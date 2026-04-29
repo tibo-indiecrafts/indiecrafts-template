@@ -1,0 +1,11 @@
+{
+  "title": "An ecosystem, not a one-off",
+  "lead": "More than a product — a full platform backed by the community we grew up with.",
+  "supporting": "APIs, integrations, and tooling for the teams who ship every week.",
+  "items": {
+    "stars": { "value": "+1,200", "label": "Stars on GitHub" },
+    "apps": { "value": "+500", "label": "Powered apps" }
+  },
+  "quote": "It's the perfect fusion of simplicity and versatility — we ship in hours what used to take sprints.",
+  "author": "Jane Doe, CEO"
+}

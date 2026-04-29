@@ -1,0 +1,12 @@
+{
+  "brandHomeLabel": "Go home",
+  "title": "Create an account",
+  "subtitle": "Welcome — create an account to get started.",
+  "googleCta": "Google",
+  "separator": "Or continue with",
+  "emailLabel": "Email",
+  "emailPlaceholder": "name@example.com",
+  "submit": "Continue",
+  "loginPrompt": "Already have an account?",
+  "loginCta": "Sign in"
+}

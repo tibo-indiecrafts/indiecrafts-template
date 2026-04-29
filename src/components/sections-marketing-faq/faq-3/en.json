@@ -1,0 +1,29 @@
+{
+  "title": "Frequently asked questions",
+  "support": {
+    "text": "Can't find what you're looking for? Reach our",
+    "link": "customer support team"
+  },
+  "items": {
+    "hours": {
+      "q": "What are your business hours?",
+      "a": "Support is live Monday-Friday 9:00-20:00 EST, weekends 10:00-18:00 EST. Holiday hours are posted on the website."
+    },
+    "subscription": {
+      "q": "How do subscription payments work?",
+      "a": "Your default payment method is charged automatically on the anniversary date (monthly or annual). You can update billing + view history in your account dashboard."
+    },
+    "expedited": {
+      "q": "Can I expedite my shipping?",
+      "a": "Next-day and 2-day shipping are available for most U.S. addresses when ordered before 14:00 EST. International expedited options vary by destination."
+    },
+    "localized": {
+      "q": "Do you offer localized support?",
+      "a": "English, Spanish, French, German, and Japanese via email, chat, and phone during regional business hours."
+    },
+    "tracking": {
+      "q": "How do I track my order?",
+      "a": "Once your order ships, you'll get a tracking number by email. Full status is also visible under Order History in your account."
+    }
+  }
+}

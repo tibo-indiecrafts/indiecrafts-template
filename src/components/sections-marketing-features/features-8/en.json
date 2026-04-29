@@ -1,0 +1,24 @@
+{
+  "customizable": "Customizable",
+  "secure": {
+    "title": "Secure by default",
+    "body": "Strict CSP, safe headers, validated inputs — security primitives are on from commit one."
+  },
+  "fast": {
+    "title": "Fast on every device",
+    "body": "Prerendered pages + lean client runtime. Lighthouse-passing out of the box."
+  },
+  "chart": {
+    "title": "Observable",
+    "body": "Structured logs, request traces, and runtime metrics — wired in, not bolted on."
+  },
+  "safety": {
+    "title": "Team-ready",
+    "body": "Role-based access, audit trails, and SOC-friendly defaults for day-one compliance.",
+    "avatars": {
+      "likeur": "Likeur",
+      "irung": "M. Irung",
+      "ng": "B. Ng"
+    }
+  }
+}

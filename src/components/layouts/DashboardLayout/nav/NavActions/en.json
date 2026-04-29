@@ -1,0 +1,18 @@
+{
+  "editedAt": "Edit Oct 08",
+  "items": {
+    "customizePage": "Customize Page",
+    "turnIntoWiki": "Turn into wiki",
+    "copyLink": "Copy Link",
+    "duplicate": "Duplicate",
+    "moveTo": "Move to",
+    "moveToTrash": "Move to Trash",
+    "undo": "Undo",
+    "viewAnalytics": "View analytics",
+    "versionHistory": "Version History",
+    "showDeletedPages": "Show delete pages",
+    "notifications": "Notifications",
+    "import": "Import",
+    "export": "Export"
+  }
+}

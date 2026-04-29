@@ -1,0 +1,62 @@
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { BackgroundLines } from "./background-lines";
+
+const meta: Meta<typeof BackgroundLines> = {
+  title: "UI Effects/BackgroundLines",
+  component: BackgroundLines,
+  parameters: { layout: "fullscreen" },
+};
+export default meta;
+
+type Story = StoryObj<typeof BackgroundLines>;
+
+/** Default — animated lines behind a centered headline. */
+export const Default: Story = {
+  render: () => (
+    <BackgroundLines>
+      <div className="relative z-10 flex h-screen items-center justify-center px-6">
+        <div className="text-center">
+          <h2 className="bg-gradient-to-r from-neutral-900 via-neutral-700 to-neutral-900 bg-clip-text text-4xl font-bold text-transparent dark:from-white dark:via-neutral-200 dark:to-white md:text-7xl">
+            Lights, animated.
+          </h2>
+          <p className="text-muted-foreground mx-auto mt-4 max-w-md text-sm">
+            Soft moving lines behind a clean headline — perfect for a quiet hero.
+          </p>
+        </div>
+      </div>
+    </BackgroundLines>
+  ),
+};
+
+/** Slow lines — `svgOptions.duration={20}` for a calmer animation. */
+export const SlowLines: Story = {
+  render: () => (
+    <BackgroundLines svgOptions={{ duration: 20 }}>
+      <div className="relative z-10 flex h-screen items-center justify-center px-6">
+        <h2 className="text-4xl font-bold md:text-6xl">Slow (20s cycle)</h2>
+      </div>
+    </BackgroundLines>
+  ),
+};
+
+/** Fast lines — `svgOptions.duration={3}` for energetic motion. */
+export const FastLines: Story = {
+  render: () => (
+    <BackgroundLines svgOptions={{ duration: 3 }}>
+      <div className="relative z-10 flex h-screen items-center justify-center px-6">
+        <h2 className="text-4xl font-bold md:text-6xl">Fast (3s cycle)</h2>
+      </div>
+    </BackgroundLines>
+  ),
+};
+
+/** Compact stage — `className="h-[40vh]"` shrinks the section height. */
+export const ShortStage: Story = {
+  render: () => (
+    <BackgroundLines className="h-[40vh]">
+      <div className="relative z-10 flex h-[40vh] items-center justify-center px-6">
+        <h3 className="text-3xl font-semibold">Section accent (40vh)</h3>
+      </div>
+    </BackgroundLines>
+  ),
+};

@@ -1,0 +1,37 @@
+{
+  "sr": {
+    "included": "Included",
+    "notIncluded": "Not included"
+  },
+  "tiers": {
+    "free": { "label": "Free", "cta": "Get started" },
+    "pro": { "label": "Pro", "cta": "Get started" },
+    "startup": { "label": "Startup", "cta": "Contact sales" }
+  },
+  "groups": {
+    "features": {
+      "label": "Features",
+      "rows": {
+        "tokens": "Tokens",
+        "videoCalls": "Video calls",
+        "support": "Support",
+        "security": "Security"
+      }
+    },
+    "ai": {
+      "label": "AI capabilities",
+      "rows": {
+        "feature1": "Prompt library",
+        "feature2": "Vector search",
+        "feature3": "Custom fine-tuning"
+      }
+    }
+  },
+  "values": {
+    "unlimited": "Unlimited",
+    "twentyUsers": "20 users",
+    "twelveWeeks": "12 weeks",
+    "fiftySix": "56 / month",
+    "seconds": "Seconds"
+  }
+}

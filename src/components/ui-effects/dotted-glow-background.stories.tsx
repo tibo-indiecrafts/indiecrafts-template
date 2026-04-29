@@ -1,0 +1,85 @@
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { DottedGlowBackground } from "./dotted-glow-background";
+
+const meta: Meta<typeof DottedGlowBackground> = {
+  title: "UI Effects/DottedGlowBackground",
+  component: DottedGlowBackground,
+  parameters: { layout: "fullscreen" },
+};
+export default meta;
+
+type Story = StoryObj<typeof DottedGlowBackground>;
+
+const Stage = ({ children }: { children: React.ReactNode }) => (
+  <div className="bg-background relative flex h-screen w-full items-center justify-center overflow-hidden">
+    {children}
+  </div>
+);
+
+/** Default — canvas-painted dots that pulse alpha at random phases. */
+export const Default: Story = {
+  render: () => (
+    <Stage>
+      <DottedGlowBackground />
+      <p className="relative z-10 text-2xl font-medium">
+        Dotted glow background
+      </p>
+    </Stage>
+  ),
+};
+
+/** Sparse — 60px gap between dot centres for a roomier ambient pattern. */
+export const Sparse: Story = {
+  render: () => (
+    <Stage>
+      <DottedGlowBackground gap={60} radius={2.5} />
+      <p className="relative z-10 text-2xl font-medium">gap = 60</p>
+    </Stage>
+  ),
+};
+
+/** Dense — 16px gap. */
+export const Dense: Story = {
+  render: () => (
+    <Stage>
+      <DottedGlowBackground gap={16} radius={1} />
+      <p className="relative z-10 text-2xl font-medium">gap = 16</p>
+    </Stage>
+  ),
+};
+
+/** Custom palette — emerald dots glowing on a dark teal background. */
+export const Emerald: Story = {
+  render: () => (
+    <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-emerald-950">
+      <DottedGlowBackground
+        color="rgba(16, 185, 129, 0.6)"
+        glowColor="rgba(16, 185, 129, 1)"
+        backgroundOpacity={0}
+      />
+      <p className="relative z-10 text-2xl font-medium text-emerald-50">
+        Emerald palette
+      </p>
+    </div>
+  ),
+};
+
+/** Faster pulse — speed multiplier `speedScale=3` for restless motion. */
+export const Fast: Story = {
+  render: () => (
+    <Stage>
+      <DottedGlowBackground speedScale={3} />
+      <p className="relative z-10 text-2xl font-medium">speedScale = 3</p>
+    </Stage>
+  ),
+};
+
+/** Calm — speedScale 0.3 for a meditative shimmer. */
+export const Calm: Story = {
+  render: () => (
+    <Stage>
+      <DottedGlowBackground speedScale={0.3} />
+      <p className="relative z-10 text-2xl font-medium">speedScale = 0.3</p>
+    </Stage>
+  ),
+};

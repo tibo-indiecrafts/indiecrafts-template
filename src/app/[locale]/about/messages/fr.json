@@ -1,0 +1,29 @@
+{
+  "title": "À propos",
+  "description": "Qui nous sommes et ce que nous construisons.",
+  "hero": {
+    "title": "Pensé pour les petits studios",
+    "subtitle": "Un template, tous les clients."
+  },
+  "body": "Ce template est la base commune de tous les sites clients que nous livrons. Forkez-le, ouvrez src/config, éditez quelques fichiers et votre site est prêt pour la production.",
+  "timeline": {
+    "title": "Notre parcours",
+    "items": {
+      "a": {
+        "year": "2023",
+        "title": "Premier fork",
+        "body": "Livré un site marketing pour un client unique — le scaffolding méritait de survivre au projet."
+      },
+      "b": {
+        "year": "2024",
+        "title": "Réécriture config-first",
+        "body": "Toutes les chaînes client extraites en config + messages. Trois studios ont forké en un mois."
+      },
+      "c": {
+        "year": "2025",
+        "title": "Passage en open source",
+        "body": "Publié sous licence MIT avec le registre de sections et la trappe CustomBlock."
+      }
+    }
+  }
+}

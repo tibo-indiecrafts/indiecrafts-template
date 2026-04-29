@@ -1,0 +1,629 @@
+{
+  "summary": {
+    "total": 69,
+    "failing": 0
+  },
+  "results": [
+    {
+      "id": "sections-app-charts-chartareaaxes--default",
+      "title": "Sections/App/Charts/ChartAreaAxes",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartareadefault--default",
+      "title": "Sections/App/Charts/ChartAreaDefault",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartareagradient--default",
+      "title": "Sections/App/Charts/ChartAreaGradient",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartareaicons--default",
+      "title": "Sections/App/Charts/ChartAreaIcons",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartareainteractive--default",
+      "title": "Sections/App/Charts/ChartAreaInteractive",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartarealegend--default",
+      "title": "Sections/App/Charts/ChartAreaLegend",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartarealinear--default",
+      "title": "Sections/App/Charts/ChartAreaLinear",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartareastacked--default",
+      "title": "Sections/App/Charts/ChartAreaStacked",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartareastackedexpand--default",
+      "title": "Sections/App/Charts/ChartAreaStackedExpand",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartareastep--default",
+      "title": "Sections/App/Charts/ChartAreaStep",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartbaractive--default",
+      "title": "Sections/App/Charts/ChartBarActive",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartbardefault--default",
+      "title": "Sections/App/Charts/ChartBarDefault",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartbarhorizontal--default",
+      "title": "Sections/App/Charts/ChartBarHorizontal",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartbarinteractive--default",
+      "title": "Sections/App/Charts/ChartBarInteractive",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-charts-chartbarlabelcustom--default",
+      "title": "Sections/App/Charts/ChartBarLabelCustom",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-dashboard-sectioncards--default",
+      "title": "Sections/App/Dashboard/SectionCards",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-dashboard-sectioncards--compact",
+      "title": "Sections/App/Dashboard/SectionCards",
+      "name": "Compact",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-dashboard-sectioncards--empty",
+      "title": "Sections/App/Dashboard/SectionCards",
+      "name": "Empty",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-data-datatable--default",
+      "title": "Sections/App/Data/DataTable",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-data-datatable--paginated",
+      "title": "Sections/App/Data/DataTable",
+      "name": "Paginated",
+      "painted": 926080,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-data-datatable--empty",
+      "title": "Sections/App/Data/DataTable",
+      "name": "Empty",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-forms-calendars--default",
+      "title": "Sections/App/Forms/Calendars",
+      "name": "Default",
+      "painted": 268800,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-forms-datepicker--default",
+      "title": "Sections/App/Forms/DatePicker",
+      "name": "Default",
+      "painted": 268800,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-app-forms-searchform--default",
+      "title": "Sections/App/Forms/SearchForm",
+      "name": "Default",
+      "painted": 207552,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-forgotpassword--default",
+      "title": "Sections/Auth/ForgotPassword",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-forgotpassword--custom-links",
+      "title": "Sections/Auth/ForgotPassword",
+      "name": "Custom Links",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-login--default",
+      "title": "Sections/Auth/Login",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-login--custom-links",
+      "title": "Sections/Auth/Login",
+      "name": "Custom Links",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-loginform--default",
+      "title": "Sections/Auth/LoginForm",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-loginform--custom-links",
+      "title": "Sections/Auth/LoginForm",
+      "name": "Custom Links",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-loginform--split-hero",
+      "title": "Sections/Auth/LoginForm",
+      "name": "Side-by-side hero",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-signup--default",
+      "title": "Sections/Auth/SignUp",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-signup--custom-links",
+      "title": "Sections/Auth/SignUp",
+      "name": "Custom Links",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-signupform--default",
+      "title": "Sections/Auth/SignupForm",
+      "name": "Default",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-auth-signupform--placeholder-art",
+      "title": "Sections/Auth/SignupForm",
+      "name": "Placeholder illustration",
+      "painted": 983040,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-contact-contact1--default",
+      "title": "Sections/Marketing/Contact/Contact1",
+      "name": "Default",
+      "painted": 2168320,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-content-content1--default",
+      "title": "Sections/Marketing/Content/Content1",
+      "name": "Default",
+      "painted": 1054980,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-content-content2--default",
+      "title": "Sections/Marketing/Content/Content2",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-content-content3--default",
+      "title": "Sections/Marketing/Content/Content3",
+      "name": "Default",
+      "painted": 1387300,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-content-content4--default",
+      "title": "Sections/Marketing/Content/Content4",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-content-content5--default",
+      "title": "Sections/Marketing/Content/Content5",
+      "name": "Default",
+      "painted": 1749860,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-content-content6--default",
+      "title": "Sections/Marketing/Content/Content6",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-content-content7--default",
+      "title": "Sections/Marketing/Content/Content7",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-cta-cta1--default",
+      "title": "Sections/Marketing/Cta/Cta1",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-faq-faq1--default",
+      "title": "Sections/Marketing/Faq/Faq1",
+      "name": "Default",
+      "painted": 1029120,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-faq-faq2--default",
+      "title": "Sections/Marketing/Faq/Faq2",
+      "name": "Default",
+      "painted": 1031680,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-faq-faq3--default",
+      "title": "Sections/Marketing/Faq/Faq3",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-faq-faq4--default",
+      "title": "Sections/Marketing/Faq/Faq4",
+      "name": "Default",
+      "painted": 1059840,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features1--default",
+      "title": "Sections/Marketing/Features/Features1",
+      "name": "Default",
+      "painted": 1027840,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features10--default",
+      "title": "Sections/Marketing/Features/Features10",
+      "name": "Default",
+      "painted": 1621380,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features11--default",
+      "title": "Sections/Marketing/Features/Features11",
+      "name": "Default",
+      "painted": 1863760,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features12--default",
+      "title": "Sections/Marketing/Features/Features12",
+      "name": "Default",
+      "painted": 1146360,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features2--default",
+      "title": "Sections/Marketing/Features/Features2",
+      "name": "Default",
+      "painted": 998400,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features3--default",
+      "title": "Sections/Marketing/Features/Features3",
+      "name": "Default",
+      "painted": 1011200,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features4--default",
+      "title": "Sections/Marketing/Features/Features4",
+      "name": "Default",
+      "painted": 1049600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features5--default",
+      "title": "Sections/Marketing/Features/Features5",
+      "name": "Default",
+      "painted": 1045240,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features6--default",
+      "title": "Sections/Marketing/Features/Features6",
+      "name": "Default",
+      "painted": 1279060,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features7--default",
+      "title": "Sections/Marketing/Features/Features7",
+      "name": "Default",
+      "painted": 1363540,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features8--default",
+      "title": "Sections/Marketing/Features/Features8",
+      "name": "Default",
+      "painted": 1210160,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-features-features9--default",
+      "title": "Sections/Marketing/Features/Features9",
+      "name": "Default",
+      "painted": 1704320,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-footer-footer1--default",
+      "title": "Sections/Marketing/Footer/Footer1",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-pricing-pricing1--default",
+      "title": "Sections/Marketing/Pricing/Pricing1",
+      "name": "Default",
+      "painted": 1259520,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-pricing-pricingcomparator--default",
+      "title": "Sections/Marketing/Pricing/PricingComparator",
+      "name": "Default",
+      "painted": 1237760,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-stats-stats1--default",
+      "title": "Sections/Marketing/Stats/Stats1",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-stats-stats2--default",
+      "title": "Sections/Marketing/Stats/Stats2",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-stats-stats3--default",
+      "title": "Sections/Marketing/Stats/Stats3",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-stats-stats4--default",
+      "title": "Sections/Marketing/Stats/Stats4",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-team-team1--default",
+      "title": "Sections/Marketing/Team/Team1",
+      "name": "Default",
+      "painted": 1950720,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    },
+    {
+      "id": "sections-marketing-testimonials-testimonials1--default",
+      "title": "Sections/Marketing/Testimonials/Testimonials1",
+      "name": "Default",
+      "painted": 921600,
+      "blank": false,
+      "timedOut": false,
+      "errors": []
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "title": "One platform, every touchpoint",
+  "leading": "More than a product — a full ecosystem. APIs, integrations, and the tools your team needs to ship.",
+  "supporting": "From startup to enterprise, the same primitives scale with you.",
+  "features": {
+    "fast": {
+      "title": "Fast",
+      "body": "Tuned for speed from the first paint — CLS-safe, prefetched, tight bundles."
+    },
+    "powerful": {
+      "title": "Powerful",
+      "body": "Every layer is extendable. Drop into the config when defaults don't fit."
+    }
+  },
+  "imageAlt": "Dashboard charts preview"
+}

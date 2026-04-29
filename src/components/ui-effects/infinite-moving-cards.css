@@ -1,0 +1,19 @@
+/*
+ * Marquee scroll animation tokens for `<InfiniteMovingCards />`.
+ *
+ * The component sets `--animation-direction` and `--animation-duration` as
+ * inline CSS variables on the container; this animation reads them so a
+ * single keyframe definition powers both directions and all three speed
+ * presets. Imported from `src/app/globals.css`.
+ */
+
+@theme inline {
+  --animate-scroll: scroll var(--animation-duration, 40s)
+    var(--animation-direction, forwards) linear infinite;
+
+  @keyframes scroll {
+    to {
+      transform: translateX(calc(-50% - 0.5rem));
+    }
+  }
+}

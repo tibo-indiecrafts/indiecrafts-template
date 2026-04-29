@@ -1,0 +1,23 @@
+{
+  "title": "One ecosystem, every touchpoint",
+  "body": "More than a product — a full stack. APIs, integrations, and the tools your team needs to ship faster without compromising safety or style.",
+  "imageAlt": "Studio workspace overview",
+  "features": {
+    "fast": {
+      "title": "Fast",
+      "body": "Tuned for speed from the first paint to the last interaction."
+    },
+    "powerful": {
+      "title": "Powerful",
+      "body": "Every layer is swappable. No vendor lock-in on fonts, colors, or content."
+    },
+    "secure": {
+      "title": "Secure",
+      "body": "Strict CSP, safe headers, and validated inputs out of the box."
+    },
+    "smart": {
+      "title": "Smart",
+      "body": "Built-in SEO, JSON-LD factories, and accessibility checks in CI."
+    }
+  }
+}

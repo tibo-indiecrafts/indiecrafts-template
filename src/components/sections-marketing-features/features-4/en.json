@@ -1,0 +1,30 @@
+{
+  "title": "The foundation for teams who ship",
+  "body": "Six promises — every one enforced in CI so they stay true across every release.",
+  "items": {
+    "fast": {
+      "title": "Fast",
+      "body": "Tuned for first-paint — prefetched routes, CLS-safe fonts, tight bundles."
+    },
+    "powerful": {
+      "title": "Powerful",
+      "body": "Every layer is editable. No vendor lock-in on fonts, colors, content, or routes."
+    },
+    "security": {
+      "title": "Secure",
+      "body": "CSP, safe headers, validated inputs at every boundary. Shipped locked down."
+    },
+    "custom": {
+      "title": "Customizable",
+      "body": "Rebrand, relocalize, reshape from the config folder — no component rewrites."
+    },
+    "control": {
+      "title": "Full control",
+      "body": "Drop below the surface when defaults don't fit. No rewrites, no forks."
+    },
+    "ai": {
+      "title": "AI-friendly",
+      "body": "Typed routes + typed translations let LLM copilots do the tedious work safely."
+    }
+  }
+}

@@ -1,0 +1,14 @@
+# Build output
+.next/
+out/
+build/
+coverage/
+
+# Generated
+next-env.d.ts
+pnpm-lock.yaml
+
+# Upstream downloads — keep pristine so `shadcn add`/etc. diffs stay clean
+src/components/ui/
+src/components/*.tsx
+src/hooks/

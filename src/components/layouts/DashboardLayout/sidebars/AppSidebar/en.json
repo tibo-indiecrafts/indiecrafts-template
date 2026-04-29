@@ -1,0 +1,20 @@
+{
+  "brandLabel": "Acme Inc.",
+  "navMain": {
+    "dashboard": "Dashboard",
+    "lifecycle": "Lifecycle",
+    "analytics": "Analytics",
+    "projects": "Projects",
+    "team": "Team"
+  },
+  "navSecondary": {
+    "settings": "Settings",
+    "help": "Get Help",
+    "search": "Search"
+  },
+  "documents": {
+    "library": "Data Library",
+    "reports": "Reports",
+    "assistant": "Word Assistant"
+  }
+}

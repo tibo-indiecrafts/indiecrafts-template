@@ -1,0 +1,26 @@
+{
+  "title": "The foundation for AI-native teams",
+  "body": "Everything you need to ship — the building blocks, the integrations, and the guardrails. Pick one to explore how it fits.",
+  "items": {
+    "database": {
+      "label": "Database visualization",
+      "body": "Live charts for every cluster, with drill-through to the individual query.",
+      "alt": "Database dashboard preview"
+    },
+    "auth": {
+      "label": "Advanced authentication",
+      "body": "OAuth, SAML, passkeys — the whole catalog, turned on with a single flag.",
+      "alt": "Authentication screen preview"
+    },
+    "identity": {
+      "label": "Identity management",
+      "body": "User + org + role in one place. Provisioning via SCIM, audit log included.",
+      "alt": "Identity management preview"
+    },
+    "analytics": {
+      "label": "Analytics dashboard",
+      "body": "Event streams, cohort retention, and funnel analysis without a second tool.",
+      "alt": "Analytics chart preview"
+    }
+  }
+}

@@ -1,0 +1,98 @@
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { HoverBorderGradient } from "./hover-border-gradient";
+
+const meta: Meta<typeof HoverBorderGradient> = {
+  title: "UI Effects/HoverBorderGradient",
+  component: HoverBorderGradient,
+  parameters: { layout: "centered" },
+  argTypes: {
+    duration: { control: { type: "range", min: 0.25, max: 4, step: 0.25 } },
+    clockwise: { control: "boolean" },
+  },
+};
+export default meta;
+
+type Story = StoryObj<typeof HoverBorderGradient>;
+
+// The component paints a white radial gradient around the border. It's
+// invisible on light surfaces, so stories use a dark stage like the upstream
+// Aceternity demo.
+const Stage = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex min-h-[200px] items-center justify-center bg-neutral-950 p-10">
+    {children}
+  </div>
+);
+
+/**
+ * Default — pill button with a radial gradient that rotates around the
+ * border. Hover the button to swap the moving highlight for a brighter blue
+ * radial fill.
+ */
+export const Default: Story = {
+  args: { duration: 1, clockwise: true },
+  render: (args) => (
+    <Stage>
+      <HoverBorderGradient {...args}>Get started</HoverBorderGradient>
+    </Stage>
+  ),
+};
+
+/** Counter-clockwise — `clockwise={false}` flips the rotation direction. */
+export const CounterClockwise: Story = {
+  args: { duration: 1, clockwise: false },
+  render: (args) => (
+    <Stage>
+      <HoverBorderGradient {...args}>Counter-clockwise</HoverBorderGradient>
+    </Stage>
+  ),
+};
+
+/** Slow — `duration={3}` makes the rotating highlight more deliberate. */
+export const Slow: Story = {
+  args: { duration: 3, clockwise: true },
+  render: (args) => (
+    <Stage>
+      <HoverBorderGradient {...args}>Slow rotation</HoverBorderGradient>
+    </Stage>
+  ),
+};
+
+/**
+ * As a link — `as="a"` swaps the rendered tag from `<button>` to `<a>`.
+ * Pass any HTML props (`href`, `target`, etc.) through.
+ */
+export const AsLink: Story = {
+  args: { duration: 1 },
+  render: (args) => (
+    <Stage>
+      <HoverBorderGradient {...args} as="a" href="#hello">
+        <span className="inline-flex items-center gap-2">
+          <Sparkles className="h-4 w-4" aria-hidden /> Read the launch post
+        </span>
+      </HoverBorderGradient>
+    </Stage>
+  ),
+};
+
+/** Rich content — children can mix icons + text for a CTA-style button. */
+export const RichContent: Story = {
+  args: { duration: 1.5 },
+  render: (args) => (
+    <Stage>
+      <HoverBorderGradient {...args}>
+        <span className="inline-flex items-center gap-3">
+          <span>
+            <span className="block text-xs font-normal text-white/60">
+              Indiecrafts
+            </span>
+            <span className="block text-base font-semibold">
+              Try the template
+            </span>
+          </span>
+          <ArrowRight className="h-4 w-4" aria-hidden />
+        </span>
+      </HoverBorderGradient>
+    </Stage>
+  ),
+};

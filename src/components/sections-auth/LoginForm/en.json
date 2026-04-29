@@ -1,0 +1,17 @@
+{
+  "brandSrOnly": "Acme Inc.",
+  "title": "Welcome to Acme Inc.",
+  "signupPrompt": "Don't have an account?",
+  "signupCta": "Sign up",
+  "emailLabel": "Email",
+  "emailPlaceholder": "m@example.com",
+  "submit": "Login",
+  "separator": "Or",
+  "appleCta": "Continue with Apple",
+  "googleCta": "Continue with Google",
+  "termsPrefix": "By clicking continue, you agree to our",
+  "termsLink": "Terms of Service",
+  "termsAnd": "and",
+  "privacyLink": "Privacy Policy",
+  "termsSuffix": "."
+}

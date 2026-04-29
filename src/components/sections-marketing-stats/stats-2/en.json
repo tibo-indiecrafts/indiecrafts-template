@@ -1,0 +1,9 @@
+{
+  "title": "By the numbers",
+  "intro": "Every signal that matters — captured, aggregated, made legible.",
+  "items": {
+    "stars": { "value": "+1,200", "label": "Stars on GitHub" },
+    "conversion": { "value": "56%", "label": "Conversion rate" },
+    "apps": { "value": "+500", "label": "Powered apps" }
+  }
+}

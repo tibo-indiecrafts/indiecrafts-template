@@ -1,0 +1,15 @@
+{
+  "navMain": {
+    "search": "Search",
+    "askAi": "Ask AI",
+    "home": "Home",
+    "inbox": "Inbox"
+  },
+  "navSecondary": {
+    "calendar": "Calendar",
+    "settings": "Settings",
+    "templates": "Templates",
+    "trash": "Trash",
+    "help": "Help"
+  }
+}

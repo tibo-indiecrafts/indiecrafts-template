@@ -1,0 +1,19 @@
+{
+  "items": {
+    "alice": {
+      "name": "Alice Walker",
+      "designation": "Founder, Beam",
+      "quote": "Indiecrafts cut our time-to-launch in half. The defaults match our brand, the i18n is wired, and the only thing left was to write the actual product."
+    },
+    "ben": {
+      "name": "Ben Ortiz",
+      "designation": "Engineering Lead, Northwind",
+      "quote": "We replaced three internal templates with Indiecrafts and our team stopped arguing about file structure. The Storybook coverage is genuinely useful."
+    },
+    "cara": {
+      "name": "Cara Tanaka",
+      "designation": "Design Director, Studio Halo",
+      "quote": "Per-locale URLs, page-template defaults, and a working dashboard out of the box. Other starters give you marketing chrome and stop there."
+    }
+  }
+}

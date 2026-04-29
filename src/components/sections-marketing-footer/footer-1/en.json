@@ -1,0 +1,29 @@
+{
+  "groups": {
+    "product": {
+      "title": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "changelog": "Changelog"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About",
+      "careers": "Careers",
+      "contact": "Contact"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "cookies": "Cookies"
+    }
+  },
+  "newsletter": {
+    "label": "Newsletter",
+    "placeholder": "you@example.com",
+    "submit": "Subscribe",
+    "hint": "One short update per month. Unsubscribe any time."
+  },
+  "copyright": "All rights reserved."
+}

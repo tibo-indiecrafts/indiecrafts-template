@@ -1,0 +1,26 @@
+/*
+ * Meteor streak animation tokens for `<Meteors />`.
+ *
+ * Tailwind v4 merges every `@theme inline` block reachable through the CSS
+ * `@import` graph, so this file registers `animate-meteor-effect` as a
+ * generated utility while keeping the keyframes co-located with the component
+ * that consumes them. Imported from `src/app/globals.css`.
+ */
+
+@theme inline {
+  --animate-meteor-effect: meteor-effect 5s linear infinite;
+
+  @keyframes meteor-effect {
+    0% {
+      transform: rotate(215deg) translateX(0);
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(215deg) translateX(-500px);
+      opacity: 0;
+    }
+  }
+}

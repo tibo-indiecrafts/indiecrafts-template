@@ -1,0 +1,155 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "blog": "Blog",
+    "contact": "Contact",
+    "company": "Company",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "cta": {
+    "getStarted": "Get started",
+    "learnMore": "Learn more"
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  },
+  "common": {
+    "skipToContent": "Skip to main content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "changeLanguage": "Change language",
+    "switchTheme": "Switch theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
+  },
+  "typography": {
+    "titleCase": "title",
+    "headingCase": "sentence",
+    "adjectivePlacement": "before",
+    "quoteStyle": {
+      "primary": ["“", "”"],
+      "secondary": ["‘", "’"]
+    },
+    "apostrophe": "’",
+    "ellipsis": "…",
+    "thousandsSeparator": ",",
+    "decimalSeparator": ".",
+    "dateFormat": "MMM d, yyyy",
+    "timeFormat": "h:mm a",
+    "firstDayOfWeek": 0,
+    "listStyle": "comma",
+    "oxfordComma": true,
+    "hyphenationChar": "-",
+    "nonBreakingSpaceBeforePunctuation": [],
+    "currencyPosition": "before",
+    "numberSpacing": ""
+  },
+  "dev": {
+    "pricing": {
+      "title": "Simple, honest pricing",
+      "subtitle": "Start free. Upgrade when you grow.",
+      "tiers": {
+        "free": {
+          "name": "Free",
+          "price": "$0",
+          "period": "forever",
+          "description": "For experimenting.",
+          "cta": "Start free",
+          "featureProjects": "1 project",
+          "featureLocales": "2 locales",
+          "featureSupport": "Community support"
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "$29",
+          "period": "per month",
+          "description": "For small studios shipping regularly.",
+          "cta": "Go Pro",
+          "featureProjects": "Unlimited projects",
+          "featureLocales": "All 24 EU locales",
+          "featureSupport": "Priority email"
+        },
+        "team": {
+          "name": "Team",
+          "price": "$99",
+          "period": "per month",
+          "description": "For agencies handling many clients.",
+          "cta": "Contact us",
+          "featureProjects": "Everything in Pro",
+          "featureLocales": "White-label",
+          "featureSupport": "Dedicated support"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "What people say",
+      "items": {
+        "a": {
+          "quote": "Forked once, shipped three client sites in a week. This is the template I wish I'd written myself.",
+          "author": "Ada Lovelace",
+          "role": "Founder, Analytic Studio"
+        },
+        "b": {
+          "quote": "Config-first done right. My designers own the content; I haven't touched a component file in two sprints.",
+          "author": "Turing Alan",
+          "role": "Engineering Lead"
+        },
+        "c": {
+          "quote": "The contrast check + WCAG rules caught three issues before our accessibility audit. Saved us days.",
+          "author": "Grace Hopper",
+          "role": "Accessibility Consultant"
+        }
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "license": {
+          "q": "Can I use this for commercial client projects?",
+          "a": "Yes — MIT licensed. Fork freely, ship freely, bill your clients."
+        },
+        "i18n": {
+          "q": "How do I add a new language?",
+          "a": "Push the locale code into SUPPORTED_LOCALES, add messages/<locale>.json mirroring English, and register it in pages/messages.ts — the scaffolder handles the first two automatically."
+        },
+        "blocks": {
+          "q": "Can I drop in Tailark or shadcn blocks?",
+          "a": "Yes. Port each block into a typed section (schema + component + registry entry) — takes about 20 minutes per block. One-off blocks use the CustomBlock escape hatch."
+        }
+      }
+    },
+    "stats": {
+      "title": "Trusted at every scale",
+      "items": {
+        "projects": { "value": "300+", "label": "Projects shipped" },
+        "locales": { "value": "24", "label": "EU locales supported" },
+        "uptime": { "value": "99.99%", "label": "CDN uptime" },
+        "developers": { "value": "1.2K", "label": "Happy developers" }
+      }
+    }
+  },
+  "validation": {
+    "required": "This field is required.",
+    "invalidEmail": "Please enter a valid email.",
+    "invalidUrl": "Please enter a valid URL.",
+    "tooShort": "This value is too short.",
+    "mustBePositive": "Must be greater than zero.",
+    "nonNegative": "Must be zero or greater."
+  },
+  "llms": {
+    "sections": {
+      "about": "We are {company}. {tagline}",
+      "howItWorks": "Visit our site to learn how our modular template works.",
+      "contact": "Get in touch via the contact page or email {email}."
+    },
+    "resources": {
+      "home": "Home page",
+      "about": "About page",
+      "blog": "Blog"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "title": "The ecosystem that grows with your product",
+  "leading": "Ship the marketing site and the dashboard from the same config — no drift between the story and the product.",
+  "supporting": "From zero to production to rebrand in an afternoon — the same primitives power every surface.",
+  "features": {
+    "fast": {
+      "title": "Fast",
+      "body": "Prerendered by default, streaming where it matters."
+    },
+    "powerful": {
+      "title": "Powerful",
+      "body": "Typed routes, typed translations, typed section schema — end to end."
+    }
+  },
+  "imageAlt": "Product dashboard preview"
+}

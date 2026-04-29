@@ -1,0 +1,29 @@
+{
+  "title": "About",
+  "description": "Who we are and what we build.",
+  "hero": {
+    "title": "Built for small studios",
+    "subtitle": "One template, every client."
+  },
+  "body": "This template is the common foundation for every client website we ship. Fork it, open src/config, edit a few files, and you have a production-ready site.",
+  "timeline": {
+    "title": "How we got here",
+    "items": {
+      "a": {
+        "year": "2023",
+        "title": "First fork",
+        "body": "Shipped a marketing site for a single client and realized the scaffolding deserved to live past the project."
+      },
+      "b": {
+        "year": "2024",
+        "title": "Config-first rewrite",
+        "body": "Pulled every client-specific string into config + messages files. Three studios forked within a month."
+      },
+      "c": {
+        "year": "2025",
+        "title": "Open-sourced",
+        "body": "Released under MIT, added the section registry and custom-block escape hatch."
+      }
+    }
+  }
+}

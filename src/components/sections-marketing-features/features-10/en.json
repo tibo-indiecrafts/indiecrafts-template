@@ -1,0 +1,13 @@
+{
+  "tracking": {
+    "eyebrow": "Real-time location tracking",
+    "body": "Know where every asset is, right now — without refreshing.",
+    "imageAlt": "Map with location pins"
+  },
+  "scheduling": {
+    "eyebrow": "Advanced scheduling",
+    "body": "Calendar-native workflows with conflict-aware reminders baked in.",
+    "imageAlt": "Calendar app preview"
+  },
+  "stamps": "Smart scheduling with automated reminders for maintenance."
+}

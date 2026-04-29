@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Brand logo">
+  <title>Brand logo</title>
+  <rect width="64" height="64" rx="14" fill="oklch(0.65 0.18 260)" />
+  <path d="M20 22h9l3 14h.2L35 22h9l-7 20h-9l-3-14h-.2L22 42h-9L6 22h9l3 14h.2L20 22Z"
+        fill="#ffffff" transform="translate(7 0)" />
+</svg>

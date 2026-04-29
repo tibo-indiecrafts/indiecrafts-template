@@ -1,0 +1,30 @@
+{
+  "title": "Frequently asked questions",
+  "body": "Quick answers to the most common questions about shipping, billing, and returns.",
+  "items": {
+    "shipping": {
+      "q": "How long does shipping take?",
+      "a": "Standard shipping takes 3-5 business days. Express shipping options at checkout deliver in 1-2 business days."
+    },
+    "payment": {
+      "q": "What payment methods do you accept?",
+      "a": "All major credit cards (Visa, Mastercard, American Express), PayPal, Apple Pay, and Google Pay. Enterprise invoicing is available on request."
+    },
+    "changes": {
+      "q": "Can I change or cancel my order?",
+      "a": "Yes — within the first hour after placing your order. After that, contact our support team and we'll help you sort it out."
+    },
+    "international": {
+      "q": "Do you ship internationally?",
+      "a": "We ship to over 50 countries. International delivery typically takes 7-14 business days. Customs fees may apply depending on your country."
+    },
+    "returns": {
+      "q": "What is your return policy?",
+      "a": "30-day returns on most items in original condition. Some specialty items have different terms — noted on each product page."
+    }
+  },
+  "support": {
+    "text": "Can't find what you're looking for? Reach our",
+    "link": "customer support team"
+  }
+}
