@@ -3,7 +3,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { RainbowButton } from "./rainbow-button";
 
 const meta: Meta<typeof RainbowButton> = {
-  title: "UI Effects/RainbowButton",
+  title: "UI Effects/Buttons/RainbowButton",
   component: RainbowButton,
   parameters: { layout: "centered" },
   argTypes: {

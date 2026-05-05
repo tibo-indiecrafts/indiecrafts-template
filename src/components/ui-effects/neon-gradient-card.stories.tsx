@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { NeonGradientCard } from "./neon-gradient-card";
 
 const meta: Meta<typeof NeonGradientCard> = {
-  title: "UI Effects/NeonGradientCard",
+  title: "UI Effects/Cards/NeonGradientCard",
   component: NeonGradientCard,
   parameters: { layout: "centered" },
   argTypes: {
@@ -20,13 +20,7 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-const CardBody = ({
-  title,
-  body,
-}: {
-  title: string;
-  body: string;
-}) => (
+const CardBody = ({ title, body }: { title: string; body: string }) => (
   <div>
     <h3 className="text-foreground text-xl font-semibold">{title}</h3>
     <p className="text-muted-foreground mt-2 text-sm">{body}</p>

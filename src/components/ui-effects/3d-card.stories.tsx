@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { CardBody, CardContainer, CardItem } from "./3d-card";
 
 const meta: Meta<typeof CardContainer> = {
-  title: "UI Effects/3dCard",
+  title: "UI Effects/3D & Devices/3dCard",
   component: CardContainer,
   parameters: { layout: "centered" },
 };
@@ -128,11 +129,7 @@ export const Compact: Story = {
         <CardItem translateZ={30} className="text-sm font-semibold">
           Compact
         </CardItem>
-        <CardItem
-          as="p"
-          translateZ={40}
-          className="text-muted-foreground mt-1 text-xs"
-        >
+        <CardItem as="p" translateZ={40} className="text-muted-foreground mt-1 text-xs">
           Tighter perspective for sidebar / grid usage.
         </CardItem>
       </CardBody>

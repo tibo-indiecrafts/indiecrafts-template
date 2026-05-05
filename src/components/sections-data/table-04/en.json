@@ -1,0 +1,21 @@
+{
+  "title": "Project tasks by team",
+  "columns": {
+    "task": "Task",
+    "budget": "Budget",
+    "deadline": "Deadline",
+    "assigned": "Assigned",
+    "status": "Status"
+  },
+  "groups": {
+    "engineering": "Engineering",
+    "marketing": "Marketing",
+    "operations": "Operations"
+  },
+  "status": {
+    "in-progress": "In Progress",
+    "completed": "Completed",
+    "planning": "Planning",
+    "on-hold": "On Hold"
+  }
+}

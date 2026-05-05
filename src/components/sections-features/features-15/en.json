@@ -1,0 +1,16 @@
+{
+  "items": {
+    "messaging": {
+      "title": "Fast messaging",
+      "body": "Send and receive messages quickly with threaded mentions and presence."
+    },
+    "uptime": {
+      "title": "Reliable by design",
+      "body": "Track service health with 99.9% uptime, granular incident timelines, and instant alerts."
+    },
+    "polls": {
+      "title": "Customizable polls",
+      "body": "Create polls with custom questions, options, and voting methods — close them automatically when time's up."
+    }
+  }
+}

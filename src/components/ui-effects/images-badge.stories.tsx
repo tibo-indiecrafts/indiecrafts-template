@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ImagesBadge } from "./images-badge";
 
 const meta: Meta<typeof ImagesBadge> = {
-  title: "UI Effects/ImagesBadge",
+  title: "UI Effects/Social/ImagesBadge",
   component: ImagesBadge,
   parameters: { layout: "centered" },
 };
@@ -38,11 +38,7 @@ export const Default: Story = {
 export const AsLink: Story = {
   render: () => (
     <Stage>
-      <ImagesBadge
-        text="See 12 photos"
-        images={IMAGES}
-        href="#gallery"
-      />
+      <ImagesBadge text="See 12 photos" images={IMAGES} href="#gallery" />
     </Stage>
   ),
 };

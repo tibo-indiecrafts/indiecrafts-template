@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { NoiseBackground } from "./noise-background";
 
 const meta: Meta<typeof NoiseBackground> = {
-  title: "UI Effects/NoiseBackground",
+  title: "UI Effects/Backgrounds/NoiseBackground",
   component: NoiseBackground,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -22,13 +22,7 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-const Body = ({
-  title,
-  body,
-}: {
-  title: string;
-  body: string;
-}) => (
+const Body = ({ title, body }: { title: string; body: string }) => (
   <div className="flex h-72 flex-col items-center justify-center text-center">
     <h3 className="text-2xl font-bold text-white drop-shadow-md">{title}</h3>
     <p className="mt-2 max-w-md text-sm text-white/80">{body}</p>
@@ -61,11 +55,7 @@ export const Default: Story = {
  */
 export const BrandPalette: Story = {
   args: {
-    gradientColors: [
-      "rgb(99, 102, 241)",
-      "rgb(79, 70, 229)",
-      "rgb(165, 180, 252)",
-    ],
+    gradientColors: ["rgb(99, 102, 241)", "rgb(79, 70, 229)", "rgb(165, 180, 252)"],
   },
   render: (args) => (
     <Stage>
@@ -85,10 +75,7 @@ export const HeavyNoise: Story = {
   render: (args) => (
     <Stage>
       <NoiseBackground {...args}>
-        <Body
-          title="Grainy"
-          body="More noise feels analogue; less feels digital."
-        />
+        <Body title="Grainy" body="More noise feels analogue; less feels digital." />
       </NoiseBackground>
     </Stage>
   ),

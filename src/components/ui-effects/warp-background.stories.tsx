@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { WarpBackground } from "./warp-background";
 
 const meta: Meta<typeof WarpBackground> = {
-  title: "UI Effects/WarpBackground",
+  title: "UI Effects/Backgrounds/WarpBackground",
   component: WarpBackground,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -25,13 +25,7 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-const CardBody = ({
-  title,
-  body,
-}: {
-  title: string;
-  body: string;
-}) => (
+const CardBody = ({ title, body }: { title: string; body: string }) => (
   <div className="border-border bg-card text-foreground rounded-2xl border p-10 shadow-sm">
     <h2 className="text-3xl font-semibold">{title}</h2>
     <p className="text-muted-foreground mt-3">{body}</p>
@@ -77,10 +71,7 @@ export const Dense: Story = {
   render: (args) => (
     <Stage>
       <WarpBackground {...args}>
-        <CardBody
-          title="Hyperspace"
-          body="More beams per side and a faster cycle."
-        />
+        <CardBody title="Hyperspace" body="More beams per side and a faster cycle." />
       </WarpBackground>
     </Stage>
   ),

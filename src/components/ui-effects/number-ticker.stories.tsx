@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { NumberTicker } from "./number-ticker";
 
 const meta: Meta<typeof NumberTicker> = {
-  title: "UI Effects/NumberTicker",
+  title: "UI Effects/Loaders & Progress/NumberTicker",
   component: NumberTicker,
   parameters: { layout: "centered" },
   argTypes: {
@@ -31,10 +31,7 @@ export const Default: Story = {
   args: { value: 1234 },
   render: (args) => (
     <Stage>
-      <NumberTicker
-        {...args}
-        className="text-foreground text-7xl font-semibold"
-      />
+      <NumberTicker {...args} className="text-foreground text-7xl font-semibold" />
     </Stage>
   ),
 };
@@ -44,10 +41,7 @@ export const CountDown: Story = {
   args: { value: 0, startValue: 100, direction: "down" },
   render: (args) => (
     <Stage>
-      <NumberTicker
-        {...args}
-        className="text-foreground text-7xl font-semibold"
-      />
+      <NumberTicker {...args} className="text-foreground text-7xl font-semibold" />
     </Stage>
   ),
 };
@@ -57,10 +51,7 @@ export const Decimals: Story = {
   args: { value: 4.95, decimalPlaces: 2 },
   render: (args) => (
     <Stage>
-      <NumberTicker
-        {...args}
-        className="text-foreground text-7xl font-semibold"
-      />
+      <NumberTicker {...args} className="text-foreground text-7xl font-semibold" />
     </Stage>
   ),
 };
@@ -70,10 +61,7 @@ export const Delayed: Story = {
   args: { value: 9999, delay: 1.5 },
   render: (args) => (
     <Stage>
-      <NumberTicker
-        {...args}
-        className="text-foreground text-7xl font-semibold"
-      />
+      <NumberTicker {...args} className="text-foreground text-7xl font-semibold" />
     </Stage>
   ),
 };

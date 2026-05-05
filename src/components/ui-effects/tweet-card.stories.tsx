@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { MagicTweet, TweetSkeleton } from "./tweet-card";
 // Use the localized wrapper for the "not found" state so the demo
-// reflects what consumers should import (`./TweetNotFound`), not the
+// reflects what consumers should import (`./tweet-not-found`), not the
 // upstream's hardcoded English copy.
-import { TweetNotFound } from "./TweetNotFound";
+import { TweetNotFound } from "./tweet-not-found";
 
 const meta: Meta = {
-  title: "UI Effects/TweetCard",
+  title: "UI Effects/Social/TweetCard",
   parameters: { layout: "centered" },
 };
 export default meta;
@@ -39,7 +39,12 @@ const FIXTURE_TWEET = {
     is_blue_verified: true,
     profile_image_shape: "Circle",
   },
-  edit_control: { edit_tweet_ids: ["1781111111111111111"], editable_until_msecs: "0", is_edit_eligible: false, edits_remaining: "5" },
+  edit_control: {
+    edit_tweet_ids: ["1781111111111111111"],
+    editable_until_msecs: "0",
+    is_edit_eligible: false,
+    edits_remaining: "5",
+  },
   isEdited: false,
   isStaleEdit: false,
   conversation_count: 12,

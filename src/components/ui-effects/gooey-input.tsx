@@ -12,13 +12,7 @@ import {
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
-function GooeyFilter({
-  filterId,
-  blur,
-}: {
-  filterId: string;
-  blur: number;
-}) {
+function GooeyFilter({ filterId, blur }: { filterId: string; blur: number }) {
   return (
     <svg className="absolute hidden h-0 w-0" aria-hidden>
       <defs>
@@ -174,8 +168,7 @@ export function GooeyInput({
     if (!searchText) setExpanded(false);
   }, [searchText, setExpanded]);
 
-  const surfaceClass =
-    "bg-foreground text-background shadow-sm ring-1 ring-border/60";
+  const surfaceClass = "bg-foreground text-background shadow-sm ring-1 ring-border/60";
 
   return (
     <div
@@ -206,14 +199,12 @@ export function GooeyInput({
             disabled={disabled}
             onClick={handleExpand}
             className={cn(
-              "flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-full px-4 text-sm font-medium outline-none transition-[color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50",
+              "focus-visible:ring-ring focus-visible:ring-offset-background flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-full px-4 text-sm font-medium transition-[color,box-shadow] outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
               surfaceClass,
               classNames?.trigger,
             )}
           >
-            {!isExpanded ? (
-              <SearchIcon layoutId={iconLayoutId} />
-            ) : null}
+            {!isExpanded ? <SearchIcon layoutId={iconLayoutId} /> : null}
             <motion.input
               layoutId={inputLayoutId}
               ref={inputRef}
@@ -226,10 +217,10 @@ export function GooeyInput({
               disabled={disabled || !isExpanded}
               placeholder={placeholder}
               className={cn(
-                "h-full min-w-0 flex-1 bg-transparent text-sm text-background outline-none",
+                "text-background h-full min-w-0 flex-1 bg-transparent text-sm outline-none",
                 isExpanded
                   ? "placeholder:text-background/50 dark:placeholder:text-background/45"
-                  : "pointer-events-none placeholder:text-background/80 dark:placeholder:text-background/70",
+                  : "placeholder:text-background/80 dark:placeholder:text-background/70 pointer-events-none",
                 classNames?.input,
               )}
             />

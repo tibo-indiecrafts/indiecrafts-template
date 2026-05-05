@@ -38,12 +38,7 @@ const ITEMS = [
 
 export const Single: Story = {
   render: () => (
-    <Accordion
-      type="single"
-      collapsible
-      className="w-80"
-      defaultValue="one"
-    >
+    <Accordion type="single" collapsible className="w-80" defaultValue="one">
       {ITEMS.map((it) => (
         <AccordionItem key={it.value} value={it.value}>
           <AccordionTrigger>{it.question}</AccordionTrigger>

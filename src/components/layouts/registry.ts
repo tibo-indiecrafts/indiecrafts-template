@@ -6,11 +6,11 @@
  * whether the header/footer show, sidebars, prose containers, etc.
  *
  * Each layout lives in its own folder with:
- *   ├── <Name>Layout.tsx   component
+ *   ├── <Name>Layout.tsx   component (PascalCase file inside kebab-case folder)
  *   └── index.ts           barrel re-export
  *
  * Add a layout in 3 steps:
- *   1. Create src/components/layouts/<Name>Layout/ with the component + index.ts.
+ *   1. Create src/components/layouts/<name>-layout/ with the component + index.ts.
  *      Layout-specific chrome (header, sidebar, etc.) lives INSIDE that folder
  *      as siblings; cross-layout chrome lives in src/components/layouts/_shared/.
  *   2. Register it below under a kebab-case key.
@@ -18,11 +18,11 @@
  */
 
 import type { ComponentType, ReactNode } from "react";
-import { DashboardLayout } from "./DashboardLayout";
-import { DefaultLayout } from "./DefaultLayout";
-import { FullBleedLayout } from "./FullBleedLayout";
-import { ProseLayout } from "./ProseLayout";
-import { SidebarLayout } from "./SidebarLayout";
+import { DashboardLayout } from "./dashboard-layout";
+import { DefaultLayout } from "./default-layout";
+import { FullBleedLayout } from "./full-bleed-layout";
+import { ProseLayout } from "./prose-layout";
+import { SidebarLayout } from "./sidebar-layout";
 
 export type LayoutName = "default" | "full-bleed" | "prose" | "sidebar" | "dashboard";
 

@@ -1,0 +1,30 @@
+{
+  "title": "Deployment progress",
+  "items": {
+    "repo-connected": {
+      "title": "Repository connected",
+      "description": "Linked GitHub repository to deployment pipeline",
+      "activityTime": "3d ago"
+    },
+    "build-config-set": {
+      "title": "Build configuration set",
+      "description": "Configured build commands and environment variables",
+      "activityTime": "2d ago"
+    },
+    "domain-configured": {
+      "title": "Domain configured",
+      "description": "Custom domain verified and SSL certificate issued",
+      "activityTime": "31min ago"
+    },
+    "health-checks": {
+      "title": "Running health checks",
+      "description": "Verifying all endpoints respond correctly",
+      "activityTime": "Running now..."
+    },
+    "go-live": {
+      "title": "Go live",
+      "description": "Switch traffic to the new deployment",
+      "activityTime": "Upcoming"
+    }
+  }
+}

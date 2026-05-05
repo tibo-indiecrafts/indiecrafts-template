@@ -1,0 +1,21 @@
+{
+  "title": "Product Inventory",
+  "description": "Track and manage product stock levels across all warehouse locations.",
+  "filterPlaceholder": "Filter by category",
+  "allCategories": "All Categories",
+  "emptyState": "No products found matching the selected filters.",
+  "columns": {
+    "sku": "SKU",
+    "productName": "Product Name",
+    "category": "Category",
+    "status": "Status",
+    "unitPrice": "Unit Price",
+    "lastRestocked": "Last Restocked"
+  },
+  "status": {
+    "active": "Active",
+    "pending": "Pending",
+    "discontinued": "Discontinued",
+    "on-hold": "On Hold"
+  }
+}

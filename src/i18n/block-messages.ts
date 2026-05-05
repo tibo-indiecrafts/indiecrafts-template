@@ -2,109 +2,326 @@
 // DO NOT EDIT — run `pnpm gen:i18n` to regenerate. Drift caught by `pnpm verify:i18n`.
 
 import _3dPinEn from "../components/ui-effects/3d-pin.en.json";
-import about1En from "../components/pages-marketing/about-1/en.json";
-import animatedTestimonialsEn from "../components/ui-effects/AnimatedTestimonials/en.json";
-import appSidebarEn from "../components/layouts/DashboardLayout/sidebars/AppSidebar/en.json";
-import chartAreaAxesEn from "../components/sections-app-charts/ChartAreaAxes/en.json";
-import chartAreaDefaultEn from "../components/sections-app-charts/ChartAreaDefault/en.json";
-import chartAreaGradientEn from "../components/sections-app-charts/ChartAreaGradient/en.json";
-import chartAreaIconsEn from "../components/sections-app-charts/ChartAreaIcons/en.json";
-import chartAreaInteractiveEn from "../components/sections-app-charts/ChartAreaInteractive/en.json";
-import chartAreaLegendEn from "../components/sections-app-charts/ChartAreaLegend/en.json";
-import chartAreaLinearEn from "../components/sections-app-charts/ChartAreaLinear/en.json";
-import chartAreaStackedEn from "../components/sections-app-charts/ChartAreaStacked/en.json";
-import chartAreaStackedExpandEn from "../components/sections-app-charts/ChartAreaStackedExpand/en.json";
-import chartAreaStepEn from "../components/sections-app-charts/ChartAreaStep/en.json";
-import chartBarActiveEn from "../components/sections-app-charts/ChartBarActive/en.json";
-import chartBarDefaultEn from "../components/sections-app-charts/ChartBarDefault/en.json";
-import chartBarHorizontalEn from "../components/sections-app-charts/ChartBarHorizontal/en.json";
-import chartBarInteractiveEn from "../components/sections-app-charts/ChartBarInteractive/en.json";
-import chartBarLabelCustomEn from "../components/sections-app-charts/ChartBarLabelCustom/en.json";
-import commandPaletteEn from "../components/ui-effects/CommandPalette/en.json";
-import contact1En from "../components/sections-marketing-contact/contact-1/en.json";
-import content1En from "../components/sections-marketing-content/content-1/en.json";
-import content2En from "../components/sections-marketing-content/content-2/en.json";
-import content3En from "../components/sections-marketing-content/content-3/en.json";
-import content4En from "../components/sections-marketing-content/content-4/en.json";
-import content5En from "../components/sections-marketing-content/content-5/en.json";
-import content6En from "../components/sections-marketing-content/content-6/en.json";
-import content7En from "../components/sections-marketing-content/content-7/en.json";
-import cta1En from "../components/sections-marketing-cta/cta-1/en.json";
-import dashboard1En from "../components/pages-app/dashboard-1/en.json";
-import dashboardHeaderEn from "../components/layouts/DashboardLayout/DashboardHeader/en.json";
-import dataTableEn from "../components/sections-app-data/DataTable/en.json";
-import ditherShaderEn from "../components/ui-effects/DitherShader/en.json";
-import error1En from "../components/pages-error/error-1/en.json";
-import faq1En from "../components/sections-marketing-faq/faq-1/en.json";
-import faq2En from "../components/sections-marketing-faq/faq-2/en.json";
-import faq3En from "../components/sections-marketing-faq/faq-3/en.json";
-import faq4En from "../components/sections-marketing-faq/faq-4/en.json";
-import features1En from "../components/sections-marketing-features/features-1/en.json";
-import features10En from "../components/sections-marketing-features/features-10/en.json";
-import features11En from "../components/sections-marketing-features/features-11/en.json";
-import features12En from "../components/sections-marketing-features/features-12/en.json";
-import features2En from "../components/sections-marketing-features/features-2/en.json";
-import features3En from "../components/sections-marketing-features/features-3/en.json";
-import features4En from "../components/sections-marketing-features/features-4/en.json";
-import features5En from "../components/sections-marketing-features/features-5/en.json";
-import features6En from "../components/sections-marketing-features/features-6/en.json";
-import features7En from "../components/sections-marketing-features/features-7/en.json";
-import features8En from "../components/sections-marketing-features/features-8/en.json";
-import features9En from "../components/sections-marketing-features/features-9/en.json";
-import footer1En from "../components/sections-marketing-footer/footer-1/en.json";
-import forgotPasswordEn from "../components/sections-auth/ForgotPassword/en.json";
-import forgotPassword1En from "../components/pages-auth/forgot-password-1/en.json";
-import heroVideoDialogEn from "../components/ui-effects/HeroVideoDialog/en.json";
-import iconCloudEn from "../components/ui-effects/IconCloud/en.json";
-import landing1En from "../components/pages-marketing/landing-1/en.json";
-import layoutTextFlipEn from "../components/ui-effects/LayoutTextFlip/en.json";
-import localeSwitcherEn from "../components/layouts/_shared/LocaleSwitcher/en.json";
-import login1En from "../components/pages-auth/login-1/en.json";
-import loginFormEn from "../components/sections-auth/LoginForm/en.json";
-import loginPageEn from "../components/sections-auth/Login/en.json";
-import navActionsEn from "../components/layouts/DashboardLayout/nav/NavActions/en.json";
-import navDocumentsEn from "../components/layouts/DashboardLayout/nav/NavDocuments/en.json";
-import navFavoritesEn from "../components/layouts/DashboardLayout/nav/NavFavorites/en.json";
-import navMainEn from "../components/layouts/DashboardLayout/nav/NavMain/en.json";
-import navProjectsEn from "../components/layouts/DashboardLayout/nav/NavProjects/en.json";
-import navUserEn from "../components/layouts/DashboardLayout/nav/NavUser/en.json";
-import navWorkspacesEn from "../components/layouts/DashboardLayout/nav/NavWorkspaces/en.json";
-import notFound1En from "../components/pages-error/not-found-1/en.json";
-import pixelatedCanvasEn from "../components/ui-effects/PixelatedCanvas/en.json";
-import pricing1En from "../components/sections-marketing-pricing/pricing-1/en.json";
-import pricingComparatorEn from "../components/sections-marketing-pricing/pricing-comparator/en.json";
-import searchFormEn from "../components/layouts/DashboardLayout/widgets/SearchForm/en.json";
-import sectionCardsEn from "../components/sections-app-dashboard/SectionCards/en.json";
-import settingsDialogEn from "../components/sections-app-settings/SettingsDialog/en.json";
-import sidebarEn from "../components/layouts/SidebarLayout/en.json";
-import sidebarLeftEn from "../components/layouts/DashboardLayout/sidebars/SidebarLeft/en.json";
-import sidebarOptInFormEn from "../components/layouts/DashboardLayout/widgets/SidebarOptInForm/en.json";
-import sidebarRightEn from "../components/layouts/DashboardLayout/sidebars/SidebarRight/en.json";
-import sidebarTriggerEn from "../components/ui-effects/SidebarTrigger/en.json";
-import signup1En from "../components/pages-auth/signup-1/en.json";
-import signupFormEn from "../components/sections-auth/SignupForm/en.json";
-import signupPageEn from "../components/sections-auth/SignUp/en.json";
-import siteFooterEn from "../components/layouts/DefaultLayout/SiteFooter/en.json";
-import siteHeaderEn from "../components/layouts/DefaultLayout/SiteHeader/en.json";
-import skipLinkEn from "../components/layouts/_shared/SkipLink/en.json";
-import stats1En from "../components/sections-marketing-stats/stats-1/en.json";
-import stats2En from "../components/sections-marketing-stats/stats-2/en.json";
-import stats3En from "../components/sections-marketing-stats/stats-3/en.json";
-import stats4En from "../components/sections-marketing-stats/stats-4/en.json";
-import team1En from "../components/sections-marketing-team/team-1/en.json";
-import teamSwitcherEn from "../components/layouts/DashboardLayout/widgets/TeamSwitcher/en.json";
-import testimonials1En from "../components/sections-marketing-testimonials/testimonials-1/en.json";
-import themeToggleEn from "../components/layouts/_shared/ThemeToggle/en.json";
-import tweetNotFoundEn from "../components/ui-effects/TweetNotFound/en.json";
-import versionSwitcherEn from "../components/layouts/DashboardLayout/widgets/VersionSwitcher/en.json";
-import webcamPixelGridEn from "../components/ui-effects/WebcamPixelGrid/en.json";
-import worldMapEn from "../components/ui-effects/WorldMap/en.json";
+import about01En from "../components/pages-about/about-01/en.json";
+import ai01En from "../components/sections-ai/ai-01/en.json";
+import ai02En from "../components/sections-ai/ai-02/en.json";
+import ai03En from "../components/sections-ai/ai-03/en.json";
+import ai04En from "../components/sections-ai/ai-04/en.json";
+import ai05En from "../components/sections-ai/ai-05/en.json";
+import animatedTestimonialsEn from "../components/ui-effects/animated-testimonials/en.json";
+import bento1En from "../components/sections-bento/bento-1/en.json";
+import bento10En from "../components/sections-bento/bento-10/en.json";
+import bento11En from "../components/sections-bento/bento-11/en.json";
+import bento12En from "../components/sections-bento/bento-12/en.json";
+import bento13En from "../components/sections-bento/bento-13/en.json";
+import bento14En from "../components/sections-bento/bento-14/en.json";
+import bento2En from "../components/sections-bento/bento-2/en.json";
+import bento3En from "../components/sections-bento/bento-3/en.json";
+import bento4En from "../components/sections-bento/bento-4/en.json";
+import bento5En from "../components/sections-bento/bento-5/en.json";
+import bento6En from "../components/sections-bento/bento-6/en.json";
+import bento7En from "../components/sections-bento/bento-7/en.json";
+import bento8En from "../components/sections-bento/bento-8/en.json";
+import bento9En from "../components/sections-bento/bento-9/en.json";
+import chartAreaAxesEn from "../components/ui-molecules/chart/area/axes/en.json";
+import chartAreaDefaultEn from "../components/ui-molecules/chart/area/default/en.json";
+import chartAreaGradientEn from "../components/ui-molecules/chart/area/gradient/en.json";
+import chartAreaIconsEn from "../components/ui-molecules/chart/area/icons/en.json";
+import chartAreaInteractiveEn from "../components/ui-molecules/chart/area/interactive/en.json";
+import chartAreaLegendEn from "../components/ui-molecules/chart/area/legend/en.json";
+import chartAreaLinearEn from "../components/ui-molecules/chart/area/linear/en.json";
+import chartAreaStackedEn from "../components/ui-molecules/chart/area/stacked/en.json";
+import chartAreaStackedExpandEn from "../components/ui-molecules/chart/area/stacked-expand/en.json";
+import chartAreaStepEn from "../components/ui-molecules/chart/area/step/en.json";
+import chartBarActiveEn from "../components/ui-molecules/chart/bar/active/en.json";
+import chartBarDefaultEn from "../components/ui-molecules/chart/bar/default/en.json";
+import chartBarHorizontalEn from "../components/ui-molecules/chart/bar/horizontal/en.json";
+import chartBarInteractiveEn from "../components/ui-molecules/chart/bar/interactive/en.json";
+import chartBarLabelCustomEn from "../components/ui-molecules/chart/bar/label-custom/en.json";
+import codeDemo1En from "../components/sections-code-demo/code-demo-1/en.json";
+import codeDemo2En from "../components/sections-code-demo/code-demo-2/en.json";
+import codeDemo3En from "../components/sections-code-demo/code-demo-3/en.json";
+import codeDemo4En from "../components/sections-code-demo/code-demo-4/en.json";
+import commandMenu01En from "../components/ui-molecules/command-menu/01/en.json";
+import commandMenu02En from "../components/ui-molecules/command-menu/02/en.json";
+import commandMenu03En from "../components/ui-molecules/command-menu/03/en.json";
+import commandPaletteEn from "../components/ui-effects/command-palette/en.json";
+import contact01En from "../components/sections-contact/contact-01/en.json";
+import content01En from "../components/sections-content/content-01/en.json";
+import content02En from "../components/sections-content/content-02/en.json";
+import content03En from "../components/sections-content/content-03/en.json";
+import content04En from "../components/sections-content/content-04/en.json";
+import content05En from "../components/sections-content/content-05/en.json";
+import content06En from "../components/sections-content/content-06/en.json";
+import content07En from "../components/sections-content/content-07/en.json";
+import content08En from "../components/sections-content/content-08/en.json";
+import content09En from "../components/sections-content/content-09/en.json";
+import content10En from "../components/sections-content/content-10/en.json";
+import content11En from "../components/sections-content/content-11/en.json";
+import cta01En from "../components/sections-cta/cta-01/en.json";
+import dashboard01En from "../components/pages-dashboard/dashboard-01/en.json";
+import dashboardHeaderEn from "../components/ui-molecules/dashboard/header/en.json";
+import dashboardNavDocumentsEn from "../components/ui-molecules/dashboard/nav-documents/en.json";
+import dashboardNavFavoritesEn from "../components/ui-molecules/dashboard/nav-favorites/en.json";
+import dashboardNavMainEn from "../components/ui-molecules/dashboard/nav-main/en.json";
+import dashboardNavUserEn from "../components/ui-molecules/dashboard/nav-user/en.json";
+import dashboardNavWorkspacesEn from "../components/ui-molecules/dashboard/nav-workspaces/en.json";
+import dashboardTeamSwitcherEn from "../components/ui-molecules/dashboard/team-switcher/en.json";
+import dataTableEn from "../components/sections-data/data-table/en.json";
+import dialog01En from "../components/sections-modals/dialog-01/en.json";
+import dialog02En from "../components/sections-modals/dialog-02/en.json";
+import dialog03En from "../components/sections-modals/dialog-03/en.json";
+import dialog04En from "../components/sections-modals/dialog-04/en.json";
+import dialog05En from "../components/sections-modals/dialog-05/en.json";
+import dialog06En from "../components/sections-modals/dialog-06/en.json";
+import dialog07En from "../components/sections-modals/dialog-07/en.json";
+import dialog08En from "../components/sections-modals/dialog-08/en.json";
+import dialog09En from "../components/sections-modals/dialog-09/en.json";
+import dialog10En from "../components/sections-modals/dialog-10/en.json";
+import dialog11En from "../components/sections-modals/dialog-11/en.json";
+import dialog12En from "../components/sections-modals/dialog-12/en.json";
+import ditherShaderEn from "../components/ui-effects/dither-shader/en.json";
+import enterpriseFormEn from "../components/ui-molecules/contact-form/enterprise/en.json";
+import error01En from "../components/pages-error/error-01/en.json";
+import faq01En from "../components/sections-faq/faq-01/en.json";
+import faq02En from "../components/sections-faq/faq-02/en.json";
+import faq03En from "../components/sections-faq/faq-03/en.json";
+import faq04En from "../components/sections-faq/faq-04/en.json";
+import features01En from "../components/sections-features/features-01/en.json";
+import features02En from "../components/sections-features/features-02/en.json";
+import features03En from "../components/sections-features/features-03/en.json";
+import features04En from "../components/sections-features/features-04/en.json";
+import features05En from "../components/sections-features/features-05/en.json";
+import features06En from "../components/sections-features/features-06/en.json";
+import features07En from "../components/sections-features/features-07/en.json";
+import features08En from "../components/sections-features/features-08/en.json";
+import features09En from "../components/sections-features/features-09/en.json";
+import features10En from "../components/sections-features/features-10/en.json";
+import features11En from "../components/sections-features/features-11/en.json";
+import features12En from "../components/sections-features/features-12/en.json";
+import features13En from "../components/sections-features/features-13/en.json";
+import features14En from "../components/sections-features/features-14/en.json";
+import features15En from "../components/sections-features/features-15/en.json";
+import features16En from "../components/sections-features/features-16/en.json";
+import features17En from "../components/sections-features/features-17/en.json";
+import features18En from "../components/sections-features/features-18/en.json";
+import features19En from "../components/sections-features/features-19/en.json";
+import features20En from "../components/sections-features/features-20/en.json";
+import features21En from "../components/sections-features/features-21/en.json";
+import features22En from "../components/sections-features/features-22/en.json";
+import features23En from "../components/sections-features/features-23/en.json";
+import features24En from "../components/sections-features/features-24/en.json";
+import features25En from "../components/sections-features/features-25/en.json";
+import features26En from "../components/sections-features/features-26/en.json";
+import featuresCarousel1En from "../components/sections-features-carousel/features-carousel-1/en.json";
+import featuresCarousel2En from "../components/sections-features-carousel/features-carousel-2/en.json";
+import featuresCarousel3En from "../components/sections-features-carousel/features-carousel-3/en.json";
+import featuresCarousel4En from "../components/sections-features-carousel/features-carousel-4/en.json";
+import featuresCarousel5En from "../components/sections-features-carousel/features-carousel-5/en.json";
+import featuresExpandable1En from "../components/sections-features-expandable/features-expandable-1/en.json";
+import featuresExpandable10En from "../components/sections-features-expandable/features-expandable-10/en.json";
+import featuresExpandable11En from "../components/sections-features-expandable/features-expandable-11/en.json";
+import featuresExpandable12En from "../components/sections-features-expandable/features-expandable-12/en.json";
+import featuresExpandable13En from "../components/sections-features-expandable/features-expandable-13/en.json";
+import featuresExpandable14En from "../components/sections-features-expandable/features-expandable-14/en.json";
+import featuresExpandable15En from "../components/sections-features-expandable/features-expandable-15/en.json";
+import featuresExpandable16En from "../components/sections-features-expandable/features-expandable-16/en.json";
+import featuresExpandable17En from "../components/sections-features-expandable/features-expandable-17/en.json";
+import featuresExpandable18En from "../components/sections-features-expandable/features-expandable-18/en.json";
+import featuresExpandable19En from "../components/sections-features-expandable/features-expandable-19/en.json";
+import featuresExpandable2En from "../components/sections-features-expandable/features-expandable-2/en.json";
+import featuresExpandable20En from "../components/sections-features-expandable/features-expandable-20/en.json";
+import featuresExpandable21En from "../components/sections-features-expandable/features-expandable-21/en.json";
+import featuresExpandable22En from "../components/sections-features-expandable/features-expandable-22/en.json";
+import featuresExpandable3En from "../components/sections-features-expandable/features-expandable-3/en.json";
+import featuresExpandable4En from "../components/sections-features-expandable/features-expandable-4/en.json";
+import featuresExpandable5En from "../components/sections-features-expandable/features-expandable-5/en.json";
+import featuresExpandable6En from "../components/sections-features-expandable/features-expandable-6/en.json";
+import featuresExpandable7En from "../components/sections-features-expandable/features-expandable-7/en.json";
+import featuresExpandable8En from "../components/sections-features-expandable/features-expandable-8/en.json";
+import featuresExpandable9En from "../components/sections-features-expandable/features-expandable-9/en.json";
+import fileUpload01En from "../components/sections-file-upload/file-upload-01/en.json";
+import fileUpload02En from "../components/sections-file-upload/file-upload-02/en.json";
+import fileUpload03En from "../components/sections-file-upload/file-upload-03/en.json";
+import fileUpload04En from "../components/sections-file-upload/file-upload-04/en.json";
+import fileUpload05En from "../components/sections-file-upload/file-upload-05/en.json";
+import fileUpload06En from "../components/sections-file-upload/file-upload-06/en.json";
+import forgotPasswordEn from "../components/sections-auth/forgot-password/en.json";
+import forgotPassword01En from "../components/pages-forgot-password/forgot-password-01/en.json";
+import formLayout01En from "../components/sections-form/form-layout-01/en.json";
+import formLayout02En from "../components/sections-form/form-layout-02/en.json";
+import formLayout03En from "../components/sections-form/form-layout-03/en.json";
+import formLayout04En from "../components/sections-form/form-layout-04/en.json";
+import formLayout05En from "../components/sections-form/form-layout-05/en.json";
+import gridList01En from "../components/sections-lists/grid-list-01/en.json";
+import gridList02En from "../components/sections-lists/grid-list-02/en.json";
+import gridList03En from "../components/sections-lists/grid-list-03/en.json";
+import header1En from "../components/layouts/_shared/site-headers/header-1/en.json";
+import header2En from "../components/layouts/_shared/site-headers/header-2/en.json";
+import header3En from "../components/layouts/_shared/site-headers/header-3/en.json";
+import header4En from "../components/layouts/_shared/site-headers/header-4/en.json";
+import header5En from "../components/layouts/_shared/site-headers/header-5/en.json";
+import header6En from "../components/layouts/_shared/site-headers/header-6/en.json";
+import header7En from "../components/layouts/_shared/site-headers/header-7/en.json";
+import header8En from "../components/layouts/_shared/site-headers/header-8/en.json";
+import hero1En from "../components/sections-hero/hero-1/en.json";
+import hero10En from "../components/sections-hero/hero-10/en.json";
+import hero11En from "../components/sections-hero/hero-11/en.json";
+import hero12En from "../components/sections-hero/hero-12/en.json";
+import hero13En from "../components/sections-hero/hero-13/en.json";
+import hero14En from "../components/sections-hero/hero-14/en.json";
+import hero15En from "../components/sections-hero/hero-15/en.json";
+import hero16En from "../components/sections-hero/hero-16/en.json";
+import hero2En from "../components/sections-hero/hero-2/en.json";
+import hero3En from "../components/sections-hero/hero-3/en.json";
+import hero4En from "../components/sections-hero/hero-4/en.json";
+import hero5En from "../components/sections-hero/hero-5/en.json";
+import hero6En from "../components/sections-hero/hero-6/en.json";
+import hero7En from "../components/sections-hero/hero-7/en.json";
+import hero8En from "../components/sections-hero/hero-8/en.json";
+import hero9En from "../components/sections-hero/hero-9/en.json";
+import heroVideoDialogEn from "../components/ui-effects/hero-video-dialog/en.json";
+import howItWorks1En from "../components/sections-how-it-works/how-it-works-1/en.json";
+import howItWorks2En from "../components/sections-how-it-works/how-it-works-2/en.json";
+import howItWorks3En from "../components/sections-how-it-works/how-it-works-3/en.json";
+import howItWorks4En from "../components/sections-how-it-works/how-it-works-4/en.json";
+import howItWorks5En from "../components/sections-how-it-works/how-it-works-5/en.json";
+import howItWorks6En from "../components/sections-how-it-works/how-it-works-6/en.json";
+import howItWorks7En from "../components/sections-how-it-works/how-it-works-7/en.json";
+import iconCloudEn from "../components/ui-effects/icon-cloud/en.json";
+import landing01En from "../components/pages-landing/landing-01/en.json";
+import layoutTextFlipEn from "../components/ui-effects/layout-text-flip/en.json";
+import localeSwitcherEn from "../components/layouts/_shared/locale-switcher/en.json";
+import login01En from "../components/sections-auth/login-01/en.json";
+import login02En from "../components/sections-auth/login-02/en.json";
+import login03En from "../components/sections-auth/login-03/en.json";
+import login04En from "../components/sections-auth/login-04/en.json";
+import login05En from "../components/sections-auth/login-05/en.json";
+import login06En from "../components/sections-auth/login-06/en.json";
+import login07En from "../components/sections-auth/login-07/en.json";
+import login08En from "../components/sections-auth/login-08/en.json";
+import login09En from "../components/sections-auth/login-09/en.json";
+import loginFormEn from "../components/ui-molecules/auth-form/login/en.json";
+import logoCloud1En from "../components/sections-logo-cloud/logo-cloud-1/en.json";
+import logoCloud10En from "../components/sections-logo-cloud/logo-cloud-10/en.json";
+import logoCloud2En from "../components/sections-logo-cloud/logo-cloud-2/en.json";
+import logoCloud3En from "../components/sections-logo-cloud/logo-cloud-3/en.json";
+import logoCloud4En from "../components/sections-logo-cloud/logo-cloud-4/en.json";
+import logoCloud5En from "../components/sections-logo-cloud/logo-cloud-5/en.json";
+import logoCloud6En from "../components/sections-logo-cloud/logo-cloud-6/en.json";
+import logoCloud7En from "../components/sections-logo-cloud/logo-cloud-7/en.json";
+import logoCloud8En from "../components/sections-logo-cloud/logo-cloud-8/en.json";
+import logoCloud9En from "../components/sections-logo-cloud/logo-cloud-9/en.json";
+import notFound01En from "../components/pages-not-found/not-found-01/en.json";
+import onboarding01En from "../components/sections-onboarding/onboarding-01/en.json";
+import onboarding02En from "../components/sections-onboarding/onboarding-02/en.json";
+import onboarding03En from "../components/sections-onboarding/onboarding-03/en.json";
+import onboarding04En from "../components/sections-onboarding/onboarding-04/en.json";
+import onboarding07En from "../components/sections-onboarding/onboarding-07/en.json";
+import pagesLogin01En from "../components/pages-login/login-01/en.json";
+import pixelatedCanvasEn from "../components/ui-effects/pixelated-canvas/en.json";
+import pricing01En from "../components/sections-pricing/pricing-01/en.json";
+import pricingComparatorEn from "../components/sections-pricing/pricing-comparator/en.json";
+import quickActions01En from "../components/sections-dashboard/quick-actions-01/en.json";
+import recentActivity01En from "../components/sections-dashboard/recent-activity-01/en.json";
+import secondaryHero1En from "../components/sections-secondary-hero/secondary-hero-1/en.json";
+import secondaryHero10En from "../components/sections-secondary-hero/secondary-hero-10/en.json";
+import secondaryHero11En from "../components/sections-secondary-hero/secondary-hero-11/en.json";
+import secondaryHero12En from "../components/sections-secondary-hero/secondary-hero-12/en.json";
+import secondaryHero13En from "../components/sections-secondary-hero/secondary-hero-13/en.json";
+import secondaryHero14En from "../components/sections-secondary-hero/secondary-hero-14/en.json";
+import secondaryHero15En from "../components/sections-secondary-hero/secondary-hero-15/en.json";
+import secondaryHero16En from "../components/sections-secondary-hero/secondary-hero-16/en.json";
+import secondaryHero17En from "../components/sections-secondary-hero/secondary-hero-17/en.json";
+import secondaryHero18En from "../components/sections-secondary-hero/secondary-hero-18/en.json";
+import secondaryHero19En from "../components/sections-secondary-hero/secondary-hero-19/en.json";
+import secondaryHero2En from "../components/sections-secondary-hero/secondary-hero-2/en.json";
+import secondaryHero20En from "../components/sections-secondary-hero/secondary-hero-20/en.json";
+import secondaryHero3En from "../components/sections-secondary-hero/secondary-hero-3/en.json";
+import secondaryHero4En from "../components/sections-secondary-hero/secondary-hero-4/en.json";
+import secondaryHero5En from "../components/sections-secondary-hero/secondary-hero-5/en.json";
+import secondaryHero6En from "../components/sections-secondary-hero/secondary-hero-6/en.json";
+import secondaryHero7En from "../components/sections-secondary-hero/secondary-hero-7/en.json";
+import secondaryHero8En from "../components/sections-secondary-hero/secondary-hero-8/en.json";
+import secondaryHero9En from "../components/sections-secondary-hero/secondary-hero-9/en.json";
+import sectionCardsEn from "../components/ui-molecules/dashboard/kpi-cards/en.json";
+import settingsDialogEn from "../components/sections-modals/settings-dialog/en.json";
+import sidebarEn from "../components/layouts/sidebar-layout/en.json";
+import sidebar01En from "../components/layouts/dashboard-layout/sidebars/sidebar-01/en.json";
+import sidebar02En from "../components/layouts/dashboard-layout/sidebars/sidebar-02/en.json";
+import sidebar03En from "../components/layouts/dashboard-layout/sidebars/sidebar-03/en.json";
+import sidebar04En from "../components/layouts/dashboard-layout/sidebars/sidebar-04/en.json";
+import sidebar05En from "../components/layouts/dashboard-layout/sidebars/sidebar-05/en.json";
+import sidebar06En from "../components/layouts/dashboard-layout/sidebars/sidebar-06/en.json";
+import sidebar07En from "../components/layouts/dashboard-layout/sidebars/sidebar-07/en.json";
+import sidebar08En from "../components/layouts/dashboard-layout/sidebars/sidebar-08/en.json";
+import sidebar09En from "../components/layouts/dashboard-layout/sidebars/sidebar-09/en.json";
+import sidebarNavCollapseEn from "../components/ui-molecules/sidebar/nav-collapse/en.json";
+import sidebarNavFooterEn from "../components/ui-molecules/sidebar/nav-footer/en.json";
+import sidebarNavHeaderEn from "../components/ui-molecules/sidebar/nav-header/en.json";
+import sidebarNavNotificationsEn from "../components/ui-molecules/sidebar/nav-notifications/en.json";
+import sidebarNavUserEn from "../components/ui-molecules/sidebar/nav-user/en.json";
+import sidebarTeamSwitcherGroupedEn from "../components/ui-molecules/sidebar/team-switcher/grouped/en.json";
+import sidebarTeamSwitcherToggleEn from "../components/ui-molecules/sidebar/team-switcher/toggle/en.json";
+import sidebarTriggerEn from "../components/ui-effects/sidebar-trigger/en.json";
+import signup01En from "../components/pages-signup/signup-01/en.json";
+import signupFormEn from "../components/ui-molecules/auth-form/signup/en.json";
+import siteFooterEn from "../components/layouts/default-layout/site-footer/en.json";
+import skipLinkEn from "../components/layouts/_shared/skip-link/en.json";
+import stats01En from "../components/sections-stats/stats-01/en.json";
+import stats02En from "../components/sections-stats/stats-02/en.json";
+import stats03En from "../components/sections-stats/stats-03/en.json";
+import stats04En from "../components/sections-stats/stats-04/en.json";
+import stats05En from "../components/sections-stats/stats-05/en.json";
+import stats06En from "../components/sections-stats/stats-06/en.json";
+import stats07En from "../components/sections-stats/stats-07/en.json";
+import stats08En from "../components/sections-stats/stats-08/en.json";
+import stats09En from "../components/ui-molecules/stat-tile/usage/en.json";
+import stats10En from "../components/sections-stats/stats-10/en.json";
+import stats11En from "../components/sections-stats/stats-11/en.json";
+import stats12En from "../components/sections-stats/stats-12/en.json";
+import stats13En from "../components/sections-stats/stats-13/en.json";
+import stats14En from "../components/sections-stats/stats-14/en.json";
+import stats15En from "../components/ui-molecules/stat-tile/projection/en.json";
+import table01En from "../components/sections-data/table-01/en.json";
+import table02En from "../components/sections-data/table-02/en.json";
+import table03En from "../components/sections-data/table-03/en.json";
+import table04En from "../components/sections-data/table-04/en.json";
+import table05En from "../components/sections-data/table-05/en.json";
+import team01En from "../components/sections-team/team-01/en.json";
+import testimonials01En from "../components/sections-testimonials/testimonials-01/en.json";
+import themeToggleEn from "../components/layouts/_shared/theme-toggle/en.json";
+import timeline01En from "../components/sections-timelines/timeline-01/en.json";
+import timeline02En from "../components/sections-timelines/timeline-02/en.json";
+import trendBadgeEn from "../components/ui-molecules/trend-badge/en.json";
+import tweetNotFoundEn from "../components/ui-effects/tweet-not-found/en.json";
+import webcamPixelGridEn from "../components/ui-effects/webcam-pixel-grid/en.json";
+import welcomeBanner01En from "../components/sections-dashboard/welcome-banner-01/en.json";
+import worldMapEn from "../components/ui-effects/world-map/en.json";
 
 const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "3d-pin": _3dPinEn,
-  "about-1": about1En,
+  "about-01": about01En,
+  "ai-01": ai01En,
+  "ai-02": ai02En,
+  "ai-03": ai03En,
+  "ai-04": ai04En,
+  "ai-05": ai05En,
   "animated-testimonials": animatedTestimonialsEn,
-  "app-sidebar": appSidebarEn,
+  "bento-1": bento1En,
+  "bento-10": bento10En,
+  "bento-11": bento11En,
+  "bento-12": bento12En,
+  "bento-13": bento13En,
+  "bento-14": bento14En,
+  "bento-2": bento2En,
+  "bento-3": bento3En,
+  "bento-4": bento4En,
+  "bento-5": bento5En,
+  "bento-6": bento6En,
+  "bento-7": bento7En,
+  "bento-8": bento8En,
+  "bento-9": bento9En,
   "chart-area-axes": chartAreaAxesEn,
   "chart-area-default": chartAreaDefaultEn,
   "chart-area-gradient": chartAreaGradientEn,
@@ -120,84 +337,265 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "chart-bar-horizontal": chartBarHorizontalEn,
   "chart-bar-interactive": chartBarInteractiveEn,
   "chart-bar-label-custom": chartBarLabelCustomEn,
+  "code-demo-1": codeDemo1En,
+  "code-demo-2": codeDemo2En,
+  "code-demo-3": codeDemo3En,
+  "code-demo-4": codeDemo4En,
+  "command-menu-01": commandMenu01En,
+  "command-menu-02": commandMenu02En,
+  "command-menu-03": commandMenu03En,
   "command-palette": commandPaletteEn,
-  "contact-1": contact1En,
-  "content-1": content1En,
-  "content-2": content2En,
-  "content-3": content3En,
-  "content-4": content4En,
-  "content-5": content5En,
-  "content-6": content6En,
-  "content-7": content7En,
-  "cta-1": cta1En,
-  "dashboard-1": dashboard1En,
+  "contact-01": contact01En,
+  "content-01": content01En,
+  "content-02": content02En,
+  "content-03": content03En,
+  "content-04": content04En,
+  "content-05": content05En,
+  "content-06": content06En,
+  "content-07": content07En,
+  "content-08": content08En,
+  "content-09": content09En,
+  "content-10": content10En,
+  "content-11": content11En,
+  "cta-01": cta01En,
+  "dashboard-01": dashboard01En,
   "dashboard-header": dashboardHeaderEn,
+  "dashboard-nav-documents": dashboardNavDocumentsEn,
+  "dashboard-nav-favorites": dashboardNavFavoritesEn,
+  "dashboard-nav-main": dashboardNavMainEn,
+  "dashboard-nav-user": dashboardNavUserEn,
+  "dashboard-nav-workspaces": dashboardNavWorkspacesEn,
+  "dashboard-team-switcher": dashboardTeamSwitcherEn,
   "data-table": dataTableEn,
+  "dialog-01": dialog01En,
+  "dialog-02": dialog02En,
+  "dialog-03": dialog03En,
+  "dialog-04": dialog04En,
+  "dialog-05": dialog05En,
+  "dialog-06": dialog06En,
+  "dialog-07": dialog07En,
+  "dialog-08": dialog08En,
+  "dialog-09": dialog09En,
+  "dialog-10": dialog10En,
+  "dialog-11": dialog11En,
+  "dialog-12": dialog12En,
   "dither-shader": ditherShaderEn,
-  "error-1": error1En,
-  "faq-1": faq1En,
-  "faq-2": faq2En,
-  "faq-3": faq3En,
-  "faq-4": faq4En,
-  "features-1": features1En,
+  "enterprise-form": enterpriseFormEn,
+  "error-01": error01En,
+  "faq-01": faq01En,
+  "faq-02": faq02En,
+  "faq-03": faq03En,
+  "faq-04": faq04En,
+  "features-01": features01En,
+  "features-02": features02En,
+  "features-03": features03En,
+  "features-04": features04En,
+  "features-05": features05En,
+  "features-06": features06En,
+  "features-07": features07En,
+  "features-08": features08En,
+  "features-09": features09En,
   "features-10": features10En,
   "features-11": features11En,
   "features-12": features12En,
-  "features-2": features2En,
-  "features-3": features3En,
-  "features-4": features4En,
-  "features-5": features5En,
-  "features-6": features6En,
-  "features-7": features7En,
-  "features-8": features8En,
-  "features-9": features9En,
-  "footer-1": footer1En,
+  "features-13": features13En,
+  "features-14": features14En,
+  "features-15": features15En,
+  "features-16": features16En,
+  "features-17": features17En,
+  "features-18": features18En,
+  "features-19": features19En,
+  "features-20": features20En,
+  "features-21": features21En,
+  "features-22": features22En,
+  "features-23": features23En,
+  "features-24": features24En,
+  "features-25": features25En,
+  "features-26": features26En,
+  "features-carousel-1": featuresCarousel1En,
+  "features-carousel-2": featuresCarousel2En,
+  "features-carousel-3": featuresCarousel3En,
+  "features-carousel-4": featuresCarousel4En,
+  "features-carousel-5": featuresCarousel5En,
+  "features-expandable-1": featuresExpandable1En,
+  "features-expandable-10": featuresExpandable10En,
+  "features-expandable-11": featuresExpandable11En,
+  "features-expandable-12": featuresExpandable12En,
+  "features-expandable-13": featuresExpandable13En,
+  "features-expandable-14": featuresExpandable14En,
+  "features-expandable-15": featuresExpandable15En,
+  "features-expandable-16": featuresExpandable16En,
+  "features-expandable-17": featuresExpandable17En,
+  "features-expandable-18": featuresExpandable18En,
+  "features-expandable-19": featuresExpandable19En,
+  "features-expandable-2": featuresExpandable2En,
+  "features-expandable-20": featuresExpandable20En,
+  "features-expandable-21": featuresExpandable21En,
+  "features-expandable-22": featuresExpandable22En,
+  "features-expandable-3": featuresExpandable3En,
+  "features-expandable-4": featuresExpandable4En,
+  "features-expandable-5": featuresExpandable5En,
+  "features-expandable-6": featuresExpandable6En,
+  "features-expandable-7": featuresExpandable7En,
+  "features-expandable-8": featuresExpandable8En,
+  "features-expandable-9": featuresExpandable9En,
+  "file-upload-01": fileUpload01En,
+  "file-upload-02": fileUpload02En,
+  "file-upload-03": fileUpload03En,
+  "file-upload-04": fileUpload04En,
+  "file-upload-05": fileUpload05En,
+  "file-upload-06": fileUpload06En,
   "forgot-password": forgotPasswordEn,
-  "forgot-password-1": forgotPassword1En,
+  "forgot-password-01": forgotPassword01En,
+  "form-layout-01": formLayout01En,
+  "form-layout-02": formLayout02En,
+  "form-layout-03": formLayout03En,
+  "form-layout-04": formLayout04En,
+  "form-layout-05": formLayout05En,
+  "grid-list-01": gridList01En,
+  "grid-list-02": gridList02En,
+  "grid-list-03": gridList03En,
+  "header-1": header1En,
+  "header-2": header2En,
+  "header-3": header3En,
+  "header-4": header4En,
+  "header-5": header5En,
+  "header-6": header6En,
+  "header-7": header7En,
+  "header-8": header8En,
+  "hero-1": hero1En,
+  "hero-10": hero10En,
+  "hero-11": hero11En,
+  "hero-12": hero12En,
+  "hero-13": hero13En,
+  "hero-14": hero14En,
+  "hero-15": hero15En,
+  "hero-16": hero16En,
+  "hero-2": hero2En,
+  "hero-3": hero3En,
+  "hero-4": hero4En,
+  "hero-5": hero5En,
+  "hero-6": hero6En,
+  "hero-7": hero7En,
+  "hero-8": hero8En,
+  "hero-9": hero9En,
   "hero-video-dialog": heroVideoDialogEn,
+  "how-it-works-1": howItWorks1En,
+  "how-it-works-2": howItWorks2En,
+  "how-it-works-3": howItWorks3En,
+  "how-it-works-4": howItWorks4En,
+  "how-it-works-5": howItWorks5En,
+  "how-it-works-6": howItWorks6En,
+  "how-it-works-7": howItWorks7En,
   "icon-cloud": iconCloudEn,
-  "landing-1": landing1En,
+  "landing-01": landing01En,
   "layout-text-flip": layoutTextFlipEn,
   "locale-switcher": localeSwitcherEn,
-  "login-1": login1En,
+  "login-01": login01En,
+  "login-02": login02En,
+  "login-03": login03En,
+  "login-04": login04En,
+  "login-05": login05En,
+  "login-06": login06En,
+  "login-07": login07En,
+  "login-08": login08En,
+  "login-09": login09En,
   "login-form": loginFormEn,
-  "login-page": loginPageEn,
-  "nav-actions": navActionsEn,
-  "nav-documents": navDocumentsEn,
-  "nav-favorites": navFavoritesEn,
-  "nav-main": navMainEn,
-  "nav-projects": navProjectsEn,
-  "nav-user": navUserEn,
-  "nav-workspaces": navWorkspacesEn,
-  "not-found-1": notFound1En,
+  "logo-cloud-1": logoCloud1En,
+  "logo-cloud-10": logoCloud10En,
+  "logo-cloud-2": logoCloud2En,
+  "logo-cloud-3": logoCloud3En,
+  "logo-cloud-4": logoCloud4En,
+  "logo-cloud-5": logoCloud5En,
+  "logo-cloud-6": logoCloud6En,
+  "logo-cloud-7": logoCloud7En,
+  "logo-cloud-8": logoCloud8En,
+  "logo-cloud-9": logoCloud9En,
+  "not-found-01": notFound01En,
+  "onboarding-01": onboarding01En,
+  "onboarding-02": onboarding02En,
+  "onboarding-03": onboarding03En,
+  "onboarding-04": onboarding04En,
+  "onboarding-07": onboarding07En,
+  "pages-login-01": pagesLogin01En,
   "pixelated-canvas": pixelatedCanvasEn,
-  "pricing-1": pricing1En,
+  "pricing-01": pricing01En,
   "pricing-comparator": pricingComparatorEn,
-  "search-form": searchFormEn,
+  "quick-actions-01": quickActions01En,
+  "recent-activity-01": recentActivity01En,
+  "secondary-hero-1": secondaryHero1En,
+  "secondary-hero-10": secondaryHero10En,
+  "secondary-hero-11": secondaryHero11En,
+  "secondary-hero-12": secondaryHero12En,
+  "secondary-hero-13": secondaryHero13En,
+  "secondary-hero-14": secondaryHero14En,
+  "secondary-hero-15": secondaryHero15En,
+  "secondary-hero-16": secondaryHero16En,
+  "secondary-hero-17": secondaryHero17En,
+  "secondary-hero-18": secondaryHero18En,
+  "secondary-hero-19": secondaryHero19En,
+  "secondary-hero-2": secondaryHero2En,
+  "secondary-hero-20": secondaryHero20En,
+  "secondary-hero-3": secondaryHero3En,
+  "secondary-hero-4": secondaryHero4En,
+  "secondary-hero-5": secondaryHero5En,
+  "secondary-hero-6": secondaryHero6En,
+  "secondary-hero-7": secondaryHero7En,
+  "secondary-hero-8": secondaryHero8En,
+  "secondary-hero-9": secondaryHero9En,
   "section-cards": sectionCardsEn,
   "settings-dialog": settingsDialogEn,
-  "sidebar": sidebarEn,
-  "sidebar-left": sidebarLeftEn,
-  "sidebar-opt-in-form": sidebarOptInFormEn,
-  "sidebar-right": sidebarRightEn,
+  sidebar: sidebarEn,
+  "sidebar-01": sidebar01En,
+  "sidebar-02": sidebar02En,
+  "sidebar-03": sidebar03En,
+  "sidebar-04": sidebar04En,
+  "sidebar-05": sidebar05En,
+  "sidebar-06": sidebar06En,
+  "sidebar-07": sidebar07En,
+  "sidebar-08": sidebar08En,
+  "sidebar-09": sidebar09En,
+  "sidebar-nav-collapse": sidebarNavCollapseEn,
+  "sidebar-nav-footer": sidebarNavFooterEn,
+  "sidebar-nav-header": sidebarNavHeaderEn,
+  "sidebar-nav-notifications": sidebarNavNotificationsEn,
+  "sidebar-nav-user": sidebarNavUserEn,
+  "sidebar-team-switcher-grouped": sidebarTeamSwitcherGroupedEn,
+  "sidebar-team-switcher-toggle": sidebarTeamSwitcherToggleEn,
   "sidebar-trigger": sidebarTriggerEn,
-  "signup-1": signup1En,
+  "signup-01": signup01En,
   "signup-form": signupFormEn,
-  "signup-page": signupPageEn,
   "site-footer": siteFooterEn,
-  "site-header": siteHeaderEn,
   "skip-link": skipLinkEn,
-  "stats-1": stats1En,
-  "stats-2": stats2En,
-  "stats-3": stats3En,
-  "stats-4": stats4En,
-  "team-1": team1En,
-  "team-switcher": teamSwitcherEn,
-  "testimonials-1": testimonials1En,
+  "stats-01": stats01En,
+  "stats-02": stats02En,
+  "stats-03": stats03En,
+  "stats-04": stats04En,
+  "stats-05": stats05En,
+  "stats-06": stats06En,
+  "stats-07": stats07En,
+  "stats-08": stats08En,
+  "stats-09": stats09En,
+  "stats-10": stats10En,
+  "stats-11": stats11En,
+  "stats-12": stats12En,
+  "stats-13": stats13En,
+  "stats-14": stats14En,
+  "stats-15": stats15En,
+  "table-01": table01En,
+  "table-02": table02En,
+  "table-03": table03En,
+  "table-04": table04En,
+  "table-05": table05En,
+  "team-01": team01En,
+  "testimonials-01": testimonials01En,
   "theme-toggle": themeToggleEn,
+  "timeline-01": timeline01En,
+  "timeline-02": timeline02En,
+  "trend-badge": trendBadgeEn,
   "tweet-not-found": tweetNotFoundEn,
-  "version-switcher": versionSwitcherEn,
   "webcam-pixel-grid": webcamPixelGridEn,
+  "welcome-banner-01": welcomeBanner01En,
   "world-map": worldMapEn,
 };
 

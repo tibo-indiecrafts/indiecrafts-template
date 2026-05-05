@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/no-static-element-interactions, react-hooks/purity -- Aceternity / MagicUI upstream */
 import React, { useEffect, useRef, useState, memo } from "react";
 import { motion } from "motion/react";
 import { twMerge } from "tailwind-merge";
@@ -23,8 +24,7 @@ export const TextRevealCard = ({
 
   useEffect(() => {
     if (cardRef.current) {
-      const { left, width: localWidth } =
-        cardRef.current.getBoundingClientRect();
+      const { left, width: localWidth } = cardRef.current.getBoundingClientRect();
       setLeft(left);
       setLocalWidth(localWidth);
     }
@@ -67,13 +67,13 @@ export const TextRevealCard = ({
       onTouchMove={touchMoveHandler}
       ref={cardRef}
       className={cn(
-        "bg-[#1d1c20] border border-white/[0.08] w-[40rem] rounded-lg p-8 relative overflow-hidden",
-        className
+        "relative w-[40rem] overflow-hidden rounded-lg border border-white/[0.08] bg-[#1d1c20] p-8",
+        className,
       )}
     >
       {children}
 
-      <div className="h-40  relative flex items-center overflow-hidden">
+      <div className="relative flex h-40 items-center overflow-hidden">
         <motion.div
           style={{
             width: "100%",
@@ -89,13 +89,13 @@ export const TextRevealCard = ({
                 }
           }
           transition={isMouseOver ? { duration: 0 } : { duration: 0.4 }}
-          className="absolute bg-[#1d1c20] z-20  will-change-transform"
+          className="absolute z-20 bg-[#1d1c20] will-change-transform"
         >
           <p
             style={{
               textShadow: "4px 4px 15px rgba(0,0,0,0.5)",
             }}
-            className="text-base sm:text-[3rem] py-10 font-bold text-white bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-300"
+            className="bg-gradient-to-b from-white to-neutral-300 bg-clip-text py-10 text-base font-bold text-transparent text-white sm:text-[3rem]"
           >
             {revealText}
           </p>
@@ -107,11 +107,11 @@ export const TextRevealCard = ({
             opacity: widthPercentage > 0 ? 1 : 0,
           }}
           transition={isMouseOver ? { duration: 0 } : { duration: 0.4 }}
-          className="h-40 w-[8px] bg-gradient-to-b from-transparent via-neutral-800 to-transparent absolute z-50 will-change-transform"
+          className="absolute z-50 h-40 w-[8px] bg-gradient-to-b from-transparent via-neutral-800 to-transparent will-change-transform"
         ></motion.div>
 
-        <div className=" overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]">
-          <p className="text-base sm:text-[3rem] py-10 font-bold bg-clip-text text-transparent bg-[#323238]">
+        <div className="overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]">
+          <p className="bg-[#323238] bg-clip-text py-10 text-base font-bold text-transparent sm:text-[3rem]">
             {text}
           </p>
           <MemoizedStars />
@@ -128,11 +128,7 @@ export const TextRevealCardTitle = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  return (
-    <h2 className={twMerge("text-white text-lg mb-2", className)}>
-      {children}
-    </h2>
-  );
+  return <h2 className={twMerge("mb-2 text-lg text-white", className)}>{children}</h2>;
 };
 
 export const TextRevealCardDescription = ({
@@ -142,9 +138,7 @@ export const TextRevealCardDescription = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  return (
-    <p className={twMerge("text-[#a9a9a9] text-sm", className)}>{children}</p>
-  );
+  return <p className={twMerge("text-sm text-[#a9a9a9]", className)}>{children}</p>;
 };
 
 const Stars = () => {

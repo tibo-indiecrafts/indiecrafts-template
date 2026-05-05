@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Button } from "./moving-border";
 
 const meta: Meta<typeof Button> = {
-  title: "UI Effects/MovingBorder",
+  title: "UI Effects/Marquees & Scroll/MovingBorder",
   component: Button,
   parameters: { layout: "centered" },
   argTypes: {

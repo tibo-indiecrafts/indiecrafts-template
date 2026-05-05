@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable jsx-a11y/no-static-element-interactions -- Aceternity / MagicUI upstream */
 import React, { useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -46,7 +47,7 @@ export const Lens: React.FC<LensProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-lg z-20"
+      className="relative z-20 overflow-hidden rounded-lg"
       onMouseEnter={() => {
         setIsHovering(true);
       }}

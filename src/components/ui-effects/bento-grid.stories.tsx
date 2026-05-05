@@ -13,7 +13,7 @@ import {
 import { BentoGrid, BentoGridItem } from "./bento-grid";
 
 const meta: Meta<typeof BentoGrid> = {
-  title: "UI Effects/BentoGrid",
+  title: "UI Effects/Cards/BentoGrid",
   component: BentoGrid,
   parameters: { layout: "fullscreen" },
 };
@@ -32,7 +32,7 @@ const GradientGlow = ({ from, to }: { from: string; to: string }) => (
     className="relative h-full min-h-[6rem] w-full flex-1 overflow-hidden rounded-xl"
     style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
   >
-    <div className="absolute -bottom-8 -right-8 size-32 rounded-full bg-white/20 blur-2xl" />
+    <div className="absolute -right-8 -bottom-8 size-32 rounded-full bg-white/20 blur-2xl" />
     <div className="absolute -top-6 -left-6 size-24 rounded-full bg-white/10 blur-xl" />
   </div>
 );

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { CodeBlock } from "./code-block";
 
 const meta: Meta<typeof CodeBlock> = {
-  title: "UI Effects/CodeBlock",
+  title: "UI Effects/Code/CodeBlock",
   component: CodeBlock,
   parameters: { layout: "centered" },
 };

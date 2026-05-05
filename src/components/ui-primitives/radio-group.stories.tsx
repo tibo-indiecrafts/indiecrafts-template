@@ -32,10 +32,7 @@ export const Default: Story = {
 
 export const Horizontal: Story = {
   render: () => (
-    <RadioGroup
-      defaultValue="card"
-      className="flex w-72 items-center gap-4"
-    >
+    <RadioGroup defaultValue="card" className="flex w-72 items-center gap-4">
       <div className="flex items-center gap-2">
         <RadioGroupItem value="card" id="p-card" />
         <Label htmlFor="p-card">Card</Label>

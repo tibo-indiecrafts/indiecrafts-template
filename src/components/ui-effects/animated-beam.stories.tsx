@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { AnimatedBeam } from "./animated-beam";
 
 const meta: Meta<typeof AnimatedBeam> = {
-  title: "UI Effects/AnimatedBeam",
+  title: "UI Effects/Particles & Effects/AnimatedBeam",
   component: AnimatedBeam,
   parameters: { layout: "centered" },
 };
@@ -127,7 +127,7 @@ export const HubAndSpoke: Story = {
           <Anchor
             label="HUB"
             innerRef={centerRef}
-            className="bg-foreground text-background size-14 border-foreground"
+            className="bg-foreground text-background border-foreground size-14"
           />
         </div>
         <AnimatedBeam

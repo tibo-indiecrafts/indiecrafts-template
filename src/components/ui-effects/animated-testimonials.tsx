@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element, react-hooks/exhaustive-deps, react-hooks/purity -- Aceternity / MagicUI upstream */
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -62,9 +63,7 @@ export const AnimatedTestimonials = ({
                     scale: isActive(index) ? 1 : 0.95,
                     z: isActive(index) ? 0 : -100,
                     rotate: isActive(index) ? 0 : randomRotateY(),
-                    zIndex: isActive(index)
-                      ? 40
-                      : testimonials.length + 2 - index,
+                    zIndex: isActive(index) ? 40 : testimonials.length + 2 - index,
                     y: isActive(index) ? [0, -80, 0] : 0,
                   }}
                   exit={{

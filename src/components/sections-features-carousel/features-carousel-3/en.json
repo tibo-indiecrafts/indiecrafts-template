@@ -1,0 +1,23 @@
+{
+  "title": "Build modern AI development tools",
+  "items": {
+    "slide1": {
+      "body": "<strong>Multiple AI models</strong> including GPT-5, Claude, and Llama with seamless switching between providers."
+    },
+    "slide2": {
+      "body": "<strong>Collaborative documentation</strong> with version history, inline comments, and real-time editing."
+    },
+    "slide3": {
+      "body": "<strong>Automated workflows</strong> with drag-and-drop pipeline builder and pre-built integrations."
+    },
+    "slide4": {
+      "body": "<strong>Intelligent code completion</strong> that understands your codebase and suggests context-aware snippets."
+    },
+    "slide5": {
+      "body": "<strong>Usage analytics</strong> with detailed token tracking, cost estimation, and budget alerts."
+    },
+    "slide6": {
+      "body": "<strong>Real-time translation</strong> across 50+ languages with natural-sounding output and dialect support."
+    }
+  }
+}

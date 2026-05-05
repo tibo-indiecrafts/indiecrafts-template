@@ -1,0 +1,11 @@
+{
+  "title": "Set up your first workspace",
+  "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr.",
+  "workspaceLabel": "Workspace",
+  "workspacePlaceholder": "Workspace name",
+  "fileLabel": "Upload file",
+  "required": "*",
+  "fileHelp": "You are only allowed to upload CSV, XLSX or XLS files.",
+  "cancel": "Cancel",
+  "submit": "Submit"
+}

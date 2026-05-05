@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AnimatedTooltip } from "./animated-tooltip";
 
 const meta: Meta<typeof AnimatedTooltip> = {
-  title: "UI Effects/AnimatedTooltip",
+  title: "UI Effects/Hover & Interactions/AnimatedTooltip",
   component: AnimatedTooltip,
   parameters: { layout: "centered" },
 };
@@ -80,8 +80,7 @@ export const LargeTeam: Story = {
             id: 7,
             name: "Mira Wallace",
             designation: "Brand Designer",
-            image:
-              "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80",
+            image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80",
           },
           {
             id: 8,

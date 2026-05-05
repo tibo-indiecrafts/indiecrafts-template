@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ScrollProgress } from "./scroll-progress";
 
 const meta: Meta<typeof ScrollProgress> = {
-  title: "UI Effects/ScrollProgress",
+  title: "UI Effects/Loaders & Progress/ScrollProgress",
   component: ScrollProgress,
   parameters: { layout: "fullscreen" },
 };

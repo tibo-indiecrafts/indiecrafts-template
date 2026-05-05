@@ -1,0 +1,29 @@
+{
+  "title": "Set up your workspace",
+  "description": "Complete these steps to get your team up and running",
+  "completedOf": "of",
+  "completedSuffix": "completed",
+  "allDone": "All done 🎉",
+  "items": {
+    "workspace": {
+      "title": "Create your workspace",
+      "description": "Name your workspace and pick a URL. This is where your team will collaborate on everything.",
+      "actionLabel": "Get started"
+    },
+    "team": {
+      "title": "Invite your team",
+      "description": "Add teammates by email so everyone can collaborate in real time across projects.",
+      "actionLabel": "Send invites"
+    },
+    "project": {
+      "title": "Set up your first project",
+      "description": "Create a project to organize tasks, docs, and milestones all in one place.",
+      "actionLabel": "Create project"
+    },
+    "tools": {
+      "title": "Connect your tools",
+      "description": "Link Slack, GitHub, or Figma to keep your workflow in sync automatically.",
+      "actionLabel": "Browse integrations"
+    }
+  }
+}

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ParallaxScroll } from "./parallax-scroll";
 
 const meta: Meta<typeof ParallaxScroll> = {
-  title: "UI Effects/ParallaxScroll",
+  title: "UI Effects/Marquees & Scroll/ParallaxScroll",
   component: ParallaxScroll,
   parameters: { layout: "fullscreen" },
 };

@@ -82,8 +82,8 @@ export const RightStart: Story = {
         <Button variant="outline">Right + start</Button>
       </HoverCardTrigger>
       <HoverCardContent side="right" align="start" className="w-64 text-sm">
-        Anchored to the right of the trigger, top-aligned with the
-        trigger&apos;s leading edge.
+        Anchored to the right of the trigger, top-aligned with the trigger&apos;s leading
+        edge.
       </HoverCardContent>
     </HoverCard>
   ),

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { RippleButton } from "./ripple-button";
 
 const meta: Meta<typeof RippleButton> = {
-  title: "UI Effects/RippleButton",
+  title: "UI Effects/Buttons/RippleButton",
   component: RippleButton,
   parameters: { layout: "centered" },
   argTypes: {

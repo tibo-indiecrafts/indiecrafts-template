@@ -1,0 +1,39 @@
+import { AtSign, Paperclip, Smile } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+/**
+ * Reply-composer illustration — small rounded card showing a mention
+ * line ("@Bernard Shared 2 invoices") and a row of three icon
+ * action-buttons (mention, emoji, attach). Used by `sections-bento/
+ * bento-1/`. Pure decoration; mock copy stays hardcoded per the
+ * illustration rule. Sourced from `@tailark-pro/bento-1` (upstream
+ * `ReplyIllustration`).
+ */
+export const ReplyIllustration = ({ className }: { className?: string }) => {
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "bg-illustration ring-border-illustration mt-12 flex origin-bottom flex-col space-y-4 rounded-2xl border border-transparent px-4 pt-4 pb-2 shadow-md ring-1 shadow-black/6.5 transition-all duration-300",
+        className,
+      )}
+    >
+      <p className="text-primary text-sm font-medium">
+        @Bernard{" "}
+        <span className="text-muted-foreground font-normal">Shared 2 invoices</span>
+      </p>
+
+      <div className="text-muted-foreground *:hover:text-foreground -ml-1.5 flex">
+        <div className="hover:text-foreground hover:bg-muted flex size-7 rounded-full">
+          <AtSign className="m-auto size-4" />
+        </div>
+        <div className="hover:text-foreground hover:bg-muted flex size-7 rounded-full">
+          <Smile className="m-auto size-4" />
+        </div>
+        <div className="hover:text-foreground hover:bg-muted flex size-7 rounded-full">
+          <Paperclip className="m-auto size-4" />
+        </div>
+      </div>
+    </div>
+  );
+};

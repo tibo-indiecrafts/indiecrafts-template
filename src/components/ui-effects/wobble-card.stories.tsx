@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { WobbleCard } from "./wobble-card";
 
 const meta: Meta<typeof WobbleCard> = {
-  title: "UI Effects/WobbleCard",
+  title: "UI Effects/Cards/WobbleCard",
   component: WobbleCard,
   parameters: { layout: "centered" },
 };
@@ -27,8 +28,8 @@ export const Default: Story = {
       <WobbleCard containerClassName="max-w-md">
         <h3 className="text-2xl font-bold text-white">Indiecrafts</h3>
         <p className="mt-3 text-sm text-white/80">
-          Hover the card and move the cursor — the card subtly wobbles toward
-          your pointer while the content drifts the other way.
+          Hover the card and move the cursor — the card subtly wobbles toward your pointer
+          while the content drifts the other way.
         </p>
       </WobbleCard>
     </Stage>
@@ -56,8 +57,8 @@ export const Wide: Story = {
       <WobbleCard containerClassName="max-w-2xl bg-rose-700">
         <h3 className="text-3xl font-bold text-white">Cover story</h3>
         <p className="mt-3 max-w-prose text-base text-white/85">
-          A wider variant suits feature spotlights and editorial covers. The
-          inner padding keeps headlines and body copy readable at any size.
+          A wider variant suits feature spotlights and editorial covers. The inner padding
+          keeps headlines and body copy readable at any size.
         </p>
       </WobbleCard>
     </Stage>

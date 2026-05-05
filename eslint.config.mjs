@@ -69,19 +69,6 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "src/hooks/**",
     "storybook-static/**",
-    // `ui-primitives/` holds shadcn-managed primitives — overwritten by the
-    // shadcn CLI, so lint findings are noise. New shadcn drops land in
-    // `ui/` (staging) and ARE linted there before being promoted into
-    // `ui-primitives/`.
-    "src/components/ui-primitives/**",
-    // FLAT files at `ui-effects/*.tsx` are hand-copied Aceternity / MagicUI
-    // primitives. They ship with ~270 lint findings (any, no-img-element,
-    // react-hooks/* purity violations) that would clobber on the next
-    // upstream sync. Wrapper FOLDERS (`ui-effects/<Name>/`) are linted —
-    // they're ours to author. See `ui-effects/WRAPPERS.md` for the
-    // fork-required gaps that can't be fixed via wrapping.
-    "src/components/ui-effects/*.tsx",
-    "src/components/ui-effects/*.stories.tsx",
   ]),
   ...storybook.configs["flat/recommended"],
 ]);

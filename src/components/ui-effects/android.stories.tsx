@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Android } from "./android";
 
 const meta: Meta<typeof Android> = {
-  title: "UI Effects/Android",
+  title: "UI Effects/3D & Devices/Android",
   component: Android,
   parameters: { layout: "fullscreen" },
   // The phone SVG's path coordinates are drawn at 433×882 — the component

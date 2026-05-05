@@ -1,3 +1,0 @@
-# This directory is the staging area for new shadcn drops.
-# `pnpm dlx shadcn@latest add <name>` lands files here by default.
-# Review them, lint them, then move into ../ui-primitives/ to integrate.

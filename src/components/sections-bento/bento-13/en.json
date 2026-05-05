@@ -1,0 +1,26 @@
+{
+  "collaborationCell": {
+    "title": "Real-time Collaboration",
+    "body": "Work together with your team in real-time. Edit documents, leave comments, and see changes instantly as they happen."
+  },
+  "documentsCell": {
+    "title": "Smart Document Management",
+    "body": "Organize and access your documents efficiently with intelligent categorization and powerful search capabilities."
+  },
+  "financialCell": {
+    "title": "Financial Analytics",
+    "body": "Gain valuable insights from comprehensive financial reports and visualizations."
+  },
+  "chatCell": {
+    "title": "AI-Powered Support",
+    "body": "Get instant answers to your questions with our intelligent chatbot. Resolve issues quickly and access helpful resources whenever you need them."
+  },
+  "schedulingCell": {
+    "title": "Automated Scheduling",
+    "body": "Streamline your calendar with intelligent scheduling that finds the perfect meeting times based on everyone's availability."
+  },
+  "filesharingCell": {
+    "title": "Secure File Sharing",
+    "body": "Share files with confidence using enterprise-grade encryption and granular permission controls to protect sensitive information."
+  }
+}

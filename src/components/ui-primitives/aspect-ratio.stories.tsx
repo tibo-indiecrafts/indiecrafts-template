@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text -- shadcn upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AspectRatio } from "./aspect-ratio";
 

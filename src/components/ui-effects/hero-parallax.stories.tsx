@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HeroParallax } from "./hero-parallax";
 
 const meta: Meta<typeof HeroParallax> = {
-  title: "UI Effects/HeroParallax",
+  title: "UI Effects/Cards/HeroParallax",
   component: HeroParallax,
   parameters: { layout: "fullscreen" },
 };

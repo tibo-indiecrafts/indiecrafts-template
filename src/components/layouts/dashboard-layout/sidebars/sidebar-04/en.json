@@ -1,0 +1,96 @@
+{
+  "brand": {
+    "name": "Acme Inc",
+    "plan": "Enterprise"
+  },
+  "navMain": {
+    "inbox": "Inbox",
+    "starred": "Starred",
+    "important": "Important",
+    "scheduled": "Scheduled",
+    "archive": "Archive"
+  },
+  "labelsHeading": "Labels",
+  "labels": {
+    "personal": "Personal",
+    "work": "Work",
+    "travel": "Travel",
+    "receipts": "Receipts"
+  },
+  "search": {
+    "placeholder": "Type to search..."
+  },
+  "empty": "No results",
+  "user": {
+    "fallback": "CN",
+    "menu": {
+      "upgrade": "Upgrade to Pro",
+      "account": "Account",
+      "billing": "Billing",
+      "notifications": "Notifications",
+      "logout": "Log out"
+    }
+  },
+  "mails": {
+    "nora": {
+      "name": "Nora Patel",
+      "subject": "Welcome to Acme Mail",
+      "date": "08:15 AM",
+      "teaser": "Hi there — here's a quick tour of your new inbox.\nPin, label, and schedule messages to stay organized."
+    },
+    "stripe": {
+      "name": "Stripe",
+      "subject": "Your payout has arrived",
+      "date": "Yesterday",
+      "teaser": "A payout of $3,245.90 was sent to your bank account.\nView details in your dashboard."
+    },
+    "github": {
+      "name": "GitHub",
+      "subject": "New activity on acme/app",
+      "date": "Tue",
+      "teaser": "3 pull requests need your review. CI passed on main.\nClick to open the review queue."
+    },
+    "ava": {
+      "name": "Ava Chen",
+      "subject": "Agenda for Friday standup",
+      "date": "Mon",
+      "teaser": "Let's cover onboarding, billing bugs, and Q4 goals.\nReply with anything you want to add."
+    },
+    "figma": {
+      "name": "Figma",
+      "subject": "What's new in Figma",
+      "date": "Sep 12",
+      "teaser": "Variables, auto layout improvements, and dev mode updates.\nWatch the recap to learn more."
+    },
+    "linear": {
+      "name": "Linear",
+      "subject": "[ACME-432] Edit modal broken",
+      "date": "Sep 11",
+      "teaser": "Issue created by Wendy. Repro steps included.\nSeverity: high, priority: P1."
+    },
+    "airbnb": {
+      "name": "Airbnb",
+      "subject": "Your trip to Kyoto",
+      "date": "Sep 10",
+      "teaser": "Get ready for your stay. Check-in details and local recommendations inside."
+    },
+    "notion": {
+      "name": "Notion",
+      "subject": "Weekly team recap",
+      "date": "Sep 09",
+      "teaser": "Marketing shipped pricing page revamp. Eng closed 14 issues.\nSee full notes in the doc."
+    },
+    "gcal": {
+      "name": "Google Calendar",
+      "subject": "Design sync moved",
+      "date": "Sep 09",
+      "teaser": "Event 'Design sync' moved to 3:30 PM. Meet link updated in the invite."
+    },
+    "hn": {
+      "name": "HN Daily",
+      "subject": "Top stories today",
+      "date": "Sep 08",
+      "teaser": "OpenAI releases new API, SQLite 3.46, and why we left Kubernetes.\nRead the full digest."
+    }
+  }
+}

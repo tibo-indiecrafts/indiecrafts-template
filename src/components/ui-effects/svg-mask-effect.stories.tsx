@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { MaskContainer } from "./svg-mask-effect";
 
 const meta: Meta<typeof MaskContainer> = {
-  title: "UI Effects/SvgMaskEffect",
+  title: "UI Effects/Particles & Effects/SvgMaskEffect",
   component: MaskContainer,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -37,14 +37,13 @@ export const Default: Story = {
         {...args}
         revealText={
           <p className="mx-auto max-w-3xl text-center text-3xl font-bold text-slate-700 md:text-4xl dark:text-slate-300">
-            Indiecrafts is a config-first Next.js template that makes shipping
-            client sites a weekend project, not a quarter.
+            Indiecrafts is a config-first Next.js template that makes shipping client
+            sites a weekend project, not a quarter.
           </p>
         }
         className="rounded-md text-3xl font-bold text-white md:text-4xl dark:text-black"
       >
-        Hover to reveal what we{" "}
-        <span className="text-blue-500">really do</span>
+        Hover to reveal what we <span className="text-blue-500">really do</span>
       </MaskContainer>
     </Stage>
   ),

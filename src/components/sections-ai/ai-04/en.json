@@ -1,0 +1,27 @@
+{
+  "title": "Prompt. Refine. Ship.",
+  "subtitle": "Build real, working software just by describing it",
+  "placeholder": "Ask anything",
+  "addAttachments": "Add attachments",
+  "adjustSettings": "Adjust settings",
+  "send": "Send message",
+  "removeFile": "Remove file",
+  "dropMessage": "Drop files here to add as attachments",
+  "attachmentActions": {
+    "files": { "label": "Attach Files" },
+    "url": { "label": "Import from URL" },
+    "clipboard": { "label": "Paste from Clipboard" },
+    "template": { "label": "Use Template" }
+  },
+  "settings": {
+    "autoComplete": { "label": "Auto-complete" },
+    "streaming": { "label": "Streaming" },
+    "showHistory": { "label": "Show History" }
+  },
+  "quickActions": {
+    "screenshot": { "label": "Clone a Screenshot" },
+    "figma": { "label": "Import from Figma" },
+    "upload": { "label": "Upload a Project" },
+    "landing": { "label": "Landing Page" }
+  }
+}

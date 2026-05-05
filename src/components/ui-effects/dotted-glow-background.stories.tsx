@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { DottedGlowBackground } from "./dotted-glow-background";
 
 const meta: Meta<typeof DottedGlowBackground> = {
-  title: "UI Effects/DottedGlowBackground",
+  title: "UI Effects/Backgrounds/DottedGlowBackground",
   component: DottedGlowBackground,
   parameters: { layout: "fullscreen" },
 };
@@ -21,9 +21,7 @@ export const Default: Story = {
   render: () => (
     <Stage>
       <DottedGlowBackground />
-      <p className="relative z-10 text-2xl font-medium">
-        Dotted glow background
-      </p>
+      <p className="relative z-10 text-2xl font-medium">Dotted glow background</p>
     </Stage>
   ),
 };

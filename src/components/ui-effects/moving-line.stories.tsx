@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import MovingLine, { Content } from "./moving-line";
 
 const meta: Meta<typeof MovingLine> = {
-  title: "UI Effects/MovingLine",
+  title: "UI Effects/Marquees & Scroll/MovingLine",
   component: MovingLine,
   parameters: { layout: "fullscreen" },
 };
@@ -11,7 +11,7 @@ export default meta;
 type Story = StoryObj<typeof MovingLine>;
 
 const Stage = ({ children }: { children: React.ReactNode }) => (
-  <div className="bg-slate-950 min-h-screen w-full p-10">{children}</div>
+  <div className="min-h-screen w-full bg-slate-950 p-10">{children}</div>
 );
 
 /**

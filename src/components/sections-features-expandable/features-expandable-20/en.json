@@ -1,0 +1,14 @@
+{
+  "title": "Ship with confidence using our unified platform",
+  "body": "Streamline your workflow with tools designed to enhance productivity at every step.",
+  "items": {
+    "tab1": {
+      "title": "Smart email composition",
+      "body": "with AI-powered suggestions, templates, and seamless collaboration for faster communication."
+    },
+    "tab2": {
+      "title": "Visual task management",
+      "body": "Organize projects with drag-and-drop boards, priority flags, and real-time collaboration."
+    }
+  }
+}

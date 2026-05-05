@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/purity -- Aceternity / MagicUI upstream */
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import React from "react";
@@ -15,12 +16,7 @@ export const BackgroundLines = ({
   };
 }) => {
   return (
-    <div
-      className={cn(
-        "h-[20rem] md:h-screen w-full bg-white dark:bg-black",
-        className
-      )}
-    >
+    <div className={cn("h-[20rem] w-full bg-white md:h-screen dark:bg-black", className)}>
       <SVG svgOptions={svgOptions} />
       {children}
     </div>
@@ -98,7 +94,7 @@ const SVG = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="absolute inset-0 w-full h-full"
+      className="absolute inset-0 h-full w-full"
     >
       {paths.map((path, idx) => (
         <motion.path

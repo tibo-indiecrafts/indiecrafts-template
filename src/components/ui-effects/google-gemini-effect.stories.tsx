@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { GoogleGeminiEffect } from "./google-gemini-effect";
 
 const meta: Meta<typeof GoogleGeminiEffect> = {
-  title: "UI Effects/GoogleGeminiEffect",
+  title: "UI Effects/Particles & Effects/GoogleGeminiEffect",
   component: GoogleGeminiEffect,
   parameters: { layout: "fullscreen" },
 };
@@ -32,10 +32,7 @@ const Demo = ({
     target: ref,
     offset: ["start start", "end start"],
   });
-  const [scrollStart, scrollEnd] = scrollSpan.split(",").map(Number) as [
-    number,
-    number,
-  ];
+  const [scrollStart, scrollEnd] = scrollSpan.split(",").map(Number) as [number, number];
   const biases = startBias.split(",").map(Number);
 
   const pathLengthFirst = useTransform(
@@ -65,10 +62,7 @@ const Demo = ({
   );
 
   return (
-    <div
-      ref={ref}
-      className="bg-background relative h-[400vh] w-full overflow-clip"
-    >
+    <div ref={ref} className="bg-background relative h-[400vh] w-full overflow-clip">
       <GoogleGeminiEffect
         pathLengths={[
           pathLengthFirst,

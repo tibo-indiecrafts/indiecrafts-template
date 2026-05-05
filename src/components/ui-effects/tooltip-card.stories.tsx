@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Sparkles } from "lucide-react";
 import { Tooltip } from "./tooltip-card";
 
 const meta: Meta<typeof Tooltip> = {
-  title: "UI Effects/TooltipCard",
+  title: "UI Effects/Hover & Interactions/TooltipCard",
   component: Tooltip,
   parameters: { layout: "centered" },
 };
@@ -51,8 +52,8 @@ export const RichContent: Story = {
                 Indiecrafts Pro
               </div>
               <p className="text-xs text-white/70">
-                Includes the agency dashboard, multi-tenant routing, and the
-                Stripe integration kit.
+                Includes the agency dashboard, multi-tenant routing, and the Stripe
+                integration kit.
               </p>
             </div>
           }
@@ -82,8 +83,7 @@ export const WithImage: Story = {
                 className="aspect-[16/9] w-full rounded-md object-cover"
               />
               <p className="text-xs text-white/80">
-                Atelier in Bordeaux — a 19th-century carriage house turned
-                design studio.
+                Atelier in Bordeaux — a 19th-century carriage house turned design studio.
               </p>
             </div>
           }

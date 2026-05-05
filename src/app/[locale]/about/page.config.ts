@@ -1,6 +1,6 @@
 /**
  * About page route metadata — slugs, key, layout name. SEO + sections live
- * inside the page-template (`pages-marketing/about-1/`); see ../page.config.ts
+ * inside the page-template (`pages-about/about-01/`); see ../page.config.ts
  * for the rationale.
  */
 

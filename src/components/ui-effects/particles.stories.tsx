@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Particles } from "./particles";
 
 const meta: Meta<typeof Particles> = {
-  title: "UI Effects/Particles",
+  title: "UI Effects/Particles & Effects/Particles",
   component: Particles,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -35,13 +35,7 @@ const Stage = ({
   </div>
 );
 
-const Title = ({
-  text,
-  dark = true,
-}: {
-  text: string;
-  dark?: boolean;
-}) => (
+const Title = ({ text, dark = true }: { text: string; dark?: boolean }) => (
   <h2
     className={`relative text-3xl font-semibold ${dark ? "text-white" : "text-foreground"}`}
   >

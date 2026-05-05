@@ -1,14 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import {
-  LoaderFive,
-  LoaderFour,
-  LoaderOne,
-  LoaderThree,
-  LoaderTwo,
-} from "./loader";
+import { LoaderFive, LoaderFour, LoaderOne, LoaderThree, LoaderTwo } from "./loader";
 
 const meta: Meta = {
-  title: "UI Effects/Loader",
+  title: "UI Effects/Loaders & Progress/Loader",
   parameters: { layout: "centered" },
 };
 export default meta;

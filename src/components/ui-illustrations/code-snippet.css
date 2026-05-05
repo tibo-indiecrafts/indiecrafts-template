@@ -1,0 +1,18 @@
+.code-snippet--line-numbers pre {
+  counter-reset: line;
+}
+
+.code-snippet--line-numbers .line {
+  counter-increment: line;
+}
+
+.code-snippet--line-numbers .line::before {
+  content: counter(line);
+  display: inline-block;
+  width: 1.5rem;
+  margin-right: 0.75rem;
+  text-align: right;
+  color: var(--muted-foreground);
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}

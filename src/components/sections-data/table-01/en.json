@@ -1,0 +1,12 @@
+{
+  "title": "Project breakdown",
+  "expandLabel": "Expand row",
+  "collapseLabel": "Collapse row",
+  "columns": {
+    "id": "ID",
+    "name": "Name",
+    "category": "Category",
+    "value": "Value",
+    "date": "Date"
+  }
+}

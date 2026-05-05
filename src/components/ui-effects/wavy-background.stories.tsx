@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { WavyBackground } from "./wavy-background";
 
 const meta: Meta<typeof WavyBackground> = {
-  title: "UI Effects/WavyBackground",
+  title: "UI Effects/Backgrounds/WavyBackground",
   component: WavyBackground,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -65,10 +65,7 @@ export const BrandPalette: Story = {
   },
   render: (args) => (
     <WavyBackground {...args}>
-      <Body
-        title="Brand waves"
-        body="Indigo sweep aligned with theme.config.ts brand."
-      />
+      <Body title="Brand waves" body="Indigo sweep aligned with theme.config.ts brand." />
     </WavyBackground>
   ),
 };
@@ -78,10 +75,7 @@ export const Sharper: Story = {
   args: { blur: 2 },
   render: (args) => (
     <WavyBackground {...args}>
-      <Body
-        title="Sharper edges"
-        body="Less Gaussian blur reveals each wave stroke."
-      />
+      <Body title="Sharper edges" body="Less Gaussian blur reveals each wave stroke." />
     </WavyBackground>
   ),
 };

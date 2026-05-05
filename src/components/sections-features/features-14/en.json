@@ -1,0 +1,12 @@
+{
+  "items": {
+    "collaboration": {
+      "title": "Collaboration that keeps up",
+      "body": "Real-time messages, threaded mentions, and shared context so the whole team stays in sync."
+    },
+    "integrations": {
+      "title": "Connect the tools you already use",
+      "body": "Drop in providers, AI models, and devtools with a single click — no glue code, no migrations."
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "title": "Engagement metrics",
+  "trendUp": "Increased by",
+  "trendDown": "Decreased by",
+  "items": {
+    "daily-active": { "name": "Daily active users" },
+    "weekly-sessions": { "name": "Weekly sessions" },
+    "duration": { "name": "Duration" }
+  }
+}

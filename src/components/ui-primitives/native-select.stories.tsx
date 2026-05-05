@@ -1,9 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import {
-  NativeSelect,
-  NativeSelectOptGroup,
-  NativeSelectOption,
-} from "./native-select";
+import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "./native-select";
 
 const meta: Meta<typeof NativeSelect> = {
   title: "UI Primitives/NativeSelect",

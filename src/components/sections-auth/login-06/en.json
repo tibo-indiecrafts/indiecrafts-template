@@ -1,0 +1,12 @@
+{
+  "title": "Welcome back!",
+  "signupPrompt": "First time here?",
+  "signupCta": "Sign up for free",
+  "emailLabel": "Email",
+  "emailPlaceholder": "Your email",
+  "magicLinkSubmit": "Send me the magic link",
+  "passwordSignin": "Sign in using password",
+  "separator": "OR",
+  "ssoCta": "Single sign-on (SSO)",
+  "legal": "You acknowledge that you read, and agree, to our <terms>Terms of Service</terms> and our <privacy>Privacy Policy</privacy>."
+}

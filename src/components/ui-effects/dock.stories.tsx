@@ -14,7 +14,7 @@ import {
 import { Dock, DockIcon } from "./dock";
 
 const meta: Meta<typeof Dock> = {
-  title: "UI Effects/Dock",
+  title: "UI Effects/Nav/Dock",
   component: Dock,
   parameters: { layout: "centered" },
   argTypes: {

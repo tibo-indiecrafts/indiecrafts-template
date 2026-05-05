@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ParallaxScrollSecond } from "./parallax-scroll-2";
 
 const meta: Meta<typeof ParallaxScrollSecond> = {
-  title: "UI Effects/ParallaxScroll2",
+  title: "UI Effects/Marquees & Scroll/ParallaxScroll2",
   component: ParallaxScrollSecond,
   parameters: { layout: "fullscreen" },
 };
@@ -58,7 +58,5 @@ export const FewImages: Story = {
 
 /** Tall — `className="h-[60rem]"` overrides the default container height. */
 export const Tall: Story = {
-  render: () => (
-    <ParallaxScrollSecond images={IMAGES} className="h-[60rem]" />
-  ),
+  render: () => <ParallaxScrollSecond images={IMAGES} className="h-[60rem]" />,
 };

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { MagicCard } from "./magic-card";
 
 const meta: Meta<typeof MagicCard> = {
-  title: "UI Effects/MagicCard",
+  title: "UI Effects/Cards/MagicCard",
   component: MagicCard,
   parameters: { layout: "centered" },
 };
@@ -16,13 +16,7 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-const CardBody = ({
-  title,
-  body,
-}: {
-  title: string;
-  body: string;
-}) => (
+const CardBody = ({ title, body }: { title: string; body: string }) => (
   <div className="text-foreground p-8">
     <h3 className="text-xl font-semibold">{title}</h3>
     <p className="text-muted-foreground mt-2 text-sm">{body}</p>

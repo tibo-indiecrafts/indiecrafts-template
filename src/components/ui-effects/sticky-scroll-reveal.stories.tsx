@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { StickyScroll } from "./sticky-scroll-reveal";
 
 const meta: Meta<typeof StickyScroll> = {
-  title: "UI Effects/StickyScrollReveal",
+  title: "UI Effects/Cards/StickyScrollReveal",
   component: StickyScroll,
   parameters: { layout: "fullscreen" },
 };
@@ -77,8 +78,7 @@ export const ImagePreviews: Story = {
         content={[
           {
             title: "Atelier Lisbon",
-            description:
-              "A 19th-century carriage house turned design studio.",
+            description: "A 19th-century carriage house turned design studio.",
             content: (
               <img
                 src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&q=80"

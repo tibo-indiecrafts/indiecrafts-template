@@ -14,13 +14,7 @@ import { Input } from "./input";
 import { Textarea } from "./textarea";
 import { Button } from "./button";
 import { Checkbox } from "./checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 
 const meta: Meta<typeof FormField> = {
   title: "UI Primitives/Form",
@@ -32,9 +26,7 @@ export default meta;
 type Story = StoryObj<typeof FormField>;
 
 const Frame = ({ children }: { children: React.ReactNode }) => (
-  <div className="border-border bg-card w-[420px] rounded-xl border p-6">
-    {children}
-  </div>
+  <div className="border-border bg-card w-[420px] rounded-xl border p-6">{children}</div>
 );
 
 /** Default — `email` + `username` with a `required` validation rule. */
@@ -55,11 +47,7 @@ export const Default: Story = {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="you@example.com"
-                      {...field}
-                    />
+                    <Input type="email" placeholder="you@example.com" {...field} />
                   </FormControl>
                   <FormDescription>
                     We never share your address with anyone else.
@@ -183,10 +171,7 @@ export const MixedInputs: Story = {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Topic</FormLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Pick a topic" />

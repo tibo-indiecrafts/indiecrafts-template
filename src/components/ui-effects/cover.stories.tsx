@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Cover } from "./cover";
 
 const meta: Meta<typeof Cover> = {
-  title: "UI Effects/Cover",
+  title: "UI Effects/Text/Cover",
   component: Cover,
   parameters: { layout: "centered" },
 };
@@ -33,18 +33,15 @@ export const MultiWord: Story = {
  * focal element on its own.
  */
 export const Standalone: Story = {
-  render: () => (
-    <Cover className="text-2xl font-semibold">Hover me</Cover>
-  ),
+  render: () => <Cover className="text-2xl font-semibold">Hover me</Cover>,
 };
 
 /** Inside a paragraph — composes with regular prose. */
 export const InProse: Story = {
   render: () => (
     <p className="text-foreground max-w-md text-center text-base leading-relaxed">
-      The fastest way to ship a client website is to{" "}
-      <Cover>fork this template</Cover> and edit `src/config`. Three keystrokes,
-      a few thousand lines of work avoided.
+      The fastest way to ship a client website is to <Cover>fork this template</Cover> and
+      edit `src/config`. Three keystrokes, a few thousand lines of work avoided.
     </p>
   ),
 };

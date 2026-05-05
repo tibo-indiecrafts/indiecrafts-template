@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { FlickeringGrid } from "./flickering-grid";
 
 const meta: Meta<typeof FlickeringGrid> = {
-  title: "UI Effects/FlickeringGrid",
+  title: "UI Effects/Backgrounds/FlickeringGrid",
   component: FlickeringGrid,
   parameters: { layout: "fullscreen" },
   argTypes: {

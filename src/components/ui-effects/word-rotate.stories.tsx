@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { WordRotate } from "./word-rotate";
 
 const meta: Meta<typeof WordRotate> = {
-  title: "UI Effects/WordRotate",
+  title: "UI Effects/Text/WordRotate",
   component: WordRotate,
   parameters: { layout: "centered" },
   argTypes: {

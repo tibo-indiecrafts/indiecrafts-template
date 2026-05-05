@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { SparklesText } from "./sparkles-text";
 
 const meta: Meta<typeof SparklesText> = {
-  title: "UI Effects/SparklesText",
+  title: "UI Effects/Text/SparklesText",
   component: SparklesText,
   parameters: { layout: "centered" },
   argTypes: {

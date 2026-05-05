@@ -4,6 +4,17 @@
  * component-co-located .css file (or rely on the predev/prebuild hook).
  */
 
+@import "../components/sections-features-expandable/features-expandable-1/FeaturesExpandable.css";
+@import "../components/sections-features-expandable/features-expandable-12/FeaturesExpandable.css";
+@import "../components/sections-features-expandable/features-expandable-2/FeaturesExpandable.css";
+@import "../components/sections-features-expandable/features-expandable-3/FeaturesExpandable.css";
 @import "../components/ui-effects/infinite-moving-cards.css";
 @import "../components/ui-effects/meteors.css";
 @import "../components/ui-effects/pulsating-button.css";
+@import "../components/ui-illustrations/code-snippet.css";
+@import "../components/ui-illustrations/fingerprint-scan-illustration.css";
+@import "../components/ui-illustrations/flow-cards-illustration.css";
+@import "../components/ui-illustrations/flow-illustration.css";
+@import "../components/ui-illustrations/payments-diagram.css";
+@import "../components/ui-illustrations/scan-illustration.css";
+@import "../components/ui-molecules/code/code-block/CodeBlock.css";

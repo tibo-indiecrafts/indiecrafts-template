@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { GridPattern } from "./grid-pattern";
 
 const meta: Meta<typeof GridPattern> = {
-  title: "UI Effects/GridPattern",
+  title: "UI Effects/Backgrounds/GridPattern",
   component: GridPattern,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -47,9 +47,7 @@ export const Dense: Story = {
   render: (args) => (
     <Stage>
       <GridPattern {...args} />
-      <h3 className="text-foreground relative text-2xl font-semibold">
-        Dense 20px grid
-      </h3>
+      <h3 className="text-foreground relative text-2xl font-semibold">Dense 20px grid</h3>
     </Stage>
   ),
 };
@@ -60,9 +58,7 @@ export const Loose: Story = {
   render: (args) => (
     <Stage>
       <GridPattern {...args} />
-      <h3 className="text-foreground relative text-2xl font-semibold">
-        Loose 80px grid
-      </h3>
+      <h3 className="text-foreground relative text-2xl font-semibold">Loose 80px grid</h3>
     </Stage>
   ),
 };
@@ -73,9 +69,7 @@ export const Dashed: Story = {
   render: (args) => (
     <Stage>
       <GridPattern {...args} />
-      <h3 className="text-foreground relative text-2xl font-semibold">
-        Dashed strokes
-      </h3>
+      <h3 className="text-foreground relative text-2xl font-semibold">Dashed strokes</h3>
     </Stage>
   ),
 };
@@ -105,12 +99,10 @@ export const HighlightedSquares: Story = {
     <Stage>
       <GridPattern {...args} />
       <div className="relative px-6 text-center">
-        <h2 className="text-foreground text-3xl font-semibold">
-          Highlighted cells
-        </h2>
+        <h2 className="text-foreground text-3xl font-semibold">Highlighted cells</h2>
         <p className="text-muted-foreground mt-2 max-w-md text-sm">
-          Pass an array of <code>[x, y]</code> tuples in{" "}
-          <code>squares</code> to spotlight specific cells.
+          Pass an array of <code>[x, y]</code> tuples in <code>squares</code> to spotlight
+          specific cells.
         </p>
       </div>
     </Stage>

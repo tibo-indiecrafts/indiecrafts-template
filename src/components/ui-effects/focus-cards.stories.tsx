@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { FocusCards } from "./focus-cards";
 
 const meta: Meta<typeof FocusCards> = {
-  title: "UI Effects/FocusCards",
+  title: "UI Effects/Cards/FocusCards",
   component: FocusCards,
   parameters: { layout: "fullscreen" },
 };

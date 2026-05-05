@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Calculator, Calendar as CalendarIcon, Settings, Smile, User } from "lucide-react";
+import {
+  Calculator,
+  Calendar as CalendarIcon,
+  Settings,
+  Smile,
+  User,
+} from "lucide-react";
 import {
   Command,
   CommandEmpty,

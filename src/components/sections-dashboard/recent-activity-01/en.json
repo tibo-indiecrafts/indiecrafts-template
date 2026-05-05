@@ -1,0 +1,38 @@
+{
+  "title": "Recent activity",
+  "description": "Latest changes across your workspace.",
+  "viewAll": "View all activity",
+  "empty": "No recent activity yet.",
+  "items": {
+    "doc-edit": {
+      "actor": "Ada Lovelace",
+      "action": "edited",
+      "target": "Q4 launch plan",
+      "timestamp": "2 minutes ago"
+    },
+    "comment": {
+      "actor": "Catalin Pit",
+      "action": "commented on",
+      "target": "Onboarding redesign",
+      "timestamp": "12 minutes ago"
+    },
+    "commit": {
+      "actor": "Lucas Smith",
+      "action": "pushed 4 commits to",
+      "target": "main",
+      "timestamp": "an hour ago"
+    },
+    "invite": {
+      "actor": "Timur Ercan",
+      "action": "invited",
+      "target": "ephraim@documenso.com",
+      "timestamp": "3 hours ago"
+    },
+    "task-done": {
+      "actor": "Ephraim Duncan",
+      "action": "completed",
+      "target": "Wire up SSO config",
+      "timestamp": "yesterday"
+    }
+  }
+}

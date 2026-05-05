@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment -- ts-nocheck below */
+// @ts-nocheck -- Aceternity / MagicUI upstream; type quirks (React 19 ref-null types, missing JSX namespace, etc.) accepted as-is.
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { HoverBorderGradient } from "./hover-border-gradient";
 
 const meta: Meta<typeof HoverBorderGradient> = {
-  title: "UI Effects/HoverBorderGradient",
+  title: "UI Effects/Hover & Interactions/HoverBorderGradient",
   component: HoverBorderGradient,
   parameters: { layout: "centered" },
   argTypes: {
@@ -83,12 +85,8 @@ export const RichContent: Story = {
       <HoverBorderGradient {...args}>
         <span className="inline-flex items-center gap-3">
           <span>
-            <span className="block text-xs font-normal text-white/60">
-              Indiecrafts
-            </span>
-            <span className="block text-base font-semibold">
-              Try the template
-            </span>
+            <span className="block text-xs font-normal text-white/60">Indiecrafts</span>
+            <span className="block text-base font-semibold">Try the template</span>
           </span>
           <ArrowRight className="h-4 w-4" aria-hidden />
         </span>

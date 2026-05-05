@@ -11,7 +11,7 @@
  * `blocks.<type>.*` entry to their main `messages/<locale>.json`. Tier 1 is
  * deep-merged ON TOP of tier 3 so the client always wins, per-key.
  *
- * This means a French site can override `blocks.cta-1.title` in `fr.json`
+ * This means a French site can override `blocks.cta-01.title` in `fr.json`
  * without touching the template. Un-overridden keys fall back to the
  * English sample (good enough for preview, obvious signal that it's not
  * translated yet).

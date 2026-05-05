@@ -4,7 +4,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { MultiStepLoader } from "./multi-step-loader";
 
 const meta: Meta<typeof MultiStepLoader> = {
-  title: "UI Effects/MultiStepLoader",
+  title: "UI Effects/Loaders & Progress/MultiStepLoader",
   component: MultiStepLoader,
   parameters: { layout: "fullscreen" },
   argTypes: {

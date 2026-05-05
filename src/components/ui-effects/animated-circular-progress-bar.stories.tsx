@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AnimatedCircularProgressBar } from "./animated-circular-progress-bar";
 
 const meta: Meta<typeof AnimatedCircularProgressBar> = {
-  title: "UI Effects/AnimatedCircularProgressBar",
+  title: "UI Effects/Loaders & Progress/AnimatedCircularProgressBar",
   component: AnimatedCircularProgressBar,
   parameters: { layout: "centered" },
   argTypes: {
@@ -33,11 +33,7 @@ export const Steps: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-6">
       {[0, 25, 50, 75, 100].map((v) => (
-        <AnimatedCircularProgressBar
-          key={v}
-          value={v}
-          {...baseColors}
-        />
+        <AnimatedCircularProgressBar key={v} value={v} {...baseColors} />
       ))}
     </div>
   ),

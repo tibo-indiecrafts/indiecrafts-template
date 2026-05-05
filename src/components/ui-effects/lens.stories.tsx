@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Lens } from "./lens";
 
 const meta: Meta<typeof Lens> = {
-  title: "UI Effects/Lens",
+  title: "UI Effects/Hover & Interactions/Lens",
   component: Lens,
   parameters: { layout: "centered" },
   argTypes: {
@@ -97,11 +98,11 @@ export const OverText: Story = {
         <div className="bg-card text-foreground rounded-lg p-8 text-sm leading-relaxed">
           <h3 className="mb-2 text-2xl font-semibold">Read the fine print</h3>
           <p>
-            The Indiecrafts template ships with WCAG AA contrast verification,
-            full i18n routing via next-intl, and a config-first architecture
-            that turns rebrands into a single commit. Every section blueprint
-            is type-safe end to end. Hover this card to inspect the typography
-            up close — the lens magnifies any HTML, not just images.
+            The Indiecrafts template ships with WCAG AA contrast verification, full i18n
+            routing via next-intl, and a config-first architecture that turns rebrands
+            into a single commit. Every section blueprint is type-safe end to end. Hover
+            this card to inspect the typography up close — the lens magnifies any HTML,
+            not just images.
           </p>
         </div>
       </Lens>

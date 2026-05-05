@@ -16,7 +16,7 @@ import { DirectionProvider } from "./direction";
 import { Slider } from "@/components/ui-primitives/slider";
 
 const meta: Meta<typeof DirectionProvider> = {
-  title: "UI Effects/Direction",
+  title: "UI Effects/Hover & Interactions/Direction",
   component: DirectionProvider,
   parameters: {
     layout: "centered",

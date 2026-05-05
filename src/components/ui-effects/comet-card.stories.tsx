@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { CometCard } from "./comet-card";
 
 const meta: Meta<typeof CometCard> = {
-  title: "UI Effects/CometCard",
+  title: "UI Effects/Cards/CometCard",
   component: CometCard,
   parameters: { layout: "centered" },
   argTypes: {

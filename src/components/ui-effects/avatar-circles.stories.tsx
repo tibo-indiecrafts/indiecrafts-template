@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AvatarCircles } from "./avatar-circles";
 
 const meta: Meta<typeof AvatarCircles> = {
-  title: "UI Effects/AvatarCircles",
+  title: "UI Effects/Social/AvatarCircles",
   component: AvatarCircles,
   parameters: { layout: "centered" },
 };

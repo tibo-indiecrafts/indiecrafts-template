@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/purity -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useMemo } from "react";
 import { ImagesSlider } from "./images-slider";
 
 const meta: Meta<typeof ImagesSlider> = {
-  title: "UI Effects/ImagesSlider",
+  title: "UI Effects/Social/ImagesSlider",
   component: ImagesSlider,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -41,7 +42,6 @@ const PALETTES = {
 } as const;
 
 function useFreshSlides(palette: keyof typeof PALETTES) {
-   
   return useMemo(() => {
     const session = Math.random().toString(36).slice(2);
     return PALETTES[palette].map(
@@ -57,20 +57,10 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="relative h-[70vh] w-full">{children}</div>
 );
 
-const HeroCopy = ({
-  title,
-  subtitle,
-}: {
-  title: string;
-  subtitle: string;
-}) => (
+const HeroCopy = ({ title, subtitle }: { title: string; subtitle: string }) => (
   <div className="z-50 flex flex-col items-center justify-center px-6 text-center">
-    <h2 className="text-4xl font-bold text-white drop-shadow-lg md:text-6xl">
-      {title}
-    </h2>
-    <p className="mt-4 max-w-md text-base text-white/90 md:text-lg">
-      {subtitle}
-    </p>
+    <h2 className="text-4xl font-bold text-white drop-shadow-lg md:text-6xl">{title}</h2>
+    <p className="mt-4 max-w-md text-base text-white/90 md:text-lg">{subtitle}</p>
   </div>
 );
 
@@ -151,10 +141,7 @@ export const TintedOverlay: Story = {
     const images = useFreshSlides("scenic");
     return (
       <Frame>
-        <ImagesSlider
-          images={images}
-          overlayClassName="bg-primary/50 mix-blend-multiply"
-        >
+        <ImagesSlider images={images} overlayClassName="bg-primary/50 mix-blend-multiply">
           <HeroCopy
             title="Brand tinted"
             subtitle="Use overlayClassName to apply your brand colour at any opacity."

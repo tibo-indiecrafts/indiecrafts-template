@@ -1,5 +1,5 @@
 /**
- * Signup route metadata. SEO + composition live in `pages-auth/signup-1/`.
+ * Signup route metadata. SEO + composition live in `pages-signup/signup-01/`.
  */
 
 import { definePage } from "@/config/pages/types";

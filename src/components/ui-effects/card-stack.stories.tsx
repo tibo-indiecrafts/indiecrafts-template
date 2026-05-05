@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { CardStack } from "./card-stack";
 
 const meta: Meta<typeof CardStack> = {
-  title: "UI Effects/CardStack",
+  title: "UI Effects/Cards/CardStack",
   component: CardStack,
   parameters: { layout: "centered" },
 };
@@ -34,8 +34,8 @@ const CARDS = [
     designation: "Lead Designer at Vercel",
     content: (
       <p>
-        The <Highlight>theme tokens</Highlight> survive a brand refresh without a
-        single component rewrite. That alone paid for the migration.
+        The <Highlight>theme tokens</Highlight> survive a brand refresh without a single
+        component rewrite. That alone paid for the migration.
       </p>
     ),
   },

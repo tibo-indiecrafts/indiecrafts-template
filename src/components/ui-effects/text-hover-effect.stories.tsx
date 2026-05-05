@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { TextHoverEffect } from "./text-hover-effect";
 
 const meta: Meta<typeof TextHoverEffect> = {
-  title: "UI Effects/TextHoverEffect",
+  title: "UI Effects/Text/TextHoverEffect",
   component: TextHoverEffect,
   parameters: { layout: "fullscreen" },
   argTypes: {

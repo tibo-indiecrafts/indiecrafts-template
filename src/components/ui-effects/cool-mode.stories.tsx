@@ -3,7 +3,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { CoolMode } from "./cool-mode";
 
 const meta: Meta<typeof CoolMode> = {
-  title: "UI Effects/CoolMode",
+  title: "UI Effects/Particles & Effects/CoolMode",
   component: CoolMode,
   parameters: {
     layout: "centered",

@@ -1,0 +1,12 @@
+{
+  "items": {
+    "analytics": {
+      "title": "Powerful analytics dashboard",
+      "body": "Track performance metrics with real-time data visualization and customizable reports for informed decisions."
+    },
+    "invoicing": {
+      "title": "Streamlined invoicing system",
+      "body": "Generate, send, and manage professional invoices automatically with integrated payment tracking."
+    }
+  }
+}

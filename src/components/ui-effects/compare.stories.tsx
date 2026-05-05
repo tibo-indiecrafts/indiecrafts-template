@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Compare } from "./compare";
 
 const meta: Meta<typeof Compare> = {
-  title: "UI Effects/Compare",
+  title: "UI Effects/Particles & Effects/Compare",
   component: Compare,
   parameters: { layout: "centered" },
   argTypes: {
@@ -17,10 +17,8 @@ export default meta;
 
 type Story = StoryObj<typeof Compare>;
 
-const before =
-  "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=900&q=80";
-const after =
-  "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&q=80";
+const before = "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=900&q=80";
+const after = "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&q=80";
 
 const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-card rounded-2xl border p-2">{children}</div>

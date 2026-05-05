@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities -- shadcn upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Inbox, Plus, Search } from "lucide-react";
 import { Button } from "./button";

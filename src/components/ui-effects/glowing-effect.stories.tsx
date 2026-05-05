@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { GlowingEffect } from "./glowing-effect";
 
 const meta: Meta<typeof GlowingEffect> = {
-  title: "UI Effects/GlowingEffect",
+  title: "UI Effects/Hover & Interactions/GlowingEffect",
   component: GlowingEffect,
   parameters: { layout: "centered" },
   argTypes: {
@@ -39,9 +39,7 @@ const GlowCard = ({
   className?: string;
   effectProps: Parameters<typeof GlowingEffect>[0];
 }) => (
-  <div
-    className={`relative rounded-2xl border border-border p-2 ${className ?? ""}`}
-  >
+  <div className={`border-border relative rounded-2xl border p-2 ${className ?? ""}`}>
     <GlowingEffect {...effectProps} />
     <div className="bg-card text-foreground rounded-xl p-6">{children}</div>
   </div>
@@ -68,8 +66,8 @@ export const Default: Story = {
     <GlowCard className="h-60 w-80" effectProps={args}>
       <h3 className="text-xl font-semibold">Hover anywhere</h3>
       <p className="text-muted-foreground mt-2 text-sm">
-        Move the cursor over (or near) the card to track the rainbow gradient
-        around the border.
+        Move the cursor over (or near) the card to track the rainbow gradient around the
+        border.
       </p>
     </GlowCard>
   ),
@@ -135,8 +133,8 @@ export const ThickRing: Story = {
     <GlowCard className="h-60 w-80" effectProps={args}>
       <h3 className="text-xl font-semibold">Chunky outline</h3>
       <p className="text-muted-foreground mt-2 text-sm">
-        Bumping <code>borderWidth</code> from the 1px default to 4px makes the
-        rainbow ring substantially more visible.
+        Bumping <code>borderWidth</code> from the 1px default to 4px makes the rainbow
+        ring substantially more visible.
       </p>
     </GlowCard>
   ),
@@ -149,8 +147,8 @@ export const Disabled: Story = {
     <GlowCard className="h-60 w-80" effectProps={args}>
       <h3 className="text-xl font-semibold">Static border</h3>
       <p className="text-muted-foreground mt-2 text-sm">
-        With <code>disabled</code> set, only the static border placeholder
-        renders — no pointer tracking, no rainbow gradient.
+        With <code>disabled</code> set, only the static border placeholder renders — no
+        pointer tracking, no rainbow gradient.
       </p>
     </GlowCard>
   ),

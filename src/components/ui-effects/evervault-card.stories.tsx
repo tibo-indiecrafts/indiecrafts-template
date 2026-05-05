@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { EvervaultCard, Icon } from "./evervault-card";
 
 const meta: Meta<typeof EvervaultCard> = {
-  title: "UI Effects/EvervaultCard",
+  title: "UI Effects/Cards/EvervaultCard",
   component: EvervaultCard,
   parameters: { layout: "centered" },
 };
@@ -23,14 +23,14 @@ export const Default: Story = {
       <Icon className="text-foreground absolute -top-3 -left-3 h-6 w-6" />
       <Icon className="text-foreground absolute -top-3 -right-3 h-6 w-6" />
       <Icon className="text-foreground absolute -bottom-3 -left-3 h-6 w-6" />
-      <Icon className="text-foreground absolute -bottom-3 -right-3 h-6 w-6" />
+      <Icon className="text-foreground absolute -right-3 -bottom-3 h-6 w-6" />
       <EvervaultCard text="hover" />
       <h2 className="text-foreground mt-4 text-sm font-light">
         Hover over this card to reveal an awesome effect.
       </h2>
       <p className="text-muted-foreground mt-1 text-xs">
-        Encrypted vault feel — randomly generated characters animate behind a
-        masked spotlight that follows your cursor.
+        Encrypted vault feel — randomly generated characters animate behind a masked
+        spotlight that follows your cursor.
       </p>
     </Frame>
   ),
@@ -43,7 +43,7 @@ export const CustomText: Story = {
       <Icon className="text-foreground absolute -top-3 -left-3 h-6 w-6" />
       <Icon className="text-foreground absolute -top-3 -right-3 h-6 w-6" />
       <Icon className="text-foreground absolute -bottom-3 -left-3 h-6 w-6" />
-      <Icon className="text-foreground absolute -bottom-3 -right-3 h-6 w-6" />
+      <Icon className="text-foreground absolute -right-3 -bottom-3 h-6 w-6" />
       <EvervaultCard text="A" />
     </Frame>
   ),

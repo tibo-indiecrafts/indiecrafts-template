@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { StarsBackground } from "./stars-background";
 
 const meta: Meta<typeof StarsBackground> = {
-  title: "UI Effects/StarsBackground",
+  title: "UI Effects/Backgrounds/StarsBackground",
   component: StarsBackground,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -26,17 +26,13 @@ export default meta;
 type Story = StoryObj<typeof StarsBackground>;
 
 const Stage = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative h-[460px] w-full overflow-hidden bg-slate-950">
-    {children}
-  </div>
+  <div className="relative h-[460px] w-full overflow-hidden bg-slate-950">{children}</div>
 );
 
 const Body = ({ title, body }: { title: string; body: string }) => (
   <div className="relative z-10 grid h-full place-items-center px-6 text-center">
     <div>
-      <h2 className="text-3xl font-semibold tracking-tight text-white">
-        {title}
-      </h2>
+      <h2 className="text-3xl font-semibold tracking-tight text-white">{title}</h2>
       <p className="mt-2 max-w-md text-sm text-white/70">{body}</p>
     </div>
   </div>
@@ -57,10 +53,7 @@ export const Default: Story = {
   render: (args) => (
     <Stage>
       <StarsBackground {...args} />
-      <Body
-        title="A field of stars"
-        body="Subtle twinkle on a canvas backdrop."
-      />
+      <Body title="A field of stars" body="Subtle twinkle on a canvas backdrop." />
     </Stage>
   ),
 };
@@ -93,10 +86,7 @@ export const FastTwinkle: Story = {
   render: (args) => (
     <Stage>
       <StarsBackground {...args} />
-      <Body
-        title="Fast shimmer"
-        body="Lower speeds mean tighter twinkle cycles."
-      />
+      <Body title="Fast shimmer" body="Lower speeds mean tighter twinkle cycles." />
     </Stage>
   ),
 };

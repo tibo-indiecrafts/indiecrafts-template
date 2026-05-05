@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { VideoText } from "./video-text";
 
 const meta: Meta<typeof VideoText> = {
-  title: "UI Effects/VideoText",
+  title: "UI Effects/Text/VideoText",
   component: VideoText,
   parameters: { layout: "fullscreen" },
   argTypes: {

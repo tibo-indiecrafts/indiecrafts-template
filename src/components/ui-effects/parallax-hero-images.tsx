@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element, @typescript-eslint/no-unused-vars -- Aceternity / MagicUI upstream */
 import React, { useEffect, useState, useMemo, useCallback, memo } from "react";
 import {
   motion,
@@ -102,10 +103,7 @@ export const ParallaxHeroImages = ({
 
   return (
     <div
-      className={cn(
-        "pointer-events-none absolute inset-0 overflow-hidden",
-        className,
-      )}
+      className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
     >
       {positions.map((pos, index) => (
         <ParallaxImage

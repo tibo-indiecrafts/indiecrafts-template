@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable jsx-a11y/no-static-element-interactions -- Aceternity / MagicUI upstream */
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -22,11 +23,11 @@ export const GlowingStarsBackgroundCard = ({
         setMouseEnter(false);
       }}
       className={cn(
-        "bg-[linear-gradient(110deg,#333_0.6%,#222)] p-4 max-w-md max-h-[20rem] h-full w-full rounded-xl border border-[#eaeaea] dark:border-neutral-600",
-        className
+        "h-full max-h-[20rem] w-full max-w-md rounded-xl border border-[#eaeaea] bg-[linear-gradient(110deg,#333_0.6%,#222)] p-4 dark:border-neutral-600",
+        className,
       )}
     >
-      <div className="flex justify-center items-center">
+      <div className="flex items-center justify-center">
         <Illustration mouseEnter={mouseEnter} />
       </div>
       <div className="px-2 pb-6">{children}</div>
@@ -42,9 +43,7 @@ export const GlowingStarsDescription = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <p className={cn("text-base text-white max-w-[16rem]", className)}>
-      {children}
-    </p>
+    <p className={cn("max-w-[16rem] text-base text-white", className)}>{children}</p>
   );
 };
 
@@ -56,9 +55,7 @@ export const GlowingStarsTitle = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <h2 className={cn("font-bold text-2xl text-[#eaeaea]", className)}>
-      {children}
-    </h2>
+    <h2 className={cn("text-2xl font-bold text-[#eaeaea]", className)}>{children}</h2>
   );
 };
 
@@ -73,7 +70,7 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       highlightedStars.current = Array.from({ length: 5 }, () =>
-        Math.floor(Math.random() * stars)
+        Math.floor(Math.random() * stars),
       );
       setGlowingStars([...highlightedStars.current]);
     }, 3000);
@@ -83,7 +80,7 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
 
   return (
     <div
-      className="h-48 p-1 w-full"
+      className="h-48 w-full p-1"
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
@@ -130,7 +127,7 @@ const Star = ({ isGlowing, delay }: { isGlowing: boolean; delay: number }) => {
         ease: "easeInOut",
         delay: delay,
       }}
-      className={cn("bg-[#666] h-[1px] w-[1px] rounded-full relative z-20")}
+      className={cn("relative z-20 h-[1px] w-[1px] rounded-full bg-[#666]")}
     ></motion.div>
   );
 };
@@ -152,7 +149,7 @@ const Glow = ({ delay }: { delay: number }) => {
       exit={{
         opacity: 0,
       }}
-      className="absolute  left-1/2 -translate-x-1/2 z-10 h-[4px] w-[4px] rounded-full bg-blue-500 blur-[1px] shadow-2xl shadow-blue-400"
+      className="absolute left-1/2 z-10 h-[4px] w-[4px] -translate-x-1/2 rounded-full bg-blue-500 shadow-2xl shadow-blue-400 blur-[1px]"
     />
   );
 };

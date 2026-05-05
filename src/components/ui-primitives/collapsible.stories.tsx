@@ -1,11 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ChevronsUpDown } from "lucide-react";
 import { Button } from "./button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsible";
 
 const meta: Meta<typeof Collapsible> = {
   title: "UI Primitives/Collapsible",

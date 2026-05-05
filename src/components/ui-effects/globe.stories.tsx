@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { Globe } from "./globe";
 
 const meta: Meta<typeof Globe> = {
-  title: "UI Effects/Globe",
+  title: "UI Effects/Globes & Maps/Globe",
   component: Globe,
   parameters: { layout: "fullscreen" },
 };

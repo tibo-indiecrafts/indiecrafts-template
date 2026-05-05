@@ -21,9 +21,9 @@ type BuildArgs = {
    * Page-template SEO defaults. Merged with `page.seo` such that fields
    * declared in the route's `page.config.ts` win over template defaults.
    *
-   *   templateSeo:  { titleKey: "blocks.landing-1.title", keywords: ["a"] }
+   *   templateSeo:  { titleKey: "blocks.landing-01.title", keywords: ["a"] }
    *   page.seo:     {                                     keywords: ["b"] }
-   *   final:        { titleKey: "blocks.landing-1.title", keywords: ["b"] }
+   *   final:        { titleKey: "blocks.landing-01.title", keywords: ["b"] }
    *
    * Routes get rich defaults for free; expanding SEO per page is a
    * one-field edit in `page.config.ts`.

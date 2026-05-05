@@ -1,8 +1,9 @@
+/* eslint-disable react/no-unescaped-entities -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AnimatedGradientText } from "./animated-gradient-text";
 
 const meta: Meta<typeof AnimatedGradientText> = {
-  title: "UI Effects/AnimatedGradientText",
+  title: "UI Effects/Text/AnimatedGradientText",
   component: AnimatedGradientText,
   parameters: { layout: "centered" },
   argTypes: {

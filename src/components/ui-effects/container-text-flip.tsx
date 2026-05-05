@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/ban-ts-comment -- Aceternity / MagicUI upstream */
 import React, { useState, useEffect, useId } from "react";
 
 import { motion } from "motion/react";

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/purity -- Aceternity / MagicUI upstream */
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import React from "react";

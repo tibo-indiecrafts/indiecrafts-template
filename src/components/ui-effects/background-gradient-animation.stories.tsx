@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { BackgroundGradientAnimation } from "./background-gradient-animation";
 
 const meta: Meta<typeof BackgroundGradientAnimation> = {
-  title: "UI Effects/BackgroundGradientAnimation",
+  title: "UI Effects/Backgrounds/BackgroundGradientAnimation",
   component: BackgroundGradientAnimation,
   parameters: { layout: "fullscreen" },
 };
@@ -15,7 +15,7 @@ export const Default: Story = {
   render: () => (
     <BackgroundGradientAnimation>
       <div className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center text-center text-3xl font-bold text-white md:text-7xl">
-        <p className="bg-clip-text bg-gradient-to-b from-white/80 to-white/20 text-transparent drop-shadow-2xl">
+        <p className="bg-gradient-to-b from-white/80 to-white/20 bg-clip-text text-transparent drop-shadow-2xl">
           Gradient flow
         </p>
       </div>

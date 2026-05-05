@@ -1,11 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import {
-  TypewriterEffect,
-  TypewriterEffectSmooth,
-} from "./typewriter-effect";
+import { TypewriterEffect, TypewriterEffectSmooth } from "./typewriter-effect";
 
 const meta: Meta<typeof TypewriterEffect> = {
-  title: "UI Effects/TypewriterEffect",
+  title: "UI Effects/Text/TypewriterEffect",
   component: TypewriterEffect,
   parameters: { layout: "centered" },
 };
@@ -69,10 +66,7 @@ export const LongPhrase: Story = {
 export const CustomCursor: Story = {
   render: () => (
     <Stage>
-      <TypewriterEffect
-        words={WORDS}
-        cursorClassName="bg-fuchsia-500 w-1 h-9 md:h-12"
-      />
+      <TypewriterEffect words={WORDS} cursorClassName="bg-fuchsia-500 w-1 h-9 md:h-12" />
     </Stage>
   ),
 };
@@ -81,10 +75,7 @@ export const CustomCursor: Story = {
 export const Hero: Story = {
   render: () => (
     <Stage>
-      <TypewriterEffect
-        words={WORDS}
-        className="text-5xl font-bold md:text-7xl"
-      />
+      <TypewriterEffect words={WORDS} className="text-5xl font-bold md:text-7xl" />
     </Stage>
   ),
 };

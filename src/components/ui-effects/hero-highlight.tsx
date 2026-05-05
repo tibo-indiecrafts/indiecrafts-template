@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable jsx-a11y/no-static-element-interactions -- Aceternity / MagicUI upstream */
 import { cn } from "@/lib/utils";
 import { useMotionValue, motion, useMotionTemplate } from "motion/react";
 import React from "react";

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { BlurFade } from "./blur-fade";
 
 const meta: Meta<typeof BlurFade> = {
-  title: "UI Effects/BlurFade",
+  title: "UI Effects/Particles & Effects/BlurFade",
   component: BlurFade,
   parameters: { layout: "centered" },
 };

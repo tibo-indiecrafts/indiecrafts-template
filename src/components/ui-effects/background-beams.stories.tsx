@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { BackgroundBeams } from "./background-beams";
 
 const meta: Meta<typeof BackgroundBeams> = {
-  title: "UI Effects/BackgroundBeams",
+  title: "UI Effects/Backgrounds/BackgroundBeams",
   component: BackgroundBeams,
   parameters: { layout: "fullscreen" },
 };
@@ -29,9 +29,8 @@ export const Default: Story = {
           Join the waitlist
         </h1>
         <p className="mx-auto mt-4 max-w-lg text-sm text-neutral-400">
-          Welcome to MailJet, the best transactional email service on the web.
-          We provide reliable, scalable, and customisable email solutions for
-          your business.
+          Welcome to MailJet, the best transactional email service on the web. We provide
+          reliable, scalable, and customisable email solutions for your business.
         </p>
       </div>
       <BackgroundBeams />

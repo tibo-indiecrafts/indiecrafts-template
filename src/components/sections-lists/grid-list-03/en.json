@@ -1,0 +1,29 @@
+{
+  "title": "Help center quick links",
+  "items": {
+    "gettingStarted": {
+      "title": "Getting Started",
+      "description": "Everything you need to know to get started and get to work in ChatCloud."
+    },
+    "adminSettings": {
+      "title": "Admin Settings",
+      "description": "Learn how to manage your current workspace or your enterprise space."
+    },
+    "serverSetup": {
+      "title": "Server Setup",
+      "description": "Connect, simplify, and automate. Discover the power of apps and tools."
+    },
+    "loginVerification": {
+      "title": "Login and Verification",
+      "description": "Read on to learn how to sign in with your email address, or your Apple or Google."
+    },
+    "accountSetup": {
+      "title": "Account Setup",
+      "description": "Adjust your profile and preferences to make ChatCloud work just for you."
+    },
+    "trustSafety": {
+      "title": "Trust & Safety",
+      "description": "Trust on our current database and learn how we distribute your data."
+    }
+  }
+}

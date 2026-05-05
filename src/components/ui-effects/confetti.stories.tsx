@@ -4,7 +4,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Confetti, ConfettiButton, type ConfettiRef } from "./confetti";
 
 const meta: Meta<typeof Confetti> = {
-  title: "UI Effects/Confetti",
+  title: "UI Effects/Particles & Effects/Confetti",
   component: Confetti,
   parameters: { layout: "centered" },
 };
@@ -13,7 +13,7 @@ export default meta;
 type Story = StoryObj<typeof Confetti>;
 
 const Stage = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex h-[300px] w-[400px] items-center justify-center rounded-2xl border bg-card">
+  <div className="bg-card flex h-[300px] w-[400px] items-center justify-center rounded-2xl border">
     {children}
   </div>
 );

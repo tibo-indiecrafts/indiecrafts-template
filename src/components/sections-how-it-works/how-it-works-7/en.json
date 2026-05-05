@@ -1,0 +1,21 @@
+{
+  "headerTitle": "Simple Three-Step Workflow",
+  "headerBody": "Experience our streamlined approach to data analysis that empowers your team to make <strong>informed decisions</strong> quickly and efficiently.",
+  "steps": {
+    "step1": {
+      "number": "1",
+      "title": "Secure Messaging",
+      "body": "End-to-end encrypted communications for enterprise."
+    },
+    "step2": {
+      "number": "2",
+      "title": "Analytics Dashboard",
+      "body": "Data visualization tools to transform complex metrics into insights."
+    },
+    "step3": {
+      "number": "3",
+      "title": "Resource Monitoring",
+      "body": "Real-time tracking of system performance to optimize efficiency."
+    }
+  }
+}

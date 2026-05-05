@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Iphone } from "./iphone";
 
 const meta: Meta<typeof Iphone> = {
-  title: "UI Effects/Iphone",
+  title: "UI Effects/3D & Devices/Iphone",
   component: Iphone,
   parameters: { layout: "centered" },
 };

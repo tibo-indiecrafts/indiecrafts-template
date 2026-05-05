@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { StickyBanner } from "./sticky-banner";
 
 const meta: Meta<typeof StickyBanner> = {
-  title: "UI Effects/StickyBanner",
+  title: "UI Effects/Modals & Overlays/StickyBanner",
   component: StickyBanner,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -19,8 +19,7 @@ const Page = ({ children }: { children: React.ReactNode }) => (
     <div className="text-foreground mx-auto max-w-2xl px-6 py-32">
       <h1 className="text-4xl font-bold">Sticky banner demo</h1>
       <p className="text-muted-foreground mt-4 max-w-prose">
-        The banner sticks to the top of the viewport. Click the close icon to
-        dismiss it.
+        The banner sticks to the top of the viewport. Click the close icon to dismiss it.
       </p>
     </div>
   </div>
@@ -71,9 +70,7 @@ export const BrandColor: Story = {
       <StickyBanner className="bg-primary">
         <p className="text-primary-foreground mx-auto max-w-7xl text-center text-sm">
           ✨ Sale ends Sunday — code{" "}
-          <code className="bg-background/20 rounded px-1.5 py-0.5">
-            CRAFT15
-          </code>
+          <code className="bg-background/20 rounded px-1.5 py-0.5">CRAFT15</code>
         </p>
       </StickyBanner>
     </Page>

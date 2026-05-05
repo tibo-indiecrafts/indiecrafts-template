@@ -21,14 +21,7 @@ import {
 } from "./registry.generated";
 
 export { PAGES, PATHNAMES };
-export {
-  homePage,
-  aboutPage,
-  dashboardPage,
-  forgotPasswordPage,
-  loginPage,
-  signupPage,
-};
+export { homePage, aboutPage, dashboardPage, forgotPasswordPage, loginPage, signupPage };
 
 export const pages: readonly PageConfig[] = PAGES;
 

@@ -1,0 +1,11 @@
+{
+  "title": "Using Storage",
+  "ofTotal": "of {total} {totalUnit}",
+  "free": "Free",
+  "segments": {
+    "documents": { "label": "Documents" },
+    "photos": { "label": "Photos" },
+    "videos": { "label": "Videos" },
+    "music": { "label": "Music" }
+  }
+}

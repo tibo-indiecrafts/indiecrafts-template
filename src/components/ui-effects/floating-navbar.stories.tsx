@@ -1,16 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import {
-  Home,
-  MessageCircle,
-  User,
-  Briefcase,
-  FileText,
-  Sparkles,
-} from "lucide-react";
+import { Home, MessageCircle, User, Briefcase, FileText, Sparkles } from "lucide-react";
 import { FloatingNav } from "./floating-navbar";
 
 const meta: Meta<typeof FloatingNav> = {
-  title: "UI Effects/FloatingNavbar",
+  title: "UI Effects/Nav/FloatingNavbar",
   component: FloatingNav,
   parameters: { layout: "fullscreen" },
 };
@@ -80,9 +73,9 @@ const Page = ({ children }: { children: React.ReactNode }) => (
     <div className="text-foreground mx-auto max-w-2xl px-6 pt-40">
       <h2 className="text-2xl font-semibold">Floating navbar</h2>
       <p className="text-muted-foreground mt-2 text-sm">
-        Pinned at <code>top-10</code>, inside a frosted pill. In production
-        the component animates in only when the user scrolls up; the stories
-        below render the equivalent static markup so it&apos;s always visible.
+        Pinned at <code>top-10</code>, inside a frosted pill. In production the component
+        animates in only when the user scrolls up; the stories below render the equivalent
+        static markup so it&apos;s always visible.
       </p>
     </div>
     {children}
@@ -147,8 +140,8 @@ export const Live: Story = {
       <div className="text-foreground mx-auto max-w-2xl px-6 pt-40">
         <h2 className="text-2xl font-semibold">Scroll down, then back up</h2>
         <p className="text-muted-foreground mt-2 text-sm">
-          Real <code>FloatingNav</code> mounted below. Scroll all the way down
-          first, then scroll up — the navbar slides in from the top.
+          Real <code>FloatingNav</code> mounted below. Scroll all the way down first, then
+          scroll up — the navbar slides in from the top.
         </p>
       </div>
       <div className="text-muted-foreground/60 absolute bottom-12 left-1/2 -translate-x-1/2 text-xs">

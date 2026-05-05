@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars -- Aceternity / MagicUI upstream */
 import React, { useRef } from "react";
 import {
   motion,
@@ -27,7 +28,7 @@ const MovingLine = () => {
   const PATH = "M0.5 0.980671L0.5 1566.02";
   return (
     <div
-      className="max-w-4xl mx-auto flex flex-row space-x-10 items-start w-full "
+      className="mx-auto flex w-full max-w-4xl flex-row items-start space-x-10"
       ref={ref}
     >
       <svg
@@ -71,7 +72,7 @@ const MovingLine = () => {
           strokeWidth="3"
         />
       </svg>
-      <div className="flex flex-col w-full">
+      <div className="flex w-full flex-col">
         <Content />
         <Content />
         <Content />
@@ -86,16 +87,14 @@ const MovingLine = () => {
 
 export const Content = () => {
   return (
-    <div className="content w-full mb-10 ">
-      <p className="text-2xl font-bold text-white  ">
-        The path follows the scroll
-      </p>
-      <p className="text-base font-normal text-neutral-300  ">
+    <div className="content mb-10 w-full">
+      <p className="text-2xl font-bold text-white">The path follows the scroll</p>
+      <p className="text-base font-normal text-neutral-300">
         If you look closely, you can see the path is being animated.
       </p>
-      <div className="flex space-x-4 w-full ">
-        <div className="w-full h-40 md:h-96 rounded-md bg-gradient-to-tr from-slate-800 to-slate-700 mt-4" />
-        <div className="w-full h-40 md:h-96 rounded-md bg-gradient-to-tr from-slate-800 to-slate-700 mt-4" />
+      <div className="flex w-full space-x-4">
+        <div className="mt-4 h-40 w-full rounded-md bg-gradient-to-tr from-slate-800 to-slate-700 md:h-96" />
+        <div className="mt-4 h-40 w-full rounded-md bg-gradient-to-tr from-slate-800 to-slate-700 md:h-96" />
       </div>
     </div>
   );

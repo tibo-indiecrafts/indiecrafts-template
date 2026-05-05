@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ParallaxHeroImages } from "./parallax-hero-images";
 
 const meta: Meta<typeof ParallaxHeroImages> = {
-  title: "UI Effects/ParallaxHeroImages",
+  title: "UI Effects/Marquees & Scroll/ParallaxHeroImages",
   component: ParallaxHeroImages,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -46,9 +46,7 @@ const Frame = ({
 }) => (
   <div className="bg-background relative h-[80vh] w-full overflow-hidden">
     <div className="relative z-10 mx-auto flex h-full max-w-2xl items-center justify-center px-6">
-      <h1 className="text-foreground text-center text-5xl font-bold">
-        {title}
-      </h1>
+      <h1 className="text-foreground text-center text-5xl font-bold">{title}</h1>
     </div>
     <ParallaxHeroImages images={images} variant={variant} />
   </div>
@@ -69,16 +67,12 @@ export const Default: Story = {
  * sits in the middle.
  */
 export const EdgeFocus: Story = {
-  render: () => (
-    <Frame title="Edge focus" images={IMAGES} variant="edge-focus" />
-  ),
+  render: () => <Frame title="Edge focus" images={IMAGES} variant="edge-focus" />,
 };
 
 /** Nature theme — same component, different imagery set. */
 export const NatureTheme: Story = {
-  render: () => (
-    <Frame title="Wilderness" images={NATURE_IMAGES} />
-  ),
+  render: () => <Frame title="Wilderness" images={NATURE_IMAGES} />,
 };
 
 /**

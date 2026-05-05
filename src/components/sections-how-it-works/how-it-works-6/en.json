@@ -1,0 +1,19 @@
+{
+  "headerTitle": "Simple Three-Step Workflow",
+  "headerBody": "Experience our streamlined approach to data analysis that empowers your team to make informed decisions quickly and efficiently.",
+  "steps": {
+    "step1": {
+      "title": "Face Detection",
+      "body": "Effortlessly identify and manage users with our advanced face recognition system."
+    },
+    "step2": {
+      "title": "Automated Analysis",
+      "body": "Our AI-powered system processes complex datasets to identify patterns and insights instantly."
+    },
+    "step3": {
+      "title": "Actionable Reports",
+      "body": "Transform insights into beautiful visualizations and shareable reports to drive decisions."
+    }
+  },
+  "ctaLabel": "Get Started"
+}

@@ -1,0 +1,17 @@
+{
+  "title": "Welcome back",
+  "description": "Sign in to access to your dashboard, settings and projects.",
+  "googleCta": "Sign in with Google",
+  "separator": "or sign in with email",
+  "emailLabel": "Email",
+  "emailPlaceholder": "name@example.com",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "Enter your password",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "forgotCta": "Forgot Password?",
+  "rememberMe": "Remember for 30 days",
+  "submit": "Sign in",
+  "signupPrompt": "No account?",
+  "signupCta": "Create an account"
+}

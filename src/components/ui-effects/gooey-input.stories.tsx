@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { GooeyInput } from "./gooey-input";
 
 const meta: Meta<typeof GooeyInput> = {
-  title: "UI Effects/GooeyInput",
+  title: "UI Effects/Inputs/GooeyInput",
   component: GooeyInput,
   parameters: { layout: "centered" },
   argTypes: {
@@ -94,8 +94,7 @@ export const Controlled: Story = {
             placeholder="Try typing..."
           />
           <p className="text-muted-foreground text-sm">
-            Current value:{" "}
-            <code className="text-foreground">{value || "<empty>"}</code>
+            Current value: <code className="text-foreground">{value || "<empty>"}</code>
           </p>
         </div>
       </Stage>

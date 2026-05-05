@@ -27,11 +27,4 @@ export const PATHNAMES = {
   "/signup": expandSlug(signupPage.slugs),
 } as const;
 
-export {
-  homePage,
-  aboutPage,
-  dashboardPage,
-  forgotPasswordPage,
-  loginPage,
-  signupPage,
-};
+export { homePage, aboutPage, dashboardPage, forgotPasswordPage, loginPage, signupPage };

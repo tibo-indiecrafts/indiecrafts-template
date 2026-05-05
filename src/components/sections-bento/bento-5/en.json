@@ -1,0 +1,22 @@
+{
+  "keysCell": {
+    "title": "Keyboard-First UX",
+    "body": "Every action has a shortcut — your team navigates without lifting their hands."
+  },
+  "chartCell": {
+    "title": "Interactive Dashboards",
+    "body": "Create custom dashboards with drag-and-drop simplicity. Combine multiple visualization types to get a complete view of your data story."
+  },
+  "fingerprintCell": {
+    "title": "Biometric Sign-In",
+    "body": "Secure access without passwords. Fingerprint and face ID handle the heavy lifting on every device."
+  },
+  "campaignCell": {
+    "title": "Scheduled Reports",
+    "body": "Automate report delivery to stakeholders with customizable scheduling options."
+  },
+  "docsCell": {
+    "title": "Document Library",
+    "body": "Browse, search, and share all your team's documents from a single, organized library."
+  }
+}

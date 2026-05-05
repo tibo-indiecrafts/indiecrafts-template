@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Button } from "./stateful-button";
 
 const meta: Meta<typeof Button> = {
-  title: "UI Effects/StatefulButton",
+  title: "UI Effects/Buttons/StatefulButton",
   component: Button,
   parameters: { layout: "centered" },
 };
@@ -16,8 +16,7 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-const sleep = (ms: number) =>
-  new Promise<void>((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 /**
  * Default — clicking shows a spinner; on `onClick` resolution the spinner

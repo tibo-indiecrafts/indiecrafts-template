@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/exhaustive-deps -- Aceternity / MagicUI upstream */
 import React from "react";
 import { motion } from "motion/react";
 
@@ -46,7 +47,7 @@ export default function ColourfulText({ text }: { text: string }) {
         duration: 0.5,
         delay: index * 0.05,
       }}
-      className="inline-block whitespace-pre font-sans tracking-tight"
+      className="inline-block font-sans tracking-tight whitespace-pre"
     >
       {char}
     </motion.span>

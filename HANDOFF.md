@@ -224,7 +224,7 @@ hatch (`type: "custom"`, `componentKey: "..."`) with a component in
 2. **`/dashboard`, `/login`, `/signup`** routes exist from shadcn block
    downloads. They live outside `[locale]` so don't participate in i18n.
    `/dashboard` now uses the new `DashboardLayout` from
-   `src/layouts/DashboardLayout/` — swap nav labels + data arrays in the
+   `src/layouts/dashboard-layout/` — swap nav labels + data arrays in the
    AppSidebar when a client adopts it. Move routes into `[locale]/` (or
    delete) per project needs.
 3. **4 stubbed logo SVGs** — `linear`, `slack`, `spotify`, `twilio` in

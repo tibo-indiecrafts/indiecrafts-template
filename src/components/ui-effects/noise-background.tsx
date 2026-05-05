@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import { cn } from "@/lib/utils";
 import {
   motion,
@@ -63,11 +64,7 @@ export const NoiseBackground = ({
   children,
   className,
   containerClassName,
-  gradientColors = [
-    "rgb(255, 100, 150)",
-    "rgb(100, 150, 255)",
-    "rgb(255, 200, 100)",
-  ],
+  gradientColors = ["rgb(255, 100, 150)", "rgb(100, 150, 255)", "rgb(255, 200, 100)"],
   noiseIntensity = 0.2,
   speed = 0.1,
   backdropBlur = false,

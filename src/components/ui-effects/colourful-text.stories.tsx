@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import ColourfulText from "./colourful-text";
 
 const meta: Meta<typeof ColourfulText> = {
-  title: "UI Effects/ColourfulText",
+  title: "UI Effects/Text/ColourfulText",
   component: ColourfulText,
   parameters: { layout: "centered" },
 };

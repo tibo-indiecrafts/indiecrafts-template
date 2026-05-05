@@ -1,0 +1,161 @@
+{
+  "items": {
+    "overview": {
+      "label": "Overview"
+    },
+    "repositories": {
+      "label": "Repositories"
+    },
+    "pull-requests": {
+      "label": "Pull Requests"
+    },
+    "issues": {
+      "label": "Issues"
+    },
+    "actions": {
+      "label": "Actions"
+    },
+    "packages": {
+      "label": "Packages"
+    },
+    "security": {
+      "label": "Security"
+    },
+    "settings": {
+      "label": "Settings"
+    },
+    "docs": {
+      "label": "Documentation"
+    }
+  },
+  "subItems": {
+    "dashboard": {
+      "label": "Dashboard",
+      "description": "Project overview and activity"
+    },
+    "activity": {
+      "label": "Activity",
+      "description": "Recent commits and changes"
+    },
+    "insights": {
+      "label": "Insights",
+      "description": "Code analytics and metrics"
+    },
+    "all-repos": {
+      "label": "All Repositories",
+      "description": "Browse all your repositories"
+    },
+    "starred": {
+      "label": "Starred",
+      "description": "Your starred repositories"
+    },
+    "archived": {
+      "label": "Archived",
+      "description": "Archived repositories"
+    },
+    "open-prs": {
+      "label": "Open",
+      "description": "Open pull requests"
+    },
+    "review-requests": {
+      "label": "Review Requests",
+      "description": "PRs awaiting your review"
+    },
+    "merged": {
+      "label": "Merged",
+      "description": "Recently merged PRs"
+    },
+    "open-issues": {
+      "label": "Open Issues",
+      "description": "Active issues and bugs"
+    },
+    "assigned": {
+      "label": "Assigned to Me",
+      "description": "Issues assigned to you"
+    },
+    "created": {
+      "label": "Created by Me",
+      "description": "Issues you've created"
+    },
+    "workflows": {
+      "label": "Workflows",
+      "description": "CI/CD workflows and pipelines"
+    },
+    "runners": {
+      "label": "Runners",
+      "description": "Self-hosted runners"
+    },
+    "deployments": {
+      "label": "Deployments",
+      "description": "Deployment history"
+    },
+    "published": {
+      "label": "Published",
+      "description": "Your published packages"
+    },
+    "container-registry": {
+      "label": "Container Registry",
+      "description": "Docker images and containers"
+    },
+    "npm-packages": {
+      "label": "npm Packages",
+      "description": "Node.js packages"
+    },
+    "alerts": {
+      "label": "Security Alerts",
+      "description": "Vulnerability alerts"
+    },
+    "advisories": {
+      "label": "Advisories",
+      "description": "Security advisories"
+    },
+    "secrets": {
+      "label": "Secrets",
+      "description": "Repository secrets"
+    },
+    "profile": {
+      "label": "Profile",
+      "description": "Your profile settings"
+    },
+    "notifications": {
+      "label": "Notifications",
+      "description": "Notification preferences"
+    },
+    "webhooks": {
+      "label": "Webhooks",
+      "description": "Webhook configurations"
+    },
+    "api-keys": {
+      "label": "API Keys",
+      "description": "Personal access tokens"
+    }
+  },
+  "teams": {
+    "openai": {
+      "name": "OpenAI",
+      "plan": "Enterprise"
+    },
+    "anthropic": {
+      "name": "Anthropic",
+      "plan": "Pro"
+    },
+    "google": {
+      "name": "Google",
+      "plan": "Free"
+    },
+    "meta": {
+      "name": "Meta",
+      "plan": "Free"
+    }
+  },
+  "teamSwitcher": {
+    "label": "Teams",
+    "addTeam": "Add team"
+  },
+  "user": {
+    "name": "ephraim",
+    "email": "ephraim@blocks.so",
+    "fallback": "E"
+  },
+  "closePanel": "Close panel"
+}

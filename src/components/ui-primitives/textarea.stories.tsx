@@ -49,11 +49,7 @@ export const Disabled: Story = {
 export const Invalid: Story = {
   render: () => (
     <Frame>
-      <Textarea
-        defaultValue="too short"
-        aria-invalid="true"
-        aria-describedby="msg-err"
-      />
+      <Textarea defaultValue="too short" aria-invalid="true" aria-describedby="msg-err" />
       <p id="msg-err" className="text-destructive text-xs">
         Message must be at least 20 characters.
       </p>

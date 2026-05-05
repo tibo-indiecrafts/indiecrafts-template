@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Spotlight } from "./spotlight-new";
 
 const meta: Meta<typeof Spotlight> = {
-  title: "UI Effects/SpotlightNew",
+  title: "UI Effects/Hover & Interactions/SpotlightNew",
   component: Spotlight,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -76,7 +76,10 @@ export const BrandTinted: Story = {
         gradientSecond="radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--color-primary) 8%, transparent) 0, color-mix(in oklab, var(--color-primary) 3%, transparent) 80%, transparent 100%)"
         gradientThird="radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--color-primary) 6%, transparent) 0, color-mix(in oklab, var(--color-primary) 3%, transparent) 80%, transparent 100%)"
       />
-      <Body title="Brand glow" body="All three gradients reference --color-primary via color-mix." />
+      <Body
+        title="Brand glow"
+        body="All three gradients reference --color-primary via color-mix."
+      />
     </Stage>
   ),
 };

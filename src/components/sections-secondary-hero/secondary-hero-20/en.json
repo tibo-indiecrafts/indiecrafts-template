@@ -1,0 +1,28 @@
+{
+  "tag": "Billing",
+  "title": "Streamline your invoicing process",
+  "body": "Simplify invoicing with automated usage tracking and reporting tools.",
+  "primaryCta": "Get started",
+  "secondaryCta": "Get a demo",
+  "stats": {
+    "uptime": {
+      "value": "99.9",
+      "unit": "%",
+      "label": "Uptime guarantee",
+      "description": "for all our services."
+    },
+    "speed": {
+      "value": "12",
+      "unit": "X",
+      "label": "12X",
+      "description": "faster processing than previous generation."
+    }
+  },
+  "imageAlt": "Workplace photo",
+  "invoice": {
+    "id": "INV-456789",
+    "amount": "$284,342.57",
+    "due": "Due in 15 days",
+    "signHere": "Sign here"
+  }
+}

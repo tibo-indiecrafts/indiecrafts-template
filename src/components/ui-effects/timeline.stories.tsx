@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Timeline } from "./timeline";
 
 const meta: Meta<typeof Timeline> = {
-  title: "UI Effects/Timeline",
+  title: "UI Effects/Cards/Timeline",
   component: Timeline,
   parameters: { layout: "fullscreen" },
 };
@@ -11,9 +12,7 @@ export default meta;
 type Story = StoryObj<typeof Timeline>;
 
 const Body = ({ children }: { children: React.ReactNode }) => (
-  <div className="text-muted-foreground space-y-3 text-sm md:text-base">
-    {children}
-  </div>
+  <div className="text-muted-foreground space-y-3 text-sm md:text-base">{children}</div>
 );
 
 const FULL_DATA = [
@@ -22,12 +21,12 @@ const FULL_DATA = [
     content: (
       <Body>
         <p>
-          Shipped the first iteration of the Indiecrafts template. Three
-          client forks within the first month.
+          Shipped the first iteration of the Indiecrafts template. Three client forks
+          within the first month.
         </p>
         <p>
-          React Compiler, Tailwind v4, and next-intl 4 lock-step upgrades —
-          everything works on day one.
+          React Compiler, Tailwind v4, and next-intl 4 lock-step upgrades — everything
+          works on day one.
         </p>
       </Body>
     ),
@@ -41,8 +40,7 @@ const FULL_DATA = [
           marketing-site repo and changing twelve strings.
         </p>
         <p>
-          Settled on per-page folders so translations live next to the page
-          they describe.
+          Settled on per-page folders so translations live next to the page they describe.
         </p>
       </Body>
     ),
@@ -63,8 +61,8 @@ const FULL_DATA = [
     content: (
       <Body>
         <p>
-          The Indiecrafts studio launched with two designers and a developer
-          in a Bordeaux carriage house.
+          The Indiecrafts studio launched with two designers and a developer in a Bordeaux
+          carriage house.
         </p>
       </Body>
     ),

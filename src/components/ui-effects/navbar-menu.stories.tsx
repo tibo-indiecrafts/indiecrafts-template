@@ -1,14 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState } from "react";
-import {
-  HoveredLink,
-  Menu,
-  MenuItem,
-  ProductItem,
-} from "./navbar-menu";
+import { HoveredLink, Menu, MenuItem, ProductItem } from "./navbar-menu";
 
 const meta: Meta<typeof Menu> = {
-  title: "UI Effects/NavbarMenu",
+  title: "UI Effects/Nav/NavbarMenu",
   component: Menu,
   parameters: { layout: "fullscreen" },
 };
@@ -119,25 +114,18 @@ export const ManyItems: Story = {
     return (
       <Stage>
         <Menu setActive={setActive}>
-          {["Home", "Work", "Services", "Pricing", "Blog", "Contact"].map(
-            (item) => (
-              <MenuItem
-                key={item}
-                setActive={setActive}
-                active={active}
-                item={item}
-              >
-                <div className="flex flex-col space-y-3 p-2 text-sm">
-                  <HoveredLink href={`#${item.toLowerCase()}-1`}>
-                    {item} overview
-                  </HoveredLink>
-                  <HoveredLink href={`#${item.toLowerCase()}-2`}>
-                    {item} details
-                  </HoveredLink>
-                </div>
-              </MenuItem>
-            ),
-          )}
+          {["Home", "Work", "Services", "Pricing", "Blog", "Contact"].map((item) => (
+            <MenuItem key={item} setActive={setActive} active={active} item={item}>
+              <div className="flex flex-col space-y-3 p-2 text-sm">
+                <HoveredLink href={`#${item.toLowerCase()}-1`}>
+                  {item} overview
+                </HoveredLink>
+                <HoveredLink href={`#${item.toLowerCase()}-2`}>
+                  {item} details
+                </HoveredLink>
+              </div>
+            </MenuItem>
+          ))}
         </Menu>
       </Stage>
     );

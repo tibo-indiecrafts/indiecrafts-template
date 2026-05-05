@@ -24,6 +24,7 @@
 
 import { readdirSync, readFileSync, writeFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
+import { spawnSync } from "node:child_process";
 
 const ROOT = process.cwd();
 const APP_LOCALE_DIR = join(ROOT, "src/app/[locale]");
@@ -79,9 +80,7 @@ if (configs.length === 0) {
 // Section schemas import StaticAppPathname for href fields. If we
 // imported page.configs here, schemas → page.configs → schemas would
 // cycle. The literal union breaks the cycle.
-const literals = configs
-  .map((c) => `  | "${c.key}"`)
-  .join("\n");
+const literals = configs.map((c) => `  | "${c.key}"`).join("\n");
 
 const routesTypesContent = `${HEADER}
 /**
@@ -108,21 +107,18 @@ writeFileSync(ROUTES_TYPES_OUT, routesTypesContent);
 // ── pages/registry.generated.ts — imports + PAGES array ──────────────
 function importVarName(id) {
   // "forgot-password" → "forgotPasswordPage"
-  return (
-    id.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()) + "Page"
-  );
+  return id.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()) + "Page";
 }
 
 const imports = configs
   .map((c) => {
-    const importPath = "@/" + relative(join(ROOT, "src"), c.file).replace(/\\/g, "/").replace(/\.ts$/, "");
+    const importPath =
+      "@/" + relative(join(ROOT, "src"), c.file).replace(/\\/g, "/").replace(/\.ts$/, "");
     return `import ${importVarName(c.id)} from "${importPath}";`;
   })
   .join("\n");
 
-const pagesArray = configs
-  .map((c) => `  ${importVarName(c.id)},`)
-  .join("\n");
+const pagesArray = configs.map((c) => `  ${importVarName(c.id)},`).join("\n");
 
 // PATHNAMES emitted with literal keys — preserves per-locale slugs from
 // each `page.config.ts` (the `slugs` field is read at runtime via
@@ -131,9 +127,7 @@ const pathnamesEntries = configs
   .map((c) => `  "${c.key}": expandSlug(${importVarName(c.id)}.slugs),`)
   .join("\n");
 
-const reExports = configs
-  .map((c) => `  ${importVarName(c.id)},`)
-  .join("\n");
+const reExports = configs.map((c) => `  ${importVarName(c.id)},`).join("\n");
 
 const registryContent = `${HEADER}
 import { expandSlug } from "./expand-slug";
@@ -153,6 +147,21 @@ ${reExports}
 `;
 
 writeFileSync(REGISTRY_OUT, registryContent);
+
+// Format the generated files so `pnpm verify`'s format:check stays clean.
+spawnSync(
+  "pnpm",
+  [
+    "exec",
+    "prettier",
+    "--write",
+    "--log-level",
+    "silent",
+    ROUTES_TYPES_OUT,
+    REGISTRY_OUT,
+  ],
+  { stdio: "inherit" },
+);
 
 console.log(`✓ wrote ${configs.length} routes`);
 console.log(`  - ${relative(ROOT, ROUTES_TYPES_OUT)}`);

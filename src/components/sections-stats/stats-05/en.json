@@ -1,0 +1,9 @@
+{
+  "title": "Growth metrics",
+  "viewMore": "View more →",
+  "items": {
+    "mrr": { "name": "Monthly recurring revenue" },
+    "users": { "name": "Users" },
+    "user-growth": { "name": "User growth" }
+  }
+}

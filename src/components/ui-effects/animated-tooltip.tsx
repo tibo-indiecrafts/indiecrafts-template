@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-static-element-interactions -- Aceternity / MagicUI upstream */
 import React, { useState, useRef } from "react";
 import {
   motion,
@@ -24,14 +25,8 @@ export const AnimatedTooltip = ({
   const x = useMotionValue(0);
   const animationFrameRef = useRef<number | null>(null);
 
-  const rotate = useSpring(
-    useTransform(x, [-100, 100], [-45, 45]),
-    springConfig,
-  );
-  const translateX = useSpring(
-    useTransform(x, [-100, 100], [-50, 50]),
-    springConfig,
-  );
+  const rotate = useSpring(useTransform(x, [-100, 100], [-45, 45]), springConfig);
+  const translateX = useSpring(useTransform(x, [-100, 100], [-50, 50]), springConfig);
 
   const handleMouseMove = (event: any) => {
     if (animationFrameRef.current) {

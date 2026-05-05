@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { SparklesCore } from "./sparkles";
 
 const meta: Meta<typeof SparklesCore> = {
-  title: "UI Effects/Sparkles",
+  title: "UI Effects/Particles & Effects/Sparkles",
   component: SparklesCore,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -49,10 +49,7 @@ export const Default: Story = {
   render: (args) => (
     <Stage>
       <SparklesCore {...args} className="absolute inset-0" />
-      <Body
-        title="Sparkle field"
-        body="A subtle particle backdrop for hero sections."
-      />
+      <Body title="Sparkle field" body="A subtle particle backdrop for hero sections." />
     </Stage>
   ),
 };

@@ -1,0 +1,18 @@
+{
+  "title": "Ship with confidence",
+  "body": "From prototype to production, every tool you need in one place.",
+  "items": {
+    "tab1": {
+      "title": "AI Model Hub",
+      "body": "Access and switch between multiple AI models from a unified interface with seamless provider switching."
+    },
+    "tab2": {
+      "title": "Global Collaboration",
+      "body": "Work with teammates across the globe with real-time presence indicators and automatic syncing."
+    },
+    "tab3": {
+      "title": "Automated Workflows",
+      "body": "Build custom automation pipelines with drag-and-drop simplicity and pre-built integrations."
+    }
+  }
+}

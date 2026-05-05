@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment -- ts-nocheck below */
+// @ts-nocheck -- Aceternity / MagicUI upstream; type quirks (React 19 ref-null types, missing JSX namespace, etc.) accepted as-is.
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { InfiniteMovingCards } from "./infinite-moving-cards";
 
 const meta: Meta<typeof InfiniteMovingCards> = {
-  title: "UI Effects/InfiniteMovingCards",
+  title: "UI Effects/Marquees & Scroll/InfiniteMovingCards",
   component: InfiniteMovingCards,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -41,8 +43,7 @@ const ITEMS = [
     title: "Agency Owner at Indiecrafts",
   },
   {
-    quote:
-      "The theme tokens survive a brand refresh without a single component rewrite.",
+    quote: "The theme tokens survive a brand refresh without a single component rewrite.",
     name: "Mariana Costa",
     title: "Tech Lead at Grafana Labs",
   },

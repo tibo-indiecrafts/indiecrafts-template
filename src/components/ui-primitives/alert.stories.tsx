@@ -43,9 +43,7 @@ export const Destructive: Story = {
       <Alert variant="destructive">
         <AlertCircle />
         <AlertTitle>Could not save</AlertTitle>
-        <AlertDescription>
-          Your session expired. Sign in again to retry.
-        </AlertDescription>
+        <AlertDescription>Your session expired. Sign in again to retry.</AlertDescription>
       </Alert>
     </Frame>
   ),
@@ -70,8 +68,8 @@ export const NoIcon: Story = {
       <Alert>
         <AlertTitle>Heads up</AlertTitle>
         <AlertDescription>
-          The grid switches to single-column when no <code>&lt;svg&gt;</code> direct
-          child is present.
+          The grid switches to single-column when no <code>&lt;svg&gt;</code> direct child
+          is present.
         </AlertDescription>
       </Alert>
     </Frame>

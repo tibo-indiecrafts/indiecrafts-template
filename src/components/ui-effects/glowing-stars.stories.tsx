@@ -6,7 +6,7 @@ import {
 } from "./glowing-stars";
 
 const meta: Meta<typeof GlowingStarsBackgroundCard> = {
-  title: "UI Effects/GlowingStars",
+  title: "UI Effects/Cards/GlowingStars",
   component: GlowingStarsBackgroundCard,
   parameters: { layout: "centered" },
 };
@@ -46,8 +46,8 @@ export const CustomWidth: Story = {
     <GlowingStarsBackgroundCard className="max-w-sm">
       <GlowingStarsTitle>Telescope</GlowingStarsTitle>
       <GlowingStarsDescription className="max-w-full">
-        A wider card holds longer descriptions without wrapping awkwardly. Use
-        the `className` prop to override the default `max-w-md`.
+        A wider card holds longer descriptions without wrapping awkwardly. Use the
+        `className` prop to override the default `max-w-md`.
       </GlowingStarsDescription>
     </GlowingStarsBackgroundCard>
   ),

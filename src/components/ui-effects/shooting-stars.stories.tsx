@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ShootingStars } from "./shooting-stars";
 
 const meta: Meta<typeof ShootingStars> = {
-  title: "UI Effects/ShootingStars",
+  title: "UI Effects/Backgrounds/ShootingStars",
   component: ShootingStars,
   parameters: { layout: "fullscreen" },
   argTypes: {

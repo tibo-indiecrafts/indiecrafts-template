@@ -1,0 +1,14 @@
+{
+  "title": "Plan overview",
+  "description": "You are currently on the {planName} plan.",
+  "defaultPlanName": "starter",
+  "viewOtherPlans": "View other plans",
+  "usage": "{current} of {allowed} used",
+  "capacityLabel": "Capacity",
+  "items": {
+    "workspaces": { "name": "Workspaces" },
+    "dashboards": { "name": "Dashboards" },
+    "chart-widgets": { "name": "Chart widgets" },
+    "storage": { "name": "Storage" }
+  }
+}

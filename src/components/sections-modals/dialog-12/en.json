@@ -1,0 +1,16 @@
+{
+  "trigger": "Open Dialog",
+  "title": "Add a writer",
+  "uploadHeading": "Upload Image",
+  "uploadHelp": "Max file size: 1MB",
+  "uploadCta": "Add Image",
+  "uploadAdd": "Upload image",
+  "uploadRemove": "Remove image",
+  "uploadAvatarAlt": "Profile",
+  "uploadTooLarge": "File size exceeds 1MB limit",
+  "authorLabel": "Author name",
+  "authorRequired": "*",
+  "titleLabel": "Title",
+  "cancel": "Cancel",
+  "submit": "Save Changes"
+}

@@ -1,0 +1,17 @@
+{
+  "title": "Powerful features for modern teams",
+  "items": {
+    "slide1": {
+      "body": "<strong>Smart email composition</strong> with AI-powered suggestions, templates, and seamless collaboration for faster communication."
+    },
+    "slide2": {
+      "body": "<strong>Organized note-taking</strong> with rich formatting, tagging, and instant search to capture and retrieve ideas effortlessly."
+    },
+    "slide3": {
+      "body": "<strong>AI autocomplete</strong> that learns your writing style and provides context-aware suggestions to boost productivity."
+    },
+    "slide4": {
+      "body": "<strong>Real-time translation</strong> across 50+ languages with automatic detection and natural-sounding output for global teams."
+    }
+  }
+}

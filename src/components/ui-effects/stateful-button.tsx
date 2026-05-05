@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-unused-vars -- Aceternity / MagicUI upstream */
 import { cn } from "@/lib/utils";
 import React from "react";
 import { motion, AnimatePresence, useAnimate } from "motion/react";

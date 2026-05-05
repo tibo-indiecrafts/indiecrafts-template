@@ -23,13 +23,13 @@ Each wrapper has the same 5-file shape as the rest of the template:
 
 ## When to wrap vs fork vs replace
 
-| Scenario | Path |
-|---|---|
-| Primitive accepts the strings as props (English defaults) | **Wrap** — labels prop merged with defaults |
+| Scenario                                                                              | Path                                                                                             |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Primitive accepts the strings as props (English defaults)                             | **Wrap** — labels prop merged with defaults                                                      |
 | Primitive hardcodes strings inside JSX on a canvas/img we can wrap with `aria-hidden` | **Wrap as decorative** — opt-in `informational` for the rare case the visual carries information |
-| Primitive hardcodes asset URLs deep in JSX | **Fork** — edit the upstream file; note the divergence |
-| Primitive hardcodes interactive button copy / a11y inside its render tree | **Fork** — wrappers can't reach into descendants |
-| Primitive's component is opaque and you want a different look | **Replace** — write a sibling that owns the rendering |
+| Primitive hardcodes asset URLs deep in JSX                                            | **Fork** — edit the upstream file; note the divergence                                           |
+| Primitive hardcodes interactive button copy / a11y inside its render tree             | **Fork** — wrappers can't reach into descendants                                                 |
+| Primitive's component is opaque and you want a different look                         | **Replace** — write a sibling that owns the rendering                                            |
 
 ## Current wrappers (folder children of `ui-effects/`)
 
@@ -61,7 +61,7 @@ opt-in to a translated label.
   `blocks.animated-testimonials.items.<id>`. Pass `testimonials` to
   override with caller-supplied data (e.g. CMS).
 
-> The brand mark itself lives at `layouts/_shared/Logo` (renders
+> The brand mark itself lives at `layouts/_shared/logo` (renders
 > `siteConfig.logo`). Use that everywhere you'd reach for `NavbarLogo`.
 
 ## Known gaps left as flat upstream files (require a fork, not a wrapper)
@@ -74,4 +74,4 @@ hits — accept that re-running the Aceternity sync will clobber the diff.
 - `hero-video-dialog.tsx` — play-button `aria-label="Play video"` + iframe `title="Hero Video player"` are inside the primitive. Fork to localize.
 - `tweet-card.tsx` — verified badge `aria-label="Verified Account"` on `MagicTweet`. Fork to localize.
 - `noise-background.tsx` — `<img src="https://assets.aceternity.com/noise.webp">`. Self-host the asset + fork to swap.
-- `resizable-navbar.tsx` — logo URL hardcoded. Superseded for the brand-mark use case by `layouts/_shared/Logo` (`siteConfig.logo`).
+- `resizable-navbar.tsx` — logo URL hardcoded. Superseded for the brand-mark use case by `layouts/_shared/logo` (`siteConfig.logo`).

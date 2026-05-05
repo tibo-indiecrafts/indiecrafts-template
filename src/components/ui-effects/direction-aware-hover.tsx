@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element, jsx-a11y/img-redundant-alt -- Aceternity / MagicUI upstream */
 import { useRef, useState } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
@@ -24,9 +25,7 @@ export const DirectionAwareHover = ({
     "top" | "bottom" | "left" | "right" | string
   >("left");
 
-  const handleMouseEnter = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!ref.current) return;
 
     const direction = getDirection(event, ref.current);
@@ -52,7 +51,7 @@ export const DirectionAwareHover = ({
 
   const getDirection = (
     ev: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    obj: HTMLElement
+    obj: HTMLElement,
   ) => {
     const { width: w, height: h, left, top } = obj.getBoundingClientRect();
     const x = ev.clientX - left - (w / 2) * (w > h ? h / w : 1);
@@ -66,8 +65,8 @@ export const DirectionAwareHover = ({
       onMouseEnter={handleMouseEnter}
       ref={ref}
       className={cn(
-        "md:h-96 w-60 h-60 md:w-96 bg-transparent rounded-lg overflow-hidden group/card relative",
-        className
+        "group/card relative h-60 w-60 overflow-hidden rounded-lg bg-transparent md:h-96 md:w-96",
+        className,
       )}
     >
       <AnimatePresence mode="wait">
@@ -77,10 +76,10 @@ export const DirectionAwareHover = ({
           whileHover={direction}
           exit="exit"
         >
-          <motion.div className="group-hover/card:block hidden absolute inset-0 w-full h-full bg-black/40 z-10 transition duration-500" />
+          <motion.div className="absolute inset-0 z-10 hidden h-full w-full bg-black/40 transition duration-500 group-hover/card:block" />
           <motion.div
             variants={variants}
-            className="h-full w-full relative bg-gray-50 dark:bg-black"
+            className="relative h-full w-full bg-gray-50 dark:bg-black"
             transition={{
               duration: 0.2,
               ease: "easeOut",
@@ -88,10 +87,7 @@ export const DirectionAwareHover = ({
           >
             <img
               alt="image"
-              className={cn(
-                "h-full w-full object-cover scale-[1.15]",
-                imageClassName
-              )}
+              className={cn("h-full w-full scale-[1.15] object-cover", imageClassName)}
               width="1000"
               height="1000"
               src={imageUrl}
@@ -103,10 +99,7 @@ export const DirectionAwareHover = ({
               duration: 0.5,
               ease: "easeOut",
             }}
-            className={cn(
-              "text-white absolute bottom-4 left-4 z-40",
-              childrenClassName
-            )}
+            className={cn("absolute bottom-4 left-4 z-40 text-white", childrenClassName)}
           >
             {children}
           </motion.div>

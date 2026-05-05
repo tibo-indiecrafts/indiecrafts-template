@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { LineShadowText } from "./line-shadow-text";
 
 const meta: Meta<typeof LineShadowText> = {
-  title: "UI Effects/LineShadowText",
+  title: "UI Effects/Text/LineShadowText",
   component: LineShadowText,
   parameters: { layout: "centered" },
   argTypes: {

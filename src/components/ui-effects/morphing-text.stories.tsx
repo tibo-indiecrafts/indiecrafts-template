@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { MorphingText } from "./morphing-text";
 
 const meta: Meta<typeof MorphingText> = {
-  title: "UI Effects/MorphingText",
+  title: "UI Effects/Text/MorphingText",
   component: MorphingText,
   parameters: { layout: "centered" },
 };
@@ -33,9 +33,7 @@ export const Default: Story = {
 export const Slogan: Story = {
   render: () => (
     <Stage>
-      <MorphingText
-        texts={["Beautiful.", "Modern.", "Accessible.", "Fast."]}
-      />
+      <MorphingText texts={["Beautiful.", "Modern.", "Accessible.", "Fast."]} />
     </Stage>
   ),
 };
@@ -54,11 +52,7 @@ export const LongPhrases: Story = {
   render: () => (
     <Stage>
       <MorphingText
-        texts={[
-          "Rapid prototypes",
-          "Production sites",
-          "Reusable templates",
-        ]}
+        texts={["Rapid prototypes", "Production sites", "Reusable templates"]}
       />
     </Stage>
   ),

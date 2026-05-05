@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { TracingBeam } from "./tracing-beam";
 
 const meta: Meta<typeof TracingBeam> = {
-  title: "UI Effects/TracingBeam",
+  title: "UI Effects/Cards/TracingBeam",
   component: TracingBeam,
   parameters: { layout: "fullscreen" },
 };
@@ -27,11 +28,7 @@ const Article = ({
     <h2 className="mb-4 text-2xl font-semibold">{title}</h2>
     <p className="text-muted-foreground mb-6 leading-relaxed">{body}</p>
     {imgSrc && (
-      <img
-        src={imgSrc}
-        alt=""
-        className="aspect-[16/9] w-full rounded-lg object-cover"
-      />
+      <img src={imgSrc} alt="" className="aspect-[16/9] w-full rounded-lg object-cover" />
     )}
   </div>
 );

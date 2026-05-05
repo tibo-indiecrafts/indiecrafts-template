@@ -4,7 +4,7 @@ import homePage from "./page.config";
 import { isPageVisible } from "@/config/features.config";
 import type { Locale } from "@/config/locales.config";
 import { buildMetadata } from "@/lib/metadata";
-import { Landing1, landing1Defaults } from "@/components/pages-marketing/landing-1";
+import { Landing01, landing01Defaults } from "@/components/pages-landing/landing-01";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props) {
   // template defaults via the merge inside `buildMetadata`.
   return buildMetadata({
     page: homePage,
-    templateSeo: landing1Defaults.seo,
+    templateSeo: landing01Defaults.seo,
     locale,
   });
 }
@@ -24,5 +24,5 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   if (!isPageVisible(homePage)) notFound();
   setRequestLocale(locale);
-  return <Landing1 />;
+  return <Landing01 />;
 }

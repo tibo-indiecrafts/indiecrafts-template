@@ -1,0 +1,12 @@
+/* Progress-bar sweep keyframe for FeaturesExpandable3's auto-cycle
+   timer. Width is animated via `transform: scaleX` from 0 → 1 over
+   the configured autoplay duration. Duration + paused state are set
+   inline by the component. */
+@keyframes features-expandable-3-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

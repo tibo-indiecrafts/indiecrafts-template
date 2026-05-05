@@ -6,7 +6,7 @@ import {
 } from "./text-reveal-card";
 
 const meta: Meta<typeof TextRevealCard> = {
-  title: "UI Effects/TextRevealCard",
+  title: "UI Effects/Text/TextRevealCard",
   component: TextRevealCard,
   parameters: { layout: "centered" },
 };
@@ -28,10 +28,7 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
 export const Default: Story = {
   render: () => (
     <Stage>
-      <TextRevealCard
-        text="You know the rules."
-        revealText="And so do I."
-      />
+      <TextRevealCard text="You know the rules." revealText="And so do I." />
     </Stage>
   ),
 };
@@ -40,14 +37,11 @@ export const Default: Story = {
 export const WithCopy: Story = {
   render: () => (
     <Stage>
-      <TextRevealCard
-        text="Indie. Hand-crafted."
-        revealText="Production-ready. Today."
-      >
+      <TextRevealCard text="Indie. Hand-crafted." revealText="Production-ready. Today.">
         <TextRevealCardTitle>Indiecrafts</TextRevealCardTitle>
         <TextRevealCardDescription>
-          A config-first Next.js template that turns weekend ideas into
-          shippable client sites.
+          A config-first Next.js template that turns weekend ideas into shippable client
+          sites.
         </TextRevealCardDescription>
       </TextRevealCard>
     </Stage>
@@ -58,10 +52,7 @@ export const WithCopy: Story = {
 export const Marketing: Story = {
   render: () => (
     <Stage>
-      <TextRevealCard
-        text="Ship in a weekend."
-        revealText="Not a quarter."
-      >
+      <TextRevealCard text="Ship in a weekend." revealText="Not a quarter.">
         <TextRevealCardTitle>Built for speed</TextRevealCardTitle>
         <TextRevealCardDescription>
           Hover left or right to compare the timelines.
@@ -81,9 +72,7 @@ export const Wider: Story = {
         className="w-[640px] max-w-full"
       >
         <TextRevealCardTitle>Wide variant</TextRevealCardTitle>
-        <TextRevealCardDescription>
-          Custom width via className.
-        </TextRevealCardDescription>
+        <TextRevealCardDescription>Custom width via className.</TextRevealCardDescription>
       </TextRevealCard>
     </Stage>
   ),

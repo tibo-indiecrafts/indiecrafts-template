@@ -196,8 +196,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
               const scale = gridSize * 2;
               const rotX = x * Math.cos(angle) + y * Math.sin(angle);
               const rotY = -x * Math.sin(angle) + y * Math.cos(angle);
-              const pattern =
-                (Math.sin(rotX / scale) + Math.sin(rotY / scale) + 2) / 4;
+              const pattern = (Math.sin(rotX / scale) + Math.sin(rotY / scale) + 2) / 4;
               ditherThreshold = pattern;
               break;
             }
@@ -209,8 +208,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
             }
             case "crosshatch": {
               const line1 = (x + y) % (gridSize * 2) < gridSize ? 1 : 0;
-              const line2 =
-                (x - y + gridSize * 4) % (gridSize * 2) < gridSize ? 1 : 0;
+              const line2 = (x - y + gridSize * 4) % (gridSize * 2) < gridSize ? 1 : 0;
               ditherThreshold = (line1 + line2) / 2;
               break;
             }
@@ -232,9 +230,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
             }
             case "duotone": {
               const shouldBeDark = luminance < ditherThreshold;
-              outputColor = shouldBeDark
-                ? parsedPrimaryColor
-                : parsedSecondaryColor;
+              outputColor = shouldBeDark ? parsedPrimaryColor : parsedSecondaryColor;
               break;
             }
             case "custom": {
@@ -245,11 +241,9 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
                   : parsedCustomPalette[1];
               } else {
                 // Quantize to closest palette color with dithering
-                const adjustedLuminance =
-                  luminance + (ditherThreshold - 0.5) * 0.5;
+                const adjustedLuminance = luminance + (ditherThreshold - 0.5) * 0.5;
                 const paletteIndex = Math.floor(
-                  clamp(adjustedLuminance, 0, 1) *
-                    (parsedCustomPalette.length - 1),
+                  clamp(adjustedLuminance, 0, 1) * (parsedCustomPalette.length - 1),
                 );
                 outputColor = parsedCustomPalette[paletteIndex];
               }
@@ -337,8 +331,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
     const processImage = (img: HTMLImageElement) => {
       if (isCancelled) return;
 
-      const dpr =
-        typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+      const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
       const displayWidth = dimensions.width;
       const displayHeight = dimensions.height;
 
@@ -390,12 +383,7 @@ export const DitherShader: React.FC<DitherShaderProps> = ({
       offCtx.drawImage(img, dx, dy, dw, dh);
 
       try {
-        imageDataRef.current = offCtx.getImageData(
-          0,
-          0,
-          displayWidth,
-          displayHeight,
-        );
+        imageDataRef.current = offCtx.getImageData(0, 0, displayWidth, displayHeight);
       } catch {
         console.error("Could not get image data. CORS issue?");
         return;

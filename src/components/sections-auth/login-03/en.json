@@ -1,0 +1,11 @@
+{
+  "title": "Welcome Back",
+  "description": "Enter your credentials to access your account.",
+  "emailLabel": "Email",
+  "emailPlaceholder": "name@example.com",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "**************",
+  "submit": "Sign in",
+  "resetPrompt": "Forgot your password?",
+  "resetCta": "Reset password"
+}

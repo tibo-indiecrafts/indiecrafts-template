@@ -21,6 +21,7 @@ const LOCALE_DIR = path.join(ROOT, "src/app/[locale]");
 const LOCALES_FILE = path.join(ROOT, "src/config/locales.config.ts");
 const ROUTES_TYPES_FILE = path.join(ROOT, "src/config/routes.types.ts");
 const PAGES_INDEX_FILE = path.join(ROOT, "src/config/pages/index.ts");
+const PAGES_REGISTRY_FILE = path.join(ROOT, "src/config/pages/registry.generated.ts");
 const PAGES_MESSAGES_FILE = path.join(ROOT, "src/config/pages/messages.ts");
 
 const issues = [];
@@ -69,12 +70,16 @@ async function listPages() {
   return found;
 }
 
-const [locales, routesTypesSrc, indexSrc, messagesSrc] = await Promise.all([
+const [locales, routesTypesSrc, indexSrc, registrySrc, messagesSrc] = await Promise.all([
   readSupportedLocales(),
   readFile(ROUTES_TYPES_FILE, "utf8"),
   readFile(PAGES_INDEX_FILE, "utf8"),
+  readFile(PAGES_REGISTRY_FILE, "utf8"),
   readFile(PAGES_MESSAGES_FILE, "utf8"),
 ]);
+// `index.ts` re-exports from the generated registry — accept either file
+// as the source of truth for the import-presence check.
+const aggregatedRegistry = indexSrc + "\n" + registrySrc;
 
 const pages = await listPages();
 
@@ -92,27 +97,43 @@ for (const page of pages) {
     const importPathFragment = page.segment
       ? `@/app/[locale]/${page.segment}/page.config`
       : `@/app/[locale]/page.config`;
-    if (!indexSrc.includes(importPathFragment)) {
-      issue(`[${label}] not imported in pages/index.ts (expected ${importPathFragment})`);
+    if (!aggregatedRegistry.includes(importPathFragment)) {
+      issue(
+        `[${label}] not imported in pages/{index,registry.generated}.ts (expected ${importPathFragment})`,
+      );
     }
-    if (!indexSrc.includes(`${id}Page`)) {
-      issue(`[${label}] "${id}Page" reference not found in pages/index.ts`);
+    // ID may be hyphenated (e.g. "forgot-password" → "forgotPasswordPage").
+    const camelId = id.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
+    if (!aggregatedRegistry.includes(`${camelId}Page`)) {
+      issue(`[${label}] "${camelId}Page" reference not found in pages registry`);
     }
   }
 
-  for (const locale of locales) {
-    const msgFile = path.join(page.dir, "messages", `${locale}.json`);
-    try {
-      await stat(msgFile);
-    } catch {
-      issue(`[${label}] Missing messages/${locale}.json`);
-      continue;
-    }
-    const importPath = page.segment
-      ? `@/app/[locale]/${page.segment}/messages/${locale}.json`
-      : `@/app/[locale]/messages/${locale}.json`;
-    if (!messagesSrc.includes(importPath)) {
-      issue(`[${label}] messages.ts does not import ${importPath}`);
+  // Per-page messages folders are optional — most routes get their copy
+  // from the page-template's `blocks.<key>.*` namespace. Only enforce the
+  // messages contract when a `messages/` folder exists.
+  let hasMessages = false;
+  try {
+    await stat(path.join(page.dir, "messages"));
+    hasMessages = true;
+  } catch {
+    /* opt-out of per-page messages */
+  }
+  if (hasMessages) {
+    for (const locale of locales) {
+      const msgFile = path.join(page.dir, "messages", `${locale}.json`);
+      try {
+        await stat(msgFile);
+      } catch {
+        issue(`[${label}] Missing messages/${locale}.json`);
+        continue;
+      }
+      const importPath = page.segment
+        ? `@/app/[locale]/${page.segment}/messages/${locale}.json`
+        : `@/app/[locale]/messages/${locale}.json`;
+      if (!messagesSrc.includes(importPath)) {
+        issue(`[${label}] messages.ts does not import ${importPath}`);
+      }
     }
   }
 }

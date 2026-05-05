@@ -1,0 +1,14 @@
+{
+  "widgets": {
+    "ides": {
+      "title": "Native IDE support"
+    },
+    "llms": {
+      "title": "Works with any LLM"
+    },
+    "cli": {
+      "title": "CLI compatible",
+      "body": "Run <command>quartz</command> <flag>--help</flag> to see the available commands."
+    }
+  }
+}

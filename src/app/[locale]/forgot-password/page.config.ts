@@ -1,6 +1,6 @@
 /**
  * Forgot-password route metadata. SEO + composition live in
- * `pages-auth/forgot-password-1/`.
+ * `pages-forgot-password/forgot-password-01/`.
  */
 
 import { definePage } from "@/config/pages/types";

@@ -1,11 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import {
-  ScrollVelocityContainer,
-  ScrollVelocityRow,
-} from "./scroll-based-velocity";
+import { ScrollVelocityContainer, ScrollVelocityRow } from "./scroll-based-velocity";
 
 const meta: Meta<typeof ScrollVelocityContainer> = {
-  title: "UI Effects/ScrollBasedVelocity",
+  title: "UI Effects/Marquees & Scroll/ScrollBasedVelocity",
   component: ScrollVelocityContainer,
   parameters: { layout: "fullscreen" },
 };

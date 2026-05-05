@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { PulsatingButton } from "./pulsating-button";
 
 const meta: Meta<typeof PulsatingButton> = {
-  title: "UI Effects/PulsatingButton",
+  title: "UI Effects/Buttons/PulsatingButton",
   component: PulsatingButton,
   parameters: { layout: "centered" },
   argTypes: {
@@ -51,10 +51,7 @@ export const CustomColor: Story = {
   args: { pulseColor: "#ec4899", duration: "2s" },
   render: (args) => (
     <Stage>
-      <PulsatingButton
-        {...args}
-        className="bg-pink-600 text-white hover:bg-pink-500"
-      >
+      <PulsatingButton {...args} className="bg-pink-600 text-white hover:bg-pink-500">
         Try free
       </PulsatingButton>
     </Stage>
@@ -75,9 +72,7 @@ export const Slow: Story = {
 export const Larger: Story = {
   render: () => (
     <Stage>
-      <PulsatingButton className="px-8 py-3 text-lg">
-        Try the demo
-      </PulsatingButton>
+      <PulsatingButton className="px-8 py-3 text-lg">Try the demo</PulsatingButton>
     </Stage>
   ),
 };

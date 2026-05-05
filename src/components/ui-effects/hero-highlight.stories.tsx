@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HeroHighlight, Highlight } from "./hero-highlight";
 
 const meta: Meta<typeof HeroHighlight> = {
-  title: "UI Effects/HeroHighlight",
+  title: "UI Effects/Backgrounds/HeroHighlight",
   component: HeroHighlight,
   parameters: { layout: "fullscreen" },
 };
@@ -20,8 +20,8 @@ export const Default: Story = {
     <HeroHighlight>
       <h1 className="text-foreground mx-auto max-w-4xl px-4 text-center text-2xl font-bold md:text-4xl lg:text-5xl">
         Build sites your users{" "}
-        <Highlight className="text-foreground">love to come back to</Highlight>
-        , without the fluff.
+        <Highlight className="text-foreground">love to come back to</Highlight>, without
+        the fluff.
       </h1>
     </HeroHighlight>
   ),
@@ -63,8 +63,8 @@ export const WithSubtitle: Story = {
           <Highlight className="text-foreground">a single weekend</Highlight>.
         </h1>
         <p className="text-muted-foreground mt-6 text-base md:text-lg">
-          Fork the template, edit a few config files, ship. No framework setup,
-          no design system to scaffold.
+          Fork the template, edit a few config files, ship. No framework setup, no design
+          system to scaffold.
         </p>
       </div>
     </HeroHighlight>

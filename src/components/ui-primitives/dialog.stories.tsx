@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities -- shadcn upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Button } from "./button";
 import {

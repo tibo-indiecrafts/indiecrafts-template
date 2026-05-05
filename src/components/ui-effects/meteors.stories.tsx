@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Meteors } from "./meteors";
 
 const meta: Meta<typeof Meteors> = {
-  title: "UI Effects/Meteors",
+  title: "UI Effects/Particles & Effects/Meteors",
   component: Meteors,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -32,8 +32,8 @@ export const Default: Story = {
       <div className="relative px-6 text-center">
         <h2 className="text-3xl font-semibold text-white">Meteor shower</h2>
         <p className="mt-2 max-w-md text-sm text-white/70">
-          Each streak picks its own delay and duration so the shower feels
-          natural rather than mechanical.
+          Each streak picks its own delay and duration so the shower feels natural rather
+          than mechanical.
         </p>
       </div>
     </Stage>
@@ -46,9 +46,7 @@ export const Sparse: Story = {
   render: (args) => (
     <Stage>
       <Meteors {...args} />
-      <h3 className="relative text-2xl font-semibold text-white">
-        Just a few
-      </h3>
+      <h3 className="relative text-2xl font-semibold text-white">Just a few</h3>
     </Stage>
   ),
 };
@@ -59,9 +57,7 @@ export const Heavy: Story = {
   render: (args) => (
     <Stage>
       <Meteors {...args} />
-      <h3 className="relative text-2xl font-semibold text-white">
-        60 streaks
-      </h3>
+      <h3 className="relative text-2xl font-semibold text-white">60 streaks</h3>
     </Stage>
   ),
 };
@@ -75,9 +71,7 @@ export const Tinted: Story = {
         {...args}
         className="bg-cyan-400 before:from-cyan-300 before:to-transparent"
       />
-      <h3 className="relative text-2xl font-semibold text-white">
-        Cyan trail
-      </h3>
+      <h3 className="relative text-2xl font-semibold text-white">Cyan trail</h3>
     </Stage>
   ),
 };

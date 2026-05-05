@@ -1,0 +1,16 @@
+{
+  "title": "Sign in to your account",
+  "brand": "Acme",
+  "signupPrompt": "Don't have an account?",
+  "signupCta": "Sign up",
+  "githubCta": "Login with GitHub",
+  "googleCta": "Login with Google",
+  "separator": "or",
+  "emailLabel": "Email",
+  "emailPlaceholder": "name@example.com",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "********",
+  "submit": "Sign in",
+  "resetPrompt": "Forgot your password?",
+  "resetCta": "Reset password"
+}

@@ -1,0 +1,29 @@
+{
+  "title": "Documenso Chat",
+  "status": "Live preview",
+  "subtitle": "- Powered by shadcn/ui",
+  "placeholder": "Ask about the block, UI patterns, or an AI workflow",
+  "refresh": "Refresh",
+  "settings": "Settings",
+  "messages": {
+    "intro": {
+      "content": "**Welcome back.** I can help you explore this chat block.\n\n- Draft UI copy\n- Summarize docs\n- Turn notes into tasks\n\nAsk me anything and I will respond with a demo reply."
+    },
+    "question": {
+      "content": "What makes this chat block reusable?"
+    },
+    "answer": {
+      "content": "It is built with **AI Elements** for conversation layout and input, plus shadcn/ui for the chrome. That means you can drop it into other screens and wire it up to a real AI backend later."
+    }
+  },
+  "responses": {
+    "0": "Here is a quick outline you can reuse:\n\n1. Swap the mock response with a real API call.\n2. Stream tokens into `MessageResponse`.\n3. Keep the layout exactly as-is for a consistent UI.",
+    "1": "If you want multi-model support, add a small model selector next to the status badge and pass the selection to your backend.",
+    "2": "You can also inject tools like file upload or voice input by adding buttons to the prompt footer."
+  },
+  "tools": {
+    "attach": { "label": "Attach" },
+    "quick": { "label": "Quick prompt" },
+    "newChat": { "label": "New chat" }
+  }
+}

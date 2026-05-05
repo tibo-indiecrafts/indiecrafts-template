@@ -1,0 +1,31 @@
+{
+  "title": "Project ledger",
+  "show": "Show",
+  "entries": "entries",
+  "searchPlaceholder": "Search...",
+  "selectAll": "Select all",
+  "selectRow": "Select row",
+  "openMenu": "Open menu",
+  "previousPage": "Previous page",
+  "nextPage": "Next page",
+  "goToPage": "Go to page {page}",
+  "noResults": "No results.",
+  "showing": "Showing {start} to {end} of {total} entries",
+  "columns": {
+    "name": "Name",
+    "date": "Date",
+    "status": "Status",
+    "amount": "Amount"
+  },
+  "status": {
+    "completed": "Completed",
+    "pending": "Pending",
+    "processing": "Processing",
+    "cancelled": "Cancelled"
+  },
+  "actions": {
+    "view": "View details",
+    "edit": "Edit",
+    "delete": "Delete"
+  }
+}

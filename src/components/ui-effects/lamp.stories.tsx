@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { LampContainer } from "./lamp";
 
 const meta: Meta<typeof LampContainer> = {
-  title: "UI Effects/Lamp",
+  title: "UI Effects/Backgrounds/Lamp",
   component: LampContainer,
   parameters: { layout: "fullscreen" },
 };
@@ -57,8 +57,8 @@ export const WithSubtitle: Story = {
         transition={{ delay: 0.6, duration: 0.8, ease: "easeInOut" }}
         className="mt-4 max-w-md text-center text-base text-slate-300/80"
       >
-        Fork the template, edit a few config files, ship a client site by the
-        end of the weekend.
+        Fork the template, edit a few config files, ship a client site by the end of the
+        weekend.
       </motion.p>
     </LampContainer>
   ),

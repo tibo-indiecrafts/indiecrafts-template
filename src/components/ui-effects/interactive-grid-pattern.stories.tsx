@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { InteractiveGridPattern } from "./interactive-grid-pattern";
 
 const meta: Meta<typeof InteractiveGridPattern> = {
-  title: "UI Effects/InteractiveGridPattern",
+  title: "UI Effects/Backgrounds/InteractiveGridPattern",
   component: InteractiveGridPattern,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -63,12 +63,10 @@ export const Default: Story = {
     >
       <InteractiveGridPattern {...args} />
       <div className="relative px-6 text-center">
-        <h2 className="text-foreground text-3xl font-semibold">
-          Hover the grid
-        </h2>
+        <h2 className="text-foreground text-3xl font-semibold">Hover the grid</h2>
         <p className="text-muted-foreground mt-2 max-w-md text-sm">
-          Each cell highlights independently as the cursor enters and fades
-          back when it leaves.
+          Each cell highlights independently as the cursor enters and fades back when it
+          leaves.
         </p>
       </div>
     </Stage>
@@ -120,8 +118,7 @@ export const Branded: Story = {
     width: 40,
     height: 40,
     squares: [24, 12],
-    squaresClassName:
-      "stroke-primary/30 hover:fill-primary/40 [&:hover]:fill-primary/40",
+    squaresClassName: "stroke-primary/30 hover:fill-primary/40 [&:hover]:fill-primary/40",
   },
   render: (args) => (
     <Stage
@@ -149,9 +146,7 @@ export const WideAspect: Story = {
       rows={args.squares![1]}
     >
       <InteractiveGridPattern {...args} />
-      <h3 className="text-foreground relative text-xl font-semibold">
-        Banner aspect
-      </h3>
+      <h3 className="text-foreground relative text-xl font-semibold">Banner aspect</h3>
     </Stage>
   ),
 };

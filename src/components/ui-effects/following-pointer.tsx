@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/no-static-element-interactions, react-hooks/purity -- Aceternity / MagicUI upstream */
 import React, { useEffect, useState } from "react";
 
 import { motion, AnimatePresence, useMotionValue } from "motion/react";

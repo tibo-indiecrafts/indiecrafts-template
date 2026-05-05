@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AuroraBackground } from "./aurora-background";
 
 const meta: Meta<typeof AuroraBackground> = {
-  title: "UI Effects/AuroraBackground",
+  title: "UI Effects/Backgrounds/AuroraBackground",
   component: AuroraBackground,
   parameters: { layout: "fullscreen" },
 };
@@ -19,8 +19,8 @@ export const Default: Story = {
           Background lights
         </h2>
         <p className="text-muted-foreground max-w-md text-center text-sm md:text-base">
-          And thus the night sky shimmered, an infinite canvas pierced by
-          countless points of celestial light.
+          And thus the night sky shimmered, an infinite canvas pierced by countless points
+          of celestial light.
         </p>
         <button className="bg-foreground text-background mt-2 rounded-full px-4 py-2 text-sm font-medium">
           Explore
@@ -38,9 +38,7 @@ export const FullBleed: Story = {
   render: () => (
     <AuroraBackground showRadialGradient={false}>
       <div className="relative z-10 px-4 text-center">
-        <h2 className="text-4xl font-semibold md:text-6xl">
-          Full-bleed aurora
-        </h2>
+        <h2 className="text-4xl font-semibold md:text-6xl">Full-bleed aurora</h2>
       </div>
     </AuroraBackground>
   ),

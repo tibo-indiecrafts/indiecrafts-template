@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { InteractiveHoverButton } from "./interactive-hover-button";
 
 const meta: Meta<typeof InteractiveHoverButton> = {
-  title: "UI Effects/InteractiveHoverButton",
+  title: "UI Effects/Buttons/InteractiveHoverButton",
   component: InteractiveHoverButton,
   parameters: { layout: "centered" },
 };
@@ -32,9 +32,7 @@ export const Default: Story = {
 export const LongLabel: Story = {
   render: () => (
     <Stage>
-      <InteractiveHoverButton>
-        Read the launch announcement
-      </InteractiveHoverButton>
+      <InteractiveHoverButton>Read the launch announcement</InteractiveHoverButton>
     </Stage>
   ),
 };

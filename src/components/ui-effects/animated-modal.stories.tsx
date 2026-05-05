@@ -9,7 +9,7 @@ import {
 } from "./animated-modal";
 
 const meta: Meta<typeof Modal> = {
-  title: "UI Effects/AnimatedModal",
+  title: "UI Effects/Modals & Overlays/AnimatedModal",
   component: Modal,
   parameters: { layout: "centered" },
 };
@@ -101,10 +101,10 @@ export const LongContent: Story = {
           <h3 className="text-2xl font-semibold">Terms of Service</h3>
           {Array.from({ length: 8 }).map((_, i) => (
             <p key={i} className="text-muted-foreground mt-3 text-sm leading-relaxed">
-              Section {i + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing
-              elit. Sed do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-              laboris nisi ut aliquip ex ea commodo consequat.
+              Section {i + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+              ex ea commodo consequat.
             </p>
           ))}
         </ModalContent>

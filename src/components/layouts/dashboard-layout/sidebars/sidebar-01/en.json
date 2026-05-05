@@ -1,0 +1,58 @@
+{
+  "search": {
+    "trigger": "Search",
+    "placeholder": "Search everything...",
+    "empty": "No results found.",
+    "groups": {
+      "navigation": "Navigation",
+      "favorites": "Favorites",
+      "teams": "Teams",
+      "topics": "Topics"
+    }
+  },
+  "navMain": {
+    "overview": "Overview",
+    "tasks": "Tasks",
+    "meetings": "Meetings",
+    "notes": "Notes",
+    "calendar": "Calendar",
+    "completed": "Completed",
+    "notifications": "Notifications"
+  },
+  "groups": {
+    "favorites": "Favorites",
+    "teams": "Teams",
+    "topics": "Topics"
+  },
+  "favorites": {
+    "design": "Design",
+    "development": "Development",
+    "workshop": "Workshop",
+    "personal": "Personal"
+  },
+  "teams": {
+    "engineering": "Engineering",
+    "marketing": "Marketing"
+  },
+  "topics": {
+    "product-updates": "Product Updates",
+    "company-news": "Company News"
+  },
+  "footer": {
+    "fallback": "CN",
+    "openEditMenu": "Open edit menu",
+    "menu": {
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Logout",
+      "addNew": "Add New",
+      "addItem": "Add New Item",
+      "addBookmark": "Add Bookmark",
+      "addIntegration": "Add Integration"
+    },
+    "tooltip": {
+      "title": "User Information",
+      "body": "More details about the current user or section can be displayed here."
+    }
+  }
+}

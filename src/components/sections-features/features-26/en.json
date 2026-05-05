@@ -1,0 +1,24 @@
+{
+  "title": "Power of LLMs in your editor",
+  "body": "Write code faster with the latest large language models from Gemini, Google PaLM, and Replit.",
+  "intro": "Lyra is evolving into more than just the models. <strong>It supports an entire ecosystem</strong> — from authoring through deployment, with the same primitives.",
+  "cta": "Learn more",
+  "stats": {
+    "fast": {
+      "title": "Fast",
+      "body": "Streaming-first APIs land payloads in milliseconds, even on the slowest connections."
+    },
+    "powerful": {
+      "title": "Powerful",
+      "body": "Composable primitives that scale from a side project to an enterprise rollout."
+    },
+    "security": {
+      "title": "Security",
+      "body": "Hardened defaults, audited dependencies, and least-privilege access on by default."
+    },
+    "aiPowered": {
+      "title": "AI powered",
+      "body": "Smart suggestions, automated workflows, and contextual assistance built in."
+    }
+  }
+}

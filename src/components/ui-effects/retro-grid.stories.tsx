@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { RetroGrid } from "./retro-grid";
 
 const meta: Meta<typeof RetroGrid> = {
-  title: "UI Effects/RetroGrid",
+  title: "UI Effects/Backgrounds/RetroGrid",
   component: RetroGrid,
   parameters: { layout: "fullscreen" },
   argTypes: {

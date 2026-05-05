@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { LinkPreview } from "./link-preview";
 
 const meta: Meta<typeof LinkPreview> = {
-  title: "UI Effects/LinkPreview",
+  title: "UI Effects/Hover & Interactions/LinkPreview",
   component: LinkPreview,
   parameters: { layout: "centered" },
 };

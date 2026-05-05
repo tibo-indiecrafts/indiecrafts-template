@@ -1,0 +1,19 @@
+{
+  "title": "Last 30 days",
+  "status": "Updated just now",
+  "upgrade": "Upgrade",
+  "usedLabel": "Used",
+  "remainingLabel": "Remaining",
+  "items": {
+    "isr-reads": { "name": "ISR Reads" },
+    "edge-requests": { "name": "Edge Requests" },
+    "fast-origin-transfer": { "name": "Fast Origin Transfer" },
+    "speed-insights": { "name": "Speed Insights Data Points" },
+    "fast-data-transfer": { "name": "Fast Data Transfer" },
+    "function-duration": { "name": "Function Duration" },
+    "web-analytics": { "name": "Web Analytics Events" },
+    "isr-writes": { "name": "ISR Writes" },
+    "function-invocations": { "name": "Function Invocations" },
+    "image-cache-reads": { "name": "Image Optimization - Cache Reads" }
+  }
+}

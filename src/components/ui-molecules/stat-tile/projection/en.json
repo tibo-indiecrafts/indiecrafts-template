@@ -1,0 +1,8 @@
+{
+  "title": "Investment growth projection",
+  "items": {
+    "year-1": { "label": "After 1 year" },
+    "year-5": { "label": "After 5 years" },
+    "year-10": { "label": "After 10 years" }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Payments infrastructure for SaaS",
+  "body": "One tool that does it all. Search, generate, analyze, and chat — right inside Tailark.",
+  "primaryCta": "Start building",
+  "secondaryCta": "Request demo",
+  "stats": {
+    "uptime": {
+      "value": "99.9",
+      "unit": "%",
+      "label": "Uptime guarantee",
+      "description": "for all our services."
+    },
+    "speed": {
+      "value": "12",
+      "unit": "X",
+      "label": "12X",
+      "description": "faster processing than previous generation."
+    }
+  }
+}

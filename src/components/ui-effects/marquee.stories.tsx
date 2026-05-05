@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Marquee } from "./marquee";
 
 const meta: Meta<typeof Marquee> = {
-  title: "UI Effects/Marquee",
+  title: "UI Effects/Marquees & Scroll/Marquee",
   component: Marquee,
   parameters: { layout: "fullscreen" },
   argTypes: {

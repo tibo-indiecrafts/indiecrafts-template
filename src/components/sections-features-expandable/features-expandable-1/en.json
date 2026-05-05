@@ -1,0 +1,15 @@
+{
+  "title": "Powerful features for modern teams",
+  "items": {
+    "tab1": {
+      "ariaLabel": "Expand multi-model AI access feature",
+      "title": "Multi-model AI access",
+      "body": "with credit-based switching across Gemini, OpenAI, Deepseek, Mistral, and Qwen — no API rewrites required."
+    },
+    "tab2": {
+      "ariaLabel": "Expand global infrastructure feature",
+      "title": "Global infrastructure",
+      "body": "with multi-region failover, low-latency edge routing, and automatic regional failback for worldwide availability."
+    }
+  }
+}

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { TypingAnimation } from "./typing-animation";
 
 const meta: Meta<typeof TypingAnimation> = {
-  title: "UI Effects/TypingAnimation",
+  title: "UI Effects/Text/TypingAnimation",
   component: TypingAnimation,
   parameters: { layout: "centered" },
   argTypes: {
@@ -65,10 +65,7 @@ export const BlockCursor: Story = {
   args: { cursorStyle: "block" },
   render: (args) => (
     <Stage>
-      <TypingAnimation
-        {...args}
-        className="font-mono text-2xl"
-      >
+      <TypingAnimation {...args} className="font-mono text-2xl">
         $ pnpm dev
       </TypingAnimation>
     </Stage>
@@ -80,10 +77,7 @@ export const UnderscoreCursor: Story = {
   args: { cursorStyle: "underscore" },
   render: (args) => (
     <Stage>
-      <TypingAnimation
-        {...args}
-        className="font-mono text-2xl"
-      >
+      <TypingAnimation {...args} className="font-mono text-2xl">
         building...
       </TypingAnimation>
     </Stage>
@@ -95,11 +89,7 @@ export const Hero: Story = {
   args: { duration: 80 },
   render: (args) => (
     <Stage>
-      <TypingAnimation
-        {...args}
-        as="h1"
-        className="text-5xl font-bold md:text-7xl"
-      >
+      <TypingAnimation {...args} as="h1" className="text-5xl font-bold md:text-7xl">
         Indiecrafts
       </TypingAnimation>
     </Stage>

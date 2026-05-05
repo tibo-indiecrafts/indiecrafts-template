@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HoverEffect } from "./card-hover-effect";
 
 const meta: Meta<typeof HoverEffect> = {
-  title: "UI Effects/CardHoverEffect",
+  title: "UI Effects/Cards/CardHoverEffect",
   component: HoverEffect,
   parameters: { layout: "fullscreen" },
 };

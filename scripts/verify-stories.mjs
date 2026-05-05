@@ -23,7 +23,7 @@ const args = Object.fromEntries(
   process.argv.slice(2).map((a) => {
     const [k, v] = a.replace(/^--/, "").split("=");
     return [k, v ?? true];
-  })
+  }),
 );
 
 const FILTER = args.filter ?? null;
@@ -108,8 +108,7 @@ async function verifyStory(page, story, baseUrl) {
     await page.waitForTimeout(800);
     const result = await page.evaluate(() => {
       const root =
-        document.getElementById("storybook-root") ||
-        document.getElementById("root");
+        document.getElementById("storybook-root") || document.getElementById("root");
       if (!root) return { painted: 0, html: "" };
       const rect = root.getBoundingClientRect();
       const painted = Math.max(0, rect.width) * Math.max(0, rect.height);
@@ -140,13 +139,18 @@ async function verifyStory(page, story, baseUrl) {
 async function main() {
   const stories = Object.values(INDEX.entries).filter((e) => e.type === "story");
   let work = stories;
-  if (FILTER) work = work.filter((s) => s.title.includes(FILTER) || s.id.includes(FILTER));
+  if (FILTER)
+    work = work.filter((s) => s.title.includes(FILTER) || s.id.includes(FILTER));
   work = work.slice(0, LIMIT);
 
-  console.log(`\nVerifying ${work.length} stories${FILTER ? ` (filter: ${FILTER})` : ""}\n`);
+  console.log(
+    `\nVerifying ${work.length} stories${FILTER ? ` (filter: ${FILTER})` : ""}\n`,
+  );
 
   if (!existsSync(join(ROOT, "iframe.html"))) {
-    console.error("ERROR: storybook-static/iframe.html missing — run `pnpm build-storybook` first.");
+    console.error(
+      "ERROR: storybook-static/iframe.html missing — run `pnpm build-storybook` first.",
+    );
     process.exit(1);
   }
 
@@ -162,16 +166,10 @@ async function main() {
     i++;
     const r = await verifyStory(page, story, baseUrl);
     results.push(r);
-    const tag = r.errors.length
-      ? "ERR"
-      : r.timedOut
-      ? "TMO"
-      : r.blank
-      ? "BLK"
-      : "ok ";
+    const tag = r.errors.length ? "ERR" : r.timedOut ? "TMO" : r.blank ? "BLK" : "ok ";
     if (tag !== "ok ") {
       console.log(
-        `[${tag}] ${i.toString().padStart(3)}/${work.length}  ${r.id}  ${r.errors[0] ?? "(blank render)"}`
+        `[${tag}] ${i.toString().padStart(3)}/${work.length}  ${r.id}  ${r.errors[0] ?? "(blank render)"}`,
       );
     }
   }
@@ -180,7 +178,9 @@ async function main() {
   server.close();
 
   const failures = results.filter((r) => r.errors.length || r.blank || r.timedOut);
-  console.log(`\nSummary: ${results.length - failures.length}/${results.length} OK, ${failures.length} failing.`);
+  console.log(
+    `\nSummary: ${results.length - failures.length}/${results.length} OK, ${failures.length} failing.`,
+  );
 
   const grouped = {
     errored: failures.filter((r) => r.errors.length && !r.timedOut),
@@ -200,7 +200,14 @@ async function main() {
   // write JSON report
   const out = "storybook-verify-report.json";
   const fs = await import("node:fs");
-  fs.writeFileSync(out, JSON.stringify({ summary: { total: results.length, failing: failures.length }, results }, null, 2));
+  fs.writeFileSync(
+    out,
+    JSON.stringify(
+      { summary: { total: results.length, failing: failures.length }, results },
+      null,
+      2,
+    ),
+  );
   console.log(`\nFull report written to ${out}`);
 
   process.exit(failures.length ? 1 : 0);

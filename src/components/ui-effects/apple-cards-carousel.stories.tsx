@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Card, Carousel } from "./apple-cards-carousel";
 
 const meta: Meta<typeof Carousel> = {
-  title: "UI Effects/AppleCardsCarousel",
+  title: "UI Effects/Data display/AppleCardsCarousel",
   component: Carousel,
   parameters: { layout: "fullscreen" },
 };
@@ -18,13 +18,13 @@ const CARD_DATA = [
     content: (
       <div className="text-muted-foreground space-y-3 text-sm leading-relaxed">
         <p>
-          The pace of change is unrelenting. Every team that adopts AI thoughtfully
-          ships faster, hires more selectively, and frees up engineers to focus on
-          the hard problems.
+          The pace of change is unrelenting. Every team that adopts AI thoughtfully ships
+          faster, hires more selectively, and frees up engineers to focus on the hard
+          problems.
         </p>
         <p>
-          Use AI for what it&apos;s great at: synthesising context, drafting first
-          pass material, and surfacing what you didn&apos;t think to ask.
+          Use AI for what it&apos;s great at: synthesising context, drafting first pass
+          material, and surfacing what you didn&apos;t think to ask.
         </p>
       </div>
     ),
@@ -35,8 +35,8 @@ const CARD_DATA = [
     category: "Productivity",
     content: (
       <p className="text-muted-foreground text-sm leading-relaxed">
-        Three apps. One window. Five keyboard shortcuts you should know to never
-        again touch the trackpad while you&apos;re writing code.
+        Three apps. One window. Five keyboard shortcuts you should know to never again
+        touch the trackpad while you&apos;re writing code.
       </p>
     ),
   },
@@ -46,9 +46,8 @@ const CARD_DATA = [
     category: "Product",
     content: (
       <p className="text-muted-foreground text-sm leading-relaxed">
-        Spatial computing has arrived. We sat down with the engineering team to
-        understand what changed, what shipped late, and what the next 5 years
-        look like.
+        Spatial computing has arrived. We sat down with the engineering team to understand
+        what changed, what shipped late, and what the next 5 years look like.
       </p>
     ),
   },
@@ -58,8 +57,8 @@ const CARD_DATA = [
     category: "Design",
     content: (
       <p className="text-muted-foreground text-sm leading-relaxed">
-        A study in progressive disclosure: the map now hides 40% of its on-screen
-        chrome by default and reveals it only when zoomed beyond street level.
+        A study in progressive disclosure: the map now hides 40% of its on-screen chrome
+        by default and reveals it only when zoomed beyond street level.
       </p>
     ),
   },

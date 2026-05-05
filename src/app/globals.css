@@ -13,6 +13,7 @@
  * `pnpm gen:styles`. No edits to this file or globals.css required.
  */
 @import "./_component-styles.css";
+@import "dither-plugin";
 
 /*
  * Theme tokens — mirror src/config/theme.config.ts.
@@ -38,6 +39,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
   --border: oklch(0.84 0 0);
+  --illustration: oklch(1 0 0);
   --ring: oklch(0.55 0.18 260);
   --radius: 0.5rem;
   /*
@@ -81,6 +83,7 @@
     --muted: oklch(0.205 0 0);
     --muted-foreground: oklch(0.708 0 0);
     --border: oklch(0.5 0 0);
+    --illustration: oklch(0.18 0 0);
     /* Brand retuned for dark — lighter + slightly less saturated for AA contrast on black. */
     --brand: oklch(0.72 0.16 260);
     --brand-foreground: oklch(0.145 0 0);
@@ -88,13 +91,23 @@
   }
 }
 
-/* Explicit user toggle via next-themes (`html[data-theme="dark"]`). */
-:root[data-theme="dark"] {
+/*
+ * Explicit theme attribute. The first selector handles the page-level
+ * toggle via next-themes (`html[data-theme="dark"]`). The second
+ * selector generalizes the rule so any nested subtree marked with
+ * `data-theme="dark"` (e.g. an always-dark illustration card on a
+ * light page) inherits the dark token set — the @custom-variant above
+ * already enables `dark:` utilities in those subtrees, this completes
+ * the picture by redefining the CSS vars they read from.
+ */
+:root[data-theme="dark"],
+[data-theme="dark"] {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --muted: oklch(0.205 0 0);
   --muted-foreground: oklch(0.708 0 0);
   --border: oklch(0.5 0 0);
+  --illustration: oklch(0.18 0 0);
   --brand: oklch(0.72 0.16 260);
   --brand-foreground: oklch(0.145 0 0);
   --ring: oklch(0.72 0.16 260);
@@ -110,6 +123,22 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  /**
+   * Decorative softer-than-border token used by Tailark Pro hero
+   * registry blocks (cross-frames around announcement chips, dotted
+   * accents, pixel-stripe rows). Must remain defined or those
+   * decorations vanish silently.
+   */
+  --color-border-illustration: color-mix(in oklab, var(--border) 70%, var(--background));
+  /**
+   * Theme-aware soft surface used by Tailark Pro illustration panels
+   * (e.g. credit-card mock in `payments-diagram`, AI chat card inside
+   * `meet-illustration`). Light mode = near-white surface, dark mode
+   * = near-black. Subtrees that force-flip via `data-theme="dark"`
+   * (chat panel) inherit the dark value automatically through the
+   * generalized data-theme rule.
+   */
+  --color-illustration: var(--illustration);
   --color-ring: var(--ring);
   /* Standard shadcn utility names — `bg-primary`, `bg-card`, etc. */
   --color-primary: var(--primary);
@@ -305,6 +334,130 @@
       transform: translate(-50%, -40%) scale(1);
     }
   }
+
+  /*
+   * Tailark Pro animation tokens. Sourced from the upstream Tailark
+   * theme — registered here so registry blocks (illustrations,
+   * expandable-features sections, etc.) animate correctly without
+   * each consumer co-locating its own keyframes.
+   */
+  --animate-hue-rotate: hue-rotate 4s infinite;
+  @keyframes hue-rotate {
+    from {
+      filter: hue-rotate(0deg);
+    }
+    to {
+      filter: hue-rotate(360deg);
+    }
+  }
+}
+
+/*
+ * Tailark Pro corner-bevel marker utilities. These are no-ops on
+ * their own — the visible bevel comes from sibling `rounded-tr-[Nrem]`
+ * / `rounded-bl-[Nrem]` classes. They exist so that upstream Tailark
+ * blocks (`flow-illustration`, `features-expandable-4`) keep the same
+ * tag set as the registry source, and so the project can attach
+ * additional accent CSS to either corner later (inset shadow, border
+ * highlight, etc.) without renaming any classes.
+ *
+ * Implemented as Tailwind v4 `@utility` declarations rather than plain
+ * CSS classes so they survive the Tailwind purge regardless of where
+ * the markers are referenced in JSX.
+ */
+/*
+ * Tailark Pro corner-shape utilities. The class names mirror Tailark's
+ * live CSS (https://pro.tailark.com/_next/static/chunks/) but the
+ * implementation uses `clip-path` polygons UNCONDITIONALLY rather than
+ * the bleeding-edge `corner-shape` CSS property — `corner-shape` is
+ * Chrome-139+ only, not yet shipped in Brave / Safari / Firefox.
+ *
+ * How it works: each utility sets ONE corner's `--bevel-{corner}`
+ * variable (default `var(--bevel-size, 1.5rem)`). The polygon reads
+ * all four corner vars and falls back to `0` when unset. Stacking
+ * `corner-tr-bevel corner-bl-bevel` chamfers both corners; the polygon
+ * is byte-identical inside every utility so cascade order is moot.
+ *
+ * Override per-element: `style={{ "--bevel-size": "5rem" }}` on the
+ * card to match `rounded-tr-[5rem]`. Or set individual corners:
+ * `{ "--bevel-tr": "5rem" }`.
+ */
+@utility corner-bevel {
+  --bevel-tl: var(--bevel-size, 1.5rem);
+  --bevel-tr: var(--bevel-size, 1.5rem);
+  --bevel-br: var(--bevel-size, 1.5rem);
+  --bevel-bl: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-tl-bevel {
+  --bevel-tl: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-tr-bevel {
+  --bevel-tr: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-bl-bevel {
+  --bevel-bl: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-br-bevel {
+  --bevel-br: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-squircle {
+  /* squircle has no clip-path equivalent; rely on `corner-shape` where supported */
+  corner-shape: squircle;
+}
+@utility corner-t-notch {
+  /* notch isn't supported by clip-path; falls back to rounded corners */
+  corner-top-left-shape: notch;
+  corner-top-right-shape: notch;
 }
 
 body {

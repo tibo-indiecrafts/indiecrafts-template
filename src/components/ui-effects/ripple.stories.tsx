@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Ripple } from "./ripple";
 
 const meta: Meta<typeof Ripple> = {
-  title: "UI Effects/Ripple",
+  title: "UI Effects/Backgrounds/Ripple",
   component: Ripple,
   parameters: { layout: "fullscreen" },
   argTypes: {

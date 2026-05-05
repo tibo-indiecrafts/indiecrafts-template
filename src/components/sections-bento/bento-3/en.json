@@ -1,0 +1,20 @@
+{
+  "cells": {
+    "cell1": {
+      "title": "Identity Verification",
+      "body": "Confirm a user's identity in seconds with on-device facial scanning and zero-knowledge biometric checks."
+    },
+    "cell2": {
+      "title": "Spend Visualization",
+      "body": "Track usage against your spending limit at a glance, with progress segmented by category."
+    },
+    "cell3": {
+      "title": "Scheduled Reports",
+      "body": "Automate report delivery to stakeholders with customizable scheduling options."
+    },
+    "cell4": {
+      "title": "Seamless Integration",
+      "body": "Connect to the tools your team already uses — editors, AI providers, project trackers, and infrastructure."
+    }
+  }
+}

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Safari } from "./safari";
 
 const meta: Meta<typeof Safari> = {
-  title: "UI Effects/Safari",
+  title: "UI Effects/3D & Devices/Safari",
   component: Safari,
   parameters: { layout: "centered" },
   argTypes: {
@@ -38,8 +38,7 @@ export const WithImage: Story = {
   args: {
     mode: "default",
     url: "indiecrafts.dev/dashboard",
-    imageSrc:
-      "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&q=80",
+    imageSrc: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&q=80",
   },
   render: (args) => (
     <Stage>
@@ -67,8 +66,7 @@ export const SimpleMode: Story = {
   args: {
     mode: "simple",
     url: "indiecrafts.dev",
-    imageSrc:
-      "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1600&q=80",
+    imageSrc: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1600&q=80",
   },
   render: (args) => (
     <Stage>

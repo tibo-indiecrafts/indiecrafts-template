@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { DirectionAwareHover } from "./direction-aware-hover";
 
 const meta: Meta<typeof DirectionAwareHover> = {
-  title: "UI Effects/DirectionAwareHover",
+  title: "UI Effects/Hover & Interactions/DirectionAwareHover",
   component: DirectionAwareHover,
   parameters: {
     layout: "centered",
@@ -34,8 +34,8 @@ export const LongCaption: Story = {
     <DirectionAwareHover imageUrl="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1000&q=80">
       <p className="text-base font-bold">Iceland in winter</p>
       <p className="text-xs font-normal opacity-80">
-        Black-sand beaches and waterfalls under the aurora — only six hours
-        from London with the right airline.
+        Black-sand beaches and waterfalls under the aurora — only six hours from London
+        with the right airline.
       </p>
     </DirectionAwareHover>
   ),

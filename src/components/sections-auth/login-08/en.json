@@ -1,0 +1,17 @@
+{
+  "title": "Sign in to {brand}",
+  "brand": "Acme",
+  "description": "Welcome back! Please enter your details.",
+  "emailLabel": "Email address",
+  "emailPlaceholder": "name@example.com",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "Enter your password",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "resetCta": "Reset password",
+  "rememberMe": "Remember me",
+  "submit": "Sign In",
+  "ssoCta": "Single sign-on (SSO)",
+  "signupPrompt": "New to {brand}?",
+  "signupCta": "Sign up"
+}

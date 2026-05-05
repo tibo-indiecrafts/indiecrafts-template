@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { FollowerPointerCard } from "./following-pointer";
 
 const meta: Meta<typeof FollowerPointerCard> = {
-  title: "UI Effects/FollowingPointer",
+  title: "UI Effects/Hover & Interactions/FollowingPointer",
   component: FollowerPointerCard,
   parameters: { layout: "centered" },
 };
@@ -23,8 +23,8 @@ export const Default: Story = {
     >
       <h3 className="text-xl font-semibold">A Midsummer Night&apos;s Dream</h3>
       <p className="text-muted-foreground mt-2 text-sm">
-        Hover anywhere inside this card and the OS cursor disappears in favour
-        of the custom follower pointer with the title above.
+        Hover anywhere inside this card and the OS cursor disappears in favour of the
+        custom follower pointer with the title above.
       </p>
     </FollowerPointerCard>
   ),
@@ -41,12 +41,10 @@ export const CustomTitle: Story = {
       }
       className="border-border bg-card w-[420px] rounded-2xl border p-6"
     >
-      <h3 className="text-foreground text-xl font-semibold">
-        Behind the scenes
-      </h3>
+      <h3 className="text-foreground text-xl font-semibold">Behind the scenes</h3>
       <p className="text-muted-foreground mt-2 text-sm">
-        The <code>title</code> prop accepts any ReactNode — pass a styled badge
-        for editorial cards, hover-to-purchase product tiles, etc.
+        The <code>title</code> prop accepts any ReactNode — pass a styled badge for
+        editorial cards, hover-to-purchase product tiles, etc.
       </p>
     </FollowerPointerCard>
   ),
@@ -67,9 +65,7 @@ export const ImageCover: Story = {
         }}
       />
       <div className="bg-card border-border border-x border-b px-5 py-4">
-        <h3 className="text-foreground text-lg font-semibold">
-          Walking the alfama
-        </h3>
+        <h3 className="text-foreground text-lg font-semibold">Walking the alfama</h3>
         <p className="text-muted-foreground mt-1 text-xs">
           A short essay about the steepest streets in Europe.
         </p>

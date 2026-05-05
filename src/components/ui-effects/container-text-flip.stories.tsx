@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ContainerTextFlip } from "./container-text-flip";
 
 const meta: Meta<typeof ContainerTextFlip> = {
-  title: "UI Effects/ContainerTextFlip",
+  title: "UI Effects/Text/ContainerTextFlip",
   component: ContainerTextFlip,
   parameters: { layout: "centered" },
   argTypes: {
@@ -23,9 +23,7 @@ export const Default: Story = {
 
 /** Custom words — pass a `words` array to retune the cycle. */
 export const CustomWords: Story = {
-  render: () => (
-    <ContainerTextFlip words={["faster", "cheaper", "smarter", "kinder"]} />
-  ),
+  render: () => <ContainerTextFlip words={["faster", "cheaper", "smarter", "kinder"]} />,
 };
 
 /** Long words — proves the pill resizes to fit each word's width. */
@@ -40,10 +38,7 @@ export const VariableWidth: Story = {
 /** Fast cycle — `interval={1000}` for snappy hero animations. */
 export const Fast: Story = {
   render: () => (
-    <ContainerTextFlip
-      words={["fast", "snappy", "instant", "rapid"]}
-      interval={1000}
-    />
+    <ContainerTextFlip words={["fast", "snappy", "instant", "rapid"]} interval={1000} />
   ),
 };
 
@@ -67,8 +62,8 @@ export const HeroPattern: Story = {
     <div className="flex flex-col items-center gap-3 text-center">
       <ContainerTextFlip words={["yours", "fast", "shippable", "open"]} />
       <p className="text-muted-foreground max-w-md text-sm">
-        Make it yours. Edit a single config file to change the brand, the
-        nav, the locale, the everything.
+        Make it yours. Edit a single config file to change the brand, the nav, the locale,
+        the everything.
       </p>
     </div>
   ),

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { MacbookScroll } from "./macbook-scroll";
 
 const meta: Meta<typeof MacbookScroll> = {
-  title: "UI Effects/MacbookScroll",
+  title: "UI Effects/3D & Devices/MacbookScroll",
   component: MacbookScroll,
   parameters: { layout: "fullscreen" },
 };
@@ -57,10 +57,5 @@ export const NoGradient: Story = {
 
 /** No screenshot — without `src` the screen renders empty (chrome only). */
 export const NoScreenshot: Story = {
-  render: () => (
-    <MacbookScroll
-      title="Just the device"
-      showGradient
-    />
-  ),
+  render: () => <MacbookScroll title="Just the device" showGradient />,
 };

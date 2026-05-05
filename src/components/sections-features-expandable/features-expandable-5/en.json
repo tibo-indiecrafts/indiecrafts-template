@@ -1,0 +1,15 @@
+{
+  "title": "Ship with confidence using our unified platform",
+  "body": "Streamline your workflow with tools designed to enhance productivity at every step.",
+  "items": {
+    "tab1": {
+      "tabLabel": "Meeting notes"
+    },
+    "tab2": {
+      "tabLabel": "Smart calendar"
+    },
+    "tab3": {
+      "tabLabel": "Task agent"
+    }
+  }
+}

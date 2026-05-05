@@ -1,0 +1,12 @@
+{
+  "trigger": "Deactivate 2FA",
+  "title": "Deactivate two-step authentication",
+  "description": "Enter your password to deactivate the two-step authentication login. Make sure to have your smartphone ready.",
+  "emailLabel": "Email",
+  "passwordLabel": "Confirm password",
+  "passwordPlaceholder": "Password",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "cancel": "Cancel",
+  "confirm": "Deactivate"
+}

@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import React, { useState } from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -123,9 +124,7 @@ export function ImagesBadge({
                 y: isHovered ? hoverY : teaseY,
                 rotate: isHovered ? baseRotation : teaseRotation,
                 width: isHovered ? hoverImageSize.width : teaserImageSize.width,
-                height: isHovered
-                  ? hoverImageSize.height
-                  : teaserImageSize.height,
+                height: isHovered ? hoverImageSize.height : teaserImageSize.height,
               }}
               transition={{
                 type: "spring",

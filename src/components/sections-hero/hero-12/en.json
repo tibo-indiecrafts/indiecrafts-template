@@ -1,0 +1,10 @@
+{
+  "title": "AI-powered meeting assistant",
+  "body": "Enhance your productivity with our AI-driven meeting app that schedules, transcribes, and provides actionable insights for every meeting.",
+  "form": {
+    "label": "Subscribe to our newsletter",
+    "placeholder": "Your email",
+    "submit": "Start now",
+    "fineprint": "Get the latest product news and behind-the-scenes updates. Unsubscribe at any time."
+  }
+}

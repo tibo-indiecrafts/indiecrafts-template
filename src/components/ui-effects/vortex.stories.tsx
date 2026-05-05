@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Vortex } from "./vortex";
 
 const meta: Meta<typeof Vortex> = {
-  title: "UI Effects/Vortex",
+  title: "UI Effects/Backgrounds/Vortex",
   component: Vortex,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -34,10 +34,7 @@ export const Default: Story = {
   args: { particleCount: 700, baseHue: 220 },
   render: (args) => (
     <div className="h-[640px] w-full">
-      <Vortex
-        {...args}
-        containerClassName="flex items-center justify-center"
-      >
+      <Vortex {...args} containerClassName="flex items-center justify-center">
         <Body
           title="Particle vortex"
           body="A swirling mass of simplex-noise driven particles."
@@ -52,10 +49,7 @@ export const Sparse: Story = {
   args: { particleCount: 250 },
   render: (args) => (
     <div className="h-[640px] w-full">
-      <Vortex
-        {...args}
-        containerClassName="flex items-center justify-center"
-      >
+      <Vortex {...args} containerClassName="flex items-center justify-center">
         <Body title="Sparse" body="Fewer particles, more space." />
       </Vortex>
     </div>
@@ -67,10 +61,7 @@ export const MagentaHue: Story = {
   args: { baseHue: 320 },
   render: (args) => (
     <div className="h-[640px] w-full">
-      <Vortex
-        {...args}
-        containerClassName="flex items-center justify-center"
-      >
+      <Vortex {...args} containerClassName="flex items-center justify-center">
         <Body title="Hot palette" body="Hue shifted to magenta + amber." />
       </Vortex>
     </div>
@@ -87,10 +78,7 @@ export const CyanParticles: Story = {
   args: { baseHue: 190, backgroundColor: "#000000" },
   render: (args) => (
     <div className="h-[640px] w-full">
-      <Vortex
-        {...args}
-        containerClassName="flex items-center justify-center"
-      >
+      <Vortex {...args} containerClassName="flex items-center justify-center">
         <Body
           title="Cyan vortex"
           body="Hue rotated to cyan/teal on a true-black canvas."
@@ -105,10 +93,7 @@ export const Faster: Story = {
   args: { rangeSpeed: 3, baseSpeed: 0.5 },
   render: (args) => (
     <div className="h-[640px] w-full">
-      <Vortex
-        {...args}
-        containerClassName="flex items-center justify-center"
-      >
+      <Vortex {...args} containerClassName="flex items-center justify-center">
         <Body title="Quick swirl" body="Higher rangeSpeed for kinetic energy." />
       </Vortex>
     </div>

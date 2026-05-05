@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { CodeComparison } from "./code-comparison";
 
 const meta: Meta<typeof CodeComparison> = {
-  title: "UI Effects/CodeComparison",
+  title: "UI Effects/Code/CodeComparison",
   component: CodeComparison,
   parameters: { layout: "fullscreen" },
 };

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Spotlight } from "./spotlight";
 
 const meta: Meta<typeof Spotlight> = {
-  title: "UI Effects/Spotlight",
+  title: "UI Effects/Hover & Interactions/Spotlight",
   component: Spotlight,
   parameters: { layout: "fullscreen" },
   argTypes: {
@@ -63,10 +63,7 @@ export const BrandFill: Story = {
 export const RightSide: Story = {
   render: () => (
     <Stage>
-      <Spotlight
-        fill="#a855f7"
-        className="-top-40 right-0 md:-top-20 md:right-60"
-      />
+      <Spotlight fill="#a855f7" className="-top-40 right-0 md:-top-20 md:right-60" />
       <Body
         title="From the right"
         body="Override the className to anchor the spotlight elsewhere."
@@ -79,14 +76,8 @@ export const RightSide: Story = {
 export const TwoSpotlights: Story = {
   render: () => (
     <Stage>
-      <Spotlight
-        fill="#06b6d4"
-        className="-top-40 left-0 md:-top-20 md:left-60"
-      />
-      <Spotlight
-        fill="#ec4899"
-        className="-top-40 right-0 md:-top-20 md:right-60"
-      />
+      <Spotlight fill="#06b6d4" className="-top-40 left-0 md:-top-20 md:left-60" />
+      <Spotlight fill="#ec4899" className="-top-40 right-0 md:-top-20 md:right-60" />
       <Body
         title="Stage left + right"
         body="Two cones from opposite sides — useful for product showcases."

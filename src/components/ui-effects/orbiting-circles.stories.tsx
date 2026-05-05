@@ -16,7 +16,7 @@ import {
 import { OrbitingCircles } from "./orbiting-circles";
 
 const meta: Meta<typeof OrbitingCircles> = {
-  title: "UI Effects/OrbitingCircles",
+  title: "UI Effects/Particles & Effects/OrbitingCircles",
   component: OrbitingCircles,
   parameters: { layout: "centered" },
   argTypes: {

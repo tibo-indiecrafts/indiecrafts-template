@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState } from "react";
-import { Logo } from "@/components/layouts/_shared/Logo";
+import { Logo } from "@/components/layouts/_shared/logo";
 import {
   MobileNav,
   MobileNavHeader,
@@ -16,7 +16,7 @@ import {
 // the brand mark, not the upstream's logo.
 
 const meta: Meta<typeof Navbar> = {
-  title: "UI Effects/ResizableNavbar",
+  title: "UI Effects/Nav/ResizableNavbar",
   component: Navbar,
   parameters: { layout: "fullscreen" },
 };
@@ -60,10 +60,7 @@ function NavbarShell({
       <MobileNav>
         <MobileNavHeader>
           <Logo />
-          <MobileNavToggle
-            isOpen={open}
-            onClick={() => setOpen((o) => !o)}
-          />
+          <MobileNavToggle isOpen={open} onClick={() => setOpen((o) => !o)} />
         </MobileNavHeader>
         <MobileNavMenu isOpen={open} onClose={() => setOpen(false)}>
           {items.map((item) => (

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { File, Folder, Tree, type TreeViewElement } from "./file-tree";
 
 const meta: Meta<typeof Tree> = {
-  title: "UI Effects/FileTree",
+  title: "UI Effects/Data display/FileTree",
   component: Tree,
   parameters: { layout: "centered" },
 };

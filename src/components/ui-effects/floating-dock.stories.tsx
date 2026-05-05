@@ -15,7 +15,7 @@ import {
 import { FloatingDock } from "./floating-dock";
 
 const meta: Meta<typeof FloatingDock> = {
-  title: "UI Effects/FloatingDock",
+  title: "UI Effects/Nav/FloatingDock",
   component: FloatingDock,
   parameters: { layout: "fullscreen" },
 };
@@ -73,8 +73,8 @@ export const Default: Story = {
   render: () => (
     <Stage>
       <p className="text-muted-foreground absolute top-12 max-w-md text-center text-sm">
-        Hover the dock to magnify icons. Resize the canvas under 768px to see
-        the mobile collapse variant.
+        Hover the dock to magnify icons. Resize the canvas under 768px to see the mobile
+        collapse variant.
       </p>
       <FloatingDock items={ITEMS} />
     </Stage>
@@ -169,13 +169,10 @@ export const Pinned: Story = {
   render: () => (
     <div className="bg-background relative min-h-svh w-full overflow-hidden">
       <div className="px-6 py-12">
-        <h2 className="text-foreground text-2xl font-semibold">
-          Scroll content
-        </h2>
+        <h2 className="text-foreground text-2xl font-semibold">Scroll content</h2>
         <p className="text-muted-foreground mt-2 max-w-prose text-sm">
-          The dock stays pinned to the bottom of the viewport. On mobile the
-          toggle pins to the bottom-right corner via{" "}
-          <code className="text-xs">mobileClassName</code>.
+          The dock stays pinned to the bottom of the viewport. On mobile the toggle pins
+          to the bottom-right corner via <code className="text-xs">mobileClassName</code>.
         </p>
       </div>
       <FloatingDock

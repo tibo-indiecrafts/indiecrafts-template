@@ -1,0 +1,26 @@
+{
+  "title": "Ship with confidence using our unified platform",
+  "body": "Five pillars that power your development workflow from idea to deployment.",
+  "items": {
+    "tab1": {
+      "title": "Server",
+      "body": "Access and switch between multiple AI models from a unified interface with seamless provider switching."
+    },
+    "tab2": {
+      "title": "Router",
+      "body": "Work with teammates across the globe with real-time presence indicators and automatic syncing."
+    },
+    "tab3": {
+      "title": "Database",
+      "body": "Build custom automation pipelines with drag-and-drop simplicity and pre-built integrations."
+    },
+    "tab4": {
+      "title": "Tab",
+      "body": "Build custom automation pipelines with drag-and-drop simplicity and pre-built integrations."
+    },
+    "tab5": {
+      "title": "Mobile",
+      "body": "Build custom automation pipelines with drag-and-drop simplicity and pre-built integrations."
+    }
+  }
+}

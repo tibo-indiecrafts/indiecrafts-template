@@ -1,0 +1,12 @@
+{
+  "trigger": "Share",
+  "title": "Share & Collaborate",
+  "description": "Share this project with your team to collaborate on it.",
+  "commentsLabel": "Enable comments and suggestions",
+  "shareLinkLabel": "Share Link",
+  "copyToClipboard": "Copy to clipboard",
+  "copied": "Copied!",
+  "copiedShort": "Copied",
+  "copyLink": "Copy Link",
+  "preview": "Preview"
+}

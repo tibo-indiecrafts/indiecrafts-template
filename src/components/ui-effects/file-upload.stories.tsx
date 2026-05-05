@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FileUpload } from "./file-upload";
 
 const meta: Meta<typeof FileUpload> = {
-  title: "UI Effects/FileUpload",
+  title: "UI Effects/Data display/FileUpload",
   component: FileUpload,
   parameters: { layout: "centered" },
 };
@@ -45,7 +45,8 @@ export const Controlled: Story = {
               : `${files.length} file${files.length === 1 ? "" : "s"} uploaded`}
             {files.length > 0 && (
               <>
-                : <span className="font-medium">{files.map((f) => f.name).join(", ")}</span>
+                :{" "}
+                <span className="font-medium">{files.map((f) => f.name).join(", ")}</span>
               </>
             )}
           </p>

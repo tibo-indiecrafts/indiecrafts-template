@@ -5,7 +5,7 @@
   },
   "results": [
     {
-      "id": "sections-app-charts-chartareaaxes--default",
+      "id": "sections-charts-chartareaaxes--default",
       "title": "Sections/App/Charts/ChartAreaAxes",
       "name": "Default",
       "painted": 983040,
@@ -14,7 +14,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartareadefault--default",
+      "id": "sections-charts-chartareadefault--default",
       "title": "Sections/App/Charts/ChartAreaDefault",
       "name": "Default",
       "painted": 983040,
@@ -23,7 +23,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartareagradient--default",
+      "id": "sections-charts-chartareagradient--default",
       "title": "Sections/App/Charts/ChartAreaGradient",
       "name": "Default",
       "painted": 983040,
@@ -32,7 +32,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartareaicons--default",
+      "id": "sections-charts-chartareaicons--default",
       "title": "Sections/App/Charts/ChartAreaIcons",
       "name": "Default",
       "painted": 983040,
@@ -41,7 +41,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartareainteractive--default",
+      "id": "sections-charts-chartareainteractive--default",
       "title": "Sections/App/Charts/ChartAreaInteractive",
       "name": "Default",
       "painted": 983040,
@@ -50,7 +50,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartarealegend--default",
+      "id": "sections-charts-chartarealegend--default",
       "title": "Sections/App/Charts/ChartAreaLegend",
       "name": "Default",
       "painted": 983040,
@@ -59,7 +59,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartarealinear--default",
+      "id": "sections-charts-chartarealinear--default",
       "title": "Sections/App/Charts/ChartAreaLinear",
       "name": "Default",
       "painted": 983040,
@@ -68,7 +68,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartareastacked--default",
+      "id": "sections-charts-chartareastacked--default",
       "title": "Sections/App/Charts/ChartAreaStacked",
       "name": "Default",
       "painted": 983040,
@@ -77,7 +77,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartareastackedexpand--default",
+      "id": "sections-charts-chartareastackedexpand--default",
       "title": "Sections/App/Charts/ChartAreaStackedExpand",
       "name": "Default",
       "painted": 983040,
@@ -86,7 +86,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartareastep--default",
+      "id": "sections-charts-chartareastep--default",
       "title": "Sections/App/Charts/ChartAreaStep",
       "name": "Default",
       "painted": 983040,
@@ -95,7 +95,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartbaractive--default",
+      "id": "sections-charts-chartbaractive--default",
       "title": "Sections/App/Charts/ChartBarActive",
       "name": "Default",
       "painted": 983040,
@@ -104,7 +104,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartbardefault--default",
+      "id": "sections-charts-chartbardefault--default",
       "title": "Sections/App/Charts/ChartBarDefault",
       "name": "Default",
       "painted": 983040,
@@ -113,7 +113,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartbarhorizontal--default",
+      "id": "sections-charts-chartbarhorizontal--default",
       "title": "Sections/App/Charts/ChartBarHorizontal",
       "name": "Default",
       "painted": 983040,
@@ -122,7 +122,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartbarinteractive--default",
+      "id": "sections-charts-chartbarinteractive--default",
       "title": "Sections/App/Charts/ChartBarInteractive",
       "name": "Default",
       "painted": 983040,
@@ -131,7 +131,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-charts-chartbarlabelcustom--default",
+      "id": "sections-charts-chartbarlabelcustom--default",
       "title": "Sections/App/Charts/ChartBarLabelCustom",
       "name": "Default",
       "painted": 983040,
@@ -140,7 +140,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-dashboard-sectioncards--default",
+      "id": "sections-dashboard-sectioncards--default",
       "title": "Sections/App/Dashboard/SectionCards",
       "name": "Default",
       "painted": 921600,
@@ -149,7 +149,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-dashboard-sectioncards--compact",
+      "id": "sections-dashboard-sectioncards--compact",
       "title": "Sections/App/Dashboard/SectionCards",
       "name": "Compact",
       "painted": 921600,
@@ -158,7 +158,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-dashboard-sectioncards--empty",
+      "id": "sections-dashboard-sectioncards--empty",
       "title": "Sections/App/Dashboard/SectionCards",
       "name": "Empty",
       "painted": 921600,
@@ -167,7 +167,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-data-datatable--default",
+      "id": "sections-data-datatable--default",
       "title": "Sections/App/Data/DataTable",
       "name": "Default",
       "painted": 921600,
@@ -176,7 +176,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-data-datatable--paginated",
+      "id": "sections-data-datatable--paginated",
       "title": "Sections/App/Data/DataTable",
       "name": "Paginated",
       "painted": 926080,
@@ -185,7 +185,7 @@
       "errors": []
     },
     {
-      "id": "sections-app-data-datatable--empty",
+      "id": "sections-data-datatable--empty",
       "title": "Sections/App/Data/DataTable",
       "name": "Empty",
       "painted": 921600,
@@ -320,7 +320,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-contact-contact1--default",
+      "id": "sections-contact-contact1--default",
       "title": "Sections/Marketing/Contact/Contact1",
       "name": "Default",
       "painted": 2168320,
@@ -329,7 +329,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-content-content1--default",
+      "id": "sections-content-content1--default",
       "title": "Sections/Marketing/Content/Content1",
       "name": "Default",
       "painted": 1054980,
@@ -338,7 +338,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-content-content2--default",
+      "id": "sections-content-content2--default",
       "title": "Sections/Marketing/Content/Content2",
       "name": "Default",
       "painted": 921600,
@@ -347,7 +347,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-content-content3--default",
+      "id": "sections-content-content3--default",
       "title": "Sections/Marketing/Content/Content3",
       "name": "Default",
       "painted": 1387300,
@@ -356,7 +356,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-content-content4--default",
+      "id": "sections-content-content4--default",
       "title": "Sections/Marketing/Content/Content4",
       "name": "Default",
       "painted": 921600,
@@ -365,7 +365,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-content-content5--default",
+      "id": "sections-content-content5--default",
       "title": "Sections/Marketing/Content/Content5",
       "name": "Default",
       "painted": 1749860,
@@ -374,7 +374,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-content-content6--default",
+      "id": "sections-content-content6--default",
       "title": "Sections/Marketing/Content/Content6",
       "name": "Default",
       "painted": 921600,
@@ -383,7 +383,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-content-content7--default",
+      "id": "sections-content-content7--default",
       "title": "Sections/Marketing/Content/Content7",
       "name": "Default",
       "painted": 921600,
@@ -392,7 +392,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-cta-cta1--default",
+      "id": "sections-cta-cta1--default",
       "title": "Sections/Marketing/Cta/Cta1",
       "name": "Default",
       "painted": 921600,
@@ -401,7 +401,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-faq-faq1--default",
+      "id": "sections-faq-faq1--default",
       "title": "Sections/Marketing/Faq/Faq1",
       "name": "Default",
       "painted": 1029120,
@@ -410,7 +410,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-faq-faq2--default",
+      "id": "sections-faq-faq2--default",
       "title": "Sections/Marketing/Faq/Faq2",
       "name": "Default",
       "painted": 1031680,
@@ -419,7 +419,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-faq-faq3--default",
+      "id": "sections-faq-faq3--default",
       "title": "Sections/Marketing/Faq/Faq3",
       "name": "Default",
       "painted": 921600,
@@ -428,7 +428,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-faq-faq4--default",
+      "id": "sections-faq-faq4--default",
       "title": "Sections/Marketing/Faq/Faq4",
       "name": "Default",
       "painted": 1059840,
@@ -437,7 +437,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features1--default",
+      "id": "sections-features-features1--default",
       "title": "Sections/Marketing/Features/Features1",
       "name": "Default",
       "painted": 1027840,
@@ -446,7 +446,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features10--default",
+      "id": "sections-features-features10--default",
       "title": "Sections/Marketing/Features/Features10",
       "name": "Default",
       "painted": 1621380,
@@ -455,7 +455,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features11--default",
+      "id": "sections-features-features11--default",
       "title": "Sections/Marketing/Features/Features11",
       "name": "Default",
       "painted": 1863760,
@@ -464,7 +464,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features12--default",
+      "id": "sections-features-features12--default",
       "title": "Sections/Marketing/Features/Features12",
       "name": "Default",
       "painted": 1146360,
@@ -473,7 +473,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features2--default",
+      "id": "sections-features-features2--default",
       "title": "Sections/Marketing/Features/Features2",
       "name": "Default",
       "painted": 998400,
@@ -482,7 +482,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features3--default",
+      "id": "sections-features-features3--default",
       "title": "Sections/Marketing/Features/Features3",
       "name": "Default",
       "painted": 1011200,
@@ -491,7 +491,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features4--default",
+      "id": "sections-features-features4--default",
       "title": "Sections/Marketing/Features/Features4",
       "name": "Default",
       "painted": 1049600,
@@ -500,7 +500,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features5--default",
+      "id": "sections-features-features5--default",
       "title": "Sections/Marketing/Features/Features5",
       "name": "Default",
       "painted": 1045240,
@@ -509,7 +509,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features6--default",
+      "id": "sections-features-features6--default",
       "title": "Sections/Marketing/Features/Features6",
       "name": "Default",
       "painted": 1279060,
@@ -518,7 +518,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features7--default",
+      "id": "sections-features-features7--default",
       "title": "Sections/Marketing/Features/Features7",
       "name": "Default",
       "painted": 1363540,
@@ -527,7 +527,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features8--default",
+      "id": "sections-features-features8--default",
       "title": "Sections/Marketing/Features/Features8",
       "name": "Default",
       "painted": 1210160,
@@ -536,7 +536,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-features-features9--default",
+      "id": "sections-features-features9--default",
       "title": "Sections/Marketing/Features/Features9",
       "name": "Default",
       "painted": 1704320,
@@ -545,7 +545,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-footer-footer1--default",
+      "id": "sections-footer-footer1--default",
       "title": "Sections/Marketing/Footer/Footer1",
       "name": "Default",
       "painted": 921600,
@@ -554,7 +554,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-pricing-pricing1--default",
+      "id": "sections-pricing-pricing1--default",
       "title": "Sections/Marketing/Pricing/Pricing1",
       "name": "Default",
       "painted": 1259520,
@@ -563,7 +563,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-pricing-pricingcomparator--default",
+      "id": "sections-pricing-pricingcomparator--default",
       "title": "Sections/Marketing/Pricing/PricingComparator",
       "name": "Default",
       "painted": 1237760,
@@ -572,7 +572,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-stats-stats1--default",
+      "id": "sections-stats-stats1--default",
       "title": "Sections/Marketing/Stats/Stats1",
       "name": "Default",
       "painted": 921600,
@@ -581,7 +581,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-stats-stats2--default",
+      "id": "sections-stats-stats2--default",
       "title": "Sections/Marketing/Stats/Stats2",
       "name": "Default",
       "painted": 921600,
@@ -590,7 +590,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-stats-stats3--default",
+      "id": "sections-stats-stats3--default",
       "title": "Sections/Marketing/Stats/Stats3",
       "name": "Default",
       "painted": 921600,
@@ -599,7 +599,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-stats-stats4--default",
+      "id": "sections-stats-stats4--default",
       "title": "Sections/Marketing/Stats/Stats4",
       "name": "Default",
       "painted": 921600,
@@ -608,7 +608,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-team-team1--default",
+      "id": "sections-team-team1--default",
       "title": "Sections/Marketing/Team/Team1",
       "name": "Default",
       "painted": 1950720,
@@ -617,7 +617,7 @@
       "errors": []
     },
     {
-      "id": "sections-marketing-testimonials-testimonials1--default",
+      "id": "sections-testimonials-testimonials1--default",
       "title": "Sections/Marketing/Testimonials/Testimonials1",
       "name": "Default",
       "painted": 921600,

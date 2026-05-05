@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ThreeDMarquee } from "./3d-marquee";
 
 const meta: Meta<typeof ThreeDMarquee> = {
-  title: "UI Effects/3dMarquee",
+  title: "UI Effects/3D & Devices/3dMarquee",
   component: ThreeDMarquee,
   parameters: { layout: "fullscreen" },
 };

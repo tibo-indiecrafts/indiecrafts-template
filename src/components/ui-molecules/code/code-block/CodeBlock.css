@@ -1,0 +1,23 @@
+/* Line-number gutter for Shiki-rendered code in CodeBlock.
+   Shiki wraps each source line in a `<span class="line">` element; we
+   count them with a CSS counter and render the index via ::before so
+   no transformer / extra dependency is needed. Activated by the
+   `data-line-numbers` attribute on the wrapping div.
+   `--counter-start` lets a consumer continue numbering across
+   multiple stacked CodeBlocks (e.g. a JSON viewer with avatar
+   bookmarks splits one logical file into two CodeBlocks but expects
+   line 20 to start at 20 visually). */
+[data-line-numbers] pre code {
+  counter-reset: line calc(var(--counter-start, 1) - 1);
+}
+
+[data-line-numbers] pre code .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2ch;
+  margin-right: 1.25rem;
+  text-align: right;
+  color: var(--color-muted-foreground);
+  user-select: none;
+}

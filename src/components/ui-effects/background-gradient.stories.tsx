@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { BackgroundGradient } from "./background-gradient";
 
 const meta: Meta<typeof BackgroundGradient> = {
-  title: "UI Effects/BackgroundGradient",
+  title: "UI Effects/Backgrounds/BackgroundGradient",
   component: BackgroundGradient,
   parameters: { layout: "centered" },
 };

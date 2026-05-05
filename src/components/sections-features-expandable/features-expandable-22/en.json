@@ -1,0 +1,22 @@
+{
+  "headerTitle": "Ship with confidence using our unified platform",
+  "headerBody": "Streamline your workflow with tools designed to enhance productivity at every step.",
+  "ctaLabel": "Learn more",
+  "items": {
+    "tab1": {
+      "tabLabel": "AI Models",
+      "title": "Unified AI Model Access",
+      "body": "Switch between ChatGPT, Claude, and Gemini from a unified interface with seamless provider switching and consistent API responses."
+    },
+    "tab2": {
+      "tabLabel": "Global Reach",
+      "title": "Real-Time Global Collaboration",
+      "body": "Collaborate in real time with teammates across the globe using live presence indicators, instant syncing, and automatic conflict resolution."
+    },
+    "tab3": {
+      "tabLabel": "Smart Agent",
+      "title": "Intelligent Workflow Automation",
+      "body": "Automate repetitive tasks with context-aware AI agents that learn your workflow patterns and provide intelligent suggestions."
+    }
+  }
+}

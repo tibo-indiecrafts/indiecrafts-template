@@ -1,0 +1,13 @@
+{
+  "title": "Usage",
+  "thisMonth": "this month",
+  "breakdownLabel": "Resource breakdown",
+  "amountFormat": "(${amount} / {percentage}%)",
+  "configurePrefix": "Configure limits in",
+  "settingsLink": "resource settings.",
+  "items": {
+    "compute": { "label": "Compute" },
+    "storage": { "label": "Storage" },
+    "bandwidth": { "label": "Bandwidth" }
+  }
+}

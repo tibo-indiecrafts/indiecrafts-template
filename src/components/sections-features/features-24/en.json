@@ -1,0 +1,35 @@
+{
+  "title": "Everything you need to deploy your app",
+  "body": "From the editor to the cloud — pick the tools you love, wire them up in minutes, and ship to production with one click.",
+  "cta": "Get started",
+  "ideListLabel": "Replaces your IDE",
+  "screenshotAlt": "Application dashboard preview",
+  "cards": {
+    "invoicing": {
+      "title": "Streamlined invoicing system",
+      "body": "Generate, send, and manage professional invoices automatically with integrated payment tracking."
+    },
+    "integrations": {
+      "title": "Connect the tools you already use",
+      "body": "Drop in providers, AI models, and devtools with a single click — no glue code, no migrations."
+    }
+  },
+  "stats": {
+    "fast": {
+      "title": "Fast",
+      "body": "Streaming-first APIs land payloads in milliseconds, even on the slowest connections."
+    },
+    "powerful": {
+      "title": "Powerful",
+      "body": "Composable primitives that scale from a side project to an enterprise rollout."
+    },
+    "security": {
+      "title": "Security",
+      "body": "Hardened defaults, audited dependencies, and least-privilege access on by default."
+    },
+    "aiPowered": {
+      "title": "AI powered",
+      "body": "Smart suggestions, automated workflows, and contextual assistance built in."
+    }
+  }
+}

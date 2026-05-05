@@ -1,0 +1,17 @@
+{
+  "fallback": "CN",
+  "openEditMenu": "Open edit menu",
+  "menu": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "addNew": "Add New",
+    "addItem": "Add New Item",
+    "addBookmark": "Add Bookmark",
+    "addIntegration": "Add Integration"
+  },
+  "tooltip": {
+    "title": "User Information",
+    "body": "More details about the current user or section can be displayed here."
+  }
+}

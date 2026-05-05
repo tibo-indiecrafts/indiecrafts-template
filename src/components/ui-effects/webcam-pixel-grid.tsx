@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/immutability, react-hooks/set-state-in-effect -- Aceternity / MagicUI upstream */
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
@@ -138,8 +139,7 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
         onWebcamReady?.();
       }
     } catch (err) {
-      const error =
-        err instanceof Error ? err : new Error("Webcam access denied");
+      const error = err instanceof Error ? err : new Error("Webcam access denied");
       setError(error.message);
       onWebcamError?.(error);
     }
@@ -214,8 +214,7 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           const prevR = previousData[idx];
           const prevG = previousData[idx + 1];
           const prevB = previousData[idx + 2];
-          const diff =
-            Math.abs(r - prevR) + Math.abs(g - prevG) + Math.abs(b - prevB);
+          const diff = Math.abs(r - prevR) + Math.abs(g - prevG) + Math.abs(b - prevB);
           motion = Math.min(1, diff / 255 / motionSensitivity);
         }
 
@@ -279,10 +278,7 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
     dispCtx.fillRect(0, 0, displayWidth, displayHeight);
 
     // Calculate cell size (always square, cover entire container like object-fit: cover)
-    const cellSize = Math.max(
-      displayWidth / gridCols,
-      displayHeight / gridRows,
-    );
+    const cellSize = Math.max(displayWidth / gridCols, displayHeight / gridRows);
     const gap = cellSize * gapRatio;
 
     // Calculate offset to center the grid (negative offset for overflow, creating cover effect)
@@ -321,10 +317,7 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           // Right side
           dispCtx.fillStyle = `rgb(${Math.max(0, pixel.r - 80)}, ${Math.max(0, pixel.g - 80)}, ${Math.max(0, pixel.b - 80)})`;
           dispCtx.beginPath();
-          dispCtx.moveTo(
-            x + cellSize - gap / 2 + offsetX,
-            y + gap / 2 + offsetY,
-          );
+          dispCtx.moveTo(x + cellSize - gap / 2 + offsetX, y + gap / 2 + offsetY);
           dispCtx.lineTo(x + cellSize - gap / 2, y + gap / 2);
           dispCtx.lineTo(x + cellSize - gap / 2, y + cellSize - gap / 2);
           dispCtx.lineTo(
@@ -337,10 +330,7 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           // Bottom side
           dispCtx.fillStyle = `rgb(${Math.max(0, pixel.r - 50)}, ${Math.max(0, pixel.g - 50)}, ${Math.max(0, pixel.b - 50)})`;
           dispCtx.beginPath();
-          dispCtx.moveTo(
-            x + gap / 2 + offsetX,
-            y + cellSize - gap / 2 + offsetY,
-          );
+          dispCtx.moveTo(x + gap / 2 + offsetX, y + cellSize - gap / 2 + offsetY);
           dispCtx.lineTo(x + gap / 2, y + cellSize - gap / 2);
           dispCtx.lineTo(x + cellSize - gap / 2, y + cellSize - gap / 2);
           dispCtx.lineTo(
@@ -471,9 +461,7 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
 
             {/* Content */}
             <div className="flex-1 pr-4">
-              <p className="text-sm font-medium text-white/90">
-                Camera access needed
-              </p>
+              <p className="text-sm font-medium text-white/90">Camera access needed</p>
               <p className="mt-1 text-xs text-white/50">
                 Enable camera for the interactive background effect
               </p>
@@ -508,12 +496,7 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           className="fixed top-4 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white/50 shadow-lg backdrop-blur-xl transition-all hover:scale-105 hover:bg-black/80 hover:text-white/80"
           title={cameraAccessLabel}
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { BackgroundLines } from "./background-lines";
 
 const meta: Meta<typeof BackgroundLines> = {
-  title: "UI Effects/BackgroundLines",
+  title: "UI Effects/Backgrounds/BackgroundLines",
   component: BackgroundLines,
   parameters: { layout: "fullscreen" },
 };
@@ -16,7 +16,7 @@ export const Default: Story = {
     <BackgroundLines>
       <div className="relative z-10 flex h-screen items-center justify-center px-6">
         <div className="text-center">
-          <h2 className="bg-gradient-to-r from-neutral-900 via-neutral-700 to-neutral-900 bg-clip-text text-4xl font-bold text-transparent dark:from-white dark:via-neutral-200 dark:to-white md:text-7xl">
+          <h2 className="bg-gradient-to-r from-neutral-900 via-neutral-700 to-neutral-900 bg-clip-text text-4xl font-bold text-transparent md:text-7xl dark:from-white dark:via-neutral-200 dark:to-white">
             Lights, animated.
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-md text-sm">

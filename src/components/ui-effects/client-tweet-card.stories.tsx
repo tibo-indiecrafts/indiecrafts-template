@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ClientTweetCard } from "./client-tweet-card";
 
 const meta: Meta<typeof ClientTweetCard> = {
-  title: "UI Effects/ClientTweetCard",
+  title: "UI Effects/Social/ClientTweetCard",
   component: ClientTweetCard,
   parameters: {
     layout: "centered",

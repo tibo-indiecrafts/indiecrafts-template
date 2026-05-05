@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { TextGenerateEffect } from "./text-generate-effect";
 
 const meta: Meta<typeof TextGenerateEffect> = {
-  title: "UI Effects/TextGenerateEffect",
+  title: "UI Effects/Text/TextGenerateEffect",
   component: TextGenerateEffect,
   parameters: { layout: "centered" },
   argTypes: {

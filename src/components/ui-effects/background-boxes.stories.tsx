@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Boxes } from "./background-boxes";
 
 const meta: Meta<typeof Boxes> = {
-  title: "UI Effects/BackgroundBoxes",
+  title: "UI Effects/Backgrounds/BackgroundBoxes",
   component: Boxes,
   parameters: { layout: "fullscreen" },
 };

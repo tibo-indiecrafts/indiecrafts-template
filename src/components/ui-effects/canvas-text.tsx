@@ -78,9 +78,7 @@ export function CanvasText({
         width: Math.ceil(rect.width) || 400,
         height: Math.ceil(rect.height) || 200,
       });
-      setFont(
-        `${computed.fontWeight} ${computed.fontSize} ${computed.fontFamily}`,
-      );
+      setFont(`${computed.fontWeight} ${computed.fontSize} ${computed.fontFamily}`);
     };
 
     updateDimensions();
@@ -93,13 +91,7 @@ export function CanvasText({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (
-      !canvas ||
-      resolvedColors.length === 0 ||
-      dimensions.width === 0 ||
-      !font
-    )
-      return;
+    if (!canvas || resolvedColors.length === 0 || dimensions.width === 0 || !font) return;
 
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
@@ -150,14 +142,7 @@ export function CanvasText({
 
         ctx.beginPath();
         ctx.moveTo(0, y);
-        ctx.bezierCurveTo(
-          width * 0.33,
-          y + curve1,
-          width * 0.66,
-          y + curve2,
-          width,
-          y,
-        );
+        ctx.bezierCurveTo(width * 0.33, y + curve1, width * 0.66, y + curve2, width, y);
         ctx.stroke();
       }
 
@@ -183,11 +168,7 @@ export function CanvasText({
 
   return (
     <span
-      className={cn(
-        "relative inline-block",
-        overlay && "absolute inset-0",
-        className,
-      )}
+      className={cn("relative inline-block", overlay && "absolute inset-0", className)}
     >
       <span
         ref={bgRef}

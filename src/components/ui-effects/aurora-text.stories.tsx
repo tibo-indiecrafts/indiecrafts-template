@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AuroraText } from "./aurora-text";
 
 const meta: Meta<typeof AuroraText> = {
-  title: "UI Effects/AuroraText",
+  title: "UI Effects/Text/AuroraText",
   component: AuroraText,
   parameters: { layout: "centered" },
   argTypes: {
@@ -29,9 +29,7 @@ export const CustomColors: Story = {
       <AuroraText colors={["#10b981", "#22d3ee", "#3b82f6"]}>
         Emerald · Cyan · Blue
       </AuroraText>
-      <AuroraText colors={["#f97316", "#ef4444", "#ec4899"]}>
-        Sunset
-      </AuroraText>
+      <AuroraText colors={["#f97316", "#ef4444", "#ec4899"]}>Sunset</AuroraText>
       <AuroraText colors={["#facc15", "#a855f7", "#0ea5e9", "#10b981"]}>
         Four-stop palette
       </AuroraText>

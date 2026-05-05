@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { EncryptedText } from "./encrypted-text";
 
 const meta: Meta<typeof EncryptedText> = {
-  title: "UI Effects/EncryptedText",
+  title: "UI Effects/Text/EncryptedText",
   component: EncryptedText,
   parameters: { layout: "centered" },
   argTypes: {

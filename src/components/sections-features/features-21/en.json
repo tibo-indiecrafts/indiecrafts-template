@@ -1,0 +1,16 @@
+{
+  "cards": {
+    "messaging": {
+      "title": "Real-time messaging",
+      "body": "Connect instantly with <strong>end-to-end encryption</strong>."
+    },
+    "analytics": {
+      "title": "Performance analytics",
+      "body": "Track metrics with <strong>customizable dashboards</strong>."
+    },
+    "polling": {
+      "title": "Interactive polling",
+      "body": "Gather feedback with <strong>real-time results</strong>."
+    }
+  }
+}

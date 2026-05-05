@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- Aceternity / MagicUI upstream */
 import React, { useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -122,9 +123,7 @@ const DivGrid = ({
               borderColor: borderColor,
               ...style,
             }}
-            onClick={
-              interactive ? () => onCellClick?.(rowIdx, colIdx) : undefined
-            }
+            onClick={interactive ? () => onCellClick?.(rowIdx, colIdx) : undefined}
           />
         );
       })}

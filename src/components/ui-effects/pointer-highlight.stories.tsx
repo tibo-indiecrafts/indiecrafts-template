@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { PointerHighlight } from "./pointer-highlight";
 
 const meta: Meta<typeof PointerHighlight> = {
-  title: "UI Effects/PointerHighlight",
+  title: "UI Effects/Hover & Interactions/PointerHighlight",
   component: PointerHighlight,
   parameters: { layout: "centered" },
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Error1 } from "@/components/pages-error/error-1";
+import { Error01 } from "@/components/pages-error/error-01";
 import { logger } from "@/lib/logger";
 
 type Props = { error: Error & { digest?: string }; reset: () => void };
@@ -11,5 +11,5 @@ export default function ErrorBoundary({ error, reset }: Readonly<Props>) {
     logger.error("Route error", error, { digest: error.digest });
   }, [error]);
 
-  return <Error1 onRetry={reset} />;
+  return <Error01 onRetry={reset} />;
 }

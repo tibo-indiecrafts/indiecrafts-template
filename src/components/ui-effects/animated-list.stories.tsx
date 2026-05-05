@@ -3,7 +3,7 @@ import { Bell, CreditCard, MessageCircle, ShieldCheck, Star, Zap } from "lucide-
 import { AnimatedList } from "./animated-list";
 
 const meta: Meta<typeof AnimatedList> = {
-  title: "UI Effects/AnimatedList",
+  title: "UI Effects/Data display/AnimatedList",
   component: AnimatedList,
   parameters: { layout: "centered" },
 };
@@ -116,10 +116,7 @@ export const TextOnly: Story = {
   render: () => (
     <AnimatedList className="h-[200px] w-[260px]">
       {["First", "Second", "Third"].map((label, i) => (
-        <div
-          key={i}
-          className="bg-card rounded-md border px-4 py-2 text-center text-sm"
-        >
+        <div key={i} className="bg-card rounded-md border px-4 py-2 text-center text-sm">
           {label}
         </div>
       ))}

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { PlaceholdersAndVanishInput } from "./placeholders-and-vanish-input";
 
 const meta: Meta<typeof PlaceholdersAndVanishInput> = {
-  title: "UI Effects/PlaceholdersAndVanishInput",
+  title: "UI Effects/Inputs/PlaceholdersAndVanishInput",
   component: PlaceholdersAndVanishInput,
   parameters: { layout: "centered" },
 };
@@ -94,8 +94,7 @@ export const Controlled: Story = {
             }}
           />
           <p className="text-muted-foreground text-sm">
-            Last submitted:{" "}
-            <code className="text-foreground">{last ?? "<none>"}</code>
+            Last submitted: <code className="text-foreground">{last ?? "<none>"}</code>
           </p>
         </div>
       </Stage>

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ShimmerButton } from "./shimmer-button";
 
 const meta: Meta<typeof ShimmerButton> = {
-  title: "UI Effects/ShimmerButton",
+  title: "UI Effects/Buttons/ShimmerButton",
   component: ShimmerButton,
   parameters: { layout: "centered" },
   argTypes: {
@@ -88,9 +88,7 @@ export const Slow: Story = {
 export const Large: Story = {
   render: () => (
     <Stage>
-      <ShimmerButton className="px-10 py-4 text-base">
-        Try the demo
-      </ShimmerButton>
+      <ShimmerButton className="px-10 py-4 text-base">Try the demo</ShimmerButton>
     </Stage>
   ),
 };

@@ -1,0 +1,23 @@
+{
+  "title": {
+    "first": "The",
+    "accent": "Financial OS",
+    "rest": "powering businesses on your platform"
+  },
+  "body": "Experience seamless payments, real-time collaboration, and actionable insights. Set up in minutes.",
+  "cta": "Get started",
+  "features": {
+    "billing": {
+      "title": "Automated billing",
+      "description": "Streamline your billing process with automated tools that save you time."
+    },
+    "reports": {
+      "title": "Detailed reports",
+      "description": "Access comprehensive reports to better understand your business performance."
+    },
+    "security": {
+      "title": "Secure transactions",
+      "description": "Ensure the safety of your financial data with top-notch security measures."
+    }
+  }
+}

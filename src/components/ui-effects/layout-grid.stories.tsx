@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { LayoutGrid } from "./layout-grid";
 
 const meta: Meta<typeof LayoutGrid> = {
-  title: "UI Effects/LayoutGrid",
+  title: "UI Effects/Cards/LayoutGrid",
   component: LayoutGrid,
   parameters: { layout: "fullscreen" },
 };
@@ -14,8 +14,7 @@ const FOUR_CARDS = [
   {
     id: 1,
     className: "md:col-span-2",
-    thumbnail:
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&q=80",
     content: (
       <div>
         <h3 className="text-2xl font-bold text-white">Atelier in Bordeaux</h3>
@@ -28,8 +27,7 @@ const FOUR_CARDS = [
   {
     id: 2,
     className: "col-span-1",
-    thumbnail:
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80",
     content: (
       <div>
         <h3 className="text-2xl font-bold text-white">Workshop Berlin</h3>
@@ -42,8 +40,7 @@ const FOUR_CARDS = [
   {
     id: 3,
     className: "col-span-1",
-    thumbnail:
-      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80",
     content: (
       <div>
         <h3 className="text-2xl font-bold text-white">Maker Kyoto</h3>
@@ -56,8 +53,7 @@ const FOUR_CARDS = [
   {
     id: 4,
     className: "md:col-span-2",
-    thumbnail:
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
     content: (
       <div>
         <h3 className="text-2xl font-bold text-white">Garage Oakland</h3>
@@ -104,9 +100,7 @@ export const ThreeCards: Story = {
 export const SingleCard: Story = {
   render: () => (
     <Frame>
-      <LayoutGrid
-        cards={[{ ...FOUR_CARDS[0], className: "md:col-span-3" }]}
-      />
+      <LayoutGrid cards={[{ ...FOUR_CARDS[0], className: "md:col-span-3" }]} />
     </Frame>
   ),
 };

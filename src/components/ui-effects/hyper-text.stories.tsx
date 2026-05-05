@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { HyperText } from "./hyper-text";
 
 const meta: Meta<typeof HyperText> = {
-  title: "UI Effects/HyperText",
+  title: "UI Effects/Text/HyperText",
   component: HyperText,
   parameters: { layout: "centered" },
   argTypes: {
@@ -29,11 +29,7 @@ export const Default: Story = {
 export const Heading: Story = {
   args: { duration: 1200, delay: 0 },
   render: (args) => (
-    <HyperText
-      {...args}
-      as="h1"
-      className="text-foreground text-6xl font-bold"
-    >
+    <HyperText {...args} as="h1" className="text-foreground text-6xl font-bold">
       Indiecrafts
     </HyperText>
   ),
@@ -69,10 +65,7 @@ export const CustomCharset: Story = {
 export const HoverOnly: Story = {
   args: { duration: 800, animateOnHover: true },
   render: (args) => (
-    <HyperText
-      {...args}
-      className="text-foreground cursor-pointer text-3xl font-bold"
-    >
+    <HyperText {...args} className="text-foreground cursor-pointer text-3xl font-bold">
       Hover to rescramble
     </HyperText>
   ),

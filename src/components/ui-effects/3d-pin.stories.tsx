@@ -4,7 +4,7 @@ import { PinContainer } from "./3d-pin";
 import { threeDPinNamespace } from "./3d-pin.config";
 
 const meta: Meta<typeof PinContainer> = {
-  title: "UI Effects/3dPin",
+  title: "UI Effects/3D & Devices/3dPin",
   component: PinContainer,
   parameters: { layout: "centered" },
 };
@@ -34,7 +34,7 @@ export const Default: Story = {
               <div className="!m-0 !p-0 text-base font-normal">
                 <span className="text-slate-500">{t("demoBody")}</span>
               </div>
-              <div className="mt-4 flex flex-1 w-full rounded-lg bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500" />
+              <div className="mt-4 flex w-full flex-1 rounded-lg bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500" />
             </div>
           </PinContainer>
         </Frame>
@@ -56,7 +56,7 @@ export const CustomTitle: Story = {
           <p className="!m-0 !p-0 text-sm text-slate-500">
             A starter repo with everything pre-wired.
           </p>
-          <div className="mt-4 flex flex-1 w-full rounded-lg bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500" />
+          <div className="mt-4 flex w-full flex-1 rounded-lg bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500" />
         </div>
       </PinContainer>
     </Frame>
@@ -76,7 +76,7 @@ export const NoTitle: Story = {
           <p className="!m-0 !p-0 text-sm text-slate-500">
             A pin without a label is useful for media-only previews.
           </p>
-          <div className="mt-4 flex flex-1 w-full rounded-lg bg-gradient-to-br from-amber-500 to-rose-500" />
+          <div className="mt-4 flex w-full flex-1 rounded-lg bg-gradient-to-br from-amber-500 to-rose-500" />
         </div>
       </PinContainer>
     </Frame>

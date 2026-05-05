@@ -1,0 +1,29 @@
+/* Animated beam keyframes for FlowIllustration. Two named cycles —
+   `beam-source-to-logo` flows the bus from the SOURCE card into the
+   center logo node, then `beam-logo-to-docs` flows from the logo out
+   to the three DOC cards on the right. Both use stroke-dashoffset on
+   long dashed paths to fake a moving particle along the path. */
+@theme inline {
+  --animate-flow-source-to-logo: flow-source-to-logo 2s ease-in-out infinite;
+  --animate-flow-logo-to-docs: flow-logo-to-docs 2s ease-in-out infinite;
+
+  @keyframes flow-source-to-logo {
+    0% {
+      stroke-dashoffset: 400;
+    }
+    45% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes flow-logo-to-docs {
+    0% {
+      stroke-dashoffset: 550;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+}

@@ -3,7 +3,7 @@ import { Heart, Sparkles, Zap } from "lucide-react";
 import { Pointer } from "./pointer";
 
 const meta: Meta<typeof Pointer> = {
-  title: "UI Effects/Pointer",
+  title: "UI Effects/Hover & Interactions/Pointer",
   component: Pointer,
   parameters: { layout: "centered" },
 };
@@ -36,8 +36,7 @@ export const Default: Story = {
       <Pointer />
       <h3 className="text-xl font-semibold">Hover this card</h3>
       <p className="text-muted-foreground mt-2 text-sm">
-        The system cursor is hidden while inside; a custom arrow follows
-        instead.
+        The system cursor is hidden while inside; a custom arrow follows instead.
       </p>
     </Card>
   ),

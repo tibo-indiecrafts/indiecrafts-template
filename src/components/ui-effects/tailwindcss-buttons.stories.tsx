@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ButtonsCard } from "./tailwindcss-buttons";
 
 const meta: Meta<typeof ButtonsCard> = {
-  title: "UI Effects/TailwindcssButtons",
+  title: "UI Effects/Buttons/TailwindcssButtons",
   component: ButtonsCard,
   parameters: { layout: "centered" },
 };

@@ -1,0 +1,12 @@
+{
+  "title": "Department budgets",
+  "viewMore": "View more →",
+  "budgetLabel": "Budget {name}",
+  "progressLabel": "Progress",
+  "items": {
+    "hr": { "name": "HR" },
+    "marketing": { "name": "Marketing" },
+    "finance": { "name": "Finance" },
+    "engineering": { "name": "Engineering" }
+  }
+}

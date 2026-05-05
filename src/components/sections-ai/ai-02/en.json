@@ -1,0 +1,27 @@
+{
+  "title": "Compose a prompt",
+  "placeholder": "Ask anything",
+  "attachImages": "Attach images",
+  "sendMessage": "Send message",
+  "maxBadge": "MAX",
+  "prompts": {
+    "docs": {
+      "text": "Write documentation",
+      "prompt": "Write comprehensive documentation for this codebase, including setup instructions, API references, and usage examples."
+    },
+    "performance": {
+      "text": "Optimize performance",
+      "prompt": "Analyze the codebase for performance bottlenecks and suggest optimizations to improve loading times and runtime efficiency."
+    },
+    "bugs": {
+      "text": "Find and fix 3 bugs",
+      "prompt": "Scan through the codebase to identify and fix 3 critical bugs, providing detailed explanations for each fix."
+    }
+  },
+  "models": {
+    "gpt-5": { "name": "GPT-5", "description": "Most advanced model" },
+    "gpt-4o": { "name": "GPT-4o", "description": "Fast and capable" },
+    "gpt-4": { "name": "GPT-4", "description": "Reliable and accurate" },
+    "claude-3-5": { "name": "Claude 3.5 Sonnet", "description": "Great for coding tasks" }
+  }
+}

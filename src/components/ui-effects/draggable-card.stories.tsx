@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { DraggableCardBody, DraggableCardContainer } from "./draggable-card";
 
 const meta: Meta<typeof DraggableCardBody> = {
-  title: "UI Effects/DraggableCard",
+  title: "UI Effects/Particles & Effects/DraggableCard",
   component: DraggableCardBody,
   parameters: { layout: "fullscreen" },
 };
@@ -26,8 +27,8 @@ export const Default: Story = {
       <DraggableCardBody className="bg-card relative h-80 w-72 rounded-2xl border p-6 shadow-xl">
         <h3 className="text-lg font-semibold">Drag me</h3>
         <p className="text-muted-foreground mt-2 text-sm">
-          Click and drag the card. It rotates with velocity and snaps back
-          via spring physics when released.
+          Click and drag the card. It rotates with velocity and snaps back via spring
+          physics when released.
         </p>
       </DraggableCardBody>
     </Frame>

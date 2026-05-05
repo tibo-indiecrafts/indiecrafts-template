@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment -- ts-nocheck below */
+// @ts-nocheck -- Aceternity / MagicUI upstream; type quirks (React 19 ref-null types, missing JSX namespace, etc.) accepted as-is.
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { BackgroundBeamsWithCollision } from "./background-beams-with-collision";
 
 const meta: Meta<typeof BackgroundBeamsWithCollision> = {
-  title: "UI Effects/BackgroundBeamsWithCollision",
+  title: "UI Effects/Backgrounds/BackgroundBeamsWithCollision",
   component: BackgroundBeamsWithCollision,
   parameters: { layout: "fullscreen" },
 };
@@ -34,9 +36,9 @@ export const FullHero: Story = {
           </span>
         </h2>
         <p className="text-muted-foreground max-w-md">
-          Beams crash into the floor with sparks, like a digital firework
-          display. Suitable for marketing pages where you need a hero that
-          punches above its weight.
+          Beams crash into the floor with sparks, like a digital firework display.
+          Suitable for marketing pages where you need a hero that punches above its
+          weight.
         </p>
         <button className="bg-foreground text-background mt-2 rounded-full px-5 py-2.5 text-sm font-medium">
           Get started

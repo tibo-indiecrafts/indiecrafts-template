@@ -9,7 +9,7 @@ import { seoConfig } from "@/config/seo.config";
 import { siteConfig } from "@/config/site.config";
 import { themeConfig } from "@/config/theme.config";
 import { routing } from "@/i18n/routing";
-import { ThemeProvider } from "@/components/layouts/_shared/ThemeProvider";
+import { ThemeProvider } from "@/components/layouts/_shared/theme-provider";
 import {
   buildOrganizationSchema,
   buildWebSiteSchema,

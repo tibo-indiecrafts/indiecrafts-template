@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AnimatedSpan, Terminal, TypingAnimation } from "./terminal";
 
 const meta: Meta<typeof Terminal> = {
-  title: "UI Effects/Terminal",
+  title: "UI Effects/3D & Devices/Terminal",
   component: Terminal,
   parameters: { layout: "centered" },
 };
@@ -29,9 +29,7 @@ export const Default: Story = {
         <AnimatedSpan delay={1500} className="text-emerald-500">
           ✓ Ready in 0.4s
         </AnimatedSpan>
-        <AnimatedSpan delay={2200}>
-          - Local: http://localhost:3000
-        </AnimatedSpan>
+        <AnimatedSpan delay={2200}>- Local: http://localhost:3000</AnimatedSpan>
       </Terminal>
     </Stage>
   ),
@@ -92,9 +90,7 @@ export const NoSequence: Story = {
     <Stage>
       <Terminal sequence={false}>
         <TypingAnimation>$ git status</TypingAnimation>
-        <AnimatedSpan className="text-muted-foreground">
-          On branch main
-        </AnimatedSpan>
+        <AnimatedSpan className="text-muted-foreground">On branch main</AnimatedSpan>
         <AnimatedSpan className="text-emerald-500">
           nothing to commit, working tree clean
         </AnimatedSpan>

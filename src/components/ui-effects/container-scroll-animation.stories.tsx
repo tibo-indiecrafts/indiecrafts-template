@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ContainerScroll } from "./container-scroll-animation";
 
 const meta: Meta<typeof ContainerScroll> = {
-  title: "UI Effects/ContainerScrollAnimation",
+  title: "UI Effects/Marquees & Scroll/ContainerScrollAnimation",
   component: ContainerScroll,
   parameters: { layout: "fullscreen" },
 };
@@ -54,8 +55,7 @@ export const HeroWithCta: Story = {
               Watch the dashboard come together.
             </h2>
             <p className="text-muted-foreground max-w-xl text-sm md:text-base">
-              Six widgets, one config file. Scroll to see the screenshot tilt
-              into view.
+              Six widgets, one config file. Scroll to see the screenshot tilt into view.
             </p>
             <button className="bg-foreground text-background mt-2 rounded-full px-5 py-2 text-sm font-medium">
               Try the demo

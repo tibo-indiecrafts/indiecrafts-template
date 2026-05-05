@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { FlipWords } from "./flip-words";
 
 const meta: Meta<typeof FlipWords> = {
-  title: "UI Effects/FlipWords",
+  title: "UI Effects/Text/FlipWords",
   component: FlipWords,
   parameters: { layout: "centered" },
   argTypes: {
@@ -29,10 +29,7 @@ export const Slow: Story = {
   render: () => (
     <div className="text-foreground text-3xl font-medium">
       Ship a
-      <FlipWords
-        words={["startup", "portfolio", "blog", "store"]}
-        duration={4500}
-      />
+      <FlipWords words={["startup", "portfolio", "blog", "store"]} duration={4500} />
       in a single weekend.
     </div>
   ),

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/purity -- Aceternity / MagicUI upstream */
 import React from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -58,11 +59,7 @@ export const BoxesCore = ({ className, ...rest }: { className?: string }) => {
                   stroke="currentColor"
                   className="pointer-events-none absolute -top-[14px] -left-[22px] h-6 w-10 stroke-[1px] text-slate-700"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 6v12m6-6H6"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
                 </svg>
               ) : null}
             </motion.div>

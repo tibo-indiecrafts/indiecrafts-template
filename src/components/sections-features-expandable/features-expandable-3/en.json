@@ -1,0 +1,20 @@
+{
+  "title": "Powerful features for modern teams",
+  "items": {
+    "tab1": {
+      "ariaLabel": "Expand smart email composition feature",
+      "title": "Smart email composition",
+      "body": "with AI-powered suggestions, templates, and seamless collaboration for faster communication."
+    },
+    "tab2": {
+      "ariaLabel": "Expand AI autocomplete feature",
+      "title": "AI autocomplete",
+      "body": "that learns your writing style and provides context-aware suggestions to boost productivity."
+    },
+    "tab3": {
+      "ariaLabel": "Expand real-time translation feature",
+      "title": "Real-time translation",
+      "body": "across 50+ languages with automatic detection and natural-sounding output for global teams."
+    }
+  }
+}

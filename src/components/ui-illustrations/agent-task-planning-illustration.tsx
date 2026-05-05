@@ -1,0 +1,97 @@
+import { CheckCircle2, CircleDashed, Play } from "lucide-react";
+
+type Task =
+  | { kind: "done"; label: string; meta: string }
+  | { kind: "active"; label: string; meta: string }
+  | { kind: "pending"; label: string; meta: string };
+
+const TASKS: readonly Task[] = [
+  { kind: "done", label: "1. Gather requirements", meta: "Completed in 2.3s" },
+  { kind: "done", label: "2. Research solutions", meta: "Completed in 5.1s" },
+  { kind: "active", label: "3. Implement solution", meta: "In progress... 12s" },
+  { kind: "pending", label: "4. Test and validate", meta: "Pending" },
+  { kind: "pending", label: "5. Deliver result", meta: "Pending" },
+];
+
+/**
+ * Agent task-planning illustration — auto-generated plan for a "Build
+ * a REST API endpoint" goal: 5 tasks rendered with state-aware glyphs
+ * (green check = done, primary spinner with play head = active,
+ * dashed circle = pending). Pure decoration; mock task labels stay
+ * hardcoded per the illustration rule. Sourced from
+ * `@tailark-pro/expandable-features-4`.
+ */
+export const AgentTaskPlanningIllustration = () => {
+  return (
+    <div aria-hidden className="max-w-xs min-w-xs">
+      <div className="bg-card/95 ring-border-illustration rounded-2xl p-6 shadow-md ring-1 shadow-black/4">
+        <div className="flex items-center gap-2">
+          <div className="text-sm font-medium">Task Planning</div>
+          <div className="bg-primary/10 text-primary ml-auto rounded px-2 py-0.5 text-[10px]">
+            Auto-generated
+          </div>
+        </div>
+
+        <div className="bg-illustration ring-border-illustration mt-4 rounded-lg p-2.5 shadow ring-1 shadow-black/5">
+          <div className="text-muted-foreground text-[10px]">Goal</div>
+          <div className="mt-1 text-xs">
+            Build a REST API endpoint for user authentication with JWT tokens
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-2">
+          {TASKS.map((task) => (
+            <TaskRow key={task.label} task={task} />
+          ))}
+        </div>
+
+        <div className="mt-3 flex items-center justify-between text-[10px]">
+          <div className="text-muted-foreground">2/5 tasks complete</div>
+          <div className="text-muted-foreground">Est. 45s remaining</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+function TaskRow({ task }: Readonly<{ task: Task }>) {
+  if (task.kind === "active") {
+    return (
+      <div className="bg-primary/5 ring-primary/20 -mx-2 flex items-start gap-2 rounded-lg p-2 ring-1">
+        <div className="relative mt-0.5">
+          <CircleDashed
+            className="text-primary size-4 animate-spin"
+            style={{ animationDuration: "3s" }}
+          />
+          <Play className="text-primary absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-current" />
+        </div>
+        <div className="flex-1">
+          <div className="text-primary text-xs font-semibold">{task.label}</div>
+          <div className="text-primary/70 text-[10px]">{task.meta}</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (task.kind === "done") {
+    return (
+      <div className="flex items-start gap-2">
+        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-green-500" />
+        <div className="flex-1">
+          <div className="text-xs font-medium line-through opacity-50">{task.label}</div>
+          <div className="text-muted-foreground text-[10px]">{task.meta}</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-start gap-2 opacity-40">
+      <CircleDashed className="text-muted-foreground mt-0.5 size-4 shrink-0" />
+      <div className="flex-1">
+        <div className="text-xs font-medium">{task.label}</div>
+        <div className="text-muted-foreground text-[10px]">{task.meta}</div>
+      </div>
+    </div>
+  );
+}

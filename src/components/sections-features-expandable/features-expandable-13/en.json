@@ -1,0 +1,21 @@
+{
+  "title": "Ship with confidence using Tailark engine",
+  "body": "Streamline your workflow with tools designed to enhance productivity at every step.",
+  "items": {
+    "tab1": {
+      "tabLabel": "AI Models",
+      "title": "AI Models",
+      "body": "Access and switch between multiple AI models including GPT, Claude, and Gemini from a unified interface with seamless provider switching."
+    },
+    "tab2": {
+      "tabLabel": "Global Reach",
+      "title": "Global Reach",
+      "body": "Work with teammates across the globe with real-time presence indicators, seamless syncing, and automatic conflict resolution."
+    },
+    "tab3": {
+      "tabLabel": "Smart Agent",
+      "title": "Smart Agent",
+      "body": "Deploy intelligent agents that learn your workflow patterns and automate repetitive tasks with context-aware suggestions."
+    }
+  }
+}

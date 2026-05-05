@@ -1,0 +1,9 @@
+{
+  "title": "Site analytics",
+  "items": {
+    "unique-visitors": { "name": "Unique visitors" },
+    "bounce-rate": { "name": "Bounce rate" },
+    "visit-duration": { "name": "Visit duration" },
+    "conversion-rate": { "name": "Conversion rate" }
+  }
+}

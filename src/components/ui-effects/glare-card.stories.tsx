@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Sparkles } from "lucide-react";
 import { GlareCard } from "./glare-card";
 
 const meta: Meta<typeof GlareCard> = {
-  title: "UI Effects/GlareCard",
+  title: "UI Effects/Cards/GlareCard",
   component: GlareCard,
   parameters: { layout: "centered" },
 };

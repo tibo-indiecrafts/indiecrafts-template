@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment -- ts-nocheck below */
+// @ts-nocheck -- Aceternity / MagicUI upstream; type quirks (React 19 ref-null types, missing JSX namespace, etc.) accepted as-is.
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ShinyButton } from "./shiny-button";
 
 const meta: Meta<typeof ShinyButton> = {
-  title: "UI Effects/ShinyButton",
+  title: "UI Effects/Buttons/ShinyButton",
   component: ShinyButton,
   parameters: { layout: "centered" },
 };
@@ -32,9 +34,7 @@ export const Default: Story = {
 export const Larger: Story = {
   render: () => (
     <Stage>
-      <ShinyButton className="px-10 py-3 text-lg uppercase">
-        Try the demo
-      </ShinyButton>
+      <ShinyButton className="px-10 py-3 text-lg uppercase">Try the demo</ShinyButton>
     </Stage>
   ),
 };

@@ -11,7 +11,7 @@ import {
 } from "./combobox";
 
 const meta: Meta<typeof Combobox> = {
-  title: "UI Effects/Combobox",
+  title: "UI Effects/Inputs/Combobox",
   component: Combobox,
   parameters: { layout: "centered" },
 };

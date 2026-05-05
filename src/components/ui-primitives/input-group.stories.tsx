@@ -124,9 +124,7 @@ export const Invalid: Story = {
           defaultValue="not-an-email"
         />
       </InputGroup>
-      <p className="text-destructive text-xs">
-        Enter a valid email address.
-      </p>
+      <p className="text-destructive text-xs">Enter a valid email address.</p>
     </Frame>
   ),
 };

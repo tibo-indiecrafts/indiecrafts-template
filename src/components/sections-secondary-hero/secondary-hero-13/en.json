@@ -1,0 +1,11 @@
+{
+  "tag": "iOS",
+  "title": "Your invoicing system, in your pocket",
+  "body": "Create invoices, track payments, and manage your finances seamlessly.",
+  "cta": "Download",
+  "features": {
+    "createInvoices": "Create invoices",
+    "trackPayments": "Track payments",
+    "manageFinances": "Manage finances"
+  }
+}

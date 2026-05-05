@@ -1,0 +1,22 @@
+{
+  "title": "Data Migration",
+  "description": "Migrating records from your legacy system",
+  "logsLabel": "Logs overview ({count})",
+  "items": {
+    "export": {
+      "description": "Export records",
+      "createdLog": "Created on 2024-03-10 09:32, Runtime: 12min 18s",
+      "inProgressLog": "Preparing export…"
+    },
+    "transform": {
+      "description": "Transform schema",
+      "createdLog": "Created on 2024-03-10 10:03, Runtime: 18min 45s",
+      "inProgressLog": "Mapping schema…"
+    },
+    "import": {
+      "description": "Import to new system",
+      "createdLog": "Created on 2024-03-10 10:47, Runtime: 6min 32s",
+      "inProgressLog": "12,847 of 28,500 records processed..."
+    }
+  }
+}

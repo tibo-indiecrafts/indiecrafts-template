@@ -1,9 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment -- ts-nocheck below */
+// @ts-nocheck -- shadcn upstream; type quirks (React 19 ref-null types, missing JSX namespace, etc.) accepted as-is.
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "./resizable";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable";
 
 const meta: Meta<typeof ResizablePanelGroup> = {
   title: "UI Primitives/Resizable",

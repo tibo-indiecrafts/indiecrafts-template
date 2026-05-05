@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { SpinningText } from "./spinning-text";
 
 const meta: Meta<typeof SpinningText> = {
-  title: "UI Effects/SpinningText",
+  title: "UI Effects/Text/SpinningText",
   component: SpinningText,
   parameters: { layout: "centered" },
   argTypes: {
@@ -49,9 +49,7 @@ export const Reverse: Story = {
   render: (args) => (
     <Stage>
       <Frame>
-        <SpinningText {...args}>
-          {"  • Spin the other way • "}
-        </SpinningText>
+        <SpinningText {...args}>{"  • Spin the other way • "}</SpinningText>
       </Frame>
     </Stage>
   ),
@@ -63,9 +61,7 @@ export const Slow: Story = {
   render: (args) => (
     <Stage>
       <Frame>
-        <SpinningText {...args}>
-          Slow steady • Indiecrafts •{" "}
-        </SpinningText>
+        <SpinningText {...args}>Slow steady • Indiecrafts • </SpinningText>
       </Frame>
     </Stage>
   ),

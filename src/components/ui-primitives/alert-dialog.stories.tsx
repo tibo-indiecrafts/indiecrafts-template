@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities -- shadcn upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { cn } from "@/lib/utils";
 import {
@@ -39,9 +40,7 @@ export const Default: Story = {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            className={cn(buttonVariants({ variant: "destructive" }))}
-          >
+          <AlertDialogAction className={cn(buttonVariants({ variant: "destructive" }))}>
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

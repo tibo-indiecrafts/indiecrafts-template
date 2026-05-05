@@ -1,0 +1,12 @@
+/* Progress-line keyframe for FeaturesExpandable12 — clip-paths the
+   coloured dashed bar from left (`inset(0 100% 0 0)`) to fully
+   visible (`inset(0 0 0 0)`) over the autoplay duration. Duration +
+   paused state are set inline by the component. */
+@keyframes features-expandable-12-progress {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}

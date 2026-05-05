@@ -24,10 +24,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": [
-    "node_modules",
-    "src/components/ui-primitives/**",
-    "src/components/ui-effects/*.tsx",
-    "src/hooks/**"
-  ]
+  "exclude": ["node_modules"]
 }

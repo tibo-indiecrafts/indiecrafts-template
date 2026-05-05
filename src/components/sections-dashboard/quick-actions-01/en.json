@@ -1,0 +1,22 @@
+{
+  "title": "Quick actions",
+  "description": "Jump straight into the things you do most often.",
+  "items": {
+    "create-project": {
+      "title": "Create project",
+      "description": "Spin up a new workspace from a template."
+    },
+    "invite-teammate": {
+      "title": "Invite teammate",
+      "description": "Send an invite and assign a role."
+    },
+    "view-reports": {
+      "title": "View reports",
+      "description": "See usage, trends, and weekly summaries."
+    },
+    "configure-billing": {
+      "title": "Configure billing",
+      "description": "Update payment methods or change plan."
+    }
+  }
+}

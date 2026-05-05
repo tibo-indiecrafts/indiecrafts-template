@@ -12,13 +12,7 @@ export default meta;
 
 type Story = StoryObj<typeof Toaster>;
 
-const Trigger = ({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) => (
+const Trigger = ({ label, onClick }: { label: string; onClick: () => void }) => (
   <Button variant="outline" onClick={onClick}>
     {label}
   </Button>
@@ -47,14 +41,8 @@ export const Variants: Story = {
     <>
       <Toaster />
       <div className="flex flex-wrap gap-3">
-        <Trigger
-          label="Success"
-          onClick={() => toast.success("Profile updated")}
-        />
-        <Trigger
-          label="Info"
-          onClick={() => toast.info("New version available")}
-        />
+        <Trigger label="Success" onClick={() => toast.success("Profile updated")} />
+        <Trigger label="Info" onClick={() => toast.info("New version available")} />
         <Trigger
           label="Warning"
           onClick={() => toast.warning("Session about to expire")}

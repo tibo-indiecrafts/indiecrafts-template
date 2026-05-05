@@ -73,8 +73,7 @@ export const List: Story = {
         Someone follows me
       </Label>
       <Label className="flex items-center gap-2">
-        <Checkbox />
-        I receive a direct message
+        <Checkbox />I receive a direct message
       </Label>
     </fieldset>
   ),

@@ -1,0 +1,26 @@
+{
+  "smartHomeCell": {
+    "title": "Smart Home Automation",
+    "body": "Control your entire home with <strong>intelligent ecosystem</strong>."
+  },
+  "biometricCell": {
+    "title": "Biometric Access",
+    "body": "Secure entry with fingerprint recognition"
+  },
+  "marketingCell": {
+    "title": "Marketing Campaigns",
+    "body": "Launch targeted promotions <strong>across channels</strong>."
+  },
+  "messagingCell": {
+    "title": "Team Messaging",
+    "body": "Real-time communication for seamless collaboration."
+  },
+  "visualizationCell": {
+    "title": "Data Visualization",
+    "body": "Transform complex data into clear, actionable insights."
+  },
+  "feedbackCell": {
+    "title": "Customer Feedback",
+    "body": "Collect and analyze user opinions to improve products."
+  }
+}

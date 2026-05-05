@@ -24,6 +24,7 @@
 
 import { readdirSync, readFileSync, writeFileSync, statSync } from "node:fs";
 import { join, relative, dirname, basename } from "node:path";
+import { spawnSync } from "node:child_process";
 
 const ROOT = process.cwd();
 const COMPONENTS_DIR = join(ROOT, "src/components");
@@ -84,7 +85,9 @@ const entries = [];
 for (const file of enFiles) {
   const key = deriveKey(file);
   if (!key) {
-    console.warn(`! skipping ${relative(ROOT, file)} — no <name>Key in sibling config.ts`);
+    console.warn(
+      `! skipping ${relative(ROOT, file)} — no <name>Key in sibling config.ts`,
+    );
     continue;
   }
   const importPath = relative(dirname(I18N_OUT), file).replace(/\\/g, "/");
@@ -92,7 +95,12 @@ for (const file of enFiles) {
   // doesn't add one when the source lives in a sibling directory.
   const normalizedImport = importPath.startsWith(".") ? importPath : `./${importPath}`;
   const aliasPath = `@/components/${relative(COMPONENTS_DIR, file).replace(/\\/g, "/")}`;
-  entries.push({ key, varName: `${camelCase(key)}En`, importPath: normalizedImport, aliasPath });
+  entries.push({
+    key,
+    varName: `${camelCase(key)}En`,
+    importPath: normalizedImport,
+    aliasPath,
+  });
 }
 
 entries.sort((a, b) => a.key.localeCompare(b.key));
@@ -101,9 +109,7 @@ entries.sort((a, b) => a.key.localeCompare(b.key));
 const blockImports = entries
   .map((e) => `import ${e.varName} from "${e.importPath}";`)
   .join("\n");
-const blockMap = entries
-  .map((e) => `  "${e.key}": ${e.varName},`)
-  .join("\n");
+const blockMap = entries.map((e) => `  "${e.key}": ${e.varName},`).join("\n");
 
 const blockMessagesContent = `${HEADER}
 ${blockImports}
@@ -128,9 +134,7 @@ writeFileSync(I18N_OUT, blockMessagesContent);
 const typeImports = entries
   .map((e) => `import type ${e.varName} from "${e.aliasPath}";`)
   .join("\n");
-const typeFields = entries
-  .map((e) => `    "${e.key}": typeof ${e.varName};`)
-  .join("\n");
+const typeFields = entries.map((e) => `    "${e.key}": typeof ${e.varName};`).join("\n");
 
 const typesContent = `${HEADER}
 import type globalEn from "../../messages/en.json";
@@ -168,6 +172,15 @@ export type MessageKey = DotPath<MergedMessages>;
 `;
 
 writeFileSync(TYPES_OUT, typesContent);
+
+// Format the generated files so `pnpm verify`'s format:check stays clean.
+spawnSync(
+  "pnpm",
+  ["exec", "prettier", "--write", "--log-level", "silent", I18N_OUT, TYPES_OUT],
+  {
+    stdio: "inherit",
+  },
+);
 
 console.log(`✓ wrote ${entries.length} block-message entries`);
 console.log(`  - ${relative(ROOT, I18N_OUT)}`);

@@ -1,0 +1,9 @@
+{
+  "title": "Financial overview",
+  "items": {
+    "profit": { "name": "Profit" },
+    "late-payments": { "name": "Late payments" },
+    "pending-orders": { "name": "Pending orders" },
+    "operating-costs": { "name": "Operating costs" }
+  }
+}

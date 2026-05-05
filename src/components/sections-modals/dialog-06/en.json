@@ -1,0 +1,11 @@
+{
+  "trigger": "Create Workspace",
+  "title": "Create workspace",
+  "description": "Workspaces are shared environments where teams can connect to data sources, run queries and create reports.",
+  "nameLabel": "Workspace Name",
+  "nameRequired": "*",
+  "namePlaceholder": "My workspace",
+  "submit": "Create workspace",
+  "privateLabel": "Set workspace to private",
+  "privateDescription": "Only those invited can access or view"
+}

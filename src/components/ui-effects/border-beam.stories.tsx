@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { BorderBeam } from "./border-beam";
 
 const meta: Meta<typeof BorderBeam> = {
-  title: "UI Effects/BorderBeam",
+  title: "UI Effects/Buttons/BorderBeam",
   component: BorderBeam,
   parameters: { layout: "centered" },
 };

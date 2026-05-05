@@ -1,12 +1,7 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-unused-vars -- Aceternity / MagicUI upstream */
 import React, { useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useTransform,
-  useScroll,
-  useVelocity,
-  useSpring,
-} from "motion/react";
+import { motion, useTransform, useScroll, useVelocity, useSpring } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export const TracingBeam = ({
@@ -31,20 +26,14 @@ export const TracingBeam = ({
     }
   }, []);
 
-  const y1 = useSpring(
-    useTransform(scrollYProgress, [0, 0.8], [50, svgHeight]),
-    {
-      stiffness: 500,
-      damping: 90,
-    },
-  );
-  const y2 = useSpring(
-    useTransform(scrollYProgress, [0, 1], [50, svgHeight - 200]),
-    {
-      stiffness: 500,
-      damping: 90,
-    },
-  );
+  const y1 = useSpring(useTransform(scrollYProgress, [0, 0.8], [50, svgHeight]), {
+    stiffness: 500,
+    damping: 90,
+  });
+  const y2 = useSpring(useTransform(scrollYProgress, [0, 1], [50, svgHeight - 200]), {
+    stiffness: 500,
+    damping: 90,
+  });
 
   return (
     <motion.div
@@ -59,9 +48,7 @@ export const TracingBeam = ({
           }}
           animate={{
             boxShadow:
-              scrollYProgress.get() > 0
-                ? "none"
-                : "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+              scrollYProgress.get() > 0 ? "none" : "rgba(0, 0, 0, 0.24) 0px 3px 8px",
           }}
           className="border-netural-200 ml-[27px] flex h-4 w-4 items-center justify-center rounded-full border shadow-sm"
         >

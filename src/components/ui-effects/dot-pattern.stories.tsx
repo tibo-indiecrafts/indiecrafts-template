@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { DotPattern } from "./dot-pattern";
 
 const meta: Meta<typeof DotPattern> = {
-  title: "UI Effects/DotPattern",
+  title: "UI Effects/Backgrounds/DotPattern",
   component: DotPattern,
   parameters: { layout: "fullscreen" },
 };

@@ -1,0 +1,59 @@
+{
+  "homeLabel": "Go to home",
+  "openMenu": "Open menu",
+  "closeMenu": "Close menu",
+  "loginLabel": "Login",
+  "ctaLabel": "Get started",
+  "moreFeatures": "More features",
+  "groups": {
+    "product": "Product",
+    "solutions": "Solutions"
+  },
+  "panels": {
+    "features": "Features",
+    "useCases": "Use Cases",
+    "content": "Content"
+  },
+  "links": {
+    "pricing": "Pricing",
+    "company": "Company"
+  },
+  "features": {
+    "ai": { "name": "AI", "description": "Generate insights and recommendations" },
+    "performance": {
+      "name": "Performance",
+      "description": "Lightning-fast load times"
+    },
+    "security": {
+      "name": "Security",
+      "description": "Keep your data safe and secure"
+    },
+    "support": {
+      "name": "Customer support",
+      "description": "Get help when you need it"
+    }
+  },
+  "useCases": {
+    "marketplace": {
+      "name": "Marketplace",
+      "description": "Find and buy AI tools"
+    },
+    "guides": {
+      "name": "Guides",
+      "description": "Learn how to use AI tools"
+    },
+    "api-integration": {
+      "name": "API integration",
+      "description": "Integrate AI tools into your app"
+    },
+    "partnerships": {
+      "name": "Partnerships",
+      "description": "Get help when you need it"
+    }
+  },
+  "contentLinks": {
+    "announcements": { "name": "Announcements" },
+    "resources": { "name": "Resources" },
+    "blog": { "name": "Blog" }
+  }
+}

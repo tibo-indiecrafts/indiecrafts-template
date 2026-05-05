@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { BackgroundRippleEffect } from "./background-ripple-effect";
 
 const meta: Meta<typeof BackgroundRippleEffect> = {
-  title: "UI Effects/BackgroundRippleEffect",
+  title: "UI Effects/Backgrounds/BackgroundRippleEffect",
   component: BackgroundRippleEffect,
   parameters: { layout: "fullscreen" },
 };
@@ -28,8 +28,8 @@ export const Default: Story = {
       <div className="pointer-events-none relative z-10 px-6 text-center">
         <h2 className="text-4xl font-semibold">Click anywhere</h2>
         <p className="text-muted-foreground mt-2 max-w-md text-sm">
-          Each click triggers a ripple that propagates through the grid before
-          settling back to the resting fill colour.
+          Each click triggers a ripple that propagates through the grid before settling
+          back to the resting fill colour.
         </p>
       </div>
     </Stage>

@@ -1,6 +1,6 @@
 /**
  * Dashboard route metadata. SEO + composition live in
- * `pages-app/dashboard-1/`; this file just registers the route's slug + id
+ * `pages-dashboard/dashboard-01/`; this file just registers the route's slug + id
  * with the page registry.
  */
 

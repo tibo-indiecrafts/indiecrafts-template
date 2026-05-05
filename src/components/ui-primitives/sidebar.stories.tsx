@@ -37,9 +37,7 @@ export const Default: Story = {
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <div className="text-foreground px-2 py-1.5 font-semibold">
-            Indiecrafts
-          </div>
+          <div className="text-foreground px-2 py-1.5 font-semibold">Indiecrafts</div>
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
