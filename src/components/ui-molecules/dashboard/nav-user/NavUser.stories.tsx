@@ -26,7 +26,6 @@ export default meta;
 
 type Story = StoryObj<typeof NavUser>;
 
-/** Default — avatar empty, the fallback initials chip is rendered. */
 export const Default: Story = {
   args: {
     user: {
@@ -37,7 +36,6 @@ export const Default: Story = {
   },
 };
 
-/** Avatar URL provided — `AvatarImage` loads, `AvatarFallback` stays hidden. */
 export const WithAvatar: Story = {
   args: {
     user: {
@@ -48,7 +46,6 @@ export const WithAvatar: Story = {
   },
 };
 
-/** Long name + email — exercises the `truncate` styling on both lines. */
 export const LongIdentity: Story = {
   args: {
     user: {

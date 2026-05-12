@@ -14,7 +14,6 @@ export const Default: Story = {
   render: () => <ForgotPasswordPage />,
 };
 
-/** Custom routing — `brandHref` and `loginHref` overridden. */
 export const CustomLinks: Story = {
   render: () => <ForgotPasswordPage brandHref="/home" loginHref="/auth/login" />,
 };

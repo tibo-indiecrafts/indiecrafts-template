@@ -31,10 +31,6 @@ const ATTACHMENT_ICONS = {
   IconSearch,
 } as const;
 
-/**
- * Chat composer with auto-expanding textarea, attachments dropdown,
- * and voice/send affordances. Sourced from a shadcn AI block.
- */
 export default function Ai(props: Readonly<AiBlock>) {
   const [t, tr] = useScopedT(ai01Namespace);
   const items: AiAttachmentItem[] = props.attachmentItems ?? ai01AttachmentItems;

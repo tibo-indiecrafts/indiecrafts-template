@@ -55,7 +55,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Default — 3 column grid; hovering an item slides a subtle background pill. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -64,7 +63,6 @@ export const Default: Story = {
   ),
 };
 
-/** Three items — exercises the layoutId slide between adjacent cards. */
 export const ThreeItems: Story = {
   render: () => (
     <Frame>
@@ -73,7 +71,6 @@ export const ThreeItems: Story = {
   ),
 };
 
-/** Single item — degenerate case; the hover background still fades in. */
 export const Single: Story = {
   render: () => (
     <Frame>
@@ -82,7 +79,6 @@ export const Single: Story = {
   ),
 };
 
-/** Custom column count — `className="lg:grid-cols-2"` halves the column count. */
 export const TwoColumns: Story = {
   render: () => (
     <Frame>

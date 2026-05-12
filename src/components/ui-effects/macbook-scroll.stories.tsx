@@ -10,11 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof MacbookScroll>;
 
-/**
- * Default — the iconic Apple-style hero. Scroll the canvas to see the
- * MacBook lid open and a screenshot fill the display. The animation is
- * driven by `useScroll` against the section&apos;s own offset.
- */
 export const Default: Story = {
   render: () => (
     <MacbookScroll
@@ -29,7 +24,6 @@ export const Default: Story = {
   ),
 };
 
-/** With badge — a "New" pill above the headline (or any ReactNode). */
 export const WithBadge: Story = {
   render: () => (
     <MacbookScroll
@@ -45,7 +39,6 @@ export const WithBadge: Story = {
   ),
 };
 
-/** No gradient — `showGradient={false}` removes the bottom fade overlay. */
 export const NoGradient: Story = {
   render: () => (
     <MacbookScroll
@@ -55,7 +48,6 @@ export const NoGradient: Story = {
   ),
 };
 
-/** No screenshot — without `src` the screen renders empty (chrome only). */
 export const NoScreenshot: Story = {
   render: () => <MacbookScroll title="Just the device" showGradient />,
 };

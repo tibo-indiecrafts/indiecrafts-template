@@ -48,11 +48,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-background w-full p-6">{children}</div>
 );
 
-/**
- * Default — three sections sync the right-side preview tile to the active
- * section as the user scrolls the inner overflow container. Active heading
- * is full opacity; siblings dim to 0.3.
- */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -61,7 +56,6 @@ export const Default: Story = {
   ),
 };
 
-/** Two sections — minimum viable stack. */
 export const TwoSections: Story = {
   render: () => (
     <Frame>
@@ -70,7 +64,6 @@ export const TwoSections: Story = {
   ),
 };
 
-/** Image preview tiles — content slot accepts any ReactNode. */
 export const ImagePreviews: Story = {
   render: () => (
     <Frame>
@@ -115,7 +108,6 @@ export const ImagePreviews: Story = {
   ),
 };
 
-/** Custom tile className — pass `contentClassName` to retune the preview. */
 export const TallTile: Story = {
   render: () => (
     <Frame>

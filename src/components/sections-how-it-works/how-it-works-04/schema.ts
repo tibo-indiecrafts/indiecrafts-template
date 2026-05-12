@@ -13,7 +13,7 @@ export type HowItWorksStep = {
 export type HowItWorksBlock = {
   type: "how-it-works-04";
   id: string;
-  /** Eyebrow above the section title (e.g. "Our Process"). */
+
   eyebrowKey: MessageKey;
   headerTitleKey: MessageKey;
   headerBodyKey: MessageKey;

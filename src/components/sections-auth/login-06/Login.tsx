@@ -8,11 +8,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { login06Namespace } from "./config";
 import type { LoginBlock } from "./schema";
 
-/**
- * Passwordless-first card: magic-link primary, password fallback, SSO.
- * Sourced from `@blocks-so/login-06`, refactored into the section
- * pattern: every visible string resolves from `blocks.login-06.*`.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login06Namespace);
   const titleId = `${props.id}-title`;

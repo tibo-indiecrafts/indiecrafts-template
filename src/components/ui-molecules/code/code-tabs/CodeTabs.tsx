@@ -39,17 +39,6 @@ const SAMPLES: Record<CodeBlockKey, string> = {
   palm: `import java.net.HttpURLConnection;\n\nURL url = new URL("https://api.example.com/data");\nHttpURLConnection conn = (HttpURLConnection) url.openConnection();\nconn.setRequestMethod("POST");\nconn.setRequestProperty("Content-Type", "application/json");\nconn.setDoOutput(true);\n\nString jsonInputString = "{\\"key\\": \\"value\\", \\"anotherKey\\": \\"anotherValue\\"}";\n\ntry (OutputStream os = conn.getOutputStream()) {\n    byte[] input = jsonInputString.getBytes("utf-8");\n    os.write(input, 0, input.length);\n}\n\nint code = conn.getResponseCode();\nSystem.out.println("Response Code: " + code);`,
 };
 
-/**
- * Code-tabs molecule — composable interactive code preview with 4
- * language tabs (Gemini / JavaScript, Replit / Python, VSCodium /
- * PHP, Google PaLM / Java) over a Shiki-highlighted code window
- * with a sliding active-tab pill (`motion.span` indicator that
- * tracks the active button's position).
- *
- * Composes `CodeBlock` from `ui-molecules/code/code-block/`. Mock
- * code samples stay hardcoded — this molecule is presentational
- * (used in marketing/feature sections to demo SDK code).
- */
 export default function CodeTabs() {
   const [active, setActive] = useState<CodeBlockKey>("gemini");
   const buttonRefs = useRef<Record<CodeBlockKey, HTMLButtonElement | null>>({

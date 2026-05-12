@@ -14,20 +14,13 @@ import {
   Video,
 } from "lucide-react";
 
-/**
- * Block key — kebab-case folder name. Used to look up translations under `blocks.<key>.*`.
- */
 export const settingsDialogKey = "settings-dialog" as const;
 
-/**
- * Translation namespace — `useTranslations(settingsDialogNamespace)` resolves keys from `en.json`.
- */
 export const settingsDialogNamespace = "blocks.settings-dialog" as const;
 
 export type SettingsDialogNavItem = {
-  /** Stable id used for active-section comparison and keys. */
   id: string;
-  /** Translation key for the visible name, relative to the section namespace. */
+
   nameKey: string;
   icon: ComponentType<{ className?: string }>;
 };

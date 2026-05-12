@@ -16,11 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — frame for showcasing arbitrary button code samples. The card
- * renders a dotted-grid backdrop and reveals a clipboard icon on hover.
- * Drop any button into the slot.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -33,7 +28,6 @@ export const Default: Story = {
   ),
 };
 
-/** Outline — wraps an outlined button. */
 export const OutlineButton: Story = {
   render: () => (
     <Stage>
@@ -46,7 +40,6 @@ export const OutlineButton: Story = {
   ),
 };
 
-/** Gradient — showcases a richer CTA. */
 export const Gradient: Story = {
   render: () => (
     <Stage>
@@ -59,7 +52,6 @@ export const Gradient: Story = {
   ),
 };
 
-/** Multiple — one card with several CTAs to compare. */
 export const Multiple: Story = {
   render: () => (
     <Stage>
@@ -77,7 +69,6 @@ export const Multiple: Story = {
   ),
 };
 
-/** With onClick — cards forward `onClick` to mimic a copy-to-clipboard demo. */
 export const WithClickHandler: Story = {
   render: () => (
     <Stage>

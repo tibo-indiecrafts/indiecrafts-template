@@ -29,10 +29,6 @@ const PROMPT_ICONS = {
   IconAlertTriangle,
 } as const;
 
-/**
- * Prompt composer with model selector and quick suggestion buttons.
- * Sourced from a shadcn AI block.
- */
 export default function Ai(props: Readonly<AiBlock>) {
   const [t] = useScopedT(ai02Namespace);
   const prompts = props.prompts ?? ai02Prompts;

@@ -14,7 +14,6 @@ type Story = StoryObj<typeof Collapsible>;
 
 const items = ["@radix-ui/react-collapsible", "@radix-ui/react-icons"];
 
-/** Default — closed at mount; trigger expands the content. */
 export const Default: Story = {
   render: () => (
     <Collapsible className="w-[320px] space-y-2">
@@ -39,7 +38,6 @@ export const Default: Story = {
   ),
 };
 
-/** Open at mount via `defaultOpen`. */
 export const InitiallyOpen: Story = {
   render: () => (
     <Collapsible defaultOpen className="w-[320px] space-y-2">
@@ -63,7 +61,6 @@ export const InitiallyOpen: Story = {
   ),
 };
 
-/** Disabled — trigger is non-interactive. */
 export const Disabled: Story = {
   render: () => (
     <Collapsible disabled className="w-[320px] space-y-2">

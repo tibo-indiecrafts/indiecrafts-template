@@ -3,7 +3,6 @@ import { Clover, Gem } from "lucide-react";
 
 export function Comparator() {
   const features = [
-    // Free features
     {
       name: "Basic Analytics Dashboard",
       plans: { free: true, pro: true },
@@ -16,7 +15,7 @@ export function Comparator() {
       name: "Email and Chat Support",
       plans: { free: true, pro: true },
     },
-    // Pro-only additions
+
     {
       name: "Access to Community Forum",
       plans: { free: false, pro: true },

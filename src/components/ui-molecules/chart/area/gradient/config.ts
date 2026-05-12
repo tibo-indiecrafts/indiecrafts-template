@@ -1,16 +1,7 @@
-/**
- * Block key — kebab-case folder name. Used to look up translations under `blocks.<key>.*`.
- */
 export const chartAreaGradientKey = "chart-area-gradient" as const;
 
-/**
- * Translation namespace — `useTranslations(chartAreaGradientNamespace)` resolves keys from `en.json`.
- */
 export const chartAreaGradientNamespace = "blocks.chart-area-gradient" as const;
 
-/**
- * Chart data rows. Replace per fork with real data.
- */
 export const chartAreaGradientData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -20,10 +11,6 @@ export const chartAreaGradientData = [
   { month: "June", desktop: 214, mobile: 140 },
 ];
 
-/**
- * Series config — `dataKey` matches a property on each data row, `labelKey`
- * resolves under the namespace, `color` is the CSS var the chart paints with.
- */
 export const chartAreaGradientSeries = [
   { dataKey: "desktop", labelKey: "desktopLabel", color: "var(--chart-1)" },
   { dataKey: "mobile", labelKey: "mobileLabel", color: "var(--chart-2)" },

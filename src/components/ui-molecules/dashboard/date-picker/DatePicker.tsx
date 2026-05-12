@@ -4,12 +4,6 @@ import { cn } from "@/lib/utils";
 
 export type DatePickerProps = React.ComponentProps<typeof Calendar>;
 
-/**
- * Sidebar-flavored wrapper around the `Calendar` primitive — forwards every
- * Calendar prop (`mode`, `selected`, `onSelect`, …) so the consumer fully
- * drives the date-picking behavior. The widget itself only sets the
- * sidebar-width class overrides; it owns no state.
- */
 export function DatePicker({ className, classNames, ...props }: DatePickerProps) {
   return (
     <SidebarGroup className="px-0">

@@ -41,7 +41,6 @@ const components = [
   },
 ];
 
-/** Trigger reveals a flyout panel with grouped links. */
 export const Default: Story = {
   render: () => (
     <NavigationMenu>

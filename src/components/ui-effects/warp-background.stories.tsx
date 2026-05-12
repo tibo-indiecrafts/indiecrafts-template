@@ -32,11 +32,6 @@ const CardBody = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — colorful beams shoot inward from all four sides on a perspective
- * grid. The content slot sits at the centre, undistorted, while the beams
- * animate around it.
- */
 export const Default: Story = {
   render: (args) => (
     <Stage>
@@ -50,7 +45,6 @@ export const Default: Story = {
   ),
 };
 
-/** Calm — fewer beams, slower duration. */
 export const Calm: Story = {
   args: { beamsPerSide: 2, beamDuration: 7 },
   render: (args) => (
@@ -65,7 +59,6 @@ export const Calm: Story = {
   ),
 };
 
-/** Dense — `beamsPerSide={8}` for an arcade overload. */
 export const Dense: Story = {
   args: { beamsPerSide: 8, beamDuration: 2.5 },
   render: (args) => (
@@ -77,10 +70,6 @@ export const Dense: Story = {
   ),
 };
 
-/**
- * Brand grid — `gridColor` reads from the `--color-primary` token so the
- * perspective grid mirrors the template&apos;s brand at any theme.
- */
 export const BrandGrid: Story = {
   args: { gridColor: "var(--color-primary)" },
   render: (args) => (

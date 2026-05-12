@@ -17,7 +17,6 @@ export default meta;
 
 type Story = StoryObj<typeof Modal>;
 
-/** Trigger + body composition. Click trigger again to close, or click outside. */
 export const Default: Story = {
   render: () => (
     <Modal>
@@ -39,10 +38,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Form composition — illustrates the typical use case: a labelled modal with
- * inputs and a confirm/cancel pair in the footer.
- */
 export const Form: Story = {
   render: () => (
     <Modal>
@@ -86,10 +81,6 @@ export const Form: Story = {
   ),
 };
 
-/**
- * Long content — body extends past the visible area; the modal handles
- * scroll internally so the trigger and footer stay anchored.
- */
 export const LongContent: Story = {
   render: () => (
     <Modal>

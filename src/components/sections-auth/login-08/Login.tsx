@@ -18,11 +18,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { login08Namespace } from "./config";
 import type { LoginBlock } from "./schema";
 
-/**
- * Branded sign-in card — logo + email + password (with visibility
- * toggle) + remember-me + SSO + reset/sign-up links. Sourced from
- * `@blocks-so/login-08`, refactored into the section pattern.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login08Namespace);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);

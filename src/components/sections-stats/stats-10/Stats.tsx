@@ -26,10 +26,6 @@ const seriesData = [
   { date: "Dec 08", alpha: 168.59, beta: 78.54, gamma: 75.68 },
 ];
 
-/**
- * Area-chart sparkline cards per stock. Sourced from
- * `@blocks-so/stats-10`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats10Namespace);
   const items = props.items ?? stats10Items;

@@ -16,10 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — hover the button to expand the brand-coloured dot into a full
- * fill while the label slides out and an arrow CTA slides in from the right.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -28,7 +24,6 @@ export const Default: Story = {
   ),
 };
 
-/** Long label — proves the hover transition stays smooth with more text. */
 export const LongLabel: Story = {
   render: () => (
     <Stage>
@@ -37,7 +32,6 @@ export const LongLabel: Story = {
   ),
 };
 
-/** Larger — extra padding + a bigger font via `className`. */
 export const Larger: Story = {
   render: () => (
     <Stage>
@@ -48,7 +42,6 @@ export const Larger: Story = {
   ),
 };
 
-/** Disabled — passes through native `disabled`; hover stops responding. */
 export const Disabled: Story = {
   render: () => (
     <Stage>
@@ -59,7 +52,6 @@ export const Disabled: Story = {
   ),
 };
 
-/** Side by side — multiple buttons share the page; each hover is independent. */
 export const SideBySide: Story = {
   render: () => (
     <Stage>

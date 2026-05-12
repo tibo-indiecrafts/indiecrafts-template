@@ -27,7 +27,6 @@ const frameworks = [
   { value: "astro", label: "Astro" },
 ];
 
-/** Single-select combobox with type-ahead filtering. */
 export const Default: Story = {
   render: () => (
     <Combobox items={frameworks}>
@@ -49,7 +48,6 @@ export const Default: Story = {
   ),
 };
 
-/** Pre-selected value via `defaultValue`. */
 export const WithDefault: Story = {
   render: () => (
     <Combobox items={frameworks} defaultValue={frameworks[0]}>

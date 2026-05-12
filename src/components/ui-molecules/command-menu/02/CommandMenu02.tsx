@@ -22,11 +22,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { commandMenu02Groups, commandMenu02Namespace } from "./config";
 import type { CommandMenuBlock, CommandMenuItem } from "./schema";
 
-/**
- * Full-screen command palette with nine grouped sections, search input,
- * Esc footer, and per-item keyboard hint chips. Sourced from
- * `@blocks-so/command-menu-02`.
- */
 export default function CommandMenu(props: Readonly<CommandMenuBlock>) {
   const [t, tr] = useScopedT(commandMenu02Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

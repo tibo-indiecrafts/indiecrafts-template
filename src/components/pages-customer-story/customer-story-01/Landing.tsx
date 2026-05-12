@@ -23,10 +23,7 @@ export type LandingProps = {
   layout?: LayoutName;
   header?: boolean | ReactNode;
   footer?: boolean | ReactNode;
-  /**
-   * Customer-story content. Defaults to `customerStory01Sample`
-   * so Storybook + the live route render without a CMS connection.
-   */
+
   story?: CustomerStory;
 };
 

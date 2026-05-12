@@ -18,12 +18,10 @@ export default meta;
 
 type Story = StoryObj<typeof QuickActionsSection>;
 
-/** Default — 4 actions in a responsive 1/2/4 column grid. */
 export const Default: Story = {
   args: { ...quickActions01Sample, id: "quick-actions-01-default" },
 };
 
-/** Compact — 2 actions, useful for trimmed dashboards or empty workspaces. */
 export const Compact: Story = {
   args: {
     id: "quick-actions-01-compact",

@@ -3,12 +3,6 @@ import type { Contact01Block } from "./schema";
 export const contact01Key = "contact-01" as const;
 export const contact01Namespace = "blocks.contact-01" as const;
 
-/**
- * Default contact-1 instance. Emails and phone numbers are static contact
- * data — not translations — so they live here in config. Countries and job
- * option values are also locale-agnostic (the label is translated via
- * `labelKey`).
- */
 export const contact01Sample: Omit<Contact01Block, "id"> = {
   type: "contact-01",
   titleKey: "blocks.contact-01.title",

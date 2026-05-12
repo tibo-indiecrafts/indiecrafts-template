@@ -11,6 +11,6 @@ export type StatsBlock = {
   titleKey: MessageKey;
   bodyKey: MessageKey;
   items: ReadonlyArray<StatItem>;
-  /** Decorative globe / world-map image absolute-positioned to the bottom-right at sm+. */
+
   globeSrc: string;
 };

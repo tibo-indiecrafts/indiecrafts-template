@@ -14,7 +14,6 @@ export default meta;
 
 type Story = StoryObj<typeof AnimatedShinyText>;
 
-/** Default — gradient sweep across muted text. */
 export const Default: Story = {
   render: () => (
     <p className="text-2xl font-semibold">
@@ -23,7 +22,6 @@ export const Default: Story = {
   ),
 };
 
-/** Common "✨ New" pill pattern — used as a marketing badge. */
 export const Pill: Story = {
   render: () => (
     <div className="bg-foreground/5 ring-foreground/5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 ring-1">
@@ -36,7 +34,6 @@ export const Pill: Story = {
   ),
 };
 
-/** Wider shimmer — `shimmerWidth={300}` slows the perceived sweep. */
 export const WideShimmer: Story = {
   render: () => (
     <p className="text-2xl font-semibold">
@@ -45,7 +42,6 @@ export const WideShimmer: Story = {
   ),
 };
 
-/** Narrow shimmer — tight 50px highlight band. */
 export const NarrowShimmer: Story = {
   render: () => (
     <p className="text-2xl font-semibold">
@@ -54,7 +50,6 @@ export const NarrowShimmer: Story = {
   ),
 };
 
-/** Multiple lines — wraps and animates over the full text block. */
 export const Paragraph: Story = {
   render: () => (
     <p className="max-w-md text-base leading-relaxed">

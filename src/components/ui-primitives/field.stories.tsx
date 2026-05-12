@@ -25,7 +25,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="w-[420px]">{children}</div>
 );
 
-/** Single labeled field with helper text. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -38,7 +37,6 @@ export const Default: Story = {
   ),
 };
 
-/** With error — `FieldError` styles the message destructive. */
 export const WithError: Story = {
   render: () => (
     <Frame>
@@ -51,7 +49,6 @@ export const WithError: Story = {
   ),
 };
 
-/** Group + separator — multiple fields stacked vertically. */
 export const Group: Story = {
   render: () => (
     <Frame>
@@ -74,7 +71,6 @@ export const Group: Story = {
   ),
 };
 
-/** Set with legend — semantic grouping using `<fieldset>`. */
 export const Fieldset: Story = {
   render: () => (
     <Frame>

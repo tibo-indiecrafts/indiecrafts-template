@@ -28,10 +28,6 @@ const Anchor = ({
   </div>
 );
 
-/**
- * Default — single straight beam from A to B. Demonstrates the minimum API
- * surface: `containerRef`, `fromRef`, `toRef`.
- */
 export const Default: Story = {
   render: () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -50,7 +46,6 @@ export const Default: Story = {
   },
 };
 
-/** `curvature={75}` arches the beam upward — useful for non-linear flows. */
 export const Curved: Story = {
   render: () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -74,7 +69,6 @@ export const Curved: Story = {
   },
 };
 
-/** `reverse` flips the gradient sweep direction. */
 export const Reverse: Story = {
   render: () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -98,10 +92,6 @@ export const Reverse: Story = {
   },
 };
 
-/**
- * Hub-and-spoke — three peripheral anchors all beaming into a central node.
- * Common pattern for diagrams that show a coordinator / router.
- */
 export const HubAndSpoke: Story = {
   render: () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -155,10 +145,6 @@ export const HubAndSpoke: Story = {
   },
 };
 
-/**
- * Custom palette — `gradientStartColor` and `gradientStopColor` retune the
- * sweep, and a thicker `pathWidth` reads better against busy backgrounds.
- */
 export const CustomColors: Story = {
   render: () => {
     const containerRef = useRef<HTMLDivElement>(null);

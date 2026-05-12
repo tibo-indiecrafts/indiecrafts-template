@@ -24,7 +24,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-card rounded-2xl border p-2">{children}</div>
 );
 
-/** Default — hover-driven slider, starting at 50%. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -39,7 +38,6 @@ export const Default: Story = {
   ),
 };
 
-/** Drag mode — user drags the handle instead of hovering. */
 export const DragMode: Story = {
   render: () => (
     <Frame>
@@ -55,7 +53,6 @@ export const DragMode: Story = {
   ),
 };
 
-/** Autoplay — slider sweeps automatically; useful for hero showcases. */
 export const Autoplay: Story = {
   render: () => (
     <Frame>
@@ -72,10 +69,6 @@ export const Autoplay: Story = {
   ),
 };
 
-/**
- * Off-centre start — `initialSliderPercentage={20}` lands the handle near
- * the left so the "after" image dominates initially.
- */
 export const OffCentreStart: Story = {
   render: () => (
     <Frame>
@@ -91,7 +84,6 @@ export const OffCentreStart: Story = {
   ),
 };
 
-/** No handlebar — minimalist sliding without the drag affordance. */
 export const NoHandlebar: Story = {
   render: () => (
     <Frame>

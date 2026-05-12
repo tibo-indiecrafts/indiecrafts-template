@@ -10,15 +10,12 @@ export default meta;
 
 type Story = StoryObj<typeof Landing>;
 
-/** Defaults — DefaultLayout (SiteHeader + sections + SiteFooter). */
 export const Default: Story = {};
 
-/** Hide the SiteFooter — useful when stacking the template above another. */
 export const NoFooter: Story = {
   args: { footer: false },
 };
 
-/** No marketing chrome — sections bleed to the viewport edges. */
 export const FullBleed: Story = {
   args: { layout: "full-bleed" },
 };

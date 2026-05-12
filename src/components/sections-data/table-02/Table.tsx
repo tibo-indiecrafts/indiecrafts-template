@@ -89,13 +89,6 @@ function ActionButton({
   );
 }
 
-/**
- * Tasks table — sourced from `@blocks-so/table-02`, refactored to fit the
- * project's section pattern: status labels, column headers, and action
- * tooltips all source from `blocks.table-02.*`. The action handler is
- * caller-driven via `onAction`; the default is a logger.info no-op so
- * stories run without wiring.
- */
 export default function Table(props: Readonly<TableBlock>) {
   const t = useTranslations(table02Namespace);
   const tasks = props.tasks ?? table2Tasks;

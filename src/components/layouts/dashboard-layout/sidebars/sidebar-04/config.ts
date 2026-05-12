@@ -2,10 +2,8 @@ import { Archive, Flag } from "lucide-react";
 import { IconCarambola, IconHourglassHigh, IconMailbox } from "@tabler/icons-react";
 import type { ComponentType } from "react";
 
-/** Block key — kebab-case folder slug. Used to look up translations under `blocks.<key>.*`. */
 export const sidebar04Key = "sidebar-04" as const;
 
-/** Translation namespace — `useScopedT(sidebar04Namespace)` resolves keys from `en.json`. */
 export const sidebar04Namespace = "blocks.sidebar-04" as const;
 
 type IconComponent = ComponentType<{ className?: string }>;
@@ -20,12 +18,6 @@ export type Sidebar04Label = { id: string; color: string };
 export type Sidebar04Mail = { id: string; email: string };
 export type Sidebar04User = { name: string; email: string; avatar: string };
 
-/**
- * Demo data for sidebar-04. The user block (avatar URL, email), nav rail,
- * label colors, and mail-list email addresses would normally come from app
- * state. Replace when wiring real data — labels resolve via `en.json`, but
- * avatar URLs and email addresses are config-only.
- */
 export const sidebar04Data: {
   user: Sidebar04User;
   navMain: Sidebar04NavItem[];
@@ -64,5 +56,4 @@ export const sidebar04Data: {
   ],
 };
 
-/** Sample export — entry component holds demo content inline. */
 export const sidebar04Sample = {} as const;

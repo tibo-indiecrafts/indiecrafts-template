@@ -24,7 +24,6 @@ export const Default: Story = {
   ),
 };
 
-/** All input types — exercises browser-native variations. */
 export const Types: Story = {
   render: () => (
     <div className="grid w-[320px] gap-3">
@@ -40,7 +39,6 @@ export const Types: Story = {
   ),
 };
 
-/** Disabled — `cursor-not-allowed` and reduced opacity. */
 export const Disabled: Story = {
   render: () => (
     <Frame>
@@ -49,7 +47,6 @@ export const Disabled: Story = {
   ),
 };
 
-/** Read-only — distinguished from disabled (still focusable, copyable). */
 export const ReadOnly: Story = {
   render: () => (
     <Frame>
@@ -58,7 +55,6 @@ export const ReadOnly: Story = {
   ),
 };
 
-/** Invalid — `aria-invalid` triggers the destructive ring + border. */
 export const Invalid: Story = {
   render: () => (
     <Frame>
@@ -77,7 +73,6 @@ export const Invalid: Story = {
   ),
 };
 
-/** With a leading file input — the `file:` selectors style the native button. */
 export const FilePicker: Story = {
   render: () => (
     <Frame>

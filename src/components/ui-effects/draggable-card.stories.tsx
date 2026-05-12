@@ -17,10 +17,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   </DraggableCardContainer>
 );
 
-/**
- * Default — drag the card around. Velocity-based spring physics rotate the
- * card based on how fast you fling it.
- */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -35,7 +31,6 @@ export const Default: Story = {
   ),
 };
 
-/** Image card — proves the drag works with media-rich children. */
 export const WithImage: Story = {
   render: () => (
     <Frame>
@@ -56,7 +51,6 @@ export const WithImage: Story = {
   ),
 };
 
-/** Multiple stacked cards — drag one out without affecting the rest. */
 export const Stack: Story = {
   render: () => (
     <Frame>

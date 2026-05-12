@@ -21,11 +21,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — 40×40 cell SVG grid that fills its `relative` parent. The
- * component is `pointer-events-none absolute inset-0`, so it sits behind
- * the foreground content.
- */
 export const Default: Story = {
   args: { width: 40, height: 40 },
   render: (args) => (
@@ -41,7 +36,6 @@ export const Default: Story = {
   ),
 };
 
-/** Dense — 20px cells make a tight technical look. */
 export const Dense: Story = {
   args: { width: 20, height: 20 },
   render: (args) => (
@@ -52,7 +46,6 @@ export const Dense: Story = {
   ),
 };
 
-/** Loose — 80px cells feel more like an architectural layout. */
 export const Loose: Story = {
   args: { width: 80, height: 80 },
   render: (args) => (
@@ -63,7 +56,6 @@ export const Loose: Story = {
   ),
 };
 
-/** Dashed — `strokeDasharray="4 2"` swaps solid lines for dashed strokes. */
 export const Dashed: Story = {
   args: { width: 40, height: 40, strokeDasharray: "4 2" },
   render: (args) => (
@@ -74,11 +66,6 @@ export const Dashed: Story = {
   ),
 };
 
-/**
- * Highlighted squares — pass an array of `[x, y]` cell coordinates via
- * `squares` to fill specific cells. Useful for product walkthroughs where you
- * want to draw the eye to a particular location on the grid.
- */
 export const HighlightedSquares: Story = {
   args: {
     width: 40,

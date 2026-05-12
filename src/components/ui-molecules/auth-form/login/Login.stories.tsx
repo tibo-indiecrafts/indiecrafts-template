@@ -24,10 +24,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Custom routing — every link prop overridden so the form lives inside an
- * existing app's URL space rather than the template defaults.
- */
 export const CustomLinks: Story = {
   render: () => (
     <FullScreenShell>

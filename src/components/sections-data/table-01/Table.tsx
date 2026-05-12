@@ -139,12 +139,6 @@ function AccordionRow({
   );
 }
 
-/**
- * Collapsible grouped table — sourced from `@blocks-so/table-01`,
- * refactored to fit the project's section pattern: localized labels,
- * caller-driven data via `rows`, accessibility primitives swapped in
- * (`aria-label` from i18n; primitives from `@/components/ui-primitives/`).
- */
 export default function Table(props: Readonly<TableBlock>) {
   const t = useTranslations(table01Namespace);
   const rows = props.rows ?? table1Rows;

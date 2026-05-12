@@ -27,10 +27,6 @@ const RICH_STRONG = {
   ),
 };
 
-/**
- * Features-31 — JSX verbatim. Three alternating-side feature rows
- * + a closing Vercel testimonial.
- */
 export default function Features(props: Readonly<Features31Block>) {
   const [t, , tRoot] = useScopedT(features31Namespace);
 

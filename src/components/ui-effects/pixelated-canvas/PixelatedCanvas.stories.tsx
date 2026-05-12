@@ -25,7 +25,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Decorative — `aria-hidden`. Square dots, default density. */
 export const Default: Story = {
   args: { src: SOURCE, width: 600, height: 400, cellSize: 8, shape: "square" },
   render: (args) => (
@@ -35,7 +34,6 @@ export const Default: Story = {
   ),
 };
 
-/** Circles, grayscale — softer, secondary visual. */
 export const CirclesGrayscale: Story = {
   args: {
     src: SOURCE,
@@ -52,11 +50,6 @@ export const CirclesGrayscale: Story = {
   ),
 };
 
-/**
- * Informational — uses the translated `aria-label` (default: "Pixelated
- * visualization"). Use only when the canvas conveys information that's
- * not already captured by surrounding text.
- */
 export const Informational: Story = {
   args: { src: SOURCE, width: 600, height: 400, informational: true },
   render: (args) => (

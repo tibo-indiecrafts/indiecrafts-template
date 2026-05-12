@@ -16,13 +16,11 @@ const MovingLine = () => {
 
   const ref = useRef<any>(null);
 
-  // Track scroll progress, lies between 0 and 1.
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["end end", "start start"],
   });
 
-  // when scroll progress reached 1, path length becomes 0.
   const pathLengthValue = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
   const PATH = "M0.5 0.980671L0.5 1566.02";
@@ -54,7 +52,6 @@ const MovingLine = () => {
           </linearGradient>
         </defs>
         <motion.path
-          // animatng pathLength value, goes from 1 to 0
           style={{
             pathLength: useSpring(pathLengthValue, {
               stiffness: 500,
@@ -63,9 +60,6 @@ const MovingLine = () => {
           }}
           transition={transition}
           d={PATH}
-          // Upstream used `var(--blue-500)` which isn't defined in this
-          // template; literal hex matches the gradient stop above so the
-          // animated stroke actually shows.
           stroke="#3879E7"
           strokeOpacity="1"
           strokeLinecap={"round"}

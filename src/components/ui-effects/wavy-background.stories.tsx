@@ -26,11 +26,6 @@ const Body = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — five overlapping wave strokes drawn on a canvas with a hue
- * cycle. The component spans the viewport (`h-screen`) and centres its
- * children.
- */
 export const Default: Story = {
   args: { blur: 10, speed: "fast", waveOpacity: 0.5 },
   render: (args) => (
@@ -43,7 +38,6 @@ export const Default: Story = {
   ),
 };
 
-/** Slow — `speed="slow"` for a more meditative motion. */
 export const Slow: Story = {
   args: { speed: "slow" },
   render: (args) => (
@@ -53,11 +47,6 @@ export const Slow: Story = {
   ),
 };
 
-/**
- * Brand palette — five tonal stops around the template&apos;s indigo brand
- * (`oklch(0.55 0.18 260)`). The component draws to a canvas so we hard-code
- * sRGB hex; values mirror Tailwind&apos;s indigo-300/400/500/600/700 sweep.
- */
 export const BrandPalette: Story = {
   args: {
     colors: ["#a5b4fc", "#818cf8", "#6366f1", "#4f46e5", "#4338ca"],
@@ -70,7 +59,6 @@ export const BrandPalette: Story = {
   ),
 };
 
-/** Sharper — `blur={2}` for a more graphic look. */
 export const Sharper: Story = {
   args: { blur: 2 },
   render: (args) => (
@@ -80,7 +68,6 @@ export const Sharper: Story = {
   ),
 };
 
-/** Wider strokes — `waveWidth={120}`. */
 export const WiderStrokes: Story = {
   args: { waveWidth: 120 },
   render: (args) => (

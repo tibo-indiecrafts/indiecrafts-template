@@ -21,15 +21,6 @@ export default meta;
 
 type Story = StoryObj<typeof GlowingEffect>;
 
-/**
- * The component paints its rainbow ring on the *border edge* of its parent,
- * extending `borderWidth` pixels beyond it. So the parent must:
- *  1. be `position: relative` with a visible `border`
- *  2. NOT use `overflow: hidden` (it clips the glow ring)
- *
- * The Aceternity demo pattern is an outer wrapper (border + padding) holding
- * `<GlowingEffect />` plus a separate inner content div.
- */
 const GlowCard = ({
   children,
   className,
@@ -45,11 +36,6 @@ const GlowCard = ({
   </div>
 );
 
-/**
- * Default — move the cursor anywhere in or near the card. The rainbow ring
- * tracks the pointer around the outer border. Pass `glow` to keep the
- * placeholder ring visible at rest.
- */
 export const Default: Story = {
   args: {
     disabled: false,
@@ -73,7 +59,6 @@ export const Default: Story = {
   ),
 };
 
-/** White variant — monochrome ring using `variant="white"`. */
 export const White: Story = {
   args: {
     disabled: false,
@@ -97,7 +82,6 @@ export const White: Story = {
   ),
 };
 
-/** Blurred — `blur={12}` softens the ring into a halo. */
 export const Blurred: Story = {
   args: {
     disabled: false,
@@ -119,7 +103,6 @@ export const Blurred: Story = {
   ),
 };
 
-/** Thick ring — `borderWidth={4}` gives a chunky neon outline. */
 export const ThickRing: Story = {
   args: {
     disabled: false,
@@ -140,7 +123,6 @@ export const ThickRing: Story = {
   ),
 };
 
-/** Disabled — only the static border placeholder renders, no pointer tracking. */
 export const Disabled: Story = {
   args: { disabled: true },
   render: (args) => (
@@ -154,7 +136,6 @@ export const Disabled: Story = {
   ),
 };
 
-/** Grid — three cards exercise independent pointer tracking. */
 export const Grid: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

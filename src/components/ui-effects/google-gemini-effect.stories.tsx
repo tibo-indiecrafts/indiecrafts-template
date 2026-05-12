@@ -79,11 +79,6 @@ const Demo = ({
   );
 };
 
-/**
- * Default — scroll the canvas to animate the five SVG paths from start to
- * end. `pathLengths` is an array of five `MotionValue<number>` (typically
- * driven by `useScroll` + `useTransform`).
- */
 export const Default: Story = {
   render: () => (
     <Demo
@@ -93,7 +88,6 @@ export const Default: Story = {
   ),
 };
 
-/** Custom copy — both `title` and `description` accept any string. */
 export const CustomCopy: Story = {
   render: () => (
     <Demo
@@ -103,16 +97,10 @@ export const CustomCopy: Story = {
   ),
 };
 
-/** Fallback copy — omit `title` and `description` to see the built-in defaults. */
 export const FallbackCopy: Story = {
   render: () => <Demo />,
 };
 
-/**
- * Eager draw — paths reach full length at 30% of scroll instead of 80%, so
- * the animation completes early and the user can read the final composition
- * for longer.
- */
 export const EagerDraw: Story = {
   render: () => (
     <Demo

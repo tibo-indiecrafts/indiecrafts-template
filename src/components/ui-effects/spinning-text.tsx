@@ -46,7 +46,6 @@ export function SpinningText({
   }
 
   if (Array.isArray(children)) {
-    // Validate all elements are strings
     if (!children.every((child) => typeof child === "string")) {
       throw new Error("all elements in children array must be strings");
     }

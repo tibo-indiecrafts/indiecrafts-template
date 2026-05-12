@@ -44,10 +44,7 @@ export const ImagesSlider = ({
     const loadPromises = images.map((image) => {
       return new Promise<string>((resolve) => {
         const img = new Image();
-        // Attach handlers BEFORE setting src — otherwise cached images
-        // complete synchronously and onload never fires, leaving the slider
-        // forever blank. Resolve on error too so a single bad URL doesn't
-        // kill the rest of the slideshow.
+
         img.onload = () => resolve(image);
         img.onerror = () => resolve(image);
         img.src = image;
@@ -70,7 +67,6 @@ export const ImagesSlider = ({
 
     window.addEventListener("keydown", handleKeyDown);
 
-    // autoplay
     let interval: any;
     if (autoplay) {
       interval = setInterval(() => {

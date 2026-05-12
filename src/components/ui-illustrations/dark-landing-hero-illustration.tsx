@@ -1,12 +1,5 @@
 import Image from "next/image";
 
-/**
- * Dashboard product mock framed inside an always-dark device chrome
- * — the screenshot is a dark UI image, so we render it on a
- * permanent zinc-950 inner panel regardless of page theme. The
- * outer frame stays theme-aware (`bg-foreground/5`) so it blends
- * subtly into the surrounding section.
- */
 export const HeroIllustration = () => (
   <div
     aria-hidden

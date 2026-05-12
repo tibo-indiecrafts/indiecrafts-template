@@ -108,8 +108,6 @@ function CellMedia({ cell }: Readonly<{ cell: BentoCell }>) {
 }
 
 function IntegrationsGrid({ brands }: Readonly<{ brands: readonly IntegrationBrand[] }>) {
-  // Two rows of 6 cells. Row 1: empty, brand[0], empty, brand[1], empty, brand[2].
-  // Row 2: brand[3], empty, brand[4], empty, brand[5], empty.
   return (
     <>
       <div className="relative grid grid-cols-3 gap-4 @md:grid-cols-6">

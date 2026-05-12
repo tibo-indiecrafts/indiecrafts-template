@@ -41,11 +41,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — left-scrolling marquee at 40s per loop. The component repeats its
- * children `repeat` times to fill the container; lower the count if your tile
- * count is already large.
- */
 export const Default: Story = {
   args: { repeat: 4 },
   render: (args) => (
@@ -59,7 +54,6 @@ export const Default: Story = {
   ),
 };
 
-/** Reverse — `reverse` flips the scroll direction. */
 export const Reverse: Story = {
   args: { reverse: true, repeat: 4 },
   render: (args) => (
@@ -73,7 +67,6 @@ export const Reverse: Story = {
   ),
 };
 
-/** Pause on hover — `pauseOnHover` stops the marquee while the cursor is over it. */
 export const PauseOnHover: Story = {
   args: { pauseOnHover: true, repeat: 4 },
   render: (args) => (
@@ -87,10 +80,6 @@ export const PauseOnHover: Story = {
   ),
 };
 
-/**
- * Vertical — `vertical` switches axis. Animation speed comes from the
- * `--duration` CSS var on the marquee container — override via className.
- */
 export const Vertical: Story = {
   args: { vertical: true, repeat: 4 },
   render: (args) => (
@@ -104,7 +93,6 @@ export const Vertical: Story = {
   ),
 };
 
-/** Two-row showcase — paired top/bottom rows scrolling in opposite directions. */
 export const TwoRows: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

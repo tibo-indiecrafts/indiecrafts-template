@@ -22,15 +22,6 @@ const ICONS: Record<GridListIconName, LucideIcon> = {
   Hand,
 };
 
-/**
- * Quick-actions help-center tile grid — colored icon + title +
- * description per tile, with a card-spanning anchor and an arrow
- * accent in the corner. Sourced from `@blocks-so/grid-list-03`.
- *
- * The tile shape is now provided by `ui-molecules/action-card` in its
- * "tile" variant; this section handles the grid layout and per-item
- * tone/icon mapping.
- */
 export default function GridList(props: Readonly<GridListBlock>) {
   const [t, tr] = useScopedT(gridList03Namespace);
   const items = props.items ?? gridList03Items;

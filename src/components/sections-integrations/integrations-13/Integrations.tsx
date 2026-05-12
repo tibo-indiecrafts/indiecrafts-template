@@ -39,10 +39,6 @@ function Integration({
   );
 }
 
-/**
- * Integrations-13 — JSX verbatim. Intro + 4 hover-reveal logo cells
- * split between Platform / LLMs.
- */
 export default function Integrations(props: Readonly<IntegrationsBlock>) {
   const [t] = useScopedT(integrations13Namespace);
   const external = props.ctaHref.startsWith("http");

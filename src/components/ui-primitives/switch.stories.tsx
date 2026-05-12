@@ -11,7 +11,6 @@ export default meta;
 
 type Story = StoryObj<typeof Switch>;
 
-/** Off by default. */
 export const Default: Story = {
   render: () => (
     <Label className="flex items-center gap-2">
@@ -21,7 +20,6 @@ export const Default: Story = {
   ),
 };
 
-/** On at mount. */
 export const Checked: Story = {
   render: () => (
     <Label className="flex items-center gap-2">
@@ -31,7 +29,6 @@ export const Checked: Story = {
   ),
 };
 
-/** Disabled — both states. */
 export const Disabled: Story = {
   render: () => (
     <div className="grid gap-3">
@@ -47,7 +44,6 @@ export const Disabled: Story = {
   ),
 };
 
-/** Settings group — typical use as a row in a preferences panel. */
 export const SettingsGroup: Story = {
   render: () => (
     <div className="w-[360px] divide-y rounded-lg border">

@@ -7,7 +7,7 @@ export type BentoBlock = {
   messageCell: { titleKey: MessageKey; bodyKey: MessageKey };
   kitCell: {
     titleKey: MessageKey;
-    /** Body MAY contain inline `<strong>` markup (rendered as foreground/medium). */
+
     bodyKey: MessageKey;
   };
 };

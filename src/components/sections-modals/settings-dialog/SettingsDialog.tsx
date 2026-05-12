@@ -37,11 +37,11 @@ import {
 
 export type SettingsDialogProps = {
   nav?: readonly SettingsDialogNavItem[];
-  /** Stable id of the active section (matches `SettingsDialogNavItem.id`). */
+
   activeId?: string;
-  /** Start opened (demo default). Production callers should control via `open`. */
+
   defaultOpen?: boolean;
-  /** Optional href resolver for nav items — defaults to `#`. */
+
   itemHref?: (item: SettingsDialogNavItem) => string;
 };
 

@@ -14,21 +14,10 @@ export default meta;
 
 type Story = StoryObj<typeof MaskContainer>;
 
-// The component animates `backgroundColor` between `var(--slate-900)` and
-// `var(--white)` — both undefined in this template, so the container is
-// transparent and the revealText sits on whatever is behind it. Wrapping in
-// a Stage gives both layers a known surface so contrast is predictable.
 const Stage = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-white dark:bg-slate-950">{children}</div>
 );
 
-/**
- * Default — hover the foreground heading to widen the SVG mask circle and
- * reveal the underlying message. The mask SVG lives at `/public/mask.svg`.
- *
- * Foreground children sit on the masked layer (`bg-black` in light mode,
- * `bg-white` in dark) and need explicit `text-white dark:text-black`.
- */
 export const Default: Story = {
   args: { size: 10, revealSize: 600 },
   render: (args) => (
@@ -49,7 +38,6 @@ export const Default: Story = {
   ),
 };
 
-/** Larger reveal — `revealSize={900}` opens the mask to almost the full width. */
 export const LargeReveal: Story = {
   args: { size: 10, revealSize: 900 },
   render: (args) => (
@@ -69,7 +57,6 @@ export const LargeReveal: Story = {
   ),
 };
 
-/** Tiny rest size — `size={4}` keeps the dot almost invisible until hover. */
 export const TinyRest: Story = {
   args: { size: 4, revealSize: 600 },
   render: (args) => (

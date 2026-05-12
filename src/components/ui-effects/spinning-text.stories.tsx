@@ -27,11 +27,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — letters arranged on a circle that rotates 360° every 10s. The
- * `radius` (in `ch` units) controls how wide the circle is; the parent must
- * be a fixed-size square.
- */
 export const Default: Story = {
   args: { duration: 10, radius: 5 },
   render: (args) => (
@@ -43,7 +38,6 @@ export const Default: Story = {
   ),
 };
 
-/** Reverse — `reverse` flips the spin direction. */
 export const Reverse: Story = {
   args: { duration: 10, reverse: true },
   render: (args) => (
@@ -55,7 +49,6 @@ export const Reverse: Story = {
   ),
 };
 
-/** Slow — `duration={20}` halves the rotation speed. */
 export const Slow: Story = {
   args: { duration: 20 },
   render: (args) => (
@@ -67,7 +60,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Wider radius — `radius={9}` pushes letters further from the centre. */
 export const WideRadius: Story = {
   args: { radius: 9 },
   render: (args) => (
@@ -79,7 +71,6 @@ export const WideRadius: Story = {
   ),
 };
 
-/** With centre content — wraps a label/icon at the centre of the spin. */
 export const WithCenter: Story = {
   render: () => (
     <Stage>

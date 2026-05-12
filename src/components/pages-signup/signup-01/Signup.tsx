@@ -10,11 +10,6 @@ export type SignupProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Auth signup template — `FullBleedLayout` (no marketing chrome) wrapping
- * the `SignupForm` section. Centered card with side illustration. Pass
- * `header={true}` if your brand prefers nav during sign-up.
- */
 export function Signup({
   layout = signup01Defaults.layout,
   header,

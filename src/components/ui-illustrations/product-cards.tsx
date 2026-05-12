@@ -25,11 +25,6 @@ const previews = [
   },
 ];
 
-/**
- * Three-card product preview gallery framed by a stylized SVG window
- * outline. Used by `sections-hero/hero-09`. Mock labels are decorative;
- * treat as illustrations-only (no translations).
- */
 export const ProductCards = ({ className }: { className?: string }) => {
   return (
     <div className={cn("relative z-10 mt-16 md:mt-24", className)}>

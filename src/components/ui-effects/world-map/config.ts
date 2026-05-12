@@ -1,11 +1,6 @@
 export const worldMapKey = "world-map" as const;
 export const worldMapNamespace = "blocks.world-map" as const;
 
-/**
- * Default routes — three intercontinental arcs. Lat/lng pairs aren't
- * translatable; the wrapper combines these with a translated `alt` text
- * for the rasterized SVG fallback. Override the prop to wire real data.
- */
 export const worldMapDefaultDots = [
   {
     start: { lat: 40.7128, lng: -74.006, label: "NYC" },

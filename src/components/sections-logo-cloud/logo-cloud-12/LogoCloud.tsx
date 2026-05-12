@@ -55,12 +55,6 @@ const logos: Record<LogoCloudGroupId, ReactNode[]> = {
   streaming: streamingLogos,
 };
 
-/**
- * 4-group logo cloud with same rotator behavior as logo-cloud-11,
- * but wrapped in the grid-1 `Container` (bordered grid frame) and
- * a 4-column motion grid. Section follows the surrounding theme
- * (no `data-theme="dark"` override).
- */
 export default function LogoCloud(props: Readonly<LogoCloudBlock>) {
   const [t, , tRoot] = useScopedT(logoCloud12Namespace);
   const interval = props.rotationMs ?? 2500;

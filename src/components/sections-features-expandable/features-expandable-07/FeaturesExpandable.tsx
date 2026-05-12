@@ -322,5 +322,4 @@ function SupportiveSlot({ supportive, tRoot, STAT_ICONS }: SupportiveSlotProps) 
   );
 }
 
-// Re-export FeaturesExpandableItem so consumers can build typed item arrays.
 export type { FeaturesExpandableItem };

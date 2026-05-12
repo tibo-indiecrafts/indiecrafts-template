@@ -16,7 +16,6 @@ export default meta;
 
 type Story = StoryObj<typeof AnimatedGradientText>;
 
-/** Default warm gradient — wraps inline text. */
 export const Default: Story = {
   render: () => (
     <h1 className="text-4xl font-bold">
@@ -25,7 +24,6 @@ export const Default: Story = {
   ),
 };
 
-/** Custom palette — `colorFrom` / `colorTo` retune the sweep. */
 export const CustomColors: Story = {
   render: () => (
     <div className="flex flex-col items-center gap-3 text-3xl font-bold">
@@ -42,7 +40,6 @@ export const CustomColors: Story = {
   ),
 };
 
-/** Speed scale — slower (0.5) and faster (3) sweeps. */
 export const Speeds: Story = {
   render: () => (
     <div className="flex flex-col items-center gap-3 text-3xl font-bold">
@@ -53,7 +50,6 @@ export const Speeds: Story = {
   ),
 };
 
-/** Inline within a paragraph — shows it composes with regular prose. */
 export const Inline: Story = {
   render: () => (
     <p className="max-w-md text-center text-base">

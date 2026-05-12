@@ -19,10 +19,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { dialog07Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 
-/**
- * Destructive 2FA-deactivation AlertDialog with read-only email +
- * confirm-password field. Sourced from `@blocks-so/dialog-07`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [t, tr] = useScopedT(dialog07Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

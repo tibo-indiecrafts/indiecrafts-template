@@ -17,11 +17,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { formLayout04Plans, formLayout04Namespace } from "./config";
 import type { FormLayoutBlock } from "./schema";
 
-/**
- * Early-access application form — name + email + company + size +
- * workspace-package RadioGroup (cards) + footnotes. Sourced from
- * `@blocks-so/form-layout-04`.
- */
 export default function FormLayout(props: Readonly<FormLayoutBlock>) {
   const [t, tr] = useScopedT(formLayout04Namespace);
   const plans = props.plans ?? formLayout04Plans;

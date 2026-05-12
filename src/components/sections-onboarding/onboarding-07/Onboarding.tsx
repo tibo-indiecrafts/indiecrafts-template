@@ -15,12 +15,6 @@ import { cn } from "@/lib/utils";
 import { onboarding07Namespace, onboarding07Steps } from "./config";
 import type { OnboardingBlock, OnboardingStep } from "./schema";
 
-/**
- * Animated three-bar data migration indicator with an expandable
- * logs accordion. The third bar fills automatically over a few
- * seconds, simulating an in-progress import. Sourced from
- * `@blocks-so/onboarding-07`.
- */
 export default function Onboarding(props: Readonly<OnboardingBlock>) {
   const [t, tr] = useScopedT(onboarding07Namespace);
   const initialSteps = props.steps ?? onboarding07Steps;

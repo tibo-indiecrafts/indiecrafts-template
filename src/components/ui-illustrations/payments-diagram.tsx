@@ -5,16 +5,6 @@ import Image from "next/image";
 
 const SAMPLE_CODE = `const axios = require('axios');\n\nconst response = await axios.post('https://api.example.com/data', {\n  key: 'value',\n  anotherKey: 'anotherValue',\n});\n`;
 
-/**
- * Payments-architecture diagram illustration — a wide grid of mock UI
- * panels (cards, dotted-line accents, pixel-strips, code preview)
- * connected by animated SVG beams. Used by `sections-hero/hero-16`.
- * On mobile, falls back to a static raster image. Mock copy is
- * decorative; treat as illustrations-only (no translations). Animation
- * keyframes (`beam-move`, `beam-move-down`) are defined in the sibling
- * `payments-diagram.css` and aggregated via the project's
- * `_component-styles.css` codegen.
- */
 export const PaymentsDiagram = () => {
   return (
     <>

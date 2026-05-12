@@ -8,10 +8,7 @@ export type CarouselIllustration =
 
 export type CarouselItemBlock = {
   illustration: CarouselIllustration;
-  /**
-   * Rich-text caption. The translation may use `<strong>...</strong>`
-   * to render an emphasised inline lead (`text-foreground font-medium`).
-   */
+
   bodyKey: MessageKey;
 };
 

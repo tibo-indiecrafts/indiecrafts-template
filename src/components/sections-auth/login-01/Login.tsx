@@ -16,13 +16,6 @@ function GoogleIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Minimal centered login — email field, Google SSO, legal footer.
- * Sourced from `@blocks-so/login-01`, refactored into the section
- * pattern: every visible string resolves from `blocks.login-01.*`,
- * legal-link destinations are caller-driven, and the form posts to
- * the host application's auth handler.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login01Namespace);
   const titleId = `${props.id}-title`;

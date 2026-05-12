@@ -23,10 +23,6 @@ const WORDS = [
   { text: "today." },
 ];
 
-/**
- * Default — character-by-character reveal with a blinking cursor. Each word
- * can carry its own `className` for inline highlights.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -35,7 +31,6 @@ export const Default: Story = {
   ),
 };
 
-/** Smooth — `TypewriterEffectSmooth` reveals letters with a width animation. */
 export const Smooth: Story = {
   render: () => (
     <Stage>
@@ -44,7 +39,6 @@ export const Smooth: Story = {
   ),
 };
 
-/** Long phrase — proves the per-character cadence stays smooth on more text. */
 export const LongPhrase: Story = {
   render: () => (
     <Stage>
@@ -62,7 +56,6 @@ export const LongPhrase: Story = {
   ),
 };
 
-/** Custom cursor — `cursorClassName` retunes the blinking caret. */
 export const CustomCursor: Story = {
   render: () => (
     <Stage>
@@ -71,7 +64,6 @@ export const CustomCursor: Story = {
   ),
 };
 
-/** Hero scale — bigger type via `className`. */
 export const Hero: Story = {
   render: () => (
     <Stage>

@@ -25,10 +25,6 @@ const Page = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — informational banner with brand background. Click the close X
- * to dismiss; the banner slides up off-screen.
- */
 export const Default: Story = {
   render: () => (
     <Page>
@@ -44,7 +40,6 @@ export const Default: Story = {
   ),
 };
 
-/** Hide on scroll — `hideOnScroll` collapses the banner past 40px. */
 export const HideOnScroll: Story = {
   render: () => (
     <Page>
@@ -60,10 +55,6 @@ export const HideOnScroll: Story = {
   ),
 };
 
-/**
- * Brand colour — gradient stops use the brand token (`bg-primary` mirrors
- * `--brand` from theme.config.ts), so the banner inherits any rebrand.
- */
 export const BrandColor: Story = {
   render: () => (
     <Page>
@@ -77,7 +68,6 @@ export const BrandColor: Story = {
   ),
 };
 
-/** Dark — high-contrast banner with white-on-black. */
 export const Dark: Story = {
   render: () => (
     <Page>

@@ -21,7 +21,6 @@ const ScreenshotCard = ({ src, alt }: { src: string; alt: string }) => (
   />
 );
 
-/** Default — title + screenshot. Scroll the storybook iframe to trigger. */
 export const Default: Story = {
   render: () => (
     <div className="flex flex-col overflow-hidden">
@@ -44,7 +43,6 @@ export const Default: Story = {
   ),
 };
 
-/** With CTA + subtitle — typical marketing landing pattern. */
 export const HeroWithCta: Story = {
   render: () => (
     <div className="flex flex-col overflow-hidden">
@@ -72,7 +70,6 @@ export const HeroWithCta: Story = {
   ),
 };
 
-/** Plain text title — minimal styling, no children logo, raw screenshot only. */
 export const Minimal: Story = {
   render: () => (
     <div className="flex flex-col overflow-hidden">

@@ -4,16 +4,6 @@ import { Header7 } from "@/components/layouts/_shared/site-headers/header-7";
 import { SiteFooter } from "@/components/layouts/default-layout/site-footer";
 import type { LayoutProps } from "../registry";
 
-/**
- * Sections bleed to the viewport edges. Footer renders by default for
- * consistency across layouts; header is opt-in (auth flows usually
- * suppress nav during sign-in).
- *
- * Slot semantics for both `header` and `footer`:
- *   - `true` → render the layout's default (Header7 / SiteFooter)
- *   - `false` → render nothing
- *   - `ReactNode` → render that node in place of the default
- */
 export function FullBleedLayout({
   children,
   header = false,

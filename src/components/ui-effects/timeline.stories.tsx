@@ -73,11 +73,6 @@ const Page = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-background w-full">{children}</div>
 );
 
-/**
- * Default — sticky timeline with a scroll-driven gradient line. Scroll the
- * canvas to see the purple→blue line draw down the left edge as each entry
- * comes into view.
- */
 export const Default: Story = {
   render: () => (
     <Page>
@@ -86,7 +81,6 @@ export const Default: Story = {
   ),
 };
 
-/** Two entries — exercises the minimum viable list. */
 export const TwoEntries: Story = {
   render: () => (
     <Page>
@@ -95,7 +89,6 @@ export const TwoEntries: Story = {
   ),
 };
 
-/** Image entries — `content` slot accepts any ReactNode, not just text. */
 export const WithImages: Story = {
   render: () => (
     <Page>
@@ -152,7 +145,6 @@ export const WithImages: Story = {
   ),
 };
 
-/** Many entries — six steps stretch the gradient line further. */
 export const ManyEntries: Story = {
   render: () => (
     <Page>

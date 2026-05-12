@@ -23,11 +23,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — black pill with a white conic-gradient spark sliding around the
- * border every 3s. The shimmer rides on a `--cut`-thick strip outside the
- * inner background.
- */
 export const Default: Story = {
   args: { shimmerColor: "#ffffff", shimmerDuration: "3s" },
   render: (args) => (
@@ -37,10 +32,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Brand background — `background` retunes the inner fill and `shimmerColor`
- * reads from the `--color-primary` token so the spark stays brand-aligned.
- */
 export const BrandBackground: Story = {
   args: {
     background: "rgba(15, 23, 42, 1)",
@@ -54,7 +45,6 @@ export const BrandBackground: Story = {
   ),
 };
 
-/** Pink shimmer — `shimmerColor` controls the spark hue. */
 export const PinkShimmer: Story = {
   args: { shimmerColor: "#ec4899", background: "rgba(15, 23, 42, 1)" },
   render: (args) => (
@@ -64,7 +54,6 @@ export const PinkShimmer: Story = {
   ),
 };
 
-/** Square corners — `borderRadius="0.5rem"` for an architectural look. */
 export const Squared: Story = {
   args: { borderRadius: "0.5rem" },
   render: (args) => (
@@ -74,7 +63,6 @@ export const Squared: Story = {
   ),
 };
 
-/** Slow — `shimmerDuration="6s"` for a more deliberate pulse. */
 export const Slow: Story = {
   args: { shimmerDuration: "6s" },
   render: (args) => (
@@ -84,7 +72,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Large — Tailwind utilities scale up to a hero CTA. */
 export const Large: Story = {
   render: () => (
     <Stage>

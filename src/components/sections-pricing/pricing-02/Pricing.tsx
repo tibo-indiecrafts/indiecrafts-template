@@ -7,10 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { pricing02Namespace } from "./config";
 import type { PricingBlock, PricingTier } from "./schema";
 
-/** Plain card chrome — keeps shadcn's `rounded-xl border bg-card
- *  shadow-sm` shell but drops `flex flex-col gap-6 py-6` defaults so
- *  the upstream's slot-based layout (`flex flex-col` + per-section
- *  spacing) applies cleanly. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("bg-card text-card-foreground rounded-xl border shadow-sm", className)}

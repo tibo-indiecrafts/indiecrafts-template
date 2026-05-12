@@ -8,10 +8,6 @@ import { cn } from "@/lib/utils";
 import { onboarding03Namespace, onboarding03Steps } from "./config";
 import type { OnboardingBlock } from "./schema";
 
-/**
- * Numbered click-through setup list with progress meter and a "Need
- * help?" support block. Sourced from `@blocks-so/onboarding-03`.
- */
 export default function Onboarding(props: Readonly<OnboardingBlock>) {
   const [t, tr] = useScopedT(onboarding03Namespace);
   const steps = props.steps ?? onboarding03Steps;

@@ -13,28 +13,19 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 
-/**
- * Block key — kebab-case folder name. Used to look up translations under `blocks.<key>.*`.
- */
 export const sidebar07Key = "sidebar-07" as const;
 
-/**
- * Translation namespace — `useTranslations(sidebar07Namespace)` resolves keys from `en.json`.
- */
 export const sidebar07Namespace = "blocks.sidebar-07" as const;
 
-/** Icon component shape — accepts both tabler and lucide icons. */
 export type SidebarIcon = ComponentType<{ className?: string }>;
 
 export type SidebarNavItem = {
-  /** Translation key for the item label, relative to the section namespace. */
   titleKey: string;
   url: string;
   icon?: SidebarIcon;
 };
 
 export type SidebarDocumentItem = {
-  /** Translation key for the document name, relative to the section namespace. */
   nameKey: string;
   url: string;
   icon: SidebarIcon;

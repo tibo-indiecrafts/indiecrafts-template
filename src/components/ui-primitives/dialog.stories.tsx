@@ -23,7 +23,6 @@ export default meta;
 
 type Story = StoryObj<typeof Dialog>;
 
-/** Trigger + form-style body. */
 export const Default: Story = {
   render: () => (
     <Dialog>
@@ -58,7 +57,6 @@ export const Default: Story = {
   ),
 };
 
-/** Open by default — `defaultOpen` for review without click-through. */
 export const InitiallyOpen: Story = {
   render: () => (
     <Dialog defaultOpen>
@@ -82,7 +80,6 @@ export const InitiallyOpen: Story = {
   ),
 };
 
-/** Title-only — minimal content. */
 export const Confirmation: Story = {
   render: () => (
     <Dialog>

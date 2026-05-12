@@ -1,16 +1,7 @@
-/**
- * Block key — kebab-case folder name. Used to look up translations under `blocks.<key>.*`.
- */
 export const chartBarInteractiveKey = "chart-bar-interactive" as const;
 
-/**
- * Translation namespace — `useTranslations(chartBarInteractiveNamespace)` resolves keys from `en.json`.
- */
 export const chartBarInteractiveNamespace = "blocks.chart-bar-interactive" as const;
 
-/**
- * Chart data rows. Replace per fork with real data.
- */
 export const chartBarInteractiveData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
   { date: "2024-04-02", desktop: 97, mobile: 180 },
@@ -105,10 +96,6 @@ export const chartBarInteractiveData = [
   { date: "2024-06-30", desktop: 446, mobile: 400 },
 ];
 
-/**
- * Series config — first entry is the aggregate label used in the tooltip
- * header (no `color`). Following entries are the actual bar series.
- */
 export const chartBarInteractiveSeries = [
   { dataKey: "views", labelKey: "viewsLabel" },
   { dataKey: "desktop", labelKey: "desktopLabel", color: "var(--chart-2)" },

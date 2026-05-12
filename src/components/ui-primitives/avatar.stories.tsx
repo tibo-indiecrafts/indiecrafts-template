@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof Avatar>;
 
-/** Image loads — `AvatarFallback` stays hidden. */
 export const Default: Story = {
   render: () => (
     <Avatar>
@@ -20,7 +19,6 @@ export const Default: Story = {
   ),
 };
 
-/** Broken `src` — fallback initials render after the image errors out. */
 export const Fallback: Story = {
   render: () => (
     <Avatar>
@@ -30,7 +28,6 @@ export const Fallback: Story = {
   ),
 };
 
-/** Size scale via Tailwind classes — primitive itself is unstyled-by-size. */
 export const Sizes: Story = {
   render: () => (
     <div className="flex items-center gap-3">
@@ -54,7 +51,6 @@ export const Sizes: Story = {
   ),
 };
 
-/** Stacked avatar group (overlap with negative margin). */
 export const Stack: Story = {
   render: () => (
     <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2">

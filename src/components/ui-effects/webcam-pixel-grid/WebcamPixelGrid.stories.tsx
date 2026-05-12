@@ -21,8 +21,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-background relative h-screen w-full">{children}</div>
 );
 
-/** Default — webcam color, 64x48, mirrored. The tooltip shown when */
-/** camera access is denied uses the localized `cameraAccessLabel`. */
 export const Default: Story = {
   render: (args) => (
     <Stage>
@@ -31,7 +29,6 @@ export const Default: Story = {
   ),
 };
 
-/** Monochrome — single-color grid (deny camera access to see the i18n tooltip). */
 export const Monochrome: Story = {
   args: { colorMode: "monochrome", monochromeColor: "#00ff88" },
   render: (args) => (

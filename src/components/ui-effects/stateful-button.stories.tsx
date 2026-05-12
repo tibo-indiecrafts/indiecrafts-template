@@ -18,11 +18,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-/**
- * Default — clicking shows a spinner; on `onClick` resolution the spinner
- * morphs into a check mark for 2s, then collapses back. The transition uses
- * motion&apos;s `useAnimate` to chain the loader → check sequence.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -31,7 +26,6 @@ export const Default: Story = {
   ),
 };
 
-/** Slow handler — 3-second async work; spinner stays visible while pending. */
 export const SlowHandler: Story = {
   render: () => (
     <Stage>
@@ -40,7 +34,6 @@ export const SlowHandler: Story = {
   ),
 };
 
-/** Wider — Tailwind utilities for a hero-scale CTA. */
 export const Wider: Story = {
   render: () => (
     <Stage>
@@ -51,7 +44,6 @@ export const Wider: Story = {
   ),
 };
 
-/** Brand colour — `className` overrides the default green. */
 export const BrandColor: Story = {
   render: () => (
     <Stage>

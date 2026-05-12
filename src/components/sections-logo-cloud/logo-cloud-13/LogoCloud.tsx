@@ -52,11 +52,6 @@ const logos: Record<LogoCloudGroupId, ReactNode[]> = {
   streaming: streamingLogos,
 };
 
-/**
- * Grid-2 logo cloud — JSX verbatim. Inside a `Container asGrid` with
- * each logo cell as its own bordered card. Active group accent flips
- * to `text-indigo-500`.
- */
 export default function LogoCloud(props: Readonly<LogoCloudBlock>) {
   const [t, , tRoot] = useScopedT(logoCloud13Namespace);
   const interval = props.rotationMs ?? 2500;

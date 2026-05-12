@@ -18,12 +18,10 @@ export default meta;
 
 type Story = StoryObj<typeof WelcomeBannerSection>;
 
-/** Default — no name passed; greeting falls back to the translated placeholder. */
 export const Default: Story = {
   args: { ...welcomeBanner01Sample, id: "welcome-banner-01-default" },
 };
 
-/** WithName — exercises the ICU `{name}` interpolation in the greeting. */
 export const WithName: Story = {
   args: {
     ...welcomeBanner01Sample,
@@ -32,7 +30,6 @@ export const WithName: Story = {
   },
 };
 
-/** Compact — trimmed 2-chip row, useful for empty workspaces or dense dashboards. */
 export const Compact: Story = {
   args: {
     type: "welcome-banner-01",

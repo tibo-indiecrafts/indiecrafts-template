@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof DashboardLayout>;
 
-/** Three KPI cards inside the dashboard chrome (sidebar + header + main). */
 export const Default: Story = {
   render: () => (
     <DashboardLayout>
@@ -34,10 +33,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Long-form page — proves the main column scrolls independently of the
- * sidebar and that the sticky header stays at the top.
- */
 export const LongContent: Story = {
   render: () => (
     <DashboardLayout>
@@ -59,10 +54,6 @@ export const LongContent: Story = {
   ),
 };
 
-/**
- * Empty main — no children. Confirms the chrome (sidebar + header) renders
- * without breaking when the page has nothing to show yet.
- */
 export const Empty: Story = {
   render: () => <DashboardLayout>{null}</DashboardLayout>,
 };

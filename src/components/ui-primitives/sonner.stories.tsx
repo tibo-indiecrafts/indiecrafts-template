@@ -18,7 +18,6 @@ const Trigger = ({ label, onClick }: { label: string; onClick: () => void }) => 
   </Button>
 );
 
-/** Default toast — neutral confirmation. */
 export const Default: Story = {
   render: () => (
     <>
@@ -35,7 +34,6 @@ export const Default: Story = {
   ),
 };
 
-/** Severity variants — success / warning / error. */
 export const Variants: Story = {
   render: () => (
     <>
@@ -60,7 +58,6 @@ export const Variants: Story = {
   ),
 };
 
-/** With an action button — undo pattern. */
 export const WithAction: Story = {
   render: () => (
     <>
@@ -80,7 +77,6 @@ export const WithAction: Story = {
   ),
 };
 
-/** Promise — pending → resolved/rejected lifecycle. */
 export const Promise: Story = {
   render: () => (
     <>

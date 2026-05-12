@@ -19,10 +19,6 @@ import type { DialogBlock } from "./schema";
 
 const DEFAULT_MAX_FILE_SIZE = 1_048_576;
 
-/**
- * Add-writer modal — avatar upload panel + author / title fields +
- * cancel / save footer. Sourced from `@blocks-so/dialog-12`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [t, tr] = useScopedT(dialog12Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

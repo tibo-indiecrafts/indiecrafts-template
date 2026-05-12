@@ -23,12 +23,10 @@ const baseColors = {
   gaugeSecondaryColor: "#e5e7eb",
 };
 
-/** Static value — controls the filled arc length. */
 export const Default: Story = {
   args: { value: 66, ...baseColors },
 };
 
-/** Stepped values — common percentages laid out for visual comparison. */
 export const Steps: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-6">
@@ -39,10 +37,6 @@ export const Steps: Story = {
   ),
 };
 
-/**
- * Live animation — value climbs from 13 → 87 over a few seconds.
- * Demonstrates the `--transition-length` ease applied to `stroke-dasharray`.
- */
 export const Animated: Story = {
   render: () => {
     const Demo = () => {
@@ -57,7 +51,6 @@ export const Animated: Story = {
   },
 };
 
-/** Color palettes — primary + secondary swatches retune the gauge. */
 export const Palettes: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-6">
@@ -85,10 +78,6 @@ export const Palettes: Story = {
   ),
 };
 
-/**
- * Custom range — `min={50}` / `max={200}` rescales how `value` maps to the
- * gauge fill. Here `value=125` reads as 50% along the (50–200) range.
- */
 export const CustomRange: Story = {
   args: { value: 125, min: 50, max: 200, ...baseColors },
 };

@@ -13,9 +13,9 @@ export type IntegrationIcon =
 export type IntegrationsGroup = {
   labelKey: MessageKey;
   icons: readonly IntegrationIcon[];
-  /** Defaults to `2`. The middle group ("LLMs") uses 3 icons in upstream. */
+
   iconsPerRow?: 2 | 3;
-  /** Set on the middle group to span 3 cols at `@xl` width. */
+
   isWide?: boolean;
 };
 

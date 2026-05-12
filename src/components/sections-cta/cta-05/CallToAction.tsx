@@ -5,10 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta05Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/**
- * CTA-05 — JSX verbatim. Centered title/body/CTA on top of a
- * masked `CtaIllustration` backdrop, with a section bottom border.
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta05Namespace);
   const external = props.primary.href.startsWith("http");

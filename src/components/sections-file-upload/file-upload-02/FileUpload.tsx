@@ -14,10 +14,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { fileUpload02Namespace } from "./config";
 import type { FileUploadBlock } from "./schema";
 
-/**
- * Minimal workspace-setup card with workspace-name + single file
- * input. Sourced from `@blocks-so/file-upload-02`.
- */
 export default function FileUpload(props: Readonly<FileUploadBlock>) {
   const [t, tr] = useScopedT(fileUpload02Namespace);
   const accept = props.accept ?? ".csv,.xlsx,.xls";

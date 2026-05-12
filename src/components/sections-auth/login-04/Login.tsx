@@ -25,11 +25,6 @@ function GoogleIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Branded sign-in: logo + brand name + sign-up prompt + GitHub/Google
- * CTAs + email/password + reset link. Sourced from `@blocks-so/login-04`,
- * refactored into the section pattern.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login04Namespace);
   const titleId = `${props.id}-title`;

@@ -21,7 +21,6 @@ export default meta;
 
 type Story = StoryObj<typeof Menubar>;
 
-/** Application-style menubar with shortcuts and a submenu. */
 export const Default: Story = {
   render: () => (
     <Menubar>

@@ -19,7 +19,6 @@ export default meta;
 
 type Story = StoryObj<typeof SkipLink>;
 
-/** Default behaviour — hidden until a keyboard user tabs into the page. */
 export const Default: Story = {
   render: () => (
     <div className="flex min-h-svh flex-col gap-4 p-6">
@@ -39,7 +38,6 @@ function FocusOnMount() {
   return null;
 }
 
-/** Visual state of the link when focused — auto-focused on mount. */
 export const Focused: Story = {
   render: () => (
     <div className="flex min-h-svh flex-col gap-4 p-6">

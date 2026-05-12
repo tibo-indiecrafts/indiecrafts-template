@@ -18,10 +18,6 @@ const subFeatures = [
   { icon: CalendarDays, key: "tile4" },
 ] as const;
 
-/**
- * Features-33 — JSX verbatim. Enterprise security pitch + sub-feature
- * tile row.
- */
 export default function Features(props: Readonly<Features33Block>) {
   const [t] = useScopedT(features33Namespace);
 

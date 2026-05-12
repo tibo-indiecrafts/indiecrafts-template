@@ -4,13 +4,6 @@ import { Header7 } from "@/components/layouts/_shared/site-headers/header-7";
 import { SiteFooter } from "@/components/layouts/default-layout/site-footer";
 import type { LayoutProps } from "../registry";
 
-/**
- * Narrow reading column — for legal pages, blog posts, long-form content.
- * Wraps SkipLink + Header7 + a centered prose `<main>` + SiteFooter.
- *
- * Pass `header={false}` / `footer={false}` to opt out of the marketing
- * chrome, or pass a `ReactNode` to swap in a custom slot.
- */
 export function ProseLayout({ children, header = true, footer = true }: LayoutProps) {
   return (
     <>

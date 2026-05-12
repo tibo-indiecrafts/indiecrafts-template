@@ -26,7 +26,6 @@ import {
 } from "./config";
 
 export type AreaLinearProps = {
-  /** Data rows. Defaults to `chartAreaLinearData` from `./config`. */
   data?: typeof chartAreaLinearData;
 };
 

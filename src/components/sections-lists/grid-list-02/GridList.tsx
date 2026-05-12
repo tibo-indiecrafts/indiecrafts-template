@@ -4,10 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { gridList02Namespace, gridList02People } from "./config";
 import type { GridListBlock } from "./schema";
 
-/**
- * 2-up team-member cards with avatar + name + role. Sourced from
- * `@blocks-so/grid-list-02`.
- */
 export default function GridList(props: Readonly<GridListBlock>) {
   const [, tr] = useScopedT(gridList02Namespace);
   const people = props.people ?? gridList02People;

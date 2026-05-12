@@ -10,11 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof FollowerPointerCard>;
 
-/**
- * Default — wrap any element to replace the system cursor with a custom
- * pointer + label. The label shows `title` (or `William Shakespeare` if you
- * pass nothing).
- */
 export const Default: Story = {
   render: () => (
     <FollowerPointerCard
@@ -30,7 +25,6 @@ export const Default: Story = {
   ),
 };
 
-/** Custom title — a JSX `title` lets you compose icons + styling. */
 export const CustomTitle: Story = {
   render: () => (
     <FollowerPointerCard
@@ -50,7 +44,6 @@ export const CustomTitle: Story = {
   ),
 };
 
-/** Image cover — typical magazine-style use over a photographic header. */
 export const ImageCover: Story = {
   render: () => (
     <FollowerPointerCard
@@ -74,7 +67,6 @@ export const ImageCover: Story = {
   ),
 };
 
-/** Grid — stacks two pointer cards side by side; each tracks independently. */
 export const Grid: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

@@ -34,7 +34,6 @@ export default meta;
 
 type Story = StoryObj<typeof NavMain>;
 
-/** Standard four-item nav with icons. */
 export const Default: Story = {
   args: {
     items: [
@@ -46,7 +45,6 @@ export const Default: Story = {
   },
 };
 
-/** Six items — exercises the list when the sidebar is taller. */
 export const ExtendedNav: Story = {
   args: {
     items: [
@@ -60,14 +58,12 @@ export const ExtendedNav: Story = {
   },
 };
 
-/** Single item — no decorative wrapper around a one-entry list. */
 export const SingleItem: Story = {
   args: {
     items: [{ title: "Dashboard", url: "/dashboard", icon: IconDashboard }],
   },
 };
 
-/** Items rendered without icons — `icon` is optional in the type. */
 export const WithoutIcons: Story = {
   args: {
     items: [

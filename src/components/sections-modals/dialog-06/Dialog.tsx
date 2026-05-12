@@ -17,10 +17,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { dialog06Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 
-/**
- * Create-workspace modal — title + description + name field + private
- * toggle panel below. Sourced from `@blocks-so/dialog-06`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [t, tr] = useScopedT(dialog06Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

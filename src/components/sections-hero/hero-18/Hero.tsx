@@ -6,13 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { hero18Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 
-/**
- * Grid-1 landing hero — JSX preserved verbatim against upstream's
- * inline `page.tsx` section. Bordered grid backdrop, centered
- * heading with foreground accent split, single CTA + "No credit
- * card" subtext, then a wide product mock inside the Container's
- * subtle muted frame.
- */
 export default function Hero(props: Readonly<HeroBlock>) {
   const [, , tRoot] = useScopedT(hero18Namespace);
   const external = props.primary.href.startsWith("http");

@@ -20,11 +20,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — click anywhere on the button to spawn an outward ripple anchored
- * at the click position. Each ripple lifecycles on `duration`; multiple
- * clicks stack independent ripples.
- */
 export const Default: Story = {
   args: { rippleColor: "#3b82f6", duration: "600ms" },
   render: (args) => (
@@ -34,7 +29,6 @@ export const Default: Story = {
   ),
 };
 
-/** Pink ripple — `rippleColor="#ec4899"`. */
 export const PinkRipple: Story = {
   args: { rippleColor: "#ec4899", duration: "600ms" },
   render: (args) => (
@@ -49,7 +43,6 @@ export const PinkRipple: Story = {
   ),
 };
 
-/** Slow — `duration="1500ms"` for a more cinematic spread. */
 export const Slow: Story = {
   args: { rippleColor: "#0ea5e9", duration: "1500ms" },
   render: (args) => (
@@ -59,7 +52,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Larger — Tailwind utilities scale up the button to a hero CTA. */
 export const Larger: Story = {
   render: () => (
     <Stage>
@@ -70,7 +62,6 @@ export const Larger: Story = {
   ),
 };
 
-/** Side by side — independent ripple state per button. */
 export const SideBySide: Story = {
   render: () => (
     <Stage>

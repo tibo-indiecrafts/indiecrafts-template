@@ -14,7 +14,6 @@ const subFeatures = [
   { icon: CalendarDays, key: "tile3" },
 ] as const;
 
-/** Features-38 — JSX verbatim. AnalyticsFeatures with 4-card 6-col grid. */
 export default function Features(props: Readonly<Features38Block>) {
   const [t] = useScopedT(features38Namespace);
 

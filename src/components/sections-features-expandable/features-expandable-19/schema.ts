@@ -44,11 +44,11 @@ export type Testimonial = {
 export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
   iconKey: FeatureIcon;
-  /** Decorative bg image painted (with dither overlay) behind the illustration. */
+
   bgImageUrl: string;
-  /** Accordion-row title (e.g. "AI Models"). */
+
   titleKey: MessageKey;
-  /** Body paragraph that slides open under the active row. */
+
   bodyKey: MessageKey;
 };
 

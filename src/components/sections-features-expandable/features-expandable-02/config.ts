@@ -19,7 +19,7 @@ export const featuresExpandable02Sample: Omit<FeaturesExpandableBlock, "id"> = {
     },
     {
       illustration: "map",
-      // No `cardClassName` — card sizes to the map's intrinsic SVG.
+
       illustrationClassName: "pt-8",
       bgImageUrl:
         "https://raw.githubusercontent.com/acme/assets/refs/heads/main/c3_fzqepj.png",

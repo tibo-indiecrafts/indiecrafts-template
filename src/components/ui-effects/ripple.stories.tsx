@@ -32,11 +32,6 @@ const Body = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — eight concentric ripples expand from the centre. The component
- * is `pointer-events-none absolute inset-0` so it sits behind any foreground
- * content.
- */
 export const Default: Story = {
   args: { mainCircleSize: 210, mainCircleOpacity: 0.24, numCircles: 8 },
   render: (args) => (
@@ -50,7 +45,6 @@ export const Default: Story = {
   ),
 };
 
-/** Tighter — `numCircles={4}` and a smaller centre for a calmer look. */
 export const Tight: Story = {
   args: { mainCircleSize: 140, mainCircleOpacity: 0.3, numCircles: 4 },
   render: (args) => (
@@ -61,7 +55,6 @@ export const Tight: Story = {
   ),
 };
 
-/** Dense — 14 ripples for a denser radar feel. */
 export const Dense: Story = {
   args: { mainCircleSize: 260, mainCircleOpacity: 0.15, numCircles: 14 },
   render: (args) => (
@@ -72,7 +65,6 @@ export const Dense: Story = {
   ),
 };
 
-/** Centerpiece — Ripple wrapped around a CTA pill. */
 export const Centerpiece: Story = {
   render: () => (
     <Stage>

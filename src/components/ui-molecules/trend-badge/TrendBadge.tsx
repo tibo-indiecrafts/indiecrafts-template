@@ -9,23 +9,15 @@ import { trendBadgeNamespace } from "./config";
 export type TrendDirection = "up" | "down";
 
 export type TrendBadgeProps = {
-  /** "up" → green tone + TrendingUp icon. "down" → red tone + TrendingDown icon. */
   direction: TrendDirection;
-  /** Pre-formatted display value (e.g. "+12%", "-3.4%"). Stays caller-side
-   *  so the molecule is locale-agnostic — pass already-localized strings. */
+
   delta: ReactNode;
-  /** Override the sr-only direction announcement. Defaults to local
-   *  `trendUp` / `trendDown` keys. */
+
   srLabelKey?: MessageKey;
-  /** Caller-side wrapper class (e.g. responsive margin tweaks). */
+
   className?: string;
 };
 
-/**
- * Tonal Badge with a TrendingUp/Down icon, a delta value, and an
- * sr-only direction label. Extracted from sections-stats/stats-{02,04}
- * where the same shape was duplicated.
- */
 export function TrendBadge({
   direction,
   delta,

@@ -6,13 +6,6 @@ export type ProductSidePreviewProps = {
   className?: string;
 };
 
-/**
- * Side-masked product preview — angled-stripe backdrop + radial-mask
- * fade from the left, with two stacked screenshot cards (front + back
- * extending right). Used by `sections-secondary-hero/secondary-hero-18`
- * and `secondary-hero-19`. Mock imagery is decorative; treat as
- * illustrations-only (no translations).
- */
 export const ProductSidePreview = ({
   alt = "App preview",
   className,

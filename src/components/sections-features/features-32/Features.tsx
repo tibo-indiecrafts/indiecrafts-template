@@ -20,10 +20,6 @@ const subFeatures = [
   { icon: CalendarDays, key: "tile4" },
 ] as const;
 
-/**
- * Features-32 — JSX verbatim. Intro + Map/Viz cards + 4 sub-feature
- * tiles (with the 4th hidden at @4xl per upstream).
- */
 export default function Features(props: Readonly<Features32Block>) {
   const [t] = useScopedT(features32Namespace);
 

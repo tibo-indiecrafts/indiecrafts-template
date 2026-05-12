@@ -19,7 +19,6 @@ import {
 import { sidebar07Data, sidebar07Namespace, type SidebarData } from "./config";
 
 export type SidebarProps = React.ComponentProps<typeof UISidebar> & {
-  /** Override the demo nav + user + documents. Defaults to `sidebar07Data`. */
   data?: SidebarData;
 };
 

@@ -11,12 +11,10 @@ export default meta;
 
 type Story = StoryObj<typeof TableSection>;
 
-/** Default — sample data (4 rows, first one open). */
 export const Default: Story = {
   args: { ...table01Sample, id: "table-1-default" },
 };
 
-/** Closed — every row collapsed at first paint. */
 export const AllCollapsed: Story = {
   args: { ...table01Sample, id: "table-1-collapsed", defaultOpenIndex: -1 },
 };

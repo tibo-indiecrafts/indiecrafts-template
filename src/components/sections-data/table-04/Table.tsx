@@ -70,12 +70,6 @@ function AvatarStack({ people }: { people: TablePerson[] }) {
   );
 }
 
-/**
- * Grouped task table — sourced from `@blocks-so/table-04`. Refactored to
- * fit the section pattern: group names + status labels + column headers
- * source from `blocks.table-04.*`. Each group is a `nameKey` that resolves
- * to the team label; tasks inside use a typed `status` for badge styling.
- */
 export default function Table(props: Readonly<TableBlock>) {
   const t = useTranslations(table04Namespace);
   const groups = props.groups ?? table4Groups;

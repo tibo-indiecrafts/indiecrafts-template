@@ -19,7 +19,6 @@ type Story = StoryObj<typeof Badge>;
 
 export const Default: Story = { args: { children: "Badge" } };
 
-/** All variants laid out in a row for quick visual comparison. */
 export const Variants: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-2">
@@ -33,7 +32,6 @@ export const Variants: Story = {
   ),
 };
 
-/** Badge with a leading icon — exercises the icon size constraint. */
 export const WithIcon: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-2">
@@ -53,7 +51,6 @@ export const WithIcon: Story = {
   ),
 };
 
-/** `asChild` renders as a link — the `[a&]` selectors light up hover styling. */
 export const AsLink: Story = {
   render: () => (
     <Badge asChild>

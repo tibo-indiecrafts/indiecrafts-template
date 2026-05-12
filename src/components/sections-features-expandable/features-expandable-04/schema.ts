@@ -17,9 +17,9 @@ export type FeatureIllustration =
 
 export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
-  /** Decorative bg image painted behind the illustration in the panel. */
+
   bgImageUrl: string;
-  /** Tab button label on the left rail (also used as accessible name). */
+
   tabLabelKey: MessageKey;
 };
 

@@ -36,11 +36,6 @@ const LINTERS = [
 ] as const;
 const TESTERS = ["jest", "vitest", "cypress", "none"] as const;
 
-/**
- * Initialize-new-project modal — left-side info column + right-side
- * stepped form (framework / package manager / linter / testing).
- * Sourced from `@blocks-so/dialog-11`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const t = useTranslations(dialog11Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

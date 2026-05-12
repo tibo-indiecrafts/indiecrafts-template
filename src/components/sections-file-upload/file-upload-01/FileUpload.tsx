@@ -35,11 +35,6 @@ interface UploadedFile {
   progress: number;
 }
 
-/**
- * "Create a new project" card with project-name + project-lead
- * inputs, an image drop zone, and a progress-tracked file list.
- * Sourced from `@blocks-so/file-upload-01`.
- */
 export default function FileUpload(props: Readonly<FileUploadBlock>) {
   const [t, tr] = useScopedT(fileUpload01Namespace);
   const leads = props.leads ?? fileUpload01Leads;

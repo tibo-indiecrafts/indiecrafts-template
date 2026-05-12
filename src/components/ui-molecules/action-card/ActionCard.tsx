@@ -17,31 +17,20 @@ export type ActionCardTone =
 export type ActionCardVariant = "compact" | "tile";
 
 export type ActionCardProps = {
-  /** Lucide icon rendered in the tinted bubble. */
   icon: LucideIcon;
-  /** Card heading. Localized by the caller. */
+
   title: ReactNode;
-  /** Optional supporting body. */
+
   description?: ReactNode;
-  /** Optional href. When set, renders a card-spanning Link via the typed
-   *  next-intl helper so internal routes get client-side navigation.
-   *  Caller passes the full path; the molecule casts to satisfy the typed
-   *  Link signature. */
+
   href?: string;
-  /** "compact" — size-9 rounded-md icon bubble, p-4 card, hover affordance.
-   *  Used for dense quick-action grids.
-   *  "tile" — p-3 ring-2 rounded-lg icon bubble, p-6 card, decorative
-   *  accent slot. Used for hero-style help-center / category tiles.
-   *  Default: "compact". */
+
   variant?: ActionCardVariant;
-  /** Tone applied to the icon bubble. Defaults to "primary".
-   *  TODO(audit-item-4): tone→class mapping is currently TS-baked. If a
-   *  third or fourth tone palette appears, lift this into themeConfig. */
+
   tone?: ActionCardTone;
-  /** Decorative corner accent (e.g. an ArrowUpRight icon). Only rendered
-   *  in "tile" variant. */
+
   cornerAccent?: ReactNode;
-  /** Caller-side wrapper class. */
+
   className?: string;
 };
 
@@ -80,17 +69,6 @@ const TONE_CLASSES: Record<ActionCardTone, { fg: string; bg: string; ring: strin
   },
 };
 
-/**
- * Icon-titled card with optional description and card-spanning click
- * target. Extracted from sections-dashboard/quick-actions-01 (compact)
- * and sections-lists/grid-list-03 (tile) which were structurally
- * identical but differed in size, tone palette, and corner accent.
- *
- * Uses the canonical card-spanning anchor pattern: `<Link>` lives
- * inside the card with an `absolute inset-0` overlay span — the entire
- * card surface becomes clickable while the focusable element remains
- * the link itself.
- */
 export function ActionCard({
   icon: Icon,
   title,

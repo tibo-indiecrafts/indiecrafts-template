@@ -27,11 +27,6 @@ const CardBody = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — pink + cyan neon gradient that animates around the border via
- * the `--animate-background-position-spin` keyframes. The blurred `::after`
- * adds the outer glow.
- */
 export const Default: Story = {
   args: { borderSize: 2, borderRadius: 20 },
   render: (args) => (
@@ -46,11 +41,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Brand colours — `neonColors` swaps the two stops to the template&apos;s
- * brand indigo via the `--color-primary` CSS var. A second darker stop adds
- * depth to the gradient.
- */
 export const BrandColors: Story = {
   args: {
     borderSize: 3,
@@ -72,7 +62,6 @@ export const BrandColors: Story = {
   ),
 };
 
-/** Thick border — `borderSize={6}` for a chunkier outline. */
 export const ThickBorder: Story = {
   args: { borderSize: 6, borderRadius: 24 },
   render: (args) => (
@@ -87,7 +76,6 @@ export const ThickBorder: Story = {
   ),
 };
 
-/** Squared — `borderRadius={4}` for a more architectural shape. */
 export const Squared: Story = {
   args: { borderSize: 2, borderRadius: 4 },
   render: (args) => (
@@ -102,7 +90,6 @@ export const Squared: Story = {
   ),
 };
 
-/** Side by side — multiple cards on one canvas, each with its own glow. */
 export const SideBySide: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

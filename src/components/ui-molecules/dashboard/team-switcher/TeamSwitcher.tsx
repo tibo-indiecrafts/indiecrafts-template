@@ -28,11 +28,7 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
   const [activeTeam, setActiveTeam] = useState(teams[0]);
 
   if (!activeTeam) return null;
-  // Local capital-letter aliases — JSX requires component identifiers to
-  // start with an uppercase letter; `<activeTeam.logo />` would be parsed
-  // as an HTML element, so we re-bind to satisfy the type system.
-  // The cast narrows React's broader `ElementType` (which can be a string
-  // tag name) to a concrete component type with the className prop we pass.
+
   const ActiveLogo = activeTeam.logo as React.ComponentType<{ className?: string }>;
 
   return (

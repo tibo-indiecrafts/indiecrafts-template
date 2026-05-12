@@ -13,7 +13,6 @@ export default meta;
 
 type Story = StoryObj<typeof AuroraText>;
 
-/** Default 4-color gradient (pink → purple → blue → sky). */
 export const Default: Story = {
   render: () => (
     <h1 className="text-5xl font-bold">
@@ -22,7 +21,6 @@ export const Default: Story = {
   ),
 };
 
-/** Custom palette — pass your own gradient stops. */
 export const CustomColors: Story = {
   render: () => (
     <div className="flex flex-col items-center gap-4 text-4xl font-bold">
@@ -37,7 +35,6 @@ export const CustomColors: Story = {
   ),
 };
 
-/** Speed scale — slower / faster aurora cycles. */
 export const Speeds: Story = {
   render: () => (
     <div className="flex flex-col items-center gap-3 text-3xl font-bold">
@@ -48,7 +45,6 @@ export const Speeds: Story = {
   ),
 };
 
-/** Inline within heading copy — composes naturally with surrounding text. */
 export const Inline: Story = {
   render: () => (
     <h2 className="max-w-2xl text-center text-5xl leading-tight font-bold">

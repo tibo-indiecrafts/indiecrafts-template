@@ -13,9 +13,6 @@ const meta: Meta<typeof DatePicker> = {
   component: DatePicker,
   parameters: { layout: "centered" },
   decorators: [
-    // The DatePicker is built for sidebar use — the calendar grid `w-full`s
-    // to its container. Wrap in a fixed-width sidebar so cells render at
-    // the same size they will in the real Sidebar09.
     (Story) => (
       <SidebarProvider>
         <Sidebar collapsible="none" className="w-(--sidebar-width)">
@@ -31,10 +28,8 @@ export default meta;
 
 type Story = StoryObj<typeof DatePicker>;
 
-/** Stateless — today is highlighted, no day is selectable. */
 export const Default: Story = {};
 
-/** Single-date picking — caller drives `selected` + `onSelect`. */
 export const SingleSelect: Story = {
   render: () => {
     const [date, setDate] = useState<Date | undefined>(new Date());
@@ -42,7 +37,6 @@ export const SingleSelect: Story = {
   },
 };
 
-/** Range picking — same primitive, different `mode`. */
 export const RangeSelect: Story = {
   render: () => {
     const [range, setRange] = useState<DateRange | undefined>();

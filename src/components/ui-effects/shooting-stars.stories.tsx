@@ -33,11 +33,6 @@ const Body = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — a single shooting star streaks from a random edge every 1.2–4.2s.
- * Mount inside a `relative overflow-hidden` parent so the SVG covers the
- * whole canvas.
- */
 export const Default: Story = {
   args: {
     minSpeed: 10,
@@ -58,7 +53,6 @@ export const Default: Story = {
   ),
 };
 
-/** Frequent — `minDelay`/`maxDelay` lowered for a more active sky. */
 export const Frequent: Story = {
   args: { minDelay: 400, maxDelay: 1500 },
   render: (args) => (
@@ -69,11 +63,6 @@ export const Frequent: Story = {
   ),
 };
 
-/**
- * Brand colours — `starColor` + `trailColor` use the brand sRGB equivalent
- * (the SVG linearGradient stop fills only accept concrete colour strings,
- * so we hard-code `oklch(0.55 0.18 260)` from `theme.config.ts`).
- */
 export const BrandColors: Story = {
   args: { starColor: "#4f46e5", trailColor: "#818cf8" },
   render: (args) => (
@@ -84,7 +73,6 @@ export const BrandColors: Story = {
   ),
 };
 
-/** Slow + chunky — wider stars at slower speeds. */
 export const SlowChunky: Story = {
   args: { minSpeed: 5, maxSpeed: 12, starWidth: 24, starHeight: 3 },
   render: (args) => (

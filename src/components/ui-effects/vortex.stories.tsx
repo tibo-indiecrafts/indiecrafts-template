@@ -26,10 +26,6 @@ const Body = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — 700 noise-driven particles swirl on a black canvas. The
- * component fills its container; mount in a fixed-height parent.
- */
 export const Default: Story = {
   args: { particleCount: 700, baseHue: 220 },
   render: (args) => (
@@ -44,7 +40,6 @@ export const Default: Story = {
   ),
 };
 
-/** Sparse — `particleCount={250}` for a calmer galaxy feel. */
 export const Sparse: Story = {
   args: { particleCount: 250 },
   render: (args) => (
@@ -56,7 +51,6 @@ export const Sparse: Story = {
   ),
 };
 
-/** Magenta hue — `baseHue={320}` for a warmer palette. */
 export const MagentaHue: Story = {
   args: { baseHue: 320 },
   render: (args) => (
@@ -68,12 +62,6 @@ export const MagentaHue: Story = {
   ),
 };
 
-/**
- * Cyan particles — `baseHue={190}` shifts the swarm toward cyan/teal. Note
- * that `backgroundColor` is most effective when near-black; the upstream
- * uses additive compositing (`globalCompositeOperation: "lighter"`) which
- * washes lighter backdrops toward white over a few frames.
- */
 export const CyanParticles: Story = {
   args: { baseHue: 190, backgroundColor: "#000000" },
   render: (args) => (
@@ -88,7 +76,6 @@ export const CyanParticles: Story = {
   ),
 };
 
-/** Faster — `rangeSpeed={3}` widens the velocity distribution. */
 export const Faster: Story = {
   args: { rangeSpeed: 3, baseSpeed: 0.5 },
   render: (args) => (

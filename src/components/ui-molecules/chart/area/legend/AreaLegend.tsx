@@ -28,7 +28,6 @@ import {
 } from "./config";
 
 export type AreaLegendProps = {
-  /** Data rows. Defaults to `chartAreaLegendData` from `./config`. */
   data?: typeof chartAreaLegendData;
 };
 

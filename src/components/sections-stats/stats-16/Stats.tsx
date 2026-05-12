@@ -10,11 +10,6 @@ const RICH_STRONG = {
   ),
 };
 
-/**
- * Dark stats section — JSX verbatim against upstream
- * `dark-landing-one`. Masked dotted world-map illustration above
- * a 3-column stat row with vertical hairline separators at @2xl.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [, , tRoot] = useScopedT(stats16Namespace);
 

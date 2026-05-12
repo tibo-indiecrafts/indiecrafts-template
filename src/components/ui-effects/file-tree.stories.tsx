@@ -45,7 +45,6 @@ const REPO_ELEMENTS: TreeViewElement[] = [
   },
 ];
 
-/** Composed via JSX — typical static directory layout. */
 export const Default: Story = {
   render: () => (
     <Tree
@@ -88,7 +87,6 @@ export const Default: Story = {
   ),
 };
 
-/** Driven by a `TreeViewElement[]` — declarative form, easier to load from data. */
 export const FromElements: Story = {
   render: () => (
     <Tree
@@ -99,7 +97,6 @@ export const FromElements: Story = {
   ),
 };
 
-/** Pre-selected — `initialSelectedId` highlights a file on mount. */
 export const PreSelected: Story = {
   render: () => (
     <Tree
@@ -111,7 +108,6 @@ export const PreSelected: Story = {
   ),
 };
 
-/** Fully collapsed — root only; user expands manually. */
 export const Collapsed: Story = {
   render: () => (
     <Tree
@@ -121,7 +117,6 @@ export const Collapsed: Story = {
   ),
 };
 
-/** RTL — passes `dir="rtl"` so chevrons and indentation flip. */
 export const RightToLeft: Story = {
   render: () => (
     <div dir="rtl">

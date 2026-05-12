@@ -10,12 +10,10 @@ export default meta;
 
 type Story = StoryObj<typeof Calendar>;
 
-/** Single-date selection — `mode="single"` is the default. */
 export const Default: Story = {
   render: () => <Calendar mode="single" defaultMonth={new Date(2026, 3, 1)} />,
 };
 
-/** Multi-date — array of selected dates. */
 export const Multiple: Story = {
   render: () => (
     <Calendar
@@ -26,7 +24,6 @@ export const Multiple: Story = {
   ),
 };
 
-/** Range — `from` and `to` selection. */
 export const Range: Story = {
   render: () => (
     <Calendar
@@ -37,7 +34,6 @@ export const Range: Story = {
   ),
 };
 
-/** Dropdown caption — quickly jump months/years. */
 export const DropdownCaption: Story = {
   render: () => (
     <Calendar
@@ -50,7 +46,6 @@ export const DropdownCaption: Story = {
   ),
 };
 
-/** Two months side by side — popular for booking flows. */
 export const NumberOfMonths: Story = {
   render: () => (
     <Calendar mode="range" numberOfMonths={2} defaultMonth={new Date(2026, 3, 1)} />

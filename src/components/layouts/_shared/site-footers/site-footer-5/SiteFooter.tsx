@@ -5,12 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { siteFooter5Namespace } from "./config";
 
 export type SiteFooterProps = {
-  /**
-   * Background utility class applied to the `<footer>` element.
-   * Defaults to a white-bg light + transparent-bg dark to match the
-   * upstream's `bg-white dark:bg-transparent` pairing. Pages that
-   * wrap their content in a tinted backdrop can override.
-   */
   bgClassName?: string;
 };
 

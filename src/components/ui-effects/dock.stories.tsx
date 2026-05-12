@@ -42,7 +42,6 @@ const ICONS = [
   { Icon: Settings, label: "Settings" },
 ];
 
-/** Default — macOS-style dock with magnification on hover. */
 export const Default: Story = {
   render: () => (
     <Dock>
@@ -55,7 +54,6 @@ export const Default: Story = {
   ),
 };
 
-/** Larger icons + bigger hover magnification. */
 export const Large: Story = {
   render: () => (
     <Dock iconSize={56} iconMagnification={88} iconDistance={160}>
@@ -68,7 +66,6 @@ export const Large: Story = {
   ),
 };
 
-/** Magnification disabled — flat dock; useful for accessibility / RM. */
 export const NoMagnification: Story = {
   render: () => (
     <Dock disableMagnification>
@@ -81,7 +78,6 @@ export const NoMagnification: Story = {
   ),
 };
 
-/** Top alignment — icons anchor to the top of the dock instead of middle. */
 export const TopAligned: Story = {
   render: () => (
     <Dock direction="top">
@@ -94,7 +90,6 @@ export const TopAligned: Story = {
   ),
 };
 
-/** Single icon — proves the magnification effect still works alone. */
 export const SingleIcon: Story = {
   render: () => (
     <Dock>

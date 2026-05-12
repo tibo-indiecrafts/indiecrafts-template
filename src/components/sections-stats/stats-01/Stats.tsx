@@ -4,10 +4,6 @@ import { cn } from "@/lib/utils";
 import { stats01Items, stats01Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Joined-card row of metric tiles with positive/negative change
- * deltas. Sourced from `@blocks-so/stats-01`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats01Namespace);
   const items = props.items ?? stats01Items;

@@ -39,7 +39,6 @@ export const Default: Story = {
   },
 };
 
-/** `defaultOpenIndex={1}` — second group is the one rendered open. */
 export const SecondGroupOpen: Story = {
   args: {
     defaultOpenIndex: 1,

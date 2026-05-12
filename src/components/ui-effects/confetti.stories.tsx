@@ -18,7 +18,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Default — confetti fires automatically on mount; persists for ~3s. */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -28,10 +27,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Manual fire — `manualstart` skips the auto-trigger; the parent calls
- * `ref.current.fire(opts)` to launch confetti on demand.
- */
 export const ManualFire: Story = {
   render: () => {
     const Demo = () => {
@@ -51,7 +46,6 @@ export const ManualFire: Story = {
   },
 };
 
-/** ConfettiButton — turnkey trigger; click anywhere on the button. */
 export const ButtonHelper: Story = {
   render: () => (
     <Stage>
@@ -60,10 +54,6 @@ export const ButtonHelper: Story = {
   ),
 };
 
-/**
- * Custom palette + heavier burst — pass `options` to override the
- * canvas-confetti emitter parameters.
- */
 export const CustomBurst: Story = {
   render: () => (
     <Stage>
@@ -80,9 +70,6 @@ export const CustomBurst: Story = {
   ),
 };
 
-/**
- * Top emitter — origin near the top of the viewport, particles rain down.
- */
 export const TopRain: Story = {
   render: () => {
     const Demo = () => {

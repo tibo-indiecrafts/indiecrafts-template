@@ -8,12 +8,6 @@ import { SiteFooter } from "@/components/layouts/default-layout/site-footer";
 import type { LayoutProps } from "../registry";
 import { sidebarLayoutNamespace } from "./config";
 
-/**
- * Two-column layout with a sticky aside. Wraps the standard marketing chrome
- * (SkipLink + Header7 + `<main>` + SiteFooter) and renders the `aside`
- * slot to the left of `children`. Pass `header={false}` / `footer={false}`
- * to opt out of the marketing chrome.
- */
 export function SidebarLayout({
   children,
   aside,

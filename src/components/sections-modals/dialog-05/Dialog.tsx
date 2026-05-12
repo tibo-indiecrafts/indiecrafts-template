@@ -19,10 +19,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { dialog05Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 
-/**
- * Destructive confirm-by-password AlertDialog (delete workspace).
- * Sourced from `@blocks-so/dialog-05`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [t, tr] = useScopedT(dialog05Namespace);
   const [isOpen, setIsOpen] = useState(props.defaultOpen ?? false);

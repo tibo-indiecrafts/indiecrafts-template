@@ -23,11 +23,6 @@ export type CustomerStory = {
   testimonial?: CustomerStoryTestimonial;
 };
 
-/**
- * Sample story used by Storybook and as the page-template default
- * so the route renders without a CMS connection. Replace with real
- * data via the `story` prop when wiring up Sanity / a database.
- */
 export const customerStory04Sample: CustomerStory = {
   name: "Bolt",
   title: "How Bolt scaled streaming infrastructure to 10M concurrent viewers",

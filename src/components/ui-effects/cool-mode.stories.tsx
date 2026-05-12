@@ -19,7 +19,6 @@ export default meta;
 
 type Story = StoryObj<typeof CoolMode>;
 
-/** Default — wraps a button; click to fire particles. */
 export const Default: Story = {
   render: () => (
     <CoolMode>
@@ -28,10 +27,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Custom particle — `options.particle` accepts an image URL used as the
- * spawned particle (here, a confetti SVG).
- */
 export const CustomParticle: Story = {
   render: () => (
     <CoolMode
@@ -46,7 +41,6 @@ export const CustomParticle: Story = {
   ),
 };
 
-/** Heavy burst — 15 particles per click instead of the default. */
 export const HeavyBurst: Story = {
   render: () => (
     <CoolMode options={{ particleCount: 15, speedHorz: 8, speedUp: 14 }}>
@@ -57,7 +51,6 @@ export const HeavyBurst: Story = {
   ),
 };
 
-/** Wraps a regular link — works on any element, not just buttons. */
 export const OnLink: Story = {
   render: () => (
     <CoolMode>

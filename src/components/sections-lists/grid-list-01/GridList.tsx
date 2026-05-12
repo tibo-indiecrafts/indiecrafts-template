@@ -12,10 +12,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { gridList01Items, gridList01Namespace } from "./config";
 import type { GridListBlock } from "./schema";
 
-/**
- * 3-up favorite-collections grid with colored initials, title, count,
- * and an actions dropdown. Sourced from `@blocks-so/grid-list-01`.
- */
 export default function GridList(props: Readonly<GridListBlock>) {
   const [t, tr] = useScopedT(gridList01Namespace);
   const items = props.items ?? gridList01Items;

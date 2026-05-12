@@ -19,10 +19,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — heading text with 10 random sparkles drifting around it. The
- * sparkles regenerate after each lifespan; pass any node as children.
- */
 export const Default: Story = {
   args: { sparklesCount: 10 },
   render: (args) => (
@@ -32,11 +28,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Brand colours — `colors` retunes the sparkle palette to two indigo stops
- * matching the template&apos;s `oklch(0.55 0.18 260)` brand. SVG fill
- * attributes don&apos;t resolve CSS vars so the hex is hard-coded.
- */
 export const BrandColors: Story = {
   args: {
     sparklesCount: 14,
@@ -49,7 +40,6 @@ export const BrandColors: Story = {
   ),
 };
 
-/** Heavy — `sparklesCount={28}` for an over-the-top hero look. */
 export const HeavySparkles: Story = {
   args: { sparklesCount: 28 },
   render: (args) => (
@@ -59,7 +49,6 @@ export const HeavySparkles: Story = {
   ),
 };
 
-/** Smaller scale — `className` shrinks the heading. */
 export const Compact: Story = {
   args: { sparklesCount: 8 },
   render: (args) => (
@@ -71,7 +60,6 @@ export const Compact: Story = {
   ),
 };
 
-/** Hero scale — `className="text-8xl"` for a display headline. */
 export const Hero: Story = {
   args: { sparklesCount: 20 },
   render: (args) => (

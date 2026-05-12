@@ -20,11 +20,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — drag the cursor across the card to reveal the secondary text.
- * The component layers `text` on top and `revealText` underneath; pointer X
- * controls a CSS clip that exposes the bottom layer.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -33,7 +28,6 @@ export const Default: Story = {
   ),
 };
 
-/** With title + description — composed using the exported subcomponents. */
 export const WithCopy: Story = {
   render: () => (
     <Stage>
@@ -48,7 +42,6 @@ export const WithCopy: Story = {
   ),
 };
 
-/** Marketing slogan — punchier copy for a CTA section. */
 export const Marketing: Story = {
   render: () => (
     <Stage>
@@ -62,7 +55,6 @@ export const Marketing: Story = {
   ),
 };
 
-/** Custom className — pass `className` to override card sizing/colour. */
 export const Wider: Story = {
   render: () => (
     <Stage>

@@ -22,7 +22,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="w-[420px] max-w-full">{children}</div>
 );
 
-/** Default — renders a known-good tweet ID. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -31,7 +30,6 @@ export const Default: Story = {
   ),
 };
 
-/** Image tweet — exercises the media-attached layout. */
 export const WithImage: Story = {
   render: () => (
     <Frame>
@@ -40,7 +38,6 @@ export const WithImage: Story = {
   ),
 };
 
-/** Not found — invalid tweet id falls back to the `TweetNotFound` UI. */
 export const NotFound: Story = {
   render: () => (
     <Frame>

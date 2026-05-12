@@ -22,13 +22,8 @@ export default meta;
 
 type Story = StoryObj<typeof Sidebar08>;
 
-/** Full demo data — teams, primary nav, favorites, workspaces, secondary nav. */
 export const Default: Story = {};
 
-/**
- * Minimal — empty `favorites` and `workspaces`, single team, two nav items.
- * Verifies the sidebar collapses gracefully when those collections are empty.
- */
 export const Minimal: Story = {
   args: {
     data: {

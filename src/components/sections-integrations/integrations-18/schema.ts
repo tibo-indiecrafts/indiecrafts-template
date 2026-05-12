@@ -16,8 +16,8 @@ export type IntegrationsBlock = {
   bodyKey: MessageKey;
   ctaLabelKey: MessageKey;
   ctaHref: StaticAppPathname | `http${string}` | `#${string}`;
-  /** 3 outer-ring icons (left, top, right). */
+
   outerRing: readonly [IntegrationIcon, IntegrationIcon, IntegrationIcon];
-  /** 3 inner-ring icons (top, left, right). */
+
   innerRing: readonly [IntegrationIcon, IntegrationIcon, IntegrationIcon];
 };

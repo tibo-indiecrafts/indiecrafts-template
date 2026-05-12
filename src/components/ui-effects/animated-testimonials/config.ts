@@ -1,12 +1,6 @@
 export const animatedTestimonialsKey = "animated-testimonials" as const;
 export const animatedTestimonialsNamespace = "blocks.animated-testimonials" as const;
 
-/**
- * Structural defaults — non-translatable. Each entry's `id` matches the
- * key under `blocks.animated-testimonials.items.<id>` in `en.json`, where
- * the wrapper reads quote/name/designation. `src` stays here because it's
- * an asset URL, not copy.
- */
 export const animatedTestimonialsItems = [
   {
     id: "alice",

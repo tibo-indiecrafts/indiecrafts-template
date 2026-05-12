@@ -107,9 +107,6 @@ export default function FeaturesExpandable(props: Readonly<FeaturesExpandableBlo
             />
 
             <div
-              // `--bevel-size` matches the paired `rounded-tr-[5rem]` /
-              // `rounded-bl-[5rem]` so the clip-path utilities chamfer
-              // the corners at the same dimensions as the rounded radii.
               style={{ "--bevel-size": "5rem" } as React.CSSProperties}
               className="corner-tr-bevel corner-bl-bevel bg-muted relative aspect-4/5 overflow-hidden rounded-xl rounded-tr-[5rem] rounded-bl-[5rem]"
             >

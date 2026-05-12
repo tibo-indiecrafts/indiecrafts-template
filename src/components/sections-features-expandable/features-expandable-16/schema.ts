@@ -26,7 +26,7 @@ export type FeatureIllustration =
 
 export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
-  /** Decorative bg image painted (with dither overlay) behind the illustration. */
+
   bgImageUrl: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;

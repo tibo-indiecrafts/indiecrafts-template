@@ -49,7 +49,6 @@ export const Default: Story = {
   },
 };
 
-/** Workspaces with empty `pages` arrays — collapsible has no nested rows. */
 export const WithoutPages: Story = {
   args: {
     workspaces: [

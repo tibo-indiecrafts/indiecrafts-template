@@ -34,9 +34,9 @@ export type Testimonial = {
 
 export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
-  /** Decorative bg image painted behind the illustration. */
+
   bgImageUrl: string;
-  /** Pill-button label (no icon — the active tab shows a loader instead). */
+
   tabLabelKey: MessageKey;
 };
 
@@ -47,7 +47,7 @@ export type FeaturesExpandableBlock = {
   bodyKey: MessageKey;
   ctaLabelKey: MessageKey;
   ctaHref: StaticAppPathname | `http${string}` | `#${string}`;
-  /** Default 6000ms. */
+
   autoplayDurationMs?: number;
   items: readonly [
     FeaturesExpandableItem,

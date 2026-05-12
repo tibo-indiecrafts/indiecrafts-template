@@ -5,9 +5,9 @@ import Image from "next/image";
 type Pin = {
   src: string;
   alt: string;
-  /** Position classes applied to the marker root. */
+
   className: string;
-  /** Set to true on Theo's marker for the subtle ring border. */
+
   ringed?: boolean;
 };
 

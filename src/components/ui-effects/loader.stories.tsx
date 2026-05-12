@@ -15,7 +15,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Loader One — three pulsing dots that bounce vertically in sequence. */
 export const One: Story = {
   render: () => (
     <Stage>
@@ -24,7 +23,6 @@ export const One: Story = {
   ),
 };
 
-/** Loader Two — three dots that slide horizontally with a stagger. */
 export const Two: Story = {
   render: () => (
     <Stage>
@@ -33,10 +31,6 @@ export const Two: Story = {
   ),
 };
 
-/**
- * Loader Three — drawn lightning bolt SVG that fills with yellow as the
- * stroke completes, then reverses. Inherits theme colors via CSS vars.
- */
 export const Three: Story = {
   render: () => (
     <Stage>
@@ -45,7 +39,6 @@ export const Three: Story = {
   ),
 };
 
-/** Loader Four — chromatic glitched text. Pass `text` to customise. */
 export const Four: Story = {
   render: () => (
     <Stage>
@@ -54,7 +47,6 @@ export const Four: Story = {
   ),
 };
 
-/** Loader Four (custom text). */
 export const FourCustom: Story = {
   render: () => (
     <Stage>
@@ -63,7 +55,6 @@ export const FourCustom: Story = {
   ),
 };
 
-/** Loader Five — letters pulse + glow with a staggered delay. */
 export const Five: Story = {
   render: () => (
     <Stage>
@@ -72,7 +63,6 @@ export const Five: Story = {
   ),
 };
 
-/** All five — quick visual reference grid. */
 export const AllVariants: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

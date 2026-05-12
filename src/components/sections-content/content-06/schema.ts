@@ -1,7 +1,6 @@
 import type { MessageKey } from "@/types/messages";
 
 export type CommunityMember = {
-  /** Display name used in the hover title + alt text. */
   nameKey: MessageKey;
   avatarUrl: string;
   href: string;

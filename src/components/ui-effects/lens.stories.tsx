@@ -30,10 +30,6 @@ const Photo = () => (
   />
 );
 
-/**
- * Default — hover the photo to reveal a 170px circular lens that magnifies
- * the area under the cursor by 1.5×. Move the cursor to drag the lens.
- */
 export const Default: Story = {
   args: { zoomFactor: 1.5, lensSize: 170 },
   render: (args) => (
@@ -45,7 +41,6 @@ export const Default: Story = {
   ),
 };
 
-/** Stronger zoom — `zoomFactor={3}` for a microscope-level magnification. */
 export const StrongZoom: Story = {
   args: { zoomFactor: 3, lensSize: 170 },
   render: (args) => (
@@ -57,7 +52,6 @@ export const StrongZoom: Story = {
   ),
 };
 
-/** Larger lens — `lensSize={280}` covers a wider area. */
 export const LargeLens: Story = {
   args: { zoomFactor: 2, lensSize: 280 },
   render: (args) => (
@@ -69,10 +63,6 @@ export const LargeLens: Story = {
   ),
 };
 
-/**
- * Static — `isStatic` pins the lens to a fixed position so it&apos;s always
- * visible. `position` is the centre of the magnified circle.
- */
 export const Static: Story = {
   args: {
     isStatic: true,
@@ -89,7 +79,6 @@ export const Static: Story = {
   ),
 };
 
-/** Over text — usable on any block content, not just images. */
 export const OverText: Story = {
   args: { zoomFactor: 2, lensSize: 200 },
   render: (args) => (

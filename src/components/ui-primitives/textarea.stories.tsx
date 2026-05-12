@@ -24,7 +24,6 @@ export const Default: Story = {
   ),
 };
 
-/** Pre-filled content — exercises multi-line layout. */
 export const WithValue: Story = {
   render: () => (
     <Frame>
@@ -36,7 +35,6 @@ export const WithValue: Story = {
   ),
 };
 
-/** Disabled — opacity + cursor reflect the locked state. */
 export const Disabled: Story = {
   render: () => (
     <Frame>
@@ -45,7 +43,6 @@ export const Disabled: Story = {
   ),
 };
 
-/** Invalid — `aria-invalid` styles the ring + border red. */
 export const Invalid: Story = {
   render: () => (
     <Frame>

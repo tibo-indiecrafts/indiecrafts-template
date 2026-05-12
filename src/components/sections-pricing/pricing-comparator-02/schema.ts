@@ -3,7 +3,7 @@ import type { MessageKey } from "@/types/messages";
 
 export type ComparatorRow = {
   nameKey: MessageKey;
-  /** Either an i18n labelKey for plain-text values OR `true`/`false` for check/dash. */
+
   free: { labelKey: MessageKey } | boolean;
   pro: { labelKey: MessageKey } | boolean;
 };

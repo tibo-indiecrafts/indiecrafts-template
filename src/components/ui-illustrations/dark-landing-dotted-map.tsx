@@ -49,11 +49,6 @@ const pins = [
   { lat: -4.4419, lng: 15.2663 }, // Kinshasa
 ];
 
-// SVG colors are baked into the data URL at render time (CSS vars don't
-// work inside the embedded svg), so we pick OKLCH values from the
-// project's `--brand` channel (hue 260) that have enough contrast
-// against both light and dark backgrounds. Pins use a brighter shade
-// than the bg dots to preserve the upstream visual hierarchy.
 const MAP_BG_DOT = "oklch(0.6 0.12 260)";
 const MAP_PIN = "oklch(0.65 0.2 260)";
 

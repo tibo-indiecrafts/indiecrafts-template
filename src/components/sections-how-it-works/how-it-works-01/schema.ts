@@ -4,10 +4,10 @@ export type HowItWorksIllustration = "payment" | "invoiceSigning" | "invoiceCard
 
 export type HowItWorksStep = {
   illustration: HowItWorksIllustration;
-  /** "1." / "2." / "3." — typically just the digit + period; no trailing space. */
+
   numberKey: MessageKey;
   titleKey: MessageKey;
-  /** Body MAY contain inline `<strong>` markup (rendered as foreground/medium). */
+
   bodyKey: MessageKey;
 };
 

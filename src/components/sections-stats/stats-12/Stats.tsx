@@ -57,10 +57,6 @@ function DonutChart({
   );
 }
 
-/**
- * Donut-list usage card with 10 usage rows and an upgrade CTA.
- * Sourced from `@blocks-so/stats-12`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats12Namespace);
   const items = props.items ?? stats12Items;

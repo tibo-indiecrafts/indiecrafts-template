@@ -5,19 +5,13 @@ import { LoginForm } from "@/components/ui-molecules/auth-form/login";
 import { login01Defaults, login01Namespace } from "./config";
 
 export type LoginProps = {
-  /** Override the wrapping layout. Defaults to `login01Defaults.layout`. */
   layout?: LayoutName;
-  /** Forwarded to the layout's header slot. */
+
   header?: boolean | ReactNode;
-  /** Forwarded to the layout's footer slot. */
+
   footer?: boolean | ReactNode;
 };
 
-/**
- * Auth login template — `FullBleedLayout` (no marketing chrome) wrapping
- * the `LoginForm` section in a centered card. Pass `header={true}` to show
- * the SiteHeader if your brand prefers nav during sign-in.
- */
 export function Login({
   layout = login01Defaults.layout,
   header,

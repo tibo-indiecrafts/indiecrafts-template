@@ -14,12 +14,6 @@ export default meta;
 
 type Story = StoryObj<typeof GlowingStarsBackgroundCard>;
 
-/**
- * Default — random stars twinkle on a 3-second interval; hover the card to
- * make every star light up at once. Composed from the three exported
- * primitives: `GlowingStarsBackgroundCard`, `GlowingStarsTitle`, and
- * `GlowingStarsDescription`.
- */
 export const Default: Story = {
   render: () => (
     <GlowingStarsBackgroundCard>
@@ -31,7 +25,6 @@ export const Default: Story = {
   ),
 };
 
-/** Title only — drop the description for a tighter card. */
 export const TitleOnly: Story = {
   render: () => (
     <GlowingStarsBackgroundCard>
@@ -40,7 +33,6 @@ export const TitleOnly: Story = {
   ),
 };
 
-/** Custom width — pass `className="max-w-sm"` to widen or narrow the card. */
 export const CustomWidth: Story = {
   render: () => (
     <GlowingStarsBackgroundCard className="max-w-sm">
@@ -53,10 +45,6 @@ export const CustomWidth: Story = {
   ),
 };
 
-/**
- * Grid — three side-by-side cards. Each manages its own hover state so only
- * the hovered card lights up.
- */
 export const Grid: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

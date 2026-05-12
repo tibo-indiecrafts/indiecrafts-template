@@ -12,7 +12,6 @@ export default meta;
 
 type Story = StoryObj<typeof Label>;
 
-/** Standard label paired with an input via `htmlFor`. */
 export const Default: Story = {
   render: () => (
     <div className="grid w-[320px] gap-2">
@@ -22,7 +21,6 @@ export const Default: Story = {
   ),
 };
 
-/** Inline composition — label wraps a checkbox so the entire row is clickable. */
 export const WithCheckbox: Story = {
   render: () => (
     <Label className="flex items-center gap-2">
@@ -32,11 +30,6 @@ export const WithCheckbox: Story = {
   ),
 };
 
-/**
- * Disabled state — when wrapping a disabled control or when its parent group
- * sets `[data-disabled]`, the label dims via `group-data-[disabled=true]:`
- * styling.
- */
 export const Disabled: Story = {
   render: () => (
     <div className="group grid gap-2" data-disabled="true">

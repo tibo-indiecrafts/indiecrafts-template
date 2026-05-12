@@ -7,8 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { pricing05Namespace } from "./config";
 import type { PricingBlock, PricingTier } from "./schema";
 
-/** Plain card chrome — no baked padding so the upstream's mixed
- *  `p-8` / `border-y px-8 py-4` slot padding applies cleanly. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("bg-card text-card-foreground rounded-xl border shadow-sm", className)}

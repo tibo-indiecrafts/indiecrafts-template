@@ -41,18 +41,13 @@ export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
   iconKey: TabIcon;
   bgImageUrl: string;
-  /** Short label shown in the top tab bar. */
+
   tabLabelKey: MessageKey;
-  /** Long title shown in the detail panel below. */
+
   titleKey: MessageKey;
-  /** Detail-panel description. */
+
   bodyKey: MessageKey;
-  /**
-   * Per-item supporting content rendered under the description — a
-   * compliance/stat list (`kind: "metrics"`) or a customer
-   * testimonial (`kind: "testimonial"`). Different items can pick
-   * different supportive content.
-   */
+
   supportive: SupportiveContent;
 };
 

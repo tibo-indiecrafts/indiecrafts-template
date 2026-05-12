@@ -1,23 +1,9 @@
-/**
- * Block key — kept verbatim as "section-cards" after the file was promoted
- * from `sections-dashboard/section-cards/` so existing translation overrides
- * keep resolving. The codegen reads this string, not the folder path.
- */
 export const kpiCardsKey = "section-cards" as const;
 
-/**
- * Translation namespace — `useTranslations(kpiCardsNamespace)` resolves keys from `en.json`.
- */
 export const kpiCardsNamespace = "blocks.section-cards" as const;
 
 export type KpiCardTrend = "up" | "down";
 
-/**
- * KPI card row. `descriptionKey` / `footerTitleKey` / `footerHintKey` resolve
- * under the section namespace. `value` and `badgeDelta` are pre-formatted —
- * locale-aware number formatting is the caller's responsibility (same
- * convention as chart data).
- */
 export type KpiCardItem = {
   descriptionKey: string;
   value: string;

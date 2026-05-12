@@ -16,10 +16,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="flex h-[40rem] w-full items-center justify-center">{children}</div>
 );
 
-/**
- * Default — pin with title + linked card body. Hover to lift the card and
- * reveal the perspective stem and ripple rings.
- */
 export const Default: Story = {
   render: () => {
     const Demo = () => {
@@ -44,7 +40,6 @@ export const Default: Story = {
   },
 };
 
-/** Custom title — exercises the `title` prop directly without translations. */
 export const CustomTitle: Story = {
   render: () => (
     <Frame>
@@ -63,10 +58,6 @@ export const CustomTitle: Story = {
   ),
 };
 
-/**
- * No title — `title` and `href` omitted. The pin renders without the
- * floating label badge but the card still tilts on hover.
- */
 export const NoTitle: Story = {
   render: () => (
     <Frame>

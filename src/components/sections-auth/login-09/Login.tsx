@@ -25,12 +25,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { login09Namespace } from "./config";
 import type { LoginBlock } from "./schema";
 
-/**
- * Sign-up card — role Select, name fields, email, password (with
- * visibility toggle), terms checkbox with embedded links, sign-in
- * footer. Sourced from `@blocks-so/login-09`, refactored into the
- * section pattern.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login09Namespace);
   const [showPassword, setShowPassword] = useState(false);

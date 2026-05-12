@@ -7,7 +7,7 @@ export const login01Namespace = "blocks.pages-login-01" as const;
 const seo: PageSeo = {
   titleKey: "blocks.pages-login-01.title",
   descriptionKey: "blocks.pages-login-01.description",
-  // Auth pages aren't useful in search results.
+
   noindex: true,
 };
 

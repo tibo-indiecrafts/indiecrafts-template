@@ -14,11 +14,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   <div className="min-h-screen w-full bg-slate-950 p-10">{children}</div>
 );
 
-/**
- * Default — vertical SVG path that draws as the user scrolls toward the
- * section. The component owns its own scroll target ref and a long
- * placeholder body so the line has room to animate.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -27,10 +22,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Just content — render a single `Content` block without the line, useful
- * for editing layout copy in isolation.
- */
 export const ContentOnly: Story = {
   render: () => (
     <Stage>

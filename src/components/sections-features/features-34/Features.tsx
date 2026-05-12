@@ -13,7 +13,6 @@ const subFeatures = [
   { icon: CalendarDays, key: "tile3" },
 ] as const;
 
-/** Features-34 — JSX verbatim. AnalyticsFeatures section. */
 export default function Features(props: Readonly<Features34Block>) {
   const [t] = useScopedT(features34Namespace);
 

@@ -13,7 +13,6 @@ export default meta;
 
 type Story = StoryObj<typeof Popover>;
 
-/** Form-style content inside a popover. */
 export const Default: Story = {
   render: () => (
     <Popover>
@@ -40,7 +39,6 @@ export const Default: Story = {
   ),
 };
 
-/** Open by default. */
 export const InitiallyOpen: Story = {
   render: () => (
     <Popover defaultOpen>
@@ -54,7 +52,6 @@ export const InitiallyOpen: Story = {
   ),
 };
 
-/** Side overrides — show how the content can be positioned. */
 export const Placement: Story = {
   render: () => (
     <div className="grid grid-cols-2 gap-3">

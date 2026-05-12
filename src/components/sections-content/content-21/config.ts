@@ -12,7 +12,7 @@ export const content21Sample: Omit<ContentBlock, "id"> = {
   bodyKey: "blocks.content-21.body",
   members: Array.from({ length: 11 }, (_, i) => ({
     nameKey: memberKey,
-    // randomuser.me cycles through ~10 distinct portraits; this matches upstream.
+
     avatarSrc: `https://randomuser.me/api/portraits/men/${(i % 10) + 1}.jpg`,
     href: SHARED_HREF,
   })),

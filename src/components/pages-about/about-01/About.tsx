@@ -17,11 +17,6 @@ export type AboutProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Marketing about template — content → team → faq → cta. Section copy
- * comes from each section's `<type>Sample`; page-scoped strings live in
- * `./en.json` under `blocks.about-01.*`.
- */
 export function About({
   layout = about01Defaults.layout,
   header,

@@ -24,11 +24,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — the placeholder cycles every 3s with a layout slide. On submit,
- * the typed text is vaporized character-by-character via a canvas effect.
- * Pass `onChange` and `onSubmit` to wire to your search handler.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -43,7 +38,6 @@ export const Default: Story = {
   ),
 };
 
-/** Single placeholder — `placeholders={[...]}` of length 1 stops the cycle. */
 export const SinglePlaceholder: Story = {
   render: () => (
     <Stage>
@@ -58,7 +52,6 @@ export const SinglePlaceholder: Story = {
   ),
 };
 
-/** Long phrases — proves the cycling layout handles full sentences. */
 export const LongPhrases: Story = {
   render: () => (
     <Stage>
@@ -77,7 +70,6 @@ export const LongPhrases: Story = {
   ),
 };
 
-/** Controlled — capture changes + submissions via the callback props. */
 export const Controlled: Story = {
   render: () => {
     const [last, setLast] = useState<string | null>(null);

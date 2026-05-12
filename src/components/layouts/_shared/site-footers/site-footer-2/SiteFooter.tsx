@@ -5,14 +5,6 @@ import { cn } from "@/lib/utils";
 import { siteFooter2Namespace } from "./config";
 
 export type SiteFooterProps = {
-  /**
-   * Background utility class applied to the `<footer>` element.
-   * Defaults to `bg-background` (clean white in light mode). Pages
-   * that wrap their content in a tinted backdrop (e.g. the grid-
-   * page-template's `bg-foreground/10` for visible Container grid
-   * lines) can pass a matching tint here so the page-to-footer
-   * transition stays continuous instead of cutting back to white.
-   */
   bgClassName?: string;
 };
 

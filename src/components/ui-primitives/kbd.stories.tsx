@@ -10,12 +10,10 @@ export default meta;
 
 type Story = StoryObj<typeof Kbd>;
 
-/** Single key. */
 export const Default: Story = {
   render: () => <Kbd>⌘</Kbd>,
 };
 
-/** Multiple keys via `KbdGroup` — common chord pattern. */
 export const Chord: Story = {
   render: () => (
     <KbdGroup>
@@ -26,7 +24,6 @@ export const Chord: Story = {
   ),
 };
 
-/** Inline with prose. */
 export const InProse: Story = {
   render: () => (
     <p className="max-w-md text-sm">

@@ -17,7 +17,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Default — drag-and-drop zone with click-to-upload fallback. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -26,10 +25,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Controlled — capture uploaded files via the `onChange` callback and show
- * a small summary outside the dropzone.
- */
 export const Controlled: Story = {
   render: () => {
     const Demo = () => {
@@ -57,7 +52,6 @@ export const Controlled: Story = {
   },
 };
 
-/** Inside a card — typical settings-panel pattern. */
 export const InsideCard: Story = {
   render: () => (
     <div className="bg-card w-[520px] max-w-full rounded-2xl border p-6">

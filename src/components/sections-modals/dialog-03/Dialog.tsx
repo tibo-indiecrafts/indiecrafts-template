@@ -17,11 +17,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { dialog03Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 
-/**
- * Destructive confirmation modal — left-aligned warning icon + title
- * + description + cancel/confirm footer. Sourced from
- * `@blocks-so/dialog-03`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [, tr] = useScopedT(dialog03Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

@@ -8,10 +8,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta04Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/**
- * CTA-04 — JSX verbatim. Sandwiched between two h-16 separators,
- * with a centered title + body + CTA inside a non-asGrid Container.
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta04Namespace);
   const external = props.primary.href.startsWith("http");

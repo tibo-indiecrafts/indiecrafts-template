@@ -6,12 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { features30Namespace } from "./config";
 import type { Features30Block } from "./schema";
 
-/**
- * Features-30 — JSX verbatim. Map + Visualization illustrations
- * above a 3-tile row (each: icon, title, body). Tiles 1-3 reuse
- * the same copy in upstream — extracted as separate keys so
- * customizers can diverge per tile.
- */
 export default function Features(props: Readonly<Features30Block>) {
   const [t] = useScopedT(features30Namespace);
 

@@ -20,7 +20,6 @@ export default meta;
 
 type Story = StoryObj<typeof Empty>;
 
-/** Default — title + description, no media or actions. */
 export const Default: Story = {
   render: () => (
     <Empty className="w-[420px] border">
@@ -34,7 +33,6 @@ export const Default: Story = {
   ),
 };
 
-/** With an icon-style media slot. */
 export const WithIcon: Story = {
   render: () => (
     <Empty className="w-[420px] border">
@@ -49,7 +47,6 @@ export const WithIcon: Story = {
   ),
 };
 
-/** With a CTA in `EmptyContent`. */
 export const WithAction: Story = {
   render: () => (
     <Empty className="w-[420px] border">

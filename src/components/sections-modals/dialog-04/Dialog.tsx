@@ -17,10 +17,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { dialog04Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 
-/**
- * Edit-profile modal — title + description + username field + save
- * CTA. Sourced from `@blocks-so/dialog-04`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [, tr] = useScopedT(dialog04Namespace);
   const [isOpen, setIsOpen] = useState(props.defaultOpen ?? false);

@@ -22,7 +22,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="grid w-[360px] gap-3">{children}</div>
 );
 
-/** Leading icon — the canonical search-bar pattern. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -36,7 +35,6 @@ export const Default: Story = {
   ),
 };
 
-/** Leading icon + trailing button — submit-style search/email field. */
 export const LeadingAndTrailing: Story = {
   render: () => (
     <Frame>
@@ -55,7 +53,6 @@ export const LeadingAndTrailing: Story = {
   ),
 };
 
-/** Static unit text on the trailing edge — currency/measurement inputs. */
 export const WithUnit: Story = {
   render: () => (
     <Frame>
@@ -69,7 +66,6 @@ export const WithUnit: Story = {
   ),
 };
 
-/** Textarea variant — addon stacks below the multiline input via `block-end`. */
 export const Textarea: Story = {
   render: () => (
     <Frame>
@@ -86,7 +82,6 @@ export const Textarea: Story = {
   ),
 };
 
-/** Password field with a lock icon and a clear button. */
 export const PasswordWithClear: Story = {
   render: () => (
     <Frame>
@@ -109,7 +104,6 @@ export const PasswordWithClear: Story = {
   ),
 };
 
-/** Invalid — `aria-invalid` on the input lights up the destructive ring. */
 export const Invalid: Story = {
   render: () => (
     <Frame>

@@ -37,26 +37,18 @@ const NATURE = [
   "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80",
 ];
 
-/**
- * Default — 12-image grid split across three columns. Scroll the canvas
- * vertically to see each column drift at a different pace; the centre column
- * moves opposite to the outer two for a depth effect.
- */
 export const Default: Story = {
   render: () => <ParallaxScroll images={IMAGES} />,
 };
 
-/** Nature theme — same component, swapped imagery. */
 export const NatureTheme: Story = {
   render: () => <ParallaxScroll images={NATURE} />,
 };
 
-/** Few images — split across three columns, exercises the slim layout. */
 export const FewImages: Story = {
   render: () => <ParallaxScroll images={IMAGES.slice(0, 6)} />,
 };
 
-/** Custom height — `className="h-[60rem]"` overrides the default 40rem container. */
 export const Tall: Story = {
   render: () => <ParallaxScroll images={IMAGES} className="h-[60rem]" />,
 };

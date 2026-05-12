@@ -14,10 +14,6 @@ type Story = StoryObj<typeof CardContainer>;
 const heroImage =
   "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=1200&q=80";
 
-/**
- * Default — image hero with a stacked title and CTA. Hover the card to see
- * the parallax tilt + per-`CardItem` translateZ depth.
- */
 export const Default: Story = {
   render: () => (
     <CardContainer>
@@ -63,10 +59,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Text-only variant — proves the component works without media. The hover
- * tilt is driven by mouse position alone.
- */
 export const TextOnly: Story = {
   render: () => (
     <CardContainer>
@@ -90,10 +82,6 @@ export const TextOnly: Story = {
   ),
 };
 
-/**
- * Multi-layer composition — five `CardItem`s at different `translateZ` depths.
- * Hover reveals the depth ordering most clearly.
- */
 export const Layered: Story = {
   render: () => (
     <CardContainer>
@@ -118,10 +106,6 @@ export const Layered: Story = {
   ),
 };
 
-/**
- * Custom container size — pass `containerClassName` to constrain perspective
- * area (useful inside narrower layouts).
- */
 export const Compact: Story = {
   render: () => (
     <CardContainer containerClassName="py-6">

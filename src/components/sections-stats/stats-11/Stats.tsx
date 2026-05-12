@@ -204,11 +204,6 @@ function BudgetDialog({ id, open, onOpenChange, initialBudget }: BudgetDialogPro
   );
 }
 
-/**
- * Composite four-card resource dashboard — Commands / Bandwidth /
- * Storage / Cost — with an embedded "update budget" dialog. Sourced
- * from `@blocks-so/stats-11`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats11Namespace);
   const [budgetDialogOpen, setBudgetDialogOpen] = useState(false);

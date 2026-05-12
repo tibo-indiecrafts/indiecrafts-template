@@ -4,10 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { stats02Items, stats02Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Three-column comparison row of metric cards with trend badges.
- * Sourced from `@blocks-so/stats-02`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats02Namespace);
   const items = props.items ?? stats02Items;

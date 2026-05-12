@@ -3,11 +3,6 @@ import type { TeamBlock } from "./schema";
 export const team01Key = "team-01" as const;
 export const team01Namespace = "blocks.team-01" as const;
 
-/**
- * Default instance of the team-1 block. Avatar URLs are remote Unsplash
- * images — swap for your client's real headshots and add the hostname to
- * `next.config#images.remotePatterns` if still remote.
- */
 export const team01Sample: Omit<TeamBlock, "id"> = {
   type: "team-01",
   eyebrowKey: "blocks.team-01.eyebrow",

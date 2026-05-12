@@ -70,10 +70,6 @@ const Demo = () => (
   </div>
 );
 
-/**
- * LTR — left-to-right (default). Dropdown shortcut text aligns right of
- * each label, submenu opens to the right, slider fills left → right.
- */
 export const LeftToRight: Story = {
   render: () => (
     <DirectionProvider dir="ltr">
@@ -84,11 +80,6 @@ export const LeftToRight: Story = {
   ),
 };
 
-/**
- * RTL — right-to-left. Shortcut text now sits at the start (left) of each
- * row, submenu chevrons flip and submenu opens to the left, and the slider
- * fills right → left. This is the change `DirectionProvider` propagates.
- */
 export const RightToLeft: Story = {
   render: () => (
     <DirectionProvider dir="rtl">
@@ -99,10 +90,6 @@ export const RightToLeft: Story = {
   ),
 };
 
-/**
- * Side by side — LTR vs RTL rendered next to each other so the flip is
- * obvious at a glance.
- */
 export const SideBySide: Story = {
   render: () => (
     <div className="flex gap-12">

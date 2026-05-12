@@ -26,7 +26,6 @@ import {
 } from "./config";
 
 export type AreaDefaultProps = {
-  /** Data rows. Defaults to `chartAreaDefaultData` from `./config`. */
   data?: typeof chartAreaDefaultData;
 };
 

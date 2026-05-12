@@ -10,10 +10,8 @@ export default meta;
 
 type Story = StoryObj<typeof Dashboard>;
 
-/** Defaults — DashboardLayout (Sidebar07 + DashboardHeader + main). */
 export const Default: Story = {};
 
-/** Same content under marketing chrome — useful as a public preview. */
 export const UnderDefaultLayout: Story = {
   args: { layout: "default" },
 };

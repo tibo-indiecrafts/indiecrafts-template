@@ -9,7 +9,7 @@ export type FaqBlock = {
   titleKey?: MessageKey;
   bodyKey?: MessageKey;
   items: readonly FaqItem[];
-  /** Optional CTA under the accordion. */
+
   supportTextKey?: MessageKey;
   supportLinkKey?: MessageKey;
   supportHref?: string;

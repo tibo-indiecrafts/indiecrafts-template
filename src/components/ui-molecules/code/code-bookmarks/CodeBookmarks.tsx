@@ -58,20 +58,6 @@ const AVATARS = [
   },
 ] as const;
 
-/**
- * Code-bookmarks molecule — JSON file viewer with avatar bookmarks.
- * Two stacked `CodeBlock` instances render parts 1 and 2 of a single
- * logical JSON file (split so each user's cart fits on screen). Two
- * avatar buttons in the top-right (Méschac, Bernard) scroll-into-view
- * to their corresponding section. The second CodeBlock continues line
- * numbering from line 20 via `[--counter-start:20]` (handled by the
- * `CodeBlock.css` line-number counter).
- *
- * The header chrome mocks an editor-tab look: a "response.json"
- * filename label on the left + a tab-cutout silhouette around the
- * avatar buttons. Pure decoration; mock JSON stays hardcoded per the
- * illustration rule.
- */
 export default function CodeBookmarks() {
   const firstCodeRef = useRef<HTMLDivElement>(null);
   const secondCodeRef = useRef<HTMLDivElement>(null);

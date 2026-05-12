@@ -17,10 +17,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { dialog02Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 
-/**
- * Success confirmation modal with two-button split footer (primary +
- * secondary). Sourced from `@blocks-so/dialog-02`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [, tr] = useScopedT(dialog02Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

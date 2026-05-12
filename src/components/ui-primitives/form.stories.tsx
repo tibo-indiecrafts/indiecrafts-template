@@ -29,7 +29,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="border-border bg-card w-[420px] rounded-xl border p-6">{children}</div>
 );
 
-/** Default — `email` + `username` with a `required` validation rule. */
 export const Default: Story = {
   render: () => {
     const form = useForm<{ email: string; username: string }>({
@@ -77,11 +76,6 @@ export const Default: Story = {
   },
 };
 
-/**
- * With validation errors — pre-triggers `form.trigger()` so `FormMessage`
- * renders the required-field errors immediately. Demonstrates the
- * `aria-invalid` styling on `Input`.
- */
 export const WithErrors: Story = {
   render: () => {
     const form = useForm<{ email: string; password: string }>({
@@ -137,7 +131,6 @@ export const WithErrors: Story = {
   },
 };
 
-/** Mixed inputs — `Input`, `Textarea`, `Select`, `Checkbox` all wired through `FormField`. */
 export const MixedInputs: Story = {
   render: () => {
     const form = useForm<{
@@ -228,7 +221,6 @@ export const MixedInputs: Story = {
   },
 };
 
-/** Disabled — the entire form is read-only via `disabled` on each input. */
 export const Disabled: Story = {
   render: () => {
     const form = useForm<{ name: string; bio: string }>({

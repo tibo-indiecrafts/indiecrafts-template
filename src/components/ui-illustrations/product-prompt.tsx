@@ -44,11 +44,6 @@ const SUGGESTIONS = [
   },
 ];
 
-/**
- * Mock AI prompt-input illustration — textarea + tool buttons + submit
- * + suggestion chips. Used by `sections-hero/hero-10`. Mock copy is
- * decorative; treat as illustrations-only (no translations).
- */
 export const ProductPrompt = ({ className }: { className?: string }) => {
   const [value, setValue] = useState("");
 

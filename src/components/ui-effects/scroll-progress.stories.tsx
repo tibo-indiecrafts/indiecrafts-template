@@ -21,11 +21,6 @@ const Body = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — pink → orange gradient bar fixed to the top of the viewport that
- * grows as the user scrolls (scaleX from 0 → 1). Mounts at `top-0 z-50` so
- * it sits above page chrome.
- */
 export const Default: Story = {
   render: () => (
     <LongPage>
@@ -38,11 +33,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Brand colour — `className` overrides the gradient with brand-token stops
- * (`from-primary`/`via-primary`/`to-brand-foreground`) so the bar follows the
- * template brand at any theme.
- */
 export const BrandColor: Story = {
   render: () => (
     <LongPage>
@@ -55,7 +45,6 @@ export const BrandColor: Story = {
   ),
 };
 
-/** Thicker — bump height via className (`h-1`). */
 export const Thicker: Story = {
   render: () => (
     <LongPage>
@@ -68,7 +57,6 @@ export const Thicker: Story = {
   ),
 };
 
-/** Bottom — pin to bottom edge via `top-auto bottom-0`. */
 export const Bottom: Story = {
   render: () => (
     <LongPage>

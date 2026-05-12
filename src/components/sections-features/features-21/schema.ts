@@ -7,11 +7,7 @@ export type FeatureCard = {
   iconKey: CardIcon;
   illustration: CardIllustration;
   titleKey: MessageKey;
-  /**
-   * Rich-text body. The translation may use `<strong>...</strong>`
-   * tags to render an emphasised inline fragment (rendered as
-   * `text-foreground font-medium`).
-   */
+
   bodyKey: MessageKey;
 };
 

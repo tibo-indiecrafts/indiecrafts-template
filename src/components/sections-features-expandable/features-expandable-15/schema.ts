@@ -29,7 +29,7 @@ export type FeatureIcon = "brain" | "globe" | "bot";
 export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
   iconKey: FeatureIcon;
-  /** Decorative bg image painted (with dither overlay) behind the illustration. */
+
   bgImageUrl: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;

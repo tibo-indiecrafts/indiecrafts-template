@@ -37,26 +37,18 @@ const URBAN = [
   "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80",
 ];
 
-/**
- * Default — three-column scroll grid where the first column also rotates and
- * pans horizontally as you scroll, giving a more dramatic 3D feel than the
- * baseline `ParallaxScroll`.
- */
 export const Default: Story = {
   render: () => <ParallaxScrollSecond images={IMAGES} />,
 };
 
-/** Urban theme — same component with city/architecture imagery. */
 export const UrbanTheme: Story = {
   render: () => <ParallaxScrollSecond images={URBAN} />,
 };
 
-/** Few images — proves the layout is robust with fewer items. */
 export const FewImages: Story = {
   render: () => <ParallaxScrollSecond images={IMAGES.slice(0, 6)} />,
 };
 
-/** Tall — `className="h-[60rem]"` overrides the default container height. */
 export const Tall: Story = {
   render: () => <ParallaxScrollSecond images={IMAGES} className="h-[60rem]" />,
 };

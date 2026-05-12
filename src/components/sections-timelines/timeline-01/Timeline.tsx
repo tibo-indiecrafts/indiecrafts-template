@@ -3,10 +3,6 @@ import { cn } from "@/lib/utils";
 import { timeline1Items, timeline01Namespace } from "./config";
 import type { TimelineBlock } from "./schema";
 
-/**
- * Vertical activity timeline with colored avatar circles, marker
- * dots, and per-item metadata. Sourced from `@blocks-so/onboarding-05`.
- */
 export default function Timeline(props: Readonly<TimelineBlock>) {
   const [t, tr] = useScopedT(timeline01Namespace);
   const items = props.items ?? timeline1Items;

@@ -22,10 +22,8 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 
-/** Default solid button. */
 export const Default: Story = { args: { children: "Click me" } };
 
-/** All six variants side by side — keeps the visual hierarchy comparable. */
 export const Variants: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
@@ -39,7 +37,6 @@ export const Variants: Story = {
   ),
 };
 
-/** Size scale — compact through hero. */
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
@@ -51,7 +48,6 @@ export const Sizes: Story = {
   ),
 };
 
-/** Icon-only square buttons (accessible labels via `sr-only`). */
 export const IconOnly: Story = {
   render: () => (
     <div className="flex items-center gap-3">
@@ -75,7 +71,6 @@ export const IconOnly: Story = {
   ),
 };
 
-/** Disabled state across variants — proves the disabled styling stays readable. */
 export const Disabled: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
@@ -93,7 +88,6 @@ export const Disabled: Story = {
   ),
 };
 
-/** `asChild` — render as an anchor while keeping button styling. */
 export const AsLink: Story = {
   render: () => (
     <Button asChild>
@@ -104,7 +98,6 @@ export const AsLink: Story = {
   ),
 };
 
-/** Button with leading icon. */
 export const WithIcon: Story = {
   render: () => (
     <Button>

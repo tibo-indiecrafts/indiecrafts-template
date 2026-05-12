@@ -13,23 +13,13 @@ import {
   Trash2,
 } from "lucide-react";
 
-/**
- * Block key — kebab-case folder name. Used to look up translations under `blocks.<key>.*`.
- */
 export const sidebar08Key = "sidebar-08" as const;
 
-/**
- * Translation namespace — `useTranslations(sidebar08Namespace)` resolves keys from `en.json`.
- */
 export const sidebar08Namespace = "blocks.sidebar-08" as const;
 
 type IconComponent = ComponentType<{ className?: string }>;
 
 export type SidebarData = {
-  /**
-   * Teams shown in the team switcher. Names are demo content kept here so
-   * forks can swap them without touching translations.
-   */
   teams: { name: string; logo: ElementType; plan: string }[];
   navMain: {
     titleKey: string;
@@ -43,10 +33,7 @@ export type SidebarData = {
     url: string;
     icon?: IconComponent;
   }[];
-  /**
-   * Demo favorites — names are the user's own content in production, kept as
-   * raw strings here so the sample renders cleanly without per-locale entries.
-   */
+
   favorites: { name: string; url: string; emoji: string }[];
   workspaces: {
     name: string;

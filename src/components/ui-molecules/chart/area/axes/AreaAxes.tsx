@@ -22,7 +22,6 @@ import {
 import { chartAreaAxesData, chartAreaAxesNamespace, chartAreaAxesSeries } from "./config";
 
 export type AreaAxesProps = {
-  /** Data rows. Defaults to `chartAreaAxesData` from `./config`. */
   data?: typeof chartAreaAxesData;
 };
 

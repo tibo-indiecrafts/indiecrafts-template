@@ -15,10 +15,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { formLayout03Namespace } from "./config";
 import type { FormLayoutBlock } from "./schema";
 
-/**
- * Three-stack settings form with two-fieldset checkbox notification
- * groups (team / usage). Sourced from `@blocks-so/form-layout-03`.
- */
 export default function FormLayout(props: Readonly<FormLayoutBlock>) {
   const [t, tr] = useScopedT(formLayout03Namespace);
   const personalTitleId = `${props.id}-personal-title`;

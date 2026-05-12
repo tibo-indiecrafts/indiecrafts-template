@@ -20,25 +20,15 @@ import { dashboard01Defaults, dashboard01Namespace } from "./config";
 import { dashboard01SampleRows } from "./sample-data";
 
 export type DashboardProps = {
-  /** Override sample rows passed to the table. */
   rows?: typeof dashboard01SampleRows;
-  /** Override the wrapping layout. Defaults to `dashboard01Defaults.layout`. */
+
   layout?: LayoutName;
-  /** Forwarded to the layout's header slot. */
+
   header?: boolean | ReactNode;
-  /** Forwarded to the layout's footer slot. */
+
   footer?: boolean | ReactNode;
 };
 
-/**
- * Admin dashboard template — kpi cards → interactive chart → data table.
- * Layout defaults to `"dashboard"` (sidebar + DashboardHeader + main); pass
- * `layout="default"` to render the same content under marketing chrome.
- *
- * `rows` is overridable so a real route can swap in production data without
- * forking the template. Page-scoped strings live in `./en.json` under
- * `blocks.dashboard-01.*`.
- */
 export function Dashboard({
   rows = dashboard01SampleRows,
   layout = dashboard01Defaults.layout,

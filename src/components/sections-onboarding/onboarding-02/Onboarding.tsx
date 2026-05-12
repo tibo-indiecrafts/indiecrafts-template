@@ -58,10 +58,6 @@ function StepIndicator({
   );
 }
 
-/**
- * Vertical numbered checklist with progress bar header and per-card
- * primary action. Sourced from `@blocks-so/onboarding-02`.
- */
 export default function Onboarding(props: Readonly<OnboardingBlock>) {
   const [t, tr] = useScopedT(onboarding02Namespace);
   const steps = props.steps ?? onboarding02Steps;

@@ -14,11 +14,6 @@ import { cn } from "@/lib/utils";
 import { onboarding04Namespace, onboarding04Steps } from "./config";
 import type { OnboardingBlock } from "./schema";
 
-/**
- * Accordion-based step list with per-item illustration, subtitle,
- * description, and primary action. Sourced from
- * `@blocks-so/onboarding-04`.
- */
 export default function Onboarding(props: Readonly<OnboardingBlock>) {
   const [t, tr] = useScopedT(onboarding04Namespace);
   const steps = props.steps ?? onboarding04Steps;

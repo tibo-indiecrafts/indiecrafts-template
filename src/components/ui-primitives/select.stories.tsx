@@ -19,7 +19,6 @@ export default meta;
 
 type Story = StoryObj<typeof Select>;
 
-/** Single-choice select with a placeholder. */
 export const Default: Story = {
   render: () => (
     <Select>
@@ -36,7 +35,6 @@ export const Default: Story = {
   ),
 };
 
-/** Pre-selected value via `defaultValue`. */
 export const WithDefault: Story = {
   render: () => (
     <Select defaultValue="banana">
@@ -52,7 +50,6 @@ export const WithDefault: Story = {
   ),
 };
 
-/** Grouped items with labels and a separator. */
 export const Grouped: Story = {
   render: () => (
     <Select>
@@ -79,7 +76,6 @@ export const Grouped: Story = {
   ),
 };
 
-/** Disabled trigger and a disabled item — both states are reachable. */
 export const Disabled: Story = {
   render: () => (
     <div className="grid gap-3">
@@ -105,7 +101,6 @@ export const Disabled: Story = {
   ),
 };
 
-/** Compact size — used inline in tight UI like a data table cell. */
 export const SmallSize: Story = {
   render: () => (
     <Select defaultValue="all">

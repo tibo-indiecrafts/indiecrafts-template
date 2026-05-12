@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof AuroraBackground>;
 
-/** Default — radial gradient mask + animated aurora behind centered content. */
 export const Default: Story = {
   render: () => (
     <AuroraBackground>
@@ -30,10 +29,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * `showRadialGradient={false}` — full-bleed aurora with no spotlight mask.
- * Useful when the aurora itself is the focal point.
- */
 export const FullBleed: Story = {
   render: () => (
     <AuroraBackground showRadialGradient={false}>
@@ -44,15 +39,10 @@ export const FullBleed: Story = {
   ),
 };
 
-/**
- * Empty stage — no children. Verifies the background animates on its own when
- * used purely as a hero backdrop.
- */
 export const EmptyStage: Story = {
   render: () => <AuroraBackground>{null}</AuroraBackground>,
 };
 
-/** Custom container className — `h-[60vh]` shrinks the stage from full screen. */
 export const ShortStage: Story = {
   render: () => (
     <AuroraBackground className="h-[60vh]">

@@ -64,11 +64,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — desktop dock magnifies the icon under the cursor. The component
- * also renders a mobile collapsing variant; resize the canvas below `md` to
- * see the toggle button.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -81,7 +76,6 @@ export const Default: Story = {
   ),
 };
 
-/** Few items — `items` accepts any length; three keeps the dock compact. */
 export const FewItems: Story = {
   render: () => (
     <Stage>
@@ -108,7 +102,6 @@ export const FewItems: Story = {
   ),
 };
 
-/** Many items — proves the dock scales horizontally with up to ~10 entries. */
 export const ManyItems: Story = {
   render: () => (
     <Stage>
@@ -146,10 +139,6 @@ export const ManyItems: Story = {
   ),
 };
 
-/**
- * Custom desktop className — pass styling to the desktop dock to swap its
- * background and add a border that matches the brand surface.
- */
 export const ThemedSurface: Story = {
   render: () => (
     <Stage>
@@ -161,10 +150,6 @@ export const ThemedSurface: Story = {
   ),
 };
 
-/**
- * Pinned to bottom — typical production use: `fixed` positioning at the bottom
- * of the viewport. `mobileClassName` pins the mobile toggle to the corner.
- */
 export const Pinned: Story = {
   render: () => (
     <div className="bg-background relative min-h-svh w-full overflow-hidden">

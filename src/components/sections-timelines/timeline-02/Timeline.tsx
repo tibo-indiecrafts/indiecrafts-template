@@ -24,10 +24,6 @@ function Marker({ type }: { type: TimelineItem["type"] }) {
   );
 }
 
-/**
- * Vertical deployment-progress timeline with check / pulse / outline
- * markers. Sourced from `@blocks-so/onboarding-06`.
- */
 export default function Timeline(props: Readonly<TimelineBlock>) {
   const [t, tr] = useScopedT(timeline02Namespace);
   const items = props.items ?? timeline2Items;

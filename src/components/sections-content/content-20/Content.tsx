@@ -47,10 +47,6 @@ function CardDecorator({ className }: { className?: string }) {
   );
 }
 
-/**
- * Manifesto block (grid-2 variant) — JSX verbatim. Same essay
- * structure as content-19 but inside the non-grid Container.
- */
 export default function Content(props: Readonly<ContentBlock>) {
   const [, , tRoot] = useScopedT(content20Namespace);
   const [isFull, setIsFull] = useState(false);

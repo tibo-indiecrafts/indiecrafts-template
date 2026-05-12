@@ -26,7 +26,6 @@ import {
 } from "./config";
 
 export type AreaStackedExpandProps = {
-  /** Data rows. Defaults to `chartAreaStackedExpandData` from `./config`. */
   data?: typeof chartAreaStackedExpandData;
 };
 

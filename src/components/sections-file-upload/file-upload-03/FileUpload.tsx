@@ -26,10 +26,6 @@ import { cn } from "@/lib/utils";
 import { fileUpload03Namespace, fileUpload03VisibilityOptions } from "./config";
 import type { FileUploadBlock } from "./schema";
 
-/**
- * Cloud-storage setup card with bucket-name + visibility +
- * react-dropzone drop zone. Sourced from `@blocks-so/file-upload-03`.
- */
 export default function FileUpload(props: Readonly<FileUploadBlock>) {
   const [t, tr] = useScopedT(fileUpload03Namespace);
   const visibilityOptions = props.visibilityOptions ?? fileUpload03VisibilityOptions;

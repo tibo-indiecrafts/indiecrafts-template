@@ -17,15 +17,6 @@ export default meta;
 
 type Story = StoryObj<typeof ImagesSlider>;
 
-/**
- * Upstream bug workaround: the component sets `img.src` BEFORE attaching
- * `onload`, so any *cached* image completes loading before the handler
- * attaches and `Promise.all` never resolves. placehold.co caches for two
- * weeks, so re-mounting a story that&apos;s been viewed before goes blank.
- *
- * Fix: tag URLs with a per-mount random session id (via `useMemo`) so each
- * mount gets fresh, uncached URLs that load asynchronously.
- */
 const PALETTES = {
   scenic: [
     ["0f172a", "f8fafc", "Sunrise"],
@@ -64,10 +55,6 @@ const HeroCopy = ({ title, subtitle }: { title: string; subtitle: string }) => (
   </div>
 );
 
-/**
- * Default — autoplays through four images every 5s with an upward
- * slide-out and a 3D entrance from below. Arrow keys also navigate manually.
- */
 export const Default: Story = {
   render: () => {
     const images = useFreshSlides("scenic");
@@ -84,7 +71,6 @@ export const Default: Story = {
   },
 };
 
-/** Direction down — `direction="down"` reverses the exit slide. */
 export const DirectionDown: Story = {
   render: () => {
     const images = useFreshSlides("urban");
@@ -101,7 +87,6 @@ export const DirectionDown: Story = {
   },
 };
 
-/** No autoplay — `autoplay={false}` requires arrow keys to advance. */
 export const NoAutoplay: Story = {
   render: () => {
     const images = useFreshSlides("scenic");
@@ -118,7 +103,6 @@ export const NoAutoplay: Story = {
   },
 };
 
-/** No overlay — `overlay={false}` removes the dim layer for full-colour photos. */
 export const NoOverlay: Story = {
   render: () => {
     const images = useFreshSlides("urban");
@@ -135,7 +119,6 @@ export const NoOverlay: Story = {
   },
 };
 
-/** Tinted overlay — `overlayClassName` swaps the dim layer for a brand tint. */
 export const TintedOverlay: Story = {
   render: () => {
     const images = useFreshSlides("scenic");

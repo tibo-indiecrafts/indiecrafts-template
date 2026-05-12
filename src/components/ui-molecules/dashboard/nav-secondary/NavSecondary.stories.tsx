@@ -37,7 +37,6 @@ export const Default: Story = {
   },
 };
 
-/** `icon` is optional in the type — items render without the leading glyph. */
 export const WithoutIcons: Story = {
   args: {
     items: [

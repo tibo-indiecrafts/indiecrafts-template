@@ -20,12 +20,6 @@ function IllustrationPerspective({ children }: { children: ReactNode }) {
   );
 }
 
-/**
- * 3-step block — JSX kept verbatim against upstream
- * `dark-landing-one` HowItWorks (constellation backdrop stripped
- * per design choice). Each step is a hardcoded card with its
- * own illustration + glow color. Strings flow through `tRoot`.
- */
 export default function HowItWorks(props: Readonly<HowItWorksBlock>) {
   const [, , tRoot] = useScopedT(howItWorks08Namespace);
   const [step1, step2, step3] = props.steps;

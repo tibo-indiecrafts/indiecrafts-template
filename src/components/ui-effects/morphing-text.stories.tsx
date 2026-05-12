@@ -16,11 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — four words morph into each other every 2s via an SVG threshold
- * filter that produces a metaball-style transition. Pass any number of
- * strings via the `texts` array.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -29,7 +24,6 @@ export const Default: Story = {
   ),
 };
 
-/** Single-word slogan — periods accentuate the cadence. */
 export const Slogan: Story = {
   render: () => (
     <Stage>
@@ -38,7 +32,6 @@ export const Slogan: Story = {
   ),
 };
 
-/** Two terms — minimum viable cycle (binary morphing). */
 export const TwoTerms: Story = {
   render: () => (
     <Stage>
@@ -47,7 +40,6 @@ export const TwoTerms: Story = {
   ),
 };
 
-/** Long phrases — the threshold filter still resolves cleanly with sentences. */
 export const LongPhrases: Story = {
   render: () => (
     <Stage>
@@ -58,7 +50,6 @@ export const LongPhrases: Story = {
   ),
 };
 
-/** Smaller — compress the morph into card-sized headlines via `className`. */
 export const Smaller: Story = {
   render: () => (
     <Stage>

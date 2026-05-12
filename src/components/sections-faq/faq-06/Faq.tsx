@@ -21,9 +21,6 @@ const ICON_REGISTRY: Record<FaqIcon, LucideIcon> = {
   helpCircle: HelpCircle,
 };
 
-/** Plain card chrome — no baked padding/flex so the upstream's
- *  `p-5` slot padding applies cleanly. Tinted to give visible
- *  separation from the page bg. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("bg-muted/40 text-card-foreground rounded-xl border", className)}

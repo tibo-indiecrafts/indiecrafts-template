@@ -18,28 +18,13 @@ import { themeToggleNamespace } from "./config";
 const subscribe = () => () => {};
 
 export type ThemeToggleProps = {
-  /** Trigger size. `"icon"` is 36px square (default); `"sm"` is tighter. */
   size?: "icon" | "sm" | "default";
-  /** Button visual treatment. Default `outline` matches the LocaleSwitcher pair. */
+
   variant?: "outline" | "ghost" | "secondary";
-  /** className override forwarded to the trigger. */
+
   className?: string;
 };
 
-/**
- * Theme switcher — dropdown with three explicit options (Light / Dark /
- * System). The trigger icon reflects the *resolved* theme so the user always
- * sees a meaningful state. We use `useSyncExternalStore` instead of
- * `useEffect+setState` to avoid React 19's set-state-in-effect lint and to
- * keep the SSR/CSR mismatch invisible (placeholder until hydration).
- *
- * A simple cycle button (light ↔ dark ↔ system) feels natural until the
- * cycle hits a system-matching state — then clicking produces no visual
- * change. The dropdown removes that ambiguity by surfacing all three.
- *
- * `size` and `variant` mirror `LocaleSwitcher`'s API so headers can
- * compose the pair with one shared visual treatment.
- */
 export function ThemeToggle({
   size = "icon",
   variant = "outline",

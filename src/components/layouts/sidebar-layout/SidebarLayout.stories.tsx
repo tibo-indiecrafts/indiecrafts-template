@@ -57,7 +57,6 @@ export const Default: Story = {
   ),
 };
 
-/** No `aside` — layout collapses to a single column. */
 export const WithoutAside: Story = {
   render: () => (
     <SidebarLayout>
@@ -68,10 +67,6 @@ export const WithoutAside: Story = {
   ),
 };
 
-/**
- * Long body content — demonstrates the sticky aside behaviour: the TOC stays
- * pinned to the top of its column while the body scrolls past on `lg+`.
- */
 export const LongContent: Story = {
   render: () => (
     <SidebarLayout aside={sampleAside}>

@@ -21,12 +21,6 @@ function GoogleIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Welcome-back sign-in card with Google CTA, icon-decorated email and
- * password fields, password visibility toggle, remember-me checkbox,
- * and forgot-password / create-account links. Sourced from
- * `@blocks-so/login-07`, refactored into the section pattern.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login07Namespace);
   const [isVisible, setIsVisible] = useState(false);

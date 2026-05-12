@@ -52,11 +52,6 @@ const Tile = ({
   </div>
 );
 
-/**
- * Default — six tiles orbiting a centre marker on a 160px circle. The
- * component renders each child at an evenly-spaced angle; bumping the
- * children count auto-distributes them.
- */
 export const Default: Story = {
   args: { radius: 160, duration: 20, iconSize: 40 },
   render: (args) => (
@@ -73,7 +68,6 @@ export const Default: Story = {
   ),
 };
 
-/** Reverse — `reverse` flips the rotation direction. */
 export const Reverse: Story = {
   args: { radius: 160, duration: 20, iconSize: 40, reverse: true },
   render: (args) => (
@@ -89,7 +83,6 @@ export const Reverse: Story = {
   ),
 };
 
-/** No path — `path={false}` hides the guide circle. */
 export const NoPath: Story = {
   args: { radius: 160, path: false, iconSize: 40 },
   render: (args) => (
@@ -105,7 +98,6 @@ export const NoPath: Story = {
   ),
 };
 
-/** Slow — `speed={0.5}` doubles the orbit duration. */
 export const Slow: Story = {
   args: { radius: 160, speed: 0.5, iconSize: 40 },
   render: (args) => (
@@ -121,10 +113,6 @@ export const Slow: Story = {
   ),
 };
 
-/**
- * Concentric — two `OrbitingCircles` nested at different radii (one
- * reversed) for the canonical "solar system" look.
- */
 export const Concentric: Story = {
   render: () => (
     <Stage>

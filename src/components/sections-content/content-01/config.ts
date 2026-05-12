@@ -3,11 +3,6 @@ import type { ContentBlock } from "./schema";
 export const content01Key = "content-01" as const;
 export const content01Namespace = "blocks.content-01" as const;
 
-/**
- * Default instance of the content-01 block. Keys resolve under
- * `blocks.content-01.*`. Image paths are asset references (not translations)
- * and live here in config — replace with real assets when forking.
- */
 export const content01Sample: Omit<ContentBlock, "id"> = {
   type: "content-01",
   titleKey: "blocks.content-01.title",

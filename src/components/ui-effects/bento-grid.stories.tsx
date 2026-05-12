@@ -25,8 +25,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-background min-h-svh w-full p-6 md:p-12">{children}</div>
 );
 
-// ── Visual headers — meaningful illustrations instead of plain skeletons ──
-
 const GradientGlow = ({ from, to }: { from: string; to: string }) => (
   <div
     className="relative h-full min-h-[6rem] w-full flex-1 overflow-hidden rounded-xl"
@@ -104,7 +102,6 @@ const SparkRow = () => (
   </div>
 );
 
-/** Default — 6 feature cards, each with a unique visual header. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -150,10 +147,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Featured — second card spans 2 columns; mixes wide and standard tiles in
- * the same grid (the most common bento pattern in real marketing pages).
- */
 export const Featured: Story = {
   render: () => (
     <Frame>
@@ -200,7 +193,6 @@ export const Featured: Story = {
   ),
 };
 
-/** Compact — 3 items, single row layout for short marketing sections. */
 export const Compact: Story = {
   render: () => (
     <Frame>

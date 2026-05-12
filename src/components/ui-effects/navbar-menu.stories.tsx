@@ -11,20 +11,12 @@ export default meta;
 
 type Story = StoryObj<typeof Menu>;
 
-// The navbar surface uses bg-white/dark:bg-black; on a default background
-// the contrast can be ambiguous. The Stage paints a soft gradient backdrop
-// so the menu and its dropdowns stand out at any theme.
 const Stage = ({ children }: { children: React.ReactNode }) => (
   <div className="relative flex min-h-[480px] w-full items-start justify-center bg-gradient-to-br from-slate-100 via-slate-200 to-slate-100 p-10 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
     {children}
   </div>
 );
 
-/**
- * Default — three menu items with stacked dropdowns. Hover any label to
- * reveal its panel; the active panel uses a shared `layoutId` so the surface
- * morphs smoothly between items.
- */
 export const Default: Story = {
   render: () => {
     const [active, setActive] = useState<string | null>(null);
@@ -81,7 +73,6 @@ export const Default: Story = {
   },
 };
 
-/** Two items — minimum viable nav. */
 export const TwoItems: Story = {
   render: () => {
     const [active, setActive] = useState<string | null>(null);
@@ -107,7 +98,6 @@ export const TwoItems: Story = {
   },
 };
 
-/** Many items — six links exercise the horizontal layout. */
 export const ManyItems: Story = {
   render: () => {
     const [active, setActive] = useState<string | null>(null);

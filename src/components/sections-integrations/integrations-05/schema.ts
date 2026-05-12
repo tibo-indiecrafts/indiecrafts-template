@@ -7,7 +7,7 @@ export type IntegrationsBlock = {
   id: string;
   headerTitleKey: MessageKey;
   headerBodyKey: MessageKey;
-  /** Five icons in placement order: top-right, mid-left, mid-right, bottom-left, bottom-wide (Stripe slot). */
+
   icons: readonly [
     IntegrationIcon,
     IntegrationIcon,

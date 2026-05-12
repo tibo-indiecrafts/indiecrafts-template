@@ -13,7 +13,6 @@ export default meta;
 
 type Story = StoryObj<typeof HoverCard>;
 
-/** Default — Twitter/X-style profile preview that opens on hover. */
 export const Default: Story = {
   render: () => (
     <HoverCard>
@@ -44,7 +43,6 @@ export const Default: Story = {
   ),
 };
 
-/** Initially open — `defaultOpen` for review without hovering. */
 export const InitiallyOpen: Story = {
   render: () => (
     <HoverCard defaultOpen openDelay={0}>
@@ -60,7 +58,6 @@ export const InitiallyOpen: Story = {
   ),
 };
 
-/** Top side — content rendered above the trigger via `side="top"`. */
 export const TopSide: Story = {
   render: () => (
     <HoverCard openDelay={0}>
@@ -74,7 +71,6 @@ export const TopSide: Story = {
   ),
 };
 
-/** Right + start align — flyout to the right of the trigger, top-aligned. */
 export const RightStart: Story = {
   render: () => (
     <HoverCard openDelay={0}>
@@ -89,7 +85,6 @@ export const RightStart: Story = {
   ),
 };
 
-/** Rich content — listing card with image, metadata, and a CTA. */
 export const RichContent: Story = {
   render: () => (
     <HoverCard openDelay={100}>

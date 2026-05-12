@@ -69,11 +69,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-background h-screen w-full">{children}</div>
 );
 
-/**
- * Default — four cards in a 3-column grid (`md:col-span-2` makes the wide
- * cards span two columns). Click any card to expand it via `motion`&apos;s
- * shared `layoutId`; click the dimmed overlay to close.
- */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -82,7 +77,6 @@ export const Default: Story = {
   ),
 };
 
-/** Three cards — exercises a single row layout. */
 export const ThreeCards: Story = {
   render: () => (
     <Frame>
@@ -96,7 +90,6 @@ export const ThreeCards: Story = {
   ),
 };
 
-/** Single wide card — degenerate case; one full-width card. */
 export const SingleCard: Story = {
   render: () => (
     <Frame>
@@ -105,7 +98,6 @@ export const SingleCard: Story = {
   ),
 };
 
-/** Six cards — exercises a multi-row layout. */
 export const SixCards: Story = {
   render: () => (
     <Frame>

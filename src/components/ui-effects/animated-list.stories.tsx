@@ -78,7 +78,6 @@ const Card = ({ n }: { n: Notification }) => (
   </figure>
 );
 
-/** Default — 1s delay between item reveals; six staggered notifications. */
 export const Default: Story = {
   render: () => (
     <AnimatedList className="h-[420px] w-[360px]">
@@ -89,7 +88,6 @@ export const Default: Story = {
   ),
 };
 
-/** Fast — 250ms delay; rapid-fire reveals (good for short hero animations). */
 export const Fast: Story = {
   render: () => (
     <AnimatedList className="h-[420px] w-[360px]" delay={250}>
@@ -100,7 +98,6 @@ export const Fast: Story = {
   ),
 };
 
-/** Slow — 2s delay; cinematic pacing for marketing pages. */
 export const Slow: Story = {
   render: () => (
     <AnimatedList className="h-[420px] w-[360px]" delay={2000}>
@@ -111,7 +108,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Minimal — three plain text items, default cadence. */
 export const TextOnly: Story = {
   render: () => (
     <AnimatedList className="h-[200px] w-[260px]">

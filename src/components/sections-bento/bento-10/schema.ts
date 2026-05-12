@@ -6,9 +6,9 @@ export type BentoBlock = {
   messagingCell: { titleKey: MessageKey; bodyKey: MessageKey };
   analyticsCell: { titleKey: MessageKey; bodyKey: MessageKey };
   resourcesCell: { titleKey: MessageKey; bodyKey: MessageKey };
-  /** Spans 2 rows at @4xl. */
+
   kitCell: { titleKey: MessageKey; bodyKey: MessageKey };
-  /** Spans 2 cols at @2xl with embedded testimonial. */
+
   communicationCell: {
     titleKey: MessageKey;
     bodyKey: MessageKey;

@@ -5,12 +5,12 @@ export type FeaturesBlock = {
   id: string;
   trackingTitleKey?: MessageKey;
   trackingBodyKey?: MessageKey;
-  /** Top-left card image (light/dark variants). */
+
   trackingImageLightUrl: string;
   trackingImageDarkUrl: string;
   trackingImageAltKey?: MessageKey;
   uxTitleKey?: MessageKey;
-  /** Top-right card image (light/dark variants). */
+
   uxImageLightUrl: string;
   uxImageDarkUrl: string;
   uxImageAltKey?: MessageKey;

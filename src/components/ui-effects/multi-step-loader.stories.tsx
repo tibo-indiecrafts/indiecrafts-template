@@ -36,11 +36,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-background relative h-[80vh] w-full">{children}</div>
 );
 
-/**
- * Default — full-screen overlay with six build steps that loop every 1.5s.
- * The loader is `position: fixed inset-0` so it covers the viewport when
- * `loading` is true.
- */
 export const Default: Story = {
   args: { loading: true, loop: true, duration: 1500 },
   render: (args) => (
@@ -50,7 +45,6 @@ export const Default: Story = {
   ),
 };
 
-/** Once — `loop={false}` stops at the final step and stays. */
 export const Once: Story = {
   args: { loading: true, loop: false, duration: 1200 },
   render: (args) => (
@@ -60,7 +54,6 @@ export const Once: Story = {
   ),
 };
 
-/** Slow — `duration={3000}` stretches each step for dramatic pacing. */
 export const Slow: Story = {
   args: { loading: true, loop: true, duration: 3000 },
   render: (args) => (
@@ -70,7 +63,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Short list — three steps still animate cleanly. */
 export const ShortList: Story = {
   args: { loading: true, loop: true, duration: 1500 },
   render: (args) => (
@@ -80,11 +72,6 @@ export const ShortList: Story = {
   ),
 };
 
-/**
- * Toggle — triggered by a button click. Clicking starts the loader for one
- * pass, then it auto-closes via `setTimeout`. Demonstrates the typical
- * production usage (open during async work, close on completion).
- */
 export const Toggle: Story = {
   render: () => {
     const [loading, setLoading] = useState(false);

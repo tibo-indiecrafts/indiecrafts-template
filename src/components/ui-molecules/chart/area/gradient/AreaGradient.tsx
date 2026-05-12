@@ -26,7 +26,6 @@ import {
 } from "./config";
 
 export type AreaGradientProps = {
-  /** Data rows. Defaults to `chartAreaGradientData` from `./config`. */
   data?: typeof chartAreaGradientData;
 };
 

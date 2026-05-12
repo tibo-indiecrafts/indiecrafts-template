@@ -32,7 +32,6 @@ const HeroCard = ({ children }: { children?: React.ReactNode }) => (
   </div>
 );
 
-/** Default — animated radial gradient halo around a product card. */
 export const Default: Story = {
   render: () => (
     <BackgroundGradient>
@@ -41,7 +40,6 @@ export const Default: Story = {
   ),
 };
 
-/** Static — `animate={false}` freezes the gradient at its initial position. */
 export const Static: Story = {
   render: () => (
     <BackgroundGradient animate={false}>
@@ -50,7 +48,6 @@ export const Static: Story = {
   ),
 };
 
-/** Custom container size — `containerClassName` controls outer dimensions. */
 export const Compact: Story = {
   render: () => (
     <BackgroundGradient containerClassName="rounded-2xl">
@@ -65,10 +62,6 @@ export const Compact: Story = {
   ),
 };
 
-/**
- * Wrapping plain text — useful as an attention-getting badge for a
- * limited-time announcement.
- */
 export const TextBadge: Story = {
   render: () => (
     <BackgroundGradient containerClassName="rounded-full">

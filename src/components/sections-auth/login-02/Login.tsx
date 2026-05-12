@@ -16,12 +16,6 @@ function GoogleIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Email + password sign-in with Google CTA. Sourced from
- * `@blocks-so/login-02`, refactored into the section pattern: every
- * visible string resolves from `blocks.login-02.*`, the form posts to
- * the host application's auth handler.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login02Namespace);
   const titleId = `${props.id}-title`;

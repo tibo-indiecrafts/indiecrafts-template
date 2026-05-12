@@ -26,7 +26,6 @@ const invoices = [
   { invoice: "INV004", status: "Paid", method: "Credit Card", amount: "$450.00" },
 ];
 
-/** Standard table — header, body, alignment via Tailwind. */
 export const Default: Story = {
   render: () => (
     <Table className="w-[640px]">
@@ -53,7 +52,6 @@ export const Default: Story = {
   ),
 };
 
-/** Adds `TableFooter` for totals. */
 export const WithFooter: Story = {
   render: () => (
     <Table className="w-[640px]">
@@ -83,7 +81,6 @@ export const WithFooter: Story = {
   ),
 };
 
-/** Empty state — single row spanning all columns with a soft message. */
 export const Empty: Story = {
   render: () => (
     <Table className="w-[640px]">

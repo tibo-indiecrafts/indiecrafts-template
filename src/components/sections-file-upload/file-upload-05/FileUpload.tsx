@@ -7,10 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { fileUpload05Namespace } from "./config";
 import type { FileUploadBlock } from "./schema";
 
-/**
- * Minimal upload form with drop zone + a static completed-upload
- * card. Sourced from `@blocks-so/file-upload-05`.
- */
 export default function FileUpload(props: Readonly<FileUploadBlock>) {
   const [t, tr] = useScopedT(fileUpload05Namespace);
   const titleId = `${props.id}-title`;

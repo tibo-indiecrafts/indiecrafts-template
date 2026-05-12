@@ -24,9 +24,8 @@ export const commandMenu02Key = "command-menu-02" as const;
 export const commandMenu02Namespace = "blocks.command-menu-02" as const;
 
 export type CommandMenuGroup = {
-  /** Stable identifier for the group's translation key. */
   id: string;
-  /** When false, the group has no visible heading. */
+
   hasHeading: boolean;
   items: readonly CommandMenuItem[];
 };

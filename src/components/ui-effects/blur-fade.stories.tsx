@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof BlurFade>;
 
-/** Default — content fades + un-blurs on mount, sliding in from above. */
 export const Default: Story = {
   render: () => (
     <BlurFade>
@@ -19,7 +18,6 @@ export const Default: Story = {
   ),
 };
 
-/** Direction variants — `direction` controls the slide axis. */
 export const Directions: Story = {
   render: () => (
     <div className="grid grid-cols-2 gap-6">
@@ -39,7 +37,6 @@ export const Directions: Story = {
   ),
 };
 
-/** Staggered list — increment `delay` to reveal items one after another. */
 export const Stagger: Story = {
   render: () => (
     <div className="grid w-[320px] gap-3">
@@ -52,7 +49,6 @@ export const Stagger: Story = {
   ),
 };
 
-/** Heavy blur — `blur="14px"` for a dreamier reveal. */
 export const HeavyBlur: Story = {
   render: () => (
     <BlurFade blur="14px" duration={0.8}>
@@ -61,7 +57,6 @@ export const HeavyBlur: Story = {
   ),
 };
 
-/** Custom variant — override `variant` for non-default in/out states. */
 export const CustomVariant: Story = {
   render: () => (
     <BlurFade

@@ -27,7 +27,7 @@ type Props = {
   maxHeight?: number;
   className?: string;
   theme?: string;
-  lineNumbers?: boolean; // ← added
+  lineNumbers?: boolean;
 };
 
 export default function CodeBlock({
@@ -44,7 +44,6 @@ export default function CodeBlock({
   );
 
   useLayoutEffect(() => {
-    // If we have pre-highlighted content, skip effect
     if (preHighlighted) {
       return;
     }
@@ -56,7 +55,6 @@ export default function CodeBlock({
         if (isMounted) setContent(result);
       });
     } else {
-      // Use setTimeout to avoid synchronous setState in effect
       Promise.resolve().then(() => {
         if (isMounted)
           setContent(<pre className="rounded-lg bg-zinc-950 p-4">No code available</pre>);
@@ -72,9 +70,9 @@ export default function CodeBlock({
     <div
       className={cn(
         "*:text-[11px]/5! [&_code]:font-mono [&_pre]:max-h-(--pre-max-height) [&_pre]:min-h-128 [&_pre]:overflow-x-hidden [&_pre]:overflow-y-auto [&_pre]:border-l [&_pre]:bg-transparent! [&_pre]:py-3 [&_pre]:leading-snug",
-        // Wrap long lines instead of horizontal scroll
+
         "[&_code]:break-words [&_pre]:whitespace-pre-wrap",
-        // Line numbers via CSS counters on Shiki's .line spans
+
         "[&_.line]:before:mr-4 [&_.line]:before:inline-block [&_.line]:before:w-5 [&_.line]:before:text-right [&_.line]:before:text-zinc-500/60 [&_.line]:before:content-[counter(line)] [&_.line]:before:[counter-increment:line] [&_pre_code]:[counter-reset:line]",
         className,
       )}

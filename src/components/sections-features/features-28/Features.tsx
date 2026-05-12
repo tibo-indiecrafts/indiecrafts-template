@@ -5,10 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { features28Namespace } from "./config";
 import type { FeaturesBlock } from "./schema";
 
-/**
- * 2-card MoreFeatures bento — JSX verbatim against upstream
- * `dark-landing-one`. Both cards stack title-over-illustration.
- */
 export default function Features(props: Readonly<FeaturesBlock>) {
   const [, , tRoot] = useScopedT(features28Namespace);
   const [card1, card2] = props.cards;

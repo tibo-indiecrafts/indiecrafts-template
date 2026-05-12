@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof Separator>;
 
-/** Horizontal — divides stacked content blocks. */
 export const Horizontal: Story = {
   render: () => (
     <div className="w-[360px]">
@@ -30,7 +29,6 @@ export const Horizontal: Story = {
   ),
 };
 
-/** Vertical — used inline between mini-nav links (forced height required). */
 export const Vertical: Story = {
   render: () => (
     <div className="text-muted-foreground flex h-6 items-center gap-3 text-sm">
@@ -43,7 +41,6 @@ export const Vertical: Story = {
   ),
 };
 
-/** Decorative — `decorative` (default true) keeps it out of the a11y tree. */
 export const Semantic: Story = {
   render: () => (
     <div className="w-[360px]">

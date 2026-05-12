@@ -71,11 +71,6 @@ function StepIndicator({ completed }: { completed: boolean }) {
   );
 }
 
-/**
- * Interactive setup checklist with circular progress, expanding step
- * rows, and a dismiss/feedback dropdown menu. Sourced from
- * `@blocks-so/onboarding-01`.
- */
 export default function Onboarding(props: Readonly<OnboardingBlock>) {
   const [t, tr] = useScopedT(onboarding01Namespace);
   const initialSteps = props.steps ?? onboarding01Steps;

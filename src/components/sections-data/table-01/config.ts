@@ -1,15 +1,9 @@
 import type { TableBlock, TableRow } from "./schema";
 
-/** Block key — kebab-case. Used to look up `blocks.<key>.*`. */
 export const table01Key = "table-01" as const;
 
-/** Translation namespace — `useTranslations(table01Namespace)`. */
 export const table01Namespace = "blocks.table-01" as const;
 
-/**
- * Default rows shipped with the block. Forks pass their own `rows` prop
- * (or call site spreads `table01Sample` and overrides individual fields).
- */
 export const table1Rows: TableRow[] = [
   {
     id: "001",
@@ -103,10 +97,6 @@ export const table1Rows: TableRow[] = [
   },
 ];
 
-/**
- * Sample instance of the Table block. Spread into any page-template's
- * sections array (or pass to `<Table01Section {...table01Sample} id="..." />`).
- */
 export const table01Sample: Omit<TableBlock, "id"> = {
   type: "table-01",
   titleKey: "blocks.table-01.title",

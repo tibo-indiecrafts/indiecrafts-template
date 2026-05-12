@@ -58,30 +58,18 @@ const NATURE = NATURE_IMAGES.map((thumbnail, i) => ({
   thumbnail,
 }));
 
-/**
- * Default — 15 products in three rows of five. Scroll the canvas to see the
- * 3D parallax tilt resolve and the rows pan in opposite directions. The
- * `products` array is split into three rows of `slice(0, 5)`,
- * `slice(5, 10)`, `slice(10, 15)`.
- */
 export const Default: Story = {
   render: () => <HeroParallax products={FIFTEEN} />,
 };
 
-/**
- * Few products — fewer than 5 fills only the first row; rows 2 and 3 stay
- * empty. Useful as a smoke test for the empty-row case.
- */
 export const FewProducts: Story = {
   render: () => <HeroParallax products={FIFTEEN.slice(0, 4)} />,
 };
 
-/** Two full rows — 10 products fill rows 1 and 2; row 3 stays empty. */
 export const TwoRows: Story = {
   render: () => <HeroParallax products={FIFTEEN.slice(0, 10)} />,
 };
 
-/** Nature theme — same component, swapped imagery + titles. */
 export const NatureTheme: Story = {
   render: () => <HeroParallax products={NATURE} />,
 };

@@ -4,11 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { hero17Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 
-/**
- * Hero — typography + dual CTAs + dashboard product mock below.
- * Constellation backdrop omitted (theme-neutral); renders in
- * either light or dark mode via surrounding theme.
- */
 export default function Hero(props: Readonly<HeroBlock>) {
   const [, , tRoot] = useScopedT(hero17Namespace);
   const primaryExternal = props.primary.href.startsWith("http");

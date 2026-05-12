@@ -7,18 +7,12 @@ import { Button } from "@/components/ui-primitives/button";
 import { error01Defaults, error01Namespace } from "./config";
 
 export type ErrorProps = {
-  /** Triggered by the retry button. Defaults to a no-op for stories. */
   onRetry?: () => void;
   layout?: LayoutName;
   header?: boolean | ReactNode;
   footer?: boolean | ReactNode;
 };
 
-/**
- * Generic error template — centered card with title, description, and a
- * retry button. All copy comes from `blocks.error-01.*`. The retry handler
- * is route-supplied (Next.js error boundaries pass a `reset` callback).
- */
 export function Error({
   onRetry = () => undefined,
   layout = error01Defaults.layout,

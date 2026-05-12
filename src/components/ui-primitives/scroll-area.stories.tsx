@@ -13,7 +13,6 @@ type Story = StoryObj<typeof ScrollArea>;
 
 const tags = Array.from({ length: 50 }, (_, i) => `tag-${i + 1}`);
 
-/** Vertical scroll — long list, fixed height. */
 export const Default: Story = {
   render: () => (
     <ScrollArea className="h-72 w-48 rounded-md border">
@@ -30,7 +29,6 @@ export const Default: Story = {
   ),
 };
 
-/** Horizontal scroll — image strip with explicit `<ScrollBar orientation="horizontal" />`. */
 export const Horizontal: Story = {
   render: () => (
     <ScrollArea className="w-96 rounded-md border whitespace-nowrap">

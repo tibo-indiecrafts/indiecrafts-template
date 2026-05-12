@@ -4,14 +4,6 @@ import { Header7 } from "@/components/layouts/_shared/site-headers/header-7";
 import { SiteFooter } from "@/components/layouts/default-layout/site-footer";
 import type { LayoutProps } from "../registry";
 
-/**
- * Marketing chrome — `SkipLink + Header7 + <main> + SiteFooter`. Sections
- * run edge-to-edge inside `<main>`; each section owns its own container.
- *
- * Pass `header={false}` / `footer={false}` to opt out, or pass a `ReactNode`
- * to swap in a custom slot. SkipLink + the `<main id="main">` landmark are
- * always rendered (required for keyboard a11y).
- */
 export function DefaultLayout({ children, header = true, footer = true }: LayoutProps) {
   return (
     <>

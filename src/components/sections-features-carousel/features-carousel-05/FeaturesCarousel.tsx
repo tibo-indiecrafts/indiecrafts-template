@@ -32,12 +32,6 @@ const SPAN_CLASS: Record<CarouselSpan, string> = {
   large: "sm:basis-1/2 lg:basis-2/3",
 };
 
-/**
- * Map needs `relative` on its container because it positions pinned
- * avatars with `absolute` over the dotted-map svg, and Flow needs an
- * `origin-bottom` so the scale reads correctly. Per-illustration tweak
- * preserved as a wrapper class lookup.
- */
 const ILLUSTRATION_WRAPPER: Record<CarouselIllustration, string> = {
   notesChecklist: "mx-auto scale-90 self-center",
   models: "m-auto scale-90 self-center",

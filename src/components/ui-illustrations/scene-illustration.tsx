@@ -2,14 +2,6 @@ import type { CSSProperties } from "react";
 
 export type SceneDevice = "server" | "router" | "database" | "tab" | "mobile";
 
-/**
- * Each device's transform-origin (cx, cy in SVG userspace). When the
- * device is active, it scales 1.1 around this point; when something
- * else is active, it dims to 25% opacity. Keying by name (rather than
- * by array index, as the upstream does) avoids a subtle ordering bug
- * where `deviceGroups[3]` and `features[3]` could disagree and skew
- * the scale origin onto the wrong device.
- */
 const DEVICE_ORIGINS: Record<SceneDevice, { cx: number; cy: number }> = {
   server: { cx: 205, cy: 120 },
   router: { cx: 293, cy: 184 },

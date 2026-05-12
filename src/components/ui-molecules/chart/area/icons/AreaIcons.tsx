@@ -28,7 +28,6 @@ import {
 } from "./config";
 
 export type AreaIconsProps = {
-  /** Data rows. Defaults to `chartAreaIconsData` from `./config`. */
   data?: typeof chartAreaIconsData;
 };
 

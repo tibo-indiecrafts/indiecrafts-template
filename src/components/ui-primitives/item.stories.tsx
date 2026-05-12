@@ -26,7 +26,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="w-[420px]">{children}</div>
 );
 
-/** Single row — icon, title, description, trailing chevron. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -46,7 +45,6 @@ export const Default: Story = {
   ),
 };
 
-/** Three variants — default, outline, muted — stacked. */
 export const Variants: Story = {
   render: () => (
     <Frame>
@@ -74,7 +72,6 @@ export const Variants: Story = {
   ),
 };
 
-/** Group with separators — list pattern. */
 export const Group: Story = {
   render: () => (
     <Frame>
@@ -102,7 +99,6 @@ export const Group: Story = {
   ),
 };
 
-/** Trailing actions — buttons in `ItemActions`. */
 export const WithActions: Story = {
   render: () => (
     <Frame>

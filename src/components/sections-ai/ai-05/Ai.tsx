@@ -45,11 +45,6 @@ interface DemoMessage {
   content: string;
 }
 
-/**
- * Full chat-card composition with conversation transcript, status
- * header, and `ai-elements` prompt input. Sourced from a shadcn AI
- * block.
- */
 export default function Ai(props: Readonly<AiBlock>) {
   const [t, tr] = useScopedT(ai05Namespace);
   const initialMessages: AiMessage[] = props.initialMessages ?? ai05InitialMessages;

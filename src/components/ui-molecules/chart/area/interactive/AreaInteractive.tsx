@@ -37,7 +37,6 @@ import {
 } from "./config";
 
 export type AreaInteractiveProps = {
-  /** Data rows. Defaults to `chartAreaInteractiveData` from `./config`. */
   data?: typeof chartAreaInteractiveData;
 };
 

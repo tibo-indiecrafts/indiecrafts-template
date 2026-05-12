@@ -19,7 +19,6 @@ export default meta;
 
 type Story = StoryObj<typeof Breadcrumb>;
 
-/** Standard 3-level trail with the chevron separator. */
 export const Default: Story = {
   render: () => (
     <Breadcrumb>
@@ -40,7 +39,6 @@ export const Default: Story = {
   ),
 };
 
-/** Custom separator — the `BreadcrumbSeparator` accepts a child element. */
 export const CustomSeparator: Story = {
   render: () => (
     <Breadcrumb>
@@ -65,7 +63,6 @@ export const CustomSeparator: Story = {
   ),
 };
 
-/** Long trail with an ellipsis to collapse middle steps. */
 export const WithEllipsis: Story = {
   render: () => (
     <Breadcrumb>

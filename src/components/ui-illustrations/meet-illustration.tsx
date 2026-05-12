@@ -18,13 +18,6 @@ import { motion } from "motion/react";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * Meeting-app illustration — two-up video grid + meeting controls,
- * paired with a draggable forced-dark AI assistant chat panel that
- * floats over the top-right corner. Used by `sections-hero/hero-12`.
- * Mock copy is decorative; treat as illustrations-only (no
- * translations).
- */
 export const MeetIllustration = ({ className }: { className?: string }) => {
   const constraintsRef = useRef(null);
 

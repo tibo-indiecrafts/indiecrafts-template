@@ -16,11 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — wraps any inline content in a container that draws a rectangle
- * around it on mount, then animates a small pointer tick into the
- * bottom-right corner.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -35,7 +30,6 @@ export const Default: Story = {
   ),
 };
 
-/** Brand-coloured rectangle + pointer via `rectangleClassName` / `pointerClassName`. */
 export const BrandColors: Story = {
   render: () => (
     <Stage>
@@ -53,7 +47,6 @@ export const BrandColors: Story = {
   ),
 };
 
-/** Multi-word — the rectangle adapts to the wrapped content&apos;s width. */
 export const MultiWord: Story = {
   render: () => (
     <Stage>
@@ -68,7 +61,6 @@ export const MultiWord: Story = {
   ),
 };
 
-/** Display heading — works at hero scale with the rectangle scaling cleanly. */
 export const Hero: Story = {
   render: () => (
     <Stage>

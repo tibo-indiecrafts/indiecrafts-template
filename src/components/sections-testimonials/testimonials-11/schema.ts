@@ -5,7 +5,7 @@ export type TestimonialItem = {
   roleKey: MessageKey;
   contentKey: MessageKey;
   avatarUrl: string;
-  /** 0-5; cells beyond are rendered as muted (unfilled) stars. */
+
   stars: 0 | 1 | 2 | 3 | 4 | 5;
 };
 

@@ -75,7 +75,7 @@ export const Vortex = (props: VortexProps) => {
 
   const initParticles = () => {
     tick = 0;
-    // simplex = new SimplexNoise();
+
     particleProps = new Float32Array(particlePropsLength);
 
     for (let i = 0; i < particlePropsLength; i += particlePropCount) {

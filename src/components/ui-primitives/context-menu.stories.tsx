@@ -27,7 +27,6 @@ const Trigger = ({ children = "Right-click me" }: { children?: string }) => (
   </ContextMenuTrigger>
 );
 
-/** Standard items + shortcuts. */
 export const Default: Story = {
   render: () => (
     <ContextMenu>
@@ -52,7 +51,6 @@ export const Default: Story = {
   ),
 };
 
-/** Mixed item types — checkbox + radio group. */
 export const Mixed: Story = {
   render: () => (
     <ContextMenu>

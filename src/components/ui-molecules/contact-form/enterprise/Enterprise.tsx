@@ -13,13 +13,6 @@ import { Link } from "@/i18n/routing";
 import { useScopedT } from "@/i18n/scoped-t";
 import { enterpriseFormNamespace, enterpriseFormPrivacyHref } from "./config";
 
-/**
- * Enterprise inquiry form — name + email + country + website + job
- * function + message + submit. Used by
- * `sections-secondary-hero/secondary-hero-14` and `secondary-hero-15`.
- * Owns its own namespace (`blocks.enterprise-form.*`) so consumers
- * drop it in without wiring labels.
- */
 export const Enterprise = () => {
   const [t] = useScopedT(enterpriseFormNamespace);
 

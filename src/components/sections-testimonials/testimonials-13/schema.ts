@@ -12,8 +12,8 @@ export type TestimonialsBlock = {
   id: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Featured (large) testimonial — rendered with the Hulu wordmark above the quote. */
+
   featured: TestimonialItem;
-  /** Three follow-up testimonials filling the rest of the bento. */
+
   others: readonly [TestimonialItem, TestimonialItem, TestimonialItem];
 };

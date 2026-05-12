@@ -1,16 +1,7 @@
-/**
- * Block key — kebab-case folder name. Used to look up translations under `blocks.<key>.*`.
- */
 export const chartAreaInteractiveKey = "chart-area-interactive" as const;
 
-/**
- * Translation namespace — `useTranslations(chartAreaInteractiveNamespace)` resolves keys from `en.json`.
- */
 export const chartAreaInteractiveNamespace = "blocks.chart-area-interactive" as const;
 
-/**
- * Chart data rows. Replace per fork with real data.
- */
 export const chartAreaInteractiveData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
   { date: "2024-04-02", desktop: 97, mobile: 180 },
@@ -105,29 +96,16 @@ export const chartAreaInteractiveData = [
   { date: "2024-06-30", desktop: 446, mobile: 400 },
 ];
 
-/**
- * Series config — first entry is the aggregate label used in the tooltip
- * header (no `color`). Following entries are the actual area series.
- */
 export const chartAreaInteractiveSeries = [
   { dataKey: "visitors", labelKey: "visitorsLabel" },
   { dataKey: "desktop", labelKey: "desktopLabel", color: "var(--primary)" },
   { dataKey: "mobile", labelKey: "mobileLabel", color: "var(--primary)" },
 ] as const;
 
-/**
- * Time-range presets surfaced in the toggle group / select. `days` is the
- * window subtracted from `chartAreaInteractiveReferenceDate` to produce the
- * filtered slice. `labelKey` resolves under the namespace.
- */
 export const chartAreaInteractiveTimeRanges = [
   { value: "90d", days: 90, labelKey: "last3Months" },
   { value: "30d", days: 30, labelKey: "last30Days" },
   { value: "7d", days: 7, labelKey: "last7Days" },
 ] as const;
 
-/**
- * Cutoff date for the time-range filter — every preset subtracts `days` from
- * this anchor. Pinned to the last data point so the demo always shows data.
- */
 export const chartAreaInteractiveReferenceDate = "2024-06-30" as const;

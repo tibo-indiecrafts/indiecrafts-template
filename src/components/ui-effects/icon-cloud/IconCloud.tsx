@@ -7,11 +7,9 @@ import { iconCloudNamespace } from "./config";
 type PrimitiveProps = React.ComponentProps<typeof IconCloudPrimitive>;
 
 export type IconCloudProps = PrimitiveProps & {
-  /** See `PixelatedCanvas.informational` — same opt-in semantics. */
   informational?: boolean;
 };
 
-/** See `PixelatedCanvas` for the decorative-by-default rationale. */
 export function IconCloud({ informational, ...props }: IconCloudProps) {
   const t = useTranslations(iconCloudNamespace);
   if (informational) {

@@ -22,10 +22,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — folder icon with three images peeking out of it. Hover the badge
- * to fan the images upward and reveal them at full size.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -34,7 +30,6 @@ export const Default: Story = {
   ),
 };
 
-/** As link — pass `href` and the component renders as `<a>`. */
 export const AsLink: Story = {
   render: () => (
     <Stage>
@@ -43,7 +38,6 @@ export const AsLink: Story = {
   ),
 };
 
-/** Single image — fans straight up with no spread or rotation. */
 export const SingleImage: Story = {
   render: () => (
     <Stage>
@@ -52,11 +46,6 @@ export const SingleImage: Story = {
   ),
 };
 
-/**
- * Large folder — `folderSize`, `teaserImageSize`, `hoverImageSize` scale the
- * whole composition up; bumped `hoverTranslateY` and `hoverSpread` so the
- * fan still clears the badge cleanly.
- */
 export const LargeFolder: Story = {
   render: () => (
     <Stage>
@@ -73,7 +62,6 @@ export const LargeFolder: Story = {
   ),
 };
 
-/** Wider fan — `hoverSpread={40}` and `hoverRotation={30}` for a dramatic spread. */
 export const WideFan: Story = {
   render: () => (
     <Stage>

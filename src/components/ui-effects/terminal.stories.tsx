@@ -16,11 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — `TypingAnimation` types the command, then `AnimatedSpan` lines
- * fade in with their delays. The Terminal uses a Sequence context so children
- * appear in order.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -35,7 +30,6 @@ export const Default: Story = {
   ),
 };
 
-/** Build script — multi-step output mimicking a CI pipeline. */
 export const BuildScript: Story = {
   render: () => (
     <Stage>
@@ -64,7 +58,6 @@ export const BuildScript: Story = {
   ),
 };
 
-/** Error sequence — typed command followed by a styled error message. */
 export const Error: Story = {
   render: () => (
     <Stage>
@@ -84,7 +77,6 @@ export const Error: Story = {
   ),
 };
 
-/** No sequence — `sequence={false}` renders all lines immediately. */
 export const NoSequence: Story = {
   render: () => (
     <Stage>
@@ -99,7 +91,6 @@ export const NoSequence: Story = {
   ),
 };
 
-/** Start in view — `startOnView` defers the animation until the component scrolls in. */
 export const StartOnView: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

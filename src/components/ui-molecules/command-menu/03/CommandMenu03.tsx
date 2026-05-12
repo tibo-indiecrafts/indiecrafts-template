@@ -29,11 +29,6 @@ import {
 } from "./config";
 import type { CommandMenuBlock } from "./schema";
 
-/**
- * Documentation-style command palette with top-level pages, doc page
- * groups, and color tokens. Cmd+K (or `/` outside form fields) toggles
- * open. Sourced from `@blocks-so/command-menu-03`.
- */
 export default function CommandMenu(props: Readonly<CommandMenuBlock>) {
   const [t, tr] = useScopedT(commandMenu03Namespace);
   const router = useRouter();

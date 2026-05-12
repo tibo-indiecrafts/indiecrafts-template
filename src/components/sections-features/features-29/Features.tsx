@@ -14,12 +14,6 @@ import type { Features29Block } from "./schema";
 const THEO_AVATAR = "https://avatars.githubusercontent.com/u/68236786?v=4";
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 
-/**
- * Features-29 — JSX verbatim. Eyebrow + intro, 4-card grid (AI /
- * invoice / integrations / chat) interleaved with 2 stat tiles
- * and 2 quote cards (one inline, one in a trailing Container with
- * the Stripe wordmark).
- */
 export default function Features(props: Readonly<Features29Block>) {
   const [t] = useScopedT(features29Namespace);
 

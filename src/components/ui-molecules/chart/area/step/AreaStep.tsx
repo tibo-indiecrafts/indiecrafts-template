@@ -22,7 +22,6 @@ import {
 import { chartAreaStepData, chartAreaStepNamespace, chartAreaStepSeries } from "./config";
 
 export type AreaStepProps = {
-  /** Data rows. Defaults to `chartAreaStepData` from `./config`. */
   data?: typeof chartAreaStepData;
 };
 

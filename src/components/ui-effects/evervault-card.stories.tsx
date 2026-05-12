@@ -16,7 +16,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Default — hovering reveals a glowing reveal of random characters. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -36,7 +35,6 @@ export const Default: Story = {
   ),
 };
 
-/** Custom centre text — pass `text` to retune the headline letter glyph. */
 export const CustomText: Story = {
   render: () => (
     <Frame>
@@ -49,7 +47,6 @@ export const CustomText: Story = {
   ),
 };
 
-/** Without corner icons — minimal framing, just the card. */
 export const NoIcons: Story = {
   render: () => (
     <div className="h-[28rem] w-[28rem] max-w-full">

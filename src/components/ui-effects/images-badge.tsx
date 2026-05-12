@@ -9,21 +9,21 @@ interface ImagesBadgeProps {
   text: string;
   images: string[];
   className?: string;
-  /** Optional link URL */
+
   href?: string;
-  /** Link target attribute (e.g., "_blank" for new tab) */
+
   target?: string;
-  /** Folder dimensions { width, height } in pixels */
+
   folderSize?: { width: number; height: number };
-  /** Image dimensions when teased (peeking) { width, height } in pixels */
+
   teaserImageSize?: { width: number; height: number };
-  /** Image dimensions when hovered { width, height } in pixels */
+
   hoverImageSize?: { width: number; height: number };
-  /** How far images translate up on hover in pixels */
+
   hoverTranslateY?: number;
-  /** How far images spread horizontally on hover in pixels */
+
   hoverSpread?: number;
-  /** Rotation angle for fanned images on hover in degrees */
+
   hoverRotation?: number;
 }
 
@@ -42,10 +42,8 @@ export function ImagesBadge({
 }: ImagesBadgeProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  // Limit to max 3 images
   const displayImages = images.slice(0, 3);
 
-  // Calculate folder tab dimensions proportionally
   const tabWidth = folderSize.width * 0.375;
   const tabHeight = folderSize.height * 0.25;
 
@@ -89,7 +87,6 @@ export function ImagesBadge({
         {displayImages.map((image, index) => {
           const totalImages = displayImages.length;
 
-          // Calculate rotation based on index
           const baseRotation =
             totalImages === 1
               ? 0
@@ -97,7 +94,6 @@ export function ImagesBadge({
                 ? (index - 0.5) * hoverRotation
                 : (index - 1) * hoverRotation;
 
-          // Hover positions - fan out
           const hoverY = hoverTranslateY - (totalImages - 1 - index) * 3;
           const hoverX =
             totalImages === 1
@@ -106,7 +102,6 @@ export function ImagesBadge({
                 ? (index - 0.5) * hoverSpread
                 : (index - 1) * hoverSpread;
 
-          // Teaser positions - slight peek from folder
           const teaseY = -4 - (totalImages - 1 - index) * 1;
           const teaseRotation =
             totalImages === 1

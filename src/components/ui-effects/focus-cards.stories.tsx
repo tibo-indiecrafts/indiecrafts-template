@@ -38,18 +38,11 @@ const SIX_CARDS = [
 ];
 
 const Stage = ({ children }: { children: React.ReactNode }) => (
-  // The upstream FocusCards `<img>` is `object-cover absolute inset-0` but
-  // omits explicit `h-full w-full`; a few browsers render it at natural size.
-  // The arbitrary descendant variant forces the fill on every story.
   <div className="bg-background w-full px-4 py-10 [&_img]:h-full [&_img]:w-full">
     {children}
   </div>
 );
 
-/**
- * Default — six cards in a 3-column grid. Hover any card to focus it; the
- * others blur and shrink slightly via the `hovered` prop shared between cards.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -58,7 +51,6 @@ export const Default: Story = {
   ),
 };
 
-/** Three cards — exercises the row when the count exactly matches the grid. */
 export const ThreeCards: Story = {
   render: () => (
     <Stage>
@@ -67,11 +59,6 @@ export const ThreeCards: Story = {
   ),
 };
 
-/**
- * Single card — degenerate case. The grid still renders correctly with just
- * one item; the hover blur effect has nothing to compare against, so the card
- * just shows its title overlay.
- */
 export const SingleCard: Story = {
   render: () => (
     <Stage>
@@ -80,7 +67,6 @@ export const SingleCard: Story = {
   ),
 };
 
-/** Many cards — eight items exercise the multi-row grid layout. */
 export const ManyCards: Story = {
   render: () => (
     <Stage>

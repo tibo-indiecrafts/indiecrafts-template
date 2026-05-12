@@ -22,11 +22,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — brand-coloured button with a pulse halo at 1.5s and 8px reach.
- * The halo colour auto-tracks the button&apos;s computed background unless
- * `pulseColor` is set explicitly.
- */
 export const Default: Story = {
   args: { duration: "1.5s", distance: "8px", variant: "pulse" },
   render: (args) => (
@@ -36,7 +31,6 @@ export const Default: Story = {
   ),
 };
 
-/** Ripple variant — `variant="ripple"` swaps the halo for an outward ring. */
 export const Ripple: Story = {
   args: { variant: "ripple", duration: "1.5s", distance: "10px" },
   render: (args) => (
@@ -46,7 +40,6 @@ export const Ripple: Story = {
   ),
 };
 
-/** Custom colour — `pulseColor="#ec4899"` overrides the auto-tracked tone. */
 export const CustomColor: Story = {
   args: { pulseColor: "#ec4899", duration: "2s" },
   render: (args) => (
@@ -58,7 +51,6 @@ export const CustomColor: Story = {
   ),
 };
 
-/** Slower — `duration="3s"` for a more deliberate pulse. */
 export const Slow: Story = {
   args: { duration: "3s", distance: "12px" },
   render: (args) => (
@@ -68,7 +60,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Larger — adds Tailwind utilities for a hero-scale CTA. */
 export const Larger: Story = {
   render: () => (
     <Stage>

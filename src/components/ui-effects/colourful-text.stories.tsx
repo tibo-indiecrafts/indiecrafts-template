@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof ColourfulText>;
 
-/** Default — single colourful word in a heading; colours shuffle every 5 s. */
 export const Default: Story = {
   render: () => (
     <h1 className="text-foreground text-center text-5xl font-bold">
@@ -19,7 +18,6 @@ export const Default: Story = {
   ),
 };
 
-/** Inline within prose — no colour clash with surrounding muted text. */
 export const Inline: Story = {
   render: () => (
     <p className="text-foreground text-2xl">
@@ -28,7 +26,6 @@ export const Inline: Story = {
   ),
 };
 
-/** Long phrase — proves per-character animation scales to longer strings. */
 export const LongPhrase: Story = {
   render: () => (
     <h2 className="text-center text-3xl font-semibold">
@@ -37,7 +34,6 @@ export const LongPhrase: Story = {
   ),
 };
 
-/** Display sized — 8xl headline use as a hero accent. */
 export const DisplaySize: Story = {
   render: () => (
     <h1 className="text-center text-8xl font-black tracking-tight">
@@ -46,7 +42,6 @@ export const DisplaySize: Story = {
   ),
 };
 
-/** Multiple words — each animated independently; staggered colour cycles. */
 export const MultipleSpans: Story = {
   render: () => (
     <h2 className="text-center text-4xl font-bold">

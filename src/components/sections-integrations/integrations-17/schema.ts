@@ -16,7 +16,7 @@ export type IntegrationsBlock = {
   bodyKey: MessageKey;
   ctaLabelKey: MessageKey;
   ctaHref: StaticAppPathname | `http${string}` | `#${string}`;
-  /** Pyramid layout: 2 top / 3 middle (center is the project's LogoIcon) / 2 bottom. */
+
   topRow: readonly IntegrationIcon[];
   middleRow: readonly [IntegrationIcon, IntegrationIcon];
   bottomRow: readonly IntegrationIcon[];

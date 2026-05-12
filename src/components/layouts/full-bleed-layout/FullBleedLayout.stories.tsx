@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof FullBleedLayout>;
 
-/** Gradient hero — children fill the viewport edge-to-edge. */
 export const Default: Story = {
   render: () => (
     <FullBleedLayout>
@@ -29,7 +28,6 @@ export const Default: Story = {
   ),
 };
 
-/** Stacked sections — each child manages its own background and padding. */
 export const StackedSections: Story = {
   render: () => (
     <FullBleedLayout>

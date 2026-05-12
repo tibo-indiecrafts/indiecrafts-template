@@ -7,12 +7,6 @@ import { Gemini } from "@/components/ui-primitives/svgs/gemini";
 import { Replit } from "@/components/ui-primitives/svgs/replit";
 import { VSCodium } from "@/components/ui-primitives/svgs/vs-codium";
 
-/**
- * Brand-integrations illustration — a centered grid of brand logo
- * tiles connected by a network of dashed guideline rules. Used by
- * `sections-secondary-hero/secondary-hero-03`. Brand mix is
- * decorative; treat as illustrations-only (no translations).
- */
 export const Integrations = () => {
   return (
     <div>

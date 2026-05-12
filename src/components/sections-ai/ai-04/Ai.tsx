@@ -66,11 +66,6 @@ interface AttachedFile {
   preview?: string;
 }
 
-/**
- * Hero composer with drag-and-drop file attachments, settings
- * dropdown, and a row of quick-action buttons. Sourced from a shadcn
- * AI block.
- */
 export default function Ai(
   props: Readonly<AiBlock & { onSubmit?: (prompt: string) => void }>,
 ) {

@@ -12,21 +12,10 @@ import {
 import { LayoutDashboard, Package } from "lucide-react";
 import type { SidebarData } from "./types";
 
-/**
- * Block key — kebab-case folder slug. Used to look up translations under
- * `blocks.<key>.*`. Two-digit suffix matches the upstream registry name.
- */
 export const sidebar01Key = "sidebar-01" as const;
 
-/** Translation namespace — `useScopedT(sidebar01Namespace)` resolves keys from `en.json`. */
 export const sidebar01Namespace = "blocks.sidebar-01" as const;
 
-/**
- * Demo data for sidebar-01. The user (avatar URL, email), nav items, and
- * side-nav groupings would normally come from app state. Replace with real
- * data when wiring the sidebar into a project — labels resolve via
- * `en.json`, but avatar/email are config-only and never translated.
- */
 export const sidebar01Data: SidebarData = {
   user: {
     name: "ephraim",
@@ -60,5 +49,4 @@ export const sidebar01Data: SidebarData = {
   },
 };
 
-/** Sample export kept for parity with the section/page 5-file pattern. */
 export const sidebar01Sample = {} as const;

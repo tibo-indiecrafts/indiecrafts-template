@@ -4,41 +4,40 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
 type WebcamPixelGridProps = {
-  /** Number of columns in the grid */
   gridCols?: number;
-  /** Number of rows in the grid */
+
   gridRows?: number;
-  /** Maximum elevation for motion detection */
+
   maxElevation?: number;
-  /** Motion sensitivity (0-1) */
+
   motionSensitivity?: number;
-  /** Smoothing factor for elevation transitions */
+
   elevationSmoothing?: number;
-  /** Color mode: 'webcam' uses actual colors, 'monochrome' uses single color */
+
   colorMode?: "webcam" | "monochrome";
-  /** Base color when in monochrome mode */
+
   monochromeColor?: string;
-  /** Background color */
+
   backgroundColor?: string;
-  /** Whether to mirror the webcam feed */
+
   mirror?: boolean;
-  /** Gap between cells (0-1, fraction of cell size) */
+
   gapRatio?: number;
-  /** Invert the colors */
+
   invertColors?: boolean;
-  /** Darken factor (0-1, 0 = no darkening, 1 = fully dark) */
+
   darken?: number;
-  /** Border color for cells */
+
   borderColor?: string;
-  /** Border opacity (0-1) */
+
   borderOpacity?: number;
-  /** Additional class name */
+
   className?: string;
-  /** Callback when webcam access is denied */
+
   onWebcamError?: (error: Error) => void;
-  /** Callback when webcam is ready */
+
   onWebcamReady?: () => void;
-  /** Tooltip on the minimized error indicator (camera permission denied). */
+
   cameraAccessLabel?: string;
 };
 
@@ -81,7 +80,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [showErrorPopup, setShowErrorPopup] = useState(true);
 
-  // Parse monochrome color
   const monoRGB = React.useMemo(() => {
     const hex = monochromeColor.replace("#", "");
     return {
@@ -91,7 +89,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
     };
   }, [monochromeColor]);
 
-  // Parse border color
   const borderRGB = React.useMemo(() => {
     const hex = borderColor.replace("#", "");
     return {
@@ -101,7 +98,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
     };
   }, [borderColor]);
 
-  // Initialize pixel data
   useEffect(() => {
     pixelDataRef.current = Array.from({ length: gridRows }, () =>
       Array.from({ length: gridCols }, () => ({
@@ -117,7 +113,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
 
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Request camera access
   const requestCameraAccess = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -145,7 +140,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
     }
   }, [onWebcamError, onWebcamReady]);
 
-  // Initialize webcam on mount
   useEffect(() => {
     requestCameraAccess();
 
@@ -156,7 +150,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
     };
   }, [requestCameraAccess]);
 
-  // Main render loop
   const render = useCallback(() => {
     const video = videoRef.current;
     const processingCanvas = processingCanvasRef.current;
@@ -177,11 +170,9 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
       return;
     }
 
-    // Set processing canvas size to grid dimensions
     processingCanvas.width = gridCols;
     processingCanvas.height = gridRows;
 
-    // Draw video to processing canvas (scaled down)
     procCtx.save();
     if (mirror) {
       procCtx.scale(-1, 1);
@@ -191,12 +182,10 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
     }
     procCtx.restore();
 
-    // Get pixel data
     const imageData = procCtx.getImageData(0, 0, gridCols, gridRows);
     const currentData = imageData.data;
     const previousData = previousFrameRef.current;
 
-    // Update pixel data with motion detection
     const pixels = pixelDataRef.current;
     for (let row = 0; row < gridRows; row++) {
       for (let col = 0; col < gridCols; col++) {
@@ -208,7 +197,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
         const pixel = pixels[row]?.[col];
         if (!pixel) continue;
 
-        // Calculate motion
         let motion = 0;
         if (previousData) {
           const prevR = previousData[idx];
@@ -218,10 +206,8 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           motion = Math.min(1, diff / 255 / motionSensitivity);
         }
 
-        // Smooth motion
         pixel.motion = pixel.motion * 0.7 + motion * 0.3;
 
-        // Set colors
         let finalR = r;
         let finalG = g;
         let finalB = b;
@@ -233,14 +219,12 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           finalB = Math.round(monoRGB.b * brightness);
         }
 
-        // Apply invert
         if (invertColors) {
           finalR = 255 - finalR;
           finalG = 255 - finalG;
           finalB = 255 - finalB;
         }
 
-        // Apply darken
         if (darken > 0) {
           const darkenFactor = 1 - darken;
           finalR = Math.round(finalR * darkenFactor);
@@ -252,19 +236,15 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
         pixel.g = finalG;
         pixel.b = finalB;
 
-        // Set target elevation
         pixel.targetElevation = pixel.motion * maxElevation;
 
-        // Smooth elevation transition
         pixel.currentElevation +=
           (pixel.targetElevation - pixel.currentElevation) * elevationSmoothing;
       }
     }
 
-    // Store current frame for next comparison
     previousFrameRef.current = new Uint8ClampedArray(currentData);
 
-    // Render to display canvas
     const dpr = window.devicePixelRatio || 1;
     const displayWidth = displayCanvas.clientWidth;
     const displayHeight = displayCanvas.clientHeight;
@@ -273,21 +253,17 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
     displayCanvas.height = displayHeight * dpr;
     dispCtx.scale(dpr, dpr);
 
-    // Clear canvas
     dispCtx.fillStyle = backgroundColor;
     dispCtx.fillRect(0, 0, displayWidth, displayHeight);
 
-    // Calculate cell size (always square, cover entire container like object-fit: cover)
     const cellSize = Math.max(displayWidth / gridCols, displayHeight / gridRows);
     const gap = cellSize * gapRatio;
 
-    // Calculate offset to center the grid (negative offset for overflow, creating cover effect)
     const gridWidth = cellSize * gridCols;
     const gridHeight = cellSize * gridRows;
     const offsetXGrid = (displayWidth - gridWidth) / 2;
     const offsetYGrid = (displayHeight - gridHeight) / 2;
 
-    // Draw cells with 3D effect
     for (let row = 0; row < gridRows; row++) {
       for (let col = 0; col < gridCols; col++) {
         const pixel = pixels[row]?.[col];
@@ -297,11 +273,9 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
         const y = offsetYGrid + row * cellSize;
         const elevation = pixel.currentElevation;
 
-        // Calculate 3D offset (isometric-like projection) - MUCH larger effect
         const offsetX = -elevation * 1.2;
         const offsetY = -elevation * 1.8;
 
-        // Draw shadow - larger and more visible
         if (elevation > 0.5) {
           dispCtx.fillStyle = `rgba(0, 0, 0, ${Math.min(0.6, elevation * 0.04)})`;
           dispCtx.fillRect(
@@ -312,9 +286,7 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           );
         }
 
-        // Draw side faces for 3D effect - thicker sides
         if (elevation > 0.5) {
-          // Right side
           dispCtx.fillStyle = `rgb(${Math.max(0, pixel.r - 80)}, ${Math.max(0, pixel.g - 80)}, ${Math.max(0, pixel.b - 80)})`;
           dispCtx.beginPath();
           dispCtx.moveTo(x + cellSize - gap / 2 + offsetX, y + gap / 2 + offsetY);
@@ -327,7 +299,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           dispCtx.closePath();
           dispCtx.fill();
 
-          // Bottom side
           dispCtx.fillStyle = `rgb(${Math.max(0, pixel.r - 50)}, ${Math.max(0, pixel.g - 50)}, ${Math.max(0, pixel.b - 50)})`;
           dispCtx.beginPath();
           dispCtx.moveTo(x + gap / 2 + offsetX, y + cellSize - gap / 2 + offsetY);
@@ -341,7 +312,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           dispCtx.fill();
         }
 
-        // Draw top face (main cell) - brighter when elevated
         const brightness = 1 + elevation * 0.05;
         dispCtx.fillStyle = `rgb(${Math.min(255, Math.round(pixel.r * brightness))}, ${Math.min(255, Math.round(pixel.g * brightness))}, ${Math.min(255, Math.round(pixel.b * brightness))})`;
         dispCtx.fillRect(
@@ -351,7 +321,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
           cellSize - gap,
         );
 
-        // Draw light border around top face
         dispCtx.strokeStyle = `rgba(${borderRGB.r}, ${borderRGB.g}, ${borderRGB.b}, ${borderOpacity + elevation * 0.008})`;
         dispCtx.lineWidth = 0.5;
         dispCtx.strokeRect(
@@ -381,7 +350,6 @@ export const WebcamPixelGrid: React.FC<WebcamPixelGridProps> = ({
     borderOpacity,
   ]);
 
-  // Start render loop when ready
   useEffect(() => {
     if (!isReady) return;
 

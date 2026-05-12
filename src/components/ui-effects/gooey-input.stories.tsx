@@ -18,11 +18,6 @@ export default meta;
 
 type Story = StoryObj<typeof GooeyInput>;
 
-/**
- * Storybook's iframe pulls focus to the first focusable element on render,
- * which lands on the gooey trigger button. Blurring the active element on
- * mount keeps the canvas in its resting state — click the pill to interact.
- */
 const Stage = ({ children }: { children: React.ReactNode }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -43,10 +38,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-/**
- * Default — click the pill to expand it into a search input. The detached
- * icon bubble re-attaches to the pill via the SVG gooey filter.
- */
 export const Default: Story = {
   args: { placeholder: "Type to search..." },
   render: (args) => (
@@ -56,7 +47,6 @@ export const Default: Story = {
   ),
 };
 
-/** Wider — `expandedWidth={320}` accommodates longer queries. */
 export const Wider: Story = {
   args: {
     placeholder: "Search the docs...",
@@ -71,7 +61,6 @@ export const Wider: Story = {
   ),
 };
 
-/** Heavy gooey blur — `gooeyBlur={9}` exaggerates the metaball merge effect. */
 export const HeavyBlur: Story = {
   args: { gooeyBlur: 9, expandedOffset: 70 },
   render: (args) => (
@@ -81,7 +70,6 @@ export const HeavyBlur: Story = {
   ),
 };
 
-/** Controlled — capture the current value via `onValueChange`. */
 export const Controlled: Story = {
   render: () => {
     const [value, setValue] = useState("");
@@ -102,7 +90,6 @@ export const Controlled: Story = {
   },
 };
 
-/** Disabled — the trigger and input both respect `disabled`. */
 export const Disabled: Story = {
   args: { disabled: true, placeholder: "Search disabled" },
   render: (args) => (

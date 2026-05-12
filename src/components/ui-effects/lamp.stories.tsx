@@ -22,11 +22,6 @@ const Title = ({ children }: { children: React.ReactNode }) => (
   </motion.h1>
 );
 
-/**
- * Default — the canonical Aceternity lamp hero. The conic gradients widen on
- * mount via `whileInView`, the cyan glow blooms, and the heading floats up
- * from below.
- */
 export const Default: Story = {
   render: () => (
     <LampContainer>
@@ -37,7 +32,6 @@ export const Default: Story = {
   ),
 };
 
-/** Single-line title — works equally well with shorter copy. */
 export const SingleLineTitle: Story = {
   render: () => (
     <LampContainer>
@@ -46,7 +40,6 @@ export const SingleLineTitle: Story = {
   ),
 };
 
-/** With subtitle — heading + supporting copy beneath it. */
 export const WithSubtitle: Story = {
   render: () => (
     <LampContainer>
@@ -64,10 +57,6 @@ export const WithSubtitle: Story = {
   ),
 };
 
-/**
- * With CTA — heading + button anchored above the lamp. Useful as a hero
- * section template.
- */
 export const WithCTA: Story = {
   render: () => (
     <LampContainer>

@@ -21,7 +21,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="w-[460px] max-w-full">{children}</div>
 );
 
-/** Default variant — informational tone. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -36,7 +35,6 @@ export const Default: Story = {
   ),
 };
 
-/** Destructive variant — for errors and failed actions. */
 export const Destructive: Story = {
   render: () => (
     <Frame>
@@ -49,7 +47,6 @@ export const Destructive: Story = {
   ),
 };
 
-/** Title-only — description omitted, layout collapses correctly. */
 export const TitleOnly: Story = {
   render: () => (
     <Frame>
@@ -61,7 +58,6 @@ export const TitleOnly: Story = {
   ),
 };
 
-/** No icon — grid collapses to a single column. */
 export const NoIcon: Story = {
   render: () => (
     <Frame>

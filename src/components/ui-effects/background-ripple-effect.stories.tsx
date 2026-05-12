@@ -16,11 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — 8 rows × 27 cols at 56px cell size. Click any cell to send a
- * ripple through the grid. The text overlay is `pointer-events-none` so
- * clicks pass through to the cells below.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -36,7 +31,6 @@ export const Default: Story = {
   ),
 };
 
-/** Smaller cells — denser grid (`cellSize={32}`). */
 export const SmallCells: Story = {
   render: () => (
     <Stage>
@@ -48,7 +42,6 @@ export const SmallCells: Story = {
   ),
 };
 
-/** Larger cells — looser grid (`cellSize={96}`). */
 export const LargeCells: Story = {
   render: () => (
     <Stage>
@@ -60,7 +53,6 @@ export const LargeCells: Story = {
   ),
 };
 
-/** Empty stage — no foreground. Pure ripple backdrop demo. */
 export const EmptyStage: Story = {
   render: () => (
     <Stage>

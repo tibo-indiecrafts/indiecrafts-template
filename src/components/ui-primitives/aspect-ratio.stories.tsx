@@ -19,7 +19,6 @@ const Image = ({ className }: { className?: string }) => (
   </div>
 );
 
-/** 16:9 — most common video / hero card ratio. */
 export const Default: Story = {
   render: () => (
     <div className="w-[400px]">
@@ -30,7 +29,6 @@ export const Default: Story = {
   ),
 };
 
-/** Common ratios laid out for comparison. */
 export const Ratios: Story = {
   render: () => (
     <div className="grid w-[640px] grid-cols-3 gap-4">

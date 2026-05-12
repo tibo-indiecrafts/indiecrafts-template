@@ -10,12 +10,10 @@ export default meta;
 
 type Story = StoryObj<typeof Skeleton>;
 
-/** Single-line placeholder. */
 export const Default: Story = {
   render: () => <Skeleton className="h-4 w-[260px]" />,
 };
 
-/** Card placeholder — avatar + two text lines (chat-list pattern). */
 export const ListItem: Story = {
   render: () => (
     <div className="flex items-center space-x-4">
@@ -28,7 +26,6 @@ export const ListItem: Story = {
   ),
 };
 
-/** Article placeholder — title + paragraph stack. */
 export const Article: Story = {
   render: () => (
     <div className="w-[360px] space-y-3">

@@ -28,7 +28,6 @@ import {
 } from "./config";
 
 export type BarActiveProps = {
-  /** Data rows. Defaults to `chartBarActiveData` from `./config`. */
   data?: typeof chartBarActiveData;
 };
 

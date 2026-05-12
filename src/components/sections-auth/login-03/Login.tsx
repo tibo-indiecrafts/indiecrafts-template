@@ -8,11 +8,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { login03Namespace } from "./config";
 import type { LoginBlock } from "./schema";
 
-/**
- * Centered email + password sign-in with a "reset password" link.
- * Sourced from `@blocks-so/login-03`, refactored into the section
- * pattern: every visible string resolves from `blocks.login-03.*`.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login03Namespace);
   const titleId = `${props.id}-title`;

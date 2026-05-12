@@ -7,11 +7,9 @@ import { ditherShaderNamespace } from "./config";
 type PrimitiveProps = React.ComponentProps<typeof DitherShaderPrimitive>;
 
 export type DitherShaderProps = PrimitiveProps & {
-  /** See `PixelatedCanvas.informational` — same opt-in semantics. */
   informational?: boolean;
 };
 
-/** See `PixelatedCanvas` for the decorative-by-default rationale. */
 export function DitherShader({ informational, ...props }: DitherShaderProps) {
   const t = useTranslations(ditherShaderNamespace);
   if (informational) {

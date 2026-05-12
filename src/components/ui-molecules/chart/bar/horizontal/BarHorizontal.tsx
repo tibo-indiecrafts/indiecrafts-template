@@ -26,7 +26,6 @@ import {
 } from "./config";
 
 export type BarHorizontalProps = {
-  /** Data rows. Defaults to `chartBarHorizontalData` from `./config`. */
   data?: typeof chartBarHorizontalData;
 };
 

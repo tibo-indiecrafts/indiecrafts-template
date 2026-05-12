@@ -16,16 +16,11 @@ export default meta;
 
 type Story = StoryObj<typeof HyperText>;
 
-/**
- * Default — animates once on mount, then re-runs on hover. Uses the
- * `motion.div` element by default; pass `as="h1"` etc. to switch.
- */
 export const Default: Story = {
   args: { duration: 800, delay: 0, animateOnHover: true },
   render: (args) => <HyperText {...args}>Hover me</HyperText>,
 };
 
-/** Heading — `as="h1"` renders a 6xl scrambled heading. */
 export const Heading: Story = {
   args: { duration: 1200, delay: 0 },
   render: (args) => (
@@ -35,7 +30,6 @@ export const Heading: Story = {
   ),
 };
 
-/** Slow — `duration={2400}` stretches the scramble to over two seconds. */
 export const Slow: Story = {
   args: { duration: 2400, delay: 0 },
   render: (args) => (
@@ -45,7 +39,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Custom character set — scrambles through digits + symbols only. */
 export const CustomCharset: Story = {
   args: {
     duration: 1500,
@@ -58,10 +51,6 @@ export const CustomCharset: Story = {
   ),
 };
 
-/**
- * Hover only — `animateOnHover` re-runs the scramble each time the user
- * hovers. Move the cursor away and back to see it again.
- */
 export const HoverOnly: Story = {
   args: { duration: 800, animateOnHover: true },
   render: (args) => (
@@ -71,7 +60,6 @@ export const HoverOnly: Story = {
   ),
 };
 
-/** Delayed — wait 1s before the scramble begins on mount. */
 export const Delayed: Story = {
   args: { duration: 1000, delay: 1000 },
   render: (args) => (

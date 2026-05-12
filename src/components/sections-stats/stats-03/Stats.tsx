@@ -6,10 +6,6 @@ import { cn } from "@/lib/utils";
 import { stats03Items, stats03Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Four-tile `<dl>` grid showing a stat value with an inline change
- * percentage. Sourced from `@blocks-so/stats-03`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats03Namespace);
   const items = props.items ?? stats03Items;

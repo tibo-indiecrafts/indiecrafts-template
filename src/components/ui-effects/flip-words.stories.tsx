@@ -13,7 +13,6 @@ export default meta;
 
 type Story = StoryObj<typeof FlipWords>;
 
-/** Default — 3-second word cycle inside a sentence. */
 export const Default: Story = {
   render: () => (
     <div className="text-foreground text-3xl font-medium">
@@ -24,7 +23,6 @@ export const Default: Story = {
   ),
 };
 
-/** Slow — `duration={4500}` for a more deliberate cadence. */
 export const Slow: Story = {
   render: () => (
     <div className="text-foreground text-3xl font-medium">
@@ -35,7 +33,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Fast — `duration={1000}` for an energetic pace. */
 export const Fast: Story = {
   render: () => (
     <div className="text-foreground text-3xl font-medium">
@@ -46,7 +43,6 @@ export const Fast: Story = {
   ),
 };
 
-/** Hero size — display heading with a `text-6xl` flip. */
 export const Hero: Story = {
   render: () => (
     <h1 className="text-foreground max-w-3xl text-5xl font-bold md:text-6xl">
@@ -60,7 +56,6 @@ export const Hero: Story = {
   ),
 };
 
-/** Long phrases — `words` accepts whole sentences, not just single words. */
 export const LongPhrases: Story = {
   render: () => (
     <div className="text-foreground max-w-2xl text-2xl font-medium">

@@ -17,15 +17,14 @@ const ICONS: Record<IntegrationIcon, ComponentType<SVGProps<SVGSVGElement>>> = {
 };
 
 const SLOT_CLASSES = [
-  // Slot 1: top-right corner
   "col-start-4 flex items-center justify-center border-b border-l max-md:row-start-4 max-md:border-t md:col-start-10",
-  // Slot 2: mid-left
+
   "col-start-3 row-start-5 flex items-center justify-center border-l border-t md:col-start-9 md:row-start-2",
-  // Slot 3: mid-right
+
   "col-start-4 row-start-5 flex items-center justify-center border-l md:col-start-10 md:row-start-2",
-  // Slot 4: bottom-left
+
   "col-start-2 row-start-6 flex items-center justify-center border-l border-t md:col-start-8 md:row-start-3",
-  // Slot 5: bottom-wide (Stripe-shape slot)
+
   "col-start-3 col-end-5 row-start-6 flex items-center justify-center border-l border-t md:col-start-9 md:col-end-11 md:row-start-3",
 ] as const;
 

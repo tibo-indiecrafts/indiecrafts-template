@@ -11,12 +11,10 @@ export default meta;
 
 type Story = StoryObj<typeof Progress>;
 
-/** Static value — exercises the indicator translation. */
 export const Default: Story = {
   render: () => <Progress value={66} className="w-[320px]" />,
 };
 
-/** Stepped values — show the bar at common percentages. */
 export const Steps: Story = {
   render: () => (
     <div className="grid w-[320px] gap-4">
@@ -30,12 +28,10 @@ export const Steps: Story = {
   ),
 };
 
-/** Indeterminate — `value` undefined; the indicator parks at -100% (looks empty). */
 export const Indeterminate: Story = {
   render: () => <Progress className="w-[320px]" />,
 };
 
-/** Animated fill — climbs from 13% to 66% over 600ms. */
 export const Animated: Story = {
   render: () => {
     const Demo = () => {

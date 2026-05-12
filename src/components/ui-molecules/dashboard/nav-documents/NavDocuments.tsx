@@ -22,7 +22,6 @@ import {
 } from "@/components/ui-primitives/sidebar";
 import { dashboardNavDocumentsNamespace } from "./config";
 
-/** Icon component shape — accepts both tabler and lucide icons. */
 type IconComponent = ComponentType<{ className?: string }>;
 
 export type NavDocumentsItem = {

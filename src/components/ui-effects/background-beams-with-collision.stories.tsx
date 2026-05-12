@@ -12,7 +12,6 @@ export default meta;
 
 type Story = StoryObj<typeof BackgroundBeamsWithCollision>;
 
-/** Default — short hero with a single headline, beams crashing at the bottom. */
 export const Default: Story = {
   render: () => (
     <BackgroundBeamsWithCollision className="h-[60vh]">
@@ -23,7 +22,6 @@ export const Default: Story = {
   ),
 };
 
-/** Full-viewport hero with stacked headline + subtitle + CTA. */
 export const FullHero: Story = {
   render: () => (
     <BackgroundBeamsWithCollision className="h-screen">
@@ -48,10 +46,6 @@ export const FullHero: Story = {
   ),
 };
 
-/**
- * Empty stage — no children. Verifies the beams + collision sparks render on
- * their own (useful when used as a section divider).
- */
 export const EmptyStage: Story = {
   render: () => <BackgroundBeamsWithCollision className="h-[40vh]" />,
 };

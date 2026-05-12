@@ -10,10 +10,6 @@ const colorClasses: Record<"emerald" | "amber" | "rose", string> = {
   rose: "bg-rose-500 dark:bg-rose-400",
 };
 
-/**
- * Single usage card with stacked resource breakdown bar +
- * per-resource legend list. Sourced from `@blocks-so/stats-14`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats14Namespace);
   const items = props.items ?? stats14Items;

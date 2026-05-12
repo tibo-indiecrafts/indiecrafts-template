@@ -21,11 +21,6 @@ import { cn } from "@/lib/utils";
 import { formLayout05Namespace, formLayout05Plans } from "./config";
 import type { FormLayoutBlock } from "./schema";
 
-/**
- * Design-workspace creation form — organization + workspace name +
- * region + plan-card RadioGroup, with a side panel listing plan
- * benefits. Sourced from `@blocks-so/form-layout-05`.
- */
 export default function FormLayout(props: Readonly<FormLayoutBlock>) {
   const [t, tr] = useScopedT(formLayout05Namespace);
   const plans = props.plans ?? formLayout05Plans;

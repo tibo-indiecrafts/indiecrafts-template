@@ -10,22 +10,10 @@ export type CursorGlowPhotoProps = {
   src?: string;
   alt?: string;
   className?: string;
-  /**
-   * Override classes on the inner gradient pill — nudges the glow's
-   * anchor point relative to the cursor. Defaults to
-   * `-translate-x-1/2 -translate-y-4/5`.
-   */
+
   glowClassName?: string;
 };
 
-/**
- * Full-bleed photo with a cursor-tracking blurred gradient overlay
- * (mix-blend-overlay). Used by
- * `sections-secondary-hero/secondary-hero-02`. Photo is decorative and
- * the consumer can pass `src` + `alt` to swap it in. The overlay
- * tracks `mousemove` on the window — if you mount multiple instances
- * on the same page they'll all chase the same cursor.
- */
 export const CursorGlowPhoto = ({
   src = DEFAULT_SRC,
   alt = "Photo backdrop",

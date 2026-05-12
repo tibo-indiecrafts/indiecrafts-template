@@ -1,10 +1,5 @@
 import type { MessageKey } from "@/types/messages";
 
-/**
- * Block from `@blocks-so/dialog-10` — schedule-meeting modal: title +
- * attendees + date picker + time select + location + description. All
- * copy resolves through `blocks.dialog-10.*`.
- */
 export type DialogBlock = {
   type: "dialog-10";
   id: string;

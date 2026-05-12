@@ -4,7 +4,6 @@ import type { MessageKey } from "@/types/messages";
 export type FeatureValue = { labelKey: MessageKey } | boolean;
 
 export type ComparatorFeature = {
-  /** Stable id used as React key + maps to the row label. */
   id: string;
   labelKey: MessageKey;
 };
@@ -16,7 +15,7 @@ export type ComparatorTier = {
   periodKey: MessageKey;
   cta: { labelKey: MessageKey; href: StaticAppPathname | `http${string}` | `#${string}` };
   highlighted?: boolean;
-  /** Map of feature id → value. Keys must match `features[].id`. */
+
   values: Readonly<Record<string, FeatureValue>>;
 };
 

@@ -19,10 +19,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — cycles through `words` every 2.5s with a vertical fade-slide.
- * Each word renders as an `<h1>` for hero-style emphasis.
- */
 export const Default: Story = {
   args: {
     words: ["fast", "reliable", "modern", "accessible"],
@@ -35,7 +31,6 @@ export const Default: Story = {
   ),
 };
 
-/** Slow — `duration={4000}` keeps each word on screen longer. */
 export const Slow: Story = {
   args: { words: ["Build", "Ship", "Iterate"], duration: 4000 },
   render: (args) => (
@@ -45,7 +40,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Hero — bumped to `text-7xl` for landing-page presence. */
 export const Hero: Story = {
   args: {
     words: ["beautiful", "modern", "fast", "accessible"],
@@ -58,7 +52,6 @@ export const Hero: Story = {
   ),
 };
 
-/** Inline phrase — combine static prefix + rotating word in a sentence. */
 export const InlinePhrase: Story = {
   render: () => (
     <Stage>
@@ -73,10 +66,6 @@ export const InlinePhrase: Story = {
   ),
 };
 
-/**
- * Custom motion — pass `motionProps` to retune the entry/exit animation.
- * This demo uses a horizontal slide instead of vertical.
- */
 export const CustomMotion: Story = {
   render: () => (
     <Stage>

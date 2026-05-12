@@ -58,12 +58,10 @@ const Frame = ({ side }: { side: "top" | "right" | "bottom" | "left" }) => (
   </Sheet>
 );
 
-/** Default — slides in from the right. */
 export const Default: Story = {
   render: () => <Frame side="right" />,
 };
 
-/** All four sides — pick the edge that matches the platform convention. */
 export const Sides: Story = {
   render: () => (
     <div className="grid grid-cols-2 gap-3">
@@ -75,7 +73,6 @@ export const Sides: Story = {
   ),
 };
 
-/** Pre-opened — useful for review without click-through. */
 export const InitiallyOpen: Story = {
   render: () => (
     <Sheet defaultOpen>

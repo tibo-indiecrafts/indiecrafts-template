@@ -28,10 +28,6 @@ const Body = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — single SVG-blur spotlight that fades in from the top-left over
- * 2s. Mount inside a `relative overflow-hidden` parent.
- */
 export const Default: Story = {
   args: { fill: "white" },
   render: (args) => (
@@ -45,10 +41,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Brand fill — `fill` reads from the `--color-primary` token (SVG attributes
- * accept CSS vars), so a rebrand updates this spotlight automatically.
- */
 export const BrandFill: Story = {
   args: { fill: "var(--color-primary)" },
   render: (args) => (
@@ -59,7 +51,6 @@ export const BrandFill: Story = {
   ),
 };
 
-/** Right-side — position via `className`. */
 export const RightSide: Story = {
   render: () => (
     <Stage>
@@ -72,7 +63,6 @@ export const RightSide: Story = {
   ),
 };
 
-/** Two spotlights — combine multiple instances for richer staging. */
 export const TwoSpotlights: Story = {
   render: () => (
     <Stage>

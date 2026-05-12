@@ -20,10 +20,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — empty Safari window chrome at native 1203×753 aspect ratio.
- * Without `imageSrc` or `videoSrc`, the screen renders blank.
- */
 export const Default: Story = {
   args: { mode: "default", url: "indiecrafts.dev" },
   render: (args) => (
@@ -33,7 +29,6 @@ export const Default: Story = {
   ),
 };
 
-/** With image — `imageSrc` fills the screen with a still. */
 export const WithImage: Story = {
   args: {
     mode: "default",
@@ -47,7 +42,6 @@ export const WithImage: Story = {
   ),
 };
 
-/** With video — `videoSrc` autoplays a muted, looping clip on the screen. */
 export const WithVideo: Story = {
   args: {
     mode: "default",
@@ -61,7 +55,6 @@ export const WithVideo: Story = {
   ),
 };
 
-/** Simple mode — `mode="simple"` hides the toolbar icons (back/forward/etc.). */
 export const SimpleMode: Story = {
   args: {
     mode: "simple",
@@ -75,7 +68,6 @@ export const SimpleMode: Story = {
   ),
 };
 
-/** Compact width — wraps the SVG in a smaller container; the chrome scales. */
 export const Compact: Story = {
   render: () => (
     <div className="bg-background flex min-h-[400px] w-full items-center justify-center p-10">

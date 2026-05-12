@@ -10,8 +10,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { pricing03Namespace } from "./config";
 import type { PricingBlock } from "./schema";
 
-/** Plain card chrome — no baked padding/flex/gap so the upstream's
- *  `grid divide-x divide-y` layout applies cleanly. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("bg-card text-card-foreground rounded-xl border shadow-sm", className)}

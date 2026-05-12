@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof DefaultLayout>;
 
-/** Two stacked sections — each section owns its own padding + max-width. */
 export const Default: Story = {
   render: () => (
     <DefaultLayout>
@@ -34,7 +33,6 @@ export const Default: Story = {
   ),
 };
 
-/** Single-section page — proves the passthrough works for short pages. */
 export const SingleSection: Story = {
   render: () => (
     <DefaultLayout>

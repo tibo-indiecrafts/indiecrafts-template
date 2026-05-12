@@ -9,7 +9,7 @@ export type PricingTier = {
   descriptionKey?: MessageKey;
   cta: { labelKey: MessageKey; href: StaticAppPathname };
   featureKeys: readonly MessageKey[];
-  /** Show a badge (e.g. "Popular") above the tier. */
+
   badgeKey?: MessageKey;
 };
 

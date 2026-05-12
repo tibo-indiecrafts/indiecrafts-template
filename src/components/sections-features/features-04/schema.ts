@@ -1,6 +1,5 @@
 import type { MessageKey } from "@/types/messages";
 
-/** Icon set for features-4 — includes extras (fingerprint, pencil) not in features-1. */
 export type FeaturesIcon =
   | "zap"
   | "cpu"

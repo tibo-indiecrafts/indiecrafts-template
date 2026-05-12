@@ -10,10 +10,6 @@ const subFeatures = [
   { icon: CalendarDays, key: "tile3" },
 ] as const;
 
-/**
- * Features-36 — JSX verbatim. Product-direction heading + product
- * screenshot + 3 sub-feature tiles.
- */
 export default function Features(props: Readonly<Features36Block>) {
   const [t] = useScopedT(features36Namespace);
 

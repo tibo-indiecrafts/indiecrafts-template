@@ -26,7 +26,6 @@ export default meta;
 
 type Story = StoryObj<typeof Command>;
 
-/** Inline command palette — typeahead with grouped results. */
 export const Default: Story = {
   render: () => (
     <Command className="w-[400px] rounded-lg border shadow-md">
@@ -65,7 +64,6 @@ export const Default: Story = {
   ),
 };
 
-/** Empty state — `CommandEmpty` renders when no items match the query. */
 export const EmptyState: Story = {
   render: () => (
     <Command className="w-[400px] rounded-lg border shadow-md">

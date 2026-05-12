@@ -18,24 +18,16 @@ import {
 export type CalendarsGroup = {
   name: string;
   items: string[];
-  /**
-   * Items currently shown as checked. Pass an explicit set of item labels;
-   * leaving it `undefined` means nothing is active (no hardcoded fallback).
-   */
+
   active?: ReadonlySet<string> | readonly string[];
 };
 
 export type CalendarsProps = {
   calendars: CalendarsGroup[];
-  /** Index of the group rendered open by default. Defaults to `0`. */
+
   defaultOpenIndex?: number;
 };
 
-/**
- * Collapsible list of calendar groups for a sidebar — composes shadcn
- * `Collapsible` + `Sidebar*` primitives directly. Active items are
- * caller-driven via `group.active`; the widget owns no state.
- */
 export function Calendars({ calendars, defaultOpenIndex = 0 }: CalendarsProps) {
   return (
     <>

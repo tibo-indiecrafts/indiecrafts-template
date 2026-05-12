@@ -47,11 +47,6 @@ function CardDecorator({ className }: { className?: string }) {
   );
 }
 
-/**
- * Manifesto block — collapsible long-form essay rendered inside
- * the grid-1 `Container` frame. JSX verbatim against upstream
- * `Manifesto.tsx`; only translatable strings flow through tRoot.
- */
 export default function Content(props: Readonly<ContentBlock>) {
   const [, , tRoot] = useScopedT(content19Namespace);
   const [isFull, setIsFull] = useState(false);

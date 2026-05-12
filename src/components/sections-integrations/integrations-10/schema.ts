@@ -14,9 +14,8 @@ export type IntegrationIcon =
   | "googlePalm";
 
 export type IntegrationsRow = {
-  /** When true, reverse cell order (`flex-row-reverse`). */
   reverse?: boolean;
-  /** Array of icon keys or null (empty muted circle slot). */
+
   cells: ReadonlyArray<IntegrationIcon | null>;
 };
 

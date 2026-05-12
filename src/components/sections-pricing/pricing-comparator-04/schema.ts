@@ -4,13 +4,11 @@ import type { MessageKey } from "@/types/messages";
 export type FeatureValue = { labelKey: MessageKey } | boolean;
 
 export type ComparatorFeature = {
-  /** Stable id used as React key + maps to the row label. */
   id: string;
   labelKey: MessageKey;
 };
 
 export type ComparatorTier = {
-  /** Stable id used as React key + maps to per-feature `values[id]`. */
   id: string;
   nameKey: MessageKey;
   priceKey: MessageKey;
@@ -24,10 +22,10 @@ export type PricingBlock = {
   id: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Tier headers (typically 3 — Basic / Pro / Team). */
+
   tiers: ReadonlyArray<ComparatorTier>;
-  /** Feature row labels. */
+
   features: ReadonlyArray<ComparatorFeature>;
-  /** Per-feature × per-tier value matrix: `values[feature.id][tier.id]`. */
+
   values: Readonly<Record<string, Readonly<Record<string, FeatureValue>>>>;
 };

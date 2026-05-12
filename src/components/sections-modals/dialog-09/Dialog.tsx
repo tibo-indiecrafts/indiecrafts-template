@@ -30,11 +30,6 @@ import { cn } from "@/lib/utils";
 import { dialog09Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 
-/**
- * Share & collaborate modal — comments toggle, read-only share link
- * with copy-to-clipboard, and copy / preview actions. Sourced from
- * `@blocks-so/dialog-09`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [t, tr] = useScopedT(dialog09Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

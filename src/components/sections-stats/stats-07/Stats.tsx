@@ -7,10 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { stats07Items, stats07Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Radial-bar plan-overview cards showing capacity utilization.
- * Sourced from `@blocks-so/stats-07`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats07Namespace);
   const items = props.items ?? stats07Items;

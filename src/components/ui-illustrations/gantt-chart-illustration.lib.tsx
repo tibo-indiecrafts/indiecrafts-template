@@ -102,7 +102,6 @@ export type GanttContextProps = {
 };
 
 const getsDaysIn = (range: Range) => {
-  // For when range is daily
   let fn: (date: Date) => number = () => 1;
 
   if (range === "monthly" || range === "quarterly") {
@@ -1055,7 +1054,6 @@ export const GanttProvider: FC<GanttProviderProps> = ({
       setScrollX(scrollLeft);
 
       if (scrollLeft === 0) {
-        // Extend timelineData to the past
         const firstYear = timelineData[0]?.year;
 
         if (!firstYear) {
@@ -1077,11 +1075,9 @@ export const GanttProvider: FC<GanttProviderProps> = ({
 
         setTimelineData(newTimelineData);
 
-        // Scroll a bit forward so it's not at the very start
         el.scrollLeft = el.clientWidth;
         setScrollX(el.scrollLeft);
       } else if (scrollLeft + clientWidth >= scrollWidth) {
-        // Extend timelineData to the future
         const lastYear = timelineData.at(-1)?.year;
 
         if (!lastYear) {
@@ -1103,7 +1099,6 @@ export const GanttProvider: FC<GanttProviderProps> = ({
 
         setTimelineData(newTimelineData);
 
-        // Scroll a bit back so it's not at the very end
         el.scrollLeft = el.scrollWidth - el.clientWidth;
         setScrollX(el.scrollLeft);
       }

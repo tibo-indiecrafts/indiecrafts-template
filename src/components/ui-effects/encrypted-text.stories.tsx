@@ -14,7 +14,6 @@ export default meta;
 
 type Story = StoryObj<typeof EncryptedText>;
 
-/** Default — characters scramble then resolve from left to right. */
 export const Default: Story = {
   render: () => (
     <h1 className="text-4xl font-bold">
@@ -23,7 +22,6 @@ export const Default: Story = {
   ),
 };
 
-/** Fast — `revealDelayMs={20}` resolves the whole word in ~half a second. */
 export const Fast: Story = {
   render: () => (
     <h1 className="text-4xl font-bold">
@@ -32,7 +30,6 @@ export const Fast: Story = {
   ),
 };
 
-/** Slow — drawn-out reveal for cinematic intros. */
 export const Slow: Story = {
   render: () => (
     <h1 className="text-4xl font-bold">
@@ -41,7 +38,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Custom charset — only digits and symbols scramble during reveal. */
 export const NumbersOnly: Story = {
   render: () => (
     <h1 className="font-mono text-3xl font-semibold">
@@ -50,10 +46,6 @@ export const NumbersOnly: Story = {
   ),
 };
 
-/**
- * Distinct styles — colour the encrypted (scrambled) and revealed states
- * differently, e.g. muted while scrambling and accent once resolved.
- */
 export const StyledStates: Story = {
   render: () => (
     <h1 className="text-3xl font-bold">
@@ -66,7 +58,6 @@ export const StyledStates: Story = {
   ),
 };
 
-/** Multi-word — long phrase reveals incrementally across the line. */
 export const LongPhrase: Story = {
   render: () => (
     <p className="max-w-md text-center text-lg">

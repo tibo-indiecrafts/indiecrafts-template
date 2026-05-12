@@ -21,30 +21,15 @@ import { cn } from "@/lib/utils";
 import { localeSwitcherNamespace } from "./config";
 
 export type LocaleSwitcherProps = {
-  /**
-   * Trigger shape — adapt to the host header's visual density.
-   *  - "icon"  — globe-icon button (default; matches ThemeToggle's pair).
-   *  - "code"  — uppercase locale code (e.g. "EN") in a tight button. Use
-   *              when the right-side rail is already crowded with CTAs.
-   */
   shape?: "icon" | "code";
-  /** Trigger size. `"icon"` is 36px square (matches ThemeToggle); `"sm"` is tighter. */
+
   size?: "icon" | "sm" | "default";
-  /** Button visual treatment. Default `outline` matches the ThemeToggle pair. */
+
   variant?: "outline" | "ghost" | "secondary";
-  /** className override forwarded to the trigger. */
+
   className?: string;
 };
 
-/**
- * Client-side language switcher. Replaces the `[locale]` prefix on the
- * current URL rather than using next-intl's typed router, which lets us
- * switch without knowing the static pathname ahead of time — important
- * for pages with dynamic segments like /blog/[slug].
- *
- * Visual: matches `ThemeToggle`'s icon-button-with-dropdown shape so
- * the two switchers compose as a uniform pair across headers.
- */
 export function LocaleSwitcher({
   shape = "icon",
   size = "icon",
@@ -59,8 +44,7 @@ export function LocaleSwitcher({
 
   function switchTo(next: Locale) {
     const segments = pathname.split("/");
-    // `pathname` starts with "/"; segments[0] is "". When a non-default locale
-    // is active, segments[1] is the locale slug. Default locale: no prefix.
+
     if (params.locale && segments[1] === params.locale) {
       segments[1] = next;
     } else {

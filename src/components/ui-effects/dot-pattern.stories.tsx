@@ -16,7 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Default — 16×16 dot grid spanning the stage. */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -26,7 +25,6 @@ export const Default: Story = {
   ),
 };
 
-/** Glow — `glow` prop animates each dot's opacity with a random phase. */
 export const Glow: Story = {
   render: () => (
     <Stage>
@@ -36,7 +34,6 @@ export const Glow: Story = {
   ),
 };
 
-/** Sparse — 32×32 spacing makes the pattern read as ambient texture. */
 export const Sparse: Story = {
   render: () => (
     <Stage>
@@ -46,7 +43,6 @@ export const Sparse: Story = {
   ),
 };
 
-/** Dense — 8×8 grid for a tighter pattern. */
 export const Dense: Story = {
   render: () => (
     <Stage>
@@ -56,7 +52,6 @@ export const Dense: Story = {
   ),
 };
 
-/** Radial mask — common hero pattern that fades the dots toward the edges. */
 export const RadialMask: Story = {
   render: () => (
     <Stage>
@@ -74,7 +69,6 @@ export const RadialMask: Story = {
   ),
 };
 
-/** Custom color — pass `text-*` utility to override the default neutral. */
 export const CustomColor: Story = {
   render: () => (
     <Stage>

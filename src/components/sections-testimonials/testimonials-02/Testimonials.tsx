@@ -38,11 +38,6 @@ function PlusDecorator({ className }: { className?: string }) {
   );
 }
 
-/**
- * Tabbed testimonials — JSX verbatim against upstream
- * `dark-landing-one` TestimonialsSection. Avatar switcher on the
- * left, animated quote + logo + 2-stat results panel on the right.
- */
 export default function Testimonials(props: Readonly<TestimonialsBlock>) {
   const [, , tRoot] = useScopedT(testimonials02Namespace);
   const [activeId, setActiveId] = useState<string>(props.testimonials[0]?.id ?? "");

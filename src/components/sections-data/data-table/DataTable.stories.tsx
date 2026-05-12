@@ -55,7 +55,6 @@ const statuses = ["Done", "In Process", "Not Started"];
 
 const reviewers = ["Eddie Lake", "Jamik Tashpulatov", "Emily Whalen"];
 
-/** Generates `count` rows of demo data covering varied statuses + reviewers. */
 const generateRows = (count: number) =>
   Array.from({ length: count }, (_, i) => ({
     id: i + 1,
@@ -67,20 +66,14 @@ const generateRows = (count: number) =>
     reviewer: reviewers[i % reviewers.length],
   }));
 
-/** Three rows — fits within page size 10, no pagination controls active. */
 export const Default: Story = {
   args: { data: sampleRows },
 };
 
-/**
- * 30 rows — exceeds the default 10-per-page so prev/next/first/last are
- * enabled and the page counter reads `Page 1 of 3`.
- */
 export const Paginated: Story = {
   args: { data: generateRows(30) },
 };
 
-/** Empty data — proves the "No results." cell renders cleanly. */
 export const Empty: Story = {
   args: { data: [] },
 };

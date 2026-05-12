@@ -32,7 +32,7 @@ export type FeaturesExpandableItem = {
   iconKey: FeatureIcon;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Used by the inactive-card aria-label so screen-reader users can identify the target ("Expand <slug> feature"). */
+
   ariaSlug: string;
 };
 
@@ -41,7 +41,7 @@ export type FeaturesExpandableBlock = {
   id: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Default 7000ms. */
+
   autoplayDurationMs?: number;
   items: readonly [FeaturesExpandableItem, FeaturesExpandableItem];
 };

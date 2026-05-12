@@ -7,8 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta09Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/** Plain card chrome — no baked padding/flex so the consumer's
- *  `p-8 md:p-12` overrides apply cleanly. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("bg-card text-card-foreground rounded-xl border shadow-sm", className)}

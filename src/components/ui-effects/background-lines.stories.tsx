@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof BackgroundLines>;
 
-/** Default — animated lines behind a centered headline. */
 export const Default: Story = {
   render: () => (
     <BackgroundLines>
@@ -28,7 +27,6 @@ export const Default: Story = {
   ),
 };
 
-/** Slow lines — `svgOptions.duration={20}` for a calmer animation. */
 export const SlowLines: Story = {
   render: () => (
     <BackgroundLines svgOptions={{ duration: 20 }}>
@@ -39,7 +37,6 @@ export const SlowLines: Story = {
   ),
 };
 
-/** Fast lines — `svgOptions.duration={3}` for energetic motion. */
 export const FastLines: Story = {
   render: () => (
     <BackgroundLines svgOptions={{ duration: 3 }}>
@@ -50,7 +47,6 @@ export const FastLines: Story = {
   ),
 };
 
-/** Compact stage — `className="h-[40vh]"` shrinks the section height. */
 export const ShortStage: Story = {
   render: () => (
     <BackgroundLines className="h-[40vh]">

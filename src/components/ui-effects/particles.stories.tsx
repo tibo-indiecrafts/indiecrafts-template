@@ -43,10 +43,6 @@ const Title = ({ text, dark = true }: { text: string; dark?: boolean }) => (
   </h2>
 );
 
-/**
- * Default — 100 white particles drift across a dark canvas. Move the cursor
- * over the canvas to see them ease away from the pointer.
- */
 export const Default: Story = {
   args: { quantity: 100, color: "#ffffff" },
   render: (args) => (
@@ -57,7 +53,6 @@ export const Default: Story = {
   ),
 };
 
-/** Dense — `quantity={300}` for a heavy-snow look. */
 export const Dense: Story = {
   args: { quantity: 300, color: "#ffffff" },
   render: (args) => (
@@ -68,7 +63,6 @@ export const Dense: Story = {
   ),
 };
 
-/** Tinted — pass `color` to swap the dot colour to a brand tone. */
 export const Tinted: Story = {
   args: { quantity: 150, color: "#06b6d4" },
   render: (args) => (
@@ -79,7 +73,6 @@ export const Tinted: Story = {
   ),
 };
 
-/** Drifting — `vx` and `vy` give the particles a baseline velocity. */
 export const Drifting: Story = {
   args: { quantity: 150, vx: 0.3, vy: -0.1, color: "#ffffff" },
   render: (args) => (
@@ -90,7 +83,6 @@ export const Drifting: Story = {
   ),
 };
 
-/** Light theme — works equally well on a light surface with a dark dot colour. */
 export const LightTheme: Story = {
   args: { quantity: 120, color: "#0f172a" },
   render: (args) => (

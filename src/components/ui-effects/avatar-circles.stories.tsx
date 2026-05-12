@@ -41,27 +41,22 @@ const MORE_AVATARS = [
   },
 ];
 
-/** Default — 4 avatars + a "+3" overflow chip. */
 export const Default: Story = {
   render: () => <AvatarCircles avatarUrls={AVATARS} numPeople={3} />,
 };
 
-/** No overflow — `numPeople` omitted hides the trailing count chip. */
 export const NoOverflow: Story = {
   render: () => <AvatarCircles avatarUrls={AVATARS} />,
 };
 
-/** Single avatar — degenerate case, no overlap visible. */
 export const Single: Story = {
   render: () => <AvatarCircles avatarUrls={[AVATARS[0]]} />,
 };
 
-/** Six avatars + "+12" overflow — fuller team / contributor list. */
 export const LargeTeam: Story = {
   render: () => <AvatarCircles avatarUrls={MORE_AVATARS} numPeople={12} />,
 };
 
-/** Embedded in a "Trusted by" hero — common marketing pattern. */
 export const InContext: Story = {
   render: () => (
     <div className="flex max-w-md flex-col items-center gap-3 text-center">

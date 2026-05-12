@@ -29,13 +29,6 @@ const CHIP_CLASSES = cn(
   "hover:bg-accent/50 focus-visible:bg-accent/50 focus-visible:outline-none",
 );
 
-/**
- * Welcome-banner dashboard section — personalized greeting card with a
- * salutation, status line, and a horizontally scrollable row of
- * quick-action chips. Pairs naturally above the KPI cards on admin
- * dashboards. `userName` is per-session data; everything else is
- * translatable.
- */
 export default function WelcomeBanner(props: Readonly<WelcomeBannerBlock>) {
   const [t, tr] = useScopedT(welcomeBanner01Namespace);
   const chips = props.chips ?? welcomeBanner01Chips;

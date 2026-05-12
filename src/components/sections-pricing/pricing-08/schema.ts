@@ -16,8 +16,8 @@ export type PricingBlock = {
   id: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Two billing-cycle options (Monthly / Annual). */
+
   tiers: readonly [PricingTier, PricingTier];
-  /** Centered tagline beneath the cards. */
+
   trialNoteKey: MessageKey;
 };

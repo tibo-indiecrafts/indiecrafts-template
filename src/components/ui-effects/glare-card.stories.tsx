@@ -18,10 +18,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — hover the card to see the holographic foil tilt with the pointer.
- * The base card is `bg-slate-950`; pass children for the front face.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -34,7 +30,6 @@ export const Default: Story = {
   ),
 };
 
-/** Image fill — render an `<img>` as the front face for trading-card vibes. */
 export const ImageFill: Story = {
   render: () => (
     <Stage>
@@ -49,7 +44,6 @@ export const ImageFill: Story = {
   ),
 };
 
-/** Brand surface — replace the slate baseline with a solid brand colour. */
 export const BrandSurface: Story = {
   render: () => (
     <Stage>
@@ -64,7 +58,6 @@ export const BrandSurface: Story = {
   ),
 };
 
-/** Side by side — proves each card maintains its own pointer state. */
 export const SideBySide: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

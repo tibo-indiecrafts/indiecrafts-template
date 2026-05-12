@@ -18,12 +18,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — the live variant uses microlink.io to fetch a screenshot of the
- * target URL on hover. Note: in some networks (Storybook iframes, ad-block
- * extensions) the microlink endpoint may be blocked — see `Static` below
- * for a deterministic alternative.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -36,10 +30,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Static — `isStatic` plus an `imageSrc` URL skips the microlink call and
- * uses the image you provide. Reliable for offline / sandboxed environments.
- */
 export const Static: Story = {
   render: () => (
     <Stage>
@@ -57,7 +47,6 @@ export const Static: Story = {
   ),
 };
 
-/** Larger preview — `width={320}` and `height={200}` increase the popover size. */
 export const LargePreview: Story = {
   render: () => (
     <Stage>
@@ -77,7 +66,6 @@ export const LargePreview: Story = {
   ),
 };
 
-/** Multiple links — every preview tracks its own pointer state independently. */
 export const MultipleLinks: Story = {
   render: () => (
     <Stage>

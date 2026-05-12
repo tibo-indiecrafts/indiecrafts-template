@@ -55,11 +55,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — left-scrolling marquee at slow speed. The component clones the
- * children array on mount so the loop is seamless. The mask gradient fades
- * the edges so cards enter and exit cleanly.
- */
 export const Default: Story = {
   args: { direction: "left", speed: "slow", pauseOnHover: true },
   render: (args) => (
@@ -69,7 +64,6 @@ export const Default: Story = {
   ),
 };
 
-/** Reverse — `direction="right"` flips the scroll direction. */
 export const Reverse: Story = {
   args: { direction: "right", speed: "normal", pauseOnHover: true },
   render: (args) => (
@@ -79,7 +73,6 @@ export const Reverse: Story = {
   ),
 };
 
-/** Fast — `speed="fast"` runs the loop at 20s per cycle. */
 export const Fast: Story = {
   args: { direction: "left", speed: "fast", pauseOnHover: true },
   render: (args) => (
@@ -89,7 +82,6 @@ export const Fast: Story = {
   ),
 };
 
-/** No pause on hover — `pauseOnHover={false}` keeps the marquee running. */
 export const NoPauseOnHover: Story = {
   args: { direction: "left", speed: "normal", pauseOnHover: false },
   render: (args) => (
@@ -99,7 +91,6 @@ export const NoPauseOnHover: Story = {
   ),
 };
 
-/** Three items — exercises the minimum viable cluster. */
 export const FewItems: Story = {
   args: { direction: "left", speed: "slow" },
   render: (args) => (

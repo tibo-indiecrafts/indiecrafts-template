@@ -10,10 +10,6 @@ export type ForgotPasswordProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Auth forgot-password template — `FullBleedLayout` (no marketing chrome)
- * wrapping the `ForgotPassword` section.
- */
 export function ForgotPassword({
   layout = forgotPassword01Defaults.layout,
   header,

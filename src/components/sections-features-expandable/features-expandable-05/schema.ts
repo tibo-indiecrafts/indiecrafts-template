@@ -19,11 +19,11 @@ export type TabIcon = "brain" | "globe" | "bot" | "sparkles" | "zap" | "cpu";
 
 export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
-  /** Lucide icon rendered before the tab label. */
+
   iconKey: TabIcon;
-  /** Decorative bg image painted behind the illustration. */
+
   bgImageUrl: string;
-  /** Tab button label (also used as the bg image alt). */
+
   tabLabelKey: MessageKey;
 };
 

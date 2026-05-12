@@ -12,7 +12,6 @@ import {
 import { kpiCardsItems, kpiCardsNamespace, type KpiCardItem } from "./config";
 
 export type KpiCardsProps = {
-  /** Pass an array to override the demo KPI cards. */
   items?: readonly KpiCardItem[];
 };
 

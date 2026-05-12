@@ -19,7 +19,6 @@ export default meta;
 
 type Story = StoryObj<typeof Card>;
 
-/** Standard composition — header + content + footer. */
 export const Default: Story = {
   render: () => (
     <Card className="w-[360px]">
@@ -40,7 +39,6 @@ export const Default: Story = {
   ),
 };
 
-/** With `CardAction` — the trailing slot in the header (e.g. a kebab menu). */
 export const WithAction: Story = {
   render: () => (
     <Card className="w-[360px]">
@@ -60,7 +58,6 @@ export const WithAction: Story = {
   ),
 };
 
-/** Header-only — body omitted; useful as a quick stat card. */
 export const HeaderOnly: Story = {
   render: () => (
     <Card className="w-[260px]">
@@ -72,7 +69,6 @@ export const HeaderOnly: Story = {
   ),
 };
 
-/** Border-driven spacing — `[.border-b]:pb-6` activates when header has a border. */
 export const WithDividers: Story = {
   render: () => (
     <Card className="w-[360px]">

@@ -3,10 +3,6 @@ import { cn } from "@/lib/utils";
 import { stats15Items, stats15Namespace } from "./config";
 import type { ProjectionBlock } from "./schema";
 
-/**
- * Investment growth projection list (1y / 5y / 10y rows) with value
- * and percentage badge per row. Sourced from `@blocks-so/stats-15`.
- */
 export default function Projection(props: Readonly<ProjectionBlock>) {
   const [t, tr] = useScopedT(stats15Namespace);
   const items = props.items ?? stats15Items;

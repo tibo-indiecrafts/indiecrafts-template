@@ -18,10 +18,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — soft border-pulse with a brand-coloured shine sliding across the
- * label every 1s. Spring-based scale on tap (0.95).
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -30,7 +26,6 @@ export const Default: Story = {
   ),
 };
 
-/** Larger — hero-scale CTA via Tailwind utilities. */
 export const Larger: Story = {
   render: () => (
     <Stage>
@@ -39,7 +34,6 @@ export const Larger: Story = {
   ),
 };
 
-/** Disabled — passes native `disabled` through; the spring still animates. */
 export const Disabled: Story = {
   render: () => (
     <Stage>
@@ -50,7 +44,6 @@ export const Disabled: Story = {
   ),
 };
 
-/** Side by side — two buttons each animating independently. */
 export const SideBySide: Story = {
   render: () => (
     <Stage>

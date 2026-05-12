@@ -57,11 +57,6 @@ const SAMPLE = (
   </div>
 );
 
-/**
- * Default — wraps long-form content with a scroll-driven SVG line that
- * traces a path from a circle indicator down through the content as the
- * user scrolls.
- */
 export const Default: Story = {
   render: () => (
     <Page>
@@ -70,7 +65,6 @@ export const Default: Story = {
   ),
 };
 
-/** Short content — exercises a smaller scroll envelope. */
 export const ShortContent: Story = {
   render: () => (
     <Page>
@@ -86,7 +80,6 @@ export const ShortContent: Story = {
   ),
 };
 
-/** Wider content — `className` widens the inner column. */
 export const WideContent: Story = {
   render: () => (
     <Page>

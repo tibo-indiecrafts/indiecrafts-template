@@ -17,10 +17,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — boxes fill the stage; a radial mask + slate background fade the
- * edges so the boxes look like a hover-reactive hero backdrop.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -35,14 +31,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Empty stage — no foreground. Verifies the box grid stretches edge-to-edge
- * and reacts cleanly to hover without surrounding chrome.
- *
- * Note: the boxes component uses heavy skew + scale transforms that extend
- * beyond its parent. It only reads correctly in full-viewport heroes —
- * smaller card-sized containers don't expose enough of the diagonal grid.
- */
 export const EmptyStage: Story = {
   render: () => (
     <Stage>

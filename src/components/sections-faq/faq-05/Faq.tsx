@@ -5,8 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { faq05Namespace } from "./config";
 import type { FaqBlock } from "./schema";
 
-/** Plain card chrome — no baked padding/flex so the upstream's
- *  `p-5` slot padding applies cleanly. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("bg-muted/40 text-card-foreground rounded-xl border", className)}

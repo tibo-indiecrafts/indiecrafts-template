@@ -20,10 +20,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — words fade in word-by-word with a 0.2s stagger and 10px blur
- * resolving to 0px. Great for hero subtitles.
- */
 export const Default: Story = {
   args: { duration: 0.5, filter: true },
   render: (args) => (
@@ -36,7 +32,6 @@ export const Default: Story = {
   ),
 };
 
-/** No blur — `filter={false}` swaps the blur for a plain opacity reveal. */
 export const NoBlur: Story = {
   args: { duration: 0.5, filter: false },
   render: (args) => (
@@ -49,7 +44,6 @@ export const NoBlur: Story = {
   ),
 };
 
-/** Slow — `duration={1.5}` stretches each word's reveal. */
 export const Slow: Story = {
   args: { duration: 1.5, filter: true },
   render: (args) => (
@@ -62,7 +56,6 @@ export const Slow: Story = {
   ),
 };
 
-/** Hero scale — bigger type via `className`. */
 export const Hero: Story = {
   args: { duration: 0.5, filter: true },
   render: (args) => (
@@ -76,7 +69,6 @@ export const Hero: Story = {
   ),
 };
 
-/** Brand colour — apply Tailwind utilities through `className` to retune the text. */
 export const Branded: Story = {
   args: { duration: 0.5, filter: true },
   render: (args) => (

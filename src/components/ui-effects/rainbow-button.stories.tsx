@@ -22,10 +22,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — solid background with a five-stop rainbow border + glow that
- * animates across the button via the `--animate-rainbow` keyframes.
- */
 export const Default: Story = {
   args: { variant: "default", size: "default" },
   render: (args) => (
@@ -35,7 +31,6 @@ export const Default: Story = {
   ),
 };
 
-/** Outline — `variant="outline"` keeps the rainbow ring on a light surface. */
 export const Outline: Story = {
   args: { variant: "outline", size: "default" },
   render: (args) => (
@@ -45,7 +40,6 @@ export const Outline: Story = {
   ),
 };
 
-/** Sizes — `sm`, `default`, `lg` exposed via the `size` prop. */
 export const Sizes: Story = {
   render: () => (
     <Stage>
@@ -58,7 +52,6 @@ export const Sizes: Story = {
   ),
 };
 
-/** Icon — `size="icon"` renders a square button. */
 export const Icon: Story = {
   render: () => (
     <Stage>
@@ -69,7 +62,6 @@ export const Icon: Story = {
   ),
 };
 
-/** With icon — children compose with `lucide-react` icons cleanly. */
 export const WithIcon: Story = {
   render: () => (
     <Stage>
@@ -82,7 +74,6 @@ export const WithIcon: Story = {
   ),
 };
 
-/** Disabled — `disabled` halts pointer events and dims the button. */
 export const Disabled: Story = {
   args: { disabled: true },
   render: (args) => (

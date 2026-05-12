@@ -31,12 +31,6 @@ const NAV_ITEMS = [
   },
 ];
 
-/**
- * Static replica of the navbar markup. The real component starts hidden and
- * only animates in on scroll-up — which is unreliable inside Storybook's
- * iframe. Stories use this so the visual is always present; see `Live` below
- * to exercise the actual scroll-driven animation.
- */
 const StaticNav = ({
   items,
   className,
@@ -82,7 +76,6 @@ const Page = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Default — three nav items + the built-in Login CTA, statically pinned. */
 export const Default: Story = {
   render: () => (
     <Page>
@@ -91,7 +84,6 @@ export const Default: Story = {
   ),
 };
 
-/** Many items — six links exercise the horizontal layout. */
 export const ManyItems: Story = {
   render: () => (
     <Page>
@@ -119,7 +111,6 @@ export const ManyItems: Story = {
   ),
 };
 
-/** Tinted — pass a `className` to override the navbar surface colour. */
 export const Tinted: Story = {
   render: () => (
     <Page>
@@ -128,12 +119,6 @@ export const Tinted: Story = {
   ),
 };
 
-/**
- * Live — mounts the real `FloatingNav`. The component starts hidden; scroll
- * down past 5% of the page, then scroll back up to trigger the slide-in
- * animation. This may not always fire inside Storybook&apos;s iframe — use
- * the static stories above for reliable visual review.
- */
 export const Live: Story = {
   render: () => (
     <div className="bg-background relative h-[300vh] w-full">

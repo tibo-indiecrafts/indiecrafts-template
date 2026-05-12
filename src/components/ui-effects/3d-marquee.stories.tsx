@@ -31,17 +31,6 @@ const SAMPLE_IMAGES = [
 
 const DENSE_IMAGES = [...SAMPLE_IMAGES, ...SAMPLE_IMAGES.slice(0, 8)];
 
-/**
- * The marquee was designed to sit BEHIND content as a hero backdrop —
- * absolute positioning + a viewport-tall container is the configuration
- * that exposes the rotated 1720×1720 grid properly. Each story below uses
- * that pattern; only the framing differs.
- *
- * Stories also need ≥16 images. With fewer, each column has too few tiles
- * and the `motion.div`'s `y: ±100` animation pushes them off-screen.
- */
-
-/** Hero pattern — full-viewport marquee with a dark veil and centered headline. */
 export const Default: Story = {
   render: () => (
     <div className="relative mx-auto flex h-screen w-full max-w-7xl flex-col items-center justify-center overflow-hidden rounded-3xl">
@@ -61,7 +50,6 @@ export const Default: Story = {
   ),
 };
 
-/** Dense — 24 images, fuller scrolling wall, lighter veil. */
 export const Dense: Story = {
   render: () => (
     <div className="relative mx-auto flex h-screen w-full max-w-7xl flex-col items-center justify-center overflow-hidden rounded-3xl">

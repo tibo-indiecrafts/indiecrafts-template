@@ -23,10 +23,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — count up from 0 to 1,234 with a spring transition. The ticker
- * waits until it scrolls into view (`useInView`) before starting.
- */
 export const Default: Story = {
   args: { value: 1234 },
   render: (args) => (
@@ -36,7 +32,6 @@ export const Default: Story = {
   ),
 };
 
-/** Count down — `direction="down"` starts at `value` and ticks to `startValue`. */
 export const CountDown: Story = {
   args: { value: 0, startValue: 100, direction: "down" },
   render: (args) => (
@@ -46,7 +41,6 @@ export const CountDown: Story = {
   ),
 };
 
-/** Decimal places — render currency or precision metrics with `decimalPlaces`. */
 export const Decimals: Story = {
   args: { value: 4.95, decimalPlaces: 2 },
   render: (args) => (
@@ -56,7 +50,6 @@ export const Decimals: Story = {
   ),
 };
 
-/** Delayed — `delay={1.5}` waits 1.5s after the element enters view. */
 export const Delayed: Story = {
   args: { value: 9999, delay: 1.5 },
   render: (args) => (
@@ -66,7 +59,6 @@ export const Delayed: Story = {
   ),
 };
 
-/** Stat row — typical "by the numbers" composition with three tickers. */
 export const StatRow: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

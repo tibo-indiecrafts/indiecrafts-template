@@ -7,7 +7,6 @@ import { SidebarTrigger } from "@/components/ui-primitives/sidebar";
 import { dashboardHeaderNamespace } from "./config";
 
 export type HeaderProps = {
-  /** URL for the trailing CTA. Optional — when omitted, the CTA is hidden. */
   externalHref?: string;
 };
 

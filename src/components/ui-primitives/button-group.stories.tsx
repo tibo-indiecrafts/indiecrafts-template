@@ -12,7 +12,6 @@ export default meta;
 
 type Story = StoryObj<typeof ButtonGroup>;
 
-/** Three buttons sharing edges — common toolbar pattern. */
 export const Default: Story = {
   render: () => (
     <ButtonGroup>
@@ -23,7 +22,6 @@ export const Default: Story = {
   ),
 };
 
-/** Icon buttons — text-formatting toolbar. */
 export const Icons: Story = {
   render: () => (
     <ButtonGroup>
@@ -43,7 +41,6 @@ export const Icons: Story = {
   ),
 };
 
-/** With a separator and label — segmented control with a title. */
 export const WithSeparator: Story = {
   render: () => (
     <ButtonGroup>
@@ -59,7 +56,6 @@ export const WithSeparator: Story = {
   ),
 };
 
-/** Split button — primary action plus a dropdown trigger. */
 export const SplitButton: Story = {
   render: () => (
     <ButtonGroup>

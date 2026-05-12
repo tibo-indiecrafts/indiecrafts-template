@@ -6,10 +6,6 @@ import { cn } from "@/lib/utils";
 import { stats05Items, stats05Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Three metric cards each with a footer drill-in link. Sourced from
- * `@blocks-so/stats-05`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats05Namespace);
   const items = props.items ?? stats05Items;

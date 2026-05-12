@@ -11,7 +11,6 @@ export default meta;
 
 type Story = StoryObj<typeof Checkbox>;
 
-/** Single checkbox + label, controlled by Radix's checked state. */
 export const Default: Story = {
   render: () => (
     <Label className="flex items-center gap-2">
@@ -21,7 +20,6 @@ export const Default: Story = {
   ),
 };
 
-/** Checked at mount via `defaultChecked`. */
 export const Checked: Story = {
   render: () => (
     <Label className="flex items-center gap-2">
@@ -31,7 +29,6 @@ export const Checked: Story = {
   ),
 };
 
-/** Indeterminate state — common in "select all" patterns. */
 export const Indeterminate: Story = {
   render: () => (
     <Label className="flex items-center gap-2">
@@ -41,7 +38,6 @@ export const Indeterminate: Story = {
   ),
 };
 
-/** Disabled checked + unchecked side by side. */
 export const Disabled: Story = {
   render: () => (
     <div className="grid gap-3">
@@ -57,7 +53,6 @@ export const Disabled: Story = {
   ),
 };
 
-/** Stacked list — common pattern for filter sets. */
 export const List: Story = {
   render: () => (
     <fieldset className="grid gap-3">

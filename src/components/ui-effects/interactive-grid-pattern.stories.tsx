@@ -14,13 +14,6 @@ export default meta;
 
 type Story = StoryObj<typeof InteractiveGridPattern>;
 
-/**
- * The upstream SVG has no `viewBox`, so its rect contents render at literal
- * pixel coordinates (0..`width * horizontal`). If the parent is wider than
- * the grid, the remaining area stays empty. Each story sizes its Stage to
- * match the grid&apos;s natural dimensions so the cells always fill the
- * parent edge-to-edge.
- */
 const Stage = ({
   cellWidth,
   cellHeight,
@@ -47,11 +40,6 @@ const Stage = ({
   </div>
 );
 
-/**
- * Default — 24×12 grid of 40px cells (960×480). Hover any cell to fill it;
- * the fill fades back when the cursor leaves. Foreground content sits at
- * `relative z-10` above the SVG.
- */
 export const Default: Story = {
   args: { width: 40, height: 40, squares: [24, 12] },
   render: (args) => (
@@ -73,7 +61,6 @@ export const Default: Story = {
   ),
 };
 
-/** Dense — 60×16 grid of 20px cells (1200×320), tight technical look. */
 export const Dense: Story = {
   args: { width: 20, height: 20, squares: [60, 16] },
   render: (args) => (
@@ -91,7 +78,6 @@ export const Dense: Story = {
   ),
 };
 
-/** Loose — 12×6 grid of 80px cells (960×480), architectural feel. */
 export const Loose: Story = {
   args: { width: 80, height: 80, squares: [12, 6] },
   render: (args) => (
@@ -109,10 +95,6 @@ export const Loose: Story = {
   ),
 };
 
-/**
- * Branded — `squaresClassName` overrides the per-cell stroke and hover fill
- * to use brand tokens.
- */
 export const Branded: Story = {
   args: {
     width: 40,
@@ -135,7 +117,6 @@ export const Branded: Story = {
   ),
 };
 
-/** Wide aspect — 60×8 grid of 24px cells (1440×192) for a banner backdrop. */
 export const WideAspect: Story = {
   args: { width: 24, height: 24, squares: [60, 8] },
   render: (args) => (

@@ -7,8 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { pricingComparator04Namespace } from "./config";
 import type { ComparatorTier, FeatureValue, PricingBlock } from "./schema";
 
-/** Plain card chrome — no baked padding/flex so the upstream's
- *  `grid grid-cols-4 border-b` rows apply cleanly. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("bg-card text-card-foreground rounded-xl border shadow-sm", className)}

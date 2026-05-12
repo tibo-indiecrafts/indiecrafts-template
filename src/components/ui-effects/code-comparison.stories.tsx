@@ -58,7 +58,6 @@ const TS_AFTER = `function getUser(id: string): string {
   return user.name.toUpperCase();
 }`;
 
-/** Default — refactor of an untyped Button into a typed shadcn-style one. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -74,10 +73,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Python diff — exercises a non-TS language and shows a SQL-injection fix
- * with a parameterised query.
- */
 export const Python: Story = {
   render: () => (
     <Frame>
@@ -93,7 +88,6 @@ export const Python: Story = {
   ),
 };
 
-/** Vivid theme pair — `vitesse-light` / `tokyo-night`. */
 export const VividThemes: Story = {
   render: () => (
     <Frame>
@@ -109,7 +103,6 @@ export const VividThemes: Story = {
   ),
 };
 
-/** Custom highlight color — orange instead of red for the diff sidebar. */
 export const CustomHighlightColor: Story = {
   render: () => (
     <Frame>

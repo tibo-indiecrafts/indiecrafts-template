@@ -13,7 +13,6 @@ import {
 } from "motion/react";
 import { useEffect, useRef } from "react";
 
-// Helper component for gradient layers
 function GradientLayer({
   springX,
   springY,
@@ -51,12 +50,7 @@ interface NoiseBackgroundProps {
   speed?: number;
   backdropBlur?: boolean;
   animating?: boolean;
-  /**
-   * URL for the noise texture image (overlaid via mix-blend-mode). Defaults
-   * to a self-hosted `/noise.svg` — replace with a higher-fidelity webp/png
-   * in `/public/` for production. Forked from the upstream Aceternity
-   * primitive to drop the assets.aceternity.com CDN dependency.
-   */
+
   noiseSrc?: string;
 }
 
@@ -75,17 +69,14 @@ export const NoiseBackground = ({
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  // Use spring animation for smooth movement
   const springX = useSpring(x, { stiffness: 100, damping: 30 });
   const springY = useSpring(y, { stiffness: 100, damping: 30 });
 
-  // Transform for top gradient strip
   const topGradientX = useTransform(springX, (val) => val * 0.1 - 50);
 
   const velocityRef = useRef({ x: 0, y: 0 });
   const lastDirectionChangeRef = useRef(0);
 
-  // Initialize position to center
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -97,17 +88,15 @@ export const NoiseBackground = ({
     y.set(centerY);
   }, [x, y]);
 
-  // Generate random velocity
   const generateRandomVelocityRef = useRef(() => {
     const angle = Math.random() * Math.PI * 2;
-    const magnitude = speed * (0.5 + Math.random() * 0.5); // Random speed between 0.5x and 1x
+    const magnitude = speed * (0.5 + Math.random() * 0.5);
     return {
       x: Math.cos(angle) * magnitude,
       y: Math.sin(angle) * magnitude,
     };
   });
 
-  // Update generateRandomVelocity when speed changes
   useEffect(() => {
     generateRandomVelocityRef.current = () => {
       const angle = Math.random() * Math.PI * 2;
@@ -120,7 +109,6 @@ export const NoiseBackground = ({
     velocityRef.current = generateRandomVelocityRef.current();
   }, [speed]);
 
-  // Animate using motion/react's useAnimationFrame
   useAnimationFrame((time) => {
     if (!animating || !containerRef.current) return;
 
@@ -128,23 +116,19 @@ export const NoiseBackground = ({
     const maxX = rect.width;
     const maxY = rect.height;
 
-    // Change direction randomly every 1.5-3 seconds
     if (time - lastDirectionChangeRef.current > 1500 + Math.random() * 1500) {
       velocityRef.current = generateRandomVelocityRef.current();
       lastDirectionChangeRef.current = time;
     }
 
-    // Update position based on velocity (deltaTime is ~16ms per frame at 60fps)
-    const deltaTime = 16; // Approximate frame time
+    const deltaTime = 16;
     const currentX = x.get();
     const currentY = y.get();
 
     let newX = currentX + velocityRef.current.x * deltaTime;
     let newY = currentY + velocityRef.current.y * deltaTime;
 
-    // When hitting edges, generate a completely new random direction
-    // This ensures truly random movement in all 360 degrees, not just horizontal/vertical
-    const padding = 20; // Keep some distance from edges
+    const padding = 20;
 
     if (
       newX < padding ||
@@ -152,16 +136,15 @@ export const NoiseBackground = ({
       newY < padding ||
       newY > maxY - padding
     ) {
-      // Generate completely random direction (full 360 degrees)
       const angle = Math.random() * Math.PI * 2;
       const magnitude = speed * (0.5 + Math.random() * 0.5);
       velocityRef.current = {
         x: Math.cos(angle) * magnitude,
         y: Math.sin(angle) * magnitude,
       };
-      // Reset timer to allow immediate new direction
+
       lastDirectionChangeRef.current = time;
-      // Clamp position to stay within bounds
+
       newX = Math.max(padding, Math.min(maxX - padding, newX));
       newY = Math.max(padding, Math.min(maxY - padding, newY));
     }

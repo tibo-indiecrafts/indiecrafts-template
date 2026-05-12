@@ -22,13 +22,8 @@ export default meta;
 
 type Story = StoryObj<typeof Sidebar09>;
 
-/** Full demo — user header, date picker, three calendar groups, "New calendar" footer. */
 export const Default: Story = {};
 
-/**
- * Minimal — empty `calendars`. Verifies the date picker + footer button still
- * render when no calendar groups are configured.
- */
 export const Minimal: Story = {
   args: {
     data: {

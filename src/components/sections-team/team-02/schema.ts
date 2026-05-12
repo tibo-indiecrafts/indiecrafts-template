@@ -7,7 +7,6 @@ export type TeamMember = {
 };
 
 export type TeamGroup = {
-  /** Group heading like "Leadership", "Engineering", "Marketing". */
   headingKey: MessageKey;
   members: ReadonlyArray<TeamMember>;
 };

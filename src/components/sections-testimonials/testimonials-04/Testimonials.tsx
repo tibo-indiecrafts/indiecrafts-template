@@ -22,10 +22,6 @@ const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 const THEO_AVATAR = "https://avatars.githubusercontent.com/u/68236786?v=4";
 
-/**
- * Testimonials-04 — JSX verbatim. Title row + a hero testimonial
- * card (with masked Unsplash backdrop) + 2-card row.
- */
 export default function Testimonials(props: Readonly<Testimonials04Block>) {
   const [t] = useScopedT(testimonials04Namespace);
 

@@ -29,10 +29,6 @@ const Title = ({ text }: { text: string }) => (
   </div>
 );
 
-/**
- * Default — WebGL-rendered grid that scrolls toward the horizon at 65°.
- * Falls back to a CSS-only animated grid when WebGL is unavailable.
- */
 export const Default: Story = {
   args: { angle: 65, cellSize: 60, opacity: 0.5 },
   render: (args) => (
@@ -43,7 +39,6 @@ export const Default: Story = {
   ),
 };
 
-/** Wider cells — `cellSize={100}` makes the grid feel more architectural. */
 export const WideCells: Story = {
   args: { angle: 65, cellSize: 100, opacity: 0.5 },
   render: (args) => (
@@ -54,7 +49,6 @@ export const WideCells: Story = {
   ),
 };
 
-/** Steeper angle — `angle={45}` flattens the perspective. */
 export const ShallowAngle: Story = {
   args: { angle: 45, cellSize: 80, opacity: 0.4 },
   render: (args) => (
@@ -65,11 +59,6 @@ export const ShallowAngle: Story = {
   ),
 };
 
-/**
- * Brand colour — both line colours read from the `--color-primary` token
- * (light/dark mirror the same brand surface, so we point both at the var
- * and the existing dark variant kicks in at the token level).
- */
 export const BrandColor: Story = {
   args: {
     angle: 65,
@@ -86,7 +75,6 @@ export const BrandColor: Story = {
   ),
 };
 
-/** Faded — drop `opacity` to 0.2 for a barely-there texture. */
 export const Faded: Story = {
   args: { opacity: 0.2 },
   render: (args) => (

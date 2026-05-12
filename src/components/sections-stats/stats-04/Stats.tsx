@@ -6,10 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { stats04Items, stats04Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Three-tile metric grid with trend badges in each card corner.
- * Sourced from `@blocks-so/stats-04`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats04Namespace);
   const items = props.items ?? stats04Items;

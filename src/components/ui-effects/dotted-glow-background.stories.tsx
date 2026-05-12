@@ -16,7 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Default — canvas-painted dots that pulse alpha at random phases. */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -26,7 +25,6 @@ export const Default: Story = {
   ),
 };
 
-/** Sparse — 60px gap between dot centres for a roomier ambient pattern. */
 export const Sparse: Story = {
   render: () => (
     <Stage>
@@ -36,7 +34,6 @@ export const Sparse: Story = {
   ),
 };
 
-/** Dense — 16px gap. */
 export const Dense: Story = {
   render: () => (
     <Stage>
@@ -46,7 +43,6 @@ export const Dense: Story = {
   ),
 };
 
-/** Custom palette — emerald dots glowing on a dark teal background. */
 export const Emerald: Story = {
   render: () => (
     <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-emerald-950">
@@ -62,7 +58,6 @@ export const Emerald: Story = {
   ),
 };
 
-/** Faster pulse — speed multiplier `speedScale=3` for restless motion. */
 export const Fast: Story = {
   render: () => (
     <Stage>
@@ -72,7 +67,6 @@ export const Fast: Story = {
   ),
 };
 
-/** Calm — speedScale 0.3 for a meditative shimmer. */
 export const Calm: Story = {
   render: () => (
     <Stage>

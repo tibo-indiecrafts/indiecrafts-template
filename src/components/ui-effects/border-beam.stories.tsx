@@ -20,7 +20,6 @@ const Card = ({ children }: { children?: React.ReactNode }) => (
   </div>
 );
 
-/** Default — slow orange→violet beam tracing the border. */
 export const Default: Story = {
   render: () => (
     <Card>
@@ -29,7 +28,6 @@ export const Default: Story = {
   ),
 };
 
-/** Fast — `duration={2}` for a snappier orbit. */
 export const Fast: Story = {
   render: () => (
     <Card>
@@ -38,7 +36,6 @@ export const Fast: Story = {
   ),
 };
 
-/** Reverse — beam orbits counter-clockwise. */
 export const Reverse: Story = {
   render: () => (
     <Card>
@@ -47,7 +44,6 @@ export const Reverse: Story = {
   ),
 };
 
-/** Custom palette — emerald → cyan instead of the orange/violet default. */
 export const CustomColors: Story = {
   render: () => (
     <Card>
@@ -56,7 +52,6 @@ export const CustomColors: Story = {
   ),
 };
 
-/** Twin beams — two `BorderBeam`s with opposite `reverse` for a chase effect. */
 export const TwinBeams: Story = {
   render: () => (
     <Card>
@@ -66,7 +61,6 @@ export const TwinBeams: Story = {
   ),
 };
 
-/** Thick stroke — `borderWidth={3}` for an emphasised outline. */
 export const ThickBorder: Story = {
   render: () => (
     <Card>

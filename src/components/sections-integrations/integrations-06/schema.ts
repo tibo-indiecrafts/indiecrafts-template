@@ -18,11 +18,11 @@ export type IntegrationIcon =
 export type IntegrationsBlock = {
   type: "integrations-06";
   id: string;
-  /** Top slider: 6 icons, scroll left-to-right. */
+
   rowTop: readonly IntegrationIcon[];
-  /** Middle slider: 6 icons, scroll right-to-left (reverse). */
+
   rowMiddle: readonly IntegrationIcon[];
-  /** Bottom slider: 6 icons, scroll left-to-right slower. */
+
   rowBottom: readonly IntegrationIcon[];
   headerTitleKey: MessageKey;
   headerBodyKey: MessageKey;

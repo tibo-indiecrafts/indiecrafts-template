@@ -11,9 +11,6 @@ import {
   Navbar,
   NavbarButton,
 } from "./resizable-navbar";
-// `NavbarLogo` from the upstream primitive hardcodes an Aceternity asset URL.
-// Use the project's `Logo` (reads from `siteConfig.logo`) so the demo shows
-// the brand mark, not the upstream's logo.
 
 const meta: Meta<typeof Navbar> = {
   title: "UI Effects/Nav/ResizableNavbar",
@@ -93,11 +90,6 @@ const Page = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — full-width navbar at rest; on scroll the body shrinks and floats
- * as a pinned pill. Resize the canvas under `md` to see the mobile variant
- * with the hamburger toggle.
- */
 export const Default: Story = {
   render: () => (
     <Page>
@@ -106,7 +98,6 @@ export const Default: Story = {
   ),
 };
 
-/** Many items — seven nav links exercise the horizontal layout. */
 export const ManyItems: Story = {
   render: () => (
     <Page>
@@ -115,7 +106,6 @@ export const ManyItems: Story = {
   ),
 };
 
-/** Gradient CTA — `variant="gradient"` paints the button blue. */
 export const GradientCta: Story = {
   render: () => (
     <Page>
@@ -124,7 +114,6 @@ export const GradientCta: Story = {
   ),
 };
 
-/** Dark CTA — `variant="dark"` for a high-contrast pill. */
 export const DarkCta: Story = {
   render: () => (
     <Page>

@@ -278,13 +278,6 @@ export default function FeaturesExpandable(props: Readonly<FeaturesExpandableBlo
 const LOADER_R = 10;
 const LOADER_CIRCUMFERENCE = 2 * Math.PI * LOADER_R;
 
-/**
- * Circular SVG progress loader. Uses native SVG `<animate>` element to
- * draw the stroke from `circumference → 0` over the autoplay duration —
- * no CSS keyframe needed and the duration is set inline so consumers
- * can tune it per call. Renders only when the parent decides to mount
- * it (we mount on the active tab only).
- */
 function ProgressLoader({ durationMs }: Readonly<{ durationMs: number }>) {
   return (
     <svg

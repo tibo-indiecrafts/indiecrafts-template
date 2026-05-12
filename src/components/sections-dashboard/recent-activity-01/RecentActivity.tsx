@@ -22,12 +22,6 @@ const ICONS: Record<RecentActivityIcon, LucideIcon> = {
   Trash2,
 };
 
-/**
- * Vertical activity feed — renders a list of timestamped events with an
- * icon + actor + action + target. Designed for dashboard sidebars or as
- * a full-width section in admin pages. Pass `viewAllHref` to render the
- * footer "View all" link.
- */
 export default function RecentActivity(props: Readonly<RecentActivityBlock>) {
   const [t, tr] = useScopedT(recentActivity01Namespace);
   const items = props.items ?? recentActivity01Items;

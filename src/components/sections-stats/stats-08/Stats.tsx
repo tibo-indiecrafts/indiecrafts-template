@@ -6,10 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { stats08Items, stats08Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Radial-bar budget cards with a footer drill-in link. Sourced from
- * `@blocks-so/stats-08`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats08Namespace);
   const items = props.items ?? stats08Items;

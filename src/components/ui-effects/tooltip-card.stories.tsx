@@ -18,10 +18,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — text content tooltip that follows the cursor across the trigger.
- * Hover the underlined word to see it appear.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -38,7 +34,6 @@ export const Default: Story = {
   ),
 };
 
-/** Rich content — pass any ReactNode for layouts with icons + paragraphs. */
 export const RichContent: Story = {
   render: () => (
     <Stage>
@@ -68,7 +63,6 @@ export const RichContent: Story = {
   ),
 };
 
-/** Image preview — like a link preview tooltip. */
 export const WithImage: Story = {
   render: () => (
     <Stage>
@@ -98,7 +92,6 @@ export const WithImage: Story = {
   ),
 };
 
-/** Multiple — independent tooltip state per trigger. */
 export const Multiple: Story = {
   render: () => (
     <Stage>

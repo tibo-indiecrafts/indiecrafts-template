@@ -19,15 +19,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — diagonal-line drop shadow that animates leftward via the
- * `--animate-line-shadow` keyframes. The shadow is drawn from a CSS gradient
- * on a `::after` pseudo-element clipped to text via `attr(data-text)`.
- *
- * Note: `shadowColor` must be a real color value, not `currentColor` — the
- * `::after` already has `text-transparent` so `currentColor` resolves to
- * transparent and the gradient becomes invisible.
- */
 export const Default: Story = {
   args: { shadowColor: "#0f172a" },
   render: (args) => (
@@ -43,7 +34,6 @@ export const Default: Story = {
   ),
 };
 
-/** Brand shadow — paints the line shadow in the brand colour. */
 export const BrandShadow: Story = {
   args: { shadowColor: "var(--color-primary)" },
   render: (args) => (
@@ -59,7 +49,6 @@ export const BrandShadow: Story = {
   ),
 };
 
-/** Display heading — used as a hero title at `text-8xl`. */
 export const Hero: Story = {
   args: { shadowColor: "#ec4899" },
   render: (args) => (
@@ -75,7 +64,6 @@ export const Hero: Story = {
   ),
 };
 
-/** Inline — `as="span"` to embed inside a sentence. */
 export const Inline: Story = {
   args: { shadowColor: "var(--color-primary)" },
   render: (args) => (

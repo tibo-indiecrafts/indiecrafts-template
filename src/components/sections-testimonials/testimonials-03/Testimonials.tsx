@@ -55,11 +55,6 @@ function TestimonialCard({ id, avatar, t }: { id: string; avatar: string; t: TFn
   );
 }
 
-/**
- * Testimonials-03 — JSX verbatim. 6 plain cards + 3 highlight
- * cards (Tailwind / Hulu / Stripe wordmarks) in an asymmetric
- * 3x3 grid with positional rounded-corner overrides.
- */
 export default function Testimonials(props: Readonly<Testimonials03Block>) {
   const [t] = useScopedT(testimonials03Namespace);
 

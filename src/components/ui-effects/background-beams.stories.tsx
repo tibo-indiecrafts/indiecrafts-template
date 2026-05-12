@@ -16,11 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — the beams render as `position: absolute inset-0` and only show on
- * a darker stage. The `<Stage>` provides the contrasting background and
- * positions content above the SVG layer.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -38,10 +33,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Empty stage — beams alone, no foreground content. Useful for verifying the
- * SVG paths animate as expected.
- */
 export const EmptyStage: Story = {
   render: () => (
     <Stage>
@@ -50,10 +41,6 @@ export const EmptyStage: Story = {
   ),
 };
 
-/**
- * Inside a card — passing `className` clips the beams to a smaller surface so
- * they can be used as a hero accent rather than a full-bleed backdrop.
- */
 export const Card: Story = {
   render: () => (
     <div className="bg-background flex min-h-svh items-center justify-center p-6">

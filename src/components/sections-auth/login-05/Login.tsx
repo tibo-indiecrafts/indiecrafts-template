@@ -9,12 +9,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { login05Namespace } from "./config";
 import type { LoginBlock } from "./schema";
 
-/**
- * Workspace sign-up — name + email + password + confirm + newsletter
- * + legal copy + returning-user link. Sourced from `@blocks-so/login-05`,
- * refactored into the section pattern: every visible string resolves
- * from `blocks.login-05.*`.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login05Namespace);
   const titleId = `${props.id}-title`;

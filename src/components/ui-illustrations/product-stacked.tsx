@@ -1,13 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-/**
- * 3D-perspective stacked dual-screen product mock — a foreground card
- * overlapping a tilted background card, both showing app screenshots,
- * floating over a softly tinted angled-stripe backdrop. Used by
- * `sections-hero/hero-14`. Mock imagery is decorative; treat as
- * illustrations-only (no translations).
- */
 export const ProductStacked = ({ className }: { className?: string }) => {
   return (
     <div className={cn("pointer-events-none relative scale-105", className)}>

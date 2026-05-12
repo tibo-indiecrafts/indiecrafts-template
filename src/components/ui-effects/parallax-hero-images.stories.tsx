@@ -52,33 +52,18 @@ const Frame = ({
   </div>
 );
 
-/**
- * Default — eight images positioned around the viewport with `default` depth
- * weighting. Move the mouse to see them parallax-shift; the cards in the
- * middle ring move further than the corner ones.
- */
 export const Default: Story = {
   render: () => <Frame title="Move your mouse around" images={IMAGES} />,
 };
 
-/**
- * Edge focus — `variant="edge-focus"` swaps the depth weighting so corner
- * images move more dramatically than centre ones; useful when the hero copy
- * sits in the middle.
- */
 export const EdgeFocus: Story = {
   render: () => <Frame title="Edge focus" images={IMAGES} variant="edge-focus" />,
 };
 
-/** Nature theme — same component, different imagery set. */
 export const NatureTheme: Story = {
   render: () => <Frame title="Wilderness" images={NATURE_IMAGES} />,
 };
 
-/**
- * Few images — passing fewer than 8 only fills the corresponding positions.
- * The component clamps to a max of 8 internally.
- */
 export const FewImages: Story = {
   render: () => <Frame title="Just four" images={IMAGES.slice(0, 4)} />,
 };

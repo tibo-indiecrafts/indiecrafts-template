@@ -52,13 +52,13 @@ export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
   iconKey: FeatureIcon;
   gradientKind: GradientKind;
-  /** Decorative bg image painted (low-opacity) behind the illustration. */
+
   bgImageUrl: string;
-  /** Inline trigger pill label (e.g. "LLMs", "Personal Agents"). */
+
   triggerLabelKey: MessageKey;
-  /** Big card heading for the active item. */
+
   titleKey: MessageKey;
-  /** Body paragraph for the active item. */
+
   bodyKey: MessageKey;
   ctaLabelKey: MessageKey;
   ctaHref: StaticAppPathname | `http${string}` | `#${string}`;
@@ -68,13 +68,13 @@ export type FeaturesExpandableItem = {
 export type FeaturesExpandableBlock = {
   type: "features-expandable-21";
   id: string;
-  /** Mono eyebrow (e.g. "[ 0.1 ] Features"). */
+
   eyebrowKey: MessageKey;
-  /** Sentence segments: lead {trigger1} mid {trigger2} tail. */
+
   headlineLeadKey: MessageKey;
   headlineMidKey: MessageKey;
   headlineTailKey: MessageKey;
-  /** Default 7000ms. */
+
   autoplayDurationMs?: number;
   items: readonly [FeaturesExpandableItem, FeaturesExpandableItem];
 };

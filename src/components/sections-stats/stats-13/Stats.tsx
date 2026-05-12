@@ -6,10 +6,6 @@ import { cn } from "@/lib/utils";
 import { stats13Namespace, stats13Sample, stats13Segments } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Segmented storage progress bar with per-segment legend and a
- * "Free" remainder. Sourced from `@blocks-so/stats-13`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats13Namespace);
   const titleId = `${props.id}-title`;

@@ -3,11 +3,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta02Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/**
- * Closing CTA — JSX verbatim against upstream `dark-landing-one`
- * CallToAction. Centered headline with gradient-stroke accent
- * mirroring the hero, body, and dual CTAs.
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta02Namespace);
   const primaryExternal = props.primary.href.startsWith("http");

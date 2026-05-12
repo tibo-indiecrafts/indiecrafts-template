@@ -1,10 +1,5 @@
 import type { MessageKey } from "@/types/messages";
 
-/**
- * Block from `@blocks-so/dialog-06` — create-workspace modal: title +
- * description + workspace-name field + private-toggle panel. All copy
- * resolves through `blocks.dialog-06.*`.
- */
 export type DialogBlock = {
   type: "dialog-06";
   id: string;

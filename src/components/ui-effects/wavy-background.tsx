@@ -65,7 +65,7 @@ export const WavyBackground = ({
       ctx.strokeStyle = waveColors[i % waveColors.length];
       for (x = 0; x < w; x += 5) {
         const y = noise(x / 800, 0.3 * i, nt) * 100;
-        ctx.lineTo(x, y + h * 0.5); // adjust for height, currently at 50% of the container
+        ctx.lineTo(x, y + h * 0.5);
       }
       ctx.stroke();
       ctx.closePath();
@@ -90,7 +90,6 @@ export const WavyBackground = ({
 
   const [isSafari, setIsSafari] = useState(false);
   useEffect(() => {
-    // I'm sorry but i have got to support it on safari.
     setIsSafari(
       typeof window !== "undefined" &&
         navigator.userAgent.includes("Safari") &&

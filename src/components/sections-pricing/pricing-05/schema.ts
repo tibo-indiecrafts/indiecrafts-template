@@ -14,8 +14,8 @@ export type PricingBlock = {
   id: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Outer tiles (left + right) — outline CTA. */
+
   outer: readonly [PricingTier, PricingTier];
-  /** Floating middle tier — primary CTA, ringed shadow card. */
+
   highlighted: PricingTier;
 };

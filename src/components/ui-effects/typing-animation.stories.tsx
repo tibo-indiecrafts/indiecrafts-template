@@ -28,10 +28,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — types a single string character-by-character with a blinking
- * cursor. The cursor disappears once the typing completes.
- */
 export const Default: Story = {
   args: { duration: 100 },
   render: (args) => (
@@ -43,10 +39,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Looping words — pass `words` to cycle through phrases. Each is typed,
- * paused, deleted, then the next one is typed.
- */
 export const LoopingWords: Story = {
   args: { duration: 80, pauseDelay: 1500, loop: true },
   render: (args) => (
@@ -60,7 +52,6 @@ export const LoopingWords: Story = {
   ),
 };
 
-/** Block cursor — `cursorStyle="block"` for a terminal feel. */
 export const BlockCursor: Story = {
   args: { cursorStyle: "block" },
   render: (args) => (
@@ -72,7 +63,6 @@ export const BlockCursor: Story = {
   ),
 };
 
-/** Underscore cursor — `cursorStyle="underscore"`. */
 export const UnderscoreCursor: Story = {
   args: { cursorStyle: "underscore" },
   render: (args) => (
@@ -84,7 +74,6 @@ export const UnderscoreCursor: Story = {
   ),
 };
 
-/** Hero — `as="h1"` swaps the rendered tag and bumps the size via className. */
 export const Hero: Story = {
   args: { duration: 80 },
   render: (args) => (
@@ -96,7 +85,6 @@ export const Hero: Story = {
   ),
 };
 
-/** With delay — `delay={1500}` waits 1.5s before typing begins. */
 export const Delayed: Story = {
   args: { duration: 100, delay: 1500 },
   render: (args) => (

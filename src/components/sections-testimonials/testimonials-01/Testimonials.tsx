@@ -40,10 +40,6 @@ function QuoteBlock({ quote }: { quote: TestimonialsQuote }) {
   );
 }
 
-/**
- * Testimonials pull-quote section. One centered quote when `quotes.length
- * === 1`; vertically-stacked quotes with separators otherwise.
- */
 export default function Testimonials(props: Readonly<TestimonialsBlock>) {
   const [t] = useScopedT(testimonials01Namespace);
   const labelId = `${props.id}-label`;

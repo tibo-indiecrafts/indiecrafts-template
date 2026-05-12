@@ -23,7 +23,6 @@ export default meta;
 
 type Story = StoryObj<typeof AlertDialog>;
 
-/** Standard destructive confirmation. */
 export const Default: Story = {
   render: () => (
     <AlertDialog>
@@ -49,7 +48,6 @@ export const Default: Story = {
   ),
 };
 
-/** Open by default for review. */
 export const InitiallyOpen: Story = {
   render: () => (
     <AlertDialog defaultOpen>

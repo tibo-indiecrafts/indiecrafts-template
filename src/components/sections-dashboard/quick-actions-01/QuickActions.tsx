@@ -25,12 +25,6 @@ const ICONS: Record<QuickActionIcon, LucideIcon> = {
   Mail,
 };
 
-/**
- * Quick-actions dashboard section — a responsive 1/2/4 column grid of
- * icon-labeled CTA cards. Each action becomes a click-through card when
- * `href` is set, else renders as a static card. Pairs naturally with
- * the KPI `SectionCards` and the activity feed on the dashboard page.
- */
 export default function QuickActions(props: Readonly<QuickActionsBlock>) {
   const [t, tr] = useScopedT(quickActions01Namespace);
   const actions = props.actions ?? quickActions01Items;

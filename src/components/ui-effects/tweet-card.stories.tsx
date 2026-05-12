@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { MagicTweet, TweetSkeleton } from "./tweet-card";
-// Use the localized wrapper for the "not found" state so the demo
-// reflects what consumers should import (`./tweet-not-found`), not the
-// upstream's hardcoded English copy.
+
 import { TweetNotFound } from "./tweet-not-found";
 
 const meta: Meta = {
@@ -19,7 +17,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-// A canned Twitter API response shape, sufficient for `enrichTweet` to render.
 const FIXTURE_TWEET = {
   __typename: "Tweet",
   lang: "en",
@@ -51,11 +48,6 @@ const FIXTURE_TWEET = {
   news_action_type: "conversation",
 } as Parameters<typeof MagicTweet>[0]["tweet"];
 
-/**
- * Default — `MagicTweet` rendering a fixture tweet object. In production the
- * server-only `TweetCard` fetches this via react-tweet&apos;s API; in
- * Storybook we hand it a static fixture instead.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -64,7 +56,6 @@ export const Default: Story = {
   ),
 };
 
-/** Skeleton — the loading state that ships while the fetch is in flight. */
 export const Skeleton: Story = {
   render: () => (
     <Stage>
@@ -73,7 +64,6 @@ export const Skeleton: Story = {
   ),
 };
 
-/** Not found — the empty state shown when the API returns nothing. */
 export const NotFound: Story = {
   render: () => (
     <Stage>
@@ -82,7 +72,6 @@ export const NotFound: Story = {
   ),
 };
 
-/** Wider — `className` adjusts the card width. */
 export const Wider: Story = {
   render: () => (
     <Stage>

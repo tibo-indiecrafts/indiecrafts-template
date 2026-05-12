@@ -33,10 +33,6 @@ import { cn } from "@/lib/utils";
 import { dialog10Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 
-/**
- * Schedule-meeting modal — title + attendees + date picker + time
- * select + location + description. Sourced from `@blocks-so/dialog-10`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [, tr] = useScopedT(dialog10Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

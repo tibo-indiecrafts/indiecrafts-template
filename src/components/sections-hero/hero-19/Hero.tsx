@@ -16,11 +16,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { hero19Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 
-/**
- * Grid-2 landing hero — JSX verbatim. Grid-shaped Container with
- * a masked Unsplash backdrop, centered title + body + CTA + subtext,
- * then 2 `FeatureCard` tiles in the lower bordered grid.
- */
 export default function Hero(props: Readonly<HeroBlock>) {
   const [t, , tRoot] = useScopedT(hero19Namespace);
   const external = props.primary.href.startsWith("http");

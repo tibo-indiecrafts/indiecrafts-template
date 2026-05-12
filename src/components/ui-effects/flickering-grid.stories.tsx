@@ -23,7 +23,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Default — small black squares flickering subtly behind text. */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -33,7 +32,6 @@ export const Default: Story = {
   ),
 };
 
-/** Large squares + bigger gap for a chunky pixel-art texture. */
 export const LargeSquares: Story = {
   render: () => (
     <Stage>
@@ -47,7 +45,6 @@ export const LargeSquares: Story = {
   ),
 };
 
-/** High flicker chance — frenetic, restless motion. */
 export const RestlessFlicker: Story = {
   render: () => (
     <Stage>
@@ -61,7 +58,6 @@ export const RestlessFlicker: Story = {
   ),
 };
 
-/** Custom colour — emerald green flickers over a near-black backdrop. */
 export const Emerald: Story = {
   render: () => (
     <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-zinc-950">
@@ -78,7 +74,6 @@ export const Emerald: Story = {
   ),
 };
 
-/** Radial mask — fades the grid edges to focus attention on the centre. */
 export const RadialMask: Story = {
   render: () => (
     <Stage>

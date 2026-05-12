@@ -25,11 +25,6 @@ const Card = ({
   </div>
 );
 
-/**
- * Default — drop `<Pointer />` as a child of any element to replace the OS
- * cursor with the default arrow pointer when the user hovers the parent.
- * The component attaches mousemove/leave listeners to its parent.
- */
 export const Default: Story = {
   render: () => (
     <Card>
@@ -42,7 +37,6 @@ export const Default: Story = {
   ),
 };
 
-/** Custom child — pass any ReactNode as the cursor. */
 export const HeartCursor: Story = {
   render: () => (
     <Card>
@@ -57,7 +51,6 @@ export const HeartCursor: Story = {
   ),
 };
 
-/** Sparkles — emits trailing icons; the pointer is anchored under the cursor. */
 export const Sparkle: Story = {
   render: () => (
     <Card>
@@ -72,7 +65,6 @@ export const Sparkle: Story = {
   ),
 };
 
-/** Emoji — string children also work. */
 export const Emoji: Story = {
   render: () => (
     <Card>
@@ -87,10 +79,6 @@ export const Emoji: Story = {
   ),
 };
 
-/**
- * Side by side — two independent pointer regions; each card swaps cursors
- * only while its own bounds are hovered.
- */
 export const SideBySide: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

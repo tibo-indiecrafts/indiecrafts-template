@@ -373,10 +373,6 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
 
   const columns = React.useMemo(() => buildColumns(t), [t]);
 
-  // TanStack Table's `useReactTable` returns functions that aren't safe for
-  // React Compiler to memoize — this is a known integration gap, not a bug
-  // in our code. The Compiler skips memoizing the component automatically;
-  // the lint rule still surfaces a warning, so we disable it locally.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,

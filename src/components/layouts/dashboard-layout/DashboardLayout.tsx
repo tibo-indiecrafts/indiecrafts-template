@@ -6,20 +6,6 @@ import { SiteFooter } from "@/components/layouts/default-layout/site-footer";
 import { SidebarProvider } from "@/components/ui-primitives/sidebar";
 import type { LayoutProps } from "../registry";
 
-/**
- * Admin chrome: collapsible Sidebar07 on the left, sticky DashboardHeader on
- * top of the inset, sections render inside the `<main>` landmark, footer
- * pinned below the main column. CSS vars `--sidebar-width` /
- * `--header-height` match shadcn's dashboard-01 reference.
- *
- * The header is fixed structure (`DashboardHeader`) — the `header` prop is
- * ignored. The `footer` prop accepts the standard slot semantics:
- * `true` → `<SiteFooter />`, `false` → none, `ReactNode` → custom slot.
- *
- * We deliberately avoid shadcn's `<SidebarInset>` (which renders its own
- * `<main>`) — this layout uses its own `<main id="main">` to satisfy the
- * single-landmark rule and host the SkipLink target.
- */
 export function DashboardLayout({ children, footer = true }: LayoutProps) {
   return (
     <>

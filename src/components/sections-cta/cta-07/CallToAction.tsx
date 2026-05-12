@@ -7,8 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta07Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/** Plain card chrome — no baked padding/flex so the consumer's
- *  `grid grid-cols-2 p-6` overrides apply cleanly. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("bg-card text-card-foreground rounded-xl border shadow-sm", className)}

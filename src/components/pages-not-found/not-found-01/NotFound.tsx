@@ -10,11 +10,6 @@ export type NotFoundProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * 404 template — centered card with eyebrow, title, description, and a
- * "back home" link routed through the i18n-aware `Link`. All copy comes
- * from `blocks.not-found-01.*`.
- */
 export function NotFound({
   layout = notFound01Defaults.layout,
   header,

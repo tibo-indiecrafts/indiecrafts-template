@@ -32,11 +32,6 @@ const Body = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — two diagonal blue cones sweep horizontally on a 7s loop. Mount
- * inside a `relative overflow-hidden` parent — the component is
- * `pointer-events-none absolute inset-0`.
- */
 export const Default: Story = {
   args: { duration: 7, xOffset: 100 },
   render: (args) => (
@@ -50,7 +45,6 @@ export const Default: Story = {
   ),
 };
 
-/** Slow — `duration={14}` doubles the sweep duration. */
 export const Slow: Story = {
   args: { duration: 14, xOffset: 80 },
   render: (args) => (
@@ -64,10 +58,6 @@ export const Slow: Story = {
   ),
 };
 
-/**
- * Brand tinted — three custom radial gradients that all stop on the brand
- * primary token. Indigo stops match `oklch(0.55 0.18 260)` from theme.config.
- */
 export const BrandTinted: Story = {
   render: () => (
     <Stage>
@@ -84,7 +74,6 @@ export const BrandTinted: Story = {
   ),
 };
 
-/** Wider sweep — `xOffset={250}` gives the cones more horizontal travel. */
 export const WideSweep: Story = {
   args: { xOffset: 250, duration: 9 },
   render: (args) => (

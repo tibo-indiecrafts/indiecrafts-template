@@ -19,7 +19,6 @@ const ICONS: Record<WidgetIcon, ComponentType<SVGProps<SVGSVGElement>>> = {
   openAi: OpenAI,
 };
 
-/** OpenAI ships an outline-only mark; needs `fill-foreground` to render. */
 const ICON_EXTRA_CLASS: Partial<Record<WidgetIcon, string>> = {
   openAi: "fill-foreground",
 };
@@ -111,5 +110,4 @@ function IconRow({ widget }: Readonly<{ widget: IconsWidget }>) {
   );
 }
 
-// Type-only re-export to keep TS happy with the narrowed widget prop.
 export type { Widget };

@@ -3,11 +3,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { testimonials05Namespace } from "./config";
 import type { Testimonials05Block } from "./schema";
 
-/**
- * Testimonials-05 — JSX verbatim. Eyebrow + intro centered above
- * the upstream `<Testimonials />` rotator (motion-driven 3-card
- * stack that lives in `ui-effects/libre-landing-testimonials.tsx`).
- */
 export default function Testimonials05(props: Readonly<Testimonials05Block>) {
   const [t] = useScopedT(testimonials05Namespace);
 

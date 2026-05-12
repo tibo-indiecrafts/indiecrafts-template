@@ -23,10 +23,6 @@ const CardBody = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — `mode="gradient"`. Hover the card to see a radial gradient track
- * the cursor while the border lights up with the default purple/pink stops.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -40,11 +36,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Brand gradient — `gradientFrom` / `gradientTo` swap the border ring
- * colours to the template&apos;s indigo-tinted brand. The `var(--color-primary)`
- * resolves at render time so a rebrand updates this card automatically.
- */
 export const BrandGradient: Story = {
   render: () => (
     <Stage>
@@ -63,7 +54,6 @@ export const BrandGradient: Story = {
   ),
 };
 
-/** Larger spotlight — `gradientSize={400}` widens the radial halo. */
 export const LargeSpotlight: Story = {
   render: () => (
     <Stage>
@@ -77,10 +67,6 @@ export const LargeSpotlight: Story = {
   ),
 };
 
-/**
- * Orb mode — `mode="orb"` adds a blurred floating orb that follows the cursor
- * with spring physics. `glowFrom` / `glowTo` control its gradient.
- */
 export const Orb: Story = {
   render: () => (
     <Stage>
@@ -99,7 +85,6 @@ export const Orb: Story = {
   ),
 };
 
-/** Grid — three independent cards. Each tracks its own pointer state. */
 export const Grid: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

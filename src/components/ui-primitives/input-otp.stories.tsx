@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof InputOTP>;
 
-/** 6-digit OTP — typical 2FA code entry. */
 export const Default: Story = {
   render: () => (
     <InputOTP maxLength={6}>
@@ -26,7 +25,6 @@ export const Default: Story = {
   ),
 };
 
-/** Split into two groups with a separator — common SMS code pattern. */
 export const Split: Story = {
   render: () => (
     <InputOTP maxLength={6}>
@@ -45,7 +43,6 @@ export const Split: Story = {
   ),
 };
 
-/** Pre-filled value via `defaultValue`. */
 export const WithDefault: Story = {
   render: () => (
     <InputOTP maxLength={4} defaultValue="1234">
@@ -59,7 +56,6 @@ export const WithDefault: Story = {
   ),
 };
 
-/** Disabled state — no input or focus interaction. */
 export const Disabled: Story = {
   render: () => (
     <InputOTP maxLength={6} disabled defaultValue="123456">

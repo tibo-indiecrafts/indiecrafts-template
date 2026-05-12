@@ -15,10 +15,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { formLayout02Namespace } from "./config";
 import type { FormLayoutBlock } from "./schema";
 
-/**
- * Three-stack settings form — personal info / workspace / newsletter
- * radio. Sourced from `@blocks-so/form-layout-02`.
- */
 export default function FormLayout(props: Readonly<FormLayoutBlock>) {
   const [t, tr] = useScopedT(formLayout02Namespace);
   const personalTitleId = `${props.id}-personal-title`;

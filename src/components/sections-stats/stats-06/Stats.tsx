@@ -7,11 +7,6 @@ import { cn } from "@/lib/utils";
 import { stats06Items, stats06Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Three region cards each with a goal-progress sub-row and a
- * status pill (within / observe / critical). Sourced from
- * `@blocks-so/stats-06`.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [t, tr] = useScopedT(stats06Namespace);
   const items = props.items ?? stats06Items;

@@ -33,7 +33,6 @@ const ProductCard = () => (
   </div>
 );
 
-/** Default — moderate tilt + translate on hover. */
 export const Default: Story = {
   render: () => (
     <CometCard>
@@ -42,7 +41,6 @@ export const Default: Story = {
   ),
 };
 
-/** Subtle — reduced rotate + translate for understated motion. */
 export const Subtle: Story = {
   render: () => (
     <CometCard rotateDepth={6} translateDepth={6}>
@@ -51,7 +49,6 @@ export const Subtle: Story = {
   ),
 };
 
-/** Aggressive — full tilt for marquee / showcase contexts. */
 export const Aggressive: Story = {
   render: () => (
     <CometCard rotateDepth={30} translateDepth={40}>
@@ -60,10 +57,6 @@ export const Aggressive: Story = {
   ),
 };
 
-/**
- * Text-only — comet shadow + glare even without media. Useful for
- * testimonial / quote cards.
- */
 export const TextOnly: Story = {
   render: () => (
     <CometCard>

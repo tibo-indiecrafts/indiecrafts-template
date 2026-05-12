@@ -26,7 +26,6 @@ import {
 } from "./config";
 
 export type AreaStackedProps = {
-  /** Data rows. Defaults to `chartAreaStackedData` from `./config`. */
   data?: typeof chartAreaStackedData;
 };
 

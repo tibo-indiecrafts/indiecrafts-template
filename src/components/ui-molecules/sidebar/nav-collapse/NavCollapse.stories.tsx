@@ -40,7 +40,6 @@ export const Default: Story = {
   },
 };
 
-/** Only `favorites` populated — teams + topics groups are not rendered. */
 export const FavoritesOnly: Story = {
   args: {
     favorites: [
@@ -52,7 +51,6 @@ export const FavoritesOnly: Story = {
   },
 };
 
-/** Only `teams` populated — favorites + topics groups are not rendered. */
 export const TeamsOnly: Story = {
   args: {
     favorites: [],
@@ -64,7 +62,6 @@ export const TeamsOnly: Story = {
   },
 };
 
-/** Only `topics` populated — favorites + teams groups are not rendered. */
 export const TopicsOnly: Story = {
   args: {
     favorites: [],

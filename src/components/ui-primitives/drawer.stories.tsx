@@ -20,7 +20,6 @@ export default meta;
 
 type Story = StoryObj<typeof Drawer>;
 
-/** Default — slides up from the bottom (mobile-friendly). */
 export const Default: Story = {
   render: () => (
     <Drawer>
@@ -43,7 +42,6 @@ export const Default: Story = {
   ),
 };
 
-/** Direction overrides — top, right, bottom, left. */
 export const Direction: Story = {
   render: () => (
     <div className="grid grid-cols-2 gap-3">

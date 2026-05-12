@@ -220,18 +220,6 @@ const LANGUAGES: Language[] = [
   },
 ];
 
-/**
- * Code-with-preview molecule — split-pane SDK demo with two language
- * tabs (Next.js / Svelte) on the left rendering source code, and a
- * window-chrome card on the right rendering a live React preview.
- * The active tab gets a primary-tinted underline indicator that
- * slides between buttons. Each language carries a `theme` slug
- * applied via `data-theme` to both the indicator and the preview
- * card so the preview re-themes when switching SDKs.
- *
- * The `preview` slot is required — supply any ReactNode (typically
- * a small mock UI illustration like `LoginPreviewIllustration`).
- */
 export default function CodeWithPreview({ preview }: { preview: ReactNode }) {
   const [activeId, setActiveId] = useState(LANGUAGES[0].id);
   const [indicator, setIndicator] = useState({ width: 0, left: 0 });

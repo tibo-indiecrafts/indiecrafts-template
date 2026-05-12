@@ -18,7 +18,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="w-[640px] max-w-full">{children}</div>
 );
 
-/** Default `from-center` animation. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -27,7 +26,6 @@ export const Default: Story = {
   ),
 };
 
-/** `from-top` — modal slides in from above. */
 export const FromTop: Story = {
   render: () => (
     <Frame>
@@ -40,7 +38,6 @@ export const FromTop: Story = {
   ),
 };
 
-/** `from-bottom` — modal slides in from below (common mobile pattern). */
 export const FromBottom: Story = {
   render: () => (
     <Frame>
@@ -53,7 +50,6 @@ export const FromBottom: Story = {
   ),
 };
 
-/** `fade` — opacity-only entry, no motion. */
 export const Fade: Story = {
   render: () => (
     <Frame>

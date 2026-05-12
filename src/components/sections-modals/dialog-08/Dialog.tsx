@@ -18,10 +18,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { dialog08Members, dialog08Namespace } from "./config";
 import type { DialogBlock, DialogStatus } from "./schema";
 
-/**
- * Invite-members modal — email-invite row + list of existing members
- * with avatars + status badges. Sourced from `@blocks-so/dialog-08`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [t, tr] = useScopedT(dialog08Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

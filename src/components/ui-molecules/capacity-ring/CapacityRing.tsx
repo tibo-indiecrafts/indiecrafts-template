@@ -6,17 +6,16 @@ import { ChartContainer, type ChartConfig } from "@/components/ui-primitives/cha
 import { cn } from "@/lib/utils";
 
 export type CapacityRingProps = {
-  /** Numeric value 0–100. Caller is responsible for clamping. */
   value: number;
-  /** Bar fill color — CSS variable or hex. Defaults to `var(--primary)`. */
+
   fill?: string;
-  /** Center overlay (typically the percentage as text). When omitted, no center text renders. */
+
   label?: ReactNode;
-  /** Square pixel size. Defaults to 80. */
+
   size?: number;
-  /** Optional accessibility label announced for the chart. */
+
   ariaLabel?: string;
-  /** Wrapper class for caller-side layout tweaks. */
+
   className?: string;
 };
 
@@ -24,15 +23,6 @@ const DEFAULT_CONFIG = {
   value: { label: "value" },
 } satisfies ChartConfig;
 
-/**
- * Radial-bar capacity gauge with an optional center label. Extracted
- * from sections-stats/stats-{07,08} where the same Recharts setup
- * (innerRadius="60%", outerRadius="100%", barSize=6, full-circle
- * sweep) was duplicated.
- *
- * For pie/donut variants at smaller sizes, see other ui-molecules
- * candidates — this one is specifically the 60–80px ring shape.
- */
 export function CapacityRing({
   value,
   fill = "var(--primary)",

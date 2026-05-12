@@ -11,7 +11,6 @@ export default meta;
 
 type Story = StoryObj<typeof Testimonials01Section>;
 
-/** Single centered pull-quote — the default, used by landing pages. */
 export const Default: Story = {
   args: {
     ...testimonials01Sample,
@@ -19,13 +18,6 @@ export const Default: Story = {
   } as React.ComponentProps<typeof Testimonials01Section>,
 };
 
-/**
- * Multiple quotes — vertically stacked with separators. Demonstrates
- * the same schema with a longer `quotes` array. The added quotes reuse
- * the lovelace message keys for layout verification; real consumers
- * would add per-quote entries under `blocks.testimonials-01.quotes.<id>`
- * in en.json.
- */
 export const WithMultipleQuotes: Story = {
   args: {
     id: "story-testimonials-01-multiple",

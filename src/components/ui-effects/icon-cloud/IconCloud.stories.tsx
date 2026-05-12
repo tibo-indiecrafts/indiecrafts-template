@@ -31,7 +31,6 @@ const TECH_ICONS = [
   "storybook",
 ].map((slug) => techSlug(slug));
 
-/** Default — fallback numbered spheres. Decorative (`aria-hidden`). */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -40,7 +39,6 @@ export const Default: Story = {
   ),
 };
 
-/** Tech stack — passes simple-icons CDN URLs via `images`. */
 export const TechStack: Story = {
   render: () => (
     <Stage>
@@ -49,7 +47,6 @@ export const TechStack: Story = {
   ),
 };
 
-/** Informational — uses the translated aria-label. */
 export const Informational: Story = {
   render: () => (
     <Stage>

@@ -10,11 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof HeroHighlight>;
 
-/**
- * Default — dot-pattern hero with a flashlight reveal that follows the
- * cursor. Wrap any phrase in `<Highlight>` to apply the animated
- * indigo-to-purple highlight stroke.
- */
 export const Default: Story = {
   render: () => (
     <HeroHighlight>
@@ -27,7 +22,6 @@ export const Default: Story = {
   ),
 };
 
-/** Compact — `containerClassName="h-[24rem]"` shrinks the hero. */
 export const Compact: Story = {
   render: () => (
     <HeroHighlight containerClassName="h-[24rem]">
@@ -39,7 +33,6 @@ export const Compact: Story = {
   ),
 };
 
-/** No highlight — plain heading on the dot pattern, no background stroke. */
 export const NoHighlight: Story = {
   render: () => (
     <HeroHighlight>
@@ -50,7 +43,6 @@ export const NoHighlight: Story = {
   ),
 };
 
-/** Eyebrow + body — typical hero composition with subtitle. */
 export const WithSubtitle: Story = {
   render: () => (
     <HeroHighlight>

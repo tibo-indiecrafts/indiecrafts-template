@@ -14,10 +14,10 @@ export type PricingBlock = {
   id: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Smaller "Free" tier — col-span-2, outline CTA. */
+
   basic: PricingTier;
-  /** Larger "Pro" tier — col-span-3, primary CTA, tinted bg + shadow. */
+
   pro: PricingTier;
-  /** "Everything in free plus :" intro line above the Pro tier's checklist. */
+
   proFeaturesIntroKey: MessageKey;
 };

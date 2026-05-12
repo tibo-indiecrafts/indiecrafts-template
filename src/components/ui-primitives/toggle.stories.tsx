@@ -11,12 +11,10 @@ export default meta;
 
 type Story = StoryObj<typeof Toggle>;
 
-/** Default — text label, off at mount. */
 export const Default: Story = {
   render: () => <Toggle aria-label="Toggle italic">Italic</Toggle>,
 };
 
-/** Pressed via `defaultPressed`. */
 export const Pressed: Story = {
   render: () => (
     <Toggle defaultPressed aria-label="Toggle bold">
@@ -25,7 +23,6 @@ export const Pressed: Story = {
   ),
 };
 
-/** Outline variant — visible border. */
 export const Outline: Story = {
   render: () => (
     <Toggle variant="outline" aria-label="Toggle underline">
@@ -34,7 +31,6 @@ export const Outline: Story = {
   ),
 };
 
-/** Sizes laid out side by side. */
 export const Sizes: Story = {
   render: () => (
     <div className="flex items-center gap-3">
@@ -51,7 +47,6 @@ export const Sizes: Story = {
   ),
 };
 
-/** Disabled. */
 export const Disabled: Story = {
   render: () => (
     <Toggle disabled aria-label="locked">

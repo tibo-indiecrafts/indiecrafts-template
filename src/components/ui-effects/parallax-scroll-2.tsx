@@ -49,7 +49,7 @@ export const ParallaxScrollSecond = ({
                 y: translateYFirst,
                 x: translateXFirst,
                 rotateZ: rotateXFirst,
-              }} // Apply the translateY motion value here
+              }}
               key={"grid-1" + idx}
             >
               <img

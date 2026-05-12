@@ -56,7 +56,6 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
   <div className="flex h-[420px] items-center justify-center">{children}</div>
 );
 
-/** Default — auto-cycles every 5 s; top card flips to the back. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -65,7 +64,6 @@ export const Default: Story = {
   ),
 };
 
-/** Wide offset — `offset={20}` exposes more of each underlying card. */
 export const WideOffset: Story = {
   render: () => (
     <Frame>
@@ -74,7 +72,6 @@ export const WideOffset: Story = {
   ),
 };
 
-/** Tight offset — minimal overlap; cards almost stack on top of each other. */
 export const TightOffset: Story = {
   render: () => (
     <Frame>
@@ -83,7 +80,6 @@ export const TightOffset: Story = {
   ),
 };
 
-/** Aggressive scale — `scaleFactor={0.12}` makes back cards visibly smaller. */
 export const AggressiveScale: Story = {
   render: () => (
     <Frame>

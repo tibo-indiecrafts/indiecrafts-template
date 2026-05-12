@@ -27,7 +27,7 @@ const brandHref = "#";
 
 export default function Sidebar({ ...props }: React.ComponentProps<typeof UISidebar>) {
   const [t] = useScopedT(sidebar04Namespace);
-  // Note: state-driven active item; in production wire to the router.
+
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const [mails, setMails] = React.useState(data.mails);
   const [query, setQuery] = React.useState("");

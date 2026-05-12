@@ -27,7 +27,6 @@ import {
 } from "./config";
 
 export type BarLabelCustomProps = {
-  /** Data rows. Defaults to `chartBarLabelCustomData` from `./config`. */
   data?: typeof chartBarLabelCustomData;
 };
 

@@ -26,11 +26,6 @@ const Pill = ({ children }: { children: React.ReactNode }) => (
   </span>
 );
 
-/**
- * Default — two opposite-direction marquee rows, both reactive to scroll
- * velocity. Scroll the canvas to see the rows speed up; the
- * `ScrollVelocityContainer` shares one velocity factor across rows.
- */
 export const Default: Story = {
   render: () => (
     <Page>
@@ -52,7 +47,6 @@ export const Default: Story = {
   ),
 };
 
-/** Single row — minimum viable composition. */
 export const SingleRow: Story = {
   render: () => (
     <Page>
@@ -67,7 +61,6 @@ export const SingleRow: Story = {
   ),
 };
 
-/** Pill row — pass card/pill children for a logo-cloud style. */
 export const PillRow: Story = {
   render: () => (
     <Page>
@@ -92,10 +85,6 @@ export const PillRow: Story = {
   ),
 };
 
-/**
- * No reactivity — `scrollReactivity={false}` keeps the row at a constant
- * speed regardless of scroll velocity.
- */
 export const NoScrollReactivity: Story = {
   render: () => (
     <Page>

@@ -11,10 +11,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { fileUpload06Namespace, fileUpload06Uploads } from "./config";
 import type { FileUploadBlock, FileUploadUpload } from "./schema";
 
-/**
- * Drop-zone card with split "Uploading" / "Finished" upload lists.
- * Sourced from `@blocks-so/file-upload-06`.
- */
 export default function FileUpload(props: Readonly<FileUploadBlock>) {
   const [t, tr] = useScopedT(fileUpload06Namespace);
   const [uploads, setUploads] = useState<FileUploadUpload[]>(

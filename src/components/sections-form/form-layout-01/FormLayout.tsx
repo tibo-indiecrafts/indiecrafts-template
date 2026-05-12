@@ -6,10 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { formLayout01Namespace } from "./config";
 import type { FormLayoutBlock } from "./schema";
 
-/**
- * Single-card register-to-workspace form — name + email + address
- * fields + cancel/submit footer. Sourced from `@blocks-so/form-layout-01`.
- */
 export default function FormLayout(props: Readonly<FormLayoutBlock>) {
   const [t, tr] = useScopedT(formLayout01Namespace);
   const titleId = `${props.id}-title`;

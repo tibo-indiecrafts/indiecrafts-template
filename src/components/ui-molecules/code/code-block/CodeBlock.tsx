@@ -17,11 +17,6 @@ function getShiki() {
   return shikiPromise;
 }
 
-/**
- * Lazily-loaded shiki highlighter. Memoizes the rendered JSX in a
- * 100-entry LRU keyed on `lang:length:head:tail` so re-renders of
- * the same snippet across tab switches stay free.
- */
 export async function highlight(code: string, lang: BundledLanguage) {
   const cacheKey = `${lang}:${code.length}:${code.slice(0, 50)}:${code.slice(-50)}`;
   const cached = highlightCache.get(cacheKey);
@@ -54,14 +49,6 @@ type Props = {
   lineNumbers?: boolean;
 };
 
-/**
- * Shiki-based code-block molecule. Wraps lazy-loaded shiki/web
- * highlighting with a JSX cache so consumers can mount many
- * highlighted snippets without re-parsing each on every render.
- * Supports light / dark themes via `data-theme="dark"` (themes
- * fixed at `github-light` and `vesper` — override via the `theme`
- * prop is wired but not yet honored at the highlight layer).
- */
 export default function CodeBlock({
   code,
   lang,

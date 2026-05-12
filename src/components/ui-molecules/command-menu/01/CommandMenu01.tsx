@@ -20,10 +20,6 @@ import {
 } from "./config";
 import type { CommandMenuBlock, CommandMenuItem } from "./schema";
 
-/**
- * Cmd+K palette with Workspace / Analytics / Settings groups, search
- * input, and an Esc footer button. Sourced from `@blocks-so/command-menu-01`.
- */
 export default function CommandMenu(props: Readonly<CommandMenuBlock>) {
   const [t, tr] = useScopedT(commandMenu01Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

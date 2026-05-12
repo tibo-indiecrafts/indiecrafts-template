@@ -30,7 +30,6 @@ const Frame = ({
   </div>
 );
 
-/** Default — 50 squares fading in/out at 1s duration. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -40,7 +39,6 @@ export const Default: Story = {
   ),
 };
 
-/** Larger cells — `width={60} height={60}` for sparser grid. */
 export const LargeCells: Story = {
   render: () => (
     <Frame>
@@ -54,7 +52,6 @@ export const LargeCells: Story = {
   ),
 };
 
-/** Dashed stroke — `strokeDasharray={4}` for a faint dashed grid. */
 export const DashedStroke: Story = {
   render: () => (
     <Frame>
@@ -67,7 +64,6 @@ export const DashedStroke: Story = {
   ),
 };
 
-/** More squares + faster cycle — denser shimmer. */
 export const Dense: Story = {
   render: () => (
     <Frame>
@@ -82,7 +78,6 @@ export const Dense: Story = {
   ),
 };
 
-/** Higher max-opacity — squares fade in more boldly. */
 export const HighOpacity: Story = {
   render: () => (
     <Frame>

@@ -1,10 +1,6 @@
 import { useTranslations } from "next-intl";
 import { skipLinkNamespace } from "./config";
 
-/**
- * Skip link — only visible when focused. Targets the `<main id="main">` landmark
- * in the root layout so keyboard users can jump past the nav.
- */
 export function SkipLink() {
   const t = useTranslations(skipLinkNamespace);
   return (

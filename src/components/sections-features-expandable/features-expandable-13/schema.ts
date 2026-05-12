@@ -25,11 +25,11 @@ export type FeatureIllustration =
 export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
   bgImageUrl: string;
-  /** Short label used for the tab button (with circular loader on active). */
+
   tabLabelKey: MessageKey;
-  /** Title rendered next to the illustration when active. */
+
   titleKey: MessageKey;
-  /** Description rendered next to the illustration when active. */
+
   bodyKey: MessageKey;
 };
 
@@ -38,7 +38,7 @@ export type FeaturesExpandableBlock = {
   id: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Default 6000ms. */
+
   autoplayDurationMs?: number;
   items: readonly [
     FeaturesExpandableItem,

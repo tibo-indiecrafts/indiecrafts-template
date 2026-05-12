@@ -12,10 +12,7 @@ export type CarouselSpan = "small" | "large";
 
 export type CarouselItemBlock = {
   illustration: CarouselIllustration;
-  /**
-   * `small` → `lg:basis-1/3`, `large` → `lg:basis-2/3`. On smaller
-   * breakpoints both fall back to `sm:basis-1/2`.
-   */
+
   span: CarouselSpan;
   titleKey: MessageKey;
   bodyKey: MessageKey;

@@ -45,14 +45,12 @@ export const Default: Story = {
   },
 };
 
-/** Single team — dropdown still renders, "Add team" remains the only alt action. */
 export const SingleTeam: Story = {
   args: {
     teams: [{ name: "Solo Inc", logo: Rocket, plan: "Free" }],
   },
 };
 
-/** Six teams — exercises the dropdown's vertical list and shortcut numbering. */
 export const ManyTeams: Story = {
   args: {
     teams: [

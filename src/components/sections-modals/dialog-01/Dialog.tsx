@@ -17,10 +17,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { dialog01Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 
-/**
- * Success confirmation modal — centered green check + title + description
- * + single full-width CTA. Sourced from `@blocks-so/dialog-01`.
- */
 export default function Dialog(props: Readonly<DialogBlock>) {
   const [, tr] = useScopedT(dialog01Namespace);
   const [open, setOpen] = useState(props.defaultOpen ?? false);

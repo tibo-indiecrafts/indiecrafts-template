@@ -20,10 +20,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — large outlined SVG text where a rainbow gradient fills only the
- * area near the cursor. The stroke draws on mount via stroke-dashoffset.
- */
 export const Default: Story = {
   args: { text: "INDIECRAFTS" },
   render: (args) => (
@@ -33,7 +29,6 @@ export const Default: Story = {
   ),
 };
 
-/** Short text — single word fits the SVG viewBox better. */
 export const ShortWord: Story = {
   args: { text: "BUILD" },
   render: (args) => (
@@ -43,7 +38,6 @@ export const ShortWord: Story = {
   ),
 };
 
-/** Smooth — `duration={0.5}` for a more gradual gradient follow. */
 export const SmoothFollow: Story = {
   args: { text: "SHIP", duration: 0.5 },
   render: (args) => (
@@ -53,7 +47,6 @@ export const SmoothFollow: Story = {
   ),
 };
 
-/** Year — works for any short string, including digits. */
 export const Year: Story = {
   args: { text: "2026" },
   render: (args) => (

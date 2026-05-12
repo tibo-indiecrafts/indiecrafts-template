@@ -67,7 +67,6 @@ const CARD_DATA = [
 const buildCards = (count: number) =>
   CARD_DATA.slice(0, count).map((c, i) => <Card key={i} card={c} index={i} />);
 
-/** Default — four cards, default scroll position. */
 export const Default: Story = {
   render: () => (
     <div className="bg-background min-h-svh w-full py-10">
@@ -76,7 +75,6 @@ export const Default: Story = {
   ),
 };
 
-/** Initial scroll — opens the carousel mid-list via `initialScroll`. */
 export const InitialScroll: Story = {
   render: () => (
     <div className="bg-background min-h-svh w-full py-10">
@@ -85,7 +83,6 @@ export const InitialScroll: Story = {
   ),
 };
 
-/** Single card — proves the layout collapses cleanly with one item. */
 export const SingleCard: Story = {
   render: () => (
     <div className="bg-background min-h-svh w-full py-10">
@@ -94,7 +91,6 @@ export const SingleCard: Story = {
   ),
 };
 
-/** Eight cards — demonstrates the horizontal scroll buttons becoming active. */
 export const Many: Story = {
   render: () => (
     <div className="bg-background min-h-svh w-full py-10">

@@ -18,10 +18,6 @@ const formatFileSize = (bytes: number) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
 };
 
-/**
- * Single-file spreadsheet upload form with progress card. Sourced
- * from `@blocks-so/file-upload-04`.
- */
 export default function FileUpload(props: Readonly<FileUploadBlock>) {
   const [t, tr] = useScopedT(fileUpload04Namespace);
   const accept = props.accept ?? ".csv,.xlsx,.xls";

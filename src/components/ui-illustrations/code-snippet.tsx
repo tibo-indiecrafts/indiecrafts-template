@@ -31,14 +31,6 @@ type Props = {
   lineNumbers?: boolean;
 };
 
-/**
- * Small shiki-based code highlighter used inside `ui-illustrations/`
- * components (e.g. `payments-diagram`). Distinct from
- * `ui-effects/code-block.tsx`, which is the Aceternity flat-file
- * upstream — that one uses `react-syntax-highlighter` and ships with
- * its own copy/tabs UI; this one is a thin shiki wrapper for inline
- * decorative code mocks.
- */
 export default function CodeSnippet({
   code,
   lang,

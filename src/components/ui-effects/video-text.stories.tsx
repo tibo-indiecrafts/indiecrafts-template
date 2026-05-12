@@ -18,7 +18,6 @@ export default meta;
 
 type Story = StoryObj<typeof VideoText>;
 
-// Reliable test video URL.
 const VIDEO_SRC = "https://www.w3schools.com/html/mov_bbb.mp4";
 
 const Stage = ({ children }: { children: React.ReactNode }) => (
@@ -27,11 +26,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — a video clip rendered through an SVG text mask, so the moving
- * frames only show inside the letterforms. Mount inside a fixed-size
- * parent — the component fills its container.
- */
 export const Default: Story = {
   args: { fontSize: 20 },
   render: (args) => (
@@ -43,7 +37,6 @@ export const Default: Story = {
   ),
 };
 
-/** Short word — single short word lets the type breathe. */
 export const ShortWord: Story = {
   args: { fontSize: 30 },
   render: (args) => (
@@ -55,7 +48,6 @@ export const ShortWord: Story = {
   ),
 };
 
-/** Smaller font — `fontSize={10}` keeps the type smaller and bolder. */
 export const SmallerType: Story = {
   args: { fontSize: 10 },
   render: (args) => (
@@ -67,7 +59,6 @@ export const SmallerType: Story = {
   ),
 };
 
-/** Custom font — `fontFamily="Georgia, serif"` for a different typographic feel. */
 export const SerifFont: Story = {
   args: { fontSize: 22, fontFamily: "Georgia, serif" },
   render: (args) => (
@@ -79,7 +70,6 @@ export const SerifFont: Story = {
   ),
 };
 
-/** No autoplay — `autoPlay={false}` waits for user interaction. */
 export const NoAutoplay: Story = {
   args: { autoPlay: false, fontSize: 20 },
   render: (args) => (

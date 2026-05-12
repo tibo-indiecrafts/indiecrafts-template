@@ -18,7 +18,6 @@ export default meta;
 
 type Story = StoryObj<typeof DirectionAwareHover>;
 
-/** Default — image card with title + price overlay. */
 export const Default: Story = {
   render: () => (
     <DirectionAwareHover imageUrl="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1000&q=80">
@@ -28,7 +27,6 @@ export const Default: Story = {
   ),
 };
 
-/** Long caption — multiple lines flow inside the overlay. */
 export const LongCaption: Story = {
   render: () => (
     <DirectionAwareHover imageUrl="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1000&q=80">
@@ -41,7 +39,6 @@ export const LongCaption: Story = {
   ),
 };
 
-/** Plain text child — caption can be a string instead of JSX. */
 export const StringCaption: Story = {
   render: () => (
     <DirectionAwareHover imageUrl="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=1000&q=80">
@@ -50,7 +47,6 @@ export const StringCaption: Story = {
   ),
 };
 
-/** Custom child styling — `childrenClassName` retunes the caption layer. */
 export const CustomCaptionStyle: Story = {
   render: () => (
     <DirectionAwareHover

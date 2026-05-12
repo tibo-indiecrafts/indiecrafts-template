@@ -8,13 +8,6 @@ import {
 } from "@/components/ui-molecules/ai/sources";
 import { useState, useEffect } from "react";
 
-/**
- * Mock AI chat conversation illustration — initial user message,
- * typing-indicator transition, and an AI response with source-card
- * citations. Used by `sections-secondary-hero/secondary-hero-01`.
- * Mock copy is decorative; treat as illustrations-only (no
- * translations).
- */
 export const Chat = () => {
   const [isStreaming, setIsStreaming] = useState(false);
 

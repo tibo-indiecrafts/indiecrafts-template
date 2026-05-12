@@ -4,9 +4,9 @@ import type { MessageKey } from "@/types/messages";
 export type CallToActionBlock = {
   type: "cta-11";
   id: string;
-  /** Muted prefix line of the headline. */
+
   titleMutedKey: MessageKey;
-  /** Foreground emphasis tail of the headline. */
+
   titleAccentKey: MessageKey;
   bodyKey: MessageKey;
   primary: {

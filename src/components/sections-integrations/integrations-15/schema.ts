@@ -24,6 +24,6 @@ export type IntegrationsBlock = {
   bodyKey: MessageKey;
   ctaLabelKey: MessageKey;
   ctaHref: StaticAppPathname | `http${string}` | `#${string}`;
-  /** Six spokes around the central LogoIcon — order is left-top, left-middle, left-bottom, right-top, right-middle, right-bottom. */
+
   spokes: readonly { iconKey: IntegrationIcon; position: IntegrationPosition }[];
 };

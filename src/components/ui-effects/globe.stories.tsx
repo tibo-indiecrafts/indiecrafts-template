@@ -87,11 +87,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — three arcs (NY → London, Tokyo → Sydney, Paris → Mexico City) on
- * a deep purple globe with a white atmosphere. The component must mount
- * inside a `<Canvas>` from `@react-three/fiber`.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -111,7 +106,6 @@ export const Default: Story = {
   ),
 };
 
-/** Many arcs — seven destinations exercise the ring + arc animation density. */
 export const ManyArcs: Story = {
   render: () => (
     <Stage>
@@ -131,11 +125,6 @@ export const ManyArcs: Story = {
   ),
 };
 
-/**
- * Brand surface — replace the purple base with the template&apos;s brand
- * colour. three.js can&apos;t resolve CSS vars, so we hard-code the sRGB
- * equivalent of `oklch(0.55 0.18 260)` from `theme.config.ts`.
- */
 export const BrandSurface: Story = {
   render: () => (
     <Stage>
@@ -158,7 +147,6 @@ export const BrandSurface: Story = {
   ),
 };
 
-/** No atmosphere — `showAtmosphere={false}` removes the soft halo. */
 export const NoAtmosphere: Story = {
   render: () => (
     <Stage>

@@ -38,10 +38,6 @@ const Body = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — canvas-rendered stars with most twinkling. Density scales with
- * canvas area, so smaller stages render fewer stars automatically.
- */
 export const Default: Story = {
   args: {
     starDensity: 0.00015,
@@ -58,7 +54,6 @@ export const Default: Story = {
   ),
 };
 
-/** Dense — `starDensity={0.0008}` cranks up the count. */
 export const Dense: Story = {
   args: { starDensity: 0.0008 },
   render: (args) => (
@@ -69,7 +64,6 @@ export const Dense: Story = {
   ),
 };
 
-/** No twinkle — `allStarsTwinkle={false}` and 0 probability for a still sky. */
 export const Still: Story = {
   args: { allStarsTwinkle: false, twinkleProbability: 0 },
   render: (args) => (
@@ -80,7 +74,6 @@ export const Still: Story = {
   ),
 };
 
-/** Fast twinkle — `min/maxTwinkleSpeed` lowered for a frantic shimmer. */
 export const FastTwinkle: Story = {
   args: { minTwinkleSpeed: 0.1, maxTwinkleSpeed: 0.4 },
   render: (args) => (

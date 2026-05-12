@@ -59,7 +59,7 @@ export type FeaturesExpandableBlock = {
   id: string;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Default 7000ms. */
+
   autoplayDurationMs?: number;
   items: readonly [
     FeaturesExpandableItem,

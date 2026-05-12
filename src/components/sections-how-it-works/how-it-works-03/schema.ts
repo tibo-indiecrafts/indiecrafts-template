@@ -14,7 +14,7 @@ export type HowItWorksStep = {
   numberKey: MessageKey;
   titleKey: MessageKey;
   bodyKey: MessageKey;
-  /** Optional testimonial blockquote rendered below the illustration. */
+
   testimonial?: Testimonial;
 };
 

@@ -32,12 +32,6 @@ const STATUS_CLASSES: Record<TableStatus, string> = {
     "border-0 bg-blue-500/15 text-blue-700 hover:bg-blue-500/25 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20",
 };
 
-/**
- * Product inventory table — sourced from `@blocks-so/table-03`,
- * refactored to fit the section pattern: localized labels, caller-driven
- * `products`, primitives swapped to `@/components/ui-primitives/`.
- * Category filter derives from the products at render time.
- */
 export default function Table(props: Readonly<TableBlock>) {
   const t = useTranslations(table03Namespace);
   const products = props.products ?? table3Products;

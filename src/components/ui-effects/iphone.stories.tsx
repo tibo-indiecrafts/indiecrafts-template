@@ -16,11 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — empty phone shell. Without `src` or `videoSrc`, the SVG renders
- * the device chassis at its native 433×882 aspect ratio with no media in the
- * screen area.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -31,7 +26,6 @@ export const Default: Story = {
   ),
 };
 
-/** Image content — pass `src` to display a still image inside the screen. */
 export const WithImage: Story = {
   render: () => (
     <Stage>
@@ -42,7 +36,6 @@ export const WithImage: Story = {
   ),
 };
 
-/** Video content — `videoSrc` autoplays a muted, looping clip on the screen. */
 export const WithVideo: Story = {
   render: () => (
     <Stage>
@@ -53,7 +46,6 @@ export const WithVideo: Story = {
   ),
 };
 
-/** Larger frame — the wrapper sets the rendered width; the SVG scales with it. */
 export const Large: Story = {
   render: () => (
     <Stage>
@@ -64,7 +56,6 @@ export const Large: Story = {
   ),
 };
 
-/** Small thumbnail — proves the component scales down to compact previews. */
 export const Small: Story = {
   render: () => (
     <Stage>

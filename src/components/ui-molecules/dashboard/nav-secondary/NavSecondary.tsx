@@ -10,7 +10,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui-primitives/sidebar";
 
-/** Icon component shape — accepts both tabler and lucide icons. */
 type IconComponent = React.ComponentType<{ className?: string }>;
 
 export function NavSecondary({

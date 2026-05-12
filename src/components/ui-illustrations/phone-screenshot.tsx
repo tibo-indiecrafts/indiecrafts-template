@@ -10,13 +10,6 @@ export type PhoneScreenshotProps = {
   className?: string;
 };
 
-/**
- * Phone-shaped frame mocking an app screenshot. The outer rounded
- * shell is the device chrome; the inner image is the screen content.
- * Used by `sections-secondary-hero/secondary-hero-13`. Mock content
- * is decorative; consumers can pass a custom `src` to swap in a real
- * screenshot.
- */
 export const PhoneScreenshot = ({
   src = DEFAULT_SRC,
   alt = "App screen",

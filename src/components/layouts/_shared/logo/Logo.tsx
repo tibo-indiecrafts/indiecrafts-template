@@ -6,12 +6,6 @@ type LogoIconProps = {
   className?: string;
 };
 
-/**
- * Square brand icon — renders `siteConfig.logo` (the asset at /public/logo.svg
- * by default). Drop a new file there (or change `siteConfig.logo`) and every
- * call site updates. `unoptimized` skips the Next image pipeline since the
- * asset is typically a hand-tuned SVG that doesn't benefit from re-encoding.
- */
 export function LogoIcon({ className }: LogoIconProps) {
   return (
     <Image
@@ -28,11 +22,10 @@ export function LogoIcon({ className }: LogoIconProps) {
 
 type LogoProps = {
   className?: string;
-  /** Override the icon size (default `size-6`). */
+
   iconClassName?: string;
 };
 
-/** Brand mark + wordmark — pairs the project icon with `siteConfig.name`. */
 export function Logo({ className, iconClassName }: LogoProps) {
   return (
     <span className={cn("text-foreground inline-flex items-center gap-2", className)}>

@@ -17,11 +17,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — indigo card that wobbles toward the cursor by ±20px and the
- * inner content counter-translates for a subtle parallax. Use one of the
- * `containerClassName` brand swaps below to retune the surface.
- */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -36,7 +31,6 @@ export const Default: Story = {
   ),
 };
 
-/** Brand colour — `containerClassName` overrides the default indigo surface. */
 export const Cyan: Story = {
   render: () => (
     <Stage>
@@ -50,7 +44,6 @@ export const Cyan: Story = {
   ),
 };
 
-/** Wide — `max-w-2xl` for an editorial-width card. */
 export const Wide: Story = {
   render: () => (
     <Stage>
@@ -65,10 +58,6 @@ export const Wide: Story = {
   ),
 };
 
-/**
- * With image — wrap an image inside the card; it wobbles with the inner
- * content layer for a layered parallax feel.
- */
 export const WithImage: Story = {
   render: () => (
     <Stage>
@@ -92,7 +81,6 @@ export const WithImage: Story = {
   ),
 };
 
-/** Grid — three independent wobble cards. */
 export const Grid: Story = {
   parameters: { layout: "fullscreen" },
   render: () => (

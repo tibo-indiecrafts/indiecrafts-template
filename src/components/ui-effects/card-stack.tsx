@@ -33,8 +33,8 @@ export const CardStack = ({
   const startFlipping = () => {
     interval = setInterval(() => {
       setCards((prevCards: Card[]) => {
-        const newArray = [...prevCards]; // create a copy of the array
-        newArray.unshift(newArray.pop()!); // move the last element to the front
+        const newArray = [...prevCards];
+        newArray.unshift(newArray.pop()!);
         return newArray;
       });
     }, 5000);

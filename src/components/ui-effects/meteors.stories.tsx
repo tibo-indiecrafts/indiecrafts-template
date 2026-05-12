@@ -19,11 +19,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/**
- * Default — 20 meteor streaks fall diagonally across the frame at randomised
- * delays + durations. Mount inside a `relative overflow-hidden` parent so
- * the absolute streaks stay within the canvas.
- */
 export const Default: Story = {
   args: { number: 20 },
   render: (args) => (
@@ -40,7 +35,6 @@ export const Default: Story = {
   ),
 };
 
-/** Sparse — `number={5}` for a calmer night-sky vibe. */
 export const Sparse: Story = {
   args: { number: 5 },
   render: (args) => (
@@ -51,7 +45,6 @@ export const Sparse: Story = {
   ),
 };
 
-/** Heavy — `number={60}` for a dense storm. */
 export const Heavy: Story = {
   args: { number: 60 },
   render: (args) => (
@@ -62,7 +55,6 @@ export const Heavy: Story = {
   ),
 };
 
-/** Tinted — `className` tints the streak head + glow. */
 export const Tinted: Story = {
   args: { number: 30 },
   render: (args) => (
@@ -76,7 +68,6 @@ export const Tinted: Story = {
   ),
 };
 
-/** Card backdrop — meteors confined to a card, not the whole viewport. */
 export const InCard: Story = {
   parameters: { layout: "centered" },
   render: () => (

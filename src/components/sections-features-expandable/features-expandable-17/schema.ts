@@ -31,7 +31,7 @@ export type StatIcon = "shieldCheck" | "hourglass" | "rocket" | "lock";
 
 export type StatItem = {
   iconKey: StatIcon;
-  /** Plain label — e.g. "SOC 2", "99.9% uptime". */
+
   labelKey: MessageKey;
 };
 
@@ -49,13 +49,13 @@ export type SupportiveContent =
 export type FeaturesExpandableItem = {
   illustration: FeatureIllustration;
   iconKey: FeatureIcon;
-  /** Decorative bg image painted (with dither overlay) behind the illustration. */
+
   bgImageUrl: string;
-  /** Short pill-button label (e.g. "AI Models"). */
+
   labelKey: MessageKey;
-  /** Large headline shown when the item is active. */
+
   titleKey: MessageKey;
-  /** Body paragraph shown under the headline. */
+
   bodyKey: MessageKey;
   ctaLabelKey: MessageKey;
   ctaHref: StaticAppPathname | `http${string}` | `#${string}`;

@@ -6,10 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { testimonials13Namespace } from "./config";
 import type { TestimonialItem, TestimonialsBlock } from "./schema";
 
-/** Plain card chrome — no baked padding/flex so the consumer's
- *  `grid grid-rows-* sm:p-6 pt-6` classes apply cleanly. Mirrors the
- *  visual of shadcn's Card without its `flex flex-col gap-6 py-6`
- *  defaults that conflict with the upstream's grid layout. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("bg-card text-card-foreground rounded-xl border shadow-sm", className)}

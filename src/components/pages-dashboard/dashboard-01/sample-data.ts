@@ -1,11 +1,6 @@
 import type { z } from "zod";
 import { schema } from "@/components/sections-data/data-table";
 
-/**
- * Sample rows shipped with the Dashboard template so the table renders
- * meaningfully in Storybook. Forks supply their own data when wiring this
- * template into a real route.
- */
 export const dashboard01SampleRows: z.infer<typeof schema>[] = [
   {
     id: 1,

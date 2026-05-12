@@ -142,12 +142,6 @@ function buildColumns(t: Translator): ColumnDef<TableItem>[] {
   ];
 }
 
-/**
- * Searchable / sortable / paginated data table — sourced from
- * `@blocks-so/table-05`, refactored into the section pattern: every label
- * (column headers, status, search placeholder, pagination labels) sources
- * from `blocks.table-05.*`. Items + initial page size are caller-driven.
- */
 export default function Table(props: Readonly<TableBlock>) {
   const t = useTranslations(table05Namespace);
   const items = props.items ?? table5Items;

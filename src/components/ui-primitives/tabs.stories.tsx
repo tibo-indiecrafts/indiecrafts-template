@@ -13,7 +13,6 @@ export default meta;
 
 type Story = StoryObj<typeof Tabs>;
 
-/** Two-pane tabs for an account / password switcher. */
 export const Default: Story = {
   render: () => (
     <Tabs defaultValue="account" className="w-[400px]">
@@ -37,7 +36,6 @@ export const Default: Story = {
   ),
 };
 
-/** Three tabs with one disabled. */
 export const WithDisabledTab: Story = {
   render: () => (
     <Tabs defaultValue="overview" className="w-[420px]">
@@ -59,7 +57,6 @@ export const WithDisabledTab: Story = {
   ),
 };
 
-/** Vertical orientation — list stacks left of the panes. */
 export const Vertical: Story = {
   render: () => (
     <Tabs

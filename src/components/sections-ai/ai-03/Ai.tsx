@@ -56,11 +56,6 @@ const ICONS = {
 
 type IconName = keyof typeof ICONS;
 
-/**
- * Composer with attachments dropdown, auto-mode toggle, and three
- * selector dropdowns (model / agent / performance). Sourced from a
- * shadcn AI block.
- */
 export default function Ai(props: Readonly<AiBlock>) {
   const [t] = useScopedT(ai03Namespace);
   const attachments = props.attachments ?? ai03Attachments;

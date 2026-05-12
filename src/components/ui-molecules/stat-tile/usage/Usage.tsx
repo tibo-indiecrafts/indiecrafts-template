@@ -6,10 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { stats09Items, stats09Namespace } from "./config";
 import type { UsageBlock } from "./schema";
 
-/**
- * Usage cards with linear progress bars showing consumption vs
- * limit. Sourced from `@blocks-so/stats-09`.
- */
 export default function Usage(props: Readonly<UsageBlock>) {
   const [t, tr] = useScopedT(stats09Namespace);
   const items = props.items ?? stats09Items;

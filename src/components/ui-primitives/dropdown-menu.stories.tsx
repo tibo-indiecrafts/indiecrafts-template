@@ -27,7 +27,6 @@ export default meta;
 
 type Story = StoryObj<typeof DropdownMenu>;
 
-/** Standard menu with shortcuts and a destructive entry. */
 export const Default: Story = {
   render: () => (
     <DropdownMenu>
@@ -58,7 +57,6 @@ export const Default: Story = {
   ),
 };
 
-/** Checkbox items — multi-select toggles. */
 export const Checkboxes: Story = {
   render: () => {
     const Demo = () => {
@@ -86,7 +84,6 @@ export const Checkboxes: Story = {
   },
 };
 
-/** Radio items — single-select within a group. */
 export const Radios: Story = {
   render: () => {
     const Demo = () => {
@@ -112,7 +109,6 @@ export const Radios: Story = {
   },
 };
 
-/** Submenu — nested item that opens a side flyout. */
 export const WithSubmenu: Story = {
   render: () => (
     <DropdownMenu>

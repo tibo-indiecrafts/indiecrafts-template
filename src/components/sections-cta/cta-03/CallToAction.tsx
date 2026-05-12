@@ -7,11 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta03Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/**
- * CTA-03 — JSX verbatim. Gradient-tinted card with a masked
- * Unsplash backdrop, headline + body + single CTA on the left,
- * and the `LayoutIllustration` floating in from the right at @lg.
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta03Namespace);
   const external = props.primary.href.startsWith("http");

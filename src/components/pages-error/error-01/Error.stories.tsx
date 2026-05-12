@@ -12,5 +12,4 @@ type Story = StoryObj<typeof Error>;
 
 export const Default: Story = {};
 
-/** Bare layout — useful for embedding inside other shells. */
 export const FullBleed: Story = { args: { layout: "full-bleed" } };

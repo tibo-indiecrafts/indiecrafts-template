@@ -22,13 +22,8 @@ export default meta;
 
 type Story = StoryObj<typeof Sidebar07>;
 
-/** Full demo data — main nav, secondary nav, documents section, user footer. */
 export const Default: Story = {};
 
-/**
- * Minimal — empty `documents` and a trimmed `navMain`/`navSecondary`. Verifies
- * the sidebar renders without dividers/headers when collections are empty.
- */
 export const Minimal: Story = {
   args: {
     data: {

@@ -17,11 +17,7 @@ export type IconsWidget = {
 export type CodeWidget = {
   kind: "code";
   titleKey: MessageKey;
-  /**
-   * Rich-text body. The translation may use `<command>...</command>`
-   * and `<flag>...</flag>` tags to render inline `<code>` chips with
-   * accent colours.
-   */
+
   bodyKey: MessageKey;
 };
 

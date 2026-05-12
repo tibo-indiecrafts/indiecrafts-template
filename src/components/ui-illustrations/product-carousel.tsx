@@ -22,12 +22,6 @@ const SCREENSHOTS = [
   },
 ];
 
-/**
- * Auto-cycling single-image product preview — crossfades through three
- * screenshots every 3 seconds. Used by `sections-hero/hero-11`. Mock
- * imagery is decorative; treat as illustrations-only (no
- * translations).
- */
 export const ProductCarousel = ({ className }: { className?: string }) => {
   const [active, setActive] = useState(0);
 

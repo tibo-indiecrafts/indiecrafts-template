@@ -16,7 +16,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-/** Defaults — translated quotes/names from `blocks.animated-testimonials.*`. */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -25,7 +24,6 @@ export const Default: Story = {
   ),
 };
 
-/** Autoplay — rotates every few seconds without user interaction. */
 export const Autoplay: Story = {
   render: () => (
     <Stage>

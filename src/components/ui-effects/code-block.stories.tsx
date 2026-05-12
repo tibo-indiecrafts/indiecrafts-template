@@ -57,7 +57,6 @@ export function Counter() {
   );
 }`;
 
-/** Default — TSX with filename and copy button. */
 export const Default: Story = {
   render: () => (
     <Frame>
@@ -66,7 +65,6 @@ export const Default: Story = {
   ),
 };
 
-/** Bash — exercises a different language highlighter. */
 export const Bash: Story = {
   render: () => (
     <Frame>
@@ -75,7 +73,6 @@ export const Bash: Story = {
   ),
 };
 
-/** JSON — language switch + dotted highlighting. */
 export const Json: Story = {
   render: () => (
     <Frame>
@@ -84,7 +81,6 @@ export const Json: Story = {
   ),
 };
 
-/** Highlighted lines — `highlightLines` underlines specific rows. */
 export const Highlighted: Story = {
   render: () => (
     <Frame>
@@ -98,7 +94,6 @@ export const Highlighted: Story = {
   ),
 };
 
-/** Tabs — multiple snippets share one filename header. */
 export const Tabs: Story = {
   render: () => (
     <Frame>

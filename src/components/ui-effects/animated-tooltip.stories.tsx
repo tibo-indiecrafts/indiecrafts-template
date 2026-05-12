@@ -37,7 +37,6 @@ const ITEMS = [
   },
 ];
 
-/** Default — overlapping avatar group with hover-to-reveal tooltip. */
 export const Default: Story = {
   render: () => (
     <div className="flex items-center justify-center p-10">
@@ -46,7 +45,6 @@ export const Default: Story = {
   ),
 };
 
-/** Single avatar — proves the tooltip works without the avatar-stack effect. */
 export const Single: Story = {
   render: () => (
     <div className="flex items-center justify-center p-10">
@@ -55,7 +53,6 @@ export const Single: Story = {
   ),
 };
 
-/** Eight avatars — fuller team list, exercises stacking + tilt animation. */
 export const LargeTeam: Story = {
   render: () => (
     <div className="flex items-center justify-center p-10">
@@ -95,9 +92,6 @@ export const LargeTeam: Story = {
   ),
 };
 
-/**
- * Embedded in surrounding chrome — common "Trusted by N people" hero pattern.
- */
 export const WithCopy: Story = {
   render: () => (
     <div className="flex max-w-md flex-col items-center gap-3 p-10 text-center">

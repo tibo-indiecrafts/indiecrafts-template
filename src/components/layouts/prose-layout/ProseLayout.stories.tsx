@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof ProseLayout>;
 
-/** Privacy-policy-style content — verifies typography spacing and lists. */
 export const Default: Story = {
   render: () => (
     <ProseLayout>
@@ -40,10 +39,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Blog-post-style content — exercises code blocks, blockquotes, and inline
- * formatting that the privacy story doesn't cover.
- */
 export const BlogPost: Story = {
   render: () => (
     <ProseLayout>
@@ -74,10 +69,6 @@ pnpm verify`}</code>
   ),
 };
 
-/**
- * Single short paragraph — proves the layout looks balanced even with sparse
- * content (no awkward leading whitespace at the top).
- */
 export const ShortSnippet: Story = {
   render: () => (
     <ProseLayout>

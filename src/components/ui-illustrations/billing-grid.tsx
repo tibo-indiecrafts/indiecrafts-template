@@ -1,12 +1,5 @@
 import { BillingTable } from "@/components/ui-illustrations/billing-table";
 
-/**
- * Dashed-grid frame containing the `BillingTable` mock. The grid is a
- * stack of horizontal + vertical dashed rules creating a "blueprint"
- * backdrop. Used by `sections-secondary-hero/secondary-hero-05`. Mock
- * content is decorative; treat as illustrations-only (no
- * translations).
- */
 export const BillingGrid = () => {
   return (
     <div className="relative h-fit">

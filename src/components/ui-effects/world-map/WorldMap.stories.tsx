@@ -14,7 +14,6 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-background w-[900px] max-w-full">{children}</div>
 );
 
-/** Default — three intercontinental arcs from `worldMapDefaultDots`. Decorative. */
 export const Default: Story = {
   render: () => (
     <Stage>
@@ -23,7 +22,6 @@ export const Default: Story = {
   ),
 };
 
-/** Informational — exposes the translated alt to assistive tech. */
 export const Informational: Story = {
   render: () => (
     <Stage>
@@ -32,7 +30,6 @@ export const Informational: Story = {
   ),
 };
 
-/** Custom dots — caller supplies their own arc set. */
 export const CustomRoutes: Story = {
   render: () => (
     <Stage>

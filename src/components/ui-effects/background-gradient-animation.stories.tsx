@@ -10,7 +10,6 @@ export default meta;
 
 type Story = StoryObj<typeof BackgroundGradientAnimation>;
 
-/** Default — purple/blue palette, mouse-interactive blob. */
 export const Default: Story = {
   render: () => (
     <BackgroundGradientAnimation>
@@ -23,7 +22,6 @@ export const Default: Story = {
   ),
 };
 
-/** Non-interactive — `interactive={false}` removes the mouse follower. */
 export const NonInteractive: Story = {
   render: () => (
     <BackgroundGradientAnimation interactive={false}>
@@ -34,7 +32,6 @@ export const NonInteractive: Story = {
   ),
 };
 
-/** Custom palette — emerald + ocean blues. */
 export const EmeraldOcean: Story = {
   render: () => (
     <BackgroundGradientAnimation
@@ -54,7 +51,6 @@ export const EmeraldOcean: Story = {
   ),
 };
 
-/** Smaller blobs — `size="40%"` shrinks each colour cloud. */
 export const SmallBlobs: Story = {
   render: () => (
     <BackgroundGradientAnimation size="40%">
@@ -65,7 +61,6 @@ export const SmallBlobs: Story = {
   ),
 };
 
-/** Empty stage — no children. Ambient backdrop only. */
 export const EmptyStage: Story = {
   render: () => <BackgroundGradientAnimation />,
 };

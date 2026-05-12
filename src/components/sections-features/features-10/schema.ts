@@ -5,7 +5,7 @@ export type FeaturesBlock = {
   id: string;
   trackingEyebrowKey?: MessageKey;
   trackingBodyKey?: MessageKey;
-  /** Image shown in the tracking card (light + dark variants). */
+
   trackingImageLightUrl: string;
   trackingImageDarkUrl: string;
   trackingImageAltKey?: MessageKey;

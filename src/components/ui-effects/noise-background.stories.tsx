@@ -29,11 +29,6 @@ const Body = ({ title, body }: { title: string; body: string }) => (
   </div>
 );
 
-/**
- * Default — three drifting radial gradients tinted pink/blue/amber overlay
- * a noise texture (`/public/noise.svg`). The gradients drift on
- * `useAnimationFrame`, randomly changing direction every 1.5–3s.
- */
 export const Default: Story = {
   args: { noiseIntensity: 0.2, speed: 0.1, animating: true },
   render: (args) => (
@@ -48,11 +43,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Brand palette — three RGB stops around the template&apos;s indigo brand
- * (`oklch(0.55 0.18 260)`). The gradients render to a canvas so we use
- * concrete RGB strings rather than CSS vars.
- */
 export const BrandPalette: Story = {
   args: {
     gradientColors: ["rgb(99, 102, 241)", "rgb(79, 70, 229)", "rgb(165, 180, 252)"],
@@ -69,7 +59,6 @@ export const BrandPalette: Story = {
   ),
 };
 
-/** Heavy noise — `noiseIntensity={0.6}` makes the grain more prominent. */
 export const HeavyNoise: Story = {
   args: { noiseIntensity: 0.6 },
   render: (args) => (
@@ -81,7 +70,6 @@ export const HeavyNoise: Story = {
   ),
 };
 
-/** Static — `animating={false}` freezes the gradients in place. */
 export const Static: Story = {
   args: { animating: false },
   render: (args) => (
@@ -96,7 +84,6 @@ export const Static: Story = {
   ),
 };
 
-/** Backdrop blur — `backdropBlur` applies a frosted glass overlay. */
 export const BackdropBlur: Story = {
   args: { backdropBlur: true },
   render: (args) => (

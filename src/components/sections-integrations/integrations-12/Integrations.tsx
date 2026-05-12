@@ -40,11 +40,6 @@ function Integration({
   );
 }
 
-/**
- * Integrations-12 — JSX verbatim. Eyebrow + intro + outline CTA
- * above a sparse 12-col logo grid where 6 cells are highlighted
- * (card surface) and the rest are bordered placeholders.
- */
 export default function Integrations(props: Readonly<IntegrationsBlock>) {
   const [t] = useScopedT(integrations12Namespace);
   const external = props.ctaHref.startsWith("http");
