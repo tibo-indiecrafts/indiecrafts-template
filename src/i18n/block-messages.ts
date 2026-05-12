@@ -10,20 +10,20 @@ import ai03En from "../components/sections-ai/ai-03/en.json";
 import ai04En from "../components/sections-ai/ai-04/en.json";
 import ai05En from "../components/sections-ai/ai-05/en.json";
 import animatedTestimonialsEn from "../components/ui-effects/animated-testimonials/en.json";
-import bento1En from "../components/sections-bento/bento-1/en.json";
+import bento01En from "../components/sections-bento/bento-01/en.json";
+import bento02En from "../components/sections-bento/bento-02/en.json";
+import bento03En from "../components/sections-bento/bento-03/en.json";
+import bento04En from "../components/sections-bento/bento-04/en.json";
+import bento05En from "../components/sections-bento/bento-05/en.json";
+import bento06En from "../components/sections-bento/bento-06/en.json";
+import bento07En from "../components/sections-bento/bento-07/en.json";
+import bento08En from "../components/sections-bento/bento-08/en.json";
+import bento09En from "../components/sections-bento/bento-09/en.json";
 import bento10En from "../components/sections-bento/bento-10/en.json";
 import bento11En from "../components/sections-bento/bento-11/en.json";
 import bento12En from "../components/sections-bento/bento-12/en.json";
 import bento13En from "../components/sections-bento/bento-13/en.json";
 import bento14En from "../components/sections-bento/bento-14/en.json";
-import bento2En from "../components/sections-bento/bento-2/en.json";
-import bento3En from "../components/sections-bento/bento-3/en.json";
-import bento4En from "../components/sections-bento/bento-4/en.json";
-import bento5En from "../components/sections-bento/bento-5/en.json";
-import bento6En from "../components/sections-bento/bento-6/en.json";
-import bento7En from "../components/sections-bento/bento-7/en.json";
-import bento8En from "../components/sections-bento/bento-8/en.json";
-import bento9En from "../components/sections-bento/bento-9/en.json";
 import brand01En from "../components/pages-brand/brand-01/en.json";
 import chartAreaAxesEn from "../components/ui-molecules/chart/area/axes/en.json";
 import chartAreaDefaultEn from "../components/ui-molecules/chart/area/default/en.json";
@@ -40,10 +40,10 @@ import chartBarDefaultEn from "../components/ui-molecules/chart/bar/default/en.j
 import chartBarHorizontalEn from "../components/ui-molecules/chart/bar/horizontal/en.json";
 import chartBarInteractiveEn from "../components/ui-molecules/chart/bar/interactive/en.json";
 import chartBarLabelCustomEn from "../components/ui-molecules/chart/bar/label-custom/en.json";
-import codeDemo1En from "../components/sections-code-demo/code-demo-1/en.json";
-import codeDemo2En from "../components/sections-code-demo/code-demo-2/en.json";
-import codeDemo3En from "../components/sections-code-demo/code-demo-3/en.json";
-import codeDemo4En from "../components/sections-code-demo/code-demo-4/en.json";
+import codeDemo01En from "../components/sections-code-demo/code-demo-01/en.json";
+import codeDemo02En from "../components/sections-code-demo/code-demo-02/en.json";
+import codeDemo03En from "../components/sections-code-demo/code-demo-03/en.json";
+import codeDemo04En from "../components/sections-code-demo/code-demo-04/en.json";
 import commandMenu01En from "../components/ui-molecules/command-menu/01/en.json";
 import commandMenu02En from "../components/ui-molecules/command-menu/02/en.json";
 import commandMenu03En from "../components/ui-molecules/command-menu/03/en.json";
@@ -187,12 +187,20 @@ import features40En from "../components/sections-features/features-40/en.json";
 import features41En from "../components/sections-features/features-41/en.json";
 import features42En from "../components/sections-features/features-42/en.json";
 import features43En from "../components/sections-features/features-43/en.json";
-import featuresCarousel1En from "../components/sections-features-carousel/features-carousel-1/en.json";
-import featuresCarousel2En from "../components/sections-features-carousel/features-carousel-2/en.json";
-import featuresCarousel3En from "../components/sections-features-carousel/features-carousel-3/en.json";
-import featuresCarousel4En from "../components/sections-features-carousel/features-carousel-4/en.json";
-import featuresCarousel5En from "../components/sections-features-carousel/features-carousel-5/en.json";
-import featuresExpandable1En from "../components/sections-features-expandable/features-expandable-1/en.json";
+import featuresCarousel01En from "../components/sections-features-carousel/features-carousel-01/en.json";
+import featuresCarousel02En from "../components/sections-features-carousel/features-carousel-02/en.json";
+import featuresCarousel03En from "../components/sections-features-carousel/features-carousel-03/en.json";
+import featuresCarousel04En from "../components/sections-features-carousel/features-carousel-04/en.json";
+import featuresCarousel05En from "../components/sections-features-carousel/features-carousel-05/en.json";
+import featuresExpandable01En from "../components/sections-features-expandable/features-expandable-01/en.json";
+import featuresExpandable02En from "../components/sections-features-expandable/features-expandable-02/en.json";
+import featuresExpandable03En from "../components/sections-features-expandable/features-expandable-03/en.json";
+import featuresExpandable04En from "../components/sections-features-expandable/features-expandable-04/en.json";
+import featuresExpandable05En from "../components/sections-features-expandable/features-expandable-05/en.json";
+import featuresExpandable06En from "../components/sections-features-expandable/features-expandable-06/en.json";
+import featuresExpandable07En from "../components/sections-features-expandable/features-expandable-07/en.json";
+import featuresExpandable08En from "../components/sections-features-expandable/features-expandable-08/en.json";
+import featuresExpandable09En from "../components/sections-features-expandable/features-expandable-09/en.json";
 import featuresExpandable10En from "../components/sections-features-expandable/features-expandable-10/en.json";
 import featuresExpandable11En from "../components/sections-features-expandable/features-expandable-11/en.json";
 import featuresExpandable12En from "../components/sections-features-expandable/features-expandable-12/en.json";
@@ -203,17 +211,9 @@ import featuresExpandable16En from "../components/sections-features-expandable/f
 import featuresExpandable17En from "../components/sections-features-expandable/features-expandable-17/en.json";
 import featuresExpandable18En from "../components/sections-features-expandable/features-expandable-18/en.json";
 import featuresExpandable19En from "../components/sections-features-expandable/features-expandable-19/en.json";
-import featuresExpandable2En from "../components/sections-features-expandable/features-expandable-2/en.json";
 import featuresExpandable20En from "../components/sections-features-expandable/features-expandable-20/en.json";
 import featuresExpandable21En from "../components/sections-features-expandable/features-expandable-21/en.json";
 import featuresExpandable22En from "../components/sections-features-expandable/features-expandable-22/en.json";
-import featuresExpandable3En from "../components/sections-features-expandable/features-expandable-3/en.json";
-import featuresExpandable4En from "../components/sections-features-expandable/features-expandable-4/en.json";
-import featuresExpandable5En from "../components/sections-features-expandable/features-expandable-5/en.json";
-import featuresExpandable6En from "../components/sections-features-expandable/features-expandable-6/en.json";
-import featuresExpandable7En from "../components/sections-features-expandable/features-expandable-7/en.json";
-import featuresExpandable8En from "../components/sections-features-expandable/features-expandable-8/en.json";
-import featuresExpandable9En from "../components/sections-features-expandable/features-expandable-9/en.json";
 import fileUpload01En from "../components/sections-file-upload/file-upload-01/en.json";
 import fileUpload02En from "../components/sections-file-upload/file-upload-02/en.json";
 import fileUpload03En from "../components/sections-file-upload/file-upload-03/en.json";
@@ -243,7 +243,15 @@ import header5En from "../components/layouts/_shared/site-headers/header-5/en.js
 import header6En from "../components/layouts/_shared/site-headers/header-6/en.json";
 import header7En from "../components/layouts/_shared/site-headers/header-7/en.json";
 import header8En from "../components/layouts/_shared/site-headers/header-8/en.json";
-import hero1En from "../components/sections-hero/hero-1/en.json";
+import hero01En from "../components/sections-hero/hero-01/en.json";
+import hero02En from "../components/sections-hero/hero-02/en.json";
+import hero03En from "../components/sections-hero/hero-03/en.json";
+import hero04En from "../components/sections-hero/hero-04/en.json";
+import hero05En from "../components/sections-hero/hero-05/en.json";
+import hero06En from "../components/sections-hero/hero-06/en.json";
+import hero07En from "../components/sections-hero/hero-07/en.json";
+import hero08En from "../components/sections-hero/hero-08/en.json";
+import hero09En from "../components/sections-hero/hero-09/en.json";
 import hero10En from "../components/sections-hero/hero-10/en.json";
 import hero11En from "../components/sections-hero/hero-11/en.json";
 import hero12En from "../components/sections-hero/hero-12/en.json";
@@ -254,32 +262,29 @@ import hero16En from "../components/sections-hero/hero-16/en.json";
 import hero17En from "../components/sections-hero/hero-17/en.json";
 import hero18En from "../components/sections-hero/hero-18/en.json";
 import hero19En from "../components/sections-hero/hero-19/en.json";
-import hero2En from "../components/sections-hero/hero-2/en.json";
 import hero20En from "../components/sections-hero/hero-20/en.json";
 import hero21En from "../components/sections-hero/hero-21/en.json";
 import hero22En from "../components/sections-hero/hero-22/en.json";
 import hero23En from "../components/sections-hero/hero-23/en.json";
 import hero24En from "../components/sections-hero/hero-24/en.json";
 import hero25En from "../components/sections-hero/hero-25/en.json";
-import hero3En from "../components/sections-hero/hero-3/en.json";
-import hero4En from "../components/sections-hero/hero-4/en.json";
-import hero5En from "../components/sections-hero/hero-5/en.json";
-import hero6En from "../components/sections-hero/hero-6/en.json";
-import hero7En from "../components/sections-hero/hero-7/en.json";
-import hero8En from "../components/sections-hero/hero-8/en.json";
-import hero9En from "../components/sections-hero/hero-9/en.json";
 import heroVideoDialogEn from "../components/ui-effects/hero-video-dialog/en.json";
-import howItWorks1En from "../components/sections-how-it-works/how-it-works-1/en.json";
-import howItWorks2En from "../components/sections-how-it-works/how-it-works-2/en.json";
-import howItWorks3En from "../components/sections-how-it-works/how-it-works-3/en.json";
-import howItWorks4En from "../components/sections-how-it-works/how-it-works-4/en.json";
-import howItWorks5En from "../components/sections-how-it-works/how-it-works-5/en.json";
-import howItWorks6En from "../components/sections-how-it-works/how-it-works-6/en.json";
-import howItWorks7En from "../components/sections-how-it-works/how-it-works-7/en.json";
-import howItWorks8En from "../components/sections-how-it-works/how-it-works-8/en.json";
-import howItWorks9En from "../components/sections-how-it-works/how-it-works-9/en.json";
+import howItWorks01En from "../components/sections-how-it-works/how-it-works-01/en.json";
+import howItWorks02En from "../components/sections-how-it-works/how-it-works-02/en.json";
+import howItWorks03En from "../components/sections-how-it-works/how-it-works-03/en.json";
+import howItWorks04En from "../components/sections-how-it-works/how-it-works-04/en.json";
+import howItWorks05En from "../components/sections-how-it-works/how-it-works-05/en.json";
+import howItWorks06En from "../components/sections-how-it-works/how-it-works-06/en.json";
+import howItWorks07En from "../components/sections-how-it-works/how-it-works-07/en.json";
+import howItWorks08En from "../components/sections-how-it-works/how-it-works-08/en.json";
+import howItWorks09En from "../components/sections-how-it-works/how-it-works-09/en.json";
 import iconCloudEn from "../components/ui-effects/icon-cloud/en.json";
-import integrations1En from "../components/sections-integrations/integrations-1/en.json";
+import integrations01En from "../components/sections-integrations/integrations-01/en.json";
+import integrations02En from "../components/sections-integrations/integrations-02/en.json";
+import integrations05En from "../components/sections-integrations/integrations-05/en.json";
+import integrations06En from "../components/sections-integrations/integrations-06/en.json";
+import integrations07En from "../components/sections-integrations/integrations-07/en.json";
+import integrations09En from "../components/sections-integrations/integrations-09/en.json";
 import integrations10En from "../components/sections-integrations/integrations-10/en.json";
 import integrations11En from "../components/sections-integrations/integrations-11/en.json";
 import integrations12En from "../components/sections-integrations/integrations-12/en.json";
@@ -289,11 +294,6 @@ import integrations15En from "../components/sections-integrations/integrations-1
 import integrations16En from "../components/sections-integrations/integrations-16/en.json";
 import integrations17En from "../components/sections-integrations/integrations-17/en.json";
 import integrations18En from "../components/sections-integrations/integrations-18/en.json";
-import integrations2En from "../components/sections-integrations/integrations-2/en.json";
-import integrations5En from "../components/sections-integrations/integrations-5/en.json";
-import integrations6En from "../components/sections-integrations/integrations-6/en.json";
-import integrations7En from "../components/sections-integrations/integrations-7/en.json";
-import integrations9En from "../components/sections-integrations/integrations-9/en.json";
 import landing01En from "../components/pages-landing/landing-01/en.json";
 import landing02En from "../components/pages-landing/landing-02/en.json";
 import landing03En from "../components/pages-landing/landing-03/en.json";
@@ -326,21 +326,21 @@ import login21En from "../components/sections-auth/login-21/en.json";
 import login22En from "../components/sections-auth/login-22/en.json";
 import login23En from "../components/sections-auth/login-23/en.json";
 import loginFormEn from "../components/ui-molecules/auth-form/login/en.json";
-import logoCloud1En from "../components/sections-logo-cloud/logo-cloud-1/en.json";
+import logoCloud01En from "../components/sections-logo-cloud/logo-cloud-01/en.json";
+import logoCloud02En from "../components/sections-logo-cloud/logo-cloud-02/en.json";
+import logoCloud03En from "../components/sections-logo-cloud/logo-cloud-03/en.json";
+import logoCloud04En from "../components/sections-logo-cloud/logo-cloud-04/en.json";
+import logoCloud05En from "../components/sections-logo-cloud/logo-cloud-05/en.json";
+import logoCloud06En from "../components/sections-logo-cloud/logo-cloud-06/en.json";
+import logoCloud07En from "../components/sections-logo-cloud/logo-cloud-07/en.json";
+import logoCloud08En from "../components/sections-logo-cloud/logo-cloud-08/en.json";
+import logoCloud09En from "../components/sections-logo-cloud/logo-cloud-09/en.json";
 import logoCloud10En from "../components/sections-logo-cloud/logo-cloud-10/en.json";
 import logoCloud11En from "../components/sections-logo-cloud/logo-cloud-11/en.json";
 import logoCloud12En from "../components/sections-logo-cloud/logo-cloud-12/en.json";
 import logoCloud13En from "../components/sections-logo-cloud/logo-cloud-13/en.json";
 import logoCloud14En from "../components/sections-logo-cloud/logo-cloud-14/en.json";
 import logoCloud15En from "../components/sections-logo-cloud/logo-cloud-15/en.json";
-import logoCloud2En from "../components/sections-logo-cloud/logo-cloud-2/en.json";
-import logoCloud3En from "../components/sections-logo-cloud/logo-cloud-3/en.json";
-import logoCloud4En from "../components/sections-logo-cloud/logo-cloud-4/en.json";
-import logoCloud5En from "../components/sections-logo-cloud/logo-cloud-5/en.json";
-import logoCloud6En from "../components/sections-logo-cloud/logo-cloud-6/en.json";
-import logoCloud7En from "../components/sections-logo-cloud/logo-cloud-7/en.json";
-import logoCloud8En from "../components/sections-logo-cloud/logo-cloud-8/en.json";
-import logoCloud9En from "../components/sections-logo-cloud/logo-cloud-9/en.json";
 import notFound01En from "../components/pages-not-found/not-found-01/en.json";
 import onboarding01En from "../components/sections-onboarding/onboarding-01/en.json";
 import onboarding02En from "../components/sections-onboarding/onboarding-02/en.json";
@@ -359,9 +359,9 @@ import pricing07En from "../components/sections-pricing/pricing-07/en.json";
 import pricing08En from "../components/sections-pricing/pricing-08/en.json";
 import pricing09En from "../components/sections-pricing/pricing-09/en.json";
 import pricingComparatorEn from "../components/sections-pricing/pricing-comparator/en.json";
-import pricingComparator2En from "../components/sections-pricing/pricing-comparator-2/en.json";
-import pricingComparator3En from "../components/sections-pricing/pricing-comparator-3/en.json";
-import pricingComparator4En from "../components/sections-pricing/pricing-comparator-4/en.json";
+import pricingComparator02En from "../components/sections-pricing/pricing-comparator-02/en.json";
+import pricingComparator03En from "../components/sections-pricing/pricing-comparator-03/en.json";
+import pricingComparator04En from "../components/sections-pricing/pricing-comparator-04/en.json";
 import pricingPage01En from "../components/pages-pricing/pricing-page-01/en.json";
 import pricingPage02En from "../components/pages-pricing/pricing-page-02/en.json";
 import pricingPage03En from "../components/pages-pricing/pricing-page-03/en.json";
@@ -371,7 +371,15 @@ import product01En from "../components/pages-product/product-01/en.json";
 import product02En from "../components/pages-product/product-02/en.json";
 import quickActions01En from "../components/sections-dashboard/quick-actions-01/en.json";
 import recentActivity01En from "../components/sections-dashboard/recent-activity-01/en.json";
-import secondaryHero1En from "../components/sections-secondary-hero/secondary-hero-1/en.json";
+import secondaryHero01En from "../components/sections-secondary-hero/secondary-hero-01/en.json";
+import secondaryHero02En from "../components/sections-secondary-hero/secondary-hero-02/en.json";
+import secondaryHero03En from "../components/sections-secondary-hero/secondary-hero-03/en.json";
+import secondaryHero04En from "../components/sections-secondary-hero/secondary-hero-04/en.json";
+import secondaryHero05En from "../components/sections-secondary-hero/secondary-hero-05/en.json";
+import secondaryHero06En from "../components/sections-secondary-hero/secondary-hero-06/en.json";
+import secondaryHero07En from "../components/sections-secondary-hero/secondary-hero-07/en.json";
+import secondaryHero08En from "../components/sections-secondary-hero/secondary-hero-08/en.json";
+import secondaryHero09En from "../components/sections-secondary-hero/secondary-hero-09/en.json";
 import secondaryHero10En from "../components/sections-secondary-hero/secondary-hero-10/en.json";
 import secondaryHero11En from "../components/sections-secondary-hero/secondary-hero-11/en.json";
 import secondaryHero12En from "../components/sections-secondary-hero/secondary-hero-12/en.json";
@@ -382,15 +390,7 @@ import secondaryHero16En from "../components/sections-secondary-hero/secondary-h
 import secondaryHero17En from "../components/sections-secondary-hero/secondary-hero-17/en.json";
 import secondaryHero18En from "../components/sections-secondary-hero/secondary-hero-18/en.json";
 import secondaryHero19En from "../components/sections-secondary-hero/secondary-hero-19/en.json";
-import secondaryHero2En from "../components/sections-secondary-hero/secondary-hero-2/en.json";
 import secondaryHero20En from "../components/sections-secondary-hero/secondary-hero-20/en.json";
-import secondaryHero3En from "../components/sections-secondary-hero/secondary-hero-3/en.json";
-import secondaryHero4En from "../components/sections-secondary-hero/secondary-hero-4/en.json";
-import secondaryHero5En from "../components/sections-secondary-hero/secondary-hero-5/en.json";
-import secondaryHero6En from "../components/sections-secondary-hero/secondary-hero-6/en.json";
-import secondaryHero7En from "../components/sections-secondary-hero/secondary-hero-7/en.json";
-import secondaryHero8En from "../components/sections-secondary-hero/secondary-hero-8/en.json";
-import secondaryHero9En from "../components/sections-secondary-hero/secondary-hero-9/en.json";
 import sectionCardsEn from "../components/ui-molecules/dashboard/kpi-cards/en.json";
 import settingsDialogEn from "../components/sections-modals/settings-dialog/en.json";
 import sidebarEn from "../components/layouts/sidebar-layout/en.json";
@@ -491,20 +491,20 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "ai-04": ai04En,
   "ai-05": ai05En,
   "animated-testimonials": animatedTestimonialsEn,
-  "bento-1": bento1En,
+  "bento-01": bento01En,
+  "bento-02": bento02En,
+  "bento-03": bento03En,
+  "bento-04": bento04En,
+  "bento-05": bento05En,
+  "bento-06": bento06En,
+  "bento-07": bento07En,
+  "bento-08": bento08En,
+  "bento-09": bento09En,
   "bento-10": bento10En,
   "bento-11": bento11En,
   "bento-12": bento12En,
   "bento-13": bento13En,
   "bento-14": bento14En,
-  "bento-2": bento2En,
-  "bento-3": bento3En,
-  "bento-4": bento4En,
-  "bento-5": bento5En,
-  "bento-6": bento6En,
-  "bento-7": bento7En,
-  "bento-8": bento8En,
-  "bento-9": bento9En,
   "brand-01": brand01En,
   "chart-area-axes": chartAreaAxesEn,
   "chart-area-default": chartAreaDefaultEn,
@@ -521,10 +521,10 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "chart-bar-horizontal": chartBarHorizontalEn,
   "chart-bar-interactive": chartBarInteractiveEn,
   "chart-bar-label-custom": chartBarLabelCustomEn,
-  "code-demo-1": codeDemo1En,
-  "code-demo-2": codeDemo2En,
-  "code-demo-3": codeDemo3En,
-  "code-demo-4": codeDemo4En,
+  "code-demo-01": codeDemo01En,
+  "code-demo-02": codeDemo02En,
+  "code-demo-03": codeDemo03En,
+  "code-demo-04": codeDemo04En,
   "command-menu-01": commandMenu01En,
   "command-menu-02": commandMenu02En,
   "command-menu-03": commandMenu03En,
@@ -668,12 +668,20 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "features-41": features41En,
   "features-42": features42En,
   "features-43": features43En,
-  "features-carousel-1": featuresCarousel1En,
-  "features-carousel-2": featuresCarousel2En,
-  "features-carousel-3": featuresCarousel3En,
-  "features-carousel-4": featuresCarousel4En,
-  "features-carousel-5": featuresCarousel5En,
-  "features-expandable-1": featuresExpandable1En,
+  "features-carousel-01": featuresCarousel01En,
+  "features-carousel-02": featuresCarousel02En,
+  "features-carousel-03": featuresCarousel03En,
+  "features-carousel-04": featuresCarousel04En,
+  "features-carousel-05": featuresCarousel05En,
+  "features-expandable-01": featuresExpandable01En,
+  "features-expandable-02": featuresExpandable02En,
+  "features-expandable-03": featuresExpandable03En,
+  "features-expandable-04": featuresExpandable04En,
+  "features-expandable-05": featuresExpandable05En,
+  "features-expandable-06": featuresExpandable06En,
+  "features-expandable-07": featuresExpandable07En,
+  "features-expandable-08": featuresExpandable08En,
+  "features-expandable-09": featuresExpandable09En,
   "features-expandable-10": featuresExpandable10En,
   "features-expandable-11": featuresExpandable11En,
   "features-expandable-12": featuresExpandable12En,
@@ -684,17 +692,9 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "features-expandable-17": featuresExpandable17En,
   "features-expandable-18": featuresExpandable18En,
   "features-expandable-19": featuresExpandable19En,
-  "features-expandable-2": featuresExpandable2En,
   "features-expandable-20": featuresExpandable20En,
   "features-expandable-21": featuresExpandable21En,
   "features-expandable-22": featuresExpandable22En,
-  "features-expandable-3": featuresExpandable3En,
-  "features-expandable-4": featuresExpandable4En,
-  "features-expandable-5": featuresExpandable5En,
-  "features-expandable-6": featuresExpandable6En,
-  "features-expandable-7": featuresExpandable7En,
-  "features-expandable-8": featuresExpandable8En,
-  "features-expandable-9": featuresExpandable9En,
   "file-upload-01": fileUpload01En,
   "file-upload-02": fileUpload02En,
   "file-upload-03": fileUpload03En,
@@ -724,7 +724,15 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "header-6": header6En,
   "header-7": header7En,
   "header-8": header8En,
-  "hero-1": hero1En,
+  "hero-01": hero01En,
+  "hero-02": hero02En,
+  "hero-03": hero03En,
+  "hero-04": hero04En,
+  "hero-05": hero05En,
+  "hero-06": hero06En,
+  "hero-07": hero07En,
+  "hero-08": hero08En,
+  "hero-09": hero09En,
   "hero-10": hero10En,
   "hero-11": hero11En,
   "hero-12": hero12En,
@@ -735,32 +743,29 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "hero-17": hero17En,
   "hero-18": hero18En,
   "hero-19": hero19En,
-  "hero-2": hero2En,
   "hero-20": hero20En,
   "hero-21": hero21En,
   "hero-22": hero22En,
   "hero-23": hero23En,
   "hero-24": hero24En,
   "hero-25": hero25En,
-  "hero-3": hero3En,
-  "hero-4": hero4En,
-  "hero-5": hero5En,
-  "hero-6": hero6En,
-  "hero-7": hero7En,
-  "hero-8": hero8En,
-  "hero-9": hero9En,
   "hero-video-dialog": heroVideoDialogEn,
-  "how-it-works-1": howItWorks1En,
-  "how-it-works-2": howItWorks2En,
-  "how-it-works-3": howItWorks3En,
-  "how-it-works-4": howItWorks4En,
-  "how-it-works-5": howItWorks5En,
-  "how-it-works-6": howItWorks6En,
-  "how-it-works-7": howItWorks7En,
-  "how-it-works-8": howItWorks8En,
-  "how-it-works-9": howItWorks9En,
+  "how-it-works-01": howItWorks01En,
+  "how-it-works-02": howItWorks02En,
+  "how-it-works-03": howItWorks03En,
+  "how-it-works-04": howItWorks04En,
+  "how-it-works-05": howItWorks05En,
+  "how-it-works-06": howItWorks06En,
+  "how-it-works-07": howItWorks07En,
+  "how-it-works-08": howItWorks08En,
+  "how-it-works-09": howItWorks09En,
   "icon-cloud": iconCloudEn,
-  "integrations-1": integrations1En,
+  "integrations-01": integrations01En,
+  "integrations-02": integrations02En,
+  "integrations-05": integrations05En,
+  "integrations-06": integrations06En,
+  "integrations-07": integrations07En,
+  "integrations-09": integrations09En,
   "integrations-10": integrations10En,
   "integrations-11": integrations11En,
   "integrations-12": integrations12En,
@@ -770,11 +775,6 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "integrations-16": integrations16En,
   "integrations-17": integrations17En,
   "integrations-18": integrations18En,
-  "integrations-2": integrations2En,
-  "integrations-5": integrations5En,
-  "integrations-6": integrations6En,
-  "integrations-7": integrations7En,
-  "integrations-9": integrations9En,
   "landing-01": landing01En,
   "landing-02": landing02En,
   "landing-03": landing03En,
@@ -807,21 +807,21 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "login-22": login22En,
   "login-23": login23En,
   "login-form": loginFormEn,
-  "logo-cloud-1": logoCloud1En,
+  "logo-cloud-01": logoCloud01En,
+  "logo-cloud-02": logoCloud02En,
+  "logo-cloud-03": logoCloud03En,
+  "logo-cloud-04": logoCloud04En,
+  "logo-cloud-05": logoCloud05En,
+  "logo-cloud-06": logoCloud06En,
+  "logo-cloud-07": logoCloud07En,
+  "logo-cloud-08": logoCloud08En,
+  "logo-cloud-09": logoCloud09En,
   "logo-cloud-10": logoCloud10En,
   "logo-cloud-11": logoCloud11En,
   "logo-cloud-12": logoCloud12En,
   "logo-cloud-13": logoCloud13En,
   "logo-cloud-14": logoCloud14En,
   "logo-cloud-15": logoCloud15En,
-  "logo-cloud-2": logoCloud2En,
-  "logo-cloud-3": logoCloud3En,
-  "logo-cloud-4": logoCloud4En,
-  "logo-cloud-5": logoCloud5En,
-  "logo-cloud-6": logoCloud6En,
-  "logo-cloud-7": logoCloud7En,
-  "logo-cloud-8": logoCloud8En,
-  "logo-cloud-9": logoCloud9En,
   "not-found-01": notFound01En,
   "onboarding-01": onboarding01En,
   "onboarding-02": onboarding02En,
@@ -840,9 +840,9 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "pricing-08": pricing08En,
   "pricing-09": pricing09En,
   "pricing-comparator": pricingComparatorEn,
-  "pricing-comparator-2": pricingComparator2En,
-  "pricing-comparator-3": pricingComparator3En,
-  "pricing-comparator-4": pricingComparator4En,
+  "pricing-comparator-02": pricingComparator02En,
+  "pricing-comparator-03": pricingComparator03En,
+  "pricing-comparator-04": pricingComparator04En,
   "pricing-page-01": pricingPage01En,
   "pricing-page-02": pricingPage02En,
   "pricing-page-03": pricingPage03En,
@@ -852,7 +852,15 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "product-02": product02En,
   "quick-actions-01": quickActions01En,
   "recent-activity-01": recentActivity01En,
-  "secondary-hero-1": secondaryHero1En,
+  "secondary-hero-01": secondaryHero01En,
+  "secondary-hero-02": secondaryHero02En,
+  "secondary-hero-03": secondaryHero03En,
+  "secondary-hero-04": secondaryHero04En,
+  "secondary-hero-05": secondaryHero05En,
+  "secondary-hero-06": secondaryHero06En,
+  "secondary-hero-07": secondaryHero07En,
+  "secondary-hero-08": secondaryHero08En,
+  "secondary-hero-09": secondaryHero09En,
   "secondary-hero-10": secondaryHero10En,
   "secondary-hero-11": secondaryHero11En,
   "secondary-hero-12": secondaryHero12En,
@@ -863,15 +871,7 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "secondary-hero-17": secondaryHero17En,
   "secondary-hero-18": secondaryHero18En,
   "secondary-hero-19": secondaryHero19En,
-  "secondary-hero-2": secondaryHero2En,
   "secondary-hero-20": secondaryHero20En,
-  "secondary-hero-3": secondaryHero3En,
-  "secondary-hero-4": secondaryHero4En,
-  "secondary-hero-5": secondaryHero5En,
-  "secondary-hero-6": secondaryHero6En,
-  "secondary-hero-7": secondaryHero7En,
-  "secondary-hero-8": secondaryHero8En,
-  "secondary-hero-9": secondaryHero9En,
   "section-cards": sectionCardsEn,
   "settings-dialog": settingsDialogEn,
   sidebar: sidebarEn,

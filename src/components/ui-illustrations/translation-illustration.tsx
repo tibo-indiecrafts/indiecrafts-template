@@ -4,7 +4,7 @@
  * with gradient-clipped text, and a primary-ringed Spanish
  * translation card showing the rendered output. Pure decoration; mock
  * copy stays hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/features-carousel-1` (the upstream's
+ * `@tailark-pro/features-carousel-01` (the upstream's
  * `TranslationInterfaceIllustration`).
  */
 export const TranslationIllustration = () => {

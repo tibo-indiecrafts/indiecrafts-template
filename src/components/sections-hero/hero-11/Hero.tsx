@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { ProductCarousel } from "@/components/ui-illustrations/product-carousel";
-import { LogoCloud3Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-3";
+import { LogoCloud03Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-03";
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero11Namespace, hero11PrimaryCtaHref, hero11SecondaryCtaHref } from "./config";
 

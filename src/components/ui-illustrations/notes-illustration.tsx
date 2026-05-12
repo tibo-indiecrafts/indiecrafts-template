@@ -7,7 +7,7 @@ import { Play } from "lucide-react";
  * highlight key takeaways), and a glowing animated 03:47 voice-memo
  * play button. Pure decoration; mock copy stays hardcoded per the
  * illustration rule. Sourced from
- * `@tailark-pro/features-carousel-2`. Distinct from
+ * `@tailark-pro/features-carousel-02`. Distinct from
  * `notes-checklist-illustration.tsx` (the sticky-notes todo).
  */
 export const NotesIllustration = () => {

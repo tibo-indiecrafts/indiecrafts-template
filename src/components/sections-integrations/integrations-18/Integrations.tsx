@@ -23,7 +23,7 @@ const ICON_REGISTRY: Record<IntegrationIcon, ComponentType<SVGProps<SVGSVGElemen
 };
 
 /**
- * Tailark `integrations-5` — JSX verbatim. Two concentric orbital
+ * Tailark `integrations-05` — JSX verbatim. Two concentric orbital
  * rings: outer ring carries 3 integration cards (left / top / right),
  * inner ring carries 3 more (top / left / right), and a centered
  * `LogoIcon` tile sits at the bottom of the constellation. On hover

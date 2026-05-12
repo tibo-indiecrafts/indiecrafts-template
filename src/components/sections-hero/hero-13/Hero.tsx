@@ -2,7 +2,7 @@
 import { ParallaxImage } from "@/components/ui-effects/parallax-image";
 import { AudioLinesIcon } from "@/components/ui-illustrations/audio-lines";
 import { AnimatedGroup } from "@/components/ui-effects/animated-group";
-import { LogoCloud4Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-4";
+import { LogoCloud04Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-04";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useScopedT } from "@/i18n/scoped-t";

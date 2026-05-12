@@ -1,7 +1,7 @@
 "use client";
 import { CreditCard } from "@/components/ui-illustrations/credit-card";
 import { AnimatedGroup } from "@/components/ui-effects/animated-group";
-import { LogoCloud4Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-4";
+import { LogoCloud04Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-04";
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { useScopedT } from "@/i18n/scoped-t";

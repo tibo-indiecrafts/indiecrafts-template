@@ -21,7 +21,7 @@ export type CursorGlowPhotoProps = {
 /**
  * Full-bleed photo with a cursor-tracking blurred gradient overlay
  * (mix-blend-overlay). Used by
- * `sections-secondary-hero/secondary-hero-2`. Photo is decorative and
+ * `sections-secondary-hero/secondary-hero-02`. Photo is decorative and
  * the consumer can pass `src` + `alt` to swap it in. The overlay
  * tracks `mousemove` on the window — if you mount multiple instances
  * on the same page they'll all chase the same cursor.

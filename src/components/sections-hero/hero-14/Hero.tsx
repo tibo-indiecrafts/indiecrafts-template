@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { ProductStacked } from "@/components/ui-illustrations/product-stacked";
-import { LogoCloud1Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-1";
+import { LogoCloud01Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-01";
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero14Namespace, hero14PrimaryCtaHref, hero14SecondaryCtaHref } from "./config";
 

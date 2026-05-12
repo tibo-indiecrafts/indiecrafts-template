@@ -7,7 +7,7 @@ const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
  * display name and "12m ago" timestamp on top, then a gradient
  * message bubble (`bg-linear-to-b from-illustration to-foreground/5`)
  * with rounded-tl pointer and `@mention` highlight. Sourced from
- * `@tailark-pro/bento-6` (upstream's bento-specific message variant;
+ * `@tailark-pro/bento-06` (upstream's bento-specific message variant;
  * differs from our default `message-illustration` which uses the
  * Méschac avatar at `size-4` with a flat `bg-illustration` bubble).
  * Pure decoration; mock copy stays hardcoded per the illustration

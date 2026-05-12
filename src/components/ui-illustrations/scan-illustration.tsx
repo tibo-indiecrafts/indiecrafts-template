@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  * passes over a grayscale portrait. After ~4s the framing corners
  * turn lime and a `TextScramble` reveals the subject's name. Pure
  * decoration; mock copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/bento-3` (upstream `ScanIllustration`).
+ * Sourced from `@tailark-pro/bento-03` (upstream `ScanIllustration`).
  */
 export const ScanIllustration = () => {
   const [show, setShow] = useState(false);

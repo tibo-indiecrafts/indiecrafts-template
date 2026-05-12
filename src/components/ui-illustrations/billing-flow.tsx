@@ -9,10 +9,10 @@ import { cn } from "@/lib/utils";
  * Billing-flow illustration — three usage cards (Vercel / Supabase /
  * Cloudflare) flow into a signature-block payment authorization, then
  * into an invoice mock. Used by
- * `sections-secondary-hero/secondary-hero-6`. Mock copy is decorative;
+ * `sections-secondary-hero/secondary-hero-06`. Mock copy is decorative;
  * treat as illustrations-only (no translations). The genuine
  * `InvoiceIllustration` (with its layered shadow-paper effect) and the
- * `Firebase` SVG were missing from `@tailark-pro/secondary-hero-6`'s
+ * `Firebase` SVG were missing from `@tailark-pro/secondary-hero-06`'s
  * registry shipment — fetched separately via `@tailark-pro/invoice`
  * and `@tailark-pro/firebase` and inlined / promoted here.
  */

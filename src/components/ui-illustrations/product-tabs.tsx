@@ -48,8 +48,8 @@ const previews: PreviewItem[] = [
 /**
  * Animated tabbed product preview — three pillars (Task Management /
  * Analytics / AI Copilot) with crossfading circle decoration backdrops
- * sourced from Tailark's CDN assets. Used by `sections-hero/hero-7`
- * and `sections-hero/hero-8`. Mock labels are decorative; treat as
+ * sourced from Tailark's CDN assets. Used by `sections-hero/hero-07`
+ * and `sections-hero/hero-08`. Mock labels are decorative; treat as
  * illustrations-only (no translations).
  */
 export const ProductTabs = ({ className }: { className?: string }) => {

@@ -31,7 +31,7 @@ const chartData = [
  * Mini stacked area chart illustration — desktop vs mobile traffic
  * over six months, in primary + indigo-300, sized for small bento
  * cells (`h-28`, no overflow margin, no axis labels). Pure
- * decoration; no translations. Sourced from `@tailark-pro/bento-9`
+ * decoration; no translations. Sourced from `@tailark-pro/bento-09`
  * and `bento-10` (upstream's smallest chart variant; differs from
  * `chart-medium-illustration` (h-36, with XAxis) and
  * `chart-compact-illustration` (h-28 with -mb-4, orange + violet,

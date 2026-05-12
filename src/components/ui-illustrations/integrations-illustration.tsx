@@ -12,7 +12,7 @@ import { Replit } from "@/components/ui-primitives/svgs/replit";
  *
  * Distinct from `ui-illustrations/integrations.tsx`, which is the
  * multi-brand connected-grid illustration used by
- * `sections-secondary-hero/secondary-hero-3`.
+ * `sections-secondary-hero/secondary-hero-03`.
  */
 export const IntegrationsIllustration = () => (
   <div aria-hidden className="bg-foreground/5 group rounded-2xl">

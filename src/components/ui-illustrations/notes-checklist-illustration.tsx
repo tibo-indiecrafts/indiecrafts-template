@@ -23,7 +23,7 @@ const INITIAL_TASKS: readonly Task[] = [
  * row is a `<button>` so a user can toggle the strike-through state;
  * the parent is `aria-hidden` so it stays decorative for assistive
  * tech. Mock task copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/features-carousel-1` (upstream
+ * Sourced from `@tailark-pro/features-carousel-01` (upstream
  * `Notes3Illustration`). Distinct from `notes-illustration.tsx`
  * (the voice-memo note card).
  */

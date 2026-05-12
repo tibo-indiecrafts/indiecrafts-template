@@ -8,9 +8,9 @@ import { Link } from "@/i18n/routing";
  * Login-page preview illustration — small mock sign-in form (Logo +
  * "Welcome back" header + Google/Facebook OAuth buttons + email
  * field + Continue CTA + "Create an account" footer link). Used by
- * `sections-code-demo/code-demo-3/`'s live-preview pane next to the
+ * `sections-code-demo/code-demo-03/`'s live-preview pane next to the
  * source code. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/code-demo-3`
+ * illustration rule. Sourced from `@tailark-pro/code-demo-03`
  * (upstream `LoginPage`).
  */
 export const LoginPreviewIllustration = () => {

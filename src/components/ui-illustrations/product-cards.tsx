@@ -27,7 +27,7 @@ const previews = [
 
 /**
  * Three-card product preview gallery framed by a stylized SVG window
- * outline. Used by `sections-hero/hero-9`. Mock labels are decorative;
+ * outline. Used by `sections-hero/hero-09`. Mock labels are decorative;
  * treat as illustrations-only (no translations).
  */
 export const ProductCards = ({ className }: { className?: string }) => {

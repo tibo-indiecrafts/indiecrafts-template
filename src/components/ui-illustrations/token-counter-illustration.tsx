@@ -4,7 +4,7 @@
  * gradient with a blurred halo), prompt-token counter ("550 / 1,500
  * tokens · 950 left"), and a 2-cell stat grid (Est. cost · Requests).
  * Pure decoration; mock numbers stay hardcoded per the illustration
- * rule. Sourced from `@tailark-pro/features-carousel-3`.
+ * rule. Sourced from `@tailark-pro/features-carousel-03`.
  */
 export const TokenCounterIllustration = () => {
   return (

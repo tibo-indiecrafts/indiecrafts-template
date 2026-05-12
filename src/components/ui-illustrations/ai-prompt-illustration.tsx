@@ -6,9 +6,9 @@ import { Apple, CornerDownLeft, X } from "lucide-react";
  * close button, a tone picker (Apple icon + "Professional"), and a
  * primary submit chip. The card sits behind a hue-rotating gradient
  * blur halo (`animate-hue-rotate`) for a subtle glow. Used by
- * `sections-bento/bento-7/`'s "Uptime Monitoring" cell. Pure
+ * `sections-bento/bento-07/`'s "Uptime Monitoring" cell. Pure
  * decoration; mock copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/bento-7` (upstream `AIIllustration1`;
+ * Sourced from `@tailark-pro/bento-07` (upstream `AIIllustration1`;
  * renamed `ai-prompt-illustration` for descriptiveness).
  */
 export const AiPromptIllustration = () => {

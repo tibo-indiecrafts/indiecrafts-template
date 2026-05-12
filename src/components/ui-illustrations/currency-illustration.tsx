@@ -7,7 +7,7 @@ import { Bitcoin, DollarSign, Euro, Signature, type LucideIcon } from "lucide-re
  * and a trailing signature glyph. Tinted gradient overlay per
  * currency (blue / green / red). Pure decoration; mock copy stays
  * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-1` (upstream `CurrencyIllustration`).
+ * `@tailark-pro/bento-01` (upstream `CurrencyIllustration`).
  */
 export const CurrencyIllustration = () => {
   return (

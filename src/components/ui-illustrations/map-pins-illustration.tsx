@@ -31,7 +31,7 @@ const VIEW_BOX = "0 0 120 60";
 
 /**
  * Wide dotted-map illustration with three rotated tear-drop avatar
- * pins (Glodie / Theo / Shadcn). Sourced from `@tailark-pro/bento-7`
+ * pins (Glodie / Theo / Shadcn). Sourced from `@tailark-pro/bento-07`
  * (upstream `MapIllustration`; renamed to `map-pins-illustration` to
  * differentiate from our existing narrower `map-illustration`).
  * Pure decoration; mock pin avatars stay hardcoded per the

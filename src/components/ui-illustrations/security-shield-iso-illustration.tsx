@@ -1,7 +1,7 @@
 /**
  * Isometric security-shield illustration — line-drawing of a
  * stylized 3D shield with an embedded "F" glyph. Used by
- * `sections-bento/bento-4/`. Sourced from `@tailark-pro/bento-4`
+ * `sections-bento/bento-04/`. Sourced from `@tailark-pro/bento-04`
  * (upstream inline `SecurityShieldIsoIcon`; promoted to a flat
  * illustration so other consumers can mount it).
  */

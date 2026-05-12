@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
  * SVG fingerprint glyph (gray base + indigo gradient overlay clipped
  * at the horizontal scan-line). Reuses the `--animate-breathing`
  * keyframe from `fingerprint-scan-illustration.css`. Used by
- * `sections-bento/bento-7/`'s "Biometric Access" cell. Sourced from
- * `@tailark-pro/bento-7` (upstream `FingerprintIllustration`; renamed
+ * `sections-bento/bento-07/`'s "Biometric Access" cell. Sourced from
+ * `@tailark-pro/bento-07` (upstream `FingerprintIllustration`; renamed
  * to `fingerprint-card-illustration` to differentiate from our
  * existing animated photo-based `fingerprint-scan-illustration`).
  */

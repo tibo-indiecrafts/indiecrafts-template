@@ -17,7 +17,7 @@ const MODELS = [
  * Gemini, Open AI, Mistral AI) with the Gemini logo highlighted in
  * the middle behind a soft glow + ring. Pure decoration; mock copy
  * stays hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-8` (upstream `Models2Illustration`; renamed to
+ * `@tailark-pro/bento-08` (upstream `Models2Illustration`; renamed to
  * `models-row-illustration` to differentiate from our existing
  * `models-illustration` (chat composer + credits).
  */

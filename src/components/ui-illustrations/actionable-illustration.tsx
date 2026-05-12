@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
  * "Signature Approved" notification card mock — emerald-tinted
  * signature avatar on the left + status text + "View Report" outline
  * button on the right, sat above a striped emerald accent bar.
- * Used by `sections-how-it-works/how-it-works-6/`'s "Actionable
+ * Used by `sections-how-it-works/how-it-works-06/`'s "Actionable
  * Reports" step. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/how-it-works-6`
+ * illustration rule. Sourced from `@tailark-pro/how-it-works-06`
  * (upstream `ActionnableIllustration` — typo in source; renamed to
  * `actionable-illustration` for English correctness).
  */

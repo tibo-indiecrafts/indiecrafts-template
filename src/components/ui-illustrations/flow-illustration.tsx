@@ -14,7 +14,7 @@ const DOC_TYPES = [
  * right. Beam keyframes live in `flow-illustration.css` and are
  * picked up via the auto-aggregator. Pure decoration; mock labels
  * stay hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/features-carousel-5` (upstream `Flow5Illustration`;
+ * `@tailark-pro/features-carousel-05` (upstream `Flow5Illustration`;
  * renamed since no Flow1..4 exist).
  */
 export const FlowIllustration = () => {

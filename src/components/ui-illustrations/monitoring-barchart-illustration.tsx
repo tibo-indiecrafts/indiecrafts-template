@@ -36,7 +36,7 @@ const chartData = [
  * "Monitoring" header and a 6-month bar chart (desktop + mobile +
  * tablet, two of which render as emerald + indigo bars). Pure
  * decoration; no translations. Sourced from
- * `@tailark-pro/how-it-works-3` (upstream `MonitoringBarChart`).
+ * `@tailark-pro/how-it-works-03` (upstream `MonitoringBarChart`).
  */
 export const MonitoringBarchartIllustration = () => {
   return (

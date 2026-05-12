@@ -100,7 +100,7 @@ const TABS: readonly Tab[] = [
  * with line numbers via `CodeBlock`.
  *
  * Pure decoration; mock JSON stays hardcoded per the illustration
- * rule. Sourced from `@tailark-pro/code-demo-4`.
+ * rule. Sourced from `@tailark-pro/code-demo-04`.
  */
 export default function CodeFiles() {
   const [activeId, setActiveId] = useState(TABS[0].id);

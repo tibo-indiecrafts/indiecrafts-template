@@ -6,9 +6,9 @@ import { BookOpen, Gem, MoonStar } from "lucide-react";
  * 8,081 steps/day average against last year's 5,412 (gradient
  * purple bar vs muted bar). The front card shows a "Favorite Kits"
  * list of three brand chips (Quartz / Dusk / Mist) with relative
- * timestamps. Used by `sections-bento/bento-6/`. Pure decoration;
+ * timestamps. Used by `sections-bento/bento-06/`. Pure decoration;
  * mock copy stays hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-6` (upstream `KitIllustration`).
+ * `@tailark-pro/bento-06` (upstream `KitIllustration`).
  */
 export const KitIllustration = () => {
   return (

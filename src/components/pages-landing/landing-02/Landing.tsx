@@ -5,7 +5,7 @@ import { Header10 } from "@/components/layouts/_shared/site-headers/header-10";
 import { SiteFooter2 } from "@/components/layouts/_shared/site-footers/site-footer-2";
 import { Hero17Section } from "@/components/sections-hero/hero-17";
 import { LogoCloud11Section } from "@/components/sections-logo-cloud/logo-cloud-11";
-import { HowItWorks8Section } from "@/components/sections-how-it-works/how-it-works-8";
+import { HowItWorks08Section } from "@/components/sections-how-it-works/how-it-works-08";
 import { Features27Section } from "@/components/sections-features/features-27";
 import { Features28Section } from "@/components/sections-features/features-28";
 import { Stats16Section } from "@/components/sections-stats/stats-16";
@@ -13,7 +13,7 @@ import { Testimonials02Section } from "@/components/sections-testimonials/testim
 import { Cta02Section } from "@/components/sections-cta/cta-02";
 import { hero17Sample } from "@/components/sections-hero/hero-17/config";
 import { logoCloud11Sample } from "@/components/sections-logo-cloud/logo-cloud-11/config";
-import { howItWorks8Sample } from "@/components/sections-how-it-works/how-it-works-8/config";
+import { howItWorks08Sample } from "@/components/sections-how-it-works/how-it-works-08/config";
 import { features27Sample } from "@/components/sections-features/features-27/config";
 import { features28Sample } from "@/components/sections-features/features-28/config";
 import { stats16Sample } from "@/components/sections-stats/stats-16/config";
@@ -51,8 +51,8 @@ export function Landing({
         {...logoCloud11Sample}
         id={landing02Defaults.sectionIds.logoCloud}
       />
-      <HowItWorks8Section
-        {...howItWorks8Sample}
+      <HowItWorks08Section
+        {...howItWorks08Sample}
         id={landing02Defaults.sectionIds.howItWorks}
       />
       <Features27Section

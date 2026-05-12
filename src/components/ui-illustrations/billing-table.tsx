@@ -9,7 +9,7 @@ import { ArrowUp } from "lucide-react";
 /**
  * Mock customers/billing table with an AI-insight pill floating
  * across its bottom edge. Used by `ui-illustrations/billing-grid` and
- * `sections-secondary-hero/secondary-hero-5`. Mock rows are
+ * `sections-secondary-hero/secondary-hero-05`. Mock rows are
  * decorative; treat as illustrations-only (no translations).
  */
 

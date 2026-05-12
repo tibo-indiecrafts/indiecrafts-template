@@ -3,9 +3,9 @@ import { Globe } from "lucide-react";
 /**
  * Keyboard-keys illustration — two beveled key caps (`fn` + globe,
  * then `K`) sitting in front of a dashed cross-rule pattern. Used by
- * `sections-bento/bento-4/`. Pure decoration; mock copy stays
+ * `sections-bento/bento-04/`. Pure decoration; mock copy stays
  * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-4` (upstream `KeysIllustration`).
+ * `@tailark-pro/bento-04` (upstream `KeysIllustration`).
  */
 export const KeysIllustration = () => (
   <div

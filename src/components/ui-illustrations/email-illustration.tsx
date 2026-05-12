@@ -9,7 +9,7 @@ const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
  * / Subject / From rows, and a body paragraph featuring an inline
  * gradient-clipped text accent ("React and TypeScript"). Pure
  * decoration; mock copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/features-carousel-1`.
+ * Sourced from `@tailark-pro/features-carousel-01`.
  */
 export const EmailIllustration = () => (
   <div aria-hidden className="relative max-w-92 min-w-92 mask-b-from-75% px-4 pt-2">

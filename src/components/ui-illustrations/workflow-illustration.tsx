@@ -7,7 +7,7 @@ import { Vercel } from "@/components/ui-primitives/svgs/vercel";
  * over a dashed connector line linking three timeline cards: Linear
  * issue created → Git branch → Vercel preview deployed. Pure
  * decoration; mock timestamps stay hardcoded per the illustration
- * rule. Sourced from `@tailark-pro/features-carousel-3`.
+ * rule. Sourced from `@tailark-pro/features-carousel-03`.
  */
 export const WorkflowIllustration = () => {
   return (

@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
  * behind, unlike `invoice-illustration`). Brand mark + invoice
  * number / amount / due-date header on the left, document thumb on
  * the right, then three To/From/Address placeholder rows. Used by
- * `sections-how-it-works/how-it-works-1/`'s "Receive confirmation"
+ * `sections-how-it-works/how-it-works-01/`'s "Receive confirmation"
  * step. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/how-it-works-1`
+ * illustration rule. Sourced from `@tailark-pro/how-it-works-01`
  * (upstream `InvoiceIllustration`; renamed to
  * `invoice-card-illustration` to differentiate from our existing
  * stacked-cards `invoice-illustration`).

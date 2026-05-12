@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
  * Reply-composer illustration — small rounded card showing a mention
  * line ("@Bernard Shared 2 invoices") and a row of three icon
  * action-buttons (mention, emoji, attach). Used by `sections-bento/
- * bento-1/`. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/bento-1` (upstream
+ * bento-01/`. Pure decoration; mock copy stays hardcoded per the
+ * illustration rule. Sourced from `@tailark-pro/bento-01` (upstream
  * `ReplyIllustration`).
  */
 export const ReplyIllustration = ({ className }: { className?: string }) => {

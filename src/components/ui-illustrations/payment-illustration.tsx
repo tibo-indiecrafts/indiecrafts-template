@@ -1,9 +1,9 @@
 /**
  * Payment-form card mock — email field + "Card Information" group
  * (card number with Visa logo, MM/YY + CVV split row). Used by
- * `sections-how-it-works/how-it-works-1/`'s "Add payment information"
+ * `sections-how-it-works/how-it-works-01/`'s "Add payment information"
  * step. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/how-it-works-1`
+ * illustration rule. Sourced from `@tailark-pro/how-it-works-01`
  * (upstream `PaymentIllustration`).
  */
 export const PaymentIllustration = () => (

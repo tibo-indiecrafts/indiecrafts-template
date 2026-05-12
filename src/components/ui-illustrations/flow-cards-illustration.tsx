@@ -25,7 +25,7 @@ const NODES: readonly Node[] = [
  * illustration rule. Sourced from
  * `@tailark-pro/expandable-features-11` (upstream `flow-illustration`;
  * renamed to `flow-cards` since the project already has a horizontal
- * `flow-illustration.tsx` from `features-carousel-5`).
+ * `flow-illustration.tsx` from `features-carousel-05`).
  */
 export const FlowCardsIllustration = () => {
   return (

@@ -7,9 +7,9 @@ export type NotificationVariant = "elevated" | "outlined" | "mixed";
  * progress bar that grows on hover (1/3 → 2/3 width with delay). Three
  * styling variants control the card's surface treatment (`elevated` =
  * shadow-only, `outlined` = border-only, `mixed` = both). Used by
- * `sections-bento/bento-1/`. Pure decoration; mock copy stays
+ * `sections-bento/bento-01/`. Pure decoration; mock copy stays
  * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-1` (upstream `NotificationIllustration`).
+ * `@tailark-pro/bento-01` (upstream `NotificationIllustration`).
  */
 export const NotificationIllustration = ({
   className,

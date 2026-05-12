@@ -4,7 +4,7 @@ import { LogoIcon } from "@/components/layouts/_shared/logo";
  * Billing-checkout illustration — a 3-card stack featuring a
  * recipient form, a signature-block payment authorization, and an
  * invoice summary, framed by placeholder skeletons in the outer
- * columns. Used by `sections-secondary-hero/secondary-hero-7`. Mock
+ * columns. Used by `sections-secondary-hero/secondary-hero-07`. Mock
  * copy is decorative; treat as illustrations-only (no translations).
  */
 export const BillingCheckout = () => {

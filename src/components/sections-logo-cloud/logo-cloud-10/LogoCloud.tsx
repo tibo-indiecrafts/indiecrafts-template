@@ -12,7 +12,7 @@ import { logoCloud10Namespace } from "./config";
 /**
  * Centered intro paragraph + 4-column grid framed by `bg-foreground/10`
  * gap-painted dividers, with side-accent borders bracketing the grid.
- * Sourced from `@tailark-pro/logo-cloud-9`.
+ * Sourced from `@tailark-pro/logo-cloud-09`.
  */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud10Namespace);

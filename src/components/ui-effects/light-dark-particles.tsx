@@ -9,7 +9,7 @@ import { loadSlim } from "@tsparticles/slim";
  * `ui-illustrations/scan-illustration`. White circles linked by thin
  * lines drift slowly with random opacity. Sourced from the upstream
  * Tailark catalogue (`particles.tsx` shipped at the components root
- * for `bento-3`'s `ScanIllustration`); promoted here as a flat
+ * for `bento-03`'s `ScanIllustration`); promoted here as a flat
  * `ui-effects/` decorative primitive so other consumers can mount it.
  */
 export const LightDarkParticles = ({ id }: { id: string }) => {

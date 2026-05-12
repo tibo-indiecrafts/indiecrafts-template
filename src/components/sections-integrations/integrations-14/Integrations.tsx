@@ -16,7 +16,7 @@ const ICON_REGISTRY: Record<IntegrationIcon, ComponentType<SVGProps<SVGSVGElemen
 };
 
 /**
- * Tailark `integrations-6` — JSX verbatim. Stacked LLM-integration
+ * Tailark `integrations-06` — JSX verbatim. Stacked LLM-integration
  * row card masked by a top-radial gradient on `bg-muted dark:bg-background`,
  * with a centered title + body + outline CTA below. Each row carries
  * a brand SVG, name, description, and a square outline `Plus` button

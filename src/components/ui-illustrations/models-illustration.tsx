@@ -24,7 +24,7 @@ const MODELS: readonly Model[] = [
  * titled "Models ▸" listing five LLM options (Gemini, OpenAI,
  * Deepseek, Mistral, Qwen) with their brand glyphs. Pure decoration;
  * mock model labels stay hardcoded per the illustration rule. Sourced
- * from `@tailark-pro/features-carousel-3` (upstream
+ * from `@tailark-pro/features-carousel-03` (upstream
  * `Models3Illustration`; renamed since no Models1 / Models2 exist).
  */
 export const ModelsIllustration = () => {

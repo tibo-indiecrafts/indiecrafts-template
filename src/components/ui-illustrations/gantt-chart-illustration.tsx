@@ -25,9 +25,9 @@ const AVATARS = [
  * Gantt-chart product mock — window-chrome card with brand mark, a
  * "Timeline / Sidebar / Gantt Chart / Board / Workflow" tab row
  * (Gantt active), an avatar stack, and the full `GanttChart`
- * molecule below. Used by `sections-how-it-works/how-it-works-2/`'s
+ * molecule below. Used by `sections-how-it-works/how-it-works-02/`'s
  * "Manage your projects efficiently" step. Sourced from
- * `@tailark-pro/how-it-works-2` (upstream `GanttChartIllustration`).
+ * `@tailark-pro/how-it-works-02` (upstream `GanttChartIllustration`).
  */
 export const GanttChartIllustration = () => (
   <div
