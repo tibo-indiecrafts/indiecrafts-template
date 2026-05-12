@@ -3,17 +3,55 @@ import { withThemeByDataAttribute } from "@storybook/addon-themes";
 import { NextIntlClientProvider } from "next-intl";
 import React from "react";
 import { loadBlockMessages } from "../src/i18n/block-messages";
+import { STORY_MESSAGES } from "../src/i18n/story-messages";
 import { loadPageMessages } from "../src/config/pages/messages";
 import globalEn from "../messages/en.json";
 import globalFr from "../messages/fr.json";
 import "../src/app/globals.css";
 
 /**
- * Three-tier merge mirroring `src/i18n/request.ts` so block samples + page
- * messages render in stories the same way they do in the app.
+ * Per-story isolation:
+ *   - `Pages/*` and `Layouts/*` stories compose many blocks (page-templates
+ *     wrapping multiple section samples, layouts mounting default chrome
+ *     + sidebar variants), so they always render with the FULL three-tier
+ *     tree — same shape as `src/i18n/request.ts` produces in the app.
+ *   - All other stories whose folder has its own `en.json` (sections,
+ *     single-component molecules, isolated effects) render with ONLY
+ *     that block's translations in scope, looked up by the story's title
+ *     via the auto-generated `STORY_MESSAGES` map. Each story becomes a
+ *     standalone preview that doesn't depend on any other component's
+ *     translations.
+ *   - Stories without their own `en.json` (ui-primitives, ui-effects
+ *     without translations) also fall back to the full tree so any
+ *     incidental block reference still resolves.
+ *
+ * Root chrome (`nav`, `cta`, `footer`, `common`, `typography`, `llms`,
+ * etc.) is always loaded from `messages/<locale>.json` so layout chrome
+ * still renders. The app's runtime path in `src/i18n/request.ts` is
+ * unchanged — it continues to deep-merge the full three-tier tree.
  */
-function buildMessages(locale: "en" | "fr") {
+function buildMessages(
+  locale: "en" | "fr",
+  storyTitle: string | undefined,
+): Record<string, unknown> {
   const root = locale === "fr" ? globalFr : globalEn;
+
+  const composesMany =
+    !!storyTitle &&
+    (storyTitle.startsWith("Pages/") || storyTitle.startsWith("Layouts/"));
+  if (composesMany) {
+    return {
+      ...root,
+      pages: loadPageMessages(locale),
+      blocks: loadBlockMessages(),
+    };
+  }
+
+  const isolated = storyTitle ? STORY_MESSAGES[storyTitle] : undefined;
+  if (isolated) {
+    return { ...root, pages: {}, blocks: isolated };
+  }
+
   return {
     ...root,
     pages: loadPageMessages(locale),
@@ -123,19 +161,19 @@ const preview: Preview = {
       defaultTheme: "light",
       attributeName: "data-theme",
     }),
-    // Locale provider — listens to the toolbar's `locale` global.
+    // Locale provider — listens to the toolbar's `locale` global and
+    // isolates per-story messages via `STORY_MESSAGES[ctx.title]`.
     (Story, ctx) => {
       const locale = (ctx.globals.locale as "en" | "fr") ?? "en";
       const fullscreen = ctx.parameters?.layout === "fullscreen";
-      // Mirror the live `<body>` shape from `[locale]/layout.tsx` so layouts
-      // that own their chrome render with the same flex column flow — that
-      // pins the footer to the bottom and lets `<main className="flex-1">`
-      // grow into the empty space.
       const wrapperClass = fullscreen
         ? "bg-background text-foreground flex min-h-svh flex-col"
         : "bg-background text-foreground flex min-h-svh flex-col p-6";
       return (
-        <NextIntlClientProvider locale={locale} messages={buildMessages(locale)}>
+        <NextIntlClientProvider
+          locale={locale}
+          messages={buildMessages(locale, ctx.title)}
+        >
           <div className={wrapperClass}>
             <Story />
           </div>

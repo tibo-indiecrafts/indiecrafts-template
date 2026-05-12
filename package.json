@@ -22,7 +22,7 @@
     "verify:contrast": "node scripts/check-contrast.mjs",
     "verify:pages": "node scripts/verify-pages.mjs",
     "verify:styles": "node scripts/generate-component-styles.mjs && git diff --exit-code src/app/_component-styles.css",
-    "verify:i18n": "node scripts/generate-i18n-registry.mjs && git diff --exit-code src/i18n/block-messages.ts src/types/messages.ts",
+    "verify:i18n": "node scripts/generate-i18n-registry.mjs && git diff --exit-code src/i18n/block-messages.ts src/i18n/story-messages.ts src/types/messages.ts",
     "verify:routes": "node scripts/generate-routes.mjs && git diff --exit-code src/config/routes.types.ts src/config/pages/registry.generated.ts",
     "verify:no-real-pii": "node scripts/verify-no-real-pii.mjs",
     "verify": "pnpm tsc && pnpm lint && pnpm format:check && pnpm verify:contrast && pnpm verify:pages && pnpm verify:styles && pnpm verify:i18n && pnpm verify:routes && pnpm verify:no-real-pii",
