@@ -5,11 +5,8 @@ import { CheckCircle2 } from "lucide-react";
 import { layoutRegistry, type LayoutName } from "@/components/layouts/registry";
 import { Header10 } from "@/components/layouts/_shared/site-headers/header-10";
 import { SiteFooter2 } from "@/components/layouts/_shared/site-footers/site-footer-2";
-import { Button } from "@/components/ui-primitives/grid-2-solution-button";
-import {
-  Container,
-  Separator,
-} from "@/components/ui-primitives/grid-2-solution-container";
+import { Button } from "@/components/ui-effects/grid-2-solution-button";
+import { Container, Separator } from "@/components/ui-effects/grid-2-solution-container";
 import { Beacon } from "@/components/ui-primitives/svgs/grid-2-solution-beacon";
 import { Stripe } from "@/components/ui-primitives/svgs/grid-2-solution-stripe";
 import { Tailwindcss as TailwindCSS } from "@/components/ui-primitives/svgs/grid-2-solution-tailwindcss";

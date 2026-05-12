@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui-primitives/libre-landing-button";
+import { Button } from "@/components/ui-effects/libre-landing-button";
 import { HeroIllustration } from "@/components/ui-illustrations/libre-landing-hero-illustration";
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero20Namespace } from "./config";

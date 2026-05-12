@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui-primitives/dark-landing-card";
+import { Card } from "@/components/ui-effects/dark-landing-card";
 import { KitIllustration } from "@/components/ui-illustrations/dark-landing-kit-illustration";
 import { ReplyIllustration } from "@/components/ui-illustrations/dark-landing-reply-illustration";
 import { ScheduleIllustation } from "@/components/ui-illustrations/dark-landing-schedule-illustration";

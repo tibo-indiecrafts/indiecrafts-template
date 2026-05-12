@@ -1,15 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MessageCircle, Target } from "lucide-react";
-import { Button } from "@/components/ui-primitives/grid-2-landing-button";
-import { Container } from "@/components/ui-primitives/grid-2-landing-container";
+import { Button } from "@/components/ui-effects/grid-2-landing-button";
+import { Container } from "@/components/ui-effects/grid-2-landing-container";
 import {
   FeatureCard,
   FeatureCardCIllustration,
   FeatureCardContent,
   FeatureCardDescription,
   FeatureCardTitle,
-} from "@/components/ui-primitives/grid-2-landing-feature-card";
+} from "@/components/ui-effects/grid-2-landing-feature-card";
 import { CampaignIllustration } from "@/components/ui-illustrations/grid-2-landing-campaign-illustration";
 import { MessageIllustration } from "@/components/ui-illustrations/grid-2-landing-message-illustration";
 import { useScopedT } from "@/i18n/scoped-t";

@@ -7,8 +7,8 @@ import { LogoIcon } from "@/components/logo";
 import { Gemini } from "@/components/ui-primitives/svgs/gemini";
 import { Openai } from "@/components/ui-primitives/svgs/openai";
 import { Deepseek } from "@/components/ui-primitives/svgs/deepseek";
-import { TextShimmer } from "@/components/ui-primitives/text-shimmer";
-import { ResponseStream } from "@/components/ui-primitives/response-stream";
+import { TextShimmer } from "@/components/ui-effects/text-shimmer";
+import { ResponseStream } from "@/components/ui-effects/response-stream";
 
 const CYCLE_DURATION = 7000;
 
@@ -248,7 +248,7 @@ export const Flow13Illustration = () => {
             <div className="absolute inset-0 animate-pulse rounded-xl bg-linear-to-r from-purple-400 to-blue-500 blur-md" />
           </div>
           <div className="to-card/50 from-card ring-border-illustration relative m-auto flex size-11 items-center justify-center rounded-full bg-radial from-35% shadow-xl ring-1 shadow-black/6.5 backdrop-blur">
-            <LogoIcon className="drop-shadow-background size-4 drop-shadow" uniColor />
+            <LogoIcon className="drop-shadow-background size-4 drop-shadow" />
           </div>
         </div>
 

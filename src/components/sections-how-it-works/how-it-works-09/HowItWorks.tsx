@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowBigRight } from "lucide-react";
-import { Button } from "@/components/ui-primitives/libre-landing-two-button";
+import { Button } from "@/components/ui-effects/libre-landing-two-button";
 import { CurrencyIllustration } from "@/components/ui-illustrations/libre-landing-two-currency-illustration";
 import { DocumentIllustation } from "@/components/ui-illustrations/libre-landing-two-document-illustration";
 import { useScopedT } from "@/i18n/scoped-t";

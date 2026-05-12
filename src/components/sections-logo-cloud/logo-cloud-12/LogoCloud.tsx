@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { Container } from "@/components/ui-primitives/grid-1-landing-container";
+import { Container } from "@/components/ui-effects/grid-1-landing-container";
 import { Beacon } from "@/components/ui-primitives/svgs/grid-1-landing-beacon";
 import { Bolt } from "@/components/ui-primitives/svgs/grid-1-landing-bolt";
 import { Cisco } from "@/components/ui-primitives/svgs/grid-1-landing-cisco";

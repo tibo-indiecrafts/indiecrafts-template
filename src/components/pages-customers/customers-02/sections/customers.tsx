@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container } from "@/components/ui-primitives/grid-1-customers-one-container";
+import { Container } from "@/components/ui-effects/grid-1-customers-one-container";
 import { ReactNode } from "react";
 
 import { Stripe } from "@/components/ui-primitives/svgs/grid-1-customers-one-stripe";

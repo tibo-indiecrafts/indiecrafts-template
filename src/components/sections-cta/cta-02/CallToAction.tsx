@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui-primitives/dark-landing-button";
+import { Button } from "@/components/ui-effects/dark-landing-button";
 import { useScopedT } from "@/i18n/scoped-t";
 import { cta02Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";

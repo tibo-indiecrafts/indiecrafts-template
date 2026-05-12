@@ -8,9 +8,9 @@ import { Calendar10Illustration } from "@/components/ui-illustrations/grid-2-pro
 import { AnimatePresence, motion } from "motion/react";
 import { AgentTaskPlanningIllustration } from "@/components/ui-illustrations/grid-2-product-agent-task-planning-illustration";
 import { Globe, Bot, Brain, ShieldCheck, Hourglass } from "lucide-react";
-import { Button } from "@/components/ui-primitives/grid-2-product-button";
+import { Button } from "@/components/ui-effects/grid-2-product-button";
 import Link from "next/link";
-import { Container } from "@/components/ui-primitives/grid-2-product-container";
+import { Container } from "@/components/ui-effects/grid-2-product-container";
 const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
 
 const features = [

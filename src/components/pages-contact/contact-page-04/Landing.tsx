@@ -4,7 +4,7 @@ import Link from "next/link";
 import { layoutRegistry, type LayoutName } from "@/components/layouts/registry";
 import { Header10 } from "@/components/layouts/_shared/site-headers/header-10";
 import { SiteFooter2 } from "@/components/layouts/_shared/site-footers/site-footer-2";
-import { Container } from "@/components/ui-primitives/grid-2-contact-three-container";
+import { Container } from "@/components/ui-effects/grid-2-contact-three-container";
 import { EnterpriseForm } from "./sections/enterprise-form";
 import { contactPage04Defaults, contactPage04Namespace } from "./config";
 

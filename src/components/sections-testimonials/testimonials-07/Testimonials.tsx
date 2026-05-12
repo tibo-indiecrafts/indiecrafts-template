@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- avatars are remote thumbnails */
 
-import { Card } from "@/components/ui-primitives/libre-landing-two-card";
+import { Card } from "@/components/ui-effects/libre-landing-two-card";
 import { Hulu } from "@/components/ui-primitives/svgs/libre-landing-two-hulu";
 import { PrimeVideo } from "@/components/ui-primitives/svgs/libre-landing-two-prime-video";
 import { Stripe } from "@/components/ui-primitives/svgs/libre-landing-two-stripe";

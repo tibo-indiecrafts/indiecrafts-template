@@ -4,9 +4,9 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui-primitives/grid-1-pricing-accordion";
+} from "@/components/ui-effects/grid-1-pricing-accordion";
 import Link from "next/link";
-import { Container } from "@/components/ui-primitives/grid-1-pricing-container";
+import { Container } from "@/components/ui-effects/grid-1-pricing-container";
 
 export function FAQs() {
   const faqItems = [

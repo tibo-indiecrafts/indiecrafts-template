@@ -1,10 +1,10 @@
 import { Check, ClipboardList, ListChecks, Repeat, Timer } from "lucide-react";
-import { Container } from "@/components/ui-primitives/grid-2-product-two-container";
+import { Container } from "@/components/ui-effects/grid-2-product-two-container";
 import {
   FeatureCard,
   FeatureCardContent,
-} from "@/components/ui-primitives/grid-2-product-two-feature-card";
-import { Button } from "@/components/ui-primitives/grid-2-product-two-button";
+} from "@/components/ui-effects/grid-2-product-two-feature-card";
+import { Button } from "@/components/ui-effects/grid-2-product-two-button";
 import Link from "next/link";
 import Notes3Illustration from "@/components/ui-illustrations/grid-2-product-two-notes-3-illustration";
 

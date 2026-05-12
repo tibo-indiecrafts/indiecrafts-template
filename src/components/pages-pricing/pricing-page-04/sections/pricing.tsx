@@ -1,12 +1,9 @@
 /* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
 "use client";
-import { Button } from "@/components/ui-primitives/libre-pricing-button";
+import { Button } from "@/components/ui-effects/libre-pricing-button";
 import { Check } from "lucide-react";
 import Link from "next/link";
-import {
-  CardTitle,
-  CardDescription,
-} from "@/components/ui-primitives/libre-pricing-card";
+import { CardTitle, CardDescription } from "@/components/ui-effects/libre-pricing-card";
 import { useState } from "react";
 import NumberFlow from "@number-flow/react";
 

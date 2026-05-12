@@ -1,11 +1,11 @@
-import { Container } from "@/components/ui-primitives/grid-2-product-container";
+import { Container } from "@/components/ui-effects/grid-2-product-container";
 import {
   FeatureCard,
   FeatureCardDescription,
   FeatureCardCIllustration,
   FeatureCardContent,
   FeatureCardTitle,
-} from "@/components/ui-primitives/grid-2-product-feature-card";
+} from "@/components/ui-effects/grid-2-product-feature-card";
 import { CalendarIllustration } from "@/components/ui-illustrations/grid-2-product-calendar";
 import { WalletIllustration } from "@/components/ui-illustrations/grid-2-product-wallet-illustration";
 import { TaskPlanningIllustration } from "@/components/ui-illustrations/grid-2-product-task-planning-illustration";

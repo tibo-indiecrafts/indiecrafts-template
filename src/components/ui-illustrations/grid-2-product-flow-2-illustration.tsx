@@ -1,7 +1,7 @@
 "use client";
 
 import { Database, Server, Cloud } from "lucide-react";
-import { LogoIcon } from "@/components/ui-primitives/grid-2-product-logo";
+import { LogoIcon } from "@/components/layouts/_shared/logo";
 
 export const Flow2Illustration = () => {
   return (

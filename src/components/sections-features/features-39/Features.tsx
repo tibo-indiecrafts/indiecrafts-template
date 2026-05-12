@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui-primitives/libre-landing-two-card";
+import { Card } from "@/components/ui-effects/libre-landing-two-card";
 import { AddCommentIllustration } from "@/components/ui-illustrations/libre-landing-two-add-comment-illustration";
 import { CodeReviewIllustration } from "@/components/ui-illustrations/libre-landing-two-code-review-illustration";
 import { MapIllustration } from "@/components/ui-illustrations/libre-landing-two-map-illustration";

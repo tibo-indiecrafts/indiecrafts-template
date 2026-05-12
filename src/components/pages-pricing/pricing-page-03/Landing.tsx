@@ -4,10 +4,7 @@ import Image from "next/image";
 import { layoutRegistry, type LayoutName } from "@/components/layouts/registry";
 import { Header10 } from "@/components/layouts/_shared/site-headers/header-10";
 import { SiteFooter2 } from "@/components/layouts/_shared/site-footers/site-footer-2";
-import {
-  Container,
-  Separator,
-} from "@/components/ui-primitives/grid-2-pricing-container";
+import { Container, Separator } from "@/components/ui-effects/grid-2-pricing-container";
 import { Pricing } from "./sections/pricing";
 import { Comparator } from "./sections/comparator";
 import { FAQs } from "./sections/faqs";

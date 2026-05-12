@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-import { Container } from "@/components/ui-primitives/grid-2-customers-one-container";
+import { Container } from "@/components/ui-effects/grid-2-customers-one-container";
 
 import { VercelWordmark as VercelFull } from "@/components/ui-primitives/svgs/grid-2-customers-one-vercel";
 import { Hulu } from "@/components/ui-primitives/svgs/grid-2-customers-one-hulu";

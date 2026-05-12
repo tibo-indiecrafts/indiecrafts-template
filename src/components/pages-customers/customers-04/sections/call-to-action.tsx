@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui-primitives/libre-customers-one-button";
+import { Button } from "@/components/ui-effects/libre-customers-one-button";
 import Link from "next/link";
 import { CtaIllustration } from "@/components/ui-illustrations/libre-customers-one-cta-illustration";
 

@@ -1,4 +1,4 @@
-import { LogoIcon } from "@/components/ui-primitives/grid-2-landing-logo";
+import { LogoIcon } from "@/components/layouts/_shared/logo";
 
 export const InvoiceIllustration = () => {
   return (
@@ -56,10 +56,7 @@ export const InvoiceIllustration = () => {
           <div data-grid-content className="h-fit! p-6!">
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
-                <LogoIcon
-                  uniColor
-                  className="*:stroke-foreground opacity-50 *:fill-transparent"
-                />
+                <LogoIcon className="*:stroke-foreground opacity-50 *:fill-transparent" />
                 <div className="mt-4 font-mono text-xs">INV-456349</div>
                 <div className="mt-1 -translate-x-1 font-mono text-2xl font-semibold">
                   $57,452.64

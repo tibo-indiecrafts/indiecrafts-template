@@ -5,7 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 import { layoutRegistry, type LayoutName } from "@/components/layouts/registry";
 import { Header10 } from "@/components/layouts/_shared/site-headers/header-10";
 import { SiteFooter2 } from "@/components/layouts/_shared/site-footers/site-footer-2";
-import { Container } from "@/components/ui-primitives/grid-2-contact-container";
+import { Container } from "@/components/ui-effects/grid-2-contact-container";
 import { EnterpriseForm } from "./sections/enterprise-form";
 import { contactPage01Defaults, contactPage01Namespace } from "./config";
 

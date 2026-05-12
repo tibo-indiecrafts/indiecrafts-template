@@ -4,7 +4,7 @@ import Image from "next/image";
 import { layoutRegistry, type LayoutName } from "@/components/layouts/registry";
 import { Header10 } from "@/components/layouts/_shared/site-headers/header-10";
 import { SiteFooter2 } from "@/components/layouts/_shared/site-footers/site-footer-2";
-import { Container, Separator } from "@/components/ui-primitives/grid-2-about-container";
+import { Container, Separator } from "@/components/ui-effects/grid-2-about-container";
 import { MissionSection } from "./sections/mission-section";
 import { CoreValuesSection } from "./sections/core-values-section";
 import { TeamSection } from "./sections/team-section";

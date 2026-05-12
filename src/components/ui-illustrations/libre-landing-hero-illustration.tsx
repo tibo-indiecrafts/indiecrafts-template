@@ -3,7 +3,7 @@
 import { CheckCircle2 } from "lucide-react";
 import { CodeBlockIllustration } from "@/components/ui-illustrations/libre-landing-code-block-illustration";
 import Image from "next/image";
-import { LogoIcon } from "@/components/ui-primitives/libre-landing-logo";
+import { LogoIcon } from "@/components/layouts/_shared/logo";
 
 export const HeroIllustration = () => {
   return (
@@ -196,10 +196,7 @@ export const HeroIllustration = () => {
                         <div className="p-2">
                           <div className="bg-muted size-16 rounded-2xl border p-1">
                             <div className="ring-foreground/10 flex size-full rounded-[12px] bg-linear-to-b from-emerald-50 to-indigo-200 shadow-xl ring-1 inset-shadow-sm shadow-indigo-600/35 inset-shadow-white">
-                              <LogoIcon
-                                className="m-auto size-5 opacity-75 drop-shadow-md"
-                                uniColor
-                              />
+                              <LogoIcon className="m-auto size-5 opacity-75 drop-shadow-md" />
                             </div>
                           </div>
                         </div>

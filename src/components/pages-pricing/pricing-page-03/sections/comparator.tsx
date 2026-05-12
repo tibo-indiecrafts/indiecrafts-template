@@ -6,15 +6,12 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui-primitives/grid-2-pricing-tooltip";
-import { Button } from "@/components/ui-primitives/grid-2-pricing-button";
+} from "@/components/ui-effects/grid-2-pricing-tooltip";
+import { Button } from "@/components/ui-effects/grid-2-pricing-button";
 import Link from "next/link";
 import { useMedia } from "@/hooks/use-media";
 import { useState, type ReactNode } from "react";
-import {
-  Container,
-  Separator,
-} from "@/components/ui-primitives/grid-2-pricing-container";
+import { Container, Separator } from "@/components/ui-effects/grid-2-pricing-container";
 
 const plans = ["free", "pro", "team"] as const;
 

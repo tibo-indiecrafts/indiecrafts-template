@@ -1,12 +1,12 @@
 import { CalendarDays, Clock2, Database, Globe2, Zap } from "lucide-react";
-import { Container } from "@/components/ui-primitives/grid-2-landing-container";
+import { Container } from "@/components/ui-effects/grid-2-landing-container";
 import {
   FeatureCard,
   FeatureCardCIllustration,
   FeatureCardContent,
   FeatureCardDescription,
   FeatureCardTitle,
-} from "@/components/ui-primitives/grid-2-landing-feature-card";
+} from "@/components/ui-effects/grid-2-landing-feature-card";
 import { MapIllustration } from "@/components/ui-illustrations/grid-2-landing-map-illustration";
 import { VisualizationIllustration } from "@/components/ui-illustrations/grid-2-landing-visualization-illustration";
 import { useScopedT } from "@/i18n/scoped-t";

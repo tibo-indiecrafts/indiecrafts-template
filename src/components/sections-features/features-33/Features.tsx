@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { CalendarDays, Check, Clock2, TrendingUp, Zap } from "lucide-react";
-import { Button } from "@/components/ui-primitives/grid-2-landing-button";
-import { Container } from "@/components/ui-primitives/grid-2-landing-container";
+import { Button } from "@/components/ui-effects/grid-2-landing-button";
+import { Container } from "@/components/ui-effects/grid-2-landing-container";
 import {
   FeatureCard,
   FeatureCardContent,
-} from "@/components/ui-primitives/grid-2-landing-feature-card";
+} from "@/components/ui-effects/grid-2-landing-feature-card";
 import { EnterpriseMessageIllustration } from "@/components/ui-illustrations/grid-2-landing-enterprise-message-illustration";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features33Namespace } from "./config";

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui-primitives/dark-landing-button";
+import { buttonVariants } from "@/components/ui-effects/dark-landing-button";
 import {
   Calendar1,
   Bold,

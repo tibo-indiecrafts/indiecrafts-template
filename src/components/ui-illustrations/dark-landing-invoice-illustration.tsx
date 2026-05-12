@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { LogoIcon } from "@/components/ui-primitives/dark-landing-logo";
+import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { DocumentIllustation } from "@/components/ui-illustrations/dark-landing-document-illustration";
 
 export const InvoiceIllustration = ({ className }: { className?: string }) => {

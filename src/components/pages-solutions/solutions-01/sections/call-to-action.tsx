@@ -1,9 +1,6 @@
-import { Button } from "@/components/ui-primitives/grid-2-solution-button";
+import { Button } from "@/components/ui-effects/grid-2-solution-button";
 import Link from "next/link";
-import {
-  Container,
-  Separator,
-} from "@/components/ui-primitives/grid-2-solution-container";
+import { Container, Separator } from "@/components/ui-effects/grid-2-solution-container";
 
 export function CallToAction() {
   return (

@@ -6,7 +6,7 @@ import { Stripe } from "@/components/ui-primitives/svgs/grid-2-pricing-stripe";
 import { VercelWordmark as VercelFull } from "@/components/ui-primitives/svgs/grid-2-pricing-vercel";
 import { Cloudflare } from "@/components/ui-primitives/svgs/grid-2-pricing-cloudflare";
 import { OpenaiWordmarkLight as OpenAIFull } from "@/components/ui-primitives/svgs/grid-2-pricing-openai";
-import { Container } from "@/components/ui-primitives/grid-2-pricing-container";
+import { Container } from "@/components/ui-effects/grid-2-pricing-container";
 
 export function LogoCloud() {
   return (

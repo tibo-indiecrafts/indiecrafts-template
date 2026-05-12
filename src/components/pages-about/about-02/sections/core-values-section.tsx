@@ -1,5 +1,5 @@
 import { Heart, Lightbulb, Shield, Users } from "lucide-react";
-import { Container } from "@/components/ui-primitives/grid-2-about-container";
+import { Container } from "@/components/ui-effects/grid-2-about-container";
 
 const values = [
   {

@@ -4,14 +4,14 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { ChartPie, Cpu, HeartPulse, PanelsTopLeft } from "lucide-react";
 
-import { Button } from "@/components/ui-primitives/dark-pricing-button";
+import { Button } from "@/components/ui-effects/dark-pricing-button";
 import { useMedia } from "@/hooks/use-media";
 import {
   TooltipProvider,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui-primitives/dark-pricing-tooltip";
+} from "@/components/ui-effects/dark-pricing-tooltip";
 
 const plans = ["free", "pro", "team"] as const;
 

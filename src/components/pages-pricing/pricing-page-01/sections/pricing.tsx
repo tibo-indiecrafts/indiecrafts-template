@@ -1,8 +1,8 @@
 "use client";
-import { Button } from "@/components/ui-primitives/dark-pricing-button";
+import { Button } from "@/components/ui-effects/dark-pricing-button";
 import { Check } from "lucide-react";
 import Link from "next/link";
-import { CardTitle, CardDescription } from "@/components/ui-primitives/dark-pricing-card";
+import { CardTitle, CardDescription } from "@/components/ui-effects/dark-pricing-card";
 import { useState } from "react";
 import NumberFlow from "@number-flow/react";
 

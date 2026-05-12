@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui-primitives/libre-landing-two-card";
+import { Card } from "@/components/ui-effects/libre-landing-two-card";
 import { Play, Signature } from "lucide-react";
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 

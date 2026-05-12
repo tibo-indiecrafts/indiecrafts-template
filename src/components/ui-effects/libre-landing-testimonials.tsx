@@ -4,11 +4,11 @@ import { motion, AnimatePresence } from "motion/react";
 import { useState, useCallback, useRef } from "react";
 import { ChevronDown, ChevronRight, ChevronUp, Star, Zap } from "lucide-react";
 
-import { Card } from "@/components/ui-primitives/libre-landing-card";
+import { Card } from "@/components/ui-effects/libre-landing-card";
 import { Stripe } from "@/components/ui-primitives/svgs/libre-landing-stripe";
 import { Hulu } from "@/components/ui-primitives/svgs/libre-landing-hulu";
 import { PrimeVideo } from "@/components/ui-primitives/svgs/libre-landing-prime-video";
-import { Button } from "@/components/ui-primitives/libre-landing-button";
+import { Button } from "@/components/ui-effects/libre-landing-button";
 import { TextEffect } from "@/components/ui-effects/libre-landing-text-effect";
 
 import Link from "next/link";

@@ -1,4 +1,4 @@
-import { Container } from "@/components/ui-primitives/grid-2-customers-one-container";
+import { Container } from "@/components/ui-effects/grid-2-customers-one-container";
 
 import { Bolt } from "@/components/ui-primitives/svgs/grid-2-customers-one-bolt";
 import { SupabaseLight as Supabase } from "@/components/ui-primitives/svgs/grid-2-customers-one-supabase";

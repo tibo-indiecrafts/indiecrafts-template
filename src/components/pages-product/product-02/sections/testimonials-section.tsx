@@ -1,8 +1,8 @@
 import {
   Container,
   Separator,
-} from "@/components/ui-primitives/grid-2-product-two-container";
-import { Button } from "@/components/ui-primitives/grid-2-product-two-button";
+} from "@/components/ui-effects/grid-2-product-two-container";
+import { Button } from "@/components/ui-effects/grid-2-product-two-button";
 
 import { Hulu } from "@/components/ui-primitives/svgs/grid-2-product-two-hulu";
 import { PrimeVideo } from "@/components/ui-primitives/svgs/grid-2-product-two-prime-video";
@@ -12,7 +12,7 @@ import {
   FeatureCardCIllustration,
   FeatureCardContent,
   FeatureCardDescription,
-} from "@/components/ui-primitives/grid-2-product-two-feature-card";
+} from "@/components/ui-effects/grid-2-product-two-feature-card";
 
 import Link from "next/link";
 import Image from "next/image";

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- avatars are remote thumbnails */
 
 import { Quote } from "lucide-react";
-import { Container } from "@/components/ui-primitives/grid-1-landing-container";
+import { Container } from "@/components/ui-effects/grid-1-landing-container";
 import { AiSuggestionIllustration } from "@/components/ui-illustrations/grid-1-landing-ai-suggestion-illustration";
 import { ChatIllustration } from "@/components/ui-illustrations/grid-1-landing-chat-illustration";
 import { IntegrationsIllustration } from "@/components/ui-illustrations/grid-1-landing-integrations-illustration";

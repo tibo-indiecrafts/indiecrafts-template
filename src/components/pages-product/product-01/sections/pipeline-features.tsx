@@ -1,10 +1,10 @@
 import { Check, Database, Globe, RefreshCw, Shield, Workflow } from "lucide-react";
-import { Container } from "@/components/ui-primitives/grid-2-product-container";
+import { Container } from "@/components/ui-effects/grid-2-product-container";
 import {
   FeatureCard,
   FeatureCardContent,
-} from "@/components/ui-primitives/grid-2-product-feature-card";
-import { Button } from "@/components/ui-primitives/grid-2-product-button";
+} from "@/components/ui-effects/grid-2-product-feature-card";
+import { Button } from "@/components/ui-effects/grid-2-product-button";
 import Link from "next/link";
 import { Flow2Illustration } from "@/components/ui-illustrations/grid-2-product-flow-2-illustration";
 

@@ -1,5 +1,5 @@
 import { CalendarDays, Clock2, Zap } from "lucide-react";
-import { Card } from "@/components/ui-primitives/libre-landing-two-card";
+import { Card } from "@/components/ui-effects/libre-landing-two-card";
 import { AiOverviewIllustration } from "@/components/ui-illustrations/libre-landing-two-ai-overview-illustration";
 import { ChartIllustration } from "@/components/ui-illustrations/libre-landing-two-chart-illustration";
 import { LanguagesIllustration } from "@/components/ui-illustrations/libre-landing-two-languages-illustration";

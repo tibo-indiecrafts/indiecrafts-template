@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui-primitives/dark-landing-card";
+import { Card } from "@/components/ui-effects/dark-landing-card";
 import { CompletePaymentIllustration } from "@/components/ui-illustrations/dark-landing-complete-payment-illustration";
 import { LinkPaymentIllustration } from "@/components/ui-illustrations/dark-landing-link-payment-illustration";
 import { useScopedT } from "@/i18n/scoped-t";

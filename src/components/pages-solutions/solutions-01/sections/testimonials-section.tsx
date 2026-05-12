@@ -1,9 +1,6 @@
 /* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
-import {
-  Container,
-  Separator,
-} from "@/components/ui-primitives/grid-2-solution-container";
-import { Button } from "@/components/ui-primitives/grid-2-solution-button";
+import { Container, Separator } from "@/components/ui-effects/grid-2-solution-container";
+import { Button } from "@/components/ui-effects/grid-2-solution-button";
 
 import { Hulu } from "@/components/ui-primitives/svgs/grid-2-solution-hulu";
 import { PrimeVideo } from "@/components/ui-primitives/svgs/grid-2-solution-prime-video";
@@ -13,7 +10,7 @@ import {
   FeatureCardCIllustration,
   FeatureCardContent,
   FeatureCardDescription,
-} from "@/components/ui-primitives/grid-2-solution-feature-card";
+} from "@/components/ui-effects/grid-2-solution-feature-card";
 
 import Link from "next/link";
 import Image from "next/image";

@@ -1,4 +1,4 @@
-import { Container } from "@/components/ui-primitives/grid-2-product-container";
+import { Container } from "@/components/ui-effects/grid-2-product-container";
 import Image from "next/image";
 import { Spotify } from "@/components/ui-primitives/svgs/grid-2-product-spotify";
 

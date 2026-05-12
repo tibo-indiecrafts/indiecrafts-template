@@ -3,8 +3,8 @@
 import { motion } from "motion/react";
 import { Plus, Minus } from "lucide-react";
 import { useState, type ReactNode } from "react";
-import { Button } from "@/components/ui-primitives/grid-1-landing-button";
-import { Container } from "@/components/ui-primitives/grid-1-landing-container";
+import { Button } from "@/components/ui-effects/grid-1-landing-button";
+import { Container } from "@/components/ui-effects/grid-1-landing-container";
 import { useScopedT } from "@/i18n/scoped-t";
 import { cn } from "@/lib/utils";
 import { content19Namespace } from "./config";

@@ -1,15 +1,12 @@
 /* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
 "use client";
-import { Button } from "@/components/ui-primitives/grid-1-pricing-button";
+import { Button } from "@/components/ui-effects/grid-1-pricing-button";
 import { Check } from "lucide-react";
 import Link from "next/link";
-import {
-  CardTitle,
-  CardDescription,
-} from "@/components/ui-primitives/grid-1-pricing-card";
+import { CardTitle, CardDescription } from "@/components/ui-effects/grid-1-pricing-card";
 import { useState } from "react";
 import NumberFlow from "@number-flow/react";
-import { Container } from "@/components/ui-primitives/grid-1-pricing-container";
+import { Container } from "@/components/ui-effects/grid-1-pricing-container";
 
 export function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annually">("annually");

@@ -5,7 +5,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui-primitives/libre-landing-two-chart";
+} from "@/components/ui-effects/libre-landing-two-chart";
 
 const chartConfig = {
   desktop: {

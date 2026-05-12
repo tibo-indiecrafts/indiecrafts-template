@@ -10,7 +10,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui-primitives/dark-pricing-accordion";
+} from "@/components/ui-effects/dark-pricing-accordion";
 
 const faqItems = [
   {

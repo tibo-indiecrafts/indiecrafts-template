@@ -1,6 +1,6 @@
 /* eslint-disable -- Acme Pro upstream JSX kept verbatim for fidelity */
 
-import { Card } from "@/components/ui-primitives/dark-customers-one-card";
+import { Card } from "@/components/ui-effects/dark-customers-one-card";
 
 type Testimonial = {
   name: string;

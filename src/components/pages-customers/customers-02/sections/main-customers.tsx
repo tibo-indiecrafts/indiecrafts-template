@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container } from "@/components/ui-primitives/grid-1-customers-one-container";
+import { Container } from "@/components/ui-effects/grid-1-customers-one-container";
 import { Bolt } from "@/components/ui-primitives/svgs/grid-1-customers-one-bolt";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";

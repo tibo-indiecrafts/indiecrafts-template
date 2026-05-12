@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui-primitives/grid-2-contact-one-button";
-import { Input } from "@/components/ui-primitives/grid-2-contact-one-input";
-import { Label } from "@/components/ui-primitives/grid-2-contact-one-label";
+import { Button } from "@/components/ui-effects/grid-2-contact-one-button";
+import { Input } from "@/components/ui-effects/grid-2-contact-one-input";
+import { Label } from "@/components/ui-effects/grid-2-contact-one-label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui-primitives/grid-2-contact-one-select";
-import { Textarea } from "@/components/ui-primitives/grid-2-contact-one-textarea";
+} from "@/components/ui-effects/grid-2-contact-one-select";
+import { Textarea } from "@/components/ui-effects/grid-2-contact-one-textarea";
 import Link from "next/link";
 
 export const EnterpriseForm = () => {

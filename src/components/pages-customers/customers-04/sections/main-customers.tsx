@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-import { Card } from "@/components/ui-primitives/libre-customers-one-card";
+import { Card } from "@/components/ui-effects/libre-customers-one-card";
 import { Stripe } from "@/components/ui-primitives/svgs/libre-customers-one-stripe";
 import { SupabaseLight as Supabase } from "@/components/ui-primitives/svgs/libre-customers-one-supabase";
 import { Hulu } from "@/components/ui-primitives/svgs/libre-customers-one-hulu";

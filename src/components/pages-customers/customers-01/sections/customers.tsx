@@ -9,7 +9,7 @@ import { SupabaseDark as Supabase } from "@/components/ui-primitives/svgs/dark-c
 import { OpenaiWordmarkDark as OpenAIFull } from "@/components/ui-primitives/svgs/dark-customers-one-openai";
 
 import { ChevronRight } from "lucide-react";
-import { Card } from "@/components/ui-primitives/dark-customers-one-card";
+import { Card } from "@/components/ui-effects/dark-customers-one-card";
 
 interface Customer {
   name: string;

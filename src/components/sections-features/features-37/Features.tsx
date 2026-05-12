@@ -1,5 +1,5 @@
 import { Shield } from "lucide-react";
-import { Card } from "@/components/ui-primitives/libre-landing-card";
+import { Card } from "@/components/ui-effects/libre-landing-card";
 import { ChipIllustration } from "@/components/ui-illustrations/libre-landing-chip-illustration";
 import { CurrencyIllustration } from "@/components/ui-illustrations/libre-landing-currency-illustration";
 import { KeysIllustration } from "@/components/ui-illustrations/libre-landing-keys-illustration";

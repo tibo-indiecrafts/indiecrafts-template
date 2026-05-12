@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { LogoIcon } from "@/components/ui-primitives/grid-1-landing-logo";
+import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { DocumentIllustation } from "@/components/ui-illustrations/grid-1-landing-document-illustration";
 
 export const InvoiceIllustration = ({ className }: { className?: string }) => {

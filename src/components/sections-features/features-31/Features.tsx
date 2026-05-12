@@ -2,15 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Check, CreditCard, ScanFace, Scroll } from "lucide-react";
-import { Button } from "@/components/ui-primitives/grid-2-landing-button";
-import {
-  Container,
-  Separator,
-} from "@/components/ui-primitives/grid-2-landing-container";
+import { Button } from "@/components/ui-effects/grid-2-landing-button";
+import { Container, Separator } from "@/components/ui-effects/grid-2-landing-container";
 import {
   FeatureCard,
   FeatureCardContent,
-} from "@/components/ui-primitives/grid-2-landing-feature-card";
+} from "@/components/ui-effects/grid-2-landing-feature-card";
 import { CreditCardIllustration } from "@/components/ui-illustrations/grid-2-landing-credit-card-illustration";
 import { FlowIllustration } from "@/components/ui-illustrations/grid-2-landing-flow-illustration";
 import { InvoiceIllustration } from "@/components/ui-illustrations/grid-2-landing-invoice-illustration";

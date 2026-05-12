@@ -1,16 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui-primitives/grid-2-landing-button";
-import {
-  Container,
-  Separator,
-} from "@/components/ui-primitives/grid-2-landing-container";
+import { Button } from "@/components/ui-effects/grid-2-landing-button";
+import { Container, Separator } from "@/components/ui-effects/grid-2-landing-container";
 import {
   FeatureCard,
   FeatureCardCIllustration,
   FeatureCardContent,
   FeatureCardDescription,
-} from "@/components/ui-primitives/grid-2-landing-feature-card";
+} from "@/components/ui-effects/grid-2-landing-feature-card";
 import { Hulu } from "@/components/ui-primitives/svgs/grid-2-landing-hulu";
 import { PrimeVideo } from "@/components/ui-primitives/svgs/grid-2-landing-prime-video";
 import { Vercel } from "@/components/ui-primitives/svgs/grid-2-landing-vercel";

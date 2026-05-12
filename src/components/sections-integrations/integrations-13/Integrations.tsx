@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui-primitives/grid-2-landing-button";
-import { Container } from "@/components/ui-primitives/grid-2-landing-container";
+import { Button } from "@/components/ui-effects/grid-2-landing-button";
+import { Container } from "@/components/ui-effects/grid-2-landing-container";
 import { Claude as ClaudeAiIcon } from "@/components/ui-primitives/svgs/grid-2-landing-claude";
 import { Cloudflare } from "@/components/ui-primitives/svgs/grid-2-landing-cloudflare";
 import { GooglePalm } from "@/components/ui-primitives/svgs/grid-2-landing-google-palm";

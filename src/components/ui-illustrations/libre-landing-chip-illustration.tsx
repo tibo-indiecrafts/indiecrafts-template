@@ -1,4 +1,4 @@
-import { LogoIcon } from "@/components/ui-primitives/libre-landing-logo";
+import { LogoIcon } from "@/components/layouts/_shared/logo";
 
 export const ChipIllustration = () => {
   return (
@@ -21,7 +21,7 @@ export const ChipIllustration = () => {
           <div className="p-2">
             <div className="bg-background border-foreground/25 size-16 rounded-2xl border p-1">
               <div className="inset-ring-foreground/35 flex size-full rounded-[11px] bg-linear-to-br from-emerald-600/50 to-indigo-600/50 shadow-md inset-ring-1 shadow-indigo-600/15">
-                <LogoIcon className="m-auto size-5 text-white drop-shadow-md" uniColor />
+                <LogoIcon className="m-auto size-5 text-white drop-shadow-md" />
               </div>
             </div>
           </div>

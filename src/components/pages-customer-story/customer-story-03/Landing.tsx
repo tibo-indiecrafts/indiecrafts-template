@@ -14,7 +14,7 @@ import {
 import { layoutRegistry, type LayoutName } from "@/components/layouts/registry";
 import { Header10 } from "@/components/layouts/_shared/site-headers/header-10";
 import { SiteFooter2 } from "@/components/layouts/_shared/site-footers/site-footer-2";
-import { Container } from "@/components/ui-primitives/grid-2-customer-story-one-container";
+import { Container } from "@/components/ui-effects/grid-2-customer-story-one-container";
 import { formatDate } from "./lib/format-date";
 import { extractHeadings } from "./lib/extract-headings";
 import { portableTextComponents } from "./content-components";

@@ -16,7 +16,7 @@ import { VercelWordmark as VercelFull } from "@/components/ui-primitives/svgs/gr
 import { Spotify } from "@/components/ui-primitives/svgs/grid-2-product-two-spotify";
 import { Paypal as PayPal } from "@/components/ui-primitives/svgs/grid-2-product-two-paypal";
 
-import { Container } from "@/components/ui-primitives/grid-2-product-two-container";
+import { Container } from "@/components/ui-effects/grid-2-product-two-container";
 
 const aiLogos: React.ReactNode[] = [
   <OpenAIFull key="openai" height={22} width="auto" />,

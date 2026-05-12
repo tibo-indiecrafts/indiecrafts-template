@@ -1,4 +1,4 @@
-import { Container } from "@/components/ui-primitives/grid-2-about-container";
+import { Container } from "@/components/ui-effects/grid-2-about-container";
 
 export function MissionSection() {
   return (

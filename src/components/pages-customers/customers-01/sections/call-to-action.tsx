@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui-primitives/dark-customers-one-button";
+import { Button } from "@/components/ui-effects/dark-customers-one-button";
 import Link from "next/link";
 
 export function CallToAction() {

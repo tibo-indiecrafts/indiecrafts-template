@@ -1,4 +1,4 @@
-import { LogoIcon } from "@/components/ui-primitives/dark-landing-logo";
+import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { cn } from "@/lib/utils";
 
 export const InvoiceSigningIllustration = ({ className }: { className?: string }) => {

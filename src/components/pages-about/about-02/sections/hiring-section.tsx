@@ -1,7 +1,7 @@
 /* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
 import Link from "next/link";
 import { ArrowRight, Flame } from "lucide-react";
-import { Container } from "@/components/ui-primitives/grid-2-about-container";
+import { Container } from "@/components/ui-effects/grid-2-about-container";
 
 type Role = {
   slug: string;

@@ -8,7 +8,7 @@ import { Beacon } from "@/components/ui-primitives/svgs/libre-customers-one-beac
 import { SupabaseLight as Supabase } from "@/components/ui-primitives/svgs/libre-customers-one-supabase";
 import { OpenaiWordmarkLight as OpenAIFull } from "@/components/ui-primitives/svgs/libre-customers-one-openai";
 import { ChevronRight } from "lucide-react";
-import { Card } from "@/components/ui-primitives/libre-customers-one-card";
+import { Card } from "@/components/ui-effects/libre-customers-one-card";
 
 interface Customer {
   name: string;

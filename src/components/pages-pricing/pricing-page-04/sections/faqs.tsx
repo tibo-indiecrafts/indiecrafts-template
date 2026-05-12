@@ -4,7 +4,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui-primitives/libre-pricing-accordion";
+} from "@/components/ui-effects/libre-pricing-accordion";
 import Link from "next/link";
 
 export function FAQs() {

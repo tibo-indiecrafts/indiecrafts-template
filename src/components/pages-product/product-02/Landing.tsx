@@ -5,18 +5,18 @@ import { AtSign, Brain } from "lucide-react";
 import { layoutRegistry, type LayoutName } from "@/components/layouts/registry";
 import { Header10 } from "@/components/layouts/_shared/site-headers/header-10";
 import { SiteFooter2 } from "@/components/layouts/_shared/site-footers/site-footer-2";
-import { Button } from "@/components/ui-primitives/grid-2-product-two-button";
+import { Button } from "@/components/ui-effects/grid-2-product-two-button";
 import {
   Container,
   Separator,
-} from "@/components/ui-primitives/grid-2-product-two-container";
+} from "@/components/ui-effects/grid-2-product-two-container";
 import {
   FeatureCard,
   FeatureCardCIllustration,
   FeatureCardContent,
   FeatureCardDescription,
   FeatureCardTitle,
-} from "@/components/ui-primitives/grid-2-product-two-feature-card";
+} from "@/components/ui-effects/grid-2-product-two-feature-card";
 import AiAutocompleteIllustration from "@/components/ui-illustrations/grid-2-product-two-ai-autocomplete";
 import { AiMentionsIllustration } from "@/components/ui-illustrations/grid-2-product-two-ai-mentions";
 import { LogoCloud } from "./sections/logo-cloud";

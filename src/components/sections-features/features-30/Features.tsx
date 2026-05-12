@@ -1,5 +1,5 @@
 import { CalendarDays, Clock2, Zap } from "lucide-react";
-import { Container } from "@/components/ui-primitives/grid-1-landing-container";
+import { Container } from "@/components/ui-effects/grid-1-landing-container";
 import { MapIllustration } from "@/components/ui-illustrations/grid-1-landing-map-illustration";
 import { VisualizationIllustration } from "@/components/ui-illustrations/grid-1-landing-visualization-illustration";
 import { useScopedT } from "@/i18n/scoped-t";

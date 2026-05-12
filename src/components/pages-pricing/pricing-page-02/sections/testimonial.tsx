@@ -1,5 +1,5 @@
 /* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
-import { Container } from "@/components/ui-primitives/grid-1-pricing-container";
+import { Container } from "@/components/ui-effects/grid-1-pricing-container";
 import { Quote } from "lucide-react";
 import { Stripe } from "@/components/ui-primitives/svgs/grid-1-pricing-stripe";
 

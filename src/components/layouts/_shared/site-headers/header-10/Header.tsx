@@ -24,8 +24,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui-primitives/dark-landing-accordion";
-import { Button } from "@/components/ui-primitives/dark-landing-button";
+} from "@/components/ui-effects/dark-landing-accordion";
+import { Button } from "@/components/ui-effects/dark-landing-button";
 import { Logo } from "@/components/layouts/_shared/logo";
 import {
   NavigationMenu,
@@ -35,7 +35,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/ui-primitives/dark-landing-navigation-menu";
+} from "@/components/ui-effects/dark-landing-navigation-menu";
 import { useMedia } from "@/hooks/use-media";
 import { useScopedT } from "@/i18n/scoped-t";
 import { cn } from "@/lib/utils";

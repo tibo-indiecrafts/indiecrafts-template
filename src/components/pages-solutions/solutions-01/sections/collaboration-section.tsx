@@ -1,14 +1,11 @@
-import {
-  Container,
-  Separator,
-} from "@/components/ui-primitives/grid-2-solution-container";
+import { Container, Separator } from "@/components/ui-effects/grid-2-solution-container";
 import {
   FeatureCard,
   FeatureCardDescription,
   FeatureCardCIllustration,
   FeatureCardContent,
   FeatureCardTitle,
-} from "@/components/ui-primitives/grid-2-solution-feature-card";
+} from "@/components/ui-effects/grid-2-solution-feature-card";
 import {
   CalendarCheck,
   KanbanSquare,

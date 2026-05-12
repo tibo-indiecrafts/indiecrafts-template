@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Container } from "@/components/ui-primitives/grid-2-about-container";
+import { Container } from "@/components/ui-effects/grid-2-about-container";
 
 type Member = {
   name: string;

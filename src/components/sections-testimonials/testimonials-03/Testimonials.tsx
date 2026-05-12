@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- avatars are remote thumbnails */
 
-import { Container } from "@/components/ui-primitives/grid-1-landing-container";
+import { Container } from "@/components/ui-effects/grid-1-landing-container";
 import { Hulu } from "@/components/ui-primitives/svgs/grid-1-landing-hulu";
 import { Stripe } from "@/components/ui-primitives/svgs/grid-1-landing-stripe";
 import { Tailwindcss } from "@/components/ui-primitives/svgs/grid-1-landing-tailwindcss";

@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui-primitives/libre-landing-two-card";
+import { Card } from "@/components/ui-effects/libre-landing-two-card";
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 const BERNARD_AVATAR = "https://avatars.githubusercontent.com/u/31113941?v=4";
 const THEO_AVATAR = "https://avatars.githubusercontent.com/u/68236786?v=4";
