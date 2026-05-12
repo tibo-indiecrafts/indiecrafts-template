@@ -29,10 +29,10 @@ import {
 import { useScopedT } from "@/i18n/scoped-t";
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { sidebar03Namespace, sidebar03Notifications } from "./config";
-import type { Route } from "@/components/ui-molecules/sidebar/nav-main/grouped";
-import DashboardNavigation from "@/components/ui-molecules/sidebar/nav-main/grouped";
-import { SidebarNavNotifications } from "@/components/ui-molecules/sidebar/nav-notifications";
-import { SidebarTeamSwitcherGrouped } from "@/components/ui-molecules/sidebar/team-switcher/grouped";
+import type { Route } from "@/components/ui-molecules/nav/main/grouped";
+import DashboardNavigation from "@/components/ui-molecules/nav/main/grouped";
+import { NavNotifications } from "@/components/ui-molecules/nav/notifications";
+import { TeamSwitcherGrouped } from "@/components/ui-molecules/team-switcher/grouped";
 
 const dashboardRoutes: Route[] = [
   {
@@ -150,7 +150,7 @@ export default function Sidebar() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <SidebarNavNotifications
+          <NavNotifications
             notifications={sidebar03Notifications}
             namespace={sidebar03Namespace}
           />
@@ -161,7 +161,7 @@ export default function Sidebar() {
         <DashboardNavigation routes={dashboardRoutes} namespace={sidebar03Namespace} />
       </SidebarContent>
       <SidebarFooter className="px-2">
-        <SidebarTeamSwitcherGrouped teams={teams} namespace={sidebar03Namespace} />
+        <TeamSwitcherGrouped teams={teams} namespace={sidebar03Namespace} />
       </SidebarFooter>
     </UISidebar>
   );

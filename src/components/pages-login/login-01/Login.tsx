@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { layoutRegistry, type LayoutName } from "@/components/layouts/registry";
-import { LoginForm } from "@/components/ui-molecules/auth-form/login";
+import { LoginForm } from "@/components/ui-molecules/form/login";
 import { login01Defaults, login01Namespace } from "./config";
 
 export type LoginProps = {

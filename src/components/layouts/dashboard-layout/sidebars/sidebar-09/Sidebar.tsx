@@ -3,9 +3,9 @@
 import * as React from "react";
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { DashboardCalendars } from "@/components/ui-molecules/dashboard/calendars";
-import { DashboardDatePicker } from "@/components/ui-molecules/dashboard/date-picker";
-import { DashboardNavUser } from "@/components/ui-molecules/dashboard/nav-user";
+import { Calendars } from "@/components/ui-molecules/widget/calendars";
+import { DatePicker } from "@/components/ui-molecules/widget/date-picker";
+import { NavUserDots } from "@/components/ui-molecules/nav/user/dots";
 import {
   Sidebar as UISidebar,
   SidebarContent,
@@ -32,12 +32,12 @@ export function Sidebar({ data = sidebar09Data, ...props }: SidebarProps) {
       {...props}
     >
       <SidebarHeader className="border-sidebar-border h-16 border-b">
-        <DashboardNavUser user={data.user} />
+        <NavUserDots user={data.user} />
       </SidebarHeader>
       <SidebarContent>
-        <DashboardDatePicker />
+        <DatePicker />
         <SidebarSeparator className="mx-0" />
-        <DashboardCalendars calendars={data.calendars} />
+        <Calendars calendars={data.calendars} />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>

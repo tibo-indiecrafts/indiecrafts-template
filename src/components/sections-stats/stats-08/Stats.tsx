@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardFooter } from "@/components/ui-primitives/card";
-import { CapacityRing } from "@/components/ui-molecules/capacity-ring";
+import { CapacityRing } from "@/components/ui-molecules/widget/capacity-ring";
 import { useScopedT } from "@/i18n/scoped-t";
 import { stats08Items, stats08Namespace } from "./config";
 import type { StatsBlock } from "./schema";

@@ -20,7 +20,7 @@ import { IconBrandAmongUs } from "@tabler/icons-react";
 import { useScopedT } from "@/i18n/scoped-t";
 import { sidebar04Data, sidebar04Namespace } from "./config";
 import { useMail } from "@/components/layouts/dashboard-layout/sidebars/sidebar-04/mail-context";
-import { SidebarNavUser } from "@/components/ui-molecules/sidebar/nav-user";
+import { NavUserChevron } from "@/components/ui-molecules/nav/user/chevron";
 
 const data = sidebar04Data;
 const brandHref = "#";
@@ -123,7 +123,7 @@ export default function Sidebar({ ...props }: React.ComponentProps<typeof UISide
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <SidebarNavUser user={data.user} />
+          <NavUserChevron user={data.user} />
         </SidebarFooter>
       </UISidebar>
 

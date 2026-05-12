@@ -15,7 +15,7 @@ import {
   WelcomeBanner01Section,
   welcomeBanner01Sample,
 } from "@/components/sections-dashboard/welcome-banner-01";
-import { SectionCards } from "@/components/ui-molecules/dashboard/kpi-cards";
+import { SectionCards } from "@/components/ui-molecules/widget/kpi-cards";
 import { dashboard01Defaults, dashboard01Namespace } from "./config";
 import { dashboard01SampleRows } from "./sample-data";
 

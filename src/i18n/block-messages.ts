@@ -109,13 +109,6 @@ import customers02En from "../components/pages-customers/customers-02/en.json";
 import customers03En from "../components/pages-customers/customers-03/en.json";
 import customers04En from "../components/pages-customers/customers-04/en.json";
 import dashboard01En from "../components/pages-dashboard/dashboard-01/en.json";
-import dashboardHeaderEn from "../components/ui-molecules/dashboard/header/en.json";
-import dashboardNavDocumentsEn from "../components/ui-molecules/dashboard/nav-documents/en.json";
-import dashboardNavFavoritesEn from "../components/ui-molecules/dashboard/nav-favorites/en.json";
-import dashboardNavMainEn from "../components/ui-molecules/dashboard/nav-main/en.json";
-import dashboardNavUserEn from "../components/ui-molecules/dashboard/nav-user/en.json";
-import dashboardNavWorkspacesEn from "../components/ui-molecules/dashboard/nav-workspaces/en.json";
-import dashboardTeamSwitcherEn from "../components/ui-molecules/dashboard/team-switcher/en.json";
 import dataTableEn from "../components/sections-data/data-table/en.json";
 import dialog01En from "../components/sections-modals/dialog-01/en.json";
 import dialog02En from "../components/sections-modals/dialog-02/en.json";
@@ -130,7 +123,7 @@ import dialog10En from "../components/sections-modals/dialog-10/en.json";
 import dialog11En from "../components/sections-modals/dialog-11/en.json";
 import dialog12En from "../components/sections-modals/dialog-12/en.json";
 import ditherShaderEn from "../components/ui-effects/dither-shader/en.json";
-import enterpriseFormEn from "../components/ui-molecules/contact-form/enterprise/en.json";
+import enterpriseFormEn from "../components/ui-molecules/form/contact-enterprise/en.json";
 import error01En from "../components/pages-error/error-01/en.json";
 import faq01En from "../components/sections-faq/faq-01/en.json";
 import faq02En from "../components/sections-faq/faq-02/en.json";
@@ -325,7 +318,7 @@ import login20En from "../components/sections-auth/login-20/en.json";
 import login21En from "../components/sections-auth/login-21/en.json";
 import login22En from "../components/sections-auth/login-22/en.json";
 import login23En from "../components/sections-auth/login-23/en.json";
-import loginFormEn from "../components/ui-molecules/auth-form/login/en.json";
+import loginFormEn from "../components/ui-molecules/form/login/en.json";
 import logoCloud01En from "../components/sections-logo-cloud/logo-cloud-01/en.json";
 import logoCloud02En from "../components/sections-logo-cloud/logo-cloud-02/en.json";
 import logoCloud03En from "../components/sections-logo-cloud/logo-cloud-03/en.json";
@@ -341,12 +334,23 @@ import logoCloud12En from "../components/sections-logo-cloud/logo-cloud-12/en.js
 import logoCloud13En from "../components/sections-logo-cloud/logo-cloud-13/en.json";
 import logoCloud14En from "../components/sections-logo-cloud/logo-cloud-14/en.json";
 import logoCloud15En from "../components/sections-logo-cloud/logo-cloud-15/en.json";
+import navCollapseEn from "../components/ui-molecules/nav/collapse/en.json";
+import navDocumentsEn from "../components/ui-molecules/nav/documents/en.json";
+import navFavoritesEn from "../components/ui-molecules/nav/favorites/en.json";
+import navFooterEn from "../components/ui-molecules/nav/footer/en.json";
+import navHeaderEn from "../components/ui-molecules/nav/header/en.json";
+import navMainFlatEn from "../components/ui-molecules/nav/main/flat/en.json";
+import navNotificationsEn from "../components/ui-molecules/nav/notifications/en.json";
+import navUserChevronEn from "../components/ui-molecules/nav/user/chevron/en.json";
+import navUserDotsEn from "../components/ui-molecules/nav/user/dots/en.json";
+import navWorkspacesEn from "../components/ui-molecules/nav/workspaces/en.json";
 import notFound01En from "../components/pages-not-found/not-found-01/en.json";
 import onboarding01En from "../components/sections-onboarding/onboarding-01/en.json";
 import onboarding02En from "../components/sections-onboarding/onboarding-02/en.json";
 import onboarding03En from "../components/sections-onboarding/onboarding-03/en.json";
 import onboarding04En from "../components/sections-onboarding/onboarding-04/en.json";
 import onboarding07En from "../components/sections-onboarding/onboarding-07/en.json";
+import pageHeaderEn from "../components/ui-molecules/page-header/en.json";
 import pagesLogin01En from "../components/pages-login/login-01/en.json";
 import pixelatedCanvasEn from "../components/ui-effects/pixelated-canvas/en.json";
 import pricing01En from "../components/sections-pricing/pricing-01/en.json";
@@ -391,7 +395,7 @@ import secondaryHero17En from "../components/sections-secondary-hero/secondary-h
 import secondaryHero18En from "../components/sections-secondary-hero/secondary-hero-18/en.json";
 import secondaryHero19En from "../components/sections-secondary-hero/secondary-hero-19/en.json";
 import secondaryHero20En from "../components/sections-secondary-hero/secondary-hero-20/en.json";
-import sectionCardsEn from "../components/ui-molecules/dashboard/kpi-cards/en.json";
+import sectionCardsEn from "../components/ui-molecules/widget/kpi-cards/en.json";
 import settingsDialogEn from "../components/sections-modals/settings-dialog/en.json";
 import sidebarEn from "../components/layouts/sidebar-layout/en.json";
 import sidebar01En from "../components/layouts/dashboard-layout/sidebars/sidebar-01/en.json";
@@ -403,16 +407,9 @@ import sidebar06En from "../components/layouts/dashboard-layout/sidebars/sidebar
 import sidebar07En from "../components/layouts/dashboard-layout/sidebars/sidebar-07/en.json";
 import sidebar08En from "../components/layouts/dashboard-layout/sidebars/sidebar-08/en.json";
 import sidebar09En from "../components/layouts/dashboard-layout/sidebars/sidebar-09/en.json";
-import sidebarNavCollapseEn from "../components/ui-molecules/sidebar/nav-collapse/en.json";
-import sidebarNavFooterEn from "../components/ui-molecules/sidebar/nav-footer/en.json";
-import sidebarNavHeaderEn from "../components/ui-molecules/sidebar/nav-header/en.json";
-import sidebarNavNotificationsEn from "../components/ui-molecules/sidebar/nav-notifications/en.json";
-import sidebarNavUserEn from "../components/ui-molecules/sidebar/nav-user/en.json";
-import sidebarTeamSwitcherGroupedEn from "../components/ui-molecules/sidebar/team-switcher/grouped/en.json";
-import sidebarTeamSwitcherToggleEn from "../components/ui-molecules/sidebar/team-switcher/toggle/en.json";
 import sidebarTriggerEn from "../components/ui-effects/sidebar-trigger/en.json";
 import signup01En from "../components/pages-signup/signup-01/en.json";
-import signupFormEn from "../components/ui-molecules/auth-form/signup/en.json";
+import signupFormEn from "../components/ui-molecules/form/signup/en.json";
 import siteFooterEn from "../components/layouts/default-layout/site-footer/en.json";
 import siteFooter10En from "../components/layouts/_shared/site-footers/site-footer-10/en.json";
 import siteFooter11En from "../components/layouts/_shared/site-footers/site-footer-11/en.json";
@@ -436,13 +433,13 @@ import stats05En from "../components/sections-stats/stats-05/en.json";
 import stats06En from "../components/sections-stats/stats-06/en.json";
 import stats07En from "../components/sections-stats/stats-07/en.json";
 import stats08En from "../components/sections-stats/stats-08/en.json";
-import stats09En from "../components/ui-molecules/stat-tile/usage/en.json";
+import stats09En from "../components/ui-molecules/widget/stat-tile/usage/en.json";
 import stats10En from "../components/sections-stats/stats-10/en.json";
 import stats11En from "../components/sections-stats/stats-11/en.json";
 import stats12En from "../components/sections-stats/stats-12/en.json";
 import stats13En from "../components/sections-stats/stats-13/en.json";
 import stats14En from "../components/sections-stats/stats-14/en.json";
-import stats15En from "../components/ui-molecules/stat-tile/projection/en.json";
+import stats15En from "../components/ui-molecules/widget/stat-tile/projection/en.json";
 import stats16En from "../components/sections-stats/stats-16/en.json";
 import stats17En from "../components/sections-stats/stats-17/en.json";
 import stats18En from "../components/sections-stats/stats-18/en.json";
@@ -458,6 +455,9 @@ import team02En from "../components/sections-team/team-02/en.json";
 import team03En from "../components/sections-team/team-03/en.json";
 import team04En from "../components/sections-team/team-04/en.json";
 import team05En from "../components/sections-team/team-05/en.json";
+import teamSwitcherFlatEn from "../components/ui-molecules/team-switcher/flat/en.json";
+import teamSwitcherGroupedEn from "../components/ui-molecules/team-switcher/grouped/en.json";
+import teamSwitcherToggleEn from "../components/ui-molecules/team-switcher/toggle/en.json";
 import testimonials01En from "../components/sections-testimonials/testimonials-01/en.json";
 import testimonials02En from "../components/sections-testimonials/testimonials-02/en.json";
 import testimonials03En from "../components/sections-testimonials/testimonials-03/en.json";
@@ -475,7 +475,7 @@ import testimonials14En from "../components/sections-testimonials/testimonials-1
 import themeToggleEn from "../components/layouts/_shared/theme-toggle/en.json";
 import timeline01En from "../components/sections-timelines/timeline-01/en.json";
 import timeline02En from "../components/sections-timelines/timeline-02/en.json";
-import trendBadgeEn from "../components/ui-molecules/trend-badge/en.json";
+import trendBadgeEn from "../components/ui-molecules/widget/trend-badge/en.json";
 import tweetNotFoundEn from "../components/ui-effects/tweet-not-found/en.json";
 import webcamPixelGridEn from "../components/ui-effects/webcam-pixel-grid/en.json";
 import welcomeBanner01En from "../components/sections-dashboard/welcome-banner-01/en.json";
@@ -590,13 +590,6 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "customers-03": customers03En,
   "customers-04": customers04En,
   "dashboard-01": dashboard01En,
-  "dashboard-header": dashboardHeaderEn,
-  "dashboard-nav-documents": dashboardNavDocumentsEn,
-  "dashboard-nav-favorites": dashboardNavFavoritesEn,
-  "dashboard-nav-main": dashboardNavMainEn,
-  "dashboard-nav-user": dashboardNavUserEn,
-  "dashboard-nav-workspaces": dashboardNavWorkspacesEn,
-  "dashboard-team-switcher": dashboardTeamSwitcherEn,
   "data-table": dataTableEn,
   "dialog-01": dialog01En,
   "dialog-02": dialog02En,
@@ -822,12 +815,23 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "logo-cloud-13": logoCloud13En,
   "logo-cloud-14": logoCloud14En,
   "logo-cloud-15": logoCloud15En,
+  "nav-collapse": navCollapseEn,
+  "nav-documents": navDocumentsEn,
+  "nav-favorites": navFavoritesEn,
+  "nav-footer": navFooterEn,
+  "nav-header": navHeaderEn,
+  "nav-main-flat": navMainFlatEn,
+  "nav-notifications": navNotificationsEn,
+  "nav-user-chevron": navUserChevronEn,
+  "nav-user-dots": navUserDotsEn,
+  "nav-workspaces": navWorkspacesEn,
   "not-found-01": notFound01En,
   "onboarding-01": onboarding01En,
   "onboarding-02": onboarding02En,
   "onboarding-03": onboarding03En,
   "onboarding-04": onboarding04En,
   "onboarding-07": onboarding07En,
+  "page-header": pageHeaderEn,
   "pages-login-01": pagesLogin01En,
   "pixelated-canvas": pixelatedCanvasEn,
   "pricing-01": pricing01En,
@@ -884,13 +888,6 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "sidebar-07": sidebar07En,
   "sidebar-08": sidebar08En,
   "sidebar-09": sidebar09En,
-  "sidebar-nav-collapse": sidebarNavCollapseEn,
-  "sidebar-nav-footer": sidebarNavFooterEn,
-  "sidebar-nav-header": sidebarNavHeaderEn,
-  "sidebar-nav-notifications": sidebarNavNotificationsEn,
-  "sidebar-nav-user": sidebarNavUserEn,
-  "sidebar-team-switcher-grouped": sidebarTeamSwitcherGroupedEn,
-  "sidebar-team-switcher-toggle": sidebarTeamSwitcherToggleEn,
   "sidebar-trigger": sidebarTriggerEn,
   "signup-01": signup01En,
   "signup-form": signupFormEn,
@@ -939,6 +936,9 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "team-03": team03En,
   "team-04": team04En,
   "team-05": team05En,
+  "team-switcher-flat": teamSwitcherFlatEn,
+  "team-switcher-grouped": teamSwitcherGroupedEn,
+  "team-switcher-toggle": teamSwitcherToggleEn,
   "testimonials-01": testimonials01En,
   "testimonials-02": testimonials02En,
   "testimonials-03": testimonials03En,

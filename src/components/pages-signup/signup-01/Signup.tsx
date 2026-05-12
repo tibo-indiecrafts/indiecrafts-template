@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { layoutRegistry, type LayoutName } from "@/components/layouts/registry";
-import { SignupForm } from "@/components/ui-molecules/auth-form/signup";
+import { SignupForm } from "@/components/ui-molecules/form/signup";
 import { signup01Defaults, signup01Namespace } from "./config";
 
 export type SignupProps = {

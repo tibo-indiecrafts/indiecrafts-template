@@ -1,11 +1,11 @@
 "use client";
-import { Loader } from "@/components/ui-molecules/ai/loader";
-import { ResponseStream } from "@/components/ui-molecules/ai/response-stream";
+import { Loader } from "@/components/ui-molecules/chat/loader";
+import { ResponseStream } from "@/components/ui-molecules/chat/response-stream";
 import {
   Source,
   SourceContent,
   SourceTrigger,
-} from "@/components/ui-molecules/ai/sources";
+} from "@/components/ui-molecules/chat/sources";
 import { useState, useEffect } from "react";
 
 export const Chat = () => {

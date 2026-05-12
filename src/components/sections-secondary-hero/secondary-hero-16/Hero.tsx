@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { CheckCircle2 } from "lucide-react";
-import { EnterpriseForm } from "@/components/ui-molecules/contact-form/enterprise";
+import { EnterpriseForm } from "@/components/ui-molecules/form/contact-enterprise";
 import { Stripe } from "@/components/ui-primitives/svgs/stripe";
 import TailwindCSS from "@/components/ui-primitives/svgs/tailwindcss";
 import { Beacon } from "@/components/ui-primitives/svgs/beacon";

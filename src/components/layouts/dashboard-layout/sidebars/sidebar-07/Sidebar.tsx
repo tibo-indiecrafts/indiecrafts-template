@@ -3,10 +3,10 @@
 import * as React from "react";
 import { IconInnerShadowTop } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { DashboardNavDocuments } from "@/components/ui-molecules/dashboard/nav-documents";
-import { DashboardNavMain } from "@/components/ui-molecules/dashboard/nav-main";
-import { DashboardNavSecondary } from "@/components/ui-molecules/dashboard/nav-secondary";
-import { DashboardNavUser } from "@/components/ui-molecules/dashboard/nav-user";
+import { NavDocuments } from "@/components/ui-molecules/nav/documents";
+import { NavMainFlat } from "@/components/ui-molecules/nav/main/flat";
+import { NavSecondary } from "@/components/ui-molecules/nav/secondary";
+import { NavUserDots } from "@/components/ui-molecules/nav/user/dots";
 import {
   Sidebar as UISidebar,
   SidebarContent,
@@ -56,12 +56,12 @@ export function Sidebar({ data = sidebar07Data, ...props }: SidebarProps) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <DashboardNavMain items={navMain} />
-        <DashboardNavDocuments items={documents} />
-        <DashboardNavSecondary items={navSecondary} className="mt-auto" />
+        <NavMainFlat items={navMain} />
+        <NavDocuments items={documents} />
+        <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <DashboardNavUser user={data.user} />
+        <NavUserDots user={data.user} />
       </SidebarFooter>
     </UISidebar>
   );

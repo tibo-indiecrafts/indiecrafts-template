@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import { useTranslations } from "next-intl";
-import { DashboardNavFavorites } from "@/components/ui-molecules/dashboard/nav-favorites";
-import { DashboardNavMain } from "@/components/ui-molecules/dashboard/nav-main";
-import { DashboardNavSecondary } from "@/components/ui-molecules/dashboard/nav-secondary";
-import { DashboardNavWorkspaces } from "@/components/ui-molecules/dashboard/nav-workspaces";
-import { DashboardTeamSwitcher } from "@/components/ui-molecules/dashboard/team-switcher";
+import { NavFavorites } from "@/components/ui-molecules/nav/favorites";
+import { NavMainFlat } from "@/components/ui-molecules/nav/main/flat";
+import { NavSecondary } from "@/components/ui-molecules/nav/secondary";
+import { NavWorkspaces } from "@/components/ui-molecules/nav/workspaces";
+import { TeamSwitcherFlat } from "@/components/ui-molecules/team-switcher/flat";
 import {
   Sidebar as UISidebar,
   SidebarContent,
@@ -37,13 +37,13 @@ export function Sidebar({ data = sidebar08Data, ...props }: SidebarProps) {
   return (
     <UISidebar className="border-r-0" {...props}>
       <SidebarHeader>
-        <DashboardTeamSwitcher teams={data.teams} />
-        <DashboardNavMain items={navMain} />
+        <TeamSwitcherFlat teams={data.teams} />
+        <NavMainFlat items={navMain} />
       </SidebarHeader>
       <SidebarContent>
-        <DashboardNavFavorites favorites={data.favorites} />
-        <DashboardNavWorkspaces workspaces={data.workspaces} />
-        <DashboardNavSecondary items={navSecondary} className="mt-auto" />
+        <NavFavorites favorites={data.favorites} />
+        <NavWorkspaces workspaces={data.workspaces} />
+        <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
     </UISidebar>
   );

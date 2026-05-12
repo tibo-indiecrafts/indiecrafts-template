@@ -59,7 +59,7 @@ import type React from "react";
 import { useState } from "react";
 import { useScopedT } from "@/i18n/scoped-t";
 import { sidebar05Namespace, sidebar05UserAvatarSrc } from "./config";
-import { SidebarTeamSwitcherToggle } from "@/components/ui-molecules/sidebar/team-switcher/toggle";
+import { TeamSwitcherToggle } from "@/components/ui-molecules/team-switcher/toggle";
 
 const data = {
   teams: [
@@ -212,7 +212,7 @@ export default function Sidebar() {
         className="w-64 border-r"
       >
         <SidebarHeader>
-          <SidebarTeamSwitcherToggle teams={data.teams} namespace={sidebar05Namespace} />
+          <TeamSwitcherToggle teams={data.teams} namespace={sidebar05Namespace} />
         </SidebarHeader>
 
         <SidebarContent>

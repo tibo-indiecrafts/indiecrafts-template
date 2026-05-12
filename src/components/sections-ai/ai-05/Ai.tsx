@@ -13,12 +13,12 @@ import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from "@/components/ui-molecules/ai/conversation";
+} from "@/components/ui-molecules/chat/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
-} from "@/components/ui-molecules/ai/message";
+} from "@/components/ui-molecules/chat/message";
 import {
   PromptInput,
   PromptInputButton,
@@ -26,7 +26,7 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
-} from "@/components/ui-molecules/ai/prompt-input";
+} from "@/components/ui-molecules/chat/prompt-input";
 import { Button } from "@/components/ui-primitives/button";
 import { useScopedT } from "@/i18n/scoped-t";
 import { cn } from "@/lib/utils";
