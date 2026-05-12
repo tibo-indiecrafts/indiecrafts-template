@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { KeysIllustration } from "./keys-illustration";
 
 const meta: Meta<typeof KeysIllustration> = {
-  title: "UI Illustrations/KeysIllustration",
+  title: "UI Illustrations/Keys",
   component: KeysIllustration,
   parameters: { layout: "centered" },
 };

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { InvoiceSigningIllustration } from "./invoice-signing-illustration";
 
 const meta: Meta<typeof InvoiceSigningIllustration> = {
-  title: "UI Illustrations/InvoiceSigningIllustration",
+  title: "UI Illustrations/InvoiceSigning",
   component: InvoiceSigningIllustration,
   parameters: { layout: "centered" },
 };

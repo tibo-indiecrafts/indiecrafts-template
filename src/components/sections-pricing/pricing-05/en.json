@@ -1,0 +1,42 @@
+{
+  "title": "Pricing that scale with your business",
+  "body": "Choose the perfect plan for your needs and start optimizing your workflow today",
+  "cadence": "Per editor",
+  "ctaGetStarted": "Get Started",
+  "tiers": {
+    "free": {
+      "name": "Free",
+      "price": "$0 / mo",
+      "features": {
+        "1": "Basic Analytics Dashboard",
+        "2": "5GB Cloud Storage",
+        "3": "Email and Chat Support"
+      }
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$19 / mo",
+      "features": {
+        "1": "Everything in Free Plan",
+        "2": "5GB Cloud Storage",
+        "3": "Email and Chat Support",
+        "4": "Access to Community Forum",
+        "5": "Single User Access",
+        "6": "Access to Basic Templates",
+        "7": "Mobile App Access",
+        "8": "1 Custom Report Per Month",
+        "9": "Monthly Product Updates",
+        "10": "Standard Security Features"
+      }
+    },
+    "proPlus": {
+      "name": "Pro Plus",
+      "price": "$49 / mo",
+      "features": {
+        "1": "Everything in Pro Plan",
+        "2": "5GB Cloud Storage",
+        "3": "Email and Chat Support"
+      }
+    }
+  }
+}

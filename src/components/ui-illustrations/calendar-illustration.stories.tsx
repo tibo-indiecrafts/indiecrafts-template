@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { CalendarIllustration } from "./calendar-illustration";
 
 const meta: Meta<typeof CalendarIllustration> = {
-  title: "UI Illustrations/CalendarIllustration",
+  title: "UI Illustrations/Calendar",
   component: CalendarIllustration,
   parameters: { layout: "centered" },
 };

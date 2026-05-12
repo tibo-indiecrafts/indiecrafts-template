@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { MemoryUsageIllustration } from "./memory-usage-illustration";
 
 const meta: Meta<typeof MemoryUsageIllustration> = {
-  title: "UI Illustrations/MemoryUsageIllustration",
+  title: "UI Illustrations/MemoryUsage",
   component: MemoryUsageIllustration,
   parameters: { layout: "centered" },
 };

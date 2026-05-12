@@ -1,0 +1,13 @@
+{
+  "title": "Get started",
+  "description": "Create your account in seconds",
+  "homeAriaLabel": "Go home",
+  "emailLabel": "Email",
+  "emailPlaceholder": "you@example.com",
+  "submit": "Continue with Email",
+  "separator": "or",
+  "googleCta": "Continue with Google",
+  "githubCta": "Continue with GitHub",
+  "signinPrompt": "Already have an account?",
+  "signinCta": "Sign in"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Powerful integrations with our API",
+  "body": "Generate payment links at scale, enabling seamless marketing campaigns, efficient sales processes, and faster payment.",
+  "ideLabel": "Native IDE Support",
+  "imageAlt": "App screenshot",
+  "subFeatures": {
+    "tile1": {
+      "title": "Speed Is Everything",
+      "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently."
+    },
+    "tile2": {
+      "title": "Speed Is Everything",
+      "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently."
+    },
+    "tile3": {
+      "title": "Speed Is Everything",
+      "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently."
+    }
+  }
+}

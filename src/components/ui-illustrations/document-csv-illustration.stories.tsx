@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { DocumentCsvIllustration } from "./document-csv-illustration";
 
 const meta: Meta<typeof DocumentCsvIllustration> = {
-  title: "UI Illustrations/DocumentCsvIllustration",
+  title: "UI Illustrations/DocumentCsv",
   component: DocumentCsvIllustration,
   parameters: { layout: "centered" },
 };

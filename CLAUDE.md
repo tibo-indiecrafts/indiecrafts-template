@@ -1,5 +1,17 @@
 # Indiecrafts Template — CLAUDE.md
 
+## Working principles
+
+1. Don't assume. Don't hide confusion. Surface tradeoffs.
+2. Minimum code that solves the problem. Nothing speculative.
+3. Touch only what you must. Clean up only your own mess.
+4. Define success criteria. Loop until verified.
+5. Simplify code wherever you can.
+
+## Design guidelines
+
+- **Accessibility contrast.** Ensure WCAG AA contrast on every theme-token pair. Run `pnpm verify:contrast` after any theme/color change — CI will fail otherwise. See the deeper Accessibility section below for `<html lang>`, SkipLink, semantic-HTML, and reduced-motion rules.
+
 > Config-first, modular Next.js template for client websites. Edit `src/config/*` + drop blocks into `src/components/sections-<type>/`, ship.
 
 Read this top to bottom before touching code.
@@ -838,6 +850,38 @@ Pages have two pieces: a **page-template** (composition under `src/components/pa
 
 5. Optional: nav entry in `navigation.config.ts`, `opengraph-image.tsx` in the segment.
 6. `pnpm verify` — done.
+
+### Porting a full marketing page from a third-party registry
+
+When `pnpm dlx shadcn@latest add @tailark-pro/<page>` (or any registry that ships a multi-section composition) drops a whole `src/app/(marketing)/...` tree plus a stack of bare files at `src/components/<flat>.tsx`, **don't reuse the project's curated versions** of components that look similar. They almost always diverge: cleaned-up illustrations, fixed typos (`DocumentIllustation` → `DocumentIllustration`), Card primitive with `flex flex-col gap-6 py-6 border` baked in (vs upstream's plain `Card`), different prop interfaces, etc. Your faithful port will silently break.
+
+The integrate-as-it-arrives workflow:
+
+1. **Install with `--overwrite`** so the upstream versions land cleanly on top of any prior staging:
+   ```bash
+   pnpm dlx shadcn@latest add @tailark-pro/<page> --overwrite
+   ```
+2. **Relocate every staged file** with a disambiguating prefix (e.g. `<page>-*`) so it co-exists with the project's curated equivalents:
+   - `src/components/illustrations/*.tsx` → `src/components/ui-illustrations/<prefix>-*.tsx`
+   - `src/components/<flat>.tsx` (illustrations like `map.tsx`) → `ui-illustrations/<prefix>-*.tsx`
+   - `src/components/ui/{card,button,accordion,navigation-menu}.tsx` → `ui-primitives/<prefix>-*.tsx`
+   - `src/components/ui/text-effect.tsx` → `ui-effects/text-effect.tsx` (rare upstream flat — fits there)
+   - `src/components/ui/svgs/*.tsx` → `ui-primitives/svgs/<prefix>-*.tsx`
+   - `src/components/logo.tsx` → `ui-primitives/<prefix>-logo.tsx` (then **relink the navbar/footer to the project's existing `@/components/layouts/_shared/logo`** — branding is project-curated and should be reused even in dark-landing ports).
+3. **Fix imports** inside the relocated illustrations — they reference `@/components/logo` / `@/components/illustrations/*` / `@/components/ui/button`, all of which now point to the relocated paths.
+4. **Port each section** to its bucket (`sections-{hero,cta,features,...}/<variant>/`) using the 5-file pattern. Preserve JSX **verbatim** — the only edits are translatable strings flowing through `tRoot(...)` calls against `blocks.<key>.*`. Don't refactor; the layout is the section's identity.
+5. **Compose the page-template** under `pages-<category>/<variant>/` — its `Landing.tsx` defaults `header={<HeaderN />}` and `footer={<SiteFooterN />}` so the full chrome ships out of the box.
+6. **Cleanup** the staging dirs: delete `src/app/(marketing)/`, `src/components/{header,footer,logo,logo-cloud,call-to-action,testimonials-section,map}.tsx`, the `src/components/ui/` dir, `src/lib/const.ts` (avatars — re-inline inside the testimonials section's config).
+7. **Theme-compatibility audit** (run after porting each illustration / section — third-party registries assume dark mode):
+   - Hardcoded fixed-shade colors (`from-slate-900/50`, `bg-gray-900`, `bg-blue-950 mix-blend-color`, etc.) → `from-foreground/<n>` / `bg-foreground/<n>` (theme-aware tokens).
+   - "Selected text" / inline highlights with single-mode contrast (`bg-indigo-900/25 text-indigo-300`) → `bg-indigo-500/15 text-indigo-700 dark:text-indigo-300` so both modes have AA contrast.
+   - Heavy single-mode shadows (`shadow-black/55`, `shadow-black/65`, bare `shadow-black`) → `shadow-black/15` works in both modes.
+   - Dark-only image screenshots (the upstream ships only a dark PNG) → render inside an always-dark inner frame (`bg-zinc-950`) so the dark image looks like an intentional device-chrome screenshot in light mode.
+   - `data-theme="dark"` overrides on a section force it dark regardless of the user's theme — drop them when the page is meant to be theme-compatible.
+   - Hero-style outer rounded frame + inner rounded image: align radii (outer `rounded-2xl` + inner `rounded-xl` with matching padding) so the inner clip lands cleanly inside the outer curve.
+8. **Verify**: `pnpm gen:i18n && pnpm verify:quick` — expects 0 TS errors, 0 lint errors. The `<page>-*` prefix on illustrations means `MessageKey` paths stay disjoint from existing entries.
+
+The result is a self-contained section family the user can fork in place, while the project's existing `Logo`, `Card`, `Button`, etc. stay untouched for the rest of the codebase.
 
 ## shadcn/ui — the upstream rule
 

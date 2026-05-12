@@ -1,0 +1,9 @@
+{
+  "title": "Trusted by Teams Worldwide",
+  "body": "Our platform delivers measurable results that help businesses scale faster and work smarter.",
+  "items": {
+    "1": { "value": "99.9%", "trailing": " Uptime guarantee." },
+    "2": { "value": "10M+", "trailing": " API requests processed daily." },
+    "3": { "value": "500+", "trailing": " Enterprise customers." }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "eyebrow": "How it works",
+  "title": "Build your MRR in minutes",
+  "body": "Our platform combines cutting-edge AI models with intuitive interfaces to streamline your development workflow and boost productivity.",
+  "steps": {
+    "step1": {
+      "title": "1. Add payment information",
+      "body": "Securely add your <strong>payment details</strong> to get started with our services."
+    },
+    "step2": {
+      "title": "2. Sign documents",
+      "body": "Digitally sign and <strong>authorize transactions</strong> with ease."
+    },
+    "step3": {
+      "title": "3. Receive confirmation",
+      "body": "Get instant <strong>confirmation receipts</strong> for all your completed transactions."
+    }
+  }
+}

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { FingerprintCardIllustration } from "./fingerprint-card-illustration";
 
 const meta: Meta<typeof FingerprintCardIllustration> = {
-  title: "UI Illustrations/FingerprintCardIllustration",
+  title: "UI Illustrations/FingerprintCard",
   component: FingerprintCardIllustration,
   parameters: { layout: "centered" },
 };

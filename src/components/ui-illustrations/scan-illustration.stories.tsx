@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ScanIllustration } from "./scan-illustration";
 
 const meta: Meta<typeof ScanIllustration> = {
-  title: "UI Illustrations/ScanIllustration",
+  title: "UI Illustrations/Scan",
   component: ScanIllustration,
   parameters: { layout: "centered" },
 };

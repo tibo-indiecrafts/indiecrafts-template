@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ChatBubblesIllustration } from "./chat-bubbles-illustration";
 
 const meta: Meta<typeof ChatBubblesIllustration> = {
-  title: "UI Illustrations/ChatBubblesIllustration",
+  title: "UI Illustrations/ChatBubbles",
   component: ChatBubblesIllustration,
   parameters: { layout: "centered" },
 };

@@ -1,0 +1,14 @@
+{
+  "title": "Create a Tailark Account",
+  "description": "Welcome! Create an account to get started",
+  "homeAriaLabel": "Go home",
+  "googleCta": "Google",
+  "microsoftCta": "Microsoft",
+  "firstNameLabel": "Firstname",
+  "lastNameLabel": "Lastname",
+  "usernameLabel": "Username",
+  "passwordLabel": "Password",
+  "submit": "Continue",
+  "signinPrompt": "Have an account ?",
+  "signinCta": "Sign In"
+}

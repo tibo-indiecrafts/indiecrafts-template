@@ -1,0 +1,12 @@
+{
+  "heading": "<muted>Welcome to Tailark!</muted> Create an Account to Get Started",
+  "homeAriaLabel": "Go home",
+  "googleCta": "Google",
+  "facebookCta": "Facebook",
+  "microsoftCta": "Microsoft",
+  "emailLabel": "Email",
+  "emailPlaceholder": "Your email",
+  "submit": "Continue",
+  "signinPrompt": "Already have an account ?",
+  "signinCta": "Sign In"
+}

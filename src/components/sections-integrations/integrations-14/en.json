@@ -1,0 +1,20 @@
+{
+  "title": "Integrate with your favorite LLMs",
+  "body": "Connect seamlessly with popular platforms and services to enhance your workflow.",
+  "cta": "Get Started",
+  "rowAddAriaLabel": "Add integration",
+  "rows": {
+    "1": {
+      "name": "Gemini",
+      "description": "The AI model that powers Google's search engine."
+    },
+    "2": {
+      "name": "Replit",
+      "description": "The AI model that powers Google's search engine."
+    },
+    "3": {
+      "name": "GooglePaLM",
+      "description": "The AI model that powers Google's search engine."
+    }
+  }
+}

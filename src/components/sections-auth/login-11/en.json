@@ -1,0 +1,12 @@
+{
+  "heading": "<muted>Welcome back to Tailark!</muted> Sign in to continue",
+  "homeAriaLabel": "Go home",
+  "googleCta": "Google",
+  "facebookCta": "Facebook",
+  "microsoftCta": "Microsoft",
+  "emailLabel": "Email",
+  "emailPlaceholder": "Your email",
+  "submit": "Continue",
+  "signupPrompt": "Don't have an account ?",
+  "signupCta": "Create account"
+}

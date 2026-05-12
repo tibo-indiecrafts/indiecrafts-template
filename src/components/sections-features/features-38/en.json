@@ -1,0 +1,36 @@
+{
+  "title": "Built to power your pricings in the AI era",
+  "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently.",
+  "cards": {
+    "chart": {
+      "title": "Pricing performance analytics",
+      "body": "Monitor conversion rate, ARPU, and churn with real-time cohort charts and device breakdowns to optimize plans."
+    },
+    "ai": {
+      "title": "AI pricing overviews",
+      "body": "Get AI-generated summaries of what's working, plus suggested experiments, copy, and layout tweaks for each plan."
+    },
+    "languages": {
+      "title": "Localized pricing at scale",
+      "body": "Auto-translate plans and regional messaging into 100+ languages with currency and locale-aware formatting."
+    },
+    "linkPayment": {
+      "title": "One-click checkout links",
+      "body": "Share secure payment links that remember saved details and verify via code for frictionless, high-converting checkout."
+    }
+  },
+  "subFeatures": {
+    "tile1": {
+      "title": "Speed Is Everything",
+      "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently."
+    },
+    "tile2": {
+      "title": "Speed Is Everything",
+      "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently."
+    },
+    "tile3": {
+      "title": "Speed Is Everything",
+      "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently."
+    }
+  }
+}

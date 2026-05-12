@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AddCommentIllustration } from "./add-comment-illustration";
 
 const meta: Meta<typeof AddCommentIllustration> = {
-  title: "UI Illustrations/AddCommentIllustration",
+  title: "UI Illustrations/AddComment",
   component: AddCommentIllustration,
   parameters: { layout: "centered" },
 };

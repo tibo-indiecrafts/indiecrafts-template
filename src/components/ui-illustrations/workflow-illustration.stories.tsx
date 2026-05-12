@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { WorkflowIllustration } from "./workflow-illustration";
 
 const meta: Meta<typeof WorkflowIllustration> = {
-  title: "UI Illustrations/WorkflowIllustration",
+  title: "UI Illustrations/Workflow",
   component: WorkflowIllustration,
   parameters: { layout: "centered" },
 };

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AiAutocompleteIllustration } from "./ai-autocomplete-illustration";
 
 const meta: Meta<typeof AiAutocompleteIllustration> = {
-  title: "UI Illustrations/AiAutocompleteIllustration",
+  title: "UI Illustrations/AiAutocomplete",
   component: AiAutocompleteIllustration,
   parameters: { layout: "centered" },
 };

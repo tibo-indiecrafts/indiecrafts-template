@@ -1,0 +1,24 @@
+{
+  "tagline": "Tailark is a platform for building AI-powered applications.",
+  "groups": {
+    "product": "Product",
+    "company": "Company",
+    "community": "Community"
+  },
+  "links": {
+    "features": "Features",
+    "solution": "Solution",
+    "partnerships": "Partnerships",
+    "mobile": "Mobile App",
+    "about": "About",
+    "licence": "Licence",
+    "privacy": "Privacy"
+  },
+  "social": {
+    "twitter": "X/Twitter",
+    "linkedin": "LinkedIn"
+  },
+  "status": "All Systems Normal",
+  "copyright": "© {year} Tailark, All rights reserved",
+  "home": "go home"
+}

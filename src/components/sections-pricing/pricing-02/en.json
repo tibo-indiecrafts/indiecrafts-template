@@ -1,0 +1,43 @@
+{
+  "title": "Pricing that Scales with You",
+  "body": "Gemini is evolving to be more than just the models. It supports an entire to the APIs and platforms helping developers and businesses innovate.",
+  "cadence": "Per editor",
+  "popularBadge": "Popular",
+  "ctaGetStarted": "Get Started",
+  "tiers": {
+    "free": {
+      "name": "Free",
+      "price": "$0 / mo",
+      "features": {
+        "1": "Basic Analytics Dashboard",
+        "2": "5GB Cloud Storage",
+        "3": "Email and Chat Support"
+      }
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$19 / mo",
+      "features": {
+        "1": "Everything in Free Plan",
+        "2": "5GB Cloud Storage",
+        "3": "Email and Chat Support",
+        "4": "Access to Community Forum",
+        "5": "Single User Access",
+        "6": "Access to Basic Templates",
+        "7": "Mobile App Access",
+        "8": "1 Custom Report Per Month",
+        "9": "Monthly Product Updates",
+        "10": "Standard Security Features"
+      }
+    },
+    "startup": {
+      "name": "Startup",
+      "price": "$29 / mo",
+      "features": {
+        "1": "Everything in Pro Plan",
+        "2": "5GB Cloud Storage",
+        "3": "Email and Chat Support"
+      }
+    }
+  }
+}

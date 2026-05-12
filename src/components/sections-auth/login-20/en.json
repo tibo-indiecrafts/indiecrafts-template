@@ -1,0 +1,11 @@
+{
+  "title": "Create a Tailark Account",
+  "description": "Welcome! Create an account to get started",
+  "homeAriaLabel": "Go home",
+  "googleCta": "Google",
+  "separator": "Or continue With",
+  "emailLabel": "Email",
+  "submit": "Continue",
+  "signinPrompt": "Have an account ?",
+  "signinCta": "Sign In"
+}

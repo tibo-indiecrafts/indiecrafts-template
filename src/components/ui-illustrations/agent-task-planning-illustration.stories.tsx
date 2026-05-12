@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AgentTaskPlanningIllustration } from "./agent-task-planning-illustration";
 
 const meta: Meta<typeof AgentTaskPlanningIllustration> = {
-  title: "UI Illustrations/AgentTaskPlanningIllustration",
+  title: "UI Illustrations/AgentTaskPlanning",
   component: AgentTaskPlanningIllustration,
   parameters: { layout: "centered" },
 };

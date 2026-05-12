@@ -1,0 +1,32 @@
+{
+  "eyebrow": {
+    "tag": "[02]",
+    "label": "Analytics Platform"
+  },
+  "title": "Transform your data into visual insights",
+  "body": "Our powerful analytics platform helps you visualize complex data, identify trends, and make data-driven decisions with confidence.",
+  "cards": {
+    "map": {
+      "title": "Global Data Visualization",
+      "body": "Track worldwide metrics with interactive maps and region-specific analytics."
+    },
+    "viz": {
+      "title": "Advanced Analytics Engine",
+      "body": "Harness the power of predictive modeling and trend analysis to make data-driven decisions."
+    }
+  },
+  "tiles": {
+    "tile1": {
+      "title": "Speed Is Everything",
+      "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently."
+    },
+    "tile2": {
+      "title": "Speed Is Everything",
+      "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently."
+    },
+    "tile3": {
+      "title": "Speed Is Everything",
+      "body": "Tailark is a fast and efficient AI-powered code editor that can help you write code faster and more efficiently."
+    }
+  }
+}

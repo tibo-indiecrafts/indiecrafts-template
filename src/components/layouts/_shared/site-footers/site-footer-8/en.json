@@ -1,0 +1,19 @@
+{
+  "homeLabel": "go home",
+  "groupHeadings": {
+    "product": "Product",
+    "company": "Company"
+  },
+  "links": {
+    "features": "Features",
+    "solution": "Solution",
+    "about": "About",
+    "licence": "Licence",
+    "privacy": "Privacy",
+    "cookies": "Cookies"
+  },
+  "social": {
+    "twitter": "X/Twitter",
+    "linkedin": "LinkedIn"
+  }
+}

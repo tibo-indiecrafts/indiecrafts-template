@@ -1,0 +1,30 @@
+{
+  "title": "Enterprise Grade Security",
+  "body": "Tailark is built with the highest level of security in mind, ensuring that your data is protected from breaches and unauthorized access.",
+  "card": {
+    "title": "Scale to Infinity",
+    "body": "Tailark is built to handle the largest volumes of transactions with ease, ensuring that your business can scale to any size.",
+    "bullet1": "Secure Credit Card Transactions",
+    "bullet2": "Instant Payment Notifications",
+    "bullet3": "Flexible Payment Options",
+    "cta": "Learn more"
+  },
+  "subFeatures": {
+    "tile1": {
+      "title": "Time Management",
+      "body": "Effectively manage your time with precision and speed using our tools."
+    },
+    "tile2": {
+      "title": "Instant Performance",
+      "body": "Experience lightning-fast processing and quick responses."
+    },
+    "tile3": {
+      "title": "Schedule Management",
+      "body": "Organize your tasks seamlessly with our integrated calendar."
+    },
+    "tile4": {
+      "title": "Event Planning",
+      "body": "Plan and keep track of your events effortlessly."
+    }
+  }
+}

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ReplyIllustration } from "./reply-illustration";
 
 const meta: Meta<typeof ReplyIllustration> = {
-  title: "UI Illustrations/ReplyIllustration",
+  title: "UI Illustrations/Reply",
   component: ReplyIllustration,
   parameters: { layout: "centered" },
 };

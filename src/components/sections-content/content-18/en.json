@@ -1,0 +1,21 @@
+{
+  "title": "Building the next generation of <strong>AI-powered Marketing Tools</strong>",
+  "readMore": "Read more",
+  "cards": {
+    "card1": {
+      "alt": "Visual intelligence representation",
+      "heading": "Not a Bad Story",
+      "body": "Our platform <strong>integrates text, image, and audio processing</strong> into a unified framework."
+    },
+    "card2": {
+      "alt": "Multimodal learning visualization",
+      "heading": "Made 3M in 2 years",
+      "body": "Our platform <strong>integrates text, image, and audio processing</strong> into a unified framework."
+    },
+    "card3": {
+      "alt": "DNA-inspired neural network visualization",
+      "heading": "Raised 10M",
+      "body": "Our platform <strong>integrates text, image, and audio processing</strong> into a unified framework."
+    }
+  }
+}

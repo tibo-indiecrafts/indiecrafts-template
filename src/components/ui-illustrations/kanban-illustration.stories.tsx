@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { KanbanIllustration } from "./kanban-illustration";
 
 const meta: Meta<typeof KanbanIllustration> = {
-  title: "UI Illustrations/KanbanIllustration",
+  title: "UI Illustrations/Kanban",
   component: KanbanIllustration,
   parameters: { layout: "centered" },
 };

@@ -1,0 +1,24 @@
+import type { LayoutName } from "@/components/layouts/registry";
+import type { PageSeo } from "@/config/pages/types";
+
+export const contactPage03Key = "contact-page-03" as const;
+export const contactPage03Namespace = "blocks.contact-page-03" as const;
+
+const seo: PageSeo = {
+  titleKey: "blocks.contact-page-03.title",
+  descriptionKey: "blocks.contact-page-03.description",
+  keywords: ["next.js template", "contact page", "support", "config-first"],
+  openGraph: { type: "website" },
+};
+
+/**
+ * Tailark Pro `grid-2-contact-one` composition. Multi-channel
+ * contact page: heading hero → 3 inquiry cards (Enterprise / Tech
+ * Support / Partnership) → 4-cell contact grid (General / Support
+ * email + X/Twitter / GitHub). Light + dark theme.
+ */
+export const contactPage03Defaults = {
+  layout: "default" as LayoutName,
+  sectionIds: { hero: "contact-page-03-hero" },
+  seo,
+} as const;

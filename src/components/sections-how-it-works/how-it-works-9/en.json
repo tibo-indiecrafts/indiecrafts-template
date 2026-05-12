@@ -1,0 +1,18 @@
+{
+  "eyebrow": "Our Process",
+  "title": "Simple Three-Step Workflow",
+  "body": "Experience our streamlined approach to data analysis that empowers your team to make informed decisions quickly and efficiently.",
+  "cta": "Get Started",
+  "step1": {
+    "title": "Data Collection",
+    "body": "Easily import data from multiple sources and formats with."
+  },
+  "step2": {
+    "title": "Automated Analysis",
+    "body": "Our AI-powered system processes complex datasets to identify patterns."
+  },
+  "step3": {
+    "title": "Actionable Reports",
+    "body": "Transform insights into beautiful visualizations and shareable reports."
+  }
+}

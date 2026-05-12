@@ -1,0 +1,15 @@
+{
+  "title": "Connect all your preferred applications",
+  "body": "Tailark provides a seamless integration experience, allowing you to connect and synchronize data from multiple sources with ease.",
+  "cta": "See all integrations",
+  "groups": {
+    "platform": "Platform",
+    "llms": "LLMs"
+  },
+  "cells": {
+    "cloudflare": "Cloudflare",
+    "vercel": "Vercel",
+    "googlePalm": "Google PaLM",
+    "claude": "Claude AI"
+  }
+}

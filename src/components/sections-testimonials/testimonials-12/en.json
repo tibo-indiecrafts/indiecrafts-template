@@ -1,0 +1,21 @@
+{
+  "title": "What Our Clients Say",
+  "body": "Discover why our clients love working with us. Read their testimonials about our dedication to excellence, innovative solutions, and exceptional customer service.",
+  "items": {
+    "1": {
+      "name": "Méschac Irung",
+      "role": "Creator",
+      "content": "Using Tailark has been like unlocking a secret design superpower. It's the perfect fusion of simplicity and versatility."
+    },
+    "2": {
+      "name": "Théo Balick",
+      "role": "Frontend Dev",
+      "content": "Tailark has transformed the way I develop web applications. The flexibility to customize every aspect is amazing."
+    },
+    "3": {
+      "name": "Glodie Lukose",
+      "role": "Frontend Dev",
+      "content": "The extensive collection of UI components has significantly accelerated my workflow. Tailark is a game-changer."
+    }
+  }
+}

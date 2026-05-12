@@ -1,0 +1,48 @@
+{
+  "title": "Simple, Transparent Pricing",
+  "body": "Choose the plan that fits your needs. All plans include a 14-day free trial.",
+  "period": "/month",
+  "tiers": {
+    "starter": {
+      "name": "Starter",
+      "description": "Perfect for individuals and small projects.",
+      "price": "$0",
+      "cta": "Get Started",
+      "features": {
+        "1": "Up to 3 integrations",
+        "2": "1,000 API calls/month",
+        "3": "Community support",
+        "4": "Basic analytics"
+      }
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "For growing teams that need more power.",
+      "price": "$29",
+      "cta": "Start Free Trial",
+      "features": {
+        "1": "Unlimited integrations",
+        "2": "100,000 API calls/month",
+        "3": "Priority support",
+        "4": "Advanced analytics",
+        "5": "Custom webhooks",
+        "6": "Team collaboration"
+      }
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "description": "For organizations with advanced needs.",
+      "price": "Custom",
+      "period": "",
+      "cta": "Contact Sales",
+      "features": {
+        "1": "Everything in Pro",
+        "2": "Unlimited API calls",
+        "3": "Dedicated support",
+        "4": "SLA guarantee",
+        "5": "Custom contracts",
+        "6": "On-premise option"
+      }
+    }
+  }
+}

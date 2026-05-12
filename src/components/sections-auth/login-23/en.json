@@ -1,0 +1,12 @@
+{
+  "title": "Sign up",
+  "homeAriaLabel": "Go home",
+  "emailLabel": "Email",
+  "emailPlaceholder": "you@example.com",
+  "passwordLabel": "Password",
+  "submit": "Continue",
+  "googleCta": "Google",
+  "githubCta": "GitHub",
+  "signinPrompt": "Already have an account?",
+  "signinCta": "Sign in"
+}

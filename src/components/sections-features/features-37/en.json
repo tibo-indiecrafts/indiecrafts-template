@@ -1,0 +1,31 @@
+{
+  "eyebrow": "What you get",
+  "title": "Build winning subscriptions with smarter blocks",
+  "body": "Everything you need to design, launch, and scale—crafted for speed, reliability, and a seamless developer experience.",
+  "cards": {
+    "uptime": {
+      "title": "Consistent uptime",
+      "body": "You're always-on infrastructure with 99.9% uptime SLA and automatic failover."
+    },
+    "keys": {
+      "title": "Keyboard shortcuts",
+      "body": "Focus on what matters with customizable keyboard shortcuts that speed up your workflow."
+    },
+    "currency": {
+      "title": "Currency converter",
+      "body": "Convert currencies with ease and accuracy, with real-time exchange rates and customizable settings."
+    },
+    "security": {
+      "title": "Enterprise‑grade security",
+      "body": "Role‑based access, audit trails, and fine‑grained controls keep data locked down by default."
+    },
+    "memory": {
+      "title": "Resource insights",
+      "body": "Understand usage at a glance with live metrics, budgets, and alerts for spikes or drift."
+    },
+    "chip": {
+      "title": "Blazing performance",
+      "body": "Edge‑ready by design: fast renders, tiny payloads, and hardware‑accelerated animations."
+    }
+  }
+}

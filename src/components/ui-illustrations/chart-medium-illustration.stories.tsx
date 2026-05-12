@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ChartMediumIllustration } from "./chart-medium-illustration";
 
 const meta: Meta<typeof ChartMediumIllustration> = {
-  title: "UI Illustrations/ChartMediumIllustration",
+  title: "UI Illustrations/ChartMedium",
   component: ChartMediumIllustration,
   parameters: { layout: "centered" },
 };

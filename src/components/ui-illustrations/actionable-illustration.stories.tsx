@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ActionableIllustration } from "./actionable-illustration";
 
 const meta: Meta<typeof ActionableIllustration> = {
-  title: "UI Illustrations/ActionableIllustration",
+  title: "UI Illustrations/Actionable",
   component: ActionableIllustration,
   parameters: { layout: "centered" },
 };

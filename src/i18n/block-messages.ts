@@ -3,6 +3,7 @@
 
 import _3dPinEn from "../components/ui-effects/3d-pin.en.json";
 import about01En from "../components/pages-about/about-01/en.json";
+import about02En from "../components/pages-about/about-02/en.json";
 import ai01En from "../components/sections-ai/ai-01/en.json";
 import ai02En from "../components/sections-ai/ai-02/en.json";
 import ai03En from "../components/sections-ai/ai-03/en.json";
@@ -23,6 +24,7 @@ import bento6En from "../components/sections-bento/bento-6/en.json";
 import bento7En from "../components/sections-bento/bento-7/en.json";
 import bento8En from "../components/sections-bento/bento-8/en.json";
 import bento9En from "../components/sections-bento/bento-9/en.json";
+import brand01En from "../components/pages-brand/brand-01/en.json";
 import chartAreaAxesEn from "../components/ui-molecules/chart/area/axes/en.json";
 import chartAreaDefaultEn from "../components/ui-molecules/chart/area/default/en.json";
 import chartAreaGradientEn from "../components/ui-molecules/chart/area/gradient/en.json";
@@ -47,6 +49,12 @@ import commandMenu02En from "../components/ui-molecules/command-menu/02/en.json"
 import commandMenu03En from "../components/ui-molecules/command-menu/03/en.json";
 import commandPaletteEn from "../components/ui-effects/command-palette/en.json";
 import contact01En from "../components/sections-contact/contact-01/en.json";
+import contactPage01En from "../components/pages-contact/contact-page-01/en.json";
+import contactPage02En from "../components/pages-contact/contact-page-02/en.json";
+import contactPage03En from "../components/pages-contact/contact-page-03/en.json";
+import contactPage04En from "../components/pages-contact/contact-page-04/en.json";
+import contactPage05En from "../components/pages-contact/contact-page-05/en.json";
+import contactPage06En from "../components/pages-contact/contact-page-06/en.json";
 import content01En from "../components/sections-content/content-01/en.json";
 import content02En from "../components/sections-content/content-02/en.json";
 import content03En from "../components/sections-content/content-03/en.json";
@@ -58,7 +66,48 @@ import content08En from "../components/sections-content/content-08/en.json";
 import content09En from "../components/sections-content/content-09/en.json";
 import content10En from "../components/sections-content/content-10/en.json";
 import content11En from "../components/sections-content/content-11/en.json";
+import content12En from "../components/sections-content/content-12/en.json";
+import content13En from "../components/sections-content/content-13/en.json";
+import content14En from "../components/sections-content/content-14/en.json";
+import content15En from "../components/sections-content/content-15/en.json";
+import content16En from "../components/sections-content/content-16/en.json";
+import content17En from "../components/sections-content/content-17/en.json";
+import content18En from "../components/sections-content/content-18/en.json";
+import content19En from "../components/sections-content/content-19/en.json";
+import content20En from "../components/sections-content/content-20/en.json";
+import content21En from "../components/sections-content/content-21/en.json";
+import content22En from "../components/sections-content/content-22/en.json";
+import content23En from "../components/sections-content/content-23/en.json";
+import content24En from "../components/sections-content/content-24/en.json";
+import content25En from "../components/sections-content/content-25/en.json";
+import content26En from "../components/sections-content/content-26/en.json";
+import content27En from "../components/sections-content/content-27/en.json";
+import content28En from "../components/sections-content/content-28/en.json";
+import content29En from "../components/sections-content/content-29/en.json";
+import content30En from "../components/sections-content/content-30/en.json";
+import content31En from "../components/sections-content/content-31/en.json";
+import content32En from "../components/sections-content/content-32/en.json";
 import cta01En from "../components/sections-cta/cta-01/en.json";
+import cta02En from "../components/sections-cta/cta-02/en.json";
+import cta03En from "../components/sections-cta/cta-03/en.json";
+import cta04En from "../components/sections-cta/cta-04/en.json";
+import cta05En from "../components/sections-cta/cta-05/en.json";
+import cta06En from "../components/sections-cta/cta-06/en.json";
+import cta07En from "../components/sections-cta/cta-07/en.json";
+import cta08En from "../components/sections-cta/cta-08/en.json";
+import cta09En from "../components/sections-cta/cta-09/en.json";
+import cta10En from "../components/sections-cta/cta-10/en.json";
+import cta11En from "../components/sections-cta/cta-11/en.json";
+import cta12En from "../components/sections-cta/cta-12/en.json";
+import customerStory01En from "../components/pages-customer-story/customer-story-01/en.json";
+import customerStory02En from "../components/pages-customer-story/customer-story-02/en.json";
+import customerStory03En from "../components/pages-customer-story/customer-story-03/en.json";
+import customerStory04En from "../components/pages-customer-story/customer-story-04/en.json";
+import customerStory05En from "../components/pages-customer-story/customer-story-05/en.json";
+import customers01En from "../components/pages-customers/customers-01/en.json";
+import customers02En from "../components/pages-customers/customers-02/en.json";
+import customers03En from "../components/pages-customers/customers-03/en.json";
+import customers04En from "../components/pages-customers/customers-04/en.json";
 import dashboard01En from "../components/pages-dashboard/dashboard-01/en.json";
 import dashboardHeaderEn from "../components/ui-molecules/dashboard/header/en.json";
 import dashboardNavDocumentsEn from "../components/ui-molecules/dashboard/nav-documents/en.json";
@@ -87,6 +136,14 @@ import faq01En from "../components/sections-faq/faq-01/en.json";
 import faq02En from "../components/sections-faq/faq-02/en.json";
 import faq03En from "../components/sections-faq/faq-03/en.json";
 import faq04En from "../components/sections-faq/faq-04/en.json";
+import faq05En from "../components/sections-faq/faq-05/en.json";
+import faq06En from "../components/sections-faq/faq-06/en.json";
+import faq07En from "../components/sections-faq/faq-07/en.json";
+import faq08En from "../components/sections-faq/faq-08/en.json";
+import faq09En from "../components/sections-faq/faq-09/en.json";
+import faq10En from "../components/sections-faq/faq-10/en.json";
+import faq11En from "../components/sections-faq/faq-11/en.json";
+import faq12En from "../components/sections-faq/faq-12/en.json";
 import features01En from "../components/sections-features/features-01/en.json";
 import features02En from "../components/sections-features/features-02/en.json";
 import features03En from "../components/sections-features/features-03/en.json";
@@ -113,6 +170,23 @@ import features23En from "../components/sections-features/features-23/en.json";
 import features24En from "../components/sections-features/features-24/en.json";
 import features25En from "../components/sections-features/features-25/en.json";
 import features26En from "../components/sections-features/features-26/en.json";
+import features27En from "../components/sections-features/features-27/en.json";
+import features28En from "../components/sections-features/features-28/en.json";
+import features29En from "../components/sections-features/features-29/en.json";
+import features30En from "../components/sections-features/features-30/en.json";
+import features31En from "../components/sections-features/features-31/en.json";
+import features32En from "../components/sections-features/features-32/en.json";
+import features33En from "../components/sections-features/features-33/en.json";
+import features34En from "../components/sections-features/features-34/en.json";
+import features35En from "../components/sections-features/features-35/en.json";
+import features36En from "../components/sections-features/features-36/en.json";
+import features37En from "../components/sections-features/features-37/en.json";
+import features38En from "../components/sections-features/features-38/en.json";
+import features39En from "../components/sections-features/features-39/en.json";
+import features40En from "../components/sections-features/features-40/en.json";
+import features41En from "../components/sections-features/features-41/en.json";
+import features42En from "../components/sections-features/features-42/en.json";
+import features43En from "../components/sections-features/features-43/en.json";
 import featuresCarousel1En from "../components/sections-features-carousel/features-carousel-1/en.json";
 import featuresCarousel2En from "../components/sections-features-carousel/features-carousel-2/en.json";
 import featuresCarousel3En from "../components/sections-features-carousel/features-carousel-3/en.json";
@@ -148,6 +222,10 @@ import fileUpload05En from "../components/sections-file-upload/file-upload-05/en
 import fileUpload06En from "../components/sections-file-upload/file-upload-06/en.json";
 import forgotPasswordEn from "../components/sections-auth/forgot-password/en.json";
 import forgotPassword01En from "../components/pages-forgot-password/forgot-password-01/en.json";
+import forgotPassword02En from "../components/sections-auth/forgot-password-02/en.json";
+import forgotPassword03En from "../components/sections-auth/forgot-password-03/en.json";
+import forgotPassword04En from "../components/sections-auth/forgot-password-04/en.json";
+import forgotPassword05En from "../components/sections-auth/forgot-password-05/en.json";
 import formLayout01En from "../components/sections-form/form-layout-01/en.json";
 import formLayout02En from "../components/sections-form/form-layout-02/en.json";
 import formLayout03En from "../components/sections-form/form-layout-03/en.json";
@@ -157,6 +235,7 @@ import gridList01En from "../components/sections-lists/grid-list-01/en.json";
 import gridList02En from "../components/sections-lists/grid-list-02/en.json";
 import gridList03En from "../components/sections-lists/grid-list-03/en.json";
 import header1En from "../components/layouts/_shared/site-headers/header-1/en.json";
+import header10En from "../components/layouts/_shared/site-headers/header-10/en.json";
 import header2En from "../components/layouts/_shared/site-headers/header-2/en.json";
 import header3En from "../components/layouts/_shared/site-headers/header-3/en.json";
 import header4En from "../components/layouts/_shared/site-headers/header-4/en.json";
@@ -172,7 +251,16 @@ import hero13En from "../components/sections-hero/hero-13/en.json";
 import hero14En from "../components/sections-hero/hero-14/en.json";
 import hero15En from "../components/sections-hero/hero-15/en.json";
 import hero16En from "../components/sections-hero/hero-16/en.json";
+import hero17En from "../components/sections-hero/hero-17/en.json";
+import hero18En from "../components/sections-hero/hero-18/en.json";
+import hero19En from "../components/sections-hero/hero-19/en.json";
 import hero2En from "../components/sections-hero/hero-2/en.json";
+import hero20En from "../components/sections-hero/hero-20/en.json";
+import hero21En from "../components/sections-hero/hero-21/en.json";
+import hero22En from "../components/sections-hero/hero-22/en.json";
+import hero23En from "../components/sections-hero/hero-23/en.json";
+import hero24En from "../components/sections-hero/hero-24/en.json";
+import hero25En from "../components/sections-hero/hero-25/en.json";
 import hero3En from "../components/sections-hero/hero-3/en.json";
 import hero4En from "../components/sections-hero/hero-4/en.json";
 import hero5En from "../components/sections-hero/hero-5/en.json";
@@ -188,8 +276,30 @@ import howItWorks4En from "../components/sections-how-it-works/how-it-works-4/en
 import howItWorks5En from "../components/sections-how-it-works/how-it-works-5/en.json";
 import howItWorks6En from "../components/sections-how-it-works/how-it-works-6/en.json";
 import howItWorks7En from "../components/sections-how-it-works/how-it-works-7/en.json";
+import howItWorks8En from "../components/sections-how-it-works/how-it-works-8/en.json";
+import howItWorks9En from "../components/sections-how-it-works/how-it-works-9/en.json";
 import iconCloudEn from "../components/ui-effects/icon-cloud/en.json";
+import integrations1En from "../components/sections-integrations/integrations-1/en.json";
+import integrations10En from "../components/sections-integrations/integrations-10/en.json";
+import integrations11En from "../components/sections-integrations/integrations-11/en.json";
+import integrations12En from "../components/sections-integrations/integrations-12/en.json";
+import integrations13En from "../components/sections-integrations/integrations-13/en.json";
+import integrations14En from "../components/sections-integrations/integrations-14/en.json";
+import integrations15En from "../components/sections-integrations/integrations-15/en.json";
+import integrations16En from "../components/sections-integrations/integrations-16/en.json";
+import integrations17En from "../components/sections-integrations/integrations-17/en.json";
+import integrations18En from "../components/sections-integrations/integrations-18/en.json";
+import integrations2En from "../components/sections-integrations/integrations-2/en.json";
+import integrations5En from "../components/sections-integrations/integrations-5/en.json";
+import integrations6En from "../components/sections-integrations/integrations-6/en.json";
+import integrations7En from "../components/sections-integrations/integrations-7/en.json";
+import integrations9En from "../components/sections-integrations/integrations-9/en.json";
 import landing01En from "../components/pages-landing/landing-01/en.json";
+import landing02En from "../components/pages-landing/landing-02/en.json";
+import landing03En from "../components/pages-landing/landing-03/en.json";
+import landing04En from "../components/pages-landing/landing-04/en.json";
+import landing05En from "../components/pages-landing/landing-05/en.json";
+import landing06En from "../components/pages-landing/landing-06/en.json";
 import layoutTextFlipEn from "../components/ui-effects/layout-text-flip/en.json";
 import localeSwitcherEn from "../components/layouts/_shared/locale-switcher/en.json";
 import login01En from "../components/sections-auth/login-01/en.json";
@@ -201,9 +311,28 @@ import login06En from "../components/sections-auth/login-06/en.json";
 import login07En from "../components/sections-auth/login-07/en.json";
 import login08En from "../components/sections-auth/login-08/en.json";
 import login09En from "../components/sections-auth/login-09/en.json";
+import login10En from "../components/sections-auth/login-10/en.json";
+import login11En from "../components/sections-auth/login-11/en.json";
+import login12En from "../components/sections-auth/login-12/en.json";
+import login13En from "../components/sections-auth/login-13/en.json";
+import login14En from "../components/sections-auth/login-14/en.json";
+import login15En from "../components/sections-auth/login-15/en.json";
+import login16En from "../components/sections-auth/login-16/en.json";
+import login17En from "../components/sections-auth/login-17/en.json";
+import login18En from "../components/sections-auth/login-18/en.json";
+import login19En from "../components/sections-auth/login-19/en.json";
+import login20En from "../components/sections-auth/login-20/en.json";
+import login21En from "../components/sections-auth/login-21/en.json";
+import login22En from "../components/sections-auth/login-22/en.json";
+import login23En from "../components/sections-auth/login-23/en.json";
 import loginFormEn from "../components/ui-molecules/auth-form/login/en.json";
 import logoCloud1En from "../components/sections-logo-cloud/logo-cloud-1/en.json";
 import logoCloud10En from "../components/sections-logo-cloud/logo-cloud-10/en.json";
+import logoCloud11En from "../components/sections-logo-cloud/logo-cloud-11/en.json";
+import logoCloud12En from "../components/sections-logo-cloud/logo-cloud-12/en.json";
+import logoCloud13En from "../components/sections-logo-cloud/logo-cloud-13/en.json";
+import logoCloud14En from "../components/sections-logo-cloud/logo-cloud-14/en.json";
+import logoCloud15En from "../components/sections-logo-cloud/logo-cloud-15/en.json";
 import logoCloud2En from "../components/sections-logo-cloud/logo-cloud-2/en.json";
 import logoCloud3En from "../components/sections-logo-cloud/logo-cloud-3/en.json";
 import logoCloud4En from "../components/sections-logo-cloud/logo-cloud-4/en.json";
@@ -221,7 +350,25 @@ import onboarding07En from "../components/sections-onboarding/onboarding-07/en.j
 import pagesLogin01En from "../components/pages-login/login-01/en.json";
 import pixelatedCanvasEn from "../components/ui-effects/pixelated-canvas/en.json";
 import pricing01En from "../components/sections-pricing/pricing-01/en.json";
+import pricing02En from "../components/sections-pricing/pricing-02/en.json";
+import pricing03En from "../components/sections-pricing/pricing-03/en.json";
+import pricing04En from "../components/sections-pricing/pricing-04/en.json";
+import pricing05En from "../components/sections-pricing/pricing-05/en.json";
+import pricing06En from "../components/sections-pricing/pricing-06/en.json";
+import pricing07En from "../components/sections-pricing/pricing-07/en.json";
+import pricing08En from "../components/sections-pricing/pricing-08/en.json";
+import pricing09En from "../components/sections-pricing/pricing-09/en.json";
 import pricingComparatorEn from "../components/sections-pricing/pricing-comparator/en.json";
+import pricingComparator2En from "../components/sections-pricing/pricing-comparator-2/en.json";
+import pricingComparator3En from "../components/sections-pricing/pricing-comparator-3/en.json";
+import pricingComparator4En from "../components/sections-pricing/pricing-comparator-4/en.json";
+import pricingPage01En from "../components/pages-pricing/pricing-page-01/en.json";
+import pricingPage02En from "../components/pages-pricing/pricing-page-02/en.json";
+import pricingPage03En from "../components/pages-pricing/pricing-page-03/en.json";
+import pricingPage04En from "../components/pages-pricing/pricing-page-04/en.json";
+import pricingPage05En from "../components/pages-pricing/pricing-page-05/en.json";
+import product01En from "../components/pages-product/product-01/en.json";
+import product02En from "../components/pages-product/product-02/en.json";
 import quickActions01En from "../components/sections-dashboard/quick-actions-01/en.json";
 import recentActivity01En from "../components/sections-dashboard/recent-activity-01/en.json";
 import secondaryHero1En from "../components/sections-secondary-hero/secondary-hero-1/en.json";
@@ -267,7 +414,20 @@ import sidebarTriggerEn from "../components/ui-effects/sidebar-trigger/en.json";
 import signup01En from "../components/pages-signup/signup-01/en.json";
 import signupFormEn from "../components/ui-molecules/auth-form/signup/en.json";
 import siteFooterEn from "../components/layouts/default-layout/site-footer/en.json";
+import siteFooter10En from "../components/layouts/_shared/site-footers/site-footer-10/en.json";
+import siteFooter11En from "../components/layouts/_shared/site-footers/site-footer-11/en.json";
+import siteFooter12En from "../components/layouts/_shared/site-footers/site-footer-12/en.json";
+import siteFooter13En from "../components/layouts/_shared/site-footers/site-footer-13/en.json";
+import siteFooter2En from "../components/layouts/_shared/site-footers/site-footer-2/en.json";
+import siteFooter3En from "../components/layouts/_shared/site-footers/site-footer-3/en.json";
+import siteFooter4En from "../components/layouts/_shared/site-footers/site-footer-4/en.json";
+import siteFooter5En from "../components/layouts/_shared/site-footers/site-footer-5/en.json";
+import siteFooter6En from "../components/layouts/_shared/site-footers/site-footer-6/en.json";
+import siteFooter7En from "../components/layouts/_shared/site-footers/site-footer-7/en.json";
+import siteFooter8En from "../components/layouts/_shared/site-footers/site-footer-8/en.json";
+import siteFooter9En from "../components/layouts/_shared/site-footers/site-footer-9/en.json";
 import skipLinkEn from "../components/layouts/_shared/skip-link/en.json";
+import solutions01En from "../components/pages-solutions/solutions-01/en.json";
 import stats01En from "../components/sections-stats/stats-01/en.json";
 import stats02En from "../components/sections-stats/stats-02/en.json";
 import stats03En from "../components/sections-stats/stats-03/en.json";
@@ -283,13 +443,35 @@ import stats12En from "../components/sections-stats/stats-12/en.json";
 import stats13En from "../components/sections-stats/stats-13/en.json";
 import stats14En from "../components/sections-stats/stats-14/en.json";
 import stats15En from "../components/ui-molecules/stat-tile/projection/en.json";
+import stats16En from "../components/sections-stats/stats-16/en.json";
+import stats17En from "../components/sections-stats/stats-17/en.json";
+import stats18En from "../components/sections-stats/stats-18/en.json";
+import stats19En from "../components/sections-stats/stats-19/en.json";
+import stats20En from "../components/sections-stats/stats-20/en.json";
 import table01En from "../components/sections-data/table-01/en.json";
 import table02En from "../components/sections-data/table-02/en.json";
 import table03En from "../components/sections-data/table-03/en.json";
 import table04En from "../components/sections-data/table-04/en.json";
 import table05En from "../components/sections-data/table-05/en.json";
 import team01En from "../components/sections-team/team-01/en.json";
+import team02En from "../components/sections-team/team-02/en.json";
+import team03En from "../components/sections-team/team-03/en.json";
+import team04En from "../components/sections-team/team-04/en.json";
+import team05En from "../components/sections-team/team-05/en.json";
 import testimonials01En from "../components/sections-testimonials/testimonials-01/en.json";
+import testimonials02En from "../components/sections-testimonials/testimonials-02/en.json";
+import testimonials03En from "../components/sections-testimonials/testimonials-03/en.json";
+import testimonials04En from "../components/sections-testimonials/testimonials-04/en.json";
+import testimonials05En from "../components/sections-testimonials/testimonials-05/en.json";
+import testimonials06En from "../components/sections-testimonials/testimonials-06/en.json";
+import testimonials07En from "../components/sections-testimonials/testimonials-07/en.json";
+import testimonials08En from "../components/sections-testimonials/testimonials-08/en.json";
+import testimonials09En from "../components/sections-testimonials/testimonials-09/en.json";
+import testimonials10En from "../components/sections-testimonials/testimonials-10/en.json";
+import testimonials11En from "../components/sections-testimonials/testimonials-11/en.json";
+import testimonials12En from "../components/sections-testimonials/testimonials-12/en.json";
+import testimonials13En from "../components/sections-testimonials/testimonials-13/en.json";
+import testimonials14En from "../components/sections-testimonials/testimonials-14/en.json";
 import themeToggleEn from "../components/layouts/_shared/theme-toggle/en.json";
 import timeline01En from "../components/sections-timelines/timeline-01/en.json";
 import timeline02En from "../components/sections-timelines/timeline-02/en.json";
@@ -302,6 +484,7 @@ import worldMapEn from "../components/ui-effects/world-map/en.json";
 const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "3d-pin": _3dPinEn,
   "about-01": about01En,
+  "about-02": about02En,
   "ai-01": ai01En,
   "ai-02": ai02En,
   "ai-03": ai03En,
@@ -322,6 +505,7 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "bento-7": bento7En,
   "bento-8": bento8En,
   "bento-9": bento9En,
+  "brand-01": brand01En,
   "chart-area-axes": chartAreaAxesEn,
   "chart-area-default": chartAreaDefaultEn,
   "chart-area-gradient": chartAreaGradientEn,
@@ -346,6 +530,12 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "command-menu-03": commandMenu03En,
   "command-palette": commandPaletteEn,
   "contact-01": contact01En,
+  "contact-page-01": contactPage01En,
+  "contact-page-02": contactPage02En,
+  "contact-page-03": contactPage03En,
+  "contact-page-04": contactPage04En,
+  "contact-page-05": contactPage05En,
+  "contact-page-06": contactPage06En,
   "content-01": content01En,
   "content-02": content02En,
   "content-03": content03En,
@@ -357,7 +547,48 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "content-09": content09En,
   "content-10": content10En,
   "content-11": content11En,
+  "content-12": content12En,
+  "content-13": content13En,
+  "content-14": content14En,
+  "content-15": content15En,
+  "content-16": content16En,
+  "content-17": content17En,
+  "content-18": content18En,
+  "content-19": content19En,
+  "content-20": content20En,
+  "content-21": content21En,
+  "content-22": content22En,
+  "content-23": content23En,
+  "content-24": content24En,
+  "content-25": content25En,
+  "content-26": content26En,
+  "content-27": content27En,
+  "content-28": content28En,
+  "content-29": content29En,
+  "content-30": content30En,
+  "content-31": content31En,
+  "content-32": content32En,
   "cta-01": cta01En,
+  "cta-02": cta02En,
+  "cta-03": cta03En,
+  "cta-04": cta04En,
+  "cta-05": cta05En,
+  "cta-06": cta06En,
+  "cta-07": cta07En,
+  "cta-08": cta08En,
+  "cta-09": cta09En,
+  "cta-10": cta10En,
+  "cta-11": cta11En,
+  "cta-12": cta12En,
+  "customer-story-01": customerStory01En,
+  "customer-story-02": customerStory02En,
+  "customer-story-03": customerStory03En,
+  "customer-story-04": customerStory04En,
+  "customer-story-05": customerStory05En,
+  "customers-01": customers01En,
+  "customers-02": customers02En,
+  "customers-03": customers03En,
+  "customers-04": customers04En,
   "dashboard-01": dashboard01En,
   "dashboard-header": dashboardHeaderEn,
   "dashboard-nav-documents": dashboardNavDocumentsEn,
@@ -386,6 +617,14 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "faq-02": faq02En,
   "faq-03": faq03En,
   "faq-04": faq04En,
+  "faq-05": faq05En,
+  "faq-06": faq06En,
+  "faq-07": faq07En,
+  "faq-08": faq08En,
+  "faq-09": faq09En,
+  "faq-10": faq10En,
+  "faq-11": faq11En,
+  "faq-12": faq12En,
   "features-01": features01En,
   "features-02": features02En,
   "features-03": features03En,
@@ -412,6 +651,23 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "features-24": features24En,
   "features-25": features25En,
   "features-26": features26En,
+  "features-27": features27En,
+  "features-28": features28En,
+  "features-29": features29En,
+  "features-30": features30En,
+  "features-31": features31En,
+  "features-32": features32En,
+  "features-33": features33En,
+  "features-34": features34En,
+  "features-35": features35En,
+  "features-36": features36En,
+  "features-37": features37En,
+  "features-38": features38En,
+  "features-39": features39En,
+  "features-40": features40En,
+  "features-41": features41En,
+  "features-42": features42En,
+  "features-43": features43En,
   "features-carousel-1": featuresCarousel1En,
   "features-carousel-2": featuresCarousel2En,
   "features-carousel-3": featuresCarousel3En,
@@ -447,6 +703,10 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "file-upload-06": fileUpload06En,
   "forgot-password": forgotPasswordEn,
   "forgot-password-01": forgotPassword01En,
+  "forgot-password-02": forgotPassword02En,
+  "forgot-password-03": forgotPassword03En,
+  "forgot-password-04": forgotPassword04En,
+  "forgot-password-05": forgotPassword05En,
   "form-layout-01": formLayout01En,
   "form-layout-02": formLayout02En,
   "form-layout-03": formLayout03En,
@@ -456,6 +716,7 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "grid-list-02": gridList02En,
   "grid-list-03": gridList03En,
   "header-1": header1En,
+  "header-10": header10En,
   "header-2": header2En,
   "header-3": header3En,
   "header-4": header4En,
@@ -471,7 +732,16 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "hero-14": hero14En,
   "hero-15": hero15En,
   "hero-16": hero16En,
+  "hero-17": hero17En,
+  "hero-18": hero18En,
+  "hero-19": hero19En,
   "hero-2": hero2En,
+  "hero-20": hero20En,
+  "hero-21": hero21En,
+  "hero-22": hero22En,
+  "hero-23": hero23En,
+  "hero-24": hero24En,
+  "hero-25": hero25En,
   "hero-3": hero3En,
   "hero-4": hero4En,
   "hero-5": hero5En,
@@ -487,8 +757,30 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "how-it-works-5": howItWorks5En,
   "how-it-works-6": howItWorks6En,
   "how-it-works-7": howItWorks7En,
+  "how-it-works-8": howItWorks8En,
+  "how-it-works-9": howItWorks9En,
   "icon-cloud": iconCloudEn,
+  "integrations-1": integrations1En,
+  "integrations-10": integrations10En,
+  "integrations-11": integrations11En,
+  "integrations-12": integrations12En,
+  "integrations-13": integrations13En,
+  "integrations-14": integrations14En,
+  "integrations-15": integrations15En,
+  "integrations-16": integrations16En,
+  "integrations-17": integrations17En,
+  "integrations-18": integrations18En,
+  "integrations-2": integrations2En,
+  "integrations-5": integrations5En,
+  "integrations-6": integrations6En,
+  "integrations-7": integrations7En,
+  "integrations-9": integrations9En,
   "landing-01": landing01En,
+  "landing-02": landing02En,
+  "landing-03": landing03En,
+  "landing-04": landing04En,
+  "landing-05": landing05En,
+  "landing-06": landing06En,
   "layout-text-flip": layoutTextFlipEn,
   "locale-switcher": localeSwitcherEn,
   "login-01": login01En,
@@ -500,9 +792,28 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "login-07": login07En,
   "login-08": login08En,
   "login-09": login09En,
+  "login-10": login10En,
+  "login-11": login11En,
+  "login-12": login12En,
+  "login-13": login13En,
+  "login-14": login14En,
+  "login-15": login15En,
+  "login-16": login16En,
+  "login-17": login17En,
+  "login-18": login18En,
+  "login-19": login19En,
+  "login-20": login20En,
+  "login-21": login21En,
+  "login-22": login22En,
+  "login-23": login23En,
   "login-form": loginFormEn,
   "logo-cloud-1": logoCloud1En,
   "logo-cloud-10": logoCloud10En,
+  "logo-cloud-11": logoCloud11En,
+  "logo-cloud-12": logoCloud12En,
+  "logo-cloud-13": logoCloud13En,
+  "logo-cloud-14": logoCloud14En,
+  "logo-cloud-15": logoCloud15En,
   "logo-cloud-2": logoCloud2En,
   "logo-cloud-3": logoCloud3En,
   "logo-cloud-4": logoCloud4En,
@@ -520,7 +831,25 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "pages-login-01": pagesLogin01En,
   "pixelated-canvas": pixelatedCanvasEn,
   "pricing-01": pricing01En,
+  "pricing-02": pricing02En,
+  "pricing-03": pricing03En,
+  "pricing-04": pricing04En,
+  "pricing-05": pricing05En,
+  "pricing-06": pricing06En,
+  "pricing-07": pricing07En,
+  "pricing-08": pricing08En,
+  "pricing-09": pricing09En,
   "pricing-comparator": pricingComparatorEn,
+  "pricing-comparator-2": pricingComparator2En,
+  "pricing-comparator-3": pricingComparator3En,
+  "pricing-comparator-4": pricingComparator4En,
+  "pricing-page-01": pricingPage01En,
+  "pricing-page-02": pricingPage02En,
+  "pricing-page-03": pricingPage03En,
+  "pricing-page-04": pricingPage04En,
+  "pricing-page-05": pricingPage05En,
+  "product-01": product01En,
+  "product-02": product02En,
   "quick-actions-01": quickActions01En,
   "recent-activity-01": recentActivity01En,
   "secondary-hero-1": secondaryHero1En,
@@ -566,7 +895,20 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "signup-01": signup01En,
   "signup-form": signupFormEn,
   "site-footer": siteFooterEn,
+  "site-footer-10": siteFooter10En,
+  "site-footer-11": siteFooter11En,
+  "site-footer-12": siteFooter12En,
+  "site-footer-13": siteFooter13En,
+  "site-footer-2": siteFooter2En,
+  "site-footer-3": siteFooter3En,
+  "site-footer-4": siteFooter4En,
+  "site-footer-5": siteFooter5En,
+  "site-footer-6": siteFooter6En,
+  "site-footer-7": siteFooter7En,
+  "site-footer-8": siteFooter8En,
+  "site-footer-9": siteFooter9En,
   "skip-link": skipLinkEn,
+  "solutions-01": solutions01En,
   "stats-01": stats01En,
   "stats-02": stats02En,
   "stats-03": stats03En,
@@ -582,13 +924,35 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "stats-13": stats13En,
   "stats-14": stats14En,
   "stats-15": stats15En,
+  "stats-16": stats16En,
+  "stats-17": stats17En,
+  "stats-18": stats18En,
+  "stats-19": stats19En,
+  "stats-20": stats20En,
   "table-01": table01En,
   "table-02": table02En,
   "table-03": table03En,
   "table-04": table04En,
   "table-05": table05En,
   "team-01": team01En,
+  "team-02": team02En,
+  "team-03": team03En,
+  "team-04": team04En,
+  "team-05": team05En,
   "testimonials-01": testimonials01En,
+  "testimonials-02": testimonials02En,
+  "testimonials-03": testimonials03En,
+  "testimonials-04": testimonials04En,
+  "testimonials-05": testimonials05En,
+  "testimonials-06": testimonials06En,
+  "testimonials-07": testimonials07En,
+  "testimonials-08": testimonials08En,
+  "testimonials-09": testimonials09En,
+  "testimonials-10": testimonials10En,
+  "testimonials-11": testimonials11En,
+  "testimonials-12": testimonials12En,
+  "testimonials-13": testimonials13En,
+  "testimonials-14": testimonials14En,
   "theme-toggle": themeToggleEn,
   "timeline-01": timeline01En,
   "timeline-02": timeline02En,

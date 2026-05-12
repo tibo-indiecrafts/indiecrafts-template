@@ -1,0 +1,76 @@
+{
+  "menus": {
+    "product": "Product",
+    "solutions": "Solutions",
+    "pricing": "Pricing",
+    "company": "Company"
+  },
+  "groups": {
+    "features": "Features",
+    "moreFeatures": "More Features",
+    "changelog": "Changelog",
+    "useCases": "Use Cases",
+    "content": "Content"
+  },
+  "features": {
+    "ai": { "name": "AI", "desc": "Generate Insights and Recommendations" },
+    "performance": {
+      "name": "Performance",
+      "desc": "Lightning-fast load times"
+    },
+    "security": {
+      "name": "Security",
+      "desc": "Keep your data safe and secure"
+    }
+  },
+  "moreFeatures": {
+    "automation": {
+      "name": "Automation",
+      "desc": "Automate your workflow"
+    },
+    "scalability": {
+      "name": "Scalability",
+      "desc": "Scale your application"
+    },
+    "backup": { "name": "Backup", "desc": "Keep your data backed up" },
+    "security": {
+      "name": "Security",
+      "desc": "Keep your data safe and secure"
+    },
+    "partnerships": {
+      "name": "Partnerships",
+      "desc": "Get help when you need it"
+    },
+    "mobile": { "name": "Mobile App", "desc": "Get help when you need it" }
+  },
+  "useCases": {
+    "marketplace": {
+      "name": "Marketplace",
+      "desc": "Find and buy AI tools"
+    },
+    "api": {
+      "name": "API Integration",
+      "desc": "Integrate AI tools into your app"
+    },
+    "partnerships": {
+      "name": "Partnerships",
+      "desc": "Get help when you need it"
+    },
+    "mobile": { "name": "Mobile App", "desc": "Get help when you need it" }
+  },
+  "content": {
+    "announcements": "Announcements",
+    "resources": "Resources",
+    "blog": "Blog"
+  },
+  "changelog": {
+    "title": "Multimodal Learning",
+    "desc": "Explore how our platform integrates text, image, and audio processing into a unified framework."
+  },
+  "actions": {
+    "openMenu": "Open Menu",
+    "closeMenu": "Close Menu",
+    "signIn": "Sign In",
+    "home": "home"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "title": "Our team",
+  "groups": {
+    "leadership": "Leadership",
+    "engineering": "Engineering",
+    "marketing": "Marketing"
+  },
+  "members": {
+    "meschac": { "name": "Méschac Irung", "role": "Creator" },
+    "theo": { "name": "Théo Balick", "role": "Frontend Dev" },
+    "glodie": { "name": "Glodie Lukose", "role": "Frontend Dev" },
+    "bernard": { "name": "Bernard Ngandu", "role": "Backend Dev" }
+  }
+}

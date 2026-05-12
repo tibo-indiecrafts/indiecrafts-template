@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { LayoutIllustration } from "./layout-illustration";
 
 const meta: Meta<typeof LayoutIllustration> = {
-  title: "UI Illustrations/LayoutIllustration",
+  title: "UI Illustrations/Layout",
   component: LayoutIllustration,
   parameters: { layout: "centered" },
 };

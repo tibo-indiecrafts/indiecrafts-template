@@ -1,0 +1,47 @@
+{
+  "title": "Choose Your Plan",
+  "body": "Start free and scale as you grow.",
+  "period": "/month",
+  "features": {
+    "integrations": "Integrations",
+    "apiCalls": "API Calls",
+    "support": "Support",
+    "analytics": "Analytics",
+    "webhooks": "Custom Webhooks",
+    "sso": "SSO / SAML"
+  },
+  "starter": {
+    "name": "Starter",
+    "description": "For individuals and small projects",
+    "price": "$0",
+    "cta": "Get Started",
+    "values": {
+      "integrations": "3",
+      "apiCalls": "1,000/mo",
+      "support": "Community"
+    }
+  },
+  "pro": {
+    "name": "Pro",
+    "description": "For growing teams",
+    "price": "$29",
+    "cta": "Start Free Trial",
+    "values": {
+      "integrations": "Unlimited",
+      "apiCalls": "100,000/mo",
+      "support": "Priority"
+    }
+  },
+  "enterprise": {
+    "name": "Enterprise",
+    "description": "For large organizations",
+    "price": "Custom",
+    "period": "",
+    "cta": "Contact Sales",
+    "values": {
+      "integrations": "Unlimited",
+      "apiCalls": "Unlimited",
+      "support": "Dedicated"
+    }
+  }
+}

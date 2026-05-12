@@ -1,0 +1,58 @@
+{
+  "homeLabel": "go home",
+  "groupHeadings": {
+    "product": "Product",
+    "solution": "Solution",
+    "company": "Company",
+    "legal": "Legal"
+  },
+  "links": {
+    "features": "Features",
+    "solutionItem": "Solution",
+    "customers": "Customers",
+    "pricing": "Pricing",
+    "help": "Help",
+    "about": "About",
+    "startup": "Startup",
+    "freelancers": "Freelancers",
+    "organizations": "Organizations",
+    "students": "Students",
+    "collaboration": "Collaboration",
+    "design": "Design",
+    "management": "Management",
+    "aboutCompany": "About",
+    "careers": "Careers",
+    "blog": "Blog",
+    "press": "Press",
+    "contact": "Contact",
+    "helpCompany": "Help",
+    "licence": "Licence",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "security": "Security"
+  },
+  "social": {
+    "twitter": "X/Twitter",
+    "linkedin": "LinkedIn",
+    "facebook": "Facebook",
+    "threads": "Threads",
+    "instagram": "Instagram",
+    "tiktok": "TikTok"
+  },
+  "newsletter": {
+    "label": "Newsletter",
+    "emailLabel": "Email address",
+    "placeholder": "Your email",
+    "submit": "Submit",
+    "tagline": "Don't miss any update!"
+  },
+  "language": {
+    "label": "Language",
+    "english": "English",
+    "spanish": "Espanol",
+    "french": "Français",
+    "swahili": "Swahili",
+    "lingala": "Lingala"
+  },
+  "copyright": "© {year} Tailark, All rights reserved"
+}

@@ -1,0 +1,10 @@
+{
+  "title": "Forgot password?",
+  "description": "No worries, we'll send you reset instructions",
+  "homeAriaLabel": "Go home",
+  "emailLabel": "Email",
+  "emailPlaceholder": "you@example.com",
+  "submit": "Send Reset Link",
+  "signinPrompt": "Remember your password?",
+  "signinCta": "Sign in"
+}

@@ -1,0 +1,17 @@
+{
+  "tagline": "The modern integration platform for teams who ship fast.",
+  "links": {
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "about": "About",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "social": {
+    "twitter": "Twitter",
+    "github": "GitHub",
+    "linkedin": "LinkedIn"
+  },
+  "copyright": "© {year} Veil, Inc. All rights reserved."
+}

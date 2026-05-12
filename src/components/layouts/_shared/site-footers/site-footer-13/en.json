@@ -1,0 +1,46 @@
+{
+  "homeLabel": "go home",
+  "groupHeadings": {
+    "enterprise": "Enterprise",
+    "product": "Product",
+    "docs": "Docs",
+    "community": "Community"
+  },
+  "links": {
+    "enterpriseAbout": "About",
+    "enterpriseCustomers": "Customers",
+    "enterpriseEnterprise": "Enterprise",
+    "enterprisePartners": "Partners",
+    "enterpriseJobs": "Jobs",
+    "productSecurity": "Security",
+    "productCustomization": "Customization",
+    "productEnterprise": "Enterprise",
+    "productPartners": "Partners",
+    "docsIntroduction": "Introduction",
+    "docsInstallation": "Installation",
+    "docsUtils": "Utils",
+    "docsPrinciples": "Principles",
+    "docsJargon": "Jargon",
+    "docsPlugin": "Plugin",
+    "docsCustomizer": "Customizer",
+    "docsBoilerplates": "Boilerplates",
+    "communityGithub": "GitHub",
+    "communityDiscord": "Discord",
+    "communitySlack": "Slack",
+    "communityTwitter": "X / Twitter"
+  },
+  "social": {
+    "threads": "Threads",
+    "instagram": "Instagram",
+    "tiktok": "TikTok"
+  },
+  "newsletter": {
+    "label": "Subscribe to our newsletter",
+    "placeholder": "Your email",
+    "submit": "Subscribe"
+  },
+  "license": {
+    "copyright": "© tailus 2021 – Present",
+    "link": "Licence"
+  }
+}

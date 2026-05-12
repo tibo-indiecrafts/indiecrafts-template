@@ -1,0 +1,15 @@
+{
+  "title": "Welcome back",
+  "description": "Sign in to your account to continue",
+  "homeAriaLabel": "Go home",
+  "emailLabel": "Email",
+  "emailPlaceholder": "you@example.com",
+  "passwordLabel": "Password",
+  "forgotCta": "Forgot password?",
+  "submit": "Sign In",
+  "separator": "or continue with",
+  "googleCta": "Google",
+  "githubCta": "GitHub",
+  "signupPrompt": "Don't have an account?",
+  "signupCta": "Sign up"
+}

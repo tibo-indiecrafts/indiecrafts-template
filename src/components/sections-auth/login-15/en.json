@@ -1,0 +1,14 @@
+{
+  "title": "Sign In to Tailark",
+  "description": "Welcome back! Sign in to continue",
+  "homeAriaLabel": "Go home",
+  "usernameLabel": "Username",
+  "passwordLabel": "Password",
+  "forgotCta": "Forgot your Password ?",
+  "submit": "Sign In",
+  "separator": "Or continue With",
+  "googleCta": "Google",
+  "microsoftCta": "Microsoft",
+  "signupPrompt": "Don't have an account ?",
+  "signupCta": "Create account"
+}

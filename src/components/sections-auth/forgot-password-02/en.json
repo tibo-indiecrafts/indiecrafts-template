@@ -1,0 +1,11 @@
+{
+  "title": "Recover Password",
+  "description": "Enter your email to receive a reset link",
+  "homeAriaLabel": "Go home",
+  "emailLabel": "Email",
+  "emailPlaceholder": "name@example.com",
+  "submit": "Send Reset Link",
+  "helper": "We'll send you a link to reset your password.",
+  "signinPrompt": "Remembered your password?",
+  "signinCta": "Log in"
+}

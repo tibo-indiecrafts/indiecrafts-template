@@ -1,0 +1,32 @@
+{
+  "title": "Common Questions",
+  "body": "Everything you need to know about our platform.",
+  "contactPrompt": "Have another question?",
+  "contactLink": "Get in touch",
+  "items": {
+    "trial": {
+      "question": "How does the free trial work?",
+      "answer": "Start with a 14-day free trial with full access to all features. No credit card required."
+    },
+    "changePlan": {
+      "question": "Can I change my plan later?",
+      "answer": "Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately."
+    },
+    "payment": {
+      "question": "What payment methods do you accept?",
+      "answer": "We accept all major credit cards, PayPal, and bank transfers for annual plans."
+    },
+    "setupFee": {
+      "question": "Is there a setup fee?",
+      "answer": "No, there are no setup fees or hidden costs. You only pay for your subscription plan."
+    },
+    "refunds": {
+      "question": "Do you offer refunds?",
+      "answer": "We offer a 30-day money-back guarantee. Contact us within 30 days for a full refund."
+    },
+    "cancel": {
+      "question": "How do I cancel my subscription?",
+      "answer": "You can cancel anytime from your account settings. Your access continues until the billing period ends."
+    }
+  }
+}

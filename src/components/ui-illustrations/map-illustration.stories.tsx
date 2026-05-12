@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { MapIllustration } from "./map-illustration";
 
 const meta: Meta<typeof MapIllustration> = {
-  title: "UI Illustrations/MapIllustration",
+  title: "UI Illustrations/Map",
   component: MapIllustration,
   parameters: { layout: "centered" },
   decorators: [

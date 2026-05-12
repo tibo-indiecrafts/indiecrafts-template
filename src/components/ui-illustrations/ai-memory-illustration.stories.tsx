@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AiMemoryIllustration } from "./ai-memory-illustration";
 
 const meta: Meta<typeof AiMemoryIllustration> = {
-  title: "UI Illustrations/AiMemoryIllustration",
+  title: "UI Illustrations/AiMemory",
   component: AiMemoryIllustration,
   parameters: { layout: "centered" },
 };

@@ -1,0 +1,20 @@
+{
+  "links": {
+    "features": "Features",
+    "solution": "Solution",
+    "customers": "Customers",
+    "pricing": "Pricing",
+    "help": "Help",
+    "about": "About"
+  },
+  "social": {
+    "twitter": "X/Twitter",
+    "linkedin": "LinkedIn",
+    "facebook": "Facebook",
+    "threads": "Threads",
+    "instagram": "Instagram",
+    "tiktok": "TikTok"
+  },
+  "homeLabel": "go home",
+  "copyright": "© {year} Tailark, All rights reserved"
+}

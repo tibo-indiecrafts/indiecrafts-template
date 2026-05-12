@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { CollaborationCommentIllustration } from "./collaboration-comment-illustration";
 
 const meta: Meta<typeof CollaborationCommentIllustration> = {
-  title: "UI Illustrations/CollaborationCommentIllustration",
+  title: "UI Illustrations/CollaborationComment",
   component: CollaborationCommentIllustration,
   parameters: { layout: "centered" },
   decorators: [

@@ -1,0 +1,21 @@
+{
+  "title": "Help Center",
+  "body": "Browse by category to find the answers you need.",
+  "contactPrompt": "Need more help?",
+  "contactLink": "Contact our team",
+  "gettingStartedTitle": "Getting Started",
+  "gettingStarted1Question": "How do I create an account?",
+  "gettingStarted1Answer": "Click \"Sign Up\" and follow the prompts. You can sign up with email or connect your Google account.",
+  "gettingStarted2Question": "Is there a free trial?",
+  "gettingStarted2Answer": "Yes, we offer a 14-day free trial with full access to all features. No credit card required.",
+  "billingTitle": "Billing",
+  "billing1Question": "What payment methods do you accept?",
+  "billing1Answer": "We accept all major credit cards, PayPal, and bank transfers for annual plans.",
+  "billing2Question": "Can I get a refund?",
+  "billing2Answer": "We offer a 30-day money-back guarantee. Contact support within 30 days for a full refund.",
+  "supportTitle": "Support",
+  "support1Question": "How do I contact support?",
+  "support1Answer": "You can reach us via email, live chat, or through your account dashboard. We typically respond within 24 hours.",
+  "support2Question": "Do you offer phone support?",
+  "support2Answer": "Phone support is available for Pro and Enterprise plans during business hours (9 AM - 6 PM EST)."
+}

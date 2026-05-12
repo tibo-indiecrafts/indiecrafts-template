@@ -1,0 +1,15 @@
+{
+  "title": "The AI Coding Assistant that helps you write code faster",
+  "learnMore": "Learn more",
+  "items": {
+    "1": {
+      "title": "Code Generation",
+      "body": "Just describe the code you want to write and we'll generate it for you. From boilerplate code to complex business logic, we've got you covered."
+    },
+    "2": {
+      "title": "Code Review",
+      "body": "Get instant feedback on your code. Our AI will review your code and suggest improvements in terms of best practices and performance."
+    }
+  },
+  "imageAlt": "App screen"
+}

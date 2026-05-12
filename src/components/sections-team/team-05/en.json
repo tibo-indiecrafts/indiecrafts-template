@@ -1,0 +1,18 @@
+{
+  "title": "Meet Our Founders",
+  "body": "The visionary leaders behind our mission to transform how teams work and collaborate.",
+  "members": {
+    "1": {
+      "name": "Meschac Irung",
+      "role": "Frontend Engineer at Acme"
+    },
+    "2": {
+      "name": "Theo Balick",
+      "role": "Founder, CEO - Acme"
+    },
+    "3": {
+      "name": "Sarah Johnson",
+      "role": "DevOps Engineer"
+    }
+  }
+}

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { AgentFeedbackIllustration } from "./agent-feedback-illustration";
 
 const meta: Meta<typeof AgentFeedbackIllustration> = {
-  title: "UI Illustrations/AgentFeedbackIllustration",
+  title: "UI Illustrations/AgentFeedback",
   component: AgentFeedbackIllustration,
   parameters: { layout: "centered" },
 };

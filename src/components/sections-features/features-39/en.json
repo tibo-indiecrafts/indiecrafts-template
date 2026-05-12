@@ -1,0 +1,25 @@
+{
+  "eyebrow": "Benefits",
+  "title": "Cutting-Edge tools to build subscriptions",
+  "body": "Our platform combines cutting-edge AI models with intuitive interfaces to streamline your development workflow and boost productivity.",
+  "card1": {
+    "title": "Team collaboration",
+    "body": "Discuss in context, mention teammates, and resolve threads without leaving the flow of work."
+  },
+  "card2": {
+    "title": "Workflow Automation",
+    "body": "Trigger agents from events, chain tools with conditions."
+  },
+  "card3": {
+    "title": "Omnichannel Messaging",
+    "body": "Send campaigns across email, chat, and more—every reply lands in one unified inbox."
+  },
+  "card4": {
+    "title": "Enterprise-grade security",
+    "body": "Role-based access, audit trails, and fine-grained controls keep data locked down by default."
+  },
+  "card5": {
+    "title": "Collaborative Analysis",
+    "body": "Turn scattered signals into shared understanding with live insights your whole team can explore."
+  }
+}

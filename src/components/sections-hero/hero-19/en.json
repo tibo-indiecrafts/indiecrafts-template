@@ -1,0 +1,19 @@
+{
+  "headline": {
+    "firstAccent": "Modern",
+    "rest": "Solutions for Customer Engagement"
+  },
+  "body": "Our comprehensive analytics and experimentation platform empowers your team to make data-driven decisions.",
+  "primary": "Start Testing for free",
+  "subtext": "No credit card required!",
+  "feature1": {
+    "title": "Marketing Campaigns",
+    "boldHead": "Launch and manage campaigns seamlessly.",
+    "tail": "Collaborate with your team to deliver impactful strategies."
+  },
+  "feature2": {
+    "title": "Collaborative Campaigns",
+    "boldHead": "Work together for greater impact.",
+    "tail": "Engage with your team on comprehensive campaigns."
+  }
+}

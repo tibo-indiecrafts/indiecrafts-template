@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { NotificationIllustration } from "./notification-illustration";
 
 const meta: Meta<typeof NotificationIllustration> = {
-  title: "UI Illustrations/NotificationIllustration",
+  title: "UI Illustrations/Notification",
   component: NotificationIllustration,
   parameters: { layout: "centered" },
   args: { variant: "elevated" },

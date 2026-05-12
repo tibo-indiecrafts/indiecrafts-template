@@ -1,0 +1,28 @@
+{
+  "cards": {
+    "card1": {
+      "title": "Google Gemini",
+      "body": "Bring Gemini-powered AI into your product. Stream completions, route prompts, and ship faster."
+    },
+    "card2": {
+      "title": "Replit",
+      "body": "Spin up dev environments, share runnable demos, and collaborate on code in seconds."
+    },
+    "card3": {
+      "title": "Mistral AI",
+      "body": "Open-weight LLMs with strong tool-use. Self-host or call the hosted API from one client."
+    },
+    "card4": {
+      "title": "VSCodium",
+      "body": "Telemetry-free fork of VS Code. Extension-compatible, MIT-licensed, ships everywhere."
+    },
+    "card5": {
+      "title": "MediaWiki",
+      "body": "Sync with Wikipedia-style knowledge bases. Versioned pages, talk threads, and citations."
+    },
+    "card6": {
+      "title": "Google PaLM",
+      "body": "Long-context reasoning at Google scale. Fine-tuning, embeddings, and structured output."
+    }
+  }
+}

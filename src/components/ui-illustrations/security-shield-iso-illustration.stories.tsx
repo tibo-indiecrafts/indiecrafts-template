@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { SecurityShieldIsoIllustration } from "./security-shield-iso-illustration";
 
 const meta: Meta<typeof SecurityShieldIsoIllustration> = {
-  title: "UI Illustrations/SecurityShieldIsoIllustration",
+  title: "UI Illustrations/SecurityShieldIso",
   component: SecurityShieldIsoIllustration,
   parameters: { layout: "centered" },
 };

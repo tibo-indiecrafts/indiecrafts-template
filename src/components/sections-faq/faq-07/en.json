@@ -1,0 +1,15 @@
+{
+  "title": "Your Questions Answered",
+  "contactPrompt": "Can't find what you're looking for?",
+  "contactLink": "Contact support",
+  "item1Question": "How does the free trial work?",
+  "item1Answer": "Start with a 14-day free trial with full access to all features. No credit card required. You can upgrade to a paid plan at any time during or after the trial.",
+  "item2Question": "Can I change my plan later?",
+  "item2Answer": "Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate the difference.",
+  "item3Question": "What payment methods do you accept?",
+  "item3Answer": "We accept all major credit cards, PayPal, and bank transfers for annual plans. Enterprise customers can also pay via invoice.",
+  "item4Question": "Is there a setup fee?",
+  "item4Answer": "No, there are no setup fees or hidden costs. You only pay for your subscription plan.",
+  "item5Question": "Do you offer refunds?",
+  "item5Answer": "We offer a 30-day money-back guarantee. If you're not satisfied, contact us within 30 days for a full refund."
+}

@@ -1,0 +1,26 @@
+{
+  "tagline": "Building the future of integrations. Connect your tools, automate your workflow.",
+  "groupHeadings": {
+    "product": "Product",
+    "company": "Company",
+    "resources": "Resources"
+  },
+  "links": {
+    "features": "Features",
+    "integrations": "Integrations",
+    "pricing": "Pricing",
+    "changelog": "Changelog",
+    "about": "About",
+    "blog": "Blog",
+    "careers": "Careers",
+    "contact": "Contact",
+    "documentation": "Documentation",
+    "helpCenter": "Help Center",
+    "community": "Community",
+    "templates": "Templates",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookiePolicy": "Cookie Policy"
+  },
+  "copyright": "© {year} Veil. All rights reserved."
+}
