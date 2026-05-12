@@ -4,6 +4,9 @@ out/
 build/
 coverage/
 
+# Local tooling (untracked, not part of repo lint surface)
+.claude/
+
 # Generated
 next-env.d.ts
 pnpm-lock.yaml

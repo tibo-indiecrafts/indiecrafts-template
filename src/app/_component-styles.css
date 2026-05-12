@@ -4,10 +4,10 @@
  * component-co-located .css file (or rely on the predev/prebuild hook).
  */
 
-@import "../components/sections-features-expandable/features-expandable-1/FeaturesExpandable.css";
+@import "../components/sections-features-expandable/features-expandable-01/FeaturesExpandable.css";
+@import "../components/sections-features-expandable/features-expandable-02/FeaturesExpandable.css";
+@import "../components/sections-features-expandable/features-expandable-03/FeaturesExpandable.css";
 @import "../components/sections-features-expandable/features-expandable-12/FeaturesExpandable.css";
-@import "../components/sections-features-expandable/features-expandable-2/FeaturesExpandable.css";
-@import "../components/sections-features-expandable/features-expandable-3/FeaturesExpandable.css";
 @import "../components/ui-effects/infinite-moving-cards.css";
 @import "../components/ui-effects/meteors.css";
 @import "../components/ui-effects/pulsating-button.css";
