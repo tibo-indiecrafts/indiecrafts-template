@@ -17,8 +17,8 @@ import {
   FeatureCardDescription,
   FeatureCardTitle,
 } from "@/components/ui-effects/grid-2-product-two-feature-card";
-import AiAutocompleteIllustration from "@/components/ui-illustrations/grid-2-product-two-ai-autocomplete";
-import { AiMentionsIllustration } from "@/components/ui-illustrations/grid-2-product-two-ai-mentions";
+import AiAutocompleteIllustration from "@/components/ui-illustrations/ai-autocomplete";
+import { AiMentionsIllustration } from "@/components/ui-illustrations/ai-mentions-03";
 import { LogoCloud } from "./sections/logo-cloud";
 import HowItWorksSection from "./sections/how-it-works";
 import { TestimonialSection } from "./sections/testimonial";

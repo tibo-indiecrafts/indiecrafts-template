@@ -1,10 +1,10 @@
 import { Shield } from "lucide-react";
 import { Card } from "@/components/ui-effects/libre-landing-card";
-import { ChipIllustration } from "@/components/ui-illustrations/libre-landing-chip-illustration";
-import { CurrencyIllustration } from "@/components/ui-illustrations/libre-landing-currency-illustration";
-import { KeysIllustration } from "@/components/ui-illustrations/libre-landing-keys-illustration";
-import { MemoryUsageIllustration } from "@/components/ui-illustrations/libre-landing-memory-usage-illustration";
-import { UptimeIllustration } from "@/components/ui-illustrations/libre-landing-uptime-illustration";
+import { ChipIllustration } from "@/components/ui-illustrations/chip-illustration";
+import { CurrencyIllustration } from "@/components/ui-illustrations/currency-illustration-02";
+import { KeysIllustration } from "@/components/ui-illustrations/keys-illustration-02";
+import { MemoryUsageIllustration } from "@/components/ui-illustrations/memory-usage-illustration-02";
+import { UptimeIllustration } from "@/components/ui-illustrations/uptime-illustration-02";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features37Namespace } from "./config";
 import type { Features37Block } from "./schema";

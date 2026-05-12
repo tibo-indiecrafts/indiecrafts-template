@@ -8,9 +8,9 @@ import {
   FeatureCard,
   FeatureCardContent,
 } from "@/components/ui-effects/grid-2-landing-feature-card";
-import { CreditCardIllustration } from "@/components/ui-illustrations/grid-2-landing-credit-card-illustration";
-import { FlowIllustration } from "@/components/ui-illustrations/grid-2-landing-flow-illustration";
-import { InvoiceIllustration } from "@/components/ui-illustrations/grid-2-landing-invoice-illustration";
+import { CreditCardIllustration } from "@/components/ui-illustrations/credit-card-illustration";
+import { FlowIllustration } from "@/components/ui-illustrations/flow-illustration-02";
+import { InvoiceIllustration } from "@/components/ui-illustrations/invoice-illustration-04";
 import { VercelWordmark as VercelFull } from "@/components/ui-primitives/svgs/grid-2-landing-vercel";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features31Namespace } from "./config";

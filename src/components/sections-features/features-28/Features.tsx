@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui-effects/dark-landing-card";
-import { CompletePaymentIllustration } from "@/components/ui-illustrations/dark-landing-complete-payment-illustration";
-import { LinkPaymentIllustration } from "@/components/ui-illustrations/dark-landing-link-payment-illustration";
+import { CompletePaymentIllustration } from "@/components/ui-illustrations/complete-payment-illustration";
+import { LinkPaymentIllustration } from "@/components/ui-illustrations/link-payment-illustration";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features28Namespace } from "./config";
 import type { FeaturesBlock } from "./schema";

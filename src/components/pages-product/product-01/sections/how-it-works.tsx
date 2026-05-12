@@ -6,9 +6,9 @@ import {
   FeatureCardContent,
   FeatureCardTitle,
 } from "@/components/ui-effects/grid-2-product-feature-card";
-import { CalendarIllustration } from "@/components/ui-illustrations/grid-2-product-calendar";
-import { WalletIllustration } from "@/components/ui-illustrations/grid-2-product-wallet-illustration";
-import { TaskPlanningIllustration } from "@/components/ui-illustrations/grid-2-product-task-planning-illustration";
+import { CalendarIllustration } from "@/components/ui-illustrations/calendar";
+import { WalletIllustration } from "@/components/ui-illustrations/wallet-illustration";
+import { TaskPlanningIllustration } from "@/components/ui-illustrations/task-planning-illustration";
 
 export default function HowItWorksSection() {
   return (

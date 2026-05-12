@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { InvoiceIllustration } from "@/components/ui-illustrations/dark-landing-invoice-illustration";
-import { InvoiceSigningIllustration } from "@/components/ui-illustrations/dark-landing-invoice-signing-illustration";
-import { PaymentIllustration } from "@/components/ui-illustrations/dark-landing-payment-illustration";
+import { InvoiceIllustration } from "@/components/ui-illustrations/invoice-illustration-02";
+import { InvoiceSigningIllustration } from "@/components/ui-illustrations/invoice-signing-illustration-02";
+import { PaymentIllustration } from "@/components/ui-illustrations/payment-illustration-02";
 import { useScopedT } from "@/i18n/scoped-t";
 import { howItWorks08Namespace } from "./config";
 import type { HowItWorksBlock } from "./schema";

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Map } from "@/components/ui-illustrations/dark-landing-dotted-map";
+import { Map } from "@/components/ui-illustrations/dotted-map";
 import { useScopedT } from "@/i18n/scoped-t";
 import { stats16Namespace } from "./config";
 import type { StatsBlock } from "./schema";

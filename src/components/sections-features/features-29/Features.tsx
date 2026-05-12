@@ -2,10 +2,10 @@
 
 import { Quote } from "lucide-react";
 import { Container } from "@/components/ui-effects/grid-1-landing-container";
-import { AiSuggestionIllustration } from "@/components/ui-illustrations/grid-1-landing-ai-suggestion-illustration";
-import { ChatIllustration } from "@/components/ui-illustrations/grid-1-landing-chat-illustration";
-import { IntegrationsIllustration } from "@/components/ui-illustrations/grid-1-landing-integrations-illustration";
-import { InvoiceIllustration } from "@/components/ui-illustrations/grid-1-landing-invoice-illustration";
+import { AiSuggestionIllustration } from "@/components/ui-illustrations/ai-suggestion-illustration";
+import { ChatIllustration } from "@/components/ui-illustrations/chat-illustration";
+import { IntegrationsIllustration } from "@/components/ui-illustrations/integrations-illustration-02";
+import { InvoiceIllustration } from "@/components/ui-illustrations/invoice-illustration-03";
 import { Stripe } from "@/components/ui-primitives/svgs/grid-1-landing-stripe";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features29Namespace } from "./config";

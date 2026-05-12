@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui-effects/dark-landing-button";
-import { HeroIllustration } from "@/components/ui-illustrations/dark-landing-hero-illustration";
+import { HeroIllustration } from "@/components/ui-illustrations/hero-illustration";
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero17Namespace } from "./config";
 import type { HeroBlock } from "./schema";

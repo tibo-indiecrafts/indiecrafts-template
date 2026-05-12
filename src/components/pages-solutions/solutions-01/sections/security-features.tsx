@@ -6,7 +6,7 @@ import {
 } from "@/components/ui-effects/grid-2-solution-feature-card";
 import { Button } from "@/components/ui-effects/grid-2-solution-button";
 import Link from "next/link";
-import { SecurityAuditIllustration } from "@/components/ui-illustrations/grid-2-solution-security-shield";
+import { SecurityAuditIllustration } from "@/components/ui-illustrations/security-shield";
 
 const subFeatures = [
   {

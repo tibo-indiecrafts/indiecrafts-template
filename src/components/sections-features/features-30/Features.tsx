@@ -1,7 +1,7 @@
 import { CalendarDays, Clock2, Zap } from "lucide-react";
 import { Container } from "@/components/ui-effects/grid-1-landing-container";
-import { MapIllustration } from "@/components/ui-illustrations/grid-1-landing-map-illustration";
-import { VisualizationIllustration } from "@/components/ui-illustrations/grid-1-landing-visualization-illustration";
+import { MapIllustration } from "@/components/ui-illustrations/map-illustration-02";
+import { VisualizationIllustration } from "@/components/ui-illustrations/visualization-illustration-03";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features30Namespace } from "./config";
 import type { Features30Block } from "./schema";

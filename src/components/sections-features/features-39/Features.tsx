@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui-effects/libre-landing-two-card";
-import { AddCommentIllustration } from "@/components/ui-illustrations/libre-landing-two-add-comment-illustration";
-import { CodeReviewIllustration } from "@/components/ui-illustrations/libre-landing-two-code-review-illustration";
-import { MapIllustration } from "@/components/ui-illustrations/libre-landing-two-map-illustration";
-import { MeetingIllustration } from "@/components/ui-illustrations/libre-landing-two-meeting-illustration";
-import { MessageIllustration } from "@/components/ui-illustrations/libre-landing-two-message-illustration";
+import { AddCommentIllustration } from "@/components/ui-illustrations/add-comment-illustration-03";
+import { CodeReviewIllustration } from "@/components/ui-illustrations/code-review-illustration";
+import { MapIllustration } from "@/components/ui-illustrations/map-illustration-06";
+import { MeetingIllustration } from "@/components/ui-illustrations/meeting-illustration";
+import { MessageIllustration } from "@/components/ui-illustrations/message-illustration-03";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features39Namespace } from "./config";
 import type { Features39Block } from "./schema";

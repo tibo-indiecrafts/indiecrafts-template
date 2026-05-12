@@ -6,9 +6,9 @@ import {
   FeatureCardContent,
   FeatureCardTitle,
 } from "@/components/ui-effects/grid-2-solution-feature-card";
-import { TaskPlanningIllustration } from "@/components/ui-illustrations/grid-2-solution-task-planning-illustration";
-import { MapIllustration } from "@/components/ui-illustrations/grid-2-solution-map-illustration";
-import { AiSuggestionIllustration } from "@/components/ui-illustrations/grid-2-solution-ai-suggestion";
+import { TaskPlanningIllustration } from "@/components/ui-illustrations/task-planning-illustration";
+import { MapIllustration } from "@/components/ui-illustrations/map-illustration-03";
+import { AiSuggestionIllustration } from "@/components/ui-illustrations/ai-suggestion-02";
 import { Globe, ListChecks, Sparkles } from "lucide-react";
 
 export default function MoreFeatures() {

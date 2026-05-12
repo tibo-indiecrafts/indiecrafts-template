@@ -6,7 +6,7 @@ import {
   FeatureCard,
   FeatureCardContent,
 } from "@/components/ui-effects/grid-2-landing-feature-card";
-import { EnterpriseMessageIllustration } from "@/components/ui-illustrations/grid-2-landing-enterprise-message-illustration";
+import { EnterpriseMessageIllustration } from "@/components/ui-illustrations/enterprise-message-illustration";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features33Namespace } from "./config";
 import type { Features33Block } from "./schema";

@@ -6,7 +6,7 @@ import {
 } from "@/components/ui-effects/grid-2-product-feature-card";
 import { Button } from "@/components/ui-effects/grid-2-product-button";
 import Link from "next/link";
-import { Flow2Illustration } from "@/components/ui-illustrations/grid-2-product-flow-2-illustration";
+import { Flow2Illustration } from "@/components/ui-illustrations/flow-2-illustration";
 
 const subFeatures = [
   {

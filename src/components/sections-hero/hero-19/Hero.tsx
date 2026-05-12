@@ -10,8 +10,8 @@ import {
   FeatureCardDescription,
   FeatureCardTitle,
 } from "@/components/ui-effects/grid-2-landing-feature-card";
-import { CampaignIllustration } from "@/components/ui-illustrations/grid-2-landing-campaign-illustration";
-import { MessageIllustration } from "@/components/ui-illustrations/grid-2-landing-message-illustration";
+import { CampaignIllustration } from "@/components/ui-illustrations/campaign-illustration-02";
+import { MessageIllustration } from "@/components/ui-illustrations/message-illustration-02";
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero19Namespace } from "./config";
 import type { HeroBlock } from "./schema";

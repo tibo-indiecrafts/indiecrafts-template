@@ -1,9 +1,9 @@
 import { CalendarDays, Clock2, Zap } from "lucide-react";
 import { Card } from "@/components/ui-effects/libre-landing-two-card";
-import { AiOverviewIllustration } from "@/components/ui-illustrations/libre-landing-two-ai-overview-illustration";
-import { ChartIllustration } from "@/components/ui-illustrations/libre-landing-two-chart-illustration";
-import { LanguagesIllustration } from "@/components/ui-illustrations/libre-landing-two-languages-illustration";
-import { LinkPaymentIllustration } from "@/components/ui-illustrations/libre-landing-two-link-payment-illustration";
+import { AiOverviewIllustration } from "@/components/ui-illustrations/ai-overview-illustration";
+import { ChartIllustration } from "@/components/ui-illustrations/chart-illustration-02";
+import { LanguagesIllustration } from "@/components/ui-illustrations/languages-illustration";
+import { LinkPaymentIllustration } from "@/components/ui-illustrations/link-payment-illustration-02";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features38Namespace } from "./config";
 import type { Features38Block } from "./schema";

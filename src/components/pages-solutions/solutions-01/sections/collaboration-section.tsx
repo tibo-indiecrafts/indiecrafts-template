@@ -13,10 +13,10 @@ import {
   SquareDashedMousePointer,
   Video,
 } from "lucide-react";
-import { Meeting4Illustration } from "@/components/ui-illustrations/grid-2-solution-meeting-4";
-import { CollbarationCommentIllustration } from "@/components/ui-illustrations/grid-2-solution-collaboration-comment";
-import { Kanban2Illustration } from "@/components/ui-illustrations/grid-2-solution-kanban-2";
-import { CalendarIllustration } from "@/components/ui-illustrations/grid-2-solution-calendar";
+import { Meeting4Illustration } from "@/components/ui-illustrations/meeting-4";
+import { CollbarationCommentIllustration } from "@/components/ui-illustrations/collaboration-comment";
+import { Kanban2Illustration } from "@/components/ui-illustrations/kanban-2-02";
+import { CalendarIllustration } from "@/components/ui-illustrations/calendar";
 
 export const CollaborationSection = () => {
   return (

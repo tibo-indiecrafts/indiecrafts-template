@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui-effects/libre-landing-card";
-import { AddCommentIllustration } from "@/components/ui-illustrations/libre-landing-add-comment-illustration";
-import { MapIllustration } from "@/components/ui-illustrations/libre-landing-map-illustration";
-import { MessageIllustration } from "@/components/ui-illustrations/libre-landing-message-illustration";
-import { VisualizationIllustration } from "@/components/ui-illustrations/libre-landing-visualization-illustration";
+import { AddCommentIllustration } from "@/components/ui-illustrations/add-comment-illustration-02";
+import { MapIllustration } from "@/components/ui-illustrations/map-illustration-06";
+import { MessageIllustration } from "@/components/ui-illustrations/message-illustration-03";
+import { VisualizationIllustration } from "@/components/ui-illustrations/visualization-illustration-05";
 import { Cloudflare } from "@/components/ui-primitives/svgs/libre-landing-cloudflare";
 import { Linear } from "@/components/ui-primitives/svgs/libre-landing-linear";
 import { Openai } from "@/components/ui-primitives/svgs/libre-landing-openai";

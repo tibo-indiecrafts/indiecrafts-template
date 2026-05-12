@@ -15,9 +15,9 @@ import {
   FeatureCardDescription,
   FeatureCardTitle,
 } from "@/components/ui-effects/grid-2-product-feature-card";
-import { AiAutocompleteIllustration } from "@/components/ui-illustrations/grid-2-product-ai-autocomplete";
-import { AiMentionsIllustration } from "@/components/ui-illustrations/grid-2-product-ai-mentions";
-import { SearchResultsIllustration } from "@/components/ui-illustrations/grid-2-product-search-results-illustration";
+import { AiAutocompleteIllustration } from "@/components/ui-illustrations/ai-autocomplete";
+import { AiMentionsIllustration } from "@/components/ui-illustrations/ai-mentions-02";
+import { SearchResultsIllustration } from "@/components/ui-illustrations/search-results-illustration";
 import { LogoCloud } from "./sections/logo-cloud";
 import HowItWorksSection from "./sections/how-it-works";
 import { TestimonialSection } from "./sections/testimonial";

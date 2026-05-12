@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui-effects/libre-landing-two-button";
-import { CtaIllustration } from "@/components/ui-illustrations/libre-landing-two-cta-illustration";
+import { CtaIllustration } from "@/components/ui-illustrations/cta-illustration";
 import { useScopedT } from "@/i18n/scoped-t";
 import { cta06Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";

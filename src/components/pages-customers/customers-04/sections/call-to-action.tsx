@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui-effects/libre-customers-one-button";
 import Link from "next/link";
-import { CtaIllustration } from "@/components/ui-illustrations/libre-customers-one-cta-illustration";
+import { CtaIllustration } from "@/components/ui-illustrations/cta-illustration";
 
 export function CallToAction() {
   return (

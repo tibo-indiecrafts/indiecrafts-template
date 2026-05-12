@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui-effects/dark-landing-card";
-import { KitIllustration } from "@/components/ui-illustrations/dark-landing-kit-illustration";
-import { ReplyIllustration } from "@/components/ui-illustrations/dark-landing-reply-illustration";
-import { ScheduleIllustation } from "@/components/ui-illustrations/dark-landing-schedule-illustration";
-import { VisualizationIllustration } from "@/components/ui-illustrations/dark-landing-visualization-illustration";
+import { KitIllustration } from "@/components/ui-illustrations/kit-illustration-02";
+import { ReplyIllustration } from "@/components/ui-illustrations/reply-illustration-02";
+import { ScheduleIllustation } from "@/components/ui-illustrations/schedule-illustration-02";
+import { VisualizationIllustration } from "@/components/ui-illustrations/visualization-illustration-02";
 import { useScopedT } from "@/i18n/scoped-t";
 import { features27Namespace } from "./config";
 import type { FeaturesBlock } from "./schema";

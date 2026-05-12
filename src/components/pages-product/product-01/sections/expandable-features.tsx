@@ -3,10 +3,10 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { Notes2Illustration } from "@/components/ui-illustrations/grid-2-product-notes-2-illustration";
-import { Calendar10Illustration } from "@/components/ui-illustrations/grid-2-product-calendar-10-illustration";
+import { Notes2Illustration } from "@/components/ui-illustrations/notes-2-illustration";
+import { Calendar10Illustration } from "@/components/ui-illustrations/calendar-10-illustration";
 import { AnimatePresence, motion } from "motion/react";
-import { AgentTaskPlanningIllustration } from "@/components/ui-illustrations/grid-2-product-agent-task-planning-illustration";
+import { AgentTaskPlanningIllustration } from "@/components/ui-illustrations/agent-task-planning-illustration-02";
 import { Globe, Bot, Brain, ShieldCheck, Hourglass } from "lucide-react";
 import { Button } from "@/components/ui-effects/grid-2-product-button";
 import Link from "next/link";
