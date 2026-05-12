@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream verbatim, kept as-is */
+/* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
 "use client";
 import { Button } from "@/components/ui-primitives/grid-1-pricing-button";
 import { Check } from "lucide-react";
@@ -62,7 +62,7 @@ export function Pricing() {
             <div className="self-end">
               <CardTitle className="text-lg font-medium">Free</CardTitle>
               <div className="text-muted-foreground mt-1 text-sm text-balance">
-                For developers trying out Tailark for the first time
+                For developers trying out Acme for the first time
               </div>
             </div>
 

@@ -7,17 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { forgotPassword05Namespace } from "./config";
 import type { ForgotPasswordBlock } from "./schema";
 
-/**
- * Tailark `veil-forgot-password-2` — JSX verbatim. Recover-password
- * mirror of `veil-login-2` (login-14) / `veil-sign-up-2` (login-21):
- * `bg-background flex min-h-dvh px-4 py-16 md:py-24` wrapper, single
- * muted card (`bg-muted m-auto w-full max-w-sm rounded-2xl border
- * p-8`). Logo link, "Forgot password?" heading (default font, no
- * `font-serif` override) + subtitle, email form with "Send Reset
- * Link" CTA, inline "Sign in" footer. Input gets `bg-background` to
- * pop against the muted card (project's vetted Input is
- * `bg-transparent` in light mode).
- */
 export default function ForgotPassword(props: Readonly<ForgotPasswordBlock>) {
   const [t, tr] = useScopedT(forgotPassword05Namespace);
   const titleId = `${props.id}-title`;

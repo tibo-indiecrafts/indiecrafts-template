@@ -52,16 +52,6 @@ function MicrosoftIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>)
   );
 }
 
-/**
- * Tailark `login-2` (dusk-kit) — JSX verbatim. Centered sign-in
- * inside a `bg-muted` ring (`max-w-sm rounded border shadow-md`)
- * with a nested `bg-card -m-px rounded border p-8 pb-6` inner card;
- * the `-m-px` outdent exposes the muted ring as a hairline frame.
- * Centered logo link + heading + subtitle, email + password (inline
- * forgot link), Sign-In submit, "Or continue With" dashed-divider
- * (`grid-cols-[1fr_auto_1fr]`), 2-col Google + Microsoft OAuth.
- * Footer "Don't have an account?" sits in the muted gutter below.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login15Namespace);
   const titleId = `${props.id}-title`;

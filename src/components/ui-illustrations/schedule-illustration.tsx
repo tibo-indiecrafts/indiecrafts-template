@@ -10,17 +10,6 @@ import { buttonVariants } from "@/components/ui-primitives/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui-primitives/toggle-group";
 import { cn } from "@/lib/utils";
 
-/**
- * Floating-toolbar schedule illustration — small `bg-background`
- * floating toolbar with a primary "Schedule" button (calendar icon),
- * a divider, a 4-icon ToggleGroup (Bold / Italic / Underline /
- * Strikethrough), another divider, and a ghost ellipsis button.
- * Sits above a sentence containing a primary-tinted "Tomorrow 8:30
- * pm" fragment. Used by `sections-bento/bento-11/`'s "Smart
- * Scheduling" cell. Pure decoration; mock copy stays hardcoded per
- * the illustration rule. Sourced from `@tailark-pro/bento-11`
- * (upstream `ScheduleIllustration`).
- */
 export const ScheduleIllustration = ({ className }: { className?: string }) => {
   return (
     <div aria-hidden className={cn("relative pt-8", className)}>

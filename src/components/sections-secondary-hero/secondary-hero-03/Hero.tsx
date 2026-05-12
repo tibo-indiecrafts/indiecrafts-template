@@ -4,14 +4,6 @@ import { Integrations } from "@/components/ui-illustrations/integrations";
 import { useScopedT } from "@/i18n/scoped-t";
 import { secondaryHero03CtaHref, secondaryHero03Namespace } from "./config";
 
-/**
- * Secondary hero — leads with the `Integrations` illustration (brand
- * tiles on a dashed grid) and pairs it with a tagged headline + body
- * + CTA. Sourced from `@tailark-pro/secondary-hero-03`, refactored to
- * the project pattern: section semantics, all visible strings via
- * `blocks.secondary-hero-03.*`, primitives from `ui-primitives`,
- * illustration from `ui-illustrations`.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero03Namespace);
 

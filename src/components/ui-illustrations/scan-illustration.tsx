@@ -6,14 +6,6 @@ import { LightDarkParticles } from "@/components/ui-effects/light-dark-particles
 import { TextScramble } from "@/components/ui-effects/text-scramble";
 import { cn } from "@/lib/utils";
 
-/**
- * Face-scan illustration — dotted overlay grid + animated rotating
- * gradient halo + a vertical sweep band (`animate-scan`) that
- * passes over a grayscale portrait. After ~4s the framing corners
- * turn lime and a `TextScramble` reveals the subject's name. Pure
- * decoration; mock copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/bento-03` (upstream `ScanIllustration`).
- */
 export const ScanIllustration = () => {
   const [show, setShow] = useState(false);
   const [showName, setShowName] = useState(false);
@@ -78,7 +70,7 @@ export const ScanIllustration = () => {
 
       <div className="aspect-square max-w-xs bg-radial [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] group-hover:opacity-95">
         <Image
-          src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/human-face_kf9mt7.png"
+          src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/human-face_kf9mt7.png"
           alt=""
           aria-hidden="true"
           className="bg-illustration size-full object-cover grayscale"

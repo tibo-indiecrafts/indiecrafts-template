@@ -10,15 +10,6 @@ import { ProductTabs } from "@/components/ui-illustrations/product-tabs";
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero07Namespace, hero07PrimaryCtaHref, hero07SecondaryCtaHref } from "./config";
 
-/**
- * Two-column heading + body with dual CTAs above a full-width
- * dashboard mock and a bordered logo trust strip. Sourced from
- * `@tailark-pro/hero-section-7`, refactored to the project pattern:
- * section semantics (no `<main>` — that's the layout's job), all
- * visible strings via `blocks.hero-07.*`, primitives from
- * `ui-primitives`, brand SVGs from `ui-primitives/svgs`, illustration
- * from `ui-illustrations`.
- */
 export function Hero() {
   const [t] = useScopedT(hero07Namespace);
 

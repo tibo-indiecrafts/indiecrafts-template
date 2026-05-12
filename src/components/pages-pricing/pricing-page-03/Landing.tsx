@@ -20,7 +20,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `grid-2-pricing-one` faithful port. */
 export function Landing({
   layout = pricingPage03Defaults.layout,
   header = <Header10 />,

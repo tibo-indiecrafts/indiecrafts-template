@@ -7,11 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { features27Namespace } from "./config";
 import type { FeaturesBlock } from "./schema";
 
-/**
- * 4-card asymmetric bento — JSX kept verbatim against upstream
- * `dark-landing-one` PlatformFeatures. Uses the upstream Tailark
- * `Card` (no flex/gap baked in) so each tile's grid layout wins.
- */
 export default function Features(props: Readonly<FeaturesBlock>) {
   const [, , tRoot] = useScopedT(features27Namespace);
   const [card1, card2, card3, card4] = props.cards;

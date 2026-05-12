@@ -9,14 +9,6 @@ export type StatItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `features-14` — sister of `features-22` with the layout
- * flipped (text on the left, dropdown illustration on the right) plus
- * an optional rich-text intro paragraph that supports an inline
- * `<strong>` accent. 4-stat footer is identical. Converted to the
- * template pattern: props-driven copy, MessageKey-typed strings,
- * theme tokens.
- */
 export type FeaturesBlock = {
   type: "features-26";
   id: string;

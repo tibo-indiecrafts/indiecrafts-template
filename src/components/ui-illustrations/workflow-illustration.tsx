@@ -2,13 +2,6 @@ import { CheckCircle2, GitBranch } from "lucide-react";
 import { Linear } from "@/components/ui-primitives/svgs/linear";
 import { Vercel } from "@/components/ui-primitives/svgs/vercel";
 
-/**
- * Workflow-timeline illustration — green "Workflow completed" header
- * over a dashed connector line linking three timeline cards: Linear
- * issue created → Git branch → Vercel preview deployed. Pure
- * decoration; mock timestamps stay hardcoded per the illustration
- * rule. Sourced from `@tailark-pro/features-carousel-03`.
- */
 export const WorkflowIllustration = () => {
   return (
     <div aria-hidden className="mx-auto max-w-2xs min-w-2xs">

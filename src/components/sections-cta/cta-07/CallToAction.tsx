@@ -16,15 +16,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-call-to-action-4` — JSX verbatim. Centered veil
- * CTA inside `max-w-2xl @container py-24` rendered as a 2-col card
- * (`@xl:grid-cols-2 grid gap-8 p-6 md:p-8`). Left column: title +
- * body + bullet list of benefits with `Check` icon. Right column:
- * a `bg-muted/50 rounded-xl border` price callout with prefix +
- * `$0/month` value + caption + primary CTA with `ArrowRight` glyph.
- * Default Tailwind font (no `font-serif` override).
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta07Namespace);
   const headingId = `${props.id}-heading`;

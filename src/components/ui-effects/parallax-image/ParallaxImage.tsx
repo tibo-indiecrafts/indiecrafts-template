@@ -15,14 +15,6 @@ export type ParallaxImageProps = {
   className?: string;
 };
 
-/**
- * Parallax-on-scroll image card with a frosted-glass "Watch demo"
- * pill overlay. Authored from `@tailark-pro/hero-section-13`'s
- * `ImageIllustration`. Scroll progress drives `y`, `scale`, and
- * `rotateX` transforms — the card lifts and tilts as the user scrolls
- * past. Consumers can override `src`, `alt`, and `ctaLabel` to swap in
- * real assets without touching the layout.
- */
 export const ParallaxImage = ({
   src = DEFAULT_IMAGE_SRC,
   alt = "Hero preview",

@@ -40,22 +40,6 @@ export type Testimonial = {
   authorAvatarUrl: string;
 };
 
-/**
- * Tailark Pro `expandable-features-6` — two-column hero (left: title +
- * body + outline CTA + an accordion of 3 feature rows; right: dithered
- * background-image panel that swaps the active illustration and bg
- * image via Framer Motion). Below the hero, a dashed divider and then
- * a compliance/stats row paired with a customer testimonial.
- *
- * The accordion expands the active row's description in-place via a
- * `grid-rows-[1fr]` ↔ `grid-rows-[0fr]` transition rather than the
- * card-flip pattern used by `features-expandable-01..-5`.
- *
- * Three items is structural (the accordion `grid-rows` template
- * hardcodes three positions). Converted to the template pattern:
- * props-driven items, stats, and testimonial; MessageKey-typed
- * strings; theme tokens.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-06";
   id: string;

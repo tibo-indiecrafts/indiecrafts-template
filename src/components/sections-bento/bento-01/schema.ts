@@ -33,22 +33,6 @@ export type BentoCell = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `bento-01` — 5-cell asymmetric bento grid in a
- * 6-column layout. The first four cells each span 2 columns
- * (`@3xl:col-span-2`) and ship a "Stripes" diagonal-line
- * background under their illustration; the final cell spans
- * 4 columns (`@xl:col-span-2 @3xl:col-span-4`) and omits the
- * stripes — a wider canvas for the larger
- * VisualizationIllustration. Each cell is its own `Card`
- * (`bg-card/50` light mode), grid-rows `auto_1fr` with title +
- * body on top and the illustration anchored to the bottom via
- * `flex items-end`.
- *
- * Five cells is structural — the 6-col arithmetic only balances
- * for two rows of `2+2+2` then `2+4`. No autoplay, no state, no
- * tabs — pure layout.
- */
 export type BentoBlock = {
   type: "bento-01";
   id: string;

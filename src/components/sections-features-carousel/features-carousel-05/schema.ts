@@ -21,15 +21,6 @@ export type CarouselItemBlock = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `features-carousel-05` — two-column header (title + body)
- * over a card carousel where each slide has an alternating `small` /
- * `large` width (1/3 vs 2/3 columns on lg+) plus a per-item title +
- * body. Prev / Next arrows are centered below the carousel rather
- * than in the header row. Converted to the template pattern: props-
- * driven items with illustration + span discriminators, MessageKey-
- * typed strings, theme tokens.
- */
 export type FeaturesCarouselBlock = {
   type: "features-carousel-05";
   id: string;

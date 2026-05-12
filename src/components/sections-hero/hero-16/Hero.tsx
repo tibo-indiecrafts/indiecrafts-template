@@ -14,16 +14,6 @@ const FEATURE_ICONS: Record<(typeof FEATURE_KEYS)[number], ReactNode> = {
   security: <Shield className="stroke-foreground fill-emerald-500/15" />,
 };
 
-/**
- * Centered headline + body + framed CTA, paired with the wide
- * `PaymentsDiagram` illustration (animated SVG beams connecting mock
- * UI panels) and a 3-column features row. Sourced from
- * `@tailark-pro/hero-section-16`, refactored to the project pattern:
- * section semantics (no `<main>` — that's the layout's job), all
- * visible strings via `blocks.hero-16.*`, primitives from
- * `ui-primitives`, illustration from `ui-illustrations`. The CTA
- * pill's wrapper uses `--color-border-illustration` for its soft ring.
- */
 export function Hero() {
   const [t] = useScopedT(hero16Namespace);
 

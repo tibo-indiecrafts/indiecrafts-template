@@ -2,14 +2,6 @@ import { Signature } from "lucide-react";
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { cn } from "@/lib/utils";
 
-/**
- * Layered invoice paper mock — stacked card with masked top, brand
- * mark, mock invoice number / amount / due-date, an inline document
- * thumbnail, and three placeholder rows (To / From / Address). Pure
- * decoration; no translations (mock copy is not user-facing). Sourced
- * from `@tailark-pro/features-1`. The tiny document thumbnail is
- * inlined as a private sub-component since it has no other consumer.
- */
 export const InvoiceIllustration = ({ className }: { className?: string }) => {
   return (
     <div aria-hidden className="relative">

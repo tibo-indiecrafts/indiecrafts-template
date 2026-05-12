@@ -11,11 +11,6 @@ import { InfiniteSlider } from "@/components/ui-effects/infinite-slider";
 import { useScopedT } from "@/i18n/scoped-t";
 import { logoCloud05Namespace } from "./config";
 
-/**
- * Masked horizontal infinite-slider marquee of brand SVGs. Sourced
- * from `@tailark-pro/secondary-hero-06`. The hidden `<h2>` carries
- * `t("label")` for screen readers; the strip itself is decorative.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud05Namespace);
 

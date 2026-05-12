@@ -6,14 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { features42Namespace } from "./config";
 import type { Features42Block } from "./schema";
 
-/**
- * Tailark `mist-features-5` — JSX verbatim. 5-column grid on
- * `bg-muted/50 py-24`: left col-span-2 holds the title + Learn More
- * outline button (ChevronRight), right col-span-3 holds two
- * icon+heading+body items (Target → Code Generation, CalendarCheck
- * → Code Review). A bleed-out (`-mx-12`) framed screenshot caps
- * the section.
- */
 export default function Features({ id }: Readonly<Features42Block>) {
   const [t] = useScopedT(features42Namespace);
 

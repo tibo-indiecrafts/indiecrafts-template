@@ -11,12 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-1-customers-one` composition. Hero ("Powering
- * success for visionary companies") → MainCustomers two-card grid
- * (Bolt + Prime Video featured stories) → Customers grid (4 logo +
- * story cards: Stripe, Hulu, Vercel, Beacon). Light + dark theme.
- */
 export const customers02Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "customers-02-hero" },

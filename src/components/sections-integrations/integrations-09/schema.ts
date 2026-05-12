@@ -10,18 +10,6 @@ export type IntegrationIcon =
   | "cloudflare"
   | "vercel";
 
-/**
- * Tailark Pro `integrations-09` — center hero text + 3 grouped
- * integration buckets (e.g. Development / LLMs / Hosting). Each
- * group is a labelled rounded card containing 2 or 3 brand icon
- * tiles. Decorative grid + dot patterns sit behind the groups.
- *
- * The middle group spans 3 cols at `@xl` (col-span-3) so the LLMs
- * bucket gets more horizontal room for its 3 icons.
- *
- * Three groups is structural — the layout column math (`@xl:grid-
- * cols-9` with 2+3+2 + spacers) balances at exactly three.
- */
 export type IntegrationsGroup = {
   labelKey: MessageKey;
   icons: readonly IntegrationIcon[];

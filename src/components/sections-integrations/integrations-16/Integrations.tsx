@@ -20,14 +20,6 @@ const ICON_REGISTRY: Record<IntegrationIcon, ComponentType<SVGProps<SVGSVGElemen
   mediaWiki: MediaWiki,
 };
 
-/**
- * Tailark `integrations-8` — JSX verbatim. 2-column layout (`md:grid-cols-2`)
- * on `bg-muted dark:bg-background py-24 md:py-32`. Left column: title +
- * body + outline CTA + a testimonial block (square branded icon tile +
- * blockquote with author/role). Right column: a top-radial-masked card
- * holding a 2-col grid of 6 integration cells (icon + name + description,
- * with `hover:bg-muted` interaction).
- */
 export default function Integrations(props: Readonly<IntegrationsBlock>) {
   const [, , tRoot] = useScopedT(integrations16Namespace);
   const headingId = `${props.id}-heading`;

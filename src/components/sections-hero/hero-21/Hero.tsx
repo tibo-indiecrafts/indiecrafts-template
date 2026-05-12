@@ -5,11 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { hero21Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 
-/**
- * Tailark Pro `libre-landing-two` hero — JSX verbatim. Centered
- * title + body + dual CTAs, with an elaborate decorative
- * frame-with-corner-dots wrapper around the product screenshot.
- */
 export default function Hero(props: Readonly<HeroBlock>) {
   const [, , tRoot] = useScopedT(hero21Namespace);
   const primaryExternal = props.primary.href.startsWith("http");
@@ -89,7 +84,7 @@ export default function Hero(props: Readonly<HeroBlock>) {
                 <div className="relative aspect-3/2 min-w-xl origin-top overflow-hidden rounded-lg sm:min-w-4xl">
                   <Image
                     className="size-full object-cover object-top-left"
-                    src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle_un3f39.png"
+                    src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle_un3f39.png"
                     alt={tRoot(props.imageAltKey)}
                     width={2880}
                     height={1920}

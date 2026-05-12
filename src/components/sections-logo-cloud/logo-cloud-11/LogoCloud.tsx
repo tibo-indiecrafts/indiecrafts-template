@@ -59,12 +59,6 @@ const logos: Record<LogoCloudGroupId, ReactNode[]> = {
   streaming: streamingLogos,
 };
 
-/**
- * Dark logo cloud with a single intro line whose inline category
- * accents flip color based on the currently-shown group, and a
- * 5-column motion grid rotating between groups every `rotationMs`.
- * JSX kept verbatim against the upstream Tailark staging file.
- */
 export default function LogoCloud(props: Readonly<LogoCloudBlock>) {
   const [t, , tRoot] = useScopedT(logoCloud11Namespace);
   const interval = props.rotationMs ?? 2500;

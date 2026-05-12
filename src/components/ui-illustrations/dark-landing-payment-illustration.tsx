@@ -10,7 +10,7 @@ export const PaymentIllustration = () => (
       <div>
         <div className="text-foreground mb-3 text-sm font-medium">Email</div>
         <div className="bg-background ring-foreground/10 col-span-2 flex h-8 items-center justify-between rounded-md border border-transparent px-2 shadow ring-1">
-          <span className="text-muted-foreground text-sm">irung@tailark.com</span>
+          <span className="text-muted-foreground text-sm">irung@acme.com</span>
         </div>
       </div>
       <div className="text-foreground mb-3 text-sm font-medium">Card Information</div>

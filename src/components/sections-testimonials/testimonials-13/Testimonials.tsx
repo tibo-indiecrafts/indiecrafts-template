@@ -25,15 +25,6 @@ const CardContent = ({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
   <div className={cn("px-6 pb-6", className)} {...props} />
 );
 
-/**
- * Tailark `testimonials-1` — JSX verbatim. Bento-style 4-card
- * testimonial grid (`sm:grid-cols-2 md:grid-cols-4 lg:grid-rows-2`)
- * inside `max-w-6xl py-16 md:py-32`. Header: `text-4xl lg:text-5xl`
- * title + body. The featured card spans 2 cols × 2 rows on `lg+`,
- * carries the Hulu wordmark in its `CardHeader` and a longer pull
- * quote. The remaining 3 cards each hold a quote + avatar/cite/role
- * footer.
- */
 export default function Testimonials(props: Readonly<TestimonialsBlock>) {
   const [, , tRoot] = useScopedT(testimonials13Namespace);
   const headingId = `${props.id}-heading`;

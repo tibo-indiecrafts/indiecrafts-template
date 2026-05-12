@@ -8,14 +8,6 @@ import {
   secondaryHero07SecondaryCtaHref,
 } from "./config";
 
-/**
- * Secondary hero — two-column layout: left tagged headline + body +
- * dual CTAs, right `BillingCheckout` illustration. Sourced from
- * `@tailark-pro/secondary-hero-07`, refactored to the project pattern:
- * section semantics, all visible strings via
- * `blocks.secondary-hero-07.*`, primitives from `ui-primitives`,
- * illustration from `ui-illustrations`.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero07Namespace);
 

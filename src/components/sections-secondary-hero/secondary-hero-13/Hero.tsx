@@ -12,16 +12,6 @@ import {
 
 const FEATURE_KEYS = ["createInvoices", "trackPayments", "manageFinances"] as const;
 
-/**
- * Secondary hero — iOS app pitch. Left tagged headline + body + Apple
- * download CTA + checklist; right `PhoneScreenshot` mock with a
- * desktop preview backdrop. Sourced from
- * `@tailark-pro/secondary-hero-13`, refactored to the project pattern:
- * section semantics, all visible strings via
- * `blocks.secondary-hero-13.*`, primitives from `ui-primitives`,
- * Apple SVG promoted to `ui-primitives/svgs`, illustration from
- * `ui-illustrations/phone-screenshot`.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero13Namespace);
 

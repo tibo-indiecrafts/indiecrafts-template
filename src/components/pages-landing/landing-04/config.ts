@@ -17,14 +17,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-landing-one` composition. Grid-2 backbone
- * (every section sits inside the asGrid Container variant):
- *   hero (with backdrop + 2 feature cards) → logo-cloud →
- *   manifesto → platform features → analytics features →
- *   integrations → enterprise features → testimonials → cta.
- * JSX preserved verbatim; strings flow through i18n.
- */
 export const landing04Defaults = {
   layout: "default" as LayoutName,
   sectionIds: {

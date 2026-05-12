@@ -15,13 +15,6 @@ export type TextScrambleProps = {
 
 const defaultChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-/**
- * Text-scramble animation primitive — draws each character as a
- * random replacement glyph and progressively reveals the real text
- * over `duration` (default 0.8s) at a tick of `speed` (default
- * 0.04s). Set `trigger` to re-fire. Sourced from the upstream
- * Tailark / Motion-Primitives catalogue.
- */
 export function TextScramble({
   children,
   duration = 0.8,

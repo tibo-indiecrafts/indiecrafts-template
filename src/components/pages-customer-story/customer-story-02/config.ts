@@ -11,16 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "article" },
 };
 
-/**
- * Tailark Pro `grid-1-customer-story-one` composition. Editorial
- * customer-story detail page wrapped in the grid-1 `Container`
- * (dashed-decorator chrome): centered breadcrumb (Slash separator)
- * → centered title → wide hero image (max-w-4xl) → about lead →
- * 3-col metadata grid → PortableText body → pull-quote
- * testimonial. The upstream was Sanity-driven; this port accepts a
- * `story` prop with a sensible mock default so the page renders
- * without a CMS connection. Light + dark theme.
- */
 export const customerStory02Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { article: "customer-story-02-article" },

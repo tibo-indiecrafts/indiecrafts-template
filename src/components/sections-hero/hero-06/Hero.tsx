@@ -12,16 +12,6 @@ import {
   hero06Namespace,
 } from "./config";
 
-/**
- * Centered serif hero with bordered "corner-bevel" wrapper, soft photo
- * backdrop, framed `ProductIllustration` and `LogoCloud` trail.
- * Sourced from `@tailark-pro/hero-section-6`, refactored to the project
- * pattern: section semantics (no `<main>` — that's the layout's job),
- * all visible strings via `blocks.hero-06.*`, primitives from
- * `ui-primitives`, illustration from `ui-illustrations`, logo cloud
- * from `sections-logo-cloud`. The background image URL lives in
- * `config.ts` so projects override it without touching the component.
- */
 export function Hero() {
   const [t] = useScopedT(hero06Namespace);
 

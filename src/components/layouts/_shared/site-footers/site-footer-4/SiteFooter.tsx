@@ -47,13 +47,6 @@ type LinkId =
   | (typeof RESOURCES_LINKS)[number]["id"]
   | (typeof LEGAL_LINKS)[number]["id"];
 
-/**
- * Tailark `veil-footer-1` — JSX verbatim. Veil-style footer with
- * a brand block (Logo + tagline) + 3 link groups (`@sm:grid-cols-3`),
- * then a `border-t pt-8 mt-12` row holding copyright + 3 legal
- * links. Constrained to `max-w-2xl` and `bg-background border-t
- * py-12`. Default Tailwind font.
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter4Namespace);
   const year = new Date().getFullYear();

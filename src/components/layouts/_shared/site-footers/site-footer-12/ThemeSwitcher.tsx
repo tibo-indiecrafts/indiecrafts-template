@@ -10,11 +10,6 @@ import { siteFooter12Namespace } from "./config";
 
 type ThemeOption = "system" | "light" | "dark";
 
-/**
- * Tailark `veil-footer-5` companion. 3-button theme switcher
- * (system / light / dark) with a `aria-live="polite"` tooltip
- * line that fades in on hover/focus to announce the action.
- */
 export function ThemeSwitcher() {
   const [t] = useScopedT(siteFooter12Namespace);
   const { theme, setTheme } = useTheme();

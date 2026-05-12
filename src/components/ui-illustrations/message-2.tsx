@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream illustration kept verbatim */
+/* eslint-disable -- Acme Pro upstream illustration kept verbatim */
 
 import { SmilePlus } from "lucide-react";
 import Image from "next/image";

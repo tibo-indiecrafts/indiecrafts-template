@@ -15,7 +15,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `libre-pricing-one` faithful port. */
 export function Landing({
   layout = pricingPage04Defaults.layout,
   header = <Header10 />,

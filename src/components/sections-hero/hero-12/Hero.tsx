@@ -5,18 +5,6 @@ import { MeetIllustration } from "@/components/ui-illustrations/meet-illustratio
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero12Namespace } from "./config";
 
-/**
- * Centered headline + body + newsletter form floating over a softly
- * tinted angled-stripe backdrop, with the `MeetIllustration` (video
- * grid + draggable AI chat) underneath. Sourced from
- * `@tailark-pro/hero-section-12`, refactored to the project pattern:
- * section semantics (no `<main>` — that's the layout's job), all
- * visible strings via `blocks.hero-12.*`, primitives from
- * `ui-primitives`, illustration from `ui-illustrations`. The
- * `--color-illustration` token (defined in `globals.css`) keeps the
- * floating AI chat card dark regardless of the page theme — it's an
- * always-dark surface, not a color-mode-aware token.
- */
 export function Hero() {
   const [t] = useScopedT(hero12Namespace);
 

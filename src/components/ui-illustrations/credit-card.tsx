@@ -3,14 +3,6 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { AnimatedGroup } from "@/components/ui-effects/animated-group";
 import { cn } from "@/lib/utils";
 
-/**
- * Layered credit-card illustration — three stacked card silhouettes
- * with a foreground card showing a chip + Visa logo + mock cardholder
- * details. Driven by scroll-linked y/scale/rotateX transforms.
- * Sourced from `@tailark-pro/hero-section-15`'s `ImageIllustration`.
- * Mock cardholder copy is decorative; treat as illustrations-only (no
- * translations).
- */
 export const CreditCard = ({ className }: { className?: string }) => {
   const { scrollY } = useScroll();
   const parallaxFactor = 0.12;

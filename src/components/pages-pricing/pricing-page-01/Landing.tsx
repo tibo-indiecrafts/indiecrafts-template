@@ -15,11 +15,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Tailark Pro `dark-pricing-one` faithful port. Hero typography +
- * Pricing tiers + LogoCloud + Comparator + FAQs. Light + dark
- * theme compatible (no forced `data-theme="dark"` overrides).
- */
 export function Landing({
   layout = pricingPage01Defaults.layout,
   header = <Header10 />,

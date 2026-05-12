@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 export const ChatIllustration = () => {
   const [isStreaming, setIsStreaming] = useState(false);
 
-  const response = `Tailark is a collection of modern UI blocks designed to accelerate the development of marketing websites. `;
+  const response = `Acme is a collection of modern UI blocks designed to accelerate the development of marketing websites. `;
 
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -27,14 +27,6 @@ const chartData = [
   { month: "April", desktop: 400, mobile: 800 },
 ];
 
-/**
- * Compact stacked area chart illustration — desktop vs mobile traffic
- * over six months, in orange + violet, sized for bento cells
- * (`h-28` with `-mb-4` overflow). Pure decoration; no translations.
- * Sourced from `@tailark-pro/bento-06` (upstream's bento-specific
- * chart variant; differs from our default `chart-illustration` which
- * uses emerald + indigo at `h-72` for hero use cases).
- */
 export const ChartCompactIllustration = () => {
   return (
     <ChartContainer className="-mb-4 aspect-auto h-28" config={chartConfig}>

@@ -36,7 +36,7 @@ export const ProductSidePreview = ({
           <div className="relative aspect-video origin-top rounded-xl">
             <Image
               className="size-full object-cover object-top-left dark:hidden"
-              src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-4_lkhxqm.png"
+              src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-4_lkhxqm.png"
               alt={alt}
               width={2880}
               height={1920}
@@ -44,7 +44,7 @@ export const ProductSidePreview = ({
             />
             <Image
               className="size-full object-cover object-top-left not-dark:hidden"
-              src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-4-dark_m2mfxo.png"
+              src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-4-dark_m2mfxo.png"
               alt={alt}
               width={2880}
               height={1920}
@@ -56,7 +56,7 @@ export const ProductSidePreview = ({
           <div className="relative aspect-video origin-top overflow-hidden rounded-lg">
             <Image
               className="size-full object-cover object-top-left mix-blend-darken dark:hidden"
-              src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle_un3f39.png"
+              src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle_un3f39.png"
               alt={alt}
               width={2880}
               height={1920}
@@ -64,7 +64,7 @@ export const ProductSidePreview = ({
             />
             <Image
               className="size-full object-cover object-top-left opacity-65 not-dark:hidden"
-              src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png"
+              src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png"
               alt={alt}
               width={2880}
               height={1920}

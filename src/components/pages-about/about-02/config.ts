@@ -11,12 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-about-one` composition. Inline grid hero
- * (eyebrow + heading + body + 2 stats + team illustration) →
- * Mission → Core Values → Team → Investors → Hiring sections.
- * Light + dark theme.
- */
 export const about02Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "about-02-hero" },

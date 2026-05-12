@@ -10,16 +10,6 @@ import {
   secondaryHero10Namespace,
 } from "./config";
 
-/**
- * Secondary hero — careers/recruiting layout. Two-color headline span
- * + body + CTA paired with a 3-photo collage (portrait / square /
- * wide landscape) on an asymmetric 6/8-column grid. Sourced from
- * `@tailark-pro/secondary-hero-10`, refactored to the project pattern:
- * section semantics, all visible strings via
- * `blocks.secondary-hero-10.*`, primitives from `ui-primitives`. Photo
- * URLs live in `config.ts` so projects swap in real assets without
- * touching the layout.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero10Namespace);
 

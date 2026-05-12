@@ -10,14 +10,6 @@ const ITEMS: ReadonlyArray<{ slot: "1" | "2" | "3"; Icon: LucideIcon }> = [
   { slot: "3", Icon: PencilRuler },
 ];
 
-/**
- * Tailark `veil-content-3` — JSX verbatim. Centered editorial
- * section inside `max-w-2xl @container` with a headline + lead, then
- * a 3-col icon grid (`@xl:grid-cols-3 grid-cols-2`) where each item
- * shows a `size-4` Lucide glyph above a `border-t pt-6` paragraph
- * carrying a bold inline lead followed by muted body copy. Default
- * Tailwind font is used (no `font-serif` override).
- */
 export default function Content({ id }: Readonly<ContentBlock>) {
   const [t] = useScopedT(content26Namespace);
   const headingId = `${id}-heading`;

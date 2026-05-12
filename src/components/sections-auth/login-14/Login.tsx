@@ -52,15 +52,6 @@ function GithubIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Tailark `veil-login-2` — JSX verbatim. Minimal passwordless
- * sign-in inside a `bg-muted rounded-2xl border p-8` card on a
- * `bg-background flex min-h-dvh` wrapper. Logo link, "Sign in"
- * heading (default font, no `font-serif`) + subtitle, email form
- * with "Continue with Email" CTA, "or" divider with horizontal
- * lines, stacked full-width Google + GitHub OAuth buttons (with
- * "Continue with X" labels). Sign-up prompt centered below.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login14Namespace);
   const titleId = `${props.id}-title`;

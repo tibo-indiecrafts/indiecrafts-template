@@ -16,15 +16,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-pricing-3` — JSX verbatim. Centered 2-tier billing-
- * cycle pricing on `bg-background @container py-24` inside
- * `max-w-2xl`. `@xl:grid-cols-2 @xl:gap-3` of card tiles. Each
- * card: name + 1-line description + giant `text-5xl` price + 3-px
- * feature checklist + bottom CTA with `ArrowRight`. The Annual tier
- * is highlighted (`ring-primary ring-2`). Closing line: a centered
- * trial note. Default Tailwind font (no `font-serif` override).
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricing08Namespace);
   const headingId = `${props.id}-heading`;

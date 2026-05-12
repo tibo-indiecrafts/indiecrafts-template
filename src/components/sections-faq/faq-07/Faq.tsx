@@ -11,15 +11,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { faq07Namespace } from "./config";
 import type { FaqBlock } from "./schema";
 
-/**
- * Tailark `veil-faqs-3` — JSX verbatim. Centered single-column FAQ
- * accordion on `bg-background @container py-24` inside `max-w-2xl`.
- * Each item is wrapped in a `group` div so the divider hairline
- * (`<hr>`) hides on the active row + on the last item. Active row
- * itself gets a `data-[state=open]:bg-muted/50 rounded-xl` tint.
- * Closing line: contact prompt + inline link. Default Tailwind
- * font (no `font-serif` override).
- */
 export default function Faq(props: Readonly<FaqBlock>) {
   const [, , tRoot] = useScopedT(faq07Namespace);
   const headingId = `${props.id}-heading`;

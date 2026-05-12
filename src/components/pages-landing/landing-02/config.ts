@@ -11,13 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `dark-landing-one` composition. Eight ported sections
- * in upstream order. Hero is stripped to neutral; how-it-works has
- * its constellation backdrop removed; everything else preserves
- * the upstream JSX verbatim against the staging files installed
- * via `pnpm dlx shadcn@latest add @tailark-pro/dark-landing-one`.
- */
 export const landing02Defaults = {
   layout: "default" as LayoutName,
   sectionIds: {

@@ -4,14 +4,6 @@ import { Chat } from "@/components/ui-illustrations/chat";
 import { useScopedT } from "@/i18n/scoped-t";
 import { secondaryHero01CtaHref, secondaryHero01Namespace } from "./config";
 
-/**
- * Secondary hero — sits below a primary hero, leads with the animated
- * `Chat` illustration (typewriter response + source citations) and
- * pairs it with a tagged headline + body + CTA. Sourced from
- * `@tailark-pro/secondary-hero-01`, refactored to the project pattern:
- * section semantics, all visible strings via `blocks.secondary-hero-01.*`,
- * primitives from `ui-primitives`, illustration from `ui-illustrations`.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero01Namespace);
 

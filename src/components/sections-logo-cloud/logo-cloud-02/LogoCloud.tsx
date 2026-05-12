@@ -9,13 +9,6 @@ import { Link } from "@/i18n/routing";
 import { useScopedT } from "@/i18n/scoped-t";
 import { logoCloud02CaseStudiesHref, logoCloud02Namespace } from "./config";
 
-/**
- * Two-column logo cloud — left copy block + "case studies" link, right
- * 8-logo brand grid. Sourced from `@tailark-pro/hero-section-9`,
- * refactored to the project pattern: section semantics, all visible
- * strings via `blocks.logo-cloud-02.*`, brand SVGs from
- * `ui-primitives/svgs`.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud02Namespace);
 

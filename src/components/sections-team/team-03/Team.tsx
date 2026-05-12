@@ -6,15 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { team03Namespace } from "./config";
 import type { TeamBlock } from "./schema";
 
-/**
- * Tailark `mist-team-1` — JSX verbatim. Compact team grid on
- * `bg-muted/50 py-24` inside `max-w-5xl @container`. Header column
- * pairs a `text-4xl` title + lead body with an outline "We're
- * hiring" CTA. The grid (`@sm:grid-cols-2 @xl:grid-cols-3`) hosts
- * `grid-cols-[auto_1fr]` rows: each member is a `size-10`
- * rounded-square `Avatar` (with `AvatarFallback` initial) beside
- * a name + muted role label.
- */
 export default function Team(props: Readonly<TeamBlock>) {
   const [, , tRoot] = useScopedT(team03Namespace);
   const headingId = `${props.id}-heading`;

@@ -30,17 +30,6 @@ export type HowItWorksStep = {
   supportive?: SupportiveContent;
 };
 
-/**
- * Tailark Pro `how-it-works-02` — vertical 3-step composition
- * connected by a decorative S-curve progress rail (`Line` / `LineNode`
- * connector glyphs render the curved transitions between steps).
- * Each step has a numbered pill on the rail and a title + body +
- * illustration on the right; some steps add supportive content
- * (stats row or testimonial) below the body.
- *
- * Three steps is structural — the `Line` connector logic hardcodes
- * positions for steps 1/2/3 and step 3 closes the rail.
- */
 export type HowItWorksBlock = {
   type: "how-it-works-02";
   id: string;

@@ -27,14 +27,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Tailark Pro `dark-landing-one` faithful port — eight ported
- * sections in upstream order. Each section preserves the upstream
- * JSX verbatim; only translatable strings flow through the project's
- * i18n registry. Illustrations / Card / TextEffect / Logo SVGs all
- * live as `dark-landing-*` files inside the project's structure
- * (no reuse of pre-existing project versions).
- */
 export function Landing({
   layout = landing02Defaults.layout,
   header = <Header10 />,

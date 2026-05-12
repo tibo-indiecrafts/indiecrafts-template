@@ -16,14 +16,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-call-to-action-2` — JSX verbatim. Centered veil
- * CTA inside `max-w-2xl @container py-24` rendered as a single
- * outline card (`p-8 md:p-12`). Stack: muted eyebrow ("Limited
- * Time Offer") → `text-3xl md:text-4xl font-medium` headline →
- * lead body → primary CTA with `ArrowRight` glyph. Default
- * Tailwind font (no `font-serif` override).
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta09Namespace);
   const headingId = `${props.id}-heading`;

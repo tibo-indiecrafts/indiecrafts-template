@@ -1,10 +1,5 @@
 import type { MessageKey } from "@/types/messages";
 
-/**
- * Tailark `features-9` — 2×2 bento showing location map, chat support preview,
- * an uptime stat, and an activity chart. Visuals are baked in the component
- * (dotted map, recharts area chart); only headings are config-driven.
- */
 export type FeaturesBlock = {
   type: "features-09";
   id: string;

@@ -13,11 +13,6 @@ import { Link } from "@/i18n/routing";
 import { useScopedT } from "@/i18n/scoped-t";
 import { logoCloud07CtaHref, logoCloud07Namespace } from "./config";
 
-/**
- * Story logo cloud — heading + body intro followed by an
- * `InfiniteSlider` brand marquee with edge fades + chevron CTA.
- * Sourced from `@tailark-pro/logo-cloud-03`.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud07Namespace);
 

@@ -1,16 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/**
- * Tall fingerprint-card illustration — small portrait card with a
- * radial-gradient background, breathing corner brackets, and an inline
- * SVG fingerprint glyph (gray base + indigo gradient overlay clipped
- * at the horizontal scan-line). Reuses the `--animate-breathing`
- * keyframe from `fingerprint-scan-illustration.css`. Used by
- * `sections-bento/bento-07/`'s "Biometric Access" cell. Sourced from
- * `@tailark-pro/bento-07` (upstream `FingerprintIllustration`; renamed
- * to `fingerprint-card-illustration` to differentiate from our
- * existing animated photo-based `fingerprint-scan-illustration`).
- */
 export const FingerprintCardIllustration = () => {
   return (
     <div

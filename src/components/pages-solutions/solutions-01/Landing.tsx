@@ -28,13 +28,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Tailark Pro `grid-2-solution-one` faithful port. Enterprise
- * invoicing solutions page with form-driven hero. Sub-sections
- * (collaboration, security, more-features, testimonials, cta) +
- * the `EnterpriseForm` live as page-local components under
- * `./sections/`. `pt-14` clears the fixed `Header10`.
- */
 export function Landing({
   layout = solutions01Defaults.layout,
   header = <Header10 />,

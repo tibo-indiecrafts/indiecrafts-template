@@ -2,13 +2,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { stats17Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Tailark `stats-1` — JSX verbatim. Centered headline + body
- * (`max-w-xl`) above a 3-column stat row that uses horizontal
- * hairlines on mobile (`divide-y`) and vertical hairlines at
- * `md+` (`md:divide-x md:divide-y-0`). Each item: `text-5xl`
- * value + body label. Pure typography composition — no chrome.
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [, , tRoot] = useScopedT(stats17Namespace);
   const headingId = `${props.id}-heading`;

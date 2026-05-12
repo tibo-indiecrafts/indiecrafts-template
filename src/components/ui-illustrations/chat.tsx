@@ -18,7 +18,7 @@ import { useState, useEffect } from "react";
 export const Chat = () => {
   const [isStreaming, setIsStreaming] = useState(false);
 
-  const response = `Tailark is a collection of pre-built, responsive UI blocks and components designed to accelerate the development of marketing websites. `;
+  const response = `Acme is a collection of pre-built, responsive UI blocks and components designed to accelerate the development of marketing websites. `;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -68,11 +68,11 @@ export const Chat = () => {
         <div className="mx-auto mt-2 max-w-lg">
           {isStreaming && (
             <div className="flex flex-wrap gap-2">
-              <Source href="https://tailark.com">
+              <Source href="https://acme.com">
                 <SourceTrigger showFavicon />
                 <SourceContent
-                  title="Tailark"
-                  description="Tailark is a collection of pre-built, responsive UI blocks and components designed to accelerate the development of marketing websites."
+                  title="Acme"
+                  description="Acme is a collection of pre-built, responsive UI blocks and components designed to accelerate the development of marketing websites."
                 />
               </Source>
               <Source href="https://www.google.com">

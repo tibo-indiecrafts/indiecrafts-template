@@ -15,7 +15,7 @@ export const FaceScan2Illustration = () => {
         </div>
         <div className="aspect-square size-56">
           <Image
-            src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/human-face_kf9mt7.png"
+            src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/human-face_kf9mt7.png"
             alt="Woman face"
             className="inverted size-full object-cover contrast-105 grayscale"
             width={224}
@@ -31,7 +31,7 @@ export const FaceScan2Illustration = () => {
               opacity: { duration: 0.75, delay: 2 },
               maskSize: { duration: 5, delay: 2, repeat: Infinity, ease: "easeInOut" },
             }}
-            className="absolute inset-0 aspect-square size-56 max-w-xs bg-[url('https://raw.githubusercontent.com/tailark/assets/refs/heads/main/human-wire-face_lryi6q.png')] mask-[url('https://raw.githubusercontent.com/tailark/assets/refs/heads/main/mask-bg_v7vpk7.png')] bg-cover bg-[50%_50%] bg-no-repeat mask-no-repeat group-hover:opacity-95"
+            className="absolute inset-0 aspect-square size-56 max-w-xs bg-[url('https://raw.githubusercontent.com/acme/assets/refs/heads/main/human-wire-face_lryi6q.png')] mask-[url('https://raw.githubusercontent.com/acme/assets/refs/heads/main/mask-bg_v7vpk7.png')] bg-cover bg-[50%_50%] bg-no-repeat mask-no-repeat group-hover:opacity-95"
           />
         </div>
       </div>

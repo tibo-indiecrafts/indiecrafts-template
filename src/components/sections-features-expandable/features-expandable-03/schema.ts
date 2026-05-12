@@ -28,18 +28,6 @@ export type FeaturesExpandableItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `expandable-features-3` — three-column expandable
- * variant. Three cards each with `h-104` and a ringed
- * (`inset-ring-1`) border instead of `features-expandable-01`'s
- * shadow + before-border. The active card expands (2fr) while the
- * other two stay 1fr each. Auto-cycles every `autoplayDurationMs`
- * (default 7000); progress bar uses the emerald → indigo gradient.
- *
- * Three cards is structural — the expand grid template hardcodes
- * three slots. Converted to the template pattern: props-driven items,
- * MessageKey-typed strings, theme tokens.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-03";
   id: string;

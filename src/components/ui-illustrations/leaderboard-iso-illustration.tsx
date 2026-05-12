@@ -1,10 +1,3 @@
-/**
- * Isometric leaderboard illustration — three stacked podium-like
- * platforms drawn as a 3D wireframe. Used by `sections-bento/
- * bento-04/`. Sourced from `@tailark-pro/bento-04` (upstream inline
- * `LeaderBoardIsoIcon`; promoted to a flat illustration so other
- * consumers can mount it).
- */
 export const LeaderboardIsoIllustration = () => (
   <svg
     aria-hidden="true"

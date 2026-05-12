@@ -5,11 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { hero20Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 
-/**
- * Tailark Pro `libre-landing-one` hero — JSX verbatim. Centered
- * 3-part headline + body + framed primary CTA, with the
- * `HeroIllustration` mock composition below.
- */
 export default function Hero(props: Readonly<HeroBlock>) {
   const [, , tRoot] = useScopedT(hero20Namespace);
   const external = props.primary.href.startsWith("http");

@@ -8,7 +8,7 @@ export const content16Sample: Omit<ContentBlock, "id"> = {
   titleKey: "blocks.content-16.title",
   bodyKey: "blocks.content-16.body",
   image: {
-    src: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/ai-human-2_uo6bxc.jpg",
+    src: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/ai-human-2_uo6bxc.jpg",
     width: 5001,
     height: 3334,
     altKey: "blocks.content-16.imageAlt",

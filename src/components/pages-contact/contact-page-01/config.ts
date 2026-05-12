@@ -11,12 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-contact-five` composition. Sales contact
- * page: eyebrow ("Sales") → 2-column grid of pitch + benefits +
- * contact details on the left, form (`EnterpriseForm`) on the
- * right. Light + dark theme.
- */
 export const contactPage01Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "contact-page-01-hero" },

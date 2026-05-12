@@ -8,11 +8,6 @@ export type FeatureItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark `features-1` — 3-column card grid with a mask-gradient decorator
- * around each icon. Converted to the template pattern: props-driven content,
- * MessageKey-typed strings, theme tokens.
- */
 export type FeaturesBlock = {
   type: "features-01";
   id: string;

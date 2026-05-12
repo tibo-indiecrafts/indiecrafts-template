@@ -64,13 +64,6 @@ type LinkId =
   | (typeof COMPANY_LINKS)[number]["id"]
   | (typeof LEGAL_LINKS)[number]["id"];
 
-/**
- * Tailark `footer-2` — JSX verbatim. 5-col footer (`md:grid-cols-5`):
- * left col-span-2 hosts the Logo, right col-span-3 hosts a 4-col
- * link group grid (`grid-cols-2 sm:grid-cols-4`). Below: a `border-t
- * py-6 mt-12` row holding copyright + social icon row. Self-contained
- * — all icons inlined as SVG paths.
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter5Namespace);
   const homeLabel = t("homeLabel");

@@ -27,11 +27,6 @@ export type ComparatorGroup = {
   rows: readonly ComparatorRow[];
 };
 
-/**
- * Tailark `pricing-comparator` — a 3-tier feature comparison table.
- * Each tier column has its own label + CTA; rows are grouped under
- * an iconed section heading.
- */
 export type PricingComparatorBlock = {
   type: "pricing-comparator";
   id: string;

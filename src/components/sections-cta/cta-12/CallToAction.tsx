@@ -4,13 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta12Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/**
- * Tailark `call-to-action-1` — JSX verbatim. Centered closer CTA
- * on `py-16 md:py-32` inside `max-w-5xl`. `text-4xl lg:text-5xl
- * font-semibold` headline + 1-line body, then a `flex flex-wrap
- * justify-center gap-4 mt-12` row of dual large CTAs (primary
- * "Get Started" + outline "Book Demo").
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta12Namespace);
   const headingId = `${props.id}-heading`;

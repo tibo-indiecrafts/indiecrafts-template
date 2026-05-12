@@ -5,17 +5,6 @@ import { Firebase } from "@/components/ui-primitives/svgs/firebase";
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { cn } from "@/lib/utils";
 
-/**
- * Billing-flow illustration — three usage cards (Vercel / Supabase /
- * Cloudflare) flow into a signature-block payment authorization, then
- * into an invoice mock. Used by
- * `sections-secondary-hero/secondary-hero-06`. Mock copy is decorative;
- * treat as illustrations-only (no translations). The genuine
- * `InvoiceIllustration` (with its layered shadow-paper effect) and the
- * `Firebase` SVG were missing from `@tailark-pro/secondary-hero-06`'s
- * registry shipment — fetched separately via `@tailark-pro/invoice`
- * and `@tailark-pro/firebase` and inlined / promoted here.
- */
 export const BillingFlow = () => {
   return (
     <div className="relative h-fit">

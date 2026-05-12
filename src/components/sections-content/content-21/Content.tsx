@@ -5,13 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { content21Namespace } from "./config";
 import type { ContentBlock } from "./schema";
 
-/**
- * Tailark `content-6` — JSX verbatim. Centered "Built by the
- * Community" headline + body above a flex-wrap of avatar circles
- * (each `size-16 rounded-full border` linking to its member's
- * profile). Avatars use external URLs so they intentionally render
- * via `<img>` (Next image loader can't optimize randomuser.me).
- */
 export default function Content(props: Readonly<ContentBlock>) {
   const [, , tRoot] = useScopedT(content21Namespace);
   const headingId = `${props.id}-heading`;

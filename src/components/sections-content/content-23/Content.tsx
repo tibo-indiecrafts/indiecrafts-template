@@ -6,12 +6,6 @@ import type { ContentBlock } from "./schema";
 const STATS = ["1", "2", "3", "4"] as const;
 const FEATURES = ["1", "2", "3"] as const;
 
-/**
- * Tailark `mist-content-4` — JSX verbatim. Section heading + lead
- * over a 3-column emoji-icon feature grid (`@sm:grid-cols-2 @2xl:grid-cols-3`)
- * followed by a bordered stat list (4 items) with ArrowRight bullets.
- * The whole block is constrained to `max-w-2xl` and centered.
- */
 export default function Content({ id }: Readonly<ContentBlock>) {
   const [t] = useScopedT(content23Namespace);
   const headingId = `${id}-heading`;

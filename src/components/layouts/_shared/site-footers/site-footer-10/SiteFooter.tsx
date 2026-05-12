@@ -25,15 +25,6 @@ const SOCIAL_LINKS: ReadonlyArray<{ id: SocialId; href: string }> = [
   { id: "linkedin", href: "#" },
 ];
 
-/**
- * Tailark `veil-footer-4` — JSX verbatim. Veil-style footer on
- * `bg-background border-t py-12 @container` inside `max-w-3xl`.
- * Top brand block (Logo + tagline + 3 social icon buttons) above a
- * `border-b pb-8`. Middle row: 6-link nav (`flex flex-wrap`).
- * Bottom `border-t pt-8` copyright with `next-intl` `{year}`
- * interpolation. Brand icons inlined as SVG paths since
- * lucide-react@1.9.0 dropped them.
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter10Namespace);
   const year = new Date().getFullYear();

@@ -10,16 +10,6 @@ import {
   secondaryHero20SecondaryCtaHref,
 } from "./config";
 
-/**
- * Secondary hero — billing pitch. Left tagged headline + body + dual
- * CTAs + 2-stat row; right composite illustration (workplace photo
- * with an invoice card overlaid via radial-mask gradient backdrop).
- * Sourced from `@tailark-pro/secondary-hero-20`, refactored to the
- * project pattern: section semantics, all visible strings via
- * `blocks.secondary-hero-20.*`. The composite illustration is inlined
- * as a private `InvoiceOverlay` since it pairs hero-20-specific copy
- * with a hero-20-specific photo.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero20Namespace);
 

@@ -1,22 +1,12 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-/**
- * Fingerprint-scanner illustration — a portrait fingerprint photo
- * masked with `mask-radial-from-0%` so the centre fades, with a
- * floating scan-frame overlay (4 breathing corner brackets +
- * `animate-scan` indigo sweep band). Used by `sections-bento/bento-05/`
- * (rendered inside a force-dark card via `data-theme="dark"`). Pure
- * decoration; mock copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/bento-05` (upstream
- * `FingerprintScanIllustration`).
- */
 export const FingerprintScanIllustration = () => {
   return (
     <div className="relative aspect-square max-w-64">
       <div className="relative flex aspect-square justify-center mask-radial-from-0% mask-radial-to-75%">
         <Image
-          src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/fingerprint-scanner_vtvyyq.png"
+          src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/fingerprint-scanner_vtvyyq.png"
           alt=""
           aria-hidden="true"
           className="size-full scale-110 object-cover dark:invert"

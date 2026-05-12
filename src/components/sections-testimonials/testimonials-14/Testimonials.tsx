@@ -3,15 +3,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { testimonials14Namespace } from "./config";
 import type { TestimonialsBlock } from "./schema";
 
-/**
- * Tailark `veil-testimonials-1` — JSX verbatim. Centered veil
- * section inside `max-w-2xl @container py-24` with title + body,
- * then a 2-col testimonial grid (`@xl:grid-cols-2 grid gap-3`).
- * Each card: `bg-card ring-border ring-1 rounded-2xl p-4`, with a
- * `size-5` rounded avatar + inline `name <muted role>` header above
- * the quote paragraph. Default Tailwind font (no `font-serif`
- * override).
- */
 export default function Testimonials(props: Readonly<TestimonialsBlock>) {
   const [, , tRoot] = useScopedT(testimonials14Namespace);
   const headingId = `${props.id}-heading`;

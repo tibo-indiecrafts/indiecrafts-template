@@ -9,14 +9,6 @@ export type TeamMember = {
   href: string;
 };
 
-/**
- * Tailark `team-1` block converted to the typed/i18n pattern.
- * Editorial team grid with hover-reveal role + link label.
- *
- * All section-level MessageKey props are optional — they fall back to
- * the local `blocks.team-01.*` namespace when omitted. `members[]` keys
- * stay required full paths (data, not overrides).
- */
 export type TeamBlock = {
   type: "team-01";
   id: string;

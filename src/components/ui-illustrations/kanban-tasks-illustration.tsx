@@ -4,16 +4,6 @@ import Image from "next/image";
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
 
-/**
- * Single-column "In Progress" kanban illustration with three detailed
- * task cards (API Integration, User Testing, Documentation), each
- * showing a priority flag, an avatar stack, and message/attachment
- * counts. Used by `sections-features-expandable/features-expandable-20/`.
- * Mock copy stays hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/expandable-features-20` (upstream `Kanban3Illustration`;
- * renamed to disambiguate from the existing `kanban-illustration` which
- * is the two-column In Progress / Ready for Review variant).
- */
 export const KanbanTasksIllustration = () => {
   return (
     <div

@@ -72,17 +72,6 @@ function MicrosoftIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>)
   );
 }
 
-/**
- * Tailark `mist-login-1` — JSX verbatim. Passwordless sign-in form
- * on a `bg-linear-to-b from-muted to-background` gradient section
- * (`min-h-dvh`, `py-16 md:py-32`). Plain centered form (no card
- * chrome), `max-w-92`. Logo link, split-color welcome heading
- * (muted prefix + normal suffix via `t.rich`), three full-width
- * stacked OAuth buttons (Google / Facebook / Microsoft), plain hr,
- * single email field with `ring-foreground/15 border-transparent
- * ring-1` ring-style chrome, "Continue" CTA. Inline "Create account"
- * footer link.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t] = useScopedT(login11Namespace);
   const titleId = `${props.id}-title`;

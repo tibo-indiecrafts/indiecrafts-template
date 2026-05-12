@@ -17,14 +17,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-pricing-1` — JSX verbatim. Centered veil pricing
- * inside `bg-background @container py-24 max-w-2xl`. 3 tiers in a
- * `@3xl:grid-cols-2 grid gap-3` grid where `last:col-span-full`
- * promotes the last (Enterprise) tier to a full-width row beneath
- * the first two. The highlighted tier gets a `ring-primary` outline.
- * Default Tailwind font (no `font-serif` override).
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricing04Namespace);
   const headingId = `${props.id}-heading`;

@@ -27,12 +27,6 @@ const chartData = [
   { month: "April", desktop: 400, mobile: 800 },
 ];
 
-/**
- * Stacked area chart illustration — desktop vs mobile traffic over six
- * months, with linear gradient fills. Pure decoration; no translations
- * (axis label and tooltip use mock data labels). Sourced from
- * `@tailark-pro/features-1`.
- */
 export const ChartIllustration = () => {
   return (
     <ChartContainer className="aspect-auto h-72" config={chartConfig}>

@@ -9,18 +9,6 @@ import {
   secondaryHero06SecondaryCtaHref,
 } from "./config";
 
-/**
- * Secondary hero — centered tagged headline + body + dual CTAs paired
- * with the `BillingFlow` illustration (3 usage cards → signature →
- * invoice mock) and a `LogoCloud05` infinite-slider marquee. Sourced
- * from `@tailark-pro/secondary-hero-06`, refactored to the project
- * pattern: section semantics, all visible strings via
- * `blocks.secondary-hero-06.*`, primitives from `ui-primitives`,
- * illustration from `ui-illustrations`, logo cloud from
- * `sections-logo-cloud`. Tailark's source referenced an unshipped
- * `InvoiceIllustration` and a `Firebase` SVG — we inline a minimal
- * invoice mock and substitute Cloudflare for Firebase.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero06Namespace);
 

@@ -29,7 +29,7 @@ export const ProductIllustration = ({ className }: { className?: string }) => {
           <div className="inset-ring-foreground/15 flex size-7 rounded-md bg-radial from-zinc-500/75 to-zinc-500 inset-ring-1 *:size-4">
             <LogoIcon className="text-primary-foreground m-auto drop-shadow" />
           </div>
-          <span className="text-sm font-medium">Tailark Pro</span>
+          <span className="text-sm font-medium">Acme Pro</span>
           <ChevronsUpDown className="ml-auto size-3.5 opacity-50" />
         </div>
 
@@ -57,8 +57,8 @@ export const ProductIllustration = ({ className }: { className?: string }) => {
             </div>
             <div className="mt-3 flex flex-col gap-1.5">
               {[
-                { color: "bg-primary", label: "pro.tailark.com", active: true },
-                { color: "bg-muted-foreground/75", label: "tailark.com", active: false },
+                { color: "bg-primary", label: "pro.acme.com", active: true },
+                { color: "bg-muted-foreground/75", label: "acme.com", active: false },
                 { color: "bg-muted-foreground/75", label: "irung.me", active: false },
               ].map((item) => (
                 <div

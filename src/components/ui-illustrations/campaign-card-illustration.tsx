@@ -1,16 +1,3 @@
-/**
- * Marketing-campaign card mock — bento-10 variant. Foregrounded
- * "Campaign / Loyalty program" card with two Start-Date pill rows
- * and a "Connected to 12 Marketing Campaigns" trailing line, sat
- * above two stacked decorative outline cards (`before:` and
- * `after:` pseudo-elements offset progressively) for a layered
- * feel. Used by `sections-bento/bento-10/`'s "Communication Hub"
- * cell. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/bento-10`
- * (upstream `CampaignIllustration`; renamed to
- * `campaign-card-illustration` to differentiate from the simpler
- * `campaign-illustration` variant from features-14).
- */
 export const CampaignCardIllustration = () => (
   <div
     aria-hidden

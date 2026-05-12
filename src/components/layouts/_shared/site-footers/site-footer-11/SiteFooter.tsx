@@ -17,14 +17,6 @@ const NAV_LINKS = [
   { id: "about", href: "#" },
 ] as const;
 
-/**
- * Tailark `mist-footer-4` — JSX verbatim. Single-row mist footer
- * on `bg-background border-b py-12` inside `max-w-5xl`.
- * `flex flex-wrap justify-between gap-12`:
- *  - `order-last md:order-first`: `LogoIcon` + copyright (with
- *    `next-intl` `{year}` interpolation)
- *  - `order-first md:order-last`: 6-link nav rail
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter11Namespace);
   const homeLabel = t("homeLabel");

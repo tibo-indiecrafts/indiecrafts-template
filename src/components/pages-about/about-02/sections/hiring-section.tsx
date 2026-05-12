@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream verbatim, kept as-is */
+/* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
 import Link from "next/link";
 import { ArrowRight, Flame } from "lucide-react";
 import { Container } from "@/components/ui-primitives/grid-2-about-container";

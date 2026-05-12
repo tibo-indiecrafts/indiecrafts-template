@@ -2,18 +2,6 @@ import { ScrollRevealImage } from "@/components/ui-effects/scroll-reveal-image";
 import { useScopedT } from "@/i18n/scoped-t";
 import { secondaryHero11BackgroundImage, secondaryHero11Namespace } from "./config";
 
-/**
- * Secondary hero — full-width editorial layout. Headline above + body
- * paragraphs in a 2-column grid below, separated by the
- * `ScrollRevealImage` (clip + zoom on scroll). Sourced from
- * `@tailark-pro/secondary-hero-11`, refactored to the project pattern:
- * section semantics, all visible strings via
- * `blocks.secondary-hero-11.*` (paragraphs use ICU rich text via `tr`
- * to render `<strong>` runs), effect from
- * `ui-effects/scroll-reveal-image`. The Tailark original calls this
- * an "ImageIllustration" but it's a scroll-driven animation — fits
- * the effects bucket, not illustrations.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero11Namespace);
 

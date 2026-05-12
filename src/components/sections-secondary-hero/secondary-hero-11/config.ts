@@ -14,4 +14,4 @@ export const secondaryHero11Namespace = "blocks.secondary-hero-11" as const;
 
 /** Backdrop image URL behind the scroll-reveal effect. */
 export const secondaryHero11BackgroundImage =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/flower_a5umwb.webp" as const;
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/flower_a5umwb.webp" as const;

@@ -19,17 +19,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `mist-pricing-1` — JSX verbatim. Single-tier enterprise
- * pricing card on `bg-muted py-16 md:py-32` inside `max-w-5xl`.
- * Title + lead body above a two-column card (`md:grid-cols-2
- * md:divide-x md:divide-y-0`):
- *  - Left (`md:pr-12`): plan title + subtitle + giant price
- *    (`text-6xl` with `text-4xl` `$`) + primary `Get started`
- *    button + "Includes" footnote
- *  - Right: 4-feature checklist + "Companies using our platform"
- *    tagline + Vercel/Spotify/Supabase wordmark row
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricing03Namespace);
   const headingId = `${props.id}-heading`;

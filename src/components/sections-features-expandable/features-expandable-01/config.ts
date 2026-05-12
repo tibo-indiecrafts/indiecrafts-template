@@ -21,10 +21,9 @@ export const featuresExpandable01Sample: Omit<FeaturesExpandableBlock, "id"> = {
       illustration: "map",
       // No `cardClassName` — the card sizes to the map's intrinsic SVG
       // dimensions so the avatar pins anchor to the actual map area.
-      // Pattern from `@tailark-pro/expandable-features-2`.
       illustrationClassName: "pt-8",
       bgImageUrl:
-        "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/c3_fzqepj.png",
+        "https://raw.githubusercontent.com/acme/assets/refs/heads/main/c3_fzqepj.png",
       ariaLabelKey: "blocks.features-expandable-01.items.tab2.ariaLabel",
       titleKey: "blocks.features-expandable-01.items.tab2.title",
       bodyKey: "blocks.features-expandable-01.items.tab2.body",

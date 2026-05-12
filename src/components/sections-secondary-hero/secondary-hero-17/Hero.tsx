@@ -13,16 +13,6 @@ import {
   secondaryHero17Namespace,
 } from "./config";
 
-/**
- * Secondary hero — bordered 4-column grid with `+` decorators at the
- * corners. Top row carries headline + body + CTA + the `ProductStacked`
- * 3D illustration; bottom row carries 2 stat cells + a 2-col
- * testimonial blockquote with avatar + brand. Sourced from
- * `@tailark-pro/secondary-hero-17`, refactored to the project pattern:
- * section semantics, all visible strings via
- * `blocks.secondary-hero-17.*`. Stats and testimonial use `t.rich()`
- * for `<strong>` runs.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero17Namespace);
 

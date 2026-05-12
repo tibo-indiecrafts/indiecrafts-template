@@ -6,10 +6,6 @@ import type {
 
 export type { ContentInlineFeature, ContentInlineFeatureIcon };
 
-/**
- * Tailark `content-5` — centered headline/intro, wide image, then a
- * 4-column inline feature grid. Shares the feature schema with `content-2`.
- */
 export type ContentBlock = {
   type: "content-05";
   id: string;

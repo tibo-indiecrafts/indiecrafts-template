@@ -6,10 +6,6 @@ import type {
 
 export type { ContentInlineFeature, ContentInlineFeatureIcon };
 
-/**
- * Tailark `features-7` — 3D-tilted layered image variant of features-6.
- * Same content shape, different perspective/skew treatment.
- */
 export type FeaturesBlock = {
   type: "features-07";
   id: string;

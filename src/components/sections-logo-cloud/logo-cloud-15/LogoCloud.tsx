@@ -9,11 +9,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { logoCloud15Namespace } from "./config";
 import type { LogoCloud15Block } from "./schema";
 
-/**
- * Tailark Pro `libre-landing-two` LogoCloud — JSX verbatim. Static
- * 8-logo grid (3 cols mobile, 4 cols desktop), no rotator, no
- * heading wrapper.
- */
 export default function LogoCloud(props: Readonly<LogoCloud15Block>) {
   const [t] = useScopedT(logoCloud15Namespace);
   return (

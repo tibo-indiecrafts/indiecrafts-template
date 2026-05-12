@@ -13,14 +13,6 @@ const TASKS: readonly Task[] = [
   { kind: "pending", label: "5. Deliver result", meta: "Pending" },
 ];
 
-/**
- * Agent task-planning illustration — auto-generated plan for a "Build
- * a REST API endpoint" goal: 5 tasks rendered with state-aware glyphs
- * (green check = done, primary spinner with play head = active,
- * dashed circle = pending). Pure decoration; mock task labels stay
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/expandable-features-4`.
- */
 export const AgentTaskPlanningIllustration = () => {
   return (
     <div aria-hidden className="max-w-xs min-w-xs">

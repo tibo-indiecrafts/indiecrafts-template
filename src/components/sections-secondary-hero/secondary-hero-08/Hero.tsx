@@ -17,14 +17,6 @@ const FEATURE_ICONS: Record<(typeof FEATURE_KEYS)[number], ReactNode> = {
   security: <Shield className="stroke-foreground fill-emerald-500/15" />,
 };
 
-/**
- * Secondary hero — centered tagged headline + body + dual CTAs above
- * a three-column features grid (icon + heading + body) framed by
- * top + bottom dividers. Sourced from `@tailark-pro/secondary-hero-08`,
- * refactored to the project pattern: section semantics, all visible
- * strings via `blocks.secondary-hero-08.*`, primitives from
- * `ui-primitives`.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero08Namespace);
 

@@ -54,11 +54,6 @@ const SLOTS: { logos: ReactNode[]; group: string; mobileVisible: boolean }[] = [
   { logos: otherLogos, group: "other", mobileVisible: false },
 ];
 
-/**
- * Per-slot cycling logo cloud — 5 row slots independently crossfade
- * through their own brand pools. Sourced from
- * `@tailark-pro/logo-cloud-02`.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud06Namespace);
   const [logoIndices, setLogoIndices] = useState<number[]>(SLOTS.map(() => 0));

@@ -10,17 +10,6 @@ const BADGE_TONES: Record<DocType, string> = {
   TXT: "bg-orange-600 shadow-orange-900/25",
 };
 
-/**
- * Three-card stack of file-type document mocks (PDF / DOC / TXT)
- * with corner-bevel cards, skeleton dash rows, and a coloured file-
- * type badge floating bottom-right of each card. Used by
- * `sections-bento/bento-07/`'s "Supported Files" cell, which animates
- * the stack upward on hover (`*:group-hover:-translate-y-[225%]`).
- * Pure decoration; mock copy stays hardcoded per the illustration
- * rule. Sourced from `@tailark-pro/bento-07` (upstream
- * `DocumentsIllustration`; renamed to `documents-stack-illustration`
- * to differentiate from our existing single `document-illustration`).
- */
 export const DocumentsStackIllustration = () => {
   return (
     <div className="relative z-10 flex h-20 w-fit flex-col gap-6">

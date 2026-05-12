@@ -35,15 +35,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Tailark Pro `grid-2-product-two` faithful port. The hero is an
- * invoicing-themed grid composition with a 3-stack of grid-cell
- * decorators behind a `ProductIllustration` mock. Sub-sections live
- * as page-local components under `./sections/` (logo-cloud,
- * how-it-works, testimonial, expandable-features, notes-features,
- * testimonials-section, call-to-action) imported directly here —
- * tightly coupled to this page-template per the upstream design.
- */
 export function Landing({
   layout = product02Defaults.layout,
   header = <Header10 />,

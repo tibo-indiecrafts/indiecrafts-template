@@ -7,17 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { forgotPassword02Namespace } from "./config";
 import type { ForgotPasswordBlock } from "./schema";
 
-/**
- * Tailark `forgot-password-1` (dusk-kit) — JSX verbatim. Recover-
- * password form sharing the `login-2` / `login-15` shape: `bg-muted`
- * ring (`max-w-sm rounded border shadow-md`) with a nested
- * `bg-card -m-px rounded border p-8 pb-6` inner card; the `-m-px`
- * outdent exposes the muted ring as a hairline frame. Logo link,
- * left-aligned "Recover Password" heading + subtitle, email field,
- * "Send Reset Link" submit, centered helper text. Footer
- * "Remembered your password? Log in" sits in the muted gutter below
- * the inner card.
- */
 export default function ForgotPassword(props: Readonly<ForgotPasswordBlock>) {
   const [t, tr] = useScopedT(forgotPassword02Namespace);
   const titleId = `${props.id}-title`;

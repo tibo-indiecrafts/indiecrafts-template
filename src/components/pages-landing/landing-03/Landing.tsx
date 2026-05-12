@@ -24,12 +24,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Tailark Pro `grid-1-landing-one` faithful port. Eight sections
- * in upstream order, each rendered inside the grid-1 `Container`
- * border frame. JSX preserved verbatim per section; strings flow
- * through `blocks.<key>.*`.
- */
 export function Landing({
   layout = landing03Defaults.layout,
   header = <Header10 />,

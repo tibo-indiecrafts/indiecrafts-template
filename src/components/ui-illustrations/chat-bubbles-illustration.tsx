@@ -1,13 +1,3 @@
-/**
- * Two-bubble chat illustration — incoming message ("Hey, I'm having
- * trouble with my account.") with date timestamp, then outgoing
- * primary-tinted reply with "Now" label. Used by `sections-bento/
- * bento-12/`'s "AI-Powered Chat Support" cell. Pure decoration; mock
- * copy stays hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-12` (upstream `ChatIllustration`; renamed to
- * `chat-bubbles-illustration` to differentiate from our existing
- * animated `chat.tsx` (full AI conversation with sources)).
- */
 export const ChatBubblesIllustration = () => {
   return (
     <div aria-hidden className="flex flex-col gap-6">

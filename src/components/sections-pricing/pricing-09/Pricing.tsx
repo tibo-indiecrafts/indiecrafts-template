@@ -8,20 +8,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { pricing09Namespace } from "./config";
 import type { PricingBlock } from "./schema";
 
-/**
- * Tailark `pricing-5` — JSX verbatim. Single-tier enterprise card
- * on `py-16 md:py-32` inside `max-w-5xl`. Headline above a 2-col
- * card (`md:grid-cols-2 md:divide-x md:divide-y-0`) with elevated
- * `bg-card rounded-3xl border shadow-2xl shadow-zinc-950/5` chrome.
- *  - Left (`md:pr-12 text-center`): plan title + subtitle + giant
- *    `text-6xl` price + primary CTA + "Includes" footnote
- *  - Right: 4-feature checklist + "Companies using our platform"
- *    tagline + Hulu/Spotify/Firebase wordmark row
- *
- * Sister of pricing-03 (mist-pricing-1) — same 2-col card shape but
- * elevated chrome (no `bg-muted` outer wrapper) and different brand
- * row.
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricing09Namespace);
   const headingId = `${props.id}-heading`;

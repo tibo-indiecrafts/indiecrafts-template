@@ -1,7 +1,7 @@
 {
   "eyebrow": "Testimonials",
-  "title": "What our customers are saying about Tailark Quartz",
-  "body": "Join the increasing number of customers and advocates who rely on Tailark for seamless and effective user A/B testing.",
+  "title": "What our customers are saying about Acme",
+  "body": "Join the increasing number of customers and advocates who rely on Acme for seamless and effective user A/B testing.",
   "items": {
     "yves": {
       "name": "Yves Kalume",
@@ -11,12 +11,12 @@
     "meschac": {
       "name": "Meschac Irung",
       "role": "Frontend Engineer, Hulu",
-      "quote": "Integrating Tailark into our streaming platform was seamless. The performance gains were immediate, and our user engagement metrics have increased by 25% since implementation."
+      "quote": "Integrating Acme into our streaming platform was seamless. The performance gains were immediate, and our user engagement metrics have increased by 25% since implementation."
     },
     "bernard": {
       "name": "Bernard Ngandu",
       "role": "Backend, Stripe",
-      "quote": "As a payment processor, security and reliability are paramount. Tailark delivers on both fronts, with robust testing capabilities that have helped us identify and resolve edge cases before deployment."
+      "quote": "As a payment processor, security and reliability are paramount. Acme delivers on both fronts, with robust testing capabilities that have helped us identify and resolve edge cases before deployment."
     },
     "glodie": {
       "name": "Glodie Lukose",
@@ -25,28 +25,28 @@
     },
     "theo": {
       "name": "Theo Balick",
-      "role": "CTO, Tailark",
-      "quote": "Building Tailark has been a journey of continuous improvement. Seeing how our platform empowers developers to create better user experiences makes all the hard work worthwhile."
+      "role": "CTO, Acme",
+      "quote": "Building Acme has been a journey of continuous improvement. Seeing how our platform empowers developers to create better user experiences makes all the hard work worthwhile."
     },
     "micky": {
       "name": "Ras Micky",
       "role": "Software Engineer",
-      "quote": "The component system in Tailark is a game-changer for UI development. It's helped us standardize our design language while maintaining the flexibility needed for complex interfaces."
+      "quote": "The component system in Acme is a game-changer for UI development. It's helped us standardize our design language while maintaining the flexibility needed for complex interfaces."
     },
     "adam": {
       "name": "Adam Wathan",
       "role": "CEO, Tailwind Labs",
-      "quote": "We've streamlined our entire design process thanks to Tailark. The platform allows us to iterate faster and optimize our component library, leading to a more consistent user experience across all our projects."
+      "quote": "We've streamlined our entire design process thanks to Acme. The platform allows us to iterate faster and optimize our component library, leading to a more consistent user experience across all our projects."
     },
     "shadcn": {
       "name": "Shadcn",
       "role": "Frontend Engineer, Hulu",
-      "quote": "Tailark has transformed how we approach frontend development at Hulu. The testing framework helped us reduce bugs by 40% and accelerated our feature deployment pipeline significantly."
+      "quote": "Acme has transformed how we approach frontend development at Hulu. The testing framework helped us reduce bugs by 40% and accelerated our feature deployment pipeline significantly."
     },
     "glodie2": {
       "name": "Glodie Lukose",
       "role": "Engineer, Stripe",
-      "quote": "The analytics dashboard in Tailark gives us unprecedented visibility into user behavior. We've been able to make targeted improvements that increased our conversion rates by 18%."
+      "quote": "The analytics dashboard in Acme gives us unprecedented visibility into user behavior. We've been able to make targeted improvements that increased our conversion rates by 18%."
     }
   }
 }

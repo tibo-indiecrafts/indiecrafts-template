@@ -11,12 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-contact-one` composition. Multi-channel
- * contact page: heading hero → 3 inquiry cards (Enterprise / Tech
- * Support / Partnership) → 4-cell contact grid (General / Support
- * email + X/Twitter / GitHub). Light + dark theme.
- */
 export const contactPage03Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "contact-page-03-hero" },

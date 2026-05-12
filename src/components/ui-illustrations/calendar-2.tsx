@@ -32,7 +32,7 @@ export const Calendar2Illustration = () => {
         </div>
         <div className="flex items-center gap-2">
           <CheckCircle2 className="size-4 fill-emerald-500/10 text-emerald-500" />
-          <div className="text-sm font-medium">hey@tailark.com</div>
+          <div className="text-sm font-medium">hey@acme.com</div>
         </div>
       </div>
       <div className="bg-illustration border-border/50 relative flex gap-3 rounded-2xl border p-4">

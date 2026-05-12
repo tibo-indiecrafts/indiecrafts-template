@@ -4,7 +4,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_SRC =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/healthcare_ttc35b.jpg";
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/healthcare_ttc35b.jpg";
 
 export type CursorGlowPhotoProps = {
   src?: string;

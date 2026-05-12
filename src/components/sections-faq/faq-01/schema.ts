@@ -6,10 +6,6 @@ export type FaqItem = {
   answerKey: MessageKey;
 };
 
-/**
- * Tailark `faqs` — 2-column layout (heading left, Q&A list right on desktop).
- * Converted to the template pattern: props-driven content, MessageKey strings.
- */
 export type FaqBlock = {
   type: "faq-01";
   id: string;

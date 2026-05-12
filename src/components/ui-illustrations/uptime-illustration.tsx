@@ -1,10 +1,3 @@
-/**
- * Uptime-bars illustration — labelled "Uptime / 99.9%" header above a
- * row of 40 emerald vertical bars masked from the right with a few
- * highlighted darker bars representing minor incidents. Pure
- * decoration; mock label stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/features-3`.
- */
 export const UptimeIllustration = () => (
   <div
     aria-hidden

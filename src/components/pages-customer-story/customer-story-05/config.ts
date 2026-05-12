@@ -11,16 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "article" },
 };
 
-/**
- * Tailark Pro `dark-customer-story-three` composition. Editorial
- * customer-story detail page: centered breadcrumb (Slash separator)
- * + centered title (`text-3xl md:text-4xl lg:text-5xl`) → wide
- * hero image (full article width) → about lead → 3-col metadata
- * grid → PortableText body → pull-quote testimonial. The upstream
- * was Sanity-driven; this port accepts a `story` prop with a
- * sensible mock default so the page renders without a CMS
- * connection. Light + dark theme.
- */
 export const customerStory05Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { article: "customer-story-05-article" },

@@ -4,15 +4,6 @@ import { Label } from "@/components/ui-primitives/label";
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { Link } from "@/i18n/routing";
 
-/**
- * Login-page preview illustration — small mock sign-in form (Logo +
- * "Welcome back" header + Google/Facebook OAuth buttons + email
- * field + Continue CTA + "Create an account" footer link). Used by
- * `sections-code-demo/code-demo-03/`'s live-preview pane next to the
- * source code. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/code-demo-03`
- * (upstream `LoginPage`).
- */
 export const LoginPreviewIllustration = () => {
   return (
     <section className="relative flex">
@@ -23,8 +14,8 @@ export const LoginPreviewIllustration = () => {
               <LogoIcon />
             </Link>
             <h1 className="text-foreground mt-6 text-xl font-semibold text-balance">
-              <span className="text-muted-foreground">Welcome back to Tailark!</span> Sign
-              in to continue
+              <span className="text-muted-foreground">Welcome back!</span> Sign in to
+              continue
             </h1>
           </div>
 

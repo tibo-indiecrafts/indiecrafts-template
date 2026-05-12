@@ -1,17 +1,5 @@
 import { BookOpen, Gem, MoonStar } from "lucide-react";
 
-/**
- * Kit-stack illustration — bento-10 variant of the design-kit cards.
- * Wider, non-skewed, and with responsive container-query behaviour:
- * the back "Steps" card hides at the `@2xl` breakpoint and re-shows
- * at `@4xl`, while the front "Favorite Kits" card grows to `h-96`
- * (full-width) at `@2xl` and back to 3/4 width at `@4xl`. Front card
- * has the full kit list (Quartz / Dusk / Mist) with their custom
- * gradient logos. Used by `sections-bento/bento-10/`. Sourced from
- * `@tailark-pro/bento-10` (upstream `KitIllustration`; renamed to
- * `kit-stack-illustration` to differentiate from the bento-6
- * perspective-skewed variant).
- */
 export const KitStackIllustration = () => {
   return (
     <div aria-hidden className="-mx-8 h-fit mask-b-from-55% px-4 @2xl:-mx-4 @4xl:-mx-8">

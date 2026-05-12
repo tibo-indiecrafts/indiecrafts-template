@@ -63,17 +63,6 @@ function GithubIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Tailark `veil-login-1` — JSX verbatim. Two-row full-viewport
- * layout (`grid grid-rows-[auto_1fr] min-h-dvh`). Top: logo strip
- * in a `max-w-7xl border-b py-3` bar. Bottom: centered `max-w-sm`
- * column with "Welcome back" heading + description (default font,
- * no `font-serif` override) above an outlined card holding the
- * email + password form, "Sign In" submit, "or continue with"
- * divider, and 2-col Google / GitHub OAuth row. Sign-up prompt
- * sits below the card. Local plain `Card` keeps slot padding
- * controllable (upstream uses `Card variant="outline" p-8`).
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login12Namespace);
   const titleId = `${props.id}-title`;

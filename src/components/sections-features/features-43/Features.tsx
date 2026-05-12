@@ -17,8 +17,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { features43Namespace } from "./config";
 import type { Features43Block } from "./schema";
 
-/** Lightweight Card replacement matching Tailark's `variant="soft"` — no
- *  baked padding/border/shadow/flex; consumer controls the layout. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={cn("rounded-xl", className)} {...props} />
 );
@@ -28,15 +26,6 @@ const BERNARD_AVATAR = "https://avatars.githubusercontent.com/u/31113941?v=4";
 const THEO_AVATAR = "https://avatars.githubusercontent.com/u/68236786?v=4";
 const GLODIE_AVATAR = "https://avatars.githubusercontent.com/u/99137927?v=4";
 
-/**
- * Tailark `mist-features-6` — JSX verbatim. Title above a 3-card
- * grid where each `Card` (soft-variant emulated via `bg-muted/40`)
- * pairs an icon + heading + body with a unique sub-illustration:
- * MeetingIllustration (PDF + meeting card with avatar stack),
- * CodeReviewIllustration (avatar comment card + play card with
- * group-hover rotation), AIAssistantIllustration (prompt + Ask AI
- * footer with Plus/Globe/ArrowUp button row).
- */
 export default function Features({ id }: Readonly<Features43Block>) {
   const [t] = useScopedT(features43Namespace);
 

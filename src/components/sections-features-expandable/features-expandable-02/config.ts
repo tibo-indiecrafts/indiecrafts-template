@@ -22,7 +22,7 @@ export const featuresExpandable02Sample: Omit<FeaturesExpandableBlock, "id"> = {
       // No `cardClassName` — card sizes to the map's intrinsic SVG.
       illustrationClassName: "pt-8",
       bgImageUrl:
-        "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/c3_fzqepj.png",
+        "https://raw.githubusercontent.com/acme/assets/refs/heads/main/c3_fzqepj.png",
       ariaLabelKey: "blocks.features-expandable-02.items.tab2.ariaLabel",
       titleKey: "blocks.features-expandable-02.items.tab2.title",
       bodyKey: "blocks.features-expandable-02.items.tab2.body",

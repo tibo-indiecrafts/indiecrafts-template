@@ -69,7 +69,7 @@ export const Map = () => {
   return (
     <img
       src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
-      alt="tailark map"
+      alt="acme map"
       loading="lazy"
     />
   );

@@ -27,7 +27,7 @@ export const HeroIllustration = () => (
           <Image
             fill
             className="object-cover object-top-left hue-rotate-180 invert dark:hue-rotate-0 dark:invert-0"
-            src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png"
+            src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png"
             alt=""
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1123px"
             priority

@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream illustration kept verbatim */
+/* eslint-disable -- Acme Pro upstream illustration kept verbatim */
 
 import { Check, Circle } from "lucide-react";
 import { Linear } from "@/components/ui-primitives/svgs/linear";

@@ -2,16 +2,6 @@ import { CalendarDays, RefreshCcw } from "lucide-react";
 
 const HOURS = Array.from({ length: 25 }, (_, i) => String(i).padStart(2, "0"));
 
-/**
- * Day-view calendar illustration — bold "1 January 2026" header with
- * the day of week, three all-day event chips (Birthday, New Year's
- * Day, Team Kickoff) in sky/emerald/purple, then an hourly time grid
- * with a rose "now" marker line at 02:30. Pure decoration; mock event
- * labels and times stay hardcoded per the illustration rule. Sourced
- * from `@tailark-pro/expandable-features-4` (upstream
- * `Calendar10Illustration`; renamed since no Calendar1..9 sibling
- * family exists in this catalogue).
- */
 export const CalendarIllustration = () => {
   return (
     <div aria-hidden className="px-6 pt-1">

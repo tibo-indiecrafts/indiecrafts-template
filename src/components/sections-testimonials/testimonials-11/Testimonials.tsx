@@ -7,15 +7,6 @@ import type { TestimonialsBlock } from "./schema";
 
 const STAR_INDEXES = [0, 1, 2, 3, 4] as const;
 
-/**
- * Tailark `mist-testimonials-3` — JSX verbatim. 3-column testimonial
- * grid (`@lg:grid-cols-2 @3xl:grid-cols-3`) on `py-24` inside
- * `max-w-5xl @container`. Each card stacks: a 5-star row (filled
- * `fill-primary stroke-primary` up to `stars`, unfilled
- * `fill-foreground/15 stroke-transparent`), a quote paragraph, and
- * a `flex items-center gap-2` footer with `size-6` Avatar + name +
- * `size-1` dot separator + muted role.
- */
 export default function Testimonials(props: Readonly<TestimonialsBlock>) {
   const [, , tRoot] = useScopedT(testimonials11Namespace);
   const headingId = `${props.id}-heading`;

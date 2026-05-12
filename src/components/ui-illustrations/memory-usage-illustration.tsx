@@ -1,15 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/**
- * Memory-usage progress illustration — "Memory Usage" label, GB usage
- * line ("56 GB / 128 GB" + "45%"), and a 2/5-filled gradient progress
- * bar with a soft glow underlay (`before:` solid bar + `after:`
- * blurred bar). Used by `sections-bento/bento-07/`'s "Memory
- * Optimization" cell (`borderPosition="top"` default), and by
- * bento-09 / bento-10 with `borderPosition="bottom"`. Pure decoration;
- * mock numbers stay hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-07` (upstream `MemoryUsageIllustration`).
- */
 export const MemoryUsageIllustration = ({
   borderPosition = "top",
 }: {

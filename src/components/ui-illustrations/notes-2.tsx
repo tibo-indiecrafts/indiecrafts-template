@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream illustration kept verbatim */
+/* eslint-disable -- Acme Pro upstream illustration kept verbatim */
 
 import { LassoSelect, NotepadText, Play, Target } from "lucide-react";
 

@@ -31,14 +31,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-faqs-5` — JSX verbatim. Centered FAQ help center
- * on `bg-background @container py-24` inside `max-w-2xl`. Stack of
- * category cards (Getting Started / Billing / Support), each with
- * an icon + title header above a single-mode collapsible Accordion
- * of question/answer items. Closing line: contact prompt + inline
- * link. Default Tailwind font (no `font-serif` override).
- */
 export default function Faq(props: Readonly<FaqBlock>) {
   const [, , tRoot] = useScopedT(faq06Namespace);
   const headingId = `${props.id}-heading`;

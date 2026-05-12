@@ -11,16 +11,6 @@ import {
   hero04SecondaryCtaHref,
 } from "./config";
 
-/**
- * Announcement chip + centered headline + dual CTA, framed by a
- * bordered window with corner-square decorators carrying the dashboard
- * mock illustration, with a brand `LogoCloud` underneath. Sourced from
- * `@tailark-pro/hero-section-4`, refactored to the project pattern:
- * section semantics (no `<main>` — that's the layout's job), all
- * visible strings via `blocks.hero-04.*`, primitives from
- * `ui-primitives`, illustration from `ui-illustrations`, logo cloud
- * from `sections-logo-cloud`.
- */
 export function Hero() {
   const [t] = useScopedT(hero04Namespace);
 

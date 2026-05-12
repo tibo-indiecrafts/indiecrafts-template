@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream verbatim, kept as-is */
+/* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
 import {
   Container,
   Separator,
@@ -28,11 +28,11 @@ export function TestimonialsSection() {
         <div className="mx-auto w-full max-w-5xl px-6 xl:px-0">
           <div className="mx-auto max-w-2xl space-y-6 text-center">
             <h2 className="text-foreground text-4xl font-semibold text-balance lg:text-5xl">
-              What our customers are saying about Tailark Quartz
+              What our customers are saying about Acme
             </h2>
             <p className="text-muted-foreground text-lg text-balance">
-              Join the increasing number of customers and advocates who rely on Tailark
-              for seamless and effective user A/B testing.
+              Join the increasing number of customers and advocates who rely on Acme for
+              seamless and effective user A/B testing.
             </p>
           </div>
         </div>
@@ -61,9 +61,9 @@ export function TestimonialsSection() {
                 </div>
 
                 <p className='mt-12 max-w-lg text-xl before:mr-1 before:font-serif before:content-["\201C"] after:ml-1 after:font-serif after:content-["\201D"]'>
-                  Using Tailark has been like unlocking a secret design superpower. It's
-                  the perfect fusion of simplicity and versatility, enabling us to create
-                  UIs that are as stunning as they are user-friendly.
+                  Using Acme has been like unlocking a secret design superpower. It's the
+                  perfect fusion of simplicity and versatility, enabling us to create UIs
+                  that are as stunning as they are user-friendly.
                 </p>
               </div>
 

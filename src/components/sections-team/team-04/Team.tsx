@@ -3,15 +3,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { team04Namespace } from "./config";
 import type { TeamBlock } from "./schema";
 
-/**
- * Tailark `veil-team-1` — JSX verbatim. Centered founders section
- * inside `max-w-2xl @container py-24` with title + body, then a
- * stack of N member cards. Each card uses absolute crosshair
- * border decorations (`-inset-x-6 inset-y-1 border-y` +
- * `-inset-y-6 inset-x-1 border-x`) framing a `size-28` avatar +
- * name + role + balanced bio paragraph. Default Tailwind font (no
- * `font-serif` override).
- */
 export default function Team(props: Readonly<TeamBlock>) {
   const [, , tRoot] = useScopedT(team04Namespace);
   const headingId = `${props.id}-heading`;

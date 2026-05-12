@@ -19,14 +19,6 @@ export type StatItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `features-12` — full-bleed bordered grid identical to
- * `features-11` plus a hero row at the top: title + body + CTA, a
- * floating "Replaces your IDE" widget with 3 IDE icons, and a masked
- * product screenshot. Converted to the template pattern: props-driven
- * everything (cards, stats, IDE triple, CTA, screenshot), MessageKey-
- * typed strings, theme tokens.
- */
 export type FeaturesBlock = {
   type: "features-24";
   id: string;

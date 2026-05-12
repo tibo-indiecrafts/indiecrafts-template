@@ -16,13 +16,6 @@ import {
   hero01SecondaryCtaHref,
 } from "./config";
 
-/**
- * Centered hero with parallax background image and a floating AI-chat
- * preview card. Sourced from `@tailark-pro/hero-section-1`, refactored
- * to the project pattern: section semantics (no `<main>` — that's the
- * layout's job), all visible strings via `blocks.hero-01.*`, primitives
- * from `ui-primitives`, brand SVGs from `ui-primitives/svgs`.
- */
 export function Hero() {
   const [t] = useScopedT(hero01Namespace);
   const { scrollY } = useScroll();

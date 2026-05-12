@@ -23,15 +23,6 @@ export type FeaturesExpandableItem = {
   tabLabelKey: MessageKey;
 };
 
-/**
- * Tailark Pro `expandable-features-4` — two-column hero (text +
- * tab-rail on the left, beveled illustration panel on the right) with
- * 3 manually selectable tabs. Clicking a tab crossfades the panel's
- * illustration and bg image via Framer Motion's `AnimatePresence`. No
- * auto-cycle. Three slots is structural — the layout fits exactly
- * three buttons. Converted to the template pattern: props-driven
- * items, MessageKey-typed strings, theme tokens.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-04";
   id: string;

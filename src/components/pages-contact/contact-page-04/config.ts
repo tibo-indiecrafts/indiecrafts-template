@@ -11,11 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-contact-three` composition. Hero heading + an
- * inquiry form area wrapped in an indigo glow, alongside a 2-cell
- * Collaborate / Press contact-channel column. Light + dark theme.
- */
 export const contactPage04Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "contact-page-04-hero" },

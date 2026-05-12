@@ -2,16 +2,6 @@ import { CursorGlowPhoto } from "@/components/ui-effects/cursor-glow-photo";
 import { useScopedT } from "@/i18n/scoped-t";
 import { secondaryHero02BackgroundImage, secondaryHero02Namespace } from "./config";
 
-/**
- * Secondary hero — large editorial headline + asymmetric body copy
- * over a `CursorGlowPhoto` (full-bleed photo with cursor-tracking
- * blurred overlay). Sourced from `@tailark-pro/secondary-hero-02`,
- * refactored to the project pattern: section semantics, all visible
- * strings via `blocks.secondary-hero-02.*`, effect from `ui-effects`.
- * The Tailark original applied `data-theme="quartz"` and `bg-white`;
- * we drop the unknown vendor theme attribute and let the image carry
- * the color treatment.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero02Namespace);
 

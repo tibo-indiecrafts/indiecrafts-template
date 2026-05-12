@@ -4,14 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { content28Namespace } from "./config";
 import type { ContentBlock } from "./schema";
 
-/**
- * Tailark `content-1` — JSX verbatim. 2-column section: left
- * column hosts a framed product image with theme-aware light/dark
- * variants on a `bg-linear-to-b` border-tint `p-px aspect-76/59`
- * chrome; right column carries 2 muted lead paragraphs (with inline
- * `<strong>` highlight) followed by a `border-l-4` testimonial
- * blockquote citing John Doe, CEO with the Spotify wordmark.
- */
 export default function Content(props: Readonly<ContentBlock>) {
   const [t] = useScopedT(content28Namespace);
   const headingId = `${props.id}-heading`;

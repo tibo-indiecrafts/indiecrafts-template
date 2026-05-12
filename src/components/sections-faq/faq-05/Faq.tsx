@@ -14,14 +14,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-faqs-4` — JSX verbatim. Centered FAQ block on
- * `bg-background @container py-24` inside `max-w-3xl`. 2-col
- * (`@lg:grid-cols-2`) static grid of question/answer cards (no
- * accordion — all answers always visible). Closing line: a
- * "Have another question?" prompt with an inline `Get in touch`
- * link. Default Tailwind font (no `font-serif` override).
- */
 export default function Faq(props: Readonly<FaqBlock>) {
   const [, , tRoot] = useScopedT(faq05Namespace);
   const headingId = `${props.id}-heading`;

@@ -16,25 +16,14 @@ const RESULTS: readonly Result[] = [
     fileIcon: <FileText className="text-rose-500" />,
   },
   {
-    title: "Tailark Quartz Design system",
+    title: "Acme Design system",
     content:
       "Comprehensive design system documentation with components, tokens, and guidelines...",
-    filename: "tailark-ds.fig",
+    filename: "acme-ds.fig",
     fileIcon: <FileImage className="text-purple-500" />,
   },
 ];
 
-/**
- * AI search results illustration — a perspective-rotated search input
- * (with an "AI" sparkle chip) above a result list of two file
- * snippets. The active result is highlighted with an emerald ring.
- * Pure decoration; mock copy stays hardcoded per the illustration
- * rule. File-type glyphs use lucide `FileText` / `Figma` (the upstream
- * referenced separate `Pdf` / `Figma` SVGs that weren't actually
- * shipped in the registry, and lucide doesn't export a `Figma` icon
- * — `FileImage` stands in as a distinct file-type glyph). Sourced from
- * `@tailark-pro/expandable-features-11`.
- */
 export const AiSearchIllustration = () => {
   return (
     <div aria-hidden className="relative max-w-lg min-w-sm">

@@ -13,7 +13,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `grid-2-contact-sales-one` faithful port. */
 export function Landing({
   layout = contactPage06Defaults.layout,
   header = <Header10 />,

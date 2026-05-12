@@ -21,14 +21,6 @@ export type CarouselItemBlock = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `features-carousel-02` — sister of `features-carousel-01`
- * with a decorative per-item background image painted at 50% opacity
- * behind each illustration card. Slot 1 swaps to the voice-memo
- * `NotesIllustration` (vs. email in v1). Converted to the template
- * pattern: props-driven items with illustration + bgImageUrl,
- * MessageKey-typed strings, theme tokens.
- */
 export type FeaturesCarouselBlock = {
   type: "features-carousel-02";
   id: string;

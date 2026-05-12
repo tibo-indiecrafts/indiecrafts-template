@@ -38,17 +38,6 @@ const ACCOUNTS: readonly Account[] = [
   },
 ];
 
-/**
- * Glowing-panel dropdown illustration — black panel with twin radial
- * gradients (emerald + sky) creating a backlit glow, dotted pattern
- * and a circular border guide; a centered account-switcher dropdown
- * card floats on top with four mock accounts and the standard menu
- * actions. Pure decoration; mock account names and labels stay
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/features-14`. Distinct from
- * `dropdown-illustration.tsx` (the product-bar variant from
- * `features-10`).
- */
 export const DropdownGlowIllustration = () => (
   <div aria-hidden className="relative overflow-hidden rounded-2xl bg-black p-2">
     <div className="absolute inset-0 items-center mask-r-from-50% [background:radial-gradient(150%_115%_at_50%_5%,transparent_25%,var(--color-emerald-500)_60%,var(--color-white)_100%)]" />

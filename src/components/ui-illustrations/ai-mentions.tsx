@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream illustration kept verbatim */
+/* eslint-disable -- Acme Pro upstream illustration kept verbatim */
 
 import { CornerDownLeft } from "lucide-react";
 import { Figma } from "@/components/ui-primitives/svgs/figma";

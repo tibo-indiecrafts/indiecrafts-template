@@ -11,11 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `libre-landing-two` composition. JSX-verbatim port:
- *   hero (with frame-with-corner-dots) → logo-cloud → analytics →
- *   platform → testimonial → how-it-works → testimonials grid → cta.
- */
 export const landing06Defaults = {
   layout: "default" as LayoutName,
   sectionIds: {

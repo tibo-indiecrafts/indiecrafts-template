@@ -43,7 +43,7 @@ export function PipelineFeatures() {
             Unified Data Pipeline
           </h2>
           <p className="text-muted-foreground text-lg text-balance">
-            Connect your data sources and let Tailark handle the rest. Automatically
+            Connect your data sources and let Acme handle the rest. Automatically
             distribute, cache, and back up your data across a global infrastructure.
           </p>
         </div>

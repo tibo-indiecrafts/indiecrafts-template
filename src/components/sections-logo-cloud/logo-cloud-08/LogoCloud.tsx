@@ -9,10 +9,6 @@ import { Cisco } from "@/components/ui-primitives/svgs/cisco";
 import { useScopedT } from "@/i18n/scoped-t";
 import { logoCloud08Namespace } from "./config";
 
-/**
- * 4-column logo grid framed by `divide-x` dashed dividers and outer
- * `border-x`. Sourced from `@tailark-pro/logo-cloud-04`.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud08Namespace);
 

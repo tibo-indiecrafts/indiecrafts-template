@@ -12,15 +12,6 @@ const MODELS = [
   { name: "Mistral AI", Icon: MistralAi },
 ] as const;
 
-/**
- * Horizontal row of five AI-model SVG glyphs (Deepseek, Cohere AI,
- * Gemini, Open AI, Mistral AI) with the Gemini logo highlighted in
- * the middle behind a soft glow + ring. Pure decoration; mock copy
- * stays hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-08` (upstream `Models2Illustration`; renamed to
- * `models-row-illustration` to differentiate from our existing
- * `models-illustration` (chat composer + credits).
- */
 export const ModelsRowIllustration = () => {
   return (
     <div aria-hidden className="relative min-w-xs mask-x-from-75% py-6">

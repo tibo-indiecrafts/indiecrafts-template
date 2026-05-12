@@ -21,14 +21,6 @@ const ICON_REGISTRY: Record<FaqIcon, LucideIcon> = {
   package: Package,
 };
 
-/**
- * Tailark `faqs-3` (dusk-kit) — JSX verbatim. Two-column layout on
- * `bg-muted dark:bg-background py-20` inside `max-w-5xl`. Left
- * column (1/3, `md:sticky top-20`) holds heading + contact prompt;
- * right column (2/3) is a stack of card-style AccordionItems each
- * with a lucide icon + question on its trigger and an answer
- * indented `px-9` to align under the icon.
- */
 export default function Faq(props: Readonly<FaqBlock>) {
   const [, , tRoot] = useScopedT(faq12Namespace);
   const headingId = `${props.id}-heading`;

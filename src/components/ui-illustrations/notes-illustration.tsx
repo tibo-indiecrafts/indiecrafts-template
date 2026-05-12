@@ -1,15 +1,5 @@
 import { Play } from "lucide-react";
 
-/**
- * Voice-memo note card illustration — a meeting-note card titled
- * "Marketing Website Launch" with a date stamp, a three-fragment body
- * (the middle phrase rendered as `text-foreground font-medium` to
- * highlight key takeaways), and a glowing animated 03:47 voice-memo
- * play button. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from
- * `@tailark-pro/features-carousel-02`. Distinct from
- * `notes-checklist-illustration.tsx` (the sticky-notes todo).
- */
 export const NotesIllustration = () => {
   return (
     <div aria-hidden className="max-w-xs">

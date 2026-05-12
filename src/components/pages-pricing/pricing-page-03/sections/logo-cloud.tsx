@@ -15,7 +15,7 @@ export function LogoCloud() {
         <div>
           <div data-grid-content className="p-12 text-center">
             <p className="text-muted-foreground mx-auto max-w-xl text-balance md:text-lg">
-              Tailark is trusted by leading teams from Generative AI Companies, Hosting
+              Acme is trusted by leading teams from Generative AI Companies, Hosting
               Providers, Payments Providers, Streaming Providers
             </p>
           </div>

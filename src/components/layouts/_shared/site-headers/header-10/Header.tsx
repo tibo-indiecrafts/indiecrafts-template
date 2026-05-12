@@ -139,12 +139,6 @@ const contentLinks = [
   },
 ];
 
-/**
- * Tailark Pro `dark-landing-one` header — JSX preserved verbatim.
- * Forced `data-theme="dark"` was dropped; the header inherits the
- * surrounding theme (works in both light + dark). Strings flow
- * through `useScopedT` against `blocks.header-10.*`.
- */
 export function Header() {
   const [t, , tRoot] = useScopedT(header10Namespace);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);

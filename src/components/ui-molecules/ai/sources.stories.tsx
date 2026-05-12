@@ -12,10 +12,10 @@ type Story = StoryObj;
 export const Default: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
-      <Source href="https://tailark.com">
+      <Source href="https://acme.com">
         <SourceTrigger showFavicon />
         <SourceContent
-          title="Tailark"
+          title="Acme"
           description="A collection of pre-built, responsive UI blocks and components for marketing websites."
         />
       </Source>

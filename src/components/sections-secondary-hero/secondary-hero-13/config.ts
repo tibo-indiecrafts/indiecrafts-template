@@ -15,4 +15,4 @@ export const secondaryHero13DownloadHref = "#" as const;
 
 /** Phone screenshot URL. */
 export const secondaryHero13PhoneImage =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/mobile_hwua2g.png" as const;
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/mobile_hwua2g.png" as const;

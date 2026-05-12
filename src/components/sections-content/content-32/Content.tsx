@@ -5,14 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { content32Namespace } from "./config";
 import type { ContentBlock } from "./schema";
 
-/**
- * Tailark `mist-content-3` — JSX verbatim. Centered editorial
- * section on `py-24` with an emoji-led header (🦊 + title + body)
- * inside `max-w-2xl`, capped by a feature card whose `aspect-*`
- * frame layers an absolute decorative `<img>` backdrop under a
- * nested `bg-background rounded-(--radius)` Image inset showing a
- * product screenshot.
- */
 export default function Content(props: Readonly<ContentBlock>) {
   const [t] = useScopedT(content32Namespace);
   const headingId = `${props.id}-heading`;

@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream JSX kept verbatim for fidelity */
+/* eslint-disable -- Acme Pro upstream JSX kept verbatim for fidelity */
 
 import Link from "next/link";
 import { Bolt } from "@/components/ui-primitives/svgs/dark-customers-one-bolt";

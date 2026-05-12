@@ -56,19 +56,6 @@ export type FeaturesExpandableItem = {
   supportive: SupportiveContent;
 };
 
-/**
- * Tailark Pro `expandable-features-7` — top tab bar (icons + labels,
- * no title) with an animated motion.div indicator that slides under
- * the active tab. Below: 2-column grid where the left column shows
- * the active item's title + description + CTA + supportive content
- * (metrics list OR testimonial) and the right column shows the active
- * illustration over a dithered background image (`aspect-7/8`).
- *
- * Shared CTA (`ctaLabelKey` + `ctaHref`) stays the same across all
- * items. Two items is structural — the upstream balances exactly two
- * tabs in the centered top bar. Converted to the template pattern:
- * props-driven items, MessageKey-typed strings, theme tokens.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-07";
   id: string;

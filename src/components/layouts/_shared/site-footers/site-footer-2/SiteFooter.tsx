@@ -29,11 +29,6 @@ const companyLinks = [
   { id: "privacy", href: "#" },
 ] as const;
 
-/**
- * Tailark Pro `dark-landing-one` footer — JSX preserved verbatim.
- * Forced `data-theme="dark"` was dropped so the footer follows
- * the surrounding theme. Strings flow through `blocks.site-footer-2.*`.
- */
 export function SiteFooter({ bgClassName = "bg-background" }: SiteFooterProps = {}) {
   const [t, , tRoot] = useScopedT(siteFooter2Namespace);
   const year = new Date().getFullYear();

@@ -5,23 +5,23 @@ const previews = [
   {
     label: "Analytics",
     image:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png",
     imageDark:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-2_qt7ip8.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-2_qt7ip8.png",
   },
   {
     label: "AI Copilot",
     image:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png",
     imageDark:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-3_tgdnaa.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-3_tgdnaa.png",
   },
   {
     label: "Task Management",
     image:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png",
     imageDark:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle_un3f39.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle_un3f39.png",
   },
 ];
 

@@ -5,15 +5,6 @@ import { LogoCloud01Section as LogoCloud } from "@/components/sections-logo-clou
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero14Namespace, hero14PrimaryCtaHref, hero14SecondaryCtaHref } from "./config";
 
-/**
- * Centered headline + body + dual CTAs paired with the `ProductStacked`
- * 3D-perspective dual-screen mock, with a cycling-brand `LogoCloud`
- * trail. Sourced from `@tailark-pro/hero-section-14`, refactored to
- * the project pattern: section semantics (no `<main>` — that's the
- * layout's job), all visible strings via `blocks.hero-14.*`,
- * primitives from `ui-primitives`, illustration from
- * `ui-illustrations`, logo cloud from `sections-logo-cloud`.
- */
 export function Hero() {
   const [t] = useScopedT(hero14Namespace);
 

@@ -16,7 +16,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `grid-2-brand-one` faithful port. */
 export function Landing({
   layout = brand01Defaults.layout,
   header = <Header10 />,
@@ -47,7 +46,7 @@ export function Landing({
                   {t("title")}
                 </h2>
                 <p className="text-muted-foreground mx-auto mt-4 mb-6 text-lg text-balance">
-                  Guidelines and assets for presenting the Tailark brand consistently.
+                  Guidelines and assets for presenting the Acme brand consistently.
                 </p>
                 <Button asChild>
                   <Link href="#">Download all assets</Link>
@@ -69,11 +68,11 @@ export function Landing({
                 <div data-grid-content className="p-6 @4xl:p-12">
                   <h2 className="text-muted-foreground text-balance">Naming</h2>
                   <p className="text-muted-foreground mt-6 text-xl font-medium text-balance">
-                    <span className="text-foreground">&ldquo;Tailark&rdquo;</span> is
-                    always written as a single word with a capital{" "}
+                    <span className="text-foreground">&ldquo;Acme&rdquo;</span> is always
+                    written as a single word with a capital{" "}
                     <span className="text-foreground">&ldquo;T&rdquo;</span>. Do not spell
                     it as <span className="text-foreground">&ldquo;TailArk&rdquo;</span>,{" "}
-                    <span className="text-foreground">&ldquo;tailark&rdquo;</span>,{" "}
+                    <span className="text-foreground">&ldquo;acme&rdquo;</span>,{" "}
                     <span className="text-foreground">&ldquo;TAILARK&rdquo;</span>, or any
                     other variation to ensure a unified identity across all touchpoints.
                   </p>

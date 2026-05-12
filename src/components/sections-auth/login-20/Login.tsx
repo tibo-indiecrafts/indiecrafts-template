@@ -36,16 +36,6 @@ function GoogleIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Tailark `sign-up-3` (dusk-kit) — JSX verbatim. Sign-up mirror of
- * `login-13` (login-3): `min-h-dvh flex` wrapper, plain centered
- * `max-w-92` form (no card chrome). Logo link, "Create a Tailark
- * Account" heading + subtitle, single full-width Google OAuth
- * button, "Or continue with" dashed-divider with
- * `grid-cols-[1fr_auto_1fr]` triple-row layout, email field only
- * (passwordless), "Continue" CTA. Inline "Sign In" footer for
- * returning users.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login20Namespace);
   const titleId = `${props.id}-title`;

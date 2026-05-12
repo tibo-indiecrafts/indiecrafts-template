@@ -1,10 +1,3 @@
-/**
- * Loyalty-program campaign card mock — header line plus two
- * Start-Date pill rows. Used by `sections-features-expandable/
- * features-expandable-14/`. Mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/expandable-features-14`
- * (upstream `CampaignIllustration`).
- */
 export const CampaignIllustration = () => (
   <div aria-hidden>
     <div className="mb-4 flex gap-2 text-sm">

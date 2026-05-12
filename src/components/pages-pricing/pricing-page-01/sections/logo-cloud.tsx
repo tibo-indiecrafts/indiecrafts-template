@@ -78,7 +78,7 @@ export function LogoCloud() {
       <div className="mx-auto max-w-5xl px-6">
         <div className="mx-auto mb-12 max-w-xl text-center text-balance md:mb-16">
           <p data-current={currentGroup} className="text-muted-foreground text-lg">
-            Tailark is trusted by leading teams from{" "}
+            Acme is trusted by leading teams from{" "}
             <span className="in-data-[current=ai]:text-foreground transition-colors duration-200">
               Generative AI Companies,
             </span>{" "}

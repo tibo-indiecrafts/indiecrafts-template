@@ -7,10 +7,6 @@ import { VercelFull } from "@/components/ui-primitives/svgs/vercel";
 import { useScopedT } from "@/i18n/scoped-t";
 import { logoCloud04Namespace } from "./config";
 
-/**
- * Compact centered logo cloud — small lead-in line + 3x2 brand grid.
- * Sourced from `@tailark-pro/hero-section-13`.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud04Namespace);
 

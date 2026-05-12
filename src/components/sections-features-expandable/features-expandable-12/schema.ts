@@ -55,21 +55,6 @@ export type FeaturesExpandableItem = {
   supportive: SupportiveContent;
 };
 
-/**
- * Tailark Pro `expandable-features-12` — auto-cycling 3-row stack of
- * numbered accordion items (01 / 02 / 03). Each item collapses to a
- * single button row (number + title + active dot) and expands to a
- * 2-col panel (description + supportive content on the left,
- * illustration on the right). A dashed-pixel progress line at the
- * bottom of each row clip-paths from left to right over the autoplay
- * duration. Hover-pause via `peer-active`. Three supportive content
- * kinds via the same discriminated union as `-11`.
- *
- * Three items is structural. Numbers (`01`, `02`, …) are
- * auto-generated from the array index — they're not part of the
- * schema. Converted to the template pattern: props-driven items,
- * MessageKey-typed strings, theme tokens.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-12";
   id: string;

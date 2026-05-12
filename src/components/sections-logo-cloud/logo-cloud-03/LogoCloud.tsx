@@ -9,11 +9,6 @@ import { Supabase } from "@/components/ui-primitives/svgs/supabase";
 import { useScopedT } from "@/i18n/scoped-t";
 import { logoCloud03Namespace } from "./config";
 
-/**
- * Flat 4x2 brand grid on a `bg-card` strip — no text labels in the
- * visible UI. The hidden `<h2>` carries `t("label")` for screen
- * readers. Sourced from `@tailark-pro/hero-section-11`.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud03Namespace);
 

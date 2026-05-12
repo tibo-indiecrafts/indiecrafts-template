@@ -5,16 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta08Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/**
- * Tailark `veil-call-to-action-3` — JSX verbatim. Centered veil
- * newsletter CTA inside `max-w-2xl @container py-24`. Title +
- * lead body above an inline email-capture row: a `Mail`-iconed
- * input with a focus-within ring + a primary `Subscribe` button
- * with a `ChevronRight` glyph. Mobile stacks the field + button
- * vertically (`@max-md:flex-col`); desktop pins them side-by-side
- * left-aligned (`@xl:text-left`). Default Tailwind font (no
- * `font-serif` override).
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta08Namespace);
   const headingId = `${props.id}-heading`;

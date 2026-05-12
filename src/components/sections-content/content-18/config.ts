@@ -11,7 +11,7 @@ export const content18Sample: Omit<ContentBlock, "id"> = {
     {
       variant: "padded",
       image: {
-        src: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/time_djv8te.webp",
+        src: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/time_djv8te.webp",
         width: 1278,
         height: 900,
         altKey: "blocks.content-18.cards.card1.alt",
@@ -23,7 +23,7 @@ export const content18Sample: Omit<ContentBlock, "id"> = {
     {
       variant: "padded",
       image: {
-        src: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/dots-2_kmiukp.webp",
+        src: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/dots-2_kmiukp.webp",
         width: 1388,
         height: 1388,
         altKey: "blocks.content-18.cards.card2.alt",
@@ -35,7 +35,7 @@ export const content18Sample: Omit<ContentBlock, "id"> = {
     {
       variant: "filled",
       image: {
-        src: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/dna_lp2xey.webp",
+        src: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/dna_lp2xey.webp",
         width: 1388,
         height: 1388,
         altKey: "blocks.content-18.cards.card3.alt",

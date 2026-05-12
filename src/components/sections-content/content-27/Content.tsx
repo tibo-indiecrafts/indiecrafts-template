@@ -4,13 +4,6 @@ import type { ContentBlock } from "./schema";
 
 const SLOTS = ["1", "2", "3"] as const;
 
-/**
- * Tailark `veil-content-1` — JSX verbatim. 2-column veil section
- * (`@2xl:grid-cols-2`) inside `max-w-3xl @container`: left column
- * holds the headline, right column stacks 3 muted paragraphs each
- * carrying a bold inline `<span>` lead followed by body copy.
- * Default Tailwind font (no `font-serif` override).
- */
 export default function Content({ id }: Readonly<ContentBlock>) {
   const [t] = useScopedT(content27Namespace);
   const headingId = `${id}-heading`;

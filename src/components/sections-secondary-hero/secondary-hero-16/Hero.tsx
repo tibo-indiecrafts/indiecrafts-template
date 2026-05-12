@@ -12,15 +12,6 @@ import { secondaryHero16DemoHref, secondaryHero16Namespace } from "./config";
 
 const FEATURE_KEYS = ["createInvoices", "trackPayments", "manageFinances"] as const;
 
-/**
- * Secondary hero — hero-14's enterprise contact content rearranged
- * into a bordered 2x4 grid with `+` decorators at the corners and
- * column intersections. Reuses the shared `EnterpriseForm` molecule.
- * Sourced from `@tailark-pro/secondary-hero-16`, refactored to the
- * project pattern: section semantics, all visible strings via
- * `blocks.secondary-hero-16.*`. Stats use `t.rich()` for inline
- * `<strong>` runs.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero16Namespace);
 

@@ -11,7 +11,7 @@ export const FoodDeliveryIllustration = () => (
           <div className="flex gap-4">
             <div className="bg-muted before:border-foreground/5 relative size-20 shrink-0 overflow-hidden rounded-xl before:absolute before:inset-0 before:rounded-xl before:border">
               <Image
-                src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/burger_vndgo4.jpg"
+                src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/burger_vndgo4.jpg"
                 alt="burger image"
                 width={640}
                 height={471}

@@ -7,19 +7,6 @@ import { Link } from "@/i18n/routing";
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero15CtaHref, hero15Namespace } from "./config";
 
-/**
- * Centered hero with a layered `CreditCard` illustration above an
- * indigo-tinted gradient backdrop, headline (with a gradient-clipped
- * accent span), body, and a single rounded-pill CTA. Below the
- * section a compact `LogoCloud` strip. Sourced from
- * `@tailark-pro/hero-section-15`, refactored to the project pattern:
- * section semantics (no `<main>` — that's the layout's job), all
- * visible strings via `blocks.hero-15.*`, primitives from
- * `ui-primitives`, illustration from `ui-illustrations`, animation
- * primitive from `ui-effects/animated-group`, logo cloud from
- * `sections-logo-cloud`. The hero locally overrides `--color-foreground`
- * to indigo-950 (white in dark mode) for a richer headline tint.
- */
 export function Hero() {
   const [t] = useScopedT(hero15Namespace);
 

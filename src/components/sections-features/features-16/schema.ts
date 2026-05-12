@@ -16,12 +16,6 @@ export type StatItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `features-4` — two-column hero (illustrated invoice + a
- * data-visualization mock) above a 4-stat footer strip with icon
- * highlights. Converted to the template pattern: props-driven cards
- * AND props-driven stats, MessageKey-typed strings, theme tokens.
- */
 export type FeaturesBlock = {
   type: "features-16";
   id: string;

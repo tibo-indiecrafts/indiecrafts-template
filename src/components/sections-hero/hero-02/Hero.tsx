@@ -13,14 +13,6 @@ import {
   hero02Namespace,
 } from "./config";
 
-/**
- * Hero with parallax cloud background, app-store CTAs, and a centered
- * mobile-wallet illustration. Sourced from
- * `@tailark-pro/hero-section-2`, refactored to the project pattern:
- * section semantics (no `<main>` — that's the layout's job), all
- * visible strings via `blocks.hero-02.*`, primitives from
- * `ui-primitives`, illustration from `ui-illustrations`.
- */
 export function Hero() {
   const [t] = useScopedT(hero02Namespace);
   const { scrollY } = useScroll();

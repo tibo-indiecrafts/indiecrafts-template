@@ -15,7 +15,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `grid-2-contact-one` faithful port. */
 export function Landing({
   layout = contactPage03Defaults.layout,
   header = <Header10 />,
@@ -84,38 +83,38 @@ export function Landing({
                   <div data-grid-content className="p-6 @4xl:p-12">
                     <h2 className="text-muted-foreground mb-2 text-sm">General</h2>
                     <Link
-                      href="mailto:hello@tailark.com"
+                      href="mailto:hello@acme.com"
                       className="hover:decoration-primary font-medium hover:underline"
                     >
-                      hello@tailark.com
+                      hello@acme.com
                     </Link>
                   </div>
                   <div data-grid-content className="p-6 @4xl:p-12">
                     <h2 className="text-muted-foreground mb-2 text-sm">Support</h2>
                     <Link
-                      href="mailto:support@tailark.com"
+                      href="mailto:support@acme.com"
                       className="hover:decoration-primary font-medium hover:underline"
                     >
-                      support@tailark.com
+                      support@acme.com
                     </Link>
                   </div>
 
                   <div data-grid-content className="p-6 @4xl:p-12">
                     <h2 className="text-muted-foreground mb-2 text-sm">X/Twitter</h2>
                     <Link
-                      href="https://twitter.com/tailarkui"
+                      href="https://twitter.com/acmeui"
                       className="hover:decoration-primary font-medium hover:underline"
                     >
-                      @tailarkui
+                      @acmeui
                     </Link>
                   </div>
                   <div data-grid-content className="p-6 @4xl:p-12">
                     <h2 className="text-muted-foreground mb-2 text-sm">GitHub</h2>
                     <Link
-                      href="https://github.com/tailark"
+                      href="https://github.com/acme"
                       className="hover:decoration-primary font-medium hover:underline"
                     >
-                      @tailark
+                      @acme
                     </Link>
                   </div>
                   <div

@@ -1,11 +1,5 @@
 import type { PortableTextBlock } from "@portabletext/types";
 
-/**
- * Customer-story shape consumed by `customer-story-01`. Mirrors the
- * Tailark Pro Sanity schema (the original registry was CMS-driven)
- * but keeps the project free of any CMS dependency. Consumers can
- * pass their own story object — see `Landing` props.
- */
 export type CustomerStoryAuthor = {
   name: string;
   role?: string;
@@ -38,7 +32,7 @@ export const customerStory01Sample: CustomerStory = {
   name: "Bolt",
   title: "How Bolt scaled streaming infrastructure to 10M concurrent viewers",
   about:
-    "Bolt is a streaming-platform engineering team that powers live and on-demand video for major broadcasters. They came to Tailark to cut buffering, ship features faster, and unify their content-delivery pipeline.",
+    "Bolt is a streaming-platform engineering team that powers live and on-demand video for major broadcasters. They came to Acme to cut buffering, ship features faster, and unify their content-delivery pipeline.",
   image:
     "https://images.unsplash.com/photo-1579353977828-2a4eab540b9a?q=80&w=2340&auto=format&fit=crop",
   website: "https://bolt.example.com",
@@ -53,7 +47,7 @@ export const customerStory01Sample: CustomerStory = {
         {
           _type: "span",
           _key: "intro-1",
-          text: "Before partnering with us, Bolt's engineering team spent months patching custom streaming logic across regions. By migrating to Tailark's optimization suite, they reduced buffering by 62% during peak viewing hours and unlocked a 30% drop in egress cost.",
+          text: "Before partnering with us, Bolt's engineering team spent months patching custom streaming logic across regions. By migrating to Acme's optimization suite, they reduced buffering by 62% during peak viewing hours and unlocked a 30% drop in egress cost.",
           marks: [],
         },
       ],
@@ -113,7 +107,7 @@ export const customerStory01Sample: CustomerStory = {
   ],
   testimonial: {
     quote:
-      "We tried five other vendors before Tailark. None of them came close on tail-latency under load. The team delivered exactly what they promised — and shipped it faster than we did.",
+      "We tried five other vendors before Acme. None of them came close on tail-latency under load. The team delivered exactly what they promised — and shipped it faster than we did.",
     author: {
       name: "Maya Okonkwo",
       role: "VP Engineering, Bolt",

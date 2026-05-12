@@ -40,20 +40,6 @@ export type FeaturesExpandableItem = {
   tabLabelKey: MessageKey;
 };
 
-/**
- * Tailark Pro `expandable-features-8` — auto-cycling 3-tab variant
- * built from the same building blocks as `-6` and `-7`. Single
- * shared title + body + CTA on the left (they don't change when the
- * tab changes), with a row of pill-style tab buttons under them; the
- * active tab shows a **circular SVG loader** that draws across the
- * autoplay duration (default 6s). Right column shows the active
- * illustration over a dithered bg image (`aspect-7/8`).
- *
- * Below the hero: a dashed `h-px` divider, then the same stats +
- * testimonial footer as `-6`. Three items is structural — the pill
- * row is balanced for exactly three. Converted to the template
- * pattern: props-driven items, stats, testimonial.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-08";
   id: string;

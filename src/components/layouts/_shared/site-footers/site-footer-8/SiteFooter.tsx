@@ -27,14 +27,6 @@ const SOCIAL_LINKS = [
 
 type LinkId = (typeof PRODUCT_LINKS)[number]["id"] | (typeof COMPANY_LINKS)[number]["id"];
 
-/**
- * Tailark `mist-footer-3` — JSX verbatim. Compact 5-col footer on
- * `bg-background border-b py-8 sm:py-20` inside `max-w-5xl`. Left
- * (`md:col-span-2`): Logo + 2 social icons stacked. Right
- * (`md:col-span-3`, `sm:grid-cols-3`): 2 link groups (Product /
- * Company). The right column reserves 3 slots even with 2 groups
- * so wider variants compose cleanly.
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter8Namespace);
   const homeLabel = t("homeLabel");

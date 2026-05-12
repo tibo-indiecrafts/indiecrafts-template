@@ -16,7 +16,7 @@ export function CallToAction() {
             </h2>
             <p className="text-muted-foreground mt-4 mb-6 text-balance">
               Join a community of over 1000+ companies and developers who have already
-              discovered the power of Tailark.{" "}
+              discovered the power of Acme.{" "}
             </p>
 
             <Button asChild>

@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream verbatim, kept as-is */
+/* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
 import Image from "next/image";
 import { Container } from "@/components/ui-primitives/grid-2-about-container";
 import { YCombinator } from "@/components/ui-primitives/svgs/grid-2-about-y-combinator";

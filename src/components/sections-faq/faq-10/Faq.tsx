@@ -11,15 +11,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { faq10Namespace } from "./config";
 import type { FaqBlock } from "./schema";
 
-/**
- * Tailark `mist-faqs-3` — JSX verbatim. Centered narrow column
- * (`max-w-2xl`) FAQ. `text-4xl font-semibold` heading, then a single
- * `Accordion` with `-mx-2 sm:mx-0` negative gutter. Each item is
- * wrapped in a `group` div so the sibling `<hr>` divider hides on
- * the active row (`peer-data-[state=open]:opacity-0`) and on the
- * last row (`group-last:hidden`). Active row gets `bg-muted` tint.
- * Inline centered contact prompt below.
- */
 export default function Faq(props: Readonly<FaqBlock>) {
   const [, , tRoot] = useScopedT(faq10Namespace);
   const headingId = `${props.id}-heading`;

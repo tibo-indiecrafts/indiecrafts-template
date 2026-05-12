@@ -8,13 +8,6 @@ export type FeatureItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `features-2` — two-column card grid where each column is
- * an illustration above a centered title + body. Subgrid rows align
- * illustration heights and text baselines across both columns.
- * Converted to the template pattern: props-driven items, MessageKey-
- * typed strings, theme tokens.
- */
 export type FeaturesBlock = {
   type: "features-14";
   id: string;

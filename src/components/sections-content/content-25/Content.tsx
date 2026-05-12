@@ -4,13 +4,6 @@ import type { ContentBlock } from "./schema";
 
 const SLOTS = ["1", "2"] as const;
 
-/**
- * Tailark `veil-content-2` — JSX verbatim. Simple veil section
- * inside `max-w-2xl @container` with a serif `font-serif text-4xl`
- * headline above a 2-col paragraph grid (`@xl:gap-12 grid-cols-2`),
- * each paragraph carrying a bold inline `<span>` lead followed by
- * muted body copy, separated from the headline by a `border-t`.
- */
 export default function Content({ id }: Readonly<ContentBlock>) {
   const [t] = useScopedT(content25Namespace);
   const headingId = `${id}-heading`;

@@ -5,10 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta06Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/**
- * Tailark Pro `libre-landing-two` CallToAction — JSX verbatim.
- * Centered title/body/CTA atop a `CtaIllustration` backdrop.
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta06Namespace);
   const external = props.primary.href.startsWith("http");

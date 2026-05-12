@@ -11,11 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-contact-sales-one` composition. Centered hero
- * heading "Contact Sales" with a single full-width inquiry form
- * spanning the inner grid. Light + dark theme.
- */
 export const contactPage06Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "contact-page-06-hero" },

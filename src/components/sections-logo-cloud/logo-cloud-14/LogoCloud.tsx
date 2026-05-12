@@ -11,11 +11,6 @@ import { cn } from "@/lib/utils";
 import { logoCloud14Namespace } from "./config";
 import type { LogoCloudBlock } from "./schema";
 
-/**
- * Tailark Pro `libre-landing-one` LogoCloud — JSX verbatim. Static
- * 8-logo grid (no rotator) with optional `verticalAligned` mode for
- * a centered single-column layout.
- */
 export default function LogoCloud(props: Readonly<LogoCloudBlock>) {
   const [, , tRoot] = useScopedT(logoCloud14Namespace);
   const external = props.caseStudyHref.startsWith("http");

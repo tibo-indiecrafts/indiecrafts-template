@@ -4,13 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { testimonials08Namespace } from "./config";
 import type { TestimonialsBlock } from "./schema";
 
-/**
- * Tailark `mist-testimonials-5` — JSX verbatim. Single centered
- * pull-quote on `bg-muted py-24` inside `max-w-2xl text-center`:
- * a `Quote` icon glyph (`fill-background stroke-background drop-shadow-sm`)
- * over a `text-xl` blockquote, footer-stacked with a `size-12`
- * Avatar (with `AvatarFallback` initial), author name, and `@handle`.
- */
 export default function Testimonials(props: Readonly<TestimonialsBlock>) {
   const [, , tRoot] = useScopedT(testimonials08Namespace);
   const author = tRoot(props.authorKey);

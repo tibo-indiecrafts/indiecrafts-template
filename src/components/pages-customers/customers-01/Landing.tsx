@@ -15,7 +15,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `dark-customers-one` faithful port. */
 export function Landing({
   layout = customers01Defaults.layout,
   header = <Header10 />,
@@ -37,8 +36,8 @@ export function Landing({
               </span>
             </h2>
             <p className="text-muted-foreground mx-auto max-w-lg text-lg text-balance lg:text-xl">
-              Tailark is trusted by over 100 companies to help them scale their business
-              and stay ahead of the competition.
+              Acme is trusted by over 100 companies to help them scale their business and
+              stay ahead of the competition.
             </p>
           </div>
         </div>

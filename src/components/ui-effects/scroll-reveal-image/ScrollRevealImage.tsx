@@ -3,7 +3,7 @@ import { motion, useMotionTemplate, useScroll, useTransform } from "motion/react
 import { cn } from "@/lib/utils";
 
 const DEFAULT_SRC =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/flower_a5umwb.webp";
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/flower_a5umwb.webp";
 
 export type ScrollRevealImageProps = {
   src?: string;
@@ -11,13 +11,6 @@ export type ScrollRevealImageProps = {
   className?: string;
 };
 
-/**
- * Scroll-driven reveal-zoom image effect — as the user scrolls, the
- * clip-path inset shrinks from 5% to 0% (full reveal) and the inner
- * image scales from 1.4 to 1 (zoom-out). Result: the image starts as
- * a small zoomed-in window and grows / un-zooms into a full panorama.
- * Authored from `@tailark-pro/secondary-hero-11`'s `ImageIllustration`.
- */
 export const ScrollRevealImage = ({
   src = DEFAULT_SRC,
   alt = "Hero backdrop",

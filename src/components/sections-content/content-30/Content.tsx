@@ -17,19 +17,6 @@ import type { ContentBlock } from "./schema";
 
 const CODE_SLOTS = ["1", "2", "3", "4", "5"] as const;
 
-/**
- * Tailark `mist-content-2` — JSX verbatim. Editor-themed section
- * on `bg-muted/50 py-24` with eyebrow + title + body, then two
- * stacked rows separated by a hairline divider. Each row pairs an
- * illustration (left, `sm:col-span-2`) with title + body copy
- * (right, `sm:col-span-3 sm:border-l sm:pl-12`):
- *  - Row 1: `CodeIllustration` (radial-masked typography list with
- *    "Import" cue) → "Marketing Campaigns" copy
- *  - Row 2: `ScheduleIllustration` (floating toolbar with primary
- *    Schedule button + 4-toggle ToggleGroup + Ellipsis menu, above
- *    a sentence with a highlighted timestamp) → "AI Meeting
- *    Scheduler" copy
- */
 export default function Content({ id }: Readonly<ContentBlock>) {
   const [t] = useScopedT(content30Namespace);
   const headingId = `${id}-heading`;

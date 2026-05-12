@@ -4,14 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { content22Namespace } from "./config";
 import type { ContentBlock } from "./schema";
 
-/**
- * Tailark `content-7` — JSX verbatim. 2-column section: left
- * column carries the headline + 2 lead paragraphs (with inline
- * `<strong>` highlight) + a 2-up feature grid (Zap → Faaast,
- * Cpu → Powerful). Right column hosts a framed product image with
- * theme-aware light/dark variants on a `bg-linear-to-b` border-tint
- * `p-px` chrome.
- */
 export default function Content(props: Readonly<ContentBlock>) {
   const [t] = useScopedT(content22Namespace);
   const headingId = `${props.id}-heading`;

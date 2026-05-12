@@ -19,16 +19,6 @@ const STAT_BRANDS = [
   { key: "integration", brand: <VercelFull height={24} width={78} /> },
 ] as const;
 
-/**
- * Secondary hero — same content shape as secondary-hero-14 plus a
- * full-section dashed-column overlay (desktop only) and a vertical
- * primary-color tick before each stat. Reuses the shared
- * `EnterpriseForm` molecule. Sourced from
- * `@tailark-pro/secondary-hero-15`, refactored to the project pattern:
- * section semantics, all visible strings via
- * `blocks.secondary-hero-15.*`. The overlay's local `--color-border`
- * is set to `--color-border-illustration` for a softer dashed line.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero15Namespace);
 

@@ -64,12 +64,6 @@ type LinkId =
   | (typeof COMPANY_LINKS)[number]["id"]
   | (typeof LEGAL_LINKS)[number]["id"];
 
-/**
- * Tailark `footer-3` — JSX verbatim. Maximal footer composition:
- * top row (Logo + 6 social icons) above an `mb-8 border-b`, then a
- * 5-col / 4-col grid hosting 4 link groups + a newsletter form,
- * capped by a divider row holding copyright + language select.
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter7Namespace);
   const homeLabel = t("homeLabel");

@@ -17,14 +17,6 @@ import type { ContentBlock } from "./schema";
 
 const CODE_SLOTS = ["1", "2", "3", "4", "5"] as const;
 
-/**
- * Tailark `mist-content-1` — JSX verbatim. Sibling of content-30
- * (mist-content-2) with the same `Smart Editor` header but the two
- * stacked rows use **column-divided** grids (`sm:divide-x`) and the
- * second row's columns are **flipped**: text left + schedule
- * illustration right (vs content-30 which kept the illustration on
- * the left in both rows).
- */
 export default function Content({ id }: Readonly<ContentBlock>) {
   const [t] = useScopedT(content31Namespace);
   const headingId = `${id}-heading`;

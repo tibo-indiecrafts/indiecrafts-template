@@ -52,16 +52,6 @@ function MicrosoftIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>)
   );
 }
 
-/**
- * Tailark `login-1` (dusk-kit) — JSX verbatim. Self-contained
- * sign-in card on a `min-h-dvh flex items-center` wrapper. Card
- * chrome uses `bg-card rounded-[calc(var(--radius)+.125rem)] border
- * p-0.5 shadow-md` to inset the muted footer. Top section: logo
- * link, heading, subtitle, 2-col Google/Microsoft SSO buttons,
- * dashed divider, username + password (with inline forgot link),
- * submit. Bottom section: muted box with "Create account" link.
- * Project's `LogoIcon` swapped in for the upstream logo.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login10Namespace);
   const titleId = `${props.id}-title`;

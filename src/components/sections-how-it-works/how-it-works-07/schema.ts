@@ -14,21 +14,6 @@ export type HowItWorksStep = {
   verticalAlign?: "end" | "center";
 };
 
-/**
- * Tailark Pro `how-it-works-07` — 3-step composition rendered as a
- * single bordered grid (`@4xl:grid-cols-3` with `@4xl:divide-x`).
- * Header above the grid carries the section title + a body with
- * `<strong>` highlight via `t.rich(...)`. Four PlusDecorator marks
- * sit at the outer corners.
- *
- * Each step has a `Counter` pill (diagonal-stripe filled, mono font)
- * pinned at the top and an illustration below. Step 2 adds a
- * decorated backdrop (radial gradient blur + cross-grid pattern)
- * behind its illustration via `decoratedBackdrop: true`.
- *
- * Three steps is structural — the grid + nth-child border logic
- * balances at exactly three.
- */
 export type HowItWorksBlock = {
   type: "how-it-works-07";
   id: string;

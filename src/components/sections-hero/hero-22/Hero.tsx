@@ -17,12 +17,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { hero22Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 
-/**
- * Tailark `hero-section-4` — JSX verbatim. Two-column hero with
- * left-aligned title + dual CTAs alongside a masked grayscale photo
- * with mix-blend overlay, followed by an InfiniteSlider logo strip
- * with `ProgressiveBlur` edge fades.
- */
 export default function Hero(props: Readonly<HeroBlock>) {
   const [, , tRoot] = useScopedT(hero22Namespace);
 

@@ -3,16 +3,6 @@ import Image from "next/image";
 const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 
-/**
- * Project-board collaboration text mock — two paragraphs of body
- * copy with two highlighted phrases attached to floating user-name
- * tooltips (Shadcn / Méschac). Used by `sections-features-expandable/
- * features-expandable-14/`. Mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/expandable-features-14`
- * (upstream `CollaborationIllustration`; renamed to disambiguate from
- * the existing `collaboration-comment-illustration` which renders a
- * comment thread).
- */
 export const CollaborationTextIllustration = () => {
   return (
     <div

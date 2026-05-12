@@ -119,7 +119,7 @@ export const Flow13Illustration = () => {
           <path d="M0.5 195V244" stroke="currentColor" strokeLinecap="round" />
 
           <motion.path
-            key={`event-tailark-${activeEvent}`}
+            key={`event-acme-${activeEvent}`}
             d="M65.5 0V49"
             pathLength="1"
             stroke={`var(--color-${currentEvent.color}-400)`}
@@ -131,7 +131,7 @@ export const Flow13Illustration = () => {
           />
 
           <motion.path
-            key={`tailark-llm-center-${activeEvent}`}
+            key={`acme-llm-center-${activeEvent}`}
             d="M65.5 106V155"
             pathLength="1"
             stroke="var(--color-indigo-400)"
@@ -143,7 +143,7 @@ export const Flow13Illustration = () => {
           />
 
           <motion.path
-            key={`tailark-llm-left-${activeEvent}`}
+            key={`acme-llm-left-${activeEvent}`}
             d="M64 106C63.8576 109.843 61.9802 115.764 59.5305 121.301C54.5209 132.623 38.5003 133 26.119 133H23C10.5736 133 0.5 143.074 0.5 155.5"
             pathLength="1"
             stroke="var(--color-purple-400)"
@@ -155,7 +155,7 @@ export const Flow13Illustration = () => {
           />
 
           <motion.path
-            key={`tailark-llm-right-${activeEvent}`}
+            key={`acme-llm-right-${activeEvent}`}
             d="M67 106C67.1424 109.843 69.0198 115.764 71.4695 121.301C76.4791 132.623 92.4997 133 104.881 133H108C120.426 133 130.5 143.074 130.5 155.5"
             pathLength="1"
             stroke="var(--color-cyan-400)"

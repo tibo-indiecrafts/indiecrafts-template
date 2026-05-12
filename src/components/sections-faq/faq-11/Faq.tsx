@@ -11,15 +11,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { faq11Namespace } from "./config";
 import type { FaqBlock } from "./schema";
 
-/**
- * Tailark `faqs-2` (dusk-kit) — JSX verbatim. Centered narrow
- * column with `max-w-xl` heading (`text-3xl font-bold md:text-4xl
- * lg:text-5xl`) + balanced body, then a chrome-card Accordion
- * (`bg-card ring-muted w-full rounded-2xl border px-8 py-3 shadow-sm
- * ring-4 dark:ring-0`) with `border-dashed` AccordionItems. Inline
- * centered contact prompt below, indented `px-8` to align under the
- * Accordion's inner padding.
- */
 export default function Faq(props: Readonly<FaqBlock>) {
   const [, , tRoot] = useScopedT(faq11Namespace);
   const headingId = `${props.id}-heading`;

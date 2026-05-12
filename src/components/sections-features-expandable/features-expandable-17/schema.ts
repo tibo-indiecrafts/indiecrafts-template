@@ -62,19 +62,6 @@ export type FeaturesExpandableItem = {
   supportive: SupportiveContent;
 };
 
-/**
- * Tailark Pro `expandable-features-17` — click-driven 2-tab variant
- * with an asymmetric 2-column layout. The left column holds a
- * pill-button row, the active item's title + body + "Learn more"
- * outline button, AND a supportive-content slot pinned to the
- * bottom (`metrics` 4-line stat list OR `testimonial` quote-card).
- * The right column shows an `aspect-3/4` illustration card with a
- * dithered bg image (`opacity-65` light / `dark:opacity-35`).
- *
- * Two items is structural — the layout assumes two pills sit on
- * one row. Converted to the template pattern: props-driven items,
- * MessageKey-typed strings, theme tokens.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-17";
   id: string;

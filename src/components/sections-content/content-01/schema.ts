@@ -1,9 +1,5 @@
 import type { MessageKey } from "@/types/messages";
 
-/**
- * Tailark `content-1` block converted to the template's typed/i18n pattern.
- * Two-column editorial layout: image on the left, copy + quote on the right.
- */
 export type ContentBlock = {
   type: "content-01";
   id: string;

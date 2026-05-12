@@ -18,9 +18,6 @@ export type FeaturesItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark `features-4` — 6-cell bordered grid of inline features, 2 rows × 3 columns.
- */
 export type FeaturesBlock = {
   type: "features-04";
   id: string;

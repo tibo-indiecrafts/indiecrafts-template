@@ -2,14 +2,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { stats19Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Tailark `veil-stats-1` — JSX verbatim. Centered veil section
- * inside `max-w-2xl @container` with title + body, then a
- * `@xl:grid-cols-3 grid-cols-2` row of inline-style stat lines.
- * Each cell is a `border-y py-6 text-xl` paragraph with a bold
- * `<span>` value followed by trailing copy. Default Tailwind font
- * (no `font-serif` override).
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [, , tRoot] = useScopedT(stats19Namespace);
   const headingId = `${props.id}-heading`;

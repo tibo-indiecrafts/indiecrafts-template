@@ -15,16 +15,6 @@ import {
   secondaryHero18SecondaryCtaHref,
 } from "./config";
 
-/**
- * Secondary hero — bordered 6-column grid with `+` corner decorators.
- * Top row: headline + body + dual CTAs (left half) + masked product
- * preview (right half). Bottom row: 6 brand-logo cells (Stripe /
- * OpenAI / Vercel / Hulu / Bolt / Cisco). Sourced from
- * `@tailark-pro/secondary-hero-18`, refactored to the project pattern:
- * section semantics, all visible strings via
- * `blocks.secondary-hero-18.*`. The product preview is inlined as a
- * private subcomponent since this side-masked variant isn't reused.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero18Namespace);
 

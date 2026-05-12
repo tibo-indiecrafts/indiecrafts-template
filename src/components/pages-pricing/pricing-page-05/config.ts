@@ -11,11 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-pricing-two` composition. Single-tier pricing
- * page: Container hero → Pricing → LogoCloud → FAQs. Light + dark
- * theme; white page background.
- */
 export const pricingPage05Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "pricing-page-05-hero" },

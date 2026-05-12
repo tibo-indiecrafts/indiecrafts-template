@@ -27,15 +27,6 @@ const chartData = [
   { month: "April", desktop: 400, mobile: 800 },
 ];
 
-/**
- * Medium stacked area chart illustration — desktop vs mobile traffic
- * over six months in primary + indigo-300, sized for medium bento
- * cells (`h-36` with `-mb-4` overflow). Pure decoration; no
- * translations. Sourced from `@tailark-pro/bento-08` (upstream's
- * bento-08-specific chart variant; differs from our default
- * `chart-illustration` (emerald + indigo, h-72) and
- * `chart-compact-illustration` (orange + violet, h-28)).
- */
 export const ChartMediumIllustration = () => {
   return (
     <ChartContainer className="-mb-4 aspect-auto h-36" config={chartConfig}>

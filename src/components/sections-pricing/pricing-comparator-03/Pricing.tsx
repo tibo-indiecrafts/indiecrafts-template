@@ -21,14 +21,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-comparator-3` — JSX verbatim. Centered tier-by-tier
- * comparator on `bg-background @container py-24` inside `max-w-2xl`.
- * Each tier is a horizontal row card (`@lg:flex-row`) — left side
- * holds name + description + price + CTA; right side holds the
- * feature value table. The highlighted tier gets a `ring-primary
- * ring-2` outline. Default Tailwind font (no `font-serif` override).
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricingComparator03Namespace);
   const headingId = `${props.id}-heading`;

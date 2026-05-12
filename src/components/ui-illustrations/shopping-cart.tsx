@@ -31,7 +31,7 @@ export const ShoppingCartIllustration = () => (
           <div className="flex items-center gap-3">
             <div className="bg-muted before:border-foreground/5 relative size-16 shrink-0 overflow-hidden rounded-xl before:absolute before:inset-0 before:rounded-xl before:border">
               <Image
-                src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/headphones_itdu2u.jpg"
+                src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/headphones_itdu2u.jpg"
                 alt="headphones image"
                 width={640}
                 height={471}
@@ -48,7 +48,7 @@ export const ShoppingCartIllustration = () => (
           <div className="flex items-center gap-3">
             <div className="bg-muted before:border-foreground/5 relative size-16 shrink-0 overflow-hidden rounded-xl before:absolute before:inset-0 before:rounded-xl before:border">
               <Image
-                src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/phone-case_hugr6r.jpg"
+                src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/phone-case_hugr6r.jpg"
                 alt="phone case image"
                 width={640}
                 height={471}

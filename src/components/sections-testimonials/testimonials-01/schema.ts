@@ -16,12 +16,6 @@ export type TestimonialsQuote = {
   avatarUrl?: string;
 };
 
-/**
- * Tailark `testimonials` — pull-quote section. Renders one centered
- * quote when `quotes.length === 1`; renders a vertically-stacked list
- * with separators when `quotes.length > 1`. Sample defaults to a single
- * quote — pass a longer `quotes` array to render multiple testimonials.
- */
 export type TestimonialsBlock = {
   type: "testimonials-01";
   id: string;

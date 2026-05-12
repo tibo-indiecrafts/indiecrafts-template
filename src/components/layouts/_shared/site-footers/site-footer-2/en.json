@@ -1,5 +1,5 @@
 {
-  "tagline": "Tailark is a platform for building AI-powered applications.",
+  "tagline": "Acme is a platform for building AI-powered applications.",
   "groups": {
     "product": "Product",
     "company": "Company",
@@ -19,6 +19,6 @@
     "linkedin": "LinkedIn"
   },
   "status": "All Systems Normal",
-  "copyright": "© {year} Tailark, All rights reserved",
+  "copyright": "© {year} Acme, All rights reserved",
   "home": "go home"
 }

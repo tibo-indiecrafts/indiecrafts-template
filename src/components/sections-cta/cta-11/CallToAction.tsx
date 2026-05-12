@@ -5,15 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { cta11Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 
-/**
- * Tailark `mist-call-to-action-3` — JSX verbatim. Mist banner CTA
- * on `bg-muted py-12` inside `max-w-5xl`. Headline uses a 2-tone
- * effect: a muted prefix span (e.g. "Build Modern Websites.") + a
- * foreground emphasis tail (e.g. "Drive Results"). Below: lead
- * body and dual CTAs — primary "Try Mist for Free" with right
- * `ChevronRight` glyph + outline "Request a Demo" with leading
- * `Calendar` glyph.
- */
 export default function CallToAction(props: Readonly<CallToActionBlock>) {
   const [, , tRoot] = useScopedT(cta11Namespace);
   const headingId = `${props.id}-heading`;

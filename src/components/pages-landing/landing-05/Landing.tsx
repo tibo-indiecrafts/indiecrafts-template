@@ -22,10 +22,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Tailark Pro `libre-landing-one` faithful port. Eight sections in
- * upstream order. JSX preserved verbatim per section.
- */
 export function Landing({
   layout = landing05Defaults.layout,
   header = <Header10 />,

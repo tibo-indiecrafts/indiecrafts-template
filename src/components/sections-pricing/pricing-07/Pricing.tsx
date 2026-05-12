@@ -5,16 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { pricing07Namespace } from "./config";
 import type { PricingBlock, PricingTier } from "./schema";
 
-/**
- * Tailark `pricing-4` — JSX verbatim. Asymmetric 2-tier pricing on
- * `py-16 md:py-32` inside `max-w-5xl`. Outer grid is `md:grid-cols-5`
- * with the basic tier `md:col-span-2` flush against the pro tier
- * `md:col-span-3`. The basic tier is a plain bordered card with
- * outline CTA + 3 features. The pro tier is `dark:bg-muted` tinted
- * with `shadow-lg shadow-gray-950/5`, internally `sm:grid-cols-2`
- * (left: name + price + primary CTA / right: "Everything in free
- * plus" + 10-feature checklist).
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricing07Namespace);
   const headingId = `${props.id}-heading`;

@@ -16,16 +16,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-comparator-2` — JSX verbatim. Centered Free-vs-Pro
- * comparator on `bg-background @container py-24` inside `max-w-2xl`.
- * Card hosts a 3-col `grid grid-cols-3` table with `bg-primary/5`
- * highlight on the Pro column. Each row stripes `border-t`. Cells
- * either show plain text (resolved from `labelKey`) or boolean
- * `Check`/`Minus` icons. Header row holds plan name + price; footer
- * row holds the CTAs (outline for Free, primary for Pro). Default
- * Tailwind font (no `font-serif` override).
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricingComparator02Namespace);
   const headingId = `${props.id}-heading`;

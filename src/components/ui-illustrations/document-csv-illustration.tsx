@@ -1,11 +1,3 @@
-/**
- * CSV-document illustration — corner-bevel mini card with a "CSV"
- * teal badge floating bottom-right and a 7-row × 3-column data
- * grid (header row darker, body rows muted) suggesting tabular
- * data. Used by `sections-how-it-works/how-it-works-04/`'s "Data
- * Collection" step. Pure decoration; no translations. Sourced from
- * `@tailark-pro/how-it-works-04` (upstream `DocumentCsvIllustration`).
- */
 export const DocumentCsvIllustration = () => {
   return (
     <div aria-hidden className="relative size-fit">

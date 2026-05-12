@@ -8,15 +8,6 @@ import { ProductIllustration } from "@/components/ui-illustrations/product-illus
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero05Namespace, hero05PrimaryCtaHref, hero05SecondaryCtaHref } from "./config";
 
-/**
- * Left-column hero: headline + dual CTA + brand-logo trust strip,
- * paired with a right-floated skewed framed dashboard mock on desktop.
- * Sourced from `@tailark-pro/hero-section-5`, refactored to the project
- * pattern: section semantics (no `<main>` — that's the layout's job),
- * all visible strings via `blocks.hero-05.*`, primitives from
- * `ui-primitives`, SVG brands from `ui-primitives/svgs`, illustration
- * from `ui-illustrations`.
- */
 export function Hero() {
   const [t] = useScopedT(hero05Namespace);
 

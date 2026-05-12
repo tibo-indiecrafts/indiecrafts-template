@@ -7,16 +7,6 @@ const DOC_TYPES = [
   { type: "TXT", chip: "bg-orange-600 shadow-orange-900/25" },
 ] as const;
 
-/**
- * Animated data-flow illustration — a SOURCE card on the left feeds
- * an animated dashed beam into the brand logo node, which then
- * fans out three more beams to PDF / DOC / TXT document mocks on the
- * right. Beam keyframes live in `flow-illustration.css` and are
- * picked up via the auto-aggregator. Pure decoration; mock labels
- * stay hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/features-carousel-05` (upstream `Flow5Illustration`;
- * renamed since no Flow1..4 exist).
- */
 export const FlowIllustration = () => {
   return (
     <div

@@ -17,14 +17,6 @@ const NAV_LINKS = [
   { id: "contact", href: "#" },
 ] as const;
 
-/**
- * Tailark `veil-footer-5` — JSX verbatim. Stacked veil footer on
- * `bg-background @container py-12` inside `max-w-2xl`. Top: a
- * `LogoIcon` button (`size-8 rounded-lg hover:bg-foreground/5`).
- * Below: 5-link nav rail. Then a 3-button `ThemeSwitcher`
- * (system/light/dark) with a fade-in `aria-live` tooltip.
- * `border-t pt-6` copyright with `next-intl` `{year}` interpolation.
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter12Namespace);
   const homeLabel = t("homeLabel");

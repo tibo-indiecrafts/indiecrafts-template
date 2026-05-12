@@ -36,14 +36,6 @@ function GoogleIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Tailark `login-3` (dusk-kit) — JSX verbatim. Minimal passwordless
- * sign-in: `min-h-dvh flex` wrapper, plain centered `max-w-92` form
- * (no card chrome). Logo link, heading + subtitle, single full-width
- * Google OAuth button, "Or continue with" dashed-divider
- * (`grid-cols-[1fr_auto_1fr]`), email field, "Continue" submit.
- * Inline "Create account" footer below the inner padding.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login13Namespace);
   const titleId = `${props.id}-title`;

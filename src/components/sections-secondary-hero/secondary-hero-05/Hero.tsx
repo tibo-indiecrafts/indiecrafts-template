@@ -9,17 +9,6 @@ import {
   secondaryHero05Namespace,
 } from "./config";
 
-/**
- * Secondary hero — left-aligned tagged headline + body + small CTA,
- * paired with the `BillingGrid` illustration (dashed-grid frame
- * containing the `BillingTable`) over a soft photo backdrop (light
- * mode only). Sourced from `@tailark-pro/secondary-hero-05`,
- * refactored to the project pattern: section semantics (no `<main>`
- * — that's the layout's job), all visible strings via
- * `blocks.secondary-hero-05.*`, primitives from `ui-primitives`,
- * illustrations from `ui-illustrations`. The Tailark original wrapped
- * the illustration in a `<Header />` — that's chrome, dropped here.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero05Namespace);
 

@@ -25,8 +25,8 @@ export const HeroIllustration = () => {
         <div className="relative [--color-border-illustration:--alpha(var(--color-zinc-950)/12.5%)] [--color-border:--alpha(var(--color-zinc-950)/10%)]">
           <div className="absolute inset-0 mask-t-from-65% mask-t-to-85%">
             <img
-              src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/16-bg_kkevzx.webp"
-              alt="tailark hero section background"
+              src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/16-bg_kkevzx.webp"
+              alt="acme hero section background"
               className="size-full -scale-100 object-bottom opacity-7.5"
               loading="lazy"
             />
@@ -538,8 +538,8 @@ export const HeroIllustration = () => {
       </div>
       <div className="aspect-72/41 lg:hidden">
         <Image
-          src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/hero-illustration_nl1gdn.png"
-          alt="tailark hero section"
+          src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/hero-illustration_nl1gdn.png"
+          alt="acme hero section"
           width={833}
           height={469}
           sizes="100vw"

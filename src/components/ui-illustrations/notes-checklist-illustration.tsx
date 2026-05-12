@@ -17,16 +17,6 @@ const INITIAL_TASKS: readonly Task[] = [
   { id: 5, text: "Send weekly report", completed: false },
 ];
 
-/**
- * Sticky-note todo illustration — three stacked rotated amber/yellow
- * note cards with a "Quick Tasks" checklist on the front sheet. Each
- * row is a `<button>` so a user can toggle the strike-through state;
- * the parent is `aria-hidden` so it stays decorative for assistive
- * tech. Mock task copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/features-carousel-01` (upstream
- * `Notes3Illustration`). Distinct from `notes-illustration.tsx`
- * (the voice-memo note card).
- */
 export const NotesChecklistIllustration = () => {
   const [tasks, setTasks] = useState<readonly Task[]>(INITIAL_TASKS);
 

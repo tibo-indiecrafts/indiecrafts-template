@@ -85,11 +85,6 @@ const RICH_STAT = {
   ),
 };
 
-/**
- * Maps the active index to the grid-rows template that allocates the
- * vertical fr to the expanded item. Hardcoded for 3 slots since the
- * Tailark layout is built for exactly three.
- */
 const ROW_TEMPLATES: readonly string[] = [
   "grid-rows-[1fr_auto_auto]",
   "grid-rows-[auto_1fr_auto]",

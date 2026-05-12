@@ -27,14 +27,6 @@ export type CodeWidget = {
 
 export type Widget = IconsWidget | CodeWidget;
 
-/**
- * Tailark Pro `features-8` — the same masked-frame layout as
- * `features-7` but the stat row is replaced by 3 mixed widgets: two
- * icon-triple cards (e.g. IDEs / LLMs) and one CLI snippet card with
- * inline accent-coloured `<code>` chips. Converted to the template
- * pattern: props-driven widgets via a discriminated union, MessageKey-
- * typed strings, theme tokens.
- */
 export type FeaturesBlock = {
   type: "features-20";
   id: string;

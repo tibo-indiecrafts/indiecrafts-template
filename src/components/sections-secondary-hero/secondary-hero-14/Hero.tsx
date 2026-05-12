@@ -18,16 +18,6 @@ const STAT_BRANDS = [
   { key: "integration", brand: <VercelFull height={24} width={78} /> },
 ] as const;
 
-/**
- * Secondary hero — enterprise contact / sales inquiry layout. Left
- * tagged headline + body + Watch-demo CTA + checklist; right
- * `EnterpriseForm`. Below: 4-card stats row pairing rich-text
- * benefit copy with brand SVGs. Sourced from
- * `@tailark-pro/secondary-hero-14`, refactored to the project pattern:
- * section semantics, all visible strings via
- * `blocks.secondary-hero-14.*` (the stats row uses `t.rich()` for the
- * `<strong>` headline run inside each stat).
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero14Namespace);
 

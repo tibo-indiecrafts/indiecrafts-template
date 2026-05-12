@@ -22,7 +22,7 @@ export const PaymentsDiagram = () => {
         <div className="relative [--color-border-illustration:--alpha(var(--color-foreground)/12.5%)] [--color-border:--alpha(var(--color-foreground)/10%)]">
           <div className="absolute inset-0 mask-t-from-65% mask-t-to-85%">
             <Image
-              src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/16-bg_kkevzx.webp"
+              src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/16-bg_kkevzx.webp"
               alt="Payments background"
               className="size-full -scale-100 object-bottom opacity-7.5 dark:opacity-2.5"
               loading="lazy"
@@ -150,7 +150,7 @@ export const PaymentsDiagram = () => {
       </div>
       <div className="aspect-72/41 lg:hidden">
         <Image
-          src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/hero-illustration_nl1gdn.png"
+          src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/hero-illustration_nl1gdn.png"
           alt="Payments illustration"
           width={2304}
           height={1298}

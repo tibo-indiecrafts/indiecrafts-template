@@ -12,7 +12,7 @@ export const features24Sample: Omit<FeaturesBlock, "id"> = {
   ideListLabelKey: "blocks.features-24.ideListLabel",
   ides: ["intellij", "vsCode", "windsurf"],
   screenshotUrl:
-    "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/tailark_zazuhl.png",
+    "https://raw.githubusercontent.com/acme/assets/refs/heads/main/acme_zazuhl.png",
   screenshotAltKey: "blocks.features-24.screenshotAlt",
   cards: [
     {

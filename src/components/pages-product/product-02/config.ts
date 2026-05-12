@@ -11,13 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-product-two` composition. Inline hero
- * (eyebrow + heading + CTA + ProductIllustration) followed by
- * 2 AI feature cards → how-it-works → testimonial → expandable
- * features → notes features → testimonials grid → cta. Sub-sections
- * live as page-local components under `./sections/`.
- */
 export const product02Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "product-02-hero" },

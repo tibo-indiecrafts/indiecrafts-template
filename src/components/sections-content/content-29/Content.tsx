@@ -4,15 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { content29Namespace } from "./config";
 import type { ContentBlock } from "./schema";
 
-/**
- * Tailark `content-2` — JSX verbatim. Wide editorial section: a
- * full-width headline above a relative wrapper where the left
- * half (`md:w-1/2`) holds 2 lead paragraphs (with inline `<strong>`)
- * + a 2-up icon feature grid (Zap → Faaast, Cpu → Powerful), while
- * the right half hosts a dotted-border framed image with a
- * `md:mask-l-from-35%` horizontal fade overlapping the copy at the
- * desktop breakpoint.
- */
 export default function Content(props: Readonly<ContentBlock>) {
   const [t] = useScopedT(content29Namespace);
   const headingId = `${props.id}-heading`;

@@ -56,14 +56,6 @@ type LinkId =
   | (typeof DOCS_LINKS)[number]["id"]
   | (typeof COMMUNITY_LINKS)[number]["id"];
 
-/**
- * Tailark `footer-5` — JSX verbatim. Rounded card-style footer
- * (`m-1 rounded-3xl border`) with three regions:
- * 1. Top brand row (`border-b pb-8`): Logo + 3 social icons
- * 2. 4-col link grid (`sm:grid-cols-4`): Enterprise / Product /
- *    Docs / Community + newsletter signup
- * 3. `bg-muted rounded-md` license bar with copyright + Licence link
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter13Namespace);
   const homeLabel = t("homeLabel");

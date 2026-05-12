@@ -7,16 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { forgotPassword03Namespace } from "./config";
 import type { ForgotPasswordBlock } from "./schema";
 
-/**
- * Tailark `mist-forgot-password-1` — JSX verbatim. Recover-password
- * mirror of `mist-login-1` (login-11) / `mist-sign-up-1` (login-18):
- * plain centered `max-w-92` form on a `bg-linear-to-b from-muted
- * to-background` gradient section (no card chrome). Logo link,
- * "Forgot Your Password?" heading + muted subtitle, single email
- * field with `ring-foreground/15 border-transparent ring-1` ring-
- * style chrome, "Send Reset Link" CTA. Inline "Sign In" footer for
- * users who remember.
- */
 export default function ForgotPassword(props: Readonly<ForgotPasswordBlock>) {
   const [t, tr] = useScopedT(forgotPassword03Namespace);
   const titleId = `${props.id}-title`;

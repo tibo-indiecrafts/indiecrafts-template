@@ -36,20 +36,6 @@ export type FeaturesExpandableItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `expandable-features-1` — interactive 2-column expandable
- * grid: title only, then two cards each with a background image +
- * foreground illustration. On md+, clicking a card expands it (2fr)
- * while shrinking the other (1fr); auto-cycles every
- * `autoplayDurationMs` (default 7000); hovering the active card
- * pauses the timer; a thin progress bar animates left-to-right.
- *
- * On smaller viewports both cards always render expanded as a stack.
- *
- * Two cards is structural — the expand grid template is hardcoded for
- * exactly two slots. Converted to the template pattern: props-driven
- * items, MessageKey-typed strings, theme tokens.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-01";
   id: string;

@@ -8,14 +8,6 @@ import {
   secondaryHero12SupportHref,
 } from "./config";
 
-/**
- * Secondary hero — support landing. Centered tagged headline + body
- * above a 2-card row (Contact Sales / Help & Support) with icon +
- * description + outline CTA. Sourced from
- * `@tailark-pro/secondary-hero-12`, refactored to the project pattern:
- * section semantics, all visible strings via
- * `blocks.secondary-hero-12.*`, primitives from `ui-primitives`.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero12Namespace);
 

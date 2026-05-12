@@ -90,18 +90,6 @@ const TABS: readonly Tab[] = [
   { id: "response", label: "response.json", Icon: Braces, code: RESPONSE_JSON },
 ];
 
-/**
- * Code-files molecule — IDE-style file-tab code viewer. Clickable
- * file tabs (`users.json`, `response.json`) styled with curved
- * L-shape transitions: the active tab's underside merges into the
- * editor pane via two `bg-card` semi-circles cut at the corners
- * (and a different shape for the first vs subsequent tabs so the
- * left edge of the row is square). The editor below renders JSON
- * with line numbers via `CodeBlock`.
- *
- * Pure decoration; mock JSON stays hardcoded per the illustration
- * rule. Sourced from `@tailark-pro/code-demo-04`.
- */
 export default function CodeFiles() {
   const [activeId, setActiveId] = useState(TABS[0].id);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });

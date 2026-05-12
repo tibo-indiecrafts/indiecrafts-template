@@ -15,18 +15,6 @@ const NODES: readonly Node[] = [
   { name: "Firebase", Icon: Firebase },
 ];
 
-/**
- * Vertical brand-usage flow illustration — three usage cards (Vercel /
- * Supabase / Firebase) at the top connect via animated dashed beams
- * to the brand logo node in the middle, which then drops a beam into
- * an invoice mock at the bottom. Beam keyframes live in
- * `flow-cards-illustration.css` and are picked up via the auto-
- * aggregator. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from
- * `@tailark-pro/expandable-features-11` (upstream `flow-illustration`;
- * renamed to `flow-cards` since the project already has a horizontal
- * `flow-illustration.tsx` from `features-carousel-05`).
- */
 export const FlowCardsIllustration = () => {
   return (
     <div

@@ -9,11 +9,6 @@ import { OpenAIFull } from "@/components/ui-primitives/svgs/open-ai";
 import { useScopedT } from "@/i18n/scoped-t";
 import { logoCloud10Namespace } from "./config";
 
-/**
- * Centered intro paragraph + 4-column grid framed by `bg-foreground/10`
- * gap-painted dividers, with side-accent borders bracketing the grid.
- * Sourced from `@tailark-pro/logo-cloud-09`.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud10Namespace);
 

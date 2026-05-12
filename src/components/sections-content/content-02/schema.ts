@@ -8,10 +8,6 @@ export type ContentInlineFeature = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark `content-2` — 1-column heading then 2-column body: copy + inline
- * feature pair on the left, a floating image on the right at md+.
- */
 export type ContentBlock = {
   type: "content-02";
   id: string;

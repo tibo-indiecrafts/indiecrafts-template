@@ -17,4 +17,4 @@ export const secondaryHero20SecondaryCtaHref = "#" as const;
 
 /** Workplace photo URL behind the invoice. */
 export const secondaryHero20BackgroundImage =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/work4_c0ffmk.webp" as const;
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/work4_c0ffmk.webp" as const;

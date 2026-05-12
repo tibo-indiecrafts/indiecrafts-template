@@ -7,11 +7,6 @@ import type { Testimonials06Block } from "./schema";
 
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 
-/**
- * Tailark Pro `libre-landing-two` TestimonialSection — JSX
- * verbatim. Single-quote panel with a Quote icon, large pull
- * quote, avatar + name + role.
- */
 export default function Testimonials(props: Readonly<Testimonials06Block>) {
   const [t] = useScopedT(testimonials06Namespace);
 

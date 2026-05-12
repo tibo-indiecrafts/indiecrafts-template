@@ -5,17 +5,6 @@ import { LogoCloud03Section as LogoCloud } from "@/components/sections-logo-clou
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero11Namespace, hero11PrimaryCtaHref, hero11SecondaryCtaHref } from "./config";
 
-/**
- * Two-column hero — left column with headline + body + dual CTAs + a
- * 2-stat row, right column with the auto-cycling `ProductCarousel`.
- * Below the section a flat-grid `LogoCloud` strip. Sourced from
- * `@tailark-pro/hero-section-11`, refactored to the project pattern:
- * section semantics (no `<main>` — that's the layout's job), all
- * visible strings via `blocks.hero-11.*`, primitives from
- * `ui-primitives`, illustration from `ui-illustrations`, logo cloud
- * from `sections-logo-cloud`. Decorative dashed-column overlay across
- * the section uses `--color-border-illustration`.
- */
 export function Hero() {
   const [t] = useScopedT(hero11Namespace);
 

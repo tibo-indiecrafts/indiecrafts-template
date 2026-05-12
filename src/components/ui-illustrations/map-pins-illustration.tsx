@@ -29,14 +29,6 @@ const map = new DottedMap({ height: 55, grid: "vertical" });
 const POINTS = map.getPoints();
 const VIEW_BOX = "0 0 120 60";
 
-/**
- * Wide dotted-map illustration with three rotated tear-drop avatar
- * pins (Glodie / Theo / Shadcn). Sourced from `@tailark-pro/bento-07`
- * (upstream `MapIllustration`; renamed to `map-pins-illustration` to
- * differentiate from our existing narrower `map-illustration`).
- * Pure decoration; mock pin avatars stay hardcoded per the
- * illustration rule.
- */
 export const MapPinsIllustration = () => (
   <div aria-hidden className="relative min-w-2xl [--color-background:transparent]">
     <div className="absolute inset-6">

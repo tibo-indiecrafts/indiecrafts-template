@@ -3,15 +3,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { testimonials12Namespace } from "./config";
 import type { TestimonialsBlock } from "./schema";
 
-/**
- * Tailark `mist-testimonials-2` — JSX verbatim. 3-column testimonial
- * grid (`@lg:grid-cols-2 @3xl:grid-cols-3`) on `bg-muted py-24`
- * inside `max-w-5xl @container`. Header: `text-4xl font-semibold`
- * title + lead body. Each card: a `bg-background rounded-2xl
- * rounded-bl ring-1 ring-foreground/10` chat-bubble (rounded except
- * bottom-left corner, mimicking a speech tail) housing the quote,
- * with a `size-6` Avatar + name + dot + role footer beneath.
- */
 export default function Testimonials(props: Readonly<TestimonialsBlock>) {
   const [, , tRoot] = useScopedT(testimonials12Namespace);
   const headingId = `${props.id}-heading`;

@@ -110,7 +110,7 @@ export default function LoginPage() {
         <div className="p-8 pb-6">
           <div>
             <Link href="/" aria-label="go home"><LogoIcon /></Link>
-            <h1 className="mb-1 mt-4 text-xl font-semibold">Sign In to Tailark</h1>
+            <h1 className="mb-1 mt-4 text-xl font-semibold">Sign In</h1>
             <p className="text-sm">Welcome back! Sign in to continue</p>
           </div>
 
@@ -169,7 +169,7 @@ const SVELTE_CODE = `<script lang="ts">
           <!-- Logo SVG -->
         </a>
         <h1 class="mt-6 text-balance text-xl font-semibold">
-          <span class="text-muted-foreground">Welcome back to Tailark!</span> Sign in to continue
+          <span class="text-muted-foreground">Welcome back!</span> Sign in to continue
         </h1>
       </div>
 

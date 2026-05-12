@@ -13,9 +13,9 @@ export const TestimonialSection = () => {
 
           <div className="mt-6 lg:mt-12">
             <p className='text-xl *:leading-relaxed before:mr-1 before:content-["\201C"] after:ml-1 after:content-["\201D"] md:text-2xl'>
-              Using Tailark has been like unlocking a secret design superpower. It&apos;s
-              the perfect fusion of simplicity and versatility, enabling us to create UIs
-              that are as stunning as they are user-friendly.
+              Using Acme has been like unlocking a secret design superpower. It&apos;s the
+              perfect fusion of simplicity and versatility, enabling us to create UIs that
+              are as stunning as they are user-friendly.
             </p>
 
             <div className="mt-12 flex items-center gap-3">
@@ -25,7 +25,7 @@ export const TestimonialSection = () => {
 
               <div className="space-y-px">
                 <p className="text-sm font-medium">Meschac Irung</p>
-                <p className="text-muted-foreground text-xs">Creator of Tailark</p>
+                <p className="text-muted-foreground text-xs">Creator of Acme</p>
               </div>
             </div>
           </div>

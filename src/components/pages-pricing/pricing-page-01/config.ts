@@ -11,15 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `dark-pricing-one` composition. Inline hero with
- * gradient-stroked accent + body, then Pricing tiers, LogoCloud,
- * Comparator table, and FAQs accordion. Sub-sections live as
- * page-local components under `./sections/`. Despite the
- * "dark-" prefix this page is rendered in BOTH light + dark theme
- * — `data-theme="dark"` overrides on sub-sections were dropped per
- * the project's theme-compatibility rule.
- */
 export const pricingPage01Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "pricing-page-01-hero" },

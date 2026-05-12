@@ -3,17 +3,6 @@ import { buttonVariants } from "@/components/ui-primitives/button";
 import { Gemini } from "@/components/ui-primitives/svgs/gemini";
 import { Replit } from "@/components/ui-primitives/svgs/replit";
 
-/**
- * Integrations card illustration — header bar ("Integrations" with a
- * link glyph) over a glowing backlit panel listing two integrations
- * (Gemini, Replit) with avatar tiles, name, description, and a "+"
- * button. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/features-2`.
- *
- * Distinct from `ui-illustrations/integrations.tsx`, which is the
- * multi-brand connected-grid illustration used by
- * `sections-secondary-hero/secondary-hero-03`.
- */
 export const IntegrationsIllustration = () => (
   <div aria-hidden className="bg-foreground/5 group rounded-2xl">
     <div className="flex items-center gap-1.5 px-6 py-2.5 text-sm font-medium">

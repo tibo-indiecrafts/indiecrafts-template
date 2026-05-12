@@ -2,15 +2,6 @@ import { cn } from "@/lib/utils";
 
 export type NotificationVariant = "elevated" | "outlined" | "mixed";
 
-/**
- * File-upload notification card mock — PDF badge + filename + animated
- * progress bar that grows on hover (1/3 → 2/3 width with delay). Three
- * styling variants control the card's surface treatment (`elevated` =
- * shadow-only, `outlined` = border-only, `mixed` = both). Used by
- * `sections-bento/bento-01/`. Pure decoration; mock copy stays
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-01` (upstream `NotificationIllustration`).
- */
 export const NotificationIllustration = ({
   className,
   variant = "elevated",

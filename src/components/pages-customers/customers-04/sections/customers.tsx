@@ -71,11 +71,11 @@ export function Customers() {
           <span className="text-primary font-mono text-sm uppercase">More customers</span>
           <div className="mt-8 grid max-w-xl gap-6">
             <h2 className="text-foreground text-4xl font-semibold text-balance md:text-5xl">
-              The world’s best teams build with Tailark
+              The world’s best teams build with Acme
             </h2>
             <p className="text-muted-foreground text-balance">
-              Tailark is trusted by over 100 companies to help them scale their business
-              and stay ahead of the competition.
+              Acme is trusted by over 100 companies to help them scale their business and
+              stay ahead of the competition.
             </p>
           </div>
         </div>

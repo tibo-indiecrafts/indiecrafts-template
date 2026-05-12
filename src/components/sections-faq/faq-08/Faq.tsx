@@ -11,14 +11,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { faq08Namespace } from "./config";
 import type { FaqBlock } from "./schema";
 
-/**
- * Tailark `mist-faqs-1` — JSX verbatim. Left-aligned mist FAQ on
- * `bg-muted py-16 md:py-24` inside `max-w-5xl`. `text-4xl
- * font-semibold` title + lg body, then a single `Accordion` wrapped
- * in a `bg-card ring-foreground/5 ring-1 shadow rounded-(--radius)
- * px-8 py-3` chrome card. Each item uses `border-dotted` dividers
- * with `text-base` trigger + answer. Inline contact prompt below.
- */
 export default function Faq(props: Readonly<FaqBlock>) {
   const [, , tRoot] = useScopedT(faq08Namespace);
   const headingId = `${props.id}-heading`;

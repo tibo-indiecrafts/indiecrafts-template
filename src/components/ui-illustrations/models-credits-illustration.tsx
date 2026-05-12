@@ -13,17 +13,6 @@ const MODELS: readonly Model[] = [
   { name: "Qwen", credits: 6 },
 ];
 
-/**
- * Chat-composer + model-credits illustration — perspective-rotated
- * panel listing 5 LLMs with `Nx` credit costs floating above a
- * "Plan, Build anything..." chat composer. The composer shows an
- * Agent infinity badge, a Claude Opus 4.5 selector, and a send arrow.
- * Pure decoration; mock model labels and credit counts stay
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/expandable-features-1` (upstream
- * `Models4Illustration`). Distinct from `models-illustration.tsx`
- * (the brand-glyph picker).
- */
 export const ModelsCreditsIllustration = () => {
   return (
     <div aria-hidden className="relative min-w-xs">

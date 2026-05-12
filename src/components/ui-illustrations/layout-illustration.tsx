@@ -40,15 +40,6 @@ const CUSTOMERS = [
   },
 ] as const;
 
-/**
- * App-shell layout illustration — empty browser-style mock (sidebar +
- * top bar + diagonal-stripe content area) with a styled customers
- * table floated in front of it. Used by `sections-features/features-5`
- * and similar product-tour sections. Mock customer data stays
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/features-5`. The customer-table sub-illustration is
- * inlined as a private helper since it has no other consumer.
- */
 export const LayoutIllustration = () => (
   <div aria-hidden className="relative">
     <div className="absolute -right-56 bottom-6 left-[13rem] z-1 md:-right-4 md:w-[calc(100%-12rem)]">

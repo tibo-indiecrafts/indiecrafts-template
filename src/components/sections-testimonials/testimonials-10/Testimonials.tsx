@@ -3,14 +3,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { testimonials10Namespace } from "./config";
 import type { TestimonialsBlock } from "./schema";
 
-/**
- * Tailark `mist-testimonials-4` — JSX verbatim. Single left-aligned
- * testimonial on `py-24` inside `max-w-5xl`. Blockquote uses a
- * `before:bg-primary before:w-1 before:rounded-full pl-6` left rail
- * accent, with `text-lg` quote text. Footer pairs a `size-6` Avatar
- * (with `AvatarFallback` initial), `cite` author name, a `size-1`
- * dot separator, and a muted role label.
- */
 export default function Testimonials(props: Readonly<TestimonialsBlock>) {
   const [, , tRoot] = useScopedT(testimonials10Namespace);
   const author = tRoot(props.authorKey);

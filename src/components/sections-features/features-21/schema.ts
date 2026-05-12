@@ -15,13 +15,6 @@ export type FeatureCard = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `features-9` — 3-column card grid; each card stacks an
- * icon + title + rich-text body over a bottom-aligned illustration.
- * Converted to the template pattern: props-driven cards with separate
- * icon / illustration discriminators, MessageKey-typed strings, theme
- * tokens.
- */
 export type FeaturesBlock = {
   type: "features-21";
   id: string;

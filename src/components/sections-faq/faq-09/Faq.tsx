@@ -12,15 +12,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { faq09Namespace } from "./config";
 import type { FaqBlock } from "./schema";
 
-/**
- * Tailark `mist-faqs-2` — JSX verbatim. 2-col mist FAQ on `py-16
- * md:py-24` inside `max-w-5xl`. `md:grid-cols-5` split:
- *  - Left (`md:col-span-2`): `text-4xl font-semibold` title + lg
- *    body + (on md+) inline contact prompt + link
- *  - Right (`md:col-span-3`): single Accordion (no card chrome —
- *    items separated by default border lines, `text-base` trigger)
- *  - Mobile-only contact prompt below the Accordion (`md:hidden`)
- */
 export default function Faq(props: Readonly<FaqBlock>) {
   const [, , tRoot] = useScopedT(faq09Namespace);
   const headingId = `${props.id}-heading`;

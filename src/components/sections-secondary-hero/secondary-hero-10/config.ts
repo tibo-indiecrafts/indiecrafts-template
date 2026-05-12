@@ -16,10 +16,10 @@ export const secondaryHero10CtaHref = "#" as const;
 
 /** Portrait photo (right column, tall). */
 export const secondaryHero10ImagePortrait =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/work3_n5uspm.webp" as const;
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/work3_n5uspm.webp" as const;
 /** Square photo (middle column). */
 export const secondaryHero10ImageSquare =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/work2_eoxbvk.webp" as const;
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/work2_eoxbvk.webp" as const;
 /** Wide landscape photo (full-row). */
 export const secondaryHero10ImageWide =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/work1_e1gkt8.webp" as const;
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/work1_e1gkt8.webp" as const;

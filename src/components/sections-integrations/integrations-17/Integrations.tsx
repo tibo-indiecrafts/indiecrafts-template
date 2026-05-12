@@ -22,14 +22,6 @@ const ICON_REGISTRY: Record<IntegrationIcon, ComponentType<SVGProps<SVGSVGElemen
   googlePalm: GooglePaLM,
 };
 
-/**
- * Tailark `integrations-3` — JSX verbatim. 2-column section
- * (`sm:grid-cols-2`) on `bg-muted dark:bg-background py-24 md:py-32`.
- * Left column: pyramid of 7 cards (2 / 3 / 2) where the middle slot
- * is the project's `LogoIcon` highlighted with a thicker border + dark
- * tint, all softly faded under a `bg-radial to-muted` overlay. Right
- * column: title + body + outline CTA.
- */
 export default function Integrations(props: Readonly<IntegrationsBlock>) {
   const [, , tRoot] = useScopedT(integrations17Namespace);
   const headingId = `${props.id}-heading`;

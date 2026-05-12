@@ -11,13 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `dark-customers-one` composition. Hero ("Meet our
- * Customers") → MainCustomers feature card with image-blended
- * background → Customers story grid (6 logo+story cards) →
- * WallOfLoveSection (3-column testimonial wall) → CallToAction.
- * Light + dark theme.
- */
 export const customers01Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "customers-01-hero" },

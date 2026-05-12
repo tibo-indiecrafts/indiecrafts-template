@@ -4,8 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { features40Namespace } from "./config";
 import type { Features40Block } from "./schema";
 
-/** Lightweight Card replacement matching Tailark's `variant="soft"` — no
- *  baked padding/border/shadow/flex; consumer controls the layout. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={cn("rounded-xl", className)} {...props} />
 );
@@ -15,14 +13,6 @@ const BERNARD_AVATAR = "https://avatars.githubusercontent.com/u/31113941?v=4";
 const THEO_AVATAR = "https://avatars.githubusercontent.com/u/68236786?v=4";
 const GLODIE_AVATAR = "https://avatars.githubusercontent.com/u/99137927?v=4";
 
-/**
- * Tailark `mist-features-1` — JSX verbatim. Section heading + body
- * over a "Customers" mock-data table card, then a 2-column
- * "Marketing Campaigns" / "AI Meeting Scheduler" feature row with
- * stacked aspect-video cards, capped by a left-bordered blockquote
- * testimonial. Cards swapped to the project's plain `Card` with a
- * `bg-muted/40` soft-variant approximation.
- */
 export default function Features({ id }: Readonly<Features40Block>) {
   const [t, , tRoot] = useScopedT(features40Namespace);
 

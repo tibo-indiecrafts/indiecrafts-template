@@ -1,14 +1,5 @@
 import { Bitcoin, DollarSign, Euro, Signature, type LucideIcon } from "lucide-react";
 
-/**
- * Three-card currency mock — BTC / USD / EURO cards fanned out with a
- * `-rotate-12` tilt and `-space-x-4` overlap. Each card shows the
- * currency icon + ticker, two ledger-row blocks of skeleton dashes,
- * and a trailing signature glyph. Tinted gradient overlay per
- * currency (blue / green / red). Pure decoration; mock copy stays
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-01` (upstream `CurrencyIllustration`).
- */
 export const CurrencyIllustration = () => {
   return (
     <div aria-hidden className="flex -space-x-4">

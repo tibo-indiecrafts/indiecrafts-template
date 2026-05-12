@@ -11,13 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `libre-customers-one` composition. Hero on
- * `bg-muted/50` → MainCustomers asymmetric grid (2 featured logo +
- * story cards, 8 logo-only cards, indigo glow shadows) → Customers
- * (6 logo+story Cards) → WallOfLoveSection (3-col testimonials) →
- * CallToAction with `cta-illustration`. Light + dark theme.
- */
 export const customers04Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "customers-04-hero" },

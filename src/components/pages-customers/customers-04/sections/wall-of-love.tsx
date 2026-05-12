@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream JSX kept verbatim for fidelity */
+/* eslint-disable -- Acme Pro upstream JSX kept verbatim for fidelity */
 
 import { Card } from "@/components/ui-primitives/libre-customers-one-card";
 
@@ -94,8 +94,8 @@ export function WallOfLoveSection() {
               Loved by the Community
             </h2>
             <p className="text-muted-foreground mt-6">
-              Tailark is trusted by over 100 companies to help them scale their business
-              and stay ahead of the competition.
+              Acme is trusted by over 100 companies to help them scale their business and
+              stay ahead of the competition.
             </p>
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:-mx-8 lg:grid-cols-3">

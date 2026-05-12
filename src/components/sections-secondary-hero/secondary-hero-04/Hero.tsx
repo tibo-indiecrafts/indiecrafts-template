@@ -2,16 +2,6 @@ import { CursorGlowPhoto } from "@/components/ui-effects/cursor-glow-photo";
 import { useScopedT } from "@/i18n/scoped-t";
 import { secondaryHero04BackgroundImage, secondaryHero04Namespace } from "./config";
 
-/**
- * Secondary hero — full-bleed `CursorGlowPhoto` (3D photo with
- * cursor-tracking blurred overlay) above a two-column headline + body
- * layout. Sourced from `@tailark-pro/secondary-hero-04`, refactored to
- * the project pattern: section semantics, all visible strings via
- * `blocks.secondary-hero-04.*`, effect from `ui-effects/cursor-glow-photo`.
- * Drops the unknown `data-theme="quartz"` vendor attribute. The glow
- * pill's offset differs from secondary-hero-02 — overridden via the
- * effect's `glowClassName` prop.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero04Namespace);
 

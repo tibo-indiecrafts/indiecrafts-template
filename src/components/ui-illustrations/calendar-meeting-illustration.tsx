@@ -8,17 +8,6 @@ const ATTENDEES = [
   { src: "https://avatars.githubusercontent.com/u/99137927?v=4", alt: "Glodie Lukose" },
 ] as const;
 
-/**
- * Calendar meeting-invite card illustration — "Product Strategy Review"
- * meeting card with a Video icon header, three info rows
- * (time / location link / attendee avatars + extras chip), and a
- * Going? / Yes-No-Maybe response footer. Pure decoration; mock copy
- * stays hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/expandable-features-13` (upstream
- * `Calendar6Illustration`; renamed since no Calendar1..5 sibling
- * family exists in this catalogue and we already have a
- * `calendar-illustration.tsx` for the day-view variant).
- */
 export const CalendarMeetingIllustration = () => {
   return (
     <div

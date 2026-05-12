@@ -31,13 +31,6 @@ const chartData = [
   { month: "April", desktop: 400, mobile: 800, tablet: 450 },
 ];
 
-/**
- * Monitoring bar-chart card mock — bordered rounded-2xl card with
- * "Monitoring" header and a 6-month bar chart (desktop + mobile +
- * tablet, two of which render as emerald + indigo bars). Pure
- * decoration; no translations. Sourced from
- * `@tailark-pro/how-it-works-03` (upstream `MonitoringBarChart`).
- */
 export const MonitoringBarchartIllustration = () => {
   return (
     <div

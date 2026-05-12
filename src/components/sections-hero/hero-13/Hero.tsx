@@ -8,18 +8,6 @@ import Image from "next/image";
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero13BackgroundImage, hero13Namespace } from "./config";
 
-/**
- * Centered headline with inline animated audio-lines icon + body +
- * parallax-on-scroll image card with a Watch-demo pill, with a
- * compact `LogoCloud` strip below. Sourced from
- * `@tailark-pro/hero-section-13`, refactored to the project pattern:
- * section semantics (no `<main>` — that's the layout's job), all
- * visible strings via `blocks.hero-13.*`, parallax effect from
- * `ui-effects/parallax-image`, animated icon from
- * `ui-illustrations/audio-lines`, animation primitive from
- * `ui-effects/animated-group`, logo cloud from `sections-logo-cloud`.
- * The light-mode backdrop image URL lives in `config.ts`.
- */
 export function Hero() {
   const [t] = useScopedT(hero13Namespace);
 

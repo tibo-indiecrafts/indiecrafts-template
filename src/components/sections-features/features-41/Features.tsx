@@ -4,22 +4,10 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { features41Namespace } from "./config";
 import type { Features41Block } from "./schema";
 
-/** Lightweight Card replacement matching Tailark's `variant="soft"` — no
- *  baked padding/border/shadow/flex; consumer controls the layout. */
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={cn("rounded-xl", className)} {...props} />
 );
 
-/**
- * Tailark `mist-features-2` — JSX verbatim. Section heading + body
- * over a 3-column feature row (sm:grid-cols-2 md:grid-cols-3) where
- * each item is a stacked `Card` chrome (outer `aspect-video` soft
- * `bg-muted/40`, inner `bg-background` panel) above a title + body.
- * Each card has its own inner padding/translate variation. The
- * upstream's `<Card variant="soft">` was replaced with explicit
- * `bg-muted/40` since the project's shadcn `Card` doesn't expose a
- * `variant` prop.
- */
 export default function Features({ id }: Readonly<Features41Block>) {
   const [t] = useScopedT(features41Namespace);
 

@@ -12,16 +12,6 @@ import {
   hero08SecondaryCtaHref,
 } from "./config";
 
-/**
- * Heading + body + dual CTAs floating over a masked photo backdrop
- * (separate light/dark variants), with the animated `ProductTabs`
- * preview underneath and a `LogoCloud` trail outside the section.
- * Sourced from `@tailark-pro/hero-section-8`, refactored to the project
- * pattern: section semantics (no `<main>` — that's the layout's job),
- * all visible strings via `blocks.hero-08.*`, primitives from
- * `ui-primitives`, illustration from `ui-illustrations`, logo cloud
- * from `sections-logo-cloud`.
- */
 export function Hero() {
   const [t] = useScopedT(hero08Namespace);
 

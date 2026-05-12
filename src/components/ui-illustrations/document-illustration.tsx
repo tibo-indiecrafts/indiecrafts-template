@@ -1,16 +1,6 @@
 import { Signature } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * Generic document-card mock — rounded card with skeleton dash rows
- * (header dot + filename, two ledger rows, footer two-tone bar) and a
- * trailing signature glyph. Used by `sections-bento/bento-04/` (also
- * stacked three-up at `-rotate-12 / 0 / +rotate-12` for the "outputs"
- * step of its formula visualization). Pure decoration; mock copy
- * stays hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-04` (upstream `DocumentIllustation`; renamed to
- * fix the upstream typo).
- */
 export const DocumentIllustration = ({ className }: { className?: string }) => {
   return (
     <div

@@ -9,16 +9,6 @@ export type IntegrationIcon =
   | "mediaWiki"
   | "claude";
 
-/**
- * Tailark Pro `integrations-07` — center hero text with 7 integration
- * cards scattered around it in a `md:grid-cols-18 md:grid-rows-6`
- * grid plus 4 decorative empty squares (`bg-muted` / `bg-muted/50`)
- * for visual rhythm. Icon placements are hardcoded structurally —
- * the schema only swaps which 7 icons render in those cells.
- *
- * Seven icons is structural — the layout reserves 7 specific grid
- * positions.
- */
 export type IntegrationsBlock = {
   type: "integrations-07";
   id: string;

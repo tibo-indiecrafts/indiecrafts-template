@@ -2,12 +2,6 @@ import { Search } from "lucide-react";
 import { useScopedT } from "@/i18n/scoped-t";
 import { secondaryHero09Namespace } from "./config";
 
-/**
- * Secondary hero — centered tagged headline + body + a help-search
- * input. Sourced from `@tailark-pro/secondary-hero-09`, refactored to
- * the project pattern: section semantics, all visible strings via
- * `blocks.secondary-hero-09.*`.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero09Namespace);
 

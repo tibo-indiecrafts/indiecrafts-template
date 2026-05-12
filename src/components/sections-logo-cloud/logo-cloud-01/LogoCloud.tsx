@@ -58,13 +58,6 @@ const logos: Record<"ai" | "hosting" | "streaming" | "payments", ReactNode[]> = 
 
 type LogoGroup = keyof typeof logos;
 
-/**
- * Logo cloud — cycles through brand-logo groups (AI / hosting / payments
- * / streaming) with a per-group caption highlighting the active set.
- * Sourced from `@tailark-pro/logo-cloud-02` (bundled with hero-section-3),
- * refactored to the project pattern: section semantics, translations
- * via `blocks.logo-cloud-01.*`, brand SVGs from `ui-primitives/svgs`.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud01Namespace);
   const [currentGroup, setCurrentGroup] = useState<LogoGroup>("ai");

@@ -1,15 +1,6 @@
 import { ShieldCheck, Signature } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * Verified-ID card mock — name + role on the left, signature glyph
- * boxed on the right, and a "Verified" gradient footer bar (indigo →
- * emerald) with a shield-check icon. Used by `sections-bento/bento-04/`
- * as the middle step of its identity-check formula visualization.
- * Pure decoration; mock copy stays hardcoded per the illustration
- * rule. Sourced from `@tailark-pro/bento-04` (upstream
- * `IDCheckIllustration`).
- */
 export const IDCheckIllustration = ({ className }: { className?: string }) => {
   return (
     <div

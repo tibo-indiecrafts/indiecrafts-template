@@ -7,11 +7,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { howItWorks09Namespace } from "./config";
 import type { HowItWorks09Block } from "./schema";
 
-/**
- * Tailark Pro `libre-landing-two` HowItWorks — JSX verbatim.
- * 3-step workflow with numbered badges, illustrations, arrow
- * connectors at @3xl, and an outline CTA at the bottom.
- */
 export default function HowItWorks(props: Readonly<HowItWorks09Block>) {
   const [t] = useScopedT(howItWorks09Namespace);
   const external = props.ctaHref.startsWith("http");

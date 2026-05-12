@@ -3,15 +3,6 @@ import { cn } from "@/lib/utils";
 
 const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
 
-/**
- * Add-comment chat-bubble illustration — small floating "Add a
- * comment..." composer with a Shadcn avatar, sitting above a
- * sentence containing a primary-underlined "Tomorrow 8:30 pm"
- * fragment. Used by `sections-bento/bento-11/`'s "Team
- * Collaboration" cell. Pure decoration; mock copy stays hardcoded
- * per the illustration rule. Sourced from `@tailark-pro/bento-11`
- * (upstream `AddCommentIllustration`).
- */
 export const AddCommentIllustration = ({ className }: { className?: string }) => {
   return (
     <div aria-hidden className={cn("relative mt-8", className)}>

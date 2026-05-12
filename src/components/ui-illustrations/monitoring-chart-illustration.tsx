@@ -27,14 +27,6 @@ const chartData = [
   { month: "June", desktop: 400, mobile: 800 },
 ];
 
-/**
- * Performance-monitoring chart illustration — large stacked area
- * chart (`h-60`, indigo + emerald) with horizontal `CartesianGrid`
- * lines, `tickLine={false}` / `stroke="transparent"` XAxis (tick
- * labels visible without an axis baseline), and monotone curve
- * interpolation. Pure decoration; no translations. Sourced from
- * `@tailark-pro/bento-14` (upstream `MonitoringChart`).
- */
 export const MonitoringChartIllustration = () => {
   return (
     <ChartContainer className="-mb-8 aspect-auto h-60" config={chartConfig}>

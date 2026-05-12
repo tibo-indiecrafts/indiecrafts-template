@@ -13,11 +13,6 @@ export type PricingTier = {
   badgeKey?: MessageKey;
 };
 
-/**
- * Tailark `pricing` — 3-tier grid with optional "Popular" badge. Converted
- * to the template pattern: props-driven content, MessageKey strings,
- * theme tokens.
- */
 export type PricingBlock = {
   type: "pricing-01";
   id: string;

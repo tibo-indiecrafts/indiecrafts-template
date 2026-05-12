@@ -18,7 +18,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `grid-2-about-one` faithful port. */
 export function Landing({
   layout = about02Defaults.layout,
   header = <Header10 />,
@@ -51,7 +50,7 @@ export function Landing({
                   {t("title")}
                 </h2>
                 <p className="text-muted-foreground mt-6 max-w-2xl text-lg text-balance">
-                  Founded in 2023, Tailark started with a simple belief: developer tools
+                  Founded in 2023, Acme started with a simple belief: developer tools
                   should be beautiful, fast, and easy to use. Today, we serve thousands of
                   teams worldwide.
                 </p>
@@ -90,7 +89,7 @@ export function Landing({
             <div data-grid-content>
               <div className="aspect-43/24 mix-blend-darken">
                 <Image
-                  src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/team-hand-drawn_ctvx7q.png"
+                  src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/team-hand-drawn_ctvx7q.png"
                   alt=""
                   width={1376}
                   height={768}

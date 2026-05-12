@@ -16,15 +16,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { hero25Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 
-/**
- * Tailark `hero-section-8` — JSX verbatim. Centered hero with a
- * "New" announcement chip, large title, responsive dual paragraph
- * (sm:block/sm:hidden mobile vs desktop copy), single primary CTA
- * with Rocket icon. Below the copy: a `mask-b-from-55%` faded
- * product screenshot. A `bg-background` strip with a static logo
- * wall ("Your favorite companies are our partners") closes the
- * section.
- */
 export default function Hero(props: Readonly<HeroBlock>) {
   const [, , tRoot] = useScopedT(hero25Namespace);
 

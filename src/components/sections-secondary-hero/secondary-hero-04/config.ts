@@ -13,4 +13,4 @@ export const secondaryHero04Namespace = "blocks.secondary-hero-04" as const;
 
 /** Backdrop photo URL. */
 export const secondaryHero04BackgroundImage =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/3d_gsnqq2.webp" as const;
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/3d_gsnqq2.webp" as const;

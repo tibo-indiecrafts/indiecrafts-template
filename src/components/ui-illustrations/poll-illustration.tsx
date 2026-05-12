@@ -5,13 +5,6 @@ const POLL_AVATARS = [
   { src: "https://avatars.githubusercontent.com/u/31113941?v=4", alt: "Bernard Ngandu" },
 ] as const;
 
-/**
- * Poll-timeline illustration — vertical dotted rail with three pinned
- * events ("Poll Created" → user-vote bubble with stacked avatars →
- * "Poll Closed"). Pure decoration; mock timestamps and labels stay
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/features-3`.
- */
 export const PollIllustration = () => {
   return (
     <div aria-hidden className="relative w-full select-none">

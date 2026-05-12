@@ -16,15 +16,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `mist-pricing-2` — JSX verbatim. Joined 3-tier table on
- * `bg-muted py-16 md:py-32` inside `max-w-5xl @container`. Outer
- * tiers (Free / Pro Plus) sit flush in the side columns; the
- * middle Pro tier is a floating elevated card (`bg-background ring-1
- * ring-foreground/10 shadow @3xl:-my-3`) overlapping vertically into
- * the joined Card. Each tier: name + `text-2xl` price + cadence
- * (header) → `border-y px-8 py-4` CTA bar → 8-px feature checklist.
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricing05Namespace);
   const headingId = `${props.id}-heading`;

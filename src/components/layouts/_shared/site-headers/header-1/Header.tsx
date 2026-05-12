@@ -128,14 +128,6 @@ function isGroup(entry: MobileEntry): entry is Extract<MobileEntry, { groupId: s
   return "groupId" in entry;
 }
 
-/**
- * Scroll-aware fixed header with a desktop mega-menu (Product /
- * Solutions / Pricing / Company), mobile accordion drawer, and right-
- * side actions (Login + Get started). Sourced from
- * `@tailark-pro/header-1`, refactored to the project pattern: all
- * visible strings via `blocks.header-1.*`, primitives from
- * `ui-primitives`, brand/theme/locale toggles from `_shared`.
- */
 export function Header() {
   const [t] = useScopedT(header1Namespace);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);

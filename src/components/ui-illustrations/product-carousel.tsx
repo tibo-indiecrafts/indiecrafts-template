@@ -7,18 +7,18 @@ import { cn } from "@/lib/utils";
 const SCREENSHOTS = [
   {
     light:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle_un3f39.png",
-    dark: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle_un3f39.png",
+    dark: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png",
   },
   {
     light:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-2_qt7ip8.png",
-    dark: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-2_qt7ip8.png",
+    dark: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png",
   },
   {
     light:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-3_tgdnaa.png",
-    dark: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-3_tgdnaa.png",
+    dark: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png",
   },
 ];
 

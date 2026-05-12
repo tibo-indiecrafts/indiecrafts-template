@@ -20,38 +20,31 @@ const previews: PreviewItem[] = [
     name: "task-management",
     label: "Task Management",
     image:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png",
     imageDark:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle_un3f39.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle_un3f39.png",
     icon: <Globe />,
   },
   {
     name: "analytics",
     label: "Analytics",
     image:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png",
     imageDark:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-2_qt7ip8.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-2_qt7ip8.png",
     icon: <ChartBar />,
   },
   {
     name: "ai-copilot",
     label: "AI Copilot",
     image:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-dark_cv2taw.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-dark_cv2taw.png",
     imageDark:
-      "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle-3_tgdnaa.png",
+      "https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle-3_tgdnaa.png",
     icon: <Sparkles />,
   },
 ];
 
-/**
- * Animated tabbed product preview — three pillars (Task Management /
- * Analytics / AI Copilot) with crossfading circle decoration backdrops
- * sourced from Tailark's CDN assets. Used by `sections-hero/hero-07`
- * and `sections-hero/hero-08`. Mock labels are decorative; treat as
- * illustrations-only (no translations).
- */
 export const ProductTabs = ({ className }: { className?: string }) => {
   const [active, setActive] = useState<Preview>("task-management");
   const currentPreview = previews.find((p) => p.name === active)!;

@@ -3,14 +3,6 @@ import Image from "next/image";
 
 const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
 
-/**
- * Email-composer illustration — masked envelope card showing a "To:"
- * row with a Shadcn avatar chip + Plus button, then the standard Cc
- * / Subject / From rows, and a body paragraph featuring an inline
- * gradient-clipped text accent ("React and TypeScript"). Pure
- * decoration; mock copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/features-carousel-01`.
- */
 export const EmailIllustration = () => (
   <div aria-hidden className="relative max-w-92 min-w-92 mask-b-from-75% px-4 pt-2">
     <div className="bg-card ring-border-illustration rounded-2xl p-6 pt-2 pb-16 shadow-xl ring-1 shadow-black/6.5">

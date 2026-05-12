@@ -19,14 +19,6 @@ const MODELS: readonly Model[] = [
   { name: "Qwen", icon: <Qwen className="fill-foreground" /> },
 ];
 
-/**
- * AI-models picker illustration — perspective-rotated rounded panel
- * titled "Models ▸" listing five LLM options (Gemini, OpenAI,
- * Deepseek, Mistral, Qwen) with their brand glyphs. Pure decoration;
- * mock model labels stay hardcoded per the illustration rule. Sourced
- * from `@tailark-pro/features-carousel-03` (upstream
- * `Models3Illustration`; renamed since no Models1 / Models2 exist).
- */
 export const ModelsIllustration = () => {
   return (
     <div aria-hidden className="relative min-w-sm">

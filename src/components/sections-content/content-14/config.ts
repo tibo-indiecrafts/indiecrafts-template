@@ -11,7 +11,7 @@ export const content14Sample: Omit<ContentBlock, "id"> = {
       bodyKey: "blocks.content-14.items.item1.body",
       altKey: "blocks.content-14.items.item1.alt",
       image: {
-        src: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/time_djv8te.webp",
+        src: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/time_djv8te.webp",
         width: 1278,
         height: 900,
       },
@@ -21,7 +21,7 @@ export const content14Sample: Omit<ContentBlock, "id"> = {
       bodyKey: "blocks.content-14.items.item2.body",
       altKey: "blocks.content-14.items.item2.alt",
       image: {
-        src: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/dots-2_kmiukp.webp",
+        src: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/dots-2_kmiukp.webp",
         width: 1388,
         height: 1388,
       },

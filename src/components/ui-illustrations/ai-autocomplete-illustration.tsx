@@ -1,13 +1,5 @@
 import { CornerDownLeft, Sparkles } from "lucide-react";
 
-/**
- * AI-autocomplete illustration — an input prompt ("How do I implement |")
- * with a blinking caret and gradient highlight, an "AI Suggestions"
- * dropdown listing three context-aware completions (the first is
- * focused with a `Tab` shortcut chip), and a footer with arrow-key
- * navigation hints. Pure decoration; mock prompts stay hardcoded per
- * the illustration rule. Sourced from `@tailark-pro/features-carousel-01`.
- */
 export const AiAutocompleteIllustration = () => {
   return (
     <div aria-hidden className="min-w-2xs">

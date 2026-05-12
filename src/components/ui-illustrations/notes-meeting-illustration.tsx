@@ -1,15 +1,5 @@
 import { LassoSelect, NotepadText, Play, Target } from "lucide-react";
 
-/**
- * Detailed meeting-notes card illustration — same "Marketing Website
- * Launch" voice memo header as `notes-illustration.tsx`, then a
- * Summary / Transcript / Creations tab row (Summary active) and a
- * bulleted list of key decisions with bold lead phrases. Pure
- * decoration; mock copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/expandable-features-4` (upstream
- * `Notes2Illustration`; renamed since no Notes1/Notes2 sibling family
- * exists in this catalogue).
- */
 export const NotesMeetingIllustration = () => {
   return (
     <div aria-hidden className="max-w-md min-w-sm px-6 pt-1">

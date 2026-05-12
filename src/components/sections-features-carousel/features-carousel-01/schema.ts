@@ -15,13 +15,6 @@ export type CarouselItemBlock = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `features-carousel-01` — header + Embla carousel of N
- * square illustrated cards. Each card has an illustration and a
- * rich-text caption with an emphasised inline lead. Converted to the
- * template pattern: props-driven items with illustration discriminator,
- * MessageKey-typed strings, theme tokens.
- */
 export type FeaturesCarouselBlock = {
   type: "features-carousel-01";
   id: string;

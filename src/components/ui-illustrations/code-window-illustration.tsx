@@ -21,17 +21,6 @@ curl_close($ch);
 
 echo $response;`;
 
-/**
- * Code-window illustration — single rounded card with three
- * window-chrome dots and a single shiki-highlighted PHP code block
- * (no tabs, no avatars). Used by `sections-how-it-works/
- * how-it-works-03/`'s "Send Invoice" step. Composes the `CodeBlock`
- * molecule. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/how-it-works-03`
- * (upstream `CodeIllustration`; renamed to
- * `code-window-illustration` to differentiate from the existing
- * tabbed `code-block-illustration`).
- */
 export const CodeWindowIllustration = ({ theme }: { theme?: string }) => (
   <div
     aria-hidden

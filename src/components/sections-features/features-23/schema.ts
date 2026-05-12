@@ -16,14 +16,6 @@ export type StatItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `features-11` — full-bleed bordered grid: top half is two
- * illustrated cards (invoice + integrations), bottom half is a 4-stat
- * row, with crosshair "+" decorators stamped into the four outer
- * corners and one interior cross-point. Converted to the template
- * pattern: props-driven cards + stats, MessageKey-typed strings, theme
- * tokens.
- */
 export type FeaturesBlock = {
   type: "features-23";
   id: string;

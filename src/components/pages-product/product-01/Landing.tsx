@@ -36,16 +36,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/**
- * Tailark Pro `grid-2-product-one` faithful port. The hero is a
- * complex grid composition (search bar + masked Unsplash backdrop +
- * 2 AI feature cards) that's inlined here verbatim. Sub-sections
- * live in `./sections/` — they're page-local since they're tightly
- * coupled to the product page-template and don't share a bucket
- * pattern with other variants. Strings are minimally extracted (the
- * h1 / body / CTA / subtext live in i18n; deeper content stays
- * verbatim per upstream).
- */
 export function Landing({
   layout = product01Defaults.layout,
   header = <Header10 />,
@@ -203,8 +193,8 @@ export function Landing({
                         {t("title")}
                       </h2>
                       <p className="text-muted-foreground mx-auto mt-5 mb-9 max-w-xl text-lg text-balance">
-                        With Tailark&apos;s personal AI, get your projects to the finish
-                        line faster and with context.
+                        With Acme&apos;s personal AI, get your projects to the finish line
+                        faster and with context.
                       </p>
 
                       <Button

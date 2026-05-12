@@ -25,14 +25,6 @@ const map = new DottedMap({ height: 55, grid: "vertical" });
 const POINTS = map.getPoints();
 const VIEW_BOX = "0 0 120 60";
 
-/**
- * Dotted-map illustration with three CIRCULAR avatar pins (no
- * tear-drop rotation). Used by `sections-bento/bento-14/`'s "Global
- * Analytics" cell. Sourced from `@tailark-pro/bento-14` (upstream
- * `MapIllustration`; renamed to `map-circles-illustration` to
- * differentiate from our existing tear-drop `map-illustration` and
- * the wider `map-pins-illustration`).
- */
 export const MapCirclesIllustration = () => (
   <div
     aria-hidden

@@ -1,14 +1,6 @@
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { cn } from "@/lib/utils";
 
-/**
- * Invoice-signing card mock — invoice number / amount / due-date
- * header above a dashed "Sign here" signature placeholder. Used by
- * `sections-how-it-works/how-it-works-01/`'s "Sign documents" step.
- * Pure decoration; mock copy stays hardcoded per the illustration
- * rule. Sourced from `@tailark-pro/how-it-works-01` (upstream
- * `InvoiceSigningIllustration`).
- */
 export const InvoiceSigningIllustration = ({ className }: { className?: string }) => {
   return (
     <div aria-hidden className={cn(className)}>

@@ -30,17 +30,6 @@ const PINS: readonly Pin[] = [
   },
 ];
 
-/**
- * Dotted-map illustration — three tear-drop map-marker avatars
- * (rotate-45 with half-rounded corners) positioned over a
- * `dotted-map` (height 55, vertical grid) world projection that
- * fades via `mask-radial-from-40%`. Self-positioning: the outer
- * wrapper is `relative` so the pins anchor to the map area, not to
- * the consumer's container. Pure decoration; mock pin avatars stay
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/expandable-features-2` (the polished tear-drop
- * version; supersedes the plain-circle variant from features-13).
- */
 export const MapIllustration = () => (
   <div aria-hidden className="relative min-w-lg [--color-background:transparent]">
     <div className="absolute inset-6">

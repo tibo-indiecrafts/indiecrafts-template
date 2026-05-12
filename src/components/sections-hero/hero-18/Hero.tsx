@@ -70,7 +70,7 @@ export default function Hero(props: Readonly<HeroBlock>) {
                 <Image
                   fill
                   className="object-cover object-top-left"
-                  src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle_un3f39.png"
+                  src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle_un3f39.png"
                   alt={tRoot(props.imageAltKey)}
                   priority
                   fetchPriority="high"

@@ -11,20 +11,6 @@ export type FeaturesExpandableItem = {
   bodyKey: MessageKey;
 };
 
-/**
- * Tailark Pro `expandable-features-10` — auto-cycling 3-tier variant
- * built on the same `LayoutGroup` pill-stack as `-9` but with the
- * SceneIllustration replaced by **three stacked `ServerIllustration`
- * cards** that translate vertically per active state, plus a
- * horizontal connector line + caption that slides up/down as the
- * active row changes. Auto-cycles every `autoplayDurationMs` (default
- * 7000); manual click resets the timer. Prev/next chevrons sit
- * alongside the pill stack (always visible — no `null` state).
- *
- * Three items is structural — the right column hardcodes three
- * stacked server cards. Converted to the template pattern: props-
- * driven items, MessageKey-typed strings, theme tokens.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-10";
   id: string;

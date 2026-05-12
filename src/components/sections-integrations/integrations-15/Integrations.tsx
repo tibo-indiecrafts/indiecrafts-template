@@ -22,14 +22,6 @@ const ICON_REGISTRY: Record<IntegrationIcon, ComponentType<SVGProps<SVGSVGElemen
   googlePalm: GooglePaLM,
 };
 
-/**
- * Tailark `integrations-4` — JSX verbatim. Hub-and-spoke layout
- * with 6 integration cards (3 left + 3 right of the centered
- * `LogoIcon` tile) connected via gradient hairline rotating
- * connectors. A radial-masked dotted backdrop fills the inner
- * third for visual depth. Centered title + body + outline CTA
- * sits below the constellation.
- */
 export default function Integrations(props: Readonly<IntegrationsBlock>) {
   const [, , tRoot] = useScopedT(integrations15Namespace);
   const headingId = `${props.id}-heading`;

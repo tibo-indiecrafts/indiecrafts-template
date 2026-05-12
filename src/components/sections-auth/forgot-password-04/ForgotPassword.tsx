@@ -18,16 +18,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-forgot-password-1` — JSX verbatim. Recover-password
- * mirror of `veil-login-1` (login-12) / `veil-sign-up-1` (login-19):
- * two-row full-viewport layout (`grid grid-rows-[auto_1fr] min-h-dvh`).
- * Top: logo strip in `max-w-7xl border-b py-3` bar. Bottom: centered
- * `max-w-sm` column with "Forgot password?" heading + description
- * (default font, no `font-serif` override) above an outlined card
- * holding the email field and "Send Reset Link" submit. Sign-in
- * prompt sits below the card.
- */
 export default function ForgotPassword(props: Readonly<ForgotPasswordBlock>) {
   const [t, tr] = useScopedT(forgotPassword04Namespace);
   const titleId = `${props.id}-title`;

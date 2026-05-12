@@ -14,7 +14,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `grid-2-contact-four` faithful port. */
 export function Landing({
   layout = contactPage02Defaults.layout,
   header = <Header10 />,
@@ -57,10 +56,10 @@ export function Landing({
                 <div>
                   <h3 className="text-muted-foreground text-sm">Email</h3>
                   <Link
-                    href="mailto:hello@tailark.com"
+                    href="mailto:hello@acme.com"
                     className="text-foreground hover:decoration-primary text-sm font-medium hover:underline"
                   >
-                    hello@tailark.com
+                    hello@acme.com
                   </Link>
                 </div>
 

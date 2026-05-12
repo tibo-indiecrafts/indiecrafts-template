@@ -1,5 +1,5 @@
 /* eslint-disable */
-// @ts-nocheck — Tailark Pro / shadcn-registry upstream (response-stream)
+// @ts-nocheck
 
 "use client";
 

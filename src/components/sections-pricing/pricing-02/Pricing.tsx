@@ -41,13 +41,6 @@ const CardDescription = ({
   <div className={cn("text-muted-foreground", className)} {...props} />
 );
 
-/**
- * Tailark `pricing-1` — JSX verbatim. 3-tier pricing grid
- * (`md:grid-cols-3`) on `py-16 md:py-32` inside `max-w-6xl`. Each
- * tier card carries name + `text-2xl` price + cadence + feature
- * checklist + bottom CTA. The middle tier hosts a gradient "Popular"
- * pill (`-top-3 from-purple-400 to-amber-300`) above its header.
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricing02Namespace);
   const headingId = `${props.id}-heading`;

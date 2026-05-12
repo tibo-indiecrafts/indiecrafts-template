@@ -1,15 +1,5 @@
 import { Clock, MessageSquare } from "lucide-react";
 
-/**
- * AI memory dashboard mock — perspective-skewed card showing an
- * "AI Memory" header with an active badge, a "Context Window"
- * progress bar (12K / 16K tokens with two-tone fill), and a
- * "Remembered Context" list of three colored items (purple / blue /
- * cyan) with timestamps. Used by `sections-bento/bento-08/`'s "Smart
- * Home Automation" cell. Pure decoration; mock copy stays
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/bento-08` (upstream `AiMemoryIllustration`).
- */
 export const AiMemoryIllustration = () => {
   return (
     <div aria-hidden className="min-w-xs">

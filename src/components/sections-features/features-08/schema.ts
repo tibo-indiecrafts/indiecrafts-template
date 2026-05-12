@@ -1,10 +1,5 @@
 import type { MessageKey } from "@/types/messages";
 
-/**
- * Tailark `features-8` — bento grid with hand-crafted SVG illustrations per
- * card. Only the card headings are config-driven; the decorative visuals
- * stay baked in the component (they're too bespoke for a generic schema).
- */
 export type FeaturesBlock = {
   type: "features-08";
   id: string;

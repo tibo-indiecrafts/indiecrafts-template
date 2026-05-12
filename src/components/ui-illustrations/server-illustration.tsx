@@ -1,13 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/**
- * Stacked-server isometric illustration — a tall hex-prism stack of
- * tinted server racks with 4 active blade slots in the middle. The
- * `isActive` prop dims the whole illustration to 30% opacity when
- * false and animates the blade fill from 0 → 1 when true. Pure
- * decoration; no translatable content. Sourced from
- * `@tailark-pro/expandable-features-10`.
- */
 export const ServerIllustration = ({
   className,
   isActive,

@@ -11,13 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-customers-one` composition. Hero
- * ("Companies building with Tailark") inside a 10×3 dotted-grid
- * frame → MainCustomers (Bolt + Supabase featured stories) →
- * Customers (12-cell hover-reveal logo wall) → CallToAction. Light
- * + dark theme.
- */
 export const customers03Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "customers-03-hero" },

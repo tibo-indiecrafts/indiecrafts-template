@@ -60,7 +60,7 @@ export function Pricing() {
                   <div className="self-end">
                     <CardTitle className="text-lg font-medium">Free</CardTitle>
                     <div className="text-muted-foreground mt-1 text-sm text-balance">
-                      For developers trying out Tailark for the first time
+                      For developers trying out Acme for the first time
                     </div>
                   </div>
 

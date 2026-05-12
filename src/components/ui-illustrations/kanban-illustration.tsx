@@ -4,14 +4,6 @@ import Image from "next/image";
 const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 
-/**
- * Kanban board illustration — two columns ("In Progress" / "Ready for
- * Review") with two task cards (the active one tilted/translated
- * forward with shadow), an empty drop zone, and "Add new task" buttons
- * at the bottom. Pure decoration; mock task labels stay hardcoded per
- * the illustration rule. Sourced from
- * `@tailark-pro/expandable-features-11`.
- */
 export const KanbanIllustration = () => {
   return (
     <div aria-hidden className="min-w-md mask-b-from-65%">

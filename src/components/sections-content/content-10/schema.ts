@@ -5,9 +5,6 @@ export type StatItem = {
   labelKey: MessageKey;
 };
 
-/**
- * Tailark `stats-2` — filled muted cards.
- */
 export type ContentBlock = {
   type: "content-10";
   id: string;

@@ -14,7 +14,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `grid-2-contact-three` faithful port. */
 export function Landing({
   layout = contactPage04Defaults.layout,
   header = <Header10 />,
@@ -64,10 +63,10 @@ export function Landing({
                     Collaborate
                   </h3>
                   <Link
-                    href="mailto:hey@tailark.com"
+                    href="mailto:hey@acme.com"
                     className="hover:decoration-primary font-medium hover:underline"
                   >
-                    hey@tailark.com
+                    hey@acme.com
                   </Link>
                   <Link
                     href="tel:+6581234567"
@@ -79,10 +78,10 @@ export function Landing({
                 <div data-grid-content className="space-y-2.5 p-6 *:block @4xl:p-12">
                   <h3 className="text-muted-foreground text-sm font-medium">Press</h3>
                   <Link
-                    href="mailto:hey@tailark.com"
+                    href="mailto:hey@acme.com"
                     className="hover:decoration-primary font-medium hover:underline"
                   >
-                    press@tailark.com
+                    press@acme.com
                   </Link>
                   <Link
                     href="tel:+6581234567"

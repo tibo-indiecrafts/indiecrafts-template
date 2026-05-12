@@ -32,12 +32,6 @@ const SOCIAL_LINKS = [
   { id: "tiktok", href: "#" },
 ] as const;
 
-/**
- * Tailark `footer-1` — JSX verbatim. Centered editorial footer:
- * Logo at top, horizontal nav rail, social icon row, copyright
- * line. Self-contained — all icons inlined as SVG paths to match
- * the upstream's no-dependency design.
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter3Namespace);
   const homeLabel = t("homeLabel");

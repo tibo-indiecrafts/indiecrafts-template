@@ -4,14 +4,6 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { type Container, type ISourceOptions, MoveDirection } from "@tsparticles/engine";
 import { loadSlim } from "@tsparticles/slim";
 
-/**
- * `@tsparticles`-based decorative dust-particle layer used by
- * `ui-illustrations/scan-illustration`. White circles linked by thin
- * lines drift slowly with random opacity. Sourced from the upstream
- * Tailark catalogue (`particles.tsx` shipped at the components root
- * for `bento-03`'s `ScanIllustration`); promoted here as a flat
- * `ui-effects/` decorative primitive so other consumers can mount it.
- */
 export const LightDarkParticles = ({ id }: { id: string }) => {
   const [init, setInit] = useState(true);
 

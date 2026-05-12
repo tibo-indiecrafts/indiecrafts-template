@@ -40,11 +40,6 @@ const testimonials = [
   },
 ] as const;
 
-/**
- * Tailark Pro `libre-landing-two` TestimonialsSection — JSX
- * verbatim. 4 testimonial cards in an asymmetric md:grid-cols-2 /
- * md:grid-rows-5 layout with positional `nth-child` overrides.
- */
 export default function Testimonials(props: Readonly<Testimonials07Block>) {
   const [t] = useScopedT(testimonials07Namespace);
 

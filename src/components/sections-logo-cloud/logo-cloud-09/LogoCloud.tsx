@@ -12,10 +12,6 @@ import { Cisco } from "@/components/ui-primitives/svgs/cisco";
 import { useScopedT } from "@/i18n/scoped-t";
 import { logoCloud09CtaHref, logoCloud09Namespace } from "./config";
 
-/**
- * Heading + 4-column grayscale-then-color hover grid + outline
- * chevron CTA. Sourced from `@tailark-pro/logo-cloud-06`.
- */
 export function LogoCloud() {
   const [t] = useScopedT(logoCloud09Namespace);
 

@@ -24,13 +24,6 @@ const SOCIAL_LINKS: ReadonlyArray<{ id: SocialId; href: string }> = [
   { id: "linkedin", href: "#" },
 ];
 
-/**
- * Tailark `veil-footer-2` — JSX verbatim. Minimal centered veil
- * footer on `bg-background border-t py-12 @container` inside
- * `max-w-2xl`: Logo at top, nav row of 5 links, then 3 lucide
- * social icon buttons (Twitter / GitHub / LinkedIn), and a single-
- * line copyright with `next-intl` `{year}` interpolation.
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter6Namespace);
   const year = new Date().getFullYear();

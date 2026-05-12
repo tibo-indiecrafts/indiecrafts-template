@@ -105,11 +105,11 @@ export const MeetIllustration = ({ className }: { className?: string }) => {
           <div className="mx-auto grid max-w-2xl grid-cols-2 gap-2">
             {[
               {
-                img: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/person-1_e2jmus.jpg",
+                img: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/person-1_e2jmus.jpg",
                 name: "You",
               },
               {
-                img: "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/person-2_lzr6yo.jpg",
+                img: "https://raw.githubusercontent.com/acme/assets/refs/heads/main/person-2_lzr6yo.jpg",
                 name: "Mira",
               },
             ].map((item) => (

@@ -23,14 +23,6 @@ const LEGAL_LINKS = [
   { id: "cookies", href: "#" },
 ] as const;
 
-/**
- * Tailark `veil-footer-3` — JSX verbatim. Bordered veil footer on
- * `bg-background @container py-12` inside `max-w-2xl`. Top
- * `border-y py-8` row holds the Logo on the left and a 6-link nav
- * rail (`@xl:ml-auto`) on the right. Bottom `pt-8` row stacks
- * `flex-col-reverse @xl:flex-row @xl:justify-between` with
- * copyright (`{year}` interpolation) + 3 legal links.
- */
 export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
   const [t] = useScopedT(siteFooter9Namespace);
   const homeLabel = t("homeLabel");

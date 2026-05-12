@@ -6,15 +6,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { hero24Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 
-/**
- * Tailark `hero-section-6` — JSX verbatim. Marketing-block hero
- * with a "New" announcement chip linking to an introduction, the
- * title + body, an inline email-capture form (Mail icon, "Get
- * Started" button that collapses to `SendHorizonal` on mobile), and
- * a 3-bullet feature list. The right side hosts a theme-aware
- * radial-masked product illustration (`<Image>` swapping between
- * light and dark sources).
- */
 export default function Hero(props: Readonly<HeroBlock>) {
   const [, , tRoot] = useScopedT(hero24Namespace);
 

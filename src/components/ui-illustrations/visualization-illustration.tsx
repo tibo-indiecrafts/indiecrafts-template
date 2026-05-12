@@ -1,10 +1,3 @@
-/**
- * Spending-limit visualization mock — masked card with a highlighted
- * "Spending Limit" label, three-segment progress bar (used / hover-grow
- * primary / striped remainder), used/free split, and two legend rows.
- * Pure decoration; mock copy stays hardcoded per the illustration
- * rule. Sourced from `@tailark-pro/features-4`.
- */
 export const VisualizationIllustration = () => {
   return (
     <div

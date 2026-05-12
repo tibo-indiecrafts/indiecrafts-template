@@ -65,23 +65,6 @@ export type FeaturesExpandableItem = {
   supportive: SupportiveContent;
 };
 
-/**
- * Tailark Pro `expandable-features-21` — auto-cycling 2-tab variant
- * where the trigger UI is built into the headline copy itself. The
- * heading reads as one sentence with two inline trigger pills mid-
- * paragraph (each pill renders an icon glyph in a glowing tile
- * floating left of its label and the label text fills with a
- * gradient when active). Headline structure is a three-segment
- * sentence: `lead {trigger1} mid {trigger2} tail`.
- *
- * Below: a 2-col grid — left is the active title + body + outline
- * "Learn more" CTA + supportive content (`metrics` OR `testimonial`
- * via discriminated union); right is an `aspect-7/8` illustration
- * card with bg image at `opacity-65` light / `dark:opacity-35`.
- *
- * Two items is structural — the three-segment headline literally
- * needs exactly two pills. Default 7s autoplay; manual click resets.
- */
 export type FeaturesExpandableBlock = {
   type: "features-expandable-21";
   id: string;

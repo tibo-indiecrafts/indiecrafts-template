@@ -3,16 +3,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { stats20Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 
-/**
- * Tailark `veil-stats-4` — JSX verbatim. 2-column veil section
- * (`@2xl:grid-cols-2`) on `bg-background border-b pt-24 sm:pb-24`.
- * Left column: title + body + 3 stacked top-bordered stat lines
- * (each a `text-xl` sentence with a bold `<span>` value followed
- * by trailing copy). Right column hosts a radial-masked decorative
- * globe `<Image>` absolute-positioned to the bottom-right at `sm+`,
- * with a `bg-primary mix-blend-overlay` tint and `dark:invert`.
- * Default Tailwind font (no `font-serif` override).
- */
 export default function Stats(props: Readonly<StatsBlock>) {
   const [, , tRoot] = useScopedT(stats20Namespace);
   const headingId = `${props.id}-heading`;

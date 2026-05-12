@@ -13,10 +13,6 @@ export type FeaturesBullet = {
   labelKey: MessageKey;
 };
 
-/**
- * Tailark `features-5` — 2-col layout: headline + bullet list on the left,
- * large image on the right (lg: 2/3 width).
- */
 export type FeaturesBlock = {
   type: "features-05";
   id: string;

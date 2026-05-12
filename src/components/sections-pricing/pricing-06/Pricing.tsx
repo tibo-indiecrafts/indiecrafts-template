@@ -17,15 +17,6 @@ const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => 
   />
 );
 
-/**
- * Tailark `veil-pricing-2` — JSX verbatim. Stacked usage-based
- * pricing rows on `bg-background @container py-24` inside
- * `max-w-3xl`. Each tier is a horizontal row card (`@2xl:flex-row`)
- * with name + description + limit on the left, price + CTA on the
- * right. Highlighted tier gets a `ring-primary` outline. A
- * `bg-muted rounded-xl` footnote tile closes the section. Default
- * Tailwind font (no `font-serif` override).
- */
 export default function Pricing(props: Readonly<PricingBlock>) {
   const [, , tRoot] = useScopedT(pricing06Namespace);
   const headingId = `${props.id}-heading`;

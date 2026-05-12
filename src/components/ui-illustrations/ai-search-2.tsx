@@ -23,10 +23,10 @@ export const AiSearch2Illustration = () => {
         "https://images.unsplash.com/photo-1709803983276-7bcb343e3a9f?q=80&w=1276&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
     {
-      title: "Tailark Design System v2.0",
+      title: "Acme Design System v2.0",
       content:
         "Complete documentation for colors, typography, spacing tokens, and 50+ reusable UI components...",
-      filename: "tailark-ds.fig",
+      filename: "acme-ds.fig",
       fileIcon: <Figma />,
       image:
         "https://images.unsplash.com/photo-1634322487121-ba84c23cbc78?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",

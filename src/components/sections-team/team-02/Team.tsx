@@ -4,14 +4,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { team02Namespace } from "./config";
 import type { TeamBlock } from "./schema";
 
-/**
- * Tailark `team-1` — JSX verbatim. Editorial team grid inside
- * `max-w-3xl`: a `text-4xl lg:text-5xl` headline above N stacked
- * groups, each with a `text-lg` group heading and a 2-or-4-col
- * `border-t py-6` member grid. Every member card: a `size-20`
- * rounded avatar with a `bg-background border p-0.5` ring + name
- * + muted role label.
- */
 export default function Team(props: Readonly<TeamBlock>) {
   const [, , tRoot] = useScopedT(team02Namespace);
   const headingId = `${props.id}-heading`;

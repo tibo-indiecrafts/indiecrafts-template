@@ -11,11 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-1-pricing-one` composition. Inline hero
- * (centered title + body on bg-muted) → Pricing tiers →
- * Testimonial → Comparator → FAQs. Light + dark theme compatible.
- */
 export const pricingPage02Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "pricing-page-02-hero" },

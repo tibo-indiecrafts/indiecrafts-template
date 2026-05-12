@@ -18,14 +18,6 @@ const DEVICE_ORIGINS: Record<SceneDevice, { cx: number; cy: number }> = {
   tab: { cx: 100, cy: 328 },
 };
 
-/**
- * Isometric infrastructure scene — 5 devices (Server, Router,
- * Database, Tab, Mobile) sitting on a dashed-line platform. The
- * active device highlights (full opacity, 1.1 scale) while inactive
- * devices dim to 25% and the platform fades to 50%. Pure decoration;
- * no translatable strings. Sourced from
- * `@tailark-pro/expandable-features-9`.
- */
 export const SceneIllustration = ({
   activeDevice,
 }: {

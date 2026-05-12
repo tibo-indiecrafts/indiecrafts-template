@@ -1,4 +1,4 @@
-/* eslint-disable -- Tailark Pro upstream verbatim, kept as-is */
+/* eslint-disable -- Acme Pro upstream verbatim, kept as-is */
 import { cn } from "@/lib/utils";
 
 export const FeatureCard = ({ className, ...props }: React.ComponentProps<"div">) => {

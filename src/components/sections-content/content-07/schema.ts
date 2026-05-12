@@ -6,10 +6,6 @@ import type {
 
 export type { ContentInlineFeature, ContentInlineFeatureIcon };
 
-/**
- * Tailark `content-7` — variant of content-2 with a landscape image
- * (aspect-67/34) sitting inline next to the copy instead of floating.
- */
 export type ContentBlock = {
   type: "content-07";
   id: string;

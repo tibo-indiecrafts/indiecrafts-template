@@ -24,7 +24,7 @@ const MainIllustration = () => (
   >
     <div className="ring-foreground/10 bg-background/75 relative space-y-5 rounded-2xl p-2 ring-1 inset-shadow-sm inset-shadow-white/3 backdrop-blur-xl">
       <div>
-        <div className="text-muted-foreground px-2 pb-2 text-sm">irung@tailark.com</div>
+        <div className="text-muted-foreground px-2 pb-2 text-sm">irung@acme.com</div>
 
         <div className="bg-foreground/5 ring-foreground/10 flex flex-col gap-2 rounded-md border border-transparent p-4 shadow ring-1">
           <div className="text-foreground mb-1 text-sm font-medium">

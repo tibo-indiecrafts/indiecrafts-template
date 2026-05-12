@@ -5,13 +5,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { content24Namespace } from "./config";
 import type { ContentBlock } from "./schema";
 
-/**
- * Tailark `content-4` — JSX verbatim. Side-by-side editorial block:
- * left column carries a `text-4xl` headline; right column stacks two
- * paragraphs (the second has a brand prefix + inline `<strong>` +
- * trailing copy) above a secondary `Learn More` button with a
- * `ChevronRight` glyph.
- */
 export default function Content(props: Readonly<ContentBlock>) {
   const [, , tRoot] = useScopedT(content24Namespace);
   const headingId = `${props.id}-heading`;

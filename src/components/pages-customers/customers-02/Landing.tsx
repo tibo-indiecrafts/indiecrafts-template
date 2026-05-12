@@ -13,7 +13,6 @@ export type LandingProps = {
   footer?: boolean | ReactNode;
 };
 
-/** Tailark Pro `grid-1-customers-one` faithful port. */
 export function Landing({
   layout = customers02Defaults.layout,
   header = <Header10 />,
@@ -32,7 +31,7 @@ export function Landing({
               Powering success for visionary companies
             </h2>
             <p className="text-muted-foreground mt-4 text-lg text-balance">
-              From AI startups to global enterprises, Tailark is trusted by over 100
+              From AI startups to global enterprises, Acme is trusted by over 100
               companies to help them scale their business and stay ahead of the
               competition.
             </p>

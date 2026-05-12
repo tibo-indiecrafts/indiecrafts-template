@@ -30,7 +30,6 @@ export type LandingProps = {
   story?: CustomerStory;
 };
 
-/** Tailark Pro `dark-customer-story-one` faithful port. */
 export function Landing({
   layout = customerStory01Defaults.layout,
   header = <Header10 />,

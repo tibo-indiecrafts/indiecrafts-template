@@ -17,10 +17,6 @@ export type FeaturesItem = {
   imageAltKey: MessageKey;
 };
 
-/**
- * Tailark `features-12` — centered heading, then a split accordion (left) +
- * animated image preview (right) that swaps as the active item changes.
- */
 export type FeaturesBlock = {
   type: "features-12";
   id: string;

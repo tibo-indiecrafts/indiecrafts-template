@@ -55,8 +55,8 @@ export const ScanIllustration = () => {
 
         <div className="aspect-square max-w-xs bg-radial mask-[radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] group-hover:opacity-95">
           <Image
-            src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/portrait_vsoxqd.jpg"
-            alt="tailark hero section portrait"
+            src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/portrait_vsoxqd.jpg"
+            alt="acme hero section portrait"
             className="size-full object-cover"
             width={200}
             height={133}

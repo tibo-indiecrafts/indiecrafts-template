@@ -11,12 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-brand-one` composition. Brand kit page:
- * hero (Brand Kit headline + download CTA) → Naming guidelines →
- * Color palette (4 swatches) → Logo + Logomark download cards.
- * Light + dark theme.
- */
 export const brand01Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "brand-01-hero" },

@@ -2,19 +2,6 @@ import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { DocumentIllustration } from "@/components/ui-illustrations/document-illustration";
 import { cn } from "@/lib/utils";
 
-/**
- * Invoice card mock — bento-10/how-it-works variant. Single
- * `bg-card` rounded panel (no layered decorative stacked cards
- * behind, unlike `invoice-illustration`). Brand mark + invoice
- * number / amount / due-date header on the left, document thumb on
- * the right, then three To/From/Address placeholder rows. Used by
- * `sections-how-it-works/how-it-works-01/`'s "Receive confirmation"
- * step. Pure decoration; mock copy stays hardcoded per the
- * illustration rule. Sourced from `@tailark-pro/how-it-works-01`
- * (upstream `InvoiceIllustration`; renamed to
- * `invoice-card-illustration` to differentiate from our existing
- * stacked-cards `invoice-illustration`).
- */
 export const InvoiceCardIllustration = ({ className }: { className?: string }) => {
   return (
     <div aria-hidden className={cn(className)}>

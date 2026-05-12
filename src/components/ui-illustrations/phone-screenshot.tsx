@@ -2,7 +2,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_SRC =
-  "https://raw.githubusercontent.com/tailark/assets/refs/heads/main/mobile_hwua2g.png";
+  "https://raw.githubusercontent.com/acme/assets/refs/heads/main/mobile_hwua2g.png";
 
 export type PhoneScreenshotProps = {
   src?: string;

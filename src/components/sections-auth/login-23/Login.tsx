@@ -52,16 +52,6 @@ function GithubIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Tailark `veil-sign-up-3` — JSX verbatim. Sign-up mirror of
- * `veil-login-3` (login-16): narrow `max-w-xs` centered column with
- * NO card chrome on a `bg-background min-h-dvh flex` section.
- * Centered logo link + "Sign up" heading (default font, no
- * `font-serif` override), email + password form with full-width
- * "Continue" submit, top-border separator (`border-t pt-6`) holding
- * stacked Google + GitHub OAuth buttons, "Already have an account?
- * Sign in" footer.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login23Namespace);
   const titleId = `${props.id}-title`;

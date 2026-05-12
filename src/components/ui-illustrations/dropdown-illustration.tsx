@@ -40,15 +40,6 @@ const ACCOUNTS: readonly Account[] = [
   },
 ];
 
-/**
- * Account-switcher dropdown illustration — masked top bar with the
- * current product label ("Oxymor NS · $39 · ⋯") feeding into an open
- * dropdown panel listing four mock account avatars and the standard
- * menu actions (Add account / Preferences / Help / Send feedback / My
- * account / Settings / Sign out). Pure decoration; mock account
- * names, prices, and labels stay hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/features-10`.
- */
 export const DropdownIllustration = () => {
   return (
     <div aria-hidden className="flex items-center">

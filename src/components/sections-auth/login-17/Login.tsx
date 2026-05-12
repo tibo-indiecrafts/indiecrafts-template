@@ -52,15 +52,6 @@ function MicrosoftIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>)
   );
 }
 
-/**
- * Tailark `sign-up-1` (dusk-kit) — JSX verbatim. Mirrors the
- * `login-1` / `login-10` shape: `bg-card max-w-sm rounded border
- * p-0.5 shadow-md` form-as-card with a `p-8 pb-6` top section and
- * an inset `bg-muted rounded border p-3` footer. Top: logo link,
- * heading + subtitle, 2-col Google/Microsoft OAuth, dashed divider,
- * 2-col firstname/lastname, username (email), password, "Continue"
- * submit. Footer: "Have an account? Sign In" inline link.
- */
 export default function Login(props: Readonly<LoginBlock>) {
   const [t, tr] = useScopedT(login17Namespace);
   const titleId = `${props.id}-title`;

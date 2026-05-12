@@ -39,7 +39,7 @@ export default function Hero(props: Readonly<HeroBlock>) {
           >
             <div className="size-full">
               <Image
-                src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/grid-2-bg_bqde4m.webp"
+                src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/grid-2-bg_bqde4m.webp"
                 alt=""
                 className="size-full -scale-x-100 object-cover brightness-75 contrast-35"
                 width={2224}

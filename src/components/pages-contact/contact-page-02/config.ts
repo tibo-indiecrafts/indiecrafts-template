@@ -11,12 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-contact-four` composition. Stacked contact
- * page: top-row hero (heading + body) → bottom-row 2-col grid
- * with the form on the left and Email/Phone/Office details on
- * the right. Light + dark theme.
- */
 export const contactPage02Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "contact-page-02-hero" },

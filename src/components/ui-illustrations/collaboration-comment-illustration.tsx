@@ -19,16 +19,6 @@ const INITIAL_REACTIONS: readonly Reaction[] = [
 
 const EMOJI_POOL = ["👍", "❤️", "😂", "😮", "😢", "👏"] as const;
 
-/**
- * Collaboration comment thread illustration — radially-masked
- * placeholder document on the left with an avatar pin + comment card
- * on the right. The comment card has reactions (toggleable counts), a
- * close button (toggles card visibility), and a reply footer. Pure
- * decoration; mock copy stays hardcoded per the illustration rule.
- * Sourced from `@tailark-pro/expandable-features-12` (upstream
- * `CollbarationCommentIllustration` — typo "Collbaration" corrected
- * here).
- */
 export const CollaborationCommentIllustration = () => {
   const [reactions, setReactions] = useState<readonly Reaction[]>(INITIAL_REACTIONS);
   const [showComment, setShowComment] = useState(true);

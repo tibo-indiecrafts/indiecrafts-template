@@ -2,13 +2,6 @@ import Image from "next/image";
 
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 
-/**
- * Tiny chat-bubble illustration — circular avatar + display name, then
- * a rounded message bubble with an `@mention` highlight. Pure
- * decoration; mock copy ("Irung", "@bernard", dashboard message) stays
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/features-2`.
- */
 export const MessageIllustration = () => (
   <div aria-hidden>
     <div className="flex items-center gap-2">

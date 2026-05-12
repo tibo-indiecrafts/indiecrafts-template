@@ -17,13 +17,6 @@ import { useScopedT } from "@/i18n/scoped-t";
 import { hero23Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 
-/**
- * Tailark `hero-section-5` — JSX verbatim. Cinematic hero with a
- * looping background video framed by a rounded inset border, copy
- * pinned to the bottom-left, dual CTAs (primary with right chevron),
- * followed by an InfiniteSlider logo strip with `ProgressiveBlur`
- * edge fades.
- */
 export default function Hero(props: Readonly<HeroBlock>) {
   const [, , tRoot] = useScopedT(hero23Namespace);
 

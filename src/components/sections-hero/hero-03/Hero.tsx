@@ -5,15 +5,6 @@ import { ProductIllustration } from "@/components/ui-illustrations/product-illus
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero03CtaHref, hero03Namespace } from "./config";
 
-/**
- * Centered headline + primary CTA, framed by a bordered "browser
- * window" carrying the dashboard mock illustration, with a brand
- * `LogoCloud` underneath. Sourced from `@tailark-pro/hero-section-3`,
- * refactored to the project pattern: section semantics (no `<main>` —
- * that's the layout's job), all visible strings via `blocks.hero-03.*`,
- * primitives from `ui-primitives`, illustration from
- * `ui-illustrations`, logo cloud from `ui-molecules`.
- */
 export function Hero() {
   const [t] = useScopedT(hero03Namespace);
 

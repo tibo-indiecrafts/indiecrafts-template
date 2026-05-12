@@ -1,13 +1,5 @@
 import { AlertTriangle, RefreshCw, XCircle } from "lucide-react";
 
-/**
- * Agent self-correction-loop illustration — 3-step timeline showing an
- * AI agent failing on an API call (validation error), analyzing the
- * mistake (warning chip), then retrying with a fix (animated spinner
- * + corrected snippet). Pure decoration; mock code and labels stay
- * hardcoded per the illustration rule. Sourced from
- * `@tailark-pro/expandable-features-7`.
- */
 export const AgentFeedbackIllustration = () => {
   return (
     <div aria-hidden className="min-w-xs">

@@ -2,18 +2,6 @@ import { ProductPrompt } from "@/components/ui-illustrations/product-prompt";
 import { useScopedT } from "@/i18n/scoped-t";
 import { hero10Namespace } from "./config";
 
-/**
- * Minimal centered hero — headline + body + AI prompt-input mock.
- * Sourced from `@tailark-pro/hero-section-10`, refactored to the
- * project pattern: section semantics (no `<main>` — that's the
- * layout's job), all visible strings via `blocks.hero-10.*`, prompt
- * illustration from `ui-illustrations`. The original Tailark file
- * shipped a self-contained `PromptInput` + `Suggestion` pair under
- * `src/components/`; we extracted the entire prompt mock into
- * `ui-illustrations/product-prompt.tsx` to keep the section thin and
- * to avoid colliding with the project's richer
- * `ui-molecules/ai/prompt-input/` molecule.
- */
 export function Hero() {
   const [t] = useScopedT(hero10Namespace);
 

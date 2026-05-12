@@ -7,10 +7,6 @@ export type CommunityMember = {
   href: string;
 };
 
-/**
- * Tailark `content-6` — "built by the community" layout. Centered title + body,
- * then a flex-wrap grid of circular avatar links to contributors.
- */
 export type ContentBlock = {
   type: "content-06";
   id: string;

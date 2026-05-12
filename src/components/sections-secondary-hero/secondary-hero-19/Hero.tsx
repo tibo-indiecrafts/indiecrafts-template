@@ -15,16 +15,6 @@ import {
   secondaryHero19SecondaryCtaHref,
 } from "./config";
 
-/**
- * Secondary hero — "block grid" layout: a `bg-foreground/8` outer
- * paints the gaps between rounded inner tiles, creating a mosaic
- * frame. Top row: monospace eyebrow tag. Middle row: headline + body
- * + dual CTAs (left half) + `ProductSidePreview` (right half). Third
- * row: 6 brand-logo cells. Bottom row: a blank tile spacer. Sourced
- * from `@tailark-pro/secondary-hero-19`, refactored to the project
- * pattern: section semantics, all visible strings via
- * `blocks.secondary-hero-19.*`, illustration from `ui-illustrations`.
- */
 export function Hero() {
   const [t] = useScopedT(secondaryHero19Namespace);
 

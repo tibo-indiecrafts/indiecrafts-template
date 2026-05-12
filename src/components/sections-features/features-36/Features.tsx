@@ -42,7 +42,7 @@ export default function Features(props: Readonly<Features36Block>) {
               <div className="border-background relative aspect-video origin-top rounded-xl border-l-4">
                 <Image
                   className="size-full object-cover object-top-left"
-                  src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/circle_un3f39.png"
+                  src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/circle_un3f39.png"
                   alt={t("imageAlt")}
                   width={2880}
                   height={1920}

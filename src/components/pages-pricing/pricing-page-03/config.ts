@@ -11,11 +11,6 @@ const seo: PageSeo = {
   openGraph: { type: "website" },
 };
 
-/**
- * Tailark Pro `grid-2-pricing-one` composition. Inline grid hero
- * with masked Unsplash backdrop → Pricing tiers → LogoCloud →
- * Comparator → FAQs. Light + dark theme compatible.
- */
 export const pricingPage03Defaults = {
   layout: "default" as LayoutName,
   sectionIds: { hero: "pricing-page-03-hero" },

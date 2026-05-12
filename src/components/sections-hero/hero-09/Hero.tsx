@@ -10,19 +10,6 @@ import {
   hero09SecondaryCtaHref,
 } from "./config";
 
-/**
- * Centered hero with announcement chip + headline + body framed by
- * LED-pixel-strip decorative columns flanking the CTAs, with the
- * `ProductCards` 3-card gallery underneath and a `LogoCloud` trail.
- * Sourced from `@tailark-pro/hero-section-9`, refactored to the project
- * pattern: section semantics (no `<main>` — that's the layout's job),
- * all visible strings via `blocks.hero-09.*`, primitives from
- * `ui-primitives`, illustration from `ui-illustrations`, logo cloud
- * from `sections-logo-cloud`. The decorative cross-frame around the
- * announcement chip, dotted-line side accents, and pixel-stripe rows
- * resolve through the project's `--color-border-illustration` token
- * (defined in `globals.css`).
- */
 export function Hero() {
   const [t] = useScopedT(hero09Namespace);
 

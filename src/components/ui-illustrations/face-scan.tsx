@@ -67,7 +67,7 @@ export const FaceScanIllustration = () => {
 
       <div className="aspect-square max-w-xs bg-radial [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] group-hover:opacity-95">
         <Image
-          src="https://raw.githubusercontent.com/tailark/assets/refs/heads/main/human-face_kf9mt7.png"
+          src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/human-face_kf9mt7.png"
           alt="woman face"
           className="bg-illustration size-full object-cover grayscale"
           width={560}

@@ -43,7 +43,7 @@ export const EnterpriseForm = () => {
       <div>
         <Label htmlFor="website">Company Website</Label>
         <div className="relative">
-          <Input type="url" id="website" className="pl-16" placeholder="tailark.com" />
+          <Input type="url" id="website" className="pl-16" placeholder="acme.com" />
           <span className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm">
             https://
           </span>
