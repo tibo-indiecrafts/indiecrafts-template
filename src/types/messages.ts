@@ -31,6 +31,7 @@ import type bento11En from "@/components/sections-bento/bento-11/en.json";
 import type bento12En from "@/components/sections-bento/bento-12/en.json";
 import type bento13En from "@/components/sections-bento/bento-13/en.json";
 import type bento14En from "@/components/sections-bento/bento-14/en.json";
+import type bento15En from "@/components/sections-bento/bento-15/en.json";
 import type brand01En from "@/components/pages-brand/brand-01/en.json";
 import type chartAreaAxesEn from "@/components/ui-molecules/chart/area/axes/en.json";
 import type chartAreaDefaultEn from "@/components/ui-molecules/chart/area/default/en.json";
@@ -231,6 +232,7 @@ import type formLayout02En from "@/components/sections-form/form-layout-02/en.js
 import type formLayout03En from "@/components/sections-form/form-layout-03/en.json";
 import type formLayout04En from "@/components/sections-form/form-layout-04/en.json";
 import type formLayout05En from "@/components/sections-form/form-layout-05/en.json";
+import type gallery01En from "@/components/sections-gallery/gallery-01/en.json";
 import type gridList01En from "@/components/sections-lists/grid-list-01/en.json";
 import type gridList02En from "@/components/sections-lists/grid-list-02/en.json";
 import type gridList03En from "@/components/sections-lists/grid-list-03/en.json";
@@ -341,6 +343,7 @@ import type logoCloud12En from "@/components/sections-logo-cloud/logo-cloud-12/e
 import type logoCloud13En from "@/components/sections-logo-cloud/logo-cloud-13/en.json";
 import type logoCloud14En from "@/components/sections-logo-cloud/logo-cloud-14/en.json";
 import type logoCloud15En from "@/components/sections-logo-cloud/logo-cloud-15/en.json";
+import type mediaModalEn from "@/components/sections-modals/media-modal/en.json";
 import type navCollapseEn from "@/components/ui-molecules/nav/collapse/en.json";
 import type navDocumentsEn from "@/components/ui-molecules/nav/documents/en.json";
 import type navFavoritesEn from "@/components/ui-molecules/nav/favorites/en.json";
@@ -417,6 +420,7 @@ import type sidebar09En from "@/components/layouts/dashboard-layout/sidebars/sid
 import type sidebarTriggerEn from "@/components/ui-effects/sidebar-trigger/en.json";
 import type signup01En from "@/components/pages-signup/signup-01/en.json";
 import type signupFormEn from "@/components/ui-molecules/form/signup/en.json";
+import type siteDrawerEn from "@/components/layouts/_shared/site-drawer/en.json";
 import type siteFooterEn from "@/components/layouts/default-layout/site-footer/en.json";
 import type siteFooter10En from "@/components/layouts/_shared/site-footers/site-footer-10/en.json";
 import type siteFooter11En from "@/components/layouts/_shared/site-footers/site-footer-11/en.json";
@@ -465,6 +469,7 @@ import type team05En from "@/components/sections-team/team-05/en.json";
 import type teamSwitcherFlatEn from "@/components/ui-molecules/team-switcher/flat/en.json";
 import type teamSwitcherGroupedEn from "@/components/ui-molecules/team-switcher/grouped/en.json";
 import type teamSwitcherToggleEn from "@/components/ui-molecules/team-switcher/toggle/en.json";
+import type terminal01En from "@/components/sections-terminal/terminal-01/en.json";
 import type testimonials01En from "@/components/sections-testimonials/testimonials-01/en.json";
 import type testimonials02En from "@/components/sections-testimonials/testimonials-02/en.json";
 import type testimonials03En from "@/components/sections-testimonials/testimonials-03/en.json";
@@ -517,6 +522,7 @@ type MergedMessages = typeof globalEn & {
     "bento-12": typeof bento12En;
     "bento-13": typeof bento13En;
     "bento-14": typeof bento14En;
+    "bento-15": typeof bento15En;
     "brand-01": typeof brand01En;
     "chart-area-axes": typeof chartAreaAxesEn;
     "chart-area-default": typeof chartAreaDefaultEn;
@@ -717,6 +723,7 @@ type MergedMessages = typeof globalEn & {
     "form-layout-03": typeof formLayout03En;
     "form-layout-04": typeof formLayout04En;
     "form-layout-05": typeof formLayout05En;
+    "gallery-01": typeof gallery01En;
     "grid-list-01": typeof gridList01En;
     "grid-list-02": typeof gridList02En;
     "grid-list-03": typeof gridList03En;
@@ -827,6 +834,7 @@ type MergedMessages = typeof globalEn & {
     "logo-cloud-13": typeof logoCloud13En;
     "logo-cloud-14": typeof logoCloud14En;
     "logo-cloud-15": typeof logoCloud15En;
+    "media-modal": typeof mediaModalEn;
     "nav-collapse": typeof navCollapseEn;
     "nav-documents": typeof navDocumentsEn;
     "nav-favorites": typeof navFavoritesEn;
@@ -903,6 +911,7 @@ type MergedMessages = typeof globalEn & {
     "sidebar-trigger": typeof sidebarTriggerEn;
     "signup-01": typeof signup01En;
     "signup-form": typeof signupFormEn;
+    "site-drawer": typeof siteDrawerEn;
     "site-footer": typeof siteFooterEn;
     "site-footer-10": typeof siteFooter10En;
     "site-footer-11": typeof siteFooter11En;
@@ -951,6 +960,7 @@ type MergedMessages = typeof globalEn & {
     "team-switcher-flat": typeof teamSwitcherFlatEn;
     "team-switcher-grouped": typeof teamSwitcherGroupedEn;
     "team-switcher-toggle": typeof teamSwitcherToggleEn;
+    "terminal-01": typeof terminal01En;
     "testimonials-01": typeof testimonials01En;
     "testimonials-02": typeof testimonials02En;
     "testimonials-03": typeof testimonials03En;

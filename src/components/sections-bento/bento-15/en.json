@@ -1,0 +1,9 @@
+{
+  "title": "Featured projects",
+  "items": {
+    "project1": { "title": "Distrokings" },
+    "project2": { "title": "Profitables" },
+    "project3": { "title": "Topserve-copiers" },
+    "project4": { "title": "Labramart" }
+  }
+}

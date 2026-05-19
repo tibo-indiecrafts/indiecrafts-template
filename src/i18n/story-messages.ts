@@ -12,6 +12,7 @@ import sidebar08En from "../components/layouts/dashboard-layout/sidebars/sidebar
 import sidebar09En from "../components/layouts/dashboard-layout/sidebars/sidebar-09/en.json";
 import siteFooterEn from "../components/layouts/default-layout/site-footer/en.json";
 import localeSwitcherEn from "../components/layouts/_shared/locale-switcher/en.json";
+import siteDrawerEn from "../components/layouts/_shared/site-drawer/en.json";
 import siteFooter10En from "../components/layouts/_shared/site-footers/site-footer-10/en.json";
 import siteFooter11En from "../components/layouts/_shared/site-footers/site-footer-11/en.json";
 import siteFooter12En from "../components/layouts/_shared/site-footers/site-footer-12/en.json";
@@ -121,6 +122,7 @@ import bento11En from "../components/sections-bento/bento-11/en.json";
 import bento12En from "../components/sections-bento/bento-12/en.json";
 import bento13En from "../components/sections-bento/bento-13/en.json";
 import bento14En from "../components/sections-bento/bento-14/en.json";
+import bento15En from "../components/sections-bento/bento-15/en.json";
 import codeDemo01En from "../components/sections-code-demo/code-demo-01/en.json";
 import codeDemo02En from "../components/sections-code-demo/code-demo-02/en.json";
 import codeDemo03En from "../components/sections-code-demo/code-demo-03/en.json";
@@ -272,6 +274,7 @@ import formLayout02En from "../components/sections-form/form-layout-02/en.json";
 import formLayout03En from "../components/sections-form/form-layout-03/en.json";
 import formLayout04En from "../components/sections-form/form-layout-04/en.json";
 import formLayout05En from "../components/sections-form/form-layout-05/en.json";
+import gallery01En from "../components/sections-gallery/gallery-01/en.json";
 import hero01En from "../components/sections-hero/hero-01/en.json";
 import hero02En from "../components/sections-hero/hero-02/en.json";
 import hero03En from "../components/sections-hero/hero-03/en.json";
@@ -351,6 +354,7 @@ import dialog09En from "../components/sections-modals/dialog-09/en.json";
 import dialog10En from "../components/sections-modals/dialog-10/en.json";
 import dialog11En from "../components/sections-modals/dialog-11/en.json";
 import dialog12En from "../components/sections-modals/dialog-12/en.json";
+import mediaModalEn from "../components/sections-modals/media-modal/en.json";
 import onboarding01En from "../components/sections-onboarding/onboarding-01/en.json";
 import onboarding02En from "../components/sections-onboarding/onboarding-02/en.json";
 import onboarding03En from "../components/sections-onboarding/onboarding-03/en.json";
@@ -413,6 +417,7 @@ import team02En from "../components/sections-team/team-02/en.json";
 import team03En from "../components/sections-team/team-03/en.json";
 import team04En from "../components/sections-team/team-04/en.json";
 import team05En from "../components/sections-team/team-05/en.json";
+import terminal01En from "../components/sections-terminal/terminal-01/en.json";
 import testimonials01En from "../components/sections-testimonials/testimonials-01/en.json";
 import testimonials02En from "../components/sections-testimonials/testimonials-02/en.json";
 import testimonials03En from "../components/sections-testimonials/testimonials-03/en.json";
@@ -502,6 +507,7 @@ export const STORY_MESSAGES: Record<string, Record<string, unknown>> = {
   "Layouts/Dashboard/Sidebars/Sidebar09": { "sidebar-09": sidebar09En },
   "Layouts/Default/SiteFooter": { "site-footer": siteFooterEn },
   "Layouts/Shared/LocaleSwitcher": { "locale-switcher": localeSwitcherEn },
+  "Layouts/Shared/SiteDrawer": { "site-drawer": siteDrawerEn },
   "Layouts/Shared/SiteFooters/SiteFooter10": { "site-footer-10": siteFooter10En },
   "Layouts/Shared/SiteFooters/SiteFooter11": { "site-footer-11": siteFooter11En },
   "Layouts/Shared/SiteFooters/SiteFooter12": { "site-footer-12": siteFooter12En },
@@ -611,6 +617,7 @@ export const STORY_MESSAGES: Record<string, Record<string, unknown>> = {
   "Sections/Bento/Bento12": { "bento-12": bento12En },
   "Sections/Bento/Bento13": { "bento-13": bento13En },
   "Sections/Bento/Bento14": { "bento-14": bento14En },
+  "Sections/Bento/Bento15": { "bento-15": bento15En },
   "Sections/CodeDemo/CodeDemo01": { "code-demo-01": codeDemo01En },
   "Sections/CodeDemo/CodeDemo02": { "code-demo-02": codeDemo02En },
   "Sections/CodeDemo/CodeDemo03": { "code-demo-03": codeDemo03En },
@@ -816,6 +823,7 @@ export const STORY_MESSAGES: Record<string, Record<string, unknown>> = {
   "Sections/Form/FormLayout03": { "form-layout-03": formLayout03En },
   "Sections/Form/FormLayout04": { "form-layout-04": formLayout04En },
   "Sections/Form/FormLayout05": { "form-layout-05": formLayout05En },
+  "Sections/Gallery/Gallery01": { "gallery-01": gallery01En },
   "Sections/Hero/Hero01": { "hero-01": hero01En },
   "Sections/Hero/Hero02": { "hero-02": hero02En },
   "Sections/Hero/Hero03": { "hero-03": hero03En },
@@ -895,6 +903,7 @@ export const STORY_MESSAGES: Record<string, Record<string, unknown>> = {
   "Sections/Modals/Dialog10": { "dialog-10": dialog10En },
   "Sections/Modals/Dialog11": { "dialog-11": dialog11En },
   "Sections/Modals/Dialog12": { "dialog-12": dialog12En },
+  "Sections/Modals/MediaModal": { "media-modal": mediaModalEn },
   "Sections/Onboarding/Onboarding01": { "onboarding-01": onboarding01En },
   "Sections/Onboarding/Onboarding02": { "onboarding-02": onboarding02En },
   "Sections/Onboarding/Onboarding03": { "onboarding-03": onboarding03En },
@@ -963,6 +972,7 @@ export const STORY_MESSAGES: Record<string, Record<string, unknown>> = {
   "Sections/Team/Team03": { "team-03": team03En },
   "Sections/Team/Team04": { "team-04": team04En },
   "Sections/Team/Team05": { "team-05": team05En },
+  "Sections/Terminal/Terminal01": { "terminal-01": terminal01En },
   "Sections/Testimonials/Testimonials01": { "testimonials-01": testimonials01En },
   "Sections/Testimonials/Testimonials02": { "testimonials-02": testimonials02En },
   "Sections/Testimonials/Testimonials03": { "testimonials-03": testimonials03En },

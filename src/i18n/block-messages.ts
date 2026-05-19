@@ -24,6 +24,7 @@ import bento11En from "../components/sections-bento/bento-11/en.json";
 import bento12En from "../components/sections-bento/bento-12/en.json";
 import bento13En from "../components/sections-bento/bento-13/en.json";
 import bento14En from "../components/sections-bento/bento-14/en.json";
+import bento15En from "../components/sections-bento/bento-15/en.json";
 import brand01En from "../components/pages-brand/brand-01/en.json";
 import chartAreaAxesEn from "../components/ui-molecules/chart/area/axes/en.json";
 import chartAreaDefaultEn from "../components/ui-molecules/chart/area/default/en.json";
@@ -224,6 +225,7 @@ import formLayout02En from "../components/sections-form/form-layout-02/en.json";
 import formLayout03En from "../components/sections-form/form-layout-03/en.json";
 import formLayout04En from "../components/sections-form/form-layout-04/en.json";
 import formLayout05En from "../components/sections-form/form-layout-05/en.json";
+import gallery01En from "../components/sections-gallery/gallery-01/en.json";
 import gridList01En from "../components/sections-lists/grid-list-01/en.json";
 import gridList02En from "../components/sections-lists/grid-list-02/en.json";
 import gridList03En from "../components/sections-lists/grid-list-03/en.json";
@@ -334,6 +336,7 @@ import logoCloud12En from "../components/sections-logo-cloud/logo-cloud-12/en.js
 import logoCloud13En from "../components/sections-logo-cloud/logo-cloud-13/en.json";
 import logoCloud14En from "../components/sections-logo-cloud/logo-cloud-14/en.json";
 import logoCloud15En from "../components/sections-logo-cloud/logo-cloud-15/en.json";
+import mediaModalEn from "../components/sections-modals/media-modal/en.json";
 import navCollapseEn from "../components/ui-molecules/nav/collapse/en.json";
 import navDocumentsEn from "../components/ui-molecules/nav/documents/en.json";
 import navFavoritesEn from "../components/ui-molecules/nav/favorites/en.json";
@@ -410,6 +413,7 @@ import sidebar09En from "../components/layouts/dashboard-layout/sidebars/sidebar
 import sidebarTriggerEn from "../components/ui-effects/sidebar-trigger/en.json";
 import signup01En from "../components/pages-signup/signup-01/en.json";
 import signupFormEn from "../components/ui-molecules/form/signup/en.json";
+import siteDrawerEn from "../components/layouts/_shared/site-drawer/en.json";
 import siteFooterEn from "../components/layouts/default-layout/site-footer/en.json";
 import siteFooter10En from "../components/layouts/_shared/site-footers/site-footer-10/en.json";
 import siteFooter11En from "../components/layouts/_shared/site-footers/site-footer-11/en.json";
@@ -458,6 +462,7 @@ import team05En from "../components/sections-team/team-05/en.json";
 import teamSwitcherFlatEn from "../components/ui-molecules/team-switcher/flat/en.json";
 import teamSwitcherGroupedEn from "../components/ui-molecules/team-switcher/grouped/en.json";
 import teamSwitcherToggleEn from "../components/ui-molecules/team-switcher/toggle/en.json";
+import terminal01En from "../components/sections-terminal/terminal-01/en.json";
 import testimonials01En from "../components/sections-testimonials/testimonials-01/en.json";
 import testimonials02En from "../components/sections-testimonials/testimonials-02/en.json";
 import testimonials03En from "../components/sections-testimonials/testimonials-03/en.json";
@@ -505,6 +510,7 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "bento-12": bento12En,
   "bento-13": bento13En,
   "bento-14": bento14En,
+  "bento-15": bento15En,
   "brand-01": brand01En,
   "chart-area-axes": chartAreaAxesEn,
   "chart-area-default": chartAreaDefaultEn,
@@ -705,6 +711,7 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "form-layout-03": formLayout03En,
   "form-layout-04": formLayout04En,
   "form-layout-05": formLayout05En,
+  "gallery-01": gallery01En,
   "grid-list-01": gridList01En,
   "grid-list-02": gridList02En,
   "grid-list-03": gridList03En,
@@ -815,6 +822,7 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "logo-cloud-13": logoCloud13En,
   "logo-cloud-14": logoCloud14En,
   "logo-cloud-15": logoCloud15En,
+  "media-modal": mediaModalEn,
   "nav-collapse": navCollapseEn,
   "nav-documents": navDocumentsEn,
   "nav-favorites": navFavoritesEn,
@@ -891,6 +899,7 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "sidebar-trigger": sidebarTriggerEn,
   "signup-01": signup01En,
   "signup-form": signupFormEn,
+  "site-drawer": siteDrawerEn,
   "site-footer": siteFooterEn,
   "site-footer-10": siteFooter10En,
   "site-footer-11": siteFooter11En,
@@ -939,6 +948,7 @@ const BLOCK_MESSAGES: Record<string, Record<string, unknown>> = {
   "team-switcher-flat": teamSwitcherFlatEn,
   "team-switcher-grouped": teamSwitcherGroupedEn,
   "team-switcher-toggle": teamSwitcherToggleEn,
+  "terminal-01": terminal01En,
   "testimonials-01": testimonials01En,
   "testimonials-02": testimonials02En,
   "testimonials-03": testimonials03En,
