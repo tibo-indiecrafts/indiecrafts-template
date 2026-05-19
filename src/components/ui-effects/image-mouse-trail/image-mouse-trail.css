@@ -1,0 +1,10 @@
+/*
+ * --ease-out-expo — overshooting ease curve consumed by the
+ * `data-[status='active']:ease-out-expo` utility on ImageMouseTrail.
+ *
+ * Picked up by Tailwind v4's @theme inline merge via the
+ * component-styles aggregator (no edits to globals.css required).
+ */
+@theme inline {
+  --ease-out-expo: cubic-bezier(0.34, 1.56, 0.64, 1);
+}

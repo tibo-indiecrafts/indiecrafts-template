@@ -1,0 +1,48 @@
+/*
+ * .blur-vignette — soft-edged blur frame around media.
+ *
+ * Two crossed linear-gradient masks combined via mask-composite: add form
+ * an opaque ring at the edges and a transparent rectangle in the center.
+ * Backdrop-filter blurs whatever sits behind, but the mask limits it to
+ * just the ring. The result is a vignette of blurred edges with a sharp
+ * window into the underlying content.
+ *
+ * Tuned via four CSS variables set inline by BlurVignetteArticle:
+ *   --radius             matches the parent's border-radius
+ *   --inset              distance from edge where the ring is fully opaque
+ *   --transition-length  width of the fade from opaque ring to transparent center
+ *   --blur               blur strength applied across the ring
+ */
+
+.blur-vignette {
+  border-radius: var(--radius);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+
+  --vignette-mask:
+    linear-gradient(
+      to right,
+      black 0,
+      black var(--inset),
+      transparent calc(var(--inset) + var(--transition-length)),
+      transparent calc(100% - var(--inset) - var(--transition-length)),
+      black calc(100% - var(--inset)),
+      black 100%
+    ),
+    linear-gradient(
+      to bottom,
+      black 0,
+      black var(--inset),
+      transparent calc(var(--inset) + var(--transition-length)),
+      transparent calc(100% - var(--inset) - var(--transition-length)),
+      black calc(100% - var(--inset)),
+      black 100%
+    );
+
+  mask-image: var(--vignette-mask);
+  -webkit-mask-image: var(--vignette-mask);
+  mask-composite: add;
+  -webkit-mask-composite: source-over;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
