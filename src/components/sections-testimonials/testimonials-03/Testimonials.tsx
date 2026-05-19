@@ -32,7 +32,7 @@ function TestimonialCard({ id, avatar, t }: { id: string; avatar: string; t: TFn
   const name = t(`items.${id}.name`);
   return (
     <div className="ring-foreground/5 flex flex-col justify-end gap-8 border border-transparent p-8 ring">
-      <p className='text-foreground self-end text-lg text-balance before:mr-1 before:content-["\201C"] after:ml-1 after:content-["\201D"]'>
+      <p className='text-foreground self-end text-lg text-balance before:mr-1 before:content-["\\201C"] after:ml-1 after:content-["\\201D"]'>
         {t(`items.${id}.quote`)}
       </p>
       <div className="flex items-center gap-3">

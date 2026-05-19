@@ -145,7 +145,7 @@ export default function Features(props: Readonly<Features31Block>) {
         <div className="mx-auto max-w-2xl p-6 md:py-12 lg:py-20">
           <VercelFull className="h-6 w-24" />
           <div className="mt-6 lg:mt-12">
-            <p className='text-xl *:leading-relaxed before:mr-1 before:content-["\201C"] after:ml-1 after:content-["\201D"] md:text-2xl'>
+            <p className='text-xl *:leading-relaxed before:mr-1 before:content-["\\201C"] after:ml-1 after:content-["\\201D"] md:text-2xl'>
               {t("quote.text")}
             </p>
             <div className="mt-12 flex items-center gap-3">

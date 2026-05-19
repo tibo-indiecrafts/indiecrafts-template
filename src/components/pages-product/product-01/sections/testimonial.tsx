@@ -11,7 +11,7 @@ export const TestimonialSection = () => {
         <Spotify className="h-7 w-20" />
 
         <div className="mt-6 lg:mt-12">
-          <p className='text-xl *:leading-relaxed before:mr-1 before:content-["\201C"] after:ml-1 after:content-["\201D"] md:text-2xl'>
+          <p className='text-xl *:leading-relaxed before:mr-1 before:content-["\\201C"] after:ml-1 after:content-["\\201D"] md:text-2xl'>
             Using Acme has been like unlocking a secret design superpower. It&apos;s the
             perfect fusion of simplicity and versatility, enabling us to create UIs that
             are as stunning as they are user-friendly.

@@ -57,7 +57,7 @@ export function TestimonialsSection() {
                   </Button>
                 </div>
 
-                <p className='mt-12 max-w-lg text-xl before:mr-1 before:font-serif before:content-["\201C"] after:ml-1 after:font-serif after:content-["\201D"]'>
+                <p className='mt-12 max-w-lg text-xl before:mr-1 before:font-serif before:content-["\\201C"] after:ml-1 after:font-serif after:content-["\\201D"]'>
                   Using Acme has been like unlocking a secret design superpower. It's the
                   perfect fusion of simplicity and versatility, enabling us to create UIs
                   that are as stunning as they are user-friendly.
@@ -113,7 +113,7 @@ export function TestimonialsSection() {
         <div className="relative @4xl:col-span-9">
           <FeatureCard>
             <FeatureCardContent className="bg-card!">
-              <p className='text-lg before:mr-1 before:font-serif before:content-["\201C"] after:ml-1 after:font-serif after:content-["\201D"] lg:text-xl'>
+              <p className='text-lg before:mr-1 before:font-serif before:content-["\\201C"] after:ml-1 after:font-serif after:content-["\\201D"] lg:text-xl'>
                 Tailus has transformed the way I develop web applications. Their extensive
                 collection of UI components, blocks, and templates has significantly
                 accelerated my workflow. The flexibility to customize every aspect allows
@@ -155,7 +155,7 @@ export function TestimonialsSection() {
         <div className="@4xl:col-span-9">
           <FeatureCard className="grid-rows-[1fr_auto]">
             <FeatureCardContent className="bg-background!">
-              <p className='text-lg before:mr-1 before:font-serif before:content-["\201C"] after:ml-1 after:font-serif after:content-["\201D"] lg:text-xl'>
+              <p className='text-lg before:mr-1 before:font-serif before:content-["\\201C"] after:ml-1 after:font-serif after:content-["\\201D"] lg:text-xl'>
                 Their extensive collection of UI components, blocks, and templates has
                 significantly accelerated my workflow. The flexibility to customize every
                 aspect allows me to create unique user experiences.

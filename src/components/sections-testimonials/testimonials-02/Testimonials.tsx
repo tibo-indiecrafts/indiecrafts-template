@@ -119,7 +119,7 @@ export default function Testimonials(props: Readonly<TestimonialsBlock>) {
                   animate="animate"
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                 >
-                  <p className="text-2xl before:mr-1 before:font-serif before:content-['\201C'] after:ml-1 after:font-serif after:content-['\201D'] lg:text-3xl">
+                  <p className="text-2xl before:mr-1 before:font-serif before:content-['\\201C'] after:ml-1 after:font-serif after:content-['\\201D'] lg:text-3xl">
                     {tRoot(current.textKey)}
                   </p>
                 </motion.div>

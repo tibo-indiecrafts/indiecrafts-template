@@ -129,7 +129,7 @@ export default function Features(props: Readonly<Features29Block>) {
           />
           <Stripe className="mt-6 h-auto w-16" />
           <div className="mt-6">
-            <p className='text-xl *:leading-relaxed before:mr-1 before:content-["\201C"] after:ml-1 after:content-["\201D"] md:text-2xl'>
+            <p className='text-xl *:leading-relaxed before:mr-1 before:content-["\\201C"] after:ml-1 after:content-["\\201D"] md:text-2xl'>
               {t("quote2.text")}
             </p>
 

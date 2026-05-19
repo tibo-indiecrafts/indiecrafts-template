@@ -72,7 +72,7 @@ export default function Testimonials(props: Readonly<Testimonials07Block>) {
                 <div>
                   <testimonial.Logo {...testimonial.cardLogoProps} />
                 </div>
-                <p className='text-lg before:mr-1 before:font-serif before:content-["\201C"] after:ml-1 after:font-serif after:content-["\201D"]'>
+                <p className='text-lg before:mr-1 before:font-serif before:content-["\\201C"] after:ml-1 after:font-serif after:content-["\\201D"]'>
                   {t(`items.${testimonial.id}.text`)}
                 </p>
                 <div className="grid grid-cols-[auto_1fr] items-center gap-3 pl-px">

@@ -58,7 +58,7 @@ export default function Testimonials(props: Readonly<Testimonials04Block>) {
                   </Button>
                 </div>
 
-                <p className='mt-12 max-w-lg text-xl before:mr-1 before:font-serif before:content-["\201C"] after:ml-1 after:font-serif after:content-["\201D"]'>
+                <p className='mt-12 max-w-lg text-xl before:mr-1 before:font-serif before:content-["\\201C"] after:ml-1 after:font-serif after:content-["\\201D"]'>
                   {t("hero.quote")}
                 </p>
               </div>
@@ -113,7 +113,7 @@ export default function Testimonials(props: Readonly<Testimonials04Block>) {
         <div className="relative @4xl:col-span-9">
           <FeatureCard>
             <FeatureCardContent className="bg-card!">
-              <p className='text-lg before:mr-1 before:font-serif before:content-["\201C"] after:ml-1 after:font-serif after:content-["\201D"] lg:text-xl'>
+              <p className='text-lg before:mr-1 before:font-serif before:content-["\\201C"] after:ml-1 after:font-serif after:content-["\\201D"] lg:text-xl'>
                 {t("card1.quote")}
               </p>
             </FeatureCardContent>
@@ -152,7 +152,7 @@ export default function Testimonials(props: Readonly<Testimonials04Block>) {
         <div className="@4xl:col-span-9">
           <FeatureCard className="grid-rows-[1fr_auto]">
             <FeatureCardContent className="bg-background!">
-              <p className='text-lg before:mr-1 before:font-serif before:content-["\201C"] after:ml-1 after:font-serif after:content-["\201D"] lg:text-xl'>
+              <p className='text-lg before:mr-1 before:font-serif before:content-["\\201C"] after:ml-1 after:font-serif after:content-["\\201D"] lg:text-xl'>
                 {t("card2.quote")}
               </p>
             </FeatureCardContent>
