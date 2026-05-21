@@ -22,7 +22,7 @@ export type SignupProps = React.ComponentProps<"div"> & {
 
 export default function Signup({
   className,
-  loginHref = "/login",
+  loginHref = "/",
   termsHref = "/terms",
   privacyHref = "/privacy",
   illustrationSrc = "/placeholder.svg",

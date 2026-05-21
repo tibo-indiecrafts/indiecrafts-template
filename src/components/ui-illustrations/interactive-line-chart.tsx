@@ -40,7 +40,7 @@ export const InteractiveLineChart = () => {
 
   const getX = useCallback(
     (index: number) => padding.left + (index / (chartData.length - 1)) * chartWidth,
-    [chartWidth],
+    [chartWidth, padding.left],
   );
   const getY = (value: number) =>
     padding.top + chartHeight - (value / maxValue) * chartHeight;

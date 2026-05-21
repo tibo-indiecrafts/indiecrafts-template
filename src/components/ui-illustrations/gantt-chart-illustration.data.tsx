@@ -183,7 +183,7 @@ export const GanttChart = () => {
   };
 
   const handleAddFeature = (date: Date) =>
-    console.log(`Add feature: \${date.toISOString()}`);
+    console.log(`Add feature: ${date.toISOString()}`);
 
   return (
     <GanttProvider

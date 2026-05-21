@@ -9,19 +9,10 @@
  */
 
 import type { PageConfig } from "./types";
-import {
-  PAGES,
-  PATHNAMES,
-  homePage,
-  aboutPage,
-  dashboardPage,
-  forgotPasswordPage,
-  loginPage,
-  signupPage,
-} from "./registry.generated";
+import { PAGES, PATHNAMES, homePage } from "./registry.generated";
 
 export { PAGES, PATHNAMES };
-export { homePage, aboutPage, dashboardPage, forgotPasswordPage, loginPage, signupPage };
+export { homePage };
 
 export const pages: readonly PageConfig[] = PAGES;
 

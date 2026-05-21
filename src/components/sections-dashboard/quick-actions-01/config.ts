@@ -4,10 +4,10 @@ export const quickActions01Key = "quick-actions-01" as const;
 export const quickActions01Namespace = "blocks.quick-actions-01" as const;
 
 export const quickActions01Items: QuickActionItem[] = [
-  { id: "create-project", iconKey: "Plus", href: "/dashboard" },
-  { id: "invite-teammate", iconKey: "UserPlus", href: "/dashboard" },
-  { id: "view-reports", iconKey: "BarChart3", href: "/dashboard" },
-  { id: "configure-billing", iconKey: "CreditCard", href: "/dashboard" },
+  { id: "create-project", iconKey: "Plus", href: "/" },
+  { id: "invite-teammate", iconKey: "UserPlus", href: "/" },
+  { id: "view-reports", iconKey: "BarChart3", href: "/" },
+  { id: "configure-billing", iconKey: "CreditCard", href: "/" },
 ];
 
 export const quickActions01Sample: Omit<QuickActionsBlock, "id"> = {

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- decorative illustration; intrinsic sizing not via next/image */
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 
 export const MessageIllustration = () => (

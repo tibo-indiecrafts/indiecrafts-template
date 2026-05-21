@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# indiecrafts.dev
 
-## Getting Started
+Config-first, modular Next.js 16 template for client sites. Edit `src/config/*`, drop blocks into `src/components/sections-<type>/`, ship.
 
-First, run the development server:
+**Stack**: Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · next-intl v4 · next-themes · Zod · Storybook 10 · shadcn/ui.
+
+Conventions, naming rules, and the layer spine live in [`CLAUDE.md`](./CLAUDE.md) — read that before making non-trivial changes.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev          # http://localhost:3000
+pnpm verify       # full CI gate (tsc + lint + format + contrast + pages + styles + i18n)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Commands
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev / build / tsc / lint / format / test    # standard
+pnpm gen                                          # regen styles + i18n + routes
+pnpm gen:i18n / gen:styles / gen:routes           # individual codegens
+pnpm new:page <id>                                # scaffold route + messages
+pnpm storybook                                    # visual review
+pnpm verify / verify:quick                        # CI gate / tsc + lint only
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Customizing
 
-## Learn More
+1. Edit `src/config/*` first — site metadata, theme tokens, navigation, routes, feature flags.
+2. Edit `messages/<locale>.json` to override any block string.
+3. Edit sections/templates in place under `src/components/` — no fork, no overlay. Delete folders you'll never use; codegen rebuilds without them.
 
-To learn more about Next.js, take a look at the following resources:
+## SEO
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Set `NEXT_PUBLIC_SITE_URL` in production. When unset, `robots.ts` serves `disallow: /` so preview/staging stay out of search engines.
+- `sitemap.ts` auto-generates `(page × locale)` entries with hreflang. Dynamic `[slug]` routes are skipped — append manually.
+- Per-page SEO: declare on `page.config.ts` under `seo:` (merges over template defaults). `seo: { noindex: true }` opts out (sitemap respects).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project structure
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/[locale]/           Next App Router (locale-scoped)
+├── config/                 SINGLE SOURCE OF TRUTH (edit here first)
+├── components/
+│   ├── ui-primitives/      shadcn primitives (read-only)
+│   ├── ui-effects/         decorative / animated effects (flat upstream files + editable wrappers)
+│   ├── ui-illustrations/   decorative React components
+│   ├── ui-molecules/       shared molecule composites
+│   ├── layouts/            page templates + chrome
+│   ├── sections-*/         content blocks (one folder per type)
+│   └── pages-*/            ready-made page compositions
+├── i18n/                   routing, request handler, message aggregator
+├── lib/                    metadata, logger, typography, seo/jsonld
+└── proxy.ts                Next 16 locale routing
+```

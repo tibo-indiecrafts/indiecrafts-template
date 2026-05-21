@@ -102,8 +102,8 @@ export const LoginPreviewIllustration = () => {
         <div className="px-6">
           <p className="text-muted-foreground text-sm">
             Don&apos;t have an account?{" "}
-            <Button asChild variant="link" className="px-0">
-              <Link href="/signup">Create an account</Link>
+            <Button variant="link" className="px-0" type="button">
+              Create an account
             </Button>
           </p>
         </div>

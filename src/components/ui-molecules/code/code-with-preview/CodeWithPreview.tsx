@@ -194,7 +194,7 @@ const SVELTE_CODE = `<script lang="ts">
     <div class="px-6">
       <p class="text-muted-foreground text-sm">
         Don't have an account ?
-        <Button href="/signup" variant="link" class="px-2">Create account</Button>
+        <Button href="/" variant="link" class="px-2">Create account</Button>
       </p>
     </div>
   </form>

@@ -17,16 +17,11 @@ import type { Locale } from "@/config/locales.config";
 import homeEn from "@/app/[locale]/messages/en.json";
 import homeFr from "@/app/[locale]/messages/fr.json";
 
-// ---- about --------------------------------------------------------------
-import aboutEn from "@/app/[locale]/about/messages/en.json";
-import aboutFr from "@/app/[locale]/about/messages/fr.json";
-
 // --------------------------------------------------------------------------
 type PageBundle = Record<Locale, Record<string, unknown>>;
 
 const PAGE_MESSAGES: Record<string, PageBundle> = {
   home: { en: homeEn, fr: homeFr },
-  about: { en: aboutEn, fr: aboutFr },
 };
 
 /**

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- decorative illustration; intrinsic sizing not via next/image */
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";

@@ -5,7 +5,6 @@ import type globalEn from "../../messages/en.json";
 
 // ── per-page route messages (hand-maintained — co-located with each route) ──
 import type homeEn from "@/app/[locale]/messages/en.json";
-import type aboutEn from "@/app/[locale]/about/messages/en.json";
 
 // ── per-block / per-template messages (auto-discovered) ─────────────
 import type _3dPinEn from "@/components/ui-effects/3d-pin.en.json";
@@ -496,7 +495,6 @@ import type worldMapEn from "@/components/ui-effects/world-map/en.json";
 type MergedMessages = typeof globalEn & {
   pages: {
     home: typeof homeEn;
-    about: typeof aboutEn;
   };
   blocks: {
     "3d-pin": typeof _3dPinEn;

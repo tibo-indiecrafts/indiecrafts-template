@@ -9,4 +9,11 @@ const meta: Meta<typeof CodeReviewIllustration> = {
 export default meta;
 
 type Story = StoryObj<typeof CodeReviewIllustration>;
-export const Default: Story = {};
+
+export const Default: Story = {
+  render: () => (
+    <div className="w-[420px] max-w-full">
+      <CodeReviewIllustration />
+    </div>
+  ),
+};

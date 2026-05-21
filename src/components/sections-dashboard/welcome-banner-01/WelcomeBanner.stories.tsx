@@ -36,7 +36,7 @@ export const Compact: Story = {
     id: "welcome-banner-01-compact",
     userName: "Ada",
     chips: [
-      { id: "launch", iconKey: "Rocket", href: "/dashboard" },
+      { id: "launch", iconKey: "Rocket", href: "/" },
       { id: "shortcuts", iconKey: "Zap" },
     ],
   },

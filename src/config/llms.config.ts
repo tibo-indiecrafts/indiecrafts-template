@@ -16,7 +16,7 @@ export const llmsConfig = {
   /** Links surfaced to the model for follow-up crawling. */
   resourceLinks: [
     { href: "/", labelKey: "home" },
-    { href: "/about", labelKey: "about" },
+    { href: "/", labelKey: "about" },
     { href: "/blog", labelKey: "blog" },
   ],
 } as const;

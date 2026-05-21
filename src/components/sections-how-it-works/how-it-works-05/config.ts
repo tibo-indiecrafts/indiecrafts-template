@@ -29,5 +29,5 @@ export const howItWorks05Sample: Omit<HowItWorksBlock, "id"> = {
     },
   ],
   ctaLabelKey: "blocks.how-it-works-05.ctaLabel",
-  ctaHref: "/signup",
+  ctaHref: "/",
 };

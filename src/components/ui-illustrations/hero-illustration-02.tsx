@@ -2,7 +2,6 @@
 
 import { CheckCircle2 } from "lucide-react";
 import { CodeBlockIllustration } from "@/components/ui-illustrations/code-block-illustration-02";
-import Image from "next/image";
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 
 export const HeroIllustration = () => {
@@ -23,14 +22,6 @@ export const HeroIllustration = () => {
           }
         `}</style>
         <div className="relative [--color-border-illustration:--alpha(var(--color-zinc-950)/12.5%)] [--color-border:--alpha(var(--color-zinc-950)/10%)]">
-          <div className="absolute inset-0 mask-t-from-65% mask-t-to-85%">
-            <img
-              src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/16-bg_kkevzx.webp"
-              alt="acme hero section background"
-              className="size-full -scale-100 object-bottom opacity-7.5"
-              loading="lazy"
-            />
-          </div>
           <div className="border-b">
             <div className="relative mx-auto grid aspect-video max-w-6xl grid-cols-3 overflow-hidden rounded-2xl lg:px-12">
               <div className="grid grid-cols-2 pr-6">
@@ -532,18 +523,6 @@ export const HeroIllustration = () => {
             </div>
           </div>
         </div>
-      </div>
-      <div className="aspect-72/41 lg:hidden">
-        <Image
-          src="https://raw.githubusercontent.com/acme/assets/refs/heads/main/hero-illustration_nl1gdn.png"
-          alt="acme hero section"
-          width={833}
-          height={469}
-          sizes="100vw"
-          className="size-full object-cover"
-          priority
-          fetchPriority="high"
-        />
       </div>
     </>
   );

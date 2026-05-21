@@ -240,7 +240,6 @@ import type globalEn from "../../messages/en.json";
 
 // ── per-page route messages (hand-maintained — co-located with each route) ──
 import type homeEn from "@/app/[locale]/messages/en.json";
-import type aboutEn from "@/app/[locale]/about/messages/en.json";
 
 // ── per-block / per-template messages (auto-discovered) ─────────────
 ${typeImports}
@@ -248,7 +247,6 @@ ${typeImports}
 type MergedMessages = typeof globalEn & {
   pages: {
     home: typeof homeEn;
-    about: typeof aboutEn;
   };
   blocks: {
 ${typeFields}

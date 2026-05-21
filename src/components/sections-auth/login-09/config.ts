@@ -7,7 +7,7 @@ export const login09Sample: Omit<LoginBlock, "id"> = {
   type: "login-09",
   titleKey: "blocks.login-09.title",
   descriptionKey: "blocks.login-09.description",
-  signinHref: "/login",
+  signinHref: "/",
   termsHref: "#",
   conditionsHref: "#",
 };

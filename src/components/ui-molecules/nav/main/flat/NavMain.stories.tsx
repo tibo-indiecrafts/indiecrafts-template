@@ -37,7 +37,7 @@ type Story = StoryObj<typeof NavMain>;
 export const Default: Story = {
   args: {
     items: [
-      { title: "Dashboard", url: "/dashboard", icon: IconDashboard },
+      { title: "Dashboard", url: "/", icon: IconDashboard },
       { title: "Analytics", url: "/analytics", icon: IconChartBar },
       { title: "Projects", url: "/projects", icon: IconFolder },
       { title: "Team", url: "/team", icon: IconUsers },
@@ -48,7 +48,7 @@ export const Default: Story = {
 export const ExtendedNav: Story = {
   args: {
     items: [
-      { title: "Dashboard", url: "/dashboard", icon: IconDashboard },
+      { title: "Dashboard", url: "/", icon: IconDashboard },
       { title: "Lifecycle", url: "/lifecycle", icon: IconListDetails },
       { title: "Analytics", url: "/analytics", icon: IconChartBar },
       { title: "Projects", url: "/projects", icon: IconFolder },
@@ -60,7 +60,7 @@ export const ExtendedNav: Story = {
 
 export const SingleItem: Story = {
   args: {
-    items: [{ title: "Dashboard", url: "/dashboard", icon: IconDashboard }],
+    items: [{ title: "Dashboard", url: "/", icon: IconDashboard }],
   },
 };
 

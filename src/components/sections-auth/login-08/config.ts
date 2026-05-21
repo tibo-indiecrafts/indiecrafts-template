@@ -8,7 +8,7 @@ export const login08Sample: Omit<LoginBlock, "id"> = {
   titleKey: "blocks.login-08.title",
   brandKey: "blocks.login-08.brand",
   descriptionKey: "blocks.login-08.description",
-  resetHref: "/forgot-password",
+  resetHref: "/",
   ssoHref: "#",
-  signupHref: "/signup",
+  signupHref: "/",
 };

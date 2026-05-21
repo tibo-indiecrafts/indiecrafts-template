@@ -24,14 +24,6 @@ export type NavGroup = {
   links: NavLink[];
 };
 
-export const headerNav: NavLink[] = [
-  { labelKey: "home", href: "/" },
-  { labelKey: "about", href: "/about" },
-];
+export const headerNav: NavLink[] = [{ labelKey: "home", href: "/" }];
 
-export const footerNav: NavGroup[] = [
-  {
-    labelKey: "company",
-    links: [{ labelKey: "about", href: "/about" }],
-  },
-];
+export const footerNav: NavGroup[] = [];

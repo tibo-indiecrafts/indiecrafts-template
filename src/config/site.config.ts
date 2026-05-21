@@ -5,6 +5,13 @@
 
 import { z } from "zod";
 
+/**
+ * Sentinel value used when NEXT_PUBLIC_SITE_URL hasn't been set. Anything
+ * comparing `siteConfig.url === PLACEHOLDER_SITE_URL` knows the site hasn't
+ * been pointed at a real origin yet (see `isSiteConfigured` and robots.ts).
+ */
+export const PLACEHOLDER_SITE_URL = "https://example.com";
+
 const SiteSchema = z.object({
   /** Brand name used in <title>, OG, schema.org Organization */
   name: z.string().min(1),
@@ -71,11 +78,11 @@ const SiteSchema = z.object({
 export type SiteConfig = z.infer<typeof SiteSchema>;
 
 export const siteConfig = SiteSchema.parse({
-  name: "Indiecrafts Template",
+  name: "indiecrafts.dev",
   tagline: "The config-first Next.js template for client websites.",
   description:
     "A highly modular, SEO-ready, i18n-ready, accessibility-first Next.js template. Fork it, edit the config, ship.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? PLACEHOLDER_SITE_URL,
   logo: "/logo.svg",
   icon: {
     // Switch to { mode: "file", file: "/brand/icon.png", contentType: "image/png" }
@@ -99,3 +106,10 @@ export const siteConfig = SiteSchema.parse({
     yearFounded: 2024,
   },
 } satisfies SiteConfig);
+
+/**
+ * `true` once `siteConfig.url` has been pointed at a real production origin
+ * (via NEXT_PUBLIC_SITE_URL). Use this to gate things that shouldn't ship
+ * before the site is configured — robots allow rules, sitemap exposure, etc.
+ */
+export const isSiteConfigured = siteConfig.url !== PLACEHOLDER_SITE_URL;

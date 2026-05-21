@@ -6,7 +6,7 @@ import type { LocalizedSlug } from "./types";
  * table. A plain string stays a string; a per-locale map is filled in for
  * every supported locale, defaulting missing locales to English (or the
  * first non-empty value). Per-locale custom URLs are fully preserved
- * (e.g., `{ en: "/about", fr: "/a-propos" }` round-trips intact).
+ * (e.g., `{ en: "/", fr: "/a-propos" }` round-trips intact).
  */
 export function expandSlug(slug: LocalizedSlug): string | Record<Locale, string> {
   if (typeof slug === "string") return slug;

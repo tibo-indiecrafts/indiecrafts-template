@@ -53,7 +53,7 @@ export const sidebar07Data: SidebarData = {
     avatar: "",
   },
   navMain: [
-    { titleKey: "navMain.dashboard", url: "/dashboard", icon: IconDashboard },
+    { titleKey: "navMain.dashboard", url: "/", icon: IconDashboard },
     { titleKey: "navMain.lifecycle", url: "/lifecycle", icon: IconListDetails },
     { titleKey: "navMain.analytics", url: "/analytics", icon: IconChartBar },
     { titleKey: "navMain.projects", url: "/projects", icon: IconFolder },

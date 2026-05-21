@@ -6,7 +6,7 @@ export const login05Namespace = "blocks.login-05" as const;
 export const login05Sample: Omit<LoginBlock, "id"> = {
   type: "login-05",
   titleKey: "blocks.login-05.title",
-  signinHref: "/login",
+  signinHref: "/",
   termsHref: "#",
   privacyHref: "#",
 };

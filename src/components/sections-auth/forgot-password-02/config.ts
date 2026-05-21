@@ -7,6 +7,6 @@ export const forgotPassword02Sample: Omit<ForgotPasswordBlock, "id"> = {
   type: "forgot-password-02",
   titleKey: "blocks.forgot-password-02.title",
   descriptionKey: "blocks.forgot-password-02.description",
-  signinHref: "/login",
+  signinHref: "/",
   homeHref: "/",
 };

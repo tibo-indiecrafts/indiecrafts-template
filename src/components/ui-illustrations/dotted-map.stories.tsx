@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
 import { Map } from "./dotted-map";
 
 const meta: Meta<typeof Map> = {
@@ -9,4 +10,11 @@ const meta: Meta<typeof Map> = {
 export default meta;
 
 type Story = StoryObj<typeof Map>;
-export const Default: Story = {};
+
+export const Default: Story = {
+  render: () => (
+    <div className="w-[720px] max-w-full">
+      <Map />
+    </div>
+  ),
+};

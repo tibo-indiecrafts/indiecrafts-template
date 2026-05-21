@@ -10,7 +10,7 @@ export const commandMenu03Namespace = "blocks.command-menu-03" as const;
 
 export const commandMenu03NavItems: readonly CommandMenuNavItem[] = [
   { id: "home", href: "/", keywords: ["home", "main", "index"] },
-  { id: "dashboard", href: "/dashboard", keywords: ["dashboard", "overview"] },
+  { id: "dashboard", href: "/", keywords: ["dashboard", "overview"] },
   { id: "settings", href: "/settings", keywords: ["settings", "preferences"] },
 ];
 

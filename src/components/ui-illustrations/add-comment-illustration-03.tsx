@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- decorative illustration; intrinsic sizing not via next/image */
 import { cn } from "@/lib/utils";
 const SHADCN_AVATAR = "https://avatars.githubusercontent.com/u/124599?v=4";
 

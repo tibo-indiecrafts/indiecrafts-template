@@ -14,7 +14,7 @@ export const pricing01Sample: Omit<PricingBlock, "id"> = {
       priceKey: "blocks.pricing-01.tiers.free.price",
       periodKey: "blocks.pricing-01.tiers.free.period",
       descriptionKey: "blocks.pricing-01.tiers.free.description",
-      cta: { labelKey: "blocks.pricing-01.tiers.free.cta", href: "/about" },
+      cta: { labelKey: "blocks.pricing-01.tiers.free.cta", href: "/" },
       featureKeys: [
         "blocks.pricing-01.tiers.free.features.analytics",
         "blocks.pricing-01.tiers.free.features.storage",
@@ -27,7 +27,7 @@ export const pricing01Sample: Omit<PricingBlock, "id"> = {
       priceKey: "blocks.pricing-01.tiers.pro.price",
       periodKey: "blocks.pricing-01.tiers.pro.period",
       descriptionKey: "blocks.pricing-01.tiers.pro.description",
-      cta: { labelKey: "blocks.pricing-01.tiers.pro.cta", href: "/about" },
+      cta: { labelKey: "blocks.pricing-01.tiers.pro.cta", href: "/" },
       badgeKey: "blocks.pricing-01.tiers.pro.badge",
       featureKeys: [
         "blocks.pricing-01.tiers.pro.features.everything",
@@ -46,7 +46,7 @@ export const pricing01Sample: Omit<PricingBlock, "id"> = {
       priceKey: "blocks.pricing-01.tiers.startup.price",
       periodKey: "blocks.pricing-01.tiers.startup.period",
       descriptionKey: "blocks.pricing-01.tiers.startup.description",
-      cta: { labelKey: "blocks.pricing-01.tiers.startup.cta", href: "/about" },
+      cta: { labelKey: "blocks.pricing-01.tiers.startup.cta", href: "/" },
       featureKeys: [
         "blocks.pricing-01.tiers.startup.features.everything",
         "blocks.pricing-01.tiers.startup.features.storage",

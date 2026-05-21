@@ -7,5 +7,5 @@ export const login03Sample: Omit<LoginBlock, "id"> = {
   type: "login-03",
   titleKey: "blocks.login-03.title",
   descriptionKey: "blocks.login-03.description",
-  resetHref: "/forgot-password",
+  resetHref: "/",
 };

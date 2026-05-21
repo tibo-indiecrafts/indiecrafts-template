@@ -30,7 +30,7 @@ export default function Login(props: Readonly<LoginBlock>) {
   const titleId = `${props.id}-title`;
   const emailId = `${props.id}-email`;
   const passwordId = `${props.id}-password`;
-  const signupHref = props.signupHref ?? "/signup";
+  const signupHref = props.signupHref ?? "/";
   const githubHref = props.githubHref ?? "#";
   const googleHref = props.googleHref ?? "#";
   const resetHref = props.resetHref ?? "#";

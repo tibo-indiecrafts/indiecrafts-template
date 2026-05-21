@@ -3,28 +3,11 @@
 
 import { expandSlug } from "./expand-slug";
 import homePage from "@/app/[locale]/page.config";
-import aboutPage from "@/app/[locale]/about/page.config";
-import dashboardPage from "@/app/[locale]/dashboard/page.config";
-import forgotPasswordPage from "@/app/[locale]/forgot-password/page.config";
-import loginPage from "@/app/[locale]/login/page.config";
-import signupPage from "@/app/[locale]/signup/page.config";
 
-export const PAGES = [
-  homePage,
-  aboutPage,
-  dashboardPage,
-  forgotPasswordPage,
-  loginPage,
-  signupPage,
-] as const;
+export const PAGES = [homePage] as const;
 
 export const PATHNAMES = {
   "/": expandSlug(homePage.slugs),
-  "/about": expandSlug(aboutPage.slugs),
-  "/dashboard": expandSlug(dashboardPage.slugs),
-  "/forgot-password": expandSlug(forgotPasswordPage.slugs),
-  "/login": expandSlug(loginPage.slugs),
-  "/signup": expandSlug(signupPage.slugs),
 } as const;
 
-export { homePage, aboutPage, dashboardPage, forgotPasswordPage, loginPage, signupPage };
+export { homePage };

@@ -8,7 +8,7 @@ export const login16Sample: Omit<LoginBlock, "id"> = {
   titleKey: "blocks.login-16.title",
   googleHref: "#",
   githubHref: "#",
-  forgotHref: "/forgot-password",
-  signupHref: "/signup",
+  forgotHref: "/",
+  signupHref: "/",
   homeHref: "/",
 };

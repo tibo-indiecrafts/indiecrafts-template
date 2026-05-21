@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- decorative illustration; intrinsic sizing not via next/image */
 import { Map } from "@/components/ui-illustrations/dotted-map-03";
 
 const BERNARD_AVATAR = "https://avatars.githubusercontent.com/u/31113941?v=4";
@@ -9,7 +10,7 @@ export const MapIllustration = () => (
     <div aria-hidden className="absolute inset-6">
       <div className="absolute top-8 left-18 z-10 size-6 -translate-x-full rounded-full bg-white p-0.5 shadow-md shadow-black/15">
         <img
-          className="aspect-square rounded-full object-cover"
+          className="aspect-square size-full rounded-full object-cover"
           src={GLODIE_AVATAR}
           alt="Glodie"
           height="460"
@@ -18,7 +19,7 @@ export const MapIllustration = () => (
       </div>
       <div className="absolute top-1/2 right-1/2 z-10 size-6 translate-x-full -translate-y-full rounded-full bg-white p-0.5 shadow-md shadow-black/15">
         <img
-          className="aspect-square rounded-full object-cover"
+          className="aspect-square size-full rounded-full object-cover"
           src={THEO_AVATAR}
           alt="Theo"
           height="460"
@@ -27,7 +28,7 @@ export const MapIllustration = () => (
       </div>
       <div className="absolute top-1/3 right-1/4 z-10 size-6 translate-x-full -translate-y-full rounded-full bg-white p-0.5 shadow-md shadow-black/15">
         <img
-          className="aspect-square rounded-full object-cover"
+          className="aspect-square size-full rounded-full object-cover"
           src={BERNARD_AVATAR}
           alt="Bernard"
           height="460"

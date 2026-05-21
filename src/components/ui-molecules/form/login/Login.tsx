@@ -22,7 +22,7 @@ export type LoginProps = React.ComponentProps<"div"> & {
 export default function Login({
   className,
   brandHref = "/",
-  signupHref = "/signup",
+  signupHref = "/",
   termsHref = "/terms",
   privacyHref = "/privacy",
   ...props

@@ -13,7 +13,7 @@ export type ForgotPasswordProps = {
 
 export default function ForgotPasswordPage({
   brandHref = "/",
-  loginHref = "/login",
+  loginHref = "/",
 }: ForgotPasswordProps) {
   const t = useTranslations(forgotPasswordNamespace);
 

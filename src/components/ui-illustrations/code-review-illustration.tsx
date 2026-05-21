@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- decorative illustration; intrinsic sizing not via next/image */
 import { Card } from "@/components/ui-effects/libre-landing-two-card";
 import { Play, Signature } from "lucide-react";
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
@@ -9,7 +10,7 @@ export const CodeReviewIllustration = () => {
         <div className="mb-3 flex items-center gap-2">
           <div className="bg-background size-6 rounded-full border p-0.5 shadow shadow-zinc-950/5">
             <img
-              className="aspect-square rounded-full object-cover"
+              className="aspect-square size-full rounded-full object-cover"
               src={MESCHAC_AVATAR}
               alt="M Irung"
               height="460"

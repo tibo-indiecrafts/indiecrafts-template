@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- decorative illustration; intrinsic sizing not via next/image */
 import { Card } from "@/components/ui-effects/libre-landing-two-card";
 const MESCHAC_AVATAR = "https://avatars.githubusercontent.com/u/47919550?v=4";
 const BERNARD_AVATAR = "https://avatars.githubusercontent.com/u/31113941?v=4";

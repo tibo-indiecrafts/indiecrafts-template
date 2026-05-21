@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
 import { MapIllustration } from "./map-illustration-03";
 
 const meta: Meta<typeof MapIllustration> = {
@@ -9,4 +10,11 @@ const meta: Meta<typeof MapIllustration> = {
 export default meta;
 
 type Story = StoryObj<typeof MapIllustration>;
-export const Default: Story = {};
+
+export const Default: Story = {
+  render: () => (
+    <div className="relative h-[420px] w-[720px] max-w-full">
+      <MapIllustration />
+    </div>
+  ),
+};

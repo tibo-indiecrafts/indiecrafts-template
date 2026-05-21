@@ -1,0 +1,31 @@
+/*
+ * .spotlight-glow — radial cursor-tracking spotlight.
+ *
+ * Color stops are CSS vars rather than Tailwind from-/via-/to- utilities,
+ * because Tailwind v4 only populates --tw-gradient-stops when a gradient
+ * direction class (bg-linear-*, bg-radial-*) is also present — the
+ * from-/via-/to- utilities alone leave the radial-gradient() empty.
+ *
+ * Override per-instance via arbitrary Tailwind classes, e.g.:
+ *   className="[--spot-from:var(--color-blue-800)]
+ *              [--spot-via:var(--color-blue-600)]
+ *              [--spot-to:var(--color-blue-400)]"
+ */
+.spotlight-glow {
+  --spot-from: var(--color-zinc-100);
+  --spot-via: var(--color-zinc-200);
+  --spot-to: var(--color-zinc-400);
+  background: radial-gradient(
+    circle at center,
+    var(--spot-from),
+    var(--spot-via),
+    var(--spot-to),
+    transparent 80%
+  );
+}
+
+.spotlight-glow:where([data-theme="dark"], [data-theme="dark"] *) {
+  --spot-from: var(--color-zinc-50);
+  --spot-via: var(--color-zinc-100);
+  --spot-to: var(--color-zinc-200);
+}

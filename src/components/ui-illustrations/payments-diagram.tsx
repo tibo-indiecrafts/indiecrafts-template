@@ -1,5 +1,4 @@
 import { CheckCircle2 } from "lucide-react";
-import { LogoIcon } from "@/components/layouts/_shared/logo";
 import CodeSnippet from "@/components/ui-illustrations/code-snippet";
 import Image from "next/image";
 

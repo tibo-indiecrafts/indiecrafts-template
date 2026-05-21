@@ -8,6 +8,6 @@ export const login18Sample: Omit<LoginBlock, "id"> = {
   googleHref: "#",
   facebookHref: "#",
   microsoftHref: "#",
-  signinHref: "/login",
+  signinHref: "/",
   homeHref: "/",
 };

@@ -12,13 +12,7 @@
  * Adding a static route: drop a `page.config.ts` and run `pnpm gen:routes`.
  */
 
-export type StaticAppPathname =
-  | "/"
-  | "/about"
-  | "/dashboard"
-  | "/forgot-password"
-  | "/login"
-  | "/signup";
+export type StaticAppPathname = "/";
 
 export type DynamicAppPathname = never;
 

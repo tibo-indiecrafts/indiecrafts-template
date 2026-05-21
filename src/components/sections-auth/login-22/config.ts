@@ -9,7 +9,7 @@ export const login22Sample: Omit<LoginBlock, "id"> = {
   descriptionKey: "blocks.login-22.description",
   googleHref: "#",
   microsoftHref: "#",
-  forgotHref: "/forgot-password",
-  signinHref: "/login",
+  forgotHref: "/",
+  signinHref: "/",
   homeHref: "/",
 };
