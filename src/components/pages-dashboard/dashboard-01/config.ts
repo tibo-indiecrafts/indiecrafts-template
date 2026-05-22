@@ -1,5 +1,5 @@
 import type { LayoutName } from "@/components/layouts/registry";
-import type { PageSeo } from "@/config/pages/types";
+import type { PageSeo } from "@/config";
 
 export const dashboard01Key = "dashboard-01" as const;
 export const dashboard01Namespace = "blocks.dashboard-01" as const;

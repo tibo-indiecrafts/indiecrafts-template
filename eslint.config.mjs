@@ -62,6 +62,17 @@ const eslintConfig = defineConfig([
       "jsx-a11y/lang": "error",
     },
   },
+  {
+    // /components is an examples library — placeholder hrefs ("#") and
+    // demo-only mouse interactions on non-button elements are intentional.
+    // Production routes wire real hrefs / proper buttons when copying these
+    // sections into /app, where these rules still apply.
+    files: ["src/components/**"],
+    rules: {
+      "jsx-a11y/anchor-is-valid": "off",
+      "jsx-a11y/no-static-element-interactions": "off",
+    },
+  },
   globalIgnores([
     ".next/**",
     "out/**",

@@ -31,34 +31,29 @@ export default function QuickActions(props: Readonly<QuickActionsBlock>) {
   const titleId = `${props.id}-title`;
 
   return (
-    <section aria-labelledby={titleId} className="px-(--gutter) py-8 md:py-10">
-      <div className="mx-auto w-full max-w-6xl">
-        <header className="mb-4">
-          <h2
-            id={titleId}
-            className="text-foreground text-xl font-semibold tracking-tight"
-          >
-            {tr(props.titleKey, "title")}
-          </h2>
-          <p className="text-muted-foreground mt-1 text-sm text-pretty">
-            {tr(props.descriptionKey, "description")}
-          </p>
-        </header>
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {actions.map((action) => (
-            <li key={action.id}>
-              <ActionCard
-                icon={ICONS[action.iconKey]}
-                title={t(`items.${action.id}.title`)}
-                description={t(`items.${action.id}.description`)}
-                href={action.href}
-                variant="compact"
-                tone="primary"
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
+    <section aria-labelledby={titleId}>
+      <header className="mb-4">
+        <h2 id={titleId} className="text-foreground text-xl font-semibold tracking-tight">
+          {tr(props.titleKey, "title")}
+        </h2>
+        <p className="text-muted-foreground mt-1 text-sm text-pretty">
+          {tr(props.descriptionKey, "description")}
+        </p>
+      </header>
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {actions.map((action) => (
+          <li key={action.id}>
+            <ActionCard
+              icon={ICONS[action.iconKey]}
+              title={t(`items.${action.id}.title`)}
+              description={t(`items.${action.id}.description`)}
+              href={action.href}
+              variant="compact"
+              tone="primary"
+            />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

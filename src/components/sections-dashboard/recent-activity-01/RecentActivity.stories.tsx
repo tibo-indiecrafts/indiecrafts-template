@@ -8,7 +8,7 @@ const meta: Meta<typeof RecentActivitySection> = {
   parameters: { layout: "padded" },
   decorators: [
     (Story) => (
-      <div className="mx-auto flex w-full max-w-5xl justify-center pt-12">
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <Story />
       </div>
     ),

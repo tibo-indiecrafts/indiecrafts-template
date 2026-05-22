@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Logo } from "@/components/layouts/_shared/logo";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { useScopedT } from "@/i18n/scoped-t";
 import { siteFooter4Namespace } from "./config";
@@ -67,13 +67,13 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
           <p className="text-muted-foreground text-sm">{t("copyright", { year })}</p>
           <div className="flex gap-4">
             {LEGAL_LINKS.map((link) => (
-              <Link
+              <a
                 key={link.id}
                 href={link.href}
                 className="text-muted-foreground hover:text-foreground text-sm transition-colors"
               >
                 {t(`links.${link.id}`)}
-              </Link>
+              </a>
             ))}
           </div>
         </div>
@@ -98,12 +98,12 @@ const LinkGroup = ({
     <ul className="space-y-2">
       {links.map((link) => (
         <li key={link.id}>
-          <Link
+          <a
             href={link.href}
             className="text-muted-foreground hover:text-foreground text-sm transition-colors"
           >
             {t(`links.${link.id}`)}
-          </Link>
+          </a>
         </li>
       ))}
     </ul>

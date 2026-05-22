@@ -20,13 +20,12 @@ pnpm lint               # ESLint — ~25 jsx-a11y rules enumerated as errors, ZE
 pnpm format             # Prettier write
 pnpm test               # Vitest (happy-dom, 80% coverage target)
 
-pnpm gen:i18n           # regen block-messages, story-messages, MessageKey
 pnpm gen:styles         # regen src/app/_component-styles.css
 pnpm gen:routes         # regen routes.types.ts + pages registry
-pnpm gen                # all three above
+pnpm gen                # both of the above
 pnpm new:page <id>      # scaffold a page + route + messages
 
-pnpm verify             # tsc + lint + format:check + contrast + pages + styles + i18n
+pnpm verify             # tsc + lint + format:check + contrast + pages + styles + routes
 pnpm verify:quick       # tsc + lint (the pre-push gate)
 pnpm storybook          # visual review
 ```
@@ -39,20 +38,31 @@ Component code NEVER hard-codes brand strings, URLs, colors, nav links, or SEO c
 
 ## The layer spine
 
-Every page renders top-down through this chain. Each layer takes typed inputs and ships defaults (`config.ts` + `en.json`).
+Production routes live in `src/app/[locale]/<seg>/` and own their config + composition. `/components` is the examples library — you copy a section into a route and wire it up.
 
 ```
-ui-primitives/                  shadcn primitives (READ-ONLY, CLI-managed)
-  ↳ ui-effects/                 decorative / animated effects — flat upstream files (READ-ONLY)
-                                  + editable wrapper FOLDERS
-       ↳ ui-molecules/<domain>/<name>/  shared molecule composites
-            ↳ sections-<type>/<variant>/  content blocks: schema + config + en.json + .stories
-                 ↳ pages-<name>/<variant>/  compositions: config (incl. SEO) + en.json + .stories
-                      ↳ wrapped by layouts/<Name>Layout/  chrome (header/main/footer slots)
-                           ↳ rendered by src/app/[locale]/<seg>/page.tsx  ROUTE FILE
+src/components/                  EXAMPLES (Storybook fodder)
+  ui-primitives/                 shadcn primitives (READ-ONLY)
+   ↳ ui-effects/                 decorative effects — flat upstream files (READ-ONLY)
+       ↳ ui-molecules/<…>/       shared molecule composites
+       ↳ sections-<type>/<var>/  content block examples (5-file pattern)
+       ↳ pages-<name>/<var>/     full-page composition examples
+       ↳ layouts/<Name>Layout/   layout EXAMPLES (default/dashboard/prose/sidebar/full-bleed)
+
+src/app/_chrome/                 PRODUCTION chrome — FORKED from /components/layouts/
+  DefaultLayout.tsx              ↑ /app does NOT import from /components/layouts
+  Header.tsx                     atoms (Logo, LocaleSwitcher, ThemeToggle) still shared
+  Footer.tsx
+  SkipLink.tsx
+
+src/app/[locale]/<seg>/          ONE ROUTE = ONE FOLDER
+  page.config.ts                 pure data: key, slug, id, SEO (imported by routing.ts + sitemap.ts)
+  page.tsx                       React composition + generateMetadata
 ```
 
-Customize for a real project: edit `src/components/<bucket>/<variant>/` in place. No fork, no overlay. Delete folders you'll never use — codegen rebuilds.
+The chrome split is required by Next.js's server/client boundary: routing.ts is server-only and importing `page.tsx` (which transitively touches client components) would mis-mark the page as client. Keeping the pure-data `page.config.ts` separate lets routing.ts read the slug without dragging in client code.
+
+Customize for a real project: copy a section from `/components/sections-*/` into `src/app/[locale]/<seg>/page.tsx`, pass production `*Key` props, bake the strings into `messages/<locale>.json` under `pages.<id>.blocks.<simpleName>`. No registry, no codegen — see README → "Migrating a section from /components into the app".
 
 ## Folder & naming conventions
 
@@ -73,15 +83,45 @@ Multi-variant molecules: parent folder has no `.tsx`; each variant is a leaf fol
 
 ## i18n workflow
 
-Three message tiers merge at request time:
+**Single flat tree** — `messages/<locale>.json` is the only file the app loads at runtime. No merge, no codegen.
 
-1. **Global** → `messages/<locale>.json` (root). Cross-cutting: `nav`, `cta`, `footer`, `common`, `typography`, `llms`.
-2. **Per-route** → `src/app/[locale]/<seg>/messages/<locale>.json`. Merged under `pages.<id>.*`.
-3. **Per-block / per-template** → `src/components/<bucket>/<variant>/en.json`. Aggregated by `src/i18n/block-messages.ts` under `blocks.<key>.*` (English only; non-English locales override at root tier 1).
+Structure:
 
-**Rules**: never inline user-facing strings — pass `…Key` props that resolve via `useTranslations()`. Keep key trees identical across locales. Always `setRequestLocale(locale)` at the top of server components using translations or metadata. ALWAYS use `Link`/`useRouter`/`redirect`/`getPathname` from `@/i18n/routing` — never from `next/link` or `next-intl/navigation`. `MessageKey` is auto-derived from the merged English tree (typos are compile errors).
+```jsonc
+{
+  // Cross-cutting chrome
+  "nav": { … }, "cta": { … }, "footer": { … }, "common": { … },
+  "typography": { … }, "validation": { … }, "llms": { … },
 
-**Storybook isolation**: `Pages/*` and `Layouts/*` stories get the full message tree (they compose many blocks); everything else gets ONLY its own block's `en.json` so missing keys surface immediately. `pnpm gen:i18n` regenerates both maps and CI verifies drift.
+  // One key per route — page-level copy + nested blocks
+  "pages": {
+    "home": {
+      "title": "…", "description": "…",
+      "blocks": {
+        "features": { … },     // copy for the Features section mounted on /
+        "cta":      { … },
+        "pricing":  { … }
+      }
+    },
+    "about": {
+      "blocks": {
+        "features": { … }      // the same block on /about gets its own copy
+      }
+    }
+  }
+}
+```
+
+**Rules**:
+
+- Never inline user-facing strings — pass `…Key` props that resolve via `useTranslations()` or `tr(...)`.
+- Block keys live under `pages.<routeId>.blocks.<simpleName>` (drop the `-NN` variant suffix that appears in `/components/<bucket>/<name>-NN/` — that suffix is only meaningful in the examples library).
+- The same block on multiple pages = duplicate copy under each page (cheap, keeps each route independent).
+- Keep key trees identical across locales. Always `setRequestLocale(locale)` at the top of server components using translations or metadata. ALWAYS use `Link`/`useRouter`/`redirect`/`getPathname` from `@/i18n/routing` — never from `next/link` or `next-intl/navigation`.
+
+**`/components` is an examples library.** Each block ships its own `en.json` referencing `blocks.<name>-NN.*` — that namespace only exists inside Storybook. Production routes wire blocks via explicit `*Key` props pointing into `pages.<routeId>.blocks.*` (see README → "Migrating a section from /components into the app").
+
+**Storybook**: `.storybook/preview.tsx` builds a synthetic `blocks.<variant>` map from `import.meta.glob("../src/components/**/en.json")` at preview-load time. No codegen, no drift checks — new `en.json` files appear in stories on next Vite restart.
 
 ## Theming + accessibility
 
@@ -91,12 +131,51 @@ Three message tiers merge at request time:
 - Satori gotcha: `next/og` doesn't understand `oklch()` — that's why `themeConfig.hexColors` exists alongside `themeConfig.colors`. Update both in the same commit when rebranding.
 - `<html lang>` + `dir` from active locale. `SkipLink` mounted first in body, targets `#main`. Layouts MUST render exactly one `<main id="main" tabIndex={-1}>`. Every section: `<section aria-labelledby="…">` pointing at its heading. Prefer semantic HTML over ARIA. Icons `aria-hidden="true"` unless they're the sole label. Never `onClick` on `<div>`/`<span>` — use a button. Respect `prefers-reduced-motion`.
 
-## SEO
+## SEO + LLMs
 
-- `buildMetadata({ page, templateSeo, locale, params? })` is the only way to set `<head>` tags. Builds canonical + hreflang map.
-- `siteConfig.url` must be the production origin via `NEXT_PUBLIC_SITE_URL`. When unset, `siteConfig.url === PLACEHOLDER_SITE_URL` flips `isSiteConfigured` to false → `robots.ts` serves full disallow (keeps preview/staging out of search).
-- `sitemap.ts` auto-generates one entry per (registered page × locale) with hreflang alternates. Dynamic `[slug]` routes skipped — append manually. Pages opt out via `seo.noindex` or `isPageVisible`.
-- JSON-LD in `src/lib/seo/jsonld.tsx`. Root layout emits Organization + WebSite. Per-page schemas in `page.seo.structuredData[]`.
+**Single source of truth: `messages.<locale>.pages.<id>.title` / `.description`.** SEO, JSON-LD, sitemap, llms.txt, llms-full.txt all read from the same i18n keys per page. No parallel SEO config.
+
+### Inheritance chain (lowest → highest precedence)
+
+1. `site.*` (config) → name, url, logo, social
+2. `seoDefaults.*` (config) → titleTemplate, robots, OG type/siteName, twitter card, verification
+3. Auto-derived per `page.id` → titleKey=`pages.<id>.title`, descriptionKey=`pages.<id>.description`, og:image=`/brand/og-<id>.png`, canonical=`${site.url}${slug-for-locale}`
+4. `page.seo.*` (config) → explicit per-page overrides
+
+`buildMetadata({ page, locale })` (`@/lib/metadata`) composes the chain. Layout-level metadata is emitted via `generateMetadata({ params })` so the layout-level OG description localizes too (Next.js metadata replaces — not deep-merges — the `openGraph`/`twitter` objects, so the page-level builder re-emits `siteName`/`type`/`card` to keep them).
+
+### Per-locale (verified)
+
+Per-locale: `<title>`, `<meta description>`, canonical, hreflang, og:_ / twitter:_ (title/desc/url/locale/locale:alternate/image:alt), JSON-LD WebPage (name/desc/url/inLanguage), JSON-LD Organization.description, JSON-LD WebSite.description, /llms.txt, /llms-full.txt, /llms/<id>, sitemap hreflang.
+
+Constant across locales (intentional): site name, Organization.address/foundingDate, og:image URL (one card per page), `og:type=website`, `twitter:card`.
+
+### Adding a page — what propagates automatically
+
+- Drop entry in `pages` map (config/index.ts) with key/id/slug + optional `seo.keywords`/`structuredData`
+- Add `pages.<id>.title` + `pages.<id>.description` in every `messages/<locale>.json`
+- Add key to `AppPathname` (routes.types.ts)
+
+Auto-propagates: sitemap entry × locales, hreflang, canonical, OG/Twitter meta, JSON-LD WebPage, /llms.txt entry, /llms-full.txt section, /llms/<id> endpoint. **Never need to register a page in more than one place.**
+
+### JSON-LD
+
+`src/lib/seo/jsonld.tsx` exposes factories for: Organization, WebSite (+ optional SearchAction for sitelinks search), WebPage (auto), BreadcrumbList, Article, FAQPage, Service, Product, LocalBusiness, Person. **FAQ is the highest-ROI rich result for B2B** (shows expandable Q&A in search results) — wire via `page.seo.structuredData: [buildFAQPageSchema([...])]`. The root layout emits Organization + WebSite + `globalSchemas` (custom site-wide). Per-page emits via `<PageSchemas page={pages.X} locale={locale} />` in each `page.tsx`.
+
+### LLM endpoints
+
+- `/llms.txt` + `/<locale>/llms.txt` — per [llmstxt.org](https://llmstxt.org) spec, auto-built page list
+- `/llms-full.txt` + `/<locale>/llms-full.txt` — all pages' content concatenated (Mintlify / Anthropic convention)
+- `/llms/<id>` + `/<locale>/llms/<id>` — per-page Markdown for direct LLM ingestion
+
+All three iterate `ROUTES` (= the `pages` map) and read the same i18n keys SEO uses. `proxy.ts` matcher passes these paths to next-intl so locale rewrites work.
+
+### Critical rules
+
+- `NEXT_PUBLIC_SITE_URL` MUST be set in production (otherwise `robots.ts` serves `Disallow: /`).
+- Never inline SEO copy in code — always via `messages.<locale>.pages.<id>.*` or `site.*` config.
+- Sitemap reads `ROUTES` (= `pages` map). Dynamic `[slug]` routes skipped — expand per project.
+- After adding a page, fetch `/` AND `/fr/` (etc.) and `grep -E '<meta|<title>|application/ld'` to confirm the SEO output differs per locale.
 
 ## Critical rules (the NEVERs)
 
@@ -106,7 +185,7 @@ Three message tiers merge at request time:
 - NEVER add `as any` — fix the type. If genuinely impossible, eslint-disable with a one-line reason.
 - NEVER swallow errors — at minimum `logger.error(...)` from `@/lib/logger`. No raw `console.*` in committed code.
 - NEVER flatten a component into a bare file — folder + `index.ts` barrel.
-- NEVER put page-specific strings in `messages/<locale>.json` (root) — they belong under `src/app/[locale]/<seg>/messages/`.
+- NEVER inline user-facing strings — every visible string lives in `messages/<locale>.json` under either chrome keys or `pages.<routeId>.*`.
 - NEVER edit `src/components/ui-primitives/**` (shadcn, CLI-managed) or the FLAT files at `src/components/ui-effects/*.tsx` (upstream). New shadcn drops land in `src/components/ui/` (staging) for review before promotion.
 - NEVER set state inside `useEffect` to mark hydration — use `useSyncExternalStore`.
 - ALWAYS `setRequestLocale` at the top of server components using translations or metadata.
@@ -116,8 +195,8 @@ Three message tiers merge at request time:
 
 - **shadcn primitive**: `pnpm dlx shadcn@latest add <name>` → lands in `src/components/ui/` (staging), review diff, `mv` to `ui-primitives/`. Always import from `@/components/ui-primitives/<name>`.
 - **External registry block** (any shadcn-compatible registry wired in `components.json`): `pnpm dlx shadcn@latest add @<registry>/<name>`. If content → wrap into `sections-<type>/<variant>/` 5-file pattern. If decoration → `ui-effects/<slug>.tsx` flat OR `ui-effects/<Name>/` wrapper folder. **Translate every visible string before commit** — no "TODO: translate later" markers, no hardcoded English in committed registry components.
-- **Section**: drop 5-file pattern (`<Name>.tsx`, `schema.ts`, `config.ts`, `en.json`, `<Name>.stories.tsx`, `index.ts`) into `sections-<type>/<variant>/`. Strings use `MessageKey` props that resolve via `useTranslations(<name>Namespace)`. Run `pnpm gen:i18n`.
-- **Page template**: same 5-file pattern under `pages-<name>/<variant>/` PLUS `<name>Defaults.seo: PageSeo`. Route file in `src/app/[locale]/<seg>/` wires `buildMetadata({ templateSeo: ...Defaults.seo, page, locale })`.
+- **Section** (in /components): drop 5-file pattern (`<Name>.tsx`, `schema.ts`, `config.ts`, `en.json`, `<Name>.stories.tsx`, `index.ts`) into `sections-<type>/<variant>/`. The block's sample in `config.ts` references its own `blocks.<name>-NN.*` namespace — that's the Storybook-only namespace. **Production use is a separate step** — see README → "Migrating a section from /components into the app".
+- **Page template** (in /components): same 5-file pattern under `pages-<name>/<variant>/` PLUS `<name>Defaults.seo: PageSeo`. Optional — production routes can compose sections directly in `src/app/[locale]/<seg>/page.tsx` instead of going through a page-template wrapper.
 - **UI effect / molecule**: drop into `ui-effects/<name>/` or `ui-molecules/<domain>/<name>/`. Co-locate any CSS animation tokens in `<name>.css` next to the `.tsx` — `pnpm gen:styles` aggregates them into `_component-styles.css`.
 
 ## File-size discipline
@@ -134,7 +213,7 @@ Three message tiers merge at request time:
 4. `pnpm verify:contrast`
 5. `pnpm verify:pages`
 6. `pnpm verify:styles` — drift-guard on `_component-styles.css`
-7. `pnpm verify:i18n` — drift-guard on the i18n + story-isolation registries
+7. `pnpm verify:routes` — drift-guard on the page registry + routes.types.ts
 8. `pnpm build` — prerenders every static route × locale
 
 Treat warnings as errors. A clean tree is a shippable tree.

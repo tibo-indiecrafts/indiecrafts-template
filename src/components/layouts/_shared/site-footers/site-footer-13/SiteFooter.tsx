@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Button } from "@/components/ui-primitives/button";
+import { Link } from "@/i18n/routing";
 import { Input } from "@/components/ui-primitives/input";
 import { Label } from "@/components/ui-primitives/label";
 import { Logo } from "@/components/layouts/_shared/logo";
@@ -69,7 +69,7 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
           </Link>
           <div className="flex gap-3">
             {SOCIAL_LINKS.map(({ id, href }) => (
-              <Link
+              <a
                 key={id}
                 href={href}
                 target="_blank"
@@ -78,7 +78,7 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
                 className="text-muted-foreground hover:text-primary block"
               >
                 <SocialIcon id={id} />
-              </Link>
+              </a>
             ))}
           </div>
         </div>
@@ -96,12 +96,12 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
             <ul className="mt-4 list-inside space-y-4">
               {COMMUNITY_LINKS.map((link) => (
                 <li key={link.id}>
-                  <Link
+                  <a
                     href={link.href}
                     className="hover:text-primary text-muted-foreground text-sm duration-150"
                   >
                     {t(`links.${link.id}`)}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -131,9 +131,9 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
 
         <div className="bg-muted mt-16 flex items-center justify-between rounded-md p-4 px-6 py-3">
           <span>{t("license.copyright")}</span>
-          <Link href="#" className="text-muted-foreground hover:text-primary text-sm">
+          <a href="#" className="text-muted-foreground hover:text-primary text-sm">
             {t("license.link")}
-          </Link>
+          </a>
         </div>
       </div>
     </footer>
@@ -156,12 +156,12 @@ const LinkGroup = ({
     <ul className="mt-4 list-inside space-y-4">
       {links.map((link) => (
         <li key={link.id}>
-          <Link
+          <a
             href={link.href}
             className="hover:text-primary text-muted-foreground text-sm duration-150"
           >
             {t(`links.${link.id}`)}
-          </Link>
+          </a>
         </li>
       ))}
     </ul>

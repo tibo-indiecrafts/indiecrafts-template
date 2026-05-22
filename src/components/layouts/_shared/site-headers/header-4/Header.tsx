@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Logo, LogoIcon } from "@/components/layouts/_shared/logo";
 import { LocaleSwitcher } from "@/components/layouts/_shared/locale-switcher";
 import { ThemeToggle } from "@/components/layouts/_shared/theme-toggle";
-import { features as featuresFlags } from "@/config/features.config";
+import { features as featuresFlags } from "@/config";
 import { Button } from "@/components/ui-primitives/button";
 import React from "react";
 import {

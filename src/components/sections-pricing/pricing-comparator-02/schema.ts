@@ -1,4 +1,4 @@
-import type { StaticAppPathname } from "@/config/routes.types";
+import type { StaticAppPathname } from "@/config";
 import type { MessageKey } from "@/types/messages";
 
 export type ComparatorRow = {

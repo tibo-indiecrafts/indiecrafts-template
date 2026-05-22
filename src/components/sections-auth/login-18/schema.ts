@@ -1,4 +1,4 @@
-import type { StaticAppPathname } from "@/config/routes.types";
+import type { StaticAppPathname } from "@/config";
 
 export type LoginBlock = {
   type: "login-18";

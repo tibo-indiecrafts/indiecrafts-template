@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Logo } from "@/components/layouts/_shared/logo";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { useScopedT } from "@/i18n/scoped-t";
 import { siteFooter3Namespace } from "./config";
@@ -40,19 +40,19 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
 
         <div className="my-8 flex flex-wrap justify-center gap-6 text-sm">
           {NAV_LINKS.map((link) => (
-            <Link
+            <a
               key={link.id}
               href={link.href}
               className="text-muted-foreground hover:text-primary block duration-150"
             >
               <span>{t(`links.${link.id}`)}</span>
-            </Link>
+            </a>
           ))}
         </div>
 
         <div className="my-8 flex flex-wrap justify-center gap-6 text-sm">
           {SOCIAL_LINKS.map((social) => (
-            <Link
+            <a
               key={social.id}
               href={social.href}
               target="_blank"
@@ -61,7 +61,7 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
               className="text-muted-foreground hover:text-primary block"
             >
               <SocialIcon id={social.id} />
-            </Link>
+            </a>
           ))}
         </div>
 

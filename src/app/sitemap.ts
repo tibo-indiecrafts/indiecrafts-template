@@ -1,36 +1,35 @@
 import type { MetadataRoute } from "next";
-import { isPageVisible } from "@/config/features.config";
-import { SUPPORTED_LOCALES } from "@/config/locales.config";
-import { pages } from "@/config/pages";
-import type { StaticAppPathname } from "@/config/routes.types";
-import { siteConfig } from "@/config/site.config";
+import { isPageVisible } from "@/config";
+import { localeCodes } from "@/config";
+import type { StaticAppPathname } from "@/config";
+import { site } from "@/config";
 import { getPathname } from "@/i18n/routing";
+import { ROUTES } from "./routes";
 
 /**
- * One sitemap entry per (registered page × locale), with hreflang alternates.
+ * Sitemap — one entry per (auto-discovered route × locale) with hreflang
+ * alternates. Routes are discovered from `app/routes.ts` (which globs every
+ * `page.config.ts` under `app/[locale]/`). No per-route edits needed here.
  *
- * Pages with dynamic segments (`[slug]`) are skipped — fetch slug lists per
- * project (e.g. blog, product pages) and append entries here.
- *
- * Pages can opt out via `seo.noindex = true` or an explicit `seo.robots.index = false`.
+ * Routes opt out via `seo.noindex`, `seo.robots.index = false`, or
+ * `enabled: false` in their `page.config.ts`. Dynamic-segment routes
+ * (`[slug]`) need to be expanded with the project's slug list.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const indexablePages = pages.filter(
+  return ROUTES.filter(
     (p) =>
       !p.key.includes("[") &&
       !p.seo?.noindex &&
       p.seo?.robots?.index !== false &&
       isPageVisible(p),
-  );
-
-  return indexablePages.map((page) => {
+  ).map((page) => {
     const key = page.key as StaticAppPathname;
     const languages: Record<string, string> = {};
-    for (const locale of SUPPORTED_LOCALES) {
-      languages[locale] = `${siteConfig.url}${getPathname({ href: key, locale })}`;
+    for (const locale of localeCodes) {
+      languages[locale] = `${site.url}${getPathname({ href: key, locale })}`;
     }
     return {
-      url: `${siteConfig.url}${getPathname({ href: key, locale: "en" })}`,
+      url: `${site.url}${getPathname({ href: key, locale: "en" })}`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: key === "/" ? 1 : 0.7,

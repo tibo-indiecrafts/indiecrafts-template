@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
 import { useTranslations } from "next-intl";
-import { features as featuresFlags } from "@/config/features.config";
+import { features as featuresFlags } from "@/config";
 import { Link } from "@/i18n/routing";
 import { Logo } from "@/components/layouts/_shared/logo";
 import { LocaleSwitcher } from "@/components/layouts/_shared/locale-switcher";

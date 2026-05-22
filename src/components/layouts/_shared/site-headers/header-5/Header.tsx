@@ -38,7 +38,7 @@ import { cn } from "@/lib/utils";
 import { Logo } from "@/components/layouts/_shared/logo";
 import { LocaleSwitcher } from "@/components/layouts/_shared/locale-switcher";
 import { ThemeToggle } from "@/components/layouts/_shared/theme-toggle";
-import { features as featuresFlags } from "@/config/features.config";
+import { features as featuresFlags } from "@/config";
 
 interface FeatureLink {
   href: string;

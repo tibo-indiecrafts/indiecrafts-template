@@ -1,4 +1,8 @@
 {
+  "site": {
+    "tagline": "Le template Next.js piloté par la configuration, pour les sites clients.",
+    "description": "Un template Next.js hautement modulaire, prêt pour le SEO, l'i18n et l'accessibilité. Forkez, éditez la config, livrez."
+  },
   "nav": {
     "home": "Accueil",
     "about": "À propos",
@@ -48,317 +52,6 @@
     "currencyPosition": "after",
     "numberSpacing": " "
   },
-  "dev": {
-    "pricing": {
-      "title": "Tarifs simples et honnêtes",
-      "subtitle": "Commencez gratuitement. Passez au niveau supérieur quand vous grandissez.",
-      "tiers": {
-        "free": {
-          "name": "Gratuit",
-          "price": "0 €",
-          "period": "pour toujours",
-          "description": "Pour expérimenter.",
-          "cta": "Commencer",
-          "featureProjects": "1 projet",
-          "featureLocales": "2 langues",
-          "featureSupport": "Support communautaire"
-        },
-        "pro": {
-          "name": "Pro",
-          "price": "29 €",
-          "period": "par mois",
-          "description": "Pour les petits studios qui livrent régulièrement.",
-          "cta": "Passer Pro",
-          "featureProjects": "Projets illimités",
-          "featureLocales": "Les 24 langues UE",
-          "featureSupport": "Email prioritaire"
-        },
-        "team": {
-          "name": "Équipe",
-          "price": "99 €",
-          "period": "par mois",
-          "description": "Pour les agences qui gèrent plusieurs clients.",
-          "cta": "Nous contacter",
-          "featureProjects": "Tout Pro, et plus",
-          "featureLocales": "Marque blanche",
-          "featureSupport": "Support dédié"
-        }
-      }
-    },
-    "testimonials": {
-      "title": "Ce qu'ils en disent",
-      "items": {
-        "a": {
-          "quote": "Forké une fois, trois sites clients livrés en une semaine. Le template que j'aurais aimé écrire moi-même.",
-          "author": "Ada Lovelace",
-          "role": "Fondatrice, Analytic Studio"
-        },
-        "b": {
-          "quote": "Config-first bien fait. Mes designers gèrent le contenu ; je n'ai pas touché à un composant depuis deux sprints.",
-          "author": "Alan Turing",
-          "role": "Lead Engineering"
-        },
-        "c": {
-          "quote": "La vérification de contraste et les règles WCAG ont détecté trois problèmes avant notre audit. Des jours gagnés.",
-          "author": "Grace Hopper",
-          "role": "Consultante en accessibilité"
-        }
-      }
-    },
-    "faq": {
-      "title": "Questions fréquentes",
-      "items": {
-        "license": {
-          "q": "Puis-je l'utiliser pour des projets clients commerciaux ?",
-          "a": "Oui — licence MIT. Forkez, livrez, facturez vos clients."
-        },
-        "i18n": {
-          "q": "Comment ajouter une nouvelle langue ?",
-          "a": "Ajoutez le code de langue à SUPPORTED_LOCALES, créez messages/<locale>.json en miroir de l'anglais, et enregistrez-le dans pages/messages.ts — le scaffolder s'occupe des deux premiers points."
-        },
-        "blocks": {
-          "q": "Puis-je intégrer des blocks Tailark ou shadcn ?",
-          "a": "Oui. Portez chaque block en section typée (schema + composant + registry) — environ 20 minutes par block. Les blocks ponctuels utilisent la trappe CustomBlock."
-        }
-      }
-    },
-    "stats": {
-      "title": "Éprouvé à toutes les échelles",
-      "items": {
-        "projects": { "value": "300+", "label": "Projets livrés" },
-        "locales": { "value": "24", "label": "Langues UE supportées" },
-        "uptime": { "value": "99,99 %", "label": "Uptime CDN" },
-        "developers": { "value": "1,2 K", "label": "Développeurs heureux" }
-      }
-    }
-  },
-  "blocks": {
-    "brand-logo": {
-      "alt": "Logo",
-      "name": "Marque"
-    },
-    "command-palette": {
-      "title": "Palette de commandes",
-      "description": "Recherchez une commande à exécuter..."
-    },
-    "hero-video-dialog": {
-      "thumbnailAlt": "Vidéo de présentation",
-      "playLabel": "Lancer la vidéo",
-      "videoTitle": "Lecteur vidéo principal"
-    },
-    "layout-text-flip": {
-      "text": "Construire",
-      "words": ["des sites", "des modules", "des sections", "des effets 3D"]
-    },
-    "sidebar-trigger": {
-      "toggle": "Basculer le menu"
-    },
-    "tweet-not-found": {
-      "message": "Tweet introuvable"
-    },
-    "theme-toggle": {
-      "switchTheme": "Changer de thème",
-      "themeLight": "Clair",
-      "themeDark": "Sombre",
-      "themeSystem": "Système"
-    },
-    "login-page": {
-      "brandHomeLabel": "Retour à l'accueil",
-      "title": "Connexion",
-      "subtitle": "Bon retour parmi nous — connectez-vous pour continuer.",
-      "separator": "Ou continuer avec",
-      "emailLabel": "Adresse e-mail",
-      "emailPlaceholder": "vous@exemple.com",
-      "submit": "Continuer",
-      "signupPrompt": "Pas encore de compte ?",
-      "signupCta": "Créer un compte"
-    },
-    "signup-page": {
-      "brandHomeLabel": "Retour à l'accueil",
-      "title": "Créer un compte",
-      "subtitle": "Bienvenue — créez un compte pour commencer.",
-      "separator": "Ou continuer avec",
-      "emailLabel": "Adresse e-mail",
-      "emailPlaceholder": "vous@exemple.com",
-      "submit": "Continuer",
-      "loginPrompt": "Vous avez déjà un compte ?",
-      "loginCta": "Se connecter"
-    },
-    "forgot-password": {
-      "brandHomeLabel": "Retour à l'accueil",
-      "title": "Mot de passe oublié",
-      "subtitle": "Saisissez votre adresse e-mail pour recevoir un lien de réinitialisation.",
-      "emailLabel": "Adresse e-mail",
-      "emailPlaceholder": "vous@exemple.com",
-      "submit": "Envoyer le lien",
-      "footerHint": "Nous vous enverrons un lien pour réinitialiser votre mot de passe.",
-      "remembered": "Vous vous en souvenez ?",
-      "loginCta": "Se connecter"
-    },
-    "login-form": {
-      "brandSrOnly": "Acme SA",
-      "title": "Bienvenue chez Acme",
-      "signupPrompt": "Pas encore de compte ?",
-      "signupCta": "Créer un compte",
-      "emailLabel": "Adresse e-mail",
-      "emailPlaceholder": "vous@exemple.com",
-      "submit": "Se connecter",
-      "separator": "ou",
-      "appleCta": "Continuer avec Apple",
-      "googleCta": "Continuer avec Google",
-      "termsPrefix": "En continuant, vous acceptez nos",
-      "termsLink": "conditions d'utilisation",
-      "termsAnd": "et notre",
-      "privacyLink": "politique de confidentialité",
-      "termsSuffix": "."
-    },
-    "signup-form": {
-      "title": "Créer votre compte",
-      "subtitle": "Entrez votre adresse e-mail pour démarrer",
-      "emailLabel": "Adresse e-mail",
-      "emailPlaceholder": "vous@exemple.com",
-      "emailHelp": "Nous l'utiliserons pour vous contacter. Nous ne la partagerons avec personne.",
-      "passwordLabel": "Mot de passe",
-      "confirmPasswordLabel": "Confirmer le mot de passe",
-      "passwordHelp": "Au moins 8 caractères.",
-      "submit": "Créer le compte",
-      "separator": "ou continuer avec",
-      "appleSrOnly": "S'inscrire avec Apple",
-      "googleSrOnly": "S'inscrire avec Google",
-      "metaSrOnly": "S'inscrire avec Meta",
-      "loginPrompt": "Vous avez déjà un compte ?",
-      "loginCta": "Se connecter",
-      "termsPrefix": "En continuant, vous acceptez nos",
-      "termsLink": "conditions d'utilisation",
-      "termsAnd": "et notre",
-      "privacyLink": "politique de confidentialité",
-      "termsSuffix": ".",
-      "illustrationAlt": "Illustration décorative"
-    },
-    "chart-area-axes": {
-      "title": "Graphique en aires — axes",
-      "description": "Visiteurs totaux des 6 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "mobileLabel": "Mobile",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Janvier - Juin 2024"
-    },
-    "chart-area-default": {
-      "title": "Graphique en aires",
-      "description": "Visiteurs totaux des 6 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Janvier - Juin 2024"
-    },
-    "chart-area-gradient": {
-      "title": "Graphique en aires — dégradé",
-      "description": "Visiteurs totaux des 6 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "mobileLabel": "Mobile",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Janvier - Juin 2024"
-    },
-    "chart-area-icons": {
-      "title": "Graphique en aires — icônes",
-      "description": "Visiteurs totaux des 6 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "mobileLabel": "Mobile",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Janvier - Juin 2024"
-    },
-    "chart-area-interactive": {
-      "title": "Visiteurs totaux",
-      "descriptionLong": "Total des 3 derniers mois",
-      "descriptionShort": "3 derniers mois",
-      "last3Months": "3 derniers mois",
-      "last30Days": "30 derniers jours",
-      "last7Days": "7 derniers jours",
-      "placeholder": "3 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "mobileLabel": "Mobile",
-      "visitorsLabel": "Visiteurs"
-    },
-    "chart-area-legend": {
-      "title": "Graphique en aires — légende",
-      "description": "Visiteurs totaux des 6 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "mobileLabel": "Mobile",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Janvier - Juin 2024"
-    },
-    "chart-area-linear": {
-      "title": "Graphique en aires — linéaire",
-      "description": "Visiteurs totaux des 6 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Janvier - Juin 2024"
-    },
-    "chart-area-stacked": {
-      "title": "Graphique en aires — empilé",
-      "description": "Visiteurs totaux des 6 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "mobileLabel": "Mobile",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Janvier - Juin 2024"
-    },
-    "chart-area-stacked-expand": {
-      "title": "Graphique en aires — empilé étendu",
-      "description": "Visiteurs totaux des 6 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "mobileLabel": "Mobile",
-      "otherLabel": "Autre",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Janvier - Juin 2024"
-    },
-    "chart-area-step": {
-      "title": "Graphique en aires — escalier",
-      "description": "Visiteurs totaux des 6 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Janvier - Juin 2024"
-    },
-    "chart-bar-active": {
-      "title": "Histogramme — actif",
-      "description": "Janvier - Juin 2024",
-      "visitorsLabel": "Visiteurs",
-      "chromeLabel": "Chrome",
-      "safariLabel": "Safari",
-      "firefoxLabel": "Firefox",
-      "edgeLabel": "Edge",
-      "otherLabel": "Autre",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Visiteurs totaux des 6 derniers mois"
-    },
-    "chart-bar-default": {
-      "title": "Histogramme",
-      "description": "Janvier - Juin 2024",
-      "desktopLabel": "Ordinateur",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Visiteurs totaux des 6 derniers mois"
-    },
-    "chart-bar-horizontal": {
-      "title": "Histogramme — horizontal",
-      "description": "Janvier - Juin 2024",
-      "desktopLabel": "Ordinateur",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Visiteurs totaux des 6 derniers mois"
-    },
-    "chart-bar-interactive": {
-      "title": "Histogramme — interactif",
-      "description": "Visiteurs totaux des 3 derniers mois",
-      "desktopLabel": "Ordinateur",
-      "mobileLabel": "Mobile",
-      "viewsLabel": "Pages vues"
-    },
-    "chart-bar-label-custom": {
-      "title": "Histogramme — étiquette personnalisée",
-      "description": "Janvier - Juin 2024",
-      "desktopLabel": "Ordinateur",
-      "mobileLabel": "Mobile",
-      "trend": "En hausse de 5,2 % ce mois-ci",
-      "footerNote": "Visiteurs totaux des 6 derniers mois"
-    }
-  },
   "validation": {
     "required": "Ce champ est requis.",
     "invalidEmail": "Veuillez saisir un email valide.",
@@ -367,16 +60,99 @@
     "mustBePositive": "Doit être supérieur à zéro.",
     "nonNegative": "Doit être zéro ou supérieur."
   },
-  "llms": {
-    "sections": {
-      "about": "Nous sommes {company}. {tagline}",
-      "howItWorks": "Visitez notre site pour découvrir le fonctionnement de notre template modulaire.",
-      "contact": "Contactez-nous via la page contact ou par email à {email}."
-    },
-    "resources": {
-      "home": "Page d'accueil",
-      "about": "À propos",
-      "blog": "Blog"
+  "pages": {
+    "home": {
+      "title": "Indiecrafts — template Next.js rapide et modulaire",
+      "description": "Un template Next.js 16 piloté par la configuration, avec sections, layouts et page-templates prêts à forker pour chaque client.",
+      "hero": {
+        "eyebrow": "Template piloté par la configuration",
+        "title": "Livrez des sites clients en un week-end",
+        "subtitle": "Une base Next.js modulaire avec i18n, SEO, accessibilité et Tailwind — modifiez la config, pas le code."
+      },
+      "blocks": {
+        "features": {
+          "title": "Conçu pour couvrir vos besoins",
+          "body": "Personnalisation poussée, contrôle total et flux de travail assistés par l'IA — le tout dans un seul package.",
+          "items": {
+            "customizable": {
+              "title": "Personnalisable",
+              "body": "Des options de personnalisation poussées qui vous laissent ajuster chaque aspect à vos besoins."
+            },
+            "fullControl": {
+              "title": "Contrôle total",
+              "body": "Des éléments de design à la logique, vous gardez la main pour créer une expérience unique."
+            },
+            "poweredByAi": {
+              "title": "Propulsé par l'IA",
+              "body": "Valeurs par défaut intelligentes, suggestions contextuelles et workflows automatisés sur des primitives IA modernes."
+            }
+          }
+        },
+        "cta": {
+          "title": "Lancez-vous",
+          "body": "Laissez-nous votre email — on vous envoie les premières étapes.",
+          "emailPlaceholder": "Votre adresse email",
+          "submit": "Commencer"
+        },
+        "pricing": {
+          "title": "Une tarification qui évolue avec vous",
+          "body": "Commencez gratuitement. Évoluez quand vous avez besoin de plus de sièges, de stockage ou de support.",
+          "tiers": {
+            "free": {
+              "name": "Gratuit",
+              "price": "0 €",
+              "period": "/ mois",
+              "description": "Par éditeur",
+              "cta": "Commencer",
+              "features": {
+                "analytics": "Tableau de bord analytique de base",
+                "storage": "5 Go de stockage cloud",
+                "support": "Support email et chat"
+              }
+            },
+            "pro": {
+              "name": "Pro",
+              "price": "19 €",
+              "period": "/ mois",
+              "description": "Par éditeur",
+              "cta": "Commencer",
+              "badge": "Populaire",
+              "features": {
+                "everything": "Tout le plan Gratuit",
+                "community": "Accès au forum communautaire",
+                "singleUser": "Un seul utilisateur",
+                "templates": "Accès aux templates de base",
+                "mobile": "Application mobile",
+                "reports": "1 rapport personnalisé par mois",
+                "updates": "Mises à jour mensuelles",
+                "security": "Sécurité standard"
+              }
+            },
+            "startup": {
+              "name": "Startup",
+              "price": "29 €",
+              "period": "/ mois",
+              "description": "Par éditeur",
+              "cta": "Commencer",
+              "features": {
+                "everything": "Tout le plan Pro",
+                "storage": "50 Go de stockage cloud",
+                "support": "Support email et chat prioritaire"
+              }
+            }
+          }
+        },
+        "testimonials": {
+          "label": "Témoignages",
+          "quotes": {
+            "lovelace": {
+              "quote": "Forké une fois, trois sites clients livrés en une semaine. Le template que j'aurais aimé écrire moi-même.",
+              "author": "Ada Lovelace",
+              "role": "Fondatrice, Analytic Studio"
+            }
+          }
+        }
+      }
     }
   }
 }

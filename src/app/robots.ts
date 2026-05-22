@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 
-import { isSiteConfigured, siteConfig } from "@/config/site.config";
+import { isSiteConfigured, site } from "@/config";
 
 /**
- * When `siteConfig.url` is still the placeholder (NEXT_PUBLIC_SITE_URL hasn't
+ * When `site.url` is still the placeholder (NEXT_PUBLIC_SITE_URL hasn't
  * been set), we serve a full disallow + no sitemap. That keeps preview
  * deployments, dev branches, and unconfigured staging from leaking into
  * search engines.
@@ -26,7 +26,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/_next/"],
       },
     ],
-    sitemap: `${siteConfig.url}/sitemap.xml`,
-    host: siteConfig.url,
+    sitemap: `${site.url}/sitemap.xml`,
+    host: site.url,
   };
 }

@@ -9,7 +9,7 @@ export function DefaultLayout({ children, header = true, footer = true }: Layout
     <>
       <SkipLink />
       {resolveSlot(header, <Header7 />)}
-      <main id="main" tabIndex={-1} className="flex-1 outline-none">
+      <main id="main" tabIndex={-1} className="flex-1 pt-14 outline-none lg:pt-20">
         {children}
       </main>
       {resolveSlot(footer, <SiteFooter />)}

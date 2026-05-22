@@ -1,4 +1,4 @@
-import { headerNav, type NavLink } from "@/config/navigation.config";
+import { headerNav, type NavLink } from "@/config";
 
 export const siteDrawerKey = "site-drawer" as const;
 export const siteDrawerNamespace = "blocks.site-drawer" as const;
@@ -10,7 +10,7 @@ export interface SiteDrawerDefaults {
   direction: SiteDrawerDirection;
   buttonOpeningVariants: SiteDrawerButtonOpening;
   width: number;
-  items: NavLink[];
+  items: readonly NavLink[];
 }
 
 export const siteDrawerDefaults: SiteDrawerDefaults = {

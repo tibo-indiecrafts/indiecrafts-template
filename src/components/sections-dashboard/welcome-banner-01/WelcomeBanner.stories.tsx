@@ -8,7 +8,7 @@ const meta: Meta<typeof WelcomeBannerSection> = {
   parameters: { layout: "padded" },
   decorators: [
     (Story) => (
-      <div className="mx-auto w-full max-w-6xl pt-6">
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <Story />
       </div>
     ),

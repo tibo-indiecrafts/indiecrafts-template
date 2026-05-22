@@ -12,7 +12,7 @@ export function ProseLayout({ children, header = true, footer = true }: LayoutPr
       <main
         id="main"
         tabIndex={-1}
-        className="mx-auto w-full max-w-3xl flex-1 px-(--gutter) py-16 outline-none"
+        className="mx-auto w-full max-w-3xl flex-1 px-(--gutter) pt-28 pb-16 outline-none lg:pt-36"
       >
         <article className="prose prose-neutral dark:prose-invert">{children}</article>
       </main>

@@ -41,14 +41,17 @@ export function Dashboard({
   return (
     <Layout header={header} footer={footer}>
       <h1 className="sr-only">{t("title")}</h1>
-      <WelcomeBanner01Section {...welcomeBanner01Sample} id="dashboard-01-welcome" />
-      <SectionCards />
-      <QuickActions01Section {...quickActions01Sample} id="dashboard-01-quick-actions" />
-      <div className="px-4 lg:px-6">
+      <div className="@container/main mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 md:gap-8 md:py-8 lg:px-8">
+        <WelcomeBanner01Section {...welcomeBanner01Sample} id="dashboard-01-welcome" />
+        <SectionCards />
+        <QuickActions01Section
+          {...quickActions01Sample}
+          id="dashboard-01-quick-actions"
+        />
         <ChartAreaInteractive />
+        <DataTable data={rows} />
+        <RecentActivity01Section {...recentActivity01Sample} id="dashboard-01-activity" />
       </div>
-      <DataTable data={rows} />
-      <RecentActivity01Section {...recentActivity01Sample} id="dashboard-01-activity" />
     </Layout>
   );
 }

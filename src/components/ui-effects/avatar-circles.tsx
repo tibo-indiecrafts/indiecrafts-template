@@ -1,6 +1,6 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element, jsx-a11y/anchor-is-valid -- Aceternity / MagicUI upstream */
+/* eslint-disable @next/next/no-img-element -- Aceternity / MagicUI upstream */
 import { cn } from "@/lib/utils";
 
 interface Avatar {

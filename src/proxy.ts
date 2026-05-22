@@ -10,6 +10,13 @@ import { routing } from "@/i18n/routing";
 export default createMiddleware(routing);
 
 export const config = {
-  // Match all paths except Next internals, API routes, and static assets.
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  matcher: [
+    // Match all page paths except Next internals, API routes, and assets.
+    "/((?!api|_next|_vercel|.*\\..*).*)",
+    // Special: locale-aware route handlers (file extensions excluded above).
+    // Add per-locale endpoint paths here so next-intl rewrites them too.
+    "/llms.txt",
+    "/llms-full.txt",
+    "/llms/:path*",
+  ],
 };

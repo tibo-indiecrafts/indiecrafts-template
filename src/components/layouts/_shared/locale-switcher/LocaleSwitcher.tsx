@@ -3,12 +3,7 @@
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import {
-  LOCALE_ABBREVIATIONS,
-  LOCALE_LABELS,
-  SUPPORTED_LOCALES,
-  type Locale,
-} from "@/config/locales.config";
+import { locales, type Locale } from "@/config";
 import { Button } from "@/components/ui-primitives/button";
 import {
   DropdownMenu,
@@ -70,7 +65,9 @@ export function LocaleSwitcher({
           title={t("label")}
         >
           {isCode ? (
-            <span aria-hidden="true">{LOCALE_ABBREVIATIONS[current]}</span>
+            <span aria-hidden="true">
+              {locales.find((l) => l.code === current)?.abbr ?? current.toUpperCase()}
+            </span>
           ) : (
             <Globe className="size-4" aria-hidden="true" />
           )}
@@ -81,12 +78,12 @@ export function LocaleSwitcher({
           value={current}
           onValueChange={(value) => switchTo(value as Locale)}
         >
-          {SUPPORTED_LOCALES.map((l) => (
-            <DropdownMenuRadioItem key={l} value={l}>
+          {locales.map((l) => (
+            <DropdownMenuRadioItem key={l.code} value={l.code}>
               <span className="text-muted-foreground mr-2 text-xs font-semibold uppercase tabular-nums">
-                {LOCALE_ABBREVIATIONS[l]}
+                {l.abbr}
               </span>
-              {LOCALE_LABELS[l]}
+              {l.label}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>

@@ -1,5 +1,5 @@
 import type { LayoutName } from "@/components/layouts/registry";
-import type { PageSeo } from "@/config/pages/types";
+import type { PageSeo } from "@/config";
 
 export const notFound01Key = "not-found-01" as const;
 export const notFound01Namespace = "blocks.not-found-01" as const;

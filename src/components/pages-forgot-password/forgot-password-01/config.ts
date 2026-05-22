@@ -1,5 +1,5 @@
 import type { LayoutName } from "@/components/layouts/registry";
-import type { PageSeo } from "@/config/pages/types";
+import type { PageSeo } from "@/config";
 
 export const forgotPassword01Key = "forgot-password-01" as const;
 export const forgotPassword01Namespace = "blocks.forgot-password-01" as const;

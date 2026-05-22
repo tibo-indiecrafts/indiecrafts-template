@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import bundleAnalyzer from "@next/bundle-analyzer";
-import {
-  getCSPConnectSources,
-  getCurrentEnvironment,
-} from "./src/config/environments.config";
+import { getCSPConnectSources, getCurrentEnvironment } from "./src/config";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const withBundleAnalyzer = bundleAnalyzer({
@@ -38,6 +35,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "raw.githubusercontent.com" },
     ],
     formats: ["image/avif", "image/webp"],
+    // 1 year — once next/image hashes an asset's source it's immutable, so
+    // cache aggressively. Default is 60s which forces unnecessary revalidation.
+    minimumCacheTTL: 31536000,
   },
   // Auto-memoize components and hooks. Stable in Next 16 — top-level flag.
   reactCompiler: true,
@@ -59,6 +59,17 @@ const nextConfig: NextConfig = {
           },
           { key: "Content-Security-Policy", value: csp },
         ],
+      },
+      {
+        // Brand assets (favicons, PWA icons, OG cards) are immutable —
+        // swap by editing the file, not the URL. Long cache cuts mobile
+        // re-visit bytes to zero.
+        source: "/brand/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        source: "/logo.svg",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
     ];
   },

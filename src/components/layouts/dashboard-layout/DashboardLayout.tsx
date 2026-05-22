@@ -24,10 +24,12 @@ export function DashboardLayout({ children, footer = true }: LayoutProps) {
           className="bg-background relative flex w-full flex-1 flex-col md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2"
         >
           <PageHeader />
-          <main id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-              <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">{children}</div>
-            </div>
+          <main
+            id="main"
+            tabIndex={-1}
+            className="@container/main flex flex-1 flex-col outline-none"
+          >
+            {children}
           </main>
           {resolveSlot(footer, <SiteFooter />)}
         </div>

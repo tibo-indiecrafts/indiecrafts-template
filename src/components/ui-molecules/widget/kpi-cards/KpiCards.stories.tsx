@@ -8,7 +8,7 @@ const meta: Meta<typeof KpiCards> = {
   parameters: { layout: "fullscreen" },
   decorators: [
     (Story) => (
-      <div className="@container/main w-full py-6">
+      <div className="@container/main w-full px-4 py-6 sm:px-6 lg:px-8">
         <Story />
       </div>
     ),

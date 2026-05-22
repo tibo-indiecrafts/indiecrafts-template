@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { cn } from "@/lib/utils";
 import { useScopedT } from "@/i18n/scoped-t";
@@ -26,22 +25,22 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
     <footer className={cn("bg-background @container py-12", bgClassName)}>
       <div className="mx-auto max-w-2xl px-6">
         <div className="flex flex-col">
-          <Link
-            href="/"
+          <a
+            href="#"
             aria-label={homeLabel}
             className="hover:bg-foreground/5 -ml-1.5 flex size-8 rounded-lg *:m-auto"
           >
             <LogoIcon className="w-fit" />
-          </Link>
+          </a>
           <nav className="my-8 flex flex-wrap gap-x-8 gap-y-2">
             {NAV_LINKS.map((link) => (
-              <Link
+              <a
                 key={link.id}
                 href={link.href}
                 className="text-muted-foreground hover:text-foreground text-sm transition-colors"
               >
                 {t(`links.${link.id}`)}
-              </Link>
+              </a>
             ))}
           </nav>
 

@@ -1,5 +1,5 @@
 import type { LayoutName } from "@/components/layouts/registry";
-import type { PageSeo } from "@/config/pages/types";
+import type { PageSeo } from "@/config";
 
 export const customerStory02Key = "customer-story-02" as const;
 export const customerStory02Namespace = "blocks.customer-story-02" as const;

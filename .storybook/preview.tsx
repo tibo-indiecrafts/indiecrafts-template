@@ -2,61 +2,55 @@ import type { Preview } from "@storybook/nextjs-vite";
 import { withThemeByDataAttribute } from "@storybook/addon-themes";
 import { NextIntlClientProvider } from "next-intl";
 import React from "react";
-import { loadBlockMessages } from "../src/i18n/block-messages";
-import { STORY_MESSAGES } from "../src/i18n/story-messages";
-import { loadPageMessages } from "../src/config/pages/messages";
 import globalEn from "../messages/en.json";
 import globalFr from "../messages/fr.json";
 import "../src/app/globals.css";
 
 /**
- * Per-story isolation:
- *   - `Pages/*` and `Layouts/*` stories compose many blocks (page-templates
- *     wrapping multiple section samples, layouts mounting default chrome
- *     + sidebar variants), so they always render with the FULL three-tier
- *     tree — same shape as `src/i18n/request.ts` produces in the app.
- *   - All other stories whose folder has its own `en.json` (sections,
- *     single-component molecules, isolated effects) render with ONLY
- *     that block's translations in scope, looked up by the story's title
- *     via the auto-generated `STORY_MESSAGES` map. Each story becomes a
- *     standalone preview that doesn't depend on any other component's
- *     translations.
- *   - Stories without their own `en.json` (ui-primitives, ui-effects
- *     without translations) also fall back to the full tree so any
- *     incidental block reference still resolves.
+ * Storybook message tree.
  *
- * Root chrome (`nav`, `cta`, `footer`, `common`, `typography`, `llms`,
- * etc.) is always loaded from `messages/<locale>.json` so layout chrome
- * still renders. The app's runtime path in `src/i18n/request.ts` is
- * unchanged — it continues to deep-merge the full three-tier tree.
+ * Stories see the production root tree (`messages/<locale>.json`) PLUS a
+ * `blocks.<variant>` map built by globbing every `src/components/**\/en.json`
+ * at preview-load time. The per-block samples (e.g. `blocks.features-01.title`)
+ * stay valid so each component renders standalone with its own example copy.
+ *
+ * The production app does NOT load this `blocks.*` namespace — it reads from
+ * `pages.<id>.blocks.<simpleName>.*` only (no variant suffix). See README →
+ * "Migrating a section from /components into the app" for the wiring pattern.
+ *
+ * No codegen, no drift checks — adding a new block's `en.json` shows up here
+ * automatically on the next Vite restart.
  */
-function buildMessages(
-  locale: "en" | "fr",
-  storyTitle: string | undefined,
-): Record<string, unknown> {
+
+type BlockJson = { default: Record<string, unknown> };
+
+const blockEnModules = import.meta.glob<BlockJson>("../src/components/**/en.json", {
+  eager: true,
+});
+
+function buildBlocks(): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [path, mod] of Object.entries(blockEnModules)) {
+    // Flat file like "../src/components/ui-effects/3d-pin.en.json" → "3d-pin"
+    const flat = path.match(/components\/[^/]+\/([^/]+)\.en\.json$/);
+    if (flat) {
+      result[flat[1]] = mod.default;
+      continue;
+    }
+    // Folder file like ".../sections-features/features-01/en.json" → "features-01"
+    const folder = path.match(/components\/.+\/([^/]+)\/en\.json$/);
+    if (folder) {
+      result[folder[1]] = mod.default;
+    }
+  }
+  return result;
+}
+
+const blocks = buildBlocks();
+
+function buildMessages(locale: "en" | "fr"): Record<string, unknown> {
   const root = locale === "fr" ? globalFr : globalEn;
-
-  const composesMany =
-    !!storyTitle &&
-    (storyTitle.startsWith("Pages/") || storyTitle.startsWith("Layouts/"));
-  if (composesMany) {
-    return {
-      ...root,
-      pages: loadPageMessages(locale),
-      blocks: loadBlockMessages(),
-    };
-  }
-
-  const isolated = storyTitle ? STORY_MESSAGES[storyTitle] : undefined;
-  if (isolated) {
-    return { ...root, pages: {}, blocks: isolated };
-  }
-
-  return {
-    ...root,
-    pages: loadPageMessages(locale),
-    blocks: loadBlockMessages(),
-  };
+  return { ...root, blocks };
 }
 
 const preview: Preview = {
@@ -69,20 +63,12 @@ const preview: Preview = {
     },
     a11y: { test: "todo" },
     backgrounds: { disable: true }, // covered by data-theme
-    // Mount the App Router context so stories can use Link / usePathname /
-    // useRouter from next/navigation (and our @/i18n/routing wrappers,
-    // which delegate to next-intl/navigation → next/navigation). Without
-    // this, components hit "invariant expected app router to be mounted".
     nextjs: { appDirectory: true },
     options: {
       storySort: {
-        // Top-down from biggest abstraction to smallest. Buckets not listed
-        // here fall through to alphabetical order, after the listed ones.
         order: [
           "Pages",
           [
-            // One folder per page type — variants (Landing1, Landing2 …)
-            // live inside, mirroring the codebase shape.
             "Landing",
             "About",
             "Dashboard",
@@ -94,7 +80,6 @@ const preview: Preview = {
           ],
           "Sections",
           [
-            // Marketing types (consumed by `Pages/Marketing/*`), then app + auth.
             "Cta",
             "Contact",
             "Content",
@@ -154,15 +139,11 @@ const preview: Preview = {
     },
   },
   decorators: [
-    // Theme switcher in the Storybook toolbar — toggles
-    // `<html data-theme="dark|light">` to match the app's runtime behavior.
     withThemeByDataAttribute({
       themes: { light: "light", dark: "dark" },
       defaultTheme: "light",
       attributeName: "data-theme",
     }),
-    // Locale provider — listens to the toolbar's `locale` global and
-    // isolates per-story messages via `STORY_MESSAGES[ctx.title]`.
     (Story, ctx) => {
       const locale = (ctx.globals.locale as "en" | "fr") ?? "en";
       const fullscreen = ctx.parameters?.layout === "fullscreen";
@@ -170,10 +151,7 @@ const preview: Preview = {
         ? "bg-background text-foreground flex min-h-svh flex-col"
         : "bg-background text-foreground flex min-h-svh flex-col p-6";
       return (
-        <NextIntlClientProvider
-          locale={locale}
-          messages={buildMessages(locale, ctx.title)}
-        >
+        <NextIntlClientProvider locale={locale} messages={buildMessages(locale)}>
           <div className={wrapperClass}>
             <Story />
           </div>

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment -- ts-nocheck below */
 // @ts-nocheck -- Aceternity / MagicUI upstream; type quirks (React 19 ref-null types, missing JSX namespace, etc.) accepted as-is.
 "use client";
-/* eslint-disable @next/next/no-img-element, @typescript-eslint/no-unused-vars, jsx-a11y/anchor-is-valid -- Aceternity / MagicUI upstream */
+/* eslint-disable @next/next/no-img-element, @typescript-eslint/no-unused-vars -- Aceternity / MagicUI upstream */
 import { cn } from "@/lib/utils";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import * as React from "react";
 
 import { Logo } from "@/components/layouts/_shared/logo";
-import type { NavLink } from "@/config/navigation.config";
+import type { NavLink } from "@/config";
 import { Link } from "@/i18n/routing";
 import { useScopedT } from "@/i18n/scoped-t";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,7 @@ import {
 } from "./config";
 
 export interface SiteDrawerProps {
-  items?: NavLink[];
+  items?: readonly NavLink[];
 
   width?: number;
   direction?: SiteDrawerDirection;

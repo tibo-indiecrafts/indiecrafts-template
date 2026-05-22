@@ -21,7 +21,7 @@
 
 import { getTranslations } from "next-intl/server";
 import { useMessages } from "next-intl";
-import type { Locale } from "@/config/locales.config";
+import type { Locale } from "@/config";
 
 export type TypographyRules = {
   titleCase: "title" | "sentence" | "lower" | "upper";

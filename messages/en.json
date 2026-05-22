@@ -1,4 +1,8 @@
 {
+  "site": {
+    "tagline": "The config-first Next.js template for client websites.",
+    "description": "A highly modular, SEO-ready, i18n-ready, accessibility-first Next.js template. Fork it, edit the config, ship."
+  },
   "nav": {
     "home": "Home",
     "about": "About",
@@ -48,90 +52,6 @@
     "currencyPosition": "before",
     "numberSpacing": ""
   },
-  "dev": {
-    "pricing": {
-      "title": "Simple, honest pricing",
-      "subtitle": "Start free. Upgrade when you grow.",
-      "tiers": {
-        "free": {
-          "name": "Free",
-          "price": "$0",
-          "period": "forever",
-          "description": "For experimenting.",
-          "cta": "Start free",
-          "featureProjects": "1 project",
-          "featureLocales": "2 locales",
-          "featureSupport": "Community support"
-        },
-        "pro": {
-          "name": "Pro",
-          "price": "$29",
-          "period": "per month",
-          "description": "For small studios shipping regularly.",
-          "cta": "Go Pro",
-          "featureProjects": "Unlimited projects",
-          "featureLocales": "All 24 EU locales",
-          "featureSupport": "Priority email"
-        },
-        "team": {
-          "name": "Team",
-          "price": "$99",
-          "period": "per month",
-          "description": "For agencies handling many clients.",
-          "cta": "Contact us",
-          "featureProjects": "Everything in Pro",
-          "featureLocales": "White-label",
-          "featureSupport": "Dedicated support"
-        }
-      }
-    },
-    "testimonials": {
-      "title": "What people say",
-      "items": {
-        "a": {
-          "quote": "Forked once, shipped three client sites in a week. This is the template I wish I'd written myself.",
-          "author": "Ada Lovelace",
-          "role": "Founder, Analytic Studio"
-        },
-        "b": {
-          "quote": "Config-first done right. My designers own the content; I haven't touched a component file in two sprints.",
-          "author": "Turing Alan",
-          "role": "Engineering Lead"
-        },
-        "c": {
-          "quote": "The contrast check + WCAG rules caught three issues before our accessibility audit. Saved us days.",
-          "author": "Grace Hopper",
-          "role": "Accessibility Consultant"
-        }
-      }
-    },
-    "faq": {
-      "title": "Frequently asked questions",
-      "items": {
-        "license": {
-          "q": "Can I use this for commercial client projects?",
-          "a": "Yes — MIT licensed. Fork freely, ship freely, bill your clients."
-        },
-        "i18n": {
-          "q": "How do I add a new language?",
-          "a": "Push the locale code into SUPPORTED_LOCALES, add messages/<locale>.json mirroring English, and register it in pages/messages.ts — the scaffolder handles the first two automatically."
-        },
-        "blocks": {
-          "q": "Can I drop in Tailark or shadcn blocks?",
-          "a": "Yes. Port each block into a typed section (schema + component + registry entry) — takes about 20 minutes per block. One-off blocks use the CustomBlock escape hatch."
-        }
-      }
-    },
-    "stats": {
-      "title": "Trusted at every scale",
-      "items": {
-        "projects": { "value": "300+", "label": "Projects shipped" },
-        "locales": { "value": "24", "label": "EU locales supported" },
-        "uptime": { "value": "99.99%", "label": "CDN uptime" },
-        "developers": { "value": "1.2K", "label": "Happy developers" }
-      }
-    }
-  },
   "validation": {
     "required": "This field is required.",
     "invalidEmail": "Please enter a valid email.",
@@ -140,16 +60,99 @@
     "mustBePositive": "Must be greater than zero.",
     "nonNegative": "Must be zero or greater."
   },
-  "llms": {
-    "sections": {
-      "about": "We are {company}. {tagline}",
-      "howItWorks": "Visit our site to learn how our modular template works.",
-      "contact": "Get in touch via the contact page or email {email}."
-    },
-    "resources": {
-      "home": "Home page",
-      "about": "About page",
-      "blog": "Blog"
+  "pages": {
+    "home": {
+      "title": "Indiecrafts — fast, modular Next.js template",
+      "description": "A config-first Next.js 16 template with sections, layouts, and pre-built page templates you can fork per client.",
+      "hero": {
+        "eyebrow": "Config-first template",
+        "title": "Ship client websites in a weekend",
+        "subtitle": "A modular Next.js foundation with i18n, SEO, a11y and Tailwind wired up — edit config, not code."
+      },
+      "blocks": {
+        "features": {
+          "title": "Built to cover your needs",
+          "body": "Extensive customization, full control, and AI-assisted workflows — in one tidy package.",
+          "items": {
+            "customizable": {
+              "title": "Customizable",
+              "body": "Extensive customization options, allowing you to tailor every aspect to meet your specific needs."
+            },
+            "fullControl": {
+              "title": "You have full control",
+              "body": "From design elements to functionality, complete control to create a unique and personalized experience."
+            },
+            "poweredByAi": {
+              "title": "Powered by AI",
+              "body": "Smart defaults, intelligent suggestions, and automated workflows built on modern AI primitives."
+            }
+          }
+        },
+        "cta": {
+          "title": "Start Building",
+          "body": "Drop your email — we'll send you the first steps.",
+          "emailPlaceholder": "Your email address",
+          "submit": "Get started"
+        },
+        "pricing": {
+          "title": "Pricing that scales with you",
+          "body": "Start free. Upgrade when you need more seats, storage, or support.",
+          "tiers": {
+            "free": {
+              "name": "Free",
+              "price": "$0",
+              "period": "/ mo",
+              "description": "Per editor",
+              "cta": "Get Started",
+              "features": {
+                "analytics": "Basic Analytics Dashboard",
+                "storage": "5GB Cloud Storage",
+                "support": "Email and Chat Support"
+              }
+            },
+            "pro": {
+              "name": "Pro",
+              "price": "$19",
+              "period": "/ mo",
+              "description": "Per editor",
+              "cta": "Get Started",
+              "badge": "Popular",
+              "features": {
+                "everything": "Everything in Free Plan",
+                "community": "Access to Community Forum",
+                "singleUser": "Single User Access",
+                "templates": "Access to Basic Templates",
+                "mobile": "Mobile App Access",
+                "reports": "1 Custom Report Per Month",
+                "updates": "Monthly Product Updates",
+                "security": "Standard Security Features"
+              }
+            },
+            "startup": {
+              "name": "Startup",
+              "price": "$29",
+              "period": "/ mo",
+              "description": "Per editor",
+              "cta": "Get Started",
+              "features": {
+                "everything": "Everything in Pro Plan",
+                "storage": "50GB Cloud Storage",
+                "support": "Priority Email and Chat Support"
+              }
+            }
+          }
+        },
+        "testimonials": {
+          "label": "Testimonials",
+          "quotes": {
+            "lovelace": {
+              "quote": "Forked once, shipped three client sites in a week. This is the template I wish I'd written myself.",
+              "author": "Ada Lovelace",
+              "role": "Founder, Analytic Studio"
+            }
+          }
+        }
+      }
     }
   }
 }

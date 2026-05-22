@@ -1,0 +1,34 @@
+/*
+ * Background-gradient keyframe for AnimatedGradient circles.
+ *
+ * Each circle sets its own --tx-1..4 and --ty-1..4 (random ±1) via inline
+ * style, driving a 5-stop drift around its initial position. Animation
+ * duration is set per instance via `animation-duration`. Co-locating the
+ * keyframe here keeps the @theme tokens dataset clean and respects the
+ * project's "co-locate component CSS" pattern.
+ */
+
+@keyframes background-gradient {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(calc(100% * var(--tx-1, 1)), calc(100% * var(--ty-1, 1)));
+  }
+  40% {
+    transform: translate(calc(100% * var(--tx-2, -1)), calc(100% * var(--ty-2, 1)));
+  }
+  60% {
+    transform: translate(calc(100% * var(--tx-3, 1)), calc(100% * var(--ty-3, -1)));
+  }
+  80% {
+    transform: translate(calc(100% * var(--tx-4, -1)), calc(100% * var(--ty-4, -1)));
+  }
+}
+
+.animated-gradient-circle {
+  animation: background-gradient var(--animated-gradient-duration, 8s) ease-in-out
+    infinite;
+  animation-delay: var(--animated-gradient-delay, 0s);
+}

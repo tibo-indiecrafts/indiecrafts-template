@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Logo } from "@/components/layouts/_shared/logo";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { useScopedT } from "@/i18n/scoped-t";
 import { siteFooter8Namespace } from "./config";
@@ -42,7 +42,7 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
 
             <div className="order-first flex flex-wrap gap-6 text-sm md:order-last">
               {SOCIAL_LINKS.map((social) => (
-                <Link
+                <a
                   key={social.id}
                   href={social.href}
                   target="_blank"
@@ -51,7 +51,7 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
                   className="text-muted-foreground hover:text-primary block"
                 >
                   <SocialIcon id={social.id} />
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -81,13 +81,13 @@ const LinkGroup = ({
     <span className="block font-medium">{heading}</span>
     <div className="flex flex-wrap gap-4 sm:flex-col">
       {links.map((link) => (
-        <Link
+        <a
           key={link.id}
           href={link.href}
           className="text-muted-foreground hover:text-primary block duration-150"
         >
           <span>{t(`links.${link.id}`)}</span>
-        </Link>
+        </a>
       ))}
     </div>
   </div>

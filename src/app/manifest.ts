@@ -1,27 +1,27 @@
 import type { MetadataRoute } from "next";
-import { siteConfig } from "@/config/site.config";
-import { themeConfig } from "@/config/theme.config";
+import { site } from "@/config";
 
 /**
- * Web App Manifest — powers "Add to Home Screen" / PWA install prompts.
- * Served at /manifest.webmanifest.
+ * Web App Manifest — minimum viable. Browser favicons and apple-touch icons
+ * come from `<link>` tags (auto-emitted by `app/icon.tsx` and
+ * `app/apple-icon.tsx`), so the manifest only needs the PWA install sizes:
+ * 192, 512, and one maskable. `name` + `start_url` + `display` + `icons`
+ * are the only fields required for installability.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: siteConfig.name,
-    short_name: siteConfig.name.split(" ")[0],
-    description: siteConfig.description,
+    name: site.name,
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: themeConfig.hexColors.brand,
     icons: [
-      { src: "/icon", sizes: "64x64", type: "image/png" },
-      { src: "/apple-icon", sizes: "180x180", type: "image/png" },
-      // 192 and 512 are the canonical PWA install sizes — map both to /icon
-      // which Next will rerender at the requested size.
-      { src: "/icon", sizes: "192x192", type: "image/png" },
-      { src: "/icon", sizes: "512x512", type: "image/png" },
+      { src: "/brand/icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "/brand/icon-512.png", sizes: "512x512", type: "image/png" },
+      {
+        src: "/brand/icon-maskable-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
     ],
   };
 }

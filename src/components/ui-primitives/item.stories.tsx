@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid -- shadcn upstream */
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ChevronRight, Folder } from "lucide-react";
 import { Button } from "./button";

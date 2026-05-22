@@ -22,7 +22,7 @@ export function SidebarLayout({
       <main
         id="main"
         tabIndex={-1}
-        className="mx-auto grid w-full max-w-(--max-container) flex-1 gap-10 px-(--gutter) py-12 outline-none lg:grid-cols-[16rem_1fr]"
+        className="mx-auto grid w-full max-w-(--max-container) flex-1 gap-10 px-(--gutter) pt-26 pb-12 outline-none lg:grid-cols-[16rem_1fr] lg:pt-32"
       >
         {aside ? (
           <aside

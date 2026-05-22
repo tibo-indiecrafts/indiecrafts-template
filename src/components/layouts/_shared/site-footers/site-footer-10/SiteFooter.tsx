@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Logo } from "@/components/layouts/_shared/logo";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { useScopedT } from "@/i18n/scoped-t";
 import { siteFooter10Namespace } from "./config";
@@ -40,27 +40,27 @@ export function SiteFooter({ bgClassName }: SiteFooterProps = {}) {
             <p className="text-muted-foreground mt-4 max-w-xs text-sm">{t("tagline")}</p>
             <div className="mt-6 -ml-2 flex">
               {SOCIAL_LINKS.map(({ id, href }) => (
-                <Link
+                <a
                   key={id}
                   href={href}
                   className="text-muted-foreground hover:text-foreground inline-flex size-8 items-center justify-center transition-colors"
                   aria-label={t(`social.${id}`)}
                 >
                   <SocialIcon id={id} />
-                </Link>
+                </a>
               ))}
             </div>
           </div>
 
           <nav className="flex flex-wrap gap-x-8 gap-y-3">
             {NAV_LINKS.map((link) => (
-              <Link
+              <a
                 key={link.id}
                 href={link.href}
                 className="text-muted-foreground hover:text-foreground text-sm transition-colors"
               >
                 {t(`links.${link.id}`)}
-              </Link>
+              </a>
             ))}
           </nav>
           <div className="border-t pt-8">

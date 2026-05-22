@@ -1,31 +1,29 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { ImageResponse } from "next/og";
-import { siteConfig } from "@/config/site.config";
-import { themeConfig } from "@/config/theme.config";
+import { site } from "@/config";
+import { theme } from "@/config";
 
 /**
  * OpenGraph image dispatcher (1200×630).
  *
- * - `siteConfig.ogImage.mode === "file"`: serve a static card from /public.
- * - otherwise: render a branded gradient card using siteConfig + themeConfig.
+ * - `site.ogImage.mode === "file"`: serve a static card from /public.
+ * - otherwise: render a branded gradient card using site + theme.
  *
  * Per-route OG images still work — drop another opengraph-image.tsx (or
  * opengraph-image.png) inside that route segment and Next picks the closest.
  */
 
-export const alt = siteConfig.name;
+export const alt = site.name;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OpenGraphImage() {
-  if (siteConfig.ogImage.mode === "file") {
-    const buffer = readFileSync(
-      path.join(process.cwd(), "public", siteConfig.ogImage.file),
-    );
+  if (site.ogImage.mode === "file") {
+    const buffer = readFileSync(path.join(process.cwd(), "public", site.ogImage.file));
     return new Response(new Uint8Array(buffer), {
       headers: {
-        "content-type": siteConfig.ogImage.contentType,
+        "content-type": site.ogImage.contentType,
         "cache-control": "public, max-age=31536000, immutable",
       },
     });
@@ -40,7 +38,7 @@ export default function OpenGraphImage() {
         flexDirection: "column",
         justifyContent: "space-between",
         padding: "80px",
-        background: `linear-gradient(135deg, ${themeConfig.hexColors.brand} 0%, #0a0a0a 100%)`,
+        background: `linear-gradient(135deg, ${theme.hexColors.brand} 0%, #0a0a0a 100%)`,
         color: "#ffffff",
         fontFamily: "sans-serif",
       }}
@@ -54,17 +52,17 @@ export default function OpenGraphImage() {
           opacity: 0.85,
         }}
       >
-        <span style={{ fontSize: 44 }}>{siteConfig.faviconEmoji ?? "◆"}</span>
-        <span>{siteConfig.name}</span>
+        <span style={{ fontSize: 44 }}>{site.faviconEmoji ?? "◆"}</span>
+        <span>{site.name}</span>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         <div
           style={{ fontSize: 72, fontWeight: 700, lineHeight: 1.1, letterSpacing: -2 }}
         >
-          {siteConfig.tagline}
+          {site.tagline}
         </div>
         <div style={{ fontSize: 28, opacity: 0.8, maxWidth: 900 }}>
-          {siteConfig.description}
+          {site.description}
         </div>
       </div>
     </div>,

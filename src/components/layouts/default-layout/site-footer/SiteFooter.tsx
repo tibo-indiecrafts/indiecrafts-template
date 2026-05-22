@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { footerNav } from "@/config/navigation.config";
-import { siteConfig } from "@/config/site.config";
+import { footerNav } from "@/config";
+import { site } from "@/config";
 import { Logo } from "@/components/layouts/_shared/logo";
 import { siteFooterNamespace } from "./config";
 
@@ -15,7 +15,7 @@ export function SiteFooter() {
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
           <div>
             <Logo />
-            <p className="text-muted-foreground mt-2 text-sm">{siteConfig.tagline}</p>
+            <p className="text-muted-foreground mt-2 text-sm">{site.tagline}</p>
           </div>
           {footerNav.map((group) => (
             <nav key={group.labelKey} aria-label={tNav(group.labelKey)}>
@@ -36,7 +36,7 @@ export function SiteFooter() {
           ))}
         </div>
         <p className="text-muted-foreground mt-12 text-xs">
-          © {year} {siteConfig.legal.company}. {tBlock("rights")}
+          © {year} {site.legal.company}. {tBlock("rights")}
         </p>
       </div>
     </footer>
