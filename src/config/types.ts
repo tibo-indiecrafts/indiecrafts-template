@@ -116,7 +116,10 @@ export function getCurrentEnvironment(): Environment {
 }
 
 export function getCSPConnectSources(env: Environment): readonly string[] {
-  const common = ["'self'"];
+  // Sanity Studio at /studio needs to reach the project API + CDN.
+  // Safe to leave in prod CSP: the wildcard is locked to *.sanity.io.
+  const sanity = ["https://*.sanity.io", "wss://*.api.sanity.io"];
+  const common = ["'self'", ...sanity];
   if (env === "development" || env === "test") {
     return [...common, "ws://localhost:*", "http://localhost:*", "https://*.vercel.app"];
   }

@@ -16,7 +16,7 @@ export const config = {
     //   - icon, apple-icon, opengraph-image, manifest, robots, sitemap
     //     (root-level metadata routes — locale-agnostic by Next convention)
     //   - paths with a dot   (static assets: .css, .js, .png, .svg, …)
-    "/((?!api|_next|_vercel|icon|apple-icon|opengraph-image|manifest|robots|sitemap|.*\\..*).*)",
+    "/((?!api|_next|_vercel|studio|icon|apple-icon|opengraph-image|manifest|robots|sitemap|.*\\..*).*)",
     // Special: locale-aware route handlers (file extensions excluded above).
     // Add per-locale endpoint paths here so next-intl rewrites them too.
     "/llms.txt",
