@@ -205,6 +205,34 @@ src/
 22. `pnpm verify:quick` — fix any broken imports.
 23. End-to-end smoke: every route 200.
 
+### Docs side (both repos)
+
+24. **Update /app `README.md`:**
+    - Drop the "browse the /components examples library" sentence from the intro and the `pnpm storybook` line from the Commands block.
+    - Replace the "Adding a section" workflow section with a pointer to the library repo: "Browse `../indiecrafts-library` (or wherever you cloned it), copy the section file into `src/components/sections/`, wire it up — see `(home)/page.tsx` for the pattern."
+    - Drop the "Project structure" mention of `/components` examples library; the new tree is much smaller.
+    - Keep all SEO / LLMs / forms / cookie-banner / deployment sections — they stay relevant.
+
+25. **Update /app `CLAUDE.md`:**
+    - Drop the entire "Folder conventions" table (ui-primitives, ui-effects, sections-\* — none of those folders exist in /app anymore).
+    - Trim the Architecture block — remove the `src/components/` example-library tree, replace with the slim production-only tree (`components/ui/`, `components/chrome/`, `components/sections/`).
+    - Drop the "Adding a section to a route" 3-step section — replace with a one-liner pointer to the library repo + README.
+    - Drop these NEVERs from the Critical rules: "NEVER edit `src/components/ui-primitives/**`" and "NEVER edit flat files in `src/components/ui-effects/*.tsx`" — they don't apply after extract.
+    - Keep all i18n / SEO / theming / accessibility sections.
+
+26. **Library repo `README.md`** (new, in `../Code/indiecrafts-library/`):
+    - Top: "Storybook component library for indiecrafts.dev sites. Not a runtime dependency — browse here, copy into your app when you want a component."
+    - Commands: `pnpm install`, `pnpm storybook`, `pnpm build-storybook`.
+    - Folder map mirroring the current `/components` layout (`ui-primitives/`, `ui-effects/`, `sections-*/`, `pages-*/`, `layouts/`, `_lib/`, `_hooks/`).
+    - "How to use a component" workflow: pick → copy file → adjust imports → add i18n keys → mount.
+    - Note the stubbed `@/i18n/routing`, `@/types/messages`, `@/config` — explain why and what to swap with when copying into a real app.
+
+27. **Library `CLAUDE.md`** (new):
+    - Working principles (copy from /app, library-flavored).
+    - Component shape conventions (5-file pattern: `<Name>.tsx`, `<Name>.stories.tsx`, `schema.ts`, `config.ts`, `en.json`, `index.ts`).
+    - i18n approach (each component ships its own `en.json` for Storybook isolation; preview.tsx globs them).
+    - "Strict NEVERs" focused on the library: never break Storybook isolation, never import from `@/app/*`, never assume the host app's route shape.
+
 ## 6. Risks and tricky bits
 
 | Risk                                                                                             | Mitigation                                                                                                                                 |
@@ -239,9 +267,10 @@ src/
 | Copy ~14 components into /app (flatten naming if desired)                                | 45 min                 |
 | Mass-update /app imports + verify block i18n keys                                        | 30 min                 |
 | Delete /components, .storybook, deps from /app + verify                                  | 30 min                 |
-| Document both READMEs                                                                    | 30 min                 |
+| Update /app README + CLAUDE.md (drop /components sections, trim folder tables)           | 30 min                 |
+| Write library README + CLAUDE.md (workflow, conventions, stub explanations)              | 30 min                 |
 | End-to-end smoke + bundle size check                                                     | 30 min                 |
-| **Total**                                                                                | **~5-7 hours focused** |
+| **Total**                                                                                | **~6-8 hours focused** |
 
 ## 8. Open questions
 
