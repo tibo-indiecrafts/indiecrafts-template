@@ -6,9 +6,10 @@ import { Link } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/_chrome/DefaultLayout";
+import { Modules } from "@/components/blog-components/modules/ModuleRenderer";
 import { sanityFetchLive } from "@/sanity/live";
-import { allPostsQuery } from "@/sanity/queries";
-import type { PostListItem } from "@/sanity/types";
+import { allPostsQuery, blogSingletonQuery } from "@/sanity/queries";
+import type { BlogSingleton, PostListItem } from "@/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -18,52 +19,75 @@ export async function generateMetadata({ params }: Props) {
 }
 
 /**
- * Blog list — server-renders the latest posts via Sanity. Refetches at
- * build time and on demand (no `revalidate` set, so this is fully static
- * unless a webhook calls `revalidatePath('/blog')`).
+ * Blog frontpage — module-driven when the `blog` singleton has
+ * `frontpageModules`. Falls back to a default card grid otherwise so
+ * the route works out of the box without any editor action.
  */
 export default async function BlogPage({ params }: Props) {
   if (!features.blog || !isPageVisible(pages.blog)) notFound();
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("pages.blog");
 
-  const posts = await sanityFetchLive<PostListItem[]>({ query: allPostsQuery });
+  const blog = await sanityFetchLive<BlogSingleton | null>({
+    query: blogSingletonQuery,
+  });
+  const modules = blog?.frontpageModules ?? [];
 
   return (
     <DefaultLayout>
       <PageSchemas page={pages.blog} locale={locale} />
-      <section
-        aria-labelledby="blog-title"
-        className="mx-auto max-w-6xl px-(--gutter) py-16 md:py-24"
-      >
-        <header className="mx-auto max-w-2xl text-center">
-          <h1 id="blog-title" className="text-4xl font-semibold lg:text-5xl">
-            {t("heading")}
-          </h1>
-          <p className="text-muted-foreground mt-4 text-balance">{t("subheading")}</p>
-        </header>
-
-        {posts.length === 0 ? (
-          <p className="text-muted-foreground mt-16 text-center">{t("noPosts")}</p>
-        ) : (
-          <ul className="mt-12 grid gap-8 md:mt-20 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
-              <li key={post._id}>
-                <PostCard post={post} locale={locale} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {modules.length > 0 ? (
+        <Modules modules={modules} context={{ locale }} />
+      ) : (
+        <DefaultFrontpage locale={locale} />
+      )}
     </DefaultLayout>
+  );
+}
+
+// ─── Hard-coded fallback when no modules are configured ─────────
+
+async function DefaultFrontpage({ locale }: { locale: Locale }) {
+  const t = await getTranslations("pages.blog");
+  const posts = await sanityFetchLive<PostListItem[]>({ query: allPostsQuery });
+
+  return (
+    <section
+      aria-labelledby="blog-title"
+      className="mx-auto max-w-6xl px-(--gutter) py-16 md:py-24"
+    >
+      <header className="mx-auto max-w-2xl text-center">
+        <h1 id="blog-title" className="text-4xl font-semibold lg:text-5xl">
+          {t("heading")}
+        </h1>
+        <p className="text-muted-foreground mt-4 text-balance">{t("subheading")}</p>
+      </header>
+
+      {posts.length === 0 ? (
+        <p className="text-muted-foreground mt-16 text-center">{t("noPosts")}</p>
+      ) : (
+        <ul className="mt-12 grid gap-8 md:mt-20 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <li key={post._id}>
+              <PostCard post={post} locale={locale} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 
 function PostCard({ post, locale }: { post: PostListItem; locale: Locale }) {
   const image = post.metadata?.image?.asset?.url;
   const category = post.categories?.[0]?.title;
-  const date = post.publishedAt ? formatDate(post.publishedAt, locale) : null;
+  const date = post.publishedAt
+    ? new Intl.DateTimeFormat(locale, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }).format(new Date(post.publishedAt))
+    : null;
   const slug = post.slug ?? "";
   const title = post.metadata?.title ?? post.title ?? "";
   const description = post.metadata?.description;
@@ -113,12 +137,4 @@ function PostCard({ post, locale }: { post: PostListItem; locale: Locale }) {
       </div>
     </article>
   );
-}
-
-function formatDate(iso: string, locale: Locale): string {
-  return new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(new Date(iso));
 }

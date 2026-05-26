@@ -207,7 +207,12 @@ export const analytics = {
 
 // 5. ─── navigation ───────────────────────────────────────────
 
-export const headerNav: readonly NavLink[] = [{ labelKey: "home", href: "/" }];
+export const headerNav: readonly NavLink[] = [
+  { labelKey: "home", href: "/" },
+  // /blog only shown when `features.blog` is on — kept in this list so
+  // the Header iterates one place. Header filters by visibility.
+  ...(features.blog ? [{ labelKey: "blog" as const, href: "/blog" as const }] : []),
+];
 export const footerNav: readonly NavGroup[] = [];
 
 // 6. ─── seoDefaults ──────────────────────────────────────────

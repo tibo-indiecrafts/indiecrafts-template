@@ -23,5 +23,6 @@ export const config = {
     "/llms-full.txt",
     "/llms/:path*",
     "/blog/rss.xml",
+    "/blog/:slug/md",
   ],
 };

@@ -112,7 +112,8 @@
       "publishedOn": "Published {date}",
       "by": "By {name}",
       "backToList": "← All posts",
-      "noPosts": "No posts yet. Check back soon."
+      "noPosts": "No posts yet. Check back soon.",
+      "onThisPage": "On this page"
     },
     "home": {
       "title": "Indiecrafts — fast, modular Next.js template",

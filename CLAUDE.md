@@ -126,20 +126,47 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 
 ## Sanity + blog (feature-flagged)
 
-The template ships a Sanity-backed blog ported from `GetNextjsTemplates/blog-forge`. Disabled by default; flip `features.blog` in `config/index.ts` to turn on `/blog` + `/blog/[slug]`.
+The template ships a Sanity-backed blog with a page-builder system **scoped to the blog only**. Disabled by default; flip `features.blog` in `config/index.ts` to turn on `/blog` + `/blog/[slug]` and add the blog link to the header.
 
-**Schemas** (in `src/sanity/schema/`): `post` (title, slug, excerpt, mainImage, author ref, categories refs, publishedAt, body), `author`, `category`, `blockContent` (rich text). They're registered via `src/sanity/schema/index.ts` and loaded by `sanity.config.ts`.
+**Schemas** (in `src/sanity/schema/`):
 
-**Studio at `/studio`** — embedded catch-all route at `src/app/studio/[[...tool]]/page.tsx`. Stays available even when `features.blog === false` so content authors can keep working while the public route is hidden. Excluded from the next-intl proxy matcher.
+| Surface      | Documents                                        | Objects                                     |
+| ------------ | ------------------------------------------------ | ------------------------------------------- |
+| Blog         | `blog` (singleton), `post`, `author`, `category` | `blockContent`, `metadata`                  |
+| Module refs  | `quote`, `person`, `logo`, `form`                | `link`, `cta`                               |
+| Page-builder | —                                                | 17 `module.*` types (see `schema/modules/`) |
 
-**Queries** (in `src/sanity/queries.ts`) use `defineQuery` so a future `sanity typegen` run can pick them up. Always fetch through `@/sanity/client` — never instantiate a new `createClient` per route.
+**Studio at `/studio`** — embedded catch-all at `src/app/studio/[[...tool]]/page.tsx`. The sidebar groups Blog (singleton + posts/authors/categories) and References (quotes/people/logos/forms). Studio stays available even when `features.blog === false` so editors can keep working while the public route is hidden.
 
-**Blog detail SEO**: per-post `<title>` / `<meta description>` / `og:image` come from the post itself; `generateMetadata` spreads `buildMetadata({ page: pages.blog, locale })` first then overrides. JSON-LD adds an `Article` via `buildArticleSchema(...)`.
+**The `blog` singleton owns the layout** of both `/blog` (`frontpageModules[]`) and `/blog/[slug]` (`postModules[]`). When either array is empty, the route falls back to a hard-coded default layout. Drop a `module.blog-post-content` into `postModules` to render the active post's body at that position.
+
+**Modules** (all 17 are `object` types, all gated by the blog feature):
+
+- **Content** — accordion-list, callout, card-list, hero-split, logo-list, person-list, prose, stat-list, step-list, quote-list
+- **Utility** — breadcrumbs, custom-html, form, search
+- **Blog** — blog-index (frontpage hero), blog-post-content (active-post slot), blog-post-list (filtered post grid)
+
+**Renderer**: `src/components/blog-components/modules/ModuleRenderer.tsx` switches on `_type` and hands off to one of 17 small components. Adding a module = new schema + new component + new case in the switch (TS exhaustiveness check enforces).
+
+**Queries** (`src/sanity/queries.ts`) use `defineQuery` (typegen-ready). `MODULES_FRAGMENT` expands every reference per module type. Always fetch through `sanityFetchLive` (draft-mode aware) or `@/sanity/client` — never instantiate a new `createClient`.
+
+**Live preview + draft mode**: `defineLive` in `src/sanity/live.ts`. `<SanityLive />` is mounted in the layout (only when feature flag is on). `/api/draft-mode/enable` + `/api/draft-mode/disable` toggle the perspective. Requires `SANITY_API_READ_TOKEN`.
+
+**Per-post extras**:
+
+- `metadata.{title,description,image,slug,noIndex}` overrides the page `<head>`.
+- `body` PortableText drives a Table of Contents (`<Toc>`) — h2/h3/h4 headings auto-fetched in GROQ via `pt::text()`.
+- `readTime` derived in GROQ (`length(string::split(...)) / 200`).
+- Article JSON-LD via `buildArticleSchema(...)`.
+- Markdown export at `/<locale>/blog/<slug>/md` — frontmatter + PortableText→Markdown serializer (`src/sanity/portable-to-markdown.ts`). Advertised via `<link rel="alternate" type="text/markdown">`.
+- RSS at `/<locale>/blog/rss.xml` (also advertised via alternate link).
 
 **Feature flag** (`features.blog`):
 
-- `pages.blog.enabled` mirrors the flag so sitemap + llms.txt drop the entry automatically.
-- Both `/blog` and `/blog/[slug]` call `notFound()` when the flag is off.
+- `pages.blog.enabled` mirrors the flag — sitemap + llms.txt drop the entry automatically.
+- `headerNav` adds the `/blog` link only when on.
+- `/blog` + `/blog/[slug]` + `/blog/[slug]/md` + `/blog/rss.xml` all call `notFound()` when off.
+- `<SanityLive />` only mounted when on.
 - `generateStaticParams` returns `[]` for `/blog/[slug]` when off — build stays fast.
 
 To wire Sanity to your project, set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (see `.env.example`). The CSP in `next.config.ts` already allows `https://*.sanity.io` + `wss://*.api.sanity.io`.

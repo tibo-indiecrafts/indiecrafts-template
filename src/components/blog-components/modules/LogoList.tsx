@@ -1,0 +1,48 @@
+import Image from "next/image";
+import type { LogoListModule } from "@/sanity/types";
+
+export function LogoList(props: LogoListModule) {
+  if (!props.logos?.length) return null;
+  return (
+    <section id={props.anchor} className="mx-auto max-w-6xl px-(--gutter) py-12 md:py-16">
+      {props.title ? (
+        <header className="mx-auto max-w-2xl text-center">
+          <h2 className="text-xl font-semibold md:text-2xl">{props.title}</h2>
+          {props.intro ? (
+            <p className="text-muted-foreground mt-2 text-sm">{props.intro}</p>
+          ) : null}
+        </header>
+      ) : null}
+      <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:mt-10">
+        {props.logos.map((logo) =>
+          logo.image?.asset?.url ? (
+            <li
+              key={logo._id}
+              className="opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
+            >
+              {logo.url ? (
+                <a href={logo.url} target="_blank" rel="noopener noreferrer">
+                  <Image
+                    src={logo.image.asset.url}
+                    alt={logo.name ?? ""}
+                    width={120}
+                    height={40}
+                    className="h-8 w-auto"
+                  />
+                </a>
+              ) : (
+                <Image
+                  src={logo.image.asset.url}
+                  alt={logo.name ?? ""}
+                  width={120}
+                  height={40}
+                  className="h-8 w-auto"
+                />
+              )}
+            </li>
+          ) : null,
+        )}
+      </ul>
+    </section>
+  );
+}
