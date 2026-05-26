@@ -18,6 +18,7 @@ import { CookieBanner } from "@/app/_chrome/CookieBanner";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/app/_chrome/ThemeProvider";
 import { buildSiteSchemas, JsonLdScript } from "@/lib/seo/jsonld";
+import { SanityLive } from "@/sanity/live";
 
 const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({
@@ -146,6 +147,7 @@ gtag('config', '${analytics.googleAnalyticsId}');`}
         </ThemeProvider>
         <JsonLdScript data={buildSiteSchemas({ description: siteDescription })} />
         {features.cookieBanner ? <CookieBanner /> : null}
+        {features.blog ? <SanityLive /> : null}
         <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>
       </body>
     </html>

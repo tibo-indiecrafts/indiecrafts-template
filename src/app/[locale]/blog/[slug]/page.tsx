@@ -8,7 +8,7 @@ import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/app/_chrome/DefaultLayout";
-import { client } from "@/sanity/client";
+import { sanityFetchLive } from "@/sanity/live";
 import { allPostSlugsQuery, postBySlugQuery } from "@/sanity/queries";
 import type { Post, PostSlug } from "@/sanity/types";
 
@@ -16,7 +16,7 @@ type Props = { params: Promise<{ locale: Locale; slug: string }> };
 
 export async function generateStaticParams() {
   if (!features.blog) return [];
-  const slugs = await client.fetch<PostSlug[]>(allPostSlugsQuery);
+  const slugs = await sanityFetchLive<PostSlug[]>({ query: allPostSlugsQuery });
   return slugs.flatMap((row) =>
     row.slug
       ? [
@@ -29,23 +29,29 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { locale, slug } = await params;
-  const post = await client.fetch<Post | null>(postBySlugQuery, { slug });
+  const post = await sanityFetchLive<Post | null>({
+    query: postBySlugQuery,
+    params: { slug },
+  });
   const base = await buildMetadata({ page: pages.blog, locale });
   if (!post) return base;
 
-  // Override the inherited blog metadata with the post's own title /
-  // excerpt / image so each detail page has a unique <head>.
+  // Per-post SEO overrides come from the `metadata` object — falls back
+  // to the post's title when the metadata title is blank.
+  const title = post.metadata?.title ?? post.title;
+  const description = post.metadata?.description;
+  const ogImage = post.metadata?.image?.asset?.url;
+
   return {
     ...base,
-    title: post.title,
-    description: post.excerpt,
+    title,
+    description,
+    robots: post.metadata?.noIndex ? { index: false, follow: false } : base.robots,
     openGraph: {
       ...base.openGraph,
-      title: post.title,
-      description: post.excerpt,
-      images: post.mainImage?.asset?.url
-        ? [{ url: post.mainImage.asset.url }]
-        : base.openGraph?.images,
+      title,
+      description,
+      images: ogImage ? [{ url: ogImage }] : base.openGraph?.images,
     },
   };
 }
@@ -55,7 +61,10 @@ export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const post = await client.fetch<Post | null>(postBySlugQuery, { slug });
+  const post = await sanityFetchLive<Post | null>({
+    query: postBySlugQuery,
+    params: { slug },
+  });
   if (!post) notFound();
 
   const t = await getTranslations("pages.blog");
@@ -67,6 +76,10 @@ export default async function BlogPostPage({ params }: Props) {
       }).format(new Date(post.publishedAt))
     : null;
 
+  const title = post.metadata?.title ?? post.title ?? "";
+  const description = post.metadata?.description;
+  const image = post.metadata?.image?.asset?.url;
+
   return (
     <DefaultLayout>
       <PageSchemas
@@ -76,11 +89,11 @@ export default async function BlogPostPage({ params }: Props) {
             ...pages.blog.seo,
             structuredData: [
               buildArticleSchema({
-                headline: post.title ?? "",
-                description: post.excerpt,
+                headline: title,
+                description,
                 datePublished: post.publishedAt ?? new Date().toISOString(),
                 authorName: post.author?.name,
-                image: post.mainImage?.asset?.url,
+                image,
                 url: `${site.url}/${locale}/blog/${slug}`,
               }),
             ],
@@ -103,11 +116,9 @@ export default async function BlogPostPage({ params }: Props) {
               {post.categories[0].title}
             </span>
           ) : null}
-          <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
-            {post.title}
-          </h1>
-          {post.excerpt ? (
-            <p className="text-muted-foreground text-balance">{post.excerpt}</p>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">{title}</h1>
+          {description ? (
+            <p className="text-muted-foreground text-balance">{description}</p>
           ) : null}
           <div className="text-muted-foreground flex items-center gap-3 text-sm">
             {post.author?.name ? (
@@ -118,11 +129,11 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </header>
 
-        {post.mainImage?.asset?.url ? (
+        {image ? (
           <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-xl">
             <Image
-              src={post.mainImage.asset.url}
-              alt={post.mainImage.alt ?? post.title ?? ""}
+              src={image}
+              alt={post.metadata?.image?.alt ?? title}
               fill
               sizes="(min-width: 768px) 768px, 100vw"
               priority

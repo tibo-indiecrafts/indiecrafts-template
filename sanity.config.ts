@@ -1,9 +1,11 @@
 /**
- * Sanity Studio configuration — used by the embedded Studio at /studio.
+ * Sanity Studio configuration — embedded Studio at /studio.
  *
- * Schema types live in `src/sanity/schema/`. The list ships with `post`,
- * `author`, `category`, `blockContent` (rich text) — ported from
- * GetNextjsTemplates/blog-forge.
+ * Schemas live under `src/sanity/schema/`; the Studio sidebar layout
+ * lives in `src/sanity/structure.ts`. Ported from
+ * GetNextjsTemplates/blog-forge then enhanced with patterns from
+ * nuotsu/sanitypress-with-typegen (metadata object, groups, orderings,
+ * sidebar structure).
  */
 
 import { visionTool } from "@sanity/vision";
@@ -11,11 +13,12 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { apiVersion, dataset, projectId, studioBasePath } from "./src/sanity/env";
 import { schemaTypes } from "./src/sanity/schema";
+import { structure } from "./src/sanity/structure";
 
 export default defineConfig({
   basePath: studioBasePath,
   projectId,
   dataset,
   schema: { types: schemaTypes },
-  plugins: [structureTool(), visionTool({ defaultApiVersion: apiVersion })],
+  plugins: [structureTool({ structure }), visionTool({ defaultApiVersion: apiVersion })],
 });

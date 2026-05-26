@@ -22,5 +22,6 @@ export const config = {
     "/llms.txt",
     "/llms-full.txt",
     "/llms/:path*",
+    "/blog/rss.xml",
   ],
 };

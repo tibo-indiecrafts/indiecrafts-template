@@ -6,7 +6,7 @@ import { Link } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/_chrome/DefaultLayout";
-import { client } from "@/sanity/client";
+import { sanityFetchLive } from "@/sanity/live";
 import { allPostsQuery } from "@/sanity/queries";
 import type { PostListItem } from "@/sanity/types";
 
@@ -28,7 +28,7 @@ export default async function BlogPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations("pages.blog");
 
-  const posts = await client.fetch<PostListItem[]>(allPostsQuery);
+  const posts = await sanityFetchLive<PostListItem[]>({ query: allPostsQuery });
 
   return (
     <DefaultLayout>
@@ -61,10 +61,12 @@ export default async function BlogPage({ params }: Props) {
 }
 
 function PostCard({ post, locale }: { post: PostListItem; locale: Locale }) {
-  const image = post.mainImage?.asset?.url;
+  const image = post.metadata?.image?.asset?.url;
   const category = post.categories?.[0]?.title;
   const date = post.publishedAt ? formatDate(post.publishedAt, locale) : null;
   const slug = post.slug ?? "";
+  const title = post.metadata?.title ?? post.title ?? "";
+  const description = post.metadata?.description;
 
   return (
     <article className="bg-card ring-border/60 group flex h-full flex-col overflow-hidden rounded-xl shadow-sm ring-1 transition hover:shadow-md">
@@ -75,7 +77,7 @@ function PostCard({ post, locale }: { post: PostListItem; locale: Locale }) {
         {image ? (
           <Image
             src={image}
-            alt={post.mainImage?.alt ?? post.title ?? ""}
+            alt={post.metadata?.image?.alt ?? title}
             fill
             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             className="object-cover transition group-hover:scale-[1.02]"
@@ -88,16 +90,21 @@ function PostCard({ post, locale }: { post: PostListItem; locale: Locale }) {
             {category}
           </span>
         ) : null}
+        {post.featured ? (
+          <span className="bg-brand text-brand-foreground absolute top-3 right-3 rounded-md px-2 py-1 text-xs font-medium">
+            ★
+          </span>
+        ) : null}
       </Link>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <Link
           href={`/blog/${slug}`}
           className="focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
         >
-          <h2 className="line-clamp-2 text-lg font-semibold">{post.title}</h2>
+          <h2 className="line-clamp-2 text-lg font-semibold">{title}</h2>
         </Link>
-        {post.excerpt ? (
-          <p className="text-muted-foreground line-clamp-2 text-sm">{post.excerpt}</p>
+        {description ? (
+          <p className="text-muted-foreground line-clamp-2 text-sm">{description}</p>
         ) : null}
         <div className="text-muted-foreground mt-auto flex items-center justify-between pt-3 text-xs">
           {post.author?.name ? <span>{post.author.name}</span> : <span />}

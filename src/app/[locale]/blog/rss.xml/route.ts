@@ -1,0 +1,75 @@
+import { features, isPageVisible, pages, site } from "@/config";
+import { client } from "@/sanity/client";
+import { rssPostsQuery } from "@/sanity/queries";
+import type { RssPost } from "@/sanity/types";
+
+type Props = { params: Promise<{ locale: string }> };
+
+/**
+ * RSS 2.0 feed for the blog. One per locale; matches the sitemap/llms.txt
+ * locale pattern. Honors `metadata.noIndex` (hidden posts are filtered
+ * out by the query). Returns 404 when `features.blog` is off.
+ *
+ * Pattern adapted from sanitypress-with-typegen — kept stripped of the
+ * <content:encoded> body export to avoid the additional `@portabletext/to-html`
+ * dependency. Add it back if you want full-text in feed readers.
+ */
+export async function GET(_req: Request, { params }: Props) {
+  if (!features.blog || !isPageVisible(pages.blog)) {
+    return new Response("Not found", { status: 404 });
+  }
+  const { locale } = await params;
+  const posts = await client.fetch<RssPost[]>(rssPostsQuery);
+  const baseUrl = `${site.url}/${locale}`;
+  const feedUrl = `${baseUrl}/blog/rss.xml`;
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  <title>${escapeXml(site.name)} — ${escapeXml(pages.blog.id)}</title>
+  <link>${baseUrl}/blog</link>
+  <atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />
+  <description>${escapeXml(site.description)}</description>
+  <language>${locale}</language>
+  <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+${posts.map((p) => renderItem(p, baseUrl)).join("\n")}
+</channel>
+</rss>`;
+
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/rss+xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600",
+    },
+  });
+}
+
+function renderItem(post: RssPost, baseUrl: string): string {
+  const url = `${baseUrl}/blog/${post.slug ?? ""}`;
+  const title = post.metadata?.title ?? post.title ?? "";
+  const description = post.metadata?.description ?? "";
+  const pubDate = post.publishedAt ? new Date(post.publishedAt).toUTCString() : null;
+  const author = post.author?.name;
+  const cats = post.categories?.map((c) => c.title).filter(Boolean) ?? [];
+  const image = post.metadata?.image?.asset?.url;
+
+  return `  <item>
+    <title><![CDATA[${title}]]></title>
+    <link>${url}</link>
+    <guid isPermaLink="true">${url}</guid>
+    ${description ? `<description><![CDATA[${description}]]></description>` : ""}
+    ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ""}
+    ${author ? `<dc:creator>${escapeXml(author)}</dc:creator>` : ""}
+    ${cats.map((c) => `<category>${escapeXml(c!)}</category>`).join("\n    ")}
+    ${image ? `<enclosure url="${image}" length="0" type="image/jpeg" />` : ""}
+  </item>`;
+}
+
+function escapeXml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
