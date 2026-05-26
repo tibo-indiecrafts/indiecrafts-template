@@ -11,7 +11,7 @@ import {
 import { Hulu } from "@/components/ui-primitives/svgs/grid-2-landing-hulu";
 import { PrimeVideo } from "@/components/ui-primitives/svgs/grid-2-landing-prime-video";
 import { Vercel } from "@/components/ui-primitives/svgs/grid-2-landing-vercel";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { testimonials04Namespace } from "./config";
 import type { Testimonials04Block } from "./schema";
 

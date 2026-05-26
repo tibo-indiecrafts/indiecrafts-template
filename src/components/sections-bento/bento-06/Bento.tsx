@@ -3,7 +3,7 @@ import { Card } from "@/components/ui-primitives/card";
 import { ChartCompactIllustration } from "@/components/ui-illustrations/chart-compact-illustration";
 import { KitIllustration } from "@/components/ui-illustrations/kit-illustration";
 import { MessageChatIllustration } from "@/components/ui-illustrations/message-chat-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { bento06Namespace } from "./config";
 import type { BentoBlock } from "./schema";
 

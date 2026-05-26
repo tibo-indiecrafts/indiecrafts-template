@@ -6,7 +6,7 @@ import { ChartMediumIllustration } from "@/components/ui-illustrations/chart-med
 import { FingerprintCardIllustration } from "@/components/ui-illustrations/fingerprint-card-illustration";
 import { MessageChatIllustration } from "@/components/ui-illustrations/message-chat-illustration";
 import { ModelsRowIllustration } from "@/components/ui-illustrations/models-row-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { bento08Namespace } from "./config";
 import type { BentoBlock } from "./schema";
 

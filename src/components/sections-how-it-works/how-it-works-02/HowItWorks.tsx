@@ -3,7 +3,7 @@ import type { ComponentType, ReactNode } from "react";
 import { ChartIllustration } from "@/components/ui-illustrations/chart-illustration";
 import { GanttChartIllustration } from "@/components/ui-illustrations/gantt-chart-illustration";
 import { LayoutIllustration } from "@/components/ui-illustrations/layout-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import type { MessageKey } from "@/types/messages";
 import { cn } from "@/lib/utils";
 import { howItWorks02Namespace } from "./config";

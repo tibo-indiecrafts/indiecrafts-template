@@ -3,7 +3,7 @@ import { AddCommentIllustration } from "@/components/ui-illustrations/add-commen
 import { CurrencyIllustration } from "@/components/ui-illustrations/currency-illustration";
 import { DocumentIllustration } from "@/components/ui-illustrations/document-illustration";
 import { ScheduleIllustration } from "@/components/ui-illustrations/schedule-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { bento11Namespace } from "./config";
 import type { BentoBlock } from "./schema";
 

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui-primitives/select";
 import { Textarea } from "@/components/ui-primitives/textarea";
 import { Link } from "@/i18n/routing";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { enterpriseFormNamespace, enterpriseFormPrivacyHref } from "./config";
 
 export const Enterprise = () => {

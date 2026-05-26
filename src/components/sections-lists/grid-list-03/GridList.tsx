@@ -9,7 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { ActionCard } from "@/components/ui-molecules/widget/action-card";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { gridList03Items, gridList03Namespace } from "./config";
 import type { GridListBlock, GridListIconName } from "./schema";
 

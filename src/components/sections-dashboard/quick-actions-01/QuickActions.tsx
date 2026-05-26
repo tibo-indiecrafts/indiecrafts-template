@@ -10,7 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { ActionCard } from "@/components/ui-molecules/widget/action-card";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { quickActions01Items, quickActions01Namespace } from "./config";
 import type { QuickActionIcon, QuickActionsBlock } from "./schema";
 

@@ -7,7 +7,7 @@ import {
   FeatureCardContent,
 } from "@/components/ui-effects/grid-2-landing-feature-card";
 import { EnterpriseMessageIllustration } from "@/components/ui-illustrations/enterprise-message-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features33Namespace } from "./config";
 import type { Features33Block } from "./schema";
 

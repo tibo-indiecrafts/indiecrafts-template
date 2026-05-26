@@ -3,7 +3,7 @@ import { KitIllustration } from "@/components/ui-illustrations/kit-illustration-
 import { ReplyIllustration } from "@/components/ui-illustrations/reply-illustration-02";
 import { ScheduleIllustation } from "@/components/ui-illustrations/schedule-illustration-02";
 import { VisualizationIllustration } from "@/components/ui-illustrations/visualization-illustration-02";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features27Namespace } from "./config";
 import type { FeaturesBlock } from "./schema";
 

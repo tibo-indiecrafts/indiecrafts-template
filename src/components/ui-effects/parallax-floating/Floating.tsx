@@ -3,7 +3,7 @@
 import { useAnimationFrame } from "motion/react";
 import * as React from "react";
 
-import { useMousePositionRef } from "@/hooks/use-mouse-position-ref";
+import { useMousePositionRef } from "@/components/_hooks/use-mouse-position-ref";
 import { cn } from "@/lib/utils";
 
 interface FloatingContextValue {

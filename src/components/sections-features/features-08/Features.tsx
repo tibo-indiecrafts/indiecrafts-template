@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui-primitives/card";
 import { Shield, Users } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features08Namespace } from "./config";
 import type { FeaturesBlock } from "./schema";
 

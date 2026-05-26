@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui-primitives/badge";
 import { Card, CardContent } from "@/components/ui-primitives/card";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { stats14Items, stats14Namespace, stats14Sample } from "./config";
 import type { StatsBlock } from "./schema";
 

@@ -5,7 +5,7 @@ import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui-primitives/button";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { siteFooter12Namespace } from "./config";
 
 type ThemeOption = "system" | "light" | "dark";

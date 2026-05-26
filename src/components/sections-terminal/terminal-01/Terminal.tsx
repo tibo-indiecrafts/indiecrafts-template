@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { TypingAnimation } from "@/components/ui-effects/typing-animation";
 import { ShimmerLoader } from "@/components/ui-molecules/widget/shimmer-loader";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 
 import { terminal01Namespace } from "./config";
 import type { TerminalBlock, TerminalPhase } from "./schema";

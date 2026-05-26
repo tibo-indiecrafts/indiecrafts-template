@@ -6,7 +6,7 @@ import { Stripe } from "@/components/ui-primitives/svgs/libre-landing-stripe";
 import { SupabaseDark as Supabase } from "@/components/ui-primitives/svgs/libre-landing-supabase";
 import { Tailwindcss as TailwindCSS } from "@/components/ui-primitives/svgs/libre-landing-tailwindcss";
 import { VercelWordmark as VercelFull } from "@/components/ui-primitives/svgs/libre-landing-vercel";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { logoCloud14Namespace } from "./config";
 import type { LogoCloudBlock } from "./schema";

@@ -1,5 +1,5 @@
 import { ScrollRevealImage } from "@/components/ui-effects/scroll-reveal-image";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { secondaryHero11BackgroundImage, secondaryHero11Namespace } from "./config";
 
 export function Hero() {

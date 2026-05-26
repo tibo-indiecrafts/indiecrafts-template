@@ -6,7 +6,7 @@ import TailwindCSS from "@/components/ui-primitives/svgs/tailwindcss";
 import { VercelFull } from "@/components/ui-primitives/svgs/vercel";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   secondaryHero17AvatarUrl,
   secondaryHero17DemoHref,

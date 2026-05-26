@@ -4,7 +4,7 @@ import { CodeReviewIllustration } from "@/components/ui-illustrations/code-revie
 import { MapIllustration } from "@/components/ui-illustrations/map-illustration-06";
 import { MeetingIllustration } from "@/components/ui-illustrations/meeting-illustration";
 import { MessageIllustration } from "@/components/ui-illustrations/message-illustration-03";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features39Namespace } from "./config";
 import type { Features39Block } from "./schema";
 

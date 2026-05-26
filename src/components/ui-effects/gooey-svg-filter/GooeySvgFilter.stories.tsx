@@ -3,8 +3,8 @@ import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui-primitives/button";
-import { useDetectBrowser } from "@/hooks/use-detect-browser";
-import { useMedia } from "@/hooks/use-media";
+import { useDetectBrowser } from "@/components/_hooks/use-detect-browser";
+import { useMedia } from "@/components/_hooks/use-media";
 
 import { GooeySvgFilter } from "./index";
 

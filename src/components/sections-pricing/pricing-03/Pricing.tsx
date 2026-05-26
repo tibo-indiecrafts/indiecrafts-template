@@ -6,7 +6,7 @@ import { Spotify } from "@/components/ui-primitives/svgs/spotify";
 import { Supabase } from "@/components/ui-primitives/svgs/supabase";
 import { VercelFull } from "@/components/ui-primitives/svgs/vercel";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { pricing03Namespace } from "./config";
 import type { PricingBlock } from "./schema";
 

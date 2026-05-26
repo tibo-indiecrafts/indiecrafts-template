@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Bug, BugOff } from "lucide-react";
 import { useRef, useState } from "react";
 
-import { useMedia } from "@/hooks/use-media";
+import { useMedia } from "@/components/_hooks/use-media";
 
 import { BoxCarousel, type BoxCarouselRef, type CarouselItem } from "./index";
 

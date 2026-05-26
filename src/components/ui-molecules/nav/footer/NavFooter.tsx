@@ -30,7 +30,7 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { navFooterNamespace } from "./config";
 
 export function NavFooter({

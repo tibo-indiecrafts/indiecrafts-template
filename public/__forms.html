@@ -1,0 +1,37 @@
+<!--
+  Netlify Forms registry.
+
+  Netlify's build pipeline scans STATIC HTML for forms tagged with
+  `data-netlify="true"`. Next.js pages are server-rendered, so their forms
+  don't appear in any static file — this file declares them instead.
+
+  Each <form> below MUST mirror the React form's `name` + field names. The
+  honeypot `bot-field` is recommended (Netlify silently drops submissions
+  that fill it in — bots usually do).
+
+  View submissions: Netlify dashboard → your site → Forms.
+  Submission webhook / email: configure in Netlify dashboard → Forms → Settings.
+
+  Add a new form: copy a block, change `name` + the input names, render a
+  matching React form somewhere in your /app code.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Netlify Forms registry</title>
+  </head>
+  <body>
+    <form name="newsletter" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="email" name="email" />
+      <input type="text" name="bot-field" />
+    </form>
+
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+      <input type="text" name="bot-field" />
+    </form>
+  </body>
+</html>

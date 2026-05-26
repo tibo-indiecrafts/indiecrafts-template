@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui-primitives/sidebar";
 import { ChevronDown } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { sidebar01Namespace } from "@/components/layouts/dashboard-layout/sidebars/sidebar-01/config";
 import { navCollapseNamespace } from "./config";
 import type {

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui-primitives/select";
 import { Separator } from "@/components/ui-primitives/separator";
 import { Textarea } from "@/components/ui-primitives/textarea";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { formLayout03Namespace } from "./config";
 import type { FormLayoutBlock } from "./schema";
 

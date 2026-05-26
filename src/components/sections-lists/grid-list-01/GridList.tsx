@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui-primitives/dropdown-menu";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { gridList01Items, gridList01Namespace } from "./config";
 import type { GridListBlock } from "./schema";
 

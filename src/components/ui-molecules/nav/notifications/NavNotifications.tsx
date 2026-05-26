@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui-primitives/dropdown-menu";
 import { BellIcon } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { navNotificationsNamespace } from "./config";
 
 type SidebarMoleculeNamespace = Parameters<typeof useScopedT>[0];

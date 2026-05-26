@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui-effects/libre-landing-button";
 import { HeroIllustration } from "@/components/ui-illustrations/hero-illustration-02";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero20Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 

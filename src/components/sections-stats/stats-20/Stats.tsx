@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { stats20Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 

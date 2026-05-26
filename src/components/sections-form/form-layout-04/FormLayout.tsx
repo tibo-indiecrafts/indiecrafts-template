@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui-primitives/select";
 import { Separator } from "@/components/ui-primitives/separator";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { formLayout04Plans, formLayout04Namespace } from "./config";
 import type { FormLayoutBlock } from "./schema";
 

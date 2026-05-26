@@ -6,7 +6,7 @@ import { KitStackIllustration } from "@/components/ui-illustrations/kit-stack-il
 import { MemoryUsageIllustration } from "@/components/ui-illustrations/memory-usage-illustration";
 import { MessageChatIllustration } from "@/components/ui-illustrations/message-chat-illustration";
 import { UptimeIllustration } from "@/components/ui-illustrations/uptime-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { bento10Namespace } from "./config";
 import type { BentoBlock } from "./schema";

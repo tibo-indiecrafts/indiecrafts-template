@@ -7,7 +7,7 @@ import { IntelliJIDEA } from "@/components/ui-primitives/svgs/intellij";
 import { OpenAI } from "@/components/ui-primitives/svgs/open-ai";
 import { Vercel } from "@/components/ui-primitives/svgs/vercel";
 import { VisualStudioCode as VSCode } from "@/components/ui-primitives/svgs/vs-code";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { integrations09Namespace } from "./config";
 import type {

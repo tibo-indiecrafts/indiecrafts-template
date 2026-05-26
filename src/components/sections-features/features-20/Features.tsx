@@ -6,7 +6,7 @@ import { IntelliJIDEA } from "@/components/ui-primitives/svgs/intellij";
 import { OpenAI } from "@/components/ui-primitives/svgs/open-ai";
 import { VisualStudioCode } from "@/components/ui-primitives/svgs/vs-code";
 import { Windsurf } from "@/components/ui-primitives/svgs/windsurf";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features20Namespace } from "./config";
 import type { FeaturesBlock, IconsWidget, Widget, WidgetIcon } from "./schema";
 

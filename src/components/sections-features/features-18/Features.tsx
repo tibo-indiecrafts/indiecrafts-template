@@ -3,7 +3,7 @@ import CodeBlockIllustration from "@/components/ui-illustrations/code-block-illu
 import { IntelliJIDEA } from "@/components/ui-primitives/svgs/intellij";
 import { VisualStudioCode } from "@/components/ui-primitives/svgs/vs-code";
 import { Windsurf } from "@/components/ui-primitives/svgs/windsurf";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features18Namespace } from "./config";
 import type { FeaturesBlock, IdeIcon } from "./schema";
 

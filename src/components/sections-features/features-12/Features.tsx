@@ -19,7 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui-primitives/accordion";
 import { BorderBeam } from "@/components/ui-effects/border-beam";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features12Namespace } from "./config";
 import type { FeaturesBlock, FeaturesIcon } from "./schema";
 

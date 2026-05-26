@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- external GitHub avatar URLs intentionally use <img> */
 
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { team02Namespace } from "./config";
 import type { TeamBlock } from "./schema";
 

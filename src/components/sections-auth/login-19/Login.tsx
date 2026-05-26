@@ -6,7 +6,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Input } from "@/components/ui-primitives/input";
 import { Label } from "@/components/ui-primitives/label";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { login19Namespace } from "./config";
 import type { LoginBlock } from "./schema";
 

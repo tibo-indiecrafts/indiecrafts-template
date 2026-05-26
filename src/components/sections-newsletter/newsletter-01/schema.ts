@@ -9,4 +9,5 @@ export type NewsletterBlock = {
   emailPlaceholderKey?: MessageKey;
   submitLabelKey?: MessageKey;
   privacyNoteKey?: MessageKey;
+  errorKey?: MessageKey;
 };

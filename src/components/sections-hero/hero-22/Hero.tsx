@@ -13,7 +13,7 @@ import { Beacon } from "@/components/ui-primitives/svgs/beacon";
 import { Claude } from "@/components/ui-primitives/svgs/claude";
 import { Figma } from "@/components/ui-primitives/svgs/figma";
 import { Cisco } from "@/components/ui-primitives/svgs/cisco";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero22Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 

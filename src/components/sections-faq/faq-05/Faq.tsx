@@ -1,7 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { faq05Namespace } from "./config";
 import type { FaqBlock } from "./schema";
 

@@ -2,13 +2,7 @@
 
 import * as React from "react";
 
-export type BrowserName =
-  | "Chrome"
-  | "Safari"
-  | "Firefox"
-  | "Edge"
-  | "Opera"
-  | "Unknown";
+export type BrowserName = "Chrome" | "Safari" | "Firefox" | "Edge" | "Opera" | "Unknown";
 
 function detect(): BrowserName {
   if (typeof navigator === "undefined") return "Unknown";

@@ -1,7 +1,7 @@
 import { Mail, MessageCircleQuestion } from "lucide-react";
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   secondaryHero12Namespace,
   secondaryHero12SalesHref,

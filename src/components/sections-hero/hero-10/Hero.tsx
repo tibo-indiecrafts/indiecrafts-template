@@ -1,5 +1,5 @@
 import { ProductPrompt } from "@/components/ui-illustrations/product-prompt";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero10Namespace } from "./config";
 
 export function Hero() {

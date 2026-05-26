@@ -3,7 +3,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Apple } from "@/components/ui-primitives/svgs/apple";
 import { PhoneScreenshot } from "@/components/ui-illustrations/phone-screenshot";
 import { CheckCircle2 } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   secondaryHero13DownloadHref,
   secondaryHero13Namespace,

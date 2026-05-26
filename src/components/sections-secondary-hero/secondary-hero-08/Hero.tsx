@@ -2,7 +2,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { Shield, Sparkles, SquareActivity } from "lucide-react";
 import type { ReactNode } from "react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   secondaryHero08Namespace,
   secondaryHero08PrimaryCtaHref,

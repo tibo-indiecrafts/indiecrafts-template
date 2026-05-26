@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { CampaignCardIllustration } from "@/components/ui-illustrations/campaign-card-illustration";
 import { MemoryUsageIllustration } from "@/components/ui-illustrations/memory-usage-illustration";
 import { PollIllustration } from "@/components/ui-illustrations/poll-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { howItWorks07Namespace } from "./config";
 import type { HowItWorksBlock, HowItWorksIllustration } from "./schema";

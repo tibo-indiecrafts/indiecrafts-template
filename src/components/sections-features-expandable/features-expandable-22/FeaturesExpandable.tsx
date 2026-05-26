@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui-primitives/button";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { featuresExpandable22Namespace } from "./config";
 import type { FeaturesExpandableBlock } from "./schema";

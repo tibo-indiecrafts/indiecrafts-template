@@ -4,7 +4,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { CurrencyIllustration } from "@/components/ui-illustrations/currency-illustration";
 import { DocumentCsvIllustration } from "@/components/ui-illustrations/document-csv-illustration";
 import { DocumentIllustration } from "@/components/ui-illustrations/document-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { howItWorks04Namespace } from "./config";
 import type { HowItWorksBlock, HowItWorksIllustration } from "./schema";
 

@@ -8,7 +8,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { recentActivity01Items, recentActivity01Namespace } from "./config";
 import type { RecentActivityBlock, RecentActivityIcon } from "./schema";

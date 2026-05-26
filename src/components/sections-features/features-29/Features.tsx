@@ -7,7 +7,7 @@ import { ChatIllustration } from "@/components/ui-illustrations/chat-illustratio
 import { IntegrationsIllustration } from "@/components/ui-illustrations/integrations-illustration-02";
 import { InvoiceIllustration } from "@/components/ui-illustrations/invoice-illustration-03";
 import { Stripe } from "@/components/ui-primitives/svgs/grid-1-landing-stripe";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features29Namespace } from "./config";
 import type { Features29Block } from "./schema";
 

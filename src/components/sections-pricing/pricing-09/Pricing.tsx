@@ -4,7 +4,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Spotify } from "@/components/ui-primitives/svgs/spotify";
 import { Hulu } from "@/components/ui-primitives/svgs/hulu";
 import { Firebase } from "@/components/ui-primitives/svgs/firebase";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { pricing09Namespace } from "./config";
 import type { PricingBlock } from "./schema";
 

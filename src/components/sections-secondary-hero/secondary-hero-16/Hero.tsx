@@ -7,7 +7,7 @@ import TailwindCSS from "@/components/ui-primitives/svgs/tailwindcss";
 import { Beacon } from "@/components/ui-primitives/svgs/beacon";
 import { VercelFull } from "@/components/ui-primitives/svgs/vercel";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { secondaryHero16DemoHref, secondaryHero16Namespace } from "./config";
 
 const FEATURE_KEYS = ["createInvoices", "trackPayments", "manageFinances"] as const;

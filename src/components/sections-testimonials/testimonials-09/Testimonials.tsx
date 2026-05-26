@@ -1,5 +1,5 @@
 import { Spotify } from "@/components/ui-primitives/svgs/spotify";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { testimonials09Namespace } from "./config";
 import type { TestimonialsBlock } from "./schema";
 

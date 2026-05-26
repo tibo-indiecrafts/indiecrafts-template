@@ -5,7 +5,7 @@ import { Spotify } from "@/components/ui-primitives/svgs/spotify";
 import { Supabase } from "@/components/ui-primitives/svgs/supabase";
 import { Beacon } from "@/components/ui-primitives/svgs/beacon";
 import { ProductIllustration } from "@/components/ui-illustrations/product-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero05Namespace, hero05PrimaryCtaHref, hero05SecondaryCtaHref } from "./config";
 
 export function Hero() {

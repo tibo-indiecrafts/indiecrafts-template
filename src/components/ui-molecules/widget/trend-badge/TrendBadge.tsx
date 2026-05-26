@@ -1,7 +1,7 @@
 import { TrendingDown, TrendingUp } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui-primitives/badge";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import type { MessageKey } from "@/types/messages";
 import { trendBadgeNamespace } from "./config";

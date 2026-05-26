@@ -5,7 +5,7 @@ import { Hulu } from "@/components/ui-primitives/svgs/libre-landing-two-hulu";
 import { PrimeVideo } from "@/components/ui-primitives/svgs/libre-landing-two-prime-video";
 import { Stripe } from "@/components/ui-primitives/svgs/libre-landing-two-stripe";
 import { Tailwindcss as TailwindcssWordmark } from "@/components/ui-primitives/svgs/libre-landing-two-tailwindcss";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { testimonials07Namespace } from "./config";
 import type { Testimonials07Block } from "./schema";
 

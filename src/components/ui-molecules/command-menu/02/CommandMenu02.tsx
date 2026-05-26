@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui-primitives/dialog";
 import { Kbd, KbdGroup } from "@/components/ui-primitives/kbd";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { commandMenu02Groups, commandMenu02Namespace } from "./config";
 import type { CommandMenuBlock, CommandMenuItem } from "./schema";
 

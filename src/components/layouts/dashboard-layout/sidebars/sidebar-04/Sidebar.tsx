@@ -17,7 +17,7 @@ import {
   useSidebar,
 } from "@/components/ui-primitives/sidebar";
 import { IconBrandAmongUs } from "@tabler/icons-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { sidebar04Data, sidebar04Namespace } from "./config";
 import { useMail } from "@/components/layouts/dashboard-layout/sidebars/sidebar-04/mail-context";
 import { NavUserChevron } from "@/components/ui-molecules/nav/user/chevron";

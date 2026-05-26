@@ -8,7 +8,7 @@ import { Hulu } from "@/components/ui-primitives/svgs/hulu";
 import { Bolt } from "@/components/ui-primitives/svgs/bolt";
 import { ProductSidePreview } from "@/components/ui-illustrations/product-side-preview";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   secondaryHero19Namespace,
   secondaryHero19PrimaryCtaHref,

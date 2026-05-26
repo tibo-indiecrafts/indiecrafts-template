@@ -7,7 +7,7 @@ import { Card } from "@/components/ui-primitives/card";
 import { Progress } from "@/components/ui-primitives/progress";
 import { Separator } from "@/components/ui-primitives/separator";
 import { logger } from "@/lib/logger";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { fileUpload06Namespace, fileUpload06Uploads } from "./config";
 import type { FileUploadBlock, FileUploadUpload } from "./schema";
 

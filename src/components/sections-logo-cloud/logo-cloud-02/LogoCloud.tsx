@@ -6,7 +6,7 @@ import { VercelFull } from "@/components/ui-primitives/svgs/vercel";
 import { Spotify } from "@/components/ui-primitives/svgs/spotify";
 import TailwindCSS from "@/components/ui-primitives/svgs/tailwindcss";
 import { Link } from "@/i18n/routing";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { logoCloud02CaseStudiesHref, logoCloud02Namespace } from "./config";
 
 export function LogoCloud() {

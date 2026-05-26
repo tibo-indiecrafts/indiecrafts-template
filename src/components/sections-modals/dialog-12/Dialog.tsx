@@ -13,7 +13,7 @@ import {
 } from "@/components/ui-primitives/dialog";
 import { Input } from "@/components/ui-primitives/input";
 import { Label } from "@/components/ui-primitives/label";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { dialog12Namespace } from "./config";
 import type { DialogBlock } from "./schema";
 

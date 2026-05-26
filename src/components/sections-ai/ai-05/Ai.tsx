@@ -28,7 +28,7 @@ import {
   PromptInputTools,
 } from "@/components/ui-molecules/chat/prompt-input";
 import { Button } from "@/components/ui-primitives/button";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { ai05InitialMessages, ai05Namespace, ai05Tools } from "./config";
 import type { AiBlock, AiMessage } from "./schema";

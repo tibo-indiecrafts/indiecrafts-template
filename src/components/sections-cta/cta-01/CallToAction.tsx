@@ -1,6 +1,6 @@
 import { Mail, SendHorizonal } from "lucide-react";
 import { Button } from "@/components/ui-primitives/button";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cta01Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 

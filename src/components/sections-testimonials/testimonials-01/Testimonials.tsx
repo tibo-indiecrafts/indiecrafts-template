@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui-primitives/avatar";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { testimonials01Namespace } from "./config";
 import type { TestimonialsBlock, TestimonialsQuote } from "./schema";
 

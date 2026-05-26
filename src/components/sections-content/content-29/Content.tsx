@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Cpu, Zap } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { content29Namespace } from "./config";
 import type { ContentBlock } from "./schema";
 

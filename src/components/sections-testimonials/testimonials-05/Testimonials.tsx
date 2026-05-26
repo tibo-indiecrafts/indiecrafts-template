@@ -1,5 +1,5 @@
 import { Testimonials } from "@/components/ui-effects/libre-landing-testimonials";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { testimonials05Namespace } from "./config";
 import type { Testimonials05Block } from "./schema";
 

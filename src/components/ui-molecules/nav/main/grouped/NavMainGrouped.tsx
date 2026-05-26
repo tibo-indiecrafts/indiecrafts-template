@@ -19,7 +19,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 
 type SidebarMoleculeNamespace = Parameters<typeof useScopedT>[0];
 

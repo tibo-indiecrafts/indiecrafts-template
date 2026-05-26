@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui-primitives/card";
 import { Progress } from "@/components/ui-primitives/progress";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { stats09Items, stats09Namespace } from "./config";
 import type { UsageBlock } from "./schema";
 

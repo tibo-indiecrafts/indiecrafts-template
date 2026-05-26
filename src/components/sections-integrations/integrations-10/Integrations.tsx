@@ -10,7 +10,7 @@ import { OpenAI } from "@/components/ui-primitives/svgs/open-ai";
 import { Replit } from "@/components/ui-primitives/svgs/replit";
 import { Vercel } from "@/components/ui-primitives/svgs/vercel";
 import { VisualStudioCode as VSCode } from "@/components/ui-primitives/svgs/vs-code";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { integrations10Namespace } from "./config";
 import type { IntegrationIcon, IntegrationsBlock } from "./schema";

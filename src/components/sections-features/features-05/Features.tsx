@@ -8,7 +8,7 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features05Namespace } from "./config";
 import type { FeaturesBlock, FeaturesBulletIcon } from "./schema";
 

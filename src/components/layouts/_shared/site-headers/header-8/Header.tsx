@@ -17,7 +17,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui-primitives/navigation-menu";
 import { Menu, X, ArrowRight } from "lucide-react";
-import { useMedia } from "@/hooks/use-media";
+import { useMedia } from "@/components/_hooks/use-media";
 import {
   Accordion,
   AccordionContent,

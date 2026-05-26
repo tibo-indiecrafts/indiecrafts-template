@@ -2,7 +2,7 @@ import { Cpu, Lock, Sparkles, Zap, type LucideIcon } from "lucide-react";
 import type { ComponentType } from "react";
 import { InvoiceIllustration } from "@/components/ui-illustrations/invoice-illustration";
 import { VisualizationIllustration } from "@/components/ui-illustrations/visualization-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features16Namespace } from "./config";
 import type { FeaturesBlock, FeaturesIllustration, StatIcon } from "./schema";
 

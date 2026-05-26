@@ -5,7 +5,7 @@ import { AnimatedGroup } from "@/components/ui-effects/animated-group";
 import { LogoCloud04Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-04";
 import { motion } from "motion/react";
 import Image from "next/image";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero13BackgroundImage, hero13Namespace } from "./config";
 
 export function Hero() {

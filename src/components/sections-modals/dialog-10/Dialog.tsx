@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui-primitives/select";
 import { Textarea } from "@/components/ui-primitives/textarea";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { dialog10Namespace } from "./config";
 import type { DialogBlock } from "./schema";

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui-primitives/dialog";
 import { Field, FieldLabel } from "@/components/ui-primitives/field";
 import { Input } from "@/components/ui-primitives/input";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { stats11Namespace, stats11Sample } from "./config";
 import type { StatsBlock } from "./schema";

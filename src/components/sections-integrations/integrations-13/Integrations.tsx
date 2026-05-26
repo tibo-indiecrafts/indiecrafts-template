@@ -6,7 +6,7 @@ import { Claude as ClaudeAiIcon } from "@/components/ui-primitives/svgs/grid-2-l
 import { Cloudflare } from "@/components/ui-primitives/svgs/grid-2-landing-cloudflare";
 import { GooglePalm } from "@/components/ui-primitives/svgs/grid-2-landing-google-palm";
 import { Vercel } from "@/components/ui-primitives/svgs/grid-2-landing-vercel";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { integrations13Namespace } from "./config";
 import type { IntegrationsBlock } from "./schema";

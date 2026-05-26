@@ -30,6 +30,13 @@
     "themeDark": "Sombre",
     "themeSystem": "Système"
   },
+  "cookies": {
+    "title": "Nous respectons votre vie privée",
+    "body": "Nous utilisons quelques cookies pour faire fonctionner le site et (avec votre accord) pour comprendre son usage.",
+    "learnMore": "En savoir plus",
+    "accept": "Accepter",
+    "reject": "Refuser"
+  },
   "typography": {
     "titleCase": "sentence",
     "headingCase": "sentence",
@@ -61,6 +68,29 @@
     "nonNegative": "Doit être zéro ou supérieur."
   },
   "pages": {
+    "legal": {
+      "title": "Mentions légales",
+      "description": "Politique de confidentialité, usage des cookies, conditions d'utilisation.",
+      "lastUpdated": "Dernière mise à jour : 2026",
+      "sections": {
+        "privacy": {
+          "heading": "Confidentialité",
+          "body": "Nous ne collectons que les données nécessaires au service. Vos données personnelles ne sont jamais vendues. Si l'analytique est activée, vous pouvez la refuser via la bannière de cookies."
+        },
+        "cookies": {
+          "heading": "Cookies",
+          "body": "Les cookies strictement nécessaires (authentification, thème, langue) ne demandent pas de consentement — ils sont indispensables au fonctionnement du site. Les cookies analytiques ne sont déposés qu'après votre accord explicite."
+        },
+        "terms": {
+          "heading": "Conditions d'utilisation",
+          "body": "En utilisant ce site, vous vous engagez à un usage licite. Le contenu est fourni en l'état, sans garantie. Ces conditions peuvent être modifiées à tout moment."
+        },
+        "contact": {
+          "heading": "Contact",
+          "body": "Une question sur cette page ? Écrivez à hello@example.com — nous répondons sous cinq jours ouvrables."
+        }
+      }
+    },
     "home": {
       "title": "Indiecrafts — template Next.js rapide et modulaire",
       "description": "Un template Next.js 16 piloté par la configuration, avec sections, layouts et page-templates prêts à forker pour chaque client.",

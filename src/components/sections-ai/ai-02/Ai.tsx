@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui-primitives/select";
 import { Textarea } from "@/components/ui-primitives/textarea";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { ai02Models, ai02Namespace, ai02Prompts } from "./config";
 import type { AiBlock, AiModel } from "./schema";

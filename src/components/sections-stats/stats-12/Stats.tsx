@@ -4,7 +4,7 @@ import { Cell, Pie, PieChart } from "recharts";
 import { Button } from "@/components/ui-primitives/button";
 import { Card, CardContent, CardHeader } from "@/components/ui-primitives/card";
 import { type ChartConfig, ChartContainer } from "@/components/ui-primitives/chart";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { stats12Items, stats12Namespace } from "./config";
 import type { StatsBlock } from "./schema";

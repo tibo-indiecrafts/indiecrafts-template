@@ -6,6 +6,7 @@
 - https://www.fancycomponents.dev/
 - https://reactbits.dev/
 
+- https://loading-ui.com/
 - https://github.com/arhamkhnz/next-shadcn-admin-dashboard
 - https://kami.tw93.fun
 - https://21st.dev/community/components

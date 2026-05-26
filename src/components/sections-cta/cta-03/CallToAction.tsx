@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui-effects/grid-1-landing-button";
 import { Container } from "@/components/ui-effects/grid-1-landing-container";
 import { LayoutIllustration } from "@/components/ui-illustrations/layout-illustration-02";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cta03Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 

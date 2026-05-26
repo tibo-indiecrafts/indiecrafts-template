@@ -3,7 +3,7 @@ import { Link } from "@/i18n/routing";
 import { PaymentsDiagram } from "@/components/ui-illustrations/payments-diagram";
 import { Shield, Sparkles, SquareActivity } from "lucide-react";
 import type { ReactNode } from "react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero16CtaHref, hero16Namespace } from "./config";
 
 const FEATURE_KEYS = ["billing", "reports", "security"] as const;

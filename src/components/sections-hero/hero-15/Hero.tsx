@@ -4,7 +4,7 @@ import { AnimatedGroup } from "@/components/ui-effects/animated-group";
 import { LogoCloud04Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-04";
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero15CtaHref, hero15Namespace } from "./config";
 
 export function Hero() {

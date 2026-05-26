@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { MessageIllustration } from "@/components/ui-illustrations/message-illustration";
 import { PollIllustration } from "@/components/ui-illustrations/poll-illustration";
 import { UptimeIllustration } from "@/components/ui-illustrations/uptime-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features15Namespace } from "./config";
 import type { FeaturesBlock, FeaturesIllustration } from "./schema";
 

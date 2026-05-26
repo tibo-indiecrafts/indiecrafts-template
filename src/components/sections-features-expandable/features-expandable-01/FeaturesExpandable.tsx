@@ -10,8 +10,8 @@ import { NotesChecklistIllustration } from "@/components/ui-illustrations/notes-
 import { TokenCounterIllustration } from "@/components/ui-illustrations/token-counter-illustration";
 import { TranslationIllustration } from "@/components/ui-illustrations/translation-illustration";
 import { WorkflowIllustration } from "@/components/ui-illustrations/workflow-illustration";
-import { useMedia } from "@/hooks/use-media";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useMedia } from "@/components/_hooks/use-media";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { featuresExpandable01Namespace } from "./config";
 import type { FeatureIllustration, FeaturesExpandableBlock } from "./schema";

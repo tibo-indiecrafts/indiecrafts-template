@@ -6,7 +6,7 @@ import { MediaWiki } from "@/components/ui-primitives/svgs/media-wiki";
 import { OpenAI } from "@/components/ui-primitives/svgs/open-ai";
 import { Replit } from "@/components/ui-primitives/svgs/replit";
 import { Vercel } from "@/components/ui-primitives/svgs/vercel";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { integrations07Namespace } from "./config";
 import type { IntegrationIcon, IntegrationsBlock } from "./schema";

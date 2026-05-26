@@ -8,7 +8,7 @@ import * as React from "react";
 import { Logo } from "@/components/layouts/_shared/logo";
 import type { NavLink } from "@/config";
 import { Link } from "@/i18n/routing";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 
 import {

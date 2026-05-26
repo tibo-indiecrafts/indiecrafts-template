@@ -56,21 +56,22 @@ export const site = {
   logo: "/logo.svg",
   /** Raster logo for schema.org Organization (Google rejects SVG). */
   brandLogoPng: "/brand/logo.png",
-  /** Favicon dispatch — what `/icon` and `/apple-icon` serve. */
+  /**
+   * Favicon — served at `/icon` and `/apple-icon` routes. Replace the
+   * files in /public to rebrand; no code changes needed.
+   */
   icon: {
-    mode: "file",
     file: "/logo.svg",
     contentType: "image/svg+xml",
+    /** iOS rejects SVG for apple-touch-icon; PNG fallback is required. */
     appleFile: "/brand/apple-icon.png",
     appleContentType: "image/png",
   },
-  /** Open Graph card dispatch — what `/opengraph-image` serves. */
+  /** Site-wide Open Graph card — served at `/opengraph-image`. */
   ogImage: {
-    mode: "file",
     file: "/brand/og.png",
     contentType: "image/png",
   },
-  faviconEmoji: "🪡",
   contact: {
     email: "hello@example.com",
   },
@@ -119,85 +120,12 @@ export const site = {
 
 /**
  * Extra site-wide JSON-LD beyond Organization + WebSite (always emitted).
- * Each entry needs `"@type"`. The layout wraps them all into a single
- * `@graph` script so Google sees one connected entity graph.
+ * Each entry needs `"@type"`. The layout wraps them into a single `@graph`.
  *
- * Common patterns to copy-paste below:
- *
- * ─ Multi-location agency ────────────────────────────────────
- *   {
- *     "@type": "LocalBusiness",
- *     "@id": `${site.url}#paris-office`,
- *     name: "Acme Paris",
- *     address: { "@type": "PostalAddress", streetAddress: "…", … },
- *     telephone: "+33-1-…",
- *     openingHoursSpecification: ["Mo-Fr 09:00-18:00"],
- *   }
- *
- * ─ Service catalog (B2B agencies) ───────────────────────────
- *   buildServiceSchema({
- *     name: "Brand Identity Design",
- *     description: "Logo, type, and brand system.",
- *     serviceType: "Design",
- *     areaServed: "Worldwide",
- *     offers: { price: "5000", priceCurrency: "USD" },
- *   })
- *
- * ─ Product (SaaS / packaged offering) ───────────────────────
- *   buildProductSchema({
- *     name: "Indiecrafts Template Pro",
- *     description: "Full template + 1 year of updates.",
- *     sku: "ICT-PRO-001",
- *     offers: {
- *       price: "299",
- *       priceCurrency: "USD",
- *       availability: "InStock",
- *     },
- *     aggregateRating: { ratingValue: 4.9, reviewCount: 42 },
- *   })
- *
- * ─ Physical product (e-commerce) ────────────────────────────
- *   buildProductSchema({
- *     name: "Hand-stitched Leather Notebook",
- *     description: "A5, vegetable-tanned leather cover, 192 pages.",
- *     sku: "NB-LTH-A5-001",
- *     image: `${site.url}/products/notebook-a5.jpg`,
- *     brand: "Indiecrafts",
- *     offers: {
- *       price: "48.00",
- *       priceCurrency: "EUR",
- *       availability: "InStock",
- *       url: `${site.url}/shop/leather-notebook`,
- *     },
- *     aggregateRating: { ratingValue: 4.8, reviewCount: 127 },
- *   })
- *
- * ─ Catalog (collection page) — use page.seo.structuredData ──
- *   {
- *     "@type": "ItemList",
- *     name: "Shop",
- *     itemListElement: [
- *       { "@type": "ListItem", position: 1, item: { "@id": `${site.url}#notebook` } },
- *       { "@type": "ListItem", position: 2, item: { "@id": `${site.url}#pen` } },
- *     ],
- *   }
- *
- * ─ FAQ (per-page, highest-ROI rich result) ──────────────────
- *   // In pages.<id>.seo.structuredData:
- *   buildFAQPageSchema([
- *     {
- *       question: "How does pricing work?",
- *       answer: "Free for personal projects; team plans start at $29/mo.",
- *     },
- *     {
- *       question: "Can I cancel anytime?",
- *       answer: "Yes — cancellation is one click, prorated to the day.",
- *     },
- *   ])
- *   // Google shows the Q&A directly under your search result.
- *
- * Factories live in `@/lib/seo/jsonld` — using them keeps `@id`s consistent
- * (Service.provider / Product.brand link back to the Organization).
+ * Per-page schemas (FAQ, Article, Service, Product, Breadcrumb…) go in
+ * `pages.<id>.seo.structuredData` instead — factories in
+ * `@/lib/seo/jsonld-factories`. Recipes + copy-paste examples:
+ *   → docs/structured-data-cookbook.md
  */
 export const globalSchemas: readonly Record<string, unknown>[] = [];
 
@@ -250,6 +178,14 @@ export const features = {
   llmsTxt: true,
   /** Shows the locale switcher in the header. */
   localeSwitcher: true,
+  /**
+   * Bottom-fixed cookie banner + GA Consent Mode integration. Turn ON for
+   * EU traffic when `analytics.googleAnalyticsId` is set. When OFF and
+   * GA is set, GA loads unconditionally — fine outside the EU, risky inside.
+   */
+  cookieBanner: false,
+  /** Enables `/legal` — privacy + cookies + terms page. */
+  legalPage: false,
 } as const;
 
 /**
@@ -336,5 +272,12 @@ export const pages = {
     seo: {
       keywords: ["next.js template", "indiecrafts", "config-first", "modular website"],
     },
+  },
+  legal: {
+    key: "/legal",
+    id: "legal",
+    slug: "/legal",
+    // Gated by the feature flag — sitemap + routing pick up the change.
+    enabled: features.legalPage,
   },
 } as const satisfies Record<string, PageConfig>;

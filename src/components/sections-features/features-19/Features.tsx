@@ -1,6 +1,6 @@
 import { CalendarDays, Clock2, Zap, type LucideIcon } from "lucide-react";
 import CodeBlockIllustration from "@/components/ui-illustrations/code-block-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features19Namespace } from "./config";
 import type { FeaturesBlock, StatIcon } from "./schema";
 

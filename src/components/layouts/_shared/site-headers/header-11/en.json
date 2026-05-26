@@ -1,0 +1,13 @@
+{
+  "actions": {
+    "openMenu": "Toggle navigation",
+    "brand": "RB"
+  },
+  "items": {
+    "home": "home",
+    "about": "about",
+    "projects": "projects",
+    "blog": "blog",
+    "contact": "contact"
+  }
+}

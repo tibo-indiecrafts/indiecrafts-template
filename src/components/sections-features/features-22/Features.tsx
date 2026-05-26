@@ -1,7 +1,7 @@
 import { ChevronRight, Cpu, Lock, Sparkles, Zap, type LucideIcon } from "lucide-react";
 import { DropdownIllustration } from "@/components/ui-illustrations/dropdown-illustration";
 import { Button } from "@/components/ui-primitives/button";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features22Namespace } from "./config";
 import type { FeaturesBlock, StatIcon } from "./schema";
 

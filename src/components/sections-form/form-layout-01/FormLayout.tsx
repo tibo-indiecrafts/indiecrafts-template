@@ -2,7 +2,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Field, FieldLabel } from "@/components/ui-primitives/field";
 import { Input } from "@/components/ui-primitives/input";
 import { Separator } from "@/components/ui-primitives/separator";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { formLayout01Namespace } from "./config";
 import type { FormLayoutBlock } from "./schema";
 

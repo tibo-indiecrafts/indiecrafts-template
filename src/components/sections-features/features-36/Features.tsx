@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { CalendarDays, Clock2, Zap } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features36Namespace } from "./config";
 import type { Features36Block } from "./schema";
 

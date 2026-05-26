@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { Minus, Plus } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui-primitives/button";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { content12Namespace } from "./config";
 import type { ContentBlock } from "./schema";

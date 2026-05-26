@@ -8,7 +8,7 @@ import { Spotify } from "@/components/ui-primitives/svgs/spotify";
 import { Supabase } from "@/components/ui-primitives/svgs/supabase";
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   hero01BackgroundImage,
   hero01Namespace,

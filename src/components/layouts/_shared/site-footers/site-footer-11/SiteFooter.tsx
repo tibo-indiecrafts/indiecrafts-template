@@ -1,6 +1,6 @@
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { siteFooter11Namespace } from "./config";
 
 export type SiteFooterProps = {

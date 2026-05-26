@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui-primitives/card";
 import { Checkbox } from "@/components/ui-primitives/checkbox";
 import { Input } from "@/components/ui-primitives/input";
 import { Label } from "@/components/ui-primitives/label";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { login05Namespace } from "./config";
 import type { LoginBlock } from "./schema";
 

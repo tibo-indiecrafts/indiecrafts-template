@@ -33,7 +33,7 @@ import {
 import { Label } from "@/components/ui-primitives/label";
 import { Switch } from "@/components/ui-primitives/switch";
 import { Textarea } from "@/components/ui-primitives/textarea";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import {
   ai04AttachmentActions,

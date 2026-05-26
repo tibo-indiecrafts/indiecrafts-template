@@ -16,7 +16,7 @@ import { Spotify } from "@/components/ui-primitives/svgs/dark-landing-spotify";
 import { Stripe } from "@/components/ui-primitives/svgs/dark-landing-stripe";
 import { SupabaseDark as Supabase } from "@/components/ui-primitives/svgs/dark-landing-supabase";
 import { VercelWordmark as VercelFull } from "@/components/ui-primitives/svgs/dark-landing-vercel";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { logoCloud11Namespace } from "./config";
 import type { LogoCloudBlock, LogoCloudGroupId } from "./schema";
 

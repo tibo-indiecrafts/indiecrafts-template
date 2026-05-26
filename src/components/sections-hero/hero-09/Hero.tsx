@@ -2,7 +2,7 @@ import { ProductCards } from "@/components/ui-illustrations/product-cards";
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { LogoCloud02Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-02";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   hero09AnnouncementHref,
   hero09Namespace,

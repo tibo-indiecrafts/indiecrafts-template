@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useRef } from "react";
 
-import { useMousePosition } from "@/hooks/use-mouse-position";
+import { useMousePosition } from "@/components/_hooks/use-mouse-position";
 
 import { PixelateSvgFilter } from "./index";
 

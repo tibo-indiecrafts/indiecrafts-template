@@ -3,7 +3,7 @@
 import { gsap } from "gsap";
 import * as React from "react";
 
-import { useMedia } from "@/hooks/use-media";
+import { useMedia } from "@/components/_hooks/use-media";
 
 export interface MasonryItem {
   id: string;

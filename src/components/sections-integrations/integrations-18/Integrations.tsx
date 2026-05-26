@@ -9,7 +9,7 @@ import { VSCodium } from "@/components/ui-primitives/svgs/vs-codium";
 import { MediaWiki } from "@/components/ui-primitives/svgs/media-wiki";
 import { GooglePaLM } from "@/components/ui-primitives/svgs/google-palm";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { integrations18Namespace } from "./config";
 import type { IntegrationIcon, IntegrationsBlock } from "./schema";
 

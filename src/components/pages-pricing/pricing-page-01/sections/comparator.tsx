@@ -5,7 +5,7 @@ import { useState, type ReactNode } from "react";
 import { ChartPie, Cpu, HeartPulse, PanelsTopLeft } from "lucide-react";
 
 import { Button } from "@/components/ui-effects/dark-pricing-button";
-import { useMedia } from "@/hooks/use-media";
+import { useMedia } from "@/components/_hooks/use-media";
 import {
   TooltipProvider,
   Tooltip,

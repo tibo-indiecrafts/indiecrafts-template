@@ -4,7 +4,7 @@ import { InvoiceIllustration } from "@/components/ui-illustrations/invoice-illus
 import { MapIllustration } from "@/components/ui-illustrations/map-illustration";
 import { VisualizationIllustration } from "@/components/ui-illustrations/visualization-illustration";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui-primitives/avatar";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { features25Namespace } from "./config";
 import type { CardIllustration, FeaturesBlock } from "./schema";

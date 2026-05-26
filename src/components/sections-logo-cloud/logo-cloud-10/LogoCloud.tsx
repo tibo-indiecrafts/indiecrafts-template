@@ -6,7 +6,7 @@ import { Stripe } from "@/components/ui-primitives/svgs/stripe";
 import { VercelFull } from "@/components/ui-primitives/svgs/vercel";
 import { Cloudflare } from "@/components/ui-primitives/svgs/cloudflare";
 import { OpenAIFull } from "@/components/ui-primitives/svgs/open-ai";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { logoCloud10Namespace } from "./config";
 
 export function LogoCloud() {

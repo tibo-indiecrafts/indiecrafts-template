@@ -4,7 +4,7 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui-primitives/button";
 import { Input } from "@/components/ui-primitives/input";
 import { Label } from "@/components/ui-primitives/label";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { login03Namespace } from "./config";
 import type { LoginBlock } from "./schema";
 

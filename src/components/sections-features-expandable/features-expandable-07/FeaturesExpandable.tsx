@@ -32,7 +32,7 @@ import { TokenCounterIllustration } from "@/components/ui-illustrations/token-co
 import { TranslationIllustration } from "@/components/ui-illustrations/translation-illustration";
 import { WorkflowIllustration } from "@/components/ui-illustrations/workflow-illustration";
 import { Button } from "@/components/ui-primitives/button";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { featuresExpandable07Namespace } from "./config";
 import type {

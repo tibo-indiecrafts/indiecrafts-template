@@ -39,8 +39,8 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui-primitives/navigation-menu";
-import { useMedia } from "@/hooks/use-media";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useMedia } from "@/components/_hooks/use-media";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { header1Namespace } from "./config";
 

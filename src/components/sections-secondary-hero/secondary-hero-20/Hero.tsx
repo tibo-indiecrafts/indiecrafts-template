@@ -2,7 +2,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 import Image from "next/image";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   secondaryHero20BackgroundImage,
   secondaryHero20Namespace,

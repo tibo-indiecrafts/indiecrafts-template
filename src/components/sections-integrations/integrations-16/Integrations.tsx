@@ -7,7 +7,7 @@ import { GooglePaLM } from "@/components/ui-primitives/svgs/google-palm";
 import { MagicUI } from "@/components/ui-primitives/svgs/magic-ui";
 import { VSCodium } from "@/components/ui-primitives/svgs/vs-codium";
 import { MediaWiki } from "@/components/ui-primitives/svgs/media-wiki";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { integrations16Namespace } from "./config";
 import type { IntegrationIcon, IntegrationsBlock } from "./schema";
 

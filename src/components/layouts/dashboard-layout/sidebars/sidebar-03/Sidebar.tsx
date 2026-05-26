@@ -26,7 +26,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { sidebar03Namespace, sidebar03Notifications } from "./config";
 import type { Route } from "@/components/ui-molecules/nav/main/grouped";

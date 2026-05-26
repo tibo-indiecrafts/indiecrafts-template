@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui-primitives/dialog";
 import { Kbd } from "@/components/ui-primitives/kbd";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   commandMenu03ColorGroups,
   commandMenu03Namespace,

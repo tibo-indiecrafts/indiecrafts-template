@@ -5,7 +5,7 @@ import { DocumentsStackIllustration } from "@/components/ui-illustrations/docume
 import { FingerprintCardIllustration } from "@/components/ui-illustrations/fingerprint-card-illustration";
 import { MapPinsIllustration } from "@/components/ui-illustrations/map-pins-illustration";
 import { MemoryUsageIllustration } from "@/components/ui-illustrations/memory-usage-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { bento07Namespace } from "./config";
 import type { BentoBlock } from "./schema";
 

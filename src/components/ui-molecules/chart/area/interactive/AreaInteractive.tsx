@@ -4,7 +4,7 @@ import * as React from "react";
 import { useTranslations } from "next-intl";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/components/_hooks/use-mobile";
 import {
   Card,
   CardAction,

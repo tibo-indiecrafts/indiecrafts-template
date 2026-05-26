@@ -3,28 +3,49 @@
 import { useId, useState } from "react";
 import { Button } from "@/components/ui-primitives/button";
 import { Input } from "@/components/ui-primitives/input";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { newsletter01Namespace } from "./config";
 import type { NewsletterBlock } from "./schema";
 
+const FORM_NAME = "newsletter";
+
 /**
- * Newsletter sign-up — gradient card with radial glow, animated focus ring,
- * inline email + submit. Front-end only: wires the submit to console for
- * demo purposes; swap the handler in production for your provider's API.
+ * Newsletter sign-up wired to Netlify Forms.
+ *
+ * The matching <form> declaration in `public/__forms.html` is what Netlify
+ * scans at build time. This component posts URL-encoded data to `/` (which
+ * Netlify intercepts and routes by `form-name`). View submissions in your
+ * Netlify dashboard → Forms → "newsletter".
+ *
+ * To swap to a different provider (Resend, Loops, Mailchimp), replace the
+ * `submit()` body with a `fetch(...)` to that service.
  */
 export default function Newsletter(props: Readonly<NewsletterBlock>) {
   const [, tr] = useScopedT(newsletter01Namespace);
   const inputId = useId();
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "submitting" | "done">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
     setStatus("submitting");
-    // Replace with your newsletter provider's endpoint.
-    setTimeout(() => setStatus("done"), 600);
+    try {
+      const body = new URLSearchParams({
+        "form-name": FORM_NAME,
+        email,
+        "bot-field": "",
+      });
+      const res = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+      });
+      setStatus(res.ok ? "done" : "error");
+    } catch {
+      setStatus("error");
+    }
   }
 
   const isDone = status === "done";
@@ -55,19 +76,32 @@ export default function Newsletter(props: Readonly<NewsletterBlock>) {
         ) : null}
 
         <form
-          onSubmit={handleSubmit}
+          name={FORM_NAME}
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          onSubmit={submit}
           className={cn(
             "mx-auto mt-8 flex max-w-md flex-col gap-2 transition-opacity sm:flex-row",
             isDone && "opacity-60",
           )}
           aria-busy={status === "submitting"}
         >
+          <input type="hidden" name="form-name" value={FORM_NAME} />
+          {/* Honeypot — bots fill it in, humans don't (it's display:none-style hidden). */}
+          <p className="hidden">
+            <label>
+              Don&apos;t fill this out: <input name="bot-field" />
+            </label>
+          </p>
+
           <label htmlFor={inputId} className="sr-only">
             {tr(props.emailPlaceholderKey, "emailPlaceholder")}
           </label>
           <Input
             id={inputId}
             type="email"
+            name="email"
             inputMode="email"
             autoComplete="email"
             required
@@ -85,6 +119,12 @@ export default function Newsletter(props: Readonly<NewsletterBlock>) {
             {isDone ? "✓" : tr(props.submitLabelKey, "submit")}
           </Button>
         </form>
+
+        {status === "error" ? (
+          <p className="text-destructive mt-3 text-sm" role="alert">
+            {tr(props.errorKey, "error")}
+          </p>
+        ) : null}
 
         {props.privacyNoteKey ? (
           <p className="text-muted-foreground/70 mt-4 text-xs">

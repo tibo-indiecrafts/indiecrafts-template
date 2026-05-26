@@ -9,7 +9,7 @@ import {
 } from "@/components/ui-effects/grid-2-landing-feature-card";
 import { MapIllustration } from "@/components/ui-illustrations/map-illustration-03";
 import { VisualizationIllustration } from "@/components/ui-illustrations/visualization-illustration-04";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features32Namespace } from "./config";
 import type { Features32Block } from "./schema";
 

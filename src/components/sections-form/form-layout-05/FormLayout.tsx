@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui-primitives/select";
 import { Separator } from "@/components/ui-primitives/separator";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { formLayout05Namespace, formLayout05Plans } from "./config";
 import type { FormLayoutBlock } from "./schema";

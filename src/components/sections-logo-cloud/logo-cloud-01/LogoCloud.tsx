@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, type ReactNode } from "react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { logoCloud01Namespace } from "./config";
 import { Beacon } from "@/components/ui-primitives/svgs/beacon";
 import { Bolt } from "@/components/ui-primitives/svgs/bolt";

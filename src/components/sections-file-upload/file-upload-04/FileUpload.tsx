@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui-primitives/button";
 import { Card } from "@/components/ui-primitives/card";
 import { Progress } from "@/components/ui-primitives/progress";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { fileUpload04Namespace, fileUpload04ValidMimeTypes } from "./config";
 import type { FileUploadBlock } from "./schema";
 
@@ -95,7 +95,7 @@ export default function FileUpload(props: Readonly<FileUploadBlock>) {
           {tr(props.titleKey, "title")}
         </h3>
 
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- drag-drop file targets are intentional on this surface; the inner <label> opens the picker via keyboard */}
+        {}
         <div
           className="border-input mt-2 flex justify-center rounded-md border border-dashed px-6 py-12"
           onDragOver={(e) => e.preventDefault()}

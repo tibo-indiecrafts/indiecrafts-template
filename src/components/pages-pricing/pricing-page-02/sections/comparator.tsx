@@ -9,7 +9,7 @@ import {
 } from "@/components/ui-effects/grid-1-pricing-tooltip";
 import { Button } from "@/components/ui-effects/grid-1-pricing-button";
 import Link from "next/link";
-import { useMedia } from "@/hooks/use-media";
+import { useMedia } from "@/components/_hooks/use-media";
 import { useState, type ReactNode } from "react";
 import { Container } from "@/components/ui-effects/grid-1-pricing-container";
 

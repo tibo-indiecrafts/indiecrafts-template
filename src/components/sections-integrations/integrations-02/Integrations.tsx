@@ -5,7 +5,7 @@ import { MediaWiki } from "@/components/ui-primitives/svgs/media-wiki";
 import { MistralAi } from "@/components/ui-primitives/svgs/mistral-ai";
 import { Replit } from "@/components/ui-primitives/svgs/replit";
 import { VSCodium } from "@/components/ui-primitives/svgs/vs-codium";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { integrations02Namespace } from "./config";
 import type {

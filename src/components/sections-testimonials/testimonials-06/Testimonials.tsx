@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- avatar is a remote thumbnail */
 
 import { Quote } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { testimonials06Namespace } from "./config";
 import type { Testimonials06Block } from "./schema";
 

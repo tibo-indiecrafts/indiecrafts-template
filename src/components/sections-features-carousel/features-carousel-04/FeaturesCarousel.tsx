@@ -14,7 +14,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui-primitives/embla-carousel";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { featuresCarousel04Namespace } from "./config";
 import type { CarouselIllustration, FeaturesCarouselBlock } from "./schema";
 

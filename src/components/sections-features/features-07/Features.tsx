@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Cpu, Lock, Sparkles, Zap, type LucideIcon } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features07Namespace } from "./config";
 import type { ContentInlineFeatureIcon, FeaturesBlock } from "./schema";
 

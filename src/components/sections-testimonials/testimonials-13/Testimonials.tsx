@@ -2,7 +2,7 @@ import * as React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui-primitives/avatar";
 import { Hulu } from "@/components/ui-primitives/svgs/hulu";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { testimonials13Namespace } from "./config";
 import type { TestimonialItem, TestimonialsBlock } from "./schema";
 

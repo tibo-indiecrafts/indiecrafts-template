@@ -8,7 +8,7 @@ import { Primevideo } from "@/components/ui-primitives/svgs/prime";
 import { Stripe } from "@/components/ui-primitives/svgs/stripe";
 import { VisualStudioCode } from "@/components/ui-primitives/svgs/vs-code";
 import { InfiniteSlider } from "@/components/ui-effects/infinite-slider";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { logoCloud05Namespace } from "./config";
 
 export function LogoCloud() {

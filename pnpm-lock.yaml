@@ -164,6 +164,9 @@ importers:
       lucide-react:
         specifier: ^1.9.0
         version: 1.9.0(react@19.2.4)
+      maath:
+        specifier: ^0.10.8
+        version: 0.10.8(@types/three@0.184.0)(three@0.184.0)
       matter-js:
         specifier: ^0.20.0
         version: 0.20.0

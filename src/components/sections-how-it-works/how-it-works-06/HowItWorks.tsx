@@ -4,7 +4,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { ActionableIllustration } from "@/components/ui-illustrations/actionable-illustration";
 import { DocumentIllustration } from "@/components/ui-illustrations/document-illustration";
 import { IDCheckIllustration } from "@/components/ui-illustrations/id-check-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { howItWorks06Namespace } from "./config";
 import type { HowItWorksBlock, HowItWorksIllustration } from "./schema";

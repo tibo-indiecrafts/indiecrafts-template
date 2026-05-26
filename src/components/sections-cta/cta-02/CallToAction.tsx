@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui-effects/dark-landing-button";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cta02Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 

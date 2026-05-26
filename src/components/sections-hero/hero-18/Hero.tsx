@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui-effects/grid-1-landing-button";
 import { Container } from "@/components/ui-effects/grid-1-landing-container";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero18Namespace } from "./config";
 import type { HeroBlock } from "./schema";
 

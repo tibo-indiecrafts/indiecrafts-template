@@ -3,7 +3,7 @@
 import { ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui-primitives/card";
 import { CapacityRing } from "@/components/ui-molecules/widget/capacity-ring";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { stats07Items, stats07Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 

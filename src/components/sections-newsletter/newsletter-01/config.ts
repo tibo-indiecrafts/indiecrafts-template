@@ -11,4 +11,5 @@ export const newsletter01Sample: Omit<NewsletterBlock, "id"> = {
   emailPlaceholderKey: "blocks.newsletter-01.emailPlaceholder",
   submitLabelKey: "blocks.newsletter-01.submit",
   privacyNoteKey: "blocks.newsletter-01.privacy",
+  errorKey: "blocks.newsletter-01.error",
 };

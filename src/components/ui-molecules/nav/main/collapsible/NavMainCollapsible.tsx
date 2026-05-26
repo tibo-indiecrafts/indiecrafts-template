@@ -6,7 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui-primitives/sidebar";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { sidebar01Namespace } from "@/components/layouts/dashboard-layout/sidebars/sidebar-01/config";
 import type { NavItem } from "@/components/layouts/dashboard-layout/sidebars/sidebar-01/types";
 

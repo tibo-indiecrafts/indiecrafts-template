@@ -3,7 +3,7 @@
 import { motion, useAnimationControls } from "motion/react";
 import * as React from "react";
 
-import { useDimensions } from "@/hooks/use-dimensions";
+import { useDimensions } from "@/components/_hooks/use-dimensions";
 import { cn } from "@/lib/utils";
 
 export interface PixelTrailProps {

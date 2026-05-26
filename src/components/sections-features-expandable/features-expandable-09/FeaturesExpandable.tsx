@@ -4,7 +4,7 @@ import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { useState } from "react";
 import { SceneIllustration } from "@/components/ui-illustrations/scene-illustration";
 import { Button } from "@/components/ui-primitives/button";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { featuresExpandable09Namespace } from "./config";
 import type { FeaturesExpandableBlock } from "./schema";

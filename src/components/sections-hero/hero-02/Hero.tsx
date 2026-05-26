@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { Button } from "@/components/ui-primitives/button";
 import { MobileWalletIllustration } from "@/components/ui-illustrations/mobile-wallet";
 import { Link } from "@/i18n/routing";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   hero02AndroidHref,
   hero02BackgroundImage,

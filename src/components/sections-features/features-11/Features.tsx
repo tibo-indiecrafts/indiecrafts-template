@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui-primitives/card";
 import { Linear } from "@/components/ui-primitives/svgs/linear";
 import { Slack } from "@/components/ui-primitives/svgs/slack";
 import { Twilio } from "@/components/ui-primitives/svgs/twilio";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features11Namespace } from "./config";
 import type { FeaturesBlock } from "./schema";
 

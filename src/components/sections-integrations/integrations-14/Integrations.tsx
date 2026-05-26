@@ -5,7 +5,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Gemini } from "@/components/ui-primitives/svgs/gemini";
 import { Replit } from "@/components/ui-primitives/svgs/replit";
 import { GooglePaLM } from "@/components/ui-primitives/svgs/google-palm";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { integrations14Namespace } from "./config";
 import type { IntegrationIcon, IntegrationsBlock } from "./schema";
 

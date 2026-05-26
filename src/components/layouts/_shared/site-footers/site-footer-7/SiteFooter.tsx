@@ -5,7 +5,7 @@ import { Input } from "@/components/ui-primitives/input";
 import { Label } from "@/components/ui-primitives/label";
 import { Logo } from "@/components/layouts/_shared/logo";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { siteFooter7Namespace } from "./config";
 
 export type SiteFooterProps = {

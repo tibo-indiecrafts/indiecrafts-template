@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui-primitives/dropdown-menu";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { onboarding01Namespace, onboarding01Steps } from "./config";
 import type { OnboardingBlock, OnboardingStep } from "./schema";

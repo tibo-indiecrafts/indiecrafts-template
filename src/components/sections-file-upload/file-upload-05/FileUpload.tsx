@@ -3,7 +3,7 @@
 import { FileSpreadsheet, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui-primitives/button";
 import { Label } from "@/components/ui-primitives/label";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { fileUpload05Namespace } from "./config";
 import type { FileUploadBlock } from "./schema";
 

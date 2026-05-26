@@ -2,7 +2,7 @@ import { CurrencyIllustration } from "@/components/ui-illustrations/currency-ill
 import { DocumentIllustration } from "@/components/ui-illustrations/document-illustration";
 import { MapCirclesIllustration } from "@/components/ui-illustrations/map-circles-illustration";
 import { MonitoringChartIllustration } from "@/components/ui-illustrations/monitoring-chart-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { bento14Namespace } from "./config";
 import type { BentoBlock } from "./schema";
 

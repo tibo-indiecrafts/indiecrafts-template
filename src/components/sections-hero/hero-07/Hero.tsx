@@ -7,7 +7,7 @@ import { VercelFull } from "@/components/ui-primitives/svgs/vercel";
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { ProductTabs } from "@/components/ui-illustrations/product-tabs";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero07Namespace, hero07PrimaryCtaHref, hero07SecondaryCtaHref } from "./config";
 
 export function Hero() {

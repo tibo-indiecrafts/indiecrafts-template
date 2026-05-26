@@ -11,7 +11,7 @@ import {
   CommandList,
 } from "@/components/ui-primitives/command";
 import { Kbd } from "@/components/ui-primitives/kbd";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   commandMenu01AnalyticsItems,
   commandMenu01Namespace,

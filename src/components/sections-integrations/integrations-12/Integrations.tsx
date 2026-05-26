@@ -12,7 +12,7 @@ import { Openai as OpenAI } from "@/components/ui-primitives/svgs/grid-1-landing
 import { Replit } from "@/components/ui-primitives/svgs/grid-1-landing-replit";
 import { Vercel } from "@/components/ui-primitives/svgs/grid-1-landing-vercel";
 import { Vscodium } from "@/components/ui-primitives/svgs/grid-1-landing-vscodium";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { integrations12Namespace } from "./config";
 import type { IntegrationsBlock } from "./schema";

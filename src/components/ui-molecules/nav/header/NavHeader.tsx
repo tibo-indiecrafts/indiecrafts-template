@@ -15,7 +15,7 @@ import {
 import { SidebarHeader } from "@/components/ui-primitives/sidebar";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { sidebar01Namespace } from "@/components/layouts/dashboard-layout/sidebars/sidebar-01/config";
 import { navHeaderNamespace } from "./config";
 import type { SidebarData } from "@/components/layouts/dashboard-layout/sidebars/sidebar-01/types";

@@ -30,6 +30,13 @@
     "themeDark": "Dark",
     "themeSystem": "System"
   },
+  "cookies": {
+    "title": "We respect your privacy",
+    "body": "We use a small number of cookies to make the site work and (with your consent) to understand how it's used.",
+    "learnMore": "Learn more",
+    "accept": "Accept",
+    "reject": "Reject"
+  },
   "typography": {
     "titleCase": "title",
     "headingCase": "sentence",
@@ -61,6 +68,29 @@
     "nonNegative": "Must be zero or greater."
   },
   "pages": {
+    "legal": {
+      "title": "Legal",
+      "description": "Privacy policy, cookie usage, and terms of service.",
+      "lastUpdated": "Last updated: 2026",
+      "sections": {
+        "privacy": {
+          "heading": "Privacy",
+          "body": "We collect only the data needed to provide and improve our service. We do not sell your personal information. Where analytics are enabled, you can refuse them via the cookie banner."
+        },
+        "cookies": {
+          "heading": "Cookies",
+          "body": "Strictly necessary cookies (auth, theme, locale) are used without consent — they are essential for the site to function. Analytics cookies are only set after you accept them in the banner."
+        },
+        "terms": {
+          "heading": "Terms of service",
+          "body": "By using this site you agree to use it for lawful purposes only. The content is provided as-is, without warranty. We may update these terms at any time."
+        },
+        "contact": {
+          "heading": "Contact",
+          "body": "Questions about this page? Email hello@example.com and we'll respond within five business days."
+        }
+      }
+    },
     "home": {
       "title": "Indiecrafts — fast, modular Next.js template",
       "description": "A config-first Next.js 16 template with sections, layouts, and pre-built page templates you can fork per client.",

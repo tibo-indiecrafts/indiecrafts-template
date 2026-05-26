@@ -6,7 +6,7 @@ import { OpenAIFull } from "@/components/ui-primitives/svgs/open-ai";
 import { Primevideo } from "@/components/ui-primitives/svgs/prime";
 import { Stripe } from "@/components/ui-primitives/svgs/stripe";
 import { Supabase } from "@/components/ui-primitives/svgs/supabase";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { logoCloud03Namespace } from "./config";
 
 export function LogoCloud() {

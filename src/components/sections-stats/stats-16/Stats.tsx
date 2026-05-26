@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Map } from "@/components/ui-illustrations/dotted-map";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { stats16Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 

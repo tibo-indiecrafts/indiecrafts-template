@@ -4,7 +4,7 @@ import { MessageIllustration } from "@/components/ui-illustrations/message-illus
 import { PollIllustration } from "@/components/ui-illustrations/poll-illustration";
 import { UptimeIllustration } from "@/components/ui-illustrations/uptime-illustration";
 import { Card } from "@/components/ui-primitives/card";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features21Namespace } from "./config";
 import type { CardIcon, CardIllustration, FeaturesBlock } from "./schema";
 

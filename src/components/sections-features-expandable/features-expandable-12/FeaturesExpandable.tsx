@@ -32,7 +32,7 @@ import { WorkflowIllustration } from "@/components/ui-illustrations/workflow-ill
 import { Antigravity } from "@/components/ui-primitives/svgs/antigravity";
 import { Cursor } from "@/components/ui-primitives/svgs/cursor";
 import { Windsurf } from "@/components/ui-primitives/svgs/windsurf";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { featuresExpandable12Namespace } from "./config";
 import type {

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Cpu, Globe, Shield, Sparkles, Zap, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui-primitives/button";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { pricingComparatorNamespace } from "./config";
 import type {
   ComparatorCell,

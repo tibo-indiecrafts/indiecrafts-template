@@ -2,7 +2,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Input } from "@/components/ui-primitives/input";
 import { Label } from "@/components/ui-primitives/label";
 import { MeetIllustration } from "@/components/ui-illustrations/meet-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero12Namespace } from "./config";
 
 export function Hero() {

@@ -4,7 +4,7 @@ import { LogoIcon } from "@/components/layouts/_shared/logo";
 import { Button } from "@/components/ui-primitives/button";
 import { Input } from "@/components/ui-primitives/input";
 import { Label } from "@/components/ui-primitives/label";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { login17Namespace } from "./config";
 import type { LoginBlock } from "./schema";
 

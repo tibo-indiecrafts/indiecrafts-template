@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from "react";
 import { InvoiceCardIllustration } from "@/components/ui-illustrations/invoice-card-illustration";
 import { InvoiceSigningIllustration } from "@/components/ui-illustrations/invoice-signing-illustration";
 import { PaymentIllustration } from "@/components/ui-illustrations/payment-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { howItWorks01Namespace } from "./config";
 import type { HowItWorksBlock, HowItWorksIllustration } from "./schema";
 

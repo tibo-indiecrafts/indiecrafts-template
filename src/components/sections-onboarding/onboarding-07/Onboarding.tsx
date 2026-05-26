@@ -10,7 +10,7 @@ import {
 } from "@/components/ui-primitives/accordion";
 import { Button } from "@/components/ui-primitives/button";
 import { Progress } from "@/components/ui-primitives/progress";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { onboarding07Namespace, onboarding07Steps } from "./config";
 import type { OnboardingBlock, OnboardingStep } from "./schema";

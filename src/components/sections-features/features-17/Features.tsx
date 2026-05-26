@@ -1,5 +1,5 @@
 import { LayoutIllustration } from "@/components/ui-illustrations/layout-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features17Namespace } from "./config";
 import type { FeaturesBlock } from "./schema";
 

@@ -17,7 +17,7 @@ import { Spotify } from "@/components/ui-primitives/svgs/spotify";
 import { PayPal } from "@/components/ui-primitives/svgs/paypal";
 import { LeapWallet } from "@/components/ui-primitives/svgs/leap-wallet";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { logoCloud06Namespace } from "./config";
 
 const aiLogos: ReactNode[] = [

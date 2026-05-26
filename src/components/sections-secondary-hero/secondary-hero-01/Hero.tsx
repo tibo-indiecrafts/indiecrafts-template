@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { Chat } from "@/components/ui-illustrations/chat";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { secondaryHero01CtaHref, secondaryHero01Namespace } from "./config";
 
 export function Hero() {

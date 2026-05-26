@@ -4,7 +4,7 @@ import { MoveUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 
 import { bento15Namespace } from "./config";

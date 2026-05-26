@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import { ProductIllustration } from "@/components/ui-illustrations/product-illustration";
 import { LogoCloud01Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-01";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   hero06AnnouncementHref,
   hero06BackgroundImage,

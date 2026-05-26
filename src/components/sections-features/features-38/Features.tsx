@@ -4,7 +4,7 @@ import { AiOverviewIllustration } from "@/components/ui-illustrations/ai-overvie
 import { ChartIllustration } from "@/components/ui-illustrations/chart-illustration-02";
 import { LanguagesIllustration } from "@/components/ui-illustrations/languages-illustration";
 import { LinkPaymentIllustration } from "@/components/ui-illustrations/link-payment-illustration-02";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features38Namespace } from "./config";
 import type { Features38Block } from "./schema";
 

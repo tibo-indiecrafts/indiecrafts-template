@@ -4,7 +4,7 @@ import { ChartIllustration } from "@/components/ui-illustrations/chart-illustrat
 import { DocumentIllustration } from "@/components/ui-illustrations/document-illustration";
 import { FingerprintScanIllustration } from "@/components/ui-illustrations/fingerprint-scan-illustration";
 import { KeysIllustration } from "@/components/ui-illustrations/keys-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { bento05Namespace } from "./config";
 import type { BentoBlock } from "./schema";
 

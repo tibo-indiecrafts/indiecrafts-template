@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import * as React from "react";
 
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 
 import { gallery01Namespace } from "./config";

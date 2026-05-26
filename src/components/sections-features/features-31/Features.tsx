@@ -12,7 +12,7 @@ import { CreditCardIllustration } from "@/components/ui-illustrations/credit-car
 import { FlowIllustration } from "@/components/ui-illustrations/flow-illustration-02";
 import { InvoiceIllustration } from "@/components/ui-illustrations/invoice-illustration-04";
 import { VercelWordmark as VercelFull } from "@/components/ui-primitives/svgs/grid-2-landing-vercel";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features31Namespace } from "./config";
 import type { Features31Block } from "./schema";
 

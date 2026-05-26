@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { Lightbulb, Pencil, PencilRuler } from "lucide-react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { content26Namespace } from "./config";
 import type { ContentBlock } from "./schema";
 

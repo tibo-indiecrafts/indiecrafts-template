@@ -1,7 +1,7 @@
 import { Logo } from "@/components/layouts/_shared/logo";
 import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { siteFooter8Namespace } from "./config";
 
 export type SiteFooterProps = {

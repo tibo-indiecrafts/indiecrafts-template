@@ -4,7 +4,7 @@ import { Container } from "@/components/ui-effects/grid-1-landing-container";
 import { Hulu } from "@/components/ui-primitives/svgs/grid-1-landing-hulu";
 import { Stripe } from "@/components/ui-primitives/svgs/grid-1-landing-stripe";
 import { Tailwindcss } from "@/components/ui-primitives/svgs/grid-1-landing-tailwindcss";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { testimonials03Namespace } from "./config";
 import type { Testimonials03Block } from "./schema";
 

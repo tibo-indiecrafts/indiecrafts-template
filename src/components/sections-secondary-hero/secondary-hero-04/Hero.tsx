@@ -1,5 +1,5 @@
 import { CursorGlowPhoto } from "@/components/ui-effects/cursor-glow-photo";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { secondaryHero04BackgroundImage, secondaryHero04Namespace } from "./config";
 
 export function Hero() {

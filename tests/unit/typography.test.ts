@@ -6,7 +6,7 @@ import {
   placeAdjective,
   quote,
   type TypographyRules,
-} from "@/lib/typography";
+} from "@/components/_lib/typography";
 
 const enRules: TypographyRules = {
   titleCase: "title",

@@ -5,7 +5,7 @@ import { CurrencyIllustration } from "@/components/ui-illustrations/currency-ill
 import { KeysIllustration } from "@/components/ui-illustrations/keys-illustration-02";
 import { MemoryUsageIllustration } from "@/components/ui-illustrations/memory-usage-illustration-02";
 import { UptimeIllustration } from "@/components/ui-illustrations/uptime-illustration-02";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features37Namespace } from "./config";
 import type { Features37Block } from "./schema";
 

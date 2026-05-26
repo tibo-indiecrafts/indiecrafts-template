@@ -8,7 +8,7 @@ import {
 import { PollIllustration } from "@/components/ui-illustrations/poll-illustration";
 import { ReplyIllustration } from "@/components/ui-illustrations/reply-illustration";
 import { VisualizationIllustration } from "@/components/ui-illustrations/visualization-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { bento01Namespace } from "./config";
 import type { BentoBlock, BentoCell, BentoIllustration } from "./schema";

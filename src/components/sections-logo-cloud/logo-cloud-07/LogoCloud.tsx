@@ -10,7 +10,7 @@ import { InfiniteSlider } from "@/components/ui-effects/infinite-slider";
 import { Button } from "@/components/ui-primitives/button";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { logoCloud07CtaHref, logoCloud07Namespace } from "./config";
 
 export function LogoCloud() {

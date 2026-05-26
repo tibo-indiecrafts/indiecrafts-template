@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import { IntegrationsIllustration } from "@/components/ui-illustrations/integrations-illustration";
 import { MessageIllustration } from "@/components/ui-illustrations/message-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { features14Namespace } from "./config";
 import type { FeaturesBlock, FeaturesIllustration } from "./schema";
 

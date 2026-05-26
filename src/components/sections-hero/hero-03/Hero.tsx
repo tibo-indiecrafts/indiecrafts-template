@@ -2,7 +2,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { LogoCloud01Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-01";
 import { ProductIllustration } from "@/components/ui-illustrations/product-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { hero03CtaHref, hero03Namespace } from "./config";
 
 export function Hero() {

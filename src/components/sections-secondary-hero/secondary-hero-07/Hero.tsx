@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { BillingCheckout } from "@/components/ui-illustrations/billing-checkout";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   secondaryHero07Namespace,
   secondaryHero07PrimaryCtaHref,

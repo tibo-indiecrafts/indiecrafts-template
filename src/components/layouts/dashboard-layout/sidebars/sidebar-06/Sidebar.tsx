@@ -57,7 +57,7 @@ import {
 } from "@tabler/icons-react";
 import type React from "react";
 import { useState } from "react";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { sidebar06Namespace, sidebar06UserAvatarSrc } from "./config";
 import { TeamSwitcherToggle } from "@/components/ui-molecules/team-switcher/toggle";
 

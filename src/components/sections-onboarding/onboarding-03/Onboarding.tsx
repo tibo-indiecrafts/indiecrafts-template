@@ -3,7 +3,7 @@
 import { IconCircleCheckFilled } from "@tabler/icons-react";
 import { useState } from "react";
 import { Progress } from "@/components/ui-primitives/progress";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { onboarding03Namespace, onboarding03Steps } from "./config";
 import type { OnboardingBlock } from "./schema";

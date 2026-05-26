@@ -4,7 +4,7 @@ import { DocumentIllustration } from "@/components/ui-illustrations/document-ill
 import { NotificationIllustration } from "@/components/ui-illustrations/notification-illustration";
 import { ReplyIllustration } from "@/components/ui-illustrations/reply-illustration";
 import { ScheduleIllustration } from "@/components/ui-illustrations/schedule-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { bento13Namespace } from "./config";
 import type { BentoBlock } from "./schema";
 

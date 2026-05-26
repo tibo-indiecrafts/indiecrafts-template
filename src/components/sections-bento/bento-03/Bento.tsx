@@ -9,7 +9,7 @@ import { Linear } from "@/components/ui-primitives/svgs/linear";
 import { OpenAI } from "@/components/ui-primitives/svgs/open-ai";
 import { Replit } from "@/components/ui-primitives/svgs/replit";
 import { VSCodium } from "@/components/ui-primitives/svgs/vs-codium";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { bento03Namespace } from "./config";
 import type { BentoBlock, BentoCell, BentoCellSpan, IntegrationBrand } from "./schema";

@@ -9,7 +9,7 @@ import { TextEffect } from "@/components/ui-effects/text-effect";
 import { PrimeVideo as Primevideo } from "@/components/ui-primitives/svgs/dark-landing-prime-video";
 import { Tailwindcss as TailwindCSS } from "@/components/ui-primitives/svgs/dark-landing-tailwindcss";
 import { VercelWordmark as VercelFull } from "@/components/ui-primitives/svgs/dark-landing-vercel";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { testimonials02Namespace } from "./config";
 import type { TestimonialLogoId, TestimonialsBlock } from "./schema";

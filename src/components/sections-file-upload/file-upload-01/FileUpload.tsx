@@ -22,7 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui-primitives/tooltip";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { fileUpload01Leads, fileUpload01Namespace } from "./config";
 import type { FileUploadBlock } from "./schema";

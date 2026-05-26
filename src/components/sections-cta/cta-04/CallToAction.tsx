@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui-effects/grid-2-landing-button";
 import { Container, Separator } from "@/components/ui-effects/grid-2-landing-container";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cta04Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 

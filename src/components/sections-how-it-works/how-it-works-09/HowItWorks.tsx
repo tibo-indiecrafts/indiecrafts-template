@@ -3,7 +3,7 @@ import { ArrowBigRight } from "lucide-react";
 import { Button } from "@/components/ui-effects/libre-landing-two-button";
 import { CurrencyIllustration } from "@/components/ui-illustrations/currency-illustration-02";
 import { DocumentIllustation } from "@/components/ui-illustrations/document-illustration-05";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { howItWorks09Namespace } from "./config";
 import type { HowItWorks09Block } from "./schema";
 

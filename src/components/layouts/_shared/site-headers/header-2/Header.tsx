@@ -31,7 +31,7 @@ import {
   Notebook,
   Croissant,
 } from "lucide-react";
-import { useMedia } from "@/hooks/use-media";
+import { useMedia } from "@/components/_hooks/use-media";
 import {
   Accordion,
   AccordionContent,

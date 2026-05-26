@@ -4,7 +4,7 @@ import { Spotify } from "@/components/ui-primitives/svgs/spotify";
 import { Stripe } from "@/components/ui-primitives/svgs/stripe";
 import { Supabase } from "@/components/ui-primitives/svgs/supabase";
 import { VercelFull } from "@/components/ui-primitives/svgs/vercel";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { logoCloud04Namespace } from "./config";
 
 export function LogoCloud() {

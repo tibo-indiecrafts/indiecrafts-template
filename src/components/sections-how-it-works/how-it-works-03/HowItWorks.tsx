@@ -3,7 +3,7 @@ import type { ComponentType } from "react";
 import { CodeWindowIllustration } from "@/components/ui-illustrations/code-window-illustration";
 import { MonitoringBarchartIllustration } from "@/components/ui-illustrations/monitoring-barchart-illustration";
 import { ScanIllustration } from "@/components/ui-illustrations/scan-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cn } from "@/lib/utils";
 import { howItWorks03Namespace } from "./config";
 import type { HowItWorksBlock, HowItWorksIllustration } from "./schema";

@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui-primitives/avatar";
 import { Card, CardContent } from "@/components/ui-primitives/card";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { gridList02Namespace, gridList02People } from "./config";
 import type { GridListBlock } from "./schema";
 

@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui-primitives/card";
 import { TrendBadge } from "@/components/ui-molecules/widget/trend-badge";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { stats04Items, stats04Namespace } from "./config";
 import type { StatsBlock } from "./schema";
 

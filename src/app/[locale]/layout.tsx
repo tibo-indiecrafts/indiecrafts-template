@@ -5,7 +5,16 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Script from "next/script";
-import { analytics, locales, seoDefaults, site, theme, type Locale } from "@/config";
+import {
+  analytics,
+  features,
+  locales,
+  seoDefaults,
+  site,
+  theme,
+  type Locale,
+} from "@/config";
+import { CookieBanner } from "@/app/_chrome/CookieBanner";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/layouts/_shared/theme-provider";
 import { buildSiteSchemas, JsonLdScript } from "@/lib/seo/jsonld";
@@ -27,19 +36,23 @@ export function generateStaticParams() {
  * `messages/<locale>.json` so the fallback head is correctly localized
  * even if a route forgets to call `buildMetadata`.
  */
+/** Locale-aware site description. Falls back to the static config value. */
+async function getSiteDescription(locale: Locale): Promise<string> {
+  const t = await getTranslations({ locale });
+  try {
+    return t("site.description");
+  } catch {
+    return site.description;
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale });
-  let siteDescription: string = site.description;
-  try {
-    siteDescription = t("site.description");
-  } catch {
-    /* key missing — keep static fallback */
-  }
+  const siteDescription = await getSiteDescription(locale);
   return {
     metadataBase: new URL(site.url),
     title: { default: seoDefaults.defaultTitle, template: seoDefaults.titleTemplate },
@@ -87,16 +100,7 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   setRequestLocale(locale);
 
   const messages = await getMessages();
-
-  // Locale-aware site description for Organization + WebSite JSON-LD. Falls
-  // back to the static config value when the message key is missing.
-  const t = await getTranslations({ locale });
-  let siteDescription: string = site.description;
-  try {
-    siteDescription = t("site.description");
-  } catch {
-    /* key missing — keep static fallback */
-  }
+  const siteDescription = await getSiteDescription(locale as Locale);
 
   return (
     <html
@@ -123,7 +127,12 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
             <Script id="gtag-init" strategy="afterInteractive">
               {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
+${
+  features.cookieBanner
+    ? `gtag('consent', 'default', { ad_storage: 'denied', analytics_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', wait_for_update: 500 });
+`
+    : ""
+}gtag('js', new Date());
 gtag('config', '${analytics.googleAnalyticsId}');`}
             </Script>
           </>
@@ -136,6 +145,7 @@ gtag('config', '${analytics.googleAnalyticsId}');`}
           </NextIntlClientProvider>
         </ThemeProvider>
         <JsonLdScript data={buildSiteSchemas({ description: siteDescription })} />
+        {features.cookieBanner ? <CookieBanner /> : null}
         <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>
       </body>
     </html>

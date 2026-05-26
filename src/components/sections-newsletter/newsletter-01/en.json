@@ -4,5 +4,6 @@
   "body": "One short email a month, packed with the templates, patterns, and tools we use to ship faster. No spam, unsubscribe in a click.",
   "emailPlaceholder": "you@studio.com",
   "submit": "Subscribe",
-  "privacy": "We respect your privacy. Unsubscribe at any time."
+  "privacy": "We respect your privacy. Unsubscribe at any time.",
+  "error": "Something went wrong. Please try again."
 }

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui-primitives/button";
 import { Link } from "@/i18n/routing";
 import { LogoCloud01Section as LogoCloud } from "@/components/sections-logo-cloud/logo-cloud-01";
 import Image from "next/image";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import {
   hero08BackgroundImageDark,
   hero08BackgroundImageLight,

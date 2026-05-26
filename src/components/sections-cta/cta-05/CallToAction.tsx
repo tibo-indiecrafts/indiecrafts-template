@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui-effects/libre-landing-button";
 import { CtaIllustration } from "@/components/ui-illustrations/cta-illustration";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { cta05Namespace } from "./config";
 import type { CallToActionBlock } from "./schema";
 

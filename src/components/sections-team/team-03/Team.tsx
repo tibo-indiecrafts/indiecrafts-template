@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui-primitives/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui-primitives/avatar";
-import { useScopedT } from "@/i18n/scoped-t";
+import { useScopedT } from "@/components/_lib/scoped-t";
 import { team03Namespace } from "./config";
 import type { TeamBlock } from "./schema";
 
