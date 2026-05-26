@@ -186,6 +186,14 @@ export const features = {
   cookieBanner: false,
   /** Enables `/legal` — privacy + cookies + terms page. */
   legalPage: false,
+  /**
+   * Enables `/blog` + `/blog/[slug]` — Sanity-powered article list and
+   * detail pages. When OFF, both routes 404 (and sitemap / llms.txt drop
+   * the blog entry via `pages.blog.enabled`). The Sanity Studio at
+   * `/studio` stays available regardless — content authors can keep
+   * editing while the public route is hidden.
+   */
+  blog: false,
 } as const;
 
 /**
@@ -279,5 +287,15 @@ export const pages = {
     slug: "/legal",
     // Gated by the feature flag — sitemap + routing pick up the change.
     enabled: features.legalPage,
+  },
+  blog: {
+    key: "/blog",
+    id: "blog",
+    slug: "/blog",
+    // Mirrors `features.blog` — sitemap + llms.txt + routing all gate off this.
+    enabled: features.blog,
+    seo: {
+      keywords: ["blog", "articles", "indiecrafts"],
+    },
   },
 } as const satisfies Record<string, PageConfig>;

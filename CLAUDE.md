@@ -46,6 +46,18 @@ src/lib/
      jsonld-factories.tsx  On-demand: FAQ, Article, Service, Product, LocalBusiness, Person, Breadcrumb
      page-markdown.ts      Backs /llms.txt + /llms-full.txt + /llms/<id>
 
+src/sanity/                Sanity client + Studio wiring
+   env.ts                  projectId / dataset / apiVersion (NEXT_PUBLIC_SANITY_*)
+   client.ts               Read client for RSC queries (useCdn: false)
+   Studio.tsx              "use client" wrapper around <NextStudio>
+   queries.ts              GROQ — allPostsQuery, postBySlugQuery, allPostSlugsQuery
+   types.ts                Post, PostListItem, AuthorRef, CategoryRef
+   image.ts                urlFor(source) — Sanity image URL builder
+   schema/                 post / author / category / blockContent
+
+sanity.config.ts           Studio config — registers schema types, plugins
+src/app/studio/            Embedded Studio at /studio (catch-all route)
+
 messages/<locale>.json     Single flat tree — chrome + pages.<id>.{title, description, blocks}
 ```
 
@@ -112,6 +124,26 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 
 `/<locale>/llms.txt`, `/<locale>/llms-full.txt`, `/<locale>/llms/<id>` — all auto-built from `messages.<locale>.pages.*`. **Zero per-page config.** Add a page → it appears in all three, in every locale.
 
+## Sanity + blog (feature-flagged)
+
+The template ships a Sanity-backed blog ported from `GetNextjsTemplates/blog-forge`. Disabled by default; flip `features.blog` in `config/index.ts` to turn on `/blog` + `/blog/[slug]`.
+
+**Schemas** (in `src/sanity/schema/`): `post` (title, slug, excerpt, mainImage, author ref, categories refs, publishedAt, body), `author`, `category`, `blockContent` (rich text). They're registered via `src/sanity/schema/index.ts` and loaded by `sanity.config.ts`.
+
+**Studio at `/studio`** — embedded catch-all route at `src/app/studio/[[...tool]]/page.tsx`. Stays available even when `features.blog === false` so content authors can keep working while the public route is hidden. Excluded from the next-intl proxy matcher.
+
+**Queries** (in `src/sanity/queries.ts`) use `defineQuery` so a future `sanity typegen` run can pick them up. Always fetch through `@/sanity/client` — never instantiate a new `createClient` per route.
+
+**Blog detail SEO**: per-post `<title>` / `<meta description>` / `og:image` come from the post itself; `generateMetadata` spreads `buildMetadata({ page: pages.blog, locale })` first then overrides. JSON-LD adds an `Article` via `buildArticleSchema(...)`.
+
+**Feature flag** (`features.blog`):
+
+- `pages.blog.enabled` mirrors the flag so sitemap + llms.txt drop the entry automatically.
+- Both `/blog` and `/blog/[slug]` call `notFound()` when the flag is off.
+- `generateStaticParams` returns `[]` for `/blog/[slug]` when off — build stays fast.
+
+To wire Sanity to your project, set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (see `.env.example`). The CSP in `next.config.ts` already allows `https://*.sanity.io` + `wss://*.api.sanity.io`.
+
 ## Theming + accessibility
 
 - Tailwind v4 + CSS vars. Tokens in `theme.*` (config/index.ts), mirrored in `globals.css` as `oklch(...)`.
@@ -137,6 +169,8 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 - NEVER depend on `../indiecrafts-library` at runtime — it's browse-only, copy what you need.
 - NEVER swallow errors — `logger.error(...)` minimum.
 - NEVER set state inside `useEffect` to mark hydration — use `useSyncExternalStore`.
+- NEVER instantiate a Sanity `createClient` per route — use `@/sanity/client`.
+- NEVER expose `SANITY_API_READ_TOKEN` (or any non-public Sanity token) under a `NEXT_PUBLIC_` prefix.
 - ALWAYS `setRequestLocale(locale)` at the top of server components using translations or metadata.
 - ALWAYS run `pnpm verify:quick` before push.
 

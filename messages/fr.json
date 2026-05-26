@@ -102,6 +102,18 @@
         }
       }
     },
+    "blog": {
+      "title": "Blog",
+      "description": "Articles, tutoriels et coulisses.",
+      "heading": "Lire, apprendre, grandir",
+      "subheading": "Des conseils d'experts aux coulisses — du contenu pensé pour les esprits curieux.",
+      "readMore": "Lire la suite",
+      "minRead": "{minutes} min de lecture",
+      "publishedOn": "Publié le {date}",
+      "by": "Par {name}",
+      "backToList": "← Tous les articles",
+      "noPosts": "Aucun article pour le moment. Revenez bientôt."
+    },
     "home": {
       "title": "Indiecrafts — template Next.js rapide et modulaire",
       "description": "Un template Next.js 16 piloté par la configuration, avec sections, layouts et page-templates prêts à forker pour chaque client.",

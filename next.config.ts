@@ -33,6 +33,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "randomuser.me" },
       { protocol: "https", hostname: "avatars.githubusercontent.com" },
       { protocol: "https", hostname: "raw.githubusercontent.com" },
+      // Sanity-hosted assets — images, author portraits, post covers.
+      { protocol: "https", hostname: "cdn.sanity.io" },
     ],
     formats: ["image/avif", "image/webp"],
     // 1 year — once next/image hashes an asset's source it's immutable, so

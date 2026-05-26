@@ -21,8 +21,8 @@ export type Locale = (typeof locales)[number]["code"];
 
 // ── Routes ───────────────────────────────────────────────────
 
-export type StaticAppPathname = "/" | "/legal";
-export type DynamicAppPathname = never;
+export type StaticAppPathname = "/" | "/legal" | "/blog";
+export type DynamicAppPathname = "/blog/[slug]";
 export type AppPathname = StaticAppPathname | DynamicAppPathname;
 
 // ── Page config ──────────────────────────────────────────────
