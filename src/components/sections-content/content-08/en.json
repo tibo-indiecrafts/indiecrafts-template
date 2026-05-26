@@ -1,9 +1,0 @@
-{
-  "title": "By the numbers",
-  "intro": "Proof the approach works — aggregate signals from across every active deployment.",
-  "items": {
-    "stars": { "value": "+1,200", "label": "Stars on GitHub" },
-    "users": { "value": "22M", "label": "Active users" },
-    "apps": { "value": "+500", "label": "Powered apps" }
-  }
-}

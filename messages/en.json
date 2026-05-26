@@ -68,6 +68,17 @@
     "nonNegative": "Must be zero or greater."
   },
   "pages": {
+    "error": {
+      "title": "Something went wrong",
+      "description": "An unexpected error occurred. Please try again.",
+      "retryLabel": "Try again"
+    },
+    "notFound": {
+      "eyebrow": "404",
+      "title": "Page not found",
+      "description": "The page you requested doesn't exist or has moved.",
+      "homeLabel": "← Back home"
+    },
     "legal": {
       "title": "Legal",
       "description": "Privacy policy, cookie usage, and terms of service.",

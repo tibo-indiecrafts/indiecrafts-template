@@ -1,8 +1,0 @@
-{
-  "title": "Watchlist",
-  "items": {
-    "alpha": { "name": "Alpha Corp", "tickerSymbol": "ACP" },
-    "beta": { "name": "Beta Solutions", "tickerSymbol": "BTS" },
-    "gamma": { "name": "Gamma Industries", "tickerSymbol": "GMI" }
-  }
-}

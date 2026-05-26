@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Logo } from "@/components/layouts/_shared/logo";
-import { LocaleSwitcher } from "@/components/layouts/_shared/locale-switcher";
-import { ThemeToggle } from "@/components/layouts/_shared/theme-toggle";
+import { Logo } from "@/app/_chrome/Logo";
+import { LocaleSwitcher } from "@/app/_chrome/LocaleSwitcher";
+import { ThemeToggle } from "@/app/_chrome/ThemeToggle";
 import { Link } from "@/i18n/routing";
 import { features } from "@/config";
 import { headerNav } from "@/config";

@@ -1,6 +1,6 @@
 # indiecrafts.dev — CLAUDE.md
 
-Config-first, modular Next.js 16 template for client sites.
+Config-first, modular Next.js 16 template for client sites. Production-only — the Storybook component library lives in the sibling repo `../indiecrafts-library`.
 
 ## Working principles
 
@@ -13,11 +13,9 @@ Config-first, modular Next.js 16 template for client sites.
 ## Commands
 
 ```bash
-pnpm dev / build / tsc / lint / format / test    # standard
-pnpm new:page <id>                                # scaffold a route
-pnpm verify                                       # CI gate (tsc + lint + format + contrast)
-pnpm verify:quick                                 # tsc + lint (pre-push)
-pnpm storybook                                    # browse /components
+pnpm dev / build / tsc / lint / format    # standard
+pnpm verify                               # CI gate (tsc + lint + format + contrast)
+pnpm verify:quick                         # tsc + lint (pre-push)
 ```
 
 Pre-push hook: `lint && tsc`. Pre-commit: `lint-staged`.
@@ -25,25 +23,28 @@ Pre-push hook: `lint && tsc`. Pre-commit: `lint-staged`.
 ## Architecture
 
 ```
-src/config/index.ts        Pure data (site, theme, locales, features, navigation, seoDefaults, llms, pages, globalSchemas, analytics)
+src/config/index.ts        Pure data — site, theme, locales, features, navigation, seoDefaults, llms, pages, globalSchemas, analytics
 src/config/types.ts        Types + helpers (definePage, isLocale, …)
 
-src/app/_chrome/           PRODUCTION layout — forked from /components/layouts/, no /components imports
+src/app/_chrome/           Production chrome: DefaultLayout, Header, Footer, SkipLink, CookieBanner,
+                           Logo, LocaleSwitcher, ThemeToggle, ThemeProvider
 src/app/[locale]/<seg>/    One route per folder (page.tsx). Home = (home) route group.
-src/app/routes.ts          Auto-aggregates `pages` map into ROUTES + PATHNAMES
+src/app/routes.ts          Auto-aggregates `pages` map → ROUTES + PATHNAMES
 
-src/components/            EXAMPLES library — Storybook fodder. Copy strings + mount in /app to use.
+src/components/
    ui-primitives/          shadcn (READ-ONLY, CLI-managed)
-   ui-effects/             upstream effects (flat files = READ-ONLY; wrapper folders = editable)
-   ui-molecules/           shared composites
-   sections-<type>/        content blocks (one folder per variant)
-   layouts/                example chrome variants — NOT loaded in production
-   _shared/                atoms shared by layouts (Logo, LocaleSwitcher, ThemeToggle, …)
+   sections/               Production sections — copy targets from the sibling library
+   pages/                  Full-page composites (Error, NotFound)
 
-src/lib/seo/
-   jsonld.tsx              Auto-emitted on every page: Organization + WebSite + WebPage
-   jsonld-factories.tsx    On-demand: FAQ, Article, Service, Product, LocalBusiness, Person, Breadcrumb
-   page-markdown.ts        Backs /llms.txt + /llms-full.txt + /llms/<id>
+src/hooks/                 Production hooks (use-mobile)
+src/lib/
+   scoped-t.ts             useScopedT for sections that take MessageKey overrides
+   metadata.ts             buildMetadata({ page, locale }) — inherits site → page
+   logger.ts               Minimal logger — never use console.* directly
+   seo/
+     jsonld.tsx            Auto-emitted: Organization + WebSite + WebPage
+     jsonld-factories.tsx  On-demand: FAQ, Article, Service, Product, LocalBusiness, Person, Breadcrumb
+     page-markdown.ts      Backs /llms.txt + /llms-full.txt + /llms/<id>
 
 messages/<locale>.json     Single flat tree — chrome + pages.<id>.{title, description, blocks}
 ```
@@ -68,7 +69,7 @@ messages/<locale>.json     Single flat tree — chrome + pages.<id>.{title, desc
 }
 ```
 
-- Drop variant suffix in production keys: `/components/sections-features/features-01/` → `pages.home.blocks.features`.
+- Drop variant suffix in production keys: library's `sections-features/features-01/` → `pages.home.blocks.features`.
 - Same block on multiple pages = duplicate copy under each page (cheap, independent).
 - Adding a locale: append to `locales` array + drop `messages/<code>.json`.
 
@@ -76,16 +77,19 @@ messages/<locale>.json     Single flat tree — chrome + pages.<id>.{title, desc
 
 1. `src/app/[locale]/<seg>/page.tsx`
 2. Entry in `pages` (config/index.ts): `{ key, id, slug, seo: { keywords } }`
-3. Key in `AppPathname` (`src/config/routes.types.ts`)
+3. Key in `AppPathname` (`src/config/types.ts`)
 4. `pages.<id>.title` + `pages.<id>.description` in every `messages/<locale>.json`
 
 Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, JSON-LD WebPage.
 
 ## Adding a section to a route
 
-1. Pick from `/components/sections-*/` (browse Storybook)
-2. Copy its `en.json` into `messages.<locale>.pages.<id>.blocks.<simpleName>` (drop -NN)
-3. Mount in route's `page.tsx` with explicit `*Key` props → `pages.<id>.blocks.<simpleName>.*`
+The /app does NOT import the library at runtime — they're two separate repos. To add a section:
+
+1. Open Storybook in the sibling library (`cd ../indiecrafts-library && pnpm storybook`).
+2. Find the variant you want. Copy its component file into `src/components/sections/<Name>.tsx`. If the upstream ships a multi-file folder (schema.ts + config.ts + en.json), flatten everything into one .tsx file as you copy. See `src/components/sections/Features.tsx` for the target shape.
+3. Drop the matching `en.json` content into `messages/<locale>.pages.<id>.blocks.<simpleName>` (drop -NN).
+4. Mount in the route's `page.tsx` with explicit `*Key` props pointing at the new keys.
 
 See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 
@@ -116,6 +120,12 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 - `next/og` (Satori) doesn't understand oklch → keep `theme.hexColors` in sync with `theme.colors` for the brand/foreground pairs.
 - `<html lang>` + `dir` from active locale. `SkipLink` first in body, targets `#main`. Layouts render exactly one `<main id="main" tabIndex={-1}>`. Sections: `<section aria-labelledby="…">`. Icons `aria-hidden="true"` unless they're the sole label. Respect `prefers-reduced-motion`.
 
+## Relationship to the library
+
+- The library at `../indiecrafts-library` is a Storybook-only browse surface. The /app has **zero runtime imports** from it.
+- Workflow when the library improves a component: re-copy the file by hand, re-run `pnpm verify:quick`.
+- Don't add the library as a workspace, dependency, or symlink — keeping them decoupled is the design.
+
 ## Critical rules (the NEVERs)
 
 - NEVER commit `.env*` (only `.env.example`).
@@ -123,23 +133,12 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 - NEVER import from `next/link` or `next-intl/navigation` — use `@/i18n/routing`.
 - NEVER inline user-facing strings — every visible string lives in `messages/<locale>.json`.
 - NEVER add `as any` — fix the type, or eslint-disable with a one-line reason.
-- NEVER edit `src/components/ui-primitives/**` (shadcn) or flat files in `src/components/ui-effects/*.tsx` (upstream).
+- NEVER edit `src/components/ui-primitives/**` (shadcn — managed via CLI).
+- NEVER depend on `../indiecrafts-library` at runtime — it's browse-only, copy what you need.
 - NEVER swallow errors — `logger.error(...)` minimum.
+- NEVER set state inside `useEffect` to mark hydration — use `useSyncExternalStore`.
 - ALWAYS `setRequestLocale(locale)` at the top of server components using translations or metadata.
 - ALWAYS run `pnpm verify:quick` before push.
-
-## Folder conventions
-
-| Path                            | Folder                                | File                                | Edit?                             |
-| ------------------------------- | ------------------------------------- | ----------------------------------- | --------------------------------- |
-| `ui-primitives/<name>.tsx`      | flat kebab                            | flat kebab                          | NO (shadcn CLI)                   |
-| `ui-effects/<name>.tsx`         | flat kebab                            | flat kebab                          | NO (upstream — treat as vendored) |
-| `ui-effects/<Name>/`            | kebab                                 | PascalCase                          | YES (wrapper)                     |
-| `ui-molecules/<domain>/<name>/` | kebab                                 | PascalCase                          | YES                               |
-| `sections-<type>/<variant>/`    | kebab `<bucket>-<NN>`                 | PascalCase (no digits in file name) | YES                               |
-| `layouts/_shared/<x>/`          | kebab (underscore prefix sorts first) | PascalCase                          | YES                               |
-
-`index.ts` barrel re-aliases the bare component as `<Bucket><NN>Section` so consumers always import the unique name.
 
 ## File-size discipline
 
@@ -150,7 +149,7 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 ## Verification (CI runs all of these)
 
 1. `pnpm tsc` — strict, no emit
-2. `pnpm lint` — zero errors (warnings tolerated for /components placeholder anchors)
+2. `pnpm lint` — zero errors
 3. `pnpm format:check`
 4. `pnpm verify:contrast` — WCAG AA on theme tokens
 5. `pnpm build` — prerenders every static route × locale

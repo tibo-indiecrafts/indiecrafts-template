@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { Logo } from "@/components/layouts/_shared/logo";
+import { Logo } from "@/app/_chrome/Logo";
 import { footerNav } from "@/config";
 import { site } from "@/config";
 

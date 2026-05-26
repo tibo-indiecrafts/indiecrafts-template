@@ -1,7 +1,0 @@
-{
-  "trigger": "Deactivate",
-  "title": "Deactivate account",
-  "description": "Are you sure you want to deactivate your account? All of your data will be permanently removed. This action cannot be undone.",
-  "cancel": "Cancel",
-  "confirm": "Deactivate"
-}

@@ -3,15 +3,12 @@
 /*
  * Component-co-located animation tokens.
  *
- * When you copy a component from /components into the app and it ships its
- * own `.css` file (Tailwind v4 merges every `@theme inline` block reachable
- * through the @import graph), add a one-line @import here pointing at it.
- * Example:
- *   @import "../components/ui-effects/meteors.css";
- *
- * Components without a co-located .css need no entry here.
+ * When you copy a component from the sibling indiecrafts-library and it
+ * ships its own `.css` file (Tailwind v4 merges every `@theme inline`
+ * block reachable through the @import graph), add a one-line @import here
+ * pointing at the local copy. Components without a co-located .css need
+ * no entry here.
  */
-@import "dither-plugin";
 
 /*
  * Theme tokens — mirror src/config/theme.config.ts.

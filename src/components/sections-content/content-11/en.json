@@ -1,9 +1,0 @@
-{
-  "title": "Signals that matter",
-  "intro": "The numbers below are the ones we look at every week to see whether we're still solving the right problem.",
-  "items": {
-    "stars": { "value": "+1,200", "label": "Stars on GitHub" },
-    "conversion": { "value": "56%", "label": "Conversion rate" },
-    "apps": { "value": "+500", "label": "Powered apps" }
-  }
-}

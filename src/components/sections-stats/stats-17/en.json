@@ -1,9 +1,0 @@
-{
-  "title": "Acme in numbers",
-  "body": "Gemini is evolving to be more than just the models. It supports an entire to the APIs and platforms helping developers and businesses innovate.",
-  "items": {
-    "1": { "value": "+1200", "body": "Stars on GitHub" },
-    "2": { "value": "22 Million", "body": "Active Users" },
-    "3": { "value": "+500", "body": "Powered Apps" }
-  }
-}

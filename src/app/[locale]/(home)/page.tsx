@@ -5,27 +5,19 @@ import type { Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/_chrome/DefaultLayout";
-import { Features01Section } from "@/components/sections-features/features-01";
-import { CallToActionSection } from "@/components/sections-cta/cta-01";
-import { Pricing01Section } from "@/components/sections-pricing/pricing-01";
-import { Testimonials01Section } from "@/components/sections-testimonials/testimonials-01";
+import { Features } from "@/components/sections/Features";
+import { Cta } from "@/components/sections/Cta";
+import { Pricing } from "@/components/sections/Pricing";
+import { Testimonials } from "@/components/sections/Testimonials";
 
 /**
- * Production home page. Everything route-specific lives in this folder:
- *   - `page.config.ts` — key, slug, id, SEO (pure data, imported by routing
- *      + sitemap)
- *   - `page.tsx` (this file) — generateMetadata + the React composition
+ * Production home page. Section components live in `src/components/sections/`
+ * and are mounted with explicit `*Key` props pointing at
+ * `pages.home.blocks.<name>.*` in `messages/<locale>.json`.
  *
- * The split is required by Next.js's server/client boundary: routing.ts is
- * server-only and importing page.tsx (which transitively touches client
- * components) would mismark this page as client. page.config.ts has no
- * React deps so it crosses freely.
- *
- * Section blocks are mounted with explicit `*Key` props pointing at
- * `pages.home.blocks.<simpleName>.*` in `messages/<locale>.json`. The
- * section components themselves are picked from /components (an examples
- * library — its built-in samples reference `blocks.<name>-NN.*` for
- * Storybook only; production keys live under `pages.<route>.blocks.*`).
+ * To swap in a new section variant: browse the sibling library repo
+ * (`indiecrafts-library`, `pnpm storybook`), copy the section file into
+ * `src/components/sections/`, drop its block keys into messages/, mount here.
  */
 
 type Props = { params: Promise<{ locale: Locale }> };
@@ -49,9 +41,10 @@ export default async function HomePage({ params }: Props) {
       <PageSchemas page={pages.home} locale={locale} />
       <h1 className="sr-only">{t("title")}</h1>
 
-      <Features01Section
-        type="features-01"
+      <Features
+        type="features"
         id="home-features"
+        namespace={`${BLOCKS}.features`}
         titleKey={`${BLOCKS}.features.title`}
         bodyKey={`${BLOCKS}.features.body`}
         items={[
@@ -73,18 +66,20 @@ export default async function HomePage({ params }: Props) {
         ]}
       />
 
-      <CallToActionSection
-        type="cta-01"
+      <Cta
+        type="cta"
         id="home-cta"
+        namespace={`${BLOCKS}.cta`}
         titleKey={`${BLOCKS}.cta.title`}
         bodyKey={`${BLOCKS}.cta.body`}
         emailPlaceholderKey={`${BLOCKS}.cta.emailPlaceholder`}
         submitLabelKey={`${BLOCKS}.cta.submit`}
       />
 
-      <Pricing01Section
-        type="pricing-01"
+      <Pricing
+        type="pricing"
         id="home-pricing"
+        namespace={`${BLOCKS}.pricing`}
         titleKey={`${BLOCKS}.pricing.title`}
         bodyKey={`${BLOCKS}.pricing.body`}
         tiers={[
@@ -136,9 +131,10 @@ export default async function HomePage({ params }: Props) {
         ]}
       />
 
-      <Testimonials01Section
-        type="testimonials-01"
+      <Testimonials
+        type="testimonials"
         id="home-testimonials"
+        namespace={`${BLOCKS}.testimonials`}
         quotes={[
           {
             id: "lovelace",

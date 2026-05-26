@@ -16,7 +16,7 @@ import {
 } from "@/config";
 import { CookieBanner } from "@/app/_chrome/CookieBanner";
 import { routing } from "@/i18n/routing";
-import { ThemeProvider } from "@/components/layouts/_shared/theme-provider";
+import { ThemeProvider } from "@/app/_chrome/ThemeProvider";
 import { buildSiteSchemas, JsonLdScript } from "@/lib/seo/jsonld";
 
 const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"], display: "swap" });

@@ -2,7 +2,9 @@
 
 Config-first Next.js 16 template for client sites. Edit `src/config/index.ts`, compose sections into your route, ship.
 
-**Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · next-intl v4 · next-themes · Storybook 10 · shadcn/ui.
+**Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · next-intl v4 · next-themes · shadcn/ui.
+
+The sibling **[indiecrafts-library](../indiecrafts-library)** repo is a Storybook component library — browse it to find sections, then copy the file you want into `src/components/sections/` here. This /app stays decoupled and ships only what it uses.
 
 Detailed conventions: [`CLAUDE.md`](./CLAUDE.md).
 
@@ -12,8 +14,7 @@ Detailed conventions: [`CLAUDE.md`](./CLAUDE.md).
 pnpm install
 pnpm dev                # http://localhost:3000
 pnpm verify             # tsc + lint + format:check + contrast (full CI gate)
-pnpm verify:quick       # tsc + lint (the pre-push gate)
-pnpm storybook          # browse the /components examples library
+pnpm verify:quick       # tsc + lint (pre-push)
 ```
 
 ## How it's organised
@@ -22,15 +23,22 @@ pnpm storybook          # browse the /components examples library
 messages/<locale>.json    Single source of truth for ALL user-facing copy
 src/
 ├── app/
-│   ├── _chrome/          PRODUCTION layout (DefaultLayout, Header, Footer, SkipLink)
-│   ├── [locale]/         Routes — `(home)`, future `about/`, `pricing/`, …
-│   └── routes.ts         Auto-aggregates `pages` map into ROUTES + PATHNAMES
+│   ├── _chrome/          Production chrome — DefaultLayout, Header, Footer, SkipLink,
+│   │                     CookieBanner + Logo, LocaleSwitcher, ThemeToggle, ThemeProvider
+│   ├── [locale]/         Routes — `(home)`, `legal`, error, not-found, llms.txt, llms-full.txt, llms/[id]
+│   └── routes.ts         Auto-aggregates `pages` map → ROUTES + PATHNAMES
+├── components/
+│   ├── ui-primitives/    shadcn/ui (READ-ONLY, CLI-managed)
+│   ├── sections/         Production section components — copy here from the library
+│   └── pages/            Full-page composites (Error, NotFound)
 ├── config/
 │   ├── index.ts          PURE DATA — site, theme, locales, features, seo, pages, …
 │   └── types.ts          Types + helpers (definePage, isLocale, …)
-├── components/           EXAMPLES LIBRARY — Storybook fodder, copy into /app to use
+├── hooks/                Production hooks (use-mobile)
 ├── i18n/                 Routing + request handler (loads messages/<locale>.json)
 └── lib/
+    ├── scoped-t.ts             useScopedT hook for section i18n
+    ├── metadata.ts             buildMetadata({ page, locale }) — inherits site → page
     └── seo/
         ├── jsonld.tsx              Auto-emitted: Organization + WebSite + WebPage
         ├── jsonld-factories.tsx    On-demand: FAQ, Article, Service, Product, …
@@ -41,20 +49,19 @@ src/
 
 1. Folder under `src/app/[locale]/<seg>/` with a `page.tsx`
 2. Entry in `pages` map (`src/config/index.ts`): `{ key, id, slug, seo: { keywords } }`
-3. Key in `AppPathname` (`src/config/routes.types.ts`)
+3. Key in `AppPathname` (`src/config/types.ts`)
 4. `pages.<id>.title` + `pages.<id>.description` in every `messages/<locale>.json`
 
 Everything else propagates — sitemap, routing, llms.txt, SEO metadata, JSON-LD.
 
 ## Adding a section
 
-`/components` is an examples library. To use one in production:
+1. Browse the sibling **[indiecrafts-library](../indiecrafts-library)** (`pnpm storybook`) and find a section variant.
+2. Copy its `Component.tsx` into `src/components/sections/<Name>.tsx`. If it ships a multi-file folder, flatten the schema + config into one file as you copy. See `src/components/sections/Features.tsx` for the target shape.
+3. Drop its sample copy (`en.json`) into `messages/<locale>.pages.<id>.blocks.<simpleName>`. Drop the `-NN` variant suffix — production keys are clean.
+4. Mount it in your route's `page.tsx` with explicit `*Key` props pointing at those keys. See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 
-1. Browse Storybook, pick a section (e.g. `Features01`)
-2. Copy its strings from `components/<bucket>/<variant>/en.json` into your route's `messages.<locale>.pages.<id>.blocks.<simpleName>` (drop the `-01` suffix)
-3. Mount it in your route's `page.tsx` with `*Key` props pointing at the new paths
-
-The component itself stays in `/components`. Only the strings move into your messages tree. See `src/app/[locale]/(home)/page.tsx` for the live pattern.
+The library is **never imported at runtime** — it's a Storybook-only browse surface. The /app ships only the section files you've copied in.
 
 ## i18n
 
@@ -152,10 +159,7 @@ Submissions are stored on Netlify and visible in the dashboard → Forms. No API
 - `public/__forms.html` declares each form schema (Netlify's HTML parser only scans static files; Next.js dynamic pages don't count). Add a `<form>` block here for every form your site renders.
 - React forms include a matching `name`, `data-netlify="true"`, a hidden `<input name="form-name" />`, and a honeypot `<input name="bot-field" />`. They POST URL-encoded data to `/`; Netlify routes by `form-name`.
 
-Wired sections:
-
-- `sections-newsletter/newsletter-01/` — email-only signup → form name `"newsletter"`
-- `sections-contact/contact-netlify-01/` — name + email + message → form name `"contact"`
+The library ships ready-to-copy newsletter + contact section variants — pick one, copy in, and Netlify scans `public/__forms.html` at build time.
 
 Set up email/Slack notifications in Netlify dashboard → Forms → Settings. Local dev posts to the dev server and quietly fails — test forms by pushing to a Netlify branch preview.
 
@@ -192,5 +196,6 @@ For EU traffic with GA enabled, turn both on.
 - Never inline user-facing strings — use messages
 - Never `import Link from "next/link"` — use `@/i18n/routing`
 - Never edit `src/components/ui-primitives/**` (shadcn-managed)
+- Never depend on `../indiecrafts-library` at runtime — that repo is browse-only
 - Always `setRequestLocale(locale)` in server components that use translations
 - Always run `pnpm verify:quick` before push

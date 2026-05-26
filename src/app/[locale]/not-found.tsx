@@ -1,5 +1,5 @@
-import { NotFound01 } from "@/components/pages-not-found/not-found-01";
+import { NotFound as NotFoundPage } from "@/components/pages/NotFound";
 
 export default function NotFound() {
-  return <NotFound01 />;
+  return <NotFoundPage />;
 }

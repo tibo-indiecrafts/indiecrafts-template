@@ -68,6 +68,17 @@
     "nonNegative": "Doit être zéro ou supérieur."
   },
   "pages": {
+    "error": {
+      "title": "Une erreur est survenue",
+      "description": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "retryLabel": "Réessayer"
+    },
+    "notFound": {
+      "eyebrow": "404",
+      "title": "Page introuvable",
+      "description": "La page demandée n'existe pas ou a été déplacée.",
+      "homeLabel": "← Retour à l'accueil"
+    },
     "legal": {
       "title": "Mentions légales",
       "description": "Politique de confidentialité, usage des cookies, conditions d'utilisation.",
