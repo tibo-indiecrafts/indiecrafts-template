@@ -3,13 +3,16 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
 /**
- * ESLint config — production app only.
+ * ESLint flat config — production app.
  *
- * `next/core-web-vitals` bundles `jsx-a11y/recommended`. We enumerate the
- * rules below explicitly so future eslint-config-next changes can't
- * silently weaken accessibility coverage.
+ * Enumerates `jsx-a11y` rules explicitly so a future `eslint-config-next`
+ * downgrade can't silently weaken accessibility coverage. WCAG 2.1 AA is
+ * the baseline; treat every jsx-a11y violation as an error.
  *
- * WCAG 2.1 AA is the baseline; treat jsx-a11y violations as errors.
+ * Mirrors the rule set in `../indiecrafts-library/eslint.config.mjs` so
+ * both repos enforce the same a11y bar. The library loosens
+ * `anchor-is-valid` + `no-static-element-interactions` on its /components
+ * examples surface; /app keeps the strict defaults everywhere.
  */
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -55,6 +58,12 @@ const eslintConfig = defineConfig([
       "jsx-a11y/no-access-key": "error",
       "jsx-a11y/no-distracting-elements": "error",
       "jsx-a11y/lang": "error",
+
+      // Underscore-prefixed args/vars are intentional placeholders
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
     },
   },
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
