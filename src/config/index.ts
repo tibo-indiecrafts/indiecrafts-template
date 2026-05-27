@@ -193,7 +193,7 @@ export const features = {
    * `/studio` stays available regardless — content authors can keep
    * editing while the public route is hidden.
    */
-  blog: false,
+  blog: true,
 } as const;
 
 /**

@@ -75,9 +75,10 @@ const MODULES_FRAGMENT = `
     }
   },
   _type == "module.quote-list" => {
-    "quotes": quotes[@->coalesce(language, "en") == $locale]->{
-      _id, content, author, role, image { asset->{ url } }
-    }
+    "quotes": quotes[]->{
+      _id, content, author, role, language,
+      image { asset->{ url } }
+    }[coalesce(language, "en") == $locale]
   },
   _type == "module.form" => {
     form->{
