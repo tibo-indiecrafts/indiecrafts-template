@@ -47,6 +47,11 @@ export type Post = PostListItem & {
   readTime?: number;
   /** Flat heading list — derived in GROQ, drives the Table of Contents. */
   headings?: Heading[];
+  /**
+   * Per-post module override. When non-empty, the detail route renders
+   * these instead of the shared `blog.postModules` from the singleton.
+   */
+  modules?: AnyModule[];
 };
 
 export type PostSlug = { slug?: string; language?: string };

@@ -1,5 +1,8 @@
 import { EditIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { MODULE_TYPES } from "./modules";
+
+const MODULE_FIELD_REFS = MODULE_TYPES.map((type) => ({ type }));
 
 /**
  * Blog post — title + body + structured metadata block.
@@ -73,6 +76,15 @@ export default defineType({
       name: "body",
       title: "Body",
       type: "blockContent",
+      group: "content",
+    }),
+    defineField({
+      name: "modules",
+      title: "Modules (overrides post layout)",
+      description:
+        "Optional. When set, this post's layout is composed of these modules instead of the shared `blog.postModules`. Drop a `module.blog-post-content` somewhere in the array to slot in the body field above. Useful for one-off showcase posts.",
+      type: "array",
+      of: MODULE_FIELD_REFS,
       group: "content",
     }),
     defineField({

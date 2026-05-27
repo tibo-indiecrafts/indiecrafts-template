@@ -88,7 +88,9 @@ export default async function BlogPostPage({ params }: Props) {
   const title = post.metadata?.title ?? post.title ?? "";
   const description = post.metadata?.description;
   const image = post.metadata?.image?.asset?.url;
-  const modules = blog?.postModules ?? [];
+  // Per-post `modules` override the singleton's `postModules`. Empty
+  // arrays on both sides → default article layout.
+  const modules = post.modules?.length ? post.modules : (blog?.postModules ?? []);
 
   return (
     <DefaultLayout>

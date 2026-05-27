@@ -5,23 +5,29 @@
  *   pnpm seed:blog
  *
  * Needs a write-capable Sanity token in `SANITY_API_WRITE_TOKEN`
- * (Editor role is enough). Get one at:
- *   https://www.sanity.io/manage/personal/project/qy2pp5sn/api → Tokens.
+ * (Editor role is enough). The package.json script loads `.env.local`
+ * automatically via Node's `--env-file` flag.
  *
  * Idempotent: re-running re-applies the same `_id`s via `createOrReplace`,
  * so editing the data here and re-running updates content in place
  * instead of duplicating it.
  *
- * Creates:
- *   - 3 authors (language-agnostic — names stay the same)
+ * What this seeds:
+ *
+ *   - 3 authors with Unsplash portrait images
  *   - 3 categories per locale (en + fr)
- *   - 5 posts per locale, including 2 in-depth "fast prototyping" articles
+ *   - 5 posts per locale, each with a metadata.image uploaded from Unsplash
  *   - 4 quotes (testimonials, language-tagged)
- *   - 3 people (team members)
- *   - 4 logos (brand placeholders)
+ *   - 3 people (team members) with portrait images
+ *   - 4 logos (brand placeholders, no images)
  *   - 1 contact form
- *   - 1 blog singleton with ALL 17 modules wired into frontpageModules
- *     and a representative subset in postModules
+ *   - 1 blog singleton with EMPTY frontpageModules + EMPTY postModules
+ *     → /blog falls back to the minimal card-grid layout
+ *     → individual posts use their own modules (see below) or the default
+ *       article layout
+ *   - The "fast prototyping with Next.js" post (both EN and FR) gets a
+ *     `modules: [...]` override that showcases ALL 17 module types
+ *     inside the post page. Every other post uses the default layout.
  */
 
 import { createClient } from "@sanity/client";
@@ -59,7 +65,6 @@ const daysAgo = (n) => new Date(now.getTime() - n * 24 * 60 * 60 * 1000).toISOSt
 let _key = 0;
 const key = (prefix = "k") => `${prefix}_${++_key}`;
 
-/** PortableText block builder — single paragraph of plain text. */
 const p = (text) => ({
   _type: "block",
   _key: key("b"),
@@ -68,7 +73,6 @@ const p = (text) => ({
   children: [{ _type: "span", _key: key("s"), text, marks: [] }],
 });
 
-/** PortableText heading. */
 const h = (level, text) => ({
   _type: "block",
   _key: key("b"),
@@ -85,7 +89,6 @@ const blockquote = (text) => ({
   children: [{ _type: "span", _key: key("s"), text, marks: [] }],
 });
 
-/** Bullet list item. */
 const li = (text) => ({
   _type: "block",
   _key: key("b"),
@@ -96,23 +99,18 @@ const li = (text) => ({
   children: [{ _type: "span", _key: key("s"), text, marks: [] }],
 });
 
-/** Paragraph with one strong span. */
-const pStrong = (lead, strong, tail = "") => {
-  const sKey = key("s");
-  return {
-    _type: "block",
-    _key: key("b"),
-    style: "normal",
-    markDefs: [],
-    children: [
-      { _type: "span", _key: key("s"), text: lead, marks: [] },
-      { _type: "span", _key: sKey, text: strong, marks: ["strong"] },
-      ...(tail ? [{ _type: "span", _key: key("s"), text: tail, marks: [] }] : []),
-    ],
-  };
-};
+const pStrong = (lead, strong, tail = "") => ({
+  _type: "block",
+  _key: key("b"),
+  style: "normal",
+  markDefs: [],
+  children: [
+    { _type: "span", _key: key("s"), text: lead, marks: [] },
+    { _type: "span", _key: key("s"), text: strong, marks: ["strong"] },
+    ...(tail ? [{ _type: "span", _key: key("s"), text: tail, marks: [] }] : []),
+  ],
+});
 
-/** Paragraph with one link mark. */
 const pLink = (lead, linkText, href, tail = "") => {
   const linkKey = key("m");
   return {
@@ -128,15 +126,121 @@ const pLink = (lead, linkText, href, tail = "") => {
   };
 };
 
-// ─── Doc definitions ───────────────────────────────────────────
+// ─── Image upload ──────────────────────────────────────────────
 
-const authors = [
+/**
+ * Curated Unsplash photo IDs, sized for the consumer:
+ *   - posts:    1200×630  (OG card + cover hero)
+ *   - portraits: 320×320  (author + person avatars)
+ *
+ * Unsplash CDN URLs are public + rate-limited but generous enough for a
+ * one-shot seed. Each fetched image is uploaded once to Sanity, then
+ * the asset _id is referenced from every doc that uses it.
+ */
+const IMAGES = {
+  // Post covers
+  "post-fast-proto": {
+    url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&h=630&q=80",
+    alt: "Developer workspace with laptop and code",
+  },
+  "post-ship-weekend": {
+    url: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&h=630&q=80",
+    alt: "Coding session at sunrise",
+  },
+  "post-config-first": {
+    url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&h=630&q=80",
+    alt: "Lines of code on a dark screen",
+  },
+  "post-netlify-forms": {
+    url: "https://images.unsplash.com/photo-1633265486064-086b219458ec?auto=format&fit=crop&w=1200&h=630&q=80",
+    alt: "Vintage envelope and stamps",
+  },
+  "post-cookie-banner": {
+    url: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1200&h=630&q=80",
+    alt: "Vintage browser interface on screen",
+  },
+  // Module showcase
+  "hero-split": {
+    url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&h=900&q=80",
+    alt: "Editor with terminal session",
+  },
+  // Authors
+  "author-ada": {
+    url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
+    alt: "Portrait — Ada",
+  },
+  "author-grace": {
+    url: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
+    alt: "Portrait — Grace",
+  },
+  "author-tim": {
+    url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
+    alt: "Portrait — Tim",
+  },
+  // People (Person List module)
+  "person-maya": {
+    url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
+    alt: "Portrait — Maya",
+  },
+  "person-luis": {
+    url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
+    alt: "Portrait — Luis",
+  },
+  "person-yuki": {
+    url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
+    alt: "Portrait — Yuki",
+  },
+};
+
+const assetCache = new Map();
+
+async function uploadImage(name) {
+  if (assetCache.has(name)) return assetCache.get(name);
+  const meta = IMAGES[name];
+  if (!meta) throw new Error(`No image registered under ${name}`);
+
+  const res = await fetch(meta.url);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${meta.url}: ${res.status}`);
+  }
+  const buf = Buffer.from(await res.arrayBuffer());
+  const asset = await client.assets.upload("image", buf, {
+    filename: `${name}.jpg`,
+    contentType: "image/jpeg",
+  });
+  const ref = {
+    _type: "image",
+    asset: { _type: "reference", _ref: asset._id },
+    alt: meta.alt,
+  };
+  assetCache.set(name, ref);
+  return ref;
+}
+
+async function uploadAllImages() {
+  console.log(`Uploading ${Object.keys(IMAGES).length} images to Sanity…`);
+  let done = 0;
+  // Sequential to keep Unsplash + Sanity happy.
+  for (const name of Object.keys(IMAGES)) {
+    await uploadImage(name);
+    done += 1;
+    process.stdout.write(`\r  ${done}/${Object.keys(IMAGES).length} uploaded`);
+  }
+  process.stdout.write("\n");
+}
+
+const img = (name) => assetCache.get(name);
+
+// ─── Documents ─────────────────────────────────────────────────
+
+const buildAuthors = () => [
   {
     _id: "author.ada",
     _type: "author",
     name: "Ada Lovelace",
     position: "Founder · Analytic Studio",
     slug: { _type: "slug", current: "ada-lovelace" },
+    image: img("author-ada"),
     bio: [p("Mathematician, writer, and self-described 'enchantress of numbers'.")],
   },
   {
@@ -145,6 +249,7 @@ const authors = [
     name: "Grace Hopper",
     position: "Engineering · USNR",
     slug: { _type: "slug", current: "grace-hopper" },
+    image: img("author-grace"),
     bio: [p("Compiler pioneer. If it works, ship it; ask forgiveness, not permission.")],
   },
   {
@@ -153,6 +258,7 @@ const authors = [
     name: "Tim Berners-Lee",
     position: "Web architect",
     slug: { _type: "slug", current: "tim-berners-lee" },
+    image: img("author-tim"),
     bio: [p("Built the World Wide Web on a NeXT cube in three months.")],
   },
 ];
@@ -241,13 +347,14 @@ const quotes = [
   },
 ];
 
-const people = [
+const buildPeople = () => [
   {
     _id: "person.maya",
     _type: "person",
     name: "Maya Chen",
     role: "Founder",
     bio: "Ex-Stripe. Three exits, all bootstrapped.",
+    image: img("person-maya"),
   },
   {
     _id: "person.luis",
@@ -255,6 +362,7 @@ const people = [
     name: "Luis Martínez",
     role: "Head of Design",
     bio: "Ex-Airbnb. Cares about kerning more than caffeine.",
+    image: img("person-luis"),
   },
   {
     _id: "person.yuki",
@@ -262,6 +370,7 @@ const people = [
     name: "Yuki Tanaka",
     role: "Lead Engineer",
     bio: "Compiler nerd. Talks to herself in Lisp.",
+    image: img("person-yuki"),
   },
 ];
 
@@ -309,6 +418,263 @@ const forms = [
   },
 ];
 
+// ─── Module showcase (all 17, used as post.modules) ────────────
+
+const showcaseModules = () => [
+  {
+    _type: "module.breadcrumbs",
+    _key: key("m"),
+    items: [
+      { _key: key("c"), label: "Home", href: "/" },
+      { _key: key("c"), label: "Blog", href: "/blog" },
+      { _key: key("c"), label: "Showcase" },
+    ],
+  },
+
+  {
+    _type: "module.blog-index",
+    _key: key("m"),
+    eyebrow: "Indiecrafts Journal",
+    title: "Every module, one page",
+    intro:
+      "Below: each of the 17 page-builder modules rendered against the same theme tokens, so you can see how they compose.",
+  },
+
+  {
+    _type: "module.hero-split",
+    _key: key("m"),
+    eyebrow: "Featured",
+    title: "Two days. One site.",
+    content: [
+      p(
+        "The fast-prototyping handbook is a two-part series on how we ship client sites between Friday evening and Sunday night.",
+      ),
+    ],
+    image: img("hero-split"),
+    imagePosition: "right",
+  },
+
+  {
+    _type: "module.stat-list",
+    _key: key("m"),
+    title: "By the numbers",
+    intro: "What two days of shipping looks like.",
+    stats: [
+      { _key: key("s"), value: "48h", label: "Average build time" },
+      { _key: key("s"), value: "17", label: "Page-builder modules" },
+      { _key: key("s"), value: "2", label: "Supported locales" },
+      { _key: key("s"), value: "AA", label: "WCAG contrast everywhere" },
+    ],
+  },
+
+  {
+    _type: "module.card-list",
+    _key: key("m"),
+    title: "Recent themes",
+    intro: "What we keep coming back to.",
+    columns: 3,
+    cards: [
+      {
+        _key: key("c"),
+        icon: "zap",
+        title: "Fast prototyping",
+        content: [p("Going from idea to deployed MVP in 48 hours.")],
+      },
+      {
+        _key: key("c"),
+        icon: "settings",
+        title: "Config-first",
+        content: [p("Why one config file beats fifty conventions.")],
+      },
+      {
+        _key: key("c"),
+        icon: "sparkles",
+        title: "Editor-friendly",
+        content: [p("Sanity, Netlify Forms, GDPR — without the SaaS sprawl.")],
+      },
+    ],
+  },
+
+  {
+    _type: "module.prose",
+    _key: key("m"),
+    width: "wide",
+    content: [
+      h(2, "What follows"),
+      p(
+        "Everything below is editor-composable. The order is arbitrary — drag modules around in the Studio to recompose the page.",
+      ),
+    ],
+  },
+
+  {
+    _type: "module.callout",
+    _key: key("m"),
+    variant: "info",
+    content: [
+      pStrong(
+        "Heads up: ",
+        "this is a Callout module — info variant",
+        ". Use it for context the reader needs but isn't part of the main narrative.",
+      ),
+    ],
+  },
+
+  {
+    _type: "module.callout",
+    _key: key("m"),
+    variant: "success",
+    content: [p("Success variant — confirmations, completed-state messaging.")],
+  },
+
+  {
+    _type: "module.callout",
+    _key: key("m"),
+    variant: "warning",
+    content: [p("Warning variant — caveats, gotchas, things to double-check.")],
+  },
+
+  {
+    _type: "module.callout",
+    _key: key("m"),
+    variant: "danger",
+    content: [
+      p("Danger variant — destructive operations, deprecations, security holds."),
+    ],
+  },
+
+  // The actual post body slots in here. Authoring tip: place this where
+  // the reader expects the "main article" — usually near the top, with
+  // contextual modules above and supplementary modules below.
+  { _type: "module.blog-post-content", _key: key("m") },
+
+  {
+    _type: "module.accordion-list",
+    _key: key("m"),
+    title: "FAQ",
+    intro: "Common questions about the template.",
+    items: [
+      {
+        _key: key("a"),
+        title: "Is the blog feature flag really optional?",
+        content: [
+          p(
+            "Yes — set features.blog = false to make every blog route 404. The Studio at /studio stays available regardless.",
+          ),
+        ],
+      },
+      {
+        _key: key("a"),
+        title: "Does Sanity own the home page too?",
+        content: [
+          p(
+            "No. Only the blog is module-driven. Home / legal / pages live in messages/<locale>.json.",
+          ),
+        ],
+      },
+      {
+        _key: key("a"),
+        title: "Can I run this on Vercel?",
+        content: [
+          p(
+            "Yes. The template is platform-agnostic. Netlify Forms only matter if you keep the Netlify Forms section.",
+          ),
+        ],
+      },
+    ],
+  },
+
+  {
+    _type: "module.step-list",
+    _key: key("m"),
+    title: "How to fork and ship",
+    intro: "Three steps to a deployed site.",
+    steps: [
+      {
+        _key: key("s"),
+        title: "Fork",
+        content: [p("Clone the repo. Set NEXT_PUBLIC_SANITY_PROJECT_ID + DATASET.")],
+      },
+      {
+        _key: key("s"),
+        title: "Theme",
+        content: [p("Edit theme.hexColors + theme.colors in src/config/index.ts.")],
+      },
+      {
+        _key: key("s"),
+        title: "Ship",
+        content: [p("Push to Netlify. Verify with pnpm verify.")],
+      },
+    ],
+  },
+
+  {
+    _type: "module.quote-list",
+    _key: key("m"),
+    title: "What people say",
+    quotes: [
+      { _type: "reference", _ref: "quote.en.lovelace", _key: key("q") },
+      { _type: "reference", _ref: "quote.en.hopper", _key: key("q") },
+    ],
+  },
+
+  {
+    _type: "module.logo-list",
+    _key: key("m"),
+    title: "Trusted by",
+    intro: "Teams shipping with the template.",
+    logos: [
+      { _type: "reference", _ref: "logo.acme", _key: key("l") },
+      { _type: "reference", _ref: "logo.contoso", _key: key("l") },
+      { _type: "reference", _ref: "logo.northwind", _key: key("l") },
+      { _type: "reference", _ref: "logo.fabrikam", _key: key("l") },
+    ],
+  },
+
+  {
+    _type: "module.person-list",
+    _key: key("m"),
+    title: "The team",
+    intro: "Who's behind it.",
+    people: [
+      { _type: "reference", _ref: "person.maya", _key: key("p") },
+      { _type: "reference", _ref: "person.luis", _key: key("p") },
+      { _type: "reference", _ref: "person.yuki", _key: key("p") },
+    ],
+  },
+
+  {
+    _type: "module.search",
+    _key: key("m"),
+    title: "Search posts",
+    placeholder: "Search by title…",
+    scope: "post",
+  },
+
+  {
+    _type: "module.blog-post-list",
+    _key: key("m"),
+    title: "Keep reading",
+    intro: "More from the journal.",
+    limit: 6,
+    featuredOnly: false,
+  },
+
+  {
+    _type: "module.form",
+    _key: key("m"),
+    title: "Get notified",
+    intro: "Drop your email — we send a digest every other Friday.",
+    form: { _type: "reference", _ref: "form.contact" },
+  },
+
+  {
+    _type: "module.custom-html",
+    _key: key("m"),
+    html: '<div style="margin: 2rem auto; max-width: 48rem; padding: 1.5rem; text-align: center; border-radius: 0.75rem; background: var(--muted); color: var(--muted-foreground); font-size: 0.875rem;">This block is a <code>module.custom-html</code> — raw HTML the editor controls. Lock the Studio role if you need to restrict access.</div>',
+  },
+];
+
 // ─── Posts ──────────────────────────────────────────────────────
 
 const post = (
@@ -323,6 +689,8 @@ const post = (
     categories: cats,
     featured,
     body,
+    imageKey,
+    modules,
   },
 ) => ({
   _id: id,
@@ -334,16 +702,18 @@ const post = (
   categories: cats.map((c) => ({ _type: "reference", _ref: c, _key: key("c") })),
   featured: !!featured,
   body,
+  ...(modules ? { modules } : {}),
   metadata: {
     title,
     description,
     slug: { _type: "slug", current: slug },
+    image: imageKey ? img(imageKey) : undefined,
     noIndex: false,
   },
 });
 
-const posts = [
-  // ── EN: 2 in-depth fast-prototyping pieces + 3 fillers ──
+const buildPosts = () => [
+  // ── EN ──
   post("post.en.fast-proto-nextjs", {
     language: "en",
     title: "Fast prototyping with Next.js: zero to MVP in a weekend",
@@ -354,6 +724,8 @@ const posts = [
     author: "author.ada",
     categories: ["cat.en.engineering", "cat.en.product"],
     featured: true,
+    imageKey: "post-fast-proto",
+    modules: showcaseModules(),
     body: [
       p(
         "The fastest way to validate a product idea is to ship it. Not a clickable Figma — a real site visitors can break, share, and abandon.",
@@ -376,20 +748,9 @@ const posts = [
       p(
         "By the afternoon of day two, you have a single page with real copy, a contact form, and traffic-level analytics. Resist the urge to add more.",
       ),
-      h(3, "Skip these"),
-      li(
-        "CMS integration. Hard-code copy until you've written the same paragraph three times.",
-      ),
-      li("Authentication. Most MVPs don't need it."),
-      li("A design system. Use defaults until friction proves otherwise."),
-      h(2, "When to slow down"),
-      p(
-        "The moment you have a second person editing copy, set up a CMS. The moment two people share a feature flag, write it down. Premature infrastructure is the enemy.",
-      ),
       blockquote(
         "Make it work, make it right, make it fast — in that order. — Kent Beck",
       ),
-      h(2, "Closing thought"),
       pLink(
         "The template this guide ships with — ",
         "indiecrafts.dev",
@@ -409,6 +770,7 @@ const posts = [
     author: "author.grace",
     categories: ["cat.en.product", "cat.en.story"],
     featured: true,
+    imageKey: "post-ship-weekend",
     body: [
       p(
         "Most freelance gigs die in the discovery call. Here's how to keep them alive: pre-commit to a 48-hour shipping window and tell the client up front.",
@@ -420,21 +782,6 @@ const posts = [
       li("One landing page with hero + features + contact."),
       li("One legal page (or none — see if it's truly required)."),
       li("One submission endpoint (Netlify Forms or an email-to-API service)."),
-      h(2, "The hour-by-hour timeline"),
-      h(3, "Friday evening (2h)"),
-      p(
-        "Fork the template, set the brand colors, paste in the copy you already have, push the first deploy.",
-      ),
-      h(3, "Saturday (6h)"),
-      p(
-        "Wire up content, hook up the form, add real imagery, write the SEO description, ship.",
-      ),
-      h(3, "Sunday (3h)"),
-      p(
-        "Test on a phone, fix the three things that always break (touch targets, contrast, footer overflow), hand off.",
-      ),
-      h(2, "What about polish?"),
-      p("Polish is what week two is for. The weekend is for proving it works."),
     ],
   }),
 
@@ -447,6 +794,7 @@ const posts = [
     daysOld: 14,
     author: "author.ada",
     categories: ["cat.en.engineering"],
+    imageKey: "post-config-first",
     body: [
       p(
         "The dirty secret of agency work is that every site is the same site with different colors. Conventions encode the sameness; configuration captures the differences.",
@@ -455,10 +803,6 @@ const posts = [
       li("Brand theming without touching components."),
       li("Per-client feature flags (does this one need a blog? cookies?)."),
       li("Faster onboarding — new contractor reads one file, ships the next day."),
-      h(2, "Where it falls down"),
-      p(
-        "Config can leak into the layer it shouldn't touch. If a component reads the brand color through three layers of abstraction, that's not configuration — that's an obstacle course.",
-      ),
     ],
   }),
 
@@ -471,21 +815,13 @@ const posts = [
     daysOld: 21,
     author: "author.tim",
     categories: ["cat.en.engineering"],
+    imageKey: "post-netlify-forms",
     body: [
       p(
         "If you've ever set up an email-only contact form with Resend, SendGrid, or a serverless function — you've over-engineered.",
       ),
       p(
         "Netlify Forms scans your `public/__forms.html` at build time and treats any matching POST to `/` as a submission. No JS required.",
-      ),
-      h(2, "How it works"),
-      li("Declare each form once in `public/__forms.html`."),
-      li("Submit a URL-encoded POST to `/` with a `form-name` field that matches."),
-      li(
-        "View submissions in the Netlify dashboard. Configure email/Slack notifications there.",
-      ),
-      blockquote(
-        "If a third party will do it for free and not mess it up, that's the right answer.",
       ),
     ],
   }),
@@ -499,6 +835,7 @@ const posts = [
     daysOld: 30,
     author: "author.grace",
     categories: ["cat.en.product"],
+    imageKey: "post-cookie-banner",
     body: [
       p(
         "Cookie banner SaaS products charge real money for a problem that is, fundamentally, a single boolean.",
@@ -509,7 +846,6 @@ const posts = [
       li(
         "If you load Google Analytics, integrate with Consent Mode v2 — set `analytics_storage` to `denied` by default, flip to `granted` on accept.",
       ),
-      p("That's it. No vendor."),
     ],
   }),
 
@@ -524,6 +860,8 @@ const posts = [
     author: "author.ada",
     categories: ["cat.fr.engineering", "cat.fr.product"],
     featured: true,
+    imageKey: "post-fast-proto",
+    modules: showcaseModules(),
     body: [
       p(
         "La meilleure façon de valider une idée produit, c'est de la livrer. Pas un Figma cliquable — un vrai site que des visiteurs peuvent casser, partager, abandonner.",
@@ -544,24 +882,9 @@ const posts = [
       li(
         "Déployez à chaque push. Pas de danse de staging — les previews par PR suffisent.",
       ),
-      h(2, "Jour deux : contenu et analytics"),
-      p(
-        "L'après-midi du jour deux, vous avez une page unique avec du contenu réel, un formulaire de contact et des métriques au niveau du trafic. Résistez à l'envie d'en ajouter.",
-      ),
-      h(3, "À sauter pour l'instant"),
-      li(
-        "Intégration CMS. Codez le contenu en dur jusqu'à avoir réécrit trois fois le même paragraphe.",
-      ),
-      li("Authentification. La plupart des MVP n'en ont pas besoin."),
-      li("Un design system. Restez avec les défauts jusqu'à preuve du contraire."),
-      h(2, "Quand ralentir"),
-      p(
-        "Dès qu'une deuxième personne édite le contenu, installez un CMS. Dès que deux personnes partagent un feature flag, documentez-le. L'infrastructure prématurée est l'ennemi.",
-      ),
       blockquote(
         "Faites que ça marche, faites que ça soit juste, faites que ça soit rapide — dans cet ordre. — Kent Beck",
       ),
-      h(2, "Pour finir"),
       pLink(
         "Le template fourni avec ce guide — ",
         "indiecrafts.dev",
@@ -581,6 +904,7 @@ const posts = [
     author: "author.grace",
     categories: ["cat.fr.product", "cat.fr.story"],
     featured: true,
+    imageKey: "post-ship-weekend",
     body: [
       p(
         "La plupart des missions freelance meurent en réunion cadrage. Voici comment les maintenir en vie : engagez-vous sur une fenêtre de 48 h dès le départ, et dites-le.",
@@ -588,26 +912,6 @@ const posts = [
       h(2, "Cadrer avant de cadrer"),
       p(
         "Avant la première ligne de code, mettez-vous d'accord sur les trois pages, le formulaire unique, et la cible de déploiement. Tout le reste, c'est de la v2.",
-      ),
-      li("Une landing page avec hero + features + contact."),
-      li("Une page légale (ou aucune — vérifiez si elle est vraiment requise)."),
-      li("Un endpoint de soumission (Netlify Forms ou un service email-to-API)."),
-      h(2, "Le planning heure par heure"),
-      h(3, "Vendredi soir (2 h)"),
-      p(
-        "Forkez le template, posez les couleurs, collez le contenu déjà disponible, lancez le premier déploiement.",
-      ),
-      h(3, "Samedi (6 h)"),
-      p(
-        "Câblez le contenu, branchez le formulaire, ajoutez de vraies images, rédigez la description SEO, livrez.",
-      ),
-      h(3, "Dimanche (3 h)"),
-      p(
-        "Testez sur téléphone, corrigez les trois bugs habituels (zones tactiles, contraste, débordement du footer), faites la passation.",
-      ),
-      h(2, "Et le polish alors ?"),
-      p(
-        "Le polish, c'est pour la semaine d'après. Le week-end sert à prouver que ça marche.",
       ),
     ],
   }),
@@ -621,19 +925,10 @@ const posts = [
     daysOld: 14,
     author: "author.ada",
     categories: ["cat.fr.engineering"],
+    imageKey: "post-config-first",
     body: [
       p(
         "Le secret mal gardé du travail d'agence : chaque site est le même site, avec des couleurs différentes. Les conventions encodent la similitude ; la configuration capture les différences.",
-      ),
-      h(2, "Ce que la configuration permet"),
-      li("Thématisation de marque sans toucher aux composants."),
-      li("Feature flags par client (celui-là veut-il un blog ? des cookies ?)."),
-      li(
-        "Onboarding plus rapide — le nouveau contractor lit un fichier, livre le lendemain.",
-      ),
-      h(2, "Où elle déraille"),
-      p(
-        "La config peut déborder sur les couches qu'elle ne devrait pas toucher. Si un composant lit la couleur de marque à travers trois niveaux d'abstraction, ce n'est plus de la configuration — c'est un parcours d'obstacles.",
       ),
     ],
   }),
@@ -647,6 +942,7 @@ const posts = [
     daysOld: 21,
     author: "author.tim",
     categories: ["cat.fr.engineering"],
+    imageKey: "post-netlify-forms",
     body: [
       p(
         "Si vous avez déjà monté un formulaire de contact email-only avec Resend, SendGrid ou une fonction serverless — vous avez sur-ingénieré.",
@@ -654,13 +950,6 @@ const posts = [
       p(
         "Netlify Forms scanne `public/__forms.html` au moment du build et traite toute requête POST vers `/` avec un champ `form-name` correspondant comme une soumission. Sans JS.",
       ),
-      h(2, "Mécanique"),
-      li("Déclarez chaque formulaire une fois dans `public/__forms.html`."),
-      li("Soumettez une requête POST URL-encodée vers `/` avec un champ `form-name`."),
-      li(
-        "Consultez les soumissions dans le dashboard Netlify. Configurez-y les notifications email / Slack.",
-      ),
-      blockquote("Si un tiers le fait gratuitement et bien, c'est la bonne réponse."),
     ],
   }),
 
@@ -673,316 +962,59 @@ const posts = [
     daysOld: 30,
     author: "author.grace",
     categories: ["cat.fr.product"],
+    imageKey: "post-cookie-banner",
     body: [
       p(
         "Les SaaS de bannière cookies font payer cher un problème qui se résume à un booléen.",
       ),
-      h(2, "Ce qu'il vous faut réellement"),
-      li("Une bannière qui apparaît à la première visite et disparaît après un clic."),
-      li("Une clé `cookie-consent` dans localStorage."),
-      li(
-        "Si vous chargez Google Analytics, intégrez Consent Mode v2 — `analytics_storage` à `denied` par défaut, bascule en `granted` à l'acceptation.",
-      ),
-      p("Voilà. Pas de vendor."),
     ],
   }),
 ];
 
-// ─── Blog singleton: showcase ALL 17 modules ───────────────────
+// ─── Blog singleton — MINIMAL ──────────────────────────────────
 
 const blog = {
   _id: "blog",
   _type: "blog",
-  frontpageModules: [
-    {
-      _type: "module.blog-index",
-      _key: key("m"),
-      eyebrow: "Indiecrafts Journal",
-      title: "Read, learn, ship",
-      intro:
-        "Notes from the workshop — engineering, product, and the stories behind shipping fast.",
-      hidden: false,
-    },
-    {
-      _type: "module.breadcrumbs",
-      _key: key("m"),
-      items: [
-        { _key: key("c"), label: "Home", href: "/" },
-        { _key: key("c"), label: "Blog" },
-      ],
-    },
-    {
-      _type: "module.hero-split",
-      _key: key("m"),
-      eyebrow: "Featured",
-      title: "Two days. One site.",
-      content: [
-        p(
-          "The fast-prototyping handbook is a two-part series on how we ship client sites between Friday evening and Sunday night.",
-        ),
-      ],
-      imagePosition: "right",
-      hidden: false,
-    },
-    {
-      _type: "module.stat-list",
-      _key: key("m"),
-      title: "By the numbers",
-      intro: "What two days of shipping looks like.",
-      stats: [
-        { _key: key("s"), value: "48h", label: "Average build time" },
-        { _key: key("s"), value: "17", label: "Page-builder modules" },
-        { _key: key("s"), value: "2", label: "Supported locales" },
-        { _key: key("s"), value: "AA", label: "WCAG contrast everywhere" },
-      ],
-    },
-    {
-      _type: "module.card-list",
-      _key: key("m"),
-      title: "Recent themes",
-      intro: "What we keep coming back to.",
-      columns: 3,
-      cards: [
-        {
-          _key: key("c"),
-          icon: "zap",
-          title: "Fast prototyping",
-          content: [p("Going from idea to deployed MVP in 48 hours.")],
-        },
-        {
-          _key: key("c"),
-          icon: "settings",
-          title: "Config-first",
-          content: [p("Why one config file beats fifty conventions.")],
-        },
-        {
-          _key: key("c"),
-          icon: "sparkles",
-          title: "Editor-friendly",
-          content: [p("Sanity, Netlify Forms, GDPR — without the SaaS sprawl.")],
-        },
-      ],
-    },
-    {
-      _type: "module.blog-post-list",
-      _key: key("m"),
-      title: "Latest posts",
-      intro: "Newest first.",
-      limit: 9,
-      featuredOnly: false,
-    },
-    {
-      _type: "module.quote-list",
-      _key: key("m"),
-      title: "What people say",
-      quotes: [
-        { _type: "reference", _ref: "quote.en.lovelace", _key: key("q") },
-        { _type: "reference", _ref: "quote.en.hopper", _key: key("q") },
-        { _type: "reference", _ref: "quote.fr.lovelace", _key: key("q") },
-        { _type: "reference", _ref: "quote.fr.hopper", _key: key("q") },
-      ],
-    },
-    {
-      _type: "module.logo-list",
-      _key: key("m"),
-      title: "Trusted by",
-      intro: "Teams shipping with the template.",
-      logos: [
-        { _type: "reference", _ref: "logo.acme", _key: key("l") },
-        { _type: "reference", _ref: "logo.contoso", _key: key("l") },
-        { _type: "reference", _ref: "logo.northwind", _key: key("l") },
-        { _type: "reference", _ref: "logo.fabrikam", _key: key("l") },
-      ],
-    },
-    {
-      _type: "module.person-list",
-      _key: key("m"),
-      title: "The team",
-      intro: "Who's behind it.",
-      people: [
-        { _type: "reference", _ref: "person.maya", _key: key("p") },
-        { _type: "reference", _ref: "person.luis", _key: key("p") },
-        { _type: "reference", _ref: "person.yuki", _key: key("p") },
-      ],
-    },
-    {
-      _type: "module.step-list",
-      _key: key("m"),
-      title: "How to fork and ship",
-      intro: "Three steps to a deployed site.",
-      steps: [
-        {
-          _key: key("s"),
-          title: "Fork",
-          content: [p("Clone the repo. Set NEXT_PUBLIC_SANITY_PROJECT_ID + DATASET.")],
-        },
-        {
-          _key: key("s"),
-          title: "Theme",
-          content: [p("Edit theme.hexColors + theme.colors in src/config/index.ts.")],
-        },
-        {
-          _key: key("s"),
-          title: "Ship",
-          content: [p("Push to Netlify. Verify with pnpm verify.")],
-        },
-      ],
-    },
-    {
-      _type: "module.accordion-list",
-      _key: key("m"),
-      title: "FAQ",
-      intro: "Common questions about the template.",
-      items: [
-        {
-          _key: key("a"),
-          title: "Is the blog feature flag really optional?",
-          content: [
-            p(
-              "Yes — set features.blog = false to make every blog route 404. The Studio at /studio stays available regardless.",
-            ),
-          ],
-        },
-        {
-          _key: key("a"),
-          title: "Does Sanity own the home page too?",
-          content: [
-            p(
-              "No. Only the blog is module-driven. Home / legal / pages live in messages/<locale>.json.",
-            ),
-          ],
-        },
-        {
-          _key: key("a"),
-          title: "Can I run this on Vercel?",
-          content: [
-            p(
-              "Yes. The template is platform-agnostic. Netlify Forms only matter if you keep the Netlify Forms section.",
-            ),
-          ],
-        },
-      ],
-    },
-    {
-      _type: "module.callout",
-      _key: key("m"),
-      variant: "info",
-      content: [
-        pStrong(
-          "Heads up: ",
-          "the blog feature flag is OFF by default",
-          " — flip it in src/config/index.ts to enable these routes in production.",
-        ),
-      ],
-    },
-    {
-      _type: "module.callout",
-      _key: key("m"),
-      variant: "warning",
-      content: [
-        p(
-          "If you fork this for an EU-targeted site with analytics, also turn on the cookieBanner flag.",
-        ),
-      ],
-    },
-    {
-      _type: "module.callout",
-      _key: key("m"),
-      variant: "success",
-      content: [
-        p(
-          "All AA contrast checks pass on the default theme — verify with pnpm verify:contrast.",
-        ),
-      ],
-    },
-    {
-      _type: "module.callout",
-      _key: key("m"),
-      variant: "danger",
-      content: [
-        p(
-          "Avoid editing src/components/ui-primitives/* by hand — they're shadcn-managed.",
-        ),
-      ],
-    },
-    {
-      _type: "module.search",
-      _key: key("m"),
-      title: "Search posts",
-      placeholder: "Search by title…",
-      scope: "post",
-    },
-    {
-      _type: "module.prose",
-      _key: key("m"),
-      width: "wide",
-      content: [
-        h(2, "Open source, built in the open"),
-        p(
-          "The template is MIT-licensed. PRs welcome on the indiecrafts.dev repo — see CONTRIBUTING.md for the conventions we hold each other to.",
-        ),
-      ],
-    },
-    {
-      _type: "module.form",
-      _key: key("m"),
-      title: "Get notified",
-      intro: "Drop your email — we send a digest every other Friday.",
-      form: { _type: "reference", _ref: "form.contact" },
-    },
-    {
-      _type: "module.custom-html",
-      _key: key("m"),
-      html: '<div style="margin: 4rem auto; max-width: 64rem; padding: 1.5rem; text-align: center; border-radius: 0.75rem; background: var(--muted); color: var(--muted-foreground); font-size: 0.875rem;">This block is a <code>module.custom-html</code> — raw HTML the editor controls. Lock the Studio role if you need to restrict access.</div>',
-    },
-  ],
-  postModules: [
-    {
-      _type: "module.breadcrumbs",
-      _key: key("m"),
-      items: [
-        { _key: key("c"), label: "Home", href: "/" },
-        { _key: key("c"), label: "Blog", href: "/blog" },
-        { _key: key("c"), label: "Article" },
-      ],
-    },
-    { _type: "module.blog-post-content", _key: key("m") },
-    {
-      _type: "module.quote-list",
-      _key: key("m"),
-      title: "What others say",
-      quotes: [{ _type: "reference", _ref: "quote.en.hopper", _key: key("q") }],
-    },
-    { _type: "module.blog-post-list", _key: key("m"), title: "Keep reading", limit: 3 },
-  ],
+  // Empty → /blog falls back to the default minimal card-grid layout.
+  // Add modules here from the Studio when you want a richer frontpage.
+  frontpageModules: [],
+  // Empty → individual posts use the default article layout, unless
+  // a specific post sets its own `modules` (see post.modules above).
+  postModules: [],
 };
 
 // ─── Run ────────────────────────────────────────────────────────
 
-const allDocs = [
-  ...authors,
-  ...categories,
-  ...quotes,
-  ...people,
-  ...logos,
-  ...forms,
-  ...posts,
-  blog,
-];
-
 async function run() {
-  console.log(`Seeding ${allDocs.length} documents into ${projectId}/${dataset}…`);
+  console.log(`Seeding into ${projectId}/${dataset}…`);
+  console.log("");
+
+  await uploadAllImages();
+  console.log("");
+
+  const allDocs = [
+    ...buildAuthors(),
+    ...categories,
+    ...quotes,
+    ...buildPeople(),
+    ...logos,
+    ...forms,
+    ...buildPosts(),
+    blog,
+  ];
+
+  console.log(`Committing ${allDocs.length} documents…`);
   let tx = client.transaction();
   for (const doc of allDocs) tx = tx.createOrReplace(doc);
   const res = await tx.commit({ visibility: "async" });
   console.log(`✓ Committed transaction ${res.transactionId}`);
   console.log("");
-  console.log("Next steps:");
-  console.log("  - Set features.blog = true in src/config/index.ts");
-  console.log("  - pnpm dev → open http://localhost:3000/en/blog and /fr/blog");
-  console.log(
-    "  - Open the Studio at /studio → Blog → Layout (singleton) to see the module mix",
-  );
+  console.log("What you should see:");
+  console.log("  /blog                                 → minimal card grid");
+  console.log("  /blog/fast-prototyping-with-nextjs    → ALL 17 modules");
+  console.log("  /blog/prototypage-rapide-avec-nextjs  → ALL 17 modules (FR)");
+  console.log("  any other post                         → default article layout");
   console.log("");
   console.log("Re-running this script updates the documents in place (same _ids).");
 }

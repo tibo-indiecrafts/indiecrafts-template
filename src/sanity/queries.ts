@@ -142,7 +142,10 @@ export const postBySlugQuery = defineQuery(`
     "headings": body[style in ["h2", "h3", "h4"]]{
       style,
       "text": pt::text(@)
-    }
+    },
+    // Per-post module override (optional). MODULES_FRAGMENT expands
+    // every cross-reference the same way the blog singleton does.
+    modules[]{ ${MODULES_FRAGMENT} }
   }
 `);
 
