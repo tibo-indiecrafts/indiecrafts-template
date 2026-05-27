@@ -1,0 +1,526 @@
+# Sanity setup & test guide
+
+End-to-end reference for the Sanity-backed blog: configuration, schemas, routes, seeding, and the full QA matrix. Everything stays gated by `features.blog` (default `false`) — flip it in `src/config/index.ts` to activate.
+
+---
+
+## 1. What's wired
+
+| Surface                    | Where                                      | Notes                                                                                                                         |
+| -------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| Embedded Studio            | `/studio`                                  | Catch-all at `src/app/studio/[[...tool]]/page.tsx`. Always reachable, even when `features.blog === false`.                    |
+| Public blog                | `/<locale>/blog` + `/<locale>/blog/<slug>` | Hard-coded fallback layouts when the `blog` singleton has no modules; otherwise driven by `frontpageModules` / `postModules`. |
+| Markdown export            | `/<locale>/blog/<slug>/md`                 | YAML frontmatter + PortableText serialized to Markdown.                                                                       |
+| RSS feed                   | `/<locale>/blog/rss.xml`                   | RSS 2.0, locale-filtered.                                                                                                     |
+| Draft preview              | `/api/draft-mode/enable` + `/disable`      | 503 with actionable message when `SANITY_API_READ_TOKEN` is missing.                                                          |
+| Live content subscriptions | `<SanityLive />` in `[locale]/layout.tsx`  | Only mounted when `features.blog === true`.                                                                                   |
+| Header nav link            | `/blog` link                               | Only shown when `features.blog === true`.                                                                                     |
+| Sitemap + llms.txt entries | `/sitemap.xml` + `/<locale>/llms.txt`      | Auto-included via `pages.blog.enabled = features.blog`.                                                                       |
+
+---
+
+## 2. Configuration
+
+### Env vars (`.env.local`)
+
+```bash
+# ── Public (safe to expose) ──
+NEXT_PUBLIC_SANITY_PROJECT_ID=qy2pp5sn        # your Sanity project ID
+NEXT_PUBLIC_SANITY_DATASET=production         # default; the embedded Studio reads from here
+NEXT_PUBLIC_SANITY_API_VERSION=2025-01-01     # query-stability pin; bump intentionally
+
+# ── Server-only (NOT NEXT_PUBLIC_) ──
+SANITY_API_READ_TOKEN=                        # Viewer role. Required for draft preview.
+SANITY_API_WRITE_TOKEN=                       # Editor role. Only `pnpm seed:blog` uses this.
+```
+
+Issue tokens at: <https://www.sanity.io/manage> → your project → **API** → **Tokens** → **Add API token**.
+
+### Feature flag (`src/config/index.ts`)
+
+```ts
+features: {
+  // …
+  blog: true,   // ← flip this to light up every Sanity-driven route
+}
+```
+
+The flag is the master switch. When `false`:
+
+- `/blog`, `/blog/<slug>`, `/blog/<slug>/md`, `/blog/rss.xml` all return 404
+- `/api/draft-mode/{enable,disable}` return 404
+- `<SanityLive />` is not mounted in the layout
+- The header `/blog` link disappears
+- `pages.blog.enabled` is `false` → sitemap + llms.txt drop the entry
+- `generateStaticParams` for `/blog/[slug]` returns `[]` so the build skips Sanity calls
+
+### CSP allowlist (already configured)
+
+`src/config/types.ts` → `getCSPConnectSources()` returns `https://*.sanity.io` + `wss://*.api.sanity.io` so the Studio can talk to the API in all environments.
+
+### Studio config
+
+```
+sanity.config.ts                    # Schema list + structure + plugins
+src/sanity/env.ts                   # projectId, dataset, apiVersion, studioBasePath
+src/sanity/client.ts                # Read client (useCdn: false, stega.studioUrl wired)
+src/sanity/live.ts                  # defineLive — sanityFetch + <SanityLive />
+src/sanity/token.ts                 # Server-only SANITY_API_READ_TOKEN
+src/sanity/structure.ts             # Studio sidebar groups
+src/sanity/queries.ts               # GROQ — every query filters by $locale
+src/sanity/portable-to-markdown.ts  # PortableText → Markdown serializer
+```
+
+---
+
+## 3. Schemas
+
+All registered via `src/sanity/schema/index.ts`. Modules registered via `src/sanity/schema/modules/index.ts` (also exports `MODULE_TYPES` — the single source of truth used by both the `blog` singleton and the runtime renderer switch).
+
+### Documents
+
+| Schema             | File                  | Localized?           | Purpose                                                                            |
+| ------------------ | --------------------- | -------------------- | ---------------------------------------------------------------------------------- |
+| `blog` (singleton) | `documents/blog.ts`   | shared               | Owns `frontpageModules[]` + `postModules[]`. One per dataset; sidebar enforces.    |
+| `post`             | `post.ts`             | **yes** (`language`) | Title, body (PortableText), author ref, categories, featured flag, metadata object |
+| `author`           | `author.ts`           | shared               | Name, position, slug, image, bio                                                   |
+| `category`         | `category.ts`         | **yes** (`language`) | Title, description                                                                 |
+| `quote`            | `documents/quote.ts`  | **yes** (`language`) | Testimonial content + attribution                                                  |
+| `person`           | `documents/person.ts` | shared               | Team-member docs for Person List module                                            |
+| `logo`             | `documents/logo.ts`   | shared               | Brand logos for Logo List module                                                   |
+| `form`             | `documents/form.ts`   | shared               | Form definitions for Form module (mirrors Netlify Forms entries)                   |
+
+### Objects
+
+| Object         | File                  | Used by                                           |
+| -------------- | --------------------- | ------------------------------------------------- |
+| `metadata`     | `objects/metadata.ts` | post (title/description/image/slug/noIndex)       |
+| `blockContent` | `blockContent.ts`     | post body, accordion items, callout content, etc. |
+| `link`         | `objects/link.ts`     | inside `cta`. Internal refs target `post` only.   |
+| `cta`          | `objects/cta.ts`      | callout, hero-split, card-list, etc.              |
+
+### Modules (object types — embedded inside `blog` arrays only)
+
+| Module                     | File                           | Notes                                                    |
+| -------------------------- | ------------------------------ | -------------------------------------------------------- |
+| `module.accordion-list`    | `modules/accordion-list.ts`    | title + intro + items[{title, content}]                  |
+| `module.callout`           | `modules/callout.ts`           | variant (info/success/warning/danger) + content + cta    |
+| `module.card-list`         | `modules/card-list.ts`         | title + intro + columns + cards[]                        |
+| `module.hero-split`        | `modules/hero-split.ts`        | eyebrow + title + content + ctas + image + imagePosition |
+| `module.logo-list`         | `modules/logo-list.ts`         | title + intro + refs to `logo`                           |
+| `module.person-list`       | `modules/person-list.ts`       | title + intro + refs to `person`                         |
+| `module.prose`             | `modules/prose.ts`             | content + width (narrow/wide)                            |
+| `module.stat-list`         | `modules/stat-list.ts`         | title + intro + stats[{value, label}]                    |
+| `module.step-list`         | `modules/step-list.ts`         | title + intro + steps[{title, content}]                  |
+| `module.quote-list`        | `modules/quote-list.ts`        | refs to `quote` (locale-filtered)                        |
+| `module.breadcrumbs`       | `modules/breadcrumbs.ts`       | items[{label, href}]                                     |
+| `module.custom-html`       | `modules/custom-html.ts`       | raw HTML — `dangerouslySetInnerHTML`                     |
+| `module.form`              | `modules/form-module.ts`       | form ref + overrides; renders Netlify Forms              |
+| `module.search`            | `modules/search-module.ts`     | client-side post search via `data-search-title`          |
+| `module.blog-index`        | `modules/blog-index.ts`        | frontpage hero                                           |
+| `module.blog-post-content` | `modules/blog-post-content.ts` | renders the active post (slot)                           |
+| `module.blog-post-list`    | `modules/blog-post-list.ts`    | filtered post grid (limit, categories, featuredOnly)     |
+
+Every module gets `anchor` + `hidden` fields auto-injected by `defineModule` (`src/sanity/schema/objects/define-module.ts`).
+
+### Renderer
+
+`src/components/blog-components/modules/ModuleRenderer.tsx` switches on `_type` with **TS exhaustiveness**: adding a new module without wiring its case is a compile error. Each module has a matching component in `src/components/blog-components/modules/`.
+
+### Studio sidebar (`src/sanity/structure.ts`)
+
+```
+Content
+├─ Blog
+│  ├─ Layout (singleton)   ← always opens documentId="blog"
+│  ├─ Posts
+│  ├─ Authors
+│  └─ Categories
+└─ References
+   ├─ Quotes
+   ├─ People
+   ├─ Logos
+   └─ Forms
+```
+
+The 17 modules are object types, not documents — editors only ever encounter them via the picker inside the singleton's two arrays.
+
+---
+
+## 4. Routes
+
+| Route                                                                              | Type    | Gated                                     | Reads from                                        |
+| ---------------------------------------------------------------------------------- | ------- | ----------------------------------------- | ------------------------------------------------- |
+| `/<locale>`                                                                        | static  | —                                         | `messages/<locale>.json`                          |
+| `/<locale>/legal`                                                                  | static  | `features.legalPage`                      | `messages/<locale>.json`                          |
+| `/<locale>/blog`                                                                   | SSG     | `features.blog`                           | `blogSingletonQuery` + `allPostsQuery` (fallback) |
+| `/<locale>/blog/<slug>`                                                            | SSG     | `features.blog`                           | `postBySlugQuery` + `blogSingletonQuery`          |
+| `/<locale>/blog/<slug>/md`                                                         | dynamic | `features.blog`                           | `postBySlugQuery`                                 |
+| `/<locale>/blog/rss.xml`                                                           | dynamic | `features.blog`                           | `rssPostsQuery`                                   |
+| `/<locale>/llms.txt`                                                               | dynamic | `features.llmsTxt`                        | messages tree                                     |
+| `/<locale>/llms-full.txt`                                                          | dynamic | `features.llmsTxt`                        | messages tree                                     |
+| `/<locale>/llms/<id>`                                                              | dynamic | `features.llmsTxt`                        | messages tree                                     |
+| `/api/draft-mode/enable`                                                           | dynamic | `features.blog` + `SANITY_API_READ_TOKEN` | —                                                 |
+| `/api/draft-mode/disable`                                                          | dynamic | `features.blog`                           | —                                                 |
+| `/studio/[[...tool]]`                                                              | static  | —                                         | Sanity API                                        |
+| `/sitemap.xml`                                                                     | static  | —                                         | `pages` map                                       |
+| `/robots.txt`, `/icon`, `/apple-icon`, `/opengraph-image`, `/manifest.webmanifest` | static  | —                                         | `site` config                                     |
+
+`proxy.ts` matcher excludes `/studio` and `/api`; explicitly includes `/llms.txt`, `/llms-full.txt`, `/llms/:path*`, `/blog/rss.xml`, `/blog/:slug/md`.
+
+---
+
+## 5. Initial setup (one-time)
+
+```bash
+# 1. Install deps
+pnpm install
+
+# 2. Copy env template; fill in project ID + dataset
+cp .env.example .env.local
+# Edit .env.local — at minimum NEXT_PUBLIC_SANITY_PROJECT_ID + _DATASET
+
+# 3. Flip the feature flag in src/config/index.ts
+#    features: { blog: true }
+
+# 4. (Optional) Issue tokens at https://www.sanity.io/manage
+#    Add SANITY_API_READ_TOKEN  for draft preview
+#    Add SANITY_API_WRITE_TOKEN for `pnpm seed:blog`
+
+# 5. Boot dev — Studio is at /studio
+pnpm dev
+```
+
+---
+
+## 6. Seed demo content
+
+`scripts/seed-blog-demo.mjs` populates a complete demo dataset:
+
+- **3 authors** — Lovelace, Hopper, Berners-Lee
+- **6 categories** — 3 en (Engineering, Product, Stories) + 3 fr (Ingénierie, Produit, Histoires)
+- **4 quotes** — 2 per locale
+- **3 people** — for the Person List module
+- **4 logos** — for the Logo List module
+- **1 contact form** — for the Form module (matches `public/__forms.html`)
+- **10 posts** — 5 per locale, including 2 in-depth "fast prototyping" articles per locale, each exercising every PortableText feature (h2/h3, lists, blockquote, strong, link)
+- **1 blog singleton** — `frontpageModules` populated with ALL 17 modules in a sensible order, `postModules` with 4 modules (breadcrumbs → post content → quote → related posts)
+
+### Run
+
+```bash
+SANITY_API_WRITE_TOKEN=<your-editor-token> pnpm seed:blog
+```
+
+Or set `SANITY_API_WRITE_TOKEN` in `.env.local` first and just run `pnpm seed:blog`.
+
+**Idempotent**: re-running upserts the same `_id`s via `createOrReplace`. Tweak the script and re-run to update content in place.
+
+### Expected output
+
+```
+Seeding 29 documents into qy2pp5sn/production…
+✓ Committed transaction <uuid>
+
+Next steps:
+  - Set features.blog = true in src/config/index.ts
+  - pnpm dev → open http://localhost:3000/en/blog and /fr/blog
+  - Open the Studio at /studio → Blog → Layout (singleton) to see the module mix
+```
+
+---
+
+## 7. Full QA matrix
+
+After seeding + setting `features.blog = true`:
+
+### 7.1 Static checks
+
+```bash
+pnpm tsc            # → no output (0 errors)
+pnpm lint           # → no output (0 errors, 0 warnings)
+pnpm format:check   # → "All matched files use Prettier code style!"
+pnpm verify:contrast # → "All pairs meet WCAG AA."
+pnpm build          # → 17 prerendered routes + 7 dynamic
+```
+
+The build output should list these routes:
+
+```
+○ /_not-found
+● /[locale] (/en, /fr)
+● /[locale]/blog (/en/blog, /fr/blog)
+● /[locale]/blog/[slug]                     ← 10 statically generated paths
+ƒ /[locale]/blog/[slug]/md
+ƒ /[locale]/blog/rss.xml
+● /[locale]/legal (/en/legal, /fr/legal)
+ƒ /[locale]/llms-full.txt
+ƒ /[locale]/llms.txt
+ƒ /[locale]/llms/[id]
+ƒ /api/draft-mode/disable
+ƒ /api/draft-mode/enable
+○ /apple-icon, /icon, /manifest.webmanifest, /opengraph-image, /robots.txt, /sitemap.xml
+○ /studio/[[...tool]]
+```
+
+### 7.2 Public routes (curl)
+
+`pnpm dev`, then in another shell:
+
+```bash
+# Home
+curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/en      # 200
+curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/fr      # 200
+
+# Blog frontpage
+curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog # 200
+curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/fr/blog # 200
+
+# Fast-prototyping article in both locales
+curl -sSL -o /dev/null -w "%{http_code}\n" \
+  http://localhost:3000/en/blog/fast-prototyping-with-nextjs              # 200
+curl -sSL -o /dev/null -w "%{http_code}\n" \
+  http://localhost:3000/fr/blog/prototypage-rapide-avec-nextjs            # 200
+
+# Cross-locale should 404 (post.language doesn't match request locale)
+curl -sSL -o /dev/null -w "%{http_code}\n" \
+  http://localhost:3000/fr/blog/fast-prototyping-with-nextjs              # 404
+curl -sSL -o /dev/null -w "%{http_code}\n" \
+  http://localhost:3000/en/blog/prototypage-rapide-avec-nextjs            # 404
+
+# Markdown export
+curl -sS http://localhost:3000/en/blog/fast-prototyping-with-nextjs/md | head -10
+#   ---
+#   title: "Fast prototyping with Next.js: …"
+#   description: "…"
+#   date: 2026-05-26
+#   author: "Ada Lovelace"
+#   canonical: https://example.com/en/blog/fast-prototyping-with-nextjs
+#   ---
+#   # Fast prototyping with Next.js: …
+
+# RSS
+curl -sS http://localhost:3000/en/blog/rss.xml | head -20
+# <rss version="2.0" …> with 5 EN posts
+
+curl -sS http://localhost:3000/fr/blog/rss.xml | head -20
+# <rss version="2.0" …> with 5 FR posts
+
+# Metadata routes (locale-agnostic)
+curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/sitemap.xml     # 200, lists /blog
+curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/robots.txt       # 200
+curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/opengraph-image  # 200
+curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/icon             # 200
+curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/apple-icon       # 200
+curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/manifest.webmanifest # 200
+
+# llms.txt — should now include the Blog entry
+curl -sS http://localhost:3000/en/llms.txt | grep -A 1 Blog
+```
+
+### 7.3 Studio
+
+Open <http://localhost:3000/studio>. Log in with the account that owns the project.
+
+**Verify sidebar:**
+
+- Blog (expandable) → Layout (singleton) + Posts + Authors + Categories
+- References (expandable) → Quotes + People + Logos + Forms
+
+**Verify content** (after seeding):
+
+- Posts list: 10 documents — 5 EN, 5 FR
+- Each post preview line shows `EN · <date>` or `FR · <date>`
+- Open any post → two tabs: **Content** and **Metadata**
+- Open Layout (singleton): two arrays, `Frontpage modules` (17 items) and `Per-post modules` (4 items)
+- Add a new module from the picker — every type from the catalog should be selectable
+
+### 7.4 Draft preview
+
+Requires `SANITY_API_READ_TOKEN`. With it set:
+
+1. Edit a post in the Studio but don't publish — just save as draft
+2. Visit:
+   ```
+   http://localhost:3000/api/draft-mode/enable?sanity-preview-secret=<token>&sanity-preview-pathname=/en/blog/fast-prototyping-with-nextjs
+   ```
+3. You should land on the post with **draft** content rendered
+4. Exit: `http://localhost:3000/api/draft-mode/disable`
+
+Without the token: the enable endpoint returns 503 with the message `Draft preview unavailable — set SANITY_API_READ_TOKEN in your environment.`
+
+### 7.5 All 17 modules
+
+Visit `/en/blog`. Scroll top to bottom and verify each module renders:
+
+1. **Blog frontpage hero** — eyebrow + title + intro
+2. **Breadcrumbs** — Home / Blog
+3. **Hero (split)** — eyebrow + title + content + (optional CTAs)
+4. **Stat list** — 4 stats with values + labels
+5. **Card list** — 3 cards with icons + body
+6. **Blog post list** — locale-filtered post grid (5 cards)
+7. **Quote list** — testimonials, locale-filtered (you'll see only the locale's quotes)
+8. **Logo list** — 4 brand placeholders
+9. **Person list** — 3 team members
+10. **Step list** — 3 numbered steps
+11. **Accordion list** — 3 expandable Q&As
+12. **Callout (info)** — neutral muted background
+13. **Callout (warning)** — amber
+14. **Callout (success)** — emerald
+15. **Callout (danger)** — destructive red
+16. **Search** — input that filters cards via `data-search-title`
+17. **Prose** — wide block of formatted text
+18. **Form** — Netlify Forms-wired contact form
+19. **Custom HTML** — raw HTML island
+
+(Note: 17 schemas, 19 instances in the seed because callout is rendered 4× with different variants.)
+
+### 7.6 Per-post layout
+
+Visit any post detail. The seed populates `postModules` with:
+
+1. Breadcrumbs (Home / Blog / Article)
+2. Blog post content (renders the active post's header + body)
+3. Quote list ("What others say")
+4. Blog post list ("Keep reading" — 3 most recent in this locale)
+
+The TOC sidebar appears on the right (md+) — anchors to h2/h3/h4 in the body, scroll-spy highlights the current section.
+
+### 7.7 Feature flag OFF (regression check)
+
+Flip back to `features: { blog: false }`. After dev reload:
+
+```bash
+curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog                 # 404
+curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog/fast-prototyping-with-nextjs # 404
+curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog/fast-prototyping-with-nextjs/md # 404
+curl -sS    -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog/rss.xml         # 404
+curl -sS    -o /dev/null -w "%{http_code}\n" http://localhost:3000/api/draft-mode/enable    # 404
+curl -sS    -o /dev/null -w "%{http_code}\n" http://localhost:3000/api/draft-mode/disable   # 404
+curl -sS    -o /dev/null -w "%{http_code}\n" http://localhost:3000/studio                   # 200 (Studio stays)
+```
+
+Home `/`: no "Blog" link in the header nav. `/sitemap.xml` should not list `/blog`. `/llms.txt` should not list the Blog entry.
+
+---
+
+## 8. Troubleshooting
+
+### "Draft preview unavailable" (503)
+
+`SANITY_API_READ_TOKEN` isn't set. Add it to `.env.local`. The 503 is intentional — it's better than the 500 `defineEnableDraftMode` would otherwise throw at module-load time.
+
+### Build fails: "Route used draftMode() inside generateStaticParams"
+
+`generateStaticParams` cannot call `sanityFetchLive` (which reads `draftMode()`). Use the plain `client.fetch(query)` there — the `/blog/[slug]/page.tsx` does exactly this. The fix is already in place; this note is for future routes.
+
+### Posts don't appear on `/en/blog` or `/fr/blog`
+
+Check the post's `language` field in the Studio — must equal the route locale. The fallback `coalesce(language, "en") == $locale` means a missing language field defaults to `en` (legacy docs).
+
+### Studio shows "Schema migration needed" warning
+
+After running the seed against an existing dataset that pre-dated the `language` field, Sanity may flag legacy docs. The fallback in queries already handles them; in the Studio, open each doc and the field will auto-default to `en`.
+
+### Seed script fails with 401/403
+
+The write token is missing or doesn't have Editor permissions. Re-issue at <https://www.sanity.io/manage> → API → Tokens with role `Editor`.
+
+### CSP blocks Studio API calls
+
+Already allowed via `getCSPConnectSources()` in `src/config/types.ts`. If you've customized that function, ensure `https://*.sanity.io` + `wss://*.api.sanity.io` are present.
+
+### `/blog` 200s but is blank
+
+The `blog` singleton's `frontpageModules` array is empty AND there are no posts. Either run `pnpm seed:blog` or set at least one module in the singleton via the Studio.
+
+### `/studio` shows "Configuration error"
+
+Likely an unset `NEXT_PUBLIC_SANITY_PROJECT_ID`. Check `.env.local`, restart dev.
+
+---
+
+## 9. Customization
+
+### Add a new module
+
+1. **Schema** — create `src/sanity/schema/modules/<name>.ts` using the `defineModule` helper
+2. **Register** — import + add to `moduleSchemas` and `MODULE_TYPES` in `src/sanity/schema/modules/index.ts`
+3. **Type** — add a `<Name>Module` discriminant + add it to `AnyModule` union in `src/sanity/types.ts`
+4. **GROQ** (only if the module has cross-references) — add a `_type == "module.<name>" => { ... }` branch to `MODULES_FRAGMENT` in `src/sanity/queries.ts`
+5. **Component** — add `src/components/blog-components/modules/<Name>.tsx`
+6. **Renderer** — add a case in `ModuleRenderer.tsx`'s switch (TS exhaustiveness will flag if you forget)
+
+### Rename `/blog` to something else
+
+Two places:
+
+1. `src/config/index.ts` → `pages.blog.slug` and `pages.blog.key`
+2. `src/config/types.ts` → `StaticAppPathname` + `DynamicAppPathname` unions
+
+Routes + sitemap + Studio sidebar follow automatically.
+
+### Change locale set
+
+Edit `locales` in `src/config/index.ts`. Add the locale code as a new option in the `language` field's `options.list` on `post`, `category`, `quote` schemas. Drop `messages/<code>.json`.
+
+### Disable a module without deleting it
+
+Every module has a `hidden` boolean (auto-injected by `defineModule`). Toggle it in the Studio — the renderer skips hidden modules.
+
+---
+
+## 10. File map
+
+```
+sanity.config.ts                                Studio config (schema, plugins, structure)
+scripts/seed-blog-demo.mjs                      pnpm seed:blog — populates demo dataset
+
+src/sanity/
+├── env.ts                                      projectId, dataset, apiVersion, studioBasePath
+├── client.ts                                   Read client (useCdn: false, stega.studioUrl)
+├── token.ts                                    Server-only SANITY_API_READ_TOKEN
+├── live.ts                                     defineLive — sanityFetch + <SanityLive />
+├── Studio.tsx                                  "use client" wrapper around <NextStudio>
+├── structure.ts                                Studio sidebar layout
+├── queries.ts                                  Every GROQ query (locale-filtered)
+├── types.ts                                    TypeScript shapes for query results
+├── portable-to-markdown.ts                     PortableText → Markdown serializer
+├── image.ts                                    Sanity image URL builder
+└── schema/
+    ├── index.ts                                Schema-types registry
+    ├── post.ts, author.ts, category.ts         Top-level documents
+    ├── blockContent.ts                         Rich text definition
+    ├── documents/                              Singleton + module-reference documents
+    │   ├── blog.ts                             Singleton (frontpageModules + postModules)
+    │   ├── quote.ts, person.ts, logo.ts, form.ts
+    │   └── …
+    ├── objects/                                Reusable object types
+    │   ├── metadata.ts                         Per-doc SEO override
+    │   ├── link.ts, cta.ts
+    │   └── define-module.ts                    Helper for module schemas
+    └── modules/                                17 module schemas + MODULE_TYPES catalog
+        ├── index.ts
+        ├── accordion-list.ts, callout.ts, card-list.ts, hero-split.ts,
+        │   logo-list.ts, person-list.ts, prose.ts, stat-list.ts, step-list.ts,
+        │   quote-list.ts, breadcrumbs.ts, custom-html.ts, form-module.ts,
+        │   search-module.ts, blog-index.ts, blog-post-content.ts,
+        │   blog-post-list.ts
+
+src/app/
+├── studio/[[...tool]]/page.tsx                 Embedded Studio route
+├── api/draft-mode/{enable,disable}/route.ts    Draft preview toggles
+└── [locale]/blog/
+    ├── page.tsx                                Frontpage (module-driven, falls back to card grid)
+    ├── [slug]/page.tsx                         Detail (module-driven, falls back to article + TOC)
+    ├── [slug]/md/route.ts                      Markdown export
+    └── rss.xml/route.ts                        RSS feed
+
+src/components/blog-components/
+├── Toc.tsx                                     Table of Contents sidebar (scroll-spy)
+└── modules/
+    ├── ModuleRenderer.tsx                      <Modules> + ModuleSwitch
+    ├── portable-text-components.tsx            Shared PortableText render map
+    ├── Cta.tsx                                 ModuleCta button
+    └── <17 module component files>
+```
