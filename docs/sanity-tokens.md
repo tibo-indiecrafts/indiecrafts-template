@@ -19,6 +19,18 @@ Project ID: `qy2pp5sn` (override via `NEXT_PUBLIC_SANITY_PROJECT_ID`).
 
 ### CLI
 
+The Sanity CLI ships with `@sanity/cli`. You can invoke it without installing anything globally via `pnpm dlx sanity@latest`. First-time CLI use needs a one-shot OAuth login.
+
+**Step 1 — log in once** (interactive; opens a browser tab, or prints the URL with `--no-open`):
+
+```bash
+pnpm dlx sanity@latest login --no-open
+```
+
+Pick the same provider (Google / GitHub / email) you used to create the project. Credentials get cached at `~/.config/sanity/config.json` and the same login serves every subsequent CLI command on this machine.
+
+**Step 2 — mint the two robot tokens**:
+
 ```bash
 pnpm dlx sanity@latest tokens add "indiecrafts-template-read" \
   --project qy2pp5sn --role=viewer
@@ -27,7 +39,18 @@ pnpm dlx sanity@latest tokens add "indiecrafts-template-seed" \
   --project qy2pp5sn --role=editor
 ```
 
-Tokens created via either path are **robot tokens** — no expiry, tied to the project (not your user). Use these for apps and scripts. Don't use **personal tokens** (your login session) in code — they silently rotate when you log out.
+Each command prints the freshly-minted token. Copy the `sk...` string into `.env.local` immediately — Sanity stores only the hash, so the plaintext is shown exactly once.
+
+**Other useful CLI verbs**:
+
+```bash
+pnpm dlx sanity@latest tokens list                        # what's already in the project
+pnpm dlx sanity@latest tokens remove <token-id>           # revoke
+pnpm dlx sanity@latest projects list                      # confirm projectId
+pnpm dlx sanity@latest debug --secrets                    # diagnose auth / env issues
+```
+
+Tokens created via either the Web UI or the CLI are **robot tokens** — no expiry, tied to the project (not your user). Use these for apps and scripts. Don't use **personal tokens** (your login session) in code — they silently rotate when you log out.
 
 ---
 
@@ -98,6 +121,49 @@ Tick **Allow credentials** so the Studio's session cookie is sent on requests.
 
 ## 6. Step-by-step for this project
 
+Two equivalent paths — pick one. The CLI path is fully scriptable; the Web UI path is faster if you'd rather click than type.
+
+### Path A — fully CLI-driven (recommended)
+
+```bash
+# 1. One-time interactive login (browser OAuth)
+pnpm dlx sanity@latest login --no-open
+
+# 2. Mint the read token (Viewer role)
+pnpm dlx sanity@latest tokens add "indiecrafts-template-read" \
+  --project qy2pp5sn --role=viewer
+# → copies the printed sk... into the next step
+
+# 3. Mint the write token (Editor role)
+pnpm dlx sanity@latest tokens add "indiecrafts-template-seed" \
+  --project qy2pp5sn --role=editor
+
+# 4. Write tokens into .env.local
+cat >> .env.local <<EOF
+SANITY_API_READ_TOKEN=<paste viewer token>
+SANITY_API_WRITE_TOKEN=<paste editor token>
+EOF
+
+# 5. Seed demo content (uses the Editor token)
+pnpm seed:blog
+# → "✓ Committed transaction <uuid>"
+
+# 6. Restart dev so the new env is picked up
+pnpm dev
+
+# 7. Verify draft preview is wired (uses the Viewer token).
+#    /api/draft-mode/disable is the always-safe canary — 307 when wired,
+#    404 if the blog feature flag is off.
+curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/api/draft-mode/disable
+
+# 8. Spot-check the public surface
+curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog        # 200
+curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/fr/blog        # 200
+curl -sS  -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog/rss.xml # 200
+```
+
+### Path B — Web UI
+
 ```bash
 # 1. Open the dashboard
 open "https://www.sanity.io/manage/personal/project/qy2pp5sn/api/tokens"
@@ -109,17 +175,22 @@ open "https://www.sanity.io/manage/personal/project/qy2pp5sn/api/tokens"
 #    SANITY_API_READ_TOKEN=<viewer token>
 #    SANITY_API_WRITE_TOKEN=<editor token>
 
-# 5. Seed demo content (uses the Editor token):
+# 5. Seed + verify — same as steps 5-8 in Path A
 pnpm seed:blog
-
-# 6. Restart dev so the new env is picked up:
 pnpm dev
-
-# 7. Verify draft preview is wired (uses the Viewer token):
-#    /api/draft-mode/disable is the always-safe canary — 307 → / when wired,
-#    404 if the blog feature flag is off.
 curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/api/draft-mode/disable
 ```
+
+### Skipping the login step on shared / CI machines
+
+If `sanity login` isn't an option (no browser, no OAuth provider available, CI runner), you can authenticate the CLI directly with an existing token instead. Issue **one** Editor token from the Web UI, then:
+
+```bash
+SANITY_AUTH_TOKEN=<editor-token> pnpm dlx sanity@latest tokens add \
+  "indiecrafts-template-read" --project qy2pp5sn --role=viewer
+```
+
+That mints the Viewer token using the Editor token's authority, no browser required. Subsequent CLI commands either re-supply `SANITY_AUTH_TOKEN=` inline or read from `~/.config/sanity/config.json` if you've already logged in.
 
 ---
 
@@ -133,6 +204,9 @@ curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/api/draft-mode/d
 | CORS error in the Studio browser console                   | Missing origin in **Manage → API → CORS Origins** | Add the origin, tick **Allow credentials**, refresh                 |
 | Studio loads but everything is empty                       | Token is fine but dataset is empty                | Run `pnpm seed:blog`                                                |
 | Tokens vanish from the dashboard after months              | Personal tokens auto-rotate; robot tokens do not  | Re-issue as a **robot token** (Manage UI does this by default)      |
+| `sanity login` opens a blank browser tab                   | Browser doesn't handle the deep link              | Re-run with `--no-open`; copy the printed URL manually              |
+| `sanity tokens add` fails with `not authenticated`         | CLI auth cache missing (`~/.config/sanity/`)      | Re-run `sanity login`, or pass `SANITY_AUTH_TOKEN=<token>` inline   |
+| `sanity tokens add` fails with `project not found`         | Wrong `--project` ID, or your user lacks access   | `sanity projects list` to confirm; if missing access, contact admin |
 
 ---
 
