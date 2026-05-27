@@ -1,18 +1,27 @@
 import { useTranslations } from "next-intl";
 
 /**
- * Skip-to-content link. Forked from /components/layouts/_shared/skip-link/
- * so /app stays self-contained for production chrome.
+ * Skip-to-content link — first focusable element in `<body>`, targets the
+ * `<main id="main" tabIndex={-1}>` rendered by `DefaultLayout`.
  *
- * Must be the first focusable element in <body> and target `#main` (the
- * `<main>` element rendered by DefaultLayout).
+ * Implementation notes (matters for screen-reader + keyboard users):
+ *
+ *   - Positioned off-screen with `-top-24` instead of `sr-only`. Both
+ *     keep the link in the tab order, but off-screen positioning lets
+ *     the `top` transition animate when focus arrives.
+ *   - `transition-[top] duration-200 ease-in-out` smooths the slide-down.
+ *   - The focus ring stacks a 2px brand-color ring + 2px background-color
+ *     offset, so the indicator stays visible against any theme.
+ *   - The link is rendered every page load — never hidden via `display:
+ *     none` or `visibility: hidden`, which would drop it from the tab
+ *     flow.
  */
 export function SkipLink() {
   const t = useTranslations("common");
   return (
     <a
       href="#main"
-      className="focus:bg-foreground focus:text-background focus:ring-ring sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:px-4 focus:py-2 focus:shadow-lg focus:ring-2 focus:outline-none"
+      className="bg-foreground text-background ring-ring ring-offset-background fixed -top-24 left-4 z-50 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium shadow-lg transition-[top] duration-200 ease-in-out focus:top-4 focus:ring-2 focus:ring-offset-2 focus:outline-none"
     >
       {t("skipToContent")}
     </a>
