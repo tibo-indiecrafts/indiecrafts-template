@@ -14,9 +14,9 @@ import {
   theme,
   type Locale,
 } from "@/config";
-import { CookieBanner } from "@/app/_chrome/CookieBanner";
+import { CookieBanner } from "@/app/layout/CookieBanner";
 import { routing } from "@/i18n/routing";
-import { ThemeProvider } from "@/app/_chrome/ThemeProvider";
+import { ThemeProvider } from "@/app/layout/ThemeProvider";
 import { buildSiteSchemas, JsonLdScript } from "@/lib/seo/jsonld";
 import { SanityLive } from "@/sanity/live";
 

@@ -26,7 +26,7 @@ Pre-push hook: `lint && tsc`. Pre-commit: `lint-staged`.
 src/config/index.ts        Pure data — site, theme, locales, features, navigation, seoDefaults, llms, pages, globalSchemas, analytics
 src/config/types.ts        Types + helpers (definePage, isLocale, …)
 
-src/app/_chrome/           Production chrome: DefaultLayout, Header, Footer, SkipLink, CookieBanner,
+src/app/layout/           Production chrome: DefaultLayout, Header, Footer, SkipLink, CookieBanner,
                            Logo, LocaleSwitcher, ThemeToggle, ThemeProvider
 src/app/[locale]/<seg>/    One route per folder (page.tsx). Home = (home) route group.
 src/app/routes.ts          Auto-aggregates `pages` map → ROUTES + PATHNAMES

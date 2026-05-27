@@ -23,7 +23,7 @@ pnpm verify:quick       # tsc + lint (pre-push)
 messages/<locale>.json    Single source of truth for ALL user-facing copy
 src/
 ├── app/
-│   ├── _chrome/          Production chrome — DefaultLayout, Header, Footer, SkipLink,
+│   ├── layout/          Production chrome — DefaultLayout, Header, Footer, SkipLink,
 │   │                     CookieBanner + Logo, LocaleSwitcher, ThemeToggle, ThemeProvider
 │   ├── [locale]/         Routes — `(home)`, `legal`, error, not-found, llms.txt, llms-full.txt, llms/[id]
 │   └── routes.ts         Auto-aggregates `pages` map → ROUTES + PATHNAMES

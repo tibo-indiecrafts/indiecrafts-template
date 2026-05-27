@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui-primitives/button";
-import { DefaultLayout } from "@/app/_chrome/DefaultLayout";
+import { DefaultLayout } from "@/app/layout/DefaultLayout";
 
 export type ErrorProps = {
   onRetry?: () => void;

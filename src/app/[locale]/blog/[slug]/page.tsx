@@ -7,7 +7,7 @@ import { Link } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema } from "@/lib/seo/jsonld-factories";
-import { DefaultLayout } from "@/app/_chrome/DefaultLayout";
+import { DefaultLayout } from "@/app/layout/DefaultLayout";
 import { Toc } from "@/components/blog-components/Toc";
 import { Modules } from "@/components/blog-components/modules/ModuleRenderer";
 import { portableComponents } from "@/components/blog-components/modules/portable-text-components";

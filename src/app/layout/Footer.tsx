@@ -1,12 +1,12 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { Logo } from "@/app/_chrome/Logo";
+import { Logo } from "@/app/layout/Logo";
 import { footerNav } from "@/config";
 import { site } from "@/config";
 
 /**
  * Production site footer. Forked from
- * /components/layouts/default-layout/site-footer/ so /app/_chrome owns the
+ * /components/layouts/default-layout/site-footer/ so /app/layout owns the
  * production chrome end-to-end.
  *
  * Renders nav groups from `footerNav` in `navigation.config.ts` (empty for

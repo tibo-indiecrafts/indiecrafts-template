@@ -5,7 +5,7 @@ import { features, isPageVisible, pages, type Locale } from "@/config";
 import { Link } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { DefaultLayout } from "@/app/_chrome/DefaultLayout";
+import { DefaultLayout } from "@/app/layout/DefaultLayout";
 import { Modules } from "@/components/blog-components/modules/ModuleRenderer";
 import { sanityFetchLive } from "@/sanity/live";
 import { allPostsQuery, blogSingletonQuery } from "@/sanity/queries";
