@@ -15,7 +15,7 @@
     "verify:contrast": "node scripts/check-contrast.mjs",
     "verify": "pnpm tsc && pnpm lint && pnpm format:check && pnpm verify:contrast",
     "analyze": "ANALYZE=1 next build",
-    "seed:blog": "node scripts/seed-blog-demo.mjs",
+    "seed:blog": "node --env-file=.env.local scripts/seed-blog-demo.mjs",
     "prepare": "husky"
   },
   "dependencies": {
@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "16.2.4",
+    "@sanity/client": "^7.22.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -2,7 +2,9 @@ import Image from "next/image";
 import type { LogoListModule } from "@/sanity/types";
 
 export function LogoList(props: LogoListModule) {
-  if (!props.logos?.length) return null;
+  // Filter null refs that the client couldn't resolve.
+  const logos = (props.logos ?? []).filter(Boolean);
+  if (!logos.length) return null;
   return (
     <section id={props.anchor} className="mx-auto max-w-6xl px-(--gutter) py-12 md:py-16">
       {props.title ? (
@@ -14,7 +16,7 @@ export function LogoList(props: LogoListModule) {
         </header>
       ) : null}
       <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:mt-10">
-        {props.logos.map((logo) =>
+        {logos.map((logo) =>
           logo.image?.asset?.url ? (
             <li
               key={logo._id}

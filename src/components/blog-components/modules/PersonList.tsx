@@ -2,7 +2,9 @@ import Image from "next/image";
 import type { PersonListModule } from "@/sanity/types";
 
 export function PersonList(props: PersonListModule) {
-  if (!props.people?.length) return null;
+  // Filter null refs that the client couldn't resolve.
+  const people = (props.people ?? []).filter(Boolean);
+  if (!people.length) return null;
   return (
     <section id={props.anchor} className="mx-auto max-w-6xl px-(--gutter) py-12 md:py-20">
       {props.title ? (
@@ -14,7 +16,7 @@ export function PersonList(props: PersonListModule) {
         </header>
       ) : null}
       <ul className="mt-10 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
-        {props.people.map((p) => (
+        {people.map((p) => (
           <li key={p._id} className="flex flex-col items-start gap-3">
             {p.image?.asset?.url ? (
               <Image

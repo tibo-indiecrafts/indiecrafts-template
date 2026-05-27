@@ -2,8 +2,11 @@ import Image from "next/image";
 import type { QuoteListModule } from "@/sanity/types";
 
 export function QuoteList(props: QuoteListModule) {
-  if (!props.quotes?.length) return null;
-  const single = props.quotes.length === 1;
+  // GROQ can return null entries for references the client can't see;
+  // filter them so the renderer never dereferences null.
+  const quotes = (props.quotes ?? []).filter(Boolean);
+  if (!quotes.length) return null;
+  const single = quotes.length === 1;
   return (
     <section id={props.anchor} className="mx-auto max-w-5xl px-(--gutter) py-12 md:py-20">
       {props.title ? (
@@ -16,7 +19,7 @@ export function QuoteList(props: QuoteListModule) {
             : "divide-border mt-8 grid gap-10 divide-y md:grid-cols-2 md:divide-x md:divide-y-0"
         }
       >
-        {props.quotes.map((q) => (
+        {quotes.map((q) => (
           <li
             key={q._id}
             className="flex max-w-2xl flex-col items-center gap-6 px-6 py-6 text-center"
