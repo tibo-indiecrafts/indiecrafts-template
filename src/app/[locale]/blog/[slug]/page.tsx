@@ -24,13 +24,11 @@ export async function generateStaticParams() {
   // `generateStaticParams` (build time, no request). Use the unauthed
   // client directly — `noIndex` filtering happens in the query anyway.
   const slugs = await client.fetch<PostSlug[]>(allPostSlugsQuery);
+  // Each post now belongs to one locale (post.language); pair its slug
+  // with that locale only so the FR post doesn't statically render at
+  // /en and vice versa.
   return slugs.flatMap((row) =>
-    row.slug
-      ? [
-          { locale: "en", slug: row.slug },
-          { locale: "fr", slug: row.slug },
-        ]
-      : [],
+    row.slug && row.language ? [{ locale: row.language, slug: row.slug }] : [],
   );
 }
 
@@ -38,7 +36,7 @@ export async function generateMetadata({ params }: Props) {
   const { locale, slug } = await params;
   const post = await sanityFetchLive<Post | null>({
     query: postBySlugQuery,
-    params: { slug },
+    params: { slug, locale },
   });
   const base = await buildMetadata({ page: pages.blog, locale });
   if (!post) return base;
@@ -79,8 +77,11 @@ export default async function BlogPostPage({ params }: Props) {
   // Fetch post + blog singleton in parallel — the singleton drives the
   // module layout when its `postModules` array is populated.
   const [post, blog] = await Promise.all([
-    sanityFetchLive<Post | null>({ query: postBySlugQuery, params: { slug } }),
-    sanityFetchLive<BlogSingleton | null>({ query: blogSingletonQuery }),
+    sanityFetchLive<Post | null>({ query: postBySlugQuery, params: { slug, locale } }),
+    sanityFetchLive<BlogSingleton | null>({
+      query: blogSingletonQuery,
+      params: { locale },
+    }),
   ]);
   if (!post) notFound();
 

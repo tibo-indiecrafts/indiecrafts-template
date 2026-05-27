@@ -30,6 +30,7 @@ export default async function BlogPage({ params }: Props) {
 
   const blog = await sanityFetchLive<BlogSingleton | null>({
     query: blogSingletonQuery,
+    params: { locale },
   });
   const modules = blog?.frontpageModules ?? [];
 
@@ -49,7 +50,10 @@ export default async function BlogPage({ params }: Props) {
 
 async function DefaultFrontpage({ locale }: { locale: Locale }) {
   const t = await getTranslations("pages.blog");
-  const posts = await sanityFetchLive<PostListItem[]>({ query: allPostsQuery });
+  const posts = await sanityFetchLive<PostListItem[]>({
+    query: allPostsQuery,
+    params: { locale },
+  });
 
   return (
     <section

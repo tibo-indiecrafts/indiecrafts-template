@@ -15,6 +15,7 @@
     "verify:contrast": "node scripts/check-contrast.mjs",
     "verify": "pnpm tsc && pnpm lint && pnpm format:check && pnpm verify:contrast",
     "analyze": "ANALYZE=1 next build",
+    "seed:blog": "node scripts/seed-blog-demo.mjs",
     "prepare": "husky"
   },
   "dependencies": {

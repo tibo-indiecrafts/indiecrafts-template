@@ -23,6 +23,7 @@ export async function BlogPostList({
   const posts = await sanityFetchLive<PostListItem[]>({
     query: moduleBlogPostListQuery,
     params: {
+      locale,
       categoryIds,
       limit: m.limit ?? 100,
       featuredOnly: m.featuredOnly ?? false,

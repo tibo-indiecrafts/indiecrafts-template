@@ -26,7 +26,7 @@ export async function GET(_req: Request, { params }: Props) {
 
   const post = await sanityFetchLive<Post | null>({
     query: postBySlugQuery,
-    params: { slug },
+    params: { slug, locale },
   });
   if (!post || post.metadata?.noIndex) {
     return new Response("Not found", { status: 404 });

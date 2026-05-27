@@ -19,6 +19,22 @@ export default defineType({
   ],
   fields: [
     defineField({
+      name: "language",
+      title: "Language",
+      type: "string",
+      group: "content",
+      options: {
+        list: [
+          { title: "English", value: "en" },
+          { title: "Français", value: "fr" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "en",
+      description: "Drives which locale this post appears in (/en/blog vs /fr/blog).",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: "title",
       title: "Title",
       type: "string",
@@ -71,12 +87,14 @@ export default defineType({
     select: {
       title: "title",
       subtitle: "publishedAt",
+      language: "language",
       media: "metadata.image",
     },
-    prepare({ title, subtitle, media }) {
+    prepare({ title, subtitle, language, media }) {
+      const date = subtitle ? new Date(subtitle).toLocaleDateString() : "";
       return {
         title,
-        subtitle: subtitle ? new Date(subtitle).toLocaleDateString() : undefined,
+        subtitle: [language?.toUpperCase(), date].filter(Boolean).join(" · "),
         media,
       };
     },

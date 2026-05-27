@@ -6,6 +6,19 @@ export default defineType({
   type: "document",
   fields: [
     defineField({
+      name: "language",
+      title: "Language",
+      type: "string",
+      options: {
+        list: [
+          { title: "English", value: "en" },
+          { title: "Français", value: "fr" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "en",
+    }),
+    defineField({
       name: "content",
       title: "Content",
       type: "text",
@@ -22,11 +35,18 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { title: "author", subtitle: "content", media: "image" },
-    prepare({ title, subtitle, media }) {
+    select: {
+      title: "author",
+      subtitle: "content",
+      language: "language",
+      media: "image",
+    },
+    prepare({ title, subtitle, language, media }) {
       return {
         title: title ?? "(no author)",
-        subtitle: subtitle ? `"${subtitle.slice(0, 50)}…"` : undefined,
+        subtitle: subtitle
+          ? `${language?.toUpperCase() ?? ""} · "${subtitle.slice(0, 50)}…"`.trim()
+          : language?.toUpperCase(),
         media,
       };
     },

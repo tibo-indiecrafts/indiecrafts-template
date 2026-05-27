@@ -19,7 +19,7 @@ export async function GET(_req: Request, { params }: Props) {
     return new Response("Not found", { status: 404 });
   }
   const { locale } = await params;
-  const posts = await client.fetch<RssPost[]>(rssPostsQuery);
+  const posts = await client.fetch<RssPost[]>(rssPostsQuery, { locale });
   const baseUrl = `${site.url}/${locale}`;
   const feedUrl = `${baseUrl}/blog/rss.xml`;
 

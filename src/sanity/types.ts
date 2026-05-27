@@ -49,7 +49,7 @@ export type Post = PostListItem & {
   headings?: Heading[];
 };
 
-export type PostSlug = { slug?: string };
+export type PostSlug = { slug?: string; language?: string };
 
 /** Reduced shape used by the RSS route. */
 export type RssPost = {
