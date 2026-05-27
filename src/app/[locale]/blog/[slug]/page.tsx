@@ -11,6 +11,7 @@ import { DefaultLayout } from "@/app/_chrome/DefaultLayout";
 import { Toc } from "@/components/blog-components/Toc";
 import { Modules } from "@/components/blog-components/modules/ModuleRenderer";
 import { portableComponents } from "@/components/blog-components/modules/portable-text-components";
+import { client } from "@/sanity/client";
 import { sanityFetchLive } from "@/sanity/live";
 import { allPostSlugsQuery, blogSingletonQuery, postBySlugQuery } from "@/sanity/queries";
 import type { BlogSingleton, Post, PostSlug } from "@/sanity/types";
@@ -19,7 +20,10 @@ type Props = { params: Promise<{ locale: Locale; slug: string }> };
 
 export async function generateStaticParams() {
   if (!features.blog) return [];
-  const slugs = await sanityFetchLive<PostSlug[]>({ query: allPostSlugsQuery });
+  // `sanityFetchLive` reads `draftMode()` which isn't allowed inside
+  // `generateStaticParams` (build time, no request). Use the unauthed
+  // client directly — `noIndex` filtering happens in the query anyway.
+  const slugs = await client.fetch<PostSlug[]>(allPostSlugsQuery);
   return slugs.flatMap((row) =>
     row.slug
       ? [

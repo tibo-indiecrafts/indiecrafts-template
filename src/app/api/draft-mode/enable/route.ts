@@ -1,15 +1,33 @@
 import { defineEnableDraftMode } from "next-sanity/draft-mode";
+import { features } from "@/config";
 import { client } from "@/sanity/client";
 import { token } from "@/sanity/token";
 
 /**
- * Enable draft preview. The Studio's Presentation tool calls this to open
- * a live-editing session. Requires `SANITY_API_READ_TOKEN`.
+ * Enable draft preview. The Studio's Presentation tool calls this to
+ * open a live-editing session.
  *
  *   GET /api/draft-mode/enable?sanity-preview-secret=<token>&sanity-preview-pathname=/blog/hello
  *
- * Disable: GET /api/draft-mode/disable
+ * Gated by `features.blog`:
+ *   - 404 when the blog feature is off
+ *   - 503 when the blog is on but `SANITY_API_READ_TOKEN` isn't set
+ *     (avoids the confusing 500 from `defineEnableDraftMode` about a
+ *     missing token; flags the misconfig explicitly instead).
  */
-export const { GET } = defineEnableDraftMode({
-  client: client.withConfig({ token }),
-});
+const handler = token
+  ? defineEnableDraftMode({ client: client.withConfig({ token }) })
+  : null;
+
+export async function GET(request: Request) {
+  if (!features.blog) {
+    return new Response("Not found", { status: 404 });
+  }
+  if (!handler) {
+    return new Response(
+      "Draft preview unavailable — set SANITY_API_READ_TOKEN in your environment.",
+      { status: 503 },
+    );
+  }
+  return handler.GET(request);
+}
