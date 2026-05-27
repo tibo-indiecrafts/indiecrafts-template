@@ -418,262 +418,416 @@ const forms = [
   },
 ];
 
-// ─── Module showcase (all 17, used as post.modules) ────────────
+// ─── Inline content modules — interspersed inside the body PortableText.
+// Eleven of the 17 modules can be embedded directly inside `blockContent`
+// (see src/sanity/schema/blockContent.ts for the catalog). The other six
+// — breadcrumbs, blog-index, blog-post-content, blog-post-list, search,
+// prose — are page chrome and live in the `blog.postModules` array.
 
-const showcaseModules = () => [
+const inline = {
+  callout: (variant, content) => ({
+    _type: "module.callout",
+    _key: key("m"),
+    variant,
+    content,
+  }),
+
+  statList: (title, intro, stats) => ({
+    _type: "module.stat-list",
+    _key: key("m"),
+    title,
+    intro,
+    stats: stats.map(([value, label]) => ({ _key: key("s"), value, label })),
+  }),
+
+  cardList: (title, intro, columns, cards) => ({
+    _type: "module.card-list",
+    _key: key("m"),
+    title,
+    intro,
+    columns,
+    cards: cards.map(([icon, cardTitle, cardBody]) => ({
+      _key: key("c"),
+      icon,
+      title: cardTitle,
+      content: [p(cardBody)],
+    })),
+  }),
+
+  stepList: (title, intro, steps) => ({
+    _type: "module.step-list",
+    _key: key("m"),
+    title,
+    intro,
+    steps: steps.map(([stepTitle, stepBody]) => ({
+      _key: key("s"),
+      title: stepTitle,
+      content: [p(stepBody)],
+    })),
+  }),
+
+  accordionList: (title, intro, items) => ({
+    _type: "module.accordion-list",
+    _key: key("m"),
+    title,
+    intro,
+    items: items.map(([q, a]) => ({
+      _key: key("a"),
+      title: q,
+      content: [p(a)],
+    })),
+  }),
+
+  quoteList: (title, quoteRefs) => ({
+    _type: "module.quote-list",
+    _key: key("m"),
+    title,
+    quotes: quoteRefs.map((ref) => ({
+      _type: "reference",
+      _ref: ref,
+      _key: key("q"),
+    })),
+  }),
+
+  logoList: (title, intro, logoRefs) => ({
+    _type: "module.logo-list",
+    _key: key("m"),
+    title,
+    intro,
+    logos: logoRefs.map((ref) => ({
+      _type: "reference",
+      _ref: ref,
+      _key: key("l"),
+    })),
+  }),
+
+  personList: (title, intro, personRefs) => ({
+    _type: "module.person-list",
+    _key: key("m"),
+    title,
+    intro,
+    people: personRefs.map((ref) => ({
+      _type: "reference",
+      _ref: ref,
+      _key: key("p"),
+    })),
+  }),
+
+  heroSplit: (eyebrow, title, contentText) => ({
+    _type: "module.hero-split",
+    _key: key("m"),
+    eyebrow,
+    title,
+    content: [p(contentText)],
+    image: img("hero-split"),
+    imagePosition: "right",
+  }),
+
+  form: (title, intro, formRef) => ({
+    _type: "module.form",
+    _key: key("m"),
+    title,
+    intro,
+    form: { _type: "reference", _ref: formRef },
+  }),
+
+  customHtml: (html) => ({
+    _type: "module.custom-html",
+    _key: key("m"),
+    html,
+  }),
+};
+
+// ─── Page-chrome modules (blog.postModules — wrap every post) ──
+// Just the layout slots: breadcrumbs above, body slot, related posts
+// below. The body itself carries the inline content modules.
+
+const postChromeModules = () => [
   {
     _type: "module.breadcrumbs",
     _key: key("m"),
     items: [
       { _key: key("c"), label: "Home", href: "/" },
       { _key: key("c"), label: "Blog", href: "/blog" },
-      { _key: key("c"), label: "Showcase" },
+      { _key: key("c"), label: "Article" },
     ],
   },
-
-  {
-    _type: "module.blog-index",
-    _key: key("m"),
-    eyebrow: "Indiecrafts Journal",
-    title: "Every module, one page",
-    intro:
-      "Below: each of the 17 page-builder modules rendered against the same theme tokens, so you can see how they compose.",
-  },
-
-  {
-    _type: "module.hero-split",
-    _key: key("m"),
-    eyebrow: "Featured",
-    title: "Two days. One site.",
-    content: [
-      p(
-        "The fast-prototyping handbook is a two-part series on how we ship client sites between Friday evening and Sunday night.",
-      ),
-    ],
-    image: img("hero-split"),
-    imagePosition: "right",
-  },
-
-  {
-    _type: "module.stat-list",
-    _key: key("m"),
-    title: "By the numbers",
-    intro: "What two days of shipping looks like.",
-    stats: [
-      { _key: key("s"), value: "48h", label: "Average build time" },
-      { _key: key("s"), value: "17", label: "Page-builder modules" },
-      { _key: key("s"), value: "2", label: "Supported locales" },
-      { _key: key("s"), value: "AA", label: "WCAG contrast everywhere" },
-    ],
-  },
-
-  {
-    _type: "module.card-list",
-    _key: key("m"),
-    title: "Recent themes",
-    intro: "What we keep coming back to.",
-    columns: 3,
-    cards: [
-      {
-        _key: key("c"),
-        icon: "zap",
-        title: "Fast prototyping",
-        content: [p("Going from idea to deployed MVP in 48 hours.")],
-      },
-      {
-        _key: key("c"),
-        icon: "settings",
-        title: "Config-first",
-        content: [p("Why one config file beats fifty conventions.")],
-      },
-      {
-        _key: key("c"),
-        icon: "sparkles",
-        title: "Editor-friendly",
-        content: [p("Sanity, Netlify Forms, GDPR — without the SaaS sprawl.")],
-      },
-    ],
-  },
-
-  {
-    _type: "module.prose",
-    _key: key("m"),
-    width: "wide",
-    content: [
-      h(2, "What follows"),
-      p(
-        "Everything below is editor-composable. The order is arbitrary — drag modules around in the Studio to recompose the page.",
-      ),
-    ],
-  },
-
-  {
-    _type: "module.callout",
-    _key: key("m"),
-    variant: "info",
-    content: [
-      pStrong(
-        "Heads up: ",
-        "this is a Callout module — info variant",
-        ". Use it for context the reader needs but isn't part of the main narrative.",
-      ),
-    ],
-  },
-
-  {
-    _type: "module.callout",
-    _key: key("m"),
-    variant: "success",
-    content: [p("Success variant — confirmations, completed-state messaging.")],
-  },
-
-  {
-    _type: "module.callout",
-    _key: key("m"),
-    variant: "warning",
-    content: [p("Warning variant — caveats, gotchas, things to double-check.")],
-  },
-
-  {
-    _type: "module.callout",
-    _key: key("m"),
-    variant: "danger",
-    content: [
-      p("Danger variant — destructive operations, deprecations, security holds."),
-    ],
-  },
-
-  // The actual post body slots in here. Authoring tip: place this where
-  // the reader expects the "main article" — usually near the top, with
-  // contextual modules above and supplementary modules below.
+  // Slot for the active post — renders the body PortableText, which
+  // itself contains the 11 inline-embeddable modules.
   { _type: "module.blog-post-content", _key: key("m") },
-
-  {
-    _type: "module.accordion-list",
-    _key: key("m"),
-    title: "FAQ",
-    intro: "Common questions about the template.",
-    items: [
-      {
-        _key: key("a"),
-        title: "Is the blog feature flag really optional?",
-        content: [
-          p(
-            "Yes — set features.blog = false to make every blog route 404. The Studio at /studio stays available regardless.",
-          ),
-        ],
-      },
-      {
-        _key: key("a"),
-        title: "Does Sanity own the home page too?",
-        content: [
-          p(
-            "No. Only the blog is module-driven. Home / legal / pages live in messages/<locale>.json.",
-          ),
-        ],
-      },
-      {
-        _key: key("a"),
-        title: "Can I run this on Vercel?",
-        content: [
-          p(
-            "Yes. The template is platform-agnostic. Netlify Forms only matter if you keep the Netlify Forms section.",
-          ),
-        ],
-      },
-    ],
-  },
-
-  {
-    _type: "module.step-list",
-    _key: key("m"),
-    title: "How to fork and ship",
-    intro: "Three steps to a deployed site.",
-    steps: [
-      {
-        _key: key("s"),
-        title: "Fork",
-        content: [p("Clone the repo. Set NEXT_PUBLIC_SANITY_PROJECT_ID + DATASET.")],
-      },
-      {
-        _key: key("s"),
-        title: "Theme",
-        content: [p("Edit theme.hexColors + theme.colors in src/config/index.ts.")],
-      },
-      {
-        _key: key("s"),
-        title: "Ship",
-        content: [p("Push to Netlify. Verify with pnpm verify.")],
-      },
-    ],
-  },
-
-  {
-    _type: "module.quote-list",
-    _key: key("m"),
-    title: "What people say",
-    quotes: [
-      { _type: "reference", _ref: "quote.en.lovelace", _key: key("q") },
-      { _type: "reference", _ref: "quote.en.hopper", _key: key("q") },
-    ],
-  },
-
-  {
-    _type: "module.logo-list",
-    _key: key("m"),
-    title: "Trusted by",
-    intro: "Teams shipping with the template.",
-    logos: [
-      { _type: "reference", _ref: "logo.acme", _key: key("l") },
-      { _type: "reference", _ref: "logo.contoso", _key: key("l") },
-      { _type: "reference", _ref: "logo.northwind", _key: key("l") },
-      { _type: "reference", _ref: "logo.fabrikam", _key: key("l") },
-    ],
-  },
-
-  {
-    _type: "module.person-list",
-    _key: key("m"),
-    title: "The team",
-    intro: "Who's behind it.",
-    people: [
-      { _type: "reference", _ref: "person.maya", _key: key("p") },
-      { _type: "reference", _ref: "person.luis", _key: key("p") },
-      { _type: "reference", _ref: "person.yuki", _key: key("p") },
-    ],
-  },
-
-  {
-    _type: "module.search",
-    _key: key("m"),
-    title: "Search posts",
-    placeholder: "Search by title…",
-    scope: "post",
-  },
 
   {
     _type: "module.blog-post-list",
     _key: key("m"),
     title: "Keep reading",
     intro: "More from the journal.",
-    limit: 6,
+    limit: 3,
     featuredOnly: false,
   },
-
-  {
-    _type: "module.form",
-    _key: key("m"),
-    title: "Get notified",
-    intro: "Drop your email — we send a digest every other Friday.",
-    form: { _type: "reference", _ref: "form.contact" },
-  },
-
-  {
-    _type: "module.custom-html",
-    _key: key("m"),
-    html: '<div style="margin: 2rem auto; max-width: 48rem; padding: 1.5rem; text-align: center; border-radius: 0.75rem; background: var(--muted); color: var(--muted-foreground); font-size: 0.875rem;">This block is a <code>module.custom-html</code> — raw HTML the editor controls. Lock the Studio role if you need to restrict access.</div>',
-  },
 ];
+
+// ─── Showcase body — modules INSIDE the PortableText body ──────
+// Builds an array of mixed text blocks + inline modules, in the order
+// readers see them. `quoteLocale` lets the FR variant point at the FR
+// quotes without duplicating the structure.
+
+const showcaseBody = ({ quoteLocale, copy }) => [
+  p(copy.intro1),
+  pStrong("", copy.introStrong, copy.introTail),
+  inline.callout("info", [
+    pStrong(copy.calloutInfoLead, copy.calloutInfoStrong, copy.calloutInfoTail),
+  ]),
+  h(2, copy.dayOneHeading),
+  p(copy.dayOneIntro),
+  li(copy.dayOneBullet1),
+  li(copy.dayOneBullet2),
+  li(copy.dayOneBullet3),
+  inline.statList(copy.statTitle, copy.statIntro, [
+    ["48h", copy.statLabel1],
+    ["17", copy.statLabel2],
+    ["2", copy.statLabel3],
+    ["AA", copy.statLabel4],
+  ]),
+  inline.cardList(copy.cardsTitle, copy.cardsIntro, 3, [
+    ["zap", copy.card1Title, copy.card1Body],
+    ["settings", copy.card2Title, copy.card2Body],
+    ["sparkles", copy.card3Title, copy.card3Body],
+  ]),
+  h(2, copy.dayTwoHeading),
+  p(copy.dayTwoIntro),
+  inline.callout("warning", [p(copy.calloutWarning)]),
+  inline.stepList(copy.stepsTitle, copy.stepsIntro, [
+    [copy.step1Title, copy.step1Body],
+    [copy.step2Title, copy.step2Body],
+    [copy.step3Title, copy.step3Body],
+  ]),
+  h(3, copy.skipHeading),
+  li(copy.skipBullet1),
+  li(copy.skipBullet2),
+  li(copy.skipBullet3),
+  inline.accordionList(copy.faqTitle, copy.faqIntro, [
+    [copy.faq1Q, copy.faq1A],
+    [copy.faq2Q, copy.faq2A],
+    [copy.faq3Q, copy.faq3A],
+  ]),
+  h(2, copy.slowdownHeading),
+  p(copy.slowdownIntro),
+  inline.heroSplit("Featured", copy.heroSplitTitle, copy.heroSplitContent),
+  blockquote(copy.beckQuote),
+  inline.quoteList(copy.quotesTitle, [
+    `quote.${quoteLocale}.lovelace`,
+    `quote.${quoteLocale}.hopper`,
+  ]),
+  h(2, copy.proofHeading),
+  p(copy.proofIntro),
+  inline.logoList(copy.logosTitle, copy.logosIntro, [
+    "logo.acme",
+    "logo.contoso",
+    "logo.northwind",
+    "logo.fabrikam",
+  ]),
+  inline.personList(copy.peopleTitle, copy.peopleIntro, [
+    "person.maya",
+    "person.luis",
+    "person.yuki",
+  ]),
+  inline.callout("success", [p(copy.calloutSuccess)]),
+  inline.callout("danger", [p(copy.calloutDanger)]),
+  inline.form(copy.formTitle, copy.formIntro, "form.contact"),
+  inline.customHtml(
+    `<div style="margin: 2rem 0; padding: 1.25rem; text-align: center; border-radius: 0.75rem; background: var(--muted); color: var(--muted-foreground); font-size: 0.875rem;">This block is a <code>module.custom-html</code> &mdash; ${copy.customHtmlNote}</div>`,
+  ),
+  h(2, copy.closingHeading),
+  pLink(
+    copy.closingLead,
+    copy.closingLinkText,
+    "https://indiecrafts.dev",
+    copy.closingTail,
+  ),
+];
+
+const showcaseCopyEn = {
+  intro1:
+    "The fastest way to validate a product idea is to ship it. Not a clickable Figma — a real site visitors can break, share, and abandon.",
+  introStrong:
+    "This guide is opinionated: do less, deploy more, learn on production traffic.",
+  introTail: "",
+  calloutInfoLead: "Heads up: ",
+  calloutInfoStrong: "this is a Callout module embedded inline in the post body",
+  calloutInfoTail:
+    ". Editors drop any of 11 modules directly into the body from the Studio.",
+  dayOneHeading: "Day one: scaffold and deploy",
+  dayOneIntro:
+    "Start with a template that already handles the boring decisions. The first deploy should happen before lunch.",
+  dayOneBullet1:
+    "Pick a routing primitive (App Router) and never touch the router code on day one.",
+  dayOneBullet2: "Wire SEO + sitemap once. Skip i18n unless the target market needs it.",
+  dayOneBullet3:
+    "Deploy on push. No staging dance — preview deploys per PR are good enough.",
+  statTitle: "By the numbers",
+  statIntro: "What two days of shipping looks like.",
+  statLabel1: "Average build time",
+  statLabel2: "Page-builder modules",
+  statLabel3: "Supported locales",
+  statLabel4: "WCAG contrast everywhere",
+  cardsTitle: "Recent themes",
+  cardsIntro: "What we keep coming back to.",
+  card1Title: "Fast prototyping",
+  card1Body: "Going from idea to deployed MVP in 48 hours.",
+  card2Title: "Config-first",
+  card2Body: "Why one config file beats fifty conventions.",
+  card3Title: "Editor-friendly",
+  card3Body: "Sanity, Netlify Forms, GDPR — without the SaaS sprawl.",
+  dayTwoHeading: "Day two: content + analytics",
+  dayTwoIntro:
+    "By the afternoon of day two, you have a single page with real copy, a contact form, and traffic-level analytics. Resist the urge to add more.",
+  calloutWarning:
+    "If you add a CMS in the first 48 hours, you'll spend day three migrating schema instead of finding customers. Wait until the third paragraph repeats itself.",
+  stepsTitle: "How to fork and ship",
+  stepsIntro: "Three steps to a deployed site.",
+  step1Title: "Fork",
+  step1Body: "Clone the repo. Set NEXT_PUBLIC_SANITY_PROJECT_ID + DATASET.",
+  step2Title: "Theme",
+  step2Body: "Edit theme.hexColors + theme.colors in src/config/index.ts.",
+  step3Title: "Ship",
+  step3Body: "Push to Netlify. Verify with pnpm verify.",
+  skipHeading: "Skip these on day one",
+  skipBullet1:
+    "CMS integration. Hard-code copy until you've written the same paragraph three times.",
+  skipBullet2: "Authentication. Most MVPs don't need it.",
+  skipBullet3: "A design system. Use defaults until friction proves otherwise.",
+  faqTitle: "FAQ",
+  faqIntro: "Common questions about the template.",
+  faq1Q: "Is the blog feature flag really optional?",
+  faq1A:
+    "Yes — set features.blog = false to make every blog route 404. The Studio at /studio stays available regardless.",
+  faq2Q: "Does Sanity own the home page too?",
+  faq2A:
+    "No. Only the blog is module-driven. Home / legal / pages live in messages/<locale>.json.",
+  faq3Q: "Can I run this on Vercel?",
+  faq3A:
+    "Yes. The template is platform-agnostic. Netlify Forms only matter if you keep the Netlify Forms section.",
+  slowdownHeading: "When to slow down",
+  slowdownIntro:
+    "The moment you have a second person editing copy, set up a CMS. The moment two people share a feature flag, write it down. Premature infrastructure is the enemy.",
+  heroSplitTitle: "Two days. One site.",
+  heroSplitContent:
+    "The fast-prototyping handbook is a two-part series on how we ship client sites between Friday evening and Sunday night.",
+  beckQuote: "Make it work, make it right, make it fast — in that order. — Kent Beck",
+  quotesTitle: "What people say",
+  proofHeading: "Proof, not just promises",
+  proofIntro:
+    "Below: a few of the teams shipping with the template and the people behind it.",
+  logosTitle: "Trusted by",
+  logosIntro: "Teams shipping with the template.",
+  peopleTitle: "The team",
+  peopleIntro: "Who's behind it.",
+  calloutSuccess:
+    "All AA contrast checks pass on the default theme — verify with pnpm verify:contrast.",
+  calloutDanger:
+    "Avoid editing src/components/ui-primitives/* by hand — they're shadcn-managed.",
+  formTitle: "Get notified",
+  formIntro: "Drop your email — we send a digest every other Friday.",
+  customHtmlNote:
+    "raw HTML the editor controls. Lock the Studio role if you need to restrict access.",
+  closingHeading: "Closing thought",
+  closingLead: "The template this guide ships with — ",
+  closingLinkText: "indiecrafts.dev",
+  closingTail:
+    " — covers steps one through five so you can spend your weekend on steps six and beyond.",
+};
+
+const showcaseCopyFr = {
+  intro1:
+    "La meilleure façon de valider une idée produit, c'est de la livrer. Pas un Figma cliquable — un vrai site que des visiteurs peuvent casser, partager, abandonner.",
+  introStrong:
+    "Ce guide est opinionné : faites moins, déployez plus, apprenez sur du trafic réel.",
+  introTail: "",
+  calloutInfoLead: "À noter : ",
+  calloutInfoStrong: "ceci est un module Callout intégré dans le corps de l'article",
+  calloutInfoTail:
+    ". Les éditeurs peuvent insérer 11 modules directement dans le corps depuis le Studio.",
+  dayOneHeading: "Jour un : poser les fondations et déployer",
+  dayOneIntro:
+    "Démarrez avec un template qui gère déjà les décisions ennuyeuses. Le premier déploiement doit tomber avant le déjeuner.",
+  dayOneBullet1: "Choisissez un routeur (App Router) et n'y touchez plus le jour un.",
+  dayOneBullet2:
+    "Branchez SEO + sitemap une bonne fois. Évitez l'i18n sauf si le marché cible l'exige.",
+  dayOneBullet3:
+    "Déployez à chaque push. Pas de danse de staging — les previews par PR suffisent.",
+  statTitle: "En chiffres",
+  statIntro: "Ce que représentent deux jours de livraison.",
+  statLabel1: "Temps de build moyen",
+  statLabel2: "Modules page-builder",
+  statLabel3: "Langues supportées",
+  statLabel4: "Contraste WCAG partout",
+  cardsTitle: "Thèmes récurrents",
+  cardsIntro: "Ce sur quoi nous revenons sans cesse.",
+  card1Title: "Prototypage rapide",
+  card1Body: "De l'idée au MVP déployé en 48 heures.",
+  card2Title: "Config-first",
+  card2Body: "Pourquoi un fichier de config bat cinquante conventions.",
+  card3Title: "Pensé pour les éditeurs",
+  card3Body: "Sanity, Netlify Forms, RGPD — sans la prolifération SaaS.",
+  dayTwoHeading: "Jour deux : contenu et analytics",
+  dayTwoIntro:
+    "L'après-midi du jour deux, vous avez une page unique avec du contenu réel, un formulaire de contact et des métriques au niveau du trafic. Résistez à l'envie d'en ajouter.",
+  calloutWarning:
+    "Si vous ajoutez un CMS dans les premières 48 heures, vous passerez le jour trois à migrer du schéma au lieu de chercher des clients. Attendez que le même paragraphe se répète trois fois.",
+  stepsTitle: "Forker et livrer",
+  stepsIntro: "Trois étapes vers un site déployé.",
+  step1Title: "Forker",
+  step1Body: "Clonez le dépôt. Définissez NEXT_PUBLIC_SANITY_PROJECT_ID + DATASET.",
+  step2Title: "Thématiser",
+  step2Body: "Éditez theme.hexColors + theme.colors dans src/config/index.ts.",
+  step3Title: "Livrer",
+  step3Body: "Pushez vers Netlify. Vérifiez avec pnpm verify.",
+  skipHeading: "À sauter le jour un",
+  skipBullet1:
+    "Intégration CMS. Codez le contenu en dur jusqu'à avoir réécrit trois fois le même paragraphe.",
+  skipBullet2: "Authentification. La plupart des MVP n'en ont pas besoin.",
+  skipBullet3: "Un design system. Restez avec les défauts jusqu'à preuve du contraire.",
+  faqTitle: "FAQ",
+  faqIntro: "Questions fréquentes sur le template.",
+  faq1Q: "Le feature flag blog est-il vraiment optionnel ?",
+  faq1A:
+    "Oui — passez features.blog à false et toutes les routes blog renvoient 404. Le Studio à /studio reste accessible.",
+  faq2Q: "Sanity gère-t-il aussi la page d'accueil ?",
+  faq2A:
+    "Non. Seul le blog est module-driven. Home / mentions légales / pages vivent dans messages/<locale>.json.",
+  faq3Q: "Puis-je déployer sur Vercel ?",
+  faq3A:
+    "Oui. Le template est platform-agnostic. Netlify Forms n'a d'importance que si vous gardez la section Netlify Forms.",
+  slowdownHeading: "Quand ralentir",
+  slowdownIntro:
+    "Dès qu'une deuxième personne édite le contenu, installez un CMS. Dès que deux personnes partagent un feature flag, documentez-le. L'infrastructure prématurée est l'ennemi.",
+  heroSplitTitle: "Deux jours. Un site.",
+  heroSplitContent:
+    "Le manuel du prototypage rapide est une série en deux parties sur la livraison de sites clients entre le vendredi soir et le dimanche soir.",
+  beckQuote:
+    "Faites que ça marche, faites que ça soit juste, faites que ça soit rapide — dans cet ordre. — Kent Beck",
+  quotesTitle: "Ce qu'on en dit",
+  proofHeading: "Preuves, pas promesses",
+  proofIntro:
+    "Ci-dessous : quelques équipes qui livrent avec le template, et les personnes derrière.",
+  logosTitle: "Ils nous font confiance",
+  logosIntro: "Des équipes qui livrent avec le template.",
+  peopleTitle: "L'équipe",
+  peopleIntro: "Qui se cache derrière.",
+  calloutSuccess:
+    "Tous les checks de contraste AA passent sur le thème par défaut — vérifiez avec pnpm verify:contrast.",
+  calloutDanger:
+    "Évitez d'éditer src/components/ui-primitives/* à la main — c'est géré par shadcn.",
+  formTitle: "Soyez notifié",
+  formIntro: "Laissez votre email — nous envoyons un digest tous les quinze jours.",
+  customHtmlNote:
+    "du HTML brut contrôlé par l'éditeur. Verrouillez le rôle Studio si vous voulez restreindre l'accès.",
+  closingHeading: "Pour conclure",
+  closingLead: "Le template fourni avec ce guide — ",
+  closingLinkText: "indiecrafts.dev",
+  closingTail:
+    " — couvre les étapes un à cinq, pour que votre week-end soit consacré à six et au-delà.",
+};
 
 // ─── Posts ──────────────────────────────────────────────────────
 
@@ -725,39 +879,7 @@ const buildPosts = () => [
     categories: ["cat.en.engineering", "cat.en.product"],
     featured: true,
     imageKey: "post-fast-proto",
-    modules: showcaseModules(),
-    body: [
-      p(
-        "The fastest way to validate a product idea is to ship it. Not a clickable Figma — a real site visitors can break, share, and abandon.",
-      ),
-      pStrong(
-        "This guide is opinionated: ",
-        "do less, deploy more, learn on production traffic",
-        ".",
-      ),
-      h(2, "Day one: scaffold and deploy"),
-      p(
-        "Start with a template that already handles the boring decisions. The first deploy should happen before lunch.",
-      ),
-      li(
-        "Pick a routing primitive (App Router) and never touch the router code on day one.",
-      ),
-      li("Wire SEO + sitemap once. Skip i18n unless the target market needs it."),
-      li("Deploy on push. No staging dance — preview deploys per PR are good enough."),
-      h(2, "Day two: content + analytics"),
-      p(
-        "By the afternoon of day two, you have a single page with real copy, a contact form, and traffic-level analytics. Resist the urge to add more.",
-      ),
-      blockquote(
-        "Make it work, make it right, make it fast — in that order. — Kent Beck",
-      ),
-      pLink(
-        "The template this guide ships with — ",
-        "indiecrafts.dev",
-        "https://indiecrafts.dev",
-        " — covers steps one through five so you can spend your weekend on steps six and beyond.",
-      ),
-    ],
+    body: showcaseBody({ quoteLocale: "en", copy: showcaseCopyEn }),
   }),
 
   post("post.en.ship-weekend", {
@@ -861,37 +983,7 @@ const buildPosts = () => [
     categories: ["cat.fr.engineering", "cat.fr.product"],
     featured: true,
     imageKey: "post-fast-proto",
-    modules: showcaseModules(),
-    body: [
-      p(
-        "La meilleure façon de valider une idée produit, c'est de la livrer. Pas un Figma cliquable — un vrai site que des visiteurs peuvent casser, partager, abandonner.",
-      ),
-      pStrong(
-        "Ce guide est opinionné : ",
-        "faites moins, déployez plus, apprenez sur du trafic réel",
-        ".",
-      ),
-      h(2, "Jour un : poser les fondations et déployer"),
-      p(
-        "Démarrez avec un template qui gère déjà les décisions ennuyeuses. Le premier déploiement doit tomber avant le déjeuner.",
-      ),
-      li("Choisissez un routeur (App Router) et n'y touchez plus le jour un."),
-      li(
-        "Branchez SEO + sitemap une bonne fois. Évitez l'i18n sauf si le marché cible l'exige.",
-      ),
-      li(
-        "Déployez à chaque push. Pas de danse de staging — les previews par PR suffisent.",
-      ),
-      blockquote(
-        "Faites que ça marche, faites que ça soit juste, faites que ça soit rapide — dans cet ordre. — Kent Beck",
-      ),
-      pLink(
-        "Le template fourni avec ce guide — ",
-        "indiecrafts.dev",
-        "https://indiecrafts.dev",
-        " — couvre les étapes un à cinq, pour que votre week-end soit consacré à six et au-delà.",
-      ),
-    ],
+    body: showcaseBody({ quoteLocale: "fr", copy: showcaseCopyFr }),
   }),
 
   post("post.fr.ship-weekend", {
@@ -979,9 +1071,10 @@ const blog = {
   // Empty → /blog falls back to the default minimal card-grid layout.
   // Add modules here from the Studio when you want a richer frontpage.
   frontpageModules: [],
-  // Empty → individual posts use the default article layout, unless
-  // a specific post sets its own `modules` (see post.modules above).
-  postModules: [],
+  // Every post gets breadcrumbs at the top, the body in the middle (with
+  // its inline modules), and "Keep reading" at the bottom. Posts can
+  // still override with their own `post.modules` array.
+  postModules: postChromeModules(),
 };
 
 // ─── Run ────────────────────────────────────────────────────────
