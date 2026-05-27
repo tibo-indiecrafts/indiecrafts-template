@@ -34,7 +34,7 @@ SANITY_API_READ_TOKEN=                        # Viewer role. Required for draft 
 SANITY_API_WRITE_TOKEN=                       # Editor role. Only `pnpm seed:blog` uses this.
 ```
 
-Issue tokens at: <https://www.sanity.io/manage> → your project → **API** → **Tokens** → **Add API token**.
+Issue tokens at: <https://www.sanity.io/manage> → your project → **API** → **Tokens** → **Add API token**. Full reference (roles, CORS, security, troubleshooting) in [`sanity-tokens.md`](./sanity-tokens.md).
 
 ### Feature flag (`src/config/index.ts`)
 
