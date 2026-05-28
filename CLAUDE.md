@@ -126,27 +126,28 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 
 ## Sanity + blog (feature-flagged)
 
-The template ships a Sanity-backed blog with a page-builder system **scoped to the blog only**. Disabled by default; flip `features.blog` in `config/index.ts` to turn on `/blog` + `/blog/[slug]` and add the blog link to the header.
+The template ships a Sanity-backed blog with a page-builder system **scoped to the blog only**. On by default (`features.blog: true` in `config/index.ts`) — flip to `false` to 404 every blog route, drop the entry from sitemap + llms.txt, and remove the `/blog` link from the header. The Studio at `/studio` stays reachable regardless, so editors can keep working while the public surface is hidden.
 
 **Schemas** (in `src/sanity/schema/`):
 
-| Surface      | Documents                                        | Objects                                     |
-| ------------ | ------------------------------------------------ | ------------------------------------------- |
-| Blog         | `blog` (singleton), `post`, `author`, `category` | `blockContent`, `metadata`                  |
-| Module refs  | `quote`, `person`, `logo`, `form`                | `link`, `cta`                               |
-| Page-builder | —                                                | 17 `module.*` types (see `schema/modules/`) |
+| Surface      | Documents                                               | Objects                                     |
+| ------------ | ------------------------------------------------------- | ------------------------------------------- |
+| Blog         | `blog` (singleton), `post`, `author`, `category`, `tag` | `blockContent`, `metadata`                  |
+| Module refs  | `quote`, `person`                                       | `link`, `cta`                               |
+| Page-builder | —                                                       | 14 `module.*` types (see `schema/modules/`) |
 
-**Studio at `/studio`** — embedded catch-all at `src/app/studio/[[...tool]]/page.tsx`. The sidebar groups Blog (singleton + posts/authors/categories) and References (quotes/people/logos/forms). Studio stays available even when `features.blog === false` so editors can keep working while the public route is hidden.
+**Studio at `/studio`** — embedded catch-all at `src/app/studio/[[...tool]]/page.tsx`. Studio root layout at `src/app/studio/layout.tsx` (catch-all sits outside `[locale]/`, so it needs its own `<html>`/`<body>`). The sidebar groups Blog (singleton + posts/authors/categories) and References (quotes/people).
 
-**The `blog` singleton owns the layout** of both `/blog` (`frontpageModules[]`) and `/blog/[slug]` (`postModules[]`). When either array is empty, the route falls back to a hard-coded default layout. Drop a `module.blog-post-content` into `postModules` to render the active post's body at that position.
+**The `blog` singleton owns the per-post chrome via `postModules[]`.** When the array is empty, every `/blog/[slug]` falls back to `DefaultPostLayout` (full-width hero with cover image touching the nav, sticky TOC sidebar, rounded body panel, "Keep reading" related-posts grid). The frontpage at `/blog` is **never** module-driven — chrome stays uniform by design.
 
-**Modules** (all 17 are `object` types, all gated by the blog feature):
+**Modules** (all 14 are `object` types, all gated by the blog feature):
 
-- **Content** — accordion-list, callout, card-list, hero-split, logo-list, person-list, prose, stat-list, step-list, quote-list
-- **Utility** — breadcrumbs, custom-html, form, search
-- **Blog** — blog-index (frontpage hero), blog-post-content (active-post slot), blog-post-list (filtered post grid)
+- **Inline-embeddable in post body + usable in `postModules`** (8): accordion-list, callout, card-list, custom-html, person-list, quote-list, stat-list, step-list
+- **`postModules`-only** (6): breadcrumbs, blog-index, blog-post-content, blog-post-list, prose, search
 
-**Renderer**: `src/components/blog-components/modules/ModuleRenderer.tsx` switches on `_type` and hands off to one of 17 small components. Adding a module = new schema + new component + new case in the switch (TS exhaustiveness check enforces).
+The inline allowlist lives in `src/sanity/schema/blockContent.ts` (`INLINE_MODULES`). Removing a module = remove from both that list AND from the renderer's `types` map in `portable-text-components.tsx`.
+
+**Renderer**: `src/components/blog-components/modules/ModuleRenderer.tsx` switches on `_type` and hands off to one of 14 small components. Adding a module = new schema + new component + new case in the switch (TS exhaustiveness check enforces).
 
 **Queries** (`src/sanity/queries.ts`) use `defineQuery` (typegen-ready). `MODULES_FRAGMENT` expands every reference per module type. Always fetch through `sanityFetchLive` (draft-mode aware) or `@/sanity/client` — never instantiate a new `createClient`.
 

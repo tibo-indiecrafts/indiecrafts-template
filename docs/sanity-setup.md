@@ -144,12 +144,10 @@ Content
 │  └─ Categories
 └─ References
    ├─ Quotes
-   ├─ People
-   ├─ Logos
-   └─ Forms
+   └─ People
 ```
 
-The 17 modules are object types, not documents — editors only ever encounter them via the picker inside the singleton's two arrays.
+The 14 modules are object types, not documents — editors only ever encounter them via the picker inside the singleton's `postModules` array or directly inline in a post body (the 8 inline-embeddable types listed in `blockContent.ts`).
 
 ---
 
@@ -205,12 +203,15 @@ pnpm dev
 
 - **3 authors** — Lovelace, Hopper, Berners-Lee
 - **6 categories** — 3 en (Engineering, Product, Stories) + 3 fr (Ingénierie, Produit, Histoires)
-- **4 quotes** — 2 per locale
+- **20 tags** — 10 per locale
+- **4 quotes** — 2 per locale, each carrying a real Unsplash portrait
 - **3 people** — for the Person List module
-- **4 logos** — for the Logo List module
-- **1 contact form** — for the Form module (matches `public/__forms.html`)
-- **10 posts** — 5 per locale, including 2 in-depth "fast prototyping" articles per locale, each exercising every PortableText feature (h2/h3, lists, blockquote, strong, link)
-- **1 blog singleton** — `frontpageModules` populated with ALL 17 modules in a sensible order, `postModules` with 4 modules (breadcrumbs → post content → quote → related posts)
+- **10 posts** — 5 per locale, including a long-form "fast prototyping" showcase per locale that exercises **every** body-editor primitive (H1-H6, numbered + bulleted lists, code / underline / strike-through marks, inline images, links, blockquote) plus **all 8 inline-embeddable modules**
+- **1 blog singleton** — `postModules` empty by default, so every post renders via `DefaultPostLayout` (hero card → TOC sidebar + body panel → keep-reading grid)
+
+Total: **47 documents** in a single transaction.
+
+Before the seed transaction commits, `cleanupLegacy()` runs once to scrub any leftover `module.hero-split` / `module.logo-list` blocks from existing post bodies + delete orphan `logo` docs in the correct reference order. Re-running the seed is therefore safe even against an older dataset that pre-dates this template version.
 
 ### Run
 
@@ -218,20 +219,28 @@ pnpm dev
 SANITY_API_WRITE_TOKEN=<your-editor-token> pnpm seed:blog
 ```
 
-Or set `SANITY_API_WRITE_TOKEN` in `.env.local` first and just run `pnpm seed:blog`.
+Or set `SANITY_API_WRITE_TOKEN` in `.env.local` first and just run `pnpm seed:blog` — the npm script loads `.env.local` for you via `node --env-file=.env.local`.
 
 **Idempotent**: re-running upserts the same `_id`s via `createOrReplace`. Tweak the script and re-run to update content in place.
 
 ### Expected output
 
 ```
-Seeding 29 documents into qy2pp5sn/production…
+Seeding into <projectId>/<dataset>…
+
+✓ Cleanup: cleaned N post(s) + 0 blog singleton(s), removed orphan logos
+
+Uploading 11 images to Sanity…
+  11/11 uploaded
+
+Committing 47 documents…
 ✓ Committed transaction <uuid>
 
-Next steps:
-  - Set features.blog = true in src/config/index.ts
-  - pnpm dev → open http://localhost:3000/en/blog and /fr/blog
-  - Open the Studio at /studio → Blog → Layout (singleton) to see the module mix
+What you should see:
+  /blog                                 → minimal card grid
+  /blog/fast-prototyping-with-nextjs    → ALL 8 inline modules
+  /blog/prototypage-rapide-avec-nextjs  → ALL 8 inline modules (FR)
+  any other post                         → default article layout
 ```
 
 ---
@@ -355,42 +364,42 @@ Requires `SANITY_API_READ_TOKEN`. With it set:
 
 Without the token: the enable endpoint returns 503 with the message `Draft preview unavailable — set SANITY_API_READ_TOKEN in your environment.`
 
-### 7.5 All 17 modules
+### 7.5 All 8 inline modules
 
-Visit `/en/blog`. Scroll top to bottom and verify each module renders:
+Visit `/en/blog/fast-prototyping-with-nextjs`. Scroll top to bottom and verify each inline module renders:
 
-1. **Blog frontpage hero** — eyebrow + title + intro
-2. **Breadcrumbs** — Home / Blog
-3. **Hero (split)** — eyebrow + title + content + (optional CTAs)
-4. **Stat list** — 4 stats with values + labels
-5. **Card list** — 3 cards with icons + body
-6. **Blog post list** — locale-filtered post grid (5 cards)
-7. **Quote list** — testimonials, locale-filtered (you'll see only the locale's quotes)
-8. **Logo list** — 4 brand placeholders
-9. **Person list** — 3 team members
-10. **Step list** — 3 numbered steps
-11. **Accordion list** — 3 expandable Q&As
-12. **Callout (info)** — neutral muted background
-13. **Callout (warning)** — amber
-14. **Callout (success)** — emerald
-15. **Callout (danger)** — destructive red
-16. **Search** — input that filters cards via `data-search-title`
-17. **Prose** — wide block of formatted text
-18. **Form** — Netlify Forms-wired contact form
-19. **Custom HTML** — raw HTML island
+1. **Callout (info)** — neutral muted background, just after the intro paragraph
+2. **Stat list** — 4 stats (48h / 17 / 2 / AA) inside a hairline-divided grid
+3. **Card list** — 3 cards with the same hairline-divider treatment
+4. **Callout (warning)** — amber
+5. **Step list** — 3 numbered steps with vertical connector
+6. **Accordion list** — 3 expandable Q&As
+7. **Quote list** — 2 testimonials (locale-filtered), each with portrait + role
+8. **Person list** — 3 team members, centered avatars
+9. **Callout (success)** — emerald
+10. **Callout (danger)** — destructive red
+11. **Custom HTML** — centered "raw HTML the editor controls" block
 
-(Note: 17 schemas, 19 instances in the seed because callout is rendered 4× with different variants.)
+(8 module types, 11 instances because Callout renders 4× with different variants.)
+
+In the same post, also verify the default body primitives that ship with `blockContent`:
+
+- **Heading hierarchy** — H2 ("Day one"…), H3 ("Deploy before you decorate"…), H4, H5, H6 examples toward the end
+- **Numbered list** — "The three-move playbook"
+- **Bulleted list** — "Day one bullets"
+- **Inline marks** — `pnpm dev` as code, "Shipping is the artefact." as strong, strike-through in the "older draft" footnote
+- **Inline image** — hero photo embedded in the body
+- **Link** — closing "indiecrafts.dev" link
 
 ### 7.6 Per-post layout
 
-Visit any post detail. The seed populates `postModules` with:
+By default the `blog` singleton's `postModules` array is empty, so every `/blog/[slug]` route renders via `DefaultPostLayout` (`src/components/blog-components/DefaultPostLayout.tsx`):
 
-1. Breadcrumbs (Home / Blog / Article)
-2. Blog post content (renders the active post's header + body)
-3. Quote list ("What others say")
-4. Blog post list ("Keep reading" — 3 most recent in this locale)
+- Full-width hero card with cover image touching the nav, breadcrumbs in a backdrop-blur pill, bottom-aligned title block
+- Two-column layout below: TOC sidebar on the right (sticky `top-24`, only mounted when `post.headings` has at least one h2/h3/h4) and a rounded body panel filling the rest of the width
+- "Keep reading" related-posts grid at the bottom
 
-The TOC sidebar appears on the right (md+) — anchors to h2/h3/h4 in the body, scroll-spy highlights the current section.
+To swap in a module-driven shell for every post, populate `postModules` from the Studio: drop in `breadcrumbs` → `blog-post-content` → `quote-list` → `blog-post-list` (or any other order). The fallback only fires when the array is empty.
 
 ### 7.7 Feature flag OFF (regression check)
 
@@ -431,6 +440,18 @@ After running the seed against an existing dataset that pre-dated the `language`
 ### Seed script fails with 401/403
 
 The write token is missing or doesn't have Editor permissions. Re-issue at <https://www.sanity.io/manage> → API → Tokens with role `Editor`.
+
+### Removed a schema field, but old docs still expose it in the Studio
+
+Sanity stores every previously-set field on a document forever — removing the schema entry hides it from the editor, but the data is still in the JSON. Use `scripts/unset-legacy-fields.mjs` to nuke a named field from every document in one transaction.
+
+```bash
+node --env-file=.env.local scripts/unset-legacy-fields.mjs
+```
+
+The script reads the `TARGETS` array at the top — `[GROQ query returning _ids, field-path to unset]`. Edit those entries to match the field you're retiring, run once, and the orphan fields are gone. Idempotent — re-running with no matches reports `nothing to unset`.
+
+It currently ships pointing at two fields removed in earlier releases (`post.modules` and `blog.frontpageModules`) — adapt or comment out before running against a fresh dataset.
 
 ### CSP blocks Studio API calls
 
@@ -498,8 +519,8 @@ src/sanity/
     ├── post.ts, author.ts, category.ts         Top-level documents
     ├── blockContent.ts                         Rich text definition
     ├── documents/                              Singleton + module-reference documents
-    │   ├── blog.ts                             Singleton (frontpageModules + postModules)
-    │   ├── quote.ts, person.ts, logo.ts, form.ts
+    │   ├── blog.ts                             Singleton (postModules layout slot)
+    │   ├── quote.ts, person.ts
     │   └── …
     ├── objects/                                Reusable object types
     │   ├── metadata.ts                         Per-doc SEO override
@@ -528,5 +549,5 @@ src/components/blog-components/
     ├── ModuleRenderer.tsx                      <Modules> + ModuleSwitch
     ├── portable-text-components.tsx            Shared PortableText render map
     ├── Cta.tsx                                 ModuleCta button
-    └── <17 module component files>
+    └── <14 module component files>
 ```

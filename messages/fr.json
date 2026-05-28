@@ -7,7 +7,6 @@
     "home": "Accueil",
     "about": "À propos",
     "blog": "Blog",
-    "blogTwoCol": "Deux colonnes",
     "author": "Auteurs",
     "contact": "Contact",
     "company": "Société",
@@ -16,7 +15,6 @@
     "terms": "Conditions"
   },
   "cta": {
-    "getStarted": "Commencer",
     "learnMore": "En savoir plus"
   },
   "footer": {
@@ -24,8 +22,6 @@
   },
   "common": {
     "skipToContent": "Aller au contenu principal",
-    "openMenu": "Ouvrir le menu",
-    "closeMenu": "Fermer le menu",
     "changeLanguage": "Changer de langue",
     "switchTheme": "Changer de thème",
     "themeLight": "Clair",
@@ -109,29 +105,21 @@
       "description": "Articles, tutoriels et coulisses.",
       "heading": "Lire, apprendre, grandir",
       "subheading": "Des conseils d'experts aux coulisses — du contenu pensé pour les esprits curieux.",
-      "readMore": "Lire la suite",
       "minRead": "{minutes} min de lecture",
-      "publishedOn": "Publié le {date}",
       "by": "Par {name}",
       "backToList": "← Tous les articles",
       "noPosts": "Aucun article pour le moment. Revenez bientôt.",
       "onThisPage": "Sur cette page",
       "related": "À lire ensuite",
       "relatedSubheading": "D'autres articles qui pourraient vous plaire.",
-      "tagsLabel": "Tags",
       "heroLabel": "Derniers articles",
-      "featuredLabel": "En vedette",
       "noPostsModule": "Aucun article pour le moment.",
       "searchPlaceholder": "Rechercher…",
       "searchLabel": "Rechercher",
-      "formSubmitDefault": "Envoyer",
-      "formHoneypot": "Ne remplissez pas ce champ :",
       "breadcrumbsLabel": "Fil d'ariane",
       "metaPublished": "Publié le",
       "metaReadTime": "Temps de lecture",
-      "metaAuthor": "Auteur",
       "metaCategory": "Catégorie",
-      "navPillsLabel": "Sections du blog",
       "navPills": {
         "all": "Tous les articles",
         "authors": "Auteurs",
@@ -141,7 +129,6 @@
       "categories": {
         "heading": "Explorer les catégories",
         "subheading": "Choisissez une catégorie pour explorer le contenu associé — trouvez ce qui vous intéresse.",
-        "uncategorized": "Non classé",
         "all": "Tous",
         "viewAll": "Voir tous les articles"
       },
@@ -157,7 +144,6 @@
         "posts": "{count} articles"
       },
       "category": {
-        "headingPrefix": "Catégorie : {name}",
         "subheading": "Tous les articles classés dans cette catégorie.",
         "noPosts": "Aucun article dans cette catégorie pour le moment.",
         "back": "← Toutes les catégories"
@@ -180,15 +166,7 @@
       "empty": "Aucun tag pour le moment. Revenez bientôt.",
       "posts": "{count} articles",
       "noPosts": "Aucun article avec ce tag pour le moment.",
-      "breadcrumbs": "Fil d'ariane",
-      "tagsLabel": "Tags"
-    },
-    "blogTwoCol": {
-      "title": "Blog — deux colonnes",
-      "description": "Tous les articles présentés dans une grille large à deux colonnes.",
-      "heading": "Lire, apprendre, grandir",
-      "subheading": "Parcourez tous les articles dans une mise en page deux colonnes pensée pour les résumés plus longs.",
-      "noPosts": "Aucun article pour le moment. Revenez bientôt."
+      "breadcrumbs": "Fil d'ariane"
     },
     "author": {
       "title": "Auteurs",

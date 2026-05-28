@@ -7,7 +7,6 @@
     "home": "Home",
     "about": "About",
     "blog": "Blog",
-    "blogTwoCol": "Two column",
     "author": "Authors",
     "contact": "Contact",
     "company": "Company",
@@ -16,7 +15,6 @@
     "terms": "Terms"
   },
   "cta": {
-    "getStarted": "Get started",
     "learnMore": "Learn more"
   },
   "footer": {
@@ -24,8 +22,6 @@
   },
   "common": {
     "skipToContent": "Skip to main content",
-    "openMenu": "Open menu",
-    "closeMenu": "Close menu",
     "changeLanguage": "Change language",
     "switchTheme": "Switch theme",
     "themeLight": "Light",
@@ -109,29 +105,21 @@
       "description": "Articles, tutorials, and behind-the-scenes stories.",
       "heading": "Read, learn, grow",
       "subheading": "From expert advice to behind-the-scenes stories — content designed for curious minds.",
-      "readMore": "Read more",
       "minRead": "{minutes} min read",
-      "publishedOn": "Published {date}",
       "by": "By {name}",
       "backToList": "← All posts",
       "noPosts": "No posts yet. Check back soon.",
       "onThisPage": "On this page",
       "related": "Keep reading",
       "relatedSubheading": "More articles you might enjoy.",
-      "tagsLabel": "Tags",
       "heroLabel": "Latest articles",
-      "featuredLabel": "Featured",
       "noPostsModule": "No posts yet.",
       "searchPlaceholder": "Search…",
       "searchLabel": "Search",
-      "formSubmitDefault": "Send",
-      "formHoneypot": "Don't fill this out:",
       "breadcrumbsLabel": "Breadcrumb",
       "metaPublished": "Published",
       "metaReadTime": "Read time",
-      "metaAuthor": "Author",
       "metaCategory": "Category",
-      "navPillsLabel": "Blog sections",
       "navPills": {
         "all": "All articles",
         "authors": "Authors",
@@ -141,7 +129,6 @@
       "categories": {
         "heading": "Explore categories",
         "subheading": "Choose a category to explore related content — find what interests you.",
-        "uncategorized": "Uncategorized",
         "all": "All",
         "viewAll": "View all articles"
       },
@@ -157,7 +144,6 @@
         "posts": "{count} posts"
       },
       "category": {
-        "headingPrefix": "Category: {name}",
         "subheading": "Every article filed under this category.",
         "noPosts": "No posts in this category yet.",
         "back": "← All categories"
@@ -180,15 +166,7 @@
       "empty": "No tags yet. Check back soon.",
       "posts": "{count} posts",
       "noPosts": "No posts with this tag yet.",
-      "breadcrumbs": "Breadcrumb",
-      "tagsLabel": "Tags"
-    },
-    "blogTwoCol": {
-      "title": "Blog — two column",
-      "description": "All articles in a wide two-column grid.",
-      "heading": "Read, learn, grow",
-      "subheading": "Browse every article in a spacious two-column layout designed for longer summaries.",
-      "noPosts": "No posts yet. Check back soon."
+      "breadcrumbs": "Breadcrumb"
     },
     "author": {
       "title": "Authors",

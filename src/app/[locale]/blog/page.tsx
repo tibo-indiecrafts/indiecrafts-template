@@ -30,8 +30,6 @@ export async function generateMetadata({ params }: Props) {
  * ExploreCategories chips → ExploreTags pills → TopAuthors. There is no
  * editor-driven module override for this route (by design — chrome
  * stays uniform across deployments).
- *
- * The plain three-column listing still lives at /blog/two-column.
  */
 export default async function BlogPage({ params }: Props) {
   if (!features.blog || !isPageVisible(pages.blog)) notFound();
@@ -73,7 +71,7 @@ export default async function BlogPage({ params }: Props) {
             heading={t("categories.heading")}
             subheading={t("categories.subheading")}
             viewAllLabel={t("categories.viewAll")}
-            allHref="/blog/two-column"
+            allHref="/blog/category"
           />
 
           <ExploreTags

@@ -265,7 +265,6 @@ The Sanity Studio drives **content**. These messages drive everything **chromati
   "author":    { "title", "description", "heading", "subheading", "empty", "posts", "noPosts", "breadcrumbs" },
   "category":  { "title", "description", "heading", "subheading", "empty", "posts", "breadcrumbs" },
   "tag":       { "title", "description", "heading", "subheading", "empty", "posts", "noPosts", "breadcrumbs", "tagsLabel" },
-  "blogTwoCol":{ "title", "description", "heading", "subheading", "noPosts" }
 }
 ```
 

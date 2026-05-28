@@ -25,7 +25,6 @@ export type StaticAppPathname =
   | "/"
   | "/legal"
   | "/blog"
-  | "/blog/two-column"
   | "/blog/category"
   | "/blog/tag"
   | "/author";

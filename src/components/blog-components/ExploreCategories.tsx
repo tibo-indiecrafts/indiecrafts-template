@@ -27,7 +27,7 @@ export function ExploreCategories({
   subheading: string;
   viewAllLabel: string;
   /** Where the trailing "view all" button points — typically /blog/category. */
-  allHref: "/blog" | "/blog/category" | "/blog/two-column";
+  allHref: "/blog" | "/blog/category";
 }) {
   // Hide the entire section when there's nothing to surface — keeps the
   // page from showing an empty heading with no chips beneath it.

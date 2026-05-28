@@ -304,15 +304,6 @@ export const pages = {
       keywords: ["blog", "articles", "indiecrafts"],
     },
   },
-  blogTwoCol: {
-    key: "/blog/two-column",
-    id: "blogTwoCol",
-    slug: "/blog/two-column",
-    enabled: features.blog,
-    seo: {
-      keywords: ["blog", "two column", "articles"],
-    },
-  },
   author: {
     key: "/author",
     id: "author",

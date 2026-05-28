@@ -4,10 +4,10 @@ import type { Locale } from "@/config";
 import type { PostListItem } from "@/sanity/types";
 
 /**
- * Featured card used by the blog listing, two-column variant, category
- * explorer, and author detail. Cover image with an author-avatar overlay
- * spilling into the body; the body carries the clickable category
- * badge, title, description, tag chips, then a meta footer.
+ * Featured card used by the blog listing, category explorer, and author
+ * detail. Cover image with an author-avatar overlay spilling into the
+ * body; the body carries the clickable category badge, title,
+ * description, tag chips, then a meta footer.
  */
 export function BlogCard({
   post,

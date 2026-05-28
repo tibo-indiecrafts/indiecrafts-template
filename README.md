@@ -17,6 +17,26 @@ pnpm verify             # tsc + lint + format:check + contrast (full CI gate)
 pnpm verify:quick       # tsc + lint (pre-push)
 ```
 
+## Blog (Sanity-powered, optional)
+
+A full Sanity-backed editorial blog is wired into the template — feature-flagged so you can ship without it.
+
+- **Turn it on** — set `features.blog: true` in `src/config/index.ts`, drop `NEXT_PUBLIC_SANITY_PROJECT_ID` + dataset into `.env.local`, run `pnpm dev`. Editor lives at <http://localhost:3000/studio>.
+- **What you get** — `/blog`, `/blog/[slug]`, `/blog/category/[slug]`, `/blog/tag/[slug]`, `/author/[slug]`, RSS feed, Markdown export, draft preview, live content subscriptions, locale-filtered (EN + FR by default), embedded Sanity Studio at `/studio`.
+- **Page-builder** — 14 modules (8 inline-embeddable inside post bodies, 6 layout-slot only). Editors compose post chrome from the `blog` singleton's `postModules` array; the body editor exposes H1-H6, lists, marks (incl. code / underline / strike), inline images, links, and 8 fancy module types.
+- **Seed demo content** — `pnpm seed:blog` populates 47 docs incl. a showcase article that exercises every single editor primitive.
+
+Four guides, depending on who you are:
+
+| You are…                                             | Read                                                                                                             |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| A developer setting up the project / hitting a bug   | [`docs/sanity-setup.md`](./docs/sanity-setup.md) — env vars, CORS, feature flag, full QA matrix, troubleshooting |
+| A content editor publishing your first post          | [`docs/editor-guide.md`](./docs/editor-guide.md) — Studio tour, post form walkthrough, draft preview, references |
+| Anyone who needs to know what the body editor can do | [`docs/body-editor.md`](./docs/body-editor.md) — every style, list, mark, inline module catalogued               |
+| A developer extending or removing modules            | [`docs/blog-architecture.md`](./docs/blog-architecture.md) — routes ↔ queries ↔ components ↔ schema              |
+
+When `features.blog: false`, every route above 404s, sitemap drops the entry, the header link disappears, and `/studio` is the only Sanity surface that stays — useful for content prep before launch.
+
 ## How it's organised
 
 ```

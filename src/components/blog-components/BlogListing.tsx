@@ -3,8 +3,9 @@ import type { PostListItem } from "@/sanity/types";
 import { BlogCard } from "./BlogCard";
 
 /**
- * Blog listing section — three-column on desktop, two-column wide variant.
- * Used by /blog (cols=3) and /blog/two-column (cols=2).
+ * Blog listing section — three-column on desktop by default, switch to
+ * two columns via the `cols` prop when each card needs more horizontal
+ * room. Used as the empty-state fallback on /blog (cols=3).
  */
 export function BlogListing({
   posts,
