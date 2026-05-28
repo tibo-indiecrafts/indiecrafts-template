@@ -1,19 +1,17 @@
+import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui-primitives/avatar";
-import { useScopedT } from "@/lib/scoped-t";
-import type { MessageKey } from "@/types/messages";
 
 export type TestimonialsQuote = {
+  /** Maps to `<namespace>.quotes.<id>.{quote,author,role}` in messages. */
   id: string;
-  quoteKey: MessageKey;
-  authorKey: MessageKey;
-  roleKey?: MessageKey;
   avatarUrl?: string;
 };
 
 export type TestimonialsBlock = {
   type: "testimonials";
   id: string;
-  namespace: MessageKey;
+  /** i18n namespace — e.g. `"pages.home.blocks.testimonials"`. */
+  namespace: string;
   quotes: readonly TestimonialsQuote[];
 };
 
@@ -30,15 +28,17 @@ function QuoteBlock({
   namespace,
 }: {
   quote: TestimonialsQuote;
-  namespace: MessageKey;
+  namespace: string;
 }) {
-  const [, , tRoot] = useScopedT(namespace);
-  const author = tRoot(quote.authorKey);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const t = useTranslations(namespace as any);
+  const k = (suffix: string) => `quotes.${quote.id}.${suffix}`;
+  const author = t(k("author"));
   const initials = quoteInitials(author);
   return (
     <blockquote>
       <p className="text-lg font-medium text-pretty sm:text-xl md:text-3xl">
-        {tRoot(quote.quoteKey)}
+        {t(k("quote"))}
       </p>
       <div className="mt-12 flex items-center justify-center gap-6">
         <Avatar className="size-12">
@@ -49,11 +49,7 @@ function QuoteBlock({
         </Avatar>
         <div className="space-y-1 border-l pl-6 text-left">
           <cite className="font-medium not-italic">{author}</cite>
-          {quote.roleKey ? (
-            <span className="text-muted-foreground block text-sm">
-              {tRoot(quote.roleKey)}
-            </span>
-          ) : null}
+          <span className="text-muted-foreground block text-sm">{t(k("role"))}</span>
         </div>
       </div>
     </blockquote>
@@ -61,7 +57,8 @@ function QuoteBlock({
 }
 
 export function Testimonials(props: Readonly<TestimonialsBlock>) {
-  const [t] = useScopedT(props.namespace);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const t = useTranslations(props.namespace as any);
   const labelId = `${props.id}-label`;
   const isSingle = props.quotes.length === 1;
 

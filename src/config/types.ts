@@ -21,19 +21,25 @@ export type Locale = (typeof locales)[number]["code"];
 
 // ── Routes ───────────────────────────────────────────────────
 
-export type StaticAppPathname =
-  | "/"
-  | "/legal"
-  | "/blog"
-  | "/blog/category"
-  | "/blog/tag"
-  | "/author";
-export type DynamicAppPathname =
-  | "/blog/[slug]"
-  | "/blog/category/[slug]"
-  | "/blog/tag/[slug]"
-  | "/author/[slug]";
-export type AppPathname = StaticAppPathname | DynamicAppPathname;
+/**
+ * Every static route the `pages` map can hold. Single source of truth —
+ * adding a new static route means appending one literal here AND adding
+ * the matching entry under `pages` in `./index.ts`.
+ *
+ * Dynamic routes (`/blog/[slug]`, etc.) live in
+ * `src/app/routes.ts:DYNAMIC_PATHNAMES`. They don't appear in the
+ * `pages` map (one entry per URL pattern, not per content item).
+ */
+export const STATIC_PATHNAME_KEYS = [
+  "/",
+  "/legal",
+  "/blog",
+  "/blog/category",
+  "/blog/tag",
+  "/author",
+] as const;
+
+export type StaticAppPathname = (typeof STATIC_PATHNAME_KEYS)[number];
 
 // ── Page config ──────────────────────────────────────────────
 

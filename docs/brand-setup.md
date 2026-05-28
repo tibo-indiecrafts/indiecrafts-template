@@ -162,7 +162,20 @@ analytics = {
 };
 ```
 
-The cookie banner / GA pairing is detailed in [`launch-checklist.md`](./launch-checklist.md) § 4.
+### Cookie banner / GA / legal page — which flags to set
+
+The three flags interact. This table shows the four reasonable combinations:
+
+| Scenario                                    | `analytics.googleAnalyticsId` | `features.cookieBanner` | `features.legalPage` | Result                                                                                                                                                                                                        |
+| ------------------------------------------- | ----------------------------- | ----------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No analytics, no banner                     | `""`                          | `false`                 | depends              | Lightest config. No scripts load, no banner. Pick `legalPage: true` if you need a `/legal` page for other reasons (terms, contact)                                                                            |
+| GA, outside the EU                          | `"G-XXXX"`                    | `false`                 | `false` (or `true`)  | GA loads on every page. No banner. Legally fine outside GDPR jurisdictions.                                                                                                                                   |
+| GA + EU traffic                             | `"G-XXXX"`                    | `true`                  | `true` (recommended) | GA loads with Consent Mode `denied` defaults. Banner flips to `granted` on accept. `/legal` exposes privacy / cookies / terms.                                                                                |
+| Other tracking (Plausible, Fathom, Pirsch…) | `""`                          | depends                 | depends              | The cookie banner is **independent** of GA — only GA Consent Mode wiring is built-in. For privacy-friendly analytics you typically need neither the banner nor the legal page (no personal data, no consent). |
+
+The banner stores user choice in `localStorage["cookie-consent"]` as `"accepted"` or `"rejected"`. Send users to `?cookies=manage` to surface the banner again without clearing other state — see [`operations.md`](./operations.md) § 4 for the user-side detail.
+
+The launch-day verification curl pass is in [`launch-checklist.md`](./launch-checklist.md) § 4.
 
 ---
 

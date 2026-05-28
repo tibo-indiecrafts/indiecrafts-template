@@ -19,13 +19,12 @@
 import type { Locale, NavGroup, NavLink, PageConfig } from "./types";
 
 // `@/config` is the single import for everyone — re-export from sibling types
+export { STATIC_PATHNAME_KEYS } from "./types";
 export type {
   Locale,
   PageConfig,
   PageSeo,
-  AppPathname,
   StaticAppPathname,
-  DynamicAppPathname,
   RouteSlug,
   CanonicalOverride,
   OgImageUrl,

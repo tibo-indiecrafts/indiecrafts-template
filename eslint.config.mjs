@@ -64,7 +64,34 @@ const eslintConfig = defineConfig([
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
+
+      // Routing: always go through @/i18n/routing so locale prefixes,
+      // typed pathnames, and hreflang stay consistent. Direct imports
+      // from next/link or next-intl/navigation bypass all of that.
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "next/link",
+              message: "Use `Link` from `@/i18n/routing` instead.",
+            },
+            {
+              name: "next-intl/navigation",
+              message:
+                "Use `Link` / `redirect` / `usePathname` / `useRouter` / `getPathname` from `@/i18n/routing` instead — they're bound to the project's `routing` config.",
+            },
+          ],
+        },
+      ],
     },
+  },
+  {
+    // The routing module is allowed (and required) to import from
+    // next-intl/navigation — it's the single point where the typed
+    // wrappers get created.
+    files: ["src/i18n/routing.ts"],
+    rules: { "no-restricted-imports": "off" },
   },
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 ]);

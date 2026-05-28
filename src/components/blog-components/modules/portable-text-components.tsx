@@ -1,26 +1,22 @@
 import Image from "next/image";
 import type { PortableTextBlock, PortableTextComponents } from "@portabletext/react";
 import { slugify } from "@/lib/slugify";
-import { AccordionList } from "./AccordionList";
-import { Callout } from "./Callout";
-import { CardList } from "./CardList";
-import { CustomHtml } from "./CustomHtml";
-import { PersonList } from "./PersonList";
-import { QuoteList } from "./QuoteList";
-import { StatList } from "./StatList";
-import { StepList } from "./StepList";
+import { SIMPLE_MODULES } from "./registry";
 
 /**
  * Shared PortableText render map for module bodies.
  *
- *   - h2/h3/h4 headings get a deterministic `id` from the text so the
- *     Table of Contents can anchor-link to them.
- *   - The `link` mark promotes external URLs to `target="_blank"`.
- *   - Eleven module `_type`s are renderable INLINE inside a body — see
- *     `src/sanity/schema/blockContent.ts`. Each one routes to the same
- *     React component the layout-slot renderer (`ModuleRenderer`) uses,
- *     so a Callout inside a post body looks identical to a Callout
- *     placed in the blog singleton's `frontpageModules`.
+ * Block / list / mark base styling comes from `@tailwindcss/typography`
+ * (the body wrapper carries `prose prose-neutral dark:prose-invert`) —
+ * we override only what the plugin can't infer from markup alone:
+ *
+ *   - h2/h3/h4 get a deterministic `id` (slugified from text content) so
+ *     the Table of Contents can anchor-link. `scroll-mt-24` clears the
+ *     fixed nav when scrolled to via hash.
+ *   - The `link` mark promotes `http(s)://` URLs to `target="_blank"`.
+ *   - Eight inline-module `_type`s map to the same React components
+ *     `ModuleRenderer` uses for `postModules`, so a Callout inline in a
+ *     body and a Callout in the layout slot render identically.
  */
 function headingId(value: PortableTextBlock | undefined): string {
   const children = ((value?.children ?? []) as { text?: string }[])
@@ -30,93 +26,53 @@ function headingId(value: PortableTextBlock | undefined): string {
 }
 
 // The `value` Sanity hands to each block-content renderer is the module
-// shape itself — same as what `ModuleRenderer` passes via spread. The
-// `unknown` cast keeps the wider union safe at the boundary; each
-// component re-narrows on its own props type.
+// shape itself — same as what `ModuleRenderer` passes. The `unknown`
+// cast keeps the wider union safe at the boundary; each component
+// re-narrows on its own props type.
 const m =
   <P,>(Cmp: (props: P) => React.ReactNode) =>
   ({ value }: { value: unknown }) =>
     Cmp(value as P);
 
+/**
+ * Inline-embeddable module types — must stay in lockstep with
+ * `INLINE_MODULES` in `src/sanity/schema/blockContent.ts`. The 8 types
+ * listed here are the subset of the full module catalogue that editors
+ * can drop directly into a post body (the others are layout-slot only).
+ */
+const INLINE_TYPES = [
+  "module.callout",
+  "module.card-list",
+  "module.person-list",
+  "module.stat-list",
+  "module.step-list",
+  "module.quote-list",
+  "module.accordion-list",
+  "module.custom-html",
+] as const;
+
+const inlineTypes = Object.fromEntries(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  INLINE_TYPES.map((t) => [t, m(SIMPLE_MODULES[t] as any)]),
+);
+
 export const portableComponents: PortableTextComponents = {
-  // Base styling for every default block style + list. The post body
-  // wrapper carries `prose` for forward-compat (if the typography plugin
-  // is added later), but the project does NOT ship that plugin, so each
-  // element is styled explicitly here. Keep these in lockstep with the
-  // schema's `styles` array in `src/sanity/schema/blockContent.ts`.
   block: {
-    normal: ({ children }) => (
-      <p className="text-foreground my-4 leading-7">{children}</p>
-    ),
-    h1: ({ children, value }) => (
-      <h1
-        id={headingId(value)}
-        className="text-foreground mt-10 mb-4 scroll-mt-24 text-4xl font-bold tracking-tight md:text-5xl"
-      >
-        {children}
-      </h1>
-    ),
     h2: ({ children, value }) => (
-      <h2
-        id={headingId(value)}
-        className="text-foreground mt-10 mb-4 scroll-mt-24 text-3xl font-bold tracking-tight md:text-4xl"
-      >
+      <h2 id={headingId(value)} className="scroll-mt-24">
         {children}
       </h2>
     ),
     h3: ({ children, value }) => (
-      <h3
-        id={headingId(value)}
-        className="text-foreground mt-8 mb-3 scroll-mt-24 text-2xl font-semibold tracking-tight md:text-3xl"
-      >
+      <h3 id={headingId(value)} className="scroll-mt-24">
         {children}
       </h3>
     ),
     h4: ({ children, value }) => (
-      <h4
-        id={headingId(value)}
-        className="text-foreground mt-6 mb-2 scroll-mt-24 text-xl font-semibold tracking-tight md:text-2xl"
-      >
+      <h4 id={headingId(value)} className="scroll-mt-24">
         {children}
       </h4>
     ),
-    h5: ({ children, value }) => (
-      <h5
-        id={headingId(value)}
-        className="text-foreground mt-6 mb-2 scroll-mt-24 text-base font-semibold tracking-tight"
-      >
-        {children}
-      </h5>
-    ),
-    h6: ({ children, value }) => (
-      <h6
-        id={headingId(value)}
-        className="text-muted-foreground mt-6 mb-2 scroll-mt-24 text-sm font-semibold tracking-wide uppercase"
-      >
-        {children}
-      </h6>
-    ),
-    blockquote: ({ children }) => (
-      <blockquote className="border-foreground/30 text-muted-foreground my-6 border-l-4 pl-4 text-lg italic">
-        {children}
-      </blockquote>
-    ),
-  },
-  list: {
-    bullet: ({ children }) => (
-      <ul className="marker:text-muted-foreground my-4 ml-6 list-disc space-y-2">
-        {children}
-      </ul>
-    ),
-    number: ({ children }) => (
-      <ol className="marker:text-muted-foreground my-4 ml-6 list-decimal space-y-2">
-        {children}
-      </ol>
-    ),
-  },
-  listItem: {
-    bullet: ({ children }) => <li className="leading-7">{children}</li>,
-    number: ({ children }) => <li className="leading-7">{children}</li>,
   },
   marks: {
     link: ({ value, children }) => {
@@ -130,13 +86,6 @@ export const portableComponents: PortableTextComponents = {
         <a href={href}>{children}</a>
       );
     },
-    code: ({ children }) => (
-      <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-[0.85em]">
-        {children}
-      </code>
-    ),
-    underline: ({ children }) => <u>{children}</u>,
-    "strike-through": ({ children }) => <s>{children}</s>,
   },
   // Inline modules — editors insert these in the body picker; the
   // schema (`blockContent.ts`) controls which `_type`s are insertable.
@@ -157,13 +106,6 @@ export const portableComponents: PortableTextComponents = {
         />
       );
     },
-    "module.callout": m(Callout),
-    "module.card-list": m(CardList),
-    "module.person-list": m(PersonList),
-    "module.stat-list": m(StatList),
-    "module.step-list": m(StepList),
-    "module.quote-list": m(QuoteList),
-    "module.accordion-list": m(AccordionList),
-    "module.custom-html": m(CustomHtml),
+    ...inlineTypes,
   },
 };

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import {
   Globe,
   Settings2,
@@ -9,23 +10,24 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui-primitives/card";
-import { useScopedT } from "@/lib/scoped-t";
-import type { MessageKey } from "@/types/messages";
 
 export type FeatureIcon = "zap" | "settings" | "sparkles" | "shield" | "globe" | "users";
 
 export type FeatureItem = {
+  /** Maps to `<namespace>.items.<id>.{title,body}` in messages. */
+  id: string;
   iconKey?: FeatureIcon;
-  titleKey: MessageKey;
-  bodyKey: MessageKey;
 };
 
 export type FeaturesBlock = {
   type: "features";
   id: string;
-  namespace: MessageKey;
-  titleKey?: MessageKey;
-  bodyKey?: MessageKey;
+  /**
+   * i18n namespace — e.g. `"pages.home.blocks.features"`. The section
+   * reads `t("title")`, `t("body")`, and `t("items.<id>.title|body")`
+   * relative to this root.
+   */
+  namespace: string;
   items: readonly FeatureItem[];
 };
 
@@ -39,7 +41,8 @@ const ICONS: Record<FeatureIcon, LucideIcon> = {
 };
 
 export function Features(props: Readonly<FeaturesBlock>) {
-  const [, tr, tRoot] = useScopedT(props.namespace);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const t = useTranslations(props.namespace as any);
 
   return (
     <section
@@ -52,26 +55,26 @@ export function Features(props: Readonly<FeaturesBlock>) {
             id={`${props.id}-title`}
             className="text-4xl font-semibold text-balance lg:text-5xl"
           >
-            {tr(props.titleKey, "title")}
+            {t("title")}
           </h2>
-          {props.bodyKey ? (
-            <p className="text-muted-foreground mt-4">{tr(props.bodyKey, "body")}</p>
-          ) : null}
+          <p className="text-muted-foreground mt-4">{t("body")}</p>
         </div>
         <ul className="mx-auto mt-8 grid max-w-sm gap-6 *:text-center md:mt-16 @min-4xl:max-w-full @min-4xl:grid-cols-3">
-          {props.items.map((item, i) => {
+          {props.items.map((item) => {
             const Icon = item.iconKey ? ICONS[item.iconKey] : Sparkles;
             return (
-              <li key={i}>
+              <li key={item.id}>
                 <Card className="group h-full shadow-sm">
                   <CardHeader className="pb-3">
                     <CardDecorator>
                       <Icon className="size-6" aria-hidden="true" />
                     </CardDecorator>
-                    <h3 className="mt-6 font-medium">{tRoot(item.titleKey)}</h3>
+                    <h3 className="mt-6 font-medium">{t(`items.${item.id}.title`)}</h3>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground text-sm">{tRoot(item.bodyKey)}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {t(`items.${item.id}.body`)}
+                    </p>
                   </CardContent>
                 </Card>
               </li>

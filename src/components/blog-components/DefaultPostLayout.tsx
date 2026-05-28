@@ -71,19 +71,49 @@ export async function DefaultPostLayout({
   const hasToc = (post.headings?.length ?? 0) > 0;
 
   // Theming: when there's a cover image, the hero overlays content on the
-  // image so all text + chips switch to white-on-dark. Without an image,
-  // we fall back to the theme's foreground colours.
+  // image with a dark gradient so text + chrome read white-on-dark.
+  // Without an image, we fall back to the theme's foreground colours.
+  // All hero descendants read these CSS vars instead of branching on
+  // `heroLight` per element — one decision per render, not eleven.
   const heroLight = !image;
+  const heroVars = heroLight
+    ? ({
+        "--hero-fg": "var(--foreground)",
+        "--hero-fg-muted": "var(--muted-foreground)",
+        "--hero-border": "color-mix(in oklab, var(--border) 60%, transparent)",
+        "--hero-chip-bg": "var(--muted)",
+        "--hero-chip-fg": "var(--muted-foreground)",
+        "--hero-chip-hover-bg": "var(--foreground)",
+        "--hero-chip-hover-fg": "var(--background)",
+        "--hero-pill-bg": "color-mix(in oklab, var(--background) 70%, transparent)",
+        "--hero-pill-ring": "color-mix(in oklab, var(--border) 60%, transparent)",
+        "--hero-avatar-ring": "var(--border)",
+        "--hero-fg-hover": "var(--muted-foreground)",
+      } as React.CSSProperties)
+    : ({
+        "--hero-fg": "white",
+        "--hero-fg-muted": "rgb(255 255 255 / 0.85)",
+        "--hero-border": "rgb(255 255 255 / 0.25)",
+        "--hero-chip-bg": "rgb(255 255 255 / 0.15)",
+        "--hero-chip-fg": "white",
+        "--hero-chip-hover-bg": "rgb(255 255 255 / 0.25)",
+        "--hero-chip-hover-fg": "white",
+        "--hero-pill-bg": "rgb(0 0 0 / 0.3)",
+        "--hero-pill-ring": "rgb(255 255 255 / 0.15)",
+        "--hero-avatar-ring": "rgb(255 255 255 / 0.4)",
+        "--hero-fg-hover": "rgb(255 255 255 / 0.8)",
+      } as React.CSSProperties);
 
   return (
     <article className="pb-16 md:pb-24">
       <div className="mx-auto max-w-(--max-container) px-(--gutter)">
         <header
+          style={heroVars}
           className={cn(
             "relative mb-12 flex flex-col overflow-hidden rounded-b-3xl shadow-xl md:mb-16",
             image
               ? "min-h-[60vh] ring-1 shadow-black/15 ring-black/10 md:min-h-[70vh]"
-              : "bg-card ring-border/60 mt-8 rounded-3xl ring-1 shadow-black/5 md:mt-12",
+              : "bg-card mt-8 rounded-3xl ring-1 shadow-black/5 ring-(--hero-pill-ring) md:mt-12",
           )}
         >
           {image ? (
@@ -112,12 +142,7 @@ export async function DefaultPostLayout({
             <Breadcrumbs
               items={breadcrumbs}
               label={t("breadcrumbsLabel")}
-              className={cn(
-                "inline-flex rounded-full px-3 py-1.5 ring-1 backdrop-blur-md",
-                heroLight
-                  ? "bg-background/70 ring-border/60"
-                  : "bg-black/30 text-white/90 ring-white/15",
-              )}
+              className="inline-flex rounded-full bg-(--hero-pill-bg) px-3 py-1.5 text-(--hero-fg) ring-1 ring-(--hero-pill-ring) backdrop-blur-md"
             />
           </div>
 
@@ -130,12 +155,7 @@ export async function DefaultPostLayout({
                     <li key={tag._id}>
                       <Link
                         href={`/blog/tag/${tag.slug}`}
-                        className={cn(
-                          "focus-visible:ring-ring rounded-md px-2 py-1 text-xs font-medium capitalize backdrop-blur transition-colors focus-visible:ring-2 focus-visible:outline-none",
-                          heroLight
-                            ? "bg-muted text-muted-foreground hover:bg-foreground hover:text-background"
-                            : "bg-white/15 text-white hover:bg-white/25",
-                        )}
+                        className="focus-visible:ring-ring rounded-md bg-(--hero-chip-bg) px-2 py-1 text-xs font-medium text-(--hero-chip-fg) capitalize backdrop-blur transition-colors hover:bg-(--hero-chip-hover-bg) hover:text-(--hero-chip-hover-fg) focus-visible:ring-2 focus-visible:outline-none"
                       >
                         #{tag.title}
                       </Link>
@@ -146,40 +166,26 @@ export async function DefaultPostLayout({
 
               <h1
                 className={cn(
-                  "text-3xl font-bold tracking-tight text-balance md:text-5xl xl:text-6xl",
-                  "leading-[1.05]",
-                  heroLight ? "text-foreground" : "text-white drop-shadow-lg",
+                  "text-3xl leading-[1.05] font-bold tracking-tight text-balance text-(--hero-fg) md:text-5xl xl:text-6xl",
+                  !heroLight && "drop-shadow-lg",
                 )}
               >
                 {title}
               </h1>
               {description ? (
-                <p
-                  className={cn(
-                    "mt-6 text-lg leading-relaxed md:text-xl",
-                    heroLight ? "text-muted-foreground" : "text-white/85",
-                  )}
-                >
+                <p className="mt-6 text-lg leading-relaxed text-(--hero-fg-muted) md:text-xl">
                   {description}
                 </p>
               ) : null}
 
               {/* Meta strip — author block + publish/read-time/category.
                   Stacks on mobile, single row from sm: upward. */}
-              <div
-                className={cn(
-                  "mt-8 flex flex-col gap-4 border-t pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3",
-                  heroLight ? "border-border/60" : "border-white/25",
-                )}
-              >
+              <div className="mt-8 flex flex-col gap-4 border-t border-(--hero-border) pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3">
                 {author?.name ? (
                   <Link
                     href={authorHref}
                     aria-label={author.name}
-                    className={cn(
-                      "focus-visible:ring-ring group flex items-center gap-3 rounded focus-visible:ring-2 focus-visible:outline-none",
-                      heroLight ? "" : "focus-visible:ring-white/80",
-                    )}
+                    className="focus-visible:ring-ring group flex items-center gap-3 rounded focus-visible:ring-2 focus-visible:outline-none"
                   >
                     {author.image?.asset?.url ? (
                       <Image
@@ -187,41 +193,19 @@ export async function DefaultPostLayout({
                         alt={author.name}
                         width={80}
                         height={80}
-                        className={cn(
-                          "bg-card size-10 rounded-full object-cover ring-1",
-                          heroLight ? "ring-border" : "ring-white/40",
-                        )}
+                        className="bg-card size-10 rounded-full object-cover ring-1 ring-(--hero-avatar-ring)"
                       />
                     ) : (
-                      <span
-                        className={cn(
-                          "flex size-10 items-center justify-center rounded-full text-xs ring-1",
-                          heroLight
-                            ? "bg-muted ring-border"
-                            : "bg-white/15 text-white ring-white/30",
-                        )}
-                      >
+                      <span className="flex size-10 items-center justify-center rounded-full bg-(--hero-chip-bg) text-xs text-(--hero-chip-fg) ring-1 ring-(--hero-avatar-ring)">
                         {author.name.slice(0, 1).toUpperCase()}
                       </span>
                     )}
                     <div className="min-w-0">
-                      <span
-                        className={cn(
-                          "block truncate text-sm font-medium transition-colors",
-                          heroLight
-                            ? "text-foreground group-hover:text-muted-foreground"
-                            : "text-white group-hover:text-white/80",
-                        )}
-                      >
+                      <span className="block truncate text-sm font-medium text-(--hero-fg) transition-colors group-hover:text-(--hero-fg-hover)">
                         {author.name}
                       </span>
                       {author.position ? (
-                        <span
-                          className={cn(
-                            "block truncate text-xs",
-                            heroLight ? "text-muted-foreground" : "text-white/70",
-                          )}
-                        >
+                        <span className="block truncate text-xs text-(--hero-fg-muted)">
                           {author.position}
                         </span>
                       ) : null}
@@ -230,12 +214,7 @@ export async function DefaultPostLayout({
                 ) : null}
 
                 {date || readTime || categoryRef?.slug ? (
-                  <dl
-                    className={cn(
-                      "flex flex-wrap items-center gap-x-4 gap-y-1 text-sm sm:ml-auto",
-                      heroLight ? "text-muted-foreground" : "text-white/80",
-                    )}
-                  >
+                  <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-(--hero-fg-muted) sm:ml-auto">
                     {date ? (
                       <div className="flex items-center gap-1.5">
                         <dt className="sr-only">{t("metaPublished")}</dt>
@@ -245,31 +224,18 @@ export async function DefaultPostLayout({
                       </div>
                     ) : null}
                     {readTime ? (
-                      <div
-                        className={cn(
-                          "flex items-center gap-1.5 sm:border-l sm:pl-4",
-                          heroLight ? "border-border/60" : "border-white/30",
-                        )}
-                      >
+                      <div className="flex items-center gap-1.5 sm:border-l sm:border-(--hero-border) sm:pl-4">
                         <dt className="sr-only">{t("metaReadTime")}</dt>
                         <dd>{t("minRead", { minutes: readTime })}</dd>
                       </div>
                     ) : null}
                     {categoryRef?.title && categoryRef.slug ? (
-                      <div
-                        className={cn(
-                          "flex items-center gap-1.5 sm:border-l sm:pl-4",
-                          heroLight ? "border-border/60" : "border-white/30",
-                        )}
-                      >
+                      <div className="flex items-center gap-1.5 sm:border-l sm:border-(--hero-border) sm:pl-4">
                         <dt className="sr-only">{t("metaCategory")}</dt>
                         <dd>
                           <Link
                             href={`/blog/category/${categoryRef.slug}`}
-                            className={cn(
-                              "capitalize transition-colors",
-                              heroLight ? "hover:text-foreground" : "hover:text-white",
-                            )}
+                            className="capitalize transition-colors hover:text-(--hero-fg)"
                           >
                             {categoryRef.title}
                           </Link>
