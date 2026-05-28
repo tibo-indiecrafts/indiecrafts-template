@@ -26,16 +26,36 @@ A full Sanity-backed editorial blog is wired into the template — feature-flagg
 - **Page-builder** — 14 modules (8 inline-embeddable inside post bodies, 6 layout-slot only). Editors compose post chrome from the `blog` singleton's `postModules` array; the body editor exposes H1-H6, lists, marks (incl. code / underline / strike), inline images, links, and 8 fancy module types.
 - **Seed demo content** — `pnpm seed:blog` populates 47 docs incl. a showcase article that exercises every single editor primitive.
 
-Four guides, depending on who you are:
-
-| You are…                                             | Read                                                                                                             |
-| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| A developer setting up the project / hitting a bug   | [`docs/sanity-setup.md`](./docs/sanity-setup.md) — env vars, CORS, feature flag, full QA matrix, troubleshooting |
-| A content editor publishing your first post          | [`docs/editor-guide.md`](./docs/editor-guide.md) — Studio tour, post form walkthrough, draft preview, references |
-| Anyone who needs to know what the body editor can do | [`docs/body-editor.md`](./docs/body-editor.md) — every style, list, mark, inline module catalogued               |
-| A developer extending or removing modules            | [`docs/blog-architecture.md`](./docs/blog-architecture.md) — routes ↔ queries ↔ components ↔ schema              |
-
 When `features.blog: false`, every route above 404s, sitemap drops the entry, the header link disappears, and `/studio` is the only Sanity surface that stays — useful for content prep before launch.
+
+## Documentation
+
+Guides grouped by what you're trying to do.
+
+**Launch + operations**
+
+| You want to…                                               | Read                                                     |
+| ---------------------------------------------------------- | -------------------------------------------------------- |
+| Take the site from "dev is done" to "live and indexed"     | [`docs/launch-checklist.md`](./docs/launch-checklist.md) |
+| Run the site day-to-day, find form submissions, fix things | [`docs/operations.md`](./docs/operations.md)             |
+| Change colours / fonts / logo / social links / assets      | [`docs/brand-setup.md`](./docs/brand-setup.md)           |
+
+**Blog (when `features.blog: true`)**
+
+| You want to…                                                   | Read                                                       |
+| -------------------------------------------------------------- | ---------------------------------------------------------- |
+| Set up Sanity for the first time, env vars, CORS, QA matrix    | [`docs/sanity-setup.md`](./docs/sanity-setup.md)           |
+| Publish your first post as a content editor                    | [`docs/editor-guide.md`](./docs/editor-guide.md)           |
+| Reference what the body editor can do (styles, marks, modules) | [`docs/body-editor.md`](./docs/body-editor.md)             |
+| Extend or remove a module as a developer                       | [`docs/blog-architecture.md`](./docs/blog-architecture.md) |
+| Mint / rotate Sanity API tokens                                | [`docs/sanity-tokens.md`](./docs/sanity-tokens.md)         |
+
+**Other**
+
+| You want to…                                          | Read                                                                     |
+| ----------------------------------------------------- | ------------------------------------------------------------------------ |
+| Fork the template for a new client site               | [`docs/new-client.md`](./docs/new-client.md)                             |
+| Add rich-result JSON-LD (FAQ, Article, Service, etc.) | [`docs/structured-data-cookbook.md`](./docs/structured-data-cookbook.md) |
 
 ## How it's organised
 
