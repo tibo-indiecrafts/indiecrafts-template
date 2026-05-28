@@ -24,7 +24,7 @@
 import type { Locale, PageConfig } from "@/config";
 import { features, llms, site } from "@/config";
 import { getTranslations } from "next-intl/server";
-import { getPathname } from "@/i18n/routing";
+import { getStaticPathname } from "@/i18n/routing";
 import type { MessageKey } from "@/types/messages";
 import { ROUTES } from "@/app/routes";
 
@@ -105,8 +105,7 @@ function formatPageEntry(
     page.seo?.descriptionKey ?? (`pages.${page.id}.description` as MessageKey);
   const title = safeT(t, titleKey, page.id);
   const desc = safeT(t, descKey, "");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pathname = getPathname({ href: page.key as any, locale: locale as any });
+  const pathname = getStaticPathname(page.key, locale);
   const url = `${site.url}${pathname}`;
   return desc ? `- [${title}](${url}): ${desc}` : `- [${title}](${url})`;
 }

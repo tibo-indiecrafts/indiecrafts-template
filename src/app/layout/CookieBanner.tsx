@@ -9,6 +9,16 @@ import { analytics } from "@/config";
 const STORAGE_KEY = "cookie-consent";
 type Consent = "accepted" | "rejected" | null;
 
+/**
+ * GA / GTM injects `window.dataLayer` at runtime — augment the global so
+ * we can push consent updates without an `as any` cast.
+ */
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+  }
+}
+
 const consentStore = {
   get(): Consent {
     if (typeof window === "undefined") return null;
@@ -60,11 +70,9 @@ export function CookieBanner() {
   function decide(choice: "accepted" | "rejected") {
     setConsent(choice);
     if (analytics.googleAnalyticsId && typeof window !== "undefined") {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const w = window as any;
-      w.dataLayer = w.dataLayer || [];
+      window.dataLayer = window.dataLayer ?? [];
       const value = choice === "accepted" ? "granted" : "denied";
-      w.dataLayer.push([
+      window.dataLayer.push([
         "consent",
         "update",
         {

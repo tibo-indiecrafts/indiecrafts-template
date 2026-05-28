@@ -22,13 +22,11 @@ import { getTranslations } from "next-intl/server";
 import { localeCodes, seoDefaults, site, type Locale } from "@/config";
 import type { PageConfig, StaticAppPathname } from "@/config";
 import type { MessageKey } from "@/types/messages";
-import { getPathname } from "@/i18n/routing";
+import { getStaticPathname } from "@/i18n/routing";
 
 type BuildArgs = {
   page: PageConfig;
   locale: Locale;
-  /** Dynamic params for pathnames like "/blog/[slug]". */
-  params?: Record<string, string | number>;
 };
 
 function safeT(
@@ -47,11 +45,7 @@ function isAbsoluteUrl(x: string): x is `http${string}` {
   return x.startsWith("http");
 }
 
-export async function buildMetadata({
-  page,
-  locale,
-  params,
-}: BuildArgs): Promise<Metadata> {
+export async function buildMetadata({ page, locale }: BuildArgs): Promise<Metadata> {
   const t = await getTranslations({ locale });
   const seo = page.seo;
 
@@ -67,14 +61,7 @@ export async function buildMetadata({
   const href = (
     l: Locale,
     key: StaticAppPathname = page.key as StaticAppPathname,
-  ): string => {
-    const arg = params
-      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ({ pathname: key, params } as any)
-      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (key as any);
-    return getPathname({ href: arg, locale: l });
-  };
+  ): string => getStaticPathname(key, l);
 
   let canonical: string;
   const canonicalOverride = seo?.canonical;

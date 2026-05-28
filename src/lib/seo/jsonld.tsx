@@ -13,7 +13,7 @@
 import type { PageConfig } from "@/config";
 import { globalSchemas, site } from "@/config";
 import { getTranslations } from "next-intl/server";
-import { getPathname } from "@/i18n/routing";
+import { getStaticPathname } from "@/i18n/routing";
 import type { Locale } from "@/config";
 import type { MessageKey } from "@/types/messages";
 
@@ -178,8 +178,7 @@ export async function PageSchemas({
   const title = safeT(t, titleKey, site.name);
   const description = safeT(t, descriptionKey, site.description);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pathname = getPathname({ href: page.key as any, locale: locale as any });
+  const pathname = getStaticPathname(page.key, locale);
   const url = `${site.url}${pathname}`;
   const imageUrl = page.seo?.openGraph?.imageUrl ?? `/brand/og-${page.id}.png`;
   const image = imageUrl.startsWith("http") ? imageUrl : `${site.url}${imageUrl}`;

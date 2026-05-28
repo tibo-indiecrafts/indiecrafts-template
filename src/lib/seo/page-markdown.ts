@@ -15,9 +15,9 @@
  *   - other strings  → "**<key>**: <value>" bullet
  */
 
-import type { PageConfig } from "@/config";
+import type { Locale, PageConfig } from "@/config";
 import { site } from "@/config";
-import { getPathname } from "@/i18n/routing";
+import { getStaticPathname } from "@/i18n/routing";
 
 type Json = string | number | boolean | null | { [k: string]: Json } | Json[];
 
@@ -91,7 +91,7 @@ function renderObject(
  */
 export function renderPageMarkdown(
   page: PageConfig,
-  locale: string,
+  locale: Locale,
   messages: Record<string, unknown>,
 ): string {
   const node = getMessagesNode(messages, `pages.${page.id}`);
@@ -105,8 +105,7 @@ export function renderPageMarkdown(
     page.id;
   const description = isLeafString(node.description) ? node.description : "";
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pathname = getPathname({ href: page.key as any, locale: locale as any });
+  const pathname = getStaticPathname(page.key, locale);
   const url = `${site.url}${pathname}`;
 
   const head = [`# ${title}`, "", `URL: ${url}`, ""];
@@ -126,7 +125,7 @@ export function renderPageMarkdown(
 /** Concatenate every visible page's markdown for `/llms-full.txt`. */
 export function renderAllPagesMarkdown(
   pages: readonly PageConfig[],
-  locale: string,
+  locale: Locale,
   messages: Record<string, unknown>,
 ): string {
   return pages.map((p) => renderPageMarkdown(p, locale, messages)).join("\n---\n\n");

@@ -29,11 +29,9 @@ const nextConfig: NextConfig = {
   typescript: { ignoreBuildErrors: false },
   images: {
     remotePatterns: [
+      // Demo content seed pulls cover images + portraits from Unsplash.
       { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "randomuser.me" },
-      { protocol: "https", hostname: "avatars.githubusercontent.com" },
-      { protocol: "https", hostname: "raw.githubusercontent.com" },
-      // Sanity-hosted assets — images, author portraits, post covers.
+      // Sanity-hosted assets — uploaded post covers, author portraits, etc.
       { protocol: "https", hostname: "cdn.sanity.io" },
     ],
     formats: ["image/avif", "image/webp"],

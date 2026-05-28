@@ -10,7 +10,12 @@
 
 import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
-import { defaultLocale, localeCodes } from "@/config";
+import {
+  defaultLocale,
+  localeCodes,
+  type Locale,
+  type StaticAppPathname,
+} from "@/config";
 import { PATHNAMES } from "@/app/routes";
 
 export const routing = defineRouting({
@@ -22,3 +27,20 @@ export const routing = defineRouting({
 
 export const { Link, redirect, usePathname, useRouter, getPathname } =
   createNavigation(routing);
+
+/**
+ * Type-safe wrapper around `getPathname` for our static routes.
+ *
+ * `PATHNAMES` is widened to `Record<string, ...>` in `src/app/routes.ts`
+ * so it can be assembled dynamically from the `pages` map. That widening
+ * means next-intl's strict `Pathname` union can't statically match a
+ * `StaticAppPathname` literal — calling `getPathname({ href, locale })`
+ * directly with our project types would require a cast at every site.
+ *
+ * Keep the cast contained here. Callers get a typed entry point that
+ * only accepts the unions defined in `@/config`.
+ */
+type PathnameArg = Parameters<typeof getPathname>[0]["href"];
+export function getStaticPathname(href: StaticAppPathname, locale: Locale): string {
+  return getPathname({ href: href as PathnameArg, locale });
+}

@@ -64,7 +64,13 @@ export type PageSeo = {
 };
 
 export type PageConfig = {
-  key: AppPathname;
+  /**
+   * Pathname union for static routes only. Dynamic routes
+   * (`/blog/[slug]`, `/blog/category/[slug]`, etc.) don't live in the
+   * `pages` map — they're declared separately in
+   * `src/app/routes.ts:DYNAMIC_PATHNAMES`.
+   */
+  key: StaticAppPathname;
   id: string;
   slug: RouteSlug;
   /** `false` returns 404 site-wide. Defaults true. */
