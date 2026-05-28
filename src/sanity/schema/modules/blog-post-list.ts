@@ -4,7 +4,7 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.blog-post-list",
-  title: "Liste d'articles",
+  title: "Articles",
   icon: BlockContentIcon,
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
@@ -24,11 +24,9 @@ export default defineModule({
         {
           type: "reference",
           to: [{ type: "category" }],
-          // Filter category picker by parent post's language (when the
-          // module sits inside `post.modules`). The blog singleton's
-          // module arrays have no language, so any-locale is allowed
-          // there — fine because the GROQ list query filters by locale
-          // at render time anyway.
+          // The blog singleton's module arrays have no language, so any
+          // locale is allowed in the picker here — fine because the
+          // GROQ list query filters posts by `$locale` at render time.
           options: {
             filter: ({ document }) =>
               document.language

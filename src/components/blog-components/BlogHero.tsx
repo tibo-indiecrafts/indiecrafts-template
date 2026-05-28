@@ -23,7 +23,7 @@ export function BlogHero({
   const top = posts.slice(0, 5);
 
   return (
-    <section aria-label={label} className="bg-muted/40 pt-32 pb-14 md:pt-40 md:pb-20">
+    <section aria-label={label} className="bg-muted/40 pt-24 pb-14 md:pt-28 md:pb-20">
       <div className="mx-auto max-w-6xl px-(--gutter)">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {top.map((post, i) => (

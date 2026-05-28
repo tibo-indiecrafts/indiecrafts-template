@@ -2,53 +2,50 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import type { QuoteListModule } from "@/sanity/types";
 
+/**
+ * Testimonials module — design ported from
+ * `sections-testimonials/testimonials-06`: a small Quote icon, a large
+ * editorial pull quote, then avatar + name + role row beneath. Multiple
+ * quotes stack vertically with a thin separator.
+ */
 export async function QuoteList(props: QuoteListModule) {
   // GROQ can return null entries for references the client can't see;
   // filter them so the renderer never dereferences null.
   const quotes = (props.quotes ?? []).filter(Boolean);
   if (!quotes.length) return null;
-  const single = quotes.length === 1;
   // Locale-aware quotation marks — `typography.quoteStyle.primary` is
   // an array like ["“", "”"] (EN) or ["« ", " »"] (FR).
   const t = await getTranslations("typography");
   const marks = t.raw("quoteStyle.primary") as [string, string];
   const [open, close] = Array.isArray(marks) ? marks : ["“", "”"];
   return (
-    <section id={props.anchor} className="mx-auto max-w-5xl px-(--gutter) py-12 md:py-20">
-      {props.title ? (
-        <h2 className="text-center text-2xl font-semibold md:text-3xl">{props.title}</h2>
-      ) : null}
-      <ul
-        className={
-          single
-            ? "mt-8 flex justify-center"
-            : "divide-border mt-8 grid gap-10 divide-y md:grid-cols-2 md:divide-x md:divide-y-0"
-        }
-      >
+    <section id={props.anchor} className="w-full py-8 md:py-12">
+      <ul className="divide-border/60 border-border/60 flex w-full flex-col divide-y border-y">
         {quotes.map((q) => (
-          <li
-            key={q._id}
-            className="flex max-w-2xl flex-col items-center gap-6 px-6 py-6 text-center"
-          >
-            <blockquote className="text-lg font-medium md:text-2xl">
+          <li key={q._id} className="py-6 md:py-8">
+            <p className="mb-4 text-lg font-medium md:mb-6 md:text-2xl md:leading-relaxed">
               {open}
               {q.content}
               {close}
-            </blockquote>
-            <div className="flex items-center gap-3">
+            </p>
+            <div className="flex items-center gap-3 pl-px">
               {q.image?.asset?.url ? (
-                <Image
-                  src={q.image.asset.url}
-                  alt={q.author ?? ""}
-                  width={40}
-                  height={40}
-                  className="size-10 rounded-full object-cover"
-                />
+                <div className="ring-foreground/10 aspect-square size-12 shrink-0 overflow-hidden rounded-xl border border-transparent shadow-md ring-1 shadow-black/15">
+                  <Image
+                    src={q.image.asset.url}
+                    alt={q.author ?? ""}
+                    width={96}
+                    height={96}
+                    className="size-full object-cover"
+                  />
+                </div>
               ) : null}
-              <div className="text-left">
-                {q.author ? <p className="font-medium">{q.author}</p> : null}
+              <div className="space-y-0.5 text-base *:block">
+                {q.author ? (
+                  <span className="text-foreground font-medium">{q.author}</span>
+                ) : null}
                 {q.role ? (
-                  <p className="text-muted-foreground text-sm">{q.role}</p>
+                  <span className="text-muted-foreground text-sm">{q.role}</span>
                 ) : null}
               </div>
             </div>

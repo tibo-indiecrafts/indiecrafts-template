@@ -31,22 +31,20 @@ export function TagDetail({
     : String(count);
 
   return (
-    <section aria-labelledby="tag-detail-title" className="pt-28 pb-14 md:pt-40 md:pb-20">
+    <section aria-labelledby="tag-detail-title" className="pt-6 pb-12 md:pt-8 md:pb-16">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-(--gutter) md:gap-12">
         <Breadcrumbs items={breadcrumbs} label={breadcrumbsLabel} />
 
-        <header className="bg-card ring-border/60 flex flex-col gap-4 rounded-xl p-8 shadow-sm ring-1 md:p-10">
-          <span className="bg-muted text-muted-foreground w-fit rounded-md px-2 py-1 text-xs font-medium">
-            {countLabel}
-          </span>
+        <header className="flex flex-col gap-2">
+          <span className="text-muted-foreground text-xs">{countLabel}</span>
           <h1
             id="tag-detail-title"
-            className="text-4xl font-semibold capitalize lg:text-6xl"
+            className="text-3xl font-semibold capitalize md:text-4xl"
           >
             #{tag.title}
           </h1>
           {tag.description ? (
-            <p className="text-muted-foreground max-w-2xl text-lg text-balance">
+            <p className="text-muted-foreground max-w-2xl text-balance">
               {tag.description}
             </p>
           ) : null}

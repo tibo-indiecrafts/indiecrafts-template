@@ -85,9 +85,9 @@ export default async function BlogPostPage({ params }: Props) {
   const title = post.metadata?.title ?? post.title ?? "";
   const description = post.metadata?.description;
   const image = post.metadata?.image?.asset?.url;
-  // Per-post `modules` override the singleton's `postModules`. Empty
-  // arrays on both sides → default article layout.
-  const modules = post.modules?.length ? post.modules : (blog?.postModules ?? []);
+  // The blog singleton's `postModules` composes every article's chrome
+  // (breadcrumbs / body slot / related). Empty array → DefaultPostLayout.
+  const modules = blog?.postModules ?? [];
 
   // Related posts — only fetched for the default layout. Module-driven
   // layouts can drop their own `module.blog-post-list` instead.

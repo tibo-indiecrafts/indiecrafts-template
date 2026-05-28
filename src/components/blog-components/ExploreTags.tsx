@@ -2,10 +2,9 @@ import { Link } from "@/i18n/routing";
 import type { Tag } from "@/sanity/types";
 
 /**
- * Tag cloud for the /blog frontpage. Same shape as ExploreCategories but
- * uses pill-shaped chips with a `#` prefix to make the visual difference
- * obvious. Each chip is a link to `/blog/tag/<slug>`. The trailing CTA
- * links to the full tag index.
+ * Tag explorer for the /blog frontpage. Chip styling mirrors
+ * ExploreCategories so the two sections feel like siblings; the only
+ * visual cue distinguishing tags is the `#` prefix.
  */
 export function ExploreTags({
   tags,
@@ -31,21 +30,15 @@ export function ExploreTags({
           <p className="text-muted-foreground max-w-lg">{subheading}</p>
         </header>
 
-        <ul className="flex flex-wrap justify-center gap-2">
+        <ul className="flex flex-wrap justify-center gap-3">
           {sorted.slice(0, 24).map((tag) =>
             tag.slug ? (
               <li key={tag._id}>
                 <Link
                   href={`/blog/tag/${tag.slug}`}
-                  className="group bg-muted text-muted-foreground hover:bg-foreground hover:text-background focus-visible:ring-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                  className="border-border hover:bg-foreground hover:text-background focus-visible:ring-ring rounded-md border bg-transparent px-4 py-2 text-base font-medium capitalize transition-colors focus-visible:ring-2 focus-visible:outline-none"
                 >
-                  <span className="capitalize">#{tag.title}</span>
-                  <span
-                    aria-hidden="true"
-                    className="text-muted-foreground/70 group-hover:text-background/70 text-xs"
-                  >
-                    {tag.postCount ?? 0}
-                  </span>
+                  #{tag.title}
                 </Link>
               </li>
             ) : null,

@@ -25,16 +25,13 @@ export function BlogListing({
     cols === 2 ? "md:grid-cols-2 lg:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <section
-      aria-labelledby="blog-listing-title"
-      className="pt-28 pb-14 md:pt-40 md:pb-20"
-    >
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-(--gutter) md:gap-14">
-        <header className="flex flex-col items-center gap-3.5 text-center">
-          <h1 id="blog-listing-title" className="text-4xl font-semibold lg:text-5xl">
+    <section aria-labelledby="blog-listing-title" className="pt-6 pb-12 md:pt-8 md:pb-16">
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-(--gutter) md:gap-12">
+        <header className="flex flex-col gap-2">
+          <h1 id="blog-listing-title" className="text-3xl font-semibold md:text-4xl">
             {heading}
           </h1>
-          <p className="text-muted-foreground max-w-lg">{subheading}</p>
+          <p className="text-muted-foreground max-w-2xl text-balance">{subheading}</p>
         </header>
 
         {posts.length === 0 ? (

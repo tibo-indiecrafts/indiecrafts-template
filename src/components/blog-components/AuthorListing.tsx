@@ -1,6 +1,7 @@
 import type { Author } from "@/sanity/types";
 import { AuthorCard } from "./AuthorCard";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
+import { PageHero, type PageHeroPill } from "./PageHero";
 
 /**
  * Author index page section — `/author`. Each author card links to its
@@ -15,6 +16,7 @@ export function AuthorListing({
   subheading,
   emptyLabel,
   postsLabel,
+  pills,
 }: {
   authors: Author[];
   breadcrumbs: Crumb[];
@@ -23,22 +25,21 @@ export function AuthorListing({
   subheading: string;
   emptyLabel: string;
   postsLabel: string;
+  pills?: PageHeroPill[];
 }) {
   return (
     <section
       aria-labelledby="author-listing-title"
-      className="pt-28 pb-14 md:pt-40 md:pb-20"
+      className="pt-6 pb-12 md:pt-8 md:pb-16"
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-9 px-(--gutter) pt-9 pb-24 md:gap-14">
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-(--gutter) md:gap-12">
         <Breadcrumbs items={breadcrumbs} label={breadcrumbsLabel} />
-        <header className="bg-card ring-border/60 flex flex-col gap-3 rounded-xl p-8 shadow-sm ring-1 md:p-12">
-          <h1 id="author-listing-title" className="text-4xl font-semibold lg:text-6xl">
-            {heading}
-          </h1>
-          <p className="text-muted-foreground max-w-2xl text-lg text-balance">
-            {subheading}
-          </p>
-        </header>
+        <PageHero
+          titleId="author-listing-title"
+          title={heading}
+          subtitle={subheading}
+          pills={pills}
+        />
 
         {authors.length === 0 ? (
           <p className="text-muted-foreground text-center">{emptyLabel}</p>

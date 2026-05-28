@@ -56,10 +56,7 @@ export function ExploreCategories({
                     href={`/blog/category/${category.slug}`}
                     className="border-border hover:bg-foreground hover:text-background focus-visible:ring-ring rounded-md border bg-transparent px-4 py-2 text-base font-medium capitalize transition-colors focus-visible:ring-2 focus-visible:outline-none"
                   >
-                    <span>{category.title}</span>{" "}
-                    <span aria-hidden="true" className="text-muted-foreground/80 text-sm">
-                      ({(category.postCount ?? 0).toString().padStart(2, "0")})
-                    </span>
+                    {category.title}
                   </Link>
                 </li>
               ) : null,

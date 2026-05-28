@@ -4,7 +4,7 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.blog-index",
-  title: "Hero d'accueil du blog",
+  title: "Hero du blog",
   icon: HomeIcon,
   fields: [
     defineField({ name: "eyebrow", title: "Sur-titre", type: "string" }),
@@ -19,7 +19,7 @@ export default defineModule({
   preview: {
     select: { title: "title" },
     prepare: ({ title }) => ({
-      title: "Hero d'accueil du blog",
+      title: "Hero du blog",
       subtitle: title,
     }),
   },

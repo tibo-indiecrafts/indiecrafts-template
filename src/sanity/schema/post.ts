@@ -1,8 +1,5 @@
 import { EditIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
-import { MODULE_TYPES } from "./modules";
-
-const MODULE_FIELD_REFS = MODULE_TYPES.map((type) => ({ type }));
 
 /**
  * Blog post — title + body + structured metadata block.
@@ -10,6 +7,13 @@ const MODULE_FIELD_REFS = MODULE_TYPES.map((type) => ({ type }));
  * Slug + excerpt + social image all live under `metadata.*` (reusable
  * `metadata` object) so per-post SEO overrides happen in one place. The
  * Studio splits content vs. metadata into two tabs via `groups`.
+ *
+ * Layout — articles use the shared blog layout (`blog.postModules` when
+ * set, otherwise `DefaultPostLayout`). There is intentionally NO
+ * per-post layout override on this document; editors compose content,
+ * not chrome. Rich inline content inside `body` (callouts, card lists,
+ * stat lists, etc.) is available via the "+" insert menu in the
+ * PortableText editor.
  */
 export default defineType({
   name: "post",
@@ -117,15 +121,6 @@ export default defineType({
       name: "body",
       title: "Corps",
       type: "blockContent",
-      group: "content",
-    }),
-    defineField({
-      name: "modules",
-      title: "Modules (remplacent la mise en page)",
-      description:
-        "Optionnel. Lorsqu'ils sont renseignés, ces modules composent la mise en page de l'article au lieu des `blog.postModules` partagés. Insérez un `module.blog-post-content` quelque part dans le tableau pour placer le champ corps ci-dessus. Pratique pour les articles vitrines ponctuels.",
-      type: "array",
-      of: MODULE_FIELD_REFS,
       group: "content",
     }),
     defineField({

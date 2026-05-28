@@ -35,11 +35,7 @@ export default async function CategoryIndexPage({ params }: Props) {
       <PageSchemas page={pages.category} locale={locale} />
       <CategoryListing
         categories={categories}
-        breadcrumbs={[
-          { label: nav("home"), href: "/" },
-          { label: nav("blog"), href: "/blog" },
-          { label: t("title") },
-        ]}
+        breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: t("title") }]}
         breadcrumbsLabel={t("breadcrumbs")}
         heading={t("heading")}
         subheading={t("subheading")}

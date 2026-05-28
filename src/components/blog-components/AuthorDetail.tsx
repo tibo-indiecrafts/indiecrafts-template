@@ -33,43 +33,39 @@ export function AuthorDetail({
   return (
     <section
       aria-labelledby="author-detail-title"
-      className="pt-28 pb-14 md:pt-40 md:pb-20"
+      className="pt-6 pb-12 md:pt-8 md:pb-16"
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-7 px-(--gutter) md:gap-16">
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-(--gutter) md:gap-12">
         <Breadcrumbs items={breadcrumbs} label={breadcrumbsLabel} />
-        <header className="bg-card ring-border/60 flex flex-col items-start gap-7 rounded-xl p-8 shadow-sm ring-1 sm:flex-row sm:items-center md:p-10">
+        <header className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
           {author.image?.asset?.url ? (
             <Image
               src={author.image.asset.url}
               alt={author.name ?? ""}
-              width={240}
-              height={240}
-              className="h-40 w-40 rounded-full object-cover sm:h-48 sm:w-48 md:h-56 md:w-56"
+              width={160}
+              height={160}
+              className="h-28 w-28 rounded-full object-cover sm:h-32 sm:w-32 md:h-40 md:w-40"
               priority
             />
           ) : (
             <span
               aria-hidden="true"
-              className="bg-muted flex h-40 w-40 items-center justify-center rounded-full text-5xl sm:h-48 sm:w-48 md:h-56 md:w-56"
+              className="bg-muted flex h-28 w-28 items-center justify-center rounded-full text-3xl sm:h-32 sm:w-32 md:h-40 md:w-40"
             >
               {(author.name ?? "?").slice(0, 1).toUpperCase()}
             </span>
           )}
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <span className="bg-muted text-muted-foreground w-fit rounded-md px-2 py-1 text-xs font-medium">
-                {postCountLabel}
-              </span>
-              <h1 id="author-detail-title" className="text-4xl font-semibold lg:text-6xl">
-                {author.name}
-              </h1>
-              {author.position ? (
-                <p className="text-muted-foreground text-base">{author.position}</p>
-              ) : null}
-            </div>
-            {author.bio ? (
-              <p className="text-muted-foreground max-w-2xl text-lg">{author.bio}</p>
+          <div className="flex flex-col gap-2">
+            <h1 id="author-detail-title" className="text-3xl font-semibold md:text-4xl">
+              {author.name}
+            </h1>
+            {author.position ? (
+              <p className="text-muted-foreground text-sm">{author.position}</p>
             ) : null}
+            {author.bio ? (
+              <p className="text-muted-foreground max-w-2xl text-balance">{author.bio}</p>
+            ) : null}
+            <span className="text-muted-foreground mt-1 text-xs">{postCountLabel}</span>
           </div>
         </header>
 

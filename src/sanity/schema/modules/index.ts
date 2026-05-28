@@ -7,9 +7,6 @@ import breadcrumbs from "./breadcrumbs";
 import callout from "./callout";
 import cardList from "./card-list";
 import customHtml from "./custom-html";
-import formModule from "./form-module";
-import heroSplit from "./hero-split";
-import logoList from "./logo-list";
 import personList from "./person-list";
 import prose from "./prose";
 import quoteList from "./quote-list";
@@ -23,8 +20,6 @@ export const moduleSchemas: SchemaTypeDefinition[] = [
   accordionList,
   callout,
   cardList,
-  heroSplit,
-  logoList,
   personList,
   prose,
   statList,
@@ -33,7 +28,6 @@ export const moduleSchemas: SchemaTypeDefinition[] = [
   // Utility
   breadcrumbs,
   customHtml,
-  formModule,
   searchModule,
   // Blog
   blogIndex,
@@ -46,8 +40,6 @@ export const MODULE_TYPES = [
   "module.accordion-list",
   "module.callout",
   "module.card-list",
-  "module.hero-split",
-  "module.logo-list",
   "module.person-list",
   "module.prose",
   "module.stat-list",
@@ -55,7 +47,6 @@ export const MODULE_TYPES = [
   "module.quote-list",
   "module.breadcrumbs",
   "module.custom-html",
-  "module.form",
   "module.search",
   "module.blog-index",
   "module.blog-post-content",

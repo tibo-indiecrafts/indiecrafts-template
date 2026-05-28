@@ -3,7 +3,7 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.quote-list",
-  title: "Liste de citations",
+  title: "Citations",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({

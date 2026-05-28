@@ -93,7 +93,6 @@ export default async function AuthorDetailPage({ params }: Props) {
         posts={posts}
         locale={locale}
         breadcrumbs={[
-          { label: nav("home"), href: "/" },
           { label: nav("blog"), href: "/blog" },
           { label: nav("author"), href: "/author" },
           { label: author.name ?? slug },

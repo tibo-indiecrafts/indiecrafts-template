@@ -9,8 +9,8 @@ import { defineModule } from "../objects/define-module";
  */
 export default defineModule({
   name: "module.blog-post-content",
-  title: "Contenu de l'article",
+  title: "Contenu d'article",
   icon: DocumentTextIcon,
   fields: [],
-  preview: { prepare: () => ({ title: "Contenu de l'article (article actif)" }) },
+  preview: { prepare: () => ({ title: "Contenu d'article (article actif)" }) },
 });

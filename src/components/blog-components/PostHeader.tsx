@@ -39,24 +39,24 @@ export function PostHeader({
         <Link
           href={authorHref}
           aria-label={author.name ?? undefined}
-          className="focus-visible:ring-ring absolute -top-7 left-6 block rounded-full focus-visible:ring-2 focus-visible:outline-none"
+          className="focus-visible:ring-ring absolute -top-10 left-6 block rounded-full focus-visible:ring-2 focus-visible:outline-none"
         >
           {author.image?.asset?.url ? (
             <Image
               src={author.image.asset.url}
               alt={author.name ?? ""}
-              width={56}
-              height={56}
-              className="ring-card h-14 w-14 rounded-full object-cover ring-4"
+              width={80}
+              height={80}
+              className="ring-card h-20 w-20 rounded-full object-cover ring-4"
             />
           ) : (
-            <span className="bg-muted ring-card flex h-14 w-14 items-center justify-center rounded-full text-base ring-4">
+            <span className="bg-muted ring-card flex h-20 w-20 items-center justify-center rounded-full text-xl ring-4">
               {(author.name ?? "?").slice(0, 1).toUpperCase()}
             </span>
           )}
         </Link>
       ) : null}
-      <div className={author ? "pt-6" : ""}>
+      <div className={author ? "pt-10" : ""}>
         {categoryRef?.title ? (
           categorySlug ? (
             <Link

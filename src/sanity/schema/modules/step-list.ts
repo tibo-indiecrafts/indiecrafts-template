@@ -3,7 +3,7 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.step-list",
-  title: "Liste d'étapes",
+  title: "Étapes",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),

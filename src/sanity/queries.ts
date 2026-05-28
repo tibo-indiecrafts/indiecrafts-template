@@ -72,15 +72,10 @@ const CTA_FRAGMENT = `
  */
 const MODULES_FRAGMENT = `
   ...,
+  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },
   _type == "module.callout" => { cta { ${CTA_FRAGMENT} } },
-  _type == "module.hero-split" => {
-    ctas[] { ${CTA_FRAGMENT} }
-  },
   _type == "module.card-list" => {
     cards[] { ..., cta { ${CTA_FRAGMENT} } }
-  },
-  _type == "module.logo-list" => {
-    logos[]->{ _id, name, url, image { asset->{ url } } }
   },
   _type == "module.person-list" => {
     people[]->{
@@ -93,12 +88,6 @@ const MODULES_FRAGMENT = `
     "quotes": quotes[]->{
       _id, content, author, role, language,
       image { asset->{ url } }
-    }[coalesce(language, "en") == $locale]
-  },
-  _type == "module.form" => {
-    form->{
-      _id, name, title, intro, submitLabel,
-      fields[]
     }
   },
   _type == "module.blog-post-list" => {
@@ -142,7 +131,12 @@ export const postBySlugQuery = defineQuery(`
     publishedAt,
     featured,
     language,
-    body,
+    // Project the body with module-aware reference expansion. Plain
+    // PortableText blocks pass through unchanged via the spread; module
+    // blocks (module.quote-list, etc.) get their refs dereferenced via
+    // MODULES_FRAGMENT. Without this, modules embedded inline render
+    // with empty quotes / people.
+    body[]{ ${MODULES_FRAGMENT} },
     "slug": metadata.slug.current,
     metadata {
       title,
@@ -158,10 +152,7 @@ export const postBySlugQuery = defineQuery(`
     "headings": body[style in ["h2", "h3", "h4"]]{
       style,
       "text": pt::text(@)
-    },
-    // Per-post module override (optional). MODULES_FRAGMENT expands
-    // every cross-reference the same way the blog singleton does.
-    modules[]{ ${MODULES_FRAGMENT} }
+    }
   }
 `);
 
@@ -221,7 +212,6 @@ export const rssPostsQuery = defineQuery(`
  */
 export const blogSingletonQuery = defineQuery(`
   *[_type == "blog"][0]{
-    frontpageModules[]{ ${MODULES_FRAGMENT} },
     postModules[]{ ${MODULES_FRAGMENT} }
   }
 `);

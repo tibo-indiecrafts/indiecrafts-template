@@ -32,11 +32,7 @@ export default async function TagIndexPage({ params }: Props) {
       <PageSchemas page={pages.tag} locale={locale} />
       <TagListing
         tags={tags}
-        breadcrumbs={[
-          { label: nav("home"), href: "/" },
-          { label: nav("blog"), href: "/blog" },
-          { label: t("title") },
-        ]}
+        breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: t("title") }]}
         breadcrumbsLabel={t("breadcrumbs")}
         heading={t("heading")}
         subheading={t("subheading")}

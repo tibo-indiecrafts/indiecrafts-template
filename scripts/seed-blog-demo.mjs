@@ -19,8 +19,6 @@
  *   - 5 posts per locale, each with a metadata.image uploaded from Unsplash
  *   - 4 quotes (testimonials, language-tagged)
  *   - 3 people (team members) with portrait images
- *   - 4 logos (brand placeholders, no images)
- *   - 1 contact form
  *   - 1 blog singleton with EMPTY frontpageModules + EMPTY postModules
  *     → /blog falls back to the minimal card-grid layout
  *     → individual posts use their own modules (see below) or the default
@@ -99,6 +97,42 @@ const li = (text) => ({
   children: [{ _type: "span", _key: key("s"), text, marks: [] }],
 });
 
+const numli = (text) => ({
+  _type: "block",
+  _key: key("b"),
+  style: "normal",
+  listItem: "number",
+  level: 1,
+  markDefs: [],
+  children: [{ _type: "span", _key: key("s"), text, marks: [] }],
+});
+
+// Paragraph mixing plain + decorated spans. `decorations` is an array of
+// `[text, marks[]]`; `marks` can be ["strong"], ["em"], ["code"], etc.
+const pMixed = (parts) => ({
+  _type: "block",
+  _key: key("b"),
+  style: "normal",
+  markDefs: [],
+  children: parts.map(([text, marks = []]) => ({
+    _type: "span",
+    _key: key("s"),
+    text,
+    marks,
+  })),
+});
+
+const imgBlock = (name, alt = "") => {
+  const ref = img(name);
+  if (!ref) throw new Error(`imgBlock: image "${name}" not in cache`);
+  return {
+    _type: "image",
+    _key: key("img"),
+    asset: ref.asset,
+    alt,
+  };
+};
+
 const pStrong = (lead, strong, tail = "") => ({
   _type: "block",
   _key: key("b"),
@@ -158,11 +192,6 @@ const IMAGES = {
   "post-cookie-banner": {
     url: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1200&h=630&q=80",
     alt: "Vintage browser interface on screen",
-  },
-  // Module showcase
-  "hero-split": {
-    url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&h=900&q=80",
-    alt: "Editor with terminal session",
   },
   // Authors
   "author-ada": {
@@ -461,7 +490,7 @@ const tags = [
   },
 ].map((t) => ({ ...t, _type: "tag" }));
 
-const quotes = [
+const buildQuotes = () => [
   {
     _id: "quote.en.lovelace",
     _type: "quote",
@@ -470,6 +499,7 @@ const quotes = [
       "Forked once, shipped three client sites in a week. This is the template I wish I had written myself.",
     author: "Ada Lovelace",
     role: "Founder, Analytic Studio",
+    image: img("author-ada"),
   },
   {
     _id: "quote.en.hopper",
@@ -479,6 +509,7 @@ const quotes = [
       "Move at the speed of thought. Build, measure, ship — repeat until the rhythm matches the market.",
     author: "Grace Hopper",
     role: "Engineering Lead",
+    image: img("author-grace"),
   },
   {
     _id: "quote.fr.lovelace",
@@ -488,6 +519,7 @@ const quotes = [
       "Forké une fois, trois sites clients livrés en une semaine. Le template que j'aurais aimé écrire moi-même.",
     author: "Ada Lovelace",
     role: "Fondatrice, Analytic Studio",
+    image: img("author-ada"),
   },
   {
     _id: "quote.fr.hopper",
@@ -497,6 +529,7 @@ const quotes = [
       "Avancez à la vitesse de la pensée. Construire, mesurer, livrer — répéter jusqu'à ce que le rythme épouse le marché.",
     author: "Grace Hopper",
     role: "Lead Ingénierie",
+    image: img("author-grace"),
   },
 ];
 
@@ -524,50 +557,6 @@ const buildPeople = () => [
     role: "Lead Engineer",
     bio: "Compiler nerd. Talks to herself in Lisp.",
     image: img("person-yuki"),
-  },
-];
-
-const logos = [
-  { _id: "logo.acme", _type: "logo", name: "Acme", url: "https://example.com/acme" },
-  {
-    _id: "logo.contoso",
-    _type: "logo",
-    name: "Contoso",
-    url: "https://example.com/contoso",
-  },
-  {
-    _id: "logo.northwind",
-    _type: "logo",
-    name: "Northwind",
-    url: "https://example.com/northwind",
-  },
-  {
-    _id: "logo.fabrikam",
-    _type: "logo",
-    name: "Fabrikam",
-    url: "https://example.com/fabrikam",
-  },
-];
-
-const forms = [
-  {
-    _id: "form.contact",
-    _type: "form",
-    name: "contact",
-    title: "Get in touch",
-    intro: "We answer within one business day.",
-    submitLabel: "Send message",
-    fields: [
-      { _key: key("f"), name: "name", label: "Name", type: "text", required: true },
-      { _key: key("f"), name: "email", label: "Email", type: "email", required: true },
-      {
-        _key: key("f"),
-        name: "message",
-        label: "Message",
-        type: "textarea",
-        required: true,
-      },
-    ],
   },
 ];
 
@@ -641,18 +630,6 @@ const inline = {
     })),
   }),
 
-  logoList: (title, intro, logoRefs) => ({
-    _type: "module.logo-list",
-    _key: key("m"),
-    title,
-    intro,
-    logos: logoRefs.map((ref) => ({
-      _type: "reference",
-      _ref: ref,
-      _key: key("l"),
-    })),
-  }),
-
   personList: (title, intro, personRefs) => ({
     _type: "module.person-list",
     _key: key("m"),
@@ -663,24 +640,6 @@ const inline = {
       _ref: ref,
       _key: key("p"),
     })),
-  }),
-
-  heroSplit: (eyebrow, title, contentText) => ({
-    _type: "module.hero-split",
-    _key: key("m"),
-    eyebrow,
-    title,
-    content: [p(contentText)],
-    image: img("hero-split"),
-    imagePosition: "right",
-  }),
-
-  form: (title, intro, formRef) => ({
-    _type: "module.form",
-    _key: key("m"),
-    title,
-    intro,
-    form: { _type: "reference", _ref: formRef },
   }),
 
   customHtml: (html) => ({
@@ -696,9 +655,10 @@ const inline = {
 // route falls back to its `DefaultPostLayout`, which renders proper
 // localized breadcrumbs + related posts via translations.
 //
-// Editors who want a custom module-driven layout for a single post can
-// set the per-post `post.modules` field in Studio and accept the
-// responsibility for translating any text the modules carry.
+// Rich content INSIDE an article (callouts, card lists, stat lists, …)
+// belongs in the post's `body` PortableText via the "+" insert menu —
+// the 11 inline-embeddable modules live there. The post document itself
+// no longer exposes a per-post layout override; chrome stays uniform.
 
 // ─── Showcase body — modules INSIDE the PortableText body ──────
 // Builds an array of mixed text blocks + inline modules, in the order
@@ -708,69 +668,98 @@ const inline = {
 const showcaseBody = ({ quoteLocale, copy }) => [
   p(copy.intro1),
   pStrong("", copy.introStrong, copy.introTail),
+  imgBlock("post-fast-proto", copy.heroAlt),
   inline.callout("info", [
     pStrong(copy.calloutInfoLead, copy.calloutInfoStrong, copy.calloutInfoTail),
   ]),
+
   h(2, copy.dayOneHeading),
-  p(copy.dayOneIntro),
+  pMixed([
+    [copy.dayOneIntroLead, []],
+    [copy.dayOneIntroCode, ["code"]],
+    [copy.dayOneIntroTail, []],
+  ]),
   li(copy.dayOneBullet1),
   li(copy.dayOneBullet2),
   li(copy.dayOneBullet3),
+  h(3, copy.deployHeading),
+  p(copy.deployIntro),
+  pMixed([
+    [copy.deployEmphasisLead, []],
+    [copy.deployEmphasisStrong, ["strong"]],
+    [copy.deployEmphasisTail, []],
+  ]),
+  p(copy.beforeStats),
   inline.statList(copy.statTitle, copy.statIntro, [
     ["48h", copy.statLabel1],
     ["17", copy.statLabel2],
     ["2", copy.statLabel3],
     ["AA", copy.statLabel4],
   ]),
+  p(copy.afterStats),
   inline.cardList(copy.cardsTitle, copy.cardsIntro, 3, [
     [copy.card1Title, copy.card1Body],
     [copy.card2Title, copy.card2Body],
     [copy.card3Title, copy.card3Body],
   ]),
+  p(copy.afterCards),
+
   h(2, copy.dayTwoHeading),
   p(copy.dayTwoIntro),
   inline.callout("warning", [p(copy.calloutWarning)]),
+  p(copy.afterCalloutWarning),
+  h(3, copy.playbookHeading),
+  p(copy.playbookIntro),
+  numli(copy.playbookStep1),
+  numli(copy.playbookStep2),
+  numli(copy.playbookStep3),
+  p(copy.beforeSteps),
   inline.stepList(copy.stepsTitle, copy.stepsIntro, [
     [copy.step1Title, copy.step1Body],
     [copy.step2Title, copy.step2Body],
     [copy.step3Title, copy.step3Body],
   ]),
+  p(copy.afterSteps),
   h(3, copy.skipHeading),
   li(copy.skipBullet1),
   li(copy.skipBullet2),
   li(copy.skipBullet3),
+  h(4, copy.skipFootnoteHeading),
+  pMixed([
+    [copy.skipFootnoteLead, []],
+    [copy.skipFootnoteStruck, ["strike-through"]],
+    [copy.skipFootnoteTail, []],
+  ]),
+  p(copy.beforeFaq),
   inline.accordionList(copy.faqTitle, copy.faqIntro, [
     [copy.faq1Q, copy.faq1A],
     [copy.faq2Q, copy.faq2A],
     [copy.faq3Q, copy.faq3A],
   ]),
+  p(copy.afterFaq),
+
   h(2, copy.slowdownHeading),
   p(copy.slowdownIntro),
-  inline.heroSplit(copy.heroSplitEyebrow, copy.heroSplitTitle, copy.heroSplitContent),
   blockquote(copy.beckQuote),
+  p(copy.beforeQuotes),
   inline.quoteList(copy.quotesTitle, [
     `quote.${quoteLocale}.lovelace`,
     `quote.${quoteLocale}.hopper`,
   ]),
-  h(2, copy.proofHeading),
-  p(copy.proofIntro),
-  inline.logoList(copy.logosTitle, copy.logosIntro, [
-    "logo.acme",
-    "logo.contoso",
-    "logo.northwind",
-    "logo.fabrikam",
-  ]),
-  inline.personList(copy.peopleTitle, copy.peopleIntro, [
-    "person.maya",
-    "person.luis",
-    "person.yuki",
-  ]),
+  p(copy.afterQuotes),
+  inline.personList("", "", ["person.maya", "person.luis", "person.yuki"]),
+  p(copy.afterTeam),
+  h(4, copy.guardrailsHeading),
+  p(copy.guardrailsIntro),
   inline.callout("success", [p(copy.calloutSuccess)]),
+  p(copy.afterCalloutSuccess),
   inline.callout("danger", [p(copy.calloutDanger)]),
-  inline.form(copy.formTitle, copy.formIntro, "form.contact"),
+  p(copy.afterCalloutDanger),
   inline.customHtml(
-    `<div style="margin: 2rem 0; padding: 1.25rem; text-align: center; border-radius: 0.75rem; background: var(--muted); color: var(--muted-foreground); font-size: 0.875rem;">This block is a <code>module.custom-html</code> &mdash; ${copy.customHtmlNote}</div>`,
+    `<div style="padding: 1.25rem; text-align: center; border-radius: 0.75rem; background: var(--muted); color: var(--muted-foreground); font-size: 0.875rem;">${copy.customHtmlBody}</div>`,
   ),
+  p(copy.afterCustomHtml),
+
   h(2, copy.closingHeading),
   pLink(
     copy.closingLead,
@@ -778,6 +767,14 @@ const showcaseBody = ({ quoteLocale, copy }) => [
     "https://indiecrafts.dev",
     copy.closingTail,
   ),
+  h(5, copy.editorNoteHeading),
+  pMixed([
+    [copy.editorNoteLead, []],
+    [copy.editorNoteEm, ["em"]],
+    [copy.editorNoteTail, []],
+  ]),
+  h(6, copy.updatedHeading),
+  p(copy.updatedBody),
 ];
 
 const showcaseCopyEn = {
@@ -786,24 +783,40 @@ const showcaseCopyEn = {
   introStrong:
     "This guide is opinionated: do less, deploy more, learn on production traffic.",
   introTail: "",
-  calloutInfoLead: "Heads up: ",
-  calloutInfoStrong: "this is a Callout module embedded inline in the post body",
+  heroAlt: "Editor with a terminal — the rhythm of a Friday-night ship.",
+  calloutInfoLead: "Quick note: ",
+  calloutInfoStrong:
+    "everything you read past this point was authored in the Sanity Studio",
   calloutInfoTail:
-    ". Editors drop any of 11 modules directly into the body from the Studio.",
+    ". The eight inline modules, the headings, the lists, the images — same picker that ships with every Indie Crafts site.",
   dayOneHeading: "Day one: scaffold and deploy",
-  dayOneIntro:
-    "Start with a template that already handles the boring decisions. The first deploy should happen before lunch.",
+  dayOneIntroLead:
+    "Start with a template that already handles the boring decisions. The first deploy should happen before lunch — ",
+  dayOneIntroCode: "pnpm dev",
+  dayOneIntroTail:
+    " and a push to main are the only commands you should need that morning. Everything else is choice, and choice is what tomorrow is for.",
   dayOneBullet1:
     "Pick a routing primitive (App Router) and never touch the router code on day one.",
   dayOneBullet2: "Wire SEO + sitemap once. Skip i18n unless the target market needs it.",
   dayOneBullet3:
     "Deploy on push. No staging dance — preview deploys per PR are good enough.",
+  deployHeading: "Deploy before you decorate",
+  deployIntro:
+    "Treat the live URL as the milestone. Every other choice — palette, copy, illustrations — happens on a page that is already in production, watched by analytics, and within a Git revert of a green deploy.",
+  deployEmphasisLead: "If it isn't deployed, it doesn't exist. ",
+  deployEmphasisStrong: "Shipping is the artefact.",
+  deployEmphasisTail:
+    " Everything that happens in the editor up to that point is rehearsal.",
+  beforeStats:
+    "We tracked the last twelve weekend builds we shipped from this template. The numbers, in aggregate:",
   statTitle: "By the numbers",
   statIntro: "What two days of shipping looks like.",
   statLabel1: "Average build time",
   statLabel2: "Page-builder modules",
   statLabel3: "Supported locales",
   statLabel4: "WCAG contrast everywhere",
+  afterStats:
+    "Three themes drive most of the reductions. The same projects keep coming back to the same trade-offs, articulated below:",
   cardsTitle: "Recent themes",
   cardsIntro: "What we keep coming back to.",
   card1Title: "Fast prototyping",
@@ -812,11 +825,22 @@ const showcaseCopyEn = {
   card2Body: "Why one config file beats fifty conventions.",
   card3Title: "Editor-friendly",
   card3Body: "Sanity, Netlify Forms, GDPR — without the SaaS sprawl.",
+  afterCards:
+    "That closes day one. Push the deploy, walk away, come back tomorrow for the content pass.",
   dayTwoHeading: "Day two: content + analytics",
   dayTwoIntro:
     "By the afternoon of day two, you have a single page with real copy, a contact form, and traffic-level analytics. Resist the urge to add more.",
   calloutWarning:
     "If you add a CMS in the first 48 hours, you'll spend day three migrating schema instead of finding customers. Wait until the third paragraph repeats itself.",
+  afterCalloutWarning: "Past the warning, the moves themselves are unromantic.",
+  playbookHeading: "The three-move playbook",
+  playbookIntro:
+    "By Saturday lunch, the entire job collapses into three moves you can recite in sequence:",
+  playbookStep1: "Clone the repo and point the env file at your fresh Sanity dataset.",
+  playbookStep2: "Rename the brand tokens, drop in your copy, replace the hero image.",
+  playbookStep3: "Push to main; let the deploy hook do the rest.",
+  beforeSteps:
+    "Stated in prose, that playbook expands into a step list — the same content, rendered as a vertical timeline:",
   stepsTitle: "How to fork and ship",
   stepsIntro: "Three steps to a deployed site.",
   step1Title: "Fork",
@@ -825,11 +849,20 @@ const showcaseCopyEn = {
   step2Body: "Edit theme.hexColors + theme.colors in src/config/index.ts.",
   step3Title: "Ship",
   step3Body: "Push to Netlify. Verify with pnpm verify.",
+  afterSteps:
+    "Three steps is the whole flow. Equally important is what you can drop entirely on day one.",
   skipHeading: "Skip these on day one",
   skipBullet1:
     "CMS integration. Hard-code copy until you've written the same paragraph three times.",
   skipBullet2: "Authentication. Most MVPs don't need it.",
   skipBullet3: "A design system. Use defaults until friction proves otherwise.",
+  skipFootnoteHeading: "An older draft of this section",
+  skipFootnoteLead: "An earlier draft of this list had a fourth bullet here: ",
+  skipFootnoteStruck: "wire up auth on day one",
+  skipFootnoteTail:
+    ". Two MVPs and a launch later, we deleted it. The line is left here, struck through, as a reminder that defaults age.",
+  beforeFaq:
+    "Readers always ask the same three questions before they fork the repo. Worth answering up-front:",
   faqTitle: "FAQ",
   faqIntro: "Common questions about the template.",
   faq1Q: "Is the blog feature flag really optional?",
@@ -841,35 +874,46 @@ const showcaseCopyEn = {
   faq3Q: "Can I run this on Vercel?",
   faq3A:
     "Yes. The template is platform-agnostic. Netlify Forms only matter if you keep the Netlify Forms section.",
+  afterFaq:
+    "Two days gets you the shape of the site. The question is when to stop optimizing speed.",
   slowdownHeading: "When to slow down",
   slowdownIntro:
     "The moment you have a second person editing copy, set up a CMS. The moment two people share a feature flag, write it down. Premature infrastructure is the enemy.",
-  heroSplitEyebrow: "Featured",
-  heroSplitTitle: "Two days. One site.",
-  heroSplitContent:
-    "The fast-prototyping handbook is a two-part series on how we ship client sites between Friday evening and Sunday night.",
   beckQuote: "Make it work, make it right, make it fast — in that order. — Kent Beck",
-  quotesTitle: "What people say",
-  proofHeading: "Proof, not just promises",
-  proofIntro:
-    "Below: a few of the teams shipping with the template and the people behind it.",
-  logosTitle: "Trusted by",
-  logosIntro: "Teams shipping with the template.",
-  peopleTitle: "The team",
-  peopleIntro: "Who's behind it.",
+  beforeQuotes:
+    'Beck\'s order matters because most weekend sites die at "make it right". Two voices from teams that shipped, on the value of doing less:',
+  quotesTitle: "",
+  afterQuotes:
+    "Two testimonials, one observation: nobody who shipped fast says they regret it. The people behind those cycles:",
+  afterTeam: "Those are the three people running the build rhythms you just read about.",
+  guardrailsHeading: "Two guardrails before you tag the release",
+  guardrailsIntro:
+    "Before the tag goes up, two checks. The first congratulates a thing already working; the second warns away from a temptation that has bitten us twice.",
   calloutSuccess:
     "All AA contrast checks pass on the default theme — verify with pnpm verify:contrast.",
+  afterCalloutSuccess:
+    "Green calls celebrate what's right. The next one warns what to avoid.",
   calloutDanger:
     "Avoid editing src/components/ui-primitives/* by hand — they're shadcn-managed.",
-  formTitle: "Get notified",
-  formIntro: "Drop your email — we send a digest every other Friday.",
-  customHtmlNote:
-    "raw HTML the editor controls. Lock the Studio role if you need to restrict access.",
+  afterCalloutDanger:
+    "When the schema doesn't cover what you need — a newsletter signup, a third-party widget, a partner badge — drop raw markup. The block below is one of those:",
+  customHtmlBody:
+    "Most newsletters and embed widgets live in a block exactly like this one — a centred frame of arbitrary HTML the editor controls end to end.",
+  afterCustomHtml:
+    "That is the entire surface area of the body editor. From here on out, what shows up on the page is whatever you write.",
   closingHeading: "Closing thought",
   closingLead: "The template this guide ships with — ",
   closingLinkText: "indiecrafts.dev",
   closingTail:
     " — covers steps one through five so you can spend your weekend on steps six and beyond.",
+  editorNoteHeading: "Editor's note",
+  editorNoteLead: "This article is part of a series. The next entry covers what to do ",
+  editorNoteEm: "after",
+  editorNoteTail:
+    " the weekend ships — analytics, feedback loops, the first time you actually email a customer.",
+  updatedHeading: "Updated",
+  updatedBody:
+    "March 2026 — added the deployment playbook and the day-two warning. Earlier drafts focused only on day one.",
 };
 
 const showcaseCopyFr = {
@@ -878,24 +922,40 @@ const showcaseCopyFr = {
   introStrong:
     "Ce guide est opinionné : faites moins, déployez plus, apprenez sur du trafic réel.",
   introTail: "",
-  calloutInfoLead: "À noter : ",
-  calloutInfoStrong: "ceci est un module Callout intégré dans le corps de l'article",
+  heroAlt: "Éditeur avec terminal — le rythme d'une livraison du vendredi soir.",
+  calloutInfoLead: "Petite précision : ",
+  calloutInfoStrong:
+    "tout ce que vous lisez à partir d'ici a été rédigé dans le Sanity Studio",
   calloutInfoTail:
-    ". Les éditeurs peuvent insérer 11 modules directement dans le corps depuis le Studio.",
+    ". Les huit modules inline, les titres, les listes, les images — le même menu que chaque site Indie Crafts embarque.",
   dayOneHeading: "Jour un : poser les fondations et déployer",
-  dayOneIntro:
-    "Démarrez avec un template qui gère déjà les décisions ennuyeuses. Le premier déploiement doit tomber avant le déjeuner.",
+  dayOneIntroLead:
+    "Démarrez avec un template qui gère déjà les décisions ennuyeuses. Le premier déploiement doit tomber avant le déjeuner — ",
+  dayOneIntroCode: "pnpm dev",
+  dayOneIntroTail:
+    " et un push vers main sont les seules commandes utiles ce matin-là. Le reste, c'est de la décision, et la décision est l'affaire du lendemain.",
   dayOneBullet1: "Choisissez un routeur (App Router) et n'y touchez plus le jour un.",
   dayOneBullet2:
     "Branchez SEO + sitemap une bonne fois. Évitez l'i18n sauf si le marché cible l'exige.",
   dayOneBullet3:
     "Déployez à chaque push. Pas de danse de staging — les previews par PR suffisent.",
+  deployHeading: "Déployer avant de décorer",
+  deployIntro:
+    "Considérez l'URL en production comme le jalon. Tous les autres choix — palette, copy, illustrations — se font sur une page déjà déployée, observée par les analytics, à un revert Git d'un build vert.",
+  deployEmphasisLead: "Si ce n'est pas déployé, ça n'existe pas. ",
+  deployEmphasisStrong: "La livraison est l'artefact.",
+  deployEmphasisTail:
+    " Tout ce qui se passe dans l'éditeur avant ce moment-là, c'est de la répétition.",
+  beforeStats:
+    "Nous avons mesuré nos douze derniers builds livrés en week-end depuis ce template. Les chiffres, en agrégé :",
   statTitle: "En chiffres",
   statIntro: "Ce que représentent deux jours de livraison.",
   statLabel1: "Temps de build moyen",
   statLabel2: "Modules page-builder",
   statLabel3: "Langues supportées",
   statLabel4: "Contraste WCAG partout",
+  afterStats:
+    "Trois thèmes expliquent la majorité de ces réductions. Les mêmes projets reviennent toujours aux mêmes arbitrages, articulés ci-dessous :",
   cardsTitle: "Thèmes récurrents",
   cardsIntro: "Ce sur quoi nous revenons sans cesse.",
   card1Title: "Prototypage rapide",
@@ -904,11 +964,24 @@ const showcaseCopyFr = {
   card2Body: "Pourquoi un fichier de config bat cinquante conventions.",
   card3Title: "Pensé pour les éditeurs",
   card3Body: "Sanity, Netlify Forms, RGPD — sans la prolifération SaaS.",
+  afterCards:
+    "Voilà pour le jour un. Poussez le déploiement, fermez l'ordinateur, revenez demain pour la passe de contenu.",
   dayTwoHeading: "Jour deux : contenu et analytics",
   dayTwoIntro:
     "L'après-midi du jour deux, vous avez une page unique avec du contenu réel, un formulaire de contact et des métriques au niveau du trafic. Résistez à l'envie d'en ajouter.",
   calloutWarning:
     "Si vous ajoutez un CMS dans les premières 48 heures, vous passerez le jour trois à migrer du schéma au lieu de chercher des clients. Attendez que le même paragraphe se répète trois fois.",
+  afterCalloutWarning:
+    "Cette mise en garde posée, les mouvements eux-mêmes n'ont rien de romantique.",
+  playbookHeading: "Le playbook en trois coups",
+  playbookIntro:
+    "À l'heure du déjeuner samedi, le travail entier tient en trois mouvements à réciter dans l'ordre :",
+  playbookStep1: "Clonez le dépôt et pointez l'env vers votre nouveau dataset Sanity.",
+  playbookStep2:
+    "Renommez les tokens de marque, glissez votre contenu, remplacez l'image hero.",
+  playbookStep3: "Pushez vers main ; le hook de déploiement s'occupe du reste.",
+  beforeSteps:
+    "Énoncé en prose, ce playbook se développe en step list — le même contenu, en timeline verticale :",
   stepsTitle: "Forker et livrer",
   stepsIntro: "Trois étapes vers un site déployé.",
   step1Title: "Forker",
@@ -917,11 +990,21 @@ const showcaseCopyFr = {
   step2Body: "Éditez theme.hexColors + theme.colors dans src/config/index.ts.",
   step3Title: "Livrer",
   step3Body: "Pushez vers Netlify. Vérifiez avec pnpm verify.",
+  afterSteps:
+    "Trois étapes pour l'essentiel. Aussi important : ce qu'on peut entièrement laisser de côté le jour un.",
   skipHeading: "À sauter le jour un",
   skipBullet1:
     "Intégration CMS. Codez le contenu en dur jusqu'à avoir réécrit trois fois le même paragraphe.",
   skipBullet2: "Authentification. La plupart des MVP n'en ont pas besoin.",
   skipBullet3: "Un design system. Restez avec les défauts jusqu'à preuve du contraire.",
+  skipFootnoteHeading: "Un brouillon plus ancien de cette section",
+  skipFootnoteLead:
+    "Un brouillon antérieur de cette liste avait une quatrième puce ici : ",
+  skipFootnoteStruck: "brancher l'authentification le jour un",
+  skipFootnoteTail:
+    ". Deux MVP et un lancement plus tard, nous l'avons supprimée. La ligne reste, barrée, pour rappeler que les défauts vieillissent.",
+  beforeFaq:
+    "Les mêmes trois questions reviennent à chaque fois avant de forker le dépôt. Autant y répondre tout de suite :",
   faqTitle: "FAQ",
   faqIntro: "Questions fréquentes sur le template.",
   faq1Q: "Le feature flag blog est-il vraiment optionnel ?",
@@ -933,36 +1016,49 @@ const showcaseCopyFr = {
   faq3Q: "Puis-je déployer sur Vercel ?",
   faq3A:
     "Oui. Le template est platform-agnostic. Netlify Forms n'a d'importance que si vous gardez la section Netlify Forms.",
+  afterFaq:
+    "Deux jours suffisent à dessiner la forme du site. La vraie question : quand cesser d'optimiser la vitesse.",
   slowdownHeading: "Quand ralentir",
   slowdownIntro:
     "Dès qu'une deuxième personne édite le contenu, installez un CMS. Dès que deux personnes partagent un feature flag, documentez-le. L'infrastructure prématurée est l'ennemi.",
-  heroSplitEyebrow: "En vedette",
-  heroSplitTitle: "Deux jours. Un site.",
-  heroSplitContent:
-    "Le manuel du prototypage rapide est une série en deux parties sur la livraison de sites clients entre le vendredi soir et le dimanche soir.",
   beckQuote:
     "Faites que ça marche, faites que ça soit juste, faites que ça soit rapide — dans cet ordre. — Kent Beck",
-  quotesTitle: "Ce qu'on en dit",
-  proofHeading: "Preuves, pas promesses",
-  proofIntro:
-    "Ci-dessous : quelques équipes qui livrent avec le template, et les personnes derrière.",
-  logosTitle: "Ils nous font confiance",
-  logosIntro: "Des équipes qui livrent avec le template.",
-  peopleTitle: "L'équipe",
-  peopleIntro: "Qui se cache derrière.",
+  beforeQuotes:
+    "L'ordre de Beck compte parce que la plupart des sites du week-end meurent à « faites que ça soit juste ». Deux voix d'équipes qui ont livré, sur la valeur d'en faire moins.",
+  quotesTitle: "",
+  afterQuotes:
+    "Deux témoignages, une observation : personne qui a livré vite ne le regrette. Les personnes derrière ces cycles :",
+  afterTeam:
+    "Ce sont les trois personnes qui orchestrent les rythmes de build dont vous venez de lire.",
+  guardrailsHeading: "Deux garde-fous avant la release",
+  guardrailsIntro:
+    "Avant que le tag ne parte, deux vérifications. La première félicite une chose déjà en place ; la seconde prévient d'une tentation qui nous a mordu deux fois.",
   calloutSuccess:
     "Tous les checks de contraste AA passent sur le thème par défaut — vérifiez avec pnpm verify:contrast.",
+  afterCalloutSuccess:
+    "Le vert célèbre ce qui va bien. Le suivant prévient de ce qu'il faut éviter.",
   calloutDanger:
     "Évitez d'éditer src/components/ui-primitives/* à la main — c'est géré par shadcn.",
-  formTitle: "Soyez notifié",
-  formIntro: "Laissez votre email — nous envoyons un digest tous les quinze jours.",
-  customHtmlNote:
-    "du HTML brut contrôlé par l'éditeur. Verrouillez le rôle Studio si vous voulez restreindre l'accès.",
+  afterCalloutDanger:
+    "Quand le schéma ne couvre pas ce qu'il vous faut — une inscription newsletter, un widget tiers, un badge partenaire — basculez en HTML brut. Le bloc ci-dessous en est un :",
+  customHtmlBody:
+    "La plupart des newsletters et widgets embed atterrissent dans un bloc exactement comme celui-ci — un cadre centré de HTML arbitraire que l'éditeur contrôle de bout en bout.",
+  afterCustomHtml:
+    "Voilà la surface complète de l'éditeur de corps. À partir d'ici, ce qui s'affiche sur la page, c'est ce que vous écrivez.",
   closingHeading: "Pour conclure",
   closingLead: "Le template fourni avec ce guide — ",
   closingLinkText: "indiecrafts.dev",
   closingTail:
     " — couvre les étapes un à cinq, pour que votre week-end soit consacré à six et au-delà.",
+  editorNoteHeading: "Note de l'éditeur",
+  editorNoteLead:
+    "Cet article fait partie d'une série. Le prochain volet traite de ce qu'il faut faire ",
+  editorNoteEm: "après",
+  editorNoteTail:
+    " le week-end de livraison — analytics, boucles de feedback, le premier vrai email à un client.",
+  updatedHeading: "Mise à jour",
+  updatedBody:
+    "Mars 2026 — ajout du playbook de déploiement et de l'avertissement du jour deux. Les premiers brouillons se concentraient uniquement sur le jour un.",
 };
 
 // ─── Posts ──────────────────────────────────────────────────────
@@ -981,7 +1077,6 @@ const post = (
     featured,
     body,
     imageKey,
-    modules,
   },
 ) => ({
   _id: id,
@@ -994,7 +1089,6 @@ const post = (
   tags: postTags.map((t) => ({ _type: "reference", _ref: t, _key: key("t") })),
   featured: !!featured,
   body,
-  ...(modules ? { modules } : {}),
   metadata: {
     title,
     description,
@@ -1216,19 +1310,74 @@ const buildPosts = () => [
 const blog = {
   _id: "blog",
   _type: "blog",
-  // Empty → /blog falls back to the default minimal card-grid layout.
-  // Add modules here from the Studio when you want a richer frontpage.
-  frontpageModules: [],
   // Empty → DefaultPostLayout takes over with translated breadcrumbs +
-  // related-posts section. Authors can override per post via
-  // `post.modules` for a module-driven layout instead.
+  // related-posts section. Populate from Studio to swap in a
+  // module-driven shell that applies to every article.
   postModules: [],
 };
 
 // ─── Run ────────────────────────────────────────────────────────
 
+async function cleanupLegacy() {
+  // Order matters: Sanity blocks deletion of documents that still have
+  // references pointing at them. So we strip references first, then
+  // delete the orphan documents.
+
+  // ── 1. Strip legacy module blocks from any post body (both drafts
+  //       and published). The seed's `createOrReplace` covers the
+  //       showcase post + blog singleton; this catches every other.
+  const LEGACY_TYPES = ["module.hero-split", "module.logo-list"];
+  const dirtyPosts = await client.fetch(
+    `*[_type == "post" && count(body[_type in $types]) > 0]{ _id, body }`,
+    { types: LEGACY_TYPES },
+  );
+  for (const post of dirtyPosts) {
+    const cleaned = (post.body ?? []).filter((b) => !LEGACY_TYPES.includes(b._type));
+    await client.patch(post._id).set({ body: cleaned }).commit();
+  }
+
+  // ── 2. Also sweep `blog` singleton's frontpageModules + postModules.
+  const dirtyBlog = await client.fetch(
+    `*[_type == "blog" && (count(frontpageModules[_type in $types]) > 0 || count(postModules[_type in $types]) > 0)]{ _id, frontpageModules, postModules }`,
+    { types: LEGACY_TYPES },
+  );
+  for (const b of dirtyBlog) {
+    await client
+      .patch(b._id)
+      .set({
+        frontpageModules: (b.frontpageModules ?? []).filter(
+          (m) => !LEGACY_TYPES.includes(m._type),
+        ),
+        postModules: (b.postModules ?? []).filter((m) => !LEGACY_TYPES.includes(m._type)),
+      })
+      .commit();
+  }
+
+  // ── 3. Now safe to delete orphan `logo` documents. Sweep all logos
+  //       by type plus an explicit ID list covering draft copies.
+  const orphanedLogoIds = [
+    "logo.acme",
+    "logo.contoso",
+    "logo.northwind",
+    "logo.fabrikam",
+    "drafts.logo.acme",
+    "drafts.logo.contoso",
+    "drafts.logo.northwind",
+    "drafts.logo.fabrikam",
+  ];
+  await client.delete({ query: `*[_type == "logo"]` });
+  await client.delete({ query: `*[_id in $ids]`, params: { ids: orphanedLogoIds } });
+
+  console.log(
+    `✓ Cleanup: cleaned ${dirtyPosts.length} post(s) + ${dirtyBlog.length} blog singleton(s), removed orphan logos`,
+  );
+}
+
 async function run() {
   console.log(`Seeding into ${projectId}/${dataset}…`);
+  console.log("");
+
+  await cleanupLegacy();
   console.log("");
 
   await uploadAllImages();
@@ -1238,10 +1387,8 @@ async function run() {
     ...buildAuthors(),
     ...categories,
     ...tags,
-    ...quotes,
+    ...buildQuotes(),
     ...buildPeople(),
-    ...logos,
-    ...forms,
     ...buildPosts(),
     blog,
   ];

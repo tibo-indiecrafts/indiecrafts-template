@@ -36,6 +36,17 @@ SANITY_API_WRITE_TOKEN=                       # Editor role. Only `pnpm seed:blo
 
 Issue tokens at: <https://www.sanity.io/manage> → your project → **API** → **Tokens** → **Add API token**. Full reference (roles, CORS, security, troubleshooting) in [`sanity-tokens.md`](./sanity-tokens.md).
 
+### Whitelist your dev origin (CORS)
+
+Required once per origin — without it the Studio at `http://localhost:3000/studio` throws `CorsOriginError` on every request.
+
+```bash
+pnpm dlx sanity@latest cors add http://localhost:3000 \
+  --credentials --project-id qy2pp5sn
+```
+
+`--credentials` lets the Studio's session cookie ride along. Repeat for every domain (staging, prod, preview branches) that will talk to this project.
+
 ### Feature flag (`src/config/index.ts`)
 
 ```ts
@@ -87,8 +98,6 @@ All registered via `src/sanity/schema/index.ts`. Modules registered via `src/san
 | `category`         | `category.ts`         | **yes** (`language`) | Title, description                                                                 |
 | `quote`            | `documents/quote.ts`  | **yes** (`language`) | Testimonial content + attribution                                                  |
 | `person`           | `documents/person.ts` | shared               | Team-member docs for Person List module                                            |
-| `logo`             | `documents/logo.ts`   | shared               | Brand logos for Logo List module                                                   |
-| `form`             | `documents/form.ts`   | shared               | Form definitions for Form module (mirrors Netlify Forms entries)                   |
 
 ### Objects
 
@@ -97,29 +106,26 @@ All registered via `src/sanity/schema/index.ts`. Modules registered via `src/san
 | `metadata`     | `objects/metadata.ts` | post (title/description/image/slug/noIndex)       |
 | `blockContent` | `blockContent.ts`     | post body, accordion items, callout content, etc. |
 | `link`         | `objects/link.ts`     | inside `cta`. Internal refs target `post` only.   |
-| `cta`          | `objects/cta.ts`      | callout, hero-split, card-list, etc.              |
+| `cta`          | `objects/cta.ts`      | callout, card-list, etc.                          |
 
 ### Modules (object types — embedded inside `blog` arrays only)
 
-| Module                     | File                           | Notes                                                    |
-| -------------------------- | ------------------------------ | -------------------------------------------------------- |
-| `module.accordion-list`    | `modules/accordion-list.ts`    | title + intro + items[{title, content}]                  |
-| `module.callout`           | `modules/callout.ts`           | variant (info/success/warning/danger) + content + cta    |
-| `module.card-list`         | `modules/card-list.ts`         | title + intro + columns + cards[]                        |
-| `module.hero-split`        | `modules/hero-split.ts`        | eyebrow + title + content + ctas + image + imagePosition |
-| `module.logo-list`         | `modules/logo-list.ts`         | title + intro + refs to `logo`                           |
-| `module.person-list`       | `modules/person-list.ts`       | title + intro + refs to `person`                         |
-| `module.prose`             | `modules/prose.ts`             | content + width (narrow/wide)                            |
-| `module.stat-list`         | `modules/stat-list.ts`         | title + intro + stats[{value, label}]                    |
-| `module.step-list`         | `modules/step-list.ts`         | title + intro + steps[{title, content}]                  |
-| `module.quote-list`        | `modules/quote-list.ts`        | refs to `quote` (locale-filtered)                        |
-| `module.breadcrumbs`       | `modules/breadcrumbs.ts`       | items[{label, href}]                                     |
-| `module.custom-html`       | `modules/custom-html.ts`       | raw HTML — `dangerouslySetInnerHTML`                     |
-| `module.form`              | `modules/form-module.ts`       | form ref + overrides; renders Netlify Forms              |
-| `module.search`            | `modules/search-module.ts`     | client-side post search via `data-search-title`          |
-| `module.blog-index`        | `modules/blog-index.ts`        | frontpage hero                                           |
-| `module.blog-post-content` | `modules/blog-post-content.ts` | renders the active post (slot)                           |
-| `module.blog-post-list`    | `modules/blog-post-list.ts`    | filtered post grid (limit, categories, featuredOnly)     |
+| Module                     | File                           | Notes                                                 |
+| -------------------------- | ------------------------------ | ----------------------------------------------------- |
+| `module.accordion-list`    | `modules/accordion-list.ts`    | title + intro + items[{title, content}]               |
+| `module.callout`           | `modules/callout.ts`           | variant (info/success/warning/danger) + content + cta |
+| `module.card-list`         | `modules/card-list.ts`         | title + intro + columns + cards[]                     |
+| `module.person-list`       | `modules/person-list.ts`       | title + intro + refs to `person`                      |
+| `module.prose`             | `modules/prose.ts`             | content + width (narrow/wide)                         |
+| `module.stat-list`         | `modules/stat-list.ts`         | title + intro + stats[{value, label}]                 |
+| `module.step-list`         | `modules/step-list.ts`         | title + intro + steps[{title, content}]               |
+| `module.quote-list`        | `modules/quote-list.ts`        | refs to `quote` (locale-filtered)                     |
+| `module.breadcrumbs`       | `modules/breadcrumbs.ts`       | items[{label, href}]                                  |
+| `module.custom-html`       | `modules/custom-html.ts`       | raw HTML — `dangerouslySetInnerHTML`                  |
+| `module.search`            | `modules/search-module.ts`     | client-side post search via `data-search-title`       |
+| `module.blog-index`        | `modules/blog-index.ts`        | frontpage hero                                        |
+| `module.blog-post-content` | `modules/blog-post-content.ts` | renders the active post (slot)                        |
+| `module.blog-post-list`    | `modules/blog-post-list.ts`    | filtered post grid (limit, categories, featuredOnly)  |
 
 Every module gets `anchor` + `hidden` fields auto-injected by `defineModule` (`src/sanity/schema/objects/define-module.ts`).
 
@@ -499,11 +505,11 @@ src/sanity/
     │   ├── metadata.ts                         Per-doc SEO override
     │   ├── link.ts, cta.ts
     │   └── define-module.ts                    Helper for module schemas
-    └── modules/                                17 module schemas + MODULE_TYPES catalog
+    └── modules/                                Module schemas + MODULE_TYPES catalog
         ├── index.ts
-        ├── accordion-list.ts, callout.ts, card-list.ts, hero-split.ts,
-        │   logo-list.ts, person-list.ts, prose.ts, stat-list.ts, step-list.ts,
-        │   quote-list.ts, breadcrumbs.ts, custom-html.ts, form-module.ts,
+        ├── accordion-list.ts, callout.ts, card-list.ts,
+        │   person-list.ts, prose.ts, stat-list.ts, step-list.ts,
+        │   quote-list.ts, breadcrumbs.ts, custom-html.ts,
         │   search-module.ts, blog-index.ts, blog-post-content.ts,
         │   blog-post-list.ts
 

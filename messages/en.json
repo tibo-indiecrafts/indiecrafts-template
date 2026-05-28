@@ -127,6 +127,17 @@
       "formSubmitDefault": "Send",
       "formHoneypot": "Don't fill this out:",
       "breadcrumbsLabel": "Breadcrumb",
+      "metaPublished": "Published",
+      "metaReadTime": "Read time",
+      "metaAuthor": "Author",
+      "metaCategory": "Category",
+      "navPillsLabel": "Blog sections",
+      "navPills": {
+        "all": "All articles",
+        "authors": "Authors",
+        "categories": "Categories",
+        "tags": "Tags"
+      },
       "categories": {
         "heading": "Explore categories",
         "subheading": "Choose a category to explore related content — find what interests you.",
@@ -141,16 +152,9 @@
       },
       "authors": {
         "heading": "Explore authors",
+        "subheading": "Meet the writers and contributors shaping every story.",
         "viewAll": "View all authors",
         "posts": "{count} posts"
-      },
-      "newsletter": {
-        "heading": "Subscribe to our newsletter",
-        "subheading": "Be the first to know about new arrivals, exclusive offers, special promotions, and the latest news.",
-        "placeholder": "Enter your email address",
-        "submit": "Subscribe",
-        "success": "Thank you for subscribing!",
-        "error": "Something went wrong — please try again."
       },
       "category": {
         "headingPrefix": "Category: {name}",

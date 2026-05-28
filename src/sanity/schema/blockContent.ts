@@ -16,20 +16,17 @@ import { defineArrayMember, defineType } from "sanity";
  *   - `blog-post-content` — would render the post body recursively
  *   - `prose` — body content is already prose, embedding it inside
  *     itself adds nothing
- * Those six are still available via the layout slots `post.modules` and
- * `blog.{front,post}Modules`.
+ * Those six are still available via the blog singleton's layout slots
+ * `blog.frontpageModules` and `blog.postModules`.
  */
 const INLINE_MODULES = [
   "module.callout",
   "module.card-list",
-  "module.hero-split",
-  "module.logo-list",
   "module.person-list",
   "module.stat-list",
   "module.step-list",
   "module.quote-list",
   "module.accordion-list",
-  "module.form",
   "module.custom-html",
 ];
 
@@ -47,13 +44,21 @@ export default defineType({
         { title: "H2", value: "h2" },
         { title: "H3", value: "h3" },
         { title: "H4", value: "h4" },
+        { title: "H5", value: "h5" },
+        { title: "H6", value: "h6" },
         { title: "Citation", value: "blockquote" },
       ],
-      lists: [{ title: "Puces", value: "bullet" }],
+      lists: [
+        { title: "Puces", value: "bullet" },
+        { title: "Numéros", value: "number" },
+      ],
       marks: {
         decorators: [
           { title: "Gras", value: "strong" },
           { title: "Italique", value: "em" },
+          { title: "Code", value: "code" },
+          { title: "Souligné", value: "underline" },
+          { title: "Barré", value: "strike-through" },
         ],
         annotations: [
           {

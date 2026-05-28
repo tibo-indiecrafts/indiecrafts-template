@@ -8,9 +8,6 @@ import { Breadcrumbs } from "./Breadcrumbs";
 import { Callout } from "./Callout";
 import { CardList } from "./CardList";
 import { CustomHtml } from "./CustomHtml";
-import { FormModule } from "./FormModule";
-import { HeroSplit } from "./HeroSplit";
-import { LogoList } from "./LogoList";
 import { PersonList } from "./PersonList";
 import { Prose } from "./Prose";
 import { QuoteList } from "./QuoteList";
@@ -67,10 +64,6 @@ async function ModuleSwitch({
       return <Callout {...m} />;
     case "module.card-list":
       return <CardList {...m} />;
-    case "module.hero-split":
-      return <HeroSplit {...m} />;
-    case "module.logo-list":
-      return <LogoList {...m} />;
     case "module.person-list":
       return <PersonList {...m} />;
     case "module.prose":
@@ -85,8 +78,6 @@ async function ModuleSwitch({
       return <Breadcrumbs {...m} />;
     case "module.custom-html":
       return <CustomHtml {...m} />;
-    case "module.form":
-      return <FormModule {...m} />;
     case "module.search":
       return <SearchModule {...m} />;
     case "module.blog-index":

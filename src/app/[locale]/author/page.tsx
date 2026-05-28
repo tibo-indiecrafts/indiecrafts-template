@@ -33,11 +33,7 @@ export default async function AuthorIndexPage({ params }: Props) {
       <PageSchemas page={pages.author} locale={locale} />
       <AuthorListing
         authors={authors}
-        breadcrumbs={[
-          { label: nav("home"), href: "/" },
-          { label: nav("blog"), href: "/blog" },
-          { label: nav("author") },
-        ]}
+        breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: nav("author") }]}
         breadcrumbsLabel={t("breadcrumbs")}
         heading={t("heading")}
         subheading={t("subheading")}

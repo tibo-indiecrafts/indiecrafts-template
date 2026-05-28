@@ -40,7 +40,7 @@ export async function BlogPostList({
   ]);
 
   return (
-    <section id={m.anchor} className="mx-auto max-w-6xl px-(--gutter) py-12 md:py-20">
+    <section id={m.anchor} className="mx-auto max-w-6xl px-(--gutter) py-8 md:py-12">
       {m.title ? (
         <header className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-semibold md:text-4xl">{m.title}</h2>

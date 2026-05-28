@@ -100,11 +100,6 @@ export type Post = PostListItem & {
   readTime?: number;
   /** Flat heading list — derived in GROQ, drives the Table of Contents. */
   headings?: Heading[];
-  /**
-   * Per-post module override. When non-empty, the detail route renders
-   * these instead of the shared `blog.postModules` from the singleton.
-   */
-  modules?: AnyModule[];
 };
 
 export type PostSlug = { slug?: string; language?: string };
@@ -168,23 +163,6 @@ export type CardListModule = ModuleBase & {
   }[];
 };
 
-export type HeroSplitModule = ModuleBase & {
-  _type: "module.hero-split";
-  eyebrow?: string;
-  title?: string;
-  content?: PortableTextBlock[];
-  ctas?: Cta[];
-  image?: ImageRef;
-  imagePosition?: "left" | "right";
-};
-
-export type LogoListModule = ModuleBase & {
-  _type: "module.logo-list";
-  title?: string;
-  intro?: string;
-  logos?: { _id: string; name?: string; url?: string; image?: ImageRef }[];
-};
-
 export type PersonListModule = ModuleBase & {
   _type: "module.person-list";
   title?: string;
@@ -243,28 +221,6 @@ export type CustomHtmlModule = ModuleBase & {
   html?: string;
 };
 
-export type FormField = {
-  _key: string;
-  name?: string;
-  label?: string;
-  type?: "text" | "email" | "textarea" | "tel" | "url";
-  required?: boolean;
-};
-
-export type FormModule = ModuleBase & {
-  _type: "module.form";
-  title?: string;
-  intro?: string;
-  form?: {
-    _id: string;
-    name?: string;
-    title?: string;
-    intro?: string;
-    submitLabel?: string;
-    fields?: FormField[];
-  };
-};
-
 export type SearchModule = ModuleBase & {
   _type: "module.search";
   title?: string;
@@ -296,8 +252,6 @@ export type AnyModule =
   | AccordionListModule
   | CalloutModule
   | CardListModule
-  | HeroSplitModule
-  | LogoListModule
   | PersonListModule
   | ProseModule
   | StatListModule
@@ -305,13 +259,11 @@ export type AnyModule =
   | QuoteListModule
   | BreadcrumbsModule
   | CustomHtmlModule
-  | FormModule
   | SearchModule
   | BlogIndexModule
   | BlogPostContentModule
   | BlogPostListModule;
 
 export type BlogSingleton = {
-  frontpageModules?: AnyModule[];
   postModules?: AnyModule[];
 };

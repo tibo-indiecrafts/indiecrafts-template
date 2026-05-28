@@ -1,19 +1,15 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
 import type { PostListItem } from "@/sanity/types";
 
 /**
  * Featured card used by the blog listing, two-column variant, category
- * explorer, and author detail. Carries the author avatar overlay + the
- * read-time / category badges from the blog-forge design.
- *
- * Read count + comment count are static placeholders — Sanity doesn't
- * track those; wire them up if/when you add an analytics or
- * commenting backend.
+ * explorer, and author detail. Cover image with an author-avatar overlay
+ * spilling into the body; the body carries the clickable category
+ * badge, title, description, tag chips, then a meta footer.
  */
-export async function BlogCard({
+export function BlogCard({
   post,
   locale,
   variant = "tall",
@@ -22,12 +18,12 @@ export async function BlogCard({
   locale: Locale;
   variant?: "tall" | "wide";
 }) {
-  const t = await getTranslations({ locale, namespace: "pages.blog" });
   const image = post.metadata?.image?.asset?.url;
   const alt = post.metadata?.image?.alt;
   const categoryRef = post.categories?.[0];
   const category = categoryRef?.title;
   const categorySlug = categoryRef?.slug;
+  const tags = (post.tags ?? []).filter((tag) => tag.slug);
   const date = post.publishedAt
     ? new Intl.DateTimeFormat(locale, {
         year: "numeric",
@@ -62,14 +58,6 @@ export async function BlogCard({
           ) : (
             <div className="bg-muted h-full w-full" aria-hidden="true" />
           )}
-          {post.featured ? (
-            <span
-              aria-label={t("featuredLabel")}
-              className="bg-brand text-brand-foreground absolute top-3 right-3 rounded-md px-2 py-1 text-xs font-medium uppercase"
-            >
-              ★
-            </span>
-          ) : null}
         </div>
       </Link>
 
@@ -93,7 +81,7 @@ export async function BlogCard({
                 {(author.name ?? "?").slice(0, 1).toUpperCase()}
               </span>
             )}
-            <span className="bg-foreground text-background pointer-events-none absolute top-full left-1/2 mt-2 -translate-x-1/2 rounded px-2 py-1 text-xs whitespace-nowrap opacity-0 transition group-hover/avatar:opacity-100">
+            <span className="bg-foreground text-background pointer-events-none absolute top-1/2 left-full ml-2 -translate-y-1/2 rounded px-2 py-1 text-xs whitespace-nowrap opacity-0 transition group-hover/avatar:opacity-100">
               {author.name}
             </span>
           </Link>
@@ -126,9 +114,33 @@ export async function BlogCard({
         ) : null}
 
         <div className="text-muted-foreground mt-auto flex items-center justify-between gap-3 pt-3 text-xs">
-          {author?.name ? <span className="truncate">{author.name}</span> : <span />}
+          {author?.name ? (
+            <Link
+              href={author.slug ? `/author/${author.slug}` : "/author"}
+              className="hover:text-foreground focus-visible:ring-ring max-w-[60%] truncate rounded transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {author.name}
+            </Link>
+          ) : (
+            <span />
+          )}
           {date ? <time dateTime={post.publishedAt}>{date}</time> : null}
         </div>
+
+        {tags.length > 0 ? (
+          <ul className="border-border/60 -mx-6 flex flex-wrap gap-1.5 border-t px-6 pt-4">
+            {tags.map((tag) => (
+              <li key={tag._id}>
+                <Link
+                  href={`/blog/tag/${tag.slug}`}
+                  className="bg-muted text-muted-foreground hover:bg-foreground hover:text-background focus-visible:ring-ring rounded-md px-2 py-1 text-xs font-medium capitalize transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                >
+                  #{tag.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
     </article>
   );

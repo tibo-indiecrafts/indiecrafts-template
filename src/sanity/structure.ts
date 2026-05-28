@@ -1,9 +1,10 @@
 import type { StructureBuilder, StructureResolver } from "sanity/structure";
+import { apiVersion } from "./env";
 
 /**
  * Sidebar du Studio — regroupe Blog (singleton + articles/auteurs/
  * catégories/tags), les documents référencés par les modules de
- * page-builder (Citations/Personnes/Logos/Formulaires), et masque tout
+ * page-builder (Citations/Personnes/Logos), et masque tout
  * le reste de la liste racine.
  *
  * Les types de documents localisés (`post`, `category`, `tag`, `quote`)
@@ -51,8 +52,6 @@ export const structure: StructureResolver = (S) =>
             .items([
               languageSplit(S, "quote", "Citations"),
               S.documentTypeListItem("person").title("Personnes"),
-              S.documentTypeListItem("logo").title("Logos"),
-              S.documentTypeListItem("form").title("Formulaires"),
             ]),
         ),
     ]);
@@ -93,6 +92,11 @@ function languageList(
     .child(
       S.documentTypeList(type)
         .title(`${label} — ${type}`)
+        // Custom filters on a documentTypeList must declare the GROQ
+        // apiVersion they're written against — Sanity warns now, will
+        // hard-require in a future Studio release.
+        // https://www.sanity.io/docs/help/structure-api-version-required-for-custom-filter
+        .apiVersion(apiVersion)
         .filter("_type == $type && language == $lang")
         .params({ type, lang })
         .initialValueTemplates([

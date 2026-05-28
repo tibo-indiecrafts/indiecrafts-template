@@ -129,8 +129,14 @@ export function getCurrentEnvironment(): Environment {
 export function getCSPConnectSources(env: Environment): readonly string[] {
   // Sanity Studio at /studio needs to reach the project API + CDN.
   // Safe to leave in prod CSP: the wildcard is locked to *.sanity.io.
+  //
+  // `registry.npmjs.org` — the embedded Studio polls npm for its own
+  // package version ("you're running an outdated Studio" check). Not
+  // critical, but without this entry the dev console fills with
+  // `TypeError: Failed to fetch` from CSP blocking the request.
   const sanity = ["https://*.sanity.io", "wss://*.api.sanity.io"];
-  const common = ["'self'", ...sanity];
+  const npm = ["https://registry.npmjs.org"];
+  const common = ["'self'", ...sanity, ...npm];
   if (env === "development" || env === "test") {
     return [...common, "ws://localhost:*", "http://localhost:*", "https://*.vercel.app"];
   }

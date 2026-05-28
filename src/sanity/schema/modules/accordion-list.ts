@@ -3,7 +3,7 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.accordion-list",
-  title: "Liste accordéon",
+  title: "Accordéon",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),

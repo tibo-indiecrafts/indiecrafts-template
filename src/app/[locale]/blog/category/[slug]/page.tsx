@@ -73,7 +73,6 @@ export default async function CategoryDetailPage({ params }: Props) {
         posts={posts}
         locale={locale}
         breadcrumbs={[
-          { label: nav("home"), href: "/" },
           { label: nav("blog"), href: "/blog" },
           { label: catT("title"), href: "/blog/category" },
           { label: category.title ?? slug },

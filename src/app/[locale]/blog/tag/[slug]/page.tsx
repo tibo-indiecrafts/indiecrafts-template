@@ -66,7 +66,6 @@ export default async function TagDetailPage({ params }: Props) {
         posts={posts}
         locale={locale}
         breadcrumbs={[
-          { label: nav("home"), href: "/" },
           { label: nav("blog"), href: "/blog" },
           { label: t("title"), href: "/blog/tag" },
           { label: tag.title ?? slug },

@@ -2,39 +2,46 @@ import { PortableText } from "@portabletext/react";
 import type { StepListModule } from "@/sanity/types";
 import { portableComponents } from "./portable-text-components";
 
+/**
+ * Step list — vertical timeline. Each step's number sits in a circle;
+ * a hairline separator runs between consecutive circles to make the
+ * sequence read as a flow rather than a stack of cards.
+ */
 export function StepList(props: StepListModule) {
   if (!props.steps?.length) return null;
   return (
-    <section id={props.anchor} className="mx-auto max-w-3xl px-(--gutter) py-12 md:py-20">
-      {props.title ? (
-        <header>
-          <h2 className="text-3xl font-semibold md:text-4xl">{props.title}</h2>
-          {props.intro ? (
-            <p className="text-muted-foreground mt-3">{props.intro}</p>
-          ) : null}
-        </header>
-      ) : null}
-      <ol className="mt-10 space-y-8">
-        {props.steps.map((step, i) => (
-          <li key={step._key} className="flex gap-5">
-            <span
-              aria-hidden="true"
-              className="bg-foreground text-background flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold"
-            >
-              {i + 1}
-            </span>
-            <div className="flex-1">
-              {step.title ? (
-                <h3 className="text-lg font-semibold">{step.title}</h3>
+    <section id={props.anchor} className="mx-auto max-w-6xl px-(--gutter) py-8 md:py-12">
+      <ol className="relative mx-auto max-w-3xl">
+        {props.steps.map((step, i) => {
+          const isLast = i === props.steps!.length - 1;
+          return (
+            <li key={step._key} className="relative flex gap-5 pb-10 last:pb-0">
+              {/* Light vertical connector between numbered circles. */}
+              {!isLast ? (
+                <span
+                  aria-hidden="true"
+                  className="bg-border/60 absolute top-9 bottom-0 left-[1.125rem] w-px"
+                />
               ) : null}
-              {step.content ? (
-                <div className="prose prose-neutral dark:prose-invert prose-sm mt-2 max-w-none">
-                  <PortableText value={step.content} components={portableComponents} />
-                </div>
-              ) : null}
-            </div>
-          </li>
-        ))}
+              <span
+                aria-hidden="true"
+                className="bg-foreground text-background ring-background relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold ring-4"
+              >
+                {i + 1}
+              </span>
+              <div className="flex-1 pt-1">
+                {step.title ? (
+                  <h3 className="text-lg font-semibold">{step.title}</h3>
+                ) : null}
+                {step.content ? (
+                  <div className="prose prose-neutral dark:prose-invert prose-sm mt-2 max-w-none">
+                    <PortableText value={step.content} components={portableComponents} />
+                  </div>
+                ) : null}
+              </div>
+            </li>
+          );
+        })}
       </ol>
     </section>
   );

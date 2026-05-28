@@ -127,6 +127,17 @@
       "formSubmitDefault": "Envoyer",
       "formHoneypot": "Ne remplissez pas ce champ :",
       "breadcrumbsLabel": "Fil d'ariane",
+      "metaPublished": "Publié le",
+      "metaReadTime": "Temps de lecture",
+      "metaAuthor": "Auteur",
+      "metaCategory": "Catégorie",
+      "navPillsLabel": "Sections du blog",
+      "navPills": {
+        "all": "Tous les articles",
+        "authors": "Auteurs",
+        "categories": "Catégories",
+        "tags": "Tags"
+      },
       "categories": {
         "heading": "Explorer les catégories",
         "subheading": "Choisissez une catégorie pour explorer le contenu associé — trouvez ce qui vous intéresse.",
@@ -141,16 +152,9 @@
       },
       "authors": {
         "heading": "Explorer les auteurs",
+        "subheading": "Découvrez les autrices et auteurs qui façonnent chaque histoire.",
         "viewAll": "Voir tous les auteurs",
         "posts": "{count} articles"
-      },
-      "newsletter": {
-        "heading": "Inscrivez-vous à notre newsletter",
-        "subheading": "Soyez les premiers informés des nouveautés, offres exclusives, promotions et dernières actus.",
-        "placeholder": "Saisissez votre email",
-        "submit": "S'inscrire",
-        "success": "Merci pour votre inscription !",
-        "error": "Une erreur est survenue — réessayez."
       },
       "category": {
         "headingPrefix": "Catégorie : {name}",
