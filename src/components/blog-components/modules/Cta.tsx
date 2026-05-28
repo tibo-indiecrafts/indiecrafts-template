@@ -8,8 +8,11 @@ import { cn } from "@/lib/utils";
  */
 export function ModuleCta({ cta }: { cta?: CtaProps }) {
   const href = cta?.link?.href;
-  if (!href) return null;
-  const label = cta.link?.label ?? "Read more";
+  const label = cta?.link?.label;
+  // Require both — no English fallback. Editors who don't set a label on
+  // their CTA simply won't see the button render, which surfaces the
+  // missing data instead of silently shipping untranslated copy.
+  if (!href || !label) return null;
   const variant = cta.variant ?? "primary";
   const className = cn(
     "focus-visible:ring-ring inline-flex h-10 items-center rounded-md px-5 text-sm font-medium transition focus-visible:ring-2 focus-visible:outline-none",

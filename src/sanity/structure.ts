@@ -1,17 +1,24 @@
-import type { StructureResolver } from "sanity/structure";
+import type { StructureBuilder, StructureResolver } from "sanity/structure";
 
 /**
- * Studio sidebar — groups Blog (singleton + posts/authors/categories),
- * the page-builder reference docs (Quotes/People/Logos/Forms), and keeps
- * everything else hidden from the root list.
+ * Sidebar du Studio — regroupe Blog (singleton + articles/auteurs/
+ * catégories/tags), les documents référencés par les modules de
+ * page-builder (Citations/Personnes/Logos/Formulaires), et masque tout
+ * le reste de la liste racine.
  *
- * The page-builder modules themselves (Accordion/Callout/etc.) are
- * object types embedded inside `blog.frontpageModules` and
- * `blog.postModules` — they don't appear in the sidebar.
+ * Les types de documents localisés (`post`, `category`, `tag`, `quote`)
+ * exposent chacun une liste parente avec des enfants « English » /
+ * « Français » pour que les éditeurs bilingues ne parcourent pas une
+ * seule liste mélangée. Les templates de création par (type, locale)
+ * sont définis dans `sanity.config.ts`.
+ *
+ * Les modules de page-builder (Encadré / Liste de cartes / etc.) sont
+ * des types objet imbriqués dans `blog.frontpageModules` et
+ * `blog.postModules` — ils n'apparaissent pas dans la sidebar.
  */
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title("Content")
+    .title("Contenu")
     .items([
       // ── Blog ──────────────────────────────────────────────
       S.listItem()
@@ -20,16 +27,16 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title("Blog")
             .items([
-              // Singleton: layout config for /blog + /blog/[slug]
               S.listItem()
-                .title("Layout (singleton)")
+                .title("Mise en page (singleton)")
                 .child(
                   S.editor().id("blog-singleton").schemaType("blog").documentId("blog"),
                 ),
               S.divider(),
-              S.documentTypeListItem("post").title("Posts"),
-              S.documentTypeListItem("author").title("Authors"),
-              S.documentTypeListItem("category").title("Categories"),
+              languageSplit(S, "post", "Articles"),
+              S.documentTypeListItem("author").title("Auteurs"),
+              languageSplit(S, "category", "Catégories"),
+              languageSplit(S, "tag", "Tags"),
             ]),
         ),
 
@@ -37,15 +44,59 @@ export const structure: StructureResolver = (S) =>
 
       // ── References for the page-builder modules ─────────
       S.listItem()
-        .title("References")
+        .title("Références")
         .child(
           S.list()
-            .title("References")
+            .title("Références")
             .items([
-              S.documentTypeListItem("quote").title("Quotes"),
-              S.documentTypeListItem("person").title("People"),
+              languageSplit(S, "quote", "Citations"),
+              S.documentTypeListItem("person").title("Personnes"),
               S.documentTypeListItem("logo").title("Logos"),
-              S.documentTypeListItem("form").title("Forms"),
+              S.documentTypeListItem("form").title("Formulaires"),
             ]),
         ),
     ]);
+
+/**
+ * Entrée à deux niveaux dans la sidebar : un parent étiqueté p.ex.
+ * « Articles » avec des enfants EN/FR, plus « Toutes les langues » pour
+ * les utilisateurs avancés. Chaque feuille pré-remplit le template de
+ * création avec la `language` correspondante.
+ */
+function languageSplit(
+  S: StructureBuilder,
+  type: "post" | "category" | "tag" | "quote",
+  title: string,
+) {
+  return S.listItem()
+    .title(title)
+    .child(
+      S.list()
+        .title(title)
+        .items([
+          languageList(S, type, "en", "English"),
+          languageList(S, type, "fr", "Français"),
+          S.divider(),
+          S.documentTypeListItem(type).title("Toutes les langues"),
+        ]),
+    );
+}
+
+function languageList(
+  S: StructureBuilder,
+  type: string,
+  lang: "en" | "fr",
+  label: string,
+) {
+  return S.listItem()
+    .title(label)
+    .child(
+      S.documentTypeList(type)
+        .title(`${label} — ${type}`)
+        .filter("_type == $type && language == $lang")
+        .params({ type, lang })
+        .initialValueTemplates([
+          S.initialValueTemplateItem(`${type}-${lang}`, { language: lang }),
+        ]),
+    );
+}

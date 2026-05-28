@@ -3,31 +3,36 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.search",
-  title: "Search",
+  title: "Recherche",
   fields: [
     defineField({
       name: "title",
-      title: "Title",
+      title: "Titre",
       type: "string",
-      initialValue: "Search posts",
+      initialValue: "Rechercher des articles",
     }),
     defineField({
       name: "placeholder",
       title: "Placeholder",
       type: "string",
-      initialValue: "Search…",
+      initialValue: "Rechercher…",
     }),
     defineField({
       name: "scope",
-      title: "Scope",
+      title: "Portée",
       type: "string",
       options: {
-        list: [{ title: "Blog posts", value: "post" }],
+        list: [{ title: "Articles de blog", value: "post" }],
         layout: "radio",
       },
       initialValue: "post",
-      description: "Posts only for now. Extend the SearchModule renderer to add scopes.",
+      // Masqué tant qu'une deuxième portée n'est pas livrée — un radio à
+      // une seule option n'apporte que du bruit visuel. Passez en
+      // `hidden: false` une fois le renderer étendu.
+      hidden: true,
+      description:
+        "Articles uniquement pour l'instant. Étendez le renderer SearchModule pour ajouter d'autres portées.",
     }),
   ],
-  preview: { prepare: () => ({ title: "Search" }) },
+  preview: { prepare: () => ({ title: "Recherche" }) },
 });

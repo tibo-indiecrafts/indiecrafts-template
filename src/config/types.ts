@@ -21,8 +21,19 @@ export type Locale = (typeof locales)[number]["code"];
 
 // ── Routes ───────────────────────────────────────────────────
 
-export type StaticAppPathname = "/" | "/legal" | "/blog";
-export type DynamicAppPathname = "/blog/[slug]";
+export type StaticAppPathname =
+  | "/"
+  | "/legal"
+  | "/blog"
+  | "/blog/two-column"
+  | "/blog/category"
+  | "/blog/tag"
+  | "/author";
+export type DynamicAppPathname =
+  | "/blog/[slug]"
+  | "/blog/category/[slug]"
+  | "/blog/tag/[slug]"
+  | "/author/[slug]";
 export type AppPathname = StaticAppPathname | DynamicAppPathname;
 
 // ── Page config ──────────────────────────────────────────────

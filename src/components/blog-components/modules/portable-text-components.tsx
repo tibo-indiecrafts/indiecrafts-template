@@ -32,15 +32,13 @@ function headingId(value: PortableTextBlock | undefined): string {
 }
 
 // The `value` Sanity hands to each block-content renderer is the module
-// shape itself — same as what `ModuleRenderer` passes via spread. Using
-// `any` here because `@portabletext/react`'s types parameterize on a
-// concrete value shape and our union is too wide to express literally.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// shape itself — same as what `ModuleRenderer` passes via spread. The
+// `unknown` cast keeps the wider union safe at the boundary; each
+// component re-narrows on its own props type.
 const m =
-  (Cmp: (props: any) => React.ReactNode) =>
+  <P,>(Cmp: (props: P) => React.ReactNode) =>
   ({ value }: { value: unknown }) =>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Cmp(value as any);
+    Cmp(value as P);
 
 export const portableComponents: PortableTextComponents = {
   block: {

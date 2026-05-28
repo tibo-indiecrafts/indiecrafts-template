@@ -13,17 +13,17 @@ const MODULE_FIELD_REFS = MODULE_TYPES.map((type) => ({ type }));
  */
 export default defineType({
   name: "post",
-  title: "Post",
+  title: "Article",
   type: "document",
   icon: EditIcon,
   groups: [
-    { name: "content", title: "Content", default: true },
-    { name: "metadata", title: "Metadata" },
+    { name: "content", title: "Contenu", default: true },
+    { name: "metadata", title: "Métadonnées" },
   ],
   fields: [
     defineField({
       name: "language",
-      title: "Language",
+      title: "Langue",
       type: "string",
       group: "content",
       options: {
@@ -34,65 +34,109 @@ export default defineType({
         layout: "radio",
       },
       initialValue: "en",
-      description: "Drives which locale this post appears in (/en/blog vs /fr/blog).",
+      description:
+        "Détermine la locale dans laquelle l'article apparaît (/en/blog ou /fr/blog).",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "title",
-      title: "Title",
+      title: "Titre",
       type: "string",
       group: "content",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "publishedAt",
-      title: "Published at",
+      title: "Publié le",
       type: "datetime",
       group: "content",
     }),
     defineField({
       name: "author",
-      title: "Author",
+      title: "Auteur",
       type: "reference",
       to: [{ type: "author" }],
       group: "content",
     }),
     defineField({
       name: "categories",
-      title: "Categories",
+      title: "Catégories",
       type: "array",
-      of: [{ type: "reference", to: [{ type: "category" }] }],
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "category" }],
+          // Studio reference selector — only show categories in the same
+          // language as the post being edited. Without this, the picker
+          // lists EN + FR categories side-by-side and editors silently
+          // attach the wrong locale.
+          options: {
+            filter: ({ document }) =>
+              document.language
+                ? {
+                    filter: "language == $lang",
+                    params: { lang: document.language as string },
+                  }
+                : { filter: "" },
+          },
+        },
+      ],
+      group: "content",
+    }),
+    defineField({
+      name: "tags",
+      title: "Tags",
+      type: "array",
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "tag" }],
+          options: {
+            filter: ({ document }) =>
+              document.language
+                ? {
+                    filter: "language == $lang",
+                    params: { lang: document.language as string },
+                  }
+                : { filter: "" },
+          },
+        },
+      ],
+      description: "Étiquettes plus fines. Chaque tag a sa propre page /blog/tag/<slug>.",
       group: "content",
     }),
     defineField({
       name: "featured",
-      title: "Featured",
+      title: "Mis en avant",
       type: "boolean",
-      description: "Flagged for editorial highlights (used by `featuredPostsQuery`).",
+      description: "Marqué comme article phare (utilisé par `featuredPostsQuery`).",
       initialValue: false,
       group: "content",
     }),
     defineField({
       name: "body",
-      title: "Body",
+      title: "Corps",
       type: "blockContent",
       group: "content",
     }),
     defineField({
       name: "modules",
-      title: "Modules (overrides post layout)",
+      title: "Modules (remplacent la mise en page)",
       description:
-        "Optional. When set, this post's layout is composed of these modules instead of the shared `blog.postModules`. Drop a `module.blog-post-content` somewhere in the array to slot in the body field above. Useful for one-off showcase posts.",
+        "Optionnel. Lorsqu'ils sont renseignés, ces modules composent la mise en page de l'article au lieu des `blog.postModules` partagés. Insérez un `module.blog-post-content` quelque part dans le tableau pour placer le champ corps ci-dessus. Pratique pour les articles vitrines ponctuels.",
       type: "array",
       of: MODULE_FIELD_REFS,
       group: "content",
     }),
     defineField({
       name: "metadata",
-      title: "Metadata",
+      title: "Métadonnées",
       type: "metadata",
       group: "metadata",
-      validation: (Rule) => Rule.required(),
+      // La feuille réellement requise est `metadata.slug` (définie dans
+      // le schéma `metadata`). Marquer le wrapper comme requis affiche
+      // un toast confus « Métadonnées requises » alors qu'il s'agit du
+      // slug.
     }),
   ],
   preview: {
@@ -114,12 +158,12 @@ export default defineType({
   orderings: [
     {
       name: "publishedAtDesc",
-      title: "Published (newest)",
+      title: "Publication (récents)",
       by: [{ field: "publishedAt", direction: "desc" }],
     },
     {
       name: "titleAsc",
-      title: "Title A→Z",
+      title: "Titre A→Z",
       by: [{ field: "title", direction: "asc" }],
     },
   ],

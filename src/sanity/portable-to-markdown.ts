@@ -1,4 +1,5 @@
 import type { PortableTextBlock } from "@portabletext/react";
+import { logger } from "@/lib/logger";
 
 /**
  * Minimal PortableText → Markdown serializer. Handles the block / span /
@@ -53,6 +54,12 @@ function blockToMarkdown(block: Record<string, unknown>): string {
     return `![${alt}](${asset.url})`;
   }
 
+  // Unknown block type — log it once so a new inline module isn't
+  // silently stripped from the markdown export the next time someone
+  // adds one to `blockContent.ts`.
+  if (type) {
+    logger.warn("portable-to-markdown: skipping unknown block type", { type });
+  }
   return "";
 }
 

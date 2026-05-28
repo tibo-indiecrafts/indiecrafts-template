@@ -1,13 +1,16 @@
+import { DocumentTextIcon } from "@sanity/icons";
 import { defineModule } from "../objects/define-module";
 
 /**
- * Renders the active post's header (title, author, date, cover) + body
- * (`blockContent`). Place inside `blog.postModules` once — the renderer
- * pulls the current post from route context.
+ * Rendu de l'en-tête (titre, auteur, date, couverture) + corps
+ * (`blockContent`) de l'article actif. À placer une seule fois dans
+ * `blog.postModules` — le renderer récupère l'article courant via le
+ * contexte de route.
  */
 export default defineModule({
   name: "module.blog-post-content",
-  title: "Blog post content",
+  title: "Contenu de l'article",
+  icon: DocumentTextIcon,
   fields: [],
-  preview: { prepare: () => ({ title: "Blog post content (active post)" }) },
+  preview: { prepare: () => ({ title: "Contenu de l'article (article actif)" }) },
 });

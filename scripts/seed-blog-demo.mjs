@@ -263,12 +263,15 @@ const buildAuthors = () => [
   },
 ];
 
+const slug = (current) => ({ _type: "slug", current });
+
 const categories = [
   {
     _id: "cat.en.engineering",
     _type: "category",
     language: "en",
     title: "Engineering",
+    slug: slug("engineering"),
     description: "Tooling, performance, and infrastructure.",
   },
   {
@@ -276,6 +279,7 @@ const categories = [
     _type: "category",
     language: "en",
     title: "Product",
+    slug: slug("product"),
     description: "Design choices, UX research, launches.",
   },
   {
@@ -283,6 +287,7 @@ const categories = [
     _type: "category",
     language: "en",
     title: "Stories",
+    slug: slug("stories"),
     description: "Founder narratives and lessons learned.",
   },
   {
@@ -290,6 +295,7 @@ const categories = [
     _type: "category",
     language: "fr",
     title: "Ingénierie",
+    slug: slug("ingenierie"),
     description: "Outils, performance et infrastructure.",
   },
   {
@@ -297,6 +303,7 @@ const categories = [
     _type: "category",
     language: "fr",
     title: "Produit",
+    slug: slug("produit"),
     description: "Choix design, recherche UX, lancements.",
   },
   {
@@ -304,9 +311,155 @@ const categories = [
     _type: "category",
     language: "fr",
     title: "Histoires",
+    slug: slug("histoires"),
     description: "Récits de fondateurs, leçons apprises.",
   },
 ];
+
+const tags = [
+  // EN
+  {
+    _id: "tag.en.nextjs",
+    language: "en",
+    title: "Next.js",
+    slug: slug("nextjs"),
+    description: "App Router, React Server Components, the whole stack.",
+  },
+  {
+    _id: "tag.en.sanity",
+    language: "en",
+    title: "Sanity",
+    slug: slug("sanity"),
+    description: "Schemas, GROQ, Studio customization.",
+  },
+  {
+    _id: "tag.en.tailwind",
+    language: "en",
+    title: "Tailwind",
+    slug: slug("tailwind"),
+    description: "Utility-first CSS workflows.",
+  },
+  {
+    _id: "tag.en.seo",
+    language: "en",
+    title: "SEO",
+    slug: slug("seo"),
+    description: "Search visibility for indie sites.",
+  },
+  {
+    _id: "tag.en.dx",
+    language: "en",
+    title: "DX",
+    slug: slug("dx"),
+    description: "Developer experience — toolchains, ergonomics, speed.",
+  },
+  {
+    _id: "tag.en.deployment",
+    language: "en",
+    title: "Deployment",
+    slug: slug("deployment"),
+    description: "CI/CD, hosting choices, edge networks.",
+  },
+  {
+    _id: "tag.en.privacy",
+    language: "en",
+    title: "Privacy",
+    slug: slug("privacy"),
+    description: "GDPR, consent banners, data minimization.",
+  },
+  {
+    _id: "tag.en.freelance",
+    language: "en",
+    title: "Freelance",
+    slug: slug("freelance"),
+    description: "Pricing, scoping, contracting.",
+  },
+  {
+    _id: "tag.en.mvp",
+    language: "en",
+    title: "MVP",
+    slug: slug("mvp"),
+    description: "Lean validation, fast first releases.",
+  },
+  {
+    _id: "tag.en.forms",
+    language: "en",
+    title: "Forms",
+    slug: slug("forms"),
+    description: "Contact, submission, and HTML-only patterns.",
+  },
+  // FR
+  {
+    _id: "tag.fr.nextjs",
+    language: "fr",
+    title: "Next.js",
+    slug: slug("nextjs"),
+    description: "App Router, React Server Components — toute la pile.",
+  },
+  {
+    _id: "tag.fr.sanity",
+    language: "fr",
+    title: "Sanity",
+    slug: slug("sanity"),
+    description: "Schémas, GROQ, personnalisation du Studio.",
+  },
+  {
+    _id: "tag.fr.tailwind",
+    language: "fr",
+    title: "Tailwind",
+    slug: slug("tailwind"),
+    description: "CSS utilitaire en flux de production.",
+  },
+  {
+    _id: "tag.fr.seo",
+    language: "fr",
+    title: "SEO",
+    slug: slug("seo"),
+    description: "Visibilité dans la recherche pour sites indépendants.",
+  },
+  {
+    _id: "tag.fr.dx",
+    language: "fr",
+    title: "DX",
+    slug: slug("dx"),
+    description: "Expérience développeur — outillage, ergonomie, vitesse.",
+  },
+  {
+    _id: "tag.fr.deployment",
+    language: "fr",
+    title: "Déploiement",
+    slug: slug("deploiement"),
+    description: "CI/CD, choix d'hébergement, réseaux edge.",
+  },
+  {
+    _id: "tag.fr.privacy",
+    language: "fr",
+    title: "Confidentialité",
+    slug: slug("confidentialite"),
+    description: "RGPD, bannières de consentement, minimisation des données.",
+  },
+  {
+    _id: "tag.fr.freelance",
+    language: "fr",
+    title: "Freelance",
+    slug: slug("freelance"),
+    description: "Tarification, cadrage, contractualisation.",
+  },
+  {
+    _id: "tag.fr.mvp",
+    language: "fr",
+    title: "MVP",
+    slug: slug("mvp"),
+    description: "Validation rapide, premières versions minimales.",
+  },
+  {
+    _id: "tag.fr.forms",
+    language: "fr",
+    title: "Formulaires",
+    slug: slug("formulaires"),
+    description: "Contact, soumission, patterns HTML-only.",
+  },
+].map((t) => ({ ...t, _type: "tag" }));
 
 const quotes = [
   {
@@ -446,9 +599,8 @@ const inline = {
     title,
     intro,
     columns,
-    cards: cards.map(([icon, cardTitle, cardBody]) => ({
+    cards: cards.map(([cardTitle, cardBody]) => ({
       _key: key("c"),
-      icon,
       title: cardTitle,
       content: [p(cardBody)],
     })),
@@ -538,33 +690,15 @@ const inline = {
   }),
 };
 
-// ─── Page-chrome modules (blog.postModules — wrap every post) ──
-// Just the layout slots: breadcrumbs above, body slot, related posts
-// below. The body itself carries the inline content modules.
-
-const postChromeModules = () => [
-  {
-    _type: "module.breadcrumbs",
-    _key: key("m"),
-    items: [
-      { _key: key("c"), label: "Home", href: "/" },
-      { _key: key("c"), label: "Blog", href: "/blog" },
-      { _key: key("c"), label: "Article" },
-    ],
-  },
-  // Slot for the active post — renders the body PortableText, which
-  // itself contains the 11 inline-embeddable modules.
-  { _type: "module.blog-post-content", _key: key("m") },
-
-  {
-    _type: "module.blog-post-list",
-    _key: key("m"),
-    title: "Keep reading",
-    intro: "More from the journal.",
-    limit: 3,
-    featuredOnly: false,
-  },
-];
+// `blog.postModules` is shared across locales — anything hardcoded here
+// (breadcrumb labels, "Keep reading" titles, etc.) would leak the same
+// language to every post. We leave the array empty so the post detail
+// route falls back to its `DefaultPostLayout`, which renders proper
+// localized breadcrumbs + related posts via translations.
+//
+// Editors who want a custom module-driven layout for a single post can
+// set the per-post `post.modules` field in Studio and accept the
+// responsibility for translating any text the modules carry.
 
 // ─── Showcase body — modules INSIDE the PortableText body ──────
 // Builds an array of mixed text blocks + inline modules, in the order
@@ -589,9 +723,9 @@ const showcaseBody = ({ quoteLocale, copy }) => [
     ["AA", copy.statLabel4],
   ]),
   inline.cardList(copy.cardsTitle, copy.cardsIntro, 3, [
-    ["zap", copy.card1Title, copy.card1Body],
-    ["settings", copy.card2Title, copy.card2Body],
-    ["sparkles", copy.card3Title, copy.card3Body],
+    [copy.card1Title, copy.card1Body],
+    [copy.card2Title, copy.card2Body],
+    [copy.card3Title, copy.card3Body],
   ]),
   h(2, copy.dayTwoHeading),
   p(copy.dayTwoIntro),
@@ -612,7 +746,7 @@ const showcaseBody = ({ quoteLocale, copy }) => [
   ]),
   h(2, copy.slowdownHeading),
   p(copy.slowdownIntro),
-  inline.heroSplit("Featured", copy.heroSplitTitle, copy.heroSplitContent),
+  inline.heroSplit(copy.heroSplitEyebrow, copy.heroSplitTitle, copy.heroSplitContent),
   blockquote(copy.beckQuote),
   inline.quoteList(copy.quotesTitle, [
     `quote.${quoteLocale}.lovelace`,
@@ -710,6 +844,7 @@ const showcaseCopyEn = {
   slowdownHeading: "When to slow down",
   slowdownIntro:
     "The moment you have a second person editing copy, set up a CMS. The moment two people share a feature flag, write it down. Premature infrastructure is the enemy.",
+  heroSplitEyebrow: "Featured",
   heroSplitTitle: "Two days. One site.",
   heroSplitContent:
     "The fast-prototyping handbook is a two-part series on how we ship client sites between Friday evening and Sunday night.",
@@ -801,6 +936,7 @@ const showcaseCopyFr = {
   slowdownHeading: "Quand ralentir",
   slowdownIntro:
     "Dès qu'une deuxième personne édite le contenu, installez un CMS. Dès que deux personnes partagent un feature flag, documentez-le. L'infrastructure prématurée est l'ennemi.",
+  heroSplitEyebrow: "En vedette",
   heroSplitTitle: "Deux jours. Un site.",
   heroSplitContent:
     "Le manuel du prototypage rapide est une série en deux parties sur la livraison de sites clients entre le vendredi soir et le dimanche soir.",
@@ -836,11 +972,12 @@ const post = (
   {
     language,
     title,
-    slug,
+    slug: postSlug,
     description,
     daysOld,
     author,
     categories: cats,
+    tags: postTags = [],
     featured,
     body,
     imageKey,
@@ -854,13 +991,14 @@ const post = (
   publishedAt: daysAgo(daysOld),
   author: { _type: "reference", _ref: author },
   categories: cats.map((c) => ({ _type: "reference", _ref: c, _key: key("c") })),
+  tags: postTags.map((t) => ({ _type: "reference", _ref: t, _key: key("t") })),
   featured: !!featured,
   body,
   ...(modules ? { modules } : {}),
   metadata: {
     title,
     description,
-    slug: { _type: "slug", current: slug },
+    slug: { _type: "slug", current: postSlug },
     image: imageKey ? img(imageKey) : undefined,
     noIndex: false,
   },
@@ -877,6 +1015,7 @@ const buildPosts = () => [
     daysOld: 1,
     author: "author.ada",
     categories: ["cat.en.engineering", "cat.en.product"],
+    tags: ["tag.en.nextjs", "tag.en.mvp", "tag.en.dx", "tag.en.sanity"],
     featured: true,
     imageKey: "post-fast-proto",
     body: showcaseBody({ quoteLocale: "en", copy: showcaseCopyEn }),
@@ -891,6 +1030,7 @@ const buildPosts = () => [
     daysOld: 4,
     author: "author.grace",
     categories: ["cat.en.product", "cat.en.story"],
+    tags: ["tag.en.freelance", "tag.en.mvp", "tag.en.dx", "tag.en.deployment"],
     featured: true,
     imageKey: "post-ship-weekend",
     body: [
@@ -916,6 +1056,7 @@ const buildPosts = () => [
     daysOld: 14,
     author: "author.ada",
     categories: ["cat.en.engineering"],
+    tags: ["tag.en.dx", "tag.en.freelance", "tag.en.nextjs"],
     imageKey: "post-config-first",
     body: [
       p(
@@ -937,6 +1078,7 @@ const buildPosts = () => [
     daysOld: 21,
     author: "author.tim",
     categories: ["cat.en.engineering"],
+    tags: ["tag.en.forms", "tag.en.deployment", "tag.en.dx"],
     imageKey: "post-netlify-forms",
     body: [
       p(
@@ -957,6 +1099,7 @@ const buildPosts = () => [
     daysOld: 30,
     author: "author.grace",
     categories: ["cat.en.product"],
+    tags: ["tag.en.privacy", "tag.en.dx", "tag.en.nextjs"],
     imageKey: "post-cookie-banner",
     body: [
       p(
@@ -981,6 +1124,7 @@ const buildPosts = () => [
     daysOld: 1,
     author: "author.ada",
     categories: ["cat.fr.engineering", "cat.fr.product"],
+    tags: ["tag.fr.nextjs", "tag.fr.mvp", "tag.fr.dx", "tag.fr.sanity"],
     featured: true,
     imageKey: "post-fast-proto",
     body: showcaseBody({ quoteLocale: "fr", copy: showcaseCopyFr }),
@@ -995,6 +1139,7 @@ const buildPosts = () => [
     daysOld: 4,
     author: "author.grace",
     categories: ["cat.fr.product", "cat.fr.story"],
+    tags: ["tag.fr.freelance", "tag.fr.mvp", "tag.fr.dx", "tag.fr.deployment"],
     featured: true,
     imageKey: "post-ship-weekend",
     body: [
@@ -1017,6 +1162,7 @@ const buildPosts = () => [
     daysOld: 14,
     author: "author.ada",
     categories: ["cat.fr.engineering"],
+    tags: ["tag.fr.dx", "tag.fr.freelance", "tag.fr.nextjs"],
     imageKey: "post-config-first",
     body: [
       p(
@@ -1034,6 +1180,7 @@ const buildPosts = () => [
     daysOld: 21,
     author: "author.tim",
     categories: ["cat.fr.engineering"],
+    tags: ["tag.fr.forms", "tag.fr.deployment", "tag.fr.dx"],
     imageKey: "post-netlify-forms",
     body: [
       p(
@@ -1054,6 +1201,7 @@ const buildPosts = () => [
     daysOld: 30,
     author: "author.grace",
     categories: ["cat.fr.product"],
+    tags: ["tag.fr.privacy", "tag.fr.dx", "tag.fr.nextjs"],
     imageKey: "post-cookie-banner",
     body: [
       p(
@@ -1071,10 +1219,10 @@ const blog = {
   // Empty → /blog falls back to the default minimal card-grid layout.
   // Add modules here from the Studio when you want a richer frontpage.
   frontpageModules: [],
-  // Every post gets breadcrumbs at the top, the body in the middle (with
-  // its inline modules), and "Keep reading" at the bottom. Posts can
-  // still override with their own `post.modules` array.
-  postModules: postChromeModules(),
+  // Empty → DefaultPostLayout takes over with translated breadcrumbs +
+  // related-posts section. Authors can override per post via
+  // `post.modules` for a module-driven layout instead.
+  postModules: [],
 };
 
 // ─── Run ────────────────────────────────────────────────────────
@@ -1089,6 +1237,7 @@ async function run() {
   const allDocs = [
     ...buildAuthors(),
     ...categories,
+    ...tags,
     ...quotes,
     ...buildPeople(),
     ...logos,

@@ -3,21 +3,21 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.card-list",
-  title: "Card list",
+  title: "Liste de cartes",
   fields: [
-    defineField({ name: "title", title: "Title", type: "string" }),
+    defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),
     defineField({
       name: "columns",
-      title: "Columns",
+      title: "Colonnes",
       type: "number",
-      description: "Cards per row on desktop. Defaults to 3.",
+      description: "Nombre de cartes par ligne sur desktop. Par défaut 3.",
       initialValue: 3,
       validation: (Rule) => Rule.min(1).max(4),
     }),
     defineField({
       name: "cards",
-      title: "Cards",
+      title: "Cartes",
       type: "array",
       of: [
         defineArrayMember({
@@ -25,21 +25,14 @@ export default defineModule({
           name: "card",
           fields: [
             defineField({
-              name: "icon",
-              title: "Icon",
-              type: "string",
-              description:
-                "Optional lucide-react icon key, e.g. 'zap', 'sparkles'. Renderer falls back to no icon when blank.",
-            }),
-            defineField({
               name: "title",
-              title: "Title",
+              title: "Titre",
               type: "string",
               validation: (Rule) => Rule.required(),
             }),
-            defineField({ name: "content", title: "Content", type: "blockContent" }),
+            defineField({ name: "content", title: "Contenu", type: "blockContent" }),
             defineField({ name: "image", title: "Image", type: "image" }),
-            defineField({ name: "cta", title: "CTA", type: "cta" }),
+            defineField({ name: "cta", title: "Appel à l'action", type: "cta" }),
           ],
           preview: { select: { title: "title", media: "image" } },
         }),

@@ -37,7 +37,9 @@ export function PersonList(props: PersonListModule) {
                 {p.social
                   .filter((link) => link?.href)
                   .map((link, i) => (
-                    <li key={i}>
+                    // social links don't carry _key after LINK_FRAGMENT;
+                    // compose a stable key from href + position.
+                    <li key={`${link.href ?? ""}-${i}`}>
                       <a
                         href={link.href}
                         target={link.newTab ? "_blank" : undefined}

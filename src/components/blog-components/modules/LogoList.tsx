@@ -22,29 +22,31 @@ export function LogoList(props: LogoListModule) {
               key={logo._id}
               className="opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
             >
-              {logo.url ? (
-                <a href={logo.url} target="_blank" rel="noopener noreferrer">
-                  <Image
-                    src={logo.image.asset.url}
-                    alt={logo.name ?? ""}
-                    width={120}
-                    height={40}
-                    className="h-8 w-auto"
-                  />
-                </a>
-              ) : (
-                <Image
-                  src={logo.image.asset.url}
-                  alt={logo.name ?? ""}
-                  width={120}
-                  height={40}
-                  className="h-8 w-auto"
-                />
-              )}
+              <LogoImage logo={logo} />
             </li>
           ) : null,
         )}
       </ul>
     </section>
+  );
+}
+
+function LogoImage({ logo }: { logo: NonNullable<LogoListModule["logos"]>[number] }) {
+  if (!logo.image?.asset?.url) return null;
+  const img = (
+    <Image
+      src={logo.image.asset.url}
+      alt={logo.name ?? ""}
+      width={120}
+      height={40}
+      className="h-8 w-auto"
+    />
+  );
+  return logo.url ? (
+    <a href={logo.url} target="_blank" rel="noopener noreferrer">
+      {img}
+    </a>
+  ) : (
+    img
   );
 }

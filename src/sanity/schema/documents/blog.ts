@@ -17,25 +17,33 @@ export default defineType({
   title: "Blog",
   type: "document",
   icon: BlockContentIcon,
+  // Block "+ Create" + global search/list surfaces — the singleton has
+  // exactly one instance with `documentId: "blog"`, edited from the
+  // sidebar entry in `structure.ts`. Without this an editor could
+  // accidentally produce a second doc via search → 404 in `[0]` GROQ.
+  __experimental_omnisearch_visibility: false,
   fields: [
     defineField({
       name: "frontpageModules",
-      title: "Frontpage modules",
+      title: "Modules de la page d'accueil du blog",
       description:
-        "Composes the /blog landing. Empty = default card grid. Add a 'Blog post list' module to render posts.",
+        "Compose la page /blog. Vide = grille de cartes par défaut. Ajoutez un module « Blog post list » pour afficher les articles.",
       type: "array",
       of: moduleFieldRefs,
     }),
     defineField({
       name: "postModules",
-      title: "Per-post modules",
+      title: "Modules par article",
       description:
-        "Composes the layout of every /blog/[slug] page. Empty = default article layout. Include a 'Blog post content' module to render the active post's body.",
+        "Compose la mise en page de chaque /blog/[slug]. Vide = mise en page article par défaut. Incluez un module « Blog post content » pour afficher le corps de l'article actif.",
       type: "array",
       of: moduleFieldRefs,
     }),
   ],
   preview: {
-    prepare: () => ({ title: "Blog", subtitle: "Frontpage + per-post layout" }),
+    prepare: () => ({
+      title: "Blog",
+      subtitle: "Mise en page accueil + article",
+    }),
   },
 });

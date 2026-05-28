@@ -1,59 +1,60 @@
 import { defineField, defineType } from "sanity";
 
 /**
- * Form definition used by the Form module. The schema describes the
- * shape; rendering is handled by Netlify Forms (see `public/__forms.html`).
- * For each form you create here, add a matching `<form>` declaration to
- * `public/__forms.html` so Netlify's build-time scanner picks it up.
+ * Définition de formulaire utilisée par le module Formulaire. Le schéma
+ * décrit la forme ; le rendu est géré par Netlify Forms (voir
+ * `public/__forms.html`). Pour chaque formulaire créé ici, ajoutez une
+ * déclaration `<form>` correspondante dans `public/__forms.html` afin
+ * que le scanner de Netlify la détecte au moment du build.
  */
 export default defineType({
   name: "form",
-  title: "Form",
+  title: "Formulaire",
   type: "document",
   fields: [
     defineField({
       name: "name",
-      title: "Form name",
+      title: "Nom du formulaire",
       type: "string",
       description:
-        "Matches the `name` attribute in public/__forms.html (e.g. 'contact', 'newsletter').",
+        "Doit correspondre à l'attribut `name` dans public/__forms.html (ex. 'contact', 'newsletter').",
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: "title", title: "Display title", type: "string" }),
+    defineField({ name: "title", title: "Titre affiché", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),
     defineField({
       name: "submitLabel",
-      title: "Submit button label",
+      title: "Libellé du bouton d'envoi",
       type: "string",
-      initialValue: "Send",
+      initialValue: "Envoyer",
     }),
     defineField({
       name: "fields",
-      title: "Fields",
+      title: "Champs",
       type: "array",
       of: [
         {
           type: "object",
           name: "field",
           fields: [
-            defineField({ name: "name", title: "Name", type: "string" }),
-            defineField({ name: "label", title: "Label", type: "string" }),
+            defineField({ name: "name", title: "Nom", type: "string" }),
+            defineField({ name: "label", title: "Libellé", type: "string" }),
             defineField({
               name: "type",
               title: "Type",
               type: "string",
               options: {
                 list: [
-                  { title: "Text", value: "text" },
+                  { title: "Texte", value: "text" },
                   { title: "Email", value: "email" },
-                  { title: "Textarea", value: "textarea" },
-                  { title: "Tel", value: "tel" },
+                  { title: "Zone de texte", value: "textarea" },
+                  { title: "Téléphone", value: "tel" },
                   { title: "URL", value: "url" },
                 ],
               },
               initialValue: "text",
             }),
-            defineField({ name: "required", title: "Required", type: "boolean" }),
+            defineField({ name: "required", title: "Obligatoire", type: "boolean" }),
           ],
           preview: { select: { title: "label", subtitle: "type" } },
         },

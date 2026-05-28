@@ -34,12 +34,12 @@ const INLINE_MODULES = [
 ];
 
 export default defineType({
-  title: "Block Content",
+  title: "Contenu enrichi",
   name: "blockContent",
   type: "array",
   of: [
     defineArrayMember({
-      title: "Block",
+      title: "Bloc",
       type: "block",
       styles: [
         { title: "Normal", value: "normal" },
@@ -47,13 +47,13 @@ export default defineType({
         { title: "H2", value: "h2" },
         { title: "H3", value: "h3" },
         { title: "H4", value: "h4" },
-        { title: "Quote", value: "blockquote" },
+        { title: "Citation", value: "blockquote" },
       ],
-      lists: [{ title: "Bullet", value: "bullet" }],
+      lists: [{ title: "Puces", value: "bullet" }],
       marks: {
         decorators: [
-          { title: "Strong", value: "strong" },
-          { title: "Emphasis", value: "em" },
+          { title: "Gras", value: "strong" },
+          { title: "Italique", value: "em" },
         ],
         annotations: [
           {

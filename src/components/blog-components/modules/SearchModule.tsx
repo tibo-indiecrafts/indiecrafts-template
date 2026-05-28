@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { SearchModule as SearchModuleProps } from "@/sanity/types";
 
 /**
@@ -12,6 +13,7 @@ import type { SearchModule as SearchModuleProps } from "@/sanity/types";
  * elements so this widget can match against them.
  */
 export function SearchModule(props: SearchModuleProps) {
+  const t = useTranslations("pages.blog");
   const [query, setQuery] = useState("");
 
   const handleChange = (next: string) => {
@@ -32,9 +34,9 @@ export function SearchModule(props: SearchModuleProps) {
         type="search"
         value={query}
         onChange={(e) => handleChange(e.target.value)}
-        placeholder={props.placeholder ?? "Search…"}
+        placeholder={props.placeholder ?? t("searchPlaceholder")}
         className="bg-background ring-border focus-visible:ring-ring mt-3 h-11 w-full rounded-md px-4 ring-1 focus-visible:ring-2 focus-visible:outline-none"
-        aria-label={props.title ?? "Search"}
+        aria-label={props.title ?? t("searchLabel")}
       />
     </section>
   );

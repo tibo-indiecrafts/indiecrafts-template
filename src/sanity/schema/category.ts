@@ -2,12 +2,12 @@ import { defineField, defineType } from "sanity";
 
 export default defineType({
   name: "category",
-  title: "Category",
+  title: "Catégorie",
   type: "document",
   fields: [
     defineField({
       name: "language",
-      title: "Language",
+      title: "Langue",
       type: "string",
       options: {
         list: [
@@ -21,8 +21,16 @@ export default defineType({
     }),
     defineField({
       name: "title",
-      title: "Title",
+      title: "Titre",
       type: "string",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: { source: "title", maxLength: 96 },
+      description: "Fragment d'URL pour /blog/category/<slug>.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({ name: "description", title: "Description", type: "text" }),

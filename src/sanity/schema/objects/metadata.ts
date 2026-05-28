@@ -12,29 +12,36 @@ import { defineField, defineType } from "sanity";
  */
 export default defineType({
   name: "metadata",
-  title: "Metadata",
+  title: "Métadonnées",
   type: "object",
   fields: [
     defineField({
       name: "title",
-      title: "Title",
+      title: "Titre",
       type: "string",
-      description: "Up to ~60 chars. Falls back to the document title if blank.",
-      validation: (Rule) => Rule.max(60).warning("Keep under 60 characters for SERP."),
+      description: "Jusqu'à ~60 caractères. Retombe sur le titre du document si vide.",
+      validation: (Rule) =>
+        Rule.max(60).warning(
+          "Restez sous 60 caractères pour les résultats de recherche.",
+        ),
     }),
     defineField({
       name: "description",
       title: "Description",
       type: "text",
       rows: 3,
-      description: "Up to ~160 chars — also shown on listing cards.",
-      validation: (Rule) => Rule.max(160).warning("Keep under 160 characters for SERP."),
+      description:
+        "Jusqu'à ~160 caractères — également affichée sur les cartes du listing.",
+      validation: (Rule) =>
+        Rule.max(160).warning(
+          "Restez sous 160 caractères pour les résultats de recherche.",
+        ),
     }),
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      description: "URL path. Use lowercase, dashes only.",
+      description: "Chemin d'URL. Minuscules, tirets uniquement.",
       options: {
         source: (doc) =>
           (doc as { title?: string; metadata?: { title?: string } }).metadata?.title ??
@@ -46,17 +53,18 @@ export default defineType({
     }),
     defineField({
       name: "image",
-      title: "Social image",
+      title: "Image sociale",
       type: "image",
-      description: "1200×630 recommended. Used for OG/Twitter cards + listing covers.",
+      description:
+        "1200×630 recommandé. Utilisée pour les cartes OG/Twitter + les couvertures dans le listing.",
       options: { hotspot: true, metadata: ["lqip"] },
-      fields: [defineField({ name: "alt", type: "string", title: "Alt text" })],
+      fields: [defineField({ name: "alt", type: "string", title: "Texte alternatif" })],
     }),
     defineField({
       name: "noIndex",
-      title: "Hide from search engines",
+      title: "Masquer des moteurs de recherche",
       type: "boolean",
-      description: "Adds robots:noindex + drops the post from RSS + sitemap.",
+      description: "Ajoute robots:noindex + retire l'article du RSS et du plan de site.",
       initialValue: false,
     }),
   ],

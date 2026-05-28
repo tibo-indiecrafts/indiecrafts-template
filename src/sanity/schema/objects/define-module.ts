@@ -41,15 +41,16 @@ export function defineModule({
       ...fields,
       defineField({
         name: "anchor",
-        title: "Anchor",
+        title: "Ancre",
         type: "string",
-        description: "Optional id for in-page links (e.g. 'pricing' → /…/#pricing).",
+        description:
+          "Identifiant optionnel pour les liens internes à la page (ex. 'pricing' → /…/#pricing).",
       }),
       defineField({
         name: "hidden",
-        title: "Hidden",
+        title: "Masqué",
         type: "boolean",
-        description: "Hide this module without deleting it.",
+        description: "Masque ce module sans le supprimer.",
         initialValue: false,
       }),
     ],

@@ -1,0 +1,107 @@
+import { notFound } from "next/navigation";
+import { setRequestLocale, getTranslations } from "next-intl/server";
+import { features, isPageVisible, localeCodes, pages, site } from "@/config";
+import type { Locale } from "@/config";
+import { buildMetadata } from "@/lib/metadata";
+import { PageSchemas } from "@/lib/seo/jsonld";
+import { DefaultLayout } from "@/app/layout/DefaultLayout";
+import { AuthorDetail } from "@/components/blog-components/AuthorDetail";
+import { client } from "@/sanity/client";
+import { sanityFetchLive } from "@/sanity/live";
+import {
+  allAuthorSlugsQuery,
+  authorBySlugQuery,
+  postsByAuthorSlugQuery,
+} from "@/sanity/queries";
+import type { Author, PostListItem } from "@/sanity/types";
+
+type Props = { params: Promise<{ locale: Locale; slug: string }> };
+
+export async function generateStaticParams() {
+  if (!features.blog) return [];
+  const rows = await client.fetch<{ slug?: string }[]>(allAuthorSlugsQuery);
+  // Author pages are locale-neutral — emit one per (locale, slug) pair.
+  return rows.flatMap((row) =>
+    row.slug ? localeCodes.map((locale) => ({ locale, slug: row.slug! })) : [],
+  );
+}
+
+export async function generateMetadata({ params }: Props) {
+  const { locale, slug } = await params;
+  const author = await sanityFetchLive<Author | null>({
+    query: authorBySlugQuery,
+    params: { slug },
+  });
+  const base = await buildMetadata({ page: pages.author, locale });
+  if (!author) return base;
+
+  return {
+    ...base,
+    title: author.name,
+    description: author.bio ?? base.description,
+    openGraph: {
+      ...base.openGraph,
+      type: "profile",
+      title: author.name,
+      description: author.bio,
+      images: author.image?.asset?.url
+        ? [{ url: author.image.asset.url }]
+        : base.openGraph?.images,
+    },
+  };
+}
+
+export default async function AuthorDetailPage({ params }: Props) {
+  if (!features.blog || !isPageVisible(pages.author)) notFound();
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
+
+  const [author, posts, t, nav] = await Promise.all([
+    sanityFetchLive<Author | null>({ query: authorBySlugQuery, params: { slug } }),
+    sanityFetchLive<PostListItem[]>({
+      query: postsByAuthorSlugQuery,
+      params: { slug, locale },
+    }),
+    getTranslations("pages.author"),
+    getTranslations("nav"),
+  ]);
+  if (!author) notFound();
+
+  return (
+    <DefaultLayout>
+      <PageSchemas
+        page={{
+          ...pages.author,
+          seo: {
+            ...pages.author.seo,
+            structuredData: [
+              {
+                "@type": "Person",
+                name: author.name,
+                description: author.bio,
+                image: author.image?.asset?.url,
+                jobTitle: author.position,
+                url: `${site.url}/${locale}/author/${slug}`,
+              },
+            ],
+          },
+        }}
+        locale={locale}
+      />
+      <AuthorDetail
+        author={author}
+        posts={posts}
+        locale={locale}
+        breadcrumbs={[
+          { label: nav("home"), href: "/" },
+          { label: nav("blog"), href: "/blog" },
+          { label: nav("author"), href: "/author" },
+          { label: author.name ?? slug },
+        ]}
+        breadcrumbsLabel={t("breadcrumbs")}
+        postsLabel={t.raw("posts")}
+        noPostsLabel={t("noPosts")}
+      />
+    </DefaultLayout>
+  );
+}

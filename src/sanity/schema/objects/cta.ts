@@ -1,24 +1,24 @@
 import { defineField, defineType } from "sanity";
 
 /**
- * Call-to-action — a styled link with a variant. Reused across modules
- * (hero, callout, card-list, etc.).
+ * Appel à l'action — un lien stylisé avec une variante. Réutilisé dans
+ * plusieurs modules (hero, callout, card-list, etc.).
  */
 export default defineType({
   name: "cta",
-  title: "Call to action",
+  title: "Appel à l'action",
   type: "object",
   fields: [
-    defineField({ name: "link", title: "Link", type: "link" }),
+    defineField({ name: "link", title: "Lien", type: "link" }),
     defineField({
       name: "variant",
       title: "Style",
       type: "string",
       options: {
         list: [
-          { title: "Primary", value: "primary" },
-          { title: "Secondary", value: "secondary" },
-          { title: "Ghost", value: "ghost" },
+          { title: "Primaire", value: "primary" },
+          { title: "Secondaire", value: "secondary" },
+          { title: "Discret", value: "ghost" },
         ],
         layout: "radio",
       },

@@ -1,6 +1,6 @@
 import { defineField, defineType } from "sanity";
 
-/** Brand logo used by the Logo List module ("trusted by"). */
+/** Logo de marque utilisé par le module Logo List (« ils nous font confiance »). */
 export default defineType({
   name: "logo",
   title: "Logo",
@@ -8,22 +8,22 @@ export default defineType({
   fields: [
     defineField({
       name: "name",
-      title: "Brand name",
+      title: "Nom de la marque",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "image",
-      title: "Logo image",
+      title: "Image du logo",
       type: "image",
       options: { hotspot: true },
-      description: "SVG preferred. Keep a transparent background.",
+      description: "SVG recommandé. Conservez un fond transparent.",
     }),
     defineField({
       name: "url",
-      title: "Link URL",
+      title: "URL du lien",
       type: "url",
-      description: "Optional — link the logo to the brand's site.",
+      description: "Optionnel — pour lier le logo au site de la marque.",
     }),
   ],
   preview: { select: { title: "name", media: "image" } },

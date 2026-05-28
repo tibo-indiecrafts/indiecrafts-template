@@ -3,13 +3,13 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.accordion-list",
-  title: "Accordion list",
+  title: "Liste accordéon",
   fields: [
-    defineField({ name: "title", title: "Title", type: "string" }),
+    defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),
     defineField({
       name: "items",
-      title: "Items",
+      title: "Éléments",
       type: "array",
       of: [
         defineArrayMember({
@@ -18,11 +18,11 @@ export default defineModule({
           fields: [
             defineField({
               name: "title",
-              title: "Title",
+              title: "Titre",
               type: "string",
               validation: (Rule) => Rule.required(),
             }),
-            defineField({ name: "content", title: "Content", type: "blockContent" }),
+            defineField({ name: "content", title: "Contenu", type: "blockContent" }),
           ],
           preview: { select: { title: "title" } },
         }),

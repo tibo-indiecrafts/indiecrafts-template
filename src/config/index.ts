@@ -209,8 +209,9 @@ export const analytics = {
 
 export const headerNav: readonly NavLink[] = [
   { labelKey: "home", href: "/" },
-  // /blog only shown when `features.blog` is on — kept in this list so
-  // the Header iterates one place. Header filters by visibility.
+  // Blog routes — only shown when `features.blog` is on. Header filters by visibility.
+  // Author + category indexes are reachable from inside the blog, so they
+  // intentionally stay out of the primary nav to avoid clutter.
   ...(features.blog ? [{ labelKey: "blog" as const, href: "/blog" as const }] : []),
 ];
 export const footerNav: readonly NavGroup[] = [];
@@ -301,6 +302,42 @@ export const pages = {
     enabled: features.blog,
     seo: {
       keywords: ["blog", "articles", "indiecrafts"],
+    },
+  },
+  blogTwoCol: {
+    key: "/blog/two-column",
+    id: "blogTwoCol",
+    slug: "/blog/two-column",
+    enabled: features.blog,
+    seo: {
+      keywords: ["blog", "two column", "articles"],
+    },
+  },
+  author: {
+    key: "/author",
+    id: "author",
+    slug: "/author",
+    enabled: features.blog,
+    seo: {
+      keywords: ["authors", "contributors", "writers"],
+    },
+  },
+  category: {
+    key: "/blog/category",
+    id: "category",
+    slug: "/blog/category",
+    enabled: features.blog,
+    seo: {
+      keywords: ["categories", "topics", "articles by topic"],
+    },
+  },
+  tag: {
+    key: "/blog/tag",
+    id: "tag",
+    slug: "/blog/tag",
+    enabled: features.blog,
+    seo: {
+      keywords: ["tags", "topics", "articles by tag"],
     },
   },
 } as const satisfies Record<string, PageConfig>;

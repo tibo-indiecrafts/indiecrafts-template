@@ -1,21 +1,21 @@
 import { defineField, defineType } from "sanity";
 
 /**
- * A person — used by the Person List module (team / contributors).
- * Distinct from `author` which is specifically the author of a post.
+ * Une personne — utilisée par le module Person List (équipe / contributeurs).
+ * Distinct de `author`, qui correspond précisément à l'auteur d'un article.
  */
 export default defineType({
   name: "person",
-  title: "Person",
+  title: "Personne",
   type: "document",
   fields: [
     defineField({
       name: "name",
-      title: "Name",
+      title: "Nom",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: "role", title: "Role", type: "string" }),
+    defineField({ name: "role", title: "Rôle", type: "string" }),
     defineField({
       name: "image",
       title: "Photo",
@@ -30,7 +30,7 @@ export default defineType({
     }),
     defineField({
       name: "social",
-      title: "Social links",
+      title: "Liens sociaux",
       type: "array",
       of: [{ type: "link" }],
     }),

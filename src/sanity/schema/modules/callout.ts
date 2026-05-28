@@ -3,17 +3,17 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.callout",
-  title: "Callout",
+  title: "Encadré",
   fields: [
     defineField({
       name: "variant",
-      title: "Variant",
+      title: "Variante",
       type: "string",
       options: {
         list: [
           { title: "Info", value: "info" },
-          { title: "Success", value: "success" },
-          { title: "Warning", value: "warning" },
+          { title: "Succès", value: "success" },
+          { title: "Avertissement", value: "warning" },
           { title: "Danger", value: "danger" },
         ],
         layout: "radio",
@@ -22,14 +22,14 @@ export default defineModule({
     }),
     defineField({
       name: "content",
-      title: "Content",
+      title: "Contenu",
       type: "blockContent",
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: "cta", title: "CTA", type: "cta" }),
+    defineField({ name: "cta", title: "Appel à l'action", type: "cta" }),
   ],
   preview: {
     select: { variant: "variant" },
-    prepare: ({ variant }) => ({ title: `Callout (${variant ?? "info"})` }),
+    prepare: ({ variant }) => ({ title: `Encadré (${variant ?? "info"})` }),
   },
 });

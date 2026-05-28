@@ -3,13 +3,13 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.step-list",
-  title: "Step list",
+  title: "Liste d'étapes",
   fields: [
-    defineField({ name: "title", title: "Title", type: "string" }),
+    defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),
     defineField({
       name: "steps",
-      title: "Steps",
+      title: "Étapes",
       type: "array",
       of: [
         defineArrayMember({
@@ -18,11 +18,11 @@ export default defineModule({
           fields: [
             defineField({
               name: "title",
-              title: "Title",
+              title: "Titre",
               type: "string",
               validation: (Rule) => Rule.required(),
             }),
-            defineField({ name: "content", title: "Content", type: "blockContent" }),
+            defineField({ name: "content", title: "Contenu", type: "blockContent" }),
           ],
           preview: { select: { title: "title" } },
         }),

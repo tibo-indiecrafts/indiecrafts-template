@@ -3,9 +3,9 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.logo-list",
-  title: "Logo list",
+  title: "Liste de logos",
   fields: [
-    defineField({ name: "title", title: "Title", type: "string" }),
+    defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),
     defineField({
       name: "logos",

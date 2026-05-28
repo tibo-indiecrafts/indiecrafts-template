@@ -5,16 +5,68 @@ export type ImageRef = {
   alt?: string;
 };
 
+/**
+ * Lightweight author reference embedded inside post fragments.
+ *
+ * Note: `bio` is typed as `string` here even though the Sanity schema
+ * stores it as an array of PortableText blocks. The GROQ projections
+ * (`POST_LIST_FRAGMENT`, `AUTHOR_FRAGMENT`) flatten it via `pt::text(bio)`
+ * so consumers can render it as a plain paragraph. If you ever need
+ * rich-text bios on the public site, switch the projections back to
+ * `bio` and update this type to `PortableTextBlock[]`.
+ */
 export type AuthorRef = {
+  _id?: string;
   name?: string;
   position?: string;
   slug?: string;
+  bio?: string;
   image?: { asset?: { url?: string } };
+};
+
+/** Full author document — used by /author and /author/[slug]. */
+export type Author = {
+  _id: string;
+  name?: string;
+  position?: string;
+  slug?: string;
+  bio?: string;
+  image?: { asset?: { url?: string } };
+  /** Computed in GROQ — count of posts attributed to this author. */
+  postCount?: number;
 };
 
 export type CategoryRef = {
   _id: string;
   title?: string;
+  slug?: string;
+};
+
+/** Full category document — used by /blog/category/[slug]. */
+export type Category = {
+  _id: string;
+  title?: string;
+  slug?: string;
+  description?: string;
+  /** Computed in GROQ — count of posts in this category, locale-filtered. */
+  postCount?: number;
+};
+
+/** Lightweight tag reference — embedded inside post fragments. */
+export type TagRef = {
+  _id: string;
+  title?: string;
+  slug?: string;
+};
+
+/** Full tag document — used by /blog/tag and /blog/tag/[slug]. */
+export type Tag = {
+  _id: string;
+  title?: string;
+  slug?: string;
+  description?: string;
+  /** Computed in GROQ — count of posts with this tag, locale-filtered. */
+  postCount?: number;
 };
 
 /** Reusable `metadata` object — see `src/sanity/schema/objects/metadata.ts`. */
@@ -34,6 +86,7 @@ export type PostListItem = {
   metadata?: PostMetadata;
   author?: AuthorRef;
   categories?: CategoryRef[];
+  tags?: TagRef[];
 };
 
 export type Heading = {
@@ -108,7 +161,6 @@ export type CardListModule = ModuleBase & {
   columns?: number;
   cards?: {
     _key: string;
-    icon?: string;
     title?: string;
     content?: PortableTextBlock[];
     image?: ImageRef;
@@ -181,6 +233,8 @@ export type QuoteListModule = ModuleBase & {
 
 export type BreadcrumbsModule = ModuleBase & {
   _type: "module.breadcrumbs";
+  /** Optional aria-label override; falls back to localized default. */
+  label?: string;
   items?: { _key: string; label?: string; href?: string }[];
 };
 

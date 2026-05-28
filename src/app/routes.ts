@@ -18,6 +18,9 @@ export const ROUTES: readonly PageConfig[] = Object.values(pages);
  */
 const DYNAMIC_PATHNAMES = {
   "/blog/[slug]": "/blog/[slug]",
+  "/blog/category/[slug]": "/blog/category/[slug]",
+  "/blog/tag/[slug]": "/blog/tag/[slug]",
+  "/author/[slug]": "/author/[slug]",
 } as const;
 
 export const PATHNAMES = {

@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import type { FormModule as FormModuleProps } from "@/sanity/types";
 
 /**
@@ -8,12 +9,13 @@ import type { FormModule as FormModuleProps } from "@/sanity/types";
  * No client-side JS — Netlify intercepts the standard POST and routes
  * by the hidden `form-name` input. A honeypot `bot-field` is included.
  */
-export function FormModule(props: FormModuleProps) {
+export async function FormModule(props: FormModuleProps) {
   const form = props.form;
   if (!form?.name) return null;
+  const t = await getTranslations("pages.blog");
   const title = props.title ?? form.title;
   const intro = props.intro ?? form.intro;
-  const submit = form.submitLabel ?? "Send";
+  const submit = form.submitLabel ?? t("formSubmitDefault");
 
   return (
     <section id={props.anchor} className="mx-auto max-w-2xl px-(--gutter) py-12 md:py-20">
@@ -31,7 +33,7 @@ export function FormModule(props: FormModuleProps) {
         <input type="hidden" name="form-name" value={form.name} />
         <p className="hidden">
           <label>
-            Don&apos;t fill this out: <input name="bot-field" />
+            {t("formHoneypot")} <input name="bot-field" />
           </label>
         </p>
 

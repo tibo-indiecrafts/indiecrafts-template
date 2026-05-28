@@ -4,6 +4,7 @@ import type { SchemaTypeDefinition } from "sanity";
 import author from "./author";
 import blog from "./documents/blog";
 import category from "./category";
+import tag from "./tag";
 import form from "./documents/form";
 import logo from "./documents/logo";
 import person from "./documents/person";
@@ -25,6 +26,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   post,
   author,
   category,
+  tag,
   quote,
   person,
   logo,

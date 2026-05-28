@@ -1,16 +1,16 @@
 import { defineField, defineType } from "sanity";
 
 /**
- * Polymorphic link used inside blog modules — points to an internal
- * post or an external URL. Renderers normalize the resolved href via
- * the LINK_FRAGMENT in `src/sanity/queries.ts`.
+ * Lien polymorphe utilisé dans les modules — pointe vers un article
+ * interne ou une URL externe. Les renderers normalisent le `href`
+ * résolu via le LINK_FRAGMENT dans `src/sanity/queries.ts`.
  *
- * Scoped to the blog: internal target is a `post` document only.
- * Use the external URL field for marketing pages / other sites.
+ * Portée du blog : la cible interne est uniquement un document `post`.
+ * Utilisez le champ URL externe pour les pages marketing / autres sites.
  */
 export default defineType({
   name: "link",
-  title: "Link",
+  title: "Lien",
   type: "object",
   fields: [
     defineField({
@@ -19,8 +19,8 @@ export default defineType({
       type: "string",
       options: {
         list: [
-          { title: "Internal post", value: "internal" },
-          { title: "External URL", value: "external" },
+          { title: "Article interne", value: "internal" },
+          { title: "URL externe", value: "external" },
         ],
         layout: "radio",
       },
@@ -28,26 +28,26 @@ export default defineType({
     }),
     defineField({
       name: "label",
-      title: "Label",
+      title: "Libellé",
       type: "string",
     }),
     defineField({
       name: "internal",
-      title: "Internal post",
+      title: "Article interne",
       type: "reference",
       to: [{ type: "post" }],
       hidden: ({ parent }) => parent?.type !== "internal",
     }),
     defineField({
       name: "external",
-      title: "External URL",
+      title: "URL externe",
       type: "url",
       hidden: ({ parent }) => parent?.type !== "external",
       validation: (Rule) => Rule.uri({ scheme: ["http", "https", "mailto", "tel"] }),
     }),
     defineField({
       name: "newTab",
-      title: "Open in new tab",
+      title: "Ouvrir dans un nouvel onglet",
       type: "boolean",
       initialValue: false,
     }),

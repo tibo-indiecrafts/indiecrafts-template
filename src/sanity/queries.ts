@@ -26,8 +26,23 @@ const POST_LIST_FRAGMENT = `
     noIndex,
     image { asset->{ url, metadata }, alt }
   },
-  author->{ name, "slug": slug.current, image { asset->{ url } } },
-  categories[]->{ _id, title }
+  author->{
+    _id, name, position, "slug": slug.current,
+    "bio": pt::text(bio),
+    image { asset->{ url } }
+  },
+  categories[]->{ _id, title, "slug": slug.current },
+  tags[]->{ _id, title, "slug": slug.current }
+`;
+
+/** Author fragment used by the standalone /author routes. */
+const AUTHOR_FRAGMENT = `
+  _id,
+  name,
+  position,
+  "slug": slug.current,
+  "bio": pt::text(bio),
+  image { asset->{ url } }
 `;
 
 /**
@@ -87,7 +102,7 @@ const MODULES_FRAGMENT = `
     }
   },
   _type == "module.blog-post-list" => {
-    categories[]->{ _id, title }
+    categories[]->{ _id }
   }
 `;
 
@@ -136,7 +151,8 @@ export const postBySlugQuery = defineQuery(`
       image { asset->{ url, metadata }, alt }
     },
     author->{ name, position, "slug": slug.current, image { asset->{ url } } },
-    categories[]->{ _id, title },
+    categories[]->{ _id, title, "slug": slug.current },
+    tags[]->{ _id, title, "slug": slug.current },
     // Derived — keep these in the same shape the components expect.
     "readTime": round(length(string::split(pt::text(body), " ")) / 200),
     "headings": body[style in ["h2", "h3", "h4"]]{
@@ -146,6 +162,26 @@ export const postBySlugQuery = defineQuery(`
     // Per-post module override (optional). MODULES_FRAGMENT expands
     // every cross-reference the same way the blog singleton does.
     modules[]{ ${MODULES_FRAGMENT} }
+  }
+`);
+
+/**
+ * Posts related to the current one — same categories overlap, excludes
+ * the current post, locale-filtered, limit 3.
+ *
+ * `$categoryIds` is the array of `_id`s of the current post's categories.
+ * Pass an empty array to disable the filter and just return the latest
+ * three posts (still excluding the current one).
+ */
+export const relatedPostsQuery = defineQuery(`
+  *[_type == "post"
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && coalesce(language, "en") == $locale
+    && _id != $id
+    && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]
+  | order(coalesce(publishedAt, _createdAt) desc)[0...3] {
+    ${POST_LIST_FRAGMENT}
   }
 `);
 
@@ -187,6 +223,174 @@ export const blogSingletonQuery = defineQuery(`
   *[_type == "blog"][0]{
     frontpageModules[]{ ${MODULES_FRAGMENT} },
     postModules[]{ ${MODULES_FRAGMENT} }
+  }
+`);
+
+// ─── Category queries ─────────────────────────────────────────
+
+/**
+ * All categories that have at least one post in the current locale.
+ * Includes `postCount` so the chip/list can show how many articles
+ * each one currently has.
+ */
+export const categoriesForLocaleQuery = defineQuery(`
+  *[_type == "category"
+    && coalesce(language, "en") == $locale
+    && defined(slug.current)
+    && count(*[_type == "post"
+      && references(^._id)
+      && coalesce(language, "en") == $locale
+      && metadata.noIndex != true]) > 0
+  ] | order(title asc) {
+    _id,
+    title,
+    description,
+    "slug": slug.current,
+    "postCount": count(*[_type == "post"
+      && references(^._id)
+      && coalesce(language, "en") == $locale
+      && metadata.noIndex != true])
+  }
+`);
+
+export const categoryBySlugQuery = defineQuery(`
+  *[_type == "category"
+    && slug.current == $slug
+    && coalesce(language, "en") == $locale][0]{
+    _id,
+    title,
+    description,
+    "slug": slug.current,
+    "postCount": count(*[_type == "post"
+      && references(^._id)
+      && coalesce(language, "en") == $locale
+      && metadata.noIndex != true])
+  }
+`);
+
+/** Posts in a category, locale-filtered — feeds /blog/category/[slug]. */
+export const postsByCategorySlugQuery = defineQuery(`
+  *[_type == "post"
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && coalesce(language, "en") == $locale
+    && count(categories[@->slug.current == $slug]) > 0]
+  | order(coalesce(publishedAt, _createdAt) desc) {
+    ${POST_LIST_FRAGMENT}
+  }
+`);
+
+/** Locale-tagged slugs — `generateStaticParams` builds one entry per pair. */
+export const allCategorySlugsQuery = defineQuery(`
+  *[_type == "category" && defined(slug.current)]{
+    "slug": slug.current,
+    "language": coalesce(language, "en")
+  }
+`);
+
+// ─── Tag queries ──────────────────────────────────────────────
+
+const TAG_FRAGMENT = `
+  _id,
+  title,
+  description,
+  "slug": slug.current,
+  "postCount": count(*[_type == "post"
+    && references(^._id)
+    && coalesce(language, "en") == $locale
+    && metadata.noIndex != true])
+`;
+
+export const tagsForLocaleQuery = defineQuery(`
+  *[_type == "tag"
+    && coalesce(language, "en") == $locale
+    && defined(slug.current)
+    && count(*[_type == "post"
+      && references(^._id)
+      && coalesce(language, "en") == $locale
+      && metadata.noIndex != true]) > 0
+  ] | order(title asc) {
+    ${TAG_FRAGMENT}
+  }
+`);
+
+export const tagBySlugQuery = defineQuery(`
+  *[_type == "tag"
+    && slug.current == $slug
+    && coalesce(language, "en") == $locale][0]{
+    ${TAG_FRAGMENT}
+  }
+`);
+
+/** Posts carrying a given tag, locale-filtered — feeds /blog/tag/[slug]. */
+export const postsByTagSlugQuery = defineQuery(`
+  *[_type == "post"
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && coalesce(language, "en") == $locale
+    && count(tags[@->slug.current == $slug]) > 0]
+  | order(coalesce(publishedAt, _createdAt) desc) {
+    ${POST_LIST_FRAGMENT}
+  }
+`);
+
+export const allTagSlugsQuery = defineQuery(`
+  *[_type == "tag" && defined(slug.current)]{
+    "slug": slug.current,
+    "language": coalesce(language, "en")
+  }
+`);
+
+// ─── Author queries ───────────────────────────────────────────
+
+/**
+ * All authors with at least one post in the given locale. `postCount`
+ * lets the listing show "N posts" and lets the home Top Authors block
+ * order by activity.
+ */
+export const authorsForLocaleQuery = defineQuery(`
+  *[_type == "author"
+    && defined(slug.current)
+    && count(*[_type == "post"
+      && references(^._id)
+      && coalesce(language, "en") == $locale
+      && metadata.noIndex != true]) > 0
+  ] | order(name asc) {
+    ${AUTHOR_FRAGMENT},
+    "postCount": count(*[_type == "post"
+      && references(^._id)
+      && coalesce(language, "en") == $locale
+      && metadata.noIndex != true])
+  }
+`);
+
+/**
+ * Author document lookup — intentionally NOT locale-filtered. Authors
+ * are global entities (one person, one profile) while their posts are
+ * language-scoped via `postsByAuthorSlugQuery`. This mirrors the
+ * data-model: the `author` schema has no `language` field.
+ */
+export const authorBySlugQuery = defineQuery(`
+  *[_type == "author" && slug.current == $slug][0]{
+    ${AUTHOR_FRAGMENT}
+  }
+`);
+
+/** Posts by a given author, locale-filtered — feeds /author/[slug]. */
+export const postsByAuthorSlugQuery = defineQuery(`
+  *[_type == "post"
+    && author->slug.current == $slug
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && coalesce(language, "en") == $locale]
+  | order(coalesce(publishedAt, _createdAt) desc) {
+    ${POST_LIST_FRAGMENT}
+  }
+`);
+
+export const allAuthorSlugsQuery = defineQuery(`
+  *[_type == "author" && defined(slug.current)]{
+    "slug": slug.current
   }
 `);
 

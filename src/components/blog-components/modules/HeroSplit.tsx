@@ -34,7 +34,14 @@ export function HeroSplit(props: HeroSplitModule) {
           {props.ctas?.length ? (
             <div className="mt-2 flex flex-wrap gap-3">
               {props.ctas.map((cta, i) => (
-                <ModuleCta key={i} cta={cta} />
+                // CTAs don't carry a `_key` after the LINK_FRAGMENT projection.
+                // Compose a stable id from href + label; fall back to position
+                // when both are missing (in which case `ModuleCta` renders null
+                // anyway, so the duplicate-key risk is theoretical).
+                <ModuleCta
+                  key={`${cta.link?.href ?? ""}-${cta.link?.label ?? ""}-${i}`}
+                  cta={cta}
+                />
               ))}
             </div>
           ) : null}

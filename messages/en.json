@@ -7,6 +7,8 @@
     "home": "Home",
     "about": "About",
     "blog": "Blog",
+    "blogTwoCol": "Two column",
+    "author": "Authors",
     "contact": "Contact",
     "company": "Company",
     "legal": "Legal",
@@ -113,7 +115,86 @@
       "by": "By {name}",
       "backToList": "← All posts",
       "noPosts": "No posts yet. Check back soon.",
-      "onThisPage": "On this page"
+      "onThisPage": "On this page",
+      "related": "Keep reading",
+      "relatedSubheading": "More articles you might enjoy.",
+      "tagsLabel": "Tags",
+      "heroLabel": "Latest articles",
+      "featuredLabel": "Featured",
+      "noPostsModule": "No posts yet.",
+      "searchPlaceholder": "Search…",
+      "searchLabel": "Search",
+      "formSubmitDefault": "Send",
+      "formHoneypot": "Don't fill this out:",
+      "breadcrumbsLabel": "Breadcrumb",
+      "categories": {
+        "heading": "Explore categories",
+        "subheading": "Choose a category to explore related content — find what interests you.",
+        "uncategorized": "Uncategorized",
+        "all": "All",
+        "viewAll": "View all articles"
+      },
+      "tags": {
+        "heading": "Explore tags",
+        "subheading": "Smaller topics across articles — pick a tag to follow a thread.",
+        "viewAll": "View all tags"
+      },
+      "authors": {
+        "heading": "Explore authors",
+        "viewAll": "View all authors",
+        "posts": "{count} posts"
+      },
+      "newsletter": {
+        "heading": "Subscribe to our newsletter",
+        "subheading": "Be the first to know about new arrivals, exclusive offers, special promotions, and the latest news.",
+        "placeholder": "Enter your email address",
+        "submit": "Subscribe",
+        "success": "Thank you for subscribing!",
+        "error": "Something went wrong — please try again."
+      },
+      "category": {
+        "headingPrefix": "Category: {name}",
+        "subheading": "Every article filed under this category.",
+        "noPosts": "No posts in this category yet.",
+        "back": "← All categories"
+      }
+    },
+    "category": {
+      "title": "Categories",
+      "description": "Browse articles by topic.",
+      "heading": "Browse by category",
+      "subheading": "Pick a topic to see every article filed under it.",
+      "empty": "No categories yet. Check back soon.",
+      "posts": "{count} posts",
+      "breadcrumbs": "Breadcrumb"
+    },
+    "tag": {
+      "title": "Tags",
+      "description": "Browse articles by tag.",
+      "heading": "Browse by tag",
+      "subheading": "Pick a tag to see every article carrying that label.",
+      "empty": "No tags yet. Check back soon.",
+      "posts": "{count} posts",
+      "noPosts": "No posts with this tag yet.",
+      "breadcrumbs": "Breadcrumb",
+      "tagsLabel": "Tags"
+    },
+    "blogTwoCol": {
+      "title": "Blog — two column",
+      "description": "All articles in a wide two-column grid.",
+      "heading": "Read, learn, grow",
+      "subheading": "Browse every article in a spacious two-column layout designed for longer summaries.",
+      "noPosts": "No posts yet. Check back soon."
+    },
+    "author": {
+      "title": "Authors",
+      "description": "Meet the writers and contributors behind every article.",
+      "heading": "Creators behind the content",
+      "subheading": "Learn more about the talented writers and contributors shaping every story you read.",
+      "empty": "No authors yet. Check back soon.",
+      "posts": "{count} posts",
+      "noPosts": "This author hasn't published anything yet.",
+      "breadcrumbs": "Breadcrumb"
     },
     "home": {
       "title": "Indiecrafts — fast, modular Next.js template",

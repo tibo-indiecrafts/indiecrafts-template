@@ -1,4 +1,6 @@
+import { getTranslations } from "next-intl/server";
 import { features, isPageVisible, pages, site } from "@/config";
+import type { Locale } from "@/config";
 import { client } from "@/sanity/client";
 import { rssPostsQuery } from "@/sanity/queries";
 import type { RssPost } from "@/sanity/types";
@@ -19,14 +21,17 @@ export async function GET(_req: Request, { params }: Props) {
     return new Response("Not found", { status: 404 });
   }
   const { locale } = await params;
-  const posts = await client.fetch<RssPost[]>(rssPostsQuery, { locale });
+  const [posts, t] = await Promise.all([
+    client.fetch<RssPost[]>(rssPostsQuery, { locale }),
+    getTranslations({ locale: locale as Locale, namespace: "pages.blog" }),
+  ]);
   const baseUrl = `${site.url}/${locale}`;
   const feedUrl = `${baseUrl}/blog/rss.xml`;
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>
-  <title>${escapeXml(site.name)} — ${escapeXml(pages.blog.id)}</title>
+  <title>${escapeXml(site.name)} — ${escapeXml(t("title"))}</title>
   <link>${baseUrl}/blog</link>
   <atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />
   <description>${escapeXml(site.description)}</description>

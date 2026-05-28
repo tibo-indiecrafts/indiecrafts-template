@@ -1,15 +1,25 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, isPageVisible, pages, type Locale } from "@/config";
-import { Link } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/layout/DefaultLayout";
+import { BlogHero } from "@/components/blog-components/BlogHero";
+import { ExploreCategories } from "@/components/blog-components/ExploreCategories";
+import { ExploreTags } from "@/components/blog-components/ExploreTags";
+import { TopAuthors } from "@/components/blog-components/TopAuthors";
+import { NewsletterSignup } from "@/components/blog-components/NewsletterSignup";
+import { BlogListing } from "@/components/blog-components/BlogListing";
 import { Modules } from "@/components/blog-components/modules/ModuleRenderer";
 import { sanityFetchLive } from "@/sanity/live";
-import { allPostsQuery, blogSingletonQuery } from "@/sanity/queries";
-import type { BlogSingleton, PostListItem } from "@/sanity/types";
+import {
+  allPostsQuery,
+  authorsForLocaleQuery,
+  blogSingletonQuery,
+  categoriesForLocaleQuery,
+  tagsForLocaleQuery,
+} from "@/sanity/queries";
+import type { Author, BlogSingleton, Category, PostListItem, Tag } from "@/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -19,9 +29,11 @@ export async function generateMetadata({ params }: Props) {
 }
 
 /**
- * Blog frontpage — module-driven when the `blog` singleton has
- * `frontpageModules`. Falls back to a default card grid otherwise so
- * the route works out of the box without any editor action.
+ * Blog frontpage. Module-driven when the `blog` singleton has
+ * `frontpageModules` populated; otherwise renders the blog-forge style
+ * default: hero card grid → category explorer → top authors → newsletter.
+ *
+ * The plain three-column listing still lives at /blog/two-column.
  */
 export default async function BlogPage({ params }: Props) {
   if (!features.blog || !isPageVisible(pages.blog)) notFound();
@@ -40,105 +52,74 @@ export default async function BlogPage({ params }: Props) {
       {modules.length > 0 ? (
         <Modules modules={modules} context={{ locale }} />
       ) : (
-        <DefaultFrontpage locale={locale} />
+        <DefaultBlogFrontpage locale={locale} />
       )}
     </DefaultLayout>
   );
 }
 
-// ─── Hard-coded fallback when no modules are configured ─────────
+async function DefaultBlogFrontpage({ locale }: { locale: Locale }) {
+  const [posts, authors, categories, tags, t] = await Promise.all([
+    sanityFetchLive<PostListItem[]>({ query: allPostsQuery, params: { locale } }),
+    sanityFetchLive<Author[]>({ query: authorsForLocaleQuery, params: { locale } }),
+    sanityFetchLive<Category[]>({
+      query: categoriesForLocaleQuery,
+      params: { locale },
+    }),
+    sanityFetchLive<Tag[]>({ query: tagsForLocaleQuery, params: { locale } }),
+    getTranslations("pages.blog"),
+  ]);
 
-async function DefaultFrontpage({ locale }: { locale: Locale }) {
-  const t = await getTranslations("pages.blog");
-  const posts = await sanityFetchLive<PostListItem[]>({
-    query: allPostsQuery,
-    params: { locale },
-  });
-
-  return (
-    <section
-      aria-labelledby="blog-title"
-      className="mx-auto max-w-6xl px-(--gutter) py-16 md:py-24"
-    >
-      <header className="mx-auto max-w-2xl text-center">
-        <h1 id="blog-title" className="text-4xl font-semibold lg:text-5xl">
-          {t("heading")}
-        </h1>
-        <p className="text-muted-foreground mt-4 text-balance">{t("subheading")}</p>
-      </header>
-
-      {posts.length === 0 ? (
-        <p className="text-muted-foreground mt-16 text-center">{t("noPosts")}</p>
-      ) : (
-        <ul className="mt-12 grid gap-8 md:mt-20 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
-            <li key={post._id}>
-              <PostCard post={post} locale={locale} />
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
-
-function PostCard({ post, locale }: { post: PostListItem; locale: Locale }) {
-  const image = post.metadata?.image?.asset?.url;
-  const category = post.categories?.[0]?.title;
-  const date = post.publishedAt
-    ? new Intl.DateTimeFormat(locale, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }).format(new Date(post.publishedAt))
-    : null;
-  const slug = post.slug ?? "";
-  const title = post.metadata?.title ?? post.title ?? "";
-  const description = post.metadata?.description;
+  if (posts.length === 0) {
+    return (
+      <BlogListing
+        posts={posts}
+        locale={locale}
+        heading={t("heading")}
+        subheading={t("subheading")}
+        noPostsLabel={t("noPosts")}
+        cols={3}
+      />
+    );
+  }
 
   return (
-    <article className="bg-card ring-border/60 group flex h-full flex-col overflow-hidden rounded-xl shadow-sm ring-1 transition hover:shadow-md">
-      <Link
-        href={`/blog/${slug}`}
-        className="focus-visible:ring-ring relative block aspect-[4/3] overflow-hidden focus-visible:ring-2 focus-visible:outline-none"
-      >
-        {image ? (
-          <Image
-            src={image}
-            alt={post.metadata?.image?.alt ?? title}
-            fill
-            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-            className="object-cover transition group-hover:scale-[1.02]"
-          />
-        ) : (
-          <div className="bg-muted h-full w-full" aria-hidden="true" />
-        )}
-        {category ? (
-          <span className="bg-background/90 text-foreground absolute top-3 left-3 rounded-md px-2 py-1 text-xs font-medium">
-            {category}
-          </span>
-        ) : null}
-        {post.featured ? (
-          <span className="bg-brand text-brand-foreground absolute top-3 right-3 rounded-md px-2 py-1 text-xs font-medium">
-            ★
-          </span>
-        ) : null}
-      </Link>
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <Link
-          href={`/blog/${slug}`}
-          className="focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
-        >
-          <h2 className="line-clamp-2 text-lg font-semibold">{title}</h2>
-        </Link>
-        {description ? (
-          <p className="text-muted-foreground line-clamp-2 text-sm">{description}</p>
-        ) : null}
-        <div className="text-muted-foreground mt-auto flex items-center justify-between pt-3 text-xs">
-          {post.author?.name ? <span>{post.author.name}</span> : <span />}
-          {date ? <time dateTime={post.publishedAt}>{date}</time> : null}
-        </div>
-      </div>
-    </article>
+    <>
+      <h1 className="sr-only">{t("title")}</h1>
+      <BlogHero posts={posts} locale={locale} label={t("heroLabel")} />
+
+      <ExploreCategories
+        categories={categories}
+        posts={posts}
+        locale={locale}
+        heading={t("categories.heading")}
+        subheading={t("categories.subheading")}
+        viewAllLabel={t("categories.viewAll")}
+        allHref="/blog/two-column"
+      />
+
+      <ExploreTags
+        tags={tags}
+        heading={t("tags.heading")}
+        subheading={t("tags.subheading")}
+        viewAllLabel={t("tags.viewAll")}
+      />
+
+      <TopAuthors
+        authors={authors}
+        heading={t("authors.heading")}
+        viewAllLabel={t("authors.viewAll")}
+        postsLabel={t.raw("authors.posts")}
+      />
+
+      <NewsletterSignup
+        heading={t("newsletter.heading")}
+        subheading={t("newsletter.subheading")}
+        placeholder={t("newsletter.placeholder")}
+        submitLabel={t("newsletter.submit")}
+        successLabel={t("newsletter.success")}
+        errorLabel={t("newsletter.error")}
+      />
+    </>
   );
 }

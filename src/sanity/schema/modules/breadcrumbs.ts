@@ -3,11 +3,18 @@ import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.breadcrumbs",
-  title: "Breadcrumbs",
+  title: "Fil d'ariane",
   fields: [
     defineField({
+      name: "label",
+      title: "Libellé aria",
+      type: "string",
+      description:
+        "Optionnel. Définit `aria-label` sur la nav du fil d'ariane. Laissez vide pour utiliser la valeur localisée par défaut (messages/<locale>.json).",
+    }),
+    defineField({
       name: "items",
-      title: "Items",
+      title: "Éléments",
       type: "array",
       of: [
         defineArrayMember({
@@ -16,15 +23,16 @@ export default defineModule({
           fields: [
             defineField({
               name: "label",
-              title: "Label",
+              title: "Libellé",
               type: "string",
               validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: "href",
-              title: "Href",
+              title: "Lien (href)",
               type: "string",
-              description: "Path like '/blog' or '/' — leave blank for current page.",
+              description:
+                "Chemin comme « /blog » ou « / » — laissez vide pour la page courante.",
             }),
           ],
           preview: { select: { title: "label", subtitle: "href" } },
@@ -32,5 +40,5 @@ export default defineModule({
       ],
     }),
   ],
-  preview: { prepare: () => ({ title: "Breadcrumbs" }) },
+  preview: { prepare: () => ({ title: "Fil d'ariane" }) },
 });

@@ -1,12 +1,18 @@
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import type { QuoteListModule } from "@/sanity/types";
 
-export function QuoteList(props: QuoteListModule) {
+export async function QuoteList(props: QuoteListModule) {
   // GROQ can return null entries for references the client can't see;
   // filter them so the renderer never dereferences null.
   const quotes = (props.quotes ?? []).filter(Boolean);
   if (!quotes.length) return null;
   const single = quotes.length === 1;
+  // Locale-aware quotation marks — `typography.quoteStyle.primary` is
+  // an array like ["“", "”"] (EN) or ["« ", " »"] (FR).
+  const t = await getTranslations("typography");
+  const marks = t.raw("quoteStyle.primary") as [string, string];
+  const [open, close] = Array.isArray(marks) ? marks : ["“", "”"];
   return (
     <section id={props.anchor} className="mx-auto max-w-5xl px-(--gutter) py-12 md:py-20">
       {props.title ? (
@@ -25,7 +31,9 @@ export function QuoteList(props: QuoteListModule) {
             className="flex max-w-2xl flex-col items-center gap-6 px-6 py-6 text-center"
           >
             <blockquote className="text-lg font-medium md:text-2xl">
-              “{q.content}”
+              {open}
+              {q.content}
+              {close}
             </blockquote>
             <div className="flex items-center gap-3">
               {q.image?.asset?.url ? (

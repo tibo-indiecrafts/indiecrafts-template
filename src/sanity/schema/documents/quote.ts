@@ -2,12 +2,12 @@ import { defineField, defineType } from "sanity";
 
 export default defineType({
   name: "quote",
-  title: "Quote",
+  title: "Citation",
   type: "document",
   fields: [
     defineField({
       name: "language",
-      title: "Language",
+      title: "Langue",
       type: "string",
       options: {
         list: [
@@ -17,19 +17,20 @@ export default defineType({
         layout: "radio",
       },
       initialValue: "en",
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "content",
-      title: "Content",
+      title: "Contenu",
       type: "text",
       rows: 4,
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: "author", title: "Author name", type: "string" }),
-    defineField({ name: "role", title: "Author role", type: "string" }),
+    defineField({ name: "author", title: "Nom de l'auteur", type: "string" }),
+    defineField({ name: "role", title: "Rôle / fonction", type: "string" }),
     defineField({
       name: "image",
-      title: "Author photo",
+      title: "Photo de l'auteur",
       type: "image",
       options: { hotspot: true },
     }),
@@ -43,9 +44,9 @@ export default defineType({
     },
     prepare({ title, subtitle, language, media }) {
       return {
-        title: title ?? "(no author)",
+        title: title ?? "(sans auteur)",
         subtitle: subtitle
-          ? `${language?.toUpperCase() ?? ""} · "${subtitle.slice(0, 50)}…"`.trim()
+          ? `${language?.toUpperCase() ?? ""} · « ${subtitle.slice(0, 50)}… »`.trim()
           : language?.toUpperCase(),
         media,
       };

@@ -1,31 +1,52 @@
+import { BlockContentIcon } from "@sanity/icons";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.blog-post-list",
-  title: "Blog post list",
+  title: "Liste d'articles",
+  icon: BlockContentIcon,
   fields: [
-    defineField({ name: "title", title: "Title", type: "string" }),
+    defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({ name: "intro", title: "Intro", type: "text", rows: 2 }),
     defineField({
       name: "limit",
-      title: "Limit",
+      title: "Limite",
       type: "number",
-      description: "Max posts to show. Leave blank for all.",
+      description: "Nombre maximum d'articles. Laissez vide pour tous les afficher.",
       validation: (Rule) => Rule.min(1).max(100),
     }),
     defineField({
       name: "categories",
-      title: "Filter by categories",
+      title: "Filtrer par catégories",
       type: "array",
-      of: [{ type: "reference", to: [{ type: "category" }] }],
-      description: "Only show posts in one of these categories. Empty = all.",
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "category" }],
+          // Filter category picker by parent post's language (when the
+          // module sits inside `post.modules`). The blog singleton's
+          // module arrays have no language, so any-locale is allowed
+          // there — fine because the GROQ list query filters by locale
+          // at render time anyway.
+          options: {
+            filter: ({ document }) =>
+              document.language
+                ? {
+                    filter: "language == $lang",
+                    params: { lang: document.language as string },
+                  }
+                : { filter: "" },
+          },
+        },
+      ],
+      description: "N'affiche que les articles d'une de ces catégories. Vide = toutes.",
     }),
     defineField({
       name: "featuredOnly",
-      title: "Featured only",
+      title: "Articles mis en avant uniquement",
       type: "boolean",
-      description: "Restrict to posts flagged `featured` on the post itself.",
+      description: "Restreint aux articles marqués `featured` dans le document article.",
       initialValue: false,
     }),
   ],

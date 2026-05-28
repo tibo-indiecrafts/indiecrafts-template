@@ -7,18 +7,18 @@ export default defineModule({
   fields: [
     defineField({
       name: "content",
-      title: "Content",
+      title: "Contenu",
       type: "blockContent",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "width",
-      title: "Width",
+      title: "Largeur",
       type: "string",
       options: {
         list: [
-          { title: "Narrow (article)", value: "narrow" },
-          { title: "Wide", value: "wide" },
+          { title: "Étroite (article)", value: "narrow" },
+          { title: "Large", value: "wide" },
         ],
         layout: "radio",
       },

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  *
  * Pattern matches sanitypress's article sidebar TOC.
  */
-export function Toc({ headings, title }: { headings: Heading[]; title?: string }) {
+export function Toc({ headings, title }: { headings: Heading[]; title: string }) {
   const items = headings.map((h) => ({ ...h, id: slugify(h.text) }));
   const [active, setActive] = useState<string | null>(items[0]?.id ?? null);
 
@@ -46,11 +46,11 @@ export function Toc({ headings, title }: { headings: Heading[]; title?: string }
 
   return (
     <nav
-      aria-label={title ?? "On this page"}
+      aria-label={title}
       className="sticky top-24 hidden max-h-[calc(100vh-8rem)] overflow-y-auto text-sm md:block"
     >
       <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wider uppercase">
-        {title ?? "On this page"}
+        {title}
       </p>
       <ul className="border-border space-y-1 border-l">
         {items.map((h) => (

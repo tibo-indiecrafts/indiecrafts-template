@@ -141,7 +141,6 @@ export default async function HomePage({ params }: Props) {
             quoteKey: `${BLOCKS}.testimonials.quotes.lovelace.quote`,
             authorKey: `${BLOCKS}.testimonials.quotes.lovelace.author`,
             roleKey: `${BLOCKS}.testimonials.quotes.lovelace.role`,
-            // Placeholder portrait from Unsplash — swap for the real client photo.
             avatarUrl:
               "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=160&h=160&q=80",
           },

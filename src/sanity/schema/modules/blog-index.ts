@@ -1,14 +1,16 @@
+import { HomeIcon } from "@sanity/icons";
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 
 export default defineModule({
   name: "module.blog-index",
-  title: "Blog frontpage hero",
+  title: "Hero d'accueil du blog",
+  icon: HomeIcon,
   fields: [
-    defineField({ name: "eyebrow", title: "Eyebrow", type: "string" }),
+    defineField({ name: "eyebrow", title: "Sur-titre", type: "string" }),
     defineField({
       name: "title",
-      title: "Title",
+      title: "Titre",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
@@ -17,7 +19,7 @@ export default defineModule({
   preview: {
     select: { title: "title" },
     prepare: ({ title }) => ({
-      title: "Blog frontpage hero",
+      title: "Hero d'accueil du blog",
       subtitle: title,
     }),
   },
