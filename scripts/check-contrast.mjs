@@ -34,6 +34,7 @@ const PAIRS = [
   ["brand", "background", 3.0, "brand accent / links"],
   ["ring", "background", 3.0, "focus ring"],
   ["border", "background", 1.5, "border (non-text)"],
+  ["selection-fg", "selection-bg", 4.5, "selected text"],
 ];
 
 // ---- oklch parser --------------------------------------------------------
@@ -77,8 +78,12 @@ function contrast(a, b) {
 
 // ---- block extractor -----------------------------------------------------
 function extractBlock(css, selector) {
+  // The selector may appear in a comma-separated list, e.g.
+  //   :root[data-theme="dark"],
+  //   [data-theme="dark"] { … }
+  // Allow an optional `, ...` between the selector and the opening brace.
   const re = new RegExp(
-    `${selector.replace(/[-[\]{}()*+?.\\^$|]/g, "\\$&")}\\s*\\{([^}]*)\\}`,
+    `${selector.replace(/[-[\]{}()*+?.\\^$|]/g, "\\$&")}(?:\\s*,\\s*[^{]+?)?\\s*\\{([^}]*)\\}`,
     "m",
   );
   const m = re.exec(css);

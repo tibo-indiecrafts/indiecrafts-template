@@ -12,31 +12,53 @@
  */
 
 /*
- * Theme tokens — mirror src/config/theme.config.ts.
+ * Theme tokens — mirror `src/config/theme.colors`.
  *
- * Two dark triggers, in order of precedence:
+ * ─ Why OKLCH ───────────────────────────────────────────────────
+ * Lightness (L) is perceptually uniform: equal L jumps look like equal
+ * brightness jumps, regardless of hue. Chroma (C) behaves the same way
+ * for saturation. HSL doesn't have either property — that's why dark-
+ * mode palettes built by inverting HSL look uneven.
+ *
+ * Tailwind v4 ships its entire colour scale in OKLCH. The comments
+ * after each value below (`/* slate-200 *​/`, etc.) map to the closest
+ * named Tailwind v4 colour so the design reference is recoverable
+ * without reverse-engineering OKLCH triples.
+ *
+ * ─ Where the hex mirror lives ──────────────────────────────────
+ * `src/config/index.ts:theme.hexColors` exists only because next/og
+ * (Satori) can't parse OKLCH at build time. If you change a colour
+ * here, update both. See docs/brand-setup.md § "The hex / oklch trap".
+ *
+ * ─ Two dark triggers ───────────────────────────────────────────
  *   1. `html[data-theme="dark"]` — user-chosen via ThemeProvider/toggle
- *   2. `@media (prefers-color-scheme: dark)` when `data-theme` isn't forcing light
+ *   2. `@media (prefers-color-scheme: dark)` when `data-theme` isn't
+ *      forcing light
  *
- * The `@custom-variant dark` directive makes `dark:` utilities match on the
- * data-theme attribute (Tailwind v4 pattern). Keep both triggers so a first-
- * paint visitor without JS still sees their OS preference respected.
+ * The `@custom-variant dark` directive below makes `dark:` utilities
+ * match on the data-theme attribute (Tailwind v4 pattern). Keep both
+ * triggers so a first-paint visitor without JS still sees their OS
+ * preference respected.
  */
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --brand: oklch(0.55 0.18 260);
-  --brand-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.84 0 0);
-  --illustration: oklch(1 0 0);
-  --ring: oklch(0.55 0.18 260);
+  --background: oklch(1 0 0); /* white */
+  --foreground: oklch(0.145 0 0); /* neutral-950 */
+  --muted: oklch(0.97 0 0); /* neutral-100 */
+  --muted-foreground: oklch(0.556 0 0); /* neutral-500 */
+  --brand: oklch(0.55 0.18 260); /* indigo-500 (hue retuned to 260) */
+  --brand-foreground: oklch(0.985 0 0); /* neutral-50 */
+  --destructive: oklch(0.577 0.245 27.325); /* red-600 */
+  --destructive-foreground: oklch(0.985 0 0); /* neutral-50 */
+  --border: oklch(0.84 0 0); /* between neutral-200 + neutral-300 */
+  --illustration: oklch(1 0 0); /* white — flips to near-black in dark */
+  --ring: oklch(0.55 0.18 260); /* matches --brand */
+  /* Selected text — brand-tinted wash. Foreground reuses --foreground
+     for readable contrast (verified by pnpm verify:contrast). */
+  --selection-bg: oklch(0.9 0.07 260); /* pale indigo, indigo-100-ish */
+  --selection-fg: oklch(0.145 0 0); /* neutral-950 — same as --foreground */
   --radius: 0.5rem;
   /*
    * Standard shadcn tokens — aliased to this repo's palette.
@@ -74,16 +96,23 @@
 /* OS preference — only applies if data-theme isn't overriding. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --muted: oklch(0.205 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --border: oklch(0.5 0 0);
-    --illustration: oklch(0.18 0 0);
-    /* Brand retuned for dark — lighter + slightly less saturated for AA contrast on black. */
-    --brand: oklch(0.72 0.16 260);
-    --brand-foreground: oklch(0.145 0 0);
-    --ring: oklch(0.72 0.16 260);
+    --background: oklch(0.145 0 0); /* neutral-950 */
+    --foreground: oklch(0.985 0 0); /* neutral-50 */
+    --muted: oklch(0.205 0 0); /* neutral-900 */
+    --muted-foreground: oklch(0.708 0 0); /* neutral-400 */
+    --border: oklch(0.5 0 0); /* ~neutral-500 — bumped for AA on near-black */
+    --illustration: oklch(0.18 0 0); /* between neutral-900 + neutral-950 */
+    /* Brand retuned for dark — lighter + slightly less saturated for AA
+       contrast on black. Not a strict inversion: the article's "invert
+       grayscale" rule breaks here because chromatic colours need a
+       different shift than neutrals. */
+    --brand: oklch(0.72 0.16 260); /* indigo-400-ish */
+    --brand-foreground: oklch(0.145 0 0); /* neutral-950 */
+    --ring: oklch(0.72 0.16 260); /* matches --brand */
+    /* Selected text — deeper indigo for dark surface, foreground stays
+       near-white for high contrast. */
+    --selection-bg: oklch(0.4 0.12 260); /* indigo-800-ish */
+    --selection-fg: oklch(0.985 0 0); /* neutral-50 — same as --foreground */
   }
 }
 
@@ -98,15 +127,17 @@
  */
 :root[data-theme="dark"],
 [data-theme="dark"] {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --muted: oklch(0.205 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --border: oklch(0.5 0 0);
-  --illustration: oklch(0.18 0 0);
-  --brand: oklch(0.72 0.16 260);
-  --brand-foreground: oklch(0.145 0 0);
-  --ring: oklch(0.72 0.16 260);
+  --background: oklch(0.145 0 0); /* neutral-950 */
+  --foreground: oklch(0.985 0 0); /* neutral-50 */
+  --muted: oklch(0.205 0 0); /* neutral-900 */
+  --muted-foreground: oklch(0.708 0 0); /* neutral-400 */
+  --border: oklch(0.5 0 0); /* ~neutral-500 */
+  --illustration: oklch(0.18 0 0); /* between neutral-900 + neutral-950 */
+  --brand: oklch(0.72 0.16 260); /* indigo-400-ish */
+  --brand-foreground: oklch(0.145 0 0); /* neutral-950 */
+  --ring: oklch(0.72 0.16 260); /* matches --brand */
+  --selection-bg: oklch(0.4 0.12 260); /* indigo-800-ish */
+  --selection-fg: oklch(0.985 0 0); /* neutral-50 */
 }
 
 @theme inline {
@@ -475,6 +506,45 @@ body {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
   border-radius: var(--radius);
+}
+
+/*
+ * Branded text selection — replaces the OS default (Win/Mac/Linux all
+ * differ). Uses tokens so it auto-adapts to light/dark and any future
+ * brand reskin. `text-shadow: none` resets the hero h1's drop-shadow
+ * during selection so the selected text never goes blurry.
+ */
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-fg);
+  text-shadow: none;
+}
+
+/*
+ * Windows High Contrast Mode (forced-colors). When active, the user's
+ * OS forces text + UI to a tiny palette of system colors that the
+ * browser exposes as CSS keywords (Canvas, CanvasText, Highlight,
+ * LinkText, ButtonText). Mapping our tokens here makes every component
+ * that reads them automatically respect the OS theme.
+ *
+ * Doesn't fire for ~95 % of visitors but covers a real accessibility
+ * class (vision-impaired Windows users who turn on High Contrast).
+ */
+@media (forced-colors: active) {
+  :root {
+    --background: Canvas;
+    --foreground: CanvasText;
+    --muted: Canvas;
+    --muted-foreground: CanvasText;
+    --brand: LinkText;
+    --brand-foreground: Canvas;
+    --destructive: Mark;
+    --destructive-foreground: MarkText;
+    --border: CanvasText;
+    --ring: Highlight;
+    --selection-bg: Highlight;
+    --selection-fg: HighlightText;
+  }
 }
 
 /*

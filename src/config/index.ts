@@ -141,17 +141,24 @@ export const theme = {
     background: "#ffffff",
     foreground: "#171717",
   },
-  /** Runtime CSS colors — mirrored in globals.css. */
+  /**
+   * Runtime CSS colors — mirrored in globals.css.
+   * Comments mark the closest Tailwind v4 colour reference so the
+   * original design choice is recoverable without decoding OKLCH.
+   * Light-mode values only here; dark-mode is in globals.css.
+   */
   colors: {
-    brand: "oklch(0.55 0.18 260)",
-    brandForeground: "oklch(0.985 0 0)",
-    background: "oklch(1 0 0)",
-    foreground: "oklch(0.145 0 0)",
-    muted: "oklch(0.97 0 0)",
-    mutedForeground: "oklch(0.556 0 0)",
-    destructive: "oklch(0.577 0.245 27.325)",
-    border: "oklch(0.84 0 0)",
-    ring: "oklch(0.55 0.18 260)",
+    brand: "oklch(0.55 0.18 260)" /* indigo-500 (hue retuned to 260) */,
+    brandForeground: "oklch(0.985 0 0)" /* neutral-50 */,
+    background: "oklch(1 0 0)" /* white */,
+    foreground: "oklch(0.145 0 0)" /* neutral-950 */,
+    muted: "oklch(0.97 0 0)" /* neutral-100 */,
+    mutedForeground: "oklch(0.556 0 0)" /* neutral-500 */,
+    destructive: "oklch(0.577 0.245 27.325)" /* red-600 */,
+    border: "oklch(0.84 0 0)" /* between neutral-200 + neutral-300 */,
+    ring: "oklch(0.55 0.18 260)" /* matches brand */,
+    selectionBg: "oklch(0.9 0.07 260)" /* indigo-100 — selected text wash */,
+    selectionFg: "oklch(0.145 0 0)" /* same as foreground */,
   },
   fonts: { sans: "var(--font-sans)", mono: "var(--font-mono)" },
   radii: { sm: "0.375rem", md: "0.5rem", lg: "0.75rem", xl: "1rem" },

@@ -52,16 +52,19 @@ theme = {
     foreground: "#0a0a0a",
   },
   colors: {
-    // CSS vars — oklch encouraged
-    brand: "oklch(0.46 0.21 290)",
-    brandForeground: "oklch(1 0 0)",
-    background: "oklch(1 0 0)",
-    foreground: "oklch(0.18 0 0)",
-    muted: "oklch(0.97 0 0)",
-    mutedForeground: "oklch(0.46 0 0)",
-    border: "oklch(0.92 0 0)",
-    ring: "oklch(0.46 0.21 290)",
-    // …
+    // CSS vars — oklch. Annotate every value with the closest Tailwind
+    // v4 named colour so the original design reference is recoverable
+    // without decoding OKLCH manually.
+    brand: "oklch(0.55 0.18 260)" /* indigo-500 */,
+    brandForeground: "oklch(0.985 0 0)" /* neutral-50 */,
+    background: "oklch(1 0 0)" /* white */,
+    foreground: "oklch(0.145 0 0)" /* neutral-950 */,
+    muted: "oklch(0.97 0 0)" /* neutral-100 */,
+    mutedForeground: "oklch(0.556 0 0)" /* neutral-500 */,
+    border: "oklch(0.84 0 0)" /* between neutral-200 + neutral-300 */,
+    ring: "oklch(0.55 0.18 260)" /* matches brand */,
+    selectionBg: "oklch(0.9 0.07 260)" /* indigo-100 — selected text wash */,
+    selectionFg: "oklch(0.145 0 0)" /* same as foreground */,
   },
   fonts: { sans: "Inter", mono: "JetBrains Mono" },
   radii: { sm: "0.25rem", md: "0.5rem", lg: "0.75rem", xl: "1rem" },
@@ -84,9 +87,28 @@ When you change a colour, change it in both places. The contrast check below wil
 pnpm verify:contrast
 ```
 
-Asserts WCAG AA on every pair in `theme.colors` (`foreground`/`background`, `mutedForeground`/`background`, `brandForeground`/`brand`, …). If a pair fails, the script tells you the ratio and the minimum needed.
+Asserts WCAG AA on every pair in `theme.colors` (`foreground`/`background`, `mutedForeground`/`background`, `brandForeground`/`brand`, `selectionFg`/`selectionBg`, …). Runs both light + dark themes independently — if a pair fails in either, it fails the whole check. The script tells you the ratio and the minimum needed.
 
 This is also part of `pnpm verify` (the full CI gate), so failing contrast blocks the build.
+
+### Selected text
+
+`::selection` is wired to two brand-tinted tokens, `--selection-bg` + `--selection-fg`. Both adapt automatically to the active theme — the light variant uses a pale indigo wash with dark text; the dark variant uses a deeper indigo with light text. Both pass WCAG AA against each other (14.5:1 light, 9:1 dark).
+
+You almost never need to touch these — they recolour every selectable surface on the site at once. The only reason to override would be intentionally suppressing brand colour on a specific section (e.g. a dark hero where the brand wash would visually fight with the cover image). In that case, scope an override:
+
+```css
+.no-brand-selection ::selection {
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+```
+
+### Windows High Contrast mode (forced-colors)
+
+A `@media (forced-colors: active)` block at the bottom of `globals.css` remaps every token to OS system colours (`Canvas`, `CanvasText`, `LinkText`, `Highlight`, `Mark`). Vision-impaired Windows users who turn on High Contrast see the site rendered in their chosen palette automatically — no per-component work needed, because every utility already reads the same `--*` tokens.
+
+You should never need to change this block. The mapping is conservative: backgrounds → `Canvas`, text → `CanvasText`, brand/links → `LinkText`, focus rings → `Highlight`.
 
 ---
 
