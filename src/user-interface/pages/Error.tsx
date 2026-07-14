@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/parts/ui/button";
-import { DefaultLayout } from "@/parts/layout/DefaultLayout";
+import { Button } from "@/user-interface/ui/button";
+import { DefaultLayout } from "@/user-interface/layout/DefaultLayout";
 
 export type ErrorProps = {
   onRetry?: () => void;

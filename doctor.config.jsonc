@@ -1,0 +1,71 @@
+{
+  "$schema": "https://react.doctor/schema/config.json",
+
+  // Paths excluded from React Doctor scanning entirely (all rules, not just
+  // dead-code). These are externally-managed sources we do not hand-edit, so
+  // React Doctor findings inside them are noise — the fix would be reverted by
+  // the tool that owns the file, or would break an isolated sub-project.
+  "ignore": {
+    "files": [
+      // shadcn/ui primitives — CLI-managed and READ-ONLY (see CLAUDE.md +
+      // components.json). They're the template's component palette: "unused"
+      // only because no page imports them yet, and un-editable by hand because
+      // `shadcn add` regenerates them.
+      "src/user-interface/ui/**",
+
+      // Companion hook that ships with shadcn's sidebar primitive; same
+      // CLI-managed lifecycle as src/user-interface/ui/**.
+      "src/hooks/use-mobile.ts",
+
+      // VitePress docs site — a separate, npm-managed project isolated from the
+      // app (own docs/package.json). Its config.mts is a framework entry point
+      // React Doctor's reachability tracer can't see, so it mis-reports as an
+      // orphan file.
+      "docs/**",
+    ],
+
+    // Narrow per-path rule suppressions (the file is still scanned for every
+    // OTHER rule — this only drops the named rule for the matched paths).
+    "overrides": [
+      {
+        // The SEO structured-data toolkit: on-demand schema builders (Article,
+        // Service, Product, LocalBusiness, Person, Breadcrumb) exposed as the
+        // template's starting point for `page.seo.structuredData[]`. They're
+        // intentional public API — "unused" only until a client site wires one
+        // in — so they're entry points, not dead code.
+        "files": ["src/lib/seo/jsonld-factories.tsx"],
+        "rules": ["deslop/unused-export"],
+      },
+      {
+        // `STATIC_PATHNAME_KEYS` IS used — the `StaticAppPathname` type reads it
+        // via `typeof`, and it's re-exported from the `@/config` barrel as
+        // public API. deslop doesn't count type-level (`typeof`) usage, so it
+        // mis-reports the value export as dead.
+        "files": ["src/config/types.ts"],
+        "rules": ["deslop/unused-export"],
+      },
+      {
+        // Custom-HTML page-builder module — a deliberate editor escape-hatch
+        // that injects `props.html` so authors can embed scripts / iframes /
+        // widgets. The trust boundary is Sanity Studio access (locked via
+        // roles), documented in the file; sanitizing would defeat its purpose.
+        "files": ["src/features/blog/user-interface/renderers/CustomHtml.tsx"],
+        "rules": ["react-doctor/dangerous-html-sink"],
+      },
+      {
+        // BrandIcon injects `icon.svgContent`, a static `<path>` constant from
+        // the `reicon-brands` library (the only SSR-safe render path it
+        // exposes) — not user- or request-derived data, so no XSS surface.
+        "files": ["src/user-interface/components/BrandIcon.tsx"],
+        "rules": ["react-doctor/dangerous-html-sink"],
+      },
+      {
+        // IconShowcase renders fixed, hardcoded icon arrays that never reorder
+        // or filter — the one case React's docs sanction using the array index
+        // as a key. No stable domain id exists (they're bare component refs).
+        "files": ["src/user-interface/sections/IconShowcase.tsx"],
+        "rules": ["react-doctor/no-array-index-as-key"],
+      },
+    ],
+  },
+}

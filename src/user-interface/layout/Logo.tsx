@@ -6,7 +6,7 @@ type LogoIconProps = {
   className?: string;
 };
 
-export function LogoIcon({ className }: LogoIconProps) {
+function LogoIcon({ className }: LogoIconProps) {
   return (
     <Image
       src={site.logo}

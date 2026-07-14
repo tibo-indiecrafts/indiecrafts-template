@@ -2,8 +2,9 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
 import { parseVideoEmbed } from "@/lib/video-embed";
+import { formatPostDate } from "@/lib/format-date";
 import type { PostListItem } from "@/features/blog/sanity/types";
-import { PlayBadge } from "@/features/blog/components/PlayBadge";
+import { PlayBadge } from "@/features/blog/user-interface/components/PlayBadge";
 
 /**
  * Homepage "editor's desk" — a curated strip of featured articles, laid out
@@ -183,10 +184,5 @@ function SecondaryRow({ post, locale }: { post: PostListItem; locale: Locale }) 
 }
 
 function formatDate(locale: Locale, iso?: string | null): string | null {
-  if (!iso) return null;
-  return new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(new Date(iso));
+  return formatPostDate(locale, iso);
 }

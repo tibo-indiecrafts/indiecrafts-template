@@ -1,14 +1,14 @@
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { Button } from "@/parts/ui/button";
+import { Button } from "@/user-interface/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/parts/ui/card";
+} from "@/user-interface/ui/card";
 import { cn } from "@/lib/utils";
 import type { StaticAppPathname } from "@/config";
 

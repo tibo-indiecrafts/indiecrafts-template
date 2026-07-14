@@ -1,8 +1,11 @@
 import Image from "next/image";
 import type { Locale } from "@/config";
 import type { Author, PostListItem } from "@/features/blog/sanity/types";
-import { BlogCard } from "./BlogCard";
-import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
+import { BlogCard } from "@/features/blog/user-interface/components/BlogCard";
+import {
+  Breadcrumbs,
+  type Crumb,
+} from "@/features/blog/user-interface/components/Breadcrumbs";
 
 /**
  * Author detail section — `/author/[slug]`. Hero block shows the

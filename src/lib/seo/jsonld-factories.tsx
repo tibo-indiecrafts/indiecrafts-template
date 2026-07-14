@@ -21,7 +21,7 @@
  */
 
 import { site } from "@/config";
-import { compact, type SchemaObject } from "./jsonld";
+import { compact, type SchemaObject } from "./jsonld-core";
 
 // ── BreadcrumbList ───────────────────────────────────────────
 

@@ -6,12 +6,16 @@ import { cn } from "@/lib/utils";
 import { parseVideoEmbed } from "@/lib/video-embed";
 import { Link } from "@/i18n/routing";
 import type { Post, PostListItem } from "@/features/blog/sanity/types";
-import { BlogCard } from "./BlogCard";
-import { HeroVideo } from "./HeroVideo";
-import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
-import { Toc } from "./Toc";
-import { MobileToc } from "./MobileToc";
-import { portableComponents } from "./modules/portable-text-components";
+import { BlogCard } from "@/features/blog/user-interface/components/BlogCard";
+import { HeroVideo } from "@/features/blog/user-interface/components/HeroVideo";
+import {
+  Breadcrumbs,
+  type Crumb,
+} from "@/features/blog/user-interface/components/Breadcrumbs";
+import { Toc } from "@/features/blog/user-interface/components/Toc";
+import { MobileToc } from "@/features/blog/user-interface/components/MobileToc";
+import { portableComponents } from "@/features/blog/user-interface/renderers/portable-text-components";
+import { formatPostDate } from "@/lib/format-date";
 
 /**
  * Server-rendered post page when no module-driven layout is configured.
@@ -45,13 +49,7 @@ export async function DefaultPostLayout({
     getTranslations("pages.blog"),
     getTranslations("nav"),
   ]);
-  const date = post.publishedAt
-    ? new Intl.DateTimeFormat(locale, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(post.publishedAt))
-    : null;
+  const date = formatPostDate(locale, post.publishedAt, { month: "long" });
   const readTime = post.readTime && post.readTime > 0 ? post.readTime : null;
   const author = post.author;
   const authorHref = author?.slug ? `/author/${author.slug}` : "/author";

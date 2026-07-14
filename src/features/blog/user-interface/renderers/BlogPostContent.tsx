@@ -3,6 +3,7 @@ import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";
 import type { BlogPostContentModule, Post } from "@/features/blog/sanity/types";
 import type { Locale } from "@/config";
+import { formatPostDate } from "@/lib/format-date";
 import { Link } from "@/i18n/routing";
 import { portableComponents } from "./portable-text-components";
 
@@ -28,13 +29,7 @@ export async function BlogPostContent({
   const title = post.metadata?.title ?? post.title ?? "";
   const description = post.metadata?.description;
   const image = post.metadata?.image?.asset?.url;
-  const date = post.publishedAt
-    ? new Intl.DateTimeFormat(locale, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(post.publishedAt))
-    : null;
+  const date = formatPostDate(locale, post.publishedAt, { month: "long" });
   const categoryRef = post.categories?.[0];
   const author = post.author;
   const authorHref = author?.slug ? `/author/${author.slug}` : "/author";

@@ -2,7 +2,7 @@
 
 Everything you can insert into a post body in the Studio.
 
-The body editor is Sanity's Portable Text canvas, configured by `src/features/blog/sanity/schema/blockContent.ts`. On the live site the body renders inside a `.prose prose-neutral dark:prose-invert` wrapper — the visual styling of paragraphs, headings, lists, marks, and blockquotes comes from the `@tailwindcss/typography` plugin (enabled in `src/app/globals.css`). `src/features/blog/components/modules/portable-text-components.tsx` overrides only what the plugin can't infer from markup: deterministic heading `id`s (so the TOC can anchor), the external-link `target`, inline images, and the inline modules.
+The body editor is Sanity's Portable Text canvas, configured by `src/features/blog/sanity/schema/blockContent.ts`. On the live site the body renders inside a `.prose prose-neutral dark:prose-invert` wrapper — the visual styling of paragraphs, headings, lists, marks, and blockquotes comes from the `@tailwindcss/typography` plugin (enabled in `src/app/globals.css`). `src/features/blog/user-interface/renderers/portable-text-components.tsx` overrides only what the plugin can't infer from markup: deterministic heading `id`s (so the TOC can anchor), the external-link `target`, inline images, and the inline modules.
 
 If you want to _see_ every primitive in one post, look at the showcase article: `/en/blog/fast-prototyping-with-nextjs` (or `/fr/...prototypage-rapide-avec-nextjs`). The seed scaffolds it on purpose.
 
@@ -63,7 +63,7 @@ The chain icon adds a link annotation around the selected text.
 - Internal links: paste a path starting with `/` (e.g. `/blog/another-post`). Rendered as `<a href="...">`.
 - External links: paste any `http(s)://` URL. Rendered as `<a target="_blank" rel="noopener noreferrer">`.
 
-The renderer is in `src/features/blog/components/modules/portable-text-components.tsx` under `marks.link`.
+The renderer is in `src/features/blog/user-interface/renderers/portable-text-components.tsx` under `marks.link`.
 
 ---
 

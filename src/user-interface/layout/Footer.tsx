@@ -1,11 +1,11 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { Logo } from "@/parts/layout/Logo";
+import { Logo } from "@/user-interface/layout/Logo";
 import { footerNav } from "@/config";
 import { site } from "@/config";
 
 /**
- * Production site footer, colocated in `@/parts/layout` so the production
+ * Production site footer, colocated in `@/user-interface/layout` so the production
  * chrome is owned end-to-end.
  *
  * Renders nav groups from `footerNav` in `@/config` (a "Company" group with

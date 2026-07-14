@@ -1,6 +1,6 @@
 # Featured video embeds
 
-A post can carry a video (`metadata.videoUrl` in Sanity). Rather than store raw `<iframe>` HTML, the template stores a plain **URL** and builds the player itself — so only a validated URL from a known provider ever reaches an iframe `src`. `src/lib/video-embed.ts` does the parsing; `src/features/blog/components/HeroVideo.tsx` renders it.
+A post can carry a video (`metadata.videoUrl` in Sanity). Rather than store raw `<iframe>` HTML, the template stores a plain **URL** and builds the player itself — so only a validated URL from a known provider ever reaches an iframe `src`. `src/lib/video-embed.ts` does the parsing; `src/features/blog/user-interface/components/HeroVideo.tsx` renders it.
 
 ## Why a URL, not markup
 

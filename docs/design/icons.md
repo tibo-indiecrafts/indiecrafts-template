@@ -4,7 +4,7 @@ Two separate concerns: the **icon sets** you draw UI glyphs from, and the **favi
 
 ## Icon sets
 
-The template ships three sets, each for a different job (all demoed in `src/parts/sections/IconShowcase.tsx`):
+The template ships three sets, each for a different job (all demoed in `src/user-interface/sections/IconShowcase.tsx`):
 
 | Set               | Package         | Use for                                                                |
 | ----------------- | --------------- | ---------------------------------------------------------------------- |
@@ -16,11 +16,11 @@ Lucide icons are plain React components: `<Zap className="size-5" aria-hidden="t
 
 ## BrandIcon
 
-Brand logos need a wrapper because `reicon-brands` icons are framework-agnostic factories that call `document.createElementNS` — which throws during SSR. `src/parts/components/BrandIcon.tsx` sidesteps that by building the `<svg>` itself from the icon's static `svgContent`:
+Brand logos need a wrapper because `reicon-brands` icons are framework-agnostic factories that call `document.createElementNS` — which throws during SSR. `src/user-interface/components/BrandIcon.tsx` sidesteps that by building the `<svg>` itself from the icon's static `svgContent`:
 
 ```tsx
 import { Github } from "reicon-brands";
-import { BrandIcon } from "@/parts/components/BrandIcon";
+import { BrandIcon } from "@/user-interface/components/BrandIcon";
 
 <BrandIcon icon={Github} size={28} brandColor />;
 ```

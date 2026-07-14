@@ -13,8 +13,9 @@ Detailed conventions: [`CLAUDE.md`](./CLAUDE.md).
 ```bash
 pnpm install
 pnpm dev                # http://localhost:3000
-pnpm verify             # tsc + lint + format:check + contrast (full CI gate)
+pnpm verify             # tsc + lint + format:check + contrast + react-doctor (full CI gate)
 pnpm verify:quick       # tsc + lint (pre-push)
+pnpm doctor             # React Doctor — full health scan (doctor:changed = new code only)
 ```
 
 ## Blog (Sanity-powered, optional)

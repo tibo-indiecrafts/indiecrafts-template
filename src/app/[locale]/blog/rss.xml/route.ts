@@ -60,7 +60,7 @@ function renderItem(post: RssPost, locale: Locale): string {
   const description = post.metadata?.description ?? "";
   const pubDate = post.publishedAt ? new Date(post.publishedAt).toUTCString() : null;
   const author = post.author?.name;
-  const cats = post.categories?.map((c) => c.title).filter(Boolean) ?? [];
+  const cats = post.categories?.flatMap((c) => (c.title ? [c.title] : [])) ?? [];
   const image = post.metadata?.image?.asset?.url;
 
   return `  <item>
@@ -70,7 +70,7 @@ function renderItem(post: RssPost, locale: Locale): string {
     ${description ? `<description><![CDATA[${description}]]></description>` : ""}
     ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ""}
     ${author ? `<dc:creator>${escapeXml(author)}</dc:creator>` : ""}
-    ${cats.map((c) => `<category>${escapeXml(c!)}</category>`).join("\n    ")}
+    ${cats.map((c) => `<category>${escapeXml(c)}</category>`).join("\n    ")}
     ${image ? `<enclosure url="${image}" length="0" type="image/jpeg" />` : ""}
   </item>`;
 }

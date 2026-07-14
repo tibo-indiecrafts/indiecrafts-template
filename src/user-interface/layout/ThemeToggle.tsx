@@ -4,14 +4,14 @@ import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { useSyncExternalStore } from "react";
-import { Button } from "@/parts/ui/button";
+import { Button } from "@/user-interface/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@/parts/ui/dropdown-menu";
+} from "@/user-interface/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { THEME_MODES } from "@/lib/theme";
 import type { ThemeMode } from "@/config";

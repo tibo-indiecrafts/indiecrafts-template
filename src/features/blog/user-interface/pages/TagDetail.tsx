@@ -1,7 +1,10 @@
 import type { Locale } from "@/config";
 import type { PostListItem, Tag } from "@/features/blog/sanity/types";
-import { BlogCard } from "./BlogCard";
-import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
+import { BlogCard } from "@/features/blog/user-interface/components/BlogCard";
+import {
+  Breadcrumbs,
+  type Crumb,
+} from "@/features/blog/user-interface/components/Breadcrumbs";
 
 /**
  * Tag detail section — `/blog/tag/[slug]`. Header card shows the tag

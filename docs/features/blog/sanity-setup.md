@@ -145,7 +145,7 @@ Every module gets `anchor` + `hidden` fields auto-injected by `defineModule` (`s
 
 ### Renderer
 
-`src/features/blog/components/modules/registry.tsx` holds the `SIMPLE_MODULES` map (`_type` → component), constrained with `satisfies` so a missing entry is a **compile error** — this is where TS exhaustiveness lives. `ModuleRenderer.tsx` (`<Modules>` + `ModuleSwitch`) consumes that registry, special-casing the two context-aware modules. Each module has a matching component in `src/features/blog/components/modules/`.
+`src/features/blog/user-interface/renderers/registry.tsx` holds the `SIMPLE_MODULES` map (`_type` → component), constrained with `satisfies` so a missing entry is a **compile error** — this is where TS exhaustiveness lives. `ModuleRenderer.tsx` (`<Modules>` + `ModuleSwitch`) consumes that registry, special-casing the two context-aware modules. Each module has a matching component in `src/features/blog/user-interface/renderers/`.
 
 ### Studio sidebar (`src/features/blog/sanity/structure.ts`)
 
@@ -414,7 +414,7 @@ In the same post, also verify the default body primitives that ship with `blockC
 
 ### 7.6 Per-post layout
 
-By default the `blog` singleton's `postModules` array is empty, so every `/blog/[slug]` route renders via `DefaultPostLayout` (`src/features/blog/components/DefaultPostLayout.tsx`):
+By default the `blog` singleton's `postModules` array is empty, so every `/blog/[slug]` route renders via `DefaultPostLayout` (`src/features/blog/user-interface/pages/DefaultPostLayout.tsx`):
 
 - Full-width hero card with cover image touching the nav, breadcrumbs in a backdrop-blur pill, bottom-aligned title block
 - Two-column layout below: TOC sidebar on the right (sticky `top-24`, only mounted when `post.headings` has at least one h2/h3/h4) and a rounded body panel filling the rest of the width
@@ -496,8 +496,8 @@ Likely an unset `NEXT_PUBLIC_SANITY_PROJECT_ID`. Check `.env.local`, restart dev
 2. **Register** — import + add to `moduleSchemas` and `MODULE_TYPES` in `src/features/blog/sanity/schema/modules/index.ts`
 3. **Type** — add a `<Name>Module` discriminant + add it to `AnyModule` union in `src/features/blog/sanity/types.ts`
 4. **GROQ** (only if the module has cross-references) — add a `_type == "module.<name>" => { ... }` branch to `MODULES_FRAGMENT` in `src/features/blog/sanity/queries.ts`
-5. **Component** — add `src/features/blog/components/modules/<Name>.tsx`
-6. **Registry** — add the `_type` → component entry to `SIMPLE_MODULES` in `src/features/blog/components/modules/registry.tsx` (the `satisfies` check flags a missing entry). Context-aware modules are special-cased in `ModuleRenderer.tsx` instead.
+5. **Component** — add `src/features/blog/user-interface/renderers/<Name>.tsx`
+6. **Registry** — add the `_type` → component entry to `SIMPLE_MODULES` in `src/features/blog/user-interface/renderers/registry.tsx` (the `satisfies` check flags a missing entry). Context-aware modules are special-cased in `ModuleRenderer.tsx` instead.
 
 ### Rename `/blog` to something else
 
@@ -559,11 +559,15 @@ src/features/blog/                              THE BLOG FEATURE (gated by featu
 │           │   quote-list.ts, breadcrumbs.ts, custom-html.ts,
 │           │   search-module.ts, blog-index.ts, blog-post-content.ts,
 │           │   blog-post-list.ts
-└── components/
-    ├── DefaultPostLayout.tsx                   Fallback per-post shell (hero + TOC + body)
-    ├── Toc.tsx, MobileToc.tsx                  Table of Contents (scroll-spy)
-    ├── BlogHero.tsx, BlogListing.tsx, BlogCard.tsx, …   Views + cards
-    └── modules/
+└── user-interface/                             Blog UI, mirrors src/user-interface/
+    ├── pages/                                  Full-page composites
+    │   ├── DefaultPostLayout.tsx               Fallback per-post shell (hero + TOC + body)
+    │   └── BlogListing.tsx, *Detail.tsx, *Listing.tsx   Frontpage + author/category/tag views
+    ├── components/                             Cards + navigational pieces
+    │   ├── Toc.tsx, MobileToc.tsx              Table of Contents (scroll-spy)
+    │   └── BlogCard.tsx, HeroVideo.tsx, Breadcrumbs.tsx, …
+    ├── sections/                               BlogHero, PageHero, ExploreCategories/Tags, TopAuthors
+    └── renderers/                              Page-builder module renderers
         ├── registry.tsx                        SIMPLE_MODULES map (TS exhaustiveness)
         ├── ModuleRenderer.tsx                  <Modules> + ModuleSwitch
         ├── portable-text-components.tsx        Shared PortableText render map

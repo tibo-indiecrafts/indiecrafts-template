@@ -4,12 +4,12 @@ import { isRssEnabled, requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { DefaultLayout } from "@/parts/layout/DefaultLayout";
-import { BlogHero } from "@/features/blog/components/BlogHero";
-import { ExploreCategories } from "@/features/blog/components/ExploreCategories";
-import { ExploreTags } from "@/features/blog/components/ExploreTags";
-import { TopAuthors } from "@/features/blog/components/TopAuthors";
-import { BlogListing } from "@/features/blog/components/BlogListing";
+import { DefaultLayout } from "@/user-interface/layout/DefaultLayout";
+import { BlogHero } from "@/features/blog/user-interface/sections/BlogHero";
+import { ExploreCategories } from "@/features/blog/user-interface/sections/ExploreCategories";
+import { ExploreTags } from "@/features/blog/user-interface/sections/ExploreTags";
+import { TopAuthors } from "@/features/blog/user-interface/sections/TopAuthors";
+import { BlogListing } from "@/features/blog/user-interface/pages/BlogListing";
 import { sanityFetchLive } from "@/sanity/live";
 import {
   allPostsQuery,

@@ -1,7 +1,13 @@
 import type { Author } from "@/features/blog/sanity/types";
-import { AuthorCard } from "./AuthorCard";
-import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
-import { PageHero, type PageHeroPill } from "./PageHero";
+import { AuthorCard } from "@/features/blog/user-interface/components/AuthorCard";
+import {
+  Breadcrumbs,
+  type Crumb,
+} from "@/features/blog/user-interface/components/Breadcrumbs";
+import {
+  PageHero,
+  type PageHeroPill,
+} from "@/features/blog/user-interface/sections/PageHero";
 
 /**
  * Author index page section — `/author`. Each author card links to its

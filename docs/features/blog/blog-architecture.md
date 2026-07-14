@@ -172,7 +172,7 @@ export const MODULE_TYPES = [
 
 ## 5. Renderer
 
-All runtime files live under `src/features/blog/components/modules/`. The runtime mirrors the schema split around a single map:
+All runtime files live under `src/features/blog/user-interface/renderers/`. The runtime mirrors the schema split around a single map:
 
 - `registry.tsx` — the `SIMPLE_MODULES` map (`_type` → component), declared `satisfies { [K in SimpleModuleType]: SimpleRenderer<K> }` so a missing entry or drifted `_type` is a **compile error** (this is where TS exhaustiveness lives now). Exports `renderSimpleModule(module)` plus the two context-aware components (`BlogPostList`, `BlogPostContent`) that need extra render context.
 - `ModuleRenderer.tsx` — `<Modules>` + `ModuleSwitch`. Filters out `hidden` modules, special-cases the two context-aware types (`module.blog-post-list` needs the locale, `module.blog-post-content` needs the active `Post`), and delegates everything else to `renderSimpleModule`. Used by the singleton's `postModules` slot.
@@ -199,7 +199,7 @@ Cross-locale 404 protection: `postBySlugQuery` filters on `coalesce(language, "e
 
 ## 7. Post detail layout — `DefaultPostLayout`
 
-When `blog.postModules` is empty (the seed's default), every post renders through `src/features/blog/components/DefaultPostLayout.tsx`. The design:
+When `blog.postModules` is empty (the seed's default), every post renders through `src/features/blog/user-interface/pages/DefaultPostLayout.tsx`. The design:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -285,9 +285,9 @@ Anything you build into `postModules` runs through `ModuleRenderer`, which means
    }
    ```
 
-5. **Component** — drop `src/features/blog/components/modules/<Name>.tsx`. Follow the existing pattern: `py-8 md:py-12` outer padding, content centred on `max-w-6xl` or `max-w-3xl` depending on whether it's wide or narrow.
+5. **Component** — drop `src/features/blog/user-interface/renderers/<Name>.tsx`. Follow the existing pattern: `py-8 md:py-12` outer padding, content centred on `max-w-6xl` or `max-w-3xl` depending on whether it's wide or narrow.
 
-6. **Registry** — add the `_type` → component entry to `SIMPLE_MODULES` in `src/features/blog/components/modules/registry.tsx` (or, if the module needs the active `Post`/`locale`, special-case it in `ModuleRenderer.tsx` like `blog-post-content`/`blog-post-list`). The `satisfies` constraint on `SIMPLE_MODULES` flags the missing entry at build time.
+6. **Registry** — add the `_type` → component entry to `SIMPLE_MODULES` in `src/features/blog/user-interface/renderers/registry.tsx` (or, if the module needs the active `Post`/`locale`, special-case it in `ModuleRenderer.tsx` like `blog-post-content`/`blog-post-list`). The `satisfies` constraint on `SIMPLE_MODULES` flags the missing entry at build time.
 
 7. **Inline-embeddable?** — if editors should be able to drop this module directly inside a post body (not just inside `postModules`), add the `_type` string to `INLINE_MODULES` in `src/features/blog/sanity/schema/blockContent.ts` **and** to `INLINE_TYPES` in `portable-text-components.tsx`.
 
@@ -302,7 +302,7 @@ The opposite of §8 — in this exact order to keep the build green:
 3. Remove the `<Name>Module` type + the union member in `src/features/blog/sanity/types.ts`.
 4. Remove any branch from `MODULES_FRAGMENT`.
 5. Remove the import + array entry in `src/features/blog/sanity/schema/modules/index.ts` (both `moduleSchemas` and `MODULE_TYPES`).
-6. Delete the schema file (`src/features/blog/sanity/schema/modules/<name>.ts`) and the component file (`src/features/blog/components/modules/<Name>.tsx`).
+6. Delete the schema file (`src/features/blog/sanity/schema/modules/<name>.ts`) and the component file (`src/features/blog/user-interface/renderers/<Name>.tsx`).
 
 **Live data hygiene** — existing instances of the removed module type may still be in your Sanity dataset:
 

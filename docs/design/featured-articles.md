@@ -1,6 +1,6 @@
 # Featured articles
 
-`FeaturedArticles` is the home page's "editor's desk" — a curated strip of blog posts laid out as one lead pick beside a compact list of runners-up. The asymmetry is deliberate: it reads differently from the uniform `/blog` grid because the lead genuinely outranks the rest. Component: `src/parts/sections/FeaturedArticles.tsx`.
+`FeaturedArticles` is the home page's "editor's desk" — a curated strip of blog posts laid out as one lead pick beside a compact list of runners-up. The asymmetry is deliberate: it reads differently from the uniform `/blog` grid because the lead genuinely outranks the rest. Component: `src/user-interface/sections/FeaturedArticles.tsx`.
 
 ## Pure display, fed by the route
 

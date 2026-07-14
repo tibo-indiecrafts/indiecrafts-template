@@ -9,7 +9,7 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from "@/parts/ui/dialog";
+} from "@/user-interface/ui/dialog";
 
 /**
  * Featured-video hero. A poster thumbnail with a play button opens an

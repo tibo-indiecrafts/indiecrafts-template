@@ -1,3 +1,11 @@
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+
+# Supply-chain hardening (see react-doctor require-pnpm-hardening).
+# Wait 7 days before installing a freshly published version, so
+# quickly-unpublished malware never reaches the lockfile.
+minimumReleaseAge: 10080
+# Refuse packages whose provenance/signature trust weakens between
+# resolutions (never silently downgrade to a less-trusted source).
+trustPolicy: no-downgrade

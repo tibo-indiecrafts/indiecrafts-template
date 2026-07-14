@@ -15,10 +15,11 @@ import {
   type Locale,
 } from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
-import { CookieBanner } from "@/parts/layout/CookieBanner";
+import { CookieBanner } from "@/user-interface/layout/CookieBanner";
 import { routing } from "@/i18n/routing";
-import { ThemeProvider } from "@/parts/layout/ThemeProvider";
-import { buildSiteSchemas, JsonLdScript } from "@/lib/seo/jsonld";
+import { ThemeProvider } from "@/user-interface/layout/ThemeProvider";
+import { JsonLdScript } from "@/lib/seo/jsonld";
+import { buildSiteSchemas } from "@/lib/seo/jsonld-core";
 import { SanityLive } from "@/sanity/live";
 
 export function generateStaticParams() {

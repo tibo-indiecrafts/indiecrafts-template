@@ -2,8 +2,9 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
 import { parseVideoEmbed } from "@/lib/video-embed";
+import { formatPostDate } from "@/lib/format-date";
 import type { PostListItem } from "@/features/blog/sanity/types";
-import { PlayBadge } from "./PlayBadge";
+import { PlayBadge } from "@/features/blog/user-interface/components/PlayBadge";
 
 /**
  * Featured card used by the blog listing, category explorer, and author
@@ -26,13 +27,7 @@ export function BlogCard({
   const category = categoryRef?.title;
   const categorySlug = categoryRef?.slug;
   const tags = (post.tags ?? []).filter((tag) => tag.slug);
-  const date = post.publishedAt
-    ? new Intl.DateTimeFormat(locale, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }).format(new Date(post.publishedAt))
-    : null;
+  const date = formatPostDate(locale, post.publishedAt);
   const slug = post.slug ?? "";
   const title = post.metadata?.title ?? post.title ?? "";
   const description = post.metadata?.description;

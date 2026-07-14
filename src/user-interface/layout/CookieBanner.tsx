@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { Button } from "@/parts/ui/button";
+import { Button } from "@/user-interface/ui/button";
 import { analytics } from "@/config";
 
 const STORAGE_KEY = "cookie-consent";
@@ -46,6 +46,27 @@ function manageRequested(): boolean {
   return new URLSearchParams(window.location.search).get("cookies") === "manage";
 }
 
+// Pure event handler — reads only its argument and module-scope config, so it
+// lives at module scope instead of being rebuilt per render
+// (react-doctor prefer-module-scope-pure-function).
+function decide(choice: "accepted" | "rejected") {
+  setConsent(choice);
+  if (analytics.googleAnalyticsId && typeof window !== "undefined") {
+    window.dataLayer = window.dataLayer ?? [];
+    const value = choice === "accepted" ? "granted" : "denied";
+    window.dataLayer.push([
+      "consent",
+      "update",
+      {
+        analytics_storage: value,
+        ad_storage: value,
+        ad_user_data: value,
+        ad_personalization: value,
+      },
+    ]);
+  }
+}
+
 /**
  * Minimal GDPR cookie banner.
  *
@@ -67,29 +88,16 @@ export function CookieBanner() {
 
   if (!show) return null;
 
-  function decide(choice: "accepted" | "rejected") {
-    setConsent(choice);
-    if (analytics.googleAnalyticsId && typeof window !== "undefined") {
-      window.dataLayer = window.dataLayer ?? [];
-      const value = choice === "accepted" ? "granted" : "denied";
-      window.dataLayer.push([
-        "consent",
-        "update",
-        {
-          analytics_storage: value,
-          ad_storage: value,
-          ad_user_data: value,
-          ad_personalization: value,
-        },
-      ]);
-    }
-  }
-
+  // Native non-modal <dialog> (rendered `open`, never `showModal()`): gives
+  // screen readers real dialog semantics without trapping focus, locking
+  // scroll, or dimming the page — right for a persistent consent banner.
+  // `w-auto` + `border-0` neutralize the UA dialog defaults so the fixed
+  // bottom-banner layout is unchanged.
   return (
-    <div
-      role="dialog"
+    <dialog
+      open
       aria-labelledby="cookie-banner-title"
-      className="bg-card text-foreground ring-border/60 fixed right-4 bottom-4 left-4 z-50 mx-auto max-w-3xl rounded-2xl p-4 shadow-lg ring-1 backdrop-blur sm:p-5"
+      className="bg-card text-foreground ring-border/60 fixed right-4 bottom-4 left-4 z-50 mx-auto w-auto max-w-3xl rounded-2xl border-0 p-4 shadow-lg ring-1 backdrop-blur sm:p-5"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm">
@@ -112,6 +120,6 @@ export function CookieBanner() {
           </Button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }

@@ -10,8 +10,10 @@ import { logger } from "@/lib/logger";
  */
 export function portableTextToMarkdown(blocks: PortableTextBlock[]): string {
   return blocks
-    .map((block) => blockToMarkdown(block as unknown as Record<string, unknown>))
-    .filter(Boolean)
+    .flatMap((block) => {
+      const md = blockToMarkdown(block as unknown as Record<string, unknown>);
+      return md ? [md] : [];
+    })
     .join("\n\n");
 }
 
@@ -70,13 +72,15 @@ function spanToMarkdown(
   if (span._type !== "span") return "";
   let text = (span.text as string | undefined) ?? "";
   const marks = (span.marks as string[] | undefined) ?? [];
+  // Index the link/annotation defs once instead of re-scanning per mark.
+  const defsByKey = new Map(markDefs.map((m) => [m._key as string, m] as const));
 
   for (const mark of marks) {
     if (mark === "strong") text = `**${text}**`;
     else if (mark === "em") text = `_${text}_`;
     else if (mark === "code") text = `\`${text}\``;
     else {
-      const def = markDefs.find((m) => m._key === mark);
+      const def = defsByKey.get(mark);
       if (def?._type === "link") {
         const href = def.href as string | undefined;
         if (href) text = `[${text}](${href})`;

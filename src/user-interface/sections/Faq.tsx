@@ -6,7 +6,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/parts/ui/accordion";
+} from "@/user-interface/ui/accordion";
 import { features } from "@/config";
 import { getFaqItems } from "@/lib/faq";
 
@@ -48,8 +48,8 @@ export function Faq({ pageId }: Readonly<{ pageId: string }>) {
         </div>
 
         <Accordion type="single" collapsible className="w-full">
-          {items.map((item, i) => (
-            <AccordionItem key={`${pageId}-faq-${i}`} value={`${pageId}-faq-${i}`}>
+          {items.map((item) => (
+            <AccordionItem key={item.question} value={item.question}>
               <AccordionTrigger className="py-5 text-base">
                 {item.question}
               </AccordionTrigger>

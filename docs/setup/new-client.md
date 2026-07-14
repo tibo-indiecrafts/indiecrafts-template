@@ -403,20 +403,20 @@ Robots:
 
 ## 11. Quick reference — what to edit when
 
-| Want to change                                           | File                                                                                                                       |
-| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Brand name, URL, colors, social, contact                 | `src/config/index.ts:site` + `theme`                                                                                       |
-| Locales                                                  | `src/config/index.ts:locales` + `messages/<code>.json`                                                                     |
-| Feature flags (blog, cookies, legal page)                | `src/config/index.ts:features`                                                                                             |
-| Header nav items                                         | `src/config/index.ts:headerNav`                                                                                            |
-| Site-wide SEO defaults                                   | `src/config/index.ts:seoDefaults`                                                                                          |
-| Static page list                                         | `src/config/index.ts:pages` + add the matching route folder under `src/app/[locale]/`                                      |
-| Marketing home copy                                      | `messages/<locale>.json:pages.home.*`                                                                                      |
-| Blog chrome copy                                         | `messages/<locale>.json:pages.blog.*`                                                                                      |
-| Blog content (posts, authors, categories, tags, layouts) | Sanity Studio at `/studio`                                                                                                 |
-| Sanity Studio language / labels                          | `src/features/blog/sanity/schema/**` (already in French)                                                                   |
-| Add a new static route                                   | New folder under `src/app/[locale]/<seg>/`, entry in `pages`, key in `AppPathname`, message keys                           |
-| Add a new section to the home                            | Copy a section file from `../indiecrafts-library` into `src/parts/sections/`, mount in `(home)/page.tsx`, add message keys |
+| Want to change                                           | File                                                                                                                                |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Brand name, URL, colors, social, contact                 | `src/config/index.ts:site` + `theme`                                                                                                |
+| Locales                                                  | `src/config/index.ts:locales` + `messages/<code>.json`                                                                              |
+| Feature flags (blog, cookies, legal page)                | `src/config/index.ts:features`                                                                                                      |
+| Header nav items                                         | `src/config/index.ts:headerNav`                                                                                                     |
+| Site-wide SEO defaults                                   | `src/config/index.ts:seoDefaults`                                                                                                   |
+| Static page list                                         | `src/config/index.ts:pages` + add the matching route folder under `src/app/[locale]/`                                               |
+| Marketing home copy                                      | `messages/<locale>.json:pages.home.*`                                                                                               |
+| Blog chrome copy                                         | `messages/<locale>.json:pages.blog.*`                                                                                               |
+| Blog content (posts, authors, categories, tags, layouts) | Sanity Studio at `/studio`                                                                                                          |
+| Sanity Studio language / labels                          | `src/features/blog/sanity/schema/**` (already in French)                                                                            |
+| Add a new static route                                   | New folder under `src/app/[locale]/<seg>/`, entry in `pages`, key in `AppPathname`, message keys                                    |
+| Add a new section to the home                            | Copy a section file from `../indiecrafts-library` into `src/user-interface/sections/`, mount in `(home)/page.tsx`, add message keys |
 
 ---
 

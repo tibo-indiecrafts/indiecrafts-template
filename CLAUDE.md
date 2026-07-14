@@ -22,7 +22,7 @@ Working if: fewer unnecessary changes in diffs, fewer rewrites from overcomplica
 
 ```bash
 pnpm dev / build / tsc / lint / format    # standard
-pnpm verify                               # CI gate (tsc + lint + format + contrast)
+pnpm verify                               # CI gate (tsc + lint + format + contrast + react-doctor on changed code)
 pnpm verify:quick                         # tsc + lint (pre-push)
 ```
 
@@ -66,11 +66,11 @@ src/app/                   ROUTES ONLY (thin page.tsx / route.ts)
    studio/  maintenance/   embedded Studio + maintenance page (own root layouts)
 
 src/features/blog/         THE BLOG FEATURE (self-contained, gated by features.blog)
-   components/             views, cards, hero, TOC + modules/ (page-builder renderers)
+   user-interface/         mirrors src/user-interface/ — components/ sections/ pages/ + renderers/ (page-builder)
    sanity/                 schema/ + queries.ts + types.ts + structure.ts + portable-to-markdown.ts
    lib/route-gate.ts       requireBlogRoute / isBlogRouteEnabled / isRssEnabled
 
-src/parts/                 SHARED, cross-feature UI
+src/user-interface/                 SHARED, cross-feature UI
    ui/                     shadcn primitives (READ-ONLY, CLI-managed → components.json)
    layout/                 chrome: DefaultLayout, Header, Footer, ThemeToggle, CookieBanner…
    sections/               marketing blocks — copy targets from the sibling library
@@ -128,14 +128,14 @@ Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, J
 
 ## Working with the library (shadcn/ui + `../indiecrafts-library`)
 
-Two building blocks feed the UI: **shadcn/ui** primitives (`src/parts/ui`, CLI-managed) and the sibling **`../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
+Two building blocks feed the UI: **shadcn/ui** primitives (`src/user-interface/ui`, CLI-managed) and the sibling **`../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
 
-**Reuse before create.** Before adding UI: reuse an existing part → add a backward-compatible variant → compose primitives → new shared part (`parts/`) → page-specific. Never duplicate a part just because it has a different name. When sources disagree, authority runs: `parts/ui` + `config`/`globals.css` tokens (canonical) → the library (a reference to adapt, not copy verbatim) → screenshots.
+**Reuse before create.** Before adding UI: reuse an existing part → add a backward-compatible variant → compose primitives → new shared part (`user-interface/`) → page-specific. Never duplicate a part just because it has a different name. When sources disagree, authority runs: `user-interface/ui` + `config`/`globals.css` tokens (canonical) → the library (a reference to adapt, not copy verbatim) → screenshots.
 
 To adapt a library section:
 
 1. Browse the variant in Storybook (`cd ../indiecrafts-library && pnpm storybook`).
-2. Copy its file into `src/parts/sections/<Name>.tsx`. Flatten a multi-file folder (schema.ts + config.ts + en.json) into one `.tsx`, and rework it to template patterns: strings → `messages/`, colors/nav → `@/config`, links → `@/i18n/routing`. See `src/parts/sections/Features.tsx` for the target shape.
+2. Copy its file into `src/user-interface/sections/<Name>.tsx`. Flatten a multi-file folder (schema.ts + config.ts + en.json) into one `.tsx`, and rework it to template patterns: strings → `messages/`, colors/nav → `@/config`, links → `@/i18n/routing`. See `src/user-interface/sections/Features.tsx` for the target shape.
 3. Drop the matching copy into `messages/<locale>.pages.<id>.blocks.<simpleName>` (drop the -NN suffix).
 4. Mount in the route's `page.tsx`, passing a `namespace` (e.g. `pages.home.blocks.cta`) or `pageId` prop. Live pattern: `src/app/[locale]/(home)/page.tsx`.
 
@@ -158,7 +158,7 @@ Never add the library as a workspace, dependency, or symlink — the decoupling 
 
 ## LLM endpoints
 
-`/<locale>/llms.txt`, `/<locale>/llms-full.txt`, `/<locale>/llms/<id>` — all auto-built from `messages.<locale>.pages.*`. **Zero per-page config.** Add a page → it appears in all three, in every locale.
+`/<locale>/llms.txt`, `/<locale>/llms-full.txt`, `/<locale>/llms/<id>` — all auto-built from `messages.<locale>.pages.*`. **Zero per-page config.** Add a page → it appears in all three, in every locale. Published blog posts are appended to `llms.txt` + `llms-full.txt` as a `## Blog` section (each links to its `/blog/<slug>/md` export) via `getBlogLlmsLines` in `features/blog/lib/llms.ts` — gated by `features.blog`, `noIndex` posts excluded.
 
 ## Sanity + blog (feature-flagged)
 
@@ -184,7 +184,7 @@ The **visual system** — colors, typography, spacing, dark mode, motion, contra
 - NEVER import from `next/link` or `next-intl/navigation` — use `@/i18n/routing`.
 - NEVER inline user-facing strings — every visible string lives in `messages/<locale>.json`.
 - NEVER add `as any` — fix the type, or eslint-disable with a one-line reason.
-- NEVER edit `src/parts/ui/**` (shadcn — managed via CLI).
+- NEVER edit `src/user-interface/ui/**` (shadcn — managed via CLI).
 - NEVER depend on `../indiecrafts-library` at runtime — it's browse-only, copy what you need.
 - NEVER swallow errors — `logger.error(...)` minimum.
 - NEVER set state inside `useEffect` to mark hydration — use `useSyncExternalStore`.
@@ -206,6 +206,7 @@ The **visual system** — colors, typography, spacing, dark mode, motion, contra
 2. `pnpm lint` — zero errors
 3. `pnpm format:check`
 4. `pnpm verify:contrast` — WCAG AA on theme tokens
-5. `pnpm build` — prerenders every static route × locale
+5. `pnpm doctor:changed` — React Doctor, `--scope changed --base main` (fails only on issues your branch introduced, not legacy debt)
+6. `pnpm build` — prerenders every static route × locale
 
 Treat warnings as errors in /app + /lib + /config. A clean tree is a shippable tree.

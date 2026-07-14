@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Error as ErrorPage } from "@/parts/pages/Error";
+import { Error as ErrorPage } from "@/user-interface/pages/Error";
 import { logger } from "@/lib/logger";
 
 type Props = { error: Error & { digest?: string }; reset: () => void };

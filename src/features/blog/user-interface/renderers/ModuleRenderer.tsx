@@ -1,10 +1,7 @@
 import type { AnyModule } from "@/features/blog/sanity/types";
-import {
-  BlogPostContent,
-  BlogPostList,
-  type ModuleContext,
-  renderSimpleModule,
-} from "./registry";
+import { BlogPostContent } from "./BlogPostContent";
+import { BlogPostList } from "./BlogPostList";
+import { type ModuleContext, renderSimpleModule } from "./registry";
 
 /**
  * Drives the page-builder. Hands each module to its matching component
@@ -23,11 +20,9 @@ export async function Modules({
   if (!modules.length) return null;
   return (
     <>
-      {modules
-        .filter((m) => !m.hidden)
-        .map((m) => (
-          <ModuleSwitch key={m._key} module={m} context={context} />
-        ))}
+      {modules.flatMap((m) =>
+        m.hidden ? [] : [<ModuleSwitch key={m._key} module={m} context={context} />],
+      )}
     </>
   );
 }

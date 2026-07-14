@@ -1,19 +1,19 @@
 # Error &amp; not-found pages
 
-Two failure states have dedicated pages: an uncaught render error and a 404. Each is a **reusable composite** in `src/parts/pages/` mounted by a **thin Next.js route file** in `src/app/[locale]/`. All copy comes from `messages/<locale>.json` — nothing is inlined.
+Two failure states have dedicated pages: an uncaught render error and a 404. Each is a **reusable composite** in `src/user-interface/pages/` mounted by a **thin Next.js route file** in `src/app/[locale]/`. All copy comes from `messages/<locale>.json` — nothing is inlined.
 
 ## The split
 
-| State          | Composite (`src/parts/pages/`) | Route (`src/app/[locale]/`) | Message namespace |
-| -------------- | ------------------------------ | --------------------------- | ----------------- |
-| Uncaught error | `Error.tsx`                    | `error.tsx`                 | `pages.error`     |
-| 404 not found  | `NotFound.tsx`                 | `not-found.tsx`             | `pages.notFound`  |
+| State          | Composite (`src/user-interface/pages/`) | Route (`src/app/[locale]/`) | Message namespace |
+| -------------- | --------------------------------------- | --------------------------- | ----------------- |
+| Uncaught error | `Error.tsx`                             | `error.tsx`                 | `pages.error`     |
+| 404 not found  | `NotFound.tsx`                          | `not-found.tsx`             | `pages.notFound`  |
 
 The composites own the layout and copy; the route files own the Next.js contract (`error.tsx` must be a Client Component with `error` / `reset` props; `not-found.tsx` renders for unmatched routes and `notFound()` calls).
 
 ## Error page
 
-`src/parts/pages/Error.tsx` renders inside `DefaultLayout` and reads three keys from `pages.error`:
+`src/user-interface/pages/Error.tsx` renders inside `DefaultLayout` and reads three keys from `pages.error`:
 
 ```tsx
 const t = useTranslations("pages.error");
@@ -38,7 +38,7 @@ Note the `logger.error(...)` — errors are never swallowed silently.
 
 ## Not-found page
 
-`src/parts/pages/NotFound.tsx` follows the same shape, reading `pages.notFound`:
+`src/user-interface/pages/NotFound.tsx` follows the same shape, reading `pages.notFound`:
 
 ```tsx
 const t = useTranslations("pages.notFound");
@@ -50,7 +50,7 @@ The "back home" link uses the locale-aware `Link` from `@/i18n/routing` (never `
 The route file is a one-liner that re-exports the composite:
 
 ```tsx
-import { NotFound as NotFoundPage } from "@/parts/pages/NotFound";
+import { NotFound as NotFoundPage } from "@/user-interface/pages/NotFound";
 export default function NotFound() {
   return <NotFoundPage />;
 }
@@ -70,5 +70,5 @@ Both namespaces live in every `messages/<locale>.json`. Defaults (`en.json`):
 Translate the same keys in each locale file. Both composites share one centered layout (`max-w-xl`, `px-(--gutter)`, muted description, single action), so they read as one family regardless of which one a visitor hits.
 
 ::: tip
-There's also a standalone `Maintenance.tsx` composite in `src/parts/pages/` for the maintenance route — same "centered composite reading from messages" pattern, mounted outside `[locale]/` with its own root layout.
+There's also a standalone `Maintenance.tsx` composite in `src/user-interface/pages/` for the maintenance route — same "centered composite reading from messages" pattern, mounted outside `[locale]/` with its own root layout.
 :::

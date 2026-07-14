@@ -1,7 +1,10 @@
 import type { Locale } from "@/config";
 import type { Category, PostListItem } from "@/features/blog/sanity/types";
-import { BlogCard } from "./BlogCard";
-import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
+import { BlogCard } from "@/features/blog/user-interface/components/BlogCard";
+import {
+  Breadcrumbs,
+  type Crumb,
+} from "@/features/blog/user-interface/components/Breadcrumbs";
 
 /**
  * Category detail section — `/blog/category/[slug]`. Header shows the

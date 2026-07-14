@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
+import { formatPostDate } from "@/lib/format-date";
 import type { PostListItem } from "@/features/blog/sanity/types";
 
 /**
@@ -63,13 +64,7 @@ function HeroCard({
   const category = categoryRef?.title;
   const categorySlug = categoryRef?.slug;
   const author = post.author;
-  const date = post.publishedAt
-    ? new Intl.DateTimeFormat(locale, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }).format(new Date(post.publishedAt))
-    : null;
+  const date = formatPostDate(locale, post.publishedAt);
 
   return (
     <article

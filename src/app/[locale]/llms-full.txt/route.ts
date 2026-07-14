@@ -18,6 +18,7 @@ import { features } from "@/config";
 import { getMessages } from "next-intl/server";
 import { ROUTES } from "@/app/routes";
 import { isLlmsPage, renderAllPagesMarkdown } from "@/lib/seo/page-markdown";
+import { getBlogLlmsLines } from "@/features/blog/lib/llms";
 
 export async function GET(
   _request: Request,
@@ -30,7 +31,14 @@ export async function GET(
   const visible = ROUTES.filter(isLlmsPage);
 
   const messages = (await getMessages({ locale })) as Record<string, unknown>;
-  const body = renderAllPagesMarkdown(visible, locale, messages);
+  const pagesMarkdown = renderAllPagesMarkdown(visible, locale, messages);
+
+  // Append a `## Blog` directory of published posts (each links to its `/md`
+  // full-text export). Empty when the blog surface is off.
+  const blogLines = await getBlogLlmsLines(locale);
+  const body = blogLines.length
+    ? `${pagesMarkdown}\n\n---\n\n${blogLines.join("\n")}`
+    : pagesMarkdown;
 
   return new Response(body, {
     headers: {

@@ -2,8 +2,6 @@ import type { Locale } from "@/config";
 import type { AnyModule, Post } from "@/features/blog/sanity/types";
 import { AccordionList } from "./AccordionList";
 import { BlogIndex } from "./BlogIndex";
-import { BlogPostContent } from "./BlogPostContent";
-import { BlogPostList } from "./BlogPostList";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { Callout } from "./Callout";
 import { CardList } from "./CardList";
@@ -88,12 +86,3 @@ export function renderSimpleModule<M extends AnyModule>(module: M): React.ReactN
   const Component = SIMPLE_MODULES[module._type] as SimpleRenderer<typeof module._type>;
   return Component(module as ModuleOf<typeof module._type>);
 }
-
-/** Inline-aware components (used by portable-text-components). */
-export const INLINE_AWARE_COMPONENTS = SIMPLE_MODULES;
-
-/**
- * Re-exports for the two context-aware modules so callers can render
- * them with the right props shape.
- */
-export { BlogPostContent, BlogPostList };

@@ -1,10 +1,10 @@
 # Blog feature — CLAUDE.md
 
-Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (public surface) and `features.studio` (editing). The Sanity infra it builds on → `src/sanity/CLAUDE.md`. Human docs → `docs/blog/`.
+Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (public surface) and `features.studio` (editing). The Sanity infra it builds on → `src/sanity/CLAUDE.md`. Human docs → `docs/features/blog/`.
 
 ## Layout
 
-- `components/` — views, cards, hero, TOC + `modules/` (page-builder renderers)
+- `user-interface/` — the blog's UI, categorized like `src/user-interface/`: `components/` (cards, hero video, TOC, breadcrumbs) · `sections/` (heroes, explore/top blocks) · `pages/` (listings, detail views, `DefaultPostLayout`) · `renderers/` (the 14 page-builder module renderers)
 - `sanity/` — `schema/` + `queries.ts` + `types.ts` + `structure.ts` (Studio desk) + `portable-to-markdown.ts`
 - `lib/route-gate.ts` — `requireBlogRoute(page)` (page components) / `isBlogRouteEnabled(page)` (route handlers) / `isRssEnabled()`. Each folds in the flag **and** `page.enabled`, so a new route can't drift by checking only one.
 
@@ -21,7 +21,7 @@ Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (publ
 - **Inline-embeddable in body + `postModules`** (8): accordion-list, callout, card-list, custom-html, person-list, quote-list, stat-list, step-list
 - **`postModules`-only** (6): breadcrumbs, blog-index, blog-post-content, blog-post-list, prose, search
 
-Inline allowlist → `sanity/schema/blockContent.ts` (`INLINE_MODULES`). Renderer → `components/modules/ModuleRenderer.tsx` (switch on `_type`, TS exhaustiveness enforces). **Adding** a module = schema + component + switch case; **removing** = drop from `INLINE_MODULES` **and** the renderer's `types` map in `portable-text-components.tsx`.
+Inline allowlist → `sanity/schema/blockContent.ts` (`INLINE_MODULES`). Renderer → `user-interface/renderers/ModuleRenderer.tsx` (switch on `_type`, TS exhaustiveness enforces). **Adding** a module = schema + component + switch case; **removing** = drop from `INLINE_MODULES` **and** the renderer's `types` map in `portable-text-components.tsx`.
 
 ## Per-post layout + extras
 

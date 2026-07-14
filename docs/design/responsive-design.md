@@ -4,7 +4,7 @@ The template is Tailwind v4, mobile-first. There's no custom breakpoint config �
 
 ## Mobile-first defaults
 
-Base utility classes target the smallest screen; breakpoint prefixes layer on larger-screen overrides. From `src/parts/sections/Features.tsx`:
+Base utility classes target the smallest screen; breakpoint prefixes layer on larger-screen overrides. From `src/user-interface/sections/Features.tsx`:
 
 ```html
 <section class="bg-muted/40 border-b py-16 md:py-32">
@@ -38,7 +38,7 @@ Rebrand the container by editing `theme.container` — every section, the header
 ## Layout scaffolding
 
 - The `<body>` is `flex min-h-screen flex-col` (`src/app/[locale]/layout.tsx`), so a short page still pushes the footer to the viewport bottom.
-- `DefaultLayout`'s `<main>` is `flex-1` and clears the fixed header with `pt-14 lg:pt-20` — matching the header's `h-14 lg:h-20`. Header height and this offset must stay in sync (`src/parts/layout/DefaultLayout.tsx`, `Header.tsx`).
+- `DefaultLayout`'s `<main>` is `flex-1` and clears the fixed header with `pt-14 lg:pt-20` — matching the header's `h-14 lg:h-20`. Header height and this offset must stay in sync (`src/user-interface/layout/DefaultLayout.tsx`, `Header.tsx`).
 
 ## Responsive imagery
 

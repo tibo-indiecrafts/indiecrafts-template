@@ -8,23 +8,23 @@ import { Slot } from "radix-ui";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { Button } from "@/parts/ui/button";
-import { Input } from "@/parts/ui/input";
-import { Separator } from "@/parts/ui/separator";
+import { Button } from "@/user-interface/ui/button";
+import { Input } from "@/user-interface/ui/input";
+import { Separator } from "@/user-interface/ui/separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/parts/ui/sheet";
-import { Skeleton } from "@/parts/ui/skeleton";
+} from "@/user-interface/ui/sheet";
+import { Skeleton } from "@/user-interface/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/parts/ui/tooltip";
+} from "@/user-interface/ui/tooltip";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;

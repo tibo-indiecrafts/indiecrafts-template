@@ -1,6 +1,6 @@
 import type { Locale } from "@/config";
 import type { PostListItem } from "@/features/blog/sanity/types";
-import { BlogCard } from "./BlogCard";
+import { BlogCard } from "@/features/blog/user-interface/components/BlogCard";
 
 /**
  * Blog listing section — three-column on desktop by default, switch to

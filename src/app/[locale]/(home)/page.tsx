@@ -4,27 +4,27 @@ import { features, isPageVisible, pages } from "@/config";
 import type { Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { DefaultLayout } from "@/parts/layout/DefaultLayout";
-import { Features } from "@/parts/sections/Features";
-import { Faq } from "@/parts/sections/Faq";
-import { Cta } from "@/parts/sections/Cta";
-import { Pricing } from "@/parts/sections/Pricing";
-import { Testimonials } from "@/parts/sections/Testimonials";
-import { FeaturedArticles } from "@/parts/sections/FeaturedArticles";
-import { IconShowcase } from "@/parts/sections/IconShowcase";
+import { DefaultLayout } from "@/user-interface/layout/DefaultLayout";
+import { Features } from "@/user-interface/sections/Features";
+import { Faq } from "@/user-interface/sections/Faq";
+import { Cta } from "@/user-interface/sections/Cta";
+import { Pricing } from "@/user-interface/sections/Pricing";
+import { Testimonials } from "@/user-interface/sections/Testimonials";
+import { FeaturedArticles } from "@/user-interface/sections/FeaturedArticles";
+import { IconShowcase } from "@/user-interface/sections/IconShowcase";
 import { client } from "@/sanity/client";
 import { featuredPostsQuery } from "@/features/blog/sanity/queries";
 import type { PostListItem } from "@/features/blog/sanity/types";
 
 /**
- * Production home page. Section components live in `src/parts/sections/`
+ * Production home page. Section components live in `src/user-interface/sections/`
  * and are mounted with a single `namespace` prop pointing at
  * `pages.home.blocks.<name>` in `messages/<locale>.json`. The section reads
  * its own `title`, `body`, `items`, etc. relative to that namespace.
  *
  * To swap in a new section variant: browse the sibling library repo
  * (`indiecrafts-library`, `pnpm storybook`), copy the section file into
- * `src/parts/sections/`, drop its block keys into messages/, mount here.
+ * `src/user-interface/sections/`, drop its block keys into messages/, mount here.
  */
 
 type Props = { params: Promise<{ locale: Locale }> };

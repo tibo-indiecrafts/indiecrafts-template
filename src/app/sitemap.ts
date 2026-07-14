@@ -18,6 +18,10 @@ import {
 } from "@/features/blog/sanity/queries";
 import { ROUTES } from "./routes";
 
+// O(1) membership test for the per-document locale loop below (vs re-scanning
+// the locale array on every Sanity doc).
+const localeCodeSet = new Set<Locale>(localeCodes);
+
 /**
  * Sitemap — every (route × locale) combination with hreflang alternates.
  *
@@ -38,20 +42,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   // ── Static pages ────────────────────────────────────────────
-  const staticEntries: MetadataRoute.Sitemap = ROUTES.filter(
-    (p) => !p.seo?.noindex && p.seo?.robots?.index !== false && isPageVisible(p),
-  ).map((page) => {
+  const staticEntries: MetadataRoute.Sitemap = ROUTES.flatMap((page) => {
+    if (page.seo?.noindex || page.seo?.robots?.index === false || !isPageVisible(page))
+      return [];
     const languages: Record<string, string> = {};
     for (const locale of localeCodes) {
       languages[locale] = `${site.url}${getStaticPathname(page.key, locale)}`;
     }
-    return {
-      url: `${site.url}${getStaticPathname(page.key, defaultLocale)}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: page.key === "/" ? 1 : 0.7,
-      alternates: { languages },
-    };
+    return [
+      {
+        url: `${site.url}${getStaticPathname(page.key, defaultLocale)}`,
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: page.key === "/" ? 1 : 0.7,
+        alternates: { languages },
+      },
+    ];
   });
 
   // ── Dynamic Sanity-driven entries (blog only) ───────────────
@@ -73,7 +79,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const doc of docs) {
       if (!doc.slug) continue;
       const lang = (doc.language ?? defaultLocale) as Locale;
-      if (!localeCodes.includes(lang)) continue;
+      if (!localeCodeSet.has(lang)) continue;
       if (!map.has(doc.slug)) map.set(doc.slug, new Set());
       map.get(doc.slug)!.add(lang);
     }

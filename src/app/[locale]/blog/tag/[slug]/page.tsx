@@ -5,8 +5,8 @@ import { localizedPathname } from "@/i18n/routing";
 import { requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { DefaultLayout } from "@/parts/layout/DefaultLayout";
-import { TagDetail } from "@/features/blog/components/TagDetail";
+import { DefaultLayout } from "@/user-interface/layout/DefaultLayout";
+import { TagDetail } from "@/features/blog/user-interface/pages/TagDetail";
 import { client } from "@/sanity/client";
 import { sanityFetchLive } from "@/sanity/live";
 import {

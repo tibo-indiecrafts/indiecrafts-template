@@ -6,9 +6,9 @@ import { isRssEnabled, requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema } from "@/lib/seo/jsonld-factories";
-import { DefaultLayout } from "@/parts/layout/DefaultLayout";
-import { DefaultPostLayout } from "@/features/blog/components/DefaultPostLayout";
-import { Modules } from "@/features/blog/components/modules/ModuleRenderer";
+import { DefaultLayout } from "@/user-interface/layout/DefaultLayout";
+import { DefaultPostLayout } from "@/features/blog/user-interface/pages/DefaultPostLayout";
+import { Modules } from "@/features/blog/user-interface/renderers/ModuleRenderer";
 import { client } from "@/sanity/client";
 import { sanityFetchLive } from "@/sanity/live";
 import {
@@ -43,11 +43,13 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { locale, slug } = await params;
   const path = localizedPathname(`/blog/${slug}`, locale);
-  const post = await sanityFetchLive<Post | null>({
-    query: postBySlugQuery,
-    params: { slug, locale },
-  });
-  const base = await buildMetadata({ page: pages.blog, locale, pathname: path });
+  const [post, base] = await Promise.all([
+    sanityFetchLive<Post | null>({
+      query: postBySlugQuery,
+      params: { slug, locale },
+    }),
+    buildMetadata({ page: pages.blog, locale, pathname: path }),
+  ]);
   if (!post) return base;
 
   const title = post.metadata?.title ?? post.title;
@@ -105,10 +107,7 @@ export default async function BlogPostPage({ params }: Props) {
   // client can't resolve (deleted / private categories).
   const categoryIds =
     modules.length === 0
-      ? (post.categories ?? [])
-          .filter((c): c is NonNullable<typeof c> => c != null)
-          .map((c) => c._id)
-          .filter(Boolean)
+      ? (post.categories ?? []).flatMap((c) => (c?._id ? [c._id] : []))
       : [];
   const related =
     modules.length === 0
@@ -119,6 +118,10 @@ export default async function BlogPostPage({ params }: Props) {
       : [];
 
   const path = localizedPathname(`/blog/${slug}`, locale);
+  // Evaluate once (not inline in JSX): a bare `new Date()` reached from the
+  // render tree yields a different value per evaluation. Falls back to now
+  // only for a post with no publish date.
+  const datePublished = post.publishedAt ?? new Date().toISOString();
 
   return (
     <DefaultLayout>
@@ -130,7 +133,7 @@ export default async function BlogPostPage({ params }: Props) {
               buildArticleSchema({
                 headline: title,
                 description,
-                datePublished: post.publishedAt ?? new Date().toISOString(),
+                datePublished,
                 authorName: post.author?.name,
                 image,
                 url: `${site.url}${path}`,

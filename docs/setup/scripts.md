@@ -18,20 +18,35 @@ Run with `pnpm <name>`.
 
 ### Quality gates
 
-| Script            | Command                                                              | What it does / when to run                                                      |
-| ----------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `tsc`             | `tsc --noEmit`                                                       | Strict typecheck, no output files. Run after any type-level change.             |
-| `lint`            | `eslint`                                                             | ESLint over the repo. Zero errors expected.                                     |
-| `lint:fix`        | `eslint --fix`                                                       | Same, auto-fixing what it can.                                                  |
-| `format`          | `prettier --write .`                                                 | Formats the whole tree in place.                                                |
-| `format:check`    | `prettier --check .`                                                 | Verifies formatting without writing. What CI runs.                              |
-| `verify:contrast` | `node scripts/check-contrast.mjs`                                    | WCAG AA contrast check on the theme tokens. Run after any color change.         |
-| `verify:quick`    | `pnpm tsc && pnpm lint`                                              | Typecheck + lint. The **pre-push gate** — run it before you push.               |
-| `verify`          | `pnpm tsc && pnpm lint && pnpm format:check && pnpm verify:contrast` | The full local gate: types + lint + format + contrast. Run before opening a PR. |
+| Script            | Command                                                                                     | What it does / when to run                                                                                    |
+| ----------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `tsc`             | `tsc --noEmit`                                                                              | Strict typecheck, no output files. Run after any type-level change.                                           |
+| `lint`            | `eslint`                                                                                    | ESLint over the repo. Zero errors expected.                                                                   |
+| `lint:fix`        | `eslint --fix`                                                                              | Same, auto-fixing what it can.                                                                                |
+| `format`          | `prettier --write .`                                                                        | Formats the whole tree in place.                                                                              |
+| `format:check`    | `prettier --check .`                                                                        | Verifies formatting without writing. What CI runs.                                                            |
+| `verify:contrast` | `node scripts/check-contrast.mjs`                                                           | WCAG AA contrast check on the theme tokens. Run after any color change.                                       |
+| `doctor`          | `npx react-doctor@latest --verbose`                                                         | Full [React Doctor](#react-doctor) scan (security / performance / correctness / architecture).                |
+| `doctor:changed`  | `npx react-doctor@latest --verbose --scope changed --base main`                             | React Doctor scoped to **only new issues vs `main`** — what `verify` runs, so legacy debt can't block you.    |
+| `verify:quick`    | `pnpm tsc && pnpm lint`                                                                     | Typecheck + lint. The **pre-push gate** — run it before you push.                                             |
+| `verify`          | `pnpm tsc && pnpm lint && pnpm format:check && pnpm verify:contrast && pnpm doctor:changed` | The full local gate: types + lint + format + contrast + React Doctor (changed code). Run before opening a PR. |
 
 ::: tip
 `pnpm verify` does **not** run `pnpm build`. CI runs both — `verify` for correctness/style, `build` to prove every route prerenders. Run `pnpm build` yourself when you've touched routing, config, or anything that affects static generation.
 :::
+
+### React Doctor
+
+[React Doctor](https://github.com/millionco/react-doctor) scans the codebase for React-specific security, performance, correctness, and architecture issues and prints a 0–100 health score.
+
+- `pnpm doctor` — full scan of the whole codebase. Use for a cleanup pass; fix by severity (errors first, then warnings).
+- `pnpm doctor:changed` — the version wired into `verify`. `--scope changed --base main` reports **only issues your branch introduced vs `main`**, so a pre-existing warning elsewhere never fails your gate — you're accountable only for the code you touched. It exits non-zero on a **new error** (the default `--blocking` level); new warnings are reported but don't block.
+
+Because it runs via `npx …@latest`, the first run fetches the CLI (needs network). On `main` itself the changed set is empty, so it's a no-op. To fail on warnings too, add `--blocking warning`; to scan only staged files in a hook, use `--staged`.
+
+**Config** (`doctor.config.jsonc`) excludes code we don't own, so its findings never count against you: `src/user-interface/ui/**` and `src/hooks/use-mobile.ts` (shadcn — CLI-managed, READ-ONLY) and `docs/**` (the isolated VitePress project). Tune rules with `npx react-doctor@latest rules …` (`list` / `explain <rule>` / `set <rule> <severity>`).
+
+**CI** (`.github/workflows/react-doctor.yml`) runs the same scan on every PR — a sticky comment listing only the issues that PR introduced, plus a health-score status. It's **advisory** (never red-Xes the check); `pnpm doctor:changed` in `verify` is the local gate that actually blocks on a new error.
 
 ### Analysis
 

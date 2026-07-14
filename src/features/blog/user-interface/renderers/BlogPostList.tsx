@@ -3,7 +3,7 @@ import type { BlogPostListModule, PostListItem } from "@/features/blog/sanity/ty
 import type { Locale } from "@/config";
 import { sanityFetchLive } from "@/sanity/live";
 import { moduleBlogPostListQuery } from "@/features/blog/sanity/queries";
-import { BlogCard } from "@/features/blog/components/BlogCard";
+import { BlogCard } from "@/features/blog/user-interface/components/BlogCard";
 
 /**
  * Server component — fetches its own posts using the module's filters
@@ -22,10 +22,7 @@ export async function BlogPostList({
 }) {
   // Filter null entries before mapping — GROQ returns null for refs the
   // client can't resolve (deleted / private categories).
-  const categoryIds = (m.categories ?? [])
-    .filter((c): c is NonNullable<typeof c> => c != null)
-    .map((c) => c._id)
-    .filter(Boolean);
+  const categoryIds = (m.categories ?? []).flatMap((c) => (c?._id ? [c._id] : []));
   const [posts, t] = await Promise.all([
     sanityFetchLive<PostListItem[]>({
       query: moduleBlogPostListQuery,

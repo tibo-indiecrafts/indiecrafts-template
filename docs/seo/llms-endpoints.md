@@ -2,11 +2,13 @@
 
 Three plain-text endpoints expose the site's content to LLM crawlers and assistants, following the [llmstxt.org](https://llmstxt.org) convention. All three are **auto-built from `messages.<locale>.pages.*`** — the same translations that drive SEO titles, descriptions, and the UI. There is **zero per-page config**: register a page and it appears in every endpoint, in every locale.
 
-| Endpoint          | URL (default locale) | Content                                         | Content-Type    |
-| ----------------- | -------------------- | ----------------------------------------------- | --------------- |
-| Index             | `/llms.txt`          | Site summary + one line per page (title + link) | `text/plain`    |
-| Full dump         | `/llms-full.txt`     | Every page's Markdown concatenated with `---`   | `text/plain`    |
-| Per-page Markdown | `/llms/<id>`         | One page rendered as Markdown                   | `text/markdown` |
+| Endpoint          | URL (default locale) | Content                                                      | Content-Type    |
+| ----------------- | -------------------- | ------------------------------------------------------------ | --------------- |
+| Index             | `/llms.txt`          | Site summary + one line per page + published blog posts      | `text/plain`    |
+| Full dump         | `/llms-full.txt`     | Every page's Markdown, `---`-joined, + a blog post directory | `text/plain`    |
+| Per-page Markdown | `/llms/<id>`         | One page rendered as Markdown                                | `text/markdown` |
+
+Pages are auto-built from `messages`; blog posts come from Sanity (see [Blog posts](#blog-posts)). Each post links to its existing `/md` export.
 
 Every endpoint is locale-aware — the default locale serves the bare path, other locales are prefixed:
 
@@ -27,11 +29,12 @@ Route: `src/app/[locale]/llms.txt/route.ts`. A short, link-heavy summary:
 - **paragraph** = `messages.site.description`
 - `Site: <site.url>`
 - **`## Pages`** — one bullet per visible page: `- [title](url): description`, pulling `pages.<id>.title` + `pages.<id>.description` per locale.
+- **`## Blog`** — one bullet per published post, linking to its `/md` export (see [Blog posts](#blog-posts) below). Omitted when the blog surface is off.
 - **`## Resources`** — optional external links from `llms.resources` in `src/config/index.ts` (GitHub, docs, status page). Empty by default, so the section is omitted.
 
 ### `/llms-full.txt` — the full dump
 
-Route: `src/app/[locale]/llms-full.txt/route.ts`. Concatenates every visible page's Markdown (the same output `/llms/<id>` returns) with `---` separators, so an LLM can ingest the whole site in one fetch.
+Route: `src/app/[locale]/llms-full.txt/route.ts`. Concatenates every visible page's Markdown (the same output `/llms/<id>` returns) with `---` separators, so an LLM can ingest the whole site in one fetch. When the blog is on, a `## Blog` directory of published posts (each linking to its `/md` full-text export) is appended after the pages.
 
 ### `/llms/<id>` — per-page Markdown
 
@@ -55,6 +58,21 @@ The document also emits a `URL:` line (`site.url` + the localized pathname).
 ### The `## FAQ` block
 
 When `features.faq` is on and a page has a translated `faq` array under `messages.pages.<id>.faq`, `renderPageMarkdown` appends a dedicated `## FAQ` section — each item rendered as `### question` followed by the answer. This is the **same** `faq` array the `<Faq>` section and the FAQPage JSON-LD consume, so the three stay in sync automatically. When `features.faq` is off, the block is dropped everywhere.
+
+## Blog posts
+
+Static pages come from `messages`; blog posts come from Sanity, so they're contributed separately — but they surface in the same two endpoints. `getBlogLlmsLines(locale)` (`src/features/blog/lib/llms.ts`) fetches every published post via `allPostsQuery` and returns a `## Blog` section, one bullet per post:
+
+```
+## Blog
+
+- [Post title](https://acme.com/blog/post-slug/md): The post's meta description.
+```
+
+- **Each entry links to the post's `/md` export**, not the HTML page — that's the clean, text-only Markdown version an agent should ingest (see the [blog docs](../features/blog/blog-architecture.md)). The full body isn't inlined into `/llms-full.txt`; the `/md` link is the fetch target.
+- **`allPostsQuery` already filters `metadata.noIndex` and scopes by locale**, so hidden posts never appear and a French `/fr/llms.txt` lists French posts.
+- **Gated by the public blog surface.** `getBlogLlmsLines` returns `[]` when `isBlogRouteEnabled(pages.blog)` is false (i.e. `features.blog` off or the blog page disabled), so the `## Blog` heading is never emitted empty and the llms routes stay blog-agnostic.
+- **Zero per-post config** — publish a post (with a slug, not `noIndex`) and it appears, exactly like adding a page.
 
 ## Which pages appear — `isLlmsPage`
 

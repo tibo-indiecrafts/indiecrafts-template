@@ -28,6 +28,7 @@ import { getStaticPathname } from "@/i18n/routing";
 import type { MessageKey } from "@/types/messages";
 import { ROUTES } from "@/app/routes";
 import { isLlmsPage } from "@/lib/seo/page-markdown";
+import { getBlogLlmsLines } from "@/features/blog/lib/llms";
 
 export async function GET(
   _request: Request,
@@ -56,13 +57,16 @@ export async function GET(
   const visiblePages = ROUTES.filter(isLlmsPage);
   const pageLines = visiblePages.map((page) => formatPageEntry(page, locale, t));
 
+  // Published blog posts (empty when the blog surface is off), each linking
+  // to its `/md` export.
+  const blogLines = await getBlogLlmsLines(locale);
+
   // Optional non-route resources (external GitHub, docs sites, etc.)
-  const resourceLines = llms.resources
-    .filter((link) => link.href.startsWith("http"))
-    .map((link) => {
-      const label = safeT(t, `nav.${link.labelKey}` as MessageKey, link.labelKey);
-      return `- [${label}](${link.href})`;
-    });
+  const resourceLines = llms.resources.flatMap((link) => {
+    if (!link.href.startsWith("http")) return [];
+    const label = safeT(t, `nav.${link.labelKey}` as MessageKey, link.labelKey);
+    return [`- [${label}](${link.href})`];
+  });
 
   const body = [
     ...header,
@@ -70,6 +74,7 @@ export async function GET(
     ``,
     ...pageLines,
     ``,
+    ...blogLines,
     ...(resourceLines.length > 0 ? [`## Resources`, ``, ...resourceLines, ``] : []),
   ].join("\n");
 
