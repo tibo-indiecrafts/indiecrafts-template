@@ -2,7 +2,7 @@
 
 Everything you can insert into a post body in the Studio.
 
-The body editor is Sanity's Portable Text canvas, configured by `src/sanity/schema/blockContent.ts`. On the live site, the same configuration is rendered by `src/components/blog-components/modules/portable-text-components.tsx` — every primitive listed here has explicit Tailwind styling there (no `@tailwindcss/typography` dependency).
+The body editor is Sanity's Portable Text canvas, configured by `src/features/blog/sanity/schema/blockContent.ts`. On the live site, the same configuration is rendered by `src/features/blog/components/modules/portable-text-components.tsx` — every primitive listed here has explicit Tailwind styling there (no `@tailwindcss/typography` dependency).
 
 If you want to _see_ every primitive in one post, look at the showcase article: `/en/blog/fast-prototyping-with-nextjs` (or `/fr/...prototypage-rapide-avec-nextjs`). The seed scaffolds it on purpose.
 
@@ -63,7 +63,7 @@ The chain icon adds a link annotation around the selected text.
 - Internal links: paste a path starting with `/` (e.g. `/blog/another-post`). Rendered as `<a href="...">`.
 - External links: paste any `http(s)://` URL. Rendered as `<a target="_blank" rel="noopener noreferrer">`.
 
-The renderer is in `src/components/blog-components/modules/portable-text-components.tsx` under `marks.link`.
+The renderer is in `src/features/blog/components/modules/portable-text-components.tsx` under `marks.link`.
 
 ---
 
@@ -77,7 +77,7 @@ When you insert one:
 2. (Optional) Set the `Alt` field for accessibility — leave blank for purely decorative images
 3. Drag the hotspot dot to mark the "important" part of the image (used when the page crops to 16:9)
 
-Live rendering: `next/image` with `width={1200} height={675} sizes="(min-width: 1024px) 768px, 100vw"`, aspect-`16/9`, rounded corners, `my-8` vertical margin. The GROQ projection (`MODULES_FRAGMENT` in `src/sanity/queries.ts`) auto-dereferences the asset URL.
+Live rendering: `next/image` with `width={1200} height={675} sizes="(min-width: 1024px) 768px, 100vw"`, aspect-`16/9`, rounded corners, `my-8` vertical margin. The GROQ projection (`MODULES_FRAGMENT` in `src/features/blog/sanity/queries.ts`) auto-dereferences the asset URL (`asset->{ url }`).
 
 Images are best used to break up long stretches of prose. For decorative spacing or fancy galleries, use a Custom HTML inline module instead.
 
@@ -155,6 +155,6 @@ Adding any of these as first-class primitives means a new module — see [`blog-
 
 ## 9. Markdown export
 
-Every post is also reachable at `/<locale>/blog/<slug>/md` — YAML frontmatter + the body serialised to Markdown. The serialiser lives at `src/sanity/portable-to-markdown.ts` and handles every primitive listed above.
+Every post is also reachable at `/<locale>/blog/<slug>/md` — YAML frontmatter + the body serialised to Markdown. The serialiser lives at `src/features/blog/sanity/portable-to-markdown.ts` and handles every primitive listed above.
 
 The endpoint is advertised on the post page itself via `<link rel="alternate" type="text/markdown">` so RSS readers, llms.txt consumers, and other clients can pick it up automatically.

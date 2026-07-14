@@ -16,11 +16,11 @@ Lucide icons are plain React components: `<Zap className="size-5" aria-hidden="t
 
 ## BrandIcon
 
-Brand logos need a wrapper because `reicon-brands` icons are framework-agnostic factories that call `document.createElementNS` — which throws during SSR. `src/parts/BrandIcon.tsx` sidesteps that by building the `<svg>` itself from the icon's static `svgContent`:
+Brand logos need a wrapper because `reicon-brands` icons are framework-agnostic factories that call `document.createElementNS` — which throws during SSR. `src/parts/components/BrandIcon.tsx` sidesteps that by building the `<svg>` itself from the icon's static `svgContent`:
 
 ```tsx
 import { Github } from "reicon-brands";
-import { BrandIcon } from "@/parts/BrandIcon";
+import { BrandIcon } from "@/parts/components/BrandIcon";
 
 <BrandIcon icon={Github} size={28} brandColor />;
 ```
@@ -61,10 +61,18 @@ The exported `size` in `icon.tsx` (`180×180`) must match the served file's real
 
 ## Open Graph images
 
-`/opengraph-image` serves the site-wide card (`site.ogImage.file`, 1200×630). Per-page overrides follow the `/brand/og-<id>.png` convention: when a page config sets no explicit `seo.openGraph.imageUrl`, `buildMetadata` auto-derives `/brand/og-<id>.png` for that page id (e.g. `og-home.png`, `og-blog.png`). Two ways to override for one route:
+`/opengraph-image` (rendered by `src/app/opengraph-image.tsx`, a branded Satori card, 1200×630) is the default OG image for **every** page. `buildMetadata` sets `og:image` to `page.seo?.openGraph?.imageUrl ?? "/opengraph-image"` — so a page only diverges from the dynamic card when it sets an explicit `imageUrl`. To ship a static card for one route, point `imageUrl` at a file:
 
-- Set `pageConfig.seo.openGraph.imageUrl` to a static path.
-- Drop another `opengraph-image.*` inside that route's segment — Next.js picks the closest match.
+```ts
+// config: pages entry
+seo: {
+  openGraph: {
+    imageUrl: "/brand/og-home.png";
+  }
+}
+```
+
+The `/brand/og-<id>.png` filenames are just a naming convention for those static overrides — nothing auto-derives them.
 
 Drop the PNGs in `/public/brand/`. Existing assets there include `apple-icon.png`, `og.png`, `og-home.png`, plus the PWA manifest rasters (`icon-192.png`, `icon-512.png`, `icon-maskable-512.png`) and `logo.png` (schema.org Organization raster).
 

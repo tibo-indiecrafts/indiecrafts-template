@@ -153,7 +153,7 @@ pnpm dev
 
 # 7. Verify draft preview is wired (uses the Viewer token).
 #    /api/draft-mode/disable is the always-safe canary — 307 when wired,
-#    404 if the blog feature flag is off.
+#    404 if the `features.studio` flag is off (the editing surface it belongs to).
 curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/api/draft-mode/disable
 
 # 8. Spot-check the public surface

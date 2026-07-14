@@ -1,95 +1,160 @@
-# DESIGN.md — indiecrafts.dev design system
+---
+version: alpha
+name: Indiecrafts
+description: Quiet, editorial minimalism — one indigo accent on near-neutral greys, generous whitespace, one signature moment per surface. Config-first (src/config/index.ts + src/app/globals.css). OKLCH is authoritative at runtime; the hex below are sRGB mirrors for tooling + next/og.
+colors:
+  # Light (sRGB mirrors of the OKLCH tokens in globals.css)
+  background: "#ffffff"
+  foreground: "#171717"
+  brand: "#4f69d9"
+  brand-foreground: "#ffffff"
+  muted: "#f5f5f5"
+  muted-foreground: "#737373"
+  border: "#d4d4d4"
+  ring: "{colors.brand}"
+  destructive: "#dc2626"
+  # Dark
+  background-dark: "#0a0a0a"
+  foreground-dark: "#fafafa"
+  brand-dark: "#818cf8"
+  muted-dark: "#262626"
+  muted-foreground-dark: "#a3a3a3"
+  border-dark: "#737373"
+typography:
+  hero:
+    fontFamily: Satoshi
+    fontSize: 48px
+    fontWeight: 700
+    lineHeight: 1.05
+    letterSpacing: -0.02em
+  heading:
+    fontFamily: Satoshi
+    fontSize: 36px
+    fontWeight: 600
+    lineHeight: 1.1
+    letterSpacing: -0.02em
+  body:
+    fontFamily: Geist
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: normal
+  eyebrow:
+    fontFamily: Geist
+    fontSize: 12px
+    fontWeight: 500
+    lineHeight: 1.4
+    letterSpacing: 0.1em
+  code:
+    fontFamily: Geist Mono
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.5
+rounded:
+  sm: 0.375rem
+  md: 0.5rem
+  lg: 0.75rem
+  xl: 1rem
+  full: 9999px
+spacing:
+  gutter: 1rem
+  section-y: 4rem
+  section-y-lg: 6rem
+  container-max: 1280px
+components:
+  button-primary:
+    backgroundColor: "{colors.brand}"
+    color: "{colors.brand-foreground}"
+    borderRadius: "{rounded.md}"
+  card:
+    backgroundColor: "{colors.background}"
+    borderColor: "{colors.border}"
+    borderRadius: "{rounded.xl}"
+  chip:
+    backgroundColor: "{colors.muted}"
+    color: "{colors.muted-foreground}"
+    borderRadius: "{rounded.md}"
+---
 
-The visual language and its tokens. Everything here is **config-first**: values
-live in `src/config/index.ts` (`theme`, `fonts`) and are mirrored as CSS vars in
-`src/app/globals.css`, then exposed as Tailwind v4 utilities. Edit the config and
-globals together, never hard-code. Deeper guides live in `docs/design/` and
-`docs/config/theme-modes.md`.
+# Indiecrafts — Design System
 
-## Personality
+Machine-readable tokens live in the front matter above; the prose below is the
+"why". Deeper guides: `docs/design/`, `docs/config/theme-modes.md`.
 
-Quiet, modern, editorial. A single indigo accent doing one job at a time; near-
-neutral greys everywhere else; generous whitespace; one deliberate "signature"
-moment per surface rather than scattered flourishes. Restraint is the brand.
+## Brand & Style
 
-## Color tokens
+Quiet, modern, editorial — "restraint is the brand." A single indigo accent
+(`brand`, hue 260) does one job at a time; everything else is near-neutral grey
+with generous whitespace. Each surface earns **one** deliberate signature moment
+(a pulsing status dot, an asymmetric featured lead) rather than scattered
+flourishes. Audience: developers and agencies shipping client sites — it should
+read as crafted and calm, never busy or templated.
 
-OKLCH at runtime (`globals.css`), with **hex mirrors** in `theme.hexColors` for
-`next/og` — Satori can't parse oklch, so **keep the two in sync** for the
-brand/foreground pair. Accent hue is a retuned indigo (**hue 260**).
+## Colors
 
-| Token                  | Light                          | Dark                    | Role                           |
-| ---------------------- | ------------------------------ | ----------------------- | ------------------------------ |
-| `background`           | `oklch(1 0 0)` #ffffff         | `oklch(0.145 0 0)`      | page surface                   |
-| `foreground`           | `oklch(0.145 0 0)` #171717     | `oklch(0.985 0 0)`      | body text                      |
-| `brand`                | `oklch(0.55 0.18 260)` #4f69d9 | `oklch(0.72 0.16 260)`  | the accent (lighter in dark)   |
-| `brand-foreground`     | `oklch(0.985 0 0)`             | `oklch(0.145 0 0)`      | text on brand                  |
-| `muted`                | `oklch(0.97 0 0)`              | `oklch(0.205 0 0)`      | soft surfaces                  |
-| `muted-foreground`     | `oklch(0.556 0 0)`             | `oklch(0.708 0 0)`      | secondary text                 |
-| `border`               | `oklch(0.84 0 0)`              | `oklch(0.5 0 0)`        | hairlines (dark bumped for AA) |
-| `ring`                 | = brand                        | = brand                 | focus ring                     |
-| `destructive`          | `oklch(0.577 0.245 27.325)`    | —                       | errors (red-600)               |
-| `selection-bg` / `-fg` | pale indigo / foreground       | indigo-800 / foreground | text selection                 |
-
-`primary`→`brand`, `accent`→`muted`, `card`→`background` are shadcn aliases.
-Use utilities (`bg-brand`, `text-muted-foreground`, `ring-border`) — never raw hex.
+OKLCH in `globals.css` is authoritative; the front-matter hex are sRGB mirrors
+(`theme.hexColors` must stay in sync with `theme.colors` for the brand pair —
+`next/og`'s Satori can't parse oklch). Use utilities (`bg-brand`,
+`text-muted-foreground`, `ring-border`), never raw hex. The accent lightens in
+dark mode (`brand` → `brand-dark`) to hold contrast; `border-dark` is bumped to
+`~neutral-500` to keep hairlines AA-visible on near-black.
 
 ## Typography
 
-**Pairing** (`config.fonts`, registry in `src/lib/fonts.ts`):
+- **Display — Satoshi** (self-hosted variable `.woff2`): all `h1–h6` via
+  `--font-display`. Tight tracking, heavier weights for hero/section titles.
+- **Body — Geist** (Google, self-hosted): UI + prose via `--font-sans`.
+- **Mono — Geist Mono**: code + tabular figures via `--font-mono`.
 
-| Role    | Font                   | Source                             | Var → utility               |
-| ------- | ---------------------- | ---------------------------------- | --------------------------- |
-| display | **Satoshi** (variable) | local `.woff2` (`next/font/local`) | `--font-display` → headings |
-| body    | **Geist**              | Google (`next/font`, self-hosted)  | `--font-sans` → `font-sans` |
-| mono    | **Geist Mono**         | Google                             | `--font-mono` → `font-mono` |
+Think in roles, not sizes: `eyebrow` (uppercase, `tracking-widest`, `brand`) →
+`heading` → `hero` → `body` (secondary text is `muted-foreground`). The pairing
+is one line in `config.fonts`; set `display: geist` for a single-face look.
+Locale-aware punctuation (quotes, dates, French NBSP before `: ; ? !`) lives in
+`messages.<locale>.typography.*`.
 
-`--font-display` drives all `h1–h6` (set `display: "geist"` for a single-face
-look). Swapping the pairing is a one-line edit in `config.fonts`.
+## Layout & Spacing
 
-**Scale** (the recurring treatment across sections):
+- Container: max **1280px** (`--max-container`), page gutter **1rem**
+  (`--gutter`, applied as `px-(--gutter)`).
+- Section rhythm: `border-t py-16 md:py-24`, with a centered intro capped at
+  `max-w-2xl`. Content columns cap around `max-w-5xl/6xl`; article prose at
+  `max-w-3xl` for readable line length.
+- Base spacing is Tailwind's default 0.25rem scale.
 
-- Eyebrow — `text-xs font-medium uppercase tracking-widest text-brand`
-- Section heading — `text-3xl lg:text-4xl font-semibold tracking-tight text-balance`
-- Hero H1 — `text-3xl md:text-5xl xl:text-6xl font-bold tracking-tight`
-- Body — base, `text-muted-foreground` for secondary; `text-balance`/`text-pretty` on headings/leads
+## Elevation & Depth
 
-**Locale-aware typographic rules** live in `messages.<locale>.typography.*` —
-quote marks (`" "` en / `« »` fr), date/time formats, Oxford comma, thousands
-separator, and a **non-breaking space before `: ; ? ! %`** in French. See
-`docs/design/typography.md`.
+Flat by default — depth comes from **hairline rings + tonal surfaces**, not heavy
+shadows. Cards sit on `bg-card` with `ring-1 ring-border/60` and at most a
+`shadow-sm`; hover lifts a touch (`hover:shadow-md`, subtle scale). Overlays
+(dialogs, hero gradients) are the only place real shadow/scrim appears.
 
-## Spacing, radius, container
+## Shapes
 
-- Radii (`theme.radii`): `sm 0.375rem` · `md 0.5rem` (`--radius`) · `lg 0.75rem` · `xl 1rem`. Cards use `rounded-xl`.
-- Container: `--max-container` **1280px**, page gutter `--gutter` **1rem** (`px-(--gutter)`).
-- Section rhythm: `border-t py-16 md:py-24`, centered intro capped at `max-w-2xl`.
+Soft but disciplined. Radii: `sm 0.375rem` · `md 0.5rem` (`--radius`, the
+default) · `lg 0.75rem` · `xl 1rem`. Cards and media use `rounded-xl`; pills and
+status dots use `full`. Don't mix radii within one component.
 
-## Dark mode
+## Components
 
-Two triggers, both mapped to the same tokens: the attribute
-`html[data-theme="dark"]` (next-themes toggle) **and** `@media (prefers-color-scheme: dark)`
-(so no-JS surfaces like `/maintenance` still adapt). `@custom-variant dark` binds
-`dark:` to the attribute. Availability (`light`/`dark`/`system`/`forced`) is
-declared in `config.themeConfig` → resolved in `@/lib/theme`.
+- **Buttons** — Primary: `brand` bg, `brand-foreground` text, `rounded-md`, no
+  shadow. Secondary: transparent, `1px border`, `rounded-md`.
+- **Cards** — `bg-card ring-1 ring-border/60 rounded-xl shadow-sm`.
+- **Chips / badges** — `bg-muted text-muted-foreground rounded-md`, `text-xs`.
+- **Eyebrow marker** — a short brand rule (`h-px w-8 bg-brand`) or dot before the
+  label; it should **encode** something (status, category), not decorate.
+- **Focus** — every interactive element:
+  `focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none`.
+- **Icons** — Lucide (UI), Reicon outline/filled (range), Reicon Brands (logos);
+  `aria-hidden` unless the sole label.
 
-## Motion
+## Do's and Don'ts
 
-Sparing and purposeful — one signature per surface (e.g. the maintenance status
-dot's pulse, the featured lead's hover scale), never ambient clutter. **Always**
-guard transforms with `motion-reduce:` (e.g. `motion-reduce:transition-none`,
-`motion-reduce:group-hover:scale-100`). Respect `prefers-reduced-motion`.
-
-## Component patterns
-
-- **Cards** — `bg-card ring-1 ring-border/60 rounded-xl shadow-sm`; hover lifts subtly.
-- **Focus** — every interactive element: `focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none`.
-- **Eyebrow marker** — a short brand rule (`h-px w-8 bg-brand`) or a small dot preceding the label; use it to _encode_ something (status, category), not as decoration.
-- **Icons** — Lucide for UI, Reicon (outline/filled) for range, Reicon Brands for logos; `aria-hidden` unless the sole label. See `docs/design/icons.md`.
-
-## Accessibility bar (non-negotiable)
-
-WCAG 2.1 **AA**. `pnpm verify:contrast` asserts AA on the theme tokens (run after
-any color change). `jsx-a11y` rules are all **errors** in eslint. One
-`<main id="main" tabIndex={-1}>` per layout; `SkipLink` first in the body;
-`<section aria-labelledby>`; `<html lang>` + `dir` from the active locale.
+- **Do** keep OKLCH (`globals.css`) authoritative and re-sync `theme.hexColors`
+  on any brand-color change; run `pnpm verify:contrast` (WCAG **AA**) after.
+- **Do** guard every transform with `motion-reduce:` and respect
+  `prefers-reduced-motion`.
+- **Do** spend boldness once per surface; keep everything around it quiet.
+- **Don't** hard-code colors, spacing, or fonts — read tokens from `@/config`
+  and the CSS vars.
+- **Don't** mix `rounded` scales or add drop-shadows to flat surfaces.
+- **Don't** ship an interactive element without a visible `focus-visible` ring.
