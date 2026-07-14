@@ -4,36 +4,32 @@
  *
  * Wrap rendered content:  <div className="typeset typeset-docs">…</div>
  *
- * FONTS ARE LINKED TO THE TEMPLATE'S FONT CONFIG. The registry in `@/lib/fonts`
- * exposes `--font-display` / `--font-sans` / `--font-mono` (driven by
- * `config.fonts`), and the seams below point at them — swap the pairing in one
- * place and Typeset follows. Colors read the theme tokens in `globals.css`, so
- * it flips light/dark automatically (no `dark:` needed).
+ * FONTS — single owner, no duplication. The pairing lives in `config.fonts` →
+ * `@/lib/fonts` → `--font-display` / `--font-sans` / `--font-mono`, applied
+ * app-wide by the base `body` + `h1–h6` rules in `globals.css`. Those cascade
+ * into `.typeset`, so this file does NOT re-declare heading/body fonts — it only
+ * adds `--font-mono` for code, the one role the base rules don't cover. Colors
+ * read the theme tokens, so it flips light/dark automatically (no `dark:`).
  *
  * Imported after Tailwind in `globals.css`. Coexists with
  * `@tailwindcss/typography` (`prose`) — use whichever a surface calls for.
  */
 
 .typeset {
-  /* ── Font seam → template config (src/lib/fonts.ts) ── */
-  --typeset-font-body: var(--font-sans);
-  --typeset-font-heading: var(--font-display);
-  --typeset-font-mono: var(--font-mono);
-
   color: var(--foreground);
-  font-family: var(--typeset-font-body);
   text-wrap: pretty;
+  /* body + heading font-families inherit from the config-driven base rules in
+     globals.css — intentionally not repeated here. */
 }
 
 .typeset :is(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--typeset-font-heading);
   font-weight: 600;
   letter-spacing: -0.02em;
   text-wrap: balance;
   scroll-margin-top: 6rem;
 }
 .typeset :is(code, kbd, samp, pre) {
-  font-family: var(--typeset-font-mono);
+  font-family: var(--font-mono), ui-monospace, monospace;
 }
 .typeset a {
   color: var(--brand);

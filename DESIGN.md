@@ -125,9 +125,10 @@ Locale-aware punctuation (quotes, dates, French NBSP before `: ; ? !`) lives in
 
 **Long-form prose** uses shadcn **Typeset** (`src/app/typeset.css`, imported
 after Tailwind) — wrap rendered content in `<div class="typeset typeset-docs">`.
-Its font seam (`--typeset-font-heading` / `-body` / `-mono`) points at the same
-`--font-*` vars, so it inherits the pairing automatically and flips light/dark
-via the theme tokens. Coexists with Tailwind's `prose`.
+It owns only the prose _rhythm_; **fonts have a single owner** — headings and
+body inherit the config-driven `--font-*` base rules (`globals.css`), so Typeset
+never re-declares the pairing (it only sets `--font-mono` for code, which the
+base rules don't cover). Flips light/dark via the tokens; coexists with `prose`.
 
 ## Layout & Spacing
 

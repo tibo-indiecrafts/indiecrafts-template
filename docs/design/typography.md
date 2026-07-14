@@ -140,18 +140,8 @@ Wrap rendered content in the preset:
 ```
 
 - `typeset` enables the base styles; `typeset-docs` is the long-form rhythm preset.
-- **Fonts are linked to the config, not hard-coded.** Its seam variables point straight at the role variables:
-
-  ```css
-  .typeset {
-    --typeset-font-heading: var(--font-display);
-    --typeset-font-body: var(--font-sans);
-    --typeset-font-mono: var(--font-mono);
-  }
-  ```
-
-  So swapping `config.fonts` re-fonts Typeset automatically. Colors read the theme tokens, so it flips light/dark with no `dark:` overrides.
+- **One owner for the pairing, no duplication.** Typeset does **not** re-declare heading/body fonts. The pairing lives in `config.fonts` → `--font-display` / `--font-sans` / `--font-mono`, applied app-wide by the base `body` + `h1–h6` rules in `globals.css` — and those cascade into `.typeset`. So swapping `config.fonts` re-fonts Typeset automatically. It only sets `--font-mono` for code (the one role the base rules don't cover), and colors read the theme tokens (flips light/dark with no `dark:`).
 
 ::: info Typeset vs. `prose`
-Typeset coexists with `@tailwindcss/typography` (`prose`), which the blog renderers still use. Reach for whichever a surface calls for; both are token- and font-config-driven. To regenerate a different rhythm/scale, use the [Typeset builder](https://ui.shadcn.com/typeset) and keep the `--typeset-font-*` seam pointed at our `--font-*` vars.
+Typeset coexists with `@tailwindcss/typography` (`prose`), which the blog renderers still use. Reach for whichever a surface calls for; both inherit the same config-driven fonts and theme tokens. Typeset owns only the **rhythm** (sizes + spacing) — to regenerate a different scale, use the [Typeset builder](https://ui.shadcn.com/typeset); leave the fonts to the config.
 :::
