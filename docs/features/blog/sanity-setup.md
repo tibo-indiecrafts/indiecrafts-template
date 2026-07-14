@@ -6,16 +6,16 @@ End-to-end reference for the Sanity-backed blog: configuration, schemas, routes,
 
 ## 1. What's wired
 
-| Surface                    | Where                                      | Notes                                                                                                                         |
-| -------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| Embedded Studio            | `/studio`                                  | Catch-all at `src/app/studio/[[...tool]]/page.tsx`. Always reachable, even when `features.blog === false`.                    |
-| Public blog                | `/<locale>/blog` + `/<locale>/blog/<slug>` | Hard-coded fallback layouts when the `blog` singleton has no modules; otherwise driven by `frontpageModules` / `postModules`. |
-| Markdown export            | `/<locale>/blog/<slug>/md`                 | YAML frontmatter + PortableText serialized to Markdown.                                                                       |
-| RSS feed                   | `/<locale>/blog/rss.xml`                   | RSS 2.0, locale-filtered.                                                                                                     |
-| Draft preview              | `/api/draft-mode/enable` + `/disable`      | 503 with actionable message when `SANITY_API_READ_TOKEN` is missing.                                                          |
-| Live content subscriptions | `<SanityLive />` in `[locale]/layout.tsx`  | Only mounted when `features.blog === true`.                                                                                   |
-| Header nav link            | `/blog` link                               | Only shown when `features.blog === true`.                                                                                     |
-| Sitemap + llms.txt entries | `/sitemap.xml` + `/<locale>/llms.txt`      | Auto-included via `pages.blog.enabled = features.blog`.                                                                       |
+| Surface                    | Where                                      | Notes                                                                                                                                                                                                   |
+| -------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Embedded Studio            | `/studio`                                  | Catch-all at `src/app/studio/[[...tool]]/page.tsx` (own root layout `studio/layout.tsx`). Gated by **`features.studio`** — independent of `features.blog`.                                              |
+| Public blog                | `/<locale>/blog` + `/<locale>/blog/<slug>` | The frontpage is never module-driven (chrome stays uniform). Each `/blog/<slug>` renders via `DefaultPostLayout` when the `blog` singleton's `postModules` is empty; otherwise driven by `postModules`. |
+| Markdown export            | `/<locale>/blog/<slug>/md`                 | YAML frontmatter + PortableText serialized to Markdown.                                                                                                                                                 |
+| RSS feed                   | `/<locale>/blog/rss.xml`                   | RSS 2.0, locale-filtered. Requires `features.blog` **and** `features.rss` (`isRssEnabled()`).                                                                                                           |
+| Draft preview              | `/api/draft-mode/enable` + `/disable`      | Gated by **`features.studio`** (404 when off). `/enable` also 503s with an actionable message when `SANITY_API_READ_TOKEN` is missing.                                                                  |
+| Live content subscriptions | `<SanityLive />` in `[locale]/layout.tsx`  | Only mounted when `features.blog === true`.                                                                                                                                                             |
+| Header nav link            | `/blog` link                               | Only shown when `features.blog === true`.                                                                                                                                                               |
+| Sitemap + llms.txt entries | `/sitemap.xml` + `/<locale>/llms.txt`      | Auto-included via `pages.blog.enabled = features.blog`.                                                                                                                                                 |
 
 ---
 
@@ -47,23 +47,32 @@ pnpm dlx sanity@latest cors add http://localhost:3000 \
 
 `--credentials` lets the Studio's session cookie ride along. Repeat for every domain (staging, prod, preview branches) that will talk to this project.
 
-### Feature flag (`src/config/index.ts`)
+### Feature flags (`src/config/index.ts`)
+
+Two **independent** flags govern the blog. `features.blog` is the public surface; `features.studio` is the editing surface. Keep the Studio on with `blog: false` so editors keep working while the public site is hidden, or turn `studio` off to lock editing on a frozen site.
 
 ```ts
 features: {
   // …
-  blog: true,   // ← flip this to light up every Sanity-driven route
+  blog: true,     // ← the public surface — lights up every public Sanity-driven route
+  studio: true,   // ← the editing surface — /studio + /api/draft-mode/{enable,disable}
 }
 ```
 
-The flag is the master switch. When `false`:
+**`features.blog` (public surface)** — when `false`:
 
-- `/blog`, `/blog/<slug>`, `/blog/<slug>/md`, `/blog/rss.xml` all return 404
-- `/api/draft-mode/{enable,disable}` return 404
+- `/blog`, `/blog/<slug>`, `/blog/<slug>/md`, `/blog/category` + `/[slug]`, `/blog/tag` + `/[slug]`, `/author` + `/[slug]`, `/blog/rss.xml` all return 404 (gated via `src/features/blog/lib/route-gate.ts`)
 - `<SanityLive />` is not mounted in the layout
 - The header `/blog` link disappears
-- `pages.blog.enabled` is `false` → sitemap + llms.txt drop the entry
-- `generateStaticParams` for `/blog/[slug]` returns `[]` so the build skips Sanity calls
+- `pages.{blog,author,category,tag}.enabled` mirror the flag → sitemap + llms.txt drop the entries
+- `generateStaticParams` for every dynamic blog route returns `[]` so the build skips Sanity calls
+
+**`features.studio` (editing surface)** — when `false`:
+
+- `/studio` (the embedded Studio) returns 404
+- `/api/draft-mode/enable` + `/disable` return 404
+
+> The RSS feed also honors a third flag, `features.rss`: `/blog/rss.xml` and its `<link rel="alternate">` tags require `features.blog` **and** `features.rss` (see `isRssEnabled()`).
 
 ### CSP allowlist (already configured)
 
@@ -71,31 +80,36 @@ The flag is the master switch. When `false`:
 
 ### Studio config
 
+Core Sanity infra (client, env, live, token, Studio wrapper) is shared and stays under `src/sanity/`. Everything blog-specific (schema, GROQ, structure, serializer, types) lives inside the self-contained blog feature at `src/features/blog/sanity/`:
+
 ```
-sanity.config.ts                    # Schema list + structure + plugins
-src/sanity/env.ts                   # projectId, dataset, apiVersion, studioBasePath
-src/sanity/client.ts                # Read client (useCdn: false, stega.studioUrl wired)
-src/sanity/live.ts                  # defineLive — sanityFetch + <SanityLive />
-src/sanity/token.ts                 # Server-only SANITY_API_READ_TOKEN
-src/sanity/structure.ts             # Studio sidebar groups
-src/sanity/queries.ts               # GROQ — every query filters by $locale
-src/sanity/portable-to-markdown.ts  # PortableText → Markdown serializer
+sanity.config.ts                                 # Schema list + structure + plugins
+src/sanity/env.ts                                # projectId, dataset, apiVersion, studioBasePath
+src/sanity/client.ts                             # Read client (useCdn: false, stega.studioUrl wired)
+src/sanity/live.ts                               # defineLive — sanityFetch/sanityFetchLive + <SanityLive />
+src/sanity/token.ts                              # Server-only SANITY_API_READ_TOKEN
+src/sanity/Studio.tsx                            # "use client" wrapper around <NextStudio>
+src/features/blog/sanity/structure.ts            # Studio sidebar groups
+src/features/blog/sanity/queries.ts              # GROQ — every query filters by $locale
+src/features/blog/sanity/portable-to-markdown.ts # PortableText → Markdown serializer
+src/features/blog/sanity/types.ts                # TypeScript shapes for query results
 ```
 
 ---
 
 ## 3. Schemas
 
-All registered via `src/sanity/schema/index.ts`. Modules registered via `src/sanity/schema/modules/index.ts` (also exports `MODULE_TYPES` — the single source of truth used by both the `blog` singleton and the runtime renderer switch).
+All registered via `src/features/blog/sanity/schema/index.ts` (exported as `schemaTypes`, consumed by `sanity.config.ts`). Modules registered via `src/features/blog/sanity/schema/modules/index.ts` (also exports `MODULE_TYPES` — the single source of truth used by both the `blog` singleton and the runtime renderer registry). File paths in the tables below are relative to `src/features/blog/sanity/schema/`.
 
 ### Documents
 
 | Schema             | File                  | Localized?           | Purpose                                                                            |
 | ------------------ | --------------------- | -------------------- | ---------------------------------------------------------------------------------- |
-| `blog` (singleton) | `documents/blog.ts`   | shared               | Owns `frontpageModules[]` + `postModules[]`. One per dataset; sidebar enforces.    |
+| `blog` (singleton) | `documents/blog.ts`   | shared               | Owns `postModules[]` (per-post chrome). One per dataset; sidebar enforces.         |
 | `post`             | `post.ts`             | **yes** (`language`) | Title, body (PortableText), author ref, categories, featured flag, metadata object |
 | `author`           | `author.ts`           | shared               | Name, position, slug, image, bio                                                   |
 | `category`         | `category.ts`         | **yes** (`language`) | Title, description                                                                 |
+| `tag`              | `tag.ts`              | **yes** (`language`) | Cross-cutting tags (title, slug)                                                   |
 | `quote`            | `documents/quote.ts`  | **yes** (`language`) | Testimonial content + attribution                                                  |
 | `person`           | `documents/person.ts` | shared               | Team-member docs for Person List module                                            |
 
@@ -127,24 +141,25 @@ All registered via `src/sanity/schema/index.ts`. Modules registered via `src/san
 | `module.blog-post-content` | `modules/blog-post-content.ts` | renders the active post (slot)                        |
 | `module.blog-post-list`    | `modules/blog-post-list.ts`    | filtered post grid (limit, categories, featuredOnly)  |
 
-Every module gets `anchor` + `hidden` fields auto-injected by `defineModule` (`src/sanity/schema/objects/define-module.ts`).
+Every module gets `anchor` + `hidden` fields auto-injected by `defineModule` (`src/features/blog/sanity/schema/objects/define-module.ts`).
 
 ### Renderer
 
-`src/components/blog-components/modules/ModuleRenderer.tsx` switches on `_type` with **TS exhaustiveness**: adding a new module without wiring its case is a compile error. Each module has a matching component in `src/components/blog-components/modules/`.
+`src/features/blog/components/modules/registry.tsx` holds the `SIMPLE_MODULES` map (`_type` → component), constrained with `satisfies` so a missing entry is a **compile error** — this is where TS exhaustiveness lives. `ModuleRenderer.tsx` (`<Modules>` + `ModuleSwitch`) consumes that registry, special-casing the two context-aware modules. Each module has a matching component in `src/features/blog/components/modules/`.
 
-### Studio sidebar (`src/sanity/structure.ts`)
+### Studio sidebar (`src/features/blog/sanity/structure.ts`)
 
 ```
-Content
+Contenu
 ├─ Blog
-│  ├─ Layout (singleton)   ← always opens documentId="blog"
-│  ├─ Posts
-│  ├─ Authors
-│  └─ Categories
-└─ References
-   ├─ Quotes
-   └─ People
+│  ├─ Mise en page (singleton)   ← always opens documentId="blog"
+│  ├─ Articles (EN / FR)
+│  ├─ Auteurs
+│  ├─ Catégories (EN / FR)
+│  └─ Tags (EN / FR)
+└─ Références
+   ├─ Citations (EN / FR)
+   └─ Personnes
 ```
 
 The 14 modules are object types, not documents — editors only ever encounter them via the picker inside the singleton's `postModules` array or directly inline in a post body (the 8 inline-embeddable types listed in `blockContent.ts`).
@@ -153,22 +168,25 @@ The 14 modules are object types, not documents — editors only ever encounter t
 
 ## 4. Routes
 
-| Route                                                                              | Type    | Gated                                     | Reads from                                        |
-| ---------------------------------------------------------------------------------- | ------- | ----------------------------------------- | ------------------------------------------------- |
-| `/<locale>`                                                                        | static  | —                                         | `messages/<locale>.json`                          |
-| `/<locale>/legal`                                                                  | static  | `features.legalPage`                      | `messages/<locale>.json`                          |
-| `/<locale>/blog`                                                                   | SSG     | `features.blog`                           | `blogSingletonQuery` + `allPostsQuery` (fallback) |
-| `/<locale>/blog/<slug>`                                                            | SSG     | `features.blog`                           | `postBySlugQuery` + `blogSingletonQuery`          |
-| `/<locale>/blog/<slug>/md`                                                         | dynamic | `features.blog`                           | `postBySlugQuery`                                 |
-| `/<locale>/blog/rss.xml`                                                           | dynamic | `features.blog`                           | `rssPostsQuery`                                   |
-| `/<locale>/llms.txt`                                                               | dynamic | `features.llmsTxt`                        | messages tree                                     |
-| `/<locale>/llms-full.txt`                                                          | dynamic | `features.llmsTxt`                        | messages tree                                     |
-| `/<locale>/llms/<id>`                                                              | dynamic | `features.llmsTxt`                        | messages tree                                     |
-| `/api/draft-mode/enable`                                                           | dynamic | `features.blog` + `SANITY_API_READ_TOKEN` | —                                                 |
-| `/api/draft-mode/disable`                                                          | dynamic | `features.blog`                           | —                                                 |
-| `/studio/[[...tool]]`                                                              | static  | —                                         | Sanity API                                        |
-| `/sitemap.xml`                                                                     | static  | —                                         | `pages` map                                       |
-| `/robots.txt`, `/icon`, `/apple-icon`, `/opengraph-image`, `/manifest.webmanifest` | static  | —                                         | `site` config                                     |
+| Route                                                                              | Type    | Gated                                       | Reads from                                         |
+| ---------------------------------------------------------------------------------- | ------- | ------------------------------------------- | -------------------------------------------------- |
+| `/<locale>`                                                                        | static  | —                                           | `messages/<locale>.json`                           |
+| `/<locale>/legal`                                                                  | static  | `features.legalPage`                        | `messages/<locale>.json`                           |
+| `/<locale>/blog`                                                                   | SSG     | `features.blog`                             | `blogSingletonQuery` + `allPostsQuery` (fallback)  |
+| `/<locale>/blog/<slug>`                                                            | SSG     | `features.blog`                             | `postBySlugQuery` + `blogSingletonQuery`           |
+| `/<locale>/blog/<slug>/md`                                                         | dynamic | `features.blog`                             | `postBySlugQuery`                                  |
+| `/<locale>/blog/rss.xml`                                                           | dynamic | `features.blog` + `features.rss`            | `rssPostsQuery`                                    |
+| `/<locale>/blog/category` + `/<slug>`                                              | SSG     | `features.blog`                             | `categoriesForLocaleQuery` / `categoryBySlugQuery` |
+| `/<locale>/blog/tag` + `/<slug>`                                                   | SSG     | `features.blog`                             | `tagsForLocaleQuery` / `tagBySlugQuery`            |
+| `/<locale>/author` + `/<slug>`                                                     | SSG     | `features.blog`                             | `authorsForLocaleQuery` / `authorBySlugQuery`      |
+| `/<locale>/llms.txt`                                                               | dynamic | `features.llms.index`                       | messages tree                                      |
+| `/<locale>/llms-full.txt`                                                          | dynamic | `features.llms.full`                        | messages tree                                      |
+| `/<locale>/llms/<id>`                                                              | dynamic | `features.llms.pages`                       | messages tree                                      |
+| `/api/draft-mode/enable`                                                           | dynamic | `features.studio` + `SANITY_API_READ_TOKEN` | —                                                  |
+| `/api/draft-mode/disable`                                                          | dynamic | `features.studio`                           | —                                                  |
+| `/studio/[[...tool]]`                                                              | static  | `features.studio`                           | Sanity API                                         |
+| `/sitemap.xml`                                                                     | static  | —                                           | `pages` map                                        |
+| `/robots.txt`, `/icon`, `/apple-icon`, `/opengraph-image`, `/manifest.webmanifest` | static  | —                                           | `site` config                                      |
 
 `proxy.ts` matcher excludes `/studio` and `/api`; explicitly includes `/llms.txt`, `/llms-full.txt`, `/llms/:path*`, `/blog/rss.xml`, `/blog/:slug/md`.
 
@@ -256,7 +274,7 @@ pnpm tsc            # → no output (0 errors)
 pnpm lint           # → no output (0 errors, 0 warnings)
 pnpm format:check   # → "All matched files use Prettier code style!"
 pnpm verify:contrast # → "All pairs meet WCAG AA."
-pnpm build          # → 17 prerendered routes + 7 dynamic
+pnpm build          # → prerenders every static route × locale + the dynamic handlers
 ```
 
 The build output should list these routes:
@@ -268,6 +286,9 @@ The build output should list these routes:
 ● /[locale]/blog/[slug]                     ← 10 statically generated paths
 ƒ /[locale]/blog/[slug]/md
 ƒ /[locale]/blog/rss.xml
+● /[locale]/blog/category, /[locale]/blog/category/[slug]
+● /[locale]/blog/tag, /[locale]/blog/tag/[slug]
+● /[locale]/author, /[locale]/author/[slug]
 ● /[locale]/legal (/en/legal, /fr/legal)
 ƒ /[locale]/llms-full.txt
 ƒ /[locale]/llms.txt
@@ -339,16 +360,16 @@ Open <http://localhost:3000/studio>. Log in with the account that owns the proje
 
 **Verify sidebar:**
 
-- Blog (expandable) → Layout (singleton) + Posts + Authors + Categories
-- References (expandable) → Quotes + People + Logos + Forms
+- Blog (expandable) → Mise en page (singleton) + Articles (EN/FR) + Auteurs + Catégories (EN/FR) + Tags (EN/FR)
+- Références (expandable) → Citations (EN/FR) + Personnes
 
 **Verify content** (after seeding):
 
-- Posts list: 10 documents — 5 EN, 5 FR
+- Articles list: 10 documents — 5 EN, 5 FR
 - Each post preview line shows `EN · <date>` or `FR · <date>`
-- Open any post → two tabs: **Content** and **Metadata**
-- Open Layout (singleton): two arrays, `Frontpage modules` (17 items) and `Per-post modules` (4 items)
-- Add a new module from the picker — every type from the catalog should be selectable
+- Open any post → two tabs: **Contenu** and **Metadata**
+- Open Mise en page (singleton): a single `Modules par article` array (empty by default, so posts fall back to `DefaultPostLayout`)
+- Add a new module from the picker — every type from the 14-module catalog should be selectable
 
 ### 7.4 Draft preview
 
@@ -393,7 +414,7 @@ In the same post, also verify the default body primitives that ship with `blockC
 
 ### 7.6 Per-post layout
 
-By default the `blog` singleton's `postModules` array is empty, so every `/blog/[slug]` route renders via `DefaultPostLayout` (`src/components/blog-components/DefaultPostLayout.tsx`):
+By default the `blog` singleton's `postModules` array is empty, so every `/blog/[slug]` route renders via `DefaultPostLayout` (`src/features/blog/components/DefaultPostLayout.tsx`):
 
 - Full-width hero card with cover image touching the nav, breadcrumbs in a backdrop-blur pill, bottom-aligned title block
 - Two-column layout below: TOC sidebar on the right (sticky `top-24`, only mounted when `post.headings` has at least one h2/h3/h4) and a rounded body panel filling the rest of the width
@@ -403,7 +424,7 @@ To swap in a module-driven shell for every post, populate `postModules` from the
 
 ### 7.7 Feature flag OFF (regression check)
 
-Flip back to `features: { blog: false }`. After dev reload:
+Flip back to `features: { blog: false }` (leave `studio: true`). After dev reload:
 
 ```bash
 curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog                 # 404
@@ -412,10 +433,10 @@ curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog/fast-pr
 curl -sS    -o /dev/null -w "%{http_code}\n" http://localhost:3000/en/blog/rss.xml         # 404
 curl -sS    -o /dev/null -w "%{http_code}\n" http://localhost:3000/api/draft-mode/enable    # 404
 curl -sS    -o /dev/null -w "%{http_code}\n" http://localhost:3000/api/draft-mode/disable   # 404
-curl -sS    -o /dev/null -w "%{http_code}\n" http://localhost:3000/studio                   # 200 (Studio stays)
+curl -sS    -o /dev/null -w "%{http_code}\n" http://localhost:3000/studio                   # 200 (Studio stays — gated by features.studio)
 ```
 
-Home `/`: no "Blog" link in the header nav. `/sitemap.xml` should not list `/blog`. `/llms.txt` should not list the Blog entry.
+Home `/`: no "Blog" link in the header nav. `/sitemap.xml` should not list `/blog`. `/llms.txt` should not list the Blog entry. (To 404 the Studio too, set `features.studio = false` as well.)
 
 ---
 
@@ -459,7 +480,7 @@ Already allowed via `getCSPConnectSources()` in `src/config/types.ts`. If you've
 
 ### `/blog` 200s but is blank
 
-The `blog` singleton's `frontpageModules` array is empty AND there are no posts. Either run `pnpm seed:blog` or set at least one module in the singleton via the Studio.
+The frontpage is driven entirely by published posts (it's never module-driven), so a blank `/blog` means there are no posts in the requested locale. Run `pnpm seed:blog`, or publish a post with its `language` matching the route locale.
 
 ### `/studio` shows "Configuration error"
 
@@ -471,12 +492,12 @@ Likely an unset `NEXT_PUBLIC_SANITY_PROJECT_ID`. Check `.env.local`, restart dev
 
 ### Add a new module
 
-1. **Schema** — create `src/sanity/schema/modules/<name>.ts` using the `defineModule` helper
-2. **Register** — import + add to `moduleSchemas` and `MODULE_TYPES` in `src/sanity/schema/modules/index.ts`
-3. **Type** — add a `<Name>Module` discriminant + add it to `AnyModule` union in `src/sanity/types.ts`
-4. **GROQ** (only if the module has cross-references) — add a `_type == "module.<name>" => { ... }` branch to `MODULES_FRAGMENT` in `src/sanity/queries.ts`
-5. **Component** — add `src/components/blog-components/modules/<Name>.tsx`
-6. **Renderer** — add a case in `ModuleRenderer.tsx`'s switch (TS exhaustiveness will flag if you forget)
+1. **Schema** — create `src/features/blog/sanity/schema/modules/<name>.ts` using the `defineModule` helper
+2. **Register** — import + add to `moduleSchemas` and `MODULE_TYPES` in `src/features/blog/sanity/schema/modules/index.ts`
+3. **Type** — add a `<Name>Module` discriminant + add it to `AnyModule` union in `src/features/blog/sanity/types.ts`
+4. **GROQ** (only if the module has cross-references) — add a `_type == "module.<name>" => { ... }` branch to `MODULES_FRAGMENT` in `src/features/blog/sanity/queries.ts`
+5. **Component** — add `src/features/blog/components/modules/<Name>.tsx`
+6. **Registry** — add the `_type` → component entry to `SIMPLE_MODULES` in `src/features/blog/components/modules/registry.tsx` (the `satisfies` check flags a missing entry). Context-aware modules are special-cased in `ModuleRenderer.tsx` instead.
 
 ### Rename `/blog` to something else
 
@@ -489,7 +510,7 @@ Routes + sitemap + Studio sidebar follow automatically.
 
 ### Change locale set
 
-Edit `locales` in `src/config/index.ts`. Add the locale code as a new option in the `language` field's `options.list` on `post`, `category`, `quote` schemas. Drop `messages/<code>.json`.
+Edit `locales` in `src/config/index.ts`. Add the locale code as a new option in the `language` field's `options.list` on the `post`, `category`, `tag`, and `quote` schemas, and add an `en`/`fr`-style leaf to `languageSplit` in `src/features/blog/sanity/structure.ts`. Drop `messages/<code>.json`.
 
 ### Disable a module without deleting it
 
@@ -499,55 +520,67 @@ Every module has a `hidden` boolean (auto-injected by `defineModule`). Toggle it
 
 ## 10. File map
 
+Core Sanity infra is shared (`src/sanity/`); everything blog-specific is self-contained under `src/features/blog/`.
+
 ```
 sanity.config.ts                                Studio config (schema, plugins, structure)
 scripts/seed-blog-demo.mjs                      pnpm seed:blog — populates demo dataset
+scripts/unset-legacy-fields.mjs                 one-shot field unset after a schema removal
 
-src/sanity/
+src/sanity/                                     SHARED core infra (not blog-specific)
 ├── env.ts                                      projectId, dataset, apiVersion, studioBasePath
 ├── client.ts                                   Read client (useCdn: false, stega.studioUrl)
 ├── token.ts                                    Server-only SANITY_API_READ_TOKEN
-├── live.ts                                     defineLive — sanityFetch + <SanityLive />
-├── Studio.tsx                                  "use client" wrapper around <NextStudio>
-├── structure.ts                                Studio sidebar layout
-├── queries.ts                                  Every GROQ query (locale-filtered)
-├── types.ts                                    TypeScript shapes for query results
-├── portable-to-markdown.ts                     PortableText → Markdown serializer
-├── image.ts                                    Sanity image URL builder
-└── schema/
-    ├── index.ts                                Schema-types registry
-    ├── post.ts, author.ts, category.ts         Top-level documents
-    ├── blockContent.ts                         Rich text definition
-    ├── documents/                              Singleton + module-reference documents
-    │   ├── blog.ts                             Singleton (postModules layout slot)
-    │   ├── quote.ts, person.ts
-    │   └── …
-    ├── objects/                                Reusable object types
-    │   ├── metadata.ts                         Per-doc SEO override
-    │   ├── link.ts, cta.ts
-    │   └── define-module.ts                    Helper for module schemas
-    └── modules/                                Module schemas + MODULE_TYPES catalog
-        ├── index.ts
-        ├── accordion-list.ts, callout.ts, card-list.ts,
-        │   person-list.ts, prose.ts, stat-list.ts, step-list.ts,
-        │   quote-list.ts, breadcrumbs.ts, custom-html.ts,
-        │   search-module.ts, blog-index.ts, blog-post-content.ts,
-        │   blog-post-list.ts
+├── live.ts                                     defineLive — sanityFetch / sanityFetchLive + <SanityLive />
+└── Studio.tsx                                  "use client" wrapper around <NextStudio>
+
+src/features/blog/                              THE BLOG FEATURE (gated by features.blog)
+├── lib/route-gate.ts                           requireBlogRoute / isBlogRouteEnabled / isRssEnabled
+├── sanity/
+│   ├── queries.ts                              Every GROQ query (locale-filtered)
+│   ├── types.ts                                TypeScript shapes for query results
+│   ├── structure.ts                            Studio sidebar layout
+│   ├── portable-to-markdown.ts                 PortableText → Markdown serializer
+│   └── schema/
+│       ├── index.ts                            schemaTypes registry
+│       ├── post.ts, author.ts, category.ts, tag.ts   Top-level documents
+│       ├── blockContent.ts                     Rich text def + INLINE_MODULES allowlist
+│       ├── documents/                          Singleton + module-reference documents
+│       │   ├── blog.ts                         Singleton (postModules layout slot)
+│       │   └── quote.ts, person.ts
+│       ├── objects/                            Reusable object types
+│       │   ├── metadata.ts                     Per-doc SEO override
+│       │   ├── link.ts, cta.ts
+│       │   └── define-module.ts                Helper (auto-injects anchor + hidden)
+│       └── modules/                            Module schemas + MODULE_TYPES catalog
+│           ├── index.ts
+│           ├── accordion-list.ts, callout.ts, card-list.ts,
+│           │   person-list.ts, prose.ts, stat-list.ts, step-list.ts,
+│           │   quote-list.ts, breadcrumbs.ts, custom-html.ts,
+│           │   search-module.ts, blog-index.ts, blog-post-content.ts,
+│           │   blog-post-list.ts
+└── components/
+    ├── DefaultPostLayout.tsx                   Fallback per-post shell (hero + TOC + body)
+    ├── Toc.tsx, MobileToc.tsx                  Table of Contents (scroll-spy)
+    ├── BlogHero.tsx, BlogListing.tsx, BlogCard.tsx, …   Views + cards
+    └── modules/
+        ├── registry.tsx                        SIMPLE_MODULES map (TS exhaustiveness)
+        ├── ModuleRenderer.tsx                  <Modules> + ModuleSwitch
+        ├── portable-text-components.tsx        Shared PortableText render map
+        ├── Cta.tsx                             ModuleCta button
+        └── <14 module component files>
 
 src/app/
-├── studio/[[...tool]]/page.tsx                 Embedded Studio route
-├── api/draft-mode/{enable,disable}/route.ts    Draft preview toggles
-└── [locale]/blog/
-    ├── page.tsx                                Frontpage (module-driven, falls back to card grid)
-    ├── [slug]/page.tsx                         Detail (module-driven, falls back to article + TOC)
-    ├── [slug]/md/route.ts                      Markdown export
-    └── rss.xml/route.ts                        RSS feed
-
-src/components/blog-components/
-├── Toc.tsx                                     Table of Contents sidebar (scroll-spy)
-└── modules/
-    ├── ModuleRenderer.tsx                      <Modules> + ModuleSwitch
-    ├── portable-text-components.tsx            Shared PortableText render map
-    ├── Cta.tsx                                 ModuleCta button
-    └── <14 module component files>
+├── studio/layout.tsx                           Studio root layout (own <html>/<body>)
+├── studio/[[...tool]]/page.tsx                 Embedded Studio route (features.studio)
+├── api/draft-mode/{enable,disable}/route.ts    Draft preview toggles (features.studio)
+└── [locale]/
+    ├── blog/
+    │   ├── page.tsx                            Frontpage (post grid; never module-driven)
+    │   ├── [slug]/page.tsx                     Detail (postModules-driven, falls back to DefaultPostLayout)
+    │   ├── [slug]/md/route.ts                  Markdown export
+    │   ├── rss.xml/route.ts                    RSS feed
+    │   ├── category/…                          Category listing + detail
+    │   └── tag/…                               Tag listing + detail
+    └── author/…                                Author listing + detail
 ```

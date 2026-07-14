@@ -2,10 +2,9 @@
 
 The visual language and its tokens. Everything here is **config-first**: values
 live in `src/config/index.ts` (`theme`, `fonts`) and are mirrored as CSS vars in
-`src/app/globals.css`, then exposed as Tailwind v4 utilities. Change the config
-
-- globals pair, never hard-code. Deeper guides live in `docs/design/` and
-  `docs/config/theme-modes.md`.
+`src/app/globals.css`, then exposed as Tailwind v4 utilities. Edit the config and
+globals together, never hard-code. Deeper guides live in `docs/design/` and
+`docs/config/theme-modes.md`.
 
 ## Personality
 

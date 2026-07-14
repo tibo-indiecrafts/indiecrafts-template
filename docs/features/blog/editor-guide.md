@@ -19,18 +19,21 @@ Once you're in, the Studio loads with the sidebar visible.
 ## 2. Tour the sidebar
 
 ```
-Content
+Contenu
 ├─ Blog
-│  ├─ Layout              ← the singleton that governs /blog/[slug] chrome
-│  ├─ Posts               ← every article (split EN / FR)
-│  ├─ Authors             ← writer profiles
-│  └─ Categories          ← topic taxonomy (split EN / FR)
-└─ References
-   ├─ Quotes              ← reusable testimonials (split EN / FR)
-   └─ People              ← reusable team-member docs (used by the Team module)
+│  ├─ Mise en page         ← the singleton that governs /blog/[slug] chrome
+│  ├─ Articles             ← every article (split EN / FR)
+│  ├─ Auteurs              ← writer profiles
+│  ├─ Catégories           ← topic taxonomy (split EN / FR)
+│  └─ Tags                 ← cross-cutting tags (split EN / FR)
+└─ Références
+   ├─ Citations            ← reusable testimonials (split EN / FR)
+   └─ Personnes            ← reusable team-member docs (used by the Person List module)
 ```
 
-**Singleton vs. document list:** the _Layout_ entry under Blog opens **the same one document** every time — there's only ever one `blog` singleton per dataset. _Posts_, _Authors_, _Categories_, etc. are lists where you can create as many as you like.
+(The Studio sidebar labels are in French — the English glosses above map to `Mise en page`, `Articles`, `Auteurs`, `Catégories`, `Tags`, `Citations`, `Personnes`.)
+
+**Singleton vs. document list:** the _Mise en page_ entry under Blog opens **the same one document** every time — there's only ever one `blog` singleton per dataset. _Articles_, _Auteurs_, _Catégories_, etc. are lists where you can create as many as you like.
 
 **Language splits:** _Posts_, _Categories_, _Tags_, and _Quotes_ each have two child entries — `EN` and `FR`. Clicking `EN` pre-fills the `language` field on any new document you create, so you can't accidentally publish a French post into the English feed. The flat _Toutes les langues_ entry below is for power users editing across locales.
 
@@ -108,7 +111,8 @@ Quick summary of what's available:
   - Stats
   - Steps (numbered timeline)
   - Quotes (testimonials)
-  - Search
+
+  (Search, Breadcrumbs, Blog hero, Article content, Article list, and Prose are page-chrome modules — they only appear inside the singleton's `postModules`, not in the body picker.)
 
 Each module has its own simple form when you insert it (title, intro, items array, etc.) — none require code.
 
@@ -160,13 +164,13 @@ If you accidentally created a post under the wrong language: open it, change the
 
 ## 8. Common gotchas
 
-| Symptom                                         | Cause                                                                                                                                                               | Fix                                                         |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Post saved but not appearing at `/en/blog`      | `metadata.noIndex` is on, OR `language` doesn't match the route                                                                                                     | Untick `No index`; check the `Langue` field matches the URL |
-| Cover image looks cropped weird                 | Hotspot is centred (default) but the image's subject isn't                                                                                                          | Click the image → drag the round dot over the subject       |
-| Body content renders without the hero image     | `metadata.image` is empty (only the post-level image renders, not the document-level)                                                                               | Set the image in the **Metadata** tab                       |
-| "Reference broken" red box appears              | The quote/person doc you referenced was deleted or has the wrong language                                                                                           | Open the picker, swap to a valid doc, publish               |
-| Module picker shows fewer options than expected | You're inside a post body — only the 8 inline-embeddable types appear. The other 6 (Layout, Blog hero, etc.) live inside the `blog` singleton's `postModules` array | Open Studio → Blog → Layout to access them                  |
+| Symptom                                         | Cause                                                                                                                                                                                                            | Fix                                                         |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Post saved but not appearing at `/en/blog`      | `metadata.noIndex` is on, OR `language` doesn't match the route                                                                                                                                                  | Untick `No index`; check the `Langue` field matches the URL |
+| Cover image looks cropped weird                 | Hotspot is centred (default) but the image's subject isn't                                                                                                                                                       | Click the image → drag the round dot over the subject       |
+| Body content renders without the hero image     | `metadata.image` is empty (only the post-level image renders, not the document-level)                                                                                                                            | Set the image in the **Metadata** tab                       |
+| "Reference broken" red box appears              | The quote/person doc you referenced was deleted or has the wrong language                                                                                                                                        | Open the picker, swap to a valid doc, publish               |
+| Module picker shows fewer options than expected | You're inside a post body — only the 8 inline-embeddable types appear. The other 6 (Search, Breadcrumbs, Blog hero, Article content, Article list, Prose) live inside the `blog` singleton's `postModules` array | Open Studio → Blog → Mise en page to access them            |
 
 ---
 

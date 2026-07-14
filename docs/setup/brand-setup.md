@@ -154,13 +154,13 @@ If you reference an external image from anywhere else (a partner logo on the hom
 
 ```ts
 headerNav = [
-  { href: "/", labelKey: "nav.home" },
-  { href: "/blog", labelKey: "nav.blog" },
-  { href: "/about", labelKey: "nav.about" }, // ⚠ also add a new entry to AppPathname
+  { labelKey: "home", href: "/" },
+  { labelKey: "blog", href: "/blog" },
+  { labelKey: "about", href: "/about" }, // ⚠ also add a new entry to AppPathname
 ];
 ```
 
-`labelKey` is a path into `messages/<locale>.json`. Add the translation in every locale file.
+`labelKey` resolves under the `nav` namespace in `messages/<locale>.json` (`labelKey: "home"` → `nav.home`). Add the translation under `nav` in every locale file.
 
 Removing an entry hides it from the header but the route stays reachable by direct URL. Hide an entire route at the routing layer by toggling `enabled: false` on its `pages.<id>` entry instead.
 
@@ -173,9 +173,10 @@ The two operational flags you'll touch most often:
 ```ts
 features = {
   cookieBanner: false, // turn ON for EU traffic when GA is on
-  legalPage: false, // /legal route
-  blog: true, // every Sanity-driven route
-  llmsTxt: true, // /llms.txt + /llms-full.txt + /llms/<id>
+  legalPage: true, // /legal route
+  blog: true, // public Sanity-driven blog surface
+  studio: true, // Sanity Studio at /studio (gated separately from blog)
+  llms: { index: true, full: true, pages: true }, // /llms.txt + /llms-full.txt + /llms/<id>
   localeSwitcher: true, // header language picker (auto-hides at 1 locale)
 };
 
