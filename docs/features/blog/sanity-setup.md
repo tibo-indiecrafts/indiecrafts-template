@@ -367,7 +367,7 @@ Open <http://localhost:3000/studio>. Log in with the account that owns the proje
 
 - Articles list: 10 documents — 5 EN, 5 FR
 - Each post preview line shows `EN · <date>` or `FR · <date>`
-- Open any post → two tabs: **Contenu** and **Metadata**
+- Open any post → two tabs: **Contenu** and **Métadonnées**
 - Open Mise en page (singleton): a single `Modules par article` array (empty by default, so posts fall back to `DefaultPostLayout`)
 - Add a new module from the picker — every type from the 14-module catalog should be selectable
 

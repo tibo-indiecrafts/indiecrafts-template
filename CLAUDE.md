@@ -122,7 +122,11 @@ Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, J
 
 ## Working with the library (shadcn/ui + `../indiecrafts-library`)
 
-Two building blocks feed the UI: **shadcn/ui** primitives (`src/parts/ui`, CLI-managed) and the sibling **`../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend:
+Two building blocks feed the UI: **shadcn/ui** primitives (`src/parts/ui`, CLI-managed) and the sibling **`../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
+
+**Reuse before create.** Before adding UI: reuse an existing part → add a backward-compatible variant → compose primitives → new shared part (`parts/`) → page-specific. Never duplicate a part just because it has a different name. When sources disagree, authority runs: `parts/ui` + `config`/`globals.css` tokens (canonical) → the library (a reference to adapt, not copy verbatim) → screenshots.
+
+To adapt a library section:
 
 1. Browse the variant in Storybook (`cd ../indiecrafts-library && pnpm storybook`).
 2. Copy its file into `src/parts/sections/<Name>.tsx`. Flatten a multi-file folder (schema.ts + config.ts + en.json) into one `.tsx`, and rework it to template patterns: strings → `messages/`, colors/nav → `@/config`, links → `@/i18n/routing`. See `src/parts/sections/Features.tsx` for the target shape.

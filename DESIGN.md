@@ -173,8 +173,13 @@ status dots use `full`. Don't mix radii within one component.
   label; it should **encode** something (status, category), not decorate.
 - **Focus** — every interactive element:
   `focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none`.
+- **States** — a component is its appearance _and_ its behavior. Interactive
+  elements handle keyboard, `focus-visible`, disabled, loading (async), and error;
+  **never signal state by color alone**. Use the Radix primitive for
+  dialogs/menus/tabs/tooltips (focus trap, Escape, return-focus) — don't hand-roll it.
 - **Icons** — Lucide (UI), Reicon outline/filled (range), Reicon Brands (logos);
-  `aria-hidden` unless the sole label.
+  `aria-hidden` unless the sole label. Don't substitute Unicode glyphs or add a
+  new icon set.
 
 ## Do's and Don'ts
 
@@ -184,8 +189,25 @@ status dots use `full`. Don't mix radii within one component.
   and run `pnpm verify:contrast` (WCAG **AA**) after.
 - **Do** guard every transform with `motion-reduce:`, and spend boldness once per
   surface — keep everything around it quiet.
+- **Do** expose a missing token — name the semantic role and propose adding it;
+  never bury a raw value inside a component to paper over the gap.
 - **Don't** hard-code colors/spacing/fonts, or invent a grey outside the token
   scale.
 - **Don't** use `brand` decoratively, or the display font for body copy.
+- **Don't** wrap every content group in a card — reach for spacing, a heading, or
+  a divider first; a card is for content that needs its own surface.
 - **Don't** mix `rounded` scales, add drop-shadows to flat cards (use `ring` +
   `shadow-sm`), or ship an interactive element without a `focus-visible` ring.
+
+## Definition of done (UI)
+
+A screen that renders is not done. Before calling a UI task complete:
+
+1. **Reused** existing parts where possible — no near-duplicate component.
+2. **Tokens only** — no raw colors/spacing/fonts; any genuinely new token is
+   surfaced and proposed, not buried.
+3. **All states** covered where relevant: loading, empty, error, disabled, success.
+4. **Keyboard + `focus-visible`** work; no state communicated by color alone.
+5. **Verified at 375 / 768 / 1280** — nothing overflows, clips, or mis-reflows.
+6. `pnpm verify:quick` passes and the result matches the reference.
+7. **Listed** any intentional deviation, and any new component / variant / token.

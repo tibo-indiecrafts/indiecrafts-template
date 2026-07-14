@@ -12,16 +12,18 @@ If you want to _see_ every primitive in one post, look at the showcase article: 
 
 Click the **"Normal"** dropdown at the top of the body editor toolbar to switch the style of the current block.
 
-| Style                     | Live rendering                                                                                  | When to use                                                                                                                 |
-| ------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **Normal**                | Body paragraph, `text-base leading-7`, `my-4` margin                                            | Default for prose                                                                                                           |
-| **H1**                    | Largest heading, `text-4xl md:text-5xl font-bold`, `tracking-tight`, `mt-10 mb-4`               | Reserved for the post title (auto-rendered by the layout). Don't use H1 in the body — duplicate H1s break the page outline. |
-| **H2**                    | `text-3xl md:text-4xl font-bold tracking-tight`, `mt-10 mb-4`. Picked up by the TOC sidebar.    | Major sections inside the post                                                                                              |
-| **H3**                    | `text-2xl md:text-3xl font-semibold tracking-tight`, `mt-8 mb-3`. Picked up by the TOC sidebar. | Sub-sections under H2                                                                                                       |
-| **H4**                    | `text-xl md:text-2xl font-semibold`, `mt-6 mb-2`. Picked up by the TOC sidebar.                 | Sub-sub-sections; rarely needed in editorial                                                                                |
-| **H5**                    | `text-base font-semibold tracking-tight`, `mt-6 mb-2`. NOT in the TOC.                          | Editorial micro-headings ("Editor's note", etc.)                                                                            |
-| **H6**                    | `text-sm font-semibold uppercase tracking-wide`, `text-muted-foreground`. NOT in the TOC.       | Metadata labels ("Updated", "Source", "Disclosure")                                                                         |
-| **Citation** (Blockquote) | `text-lg italic`, left border (`border-l-4 border-foreground/30 pl-4`), `text-muted-foreground` | Long editorial pull quotes                                                                                                  |
+Every style below maps to a Portable Text block `value` (`normal`, `h1`–`h6`, `blockquote`) defined in `blockContent.ts`. Visual sizing/spacing is the `prose` plugin's default scale — the renderer only adds a slug `id` + `scroll-mt-24` to H2/H3/H4 so the TOC can anchor to them.
+
+| Style                     | Live rendering                                                         | When to use                                                                                                                 |
+| ------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Normal**                | Prose body paragraph                                                   | Default for prose                                                                                                           |
+| **H1**                    | Largest prose heading                                                  | Reserved for the post title (auto-rendered by the layout). Don't use H1 in the body — duplicate H1s break the page outline. |
+| **H2**                    | Large prose heading. Gets a slug `id` — picked up by the TOC sidebar.  | Major sections inside the post                                                                                              |
+| **H3**                    | Sub-heading. Also gets an `id` — picked up by the TOC sidebar.         | Sub-sections under H2                                                                                                       |
+| **H4**                    | Smaller sub-heading. Also gets an `id` — picked up by the TOC sidebar. | Sub-sub-sections; rarely needed in editorial                                                                                |
+| **H5**                    | Small prose heading. NOT in the TOC.                                   | Editorial micro-headings ("Editor's note", etc.)                                                                            |
+| **H6**                    | Smallest prose heading. NOT in the TOC.                                | Metadata labels ("Updated", "Source", "Disclosure")                                                                         |
+| **Citation** (Blockquote) | Prose blockquote (left border + italic)                                | Long editorial pull quotes                                                                                                  |
 
 **TOC behaviour:** the right-rail sidebar on every post auto-collects H2 / H3 / H4 with deterministic `id` slugs so the entries are click-to-scroll-to-section. Hide a section from the TOC by promoting it to H5 / H6 instead.
 
@@ -31,10 +33,8 @@ Click the **"Normal"** dropdown at the top of the body editor toolbar to switch 
 
 Two list types, toggled with the bullet/number icons in the toolbar.
 
-- **Puces** (bulleted) — `<ul>` with `list-disc ml-6 my-4 space-y-2 marker:text-muted-foreground`
-- **Numéros** (numbered) — `<ol>` with `list-decimal ml-6 my-4 space-y-2 marker:text-muted-foreground`
-
-Both render with relaxed `leading-7` per item.
+- **Puces** (bulleted) — rendered as `<ul>`, styled by the `prose` plugin
+- **Numéros** (numbered) — rendered as `<ol>`, styled by the `prose` plugin
 
 Lists nest naturally — indent with **Tab** to push one level deeper. There is no separate "checkbox" or "definition list" — for those, use a Custom HTML inline module.
 
@@ -44,13 +44,13 @@ Lists nest naturally — indent with **Tab** to push one level deeper. There is 
 
 Select a span of text and click the toolbar icon, or use the keyboard shortcuts.
 
-| Mark                       | Rendering                                                                                       | Shortcut      |
-| -------------------------- | ----------------------------------------------------------------------------------------------- | ------------- |
-| **Gras** (strong)          | `<strong>`                                                                                      | ⌘B / Ctrl-B   |
-| **Italique** (em)          | `<em>`                                                                                          | ⌘I / Ctrl-I   |
-| **Code**                   | `<code className="bg-muted rounded px-1.5 py-0.5 font-mono text-[0.85em]">` — looks like a pill | (no shortcut) |
-| **Souligné** (underline)   | `<u>`                                                                                           | ⌘U / Ctrl-U   |
-| **Barré** (strike-through) | `<s>`                                                                                           | (no shortcut) |
+| Mark                       | Rendering                                                      | Shortcut      |
+| -------------------------- | -------------------------------------------------------------- | ------------- |
+| **Gras** (strong)          | `<strong>`                                                     | ⌘B / Ctrl-B   |
+| **Italique** (em)          | `<em>`                                                         | ⌘I / Ctrl-I   |
+| **Code**                   | `<code>` (monospace inline code, styled by the `prose` plugin) | (no shortcut) |
+| **Souligné** (underline)   | `<u>`                                                          | ⌘U / Ctrl-U   |
+| **Barré** (strike-through) | `<s>`                                                          | (no shortcut) |
 
 Marks combine freely — you can have "**important `code`**" with both `strong` + `code`.
 

@@ -48,32 +48,33 @@ In the sidebar, **Blog → Posts → EN → "+ Create"** (the green button at th
 You land on an empty post form with two top-level tabs:
 
 - **Contenu** — title, body, author, categories, tags, featured flag
-- **Metadata** — per-post SEO override (slug, OG image, noIndex…)
+- **Métadonnées** — per-post SEO override (slug, OG image, noIndex…)
 
 ### 3.2 Fill the basic fields (Contenu tab)
 
-| Field                   | Notes                                                                                                                                                               |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Titre**               | Internal/display title. Required.                                                                                                                                   |
-| **Langue**              | Pre-filled to `en` because you came in through the EN list.                                                                                                         |
-| **Auteur**              | Reference picker. Click "Add" → select from existing authors, or create a new one inline. The locale filter is bypassed here — authors are shared across languages. |
-| **Catégories**          | Reference picker, language-filtered (you'll only see EN categories from an EN post). One post can sit in multiple categories.                                       |
-| **Tags**                | Same shape as categories, language-filtered.                                                                                                                        |
-| **Featured**            | Boolean. When true, the post is eligible for the BlogHero card-grid on `/blog`.                                                                                     |
-| **Corps de l'article**  | The body editor. See **§4 The body editor** below.                                                                                                                  |
-| **Date de publication** | Defaults to "now" if you leave it blank when you publish.                                                                                                           |
+| Field            | Notes                                                                                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Titre**        | Internal/display title. Required.                                                                                                                                   |
+| **Langue**       | Pre-filled to `en` because you came in through the EN list.                                                                                                         |
+| **Auteur**       | Reference picker. Click "Add" → select from existing authors, or create a new one inline. The locale filter is bypassed here — authors are shared across languages. |
+| **Catégories**   | Reference picker, language-filtered (you'll only see EN categories from an EN post). One post can sit in multiple categories.                                       |
+| **Tags**         | Same shape as categories, language-filtered.                                                                                                                        |
+| **Mis en avant** | Boolean. When true, the post is eligible for the BlogHero card-grid on `/blog`.                                                                                     |
+| **Corps**        | The body editor. See **§4 The body editor** below.                                                                                                                  |
+| **Publié le**    | Defaults to "now" if you leave it blank when you publish.                                                                                                           |
 
-### 3.3 Set the metadata (Metadata tab)
+### 3.3 Set the metadata (Métadonnées tab)
 
-The **Metadata** tab holds per-post overrides for SEO and routing.
+The **Métadonnées** tab holds per-post overrides for SEO and routing.
 
-| Field                | What it controls                                                                                                   | Falls back to                                                     |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| **Titre** (metadata) | `<title>` of the post page                                                                                         | Document title                                                    |
-| **Description**      | `<meta description>` + OG description                                                                              | Empty                                                             |
-| **Image**            | OG card image + cover image at the top of the post                                                                 | None (page renders without a hero image)                          |
-| **Slug**             | The URL segment (`/blog/<slug>`)                                                                                   | Required — generate one from the title with the "Generate" button |
-| **No index**         | When true, the post is excluded from sitemap, `/blog` listing, and serves `<meta name="robots" content="noindex">` | False                                                             |
+| Field                                | What it controls                                                                                                      | Falls back to                                                     |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Titre** (metadata)                 | `<title>` of the post page                                                                                            | Document title                                                    |
+| **Description**                      | `<meta description>` + OG description                                                                                 | Empty                                                             |
+| **Image sociale**                    | OG card image + cover image at the top of the post                                                                    | None (page renders without a hero image)                          |
+| **Slug**                             | The URL segment (`/blog/<slug>`)                                                                                      | Required — generate one from the title with the "Generate" button |
+| **Vidéo à la une**                   | Optional YouTube / Vimeo / file URL — the hero plays this instead of the cover image (the social image is the poster) | None (cover image is used)                                        |
+| **Masquer des moteurs de recherche** | When true, the post is excluded from sitemap, `/blog` listing, and serves `<meta name="robots" content="noindex">`    | False                                                             |
 
 The cover image uses Sanity's **hotspot + crop** — once uploaded, click into the image, drag the round dot to mark the "important" part, and crop manually if needed. The site renders the asset with `next/image`, so it'll automatically serve correctly sized variants per viewport.
 
@@ -164,13 +165,13 @@ If you accidentally created a post under the wrong language: open it, change the
 
 ## 8. Common gotchas
 
-| Symptom                                         | Cause                                                                                                                                                                                                            | Fix                                                         |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Post saved but not appearing at `/en/blog`      | `metadata.noIndex` is on, OR `language` doesn't match the route                                                                                                                                                  | Untick `No index`; check the `Langue` field matches the URL |
-| Cover image looks cropped weird                 | Hotspot is centred (default) but the image's subject isn't                                                                                                                                                       | Click the image → drag the round dot over the subject       |
-| Body content renders without the hero image     | `metadata.image` is empty (only the post-level image renders, not the document-level)                                                                                                                            | Set the image in the **Metadata** tab                       |
-| "Reference broken" red box appears              | The quote/person doc you referenced was deleted or has the wrong language                                                                                                                                        | Open the picker, swap to a valid doc, publish               |
-| Module picker shows fewer options than expected | You're inside a post body — only the 8 inline-embeddable types appear. The other 6 (Search, Breadcrumbs, Blog hero, Article content, Article list, Prose) live inside the `blog` singleton's `postModules` array | Open Studio → Blog → Mise en page to access them            |
+| Symptom                                         | Cause                                                                                                                                                                                                            | Fix                                                                                 |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Post saved but not appearing at `/en/blog`      | `metadata.noIndex` is on, OR `language` doesn't match the route                                                                                                                                                  | Untick `Masquer des moteurs de recherche`; check the `Langue` field matches the URL |
+| Cover image looks cropped weird                 | Hotspot is centred (default) but the image's subject isn't                                                                                                                                                       | Click the image → drag the round dot over the subject                               |
+| Body content renders without the hero image     | `metadata.image` is empty (only the post-level image renders, not the document-level)                                                                                                                            | Set the image in the **Métadonnées** tab                                            |
+| "Reference broken" red box appears              | The quote/person doc you referenced was deleted or has the wrong language                                                                                                                                        | Open the picker, swap to a valid doc, publish                                       |
+| Module picker shows fewer options than expected | You're inside a post body — only the 8 inline-embeddable types appear. The other 6 (Search, Breadcrumbs, Blog hero, Article content, Article list, Prose) live inside the `blog` singleton's `postModules` array | Open Studio → Blog → Mise en page to access them                                    |
 
 ---
 
