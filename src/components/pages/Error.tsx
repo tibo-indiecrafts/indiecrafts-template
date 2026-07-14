@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui-primitives/button";
+import { Button } from "@/components/ui/button";
 import { DefaultLayout } from "@/app/layout/DefaultLayout";
 
 export type ErrorProps = {

@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { Button } from "@/components/ui-primitives/button";
+import { Button } from "@/components/ui/button";
 import { analytics } from "@/config";
 
 const STORAGE_KEY = "cookie-consent";

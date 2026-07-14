@@ -9,7 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui-primitives/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export type FeatureIcon = "zap" | "settings" | "sparkles" | "shield" | "globe" | "users";
 

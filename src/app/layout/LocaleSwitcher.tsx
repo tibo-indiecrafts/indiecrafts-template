@@ -4,14 +4,14 @@ import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { localeMap, locales, type Locale } from "@/config";
-import { Button } from "@/components/ui-primitives/button";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@/components/ui-primitives/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 export type LocaleSwitcherProps = {

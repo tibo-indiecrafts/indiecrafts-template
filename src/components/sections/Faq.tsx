@@ -6,7 +6,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui-primitives/accordion";
+} from "@/components/ui/accordion";
 import { features } from "@/config";
 import { getFaqItems } from "@/lib/faq";
 
