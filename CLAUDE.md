@@ -6,11 +6,17 @@ Config-first, modular Next.js 16 template for client sites. Production-only — 
 
 ## Working principles
 
-1. Don't assume. Surface tradeoffs. Don't hide confusion.
-2. Minimum code that solves the problem. Nothing speculative.
-3. Touch only what you must.
-4. Define success criteria. Loop until verified.
-5. Simplify wherever you can.
+Behavioral guardrails against common LLM coding mistakes — bias toward caution over speed (use judgment on trivial tasks).
+
+**1. Think before coding.** Don't assume, don't hide confusion, surface tradeoffs. State assumptions explicitly; if uncertain, ask. Multiple interpretations → present them, don't pick silently. A simpler approach exists → say so; push back when warranted. Unclear → stop, name it, ask.
+
+**2. Simplicity first.** Minimum code that solves the problem, nothing speculative. No features beyond what was asked; no abstractions for single-use code; no unrequested flexibility; no error handling for impossible scenarios. If 200 lines could be 50, rewrite. "Would a senior engineer call this overcomplicated?" → simplify.
+
+**3. Surgical changes.** Touch only what you must; clean up only your own mess. Don't "improve" adjacent code, comments, or formatting, or refactor what isn't broken — match existing style. Notice unrelated dead code → mention it, don't delete. Remove only the orphans (imports/vars/functions) your own changes made unused. The test: every changed line traces directly to the request.
+
+**4. Goal-driven execution.** Define success criteria, loop until verified. Turn tasks into verifiable goals ("add validation" → "write tests for invalid inputs, then make them pass"; "fix the bug" → "write a failing repro, then make it pass"). Multi-step → a brief plan with a per-step verify. Strong criteria let you loop independently.
+
+Working if: fewer unnecessary changes in diffs, fewer rewrites from overcomplication, and clarifying questions come _before_ implementation, not after mistakes.
 
 ## Commands
 

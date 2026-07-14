@@ -239,7 +239,7 @@ Notable details:
 - The outer container uses `max-w-(--max-container)` (= 1280px from `theme.container.maxWidth`) — same width as the main nav, so the hero edges line up with the header underneath.
 - Hero meta strip stacks vertically on mobile, becomes a horizontal row from `sm:` upward with vertical dividers between date / read time / category.
 - Cover image is theme-aware: a `bg-gradient-to-t from-black/90 via-black/55 to-black/15` overlay sits between the image and content so the title stays legible regardless of the photo. Without an image, the hero falls back to a clean `bg-card` panel with the same shape and identical content layout.
-- Breadcrumbs use the `Breadcrumbs` component with `className="bg-black/30 text-white/90 ring-white/15 backdrop-blur-md"` overrides on dark; passes `undefined` on light. The component accepts arbitrary outer `className` to merge via `cn()`.
+- Breadcrumbs sit in a pill styled through hero CSS variables (`bg-(--hero-pill-bg) text-(--hero-fg) ring-(--hero-pill-ring) backdrop-blur-md`), so it stays legible over the cover image in both themes without per-theme class overrides. The `Breadcrumbs` component accepts an arbitrary outer `className` merged via `cn()`.
 - The TOC sidebar renders only when `post.headings.length > 0` — when the body has no h2/h3/h4 anchors, the body panel claims the full column width.
 
 To swap in a module-driven shell instead, populate `blog.postModules` from the Studio. Typical order:

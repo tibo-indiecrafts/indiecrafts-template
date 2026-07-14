@@ -145,7 +145,7 @@ Together:
 
 The second `[data-theme="dark"]` selector (without `:root`) also lets a nested
 subtree opt into the dark token set — e.g. an always-dark card on a light page.
-The root `<html>` carries `style={{ colorScheme: "light dark" }}` and
+The root `<html>` sets an inline `color-scheme: light dark` style and
 `suppressHydrationWarning` (in `src/app/[locale]/layout.tsx`), which next-themes
 needs to swap the attribute before paint without a mismatch warning.
 

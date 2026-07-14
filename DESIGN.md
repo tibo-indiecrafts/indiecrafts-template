@@ -181,6 +181,27 @@ status dots use `full`. Don't mix radii within one component.
   `aria-hidden` unless the sole label. Don't substitute Unicode glyphs or add a
   new icon set.
 
+## Component conventions (shadcn/ui + Tailwind v4)
+
+Primitives in `parts/ui` are shadcn (Radix behavior + Tailwind styling,
+CLI-managed — don't hand-edit). Build on them the shadcn way:
+
+- **Merge classes with `cn()`** (`@/lib/utils`) — never string-concatenate.
+  tailwind-merge resolves conflicts and lets a passed `className` win, so a
+  component's own classes come first and `{className}` last.
+- **Vary with `cva`, not forks** — add a case to the `cva()` map + its union
+  type; don't copy a component to change one look.
+- **Extend least → most effort:** tweak a token → add a `cva` variant → wrap the
+  primitive → compose primitives → (only then) a new shared part.
+- **`asChild`** to change the rendered element (a `Button` that's really a
+  `Link`) instead of nesting wrappers. **`data-slot`** is the styling hook —
+  target parts via `[data-slot="…"]`, don't reach into internals.
+- **Semantic tokens over `dark:`** — `bg-card` / `text-foreground` flip
+  automatically through the CSS vars, so `dark:` overrides should be rare.
+- **Tailwind v4:** container queries (`@container` / `@xl`) are core — use them
+  when a component's _own_ width should drive its layout. Plugins load via
+  `@plugin` in the single `globals.css`; never add a second Tailwind config.
+
 ## Do's and Don'ts
 
 - **Do** use colors by their role — `brand` earns attention, the two greys carry
