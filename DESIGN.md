@@ -123,6 +123,12 @@ is one line in `config.fonts`; set `display: geist` for a single-face look.
 Locale-aware punctuation (quotes, dates, French NBSP before `: ; ? !`) lives in
 `messages.<locale>.typography.*`.
 
+**Long-form prose** uses shadcn **Typeset** (`src/app/typeset.css`, imported
+after Tailwind) — wrap rendered content in `<div class="typeset typeset-docs">`.
+Its font seam (`--typeset-font-heading` / `-body` / `-mono`) points at the same
+`--font-*` vars, so it inherits the pairing automatically and flips light/dark
+via the theme tokens. Coexists with Tailwind's `prose`.
+
 ## Layout & Spacing
 
 - Container: max **1280px** (`--max-container`), page gutter **1rem**
@@ -183,7 +189,7 @@ status dots use `full`. Don't mix radii within one component.
 
 ## Component conventions (shadcn/ui + Tailwind v4)
 
-Primitives in `parts/ui` are shadcn (Radix behavior + Tailwind styling,
+Primitives in `user-interface/ui` are shadcn (Radix behavior + Tailwind styling,
 CLI-managed — don't hand-edit). Build on them the shadcn way:
 
 - **Merge classes with `cn()`** (`@/lib/utils`) — never string-concatenate.

@@ -113,7 +113,7 @@ Headings fall back to `--font-sans` when `display` and `body` are the same key. 
 <div className="prose prose-neutral dark:prose-invert max-w-none">
 ```
 
-See `src/features/blog/components/modules/Prose.tsx`. `dark:prose-invert` flips prose colors for dark mode; the heading rule above ensures prose headings still use the display face.
+See `src/features/blog/user-interface/renderers/Prose.tsx`. `dark:prose-invert` flips prose colors for dark mode; the heading rule above ensures prose headings still use the display face.
 
 ## Swapping a font
 
@@ -127,4 +127,31 @@ See `src/features/blog/components/modules/Prose.tsx`. `dark:prose-invert` flips 
 
 ::: tip
 `--font-display`, `--font-sans`, and `--font-mono` are the only font names anything else in the app should reference. Never hard-code a font family in a component.
+:::
+
+## Typeset preset (long-form prose)
+
+For rendered markdown / articles the template ships shadcn's [**Typeset**](https://ui.shadcn.com/docs/typeset) preset — `src/app/typeset.css`, imported right after Tailwind in `globals.css`.
+
+Wrap rendered content in the preset:
+
+```tsx
+<div className="typeset typeset-docs">{renderedMarkdown}</div>
+```
+
+- `typeset` enables the base styles; `typeset-docs` is the long-form rhythm preset.
+- **Fonts are linked to the config, not hard-coded.** Its seam variables point straight at the role variables:
+
+  ```css
+  .typeset {
+    --typeset-font-heading: var(--font-display);
+    --typeset-font-body: var(--font-sans);
+    --typeset-font-mono: var(--font-mono);
+  }
+  ```
+
+  So swapping `config.fonts` re-fonts Typeset automatically. Colors read the theme tokens, so it flips light/dark with no `dark:` overrides.
+
+::: info Typeset vs. `prose`
+Typeset coexists with `@tailwindcss/typography` (`prose`), which the blog renderers still use. Reach for whichever a surface calls for; both are token- and font-config-driven. To regenerate a different rhythm/scale, use the [Typeset builder](https://ui.shadcn.com/typeset) and keep the `--typeset-font-*` seam pointed at our `--font-*` vars.
 :::

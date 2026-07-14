@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+/* shadcn Typeset preset — long-form prose, fonts linked to config (src/app/typeset.css). */
+@import "./typeset.css";
 
 /*
  * Component-co-located animation tokens.
