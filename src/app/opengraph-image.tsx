@@ -3,11 +3,13 @@ import path from "node:path";
 import { site } from "@/config";
 
 /**
- * Site-wide OpenGraph card (1200×630). Serves `site.ogImage.file` from
- * /public. Per-route override pattern: drop another `opengraph-image.*`
- * inside that route's segment and Next.js picks the closest match. Or
- * set `pageConfig.seo.openGraph.imageUrl` to a static `/brand/og-<id>.png`
- * (the convention `buildMetadata` auto-derives when no override is set).
+ * Site-wide OpenGraph card (1200×630). Serves the static `site.ogImage.file`
+ * PNG from /public — this route is the default `og:image` for every page.
+ * Per-route override pattern: drop another `opengraph-image.*` inside that
+ * route's segment and Next.js picks the closest match. Or set
+ * `pageConfig.seo.openGraph.imageUrl` to a static file (e.g. the
+ * `/brand/og-<id>.png` naming convention) — `buildMetadata` uses
+ * `imageUrl ?? "/opengraph-image"`, so nothing is auto-derived.
  */
 
 export const alt = site.name;

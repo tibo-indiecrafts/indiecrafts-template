@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import bundleAnalyzer from "@next/bundle-analyzer";
-import { getCSPConnectSources, getCurrentEnvironment } from "./src/config";
+import { analytics, getCSPConnectSources, getCurrentEnvironment } from "./src/config";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const withBundleAnalyzer = bundleAnalyzer({
@@ -11,13 +11,23 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const env = getCurrentEnvironment();
 const cspConnectSources = getCSPConnectSources(env).join(" ");
+
+// Google Analytics (gtag). Only widen the CSP when a measurement ID is set —
+// GA loads its script from googletagmanager.com and beacons to
+// google-analytics.com. Off by default, so the base policy stays tight.
+const gaEnabled = analytics.googleAnalyticsId !== "";
+const gaScriptSrc = gaEnabled ? " https://*.googletagmanager.com" : "";
+const gaConnectSrc = gaEnabled
+  ? " https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com"
+  : "";
+
 const csp = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline'${env === "development" ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline'${env === "development" ? " 'unsafe-eval'" : ""}${gaScriptSrc}`,
   `style-src 'self' 'unsafe-inline'`,
   `img-src 'self' data: blob: https:`,
   `font-src 'self' data:`,
-  `connect-src ${cspConnectSources}`,
+  `connect-src ${cspConnectSources}${gaConnectSrc}`,
   // Featured-video embeds — the only third-party frames we ever render, and
   // only from these validated hosts (see `parseVideoEmbed` + `HeroVideo`).
   `frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com`,

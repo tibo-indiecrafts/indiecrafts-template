@@ -96,6 +96,6 @@ When you add a third-party service, add its origin to the matching directive:
 `script-src` and `style-src` already carry `'unsafe-inline'` (needed for the GA/theme boot scripts and Tailwind). Don't loosen them further — add specific hosts to the narrow directives (`connect-src`, `frame-src`) instead of broadening the script/style policy.
 :::
 
-::: warning Google Analytics needs CSP additions
-The CSP as shipped does **not** whitelist Google's analytics hosts — the default config has GA off (`analytics.googleAnalyticsId: ""`), so nothing to allow. When you enable GA (see [Analytics](./analytics.md)), the `gtag/js` loader is fetched from `https://www.googletagmanager.com`, which isn't covered by `script-src 'self'`. Add `https://www.googletagmanager.com` to the `script-src` line in `next.config.ts`, and `https://*.google-analytics.com` to `connect-src` (via `getCSPConnectSources`) so GA's beacon requests aren't blocked.
+::: tip Google Analytics is handled automatically
+GA needs its script host (`googletagmanager.com`) and beacon endpoints (`google-analytics.com`) in the CSP. `next.config.ts` adds these **only when `analytics.googleAnalyticsId` is set** — set the ID (see [Analytics](./analytics.md)) and the CSP widens itself; leave it empty and the policy stays tight. No manual CSP edit needed for GA.
 :::

@@ -39,9 +39,9 @@ type BuildArgs = {
 
 /**
  * Per-page OG image. An explicit `seo.openGraph.imageUrl` wins; otherwise
- * the always-available dynamic `/opengraph-image` route (branded Satori
- * card) is used. Ship a static per-page card by pointing `imageUrl` at a
- * file, e.g. `/brand/og-home.png`.
+ * the always-available `/opengraph-image` route (serves the static
+ * `site.ogImage.file` PNG) is used. Ship a static per-page card by pointing
+ * `imageUrl` at a file, e.g. `/brand/og-home.png`.
  */
 export function pageOgImage(page: PageConfig): string {
   return page.seo?.openGraph?.imageUrl ?? "/opengraph-image";

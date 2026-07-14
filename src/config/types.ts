@@ -134,6 +134,12 @@ export type PageSeo = {
     imageUrl?: OgImageUrl;
   };
   /**
+   * Override the image Google may show next to this page's search result
+   * (the WebPage JSON-LD `image`). Falls back to `seoDefaults.schemaImage`,
+   * then the page's OG image. A root-relative path or absolute URL.
+   */
+  schemaImage?: string;
+  /**
    * Per-page JSON-LD blocks. Each entry needs `"@type"`. Rendered into the
    * page <head> by `<PageSchemas page={pageConfig} />` (imported from
    * `@/lib/seo/jsonld`). Use the `build*Schema(...)` factories where

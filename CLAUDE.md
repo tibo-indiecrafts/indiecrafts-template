@@ -162,61 +162,13 @@ Never add the library as a workspace, dependency, or symlink — the decoupling 
 
 ## Sanity + blog (feature-flagged)
 
-The template ships a Sanity-backed blog with a page-builder system **scoped to the blog only**. Two independent flags in `config/index.ts` govern it:
+Two independent flags in `config`: **`features.blog`** (public surface — every blog route 404s and drops from sitemap + llms.txt + header nav when off) and **`features.studio`** (the Studio at `/studio` + draft-mode preview; independent of `blog`). Public-blog gating is centralized in `@/features/blog/lib/route-gate`.
 
-- **`features.blog`** — the public surface. `false` ⇒ every public blog route 404s and drops from sitemap + llms.txt + header nav (see the flag list below).
-- **`features.studio`** — the editing surface (Studio at `/studio` + draft-mode preview). Independent of `features.blog`: keep the Studio on with `blog: false` so editors keep working while the public surface is hidden, or turn it off to lock editing on a frozen site.
+Details live with the code they describe (Claude Code auto-loads these when you work in those dirs):
 
-Public-blog route gating is centralized in `@/features/blog/lib/route-gate` — `requireBlogRoute(page)` for page components, `isBlogRouteEnabled(page)` for route handlers. Both fold in the `features.blog` flag **and** the page's `enabled` field, so a new blog route can't drift by checking only one.
-
-**Schemas** (in `src/features/blog/sanity/schema/`):
-
-| Surface      | Documents                                               | Objects                                     |
-| ------------ | ------------------------------------------------------- | ------------------------------------------- |
-| Blog         | `blog` (singleton), `post`, `author`, `category`, `tag` | `blockContent`, `metadata`                  |
-| Module refs  | `quote`, `person`                                       | `link`, `cta`                               |
-| Page-builder | —                                                       | 14 `module.*` types (see `schema/modules/`) |
-
-**Studio at `/studio`** — embedded catch-all at `src/app/studio/[[...tool]]/page.tsx`. Studio root layout at `src/app/studio/layout.tsx` (catch-all sits outside `[locale]/`, so it needs its own `<html>`/`<body>`). The sidebar groups Blog (singleton + posts/authors/categories) and References (quotes/people).
-
-**The `blog` singleton owns the per-post chrome via `postModules[]`.** When the array is empty, every `/blog/[slug]` falls back to `DefaultPostLayout` (full-width hero with cover image touching the nav, sticky TOC sidebar, rounded body panel, "Keep reading" related-posts grid). The frontpage at `/blog` is **never** module-driven — chrome stays uniform by design.
-
-**Modules** (all 14 are `object` types, all gated by the blog feature):
-
-- **Inline-embeddable in post body + usable in `postModules`** (8): accordion-list, callout, card-list, custom-html, person-list, quote-list, stat-list, step-list
-- **`postModules`-only** (6): breadcrumbs, blog-index, blog-post-content, blog-post-list, prose, search
-
-The inline allowlist lives in `src/features/blog/sanity/schema/blockContent.ts` (`INLINE_MODULES`). Removing a module = remove from both that list AND from the renderer's `types` map in `portable-text-components.tsx`.
-
-**Renderer**: `src/features/blog/components/modules/ModuleRenderer.tsx` switches on `_type` and hands off to one of 14 small components. Adding a module = new schema + new component + new case in the switch (TS exhaustiveness check enforces).
-
-**Queries** (`src/features/blog/sanity/queries.ts`) use `defineQuery` (typegen-ready). `MODULES_FRAGMENT` expands every reference per module type. Always fetch through `sanityFetchLive` (draft-mode aware) or `@/sanity/client` — never instantiate a new `createClient`.
-
-**Live preview + draft mode**: `defineLive` in `src/sanity/live.ts`. `<SanityLive />` is mounted in the layout (only when feature flag is on). `/api/draft-mode/enable` + `/api/draft-mode/disable` toggle the perspective. Requires `SANITY_API_READ_TOKEN`.
-
-**Per-post extras**:
-
-- `metadata.{title,description,image,slug,noIndex}` overrides the page `<head>`.
-- `body` PortableText drives a Table of Contents (`<Toc>`) — h2/h3/h4 headings auto-fetched in GROQ via `pt::text()`.
-- `readTime` derived in GROQ (`length(string::split(...)) / 200`).
-- Article JSON-LD via `buildArticleSchema(...)`.
-- Markdown export at `/<locale>/blog/<slug>/md` — frontmatter + PortableText→Markdown serializer (`src/features/blog/sanity/portable-to-markdown.ts`). Advertised via `<link rel="alternate" type="text/markdown">`.
-- RSS at `/<locale>/blog/rss.xml` (also advertised via alternate link).
-
-**`features.blog`** (public surface) gates:
-
-- All public routes via `@/features/blog/lib/route-gate`: `/blog`, `/blog/[slug]`, `/blog/category` + `/[slug]`, `/blog/tag` + `/[slug]`, `/author` + `/[slug]`, plus the `/blog/[slug]/md` + `/blog/rss.xml` handlers — 404 when off.
-- `pages.{blog,author,category,tag}.enabled` mirror the flag — sitemap + llms.txt drop the entries automatically.
-- `headerNav` adds the `/blog` link only when on.
-- `<SanityLive />` only mounted when on (it revalidates public blog pages).
-- `generateStaticParams` returns `[]` for every dynamic blog route when off — build stays fast.
-
-**`features.studio`** (editing surface) gates:
-
-- `/studio` (the embedded Studio) — 404s when off.
-- `/api/draft-mode/enable` + `/disable` — 404 when off.
-
-To wire Sanity to your project, set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (see `.env.example`). The CSP in `next.config.ts` already allows `https://*.sanity.io` + `wss://*.api.sanity.io`.
+- Blog feature — schema, page-builder modules, per-post layout, gating → **`src/features/blog/CLAUDE.md`**
+- Sanity infra — client, live/draft-mode, env, "never new `createClient`" → **`src/sanity/CLAUDE.md`**
+- Human-facing docs → `docs/blog/`.
 
 ## Accessibility (structural)
 

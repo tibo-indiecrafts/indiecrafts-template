@@ -17,14 +17,14 @@ import { featuredPostsQuery } from "@/features/blog/sanity/queries";
 import type { PostListItem } from "@/features/blog/sanity/types";
 
 /**
- * Production home page. Section components live in `src/components/sections/`
+ * Production home page. Section components live in `src/parts/sections/`
  * and are mounted with a single `namespace` prop pointing at
  * `pages.home.blocks.<name>` in `messages/<locale>.json`. The section reads
  * its own `title`, `body`, `items`, etc. relative to that namespace.
  *
  * To swap in a new section variant: browse the sibling library repo
  * (`indiecrafts-library`, `pnpm storybook`), copy the section file into
- * `src/components/sections/`, drop its block keys into messages/, mount here.
+ * `src/parts/sections/`, drop its block keys into messages/, mount here.
  */
 
 type Props = { params: Promise<{ locale: Locale }> };

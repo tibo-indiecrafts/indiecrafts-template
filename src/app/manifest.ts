@@ -6,8 +6,9 @@ import { site, theme } from "@/config";
  * tags (auto-emitted by `app/icon.tsx` and `app/apple-icon.tsx`), so the
  * manifest carries the PWA install sizes (192 / 512 / maskable) plus the
  * install/splash chrome. Everything user-visible reads from `@/config` — name
- * + description from `site`, colors from `theme.hexColors` (the same hex
- * mirror next/og uses, so the install screen matches the site).
+ * + description from `site`, colors from `theme.hexColors` (hex mirrors of the
+ * oklch tokens, since the manifest can't take oklch — so the install screen
+ * matches the site).
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {

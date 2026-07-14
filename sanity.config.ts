@@ -1,8 +1,8 @@
 /**
  * Sanity Studio configuration — embedded Studio at /studio.
  *
- * Schemas live under `src/sanity/schema/`; the Studio sidebar layout
- * lives in `src/sanity/structure.ts`. Ported from
+ * Schemas live under `src/features/blog/sanity/schema/`; the Studio sidebar
+ * layout lives in `src/features/blog/sanity/structure.ts`. Ported from
  * GetNextjsTemplates/blog-forge then enhanced with patterns from
  * nuotsu/sanitypress-with-typegen (metadata object, groups, orderings,
  * sidebar structure).

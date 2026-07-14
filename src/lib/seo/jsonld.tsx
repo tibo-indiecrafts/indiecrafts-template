@@ -13,7 +13,7 @@
  */
 
 import type { PageConfig } from "@/config";
-import { features, globalSchemas, site } from "@/config";
+import { features, globalSchemas, seoDefaults, site } from "@/config";
 import { getTranslations } from "next-intl/server";
 import { getStaticPathname } from "@/i18n/routing";
 import type { Locale } from "@/config";
@@ -228,7 +228,9 @@ export async function PageSchemas({
 
   const path = pathname ?? getStaticPathname(page.key, locale);
   const url = `${site.url}${path}`;
-  const imageUrl = pageOgImage(page);
+  // The image Google may show next to the result: explicit per-page
+  // `schemaImage` > site `seoDefaults.schemaImage` > the page's OG image.
+  const imageUrl = page.seo?.schemaImage || seoDefaults.schemaImage || pageOgImage(page);
   const image = imageUrl.startsWith("http") ? imageUrl : `${site.url}${imageUrl}`;
 
   const webPage = buildWebPageSchema({

@@ -146,7 +146,7 @@ Until `site.url` is changed from `PLACEHOLDER_SITE_URL`, `isSiteConfigured` is `
 
 ```ts
 theme = {
-  hexColors: { brand, brandForeground, background, foreground },  // for next/og Satori (no oklch)
+  hexColors: { brand, brandForeground, background, foreground },  // hex mirror for the PWA manifest (no oklch)
   colors: { brand, brandForeground, ... },                        // CSS vars (oklch ok here)
   fonts: { sans, mono },
   radii: { sm, md, lg, xl },
@@ -154,7 +154,7 @@ theme = {
 }
 ```
 
-Keep `hexColors` in sync with `colors` for the brand/foreground pair — `next/og` (Satori) doesn't parse oklch and uses the hex fallback for OG card rendering.
+Keep `hexColors` in sync with `colors` for the brand/foreground pair — the PWA manifest (`app/manifest.ts`) reads `hexColors` for its `theme_color`/`background_color`, and the manifest spec can't take oklch.
 
 After any theme change, run `pnpm verify:contrast` to confirm WCAG AA holds on the new palette.
 

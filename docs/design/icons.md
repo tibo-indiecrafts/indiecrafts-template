@@ -75,5 +75,5 @@ The `/brand/og-<id>.png` filenames are just a naming convention for those static
 Drop the PNGs in `/public/brand/`. Existing assets there include `apple-icon.png`, `og.png`, `og-home.png`, plus the PWA manifest rasters (`icon-192.png`, `icon-512.png`, `icon-maskable-512.png`) and `logo.png` (schema.org Organization raster).
 
 ::: tip
-`theme.hexColors` in `src/config/index.ts` mirrors the OKLCH brand/foreground tokens because `next/og` (Satori) can't parse OKLCH — keep the two in sync so any Satori-rendered card stays on-brand. See [Responsive design](./responsive-design.md) and the brand-setup guide.
+`theme.hexColors` in `src/config/index.ts` mirrors the OKLCH brand/background tokens as hex for the **PWA manifest** (`app/manifest.ts` → `theme_color`/`background_color`), which can't take oklch. The OG card itself is a static PNG (`site.ogImage.file`), so it doesn't read these — but keep the mirror in sync so the install screen stays on-brand. See the [brand-setup guide](../setup/brand-setup.md).
 :::

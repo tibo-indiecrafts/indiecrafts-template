@@ -18,6 +18,8 @@ guidance so nothing gets cut off.
 - **Tagline** — a few words, e.g. "Mountain & city architecture": [ … ]
 - **One-line description** — 1 sentence, ~155 characters: [ … ]
 - **Main keywords** — comma-separated, 4–8 words/phrases: [ … ]
+- **Logo** — your logo as SVG or a high-res PNG, **plus a square version** (this one shows up in your Google listing and next to your links): [ attach ]
+- **Default social share image** — one 1200×630 image used whenever a page has no image of its own. Leave blank and we'll use a branded placeholder: [ attach / link ]
 
 ## Social profiles (fill once)
 
@@ -41,6 +43,6 @@ the grey text under it. Both also appear when the page is shared.
 - **Page title** — ~60 characters: [ … ]
 - **Meta description** — ~155 characters: [ … ]
 - **Keywords for this page** — comma-separated: [ … ]
-- **Share image** — optional, a 1200×630 image for social previews: [ attach / link ]
+- **Share image** — optional, a 1200×630 image just for this page; overrides the default social image above. Leave blank to use the default: [ attach / link ]
 
 _Repeat the block above for every page._

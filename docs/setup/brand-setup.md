@@ -45,7 +45,7 @@ site = {
 ```ts
 theme = {
   hexColors: {
-    // for next/og (Satori) — no oklch
+    // hex mirror for the PWA manifest (app/manifest.ts) — can't take oklch
     brand: "#5b21b6",
     brandForeground: "#ffffff",
     background: "#ffffff",
@@ -77,7 +77,7 @@ theme = {
 `hexColors` and `colors` describe **the same palette twice**. They must stay in sync for the `brand` + `brandForeground` + `background` + `foreground` pair, because:
 
 - `colors.*` becomes CSS variables consumed by Tailwind utilities — modern browsers parse oklch natively.
-- `hexColors.*` is used by `next/og` (Satori) to render the OG cards as PNGs at build time. **Satori doesn't parse oklch** — it falls back to black if it can't read the value, which is how OG cards silently break.
+- `hexColors.*` feeds the **PWA manifest** (`app/manifest.ts` → `theme_color` / `background_color`), which the browser reads for the install/splash screen. The manifest spec only takes hex/named colours — **not oklch** — so the mirror exists to give it valid values that still match the site.
 
 When you change a colour, change it in both places. The contrast check below will scream if they drift far enough apart to break accessibility, but a subtle mismatch (e.g. picking a slightly different brand shade in oklch vs hex) won't get caught — only manual review will.
 

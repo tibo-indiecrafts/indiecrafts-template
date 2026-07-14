@@ -39,7 +39,7 @@ const m =
 
 /**
  * Inline-embeddable module types — must stay in lockstep with
- * `INLINE_MODULES` in `src/sanity/schema/blockContent.ts`. The 8 types
+ * `INLINE_MODULES` in `src/features/blog/sanity/schema/blockContent.ts`. The 8 types
  * listed here are the subset of the full module catalogue that editors
  * can drop directly into a post body (the others are layout-slot only).
  */
