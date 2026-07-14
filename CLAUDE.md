@@ -44,7 +44,6 @@ src/components/            SHARED, cross-feature UI
    layout/                 chrome: DefaultLayout, Header, Footer, ThemeToggle, CookieBanner…
    sections/               marketing blocks — copy targets from the sibling library
    pages/                  full-page composites (Error, NotFound, Maintenance)
-   svgs/                   brand/illustration SVG components
    BrandIcon.tsx           reicon-brands wrapper
 
 src/lib/                   SHARED utils/services
