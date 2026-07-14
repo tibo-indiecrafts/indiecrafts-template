@@ -93,7 +93,15 @@ const eslintConfig = defineConfig([
     files: ["src/i18n/routing.ts"],
     rules: { "no-restricted-imports": "off" },
   },
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    // VitePress docs-site build output — generated, never hand-linted.
+    "docs/.vitepress/dist/**",
+    "docs/.vitepress/cache/**",
+  ]),
 ]);
 
 export default eslintConfig;
