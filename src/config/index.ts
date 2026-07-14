@@ -498,14 +498,16 @@ export const seoDefaults = {
     card: "summary_large_image",
   },
   /**
-   * The image Google may show next to a search result — the `image` field
-   * in the auto-emitted WebPage JSON-LD. Empty = reuse the page's OG image
-   * (per-page `seo.openGraph.imageUrl`, else the site OG card). Set a path
-   * (e.g. `/brand/rich-result.png`) for a distinct rich-result image, or
-   * override one page via `seo.schemaImage`. The Organization logo shown in
-   * Google's knowledge panel is configured separately by `site.brandLogoPng`.
+   * The image(s) Google may show next to a search result — the `image` field
+   * in the auto-emitted WebPage JSON-LD. A single path or an array (Google
+   * recommends several aspect ratios: 16:9, 4:3, 1:1). Empty = reuse the
+   * page's OG image (per-page `seo.openGraph.imageUrl`, else the site OG
+   * card). Set a path (e.g. `/brand/rich-result.png`) or list for distinct
+   * rich-result images, or override one page via `seo.schemaImage`. The
+   * Organization logo shown in Google's knowledge panel is configured
+   * separately by `site.brandLogoPng`.
    */
-  schemaImage: "",
+  schemaImage: "" as string | readonly string[],
   /**
    * Search-engine verification meta tags. Fill in the strings when the
    * provider gives you a verification code; empty strings are omitted from

@@ -164,7 +164,7 @@ export function buildWebPageSchema(args: {
   locale: string;
   title: string;
   description?: string;
-  image?: string;
+  image?: string | readonly string[];
 }): SchemaObject {
   return compact({
     "@type": "WebPage",
@@ -228,10 +228,23 @@ export async function PageSchemas({
 
   const path = pathname ?? getStaticPathname(page.key, locale);
   const url = `${site.url}${path}`;
-  // The image Google may show next to the result: explicit per-page
+  // The image(s) Google may show next to the result: explicit per-page
   // `schemaImage` > site `seoDefaults.schemaImage` > the page's OG image.
-  const imageUrl = page.seo?.schemaImage || seoDefaults.schemaImage || pageOgImage(page);
-  const image = imageUrl.startsWith("http") ? imageUrl : `${site.url}${imageUrl}`;
+  // Each may be one path or a list; emit a string for one, an array for many.
+  const toImageList = (v?: string | readonly string[]): string[] =>
+    (Array.isArray(v) ? [...v] : v ? [v] : []).filter(Boolean);
+  const pageImages = toImageList(page.seo?.schemaImage);
+  const defaultImages = toImageList(seoDefaults.schemaImage);
+  const schemaImages =
+    pageImages.length > 0
+      ? pageImages
+      : defaultImages.length > 0
+        ? defaultImages
+        : [pageOgImage(page)];
+  const toAbsolute = (src: string) =>
+    src.startsWith("http") ? src : `${site.url}${src}`;
+  const absoluteImages = schemaImages.map(toAbsolute);
+  const image = absoluteImages.length === 1 ? absoluteImages[0] : absoluteImages;
 
   const webPage = buildWebPageSchema({
     id: page.id,

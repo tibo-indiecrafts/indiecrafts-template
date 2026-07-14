@@ -136,9 +136,34 @@ Most pages need none of these — the auto-derived defaults are enough. Reach fo
 | `robots`                                      | Full robots override (wins over `noindex`)                                                                   |
 | `llms`                                        | `false` excludes the page from `/llms.txt` while keeping it indexed (`noindex` pages drop out automatically) |
 | `openGraph.type` / `openGraph.imageUrl`       | Per-page OG type + image                                                                                     |
+| `schemaImage`                                 | Per-page image(s) Google may show next to the result — see below                                             |
 | `structuredData`                              | Per-page JSON-LD blocks — see `docs/seo/structured-data-cookbook.md`                                         |
 
 Human-facing text (title, description, keywords) belongs in `messages`, not here. Only structure lives in `seo`.
+
+### The image next to Google results (`schemaImage`)
+
+The auto-emitted **WebPage** JSON-LD carries an `image` — the picture Google may show next to your result. It resolves in this order:
+
+1. `page.seo.schemaImage` — per-page override
+2. `seoDefaults.schemaImage` — the site-wide default (empty by default)
+3. the page's OG image (`seo.openGraph.imageUrl`, else the site OG card)
+
+So out of the box it reuses your OG image and you configure nothing. To set a **distinct** rich-result image — or several (Google recommends multiple aspect ratios: 16:9, 4:3, 1:1) — pass a path or an array:
+
+```ts
+// src/config/index.ts — site-wide default
+seoDefaults.schemaImage = [
+  "/brand/rich-16x9.png",
+  "/brand/rich-4x3.png",
+  "/brand/rich-1x1.png",
+];
+
+// or per page
+pages.services.seo = { schemaImage: "/brand/services-card.png" };
+```
+
+Relative paths are resolved against `site.url`; absolute `https://…` URLs are used as-is. A single value emits `image: "…"`; a list emits `image: ["…", "…"]`. (The **logo** in Google's knowledge panel is separate — it comes from the Organization JSON-LD's `logo`, set by `site.brandLogoPng`.)
 
 ## Adding SEO for a new page
 
