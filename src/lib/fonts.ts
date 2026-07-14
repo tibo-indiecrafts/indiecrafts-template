@@ -37,8 +37,16 @@ const geistMono = Geist_Mono({
 // and it's selectable in `config.fonts` exactly like a Google font.
 const satoshi = localFont({
   src: [
-    { path: "../fonts/Satoshi-Variable.woff2", weight: "300 900", style: "normal" },
-    { path: "../fonts/Satoshi-VariableItalic.woff2", weight: "300 900", style: "italic" },
+    {
+      path: "../assets/fonts/Satoshi-Variable.woff2",
+      weight: "300 900",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/Satoshi-VariableItalic.woff2",
+      weight: "300 900",
+      style: "italic",
+    },
   ],
   display: "swap",
   variable: "--f-satoshi",
