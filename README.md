@@ -30,6 +30,14 @@ When `features.blog: false`, every route above 404s, sitemap drops the entry, th
 
 ## Documentation
 
+The guides in [`docs/`](./docs/) also render as a browsable [VitePress](https://vitepress.dev) site (its own npm package, isolated from the app):
+
+```bash
+pnpm docs:install   # once — installs VitePress inside docs/
+pnpm docs           # dev server → http://localhost:3002
+pnpm docs:build     # static build → docs/.vitepress/dist (deploy to Vercel)
+```
+
 Full index — every guide in [`docs/`](./docs/), grouped by area.
 
 **Setup & operations**
@@ -79,13 +87,13 @@ Full index — every guide in [`docs/`](./docs/), grouped by area.
 
 **Blog (when `features.blog: true`)**
 
-| Doc                                                        | Covers                                               |
-| ---------------------------------------------------------- | ---------------------------------------------------- |
-| [`sanity-setup.md`](./docs/blog/sanity-setup.md)           | Set up Sanity — env vars, CORS, QA matrix            |
-| [`editor-guide.md`](./docs/blog/editor-guide.md)           | Publish your first post as a content editor          |
-| [`body-editor.md`](./docs/blog/body-editor.md)             | What the body editor can do (styles, marks, modules) |
-| [`blog-architecture.md`](./docs/blog/blog-architecture.md) | Extend or remove a module as a developer             |
-| [`sanity-tokens.md`](./docs/blog/sanity-tokens.md)         | Mint / rotate Sanity API tokens                      |
+| Doc                                                                 | Covers                                               |
+| ------------------------------------------------------------------- | ---------------------------------------------------- |
+| [`sanity-setup.md`](./docs/features/blog/sanity-setup.md)           | Set up Sanity — env vars, CORS, QA matrix            |
+| [`editor-guide.md`](./docs/features/blog/editor-guide.md)           | Publish your first post as a content editor          |
+| [`body-editor.md`](./docs/features/blog/body-editor.md)             | What the body editor can do (styles, marks, modules) |
+| [`blog-architecture.md`](./docs/features/blog/blog-architecture.md) | Extend or remove a module as a developer             |
+| [`sanity-tokens.md`](./docs/features/blog/sanity-tokens.md)         | Mint / rotate Sanity API tokens                      |
 
 **Client intake forms** — fill-in questionnaires in [`docs/client-intake/`](./docs/client-intake/) to send to clients so they can supply their own SEO copy, business details, AI-index summary, and FAQ (each per language).
 

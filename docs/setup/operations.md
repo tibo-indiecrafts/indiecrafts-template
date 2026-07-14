@@ -28,7 +28,7 @@ For the launch itself, see [`launch-checklist.md`](./launch-checklist.md).
 
 A typical week with the blog on:
 
-1. **Draft in the Studio** (`/studio` → Blog → Posts → EN or FR → + Create). Walk through the post form following [`editor-guide.md`](../blog/editor-guide.md).
+1. **Draft in the Studio** (`/studio` → Blog → Posts → EN or FR → + Create). Walk through the post form following [`editor-guide.md`](../features/blog/editor-guide.md).
 2. **Click Publish.** The site receives the change via the Sanity Live subscription within a few seconds — no rebuild required.
 3. **Verify on the live URL:**
    ```bash
@@ -95,7 +95,7 @@ To verify in production:
 
 ## 5. Adding a new post
 
-For non-editors: walk an editor through [`editor-guide.md`](../blog/editor-guide.md) once, then point them at it.
+For non-editors: walk an editor through [`editor-guide.md`](../features/blog/editor-guide.md) once, then point them at it.
 
 For someone with code access: the post lives in Sanity, not in the repo. There's no PR to merge — clicking **Publish** in the Studio is the deploy. The only repo change a new post triggers is when you next run the build, `generateStaticParams` picks it up and prerenders the new route.
 
@@ -138,12 +138,12 @@ Changing the brand colour, logo, font, or social links happens in `src/config/in
 | Image not loading                        | Browser console → `next/image` errors                          | Domain not in `next.config.ts` `remotePatterns` — see [`brand-setup.md`](./brand-setup.md) § Image hosts |
 | Studio shows "CorsOriginError"           | <https://www.sanity.io/manage> → API → CORS origins            | Add the exact origin (incl. protocol + port) with **Allow credentials** ticked                           |
 | Studio "Configuration error"             | Netlify env vars                                               | `NEXT_PUBLIC_SANITY_PROJECT_ID` missing or typo                                                          |
-| Draft preview returns 503                | Netlify env vars                                               | `SANITY_API_READ_TOKEN` not set — see [`sanity-tokens.md`](../blog/sanity-tokens.md)                     |
+| Draft preview returns 503                | Netlify env vars                                               | `SANITY_API_READ_TOKEN` not set — see [`sanity-tokens.md`](../features/blog/sanity-tokens.md)            |
 | Form submits but no email arrives        | Netlify dashboard → Forms → Settings → Notifications           | Add email / Slack / webhook destination                                                                  |
 | `/sitemap.xml` is missing entries        | Build was at the wrong revision                                | Re-deploy from `main` — sitemap is regenerated at build time                                             |
 | Cookie banner won't go away              | Browser DevTools → Application → Local Storage                 | `cookie-consent` key is missing; banner reappears every visit until set                                  |
 
-Deeper Sanity-specific symptoms (e.g. "Schema migration needed", legacy module fields) are in [`sanity-setup.md`](../blog/sanity-setup.md) § Troubleshooting.
+Deeper Sanity-specific symptoms (e.g. "Schema migration needed", legacy module fields) are in [`sanity-setup.md`](../features/blog/sanity-setup.md) § Troubleshooting.
 
 ---
 

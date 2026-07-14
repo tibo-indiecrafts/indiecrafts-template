@@ -16,6 +16,9 @@
     "verify": "pnpm tsc && pnpm lint && pnpm format:check && pnpm verify:contrast",
     "analyze": "ANALYZE=1 next build",
     "seed:blog": "node --env-file=.env.local scripts/seed-blog-demo.mjs",
+    "docs:install": "npm --prefix docs install",
+    "docs": "npm --prefix docs run docs:dev",
+    "docs:build": "npm --prefix docs run docs:build",
     "prepare": "husky"
   },
   "dependencies": {

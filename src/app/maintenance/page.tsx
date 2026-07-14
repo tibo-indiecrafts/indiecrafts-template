@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Maintenance } from "@/components/pages/Maintenance";
+import { Maintenance } from "@/parts/pages/Maintenance";
 import { maintenanceLocale } from "./locale";
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -4,7 +4,7 @@ import { isRssEnabled, requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { DefaultLayout } from "@/components/layout/DefaultLayout";
+import { DefaultLayout } from "@/parts/layout/DefaultLayout";
 import { BlogHero } from "@/features/blog/components/BlogHero";
 import { ExploreCategories } from "@/features/blog/components/ExploreCategories";
 import { ExploreTags } from "@/features/blog/components/ExploreTags";

@@ -3,7 +3,7 @@ import { pages, type Locale } from "@/config";
 import { requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { DefaultLayout } from "@/components/layout/DefaultLayout";
+import { DefaultLayout } from "@/parts/layout/DefaultLayout";
 import { CategoryListing } from "@/features/blog/components/CategoryListing";
 import { sanityFetchLive } from "@/sanity/live";
 import { categoriesForLocaleQuery } from "@/features/blog/sanity/queries";

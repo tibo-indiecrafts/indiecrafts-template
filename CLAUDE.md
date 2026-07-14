@@ -20,6 +20,29 @@ pnpm verify:quick                         # tsc + lint (pre-push)
 
 Pre-push hook: `lint && tsc`. Pre-commit: `lint-staged`.
 
+## Documentation site (VitePress)
+
+Human-facing docs live in `docs/` as a standalone **VitePress** site — its own `docs/package.json` + `docs/.vitepress/config.mts`, **npm-managed and isolated** from the pnpm app (so VitePress deps never touch the app tree). `README.md`'s "Documentation" section indexes every page. Static build deploys to Vercel.
+
+```bash
+pnpm docs:install          # once (npm install inside docs/)
+pnpm docs                  # dev server → http://localhost:3002
+pnpm docs:build            # static output → docs/.vitepress/dist
+```
+
+(Root scripts delegate to the isolated `docs/` npm package via `npm --prefix docs`.)
+
+Every `.md` under `docs/` is a page. Folders = cross-cutting topics plus per-feature docs:
+
+```
+docs/
+├── setup/ config/ design/ seo/   Cross-cutting topic guides
+├── features/<name>/              Per-feature docs — mirrors src/features/<name>/ (e.g. features/blog/)
+└── client-intake/                Fill-in forms to send to clients (per language)
+```
+
+Adding a doc: drop the `.md` in the right folder, add one sidebar line in `docs/.vitepress/config.mts`, and a row in the README index. Keep those three in sync. `docs/node_modules`, `.vitepress/cache`, and `.vitepress/dist` are gitignored (`docs/.gitignore`).
+
 ## Architecture
 
 Feature-based: shared code in flat top-level folders; each domain owns a
@@ -211,6 +234,7 @@ To wire Sanity to your project, set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBL
 - NEVER instantiate a Sanity `createClient` per route — use `@/sanity/client`.
 - NEVER expose `SANITY_API_READ_TOKEN` (or any non-public Sanity token) under a `NEXT_PUBLIC_` prefix.
 - ALWAYS `setRequestLocale(locale)` at the top of server components using translations or metadata.
+- ALWAYS update the docs when you change what they describe — every change to a feature, flag, config shape, route, or convention updates the matching `docs/` page **and** the README index **and** the `docs/.vitepress/config.mts` sidebar (add/rename/remove in lockstep). Docs are part of the change, not a follow-up.
 - ALWAYS run `pnpm verify:quick` before push.
 
 ## File-size discipline
