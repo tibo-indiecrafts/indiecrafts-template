@@ -4,7 +4,7 @@ import { features, isPageVisible, pages } from "@/config";
 import type { Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { DefaultLayout } from "@/app/layout/DefaultLayout";
+import { DefaultLayout } from "@/components/layout/DefaultLayout";
 import { Features } from "@/components/sections/Features";
 import { Faq } from "@/components/sections/Faq";
 import { Cta } from "@/components/sections/Cta";

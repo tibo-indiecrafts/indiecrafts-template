@@ -15,9 +15,9 @@ import {
   type Locale,
 } from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
-import { CookieBanner } from "@/app/layout/CookieBanner";
+import { CookieBanner } from "@/components/layout/CookieBanner";
 import { routing } from "@/i18n/routing";
-import { ThemeProvider } from "@/app/layout/ThemeProvider";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { buildSiteSchemas, JsonLdScript } from "@/lib/seo/jsonld";
 import { SanityLive } from "@/sanity/live";
 

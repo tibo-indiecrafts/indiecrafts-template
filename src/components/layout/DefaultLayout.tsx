@@ -4,7 +4,7 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 
 /**
- * Production default layout, colocated in `@/app/layout` so the app owns
+ * Production default layout, colocated in `@/components/layout` so the app owns
  * its chrome without depending on the sibling component library.
  *
  * `<main>` gets `pt-14 lg:pt-20` to clear the fixed Header height (h-14

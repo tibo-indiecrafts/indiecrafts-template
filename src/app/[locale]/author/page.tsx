@@ -4,7 +4,7 @@ import type { Locale } from "@/config";
 import { requireBlogRoute } from "@/lib/feature-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { DefaultLayout } from "@/app/layout/DefaultLayout";
+import { DefaultLayout } from "@/components/layout/DefaultLayout";
 import { AuthorListing } from "@/components/blog-components/AuthorListing";
 import { sanityFetchLive } from "@/sanity/live";
 import { authorsForLocaleQuery } from "@/sanity/queries";

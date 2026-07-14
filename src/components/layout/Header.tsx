@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Logo } from "@/app/layout/Logo";
-import { LocaleSwitcher } from "@/app/layout/LocaleSwitcher";
-import { ThemeToggle } from "@/app/layout/ThemeToggle";
+import { Logo } from "@/components/layout/Logo";
+import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { SHOW_THEME_TOGGLE } from "@/lib/theme";
 import { Link } from "@/i18n/routing";
 import { features } from "@/config";
@@ -13,9 +13,9 @@ import { headerNav } from "@/config";
  * Production site header. Slim purpose-built variant — logo, nav links from
  * `headerNav` in `@/config`, locale switcher, theme toggle.
  *
- * Lives in `@/app/layout` (not imported from the sibling component library)
+ * Lives in `@/components/layout` (not imported from the sibling component library)
  * so the production header can evolve independently. Its atoms — Logo,
- * LocaleSwitcher, ThemeToggle — are colocated in `@/app/layout` too.
+ * LocaleSwitcher, ThemeToggle — are colocated in `@/components/layout` too.
  *
  * Fixed at the top — DefaultLayout's `<main>` adds `pt-14 lg:pt-20` to
  * clear the header height.

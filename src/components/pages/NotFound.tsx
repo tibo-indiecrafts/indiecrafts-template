@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { DefaultLayout } from "@/app/layout/DefaultLayout";
+import { DefaultLayout } from "@/components/layout/DefaultLayout";
 
 export type NotFoundProps = {
   header?: boolean | ReactNode;
