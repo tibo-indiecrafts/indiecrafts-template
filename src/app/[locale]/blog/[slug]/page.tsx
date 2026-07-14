@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { features, pages, site, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
-import { isRssEnabled, requireBlogRoute } from "@/lib/feature-gate";
+import { isRssEnabled, requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema } from "@/lib/seo/jsonld-factories";

@@ -28,7 +28,7 @@
  * ─ Where the hex mirror lives ──────────────────────────────────
  * `src/config/index.ts:theme.hexColors` exists only because next/og
  * (Satori) can't parse OKLCH at build time. If you change a colour
- * here, update both. See docs/brand-setup.md § "The hex / oklch trap".
+ * here, update both. See docs/setup/brand-setup.md § "The hex / oklch trap".
  *
  * ─ Two dark triggers ───────────────────────────────────────────
  *   1. `html[data-theme="dark"]` — user-chosen via ThemeProvider/toggle

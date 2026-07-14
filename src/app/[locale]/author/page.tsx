@@ -1,7 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages } from "@/config";
 import type { Locale } from "@/config";
-import { requireBlogRoute } from "@/lib/feature-gate";
+import { requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/components/layout/DefaultLayout";

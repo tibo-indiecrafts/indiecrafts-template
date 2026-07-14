@@ -1,5 +1,5 @@
 import { pages, site } from "@/config";
-import { isBlogRouteEnabled } from "@/lib/feature-gate";
+import { isBlogRouteEnabled } from "@/features/blog/lib/route-gate";
 import { sanityFetchLive } from "@/sanity/live";
 import { portableTextToMarkdown } from "@/features/blog/sanity/portable-to-markdown";
 import { postBySlugQuery } from "@/features/blog/sanity/queries";

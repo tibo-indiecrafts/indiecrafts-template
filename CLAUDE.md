@@ -116,7 +116,7 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 
 `buildMetadata({ page, locale })` (`@/lib/metadata`) composes the chain. Layout uses `generateMetadata` so site-wide metadata is also locale-aware.
 
-**Auto-emitted JSON-LD:** Organization, WebSite (layout), WebPage (per page via `<PageSchemas>`). Per-page extras → `page.seo.structuredData[]` using factories from `@/lib/seo/jsonld-factories`. Cookbook in `docs/structured-data-cookbook.md`.
+**Auto-emitted JSON-LD:** Organization, WebSite (layout), WebPage (per page via `<PageSchemas>`). Per-page extras → `page.seo.structuredData[]` using factories from `@/lib/seo/jsonld-factories`. Cookbook in `docs/seo/structured-data-cookbook.md`.
 
 **FAQ is the highest-ROI rich result** for B2B. Wire it via `buildFAQPageSchema(...)`.
 

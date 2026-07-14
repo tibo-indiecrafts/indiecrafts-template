@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { site } from "@/config";
 import type { Locale } from "@/config";
-import { isRssEnabled } from "@/lib/feature-gate";
+import { isRssEnabled } from "@/features/blog/lib/route-gate";
 import { localizedPathname } from "@/i18n/routing";
 import { client } from "@/sanity/client";
 import { rssPostsQuery } from "@/features/blog/sanity/queries";

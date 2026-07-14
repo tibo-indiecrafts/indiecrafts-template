@@ -1,6 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, type Locale } from "@/config";
-import { isRssEnabled, requireBlogRoute } from "@/lib/feature-gate";
+import { isRssEnabled, requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";

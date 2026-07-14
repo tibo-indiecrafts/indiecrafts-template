@@ -170,7 +170,7 @@ export const site = {
  * Per-page schemas (FAQ, Article, Service, Product, Breadcrumb…) go in
  * `pages.<id>.seo.structuredData` instead — factories in
  * `@/lib/seo/jsonld-factories`. Recipes + copy-paste examples:
- *   → docs/structured-data-cookbook.md
+ *   → docs/seo/structured-data-cookbook.md
  */
 export const globalSchemas: readonly Record<string, unknown>[] = [];
 
@@ -340,7 +340,7 @@ export const features = {
   /**
    * RSS 2.0 feed at `/blog/rss.xml` + its `<link rel="alternate">` discovery
    * tags. Requires `blog` (the feed lists blog posts) — `blog: false` hides it
-   * regardless. Gated via `isRssEnabled()` in `@/lib/feature-gate`.
+   * regardless. Gated via `isRssEnabled()` in `@/features/blog/lib/route-gate`.
    */
   rss: true,
   /**
@@ -383,7 +383,7 @@ export const features = {
    *     the header `/blog` nav link
    *   - `<SanityLive>` (revalidates public blog pages on content change)
    *
-   * Route gating is centralized in `@/lib/feature-gate`
+   * Route gating is centralized in `@/features/blog/lib/route-gate`
    * (`requireBlogRoute` / `isBlogRouteEnabled`) — a single source of truth
    * so a new blog route can't forget the check.
    *

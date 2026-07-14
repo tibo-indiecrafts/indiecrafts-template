@@ -3,7 +3,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, localeCodes, pages, site } from "@/config";
 import type { Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
-import { requireBlogRoute } from "@/lib/feature-gate";
+import { requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
