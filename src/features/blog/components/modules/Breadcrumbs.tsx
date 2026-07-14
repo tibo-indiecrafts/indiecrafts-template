@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
-import type { BreadcrumbsModule } from "@/sanity/types";
+import type { BreadcrumbsModule } from "@/features/blog/sanity/types";
 
 export async function Breadcrumbs(props: BreadcrumbsModule) {
   if (!props.items?.length) return null;

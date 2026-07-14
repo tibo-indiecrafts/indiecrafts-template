@@ -1,5 +1,5 @@
 import { PortableText } from "@portabletext/react";
-import type { ProseModule } from "@/sanity/types";
+import type { ProseModule } from "@/features/blog/sanity/types";
 import { cn } from "@/lib/utils";
 import { portableComponents } from "./portable-text-components";
 

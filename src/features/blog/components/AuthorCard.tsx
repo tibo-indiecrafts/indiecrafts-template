@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import type { Author, AuthorRef } from "@/sanity/types";
+import type { Author, AuthorRef } from "@/features/blog/sanity/types";
 
 /**
  * Author profile card — used by /author and the home Top Authors section.

@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import type { BlogPostListModule, PostListItem } from "@/sanity/types";
+import type { BlogPostListModule, PostListItem } from "@/features/blog/sanity/types";
 import type { Locale } from "@/config";
 import { sanityFetchLive } from "@/sanity/live";
-import { moduleBlogPostListQuery } from "@/sanity/queries";
+import { moduleBlogPostListQuery } from "@/features/blog/sanity/queries";
 import { BlogCard } from "@/features/blog/components/BlogCard";
 
 /**

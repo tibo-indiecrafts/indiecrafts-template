@@ -16,8 +16,8 @@ import {
   authorsForLocaleQuery,
   categoriesForLocaleQuery,
   tagsForLocaleQuery,
-} from "@/sanity/queries";
-import type { Author, Category, PostListItem, Tag } from "@/sanity/types";
+} from "@/features/blog/sanity/queries";
+import type { Author, Category, PostListItem, Tag } from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale }> };
 

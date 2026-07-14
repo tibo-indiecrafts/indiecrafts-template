@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import type { QuoteListModule } from "@/sanity/types";
+import type { QuoteListModule } from "@/features/blog/sanity/types";
 
 /**
  * Testimonials module — design ported from

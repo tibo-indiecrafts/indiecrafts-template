@@ -13,8 +13,8 @@ import { Testimonials } from "@/components/sections/Testimonials";
 import { FeaturedArticles } from "@/components/sections/FeaturedArticles";
 import { IconShowcase } from "@/components/sections/IconShowcase";
 import { client } from "@/sanity/client";
-import { featuredPostsQuery } from "@/sanity/queries";
-import type { PostListItem } from "@/sanity/types";
+import { featuredPostsQuery } from "@/features/blog/sanity/queries";
+import type { PostListItem } from "@/features/blog/sanity/types";
 
 /**
  * Production home page. Section components live in `src/components/sections/`

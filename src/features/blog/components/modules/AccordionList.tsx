@@ -1,5 +1,5 @@
 import { PortableText } from "@portabletext/react";
-import type { AccordionListModule } from "@/sanity/types";
+import type { AccordionListModule } from "@/features/blog/sanity/types";
 import { portableComponents } from "./portable-text-components";
 import { ModuleSection } from "./ModuleSection";
 

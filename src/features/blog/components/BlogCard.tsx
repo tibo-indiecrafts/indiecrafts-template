@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
 import { parseVideoEmbed } from "@/lib/video-embed";
-import type { PostListItem } from "@/sanity/types";
+import type { PostListItem } from "@/features/blog/sanity/types";
 import { PlayBadge } from "./PlayBadge";
 
 /**

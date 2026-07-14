@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { Locale } from "@/config";
-import type { Author, PostListItem } from "@/sanity/types";
+import type { Author, PostListItem } from "@/features/blog/sanity/types";
 import { BlogCard } from "./BlogCard";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 

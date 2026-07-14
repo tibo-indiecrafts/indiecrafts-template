@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
-import type { CardListModule } from "@/sanity/types";
+import type { CardListModule } from "@/features/blog/sanity/types";
 import { cn } from "@/lib/utils";
 import { ModuleCta } from "./Cta";
 import { portableComponents } from "./portable-text-components";

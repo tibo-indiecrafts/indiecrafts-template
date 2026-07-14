@@ -1,5 +1,5 @@
 import type { Locale } from "@/config";
-import type { AnyModule, Post } from "@/sanity/types";
+import type { AnyModule, Post } from "@/features/blog/sanity/types";
 import { AccordionList } from "./AccordionList";
 import { BlogIndex } from "./BlogIndex";
 import { BlogPostContent } from "./BlogPostContent";

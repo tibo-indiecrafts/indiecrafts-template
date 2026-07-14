@@ -1,4 +1,4 @@
-import type { Author } from "@/sanity/types";
+import type { Author } from "@/features/blog/sanity/types";
 import { AuthorCard } from "./AuthorCard";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 import { PageHero, type PageHeroPill } from "./PageHero";

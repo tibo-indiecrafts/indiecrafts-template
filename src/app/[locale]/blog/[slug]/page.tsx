@@ -16,8 +16,13 @@ import {
   blogSingletonQuery,
   postBySlugQuery,
   relatedPostsQuery,
-} from "@/sanity/queries";
-import type { BlogSingleton, Post, PostListItem, PostSlug } from "@/sanity/types";
+} from "@/features/blog/sanity/queries";
+import type {
+  BlogSingleton,
+  Post,
+  PostListItem,
+  PostSlug,
+} from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 

@@ -1,5 +1,5 @@
 import { PortableText } from "@portabletext/react";
-import type { StepListModule } from "@/sanity/types";
+import type { StepListModule } from "@/features/blog/sanity/types";
 import { portableComponents } from "./portable-text-components";
 import { ModuleSection } from "./ModuleSection";
 

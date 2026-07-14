@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
-import type { Category, PostListItem } from "@/sanity/types";
+import type { Category, PostListItem } from "@/features/blog/sanity/types";
 import { BlogCard } from "./BlogCard";
 
 /**

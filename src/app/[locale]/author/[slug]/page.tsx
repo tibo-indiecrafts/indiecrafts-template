@@ -14,8 +14,8 @@ import {
   allAuthorSlugsQuery,
   authorBySlugQuery,
   postsByAuthorSlugQuery,
-} from "@/sanity/queries";
-import type { Author, PostListItem } from "@/sanity/types";
+} from "@/features/blog/sanity/queries";
+import type { Author, PostListItem } from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 

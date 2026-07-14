@@ -6,8 +6,8 @@ import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
 import { TagListing } from "@/features/blog/components/TagListing";
 import { sanityFetchLive } from "@/sanity/live";
-import { tagsForLocaleQuery } from "@/sanity/queries";
-import type { Tag } from "@/sanity/types";
+import { tagsForLocaleQuery } from "@/features/blog/sanity/queries";
+import type { Tag } from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale }> };
 

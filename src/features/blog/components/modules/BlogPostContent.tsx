@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";
-import type { BlogPostContentModule, Post } from "@/sanity/types";
+import type { BlogPostContentModule, Post } from "@/features/blog/sanity/types";
 import type { Locale } from "@/config";
 import { Link } from "@/i18n/routing";
 import { portableComponents } from "./portable-text-components";

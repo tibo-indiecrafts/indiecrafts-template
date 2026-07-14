@@ -7,8 +7,8 @@ import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
 import { AuthorListing } from "@/features/blog/components/AuthorListing";
 import { sanityFetchLive } from "@/sanity/live";
-import { authorsForLocaleQuery } from "@/sanity/queries";
-import type { Author } from "@/sanity/types";
+import { authorsForLocaleQuery } from "@/features/blog/sanity/queries";
+import type { Author } from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale }> };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Heading } from "@/sanity/types";
+import type { Heading } from "@/features/blog/sanity/types";
 import { slugify } from "@/lib/slugify";
 import { cn } from "@/lib/utils";
 

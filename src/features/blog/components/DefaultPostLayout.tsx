@@ -5,7 +5,7 @@ import type { Locale } from "@/config";
 import { cn } from "@/lib/utils";
 import { parseVideoEmbed } from "@/lib/video-embed";
 import { Link } from "@/i18n/routing";
-import type { Post, PostListItem } from "@/sanity/types";
+import type { Post, PostListItem } from "@/features/blog/sanity/types";
 import { BlogCard } from "./BlogCard";
 import { HeroVideo } from "./HeroVideo";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";

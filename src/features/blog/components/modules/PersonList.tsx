@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { PersonListModule } from "@/sanity/types";
+import type { PersonListModule } from "@/features/blog/sanity/types";
 import { ModuleSection } from "./ModuleSection";
 
 /**

@@ -1,5 +1,5 @@
 import { PortableText } from "@portabletext/react";
-import type { CalloutModule } from "@/sanity/types";
+import type { CalloutModule } from "@/features/blog/sanity/types";
 import { cn } from "@/lib/utils";
 import { ModuleCta } from "./Cta";
 import { portableComponents } from "./portable-text-components";

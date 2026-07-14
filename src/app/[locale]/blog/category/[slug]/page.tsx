@@ -13,8 +13,8 @@ import {
   allCategorySlugsQuery,
   categoryBySlugQuery,
   postsByCategorySlugQuery,
-} from "@/sanity/queries";
-import type { Category, PostListItem } from "@/sanity/types";
+} from "@/features/blog/sanity/queries";
+import type { Category, PostListItem } from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 

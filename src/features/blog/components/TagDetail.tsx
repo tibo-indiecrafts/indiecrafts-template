@@ -1,5 +1,5 @@
 import type { Locale } from "@/config";
-import type { PostListItem, Tag } from "@/sanity/types";
+import type { PostListItem, Tag } from "@/features/blog/sanity/types";
 import { BlogCard } from "./BlogCard";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 

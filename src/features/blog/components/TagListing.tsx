@@ -1,4 +1,4 @@
-import type { Tag } from "@/sanity/types";
+import type { Tag } from "@/features/blog/sanity/types";
 import { TagCard } from "./TagCard";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 import { PageHero, type PageHeroPill } from "./PageHero";

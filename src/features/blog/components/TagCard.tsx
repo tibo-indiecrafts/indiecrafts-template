@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/routing";
-import type { Tag } from "@/sanity/types";
+import type { Tag } from "@/features/blog/sanity/types";
 
 /**
  * Single tag card — used by /blog/tag. Visually lighter than the

@@ -12,8 +12,8 @@ import { visionTool } from "@sanity/vision";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { apiVersion, dataset, projectId, studioBasePath } from "./src/sanity/env";
-import { schemaTypes } from "./src/sanity/schema";
-import { structure } from "./src/sanity/structure";
+import { schemaTypes } from "./src/features/blog/sanity/schema";
+import { structure } from "./src/features/blog/sanity/structure";
 
 /**
  * Per-(type, locale) initial-value templates. Wired into the sidebar via

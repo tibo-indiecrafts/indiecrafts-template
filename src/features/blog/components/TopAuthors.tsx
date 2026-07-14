@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import type { Author } from "@/sanity/types";
+import type { Author } from "@/features/blog/sanity/types";
 
 /**
  * Top authors block — ported from `sections-team/team-05` in the

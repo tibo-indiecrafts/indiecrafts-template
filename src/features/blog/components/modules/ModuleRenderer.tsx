@@ -1,4 +1,4 @@
-import type { AnyModule } from "@/sanity/types";
+import type { AnyModule } from "@/features/blog/sanity/types";
 import {
   BlogPostContent,
   BlogPostList,

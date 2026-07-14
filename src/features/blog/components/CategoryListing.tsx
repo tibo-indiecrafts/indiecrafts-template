@@ -1,4 +1,4 @@
-import type { Category } from "@/sanity/types";
+import type { Category } from "@/features/blog/sanity/types";
 import { CategoryCard } from "./CategoryCard";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 import { PageHero, type PageHeroPill } from "./PageHero";

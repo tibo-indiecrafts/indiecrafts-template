@@ -4,8 +4,8 @@ import type { Locale } from "@/config";
 import { isRssEnabled } from "@/lib/feature-gate";
 import { localizedPathname } from "@/i18n/routing";
 import { client } from "@/sanity/client";
-import { rssPostsQuery } from "@/sanity/queries";
-import type { RssPost } from "@/sanity/types";
+import { rssPostsQuery } from "@/features/blog/sanity/queries";
+import type { RssPost } from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: string }> };
 

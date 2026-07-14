@@ -15,7 +15,7 @@ import {
   allCategorySlugsQuery,
   allPostSlugsQuery,
   allTagSlugsQuery,
-} from "@/sanity/queries";
+} from "@/features/blog/sanity/queries";
 import { ROUTES } from "./routes";
 
 /**

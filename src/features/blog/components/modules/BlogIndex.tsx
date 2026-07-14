@@ -1,4 +1,4 @@
-import type { BlogIndexModule } from "@/sanity/types";
+import type { BlogIndexModule } from "@/features/blog/sanity/types";
 
 /** Frontpage hero for /blog — title + intro. Posts go in BlogPostList. */
 export function BlogIndex(props: BlogIndexModule) {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import type { SearchModule as SearchModuleProps } from "@/sanity/types";
+import type { SearchModule as SearchModuleProps } from "@/features/blog/sanity/types";
 
 /**
  * Lightweight client-side post search. Filters whatever post cards are

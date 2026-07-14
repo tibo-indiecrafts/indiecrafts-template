@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/routing";
-import type { Category } from "@/sanity/types";
+import type { Category } from "@/features/blog/sanity/types";
 
 /**
  * Single category card — used by /blog/category. Displays the title,

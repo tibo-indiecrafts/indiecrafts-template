@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
-import type { PostListItem } from "@/sanity/types";
+import type { PostListItem } from "@/features/blog/sanity/types";
 
 /**
  * Five-card hero — mirrors the blog-forge home grid. First two cards

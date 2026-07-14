@@ -1,4 +1,4 @@
-import type { CustomHtmlModule } from "@/sanity/types";
+import type { CustomHtmlModule } from "@/features/blog/sanity/types";
 
 /**
  * Custom HTML — escape hatch for editor-authored markup (embed scripts,

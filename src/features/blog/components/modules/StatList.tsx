@@ -1,4 +1,4 @@
-import type { StatListModule } from "@/sanity/types";
+import type { StatListModule } from "@/features/blog/sanity/types";
 import { cn } from "@/lib/utils";
 import { ModuleSection } from "./ModuleSection";
 

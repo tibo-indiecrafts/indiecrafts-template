@@ -1,9 +1,9 @@
 import { pages, site } from "@/config";
 import { isBlogRouteEnabled } from "@/lib/feature-gate";
 import { sanityFetchLive } from "@/sanity/live";
-import { portableTextToMarkdown } from "@/sanity/portable-to-markdown";
-import { postBySlugQuery } from "@/sanity/queries";
-import type { Post } from "@/sanity/types";
+import { portableTextToMarkdown } from "@/features/blog/sanity/portable-to-markdown";
+import { postBySlugQuery } from "@/features/blog/sanity/queries";
+import type { Post } from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 

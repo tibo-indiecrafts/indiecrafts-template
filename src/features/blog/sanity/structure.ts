@@ -1,5 +1,5 @@
 import type { StructureBuilder, StructureResolver } from "sanity/structure";
-import { apiVersion } from "./env";
+import { apiVersion } from "@/sanity/env";
 
 /**
  * Sidebar du Studio — regroupe Blog (singleton + articles/auteurs/

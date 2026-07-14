@@ -9,8 +9,12 @@ import { DefaultLayout } from "@/components/layout/DefaultLayout";
 import { TagDetail } from "@/features/blog/components/TagDetail";
 import { client } from "@/sanity/client";
 import { sanityFetchLive } from "@/sanity/live";
-import { allTagSlugsQuery, postsByTagSlugQuery, tagBySlugQuery } from "@/sanity/queries";
-import type { PostListItem, Tag } from "@/sanity/types";
+import {
+  allTagSlugsQuery,
+  postsByTagSlugQuery,
+  tagBySlugQuery,
+} from "@/features/blog/sanity/queries";
+import type { PostListItem, Tag } from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 

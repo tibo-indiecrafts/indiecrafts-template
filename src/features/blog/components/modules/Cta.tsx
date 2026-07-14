@@ -1,4 +1,4 @@
-import type { Cta as CtaProps } from "@/sanity/types";
+import type { Cta as CtaProps } from "@/features/blog/sanity/types";
 import { cn } from "@/lib/utils";
 
 /**
