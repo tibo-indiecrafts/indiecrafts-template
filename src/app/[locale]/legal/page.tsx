@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { features, isPageVisible, pages, type Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { DefaultLayout } from "@/user-interface/layout/DefaultLayout";
+import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 
 type Props = { params: Promise<{ locale: Locale }> };
 

@@ -199,7 +199,7 @@ Cross-locale 404 protection: `postBySlugQuery` filters on `coalesce(language, "e
 
 ## 7. Post detail layout — `DefaultPostLayout`
 
-When `blog.postModules` is empty (the seed's default), every post renders through `src/features/blog/user-interface/pages/DefaultPostLayout.tsx`. The design:
+When `blog.postModules` is empty (the seed's default), every post renders through `src/features/blog/user-interface/post/layout/DefaultPostLayout.tsx`. The design:
 
 ```
 ┌─────────────────────────────────────────────────────────┐

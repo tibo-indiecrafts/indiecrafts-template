@@ -1,13 +1,13 @@
 import type { Tag } from "@/features/blog/sanity/types";
-import { TagCard } from "@/features/blog/user-interface/components/TagCard";
+import { TagCard } from "@/features/blog/user-interface/tag/components/TagCard";
 import {
   Breadcrumbs,
   type Crumb,
-} from "@/features/blog/user-interface/components/Breadcrumbs";
+} from "@/features/blog/user-interface/shared/components/Breadcrumbs";
 import {
   PageHero,
   type PageHeroPill,
-} from "@/features/blog/user-interface/sections/PageHero";
+} from "@/features/blog/user-interface/shared/sections/PageHero";
 
 /**
  * Tag index page — `/blog/tag`. Sorted by post count desc so the most

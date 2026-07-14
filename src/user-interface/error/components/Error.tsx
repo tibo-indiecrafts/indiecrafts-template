@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/user-interface/ui/button";
-import { DefaultLayout } from "@/user-interface/layout/DefaultLayout";
+import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 
 export type ErrorProps = {
   onRetry?: () => void;

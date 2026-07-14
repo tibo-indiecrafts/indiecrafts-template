@@ -45,7 +45,7 @@ The behavior depends on `features.cookieBanner`:
 
 ## The cookie banner
 
-Component: `src/user-interface/layout/CookieBanner.tsx`. Mounted in the layout only when `features.cookieBanner === true`:
+Component: `src/user-interface/shared/layout/CookieBanner.tsx`. Mounted in the layout only when `features.cookieBanner === true`:
 
 ```tsx
 {

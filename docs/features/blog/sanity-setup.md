@@ -414,7 +414,7 @@ In the same post, also verify the default body primitives that ship with `blockC
 
 ### 7.6 Per-post layout
 
-By default the `blog` singleton's `postModules` array is empty, so every `/blog/[slug]` route renders via `DefaultPostLayout` (`src/features/blog/user-interface/pages/DefaultPostLayout.tsx`):
+By default the `blog` singleton's `postModules` array is empty, so every `/blog/[slug]` route renders via `DefaultPostLayout` (`src/features/blog/user-interface/post/layout/DefaultPostLayout.tsx`):
 
 - Full-width hero card with cover image touching the nav, breadcrumbs in a backdrop-blur pill, bottom-aligned title block
 - Two-column layout below: TOC sidebar on the right (sticky `top-24`, only mounted when `post.headings` has at least one h2/h3/h4) and a rounded body panel filling the rest of the width
@@ -559,14 +559,13 @@ src/features/blog/                              THE BLOG FEATURE (gated by featu
 │           │   quote-list.ts, breadcrumbs.ts, custom-html.ts,
 │           │   search-module.ts, blog-index.ts, blog-post-content.ts,
 │           │   blog-post-list.ts
-└── user-interface/                             Blog UI, mirrors src/user-interface/
-    ├── pages/                                  Full-page composites
-    │   ├── DefaultPostLayout.tsx               Fallback per-post shell (hero + TOC + body)
-    │   └── BlogListing.tsx, *Detail.tsx, *Listing.tsx   Frontpage + author/category/tag views
-    ├── components/                             Cards + navigational pieces
-    │   ├── Toc.tsx, MobileToc.tsx              Table of Contents (scroll-spy)
-    │   └── BlogCard.tsx, HeroVideo.tsx, Breadcrumbs.tsx, …
-    ├── sections/                               BlogHero, PageHero, ExploreCategories/Tags, TopAuthors
+└── user-interface/                             Blog UI, organized by route (like src/user-interface/)
+    ├── blog/sections/                          Frontpage: BlogListing, BlogHero, ExploreCategories/Tags, TopAuthors
+    ├── post/                                   A single post (/blog/[slug])
+    │   ├── layout/DefaultPostLayout.tsx        Per-post shell (hero + TOC + body)
+    │   └── components/                         Toc, MobileToc, HeroVideo
+    ├── author/  category/  tag/                Each: sections/ (Listing + Detail views) + components/ (its card)
+    ├── shared/                                 Multi-page: sections/PageHero + components/{BlogCard, Breadcrumbs, PlayBadge}
     └── renderers/                              Page-builder module renderers
         ├── registry.tsx                        SIMPLE_MODULES map (TS exhaustiveness)
         ├── ModuleRenderer.tsx                  <Modules> + ModuleSwitch

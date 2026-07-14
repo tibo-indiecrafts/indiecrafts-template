@@ -103,7 +103,7 @@ Two values come from config rather than messages:
 
 ## 5. The page itself
 
-`src/user-interface/pages/Maintenance.tsx` is purely presentational — the route resolves the copy and passes it in as props (`statusLabel`, `title`, `body`, `contactLabel`). It renders a centered card: a status pill with a pulsing brand dot, the headline, the body, and the `mailto:` contact line, with `site.name` pinned at the bottom.
+`src/user-interface/maintenance/components/Maintenance.tsx` is purely presentational — the route resolves the copy and passes it in as props (`statusLabel`, `title`, `body`, `contactLabel`). It renders a centered card: a status pill with a pulsing brand dot, the headline, the body, and the `mailto:` contact line, with `site.name` pinned at the bottom.
 
 The pulsing dot is an honest "actively working" signal, not decoration — and it's the page's only motion, so it holds still under `prefers-reduced-motion` (`motion-reduce:hidden` on the ping layer).
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Logo } from "@/user-interface/layout/Logo";
-import { LocaleSwitcher } from "@/user-interface/layout/LocaleSwitcher";
-import { ThemeToggle } from "@/user-interface/layout/ThemeToggle";
+import { Logo } from "@/user-interface/shared/layout/Logo";
+import { LocaleSwitcher } from "@/user-interface/shared/layout/LocaleSwitcher";
+import { ThemeToggle } from "@/user-interface/shared/layout/ThemeToggle";
 import { SHOW_THEME_TOGGLE } from "@/lib/theme";
 import { Link } from "@/i18n/routing";
 import { features } from "@/config";

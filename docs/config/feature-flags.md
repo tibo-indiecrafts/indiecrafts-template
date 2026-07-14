@@ -82,7 +82,7 @@ for rich results.
 ## `localeSwitcher`
 
 Shows the header locale picker (`<LocaleSwitcher>`), gated in
-`src/user-interface/layout/Header.tsx`:
+`src/user-interface/shared/layout/Header.tsx`:
 
 ```tsx
 {

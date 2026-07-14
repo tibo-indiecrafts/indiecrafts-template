@@ -1,13 +1,13 @@
 import type { Category } from "@/features/blog/sanity/types";
-import { CategoryCard } from "@/features/blog/user-interface/components/CategoryCard";
+import { CategoryCard } from "@/features/blog/user-interface/category/components/CategoryCard";
 import {
   Breadcrumbs,
   type Crumb,
-} from "@/features/blog/user-interface/components/Breadcrumbs";
+} from "@/features/blog/user-interface/shared/components/Breadcrumbs";
 import {
   PageHero,
   type PageHeroPill,
-} from "@/features/blog/user-interface/sections/PageHero";
+} from "@/features/blog/user-interface/shared/sections/PageHero";
 
 /**
  * Category index page section — `/blog/category`. Sorted by post count

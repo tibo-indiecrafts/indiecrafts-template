@@ -18,7 +18,7 @@ import {
   Typescript,
   Vercel,
 } from "reicon-brands";
-import { BrandIcon } from "@/user-interface/components/BrandIcon";
+import { BrandIcon } from "@/user-interface/shared/components/BrandIcon";
 
 /**
  * Icon-systems showcase for the homepage. Demonstrates the three icon sets

@@ -2,6 +2,7 @@ import type { AnyModule } from "@/features/blog/sanity/types";
 import { BlogPostContent } from "./BlogPostContent";
 import { BlogPostList } from "./BlogPostList";
 import { type ModuleContext, renderSimpleModule } from "./registry";
+import { portableComponents } from "./portable-text-components";
 
 /**
  * Drives the page-builder. Hands each module to its matching component
@@ -42,5 +43,5 @@ async function ModuleSwitch({
       <BlogPostContent module={m} post={context.post} locale={context.locale} />
     ) : null;
   }
-  return renderSimpleModule(m);
+  return renderSimpleModule(m, portableComponents);
 }

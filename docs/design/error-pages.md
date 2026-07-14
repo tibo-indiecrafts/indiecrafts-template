@@ -13,7 +13,7 @@ The composites own the layout and copy; the route files own the Next.js contract
 
 ## Error page
 
-`src/user-interface/pages/Error.tsx` renders inside `DefaultLayout` and reads three keys from `pages.error`:
+`src/user-interface/error/components/Error.tsx` renders inside `DefaultLayout` and reads three keys from `pages.error`:
 
 ```tsx
 const t = useTranslations("pages.error");
@@ -38,7 +38,7 @@ Note the `logger.error(...)` — errors are never swallowed silently.
 
 ## Not-found page
 
-`src/user-interface/pages/NotFound.tsx` follows the same shape, reading `pages.notFound`:
+`src/user-interface/not-found/components/NotFound.tsx` follows the same shape, reading `pages.notFound`:
 
 ```tsx
 const t = useTranslations("pages.notFound");
@@ -50,7 +50,7 @@ The "back home" link uses the locale-aware `Link` from `@/i18n/routing` (never `
 The route file is a one-liner that re-exports the composite:
 
 ```tsx
-import { NotFound as NotFoundPage } from "@/user-interface/pages/NotFound";
+import { NotFound as NotFoundPage } from "@/user-interface/not-found/components/NotFound";
 export default function NotFound() {
   return <NotFoundPage />;
 }

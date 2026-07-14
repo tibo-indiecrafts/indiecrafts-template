@@ -4,7 +4,7 @@ Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (publ
 
 ## Layout
 
-- `user-interface/` — the blog's UI, categorized like `src/user-interface/`: `components/` (cards, hero video, TOC, breadcrumbs) · `sections/` (heroes, explore/top blocks) · `pages/` (listings, detail views, `DefaultPostLayout`) · `renderers/` (the 14 page-builder module renderers)
+- `user-interface/` — the blog's UI, organized by route like `src/user-interface/`: `blog/` (frontpage), `post/` (single post), `author/`, `category/`, `tag/` — each split into `sections/` (big views + blocks), `components/` (small: cards, TOC, badges), `layout/` (page shells, e.g. `post/layout/DefaultPostLayout`) as needed. Multi-page pieces live in `shared/` (`sections/PageHero`, `components/{BlogCard,Breadcrumbs,PlayBadge}`); `renderers/` holds the 14 page-builder module renderers.
 - `sanity/` — `schema/` + `queries.ts` + `types.ts` + `structure.ts` (Studio desk) + `portable-to-markdown.ts`
 - `lib/route-gate.ts` — `requireBlogRoute(page)` (page components) / `isBlogRouteEnabled(page)` (route handlers) / `isRssEnabled()`. Each folds in the flag **and** `page.enabled`, so a new route can't drift by checking only one.
 

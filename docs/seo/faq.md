@@ -43,10 +43,10 @@ All three read the exact same `messages.pages.<id>.faq` array via `getFaqItems` 
 
 ### 1. The accordion (`<Faq>`)
 
-`src/user-interface/sections/Faq.tsx` renders the two-column FAQ section. Mount it with a `pageId` and nothing else:
+`src/user-interface/homepage/sections/Faq.tsx` renders the two-column FAQ section. Mount it with a `pageId` and nothing else:
 
 ```tsx
-import { Faq } from "@/user-interface/sections/Faq";
+import { Faq } from "@/user-interface/homepage/sections/Faq";
 
 // inside the page body
 <Faq pageId="home" />;

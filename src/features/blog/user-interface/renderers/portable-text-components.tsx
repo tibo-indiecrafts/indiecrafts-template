@@ -35,7 +35,13 @@ function headingId(value: PortableTextBlock | undefined): string {
 const m =
   <P,>(Cmp: (props: P) => React.ReactNode) =>
   ({ value }: { value: unknown }) =>
-    Cmp({ ...(value as Record<string, unknown>), inline: true } as P);
+    // Pass `components` in so a module rendered inline can recurse into nested
+    // modules without importing this map (which would form an import cycle).
+    Cmp({
+      ...(value as Record<string, unknown>),
+      inline: true,
+      components: portableComponents,
+    } as P);
 
 /**
  * Inline-embeddable module types — must stay in lockstep with

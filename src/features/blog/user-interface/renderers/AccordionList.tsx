@@ -1,12 +1,12 @@
-import { PortableText } from "@portabletext/react";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { AccordionListModule } from "@/features/blog/sanity/types";
-import { portableComponents } from "./portable-text-components";
 import { ModuleSection } from "./ModuleSection";
 
 export function AccordionList({
   inline,
+  components,
   ...props
-}: AccordionListModule & { inline?: boolean }) {
+}: AccordionListModule & { inline?: boolean; components: PortableTextComponents }) {
   if (!props.items?.length) return null;
   return (
     <ModuleSection anchor={props.anchor} inline={inline}>
@@ -25,7 +25,7 @@ export function AccordionList({
               </summary>
               {item.content ? (
                 <div className="prose prose-neutral dark:prose-invert mt-3 max-w-none">
-                  <PortableText value={item.content} components={portableComponents} />
+                  <PortableText value={item.content} components={components} />
                 </div>
               ) : null}
             </details>

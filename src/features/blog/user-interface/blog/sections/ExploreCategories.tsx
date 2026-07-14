@@ -1,7 +1,7 @@
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
 import type { Category, PostListItem } from "@/features/blog/sanity/types";
-import { BlogCard } from "@/features/blog/user-interface/components/BlogCard";
+import { BlogCard } from "@/features/blog/user-interface/shared/components/BlogCard";
 
 /**
  * Server-rendered category explorer for the /blog frontpage.

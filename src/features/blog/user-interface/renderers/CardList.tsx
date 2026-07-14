@@ -1,9 +1,8 @@
 import Image from "next/image";
-import { PortableText } from "@portabletext/react";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { CardListModule } from "@/features/blog/sanity/types";
 import { cn } from "@/lib/utils";
 import { ModuleCta } from "./Cta";
-import { portableComponents } from "./portable-text-components";
 
 /**
  * Card list — design ported from `sections-features/features-04`: a
@@ -18,7 +17,7 @@ const COLS: Record<number, string> = {
   4: "sm:grid-cols-2 lg:grid-cols-4",
 };
 
-export function CardList(props: CardListModule) {
+export function CardList(props: CardListModule & { components: PortableTextComponents }) {
   if (!props.cards?.length) return null;
   const cols = COLS[props.columns ?? 3] ?? COLS[3];
 
@@ -49,7 +48,7 @@ export function CardList(props: CardListModule) {
               ) : null}
               {card.content ? (
                 <div className="prose prose-neutral dark:prose-invert prose-sm [&_p]:text-muted-foreground max-w-none [&_p]:text-sm">
-                  <PortableText value={card.content} components={portableComponents} />
+                  <PortableText value={card.content} components={props.components} />
                 </div>
               ) : null}
               {card.cta ? (

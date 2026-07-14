@@ -3,7 +3,7 @@ import type { BlogPostListModule, PostListItem } from "@/features/blog/sanity/ty
 import type { Locale } from "@/config";
 import { sanityFetchLive } from "@/sanity/live";
 import { moduleBlogPostListQuery } from "@/features/blog/sanity/queries";
-import { BlogCard } from "@/features/blog/user-interface/components/BlogCard";
+import { BlogCard } from "@/features/blog/user-interface/shared/components/BlogCard";
 
 /**
  * Server component — fetches its own posts using the module's filters

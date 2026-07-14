@@ -20,16 +20,17 @@ src/
 │
 ├── features/       DOMAIN FEATURES — self-contained, one folder per feature
 │   └── blog/
-│       ├── user-interface/  components/ sections/ pages/ + renderers/ (page-builder)
+│       ├── user-interface/  one folder per blog page (each with components/) + shared/{sections,components} + renderers/
 │       ├── sanity/       schema/ + queries.ts + types.ts + structure.ts + portable-to-markdown.ts
 │       └── lib/          route-gate.ts (blog route gating)
 │
-├── user-interface/ SHARED, cross-feature UI
+├── user-interface/ SHARED, cross-feature UI — organized by page, then category
 │   ├── ui/             shadcn primitives (CLI-managed — see components.json)
-│   ├── layout/         production chrome: Header, Footer, ThemeToggle, CookieBanner…
-│   ├── sections/       marketing blocks: Features, Pricing, Faq, IconShowcase…
-│   ├── pages/          full-page composites: Error, NotFound, Maintenance
-│   └── components/     adapted pieces (BrandIcon…) + shadcn `add` target
+│   ├── homepage/       homepage-specific UI → sections/ (Features, Pricing, Faq…)
+│   ├── error/ maintenance/ not-found/   per-page folders → components/<Composite>
+│   └── shared/         used across pages
+│       ├── layout/     production chrome: Header, Footer, ThemeToggle, CookieBanner…
+│       └── components/  adapted pieces (BrandIcon…) + shadcn `add` target
 │
 ├── config/         single source of truth (site, theme, fonts, i18n, features, pages…)
 ├── lib/            SHARED utilities/services: metadata, seo/, theme, fonts, logger, slugify, utils, faq, video-embed
@@ -66,8 +67,8 @@ src/
 
 - Alias: `@/*` → `src/*`. No per-feature alias needed — `@/features/blog/...`
   resolves for free.
-- **No barrel files.** Import deep (`@/features/blog/user-interface/pages/DefaultPostLayout`,
-  `@/user-interface/sections/Features`), not through an `index.ts`. A single barrel would
+- **No barrel files.** Import deep (`@/features/blog/user-interface/post/layout/DefaultPostLayout`,
+  `@/user-interface/homepage/sections/Features`), not through an `index.ts`. A single barrel would
   taint on `route-gate`'s `server-only` import and defeat tree-shaking.
 - Naming: `PascalCase.tsx` for components, `kebab-case.ts` for lib/util modules,
   matching the existing tree.

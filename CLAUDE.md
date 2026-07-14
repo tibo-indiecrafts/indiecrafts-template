@@ -66,16 +66,18 @@ src/app/                   ROUTES ONLY (thin page.tsx / route.ts)
    studio/  maintenance/   embedded Studio + maintenance page (own root layouts)
 
 src/features/blog/         THE BLOG FEATURE (self-contained, gated by features.blog)
-   user-interface/         mirrors src/user-interface/ — components/ sections/ pages/ + renderers/ (page-builder)
+   user-interface/         organized by route (like src/user-interface/) — blog/ post/ author/
+                           category/ tag/, each split into sections/ components/ layout/ as needed;
+                           + renderers/ (page-builder) + shared/{sections,components} (multi-page)
    sanity/                 schema/ + queries.ts + types.ts + structure.ts + portable-to-markdown.ts
    lib/route-gate.ts       requireBlogRoute / isBlogRouteEnabled / isRssEnabled
 
-src/user-interface/                 SHARED, cross-feature UI
+src/user-interface/        SHARED, cross-feature UI — organized by page, then category
    ui/                     shadcn primitives (READ-ONLY, CLI-managed → components.json)
-   layout/                 chrome: DefaultLayout, Header, Footer, ThemeToggle, CookieBanner…
-   sections/               marketing blocks — copy targets from the sibling library
-   pages/                  full-page composites (Error, NotFound, Maintenance)
-   components/BrandIcon.tsx  reicon-brands wrapper
+   homepage/sections/      marketing blocks — copy targets from the sibling library
+   error/ maintenance/ not-found/   per-page folders, each: components/<Composite>
+   shared/layout/          chrome: DefaultLayout, Header, Footer, ThemeToggle, CookieBanner…
+   shared/components/      BrandIcon (reicon-brands wrapper)
 
 src/lib/                   SHARED utils/services
    metadata.ts             buildMetadata({ page, locale }) — inherits site → page
@@ -135,7 +137,7 @@ Two building blocks feed the UI: **shadcn/ui** primitives (`src/user-interface/u
 To adapt a library section:
 
 1. Browse the variant in Storybook (`cd ../indiecrafts-library && pnpm storybook`).
-2. Copy its file into `src/user-interface/sections/<Name>.tsx`. Flatten a multi-file folder (schema.ts + config.ts + en.json) into one `.tsx`, and rework it to template patterns: strings → `messages/`, colors/nav → `@/config`, links → `@/i18n/routing`. See `src/user-interface/sections/Features.tsx` for the target shape.
+2. Copy its file into `src/user-interface/homepage/sections/<Name>.tsx`. Flatten a multi-file folder (schema.ts + config.ts + en.json) into one `.tsx`, and rework it to template patterns: strings → `messages/`, colors/nav → `@/config`, links → `@/i18n/routing`. See `src/user-interface/homepage/sections/Features.tsx` for the target shape.
 3. Drop the matching copy into `messages/<locale>.pages.<id>.blocks.<simpleName>` (drop the -NN suffix).
 4. Mount in the route's `page.tsx`, passing a `namespace` (e.g. `pages.home.blocks.cta`) or `pageId` prop. Live pattern: `src/app/[locale]/(home)/page.tsx`.
 

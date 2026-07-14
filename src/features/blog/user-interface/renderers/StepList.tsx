@@ -1,6 +1,5 @@
-import { PortableText } from "@portabletext/react";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { StepListModule } from "@/features/blog/sanity/types";
-import { portableComponents } from "./portable-text-components";
 import { ModuleSection } from "./ModuleSection";
 
 /**
@@ -8,7 +7,11 @@ import { ModuleSection } from "./ModuleSection";
  * a hairline separator runs between consecutive circles to make the
  * sequence read as a flow rather than a stack of cards.
  */
-export function StepList({ inline, ...props }: StepListModule & { inline?: boolean }) {
+export function StepList({
+  inline,
+  components,
+  ...props
+}: StepListModule & { inline?: boolean; components: PortableTextComponents }) {
   if (!props.steps?.length) return null;
   return (
     <ModuleSection anchor={props.anchor} inline={inline}>
@@ -36,7 +39,7 @@ export function StepList({ inline, ...props }: StepListModule & { inline?: boole
                 ) : null}
                 {step.content ? (
                   <div className="prose prose-neutral dark:prose-invert prose-sm mt-2 max-w-none">
-                    <PortableText value={step.content} components={portableComponents} />
+                    <PortableText value={step.content} components={components} />
                   </div>
                 ) : null}
               </div>

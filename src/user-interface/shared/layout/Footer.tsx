@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { Logo } from "@/user-interface/layout/Logo";
+import { Logo } from "@/user-interface/shared/layout/Logo";
 import { footerNav } from "@/config";
 import { site } from "@/config";
 

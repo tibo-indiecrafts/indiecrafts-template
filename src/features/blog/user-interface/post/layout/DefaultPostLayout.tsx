@@ -6,14 +6,14 @@ import { cn } from "@/lib/utils";
 import { parseVideoEmbed } from "@/lib/video-embed";
 import { Link } from "@/i18n/routing";
 import type { Post, PostListItem } from "@/features/blog/sanity/types";
-import { BlogCard } from "@/features/blog/user-interface/components/BlogCard";
-import { HeroVideo } from "@/features/blog/user-interface/components/HeroVideo";
+import { BlogCard } from "@/features/blog/user-interface/shared/components/BlogCard";
+import { HeroVideo } from "@/features/blog/user-interface/post/components/HeroVideo";
 import {
   Breadcrumbs,
   type Crumb,
-} from "@/features/blog/user-interface/components/Breadcrumbs";
-import { Toc } from "@/features/blog/user-interface/components/Toc";
-import { MobileToc } from "@/features/blog/user-interface/components/MobileToc";
+} from "@/features/blog/user-interface/shared/components/Breadcrumbs";
+import { Toc } from "@/features/blog/user-interface/post/components/Toc";
+import { MobileToc } from "@/features/blog/user-interface/post/components/MobileToc";
 import { portableComponents } from "@/features/blog/user-interface/renderers/portable-text-components";
 import { formatPostDate } from "@/lib/format-date";
 

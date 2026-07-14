@@ -1,8 +1,7 @@
-import { PortableText } from "@portabletext/react";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { CalloutModule } from "@/features/blog/sanity/types";
 import { cn } from "@/lib/utils";
 import { ModuleCta } from "./Cta";
-import { portableComponents } from "./portable-text-components";
 
 const VARIANT_STYLES: Record<NonNullable<CalloutModule["variant"]>, string> = {
   info: "bg-muted text-foreground ring-border",
@@ -17,7 +16,7 @@ const VARIANT_STYLES: Record<NonNullable<CalloutModule["variant"]>, string> = {
     "bg-destructive/10 text-destructive ring-destructive/30 dark:bg-destructive/15 dark:text-destructive-foreground dark:ring-destructive/40",
 };
 
-export function Callout(props: CalloutModule) {
+export function Callout(props: CalloutModule & { components: PortableTextComponents }) {
   if (!props.content) return null;
   const variant = props.variant ?? "info";
   return (
@@ -30,7 +29,7 @@ export function Callout(props: CalloutModule) {
       )}
     >
       <div className="prose prose-neutral dark:prose-invert max-w-none [&_p]:my-0 [&_p]:leading-relaxed">
-        <PortableText value={props.content} components={portableComponents} />
+        <PortableText value={props.content} components={props.components} />
       </div>
       {props.cta ? (
         <div className="mt-4">

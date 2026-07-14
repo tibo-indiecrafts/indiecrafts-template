@@ -1,3 +1,4 @@
+import type { PortableTextComponents } from "@portabletext/react";
 import type { Locale } from "@/config";
 import type { AnyModule, Post } from "@/features/blog/sanity/types";
 import { AccordionList } from "./AccordionList";
@@ -43,8 +44,11 @@ type ModuleOf<T extends AnyModule["_type"]> = Extract<AnyModule, { _type: T }>;
  * The two context-aware ones declare themselves with a different shape
  * inline in `ModuleRenderer` instead of via this map.
  */
+// Modules that render nested PortableText (Callout, Prose, …) receive the
+// component map via `components` rather than importing it — that import would
+// close a cycle (renderer → portable-text-components → registry → renderer).
 type SimpleRenderer<T extends AnyModule["_type"]> = (
-  props: ModuleOf<T>,
+  props: ModuleOf<T> & { inline?: boolean; components: PortableTextComponents },
 ) => React.ReactNode;
 
 type SimpleModuleType = Exclude<
@@ -76,7 +80,10 @@ export const SIMPLE_MODULES = {
  * Render a simple module (no extra context required). Returns null for
  * the two context-aware types — `ModuleRenderer` handles those itself.
  */
-export function renderSimpleModule<M extends AnyModule>(module: M): React.ReactNode {
+export function renderSimpleModule<M extends AnyModule>(
+  module: M,
+  components: PortableTextComponents,
+): React.ReactNode {
   if (
     module._type === "module.blog-post-list" ||
     module._type === "module.blog-post-content"
@@ -84,5 +91,5 @@ export function renderSimpleModule<M extends AnyModule>(module: M): React.ReactN
     return null;
   }
   const Component = SIMPLE_MODULES[module._type] as SimpleRenderer<typeof module._type>;
-  return Component(module as ModuleOf<typeof module._type>);
+  return Component({ ...(module as ModuleOf<typeof module._type>), components });
 }

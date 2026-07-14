@@ -4,7 +4,7 @@ import type { Locale } from "@/config";
 import { parseVideoEmbed } from "@/lib/video-embed";
 import { formatPostDate } from "@/lib/format-date";
 import type { PostListItem } from "@/features/blog/sanity/types";
-import { PlayBadge } from "@/features/blog/user-interface/components/PlayBadge";
+import { PlayBadge } from "@/features/blog/user-interface/shared/components/PlayBadge";
 
 /**
  * Homepage "editor's desk" — a curated strip of featured articles, laid out

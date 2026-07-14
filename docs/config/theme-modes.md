@@ -90,7 +90,7 @@ export const THEME_PROVIDER_PROPS = {
 
 ## Where they're consumed
 
-`ThemeProvider` (`src/user-interface/layout/ThemeProvider.tsx`) is a thin wrapper that
+`ThemeProvider` (`src/user-interface/shared/layout/ThemeProvider.tsx`) is a thin wrapper that
 spreads `THEME_PROVIDER_PROPS`:
 
 ```tsx
@@ -100,7 +100,7 @@ export function ThemeProvider({ children }: Props) {
 ```
 
 It's mounted once, high in `src/app/[locale]/layout.tsx`. The header gates the
-toggle on `SHOW_THEME_TOGGLE` (`src/user-interface/layout/Header.tsx`):
+toggle on `SHOW_THEME_TOGGLE` (`src/user-interface/shared/layout/Header.tsx`):
 
 ```tsx
 {
@@ -108,7 +108,7 @@ toggle on `SHOW_THEME_TOGGLE` (`src/user-interface/layout/Header.tsx`):
 }
 ```
 
-`ThemeToggle` (`src/user-interface/layout/ThemeToggle.tsx`) maps each entry in
+`ThemeToggle` (`src/user-interface/shared/layout/ThemeToggle.tsx`) maps each entry in
 `THEME_MODES` to a labelled radio item (Sun / Moon / Monitor icon). It reads the
 mounted state via `useSyncExternalStore` — never `useEffect` — to avoid a
 hydration flash, per the repo convention.

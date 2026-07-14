@@ -1,9 +1,8 @@
-import { PortableText } from "@portabletext/react";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { ProseModule } from "@/features/blog/sanity/types";
 import { cn } from "@/lib/utils";
-import { portableComponents } from "./portable-text-components";
 
-export function Prose(props: ProseModule) {
+export function Prose(props: ProseModule & { components: PortableTextComponents }) {
   if (!props.content) return null;
   return (
     <section
@@ -14,7 +13,7 @@ export function Prose(props: ProseModule) {
       )}
     >
       <div className="prose prose-neutral dark:prose-invert max-w-none">
-        <PortableText value={props.content} components={portableComponents} />
+        <PortableText value={props.content} components={props.components} />
       </div>
     </section>
   );
