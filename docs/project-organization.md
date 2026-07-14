@@ -78,6 +78,3 @@ Mirror `features/blog/`: create `features/<name>/{components,lib,sanity?}`, add 
 helper in `features/<name>/lib`, and keep its `app/` routes thin. Shared pieces it
 needs (a new UI primitive, a generic util) go in `components/ui` or `lib/`, not in
 the feature.
-
-> Migration history: this structure was reached from a flat type-based layout via
-> `docs/migration-feature-based.md` (7 phased, verified commits).

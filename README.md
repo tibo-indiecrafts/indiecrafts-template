@@ -55,30 +55,27 @@ Full index — every guide in [`docs/`](./docs/), grouped by area.
 
 **Design & content**
 
-| Doc                                                            | Covers                                         |
-| -------------------------------------------------------------- | ---------------------------------------------- |
-| [`sections.md`](./docs/design/sections.md)                     | Copying + mounting section components          |
-| [`typography.md`](./docs/design/typography.md)                 | Type scale and text styles                     |
-| [`fonts.md`](./docs/design/fonts.md)                           | The font registry (`@/lib/fonts`)              |
-| [`responsive-design.md`](./docs/design/responsive-design.md)   | Breakpoints and responsive conventions         |
-| [`icons.md`](./docs/design/icons.md)                           | Icon usage in the UI                           |
-| [`favicons-and-icons.md`](./docs/design/favicons-and-icons.md) | Favicon, apple-touch, PWA + Safari consistency |
-| [`featured-articles.md`](./docs/design/featured-articles.md)   | The featured-articles home section             |
-| [`video-embeds.md`](./docs/design/video-embeds.md)             | Embedding video                                |
-| [`error-pages.md`](./docs/design/error-pages.md)               | Error + not-found pages                        |
+| Doc                                                          | Covers                                      |
+| ------------------------------------------------------------ | ------------------------------------------- |
+| [`sections.md`](./docs/design/sections.md)                   | Copying + mounting section components       |
+| [`typography.md`](./docs/design/typography.md)               | Type scale, text styles + the font registry |
+| [`responsive-design.md`](./docs/design/responsive-design.md) | Breakpoints and responsive conventions      |
+| [`icons.md`](./docs/design/icons.md)                         | UI icon sets + favicon / apple-touch / PWA  |
+| [`featured-articles.md`](./docs/design/featured-articles.md) | The featured-articles home section          |
+| [`video-embeds.md`](./docs/design/video-embeds.md)           | Embedding video                             |
+| [`error-pages.md`](./docs/design/error-pages.md)             | Error + not-found pages                     |
 
 **SEO & discovery**
 
-| Doc                                                                                 | Covers                                               |
-| ----------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| [`seo-metadata.md`](./docs/seo/seo-metadata.md)                                     | How `<head>` metadata is generated (translatable)    |
-| [`structured-data-cookbook.md`](./docs/seo/structured-data-cookbook.md)             | Per-page JSON-LD factory recipes                     |
-| [`structured-data-business-types.md`](./docs/seo/structured-data-business-types.md) | Business-type presets (Organization / LocalBusiness) |
-| [`faq.md`](./docs/seo/faq.md)                                                       | Per-page FAQ → display + FAQPage JSON-LD + llms      |
-| [`llms-endpoints.md`](./docs/seo/llms-endpoints.md)                                 | `/llms.txt`, `/llms-full.txt`, `/llms/<id>`          |
-| [`robots-and-environments.md`](./docs/seo/robots-and-environments.md)               | Env-aware robots.txt + production origin from env    |
-| [`analytics.md`](./docs/seo/analytics.md)                                           | Analytics + Consent Mode setup                       |
-| [`security-headers.md`](./docs/seo/security-headers.md)                             | CSP + security headers                               |
+| Doc                                                                     | Covers                                            |
+| ----------------------------------------------------------------------- | ------------------------------------------------- |
+| [`seo-metadata.md`](./docs/seo/seo-metadata.md)                         | How `<head>` metadata is generated (translatable) |
+| [`structured-data-cookbook.md`](./docs/seo/structured-data-cookbook.md) | Per-page JSON-LD recipes + business-type presets  |
+| [`faq.md`](./docs/seo/faq.md)                                           | Per-page FAQ → display + FAQPage JSON-LD + llms   |
+| [`llms-endpoints.md`](./docs/seo/llms-endpoints.md)                     | `/llms.txt`, `/llms-full.txt`, `/llms/<id>`       |
+| [`robots-and-environments.md`](./docs/seo/robots-and-environments.md)   | Env-aware robots.txt + production origin from env |
+| [`analytics.md`](./docs/seo/analytics.md)                               | Analytics + Consent Mode setup                    |
+| [`security-headers.md`](./docs/seo/security-headers.md)                 | CSP + security headers                            |
 
 **Blog (when `features.blog: true`)**
 
