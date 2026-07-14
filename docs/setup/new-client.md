@@ -242,10 +242,12 @@ Single flat file per locale. The keys that need attention per client:
     "description": "...",                                  // <meta description>
     "hero": { "eyebrow", "title", "subtitle" },
     "blocks": {
-      "features": { "title", "body", "items": { ... } },   // 3 items by default
-      "cta":      { "title", "body", "emailPlaceholder", "submit" },
-      "pricing":  { "title", "body", "tiers": { ... } },   // 3 tiers
-      "testimonials": { "quotes": { ... } },               // 1 quote
+      "features":     { "title", "body", "items": { ... } },        // 3 items by default
+      "cta":          { "title", "body", "emailPlaceholder", "submit" },
+      "pricing":      { "title", "body", "tiers": { ... } },        // 3 tiers
+      "testimonials": { "label", "quotes": { ... } },              // 1 quote
+      "featured":     { "eyebrow", "title", "body", "viewAll" },    // latest blog posts (only when blog on)
+      "icons":        { "eyebrow", "title", "body", "lucide", "reicon", "brands" }, // icon showcase
     }
   }
 }

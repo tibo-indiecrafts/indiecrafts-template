@@ -2,6 +2,8 @@
 
 Config-first, modular Next.js 16 template for client sites. Production-only — the Storybook component library lives in the sibling repo `../indiecrafts-library`.
 
+**Two briefs, two jobs:** this file (`CLAUDE.md`) is _how to code_ — architecture, conventions, workflow. **`DESIGN.md`** (repo root) is _how to design_ — the visual system (color roles, typography, spacing, motion). Read both; don't put visual tokens here or code rules there.
+
 ## Working principles
 
 1. Don't assume. Surface tradeoffs. Don't hide confusion.
@@ -206,13 +208,12 @@ The inline allowlist lives in `src/features/blog/sanity/schema/blockContent.ts` 
 
 To wire Sanity to your project, set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (see `.env.example`). The CSP in `next.config.ts` already allows `https://*.sanity.io` + `wss://*.api.sanity.io`.
 
-## Theming + accessibility
+## Accessibility (structural)
 
-- Tailwind v4 + CSS vars. Tokens in `theme.*` (config/index.ts), mirrored in `globals.css` as `oklch(...)`.
-- Two dark triggers: `html[data-theme="dark"]` → `@media (prefers-color-scheme: dark)`. `@custom-variant dark` on the attribute.
-- `pnpm verify:contrast` asserts WCAG AA on theme tokens. Run after every theme change.
-- `next/og` (Satori) doesn't understand oklch → keep `theme.hexColors` in sync with `theme.colors` for the brand/foreground pairs.
-- `<html lang>` + `dir` from active locale. `SkipLink` first in body, targets `#main`. Layouts render exactly one `<main id="main" tabIndex={-1}>`. Sections: `<section aria-labelledby="…">`. Icons `aria-hidden="true"` unless they're the sole label. Respect `prefers-reduced-motion`.
+The **visual system** — colors, typography, spacing, dark mode, motion, contrast — lives in **`DESIGN.md`** (repo root). CLAUDE.md keeps only the structural, code-level rules:
+
+- `<html lang>` + `dir` from the active locale. `SkipLink` first in the body, targets `#main`. Exactly one `<main id="main" tabIndex={-1}>` per layout. Sections use `<section aria-labelledby="…">`. Icons `aria-hidden="true"` unless the sole label.
+- `jsx-a11y` rules are errors (eslint); `pnpm verify:contrast` gates WCAG AA on the theme tokens (see Verification).
 
 ## Critical rules (the NEVERs)
 

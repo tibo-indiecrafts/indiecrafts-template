@@ -29,7 +29,6 @@ Paste the full URL, or leave blank to skip.
 | LinkedIn    | [ … ] |
 | Instagram   | [ … ] |
 | GitHub      | [ … ] |
-| Facebook    | [ … ] |
 | Mastodon    | [ … ] |
 
 ## Each page (copy this block per page)

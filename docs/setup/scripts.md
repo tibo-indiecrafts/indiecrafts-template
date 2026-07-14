@@ -65,7 +65,7 @@ The docs site (this VitePress site) is an isolated npm package under `docs/`. Th
 
 ## 2. `scripts/*.mjs`
 
-Four Node scripts. The two contrast/data files run with plain `node`; the Sanity ones need a token in your environment (either exported, or loaded from `.env.local` via `--env-file`).
+Four Node scripts. Only the contrast checker runs with plain `node` (no token, no network); the three Sanity scripts need a token in your environment (either exported, or loaded from `.env.local` via `--env-file`).
 
 ### `check-contrast.mjs` — WCAG contrast checker
 

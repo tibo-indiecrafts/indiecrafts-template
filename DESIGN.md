@@ -92,12 +92,23 @@ read as crafted and calm, never busy or templated.
 
 ## Colors
 
-OKLCH in `globals.css` is authoritative; the front-matter hex are sRGB mirrors
-(`theme.hexColors` must stay in sync with `theme.colors` for the brand pair —
-`next/og`'s Satori can't parse oklch). Use utilities (`bg-brand`,
-`text-muted-foreground`, `ring-border`), never raw hex. The accent lightens in
-dark mode (`brand` → `brand-dark`) to hold contrast; `border-dark` is bumped to
-`~neutral-500` to keep hairlines AA-visible on near-black.
+Colors carry **roles, not preferences** — each has a job description, not just a
+hex. OKLCH in `globals.css` is authoritative; the front-matter hex are sRGB
+mirrors (`theme.hexColors` must stay synced with `theme.colors` for the brand
+pair — `next/og`'s Satori can't parse oklch). Always use utilities (`bg-brand`,
+`text-muted-foreground`), never raw hex.
+
+- **`brand` (indigo, hue 260)** — primary actions, focus rings, active nav, the
+  single eyebrow accent. It marks _the one important thing_ on a surface.
+  **Never** a decorative fill; never error/success. Lightens to `brand-dark` in
+  dark mode to hold contrast.
+- **`foreground` / `muted-foreground`** — primary text / secondary + captions.
+  The only two text colors — don't invent greys.
+- **`muted`** — soft surfaces (chips, alternating section backgrounds). Never text.
+- **`border`** — hairlines + rings only (`border-dark` bumped to ~neutral-500 for
+  AA on near-black).
+- **`destructive`** — error/validation states only, never decorative.
+- **`background` / `card`** — page and raised-surface fills.
 
 ## Typography
 
@@ -120,6 +131,24 @@ Locale-aware punctuation (quotes, dates, French NBSP before `: ; ? !`) lives in
   `max-w-2xl`. Content columns cap around `max-w-5xl/6xl`; article prose at
   `max-w-3xl` for readable line length.
 - Base spacing is Tailwind's default 0.25rem scale.
+
+## Responsive behavior
+
+Mobile-first — mobile is a different context, not a squeezed desktop. Breakpoints
+are Tailwind's (`sm 640 · md 768 · lg 1024 · xl 1280`).
+
+- Grids collapse `grid-cols-1 → md:2 → lg:3`; hero type scales
+  `text-3xl → md:5xl → xl:6xl`.
+- Section-layout modules render **bare inline** inside prose (no page gutter) so
+  they never double-pad on mobile.
+- Every desktop-only affordance has a mobile equivalent: the sticky TOC sidebar
+  (`lg`+) becomes a collapsible "On this page" disclosure below `lg`.
+- Touch targets ≥ 40px; hover-only affordances (tooltips) are `sm:`-gated.
+- Nothing scrolls horizontally — wide media/tables get their own `overflow-x`.
+- **Always verify** any UI change renders correctly at **mobile (375px),
+  tablet (768px), and desktop (1280px)** before shipping — never assume a desktop
+  layout reflows. Check the layout, type scale, spacing, and that nothing
+  overflows or clips at each size.
 
 ## Elevation & Depth
 
@@ -149,12 +178,14 @@ status dots use `full`. Don't mix radii within one component.
 
 ## Do's and Don'ts
 
-- **Do** keep OKLCH (`globals.css`) authoritative and re-sync `theme.hexColors`
-  on any brand-color change; run `pnpm verify:contrast` (WCAG **AA**) after.
-- **Do** guard every transform with `motion-reduce:` and respect
-  `prefers-reduced-motion`.
-- **Do** spend boldness once per surface; keep everything around it quiet.
-- **Don't** hard-code colors, spacing, or fonts — read tokens from `@/config`
-  and the CSS vars.
-- **Don't** mix `rounded` scales or add drop-shadows to flat surfaces.
-- **Don't** ship an interactive element without a visible `focus-visible` ring.
+- **Do** use colors by their role — `brand` earns attention, the two greys carry
+  everything else.
+- **Do** keep OKLCH authoritative; re-sync `theme.hexColors` on any brand change
+  and run `pnpm verify:contrast` (WCAG **AA**) after.
+- **Do** guard every transform with `motion-reduce:`, and spend boldness once per
+  surface — keep everything around it quiet.
+- **Don't** hard-code colors/spacing/fonts, or invent a grey outside the token
+  scale.
+- **Don't** use `brand` decoratively, or the display font for body copy.
+- **Don't** mix `rounded` scales, add drop-shadows to flat cards (use `ring` +
+  `shadow-sm`), or ship an interactive element without a `focus-visible` ring.

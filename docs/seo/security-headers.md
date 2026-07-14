@@ -20,10 +20,10 @@ All security headers are set in `next.config.ts` via the `headers()` hook. They 
 | `Permissions-Policy`      | `camera=(), microphone=(), geolocation=()` | Disables camera, mic, and geolocation for all origins.                              |
 | `Content-Security-Policy` | see below                                  | The main defense — see below.                                                       |
 
-Two supporting bits also live in `headers()`:
+Two supporting bits round out the config:
 
-- `poweredByHeader: false` strips the `X-Powered-By: Next.js` header.
-- Immutable, one-year `Cache-Control` on `/brand/:path*` and `/logo.svg` (brand assets are swapped by editing the file, not the URL).
+- `poweredByHeader: false` (a top-level `nextConfig` option, not part of `headers()`) strips the `X-Powered-By: Next.js` header.
+- Immutable, one-year `Cache-Control` on `/brand/:path*` and `/logo.svg`, set in `headers()` (brand assets are swapped by editing the file, not the URL).
 
 ## The Content-Security-Policy
 

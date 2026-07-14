@@ -61,15 +61,13 @@ The exported `size` in `icon.tsx` (`180×180`) must match the served file's real
 
 ## Open Graph images
 
-`/opengraph-image` (rendered by `src/app/opengraph-image.tsx`, a branded Satori card, 1200×630) is the default OG image for **every** page. `buildMetadata` sets `og:image` to `page.seo?.openGraph?.imageUrl ?? "/opengraph-image"` — so a page only diverges from the dynamic card when it sets an explicit `imageUrl`. To ship a static card for one route, point `imageUrl` at a file:
+`/opengraph-image` (`src/app/opengraph-image.tsx`, 1200×630) is the default OG image for **every** page. Like the icon routes, it `readFileSync`s a static PNG from `/public` — `site.ogImage.file` (default `/brand/og.png`). `buildMetadata` sets `og:image` to `page.seo?.openGraph?.imageUrl ?? "/opengraph-image"` — so a page only diverges from that default when it sets an explicit `imageUrl`. To point one route at its own card, set `imageUrl` to a file:
 
 ```ts
 // config: pages entry
 seo: {
-  openGraph: {
-    imageUrl: "/brand/og-home.png";
-  }
-}
+  openGraph: { imageUrl: "/brand/og-home.png" },
+},
 ```
 
 The `/brand/og-<id>.png` filenames are just a naming convention for those static overrides — nothing auto-derives them.
@@ -77,5 +75,5 @@ The `/brand/og-<id>.png` filenames are just a naming convention for those static
 Drop the PNGs in `/public/brand/`. Existing assets there include `apple-icon.png`, `og.png`, `og-home.png`, plus the PWA manifest rasters (`icon-192.png`, `icon-512.png`, `icon-maskable-512.png`) and `logo.png` (schema.org Organization raster).
 
 ::: tip
-OG cards are rendered by `next/og` (Satori), which can't parse OKLCH. That's why `theme.hexColors` mirrors the brand/foreground pair in `src/config/index.ts` — keep them in sync. See [Responsive design](./responsive-design.md) and the brand-setup guide.
+`theme.hexColors` in `src/config/index.ts` mirrors the OKLCH brand/foreground tokens because `next/og` (Satori) can't parse OKLCH — keep the two in sync so any Satori-rendered card stays on-brand. See [Responsive design](./responsive-design.md) and the brand-setup guide.
 :::

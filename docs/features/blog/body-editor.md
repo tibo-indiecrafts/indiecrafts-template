@@ -2,7 +2,7 @@
 
 Everything you can insert into a post body in the Studio.
 
-The body editor is Sanity's Portable Text canvas, configured by `src/features/blog/sanity/schema/blockContent.ts`. On the live site, the same configuration is rendered by `src/features/blog/components/modules/portable-text-components.tsx` — every primitive listed here has explicit Tailwind styling there (no `@tailwindcss/typography` dependency).
+The body editor is Sanity's Portable Text canvas, configured by `src/features/blog/sanity/schema/blockContent.ts`. On the live site the body renders inside a `.prose prose-neutral dark:prose-invert` wrapper — the visual styling of paragraphs, headings, lists, marks, and blockquotes comes from the `@tailwindcss/typography` plugin (enabled in `src/app/globals.css`). `src/features/blog/components/modules/portable-text-components.tsx` overrides only what the plugin can't infer from markup: deterministic heading `id`s (so the TOC can anchor), the external-link `target`, inline images, and the inline modules.
 
 If you want to _see_ every primitive in one post, look at the showcase article: `/en/blog/fast-prototyping-with-nextjs` (or `/fr/...prototypage-rapide-avec-nextjs`). The seed scaffolds it on purpose.
 

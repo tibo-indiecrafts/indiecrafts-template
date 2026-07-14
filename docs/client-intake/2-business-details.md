@@ -17,6 +17,7 @@ Tick the closest match (one):
 - [ ] **General company / organisation** — no single public storefront
 - [ ] **Local business** — customers visit a physical location
 - [ ] **Professional service** — architect, consultant, agency, lawyer, accountant…
+- [ ] **Home & trades / construction** — builder, plumber, electrician, contractor, renovation…
 - [ ] **Restaurant / food**
 - [ ] **Shop / store**
 - [ ] **Medical / clinic**
