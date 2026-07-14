@@ -4,8 +4,9 @@ import { defineQuery } from "next-sanity";
  * GROQ queries — `defineQuery` flags them for future `sanity typegen`
  * without affecting runtime.
  *
- * **Locale filter** — every post / category / quote read filters by
- * `$locale`. Documents without a `language` field default to "en"
+ * **Locale filter** — every post / category / tag read filters by
+ * `$locale` (authors and nested quote refs stay global). Documents
+ * without a `language` field default to "en"
  * (matches the schema's `initialValue`); legacy un-tagged docs default
  * to "en" too, so existing content still appears on /en after the
  * schema change.
@@ -24,6 +25,7 @@ const POST_LIST_FRAGMENT = `
     title,
     description,
     noIndex,
+    videoUrl,
     image { asset->{ url, metadata }, alt }
   },
   author->{
@@ -67,8 +69,9 @@ const CTA_FRAGMENT = `
 
 /**
  * Modules fragment — expands every referenced field per module type.
- * `quote-list` filters its quotes by `$locale`; other refs (logos,
- * people, forms) aren't locale-tagged.
+ * `quote-list` dereferences all its quotes (each carries a `language`
+ * field, but they're not `$locale`-filtered here); other refs (people)
+ * aren't locale-tagged.
  */
 const MODULES_FRAGMENT = `
   ...,
@@ -142,6 +145,7 @@ export const postBySlugQuery = defineQuery(`
       title,
       description,
       noIndex,
+      videoUrl,
       image { asset->{ url, metadata }, alt }
     },
     author->{ name, position, "slug": slug.current, image { asset->{ url } } },
@@ -208,7 +212,8 @@ export const rssPostsQuery = defineQuery(`
 
 /**
  * Blog singleton — shared layout across locales. The modules' nested
- * refs (`quote-list` quotes) filter by `$locale` inside MODULES_FRAGMENT.
+ * refs (`quote-list` quotes) are dereferenced inside MODULES_FRAGMENT
+ * (not `$locale`-filtered).
  */
 export const blogSingletonQuery = defineQuery(`
   *[_type == "blog"][0]{

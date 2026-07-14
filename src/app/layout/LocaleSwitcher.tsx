@@ -3,7 +3,7 @@
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { locales, type Locale } from "@/config";
+import { localeMap, locales, type Locale } from "@/config";
 import { Button } from "@/components/ui-primitives/button";
 import {
   DropdownMenu,
@@ -61,7 +61,7 @@ export function LocaleSwitcher({
         >
           {isCode ? (
             <span aria-hidden="true">
-              {locales.find((l) => l.code === current)?.abbr ?? current.toUpperCase()}
+              {localeMap[current]?.abbr ?? current.toUpperCase()}
             </span>
           ) : (
             <Globe className="size-4" aria-hidden="true" />

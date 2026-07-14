@@ -4,10 +4,10 @@ import { features } from "@/config";
 
 /**
  * Exit draft preview — sends the visitor back to the home page.
- * Gated by `features.blog` for parity with /enable.
+ * Gated by `features.studio` for parity with /enable.
  */
 export async function GET(request: Request) {
-  if (!features.blog) {
+  if (!features.studio) {
     return new Response("Not found", { status: 404 });
   }
   (await draftMode()).disable();

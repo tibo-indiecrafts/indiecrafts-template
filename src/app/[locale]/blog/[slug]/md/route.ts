@@ -1,4 +1,5 @@
-import { features, isPageVisible, pages, site } from "@/config";
+import { pages, site } from "@/config";
+import { isBlogRouteEnabled } from "@/lib/feature-gate";
 import { sanityFetchLive } from "@/sanity/live";
 import { portableTextToMarkdown } from "@/sanity/portable-to-markdown";
 import { postBySlugQuery } from "@/sanity/queries";
@@ -19,7 +20,7 @@ type Props = { params: Promise<{ locale: string; slug: string }> };
  * (see `generateMetadata` in the sibling `page.tsx`).
  */
 export async function GET(_req: Request, { params }: Props) {
-  if (!features.blog || !isPageVisible(pages.blog)) {
+  if (!isBlogRouteEnabled(pages.blog)) {
     return new Response("Not found", { status: 404 });
   }
   const { locale, slug } = await params;

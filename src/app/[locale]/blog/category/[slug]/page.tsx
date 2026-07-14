@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, isPageVisible, pages, type Locale } from "@/config";
+import { features, pages, type Locale } from "@/config";
+import { localizedPathname } from "@/i18n/routing";
+import { requireBlogRoute } from "@/lib/feature-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/layout/DefaultLayout";
@@ -31,11 +33,12 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { locale, slug } = await params;
+  const path = localizedPathname(`/blog/category/${slug}`, locale);
   const category = await sanityFetchLive<Category | null>({
     query: categoryBySlugQuery,
     params: { slug, locale },
   });
-  const base = await buildMetadata({ page: pages.category, locale });
+  const base = await buildMetadata({ page: pages.category, locale, pathname: path });
   if (!category) return base;
 
   return {
@@ -46,7 +49,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function CategoryDetailPage({ params }: Props) {
-  if (!features.blog || !isPageVisible(pages.category)) notFound();
+  requireBlogRoute(pages.category);
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
@@ -67,7 +70,11 @@ export default async function CategoryDetailPage({ params }: Props) {
 
   return (
     <DefaultLayout>
-      <PageSchemas page={pages.category} locale={locale} />
+      <PageSchemas
+        page={pages.category}
+        locale={locale}
+        pathname={localizedPathname(`/blog/category/${slug}`, locale)}
+      />
       <CategoryDetail
         category={category}
         posts={posts}

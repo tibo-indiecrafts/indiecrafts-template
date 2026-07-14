@@ -4,9 +4,9 @@ import { BlogCard } from "./BlogCard";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 
 /**
- * Category detail section — `/blog/category/[slug]`. Header card shows
- * the category name + post count + optional description. A back-link
- * returns to the category index.
+ * Category detail section — `/blog/category/[slug]`. Header shows the
+ * category name + post count + optional description, above the grid of
+ * posts in that category.
  */
 export function CategoryDetail({
   category,

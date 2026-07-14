@@ -18,6 +18,9 @@ const csp = [
   `img-src 'self' data: blob: https:`,
   `font-src 'self' data:`,
   `connect-src ${cspConnectSources}`,
+  // Featured-video embeds — the only third-party frames we ever render, and
+  // only from these validated hosts (see `parseVideoEmbed` + `HeroVideo`).
+  `frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com`,
   `frame-ancestors 'none'`,
   `base-uri 'self'`,
   `form-action 'self'`,
@@ -42,8 +45,10 @@ const nextConfig: NextConfig = {
   // Auto-memoize components and hooks. Stable in Next 16 — top-level flag.
   reactCompiler: true,
   experimental: {
-    // Tighter bundle: only import icons you actually reference.
-    optimizePackageImports: ["lucide-react"],
+    // Tighter bundle: only import icons you actually reference. All three
+    // icon sets are barrel-exported + tree-shakeable; this optimizes the
+    // named-import form so unused icons never reach the bundle.
+    optimizePackageImports: ["lucide-react", "reicon-react", "reicon-brands"],
   },
   async headers() {
     return [

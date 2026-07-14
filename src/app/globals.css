@@ -180,6 +180,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-input: var(--input);
   --radius-md: var(--radius);
+  --font-display: var(--font-display);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -489,6 +490,19 @@
 
 body {
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Headings pick up the display face (`config.fonts.display`). Falls back to
+   the body font when display and body are the same key. Explicit element
+   rule so it also wins inside `.prose` article bodies. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family:
+    var(--font-display, var(--font-sans)), ui-sans-serif, system-ui, sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {

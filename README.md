@@ -30,32 +30,66 @@ When `features.blog: false`, every route above 404s, sitemap drops the entry, th
 
 ## Documentation
 
-Guides grouped by what you're trying to do.
+Full index — every guide in [`docs/`](./docs/), grouped by area.
 
-**Launch + operations**
+**Setup & operations**
 
-| You want to…                                               | Read                                                     |
-| ---------------------------------------------------------- | -------------------------------------------------------- |
-| Take the site from "dev is done" to "live and indexed"     | [`docs/launch-checklist.md`](./docs/launch-checklist.md) |
-| Run the site day-to-day, find form submissions, fix things | [`docs/operations.md`](./docs/operations.md)             |
-| Change colours / fonts / logo / social links / assets      | [`docs/brand-setup.md`](./docs/brand-setup.md)           |
+| Doc                                                 | Covers                                             |
+| --------------------------------------------------- | -------------------------------------------------- |
+| [`new-client.md`](./docs/new-client.md)             | Fork the template for a new client site            |
+| [`brand-setup.md`](./docs/brand-setup.md)           | Colours, fonts, logo, social links, brand assets   |
+| [`launch-checklist.md`](./docs/launch-checklist.md) | Take the site from "dev is done" to live + indexed |
+| [`operations.md`](./docs/operations.md)             | Run the site day-to-day, forms, fixes              |
+| [`scripts.md`](./docs/scripts.md)                   | The `pnpm` scripts and what they do                |
+| [`maintenance-mode.md`](./docs/maintenance-mode.md) | Take the site offline gracefully                   |
+
+**Configuration & architecture**
+
+| Doc                                                         | Covers                                               |
+| ----------------------------------------------------------- | ---------------------------------------------------- |
+| [`project-organization.md`](./docs/project-organization.md) | How the repo is laid out — where things live         |
+| [`feature-flags.md`](./docs/feature-flags.md)               | Every `features` toggle + route gating               |
+| [`i18n-and-routing.md`](./docs/i18n-and-routing.md)         | Languages, URL prefix modes, locale detection, slugs |
+| [`theme-modes.md`](./docs/theme-modes.md)                   | Light / dark / system + forced themes                |
+
+**Design & content**
+
+| Doc                                                     | Covers                                         |
+| ------------------------------------------------------- | ---------------------------------------------- |
+| [`sections.md`](./docs/sections.md)                     | Copying + mounting section components          |
+| [`typography.md`](./docs/typography.md)                 | Type scale and text styles                     |
+| [`fonts.md`](./docs/fonts.md)                           | The font registry (`@/lib/fonts`)              |
+| [`responsive-design.md`](./docs/responsive-design.md)   | Breakpoints and responsive conventions         |
+| [`icons.md`](./docs/icons.md)                           | Icon usage in the UI                           |
+| [`favicons-and-icons.md`](./docs/favicons-and-icons.md) | Favicon, apple-touch, PWA + Safari consistency |
+| [`featured-articles.md`](./docs/featured-articles.md)   | The featured-articles home section             |
+| [`video-embeds.md`](./docs/video-embeds.md)             | Embedding video                                |
+| [`error-pages.md`](./docs/error-pages.md)               | Error + not-found pages                        |
+
+**SEO & discovery**
+
+| Doc                                                                             | Covers                                               |
+| ------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| [`seo-metadata.md`](./docs/seo-metadata.md)                                     | How `<head>` metadata is generated (translatable)    |
+| [`structured-data-cookbook.md`](./docs/structured-data-cookbook.md)             | Per-page JSON-LD factory recipes                     |
+| [`structured-data-business-types.md`](./docs/structured-data-business-types.md) | Business-type presets (Organization / LocalBusiness) |
+| [`faq.md`](./docs/faq.md)                                                       | Per-page FAQ → display + FAQPage JSON-LD + llms      |
+| [`llms-endpoints.md`](./docs/llms-endpoints.md)                                 | `/llms.txt`, `/llms-full.txt`, `/llms/<id>`          |
+| [`robots-and-environments.md`](./docs/robots-and-environments.md)               | Env-aware robots.txt + production origin from env    |
+| [`analytics.md`](./docs/analytics.md)                                           | Analytics + Consent Mode setup                       |
+| [`security-headers.md`](./docs/security-headers.md)                             | CSP + security headers                               |
 
 **Blog (when `features.blog: true`)**
 
-| You want to…                                                   | Read                                                       |
-| -------------------------------------------------------------- | ---------------------------------------------------------- |
-| Set up Sanity for the first time, env vars, CORS, QA matrix    | [`docs/sanity-setup.md`](./docs/sanity-setup.md)           |
-| Publish your first post as a content editor                    | [`docs/editor-guide.md`](./docs/editor-guide.md)           |
-| Reference what the body editor can do (styles, marks, modules) | [`docs/body-editor.md`](./docs/body-editor.md)             |
-| Extend or remove a module as a developer                       | [`docs/blog-architecture.md`](./docs/blog-architecture.md) |
-| Mint / rotate Sanity API tokens                                | [`docs/sanity-tokens.md`](./docs/sanity-tokens.md)         |
+| Doc                                                   | Covers                                               |
+| ----------------------------------------------------- | ---------------------------------------------------- |
+| [`sanity-setup.md`](./docs/sanity-setup.md)           | Set up Sanity — env vars, CORS, QA matrix            |
+| [`editor-guide.md`](./docs/editor-guide.md)           | Publish your first post as a content editor          |
+| [`body-editor.md`](./docs/body-editor.md)             | What the body editor can do (styles, marks, modules) |
+| [`blog-architecture.md`](./docs/blog-architecture.md) | Extend or remove a module as a developer             |
+| [`sanity-tokens.md`](./docs/sanity-tokens.md)         | Mint / rotate Sanity API tokens                      |
 
-**Other**
-
-| You want to…                                          | Read                                                                     |
-| ----------------------------------------------------- | ------------------------------------------------------------------------ |
-| Fork the template for a new client site               | [`docs/new-client.md`](./docs/new-client.md)                             |
-| Add rich-result JSON-LD (FAQ, Article, Service, etc.) | [`docs/structured-data-cookbook.md`](./docs/structured-data-cookbook.md) |
+**Client intake forms** — fill-in questionnaires in [`docs/client-intake/`](./docs/client-intake/) to send to clients so they can supply their own SEO copy, business details, AI-index summary, and FAQ (each per language).
 
 ## How it's organised
 

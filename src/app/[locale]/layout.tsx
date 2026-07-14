@@ -1,6 +1,5 @@
 import "../globals.css";
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -8,24 +7,19 @@ import Script from "next/script";
 import {
   analytics,
   features,
-  locales,
+  localeDir,
+  localePrefix,
   seoDefaults,
   site,
   theme,
   type Locale,
 } from "@/config";
+import { fontClassName, fontStyle } from "@/lib/fonts";
 import { CookieBanner } from "@/app/layout/CookieBanner";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/app/layout/ThemeProvider";
 import { buildSiteSchemas, JsonLdScript } from "@/lib/seo/jsonld";
 import { SanityLive } from "@/sanity/live";
-
-const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"], display: "swap" });
-const geistMono = Geist_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -106,17 +100,29 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   return (
     <html
       lang={locale}
-      dir={locales.find((l) => l.code === locale)?.dir ?? "ltr"}
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      style={{ colorScheme: "light dark" }}
+      dir={localeDir(locale)}
+      className={`${fontClassName} antialiased`}
+      style={{ colorScheme: "light dark", ...fontStyle }}
       suppressHydrationWarning
     >
       <head>
-        {/* Typed preload — next/image with priority emits a preload too, but
-            without the `type` for SVG (because it's marked unoptimized).
-            Adding the explicit type lets browsers match this hint to the
-            <img> request faster on mobile. */}
-        <link rel="preload" as="image" href={site.logo} type="image/svg+xml" />
+        {/* The logo preload is emitted by next/image itself — <LogoIcon> uses
+            `priority`, which already produces a correctly-typed
+            `<link rel="preload" as="image" type="image/svg+xml">`. Adding a
+            second manual one here duplicates the hint: the browser consumes one
+            for the <img> fetch and warns the other was "preloaded but not used". */}
+
+        {/* Discoverability hint for the LLM index — gated on `features.llms.index`
+            (the `/llms.txt` route it points at 404s when that flag is off).
+            Locale-aware: default locale → `/llms.txt`, others → `/<locale>/llms.txt`. */}
+        {features.llms.index ? (
+          <link
+            rel="alternate"
+            type="text/plain"
+            title="llms.txt"
+            href={`${localePrefix(locale as Locale)}/llms.txt`}
+          />
+        ) : null}
 
         {/* Google Analytics — only injected when an ID is configured. */}
         {analytics.googleAnalyticsId ? (
@@ -145,7 +151,9 @@ gtag('config', '${analytics.googleAnalyticsId}');`}
             {children}
           </NextIntlClientProvider>
         </ThemeProvider>
-        <JsonLdScript data={buildSiteSchemas({ description: siteDescription })} />
+        {features.structuredData ? (
+          <JsonLdScript data={buildSiteSchemas({ description: siteDescription })} />
+        ) : null}
         {features.cookieBanner ? <CookieBanner /> : null}
         {features.blog ? <SanityLive /> : null}
         <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>

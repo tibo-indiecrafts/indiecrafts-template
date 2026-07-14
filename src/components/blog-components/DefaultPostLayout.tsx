@@ -3,11 +3,14 @@ import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/config";
 import { cn } from "@/lib/utils";
+import { parseVideoEmbed } from "@/lib/video-embed";
 import { Link } from "@/i18n/routing";
 import type { Post, PostListItem } from "@/sanity/types";
 import { BlogCard } from "./BlogCard";
+import { HeroVideo } from "./HeroVideo";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 import { Toc } from "./Toc";
+import { MobileToc } from "./MobileToc";
 import { portableComponents } from "./modules/portable-text-components";
 
 /**
@@ -70,12 +73,18 @@ export async function DefaultPostLayout({
 
   const hasToc = (post.headings?.length ?? 0) > 0;
 
-  // Theming: when there's a cover image, the hero overlays content on the
-  // image with a dark gradient so text + chrome read white-on-dark.
-  // Without an image, we fall back to the theme's foreground colours.
-  // All hero descendants read these CSS vars instead of branching on
-  // `heroLight` per element — one decision per render, not eleven.
-  const heroLight = !image;
+  // Featured video wins the hero: the header drops the image overlay (text
+  // needs a light background, not a croppable video) and the video plays in
+  // its own 16:9 block below. The cover image becomes the video poster.
+  const videoEmbed = parseVideoEmbed(post.metadata?.videoUrl);
+  const hasCoverHero = !!image && !videoEmbed;
+
+  // Theming: with a cover-image hero we overlay content on the image with a
+  // dark gradient so text + chrome read white-on-dark. Otherwise (no image,
+  // or a video hero) we fall back to the theme's foreground colours. All
+  // hero descendants read these CSS vars instead of branching on `heroLight`
+  // per element — one decision per render, not eleven.
+  const heroLight = !hasCoverHero;
   const heroVars = heroLight
     ? ({
         "--hero-fg": "var(--foreground)",
@@ -110,13 +119,14 @@ export async function DefaultPostLayout({
         <header
           style={heroVars}
           className={cn(
-            "relative mb-12 flex flex-col overflow-hidden rounded-b-3xl shadow-xl md:mb-16",
-            image
+            "relative flex flex-col overflow-hidden rounded-b-3xl shadow-xl",
+            videoEmbed ? "mb-6 md:mb-8" : "mb-12 md:mb-16",
+            hasCoverHero
               ? "min-h-[60vh] ring-1 shadow-black/15 ring-black/10 md:min-h-[70vh]"
               : "bg-card mt-8 rounded-3xl ring-1 shadow-black/5 ring-(--hero-pill-ring) md:mt-12",
           )}
         >
-          {image ? (
+          {hasCoverHero ? (
             <>
               <Image
                 src={image}
@@ -248,6 +258,20 @@ export async function DefaultPostLayout({
             </div>
           </div>
         </header>
+
+        {videoEmbed ? (
+          <div className="mb-12 md:mb-16">
+            <HeroVideo
+              embed={videoEmbed}
+              poster={image}
+              title={title}
+              playLabel={t("playVideo")}
+              closeLabel={t("closeVideo")}
+            />
+          </div>
+        ) : null}
+
+        {hasToc ? <MobileToc headings={post.headings!} title={t("onThisPage")} /> : null}
 
         <div className="flex gap-8 lg:gap-12">
           {hasToc ? (

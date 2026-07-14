@@ -1,14 +1,20 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { isPageVisible, pages } from "@/config";
+import { features, isPageVisible, pages } from "@/config";
 import type { Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/layout/DefaultLayout";
 import { Features } from "@/components/sections/Features";
+import { Faq } from "@/components/sections/Faq";
 import { Cta } from "@/components/sections/Cta";
 import { Pricing } from "@/components/sections/Pricing";
 import { Testimonials } from "@/components/sections/Testimonials";
+import { FeaturedArticles } from "@/components/sections/FeaturedArticles";
+import { IconShowcase } from "@/components/sections/IconShowcase";
+import { client } from "@/sanity/client";
+import { featuredPostsQuery } from "@/sanity/queries";
+import type { PostListItem } from "@/sanity/types";
 
 /**
  * Production home page. Section components live in `src/components/sections/`
@@ -35,6 +41,14 @@ export default async function HomePage({ params }: Props) {
 
   const t = await getTranslations("pages.home");
 
+  // Featured articles — only when the blog feature is on. Uses the static
+  // `client` (not `sanityFetchLive`) so the home page stays prerendered.
+  // `tf` is resolved unconditionally so the hooks-free render stays simple.
+  const tf = await getTranslations("pages.home.blocks.featured");
+  const featured: PostListItem[] = features.blog
+    ? (await client.fetch(featuredPostsQuery, { locale })).slice(0, 4)
+    : [];
+
   return (
     <DefaultLayout>
       <PageSchemas page={pages.home} locale={locale} />
@@ -50,6 +64,8 @@ export default async function HomePage({ params }: Props) {
           { id: "poweredByAi", iconKey: "sparkles" },
         ]}
       />
+
+      <IconShowcase id="home-icons" namespace="pages.home.blocks.icons" />
 
       <Cta type="cta" id="home-cta" namespace="pages.home.blocks.cta" />
 
@@ -98,6 +114,20 @@ export default async function HomePage({ params }: Props) {
           },
         ]}
       />
+
+      {featured.length > 0 ? (
+        <FeaturedArticles
+          id="home-featured"
+          posts={featured}
+          locale={locale}
+          eyebrow={tf("eyebrow")}
+          title={tf("title")}
+          body={tf("body")}
+          viewAllLabel={tf("viewAll")}
+        />
+      ) : null}
+
+      <Faq pageId="home" />
     </DefaultLayout>
   );
 }

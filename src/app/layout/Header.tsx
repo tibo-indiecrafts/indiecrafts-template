@@ -4,19 +4,18 @@ import { useTranslations } from "next-intl";
 import { Logo } from "@/app/layout/Logo";
 import { LocaleSwitcher } from "@/app/layout/LocaleSwitcher";
 import { ThemeToggle } from "@/app/layout/ThemeToggle";
+import { SHOW_THEME_TOGGLE } from "@/lib/theme";
 import { Link } from "@/i18n/routing";
 import { features } from "@/config";
 import { headerNav } from "@/config";
 
 /**
  * Production site header. Slim purpose-built variant — logo, nav links from
- * `headerNav` in `navigation.config.ts`, locale switcher, theme toggle.
+ * `headerNav` in `@/config`, locale switcher, theme toggle.
  *
- * Forked here (not imported from /components) so the production header can
- * evolve independently of the example header library in
- * /components/layouts/_shared/site-headers/. Atoms (Logo, LocaleSwitcher,
- * ThemeToggle) are still shared from /components — they're widgets, not
- * chrome.
+ * Lives in `@/app/layout` (not imported from the sibling component library)
+ * so the production header can evolve independently. Its atoms — Logo,
+ * LocaleSwitcher, ThemeToggle — are colocated in `@/app/layout` too.
  *
  * Fixed at the top — DefaultLayout's `<main>` adds `pt-14 lg:pt-20` to
  * clear the header height.
@@ -44,7 +43,7 @@ export function Header() {
             </Link>
           ))}
           {features.localeSwitcher ? <LocaleSwitcher /> : null}
-          <ThemeToggle />
+          {SHOW_THEME_TOGGLE ? <ThemeToggle /> : null}
         </nav>
       </div>
     </header>

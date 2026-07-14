@@ -4,7 +4,7 @@ import { defineArrayMember, defineType } from "sanity";
  * Reusable rich-text field. Referenced as `type: "blockContent"` from
  * post bodies, author bios, accordion items, callout content, etc.
  *
- * Editors can drop any of the 11 INLINE-EMBEDDABLE modules into a block
+ * Editors can drop any of the 8 INLINE-EMBEDDABLE modules into a block
  * content array directly from the Studio "+" picker, mixed with normal
  * paragraphs and headings. The runtime PortableText renderer
  * (`@/components/blog-components/modules/portable-text-components`) maps
@@ -16,8 +16,8 @@ import { defineArrayMember, defineType } from "sanity";
  *   - `blog-post-content` — would render the post body recursively
  *   - `prose` — body content is already prose, embedding it inside
  *     itself adds nothing
- * Those six are still available via the blog singleton's layout slots
- * `blog.frontpageModules` and `blog.postModules`.
+ * Those six are still available via the blog singleton's `postModules`
+ * layout slot.
  */
 const INLINE_MODULES = [
   "module.callout",

@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import { features, isPageVisible, pages, site } from "@/config";
+import { site } from "@/config";
 import type { Locale } from "@/config";
+import { isRssEnabled } from "@/lib/feature-gate";
+import { localizedPathname } from "@/i18n/routing";
 import { client } from "@/sanity/client";
 import { rssPostsQuery } from "@/sanity/queries";
 import type { RssPost } from "@/sanity/types";
@@ -10,34 +12,37 @@ type Props = { params: Promise<{ locale: string }> };
 /**
  * RSS 2.0 feed for the blog. One per locale; matches the sitemap/llms.txt
  * locale pattern. Honors `metadata.noIndex` (hidden posts are filtered
- * out by the query). Returns 404 when `features.blog` is off.
+ * out by the query). Returns 404 when the blog or rss feature is off (via
+ * `isRssEnabled`).
  *
  * Pattern adapted from sanitypress-with-typegen — kept stripped of the
  * <content:encoded> body export to avoid the additional `@portabletext/to-html`
  * dependency. Add it back if you want full-text in feed readers.
  */
 export async function GET(_req: Request, { params }: Props) {
-  if (!features.blog || !isPageVisible(pages.blog)) {
+  if (!isRssEnabled()) {
     return new Response("Not found", { status: 404 });
   }
   const { locale } = await params;
+  const loc = locale as Locale;
   const [posts, t] = await Promise.all([
     client.fetch<RssPost[]>(rssPostsQuery, { locale }),
-    getTranslations({ locale: locale as Locale, namespace: "pages.blog" }),
+    getTranslations({ locale: loc, namespace: "pages.blog" }),
   ]);
-  const baseUrl = `${site.url}/${locale}`;
-  const feedUrl = `${baseUrl}/blog/rss.xml`;
+  // Locale-aware URLs — matches canonical/sitemap (default locale, no prefix).
+  const blogUrl = `${site.url}${localizedPathname("/blog", loc)}`;
+  const feedUrl = `${site.url}${localizedPathname("/blog/rss.xml", loc)}`;
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>
   <title>${escapeXml(site.name)} — ${escapeXml(t("title"))}</title>
-  <link>${baseUrl}/blog</link>
+  <link>${blogUrl}</link>
   <atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />
   <description>${escapeXml(site.description)}</description>
   <language>${locale}</language>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-${posts.map((p) => renderItem(p, baseUrl)).join("\n")}
+${posts.map((p) => renderItem(p, loc)).join("\n")}
 </channel>
 </rss>`;
 
@@ -49,8 +54,8 @@ ${posts.map((p) => renderItem(p, baseUrl)).join("\n")}
   });
 }
 
-function renderItem(post: RssPost, baseUrl: string): string {
-  const url = `${baseUrl}/blog/${post.slug ?? ""}`;
+function renderItem(post: RssPost, locale: Locale): string {
+  const url = `${site.url}${localizedPathname(`/blog/${post.slug ?? ""}`, locale)}`;
   const title = post.metadata?.title ?? post.title ?? "";
   const description = post.metadata?.description ?? "";
   const pubDate = post.publishedAt ? new Date(post.publishedAt).toUTCString() : null;

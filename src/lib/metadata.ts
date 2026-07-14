@@ -8,7 +8,7 @@
  *   2. seoDefaults.*        → titleTemplate, default robots, OG type, twitter card
  *   3. Auto-derived per id  → titleKey = `pages.<id>.title`,
  *                             descriptionKey = `pages.<id>.description`,
- *                             og:image = `/brand/og-<id>.png`,
+ *                             og:image = dynamic `/opengraph-image` card,
  *                             canonical = `${site.url}${slug-for-locale}`
  *   4. page.seo.*           → explicit overrides for any field above
  *
@@ -19,7 +19,7 @@
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { localeCodes, seoDefaults, site, type Locale } from "@/config";
+import { defaultLocale, localeCodes, seoDefaults, site, type Locale } from "@/config";
 import type { PageConfig, StaticAppPathname } from "@/config";
 import type { MessageKey } from "@/types/messages";
 import { getStaticPathname } from "@/i18n/routing";
@@ -27,7 +27,25 @@ import { getStaticPathname } from "@/i18n/routing";
 type BuildArgs = {
   page: PageConfig;
   locale: Locale;
+  /**
+   * Locale-aware path override for dynamic detail routes (blog posts,
+   * categories, tags, authors) whose slug isn't in `PATHNAMES`. When set,
+   * the page self-canonicalizes to this path instead of inheriting its
+   * index route, and hreflang collapses to the single locale the resource
+   * exists at (cross-locale alternates would falsely claim translations).
+   */
+  pathname?: string;
 };
+
+/**
+ * Per-page OG image. An explicit `seo.openGraph.imageUrl` wins; otherwise
+ * the always-available dynamic `/opengraph-image` route (branded Satori
+ * card) is used. Ship a static per-page card by pointing `imageUrl` at a
+ * file, e.g. `/brand/og-home.png`.
+ */
+export function pageOgImage(page: PageConfig): string {
+  return page.seo?.openGraph?.imageUrl ?? "/opengraph-image";
+}
 
 function safeT(
   t: Awaited<ReturnType<typeof getTranslations>>,
@@ -45,7 +63,11 @@ function isAbsoluteUrl(x: string): x is `http${string}` {
   return x.startsWith("http");
 }
 
-export async function buildMetadata({ page, locale }: BuildArgs): Promise<Metadata> {
+export async function buildMetadata({
+  page,
+  locale,
+  pathname,
+}: BuildArgs): Promise<Metadata> {
   const t = await getTranslations({ locale });
   const seo = page.seo;
 
@@ -55,6 +77,17 @@ export async function buildMetadata({ page, locale }: BuildArgs): Promise<Metada
     seo?.descriptionKey ?? (`pages.${page.id}.description` as MessageKey);
   const title = safeT(t, titleKey, site.name);
   const description = safeT(t, descriptionKey, site.description);
+
+  // Keywords are translated like title/description — a comma-separated string
+  // in `messages.pages.<id>.keywords` (empty/absent → no <meta keywords>).
+  const keywordsKey = seo?.keywordsKey ?? (`pages.${page.id}.keywords` as MessageKey);
+  const keywordsRaw = safeT(t, keywordsKey, "");
+  const keywords = keywordsRaw
+    ? keywordsRaw
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean)
+    : undefined;
 
   // Canonical + hreflang. Absolute URL passes through; StaticAppPathname
   // resolves via next-intl; missing → auto-build from the page's key.
@@ -69,15 +102,24 @@ export async function buildMetadata({ page, locale }: BuildArgs): Promise<Metada
     canonical = canonicalOverride;
   } else if (canonicalOverride) {
     canonical = `${site.url}${href(locale, canonicalOverride)}`;
+  } else if (pathname) {
+    canonical = `${site.url}${pathname}`;
   } else {
     canonical = `${site.url}${href(locale)}`;
   }
 
+  // Static routes exist in every locale → full hreflang set. Dynamic detail
+  // pages exist at a single locale → self-reference only.
   const languages: Record<string, string> = {};
-  for (const l of localeCodes) {
-    languages[l] = `${site.url}${href(l)}`;
+  if (pathname) {
+    languages[locale] = canonical;
+    languages["x-default"] = canonical;
+  } else {
+    for (const l of localeCodes) {
+      languages[l] = `${site.url}${href(l)}`;
+    }
+    languages["x-default"] = `${site.url}${href(defaultLocale)}`;
   }
-  languages["x-default"] = `${site.url}${href("en")}`;
 
   // Robots: page override > noindex shortcut > seoDefaults
   const robots = seo?.robots
@@ -86,8 +128,8 @@ export async function buildMetadata({ page, locale }: BuildArgs): Promise<Metada
       ? { index: false, follow: false }
       : seoDefaults.robots;
 
-  // OG image: per-page override > conventional per-page file > /opengraph-image route
-  const ogImage = seo?.openGraph?.imageUrl ?? `/brand/og-${page.id}.png`;
+  // OG image: per-page override > dynamic /opengraph-image route
+  const ogImage = pageOgImage(page);
 
   // Twitter handle for `twitter:site` — falls through cleanly when unset
   const twitterHandle = site.social.twitter || undefined;
@@ -95,7 +137,7 @@ export async function buildMetadata({ page, locale }: BuildArgs): Promise<Metada
   return {
     title,
     description,
-    keywords: seo?.keywords ? [...seo.keywords] : undefined,
+    keywords,
     alternates: { canonical, languages },
     robots,
     // Next.js REPLACES (does not deep-merge) openGraph/twitter when the

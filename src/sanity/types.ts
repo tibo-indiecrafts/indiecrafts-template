@@ -74,6 +74,12 @@ export type PostMetadata = {
   title?: string;
   description?: string;
   image?: ImageRef;
+  /**
+   * Optional featured video (YouTube / Vimeo / direct file URL). When set,
+   * the post hero plays this instead of the cover image; `image` stays the
+   * poster + the OG/social + card thumbnail. Parsed by `parseVideoEmbed`.
+   */
+  videoUrl?: string;
   noIndex?: boolean;
 };
 

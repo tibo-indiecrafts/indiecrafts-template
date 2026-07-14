@@ -5,13 +5,13 @@ import { footerNav } from "@/config";
 import { site } from "@/config";
 
 /**
- * Production site footer. Forked from
- * /components/layouts/default-layout/site-footer/ so /app/layout owns the
- * production chrome end-to-end.
+ * Production site footer, colocated in `@/app/layout` so the production
+ * chrome is owned end-to-end.
  *
- * Renders nav groups from `footerNav` in `navigation.config.ts` (empty for
- * the template — pages-pricing/contact/etc. get added there when wired).
- * Always uses `Link` from `@/i18n/routing` so locale prefixes resolve.
+ * Renders nav groups from `footerNav` in `@/config` (a "Company" group with
+ * a `/legal` link when `features.legalPage` is on; add more groups as pages
+ * get wired). Always uses `Link` from `@/i18n/routing` so locale prefixes
+ * resolve.
  */
 export function Footer() {
   const tNav = useTranslations("nav");

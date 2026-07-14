@@ -3,8 +3,8 @@
  * the matching data is in `./index.ts`.
  *
  * Three things to know:
- *  - `Locale` is derived from the `locales` data via type-only import (no
- *    runtime cycle since the import is erased).
+ *  - `Locale` is derived from the `locales` data in `./index.ts` via a
+ *    type-only import (no runtime cycle since the import is erased).
  *  - Adding a new route: extend `AppPathname` below.
  *  - Adding a new locale: append a row to `locales` in `./index.ts`; the
  *    `Locale` union here updates automatically.
@@ -13,11 +13,72 @@
 import type { Robots } from "next/dist/lib/metadata/types/metadata-types";
 import type { MessageKey } from "@/types/messages";
 import type globalEn from "../../messages/en.json";
-import type { locales } from "./index";
+import type { i18n } from "./index";
 
 // ── Locales ──────────────────────────────────────────────────
 
-export type Locale = (typeof locales)[number]["code"];
+/** One registered language (a row in `i18n.locales`). */
+export type LocaleConfig = {
+  /** BCP-47 code. Doubles as the URL prefix for non-default locales (`/fr/…`). */
+  code: string;
+  /** Native language name — shown in the locale-switcher menu. */
+  label: string;
+  /** Short badge (2 letters) — shown on the switcher trigger. */
+  abbr: string;
+  /** Text direction. Drives `<html dir>`; set `"rtl"` for Arabic/Hebrew/etc. */
+  dir: "ltr" | "rtl";
+};
+
+/** Union of registered locale codes — derived from the `i18n.locales` data. */
+export type Locale = (typeof i18n.locales)[number]["code"];
+
+// ── Theme ────────────────────────────────────────────────────
+
+/** A concrete, paintable theme. */
+export type ThemeName = "light" | "dark";
+
+/** A theme option offered in the toggle — concrete themes plus "system". */
+export type ThemeMode = ThemeName | "system";
+
+// ── Fonts ────────────────────────────────────────────────────
+
+/**
+ * Registry keys for the fonts wired up in `@/lib/fonts`. `next/font` needs
+ * its loader calls to be static literals, so fonts are registered there and
+ * `config.fonts` selects among them by key. Adding a font = one key here +
+ * one `next/font` call in the registry.
+ */
+export type FontKey = "geist" | "geist-mono" | "satoshi";
+
+/** The active pairing — one registered font per role. */
+export type FontRoles = {
+  /** Headings. Drives `--font-display`; set equal to `body` for one face. */
+  display: FontKey;
+  /** Body + UI default. Drives `--font-sans`. */
+  body: FontKey;
+  /** Code / tabular figures. Drives `--font-mono`. */
+  mono: FontKey;
+};
+
+// ── Structured data ──────────────────────────────────────────
+
+/**
+ * schema.org type emitted for the site's business entity (`site.legal.businessType`).
+ * `"Organization"` is the neutral default. Every other value is a LocalBusiness
+ * subtype — it emits the richer local-business schema (geo, opening hours, price
+ * range, areaServed) from `site.legal`. Pick the closest match for the client.
+ */
+export type BusinessType =
+  | "Organization"
+  | "LocalBusiness"
+  | "ProfessionalService"
+  | "HomeAndConstructionBusiness"
+  | "LegalService"
+  | "MedicalBusiness"
+  | "FinancialService"
+  | "Store"
+  | "Restaurant"
+  | "FoodEstablishment";
 
 // ── Routes ───────────────────────────────────────────────────
 
@@ -50,12 +111,24 @@ export type OgImageUrl = "/opengraph-image" | `/${string}` | `http${string}`;
 export type PageSeo = {
   titleKey?: MessageKey;
   descriptionKey?: MessageKey;
-  keywords?: readonly string[];
+  /**
+   * Override the message key for keywords. Defaults to `pages.<id>.keywords`
+   * — a comma-separated, translated string in `messages/<locale>.json`
+   * (leave the key out entirely to emit no `<meta keywords>`).
+   */
+  keywordsKey?: MessageKey;
   canonical?: CanonicalOverride;
   /** Convenience for `robots: { index: false, follow: false }`. */
   noindex?: boolean;
   /** Full robots override — overrides `noindex`. */
   robots?: Robots;
+  /**
+   * Include this page in the LLM endpoints (`/llms.txt`, `/llms-full.txt`,
+   * `/llms/<id>`). Defaults to `true`. Automatically forced off for
+   * `noindex` pages, so you only set `llms: false` to exclude a page from AI
+   * assistants while keeping it indexed by search engines.
+   */
+  llms?: boolean;
   openGraph?: {
     type?: "website" | "article" | "profile";
     imageUrl?: OgImageUrl;

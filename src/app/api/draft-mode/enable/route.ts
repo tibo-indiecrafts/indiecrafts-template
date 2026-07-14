@@ -9,9 +9,9 @@ import { token } from "@/sanity/token";
  *
  *   GET /api/draft-mode/enable?sanity-preview-secret=<token>&sanity-preview-pathname=/blog/hello
  *
- * Gated by `features.blog`:
- *   - 404 when the blog feature is off
- *   - 503 when the blog is on but `SANITY_API_READ_TOKEN` isn't set
+ * Gated by `features.studio` (the editing surface this preview belongs to):
+ *   - 404 when the Studio feature is off
+ *   - 503 when the Studio is on but `SANITY_API_READ_TOKEN` isn't set
  *     (avoids the confusing 500 from `defineEnableDraftMode` about a
  *     missing token; flags the misconfig explicitly instead).
  */
@@ -20,7 +20,7 @@ const handler = token
   : null;
 
 export async function GET(request: Request) {
-  if (!features.blog) {
+  if (!features.studio) {
     return new Response("Not found", { status: 404 });
   }
   if (!handler) {

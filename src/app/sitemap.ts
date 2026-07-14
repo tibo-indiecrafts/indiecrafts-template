@@ -1,5 +1,13 @@
 import type { MetadataRoute } from "next";
-import { features, isPageVisible, localeCodes, site, type Locale } from "@/config";
+import {
+  defaultLocale,
+  features,
+  isPageVisible,
+  localeCodes,
+  localePrefix,
+  site,
+  type Locale,
+} from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
 import { client } from "@/sanity/client";
 import {
@@ -18,8 +26,15 @@ import { ROUTES } from "./routes";
  * expanded from Sanity at build time, but only when `features.blog` is
  * on. Routes opt out via `seo.noindex`, `seo.robots.index = false`, or
  * `enabled: false` on their page entry.
+ *
+ * Disabled entirely (empty sitemap) when `features.sitemap` is off —
+ * `robots.txt` also stops advertising it then.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Feature-gated: an empty sitemap when off; robots.txt also stops
+  // advertising it (see `app/robots.txt/route.ts`).
+  if (!features.sitemap) return [];
+
   const now = new Date();
 
   // ── Static pages ────────────────────────────────────────────
@@ -31,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       languages[locale] = `${site.url}${getStaticPathname(page.key, locale)}`;
     }
     return {
-      url: `${site.url}${getStaticPathname(page.key, "en")}`,
+      url: `${site.url}${getStaticPathname(page.key, defaultLocale)}`,
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: page.key === "/" ? 1 : 0.7,
@@ -57,15 +72,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const map = new Map<string, Set<Locale>>();
     for (const doc of docs) {
       if (!doc.slug) continue;
-      const lang = (doc.language ?? "en") as Locale;
+      const lang = (doc.language ?? defaultLocale) as Locale;
       if (!localeCodes.includes(lang)) continue;
       if (!map.has(doc.slug)) map.set(doc.slug, new Set());
       map.get(doc.slug)!.add(lang);
     }
     return map;
   };
-
-  const localePrefix = (locale: Locale): string => (locale === "en" ? "" : `/${locale}`);
 
   const dynamicEntries: MetadataRoute.Sitemap = [];
 
@@ -76,7 +89,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const locale of locales) {
       languages[locale] = `${site.url}${localePrefix(locale)}/blog/${slug}`;
     }
-    const primary = locales.has("en") ? "en" : (locales.values().next().value as Locale);
+    const primary = locales.has(defaultLocale)
+      ? defaultLocale
+      : (locales.values().next().value as Locale);
     dynamicEntries.push({
       url: `${site.url}${localePrefix(primary)}/blog/${slug}`,
       lastModified: now,
@@ -93,7 +108,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const locale of locales) {
       languages[locale] = `${site.url}${localePrefix(locale)}/blog/category/${slug}`;
     }
-    const primary = locales.has("en") ? "en" : (locales.values().next().value as Locale);
+    const primary = locales.has(defaultLocale)
+      ? defaultLocale
+      : (locales.values().next().value as Locale);
     dynamicEntries.push({
       url: `${site.url}${localePrefix(primary)}/blog/category/${slug}`,
       lastModified: now,
@@ -110,7 +127,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const locale of locales) {
       languages[locale] = `${site.url}${localePrefix(locale)}/blog/tag/${slug}`;
     }
-    const primary = locales.has("en") ? "en" : (locales.values().next().value as Locale);
+    const primary = locales.has(defaultLocale)
+      ? defaultLocale
+      : (locales.values().next().value as Locale);
     dynamicEntries.push({
       url: `${site.url}${localePrefix(primary)}/blog/tag/${slug}`,
       lastModified: now,
@@ -128,7 +147,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       languages[locale] = `${site.url}${localePrefix(locale)}/author/${author.slug}`;
     }
     dynamicEntries.push({
-      url: `${site.url}/author/${author.slug}`,
+      url: `${site.url}${localePrefix(defaultLocale)}/author/${author.slug}`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.4,

@@ -1,7 +1,7 @@
-import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, isPageVisible, pages } from "@/config";
+import { pages } from "@/config";
 import type { Locale } from "@/config";
+import { requireBlogRoute } from "@/lib/feature-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/layout/DefaultLayout";
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function AuthorIndexPage({ params }: Props) {
-  if (!features.blog || !isPageVisible(pages.author)) notFound();
+  requireBlogRoute(pages.author);
   const { locale } = await params;
   setRequestLocale(locale);
 

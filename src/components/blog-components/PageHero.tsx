@@ -25,12 +25,16 @@ export function PageHero({
   subtitle,
   titleId,
   pills,
+  pillsLabel,
 }: {
   tag?: string;
   title: string;
   subtitle?: string;
   titleId?: string;
   pills?: PageHeroPill[];
+  /** Accessible label for the pill sub-nav. Pass a translated string;
+   *  falls back to the (already-translated) `title` so it's never hardcoded. */
+  pillsLabel?: string;
 }) {
   return (
     <header className="py-12 md:py-16">
@@ -52,7 +56,7 @@ export function PageHero({
           </p>
         ) : null}
         {pills && pills.length > 0 ? (
-          <nav aria-label="Blog sections" className="mt-8">
+          <nav aria-label={pillsLabel ?? title} className="mt-8">
             <ul className="flex flex-wrap justify-center gap-2">
               {pills.map((pill) => (
                 <li key={pill.href}>

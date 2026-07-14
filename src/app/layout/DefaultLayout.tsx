@@ -4,9 +4,8 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 
 /**
- * Production default layout. Forked from
- * /components/layouts/default-layout/DefaultLayout.tsx so /app does not
- * depend on /components for chrome.
+ * Production default layout, colocated in `@/app/layout` so the app owns
+ * its chrome without depending on the sibling component library.
  *
  * `<main>` gets `pt-14 lg:pt-20` to clear the fixed Header height (h-14
  * mobile / h-20 desktop). `flex-1` pushes Footer to viewport bottom when

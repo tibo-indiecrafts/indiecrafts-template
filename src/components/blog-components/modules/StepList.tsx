@@ -1,16 +1,17 @@
 import { PortableText } from "@portabletext/react";
 import type { StepListModule } from "@/sanity/types";
 import { portableComponents } from "./portable-text-components";
+import { ModuleSection } from "./ModuleSection";
 
 /**
  * Step list — vertical timeline. Each step's number sits in a circle;
  * a hairline separator runs between consecutive circles to make the
  * sequence read as a flow rather than a stack of cards.
  */
-export function StepList(props: StepListModule) {
+export function StepList({ inline, ...props }: StepListModule & { inline?: boolean }) {
   if (!props.steps?.length) return null;
   return (
-    <section id={props.anchor} className="mx-auto max-w-6xl px-(--gutter) py-8 md:py-12">
+    <ModuleSection anchor={props.anchor} inline={inline}>
       <ol className="relative mx-auto max-w-3xl">
         {props.steps.map((step, i) => {
           const isLast = i === props.steps!.length - 1;
@@ -43,6 +44,6 @@ export function StepList(props: StepListModule) {
           );
         })}
       </ol>
-    </section>
+    </ModuleSection>
   );
 }

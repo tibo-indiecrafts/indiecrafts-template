@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, isPageVisible, localeCodes, pages, site } from "@/config";
+import { features, localeCodes, pages, site } from "@/config";
 import type { Locale } from "@/config";
+import { localizedPathname } from "@/i18n/routing";
+import { requireBlogRoute } from "@/lib/feature-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/layout/DefaultLayout";
@@ -28,11 +30,12 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { locale, slug } = await params;
+  const path = localizedPathname(`/author/${slug}`, locale);
   const author = await sanityFetchLive<Author | null>({
     query: authorBySlugQuery,
     params: { slug },
   });
-  const base = await buildMetadata({ page: pages.author, locale });
+  const base = await buildMetadata({ page: pages.author, locale, pathname: path });
   if (!author) return base;
 
   return {
@@ -52,7 +55,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function AuthorDetailPage({ params }: Props) {
-  if (!features.blog || !isPageVisible(pages.author)) notFound();
+  requireBlogRoute(pages.author);
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
@@ -67,13 +70,14 @@ export default async function AuthorDetailPage({ params }: Props) {
   ]);
   if (!author) notFound();
 
+  const path = localizedPathname(`/author/${slug}`, locale);
+
   return (
     <DefaultLayout>
       <PageSchemas
         page={{
           ...pages.author,
           seo: {
-            ...pages.author.seo,
             structuredData: [
               {
                 "@type": "Person",
@@ -81,12 +85,13 @@ export default async function AuthorDetailPage({ params }: Props) {
                 description: author.bio,
                 image: author.image?.asset?.url,
                 jobTitle: author.position,
-                url: `${site.url}/${locale}/author/${slug}`,
+                url: `${site.url}${path}`,
               },
             ],
           },
         }}
         locale={locale}
+        pathname={path}
       />
       <AuthorDetail
         author={author}

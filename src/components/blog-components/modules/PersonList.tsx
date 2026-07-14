@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { PersonListModule } from "@/sanity/types";
+import { ModuleSection } from "./ModuleSection";
 
 /**
  * Team module — design ported from `sections-team/team-05` in the
@@ -7,15 +8,15 @@ import type { PersonListModule } from "@/sanity/types";
  * 28-size rounded square avatars with a subtle inner border + drop
  * shadow, name + role below each.
  */
-export function PersonList(props: PersonListModule) {
+export function PersonList({
+  inline,
+  ...props
+}: PersonListModule & { inline?: boolean }) {
   // Filter null refs that the client couldn't resolve.
   const people = (props.people ?? []).filter(Boolean);
   if (!people.length) return null;
   return (
-    <section
-      id={props.anchor}
-      className="@container mx-auto max-w-6xl px-(--gutter) py-8 md:py-12"
-    >
+    <ModuleSection anchor={props.anchor} inline={inline} className="@container">
       <ul className="mx-auto grid max-w-2xl grid-cols-2 gap-x-3 gap-y-6 text-sm @xl:grid-cols-3 @xl:gap-x-6 @xl:gap-y-12">
         {people.map((p) => (
           <li key={p._id} className="flex flex-col items-center gap-4 text-center">
@@ -40,6 +41,6 @@ export function PersonList(props: PersonListModule) {
           </li>
         ))}
       </ul>
-    </section>
+    </ModuleSection>
   );
 }

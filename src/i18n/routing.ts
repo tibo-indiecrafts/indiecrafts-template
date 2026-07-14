@@ -1,7 +1,6 @@
 /**
- * next-intl routing definition. PATHNAMES is auto-discovered from every
- * `page.config.ts` under `app/[locale]/` via `src/app/routes.ts` — no
- * per-route import here.
+ * next-intl routing definition. PATHNAMES is assembled from the `pages`
+ * map in `@/config` via `src/app/routes.ts` — no per-route import here.
  *
  * Components should always import `Link` / `useRouter` / `redirect` /
  * `getPathname` from `@/i18n/routing`, never from `next/link` or
@@ -11,8 +10,9 @@
 import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
 import {
-  defaultLocale,
+  i18n,
   localeCodes,
+  localePrefix,
   type Locale,
   type StaticAppPathname,
 } from "@/config";
@@ -20,8 +20,9 @@ import { PATHNAMES } from "@/app/routes";
 
 export const routing = defineRouting({
   locales: [...localeCodes],
-  defaultLocale: defaultLocale,
-  localePrefix: "as-needed",
+  defaultLocale: i18n.defaultLocale,
+  localePrefix: i18n.localePrefix,
+  localeDetection: i18n.localeDetection,
   pathnames: PATHNAMES,
 });
 
@@ -43,4 +44,15 @@ export const { Link, redirect, usePathname, useRouter, getPathname } =
 type PathnameArg = Parameters<typeof getPathname>[0]["href"];
 export function getStaticPathname(href: StaticAppPathname, locale: Locale): string {
   return getPathname({ href: href as PathnameArg, locale });
+}
+
+/**
+ * Locale-aware absolute path for a dynamic detail route whose slug isn't in
+ * `PATHNAMES` — blog posts, categories, tags, authors. Mirrors the
+ * `as-needed` prefix policy: the default locale gets no prefix, every other
+ * locale gets a `/<locale>` prefix. Use this to self-canonicalize detail
+ * pages instead of inheriting their index route's path.
+ */
+export function localizedPathname(pathname: `/${string}`, locale: Locale): string {
+  return `${localePrefix(locale)}${pathname}`;
 }

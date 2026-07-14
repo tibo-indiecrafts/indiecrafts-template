@@ -17,19 +17,17 @@ import type { Locale } from "@/config";
 import { features } from "@/config";
 import { getMessages } from "next-intl/server";
 import { ROUTES } from "@/app/routes";
-import { renderAllPagesMarkdown } from "@/lib/seo/page-markdown";
+import { isLlmsPage, renderAllPagesMarkdown } from "@/lib/seo/page-markdown";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ locale: string }> },
 ) {
-  if (!features.llmsTxt) return new Response("Not found", { status: 404 });
+  if (!features.llms.full) return new Response("Not found", { status: 404 });
 
   const { locale } = (await params) as { locale: Locale };
 
-  const visible = ROUTES.filter(
-    (p) => !p.key.includes("[") && !p.seo?.noindex && p.enabled !== false,
-  );
+  const visible = ROUTES.filter(isLlmsPage);
 
   const messages = (await getMessages({ locale })) as Record<string, unknown>;
   const body = renderAllPagesMarkdown(visible, locale, messages);

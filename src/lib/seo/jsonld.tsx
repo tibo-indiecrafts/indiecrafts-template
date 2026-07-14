@@ -1,21 +1,26 @@
 /**
- * Core JSON-LD — only the schemas auto-emitted on every page.
+ * Core JSON-LD — the schemas auto-emitted on every page. All gated by
+ * `features.structuredData`.
  *
- * - `Organization` + `WebSite` from `buildSiteSchemas()` (locale layout).
- * - `WebPage` from `<PageSchemas>` (each route's page.tsx).
+ * - `Organization` (or a LocalBusiness subtype, per `site.legal.businessType`)
+ *   + `WebSite` from `buildSiteSchemas()` (locale layout).
+ * - `WebPage` + `FAQPage` (the latter when the page has `faq` content) from
+ *   `<PageSchemas>` (each route's page.tsx).
  *
- * Pages that need richer schema (Article, FAQPage, Service, Product,
- * LocalBusiness, Person, Breadcrumb) import the relevant builder from
- * `./jsonld-factories.tsx`. That file is tree-shaken out of the default
- * bundle until a page actually references it.
+ * Pages that need other schema (Article, Service, Product, Person, Breadcrumb)
+ * import the relevant builder from `./jsonld-factories.tsx`, which is
+ * tree-shaken out of the default bundle until referenced.
  */
 
 import type { PageConfig } from "@/config";
-import { globalSchemas, site } from "@/config";
+import { features, globalSchemas, site } from "@/config";
 import { getTranslations } from "next-intl/server";
 import { getStaticPathname } from "@/i18n/routing";
 import type { Locale } from "@/config";
 import type { MessageKey } from "@/types/messages";
+import { pageOgImage } from "@/lib/metadata";
+import { getFaqItems } from "@/lib/faq";
+import { buildFAQPageSchema } from "./jsonld-factories";
 
 // ── Shared helpers ───────────────────────────────────────────
 
@@ -53,37 +58,73 @@ export type JsonLdOrganization = SchemaBase<"Organization"> & {
   contactPoint?: Record<string, unknown>;
 };
 
-export function buildOrganizationSchema(
+/**
+ * The site's primary entity. `site.legal.businessType` picks the schema.org
+ * `@type`: `"Organization"` (neutral) or a LocalBusiness subtype — the latter
+ * additionally emits geo / openingHours / priceRange / areaServed / telephone /
+ * image from `site.legal`. Every field is dropped when empty, so a bare
+ * Organization looks exactly as it did before any local fields were filled in.
+ */
+export function buildBusinessSchema(
   overrides: { description?: string } = {},
-): JsonLdOrganization {
+): SchemaObject {
+  const legal = site.legal;
+  const isLocal = legal.businessType !== "Organization";
   const sameAs = (Object.values(site.social) as string[]).filter(Boolean);
+  const logo = `${site.url}${site.brandLogoPng ?? site.logo}`;
+
   const addr = compact({
     "@type": "PostalAddress" as const,
-    streetAddress: site.legal.address.streetAddress,
-    addressLocality: site.legal.address.addressLocality,
-    addressRegion: site.legal.address.addressRegion,
-    postalCode: site.legal.address.postalCode,
-    addressCountry: site.legal.address.addressCountry,
+    streetAddress: legal.address.streetAddress,
+    addressLocality: legal.address.addressLocality,
+    addressRegion: legal.address.addressRegion,
+    postalCode: legal.address.postalCode,
+    addressCountry: legal.address.addressCountry,
   });
   const cp = compact({
     "@type": "ContactPoint" as const,
-    telephone: site.legal.contactPoint.telephone,
-    email: site.legal.contactPoint.email,
-    contactType: site.legal.contactPoint.contactType,
+    telephone: legal.contactPoint.telephone,
+    email: legal.contactPoint.email,
+    contactType: legal.contactPoint.contactType,
   });
+
+  // LocalBusiness-only extras (undefined → dropped by `compact`).
+  const geo =
+    isLocal && legal.geo.latitude && legal.geo.longitude
+      ? {
+          "@type": "GeoCoordinates" as const,
+          latitude: legal.geo.latitude,
+          longitude: legal.geo.longitude,
+        }
+      : undefined;
+  const areaServed =
+    isLocal && legal.areaServed.length
+      ? legal.areaServed.map((name) => ({ "@type": "AdministrativeArea" as const, name }))
+      : undefined;
+
   return compact({
-    "@type": "Organization",
+    "@type": legal.businessType,
     "@id": `${site.url}#organization`,
-    name: site.legal.company,
+    name: legal.company,
     description: overrides.description,
     url: site.url,
-    logo: `${site.url}${site.brandLogoPng ?? site.logo}`,
+    logo,
+    image: isLocal ? logo : undefined,
     sameAs: sameAs.length ? sameAs : undefined,
-    foundingDate: site.legal.foundingDate || undefined,
+    foundingDate: legal.foundingDate || undefined,
     address: Object.keys(addr).length > 1 ? addr : undefined,
     contactPoint: Object.keys(cp).length > 2 ? cp : undefined,
-  }) as JsonLdOrganization;
+    telephone: isLocal ? legal.contactPoint.telephone || undefined : undefined,
+    geo,
+    areaServed,
+    openingHours:
+      isLocal && legal.openingHours.length ? [...legal.openingHours] : undefined,
+    priceRange: isLocal ? legal.priceRange || undefined : undefined,
+  }) as SchemaObject;
 }
+
+/** @deprecated Use `buildBusinessSchema`. Kept as an alias for back-compat. */
+export const buildOrganizationSchema = buildBusinessSchema;
 
 // ── WebSite (with optional sitelinks search) ─────────────────
 
@@ -143,7 +184,7 @@ export function buildSiteSchemas(
   options: { description?: string; searchUrlTemplate?: string } = {},
 ): SchemaObject[] {
   return [
-    buildOrganizationSchema({ description: options.description }),
+    buildBusinessSchema({ description: options.description }),
     buildWebSiteSchema(options),
     ...(globalSchemas as SchemaObject[]),
   ];
@@ -166,11 +207,18 @@ function safeT(
  * `page.seo.structuredData`. Drop into each route's `page.tsx`:
  *
  *   <PageSchemas page={pages.home} locale={locale} />
+ *
+ * Dynamic detail routes pass `pathname` (their locale-aware slug path) so
+ * the WebPage `@id`/`url` self-references instead of colliding on the
+ * shared index route.
  */
 export async function PageSchemas({
   page,
   locale,
-}: Readonly<{ page: PageConfig; locale: Locale }>) {
+  pathname,
+}: Readonly<{ page: PageConfig; locale: Locale; pathname?: string }>) {
+  if (!features.structuredData) return null;
+
   const t = await getTranslations({ locale });
   const titleKey = page.seo?.titleKey ?? (`pages.${page.id}.title` as MessageKey);
   const descriptionKey =
@@ -178,9 +226,9 @@ export async function PageSchemas({
   const title = safeT(t, titleKey, site.name);
   const description = safeT(t, descriptionKey, site.description);
 
-  const pathname = getStaticPathname(page.key, locale);
-  const url = `${site.url}${pathname}`;
-  const imageUrl = page.seo?.openGraph?.imageUrl ?? `/brand/og-${page.id}.png`;
+  const path = pathname ?? getStaticPathname(page.key, locale);
+  const url = `${site.url}${path}`;
+  const imageUrl = pageOgImage(page);
   const image = imageUrl.startsWith("http") ? imageUrl : `${site.url}${imageUrl}`;
 
   const webPage = buildWebPageSchema({
@@ -193,7 +241,13 @@ export async function PageSchemas({
   });
 
   const extras = (page.seo?.structuredData ?? []) as readonly SchemaObject[];
-  return <JsonLdScript data={[webPage, ...extras]} />;
+
+  // Auto-emit FAQPage rich-result markup from the page's translated `faq`
+  // array — zero per-page config, in sync with what the <Faq> section shows.
+  const faqItems = features.faq ? getFaqItems(t.raw, page.id) : [];
+  const faqSchema: SchemaObject[] = faqItems.length ? [buildFAQPageSchema(faqItems)] : [];
+
+  return <JsonLdScript data={[webPage, ...extras, ...faqSchema]} />;
 }
 
 // ── Script renderer ──────────────────────────────────────────

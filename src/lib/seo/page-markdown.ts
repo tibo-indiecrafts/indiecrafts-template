@@ -16,10 +16,27 @@
  */
 
 import type { Locale, PageConfig } from "@/config";
-import { site } from "@/config";
+import { features, site } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
+import { parseFaqItems } from "@/lib/faq";
 
 type Json = string | number | boolean | null | { [k: string]: Json } | Json[];
+
+/**
+ * Whether a page appears in the LLM endpoints. Single source of truth for
+ * `/llms.txt`, `/llms-full.txt`, and `/llms/<id>` so the three can't drift.
+ * A page is included when it's a real static route, enabled, indexable, and
+ * hasn't opted out via `seo.llms: false` — so `noindex` pages drop out
+ * automatically.
+ */
+export function isLlmsPage(page: PageConfig): boolean {
+  return (
+    !page.key.includes("[") &&
+    page.enabled !== false &&
+    !page.seo?.noindex &&
+    page.seo?.llms !== false
+  );
+}
 
 /** Read a sub-tree of messages by dotted path; returns null when missing. */
 export function getMessagesNode(
@@ -112,14 +129,25 @@ export function renderPageMarkdown(
   if (description) head.push(description, "");
 
   // Render the rest (everything except title/description, which we already
-  // emitted) starting at H2.
-  const { title: _t, name: _n, description: _d, ...rest } = node;
+  // emitted, and `faq`, which gets a dedicated block below) starting at H2.
+  const { title: _t, name: _n, description: _d, faq: _faq, ...rest } = node;
   void _t;
   void _n;
   void _d;
+  void _faq;
   const body = renderObject(rest as Record<string, Json>, 2);
 
-  return [...head, body, ""].join("\n");
+  const parts = [...head, body];
+
+  // FAQ — the same translated `faq` array the <Faq> section + FAQPage JSON-LD
+  // use, so llms.txt stays in sync automatically.
+  const faqItems = features.faq ? parseFaqItems(node.faq) : [];
+  if (faqItems.length > 0) {
+    parts.push("", "## FAQ", "");
+    for (const it of faqItems) parts.push(`### ${it.question}`, "", it.answer, "");
+  }
+
+  return [...parts, ""].join("\n");
 }
 
 /** Concatenate every visible page's markdown for `/llms-full.txt`. */

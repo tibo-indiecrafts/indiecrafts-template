@@ -1,5 +1,6 @@
 import type { StatListModule } from "@/sanity/types";
 import { cn } from "@/lib/utils";
+import { ModuleSection } from "./ModuleSection";
 
 /**
  * Stats module — design ported from `sections-stats/stats-01`: a rounded
@@ -9,11 +10,11 @@ import { cn } from "@/lib/utils";
  * which also had a change indicator; we don't track change so it's
  * omitted.
  */
-export function StatList(props: StatListModule) {
+export function StatList({ inline, ...props }: StatListModule & { inline?: boolean }) {
   if (!props.stats?.length) return null;
   const stats = props.stats;
   return (
-    <section id={props.anchor} className="mx-auto max-w-6xl px-(--gutter) py-8 md:py-12">
+    <ModuleSection anchor={props.anchor} inline={inline}>
       <dl
         className={cn(
           "bg-border grid grid-cols-1 gap-px overflow-hidden rounded-xl sm:grid-cols-2",
@@ -34,6 +35,6 @@ export function StatList(props: StatListModule) {
           </div>
         ))}
       </dl>
-    </section>
+    </ModuleSection>
   );
 }

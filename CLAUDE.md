@@ -126,7 +126,12 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 
 ## Sanity + blog (feature-flagged)
 
-The template ships a Sanity-backed blog with a page-builder system **scoped to the blog only**. On by default (`features.blog: true` in `config/index.ts`) — flip to `false` to 404 every blog route, drop the entry from sitemap + llms.txt, and remove the `/blog` link from the header. The Studio at `/studio` stays reachable regardless, so editors can keep working while the public surface is hidden.
+The template ships a Sanity-backed blog with a page-builder system **scoped to the blog only**. Two independent flags in `config/index.ts` govern it:
+
+- **`features.blog`** — the public surface. `false` ⇒ every public blog route 404s and drops from sitemap + llms.txt + header nav (see the flag list below).
+- **`features.studio`** — the editing surface (Studio at `/studio` + draft-mode preview). Independent of `features.blog`: keep the Studio on with `blog: false` so editors keep working while the public surface is hidden, or turn it off to lock editing on a frozen site.
+
+Public-blog route gating is centralized in `@/lib/feature-gate` — `requireBlogRoute(page)` for page components, `isBlogRouteEnabled(page)` for route handlers. Both fold in the `features.blog` flag **and** the page's `enabled` field, so a new blog route can't drift by checking only one.
 
 **Schemas** (in `src/sanity/schema/`):
 
@@ -162,13 +167,18 @@ The inline allowlist lives in `src/sanity/schema/blockContent.ts` (`INLINE_MODUL
 - Markdown export at `/<locale>/blog/<slug>/md` — frontmatter + PortableText→Markdown serializer (`src/sanity/portable-to-markdown.ts`). Advertised via `<link rel="alternate" type="text/markdown">`.
 - RSS at `/<locale>/blog/rss.xml` (also advertised via alternate link).
 
-**Feature flag** (`features.blog`):
+**`features.blog`** (public surface) gates:
 
-- `pages.blog.enabled` mirrors the flag — sitemap + llms.txt drop the entry automatically.
+- All public routes via `@/lib/feature-gate`: `/blog`, `/blog/[slug]`, `/blog/category` + `/[slug]`, `/blog/tag` + `/[slug]`, `/author` + `/[slug]`, plus the `/blog/[slug]/md` + `/blog/rss.xml` handlers — 404 when off.
+- `pages.{blog,author,category,tag}.enabled` mirror the flag — sitemap + llms.txt drop the entries automatically.
 - `headerNav` adds the `/blog` link only when on.
-- `/blog` + `/blog/[slug]` + `/blog/[slug]/md` + `/blog/rss.xml` all call `notFound()` when off.
-- `<SanityLive />` only mounted when on.
-- `generateStaticParams` returns `[]` for `/blog/[slug]` when off — build stays fast.
+- `<SanityLive />` only mounted when on (it revalidates public blog pages).
+- `generateStaticParams` returns `[]` for every dynamic blog route when off — build stays fast.
+
+**`features.studio`** (editing surface) gates:
+
+- `/studio` (the embedded Studio) — 404s when off.
+- `/api/draft-mode/enable` + `/disable` — 404 when off.
 
 To wire Sanity to your project, set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (see `.env.example`). The CSP in `next.config.ts` already allows `https://*.sanity.io` + `wss://*.api.sanity.io`.
 

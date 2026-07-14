@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, isPageVisible, pages, type Locale } from "@/config";
+import { pages, type Locale } from "@/config";
+import { isRssEnabled, requireBlogRoute } from "@/lib/feature-gate";
+import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/layout/DefaultLayout";
@@ -22,7 +23,21 @@ type Props = { params: Promise<{ locale: Locale }> };
 
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params;
-  return buildMetadata({ page: pages.blog, locale });
+  const base = await buildMetadata({ page: pages.blog, locale });
+  // Advertise the feed from the index — the conventional discovery point.
+  // Only when the RSS feature is on, so the tag never points at a 404.
+  return {
+    ...base,
+    alternates: {
+      ...base.alternates,
+      types: {
+        ...(base.alternates?.types ?? {}),
+        ...(isRssEnabled()
+          ? { "application/rss+xml": localizedPathname(`/blog/rss.xml`, locale) }
+          : {}),
+      },
+    },
+  };
 }
 
 /**
@@ -32,7 +47,7 @@ export async function generateMetadata({ params }: Props) {
  * stays uniform across deployments).
  */
 export default async function BlogPage({ params }: Props) {
-  if (!features.blog || !isPageVisible(pages.blog)) notFound();
+  requireBlogRoute(pages.blog);
   const { locale } = await params;
   setRequestLocale(locale);
 

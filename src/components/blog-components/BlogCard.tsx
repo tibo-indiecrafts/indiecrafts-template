@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
+import { parseVideoEmbed } from "@/lib/video-embed";
 import type { PostListItem } from "@/sanity/types";
+import { PlayBadge } from "./PlayBadge";
 
 /**
  * Featured card used by the blog listing, category explorer, and author
@@ -35,6 +37,7 @@ export function BlogCard({
   const title = post.metadata?.title ?? post.title ?? "";
   const description = post.metadata?.description;
   const author = post.author;
+  const hasVideo = !!parseVideoEmbed(post.metadata?.videoUrl);
   const aspect = variant === "wide" ? "aspect-[16/9]" : "aspect-[4/3]";
 
   return (
@@ -58,6 +61,7 @@ export function BlogCard({
           ) : (
             <div className="bg-muted h-full w-full" aria-hidden="true" />
           )}
+          {hasVideo ? <PlayBadge /> : null}
         </div>
       </Link>
 
@@ -81,7 +85,7 @@ export function BlogCard({
                 {(author.name ?? "?").slice(0, 1).toUpperCase()}
               </span>
             )}
-            <span className="bg-foreground text-background pointer-events-none absolute top-1/2 left-full ml-2 -translate-y-1/2 rounded px-2 py-1 text-xs whitespace-nowrap opacity-0 transition group-hover/avatar:opacity-100">
+            <span className="bg-foreground text-background pointer-events-none absolute top-1/2 left-full ml-2 hidden -translate-y-1/2 rounded px-2 py-1 text-xs whitespace-nowrap opacity-0 transition group-hover/avatar:opacity-100 sm:block">
               {author.name}
             </span>
           </Link>

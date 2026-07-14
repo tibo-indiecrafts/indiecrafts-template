@@ -4,7 +4,7 @@ import { apiVersion } from "./env";
 /**
  * Sidebar du Studio — regroupe Blog (singleton + articles/auteurs/
  * catégories/tags), les documents référencés par les modules de
- * page-builder (Citations/Personnes/Logos), et masque tout
+ * page-builder (Citations/Personnes), et masque tout
  * le reste de la liste racine.
  *
  * Les types de documents localisés (`post`, `category`, `tag`, `quote`)
@@ -14,8 +14,8 @@ import { apiVersion } from "./env";
  * sont définis dans `sanity.config.ts`.
  *
  * Les modules de page-builder (Encadré / Liste de cartes / etc.) sont
- * des types objet imbriqués dans `blog.frontpageModules` et
- * `blog.postModules` — ils n'apparaissent pas dans la sidebar.
+ * des types objet imbriqués dans `blog.postModules` — ils
+ * n'apparaissent pas dans la sidebar.
  */
 export const structure: StructureResolver = (S) =>
   S.list()

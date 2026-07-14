@@ -1,11 +1,15 @@
 import { PortableText } from "@portabletext/react";
 import type { AccordionListModule } from "@/sanity/types";
 import { portableComponents } from "./portable-text-components";
+import { ModuleSection } from "./ModuleSection";
 
-export function AccordionList(props: AccordionListModule) {
+export function AccordionList({
+  inline,
+  ...props
+}: AccordionListModule & { inline?: boolean }) {
   if (!props.items?.length) return null;
   return (
-    <section id={props.anchor} className="mx-auto max-w-6xl px-(--gutter) py-8 md:py-12">
+    <ModuleSection anchor={props.anchor} inline={inline}>
       <ul className="divide-border mx-auto max-w-3xl divide-y rounded-xl border">
         {props.items.map((item) => (
           <li key={item._key} className="px-5">
@@ -28,6 +32,6 @@ export function AccordionList(props: AccordionListModule) {
           </li>
         ))}
       </ul>
-    </section>
+    </ModuleSection>
   );
 }

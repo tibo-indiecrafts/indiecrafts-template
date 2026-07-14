@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 /**
  * Reusable breadcrumbs trail — used by author + category routes.
  * Pass items in order; the last item is rendered as plain text (current
- * page) and gets `aria-current="page"`. Emits `BreadcrumbList` JSON-LD
- * inline so the trail also helps search engines.
+ * page) and gets `aria-current="page"`. Renders the visual + ARIA trail
+ * only — it does not emit `BreadcrumbList` JSON-LD.
  *
  * Link + current-page styling uses opacity + font-weight rather than
  * hard-coded colours, so passing `className="text-white/85"` (or similar)
@@ -31,7 +31,7 @@ export function Breadcrumbs({
         {items.map((item, i) => {
           const isLast = i === items.length - 1;
           return (
-            <li key={`${item.label}-${i}`} className="flex items-center gap-1.5">
+            <li key={`${item.label}-${i}`} className="flex min-w-0 items-center gap-1.5">
               {item.href && !isLast ? (
                 <Link
                   href={item.href}
@@ -40,9 +40,12 @@ export function Breadcrumbs({
                   {item.label}
                 </Link>
               ) : (
+                // Current page — truncate so a long title/name ellipsizes
+                // instead of wrapping (matters in the post hero's pill on
+                // mobile, and for long category/author names anywhere).
                 <span
                   aria-current={isLast ? "page" : undefined}
-                  className="font-semibold"
+                  className="max-w-[60vw] truncate font-semibold sm:max-w-sm"
                 >
                   {item.label}
                 </span>

@@ -13,8 +13,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui-primitives/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { THEME_MODES } from "@/lib/theme";
+import type { ThemeMode } from "@/config";
 
 const subscribe = () => () => {};
+
+/** Icon + label key for each selectable theme mode. */
+const MODE_META: Record<ThemeMode, { Icon: typeof Sun; labelKey: string }> = {
+  light: { Icon: Sun, labelKey: "themeLight" },
+  dark: { Icon: Moon, labelKey: "themeDark" },
+  system: { Icon: Monitor, labelKey: "themeSystem" },
+};
 
 export type ThemeToggleProps = {
   size?: "icon" | "sm" | "default";
@@ -52,18 +61,15 @@ export function ThemeToggle({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-32">
         <DropdownMenuRadioGroup value={theme} onValueChange={(value) => setTheme(value)}>
-          <DropdownMenuRadioItem value="light">
-            <Sun className="mr-2 size-4" aria-hidden="true" />
-            {t("themeLight")}
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="dark">
-            <Moon className="mr-2 size-4" aria-hidden="true" />
-            {t("themeDark")}
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="system">
-            <Monitor className="mr-2 size-4" aria-hidden="true" />
-            {t("themeSystem")}
-          </DropdownMenuRadioItem>
+          {THEME_MODES.map((mode) => {
+            const { Icon, labelKey } = MODE_META[mode];
+            return (
+              <DropdownMenuRadioItem key={mode} value={mode}>
+                <Icon className="mr-2 size-4" aria-hidden="true" />
+                {t(labelKey)}
+              </DropdownMenuRadioItem>
+            );
+          })}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

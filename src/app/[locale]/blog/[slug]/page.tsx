@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { features, isPageVisible, pages, site, type Locale } from "@/config";
+import { features, pages, site, type Locale } from "@/config";
+import { localizedPathname } from "@/i18n/routing";
+import { isRssEnabled, requireBlogRoute } from "@/lib/feature-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema } from "@/lib/seo/jsonld-factories";
@@ -35,11 +37,12 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { locale, slug } = await params;
+  const path = localizedPathname(`/blog/${slug}`, locale);
   const post = await sanityFetchLive<Post | null>({
     query: postBySlugQuery,
     params: { slug, locale },
   });
-  const base = await buildMetadata({ page: pages.blog, locale });
+  const base = await buildMetadata({ page: pages.blog, locale, pathname: path });
   if (!post) return base;
 
   const title = post.metadata?.title ?? post.title;
@@ -61,15 +64,17 @@ export async function generateMetadata({ params }: Props) {
       ...base.alternates,
       types: {
         ...(base.alternates?.types ?? {}),
-        "text/markdown": `/${locale}/blog/${slug}/md`,
-        "application/rss+xml": `/${locale}/blog/rss.xml`,
+        "text/markdown": localizedPathname(`/blog/${slug}/md`, locale),
+        ...(isRssEnabled()
+          ? { "application/rss+xml": localizedPathname(`/blog/rss.xml`, locale) }
+          : {}),
       },
     },
   };
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  if (!features.blog || !isPageVisible(pages.blog)) notFound();
+  requireBlogRoute(pages.blog);
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
@@ -108,13 +113,14 @@ export default async function BlogPostPage({ params }: Props) {
         })
       : [];
 
+  const path = localizedPathname(`/blog/${slug}`, locale);
+
   return (
     <DefaultLayout>
       <PageSchemas
         page={{
           ...pages.blog,
           seo: {
-            ...pages.blog.seo,
             structuredData: [
               buildArticleSchema({
                 headline: title,
@@ -122,12 +128,13 @@ export default async function BlogPostPage({ params }: Props) {
                 datePublished: post.publishedAt ?? new Date().toISOString(),
                 authorName: post.author?.name,
                 image,
-                url: `${site.url}/${locale}/blog/${slug}`,
+                url: `${site.url}${path}`,
               }),
             ],
           },
         }}
         locale={locale}
+        pathname={path}
       />
       {modules.length > 0 ? (
         <Modules modules={modules} context={{ locale, post }} />

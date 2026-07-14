@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, isPageVisible, pages, type Locale } from "@/config";
+import { features, pages, type Locale } from "@/config";
+import { localizedPathname } from "@/i18n/routing";
+import { requireBlogRoute } from "@/lib/feature-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/app/layout/DefaultLayout";
@@ -25,11 +27,12 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { locale, slug } = await params;
+  const path = localizedPathname(`/blog/tag/${slug}`, locale);
   const tag = await sanityFetchLive<Tag | null>({
     query: tagBySlugQuery,
     params: { slug, locale },
   });
-  const base = await buildMetadata({ page: pages.tag, locale });
+  const base = await buildMetadata({ page: pages.tag, locale, pathname: path });
   if (!tag) return base;
 
   return {
@@ -40,7 +43,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function TagDetailPage({ params }: Props) {
-  if (!features.blog || !isPageVisible(pages.tag)) notFound();
+  requireBlogRoute(pages.tag);
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
@@ -60,7 +63,11 @@ export default async function TagDetailPage({ params }: Props) {
 
   return (
     <DefaultLayout>
-      <PageSchemas page={pages.tag} locale={locale} />
+      <PageSchemas
+        page={pages.tag}
+        locale={locale}
+        pathname={localizedPathname(`/blog/tag/${slug}`, locale)}
+      />
       <TagDetail
         tag={tag}
         posts={posts}

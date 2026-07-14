@@ -77,6 +77,12 @@
       "description": "The page you requested doesn't exist or has moved.",
       "homeLabel": "← Back home"
     },
+    "maintenance": {
+      "status": "Scheduled maintenance",
+      "title": "We'll be back shortly",
+      "body": "The site is briefly offline for planned updates. It'll be back to normal soon — thanks for waiting.",
+      "contact": "Need to reach us in the meantime?"
+    },
     "legal": {
       "title": "Legal",
       "description": "Privacy policy, cookie usage, and terms of service.",
@@ -103,6 +109,7 @@
     "blog": {
       "title": "Blog",
       "description": "Articles, tutorials, and behind-the-scenes stories.",
+      "keywords": "blog, articles, indiecrafts",
       "heading": "Read, learn, grow",
       "subheading": "From expert advice to behind-the-scenes stories — content designed for curious minds.",
       "minRead": "{minutes} min read",
@@ -120,6 +127,9 @@
       "metaPublished": "Published",
       "metaReadTime": "Read time",
       "metaCategory": "Category",
+      "playVideo": "Play video",
+      "closeVideo": "Close",
+      "hasVideo": "Video",
       "navPills": {
         "all": "All articles",
         "authors": "Authors",
@@ -152,6 +162,7 @@
     "category": {
       "title": "Categories",
       "description": "Browse articles by topic.",
+      "keywords": "categories, topics, articles by topic",
       "heading": "Browse by category",
       "subheading": "Pick a topic to see every article filed under it.",
       "empty": "No categories yet. Check back soon.",
@@ -161,6 +172,7 @@
     "tag": {
       "title": "Tags",
       "description": "Browse articles by tag.",
+      "keywords": "tags, topics, articles by tag",
       "heading": "Browse by tag",
       "subheading": "Pick a tag to see every article carrying that label.",
       "empty": "No tags yet. Check back soon.",
@@ -171,6 +183,7 @@
     "author": {
       "title": "Authors",
       "description": "Meet the writers and contributors behind every article.",
+      "keywords": "authors, contributors, writers",
       "heading": "Creators behind the content",
       "subheading": "Learn more about the talented writers and contributors shaping every story you read.",
       "empty": "No authors yet. Check back soon.",
@@ -181,6 +194,25 @@
     "home": {
       "title": "Indiecrafts — fast, modular Next.js template",
       "description": "A config-first Next.js 16 template with sections, layouts, and pre-built page templates you can fork per client.",
+      "keywords": "next.js template, indiecrafts, config-first, modular website",
+      "faq": [
+        {
+          "question": "Do I need to touch code to rebrand?",
+          "answer": "No. Point the config at your brand — name, colors, logo, languages — and the whole site follows. You only write code to add new sections or logic."
+        },
+        {
+          "question": "How does adding a language work?",
+          "answer": "Add one row to the locale config and drop in a translations file. URLs, SEO, the sitemap, and the language switcher all update on their own."
+        },
+        {
+          "question": "Is it SEO-ready out of the box?",
+          "answer": "Yes. Titles, descriptions, canonical URLs, hreflang, Open Graph, and JSON-LD — including this FAQ's rich-result markup — are generated from your content."
+        },
+        {
+          "question": "Can I turn features off?",
+          "answer": "Every surface — blog, legal page, RSS, LLM endpoints, this FAQ — is a single flag. Flip it off and its routes, links, and sitemap entries disappear together."
+        }
+      ],
       "hero": {
         "eyebrow": "Config-first template",
         "title": "Ship client websites in a weekend",
@@ -268,8 +300,27 @@
               "role": "Founder, Analytic Studio"
             }
           }
+        },
+        "featured": {
+          "eyebrow": "Featured",
+          "title": "Notes from the studio",
+          "body": "Guides, teardowns, and field notes on shipping client sites faster.",
+          "viewAll": "All articles"
+        },
+        "icons": {
+          "eyebrow": "Icons",
+          "title": "One interface, three icon sets",
+          "body": "Lucide for UI glyphs, Reicon for outline and filled weights, and Reicon Brands for logos in their official colors.",
+          "lucide": "Lucide — UI glyphs",
+          "reicon": "Reicon — outline + filled",
+          "brands": "Reicon Brands — official colors"
         }
       }
     }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Frequently asked questions",
+    "subtitle": "Everything you need to know about the template. Can't find an answer? Reach out."
   }
 }

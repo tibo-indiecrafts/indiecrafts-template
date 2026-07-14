@@ -27,12 +27,13 @@ import { getTranslations } from "next-intl/server";
 import { getStaticPathname } from "@/i18n/routing";
 import type { MessageKey } from "@/types/messages";
 import { ROUTES } from "@/app/routes";
+import { isLlmsPage } from "@/lib/seo/page-markdown";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ locale: string }> },
 ) {
-  if (!features.llmsTxt) return new Response("Not found", { status: 404 });
+  if (!features.llms.index) return new Response("Not found", { status: 404 });
 
   const { locale } = (await params) as { locale: Locale };
   const t = await getTranslations({ locale });
@@ -52,9 +53,7 @@ export async function GET(
   ];
 
   // Auto per-page section
-  const visiblePages = ROUTES.filter(
-    (p) => !p.key.includes("[") && !p.seo?.noindex && p.enabled !== false,
-  );
+  const visiblePages = ROUTES.filter(isLlmsPage);
   const pageLines = visiblePages.map((page) => formatPageEntry(page, locale, t));
 
   // Optional non-route resources (external GitHub, docs sites, etc.)

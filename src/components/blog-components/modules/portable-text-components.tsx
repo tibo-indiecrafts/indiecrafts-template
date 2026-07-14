@@ -28,11 +28,14 @@ function headingId(value: PortableTextBlock | undefined): string {
 // The `value` Sanity hands to each block-content renderer is the module
 // shape itself — same as what `ModuleRenderer` passes. The `unknown`
 // cast keeps the wider union safe at the boundary; each component
-// re-narrows on its own props type.
+// re-narrows on its own props type. `inline: true` is injected so the
+// section-chrome modules (stat/step/accordion/person) render bare inside
+// the article's `.prose` column instead of double-padding; modules that
+// don't read `inline` ignore the extra field.
 const m =
   <P,>(Cmp: (props: P) => React.ReactNode) =>
   ({ value }: { value: unknown }) =>
-    Cmp(value as P);
+    Cmp({ ...(value as Record<string, unknown>), inline: true } as P);
 
 /**
  * Inline-embeddable module types — must stay in lockstep with

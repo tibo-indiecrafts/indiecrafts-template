@@ -1,27 +1,43 @@
 /**
- * SITE CONFIGURATION — pure data, single source of truth.
- *
- * No functions, no env vars, no logic. Edit values directly. Types and
- * helpers live in `./types.ts` and re-export from this file for ergonomic
+ * SITE CONFIGURATION — the single source of truth, almost entirely data:
+ * edit values directly. Two things aren't plain literals: `site.url` reads
+ * `NEXT_PUBLIC_SITE_URL`, and the locale section's derived lookups
+ * (`localeMap`, `localePrefix`, …) sit next to the `locales` array they read
+ * — they can't live in `./types.ts` without a runtime import cycle. Types
+ * live in `./types.ts` and re-export from here for ergonomic
  * `import { ... } from "@/config"` access.
  *
  * Sections in order:
  *   1. site          — brand, contact, social, legal, image surfaces
  *   2. theme         — color tokens, fonts, radii, container widths
- *   3. locales       — supported languages (+ derived lookup maps)
- *   4. features      — global feature flags (only what's wired in code)
+ *   3. locales       — supported languages + defaultLocale + derived helpers
+ *   4. features      — global feature flags + themeConfig (light/dark/forced)
  *   5. navigation    — header + footer nav structure
  *   6. seoDefaults   — site-wide head defaults (per-page overrides via `pages.*.seo`)
  *   7. llms          — /llms.txt structure
  *   8. pages         — per-route metadata (key, slug, SEO)
  */
 
-import type { Locale, NavGroup, NavLink, PageConfig } from "./types";
+import type {
+  BusinessType,
+  FontRoles,
+  Locale,
+  LocaleConfig,
+  NavGroup,
+  NavLink,
+  PageConfig,
+  ThemeName,
+} from "./types";
 
 // `@/config` is the single import for everyone — re-export from sibling types
 export { STATIC_PATHNAME_KEYS } from "./types";
 export type {
   Locale,
+  LocaleConfig,
+  ThemeName,
+  ThemeMode,
+  FontKey,
+  FontRoles,
   PageConfig,
   PageSeo,
   StaticAppPathname,
@@ -31,6 +47,7 @@ export type {
   NavLink,
   NavGroup,
   Environment,
+  BusinessType,
 } from "./types";
 export {
   isLocale,
@@ -49,8 +66,12 @@ export const site = {
   tagline: "The config-first Next.js template for client websites.",
   description:
     "A highly modular, SEO-ready, i18n-ready, accessibility-first Next.js template. Fork it, edit the config, ship.",
-  /** Replace with the production origin before deploying. */
-  url: PLACEHOLDER_SITE_URL,
+  /**
+   * Production origin. Reads `NEXT_PUBLIC_SITE_URL` (set it per environment —
+   * real domain in prod, left unset everywhere else) and falls back to the
+   * placeholder. `isSiteConfigured` + robots.txt key off whether this is real.
+   */
+  url: process.env.NEXT_PUBLIC_SITE_URL || PLACEHOLDER_SITE_URL,
   /** UI logo (SVG preferred for crispness at any size). */
   logo: "/logo.svg",
   /** Raster logo for schema.org Organization (Google rejects SVG). */
@@ -60,9 +81,16 @@ export const site = {
    * files in /public to rebrand; no code changes needed.
    */
   icon: {
-    file: "/logo.svg",
-    contentType: "image/svg+xml",
-    /** iOS rejects SVG for apple-touch-icon; PNG fallback is required. */
+    /**
+     * Favicon + apple-touch-icon serve the SAME 180×180 raster. Safari uses
+     * the favicon for the tab strip but the higher-res apple-touch-icon for
+     * the sidebar / tab-overview thumbnail — pointing both at one file is the
+     * only way to guarantee an identical mark on both surfaces. (An SVG
+     * favicon here would render as different artwork than the PNG sidebar icon.)
+     */
+    file: "/brand/apple-icon.png",
+    contentType: "image/png",
+    /** iOS rejects SVG for apple-touch-icon; PNG is required regardless. */
     appleFile: "/brand/apple-icon.png",
     appleContentType: "image/png",
   },
@@ -91,6 +119,14 @@ export const site = {
   },
   legal: {
     company: "Indiecrafts",
+    /**
+     * schema.org business type for the site entity. `"Organization"` (default)
+     * emits a neutral Organization. Any LocalBusiness subtype
+     * (`"LocalBusiness"`, `"ProfessionalService"`, `"Restaurant"`, …) upgrades
+     * the schema to that type and pulls in `geo`, `openingHours`, `priceRange`,
+     * and `areaServed` below — set those for a local/agency/practice site.
+     */
+    businessType: "Organization" as BusinessType,
     /** ISO date or just year — fed to schema.org `foundingDate`. Empty = omitted. */
     foundingDate: "",
     /**
@@ -114,6 +150,16 @@ export const site = {
       email: "",
       contactType: "customer service",
     },
+    // ── LocalBusiness extras — only emitted when `businessType` isn't
+    //    "Organization". Each is omitted individually when left empty. ──
+    /** Geo coordinates as strings. BOTH required or the `geo` block is dropped. */
+    geo: { latitude: "", longitude: "" },
+    /** Price-range hint shown in rich results, e.g. "€€" or "$$–$$$". */
+    priceRange: "",
+    /** schema.org opening-hours specs, e.g. ["Mo-Fr 09:00-18:00", "Sa 10:00-13:00"]. */
+    openingHours: [] as readonly string[],
+    /** Regions/cities served — emitted as `AdministrativeArea` entries. */
+    areaServed: [] as readonly string[],
   },
 } as const;
 
@@ -160,28 +206,155 @@ export const theme = {
     selectionBg: "oklch(0.9 0.07 260)" /* indigo-100 — selected text wash */,
     selectionFg: "oklch(0.145 0 0)" /* same as foreground */,
   },
-  fonts: { sans: "var(--font-sans)", mono: "var(--font-mono)" },
+  /**
+   * CSS-var references for the three font roles — the runtime values are
+   * resolved by `@/lib/fonts` from the `fonts` pairing below. Kept here as
+   * the canonical var names (e.g. for `next/og` or ad-hoc inline styles).
+   */
+  fonts: {
+    display: "var(--font-display)",
+    sans: "var(--font-sans)",
+    mono: "var(--font-mono)",
+  },
   radii: { sm: "0.375rem", md: "0.5rem", lg: "0.75rem", xl: "1rem" },
   container: { maxWidth: "1280px", gutter: "1rem" },
 } as const;
 
-// 3. ─── locales ──────────────────────────────────────────────
+/**
+ * Active font pairing — one registered font (see `@/lib/fonts`) per role.
+ *
+ * `next/font` requires its loader calls to be static literals, so the fonts
+ * themselves live in the registry; this just picks which plays each role.
+ * `display` drives headings (`--font-display`); set it equal to `body` for a
+ * single-typeface look. Swapping the whole pairing is a one-line edit here.
+ *
+ * Ships a display/body split: Satoshi (self-hosted local variable font) for
+ * headings, Geist (Google, auto-subset + self-hosted) for body, Geist Mono
+ * for code. Add a font → extend `FontKey` + the registry, then name it here.
+ */
+export const fonts = {
+  display: "satoshi",
+  body: "geist",
+  mono: "geist-mono",
+} as const satisfies FontRoles;
 
-export const locales = [
-  { code: "en", label: "English", abbr: "EN", dir: "ltr" },
-  { code: "fr", label: "Français", abbr: "FR", dir: "ltr" },
-] as const;
+// 3. ─── i18n: locales + routing ──────────────────────────────
+//
+// The entire internationalization surface in ONE object — the languages the
+// site ships, which one is the unprefixed default, and how locales appear in
+// URLs. `i18n/routing.ts` + the proxy consume `i18n` directly; the flat
+// aliases + derived helpers below (`locales`, `defaultLocale`, `localeDir`, …)
+// are ergonomic re-exports so the rest of the app imports a single name.
+//
+// Add a language: add a row to `i18n.locales` + drop `messages/<code>.json`.
+// The `Locale` union, routing, sitemap, hreflang, llms endpoints, and the
+// locale switcher all follow automatically.
+//
+// Localized slugs: a page's `slug` (in the `pages` map below) may be a plain
+// string (same path everywhere) OR a `{ [code]: string }` object for per-locale
+// paths — e.g. `{ en: "/legal", fr: "/mentions-legales" }`.
 
-export const defaultLocale = "en";
+export const i18n = {
+  /** Registered languages. Row order is the locale-switcher menu order. */
+  locales: [
+    { code: "en", label: "English", abbr: "EN", dir: "ltr" },
+    { code: "fr", label: "Français", abbr: "FR", dir: "ltr" },
+  ],
+  /** The unprefixed locale, served at bare paths (`/`, `/blog`). */
+  defaultLocale: "en",
+  /**
+   * How the locale appears in the URL (next-intl `localePrefix`):
+   *   - "as-needed" — default locale unprefixed (`/`, `/blog`); others get
+   *     `/<code>` (`/fr/blog`). The usual choice.
+   *   - "always"    — every locale prefixed (`/en`, `/fr`).
+   *   - "never"     — no prefixes; active locale tracked by cookie only.
+   */
+  localePrefix: "as-needed",
+  /**
+   * On a first visit to `/`, redirect to the visitor's browser language
+   * (Accept-Language) when it's one of `locales`. Their explicit choice (the
+   * NEXT_LOCALE cookie) always wins afterwards. `false` = always serve the
+   * default locale until the user picks one.
+   */
+  localeDetection: true,
+} as const satisfies {
+  locales: readonly LocaleConfig[];
+  defaultLocale: string;
+  localePrefix: "as-needed" | "always" | "never";
+  localeDetection: boolean;
+};
 
-/** Just the codes — used in 5 places, worth the one-line derivation. */
+// ── Flat aliases + derived helpers (stable public API) ────────
+
+export const locales = i18n.locales;
+
+/**
+ * The unprefixed locale. The `: Locale` annotation fails the build if
+ * `i18n.defaultLocale` ever names a code that isn't registered above.
+ */
+export const defaultLocale: Locale = i18n.defaultLocale;
+
+/** Just the codes — the common case, worth the one-line derivation. */
 export const localeCodes = locales.map((l) => l.code) as readonly Locale[];
+
+/** O(1) `code → config` lookup. Replaces scattered `locales.find(...)` calls. */
+export const localeMap = Object.fromEntries(locales.map((l) => [l.code, l])) as Record<
+  Locale,
+  LocaleConfig
+>;
+
+/** Whether `code` is the default (unprefixed) locale. */
+export const isDefaultLocale = (code: Locale): boolean => code === defaultLocale;
+
+/**
+ * The URL path prefix for a locale, honouring `i18n.localePrefix`:
+ *   never → `""` · always → `"/<code>"` · as-needed → `""` for the default
+ * else `"/<code>"`. Used for manual URL building (sitemap, the llms head
+ * link); next-intl drives the live routing itself.
+ */
+export const localePrefix = (code: Locale): string => {
+  // Cast off the `as const` literal so all three modes stay reachable
+  // (the value is already constrained by the `satisfies` on `i18n`).
+  const mode = i18n.localePrefix as string;
+  if (mode === "never") return "";
+  if (mode === "always") return `/${code}`;
+  return isDefaultLocale(code) ? "" : `/${code}`;
+};
+
+/** Text direction for a locale — falls back to `"ltr"` for unknown codes. */
+export const localeDir = (code: Locale): "ltr" | "rtl" => localeMap[code]?.dir ?? "ltr";
 
 // 4. ─── features ─────────────────────────────────────────────
 
 export const features = {
-  /** Enables `/llms.txt`. */
-  llmsTxt: true,
+  /**
+   * LLM discovery endpoints — each gated independently so you can ship the
+   * short index without the heavy full dump, etc.
+   *   index → `/llms.txt`   full → `/llms-full.txt`   pages → `/llms/<id>`
+   */
+  llms: {
+    index: true,
+    full: true,
+    pages: true,
+  },
+  /**
+   * RSS 2.0 feed at `/blog/rss.xml` + its `<link rel="alternate">` discovery
+   * tags. Requires `blog` (the feed lists blog posts) — `blog: false` hides it
+   * regardless. Gated via `isRssEnabled()` in `@/lib/feature-gate`.
+   */
+  rss: true,
+  /**
+   * `/sitemap.xml`. When off, the route serves an empty sitemap AND
+   * `robots.txt` stops advertising it. Leave on for SEO unless intentionally
+   * hiding a site from crawlers.
+   */
+  sitemap: true,
+  /**
+   * All JSON-LD structured data — Organization/LocalBusiness + WebSite
+   * (site-wide) and WebPage + FAQPage (per page). When off, `<PageSchemas>`
+   * and the layout's site schema emit nothing. Leave on for rich results.
+   */
+  structuredData: true,
   /** Shows the locale switcher in the header. */
   localeSwitcher: true,
   /**
@@ -191,16 +364,79 @@ export const features = {
    */
   cookieBanner: false,
   /** Enables `/legal` — privacy + cookies + terms page. */
-  legalPage: false,
+  legalPage: true,
   /**
-   * Enables `/blog` + `/blog/[slug]` — Sanity-powered article list and
-   * detail pages. When OFF, both routes 404 (and sitemap / llms.txt drop
-   * the blog entry via `pages.blog.enabled`). The Sanity Studio at
-   * `/studio` stays available regardless — content authors can keep
-   * editing while the public route is hidden.
+   * Per-page FAQ. Content lives in `messages.pages.<id>.faq` (a translated
+   * `{ question, answer }` array). When on, any page that mounts `<Faq>` shows
+   * the accordion AND automatically gets FAQPage JSON-LD + an llms.txt FAQ
+   * block — see `@/lib/faq`. Off = no FAQ renders and the schema/llms blocks
+   * are dropped everywhere.
+   */
+  faq: true,
+  /**
+   * The public, Sanity-powered blog surface. When OFF, every public blog
+   * route 404s and drops out of discovery — nothing blog-related renders:
+   *   - Routes: `/blog`, `/blog/[slug]`, `/blog/category` + `/[slug]`,
+   *     `/blog/tag` + `/[slug]`, `/author` + `/[slug]`
+   *   - Feeds/exports: `/blog/rss.xml`, `/blog/[slug]/md`
+   *   - Discovery: sitemap + llms.txt entries (via `pages.*.enabled`),
+   *     the header `/blog` nav link
+   *   - `<SanityLive>` (revalidates public blog pages on content change)
+   *
+   * Route gating is centralized in `@/lib/feature-gate`
+   * (`requireBlogRoute` / `isBlogRouteEnabled`) — a single source of truth
+   * so a new blog route can't forget the check.
+   *
+   * The editing surface (Studio at `/studio` + draft-mode preview) is
+   * gated SEPARATELY by `features.studio` below — editors can keep the
+   * Studio while the public blog is hidden, or vice versa.
    */
   blog: true,
+  /**
+   * The Sanity editing surface — the embedded Studio at `/studio` plus the
+   * draft-mode preview API (`/api/draft-mode/enable` + `/disable`) its
+   * Presentation tool drives. Independent of `features.blog`: turn this OFF
+   * to 404 the Studio (e.g. lock editing on a frozen production site)
+   * without touching the public blog, or leave it ON with `blog: false` so
+   * authors keep working while the public surface is hidden.
+   */
+  studio: true,
+  /**
+   * Site-wide maintenance mode. When ON, `proxy.ts` rewrites every public
+   * request to `/maintenance` with a `503` (so crawlers treat the outage as
+   * temporary, not a dead site). The Studio (`/studio`) and metadata routes
+   * (robots/sitemap/icons) stay reachable — the matcher excludes them — so
+   * editors keep working while visitors see the maintenance page.
+   */
+  maintenance: false,
 } as const;
+
+/**
+ * Theme availability — which color modes the site offers and whether it's
+ * locked to one. Consumed via `@/lib/theme`, which turns these flags into
+ * next-themes provider props and decides whether the toggle renders.
+ *
+ * Common setups:
+ *   - Light + dark + system (default):  { light: true,  dark: true,  system: true,  forced: null }
+ *   - Light only (no toggle):           { light: true,  dark: false, system: false, forced: null }
+ *   - Locked to dark (no toggle):       {                                            forced: "dark" }
+ *
+ * `forced` wins over everything: it paints one theme site-wide and hides the
+ * toggle. Otherwise the toggle offers `light`/`dark` (whichever are on), plus
+ * a "System" (follow-OS) option when `system` is on AND both themes exist.
+ * The toggle auto-hides whenever only one option remains.
+ */
+export const themeConfig: {
+  light: boolean;
+  dark: boolean;
+  system: boolean;
+  forced: ThemeName | null;
+} = {
+  light: true,
+  dark: true,
+  system: true,
+  forced: null,
+};
 
 /**
  * Third-party tracking. Empty string = disabled (no script injected,
@@ -220,7 +456,18 @@ export const headerNav: readonly NavLink[] = [
   // intentionally stay out of the primary nav to avoid clutter.
   ...(features.blog ? [{ labelKey: "blog" as const, href: "/blog" as const }] : []),
 ];
-export const footerNav: readonly NavGroup[] = [];
+export const footerNav: readonly NavGroup[] = [
+  // Legal link — only shown when `features.legalPage` is on, mirroring the
+  // route's own `notFound()` gate so nav and routing can never disagree.
+  ...(features.legalPage
+    ? [
+        {
+          labelKey: "company" as const,
+          links: [{ labelKey: "legal" as const, href: "/legal" as const }],
+        },
+      ]
+    : []),
+];
 
 // 6. ─── seoDefaults ──────────────────────────────────────────
 
@@ -277,12 +524,18 @@ export const llms = {
  *
  *   - title           → messages key `pages.<id>.title`
  *   - description     → messages key `pages.<id>.description`
- *   - og image        → `/brand/og-<id>.png` (place a file there per page)
+ *   - keywords        → messages key `pages.<id>.keywords` (comma-separated,
+ *                       translated per locale; omit the key for no keywords)
+ *   - og image        → dynamic `/opengraph-image` card (override per page
+ *                       with `seo.openGraph.imageUrl`, e.g. `/brand/og-<id>.png`)
  *   - canonical       → `${site.url}${slug}` (locale-aware)
  *   - robots          → `seoDefaults.robots` (override via `seo.noindex` etc.)
  *
- * So each page entry usually only needs `key`, `id`, `slug`, and
- * `seo.keywords`. Override anything by setting it in `seo`.
+ * So each page entry usually only needs `key`, `id`, `slug`. All human-facing
+ * SEO text (title, description, keywords) is translated in `messages`; only
+ * structural/non-text overrides live here under `seo`. A `slug` may be a
+ * `{ [locale]: string }` object for per-locale paths (e.g.
+ * `{ en: "/legal", fr: "/mentions-legales" }`).
  */
 export const pages = {
   home: {
@@ -290,7 +543,9 @@ export const pages = {
     id: "home",
     slug: "/",
     seo: {
-      keywords: ["next.js template", "indiecrafts", "config-first", "modular website"],
+      // Static hero card. Other pages fall back to the dynamic
+      // `/opengraph-image` route; drop a file + point `imageUrl` at it here.
+      openGraph: { imageUrl: "/brand/og-home.png" },
     },
   },
   legal: {
@@ -306,35 +561,23 @@ export const pages = {
     slug: "/blog",
     // Mirrors `features.blog` — sitemap + llms.txt + routing all gate off this.
     enabled: features.blog,
-    seo: {
-      keywords: ["blog", "articles", "indiecrafts"],
-    },
   },
   author: {
     key: "/author",
     id: "author",
     slug: "/author",
     enabled: features.blog,
-    seo: {
-      keywords: ["authors", "contributors", "writers"],
-    },
   },
   category: {
     key: "/blog/category",
     id: "category",
     slug: "/blog/category",
     enabled: features.blog,
-    seo: {
-      keywords: ["categories", "topics", "articles by topic"],
-    },
   },
   tag: {
     key: "/blog/tag",
     id: "tag",
     slug: "/blog/tag",
     enabled: features.blog,
-    seo: {
-      keywords: ["tags", "topics", "articles by tag"],
-    },
   },
 } as const satisfies Record<string, PageConfig>;
