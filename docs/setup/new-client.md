@@ -148,7 +148,7 @@ Until `site.url` is changed from `PLACEHOLDER_SITE_URL`, `isSiteConfigured` is `
 theme = {
   hexColors: { brand, brandForeground, background, foreground },  // hex mirror for the PWA manifest (no oklch)
   colors: { brand, brandForeground, ... },                        // CSS vars (oklch ok here)
-  fonts: { sans, mono },
+  fonts: { display, sans, mono },                                 // CSS-var *names* (the typefaces are picked below)
   radii: { sm, md, lg, xl },
   container: { maxWidth, gutter },
 }
@@ -156,9 +156,25 @@ theme = {
 
 Keep `hexColors` in sync with `colors` for the brand/foreground pair — the PWA manifest (`app/manifest.ts`) reads `hexColors` for its `theme_color`/`background_color`, and the manifest spec can't take oklch.
 
+Theme **modes** (light / dark / system / forced) are a separate `themeConfig` object — set `forced: "light"` to lock a single mode, etc. See [`../config/theme-modes.md`](../config/theme-modes.md).
+
 After any theme change, run `pnpm verify:contrast` to confirm WCAG AA holds on the new palette.
 
-### 5.3 — `locales`
+### 5.3 — `fonts` (typeface pairing)
+
+Two parts:
+
+- **`config.fonts`** (top-level in `src/config/index.ts`) picks one registered font per role — `{ display, body, mono }`. Swapping the whole pairing is one line.
+- **The registry** (`src/lib/fonts.ts`) is where each font is actually loaded via `next/font` (Google or self-hosted local `.woff2`). The template ships **Satoshi** (local, display) + **Geist** / **Geist Mono** (Google).
+
+```ts
+// src/config/index.ts
+fonts = { display: "satoshi", body: "geist", mono: "geist-mono" };
+```
+
+Change the pairing only (both already registered): edit `config.fonts` — e.g. `display: "geist"` for a single-face look. **Add a new font:** register it in `src/lib/fonts.ts` (a `Google(...)` or `localFont(...)` call), add its key to `FontKey` in `src/config/types.ts`, drop any `.woff2` in `src/assets/fonts/`, then name it in `config.fonts`. Full guide: [`../design/typography.md`](../design/typography.md).
+
+### 5.4 — `locales`
 
 ```ts
 locales = [
@@ -170,7 +186,7 @@ defaultLocale = "en";
 
 Monolingual client? Strip the row + delete `messages/fr.json`. Multilingual with a new language? Add the row + drop `messages/<code>.json`.
 
-### 5.4 — `features` flags
+### 5.5 — `features` flags
 
 ```ts
 features = {
@@ -190,7 +206,7 @@ features = {
 
 Turning `blog: false` drops every blog route from routing, sitemap, llms.txt, and the header. `/studio` is gated **separately** by `features.studio`, so leaving `studio: true` keeps editors working while the public blog is hidden.
 
-### 5.5 — `analytics`
+### 5.6 — `analytics`
 
 ```ts
 analytics = { googleAnalyticsId: "" }; // empty = no script loaded
@@ -198,19 +214,19 @@ analytics = { googleAnalyticsId: "" }; // empty = no script loaded
 
 Outside the EU you can leave the cookie banner off and the script loads unconditionally. Inside the EU, flip `cookieBanner: true` and the script only fires after consent.
 
-### 5.6 — `headerNav`
+### 5.7 — `headerNav`
 
 Already wired — only displays Home + Blog when `features.blog` is on. Add more entries by extending the array and the `AppPathname` union in `src/config/types.ts`.
 
-### 5.7 — `pages.*`
+### 5.8 — `pages.*`
 
 One entry per static route. Each has `key`, `id`, `slug`, optional `enabled`, optional `seo.keywords`. Defaults derive title + description + OG image from the page id; override via `seo.titleKey` / `seo.descriptionKey` / `seo.openGraph.imageUrl` if needed.
 
-### 5.8 — `seoDefaults`
+### 5.9 — `seoDefaults`
 
 `titleTemplate`, robot rules, OG type/siteName, twitter card, Search Console verification codes (empty by default).
 
-### 5.9 — `globalSchemas`
+### 5.10 — `globalSchemas`
 
 Extra site-wide JSON-LD beyond `Organization` + `WebSite` (which are always emitted). Pulled into the layout's `@graph`. Cookbook at [`../seo/structured-data-cookbook.md`](../seo/structured-data-cookbook.md).
 
@@ -403,20 +419,22 @@ Robots:
 
 ## 11. Quick reference — what to edit when
 
-| Want to change                                           | File                                                                                                                                |
-| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Brand name, URL, colors, social, contact                 | `src/config/index.ts:site` + `theme`                                                                                                |
-| Locales                                                  | `src/config/index.ts:locales` + `messages/<code>.json`                                                                              |
-| Feature flags (blog, cookies, legal page)                | `src/config/index.ts:features`                                                                                                      |
-| Header nav items                                         | `src/config/index.ts:headerNav`                                                                                                     |
-| Site-wide SEO defaults                                   | `src/config/index.ts:seoDefaults`                                                                                                   |
-| Static page list                                         | `src/config/index.ts:pages` + add the matching route folder under `src/app/[locale]/`                                               |
-| Marketing home copy                                      | `messages/<locale>.json:pages.home.*`                                                                                               |
-| Blog chrome copy                                         | `messages/<locale>.json:pages.blog.*`                                                                                               |
-| Blog content (posts, authors, categories, tags, layouts) | Sanity Studio at `/studio`                                                                                                          |
-| Sanity Studio language / labels                          | `src/features/blog/sanity/schema/**` (already in French)                                                                            |
-| Add a new static route                                   | New folder under `src/app/[locale]/<seg>/`, entry in `pages`, key in `AppPathname`, message keys                                    |
-| Add a new section to the home                            | Copy a section file from `../indiecrafts-library` into `src/user-interface/sections/`, mount in `(home)/page.tsx`, add message keys |
+| Want to change                                           | File                                                                                                                                         |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Brand name, URL, colors, social, contact                 | `src/config/index.ts:site` + `theme`                                                                                                         |
+| Fonts / typefaces                                        | `src/config/index.ts:fonts` (pairing) + `src/lib/fonts.ts` (registry)                                                                        |
+| Theme modes (light/dark/forced)                          | `src/config/index.ts:themeConfig`                                                                                                            |
+| Locales                                                  | `src/config/index.ts:locales` + `messages/<code>.json`                                                                                       |
+| Feature flags (blog, cookies, legal page)                | `src/config/index.ts:features`                                                                                                               |
+| Header nav items                                         | `src/config/index.ts:headerNav`                                                                                                              |
+| Site-wide SEO defaults                                   | `src/config/index.ts:seoDefaults`                                                                                                            |
+| Static page list                                         | `src/config/index.ts:pages` + add the matching route folder under `src/app/[locale]/`                                                        |
+| Marketing home copy                                      | `messages/<locale>.json:pages.home.*`                                                                                                        |
+| Blog chrome copy                                         | `messages/<locale>.json:pages.blog.*`                                                                                                        |
+| Blog content (posts, authors, categories, tags, layouts) | Sanity Studio at `/studio`                                                                                                                   |
+| Sanity Studio language / labels                          | `src/features/blog/sanity/schema/**` (already in French)                                                                                     |
+| Add a new static route                                   | New folder under `src/app/[locale]/<seg>/`, entry in `pages`, key in `AppPathname`, message keys                                             |
+| Add a new section to the home                            | Copy a section file from `../indiecrafts-library` into `src/user-interface/homepage/sections/`, mount in `(home)/page.tsx`, add message keys |
 
 ---
 
