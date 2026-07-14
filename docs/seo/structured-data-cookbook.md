@@ -4,18 +4,32 @@ Copy-paste JSON-LD recipes. Drop site-wide entries into `globalSchemas` (`src/co
 
 The `@id` fields chain into `Organization` and `WebSite` so Google sees a single connected entity graph — keep the `@id` patterns intact when adapting.
 
+## What's already emitted (no config)
+
+Three schemas ship automatically — you only reach for this cookbook to add more:
+
+- **`Organization`** (or a LocalBusiness subtype — see [Business type](#business-type-the-site-entity)) + **`WebSite`** — emitted site-wide by `buildSiteSchemas()` in the locale layout (`src/app/[locale]/layout.tsx`).
+- **`WebPage`** — emitted per route by `<PageSchemas page={pages.<id>} locale={locale} />`, from the page's `messages.pages.<id>.*` tree.
+- **`FAQPage`** — auto-appended by `<PageSchemas>` when the page has a `faq` array in messages. See `docs/seo/faq.md`; don't hand-write one for content-driven FAQs.
+
+::: warning All JSON-LD is gated
+Every schema on this page — auto-emitted and per-page — is gated by `features.structuredData` (`config/index.ts`). When it's off, `buildSiteSchemas()` and `<PageSchemas>` emit nothing.
+:::
+
 ## Site-wide (`globalSchemas`)
 
 ### Multi-location agency / business
 
+For a single site-wide business, set `site.legal.businessType` instead (see [Business type](#business-type-the-site-entity)). Use per-location `LocalBusiness` entries only when the brand has several physical locations. The `buildLocalBusinessSchema` factory fills `@id` (from the `id` you pass) and wraps `geo`:
+
 ```ts
-import { site } from "@/config";
+import { buildLocalBusinessSchema } from "@/lib/seo/jsonld-factories";
 
 globalSchemas: [
-  {
-    "@type": "LocalBusiness",
-    "@id": `${site.url}#paris-office`,
+  buildLocalBusinessSchema({
+    id: "paris-office",
     name: "Acme Paris",
+    telephone: "+33-1-…",
     address: {
       "@type": "PostalAddress",
       streetAddress: "…",
@@ -23,9 +37,9 @@ globalSchemas: [
       postalCode: "75001",
       addressCountry: "FR",
     },
-    telephone: "+33-1-…",
-    openingHoursSpecification: ["Mo-Fr 09:00-18:00"],
-  },
+    geo: { latitude: 48.8566, longitude: 2.3522 },
+    openingHours: ["Mo-Fr 09:00-18:00"],
+  }),
 ];
 ```
 
@@ -93,7 +107,11 @@ globalSchemas: [
 
 ### FAQ — highest-ROI rich result
 
-Google renders Q&A directly under the search result. Add to any page with a FAQ section.
+Google renders Q&A directly under the search result.
+
+::: tip Prefer the content-driven path
+For FAQs that belong to a page, put the Q&A in `messages.pages.<id>.faq` and mount `<Faq pageId="…">` — `<PageSchemas>` then emits the FAQPage automatically, in sync with the on-page accordion and llms.txt. See `docs/seo/faq.md`. Use the manual factory below only for a FAQPage whose content isn't in the page's message tree, and never add both for the same page (you'd emit two FAQPage blocks).
+:::
 
 ```ts
 import { buildFAQPageSchema } from "@/lib/seo/jsonld-factories";
@@ -196,4 +214,20 @@ structuredData: [
 
 ## Business type — the site entity
 
-The site-wide `Organization` schema upgrades to a LocalBusiness subtype via `site.legal.businessType` (`config/index.ts`): `"Organization"` (default), `"LocalBusiness"`, `"ProfessionalService"`, `"Restaurant"`, `"Store"`, etc. Any non-`Organization` value additionally emits `geo`, `openingHours`, `priceRange`, and `areaServed` from `site.legal`. All JSON-LD is gated by `features.structuredData`.
+The site-wide `Organization` schema (`buildBusinessSchema` in `@/lib/seo/jsonld`, `@id` `${site.url}#organization`) upgrades to a LocalBusiness subtype via `site.legal.businessType` (`config/index.ts`). The type union (`BusinessType` in `config/types.ts`):
+
+```
+"Organization" (default) · "LocalBusiness" · "ProfessionalService"
+"HomeAndConstructionBusiness" · "LegalService" · "MedicalBusiness"
+"FinancialService" · "Store" · "Restaurant" · "FoodEstablishment"
+```
+
+`"Organization"` emits a neutral entity. **Any other value** additionally pulls these from `site.legal` — each dropped individually when left empty:
+
+- `geo` (both `latitude` + `longitude` required, or the block is dropped)
+- `openingHours`
+- `priceRange`
+- `areaServed` (emitted as `AdministrativeArea` entries)
+- `telephone` + `image` (the raster logo)
+
+So switching a client to a local/agency/practice type is a one-line config change plus filling in the `site.legal` fields — no code. All JSON-LD is gated by `features.structuredData`.

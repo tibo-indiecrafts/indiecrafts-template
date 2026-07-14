@@ -46,7 +46,6 @@ export default defineConfig({
           { text: "Feature flags", link: "/config/feature-flags" },
           { text: "i18n & routing", link: "/config/i18n-and-routing" },
           { text: "Theme modes", link: "/config/theme-modes" },
-          { text: "Migration (feature-based)", link: "/config/migration-feature-based" },
         ],
       },
       {

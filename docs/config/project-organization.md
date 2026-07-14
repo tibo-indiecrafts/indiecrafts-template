@@ -24,12 +24,12 @@ src/
 │       ├── sanity/       schema/ + queries.ts + types.ts + structure.ts + portable-to-markdown.ts
 │       └── lib/          route-gate.ts (blog route gating)
 │
-├── components/     SHARED, cross-feature UI
+├── parts/          SHARED, cross-feature UI
 │   ├── ui/             shadcn primitives (CLI-managed — see components.json)
 │   ├── layout/         production chrome: Header, Footer, ThemeToggle, CookieBanner…
 │   ├── sections/       marketing blocks: Features, Pricing, Faq, IconShowcase…
 │   ├── pages/          full-page composites: Error, NotFound, Maintenance
-│   └── BrandIcon.tsx   reicon-brands wrapper
+│   └── components/     adapted pieces (BrandIcon…) + shadcn `add` target
 │
 ├── config/         single source of truth (site, theme, fonts, i18n, features, pages…)
 ├── lib/            SHARED utilities/services: metadata, seo/, theme, fonts, logger, slugify, utils, faq, video-embed
@@ -44,11 +44,11 @@ src/
 1. **Used by exactly one feature → `features/<name>/`.** Blog views, its GROQ,
    its schema, its route-gating all live under `features/blog/`. Deleting a
    feature = deleting one folder.
-2. **Used site-wide or by ≥2 features → a shared top-level folder** (`components/`,
+2. **Used site-wide or by ≥2 features → a shared top-level folder** (`parts/`,
    `lib/`, `hooks/`, `config/`).
 3. **Routes stay in `app/`.** Next's App Router _is_ the routing layer; a
    `page.tsx` should be thin and import its heavy lifting from `features/*` or
-   `components/*`.
+   `parts/*`.
 
 ## `public/` vs `src/assets/`
 
@@ -58,24 +58,24 @@ src/
   `next/font/local`. Never URL-served images; never fonts in `public/`.
 
 (A `.tsx` that renders an `<svg>` is a **component**, not an asset — it lives in
-`components/`, not `assets/`.)
+`parts/`, not `assets/`.)
 
 ## Imports & conventions
 
 - Alias: `@/*` → `src/*`. No per-feature alias needed — `@/features/blog/...`
   resolves for free.
-- **No barrel files.** Import deep (`@/features/blog/components/DefaultPostLayout`),
-  not through an `index.ts`. A single barrel would taint on `route-gate`'s
-  `server-only` import and defeat tree-shaking.
+- **No barrel files.** Import deep (`@/features/blog/components/DefaultPostLayout`,
+  `@/parts/sections/Features`), not through an `index.ts`. A single barrel would
+  taint on `route-gate`'s `server-only` import and defeat tree-shaking.
 - Naming: `PascalCase.tsx` for components, `kebab-case.ts` for lib/util modules,
   matching the existing tree.
 - Never import from `next/link` / `next-intl/navigation` directly — use
-  `@/i18n/routing`. Never edit `components/ui/**` by hand (shadcn CLI-managed).
+  `@/i18n/routing`. Never edit `parts/ui/**` by hand (shadcn CLI-managed).
 
 ## Adding a new feature
 
 Mirror `features/blog/`: create `features/<name>/{components,lib,sanity?}`, add a
 `features.<name>` flag in `config`, gate its routes with a `require<Name>Route`
 helper in `features/<name>/lib`, and keep its `app/` routes thin. Shared pieces it
-needs (a new UI primitive, a generic util) go in `components/ui` or `lib/`, not in
-the feature.
+needs (a new UI primitive, a generic util) go in `parts/ui` or `lib/`, not in the
+feature.

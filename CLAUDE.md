@@ -46,7 +46,7 @@ Adding a doc: drop the `.md` in the right folder, add one sidebar line in `docs/
 ## Architecture
 
 Feature-based: shared code in flat top-level folders; each domain owns a
-`features/<name>/` folder. Full rationale in `docs/project-organization.md`.
+`features/<name>/` folder. Full rationale in `docs/config/project-organization.md`.
 
 ```
 src/config/index.ts        Pure data — site, theme, fonts, locales, features, navigation, seoDefaults, llms, pages, analytics
@@ -62,12 +62,12 @@ src/features/blog/         THE BLOG FEATURE (self-contained, gated by features.b
    sanity/                 schema/ + queries.ts + types.ts + structure.ts + portable-to-markdown.ts
    lib/route-gate.ts       requireBlogRoute / isBlogRouteEnabled / isRssEnabled
 
-src/components/            SHARED, cross-feature UI
+src/parts/                 SHARED, cross-feature UI
    ui/                     shadcn primitives (READ-ONLY, CLI-managed → components.json)
    layout/                 chrome: DefaultLayout, Header, Footer, ThemeToggle, CookieBanner…
    sections/               marketing blocks — copy targets from the sibling library
    pages/                  full-page composites (Error, NotFound, Maintenance)
-   BrandIcon.tsx           reicon-brands wrapper
+   components/BrandIcon.tsx  reicon-brands wrapper
 
 src/lib/                   SHARED utils/services
    metadata.ts             buildMetadata({ page, locale }) — inherits site → page
@@ -118,16 +118,16 @@ messages/<locale>.json     Single flat tree — chrome + pages.<id>.{title, desc
 
 Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, JSON-LD WebPage.
 
-## Adding a section to a route
+## Working with the library (shadcn/ui + `../indiecrafts-library`)
 
-The /app does NOT import the library at runtime — they're two separate repos. To add a section:
+Two building blocks feed the UI: **shadcn/ui** primitives (`src/parts/ui`, CLI-managed) and the sibling **`../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend:
 
-1. Open Storybook in the sibling library (`cd ../indiecrafts-library && pnpm storybook`).
-2. Find the variant you want. Copy its component file into `src/components/sections/<Name>.tsx`. If the upstream ships a multi-file folder (schema.ts + config.ts + en.json), flatten everything into one .tsx file as you copy. See `src/components/sections/Features.tsx` for the target shape.
-3. Drop the matching `en.json` content into `messages/<locale>.pages.<id>.blocks.<simpleName>` (drop -NN).
-4. Mount in the route's `page.tsx` with explicit `*Key` props pointing at the new keys.
+1. Browse the variant in Storybook (`cd ../indiecrafts-library && pnpm storybook`).
+2. Copy its file into `src/parts/sections/<Name>.tsx`. Flatten a multi-file folder (schema.ts + config.ts + en.json) into one `.tsx`, and rework it to template patterns: strings → `messages/`, colors/nav → `@/config`, links → `@/i18n/routing`. See `src/parts/sections/Features.tsx` for the target shape.
+3. Drop the matching copy into `messages/<locale>.pages.<id>.blocks.<simpleName>` (drop the -NN suffix).
+4. Mount in the route's `page.tsx`, passing a `namespace` (e.g. `pages.home.blocks.cta`) or `pageId` prop. Live pattern: `src/app/[locale]/(home)/page.tsx`.
 
-See `src/app/[locale]/(home)/page.tsx` for the live pattern.
+Never add the library as a workspace, dependency, or symlink — the decoupling is the design. When the library improves a component, re-copy by hand + re-run `pnpm verify:quick`.
 
 ## SEO + JSON-LD
 
@@ -135,7 +135,7 @@ See `src/app/[locale]/(home)/page.tsx` for the live pattern.
 
 1. `site.*` (brand, url, social)
 2. `seoDefaults.*` (titleTemplate, robots, OG type/siteName, twitter card, verification)
-3. Auto-derived from `page.id`: titleKey, descriptionKey, og:image=`/brand/og-<id>.png`, canonical
+3. Auto-derived from `page.id`: titleKey, descriptionKey, og:image=`/opengraph-image`, canonical
 4. `page.seo.*` overrides
 
 `buildMetadata({ page, locale })` (`@/lib/metadata`) composes the chain. Layout uses `generateMetadata` so site-wide metadata is also locale-aware.
@@ -214,12 +214,6 @@ To wire Sanity to your project, set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBL
 - `next/og` (Satori) doesn't understand oklch → keep `theme.hexColors` in sync with `theme.colors` for the brand/foreground pairs.
 - `<html lang>` + `dir` from active locale. `SkipLink` first in body, targets `#main`. Layouts render exactly one `<main id="main" tabIndex={-1}>`. Sections: `<section aria-labelledby="…">`. Icons `aria-hidden="true"` unless they're the sole label. Respect `prefers-reduced-motion`.
 
-## Relationship to the library
-
-- The library at `../indiecrafts-library` is a Storybook-only browse surface. The /app has **zero runtime imports** from it.
-- Workflow when the library improves a component: re-copy the file by hand, re-run `pnpm verify:quick`.
-- Don't add the library as a workspace, dependency, or symlink — keeping them decoupled is the design.
-
 ## Critical rules (the NEVERs)
 
 - NEVER commit `.env*` (only `.env.example`).
@@ -227,7 +221,7 @@ To wire Sanity to your project, set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBL
 - NEVER import from `next/link` or `next-intl/navigation` — use `@/i18n/routing`.
 - NEVER inline user-facing strings — every visible string lives in `messages/<locale>.json`.
 - NEVER add `as any` — fix the type, or eslint-disable with a one-line reason.
-- NEVER edit `src/components/ui/**` (shadcn — managed via CLI).
+- NEVER edit `src/parts/ui/**` (shadcn — managed via CLI).
 - NEVER depend on `../indiecrafts-library` at runtime — it's browse-only, copy what you need.
 - NEVER swallow errors — `logger.error(...)` minimum.
 - NEVER set state inside `useEffect` to mark hydration — use `useSyncExternalStore`.

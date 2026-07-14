@@ -26,7 +26,7 @@ features:
     link: /design/sections
   - title: Blog (Sanity)
     details: Studio setup, editor guide, and the page-builder architecture.
-    link: /blog/sanity-setup
+    link: /features/blog/sanity-setup
   - title: Client intake forms
     details: Fill-in questionnaires to send to clients for their SEO, business, and FAQ content.
     link: /client-intake/1-seo-content

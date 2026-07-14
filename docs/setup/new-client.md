@@ -4,9 +4,9 @@ How to fork this template for a new client site, including Sanity wiring. Read t
 
 Companion docs:
 
-- `docs/sanity-setup.md` — full Sanity Studio bring-up + smoke tests
-- `docs/sanity-tokens.md` — how to mint Viewer / Editor tokens
-- `docs/structured-data-cookbook.md` — per-page JSON-LD recipes
+- [`../features/blog/sanity-setup.md`](../features/blog/sanity-setup.md) — full Sanity Studio bring-up + smoke tests
+- [`../features/blog/sanity-tokens.md`](../features/blog/sanity-tokens.md) — how to mint Viewer / Editor tokens
+- [`../seo/structured-data-cookbook.md`](../seo/structured-data-cookbook.md) — per-page JSON-LD recipes
 
 ---
 
@@ -66,7 +66,7 @@ pnpm dlx sanity@latest tokens add "Editor (seed only)" --project-id <ID> --role 
 
 Copy the `sk_…` strings out of each JSON response — they're shown ONCE.
 
-> Need detail on tokens (web UI path, CI, rotation)? See `docs/sanity-tokens.md`.
+> Need detail on tokens (web UI path, CI, rotation)? See [`../features/blog/sanity-tokens.md`](../features/blog/sanity-tokens.md).
 
 ### Whitelist your dev origin (CORS)
 
@@ -174,15 +174,21 @@ Monolingual client? Strip the row + delete `messages/fr.json`. Multilingual with
 
 ```ts
 features = {
-  llmsTxt: true, // /<locale>/llms.txt + /<locale>/llms/<id>
+  llms: { index: true, full: true, pages: true }, // /llms.txt · /llms-full.txt · /llms/<id>
+  rss: true, // /blog/rss.xml (requires blog)
+  sitemap: true, // /sitemap.xml
+  structuredData: true, // all JSON-LD (Organization/WebSite/WebPage/FAQ)
   localeSwitcher: true, // header locale picker (auto-hides at 1 locale)
   cookieBanner: false, // GA Consent Mode banner — turn ON for EU + GA
-  legalPage: false, // /legal route
-  blog: true, // /blog, /author, /blog/tag, /blog/category routes + Sanity studio
+  legalPage: true, // /legal route
+  faq: true, // per-page FAQ accordion + FAQPage JSON-LD
+  blog: true, // public blog surface — /blog, /author, /blog/tag, /blog/category
+  studio: true, // Sanity Studio at /studio + draft-mode preview (independent of blog)
+  maintenance: false, // site-wide 503 maintenance page (see maintenance-mode.md)
 };
 ```
 
-Turning `blog: false` drops every blog route from routing, sitemap, llms.txt, and the header — and `/studio` keeps working for content prep.
+Turning `blog: false` drops every blog route from routing, sitemap, llms.txt, and the header. `/studio` is gated **separately** by `features.studio`, so leaving `studio: true` keeps editors working while the public blog is hidden.
 
 ### 5.5 — `analytics`
 
@@ -206,7 +212,7 @@ One entry per static route. Each has `key`, `id`, `slug`, optional `enabled`, op
 
 ### 5.9 — `globalSchemas`
 
-Extra site-wide JSON-LD beyond `Organization` + `WebSite` (which are always emitted). Pulled into the layout's `@graph`. Cookbook at `docs/structured-data-cookbook.md`.
+Extra site-wide JSON-LD beyond `Organization` + `WebSite` (which are always emitted). Pulled into the layout's `@graph`. Cookbook at [`../seo/structured-data-cookbook.md`](../seo/structured-data-cookbook.md).
 
 ---
 
@@ -370,7 +376,7 @@ pnpm verify            # full gate: tsc + lint + format + contrast (CI runs this
 pnpm build             # prerenders every static route × locale
 ```
 
-Walk the smoke test from `docs/sanity-setup.md` once.
+Walk the smoke test from [`../features/blog/sanity-setup.md`](../features/blog/sanity-setup.md) once.
 
 ---
 

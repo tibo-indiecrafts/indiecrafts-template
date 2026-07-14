@@ -14,28 +14,28 @@ Companion docs:
 
 Every blog route lives under `src/app/[locale]/`:
 
-| URL                                | File                              | What it does                                                                                                                                                   |
-| ---------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/<locale>/blog`                   | `blog/page.tsx`                   | Frontpage. Hero card grid + ExploreCategories + ExploreTags + TopAuthors. Empty-state falls back to `BlogListing`. Never module-driven (chrome stays uniform). |
-| `/<locale>/blog/<slug>`            | `blog/[slug]/page.tsx`            | Post detail. Module-driven if `blog.postModules.length > 0`, otherwise falls back to `DefaultPostLayout`.                                                      |
-| `/<locale>/blog/<slug>/md`         | `blog/[slug]/md/route.ts`         | Markdown export (YAML frontmatter + PortableText → Markdown via `src/sanity/portable-to-markdown.ts`).                                                         |
-| `/<locale>/blog/rss.xml`           | `blog/rss.xml/route.ts`           | RSS 2.0, locale-filtered.                                                                                                                                      |
-| `/<locale>/blog/category`          | `blog/category/page.tsx`          | Category listing (all topics with at least one post in the locale).                                                                                            |
-| `/<locale>/blog/category/<slug>`   | `blog/category/[slug]/page.tsx`   | Single category — posts filtered by `categories[]->_ref`.                                                                                                      |
-| `/<locale>/blog/tag`               | `blog/tag/page.tsx`               | Tag listing.                                                                                                                                                   |
-| `/<locale>/blog/tag/<slug>`        | `blog/tag/[slug]/page.tsx`        | Single tag.                                                                                                                                                    |
-| `/<locale>/author`                 | `author/page.tsx`                 | Author listing.                                                                                                                                                |
-| `/<locale>/author/<slug>`          | `author/[slug]/page.tsx`          | Author profile + their posts. NOT locale-filtered on the document (authors are global); posts on the profile are.                                              |
-| `/api/draft-mode/{enable,disable}` | `api/draft-mode/.../route.ts`     | Preview toggles. 503 when `SANITY_API_READ_TOKEN` is unset.                                                                                                    |
-| `/studio/[[...tool]]`              | `app/studio/[[...tool]]/page.tsx` | Embedded Sanity Studio. Sits **outside** `[locale]/` because Studio owns its own HTML shell.                                                                   |
+| URL                                | File                              | What it does                                                                                                                                                                  |
+| ---------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/<locale>/blog`                   | `blog/page.tsx`                   | Frontpage. Hero card grid + ExploreCategories + ExploreTags + TopAuthors. Empty-state falls back to `BlogListing`. Never module-driven (chrome stays uniform).                |
+| `/<locale>/blog/<slug>`            | `blog/[slug]/page.tsx`            | Post detail. Module-driven if `blog.postModules.length > 0`, otherwise falls back to `DefaultPostLayout`.                                                                     |
+| `/<locale>/blog/<slug>/md`         | `blog/[slug]/md/route.ts`         | Markdown export (YAML frontmatter + PortableText → Markdown via `src/sanity/portable-to-markdown.ts`).                                                                        |
+| `/<locale>/blog/rss.xml`           | `blog/rss.xml/route.ts`           | RSS 2.0, locale-filtered.                                                                                                                                                     |
+| `/<locale>/blog/category`          | `blog/category/page.tsx`          | Category listing (all topics with at least one post in the locale).                                                                                                           |
+| `/<locale>/blog/category/<slug>`   | `blog/category/[slug]/page.tsx`   | Single category — posts filtered by `categories[]->_ref`.                                                                                                                     |
+| `/<locale>/blog/tag`               | `blog/tag/page.tsx`               | Tag listing.                                                                                                                                                                  |
+| `/<locale>/blog/tag/<slug>`        | `blog/tag/[slug]/page.tsx`        | Single tag.                                                                                                                                                                   |
+| `/<locale>/author`                 | `author/page.tsx`                 | Author listing.                                                                                                                                                               |
+| `/<locale>/author/<slug>`          | `author/[slug]/page.tsx`          | Author profile + their posts. NOT locale-filtered on the document (authors are global); posts on the profile are.                                                             |
+| `/api/draft-mode/{enable,disable}` | `api/draft-mode/.../route.ts`     | Preview toggles. Gated by **`features.studio`** (404 when off); `/enable` also 503s when `SANITY_API_READ_TOKEN` is unset.                                                    |
+| `/studio/[[...tool]]`              | `app/studio/[[...tool]]/page.tsx` | Embedded Sanity Studio. Gated by **`features.studio`**. Sits **outside** `[locale]/` (its own root layout at `app/studio/layout.tsx`) because Studio owns its own HTML shell. |
 
-All `/<locale>/blog/*` routes 404 when `features.blog === false` (see `src/config/index.ts`).
+All `/<locale>/blog/*` routes 404 when `features.blog === false`; the Studio + draft-mode surface is gated **independently** by `features.studio` (see `src/config/index.ts`). Public-route gating is centralized in `src/features/blog/lib/route-gate.ts` (`requireBlogRoute` for page components, `isBlogRouteEnabled` for route handlers). The RSS feed additionally requires `features.rss` (`isRssEnabled()`).
 
 ---
 
 ## 2. GROQ queries
 
-Defined in `src/sanity/queries.ts` and wired through `defineQuery` (typegen-ready). Every query that touches localized content filters by `$locale`.
+Defined in `src/features/blog/sanity/queries.ts` and wired through `defineQuery` (typegen-ready). Every query that touches localized content filters by `$locale`.
 
 ### Fragments (composed into queries)
 
@@ -99,13 +99,13 @@ const posts = await sanityFetchLive<PostListItem[]>({
 What this gives us:
 
 - **Live content**: when `<SanityLive />` is mounted in the layout (it is, when `features.blog === true`), the client subscribes to GROQ websocket updates. Edits in the Studio reflect on the live page within seconds without a redeploy.
-- **Draft mode awareness**: when `draftMode().isEnabled === true`, queries use the Sanity perspective `previewDrafts` and surface unpublished documents. The toggle is at `/api/draft-mode/{enable,disable}`.
+- **Draft mode awareness**: when `draftMode().isEnabled === true`, `sanityFetchLive` switches the Sanity perspective to `drafts` (from `published`) and surfaces unpublished documents. The toggle is at `/api/draft-mode/{enable,disable}` (gated by `features.studio`).
 
 `generateStaticParams` **cannot** call `sanityFetchLive` (it would attempt to read `draftMode()`, which isn't available during static analysis). Use the plain `client.fetch(query)` there. The existing `/blog/[slug]/page.tsx` follows this pattern — copy it when adding new dynamic routes.
 
 ---
 
-## 4. Schemas (`src/sanity/schema/`)
+## 4. Schemas (`src/features/blog/sanity/schema/`)
 
 ```
 schema/
@@ -145,7 +145,7 @@ schema/
 
 Object types embedded inside the singleton's `postModules` array or directly inside post body (`blockContent`'s `INLINE_MODULES` list).
 
-The catalog is the single source of truth in `src/sanity/schema/modules/index.ts`:
+The catalog is the single source of truth in `src/features/blog/sanity/schema/modules/index.ts`:
 
 ```ts
 export const MODULE_TYPES = [
@@ -172,12 +172,13 @@ export const MODULE_TYPES = [
 
 ## 5. Renderer
 
-The runtime mirrors the schema split:
+All runtime files live under `src/features/blog/components/modules/`. The runtime mirrors the schema split around a single map:
 
-- `ModuleRenderer.tsx` — `<Modules>` + `ModuleSwitch`. Switches on `_type` with TS exhaustiveness — adding a module type without wiring its case is a compile error. Used by the singleton's `postModules` slot.
-- `portable-text-components.tsx` — `portableComponents` object passed to `<PortableText>`. Maps every body primitive (block styles, list types, decorators, inline images, inline modules) to React. Used by post bodies + every other `blockContent` consumer (callout content, accordion items, etc.).
+- `registry.tsx` — the `SIMPLE_MODULES` map (`_type` → component), declared `satisfies { [K in SimpleModuleType]: SimpleRenderer<K> }` so a missing entry or drifted `_type` is a **compile error** (this is where TS exhaustiveness lives now). Exports `renderSimpleModule(module)` plus the two context-aware components (`BlogPostList`, `BlogPostContent`) that need extra render context.
+- `ModuleRenderer.tsx` — `<Modules>` + `ModuleSwitch`. Filters out `hidden` modules, special-cases the two context-aware types (`module.blog-post-list` needs the locale, `module.blog-post-content` needs the active `Post`), and delegates everything else to `renderSimpleModule`. Used by the singleton's `postModules` slot.
+- `portable-text-components.tsx` — `portableComponents` object passed to `<PortableText>`. Maps every body primitive (block styles, list types, decorators, inline images, inline modules) to React. Its inline-module `types` map is derived from the same `SIMPLE_MODULES` registry (via `INLINE_AWARE_COMPONENTS`), so post bodies and `postModules` render each module from one source. Used by post bodies + every other `blockContent` consumer (callout content, accordion items, etc.).
 
-Both maps delegate inline modules to the **same React components** — a `Callout` inside a post body looks identical to a `Callout` placed in `postModules`.
+Because both consumers pull from the same registry, a `Callout` inside a post body looks identical to a `Callout` placed in `postModules`.
 
 ---
 
@@ -198,7 +199,7 @@ Cross-locale 404 protection: `postBySlugQuery` filters on `coalesce(language, "e
 
 ## 7. Post detail layout — `DefaultPostLayout`
 
-When `blog.postModules` is empty (the seed's default), every post renders through `src/components/blog-components/DefaultPostLayout.tsx`. The design:
+When `blog.postModules` is empty (the seed's default), every post renders through `src/features/blog/components/DefaultPostLayout.tsx`. The design:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -254,7 +255,7 @@ Anything you build into `postModules` runs through `ModuleRenderer`, which means
 
 ## 8. Adding a module
 
-1. **Schema** — create `src/sanity/schema/modules/<name>.ts` using the `defineModule` helper:
+1. **Schema** — create `src/features/blog/sanity/schema/modules/<name>.ts` using the `defineModule` helper:
 
    ```ts
    import { defineField } from "sanity";
@@ -272,11 +273,11 @@ Anything you build into `postModules` runs through `ModuleRenderer`, which means
 
    `defineModule` auto-injects `anchor` + `hidden` fields.
 
-2. **Register** — import into `src/sanity/schema/modules/index.ts` and add to both `moduleSchemas` and `MODULE_TYPES`. The order in `MODULE_TYPES` controls how the Studio picker presents the options.
+2. **Register** — import into `src/features/blog/sanity/schema/modules/index.ts` and add to both `moduleSchemas` and `MODULE_TYPES`. The order in `MODULE_TYPES` controls how the Studio picker presents the options.
 
-3. **Type** — declare a `<Name>Module` discriminant in `src/sanity/types.ts` and add it to the `AnyModule` union. The compiler will then force you to handle the new `_type` in the renderer switch.
+3. **Type** — declare a `<Name>Module` discriminant in `src/features/blog/sanity/types.ts` and add it to the `AnyModule` union. The compiler will then force you to add the new `_type` to the renderer registry.
 
-4. **GROQ (only if you have refs)** — if the module references other docs, add a branch in `MODULES_FRAGMENT` (`src/sanity/queries.ts`):
+4. **GROQ (only if you have refs)** — if the module references other docs, add a branch in `MODULES_FRAGMENT` (`src/features/blog/sanity/queries.ts`):
 
    ```groq
    _type == "module.your-name" => {
@@ -284,11 +285,11 @@ Anything you build into `postModules` runs through `ModuleRenderer`, which means
    }
    ```
 
-5. **Component** — drop `src/components/blog-components/modules/<Name>.tsx`. Follow the existing pattern: `py-8 md:py-12` outer padding, content centred on `max-w-6xl` or `max-w-3xl` depending on whether it's wide or narrow.
+5. **Component** — drop `src/features/blog/components/modules/<Name>.tsx`. Follow the existing pattern: `py-8 md:py-12` outer padding, content centred on `max-w-6xl` or `max-w-3xl` depending on whether it's wide or narrow.
 
-6. **Renderer switch** — add the case in `ModuleRenderer.tsx`. Without this, TS will flag the missing case at build time.
+6. **Registry** — add the `_type` → component entry to `SIMPLE_MODULES` in `src/features/blog/components/modules/registry.tsx` (or, if the module needs the active `Post`/`locale`, special-case it in `ModuleRenderer.tsx` like `blog-post-content`/`blog-post-list`). The `satisfies` constraint on `SIMPLE_MODULES` flags the missing entry at build time.
 
-7. **Inline-embeddable?** — if editors should be able to drop this module directly inside a post body (not just inside `postModules`), add the `_type` string to `INLINE_MODULES` in `src/sanity/schema/blockContent.ts` **and** to the `types` map in `portable-text-components.tsx`.
+7. **Inline-embeddable?** — if editors should be able to drop this module directly inside a post body (not just inside `postModules`), add the `_type` string to `INLINE_MODULES` in `src/features/blog/sanity/schema/blockContent.ts` **and** to `INLINE_TYPES` in `portable-text-components.tsx`.
 
 ---
 
@@ -296,12 +297,12 @@ Anything you build into `postModules` runs through `ModuleRenderer`, which means
 
 The opposite of §8 — in this exact order to keep the build green:
 
-1. Remove the module's `_type` from `INLINE_MODULES` (`blockContent.ts`) **and** from the `types` map in `portable-text-components.tsx`.
-2. Remove the case from `ModuleRenderer.tsx`'s switch.
-3. Remove the `<Name>Module` type + the union member in `src/sanity/types.ts`.
+1. Remove the module's `_type` from `INLINE_MODULES` (`blockContent.ts`) **and** from `INLINE_TYPES` in `portable-text-components.tsx`.
+2. Remove the entry from `SIMPLE_MODULES` in `registry.tsx` (and any special-case in `ModuleRenderer.tsx`).
+3. Remove the `<Name>Module` type + the union member in `src/features/blog/sanity/types.ts`.
 4. Remove any branch from `MODULES_FRAGMENT`.
-5. Remove the import + array entry in `src/sanity/schema/modules/index.ts` (both `moduleSchemas` and `MODULE_TYPES`).
-6. Delete the schema file (`src/sanity/schema/modules/<name>.ts`) and the component file (`src/components/blog-components/modules/<Name>.tsx`).
+5. Remove the import + array entry in `src/features/blog/sanity/schema/modules/index.ts` (both `moduleSchemas` and `MODULE_TYPES`).
+6. Delete the schema file (`src/features/blog/sanity/schema/modules/<name>.ts`) and the component file (`src/features/blog/components/modules/<Name>.tsx`).
 
 **Live data hygiene** — existing instances of the removed module type may still be in your Sanity dataset:
 
@@ -316,12 +317,12 @@ The opposite of §8 — in this exact order to keep the build green:
 
 `<SanityLive />` is mounted in `src/app/[locale]/layout.tsx`, gated by `features.blog`. It opens a websocket subscription that re-fetches every `sanityFetchLive`-backed page when content changes. No redeploy needed.
 
-Draft mode (`draftMode().isEnabled === true`) switches the perspective to `previewDrafts`, surfacing the latest draft version of any document. Routes:
+Draft mode (`draftMode().isEnabled === true`) switches the perspective to `drafts`, surfacing the latest draft version of any document. Both routes are gated by **`features.studio`** (the editing surface they belong to) — 404 when that flag is off. Routes:
 
 - `/api/draft-mode/enable?sanity-preview-secret=<TOKEN>&sanity-preview-pathname=/en/blog/<slug>` — turns it on and redirects to the requested path
 - `/api/draft-mode/disable` — turns it off
 
-The `SANITY_API_READ_TOKEN` env var must be set for the enable route. Without it, it returns 503 with an actionable error message rather than 500 on every request.
+The `SANITY_API_READ_TOKEN` env var must be set for the enable route. Without it (but with `features.studio` on), it returns 503 with an actionable error message rather than 500 on every request.
 
 ---
 
