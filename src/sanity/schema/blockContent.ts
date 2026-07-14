@@ -7,7 +7,7 @@ import { defineArrayMember, defineType } from "sanity";
  * Editors can drop any of the 8 INLINE-EMBEDDABLE modules into a block
  * content array directly from the Studio "+" picker, mixed with normal
  * paragraphs and headings. The runtime PortableText renderer
- * (`@/components/blog-components/modules/portable-text-components`) maps
+ * (`@/features/blog/components/modules/portable-text-components`) maps
  * each module `_type` to its React component.
  *
  * Modules deliberately excluded from inline embedding:

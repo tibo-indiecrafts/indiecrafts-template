@@ -7,7 +7,7 @@ import { requireBlogRoute } from "@/lib/feature-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
-import { AuthorDetail } from "@/components/blog-components/AuthorDetail";
+import { AuthorDetail } from "@/features/blog/components/AuthorDetail";
 import { client } from "@/sanity/client";
 import { sanityFetchLive } from "@/sanity/live";
 import {

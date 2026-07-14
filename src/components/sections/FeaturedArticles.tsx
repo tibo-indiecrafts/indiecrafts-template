@@ -3,7 +3,7 @@ import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
 import { parseVideoEmbed } from "@/lib/video-embed";
 import type { PostListItem } from "@/sanity/types";
-import { PlayBadge } from "@/components/blog-components/PlayBadge";
+import { PlayBadge } from "@/features/blog/components/PlayBadge";
 
 /**
  * Homepage "editor's desk" — a curated strip of featured articles, laid out

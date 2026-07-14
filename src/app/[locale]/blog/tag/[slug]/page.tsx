@@ -6,7 +6,7 @@ import { requireBlogRoute } from "@/lib/feature-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
-import { TagDetail } from "@/components/blog-components/TagDetail";
+import { TagDetail } from "@/features/blog/components/TagDetail";
 import { client } from "@/sanity/client";
 import { sanityFetchLive } from "@/sanity/live";
 import { allTagSlugsQuery, postsByTagSlugQuery, tagBySlugQuery } from "@/sanity/queries";

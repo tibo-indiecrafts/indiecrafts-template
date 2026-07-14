@@ -5,11 +5,11 @@ import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
-import { BlogHero } from "@/components/blog-components/BlogHero";
-import { ExploreCategories } from "@/components/blog-components/ExploreCategories";
-import { ExploreTags } from "@/components/blog-components/ExploreTags";
-import { TopAuthors } from "@/components/blog-components/TopAuthors";
-import { BlogListing } from "@/components/blog-components/BlogListing";
+import { BlogHero } from "@/features/blog/components/BlogHero";
+import { ExploreCategories } from "@/features/blog/components/ExploreCategories";
+import { ExploreTags } from "@/features/blog/components/ExploreTags";
+import { TopAuthors } from "@/features/blog/components/TopAuthors";
+import { BlogListing } from "@/features/blog/components/BlogListing";
 import { sanityFetchLive } from "@/sanity/live";
 import {
   allPostsQuery,

@@ -7,8 +7,8 @@ import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/components/layout/DefaultLayout";
-import { DefaultPostLayout } from "@/components/blog-components/DefaultPostLayout";
-import { Modules } from "@/components/blog-components/modules/ModuleRenderer";
+import { DefaultPostLayout } from "@/features/blog/components/DefaultPostLayout";
+import { Modules } from "@/features/blog/components/modules/ModuleRenderer";
 import { client } from "@/sanity/client";
 import { sanityFetchLive } from "@/sanity/live";
 import {
