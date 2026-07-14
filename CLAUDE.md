@@ -22,41 +22,43 @@ Pre-push hook: `lint && tsc`. Pre-commit: `lint-staged`.
 
 ## Architecture
 
+Feature-based: shared code in flat top-level folders; each domain owns a
+`features/<name>/` folder. Full rationale in `docs/project-organization.md`.
+
 ```
-src/config/index.ts        Pure data — site, theme, locales, features, navigation, seoDefaults, llms, pages, globalSchemas, analytics
-src/config/types.ts        Types + helpers (definePage, isLocale, …)
+src/config/index.ts        Pure data — site, theme, fonts, locales, features, navigation, seoDefaults, llms, pages, analytics
+src/config/types.ts        Types + helpers (isLocale, FontRoles, …)
 
-src/app/layout/           Production chrome: DefaultLayout, Header, Footer, SkipLink, CookieBanner,
-                           Logo, LocaleSwitcher, ThemeToggle, ThemeProvider
-src/app/[locale]/<seg>/    One route per folder (page.tsx). Home = (home) route group.
-src/app/routes.ts          Auto-aggregates `pages` map → ROUTES + PATHNAMES
+src/app/                   ROUTES ONLY (thin page.tsx / route.ts)
+   [locale]/<seg>/         One route per folder (page.tsx). Home = (home) route group.
+   routes.ts               Auto-aggregates `pages` map → ROUTES + PATHNAMES
+   studio/  maintenance/   embedded Studio + maintenance page (own root layouts)
 
-src/components/
-   ui-primitives/          shadcn (READ-ONLY, CLI-managed)
-   sections/               Production sections — copy targets from the sibling library
-   pages/                  Full-page composites (Error, NotFound)
+src/features/blog/         THE BLOG FEATURE (self-contained, gated by features.blog)
+   components/             views, cards, hero, TOC + modules/ (page-builder renderers)
+   sanity/                 schema/ + queries.ts + types.ts + structure.ts + portable-to-markdown.ts
+   lib/route-gate.ts       requireBlogRoute / isBlogRouteEnabled / isRssEnabled
 
-src/hooks/                 Production hooks (use-mobile)
-src/lib/
-   scoped-t.ts             useScopedT for sections that take MessageKey overrides
+src/components/            SHARED, cross-feature UI
+   ui/                     shadcn primitives (READ-ONLY, CLI-managed → components.json)
+   layout/                 chrome: DefaultLayout, Header, Footer, ThemeToggle, CookieBanner…
+   sections/               marketing blocks — copy targets from the sibling library
+   pages/                  full-page composites (Error, NotFound, Maintenance)
+   svgs/                   brand/illustration SVG components
+   BrandIcon.tsx           reicon-brands wrapper
+
+src/lib/                   SHARED utils/services
    metadata.ts             buildMetadata({ page, locale }) — inherits site → page
-   logger.ts               Minimal logger — never use console.* directly
-   seo/
-     jsonld.tsx            Auto-emitted: Organization + WebSite + WebPage
-     jsonld-factories.tsx  On-demand: FAQ, Article, Service, Product, LocalBusiness, Person, Breadcrumb
-     page-markdown.ts      Backs /llms.txt + /llms-full.txt + /llms/<id>
+   fonts.ts                next/font registry (Geist google + Satoshi local) → --font-* vars
+   faq.ts  theme.ts  video-embed.ts  slugify.ts  logger.ts  utils.ts
+   seo/jsonld.tsx          Auto-emitted: Organization + WebSite + WebPage (+ FAQ)
+   seo/jsonld-factories.tsx  On-demand: Article, Service, Product, LocalBusiness, Person, Breadcrumb
+   seo/page-markdown.ts    Backs /llms.txt + /llms-full.txt + /llms/<id> (all pages)
 
-src/sanity/                Sanity client + Studio wiring
-   env.ts                  projectId / dataset / apiVersion (NEXT_PUBLIC_SANITY_*)
-   client.ts               Read client for RSC queries (useCdn: false)
-   Studio.tsx              "use client" wrapper around <NextStudio>
-   queries.ts              GROQ — allPostsQuery, postBySlugQuery, allPostSlugsQuery
-   types.ts                Post, PostListItem, AuthorRef, CategoryRef
-   image.ts                urlFor(source) — Sanity image URL builder
-   schema/                 post / author / category / blockContent
-
-sanity.config.ts           Studio config — registers schema types, plugins
-src/app/studio/            Embedded Studio at /studio (catch-all route)
+src/sanity/                CORE Sanity infra: client, live, env, token, image, Studio
+src/hooks/  src/i18n/  src/types/   shared hooks / routing / ambient types
+src/assets/fonts/          build-imported .woff2 (next/font/local). URL-served files → /public
+sanity.config.ts           Studio config — registers features/blog/sanity/schema + structure
 
 messages/<locale>.json     Single flat tree — chrome + pages.<id>.{title, description, blocks}
 ```
@@ -131,9 +133,9 @@ The template ships a Sanity-backed blog with a page-builder system **scoped to t
 - **`features.blog`** — the public surface. `false` ⇒ every public blog route 404s and drops from sitemap + llms.txt + header nav (see the flag list below).
 - **`features.studio`** — the editing surface (Studio at `/studio` + draft-mode preview). Independent of `features.blog`: keep the Studio on with `blog: false` so editors keep working while the public surface is hidden, or turn it off to lock editing on a frozen site.
 
-Public-blog route gating is centralized in `@/lib/feature-gate` — `requireBlogRoute(page)` for page components, `isBlogRouteEnabled(page)` for route handlers. Both fold in the `features.blog` flag **and** the page's `enabled` field, so a new blog route can't drift by checking only one.
+Public-blog route gating is centralized in `@/features/blog/lib/route-gate` — `requireBlogRoute(page)` for page components, `isBlogRouteEnabled(page)` for route handlers. Both fold in the `features.blog` flag **and** the page's `enabled` field, so a new blog route can't drift by checking only one.
 
-**Schemas** (in `src/sanity/schema/`):
+**Schemas** (in `src/features/blog/sanity/schema/`):
 
 | Surface      | Documents                                               | Objects                                     |
 | ------------ | ------------------------------------------------------- | ------------------------------------------- |
@@ -150,11 +152,11 @@ Public-blog route gating is centralized in `@/lib/feature-gate` — `requireBlog
 - **Inline-embeddable in post body + usable in `postModules`** (8): accordion-list, callout, card-list, custom-html, person-list, quote-list, stat-list, step-list
 - **`postModules`-only** (6): breadcrumbs, blog-index, blog-post-content, blog-post-list, prose, search
 
-The inline allowlist lives in `src/sanity/schema/blockContent.ts` (`INLINE_MODULES`). Removing a module = remove from both that list AND from the renderer's `types` map in `portable-text-components.tsx`.
+The inline allowlist lives in `src/features/blog/sanity/schema/blockContent.ts` (`INLINE_MODULES`). Removing a module = remove from both that list AND from the renderer's `types` map in `portable-text-components.tsx`.
 
-**Renderer**: `src/components/blog-components/modules/ModuleRenderer.tsx` switches on `_type` and hands off to one of 14 small components. Adding a module = new schema + new component + new case in the switch (TS exhaustiveness check enforces).
+**Renderer**: `src/features/blog/components/modules/ModuleRenderer.tsx` switches on `_type` and hands off to one of 14 small components. Adding a module = new schema + new component + new case in the switch (TS exhaustiveness check enforces).
 
-**Queries** (`src/sanity/queries.ts`) use `defineQuery` (typegen-ready). `MODULES_FRAGMENT` expands every reference per module type. Always fetch through `sanityFetchLive` (draft-mode aware) or `@/sanity/client` — never instantiate a new `createClient`.
+**Queries** (`src/features/blog/sanity/queries.ts`) use `defineQuery` (typegen-ready). `MODULES_FRAGMENT` expands every reference per module type. Always fetch through `sanityFetchLive` (draft-mode aware) or `@/sanity/client` — never instantiate a new `createClient`.
 
 **Live preview + draft mode**: `defineLive` in `src/sanity/live.ts`. `<SanityLive />` is mounted in the layout (only when feature flag is on). `/api/draft-mode/enable` + `/api/draft-mode/disable` toggle the perspective. Requires `SANITY_API_READ_TOKEN`.
 
@@ -164,12 +166,12 @@ The inline allowlist lives in `src/sanity/schema/blockContent.ts` (`INLINE_MODUL
 - `body` PortableText drives a Table of Contents (`<Toc>`) — h2/h3/h4 headings auto-fetched in GROQ via `pt::text()`.
 - `readTime` derived in GROQ (`length(string::split(...)) / 200`).
 - Article JSON-LD via `buildArticleSchema(...)`.
-- Markdown export at `/<locale>/blog/<slug>/md` — frontmatter + PortableText→Markdown serializer (`src/sanity/portable-to-markdown.ts`). Advertised via `<link rel="alternate" type="text/markdown">`.
+- Markdown export at `/<locale>/blog/<slug>/md` — frontmatter + PortableText→Markdown serializer (`src/features/blog/sanity/portable-to-markdown.ts`). Advertised via `<link rel="alternate" type="text/markdown">`.
 - RSS at `/<locale>/blog/rss.xml` (also advertised via alternate link).
 
 **`features.blog`** (public surface) gates:
 
-- All public routes via `@/lib/feature-gate`: `/blog`, `/blog/[slug]`, `/blog/category` + `/[slug]`, `/blog/tag` + `/[slug]`, `/author` + `/[slug]`, plus the `/blog/[slug]/md` + `/blog/rss.xml` handlers — 404 when off.
+- All public routes via `@/features/blog/lib/route-gate`: `/blog`, `/blog/[slug]`, `/blog/category` + `/[slug]`, `/blog/tag` + `/[slug]`, `/author` + `/[slug]`, plus the `/blog/[slug]/md` + `/blog/rss.xml` handlers — 404 when off.
 - `pages.{blog,author,category,tag}.enabled` mirror the flag — sitemap + llms.txt drop the entries automatically.
 - `headerNav` adds the `/blog` link only when on.
 - `<SanityLive />` only mounted when on (it revalidates public blog pages).
@@ -203,7 +205,7 @@ To wire Sanity to your project, set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBL
 - NEVER import from `next/link` or `next-intl/navigation` — use `@/i18n/routing`.
 - NEVER inline user-facing strings — every visible string lives in `messages/<locale>.json`.
 - NEVER add `as any` — fix the type, or eslint-disable with a one-line reason.
-- NEVER edit `src/components/ui-primitives/**` (shadcn — managed via CLI).
+- NEVER edit `src/components/ui/**` (shadcn — managed via CLI).
 - NEVER depend on `../indiecrafts-library` at runtime — it's browse-only, copy what you need.
 - NEVER swallow errors — `logger.error(...)` minimum.
 - NEVER set state inside `useEffect` to mark hydration — use `useSyncExternalStore`.

@@ -193,3 +193,7 @@ structuredData: [
 - **Validate before deploying.** Paste the rendered HTML into [Google's Rich Results Test](https://search.google.com/test/rich-results) to confirm Google parses your schema.
 - **One `@graph` per page.** The layout and `<PageSchemas>` already emit two `@graph` scripts (site-wide + per-page). Don't add a third — the existing structure lets Google connect entities via `@id`.
 - **Locale-aware fields.** `Organization.description` and `WebSite.description` are localized via `messages.<locale>.site.description`. Names/addresses/dates stay constant. Per-page WebPage schemas inherit `messages.<locale>.pages.<id>.*` automatically.
+
+## Business type — the site entity
+
+The site-wide `Organization` schema upgrades to a LocalBusiness subtype via `site.legal.businessType` (`config/index.ts`): `"Organization"` (default), `"LocalBusiness"`, `"ProfessionalService"`, `"Restaurant"`, `"Store"`, etc. Any non-`Organization` value additionally emits `geo`, `openingHours`, `priceRange`, and `areaServed` from `site.legal`. All JSON-LD is gated by `features.structuredData`.
