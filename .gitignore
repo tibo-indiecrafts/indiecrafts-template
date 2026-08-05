@@ -37,6 +37,9 @@ yarn-error.log*
 # local tooling state (not part of the repo)
 .claude/
 
+# codegraph — machine-local semantic index (opt-in dev tool; rebuild with `pnpm codegraph:init`)
+.codegraph/
+
 # vercel
 .vercel
 

@@ -1,22 +1,31 @@
 # indiecrafts.dev — CLAUDE.md
 
-Config-first, modular Next.js 16 template for client sites. Production-only — the Storybook component library lives in the sibling repo `../indiecrafts-library`.
+Config-first, modular template for client sites. Production-only — the Storybook
+component library is the sibling repo `../indiecrafts-library`.
 
-**Two briefs, two jobs:** this file (`CLAUDE.md`) is _how to code_ — architecture, conventions, workflow. **`DESIGN.md`** (repo root) is _how to design_ — the visual system (color roles, typography, spacing, motion). Read both; don't put visual tokens here or code rules there.
+**Stack:** Next.js 16 (App Router) · TypeScript (strict) · Tailwind v4 · shadcn/ui · Sanity · next-intl.
+
+**Top non-negotiables** (full list → [Critical rules](#critical-rules-the-nevers)):
+
+- Read from `@/config` — never hard-code brand strings, URLs, colors, or nav.
+- Route via `@/i18n/routing` — never `next/link` / `next-intl/navigation`.
+- User-facing strings live in `messages/<locale>.json` — never inline.
+- Don't edit `src/user-interface/ui/**` (shadcn CLI) or depend on the library at runtime.
+- `pnpm verify:quick` before every push.
+
+**Two briefs:** this file (`CLAUDE.md`) is _how to code_ — architecture, conventions, workflow. **`DESIGN.md`** (repo root) is _how to design_ — the visual token contract (color roles, type scale, spacing, elevation, motion). Read both; visual tokens never go here, code rules never go there.
 
 ## Working principles
 
-Behavioral guardrails against common LLM coding mistakes — bias toward caution over speed (use judgment on trivial tasks).
+Guardrails against common LLM coding mistakes — bias to caution over speed (use judgment on trivial tasks).
 
-**1. Think before coding.** Don't assume, don't hide confusion, surface tradeoffs. State assumptions explicitly; if uncertain, ask. Multiple interpretations → present them, don't pick silently. A simpler approach exists → say so; push back when warranted. Unclear → stop, name it, ask.
+**1. Think before coding.** State assumptions; if uncertain, ask. Multiple interpretations → present them, don't pick silently. Simpler approach exists → say so, push back when warranted. Unclear → stop, name it, ask.
 
-**2. Simplicity first.** Minimum code that solves the problem, nothing speculative. No features beyond what was asked; no abstractions for single-use code; no unrequested flexibility; no error handling for impossible scenarios. If 200 lines could be 50, rewrite. "Would a senior engineer call this overcomplicated?" → simplify.
+**2. Simplicity first.** Minimum code that solves the problem, nothing speculative — no unrequested features, abstractions, flexibility, or error handling for impossible cases. If 200 lines could be 50, rewrite.
 
-**3. Surgical changes.** Touch only what you must; clean up only your own mess. Don't "improve" adjacent code, comments, or formatting, or refactor what isn't broken — match existing style. Notice unrelated dead code → mention it, don't delete. Remove only the orphans (imports/vars/functions) your own changes made unused. The test: every changed line traces directly to the request.
+**3. Surgical changes.** Touch only what the request needs; match existing style; don't "improve" adjacent code, comments, or formatting. Notice unrelated dead code → mention it, don't delete. Every changed line traces directly to the request.
 
-**4. Goal-driven execution.** Define success criteria, loop until verified. Turn tasks into verifiable goals ("add validation" → "write tests for invalid inputs, then make them pass"; "fix the bug" → "write a failing repro, then make it pass"). Multi-step → a brief plan with a per-step verify. Strong criteria let you loop independently.
-
-Working if: fewer unnecessary changes in diffs, fewer rewrites from overcomplication, and clarifying questions come _before_ implementation, not after mistakes.
+**4. Goal-driven execution.** Turn tasks into verifiable goals (bug → failing repro, then fix; "add validation" → tests for bad input, then pass). Multi-step → brief plan + per-step verify, then loop until green.
 
 ## Commands
 
@@ -30,7 +39,7 @@ Pre-push hook: `lint && tsc`. Pre-commit: `lint-staged`.
 
 ## Documentation site (VitePress)
 
-Human-facing docs live in `docs/` as a standalone **VitePress** site — its own `docs/package.json` + `docs/.vitepress/config.mts`, **npm-managed and isolated** from the pnpm app (so VitePress deps never touch the app tree). `README.md`'s "Documentation" section indexes every page. Static build deploys to Vercel.
+Human-facing docs live in `docs/` as a standalone **VitePress** site — own `docs/package.json` + `docs/.vitepress/config.mts`, **npm-managed and isolated** from the pnpm app (deps never touch the app tree). Root scripts delegate via `npm --prefix docs`; `README.md` indexes every page; static build deploys to Vercel.
 
 ```bash
 pnpm docs:install          # once (npm install inside docs/)
@@ -38,18 +47,7 @@ pnpm docs                  # dev server → http://localhost:3002
 pnpm docs:build            # static output → docs/.vitepress/dist
 ```
 
-(Root scripts delegate to the isolated `docs/` npm package via `npm --prefix docs`.)
-
-Every `.md` under `docs/` is a page. Folders = cross-cutting topics plus per-feature docs:
-
-```
-docs/
-├── setup/ config/ design/ seo/   Cross-cutting topic guides
-├── features/<name>/              Per-feature docs — mirrors src/features/<name>/ (e.g. features/blog/)
-└── client-intake/                Fill-in forms to send to clients (per language)
-```
-
-Adding a doc: drop the `.md` in the right folder, add one sidebar line in `docs/.vitepress/config.mts`, and a row in the README index. Keep those three in sync. `docs/node_modules`, `.vitepress/cache`, and `.vitepress/dist` are gitignored (`docs/.gitignore`).
+Folders: `setup/ config/ design/ seo/` (topic guides), `features/<name>/` (mirrors `src/features/<name>/`), `client-intake/` (per-language client forms). Adding a doc: drop the `.md`, add one sidebar line in `docs/.vitepress/config.mts`, **and** a README index row — keep those three in sync. `docs/{node_modules,.vitepress/cache,.vitepress/dist}` are gitignored.
 
 ## Architecture
 
@@ -192,8 +190,11 @@ The **visual system** — colors, typography, spacing, dark mode, motion, contra
 - NEVER set state inside `useEffect` to mark hydration — use `useSyncExternalStore`.
 - NEVER instantiate a Sanity `createClient` per route — use `@/sanity/client`.
 - NEVER expose `SANITY_API_READ_TOKEN` (or any non-public Sanity token) under a `NEXT_PUBLIC_` prefix.
+- ALWAYS maximise use of the `frontend-design` skill when building or reshaping UI — lean on it for aesthetic direction, typography, and layout so nothing reads as a templated default.
+- ALWAYS ship responsive UI optimised for every screen size we support (Tailwind `sm 640 · md 768 · lg 1024 · xl 1280`, mobile-first) — verify each change at **375 / 768 / 1280** before shipping. See `DESIGN.md` § Responsive behavior.
 - ALWAYS `setRequestLocale(locale)` at the top of server components using translations or metadata.
 - ALWAYS update the docs when you change what they describe — every change to a feature, flag, config shape, route, or convention updates the matching `docs/` page **and** the README index **and** the `docs/.vitepress/config.mts` sidebar (add/rename/remove in lockstep). Docs are part of the change, not a follow-up.
+- ALWAYS log behavior/config/route/convention **and** design-token changes in the shared root `CHANGELOG.md` (one file for code + design) with a plain-language _why_.
 - ALWAYS run `pnpm verify:quick` before push.
 
 ## File-size discipline

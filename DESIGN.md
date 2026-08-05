@@ -23,31 +23,55 @@ colors:
 typography:
   hero:
     fontFamily: Satoshi
-    fontSize: 48px
+    fontSize: 48px # text-5xl (scales to 6xl · 60px at xl)
     fontWeight: 700
     lineHeight: 1.05
     letterSpacing: -0.02em
   heading:
     fontFamily: Satoshi
-    fontSize: 36px
+    fontSize: 36px # text-4xl
     fontWeight: 600
     lineHeight: 1.1
     letterSpacing: -0.02em
+  subheading:
+    fontFamily: Satoshi
+    fontSize: 30px # text-3xl — section titles (h2)
+    fontWeight: 600
+    lineHeight: 1.15
+    letterSpacing: -0.02em
+  title:
+    fontFamily: Satoshi
+    fontSize: 24px # text-2xl — card / component titles (h3)
+    fontWeight: 600
+    lineHeight: 1.25
+    letterSpacing: -0.01em
+  lead:
+    fontFamily: Geist
+    fontSize: 18px # text-lg — intro / lead paragraphs
+    fontWeight: 400
+    lineHeight: 1.6
+    letterSpacing: normal
   body:
     fontFamily: Geist
-    fontSize: 16px
+    fontSize: 16px # text-base
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: normal
+  caption:
+    fontFamily: Geist
+    fontSize: 14px # text-sm — meta, secondary, captions
+    fontWeight: 400
+    lineHeight: 1.4
+    color: "{colors.muted-foreground}"
   eyebrow:
     fontFamily: Geist
-    fontSize: 12px
+    fontSize: 12px # text-xs, uppercase
     fontWeight: 500
     lineHeight: 1.4
     letterSpacing: 0.1em
   code:
     fontFamily: Geist Mono
-    fontSize: 14px
+    fontSize: 14px # text-sm, tabular
     fontWeight: 400
     lineHeight: 1.5
 rounded:
@@ -61,25 +85,54 @@ spacing:
   section-y: 4rem
   section-y-lg: 6rem
   container-max: 1280px
+elevation:
+  # Flat by default — depth is rings + tonal surfaces, not heavy shadows.
+  flat: none
+  card: "ring-1 ring-border/60, shadow-sm" # resting surface
+  raised: shadow-md # hover lift
+  overlay: shadow-lg # dialogs, hero scrims only
 components:
   button-primary:
     backgroundColor: "{colors.brand}"
     color: "{colors.brand-foreground}"
     borderRadius: "{rounded.md}"
+  button-secondary:
+    backgroundColor: transparent
+    borderColor: "{colors.border}"
+    borderWidth: 1px
+    borderRadius: "{rounded.md}"
   card:
     backgroundColor: "{colors.background}"
-    borderColor: "{colors.border}"
     borderRadius: "{rounded.xl}"
+    elevation: "{elevation.card}"
   chip:
     backgroundColor: "{colors.muted}"
     color: "{colors.muted-foreground}"
     borderRadius: "{rounded.md}"
+  focus-ring:
+    color: "{colors.ring}"
+    width: 2px # focus-visible:ring-2 ring-ring
 ---
 
 # Indiecrafts — Design System
 
 Machine-readable tokens live in the front matter above; the prose below is the
 "why". Deeper guides: `docs/design/`, `docs/config/theme-modes.md`.
+
+## How to read this system
+
+1. **Tokens win.** The front-matter tokens are normative — when prose and a token
+   disagree, the token is right, and a token always overrides a hardcoded value in
+   a component.
+2. **Runtime source of truth:** OKLCH in `globals.css` is authoritative for color;
+   the front-matter hex are sRGB mirrors for tooling (`next/og`, PWA manifest) —
+   reference values, never hardcode them.
+3. **Use utilities, never raw values:** `bg-brand`, `text-muted-foreground`,
+   `rounded-md` — never a raw hex, px, or rem in a component.
+4. **Deeper detail** → `docs/design/*` (typography, responsive, sections, icons…).
+   Read this file first, then the topic guide.
+5. **Log every change** in the shared root `CHANGELOG.md` (code + design share one).
+6. **Unsure which rule applies? Ask — never "use your best judgment."**
 
 ## Brand & Style
 
@@ -98,17 +151,18 @@ mirrors (`theme.hexColors` must stay synced with `theme.colors` for the brand
 pair — `next/og`'s Satori can't parse oklch). Always use utilities (`bg-brand`,
 `text-muted-foreground`), never raw hex.
 
-- **`brand` (indigo, hue 260)** — primary actions, focus rings, active nav, the
-  single eyebrow accent. It marks _the one important thing_ on a surface.
-  **Never** a decorative fill; never error/success. Lightens to `brand-dark` in
-  dark mode to hold contrast.
-- **`foreground` / `muted-foreground`** — primary text / secondary + captions.
-  The only two text colors — don't invent greys.
-- **`muted`** — soft surfaces (chips, alternating section backgrounds). Never text.
-- **`border`** — hairlines + rings only (`border-dark` bumped to ~neutral-500 for
-  AA on near-black).
-- **`destructive`** — error/validation states only, never decorative.
-- **`background` / `card`** — page and raised-surface fills.
+- **`brand` — `oklch(0.55 0.18 260)` · `#4f69d9` (indigo, hue 260)** — primary
+  actions, focus rings, active nav, the single eyebrow accent. It marks _the one
+  important thing_ on a surface. **Never** a decorative fill; never error/success.
+  Lightens to `brand-dark` (`oklch(0.72 0.16 260)`) in dark mode to hold contrast.
+- **`foreground` — `#171717` / `muted-foreground` — `#737373`** — primary text /
+  secondary + captions. The only two text colors — don't invent greys.
+- **`muted` — `#f5f5f5`** — soft surfaces (chips, alternating section
+  backgrounds). Never text.
+- **`border` — `#d4d4d4`** — hairlines + rings only (`border-dark` bumped to
+  `oklch(0.5 0 0)` ≈ neutral-500 for AA on near-black).
+- **`destructive` — `#dc2626`** — error/validation states only, never decorative.
+- **`background` — `#ffffff` / `card`** — page and raised-surface fills.
 
 ## Typography
 
@@ -117,8 +171,11 @@ pair — `next/og`'s Satori can't parse oklch). Always use utilities (`bg-brand`
 - **Body — Geist** (Google, self-hosted): UI + prose via `--font-sans`.
 - **Mono — Geist Mono**: code + tabular figures via `--font-mono`.
 
-Think in roles, not sizes: `eyebrow` (uppercase, `tracking-widest`, `brand`) →
-`heading` → `hero` → `body` (secondary text is `muted-foreground`). The pairing
+Think in roles, not sizes. The display ladder (Satoshi, tight tracking) runs
+`hero` → `heading` (h1/h2) → `subheading` (h2) → `title` (h3); the text ladder
+(Geist) runs `lead` → `body` → `caption`, with `eyebrow` (uppercase,
+`tracking-widest`, `brand`) marking sections. Secondary text and `caption` are
+`muted-foreground` — don't invent an in-between size or grey. The pairing
 is one line in `config.fonts`; set `display: geist` for a single-face look.
 Locale-aware punctuation (quotes, dates, French NBSP before `: ; ? !`) lives in
 `messages.<locale>.typography.*`.
@@ -141,8 +198,11 @@ base rules don't cover). Flips light/dark via the tokens; coexists with `prose`.
 
 ## Responsive behavior
 
-Mobile-first — mobile is a different context, not a squeezed desktop. Breakpoints
-are Tailwind's (`sm 640 · md 768 · lg 1024 · xl 1280`).
+**Every UI must be responsive and optimised for all screen sizes we support** —
+no exceptions. Lean on the `frontend-design` skill for layout and visual
+direction, and build mobile-first: mobile is a different context, not a squeezed
+desktop. Breakpoints are Tailwind's (`sm 640 · md 768 · lg 1024 · xl 1280`);
+verify every change at **375 / 768 / 1280**.
 
 - Grids collapse `grid-cols-1 → md:2 → lg:3`; hero type scales
   `text-3xl → md:5xl → xl:6xl`.
@@ -160,9 +220,11 @@ are Tailwind's (`sm 640 · md 768 · lg 1024 · xl 1280`).
 ## Elevation & Depth
 
 Flat by default — depth comes from **hairline rings + tonal surfaces**, not heavy
-shadows. Cards sit on `bg-card` with `ring-1 ring-border/60` and at most a
-`shadow-sm`; hover lifts a touch (`hover:shadow-md`, subtle scale). Overlays
-(dialogs, hero gradients) are the only place real shadow/scrim appears.
+shadows. The `elevation` tokens name the three steps: `flat` (none) →
+`card` (`ring-1 ring-border/60` + `shadow-sm`, the resting surface) →
+`raised` (`shadow-md`, hover lift, subtle scale). `overlay` (`shadow-lg` + scrim)
+is the only place real shadow appears — dialogs and hero gradients. Don't reach
+past the step a surface needs.
 
 ## Shapes
 
@@ -173,7 +235,9 @@ status dots use `full`. Don't mix radii within one component.
 ## Components
 
 - **Buttons** — Primary: `brand` bg, `brand-foreground` text, `rounded-md`, no
-  shadow. Secondary: transparent, `1px border`, `rounded-md`.
+  shadow. Secondary: transparent, `1px border`, `rounded-md`. Never more than
+  **one** primary button per view; never use `brand` as the fill of a
+  secondary/tertiary action.
 - **Cards** — `bg-card ring-1 ring-border/60 rounded-xl shadow-sm`.
 - **Chips / badges** — `bg-muted text-muted-foreground rounded-md`, `text-xs`.
 - **Eyebrow marker** — a short brand rule (`h-px w-8 bg-brand`) or dot before the
@@ -215,6 +279,8 @@ CLI-managed — don't hand-edit). Build on them the shadcn way:
   everything else.
 - **Do** keep OKLCH authoritative; re-sync `theme.hexColors` on any brand change
   and run `pnpm verify:contrast` (WCAG **AA**) after.
+- **Do** log every brand/token/component change in the shared root `CHANGELOG.md`
+  with a plain-language _why_ — the same file dev changes land in.
 - **Do** guard every transform with `motion-reduce:`, and spend boldness once per
   surface — keep everything around it quiet.
 - **Do** expose a missing token — name the semantic role and propose adding it;

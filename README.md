@@ -50,6 +50,7 @@ Full index — every guide in [`docs/`](./docs/), grouped by area.
 | [`launch-checklist.md`](./docs/setup/launch-checklist.md) | Take the site from "dev is done" to live + indexed |
 | [`operations.md`](./docs/setup/operations.md)             | Run the site day-to-day, forms, fixes              |
 | [`scripts.md`](./docs/setup/scripts.md)                   | The `pnpm` scripts and what they do                |
+| [`codegraph.md`](./docs/setup/codegraph.md)               | Opt-in local semantic index for AI coding agents   |
 | [`maintenance-mode.md`](./docs/setup/maintenance-mode.md) | Take the site offline gracefully                   |
 
 **Configuration & architecture**

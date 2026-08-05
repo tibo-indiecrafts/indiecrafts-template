@@ -35,6 +35,7 @@ export default defineConfig({
           { text: "Launch checklist", link: "/setup/launch-checklist" },
           { text: "Operations", link: "/setup/operations" },
           { text: "Scripts", link: "/setup/scripts" },
+          { text: "CodeGraph (agent index)", link: "/setup/codegraph" },
           { text: "Maintenance mode", link: "/setup/maintenance-mode" },
         ],
       },
