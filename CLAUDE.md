@@ -15,6 +15,8 @@ component library is the sibling repo `../indiecrafts-library`.
 
 **Two briefs:** this file (`CLAUDE.md`) is _how to code_ — architecture, conventions, workflow. **`DESIGN.md`** (repo root) is _how to design_ — the visual token contract (color roles, type scale, spacing, elevation, motion). Read both; visual tokens never go here, code rules never go there.
 
+**Focused rules** live in `.claude/rules/` — load the relevant one when the task touches it: [`naming`](.claude/rules/naming.md), [`accessibility`](.claude/rules/accessibility.md), [`component-architecture`](.claude/rules/component-architecture.md), [`design-token-usage`](.claude/rules/design-token-usage.md), [`figma-handoff`](.claude/rules/figma-handoff.md). Long-term context/decisions → `MEMORY.md`.
+
 ## Working principles
 
 Guardrails against common LLM coding mistakes — bias to caution over speed (use judgment on trivial tasks).

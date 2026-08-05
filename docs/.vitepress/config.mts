@@ -53,6 +53,7 @@ export default defineConfig({
         text: "Design & content",
         collapsed: true,
         items: [
+          { text: "Design decisions (log)", link: "/design-decisions" },
           { text: "Sections", link: "/design/sections" },
           { text: "Typography & fonts", link: "/design/typography" },
           { text: "Responsive design", link: "/design/responsive-design" },

@@ -65,15 +65,16 @@ Full index — every guide in [`docs/`](./docs/), grouped by area.
 
 **Design & content**
 
-| Doc                                                          | Covers                                      |
-| ------------------------------------------------------------ | ------------------------------------------- |
-| [`sections.md`](./docs/design/sections.md)                   | Copying + mounting section components       |
-| [`typography.md`](./docs/design/typography.md)               | Type scale, text styles + the font registry |
-| [`responsive-design.md`](./docs/design/responsive-design.md) | Breakpoints and responsive conventions      |
-| [`icons.md`](./docs/design/icons.md)                         | UI icon sets + favicon / apple-touch / PWA  |
-| [`featured-articles.md`](./docs/design/featured-articles.md) | The featured-articles home section          |
-| [`video-embeds.md`](./docs/design/video-embeds.md)           | Embedding video                             |
-| [`error-pages.md`](./docs/design/error-pages.md)             | Error + not-found pages                     |
+| Doc                                                          | Covers                                        |
+| ------------------------------------------------------------ | --------------------------------------------- |
+| [`design-decisions.md`](./docs/design-decisions.md)          | Why key visual/UI choices were made (ADR log) |
+| [`sections.md`](./docs/design/sections.md)                   | Copying + mounting section components         |
+| [`typography.md`](./docs/design/typography.md)               | Type scale, text styles + the font registry   |
+| [`responsive-design.md`](./docs/design/responsive-design.md) | Breakpoints and responsive conventions        |
+| [`icons.md`](./docs/design/icons.md)                         | UI icon sets + favicon / apple-touch / PWA    |
+| [`featured-articles.md`](./docs/design/featured-articles.md) | The featured-articles home section            |
+| [`video-embeds.md`](./docs/design/video-embeds.md)           | Embedding video                               |
+| [`error-pages.md`](./docs/design/error-pages.md)             | Error + not-found pages                       |
 
 **SEO & discovery**
 

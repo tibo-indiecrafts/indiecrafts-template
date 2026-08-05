@@ -32,6 +32,16 @@ so an agent (or a client) reads one history, not two.
   Kept out of the committed `.mcp.json` so it never spawns for client sites that
   didn't opt in; MCP registration is per-developer (global).
 
+- Scaffolded the template toward the Babich "design project" structure (Phases 1–4):
+  `MEMORY.md`, `CLAUDE.local.md` (gitignored), `.claude/settings.json`,
+  `reference/` (screenshots/competitors/moodboards/flows/research), `docs/design-decisions.md`,
+  `.claude/rules/` (naming, accessibility, component-architecture, design-token-usage,
+  figma-handoff — CLAUDE.md now points to them), 3 project agents (design-system-reviewer,
+  accessibility-reviewer, ux-reviewer), and 3 project skills (design-system-check,
+  accessibility-pass, visual-polish). `.gitignore` refined to commit the `.claude`
+  team toolkit while ignoring personal/machine state. Skipped `design-tokens.json`
+  (would fork the OKLCH source of truth).
+
 ### Changed
 
 - `CLAUDE.md` front-loaded: a stack line + top-5 non-negotiables now open the file
