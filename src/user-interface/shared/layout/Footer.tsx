@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Logo } from "@/user-interface/shared/layout/Logo";
+import { MadeByCredit } from "@/user-interface/shared/layout/MadeByCredit";
 import { footerNav } from "@/config";
 import { site } from "@/config";
 
@@ -46,6 +47,7 @@ export function Footer() {
         <p className="text-muted-foreground mt-12 text-xs">
           © {year} {site.legal.company}. {tFooter("rights")}
         </p>
+        <MadeByCredit />
       </div>
     </footer>
   );

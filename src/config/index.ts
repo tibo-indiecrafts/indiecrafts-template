@@ -458,6 +458,26 @@ export const headerNav: readonly NavLink[] = [
   // intentionally stay out of the primary nav to avoid clutter.
   ...(features.blog ? [{ labelKey: "blog" as const, href: "/blog" as const }] : []),
 ];
+/**
+ * Maker attribution rendered in the footer credit (with a hover/focus link
+ * preview). Points at indiecrafts.dev — the template's origin.
+ *
+ * `title`, `description`, and `image` are the **real SEO/OG data published by
+ * indiecrafts.dev** (its home `og:title` / `og:description` / `og:image`), not
+ * template copy — so the preview is an accurate link card. They're live external
+ * / fixed values on purpose: they must stay Indiecrafts' own metadata even after
+ * a client rebrands this template's local config + `public/brand/*` assets.
+ */
+export const madeBy = {
+  name: "L'Atelier Web Des Alpes",
+  href: "https://indiecrafts.dev",
+  image: "https://indiecrafts.dev/brand/og-home.webp",
+  domain: "indiecrafts.dev",
+  title: "Front-end Design Engineer — AI-accelerated interface design in code",
+  description:
+    "Freelance front-end design engineer in the French Alps — UX design, UI design, product design and design systems. I design and build websites and digital interfaces directly in code, accelerated by AI.",
+} as const;
+
 export const footerNav: readonly NavGroup[] = [
   // Legal link — only shown when `features.legalPage` is on, mirroring the
   // route's own `notFound()` gate so nav and routing can never disagree.

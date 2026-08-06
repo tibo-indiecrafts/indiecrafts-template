@@ -18,7 +18,8 @@
     "learnMore": "Learn more"
   },
   "footer": {
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "creditPrefix": "Made with"
   },
   "common": {
     "skipToContent": "Skip to main content",
