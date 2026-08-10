@@ -53,7 +53,11 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 31536000,
   },
   // Auto-memoize components and hooks. Stable in Next 16 — top-level flag.
-  reactCompiler: true,
+  // Prod-only: the React Compiler's memoization pass adds real per-file compile
+  // cost, and on every edit in dev — gating it to production keeps HMR fast while
+  // still shipping the optimization in the build. Flip to `true` to debug a
+  // compiler-specific issue locally.
+  reactCompiler: process.env.NODE_ENV === "production",
   experimental: {
     // Tighter bundle: only import icons you actually reference. All three
     // icon sets are barrel-exported + tree-shakeable; this optimizes the
