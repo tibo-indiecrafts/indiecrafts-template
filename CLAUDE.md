@@ -22,7 +22,7 @@ component library is the sibling repo `../indiecrafts-library`.
 
 Run scripts from the repo root (`pnpm dev/build/…` delegate to `--filter @indiecrafts/web`). Rule: think in `method/work/` → build in `code/` → promote what sticks to `code/docs/`. Write drafts in `method/work/`, never into `code/docs/`.
 
-**Focused rules** live in `.claude/rules/` — load the relevant one when the task touches it: [`naming`](.claude/rules/naming.md), [`accessibility`](.claude/rules/accessibility.md), [`component-architecture`](.claude/rules/component-architecture.md), [`design-token-usage`](.claude/rules/design-token-usage.md), [`figma-handoff`](.claude/rules/figma-handoff.md), [`writing-style`](.claude/rules/writing-style.md) (how the agent writes its own output — docs, comments, commits — STE-informed; not UI copy), [`sanity-legends`](.claude/rules/sanity-legends.md) (Studio field labels + descriptions written for non-technical editors). Long-term context/decisions → `MEMORY.md`.
+**Focused rules** live in `.claude/rules/` — load the relevant one when the task touches it: [`naming`](.claude/rules/naming.md), [`accessibility`](.claude/rules/accessibility.md), [`component-architecture`](.claude/rules/component-architecture.md), [`design-token-usage`](.claude/rules/design-token-usage.md), [`figma-handoff`](.claude/rules/figma-handoff.md), [`writing-style`](.claude/rules/writing-style.md) (how the agent writes its own output — docs, comments, commits — STE-informed; not UI copy), [`sanity-legends`](.claude/rules/sanity-legends.md) (Studio field labels + descriptions written for non-technical editors). Long-term context/decisions → `method/MEMORY.md`.
 
 **Repeatable multi-file tasks** have step-by-step checklists in [`.claude/workflows/`](.claude/workflows/) — follow the matching one instead of reconstructing the steps: [`add-page`](.claude/workflows/add-page.md), [`adapt-library-section`](.claude/workflows/adapt-library-section.md), [`add-blog-module`](.claude/workflows/add-blog-module.md), [`remove-blog-module`](.claude/workflows/remove-blog-module.md).
 
@@ -214,7 +214,7 @@ The **visual system** — colors, typography, spacing, dark mode, motion, contra
 - ALWAYS ship responsive UI optimised for every screen size we support (Tailwind `sm 640 · md 768 · lg 1024 · xl 1280`, mobile-first) — verify each change at **375 / 768 / 1280** before shipping. See `DESIGN.md` § Responsive behavior.
 - ALWAYS `setRequestLocale(locale)` at the top of server components using translations or metadata.
 - ALWAYS update the docs when you change what they describe — every change to a feature, flag, config shape, route, or convention updates the matching `docs/` page **and** the README index **and** the `docs/.vitepress/config.mts` sidebar (add/rename/remove in lockstep). Docs are part of the change, not a follow-up.
-- ALWAYS log behavior/config/route/convention **and** design-token changes in the shared root `CHANGELOG.md` (one file for code + design) with a plain-language _why_.
+- ALWAYS log behavior/config/route/convention **and** design-token changes in the shared `code/CHANGELOG.md` (one file for code + design) with a plain-language _why_.
 - ALWAYS run `pnpm verify:quick` before opening a PR — there's no pre-push hook, so nothing blocks a push; the commit hook only runs `tsc` + staged-file lint.
 
 ## File-size discipline

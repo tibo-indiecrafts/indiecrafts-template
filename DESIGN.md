@@ -131,7 +131,7 @@ Machine-readable tokens live in the front matter above; the prose below is the
    `rounded-md` — never a raw hex, px, or rem in a component.
 4. **Deeper detail** → `docs/design/*` (typography, responsive, sections, icons…).
    Read this file first, then the topic guide.
-5. **Log every change** in the shared root `CHANGELOG.md` (code + design share one).
+5. **Log every change** in the shared root `code/CHANGELOG.md` (code + design share one).
 6. **Unsure which rule applies? Ask — never "use your best judgment."**
 7. **Uncovered case? Match the nearest existing screen** before inventing a
    pattern — consistency beats local perfection.
@@ -349,7 +349,7 @@ needs one — the point is to stop and ask, not to ban thinking.
 - **Do** keep OKLCH authoritative; edit color in `globals.css`, re-sync
   `theme.hexColors.background` only when `--background` changes, and run
   `pnpm verify:contrast` (WCAG **AA**) after.
-- **Do** log every brand/token/component change in the shared root `CHANGELOG.md`
+- **Do** log every brand/token/component change in the shared root `code/CHANGELOG.md`
   with a plain-language _why_ — the same file dev changes land in.
 - **Do** guard every transform with `motion-reduce:`, and spend boldness once per
   surface — keep everything around it quiet.
@@ -381,7 +381,7 @@ A screen that renders is not done. Before calling a UI task complete:
 - **Single source of truth:** OKLCH in `globals.css`. Change the background →
   re-sync `theme.hexColors.background` (the only hex mirror, for the PWA manifest)
   → run `pnpm verify:contrast` (WCAG AA).
-- **Log it:** every token/component/design change → shared root `CHANGELOG.md`
+- **Log it:** every token/component/design change → shared root `code/CHANGELOG.md`
   with a plain-language _why_; deeper rationale → `docs/design-decisions.md`.
 - **Keep current:** delete anything that no longer matches production — a stale
   rule an agent follows confidently is worse than a missing one.

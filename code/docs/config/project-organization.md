@@ -5,7 +5,31 @@ How the codebase is laid out and where new code goes. The guiding idea:
 one domain lives under `features/<name>/`.** Flipping a `features.*` flag should
 map cleanly onto a folder.
 
-## Top-level `src/`
+## Repo layout (monorepo)
+
+The repo has **two root folders** — `code/` (execution) and `method/` (planning):
+
+```
+code/                     the pnpm-workspace monorepo
+├── apps/web/             the Next.js app (@indiecrafts/web) — its src/ is detailed below
+│   └── (marketing/ admin/ mobile/ api/ workers/  → slots, see apps/_registry.md)
+├── packages/             shared bricks — extract when ≥2 apps consume (packages/_registry.md)
+├── modules/              product features (blog/shop/events…) — modules/_registry.md
+├── db/  infra/           schema·migrations·seed · envs·iac·ci
+├── docs/                 this VitePress site (product canon)
+└── CHANGELOG.md          code + design change log
+method/                   the dev framework — process · engineering · templates · context
+                          + work/ (the think·plan·develop·reflect lab) + MEMORY.md
+```
+
+The **workspace root is the repo root** (`package.json`, `pnpm-workspace.yaml`,
+`turbo.json`); members live under `code/`. Run scripts from the root — `pnpm dev`
+/`build`/… delegate to `--filter @indiecrafts/web`. Deploy: Netlify builds the
+workspace at root, publishes `code/apps/web/.next`.
+
+The rest of this page details the **app's internal layout** at `code/apps/web/`.
+
+## App internals — `code/apps/web/src/`
 
 ```
 src/
