@@ -13,9 +13,9 @@
     "seed": "pnpm --filter @indiecrafts/web seed",
     "format": "prettier --write \"method/**/*.md\" \"*.md\"",
     "format:check": "prettier --check \"method/**/*.md\" \"*.md\"",
-    "docs:install": "npm --prefix docs install",
-    "docs": "npm --prefix docs run docs:dev",
-    "docs:build": "npm --prefix docs run docs:build",
+    "docs:install": "npm --prefix code/docs install",
+    "docs": "npm --prefix code/docs run docs:dev",
+    "docs:build": "npm --prefix code/docs run docs:build",
     "prepare": "husky"
   },
   "devDependencies": {

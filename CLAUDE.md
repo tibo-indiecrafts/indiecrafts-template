@@ -15,13 +15,12 @@ component library is the sibling repo `../indiecrafts-library`.
 
 **Two briefs:** this file (`CLAUDE.md`) is _how to code_ — architecture, conventions, workflow. **`DESIGN.md`** (repo root) is _how to design_ — the visual token contract (color roles, type scale, spacing, elevation, motion). Read both; visual tokens never go here, code rules never go there.
 
-**Repo layout — app + method, side by side.** Two concerns, two homes — dev with all context at once:
+**Repo layout — two root folders: `code/` (execution) + `method/` (planning).** Dev with all context at once:
 
-- **the app** — the application: `src/`, `messages/`, `sanity/`, config, `public/` (repo root today; moves under `app/` as the monorepo lands).
-- **`method/`** — the whole `claude-tasks` dev framework: `process/` (7-phase `WORKFLOW`, `DECISION-MATRIX`, `PROJECT-BOOTSTRAP`, `SYSTEM-RULES`), `engineering/` (the brain: principles · feature-architecture · api-and-data · infra · testing · tech-debt · database · observability · git-and-pr · engineering-standards), `context/` (how-I-work · voice · audience), `templates/` (sprint templates), and **`work/`** — the lab: think · plan · develop · reflect (`work/features/<name>/0X_*` sprints stamped from `method/templates/feature`, `work/project/`, `outputs/`, `backlog.md`, `scratch/` gitignored).
-- **`docs/`** — _what this product is + why_ (the official VitePress canon). Decisions that stick graduate here.
+- **`code/`** — EXECUTION: the pnpm-workspace monorepo. `apps/` (`web` = the Next app `@indiecrafts/web`; slots for marketing/admin/mobile/api/workers), `packages/` (shared bricks — extract when ≥2 consumers), `modules/` (product features: blog/shop/events…), `db/`, `infra/`, and `docs/` (the VitePress product canon). Workspace root is the **repo root** (`package.json`, `pnpm-workspace.yaml`, `turbo.json`); members live under `code/`.
+- **`method/`** — PLANNING: the whole `claude-tasks` dev framework. `process/` (7-phase `WORKFLOW`, `DECISION-MATRIX`, `PROJECT-BOOTSTRAP`, `SYSTEM-RULES`), `engineering/` (the brain: principles · feature-architecture · api-and-data · infra · testing · tech-debt · database · observability · git-and-pr · engineering-standards), `context/` (how-I-work · voice · audience · reference), `templates/` (sprint templates), and **`work/`** — the lab: think · plan · develop · reflect (`work/features/<name>/0X_*` sprints stamped from `method/templates/feature`, `work/project/`, `outputs/`, `backlog.md`, `scratch/` gitignored).
 
-Rule: think in `method/work/` → build to `method/engineering` → promote what sticks to `docs/`. Write drafts in `method/work/`, never into `docs/`.
+Run scripts from the repo root (`pnpm dev/build/…` delegate to `--filter @indiecrafts/web`). Rule: think in `method/work/` → build in `code/` → promote what sticks to `code/docs/`. Write drafts in `method/work/`, never into `code/docs/`.
 
 **Focused rules** live in `.claude/rules/` — load the relevant one when the task touches it: [`naming`](.claude/rules/naming.md), [`accessibility`](.claude/rules/accessibility.md), [`component-architecture`](.claude/rules/component-architecture.md), [`design-token-usage`](.claude/rules/design-token-usage.md), [`figma-handoff`](.claude/rules/figma-handoff.md), [`writing-style`](.claude/rules/writing-style.md) (how the agent writes its own output — docs, comments, commits — STE-informed; not UI copy), [`sanity-legends`](.claude/rules/sanity-legends.md) (Studio field labels + descriptions written for non-technical editors). Long-term context/decisions → `MEMORY.md`.
 
@@ -56,15 +55,15 @@ Pre-commit hook: `lint-staged` (eslint --fix + prettier on staged files) then `t
 
 ## Documentation site (VitePress)
 
-Human-facing docs live in `docs/` as a standalone **VitePress** site — own `docs/package.json` + `docs/.vitepress/config.mts`, **npm-managed and isolated** from the pnpm app (deps never touch the app tree). Root scripts delegate via `npm --prefix docs`; `README.md` indexes every page; static build deploys to Vercel.
+Human-facing docs live in `code/docs/` as a standalone **VitePress** site — own `code/docs/package.json` + `code/docs/.vitepress/config.mts`, **npm-managed and isolated** from the pnpm app (deps never touch the app tree). Root scripts delegate via `npm --prefix code/docs`; `README.md` indexes every page; static build deploys to Vercel.
 
 ```bash
 pnpm docs:install          # once (npm install inside docs/)
 pnpm docs                  # dev server → http://localhost:3002
-pnpm docs:build            # static output → docs/.vitepress/dist
+pnpm docs:build            # static output → code/docs/.vitepress/dist
 ```
 
-Folders: `setup/ config/ design/ seo/` (topic guides), `features/<name>/` (mirrors `src/features/<name>/`), `client-intake/` (per-language client forms). Adding a doc: drop the `.md`, add one sidebar line in `docs/.vitepress/config.mts`, **and** a README index row — keep those three in sync. `docs/{node_modules,.vitepress/cache,.vitepress/dist}` are gitignored.
+Folders: `setup/ config/ design/ seo/` (topic guides), `features/<name>/` (mirrors `src/features/<name>/`), `client-intake/` (per-language client forms). Adding a doc: drop the `.md`, add one sidebar line in `code/docs/.vitepress/config.mts`, **and** a README index row — keep those three in sync. `code/docs/{node_modules,.vitepress/cache,.vitepress/dist}` are gitignored.
 
 ## Architecture
 

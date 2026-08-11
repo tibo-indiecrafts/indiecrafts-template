@@ -15,7 +15,7 @@ importers:
         specifier: ^3.8.3
         version: 3.8.3
 
-  apps/web:
+  code/apps/web:
     dependencies:
       '@base-ui/react':
         specifier: ^1.6.0

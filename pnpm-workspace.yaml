@@ -1,7 +1,7 @@
 packages:
-  - apps/*
-  - packages/*
-  - modules/*
+  - code/apps/*
+  - code/packages/*
+  - code/modules/*
 
 ignoredBuiltDependencies:
   - sharp
