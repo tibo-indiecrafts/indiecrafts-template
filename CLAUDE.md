@@ -15,13 +15,13 @@ component library is the sibling repo `../indiecrafts-library`.
 
 **Two briefs:** this file (`CLAUDE.md`) is _how to code_ — architecture, conventions, workflow. **`DESIGN.md`** (repo root) is _how to design_ — the visual token contract (color roles, type scale, spacing, elevation, motion). Read both; visual tokens never go here, code rules never go there.
 
-**Dev framework (in-repo).** The whole `claude-tasks` framework lives here, in three zones — dev with all context at once:
+**Repo layout — app + method, side by side.** Two concerns, two homes — dev with all context at once:
 
-- **`.platform/`** — _how we work_ + the reusable engineering brain. `process/` (7-phase sprint `WORKFLOW`, `DECISION-MATRIX`, `PROJECT-BOOTSTRAP`, `SYSTEM-RULES`), `engineering/` (principles · feature-architecture · api-and-data · infra · testing · tech-debt · database · observability · git-and-pr · engineering-standards), `context/` (how-I-work · voice · audience), `templates/` (sprint templates). Read-only reference — refresh from canon, don't hand-edit.
+- **the app** — the application: `src/`, `messages/`, `sanity/`, config, `public/` (repo root today; moves under `app/` as the monorepo lands).
+- **`method/`** — the whole `claude-tasks` dev framework: `process/` (7-phase `WORKFLOW`, `DECISION-MATRIX`, `PROJECT-BOOTSTRAP`, `SYSTEM-RULES`), `engineering/` (the brain: principles · feature-architecture · api-and-data · infra · testing · tech-debt · database · observability · git-and-pr · engineering-standards), `context/` (how-I-work · voice · audience), `templates/` (sprint templates), and **`work/`** — the lab: think · plan · develop · reflect (`work/features/<name>/0X_*` sprints stamped from `method/templates/feature`, `work/project/`, `outputs/`, `backlog.md`, `scratch/` gitignored).
 - **`docs/`** — _what this product is + why_ (the official VitePress canon). Decisions that stick graduate here.
-- **`work/`** — _the lab_: think · plan · develop · reflect. `features/<name>/0X_*` (per-branch sprint, stamped from `.platform/templates/feature`), `project/` (set-once), `outputs/`, `archive/`, `backlog.md`, `scratch/` (gitignored). **Write drafts and thinking here, never into `docs/`.**
 
-Rule: think in `work/`, build to `.platform/engineering`, promote what sticks to `docs/`.
+Rule: think in `method/work/` → build to `method/engineering` → promote what sticks to `docs/`. Write drafts in `method/work/`, never into `docs/`.
 
 **Focused rules** live in `.claude/rules/` — load the relevant one when the task touches it: [`naming`](.claude/rules/naming.md), [`accessibility`](.claude/rules/accessibility.md), [`component-architecture`](.claude/rules/component-architecture.md), [`design-token-usage`](.claude/rules/design-token-usage.md), [`figma-handoff`](.claude/rules/figma-handoff.md), [`writing-style`](.claude/rules/writing-style.md) (how the agent writes its own output — docs, comments, commits — STE-informed; not UI copy), [`sanity-legends`](.claude/rules/sanity-legends.md) (Studio field labels + descriptions written for non-technical editors). Long-term context/decisions → `MEMORY.md`.
 
