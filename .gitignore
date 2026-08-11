@@ -50,7 +50,7 @@ CLAUDE.local.md
 .codegraph/
 
 # dev framework (in-repo) — throwaway thinking + gstack state
-method/work/scratch/
+work/scratch/
 .gstack/
 
 # vercel
