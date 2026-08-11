@@ -101,26 +101,16 @@ Until `NEXT_PUBLIC_SITE_URL` is set, `site.url` falls back to the `PLACEHOLDER_S
 
 `buildMetadata` re-emits the full OG + Twitter block per page. This is deliberate: Next.js **replaces** (does not deep-merge) `openGraph`/`twitter` when a page returns them, so siteName, type, and card have to be restated from `seoDefaults` or they'd vanish.
 
-- **OG image** — `page.seo.openGraph.imageUrl` if set, otherwise the always-available `/opengraph-image` route (`src/app/opengraph-image.tsx`, which serves the static `site.ogImage.file` PNG with a one-year cache header). Ship a static per-page card by pointing `imageUrl` at a file, e.g. `/brand/og-home.png` — that's exactly what the home page does.
+- **OG image** — **Sanity-only** (no `/public`, no convention route): per-page `pageSeo.ogImage` → the locale's `siteMeta.<locale>.ogImage` → omitted. Edited in the Studio (SEO & métadonnées), per language. See [Editing SEO in Sanity](./editing-seo-in-sanity.md).
 - **OG type** — `page.seo.openGraph.type` (`"website" | "article" | "profile"`) or `seoDefaults.openGraph.type`.
 - **siteName** — always `seoDefaults.openGraph.siteName` (defaults to `site.name`).
-- **Twitter** — `card` from `seoDefaults.twitter.card`; `site` + `creator` from `site.social.twitter` (the `@handle`), both omitted cleanly when the handle is empty.
+- **Twitter** — `card` from `seoDefaults.twitter.card`; `site` + `creator` from the Sanity `siteSettings.social.twitter` (`@handle`), both omitted cleanly when empty.
 
-```ts
-// config/index.ts — a page shipping a static OG card
-pages: {
-  home: {
-    key: "/",
-    id: "home",
-    slug: "/",
-    seo: { openGraph: { imageUrl: "/brand/og-home.png" } },
-  },
-}
-```
+The OG card (and all SEO text) is edited per language in Sanity, not in `config` — the `pages` map carries only structural routing (`key` / `id` / `slug` / `enabled`).
 
 ## Robots
 
-Per page, robots resolve as: `page.seo.robots` (full override) → `page.seo.noindex` shortcut (`{ index: false, follow: false }`) → `seoDefaults.robots`. Site-wide defaults set `index: true, follow: true` plus a `max-image-preview: large` googleBot block.
+Per page, robots resolve as: `page.seo.robots` (full override) → the **site-wide Sanity toggle** (`siteSettings.robots` — `noindex` / `nofollow` applied to every page) layered with `page.seo.noindex` / `pageSeo.noindex` → `seoDefaults.robots`. A non-technical editor can `noindex` / `nofollow` the whole site from the Studio (**SEO & métadonnées → Indexation du site**) — useful for a staging/holding site. Config defaults set `index: true, follow: true` plus a `max-image-preview: large` googleBot block.
 
 Setting `noindex: true` also drops the page from the LLM endpoints automatically (see `seo.llms` below and `docs/seo/llms-endpoints.md`).
 
@@ -163,7 +153,7 @@ seoDefaults.schemaImage = [
 pages.services.seo = { schemaImage: "/brand/services-card.png" };
 ```
 
-Relative paths are resolved against `site.url`; absolute `https://…` URLs are used as-is. A single value emits `image: "…"`; a list emits `image: ["…", "…"]`. (The **logo** in Google's knowledge panel is separate — it comes from the Organization JSON-LD's `logo`, set by `site.brandLogoPng`.)
+Relative paths are resolved against `site.url`; absolute `https://…` URLs are used as-is. A single value emits `image: "…"`; a list emits `image: ["…", "…"]`. (The **logo** in Google's knowledge panel is separate — it comes from the Organization JSON-LD's `logo`, set by `siteSettings.logo` in Sanity.)
 
 ## Adding SEO for a new page
 

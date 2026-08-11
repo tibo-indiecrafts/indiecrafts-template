@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Indiecrafts
-description: Quiet, editorial minimalism — one indigo accent on near-neutral greys, generous whitespace, one signature moment per surface. Config-first (src/config/index.ts + src/app/globals.css). OKLCH is authoritative at runtime; the hex below are sRGB mirrors for tooling + next/og.
+description: Quiet, editorial minimalism — one indigo accent on near-neutral greys, generous whitespace, one signature moment per surface. Config-first (src/config/index.ts + src/app/globals.css). OKLCH in globals.css is the authoritative color source; the hex below are reference values for tooling, and theme.hexColors.background mirrors --background for the PWA manifest.
 colors:
   # Light (sRGB mirrors of the OKLCH tokens in globals.css)
   background: "#ffffff"
@@ -125,14 +125,16 @@ Machine-readable tokens live in the front matter above; the prose below is the
    disagree, the token is right, and a token always overrides a hardcoded value in
    a component.
 2. **Runtime source of truth:** OKLCH in `globals.css` is authoritative for color;
-   the front-matter hex are sRGB mirrors for tooling (`next/og`, PWA manifest) —
-   reference values, never hardcode them.
+   the front-matter hex are reference values for tooling (the PWA manifest reads
+   `theme.hexColors.background`) — never hardcode them.
 3. **Use utilities, never raw values:** `bg-brand`, `text-muted-foreground`,
    `rounded-md` — never a raw hex, px, or rem in a component.
 4. **Deeper detail** → `docs/design/*` (typography, responsive, sections, icons…).
    Read this file first, then the topic guide.
 5. **Log every change** in the shared root `CHANGELOG.md` (code + design share one).
 6. **Unsure which rule applies? Ask — never "use your best judgment."**
+7. **Uncovered case? Match the nearest existing screen** before inventing a
+   pattern — consistency beats local perfection.
 
 ## Brand & Style
 
@@ -146,9 +148,10 @@ read as crafted and calm, never busy or templated.
 ## Colors
 
 Colors carry **roles, not preferences** — each has a job description, not just a
-hex. OKLCH in `globals.css` is authoritative; the front-matter hex are sRGB
-mirrors (`theme.hexColors` must stay synced with `theme.colors` for the brand
-pair — `next/og`'s Satori can't parse oklch). Always use utilities (`bg-brand`,
+hex. OKLCH in `globals.css` is authoritative and is the **only** color source;
+the front-matter hex are reference values for tooling. The one runtime hex mirror
+is `theme.hexColors.background` — the PWA manifest can't take oklch; keep it
+matched to `--background`. Always use utilities (`bg-brand`,
 `text-muted-foreground`), never raw hex.
 
 - **`brand` — `oklch(0.55 0.18 260)` · `#4f69d9` (indigo, hue 260)** — primary
@@ -194,7 +197,10 @@ base rules don't cover). Flips light/dark via the tokens; coexists with `prose`.
 - Section rhythm: `border-t py-16 md:py-24`, with a centered intro capped at
   `max-w-2xl`. Content columns cap around `max-w-5xl/6xl`; article prose at
   `max-w-3xl` for readable line length.
-- Base spacing is Tailwind's default 0.25rem scale.
+- Base spacing is Tailwind's default 0.25rem scale. Usage map: component
+  padding `p-3`/`p-4`, gaps between related items `gap-2`/`gap-3`, gaps between
+  sections `gap-6`/`gap-8`. An off-scale need usually means the wrong two
+  elements are spaced — flag it, don't invent a value.
 
 ## Responsive behavior
 
@@ -211,11 +217,8 @@ verify every change at **375 / 768 / 1280**.
 - Every desktop-only affordance has a mobile equivalent: the sticky TOC sidebar
   (`lg`+) becomes a collapsible "On this page" disclosure below `lg`.
 - Touch targets ≥ 40px; hover-only affordances (tooltips) are `sm:`-gated.
+- Wide tables become stacked cards below `md` — not a horizontal-scroll table.
 - Nothing scrolls horizontally — wide media/tables get their own `overflow-x`.
-- **Always verify** any UI change renders correctly at **mobile (375px),
-  tablet (768px), and desktop (1280px)** before shipping — never assume a desktop
-  layout reflows. Check the layout, type scale, spacing, and that nothing
-  overflows or clips at each size.
 
 ## Elevation & Depth
 
@@ -244,41 +247,108 @@ status dots use `full`. Don't mix radii within one component.
   label; it should **encode** something (status, category), not decorate.
 - **Focus** — every interactive element:
   `focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none`.
-- **States** — a component is its appearance _and_ its behavior. Interactive
-  elements handle keyboard, `focus-visible`, disabled, loading (async), and error;
-  **never signal state by color alone**. Use the Radix primitive for
-  dialogs/menus/tabs/tooltips (focus trap, Escape, return-focus) — don't hand-roll it.
-- **Icons** — Lucide (UI), Reicon outline/filled (range), Reicon Brands (logos);
-  `aria-hidden` unless the sole label. Don't substitute Unicode glyphs or add a
-  new icon set.
 
-## Component conventions (shadcn/ui + Tailwind v4)
+(Per-state behavior → **Interaction & States**; icons → **Iconography** below.)
 
-Primitives in `user-interface/ui` are shadcn (Radix behavior + Tailwind styling,
-CLI-managed — don't hand-edit). Build on them the shadcn way:
+## Component conventions
 
-- **Merge classes with `cn()`** (`@/lib/utils`) — never string-concatenate.
-  tailwind-merge resolves conflicts and lets a passed `className` win, so a
-  component's own classes come first and `{className}` last.
-- **Vary with `cva`, not forks** — add a case to the `cva()` map + its union
-  type; don't copy a component to change one look.
-- **Extend least → most effort:** tweak a token → add a `cva` variant → wrap the
-  primitive → compose primitives → (only then) a new shared part.
-- **`asChild`** to change the rendered element (a `Button` that's really a
-  `Link`) instead of nesting wrappers. **`data-slot`** is the styling hook —
-  target parts via `[data-slot="…"]`, don't reach into internals.
-- **Semantic tokens over `dark:`** — `bg-card` / `text-foreground` flip
-  automatically through the CSS vars, so `dark:` overrides should be rare.
-- **Tailwind v4:** container queries (`@container` / `@xl`) are core — use them
-  when a component's _own_ width should drive its layout. Plugins load via
-  `@plugin` in the single `globals.css`; never add a second Tailwind config.
+Build on the shadcn primitives the shadcn way — full rules in
+[`.claude/rules/component-architecture.md`](.claude/rules/component-architecture.md):
+`cn()` not string-concat, `cva` not forks, `asChild`/`data-slot`, semantic tokens
+over `dark:`, container queries, never hand-edit `user-interface/ui/**`.
+
+## Interaction & States
+
+Every interactive component is its appearance **and** its behavior. Cover, where relevant:
+
+- **hover** — `raised` elevation (`shadow-md`) or a token tint; never a new hue.
+- **focus-visible** — `ring-2 ring-ring`, always, keyboard-reachable.
+- **active/pressed** — subtle scale or tint, `motion-reduce`-safe.
+- **disabled** — reduced opacity + `cursor-not-allowed`; keep the label.
+- **loading** — spinner/skeleton; hold layout height (no shift).
+- **error** — `destructive` + text/icon; never color alone.
+- **destructive confirm** — delete/remove/revoke/archive always: `destructive`
+  color, an `AlertDialog` confirmation, and a confirm button that repeats the
+  verb (`[Delete workspace]`, not `[Confirm]`). Non-destructive actions (save,
+  apply, filter) never confirm — confirmation is scarce, spend it only on the
+  irreversible.
+- Use the Radix primitive for dialogs/menus/tabs/tooltips (focus trap, Escape,
+  return-focus) — don't hand-roll.
+
+## Required States
+
+Every data view handles three states with real components — never a blank screen.
+
+- **Loading** — `Skeleton` shaped like the eventual content; `Spinner` only for
+  inline/button waits, not full-page loads. Hold layout height (no shift).
+- **Empty** — the `Empty` primitive: icon + short message + one primary action
+  ("No posts yet." + [Write a post]). Absence of data is a screen to design, not
+  dead space.
+- **Error** — plain-language message + retry; never surface a raw error string.
+  Pair `destructive` with text or icon.
+
+## Accessibility
+
+Visual a11y contract (structural code rules → `.claude/rules/accessibility.md`):
+
+- **Contrast** — WCAG **AA** on every token pair; `pnpm verify:contrast` gates it.
+- **Focus** — visible `focus-visible:ring-2 ring-ring` on every interactive element.
+- **Not color alone** — pair status/selection with text, icon, or shape.
+- **Targets** — ≥ 40px touch; hover-only affordances `sm:`-gated.
+- **Motion** — honor `prefers-reduced-motion` (see Motion).
+- Verify at 375 / 768 / 1280 — nothing clips or overflows.
+
+## Motion
+
+Motion explains a change of state — never decoration.
+
+- **Duration** — standard **160ms**; large layout transitions **≤ 240ms**.
+- **Easing** — `ease-out` entering, `ease-in` leaving.
+- **Reduced motion** — guard every transform with `motion-reduce:`; replace
+  movement with a plain opacity fade when reduced motion is on.
+- Spend motion once per surface — same restraint as the visual system.
+
+## Iconography
+
+- **Lucide** (UI), **Reicon** outline/filled (range), **Reicon Brands** (logos).
+- Default **20px**; **16px** in compact controls; consistent **2px** stroke.
+- Don't mix filled + outlined in one nav area; don't substitute Unicode glyphs or
+  add a new icon set. `aria-hidden` unless the icon is the sole label.
+
+## Product Content
+
+User-facing copy lives in `messages/<locale>.json` — never inline.
+
+- **Sentence case.** Button labels **start with a verb** ("Save changes", "Delete workspace").
+- Avoid bare "Yes / No / OK / Submit" when a descriptive label fits.
+- **Errors** explain what happened **and** what to do next.
+- Locale-aware punctuation (French NBSP before `: ; ? !`) → `messages.<locale>.typography.*`.
+
+## Rejected Patterns
+
+Tried and deliberately not used. Don't reach for these; flag if a case genuinely
+needs one — the point is to stop and ask, not to ban thinking.
+
+- **Carousels for primary content** — anything past slide one reads as hidden.
+  Use a grid or an asymmetric featured lead.
+- **Modals for flows longer than two fields** — long dialogs trap users with no
+  back. Multi-step flows get their own route.
+- **Tooltips for essential info** — invisible on touch and to keyboard. Tooltips
+  are `sm:`-gated hints only.
+- **Infinite scroll on data tables** — breaks pagination and deep-linking.
+  Paginate.
+- **Hover-only interactions** — invisible on touch. Every affordance has a
+  non-hover path.
+- **Cards as default grouping** — reach for spacing, a heading, or a divider
+  first (see Do's and Don'ts).
 
 ## Do's and Don'ts
 
 - **Do** use colors by their role — `brand` earns attention, the two greys carry
   everything else.
-- **Do** keep OKLCH authoritative; re-sync `theme.hexColors` on any brand change
-  and run `pnpm verify:contrast` (WCAG **AA**) after.
+- **Do** keep OKLCH authoritative; edit color in `globals.css`, re-sync
+  `theme.hexColors.background` only when `--background` changes, and run
+  `pnpm verify:contrast` (WCAG **AA**) after.
 - **Do** log every brand/token/component change in the shared root `CHANGELOG.md`
   with a plain-language _why_ — the same file dev changes land in.
 - **Do** guard every transform with `motion-reduce:`, and spend boldness once per
@@ -305,3 +375,17 @@ A screen that renders is not done. Before calling a UI task complete:
 5. **Verified at 375 / 768 / 1280** — nothing overflows, clips, or mis-reflows.
 6. `pnpm verify:quick` passes and the result matches the reference.
 7. **Listed** any intentional deviation, and any new component / variant / token.
+
+## Maintenance & Validation
+
+- **Single source of truth:** OKLCH in `globals.css`. Change the background →
+  re-sync `theme.hexColors.background` (the only hex mirror, for the PWA manifest)
+  → run `pnpm verify:contrast` (WCAG AA).
+- **Log it:** every token/component/design change → shared root `CHANGELOG.md`
+  with a plain-language _why_; deeper rationale → `docs/design-decisions.md`.
+- **Keep current:** delete anything that no longer matches production — a stale
+  rule an agent follows confidently is worse than a missing one.
+- **Loaded?** `CLAUDE.md` imports this via `@DESIGN.md`; confirm with `/context`.
+- **Structure lint (optional):** `npx @google/design.md lint DESIGN.md` catches
+  broken refs + orphaned tokens. This file extends the spec (OKLCH mirrors, extra
+  sections), so treat lint as advisory, not authoritative.

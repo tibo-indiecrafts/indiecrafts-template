@@ -23,7 +23,7 @@ All security headers are set in `next.config.ts` via the `headers()` hook. They 
 Two supporting bits round out the config:
 
 - `poweredByHeader: false` (a top-level `nextConfig` option, not part of `headers()`) strips the `X-Powered-By: Next.js` header.
-- Immutable, one-year `Cache-Control` on `/brand/:path*` and `/logo.svg`, set in `headers()` (brand assets are swapped by editing the file, not the URL).
+- Immutable, one-year `Cache-Control` on `/brand/:path*`, set in `headers()` (the OG-card defaults there are swapped by editing the file; logo + icons are Sanity assets on the CDN).
 
 ## The Content-Security-Policy
 

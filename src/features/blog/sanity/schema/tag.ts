@@ -15,18 +15,13 @@ export default defineType({
   icon: TagIcon,
   fields: [
     defineField({
+      // Géré par @sanity/document-internationalization : masqué + lecture
+      // seule (le plugin écrit la valeur à la création).
       name: "language",
-      title: "Langue",
       type: "string",
-      options: {
-        list: [
-          { title: "English", value: "en" },
-          { title: "Français", value: "fr" },
-        ],
-        layout: "radio",
-      },
+      readOnly: true,
+      hidden: true,
       initialValue: "en",
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "title",
@@ -38,11 +33,18 @@ export default defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title", maxLength: 96 },
+      // `exclude` : une traduction démarre avec un slug vide, pas une copie
+      // du slug source — chaque locale a sa propre URL.
+      options: {
+        source: "title",
+        maxLength: 96,
+        documentInternationalization: { exclude: true },
+      },
       description: "Fragment d'URL pour /blog/tag/<slug>.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({ name: "description", title: "Description", type: "text" }),
+    defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
   ],
   preview: {
     select: { title: "title", language: "language" },

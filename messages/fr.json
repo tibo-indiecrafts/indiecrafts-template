@@ -19,7 +19,8 @@
   },
   "footer": {
     "rights": "Tous droits réservés.",
-    "creditPrefix": "Réalisé avec"
+    "creditPrefix": "Réalisé avec",
+    "previewLabel": "appuyez pour prévisualiser le site"
   },
   "common": {
     "skipToContent": "Aller au contenu principal",
@@ -27,7 +28,9 @@
     "switchTheme": "Changer de thème",
     "themeLight": "Clair",
     "themeDark": "Sombre",
-    "themeSystem": "Système"
+    "themeSystem": "Système",
+    "previous": "Précédent",
+    "next": "Suivant"
   },
   "cookies": {
     "title": "Nous respectons votre vie privée",
@@ -122,8 +125,13 @@
       "relatedSubheading": "D'autres articles qui pourraient vous plaire.",
       "heroLabel": "Derniers articles",
       "noPostsModule": "Aucun article pour le moment.",
-      "searchPlaceholder": "Rechercher…",
-      "searchLabel": "Rechercher",
+      "gallery": {
+        "regionLabel": "Galerie d'images",
+        "imageLabel": "Image {n} sur {total}",
+        "open": "Agrandir l'image {n} sur {total}",
+        "close": "Fermer",
+        "goToImage": "Aller à l'image {n}"
+      },
       "breadcrumbsLabel": "Fil d'ariane",
       "metaPublished": "Publié le",
       "metaReadTime": "Temps de lecture",
@@ -315,6 +323,20 @@
           "lucide": "Lucide — icônes d'interface",
           "reicon": "Reicon — outline + filled",
           "brands": "Reicon Brands — couleurs officielles"
+        },
+        "morphicons": {
+          "eyebrow": "Animation",
+          "title": "Des icônes qui se transforment",
+          "body": "Morphicons anime la transition entre deux icônes — la forme s'écoule de l'une à l'autre au lieu de sauter.",
+          "hint": "Touchez une icône pour la transformer. Respecte reduced-motion.",
+          "icons": {
+            "menu": "Menu / fermer",
+            "play": "Lecture / pause",
+            "theme": "Clair / sombre",
+            "volume": "Volume / muet",
+            "bell": "Notifications activées / désactivées",
+            "copy": "Copier / copié"
+          }
         }
       }
     }

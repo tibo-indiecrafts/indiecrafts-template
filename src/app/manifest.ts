@@ -1,16 +1,19 @@
 import type { MetadataRoute } from "next";
 import { site, theme } from "@/config";
+import { getSiteSettings } from "@/lib/seo/site-seo";
 
 /**
- * Web App Manifest. Browser favicons and apple-touch icons come from `<link>`
- * tags (auto-emitted by `app/icon.tsx` and `app/apple-icon.tsx`), so the
- * manifest carries the PWA install sizes (192 / 512 / maskable) plus the
- * install/splash chrome. Everything user-visible reads from `@/config` — name
- * + description from `site`, colors from `theme.hexColors` (hex mirrors of the
- * oklch tokens, since the manifest can't take oklch — so the install screen
- * matches the site).
+ * Web App Manifest. Icons come from Sanity (`siteSettings.icon`) — resized via
+ * the CDN URL to the PWA install sizes (192 / 512). Empty when unset (no static
+ * fallback — Sanity is the sole source). The favicon + apple-touch `<link>`s are
+ * emitted separately by the layout's `generateMetadata.icons`.
+ *
+ * Colors read from `theme.hexColors` (hex mirrors of the oklch tokens, since the
+ * manifest can't take oklch) so the install screen matches the site.
  */
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const { brand } = await getSiteSettings();
+  const icon = brand.icon;
   return {
     name: site.name,
     short_name: site.name,
@@ -20,15 +23,11 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     background_color: theme.hexColors.background,
     theme_color: theme.hexColors.background,
-    icons: [
-      { src: "/brand/icon-192.png", sizes: "192x192", type: "image/png" },
-      { src: "/brand/icon-512.png", sizes: "512x512", type: "image/png" },
-      {
-        src: "/brand/icon-maskable-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable",
-      },
-    ],
+    icons: icon
+      ? [
+          { src: `${icon}?w=192&h=192&fit=crop`, sizes: "192x192", type: "image/png" },
+          { src: `${icon}?w=512&h=512&fit=crop`, sizes: "512x512", type: "image/png" },
+        ]
+      : [],
   };
 }

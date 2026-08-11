@@ -62,7 +62,7 @@ const nextConfig: NextConfig = {
     // Tighter bundle: only import icons you actually reference. All three
     // icon sets are barrel-exported + tree-shakeable; this optimizes the
     // named-import form so unused icons never reach the bundle.
-    optimizePackageImports: ["lucide-react", "reicon-react", "reicon-brands"],
+    optimizePackageImports: ["lucide-react", "lucide", "reicon-react", "reicon-brands"],
   },
   async headers() {
     return [

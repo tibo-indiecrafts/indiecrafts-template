@@ -16,7 +16,6 @@ For the launch itself, see [`launch-checklist.md`](./launch-checklist.md).
 | `/<locale>/blog/rss.xml`                            | RSS feed per locale — pasteable into Feedly / Inoreader / Slack RSS bot |
 | `/<locale>/blog/<slug>/md`                          | Markdown export of any single post                                      |
 | `/<locale>/llms.txt`                                | LLM-readable site summary per locale                                    |
-| `/opengraph-image`                                  | The site-wide OG card preview                                           |
 | Netlify dashboard → **Forms**                       | Every form submission, by form name                                     |
 | Netlify dashboard → **Deploys**                     | Build logs, deploy preview URLs, rollbacks                              |
 | Google Search Console → **Coverage** + **Sitemaps** | What Google sees + indexing errors                                      |

@@ -3,14 +3,13 @@ import accordionList from "./accordion-list";
 import blogIndex from "./blog-index";
 import blogPostContent from "./blog-post-content";
 import blogPostList from "./blog-post-list";
-import breadcrumbs from "./breadcrumbs";
 import callout from "./callout";
 import cardList from "./card-list";
 import customHtml from "./custom-html";
+import gallery from "./gallery";
 import personList from "./person-list";
 import prose from "./prose";
 import quoteList from "./quote-list";
-import searchModule from "./search-module";
 import statList from "./stat-list";
 import stepList from "./step-list";
 
@@ -20,15 +19,14 @@ export const moduleSchemas: SchemaTypeDefinition[] = [
   accordionList,
   callout,
   cardList,
+  gallery,
   personList,
   prose,
   statList,
   stepList,
   quoteList,
   // Utility
-  breadcrumbs,
   customHtml,
-  searchModule,
   // Blog
   blogIndex,
   blogPostContent,
@@ -40,14 +38,13 @@ export const MODULE_TYPES = [
   "module.accordion-list",
   "module.callout",
   "module.card-list",
+  "module.gallery",
   "module.person-list",
   "module.prose",
   "module.stat-list",
   "module.step-list",
   "module.quote-list",
-  "module.breadcrumbs",
   "module.custom-html",
-  "module.search",
   "module.blog-index",
   "module.blog-post-content",
   "module.blog-post-list",

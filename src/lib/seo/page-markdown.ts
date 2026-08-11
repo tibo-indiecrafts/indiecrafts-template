@@ -1,26 +1,25 @@
 /**
- * Page-to-markdown utility for /llms-full.txt and per-page .md endpoints.
+ * Page-to-markdown for `/llms-full.txt` and the per-page `/llms/<id>` endpoints.
  *
- * Walks a page's i18n tree (`messages.pages.<id>.*`) and turns it into a
- * Markdown document an LLM can ingest directly. No per-page config needed
- * — uses the same translations that drive the SEO + UI surfaces.
- *
- * Convention applied to the walked tree:
- *   - `title`        → page H1
- *   - `description`  → leading paragraph
- *   - `hero.*`       → key: value bullets under "## Hero"
- *   - `blocks.<k>`   → "## <k>" section, each property recursed
- *   - `items.<k>`    → "- **<k>**: <body>" bullets when leaf has a body
- *   - other objects  → recurse with bumped heading level
- *   - other strings  → "**<key>**: <value>" bullet
+ * SANITY-ONLY — there is no auto-generation from `messages`. A page's markdown is:
+ * a head (H1 title + URL + description, from the Sanity `pageSeo` entry) plus the
+ * editor-authored `llmsFull` body when set. No `llmsFull` → head only. This mirrors
+ * the rest of the SEO surface (Sanity is the sole source).
  */
 
 import type { Locale, PageConfig } from "@/config";
-import { features, site } from "@/config";
+import { site } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
-import { parseFaqItems } from "@/lib/faq";
 
-type Json = string | number | boolean | null | { [k: string]: Json } | Json[];
+/**
+ * SEO/copy for one page, from `getSiteSeo(locale).pageSeo`. `llmsFull` is the
+ * editor-authored full-dump body (Markdown).
+ */
+export type PageMarkdownSeo = {
+  title?: string;
+  description?: string;
+  llmsFull?: string;
+};
 
 /**
  * Whether a page appears in the LLM endpoints. Single source of truth for
@@ -38,123 +37,32 @@ export function isLlmsPage(page: PageConfig): boolean {
   );
 }
 
-/** Read a sub-tree of messages by dotted path; returns null when missing. */
-export function getMessagesNode(
-  messages: Record<string, unknown>,
-  path: string,
-): Record<string, unknown> | null {
-  const segments = path.split(".");
-  let node: unknown = messages;
-  for (const s of segments) {
-    if (typeof node !== "object" || node === null) return null;
-    node = (node as Record<string, unknown>)[s];
-  }
-  if (typeof node !== "object" || node === null || Array.isArray(node)) return null;
-  return node as Record<string, unknown>;
-}
-
-function titleCase(s: string): string {
-  return s
-    .replace(/[-_]/g, " ")
-    .replace(/([A-Z])/g, " $1")
-    .trim()
-    .replace(/^./, (c) => c.toUpperCase());
-}
-
-function isLeafString(v: unknown): v is string {
-  return typeof v === "string";
-}
-
-function isObject(v: unknown): v is Record<string, Json> {
-  return typeof v === "object" && v !== null && !Array.isArray(v);
-}
-
-function renderObject(
-  obj: Record<string, Json>,
-  level: number,
-  parentKey?: string,
-): string {
-  const lines: string[] = [];
-  for (const [key, value] of Object.entries(obj)) {
-    if (isLeafString(value)) {
-      // Common cases: "title" + "body" / "subtitle" / "description" pairs
-      if (key === "body" || key === "subtitle" || key === "description") {
-        lines.push(value, "");
-      } else if (key === "title" || key === "heading" || key === "name") {
-        // Promote to a heading at this level
-        lines.push(`${"#".repeat(Math.min(level, 6))} ${value}`, "");
-      } else {
-        lines.push(`- **${titleCase(key)}**: ${value}`);
-      }
-    } else if (isObject(value)) {
-      const hasTitle = "title" in value || "name" in value || "heading" in value;
-      const heading = hasTitle
-        ? ""
-        : `${"#".repeat(Math.min(level, 6))} ${titleCase(key)}`;
-      if (heading) {
-        lines.push(heading, "");
-      }
-      lines.push(renderObject(value, level + 1, key));
-    }
-  }
-  return lines.filter((l, i, arr) => !(l === "" && arr[i - 1] === "")).join("\n");
-  // Suppress unused parameter warning
-  void parentKey;
-}
-
 /**
- * Render a page to Markdown using its i18n tree under
- * `messages.pages.<id>.*`. Returns the markdown body — no front matter.
+ * Render one page to Markdown: head (title + URL + description from Sanity) plus
+ * the `llmsFull` body when the editor set one.
  */
 export function renderPageMarkdown(
   page: PageConfig,
   locale: Locale,
-  messages: Record<string, unknown>,
+  seo?: PageMarkdownSeo,
 ): string {
-  const node = getMessagesNode(messages, `pages.${page.id}`);
-  if (!node) {
-    return `# ${page.id}\n\n_(no content under \`messages.pages.${page.id}\`)_\n`;
-  }
+  const title = seo?.title || page.id;
+  const url = `${site.url}${getStaticPathname(page.key, locale)}`;
 
-  const title =
-    (isLeafString(node.title) && node.title) ||
-    (isLeafString(node.name) && node.name) ||
-    page.id;
-  const description = isLeafString(node.description) ? node.description : "";
+  const parts = [`# ${title}`, "", `URL: ${url}`, ""];
+  if (seo?.description) parts.push(seo.description, "");
+  if (seo?.llmsFull) parts.push(seo.llmsFull, "");
 
-  const pathname = getStaticPathname(page.key, locale);
-  const url = `${site.url}${pathname}`;
-
-  const head = [`# ${title}`, "", `URL: ${url}`, ""];
-  if (description) head.push(description, "");
-
-  // Render the rest (everything except title/description, which we already
-  // emitted, and `faq`, which gets a dedicated block below) starting at H2.
-  const { title: _t, name: _n, description: _d, faq: _faq, ...rest } = node;
-  void _t;
-  void _n;
-  void _d;
-  void _faq;
-  const body = renderObject(rest as Record<string, Json>, 2);
-
-  const parts = [...head, body];
-
-  // FAQ — the same translated `faq` array the <Faq> section + FAQPage JSON-LD
-  // use, so llms.txt stays in sync automatically.
-  const faqItems = features.faq ? parseFaqItems(node.faq) : [];
-  if (faqItems.length > 0) {
-    parts.push("", "## FAQ", "");
-    for (const it of faqItems) parts.push(`### ${it.question}`, "", it.answer, "");
-  }
-
-  return [...parts, ""].join("\n");
+  return parts.join("\n");
 }
 
 /** Concatenate every visible page's markdown for `/llms-full.txt`. */
 export function renderAllPagesMarkdown(
   pages: readonly PageConfig[],
   locale: Locale,
-  messages: Record<string, unknown>,
+  seoByPage?: ReadonlyMap<string, PageMarkdownSeo>,
 ): string {
-  return pages.map((p) => renderPageMarkdown(p, locale, messages)).join("\n---\n\n");
+  return pages
+    .map((p) => renderPageMarkdown(p, locale, seoByPage?.get(p.id)))
+    .join("\n---\n\n");
 }

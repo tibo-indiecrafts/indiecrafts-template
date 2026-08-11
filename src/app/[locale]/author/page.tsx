@@ -7,6 +7,7 @@ import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { AuthorListing } from "@/features/blog/user-interface/author/sections/AuthorListing";
 import { sanityFetchLive } from "@/sanity/live";
+import { getTaxonomyPages } from "@/lib/system-pages";
 import { authorsForLocaleQuery } from "@/features/blog/sanity/queries";
 import type { Author } from "@/features/blog/sanity/types";
 
@@ -22,11 +23,13 @@ export default async function AuthorIndexPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [authors, t, nav] = await Promise.all([
+  const [authors, t, nav, copy] = await Promise.all([
     sanityFetchLive<Author[]>({ query: authorsForLocaleQuery, params: { locale } }),
     getTranslations("pages.author"),
     getTranslations("nav"),
+    getTaxonomyPages(locale),
   ]);
+  const c = copy.author;
 
   return (
     <DefaultLayout>
@@ -35,9 +38,9 @@ export default async function AuthorIndexPage({ params }: Props) {
         authors={authors}
         breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: nav("author") }]}
         breadcrumbsLabel={t("breadcrumbs")}
-        heading={t("heading")}
-        subheading={t("subheading")}
-        emptyLabel={t("empty")}
+        heading={c?.heading ?? t("heading")}
+        subheading={c?.subheading ?? t("subheading")}
+        emptyLabel={c?.empty ?? t("empty")}
         postsLabel={t.raw("posts")}
       />
     </DefaultLayout>

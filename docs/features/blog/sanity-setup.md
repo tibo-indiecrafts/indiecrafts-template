@@ -31,7 +31,7 @@ NEXT_PUBLIC_SANITY_API_VERSION=2025-01-01     # query-stability pin; bump intent
 
 # ── Server-only (NOT NEXT_PUBLIC_) ──
 SANITY_API_READ_TOKEN=                        # Viewer role. Required for draft preview.
-SANITY_API_WRITE_TOKEN=                       # Editor role. Only `pnpm seed:blog` uses this.
+SANITY_API_WRITE_TOKEN=                       # Editor role. Only `pnpm seed` uses this.
 ```
 
 Issue tokens at: <https://www.sanity.io/manage> → your project → **API** → **Tokens** → **Add API token**. Full reference (roles, CORS, security, troubleshooting) in [`sanity-tokens.md`](./sanity-tokens.md).
@@ -129,14 +129,13 @@ All registered via `src/features/blog/sanity/schema/index.ts` (exported as `sche
 | `module.accordion-list`    | `modules/accordion-list.ts`    | title + intro + items[{title, content}]               |
 | `module.callout`           | `modules/callout.ts`           | variant (info/success/warning/danger) + content + cta |
 | `module.card-list`         | `modules/card-list.ts`         | title + intro + columns + cards[]                     |
+| `module.gallery`           | `modules/gallery.ts`           | image carousel + thumbnails + zoom lightbox (embla)   |
 | `module.person-list`       | `modules/person-list.ts`       | title + intro + refs to `person`                      |
 | `module.prose`             | `modules/prose.ts`             | content + width (narrow/wide)                         |
 | `module.stat-list`         | `modules/stat-list.ts`         | title + intro + stats[{value, label}]                 |
 | `module.step-list`         | `modules/step-list.ts`         | title + intro + steps[{title, content}]               |
 | `module.quote-list`        | `modules/quote-list.ts`        | refs to `quote` (locale-filtered)                     |
-| `module.breadcrumbs`       | `modules/breadcrumbs.ts`       | items[{label, href}]                                  |
 | `module.custom-html`       | `modules/custom-html.ts`       | raw HTML — `dangerouslySetInnerHTML`                  |
-| `module.search`            | `modules/search-module.ts`     | client-side post search via `data-search-title`       |
 | `module.blog-index`        | `modules/blog-index.ts`        | frontpage hero                                        |
 | `module.blog-post-content` | `modules/blog-post-content.ts` | renders the active post (slot)                        |
 | `module.blog-post-list`    | `modules/blog-post-list.ts`    | filtered post grid (limit, categories, featuredOnly)  |
@@ -162,31 +161,31 @@ Contenu
    └─ Personnes
 ```
 
-The 14 modules are object types, not documents — editors only ever encounter them via the picker inside the singleton's `postModules` array or directly inline in a post body (the 8 inline-embeddable types listed in `blockContent.ts`).
+The 13 modules are object types, not documents — editors only ever encounter them via the picker inside the singleton's `postModules` array or directly inline in a post body (the 9 inline-embeddable types listed in `blockContent.ts`).
 
 ---
 
 ## 4. Routes
 
-| Route                                                                              | Type    | Gated                                       | Reads from                                         |
-| ---------------------------------------------------------------------------------- | ------- | ------------------------------------------- | -------------------------------------------------- |
-| `/<locale>`                                                                        | static  | —                                           | `messages/<locale>.json`                           |
-| `/<locale>/legal`                                                                  | static  | `features.legalPage`                        | `messages/<locale>.json`                           |
-| `/<locale>/blog`                                                                   | SSG     | `features.blog`                             | `blogSingletonQuery` + `allPostsQuery` (fallback)  |
-| `/<locale>/blog/<slug>`                                                            | SSG     | `features.blog`                             | `postBySlugQuery` + `blogSingletonQuery`           |
-| `/<locale>/blog/<slug>/md`                                                         | dynamic | `features.blog`                             | `postBySlugQuery`                                  |
-| `/<locale>/blog/rss.xml`                                                           | dynamic | `features.blog` + `features.rss`            | `rssPostsQuery`                                    |
-| `/<locale>/blog/category` + `/<slug>`                                              | SSG     | `features.blog`                             | `categoriesForLocaleQuery` / `categoryBySlugQuery` |
-| `/<locale>/blog/tag` + `/<slug>`                                                   | SSG     | `features.blog`                             | `tagsForLocaleQuery` / `tagBySlugQuery`            |
-| `/<locale>/author` + `/<slug>`                                                     | SSG     | `features.blog`                             | `authorsForLocaleQuery` / `authorBySlugQuery`      |
-| `/<locale>/llms.txt`                                                               | dynamic | `features.llms.index`                       | messages tree                                      |
-| `/<locale>/llms-full.txt`                                                          | dynamic | `features.llms.full`                        | messages tree                                      |
-| `/<locale>/llms/<id>`                                                              | dynamic | `features.llms.pages`                       | messages tree                                      |
-| `/api/draft-mode/enable`                                                           | dynamic | `features.studio` + `SANITY_API_READ_TOKEN` | —                                                  |
-| `/api/draft-mode/disable`                                                          | dynamic | `features.studio`                           | —                                                  |
-| `/studio/[[...tool]]`                                                              | static  | `features.studio`                           | Sanity API                                         |
-| `/sitemap.xml`                                                                     | static  | —                                           | `pages` map                                        |
-| `/robots.txt`, `/icon`, `/apple-icon`, `/opengraph-image`, `/manifest.webmanifest` | static  | —                                           | `site` config                                      |
+| Route                                  | Type    | Gated                                       | Reads from                                         |
+| -------------------------------------- | ------- | ------------------------------------------- | -------------------------------------------------- |
+| `/<locale>`                            | static  | —                                           | `messages/<locale>.json`                           |
+| `/<locale>/legal`                      | static  | `features.legalPage`                        | `messages/<locale>.json`                           |
+| `/<locale>/blog`                       | SSG     | `features.blog`                             | `blogSingletonQuery` + `allPostsQuery` (fallback)  |
+| `/<locale>/blog/<slug>`                | SSG     | `features.blog`                             | `postBySlugQuery` + `blogSingletonQuery`           |
+| `/<locale>/blog/<slug>/md`             | dynamic | `features.blog`                             | `postBySlugQuery`                                  |
+| `/<locale>/blog/rss.xml`               | dynamic | `features.blog` + `features.rss`            | `rssPostsQuery`                                    |
+| `/<locale>/blog/category` + `/<slug>`  | SSG     | `features.blog`                             | `categoriesForLocaleQuery` / `categoryBySlugQuery` |
+| `/<locale>/blog/tag` + `/<slug>`       | SSG     | `features.blog`                             | `tagsForLocaleQuery` / `tagBySlugQuery`            |
+| `/<locale>/author` + `/<slug>`         | SSG     | `features.blog`                             | `authorsForLocaleQuery` / `authorBySlugQuery`      |
+| `/<locale>/llms.txt`                   | dynamic | `features.llms.index`                       | messages tree                                      |
+| `/<locale>/llms-full.txt`              | dynamic | `features.llms.full`                        | messages tree                                      |
+| `/<locale>/llms/<id>`                  | dynamic | `features.llms.pages`                       | messages tree                                      |
+| `/api/draft-mode/enable`               | dynamic | `features.studio` + `SANITY_API_READ_TOKEN` | —                                                  |
+| `/api/draft-mode/disable`              | dynamic | `features.studio`                           | —                                                  |
+| `/studio/[[...tool]]`                  | static  | `features.studio`                           | Sanity API                                         |
+| `/sitemap.xml`                         | static  | —                                           | `pages` map                                        |
+| `/robots.txt`, `/manifest.webmanifest` | static  | —                                           | `site` config + Sanity `siteSettings.icon`         |
 
 `proxy.ts` matcher excludes `/studio` and `/api`; explicitly includes `/llms.txt`, `/llms-full.txt`, `/llms/:path*`, `/blog/rss.xml`, `/blog/:slug/md`.
 
@@ -207,7 +206,7 @@ cp .env.example .env.local
 
 # 4. (Optional) Issue tokens at https://www.sanity.io/manage
 #    Add SANITY_API_READ_TOKEN  for draft preview
-#    Add SANITY_API_WRITE_TOKEN for `pnpm seed:blog`
+#    Add SANITY_API_WRITE_TOKEN for `pnpm seed`
 
 # 5. Boot dev — Studio is at /studio
 pnpm dev
@@ -224,7 +223,7 @@ pnpm dev
 - **20 tags** — 10 per locale
 - **4 quotes** — 2 per locale, each carrying a real Unsplash portrait
 - **3 people** — for the Person List module
-- **10 posts** — 5 per locale, including a long-form "fast prototyping" showcase per locale that exercises **every** body-editor primitive (H1-H6, numbered + bulleted lists, code / underline / strike-through marks, inline images, links, blockquote) plus **all 8 inline-embeddable modules**
+- **10 posts** — 5 per locale, including a long-form "fast prototyping" showcase per locale that exercises **every** body-editor primitive (H1-H6, numbered + bulleted lists, code / underline / strike-through marks, inline images, links, blockquote) plus **8 of the 9 inline-embeddable modules** (all but the image gallery, which needs uploaded images)
 - **1 blog singleton** — `postModules` empty by default, so every post renders via `DefaultPostLayout` (hero card → TOC sidebar + body panel → keep-reading grid)
 
 Total: **47 documents** in a single transaction.
@@ -234,10 +233,10 @@ Before the seed transaction commits, `cleanupLegacy()` runs once to scrub any le
 ### Run
 
 ```bash
-SANITY_API_WRITE_TOKEN=<your-editor-token> pnpm seed:blog
+SANITY_API_WRITE_TOKEN=<your-editor-token> pnpm seed
 ```
 
-Or set `SANITY_API_WRITE_TOKEN` in `.env.local` first and just run `pnpm seed:blog` — the npm script loads `.env.local` for you via `node --env-file=.env.local`.
+Or set `SANITY_API_WRITE_TOKEN` in `.env.local` first and just run `pnpm seed` — the npm script loads `.env.local` for you via `node --env-file=.env.local`.
 
 **Idempotent**: re-running upserts the same `_id`s via `createOrReplace`. Tweak the script and re-run to update content in place.
 
@@ -256,8 +255,8 @@ Committing 47 documents…
 
 What you should see:
   /blog                                 → minimal card grid
-  /blog/fast-prototyping-with-nextjs    → ALL 8 inline modules
-  /blog/prototypage-rapide-avec-nextjs  → ALL 8 inline modules (FR)
+  /blog/fast-prototyping-with-nextjs    → 8 inline modules (no gallery)
+  /blog/prototypage-rapide-avec-nextjs  → 8 inline modules (no gallery, FR)
   any other post                         → default article layout
 ```
 
@@ -295,7 +294,7 @@ The build output should list these routes:
 ƒ /[locale]/llms/[id]
 ƒ /api/draft-mode/disable
 ƒ /api/draft-mode/enable
-○ /apple-icon, /icon, /manifest.webmanifest, /opengraph-image, /robots.txt, /sitemap.xml
+○ /manifest.webmanifest, /robots.txt, /sitemap.xml
 ○ /studio/[[...tool]]
 ```
 
@@ -345,10 +344,9 @@ curl -sS http://localhost:3000/fr/blog/rss.xml | head -20
 # Metadata routes (locale-agnostic)
 curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/sitemap.xml     # 200, lists /blog
 curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/robots.txt       # 200
-curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/opengraph-image  # 200
-curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/icon             # 200
-curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/apple-icon       # 200
 curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/manifest.webmanifest # 200
+# Favicon + OG image are now <link>/<meta> to the Sanity CDN (siteSettings.icon /
+# siteMeta.ogImage), not /icon or /opengraph-image routes.
 
 # llms.txt — should now include the Blog entry
 curl -sS http://localhost:3000/en/llms.txt | grep -A 1 Blog
@@ -367,9 +365,9 @@ Open <http://localhost:3000/studio>. Log in with the account that owns the proje
 
 - Articles list: 10 documents — 5 EN, 5 FR
 - Each post preview line shows `EN · <date>` or `FR · <date>`
-- Open any post → two tabs: **Contenu** and **Métadonnées**
+- Open any post → defaults to the **All fields** tab (whole document at once); **Contenu** and **Métadonnées** remain as filter tabs
 - Open Mise en page (singleton): a single `Modules par article` array (empty by default, so posts fall back to `DefaultPostLayout`)
-- Add a new module from the picker — every type from the 14-module catalog should be selectable
+- Add a new module from the picker — every type from the 13-module catalog should be selectable
 
 ### 7.4 Draft preview
 
@@ -385,7 +383,7 @@ Requires `SANITY_API_READ_TOKEN`. With it set:
 
 Without the token: the enable endpoint returns 503 with the message `Draft preview unavailable — set SANITY_API_READ_TOKEN in your environment.`
 
-### 7.5 All 8 inline modules
+### 7.5 The 8 seeded inline modules (gallery excluded — not seeded)
 
 Visit `/en/blog/fast-prototyping-with-nextjs`. Scroll top to bottom and verify each inline module renders:
 
@@ -420,7 +418,7 @@ By default the `blog` singleton's `postModules` array is empty, so every `/blog/
 - Two-column layout below: TOC sidebar on the right (sticky `top-24`, only mounted when `post.headings` has at least one h2/h3/h4) and a rounded body panel filling the rest of the width
 - "Keep reading" related-posts grid at the bottom
 
-To swap in a module-driven shell for every post, populate `postModules` from the Studio: drop in `breadcrumbs` → `blog-post-content` → `quote-list` → `blog-post-list` (or any other order). The fallback only fires when the array is empty.
+To swap in a module-driven shell for every post, populate `postModules` from the Studio: drop in `blog-post-content` → `quote-list` → `blog-post-list` (or any other order). The fallback only fires when the array is empty.
 
 ### 7.7 Feature flag OFF (regression check)
 
@@ -452,7 +450,7 @@ Home `/`: no "Blog" link in the header nav. `/sitemap.xml` should not list `/blo
 
 ### Posts don't appear on `/en/blog` or `/fr/blog`
 
-Check the post's `language` field in the Studio — must equal the route locale. The fallback `coalesce(language, "en") == $locale` means a missing language field defaults to `en` (legacy docs).
+Check the post's language — must equal the route locale. The `language` field is plugin-managed and hidden; read it from the locale badge in the doc's **Translations** menu (top of the editor), and switch a post's language there rather than editing a field. The fallback `coalesce(language, "en") == $locale` means a missing language defaults to `en` (legacy docs).
 
 ### Studio shows "Schema migration needed" warning
 
@@ -480,7 +478,7 @@ Already allowed via `getCSPConnectSources()` in `src/config/types.ts`. If you've
 
 ### `/blog` 200s but is blank
 
-The frontpage is driven entirely by published posts (it's never module-driven), so a blank `/blog` means there are no posts in the requested locale. Run `pnpm seed:blog`, or publish a post with its `language` matching the route locale.
+The frontpage is driven entirely by published posts (it's never module-driven), so a blank `/blog` means there are no posts in the requested locale. Run `pnpm seed`, or publish a post with its `language` matching the route locale.
 
 ### `/studio` shows "Configuration error"
 
@@ -510,7 +508,7 @@ Routes + sitemap + Studio sidebar follow automatically.
 
 ### Change locale set
 
-Edit `locales` in `src/config/index.ts`. Add the locale code as a new option in the `language` field's `options.list` on the `post`, `category`, `tag`, and `quote` schemas, and add an `en`/`fr`-style leaf to `languageSplit` in `src/features/blog/sanity/structure.ts`. Drop `messages/<code>.json`.
+Edit `locales` in `src/config/index.ts`, then drop `messages/<code>.json`. That's it — the Sanity side reads the same `locales` array: the `@sanity/document-internationalization` `supportedLanguages`, the per-locale create templates, and the desk's language split (`languageSplit` in `structure.ts`) all derive from it. Every content document (`post`, `author`, `category`, `tag`, `quote`, `person`) is translated, and its `language` field is plugin-managed (`readOnly` + `hidden`), so there's no `options.list` to extend.
 
 ### Disable a module without deleting it
 
@@ -524,7 +522,7 @@ Core Sanity infra is shared (`src/sanity/`); everything blog-specific is self-co
 
 ```
 sanity.config.ts                                Studio config (schema, plugins, structure)
-scripts/seed-blog-demo.mjs                      pnpm seed:blog — populates demo dataset
+scripts/seed-blog-demo.mjs                      pnpm seed — populates demo dataset
 scripts/unset-legacy-fields.mjs                 one-shot field unset after a schema removal
 
 src/sanity/                                     SHARED core infra (not blog-specific)
@@ -555,10 +553,9 @@ src/features/blog/                              THE BLOG FEATURE (gated by featu
 │       └── modules/                            Module schemas + MODULE_TYPES catalog
 │           ├── index.ts
 │           ├── accordion-list.ts, callout.ts, card-list.ts,
-│           │   person-list.ts, prose.ts, stat-list.ts, step-list.ts,
-│           │   quote-list.ts, breadcrumbs.ts, custom-html.ts,
-│           │   search-module.ts, blog-index.ts, blog-post-content.ts,
-│           │   blog-post-list.ts
+│           │   gallery.ts, person-list.ts, prose.ts, stat-list.ts,
+│           │   step-list.ts, quote-list.ts, custom-html.ts,
+│           │   blog-index.ts, blog-post-content.ts, blog-post-list.ts
 └── user-interface/                             Blog UI, organized by route (like src/user-interface/)
     ├── blog/sections/                          Frontpage: BlogListing, BlogHero, ExploreCategories/Tags, TopAuthors
     ├── post/                                   A single post (/blog/[slug])
@@ -571,7 +568,7 @@ src/features/blog/                              THE BLOG FEATURE (gated by featu
         ├── ModuleRenderer.tsx                  <Modules> + ModuleSwitch
         ├── portable-text-components.tsx        Shared PortableText render map
         ├── Cta.tsx                             ModuleCta button
-        └── <14 module component files>
+        └── <13 module component files>
 
 src/app/
 ├── studio/layout.tsx                           Studio root layout (own <html>/<body>)

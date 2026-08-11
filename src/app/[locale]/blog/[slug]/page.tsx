@@ -73,7 +73,10 @@ export async function generateMetadata({ params }: Props) {
         ...(base.alternates?.types ?? {}),
         "text/markdown": localizedPathname(`/blog/${slug}/md`, locale),
         ...(isRssEnabled()
-          ? { "application/rss+xml": localizedPathname(`/blog/rss.xml`, locale) }
+          ? {
+              "application/rss+xml": localizedPathname(`/blog/rss.xml`, locale),
+              "application/atom+xml": localizedPathname(`/blog/atom.xml`, locale),
+            }
           : {}),
       },
     },
@@ -95,7 +98,8 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   const title = post.metadata?.title ?? post.title ?? "";
-  const description = post.metadata?.description;
+  // Display teaser — prefer the editorial excerpt, fall back to the SEO description.
+  const description = post.excerpt ?? post.metadata?.description;
   const image = post.metadata?.image?.asset?.url;
   // The blog singleton's `postModules` composes every article's chrome
   // (breadcrumbs / body slot / related). Empty array → DefaultPostLayout.

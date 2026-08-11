@@ -129,7 +129,7 @@ Renders only when the referenced `person` docs have at least a `name`. The title
 
 ### Quote list (Citations) + Logo list / Hero split (removed)
 
-Earlier template versions shipped Logo List, Hero Split, and Form modules. They were removed in the 2026-05 editorial overhaul. If you're working against an older dataset that still contains those module instances, run `pnpm seed:blog` once — the seed's `cleanupLegacy()` step will strip them automatically.
+Earlier template versions shipped Logo List, Hero Split, and Form modules. They were removed in the 2026-05 editorial overhaul. If you're working against an older dataset that still contains those module instances, run `pnpm seed` once — the seed's `cleanupLegacy()` step will strip them automatically.
 
 ### Custom HTML
 

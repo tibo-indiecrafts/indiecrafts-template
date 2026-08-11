@@ -2,7 +2,7 @@ import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";
 import type { BlogPostContentModule, Post } from "@/features/blog/sanity/types";
-import type { Locale } from "@/config";
+import { features, type Locale } from "@/config";
 import { formatPostDate } from "@/lib/format-date";
 import { Link } from "@/i18n/routing";
 import { portableComponents } from "./portable-text-components";
@@ -33,11 +33,16 @@ export async function BlogPostContent({
   const categoryRef = post.categories?.[0];
   const author = post.author;
   const authorHref = author?.slug ? `/author/${author.slug}` : "/author";
+  const {
+    authors: showAuthors,
+    categories: showCategories,
+    tags: showTags,
+  } = features.blogTaxonomy;
 
   return (
     <article id={m.anchor} className="mx-auto max-w-3xl px-(--gutter) py-16 md:py-24">
       <header className="flex flex-col gap-4">
-        {categoryRef?.title ? (
+        {categoryRef?.title && showCategories ? (
           categoryRef.slug ? (
             <Link
               href={`/blog/category/${categoryRef.slug}`}
@@ -56,7 +61,7 @@ export async function BlogPostContent({
           <p className="text-muted-foreground text-balance">{description}</p>
         ) : null}
         <div className="text-muted-foreground flex items-center gap-3 text-sm">
-          {author?.name ? (
+          {author?.name && showAuthors ? (
             <Link
               href={authorHref}
               className="hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
@@ -64,7 +69,7 @@ export async function BlogPostContent({
               {t("by", { name: author.name })}
             </Link>
           ) : null}
-          {author?.name && date ? <span aria-hidden="true">·</span> : null}
+          {author?.name && showAuthors && date ? <span aria-hidden="true">·</span> : null}
           {date ? <time dateTime={post.publishedAt}>{date}</time> : null}
         </div>
       </header>
@@ -88,7 +93,7 @@ export async function BlogPostContent({
         </div>
       ) : null}
 
-      {post.tags && post.tags.length > 0 ? (
+      {post.tags && post.tags.length > 0 && showTags ? (
         <div className="border-border/60 mt-10 flex flex-wrap items-center gap-2 border-t pt-6">
           {post.tags.map((tag) =>
             tag.slug ? (

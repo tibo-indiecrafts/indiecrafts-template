@@ -50,7 +50,7 @@ Site settings → **Environment variables** → Add. None of these are required 
 | `NEXT_PUBLIC_SANITY_DATASET`     | Always (if blog)                  | `production` by default                          |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | Always (if blog)                  | `2025-01-01` — pin                               |
 | `SANITY_API_READ_TOKEN`          | If you want draft preview         | Viewer role; server-only                         |
-| `SANITY_API_WRITE_TOKEN`         | Only for `pnpm seed:blog`         | Editor role; don't ship to runtime               |
+| `SANITY_API_WRITE_TOKEN`         | Only for `pnpm seed`              | Editor role; don't ship to runtime               |
 
 `.env.example` documents the full set.
 
@@ -137,7 +137,7 @@ Within an hour of the production deploy, run this curl pass to catch anything br
 SITE=https://acme.com
 
 # Public surfaces — should all be 200
-for url in / /en /fr /en/blog /fr/blog /sitemap.xml /robots.txt /opengraph-image /manifest.webmanifest; do
+for url in / /en /fr /en/blog /fr/blog /sitemap.xml /robots.txt /manifest.webmanifest; do
   printf "%-30s %s\n" "$url" "$(curl -sSL -o /dev/null -w "%{http_code}" "$SITE$url")"
 done
 
@@ -150,9 +150,8 @@ curl -s "$SITE/robots.txt"
 # Sanity Studio reachable
 curl -sSL -o /dev/null -w "%{http_code}\n" "$SITE/studio"   # → 200
 
-# OG card renders
-curl -sI "$SITE/opengraph-image" | grep -iE "content-type|content-length"
-# → image/png, ~30-80 KB
+# OG card is a <meta property="og:image"> pointing at the Sanity CDN (siteMeta.ogImage)
+curl -s "$SITE/en" | grep -iE 'og:image'   # → content=".../cdn.sanity.io/..."
 
 # Security headers present
 curl -sI "$SITE/" | grep -iE "x-frame|content-security|referrer|permissions"

@@ -31,7 +31,7 @@ export default defineType({
       type: "text",
       rows: 3,
       description:
-        "Jusqu'à ~160 caractères — également affichée sur les cartes du listing.",
+        "Description SEO (résultats de recherche + partages sociaux). ~160 caractères. Le texte affiché sur les cartes vient du champ « Extrait » (onglet Contenu) — il retombe ici s'il est vide.",
       validation: (Rule) =>
         Rule.max(160).warning(
           "Restez sous 160 caractères pour les résultats de recherche.",
@@ -48,6 +48,9 @@ export default defineType({
           (doc as { title?: string }).title ??
           "",
         maxLength: 96,
+        // `exclude` : une traduction d'article démarre avec un slug vide,
+        // pas une copie du slug source — chaque locale a sa propre URL.
+        documentInternationalization: { exclude: true },
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -77,6 +80,38 @@ export default defineType({
       type: "boolean",
       description: "Ajoute robots:noindex + retire l'article du RSS et du plan de site.",
       initialValue: false,
+    }),
+    defineField({
+      name: "hideFromDiscovery",
+      title: "Masquer des listings du site",
+      type: "boolean",
+      description:
+        "Retire des listings, de l'explorateur et des articles liés — la page reste accessible par son URL directe.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "unpublished",
+      title: "Dépublier (page inaccessible)",
+      type: "boolean",
+      description:
+        "La page renvoie 404 partout — retirée des listings, du plan de site, du RSS et de son URL directe. Le document reste éditable dans le Studio.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "llmsSummary",
+      title: "Résumé pour les IA (llms.txt)",
+      type: "text",
+      rows: 4,
+      description:
+        "Texte libre : décrivez l'article pour /llms.txt. Affiché comme une ligne de résumé (sauts de ligne aplatis). Vide = la description SEO. Contenu long = champ « Contenu complet » ci-dessous.",
+    }),
+    defineField({
+      name: "llmsFull",
+      title: "Contenu complet pour les IA (llms-full)",
+      type: "text",
+      rows: 10,
+      description:
+        "Markdown exposé sur /blog/<slug>/md (la version texte pour les assistants IA). Vide = le corps de l'article est utilisé.",
     }),
   ],
 });

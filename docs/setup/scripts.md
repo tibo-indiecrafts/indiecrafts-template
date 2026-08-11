@@ -10,26 +10,27 @@ Run with `pnpm <name>`.
 
 ### Dev & build
 
-| Script  | Command      | What it does / when to run                                                                                       |
-| ------- | ------------ | ---------------------------------------------------------------------------------------------------------------- |
-| `dev`   | `next dev`   | Local dev server at `http://localhost:3000`. Your default while working.                                         |
-| `build` | `next build` | Production build — prerenders every static route × locale. Run before deploy or to reproduce a CI build failure. |
-| `start` | `next start` | Serves the output of `pnpm build`. For smoke-testing a production build locally; not the dev server.             |
+| Script  | Command                | What it does / when to run                                                                                                                                  |
+| ------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dev`   | `next dev --turbopack` | Local dev server at `http://localhost:3000` (Turbopack — much lighter CPU than webpack, matters when running several projects). Your default while working. |
+| `build` | `next build`           | Production build — prerenders every static route × locale. Run before deploy or to reproduce a CI build failure.                                            |
+| `start` | `next start`           | Serves the output of `pnpm build`. For smoke-testing a production build locally; not the dev server.                                                        |
 
 ### Quality gates
 
-| Script            | Command                                                                                     | What it does / when to run                                                                                    |
-| ----------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `tsc`             | `tsc --noEmit`                                                                              | Strict typecheck, no output files. Run after any type-level change.                                           |
-| `lint`            | `eslint`                                                                                    | ESLint over the repo. Zero errors expected.                                                                   |
-| `lint:fix`        | `eslint --fix`                                                                              | Same, auto-fixing what it can.                                                                                |
-| `format`          | `prettier --write .`                                                                        | Formats the whole tree in place.                                                                              |
-| `format:check`    | `prettier --check .`                                                                        | Verifies formatting without writing. What CI runs.                                                            |
-| `verify:contrast` | `node scripts/check-contrast.mjs`                                                           | WCAG AA contrast check on the theme tokens. Run after any color change.                                       |
-| `doctor`          | `npx react-doctor@latest --verbose`                                                         | Full [React Doctor](#react-doctor) scan (security / performance / correctness / architecture).                |
-| `doctor:changed`  | `npx react-doctor@latest --verbose --scope changed --base main`                             | React Doctor scoped to **only new issues vs `main`** — what `verify` runs, so legacy debt can't block you.    |
-| `verify:quick`    | `pnpm tsc && pnpm lint`                                                                     | Typecheck + lint. The **pre-push gate** — run it before you push.                                             |
-| `verify`          | `pnpm tsc && pnpm lint && pnpm format:check && pnpm verify:contrast && pnpm doctor:changed` | The full local gate: types + lint + format + contrast + React Doctor (changed code). Run before opening a PR. |
+| Script            | Command                                                                                     | What it does / when to run                                                                                                                                                                                                                |
+| ----------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tsc`             | `tsc --noEmit`                                                                              | Strict typecheck, no output files. Run after any type-level change.                                                                                                                                                                       |
+| `lint`            | `eslint`                                                                                    | ESLint over the repo. Zero errors expected.                                                                                                                                                                                               |
+| `lint:fix`        | `eslint --fix`                                                                              | Same, auto-fixing what it can.                                                                                                                                                                                                            |
+| `format`          | `prettier --write .`                                                                        | Formats the whole tree in place.                                                                                                                                                                                                          |
+| `format:check`    | `prettier --check .`                                                                        | Verifies formatting without writing. What CI runs.                                                                                                                                                                                        |
+| `verify:contrast` | `node scripts/check-contrast.mjs`                                                           | WCAG AA contrast check on the theme tokens. Run after any color change.                                                                                                                                                                   |
+| `doctor`          | `npx react-doctor@latest --verbose`                                                         | Full [React Doctor](#react-doctor) scan (security / performance / correctness / architecture).                                                                                                                                            |
+| `doctor:changed`  | `npx react-doctor@latest --verbose --scope changed --base main`                             | React Doctor scoped to **only new issues vs `main`** — what `verify` runs, so legacy debt can't block you.                                                                                                                                |
+| `shadscan`        | `pnpm dlx @shadscan/cli`                                                                    | [shadscan](https://github.com/TheOrcDev/shadscan) — deterministic shadcn/ui fundamentals audit, scores UX 0–100 across 6 categories (62 rules). Manual, not in `verify`. `--prompt` for an AI fix-plan; `--json --fail-under <n>` for CI. |
+| `verify:quick`    | `pnpm tsc && pnpm lint`                                                                     | Typecheck + full-repo lint. A **manual pre-PR check** — the commit hook already runs `tsc`, this adds whole-repo lint.                                                                                                                    |
+| `verify`          | `pnpm tsc && pnpm lint && pnpm format:check && pnpm verify:contrast && pnpm doctor:changed` | The full local gate: types + lint + format + contrast + React Doctor (changed code). Run before opening a PR.                                                                                                                             |
 
 ::: tip
 `pnpm verify` does **not** run `pnpm build`. CI runs both — `verify` for correctness/style, `build` to prove every route prerenders. Run `pnpm build` yourself when you've touched routing, config, or anything that affects static generation.
@@ -56,9 +57,9 @@ Because it runs via `npx …@latest`, the first run fetches the CLI (needs netwo
 
 ### Content seeding
 
-| Script      | Command                                                 | What it does / when to run                                                                                                                                                        |
-| ----------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `seed:blog` | `node --env-file=.env.local scripts/seed-blog-demo.mjs` | Seeds the Sanity dataset with demo blog content. Needs `SANITY_API_WRITE_TOKEN`. The `--env-file=.env.local` flag loads your local env automatically. See [§ 2](#_2-scripts-mjs). |
+| Script | Command                                                 | What it does / when to run                                                                                                                                                        |
+| ------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `seed` | `node --env-file=.env.local scripts/seed-blog-demo.mjs` | Seeds the Sanity dataset with demo blog content. Needs `SANITY_API_WRITE_TOKEN`. The `--env-file=.env.local` flag loads your local env automatically. See [§ 2](#_2-scripts-mjs). |
 
 ### Documentation site
 
@@ -92,7 +93,7 @@ Four Node scripts. Only the contrast checker runs with plain `node` (no token, n
 ### `seed-blog-demo.mjs` — seed demo content
 
 - **Purpose:** populates the dataset with demo blog content — authors, categories, posts (with images fetched from Unsplash), quotes, people, and the `blog` singleton.
-- **Invoke:** `pnpm seed:blog`. Needs a write-capable token in `SANITY_API_WRITE_TOKEN` (Editor role). The `pnpm` alias loads `.env.local` for you via `--env-file`.
+- **Invoke:** `pnpm seed`. Needs a write-capable token in `SANITY_API_WRITE_TOKEN` (Editor role). The `pnpm` alias loads `.env.local` for you via `--env-file`.
 - **Touches:** writes to the live Sanity dataset. **Idempotent** — it uses `createOrReplace` keyed on fixed `_id`s, so re-running updates docs in place instead of duplicating them. It only writes, never deletes, so removing an entry from the script and re-running leaves the old doc orphaned in the dataset (see the re-seed table in [`new-client.md`](./new-client.md) § 8).
 - **When:** during template iteration or to stand up a demo. **Never** against a client's production dataset once real content exists.
 
@@ -118,12 +119,15 @@ Four Node scripts. Only the contrast checker runs with plain `node` (no token, n
 
 ## 3. Git hooks (husky)
 
-Installed by the `prepare` script on `pnpm install`. Two hooks:
+Installed by the `prepare` script on `pnpm install`. One hook:
 
-| Hook         | Runs                    | What it does                                                                             |
-| ------------ | ----------------------- | ---------------------------------------------------------------------------------------- |
-| `pre-commit` | `pnpm lint-staged`      | Runs `lint-staged` over **staged files only** — fast. Config in `.lintstagedrc.json`.    |
-| `pre-push`   | `pnpm lint && pnpm tsc` | Full lint + typecheck before anything leaves your machine. Blocks the push on any error. |
+| Hook         | Runs                           | What it does                                                                                                    |
+| ------------ | ------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `pre-commit` | `pnpm lint-staged && pnpm tsc` | Lints + formats **staged files only** (fast), then runs a full `tsc` typecheck. Blocks the commit on any error. |
+
+There is **no pre-push hook** — the commit gate plus CI cover it, so pushing is
+never blocked twice. Run `pnpm verify:quick` yourself before opening a PR for a
+full-repo lint.
 
 `lint-staged` (`.lintstagedrc.json`) applies:
 
@@ -134,4 +138,4 @@ Installed by the `prepare` script on `pnpm install`. Two hooks:
 }
 ```
 
-So committing auto-fixes lint + formats the files you're committing; pushing re-checks the whole repo. To bypass a hook in a genuine emergency, `git commit`/`git push` accept `--no-verify` — but the same checks run in CI, so you're only deferring the failure.
+So committing auto-fixes lint + formats the files you're committing, then typechecks. Pushing runs nothing — there's no pre-push hook, so CI is the whole-repo backstop. To bypass the commit hook in a genuine emergency, `git commit` accepts `--no-verify` — but the same checks run in CI, so you're only deferring the failure.

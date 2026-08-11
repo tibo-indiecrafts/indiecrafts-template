@@ -9,6 +9,7 @@ import {
   type Locale,
 } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
+import { getSiteSeo } from "@/lib/seo/site-seo";
 import { client } from "@/sanity/client";
 import {
   allAuthorSlugsQuery,
@@ -42,16 +43,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   // ── Static pages ────────────────────────────────────────────
+  // Per-locale Sanity `pageSeo.noindex` can hide a page in some languages only,
+  // so drop those locales from the alternates (and the whole page if all hidden).
+  const seoByLocale = new Map(
+    await Promise.all(localeCodes.map(async (l) => [l, await getSiteSeo(l)] as const)),
+  );
   const staticEntries: MetadataRoute.Sitemap = ROUTES.flatMap((page) => {
     if (page.seo?.noindex || page.seo?.robots?.index === false || !isPageVisible(page))
       return [];
+    const activeLocales = localeCodes.filter(
+      (l) => !seoByLocale.get(l)?.pageSeo.get(page.id)?.noindex,
+    );
+    if (activeLocales.length === 0) return [];
     const languages: Record<string, string> = {};
-    for (const locale of localeCodes) {
+    for (const locale of activeLocales) {
       languages[locale] = `${site.url}${getStaticPathname(page.key, locale)}`;
     }
+    const primary = activeLocales.includes(defaultLocale)
+      ? defaultLocale
+      : activeLocales[0]!;
     return [
       {
-        url: `${site.url}${getStaticPathname(page.key, defaultLocale)}`,
+        url: `${site.url}${getStaticPathname(page.key, primary)}`,
         lastModified: now,
         changeFrequency: "weekly" as const,
         priority: page.key === "/" ? 1 : 0.7,
@@ -145,15 +158,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // Authors — global (no `language` field). Emit once per locale.
-  for (const author of authors) {
-    if (!author.slug) continue;
+  // Authors — per-locale (shared slugs): one entry per slug, alternates limited
+  // to the locales the author actually exists in (else we'd advertise 404 URLs).
+  const authorsByLocale = groupByLocale(authors);
+  for (const [slug, locales] of authorsByLocale) {
     const languages: Record<string, string> = {};
-    for (const locale of localeCodes) {
-      languages[locale] = `${site.url}${localePrefix(locale)}/author/${author.slug}`;
+    for (const locale of locales) {
+      languages[locale] = `${site.url}${localePrefix(locale)}/author/${slug}`;
     }
+    const primary = locales.has(defaultLocale)
+      ? defaultLocale
+      : (locales.values().next().value as Locale);
     dynamicEntries.push({
-      url: `${site.url}${localePrefix(defaultLocale)}/author/${author.slug}`,
+      url: `${site.url}${localePrefix(primary)}/author/${slug}`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.4,

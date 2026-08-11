@@ -52,7 +52,9 @@ export async function GET(_req: Request, { params }: Props) {
     .filter(Boolean)
     .join("\n");
 
-  const body = post.body ? portableTextToMarkdown(post.body) : "";
+  // Editor-authored `llmsFull` wins over the serialized PortableText body.
+  const body =
+    post.metadata?.llmsFull ?? (post.body ? portableTextToMarkdown(post.body) : "");
   const markdown = `${frontmatter}\n\n# ${title}\n\n${body}\n`;
 
   return new Response(markdown, {

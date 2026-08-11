@@ -491,21 +491,28 @@
   corner-top-right-shape: notch;
 }
 
-body {
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-}
+/* Font-family lives in `@layer base` so Tailwind utilities (`font-sans`,
+   `font-display`) can override it per element — an *unlayered* rule would beat
+   the utility (unlayered CSS wins over `@layer`), silently breaking any
+   `<h2 className="font-sans">`. The base element rules still cascade into
+   `.prose` / `.typeset` descendants — the typography plugin sets no heading
+   font-family — so headings keep the display face there without being unlayered. */
+@layer base {
+  body {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  }
 
-/* Headings pick up the display face (`config.fonts.display`). Falls back to
-   the body font when display and body are the same key. Explicit element
-   rule so it also wins inside `.prose` article bodies. */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family:
-    var(--font-display, var(--font-sans)), ui-sans-serif, system-ui, sans-serif;
+  /* Headings pick up the display face (`config.fonts.display`); falls back to
+     the body font when display and body are the same key. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family:
+      var(--font-display, var(--font-sans)), ui-sans-serif, system-ui, sans-serif;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

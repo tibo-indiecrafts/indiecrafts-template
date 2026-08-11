@@ -19,7 +19,8 @@
   },
   "footer": {
     "rights": "All rights reserved.",
-    "creditPrefix": "Made with"
+    "creditPrefix": "Made with",
+    "previewLabel": "tap to preview the site"
   },
   "common": {
     "skipToContent": "Skip to main content",
@@ -27,7 +28,9 @@
     "switchTheme": "Switch theme",
     "themeLight": "Light",
     "themeDark": "Dark",
-    "themeSystem": "System"
+    "themeSystem": "System",
+    "previous": "Previous",
+    "next": "Next"
   },
   "cookies": {
     "title": "We respect your privacy",
@@ -122,8 +125,13 @@
       "relatedSubheading": "More articles you might enjoy.",
       "heroLabel": "Latest articles",
       "noPostsModule": "No posts yet.",
-      "searchPlaceholder": "Search…",
-      "searchLabel": "Search",
+      "gallery": {
+        "regionLabel": "Image gallery",
+        "imageLabel": "Image {n} of {total}",
+        "open": "Enlarge image {n} of {total}",
+        "close": "Close",
+        "goToImage": "Go to image {n}"
+      },
       "breadcrumbsLabel": "Breadcrumb",
       "metaPublished": "Published",
       "metaReadTime": "Read time",
@@ -315,6 +323,20 @@
           "lucide": "Lucide — UI glyphs",
           "reicon": "Reicon — outline + filled",
           "brands": "Reicon Brands — official colors"
+        },
+        "morphicons": {
+          "eyebrow": "Motion",
+          "title": "Icons that morph, not swap",
+          "body": "Morphicons animates the transition between any two icons — the shape flows from one shape to the next instead of cutting.",
+          "hint": "Tap any icon to morph it. Honors reduced-motion.",
+          "icons": {
+            "menu": "Menu / close",
+            "play": "Play / pause",
+            "theme": "Light / dark",
+            "volume": "Volume / muted",
+            "bell": "Notifications on / off",
+            "copy": "Copy / copied"
+          }
         }
       }
     }

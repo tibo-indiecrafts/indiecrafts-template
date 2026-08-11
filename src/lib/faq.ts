@@ -4,7 +4,8 @@
  *
  *   - `<Faq pageId="…">`            renders the accordion (display)
  *   - `PageSchemas`                 emits FAQPage JSON-LD (rich result)
- *   - `renderPageMarkdown`          adds a `## FAQ` block to /llms.txt outputs
+ *   (the llms endpoints no longer auto-emit FAQ — llms bodies come from the
+ *    Sanity `pageSeo.llmsFull` field)
  *
  * Add a FAQ to any page: drop the `faq` array into that page's messages and
  * mount `<Faq pageId="…">` where you want it shown. SEO + llms pick it up on

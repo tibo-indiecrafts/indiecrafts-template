@@ -21,6 +21,7 @@
  */
 
 import { site } from "@/config";
+import type { SiteSettings } from "@/lib/seo/site-seo";
 import { compact, type SchemaObject } from "./jsonld-core";
 
 // ── BreadcrumbList ───────────────────────────────────────────
@@ -174,6 +175,69 @@ export function buildLocalBusinessSchema(args: {
     address: args.address,
     geo: args.geo ? { "@type": "GeoCoordinates", ...args.geo } : undefined,
     openingHoursSpecification: args.openingHours,
+  });
+}
+
+// ── Global schemas (editor-picked, from `siteSettings.globalSchemas`) ──
+
+/**
+ * Map the Studio-authored `siteSettings.globalSchemas[]` entries to JSON-LD via
+ * the factories above. A curated subset — Service / Product / Person / Event.
+ * `Offer` is attached when a `price` is set (Service / Product). Unknown types
+ * are skipped.
+ */
+export function buildGlobalSchemas(
+  entries: SiteSettings["globalSchemas"],
+): SchemaObject[] {
+  // Both price + currency required for a valid Offer — skip when either is blank.
+  const offers = (e: SiteSettings["globalSchemas"][number]) =>
+    e.price && e.priceCurrency
+      ? { price: e.price, priceCurrency: e.priceCurrency }
+      : undefined;
+
+  return entries.flatMap((e) => {
+    switch (e.schemaType) {
+      case "Service":
+        return [
+          buildServiceSchema({
+            name: e.name,
+            description: e.description,
+            url: e.url,
+            areaServed: undefined,
+            offers: offers(e),
+          }),
+        ];
+      case "Product":
+        return [
+          buildProductSchema({
+            name: e.name,
+            description: e.description,
+            image: e.image,
+            url: e.url,
+            offers: offers(e),
+          }),
+        ];
+      case "Person":
+        return [
+          buildPersonSchema({
+            name: e.name,
+            image: e.image,
+            url: e.url,
+          }),
+        ];
+      case "Event":
+        return [
+          compact({
+            "@type": "Event",
+            name: e.name,
+            description: e.description,
+            image: e.image,
+            url: e.url,
+          }),
+        ];
+      default:
+        return [];
+    }
   });
 }
 

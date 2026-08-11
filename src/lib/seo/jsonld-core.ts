@@ -6,7 +6,8 @@
  * the component module (which would form an import cycle).
  */
 
-import { globalSchemas, site } from "@/config";
+import { site } from "@/config";
+import type { SiteSettings } from "@/lib/seo/site-seo";
 
 type SchemaBase<T extends string> = {
   "@type": T;
@@ -50,60 +51,72 @@ export type JsonLdOrganization = SchemaBase<"Organization"> & {
  * Organization looks exactly as it did before any local fields were filled in.
  */
 export function buildBusinessSchema(
+  settings: SiteSettings,
   overrides: { description?: string } = {},
 ): SchemaObject {
-  const legal = site.legal;
-  const isLocal = legal.businessType !== "Organization";
-  const sameAs = (Object.values(site.social) as string[]).filter(Boolean);
-  const logo = `${site.url}${site.brandLogoPng ?? site.logo}`;
-
+  const b = settings.business;
+  const businessType = b.businessType || "Organization";
+  const isLocal = businessType !== "Organization";
+  // `sameAs` must be URLs. The twitter field is an `@handle` (used for the
+  // twitter:site meta tag) → convert to a profile URL; the rest are already
+  // URLs. Filtering on `http` also drops any `_type` key a Studio-saved inline
+  // object carries.
+  const { twitter, ...profiles } = settings.social;
+  const sameAs = [
+    ...(twitter ? [`https://x.com/${twitter.replace(/^@/, "")}`] : []),
+    ...Object.values(profiles),
+  ].filter((v): v is string => typeof v === "string" && v.startsWith("http"));
+  // Organization logo — the Sanity brand logo (absolute CDN URL). Omitted when
+  // unset (no static fallback).
+  const logo = settings.brand.logo;
   const addr = compact({
     "@type": "PostalAddress" as const,
-    streetAddress: legal.address.streetAddress,
-    addressLocality: legal.address.addressLocality,
-    addressRegion: legal.address.addressRegion,
-    postalCode: legal.address.postalCode,
-    addressCountry: legal.address.addressCountry,
+    streetAddress: b.address?.streetAddress,
+    addressLocality: b.address?.addressLocality,
+    addressRegion: b.address?.addressRegion,
+    postalCode: b.address?.postalCode,
+    addressCountry: b.address?.addressCountry,
   });
   const cp = compact({
     "@type": "ContactPoint" as const,
-    telephone: legal.contactPoint.telephone,
-    email: legal.contactPoint.email,
-    contactType: legal.contactPoint.contactType,
+    telephone: b.contactPoint?.telephone,
+    email: b.contactPoint?.email,
+    contactType: b.contactPoint?.contactType,
   });
 
   // LocalBusiness-only extras (undefined → dropped by `compact`).
   const geo =
-    isLocal && legal.geo.latitude && legal.geo.longitude
+    isLocal && b.geo?.latitude && b.geo?.longitude
       ? {
           "@type": "GeoCoordinates" as const,
-          latitude: legal.geo.latitude,
-          longitude: legal.geo.longitude,
+          latitude: b.geo.latitude,
+          longitude: b.geo.longitude,
         }
       : undefined;
   const areaServed =
-    isLocal && legal.areaServed.length
-      ? legal.areaServed.map((name) => ({ "@type": "AdministrativeArea" as const, name }))
+    isLocal && b.areaServed.length
+      ? b.areaServed.map((name) => ({ "@type": "AdministrativeArea" as const, name }))
       : undefined;
 
   return compact({
-    "@type": legal.businessType,
+    "@type": businessType,
     "@id": `${site.url}#organization`,
-    name: legal.company,
+    name: b.company,
+    legalName: b.legalName || undefined,
+    alternateName: b.alternateName || undefined,
     description: overrides.description,
     url: site.url,
     logo,
     image: isLocal ? logo : undefined,
     sameAs: sameAs.length ? sameAs : undefined,
-    foundingDate: legal.foundingDate || undefined,
+    foundingDate: b.foundingDate || undefined,
     address: Object.keys(addr).length > 1 ? addr : undefined,
     contactPoint: Object.keys(cp).length > 2 ? cp : undefined,
-    telephone: isLocal ? legal.contactPoint.telephone || undefined : undefined,
+    telephone: isLocal ? b.contactPoint?.telephone || undefined : undefined,
     geo,
     areaServed,
-    openingHours:
-      isLocal && legal.openingHours.length ? [...legal.openingHours] : undefined,
-    priceRange: isLocal ? legal.priceRange || undefined : undefined,
+    openingHours: isLocal && b.openingHours.length ? [...b.openingHours] : undefined,
+    priceRange: isLocal ? b.priceRange || undefined : undefined,
   }) as SchemaObject;
 }
 
@@ -162,11 +175,13 @@ export function buildWebPageSchema(args: {
 // ── Bundlers used by layout + page ───────────────────────────
 
 export function buildSiteSchemas(
+  settings: SiteSettings,
   options: { description?: string; searchUrlTemplate?: string } = {},
+  extraSchemas: readonly SchemaObject[] = [],
 ): SchemaObject[] {
   return [
-    buildBusinessSchema({ description: options.description }),
+    buildBusinessSchema(settings, { description: options.description }),
     buildWebSiteSchema(options),
-    ...(globalSchemas as SchemaObject[]),
+    ...extraSchemas,
   ];
 }

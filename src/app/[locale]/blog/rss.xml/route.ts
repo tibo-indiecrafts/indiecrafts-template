@@ -3,7 +3,7 @@ import { site } from "@/config";
 import type { Locale } from "@/config";
 import { isRssEnabled } from "@/features/blog/lib/route-gate";
 import { localizedPathname } from "@/i18n/routing";
-import { client } from "@/sanity/client";
+import { sanityFetchLive } from "@/sanity/live";
 import { rssPostsQuery } from "@/features/blog/sanity/queries";
 import type { RssPost } from "@/features/blog/sanity/types";
 
@@ -26,7 +26,7 @@ export async function GET(_req: Request, { params }: Props) {
   const { locale } = await params;
   const loc = locale as Locale;
   const [posts, t] = await Promise.all([
-    client.fetch<RssPost[]>(rssPostsQuery, { locale }),
+    sanityFetchLive<RssPost[]>({ query: rssPostsQuery, params: { locale } }),
     getTranslations({ locale: loc, namespace: "pages.blog" }),
   ]);
   // Locale-aware URLs — matches canonical/sitemap (default locale, no prefix).

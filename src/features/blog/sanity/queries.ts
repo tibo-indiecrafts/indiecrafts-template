@@ -17,6 +17,7 @@ import { defineQuery } from "next-sanity";
 const POST_LIST_FRAGMENT = `
   _id,
   title,
+  excerpt,
   publishedAt,
   featured,
   language,
@@ -26,7 +27,8 @@ const POST_LIST_FRAGMENT = `
     description,
     noIndex,
     videoUrl,
-    image { asset->{ url, metadata }, alt }
+    image { asset->{ url, metadata }, alt },
+    llmsSummary
   },
   author->{
     _id, name, position, "slug": slug.current,
@@ -38,13 +40,26 @@ const POST_LIST_FRAGMENT = `
 `;
 
 /** Author fragment used by the standalone /author routes. */
+/** SEO + visibility override for taxonomy docs (slug-less `seoMeta`). */
+const SEO_FRAGMENT = `
+  seo {
+    noIndex,
+    hideFromDiscovery,
+    unpublished,
+    title,
+    description,
+    image { asset->{ url, metadata }, alt }
+  }
+`;
+
 const AUTHOR_FRAGMENT = `
   _id,
   name,
   position,
   "slug": slug.current,
   "bio": pt::text(bio),
-  image { asset->{ url } }
+  image { asset->{ url } },
+  ${SEO_FRAGMENT}
 `;
 
 /**
@@ -80,6 +95,17 @@ const MODULES_FRAGMENT = `
   _type == "module.card-list" => {
     cards[] { ..., cta { ${CTA_FRAGMENT} } }
   },
+  _type == "module.gallery" => {
+    images[]{
+      _key,
+      "url": asset->url,
+      "alt": coalesce(alt, ""),
+      "lqip": asset->metadata.lqip,
+      "aspectRatio": asset->metadata.dimensions.aspectRatio,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height
+    }
+  },
   _type == "module.person-list" => {
     people[]->{
       _id, name, role, bio,
@@ -108,6 +134,8 @@ export const allPostsQuery = defineQuery(`
   *[_type == "post"
     && defined(metadata.slug.current)
     && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
     && coalesce(language, "en") == $locale]
   | order(coalesce(publishedAt, _createdAt) desc) {
     ${POST_LIST_FRAGMENT}
@@ -128,9 +156,11 @@ export const featuredPostsQuery = defineQuery(`
 export const postBySlugQuery = defineQuery(`
   *[_type == "post"
     && metadata.slug.current == $slug
+    && metadata.unpublished != true
     && coalesce(language, "en") == $locale][0]{
     _id,
     title,
+    excerpt,
     publishedAt,
     featured,
     language,
@@ -146,7 +176,9 @@ export const postBySlugQuery = defineQuery(`
       description,
       noIndex,
       videoUrl,
-      image { asset->{ url, metadata }, alt }
+      image { asset->{ url, metadata }, alt },
+      llmsSummary,
+      llmsFull
     },
     author->{ name, position, "slug": slug.current, image { asset->{ url } } },
     categories[]->{ _id, title, "slug": slug.current },
@@ -172,6 +204,8 @@ export const relatedPostsQuery = defineQuery(`
   *[_type == "post"
     && defined(metadata.slug.current)
     && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
     && coalesce(language, "en") == $locale
     && _id != $id
     && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]
@@ -186,7 +220,8 @@ export const relatedPostsQuery = defineQuery(`
 export const allPostSlugsQuery = defineQuery(`
   *[_type == "post"
     && defined(metadata.slug.current)
-    && metadata.noIndex != true]{
+    && metadata.noIndex != true
+    && metadata.unpublished != true]{
     "slug": metadata.slug.current,
     "language": coalesce(language, "en")
   }
@@ -197,6 +232,8 @@ export const rssPostsQuery = defineQuery(`
   *[_type == "post"
     && defined(metadata.slug.current)
     && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
     && coalesce(language, "en") == $locale]
   | order(coalesce(publishedAt, _createdAt) desc) {
     title,
@@ -217,7 +254,8 @@ export const rssPostsQuery = defineQuery(`
  */
 export const blogSingletonQuery = defineQuery(`
   *[_type == "blog"][0]{
-    postModules[]{ ${MODULES_FRAGMENT} }
+    postModules[]{ ${MODULES_FRAGMENT} },
+    ${SEO_FRAGMENT}
   }
 `);
 
@@ -232,10 +270,13 @@ export const categoriesForLocaleQuery = defineQuery(`
   *[_type == "category"
     && coalesce(language, "en") == $locale
     && defined(slug.current)
+    && seo.hideFromDiscovery != true
+    && seo.unpublished != true
     && count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && metadata.noIndex != true]) > 0
+      && metadata.noIndex != true
+      && metadata.unpublished != true]) > 0
   ] | order(title asc) {
     _id,
     title,
@@ -244,13 +285,15 @@ export const categoriesForLocaleQuery = defineQuery(`
     "postCount": count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && metadata.noIndex != true])
+      && metadata.noIndex != true
+      && metadata.unpublished != true])
   }
 `);
 
 export const categoryBySlugQuery = defineQuery(`
   *[_type == "category"
     && slug.current == $slug
+    && seo.unpublished != true
     && coalesce(language, "en") == $locale][0]{
     _id,
     title,
@@ -259,7 +302,9 @@ export const categoryBySlugQuery = defineQuery(`
     "postCount": count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && metadata.noIndex != true])
+      && metadata.noIndex != true
+      && metadata.unpublished != true]),
+    ${SEO_FRAGMENT}
   }
 `);
 
@@ -268,6 +313,8 @@ export const postsByCategorySlugQuery = defineQuery(`
   *[_type == "post"
     && defined(metadata.slug.current)
     && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
     && coalesce(language, "en") == $locale
     && count(categories[@->slug.current == $slug]) > 0]
   | order(coalesce(publishedAt, _createdAt) desc) {
@@ -277,7 +324,9 @@ export const postsByCategorySlugQuery = defineQuery(`
 
 /** Locale-tagged slugs — `generateStaticParams` builds one entry per pair. */
 export const allCategorySlugsQuery = defineQuery(`
-  *[_type == "category" && defined(slug.current)]{
+  *[_type == "category" && defined(slug.current)
+    && seo.noIndex != true
+    && seo.unpublished != true]{
     "slug": slug.current,
     "language": coalesce(language, "en")
   }
@@ -293,17 +342,22 @@ const TAG_FRAGMENT = `
   "postCount": count(*[_type == "post"
     && references(^._id)
     && coalesce(language, "en") == $locale
-    && metadata.noIndex != true])
+    && metadata.noIndex != true
+    && metadata.unpublished != true]),
+  ${SEO_FRAGMENT}
 `;
 
 export const tagsForLocaleQuery = defineQuery(`
   *[_type == "tag"
     && coalesce(language, "en") == $locale
     && defined(slug.current)
+    && seo.hideFromDiscovery != true
+    && seo.unpublished != true
     && count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && metadata.noIndex != true]) > 0
+      && metadata.noIndex != true
+      && metadata.unpublished != true]) > 0
   ] | order(title asc) {
     ${TAG_FRAGMENT}
   }
@@ -312,6 +366,7 @@ export const tagsForLocaleQuery = defineQuery(`
 export const tagBySlugQuery = defineQuery(`
   *[_type == "tag"
     && slug.current == $slug
+    && seo.unpublished != true
     && coalesce(language, "en") == $locale][0]{
     ${TAG_FRAGMENT}
   }
@@ -322,6 +377,8 @@ export const postsByTagSlugQuery = defineQuery(`
   *[_type == "post"
     && defined(metadata.slug.current)
     && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
     && coalesce(language, "en") == $locale
     && count(tags[@->slug.current == $slug]) > 0]
   | order(coalesce(publishedAt, _createdAt) desc) {
@@ -330,7 +387,9 @@ export const postsByTagSlugQuery = defineQuery(`
 `);
 
 export const allTagSlugsQuery = defineQuery(`
-  *[_type == "tag" && defined(slug.current)]{
+  *[_type == "tag" && defined(slug.current)
+    && seo.noIndex != true
+    && seo.unpublished != true]{
     "slug": slug.current,
     "language": coalesce(language, "en")
   }
@@ -345,28 +404,35 @@ export const allTagSlugsQuery = defineQuery(`
  */
 export const authorsForLocaleQuery = defineQuery(`
   *[_type == "author"
+    && coalesce(language, "en") == $locale
     && defined(slug.current)
+    && seo.hideFromDiscovery != true
+    && seo.unpublished != true
     && count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && metadata.noIndex != true]) > 0
+      && metadata.noIndex != true
+      && metadata.unpublished != true]) > 0
   ] | order(name asc) {
     ${AUTHOR_FRAGMENT},
     "postCount": count(*[_type == "post"
       && references(^._id)
       && coalesce(language, "en") == $locale
-      && metadata.noIndex != true])
+      && metadata.noIndex != true
+      && metadata.unpublished != true])
   }
 `);
 
 /**
- * Author document lookup — intentionally NOT locale-filtered. Authors
- * are global entities (one person, one profile) while their posts are
- * language-scoped via `postsByAuthorSlugQuery`. This mirrors the
- * data-model: the `author` schema has no `language` field.
+ * Author document lookup — locale-filtered. Authors are translated
+ * (plugin-managed `language`), so each locale has its own author doc with
+ * its own slug + bio; the EN/FR versions are linked via `translation.metadata`.
  */
 export const authorBySlugQuery = defineQuery(`
-  *[_type == "author" && slug.current == $slug][0]{
+  *[_type == "author"
+    && slug.current == $slug
+    && coalesce(language, "en") == $locale
+    && seo.unpublished != true][0]{
     ${AUTHOR_FRAGMENT}
   }
 `);
@@ -377,6 +443,8 @@ export const postsByAuthorSlugQuery = defineQuery(`
     && author->slug.current == $slug
     && defined(metadata.slug.current)
     && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
     && coalesce(language, "en") == $locale]
   | order(coalesce(publishedAt, _createdAt) desc) {
     ${POST_LIST_FRAGMENT}
@@ -384,8 +452,30 @@ export const postsByAuthorSlugQuery = defineQuery(`
 `);
 
 export const allAuthorSlugsQuery = defineQuery(`
-  *[_type == "author" && defined(slug.current)]{
-    "slug": slug.current
+  *[_type == "author" && defined(slug.current)
+    && seo.noIndex != true
+    && seo.unpublished != true]{
+    "slug": slug.current,
+    "language": coalesce(language, "en")
+  }
+`);
+
+/**
+ * Taxonomy docs (category / tag / author) for the LLM endpoints, one locale.
+ * `$type` is the schema name. Excludes noindex + unpublished (mirrors the post
+ * llms query). `title` coalesces `title` (category/tag) with `name` (author).
+ * `summary`/`full` are the editor's `seo.llmsSummary` / `seo.llmsFull`.
+ */
+export const taxonomyForLlmsQuery = defineQuery(`
+  *[_type == $type && defined(slug.current)
+    && seo.noIndex != true
+    && seo.unpublished != true
+    && coalesce(language, "en") == $locale]
+    | order(coalesce(title, name) asc){
+    "slug": slug.current,
+    "title": coalesce(title, name),
+    "summary": coalesce(seo.llmsSummary, seo.description, description, pt::text(bio)),
+    "full": seo.llmsFull
   }
 `);
 
@@ -398,6 +488,8 @@ export const moduleBlogPostListQuery = defineQuery(`
   *[_type == "post"
     && defined(metadata.slug.current)
     && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
     && coalesce(language, "en") == $locale
     && (count($categoryIds) == 0 || count((categories[]._ref)[@ in $categoryIds]) > 0)
     && (!$featuredOnly || featured == true)]

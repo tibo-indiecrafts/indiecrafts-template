@@ -12,21 +12,21 @@ object, `themeConfig`, and has its own guide: see
 
 ## The flags at a glance
 
-| Flag             | Type      | Default | Gates                                                                     |
-| ---------------- | --------- | ------- | ------------------------------------------------------------------------- |
-| `llms.index`     | `boolean` | `true`  | `/<locale>/llms.txt` + its `<link rel="alternate">` discovery tag         |
-| `llms.full`      | `boolean` | `true`  | `/<locale>/llms-full.txt`                                                 |
-| `llms.pages`     | `boolean` | `true`  | `/<locale>/llms/<id>` per-page markdown                                   |
-| `rss`            | `boolean` | `true`  | `/blog/rss.xml` + its alternate link — **requires `blog`**                |
-| `sitemap`        | `boolean` | `true`  | `/sitemap.xml`; also whether `robots.txt` advertises it                   |
-| `structuredData` | `boolean` | `true`  | All JSON-LD (Organization/WebSite site-wide, WebPage/FAQPage per page)    |
-| `localeSwitcher` | `boolean` | `true`  | The header locale picker                                                  |
-| `cookieBanner`   | `boolean` | `false` | Bottom-fixed cookie banner + GA Consent Mode gating                       |
-| `legalPage`      | `boolean` | `true`  | `/legal` route + its footer nav link                                      |
-| `faq`            | `boolean` | `true`  | Per-page `<Faq>` accordion + FAQPage JSON-LD + llms FAQ block             |
-| `blog`           | `boolean` | `true`  | The entire public blog surface (routes, feeds, discovery, `<SanityLive>`) |
-| `studio`         | `boolean` | `true`  | `/studio` + the draft-mode preview API                                    |
-| `maintenance`    | `boolean` | `false` | Site-wide 503 rewrite to `/maintenance` (via `proxy.ts`)                  |
+| Flag             | Type      | Default | Gates                                                                            |
+| ---------------- | --------- | ------- | -------------------------------------------------------------------------------- |
+| `llms.index`     | `boolean` | `true`  | `/<locale>/llms.txt` + its `<link rel="alternate">` discovery tag                |
+| `llms.full`      | `boolean` | `true`  | `/<locale>/llms-full.txt`                                                        |
+| `llms.pages`     | `boolean` | `true`  | `/<locale>/llms/<id>` per-page markdown                                          |
+| `rss`            | `boolean` | `true`  | `/blog/rss.xml` + `/blog/atom.xml` + their alternate links — **requires `blog`** |
+| `sitemap`        | `boolean` | `true`  | `/sitemap.xml`; also whether `robots.txt` advertises it                          |
+| `structuredData` | `boolean` | `true`  | All JSON-LD (Organization/WebSite site-wide, WebPage/FAQPage per page)           |
+| `localeSwitcher` | `boolean` | `true`  | The header locale picker                                                         |
+| `cookieBanner`   | `boolean` | `false` | Bottom-fixed cookie banner + GA Consent Mode gating                              |
+| `legalPage`      | `boolean` | `true`  | `/legal` route + its footer nav link                                             |
+| `faq`            | `boolean` | `true`  | Per-page `<Faq>` accordion + FAQPage JSON-LD + llms FAQ block                    |
+| `blog`           | `boolean` | `true`  | The entire public blog surface (routes, feeds, discovery, `<SanityLive>`)        |
+| `studio`         | `boolean` | `true`  | `/studio` + the draft-mode preview API                                           |
+| `maintenance`    | `boolean` | `false` | Site-wide 503 rewrite to `/maintenance` (via `proxy.ts`)                         |
 
 Everything reads these from `@/config` — never re-declare a flag or its
 condition locally.
@@ -62,9 +62,11 @@ export function isRssEnabled(): boolean {
 }
 ```
 
-`blog: false` hides the feed regardless of `rss`. When on, it drives both the
-`/blog/rss.xml` handler and the `<link rel="alternate" application/rss+xml>`
-tags on blog pages.
+`blog: false` hides the feeds regardless of `rss`. When on, it drives the
+`/blog/rss.xml` **and** `/blog/atom.xml` handlers plus their
+`<link rel="alternate" application/rss+xml>` / `application/atom+xml` tags on
+blog pages. Feeds are per-locale — the `[locale]` segment yields one RSS + one
+Atom feed for each language in `i18n.locales` (`@/config`).
 
 ## `sitemap`
 
@@ -131,7 +133,7 @@ The Sanity-powered public blog. When off, everything blog-related disappears:
 
 - **Routes** — `/blog`, `/blog/[slug]`, `/blog/category` + `/[slug]`,
   `/blog/tag` + `/[slug]`, `/author` + `/[slug]` all 404.
-- **Feeds / exports** — `/blog/rss.xml`, `/blog/[slug]/md`.
+- **Feeds / exports** — `/blog/rss.xml`, `/blog/atom.xml`, `/blog/[slug]/md`.
 - **Discovery** — the `blog`/`author`/`category`/`tag` entries in the `pages`
   map carry `enabled: features.blog`, so sitemap + llms.txt drop them; the
   header `/blog` nav link is added only when on.

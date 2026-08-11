@@ -13,8 +13,14 @@ import { token } from "./token";
  * and revalidates pages when content changes (only when a token is set).
  *
  * `sanityFetchLive` is a thin wrapper that switches the perspective to
- * `drafts` when draft mode is enabled — call it from blog routes instead
- * of `client.fetch` to make preview-mode editing work.
+ * `drafts` when draft mode is enabled — call it from **any** Sanity-backed page
+ * or route handler (home featured posts, blog routes, RSS/Atom feeds, the
+ * translated-slug API) instead of `client.fetch`, so preview-mode editing and
+ * live revalidation work everywhere `<SanityLive>` is mounted.
+ *
+ * Exception: **build-time** fetches must stay `client.fetch` — `generateStaticParams`
+ * and `app/sitemap.ts` run without a request, and `sanityFetchLive` calls
+ * `draftMode()` (request-scoped). Using it there would break static generation.
  *
  * `server-only` (not `"use server"`) — this module exports both a React
  * component (`SanityLive`) and async helpers; marking it as Server

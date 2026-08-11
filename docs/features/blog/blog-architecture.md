@@ -14,22 +14,23 @@ Companion docs:
 
 Every blog route lives under `src/app/[locale]/`:
 
-| URL                                | File                              | What it does                                                                                                                                                                  |
-| ---------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/<locale>/blog`                   | `blog/page.tsx`                   | Frontpage. Hero card grid + ExploreCategories + ExploreTags + TopAuthors. Empty-state falls back to `BlogListing`. Never module-driven (chrome stays uniform).                |
-| `/<locale>/blog/<slug>`            | `blog/[slug]/page.tsx`            | Post detail. Module-driven if `blog.postModules.length > 0`, otherwise falls back to `DefaultPostLayout`.                                                                     |
-| `/<locale>/blog/<slug>/md`         | `blog/[slug]/md/route.ts`         | Markdown export (YAML frontmatter + PortableText → Markdown via `src/features/blog/sanity/portable-to-markdown.ts`).                                                          |
-| `/<locale>/blog/rss.xml`           | `blog/rss.xml/route.ts`           | RSS 2.0, locale-filtered.                                                                                                                                                     |
-| `/<locale>/blog/category`          | `blog/category/page.tsx`          | Category listing (all topics with at least one post in the locale).                                                                                                           |
-| `/<locale>/blog/category/<slug>`   | `blog/category/[slug]/page.tsx`   | Single category — posts filtered by `categories[]->_ref`.                                                                                                                     |
-| `/<locale>/blog/tag`               | `blog/tag/page.tsx`               | Tag listing.                                                                                                                                                                  |
-| `/<locale>/blog/tag/<slug>`        | `blog/tag/[slug]/page.tsx`        | Single tag.                                                                                                                                                                   |
-| `/<locale>/author`                 | `author/page.tsx`                 | Author listing.                                                                                                                                                               |
-| `/<locale>/author/<slug>`          | `author/[slug]/page.tsx`          | Author profile + their posts. NOT locale-filtered on the document (authors are global); posts on the profile are.                                                             |
-| `/api/draft-mode/{enable,disable}` | `api/draft-mode/.../route.ts`     | Preview toggles. Gated by **`features.studio`** (404 when off); `/enable` also 503s when `SANITY_API_READ_TOKEN` is unset.                                                    |
-| `/studio/[[...tool]]`              | `app/studio/[[...tool]]/page.tsx` | Embedded Sanity Studio. Gated by **`features.studio`**. Sits **outside** `[locale]/` (its own root layout at `app/studio/layout.tsx`) because Studio owns its own HTML shell. |
+| URL                                | File                              | What it does                                                                                                                                                                    |
+| ---------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/<locale>/blog`                   | `blog/page.tsx`                   | Frontpage. Hero card grid + ExploreCategories + ExploreTags + TopAuthors. Empty-state falls back to `BlogListing`. Never module-driven (chrome stays uniform).                  |
+| `/<locale>/blog/<slug>`            | `blog/[slug]/page.tsx`            | Post detail. Module-driven if `blog.postModules.length > 0`, otherwise falls back to `DefaultPostLayout`.                                                                       |
+| `/<locale>/blog/<slug>/md`         | `blog/[slug]/md/route.ts`         | Markdown export (YAML frontmatter + PortableText → Markdown via `src/features/blog/sanity/portable-to-markdown.ts`).                                                            |
+| `/<locale>/blog/rss.xml`           | `blog/rss.xml/route.ts`           | RSS 2.0, locale-filtered. One feed per locale (`[locale]` segment; locales from `@/config`).                                                                                    |
+| `/<locale>/blog/atom.xml`          | `blog/atom.xml/route.ts`          | Atom 1.0, locale-filtered. Same data + `isRssEnabled()` gate as RSS; ISO-8601 dates, `<feed>`/`<entry>` shape.                                                                  |
+| `/<locale>/blog/category`          | `blog/category/page.tsx`          | Category listing (all topics with at least one post in the locale).                                                                                                             |
+| `/<locale>/blog/category/<slug>`   | `blog/category/[slug]/page.tsx`   | Single category — posts filtered by `categories[]->_ref`.                                                                                                                       |
+| `/<locale>/blog/tag`               | `blog/tag/page.tsx`               | Tag listing.                                                                                                                                                                    |
+| `/<locale>/blog/tag/<slug>`        | `blog/tag/[slug]/page.tsx`        | Single tag.                                                                                                                                                                     |
+| `/<locale>/author`                 | `author/page.tsx`                 | Author listing.                                                                                                                                                                 |
+| `/<locale>/author/<slug>`          | `author/[slug]/page.tsx`          | Author profile + their posts. Authors are translated — the document is locale-filtered (EN/FR versions linked via `translation.metadata`), and so are the posts on the profile. |
+| `/api/draft-mode/{enable,disable}` | `api/draft-mode/.../route.ts`     | Preview toggles. Gated by **`features.studio`** (404 when off); `/enable` also 503s when `SANITY_API_READ_TOKEN` is unset.                                                      |
+| `/studio/[[...tool]]`              | `app/studio/[[...tool]]/page.tsx` | Embedded Sanity Studio. Gated by **`features.studio`**. Sits **outside** `[locale]/` (its own root layout at `app/studio/layout.tsx`) because Studio owns its own HTML shell.   |
 
-All `/<locale>/blog/*` routes 404 when `features.blog === false`; the Studio + draft-mode surface is gated **independently** by `features.studio` (see `src/config/index.ts`). Public-route gating is centralized in `src/features/blog/lib/route-gate.ts` (`requireBlogRoute` for page components, `isBlogRouteEnabled` for route handlers). The RSS feed additionally requires `features.rss` (`isRssEnabled()`).
+All `/<locale>/blog/*` routes 404 when `features.blog === false`; the Studio + draft-mode surface is gated **independently** by `features.studio` (see `src/config/index.ts`). Public-route gating is centralized in `src/features/blog/lib/route-gate.ts` (`requireBlogRoute` for page components, `isBlogRouteEnabled` for route handlers). The RSS **and** Atom feeds additionally require `features.rss` (`isRssEnabled()`).
 
 ---
 
@@ -58,28 +59,28 @@ Inside that fragment, each `_type == "module.X" => { ... }` branch projects the 
 
 ### Top-level queries
 
-| Query                      | Locale-filtered?  | Consumed by                                         |
-| -------------------------- | ----------------- | --------------------------------------------------- |
-| `allPostsQuery`            | yes               | `/blog`, `/blog/category` fallback                  |
-| `featuredPostsQuery`       | yes               | `BlogHero` on `/blog`                               |
-| `postBySlugQuery`          | yes               | `/blog/[slug]`                                      |
-| `relatedPostsQuery`        | yes               | "Keep reading" grid on post detail                  |
-| `allPostSlugsQuery`        | no (multi-locale) | `generateStaticParams` for `/blog/[slug]`           |
-| `rssPostsQuery`            | yes               | `/blog/rss.xml`                                     |
-| `blogSingletonQuery`       | n/a               | `/blog/[slug]` — pulls `postModules` shell          |
-| `categoriesForLocaleQuery` | yes               | `/blog`, `/blog/category`                           |
-| `categoryBySlugQuery`      | yes               | `/blog/category/[slug]`                             |
-| `postsByCategorySlugQuery` | yes               | `/blog/category/[slug]`                             |
-| `allCategorySlugsQuery`    | no                | `generateStaticParams` for `/blog/category/[slug]`  |
-| `tagsForLocaleQuery`       | yes               | `/blog`, `/blog/tag`                                |
-| `tagBySlugQuery`           | yes               | `/blog/tag/[slug]`                                  |
-| `postsByTagSlugQuery`      | yes               | `/blog/tag/[slug]`                                  |
-| `allTagSlugsQuery`         | no                | `generateStaticParams` for `/blog/tag/[slug]`       |
-| `authorsForLocaleQuery`    | yes               | `/blog`, `/author`                                  |
-| `authorBySlugQuery`        | **no**            | `/author/[slug]` — authors are global               |
-| `postsByAuthorSlugQuery`   | yes               | `/author/[slug]` — their posts in the active locale |
-| `allAuthorSlugsQuery`      | no                | `generateStaticParams` for `/author/[slug]`         |
-| `moduleBlogPostListQuery`  | yes               | `module.blog-post-list` runtime fetch               |
+| Query                      | Locale-filtered?  | Consumed by                                            |
+| -------------------------- | ----------------- | ------------------------------------------------------ |
+| `allPostsQuery`            | yes               | `/blog`, `/blog/category` fallback                     |
+| `featuredPostsQuery`       | yes               | `BlogHero` on `/blog`                                  |
+| `postBySlugQuery`          | yes               | `/blog/[slug]`                                         |
+| `relatedPostsQuery`        | yes               | "Keep reading" grid on post detail                     |
+| `allPostSlugsQuery`        | no (multi-locale) | `generateStaticParams` for `/blog/[slug]`              |
+| `rssPostsQuery`            | yes               | `/blog/rss.xml` + `/blog/atom.xml`                     |
+| `blogSingletonQuery`       | n/a               | `/blog/[slug]` — pulls `postModules` shell             |
+| `categoriesForLocaleQuery` | yes               | `/blog`, `/blog/category`                              |
+| `categoryBySlugQuery`      | yes               | `/blog/category/[slug]`                                |
+| `postsByCategorySlugQuery` | yes               | `/blog/category/[slug]`                                |
+| `allCategorySlugsQuery`    | no                | `generateStaticParams` for `/blog/category/[slug]`     |
+| `tagsForLocaleQuery`       | yes               | `/blog`, `/blog/tag`                                   |
+| `tagBySlugQuery`           | yes               | `/blog/tag/[slug]`                                     |
+| `postsByTagSlugQuery`      | yes               | `/blog/tag/[slug]`                                     |
+| `allTagSlugsQuery`         | no                | `generateStaticParams` for `/blog/tag/[slug]`          |
+| `authorsForLocaleQuery`    | yes               | `/blog`, `/author`                                     |
+| `authorBySlugQuery`        | **yes**           | `/author/[slug]` — authors are translated (per locale) |
+| `postsByAuthorSlugQuery`   | yes               | `/author/[slug]` — their posts in the active locale    |
+| `allAuthorSlugsQuery`      | no                | `generateStaticParams` for `/author/[slug]`            |
+| `moduleBlogPostListQuery`  | yes               | `module.blog-post-list` runtime fetch                  |
 
 All locale-filtered queries use `coalesce(language, "en") == $locale` so legacy un-tagged docs default to EN — this is what keeps existing content visible after a schema migration that adds the `language` field.
 
@@ -101,7 +102,7 @@ What this gives us:
 - **Live content**: when `<SanityLive />` is mounted in the layout (it is, when `features.blog === true`), the client subscribes to GROQ websocket updates. Edits in the Studio reflect on the live page within seconds without a redeploy.
 - **Draft mode awareness**: when `draftMode().isEnabled === true`, `sanityFetchLive` switches the Sanity perspective to `drafts` (from `published`) and surfaces unpublished documents. The toggle is at `/api/draft-mode/{enable,disable}` (gated by `features.studio`).
 
-`generateStaticParams` **cannot** call `sanityFetchLive` (it would attempt to read `draftMode()`, which isn't available during static analysis). Use the plain `client.fetch(query)` there. The existing `/blog/[slug]/page.tsx` follows this pattern — copy it when adding new dynamic routes.
+`generateStaticParams` **and `app/sitemap.ts`** **cannot** call `sanityFetchLive` (they run at build time, with no request, and `sanityFetchLive` reads `draftMode()`). Use the plain `client.fetch(query)` there. Everywhere else — pages **and** route handlers (home featured posts, RSS/Atom feeds, the translated-slug API) — uses `sanityFetchLive`, so live revalidation + draft preview work uniformly. The existing `/blog/[slug]/page.tsx` follows this pattern — copy it when adding new dynamic routes.
 
 ---
 
@@ -126,7 +127,7 @@ schema/
 │   └── define-module.ts           ← Helper that auto-injects anchor + hidden fields
 └── modules/
     ├── index.ts                   ← Module registry + MODULE_TYPES catalog
-    └── <14 module schema files>
+    └── <13 module schema files>
 ```
 
 ### Document types
@@ -152,21 +153,20 @@ export const MODULE_TYPES = [
   "module.accordion-list",
   "module.callout",
   "module.card-list",
+  "module.gallery",
   "module.person-list",
   "module.prose",
   "module.stat-list",
   "module.step-list",
   "module.quote-list",
-  "module.breadcrumbs",
   "module.custom-html",
-  "module.search",
   "module.blog-index",
   "module.blog-post-content",
   "module.blog-post-list",
 ] as const;
 ```
 
-`blog.ts` reads `MODULE_TYPES` to build its `postModules` array's `of: [...]` spec, so adding a module entry there automatically makes it pickable in the singleton. The inline-allowlist is a separate subset in `blockContent.ts`'s `INLINE_MODULES` (8 of the 14).
+`blog.ts` reads `MODULE_TYPES` to build its `postModules` array's `of: [...]` spec, so adding a module entry there automatically makes it pickable in the singleton. The inline-allowlist is a separate subset in `blockContent.ts`'s `INLINE_MODULES` (9 of the 13).
 
 ---
 
@@ -244,10 +244,9 @@ Notable details:
 
 To swap in a module-driven shell instead, populate `blog.postModules` from the Studio. Typical order:
 
-1. `module.breadcrumbs` — re-uses the same trail
-2. `module.blog-post-content` — renders the active post's header + body (this is where DefaultPostLayout's job goes)
-3. `module.quote-list` — testimonials
-4. `module.blog-post-list` — "Keep reading" grid
+1. `module.blog-post-content` — renders the active post's header + body (this is where DefaultPostLayout's job goes)
+2. `module.quote-list` — testimonials
+3. `module.blog-post-list` — "Keep reading" grid
 
 Anything you build into `postModules` runs through `ModuleRenderer`, which means you can re-arrange / hide / theme per dataset without touching code.
 

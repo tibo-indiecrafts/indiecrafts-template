@@ -3,14 +3,13 @@ import type { Locale } from "@/config";
 import type { AnyModule, Post } from "@/features/blog/sanity/types";
 import { AccordionList } from "./AccordionList";
 import { BlogIndex } from "./BlogIndex";
-import { Breadcrumbs } from "./Breadcrumbs";
 import { Callout } from "./Callout";
 import { CardList } from "./CardList";
 import { CustomHtml } from "./CustomHtml";
+import { Gallery } from "./Gallery";
 import { PersonList } from "./PersonList";
 import { Prose } from "./Prose";
 import { QuoteList } from "./QuoteList";
-import { SearchModule } from "./SearchModule";
 import { StatList } from "./StatList";
 import { StepList } from "./StepList";
 
@@ -65,14 +64,13 @@ export const SIMPLE_MODULES = {
   "module.accordion-list": AccordionList,
   "module.callout": Callout,
   "module.card-list": CardList,
+  "module.gallery": Gallery,
   "module.person-list": PersonList,
   "module.prose": Prose,
   "module.stat-list": StatList,
   "module.step-list": StepList,
   "module.quote-list": QuoteList,
-  "module.breadcrumbs": Breadcrumbs,
   "module.custom-html": CustomHtml,
-  "module.search": SearchModule,
   "module.blog-index": BlogIndex,
 } satisfies { [K in SimpleModuleType]: SimpleRenderer<K> };
 

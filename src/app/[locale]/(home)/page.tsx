@@ -12,7 +12,8 @@ import { Pricing } from "@/user-interface/homepage/sections/Pricing";
 import { Testimonials } from "@/user-interface/homepage/sections/Testimonials";
 import { FeaturedArticles } from "@/user-interface/homepage/sections/FeaturedArticles";
 import { IconShowcase } from "@/user-interface/homepage/sections/IconShowcase";
-import { client } from "@/sanity/client";
+import { MorphiconsShowcase } from "@/user-interface/homepage/sections/MorphiconsShowcase";
+import { sanityFetchLive } from "@/sanity/live";
 import { featuredPostsQuery } from "@/features/blog/sanity/queries";
 import type { PostListItem } from "@/features/blog/sanity/types";
 
@@ -41,12 +42,18 @@ export default async function HomePage({ params }: Props) {
 
   const t = await getTranslations("pages.home");
 
-  // Featured articles — only when the blog feature is on. Uses the static
-  // `client` (not `sanityFetchLive`) so the home page stays prerendered.
+  // Featured articles — only when the blog feature is on. `sanityFetchLive` so
+  // the home page live-updates via `<SanityLive>` when a post changes (opts the
+  // page into dynamic rendering — the deliberate trade for freshness).
   // `tf` is resolved unconditionally so the hooks-free render stays simple.
   const tf = await getTranslations("pages.home.blocks.featured");
   const featured: PostListItem[] = features.blog
-    ? (await client.fetch(featuredPostsQuery, { locale })).slice(0, 4)
+    ? (
+        await sanityFetchLive<PostListItem[]>({
+          query: featuredPostsQuery,
+          params: { locale },
+        })
+      ).slice(0, 4)
     : [];
 
   return (
@@ -66,6 +73,8 @@ export default async function HomePage({ params }: Props) {
       />
 
       <IconShowcase id="home-icons" namespace="pages.home.blocks.icons" />
+
+      <MorphiconsShowcase id="home-morphicons" namespace="pages.home.blocks.morphicons" />
 
       <Cta type="cta" id="home-cta" namespace="pages.home.blocks.cta" />
 

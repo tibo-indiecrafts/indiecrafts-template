@@ -15,18 +15,11 @@ site = {
   tagline: "...",                          // shown in OG cards + footer
   description: "...",                      // <meta description>, OG description
   url: "https://acme.com",                 // ⚠ flip from PLACEHOLDER before launch
-  logo: "/logo.svg",                       // header / footer / favicon source
-  brandLogoPng: "/brand/logo.png",         // schema.org Organization (Google rejects SVG here)
-  icon: { … },                             // favicon + apple-touch-icon refs
-  ogImage: { … },                          // global OG card route
+  ogImage: { … },                          // brand-default OG card route
   contact: { email: "hello@acme.com" },
-  social: {
-    twitter: "@acme",                      // → twitter:site / creator
-    github: "",                            // empty string = omitted
-    linkedin: "https://linkedin.com/company/acme",
-    instagram: "",
-    mastodon: "",
-  },
+  // Logo, favicon/app icon, social profiles, and business/structured-data are
+  // now edited in Sanity (Studio → SEO & métadonnées), not here. See
+  // docs/seo/editing-seo-in-sanity.md.
   legal: {
     company: "Acme SAS",
     foundingDate: "2024",
@@ -40,54 +33,48 @@ site = {
 
 ---
 
-## 2. `theme.*` — colours, fonts, radii
+## 2. `theme.*` — the PWA hex mirror + container
+
+The runtime color, radii, and font tokens live in **`src/app/globals.css`** (oklch)
+and are consumed through Tailwind utilities — `theme` in config no longer mirrors
+them. It carries only the two values that can't come from CSS at their point of use:
 
 ```ts
 theme = {
   hexColors: {
-    // hex mirror for the PWA manifest (app/manifest.ts) — can't take oklch
-    brand: "#5b21b6",
-    brandForeground: "#ffffff",
+    // The one hex the PWA manifest (app/manifest.ts → theme_color /
+    // background_color) needs — the manifest spec can't take oklch.
+    // Match it to --background in globals.css.
     background: "#ffffff",
-    foreground: "#0a0a0a",
   },
-  colors: {
-    // CSS vars — oklch. Annotate every value with the closest Tailwind
-    // v4 named colour so the original design reference is recoverable
-    // without decoding OKLCH manually.
-    brand: "oklch(0.55 0.18 260)" /* indigo-500 */,
-    brandForeground: "oklch(0.985 0 0)" /* neutral-50 */,
-    background: "oklch(1 0 0)" /* white */,
-    foreground: "oklch(0.145 0 0)" /* neutral-950 */,
-    muted: "oklch(0.97 0 0)" /* neutral-100 */,
-    mutedForeground: "oklch(0.556 0 0)" /* neutral-500 */,
-    border: "oklch(0.84 0 0)" /* between neutral-200 + neutral-300 */,
-    ring: "oklch(0.55 0.18 260)" /* matches brand */,
-    selectionBg: "oklch(0.9 0.07 260)" /* indigo-100 — selected text wash */,
-    selectionFg: "oklch(0.145 0 0)" /* same as foreground */,
-  },
-  fonts: { sans: "Inter", mono: "JetBrains Mono" },
-  radii: { sm: "0.25rem", md: "0.5rem", lg: "0.75rem", xl: "1rem" },
   container: { maxWidth: "1280px", gutter: "1rem" },
 };
 ```
 
-### The hex / oklch trap
+To change a brand colour, edit `globals.css` (oklch). To change the container
+width or page gutter, edit `theme.container`.
 
-`hexColors` and `colors` describe **the same palette twice**. They must stay in sync for the `brand` + `brandForeground` + `background` + `foreground` pair, because:
+````
 
-- `colors.*` becomes CSS variables consumed by Tailwind utilities — modern browsers parse oklch natively.
-- `hexColors.*` feeds the **PWA manifest** (`app/manifest.ts` → `theme_color` / `background_color`), which the browser reads for the install/splash screen. The manifest spec only takes hex/named colours — **not oklch** — so the mirror exists to give it valid values that still match the site.
+### The one hex mirror
 
-When you change a colour, change it in both places. The contrast check below will scream if they drift far enough apart to break accessibility, but a subtle mismatch (e.g. picking a slightly different brand shade in oklch vs hex) won't get caught — only manual review will.
+Colour lives in **one place** — oklch tokens in `globals.css`, consumed via Tailwind
+utilities (modern browsers parse oklch natively). The single exception is
+`theme.hexColors.background`: the **PWA manifest** (`app/manifest.ts` →
+`theme_color` / `background_color`) is read by the browser for the install/splash
+screen, and the manifest spec only takes hex/named colours — **not oklch**. So one
+hex value mirrors `--background` to keep the install screen on-brand.
+
+When you change the page background, update both `--background` in `globals.css` and
+`theme.hexColors.background`. No other colour needs a mirror.
 
 ### Verify contrast
 
 ```bash
 pnpm verify:contrast
-```
+````
 
-Asserts WCAG AA on every pair in `theme.colors` (`foreground`/`background`, `mutedForeground`/`background`, `brandForeground`/`brand`, `selectionFg`/`selectionBg`, …). Runs both light + dark themes independently — if a pair fails in either, it fails the whole check. The script tells you the ratio and the minimum needed.
+Asserts WCAG AA on every token pair parsed from `src/app/globals.css` (`foreground`/`background`, `mutedForeground`/`background`, `brandForeground`/`brand`, `selectionFg`/`selectionBg`, …). Runs both light + dark themes independently — if a pair fails in either, it fails the whole check. The script tells you the ratio and the minimum needed.
 
 This is also part of `pnpm verify` (the full CI gate), so failing contrast blocks the build.
 
@@ -112,22 +99,22 @@ You should never need to change this block. The mapping is conservative: backgro
 
 ---
 
-## 3. Brand assets — `public/`
+## 3. Brand assets — all in Sanity
 
-Drop files at these exact paths:
+**Logo, favicon/app icon, and the Open Graph share card are edited in Sanity**
+(Studio → **SEO & métadonnées**), not in `/public` — nothing brand-related lives
+in the repo anymore. They are the sole source (no fallback); `pnpm seed` uploads
+the defaults from `scripts/seed-media/`. Full guide:
+[Editing SEO in Sanity](../seo/editing-seo-in-sanity.md).
 
-| File                                 | Role                                                   | Dimensions / format                  |
-| ------------------------------------ | ------------------------------------------------------ | ------------------------------------ |
-| `public/logo.svg`                    | Browser favicon source + UI logo                       | SVG, any reasonable proportions      |
-| `public/brand/apple-icon.png`        | iOS home-screen icon                                   | 180×180, opaque background           |
-| `public/brand/icon-192.png`          | PWA install                                            | 192×192                              |
-| `public/brand/icon-512.png`          | PWA install                                            | 512×512                              |
-| `public/brand/icon-maskable-512.png` | Adaptive Android icon                                  | 512×512 with ~10% safe-area padding  |
-| `public/brand/logo.png`              | schema.org Organization logo (Google rejects SVG here) | Square, ≥512×512                     |
-| `public/brand/og.png`                | Global Open Graph card                                 | 1200×630                             |
-| `public/brand/og-<id>.png`           | Per-page OG card                                       | 1200×630, auto-detected by `page.id` |
+| Sanity field                     | Drives                                               | Guidance                                 |
+| -------------------------------- | ---------------------------------------------------- | ---------------------------------------- |
+| `siteSettings.logo` / `logoDark` | header + footer logo (+ optional dark-theme variant) | any proportions; empty = wordmark        |
+| `siteSettings.icon`              | favicon + apple-touch + PWA icons                    | square PNG ≥ 512×512; empty = no favicon |
+| `siteMeta.<locale>.ogImage`      | Open Graph share card, per language                  | 1200×630; empty = no `og:image`          |
+| `pageSeo.ogImage`                | per-page share card override                         | 1200×630                                 |
 
-Per-page OG cards are optional — when a file isn't present, the global `og.png` is used.
+Export OG cards at **exactly 1200×630** — that's the standard 1.91:1 ratio the metadata declares (`og:image:width/height`). An off-size file (even 1179×630) mismatches the declared dimensions and can letterbox the card or trip strict validators (LinkedIn Post Inspector).
 
 All `public/brand/*` files are cached `Cache-Control: public, max-age=31536000, immutable` (one year). If you ever need to swap an asset, change the filename so the URL changes and caches break naturally.
 
@@ -230,4 +217,4 @@ git diff                      # review changes before pushing
 
 If `pnpm verify:contrast` fails, you broke an accessibility pair — review the failing pair, tweak the colours, re-run.
 
-If the OG card looks wrong after a brand change, check that `theme.hexColors.brand` matches `theme.colors.brand`. Visit `/opengraph-image` in the browser to see the live render.
+The OG card is a Sanity image (`siteMeta.<locale>.ogImage`), so a brand-colour change won't touch it — upload a new card in the Studio (SEO & métadonnées) to rebrand it, per language.

@@ -9,9 +9,6 @@ import { BlogCard } from "@/features/blog/user-interface/shared/components/BlogC
  * Server component — fetches its own posts using the module's filters
  * (categories / limit / featured) and renders them with the shared
  * `BlogCard` so every post grid on the site looks the same.
- *
- * The `data-search-title` attribute used by `module.search` is set by
- * `BlogCard` itself, so search-as-you-type still works inside this list.
  */
 export async function BlogPostList({
   module: m,

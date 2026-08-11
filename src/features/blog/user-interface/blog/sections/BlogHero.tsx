@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import type { Locale } from "@/config";
+import { features, type Locale } from "@/config";
 import { formatPostDate } from "@/lib/format-date";
 import type { PostListItem } from "@/features/blog/sanity/types";
 
@@ -64,6 +64,7 @@ function HeroCard({
   const category = categoryRef?.title;
   const categorySlug = categoryRef?.slug;
   const author = post.author;
+  const { authors: showAuthors, categories: showCategories } = features.blogTaxonomy;
   const date = formatPostDate(locale, post.publishedAt);
 
   return (
@@ -84,7 +85,7 @@ function HeroCard({
       )}
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/70 to-black/20" />
 
-      {author ? (
+      {author && showAuthors ? (
         <Link
           href={author.slug ? `/author/${author.slug}` : "/author"}
           aria-label={author.name ?? undefined}
@@ -106,7 +107,7 @@ function HeroCard({
         </Link>
       ) : null}
 
-      {category ? (
+      {category && showCategories ? (
         categorySlug ? (
           <Link
             href={`/blog/category/${categorySlug}`}
@@ -135,7 +136,11 @@ function HeroCard({
           )}
         </Link>
         <div className="flex items-center justify-between text-xs">
-          {author?.name ? <span className="truncate">{author.name}</span> : <span />}
+          {author?.name && showAuthors ? (
+            <span className="truncate">{author.name}</span>
+          ) : (
+            <span />
+          )}
           {date ? <time dateTime={post.publishedAt}>{date}</time> : null}
         </div>
       </div>

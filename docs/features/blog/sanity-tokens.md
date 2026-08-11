@@ -86,7 +86,7 @@ SANITY_API_WRITE_TOKEN=sk_...  # Editor role (Free plan OK)
 | -------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` + `_DATASET` | —          | Studio + every client read                                                                            | **always** when `features.blog: true`                                                                                                  |
 | `SANITY_API_READ_TOKEN`                      | **Viewer** | `src/sanity/token.ts` → `src/sanity/live.ts` (`defineLive`, `sanityFetch`) + `/api/draft-mode/enable` | draft preview, real-time live updates. Without it: public reads still work; the enable endpoint returns 503 with an actionable message |
-| `SANITY_API_WRITE_TOKEN`                     | **Editor** | `scripts/seed-blog-demo.mjs` only                                                                     | running `pnpm seed:blog`. Never read at runtime                                                                                        |
+| `SANITY_API_WRITE_TOKEN`                     | **Editor** | `scripts/seed-blog-demo.mjs` only                                                                     | running `pnpm seed`. Never read at runtime                                                                                             |
 
 The Studio at `/studio` itself **does not need a token** — visitors authenticate via the regular Sanity session cookie when they open the page.
 
@@ -145,7 +145,7 @@ SANITY_API_WRITE_TOKEN=<paste editor token>
 EOF
 
 # 5. Seed demo content (uses the Editor token)
-pnpm seed:blog
+pnpm seed
 # → "✓ Committed transaction <uuid>"
 
 # 6. Restart dev so the new env is picked up
@@ -176,7 +176,7 @@ open "https://www.sanity.io/manage/personal/project/qy2pp5sn/api/tokens"
 #    SANITY_API_WRITE_TOKEN=<editor token>
 
 # 5. Seed + verify — same as steps 5-8 in Path A
-pnpm seed:blog
+pnpm seed
 pnpm dev
 curl -sS -o /dev/null -w "%{http_code}\n" http://localhost:3000/api/draft-mode/disable
 ```
@@ -202,7 +202,7 @@ That mints the Viewer token using the Editor token's authority, no browser requi
 | `403 Insufficient permissions` from the seed script        | Token has Viewer role but the seed needs writes   | Re-create with **Editor** role                                      |
 | Draft preview returns 503 with `set SANITY_API_READ_TOKEN` | Read token not in env at server start             | Add `SANITY_API_READ_TOKEN`, restart dev                            |
 | CORS error in the Studio browser console                   | Missing origin in **Manage → API → CORS Origins** | Add the origin, tick **Allow credentials**, refresh                 |
-| Studio loads but everything is empty                       | Token is fine but dataset is empty                | Run `pnpm seed:blog`                                                |
+| Studio loads but everything is empty                       | Token is fine but dataset is empty                | Run `pnpm seed`                                                     |
 | Tokens vanish from the dashboard after months              | Personal tokens auto-rotate; robot tokens do not  | Re-issue as a **robot token** (Manage UI does this by default)      |
 | `sanity login` opens a blank browser tab                   | Browser doesn't handle the deep link              | Re-run with `--no-open`; copy the printed URL manually              |
 | `sanity tokens add` fails with `not authenticated`         | CLI auth cache missing (`~/.config/sanity/`)      | Re-run `sanity login`, or pass `SANITY_AUTH_TOKEN=<token>` inline   |

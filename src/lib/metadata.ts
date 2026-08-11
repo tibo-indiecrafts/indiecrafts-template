@@ -1,28 +1,29 @@
 /**
- * Per-page metadata builder. Composes <head> tags from a PageConfig + the
- * site-wide defaults in `seoDefaults`.
+ * Per-page metadata builder. Composes <head> tags from a PageConfig, the
+ * Sanity SEO singletons, and the structural site-wide defaults in `seoDefaults`.
  *
- * ─ Inheritance chain (lowest precedence → highest) ──────────
+ * ─ Where each field comes from ──────────────────────────────
  *
- *   1. site.*               → name, description, url, logo, social
- *   2. seoDefaults.*        → titleTemplate, default robots, OG type, twitter card
- *   3. Auto-derived per id  → titleKey = `pages.<id>.title`,
- *                             descriptionKey = `pages.<id>.description`,
- *                             og:image = dynamic `/opengraph-image` card,
- *                             canonical = `${site.url}${slug-for-locale}`
- *   4. page.seo.*           → explicit overrides for any field above
+ *   SEO CONTENT (Sanity-only, no config fallback — see `getSiteSeo`):
+ *     - title / description / keywords → `siteMeta.<locale>.pageSeo[pageId]`
+ *     - og:image                       → page override, else `siteMeta.<locale>.ogImage`,
+ *                                        else omitted (Sanity-only — no /public card)
+ *     - twitter handle                 → `siteSettings.social.twitter`
  *
- * Each level only fills what the level below didn't. No duplication —
- * if a field exists in two layers it's because the upper one extends or
- * overrides, not because it duplicates a value.
+ *   STRUCTURAL (config/routing — not editorial SEO copy):
+ *     - canonical + hreflang → `${site.url}${slug-for-locale}`
+ *     - robots               → `page.seo.robots` / `noindex` / `seoDefaults.robots`
+ *     - og type / siteName / twitter card → `seoDefaults`
+ *
+ * A page with no Sanity `pageSeo` entry emits no title/description override — the
+ * layout's default metadata applies. Nothing here reads `messages`/config copy.
  */
 
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 import { defaultLocale, localeCodes, seoDefaults, site, type Locale } from "@/config";
 import type { PageConfig, StaticAppPathname } from "@/config";
-import type { MessageKey } from "@/types/messages";
 import { getStaticPathname } from "@/i18n/routing";
+import { getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 
 type BuildArgs = {
   page: PageConfig;
@@ -37,28 +38,6 @@ type BuildArgs = {
   pathname?: string;
 };
 
-/**
- * Per-page OG image. An explicit `seo.openGraph.imageUrl` wins; otherwise
- * the always-available `/opengraph-image` route (serves the static
- * `site.ogImage.file` PNG) is used. Ship a static per-page card by pointing
- * `imageUrl` at a file, e.g. `/brand/og-home.png`.
- */
-export function pageOgImage(page: PageConfig): string {
-  return page.seo?.openGraph?.imageUrl ?? "/opengraph-image";
-}
-
-function safeT(
-  t: Awaited<ReturnType<typeof getTranslations>>,
-  key: MessageKey,
-  fallback: string,
-): string {
-  try {
-    return t(key);
-  } catch {
-    return fallback;
-  }
-}
-
 function isAbsoluteUrl(x: string): x is `http${string}` {
   return x.startsWith("http");
 }
@@ -68,26 +47,18 @@ export async function buildMetadata({
   locale,
   pathname,
 }: BuildArgs): Promise<Metadata> {
-  const t = await getTranslations({ locale });
   const seo = page.seo;
 
-  // Auto-derived defaults (level 3 in the inheritance chain above)
-  const titleKey = seo?.titleKey ?? (`pages.${page.id}.title` as MessageKey);
-  const descriptionKey =
-    seo?.descriptionKey ?? (`pages.${page.id}.description` as MessageKey);
-  const title = safeT(t, titleKey, site.name);
-  const description = safeT(t, descriptionKey, site.description);
-
-  // Keywords are translated like title/description — a comma-separated string
-  // in `messages.pages.<id>.keywords` (empty/absent → no <meta keywords>).
-  const keywordsKey = seo?.keywordsKey ?? (`pages.${page.id}.keywords` as MessageKey);
-  const keywordsRaw = safeT(t, keywordsKey, "");
-  const keywords = keywordsRaw
-    ? keywordsRaw
-        .split(",")
-        .map((k) => k.trim())
-        .filter(Boolean)
-    : undefined;
+  // SEO copy — Sanity only. Absent → undefined (layout default applies).
+  const [siteSeo, settings] = await Promise.all([getSiteSeo(locale), getSiteSettings()]);
+  const pageSeo = siteSeo.pageSeo.get(page.id);
+  const title = pageSeo?.title;
+  const description = pageSeo?.description;
+  const keywords = pageSeo?.keywords;
+  // og:image: page-specific card → the locale's site card → omitted. Sanity-only,
+  // no /public fallback and no convention route.
+  const ogImage = pageSeo?.ogImage ?? siteSeo.ogImage;
+  const ogImageAlt = pageSeo?.ogImageAlt ?? siteSeo.ogImageAlt ?? title;
 
   // Canonical + hreflang. Absolute URL passes through; StaticAppPathname
   // resolves via next-intl; missing → auto-build from the page's key.
@@ -97,11 +68,16 @@ export async function buildMetadata({
   ): string => getStaticPathname(key, l);
 
   let canonical: string;
-  const canonicalOverride = seo?.canonical;
-  if (canonicalOverride && isAbsoluteUrl(canonicalOverride)) {
-    canonical = canonicalOverride;
-  } else if (canonicalOverride) {
-    canonical = `${site.url}${href(locale, canonicalOverride)}`;
+  // Precedence: per-page Sanity canonical (always a full URL) > config override
+  // (an absolute URL or a StaticAppPathname) > dynamic pathname > auto from key.
+  const sanityCanonical = pageSeo?.canonical;
+  const configCanonical = seo?.canonical;
+  if (sanityCanonical) {
+    canonical = sanityCanonical;
+  } else if (configCanonical && isAbsoluteUrl(configCanonical)) {
+    canonical = configCanonical;
+  } else if (configCanonical) {
+    canonical = `${site.url}${href(locale, configCanonical)}`;
   } else if (pathname) {
     canonical = `${site.url}${pathname}`;
   } else {
@@ -121,18 +97,23 @@ export async function buildMetadata({
     languages["x-default"] = `${site.url}${href(defaultLocale)}`;
   }
 
-  // Robots: page override > noindex shortcut > seoDefaults
+  // Robots: config full-override wins; otherwise layer the site-wide toggle
+  // (`siteSettings.robots`) with per-page noindex. A per-page noindex also drops
+  // follow (the historical shortcut); the site nofollow drops follow site-wide.
+  const siteRobots = settings.robots;
+  const pageNoindex = pageSeo?.noindex || seo?.noindex;
+  const index = !(pageNoindex || siteRobots.noindex);
+  const follow = !(pageNoindex || siteRobots.nofollow);
   const robots = seo?.robots
     ? seo.robots
-    : seo?.noindex
-      ? { index: false, follow: false }
-      : seoDefaults.robots;
+    : index && follow
+      ? seoDefaults.robots
+      : { index, follow };
 
-  // OG image: per-page override > dynamic /opengraph-image route
-  const ogImage = pageOgImage(page);
-
-  // Twitter handle for `twitter:site` — falls through cleanly when unset
-  const twitterHandle = site.social.twitter || undefined;
+  const twitterHandle = settings.social.twitter || undefined;
+  const ogImages = ogImage
+    ? [{ url: ogImage, width: 1200, height: 630, alt: ogImageAlt }]
+    : undefined;
 
   return {
     title,
@@ -151,7 +132,7 @@ export async function buildMetadata({
       alternateLocale: localeCodes.filter((l) => l !== locale),
       siteName: seoDefaults.openGraph.siteName,
       type: seo?.openGraph?.type ?? seoDefaults.openGraph.type,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+      images: ogImages,
     },
     twitter: {
       card: seoDefaults.twitter.card,
@@ -159,7 +140,7 @@ export async function buildMetadata({
       creator: twitterHandle,
       title,
       description,
-      images: [{ url: ogImage, alt: title }],
+      images: ogImage ? [{ url: ogImage, alt: ogImageAlt }] : undefined,
     },
   };
 }

@@ -14,7 +14,7 @@ Detailed conventions: [`CLAUDE.md`](./CLAUDE.md).
 pnpm install
 pnpm dev                # http://localhost:3000
 pnpm verify             # tsc + lint + format:check + contrast + react-doctor (full CI gate)
-pnpm verify:quick       # tsc + lint (pre-push)
+pnpm verify:quick       # tsc + lint (manual pre-PR check)
 pnpm doctor             # React Doctor — full health scan (doctor:changed = new code only)
 ```
 
@@ -23,9 +23,9 @@ pnpm doctor             # React Doctor — full health scan (doctor:changed = ne
 A full Sanity-backed editorial blog is wired into the template — feature-flagged so you can ship without it.
 
 - **Turn it on** — set `features.blog: true` in `src/config/index.ts`, drop `NEXT_PUBLIC_SANITY_PROJECT_ID` + dataset into `.env.local`, run `pnpm dev`. Editor lives at <http://localhost:3000/studio>.
-- **What you get** — `/blog`, `/blog/[slug]`, `/blog/category/[slug]`, `/blog/tag/[slug]`, `/author/[slug]`, RSS feed, Markdown export, draft preview, live content subscriptions, locale-filtered (EN + FR by default), embedded Sanity Studio at `/studio`.
-- **Page-builder** — 14 modules (8 inline-embeddable inside post bodies, 6 layout-slot only). Editors compose post chrome from the `blog` singleton's `postModules` array; the body editor exposes H1-H6, lists, marks (incl. code / underline / strike), inline images, links, and 8 fancy module types.
-- **Seed demo content** — `pnpm seed:blog` populates 47 docs incl. a showcase article that exercises every single editor primitive.
+- **What you get** — `/blog`, `/blog/[slug]`, `/blog/category/[slug]`, `/blog/tag/[slug]`, `/author/[slug]`, RSS + Atom feeds (per locale), Markdown export, draft preview, live content subscriptions, locale-filtered (EN + FR by default), embedded Sanity Studio at `/studio`.
+- **Page-builder** — 13 modules (9 inline-embeddable inside post bodies, 4 layout-slot only). Editors compose post chrome from the `blog` singleton's `postModules` array; the body editor exposes H1-H6, lists, marks (incl. code / underline / strike), inline images, links, and 9 fancy module types.
+- **Seed demo content** — `pnpm seed` populates 47 docs incl. a showcase article that exercises every single editor primitive.
 
 When `features.blog: false`, every route above 404s, sitemap drops the entry, the header link disappears, and `/studio` is the only Sanity surface that stays — useful for content prep before launch.
 
@@ -45,12 +45,15 @@ Full index — every guide in [`docs/`](./docs/), grouped by area.
 
 | Doc                                                       | Covers                                             |
 | --------------------------------------------------------- | -------------------------------------------------- |
+| [`environment.md`](./docs/setup/environment.md)           | Clone → running: app deps + optional AI toolchain  |
 | [`new-client.md`](./docs/setup/new-client.md)             | Fork the template for a new client site            |
 | [`brand-setup.md`](./docs/setup/brand-setup.md)           | Colours, fonts, logo, social links, brand assets   |
 | [`launch-checklist.md`](./docs/setup/launch-checklist.md) | Take the site from "dev is done" to live + indexed |
 | [`operations.md`](./docs/setup/operations.md)             | Run the site day-to-day, forms, fixes              |
 | [`scripts.md`](./docs/setup/scripts.md)                   | The `pnpm` scripts and what they do                |
 | [`codegraph.md`](./docs/setup/codegraph.md)               | Opt-in local semantic index for AI coding agents   |
+| [`headroom.md`](./docs/setup/headroom.md)                 | Opt-in context compression for AI coding agents    |
+| [`behavior-plugins.md`](./docs/setup/behavior-plugins.md) | caveman (terse output) + ponytail (least code)     |
 | [`maintenance-mode.md`](./docs/setup/maintenance-mode.md) | Take the site offline gracefully                   |
 
 **Configuration & architecture**
@@ -81,6 +84,7 @@ Full index — every guide in [`docs/`](./docs/), grouped by area.
 | Doc                                                                     | Covers                                            |
 | ----------------------------------------------------------------------- | ------------------------------------------------- |
 | [`seo-metadata.md`](./docs/seo/seo-metadata.md)                         | How `<head>` metadata is generated (translatable) |
+| [`editing-seo-in-sanity.md`](./docs/seo/editing-seo-in-sanity.md)       | Edit SEO / OG / llms / structured data in Studio  |
 | [`structured-data-cookbook.md`](./docs/seo/structured-data-cookbook.md) | Per-page JSON-LD recipes + business-type presets  |
 | [`faq.md`](./docs/seo/faq.md)                                           | Per-page FAQ → display + FAQPage JSON-LD + llms   |
 | [`llms-endpoints.md`](./docs/seo/llms-endpoints.md)                     | `/llms.txt`, `/llms-full.txt`, `/llms/<id>`       |
@@ -95,6 +99,7 @@ Full index — every guide in [`docs/`](./docs/), grouped by area.
 | [`sanity-setup.md`](./docs/features/blog/sanity-setup.md)           | Set up Sanity — env vars, CORS, QA matrix            |
 | [`editor-guide.md`](./docs/features/blog/editor-guide.md)           | Publish your first post as a content editor          |
 | [`body-editor.md`](./docs/features/blog/body-editor.md)             | What the body editor can do (styles, marks, modules) |
+| [`gallery.md`](./docs/features/blog/gallery.md)                     | Image gallery module — carousel + zoom lightbox      |
 | [`blog-architecture.md`](./docs/features/blog/blog-architecture.md) | Extend or remove a module as a developer             |
 | [`sanity-tokens.md`](./docs/features/blog/sanity-tokens.md)         | Mint / rotate Sanity API tokens                      |
 
@@ -203,17 +208,11 @@ Available: `buildFAQPageSchema`, `buildArticleSchema`, `buildServiceSchema`, `bu
 
 ### Brand assets
 
-Drop files into `public/`:
-
-| File                                                | Role                                                   |
-| --------------------------------------------------- | ------------------------------------------------------ |
-| `public/logo.svg`                                   | Browser favicon + UI logo                              |
-| `public/brand/apple-icon.png` (180×180, opaque)     | iOS home-screen icon                                   |
-| `public/brand/icon-192.png` / `icon-512.png`        | PWA install                                            |
-| `public/brand/icon-maskable-512.png` (~10% padding) | Adaptive Android icon                                  |
-| `public/brand/logo.png` (square, ≥512×512)          | Schema.org Organization logo (Google rejects SVG here) |
-| `public/brand/og.png` (1200×630)                    | Global Open Graph card                                 |
-| `public/brand/og-<id>.png`                          | Per-page OG card (auto-detected by `id`)               |
+**All brand assets are edited in Sanity** (Studio → SEO & métadonnées) — the logo
+(`siteSettings.logo` / `logoDark`), favicon/app icon (`siteSettings.icon`), and the
+Open Graph card per language (`siteMeta.<locale>.ogImage`). Nothing brand-related
+lives in `/public`; `pnpm seed` uploads the defaults from `scripts/seed-media/`.
+See [`editing-seo-in-sanity.md`](./docs/seo/editing-seo-in-sanity.md).
 
 ## LLM endpoints
 
@@ -281,4 +280,4 @@ For EU traffic with GA enabled, turn both on.
 - Never edit `src/components/ui-primitives/**` (shadcn-managed)
 - Never depend on `../indiecrafts-library` at runtime — that repo is browse-only
 - Always `setRequestLocale(locale)` in server components that use translations
-- Always run `pnpm verify:quick` before push
+- Always run `pnpm verify:quick` before opening a PR (no pre-push hook — the commit hook runs `tsc` + staged lint)

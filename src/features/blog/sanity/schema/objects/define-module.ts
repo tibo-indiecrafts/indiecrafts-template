@@ -23,12 +23,15 @@ export function defineModule({
   name,
   title,
   icon,
+  description,
   fields = [],
   preview,
 }: {
   name: string;
   title: string;
   icon?: ObjectDefinition["icon"];
+  /** Shown under the module in the Studio picker — helps editors choose. */
+  description?: string;
   fields?: FieldDefinition[];
   preview?: ObjectDefinition["preview"];
 }) {
@@ -37,6 +40,7 @@ export function defineModule({
     title,
     type: "object",
     icon,
+    description,
     fields: [
       ...fields,
       defineField({

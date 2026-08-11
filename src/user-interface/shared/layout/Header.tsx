@@ -20,7 +20,9 @@ import { headerNav } from "@/config";
  * Fixed at the top — DefaultLayout's `<main>` adds `pt-14 lg:pt-20` to
  * clear the header height.
  */
-export function Header() {
+type HeaderProps = { logo?: string; logoDark?: string };
+
+export function Header({ logo, logoDark }: HeaderProps) {
   const tNav = useTranslations("nav");
   return (
     <header className="bg-background/80 supports-[backdrop-filter]:bg-background/60 fixed inset-x-0 top-0 z-50 border-b backdrop-blur">
@@ -30,7 +32,7 @@ export function Header() {
           aria-label={tNav("home")}
           className="focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
         >
-          <Logo />
+          <Logo logo={logo} logoDark={logoDark} />
         </Link>
         <nav className="flex items-center gap-1">
           {headerNav.map((link) => (

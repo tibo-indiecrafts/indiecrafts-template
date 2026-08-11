@@ -2,7 +2,7 @@
 /**
  * Seed the Sanity dataset with demo blog content.
  *
- *   pnpm seed:blog
+ *   pnpm seed
  *
  * Needs a write-capable Sanity token in `SANITY_API_WRITE_TOKEN`
  * (Editor role is enough). The package.json script loads `.env.local`
@@ -14,21 +14,39 @@
  *
  * What this seeds:
  *
- *   - 3 authors with Unsplash portrait images
- *   - 3 categories per locale (en + fr)
- *   - 5 posts per locale, each with a metadata.image uploaded from Unsplash
- *   - 4 quotes (testimonials, language-tagged)
- *   - 3 people (team members) with portrait images
- *   - 1 blog singleton with EMPTY frontpageModules + EMPTY postModules
+ * Every content document is translated (plugin-managed `language`): each entity
+ * has an EN + FR version linked by a `translation.metadata` doc.
+ *
+ *   - 3 authors per locale (6 docs) with Unsplash portrait images
+ *   - 3 categories per locale (6 docs)
+ *   - 10 tags per locale (20 docs)
+ *   - 5 posts per locale (10 docs), each with a metadata.image from Unsplash
+ *   - 2 quotes per locale (4 docs, testimonials)
+ *   - 3 people per locale (6 docs, team members) with portrait images
+ *   - `translation.metadata` docs linking every EN↔FR set
+ *   - 1 `siteMeta.<locale>` singleton per language — the per-language SEO source:
+ *     tagline / description / keywords, OG share card (uploaded from
+ *     `scripts/seed-media/` — og.png / og-fr.png), llms.txt summary + resources,
+ *     and per-page title/description overrides (home / blog / legal)
+ *   - 1 `siteSettings` singleton — logo + favicon/app icon (from `scripts/seed-media/`),
+ *     social profiles, business entity, one demo global schema (Service)
+ *   - 1 blog singleton with EMPTY postModules
  *     → /blog falls back to the minimal card-grid layout
  *     → individual posts use their own modules (see below) or the default
  *       article layout
  *   - The "fast prototyping with Next.js" post (both EN and FR) gets a
- *     `modules: [...]` override that showcases ALL 17 module types
- *     inside the post page. Every other post uses the default layout.
+ *     `modules: [...]` override that showcases the inline module types
+ *     (gallery excluded — it needs uploaded images). Every other post uses
+ *     the default layout.
  */
 
 import { createClient } from "@sanity/client";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+/** Local seed media — checked-in assets uploaded to Sanity (vs the Unsplash URLs). */
+const MEDIA_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "seed-media");
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
@@ -43,7 +61,7 @@ if (!token) {
   console.error("");
   console.error("  Issue one at https://www.sanity.io/manage → your project →");
   console.error("  API tab → Tokens → Add API token → Editor permissions.");
-  console.error("  Then run with: SANITY_API_WRITE_TOKEN=<token> pnpm seed:blog");
+  console.error("  Then run with: SANITY_API_WRITE_TOKEN=<token> pnpm seed");
   process.exit(1);
 }
 
@@ -260,12 +278,195 @@ async function uploadAllImages() {
 
 const img = (name) => assetCache.get(name);
 
+// ─── Local media (from scripts/seed-media/) ────────────────────
+// The OG share cards live in the repo, not on Unsplash. Uploaded to Sanity and
+// referenced by the `siteMeta.<locale>` singletons so the Studio ships a real
+// per-language OG image out of the box (editors can then replace it).
+const LOCAL_MEDIA = {
+  "og.en": { file: "og.png", contentType: "image/png", alt: "indiecrafts.dev" },
+  "og.fr": { file: "og-fr.png", contentType: "image/png", alt: "indiecrafts.dev" },
+  logo: { file: "logo.png", contentType: "image/png", alt: "indiecrafts.dev" },
+  icon: { file: "icon.png", contentType: "image/png", alt: "indiecrafts.dev" },
+};
+
+async function uploadLocalMedia() {
+  for (const [name, meta] of Object.entries(LOCAL_MEDIA)) {
+    const buf = readFileSync(path.join(MEDIA_DIR, meta.file));
+    const asset = await client.assets.upload("image", buf, {
+      filename: meta.file,
+      contentType: meta.contentType,
+    });
+    assetCache.set(name, {
+      _type: "image",
+      asset: { _type: "reference", _ref: asset._id },
+      alt: meta.alt,
+    });
+  }
+}
+
+// One `siteMeta.<locale>` singleton per language — the SOLE runtime source for
+// the site's per-language SEO (no config fallback): tagline / description /
+// keywords, the OG card, the llms.txt summary + resources, and per-page
+// `<title>` / description overrides. Read by `getSiteSeo` (src/lib/seo/site-seo.ts).
+const res = (name, href) => ({ _key: key("res"), name, href });
+const pgSeo = (pageId, title, description, keywords, llmsFull, llmsSummary) => ({
+  _key: key("pg"),
+  pageId,
+  title,
+  description,
+  keywords,
+  llmsSummary,
+  llmsFull,
+});
+
+const buildSiteMeta = () => [
+  {
+    _id: "siteMeta.en",
+    _type: "siteMeta",
+    language: "en",
+    ogImage: img("og.en"),
+    tagline: "The config-first Next.js template for client websites.",
+    description:
+      "A highly modular, SEO-ready, i18n-ready, accessibility-first Next.js template. Fork it, edit the config, ship.",
+    keywords: "Next.js template, client websites, SEO, i18n, Sanity, Tailwind",
+    llms: {
+      summary: "A config-first Next.js template for shipping client websites fast.",
+      paragraph:
+        "Indie Crafts is a modular, SEO-ready, i18n-ready Next.js template for freelancers and studios. Fork it, edit one config file, and ship a client site in a weekend.",
+      full: "# Indie Crafts\n\nA config-first Next.js 16 template for freelancers and studios who ship client websites. The whole site — SEO, Open Graph, structured data, logo, icons, and this llms.txt — is edited per language in Sanity, with no code changes after launch.\n\nThe pages below are the site's public surface; each is described in the section that follows.",
+      resources: [res("Documentation", "https://indiecrafts.dev")],
+    },
+    systemPages: {
+      maintenance: {
+        status: "Scheduled maintenance",
+        title: "We'll be back shortly",
+        body: "The site is briefly offline for planned updates. It'll be back to normal soon — thanks for waiting.",
+        contact: "Need to reach us in the meantime?",
+      },
+      notFound: {
+        eyebrow: "404",
+        title: "Page not found",
+        description: "The page you requested doesn't exist or has moved.",
+        homeLabel: "← Back home",
+      },
+    },
+    pageSeo: [
+      pgSeo(
+        "home",
+        "Indie Crafts — ship client websites fast",
+        "A config-first Next.js template: modular, SEO-ready, i18n-ready. Fork it, edit the config, ship.",
+        "Next.js template, client websites, freelance",
+        "## What Indie Crafts is\n\nA config-first Next.js 16 template for freelancers and studios shipping client websites. Edit one config file, compose sections, and deploy in a weekend.\n\n## Highlights\n\n- SEO, Open Graph, structured data, and llms.txt — all editable per language in Sanity.\n- i18n (English + French by default), accessibility-first, Tailwind v4 design tokens.\n- Optional Sanity-powered blog with a 13-module page builder.",
+        "The config-first Next.js template for client websites — home page.",
+      ),
+      pgSeo(
+        "blog",
+        "Blog — building fast with Next.js",
+        "Notes on shipping client work: tooling, config-first architecture, and the trade-offs that keep sites lean.",
+        "Next.js, Sanity, freelance, DX",
+      ),
+      pgSeo(
+        "legal",
+        "Legal — privacy, cookies & terms",
+        "How this site handles your data, cookies, and the terms of use.",
+        "privacy, cookies, terms",
+      ),
+    ],
+  },
+  {
+    _id: "siteMeta.fr",
+    _type: "siteMeta",
+    language: "fr",
+    ogImage: img("og.fr"),
+    tagline: "Le template Next.js config-first pour sites clients.",
+    description:
+      "Un template Next.js très modulaire, prêt pour le SEO, l'i18n et l'accessibilité. Forkez, éditez la config, livrez.",
+    keywords: "template Next.js, sites clients, SEO, i18n, Sanity, Tailwind",
+    llms: {
+      summary: "Un template Next.js config-first pour livrer vite des sites clients.",
+      paragraph:
+        "Indie Crafts est un template Next.js modulaire, prêt pour le SEO et l'i18n, pour freelances et studios. Forkez, éditez un fichier de config, et livrez un site client en un week-end.",
+      full: "# Indie Crafts\n\nUn template Next.js 16 config-first pour freelances et studios qui livrent des sites clients. Tout le site — SEO, Open Graph, données structurées, logo, icônes, et ce llms.txt — s'édite par langue dans Sanity, sans code après le lancement.\n\nLes pages ci-dessous forment la surface publique du site ; chacune est décrite dans la section qui suit.",
+      resources: [res("Documentation", "https://indiecrafts.dev")],
+    },
+    systemPages: {
+      maintenance: {
+        status: "Maintenance planifiée",
+        title: "De retour très bientôt",
+        body: "Le site est momentanément hors ligne pour des mises à jour planifiées. Tout revient bientôt à la normale — merci de votre patience.",
+        contact: "Besoin de nous joindre entre-temps ?",
+      },
+      notFound: {
+        eyebrow: "404",
+        title: "Page introuvable",
+        description: "La page demandée n'existe pas ou a été déplacée.",
+        homeLabel: "← Retour à l'accueil",
+      },
+    },
+    pageSeo: [
+      pgSeo(
+        "home",
+        "Indie Crafts — livrez des sites clients vite",
+        "Un template Next.js config-first : modulaire, prêt pour le SEO et l'i18n. Forkez, éditez la config, livrez.",
+        "template Next.js, sites clients, freelance",
+        "## Ce qu'est Indie Crafts\n\nUn template Next.js 16 config-first pour freelances et studios qui livrent des sites clients. Éditez un fichier de config, composez des sections, et déployez en un week-end.\n\n## Points clés\n\n- SEO, Open Graph, données structurées et llms.txt — tout est éditable par langue dans Sanity.\n- i18n (anglais + français par défaut), accessibilité, tokens de design Tailwind v4.\n- Blog optionnel propulsé par Sanity avec un page-builder de 13 modules.",
+        "Le template Next.js config-first pour sites clients — page d'accueil.",
+      ),
+      pgSeo(
+        "blog",
+        "Blog — construire vite avec Next.js",
+        "Notes sur la livraison de projets clients : outillage, architecture config-first, et les arbitrages qui gardent les sites légers.",
+        "Next.js, Sanity, freelance, DX",
+      ),
+      pgSeo(
+        "legal",
+        "Mentions légales — confidentialité & CGU",
+        "Comment ce site gère vos données, les cookies et les conditions d'utilisation.",
+        "confidentialité, cookies, CGU",
+      ),
+    ],
+  },
+];
+
+// Language-independent site settings singleton — social profiles, the
+// schema.org business entity, and any extra global JSON-LD entities. SOLE
+// runtime source (no config fallback); read by `getSiteSettings`.
+const buildSiteSettings = () => ({
+  _id: "siteSettings",
+  _type: "siteSettings",
+  // Logo + favicon/app icon (no dark logo in the demo — the mark works on both).
+  logo: img("logo"),
+  icon: img("icon"),
+  social: {
+    twitter: "@indiecrafts",
+    github: "https://github.com/indiecrafts",
+  },
+  businessType: "Organization",
+  company: "Indiecrafts",
+  alternateName: "Indie Crafts",
+  globalSchemas: [
+    {
+      _key: key("g"),
+      schemaType: "Service",
+      name: "Website design & build",
+      description:
+        "Design and development of fast, SEO-ready client websites on the Indie Crafts stack.",
+      url: "https://indiecrafts.dev",
+    },
+  ],
+});
+
 // ─── Documents ─────────────────────────────────────────────────
 
+// Authors are translated (plugin-managed `language`) — one doc per locale,
+// linked EN↔FR via a `translation.metadata` doc (see `buildTranslationMeta`).
+// Slugs are shared across locales; the locale prefix keeps the URLs distinct.
 const buildAuthors = () => [
+  // ── EN ──
   {
-    _id: "author.ada",
+    _id: "author.en.ada",
     _type: "author",
+    language: "en",
     name: "Ada Lovelace",
     position: "Founder · Analytic Studio",
     slug: { _type: "slug", current: "ada-lovelace" },
@@ -273,8 +474,9 @@ const buildAuthors = () => [
     bio: [p("Mathematician, writer, and self-described 'enchantress of numbers'.")],
   },
   {
-    _id: "author.grace",
+    _id: "author.en.grace",
     _type: "author",
+    language: "en",
     name: "Grace Hopper",
     position: "Engineering · USNR",
     slug: { _type: "slug", current: "grace-hopper" },
@@ -282,13 +484,53 @@ const buildAuthors = () => [
     bio: [p("Compiler pioneer. If it works, ship it; ask forgiveness, not permission.")],
   },
   {
-    _id: "author.tim",
+    _id: "author.en.tim",
     _type: "author",
+    language: "en",
     name: "Tim Berners-Lee",
     position: "Web architect",
     slug: { _type: "slug", current: "tim-berners-lee" },
     image: img("author-tim"),
     bio: [p("Built the World Wide Web on a NeXT cube in three months.")],
+  },
+  // ── FR ──
+  {
+    _id: "author.fr.ada",
+    _type: "author",
+    language: "fr",
+    name: "Ada Lovelace",
+    position: "Fondatrice · Analytic Studio",
+    slug: { _type: "slug", current: "ada-lovelace" },
+    image: img("author-ada"),
+    bio: [
+      p(
+        "Mathématicienne, écrivaine, et « enchanteresse des nombres » selon ses propres mots.",
+      ),
+    ],
+  },
+  {
+    _id: "author.fr.grace",
+    _type: "author",
+    language: "fr",
+    name: "Grace Hopper",
+    position: "Ingénierie · USNR",
+    slug: { _type: "slug", current: "grace-hopper" },
+    image: img("author-grace"),
+    bio: [
+      p(
+        "Pionnière du compilateur. Si ça marche, livrez ; demandez pardon, pas la permission.",
+      ),
+    ],
+  },
+  {
+    _id: "author.fr.tim",
+    _type: "author",
+    language: "fr",
+    name: "Tim Berners-Lee",
+    position: "Architecte du Web",
+    slug: { _type: "slug", current: "tim-berners-lee" },
+    image: img("author-tim"),
+    bio: [p("A bâti le World Wide Web sur un cube NeXT en trois mois.")],
   },
 ];
 
@@ -533,37 +775,121 @@ const buildQuotes = () => [
   },
 ];
 
+// People are translated (plugin-managed `language`) — one doc per locale,
+// linked EN↔FR via a `translation.metadata` doc. Names stay constant; role +
+// bio are translated.
 const buildPeople = () => [
+  // ── EN ──
   {
-    _id: "person.maya",
+    _id: "person.en.maya",
     _type: "person",
+    language: "en",
     name: "Maya Chen",
     role: "Founder",
     bio: "Ex-Stripe. Three exits, all bootstrapped.",
     image: img("person-maya"),
   },
   {
-    _id: "person.luis",
+    _id: "person.en.luis",
     _type: "person",
+    language: "en",
     name: "Luis Martínez",
     role: "Head of Design",
     bio: "Ex-Airbnb. Cares about kerning more than caffeine.",
     image: img("person-luis"),
   },
   {
-    _id: "person.yuki",
+    _id: "person.en.yuki",
     _type: "person",
+    language: "en",
     name: "Yuki Tanaka",
     role: "Lead Engineer",
     bio: "Compiler nerd. Talks to herself in Lisp.",
     image: img("person-yuki"),
   },
+  // ── FR ──
+  {
+    _id: "person.fr.maya",
+    _type: "person",
+    language: "fr",
+    name: "Maya Chen",
+    role: "Fondatrice",
+    bio: "Ex-Stripe. Trois sorties, toutes en bootstrap.",
+    image: img("person-maya"),
+  },
+  {
+    _id: "person.fr.luis",
+    _type: "person",
+    language: "fr",
+    name: "Luis Martínez",
+    role: "Directeur du design",
+    bio: "Ex-Airbnb. Se soucie plus du crénage que de la caféine.",
+    image: img("person-luis"),
+  },
+  {
+    _id: "person.fr.yuki",
+    _type: "person",
+    language: "fr",
+    name: "Yuki Tanaka",
+    role: "Ingénieure principale",
+    bio: "Passionnée de compilateurs. Se parle à elle-même en Lisp.",
+    image: img("person-yuki"),
+  },
+];
+
+// ─── Translation links ─────────────────────────────────────────
+// One `translation.metadata` doc per EN↔FR set. The plugin uses these to jump
+// between a document's translations in the Studio; the front-end locale
+// switcher resolves a doc's counterpart slug through them (see
+// `/api/i18n/translated-slug`). Every translated content type is linked.
+// `prefix` is the id prefix ("cat" for `category`); `type` is the schema name.
+const translationMeta = (type, prefix, baseKeys) =>
+  baseKeys.map((base) => ({
+    _id: `translation.${prefix}.${base}`,
+    _type: "translation.metadata",
+    schemaTypes: [type],
+    translations: [
+      {
+        _key: "en",
+        value: { _type: "reference", _ref: `${prefix}.en.${base}`, _weak: true },
+      },
+      {
+        _key: "fr",
+        value: { _type: "reference", _ref: `${prefix}.fr.${base}`, _weak: true },
+      },
+    ],
+  }));
+
+const buildTranslationMeta = () => [
+  ...translationMeta("post", "post", [
+    "fast-proto-nextjs",
+    "ship-weekend",
+    "config-first",
+    "netlify-forms",
+    "cookie-banner",
+  ]),
+  ...translationMeta("category", "cat", ["engineering", "product", "story"]),
+  ...translationMeta("tag", "tag", [
+    "deployment",
+    "dx",
+    "forms",
+    "freelance",
+    "mvp",
+    "nextjs",
+    "privacy",
+    "sanity",
+    "seo",
+    "tailwind",
+  ]),
+  ...translationMeta("quote", "quote", ["lovelace", "hopper"]),
+  ...translationMeta("author", "author", ["ada", "grace", "tim"]),
+  ...translationMeta("person", "person", ["maya", "luis", "yuki"]),
 ];
 
 // ─── Inline content modules — interspersed inside the body PortableText.
-// Eleven of the 17 modules can be embedded directly inside `blockContent`
-// (see src/sanity/schema/blockContent.ts for the catalog). The other six
-// — breadcrumbs, blog-index, blog-post-content, blog-post-list, search,
+// Nine of the 14 modules can be embedded directly inside `blockContent`
+// (see src/features/blog/sanity/schema/blockContent.ts for the catalog). The
+// other five — breadcrumbs, blog-index, blog-post-content, blog-post-list,
 // prose — are page chrome and live in the `blog.postModules` array.
 
 const inline = {
@@ -747,7 +1073,11 @@ const showcaseBody = ({ quoteLocale, copy }) => [
     `quote.${quoteLocale}.hopper`,
   ]),
   p(copy.afterQuotes),
-  inline.personList("", "", ["person.maya", "person.luis", "person.yuki"]),
+  inline.personList("", "", [
+    `person.${quoteLocale}.maya`,
+    `person.${quoteLocale}.luis`,
+    `person.${quoteLocale}.yuki`,
+  ]),
   p(copy.afterTeam),
   h(4, copy.guardrailsHeading),
   p(copy.guardrailsIntro),
@@ -1070,6 +1400,9 @@ const post = (
     title,
     slug: postSlug,
     description,
+    // Editorial teaser shown on cards + the post page. Omit to fall back to
+    // `metadata.description` (the SEO line) — the front-end resolves that.
+    excerpt,
     daysOld,
     author,
     categories: cats,
@@ -1083,8 +1416,10 @@ const post = (
   _type: "post",
   language,
   title,
+  excerpt,
   publishedAt: daysAgo(daysOld),
-  author: { _type: "reference", _ref: author },
+  // `author` is a base key ("ada") — resolved to the same-language author doc.
+  author: { _type: "reference", _ref: `author.${language}.${author}` },
   categories: cats.map((c) => ({ _type: "reference", _ref: c, _key: key("c") })),
   tags: postTags.map((t) => ({ _type: "reference", _ref: t, _key: key("t") })),
   featured: !!featured,
@@ -1106,8 +1441,10 @@ const buildPosts = () => [
     slug: "fast-prototyping-with-nextjs",
     description:
       "A two-day playbook for going from blank repo to a deployed MVP. Tooling choices, escape hatches, and the steps to skip on the first pass.",
+    excerpt:
+      "Blank repo Friday, live MVP Sunday. The exact two-day path — and what to deliberately skip.",
     daysOld: 1,
-    author: "author.ada",
+    author: "ada",
     categories: ["cat.en.engineering", "cat.en.product"],
     tags: ["tag.en.nextjs", "tag.en.mvp", "tag.en.dx", "tag.en.sanity"],
     featured: true,
@@ -1122,7 +1459,7 @@ const buildPosts = () => [
     description:
       "A no-nonsense breakdown of how to deliver a brochure site Friday-to-Sunday: pricing, scope, tooling, and the exact words to use with the client.",
     daysOld: 4,
-    author: "author.grace",
+    author: "grace",
     categories: ["cat.en.product", "cat.en.story"],
     tags: ["tag.en.freelance", "tag.en.mvp", "tag.en.dx", "tag.en.deployment"],
     featured: true,
@@ -1148,7 +1485,7 @@ const buildPosts = () => [
     description:
       "Every client has the same five pages and 27 unique opinions about each. Config-first templates let you accommodate the 27 without rewriting the five.",
     daysOld: 14,
-    author: "author.ada",
+    author: "ada",
     categories: ["cat.en.engineering"],
     tags: ["tag.en.dx", "tag.en.freelance", "tag.en.nextjs"],
     imageKey: "post-config-first",
@@ -1170,7 +1507,7 @@ const buildPosts = () => [
     description:
       "Skip the API route. Skip the SaaS. Netlify Forms parses your HTML at build time and routes submissions for free.",
     daysOld: 21,
-    author: "author.tim",
+    author: "tim",
     categories: ["cat.en.engineering"],
     tags: ["tag.en.forms", "tag.en.deployment", "tag.en.dx"],
     imageKey: "post-netlify-forms",
@@ -1191,7 +1528,7 @@ const buildPosts = () => [
     description:
       "Most EU-targeted sites need exactly one feature flag and a localStorage write. Skip the SaaS, ship the banner.",
     daysOld: 30,
-    author: "author.grace",
+    author: "grace",
     categories: ["cat.en.product"],
     tags: ["tag.en.privacy", "tag.en.dx", "tag.en.nextjs"],
     imageKey: "post-cookie-banner",
@@ -1215,8 +1552,10 @@ const buildPosts = () => [
     slug: "prototypage-rapide-avec-nextjs",
     description:
       "Un guide en deux jours pour passer du dépôt vide au MVP déployé. Choix d'outillage, échappatoires, et les étapes à sauter dès le premier jet.",
+    excerpt:
+      "Dépôt vide le vendredi, MVP en ligne le dimanche. Le chemin exact en deux jours — et ce qu'on saute volontairement.",
     daysOld: 1,
-    author: "author.ada",
+    author: "ada",
     categories: ["cat.fr.engineering", "cat.fr.product"],
     tags: ["tag.fr.nextjs", "tag.fr.mvp", "tag.fr.dx", "tag.fr.sanity"],
     featured: true,
@@ -1231,7 +1570,7 @@ const buildPosts = () => [
     description:
       "Marche à suivre sans détour pour livrer un site vitrine du vendredi au dimanche : tarification, périmètre, outils, et les mots exacts à dire au client.",
     daysOld: 4,
-    author: "author.grace",
+    author: "grace",
     categories: ["cat.fr.product", "cat.fr.story"],
     tags: ["tag.fr.freelance", "tag.fr.mvp", "tag.fr.dx", "tag.fr.deployment"],
     featured: true,
@@ -1254,7 +1593,7 @@ const buildPosts = () => [
     description:
       "Chaque client a les mêmes cinq pages et 27 opinions uniques sur chacune. Un template config-first absorbe les 27 sans réécrire les cinq.",
     daysOld: 14,
-    author: "author.ada",
+    author: "ada",
     categories: ["cat.fr.engineering"],
     tags: ["tag.fr.dx", "tag.fr.freelance", "tag.fr.nextjs"],
     imageKey: "post-config-first",
@@ -1272,7 +1611,7 @@ const buildPosts = () => [
     description:
       "Pas d'API route. Pas de SaaS. Netlify Forms parse votre HTML au build et route les soumissions, gratuitement.",
     daysOld: 21,
-    author: "author.tim",
+    author: "tim",
     categories: ["cat.fr.engineering"],
     tags: ["tag.fr.forms", "tag.fr.deployment", "tag.fr.dx"],
     imageKey: "post-netlify-forms",
@@ -1293,7 +1632,7 @@ const buildPosts = () => [
     description:
       "La plupart des sites ciblant l'UE n'ont besoin que d'un feature flag et d'une écriture localStorage. Sautez le SaaS, livrez la bannière.",
     daysOld: 30,
-    author: "author.grace",
+    author: "grace",
     categories: ["cat.fr.product"],
     tags: ["tag.fr.privacy", "tag.fr.dx", "tag.fr.nextjs"],
     imageKey: "post-cookie-banner",
@@ -1381,6 +1720,7 @@ async function run() {
   console.log("");
 
   await uploadAllImages();
+  await uploadLocalMedia();
   console.log("");
 
   const allDocs = [
@@ -1390,6 +1730,9 @@ async function run() {
     ...buildQuotes(),
     ...buildPeople(),
     ...buildPosts(),
+    ...buildTranslationMeta(),
+    ...buildSiteMeta(),
+    buildSiteSettings(),
     blog,
   ];
 

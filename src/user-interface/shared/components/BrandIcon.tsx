@@ -1,7 +1,18 @@
-import type { BrandIconFn } from "reicon-brands";
+/**
+ * The shape this renders. `reicon-brands` icons satisfy it structurally, and
+ * so can a hand-declared mark for a brand the set doesn't carry (e.g. LinkedIn,
+ * pulled from Simple Icons after a trademark request, so every mirror lacks it).
+ */
+export type BrandMark = {
+  /** Official brand hex, WITHOUT the leading "#". */
+  hex: string;
+  title: string;
+  /** The icon's static `<path>` markup. */
+  svgContent: string;
+};
 
 /**
- * Renders a `reicon-brands` icon in React.
+ * Renders a `reicon-brands` icon — or any `BrandMark` — in React.
  *
  * The brand icons are framework-agnostic factories: calling `icon(opts)`
  * builds a DOM node via `document.createElementNS`, which throws during SSR.
@@ -21,7 +32,7 @@ export function BrandIcon({
   className,
   title,
 }: {
-  icon: BrandIconFn;
+  icon: BrandMark;
   size?: number;
   brandColor?: boolean;
   className?: string;

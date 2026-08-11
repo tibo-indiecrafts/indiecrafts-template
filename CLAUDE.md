@@ -11,11 +11,23 @@ component library is the sibling repo `../indiecrafts-library`.
 - Route via `@/i18n/routing` — never `next/link` / `next-intl/navigation`.
 - User-facing strings live in `messages/<locale>.json` — never inline.
 - Don't edit `src/user-interface/ui/**` (shadcn CLI) or depend on the library at runtime.
-- `pnpm verify:quick` before every push.
+- `pnpm verify:quick` before opening a PR (no pre-push hook — the commit hook runs `tsc` + staged lint).
 
 **Two briefs:** this file (`CLAUDE.md`) is _how to code_ — architecture, conventions, workflow. **`DESIGN.md`** (repo root) is _how to design_ — the visual token contract (color roles, type scale, spacing, elevation, motion). Read both; visual tokens never go here, code rules never go there.
 
-**Focused rules** live in `.claude/rules/` — load the relevant one when the task touches it: [`naming`](.claude/rules/naming.md), [`accessibility`](.claude/rules/accessibility.md), [`component-architecture`](.claude/rules/component-architecture.md), [`design-token-usage`](.claude/rules/design-token-usage.md), [`figma-handoff`](.claude/rules/figma-handoff.md). Long-term context/decisions → `MEMORY.md`.
+**Dev framework (in-repo).** The whole `claude-tasks` framework lives here, in three zones — dev with all context at once:
+
+- **`.platform/`** — _how we work_ + the reusable engineering brain. `process/` (7-phase sprint `WORKFLOW`, `DECISION-MATRIX`, `PROJECT-BOOTSTRAP`, `SYSTEM-RULES`), `engineering/` (principles · feature-architecture · api-and-data · infra · testing · tech-debt · database · observability · git-and-pr · engineering-standards), `context/` (how-I-work · voice · audience), `templates/` (sprint templates). Read-only reference — refresh from canon, don't hand-edit.
+- **`docs/`** — _what this product is + why_ (the official VitePress canon). Decisions that stick graduate here.
+- **`work/`** — _the lab_: think · plan · develop · reflect. `features/<name>/0X_*` (per-branch sprint, stamped from `.platform/templates/feature`), `project/` (set-once), `outputs/`, `archive/`, `backlog.md`, `scratch/` (gitignored). **Write drafts and thinking here, never into `docs/`.**
+
+Rule: think in `work/`, build to `.platform/engineering`, promote what sticks to `docs/`.
+
+**Focused rules** live in `.claude/rules/` — load the relevant one when the task touches it: [`naming`](.claude/rules/naming.md), [`accessibility`](.claude/rules/accessibility.md), [`component-architecture`](.claude/rules/component-architecture.md), [`design-token-usage`](.claude/rules/design-token-usage.md), [`figma-handoff`](.claude/rules/figma-handoff.md), [`writing-style`](.claude/rules/writing-style.md) (how the agent writes its own output — docs, comments, commits — STE-informed; not UI copy), [`sanity-legends`](.claude/rules/sanity-legends.md) (Studio field labels + descriptions written for non-technical editors). Long-term context/decisions → `MEMORY.md`.
+
+**Repeatable multi-file tasks** have step-by-step checklists in [`.claude/workflows/`](.claude/workflows/) — follow the matching one instead of reconstructing the steps: [`add-page`](.claude/workflows/add-page.md), [`adapt-library-section`](.claude/workflows/adapt-library-section.md), [`add-blog-module`](.claude/workflows/add-blog-module.md), [`remove-blog-module`](.claude/workflows/remove-blog-module.md).
+
+**Design system:** follow @DESIGN.md. Before creating or modifying UI — (1) read the component implementation, (2) reuse existing tokens and parts, (3) check the responsive + accessibility + motion rules, (4) flag any `DESIGN.md` ↔ production-code conflict. Verify what's loaded with `/context`.
 
 ## Working principles
 
@@ -34,10 +46,13 @@ Guardrails against common LLM coding mistakes — bias to caution over speed (us
 ```bash
 pnpm dev / build / tsc / lint / format    # standard
 pnpm verify                               # CI gate (tsc + lint + format + contrast + react-doctor on changed code)
-pnpm verify:quick                         # tsc + lint (pre-push)
+pnpm verify:quick                         # tsc + lint (manual pre-PR check)
+pnpm shadscan                             # shadcn/ui fundamentals audit — scores UX 0–100 (62 rules); --prompt for an AI fix-plan
 ```
 
-Pre-push hook: `lint && tsc`. Pre-commit: `lint-staged`.
+**`pnpm shadscan`** (`@shadscan/cli`) — deterministic scan of shadcn UI fundamentals (foundation, interaction, states, a11y, forms, polish). No config, no build, no app secrets. Manual audit like `pnpm doctor`; not in the `verify` gate. Add `--json` for CI (`--fail-under <n>`) or `--prompt` to hand the remediation plan to an agent.
+
+Pre-commit hook: `lint-staged` (eslint --fix + prettier on staged files) then `tsc`. No pre-push hook — CI is the backstop. Code must be type-checked and lint-clean, but that's gated at commit time — don't pre-run `tsc`/`lint` after every edit; the commit is the gate.
 
 ## Documentation site (VitePress)
 
@@ -77,7 +92,7 @@ src/user-interface/        SHARED, cross-feature UI — organized by page, then 
    homepage/sections/      marketing blocks — copy targets from the sibling library
    error/ maintenance/ not-found/   per-page folders, each: components/<Composite>
    shared/layout/          chrome: DefaultLayout, Header, Footer, ThemeToggle, CookieBanner…
-   shared/components/      BrandIcon (reicon-brands wrapper)
+   shared/components/      BrandIcon (SSR-safe wrapper — renders any BrandMark; reicon-brands or hand-declared)
 
 src/lib/                   SHARED utils/services
    metadata.ts             buildMetadata({ page, locale }) — inherits site → page
@@ -121,6 +136,8 @@ messages/<locale>.json     Single flat tree — chrome + pages.<id>.{title, desc
 
 ## Adding a page
 
+_Checklist: [`.claude/workflows/add-page.md`](.claude/workflows/add-page.md)._
+
 1. `src/app/[locale]/<seg>/page.tsx`
 2. Entry in `pages` (config/index.ts): `{ key, id, slug, seo: { keywords } }`
 3. Key in `AppPathname` (`src/config/types.ts`)
@@ -129,6 +146,8 @@ messages/<locale>.json     Single flat tree — chrome + pages.<id>.{title, desc
 Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, JSON-LD WebPage.
 
 ## Working with the library (shadcn/ui + `../indiecrafts-library`)
+
+_Checklist: [`.claude/workflows/adapt-library-section.md`](.claude/workflows/adapt-library-section.md)._
 
 Two building blocks feed the UI: **shadcn/ui** primitives (`src/user-interface/ui`, CLI-managed) and the sibling **`../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
 
@@ -197,7 +216,7 @@ The **visual system** — colors, typography, spacing, dark mode, motion, contra
 - ALWAYS `setRequestLocale(locale)` at the top of server components using translations or metadata.
 - ALWAYS update the docs when you change what they describe — every change to a feature, flag, config shape, route, or convention updates the matching `docs/` page **and** the README index **and** the `docs/.vitepress/config.mts` sidebar (add/rename/remove in lockstep). Docs are part of the change, not a follow-up.
 - ALWAYS log behavior/config/route/convention **and** design-token changes in the shared root `CHANGELOG.md` (one file for code + design) with a plain-language _why_.
-- ALWAYS run `pnpm verify:quick` before push.
+- ALWAYS run `pnpm verify:quick` before opening a PR — there's no pre-push hook, so nothing blocks a push; the commit hook only runs `tsc` + staged-file lint.
 
 ## File-size discipline
 

@@ -14,23 +14,10 @@ import { features, seoDefaults, site } from "@/config";
 import { getTranslations } from "next-intl/server";
 import { getStaticPathname } from "@/i18n/routing";
 import type { Locale } from "@/config";
-import type { MessageKey } from "@/types/messages";
-import { pageOgImage } from "@/lib/metadata";
+import { getSiteSeo } from "@/lib/seo/site-seo";
 import { getFaqItems } from "@/lib/faq";
-import { buildFAQPageSchema } from "./jsonld-factories";
+import { buildFAQPageSchema, buildGlobalSchemas } from "./jsonld-factories";
 import { buildWebPageSchema, type SchemaObject } from "./jsonld-core";
-
-function safeT(
-  t: Awaited<ReturnType<typeof getTranslations>>,
-  key: MessageKey,
-  fallback: string,
-): string {
-  try {
-    return t(key);
-  } catch {
-    return fallback;
-  }
-}
 
 // Pure image helpers — no render state, so hoisted out of PageSchemas to a
 // one-time module binding (react-doctor prefer-module-scope-pure-function).
@@ -58,27 +45,39 @@ export async function PageSchemas({
   if (!features.structuredData) return null;
 
   const t = await getTranslations({ locale });
-  const titleKey = page.seo?.titleKey ?? (`pages.${page.id}.title` as MessageKey);
-  const descriptionKey =
-    page.seo?.descriptionKey ?? (`pages.${page.id}.description` as MessageKey);
-  const title = safeT(t, titleKey, site.name);
-  const description = safeT(t, descriptionKey, site.description);
+  // SEO copy — Sanity only. WebPage `name` is required, so fall back to the
+  // brand name (identity, not editorial copy) when the locale has no entry.
+  const siteSeo = await getSiteSeo(locale);
+  const pageSeo = siteSeo.pageSeo.get(page.id);
+  const title = pageSeo?.title ?? site.name;
+  const description = pageSeo?.description;
+  const ogImage = pageSeo?.ogImage ?? siteSeo.ogImage;
 
   const path = pathname ?? getStaticPathname(page.key, locale);
   const url = `${site.url}${path}`;
-  // The image(s) Google may show next to the result: explicit per-page
-  // `schemaImage` > site `seoDefaults.schemaImage` > the page's OG image.
-  // Each may be one path or a list; emit a string for one, an array for many.
+  // The image(s) Google may show next to the result: Sanity per-page
+  // `schemaImage` > config per-page `schemaImage` > site `seoDefaults.schemaImage`
+  // > the page's Sanity OG image. Emit a string for one, an array for many.
+  const sanitySchemaImage = toImageList(pageSeo?.schemaImage);
   const pageImages = toImageList(page.seo?.schemaImage);
   const defaultImages = toImageList(seoDefaults.schemaImage);
   const schemaImages =
-    pageImages.length > 0
-      ? pageImages
-      : defaultImages.length > 0
-        ? defaultImages
-        : [pageOgImage(page)];
+    sanitySchemaImage.length > 0
+      ? sanitySchemaImage
+      : pageImages.length > 0
+        ? pageImages
+        : defaultImages.length > 0
+          ? defaultImages
+          : ogImage
+            ? [ogImage]
+            : [];
   const absoluteImages = schemaImages.map(toAbsolute);
-  const image = absoluteImages.length === 1 ? absoluteImages[0] : absoluteImages;
+  const image =
+    absoluteImages.length === 0
+      ? undefined
+      : absoluteImages.length === 1
+        ? absoluteImages[0]
+        : absoluteImages;
 
   const webPage = buildWebPageSchema({
     id: page.id,
@@ -89,7 +88,11 @@ export async function PageSchemas({
     image,
   });
 
-  const extras = (page.seo?.structuredData ?? []) as readonly SchemaObject[];
+  // Per-page JSON-LD: config `structuredData` + editor-authored Sanity entries.
+  const extras: SchemaObject[] = [
+    ...((page.seo?.structuredData ?? []) as readonly SchemaObject[]),
+    ...buildGlobalSchemas(pageSeo?.structuredData ?? []),
+  ];
 
   // Auto-emit FAQPage rich-result markup from the page's translated `faq`
   // array — zero per-page config, in sync with what the <Faq> section shows.

@@ -30,7 +30,6 @@ import type {
 } from "./types";
 
 // `@/config` is the single import for everyone — re-export from sibling types
-export { STATIC_PATHNAME_KEYS } from "./types";
 export type {
   Locale,
   LocaleConfig,
@@ -72,33 +71,10 @@ export const site = {
    * placeholder. `isSiteConfigured` + robots.txt key off whether this is real.
    */
   url: process.env.NEXT_PUBLIC_SITE_URL || PLACEHOLDER_SITE_URL,
-  /** UI logo (SVG preferred for crispness at any size). */
-  logo: "/logo.svg",
-  /** Raster logo for schema.org Organization (Google rejects SVG). */
-  brandLogoPng: "/brand/logo.png",
-  /**
-   * Favicon — served at `/icon` and `/apple-icon` routes. Replace the
-   * files in /public to rebrand; no code changes needed.
-   */
-  icon: {
-    /**
-     * Favicon + apple-touch-icon serve the SAME 180×180 raster. Safari uses
-     * the favicon for the tab strip but the higher-res apple-touch-icon for
-     * the sidebar / tab-overview thumbnail — pointing both at one file is the
-     * only way to guarantee an identical mark on both surfaces. (An SVG
-     * favicon here would render as different artwork than the PNG sidebar icon.)
-     */
-    file: "/brand/apple-icon.png",
-    contentType: "image/png",
-    /** iOS rejects SVG for apple-touch-icon; PNG is required regardless. */
-    appleFile: "/brand/apple-icon.png",
-    appleContentType: "image/png",
-  },
-  /** Site-wide Open Graph card — served at `/opengraph-image`. */
-  ogImage: {
-    file: "/brand/og.png",
-    contentType: "image/png",
-  },
+  // Logo, favicon/app icon, AND the Open Graph share card are edited in Sanity
+  // (`siteSettings.logo` / `logoDark` / `icon`, `siteMeta.<locale>.ogImage`) —
+  // the sole source, no config fallback and nothing in `/public`. Rendered by
+  // `Logo.tsx`, the layout's `generateMetadata` (icons + og), and `app/manifest.ts`.
   contact: {
     email: "hello@example.com",
   },
@@ -180,45 +156,16 @@ export const isSiteConfigured = site.url !== PLACEHOLDER_SITE_URL;
 // 2. ─── theme ────────────────────────────────────────────────
 
 export const theme = {
-  /** Hex mirrors of the oklch colors — required by the PWA manifest
-   * (`app/manifest.ts`), which can't take oklch for `theme_color` /
-   * `background_color`. Keep in sync with `colors` below. */
+  /**
+   * Hex mirror of the oklch `background` token — the one color the PWA
+   * manifest (`app/manifest.ts` → `theme_color` / `background_color`) needs,
+   * since the manifest spec can't take oklch. Everything else reads oklch
+   * straight from `globals.css` (the authoritative color source) via Tailwind
+   * utilities. Keep this value matched to `--background` in globals.css.
+   */
   hexColors: {
-    brand: "#4f69d9",
-    brandForeground: "#ffffff",
     background: "#ffffff",
-    foreground: "#171717",
   },
-  /**
-   * Runtime CSS colors — mirrored in globals.css.
-   * Comments mark the closest Tailwind v4 colour reference so the
-   * original design choice is recoverable without decoding OKLCH.
-   * Light-mode values only here; dark-mode is in globals.css.
-   */
-  colors: {
-    brand: "oklch(0.55 0.18 260)" /* indigo-500 (hue retuned to 260) */,
-    brandForeground: "oklch(0.985 0 0)" /* neutral-50 */,
-    background: "oklch(1 0 0)" /* white */,
-    foreground: "oklch(0.145 0 0)" /* neutral-950 */,
-    muted: "oklch(0.97 0 0)" /* neutral-100 */,
-    mutedForeground: "oklch(0.556 0 0)" /* neutral-500 */,
-    destructive: "oklch(0.577 0.245 27.325)" /* red-600 */,
-    border: "oklch(0.84 0 0)" /* between neutral-200 + neutral-300 */,
-    ring: "oklch(0.55 0.18 260)" /* matches brand */,
-    selectionBg: "oklch(0.9 0.07 260)" /* indigo-100 — selected text wash */,
-    selectionFg: "oklch(0.145 0 0)" /* same as foreground */,
-  },
-  /**
-   * CSS-var references for the three font roles — the runtime values are
-   * resolved by `@/lib/fonts` from the `fonts` pairing below. Kept here as
-   * the canonical var names (e.g. for ad-hoc inline styles).
-   */
-  fonts: {
-    display: "var(--font-display)",
-    sans: "var(--font-sans)",
-    mono: "var(--font-mono)",
-  },
-  radii: { sm: "0.375rem", md: "0.5rem", lg: "0.75rem", xl: "1rem" },
   container: { maxWidth: "1280px", gutter: "1rem" },
 } as const;
 
@@ -395,6 +342,18 @@ export const features = {
    */
   blog: true,
   /**
+   * Blog taxonomy surfaces — the `/author`, `/blog/category`, `/blog/tag`
+   * listing + detail routes, each toggled independently. Requires `blog`. Turn
+   * one OFF to keep posts while removing that taxonomy entirely: its routes 404,
+   * its labels/links disappear from the UI, and it drops from the sitemap,
+   * llms.txt, and the build (no static params generated).
+   */
+  blogTaxonomy: {
+    authors: true,
+    categories: true,
+    tags: true,
+  },
+  /**
    * The Sanity editing surface — the embedded Studio at `/studio` plus the
    * draft-mode preview API (`/api/draft-mode/enable` + `/disable`) its
    * Presentation tool drives. Independent of `features.blog`: turn this OFF
@@ -512,7 +471,8 @@ export const seoDefaults = {
   openGraph: {
     type: "website",
     siteName: site.name,
-    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
+    // No default image here — the OG card is Sanity-only (`siteMeta.<locale>.ogImage`
+    // / `pageSeo.ogImage`), emitted by `buildMetadata` + the layout default.
   },
   twitter: {
     card: "summary_large_image",
@@ -553,33 +513,24 @@ export const llms = {
 // 8. ─── pages ────────────────────────────────────────────────
 
 /**
- * Per-route metadata. The metadata builder auto-derives sensible defaults:
+ * Per-route metadata. SEO CONTENT (title, description, keywords, OG card) is
+ * edited per locale in Sanity (`siteMeta.<locale>.pageSeo[pageId]`) — the sole
+ * source, no config/messages fallback (see `docs/seo/editing-seo-in-sanity.md`).
+ * This map only carries STRUCTURAL routing/config:
  *
- *   - title           → messages key `pages.<id>.title`
- *   - description     → messages key `pages.<id>.description`
- *   - keywords        → messages key `pages.<id>.keywords` (comma-separated,
- *                       translated per locale; omit the key for no keywords)
- *   - og image        → dynamic `/opengraph-image` card (override per page
- *                       with `seo.openGraph.imageUrl`, e.g. `/brand/og-<id>.png`)
- *   - canonical       → `${site.url}${slug}` (locale-aware)
+ *   - key / id / slug — route identity (slug may be `{ [locale]: string }`)
+ *   - canonical       → `${site.url}${slug}` (locale-aware) unless overridden
  *   - robots          → `seoDefaults.robots` (override via `seo.noindex` etc.)
+ *   - enabled         → feature-gate a route on/off
  *
- * So each page entry usually only needs `key`, `id`, `slug`. All human-facing
- * SEO text (title, description, keywords) is translated in `messages`; only
- * structural/non-text overrides live here under `seo`. A `slug` may be a
- * `{ [locale]: string }` object for per-locale paths (e.g.
- * `{ en: "/legal", fr: "/mentions-legales" }`).
+ * So each page entry usually only needs `key`, `id`, `slug`; the editor fills the
+ * SEO text in the Studio.
  */
 export const pages = {
   home: {
     key: "/",
     id: "home",
     slug: "/",
-    seo: {
-      // Static hero card. Other pages fall back to the dynamic
-      // `/opengraph-image` route; drop a file + point `imageUrl` at it here.
-      openGraph: { imageUrl: "/brand/og-home.png" },
-    },
   },
   legal: {
     key: "/legal",
@@ -599,18 +550,18 @@ export const pages = {
     key: "/author",
     id: "author",
     slug: "/author",
-    enabled: features.blog,
+    enabled: features.blog && features.blogTaxonomy.authors,
   },
   category: {
     key: "/blog/category",
     id: "category",
     slug: "/blog/category",
-    enabled: features.blog,
+    enabled: features.blog && features.blogTaxonomy.categories,
   },
   tag: {
     key: "/blog/tag",
     id: "tag",
     slug: "/blog/tag",
-    enabled: features.blog,
+    enabled: features.blog && features.blogTaxonomy.tags,
   },
 } as const satisfies Record<string, PageConfig>;

@@ -7,6 +7,10 @@ guidance so nothing gets cut off.
 
 > Not sure about a field? Leave the `[ … ]` as-is and we'll suggest something.
 
+> ✏️ **After launch**, every field below is editable yourself, per language, in
+> the Studio under **SEO & métadonnées** — no developer needed. See
+> [Editing SEO in Sanity](../seo/editing-seo-in-sanity.md).
+
 > 🌐 **Your site runs in more than one language** (English + French by default).
 > Every text field below is per-language — please give us each answer in **all**
 > your site's languages. Easiest: fill the form once per language, or write each

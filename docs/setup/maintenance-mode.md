@@ -48,7 +48,7 @@ The proxy `matcher` already excludes a set of paths, so maintenance mode never t
 
 ```
 api · _next · _vercel · studio · maintenance ·
-icon · apple-icon · opengraph-image · manifest · robots · sitemap ·
+manifest · robots · sitemap ·
 and any path with a file extension (.css, .png, …)
 ```
 
@@ -78,7 +78,13 @@ src/app/maintenance/
 
 ## 4. Where the strings come from
 
-All visible copy lives under `pages.maintenance` in every `messages/<locale>.json`:
+**Editable in Sanity** (Studio → SEO & métadonnées → SEO par langue → **Pages
+système → Page de maintenance**), per language. Each field reads Sanity **`??` the
+`messages/<locale>.json` fallback** below — a failure page must never depend on
+Sanity being up, so the bundled copy always backs it. Blank a Sanity field → the
+message default shows.
+
+The fallback copy lives under `pages.maintenance` in every `messages/<locale>.json`:
 
 ```jsonc
 // messages/en.json

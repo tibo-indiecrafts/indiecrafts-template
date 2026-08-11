@@ -4,7 +4,7 @@ Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (publ
 
 ## Layout
 
-- `user-interface/` — the blog's UI, organized by route like `src/user-interface/`: `blog/` (frontpage), `post/` (single post), `author/`, `category/`, `tag/` — each split into `sections/` (big views + blocks), `components/` (small: cards, TOC, badges), `layout/` (page shells, e.g. `post/layout/DefaultPostLayout`) as needed. Multi-page pieces live in `shared/` (`sections/PageHero`, `components/{BlogCard,Breadcrumbs,PlayBadge}`); `renderers/` holds the 14 page-builder module renderers.
+- `user-interface/` — the blog's UI, organized by route like `src/user-interface/`: `blog/` (frontpage), `post/` (single post), `author/`, `category/`, `tag/` — each split into `sections/` (big views + blocks), `components/` (small: cards, TOC, badges), `layout/` (page shells, e.g. `post/layout/DefaultPostLayout`) as needed. Multi-page pieces live in `shared/` (`sections/PageHero`, `components/{BlogCard,Breadcrumbs,PlayBadge}`); `renderers/` holds the 13 page-builder module renderers.
 - `sanity/` — `schema/` + `queries.ts` + `types.ts` + `structure.ts` (Studio desk) + `portable-to-markdown.ts`
 - `lib/route-gate.ts` — `requireBlogRoute(page)` (page components) / `isBlogRouteEnabled(page)` (route handlers) / `isRssEnabled()`. Each folds in the flag **and** `page.enabled`, so a new route can't drift by checking only one.
 
@@ -14,14 +14,16 @@ Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (publ
 | ------------ | ------------------------------------------------------- | ------------------------------------------- |
 | Blog         | `blog` (singleton), `post`, `author`, `category`, `tag` | `blockContent`, `metadata`                  |
 | Module refs  | `quote`, `person`                                       | `link`, `cta`                               |
-| Page-builder | —                                                       | 14 `module.*` types (see `schema/modules/`) |
+| Page-builder | —                                                       | 13 `module.*` types (see `schema/modules/`) |
 
-## Page-builder modules (14 `object` types, all gated)
+## Page-builder modules (13 `object` types, all gated)
 
-- **Inline-embeddable in body + `postModules`** (8): accordion-list, callout, card-list, custom-html, person-list, quote-list, stat-list, step-list
-- **`postModules`-only** (6): breadcrumbs, blog-index, blog-post-content, blog-post-list, prose, search
+- **Inline-embeddable in body + `postModules`** (9): accordion-list, callout, card-list, custom-html, gallery, person-list, quote-list, stat-list, step-list
+- **`postModules`-only** (4): blog-index, blog-post-content, blog-post-list, prose
 
-Inline allowlist → `sanity/schema/blockContent.ts` (`INLINE_MODULES`). Renderer → `user-interface/renderers/ModuleRenderer.tsx` (switch on `_type`, TS exhaustiveness enforces). **Adding** a module = schema + component + switch case; **removing** = drop from `INLINE_MODULES` **and** the renderer's `types` map in `portable-text-components.tsx`.
+Inline allowlist → `sanity/schema/blockContent.ts` (`INLINE_MODULES`). Renderer → `user-interface/renderers/ModuleRenderer.tsx` (switch on `_type`, TS exhaustiveness enforces). **Adding or removing a module touches ~8 code locations + 4 doc count-refs** — follow the full checklist, don't reconstruct it: [`.claude/workflows/add-blog-module.md`](../../../.claude/workflows/add-blog-module.md) / [`remove-blog-module.md`](../../../.claude/workflows/remove-blog-module.md).
+
+Field **legends** (every `title` + `description` an editor sees) are written for non-technical editors — plain words, no jargon. Follow [`.claude/rules/sanity-legends.md`](../../../.claude/rules/sanity-legends.md).
 
 ## Per-post layout + extras
 
@@ -32,7 +34,7 @@ Inline allowlist → `sanity/schema/blockContent.ts` (`INLINE_MODULES`). Rendere
 
 ## Studio
 
-Embedded catch-all at `src/app/studio/[[...tool]]/page.tsx` with its own root layout (sits outside `[locale]/`, so needs its own `<html>`/`<body>`). The desk (`sanity/structure.ts`) groups Blog (singleton + posts/authors/categories) and References (quotes/people).
+Embedded catch-all at `src/app/studio/[[...tool]]/page.tsx` with its own root layout (sits outside `[locale]/`, so needs its own `<html>`/`<body>`). The desk (`sanity/structure.ts`) groups Blog (singleton + posts/authors/categories), References (quotes/people), and the core **SEO & métadonnées** section (`seoStructureItem` from `@/sanity/structure` — `siteSettings` + `siteMeta.<locale>`).
 
 ## Gating
 

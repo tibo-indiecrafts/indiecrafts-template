@@ -3,7 +3,7 @@
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { localeMap, locales, type Locale } from "@/config";
+import { defaultLocale, localeMap, locales, type Locale } from "@/config";
 import { Button } from "@/user-interface/ui/button";
 import {
   DropdownMenu,
@@ -33,9 +33,47 @@ export function LocaleSwitcher({
   const params = useParams<{ locale?: string }>();
   const current = useLocale() as Locale;
 
-  function switchTo(next: Locale) {
+  // Locale-prefixed path — the default locale is served unprefixed (as-needed).
+  const withLocale = (loc: Locale, path: string) =>
+    loc === defaultLocale ? path || "/" : `/${loc}${path}`;
+
+  async function switchTo(next: Locale) {
     const segments = pathname.split("/");
-    if (params.locale && segments[1] === params.locale) {
+    const hasLocale = Boolean(params.locale) && segments[1] === params.locale;
+    // Path after the locale prefix, e.g. "/blog/my-post".
+    const rest = "/" + segments.slice(hasLocale ? 2 : 1).join("/");
+
+    // Post / category / tag detail slugs differ per language. Resolve the
+    // translated slug via the doc-i18n links; fall back to the blog homepage
+    // when there's no translation. Author pages are global (same slug in every
+    // language), so they swap locale like any other route.
+    const detailType = /^\/blog\/category\/[^/]+$/.test(rest)
+      ? "category"
+      : /^\/blog\/tag\/[^/]+$/.test(rest)
+        ? "tag"
+        : /^\/blog\/[^/]+$/.test(rest) && !/^\/blog\/(category|tag)$/.test(rest)
+          ? "post"
+          : null;
+
+    if (detailType) {
+      const slug = rest.split("/").pop() ?? "";
+      // No counterpart in the target locale → send to that locale's homepage
+      // (this post/entity simply doesn't exist there).
+      let target = withLocale(next, "/");
+      try {
+        const res = await fetch(
+          `/api/i18n/translated-slug?type=${detailType}&slug=${encodeURIComponent(slug)}&from=${current}&to=${next}`,
+        );
+        const { path } = (await res.json()) as { path: string | null };
+        if (path) target = withLocale(next, path);
+      } catch {
+        // keep the homepage fallback
+      }
+      router.replace(target);
+      return;
+    }
+
+    if (hasLocale) {
       segments[1] = next;
     } else {
       segments.splice(1, 0, next);

@@ -119,12 +119,9 @@ site = {
   tagline: "...",                       // shown in <title>, OG cards, footer
   description: "...",                   // <meta description>, OG, schema.org
   url: "https://acme.com",              // ⚠️ MUST change from PLACEHOLDER_SITE_URL
-  logo: "/logo.svg",                    // file at /public/logo.svg
-  brandLogoPng: "/brand/logo.png",      // raster for schema.org Organization
-  icon: { ... },                        // favicon + apple-touch-icon
-  ogImage: { ... },                     // /opengraph-image route
   contact: { email: "..." },
-  social: {                             // empty string = omitted
+  // logo, favicon/icon, social profiles → now edited in Sanity (Studio → SEO & métadonnées)
+  social: {                             // (legacy config block — Sanity is the live source)
     twitter: "@acme",
     github: "",
     linkedin: "https://www.linkedin.com/company/acme",
@@ -298,18 +295,15 @@ Same keys in `fr.json`, translated.
 
 ## 7. Replace brand assets
 
-Drop your client's files at:
+Upload **all brand assets in Sanity** (Studio → SEO & métadonnées) — nothing lives
+in `/public`:
 
-```
-/public/logo.svg                        # header logo (any size SVG)
-/public/brand/logo.png                  # raster fallback for schema.org Organization (>=512×512)
-/public/brand/apple-icon.png            # 180×180 PNG (iOS rejects SVG)
-/public/brand/og.png                    # 1200×630, used by /opengraph-image
-/public/brand/og-home.png               # optional per-page OG image (one per page id)
-/public/brand/og-blog.png               # ditto
-```
+- `siteSettings.logo` / `logoDark` — header/footer logo (+ dark-theme variant)
+- `siteSettings.icon` — favicon + apple-touch + PWA icons (square PNG ≥ 512×512)
+- `siteMeta.<locale>.ogImage` — Open Graph share card, per language (1200×630)
 
-The icon + OG routes (`/icon`, `/apple-icon`, `/opengraph-image`) auto-serve whichever file is at the configured path.
+`pnpm seed` uploads defaults from `scripts/seed-media/`. Favicon/OG are emitted
+Sanity-only (no fallback): empty = no favicon / no `og:image`.
 
 ---
 
@@ -329,7 +323,7 @@ Skip the seed. Run `pnpm dev`, open `/studio`, and create your first documents:
 Edit `scripts/seed-blog-demo.mjs`: change author names + bios, replace `IMAGES` URLs, swap `categories` / `tags` / `posts` arrays. Then:
 
 ```bash
-pnpm seed:blog
+pnpm seed
 ```
 
 #### Re-seed semantics — read this once
@@ -361,7 +355,7 @@ pnpm dlx sanity@latest documents query '*[_type == "tag"]._id' \
 # Nuclear option — wipe the dataset clean (DESTROYS EVERYTHING)
 pnpm dlx sanity@latest dataset delete <name>
 pnpm dlx sanity@latest dataset create <name>
-pnpm seed:blog
+pnpm seed
 ```
 
 #### When to re-seed in practice
@@ -389,7 +383,7 @@ Click "+" inside any `body` field — the 8 inline modules (Encadré, Cartes, Pe
 ## 9. Verify before deploy
 
 ```bash
-pnpm verify:quick      # tsc + lint (pre-push gate)
+pnpm verify:quick      # tsc + lint (manual pre-PR check)
 pnpm verify            # full gate: tsc + lint + format + contrast (CI runs this)
 pnpm build             # prerenders every static route × locale
 ```

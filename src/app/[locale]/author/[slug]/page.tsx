@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, localeCodes, pages, site } from "@/config";
+import { features, pages, site } from "@/config";
 import type { Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
 import { requireBlogRoute } from "@/features/blog/lib/route-gate";
@@ -20,11 +20,13 @@ import type { Author, PostListItem } from "@/features/blog/sanity/types";
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 
 export async function generateStaticParams() {
-  if (!features.blog) return [];
-  const rows = await client.fetch<{ slug?: string }[]>(allAuthorSlugsQuery);
-  // Author pages are locale-neutral — emit one per (locale, slug) pair.
+  if (!features.blog || !features.blogTaxonomy.authors) return [];
+  const rows =
+    await client.fetch<{ slug?: string; language?: string }[]>(allAuthorSlugsQuery);
+  // Authors are translated — each doc belongs to one locale, so emit the
+  // (locale, slug) pair for its own language only.
   return rows.flatMap((row) =>
-    row.slug ? localeCodes.map((locale) => ({ locale, slug: row.slug! })) : [],
+    row.slug && row.language ? [{ locale: row.language, slug: row.slug }] : [],
   );
 }
 
@@ -33,15 +35,16 @@ export async function generateMetadata({ params }: Props) {
   const path = localizedPathname(`/author/${slug}`, locale);
   const author = await sanityFetchLive<Author | null>({
     query: authorBySlugQuery,
-    params: { slug },
+    params: { slug, locale },
   });
   const base = await buildMetadata({ page: pages.author, locale, pathname: path });
   if (!author) return base;
 
   return {
     ...base,
-    title: author.name,
-    description: author.bio ?? base.description,
+    title: author.seo?.title ?? author.name,
+    description: author.seo?.description ?? author.bio ?? base.description,
+    robots: author.seo?.noIndex ? { index: false, follow: false } : base.robots,
     openGraph: {
       ...base.openGraph,
       type: "profile",
@@ -60,7 +63,10 @@ export default async function AuthorDetailPage({ params }: Props) {
   setRequestLocale(locale);
 
   const [author, posts, t, nav] = await Promise.all([
-    sanityFetchLive<Author | null>({ query: authorBySlugQuery, params: { slug } }),
+    sanityFetchLive<Author | null>({
+      query: authorBySlugQuery,
+      params: { slug, locale },
+    }),
     sanityFetchLive<PostListItem[]>({
       query: postsByAuthorSlugQuery,
       params: { slug, locale },

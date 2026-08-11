@@ -14,6 +14,7 @@ import blockContent from "./blockContent";
 import cta from "./objects/cta";
 import link from "./objects/link";
 import metadata from "./objects/metadata";
+import seoMeta from "./objects/seo-meta";
 
 // Blog page-builder modules (object types)
 import { moduleSchemas } from "./modules";
@@ -30,6 +31,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // Reusable objects
   blockContent,
   metadata,
+  seoMeta,
   link,
   cta,
   // Modules

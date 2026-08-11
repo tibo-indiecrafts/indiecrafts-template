@@ -4,6 +4,10 @@ out/
 build/
 coverage/
 
+# VitePress docs site — build output + cache (npm-managed, not our lint surface)
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
 # Local tooling (untracked, not part of repo lint surface)
 .claude/
 
@@ -12,4 +16,4 @@ next-env.d.ts
 pnpm-lock.yaml
 
 # Upstream downloads — keep pristine so `shadcn add` diffs stay clean
-src/components/ui-primitives/
+src/user-interface/ui/

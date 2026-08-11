@@ -15,6 +15,19 @@ export type ImageRef = {
  * rich-text bios on the public site, switch the projections back to
  * `bio` and update this type to `PortableTextBlock[]`.
  */
+/** Slug-less SEO + visibility override — see `schema/objects/seo-meta.ts`. */
+export type SeoMeta = {
+  title?: string;
+  description?: string;
+  image?: ImageRef;
+  /** robots:noindex + drop from sitemap. Page still renders. */
+  noIndex?: boolean;
+  /** Remove from on-site listings/explore. Page still renders by URL. */
+  hideFromDiscovery?: boolean;
+  /** Route returns 404 everywhere; document stays editable in the Studio. */
+  unpublished?: boolean;
+};
+
 export type AuthorRef = {
   _id?: string;
   name?: string;
@@ -34,6 +47,7 @@ export type Author = {
   image?: { asset?: { url?: string } };
   /** Computed in GROQ — count of posts attributed to this author. */
   postCount?: number;
+  seo?: SeoMeta;
 };
 
 export type CategoryRef = {
@@ -50,6 +64,7 @@ export type Category = {
   description?: string;
   /** Computed in GROQ — count of posts in this category, locale-filtered. */
   postCount?: number;
+  seo?: SeoMeta;
 };
 
 /** Lightweight tag reference — embedded inside post fragments. */
@@ -67,6 +82,7 @@ export type Tag = {
   description?: string;
   /** Computed in GROQ — count of posts with this tag, locale-filtered. */
   postCount?: number;
+  seo?: SeoMeta;
 };
 
 /** Reusable `metadata` object — see `src/sanity/schema/objects/metadata.ts`. */
@@ -81,11 +97,19 @@ export type PostMetadata = {
    */
   videoUrl?: string;
   noIndex?: boolean;
+  hideFromDiscovery?: boolean;
+  unpublished?: boolean;
+  /** One-line entry for the `/llms.txt` index; else `description`. */
+  llmsSummary?: string;
+  /** Markdown body for the `/md` export; else the PortableText `body`. */
+  llmsFull?: string;
 };
 
 export type PostListItem = {
   _id: string;
   title?: string;
+  /** Display teaser for cards + the post page; falls back to `metadata.description`. */
+  excerpt?: string;
   publishedAt?: string;
   featured?: boolean;
   slug?: string;
@@ -155,6 +179,25 @@ export type CalloutModule = ModuleBase & {
   cta?: Cta;
 };
 
+export type GalleryImage = {
+  _key: string;
+  url?: string | null;
+  alt?: string | null;
+  /** Base64 blur placeholder from Sanity's asset metadata. */
+  lqip?: string | null;
+  aspectRatio?: number | null;
+  width?: number | null;
+  height?: number | null;
+};
+
+export type GalleryModule = ModuleBase & {
+  _type: "module.gallery";
+  title?: string;
+  intro?: string;
+  ratio?: "3:2" | "4:3" | "16:9" | "1:1" | "4:5";
+  images?: GalleryImage[];
+};
+
 export type CardListModule = ModuleBase & {
   _type: "module.card-list";
   title?: string;
@@ -215,23 +258,9 @@ export type QuoteListModule = ModuleBase & {
   }[];
 };
 
-export type BreadcrumbsModule = ModuleBase & {
-  _type: "module.breadcrumbs";
-  /** Optional aria-label override; falls back to localized default. */
-  label?: string;
-  items?: { _key: string; label?: string; href?: string }[];
-};
-
 export type CustomHtmlModule = ModuleBase & {
   _type: "module.custom-html";
   html?: string;
-};
-
-export type SearchModule = ModuleBase & {
-  _type: "module.search";
-  title?: string;
-  placeholder?: string;
-  scope?: "post";
 };
 
 export type BlogIndexModule = ModuleBase & {
@@ -258,18 +287,18 @@ export type AnyModule =
   | AccordionListModule
   | CalloutModule
   | CardListModule
+  | GalleryModule
   | PersonListModule
   | ProseModule
   | StatListModule
   | StepListModule
   | QuoteListModule
-  | BreadcrumbsModule
   | CustomHtmlModule
-  | SearchModule
   | BlogIndexModule
   | BlogPostContentModule
   | BlogPostListModule;
 
 export type BlogSingleton = {
   postModules?: AnyModule[];
+  seo?: SeoMeta;
 };

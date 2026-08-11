@@ -1,7 +1,7 @@
 import "../globals.css";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 import {
@@ -20,6 +20,8 @@ import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/user-interface/shared/layout/ThemeProvider";
 import { JsonLdScript } from "@/lib/seo/jsonld";
 import { buildSiteSchemas } from "@/lib/seo/jsonld-core";
+import { buildGlobalSchemas } from "@/lib/seo/jsonld-factories";
+import { getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { SanityLive } from "@/sanity/live";
 
 export function generateStaticParams() {
@@ -28,27 +30,38 @@ export function generateStaticParams() {
 
 /**
  * Layout-level metadata — the site-wide defaults Next.js merges with each
- * page's `generateMetadata` output. All locale-aware fields read from
- * `messages/<locale>.json` so the fallback head is correctly localized
- * even if a route forgets to call `buildMetadata`.
+ * page's `generateMetadata` output. Locale-aware SEO (description, verification)
+ * reads from Sanity (`getSiteSeo` / `getSiteSettings`) — the sole source, no
+ * config fallback; brand/structural defaults (title template, OG type) come
+ * from `seoDefaults`.
  */
-/** Locale-aware site description. Falls back to the static config value. */
-async function getSiteDescription(locale: Locale): Promise<string> {
-  const t = await getTranslations({ locale });
-  try {
-    return t("site.description");
-  } catch {
-    return site.description;
-  }
-}
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const siteDescription = await getSiteDescription(locale);
+  // Site-wide defaults — Sanity only (no config fallback); undefined when unset,
+  // so Next simply omits them.
+  const [siteSeo, settings] = await Promise.all([getSiteSeo(locale), getSiteSettings()]);
+  const siteDescription = siteSeo.description;
+  const verification = settings.verification;
+  // Favicon + apple-touch icon from Sanity (`siteSettings.icon`). Omitted when
+  // unset — no static fallback (Sanity is the sole source). Square crop.
+  const iconUrl = settings.brand.icon
+    ? `${settings.brand.icon}?w=180&h=180&fit=crop`
+    : undefined;
+  // Default OG card — the locale's Sanity `siteMeta.ogImage`. Omitted when unset
+  // (no `/public` fallback, no convention route).
+  const ogImages = siteSeo.ogImage
+    ? [{ url: siteSeo.ogImage, width: 1200, height: 630 }]
+    : undefined;
+  // Site-wide robots toggle (`siteSettings.robots`) — layered over the default.
+  const siteRobots = settings.robots;
+  const robots =
+    siteRobots.noindex || siteRobots.nofollow
+      ? { index: !siteRobots.noindex, follow: !siteRobots.nofollow }
+      : seoDefaults.robots;
   return {
     metadataBase: new URL(site.url),
     title: { default: seoDefaults.defaultTitle, template: seoDefaults.titleTemplate },
@@ -57,7 +70,7 @@ export async function generateMetadata({
     openGraph: {
       type: seoDefaults.openGraph.type,
       siteName: seoDefaults.openGraph.siteName,
-      images: [...seoDefaults.openGraph.images],
+      images: ogImages,
       url: site.url,
       locale,
       title: seoDefaults.defaultTitle,
@@ -66,12 +79,11 @@ export async function generateMetadata({
     twitter: {
       card: seoDefaults.twitter.card,
     },
-    robots: seoDefaults.robots,
+    robots,
+    icons: iconUrl ? { icon: iconUrl, apple: iconUrl } : undefined,
     verification: {
-      google: seoDefaults.verification.google || undefined,
-      other: seoDefaults.verification.bing
-        ? { "msvalidate.01": seoDefaults.verification.bing }
-        : undefined,
+      google: verification.google || undefined,
+      other: verification.bing ? { "msvalidate.01": verification.bing } : undefined,
     },
   };
 }
@@ -96,7 +108,11 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   setRequestLocale(locale);
 
   const messages = await getMessages();
-  const siteDescription = await getSiteDescription(locale as Locale);
+  const [siteSeo, settings] = await Promise.all([
+    getSiteSeo(locale as Locale),
+    getSiteSettings(),
+  ]);
+  const siteDescription = siteSeo.description;
 
   return (
     <html
@@ -153,7 +169,13 @@ gtag('config', '${analytics.googleAnalyticsId}');`}
           </NextIntlClientProvider>
         </ThemeProvider>
         {features.structuredData ? (
-          <JsonLdScript data={buildSiteSchemas({ description: siteDescription })} />
+          <JsonLdScript
+            data={buildSiteSchemas(
+              settings,
+              { description: siteDescription },
+              buildGlobalSchemas(settings.globalSchemas),
+            )}
+          />
         ) : null}
         {features.cookieBanner ? <CookieBanner /> : null}
         {features.blog ? <SanityLive /> : null}

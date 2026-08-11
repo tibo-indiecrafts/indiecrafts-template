@@ -19,7 +19,7 @@ import type { PostListItem, Tag } from "@/features/blog/sanity/types";
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 
 export async function generateStaticParams() {
-  if (!features.blog) return [];
+  if (!features.blog || !features.blogTaxonomy.tags) return [];
   const rows =
     await client.fetch<{ slug?: string; language?: string }[]>(allTagSlugsQuery);
   // Tags have `language` (required + initialValue "en"). Emit one route
@@ -41,8 +41,9 @@ export async function generateMetadata({ params }: Props) {
 
   return {
     ...base,
-    title: tag.title,
-    description: tag.description ?? base.description,
+    title: tag.seo?.title ?? tag.title,
+    description: tag.seo?.description ?? tag.description ?? base.description,
+    robots: tag.seo?.noIndex ? { index: false, follow: false } : base.robots,
   };
 }
 

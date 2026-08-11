@@ -15,10 +15,10 @@
 
 import type { Locale } from "@/config";
 import { features } from "@/config";
-import { getMessages } from "next-intl/server";
 import { ROUTES } from "@/app/routes";
 import { isLlmsPage, renderAllPagesMarkdown } from "@/lib/seo/page-markdown";
-import { getBlogLlmsLines } from "@/features/blog/lib/llms";
+import { getSiteSeo } from "@/lib/seo/site-seo";
+import { getBlogLlmsLines, getTaxonomyLlmsLines } from "@/features/blog/lib/llms";
 
 export async function GET(
   _request: Request,
@@ -28,17 +28,26 @@ export async function GET(
 
   const { locale } = (await params) as { locale: Locale };
 
-  const visible = ROUTES.filter(isLlmsPage);
-
-  const messages = (await getMessages({ locale })) as Record<string, unknown>;
-  const pagesMarkdown = renderAllPagesMarkdown(visible, locale, messages);
+  const siteSeo = await getSiteSeo(locale);
+  // Drop pages the editor marked noindex in Sanity.
+  const visible = ROUTES.filter(isLlmsPage).filter(
+    (p) => !siteSeo.pageSeo.get(p.id)?.noindex,
+  );
+  const pagesMarkdown = renderAllPagesMarkdown(visible, locale, siteSeo.pageSeo);
 
   // Append a `## Blog` directory of published posts (each links to its `/md`
   // full-text export). Empty when the blog surface is off.
   const blogLines = await getBlogLlmsLines(locale);
-  const body = blogLines.length
-    ? `${pagesMarkdown}\n\n---\n\n${blogLines.join("\n")}`
-    : pagesMarkdown;
+  // Taxonomy sections with each doc's `llmsFull` body inlined.
+  const taxonomyLines = await getTaxonomyLlmsLines(locale, { full: true });
+  const sections = [
+    // Site-level intro (`siteMeta.<locale>.llms.full`), when set.
+    siteSeo.llms.full,
+    pagesMarkdown,
+    blogLines.length ? blogLines.join("\n") : undefined,
+    taxonomyLines.length ? taxonomyLines.join("\n") : undefined,
+  ].filter(Boolean);
+  const body = sections.join("\n\n---\n\n");
 
   return new Response(body, {
     headers: {

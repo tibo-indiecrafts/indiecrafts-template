@@ -19,7 +19,7 @@ import type { Category, PostListItem } from "@/features/blog/sanity/types";
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 
 export async function generateStaticParams() {
-  if (!features.blog) return [];
+  if (!features.blog || !features.blogTaxonomy.categories) return [];
   const rows =
     await client.fetch<{ slug?: string; language?: string }[]>(allCategorySlugsQuery);
   // Categories have `language` (required + initialValue "en" in the
@@ -43,8 +43,9 @@ export async function generateMetadata({ params }: Props) {
 
   return {
     ...base,
-    title: category.title,
-    description: category.description ?? base.description,
+    title: category.seo?.title ?? category.title,
+    description: category.seo?.description ?? category.description ?? base.description,
+    robots: category.seo?.noIndex ? { index: false, follow: false } : base.robots,
   };
 }
 

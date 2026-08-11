@@ -21,26 +21,22 @@ export default defineType({
   type: "document",
   icon: EditIcon,
   groups: [
-    { name: "content", title: "Contenu", default: true },
+    // No group marked `default: true`, so Sanity's built-in "All fields" tab is
+    // the active one on open — the whole document shows at once. "Contenu" /
+    // "Métadonnées" remain as filter tabs.
+    { name: "content", title: "Contenu" },
     { name: "metadata", title: "Métadonnées" },
   ],
   fields: [
     defineField({
+      // Géré par @sanity/document-internationalization : masqué + lecture
+      // seule pour que l'éditeur ne désynchronise pas un document de son
+      // lien `translation.metadata`. Le plugin écrit la valeur à la création.
       name: "language",
-      title: "Langue",
       type: "string",
-      group: "content",
-      options: {
-        list: [
-          { title: "English", value: "en" },
-          { title: "Français", value: "fr" },
-        ],
-        layout: "radio",
-      },
+      readOnly: true,
+      hidden: true,
       initialValue: "en",
-      description:
-        "Détermine la locale dans laquelle l'article apparaît (/en/blog ou /fr/blog).",
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "title",
@@ -48,6 +44,15 @@ export default defineType({
       type: "string",
       group: "content",
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "excerpt",
+      title: "Extrait",
+      type: "text",
+      rows: 2,
+      group: "content",
+      description:
+        "Accroche affichée sur les cartes et la page de l'article. Retombe sur la description SEO (Métadonnées) si vide.",
     }),
     defineField({
       name: "publishedAt",
@@ -60,6 +65,16 @@ export default defineType({
       title: "Auteur",
       type: "reference",
       to: [{ type: "author" }],
+      // Same-language authors only — an EN post links the EN author doc.
+      options: {
+        filter: ({ document }) =>
+          document.language
+            ? {
+                filter: "language == $lang",
+                params: { lang: document.language as string },
+              }
+            : { filter: "" },
+      },
       group: "content",
     }),
     defineField({

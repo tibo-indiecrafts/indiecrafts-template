@@ -2,7 +2,8 @@
 /**
  * Read-only audit of the live Sanity dataset. Surfaces:
  *
- *   - Documents missing required language field (post, category, tag, quote)
+ *   - Documents missing required language field (post, category, tag, quote,
+ *     author, person)
  *   - Posts whose author / category / tag refs no longer resolve
  *   - Drafts older than 30 days (drift indicator)
  *   - Orphan documents of types that have been removed from the schema
@@ -56,7 +57,7 @@ console.log("");
 
 // 1. Documents missing a `language` field where the schema requires it.
 const missingLanguage = await client.fetch(`*[
-  _type in ["post", "category", "tag", "quote"] && !defined(language)
+  _type in ["post", "category", "tag", "quote", "author", "person"] && !defined(language)
 ]{ _id, _type, title }`);
 report(
   "Documents missing language field",

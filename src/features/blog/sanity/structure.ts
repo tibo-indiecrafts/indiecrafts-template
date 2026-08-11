@@ -1,5 +1,7 @@
 import type { StructureBuilder, StructureResolver } from "sanity/structure";
 import { apiVersion } from "@/sanity/env";
+import { locales, type Locale } from "@/config";
+import { seoStructureItem } from "@/sanity/structure";
 
 /**
  * Sidebar du Studio — regroupe Blog (singleton + articles/auteurs/
@@ -7,11 +9,11 @@ import { apiVersion } from "@/sanity/env";
  * page-builder (Citations/Personnes), et masque tout
  * le reste de la liste racine.
  *
- * Les types de documents localisés (`post`, `category`, `tag`, `quote`)
- * exposent chacun une liste parente avec des enfants « English » /
- * « Français » pour que les éditeurs bilingues ne parcourent pas une
- * seule liste mélangée. Les templates de création par (type, locale)
- * sont définis dans `sanity.config.ts`.
+ * Tous les types de documents de contenu (`post`, `author`, `category`,
+ * `tag`, `quote`, `person`) sont localisés — chacun expose une liste parente
+ * avec des enfants « English » / « Français » pour que les éditeurs bilingues
+ * ne parcourent pas une seule liste mélangée. Les templates de création par
+ * (type, locale) sont définis dans `sanity.config.ts`.
  *
  * Les modules de page-builder (Encadré / Liste de cartes / etc.) sont
  * des types objet imbriqués dans `blog.postModules` — ils
@@ -35,7 +37,7 @@ export const structure: StructureResolver = (S) =>
                 ),
               S.divider(),
               languageSplit(S, "post", "Articles"),
-              S.documentTypeListItem("author").title("Auteurs"),
+              languageSplit(S, "author", "Auteurs"),
               languageSplit(S, "category", "Catégories"),
               languageSplit(S, "tag", "Tags"),
             ]),
@@ -51,9 +53,14 @@ export const structure: StructureResolver = (S) =>
             .title("Références")
             .items([
               languageSplit(S, "quote", "Citations"),
-              S.documentTypeListItem("person").title("Personnes"),
+              languageSplit(S, "person", "Personnes"),
             ]),
         ),
+
+      S.divider(),
+
+      // ── Site-wide SEO & structured data (core, feature-independent) ──
+      seoStructureItem(S),
     ]);
 
 /**
@@ -64,7 +71,7 @@ export const structure: StructureResolver = (S) =>
  */
 function languageSplit(
   S: StructureBuilder,
-  type: "post" | "category" | "tag" | "quote",
+  type: "post" | "category" | "tag" | "quote" | "author" | "person",
   title: string,
 ) {
   return S.listItem()
@@ -73,20 +80,14 @@ function languageSplit(
       S.list()
         .title(title)
         .items([
-          languageList(S, type, "en", "English"),
-          languageList(S, type, "fr", "Français"),
+          ...locales.map((l) => languageList(S, type, l.code, l.label)),
           S.divider(),
           S.documentTypeListItem(type).title("Toutes les langues"),
         ]),
     );
 }
 
-function languageList(
-  S: StructureBuilder,
-  type: string,
-  lang: "en" | "fr",
-  label: string,
-) {
+function languageList(S: StructureBuilder, type: string, lang: Locale, label: string) {
   return S.listItem()
     .title(label)
     .child(

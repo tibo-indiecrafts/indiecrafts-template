@@ -14,7 +14,9 @@ import { site } from "@/config";
  * get wired). Always uses `Link` from `@/i18n/routing` so locale prefixes
  * resolve.
  */
-export function Footer() {
+type FooterProps = { logo?: string; logoDark?: string };
+
+export function Footer({ logo, logoDark }: FooterProps) {
   const tNav = useTranslations("nav");
   const tFooter = useTranslations("footer");
   const year = new Date().getFullYear();
@@ -23,7 +25,7 @@ export function Footer() {
       <div className="mx-auto max-w-(--max-container) px-(--gutter) py-12">
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
           <div>
-            <Logo />
+            <Logo logo={logo} logoDark={logoDark} />
             <p className="text-muted-foreground mt-2 text-sm">{site.tagline}</p>
           </div>
           {footerNav.map((group) => (

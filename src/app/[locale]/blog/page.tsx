@@ -1,5 +1,6 @@
+import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { pages, type Locale } from "@/config";
+import { features, pages, type Locale } from "@/config";
 import { isRssEnabled, requireBlogRoute } from "@/features/blog/lib/route-gate";
 import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
@@ -14,26 +15,41 @@ import { sanityFetchLive } from "@/sanity/live";
 import {
   allPostsQuery,
   authorsForLocaleQuery,
+  blogSingletonQuery,
   categoriesForLocaleQuery,
   tagsForLocaleQuery,
 } from "@/features/blog/sanity/queries";
-import type { Author, Category, PostListItem, Tag } from "@/features/blog/sanity/types";
+import type {
+  Author,
+  BlogSingleton,
+  Category,
+  PostListItem,
+  Tag,
+} from "@/features/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params;
   const base = await buildMetadata({ page: pages.blog, locale });
+  const blog = await sanityFetchLive<BlogSingleton | null>({
+    query: blogSingletonQuery,
+    params: {},
+  });
   // Advertise the feed from the index — the conventional discovery point.
   // Only when the RSS feature is on, so the tag never points at a 404.
   return {
     ...base,
+    robots: blog?.seo?.noIndex ? { index: false, follow: false } : base.robots,
     alternates: {
       ...base.alternates,
       types: {
         ...(base.alternates?.types ?? {}),
         ...(isRssEnabled()
-          ? { "application/rss+xml": localizedPathname(`/blog/rss.xml`, locale) }
+          ? {
+              "application/rss+xml": localizedPathname(`/blog/rss.xml`, locale),
+              "application/atom+xml": localizedPathname(`/blog/atom.xml`, locale),
+            }
           : {}),
       },
     },
@@ -51,16 +67,25 @@ export default async function BlogPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [posts, authors, categories, tags, t] = await Promise.all([
+  const [blog, posts, authors, categories, tags, t] = await Promise.all([
+    sanityFetchLive<BlogSingleton | null>({ query: blogSingletonQuery, params: {} }),
     sanityFetchLive<PostListItem[]>({ query: allPostsQuery, params: { locale } }),
-    sanityFetchLive<Author[]>({ query: authorsForLocaleQuery, params: { locale } }),
-    sanityFetchLive<Category[]>({
-      query: categoriesForLocaleQuery,
-      params: { locale },
-    }),
-    sanityFetchLive<Tag[]>({ query: tagsForLocaleQuery, params: { locale } }),
+    features.blogTaxonomy.authors
+      ? sanityFetchLive<Author[]>({ query: authorsForLocaleQuery, params: { locale } })
+      : Promise.resolve<Author[]>([]),
+    features.blogTaxonomy.categories
+      ? sanityFetchLive<Category[]>({
+          query: categoriesForLocaleQuery,
+          params: { locale },
+        })
+      : Promise.resolve<Category[]>([]),
+    features.blogTaxonomy.tags
+      ? sanityFetchLive<Tag[]>({ query: tagsForLocaleQuery, params: { locale } })
+      : Promise.resolve<Tag[]>([]),
     getTranslations("pages.blog"),
   ]);
+
+  if (blog?.seo?.unpublished) notFound();
 
   return (
     <DefaultLayout>
@@ -79,29 +104,35 @@ export default async function BlogPage({ params }: Props) {
           <h1 className="sr-only">{t("title")}</h1>
           <BlogHero posts={posts} locale={locale} label={t("heroLabel")} />
 
-          <ExploreCategories
-            categories={categories}
-            posts={posts}
-            locale={locale}
-            heading={t("categories.heading")}
-            subheading={t("categories.subheading")}
-            viewAllLabel={t("categories.viewAll")}
-            allHref="/blog/category"
-          />
+          {features.blogTaxonomy.categories && (
+            <ExploreCategories
+              categories={categories}
+              posts={posts}
+              locale={locale}
+              heading={t("categories.heading")}
+              subheading={t("categories.subheading")}
+              viewAllLabel={t("categories.viewAll")}
+              allHref="/blog/category"
+            />
+          )}
 
-          <ExploreTags
-            tags={tags}
-            heading={t("tags.heading")}
-            subheading={t("tags.subheading")}
-            viewAllLabel={t("tags.viewAll")}
-          />
+          {features.blogTaxonomy.tags && (
+            <ExploreTags
+              tags={tags}
+              heading={t("tags.heading")}
+              subheading={t("tags.subheading")}
+              viewAllLabel={t("tags.viewAll")}
+            />
+          )}
 
-          <TopAuthors
-            authors={authors}
-            heading={t("authors.heading")}
-            subheading={t("authors.subheading")}
-            viewAllLabel={t("authors.viewAll")}
-          />
+          {features.blogTaxonomy.authors && (
+            <TopAuthors
+              authors={authors}
+              heading={t("authors.heading")}
+              subheading={t("authors.subheading")}
+              viewAllLabel={t("authors.viewAll")}
+            />
+          )}
         </>
       )}
     </DefaultLayout>

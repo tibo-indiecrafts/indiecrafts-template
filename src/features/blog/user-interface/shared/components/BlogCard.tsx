@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import type { Locale } from "@/config";
+import { features, type Locale } from "@/config";
 import { parseVideoEmbed } from "@/lib/video-embed";
 import { formatPostDate } from "@/lib/format-date";
 import type { PostListItem } from "@/features/blog/sanity/types";
@@ -30,16 +30,21 @@ export function BlogCard({
   const date = formatPostDate(locale, post.publishedAt);
   const slug = post.slug ?? "";
   const title = post.metadata?.title ?? post.title ?? "";
-  const description = post.metadata?.description;
+  // Prefer the editorial excerpt; fall back to the SEO description.
+  const description = post.excerpt ?? post.metadata?.description;
   const author = post.author;
+  // Author / category / tag link to routes gated per-type by
+  // `features.blogTaxonomy`. When a type is off, drop its label/link.
+  const {
+    authors: showAuthors,
+    categories: showCategories,
+    tags: showTags,
+  } = features.blogTaxonomy;
   const hasVideo = !!parseVideoEmbed(post.metadata?.videoUrl);
   const aspect = variant === "wide" ? "aspect-[16/9]" : "aspect-[4/3]";
 
   return (
-    <article
-      data-search-title={title}
-      className="bg-card ring-border/60 group flex h-full flex-col overflow-hidden rounded-xl shadow-sm ring-1 transition hover:scale-[1.01] hover:shadow-md"
-    >
+    <article className="bg-card ring-border/60 group flex h-full flex-col overflow-hidden rounded-xl shadow-sm ring-1 transition hover:scale-[1.01] hover:shadow-md">
       <Link
         href={`/blog/${slug}`}
         className="focus-visible:ring-ring relative block focus-visible:ring-2 focus-visible:outline-none"
@@ -61,7 +66,7 @@ export function BlogCard({
       </Link>
 
       <div className="relative flex flex-1 flex-col gap-4 p-6 pt-8">
-        {author ? (
+        {author && showAuthors ? (
           <Link
             href={author.slug ? `/author/${author.slug}` : "/author"}
             aria-label={author.name ?? undefined}
@@ -86,7 +91,7 @@ export function BlogCard({
           </Link>
         ) : null}
 
-        {category ? (
+        {category && showCategories ? (
           categorySlug ? (
             <Link
               href={`/blog/category/${categorySlug}`}
@@ -113,7 +118,7 @@ export function BlogCard({
         ) : null}
 
         <div className="text-muted-foreground mt-auto flex items-center justify-between gap-3 pt-3 text-xs">
-          {author?.name ? (
+          {author?.name && showAuthors ? (
             <Link
               href={author.slug ? `/author/${author.slug}` : "/author"}
               className="hover:text-foreground focus-visible:ring-ring max-w-[60%] truncate rounded transition-colors focus-visible:ring-2 focus-visible:outline-none"
@@ -126,7 +131,7 @@ export function BlogCard({
           {date ? <time dateTime={post.publishedAt}>{date}</time> : null}
         </div>
 
-        {tags.length > 0 ? (
+        {tags.length > 0 && showTags ? (
           <ul className="border-border/60 -mx-6 flex flex-wrap gap-1.5 border-t px-6 pt-4">
             {tags.map((tag) => (
               <li key={tag._id}>

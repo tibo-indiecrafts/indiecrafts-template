@@ -9,6 +9,10 @@ you only need to confirm the summary and add any external links.
 > languages (English + French by default) — please provide them in **all** of
 > them. External resource names/links are the same across languages.
 
+> ✏️ **After launch**, the summary, paragraph, and resource links are editable
+> per language in the Studio under **SEO & métadonnées → Résumé pour les IA** —
+> see [Editing SEO in Sanity](../seo/editing-seo-in-sanity.md).
+
 ## Site summary
 
 - **One-line summary of what you do** — something an assistant can quote: [ … ]

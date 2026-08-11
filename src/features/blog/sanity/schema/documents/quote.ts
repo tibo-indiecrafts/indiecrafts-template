@@ -6,18 +6,14 @@ export default defineType({
   type: "document",
   fields: [
     defineField({
+      // Géré par @sanity/document-internationalization : masqué + lecture
+      // seule (le plugin écrit la valeur à la création). Auparavant un menu
+      // manuel — migré vers le plugin pour être cohérent avec post/category/tag.
       name: "language",
-      title: "Langue",
       type: "string",
-      options: {
-        list: [
-          { title: "English", value: "en" },
-          { title: "Français", value: "fr" },
-        ],
-        layout: "radio",
-      },
+      readOnly: true,
+      hidden: true,
       initialValue: "en",
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "content",

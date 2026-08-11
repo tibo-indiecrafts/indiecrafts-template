@@ -11,8 +11,7 @@ import { defineArrayMember, defineType } from "sanity";
  * each module `_type` to its React component.
  *
  * Modules deliberately excluded from inline embedding:
- *   - `breadcrumbs`, `blog-index`, `blog-post-list`, `search` — page
- *     chrome, not content
+ *   - `blog-index`, `blog-post-list`, `prose` — page chrome, not content
  *   - `blog-post-content` — would render the post body recursively
  *   - `prose` — body content is already prose, embedding it inside
  *     itself adds nothing
@@ -22,6 +21,7 @@ import { defineArrayMember, defineType } from "sanity";
 const INLINE_MODULES = [
   "module.callout",
   "module.card-list",
+  "module.gallery",
   "module.person-list",
   "module.stat-list",
   "module.step-list",

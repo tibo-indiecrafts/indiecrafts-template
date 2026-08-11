@@ -50,6 +50,10 @@ CLAUDE.local.md
 # codegraph — machine-local semantic index (opt-in dev tool; rebuild with `pnpm codegraph:init`)
 .codegraph/
 
+# dev framework (in-repo) — throwaway thinking + gstack state
+work/scratch/
+.gstack/
+
 # vercel
 .vercel
 

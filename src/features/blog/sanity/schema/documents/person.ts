@@ -10,6 +10,15 @@ export default defineType({
   type: "document",
   fields: [
     defineField({
+      // Géré par @sanity/document-internationalization : masqué + lecture
+      // seule (le plugin écrit la valeur à la création).
+      name: "language",
+      type: "string",
+      readOnly: true,
+      hidden: true,
+      initialValue: "en",
+    }),
+    defineField({
       name: "name",
       title: "Nom",
       type: "string",
@@ -35,5 +44,12 @@ export default defineType({
       of: [{ type: "link" }],
     }),
   ],
-  preview: { select: { title: "name", subtitle: "role", media: "image" } },
+  preview: {
+    select: { title: "name", role: "role", language: "language", media: "image" },
+    prepare: ({ title, role, language, media }) => ({
+      title,
+      subtitle: [language?.toUpperCase(), role].filter(Boolean).join(" · "),
+      media,
+    }),
+  },
 });

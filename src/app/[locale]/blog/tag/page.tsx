@@ -6,6 +6,7 @@ import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { TagListing } from "@/features/blog/user-interface/tag/sections/TagListing";
 import { sanityFetchLive } from "@/sanity/live";
+import { getTaxonomyPages } from "@/lib/system-pages";
 import { tagsForLocaleQuery } from "@/features/blog/sanity/queries";
 import type { Tag } from "@/features/blog/sanity/types";
 
@@ -21,11 +22,13 @@ export default async function TagIndexPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [tags, t, nav] = await Promise.all([
+  const [tags, t, nav, copy] = await Promise.all([
     sanityFetchLive<Tag[]>({ query: tagsForLocaleQuery, params: { locale } }),
     getTranslations("pages.tag"),
     getTranslations("nav"),
+    getTaxonomyPages(locale),
   ]);
+  const c = copy.tag;
 
   return (
     <DefaultLayout>
@@ -34,9 +37,9 @@ export default async function TagIndexPage({ params }: Props) {
         tags={tags}
         breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: t("title") }]}
         breadcrumbsLabel={t("breadcrumbs")}
-        heading={t("heading")}
-        subheading={t("subheading")}
-        emptyLabel={t("empty")}
+        heading={c?.heading ?? t("heading")}
+        subheading={c?.subheading ?? t("subheading")}
+        emptyLabel={c?.empty ?? t("empty")}
         postsLabel={t.raw("posts")}
       />
     </DefaultLayout>

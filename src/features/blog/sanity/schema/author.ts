@@ -6,6 +6,15 @@ export default defineType({
   type: "document",
   fields: [
     defineField({
+      // Géré par @sanity/document-internationalization : masqué + lecture
+      // seule (le plugin écrit la valeur à la création).
+      name: "language",
+      type: "string",
+      readOnly: true,
+      hidden: true,
+      initialValue: "en",
+    }),
+    defineField({
       name: "name",
       title: "Nom",
       type: "string",
@@ -16,7 +25,13 @@ export default defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "name", maxLength: 96 },
+      // `exclude` : une traduction démarre avec un slug vide, pas une copie
+      // du slug source — chaque locale a sa propre URL.
+      options: {
+        source: "name",
+        maxLength: 96,
+        documentInternationalization: { exclude: true },
+      },
       description: "Fragment d'URL pour /author/<slug>.",
       validation: (Rule) => Rule.required(),
     }),
@@ -39,6 +54,14 @@ export default defineType({
         },
       ],
     }),
+    defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
   ],
-  preview: { select: { title: "name", media: "image" } },
+  preview: {
+    select: { title: "name", language: "language", media: "image" },
+    prepare: ({ title, language, media }) => ({
+      title,
+      subtitle: language?.toUpperCase(),
+      media,
+    }),
+  },
 });

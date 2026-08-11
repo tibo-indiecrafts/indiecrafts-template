@@ -25,55 +25,54 @@ import { BrandIcon } from "@/user-interface/shared/components/BrandIcon";
 <BrandIcon icon={Github} size={28} brandColor />;
 ```
 
+- `icon` is typed as the structural **`BrandMark`** (`{ hex, title, svgContent }`), not the library's own type. A `reicon-brands` icon satisfies it, and so does a hand-declared mark for a brand the set doesn't carry (e.g. LinkedIn, dropped from Simple Icons after a trademark request) — declare `{ hex, title, svgContent }` and pass it the same way.
 - `brandColor` paints the logo in its official hex (`#${icon.hex}`); omit it to inherit `currentColor`.
 - `aria-label` defaults to `icon.title`, and the `<svg>` carries `role="img"` — so a brand mark is always named for assistive tech.
 
-Injecting `icon.svgContent` is safe: it's the library's own static path markup (no user input), and it's the only SSR-compatible render path the library exposes.
+Injecting `icon.svgContent` is safe: it's static path markup (no user input), and it's the only SSR-compatible render path `reicon-brands` exposes.
 
-## Favicon &amp; app-icon routes
+## Favicon, app icon &amp; logo — edited in Sanity
 
-Three Next.js metadata routes serve raster images from `/public`, all driven by `src/config/index.ts`:
+The **favicon / app icon** and the **site logo** are edited in Sanity Studio
+(**SEO & métadonnées → Paramètres du site → Logo & icônes**), not in code. Three
+fields on the `siteSettings` singleton:
 
-| Route              | File                          | Config                                       | Size     |
-| ------------------ | ----------------------------- | -------------------------------------------- | -------- |
-| `/icon`            | `src/app/icon.tsx`            | `site.icon.file`                             | 180×180  |
-| `/apple-icon`      | `src/app/apple-icon.tsx`      | `site.icon.appleFile` (falls back to `file`) | 180×180  |
-| `/opengraph-image` | `src/app/opengraph-image.tsx` | `site.ogImage.file`                          | 1200×630 |
+| Field      | Drives                                                                | Guidance              |
+| ---------- | --------------------------------------------------------------------- | --------------------- |
+| `icon`     | favicon (`<link rel="icon">`) + apple-touch icon + PWA manifest icons | square PNG, ≥ 512×512 |
+| `logo`     | header + footer logo (light backgrounds)                              | any proportions       |
+| `logoDark` | header + footer logo on the **dark** theme (optional)                 | any proportions       |
 
-Each reads its file with `readFileSync` from `/public` and returns it with a one-year immutable cache header. To rebrand, replace the files in `/public/brand/` — no code changes.
+**Sole source, no fallback.** When `icon` is empty the site emits no favicon
+`<link>` (the browser shows its default) and the manifest `icons` array is empty;
+when `logo` is empty the header/footer show the `{site.name}` **wordmark** alone.
+Nothing reads `/public` for these anymore — `pnpm seed` uploads the defaults.
 
-### The Safari tab-vs-sidebar strategy
+- **Favicon + apple-touch** — emitted by the layout's `generateMetadata.icons`
+  from `siteSettings.icon` (Sanity CDN URL, cropped to 180×180). No `app/icon.tsx`
+  / `app/apple-icon.tsx` route files.
+- **Logo** — rendered by `Logo.tsx` (presentational; URLs fetched server-side in
+  `DefaultLayout` and passed to the client Header + Footer).
 
-`/icon` (tab strip) and `/apple-icon` (iOS home screen + Safari sidebar/tab-overview thumbnail) intentionally point at the **same 180×180 raster**. Safari uses the favicon for the tab but the higher-res apple-touch-icon for the sidebar; serving one identical file is the only way to guarantee the same mark on both surfaces. The default config wires both to `/brand/apple-icon.png`:
+### Theme-safe logo
 
-```ts
-icon: {
-  file: "/brand/apple-icon.png",
-  contentType: "image/png",
-  appleFile: "/brand/apple-icon.png",     // iOS rejects SVG here — PNG required
-  appleContentType: "image/png",
-}
-```
+Set `logoDark` when the main logo is unreadable on the dark theme. Both render and
+a pure-CSS swap (`block dark:hidden` / `hidden dark:block`, keyed on
+`data-theme` via the `@custom-variant dark` in `globals.css`) shows the right one
+for **light / dark / system / forced** — no JS, no flash. No `logoDark` → the main
+logo shows on every theme.
 
 ::: warning
-The exported `size` in `icon.tsx` (`180×180`) must match the served file's real pixels. If it lies, Safari picks the wrong source for the sidebar and the two marks diverge. An SVG favicon would render as different artwork than the PNG sidebar icon — hence both point at one PNG.
+Favicons don't theme-switch in browsers — one `icon` asset serves every theme, so
+it must read on any background.
 :::
 
 ## Open Graph images
 
-`/opengraph-image` (`src/app/opengraph-image.tsx`, 1200×630) is the default OG image for **every** page. Like the icon routes, it `readFileSync`s a static PNG from `/public` — `site.ogImage.file` (default `/brand/og.png`). `buildMetadata` sets `og:image` to `page.seo?.openGraph?.imageUrl ?? "/opengraph-image"` — so a page only diverges from that default when it sets an explicit `imageUrl`. To point one route at its own card, set `imageUrl` to a file:
+The OG share card is **also edited in Sanity** — per language (`siteMeta.<locale>.ogImage`) or per page (`pageSeo.ogImage`). See [Editing SEO in Sanity](../seo/editing-seo-in-sanity.md). It is Sanity-only: when a locale has no card, `buildMetadata` emits no `og:image` (no `/public` file, no convention route). `pnpm seed` uploads the defaults from `scripts/seed-media/og.png` + `og-fr.png`.
 
-```ts
-// config: pages entry
-seo: {
-  openGraph: { imageUrl: "/brand/og-home.png" },
-},
-```
-
-The `/brand/og-<id>.png` filenames are just a naming convention for those static overrides — nothing auto-derives them.
-
-Drop the PNGs in `/public/brand/`. Existing assets there include `apple-icon.png`, `og.png`, `og-home.png`, plus the PWA manifest rasters (`icon-192.png`, `icon-512.png`, `icon-maskable-512.png`) and `logo.png` (schema.org Organization raster).
+Nothing brand-related lives in `/public` anymore — logo, favicon, and OG card are all Sanity assets on the CDN.
 
 ::: tip
-`theme.hexColors` in `src/config/index.ts` mirrors the OKLCH brand/background tokens as hex for the **PWA manifest** (`app/manifest.ts` → `theme_color`/`background_color`), which can't take oklch. The OG card itself is a static PNG (`site.ogImage.file`), so it doesn't read these — but keep the mirror in sync so the install screen stays on-brand. See the [brand-setup guide](../setup/brand-setup.md).
+`theme.hexColors` in `src/config/index.ts` mirrors the OKLCH brand/background tokens as hex for the **PWA manifest** (`app/manifest.ts` → `theme_color`/`background_color`), which can't take oklch. Keep the mirror in sync so the install screen stays on-brand. See the [brand-setup guide](../setup/brand-setup.md).
 :::

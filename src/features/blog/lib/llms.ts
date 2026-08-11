@@ -1,7 +1,7 @@
 import type { Locale } from "@/config";
-import { pages, site } from "@/config";
+import { features, pages, site } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
-import { allPostsQuery } from "@/features/blog/sanity/queries";
+import { allPostsQuery, taxonomyForLlmsQuery } from "@/features/blog/sanity/queries";
 import type { PostListItem } from "@/features/blog/sanity/types";
 import { sanityFetchLive } from "@/sanity/live";
 import { isBlogRouteEnabled } from "./route-gate";
@@ -28,7 +28,9 @@ export async function getBlogLlmsLines(locale: Locale): Promise<string[]> {
   const entries = posts.flatMap((post) => {
     if (!post.slug) return [];
     const title = post.metadata?.title ?? post.title ?? post.slug;
-    const description = post.metadata?.description ?? "";
+    const description = (post.metadata?.llmsSummary ?? post.metadata?.description ?? "")
+      .replace(/\s+/g, " ")
+      .trim();
     const url = `${site.url}${localizedPathname(`/blog/${post.slug}/md`, locale)}`;
     return [
       description ? `- [${title}](${url}): ${description}` : `- [${title}](${url})`,
@@ -37,4 +39,66 @@ export async function getBlogLlmsLines(locale: Locale): Promise<string[]> {
   if (!entries.length) return [];
 
   return [`## Blog`, ``, ...entries, ``];
+}
+
+type TaxonomyLlmsItem = {
+  slug?: string;
+  title?: string;
+  summary?: string;
+  full?: string;
+};
+
+const TAXONOMIES = [
+  {
+    type: "category",
+    enabled: () => features.blogTaxonomy.categories,
+    heading: "Categories",
+    path: (slug: string) => `/blog/category/${slug}` as const,
+  },
+  {
+    type: "tag",
+    enabled: () => features.blogTaxonomy.tags,
+    heading: "Tags",
+    path: (slug: string) => `/blog/tag/${slug}` as const,
+  },
+  {
+    type: "author",
+    enabled: () => features.blogTaxonomy.authors,
+    heading: "Authors",
+    path: (slug: string) => `/author/${slug}` as const,
+  },
+] as const;
+
+/**
+ * The taxonomy contribution to the LLM endpoints: `## Categories` / `## Tags` /
+ * `## Authors` sections, one line per detail page (`llmsSummary` ?? `description`),
+ * gated by `features.blogTaxonomy.*` + each doc's noindex. With `{ full: true }`
+ * (for `/llms-full.txt`), each doc's `llmsFull` body is inlined under its line.
+ */
+export async function getTaxonomyLlmsLines(
+  locale: Locale,
+  { full = false }: { full?: boolean } = {},
+): Promise<string[]> {
+  if (!isBlogRouteEnabled(pages.blog)) return [];
+
+  const out: string[] = [];
+  for (const tax of TAXONOMIES) {
+    if (!tax.enabled()) continue;
+
+    const items = await sanityFetchLive<TaxonomyLlmsItem[]>({
+      query: taxonomyForLlmsQuery,
+      params: { type: tax.type, locale },
+    });
+    if (!items?.length) continue;
+
+    const lines = items.flatMap((it) => {
+      if (!it.slug) return [];
+      const url = `${site.url}${localizedPathname(tax.path(it.slug), locale)}`;
+      const desc = (it.summary ?? "").replace(/\s+/g, " ").trim();
+      const line = desc ? `- [${it.title}](${url}): ${desc}` : `- [${it.title}](${url})`;
+      return full && it.full ? [line, ``, it.full, ``] : [line];
+    });
+    if (lines.length) out.push(`## ${tax.heading}`, ``, ...lines, ``);
+  }
+  return out;
 }

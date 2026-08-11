@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";
-import type { Locale } from "@/config";
+import { features, type Locale } from "@/config";
 import { cn } from "@/lib/utils";
 import { parseVideoEmbed } from "@/lib/video-embed";
 import { Link } from "@/i18n/routing";
@@ -55,10 +55,16 @@ export async function DefaultPostLayout({
   const authorHref = author?.slug ? `/author/${author.slug}` : "/author";
   const categoryRef = post.categories?.[0];
   const tags = (post.tags ?? []).filter((tag) => tag.slug);
+  // Author / category / tag link to routes gated per-type by `features.blogTaxonomy`.
+  const {
+    authors: showAuthors,
+    categories: showCategories,
+    tags: showTags,
+  } = features.blogTaxonomy;
 
   const breadcrumbs: Crumb[] = [
     { label: nav("blog"), href: "/blog" },
-    ...(categoryRef?.slug
+    ...(categoryRef?.slug && showCategories
       ? [
           {
             label: categoryRef.title ?? "",
@@ -157,7 +163,7 @@ export async function DefaultPostLayout({
           {/* Title block — pushed to the bottom of the hero. */}
           <div className="relative mt-auto px-6 pt-16 pb-10 sm:px-10 sm:pt-20 sm:pb-14 md:px-14 md:pt-24 md:pb-16 lg:px-20 lg:pt-28 lg:pb-20">
             <div className="max-w-3xl">
-              {tags.length > 0 ? (
+              {tags.length > 0 && showTags ? (
                 <ul className="mb-6 flex flex-wrap gap-2">
                   {tags.map((tag) => (
                     <li key={tag._id}>
@@ -189,7 +195,7 @@ export async function DefaultPostLayout({
               {/* Meta strip — author block + publish/read-time/category.
                   Stacks on mobile, single row from sm: upward. */}
               <div className="mt-8 flex flex-col gap-4 border-t border-(--hero-border) pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3">
-                {author?.name ? (
+                {author?.name && showAuthors ? (
                   <Link
                     href={authorHref}
                     aria-label={author.name}
@@ -237,7 +243,7 @@ export async function DefaultPostLayout({
                         <dd>{t("minRead", { minutes: readTime })}</dd>
                       </div>
                     ) : null}
-                    {categoryRef?.title && categoryRef.slug ? (
+                    {categoryRef?.title && categoryRef.slug && showCategories ? (
                       <div className="flex items-center gap-1.5 sm:border-l sm:border-(--hero-border) sm:pl-4">
                         <dt className="sr-only">{t("metaCategory")}</dt>
                         <dd>

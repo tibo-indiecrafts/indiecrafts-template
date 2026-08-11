@@ -39,6 +39,7 @@ export default defineType({
       type: "array",
       of: moduleFieldRefs,
     }),
+    defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
   ],
   preview: {
     prepare: () => ({
