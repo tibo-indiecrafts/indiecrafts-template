@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/(home)/layout,_N_T_/[locale]/(home)/page,_N_T_/fr,sanity:s1:d/gTBg,sanity:s1:sbRQmQ,sanity:s1:J3ggYg,sanity:s1:EkViHQ,sanity:s1:kqKZpQ,sanity:s1:JasNtw,sanity:s1:ShNiMw,sanity:s1:TnhJEQ,sanity:s1:qcCT4w,sanity:s1:6AqQIQ,sanity:s1:U5qbzw,sanity:s1:Zs6BAg,sanity:s1:+E5+zA,sanity:s1:qd1YpA,sanity:s1:sR1VEQ,sanity:s1:GRVlvQ"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale/!KGhvbWUp/__PAGE__",
+    "/$d$locale/!KGhvbWUp",
+    "/$d$locale",
+    "/_index",
+    "/_head"
+  ]
+}

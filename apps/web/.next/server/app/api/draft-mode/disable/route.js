@@ -1,0 +1,10 @@
+var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/draft-mode/disable/route.js")
+R.c("server/chunks/[root-of-the-server]__1vp85et._.js")
+R.c("server/chunks/01e5_next_dist_03qwabx._.js")
+R.c("server/chunks/01e5_next_0_lrjni._.js")
+R.c("server/chunks/[root-of-the-server]__16blch8._.js")
+R.c("server/chunks/01e5_next_dist_04lrjs6._.js")
+R.c("server/chunks/01e5_next_06xdglw._.js")
+R.c("server/chunks/apps_web__next-internal_server_app_api_draft-mode_disable_route_actions_1v90or0.js")
+R.m(854127)
+module.exports=R.m(854127).exports

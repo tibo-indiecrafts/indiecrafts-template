@@ -4,7 +4,7 @@
 
 [build]
   command = "pnpm build"
-  publish = ".next"
+  publish = "apps/web/.next"
 
 [build.environment]
   # Match the Node version we develop against. Bump when Next.js bumps theirs.

@@ -1,0 +1,3 @@
+{
+  "/[locale]/blog/atom.xml/route": "app/[locale]/blog/atom.xml/route.js"
+}

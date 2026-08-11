@@ -1,0 +1,3 @@
+{
+  "/[locale]/blog/[slug]/md/route": "app/[locale]/blog/[slug]/md/route.js"
+}

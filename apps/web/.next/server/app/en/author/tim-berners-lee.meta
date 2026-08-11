@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/author/layout,_N_T_/[locale]/author/[slug]/layout,_N_T_/[locale]/author/[slug]/page,_N_T_/en/author/tim-berners-lee,sanity:s1:GBPuuw,sanity:s1:4mwYBw,sanity:s1:IjkE2Q,sanity:s1:i1S8pw,sanity:s1:BGY1Dg,sanity:s1:EkViHQ,sanity:s1:qXSxww,sanity:s1:Zs6BAg,sanity:s1:d/gTBg,sanity:s1:CrF7SA,sanity:s1:NkgEAw,sanity:s1:UlwgKQ,sanity:s1:I0L7EQ,sanity:s1:KqFwSA"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale/author/$d$slug/__PAGE__",
+    "/$d$locale/author/$d$slug",
+    "/$d$locale/author",
+    "/$d$locale",
+    "/_index",
+    "/_head"
+  ]
+}

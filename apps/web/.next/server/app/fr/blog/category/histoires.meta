@@ -1,0 +1,18 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/blog/layout,_N_T_/[locale]/blog/category/layout,_N_T_/[locale]/blog/category/[slug]/layout,_N_T_/[locale]/blog/category/[slug]/page,_N_T_/fr/blog/category/histoires,sanity:s1:yJZJQA,sanity:s1:EkViHQ,sanity:s1:qcCT4w,sanity:s1:d/gTBg,sanity:s1:kqKZpQ,sanity:s1:JasNtw,sanity:s1:+E5+zA,sanity:s1:TnhJEQ,sanity:s1:6AqQIQ,sanity:s1:J3ggYg,sanity:s1:IjkE2Q,sanity:s1:b+5VMw,sanity:s1:gZMX8Q,sanity:s1:qd1YpA,sanity:s1:sR1VEQ"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale/blog/category/$d$slug/__PAGE__",
+    "/$d$locale/blog/category/$d$slug",
+    "/$d$locale/blog/category",
+    "/$d$locale/blog",
+    "/$d$locale",
+    "/_index",
+    "/_head"
+  ]
+}

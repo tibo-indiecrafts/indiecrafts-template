@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/blog/layout,_N_T_/[locale]/blog/[slug]/layout,_N_T_/[locale]/blog/[slug]/page,_N_T_/en/blog/netlify-forms-zero-backend,sanity:s1:IjkE2Q,sanity:s1:GBPuuw,sanity:s1:NkgEAw,sanity:s1:BGY1Dg,sanity:s1:i1S8pw,sanity:s1:CrF7SA,sanity:s1:tAQnNA,sanity:s1:I0L7EQ,sanity:s1:e+u4GA,sanity:s1:Q6a+Og,sanity:s1:gZMX8Q,sanity:s1:qd1YpA,sanity:s1:qXSxww,sanity:s1:sR1VEQ,sanity:s1:9wOwUw,sanity:s1:EkViHQ,sanity:s1:b+5VMw,sanity:s1:kqKZpQ,sanity:s1:BBwM0A,sanity:s1:i/pjCA,sanity:s1:sbRQmQ,sanity:s1:ShNiMw,sanity:s1:ZCXFtA"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale/blog/$d$slug/__PAGE__",
+    "/$d$locale/blog/$d$slug",
+    "/$d$locale/blog",
+    "/$d$locale",
+    "/_index",
+    "/_head"
+  ]
+}
