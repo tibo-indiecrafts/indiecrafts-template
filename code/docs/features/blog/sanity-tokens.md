@@ -86,7 +86,7 @@ SANITY_API_WRITE_TOKEN=sk_...  # Editor role (Free plan OK)
 | -------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` + `_DATASET` | —          | Studio + every client read                                                                            | **always** when `features.blog: true`                                                                                                  |
 | `SANITY_API_READ_TOKEN`                      | **Viewer** | `src/sanity/token.ts` → `src/sanity/live.ts` (`defineLive`, `sanityFetch`) + `/api/draft-mode/enable` | draft preview, real-time live updates. Without it: public reads still work; the enable endpoint returns 503 with an actionable message |
-| `SANITY_API_WRITE_TOKEN`                     | **Editor** | `scripts/seed-blog-demo.mjs` only                                                                     | running `pnpm seed`. Never read at runtime                                                                                             |
+| `SANITY_API_WRITE_TOKEN`                     | **Editor** | `scripts/seed-demo.mjs` only                                                                     | running `pnpm seed`. Never read at runtime                                                                                             |
 
 The Studio at `/studio` itself **does not need a token** — visitors authenticate via the regular Sanity session cookie when they open the page.
 

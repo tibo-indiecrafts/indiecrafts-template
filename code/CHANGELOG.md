@@ -16,6 +16,14 @@ so an agent (or a client) reads one history, not two.
 
 ### Added
 
+- **Footer follow block + social profiles fully in Sanity.** The dead `site.social`
+  config block is removed; `siteSettings.social` (clearer per-platform legends) is the
+  sole source. A new `SocialFollow` footer block renders the profiles as icon links
+  (`reicon-brands` marks via `BrandIcon` + a hand-declared LinkedIn), each icon taking
+  its official brand color on hover/focus and carrying `rel="me"`. One helper
+  `socialLinks` (`src/lib/social.ts`) drives **both** the visible links and the
+  Organization `sameAs` JSON-LD, so they can't drift.
+
 - **SEO, llms.txt, and structured data are now edited in Sanity Studio, per
   language** — the client-intake SEO data no longer requires a code edit after
   launch. Two singletons under **Studio → SEO & métadonnées** are the **sole

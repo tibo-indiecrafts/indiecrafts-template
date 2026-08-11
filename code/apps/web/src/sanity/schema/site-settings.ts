@@ -75,14 +75,40 @@ export default defineType({
       title: "Profils sociaux",
       type: "object",
       group: "social",
-      description: "URL complète, ou vide pour masquer.",
+      description:
+        "Vos profils sur les réseaux. Chacun apparaît en icône dans le pied de page (bloc « Nous suivre ») et confirme à Google que ce compte est le vôtre. Vide = l'icône n'apparaît pas.",
       options: { collapsible: true, collapsed: false },
       fields: [
-        defineField({ name: "twitter", title: "Twitter / X (@handle)", type: "string" }),
-        defineField({ name: "linkedin", title: "LinkedIn", type: "url" }),
-        defineField({ name: "instagram", title: "Instagram", type: "url" }),
-        defineField({ name: "github", title: "GitHub", type: "url" }),
-        defineField({ name: "mastodon", title: "Mastodon", type: "url" }),
+        defineField({
+          name: "twitter",
+          title: "X / Twitter",
+          type: "string",
+          description: "Votre identifiant avec le @, ex. « @indiecrafts ».",
+        }),
+        defineField({
+          name: "linkedin",
+          title: "LinkedIn",
+          type: "url",
+          description: "Adresse complète du profil ou de la page, ex. « https://linkedin.com/company/… ».",
+        }),
+        defineField({
+          name: "instagram",
+          title: "Instagram",
+          type: "url",
+          description: "Adresse complète du profil, ex. « https://instagram.com/… ».",
+        }),
+        defineField({
+          name: "github",
+          title: "GitHub",
+          type: "url",
+          description: "Adresse complète du profil ou de l'organisation, ex. « https://github.com/… ».",
+        }),
+        defineField({
+          name: "mastodon",
+          title: "Mastodon",
+          type: "url",
+          description: "Adresse complète du profil, ex. « https://mastodon.social/@… ».",
+        }),
       ],
     }),
 

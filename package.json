@@ -3,11 +3,11 @@
   "private": true,
   "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a",
   "scripts": {
-    "dev": "pnpm --filter @indiecrafts/web dev",
-    "build": "pnpm --filter @indiecrafts/web build",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
     "start": "pnpm --filter @indiecrafts/web start",
-    "lint": "pnpm --filter @indiecrafts/web lint",
-    "tsc": "pnpm --filter @indiecrafts/web tsc",
+    "lint": "turbo run lint",
+    "tsc": "turbo run tsc",
     "verify": "pnpm --filter @indiecrafts/web verify",
     "verify:quick": "pnpm --filter @indiecrafts/web verify:quick",
     "seed": "pnpm --filter @indiecrafts/web seed",
@@ -16,10 +16,14 @@
     "docs:install": "npm --prefix code/docs install",
     "docs": "npm --prefix code/docs run docs:dev",
     "docs:build": "npm --prefix code/docs run docs:build",
+    "method:install": "npm --prefix method install",
+    "method": "npm --prefix method run dev",
+    "method:build": "npm --prefix method run build",
     "prepare": "husky"
   },
   "devDependencies": {
     "husky": "^9.1.7",
-    "prettier": "^3.8.3"
+    "prettier": "^3.8.3",
+    "turbo": "^2.10.9"
   }
 }

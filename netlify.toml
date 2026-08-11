@@ -1,3 +1,8 @@
+# Workspace-root deploy manifest. Netlify installs the pnpm workspace here (repo
+# root) and publishes the app build. Not app-specific by choice — pnpm workspaces
+# must install from the root. Deploy elsewhere (Vercel/CF): install at root, build
+# `pnpm build`, output `code/apps/web/.next`.
+
 # Netlify build config.
 # The Next.js runtime is auto-detected — `@netlify/plugin-nextjs` is installed
 # implicitly. This file only pins what we want explicit.

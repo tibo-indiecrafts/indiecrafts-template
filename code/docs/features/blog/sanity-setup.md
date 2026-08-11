@@ -216,7 +216,7 @@ pnpm dev
 
 ## 6. Seed demo content
 
-`scripts/seed-blog-demo.mjs` populates a complete demo dataset:
+`scripts/seed-demo.mjs` populates a complete demo dataset:
 
 - **3 authors** — Lovelace, Hopper, Berners-Lee
 - **6 categories** — 3 en (Engineering, Product, Stories) + 3 fr (Ingénierie, Produit, Histoires)
@@ -522,7 +522,7 @@ Core Sanity infra is shared (`src/sanity/`); everything blog-specific is self-co
 
 ```
 sanity.config.ts                                Studio config (schema, plugins, structure)
-scripts/seed-blog-demo.mjs                      pnpm seed — populates demo dataset
+scripts/seed-demo.mjs                      pnpm seed — populates demo dataset
 scripts/unset-legacy-fields.mjs                 one-shot field unset after a schema removal
 
 src/sanity/                                     SHARED core infra (not blog-specific)

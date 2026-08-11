@@ -439,7 +439,9 @@ const buildSiteSettings = () => ({
   icon: img("icon"),
   social: {
     twitter: "@indiecrafts",
+    linkedin: "https://www.linkedin.com/company/indiecrafts",
     github: "https://github.com/indiecrafts",
+    mastodon: "https://mastodon.social/@indiecrafts",
   },
   businessType: "Organization",
   company: "Indiecrafts",

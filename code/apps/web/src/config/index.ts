@@ -78,21 +78,10 @@ export const site = {
   contact: {
     email: "hello@example.com",
   },
-  /**
-   * Social handles / profile URLs. Listed here once and re-used by:
-   *   - schema.org `Organization.sameAs` (filtered non-empty values)
-   *   - `twitter:site` / `twitter:creator` (the `twitter` handle, with `@`)
-   *   - Footer / header social icons
-   * Empty strings are omitted from every consumer.
-   */
-  social: {
-    /** Twitter / X handle WITH the `@` prefix, e.g. "@indiecrafts". */
-    twitter: "",
-    github: "",
-    linkedin: "",
-    instagram: "",
-    mastodon: "",
-  },
+  // Social profiles are edited in Sanity (`siteSettings.social`) — read via
+  // `getSiteSettings().social`, rendered by the footer follow block
+  // (`SocialFollow`) and emitted as Organization `sameAs` (both through
+  // `socialLinks`, `src/lib/social.ts`).
   legal: {
     company: "Indiecrafts",
     /**

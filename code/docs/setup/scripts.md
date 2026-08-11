@@ -59,7 +59,7 @@ Because it runs via `npx …@latest`, the first run fetches the CLI (needs netwo
 
 | Script | Command                                                 | What it does / when to run                                                                                                                                                        |
 | ------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `seed` | `node --env-file=.env.local scripts/seed-blog-demo.mjs` | Seeds the Sanity dataset with demo blog content. Needs `SANITY_API_WRITE_TOKEN`. The `--env-file=.env.local` flag loads your local env automatically. See [§ 2](#_2-scripts-mjs). |
+| `seed` | `node --env-file=.env.local scripts/seed-demo.mjs` | Seeds the Sanity dataset with demo blog content. Needs `SANITY_API_WRITE_TOKEN`. The `--env-file=.env.local` flag loads your local env automatically. See [§ 2](#_2-scripts-mjs). |
 
 ### Documentation site
 
@@ -90,7 +90,7 @@ Four Node scripts. Only the contrast checker runs with plain `node` (no token, n
 - **Result:** prints each pair's ratio in light and dark and exits `1` if any text pair dips below AA. Part of `pnpm verify`, so a failing pair blocks the gate.
 - **Keep in sync:** when you add a new semantic token pair you want enforced, add it to the `PAIRS` array in the script.
 
-### `seed-blog-demo.mjs` — seed demo content
+### `seed-demo.mjs` — seed demo content
 
 - **Purpose:** populates the dataset with demo blog content — authors, categories, posts (with images fetched from Unsplash), quotes, people, and the `blog` singleton.
 - **Invoke:** `pnpm seed`. Needs a write-capable token in `SANITY_API_WRITE_TOKEN` (Editor role). The `pnpm` alias loads `.env.local` for you via `--env-file`.
@@ -112,7 +112,7 @@ Four Node scripts. Only the contrast checker runs with plain `node` (no token, n
 - **When:** once, after a release that drops a schema field. Safe to re-run — it's a no-op when nothing matches.
 
 ::: warning
-`seed-blog-demo.mjs` and `unset-legacy-fields.mjs` both **write** to the dataset. Point them at a dev/demo dataset, not a client's production content, unless you know exactly what they'll change.
+`seed-demo.mjs` and `unset-legacy-fields.mjs` both **write** to the dataset. Point them at a dev/demo dataset, not a client's production content, unless you know exactly what they'll change.
 :::
 
 ---

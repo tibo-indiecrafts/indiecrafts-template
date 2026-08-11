@@ -20,7 +20,8 @@
   "footer": {
     "rights": "All rights reserved.",
     "creditPrefix": "Made with",
-    "previewLabel": "tap to preview the site"
+    "previewLabel": "tap to preview the site",
+    "follow": "Follow"
   },
   "common": {
     "skipToContent": "Skip to main content",

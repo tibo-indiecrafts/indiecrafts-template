@@ -5,12 +5,14 @@ import type { SchemaTypeDefinition } from "sanity";
 // with the blog feature removed. Registered directly in `sanity.config.ts`.
 import siteSettings from "./site-settings";
 import siteMeta from "./site-meta";
+import legalPage from "./legal-page";
 import pageSeo from "./objects/page-seo";
 import globalSchema from "./objects/global-schema";
 
 export const coreSchemaTypes: SchemaTypeDefinition[] = [
   siteSettings,
   siteMeta,
+  legalPage,
   pageSeo,
   globalSchema,
 ];

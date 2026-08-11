@@ -2,8 +2,10 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Logo } from "@/user-interface/shared/layout/Logo";
 import { MadeByCredit } from "@/user-interface/shared/layout/MadeByCredit";
+import { SocialFollow } from "@/user-interface/shared/layout/SocialFollow";
 import { footerNav } from "@/config";
 import { site } from "@/config";
+import type { SiteSettings } from "@/lib/seo/site-seo";
 
 /**
  * Production site footer, colocated in `@/user-interface/layout` so the production
@@ -14,9 +16,13 @@ import { site } from "@/config";
  * get wired). Always uses `Link` from `@/i18n/routing` so locale prefixes
  * resolve.
  */
-type FooterProps = { logo?: string; logoDark?: string };
+type FooterProps = {
+  logo?: string;
+  logoDark?: string;
+  social?: SiteSettings["social"];
+};
 
-export function Footer({ logo, logoDark }: FooterProps) {
+export function Footer({ logo, logoDark, social }: FooterProps) {
   const tNav = useTranslations("nav");
   const tFooter = useTranslations("footer");
   const year = new Date().getFullYear();
@@ -27,6 +33,11 @@ export function Footer({ logo, logoDark }: FooterProps) {
           <div>
             <Logo logo={logo} logoDark={logoDark} />
             <p className="text-muted-foreground mt-2 text-sm">{site.tagline}</p>
+            {social ? (
+              <div className="mt-5">
+                <SocialFollow social={social} label={tFooter("follow")} />
+              </div>
+            ) : null}
           </div>
           {footerNav.map((group) => (
             <nav key={group.labelKey} aria-label={tNav(group.labelKey)}>

@@ -1,109 +1,135 @@
-# indiecrafts.dev
+# indiecrafts.dev — platform
 
-Config-first Next.js 16 template for client sites. Edit `src/config/index.ts`, compose sections into your route, ship.
+Config-first Next.js 16 template, structured as a **full-platform monorepo** with the
+dev framework in-repo. **Two root folders:**
 
-**Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · next-intl v4 · next-themes · shadcn/ui.
+- **`code/`** — the pnpm + Turborepo workspace (the product). `apps/web` is the Next.js
+  app (`@indiecrafts/web`); `packages/ modules/ db/ infra/` are slots for growth; and
+  `code/docs/` is the product documentation site.
+- **`method/`** — the `claude-tasks` dev framework (planning): `process/` (7-phase
+  sprint), `engineering/` (the brain), `templates/`, `work/` (the lab) — browsable as
+  its own docs site.
 
-The sibling **[indiecrafts-library](../indiecrafts-library)** repo is a Storybook component library — browse it to find sections, then copy the file you want into `src/components/sections/` here. This /app stays decoupled and ships only what it uses.
+**Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · next-intl v4 ·
+next-themes · shadcn/ui · Sanity. Workspace: pnpm + Turborepo.
 
-Detailed conventions: [`CLAUDE.md`](./CLAUDE.md).
+Detailed conventions → [`CLAUDE.md`](./CLAUDE.md) · design tokens → [`DESIGN.md`](./DESIGN.md) · framework → [`method/`](./method/).
 
 ## Getting started
 
+Run everything from the **repo root** — scripts delegate to the app (`@indiecrafts/web`) via Turborepo. The app lives at `code/apps/web`.
+
 ```bash
-pnpm install
-pnpm dev                # http://localhost:3000
-pnpm verify             # tsc + lint + format:check + contrast + react-doctor (full CI gate)
+pnpm install            # installs the whole workspace (all of code/)
+pnpm dev                # http://localhost:3000  (turbo → @indiecrafts/web)
+pnpm build              # production build → code/apps/web/.next
+pnpm verify             # tsc + lint + format:check + contrast + react-doctor (CI gate)
 pnpm verify:quick       # tsc + lint (manual pre-PR check)
-pnpm doctor             # React Doctor — full health scan (doctor:changed = new code only)
 ```
+
+## Deploy — not locked to one host
+
+The workspace installs at the **repo root**; the app builds to `code/apps/web/.next`.
+
+- **Netlify** — `netlify.toml` at root (`command = pnpm build`, `publish = code/apps/web/.next`); base stays root so pnpm installs the workspace.
+- **Vercel / Cloudflare / anywhere** — point the project at this repo, keep **install at the repo root**, set build `pnpm build` and Root Directory / output to `code/apps/web`. Each `apps/*` you add later is its own deploy target.
 
 ## Blog (Sanity-powered, optional)
 
 A full Sanity-backed editorial blog is wired into the template — feature-flagged so you can ship without it.
 
-- **Turn it on** — set `features.blog: true` in `src/config/index.ts`, drop `NEXT_PUBLIC_SANITY_PROJECT_ID` + dataset into `.env.local`, run `pnpm dev`. Editor lives at <http://localhost:3000/studio>.
+- **Turn it on** — set `features.blog: true` in `code/apps/web/src/config/index.ts`, drop `NEXT_PUBLIC_SANITY_PROJECT_ID` + dataset into `.env.local`, run `pnpm dev`. Editor lives at <http://localhost:3000/studio>.
 - **What you get** — `/blog`, `/blog/[slug]`, `/blog/category/[slug]`, `/blog/tag/[slug]`, `/author/[slug]`, RSS + Atom feeds (per locale), Markdown export, draft preview, live content subscriptions, locale-filtered (EN + FR by default), embedded Sanity Studio at `/studio`.
 - **Page-builder** — 13 modules (9 inline-embeddable inside post bodies, 4 layout-slot only). Editors compose post chrome from the `blog` singleton's `postModules` array; the body editor exposes H1-H6, lists, marks (incl. code / underline / strike), inline images, links, and 9 fancy module types.
 - **Seed demo content** — `pnpm seed` populates 47 docs incl. a showcase article that exercises every single editor primitive.
 
 When `features.blog: false`, every route above 404s, sitemap drops the entry, the header link disappears, and `/studio` is the only Sanity surface that stays — useful for content prep before launch.
 
-## Documentation
+## Documentation — two VitePress sites
 
-The guides in [`docs/`](./docs/) also render as a browsable [VitePress](https://vitepress.dev) site (its own npm package, isolated from the app):
+Each is its own npm package, isolated from the pnpm workspace:
+
+**Product docs** — how the template works ([`code/docs/`](./code/docs/)):
 
 ```bash
-pnpm docs:install   # once — installs VitePress inside docs/
-pnpm docs           # dev server → http://localhost:3002
-pnpm docs:build     # static build → docs/.vitepress/dist (deploy to Vercel)
+pnpm docs:install   # once
+pnpm docs           # → http://localhost:3002
+pnpm docs:build     # → code/docs/.vitepress/dist
 ```
 
-Full index — every guide in [`docs/`](./docs/), grouped by area.
+**Method / framework** — how we work, the dev framework ([`method/`](./method/)):
+
+```bash
+pnpm method:install # once
+pnpm method         # → http://localhost:3003
+pnpm method:build   # → method/.vitepress/dist
+```
+
+Full product-docs index — every guide in [`code/docs/`](./code/docs/), grouped by area.
 
 **Setup & operations**
 
 | Doc                                                       | Covers                                             |
 | --------------------------------------------------------- | -------------------------------------------------- |
-| [`environment.md`](./docs/setup/environment.md)           | Clone → running: app deps + optional AI toolchain  |
-| [`new-client.md`](./docs/setup/new-client.md)             | Fork the template for a new client site            |
-| [`brand-setup.md`](./docs/setup/brand-setup.md)           | Colours, fonts, logo, social links, brand assets   |
-| [`launch-checklist.md`](./docs/setup/launch-checklist.md) | Take the site from "dev is done" to live + indexed |
-| [`operations.md`](./docs/setup/operations.md)             | Run the site day-to-day, forms, fixes              |
-| [`scripts.md`](./docs/setup/scripts.md)                   | The `pnpm` scripts and what they do                |
-| [`codegraph.md`](./docs/setup/codegraph.md)               | Opt-in local semantic index for AI coding agents   |
-| [`headroom.md`](./docs/setup/headroom.md)                 | Opt-in context compression for AI coding agents    |
-| [`behavior-plugins.md`](./docs/setup/behavior-plugins.md) | caveman (terse output) + ponytail (least code)     |
-| [`maintenance-mode.md`](./docs/setup/maintenance-mode.md) | Take the site offline gracefully                   |
+| [`environment.md`](./code/docs/setup/environment.md)           | Clone → running: app deps + optional AI toolchain  |
+| [`new-client.md`](./code/docs/setup/new-client.md)             | Fork the template for a new client site            |
+| [`brand-setup.md`](./code/docs/setup/brand-setup.md)           | Colours, fonts, logo, social links, brand assets   |
+| [`launch-checklist.md`](./code/docs/setup/launch-checklist.md) | Take the site from "dev is done" to live + indexed |
+| [`operations.md`](./code/docs/setup/operations.md)             | Run the site day-to-day, forms, fixes              |
+| [`scripts.md`](./code/docs/setup/scripts.md)                   | The `pnpm` scripts and what they do                |
+| [`codegraph.md`](./code/docs/setup/codegraph.md)               | Opt-in local semantic index for AI coding agents   |
+| [`headroom.md`](./code/docs/setup/headroom.md)                 | Opt-in context compression for AI coding agents    |
+| [`behavior-plugins.md`](./code/docs/setup/behavior-plugins.md) | caveman (terse output) + ponytail (least code)     |
+| [`maintenance-mode.md`](./code/docs/setup/maintenance-mode.md) | Take the site offline gracefully                   |
 
 **Configuration & architecture**
 
 | Doc                                                                      | Covers                                               |
 | ------------------------------------------------------------------------ | ---------------------------------------------------- |
-| [`project-organization.md`](./docs/config/project-organization.md)       | How the repo is laid out — where things live         |
-| [`feature-flags.md`](./docs/config/feature-flags.md)                     | Every `features` toggle + route gating               |
-| [`i18n-and-routing.md`](./docs/config/i18n-and-routing.md)               | Languages, URL prefix modes, locale detection, slugs |
-| [`theme-modes.md`](./docs/config/theme-modes.md)                         | Light / dark / system + forced themes                |
-| [`migration-feature-based.md`](./docs/config/migration-feature-based.md) | Plan: migrate to a feature-based folder structure    |
+| [`project-organization.md`](./code/docs/config/project-organization.md)       | How the repo is laid out — where things live         |
+| [`feature-flags.md`](./code/docs/config/feature-flags.md)                     | Every `features` toggle + route gating               |
+| [`i18n-and-routing.md`](./code/docs/config/i18n-and-routing.md)               | Languages, URL prefix modes, locale detection, slugs |
+| [`theme-modes.md`](./code/docs/config/theme-modes.md)                         | Light / dark / system + forced themes                |
+| [`migration-feature-based.md`](./code/docs/config/migration-feature-based.md) | Plan: migrate to a feature-based folder structure    |
 
 **Design & content**
 
 | Doc                                                          | Covers                                        |
 | ------------------------------------------------------------ | --------------------------------------------- |
-| [`design-decisions.md`](./docs/design-decisions.md)          | Why key visual/UI choices were made (ADR log) |
-| [`sections.md`](./docs/design/sections.md)                   | Copying + mounting section components         |
-| [`typography.md`](./docs/design/typography.md)               | Type scale, text styles + the font registry   |
-| [`responsive-design.md`](./docs/design/responsive-design.md) | Breakpoints and responsive conventions        |
-| [`icons.md`](./docs/design/icons.md)                         | UI icon sets + favicon / apple-touch / PWA    |
-| [`featured-articles.md`](./docs/design/featured-articles.md) | The featured-articles home section            |
-| [`video-embeds.md`](./docs/design/video-embeds.md)           | Embedding video                               |
-| [`error-pages.md`](./docs/design/error-pages.md)             | Error + not-found pages                       |
+| [`design-decisions.md`](./code/docs/design-decisions.md)          | Why key visual/UI choices were made (ADR log) |
+| [`sections.md`](./code/docs/design/sections.md)                   | Copying + mounting section components         |
+| [`typography.md`](./code/docs/design/typography.md)               | Type scale, text styles + the font registry   |
+| [`responsive-design.md`](./code/docs/design/responsive-design.md) | Breakpoints and responsive conventions        |
+| [`icons.md`](./code/docs/design/icons.md)                         | UI icon sets + favicon / apple-touch / PWA    |
+| [`featured-articles.md`](./code/docs/design/featured-articles.md) | The featured-articles home section            |
+| [`video-embeds.md`](./code/docs/design/video-embeds.md)           | Embedding video                               |
+| [`error-pages.md`](./code/docs/design/error-pages.md)             | Error + not-found pages                       |
 
 **SEO & discovery**
 
 | Doc                                                                     | Covers                                            |
 | ----------------------------------------------------------------------- | ------------------------------------------------- |
-| [`seo-metadata.md`](./docs/seo/seo-metadata.md)                         | How `<head>` metadata is generated (translatable) |
-| [`editing-seo-in-sanity.md`](./docs/seo/editing-seo-in-sanity.md)       | Edit SEO / OG / llms / structured data in Studio  |
-| [`structured-data-cookbook.md`](./docs/seo/structured-data-cookbook.md) | Per-page JSON-LD recipes + business-type presets  |
-| [`faq.md`](./docs/seo/faq.md)                                           | Per-page FAQ → display + FAQPage JSON-LD + llms   |
-| [`llms-endpoints.md`](./docs/seo/llms-endpoints.md)                     | `/llms.txt`, `/llms-full.txt`, `/llms/<id>`       |
-| [`robots-and-environments.md`](./docs/seo/robots-and-environments.md)   | Env-aware robots.txt + production origin from env |
-| [`analytics.md`](./docs/seo/analytics.md)                               | Analytics + Consent Mode setup                    |
-| [`security-headers.md`](./docs/seo/security-headers.md)                 | CSP + security headers                            |
+| [`seo-metadata.md`](./code/docs/seo/seo-metadata.md)                         | How `<head>` metadata is generated (translatable) |
+| [`editing-seo-in-sanity.md`](./code/docs/seo/editing-seo-in-sanity.md)       | Edit SEO / OG / llms / structured data in Studio  |
+| [`structured-data-cookbook.md`](./code/docs/seo/structured-data-cookbook.md) | Per-page JSON-LD recipes + business-type presets  |
+| [`faq.md`](./code/docs/seo/faq.md)                                           | Per-page FAQ → display + FAQPage JSON-LD + llms   |
+| [`llms-endpoints.md`](./code/docs/seo/llms-endpoints.md)                     | `/llms.txt`, `/llms-full.txt`, `/llms/<id>`       |
+| [`robots-and-environments.md`](./code/docs/seo/robots-and-environments.md)   | Env-aware robots.txt + production origin from env |
+| [`analytics.md`](./code/docs/seo/analytics.md)                               | Analytics + Consent Mode setup                    |
+| [`security-headers.md`](./code/docs/seo/security-headers.md)                 | CSP + security headers                            |
 
 **Blog (when `features.blog: true`)**
 
 | Doc                                                                 | Covers                                               |
 | ------------------------------------------------------------------- | ---------------------------------------------------- |
-| [`sanity-setup.md`](./docs/features/blog/sanity-setup.md)           | Set up Sanity — env vars, CORS, QA matrix            |
-| [`editor-guide.md`](./docs/features/blog/editor-guide.md)           | Publish your first post as a content editor          |
-| [`body-editor.md`](./docs/features/blog/body-editor.md)             | What the body editor can do (styles, marks, modules) |
-| [`gallery.md`](./docs/features/blog/gallery.md)                     | Image gallery module — carousel + zoom lightbox      |
-| [`blog-architecture.md`](./docs/features/blog/blog-architecture.md) | Extend or remove a module as a developer             |
-| [`sanity-tokens.md`](./docs/features/blog/sanity-tokens.md)         | Mint / rotate Sanity API tokens                      |
+| [`sanity-setup.md`](./code/docs/features/blog/sanity-setup.md)           | Set up Sanity — env vars, CORS, QA matrix            |
+| [`editor-guide.md`](./code/docs/features/blog/editor-guide.md)           | Publish your first post as a content editor          |
+| [`body-editor.md`](./code/docs/features/blog/body-editor.md)             | What the body editor can do (styles, marks, modules) |
+| [`gallery.md`](./code/docs/features/blog/gallery.md)                     | Image gallery module — carousel + zoom lightbox      |
+| [`blog-architecture.md`](./code/docs/features/blog/blog-architecture.md) | Extend or remove a module as a developer             |
+| [`sanity-tokens.md`](./code/docs/features/blog/sanity-tokens.md)         | Mint / rotate Sanity API tokens                      |
 
-**Client intake forms** — fill-in questionnaires in [`docs/client-intake/`](./docs/client-intake/) to send to clients so they can supply their own SEO copy, business details, AI-index summary, and FAQ (each per language).
+**Client intake forms** — fill-in questionnaires in [`docs/client-intake/`](./code/docs/client-intake/) to send to clients so they can supply their own SEO copy, business details, AI-index summary, and FAQ (each per language).
 
 ## How it's organised
 
@@ -136,7 +162,7 @@ src/
 ## Adding a page
 
 1. Folder under `src/app/[locale]/<seg>/` with a `page.tsx`
-2. Entry in `pages` map (`src/config/index.ts`): `{ key, id, slug, seo: { keywords } }`
+2. Entry in `pages` map (`code/apps/web/src/config/index.ts`): `{ key, id, slug, seo: { keywords } }`
 3. Key in `AppPathname` (`src/config/types.ts`)
 4. `pages.<id>.title` + `pages.<id>.description` in every `messages/<locale>.json`
 
@@ -204,7 +230,7 @@ pages: {
 }
 ```
 
-Available: `buildFAQPageSchema`, `buildArticleSchema`, `buildServiceSchema`, `buildProductSchema`, `buildLocalBusinessSchema`, `buildPersonSchema`, `buildBreadcrumbSchema`. **FAQ is the highest-ROI rich result** for B2B. Copy-paste recipes: [`docs/seo/structured-data-cookbook.md`](./docs/seo/structured-data-cookbook.md).
+Available: `buildFAQPageSchema`, `buildArticleSchema`, `buildServiceSchema`, `buildProductSchema`, `buildLocalBusinessSchema`, `buildPersonSchema`, `buildBreadcrumbSchema`. **FAQ is the highest-ROI rich result** for B2B. Copy-paste recipes: [`docs/seo/structured-data-cookbook.md`](./code/docs/seo/structured-data-cookbook.md).
 
 ### Brand assets
 
@@ -212,7 +238,7 @@ Available: `buildFAQPageSchema`, `buildArticleSchema`, `buildServiceSchema`, `bu
 (`siteSettings.logo` / `logoDark`), favicon/app icon (`siteSettings.icon`), and the
 Open Graph card per language (`siteMeta.<locale>.ogImage`). Nothing brand-related
 lives in `/public`; `pnpm seed` uploads the defaults from `scripts/seed-media/`.
-See [`editing-seo-in-sanity.md`](./docs/seo/editing-seo-in-sanity.md).
+See [`editing-seo-in-sanity.md`](./code/docs/seo/editing-seo-in-sanity.md).
 
 ## LLM endpoints
 
@@ -227,7 +253,7 @@ All per-locale, all auto-built from `messages.<locale>.pages.*` — no separate 
 1. Push the repo to GitHub / GitLab.
 2. Netlify dashboard → Add new site → Import from Git → pick the repo.
 3. Build settings are pre-filled from `netlify.toml` (build: `pnpm build`, publish: `.next`). Netlify auto-detects Next.js and installs `@netlify/plugin-nextjs`.
-4. **Edit `src/config/index.ts`** before the first deploy: set `site.url` to your Netlify URL (or custom domain). The template ships with `https://example.com` as a placeholder, which flips `robots.ts` to `Disallow: /` — that's the staging gate, swap it for the real URL when ready to be indexed.
+4. **Edit `code/apps/web/src/config/index.ts`** before the first deploy: set `site.url` to your Netlify URL (or custom domain). The template ships with `https://example.com` as a placeholder, which flips `robots.ts` to `Disallow: /` — that's the staging gate, swap it for the real URL when ready to be indexed.
 5. Env vars (all optional) live in Netlify → Site settings → Environment variables. See `.env.example`.
 
 Branch deploys, deploy previews, and rollbacks all work out of the box.
@@ -247,7 +273,7 @@ Set up email/Slack notifications in Netlify dashboard → Forms → Settings. Lo
 
 ## Cookie banner + legal page (feature-flagged)
 
-Both default OFF — turn on in `src/config/index.ts` under `features`:
+Both default OFF — turn on in `code/apps/web/src/config/index.ts` under `features`:
 
 ```ts
 features: {

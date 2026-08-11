@@ -25,7 +25,7 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
   // `cache()` dedupes with the layout's own `getSiteSettings` call) and passed
   // into the default Header/Footer so `Logo` stays a presentational component
   // renderable inside the client Header.
-  const { brand } = await getSiteSettings();
+  const { brand, social } = await getSiteSettings();
   return (
     <>
       <SkipLink />
@@ -33,7 +33,10 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
       <main id="main" tabIndex={-1} className="flex-1 pt-14 outline-none lg:pt-20">
         {children}
       </main>
-      {resolveSlot(footer, <Footer logo={brand.logo} logoDark={brand.logoDark} />)}
+      {resolveSlot(
+        footer,
+        <Footer logo={brand.logo} logoDark={brand.logoDark} social={social} />,
+      )}
     </>
   );
 }

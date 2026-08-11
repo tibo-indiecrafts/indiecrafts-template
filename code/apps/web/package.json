@@ -18,7 +18,7 @@
     "doctor:changed": "npx react-doctor@latest --verbose --scope changed --base main",
     "shadscan": "pnpm dlx @shadscan/cli",
     "analyze": "ANALYZE=1 next build",
-    "seed": "node --env-file=.env.local scripts/seed-blog-demo.mjs",
+    "seed": "node --env-file=.env.local scripts/seed-demo.mjs",
     "docs:install": "npm --prefix docs install",
     "docs": "npm --prefix docs run docs:dev",
     "docs:build": "npm --prefix docs run docs:build",

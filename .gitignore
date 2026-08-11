@@ -61,3 +61,11 @@ method/work/scratch/
 *.tsbuildinfo
 next-env.d.ts
 
+
+# VitePress build output (code/docs + method sites)
+**/.vitepress/dist/
+**/.vitepress/cache/
+
+# turbo cache
+.turbo/
+**/.turbo/

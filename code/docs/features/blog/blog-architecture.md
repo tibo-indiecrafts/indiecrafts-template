@@ -305,7 +305,7 @@ The opposite of §8 — in this exact order to keep the build green:
 
 **Live data hygiene** — existing instances of the removed module type may still be in your Sanity dataset:
 
-- In `post.body[]` (inline) — add the `_type` to the `cleanupLegacy()` LEGACY_TYPES in `scripts/seed-blog-demo.mjs` and re-seed (it strips legacy block types from post bodies before anything else).
+- In `post.body[]` (inline) — add the `_type` to the `cleanupLegacy()` LEGACY_TYPES in `scripts/seed-demo.mjs` and re-seed (it strips legacy block types from post bodies before anything else).
 - In `blog.postModules[]` — same script, same step.
 - As orphan reference documents (e.g. the `logo` doc was deleted when Logo List was removed) — the script also targets these explicitly by ID + by `_type`.
 - Schema fields that disappeared from a doc type entirely — use `scripts/unset-legacy-fields.mjs` to unset them in one transaction (see [`sanity-setup.md`](./sanity-setup.md) § Troubleshooting).
@@ -329,7 +329,7 @@ The `SANITY_API_READ_TOKEN` env var must be set for the enable route. Without it
 
 Two helper scripts in `scripts/`:
 
-- **`seed-blog-demo.mjs`** — populates the demo dataset (47 docs). Starts with a `cleanupLegacy()` step that strips orphan `module.hero-split` / `module.logo-list` blocks from post bodies and deletes leftover `logo` docs. Idempotent — re-run anytime to refresh.
+- **`seed-demo.mjs`** — populates the demo dataset (47 docs). Starts with a `cleanupLegacy()` step that strips orphan `module.hero-split` / `module.logo-list` blocks from post bodies and deletes leftover `logo` docs. Idempotent — re-run anytime to refresh.
 - **`unset-legacy-fields.mjs`** — one-shot field unsets after a schema field is removed from a document. Edit the `TARGETS` array at the top, run once. See [`sanity-setup.md`](./sanity-setup.md) § Troubleshooting for the canonical command.
 
 For ad-hoc inspection, the Sanity Vision plugin is embedded in the Studio — open `/studio` → bottom-tab `Vision` → run any GROQ query against the live dataset.

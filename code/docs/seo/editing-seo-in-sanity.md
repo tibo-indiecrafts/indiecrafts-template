@@ -31,7 +31,7 @@ Not plugin-translated — edited from the desk, not the translation menu.
 | Field                                                | Drives                                                                                                     |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | **Logo & icônes** (`logo` / `logoDark` / `icon`)     | header + footer logo (with a dark-theme variant), favicon + apple-touch + PWA icons                        |
-| **Réseaux sociaux**                                  | `twitter:site`, Organization `sameAs` (handle → profile URL)                                               |
+| **Réseaux sociaux**                                  | the footer **follow block** + `twitter:site` + Organization `sameAs` (one source, `src/lib/social.ts`)     |
 | **Type d'entité**                                    | schema.org `@type` — `Organization` or a LocalBusiness subtype (adds address / hours / geo / area served)  |
 | **Raison sociale / dénomination légale / autre nom** | Organization `name` / `legalName` / `alternateName`                                                        |
 | **Adresse / contact / GPS / horaires / zones**       | the LocalBusiness JSON-LD fields                                                                           |

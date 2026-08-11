@@ -100,7 +100,7 @@ Edit:
 NEXT_PUBLIC_SANITY_PROJECT_ID=<the new project ID>
 NEXT_PUBLIC_SANITY_DATASET=production
 SANITY_API_READ_TOKEN=<viewer token>   # used at runtime by the live preview client
-SANITY_API_WRITE_TOKEN=<editor token>  # only read by scripts/seed-blog-demo.mjs
+SANITY_API_WRITE_TOKEN=<editor token>  # only read by scripts/seed-demo.mjs
 ```
 
 Never commit `.env.local`. `.gitignore` already blocks it.
@@ -320,7 +320,7 @@ Skip the seed. Run `pnpm dev`, open `/studio`, and create your first documents:
 
 ### Option B — re-seed with your own demo content
 
-Edit `scripts/seed-blog-demo.mjs`: change author names + bios, replace `IMAGES` URLs, swap `categories` / `tags` / `posts` arrays. Then:
+Edit `scripts/seed-demo.mjs`: change author names + bios, replace `IMAGES` URLs, swap `categories` / `tags` / `posts` arrays. Then:
 
 ```bash
 pnpm seed
@@ -337,7 +337,7 @@ pnpm seed
 | Change a doc's `_id`, re-run         | The old `_id` is orphaned (still in the dataset); the new `_id` is created.             |
 | Change an image URL, re-run          | The new image is fetched + uploaded as a new asset; the old asset stays in the project. |
 
-Mechanism: a single `createOrReplace` transaction over every doc in `allDocs`. See the header comment of `scripts/seed-blog-demo.mjs` for the canonical wording.
+Mechanism: a single `createOrReplace` transaction over every doc in `allDocs`. See the header comment of `scripts/seed-demo.mjs` for the canonical wording.
 
 #### Cleanup workflows
 

@@ -20,7 +20,8 @@
   "footer": {
     "rights": "Tous droits réservés.",
     "creditPrefix": "Réalisé avec",
-    "previewLabel": "appuyez pour prévisualiser le site"
+    "previewLabel": "appuyez pour prévisualiser le site",
+    "follow": "Nous suivre"
   },
   "common": {
     "skipToContent": "Aller au contenu principal",

@@ -8,6 +8,7 @@
 
 import { site } from "@/config";
 import type { SiteSettings } from "@/lib/seo/site-seo";
+import { socialLinks } from "@/lib/social";
 
 type SchemaBase<T extends string> = {
   "@type": T;
@@ -57,15 +58,9 @@ export function buildBusinessSchema(
   const b = settings.business;
   const businessType = b.businessType || "Organization";
   const isLocal = businessType !== "Organization";
-  // `sameAs` must be URLs. The twitter field is an `@handle` (used for the
-  // twitter:site meta tag) → convert to a profile URL; the rest are already
-  // URLs. Filtering on `http` also drops any `_type` key a Studio-saved inline
-  // object carries.
-  const { twitter, ...profiles } = settings.social;
-  const sameAs = [
-    ...(twitter ? [`https://x.com/${twitter.replace(/^@/, "")}`] : []),
-    ...Object.values(profiles),
-  ].filter((v): v is string => typeof v === "string" && v.startsWith("http"));
+  // `sameAs` = the same profile URLs the footer follow block renders (one source,
+  // via `socialLinks` — twitter `@handle` already converted to its profile URL).
+  const sameAs = socialLinks(settings.social).map((l) => l.url);
   // Organization logo — the Sanity brand logo (absolute CDN URL). Omitted when
   // unset (no static fallback).
   const logo = settings.brand.logo;
