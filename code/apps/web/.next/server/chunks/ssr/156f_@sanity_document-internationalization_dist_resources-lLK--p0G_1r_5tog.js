@@ -1,3 +1,0 @@
-module.exports=[821289,a=>{"use strict";a.s(["default",0,{"action.duplicate.label":"Duplicate with translations","action.duplicate.disabled.missing-metadata":"The document cannot be duplicated because the metadata document is missing","action.duplicate.disabled.multiple-metadata":"The document cannot be duplicated because there are multiple metadata documents"}])}];
-
-//# sourceMappingURL=156f_%40sanity_document-internationalization_dist_resources-lLK--p0G_1r_5tog.js.map
