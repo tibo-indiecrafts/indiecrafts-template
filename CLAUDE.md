@@ -22,11 +22,11 @@ component library is the sibling repo `../indiecrafts-library`.
 
 Run scripts from the repo root (`pnpm dev/build/…` delegate to `--filter @indiecrafts/web`). Rule: think in `method/work/` → build in `code/` → promote what sticks to `code/docs/`. Write drafts in `method/work/`, never into `code/docs/`.
 
-> **Scope note.** This `CLAUDE.md` + `DESIGN.md` + `.claude/rules/` are the **app's** conventions (Next.js, `src/`, tokens). They live at the repo root because there's one app and Claude Code loads config from where you launch it (here). When a **2nd app** lands (`apps/api`, `apps/mobile`), split them into `code/apps/web/` (app-scoped) + a thin root router — tracked in `method/work/project/`.
+> **Config split.** `.claude/` holds Claude Code **runtime** only — `agents/`, `skills/`, `settings.json` (must sit at the repo root; Claude Code magic-loads them). The **methodology** lives in `method/`: `rules/` (coding rules) · `process/` · `engineering/` · `workflows/` · `templates/` · `work/`. `CLAUDE.md` + `DESIGN.md` (root briefs) + `method/rules/` are the **app's** conventions today (Next.js, `src/`, tokens); when a **2nd app** lands (`apps/api`, `apps/mobile`), split them app-scoped (`code/apps/web/`) + a thin root router — tracked in `method/work/project/`.
 
-**Focused rules** live in `.claude/rules/` — load the relevant one when the task touches it: [`naming`](.claude/rules/naming.md), [`accessibility`](.claude/rules/accessibility.md), [`component-architecture`](.claude/rules/component-architecture.md), [`design-token-usage`](.claude/rules/design-token-usage.md), [`figma-handoff`](.claude/rules/figma-handoff.md), [`writing-style`](.claude/rules/writing-style.md) (how the agent writes its own output — docs, comments, commits — STE-informed; not UI copy), [`sanity-legends`](.claude/rules/sanity-legends.md) (Studio field labels + descriptions written for non-technical editors). Long-term context/decisions → `method/MEMORY.md`.
+**Focused rules** live in `method/rules/` — load the relevant one when the task touches it: [`naming`](method/rules/naming.md), [`accessibility`](method/rules/accessibility.md), [`component-architecture`](method/rules/component-architecture.md), [`design-token-usage`](method/rules/design-token-usage.md), [`figma-handoff`](method/rules/figma-handoff.md), [`writing-style`](method/rules/writing-style.md) (how the agent writes its own output — docs, comments, commits — STE-informed; not UI copy), [`sanity-legends`](method/rules/sanity-legends.md) (Studio field labels + descriptions written for non-technical editors). Long-term context/decisions → `method/MEMORY.md`.
 
-**Repeatable multi-file tasks** have step-by-step checklists in [`.claude/workflows/`](.claude/workflows/) — follow the matching one instead of reconstructing the steps: [`add-page`](.claude/workflows/add-page.md), [`adapt-library-section`](.claude/workflows/adapt-library-section.md), [`add-blog-module`](.claude/workflows/add-blog-module.md), [`remove-blog-module`](.claude/workflows/remove-blog-module.md).
+**Repeatable multi-file tasks** have step-by-step checklists in [`method/workflows/`](method/workflows/) — follow the matching one instead of reconstructing the steps: [`add-page`](method/workflows/add-page.md), [`adapt-library-section`](method/workflows/adapt-library-section.md), [`add-blog-module`](method/workflows/add-blog-module.md), [`remove-blog-module`](method/workflows/remove-blog-module.md).
 
 **Design system:** follow @DESIGN.md. Before creating or modifying UI — (1) read the component implementation, (2) reuse existing tokens and parts, (3) check the responsive + accessibility + motion rules, (4) flag any `DESIGN.md` ↔ production-code conflict. Verify what's loaded with `/context`.
 
@@ -137,7 +137,7 @@ messages/<locale>.json     Single flat tree — chrome + pages.<id>.{title, desc
 
 ## Adding a page
 
-_Checklist: [`.claude/workflows/add-page.md`](.claude/workflows/add-page.md)._
+_Checklist: [`method/workflows/add-page.md`](method/workflows/add-page.md)._
 
 1. `src/app/[locale]/<seg>/page.tsx`
 2. Entry in `pages` (config/index.ts): `{ key, id, slug, seo: { keywords } }`
@@ -148,7 +148,7 @@ Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, J
 
 ## Working with the library (shadcn/ui + `../indiecrafts-library`)
 
-_Checklist: [`.claude/workflows/adapt-library-section.md`](.claude/workflows/adapt-library-section.md)._
+_Checklist: [`method/workflows/adapt-library-section.md`](method/workflows/adapt-library-section.md)._
 
 Two building blocks feed the UI: **shadcn/ui** primitives (`src/user-interface/ui`, CLI-managed) and the sibling **`../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
 
