@@ -23,6 +23,6 @@ Focus on:
 - **Accessibility & responsive** — flag obvious gaps and defer detail to
   `accessibility-reviewer`; confirm the flow holds at 375 / 768 / 1280.
 
-Read `code/apps/web/DESIGN.md` and the relevant `docs/apps/web/design/*` for intent before judging.
+Read `code/packages/ui-tokens/DESIGN.md` and the relevant `docs/apps/web/design/*` for intent before judging.
 Return findings in priority order with the screen/flow and a concrete
 recommendation. Review only — do not edit.

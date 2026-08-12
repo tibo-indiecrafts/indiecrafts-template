@@ -2,20 +2,21 @@
 
 The web app (`code/apps/web`). Auto-loads when you work under here. Platform-wide
 rules + the four-root layout live in the **root `CLAUDE.md`**; this file is the app's
-_how to code_. **Design-context triad:** this file = _how to build_ · **[`DESIGN.md`](../../packages/ui-tokens/DESIGN.md)** = _how it looks_ (tokens, imported below) · **[`PRODUCT.md`](./PRODUCT.md)** = _who & why_ (users, purpose, positioning). Each owns its facts; the others link.
+_how to code_. **Design-context triad:** this file = _how to build_ · **[`DESIGN.md`](../../../packages/ui-tokens/DESIGN.md)** = _how it looks_ (tokens, imported below) · **[`PRODUCT.md`](../PRODUCT.md)** = _who & why_ (users, purpose, positioning). Each owns its facts; the others link.
 
-**Stack:** Next.js 16 (App Router) · TypeScript (strict) · Tailwind v4 · shadcn/ui · Sanity · next-intl. Production-only — the Storybook component library is the sibling repo `../../../indiecrafts-library`.
+**Stack:** Next.js 16.x (App Router) · React 19.x · TypeScript 5.x (strict) · Tailwind v4 · shadcn/ui · Sanity v5 · next-intl v4 · pnpm 10 / Node 22. Production-only — the Storybook component library is the sibling repo `../../../../indiecrafts-library`.
 
-**Focused rules** live in `method/apps/web/rules/` — load the relevant one when the task touches it: [`naming`](../../../method/apps/web/rules/naming.md), [`accessibility`](../../../method/apps/web/rules/accessibility.md), [`component-architecture`](../../../method/apps/web/rules/component-architecture.md), [`design-token-usage`](../../../method/apps/web/rules/design-token-usage.md), [`figma-handoff`](../../../method/apps/web/rules/figma-handoff.md), [`sanity-images`](../../../method/apps/web/rules/sanity-images.md) (render Sanity/remote images through `next/image` — the loader sizes them at the CDN), [`writing-style`](../../../method/shared/writing-style.md) (cross-cutting — how the agent writes its own output — docs, comments, commits — STE-informed; not UI copy), [`sanity-legends`](../../../method/apps/web/rules/sanity-legends.md) (Studio field labels + descriptions written for non-technical editors). Long-term context/decisions → `work/MEMORY.md`.
+**Focused rules auto-load** from `.claude/rules/` when you work here (each imports the canon in `method/apps/web/rules/`): naming · accessibility · component-architecture · design-token-usage · figma-handoff · sanity-images · sanity-legends — plus the ❌/✅ [`code-patterns`](rules/code-patterns.md) library and the [`self-review`](rules/self-review.md) checklist. Global `writing-style` auto-loads from the root. Long-term decisions → `work/MEMORY.md`.
 
-**Repeatable multi-file tasks** have step-by-step checklists in [`method/apps/web/workflows/`](../../../method/apps/web/workflows/) — follow the matching one instead of reconstructing the steps: [`add-page`](../../../method/apps/web/workflows/add-page.md), [`adapt-library-section`](../../../method/apps/web/workflows/adapt-library-section.md), [`add-blog-module`](../../../method/apps/web/workflows/add-blog-module.md), [`remove-blog-module`](../../../method/apps/web/workflows/remove-blog-module.md).
+**Repeatable multi-file tasks** have step-by-step checklists in [`method/apps/web/workflows/`](../../../../method/apps/web/workflows/) — follow the matching one instead of reconstructing the steps: [`add-page`](../../../../method/apps/web/workflows/add-page.md), [`adapt-library-section`](../../../../method/apps/web/workflows/adapt-library-section.md), [`add-blog-module`](../../../../method/apps/web/workflows/add-blog-module.md), [`remove-blog-module`](../../../../method/apps/web/workflows/remove-blog-module.md).
 
-**Design system:** follow @../../packages/ui-tokens/DESIGN.md. Before creating or modifying UI — (1) read the component implementation, (2) reuse existing tokens and parts, (3) check the responsive + accessibility + motion rules, (4) flag any `DESIGN.md` ↔ production-code conflict. Verify what's loaded with `/context`.
+**Design system:** follow @../../../packages/ui-tokens/DESIGN.md. Before creating or modifying UI — (1) read the component implementation, (2) reuse existing tokens and parts, (3) check the responsive + accessibility + motion rules, (4) flag any `DESIGN.md` ↔ production-code conflict. Verify what's loaded with `/context`.
 
 ## Architecture
 
-Feature-based: shared code in flat top-level folders; each domain owns a
-`features/<name>/` folder. Full rationale in `docs/apps/web/config/project-organization.md`.
+Shared code in flat top-level folders (`user-interface/`, `lib/`, `sanity/`, `i18n/`); heavy
+features are extracted to workspace packages + modules (`@indiecrafts/*`), consumed as source.
+Full rationale in `docs/apps/web/config/project-organization.md`.
 
 **Workspace packages + module** (import via `@indiecrafts/*`):
 
@@ -69,7 +70,7 @@ messages/<locale>.json     chrome + pages.<id>.{title, description, blocks}
 
 ## Adding a page
 
-_Checklist: [`method/apps/web/workflows/add-page.md`](../../../method/apps/web/workflows/add-page.md)._
+_Checklist: [`method/apps/web/workflows/add-page.md`](../../../../method/apps/web/workflows/add-page.md)._
 
 1. `src/app/[locale]/<seg>/page.tsx`
 2. Entry in `pages` (config/index.ts): `{ key, id, slug, seo: { keywords } }`
@@ -78,17 +79,17 @@ _Checklist: [`method/apps/web/workflows/add-page.md`](../../../method/apps/web/w
 
 Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, JSON-LD WebPage.
 
-## Working with the library (shadcn/ui + `../../../indiecrafts-library`)
+## Working with the library (shadcn/ui + `../../../../indiecrafts-library`)
 
-_Checklist: [`method/apps/web/workflows/adapt-library-section.md`](../../../method/apps/web/workflows/adapt-library-section.md)._
+_Checklist: [`method/apps/web/workflows/adapt-library-section.md`](../../../../method/apps/web/workflows/adapt-library-section.md)._
 
-Two building blocks feed the UI: **shadcn/ui** primitives (`src/user-interface/ui`, CLI-managed) and the sibling **`../../../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
+Two building blocks feed the UI: **shadcn/ui** primitives (`@indiecrafts/ui`, CLI-managed) and the sibling **`../../../../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
 
 **Reuse before create.** Before adding UI: reuse an existing part → add a backward-compatible variant → compose primitives → new shared part (`user-interface/`) → page-specific. Never duplicate a part just because it has a different name. When sources disagree, authority runs: `user-interface/ui` + `config`/`globals.css` tokens (canonical) → the library (a reference to adapt, not copy verbatim) → screenshots.
 
 To adapt a library section:
 
-1. Browse the variant in Storybook (`cd ../../../indiecrafts-library && pnpm storybook`).
+1. Browse the variant in Storybook (`cd ../../../../indiecrafts-library && pnpm storybook`).
 2. Copy its file into `src/user-interface/homepage/sections/<Name>.tsx`. Flatten a multi-file folder (schema.ts + config.ts + en.json) into one `.tsx`, and rework it to template patterns: strings → `messages/`, colors/nav → `@/config`, links → `@/i18n/routing`. See `src/user-interface/homepage/sections/Features.tsx` for the target shape.
 3. Drop the matching copy into `messages/<locale>.pages.<id>.blocks.<simpleName>` (drop the -NN suffix).
 4. Mount in the route's `page.tsx`, passing a `namespace` (e.g. `pages.home.blocks.cta`) or `pageId` prop. Live pattern: `src/app/[locale]/(home)/page.tsx`.
@@ -112,7 +113,7 @@ Never add the library as a workspace, dependency, or symlink — the decoupling 
 
 ## LLM endpoints
 
-`/<locale>/llms.txt`, `/<locale>/llms-full.txt`, `/<locale>/llms/<id>` — all auto-built from `messages.<locale>.pages.*`. **Zero per-page config.** Add a page → it appears in all three, in every locale. Published blog posts are appended to `llms.txt` + `llms-full.txt` as a `## Blog` section (each links to its `/blog/<slug>/md` export) via `getBlogLlmsLines` in `features/blog/lib/llms.ts` — gated by `features.blog`, `noIndex` posts excluded.
+`/<locale>/llms.txt`, `/<locale>/llms-full.txt`, `/<locale>/llms/<id>` — all auto-built from `messages.<locale>.pages.*`. **Zero per-page config.** Add a page → it appears in all three, in every locale. Published blog posts are appended to `llms.txt` + `llms-full.txt` as a `## Blog` section (each links to its `/blog/<slug>/md` export) via `getBlogLlmsLines` in `code/modules/blog/src/lib/llms.ts` — gated by `features.blog`, `noIndex` posts excluded.
 
 ## Sanity + blog (feature-flagged)
 
@@ -122,7 +123,7 @@ Details live with the code they describe (Claude Code auto-loads these when you 
 
 - Blog feature — schema, page-builder modules, per-post layout, gating → **`code/modules/blog/CLAUDE.md`**
 - Sanity infra — client, live/draft-mode, env, "never new `createClient`" → **`src/sanity/CLAUDE.md`**
-- Human-facing docs → `docs/apps/web/features/blog/`.
+- Human-facing docs → `docs/modules/blog/`.
 
 ## Accessibility (structural)
 
@@ -139,8 +140,8 @@ The **visual system** — colors, typography, spacing, dark mode, motion, contra
 - NEVER inline user-facing strings — every visible string lives in `messages/<locale>.json`.
 - NEVER add `as any` — fix the type, or eslint-disable with a one-line reason.
 - NEVER render a Sanity/remote image at full resolution — use `next/image` (the `loaderFile` sizes it at the CDN) or, for a rare raw `<img>`, append `?w=…&auto=format&fit=max&q=`. See `rules/sanity-images.md`.
-- NEVER edit `src/user-interface/ui/**` (shadcn — managed via CLI).
-- NEVER depend on `../../../indiecrafts-library` at runtime — it's browse-only, copy what you need.
+- NEVER hand-edit `@indiecrafts/ui` primitives (shadcn — managed via CLI).
+- NEVER depend on `../../../../indiecrafts-library` at runtime — it's browse-only, copy what you need.
 - NEVER swallow errors — `logger.error(...)` minimum.
 - NEVER set state inside `useEffect` to mark hydration — use `useSyncExternalStore`.
 - NEVER instantiate a Sanity `createClient` per route — use `@/sanity/client`.

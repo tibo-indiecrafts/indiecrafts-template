@@ -21,9 +21,9 @@ Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (publ
 - **Inline-embeddable in body + `postModules`** (9): accordion-list, callout, card-list, custom-html, gallery, person-list, quote-list, stat-list, step-list
 - **`postModules`-only** (4): blog-index, blog-post-content, blog-post-list, prose
 
-Inline allowlist → `sanity/schema/blockContent.ts` (`INLINE_MODULES`). Renderer → `user-interface/renderers/ModuleRenderer.tsx` (switch on `_type`, TS exhaustiveness enforces). **Adding or removing a module touches ~8 code locations + 4 doc count-refs** — follow the full checklist, don't reconstruct it: [`.claude/workflows/add-blog-module.md`](../../../.claude/workflows/add-blog-module.md) / [`remove-blog-module.md`](../../../.claude/workflows/remove-blog-module.md).
+Inline allowlist → `sanity/schema/blockContent.ts` (`INLINE_MODULES`). Renderer → `user-interface/renderers/ModuleRenderer.tsx` (switch on `_type`, TS exhaustiveness enforces). **Adding or removing a module touches ~8 code locations + 4 doc count-refs** — follow the full checklist, don't reconstruct it: [`.claude/workflows/add-blog-module.md`](../../../../method/apps/web/workflows/add-blog-module.md) / [`remove-blog-module.md`](../../../../method/apps/web/workflows/remove-blog-module.md).
 
-Field **legends** (every `title` + `description` an editor sees) are written for non-technical editors — plain words, no jargon. Follow [`.claude/rules/sanity-legends.md`](../../../.claude/rules/sanity-legends.md).
+Field **legends** (every `title` + `description` an editor sees) are written for non-technical editors — plain words, no jargon. Follow [`.claude/rules/sanity-legends.md`](../../../../method/apps/web/rules/sanity-legends.md).
 
 ## Per-post layout + extras
 

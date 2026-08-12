@@ -21,7 +21,7 @@ by apps + modules. Seven live — `config · utils · sanity · ui · ui-tokens 
 A new brick lands in known places — do all five in the same change:
 
 1. **Code** — `code/packages/<name>/` (`package.json` `@indiecrafts/<name>` + `exports`; declare its own deps). Mixed `.ts`/`.tsx` also needs an app `tsconfig` `paths` entry; anything rendering classes needs a `@source` line in `ui-tokens/globals.css`.
-2. **Registry** — a row in [`_registry.md`](_registry.md).
+2. **Registry** — a row in [`_registry.md`](../_registry.md).
 3. **Doc** — one page `docs/packages/<name>.md` (exports · deps · consumers · gotchas), split from the shape of the others.
 4. **Sidebar** — one line under the Packages group in `docs/.vitepress/config.mts`.
 5. **Changelog** — log it in this area's `CHANGELOG.md` (the `code/packages/` home altitude); rolls up to root at release.

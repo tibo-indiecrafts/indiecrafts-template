@@ -16,7 +16,7 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   // CLAUDE.md is agent memory, not a published page — keep it out of the site.
-  srcExclude: ["**/CLAUDE.md"],
+  srcExclude: ["**/CLAUDE.md", "**/.claude/**"],
   themeConfig: {
     search: { provider: "local" },
     nav: [
@@ -155,6 +155,7 @@ export default defineConfig({
         text: "Shared · Agent tooling",
         collapsed: true,
         items: [
+          { text: "CLAUDE.md system (monorepo)", link: "/shared/tooling/claude-md-system" },
           { text: "CodeGraph (agent index)", link: "/shared/tooling/codegraph" },
           { text: "Code intelligence (LSP)", link: "/shared/tooling/code-intelligence" },
           {
