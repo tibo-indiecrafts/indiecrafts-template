@@ -2,7 +2,7 @@
 
 The web app (`code/apps/web`). Auto-loads when you work under here. Platform-wide
 rules + the four-root layout live in the **root `CLAUDE.md`**; this file is the app's
-_how to code_. Design tokens → **`code/packages/ui-tokens/DESIGN.md`** (imported below).
+_how to code_. **Design-context triad:** this file = _how to build_ · **[`DESIGN.md`](../../packages/ui-tokens/DESIGN.md)** = _how it looks_ (tokens, imported below) · **[`PRODUCT.md`](./PRODUCT.md)** = _who & why_ (users, purpose, positioning). Each owns its facts; the others link.
 
 **Stack:** Next.js 16 (App Router) · TypeScript (strict) · Tailwind v4 · shadcn/ui · Sanity · next-intl. Production-only — the Storybook component library is the sibling repo `../../../indiecrafts-library`.
 

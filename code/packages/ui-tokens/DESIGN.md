@@ -131,6 +131,9 @@ components:
 
 Machine-readable tokens live in the front matter above; the prose below is the
 "why". Deeper guides: `docs/apps/web/design/`, `docs/apps/web/config/theme-modes.md`.
+This is the **visual** third of the design-context triad — the non-visual product truth
+(users, purpose, positioning) lives in [`PRODUCT.md`](../../apps/web/PRODUCT.md), and the
+build rules in [`CLAUDE.md`](../../apps/web/CLAUDE.md).
 
 ## How to read this system
 

@@ -2,6 +2,8 @@
 
 <!-- impeccable:product-schema 1 -->
 
+_Design-context triad: **[CLAUDE.md](./CLAUDE.md)** (how to build) · **[DESIGN.md](../../packages/ui-tokens/DESIGN.md)** (how it looks) · this file (who & why). Each owns its facts; the others link, never duplicate._
+
 ## Platform
 
 web
@@ -46,16 +48,15 @@ can't copy without also adopting the "one home per fact" discipline.
   `llms.txt`/RSS; a feature-flagged blog module with a page-builder block system; a full cookie
   CMP with Google Consent Mode; theme modes (light/dark/system) and a font-pairing registry;
   CDN-sized images via a `next/image` loader.
-- **Constraints:** Next 16 / React 19 / pnpm 10 / Turborepo; read from `@/config` (never
-  hard-code brand/URL/color/nav); user-facing strings in `messages/<locale>.json`; route via
-  `@/i18n/routing`; never expose a server token under `NEXT_PUBLIC_`; `pnpm verify` gates
-  tsc + lint + format + contrast.
+- **Constraints:** the stack (Next 16 / React 19 / pnpm 10 / Turborepo) plus the build rules
+  (config-first, i18n, tokens, the security NEVERs, the `pnpm verify` gate) are owned by
+  [`CLAUDE.md`](./CLAUDE.md) — not repeated here.
 
 ## Brand Commitments
 
-- **Name:** Indiecrafts. **Voice/identity:** "restraint is the brand" — quiet, editorial,
-  crafted; one deliberate signature moment per surface. The visual contract is normative in
-  `code/packages/ui-tokens/DESIGN.md` (a single indigo accent on near-neutral greys).
+- **Name:** Indiecrafts. The voice/identity + the normative visual contract are owned by
+  [`DESIGN.md`](../../packages/ui-tokens/DESIGN.md) ("restraint is the brand"; one indigo accent
+  on near-neutral greys, one signature moment per surface) — see it, not here.
 
 ## Evidence on Hand
 
@@ -75,6 +76,7 @@ can't copy without also adopting the "one home per fact" discipline.
 
 ## Accessibility & Inclusion
 
-WCAG **AA** is a shipping gate: `pnpm verify:contrast` enforces token-pair contrast; every
-interactive element carries a visible focus ring; status is never communicated by color alone;
-touch targets ≥ 40px. Verified at 375 / 768 / 1280.
+WCAG **AA** is a shipping gate (`pnpm verify:contrast`). The visual a11y contract is owned by
+[`DESIGN.md`](../../packages/ui-tokens/DESIGN.md) (Accessibility) and the structural rules by
+[`method/apps/web/rules/accessibility.md`](../../../method/apps/web/rules/accessibility.md) —
+referenced here, not duplicated.
