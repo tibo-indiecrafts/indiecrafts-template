@@ -24,10 +24,14 @@
       "Bash(rm -rf *)",
       "Read(.env)",
       "Read(.env.*)",
-      "Read(!.env.example)"
+      "Read(!.env.example)",
+      "Read(**/node_modules/**)",
+      "Read(**/vendor/**)",
+      "Read(**/.next/**)",
+      "Read(**/dist/**)",
+      "Read(**/.turbo/**)",
+      "Read(**/.vitepress/dist/**)",
+      "Read(**/.vitepress/cache/**)"
     ]
-  },
-  "worktree": {
-    "sparsePaths": [".claude", "code"]
   }
 }
