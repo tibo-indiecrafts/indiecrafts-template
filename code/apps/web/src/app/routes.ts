@@ -1,12 +1,12 @@
 /**
- * Production route table. Built from the `pages` map in `@/config` —
+ * Production route table. Built from the `pages` map in `@indiecrafts/config` —
  * adding a static route is one entry there. This file just turns the map
  * into the array + PATHNAMES table that `i18n/routing.ts` and
  * `sitemap.ts` consume.
  */
 
-import { pages } from "@/config";
-import type { PageConfig } from "@/config";
+import { pages } from "@indiecrafts/config";
+import type { PageConfig } from "@indiecrafts/config";
 
 export const ROUTES: readonly PageConfig[] = Object.values(pages);
 

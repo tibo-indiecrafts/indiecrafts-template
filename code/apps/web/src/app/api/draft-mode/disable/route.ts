@@ -1,6 +1,6 @@
 import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
-import { features } from "@/config";
+import { features } from "@indiecrafts/config";
 
 /**
  * Exit draft preview — sends the visitor back to the home page.

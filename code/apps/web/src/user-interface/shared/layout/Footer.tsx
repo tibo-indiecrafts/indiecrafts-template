@@ -3,27 +3,66 @@ import { Link } from "@/i18n/routing";
 import { Logo } from "@/user-interface/shared/layout/Logo";
 import { MadeByCredit } from "@/user-interface/shared/layout/MadeByCredit";
 import { SocialFollow } from "@/user-interface/shared/layout/SocialFollow";
-import { footerNav } from "@/config";
-import { site } from "@/config";
 import type { SiteSettings } from "@/lib/seo/site-seo";
+import type { FooterColumn, NavLeaf } from "@/lib/navigation";
 
 /**
  * Production site footer, colocated in `@/user-interface/layout` so the production
  * chrome is owned end-to-end.
  *
- * Renders nav groups from `footerNav` in `@/config` (a "Company" group with
- * a `/legal` link when `features.legalPage` is on; add more groups as pages
- * get wired). Always uses `Link` from `@/i18n/routing` so locale prefixes
- * resolve.
+ * Renders the footer columns from the `navigation` singleton in Sanity (resolved
+ * by `getNavigation`) + the social follow block. Always uses `Link` from
+ * `@/i18n/routing` for internal links so locale prefixes resolve.
  */
 type FooterProps = {
+  /** Site name (wordmark) — resolved from Sanity, passed in. */
+  name: string;
+  /** Tagline under the logo — the locale's Sanity `siteMeta.tagline`. */
+  tagline?: string;
+  /** Copyright holder — Sanity `siteSettings.business.company`. */
+  company?: string;
   logo?: string;
   logoDark?: string;
   social?: SiteSettings["social"];
+  columns?: FooterColumn[];
 };
 
-export function Footer({ logo, logoDark, social }: FooterProps) {
-  const tNav = useTranslations("nav");
+const linkClass =
+  "text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none";
+
+function FooterLink({ item }: { item: NavLeaf }) {
+  if (item.kind === "external") {
+    return (
+      <a
+        href={item.href}
+        target={item.newTab ? "_blank" : undefined}
+        rel={item.newTab ? "noopener noreferrer" : undefined}
+        className={linkClass}
+      >
+        {item.label}
+      </a>
+    );
+  }
+  return (
+    <Link
+      href={item.href}
+      target={item.newTab ? "_blank" : undefined}
+      className={linkClass}
+    >
+      {item.label}
+    </Link>
+  );
+}
+
+export function Footer({
+  name,
+  tagline,
+  company,
+  logo,
+  logoDark,
+  social,
+  columns = [],
+}: FooterProps) {
   const tFooter = useTranslations("footer");
   const year = new Date().getFullYear();
   return (
@@ -31,26 +70,23 @@ export function Footer({ logo, logoDark, social }: FooterProps) {
       <div className="mx-auto max-w-(--max-container) px-(--gutter) py-12">
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
           <div>
-            <Logo logo={logo} logoDark={logoDark} />
-            <p className="text-muted-foreground mt-2 text-sm">{site.tagline}</p>
+            <Logo name={name} logo={logo} logoDark={logoDark} />
+            {tagline ? (
+              <p className="text-muted-foreground mt-2 text-sm">{tagline}</p>
+            ) : null}
             {social ? (
               <div className="mt-5">
                 <SocialFollow social={social} label={tFooter("follow")} />
               </div>
             ) : null}
           </div>
-          {footerNav.map((group) => (
-            <nav key={group.labelKey} aria-label={tNav(group.labelKey)}>
-              <h2 className="mb-3 text-sm font-semibold">{tNav(group.labelKey)}</h2>
+          {columns.map((column, i) => (
+            <nav key={`${column.title}-${i}`} aria-label={column.title}>
+              <h2 className="mb-3 text-sm font-semibold">{column.title}</h2>
               <ul className="space-y-2 text-sm">
-                {group.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
-                    >
-                      {tNav(link.labelKey)}
-                    </Link>
+                {column.links.map((item, j) => (
+                  <li key={`${item.href}-${j}`}>
+                    <FooterLink item={item} />
                   </li>
                 ))}
               </ul>
@@ -58,7 +94,7 @@ export function Footer({ logo, logoDark, social }: FooterProps) {
           ))}
         </div>
         <p className="text-muted-foreground mt-12 text-xs">
-          © {year} {site.legal.company}. {tFooter("rights")}
+          © {year} {company ?? name}. {tFooter("rights")}
         </p>
         <MadeByCredit />
       </div>

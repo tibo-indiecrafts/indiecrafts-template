@@ -7,16 +7,16 @@ import {
   localePrefix,
   site,
   type Locale,
-} from "@/config";
+} from "@indiecrafts/config";
 import { getStaticPathname } from "@/i18n/routing";
 import { getSiteSeo } from "@/lib/seo/site-seo";
-import { client } from "@/sanity/client";
+import { client } from "@indiecrafts/sanity/client";
 import {
   allAuthorSlugsQuery,
   allCategorySlugsQuery,
   allPostSlugsQuery,
   allTagSlugsQuery,
-} from "@/features/blog/sanity/queries";
+} from "@indiecrafts/blog/sanity/queries";
 import { ROUTES } from "./routes";
 
 // O(1) membership test for the per-document locale loop below (vs re-scanning

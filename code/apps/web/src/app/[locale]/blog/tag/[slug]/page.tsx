@@ -1,20 +1,20 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, pages, type Locale } from "@/config";
+import { features, pages, type Locale } from "@indiecrafts/config";
 import { localizedPathname } from "@/i18n/routing";
-import { requireBlogRoute } from "@/features/blog/lib/route-gate";
+import { requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { TagDetail } from "@/features/blog/user-interface/tag/sections/TagDetail";
-import { client } from "@/sanity/client";
-import { sanityFetchLive } from "@/sanity/live";
+import { TagDetail } from "@indiecrafts/blog/user-interface/tag/sections/TagDetail";
+import { client } from "@indiecrafts/sanity/client";
+import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import {
   allTagSlugsQuery,
   postsByTagSlugQuery,
   tagBySlugQuery,
-} from "@/features/blog/sanity/queries";
-import type { PostListItem, Tag } from "@/features/blog/sanity/types";
+} from "@indiecrafts/blog/sanity/queries";
+import type { PostListItem, Tag } from "@indiecrafts/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 

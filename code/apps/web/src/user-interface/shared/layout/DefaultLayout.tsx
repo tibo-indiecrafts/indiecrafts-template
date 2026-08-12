@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
-import { getSiteSettings } from "@/lib/seo/site-seo";
+import { getLocale } from "next-intl/server";
+import type { Locale } from "@indiecrafts/config";
+import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
+import { getNavigation } from "@/lib/navigation";
 import { SkipLink } from "./SkipLink";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
@@ -25,17 +28,35 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
   // `cache()` dedupes with the layout's own `getSiteSettings` call) and passed
   // into the default Header/Footer so `Logo` stays a presentational component
   // renderable inside the client Header.
-  const { brand, social } = await getSiteSettings();
+  const locale = (await getLocale()) as Locale;
+  const [settings, nav, siteSeo] = await Promise.all([
+    getSiteSettings(),
+    getNavigation(locale),
+    getSiteSeo(locale),
+  ]);
+  const { brand, social, business } = settings;
+  const name = settings.siteName || DEFAULT_SITE_NAME;
   return (
     <>
       <SkipLink />
-      {resolveSlot(header, <Header logo={brand.logo} logoDark={brand.logoDark} />)}
+      {resolveSlot(
+        header,
+        <Header name={name} logo={brand.logo} logoDark={brand.logoDark} items={nav.header} />,
+      )}
       <main id="main" tabIndex={-1} className="flex-1 pt-14 outline-none lg:pt-20">
         {children}
       </main>
       {resolveSlot(
         footer,
-        <Footer logo={brand.logo} logoDark={brand.logoDark} social={social} />,
+        <Footer
+          name={name}
+          tagline={siteSeo.tagline}
+          company={business.company}
+          logo={brand.logo}
+          logoDark={brand.logoDark}
+          social={social}
+          columns={nav.footerColumns}
+        />,
       )}
     </>
   );

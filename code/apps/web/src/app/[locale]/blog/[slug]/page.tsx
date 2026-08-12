@@ -1,28 +1,28 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { features, pages, site, type Locale } from "@/config";
+import { features, pages, site, type Locale } from "@indiecrafts/config";
 import { localizedPathname } from "@/i18n/routing";
-import { isRssEnabled, requireBlogRoute } from "@/features/blog/lib/route-gate";
+import { isRssEnabled, requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { DefaultPostLayout } from "@/features/blog/user-interface/post/layout/DefaultPostLayout";
-import { Modules } from "@/features/blog/user-interface/renderers/ModuleRenderer";
-import { client } from "@/sanity/client";
-import { sanityFetchLive } from "@/sanity/live";
+import { DefaultPostLayout } from "@indiecrafts/blog/user-interface/post/layout/DefaultPostLayout";
+import { Modules } from "@indiecrafts/blog/user-interface/renderers/ModuleRenderer";
+import { client } from "@indiecrafts/sanity/client";
+import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import {
   allPostSlugsQuery,
   blogSingletonQuery,
   postBySlugQuery,
   relatedPostsQuery,
-} from "@/features/blog/sanity/queries";
+} from "@indiecrafts/blog/sanity/queries";
 import type {
   BlogSingleton,
   Post,
   PostListItem,
   PostSlug,
-} from "@/features/blog/sanity/types";
+} from "@indiecrafts/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 

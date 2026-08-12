@@ -29,6 +29,12 @@
   "dependencies": {
     "@base-ui/react": "^1.6.0",
     "@hookform/resolvers": "^5.7.1",
+    "@indiecrafts/blog": "workspace:*",
+    "@indiecrafts/config": "workspace:*",
+    "@indiecrafts/sanity": "workspace:*",
+    "@indiecrafts/ui-tokens": "workspace:*",
+    "@indiecrafts/ui": "workspace:*",
+    "@indiecrafts/utils": "workspace:*",
     "@portabletext/react": "^6.2.0",
     "@sanity/document-internationalization": "^6.2.27",
     "@sanity/icons": "^3.7.4",

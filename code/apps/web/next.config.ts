@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import bundleAnalyzer from "@next/bundle-analyzer";
-import { analytics, getCSPConnectSources, getCurrentEnvironment } from "./src/config";
+import { getCSPConnectSources, getCurrentEnvironment } from "@indiecrafts/config";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const withBundleAnalyzer = bundleAnalyzer({
@@ -12,14 +12,13 @@ const withBundleAnalyzer = bundleAnalyzer({
 const env = getCurrentEnvironment();
 const cspConnectSources = getCSPConnectSources(env).join(" ");
 
-// Google Analytics (gtag). Only widen the CSP when a measurement ID is set —
-// GA loads its script from googletagmanager.com and beacons to
-// google-analytics.com. Off by default, so the base policy stays tight.
-const gaEnabled = analytics.googleAnalyticsId !== "";
-const gaScriptSrc = gaEnabled ? " https://*.googletagmanager.com" : "";
-const gaConnectSrc = gaEnabled
-  ? " https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com"
-  : "";
+// Google Analytics (gtag) domains. The measurement ID is edited in Sanity
+// (`siteSettings.analytics.googleAnalyticsId`) — a runtime value the build-time
+// CSP can't read — so GA's hosts are allowed unconditionally. Harmless when GA
+// is off (no script is emitted); the alternative would be a runtime CSP.
+const gaScriptSrc = " https://*.googletagmanager.com";
+const gaConnectSrc =
+  " https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com";
 
 const csp = [
   `default-src 'self'`,
@@ -37,6 +36,8 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // Workspace packages consumed as source (no build step) — Next transpiles them.
+  transpilePackages: ["@indiecrafts/config", "@indiecrafts/sanity", "@indiecrafts/utils", "@indiecrafts/ui", "@indiecrafts/ui-components", "@indiecrafts/ui-tokens", "@indiecrafts/i18n", "@indiecrafts/blog"],
   reactStrictMode: true,
   poweredByHeader: false,
   typescript: { ignoreBuildErrors: false },
@@ -51,6 +52,11 @@ const nextConfig: NextConfig = {
     // 1 year — once next/image hashes an asset's source it's immutable, so
     // cache aggressively. Default is 60s which forces unnecessary revalidation.
     minimumCacheTTL: 31536000,
+    // Every `next/image` src is rewritten to a CDN-sized source (Sanity +
+    // Unsplash resize at the edge) instead of fetching the full-res original
+    // through Next's own optimizer. See `src/lib/sanity-image-loader.ts` →
+    // `@indiecrafts/sanity/image`. Rule: `method/apps/web/rules/sanity-images.md`.
+    loaderFile: "./src/lib/sanity-image-loader.ts",
   },
   // Auto-memoize components and hooks. Stable in Next 16 — top-level flag.
   // Prod-only: the React Compiler's memoization pass adds real per-file compile

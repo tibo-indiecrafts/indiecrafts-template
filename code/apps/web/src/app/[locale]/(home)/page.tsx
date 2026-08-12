@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { features, isPageVisible, pages } from "@/config";
-import type { Locale } from "@/config";
+import { features, isPageVisible, pages } from "@indiecrafts/config";
+import type { Locale } from "@indiecrafts/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
@@ -13,9 +13,10 @@ import { Testimonials } from "@/user-interface/homepage/sections/Testimonials";
 import { FeaturedArticles } from "@/user-interface/homepage/sections/FeaturedArticles";
 import { IconShowcase } from "@/user-interface/homepage/sections/IconShowcase";
 import { MorphiconsShowcase } from "@/user-interface/homepage/sections/MorphiconsShowcase";
-import { sanityFetchLive } from "@/sanity/live";
-import { featuredPostsQuery } from "@/features/blog/sanity/queries";
-import type { PostListItem } from "@/features/blog/sanity/types";
+import { BlocksShowcase } from "@/user-interface/homepage/sections/BlocksShowcase";
+import { sanityFetchLive } from "@indiecrafts/sanity/live";
+import { featuredPostsQuery } from "@indiecrafts/blog/sanity/queries";
+import type { PostListItem } from "@indiecrafts/blog/sanity/types";
 
 /**
  * Production home page. Section components live in `src/user-interface/sections/`
@@ -75,6 +76,8 @@ export default async function HomePage({ params }: Props) {
       <IconShowcase id="home-icons" namespace="pages.home.blocks.icons" />
 
       <MorphiconsShowcase id="home-morphicons" namespace="pages.home.blocks.morphicons" />
+
+      <BlocksShowcase id="home-blocks" namespace="pages.home.blocks.blocks" />
 
       <Cta type="cta" id="home-cta" namespace="pages.home.blocks.cta" />
 

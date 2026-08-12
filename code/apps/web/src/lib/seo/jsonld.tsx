@@ -9,12 +9,12 @@
  * - `<JsonLdScript>` renders the `<script type="application/ld+json">` tag.
  */
 
-import type { PageConfig } from "@/config";
-import { features, seoDefaults, site } from "@/config";
+import type { PageConfig } from "@indiecrafts/config";
+import { features, seoDefaults, site } from "@indiecrafts/config";
 import { getTranslations } from "next-intl/server";
 import { getStaticPathname } from "@/i18n/routing";
-import type { Locale } from "@/config";
-import { getSiteSeo } from "@/lib/seo/site-seo";
+import type { Locale } from "@indiecrafts/config";
+import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { getFaqItems } from "@/lib/faq";
 import { buildFAQPageSchema, buildGlobalSchemas } from "./jsonld-factories";
 import { buildWebPageSchema, type SchemaObject } from "./jsonld-core";
@@ -47,9 +47,9 @@ export async function PageSchemas({
   const t = await getTranslations({ locale });
   // SEO copy — Sanity only. WebPage `name` is required, so fall back to the
   // brand name (identity, not editorial copy) when the locale has no entry.
-  const siteSeo = await getSiteSeo(locale);
+  const [siteSeo, settings] = await Promise.all([getSiteSeo(locale), getSiteSettings()]);
   const pageSeo = siteSeo.pageSeo.get(page.id);
-  const title = pageSeo?.title ?? site.name;
+  const title = pageSeo?.title ?? settings.siteName ?? DEFAULT_SITE_NAME;
   const description = pageSeo?.description;
   const ogImage = pageSeo?.ogImage ?? siteSeo.ogImage;
 

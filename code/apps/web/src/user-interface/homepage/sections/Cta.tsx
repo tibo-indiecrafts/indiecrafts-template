@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Mail, SendHorizonal } from "lucide-react";
-import { Button } from "@/user-interface/ui/button";
+import { Button } from "@indiecrafts/ui/button";
 
 export type CtaBlock = {
   type: "cta";

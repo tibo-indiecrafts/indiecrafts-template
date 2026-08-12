@@ -1,9 +1,9 @@
 import { defineField, defineType } from "sanity";
-import { pages } from "@/config";
+import { pages } from "@indiecrafts/config";
 
 /**
  * Per-page SEO override — one entry per static route in the `pages` map
- * (`@/config`). Lives in the `pageSeo[]` array of the per-locale `siteMeta`
+ * (`@indiecrafts/config`). Lives in the `pageSeo[]` array of the per-locale `siteMeta`
  * singleton, so an editor controls each page's `<title>` / description /
  * keywords / share card **per language** from the Studio.
  *

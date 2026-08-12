@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { sanityFetchLive } from "@/sanity/live";
+import { sanityFetchLive } from "@indiecrafts/sanity/live";
 
 /**
  * Resolve a blog detail slug into its counterpart in another locale, using the

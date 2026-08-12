@@ -11,7 +11,7 @@
  */
 
 import { notFound } from "next/navigation";
-import { features } from "@/config";
+import { features } from "@indiecrafts/config";
 import { Studio } from "@/sanity/Studio";
 
 export const dynamic = "force-static";

@@ -1,0 +1,37 @@
+# Per-app deploy manifest (this app owns its deploy, like its CLAUDE.md/DESIGN.md).
+# Netlify reads it from the site's PACKAGE DIRECTORY — set that to `code/apps/web`
+# in the Netlify UI, and leave BASE DIRECTORY unset so install + build still run
+# from the repo root (pnpm workspaces install at root). Paths below stay
+# root-relative regardless of this file's location (Netlify resolves them against
+# the base = repo root). Deploy elsewhere (Vercel/CF): install at root, build
+# `pnpm build`, output `code/apps/web/.next`. Shared infra (DNS, IaC, CI) → code/infra.
+
+# Netlify build config.
+# The Next.js runtime is auto-detected — `@netlify/plugin-nextjs` is installed
+# implicitly. This file only pins what we want explicit.
+
+[build]
+  command = "pnpm build"
+  publish = "code/apps/web/.next"
+
+[build.environment]
+  # Match the Node version we develop against. Bump when Next.js bumps theirs.
+  NODE_VERSION = "22"
+  # pnpm is detected via packageManager in package.json; this is a fallback.
+  PNPM_VERSION = "10"
+
+# Netlify Forms — when a route renders <form data-netlify="true" name="...">,
+# Netlify's build pipeline picks the form up and serves submissions at
+# `/.netlify/forms/<name>` automatically. No API route needed. View
+# submissions: Netlify dashboard → Forms.
+#
+# To wire client-side validation, redirect to a "thank you" route after
+# submit via `action="/<locale>/thank-you"`.
+
+[[redirects]]
+  # robots.txt + sitemap.xml are dynamic route handlers in /app; Netlify's
+  # default redirect resolution serves them fine, listed here for clarity.
+  from = "/robots.txt"
+  to = "/robots.txt"
+  status = 200
+  force = false

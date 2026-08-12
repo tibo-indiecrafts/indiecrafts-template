@@ -52,6 +52,8 @@ CLAUDE.local.md
 # dev framework (in-repo) — throwaway thinking + gstack state
 work/scratch/
 .gstack/
+**/_gstack
+.context/
 
 # vercel
 .vercel
@@ -61,9 +63,13 @@ work/scratch/
 next-env.d.ts
 
 
-# VitePress build output (code/docs + method sites)
+# VitePress build output (docs + method + work sites)
 **/.vitepress/dist/
 **/.vitepress/cache/
+# generated: area changelogs copied into the docs site at build (sources under code/**/CHANGELOG.md)
+docs/apps/web/changelog.md
+docs/packages/changelog.md
+docs/modules/changelog.md
 
 # turbo cache
 .turbo/

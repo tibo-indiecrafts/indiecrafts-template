@@ -8,10 +8,10 @@
  *   …                → one route per registered locale (auto)
  *
  * Content is auto-built from the per-locale Sanity `siteMeta.<locale>` singleton:
- *   - H1            = site.name (brand)
+ *   - H1            = the site name (Sanity `siteSettings.siteName`)
  *   - blockquote    = `llms.summary`, else site `tagline`
  *   - paragraph     = `llms.paragraph`, else site `description`
- *   - "## Pages"    = every entry in `ROUTES` (= the `pages` map in `@/config`),
+ *   - "## Pages"    = every entry in `ROUTES` (= the `pages` map in `@indiecrafts/config`),
  *                     pulling each page's title + description from
  *                     `siteMeta.<locale>.pageSeo[pageId]`
  *   - "## Resources"= external links from `siteMeta.<locale>.llms.resources`
@@ -19,13 +19,18 @@
  * SEO copy is Sanity-only (no config/messages fallback) — see `getSiteSeo`.
  */
 
-import type { Locale, PageConfig } from "@/config";
-import { features, site } from "@/config";
+import type { Locale, PageConfig } from "@indiecrafts/config";
+import { features, site } from "@indiecrafts/config";
 import { getStaticPathname } from "@/i18n/routing";
 import { ROUTES } from "@/app/routes";
 import { isLlmsPage } from "@/lib/seo/page-markdown";
-import { getSiteSeo, type SiteSeo } from "@/lib/seo/site-seo";
-import { getBlogLlmsLines, getTaxonomyLlmsLines } from "@/features/blog/lib/llms";
+import {
+  DEFAULT_SITE_NAME,
+  getSiteSeo,
+  getSiteSettings,
+  type SiteSeo,
+} from "@/lib/seo/site-seo";
+import { getBlogLlmsLines, getTaxonomyLlmsLines } from "@indiecrafts/blog/lib/llms";
 
 export async function GET(
   _request: Request,
@@ -34,14 +39,15 @@ export async function GET(
   if (!features.llms.index) return new Response("Not found", { status: 404 });
 
   const { locale } = (await params) as { locale: Locale };
-  const siteSeo = await getSiteSeo(locale);
+  const [siteSeo, settings] = await Promise.all([getSiteSeo(locale), getSiteSettings()]);
+  const siteName = settings.siteName || DEFAULT_SITE_NAME;
 
   // llms summary/paragraph, else the site tagline/description — all Sanity.
   const tagline = siteSeo.llms.summary ?? siteSeo.tagline;
   const description = siteSeo.llms.paragraph ?? siteSeo.description;
 
   const header = [
-    `# ${site.name}`,
+    `# ${siteName}`,
     ``,
     ...(tagline ? [`> ${tagline}`, ``] : []),
     ...(description ? [description, ``] : []),

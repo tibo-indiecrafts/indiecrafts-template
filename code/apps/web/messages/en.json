@@ -11,8 +11,15 @@
     "contact": "Contact",
     "company": "Company",
     "legal": "Legal",
+    "legalNotice": "Legal notice",
     "privacy": "Privacy",
-    "terms": "Terms"
+    "cookies": "Cookies",
+    "terms": "Terms",
+    "salesTerms": "Terms of sale"
+  },
+  "legal": {
+    "lastUpdated": "Last updated: {date}",
+    "empty": "This page hasn't been published yet."
   },
   "cta": {
     "learnMore": "Learn more"
@@ -37,16 +44,32 @@
     "title": "We respect your privacy",
     "body": "We use a small number of cookies to make the site work and (with your consent) to understand how it's used.",
     "learnMore": "Learn more",
-    "accept": "Accept",
-    "reject": "Reject"
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "customize": "Customize",
+    "save": "Save choices",
+    "preferencesTitle": "Cookie preferences",
+    "preferencesBody": "Choose which cookies you allow. Necessary cookies are always on.",
+    "manage": "Manage cookie preferences",
+    "declarationTitle": "Cookies we use",
+    "party": {
+      "first": "First-party",
+      "third": "Third-party"
+    }
   },
   "typography": {
     "titleCase": "title",
     "headingCase": "sentence",
     "adjectivePlacement": "before",
     "quoteStyle": {
-      "primary": ["“", "”"],
-      "secondary": ["‘", "’"]
+      "primary": [
+        "“",
+        "”"
+      ],
+      "secondary": [
+        "‘",
+        "’"
+      ]
     },
     "apostrophe": "’",
     "ellipsis": "…",
@@ -87,29 +110,6 @@
       "title": "We'll be back shortly",
       "body": "The site is briefly offline for planned updates. It'll be back to normal soon — thanks for waiting.",
       "contact": "Need to reach us in the meantime?"
-    },
-    "legal": {
-      "title": "Legal",
-      "description": "Privacy policy, cookie usage, and terms of service.",
-      "lastUpdated": "Last updated: 2026",
-      "sections": {
-        "privacy": {
-          "heading": "Privacy",
-          "body": "We collect only the data needed to provide and improve our service. We do not sell your personal information. Where analytics are enabled, you can refuse them via the cookie banner."
-        },
-        "cookies": {
-          "heading": "Cookies",
-          "body": "Strictly necessary cookies (auth, theme, locale) are used without consent — they are essential for the site to function. Analytics cookies are only set after you accept them in the banner."
-        },
-        "terms": {
-          "heading": "Terms of service",
-          "body": "By using this site you agree to use it for lawful purposes only. The content is provided as-is, without warranty. We may update these terms at any time."
-        },
-        "contact": {
-          "heading": "Contact",
-          "body": "Questions about this page? Email hello@example.com and we'll respond within five business days."
-        }
-      }
     },
     "blog": {
       "title": "Blog",
@@ -338,6 +338,11 @@
             "bell": "Notifications on / off",
             "copy": "Copy / copied"
           }
+        },
+        "blocks": {
+          "eyebrow": "Page builder",
+          "title": "The same blocks, everywhere",
+          "body": "Marketing pages and blog posts render one shared set of components — author in Sanity, and it looks identical wherever it lands."
         }
       }
     }

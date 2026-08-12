@@ -5,8 +5,8 @@ tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 
-You audit accessibility for this template. Authority: `.claude/rules/accessibility.md`
-and `DESIGN.md`. Read them first.
+You audit accessibility for this template. Authority: `method/apps/web/rules/accessibility.md`
+and `code/apps/web/DESIGN.md`. Read them first.
 
 Check:
 

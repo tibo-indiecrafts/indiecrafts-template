@@ -365,12 +365,14 @@ const buildSiteMeta = () => [
         "Notes on shipping client work: tooling, config-first architecture, and the trade-offs that keep sites lean.",
         "Next.js, Sanity, freelance, DX",
       ),
-      pgSeo(
-        "legal",
-        "Legal — privacy, cookies & terms",
-        "How this site handles your data, cookies, and the terms of use.",
-        "privacy, cookies, terms",
-      ),
+      pgSeo("author", "Authors", "Meet the writers and contributors behind every article.", "authors, contributors, writers"),
+      pgSeo("category", "Categories", "Browse articles by topic.", "categories, topics"),
+      pgSeo("tag", "Tags", "Browse articles by tag.", "tags, topics"),
+      pgSeo("legal-notice", "Legal notice", "Publisher, ownership, and hosting information for this site.", "legal notice, imprint, publisher"),
+      pgSeo("privacy", "Privacy policy", "How we collect, use, and protect your personal data (GDPR).", "privacy policy, GDPR, personal data"),
+      pgSeo("cookies", "Cookie policy", "The cookies this site uses and how to manage your consent.", "cookie policy, consent, tracking"),
+      pgSeo("terms", "Terms of use", "The terms governing your use of this website.", "terms of use, conditions"),
+      pgSeo("terms-of-sale", "Terms of sale", "The terms that apply to purchases made on this site.", "terms of sale, purchases"),
     ],
   },
   {
@@ -418,12 +420,14 @@ const buildSiteMeta = () => [
         "Notes sur la livraison de projets clients : outillage, architecture config-first, et les arbitrages qui gardent les sites légers.",
         "Next.js, Sanity, freelance, DX",
       ),
-      pgSeo(
-        "legal",
-        "Mentions légales — confidentialité & CGU",
-        "Comment ce site gère vos données, les cookies et les conditions d'utilisation.",
-        "confidentialité, cookies, CGU",
-      ),
+      pgSeo("author", "Auteurs", "Découvrez les auteurs et contributeurs derrière chaque article.", "auteurs, contributeurs"),
+      pgSeo("category", "Catégories", "Parcourez les articles par thème.", "catégories, thèmes"),
+      pgSeo("tag", "Tags", "Parcourez les articles par tag.", "tags, thèmes"),
+      pgSeo("legal-notice", "Mentions légales", "Informations sur l'éditeur, le responsable et l'hébergement du site.", "mentions légales, éditeur, hébergeur"),
+      pgSeo("privacy", "Politique de confidentialité", "Comment nous collectons, utilisons et protégeons vos données personnelles (RGPD).", "confidentialité, RGPD, données personnelles"),
+      pgSeo("cookies", "Politique de cookies", "Les cookies utilisés par ce site et comment gérer votre consentement.", "cookies, consentement, suivi"),
+      pgSeo("terms", "Conditions générales d'utilisation", "Les conditions régissant l'utilisation de ce site.", "CGU, conditions d'utilisation"),
+      pgSeo("terms-of-sale", "Conditions générales de vente", "Les conditions applicables aux achats effectués sur ce site.", "CGV, achats, vente"),
     ],
   },
 ];
@@ -434,6 +438,8 @@ const buildSiteMeta = () => [
 const buildSiteSettings = () => ({
   _id: "siteSettings",
   _type: "siteSettings",
+  // Brand/site name — drives <title>, OG siteName, manifest, JSON-LD WebSite.name.
+  siteName: "indiecrafts.dev",
   // Logo + favicon/app icon (no dark logo in the demo — the mark works on both).
   logo: img("logo"),
   icon: img("icon"),
@@ -446,6 +452,18 @@ const buildSiteSettings = () => ({
   businessType: "Organization",
   company: "Indiecrafts",
   alternateName: "Indie Crafts",
+  // Demo search-engine verification codes (replace with the real ones from
+  // Google Search Console / Bing Webmaster Tools). Emitted as <meta> by the layout.
+  verification: {
+    google: "google-site-verification-DEMO1234567890",
+    bing: "DEMO-BING-0123456789ABCDEF",
+  },
+  // Demo analytics + cookie consent. `googleAnalyticsId` is a placeholder GA4 id;
+  // `requireCookieConsent` shows the banner + gates GA until the visitor accepts.
+  analytics: {
+    googleAnalyticsId: "G-DEMO1234567",
+    requireCookieConsent: true,
+  },
   globalSchemas: [
     {
       _key: key("g"),
@@ -886,6 +904,13 @@ const buildTranslationMeta = () => [
   ...translationMeta("quote", "quote", ["lovelace", "hopper"]),
   ...translationMeta("author", "author", ["ada", "grace", "tim"]),
   ...translationMeta("person", "person", ["maya", "luis", "yuki"]),
+  ...translationMeta("legalPage", "legal", [
+    "mentions-legales",
+    "confidentialite",
+    "cookies",
+    "cgu",
+    "cgv",
+  ]),
 ];
 
 // ─── Inline content modules — interspersed inside the body PortableText.
@@ -1714,6 +1739,406 @@ async function cleanupLegacy() {
   );
 }
 
+// ─── Legal pages ───────────────────────────────────────────────
+// Client-editable boilerplate for the five legal pages. STARTER TEMPLATES only
+// — every doc opens with a warning to have a lawyer review it and to replace the
+// [bracketed] placeholders. Structure follows the LCEN (mentions légales) + RGPD
+// (confidentialité) + ePrivacy (cookies) requirements.
+const warnFr =
+  "⚠️ Modèle de départ à faire valider par un juriste. Remplacez les mentions entre [crochets] par vos informations.";
+const warnEn =
+  "⚠️ Starter template — have it reviewed by a lawyer. Replace the [bracketed] fields with your own details.";
+
+const LEGAL = {
+  "mentions-legales": {
+    en: {
+      title: "Legal notice",
+      body: [
+        p(warnEn),
+        h(2, "Publisher"),
+        p("[Company or individual name], [legal status], share capital €[amount]. Registered office: [address]. Business ID (SIRET): [number]. Trade register (RCS): [city + number]. VAT: [number]. Contact: [email] — [phone]."),
+        h(2, "Publication director"),
+        p("[Name of the publication director]."),
+        h(2, "Host"),
+        p("This site is hosted by [host name], [address], [phone]."),
+        h(2, "Intellectual property"),
+        p("All content on this site (text, images, logos) is protected by copyright. Any reproduction without prior written permission is prohibited."),
+      ],
+    },
+    fr: {
+      title: "Mentions légales",
+      body: [
+        p(warnFr),
+        h(2, "Éditeur du site"),
+        p("[Nom ou dénomination sociale], [statut juridique] au capital de [montant] €. Siège social : [adresse]. SIRET : [numéro]. RCS : [ville et numéro]. N° TVA intracommunautaire : [numéro]. Contact : [email] — [téléphone]."),
+        h(2, "Directeur de la publication"),
+        p("[Nom du directeur de la publication]."),
+        h(2, "Hébergeur"),
+        p("Ce site est hébergé par [nom de l'hébergeur], [adresse], [téléphone]."),
+        h(2, "Propriété intellectuelle"),
+        p("L'ensemble des contenus de ce site (textes, images, logos) est protégé par le droit d'auteur. Toute reproduction sans autorisation écrite préalable est interdite."),
+      ],
+    },
+  },
+  confidentialite: {
+    en: {
+      title: "Privacy policy",
+      body: [
+        p(warnEn),
+        h(2, "Data controller"),
+        p("The controller for your personal data is [name], [address], [email]."),
+        h(2, "Data we collect"),
+        p("[e.g. name, email, and message when you use the contact form; anonymised usage data if analytics are enabled]."),
+        h(2, "Why we use it (purposes)"),
+        p("[e.g. to answer your enquiries, run the service, and measure audience]."),
+        h(2, "Legal basis"),
+        p("[Consent for analytics; performance of a contract / legitimate interest for enquiries]."),
+        h(2, "How long we keep it"),
+        p("[e.g. enquiries kept for 3 years; analytics for 13 months]."),
+        h(2, "Who receives it"),
+        p("[Your processors — hosting, email, analytics — and any transfers outside the EU with the appropriate safeguards]."),
+        h(2, "Your rights"),
+        p("You may request access, rectification, erasure, portability, restriction, or object to processing. Contact [email]. You may also lodge a complaint with the CNIL (cnil.fr)."),
+        h(2, "Security"),
+        p("We take reasonable technical and organisational measures to protect your data."),
+      ],
+    },
+    fr: {
+      title: "Politique de confidentialité",
+      body: [
+        p(warnFr),
+        h(2, "Responsable du traitement"),
+        p("Le responsable du traitement de vos données est [nom], [adresse], [email]."),
+        h(2, "Données que nous collectons"),
+        p("[ex. nom, email et message lors de l'utilisation du formulaire de contact ; données d'usage anonymisées si la mesure d'audience est activée]."),
+        h(2, "Finalités"),
+        p("[ex. répondre à vos demandes, fournir le service, mesurer l'audience]."),
+        h(2, "Base légale"),
+        p("[Consentement pour la mesure d'audience ; exécution d'un contrat / intérêt légitime pour les demandes]."),
+        h(2, "Durée de conservation"),
+        p("[ex. demandes conservées 3 ans ; mesure d'audience 13 mois]."),
+        h(2, "Destinataires et sous-traitants"),
+        p("[Vos sous-traitants — hébergement, email, mesure d'audience — et tout transfert hors UE avec les garanties appropriées]."),
+        h(2, "Vos droits"),
+        p("Vous disposez d'un droit d'accès, de rectification, d'effacement, de portabilité, de limitation et d'opposition. Écrivez à [email]. Vous pouvez aussi introduire une réclamation auprès de la CNIL (cnil.fr)."),
+        h(2, "Sécurité"),
+        p("Nous mettons en œuvre des mesures techniques et organisationnelles raisonnables pour protéger vos données."),
+      ],
+    },
+  },
+  cookies: {
+    en: {
+      title: "Cookie policy",
+      body: [
+        p(warnEn),
+        h(2, "What is a cookie?"),
+        p("A cookie is a small file stored on your device when you visit a website."),
+        h(2, "Cookies we use"),
+        p("Strictly necessary cookies (theme, language, consent) are used without consent — the site needs them to work. Audience-measurement cookies are only set after you accept them."),
+        h(2, "Your consent"),
+        p("The cookie banner lets you accept or refuse non-essential cookies. You can change your choice at any time."),
+        h(2, "Managing cookies"),
+        p("You can also delete or block cookies in your browser settings."),
+      ],
+    },
+    fr: {
+      title: "Politique de cookies",
+      body: [
+        p(warnFr),
+        h(2, "Qu'est-ce qu'un cookie ?"),
+        p("Un cookie est un petit fichier déposé sur votre appareil lors de la visite d'un site web."),
+        h(2, "Cookies que nous utilisons"),
+        p("Les cookies strictement nécessaires (thème, langue, consentement) sont utilisés sans consentement — le site en a besoin pour fonctionner. Les cookies de mesure d'audience ne sont déposés qu'après votre acceptation."),
+        h(2, "Votre consentement"),
+        p("La bannière de cookies vous permet d'accepter ou de refuser les cookies non essentiels. Vous pouvez modifier votre choix à tout moment."),
+        h(2, "Gérer les cookies"),
+        p("Vous pouvez également supprimer ou bloquer les cookies dans les réglages de votre navigateur."),
+      ],
+    },
+  },
+  cgu: {
+    en: {
+      title: "Terms of use",
+      body: [
+        p(warnEn),
+        h(2, "Purpose"),
+        p("These terms govern the use of this website."),
+        h(2, "Access to the service"),
+        p("The site is accessible free of charge. [Owner] may interrupt access for maintenance without notice."),
+        h(2, "Intellectual property"),
+        p("The site and its content are protected. No reproduction without permission."),
+        h(2, "Liability"),
+        p("The content is provided as-is, without warranty. [Owner] is not liable for indirect damage arising from use of the site."),
+        h(2, "Personal data"),
+        p("Data processing is described in our privacy policy."),
+        h(2, "Governing law"),
+        p("These terms are governed by [French] law."),
+      ],
+    },
+    fr: {
+      title: "Conditions générales d'utilisation",
+      body: [
+        p(warnFr),
+        h(2, "Objet"),
+        p("Les présentes conditions régissent l'utilisation de ce site web."),
+        h(2, "Accès au service"),
+        p("Le site est accessible gratuitement. [Éditeur] peut interrompre l'accès pour maintenance sans préavis."),
+        h(2, "Propriété intellectuelle"),
+        p("Le site et ses contenus sont protégés. Toute reproduction est interdite sans autorisation."),
+        h(2, "Responsabilité"),
+        p("Les contenus sont fournis en l'état, sans garantie. [Éditeur] n'est pas responsable des dommages indirects liés à l'utilisation du site."),
+        h(2, "Données personnelles"),
+        p("Le traitement des données est décrit dans notre politique de confidentialité."),
+        h(2, "Droit applicable"),
+        p("Les présentes conditions sont régies par le droit [français]."),
+      ],
+    },
+  },
+  cgv: {
+    en: {
+      title: "Terms of sale",
+      body: [
+        p(warnEn),
+        h(2, "Scope"),
+        p("These terms apply to every order placed on this site."),
+        h(2, "Prices"),
+        p("Prices are shown in [currency], [including/excluding] VAT."),
+        h(2, "Order and payment"),
+        p("An order is confirmed once payment is received via [payment methods]."),
+        h(2, "Delivery / performance"),
+        p("[Delivery times, areas, or how the service is delivered]."),
+        h(2, "Right of withdrawal"),
+        p("For consumers, a 14-day right of withdrawal applies, except for the legal exceptions. [How to exercise it]."),
+        h(2, "Legal warranties"),
+        p("The legal warranty of conformity and the warranty against hidden defects apply."),
+        h(2, "Governing law and disputes"),
+        p("Governed by [French] law. In case of dispute, a consumer may use the [mediator] mediation service."),
+      ],
+    },
+    fr: {
+      title: "Conditions générales de vente",
+      body: [
+        p(warnFr),
+        h(2, "Champ d'application"),
+        p("Les présentes conditions s'appliquent à toute commande passée sur ce site."),
+        h(2, "Prix"),
+        p("Les prix sont indiqués en [devise], [TTC/HT]."),
+        h(2, "Commande et paiement"),
+        p("Une commande est confirmée après réception du paiement via [moyens de paiement]."),
+        h(2, "Livraison / exécution"),
+        p("[Délais, zones de livraison, ou modalités d'exécution du service]."),
+        h(2, "Droit de rétractation"),
+        p("Pour les consommateurs, un droit de rétractation de 14 jours s'applique, sauf exceptions légales. [Modalités d'exercice]."),
+        h(2, "Garanties légales"),
+        p("La garantie légale de conformité et la garantie des vices cachés s'appliquent."),
+        h(2, "Droit applicable et litiges"),
+        p("Régies par le droit [français]. En cas de litige, le consommateur peut recourir au médiateur [nom du médiateur]."),
+      ],
+    },
+  },
+};
+
+const buildLegalPages = () =>
+  Object.entries(LEGAL).flatMap(([pageKey, byLocale]) =>
+    ["en", "fr"].map((lang) => ({
+      _id: `legal.${lang}.${pageKey}`,
+      _type: "legalPage",
+      language: lang,
+      pageKey,
+      title: byLocale[lang].title,
+      lastUpdated: "2026-01-01",
+      body: byLocale[lang].body,
+    })),
+  );
+
+// Navigation singleton — the SOLE runtime source for the header menu + footer
+// columns (no config fallback), read by `getNavigation` (src/lib/navigation.ts).
+// One shared structure with per-language labels (`localeString`). Internal links
+// target a route KEY from the `pages` map; the resolver skips flag-disabled
+// routes (e.g. CGV when `features.legal.sales` is off) — no dead links.
+const navLabel = (en, fr) => ({ _type: "localeString", en, fr });
+const navInternal = (route, en, fr) => ({
+  _key: key("nav"),
+  _type: "navItem",
+  label: navLabel(en, fr),
+  linkType: "internal",
+  route,
+  newTab: false,
+});
+// Rich external link for a header dropdown — carries an icon (free-text Reicon
+// name) + a per-language description.
+const navExternal = (url, en, fr, icon, descEn, descFr) => ({
+  _key: key("nav"),
+  _type: "navItem",
+  label: navLabel(en, fr),
+  linkType: "external",
+  external: url,
+  newTab: true,
+  icon,
+  description: navLabel(descEn, descFr),
+});
+// Header dropdown group — a label + a submenu of links (its own link is ignored).
+const navGroup = (en, fr, children) => ({
+  _key: key("nav"),
+  _type: "navItem",
+  label: navLabel(en, fr),
+  linkType: "internal",
+  children,
+});
+
+const buildNavigation = () => ({
+  _id: "navigation",
+  _type: "navigation",
+  header: [
+    navInternal("/", "Home", "Accueil"),
+    navInternal("/blog", "Blog", "Blog"),
+    // Demo dropdown with two rich links (icon + description).
+    navGroup("Resources", "Ressources", [
+      navExternal(
+        "https://indiecrafts.dev",
+        "Get started",
+        "Commencer",
+        "Rocket",
+        "Fork the template and ship in a weekend.",
+        "Forkez le template et livrez en un week-end.",
+      ),
+      navExternal(
+        "https://indiecrafts.dev",
+        "Security",
+        "Sécurité",
+        "ShieldCheck",
+        "How the template handles data and headers.",
+        "Comment le template gère les données et les en-têtes.",
+      ),
+    ]),
+  ],
+  footerColumns: [
+    {
+      _key: key("col"),
+      _type: "footerColumn",
+      title: navLabel("Legal", "Légal"),
+      links: [
+        navInternal("/legal-notice", "Legal notice", "Mentions légales"),
+        navInternal("/privacy-policy", "Privacy", "Confidentialité"),
+        navInternal("/cookie-policy", "Cookies", "Cookies"),
+        navInternal("/terms", "Terms", "CGU"),
+        navInternal("/terms-of-sale", "Terms of sale", "CGV"),
+      ],
+    },
+  ],
+});
+
+// Cookie-consent singleton — banner copy + consent categories (with their Google
+// Consent-Mode signal mapping) + the cookie inventory shown on the policy page.
+// Read by `getCookieConsent` (src/lib/cookies.ts). `navLabel` builds localeStrings.
+const buildCookieConsent = () => ({
+  _id: "cookieConsent",
+  _type: "cookieConsent",
+  version: "1",
+  banner: {
+    title: navLabel("We respect your privacy", "Nous respectons votre vie privée"),
+    body: navLabel(
+      "We use cookies to run the site and, with your consent, to measure and improve it.",
+      "Nous utilisons des cookies pour faire fonctionner le site et, avec votre accord, le mesurer et l'améliorer.",
+    ),
+  },
+  categories: [
+    {
+      _key: key("cat"),
+      _type: "cookieCategory",
+      key: "necessary",
+      title: navLabel("Necessary", "Nécessaires"),
+      description: navLabel(
+        "Required for the site to work (language, consent). Always on.",
+        "Nécessaires au fonctionnement du site (langue, consentement). Toujours actifs.",
+      ),
+      required: true,
+      consentSignals: [],
+    },
+    {
+      _key: key("cat"),
+      _type: "cookieCategory",
+      key: "analytics",
+      title: navLabel("Analytics", "Mesure d'audience"),
+      description: navLabel(
+        "Help us understand how the site is used, anonymously.",
+        "Nous aident à comprendre l'usage du site, de façon anonyme.",
+      ),
+      required: false,
+      consentSignals: ["analytics_storage"],
+    },
+    {
+      _key: key("cat"),
+      _type: "cookieCategory",
+      key: "marketing",
+      title: navLabel("Marketing", "Marketing"),
+      description: navLabel(
+        "Used to measure ad campaigns and show relevant ads.",
+        "Servent à mesurer les campagnes publicitaires et à afficher des publicités pertinentes.",
+      ),
+      required: false,
+      consentSignals: ["ad_storage", "ad_user_data", "ad_personalization"],
+    },
+    {
+      _key: key("cat"),
+      _type: "cookieCategory",
+      key: "preferences",
+      title: navLabel("Preferences", "Préférences"),
+      description: navLabel(
+        "Remember choices like your theme or embedded content.",
+        "Mémorisent des choix comme votre thème ou les contenus intégrés.",
+      ),
+      required: false,
+      consentSignals: ["functionality_storage", "personalization_storage"],
+    },
+  ],
+  cookies: [
+    {
+      _key: key("ck"),
+      _type: "cookieEntry",
+      name: "NEXT_LOCALE",
+      provider: "Indiecrafts",
+      categoryKey: "necessary",
+      purpose: navLabel("Remembers your chosen language.", "Mémorise la langue choisie."),
+      duration: "1 year",
+      party: "first",
+    },
+    {
+      _key: key("ck"),
+      _type: "cookieEntry",
+      name: "_ga",
+      provider: "Google Analytics",
+      categoryKey: "analytics",
+      purpose: navLabel(
+        "Distinguishes anonymous visitors.",
+        "Distingue les visiteurs anonymes.",
+      ),
+      duration: "2 years",
+      party: "third",
+    },
+    {
+      _key: key("ck"),
+      _type: "cookieEntry",
+      name: "_gid",
+      provider: "Google Analytics",
+      categoryKey: "analytics",
+      purpose: navLabel("Distinguishes visitors over 24 hours.", "Distingue les visiteurs sur 24 h."),
+      duration: "24 hours",
+      party: "third",
+    },
+    {
+      _key: key("ck"),
+      _type: "cookieEntry",
+      name: "_fbp",
+      provider: "Meta",
+      categoryKey: "marketing",
+      purpose: navLabel("Measures ad campaigns from Meta.", "Mesure les campagnes publicitaires Meta."),
+      duration: "3 months",
+      party: "third",
+    },
+  ],
+});
+
 async function run() {
   console.log(`Seeding into ${projectId}/${dataset}…`);
   console.log("");
@@ -1735,6 +2160,9 @@ async function run() {
     ...buildTranslationMeta(),
     ...buildSiteMeta(),
     buildSiteSettings(),
+    ...buildLegalPages(),
+    buildNavigation(),
+    buildCookieConsent(),
     blog,
   ];
 

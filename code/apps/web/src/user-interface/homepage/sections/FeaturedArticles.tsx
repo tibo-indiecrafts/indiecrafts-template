@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import type { Locale } from "@/config";
-import { parseVideoEmbed } from "@/lib/video-embed";
-import { formatPostDate } from "@/lib/format-date";
-import type { PostListItem } from "@/features/blog/sanity/types";
-import { PlayBadge } from "@/features/blog/user-interface/shared/components/PlayBadge";
+import type { Locale } from "@indiecrafts/config";
+import { parseVideoEmbed } from "@indiecrafts/utils";
+import { formatPostDate } from "@indiecrafts/utils";
+import type { PostListItem } from "@indiecrafts/blog/sanity/types";
+import { PlayBadge } from "@indiecrafts/blog/user-interface/shared/components/PlayBadge";
 
 /**
  * Homepage "editor's desk" — a curated strip of featured articles, laid out

@@ -6,7 +6,7 @@
 // guarantees the 500 page never depends on the thing that may have broken.
 import { useEffect } from "react";
 import { Error as ErrorPage } from "@/user-interface/error/components/Error";
-import { logger } from "@/lib/logger";
+import { logger } from "@indiecrafts/utils";
 
 type Props = { error: Error & { digest?: string }; reset: () => void };
 

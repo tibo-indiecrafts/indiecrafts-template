@@ -1,4 +1,4 @@
-import "../globals.css";
+import "@indiecrafts/ui-tokens/globals.css";
 import { fontClassName, fontStyle } from "@/lib/fonts";
 import { maintenanceLocale } from "./locale";
 

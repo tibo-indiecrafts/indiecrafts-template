@@ -1,11 +1,10 @@
-import "../globals.css";
+import "@indiecrafts/ui-tokens/globals.css";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 import {
-  analytics,
   features,
   localeDir,
   localePrefix,
@@ -13,7 +12,7 @@ import {
   site,
   theme,
   type Locale,
-} from "@/config";
+} from "@indiecrafts/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
 import { CookieBanner } from "@/user-interface/shared/layout/CookieBanner";
 import { routing } from "@/i18n/routing";
@@ -21,8 +20,9 @@ import { ThemeProvider } from "@/user-interface/shared/layout/ThemeProvider";
 import { JsonLdScript } from "@/lib/seo/jsonld";
 import { buildSiteSchemas } from "@/lib/seo/jsonld-core";
 import { buildGlobalSchemas } from "@/lib/seo/jsonld-factories";
-import { getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
-import { SanityLive } from "@/sanity/live";
+import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
+import { getCookieConsent } from "@/lib/cookies";
+import { SanityLive } from "@indiecrafts/sanity/live";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -46,6 +46,11 @@ export async function generateMetadata({
   const [siteSeo, settings] = await Promise.all([getSiteSeo(locale), getSiteSettings()]);
   const siteDescription = siteSeo.description;
   const verification = settings.verification;
+  // Site name from Sanity (title template, applicationName, OG siteName). Falls
+  // back to the code default so `<title>` is never blank. Default title layers
+  // the locale's Sanity tagline when present.
+  const siteName = settings.siteName || DEFAULT_SITE_NAME;
+  const defaultTitle = siteSeo.tagline ? `${siteName} — ${siteSeo.tagline}` : siteName;
   // Favicon + apple-touch icon from Sanity (`siteSettings.icon`). Omitted when
   // unset — no static fallback (Sanity is the sole source). Square crop.
   const iconUrl = settings.brand.icon
@@ -64,16 +69,16 @@ export async function generateMetadata({
       : seoDefaults.robots;
   return {
     metadataBase: new URL(site.url),
-    title: { default: seoDefaults.defaultTitle, template: seoDefaults.titleTemplate },
+    title: { default: defaultTitle, template: `%s · ${siteName}` },
     description: siteDescription,
-    applicationName: site.name,
+    applicationName: siteName,
     openGraph: {
       type: seoDefaults.openGraph.type,
-      siteName: seoDefaults.openGraph.siteName,
+      siteName,
       images: ogImages,
       url: site.url,
       locale,
-      title: seoDefaults.defaultTitle,
+      title: defaultTitle,
       description: siteDescription,
     },
     twitter: {
@@ -108,9 +113,10 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   setRequestLocale(locale);
 
   const messages = await getMessages();
-  const [siteSeo, settings] = await Promise.all([
+  const [siteSeo, settings, cookieConsent] = await Promise.all([
     getSiteSeo(locale as Locale),
     getSiteSettings(),
+    getCookieConsent(locale as Locale),
   ]);
   const siteDescription = siteSeo.description;
 
@@ -141,23 +147,25 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
           />
         ) : null}
 
-        {/* Google Analytics — only injected when an ID is configured. */}
-        {analytics.googleAnalyticsId ? (
+        {/* Google Analytics — ID + consent are edited in Sanity
+            (`siteSettings.analytics`). Injected only when an ID is set; the
+            Consent-Mode `default: denied` preamble only when consent is required. */}
+        {settings.analytics.googleAnalyticsId ? (
           <>
             <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${analytics.googleAnalyticsId}`}
+              src={`https://www.googletagmanager.com/gtag/js?id=${settings.analytics.googleAnalyticsId}`}
               strategy="afterInteractive"
             />
             <Script id="gtag-init" strategy="afterInteractive">
               {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 ${
-  features.cookieBanner
-    ? `gtag('consent', 'default', { ad_storage: 'denied', analytics_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', wait_for_update: 500 });
+  settings.analytics.requireCookieConsent
+    ? `gtag('consent', 'default', { ad_storage: 'denied', analytics_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', functionality_storage: 'denied', personalization_storage: 'denied', wait_for_update: 500 });
 `
     : ""
 }gtag('js', new Date());
-gtag('config', '${analytics.googleAnalyticsId}');`}
+gtag('config', '${settings.analytics.googleAnalyticsId}');`}
             </Script>
           </>
         ) : null}
@@ -166,6 +174,16 @@ gtag('config', '${analytics.googleAnalyticsId}');`}
         <ThemeProvider>
           <NextIntlClientProvider messages={messages} locale={locale}>
             {children}
+            {/* Inside the intl provider — CookieBanner is a client component that
+                calls `useTranslations`, so it needs the context here. */}
+            {settings.analytics.requireCookieConsent ? (
+              <CookieBanner
+                categories={cookieConsent.categories}
+                version={cookieConsent.version}
+                title={cookieConsent.banner.title}
+                body={cookieConsent.banner.body}
+              />
+            ) : null}
           </NextIntlClientProvider>
         </ThemeProvider>
         {features.structuredData ? (
@@ -177,7 +195,6 @@ gtag('config', '${analytics.googleAnalyticsId}');`}
             )}
           />
         ) : null}
-        {features.cookieBanner ? <CookieBanner /> : null}
         {features.blog ? <SanityLive /> : null}
         <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>
       </body>

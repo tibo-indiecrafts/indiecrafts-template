@@ -10,8 +10,8 @@
  */
 
 import { cache } from "react";
-import type { Locale } from "@/config";
-import { client } from "@/sanity/client";
+import type { Locale } from "@indiecrafts/config";
+import { client } from "@indiecrafts/sanity/client";
 import { systemPagesQuery, taxonomyPagesQuery } from "@/sanity/seo-queries";
 
 export type SystemPages = {

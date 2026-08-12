@@ -4,17 +4,17 @@ import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { useSyncExternalStore } from "react";
-import { Button } from "@/user-interface/ui/button";
+import { Button } from "@indiecrafts/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@/user-interface/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+} from "@indiecrafts/ui/dropdown-menu";
+import { cn } from "@indiecrafts/utils";
 import { THEME_MODES } from "@/lib/theme";
-import type { ThemeMode } from "@/config";
+import type { ThemeMode } from "@indiecrafts/config";
 
 const subscribe = () => () => {};
 
@@ -60,7 +60,7 @@ export function ThemeToggle({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-32">
-        <DropdownMenuRadioGroup value={theme} onValueChange={(value) => setTheme(value)}>
+        <DropdownMenuRadioGroup value={theme} onValueChange={(value: string) => setTheme(value)}>
           {THEME_MODES.map((mode) => {
             const { Icon, labelKey } = MODE_META[mode];
             return (

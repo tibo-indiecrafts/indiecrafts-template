@@ -79,6 +79,7 @@ export const taxonomyPagesQuery = defineQuery(`
 
 export const siteSettingsQuery = defineQuery(`
   *[_id == "siteSettings"][0]{
+    siteName,
     "logo": logo.asset->url,
     "logoDark": logoDark.asset->url,
     "icon": icon.asset->url,
@@ -96,6 +97,7 @@ export const siteSettingsQuery = defineQuery(`
     areaServed,
     robots,
     verification,
+    analytics{ googleAnalyticsId, requireCookieConsent },
     "globalSchemas": globalSchemas[]{
       schemaType,
       name,

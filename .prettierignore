@@ -1,4 +1,4 @@
-# Root prettier covers repo-level docs (method/, code/docs, CHANGELOG, root config).
+# Root prettier covers repo-level docs (method/, docs/, CHANGELOG, root config).
 # The app formats itself via code/apps/web/.prettierignore + its own config.
 code/apps/web/
 **/node_modules

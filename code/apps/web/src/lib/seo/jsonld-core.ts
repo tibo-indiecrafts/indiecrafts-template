@@ -6,8 +6,8 @@
  * the component module (which would form an import cycle).
  */
 
-import { site } from "@/config";
-import type { SiteSettings } from "@/lib/seo/site-seo";
+import { site } from "@indiecrafts/config";
+import { DEFAULT_SITE_NAME, type SiteSettings } from "@/lib/seo/site-seo";
 import { socialLinks } from "@/lib/social";
 
 type SchemaBase<T extends string> = {
@@ -45,10 +45,10 @@ export type JsonLdOrganization = SchemaBase<"Organization"> & {
 };
 
 /**
- * The site's primary entity. `site.legal.businessType` picks the schema.org
+ * The site's primary entity. `settings.business.businessType` picks the schema.org
  * `@type`: `"Organization"` (neutral) or a LocalBusiness subtype — the latter
  * additionally emits geo / openingHours / priceRange / areaServed / telephone /
- * image from `site.legal`. Every field is dropped when empty, so a bare
+ * image from `settings.business`. Every field is dropped when empty, so a bare
  * Organization looks exactly as it did before any local fields were filled in.
  */
 export function buildBusinessSchema(
@@ -126,14 +126,14 @@ export type JsonLdWebSite = SchemaBase<"WebSite"> & {
 };
 
 export function buildWebSiteSchema(
-  options: { description?: string; searchUrlTemplate?: string } = {},
+  options: { name: string; description?: string; searchUrlTemplate?: string },
 ): JsonLdWebSite {
   return compact({
     "@type": "WebSite",
     "@id": `${site.url}#website`,
     url: site.url,
-    name: site.name,
-    description: options.description ?? site.description,
+    name: options.name,
+    description: options.description,
     publisher: { "@id": `${site.url}#organization` },
     potentialAction: options.searchUrlTemplate
       ? {
@@ -176,7 +176,7 @@ export function buildSiteSchemas(
 ): SchemaObject[] {
   return [
     buildBusinessSchema(settings, { description: options.description }),
-    buildWebSiteSchema(options),
+    buildWebSiteSchema({ ...options, name: settings.siteName || DEFAULT_SITE_NAME }),
     ...extraSchemas,
   ];
 }

@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Avatar, AvatarFallback, AvatarImage } from "@/user-interface/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@indiecrafts/ui/avatar";
 
 export type TestimonialsQuote = {
   /** Maps to `<namespace>.quotes.<id>.{quote,author,role}` in messages. */

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getSystemPages } from "@/lib/system-pages";
+import { DEFAULT_SITE_NAME, getSiteSettings } from "@/lib/seo/site-seo";
 import { Maintenance } from "@/user-interface/maintenance/components/Maintenance";
 import { maintenanceLocale } from "./locale";
 
@@ -23,9 +24,10 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function MaintenancePage() {
   const locale = await maintenanceLocale();
-  const [sys, t] = await Promise.all([
+  const [sys, t, settings] = await Promise.all([
     getSystemPages(locale),
     getTranslations({ locale, namespace: "pages.maintenance" }),
+    getSiteSettings(),
   ]);
   const m = sys.maintenance ?? {};
   return (
@@ -34,6 +36,8 @@ export default async function MaintenancePage() {
       title={m.title ?? t("title")}
       body={m.body ?? t("body")}
       contactLabel={m.contact ?? t("contact")}
+      name={settings.siteName || DEFAULT_SITE_NAME}
+      email={settings.business.contactPoint?.email}
     />
   );
 }

@@ -1,31 +1,31 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, pages, type Locale } from "@/config";
-import { isRssEnabled, requireBlogRoute } from "@/features/blog/lib/route-gate";
+import { features, pages, type Locale } from "@indiecrafts/config";
+import { isRssEnabled, requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
 import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { BlogHero } from "@/features/blog/user-interface/blog/sections/BlogHero";
-import { ExploreCategories } from "@/features/blog/user-interface/blog/sections/ExploreCategories";
-import { ExploreTags } from "@/features/blog/user-interface/blog/sections/ExploreTags";
-import { TopAuthors } from "@/features/blog/user-interface/blog/sections/TopAuthors";
-import { BlogListing } from "@/features/blog/user-interface/blog/sections/BlogListing";
-import { sanityFetchLive } from "@/sanity/live";
+import { BlogHero } from "@indiecrafts/blog/user-interface/blog/sections/BlogHero";
+import { ExploreCategories } from "@indiecrafts/blog/user-interface/blog/sections/ExploreCategories";
+import { ExploreTags } from "@indiecrafts/blog/user-interface/blog/sections/ExploreTags";
+import { TopAuthors } from "@indiecrafts/blog/user-interface/blog/sections/TopAuthors";
+import { BlogListing } from "@indiecrafts/blog/user-interface/blog/sections/BlogListing";
+import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import {
   allPostsQuery,
   authorsForLocaleQuery,
   blogSingletonQuery,
   categoriesForLocaleQuery,
   tagsForLocaleQuery,
-} from "@/features/blog/sanity/queries";
+} from "@indiecrafts/blog/sanity/queries";
 import type {
   Author,
   BlogSingleton,
   Category,
   PostListItem,
   Tag,
-} from "@/features/blog/sanity/types";
+} from "@indiecrafts/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale }> };
 

@@ -1,16 +1,16 @@
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { Button } from "@/user-interface/ui/button";
+import { Button } from "@indiecrafts/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/user-interface/ui/card";
-import { cn } from "@/lib/utils";
-import type { StaticAppPathname } from "@/config";
+} from "@indiecrafts/ui/card";
+import { cn } from "@indiecrafts/utils";
+import type { StaticAppPathname } from "@indiecrafts/config";
 
 export type PricingTier = {
   /** Maps to `<namespace>.tiers.<id>.*` in messages. */

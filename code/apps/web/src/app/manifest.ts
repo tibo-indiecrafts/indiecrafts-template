@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
-import { site, theme } from "@/config";
-import { getSiteSettings } from "@/lib/seo/site-seo";
+import { defaultLocale, theme } from "@indiecrafts/config";
+import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 
 /**
  * Web App Manifest. Icons come from Sanity (`siteSettings.icon`) — resized via
@@ -12,12 +12,16 @@ import { getSiteSettings } from "@/lib/seo/site-seo";
  * manifest can't take oklch) so the install screen matches the site.
  */
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
-  const { brand } = await getSiteSettings();
-  const icon = brand.icon;
+  const [settings, siteSeo] = await Promise.all([
+    getSiteSettings(),
+    getSiteSeo(defaultLocale),
+  ]);
+  const icon = settings.brand.icon;
+  const name = settings.siteName || DEFAULT_SITE_NAME;
   return {
-    name: site.name,
-    short_name: site.name,
-    description: site.description,
+    name,
+    short_name: name,
+    description: siteSeo.description,
     start_url: "/",
     scope: "/",
     display: "standalone",

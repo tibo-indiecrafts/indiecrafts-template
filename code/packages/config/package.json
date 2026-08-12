@@ -1,0 +1,11 @@
+{
+  "name": "@indiecrafts/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts"
+  },
+  "peerDependencies": { "next": "16.2.10" }
+}

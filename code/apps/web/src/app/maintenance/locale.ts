@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { defaultLocale, isLocale, localeCodes, type Locale } from "@/config";
+import { defaultLocale, isLocale, localeCodes, type Locale } from "@indiecrafts/config";
 
 /**
  * Best-effort locale for the standalone `/maintenance` route. It lives

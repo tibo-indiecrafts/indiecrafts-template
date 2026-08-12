@@ -3,16 +3,16 @@
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { defaultLocale, localeMap, locales, type Locale } from "@/config";
-import { Button } from "@/user-interface/ui/button";
+import { defaultLocale, localeMap, locales, type Locale } from "@indiecrafts/config";
+import { Button } from "@indiecrafts/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@/user-interface/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+} from "@indiecrafts/ui/dropdown-menu";
+import { cn } from "@indiecrafts/utils";
 
 export type LocaleSwitcherProps = {
   shape?: "icon" | "code";
@@ -109,7 +109,7 @@ export function LocaleSwitcher({
       <DropdownMenuContent align="end" className="min-w-32">
         <DropdownMenuRadioGroup
           value={current}
-          onValueChange={(value) => switchTo(value as Locale)}
+          onValueChange={(value: string) => switchTo(value as Locale)}
         >
           {locales.map((l) => (
             <DropdownMenuRadioItem key={l.code} value={l.code}>

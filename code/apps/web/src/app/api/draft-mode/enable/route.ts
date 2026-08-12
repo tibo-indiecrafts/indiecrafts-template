@@ -1,7 +1,7 @@
 import { defineEnableDraftMode } from "next-sanity/draft-mode";
-import { features } from "@/config";
-import { client } from "@/sanity/client";
-import { token } from "@/sanity/token";
+import { features } from "@indiecrafts/config";
+import { client } from "@indiecrafts/sanity/client";
+import { token } from "@indiecrafts/sanity/token";
 
 /**
  * Enable draft preview. The Studio's Presentation tool calls this to

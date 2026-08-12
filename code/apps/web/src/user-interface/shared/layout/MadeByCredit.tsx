@@ -2,8 +2,8 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { madeBy } from "@/config";
-import { Popover, PopoverContent, PopoverTrigger } from "@/user-interface/ui/popover";
+import { madeBy } from "@indiecrafts/config";
+import { Popover, PopoverContent, PopoverTrigger } from "@indiecrafts/ui/popover";
 
 /**
  * Footer maker-credit: "Made with <Indiecrafts>" where the brand name opens a

@@ -15,7 +15,11 @@
     "jsx": "react-jsx",
     "incremental": true,
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] }
+    "paths": {
+      "@/*": ["./src/*"],
+      "@indiecrafts/blog/*": ["../../modules/blog/src/*"],
+      "@indiecrafts/ui-components/*": ["../../packages/ui-components/src/*"]
+    }
   },
   "include": [
     "next-env.d.ts",

@@ -6,8 +6,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/user-interface/ui/accordion";
-import { features } from "@/config";
+} from "@indiecrafts/ui/accordion";
+import { features } from "@indiecrafts/config";
 import { getFaqItems } from "@/lib/faq";
 
 /**

@@ -1,11 +1,12 @@
 import { getTranslations } from "next-intl/server";
-import { site } from "@/config";
-import type { Locale } from "@/config";
-import { isRssEnabled } from "@/features/blog/lib/route-gate";
+import { site } from "@indiecrafts/config";
+import type { Locale } from "@indiecrafts/config";
+import { isRssEnabled } from "@indiecrafts/blog/lib/route-gate";
+import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { localizedPathname } from "@/i18n/routing";
-import { sanityFetchLive } from "@/sanity/live";
-import { rssPostsQuery } from "@/features/blog/sanity/queries";
-import type { RssPost } from "@/features/blog/sanity/types";
+import { sanityFetchLive } from "@indiecrafts/sanity/live";
+import { rssPostsQuery } from "@indiecrafts/blog/sanity/queries";
+import type { RssPost } from "@indiecrafts/blog/sanity/types";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -25,10 +26,13 @@ export async function GET(_req: Request, { params }: Props) {
   }
   const { locale } = await params;
   const loc = locale as Locale;
-  const [posts, t] = await Promise.all([
+  const [posts, t, settings, siteSeo] = await Promise.all([
     sanityFetchLive<RssPost[]>({ query: rssPostsQuery, params: { locale } }),
     getTranslations({ locale: loc, namespace: "pages.blog" }),
+    getSiteSettings(),
+    getSiteSeo(loc),
   ]);
+  const siteName = settings.siteName || DEFAULT_SITE_NAME;
   // Locale-aware URLs — matches canonical/sitemap (default locale, no prefix).
   const blogUrl = `${site.url}${localizedPathname("/blog", loc)}`;
   const feedUrl = `${site.url}${localizedPathname("/blog/rss.xml", loc)}`;
@@ -36,10 +40,10 @@ export async function GET(_req: Request, { params }: Props) {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>
-  <title>${escapeXml(site.name)} — ${escapeXml(t("title"))}</title>
+  <title>${escapeXml(siteName)} — ${escapeXml(t("title"))}</title>
   <link>${blogUrl}</link>
   <atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />
-  <description>${escapeXml(site.description)}</description>
+  <description>${escapeXml(siteSeo.description ?? "")}</description>
   <language>${locale}</language>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
 ${posts.map((p) => renderItem(p, loc)).join("\n")}

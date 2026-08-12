@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
-import type { Locale } from "@/config";
+import type { Locale } from "@indiecrafts/config";
 import { getSystemPages } from "@/lib/system-pages";
 import { NotFound as NotFoundPage } from "@/user-interface/not-found/components/NotFound";
 

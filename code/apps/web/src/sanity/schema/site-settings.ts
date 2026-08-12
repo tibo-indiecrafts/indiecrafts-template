@@ -7,7 +7,7 @@ import { CogIcon } from "@sanity/icons";
  * (Organization / LocalBusiness subtype) with its address / contact / geo
  * fields, and any extra global JSON-LD entities.
  *
- * SOLE runtime source for these (no `@/config` fallback) — read by
+ * SOLE runtime source for these (no `@indiecrafts/config` fallback) — read by
  * `getSiteSettings` (`src/lib/seo/site-seo.ts`) and fed to `buildSiteSchemas`
  * (`src/lib/seo/jsonld-core.ts`). Per-language SEO text lives in the separate
  * per-locale `siteMeta` singleton.
@@ -38,8 +38,19 @@ export default defineType({
     { name: "schemas", title: "Infos Google en plus" },
     { name: "indexing", title: "Indexation" },
     { name: "verification", title: "Vérification Google / Bing" },
+    { name: "analytics", title: "Analytics & cookies" },
   ],
   fields: [
+    // ── Identity ───────────────────────────────────────────────
+    defineField({
+      name: "siteName",
+      title: "Nom du site",
+      type: "string",
+      group: "business",
+      description:
+        "Le nom de la marque affiché dans l'onglet du navigateur, les titres de page et les partages. Ex. « indiecrafts.dev ».",
+    }),
+
     // ── Logo & icons ───────────────────────────────────────────
     defineField({
       name: "logo",
@@ -262,6 +273,34 @@ export default defineType({
       fields: [
         defineField({ name: "google", title: "Google", type: "string" }),
         defineField({ name: "bing", title: "Bing", type: "string" }),
+      ],
+    }),
+
+    // ── Analytics & cookies ────────────────────────────────────
+    defineField({
+      name: "analytics",
+      title: "Analytics & cookies",
+      type: "object",
+      group: "analytics",
+      description:
+        "Mesure d'audience Google Analytics et bannière de consentement aux cookies.",
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({
+          name: "googleAnalyticsId",
+          title: "Identifiant Google Analytics",
+          type: "string",
+          description:
+            "Votre identifiant de mesure GA4, ex. « G-XXXXXXXXXX ». Vide = aucun suivi (aucun script chargé).",
+        }),
+        defineField({
+          name: "requireCookieConsent",
+          title: "Demander le consentement aux cookies",
+          type: "boolean",
+          description:
+            "Activé, une bannière s'affiche et rien n'est mesuré tant que le visiteur n'a pas accepté (obligatoire pour le trafic UE / RGPD). Désactivé, la mesure démarre immédiatement.",
+          initialValue: false,
+        }),
       ],
     }),
 

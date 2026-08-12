@@ -1,13 +1,13 @@
 /**
- * Theme resolution — turns the declarative `themeConfig` flags in `@/config`
+ * Theme resolution — turns the declarative `themeConfig` flags in `@indiecrafts/config`
  * into the concrete values next-themes needs, plus a single flag for whether
  * the toggle should render. ThemeProvider, ThemeToggle, and Header all read
  * from here so the config can never be interpreted two different ways.
  *
- * See `themeConfig` in `@/config` for the flag semantics.
+ * See `themeConfig` in `@indiecrafts/config` for the flag semantics.
  */
-import { themeConfig } from "@/config";
-import type { ThemeMode, ThemeName } from "@/config";
+import { themeConfig } from "@indiecrafts/config";
+import type { ThemeMode, ThemeName } from "@indiecrafts/config";
 
 /**
  * User-selectable theme options, in menu order. When `forced` is set it's the

@@ -10,9 +10,16 @@
     "author": "Auteurs",
     "contact": "Contact",
     "company": "Société",
-    "legal": "Mentions légales",
+    "legal": "Légal",
+    "legalNotice": "Mentions légales",
     "privacy": "Confidentialité",
-    "terms": "Conditions"
+    "cookies": "Cookies",
+    "terms": "CGU",
+    "salesTerms": "CGV"
+  },
+  "legal": {
+    "lastUpdated": "Dernière mise à jour : {date}",
+    "empty": "Cette page n'a pas encore été publiée."
   },
   "cta": {
     "learnMore": "En savoir plus"
@@ -37,16 +44,32 @@
     "title": "Nous respectons votre vie privée",
     "body": "Nous utilisons quelques cookies pour faire fonctionner le site et (avec votre accord) pour comprendre son usage.",
     "learnMore": "En savoir plus",
-    "accept": "Accepter",
-    "reject": "Refuser"
+    "acceptAll": "Tout accepter",
+    "rejectAll": "Tout refuser",
+    "customize": "Personnaliser",
+    "save": "Enregistrer",
+    "preferencesTitle": "Préférences de cookies",
+    "preferencesBody": "Choisissez les cookies que vous autorisez. Les cookies nécessaires sont toujours actifs.",
+    "manage": "Gérer les préférences de cookies",
+    "declarationTitle": "Cookies que nous utilisons",
+    "party": {
+      "first": "Première partie",
+      "third": "Tierce partie"
+    }
   },
   "typography": {
     "titleCase": "sentence",
     "headingCase": "sentence",
     "adjectivePlacement": "after",
     "quoteStyle": {
-      "primary": ["« ", " »"],
-      "secondary": ["“", "”"]
+      "primary": [
+        "« ",
+        " »"
+      ],
+      "secondary": [
+        "“",
+        "”"
+      ]
     },
     "apostrophe": "’",
     "ellipsis": "…",
@@ -58,7 +81,13 @@
     "listStyle": "comma",
     "oxfordComma": false,
     "hyphenationChar": "-",
-    "nonBreakingSpaceBeforePunctuation": [":", ";", "?", "!", "%"],
+    "nonBreakingSpaceBeforePunctuation": [
+      ":",
+      ";",
+      "?",
+      "!",
+      "%"
+    ],
     "currencyPosition": "after",
     "numberSpacing": " "
   },
@@ -87,29 +116,6 @@
       "title": "De retour très bientôt",
       "body": "Le site est momentanément hors ligne pour des mises à jour planifiées. Tout revient bientôt à la normale — merci de votre patience.",
       "contact": "Besoin de nous joindre entre-temps ?"
-    },
-    "legal": {
-      "title": "Mentions légales",
-      "description": "Politique de confidentialité, usage des cookies, conditions d'utilisation.",
-      "lastUpdated": "Dernière mise à jour : 2026",
-      "sections": {
-        "privacy": {
-          "heading": "Confidentialité",
-          "body": "Nous ne collectons que les données nécessaires au service. Vos données personnelles ne sont jamais vendues. Si l'analytique est activée, vous pouvez la refuser via la bannière de cookies."
-        },
-        "cookies": {
-          "heading": "Cookies",
-          "body": "Les cookies strictement nécessaires (authentification, thème, langue) ne demandent pas de consentement — ils sont indispensables au fonctionnement du site. Les cookies analytiques ne sont déposés qu'après votre accord explicite."
-        },
-        "terms": {
-          "heading": "Conditions d'utilisation",
-          "body": "En utilisant ce site, vous vous engagez à un usage licite. Le contenu est fourni en l'état, sans garantie. Ces conditions peuvent être modifiées à tout moment."
-        },
-        "contact": {
-          "heading": "Contact",
-          "body": "Une question sur cette page ? Écrivez à hello@example.com — nous répondons sous cinq jours ouvrables."
-        }
-      }
     },
     "blog": {
       "title": "Blog",
@@ -338,6 +344,11 @@
             "bell": "Notifications activées / désactivées",
             "copy": "Copier / copié"
           }
+        },
+        "blocks": {
+          "eyebrow": "Constructeur de pages",
+          "title": "Les mêmes blocs, partout",
+          "body": "Les pages marketing et les articles de blog utilisent un seul jeu de composants partagés — rédigez dans Sanity, le rendu est identique partout."
         }
       }
     }

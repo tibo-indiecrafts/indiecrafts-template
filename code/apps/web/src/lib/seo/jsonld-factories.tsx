@@ -20,7 +20,7 @@
  * single connected entity graph.
  */
 
-import { site } from "@/config";
+import { site } from "@indiecrafts/config";
 import type { SiteSettings } from "@/lib/seo/site-seo";
 import { compact, type SchemaObject } from "./jsonld-core";
 

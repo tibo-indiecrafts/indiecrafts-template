@@ -20,10 +20,10 @@
  */
 
 import type { Metadata } from "next";
-import { defaultLocale, localeCodes, seoDefaults, site, type Locale } from "@/config";
-import type { PageConfig, StaticAppPathname } from "@/config";
+import { defaultLocale, localeCodes, seoDefaults, site, type Locale } from "@indiecrafts/config";
+import type { PageConfig, StaticAppPathname } from "@indiecrafts/config";
 import { getStaticPathname } from "@/i18n/routing";
-import { getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
+import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 
 type BuildArgs = {
   page: PageConfig;
@@ -130,7 +130,7 @@ export async function buildMetadata({
       url: canonical,
       locale,
       alternateLocale: localeCodes.filter((l) => l !== locale),
-      siteName: seoDefaults.openGraph.siteName,
+      siteName: settings.siteName || DEFAULT_SITE_NAME,
       type: seo?.openGraph?.type ?? seoDefaults.openGraph.type,
       images: ogImages,
     },

@@ -12,10 +12,10 @@ import { visionTool } from "@sanity/vision";
 import { documentInternationalization } from "@sanity/document-internationalization";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
-import { apiVersion, dataset, projectId, studioBasePath } from "./src/sanity/env";
-import { locales } from "./src/config";
-import { schemaTypes } from "./src/features/blog/sanity/schema";
-import { structure } from "./src/features/blog/sanity/structure";
+import { apiVersion, dataset, projectId, studioBasePath } from "@indiecrafts/sanity/env";
+import { locales } from "@indiecrafts/config";
+import { schemaTypes } from "@indiecrafts/blog/sanity/schema";
+import { structure } from "@indiecrafts/blog/sanity/structure";
 import { coreSchemaTypes } from "./src/sanity/schema";
 
 /**
@@ -27,7 +27,7 @@ import { coreSchemaTypes } from "./src/sanity/schema";
  * (always "en"), and editors have to remember to switch the radio.
  */
 const LOCALE_TEMPLATE_TITLES: Record<
-  "post" | "category" | "tag" | "quote" | "author" | "person",
+  "post" | "category" | "tag" | "quote" | "author" | "person" | "legalPage",
   string
 > = {
   post: "Article",
@@ -36,10 +36,11 @@ const LOCALE_TEMPLATE_TITLES: Record<
   quote: "Citation",
   author: "Auteur",
   person: "Personne",
+  legalPage: "Page légale",
 };
 
 const localeTemplates = (
-  ["post", "category", "tag", "quote", "author", "person"] as const
+  ["post", "category", "tag", "quote", "author", "person", "legalPage"] as const
 ).flatMap((type) =>
   locales.map(({ code: lang }) => ({
     id: `${type}-${lang}`,
@@ -64,10 +65,10 @@ export default defineConfig({
     // and the front-end can resolve a doc's slug in another locale. Every content
     // document is translated — `languageField` reuses the flat `language` field.
     documentInternationalization({
-      // Derived from the app's single locale source (`@/config`) so Studio and
+      // Derived from the app's single locale source (`@indiecrafts/config`) so Studio and
       // the front-end can never disagree on which languages exist.
       supportedLanguages: locales.map(({ code, label }) => ({ id: code, title: label })),
-      schemaTypes: ["post", "category", "tag", "quote", "author", "person"],
+      schemaTypes: ["post", "category", "tag", "quote", "author", "person", "legalPage"],
       languageField: "language",
       // Keep the plugin's `translation.metadata` link docs out of global search.
       metadataOmnisearchVisibility: false,

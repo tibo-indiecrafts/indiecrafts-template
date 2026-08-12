@@ -9,8 +9,8 @@
  */
 
 import { cache } from "react";
-import type { Locale } from "@/config";
-import { client } from "@/sanity/client";
+import type { Locale } from "@indiecrafts/config";
+import { client } from "@indiecrafts/sanity/client";
 import { siteSeoQuery, siteSettingsQuery } from "@/sanity/seo-queries";
 
 // ── Normalized shapes ────────────────────────────────────────
@@ -56,7 +56,16 @@ export type SiteSeo = {
   };
 };
 
+/**
+ * Fallback site name — the one deliberate exception to Sanity-only/no-fallback:
+ * an empty `<title>` / manifest name is worse than a stale default, so consumers
+ * use `settings.siteName || DEFAULT_SITE_NAME`.
+ */
+export const DEFAULT_SITE_NAME = "indiecrafts.dev";
+
 export type SiteSettings = {
+  /** Brand/site name — titles, OG siteName, manifest, JSON-LD WebSite.name. */
+  siteName?: string;
   brand: { logo?: string; logoDark?: string; icon?: string };
   social: {
     twitter?: string;
@@ -80,6 +89,7 @@ export type SiteSettings = {
   };
   robots: { noindex?: boolean; nofollow?: boolean };
   verification: { google?: string; bing?: string };
+  analytics: { googleAnalyticsId?: string; requireCookieConsent?: boolean };
   globalSchemas: GlobalSchemaEntry[];
 };
 
@@ -97,6 +107,7 @@ const EMPTY_SETTINGS: SiteSettings = {
   business: { openingHours: [], areaServed: [] },
   robots: {},
   verification: {},
+  analytics: {},
   globalSchemas: [],
 };
 
@@ -159,6 +170,7 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
     const data = await client.fetch(siteSettingsQuery);
     if (!data) return EMPTY_SETTINGS;
     return {
+      siteName: data.siteName ?? undefined,
       brand: {
         logo: data.logo ?? undefined,
         logoDark: data.logoDark ?? undefined,
@@ -180,6 +192,10 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
       },
       robots: data.robots ?? {},
       verification: data.verification ?? {},
+      analytics: {
+        googleAnalyticsId: data.analytics?.googleAnalyticsId ?? undefined,
+        requireCookieConsent: data.analytics?.requireCookieConsent ?? undefined,
+      },
       globalSchemas: normalizeSchemas(data.globalSchemas),
     };
   } catch {

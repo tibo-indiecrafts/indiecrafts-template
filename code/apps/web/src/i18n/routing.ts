@@ -1,6 +1,6 @@
 /**
  * next-intl routing definition. PATHNAMES is assembled from the `pages`
- * map in `@/config` via `src/app/routes.ts` — no per-route import here.
+ * map in `@indiecrafts/config` via `src/app/routes.ts` — no per-route import here.
  *
  * Components should always import `Link` / `useRouter` / `redirect` /
  * `getPathname` from `@/i18n/routing`, never from `next/link` or
@@ -12,10 +12,9 @@ import { defineRouting } from "next-intl/routing";
 import {
   i18n,
   localeCodes,
-  localePrefix,
   type Locale,
   type StaticAppPathname,
-} from "@/config";
+} from "@indiecrafts/config";
 import { PATHNAMES } from "@/app/routes";
 
 export const routing = defineRouting({
@@ -39,20 +38,13 @@ export const { Link, redirect, usePathname, useRouter, getPathname } =
  * directly with our project types would require a cast at every site.
  *
  * Keep the cast contained here. Callers get a typed entry point that
- * only accepts the unions defined in `@/config`.
+ * only accepts the unions defined in `@indiecrafts/config`.
  */
 type PathnameArg = Parameters<typeof getPathname>[0]["href"];
 export function getStaticPathname(href: StaticAppPathname, locale: Locale): string {
   return getPathname({ href: href as PathnameArg, locale });
 }
 
-/**
- * Locale-aware absolute path for a dynamic detail route whose slug isn't in
- * `PATHNAMES` — blog posts, categories, tags, authors. Mirrors the
- * `as-needed` prefix policy: the default locale gets no prefix, every other
- * locale gets a `/<locale>` prefix. Use this to self-canonicalize detail
- * pages instead of inheriting their index route's path.
- */
-export function localizedPathname(pathname: `/${string}`, locale: Locale): string {
-  return `${localePrefix(locale)}${pathname}`;
-}
+// `localizedPathname` is config-only (no app routes) — it lives in @indiecrafts/config
+// so modules can use it too; re-exported here for the app's existing import sites.
+export { localizedPathname } from "@indiecrafts/config";

@@ -1,10 +1,8 @@
-import { site } from "@/config";
-
 /**
  * Site-wide maintenance page. Rendered by the standalone `/maintenance`
  * route when `features.maintenance` is on (see `proxy.ts`). Presentational —
- * the route resolves the copy via i18n and passes it in; the contact address
- * reads straight from `site.contact.email`.
+ * the route resolves the copy via i18n and the brand identity (name + contact
+ * email) from Sanity and passes them in.
  *
  * Signature: the status pill's pulsing dot is an honest "actively working"
  * signal (not decoration), and the page's single motion — it holds still
@@ -15,14 +13,16 @@ export function Maintenance({
   title,
   body,
   contactLabel,
+  name,
+  email,
 }: {
   statusLabel: string;
   title: string;
   body: string;
   contactLabel: string;
+  name: string;
+  email?: string;
 }) {
-  const email = site.contact.email;
-
   return (
     <main className="relative grid min-h-dvh place-items-center overflow-hidden px-(--gutter) py-16">
       <div
@@ -45,19 +45,21 @@ export function Maintenance({
 
         <p className="text-muted-foreground text-lg text-pretty">{body}</p>
 
-        <p className="text-muted-foreground mt-2 text-sm">
-          {contactLabel}{" "}
-          <a
-            href={`mailto:${email}`}
-            className="text-brand focus-visible:ring-ring rounded font-medium underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:outline-none"
-          >
-            {email}
-          </a>
-        </p>
+        {email ? (
+          <p className="text-muted-foreground mt-2 text-sm">
+            {contactLabel}{" "}
+            <a
+              href={`mailto:${email}`}
+              className="text-brand focus-visible:ring-ring rounded font-medium underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {email}
+            </a>
+          </p>
+        ) : null}
       </div>
 
       <p className="text-muted-foreground/70 absolute bottom-8 text-xs font-medium tracking-widest uppercase">
-        {site.name}
+        {name}
       </p>
     </main>
   );

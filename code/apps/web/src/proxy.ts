@@ -6,7 +6,7 @@
 
 import createMiddleware from "next-intl/middleware";
 import { type NextRequest, NextResponse } from "next/server";
-import { features } from "@/config";
+import { features } from "@indiecrafts/config";
 import { routing } from "@/i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
