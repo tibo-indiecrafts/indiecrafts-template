@@ -111,7 +111,7 @@ Blog schemas register via `code/modules/blog/src/sanity/schema/index.ts` (export
 | Schema             | File                  | Localized?           | Purpose                                                                              |
 | ------------------ | --------------------- | -------------------- | ----------------------------------------------------------------------------------- |
 | `blog` (singleton) | `documents/blog.ts`   | shared               | Owns `postModules[]` (per-post chrome). One per dataset; sidebar enforces.           |
-| `post`             | `post.ts`             | **yes** (`language`) | Title, body (PortableText), author ref, categories, featured flag, `metadata` object |
+| `post`             | `post.ts`             | **yes** (`language`) | Title, body (PortableText), **authors** (one or several refs), categories, featured flag, `metadata` object |
 | `author`           | `author.ts`           | **yes** (`language`) | Name, position, slug, image, bio                                                    |
 | `category`         | `category.ts`         | **yes** (`language`) | Title, description                                                                  |
 | `tag`              | `tag.ts`              | **yes** (`language`) | Cross-cutting tags (title, slug)                                                    |

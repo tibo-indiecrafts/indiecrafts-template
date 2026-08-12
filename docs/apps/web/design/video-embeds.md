@@ -1,12 +1,23 @@
 # Featured video embeds
 
-A post can carry a video (`metadata.videoUrl` in Sanity). Rather than store raw
-`<iframe>` HTML, the template stores a plain **URL** and builds the player itself —
+A post can carry a video two ways, both under `metadata` in Sanity:
+
+- **`videoUrl`** — an embed link (YouTube / Vimeo / Dailymotion).
+- **`videoFile`** — the editor **uploads their own** `.mp4` / `.webm` (a Sanity file
+  asset). It **wins** over the link when both are set.
+
+GROQ resolves them to one string: `"video": coalesce(videoFile.asset->url, videoUrl)`. An
+uploaded file's CDN url ends `.mp4`/`.webm`, so it flows through the same parser as a direct
+link (`kind: "file"`). Two booleans control playback: **`videoAutoplay`** (muted + looping
+ambient backdrop) and **`videoControls`** (default true).
+
+Rather than store raw `<iframe>` HTML, the template stores a plain **URL** and builds the
+player itself —
 so only a validated URL from a known provider ever reaches an iframe `src`. The
-parsing lives in `@indiecrafts/utils` (`parseVideoEmbed`); the player is the shared
-`VideoEmbed` renderer in `@indiecrafts/ui-components`
-(`renderers/VideoEmbed.tsx`) — so the blog post hero and any page-builder
-media/embed block share one player.
+parsing lives in `@indiecrafts/utils` (`parseVideoEmbed`); the rendering lives in the
+shared **`FeaturedMedia`** component in `@indiecrafts/ui-components`
+(`renderers/FeaturedMedia.tsx`) — **one structure for a featured image or video**, used by
+the post hero, the blog frontpage, and the homepage/blog cards alike.
 
 ## Why a URL, not markup
 
@@ -41,43 +52,51 @@ YouTube always resolves to the **privacy-preserving** `youtube-nocookie.com` hos
 no cookies until the visitor actually plays.
 
 ::: warning
-Every embed host must also be allow-listed in the `frame-src` CSP directive in
-`next.config.ts`. It currently allows `https://www.youtube-nocookie.com`,
-`https://player.vimeo.com`, and `https://www.dailymotion.com`. Add a provider to the
-parser → add its host to `frame-src`.
+Every embed host must be allow-listed in the `frame-src` CSP directive in `next.config.ts`
+(currently `youtube-nocookie.com`, `player.vimeo.com`, `www.dailymotion.com`). **Uploaded
+files** play in a native `<video>`, so the Sanity CDN must be in **`media-src`**
+(`'self' blob: https://cdn.sanity.io`) — without it the `<video>` falls back to
+`default-src 'self'` and is blocked. Add a provider → add its host to `frame-src`.
 :::
 
-## Rendering: `VideoEmbed`
+## Rendering: `FeaturedMedia`
 
-`@indiecrafts/ui-components` `renderers/VideoEmbed.tsx` is the consumer. It imports the
-`VideoEmbed` type from `@indiecrafts/utils` and the Radix `Dialog` from
-`@indiecrafts/ui/dialog`, takes a parsed `embed` plus a poster and labels, and renders a
-poster thumbnail with a play button that opens an accessible modal player (focus trap,
-Escape, overlay):
+`@indiecrafts/ui-components` `renderers/FeaturedMedia.tsx` renders the cover — image **or**
+video — in one fixed-aspect box. It takes the image, an optional `videoUrl`, an `aspect`,
+and a `playLabel`; internally it calls `parseVideoEmbed`, so callers don't:
 
 ```tsx
-const embed = parseVideoEmbed(post.metadata?.videoUrl);
-if (embed) {
-  <VideoEmbed
-    embed={embed}
-    poster={coverUrl}
-    title={post.title}
-    playLabel={t("play")}
-    closeLabel={t("close")}
-  />;
-}
+<FeaturedMedia
+  image={post.metadata?.image?.asset?.url}
+  alt={post.metadata?.image?.alt ?? title}
+  videoUrl={post.metadata?.videoUrl}
+  lqip={post.metadata?.image?.asset?.metadata?.lqip}
+  aspect="aspect-video"
+  sizes="(min-width: 1280px) 1152px, 100vw"
+  playLabel={t("playVideo")}
+/>
 ```
 
 Key behaviors:
 
-- **Lazy mount** — the third-party iframe (or `<video>`) only mounts when the dialog opens, so nothing loads unprompted.
-- **`file` → native `<video controls autoPlay>`**; **`youtube` / `vimeo` / `dailymotion` → `<iframe>`** with `autoplay=1` (YouTube also gets `rel=0`) and a `strict-origin-when-cross-origin` referrer policy.
-- **16:9, keyboard-operable, reduced-motion safe** — labels (`playLabel`, `closeLabel`, `title`) are passed in (i18n-agnostic component), resolved from `messages` by the caller.
+- **Inline play, no dialog.** A video shows a play button over the poster; clicking it swaps
+  the poster for the player **in place** (`useState`) — the video plays where the image was,
+  in cards and heroes alike. There is no modal.
+- **`autoplay` (ambient backdrop).** Mounts the player immediately, muted + looping, with no
+  play button — browsers block unmuted autoplay, so ambient video is always muted. For
+  embeds, the iframe url gets `mute=1`; `controls=0` is added when `controls` is off.
+  Honored on the **post hero only** — listing cards stay facade/badge so a page isn't N
+  autoplaying iframes.
+- **Lazy mount** — the third-party iframe (or `<video>`) mounts only on click, so nothing
+  loads unprompted (facade / lite-embed pattern).
+- **`file` → native `<video controls autoPlay playsInline>`**; **`youtube` / `vimeo` / `dailymotion` → `<iframe>`** with `autoplay=1` (YouTube also `rel=0`) and a `strict-origin-when-cross-origin` referrer policy.
+- **`interactive={false}`** renders only a small marker (for thumbnails that just link to the
+  post) and never mounts a player.
+- **Image + lqip blur, CDN-sized** via `next/image`; keyboard-operable play button; reduced-motion safe. `playLabel` is passed in (i18n-agnostic component).
 
-## Where else it's used
+## Card integration
 
-`parseVideoEmbed` is also used as a **flag**: `FeaturedArticles.tsx` calls it just
-to decide whether to overlay a `<PlayBadge>` (also in `@indiecrafts/ui-components`) on a
-post's thumbnail (`const hasVideo = !!parseVideoEmbed(post.metadata?.videoUrl)`). Same
-validation, no player mounted. `PlayBadge` takes its `label` as a prop so the shared
-component stays i18n-agnostic. See [Featured articles](./featured-articles.md).
+Cards wrap the media with a **stretched title link** (`after:absolute after:inset-0`) so a
+click anywhere opens the post, while the play button (raised `z-10`, `stopPropagation`) plays
+inline without navigating — valid HTML (the `<button>` is a sibling of the link, never nested
+inside it). See `BlogCard`, `FeaturedArticles`, and the post hero for the pattern.

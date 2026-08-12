@@ -58,7 +58,7 @@ The post document has a hidden `language` field (set by the language leaf you en
 | **Titre** | Display title. Required. |
 | **Extrait** | Teaser on listing cards + top of the post. Falls back to the SEO **Description** (Métadonnées) when empty. |
 | **Publié le** | `datetime`. Leave blank and it stays unset — set it when you want a fixed publication date. |
-| **Auteur** | Reference picker, **language-filtered** — an EN post only lists EN authors. |
+| **Auteur·rice·s** | A list — add **one or several** authors (drag to reorder; the first leads on cards). Language-filtered picker: an EN post only lists EN authors. A co-written post shows on every author's page. |
 | **Catégories** | Reference array, language-filtered. A post can sit in several. |
 | **Tags** | Reference array, language-filtered. Each tag gets `/blog/tag/<slug>`. |
 | **Mis en avant** | Boolean. When true the post is eligible for the featured hero grid on `/blog` (`featuredPostsQuery`). |

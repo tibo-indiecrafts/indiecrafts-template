@@ -49,6 +49,22 @@ location** with zero duplication (`@path` expands the target inline). The gstack
 Per unit: **`CLAUDE.md`** (how to build) · **`DESIGN.md`** (how it looks — tokens) ·
 **`PRODUCT.md`** (who & why). Each owns its facts; the others link, never duplicate.
 
+## Agents — vendored + phase-mapped
+
+The template is **packaged**: the general agent suite (~79, from
+[contains-studio/agents](https://github.com/contains-studio/agents)) is **vendored** under
+`.claude/agents/<topic>/`, so a clone needs no `~/.claude` setup. The **template-tuned** reviewers
+live in `.claude/agents/project/` (`design-system` · `accessibility` · `ux` · `blog-module` ·
+`config-consistency`). Refresh the general suite with `pnpm agents:sync` (it never touches
+`project/`).
+
+**Which agent at which sprint step** is the canonical map in
+[`method/shared/process/my-skills-and-agents.md`](../../../method/shared/process/my-skills-and-agents.md)
+(THINK→REFLECT, with `[vendored]`/`[local]`/`[gstack]`/`[plugin]` source tags); the
+[`workflow.md`](../../../method/shared/process/workflow.md) phase chain and
+[`decision-matrix.md`](../../../method/shared/process/decision-matrix.md) (which review per change)
+sit alongside it.
+
 ## House conventions
 
 - **Keep each `CLAUDE.md` short** (aim < ~100 lines) and **specific** — exact versions, a real

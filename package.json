@@ -22,7 +22,8 @@
     "work:install": "npm --prefix work install",
     "work": "npm --prefix work run dev",
     "work:build": "npm --prefix work run build",
-    "prepare": "husky"
+    "prepare": "husky",
+    "agents:sync": "bash scripts/sync-agents.sh"
   },
   "devDependencies": {
     "husky": "^9.1.7",
