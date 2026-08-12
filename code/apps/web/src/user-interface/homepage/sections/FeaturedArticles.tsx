@@ -1,10 +1,11 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@indiecrafts/config";
 import { parseVideoEmbed } from "@indiecrafts/utils";
 import { formatPostDate } from "@indiecrafts/utils";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { PlayBadge } from "@indiecrafts/blog/user-interface/shared/components/PlayBadge";
+import { PlayBadge } from "@indiecrafts/ui-components/renderers/PlayBadge";
 
 /**
  * Homepage "editor's desk" — a curated strip of featured articles, laid out
@@ -97,6 +98,7 @@ function LeadCard({ post, locale }: { post: PostListItem; locale: Locale }) {
   const description = post.metadata?.description;
   const date = formatDate(locale, post.publishedAt);
   const hasVideo = !!parseVideoEmbed(post.metadata?.videoUrl);
+  const t = useTranslations("pages.blog");
 
   return (
     <article className="group bg-card ring-border/60 flex h-full flex-col overflow-hidden rounded-xl shadow-sm ring-1">
@@ -117,7 +119,7 @@ function LeadCard({ post, locale }: { post: PostListItem; locale: Locale }) {
         ) : (
           <div className="bg-muted h-full w-full" aria-hidden="true" />
         )}
-        {hasVideo ? <PlayBadge /> : null}
+        {hasVideo ? <PlayBadge label={t("hasVideo")} /> : null}
       </Link>
       <div className="flex flex-1 flex-col gap-3 p-6">
         {category ? (
@@ -151,6 +153,7 @@ function SecondaryRow({ post, locale }: { post: PostListItem; locale: Locale }) 
   const alt = post.metadata?.image?.alt ?? title;
   const date = formatDate(locale, post.publishedAt);
   const hasVideo = !!parseVideoEmbed(post.metadata?.videoUrl);
+  const t = useTranslations("pages.blog");
 
   return (
     <Link
@@ -167,7 +170,7 @@ function SecondaryRow({ post, locale }: { post: PostListItem; locale: Locale }) 
             className="object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
         ) : null}
-        {hasVideo ? <PlayBadge size="sm" /> : null}
+        {hasVideo ? <PlayBadge size="sm" label={t("hasVideo")} /> : null}
       </div>
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
         <h3 className="group-hover:text-brand line-clamp-2 leading-snug font-medium text-pretty transition-colors">

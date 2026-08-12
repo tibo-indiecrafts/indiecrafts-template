@@ -7,7 +7,7 @@ import { parseVideoEmbed } from "@indiecrafts/utils";
 import { Link } from "@indiecrafts/i18n";
 import type { Post, PostListItem } from "@indiecrafts/blog/sanity/types";
 import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
-import { HeroVideo } from "@indiecrafts/blog/user-interface/post/components/HeroVideo";
+import { VideoEmbed } from "@indiecrafts/ui-components/renderers/VideoEmbed";
 import {
   Breadcrumbs,
   type Crumb,
@@ -265,7 +265,7 @@ export async function DefaultPostLayout({
 
         {videoEmbed ? (
           <div className="mb-12 md:mb-16">
-            <HeroVideo
+            <VideoEmbed
               embed={videoEmbed}
               poster={image}
               title={title}

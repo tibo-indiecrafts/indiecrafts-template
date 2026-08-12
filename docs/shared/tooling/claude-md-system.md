@@ -12,26 +12,30 @@ when their files are read), so rules layer instead of overriding:
 
 ```
 CLAUDE.md                              # root — universal laws (platform, four-folder layout, principles)
-.claude/{settings.json, rules/}        # settings (ROOT-ONLY) + global rules (writing-style)
+.claude/{settings.json, rules/, skills/, agents/}   # settings (ROOT-ONLY) + global rule (writing-style)
+                                       # + skills/agents at ROOT so they're available wherever you start
 code/apps/web/.claude/
   CLAUDE.md                            # the app's how-to-code
   rules/                               # auto-loading rules (import method canon) + code-patterns + self-review
-  skills/  agents/                     # web-scoped design + review tooling
 code/packages/<name>/.claude/CLAUDE.md # per-brick specifics
 code/modules/blog/.claude/CLAUDE.md    # the module
 ```
 
-## What nests, and what doesn't
+## What nests, and what doesn't — the two loading behaviors
 
-| Component | Nested per sub-project? | Loads |
+The catch: **CLAUDE.md and rules load by the *files Claude reads*, but skills/agents/commands are
+discovered by *walking up from where you launched Claude*.** Since you run from the repo root,
+skills/agents live at **root** (always available) while CLAUDE.md + rules nest (auto-load by location).
+
+| Component | Where we put it | Loads |
 | --- | --- | --- |
-| `CLAUDE.md` | ✅ | ancestors at launch; subtree on-demand |
-| `rules/` | ✅ | with the subtree CLAUDE.md; `paths:` frontmatter scopes further |
-| `skills/` · `agents/` · `commands/` | ✅ | on-demand when working in that subtree |
-| **`settings.json` / `settings.local.json`** | ❌ **root only** | start dir only — **never nest it** |
+| `CLAUDE.md` | nested per unit | ancestors at launch; a subtree's file when Claude reads a file under it — **no `cd`** |
+| `rules/` | nested (app) + root (global) | with the subtree's CLAUDE.md; `paths:` frontmatter scopes further — **no `cd`** |
+| `skills/` · `agents/` · `commands/` | **root** | discovered by walking **up** from the start dir → nest them and they vanish unless you launch inside that subtree |
+| **`settings.json` / `settings.local.json`** | **root** | start dir only — **never nest it** |
 
-Bare `<dir>/CLAUDE.md` and `<dir>/.claude/CLAUDE.md` are interchangeable; we use `.claude/` so
-rules/skills/agents live beside it.
+Bare `<dir>/CLAUDE.md` and `<dir>/.claude/CLAUDE.md` are interchangeable; we use `.claude/` so the
+nested rules live beside their CLAUDE.md.
 
 ## Rules are importers, not copies
 

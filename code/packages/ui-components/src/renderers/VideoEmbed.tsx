@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Play } from "lucide-react";
-import type { VideoEmbed } from "@indiecrafts/utils";
+import type { VideoEmbed as VideoEmbedInfo } from "@indiecrafts/utils";
 import {
   Dialog,
   DialogClose,
@@ -12,23 +12,25 @@ import {
 } from "@indiecrafts/ui/dialog";
 
 /**
- * Featured-video hero. A poster thumbnail with a play button opens an
+ * Video embed player — a poster thumbnail with a play button that opens an
  * accessible modal player (Radix Dialog — focus trap, Escape, overlay). The
  * player only mounts when opened, so the third-party iframe never loads
- * unprompted. Adapted from the library's `HeroVideoDialog`, but the `src`
- * comes from `parseVideoEmbed` (a validated provider URL, never raw HTML).
+ * unprompted. The `embed` comes from `parseVideoEmbed` (a validated provider
+ * URL, never raw HTML). Generic across surfaces — the blog post hero and any
+ * page-builder media/embed block share it.
  *
- * YouTube/Vimeo → iframe; direct files → native `<video>`. 16:9,
- * keyboard-operable, reduced-motion safe.
+ * YouTube/Vimeo/Dailymotion → iframe; direct files → native `<video>`. 16:9,
+ * keyboard-operable, reduced-motion safe. Labels are passed in so the component
+ * stays i18n-agnostic.
  */
-export function HeroVideo({
+export function VideoEmbed({
   embed,
   poster,
   title,
   playLabel,
   closeLabel,
 }: {
-  embed: VideoEmbed;
+  embed: VideoEmbedInfo;
   poster?: string;
   title: string;
   playLabel: string;

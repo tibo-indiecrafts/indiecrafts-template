@@ -68,10 +68,10 @@ export default defineType({
       title: "Vidéo à la une",
       type: "url",
       description:
-        "URL YouTube, Vimeo ou fichier (.mp4/.webm). Si renseignée, le héros de l'article lit cette vidéo à la place de l'image — l'image sociale ci-dessus sert alors d'aperçu (poster). Collez l'URL, pas un code d'intégration.",
+        "URL YouTube, Vimeo, Dailymotion ou fichier (.mp4/.webm). Si renseignée, le héros de l'article lit cette vidéo à la place de l'image — l'image sociale ci-dessus sert alors d'aperçu (poster). Collez l'URL, pas un code d'intégration.",
       validation: (Rule) =>
         Rule.uri({ scheme: ["http", "https"] }).warning(
-          "Utilisez une URL http(s) YouTube, Vimeo ou de fichier vidéo.",
+          "Utilisez une URL http(s) YouTube, Vimeo, Dailymotion ou de fichier vidéo.",
         ),
     }),
     defineField({

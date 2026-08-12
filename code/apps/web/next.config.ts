@@ -29,7 +29,7 @@ const csp = [
   `connect-src ${cspConnectSources}${gaConnectSrc}`,
   // Featured-video embeds — the only third-party frames we ever render, and
   // only from these validated hosts (see `parseVideoEmbed` + `HeroVideo`).
-  `frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com`,
+  `frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com https://www.dailymotion.com`,
   `frame-ancestors 'none'`,
   `base-uri 'self'`,
   `form-action 'self'`,

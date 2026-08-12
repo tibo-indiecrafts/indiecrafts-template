@@ -14,6 +14,16 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **Dailymotion featured-video support** in `@indiecrafts/utils` `parseVideoEmbed` — accepts
+  `dailymotion.com/video/<id>`, `/embed/video/<id>`, and short `dai.ly/<id>` (strips a
+  `_title` suffix; id `^[a-zA-Z0-9]{5,32}$`), producing `dailymotion.com/embed/video/<id>`.
+  Joins YouTube/Vimeo/file. Host must be in the app's `frame-src` CSP (done).
+- **`VideoEmbed` + `PlayBadge` extracted to `@indiecrafts/ui-components`** (`renderers/`)
+  from the blog module, so app pages + blog share one video player + badge. `VideoEmbed`
+  (was blog `HeroVideo`) and `PlayBadge` are i18n-agnostic — labels are passed in, not
+  self-resolved — so the package owns no message namespace. Enables the page-builder
+  `embed`/`hero` media block without duplicating the player.
+
 - **`@indiecrafts/sanity/image` — the `next/image` CDN loader.** New subpath export
   `sanityImageLoader`: an isomorphic loader that appends `?w=&q=&auto=format&fit=max` for
   `cdn.sanity.io` + `images.unsplash.com` (SVG + non-CDN sources pass through). Wired

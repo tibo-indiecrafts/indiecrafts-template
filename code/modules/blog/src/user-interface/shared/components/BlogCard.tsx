@@ -1,10 +1,11 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/i18n";
 import { features, type Locale } from "@indiecrafts/config";
 import { parseVideoEmbed } from "@indiecrafts/utils";
 import { formatPostDate } from "@indiecrafts/utils";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { PlayBadge } from "@indiecrafts/blog/user-interface/shared/components/PlayBadge";
+import { PlayBadge } from "@indiecrafts/ui-components/renderers/PlayBadge";
 
 /**
  * Featured card used by the blog listing, category explorer, and author
@@ -41,6 +42,7 @@ export function BlogCard({
     tags: showTags,
   } = features.blogTaxonomy;
   const hasVideo = !!parseVideoEmbed(post.metadata?.videoUrl);
+  const t = useTranslations("pages.blog");
   const aspect = variant === "wide" ? "aspect-[16/9]" : "aspect-[4/3]";
 
   return (
@@ -61,7 +63,7 @@ export function BlogCard({
           ) : (
             <div className="bg-muted h-full w-full" aria-hidden="true" />
           )}
-          {hasVideo ? <PlayBadge /> : null}
+          {hasVideo ? <PlayBadge label={t("hasVideo")} /> : null}
         </div>
       </Link>
 

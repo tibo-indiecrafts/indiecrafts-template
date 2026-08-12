@@ -21,6 +21,12 @@ method/framework → [`method/CHANGELOG.md`](../../../method/CHANGELOG.md); lab 
 
 ### Added
 
+- **Dailymotion allowed in the `frame-src` CSP.** `next.config.ts` `frame-src` now includes
+  `https://www.dailymotion.com` alongside YouTube-nocookie + Vimeo, so featured-video posts
+  can embed Dailymotion (parser support lives in `@indiecrafts/utils`). The homepage
+  `FeaturedArticles` cards pass the play-badge `label` explicitly now that `PlayBadge` moved
+  to `@indiecrafts/ui-components` and takes it as a prop.
+
 - **Sanity images sized at the CDN (`next/image` loader).** A `next/image` loader
   (`@indiecrafts/sanity/image`, wired via `images.loaderFile`) rewrites every image `src`
   to a CDN-sized source (`?w=&q=&auto=format&fit=max`) — Sanity + Unsplash resize/re-encode

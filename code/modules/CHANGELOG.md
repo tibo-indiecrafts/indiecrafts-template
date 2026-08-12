@@ -13,6 +13,14 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Changed
+
+- **Blog featured video accepts Dailymotion + player extracted.** `metadata.videoUrl` now
+  takes Dailymotion / `dai.ly` URLs (Studio legend updated). The video player moved out of
+  the blog (`post/components/HeroVideo` → `@indiecrafts/ui-components` `renderers/VideoEmbed`)
+  and the listing play-badge too (`shared/components/PlayBadge` → same package), so app pages
+  and the blog share one player; `BlogCard` passes the badge `label` from `pages.blog`.
+
 ### Added
 
 - **`@indiecrafts/blog` — the blog extracted to a module.** The blog feature moved from the

@@ -7,19 +7,21 @@
  * `data:` URLs or arbitrary markup. Unrecognized input returns `null` and the
  * caller falls back to the cover image.
  *
- * Providers: YouTube (incl. youtu.be / -nocookie), Vimeo, and direct video
- * files (.mp4/.webm/.ogg/.mov). Embed hosts must also be allow-listed in the
- * `frame-src` CSP directive (see `next.config.ts`).
+ * Providers: YouTube (incl. youtu.be / -nocookie), Vimeo, Dailymotion (incl.
+ * dai.ly), and direct video files (.mp4/.webm/.ogg/.mov). Embed hosts must also
+ * be allow-listed in the `frame-src` CSP directive (see `next.config.ts`).
  */
 
 export type VideoEmbed =
   | { kind: "youtube"; id: string; embedSrc: string }
   | { kind: "vimeo"; id: string; embedSrc: string }
+  | { kind: "dailymotion"; id: string; embedSrc: string }
   | { kind: "file"; embedSrc: string };
 
 /** IDs are strictly alphanumeric/dash/underscore — reject anything else. */
 const YOUTUBE_ID = /^[\w-]{11}$/;
 const VIMEO_ID = /^\d+$/;
+const DAILYMOTION_ID = /^[a-zA-Z0-9]{5,32}$/;
 const FILE_EXT = /\.(mp4|webm|ogg|mov)$/i;
 
 export function parseVideoEmbed(input?: string | null): VideoEmbed | null {
@@ -57,6 +59,23 @@ export function parseVideoEmbed(input?: string | null): VideoEmbed | null {
     const id = url.pathname.split("/").filter(Boolean).pop() ?? "";
     if (!VIMEO_ID.test(id)) return null;
     return { kind: "vimeo", id, embedSrc: `https://player.vimeo.com/video/${id}` };
+  }
+
+  // ── Dailymotion ────────────────────────────────────────────
+  // `dailymotion.com/video/<id>`, `/embed/video/<id>`, or short `dai.ly/<id>`.
+  // Take the segment *after* `video/` (not just the last one, so a bare
+  // `/video/` yields no id); the public URL may append a `_title-slug`.
+  if (host === "dailymotion.com" || host === "dai.ly") {
+    const parts = url.pathname.split("/").filter(Boolean);
+    const videoIdx = parts.indexOf("video");
+    const raw = host === "dai.ly" ? parts[0] : videoIdx >= 0 ? parts[videoIdx + 1] : undefined;
+    const id = (raw ?? "").split("_")[0] ?? "";
+    if (!DAILYMOTION_ID.test(id)) return null;
+    return {
+      kind: "dailymotion",
+      id,
+      embedSrc: `https://www.dailymotion.com/embed/video/${id}`,
+    };
   }
 
   // ── Direct file ────────────────────────────────────────────
