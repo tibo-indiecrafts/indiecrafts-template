@@ -26,11 +26,13 @@ const POST_LIST_FRAGMENT = `
     title,
     description,
     noIndex,
-    videoUrl,
+    "video": coalesce(videoFile.asset->url, videoUrl),
+    videoAutoplay,
+    videoControls,
     image { asset->{ url, metadata }, alt },
     llmsSummary
   },
-  author->{
+  authors[]->{
     _id, name, position, "slug": slug.current,
     "bio": pt::text(bio),
     image { asset->{ url } }
@@ -175,12 +177,14 @@ export const postBySlugQuery = defineQuery(`
       title,
       description,
       noIndex,
-      videoUrl,
+      "video": coalesce(videoFile.asset->url, videoUrl),
+      videoAutoplay,
+      videoControls,
       image { asset->{ url, metadata }, alt },
       llmsSummary,
       llmsFull
     },
-    author->{ name, position, "slug": slug.current, image { asset->{ url } } },
+    authors[]->{ name, position, "slug": slug.current, image { asset->{ url } } },
     categories[]->{ _id, title, "slug": slug.current },
     tags[]->{ _id, title, "slug": slug.current },
     // Derived — keep these in the same shape the components expect.
@@ -240,7 +244,7 @@ export const rssPostsQuery = defineQuery(`
     publishedAt,
     "slug": metadata.slug.current,
     metadata { title, description, image { asset->{ url } } },
-    author->{ name },
+    authors[]->{ name },
     categories[]->{ title }
   }
 `);
@@ -440,7 +444,7 @@ export const authorBySlugQuery = defineQuery(`
 /** Posts by a given author, locale-filtered — feeds /author/[slug]. */
 export const postsByAuthorSlugQuery = defineQuery(`
   *[_type == "post"
-    && author->slug.current == $slug
+    && $slug in authors[]->slug.current
     && defined(metadata.slug.current)
     && metadata.noIndex != true
     && metadata.hideFromDiscovery != true

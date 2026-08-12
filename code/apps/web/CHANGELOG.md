@@ -19,6 +19,21 @@ method/framework → [`method/CHANGELOG.md`](../../../method/CHANGELOG.md); lab 
 
 ## [Unreleased]
 
+### Changed
+
+- **Multi-author output in SEO + feeds.** `buildArticleSchema` takes `authorNames[]` and emits
+  a single `Person`, an array of `Person`, or the org fallback; the post page passes every
+  author. RSS repeats `<dc:creator>`, Atom repeats `<author>`, and the `.md` export joins the
+  names — following the post `author` → `authors[]` change (blog module).
+- **CSP `media-src` added** (`'self' blob: https://cdn.sanity.io`) so editor-uploaded
+  featured videos (Sanity file assets) play in a native `<video>` — without it the element
+  fell back to `default-src 'self'` and was blocked.
+- **Homepage `FeaturedArticles` cards simplified + share `FeaturedMedia`.** The lead card and
+  secondary rows now render their cover through the shared `FeaturedMedia` (image or
+  inline-playable video, no modal); the lead uses a stretched title link so the whole card
+  navigates while the play button plays in place. Distilled to media · category · title ·
+  excerpt · author·date.
+
 ### Added
 
 - **Dailymotion allowed in the `frame-src` CSP.** `next.config.ts` `frame-src` now includes
@@ -44,7 +59,7 @@ method/framework → [`method/CHANGELOG.md`](../../../method/CHANGELOG.md); lab 
   `button-secondary-hover` variants (hover = tint/`muted` fill, disabled = 50% opacity — no
   new hue). Also aligned the `components` block to the Google spec sub-token names
   (`textColor`/`rounded`), added a `primary` alias for `brand`, and fixed the `letterSpacing`
-  + stale-path lint errors: `npx @google/design.md lint` now reports **0 errors** (was 3).
+  - stale-path lint errors: `npx @google/design.md lint` now reports **0 errors** (was 3).
 - **Chip contrast fix** _(design)_. Darkened light `--muted-foreground` `oklch(0.556)` →
   `oklch(0.52)` (`#737373` → `#696969`) so `muted-foreground` on `--muted` (chips, `text-xs`)
   clears WCAG AA — **5.05:1**, was 4.0:1. Surfaced by the Google linter, which our own
@@ -131,9 +146,9 @@ method/framework → [`method/CHANGELOG.md`](../../../method/CHANGELOG.md); lab 
   rendered by a minimal blog-decoupled `LegalBody` PortableText serializer); SEO comes
   from the existing `siteMeta.pageSeo`. A "Pages légales" Studio desk section + 10
   seeded boilerplate docs (LCEN / RGPD / ePrivacy structure, `[bracketed]` placeholders
-  + a "have a lawyer review it" note). `features.legalPage` → `features.legal` group;
-  footer now shows a **Legal** group of the enabled pages. Guide:
-  `code/docs/config/legal-pages.md`.
+  - a "have a lawyer review it" note). `features.legalPage` → `features.legal` group;
+    footer now shows a **Legal** group of the enabled pages. Guide:
+    `code/docs/config/legal-pages.md`.
 - **Footer follow block + social profiles fully in Sanity.** The dead `site.social`
   config block is removed; `siteSettings.social` (clearer per-platform legends) is the
   sole source. A new `SocialFollow` footer block renders the profiles as icon links

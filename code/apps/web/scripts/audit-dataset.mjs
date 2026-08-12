@@ -83,13 +83,17 @@ report(
   dirtyPosts.map((p) => `${p._id} (${[...new Set(p.leftover)].join(", ")})`),
 );
 
-// 4. Posts whose author reference no longer resolves.
+// 4. Posts with no author, or an author reference that no longer resolves.
 const brokenAuthors = await client.fetch(`*[
-  _type == "post" && defined(author) && !defined(author->_id)
-]{ _id, title }`);
+  _type == "post" && (
+    count(coalesce(authors, [])) == 0 || count(authors[!defined(@->_id)]) > 0
+  )
+]{ _id, title, "authorCount": count(coalesce(authors, [])) }`);
 report(
-  "Posts with broken author reference",
-  brokenAuthors.map((p) => `${p._id} (${p.title ?? "untitled"})`),
+  "Posts with missing/broken author reference",
+  brokenAuthors.map(
+    (p) => `${p._id} (${p.title ?? "untitled"}, ${p.authorCount} author(s))`,
+  ),
 );
 
 // 5. Posts with at least one category / tag ref that no longer resolves.

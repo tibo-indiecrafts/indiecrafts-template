@@ -112,11 +112,17 @@ export type PostMetadata = {
   description?: string;
   image?: ImageRef;
   /**
-   * Optional featured video (YouTube / Vimeo / Dailymotion / direct file URL). When set,
-   * the post hero plays this instead of the cover image; `image` stays the
-   * poster + the OG/social + card thumbnail. Parsed by `parseVideoEmbed`.
+   * Optional featured video — resolved in GROQ as `coalesce(videoFile.asset->url,
+   * videoUrl)`, so it's either an uploaded file's CDN url or an embed link
+   * (YouTube / Vimeo / Dailymotion). When set, the hero plays it instead of the
+   * cover image; `image` stays the poster + OG/social + card thumbnail. Parsed
+   * by `parseVideoEmbed` (a Sanity file url ends `.mp4`/`.webm` → `kind:"file"`).
    */
-  videoUrl?: string;
+  video?: string;
+  /** Auto-play the video muted + looping (ambient backdrop). Hero only. */
+  videoAutoplay?: boolean;
+  /** Show the player controls (default true). */
+  videoControls?: boolean;
   noIndex?: boolean;
   hideFromDiscovery?: boolean;
   unpublished?: boolean;
@@ -135,7 +141,8 @@ export type PostListItem = {
   featured?: boolean;
   slug?: string;
   metadata?: PostMetadata;
-  author?: AuthorRef;
+  /** One or more authors, in display order — the first is the lead. */
+  authors?: AuthorRef[];
   categories?: CategoryRef[];
   tags?: TagRef[];
 };
@@ -161,7 +168,7 @@ export type RssPost = {
   publishedAt?: string;
   slug?: string;
   metadata?: Pick<PostMetadata, "title" | "description" | "image">;
-  author?: { name?: string };
+  authors?: { name?: string }[];
   categories?: { title?: string }[];
 };
 

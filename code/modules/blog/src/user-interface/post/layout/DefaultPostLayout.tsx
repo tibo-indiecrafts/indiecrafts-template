@@ -3,11 +3,10 @@ import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";
 import { features, type Locale } from "@indiecrafts/config";
 import { cn } from "@indiecrafts/utils";
-import { parseVideoEmbed } from "@indiecrafts/utils";
 import { Link } from "@indiecrafts/i18n";
 import type { Post, PostListItem } from "@indiecrafts/blog/sanity/types";
 import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
-import { VideoEmbed } from "@indiecrafts/ui-components/renderers/VideoEmbed";
+import { FeaturedMedia } from "@indiecrafts/ui-components/renderers/FeaturedMedia";
 import {
   Breadcrumbs,
   type Crumb,
@@ -51,8 +50,7 @@ export async function DefaultPostLayout({
   ]);
   const date = formatPostDate(locale, post.publishedAt, { month: "long" });
   const readTime = post.readTime && post.readTime > 0 ? post.readTime : null;
-  const author = post.author;
-  const authorHref = author?.slug ? `/author/${author.slug}` : "/author";
+  const authors = post.authors ?? [];
   const categoryRef = post.categories?.[0];
   const tags = (post.tags ?? []).filter((tag) => tag.slug);
   // Author / category / tag link to routes gated per-type by `features.blogTaxonomy`.
@@ -77,203 +75,137 @@ export async function DefaultPostLayout({
 
   const hasToc = (post.headings?.length ?? 0) > 0;
 
-  // Featured video wins the hero: the header drops the image overlay (text
-  // needs a light background, not a croppable video) and the video plays in
-  // its own 16:9 block below. The cover image becomes the video poster.
-  const videoEmbed = parseVideoEmbed(post.metadata?.videoUrl);
-  const hasCoverHero = !!image && !videoEmbed;
-
-  // Theming: with a cover-image hero we overlay content on the image with a
-  // dark gradient so text + chrome read white-on-dark. Otherwise (no image,
-  // or a video hero) we fall back to the theme's foreground colours. All
-  // hero descendants read these CSS vars instead of branching on `heroLight`
-  // per element — one decision per render, not eleven.
-  const heroLight = !hasCoverHero;
-  const heroVars = heroLight
-    ? ({
-        "--hero-fg": "var(--foreground)",
-        "--hero-fg-muted": "var(--muted-foreground)",
-        "--hero-border": "color-mix(in oklab, var(--border) 60%, transparent)",
-        "--hero-chip-bg": "var(--muted)",
-        "--hero-chip-fg": "var(--muted-foreground)",
-        "--hero-chip-hover-bg": "var(--foreground)",
-        "--hero-chip-hover-fg": "var(--background)",
-        "--hero-pill-bg": "color-mix(in oklab, var(--background) 70%, transparent)",
-        "--hero-pill-ring": "color-mix(in oklab, var(--border) 60%, transparent)",
-        "--hero-avatar-ring": "var(--border)",
-        "--hero-fg-hover": "var(--muted-foreground)",
-      } as React.CSSProperties)
-    : ({
-        "--hero-fg": "white",
-        "--hero-fg-muted": "rgb(255 255 255 / 0.85)",
-        "--hero-border": "rgb(255 255 255 / 0.25)",
-        "--hero-chip-bg": "rgb(255 255 255 / 0.15)",
-        "--hero-chip-fg": "white",
-        "--hero-chip-hover-bg": "rgb(255 255 255 / 0.25)",
-        "--hero-chip-hover-fg": "white",
-        "--hero-pill-bg": "rgb(0 0 0 / 0.3)",
-        "--hero-pill-ring": "rgb(255 255 255 / 0.15)",
-        "--hero-avatar-ring": "rgb(255 255 255 / 0.4)",
-        "--hero-fg-hover": "rgb(255 255 255 / 0.8)",
-      } as React.CSSProperties);
+  // One hero structure for image and video alike: the cover — or an
+  // inline-playable video — sits in a media block, and the title + meta read
+  // below in theme colours. `FeaturedMedia` swaps the poster for an inline
+  // player on click, so there's no modal and no separate video block.
+  const heroLqip = post.metadata?.image?.asset?.metadata?.lqip;
+  const hasHeroMedia = !!image || !!post.metadata?.video;
 
   return (
     <article className="pb-16 md:pb-24">
       <div className="mx-auto max-w-(--max-container) px-(--gutter)">
-        <header
-          style={heroVars}
-          className={cn(
-            "relative flex flex-col overflow-hidden rounded-b-3xl shadow-xl",
-            videoEmbed ? "mb-6 md:mb-8" : "mb-12 md:mb-16",
-            hasCoverHero
-              ? "min-h-[60vh] ring-1 shadow-black/15 ring-black/10 md:min-h-[70vh]"
-              : "bg-card mt-8 rounded-3xl ring-1 shadow-black/5 ring-(--hero-pill-ring) md:mt-12",
-          )}
-        >
-          {hasCoverHero ? (
-            <>
-              <Image
-                src={image}
-                alt={post.metadata?.image?.alt ?? title}
-                width={1600}
-                height={900}
-                sizes="(min-width: 1280px) 1280px, 100vw"
-                className="absolute inset-0 size-full object-cover"
-                priority
-              />
-              {/* Dark gradient — heavy at the bottom for legibility, fades up. */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-black/15"
-              />
-            </>
+        <header className="mt-8 mb-12 md:mt-12 md:mb-16">
+          <Breadcrumbs
+            items={breadcrumbs}
+            label={t("breadcrumbsLabel")}
+            className="text-muted-foreground mb-6 inline-flex text-sm"
+          />
+
+          {hasHeroMedia ? (
+            <FeaturedMedia
+              image={image}
+              alt={post.metadata?.image?.alt ?? title}
+              videoUrl={post.metadata?.video}
+              autoplay={post.metadata?.videoAutoplay}
+              controls={post.metadata?.videoControls ?? true}
+              lqip={heroLqip}
+              aspect="aspect-[16/9]"
+              sizes="(min-width: 1280px) 1152px, 100vw"
+              priority
+              playLabel={t("playVideo")}
+              className="ring-border/60 rounded-2xl shadow-lg ring-1"
+            />
           ) : null}
 
-          {/* Breadcrumbs sit at the top of the hero, overlaid on the
-              image with a subtle backdrop-blurred pill so they stay legible
-              regardless of what the image looks like. */}
-          <div className="relative px-6 pt-6 sm:px-10 md:px-14 lg:px-20">
-            <Breadcrumbs
-              items={breadcrumbs}
-              label={t("breadcrumbsLabel")}
-              className="inline-flex rounded-full bg-(--hero-pill-bg) px-3 py-1.5 text-(--hero-fg) ring-1 ring-(--hero-pill-ring) backdrop-blur-md"
-            />
-          </div>
+          <div className={cn("max-w-3xl", hasHeroMedia && "mt-10")}>
+            {tags.length > 0 && showTags ? (
+              <ul className="mb-6 flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <li key={tag._id}>
+                    <Link
+                      href={`/blog/tag/${tag.slug}`}
+                      className="bg-muted text-muted-foreground hover:bg-foreground hover:text-background focus-visible:ring-ring rounded-md px-2 py-1 text-xs font-medium capitalize transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                    >
+                      #{tag.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
 
-          {/* Title block — pushed to the bottom of the hero. */}
-          <div className="relative mt-auto px-6 pt-16 pb-10 sm:px-10 sm:pt-20 sm:pb-14 md:px-14 md:pt-24 md:pb-16 lg:px-20 lg:pt-28 lg:pb-20">
-            <div className="max-w-3xl">
-              {tags.length > 0 && showTags ? (
-                <ul className="mb-6 flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <li key={tag._id}>
-                      <Link
-                        href={`/blog/tag/${tag.slug}`}
-                        className="focus-visible:ring-ring rounded-md bg-(--hero-chip-bg) px-2 py-1 text-xs font-medium text-(--hero-chip-fg) capitalize backdrop-blur transition-colors hover:bg-(--hero-chip-hover-bg) hover:text-(--hero-chip-hover-fg) focus-visible:ring-2 focus-visible:outline-none"
-                      >
-                        #{tag.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
+            <h1 className="text-3xl leading-[1.05] font-bold tracking-tight text-balance md:text-5xl xl:text-6xl">
+              {title}
+            </h1>
+            {description ? (
+              <p className="text-muted-foreground mt-6 text-lg leading-relaxed md:text-xl">
+                {description}
+              </p>
+            ) : null}
 
-              <h1
-                className={cn(
-                  "text-3xl leading-[1.05] font-bold tracking-tight text-balance text-(--hero-fg) md:text-5xl xl:text-6xl",
-                  !heroLight && "drop-shadow-lg",
-                )}
-              >
-                {title}
-              </h1>
-              {description ? (
-                <p className="mt-6 text-lg leading-relaxed text-(--hero-fg-muted) md:text-xl">
-                  {description}
-                </p>
-              ) : null}
-
-              {/* Meta strip — author block + publish/read-time/category.
-                  Stacks on mobile, single row from sm: upward. */}
-              <div className="mt-8 flex flex-col gap-4 border-t border-(--hero-border) pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3">
-                {author?.name && showAuthors ? (
-                  <Link
-                    href={authorHref}
-                    aria-label={author.name}
-                    className="focus-visible:ring-ring group flex items-center gap-3 rounded focus-visible:ring-2 focus-visible:outline-none"
-                  >
-                    {author.image?.asset?.url ? (
-                      <Image
-                        src={author.image.asset.url}
-                        alt={author.name}
-                        width={80}
-                        height={80}
-                        className="bg-card size-10 rounded-full object-cover ring-1 ring-(--hero-avatar-ring)"
-                      />
-                    ) : (
-                      <span className="flex size-10 items-center justify-center rounded-full bg-(--hero-chip-bg) text-xs text-(--hero-chip-fg) ring-1 ring-(--hero-avatar-ring)">
-                        {author.name.slice(0, 1).toUpperCase()}
-                      </span>
-                    )}
-                    <div className="min-w-0">
-                      <span className="block truncate text-sm font-medium text-(--hero-fg) transition-colors group-hover:text-(--hero-fg-hover)">
-                        {author.name}
-                      </span>
-                      {author.position ? (
-                        <span className="block truncate text-xs text-(--hero-fg-muted)">
-                          {author.position}
+            {/* Meta strip — author block + publish/read-time/category. */}
+            <div className="border-border/60 mt-8 flex flex-col gap-4 border-t pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3">
+              {authors.length > 0 && showAuthors ? (
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+                  {authors.map((a) => (
+                    <Link
+                      key={a._id ?? a.slug ?? a.name}
+                      href={a.slug ? `/author/${a.slug}` : "/author"}
+                      aria-label={a.name}
+                      className="focus-visible:ring-ring group flex items-center gap-3 rounded focus-visible:ring-2 focus-visible:outline-none"
+                    >
+                      {a.image?.asset?.url ? (
+                        <Image
+                          src={a.image.asset.url}
+                          alt={a.name ?? ""}
+                          width={80}
+                          height={80}
+                          className="bg-muted ring-border size-10 rounded-full object-cover ring-1"
+                        />
+                      ) : (
+                        <span className="bg-muted text-muted-foreground ring-border flex size-10 items-center justify-center rounded-full text-xs ring-1">
+                          {(a.name ?? "?").slice(0, 1).toUpperCase()}
                         </span>
-                      ) : null}
-                    </div>
-                  </Link>
-                ) : null}
+                      )}
+                      <div className="min-w-0">
+                        <span className="text-foreground group-hover:text-muted-foreground block truncate text-sm font-medium transition-colors">
+                          {a.name}
+                        </span>
+                        {a.position ? (
+                          <span className="text-muted-foreground block truncate text-xs">
+                            {a.position}
+                          </span>
+                        ) : null}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
 
-                {date || readTime || categoryRef?.slug ? (
-                  <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-(--hero-fg-muted) sm:ml-auto">
-                    {date ? (
-                      <div className="flex items-center gap-1.5">
-                        <dt className="sr-only">{t("metaPublished")}</dt>
-                        <dd>
-                          <time dateTime={post.publishedAt}>{date}</time>
-                        </dd>
-                      </div>
-                    ) : null}
-                    {readTime ? (
-                      <div className="flex items-center gap-1.5 sm:border-l sm:border-(--hero-border) sm:pl-4">
-                        <dt className="sr-only">{t("metaReadTime")}</dt>
-                        <dd>{t("minRead", { minutes: readTime })}</dd>
-                      </div>
-                    ) : null}
-                    {categoryRef?.title && categoryRef.slug && showCategories ? (
-                      <div className="flex items-center gap-1.5 sm:border-l sm:border-(--hero-border) sm:pl-4">
-                        <dt className="sr-only">{t("metaCategory")}</dt>
-                        <dd>
-                          <Link
-                            href={`/blog/category/${categoryRef.slug}`}
-                            className="capitalize transition-colors hover:text-(--hero-fg)"
-                          >
-                            {categoryRef.title}
-                          </Link>
-                        </dd>
-                      </div>
-                    ) : null}
-                  </dl>
-                ) : null}
-              </div>
+              {date || readTime || categoryRef?.slug ? (
+                <dl className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm sm:ml-auto">
+                  {date ? (
+                    <div className="flex items-center gap-1.5">
+                      <dt className="sr-only">{t("metaPublished")}</dt>
+                      <dd>
+                        <time dateTime={post.publishedAt}>{date}</time>
+                      </dd>
+                    </div>
+                  ) : null}
+                  {readTime ? (
+                    <div className="sm:border-border/60 flex items-center gap-1.5 sm:border-l sm:pl-4">
+                      <dt className="sr-only">{t("metaReadTime")}</dt>
+                      <dd>{t("minRead", { minutes: readTime })}</dd>
+                    </div>
+                  ) : null}
+                  {categoryRef?.title && categoryRef.slug && showCategories ? (
+                    <div className="sm:border-border/60 flex items-center gap-1.5 sm:border-l sm:pl-4">
+                      <dt className="sr-only">{t("metaCategory")}</dt>
+                      <dd>
+                        <Link
+                          href={`/blog/category/${categoryRef.slug}`}
+                          className="hover:text-foreground capitalize transition-colors"
+                        >
+                          {categoryRef.title}
+                        </Link>
+                      </dd>
+                    </div>
+                  ) : null}
+                </dl>
+              ) : null}
             </div>
           </div>
         </header>
-
-        {videoEmbed ? (
-          <div className="mb-12 md:mb-16">
-            <VideoEmbed
-              embed={videoEmbed}
-              poster={image}
-              title={title}
-              playLabel={t("playVideo")}
-              closeLabel={t("closeVideo")}
-            />
-          </div>
-        ) : null}
 
         {hasToc ? <MobileToc headings={post.headings!} title={t("onThisPage")} /> : null}
 

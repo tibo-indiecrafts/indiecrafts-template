@@ -31,8 +31,14 @@ export async function BlogPostContent({
   const image = post.metadata?.image?.asset?.url;
   const date = formatPostDate(locale, post.publishedAt, { month: "long" });
   const categoryRef = post.categories?.[0];
-  const author = post.author;
-  const authorHref = author?.slug ? `/author/${author.slug}` : "/author";
+  const authors = post.authors ?? [];
+  const authorNames = authors.map((a) => a.name).filter(Boolean) as string[];
+  const authorsLabel = authorNames.length
+    ? new Intl.ListFormat(locale, { type: "conjunction" }).format(authorNames)
+    : "";
+  // Only link the byline when there's a single author with a page.
+  const singleAuthorHref =
+    authors.length === 1 && authors[0]?.slug ? `/author/${authors[0].slug}` : null;
   const {
     authors: showAuthors,
     categories: showCategories,
@@ -61,15 +67,19 @@ export async function BlogPostContent({
           <p className="text-muted-foreground text-balance">{description}</p>
         ) : null}
         <div className="text-muted-foreground flex items-center gap-3 text-sm">
-          {author?.name && showAuthors ? (
-            <Link
-              href={authorHref}
-              className="hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
-            >
-              {t("by", { name: author.name })}
-            </Link>
+          {authorsLabel && showAuthors ? (
+            singleAuthorHref ? (
+              <Link
+                href={singleAuthorHref}
+                className="hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
+              >
+                {t("by", { name: authorsLabel })}
+              </Link>
+            ) : (
+              <span>{t("by", { name: authorsLabel })}</span>
+            )
           ) : null}
-          {author?.name && showAuthors && date ? <span aria-hidden="true">·</span> : null}
+          {authorsLabel && showAuthors && date ? <span aria-hidden="true">·</span> : null}
           {date ? <time dateTime={post.publishedAt}>{date}</time> : null}
         </div>
       </header>

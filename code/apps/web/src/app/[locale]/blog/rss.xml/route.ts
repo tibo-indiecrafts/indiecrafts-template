@@ -63,7 +63,7 @@ function renderItem(post: RssPost, locale: Locale): string {
   const title = post.metadata?.title ?? post.title ?? "";
   const description = post.metadata?.description ?? "";
   const pubDate = post.publishedAt ? new Date(post.publishedAt).toUTCString() : null;
-  const author = post.author?.name;
+  const authorNames = post.authors?.flatMap((a) => (a.name ? [a.name] : [])) ?? [];
   const cats = post.categories?.flatMap((c) => (c.title ? [c.title] : [])) ?? [];
   const image = post.metadata?.image?.asset?.url;
 
@@ -73,7 +73,7 @@ function renderItem(post: RssPost, locale: Locale): string {
     <guid isPermaLink="true">${url}</guid>
     ${description ? `<description><![CDATA[${description}]]></description>` : ""}
     ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ""}
-    ${author ? `<dc:creator>${escapeXml(author)}</dc:creator>` : ""}
+    ${authorNames.map((n) => `<dc:creator>${escapeXml(n)}</dc:creator>`).join("\n    ")}
     ${cats.map((c) => `<category>${escapeXml(c)}</category>`).join("\n    ")}
     ${image ? `<enclosure url="${image}" length="0" type="image/jpeg" />` : ""}
   </item>`;

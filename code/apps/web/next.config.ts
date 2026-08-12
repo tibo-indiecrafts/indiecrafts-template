@@ -25,6 +25,9 @@ const csp = [
   `script-src 'self' 'unsafe-inline'${env === "development" ? " 'unsafe-eval'" : ""}${gaScriptSrc}`,
   `style-src 'self' 'unsafe-inline'`,
   `img-src 'self' data: blob: https:`,
+  // Uploaded featured videos are served as Sanity file assets — `<video src>`
+  // falls back to default-src ('self') without this, so allow the CDN + blobs.
+  `media-src 'self' blob: https://cdn.sanity.io`,
   `font-src 'self' data:`,
   `connect-src ${cspConnectSources}${gaConnectSrc}`,
   // Featured-video embeds — the only third-party frames we ever render, and
@@ -37,7 +40,16 @@ const csp = [
 
 const nextConfig: NextConfig = {
   // Workspace packages consumed as source (no build step) — Next transpiles them.
-  transpilePackages: ["@indiecrafts/config", "@indiecrafts/sanity", "@indiecrafts/utils", "@indiecrafts/ui", "@indiecrafts/ui-components", "@indiecrafts/ui-tokens", "@indiecrafts/i18n", "@indiecrafts/blog"],
+  transpilePackages: [
+    "@indiecrafts/config",
+    "@indiecrafts/sanity",
+    "@indiecrafts/utils",
+    "@indiecrafts/ui",
+    "@indiecrafts/ui-components",
+    "@indiecrafts/ui-tokens",
+    "@indiecrafts/i18n",
+    "@indiecrafts/blog",
+  ],
   reactStrictMode: true,
   poweredByHeader: false,
   typescript: { ignoreBuildErrors: false },

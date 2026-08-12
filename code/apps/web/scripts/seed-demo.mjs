@@ -365,14 +365,44 @@ const buildSiteMeta = () => [
         "Notes on shipping client work: tooling, config-first architecture, and the trade-offs that keep sites lean.",
         "Next.js, Sanity, freelance, DX",
       ),
-      pgSeo("author", "Authors", "Meet the writers and contributors behind every article.", "authors, contributors, writers"),
+      pgSeo(
+        "author",
+        "Authors",
+        "Meet the writers and contributors behind every article.",
+        "authors, contributors, writers",
+      ),
       pgSeo("category", "Categories", "Browse articles by topic.", "categories, topics"),
       pgSeo("tag", "Tags", "Browse articles by tag.", "tags, topics"),
-      pgSeo("legal-notice", "Legal notice", "Publisher, ownership, and hosting information for this site.", "legal notice, imprint, publisher"),
-      pgSeo("privacy", "Privacy policy", "How we collect, use, and protect your personal data (GDPR).", "privacy policy, GDPR, personal data"),
-      pgSeo("cookies", "Cookie policy", "The cookies this site uses and how to manage your consent.", "cookie policy, consent, tracking"),
-      pgSeo("terms", "Terms of use", "The terms governing your use of this website.", "terms of use, conditions"),
-      pgSeo("terms-of-sale", "Terms of sale", "The terms that apply to purchases made on this site.", "terms of sale, purchases"),
+      pgSeo(
+        "legal-notice",
+        "Legal notice",
+        "Publisher, ownership, and hosting information for this site.",
+        "legal notice, imprint, publisher",
+      ),
+      pgSeo(
+        "privacy",
+        "Privacy policy",
+        "How we collect, use, and protect your personal data (GDPR).",
+        "privacy policy, GDPR, personal data",
+      ),
+      pgSeo(
+        "cookies",
+        "Cookie policy",
+        "The cookies this site uses and how to manage your consent.",
+        "cookie policy, consent, tracking",
+      ),
+      pgSeo(
+        "terms",
+        "Terms of use",
+        "The terms governing your use of this website.",
+        "terms of use, conditions",
+      ),
+      pgSeo(
+        "terms-of-sale",
+        "Terms of sale",
+        "The terms that apply to purchases made on this site.",
+        "terms of sale, purchases",
+      ),
     ],
   },
   {
@@ -420,14 +450,49 @@ const buildSiteMeta = () => [
         "Notes sur la livraison de projets clients : outillage, architecture config-first, et les arbitrages qui gardent les sites légers.",
         "Next.js, Sanity, freelance, DX",
       ),
-      pgSeo("author", "Auteurs", "Découvrez les auteurs et contributeurs derrière chaque article.", "auteurs, contributeurs"),
-      pgSeo("category", "Catégories", "Parcourez les articles par thème.", "catégories, thèmes"),
+      pgSeo(
+        "author",
+        "Auteurs",
+        "Découvrez les auteurs et contributeurs derrière chaque article.",
+        "auteurs, contributeurs",
+      ),
+      pgSeo(
+        "category",
+        "Catégories",
+        "Parcourez les articles par thème.",
+        "catégories, thèmes",
+      ),
       pgSeo("tag", "Tags", "Parcourez les articles par tag.", "tags, thèmes"),
-      pgSeo("legal-notice", "Mentions légales", "Informations sur l'éditeur, le responsable et l'hébergement du site.", "mentions légales, éditeur, hébergeur"),
-      pgSeo("privacy", "Politique de confidentialité", "Comment nous collectons, utilisons et protégeons vos données personnelles (RGPD).", "confidentialité, RGPD, données personnelles"),
-      pgSeo("cookies", "Politique de cookies", "Les cookies utilisés par ce site et comment gérer votre consentement.", "cookies, consentement, suivi"),
-      pgSeo("terms", "Conditions générales d'utilisation", "Les conditions régissant l'utilisation de ce site.", "CGU, conditions d'utilisation"),
-      pgSeo("terms-of-sale", "Conditions générales de vente", "Les conditions applicables aux achats effectués sur ce site.", "CGV, achats, vente"),
+      pgSeo(
+        "legal-notice",
+        "Mentions légales",
+        "Informations sur l'éditeur, le responsable et l'hébergement du site.",
+        "mentions légales, éditeur, hébergeur",
+      ),
+      pgSeo(
+        "privacy",
+        "Politique de confidentialité",
+        "Comment nous collectons, utilisons et protégeons vos données personnelles (RGPD).",
+        "confidentialité, RGPD, données personnelles",
+      ),
+      pgSeo(
+        "cookies",
+        "Politique de cookies",
+        "Les cookies utilisés par ce site et comment gérer votre consentement.",
+        "cookies, consentement, suivi",
+      ),
+      pgSeo(
+        "terms",
+        "Conditions générales d'utilisation",
+        "Les conditions régissant l'utilisation de ce site.",
+        "CGU, conditions d'utilisation",
+      ),
+      pgSeo(
+        "terms-of-sale",
+        "Conditions générales de vente",
+        "Les conditions applicables aux achats effectués sur ce site.",
+        "CGV, achats, vente",
+      ),
     ],
   },
 ];
@@ -1431,12 +1496,19 @@ const post = (
     // `metadata.description` (the SEO line) — the front-end resolves that.
     excerpt,
     daysOld,
-    author,
+    // Base author keys ("ada"), resolved to same-language docs. First = lead.
+    authors,
     categories: cats,
     tags: postTags = [],
     featured,
     body,
     imageKey,
+    // Optional featured video: an embed link (YouTube/Vimeo/Dailymotion). An
+    // uploaded file goes in the `videoFile` field in the Studio — the seed only
+    // demos the link path. `videoAutoplay`/`videoControls` are honored on the hero.
+    videoUrl,
+    videoAutoplay,
+    videoControls,
   },
 ) => ({
   _id: id,
@@ -1445,8 +1517,12 @@ const post = (
   title,
   excerpt,
   publishedAt: daysAgo(daysOld),
-  // `author` is a base key ("ada") — resolved to the same-language author doc.
-  author: { _type: "reference", _ref: `author.${language}.${author}` },
+  // Base keys ("ada") → same-language author refs, in order (first = lead).
+  authors: authors.map((a) => ({
+    _type: "reference",
+    _ref: `author.${language}.${a}`,
+    _key: key("a"),
+  })),
   categories: cats.map((c) => ({ _type: "reference", _ref: c, _key: key("c") })),
   tags: postTags.map((t) => ({ _type: "reference", _ref: t, _key: key("t") })),
   featured: !!featured,
@@ -1457,6 +1533,9 @@ const post = (
     slug: { _type: "slug", current: postSlug },
     image: imageKey ? img(imageKey) : undefined,
     noIndex: false,
+    ...(videoUrl ? { videoUrl } : {}),
+    ...(videoAutoplay !== undefined ? { videoAutoplay } : {}),
+    ...(videoControls !== undefined ? { videoControls } : {}),
   },
 });
 
@@ -1471,11 +1550,15 @@ const buildPosts = () => [
     excerpt:
       "Blank repo Friday, live MVP Sunday. The exact two-day path — and what to deliberately skip.",
     daysOld: 1,
-    author: "ada",
+    // Multi-author demo — this post is co-written (Ada leads, Grace second).
+    authors: ["ada", "grace"],
     categories: ["cat.en.engineering", "cat.en.product"],
     tags: ["tag.en.nextjs", "tag.en.mvp", "tag.en.dx", "tag.en.sanity"],
     featured: true,
     imageKey: "post-fast-proto",
+    // Demo featured video (embed link). Editors can instead upload their own
+    // file via `videoFile`, and toggle autoplay/controls, in the Studio.
+    videoUrl: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
     body: showcaseBody({ quoteLocale: "en", copy: showcaseCopyEn }),
   }),
 
@@ -1486,7 +1569,7 @@ const buildPosts = () => [
     description:
       "A no-nonsense breakdown of how to deliver a brochure site Friday-to-Sunday: pricing, scope, tooling, and the exact words to use with the client.",
     daysOld: 4,
-    author: "grace",
+    authors: ["grace"],
     categories: ["cat.en.product", "cat.en.story"],
     tags: ["tag.en.freelance", "tag.en.mvp", "tag.en.dx", "tag.en.deployment"],
     featured: true,
@@ -1512,7 +1595,7 @@ const buildPosts = () => [
     description:
       "Every client has the same five pages and 27 unique opinions about each. Config-first templates let you accommodate the 27 without rewriting the five.",
     daysOld: 14,
-    author: "ada",
+    authors: ["ada"],
     categories: ["cat.en.engineering"],
     tags: ["tag.en.dx", "tag.en.freelance", "tag.en.nextjs"],
     imageKey: "post-config-first",
@@ -1534,7 +1617,7 @@ const buildPosts = () => [
     description:
       "Skip the API route. Skip the SaaS. Netlify Forms parses your HTML at build time and routes submissions for free.",
     daysOld: 21,
-    author: "tim",
+    authors: ["tim"],
     categories: ["cat.en.engineering"],
     tags: ["tag.en.forms", "tag.en.deployment", "tag.en.dx"],
     imageKey: "post-netlify-forms",
@@ -1555,7 +1638,7 @@ const buildPosts = () => [
     description:
       "Most EU-targeted sites need exactly one feature flag and a localStorage write. Skip the SaaS, ship the banner.",
     daysOld: 30,
-    author: "grace",
+    authors: ["grace"],
     categories: ["cat.en.product"],
     tags: ["tag.en.privacy", "tag.en.dx", "tag.en.nextjs"],
     imageKey: "post-cookie-banner",
@@ -1582,11 +1665,13 @@ const buildPosts = () => [
     excerpt:
       "Dépôt vide le vendredi, MVP en ligne le dimanche. Le chemin exact en deux jours — et ce qu'on saute volontairement.",
     daysOld: 1,
-    author: "ada",
+    // Démo multi-auteur·rice — article co-écrit (Ada en tête, Grace ensuite).
+    authors: ["ada", "grace"],
     categories: ["cat.fr.engineering", "cat.fr.product"],
     tags: ["tag.fr.nextjs", "tag.fr.mvp", "tag.fr.dx", "tag.fr.sanity"],
     featured: true,
     imageKey: "post-fast-proto",
+    videoUrl: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
     body: showcaseBody({ quoteLocale: "fr", copy: showcaseCopyFr }),
   }),
 
@@ -1597,7 +1682,7 @@ const buildPosts = () => [
     description:
       "Marche à suivre sans détour pour livrer un site vitrine du vendredi au dimanche : tarification, périmètre, outils, et les mots exacts à dire au client.",
     daysOld: 4,
-    author: "grace",
+    authors: ["grace"],
     categories: ["cat.fr.product", "cat.fr.story"],
     tags: ["tag.fr.freelance", "tag.fr.mvp", "tag.fr.dx", "tag.fr.deployment"],
     featured: true,
@@ -1620,7 +1705,7 @@ const buildPosts = () => [
     description:
       "Chaque client a les mêmes cinq pages et 27 opinions uniques sur chacune. Un template config-first absorbe les 27 sans réécrire les cinq.",
     daysOld: 14,
-    author: "ada",
+    authors: ["ada"],
     categories: ["cat.fr.engineering"],
     tags: ["tag.fr.dx", "tag.fr.freelance", "tag.fr.nextjs"],
     imageKey: "post-config-first",
@@ -1638,7 +1723,7 @@ const buildPosts = () => [
     description:
       "Pas d'API route. Pas de SaaS. Netlify Forms parse votre HTML au build et route les soumissions, gratuitement.",
     daysOld: 21,
-    author: "tim",
+    authors: ["tim"],
     categories: ["cat.fr.engineering"],
     tags: ["tag.fr.forms", "tag.fr.deployment", "tag.fr.dx"],
     imageKey: "post-netlify-forms",
@@ -1659,7 +1744,7 @@ const buildPosts = () => [
     description:
       "La plupart des sites ciblant l'UE n'ont besoin que d'un feature flag et d'une écriture localStorage. Sautez le SaaS, livrez la bannière.",
     daysOld: 30,
-    author: "grace",
+    authors: ["grace"],
     categories: ["cat.fr.product"],
     tags: ["tag.fr.privacy", "tag.fr.dx", "tag.fr.nextjs"],
     imageKey: "post-cookie-banner",
@@ -1756,13 +1841,17 @@ const LEGAL = {
       body: [
         p(warnEn),
         h(2, "Publisher"),
-        p("[Company or individual name], [legal status], share capital €[amount]. Registered office: [address]. Business ID (SIRET): [number]. Trade register (RCS): [city + number]. VAT: [number]. Contact: [email] — [phone]."),
+        p(
+          "[Company or individual name], [legal status], share capital €[amount]. Registered office: [address]. Business ID (SIRET): [number]. Trade register (RCS): [city + number]. VAT: [number]. Contact: [email] — [phone].",
+        ),
         h(2, "Publication director"),
         p("[Name of the publication director]."),
         h(2, "Host"),
         p("This site is hosted by [host name], [address], [phone]."),
         h(2, "Intellectual property"),
-        p("All content on this site (text, images, logos) is protected by copyright. Any reproduction without prior written permission is prohibited."),
+        p(
+          "All content on this site (text, images, logos) is protected by copyright. Any reproduction without prior written permission is prohibited.",
+        ),
       ],
     },
     fr: {
@@ -1770,13 +1859,17 @@ const LEGAL = {
       body: [
         p(warnFr),
         h(2, "Éditeur du site"),
-        p("[Nom ou dénomination sociale], [statut juridique] au capital de [montant] €. Siège social : [adresse]. SIRET : [numéro]. RCS : [ville et numéro]. N° TVA intracommunautaire : [numéro]. Contact : [email] — [téléphone]."),
+        p(
+          "[Nom ou dénomination sociale], [statut juridique] au capital de [montant] €. Siège social : [adresse]. SIRET : [numéro]. RCS : [ville et numéro]. N° TVA intracommunautaire : [numéro]. Contact : [email] — [téléphone].",
+        ),
         h(2, "Directeur de la publication"),
         p("[Nom du directeur de la publication]."),
         h(2, "Hébergeur"),
         p("Ce site est hébergé par [nom de l'hébergeur], [adresse], [téléphone]."),
         h(2, "Propriété intellectuelle"),
-        p("L'ensemble des contenus de ce site (textes, images, logos) est protégé par le droit d'auteur. Toute reproduction sans autorisation écrite préalable est interdite."),
+        p(
+          "L'ensemble des contenus de ce site (textes, images, logos) est protégé par le droit d'auteur. Toute reproduction sans autorisation écrite préalable est interdite.",
+        ),
       ],
     },
   },
@@ -1788,19 +1881,29 @@ const LEGAL = {
         h(2, "Data controller"),
         p("The controller for your personal data is [name], [address], [email]."),
         h(2, "Data we collect"),
-        p("[e.g. name, email, and message when you use the contact form; anonymised usage data if analytics are enabled]."),
+        p(
+          "[e.g. name, email, and message when you use the contact form; anonymised usage data if analytics are enabled].",
+        ),
         h(2, "Why we use it (purposes)"),
         p("[e.g. to answer your enquiries, run the service, and measure audience]."),
         h(2, "Legal basis"),
-        p("[Consent for analytics; performance of a contract / legitimate interest for enquiries]."),
+        p(
+          "[Consent for analytics; performance of a contract / legitimate interest for enquiries].",
+        ),
         h(2, "How long we keep it"),
         p("[e.g. enquiries kept for 3 years; analytics for 13 months]."),
         h(2, "Who receives it"),
-        p("[Your processors — hosting, email, analytics — and any transfers outside the EU with the appropriate safeguards]."),
+        p(
+          "[Your processors — hosting, email, analytics — and any transfers outside the EU with the appropriate safeguards].",
+        ),
         h(2, "Your rights"),
-        p("You may request access, rectification, erasure, portability, restriction, or object to processing. Contact [email]. You may also lodge a complaint with the CNIL (cnil.fr)."),
+        p(
+          "You may request access, rectification, erasure, portability, restriction, or object to processing. Contact [email]. You may also lodge a complaint with the CNIL (cnil.fr).",
+        ),
         h(2, "Security"),
-        p("We take reasonable technical and organisational measures to protect your data."),
+        p(
+          "We take reasonable technical and organisational measures to protect your data.",
+        ),
       ],
     },
     fr: {
@@ -1810,19 +1913,29 @@ const LEGAL = {
         h(2, "Responsable du traitement"),
         p("Le responsable du traitement de vos données est [nom], [adresse], [email]."),
         h(2, "Données que nous collectons"),
-        p("[ex. nom, email et message lors de l'utilisation du formulaire de contact ; données d'usage anonymisées si la mesure d'audience est activée]."),
+        p(
+          "[ex. nom, email et message lors de l'utilisation du formulaire de contact ; données d'usage anonymisées si la mesure d'audience est activée].",
+        ),
         h(2, "Finalités"),
         p("[ex. répondre à vos demandes, fournir le service, mesurer l'audience]."),
         h(2, "Base légale"),
-        p("[Consentement pour la mesure d'audience ; exécution d'un contrat / intérêt légitime pour les demandes]."),
+        p(
+          "[Consentement pour la mesure d'audience ; exécution d'un contrat / intérêt légitime pour les demandes].",
+        ),
         h(2, "Durée de conservation"),
         p("[ex. demandes conservées 3 ans ; mesure d'audience 13 mois]."),
         h(2, "Destinataires et sous-traitants"),
-        p("[Vos sous-traitants — hébergement, email, mesure d'audience — et tout transfert hors UE avec les garanties appropriées]."),
+        p(
+          "[Vos sous-traitants — hébergement, email, mesure d'audience — et tout transfert hors UE avec les garanties appropriées].",
+        ),
         h(2, "Vos droits"),
-        p("Vous disposez d'un droit d'accès, de rectification, d'effacement, de portabilité, de limitation et d'opposition. Écrivez à [email]. Vous pouvez aussi introduire une réclamation auprès de la CNIL (cnil.fr)."),
+        p(
+          "Vous disposez d'un droit d'accès, de rectification, d'effacement, de portabilité, de limitation et d'opposition. Écrivez à [email]. Vous pouvez aussi introduire une réclamation auprès de la CNIL (cnil.fr).",
+        ),
         h(2, "Sécurité"),
-        p("Nous mettons en œuvre des mesures techniques et organisationnelles raisonnables pour protéger vos données."),
+        p(
+          "Nous mettons en œuvre des mesures techniques et organisationnelles raisonnables pour protéger vos données.",
+        ),
       ],
     },
   },
@@ -1834,9 +1947,13 @@ const LEGAL = {
         h(2, "What is a cookie?"),
         p("A cookie is a small file stored on your device when you visit a website."),
         h(2, "Cookies we use"),
-        p("Strictly necessary cookies (theme, language, consent) are used without consent — the site needs them to work. Audience-measurement cookies are only set after you accept them."),
+        p(
+          "Strictly necessary cookies (theme, language, consent) are used without consent — the site needs them to work. Audience-measurement cookies are only set after you accept them.",
+        ),
         h(2, "Your consent"),
-        p("The cookie banner lets you accept or refuse non-essential cookies. You can change your choice at any time."),
+        p(
+          "The cookie banner lets you accept or refuse non-essential cookies. You can change your choice at any time.",
+        ),
         h(2, "Managing cookies"),
         p("You can also delete or block cookies in your browser settings."),
       ],
@@ -1846,13 +1963,21 @@ const LEGAL = {
       body: [
         p(warnFr),
         h(2, "Qu'est-ce qu'un cookie ?"),
-        p("Un cookie est un petit fichier déposé sur votre appareil lors de la visite d'un site web."),
+        p(
+          "Un cookie est un petit fichier déposé sur votre appareil lors de la visite d'un site web.",
+        ),
         h(2, "Cookies que nous utilisons"),
-        p("Les cookies strictement nécessaires (thème, langue, consentement) sont utilisés sans consentement — le site en a besoin pour fonctionner. Les cookies de mesure d'audience ne sont déposés qu'après votre acceptation."),
+        p(
+          "Les cookies strictement nécessaires (thème, langue, consentement) sont utilisés sans consentement — le site en a besoin pour fonctionner. Les cookies de mesure d'audience ne sont déposés qu'après votre acceptation.",
+        ),
         h(2, "Votre consentement"),
-        p("La bannière de cookies vous permet d'accepter ou de refuser les cookies non essentiels. Vous pouvez modifier votre choix à tout moment."),
+        p(
+          "La bannière de cookies vous permet d'accepter ou de refuser les cookies non essentiels. Vous pouvez modifier votre choix à tout moment.",
+        ),
         h(2, "Gérer les cookies"),
-        p("Vous pouvez également supprimer ou bloquer les cookies dans les réglages de votre navigateur."),
+        p(
+          "Vous pouvez également supprimer ou bloquer les cookies dans les réglages de votre navigateur.",
+        ),
       ],
     },
   },
@@ -1864,11 +1989,15 @@ const LEGAL = {
         h(2, "Purpose"),
         p("These terms govern the use of this website."),
         h(2, "Access to the service"),
-        p("The site is accessible free of charge. [Owner] may interrupt access for maintenance without notice."),
+        p(
+          "The site is accessible free of charge. [Owner] may interrupt access for maintenance without notice.",
+        ),
         h(2, "Intellectual property"),
         p("The site and its content are protected. No reproduction without permission."),
         h(2, "Liability"),
-        p("The content is provided as-is, without warranty. [Owner] is not liable for indirect damage arising from use of the site."),
+        p(
+          "The content is provided as-is, without warranty. [Owner] is not liable for indirect damage arising from use of the site.",
+        ),
         h(2, "Personal data"),
         p("Data processing is described in our privacy policy."),
         h(2, "Governing law"),
@@ -1882,13 +2011,21 @@ const LEGAL = {
         h(2, "Objet"),
         p("Les présentes conditions régissent l'utilisation de ce site web."),
         h(2, "Accès au service"),
-        p("Le site est accessible gratuitement. [Éditeur] peut interrompre l'accès pour maintenance sans préavis."),
+        p(
+          "Le site est accessible gratuitement. [Éditeur] peut interrompre l'accès pour maintenance sans préavis.",
+        ),
         h(2, "Propriété intellectuelle"),
-        p("Le site et ses contenus sont protégés. Toute reproduction est interdite sans autorisation."),
+        p(
+          "Le site et ses contenus sont protégés. Toute reproduction est interdite sans autorisation.",
+        ),
         h(2, "Responsabilité"),
-        p("Les contenus sont fournis en l'état, sans garantie. [Éditeur] n'est pas responsable des dommages indirects liés à l'utilisation du site."),
+        p(
+          "Les contenus sont fournis en l'état, sans garantie. [Éditeur] n'est pas responsable des dommages indirects liés à l'utilisation du site.",
+        ),
         h(2, "Données personnelles"),
-        p("Le traitement des données est décrit dans notre politique de confidentialité."),
+        p(
+          "Le traitement des données est décrit dans notre politique de confidentialité.",
+        ),
         h(2, "Droit applicable"),
         p("Les présentes conditions sont régies par le droit [français]."),
       ],
@@ -1908,11 +2045,17 @@ const LEGAL = {
         h(2, "Delivery / performance"),
         p("[Delivery times, areas, or how the service is delivered]."),
         h(2, "Right of withdrawal"),
-        p("For consumers, a 14-day right of withdrawal applies, except for the legal exceptions. [How to exercise it]."),
+        p(
+          "For consumers, a 14-day right of withdrawal applies, except for the legal exceptions. [How to exercise it].",
+        ),
         h(2, "Legal warranties"),
-        p("The legal warranty of conformity and the warranty against hidden defects apply."),
+        p(
+          "The legal warranty of conformity and the warranty against hidden defects apply.",
+        ),
         h(2, "Governing law and disputes"),
-        p("Governed by [French] law. In case of dispute, a consumer may use the [mediator] mediation service."),
+        p(
+          "Governed by [French] law. In case of dispute, a consumer may use the [mediator] mediation service.",
+        ),
       ],
     },
     fr: {
@@ -1924,15 +2067,23 @@ const LEGAL = {
         h(2, "Prix"),
         p("Les prix sont indiqués en [devise], [TTC/HT]."),
         h(2, "Commande et paiement"),
-        p("Une commande est confirmée après réception du paiement via [moyens de paiement]."),
+        p(
+          "Une commande est confirmée après réception du paiement via [moyens de paiement].",
+        ),
         h(2, "Livraison / exécution"),
         p("[Délais, zones de livraison, ou modalités d'exécution du service]."),
         h(2, "Droit de rétractation"),
-        p("Pour les consommateurs, un droit de rétractation de 14 jours s'applique, sauf exceptions légales. [Modalités d'exercice]."),
+        p(
+          "Pour les consommateurs, un droit de rétractation de 14 jours s'applique, sauf exceptions légales. [Modalités d'exercice].",
+        ),
         h(2, "Garanties légales"),
-        p("La garantie légale de conformité et la garantie des vices cachés s'appliquent."),
+        p(
+          "La garantie légale de conformité et la garantie des vices cachés s'appliquent.",
+        ),
         h(2, "Droit applicable et litiges"),
-        p("Régies par le droit [français]. En cas de litige, le consommateur peut recourir au médiateur [nom du médiateur]."),
+        p(
+          "Régies par le droit [français]. En cas de litige, le consommateur peut recourir au médiateur [nom du médiateur].",
+        ),
       ],
     },
   },
@@ -2122,7 +2273,10 @@ const buildCookieConsent = () => ({
       name: "_gid",
       provider: "Google Analytics",
       categoryKey: "analytics",
-      purpose: navLabel("Distinguishes visitors over 24 hours.", "Distingue les visiteurs sur 24 h."),
+      purpose: navLabel(
+        "Distinguishes visitors over 24 hours.",
+        "Distingue les visiteurs sur 24 h.",
+      ),
       duration: "24 hours",
       party: "third",
     },
@@ -2132,7 +2286,10 @@ const buildCookieConsent = () => ({
       name: "_fbp",
       provider: "Meta",
       categoryKey: "marketing",
-      purpose: navLabel("Measures ad campaigns from Meta.", "Mesure les campagnes publicitaires Meta."),
+      purpose: navLabel(
+        "Measures ad campaigns from Meta.",
+        "Mesure les campagnes publicitaires Meta.",
+      ),
       duration: "3 months",
       party: "third",
     },

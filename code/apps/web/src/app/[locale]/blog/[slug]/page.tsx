@@ -138,7 +138,7 @@ export default async function BlogPostPage({ params }: Props) {
                 headline: title,
                 description,
                 datePublished,
-                authorName: post.author?.name,
+                authorNames: post.authors?.map((a) => a.name).filter(Boolean) as string[],
                 image,
                 url: `${site.url}${path}`,
               }),

@@ -12,6 +12,19 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Changed
+
+- **`FeaturedMedia` gained `autoplay` + `controls`.** `autoplay` mounts the player
+  immediately, muted + looping (ambient backdrop, no play button); `controls` toggles the
+  native/provider player UI (embeds get `mute=1`/`controls=0` url params per provider).
+  Defaults preserve the click-to-play facade with controls on.
+- **`FeaturedMedia` replaces `VideoEmbed` + `PlayBadge`** in `@indiecrafts/ui-components` —
+  **one structure for a featured image or video**. The video plays **inline** (poster swaps
+  to an `<iframe>`/`<video>` in place on click, facade/lazy-mount) — **no dialog**. Handles
+  the image (CDN-sized, lqip blur), the play button, and the badge-only marker
+  (`interactive={false}`). i18n-agnostic (`playLabel` prop). Used by the post hero, blog
+  frontpage, and all cards, so image and video render identically everywhere.
+
 ### Added
 
 - **Dailymotion featured-video support** in `@indiecrafts/utils` `parseVideoEmbed` — accepts

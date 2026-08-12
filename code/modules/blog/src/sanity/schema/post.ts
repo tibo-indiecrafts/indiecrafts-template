@@ -61,20 +61,28 @@ export default defineType({
       group: "content",
     }),
     defineField({
-      name: "author",
-      title: "Auteur",
-      type: "reference",
-      to: [{ type: "author" }],
-      // Same-language authors only — an EN post links the EN author doc.
-      options: {
-        filter: ({ document }) =>
-          document.language
-            ? {
-                filter: "language == $lang",
-                params: { lang: document.language as string },
-              }
-            : { filter: "" },
-      },
+      name: "authors",
+      title: "Auteur·rice·s",
+      type: "array",
+      description:
+        "Un article peut avoir plusieurs auteur·rice·s. Le premier de la liste est mis en avant sur les cartes ; l'article apparaît sur la page de chaque auteur·rice. Faites glisser pour réordonner.",
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "author" }],
+          // Same-language authors only — an EN post links EN author docs.
+          options: {
+            filter: ({ document }) =>
+              document.language
+                ? {
+                    filter: "language == $lang",
+                    params: { lang: document.language as string },
+                  }
+                : { filter: "" },
+          },
+        },
+      ],
+      validation: (Rule) => Rule.min(1).unique(),
       group: "content",
     }),
     defineField({

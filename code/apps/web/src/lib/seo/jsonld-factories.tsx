@@ -45,19 +45,24 @@ export function buildArticleSchema(args: {
   description?: string;
   datePublished: string;
   dateModified?: string;
-  authorName?: string;
+  authorNames?: string[];
   image?: string;
   url: string;
 }): SchemaObject {
+  const authors = (args.authorNames ?? []).filter(Boolean);
   return compact({
     "@type": "Article",
     headline: args.headline,
     description: args.description,
     datePublished: args.datePublished,
     dateModified: args.dateModified ?? args.datePublished,
-    author: args.authorName
-      ? { "@type": "Person", name: args.authorName }
-      : { "@id": `${site.url}#organization` },
+    // One author → a single Person; several → an array; none → the org.
+    author:
+      authors.length === 0
+        ? { "@id": `${site.url}#organization` }
+        : authors.length === 1
+          ? { "@type": "Person", name: authors[0] }
+          : authors.map((name) => ({ "@type": "Person", name })),
     publisher: { "@id": `${site.url}#organization` },
     image: args.image,
     mainEntityOfPage: args.url,

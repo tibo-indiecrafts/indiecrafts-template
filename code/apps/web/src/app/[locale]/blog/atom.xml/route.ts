@@ -64,7 +64,7 @@ function renderEntry(post: RssPost, locale: Locale): string {
   const title = post.metadata?.title ?? post.title ?? "";
   const summary = post.metadata?.description ?? "";
   const date = post.publishedAt ? new Date(post.publishedAt).toISOString() : null;
-  const author = post.author?.name;
+  const authorNames = post.authors?.flatMap((a) => (a.name ? [a.name] : [])) ?? [];
   const cats = post.categories?.flatMap((c) => (c.title ? [c.title] : [])) ?? [];
 
   return `  <entry>
@@ -74,7 +74,7 @@ function renderEntry(post: RssPost, locale: Locale): string {
     ${date ? `<updated>${date}</updated>` : `<updated>${new Date().toISOString()}</updated>`}
     ${date ? `<published>${date}</published>` : ""}
     ${summary ? `<summary type="html"><![CDATA[${summary}]]></summary>` : ""}
-    ${author ? `<author><name>${escapeXml(author)}</name></author>` : ""}
+    ${authorNames.map((n) => `<author><name>${escapeXml(n)}</name></author>`).join("\n    ")}
     ${cats.map((c) => `<category term="${escapeXml(c)}" />`).join("\n    ")}
   </entry>`;
 }

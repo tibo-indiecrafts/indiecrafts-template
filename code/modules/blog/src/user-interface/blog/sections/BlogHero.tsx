@@ -1,7 +1,9 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { Play } from "lucide-react";
 import { Link } from "@indiecrafts/i18n";
 import { features, type Locale } from "@indiecrafts/config";
-import { formatPostDate } from "@indiecrafts/utils";
+import { formatPostDate, parseVideoEmbed } from "@indiecrafts/utils";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
 
 /**
@@ -56,20 +58,25 @@ function HeroCard({
   height: string;
   size: "lg" | "sm";
 }) {
+  const t = useTranslations("pages.blog");
   const slug = post.slug ?? "";
   const image = post.metadata?.image?.asset?.url;
+  const lqip = post.metadata?.image?.asset?.metadata?.lqip;
   const alt = post.metadata?.image?.alt;
   const title = post.metadata?.title ?? post.title ?? "";
   const categoryRef = post.categories?.[0];
   const category = categoryRef?.title;
   const categorySlug = categoryRef?.slug;
-  const author = post.author;
+  const authors = post.authors ?? [];
+  const author = authors[0];
+  const moreAuthors = authors.length - 1;
   const { authors: showAuthors, categories: showCategories } = features.blogTaxonomy;
   const date = formatPostDate(locale, post.publishedAt);
+  const hasVideo = !!parseVideoEmbed(post.metadata?.video);
 
   return (
     <article
-      className={`group relative overflow-hidden rounded-xl transition hover:shadow-lg ${span} ${height}`}
+      className={`group ring-border/50 relative overflow-hidden rounded-xl ring-1 transition hover:shadow-lg ${span} ${height}`}
     >
       {image ? (
         <Image
@@ -77,7 +84,9 @@ function HeroCard({
           alt={alt ?? title}
           fill
           sizes="(min-width: 768px) 50vw, 100vw"
-          className="absolute inset-0 z-0 object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          placeholder={lqip ? "blur" : undefined}
+          blurDataURL={lqip ?? undefined}
+          className="absolute inset-0 z-0 object-cover"
           priority={size === "lg"}
         />
       ) : (
@@ -85,26 +94,15 @@ function HeroCard({
       )}
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/70 to-black/20" />
 
-      {author && showAuthors ? (
-        <Link
-          href={author.slug ? `/author/${author.slug}` : "/author"}
-          aria-label={author.name ?? undefined}
-          className="absolute top-5 left-5 z-20 block"
+      {hasVideo ? (
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 z-10 flex items-center justify-center"
         >
-          {author.image?.asset?.url ? (
-            <Image
-              src={author.image.asset.url}
-              alt={author.name ?? ""}
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-full object-cover ring-2 ring-white/80"
-            />
-          ) : (
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-xs font-medium text-black ring-2 ring-white/80">
-              {(author.name ?? "?").slice(0, 1).toUpperCase()}
-            </span>
-          )}
-        </Link>
+          <span className="bg-background/85 flex size-12 items-center justify-center rounded-full shadow-lg backdrop-blur-sm transition group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100">
+            <Play className="text-foreground size-5 translate-x-0.5 fill-current" />
+          </span>
+        </span>
       ) : null}
 
       {category && showCategories ? (
@@ -125,7 +123,8 @@ function HeroCard({
       <div className="absolute right-5 bottom-5 left-5 z-20 text-white">
         <Link
           href={`/blog/${slug}`}
-          className="focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          aria-label={hasVideo ? t("playVideo") : title}
+          className="focus-visible:ring-ring rounded after:absolute after:inset-0 focus-visible:ring-2 focus-visible:outline-none"
         >
           {size === "lg" ? (
             <h2 className="mb-4 line-clamp-2 text-2xl font-semibold md:text-3xl">
@@ -135,9 +134,12 @@ function HeroCard({
             <h3 className="mb-3 line-clamp-2 text-lg font-semibold">{title}</h3>
           )}
         </Link>
-        <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center justify-between text-xs text-white/85">
           {author?.name && showAuthors ? (
-            <span className="truncate">{author.name}</span>
+            <span className="truncate">
+              {author.name}
+              {moreAuthors > 0 ? ` +${moreAuthors}` : ""}
+            </span>
           ) : (
             <span />
           )}

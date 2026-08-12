@@ -1,11 +1,9 @@
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@indiecrafts/config";
-import { parseVideoEmbed } from "@indiecrafts/utils";
 import { formatPostDate } from "@indiecrafts/utils";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { PlayBadge } from "@indiecrafts/ui-components/renderers/PlayBadge";
+import { FeaturedMedia } from "@indiecrafts/ui-components/renderers/FeaturedMedia";
 
 /**
  * Homepage "editor's desk" — a curated strip of featured articles, laid out
@@ -90,56 +88,43 @@ export function FeaturedArticles({
 }
 
 function LeadCard({ post, locale }: { post: PostListItem; locale: Locale }) {
+  const t = useTranslations("pages.blog");
   const slug = post.slug ?? "";
   const title = post.metadata?.title ?? post.title ?? "";
-  const image = post.metadata?.image?.asset?.url;
-  const alt = post.metadata?.image?.alt ?? title;
   const category = post.categories?.[0]?.title;
   const description = post.metadata?.description;
   const date = formatDate(locale, post.publishedAt);
-  const hasVideo = !!parseVideoEmbed(post.metadata?.videoUrl);
-  const t = useTranslations("pages.blog");
 
   return (
-    <article className="group bg-card ring-border/60 flex h-full flex-col overflow-hidden rounded-xl shadow-sm ring-1">
-      <Link
-        href={`/blog/${slug}`}
-        tabIndex={-1}
-        aria-hidden="true"
-        className="relative block aspect-[3/2] overflow-hidden"
-      >
-        {image ? (
-          <Image
-            src={image}
-            alt={alt}
-            fill
-            sizes="(min-width: 1024px) 56vw, (min-width: 768px) 92vw, 100vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          />
-        ) : (
-          <div className="bg-muted h-full w-full" aria-hidden="true" />
-        )}
-        {hasVideo ? <PlayBadge label={t("hasVideo")} /> : null}
-      </Link>
+    <article className="group bg-card ring-border/60 relative flex h-full flex-col overflow-hidden rounded-xl shadow-sm ring-1">
+      <FeaturedMedia
+        image={post.metadata?.image?.asset?.url}
+        alt={post.metadata?.image?.alt ?? title}
+        videoUrl={post.metadata?.video}
+        lqip={post.metadata?.image?.asset?.metadata?.lqip}
+        aspect="aspect-[3/2]"
+        sizes="(min-width: 1024px) 56vw, (min-width: 768px) 92vw, 100vw"
+        playLabel={t("playVideo")}
+      />
       <div className="flex flex-1 flex-col gap-3 p-6">
         {category ? (
           <span className="bg-brand text-brand-foreground w-fit rounded-md px-2 py-1 text-xs font-medium capitalize">
             {category}
           </span>
         ) : null}
-        <Link
-          href={`/blog/${slug}`}
-          className="focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
-        >
-          <h3 className="group-hover:text-brand text-2xl font-semibold tracking-tight text-pretty transition-colors lg:text-3xl">
+        <h3 className="text-2xl font-semibold tracking-tight text-pretty lg:text-3xl">
+          <Link
+            href={`/blog/${slug}`}
+            className="group-hover:text-brand focus-visible:ring-ring rounded transition-colors after:absolute after:inset-0 focus-visible:ring-2 focus-visible:outline-none"
+          >
             {title}
-          </h3>
-        </Link>
+          </Link>
+        </h3>
         {description ? (
           <p className="text-muted-foreground line-clamp-2 text-pretty">{description}</p>
         ) : null}
         <p className="text-muted-foreground mt-auto pt-2 text-sm">
-          {[post.author?.name, date].filter(Boolean).join(" · ")}
+          {[authorLabel(post), date].filter(Boolean).join(" · ")}
         </p>
       </div>
     </article>
@@ -147,38 +132,34 @@ function LeadCard({ post, locale }: { post: PostListItem; locale: Locale }) {
 }
 
 function SecondaryRow({ post, locale }: { post: PostListItem; locale: Locale }) {
+  const t = useTranslations("pages.blog");
   const slug = post.slug ?? "";
   const title = post.metadata?.title ?? post.title ?? "";
-  const image = post.metadata?.image?.asset?.url;
-  const alt = post.metadata?.image?.alt ?? title;
   const date = formatDate(locale, post.publishedAt);
-  const hasVideo = !!parseVideoEmbed(post.metadata?.videoUrl);
-  const t = useTranslations("pages.blog");
 
   return (
     <Link
       href={`/blog/${slug}`}
       className="group focus-visible:ring-ring max-lg:border-border/60 flex gap-4 rounded-lg py-4 focus-visible:ring-2 focus-visible:outline-none max-lg:border-b lg:px-1"
     >
-      <div className="bg-muted relative aspect-[4/3] w-24 shrink-0 overflow-hidden rounded-lg sm:w-28">
-        {image ? (
-          <Image
-            src={image}
-            alt={alt}
-            fill
-            sizes="112px"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          />
-        ) : null}
-        {hasVideo ? <PlayBadge size="sm" label={t("hasVideo")} /> : null}
-      </div>
+      <FeaturedMedia
+        image={post.metadata?.image?.asset?.url}
+        alt={post.metadata?.image?.alt ?? title}
+        videoUrl={post.metadata?.video}
+        lqip={post.metadata?.image?.asset?.metadata?.lqip}
+        interactive={false}
+        aspect="aspect-[4/3]"
+        sizes="112px"
+        playLabel={t("playVideo")}
+        className="w-24 shrink-0 rounded-lg sm:w-28"
+      />
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
         <h3 className="group-hover:text-brand line-clamp-2 leading-snug font-medium text-pretty transition-colors">
           {title}
         </h3>
         {date ? (
           <p className="text-muted-foreground text-xs">
-            {[post.author?.name, date].filter(Boolean).join(" · ")}
+            {[authorLabel(post), date].filter(Boolean).join(" · ")}
           </p>
         ) : null}
       </div>
@@ -188,4 +169,12 @@ function SecondaryRow({ post, locale }: { post: PostListItem; locale: Locale }) 
 
 function formatDate(locale: Locale, iso?: string | null): string | null {
   return formatPostDate(locale, iso);
+}
+
+/** First author's name, plus a compact "+N" when a post has several. */
+function authorLabel(post: PostListItem): string | null {
+  const authors = post.authors ?? [];
+  const first = authors[0]?.name;
+  if (!first) return null;
+  return authors.length > 1 ? `${first} +${authors.length - 1}` : first;
 }

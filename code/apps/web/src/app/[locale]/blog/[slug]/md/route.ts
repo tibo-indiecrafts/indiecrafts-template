@@ -45,7 +45,13 @@ export async function GET(_req: Request, { params }: Props) {
     `title: ${JSON.stringify(title)}`,
     description && `description: ${JSON.stringify(description)}`,
     published && `date: ${published}`,
-    post.author?.name && `author: ${JSON.stringify(post.author.name)}`,
+    post.authors?.length &&
+      `author: ${JSON.stringify(
+        post.authors
+          .map((a) => a.name)
+          .filter(Boolean)
+          .join(", "),
+      )}`,
     `canonical: ${canonical}`,
     "---",
   ]
