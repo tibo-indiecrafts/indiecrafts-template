@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@indiecrafts/ui/button";
 import { Switch } from "@indiecrafts/ui/switch";
@@ -35,10 +35,14 @@ export function CookiePreferences({
   const t = useTranslations("cookies");
   const [draft, setDraft] = useState<Record<string, boolean>>(current);
 
-  // Re-seed the toggles from the stored choices each time the dialog opens.
-  useEffect(() => {
+  // Re-seed the toggles from the stored choices on each open (adjust-state-during-
+  // render, not an effect — avoids the cascading render, and won't wipe in-progress
+  // toggles if `current` changes while the dialog is open).
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) setDraft(current);
-  }, [open, current]);
+  }
 
   const commit = (choices: Record<string, boolean>) => {
     applyConsent(categories, choices, version);
