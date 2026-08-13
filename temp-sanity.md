@@ -24,7 +24,7 @@ Sources: [Sanity Learn — Page building](https://www.sanity.io/learn/course/pag
 - **§5** The page builder (blocks) · **§6** Renderers · **§7** Studio structure
 - **§8** Gaps vs today · **§9** Phased packs · **§10** Reserved-module alignment
 - **§11** Page templates (3 meanings) · **§12** Platform layer (what makes it great)
-- **§13** Recommended build order + Pack 0 concrete spec
+- **§13** Recommended build order + Pack 0 concrete spec · **§14** WordPress parity & deliberate omissions
 
 ---
 
@@ -157,7 +157,8 @@ unless noted. ✓ exists · ✳ new · ↑ extend existing.
 | Doc                     | Fields                                                                   | Powers                                                               |
 | ----------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
 | `location` ✳            | name · `address`(obj) · `geopoint` · `openingHours`(obj) · phone · email | `/locations/**`, map block, `LocalBusiness` JSON-LD                  |
-| `event` ✳               | title · start/end(datetime) · location→ · cta · body(PT) · ics           | `/events/[slug]`, `Event` JSON-LD                                    |
+| `event` ✳               | title · start/end(datetime) · location→ · cta · body(PT) · ics · **`capacity` · `price` · `registration`(none/rsvp/paid-ticket) · `bookingForm`→** | `/events/[slug]`, `Event` JSON-LD, **calendar view**, **bookings** |
+| `booking` ✳ (submission)| event→ · name · email · `qty` · `status`(pending/confirmed/cancelled) · `payment`→ (if paid) · createdAt | event RSVP / ticket — reserved **`booking`** module; submit API + spam guard + capacity check + notify |
 | `listing` (directory) ✳ | name · taxonomy[]→ · url · logo · description                            | `/directory/**` (third-party entries — distinct from own `location`) |
 
 ### Forms (**the biggest omission — flagged in the old draft**)
@@ -171,7 +172,7 @@ unless noted. ✓ exists · ✳ new · ↑ extend existing.
 
 | Doc                         | Fields                                                       | Notes                                         |
 | --------------------------- | ------------------------------------------------------------ | --------------------------------------------- |
-| `companyInfo` ✳ (singleton) | mission · foundedYear · stats[] · timeline[] · socialLinks[] | feeds About + footer + `Organization` JSON-LD |
+| `companyInfo` ✳ (singleton) | mission · vision · **`values[]`** (`value`: title·description·icon) · foundedYear · stats[] · timeline[] · socialLinks[] | feeds About (mission + values) + footer + `Organization` JSON-LD |
 
 ### Taxonomy (generalize)
 
@@ -192,8 +193,10 @@ vocabularies must not mix. Best practice: **hierarchical categories, flat tags.*
 | `address` · `geopoint` · `openingHours` | `location` |
 | `formField` (text/email/tel/textarea/select/checkbox/radio/consent + label/required/placeholder) | `form` |
 | `feature` (label · included · note) | `plan`, `service` |
+| `value` (title · description · icon) | `companyInfo` values → About-page `module.values` grid |
 | `stat` (value · label) | results, stats-band (today inline in `stat-list`) |
 | `logoItem` (image · url · alt) | logo-wall |
+| `payment` (provider(stripe/…) · amount · currency · `status`(pending/paid/refunded) · providerRef) | `booking` (paid ticket), `order`/`product` checkout — reserved **`billing`** package |
 | `mediaBlock` (image \| video-embed \| iframe, validated hosts) | hero, media-text, `embed` block |
 | `seo` | already `seoMeta` — keep one canonical SEO object, don't fork |
 
@@ -219,6 +222,7 @@ Extend the composable registry: `PAGE_RENDERERS = { ...BLOCK_RENDERERS, ...secti
 | `module.cta-banner` ✳                                                                                   | headline · body · ctas[] · variant                  | `CtaBanner`                       |
 | `module.logo-wall` ✳                                                                                    | title · logos(`logoItem`[]) **or** clients[]→       | `LogoWall`                        |
 | `module.pricing-table` ✳                                                                                | title · plans[]→ · interval-toggle                  | `PricingTable`                    |
+| `module.values` ✳                                                                                       | title · values(`value`[]) **or** companyInfo→       | `ValuesGrid` (About-page values)  |
 | `module.newsletter` ✳                                                                                   | title · body · form→                                | `Newsletter`                      |
 | `module.form` ✳                                                                                         | form→ · layout                                      | `FormBlock`                       |
 | `module.embed` ✳                                                                                        | url(validated) · caption                            | `Embed` (reuse `parseVideoEmbed`) |
@@ -236,6 +240,7 @@ Extend the composable registry: `PAGE_RENDERERS = { ...BLOCK_RENDERERS, ...secti
 | `module.team` ✳              | `person`[]                          | `Team` (today `person-list` is inline)           |
 | `module.faq` ✳               | `faq`[]                             | `FaqList` (+ FAQPage JSON-LD)                    |
 | `module.event-list` ✳        | `event`[] (upcoming)                | `EventList`                                      |
+| `module.event-calendar` ✳    | `event`[] (by month)                | `EventCalendar` (month/agenda view · `.ics` export · book CTA) |
 | `module.location-list` ✳     | `location`[]                        | `LocationList` / map                             |
 | `module.product-list` ✳      | `product`[]                         | `ProductList`                                    |
 | _exist_: `blog-post-list`    | `post`[]                            | ✓ blog module                                    |
@@ -318,10 +323,16 @@ service-grid` blocks.
   FAQPage JSON-LD.
 - **Pack 4 — Forms**: `form`, `formField`, `formSubmission` + submit API + spam guard +
   `form`/`newsletter` blocks.
-- **Pack 5 — Events, locations, directory**: `event`, `location`, `listing` + blocks +
-  `Event`/`LocalBusiness` JSON-LD.
+- **Pack 5 — Events, locations, directory**: `event`, `location`, `listing` + `event-list` /
+  **`event-calendar`** / `location-list` blocks + `Event`/`LocalBusiness` JSON-LD.
+- **Pack 5b — Bookings** _(reserved `booking` module)_: `booking` doc + submit API (capacity
+  check · spam guard · notify) + RSVP/ticket block. Paid tickets pull in Pack 6b payments.
 - **Pack 6 — Catalog & KB** _(heavier modules)_: `product` (+ variants) `shop`, `article`
   help-center.
+- **Pack 6b — Payments** _(reserved `billing` package)_: `payment` object + a provider adapter
+  (Stripe Checkout/Payment Intents) behind `features.payments`; consumed by `booking` (paid
+  tickets) and `product` (orders). Webhook → mark `payment.status` + confirm the `booking`/order.
+  Never store card data — provider-hosted checkout only. **Money path → tests + `logger`.**
 
 Each pack follows the existing extraction checklists (`code/modules/CLAUDE.md`,
 `code/packages/CLAUDE.md`): schema + registry + types + renderer + query + docs page +
@@ -510,6 +521,50 @@ Pack 6  catalog & KB
   `hero + feature-grid + testimonial-list` looks pixel-identical to the same blocks in a
   blog body (Chrome, light/dark, 375/768/1280); Presentation click-to-edit works in draft
   mode.
+
+---
+
+## 14. WordPress parity & deliberate omissions
+
+How this template stacks against a full WordPress site — so the omissions are **on the record**,
+not accidental. Almost everything WP ships is **already built or already in Packs 0–6**; the only
+genuine blind spots are the **user-generated / gated** features, and the template already
+_reserves the names_ for them (`community` module · `moderation`/`auth`/`billing` packages).
+
+| WordPress feature | Today | temp-sanity plan | Verdict |
+| --- | --- | --- | --- |
+| Pages / page builder · custom post types · forms · site search · shop · redirects | ❌ | ✅ Packs 0–6 + §12 | **planned** |
+| Posts/blog · categories/tags · menus · SEO+schema · multilingual · RSS · breadcrumbs · related · media library | ✅ | — | **have it** |
+| Revisions / drafts / scheduling | ~ Sanity drafts | §12.10 (optional) | thin — add scheduled-publishing plugin when needed |
+| Roles (admin/editor/author…) | ~ Sanity project roles | §12.10 | thin — Sanity roles cover the core |
+| **Comments / discussion** | ❌ | **❌ absent** | **deliberate gap → see below** |
+| **Membership / login / gated content** | ❌ | **❌ absent** | **deliberate gap → reserved `auth`/`billing`** |
+| Reviews / ratings (product/service) | ~ testimonial `rating` + Review JSON-LD | partial | fold into `product`/`service` when Pack 2/6 lands |
+
+### 14a. Comments / UGC — deferred, deliberate (reserved `community` module + `moderation` package)
+
+Native comments are the one WP staple with **no plan here — on purpose.** On a **client
+marketing site** they are usually a liability (spam, moderation cost, GDPR of commenter PII), so
+most agencies omit them. Keep it a conscious choice with two escape hatches, behind a
+`features.comments` flag:
+
+- **Lightest path (recommended default):** a **third-party embed** (Giscus/GitHub-Discussions,
+  or Disqus) as a `module.comments` block — zero backend, zero moderation infra, drop-in on
+  `post` (or any `page`). Ship this first if a client asks.
+- **Native path (a real vertical):** a `comment` doc (`post→`/`page→` · author name/email ·
+  body · `status: pending|approved|spam` · parent→ for threads) + a submit **API route** with a
+  honeypot/Turnstile spam guard + `logger` + notify, and a **Studio moderation** desk (approve/
+  spam bulk actions). This **is** the reserved `community` module + `moderation` package — build
+  it only when a client needs owned, on-platform discussion.
+
+### 14b. Auth / membership / gated content — deferred boundary (reserved `auth`/`billing`)
+
+All content is public today, correctly, for a marketing template. Member areas, gated downloads,
+and subscriptions are the reserved **`auth`/`billing`** vertical — a genuine module, not a field.
+Defer until a client's brief actually requires accounts; note it here so the boundary is explicit.
+
+**The line:** everything else WP has is built or in Packs 0–6 — adding more to the *content* plan
+is scope creep. §14 exists to **name the boundary** (comments, membership), not to fill it.
 
 > When Pack 0 ships, **promote this file** to `docs/apps/web/config/page-builder.md` (canon)
 > and delete `temp-sanity.md` — drafts live at root only until they stick.
