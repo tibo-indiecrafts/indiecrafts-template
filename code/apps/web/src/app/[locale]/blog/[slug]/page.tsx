@@ -9,6 +9,8 @@ import { buildArticleSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { DefaultPostLayout } from "@indiecrafts/blog/user-interface/post/layout/DefaultPostLayout";
 import { Modules } from "@indiecrafts/blog/user-interface/renderers/ModuleRenderer";
+import { Comments } from "@indiecrafts/blog/user-interface/post/sections/Comments";
+import { isCommentsEnabled } from "@indiecrafts/blog/lib/route-gate";
 import { client } from "@indiecrafts/sanity/client";
 import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import {
@@ -160,6 +162,9 @@ export default async function BlogPostPage({ params }: Props) {
           related={related}
         />
       )}
+      {isCommentsEnabled() ? (
+        <Comments postId={post._id} locale={locale} copy={blog?.comments} />
+      ) : null}
     </DefaultLayout>
   );
 }

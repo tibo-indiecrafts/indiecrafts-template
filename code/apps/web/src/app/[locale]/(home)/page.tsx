@@ -25,7 +25,7 @@ import type { PostListItem } from "@indiecrafts/blog/sanity/types";
  * its own `title`, `body`, `items`, etc. relative to that namespace.
  *
  * To swap in a new section variant: browse the sibling library repo
- * (`indiecrafts-library`, `pnpm storybook`), copy the section file into
+ * (`component-library`, `pnpm storybook`), copy the section file into
  * `src/user-interface/sections/`, drop its block keys into messages/, mount here.
  */
 

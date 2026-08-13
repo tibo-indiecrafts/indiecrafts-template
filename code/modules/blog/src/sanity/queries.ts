@@ -259,7 +259,27 @@ export const rssPostsQuery = defineQuery(`
 export const blogSingletonQuery = defineQuery(`
   *[_type == "blog"][0]{
     postModules[]{ ${MODULES_FRAGMENT} },
+    comments,
     ${SEO_FRAGMENT}
+  }
+`);
+
+// ─── Comments ─────────────────────────────────────────────────
+
+/**
+ * Approved comments for one post, oldest first. **Never** projects
+ * `authorEmail` — it stays private (moderation only). Unapproved comments are
+ * excluded by the `approved == true` filter; this is the ONLY public comment
+ * read, so no path can leak pending ones.
+ */
+export const approvedCommentsQuery = defineQuery(`
+  *[_type == "comment" && post._ref == $postId && approved == true]
+  | order(coalesce(createdAt, _createdAt) asc) {
+    _id,
+    authorName,
+    body,
+    "parentId": parent._ref,
+    "createdAt": coalesce(createdAt, _createdAt)
   }
 `);
 

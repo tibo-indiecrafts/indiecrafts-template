@@ -9,6 +9,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Added
+
+- **`modules/blog/comments.md` — Blog comments.** New page (+ sidebar line): how the moderated
+  comment feature works, Studio moderation, editing the per-locale copy, spam/privacy, the
+  `blogComments` flag, and the write-token-is-runtime deploy note. Also: `packages/sanity`
+  gained the `./write` export; `feature-flags` lists `blogComments`.
+
 ### Changed
 
 - **Hid the internal `method/` + `work/` folders from the client-facing docs.** The Pillars

@@ -19,6 +19,14 @@ method/framework → [`method/CHANGELOG.md`](../../../method/CHANGELOG.md); lab 
 
 ## [Unreleased]
 
+### Added
+
+- **`/api/comments` + `features.blogComments`.** A thin POST route mounts the blog comments
+  feature (validation/write live in `@indiecrafts/blog`); the `<Comments>` section renders on
+  each post when the flag is on. **`SANITY_API_WRITE_TOKEN` is now a runtime dependency** when
+  comments are on (was seed-only) — `.env.example` updated; prefer a dedicated rotatable token.
+  Seed adds one approved + one pending demo comment.
+
 ### Changed
 
 - **Multi-author output in SEO + feeds.** `buildArticleSchema` takes `authorNames[]` and emits

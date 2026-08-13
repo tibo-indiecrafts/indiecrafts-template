@@ -13,6 +13,21 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **Blog comments — moderated, Sanity-backed, per-locale editable.** A public comment form
+  under each post: `POST /api/comments` → `createComment` validates + writes a `comment` doc
+  `approved: false` via the server-only write client; it's invisible until an editor ticks
+  **Approuvé** in the new Studio **Commentaires** desk (En attente / Approuvés). The list is
+  live (`<SanityLive>`); only `approved == true` is read publicly and `authorEmail` is never
+  projected. Copy (heading, labels, consent, messages) is editable per locale on the `blog`
+  singleton (`comments`, `localeString`). Spam guard: a **honeypot** (bots get `201`, the doc
+  is dropped). Gated by `features.blogComments`. Guide: `docs/modules/blog/comments.md`.
+- **Comment threading (1 level).** A `parent` reference on `comment` + a per-comment **Reply**
+  form; replies render indented under their parent. Server-verified: a reply only threads onto
+  an **approved** comment on the **same post**, else it's stored top-level. Reply/Cancel labels
+  join the editable per-locale copy; the seed adds a demo reply.
+
 ### Changed
 
 - **A post can have several authors.** The post `author` (single reference) became **`authors`**

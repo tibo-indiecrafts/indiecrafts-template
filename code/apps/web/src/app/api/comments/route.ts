@@ -1,0 +1,46 @@
+import { NextResponse } from "next/server";
+import { isCommentsEnabled } from "@indiecrafts/blog/lib/route-gate";
+import { createComment } from "@indiecrafts/blog/lib/comments";
+
+/**
+ * Public comment submission. Thin: gate → parse → hand to the module's
+ * `createComment` (which validates, whitelists, and writes with the server-only
+ * write client). A spam-flagged (honeypot) submission returns `201` too, so bots
+ * can't tell it was dropped. `new Date()` here is fine — the handler runs once
+ * per request, not in a render tree.
+ */
+export async function POST(request: Request) {
+  if (!isCommentsEnabled()) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
+  let data: unknown;
+  try {
+    data = await request.json();
+  } catch {
+    return NextResponse.json({ error: "invalid" }, { status: 400 });
+  }
+
+  const body = (data ?? {}) as Record<string, unknown>;
+  const result = await createComment(
+    {
+      postId: String(body.postId ?? ""),
+      authorName: String(body.authorName ?? ""),
+      authorEmail: body.authorEmail ? String(body.authorEmail) : undefined,
+      body: String(body.body ?? ""),
+      consent: body.consent === true,
+      parentId: body.parentId ? String(body.parentId) : undefined,
+      honeypot: body.honeypot ? String(body.honeypot) : undefined,
+    },
+    new Date().toISOString(),
+  );
+
+  // A real create and a silently-dropped spam both look like success.
+  if (result.ok || result.error === "spam") {
+    return NextResponse.json({ ok: true }, { status: 201 });
+  }
+  if (result.error === "invalid") {
+    return NextResponse.json({ error: "invalid" }, { status: 400 });
+  }
+  return NextResponse.json({ error: "server" }, { status: 500 });
+}

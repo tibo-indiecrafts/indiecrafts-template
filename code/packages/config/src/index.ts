@@ -231,6 +231,8 @@ export const features = {
     categories: true,
     tags: true,
   },
+  /** Moderated public comments on each blog post (form + Studio approval). Requires `blog`. */
+  blogComments: true,
   /** Sanity Studio at `/studio` + draft-mode preview. Independent of `blog`. */
   studio: true,
   /** Site-wide maintenance mode — `proxy.ts` rewrites all traffic to `/maintenance` (503). */

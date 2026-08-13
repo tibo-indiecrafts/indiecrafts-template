@@ -23,6 +23,7 @@ Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling o
 | `faq` | `boolean` | `true` | Per-page `<Faq>` accordion + FAQPage JSON-LD + llms FAQ block |
 | `blog` | `boolean` | `true` | The entire public blog surface (routes, feeds, discovery, `<SanityLive>`) |
 | `blogTaxonomy.*` | `object` | all `true` | Author/category/tag routes, each `&& blog` |
+| `blogComments` | `boolean` | `true` | Moderated comments on each post (`/api/comments` + the `<Comments>` section) — **requires `blog`** ([guide](/modules/blog/comments)) |
 | `studio` | `boolean` | `true` | `/studio` + the draft-mode preview API |
 | `maintenance` | `boolean` | `false` | Site-wide 503 rewrite to `/maintenance` (via `proxy.ts`) |
 

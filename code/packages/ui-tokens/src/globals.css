@@ -11,7 +11,7 @@
 /*
  * Component-co-located animation tokens.
  *
- * When you copy a component from the sibling indiecrafts-library and it
+ * When you copy a component from the sibling component-library and it
  * ships its own `.css` file (Tailwind v4 merges every `@theme inline`
  * block reachable through the @import graph), add a one-line @import here
  * pointing at the local copy. Components without a co-located .css need

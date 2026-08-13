@@ -47,4 +47,3 @@ rule → [Workspace & deployment](/apps/web/setup/workspace).
 
 - **Set up the web app** → [Environment](/apps/web/setup/environment) → [New client](/apps/web/setup/new-client) → [Launch checklist](/apps/web/setup/launch-checklist).
 - **The growth slots** (empty until needed) → [Modules](/modules/README) · [Packages](/packages/README) · [Db](/db/README) · [Infra](/infra/README).
-- **Working with an AI agent** (optional, per-developer, all global/uncommitted) → [Environment § Tier 2](/apps/web/setup/environment) — CodeGraph, [code intelligence (LSP)](/shared/tooling/code-intelligence), Headroom, behavior plugins.

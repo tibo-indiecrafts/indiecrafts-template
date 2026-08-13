@@ -205,5 +205,34 @@ export type AnyModule =
 
 export type BlogSingleton = {
   postModules?: AnyModule[];
+  comments?: CommentsCopy;
   seo?: SeoMeta;
+};
+
+/** A public blog comment, as shown on a post (email is never fetched). */
+export type Comment = {
+  _id: string;
+  authorName?: string;
+  body?: string;
+  /** The parent comment's id when this is a reply (1-level threading). */
+  parentId?: string;
+  createdAt?: string;
+};
+
+/** Per-locale value (`{ en: "…", fr: "…" }`) from a `localeString` field. */
+export type LocaleString = Record<string, string | undefined>;
+
+/** Editor-managed, per-locale copy for the comment section (`blog.comments`). */
+export type CommentsCopy = {
+  heading?: LocaleString;
+  nameLabel?: LocaleString;
+  emailLabel?: LocaleString;
+  bodyLabel?: LocaleString;
+  consentLabel?: LocaleString;
+  submitLabel?: LocaleString;
+  replyLabel?: LocaleString;
+  cancelLabel?: LocaleString;
+  successMessage?: LocaleString;
+  emptyMessage?: LocaleString;
+  errorMessage?: LocaleString;
 };

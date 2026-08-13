@@ -8,6 +8,7 @@ import tag from "./tag";
 import person from "./documents/person";
 import post from "./post";
 import quote from "./documents/quote";
+import comment from "./documents/comment";
 
 // Reusable objects
 import blockContent from "./blockContent";
@@ -28,6 +29,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   tag,
   quote,
   person,
+  comment,
   // Reusable objects
   blockContent,
   metadata,

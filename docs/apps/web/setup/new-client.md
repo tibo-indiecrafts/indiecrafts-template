@@ -328,7 +328,7 @@ Robots: with `NEXT_PUBLIC_SITE_URL` set and `NEXT_PUBLIC_ENVIRONMENT=production`
 | Marketing home copy | `messages/<locale>.json` → `pages.home.*` |
 | Blog chrome copy | `messages/<locale>.json` → `pages.blog.*` etc. |
 | Blog content (posts, authors, categories, tags, layout) | Sanity → `/studio` |
-| Add a home section | Copy a section from `../../../indiecrafts-library` (browse-only) into `src/user-interface/homepage/sections/`, mount in `(home)/page.tsx`, add message keys — see [`../design/sections.md`](../design/sections.md) |
+| Add a home section | Copy a section from your component library (browse-only) into `src/user-interface/homepage/sections/`, mount in `(home)/page.tsx`, add message keys — see [`../design/sections.md`](../design/sections.md) |
 
 ---
 

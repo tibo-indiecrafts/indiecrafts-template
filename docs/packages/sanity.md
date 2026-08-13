@@ -5,7 +5,7 @@ schemas and GROQ stay in their owning feature.
 
 | | |
 | --- | --- |
-| **Exports (subpath-only, no `.` root)** | `./client` · `./live` · `./env` · `./token` · `./structure` · `./image` |
+| **Exports (subpath-only, no `.` root)** | `./client` · `./live` · `./env` · `./token` · `./structure` · `./image` · `./write` |
 | **Deps** | `next-sanity ^13.0.3`, `@indiecrafts/config`. **Peer:** `next 16.2.10`, `react 19.2.4`, `sanity: "*"` |
 | **Consumers** | app + blog |
 
@@ -15,6 +15,9 @@ schemas and GROQ stay in their owning feature.
 - **`structure.ts`** ships the feature-independent desk builders `seoStructureItem`,
   `legalStructureItem`, `navStructureItem`, `cookieStructureItem` — the shared Studio
   sections that the blog's own structure composes.
+- **`write.ts`** exports `writeClient` — a **server-only** authenticated write client
+  (Editor-role `SANITY_API_WRITE_TOKEN`). The one runtime write path (blog comments); callers
+  must hard-code `_type` + whitelist fields. `import "server-only"` keeps it off the browser.
 - **`image.ts`** exports `sanityImageLoader` — the isomorphic `next/image` loader that
   rewrites every image `src` to a CDN-sized source (`?w=&q=&auto=format&fit=max`), wired
   app-side via `images.loaderFile`. Details: [Images](/apps/web/config/images).

@@ -54,7 +54,6 @@ Because it runs via `npx …@latest`, the first run fetches the CLI (needs netwo
 | `docs:install` | `npm --prefix docs install` | Installs the isolated docs package's deps. Run once before working on docs. |
 | `docs` | `npm --prefix docs run docs:dev` | Docs dev server at `http://localhost:3002`. |
 | `docs:build` | `npm --prefix docs run docs:build` | Static docs build → `docs/.vitepress/dist`. |
-| `codegraph:init` / `codegraph:status` | guarded `codegraph …` | Initialise / status the optional CodeGraph index (no-op with a hint if CodeGraph isn't installed). |
 | `prepare` | `""` | Empty no-op in the app — Husky is installed from the **repo root** `prepare` (§ 3). |
 
 ---

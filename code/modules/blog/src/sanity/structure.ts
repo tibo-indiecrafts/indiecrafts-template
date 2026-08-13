@@ -1,4 +1,5 @@
 import type { StructureBuilder, StructureResolver } from "sanity/structure";
+import { CommentIcon } from "@sanity/icons";
 import { apiVersion } from "@indiecrafts/sanity/env";
 import { locales, type Locale } from "@indiecrafts/config";
 import {
@@ -59,6 +60,39 @@ export const structure: StructureResolver = (S) =>
             .items([
               languageSplit(S, "quote", "Citations"),
               languageSplit(S, "person", "Personnes"),
+            ]),
+        ),
+
+      S.divider(),
+
+      // ── Comments moderation ─────────────────────────────
+      // Submitted via /api/comments as `approved: false`; tick "Approuvé"
+      // on a comment to publish it. "En attente" = the moderation queue.
+      S.listItem()
+        .title("Commentaires")
+        .icon(CommentIcon)
+        .child(
+          S.list()
+            .title("Commentaires")
+            .items([
+              S.listItem()
+                .title("En attente")
+                .child(
+                  S.documentList()
+                    .title("En attente")
+                    .schemaType("comment")
+                    .filter('_type == "comment" && approved != true')
+                    .defaultOrdering([{ field: "createdAt", direction: "desc" }]),
+                ),
+              S.listItem()
+                .title("Approuvés")
+                .child(
+                  S.documentList()
+                    .title("Approuvés")
+                    .schemaType("comment")
+                    .filter('_type == "comment" && approved == true')
+                    .defaultOrdering([{ field: "createdAt", direction: "desc" }]),
+                ),
             ]),
         ),
 

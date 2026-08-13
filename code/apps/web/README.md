@@ -44,7 +44,7 @@ Everything else propagates — sitemap, routing, llms.txt, SEO metadata, JSON-LD
 
 ## Adding a section
 
-1. Browse the sibling **[indiecrafts-library](../../../indiecrafts-library)** (`pnpm storybook`) and find a section variant.
+1. Browse the sibling **[component-library](../../../component-library)** (`pnpm storybook`) and find a section variant.
 2. Copy its `Component.tsx` into `src/user-interface/homepage/sections/<Name>.tsx`. If it ships a multi-file folder, flatten schema + config into one file as you copy. See `src/user-interface/homepage/sections/Features.tsx` for the target shape.
 3. Drop its sample copy (`en.json`) into `messages/<locale>.pages.<id>.blocks.<simpleName>`. Drop the `-NN` variant suffix — production keys are clean.
 4. Mount it in the route's `page.tsx` with a `namespace`/`pageId` prop. See `src/app/[locale]/(home)/page.tsx` for the live pattern.
@@ -102,6 +102,6 @@ Full list in [`CLAUDE.md`](./CLAUDE.md) § Critical rules. The essentials:
 - Never inline user-facing strings — use `messages/`.
 - Never `import Link from "next/link"` — use `@/i18n/routing`.
 - Never edit `src/user-interface/ui/**` (shadcn-managed).
-- Never depend on `../../../indiecrafts-library` at runtime — browse-only.
+- Never depend on `../../../component-library` at runtime — browse-only.
 - Always `setRequestLocale(locale)` in server components that use translations.
 - Always run `pnpm verify:quick` before opening a PR.

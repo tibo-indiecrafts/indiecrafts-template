@@ -191,7 +191,7 @@ Static generation returns one `(locale, slug)` entry per document — an EN-only
 
 ## 7. Post detail layout — `DefaultPostLayout`
 
-When `blog.postModules` is empty (the seed default), each post renders through `user-interface/post/layout/DefaultPostLayout.tsx`. An editorial two-column layout adapted from `indiecrafts-library`'s `customer-story-04`:
+When `blog.postModules` is empty (the seed default), each post renders through `user-interface/post/layout/DefaultPostLayout.tsx`. An editorial two-column layout adapted from the component library's `customer-story-04`:
 
 - **Breadcrumb trail** at the top.
 - **Title + lead** in a `max-w-2xl` block above the columns.

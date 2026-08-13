@@ -132,6 +132,7 @@ export default defineConfig({
           { text: "Blog · Editor guide", link: "/modules/blog/editor-guide" },
           { text: "Blog · Body editor", link: "/modules/blog/body-editor" },
           { text: "Blog · Image gallery", link: "/modules/blog/gallery" },
+          { text: "Blog · Comments", link: "/modules/blog/comments" },
           { text: "Blog · Architecture", link: "/modules/blog/blog-architecture" },
           { text: "Blog · Sanity tokens", link: "/modules/blog/sanity-tokens" },
         ],
@@ -155,23 +156,6 @@ export default defineConfig({
           {
             text: "4 · Content & FAQ",
             link: "/shared/client-intake/4-content-and-faq",
-          },
-        ],
-      },
-      {
-        text: "Shared · Agent tooling",
-        collapsed: true,
-        items: [
-          { text: "CLAUDE.md system (monorepo)", link: "/shared/tooling/claude-md-system" },
-          { text: "CodeGraph (agent index)", link: "/shared/tooling/codegraph" },
-          { text: "Code intelligence (LSP)", link: "/shared/tooling/code-intelligence" },
-          {
-            text: "Headroom (context compression)",
-            link: "/shared/tooling/headroom",
-          },
-          {
-            text: "Behavior plugins (caveman/ponytail)",
-            link: "/shared/tooling/behavior-plugins",
           },
         ],
       },

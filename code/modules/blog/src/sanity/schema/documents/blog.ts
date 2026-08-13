@@ -40,6 +40,29 @@ export default defineType({
       of: moduleFieldRefs,
     }),
     defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
+    defineField({
+      name: "comments",
+      title: "Commentaires — textes",
+      description:
+        "Les textes de la section commentaires sous chaque article, modifiables par langue. Vide = pas affiché tant qu'un texte n'est pas renseigné.",
+      type: "object",
+      options: { collapsible: true, collapsed: true },
+      // Each field is a `localeString` → one input per language (English /
+      // Français), so an editor changes the wording without a code deploy.
+      fields: [
+        defineField({ name: "heading", title: "Titre de la section", type: "localeString" }),
+        defineField({ name: "nameLabel", title: "Libellé « Nom »", type: "localeString" }),
+        defineField({ name: "emailLabel", title: "Libellé « E-mail »", type: "localeString" }),
+        defineField({ name: "bodyLabel", title: "Libellé « Commentaire »", type: "localeString" }),
+        defineField({ name: "consentLabel", title: "Texte de consentement", type: "localeString" }),
+        defineField({ name: "submitLabel", title: "Bouton d'envoi", type: "localeString" }),
+        defineField({ name: "replyLabel", title: "Bouton « Répondre »", type: "localeString" }),
+        defineField({ name: "cancelLabel", title: "Bouton « Annuler »", type: "localeString" }),
+        defineField({ name: "successMessage", title: "Message après envoi", type: "localeString" }),
+        defineField({ name: "emptyMessage", title: "Aucun commentaire", type: "localeString" }),
+        defineField({ name: "errorMessage", title: "Message d'erreur", type: "localeString" }),
+      ],
+    }),
   ],
   preview: {
     prepare: () => ({

@@ -10,7 +10,7 @@ Sections are the reusable marketing blocks a home (or landing) page is built fro
 ## Where sections come from
 
 The app has **zero runtime imports** from the sibling Storybook library (the
-`indiecrafts-library` repo). That repo is a browse-only catalogue. To add a section:
+the component-library repo). That repo is a browse-only catalogue. To add a section:
 
 1. Open Storybook in the library (`pnpm storybook` in the sibling repo).
 2. Copy the variant's component into `src/user-interface/homepage/sections/<Name>.tsx`. If upstream ships a multi-file folder (`schema.ts` + `config.ts` + `en.json`), **flatten it into one `.tsx`** — `Features.tsx` is the target shape.

@@ -1765,7 +1765,71 @@ const blog = {
   // related-posts section. Populate from Studio to swap in a
   // module-driven shell that applies to every article.
   postModules: [],
+  // Editable per-locale copy for the comment section (a `localeString` per
+  // field). Editors change the wording in Studio → no code deploy.
+  comments: {
+    heading: { en: "Comments", fr: "Commentaires" },
+    nameLabel: { en: "Name", fr: "Nom" },
+    emailLabel: { en: "Email (optional)", fr: "E-mail (facultatif)" },
+    bodyLabel: { en: "Comment", fr: "Votre commentaire" },
+    consentLabel: {
+      en: "I agree my name and comment can be stored and shown here.",
+      fr: "J'accepte que mon nom et mon commentaire soient enregistrés et affichés.",
+    },
+    submitLabel: { en: "Post comment", fr: "Publier le commentaire" },
+    replyLabel: { en: "Reply", fr: "Répondre" },
+    cancelLabel: { en: "Cancel", fr: "Annuler" },
+    successMessage: {
+      en: "Thanks — your comment is awaiting review.",
+      fr: "Merci — votre commentaire est en attente de validation.",
+    },
+    emptyMessage: {
+      en: "No comments yet — be the first.",
+      fr: "Aucun commentaire pour l'instant — soyez le premier.",
+    },
+    errorMessage: {
+      en: "Something went wrong. Please try again.",
+      fr: "Une erreur s'est produite. Merci de réessayer.",
+    },
+  },
 };
+
+// Demo comments on the featured post — one approved (visible), one pending
+// (shows up in the Studio "En attente" queue). `approved` gates public display.
+const comments = [
+  {
+    _id: "comment.demo-approved",
+    _type: "comment",
+    approved: true,
+    authorName: "Katherine Johnson",
+    body: "Exactly the two-day path I needed — the 'skip on the first pass' list saved me a whole afternoon.",
+    post: { _type: "reference", _ref: "post.en.fast-proto-nextjs" },
+    consent: true,
+    createdAt: daysAgo(1),
+  },
+  {
+    _id: "comment.demo-pending",
+    _type: "comment",
+    approved: false,
+    authorName: "Alan Turing",
+    body: "Would love a follow-up on the deploy step — awaiting moderation, so this one is a Studio demo.",
+    post: { _type: "reference", _ref: "post.en.fast-proto-nextjs" },
+    consent: true,
+    createdAt: daysAgo(0),
+  },
+  {
+    // Threaded reply → parent is the approved comment above (1-level demo).
+    _id: "comment.demo-reply",
+    _type: "comment",
+    approved: true,
+    authorName: "Ada Lovelace",
+    body: "Glad it helped! The skip-list is the whole trick — ship first, refine on real traffic.",
+    post: { _type: "reference", _ref: "post.en.fast-proto-nextjs" },
+    parent: { _type: "reference", _ref: "comment.demo-approved" },
+    consent: true,
+    createdAt: daysAgo(0),
+  },
+];
 
 // ─── Run ────────────────────────────────────────────────────────
 
@@ -2321,6 +2385,7 @@ async function run() {
     buildNavigation(),
     buildCookieConsent(),
     blog,
+    ...comments,
   ];
 
   console.log(`Committing ${allDocs.length} documents…`);

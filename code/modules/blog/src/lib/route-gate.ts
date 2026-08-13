@@ -33,3 +33,11 @@ export function requireBlogRoute(page: PageConfig): void {
 export function isRssEnabled(): boolean {
   return isBlogRouteEnabled(pages.blog) && features.rss;
 }
+
+/**
+ * Comments are a blog surface: gated by the blog flag AND `blogComments`.
+ * Drives the `/api/comments` route + whether the `<Comments>` section renders.
+ */
+export function isCommentsEnabled(): boolean {
+  return features.blog && features.blogComments;
+}

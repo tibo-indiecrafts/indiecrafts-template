@@ -18,7 +18,7 @@ import { formatPostDate } from "@indiecrafts/utils";
 
 /**
  * Server-rendered post page when no module-driven layout is configured.
- * Editorial 2-column layout adapted from indiecrafts-library's
+ * Editorial 2-column layout adapted from component-library's
  * `pages-customer-story/customer-story-04`:
  *
  *   - Breadcrumb trail at top

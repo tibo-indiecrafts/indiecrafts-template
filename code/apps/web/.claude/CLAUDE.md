@@ -2,11 +2,11 @@
 
 The web app (`code/apps/web`). Auto-loads when you work under here. Platform-wide
 rules + the four-root layout live in the **root `CLAUDE.md`**; this file is the app's
-_how to code_. **Design-context triad:** this file = _how to build_ · **[`DESIGN.md`](../../../packages/ui-tokens/DESIGN.md)** = _how it looks_ (tokens, imported below) · **[`PRODUCT.md`](../PRODUCT.md)** = _who & why_ (users, purpose, positioning). Each owns its facts; the others link.
+_how to code_. **Design-context pair:** this file = _how to build_ · **[`DESIGN.md`](../../../packages/ui-tokens/DESIGN.md)** = _how it looks_ (tokens, imported below). (Product truth — users/purpose/positioning — is authored per project, not shipped in the template.)
 
-**Stack:** Next.js 16.x (App Router) · React 19.x · TypeScript 5.x (strict) · Tailwind v4 · shadcn/ui · Sanity v5 · next-intl v4 · pnpm 10 / Node 22. Production-only — the Storybook component library is the sibling repo `../../../../indiecrafts-library`.
+**Stack:** Next.js 16.x (App Router) · React 19.x · TypeScript 5.x (strict) · Tailwind v4 · shadcn/ui · Sanity v5 · next-intl v4 · pnpm 10 / Node 22. Production-only — the Storybook component library is an internal component-library repo.
 
-**Focused rules auto-load** from `.claude/rules/` when you work here (each imports the canon in `method/apps/web/rules/`): naming · accessibility · component-architecture · design-token-usage · figma-handoff · sanity-images · sanity-legends — plus the ❌/✅ [`code-patterns`](rules/code-patterns.md) library and the [`self-review`](rules/self-review.md) checklist. Global `writing-style` auto-loads from the root. Long-term decisions → `work/MEMORY.md`.
+**Focused rules auto-load** (self-contained) from `.claude/rules/` when you work here: naming · accessibility · component-architecture · design-token-usage · figma-handoff · sanity-images · sanity-legends — plus the ❌/✅ [`code-patterns`](rules/code-patterns.md) library and the [`self-review`](rules/self-review.md) checklist. Global `writing-style` auto-loads from the root.
 
 **Repeatable multi-file tasks** have step-by-step checklists in [`method/apps/web/workflows/`](../../../../method/apps/web/workflows/) — follow the matching one instead of reconstructing the steps: [`add-page`](../../../../method/apps/web/workflows/add-page.md), [`adapt-library-section`](../../../../method/apps/web/workflows/adapt-library-section.md), [`add-blog-module`](../../../../method/apps/web/workflows/add-blog-module.md), [`remove-blog-module`](../../../../method/apps/web/workflows/remove-blog-module.md).
 
@@ -79,17 +79,17 @@ _Checklist: [`method/apps/web/workflows/add-page.md`](../../../../method/apps/we
 
 Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, JSON-LD WebPage.
 
-## Working with the library (shadcn/ui + `../../../../indiecrafts-library`)
+## Working with the library (shadcn/ui + `<your-component-library>`)
 
 _Checklist: [`method/apps/web/workflows/adapt-library-section.md`](../../../../method/apps/web/workflows/adapt-library-section.md)._
 
-Two building blocks feed the UI: **shadcn/ui** primitives (`@indiecrafts/ui`, CLI-managed) and the sibling **`../../../../indiecrafts-library`** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
+Two building blocks feed the UI: **shadcn/ui** primitives (`@indiecrafts/ui`, CLI-managed) and your **component library** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
 
 **Reuse before create.** Before adding UI: reuse an existing part → add a backward-compatible variant → compose primitives → new shared part (`user-interface/`) → page-specific. Never duplicate a part just because it has a different name. When sources disagree, authority runs: `user-interface/ui` + `config`/`globals.css` tokens (canonical) → the library (a reference to adapt, not copy verbatim) → screenshots.
 
 To adapt a library section:
 
-1. Browse the variant in Storybook (`cd ../../../../indiecrafts-library && pnpm storybook`).
+1. Browse the variant in Storybook (`cd <your-component-library> && pnpm storybook`).
 2. Copy its file into `src/user-interface/homepage/sections/<Name>.tsx`. Flatten a multi-file folder (schema.ts + config.ts + en.json) into one `.tsx`, and rework it to template patterns: strings → `messages/`, colors/nav → `@/config`, links → `@/i18n/routing`. See `src/user-interface/homepage/sections/Features.tsx` for the target shape.
 3. Drop the matching copy into `messages/<locale>.pages.<id>.blocks.<simpleName>` (drop the -NN suffix).
 4. Mount in the route's `page.tsx`, passing a `namespace` (e.g. `pages.home.blocks.cta`) or `pageId` prop. Live pattern: `src/app/[locale]/(home)/page.tsx`.
@@ -141,7 +141,7 @@ The **visual system** — colors, typography, spacing, dark mode, motion, contra
 - NEVER add `as any` — fix the type, or eslint-disable with a one-line reason.
 - NEVER render a Sanity/remote image at full resolution — use `next/image` (the `loaderFile` sizes it at the CDN) or, for a rare raw `<img>`, append `?w=…&auto=format&fit=max&q=`. See `rules/sanity-images.md`.
 - NEVER hand-edit `@indiecrafts/ui` primitives (shadcn — managed via CLI).
-- NEVER depend on `../../../../indiecrafts-library` at runtime — it's browse-only, copy what you need.
+- NEVER depend on `<your-component-library>` at runtime — it's browse-only, copy what you need.
 - NEVER swallow errors — `logger.error(...)` minimum.
 - NEVER set state inside `useEffect` to mark hydration — use `useSyncExternalStore`.
 - NEVER instantiate a Sanity `createClient` per route — use `@/sanity/client`.

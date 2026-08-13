@@ -9,7 +9,7 @@ import nextTs from "eslint-config-next/typescript";
  * downgrade can't silently weaken accessibility coverage. WCAG 2.1 AA is
  * the baseline; treat every jsx-a11y violation as an error.
  *
- * Mirrors the rule set in `../indiecrafts-library/eslint.config.mjs` so
+ * Mirrors the rule set in `../component-library/eslint.config.mjs` so
  * both repos enforce the same a11y bar. The library loosens
  * `anchor-is-valid` + `no-static-element-interactions` on its /components
  * examples surface; /app keeps the strict defaults everywhere.

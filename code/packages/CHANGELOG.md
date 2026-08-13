@@ -12,6 +12,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **`@indiecrafts/sanity/write` — server-only authenticated write client.** New `./write`
+  export: `writeClient` (Editor-role `SANITY_API_WRITE_TOKEN`, `import "server-only"`). The one
+  runtime write path (blog comments today); callers hard-code `_type` + whitelist fields so no
+  untrusted input is spread into a mutation.
+
 ### Changed
 
 - **`FeaturedMedia` gained `autoplay` + `controls`.** `autoplay` mounts the player

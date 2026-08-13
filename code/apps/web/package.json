@@ -22,8 +22,6 @@
     "docs:install": "npm --prefix docs install",
     "docs": "npm --prefix docs run docs:dev",
     "docs:build": "npm --prefix docs run docs:build",
-    "codegraph:init": "command -v codegraph >/dev/null 2>&1 && CODEGRAPH_TELEMETRY=0 codegraph init || echo 'CodeGraph not installed (opt-in) — see docs/setup/codegraph.md'",
-    "codegraph:status": "command -v codegraph >/dev/null 2>&1 && CODEGRAPH_TELEMETRY=0 codegraph status || echo 'CodeGraph not installed (opt-in) — see docs/setup/codegraph.md'",
     "prepare": ""
   },
   "dependencies": {
