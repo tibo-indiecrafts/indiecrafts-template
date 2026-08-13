@@ -20,7 +20,7 @@ indexed from the [`DESIGN.md` component catalog](../../code/packages/ui-tokens/D
 ## Wiring & conventions
 
 How every brick is consumed (exports · `transpilePackages` · resolution · Tailwind `@source`
-· hardening), the ≥2-consumer rule, and the four-folder mirror → **[Packages overview](./)**.
+· hardening), the ≥2-consumer rule → **[Packages overview](./)**.
 
 - [`code/packages/ui/`](../../code/packages/ui/) — the source (primitives + colocated docs)
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — roster + rule

@@ -34,7 +34,7 @@ ship `version: 0.0.0`, `private: true`, `type: module`. The roster and reserved 
    the blog module, the app).
 5. **Supply-chain hardening.** `pnpm-workspace.yaml` sets `minimumReleaseAge` +
    `trustPolicy`; a `pnpm add`/re-resolve needs the temp-relax dance (comment the guards,
-   install, restore) — documented in `work/`.
+   install, restore).
 
 ## The ≥2-consumer rule
 
@@ -55,14 +55,13 @@ A new brick lands in known places — see the checklist in
 row in `_registry.md`, a `docs/packages/<name>.md` page (+ its sidebar line), and a line in
 the [packages changelog](./changelog.md).
 
-## Where this sits (the four-folder mirror)
+## Where this sits
 
-`code/packages/<name>/` (build) ↔ `method/packages/` (how) ↔ `docs/packages/` (what — these
+`code/packages/<name>/` (build) ↔ `docs/packages/` (what — these
 pages).
 
 ## Pointers
 
-- [`method/packages/api-and-data.md`](../../method/packages/api-and-data.md) — how we build packages
 - [`code/packages/CLAUDE.md`](../../code/packages/CLAUDE.md) — agent conventions
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — the brick roster + rule
 - [`DESIGN.md`](../../code/packages/ui-tokens/DESIGN.md) — the `ui-tokens` design contract

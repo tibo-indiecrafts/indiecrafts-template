@@ -51,7 +51,6 @@ If a new external image host resizes by query string, add it to `SIZED_HOSTS` in
 
 ## Rule + code
 
-- Agent rule: `method/apps/web/rules/sanity-images.md`.
 - Loader: [`@indiecrafts/sanity/image`](/packages/sanity) · shim:
   `code/apps/web/src/lib/sanity-image-loader.ts`.
 - Blog gallery lqip detail: [gallery](/modules/blog/gallery).

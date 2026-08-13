@@ -5,7 +5,7 @@ import { defineConfig } from "vitepress";
 //   npm run docs:dev     → http://localhost:3002
 //   npm run docs:build   → static output in .vitepress/dist (deploy to Vercel)
 //
-// docs/ is a repo-root sibling of code/ · method/ · work/, and mirrors the same
+// docs/ is a repo-root sibling of code/ (and the private internal folders), and mirrors the same
 // spine: shared/ (cross-cutting) + apps/web · modules · packages · db · infra.
 // The sidebar mirrors those folders. Add a doc = drop the .md in the folder that
 // matches the code it documents + add one sidebar line here.

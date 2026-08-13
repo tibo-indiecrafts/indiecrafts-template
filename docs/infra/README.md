@@ -40,19 +40,12 @@ own manifest; shared resources are provisioned from `code/infra/`.
 
 ## Where it sits
 
-Part of the four-folder mirror:
-
 - **`code/infra/`** — build (the `envs/` · `iac/` · `ci/` slots)
-- **`method/infra/`** — how (the ops playbook)
 - **`docs/infra/`** — what (this page)
 
 ## Getting started
 
-Read the ops playbook before touching an environment:
+Before touching an environment:
 
-- [`method/infra/infrastructure-and-ops.md`](../../method/infra/infrastructure-and-ops.md)
-  — config-as-data, secrets, flags-as-kill-switch, gates.
-- [`method/infra/observability.md`](../../method/infra/observability.md) — error
-  tracking, structured logs, metrics, canary.
 - [`code/infra/CLAUDE.md`](../../code/infra/CLAUDE.md) — the per-slot agent
   conventions.

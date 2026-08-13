@@ -11,7 +11,6 @@ The repo root holds four sibling pillars that mirror each other's shape:
 ```text
 code/     EXECUTION — the pnpm + Turbo workspace (workspace root = repo root)
 method/   HOW we work — 7-phase sprint, rules, workflows (read-mostly canon)
-work/     DOING — per-feature sprint deliverables + MEMORY.md / backlog.md
 docs/     CANON — product docs (this VitePress site)
 ```
 

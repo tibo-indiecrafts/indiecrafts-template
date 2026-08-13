@@ -21,7 +21,7 @@ brand string, URL, color, or nav entry**.
 ## Wiring & conventions
 
 How every brick is consumed (exports · `transpilePackages` · resolution · Tailwind `@source`
-· hardening), the ≥2-consumer rule, and the four-folder mirror → **[Packages overview](./)**.
+· hardening), the ≥2-consumer rule → **[Packages overview](./)**.
 
 - [`code/packages/config/`](../../code/packages/config/) — the source
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — roster + rule

@@ -1,8 +1,7 @@
 # Db — data-layer docs
 
 The **data layer**: schema, migrations, seed, and backups. Empty today — a stub
-until the first schema lands. This page is _what it is_; the full pattern lives in
-`method/db/database.md`.
+until the first schema lands. This page is _what it is_.
 
 ## Key conventions
 
@@ -20,19 +19,17 @@ Connection strings come from **env** — `.env.example` documents the variables.
 Never commit real data or credentials; backups live outside git. Never log or
 URL-expose PII.
 
-## Where it sits (the four-folder mirror)
+## Where it sits
 
-`code/db/` (build) ↔ `method/db/` (how) ↔ `docs/db/` (what — this page). Each
+`code/db/` (build) ↔ `docs/db/` (what — this page). Each
 folder mirrors the others; a `<change>` to the data layer touches its matching
 doc in lockstep.
 
 ## Getting started — when the schema lands
 
-1. Read `method/db/database.md` for the full pattern (plan → migrate → back up).
-2. Add the data brick under `code/packages/` — the single typed gateway.
-3. Write the first migration + an idempotent seed; start this area's `CHANGELOG.md`.
+1. Add the data brick under `code/packages/` — the single typed gateway.
+2. Write the first migration + an idempotent seed; start this area's `CHANGELOG.md`.
 
 ## Pointers
 
-- **How we do data** → `method/db/database.md`
 - **Agent conventions for this slot** → `code/db/CLAUDE.md`

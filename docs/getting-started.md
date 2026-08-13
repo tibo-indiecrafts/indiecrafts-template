@@ -4,18 +4,20 @@ A config-first Next.js 16 template, structured as a **full-platform monorepo** w
 dev framework in-repo. New here? Read this first, then jump to
 [New client setup](/apps/web/setup/new-client) for the web app.
 
-## Four root folders that mirror each other
-
-Same `apps/web · modules · packages · db · infra` spine in each:
+## The two folders you work with
 
 | Folder | Role | Holds |
 | --- | --- | --- |
 | **`code/`** | EXECUTION | the pnpm + Turborepo workspace — `apps/web` (the Next app), plus `packages/ modules/ db/ infra/` slots for growth |
-| **`method/`** | HOW we work | the dev framework — the 7-phase sprint, the engineering brain, rules, workflows. Its own site (see below) |
-| **`work/`** | DOING | the lab — per-sprint thinking, `MEMORY`, `backlog`, `scratch`. Draft here; promote keepers to docs |
 | **`docs/`** | CANON | this site — product documentation, foldered like the code |
 
-**Flow:** think in `work/` → build in `code/` → promote what sticks to `docs/`.
+These are what you build and **deploy**. Full layout + the deployment rules →
+[Workspace & deployment](/apps/web/setup/workspace).
+
+> The repo also carries internal team folders (`method/` · `work/`) — the dev
+> framework and the sprint lab. They're **private**: never deployed to a
+> client-reachable URL and excluded from client hand-offs. See
+> [Workspace § Private folders](/apps/web/setup/workspace).
 
 ## Run the monorepo
 
@@ -29,19 +31,17 @@ pnpm verify        # tsc + lint + format + contrast + react-doctor (CI gate)
 pnpm verify:quick  # tsc + lint (manual pre-PR check)
 ```
 
-## Two documentation sites
+## Documentation site
 
-Each is its own npm package, isolated from the pnpm workspace:
+`pnpm docs` → http://localhost:3002 — this site (product docs), its own npm package
+isolated from the pnpm workspace.
 
-- **Product docs** — this site. `pnpm docs` → http://localhost:3002. How the template works.
-- **Method / framework** — `pnpm method` → http://localhost:3003. How we work (the sprint, rules, engineering brain).
-
-## Deploy — not locked to one host
+## Deploy — app + docs only
 
 The workspace installs at the **repo root**; the app builds to `code/apps/web/.next`.
-
-- **Netlify** — per-app manifest `code/apps/web/netlify.toml` (`command = pnpm build`, `publish = code/apps/web/.next`); set Package directory = `code/apps/web`, Base unset. First-deploy steps → [the app README](/apps/web/setup/new-client).
-- **Vercel / Cloudflare / anywhere** — point at the repo, keep install at the repo root, set build `pnpm build` and Root Directory / output to `code/apps/web`. Each `apps/<name>` you add later is its own deploy target.
+**Deploy only `code/apps/web` (the site) and, optionally, `docs/`** — the internal
+`method/` and `work/` folders stay private. Full guide, hosts, and the private-folder
+rule → [Workspace & deployment](/apps/web/setup/workspace).
 
 ## Where to go next
 

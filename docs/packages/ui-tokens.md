@@ -29,7 +29,7 @@ implementation travel as one package.
 ## Wiring & conventions
 
 How every brick is consumed (exports · `transpilePackages` · resolution · Tailwind `@source`
-· hardening), the ≥2-consumer rule, and the four-folder mirror → **[Packages overview](./)**.
+· hardening), the ≥2-consumer rule → **[Packages overview](./)**.
 
 - [`code/packages/ui-tokens/`](../../code/packages/ui-tokens/) — the source (`globals.css` · `typeset.css` · `DESIGN.md`)
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — roster + rule

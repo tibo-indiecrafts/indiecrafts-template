@@ -14,7 +14,7 @@ The leaf brick: small, dependency-light functions, no React/Next runtime.
 ## Wiring & conventions
 
 How every brick is consumed (exports · `transpilePackages` · resolution · Tailwind `@source`
-· hardening), the ≥2-consumer rule, and the four-folder mirror → **[Packages overview](./)**.
+· hardening), the ≥2-consumer rule → **[Packages overview](./)**.
 
 - [`code/packages/utils/`](../../code/packages/utils/) — the source
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — roster + rule

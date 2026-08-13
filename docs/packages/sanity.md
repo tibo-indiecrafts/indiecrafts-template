@@ -27,7 +27,7 @@ schemas and GROQ stay in their owning feature.
 ## Wiring & conventions
 
 How every brick is consumed (exports · `transpilePackages` · resolution · Tailwind `@source`
-· hardening), the ≥2-consumer rule, and the four-folder mirror → **[Packages overview](./)**.
+· hardening), the ≥2-consumer rule → **[Packages overview](./)**.
 
 - [`code/packages/sanity/`](../../code/packages/sanity/) — the source
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — roster + rule

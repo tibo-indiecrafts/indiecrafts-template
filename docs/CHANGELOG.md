@@ -9,8 +9,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Changed
+
+- **Hid the internal `method/` + `work/` folders from the client-facing docs.** The Pillars
+  nav (Method/Lab links) is now **dev-only** (`NODE_ENV=production` drops it); the home hero
+  "How we work (method)" feature became "Workspace & deployment"; `getting-started` reframes
+  around the two client folders (`code/`, `docs/`) with method/work as a brief "private" note.
+  Swept the `method/`/`work/` pointer links + "four-folder mirror" boilerplate out of the
+  README/overview/packages pages. Removed the stray `apps/web/setup/git-worktrees.md` (+ its
+  sidebar line) — finishing the earlier worktree removal.
+
 ### Added
 
+- **`apps/web/setup/workspace.md` — Workspace & deployment.** New page: the monorepo layout,
+  run commands, and the **deploy-app+docs-only** rule, with a "Private folders" section on
+  keeping `method/` + `work/` from clients (undeploy or auth-gate; hand over `code/`+`docs/`
+  only). Wired into the Setup sidebar + the home features grid.
 - **Code-intelligence (LSP) tooling documented.** New `shared/tooling/code-intelligence.md`
   (what LSP plugins do · install · safety · language coverage · the monorepo note) + a Tier 2
   row and install block in `apps/web/setup/environment.md` + a "Working with an AI agent"

@@ -1,9 +1,7 @@
 # Modules — product-feature docs
 
 **Vertical product slices** — blog · shop · events · community · … — each feature-flagged,
-composed from `code/packages/` bricks, and mounted by an app. This page is _what they are_;
-the full build pattern lives in
-[`method/modules/architecture.md`](../../method/modules/architecture.md).
+composed from `code/packages/` bricks, and mounted by an app. This page is _what they are_.
 
 ## What a module is
 
@@ -58,11 +56,9 @@ bricks:
 
 ## Adding a module
 
-1. Read [`method/modules/architecture.md`](../../method/modules/architecture.md) for the
-   full vertical-slice pattern.
-2. Extract at a **genuine vertical slice or ≥2 consumers** (YAGNI) — the blog earned it as
+1. Extract at a **genuine vertical slice or ≥2 consumers** (YAGNI) — the blog earned it as
    a self-contained, flag-gated feature; don't pre-extract a thin one.
-3. On extraction: `git mv` the slice; give it a `package.json` (`@indiecrafts/<name>`,
+2. On extraction: `git mv` the slice; give it a `package.json` (`@indiecrafts/<name>`,
    `exports`); add it to the app's `transpilePackages` + a tsconfig `paths` entry (for
    mixed `.ts`/`.tsx`); add a `@source` line in `tokens/globals.css`; register its Sanity
    schema/structure in `sanity.config.ts` if it has any; move its docs to
@@ -74,15 +70,14 @@ bricks:
 Reserved (names only): `shop · events · community · learning · booking · jobs · newsletter ·
 support · crm`.
 
-## Where it sits (the four-folder mirror)
+## Where it sits
 
-`code/modules/` (build) ↔ `method/modules/` (how) ↔ `docs/modules/` (what — this page). A
+`code/modules/` (build) ↔ `docs/modules/` (what — this page). A
 `<name>` module gets its own `docs/modules/<name>/` folder once physically extracted to
 `code/modules/<name>/`.
 
 ## Pointers
 
-- [`method/modules/architecture.md`](../../method/modules/architecture.md) — how we build modules
 - [`code/modules/CLAUDE.md`](../../code/modules/CLAUDE.md) — agent conventions for this slot
 - [`code/modules/_registry.md`](../../code/modules/_registry.md) — the module roster + rule
 - The live reference → `code/modules/blog/src/`
