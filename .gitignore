@@ -49,8 +49,11 @@ CLAUDE.local.md
 # codegraph — machine-local semantic index (opt-in dev tool; rebuild with `pnpm codegraph:init`)
 .codegraph/
 
-# dev framework (in-repo) — throwaway thinking + gstack state
-work/scratch/
+# Internal dev framework (method/) + sprint lab (work/) — kept in a separate
+# private repo, never tracked here. Left on disk locally but git-ignored so they
+# can't re-enter the repo or reach a client hand-off.
+method/
+work/
 .gstack/
 **/_gstack
 .context/
@@ -63,7 +66,7 @@ work/scratch/
 next-env.d.ts
 
 
-# VitePress build output (docs + method + work sites)
+# VitePress build output (docs site)
 **/.vitepress/dist/
 **/.vitepress/cache/
 # generated: area changelogs copied into the docs site at build (sources under code/**/CHANGELOG.md)

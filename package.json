@@ -16,12 +16,6 @@
     "docs:install": "npm --prefix docs install",
     "docs": "npm --prefix docs run docs:dev",
     "docs:build": "npm --prefix docs run docs:build",
-    "method:install": "npm --prefix method install",
-    "method": "npm --prefix method run dev",
-    "method:build": "npm --prefix method run build",
-    "work:install": "npm --prefix work install",
-    "work": "npm --prefix work run dev",
-    "work:build": "npm --prefix work run build",
     "prepare": "husky",
     "agents:sync": "bash scripts/sync-agents.sh"
   },
