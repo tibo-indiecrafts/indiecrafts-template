@@ -26,16 +26,23 @@ export default defineConfig({
       { text: "Blog", link: "/modules/blog/" },
       { text: "Shared", link: "/shared/client-intake/1-seo-content" },
       { text: "Changelog", link: "/CHANGELOG" },
-      {
-        // Cross-pillar nav — LOCAL DEV URLs; swap for real domains on deploy.
-        text: "Pillars",
-        items: [
-          { text: "Code (app · :3000)", link: "http://localhost:3000" },
-          { text: "Docs (:3002)", link: "http://localhost:3002" },
-          { text: "Method (:3003)", link: "http://localhost:3003" },
-          { text: "Lab (:3004)", link: "http://localhost:3004" },
-        ],
-      },
+      // Internal cross-pillar nav (Code/Docs/Method/Lab) — LOCAL DEV ONLY. The
+      // Method + Lab sites are private (never deployed to a client-reachable
+      // URL), so this whole block is hidden outside dev. See
+      // `apps/web/setup/workspace` § Deployment.
+      ...(process.env.NODE_ENV === "production"
+        ? []
+        : [
+            {
+              text: "Pillars (dev)",
+              items: [
+                { text: "Code (app · :3000)", link: "http://localhost:3000" },
+                { text: "Docs (:3002)", link: "http://localhost:3002" },
+                { text: "Method (:3003)", link: "http://localhost:3003" },
+                { text: "Lab (:3004)", link: "http://localhost:3004" },
+              ],
+            },
+          ]),
     ],
     sidebar: [
       {
@@ -49,13 +56,13 @@ export default defineConfig({
         text: "Web app · Setup & operations",
         collapsed: false,
         items: [
+          { text: "Workspace & deployment", link: "/apps/web/setup/workspace" },
           { text: "Environment setup", link: "/apps/web/setup/environment" },
           { text: "New client", link: "/apps/web/setup/new-client" },
           { text: "Brand setup", link: "/apps/web/setup/brand-setup" },
           { text: "Launch checklist", link: "/apps/web/setup/launch-checklist" },
           { text: "Operations", link: "/apps/web/setup/operations" },
           { text: "Scripts", link: "/apps/web/setup/scripts" },
-          { text: "Git worktrees", link: "/apps/web/setup/git-worktrees" },
           { text: "Maintenance mode", link: "/apps/web/setup/maintenance-mode" },
         ],
       },

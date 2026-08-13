@@ -11,7 +11,7 @@ organization.
   (MIT upstream — add its `LICENSE` here if you redistribute the template publicly).
 - **`project/`** — the **template-specific** reviewers that encode *this* repo's conventions
   (not from upstream, don't overwrite): `design-system-reviewer`, `accessibility-reviewer`,
-  `ux-reviewer`, `blog-module-reviewer`, `config-consistency-reviewer`.
+  `ux-reviewer`, `page-builder-reviewer`, `config-consistency-reviewer`.
 
 Per-phase mapping (which agent at which sprint step) →
 [`method/shared/process/my-skills-and-agents.md`](../../method/shared/process/my-skills-and-agents.md).

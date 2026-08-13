@@ -33,7 +33,7 @@ features:
   - title: Client intake forms
     details: Fill-in questionnaires to send to clients for their SEO, business, and FAQ content.
     link: /shared/client-intake/1-seo-content
-  - title: How we work (method)
-    details: The dev framework — the 7-phase sprint, rules, and engineering brain. Opens the method site.
-    link: http://localhost:3003
+  - title: Workspace & deployment
+    details: How the monorepo is laid out and what gets deployed for a client.
+    link: /apps/web/setup/workspace
 ---
