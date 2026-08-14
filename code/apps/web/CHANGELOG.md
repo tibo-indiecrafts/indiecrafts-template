@@ -17,8 +17,58 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **Config split — the app owns its instance config (multi-app readiness).** `@indiecrafts/config`
+  is now **shared primitives + the generic page-config contract only** (i18n, Intl format, env/CSP,
+  logging, `site` deploy env, `PageConfig`/`isPageVisible`). The app's own **instance** config —
+  `theme`, `fonts`, `features`, and the `pages` map (+ the derived `StaticAppPathname`) — moved to
+  `apps/web/src/config`, imported via a new `@/config` barrel that re-exports the shared primitives.
+  _Why:_ a second app is coming, and each app needs its own look + feature set + routes; keeping them
+  in the shared package would force both apps to share one. `site` stays shared on purpose — it's pure
+  deploy env, already per-deployment, and read by shared packages. `StaticAppPathname` now derives from
+  the `pages` map, so adding a route is one edit (no parallel key list). No user-visible change — the
+  app renders identically.
+- **Islands read app-injected flags, not a central registry (invert flag ownership).** Modules +
+  shared packages can't import an app, so the app now **injects** each island's config once at boot
+  (`src/instrumentation.ts` → `@/lib/islands`): the blog reads a `configureBlog(...)` holder
+  (route-gate + settings + llms); the newsletter/waitlist page-builder blocks read `configureBlocks(...)`;
+  their Studio desks became `xSanity(enabled)` functions; `getLegalAcceptance(locale, flags)` takes the
+  legal flags; the `/api/newsletter*` + `/api/waitlist` routes gate on `features` directly (the module
+  `isXEnabled()` helpers are gone). _Why:_ so the same island can mount in a second app with a different
+  feature set. Each holder defaults to the template's set, so a single app is correct even before the
+  injection runs. A route-gate test proves a second app can disable the blog via injected flags.
+- **Public-form security hardening (newsletter · waitlist · comments).** An audit found the forms
+  well-built (whitelisted server-only Sanity writes, parameterized GROQ, escaped email + comment render,
+  same-site origin, body-cap) but two enforcement gaps + a few unbounded fields. Fixed: **(1) Turnstile is
+  now wired end-to-end** — a shared `TurnstileWidget` (`@indiecrafts/ui-components/web/form`) renders on
+  all three forms when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set and sends `cf-turnstile-response`, so setting
+  the key pair now turns on real CAPTCHA instead of 403-ing every submit (the old configured-but-not-wired
+  trap). **(2) The in-app rate limiter is activatable per deploy** — `pnpm setup:kv` creates a
+  **per-env** `RATE_LIMIT_KV` namespace (dev/staging/prod, like the R2 buckets — a staging load-test can't
+  burn prod's budget) and binds it in `wrangler.toml` (it fell open by default because the binding was
+  commented out); the CF WAF rule stays the separate edge layer. **Bounds:** `language` is now allowlisted to `isLocale`, tag strings capped
+  (≤40), comment `authorEmail` capped (≤254) and `postId` format-checked + **verified to reference a real
+  post** before write. **Hygiene:** comments now stamp `consentPolicyVersion` (parity with newsletter /
+  waitlist); the consent-policy lookup no longer swallows a Sanity error silently; `/api/emails/test` gained
+  a body-size cap; `/api/i18n/translated-slug` gained a CDN cache header (read-amplification). A skew-safe
+  submit-timing heuristic (`startedAt`) drops near-instant bot posts. Verified: `tsc` + `lint` + new
+  validator tests. Doc: [`setup/deployment`](../../../docs/apps/web/setup/deployment.md) § one-time setup
+  (the `pnpm setup:kv` step) + the Turnstile block in `.env.example`.
+
 ### Added
 
+- **Visual-verification rule — look at the pixels before "done".** A new engineering rule
+  (`.claude/rules/visual-verification.md`, auto-loaded on UI work) makes screenshot review a
+  required step, not an option. Green tests do not prove a human can see the screen: jsdom has no
+  layout, and snapshots diff markup, not pixels. The loop: render the affected pages, screenshot at
+  the three adaptive widths (375 · 768 · 1280), review the _images_ for overlap / clipping /
+  off-centre / dark-mode grey-on-grey, fix, and re-screenshot before calling the task done. Verify
+  the mechanism (reflow vs context-swap), stub dynamic data, and record intentional asymmetry so it
+  is not "fixed". A **"Looked at it"** line joins the `self-review` checklist, and the design guide
+  [`adaptive-responsive`](../../../docs/apps/web/design/adaptive-responsive.md) gains a matching
+  section. _Why:_ a screen that renders is not a screen a human has seen — a passing suite tests the
+  app you wrote, not the app the user sees.
 - **"Policies updated — please Accept" banner (legal re-acceptance).** A non-blocking bottom banner
   (`@indiecrafts/consent`'s new `LegalNotice`) tells a returning visitor when the **Privacy Policy /
   Terms / Terms of sale** changed and records a one-click **Accept**. Trigger = the tracked legal pages'

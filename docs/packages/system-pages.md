@@ -34,7 +34,7 @@ The brick owns **how the status pages look** + **the maintenance behaviour**. Ea
 
 ```ts
 // proxy.ts
-import { features } from "@indiecrafts/config";
+import { features } from "@/config";
 import { maintenanceRewrite } from "@indiecrafts/system-pages/proxy";
 import { getMaintenanceMode } from "@/lib/maintenance";
 const res = maintenanceRewrite(request, features.maintenance || (await getMaintenanceMode()));

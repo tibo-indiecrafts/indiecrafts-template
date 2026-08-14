@@ -85,7 +85,7 @@ locale has no card, the layout's `generateMetadata` emits no `og:image` (no
 `/public` file, no convention route). `pnpm seed` uploads the defaults.
 
 ::: tip
-`theme.hexColors.background` in `@indiecrafts/config` mirrors the OKLCH background
+`theme.hexColors.background` in `apps/web/src/config/theme.ts` mirrors the OKLCH background
 token as hex for the **PWA manifest** (`app/manifest.ts` sets both `theme_color`
 and `background_color` from it), which can't take `oklch`. Keep the mirror in sync
 when you change `--background` so the install screen stays on-brand. See the

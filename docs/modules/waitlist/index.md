@@ -11,7 +11,7 @@ contribution. The public form stays a page-builder block (renderer in `@indiecra
 
 ## One switch
 
-- **`features.waitlist`** (`boolean`, default `true`, in `@indiecrafts/config`) — gates the whole
+- **`features.waitlist`** (`boolean`, default `true`, app-owned in `@/config`; the module reads it injected) — gates the whole
   feature. Off → the block renders nothing and `/api/waitlist` returns `404`, in lockstep.
 
 ## The flow

@@ -12,7 +12,7 @@ one-line `composeSanity` contribution. The public form stays a page-builder bloc
 
 ## One switch
 
-- **`features.newsletter`** (`boolean`, default `true`, in `@indiecrafts/config`) — gates the whole
+- **`features.newsletter`** (`boolean`, default `true`, app-owned in `@/config`; the module reads it injected) — gates the whole
   feature. Off → the block renders nothing and `/api/newsletter` + `/api/newsletter/confirm` return
   `404`, in lockstep. See [Feature flags](../../apps/web/config/feature-flags.md).
 

@@ -39,7 +39,7 @@ is a compile error.
 variable:
 
 ```ts
-import { fonts, type FontKey } from "@indiecrafts/config";
+import { fonts, type FontKey } from "@/config"; // fonts app-owned; FontKey re-exported from @indiecrafts/config
 
 const geist = Geist({ subsets: ["latin"], display: "swap", variable: "--f-geist" });
 const geistMono = Geist_Mono({ subsets: ["latin"], display: "swap", variable: "--f-geist-mono" });

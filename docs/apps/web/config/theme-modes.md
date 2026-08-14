@@ -2,8 +2,8 @@
 
 Which color modes the site offers — and whether it's locked to one — is edited in **Sanity**:
 **Paramètres du site → Affichage & thème → Modes de thème** (`siteSettings.themeModes`), so a client
-changes it without a deploy. `themeConfig` (`@indiecrafts/config`, `code/packages/config/src/theme.ts`)
-is the **code default** used when the Sanity field is unset. `@/lib/theme` (`resolveThemeConfig` →
+changes it without a deploy. `themeConfig` (app-owned in `code/apps/web/src/config/theme.ts`,
+imported via `@/config`) is the **code default** used when the Sanity field is unset. `@/lib/theme` (`resolveThemeConfig` →
 `themeProviderProps`/`themeModes`/`showThemeToggle`) resolves Sanity-over-default and the layout
 prop-feeds the client ThemeProvider/toggle (next-themes' pre-paint script still prevents a flash).
 

@@ -37,7 +37,7 @@ Extracted when **≥2 consumers** use them; consumed **as source** (no build ste
 
 | Package | Holds | Exports |
 | --- | --- | --- |
-| `@indiecrafts/config` | site config data + types/helpers; `localizedPathname` | `.`, `./types` |
+| `@indiecrafts/config` | shared config primitives (i18n · format · env · logging · `site` env) + the generic page contract (`PageConfig`/`isPageVisible`); `localizedPathname` | `.` (no `./types`) |
 | `@indiecrafts/utils` | `cn` · logger · slugify · video-embed · format-date | subpath-only (no `.`) |
 | `@indiecrafts/sanity` | Sanity infra: client · live · env · token · structure | subpath-only (no `.`) |
 | `@indiecrafts/ui` | shadcn primitives + `use-mobile` (platform-nested) | `./web/*` → `src/web/*.tsx`, `./web/use-mobile`, `./shared/*` |
@@ -79,9 +79,11 @@ src/
 └── (public/)       — sibling of src/ — URL-served static files
 ```
 
-App primitives come from the `@indiecrafts/ui` **package**, not a local `ui/` dir. Note
-`src/config/` is an **empty** directory — the canonical config import is `@indiecrafts/config`
-(there is no `@/config` tsconfig path).
+App primitives come from the `@indiecrafts/ui` **package**, not a local `ui/` dir.
+`src/config/` holds the app's **instance** config (`theme` · `fonts` · `features` · the `pages`
+map); its `index.ts` re-exports the shared `@indiecrafts/config` primitives, so `@/config` (the
+`@/*` → `src/*` tsconfig path) is the app's one config import surface. Packages + modules still
+import the primitives from `@indiecrafts/config` directly. See [Multi-app](./multi-app).
 
 ## The "where does a file go?" rules
 
@@ -122,8 +124,10 @@ App primitives come from the `@indiecrafts/ui` **package**, not a local `ui/` di
 ## Adding a new feature module
 
 Mirror `code/modules/blog/`: create `code/modules/<name>/` with `package.json`
-(`@indiecrafts/<name>`, `exports`), add a `features.<name>` flag in `@indiecrafts/config`,
-gate its routes with a `require<Name>Route` helper in `lib/`, and keep its `app/` routes thin.
+(`@indiecrafts/<name>`, `exports`), add a `features.<name>` flag to the app's `features`
+(`apps/web/src/config/features.ts`) and inject it into the module (the module reads app-passed
+config, never a central registry — see [Multi-app](./multi-app)), gate its routes with a
+`require<Name>Route` helper in `lib/`, and keep its `app/` routes thin.
 Wire it in: `transpilePackages` + tsconfig `paths` + an `@source` line in `tokens/globals.css`
 + schema/structure registration in `sanity.config.ts`. The full extraction checklist lives
 in `code/modules/CLAUDE.md`.

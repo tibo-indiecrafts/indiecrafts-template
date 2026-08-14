@@ -51,13 +51,24 @@ Each island exports an `Island` descriptor (`name`, `app` tag for desk grouping,
 `SanityModule`, `features`, `pages`). Adding/removing an island is then one edit, and the app's surface is
 legible in one file.
 
-## Config split (the enabling refactor)
+## Config split (done — the enabling refactor)
 
-`@indiecrafts/config` becomes **shared primitives only** (i18n mechanics, env, CSP, logging, format,
-types); a per-app config (`apps/<app>/config/`) owns `site` · `theme` · `fonts`, and `features` / `pages`
-compose from the manifest. Islands stop reading `features.blog` from a central registry — their route
-gates take the app's resolved config, so an island recombines across apps without assuming one app's flag
-shape. (See [`packages/config`](/packages/config).)
+`@indiecrafts/config` is now **shared primitives + the generic page-config contract** (i18n mechanics,
+Intl format, env/CSP, logging, `PageConfig`/`isPageVisible`); the app owns its instance config in
+`apps/web/src/config` (`theme` · `fonts` · `features` · the `pages` map + the derived
+`StaticAppPathname`), imported via `@/config`. A second app gets its own `src/config`.
+
+- **`site` stays in `@indiecrafts/config`** — it's pure deploy env (`NEXT_PUBLIC_SITE_URL` /
+  `NEXT_PUBLIC_SITE_PREFIX`), already per-deployment, and read by shared packages (`consent`, `email`);
+  a second app overrides it via its own Worker env, which is the correct multi-app mechanism.
+- **Islands read app-injected config, not a central registry** (packages/modules can't import an app):
+  the blog reads a `configureBlog(...)` holder (route-gate + settings + llms); the newsletter/waitlist
+  page-builder blocks read `configureBlocks(...)`; their Studio desks are `xSanity(enabled)` functions;
+  `getLegalAcceptance(locale, flags)` takes the legal flags; the `/api/newsletter*` + `/api/waitlist`
+  routes gate on `features` directly. The app wires all of it once at boot in
+  `src/instrumentation.ts` → `@/lib/islands` (`configureIslands`), so an island recombines across apps
+  without assuming one app's flag shape. Each holder defaults to the template's set, so a single app is
+  correct even before `configureIslands` runs. (See [`packages/config`](/packages/config).)
 
 ## Infra per app (Terraform)
 
@@ -69,9 +80,11 @@ prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
 
 ## Where it stands
 
-- **Now:** one app (`web`) = the hub Studio + the only lens; one tenant dataset. The `Island` manifest +
-  `composeStudio`/`composeApp` + the config split are the readiness work; graduation of a module into its
-  own app (e.g. `apps/blog`) is a cheap follow-up *because* of them — not built yet.
+- **Now:** one app (`web`) = the hub Studio + the only lens; one tenant dataset. **Done:** the config
+  split (app-owned `theme`/`fonts`/`features`/`pages`; islands read injected config) + `composeStudio`
+  (the per-app-grouped hub desk). **Still readiness work:** the `Island` manifest + `composeApp` (Decision
+  C — one line per island composing `transpilePackages`/features/pages), and graduation of a module into
+  its own app (e.g. `apps/blog`) — a cheap follow-up *because* of the split, not built yet.
 - **Adding an app** (when it lands): scaffold `code/apps/<name>/` (own `CLAUDE.md`/`DESIGN.md`/`README`,
   `_registry` row — `pnpm-workspace.yaml` already globs `code/apps/*`), an `islands.ts`, per-app config,
   route files (thin), its Terraform dir + a distinct zone; it reads the shared dataset and edits through

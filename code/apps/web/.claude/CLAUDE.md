@@ -6,7 +6,7 @@ _how to code_. **Design-context pair:** this file = _how to build_ · **[`DESIGN
 
 **Stack:** Next.js 16.x (App Router) · React 19.x · TypeScript 5.x (strict) · Tailwind v4 · shadcn/ui · Sanity v5 · next-intl v4 · pnpm 10 / Node 22. Production-only — the Storybook component library is an internal component-library repo.
 
-**Focused rules auto-load** (self-contained) from `.claude/rules/` when you work here: naming · accessibility · adaptive-design · component-architecture · design-token-usage · figma-handoff · sanity-images · sanity-legends — plus the ❌/✅ [`code-patterns`](rules/code-patterns.md) library and the [`self-review`](rules/self-review.md) checklist. Global `writing-style` auto-loads from the root.
+**Focused rules auto-load** (self-contained) from `.claude/rules/` when you work here: naming · accessibility · adaptive-design · component-architecture · design-token-usage · figma-handoff · sanity-images · sanity-legends · visual-verification — plus the ❌/✅ [`code-patterns`](rules/code-patterns.md) library and the [`self-review`](rules/self-review.md) checklist. Global `writing-style` auto-loads from the root.
 
 **Repeatable multi-file tasks** — add a page · adapt a library section · add/remove a blog page-builder block — have step-by-step checklists in the internal dev framework. Follow the matching one instead of reconstructing the steps.
 
@@ -20,7 +20,7 @@ Full rationale in `docs/apps/web/config/project-organization.md`.
 
 **Workspace packages + module** (import via `@indiecrafts/*`):
 
-- `@indiecrafts/config` — site config data + types/helpers
+- `@indiecrafts/config` — shared config **primitives** (i18n · format · env/CSP · logging · `site` env) + the generic page-config contract. **App-instance** config (`theme` · `fonts` · `features` · `pages`) is app-owned in `src/config/`; import both via `@/config`.
 - `@indiecrafts/utils` — `cn` · logger · slugify · video-embed · format-date (subpath-only)
 - `@indiecrafts/sanity` — Sanity infra: `client · live · env · token · structure` builders
 - `@indiecrafts/ui` — shadcn primitives + `use-mobile`
@@ -33,13 +33,16 @@ The app (`src/`):
 ```
 src/app/                   ROUTES ONLY (thin page.tsx / route.ts) — [locale]/<seg>, api/, studio/,
                            maintenance/; routes.ts aggregates the `pages` map → ROUTES + PATHNAMES
+src/config/                app-owned config: theme · fonts · features · pages (+ StaticAppPathname);
+                           index.ts re-exports @indiecrafts/config primitives → import via @/config
 src/user-interface/        app UI, by page then category: homepage/sections/ · legal/ ·
                            shared/{layout,components}  (primitives → @indiecrafts/ui; the branded
                            maintenance/404/error status pages → @indiecrafts/system-pages)
 src/lib/                   app services: metadata · fonts · theme · navigation · cookies · social ·
-                           faq · system-pages · seo/{jsonld,jsonld-factories,page-markdown}
+                           faq · system-pages · islands (island config injection) · seo/{jsonld,…}
 src/sanity/                app Sanity: {nav,legal,cookie,seo}-queries · schema/ · Studio.tsx
 src/i18n/                  typed routing (PATHNAMES from app routes) — the app's typed `Link`
+src/instrumentation.ts     boot hook — injects app config into islands (configureIslands)
 src/hooks/ src/types/ src/assets/fonts/   useConsent · ambient types · build-imported .woff2
 sanity.config.ts           Studio config — registers `@indiecrafts/blog` schema + structure
 messages/<locale>.json     chrome + pages.<id>.{title, description, blocks}
@@ -74,9 +77,8 @@ messages/<locale>.json     chrome + pages.<id>.{title, description, blocks}
 _Checklist: the internal add-page workflow._
 
 1. `src/app/[locale]/<seg>/page.tsx`
-2. Entry in `pages` (config/index.ts): `{ key, id, slug, seo: { keywords } }`
-3. Key in `AppPathname` (`src/config/types.ts`)
-4. `pages.<id>.title` + `pages.<id>.description` in every `messages/<locale>.json`
+2. Entry in the `pages` map (`src/config/pages.ts`): `{ key, id, slug, seo: { keywords } }` — the `StaticAppPathname` union is **derived from the map**, so the typed route follows automatically (no separate key list to edit).
+3. `pages.<id>.title` + `pages.<id>.description` in every `messages/<locale>.json`
 
 Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, JSON-LD WebPage.
 

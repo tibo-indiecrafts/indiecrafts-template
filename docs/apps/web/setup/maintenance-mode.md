@@ -7,7 +7,7 @@ Maintenance takes the whole public site offline behind a branded "we'll be back"
 | | Where | Effect | Use for |
 | --- | --- | --- | --- |
 | **Live toggle** (recommended) | Sanity → **Paramètres du site → Indexation → Mode maintenance** | Flips on within ~1 minute, **no redeploy** | Ops flipping the site off/on |
-| **Hard override** | `features.maintenance` in `@indiecrafts/config` | On at build time, **skips the Sanity read** | Forcing maintenance during a known deploy |
+| **Hard override** | `features.maintenance` in `apps/web/src/config/features.ts` | On at build time, **skips the Sanity read** | Forcing maintenance during a known deploy |
 
 The proxy trips on **either** (`features.maintenance || getMaintenanceMode()`). It lives in six places: the Sanity `siteSettings.maintenanceMode` field, the cached reader `getMaintenanceMode()` (`src/lib/maintenance.ts`), the `features.maintenance` flag, the rewrite in `src/proxy.ts` (via `maintenanceRewrite` from **[`@indiecrafts/system-pages`](/packages/system-pages)**), the standalone `/maintenance` route, and the shared `Maintenance` component.
 
@@ -17,7 +17,7 @@ The proxy trips on **either** (`features.maintenance || getMaintenanceMode()`). 
 
 **Live (no deploy) — the usual way:** in the Studio, open **Paramètres du site → Indexation → Mode maintenance** and switch it on. The proxy reads it from Sanity's CDN with a ~30s per-isolate cache, so it takes effect within a minute. Switch it off to bring the site back — again, no deploy.
 
-**Hard override (build-time):** set `features.maintenance: true` in `@indiecrafts/config`, commit, redeploy. This forces maintenance **and skips the Sanity read entirely** — handy when you're deploying and know the site is down. Set back to `false` to re-enable the live toggle.
+**Hard override (build-time):** set `features.maintenance: true` in `apps/web/src/config/features.ts`, commit, redeploy. This forces maintenance **and skips the Sanity read entirely** — handy when you're deploying and know the site is down. Set back to `false` to re-enable the live toggle.
 
 ---
 

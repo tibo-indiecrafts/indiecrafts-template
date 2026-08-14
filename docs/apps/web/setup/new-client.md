@@ -145,7 +145,7 @@ export const themeConfig = { light: true, dark: true, system: true, forced: null
 export const fonts = { display: "satoshi", body: "geist", mono: "geist-mono" };
 ```
 
-One registered font per role; swapping the whole pairing is this one line. `display` drives headings — set it equal to `body` for a single-face look. The fonts themselves are loaded in the registry (`src/lib/fonts.ts`), because `next/font` needs static literal loader calls. The template ships **Satoshi** (self-hosted variable font, `.woff2` in `src/assets/fonts/`) + **Geist** / **Geist Mono** (Google). Add a font → register a `Google(...)` / `localFont(...)` call in `src/lib/fonts.ts`, extend `FontKey` in `code/packages/config/src/types.ts`, then name it here. Full guide: [`../design/typography.md`](../design/typography.md).
+One registered font per role; swapping the whole pairing is this one line. `display` drives headings — set it equal to `body` for a single-face look. The fonts themselves are loaded in the registry (`src/lib/fonts.ts`), because `next/font` needs static literal loader calls. The template ships **Satoshi** (self-hosted variable font, `.woff2` in `src/assets/fonts/`) + **Geist** / **Geist Mono** (Google). Add a font → register a `Google(...)` / `localFont(...)` call in `src/lib/fonts.ts`, extend the shared `FontKey` type in `code/packages/config/src/types.ts`, then name it here (`code/apps/web/src/config/fonts.ts`). Full guide: [`../design/typography.md`](../design/typography.md).
 
 ### 5.4 — `i18n` (locales)
 
@@ -330,8 +330,8 @@ Robots: with `NEXT_PUBLIC_SITE_URL` set and `NEXT_PUBLIC_ENVIRONMENT=production`
 | Per-page SEO copy | Sanity (`siteMeta.<locale>.pageSeo`) |
 | Analytics id, cookie banner | Sanity (`siteSettings.analytics`) |
 | Brand palette (OKLCH) | `@indiecrafts/ui-tokens/globals.css` |
-| PWA manifest bg color | `code/packages/config/src/index.ts` → `theme.hexColors` |
-| Font pairing | `config/src/index.ts` → `fonts` (+ registry `src/lib/fonts.ts`, `FontKey` in `config/src/types.ts`) |
+| PWA manifest bg color | `code/apps/web/src/config/theme.ts` → `theme.hexColors` |
+| Font pairing | `code/apps/web/src/config/fonts.ts` → `fonts` (+ registry `src/lib/fonts.ts`, shared `FontKey` type in `packages/config/src/types.ts`) |
 | Theme modes (light/dark/forced) | `config/src/index.ts` → `themeConfig` |
 | Locales | `config/src/index.ts` → `i18n.locales` + `messages/<code>.json` |
 | Feature flags | `config/src/index.ts` → `features` |

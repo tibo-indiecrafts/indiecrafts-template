@@ -1,12 +1,15 @@
 # Feature flags & feature-gate
 
-Every optional surface is a boolean in one object: `features` in `@indiecrafts/config`
-(`code/packages/config/src/index.ts`, section `4. ─── features ───`). Flip a flag and the
-routes, discovery files, nav links, and `<head>` emissions that depend on it all follow —
-the gate is already wired at every consumer.
+Every optional surface is a boolean in one object: `features`, **app-owned** in
+`code/apps/web/src/config/features.ts` (imported via `@/config`). Flip a flag and the routes,
+discovery files, nav links, and `<head>` emissions that depend on it all follow — the gate is
+already wired at every consumer. Islands (blog, newsletter, waitlist) don't read `features`
+directly — the app **injects** their flags at boot (`src/instrumentation.ts` → `configureIslands`),
+so the same island can mount in a second app with a different set. See
+[Multi-app](./multi-app).
 
-Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling object,
-`themeConfig`, with its own guide: [Theme modes](./theme-modes.md).
+Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling app-owned object,
+`themeConfig` (`src/config/theme.ts`), with its own guide: [Theme modes](./theme-modes.md).
 
 ## The flags at a glance
 

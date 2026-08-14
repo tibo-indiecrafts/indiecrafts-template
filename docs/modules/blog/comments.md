@@ -55,7 +55,7 @@ English defaults.
 
 ## Enabling / disabling
 
-`features.blogComments` (in `@indiecrafts/config`) turns the whole surface on/off — the
+`features.blogComments` (app-owned in `@/config`, injected into the blog via `configureBlog`) turns the whole surface on/off — the
 `/api/comments` route `404`s and the `<Comments>` section doesn't render when off. Requires
 `features.blog`.
 

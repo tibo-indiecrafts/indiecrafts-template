@@ -4,7 +4,7 @@
 
 Auto-loads under `code/modules/waitlist/**`. Feature-flagged by `features.waitlist` (`@indiecrafts/config`). **Collect + export only** — no runtime gating.
 
-- `src/lib/waitlist.ts` — the join engine: validate → dedupe → write (`writeClient`) a `waitlistEntry` (`status:"waiting"`). On a **new** entry, two **best-effort** emails may fire (never throw): a "you're on the list" confirmation → the joiner, and an owner alert. `join()` + `isWaitlistEnabled()`.
+- `src/lib/waitlist.ts` — the join engine: validate → dedupe → write (`writeClient`) a `waitlistEntry` (`status:"waiting"`). On a **new** entry, two **best-effort** emails may fire (never throw): a "you're on the list" confirmation → the joiner, and an owner alert. `join()`. Feature-gating is the **app's** job (`features` is app-owned): `/api/waitlist` gates on `features.waitlist`, `pages.waitlist.enabled` gates the `/waitlist` page, and `waitlistSanity(enabled)` hides the desk — the module reads no central flag.
 - `src/lib/settings.ts` — `getWaitlistSettings()` (React-`cache`d) reads the editor-configurable `waitlistSettings` singleton (form copy + `enabled`).
 - `src/sanity/` — the `waitlistSettings` singleton + `waitlistEntry` doc + the "Liste d'attente" desk, exported as the `waitlistSanity` **`SanityModule`** barrel (`src/sanity/index.ts`). Activate = one line in `composeSanity([...])`. **The entry doc is editor-creatable** (an admin adds rows via the desk's create-enabled "Tous·tes" list), unlike the API-only `subscriber`.
 - **Email config + copy** live on the shared `emailStrings` singleton (Studio → **E-mails**) — `waitlistConfirm` (translated) + `waitlistOwner`. Read via `getEmailStrings()`; the only secret is `RESEND_API_KEY`.

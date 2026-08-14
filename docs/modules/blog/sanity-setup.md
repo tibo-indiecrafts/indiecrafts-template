@@ -1,6 +1,6 @@
 # Sanity setup & test guide
 
-End-to-end reference for the Sanity-backed blog module (`@indiecrafts/blog`): configuration, schemas, routes, seeding, and the full QA matrix. The public surface stays gated by `features.blog` — flip it in `@indiecrafts/config` (`code/packages/config/src/index.ts`) to activate. The editing surface (Studio + draft preview) is a separate flag, `features.studio`.
+End-to-end reference for the Sanity-backed blog module (`@indiecrafts/blog`): configuration, schemas, routes, seeding, and the full QA matrix. The public surface stays gated by `features.blog` — flip it in the app's `features` (`code/apps/web/src/config/features.ts`, imported via `@/config`) to activate; the app injects the blog's flags at boot (`configureBlog`), so the module never reads a central registry. The editing surface (Studio + draft preview) is a separate flag, `features.studio`.
 
 ---
 

@@ -97,7 +97,7 @@ After publishing a batch of posts, nudge Google Search Console:
 
 ## 7. Theming + brand updates
 
-Colours, fonts, logo, and social links change in code (tokens + `@indiecrafts/config`) or Sanity depending on the surface — the full split and the contrast-verification step are in [`brand-setup.md`](./brand-setup.md).
+Colours, fonts, logo, and social links change in code (tokens + `@/config`) or Sanity depending on the surface — the full split and the contrast-verification step are in [`brand-setup.md`](./brand-setup.md).
 
 ---
 

@@ -21,7 +21,7 @@ Six mechanisms, all in `code/apps/web/`:
 | 3 | `@source "../../../modules/blog/src"` so Tailwind scans blog UI | `@indiecrafts/ui-tokens/globals.css` |
 | 4 | Studio registers `schemaTypes` + `structure` from `@indiecrafts/blog/sanity/*` | `sanity.config.ts` |
 | 5 | Route-gate `isBlogRouteEnabled` / `requireBlogRoute` / `isRssEnabled` | `@indiecrafts/blog/lib/route-gate` |
-| 6 | Feature flags `features.blog` + `features.blogTaxonomy.{authors,categories,tags}`; draft preview gates on `features.studio` | `@indiecrafts/config` |
+| 6 | Feature flags `features.blog` + `features.blogTaxonomy.{authors,categories,tags}`; draft preview gates on `features.studio` | app-owned `features` (`@/config`), injected into the blog via `configureBlog` |
 
 ## Guides
 

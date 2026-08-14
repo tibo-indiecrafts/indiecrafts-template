@@ -98,7 +98,7 @@ Page width and horizontal padding come from two CSS variables, injected once at 
 <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>
 ```
 
-Defaults are `maxWidth: "1280px"`, `gutter: "1rem"` (`theme.container` in `@indiecrafts/config`).
+Defaults are `maxWidth: "1280px"`, `gutter: "1rem"` (`theme.container` in `apps/web/src/config/theme.ts`).
 Sections consume them with Tailwind's arbitrary-value-from-var syntax:
 
 ```html
@@ -163,3 +163,26 @@ viewport: OKLCH light/dark tokens with two dark triggers (`html[data-theme="dark
 branded `::selection`. Those are covered in
 [`DESIGN.md`](../../../../code/packages/ui-tokens/DESIGN.md); the takeaway is that layout, motion, and
 imagery all key off Tailwind defaults plus the two container variables — nothing bespoke to learn.
+
+## Visual verification — look at the pixels before "done"
+
+A green test suite does not prove a human can see the screen. jsdom (Jest/Vitest/RTL) has no
+layout, so an element painted white-on-white or pushed off-screen still passes. Snapshots diff
+markup, not pixels — a shared-stylesheet change wrecks a layout with a clean snapshot. Close the
+gap by looking at the rendered output.
+
+**The loop — after any layout, shared-component, or responsive change.** Render the affected pages,
+screenshot at the three adaptive widths (**375 · 768 · 1280**), and review the *images*, not the
+DOM. Look for overlap, clipped text, an off-centre modal, a card wrapping to a lonely row, and
+dark-mode grey-on-grey. Fix what you saw, re-screenshot, and confirm before you call the task done.
+
+**Verify the mechanism, not just the width.** A **reflow (responsive)** layout must reflow cleanly
+at all three widths. A **context-swap (adaptive)** component must render its intended variant per
+device class, not a squeezed desktop. Name the mechanism first; the check differs for each. Add a
+coarse-pointer / touch view and a ~820px tablet — the three widths are the floor.
+
+**Keep the check honest and scoped.** Stub dynamic data so live content does not read as breakage.
+Record intentional asymmetry so it does not get "fixed". A screenshot is one frame of one state — it
+does not replace hover, focus, keyboard, or `e2e` QA. The engineering rule lives in
+[`visual-verification`](../../../../code/apps/web/.claude/rules/visual-verification.md) and the
+[self-review](../../../../code/apps/web/.claude/rules/self-review.md) checklist.

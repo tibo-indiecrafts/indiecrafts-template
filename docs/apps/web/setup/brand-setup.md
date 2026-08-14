@@ -11,9 +11,9 @@ After any change, run `pnpm verify` to confirm types, lint, format, and contrast
 | Surface | Home | Edited by |
 | --- | --- | --- |
 | Colours (light + dark) | `@indiecrafts/ui-tokens` → `code/packages/ui-tokens/src/globals.css` (OKLCH) | developer |
-| PWA install/splash colour | `theme.hexColors.background` in `@indiecrafts/config` | developer |
-| Container width + gutter | `theme.container` in `@indiecrafts/config` | developer |
-| Font pairing | `fonts` in `@indiecrafts/config` + registry in `src/lib/fonts.ts` | developer |
+| PWA install/splash colour | `theme.hexColors.background` in `code/apps/web/src/config/theme.ts` (app-owned) | developer |
+| Container width + gutter | `theme.container` in `code/apps/web/src/config/theme.ts` | developer |
+| Font pairing | `fonts` in `code/apps/web/src/config/fonts.ts` + registry in `src/lib/fonts.ts` | developer |
 | Logo / dark logo / favicon | Sanity `siteSettings.{logo,logoDark,icon}` | editor |
 | Open Graph share card | Sanity `siteMeta.<locale>.ogImage` (+ per-page `pageSeo.ogImage`) | editor |
 | Site name, tagline, social, business/legal | Sanity `siteSettings` / `siteMeta` | editor |
@@ -30,7 +30,7 @@ To rebrand a colour, edit the token — never a hex literal in a component.
 
 ### The one hex mirror
 
-The single value that can't be OKLCH is `theme.hexColors.background` in `@indiecrafts/config`. The PWA manifest (`src/app/manifest.ts` → `background_color` / `theme_color`) is read by the browser for the install/splash screen and the manifest spec only accepts hex/named colours. Keep it matched to `--background` in `globals.css`. No other colour needs a mirror.
+The single value that can't be OKLCH is `theme.hexColors.background` in `code/apps/web/src/config/theme.ts`. The PWA manifest (`src/app/manifest.ts` → `background_color` / `theme_color`) is read by the browser for the install/splash screen and the manifest spec only accepts hex/named colours. Keep it matched to `--background` in `globals.css`. No other colour needs a mirror.
 
 ```ts
 // @indiecrafts/config
@@ -80,7 +80,7 @@ fonts = {
 
 `next/font` needs statically-analyzable literal calls, so the fonts themselves are instantiated once in **`src/lib/fonts.ts`** (the registry) and given `--f-<key>` CSS variables. Config just picks which registered font plays each role. Ships a display/body split: **Satoshi** (self-hosted local variable font, `src/assets/fonts/Satoshi-Variable.woff2` + italic), **Geist** and **Geist Mono** (Google, auto-subset + self-hosted + preloaded). Set `display` equal to `body` for a single-typeface look.
 
-**Add a font:** register a `Google(...)` or `localFont(...)` call in `src/lib/fonts.ts`, add its key to `FontKey` (`@indiecrafts/config` `./types`), then name it in `fonts`. The `satisfies FontRoles` check keeps the registry and config in lockstep. Local fonts drop their `.woff2` in `src/assets/fonts/`.
+**Add a font:** register a `Google(...)` or `localFont(...)` call in `src/lib/fonts.ts`, add its key to the `FontKey` type (still shared in `@indiecrafts/config`), then name it in `fonts` (`src/config/fonts.ts`). The `satisfies FontRoles` check keeps the registry and config in lockstep. Local fonts drop their `.woff2` in `src/assets/fonts/`.
 
 Font details also covered in [`theme-modes.md`](../config/theme-modes.md).
 
