@@ -6,4 +6,4 @@
 
 **Model:** an app is a **read-lens** over one tenant's shared Sanity dataset; one **hub Studio** edits
 everything (desk grouped per app); islands (modules) compose into apps. Full architecture →
-[`docs/apps/web/config/multi-app.md`](../../docs/apps/web/config/multi-app.md).
+[`docs/shared/architecture/multi-app.md`](../../docs/shared/architecture/multi-app.md).

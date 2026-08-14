@@ -1,15 +1,15 @@
 # Multi-app architecture
 
 How the platform scales from one app to several — and how content, Studio, and infra are shared. This
-is the **target model**; today there is one app (`web`), which *is* the hub. New apps follow this.
+is the **target model**; today there is one app (`web`), which _is_ the hub. New apps follow this.
 
 ## Three axes — name them, everything follows
 
-- **Tenant** = one client = **one Sanity project/dataset + one Cloudflare zone**. The multi-*instance*
-  axis, already handled by [`pnpm project:rename`](../setup/new-client) (namespace) + a per-client
+- **Tenant** = one client = **one Sanity project/dataset + one Cloudflare zone**. The multi-_instance_
+  axis, already handled by [`pnpm project:rename`](/apps/web/setup/new-client) (namespace) + a per-client
   project/dataset. Every app a tenant runs shares this one content graph.
 - **App** = a deployable Next app = a **read-lens** over the tenant's content + its own Worker/domain.
-  The multi-*app* axis (web · a future admin · a standalone blog · …).
+  The multi-_app_ axis (web · a future admin · a standalone blog · …).
 - **Island** = a module/package (`@indiecrafts/blog`, `newsletter`, `waitlist`, …) contributing schema +
   UI + routes + flags, **composed into** apps. The recombination axis — "choose what an app has".
 
@@ -23,7 +23,7 @@ app-dataset would fork all of that and break content sharing.
 So **the dataset is the tenant, not the app.** Each app queries the one dataset for the `_type`s it
 renders; app-**private** collections (`subscriber`, `waitlistEntry`, `comment`) are only edited/owned by
 the app that defines them; **shared** collections (`post`, `quote`, `person`) are read by any app.
-Scoping is by **`_type`** (today's mechanism). If two apps ever need separate instances of the *same*
+Scoping is by **`_type`** (today's mechanism). If two apps ever need separate instances of the _same_
 type (e.g. two blogs), add an optional `scope` field + a query filter — not needed until then.
 
 ## Decision B — one hub Studio, desk organized per app; apps are read-only
@@ -34,7 +34,7 @@ editor sees `Web app · … · Shared` and edits a `post` once for every lens th
 
 **Front-end apps are read-only lenses** — they query the one dataset via the read client + generated
 types and **embed no Studio** (only the hub holds `SANITY_API_WRITE_TOKEN` + the full schema). Today the
-hub *is* the web app's `/studio`; when apps proliferate, extract a dedicated **`apps/studio`** so editors
+hub _is_ the web app's `/studio`; when apps proliferate, extract a dedicated **`apps/studio`** so editors
 have one home independent of any front-end.
 
 ## Decision C — the per-app island manifest (choose what an app has)
@@ -75,7 +75,7 @@ Intl format, env/CSP, logging, `PageConfig`/`isPageVisible`); the app owns its i
 Already multi-app: the reusable `modules/site` is keyed by `worker_name`, and state is isolated per
 app-dir × per-env-workspace. A new app = copy `apps/web/` → `apps/<app>/` + its tfvars + `infra:<app>:*`
 delegators. **One app = one Cloudflare zone** (the zone-level rules are singletons — see
-[Cloudflare IaC](../setup/cloudflare-iac#add-app-2)). `pnpm project:rename <slug>` keeps the config
+[Cloudflare IaC](/infra/cloudflare-iac#add-app-2)). `pnpm project:rename <slug>` keeps the config
 prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
 
 ## Where it stands
@@ -84,7 +84,7 @@ prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
   split (app-owned `theme`/`fonts`/`features`/`pages`; islands read injected config) + `composeStudio`
   (the per-app-grouped hub desk). **Still readiness work:** the `Island` manifest + `composeApp` (Decision
   C — one line per island composing `transpilePackages`/features/pages), and graduation of a module into
-  its own app (e.g. `apps/blog`) — a cheap follow-up *because* of the split, not built yet.
+  its own app (e.g. `apps/blog`) — a cheap follow-up _because_ of the split, not built yet.
 - **Adding an app** (when it lands): scaffold `code/apps/<name>/` (own `CLAUDE.md`/`DESIGN.md`/`README`,
   `_registry` row — `pnpm-workspace.yaml` already globs `code/apps/*`), an `islands.ts`, per-app config,
   route files (thin), its Terraform dir + a distinct zone; it reads the shared dataset and edits through

@@ -6,7 +6,7 @@ import { apiVersion } from "./env";
  * Core "SEO & métadonnées" desk section — feature-independent, so SEO stays
  * editable with the blog removed. Returned by `coreSanity.structure` and merged
  * into the Studio sidebar by `composeStudio` (under "Contenu partagé" — see
- * `@indiecrafts/sanity/module` + `docs/apps/web/config/multi-app.md`).
+ * `@indiecrafts/sanity/module` + `docs/shared/architecture/multi-app.md`).
  *
  * Two singletons:
  *   - `siteSettings` — one, language-independent (social, business type, schemas)

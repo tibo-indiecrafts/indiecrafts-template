@@ -6,13 +6,13 @@ dev framework in-repo. New here? Read this first, then jump to
 
 ## The two folders you work with
 
-| Folder | Role | Holds |
-| --- | --- | --- |
+| Folder      | Role      | Holds                                                                                                             |
+| ----------- | --------- | ----------------------------------------------------------------------------------------------------------------- |
 | **`code/`** | EXECUTION | the pnpm + Turborepo workspace — `apps/web` (the Next app), plus `packages/ modules/ db/ infra/` slots for growth |
-| **`docs/`** | CANON | this site — product documentation, foldered like the code |
+| **`docs/`** | CANON     | this site — product documentation, foldered like the code                                                         |
 
 These are what you build and **deploy**. Full layout + the deployment rules →
-[Workspace & deployment](/apps/web/setup/workspace).
+[Workspace & deployment](/shared/architecture/workspace).
 
 > The repo may also carry internal folders (`method/` · `work/`) — **private,
 > gitignored, and excluded from client hand-offs**. `pnpm build` (the app deploy)
@@ -40,7 +40,7 @@ isolated from the pnpm workspace.
 The workspace installs at the **repo root**; the app builds to `code/apps/web/.next`.
 **Deploy only `code/apps/web` (the site) and, optionally, `docs/`** — the internal
 `method/` and `work/` folders stay private. Full guide and hosts →
-[Workspace & deployment](/apps/web/setup/workspace).
+[Workspace & deployment](/shared/architecture/workspace).
 
 ## Where to go next
 

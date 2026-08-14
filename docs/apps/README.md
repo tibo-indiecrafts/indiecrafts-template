@@ -9,7 +9,7 @@ _how to build_ lives in its `CLAUDE.md`.
 
 - **A read-lens over the tenant graph.** Content is one Sanity project/dataset per tenant; each app
   queries the slice it needs via the shared read client + generated types. One app holds the Studio
-  (the hub); others are read-only. See [Multi-app architecture](/apps/web/config/multi-app).
+  (the hub); others are read-only. See [Multi-app architecture](/shared/architecture/multi-app).
 - **Composed from bricks + modules, never coupled to a sibling app.** Deps point down —
   `app → module → package → db`. Apps share code only through `code/packages/` bricks, never by
   reaching into each other.
@@ -18,7 +18,7 @@ _how to build_ lives in its `CLAUDE.md`.
   [`@indiecrafts/config`](/packages/config) holds only primitives, so a second app ships its own look
   and feature set. See [Feature flags](/apps/web/config/feature-flags).
 - **Its own Worker + domain.** One Cloudflare Worker per app × env (`<app>-<env>`), one zone per app.
-  See [Cloudflare as code](/apps/web/setup/cloudflare-iac).
+  See [Cloudflare as code](/infra/cloudflare-iac).
 
 ## The apps
 
@@ -29,7 +29,7 @@ _how to build_ lives in its `CLAUDE.md`.
 ## Adding app #2
 
 One app today; the platform is **multi-app-ready** (the config split + `composeStudio` landed —
-[Multi-app architecture](/apps/web/config/multi-app)). When a second app is real:
+[Multi-app architecture](/shared/architecture/multi-app)). When a second app is real:
 
 1. **Code** — `code/apps/<name>/` with its own `CLAUDE.md` · `DESIGN.md` · `README.md`; add it to
    `pnpm-workspace.yaml` (already globs `code/apps/*`) + `code/apps/_registry.md`.

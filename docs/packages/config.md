@@ -3,14 +3,14 @@
 The shared config **primitives** (URL/prefix, locales, Intl format defaults, env/CSP, logging)
 plus the generic **page-config contract** and shared types. **App-instance config** — `theme`,
 `fonts`, `features`, and the `pages` map — is **app-owned** (`apps/web/src/config`, imported via
-`@/config`) so a second app ships its own; see [Multi-app](/apps/web/config/multi-app). Still —
+`@/config`) so a second app ships its own; see [Multi-app](/shared/architecture/multi-app). Still —
 **never hard-code a brand string, URL, color, or nav entry**; read from `@/config`.
 
-| | |
-| --- | --- |
-| **Exports** | **One `.` barrel** (`src/index.ts`) — the single import surface (`import { … } from "@indiecrafts/config"`). Composed from per-concern internal modules: `site` (url · prefix · logging) · `i18n` (locales + `localePrefix`/`localizedPathname`/`isLocale`) · `format` (`formatDefaults`/`localeFormat`) · `seo` (`seoDefaults` — crawl mechanics only) · `pages` (the generic contract — `PageConfig`/`PageSeo`/`isPageVisible`, **not** any app's route map) · `env` (`getCurrentEnvironment`/`getCSPConnectSources`) · `types` (shared types). No `./types` subpath — everything is the barrel. |
-| **Deps** | none. **Peer:** `next 16.2.10` (for metadata types) |
-| **Consumers** | packages + modules import the primitives directly (`utils`, `sanity`, `i18n`, `format`, `logger`, `security`, `consent`, `email`, `blog`, …); the **app** imports `@/config`, which re-exports these primitives beside its own `theme`/`fonts`/`features`/`pages`. |
+|               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Exports**   | **One `.` barrel** (`src/index.ts`) — the single import surface (`import { … } from "@indiecrafts/config"`). Composed from per-concern internal modules: `site` (url · prefix · logging) · `i18n` (locales + `localePrefix`/`localizedPathname`/`isLocale`) · `format` (`formatDefaults`/`localeFormat`) · `seo` (`seoDefaults` — crawl mechanics only) · `pages` (the generic contract — `PageConfig`/`PageSeo`/`isPageVisible`, **not** any app's route map) · `env` (`getCurrentEnvironment`/`getCSPConnectSources`) · `types` (shared types). No `./types` subpath — everything is the barrel. |
+| **Deps**      | none. **Peer:** `next 16.2.10` (for metadata types)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| **Consumers** | packages + modules import the primitives directly (`utils`, `sanity`, `i18n`, `format`, `logger`, `security`, `consent`, `email`, `blog`, …); the **app** imports `@/config`, which re-exports these primitives beside its own `theme`/`fonts`/`features`/`pages`.                                                                                                                                                                                                                                                                                                                                 |
 
 - **Gotcha — brand/SEO copy is Sanity, not config.** Only `site.url`
   (`NEXT_PUBLIC_SITE_URL`, else the `https://example.com` placeholder) stays in code;
@@ -22,7 +22,7 @@ plus the generic **page-config contract** and shared types. **App-instance confi
   `apps/web/src/config`, not here — so a second app ships its own. Modules/packages that need
   a feature flag receive it injected (the blog reads `configureBlog`; newsletter/waitlist take
   `xSanity(enabled)`; consent takes `getLegalAcceptance(locale, flags)`) rather than importing
-  a central registry. See [Multi-app](/apps/web/config/multi-app).
+  a central registry. See [Multi-app](/shared/architecture/multi-app).
 - **Gotcha — `PageSeo.*Key` fields are plain `string`**, not a message-key type: the
   coupling to the app's message keys was cut on extraction so config stays app-agnostic.
 - **Locale rows carry formatting rules.** Each `i18n.locales` row holds `numberLocale` ·

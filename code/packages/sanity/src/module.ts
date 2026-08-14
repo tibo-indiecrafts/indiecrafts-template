@@ -73,7 +73,7 @@ export type StudioGroup = { title: string; modules: SanityModule[] };
  * across every group (one dataset), but the desk is **grouped per app** — each
  * `StudioGroup` becomes a top-level list whose children are that group's owners'
  * desk items. This is how one Studio edits many apps' content, organized by app
- * (see `docs/apps/web/config/multi-app.md`). A group whose modules contribute no
+ * (see `docs/shared/architecture/multi-app.md`). A group whose modules contribute no
  * desk items (objects-only owners like `sharedSanity`) is skipped in the desk but
  * still registers its schema.
  */

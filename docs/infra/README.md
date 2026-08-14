@@ -39,7 +39,7 @@ holds the _shared_ deploy topology (DNS, zones, envs, IaC, CI). Per app:
 
 Not locked to Cloudflare — swap the host, keep the root install. Each `apps/*` owns
 its own manifest; shared resources are provisioned from `code/infra/` (the Terraform
-IaC — see [Cloudflare as code](/apps/web/setup/cloudflare-iac)).
+IaC — see [Cloudflare as code](/infra/cloudflare-iac)).
 
 ## Where it sits
 

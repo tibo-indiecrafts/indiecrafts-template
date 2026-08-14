@@ -6,10 +6,10 @@ How the monorepo is laid out and what you deploy.
 
 The repo is a pnpm + Turborepo monorepo. The deliverable is two folders — `code/` and `docs/`.
 
-| Folder | Deployed? | Role |
-| --- | --- | --- |
-| **`code/`** | ✅ the app | The workspace — `apps/web` (the Next site), plus `packages/ modules/ db/ infra/`. |
-| **`docs/`** | ✅ optional | This documentation site (VitePress). Product docs, safe to share. |
+| Folder      | Deployed?   | Role                                                                              |
+| ----------- | ----------- | --------------------------------------------------------------------------------- |
+| **`code/`** | ✅ the app  | The workspace — `apps/web` (the Next site), plus `packages/ modules/ db/ infra/`. |
+| **`docs/`** | ✅ optional | This documentation site (VitePress). Product docs, safe to share.                 |
 
 The repo may also carry internal folders (`method/`, `work/`) that are **private, gitignored,
 and never part of a handoff** — they sit outside the pnpm/turbo workspace, so `pnpm build`

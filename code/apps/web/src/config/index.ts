@@ -8,7 +8,7 @@
  *
  * Rule: **app code imports from `@/config`**; packages + modules import the shared
  * primitives from `@indiecrafts/config` directly (they can't reach into an app).
- * See `docs/apps/web/config/multi-app.md`.
+ * See `docs/shared/architecture/multi-app.md`.
  */
 
 // Shared platform primitives (i18n, format, env, site env, logging, types,

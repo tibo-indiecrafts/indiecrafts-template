@@ -38,5 +38,5 @@ features:
     link: /shared/client-intake/1-seo-content
   - title: Workspace & deployment
     details: How the monorepo is laid out and what gets deployed for a client.
-    link: /apps/web/setup/workspace
+    link: /shared/architecture/workspace
 ---

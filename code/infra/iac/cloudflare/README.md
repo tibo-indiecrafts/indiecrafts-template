@@ -11,4 +11,4 @@ Mode · cache rules · Tiered Cache · zone hardening · the Turnstile widget. *
 - **Add app #2:** copy `apps/web/` → `apps/<app>/`, retarget the tfvars, add `infra:<app>:*` delegators.
 
 **Full runbook** (token scopes, Turnstile-key handoff, caching, remote state) →
-[`docs/apps/web/setup/cloudflare-iac.md`](../../../../docs/apps/web/setup/cloudflare-iac.md).
+[`docs/infra/cloudflare-iac.md`](../../../../docs/infra/cloudflare-iac.md).

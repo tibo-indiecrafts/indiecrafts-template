@@ -10,7 +10,7 @@ import { features, pages } from "@/config";
  *
  * Called once at boot from `instrumentation.ts` (runs before any route). Each
  * island ships template-matching defaults, so the app is correct even if this
- * hasn't run yet. See `docs/apps/web/config/multi-app.md`.
+ * hasn't run yet. See `docs/shared/architecture/multi-app.md`.
  */
 export function configureIslands(): void {
   configureBlog({

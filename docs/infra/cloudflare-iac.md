@@ -40,16 +40,16 @@ select <env>`, `-var-file=env/<env>.tfvars`.
 
 ## What it provisions (`modules/site/main.tf`)
 
-| Resource | Effect |
-| --- | --- |
-| `cloudflare_workers_custom_domain` | **auto domain** — attaches `<domain>` to the env's Worker; CF makes the DNS record + cert |
-| `cloudflare_ruleset` (http_ratelimit) | **rate-limit on `/api/*`** — the `@indiecrafts/security` `withGuard` **primary** limiter |
-| `cloudflare_ruleset` (firewall_managed) | Cloudflare **Managed WAF** ruleset |
+| Resource                                 | Effect                                                                                                                          |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `cloudflare_workers_custom_domain`       | **auto domain** — attaches `<domain>` to the env's Worker; CF makes the DNS record + cert                                       |
+| `cloudflare_ruleset` (http_ratelimit)    | **rate-limit on `/api/*`** — the `@indiecrafts/security` `withGuard` **primary** limiter                                        |
+| `cloudflare_ruleset` (firewall_managed)  | Cloudflare **Managed WAF** ruleset                                                                                              |
 | `cloudflare_bot_management` `fight_mode` | **Bot Fight Mode** (free). Note: separate pipeline — no skip/exceptions (upgrade to Super Bot Fight Mode on Pro for skip rules) |
-| `cloudflare_ruleset` (cache_settings) | **Cache Rules** — immutable `/_next/static`, **bypass** `/api` + `/studio` |
-| `cloudflare_tiered_cache` | **Tiered Cache** — funnel misses through one upper-tier PoP |
-| `cloudflare_zone_setting` ×3 | SSL **strict** · min TLS **1.2** · Always-Use-HTTPS |
-| `cloudflare_turnstile_widget` | provisions the widget → outputs the keys (below) |
+| `cloudflare_ruleset` (cache_settings)    | **Cache Rules** — immutable `/_next/static`, **bypass** `/api` + `/studio`                                                      |
+| `cloudflare_tiered_cache`                | **Tiered Cache** — funnel misses through one upper-tier PoP                                                                     |
+| `cloudflare_zone_setting` ×3             | SSL **strict** · min TLS **1.2** · Always-Use-HTTPS                                                                             |
+| `cloudflare_turnstile_widget`            | provisions the widget → outputs the keys (below)                                                                                |
 
 Toggle any off per env via the `enable_*` variables in the tfvars.
 
@@ -65,7 +65,7 @@ pnpm infra:web:output:prod
 
 Put the **site key** in the app env (public) and the **secret** via `secrets:sync:web:prod` (never
 commit it). Until they're set, the form guard runs on honeypot + origin + rate-limit + body-cap;
-Turnstile just no-ops. See [Security headers](./security-headers.md) + `@indiecrafts/security`.
+Turnstile just no-ops. See [Security headers](/apps/web/seo/security-headers) + `@indiecrafts/security`.
 
 ## Caching, end to end
 
@@ -82,7 +82,7 @@ Copy `apps/web/` → `apps/<app>/`, point the tfvars at that app's Worker names 
 > **One app = one Cloudflare zone.** The zone-level resources — SSL/TLS/HTTPS settings, Bot Fight
 > Mode, Tiered Cache, and the ruleset entrypoints (a zone has exactly one ruleset per phase) — are
 > keyed by `zone_id`, not by `worker_name`. If two apps' states manage the **same** zone they will
-> fight over those objects. Give each app its **own zone/domain** (a subdomain on the *same* zone is
+> fight over those objects. Give each app its **own zone/domain** (a subdomain on the _same_ zone is
 > the collision case). A future `enable_zone_settings` toggle could let a subdomain app skip them.
 
 ## State

@@ -3,11 +3,11 @@
 The client/config plumbing shared by the app's Studio and the blog module. Infra only —
 schemas and GROQ stay in their owning feature.
 
-| | |
-| --- | --- |
-| **Exports (subpath-only, no `.` root)** | `./client` · `./live` · `./env` · `./token` · `./structure` · `./image` · `./write` · `./module` |
-| **Deps** | `next-sanity ^13.0.3`, `@indiecrafts/config`. **Peer:** `next 16.2.10`, `react 19.2.4`, `sanity: "*"` |
-| **Consumers** | app + blog |
+|                                         |                                                                                                       |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| **Exports (subpath-only, no `.` root)** | `./client` · `./live` · `./env` · `./token` · `./structure` · `./image` · `./write` · `./module`      |
+| **Deps**                                | `next-sanity ^13.0.3`, `@indiecrafts/config`. **Peer:** `next 16.2.10`, `react 19.2.4`, `sanity: "*"` |
+| **Consumers**                           | app + blog                                                                                            |
 
 - **`env.ts`** derives `projectId`/`dataset` (from `NEXT_PUBLIC_SANITY_PROJECT_ID` /
   `_DATASET`, asserted present), `apiVersion` (`NEXT_PUBLIC_SANITY_API_VERSION` ??
@@ -26,7 +26,7 @@ schemas and GROQ stay in their owning feature.
 - **Gotcha — no `.` root export.** Always import a subpath (`@indiecrafts/sanity/env`,
   `@indiecrafts/sanity/client`, …).
 - **Gotcha — `Studio.tsx` and the app's `sanity/structure.ts` stay in the app** (they
-  import `sanity.config`); only the reusable *builders* moved here. Pin `sanity` to the
+  import `sanity.config`); only the reusable _builders_ moved here. Pin `sanity` to the
   app's major (v5) — a version skew breaks types across the boundary.
 
 ## Composing the Studio config
@@ -38,10 +38,10 @@ core, and every module — exports a **`SanityModule`** contribution:
 export type SanityModule = {
   name: string;
   schemaTypes: SchemaTypeDefinition[];
-  structure?: (S) => ListItemBuilder[];   // this owner's desk items (no dividers)
-  templates?: Template[];                  // "+ Create" initial-value templates
-  i18nSchemaTypes?: string[];              // document-internationalized types
-  emailGroups?: FieldDefinition[];         // E-mails singleton groups (→ @indiecrafts/email)
+  structure?: (S) => ListItemBuilder[]; // this owner's desk items (no dividers)
+  templates?: Template[]; // "+ Create" initial-value templates
+  i18nSchemaTypes?: string[]; // document-internationalized types
+  emailGroups?: FieldDefinition[]; // E-mails singleton groups (→ @indiecrafts/email)
 };
 ```
 
@@ -52,12 +52,18 @@ export type SanityModule = {
 - **`composeStudio(groups)`** — the **hub Studio** composer the web app uses: same schema/templates/i18n
   aggregation, but the desk is **grouped per app** (`{ title, modules }[]` → a top-level list per group).
   One dataset, one editing surface, organized per app + a "Contenu partagé" group — see
-  [Multi-app](/apps/web/config/multi-app).
+  [Multi-app](/shared/architecture/multi-app).
 
 ```ts
 const sanity = composeStudio([
-  { title: "Site web", modules: [homeSanity, blogSanity, newsletterSanity, waitlistSanity] },
-  { title: "Contenu partagé", modules: [coreSanity, consentSanity, sharedSanity, emailSanity(all)] },
+  {
+    title: "Site web",
+    modules: [homeSanity, blogSanity, newsletterSanity, waitlistSanity],
+  },
+  {
+    title: "Contenu partagé",
+    modules: [coreSanity, consentSanity, sharedSanity, emailSanity(all)],
+  },
 ]);
 // schema.types = sanity.schemaTypes · structureTool({ structure: sanity.structure }) · templates · i18n
 ```
