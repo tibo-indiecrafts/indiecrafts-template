@@ -45,6 +45,14 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Changed
 
+- **Studio desk is now grouped per app (`composeStudio`).** `sanity.config.ts` swaps the flat
+  `composeSanity` for `@indiecrafts/sanity`'s new **`composeStudio([{ title, modules }])`** — one hub
+  Studio, one dataset, but the desk splits into **"Site web"** (this app's content — home, blog,
+  newsletter, waitlist) and **"Contenu partagé"** (site-wide config every app/lens reads — SEO, nav, UI
+  messages, legal, cookies/consent, E-mails). `coreSanity` keeps the shared surfaces; a tiny `homeSanity`
+  carries the home desk entry into the app group (its `homePage` schema still registered by `coreSanity`).
+  No `_id`/editing change — every singleton/collection resolves as before, just organized per app. _Why:_
+  multi-app readiness — [`config/multi-app`](../../../docs/apps/web/config/multi-app.md).
 - **Theme modes, footer maker-credit, rich-result image + 3 display toggles moved to Sanity
   `siteSettings` (editor-controlled, no deploy).** Six things that lived in `@indiecrafts/config` now
   read from Sanity: **theme modes** (`themeModes` — light/dark/system/forced, over the `themeConfig` code

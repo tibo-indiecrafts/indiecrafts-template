@@ -14,6 +14,14 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/sanity` — `composeStudio(groups)`, the hub-Studio composer (per-app desk).** Alongside
+  `composeSanity` (flat "Contenu" desk), the new `composeStudio([{ title, modules }])` aggregates the same
+  schema/templates/i18n but renders the desk **grouped per app** — one top-level list per group. It's how
+  **one Studio edits many apps' content, organized by app** (multi-app readiness — the web app now groups
+  its desk into "Site web" vs "Contenu partagé"). `@indiecrafts/schema`'s `sharedSanity` (objects-only)
+  registers schema without a desk item. Doc: [`docs/packages/sanity.md`](../../docs/packages/sanity.md) +
+  [`docs/apps/web/config/multi-app.md`](../../docs/apps/web/config/multi-app.md).
+
 - **`@indiecrafts/consent` — legal re-acceptance (the compliance brick now covers terms, not just cookies).**
   New non-blocking `LegalNotice` banner (`./LegalNotice`) + `getLegalAcceptance` reader (`./sanity/legal`)
   + a `legalConsent` copy singleton (new desk item) + a first-party cookie store (`./legal-store` —

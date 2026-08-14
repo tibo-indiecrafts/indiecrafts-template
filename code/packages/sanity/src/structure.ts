@@ -5,7 +5,8 @@ import { apiVersion } from "./env";
 /**
  * Core "SEO & métadonnées" desk section — feature-independent, so SEO stays
  * editable with the blog removed. Returned by `coreSanity.structure` and merged
- * into the Studio sidebar by `composeSanity` (see `@indiecrafts/sanity/module`).
+ * into the Studio sidebar by `composeStudio` (under "Contenu partagé" — see
+ * `@indiecrafts/sanity/module` + `docs/apps/web/config/multi-app.md`).
  *
  * Two singletons:
  *   - `siteSettings` — one, language-independent (social, business type, schemas)
@@ -32,7 +33,9 @@ export function legalStructureItem(S: StructureBuilder): ListItemBuilder {
                   .filter('_type == "legalPage" && language == $lang')
                   .params({ lang: l.code })
                   .initialValueTemplates([
-                    S.initialValueTemplateItem(`legalPage-${l.code}`, { language: l.code }),
+                    S.initialValueTemplateItem(`legalPage-${l.code}`, {
+                      language: l.code,
+                    }),
                   ]),
               ),
           ),
@@ -100,7 +103,10 @@ export function navStructureItem(S: StructureBuilder): ListItemBuilder {
   return S.listItem()
     .title("Navigation")
     .child(
-      S.editor().id("navigation").schemaType("navigation").documentId("navigation"),
+      S.editor()
+        .id("navigation")
+        .schemaType("navigation")
+        .documentId("navigation"),
     );
 }
 

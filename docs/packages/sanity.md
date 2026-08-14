@@ -45,20 +45,27 @@ export type SanityModule = {
 };
 ```
 
-`sanity.config.ts` is then a thin composer — **one line per module**:
+`sanity.config.ts` is then a thin composer. Two variants:
+
+- **`composeSanity(modules)`** — flattens the owners into one flat **"Contenu"** desk (a divider
+  between each). The simple case.
+- **`composeStudio(groups)`** — the **hub Studio** composer the web app uses: same schema/templates/i18n
+  aggregation, but the desk is **grouped per app** (`{ title, modules }[]` → a top-level list per group).
+  One dataset, one editing surface, organized per app + a "Contenu partagé" group — see
+  [Multi-app](/apps/web/config/multi-app).
 
 ```ts
-const s = composeSanity([sharedSanity, blogSanity, coreSanity]);
-// schema.types = s.schemaTypes · structureTool({ structure: s.structure })
-// templates: () => s.templates · documentInternationalization({ schemaTypes: s.i18nSchemaTypes })
+const sanity = composeStudio([
+  { title: "Site web", modules: [homeSanity, blogSanity, newsletterSanity, waitlistSanity] },
+  { title: "Contenu partagé", modules: [coreSanity, consentSanity, sharedSanity, emailSanity(all)] },
+]);
+// schema.types = sanity.schemaTypes · structureTool({ structure: sanity.structure }) · templates · i18n
 ```
 
-`composeSanity` flattens the schema/templates/i18n lists and stitches the desk sections into
-one "Contenu" list with a divider between items. **Adding a module** = drop its `xSanity`
-into the array (+ the `transpilePackages`/`package.json` dep it already needs); **removing**
-= delete the line — no dangling references across four hardcoded lists. This is what makes
-each module standalone. A module's barrel lives at `@indiecrafts/<module>/sanity`; the
-app-core one at `apps/web/src/sanity`; the shared primitives at
+**Adding a module** = drop its `xSanity` into a group (+ the `transpilePackages`/`package.json` dep it
+already needs); **removing** = delete the line — no dangling references across four hardcoded lists. A
+module's barrel lives at `@indiecrafts/<module>/sanity`; app-core at `apps/web/src/sanity` (`coreSanity`
+= shared surfaces, `homeSanity` = the app's home desk entry); shared primitives at
 [`@indiecrafts/schema`](/packages/schema).
 
 ## Wiring & conventions

@@ -10,17 +10,16 @@ import {
 import { coreSchemaTypes } from "./schema";
 
 /**
- * The app's feature-independent Sanity contribution — the site-wide SEO,
- * navigation, cookie, and legal surfaces that survive with every module
- * removed. Composed alongside `sharedSanity` + each module's contribution in
- * `sanity.config.ts`. (The newsletter's subscriber doc + desk live in the
- * `@indiecrafts/newsletter` module.)
+ * The app's feature-independent Sanity contribution — the site-wide **shared**
+ * surfaces (SEO, navigation, UI messages, legal) that survive with every module
+ * removed and are read by every app/lens. Registers all `coreSchemaTypes` (incl.
+ * `homePage`, whose *desk item* lives in `homeSanity` so it groups under the app,
+ * not under shared content). Goes in the **"Contenu partagé"** Studio group.
  */
 export const coreSanity: SanityModule = {
   name: "core",
   schemaTypes: coreSchemaTypes,
   structure: (S) => [
-    homeStructureItem(S),
     uiMessagesStructureItem(S),
     seoStructureItem(S),
     navStructureItem(S),
@@ -33,4 +32,15 @@ export const coreSanity: SanityModule = {
     schemaType: "legalPage",
     value: { language: lang },
   })),
+};
+
+/**
+ * The web app's own content desk entry — the marketing `homePage` singleton.
+ * Structure-only (the `homePage` schema is registered by `coreSanity`); goes in the
+ * **"Site web"** Studio group so app content sits apart from shared site config.
+ */
+export const homeSanity: SanityModule = {
+  name: "home",
+  schemaTypes: [],
+  structure: (S) => [homeStructureItem(S)],
 };

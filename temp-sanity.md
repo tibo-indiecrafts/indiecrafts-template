@@ -20,7 +20,7 @@ Sources: [Sanity Learn — Page building](https://www.sanity.io/learn/course/pag
 ## Contents
 
 - **§0** Governing principles (best practices) · **§1** What exists today
-- **§2** Pages · **§3** Entities (content packs) · **§4** Reusable objects
+- **§2** Pages · **§3** Entities (content packs) · **§3G** The identity graph (roles, not silos) · **§4** Reusable objects
 - **§5** The page builder (blocks) · **§6** Renderers · **§7** Studio structure
 - **§8** Gaps vs today · **§9** Phased packs · **§10** Reserved-module alignment
 - **§11** Page templates (3 meanings) · **§12** Platform layer (what makes it great)
@@ -40,6 +40,11 @@ Sources: [Sanity Learn — Page building](https://www.sanity.io/learn/course/pag
    - **Reference** = shared entity, reused across pages, resolved in GROQ. → _reference
      blocks_ (`featured-projects` → `project` docs).
    - Rule of thumb: **if two pages could show it, it's a document.**
+   - **Model identity once, express role by reference.** A human is not an "author" _or_ a
+     "team member" _or_ a "client" — those are **roles the same `person` plays**. One identity
+     doc, referenced from many contexts (+ optional role-scoped fields), never a copy per role.
+     Same for an `organization` (client · partner · sponsor). This turns the content into a
+     **graph, not silos** — the highest-leverage modeling decision here. See **§3G**.
 3. **Document-level i18n** via `@sanity/document-internationalization` (already used by
    `post`): every translatable doc carries a `language` field + translation references;
    reference selectors filter by language. Config singletons stay field-level (per-locale
@@ -148,6 +153,14 @@ unless noted. ✓ exists · ✳ new · ↑ extend existing.
 | `service` ✳        | title · icon · summary · body(PT) · price→ · faqs[]→ · relatedProjects[]→             | `/services/[slug]`        |
 | `plan` (pricing) ✳ | name · price · interval · features(`feature`[]) · cta · highlighted                   | pricing-table block       |
 | `product` ✳        | title · price · variants[] · gallery · category→ · specs                              | shop module (`/products`) |
+| `bundle` ✳         | title · summary · **`items[]`→ (`service` \| `product`, mixed)** · pricing (`bundlePrice`→`plan` \| inline · `compareAt` for the savings) · `badge` · gallery | groups offerings into a package — `/bundles/[slug]` or a highlighted card in `service-grid`/`product-list` |
+
+> **Bundling is a cross-offer pattern, not a product hack.** A `bundle` groups **mixed
+> `service` + `product` refs** into one priced package (`compareAt` shows the saving). Where else
+> it makes sense — model as the same shape, not new types: **`event`** → a *series/pass* (bundle
+> of event refs); **`course`** → a *track/curriculum* (bundle of lessons/courses); **`plan`** → a
+> tier that _is_ a bundle of `feature`s. Keep bundling a **reference array + a price**, so any
+> offering entity can adopt it without a bespoke schema.
 
 ### Knowledge, help & FAQ (new)
 
@@ -176,13 +189,163 @@ unless noted. ✓ exists · ✳ new · ↑ extend existing.
 
 | Doc                         | Fields                                                       | Notes                                         |
 | --------------------------- | ------------------------------------------------------------ | --------------------------------------------- |
-| `companyInfo` ✳ (singleton) | mission · vision · **`values[]`** (`value`: title·description·icon) · foundedYear · stats[] · timeline[] · socialLinks[] | feeds About (mission + values) + footer + `Organization` JSON-LD |
+| `companyInfo` ✳ (singleton) | **Golden Circle: `why`(purpose) · `how`(approach) · `what`(offering)** · mission · vision · **`values[]`** (`value`: title·description·icon) · foundedYear · stats[] · timeline[] · socialLinks[] | feeds About (why/how/what + mission + values) + the `module.values` / `module.golden-circle` blocks + footer + `Organization` JSON-LD |
 
 ### Taxonomy (generalize)
 
 `category` ✓↑ (add optional `parent`→ for hierarchy) + `tag` ✓ become **shared taxonomy**
 usable by `project`/`service`/`product`/`faq`/`listing` — or per-domain taxonomies where
 vocabularies must not mix. Best practice: **hierarchical categories, flat tags.**
+
+---
+
+## 3G. The identity graph — roles, not silos (the polymorphic model)
+
+The single highest-leverage decision in this whole plan. **The same human is an author on a
+blog post, a team member on `/about`, a speaker at an event, the contact for a client, and the
+voice of a testimonial — all at once.** Model that human as **one `person` document**, and
+express each of those as a **role played by reference**, never a copy per context. Same for an
+`organization` (one company that is a client here, a partner there, a sponsor at an event).
+
+> **Anti-pattern (the current §3 draft):** separate `author`, `person`, `client`, `partner`,
+> `quote` docs. A person who writes a post _and_ is a client contact _and_ gave a testimonial
+> becomes **three unlinked records** — rename their photo in three places, and search never
+> knows they're the same human. **Silos, not a graph.**
+
+### 3G.1 · Two identity super-entities (the hubs everything references)
+
+| Doc | Is | Plays (facet) | Never |
+| --- | --- | --- | --- |
+| **`person`** ✳ (absorbs `author`) | one human | `author` · `teamMember` · `speaker` · `instructor` · `contact` · `testimonialVoice` | duplicated per role |
+| **`organization`** ✳ (absorbs `client`/`partner`) | one company / group | `client` · `partner` · `sponsor` · `vendor` · `self` (the site owner) | a logo trapped in a block |
+
+Both are **plain reference targets** — authored once in **People** / **Organizations**, pulled
+into any context by a `reference`. A role is `person.roles[]` (a checkbox set) **plus** the
+edges pointing _at_ it. Role-specific fields live in **collapsed field groups** that show only
+when the matching role is ticked (author → byline + author bio + author-page slug; team →
+department + seniority + order; speaker → talk title + session).
+
+### 3G.2 · The graph
+
+```mermaid
+graph TD
+  classDef id fill:#4f69d9,color:#fff,stroke:#333;
+  P((person)):::id
+  O((organization)):::id
+
+  P -- author --> POST[post]
+  P -- teamMember --> ABOUT[team / about]
+  P -- speaker --> EVT[event]
+  P -- instructor --> CRS[course]
+  P -- gives --> TST[testimonial]
+  P -- contact --> O
+
+  O -- client --> PRJ[project]
+  O -- sponsor --> EVT
+  O -- employs --> JOB[job posting]
+  O -- company --> TST
+
+  PRJ -- for client --> O
+  PRJ -- delivers --> SVC[service]
+  PRJ -- staffed by --> P
+  TST -- about --> PRJ
+  TST -- about --> SVC
+  SVC -- priced by --> PLN[plan]
+  EVT -- at --> LOC[location]
+  JOB -- at --> LOC
+```
+
+Read it as: **`person` + `organization` are the two hubs; every content doc is a spoke that
+references them by role.** The testimonial isn't a person — it's a **join** that links a
+`person` (who said it) + their `organization` (where they work) to the `project`/`service`
+it praises.
+
+### 3G.3 · Master entity matrix — every entity, its roles, its pages, its modules ("the gym")
+
+Legend: **Kind** — 🟦 identity · 📄 content (own route) · 🔗 join · 📥 submission (no page) ·
+⚙️ config · 🏷 taxonomy. `→` = reference out · `←` = referenced by.
+
+**🟦 Identity — referenced everywhere, multi-role**
+
+| Entity | Plays | Own page | Rendered by (modules) | Key edges |
+| --- | --- | --- | --- | --- |
+| `person` | author · team · speaker · instructor · contact · testimonial-voice | `/team`, `/blog/author/[slug]` | `team` · `author-bio` · `speaker-list` | ← post.authors · project.team · event.speakers · course.instructor · testimonial.person · service.lead |
+| `organization` | client · partner · sponsor · vendor · self | `/clients` or a `page` | `logo-wall` · `client-list` · `partner-grid` | ← project.client · testimonial.company · event.sponsors · jobPosting.dept · person.contact-of |
+
+**📄 Content — its own route, references the identities**
+
+| Entity | Module (list → detail) | → references | Reserved module |
+| --- | --- | --- | --- |
+| `post` ✓ | `blog-post-list` → `PostDetail` | author→person · categories[] · tags[] | blog (live) |
+| `project` / `caseStudy` | `featured-projects` → `ProjectDetail` | client→org · team[]→person · services[]→ · testimonials[]→ | core / crm |
+| `service` | `service-grid` → `ServiceDetail` | lead→person · plans[]→ · faqs[]→ · relatedProjects[]→ | services |
+| `product` | `product-list` → `ProductDetail` | category→ · variants · reviews[]→testimonial | shop |
+| `bundle` | `bundle-grid` → `BundleDetail` | items[]→ (service \| product) · bundlePrice→plan | shop / services |
+| `event` | `event-list` / `event-calendar` → `EventDetail` | speakers[]→person · sponsors[]→org · location→ · ticket→plan | events |
+| `course` / `lesson` | `course-list` → `CourseDetail` | instructor→person · lessons[] | learning |
+| `jobPosting` | `job-list` → `JobDetail` | department · location→ · applications[]← | jobs |
+| `location` | `location-list` / map → `LocationDetail` | address · geopoint · hours (hosts events + team) | core |
+| `article` (KB) | `article-list` → `ArticleDetail` | category→ · related[]→ | support |
+| `faq` | `faq` (+ FAQPage JSON-LD) | category→ | core |
+| `plan` | `pricing-table` | features[] | services / billing |
+| `page` / `homePage` | `page.sections[]` (the builder) | any block / any ref | core (Pack 0) |
+
+**🔗 Join — links identities to content (the "reference" docs)**
+
+| Entity | Links | Powers |
+| --- | --- | --- |
+| `testimonial` (from `quote`) | `person`→ + `organization`→ + about `project`/`service`→ + rating | `testimonial-list`, Review JSON-LD |
+| `postAuthorship` _(implicit)_ | `post` ↔ `person` via `post.authors[]` | byline, author page |
+
+**📥 Submission — data in, no page (spam-guarded API + notify + `logger`)**
+
+| Entity | From | Reserved module |
+| --- | --- | --- |
+| `comment` | post/page→ + name/email + status | community / moderation |
+| `booking` | event→ + person/email + status + payment→ | booking / billing |
+| `formSubmission` | form→ + values | core |
+| `subscriber` ✓ / `waitlistEntry` ✓ | email + status | newsletter / waitlist (live) |
+| `jobApplication` | jobPosting→ + person + CV | jobs |
+| `order` | product[]→ + payment→ + customer→person/org | shop / billing |
+
+**⚙️ Config singletons** — `siteSettings` · `siteMeta` · `navigation` · `cookieConsent` ·
+`homePage` · **`companyInfo`** (mission · **values[]** · why/how/what) · `uiMessages`.
+**🏷 Taxonomy** — `category` (hierarchical) · `tag` (flat), shared across post/project/service/product/faq.
+
+### 3G.4 · What this changes vs §3 (the refactor)
+
+- **`author` → deleted.** An author _is_ a `person` with the `author` role; `post.authors[]`
+  references `person`. One less doc, zero duplicate humans.
+- **`quote` → `testimonial`** that **references** a `person` + `organization` (was inline
+  strings). A testimonial now reuses the same human who might also author posts.
+- **`client` / `partner` → `organization`** with a `relationship` facet. The logo-wall and the
+  project client are the same doc.
+- **Reference selectors filter by role:** the author picker = `*[_type=="person" && "author" in roles]`;
+  the sponsor picker = `*[_type=="organization" && "sponsor" in relationships]`. One list, many
+  filtered views — no parallel Author/Team/Client lists to keep in sync.
+
+### 3G.5 · Studio impact
+
+Collapse the desk (§7) from 6 people-ish lists to **two identity homes**:
+
+```
+👤 People         → person[]        (filter: authors · team · speakers · contacts)
+🏢 Organizations  → organization[]  (filter: clients · partners · sponsors)
+★ Testimonials    → testimonial[]   (the join — person + org + rating)
+```
+
+A **"Referenced by"** panel on each `person`/`organization` shows their **whole footprint** —
+every post, project, event, and testimonial that points at them — so editors see the graph, and
+`weak` refs + block-delete-when-in-use protect integrity (§12.8). Localization stays
+**document-i18n** on the identities; role fields translate with the doc.
+
+### 3G.6 · Why it's worth the extra ref-resolution
+
+One human, edited once, correct everywhere; search + `sameAs` JSON-LD know an author and a
+speaker are the same person; a client's logo, its case studies, and its testimonial all connect;
+and adding a role (say `instructor` when the `learning` module lands) is a **checkbox on an
+existing person**, not a new silo. The cost — a few `→` GROQ joins — is exactly what Sanity is
+built for.
 
 ---
 
@@ -227,6 +390,7 @@ Extend the composable registry: `PAGE_RENDERERS = { ...BLOCK_RENDERERS, ...secti
 | `module.logo-wall` ✳                                                                                    | title · logos(`logoItem`[]) **or** clients[]→       | `LogoWall`                        |
 | `module.pricing-table` ✳                                                                                | title · plans[]→ · interval-toggle                  | `PricingTable`                    |
 | `module.values` ✳                                                                                       | title · values(`value`[]) **or** companyInfo→       | `ValuesGrid` (About-page values)  |
+| `module.golden-circle` ✳                                                                                | companyInfo→ (why · how · what) **or** inline        | `GoldenCircle` (why/how/what band) |
 | `module.newsletter` ✳                                                                                   | title · body · form→                                | `Newsletter`                      |
 | `module.form` ✳                                                                                         | form→ · layout                                      | `FormBlock`                       |
 | `module.embed` ✳                                                                                        | url(validated) · caption                            | `Embed` (reuse `parseVideoEmbed`) |
@@ -247,6 +411,7 @@ Extend the composable registry: `PAGE_RENDERERS = { ...BLOCK_RENDERERS, ...secti
 | `module.event-calendar` ✳    | `event`[] (by month)                | `EventCalendar` (month/agenda view · `.ics` export · book CTA) |
 | `module.location-list` ✳     | `location`[]                        | `LocationList` / map                             |
 | `module.product-list` ✳      | `product`[]                         | `ProductList`                                    |
+| `module.bundle-grid` ✳       | `bundle`[]                          | `BundleGrid` (package cards + savings)           |
 | _exist_: `blog-post-list`    | `post`[]                            | ✓ blog module                                    |
 
 > **Naming:** keep the `module.*` prefix (renaming to `block.*` is a breaking migration
@@ -319,8 +484,11 @@ Each new pack registers its schema + a structure section (extend
 - **Pack 0 — Page builder foundation** _(unblocks the site)_: `page` + `homePage` docs,
   `/[[...slug]]` catch-all, `<PageSections>`, blocks `hero · feature-grid · media-text ·
 cta-banner`, Presentation tool. Migrate the current homepage sections → blocks.
-- **Pack 1 — Social proof & people**: `testimonial` (from `quote`), `client`, `person`→team;
-  blocks `testimonial-list · logo-wall · team`.
+- **Pack 1 — Identity graph & social proof** (§3G): `person` **absorbs `author`** (role facets),
+  `organization` **absorbs `client`/`partner`** (relationship facet), `testimonial` **joins**
+  `person` + `organization` (from `quote`); role-filtered selectors + a two-home desk (People ·
+  Organizations); blocks `testimonial-list · logo-wall · team`. _The unification lands here so no
+  later pack builds a fresh `author`/`client` silo._
 - **Pack 2 — Portfolio & services**: `project`, `service`; routes + `featured-projects ·
 service-grid` blocks.
 - **Pack 3 — FAQ & pricing → Sanity**: `faq`, `plan`; `faq` + `pricing-table` blocks; wire
