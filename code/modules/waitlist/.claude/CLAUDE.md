@@ -2,7 +2,7 @@
 
 **Stack:** Sanity v5 · TypeScript · `@indiecrafts/sanity/write` (server-only) · `@indiecrafts/email`. Early-access signups — join engine + entry data + settings singleton. Modeled on `@indiecrafts/newsletter`.
 
-Auto-loads under `code/modules/waitlist/**`. Feature-flagged by `features.waitlist` (`@indiecrafts/config`). **Collect + export only** — no runtime gating.
+Auto-loads under `code/modules/waitlist/**`. Feature-flagged by `features.waitlist` (app-owned in `@/config`, injected into the module). **Collect + export only** — no runtime gating.
 
 - `src/lib/waitlist.ts` — the join engine: validate → dedupe → write (`writeClient`) a `waitlistEntry` (`status:"waiting"`). On a **new** entry, two **best-effort** emails may fire (never throw): a "you're on the list" confirmation → the joiner, and an owner alert. `join()`. Feature-gating is the **app's** job (`features` is app-owned): `/api/waitlist` gates on `features.waitlist`, `pages.waitlist.enabled` gates the `/waitlist` page, and `waitlistSanity(enabled)` hides the desk — the module reads no central flag.
 - `src/lib/settings.ts` — `getWaitlistSettings()` (React-`cache`d) reads the editor-configurable `waitlistSettings` singleton (form copy + `enabled`).

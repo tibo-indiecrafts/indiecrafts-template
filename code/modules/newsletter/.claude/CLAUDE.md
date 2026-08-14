@@ -2,7 +2,7 @@
 
 **Stack:** Sanity v5 · TypeScript · `@indiecrafts/sanity/write` (server-only) · `@indiecrafts/email`. The newsletter feature — subscribe engine + subscriber data + settings singleton + double opt-in.
 
-Auto-loads under `code/modules/newsletter/**`. Feature-flagged by `features.newsletter` (`@indiecrafts/config`).
+Auto-loads under `code/modules/newsletter/**`. Feature-flagged by `features.newsletter` (app-owned in `@/config`, injected into the module — see below).
 
 - **No provider adapters.** The engine **always stores** a `subscriber` doc in Sanity (read/export in Studio). To use an external ESP, the editor drops that service's own embed form in a `custom-html` block — it posts to the provider directly, never touching this path (add the provider host to `EMBED_HOSTS` in `next.config.ts`).
 - `src/lib/newsletter.ts` — the subscribe engine: validate → dedupe → write (`writeClient`). On a new subscriber, two **best-effort** emails may fire (never throw): a double opt-in confirmation → the subscriber, and an owner alert. `subscribe()`. Feature-gating is the **app's** job (`features` is app-owned): the `/api/newsletter*` routes gate on `features.newsletter`, and `newsletterSanity(enabled)` hides the desk — the module reads no central flag.

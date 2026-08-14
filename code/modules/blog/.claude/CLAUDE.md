@@ -1,6 +1,6 @@
-# Blog feature — CLAUDE.md
+# @indiecrafts/blog — self-contained blog + page-builder
 
-Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (public surface) and `features.studio` (editing). The Sanity infra it builds on → `src/sanity/CLAUDE.md`. Human docs → `docs/apps/web/features/blog/`.
+Auto-loads under `code/modules/blog/**`. Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (public surface) and `features.studio` (editing) — both app-owned, injected into the module via `configureBlog` (`lib/config.ts`). Builds on the shared Sanity infra `@indiecrafts/sanity` (`docs/packages/sanity.md`). Human docs → `docs/apps/web/features/blog/`.
 
 **Stack:** Sanity v5 (GROQ · PortableText) · Next.js 16 · React 19 · TypeScript · Tailwind v4. Self-contained blog + page-builder.
 
@@ -12,11 +12,11 @@ Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (publ
 
 ## Schemas (`sanity/schema/`)
 
-| Surface      | Documents                                               | Objects                                     |
-| ------------ | ------------------------------------------------------- | ------------------------------------------- |
-| Blog         | `blog` (singleton), `post`, `author`, `category`, `tag`, `series` | `blockContent`, `metadata`         |
-| Module refs  | `quote`, `person`                                       | `link`, `cta`                               |
-| Page-builder | —                                                       | 17 `module.*` types (see `schema/modules/`) |
+| Surface      | Documents                                                         | Objects                                     |
+| ------------ | ----------------------------------------------------------------- | ------------------------------------------- |
+| Blog         | `blog` (singleton), `post`, `author`, `category`, `tag`, `series` | `blockContent`, `metadata`                  |
+| Module refs  | `quote`, `person`                                                 | `link`, `cta`                               |
+| Page-builder | —                                                                 | 17 `module.*` types (see `schema/modules/`) |
 
 ## Page-builder modules (14 `object` types, all gated)
 

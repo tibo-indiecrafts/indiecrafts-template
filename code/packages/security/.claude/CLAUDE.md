@@ -10,7 +10,7 @@ tsconfig `paths`).
   base comes from the existing config helper **`getCSPConnectSources(env)`** (Sanity + npm + dev). App
   passes extras via `CspHosts` (`frameSrc`, `mediaSrc`, `embedHosts`, `googleAnalytics`, …).
 - **`securityHeaders(opts)`** (`./headers`) — the full Next `headers()` array: `nosniff` · `X-Frame
-  DENY` · `Referrer-Policy` · `Permissions-Policy` · `CSP` · **HSTS** (prod only) · **COOP** + immutable
+DENY` · `Referrer-Policy` · `Permissions-Policy` · `CSP` · **HSTS** (prod only) · **COOP** + immutable
   `Cache-Control` on `immutablePaths`.
 - **`imageDefaults` / `imageRemotePatterns`** (`./images`) — the Next image allowlist (unsplash +
   `cdn.sanity.io`) + formats + TTL. Spread into `images`.
@@ -22,3 +22,5 @@ unchanged from the app's prior policy, so the Studio keeps working.
 
 Integrates with, doesn't replace, `@indiecrafts/config` — `getCurrentEnvironment`/`getCSPConnectSources`
 stay in config; this brick imports and composes them. Not Sanity (build config, config-first).
+
+Full reference → [`docs/packages/security.md`](../../../../docs/packages/security.md).

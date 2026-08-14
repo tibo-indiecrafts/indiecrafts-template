@@ -26,3 +26,5 @@ Auto-loads under `code/packages/format/**`. Consumed as source via `transpilePac
 (`numberLocale`, `currency`, `capitalizeInlineNouns`, `adjBeforeNoun`) + site-wide `formatDefaults`
 (`currency`, `vatRate`, `rates`); `localeFormat(locale)` resolves them. **Not Sanity, not `messages/`.**
 Formatting **numbers** here; **words** (labels, "read", "more") stay in `messages/`.
+
+Full reference → [`docs/packages/format.md`](../../../../docs/packages/format.md).

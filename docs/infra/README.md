@@ -16,7 +16,8 @@ the contract they'll grow into.
 ## Key conventions
 
 - **Secrets never land in git.** Only `.env.example` is committed; real values
-  live in the host's env store (Netlify → Site settings).
+  live in the host's env store (Cloudflare Workers → Settings → Variables & Secrets,
+  or `wrangler secret put`).
 - **Never a token under `NEXT_PUBLIC_`.** That prefix ships to the browser — a
   public var can never hold a secret.
 - **dev · staging · prod parity.** Same variables everywhere; only the values
@@ -27,16 +28,18 @@ the contract they'll grow into.
 ## Deploy
 
 The whole workspace installs at the **repo root**, so any host that installs at
-root works. Netlify is the default — the **per-app manifest lives with the app**
-(`code/apps/web/netlify.toml`), not here; infra holds the *shared* deploy topology
-(DNS, envs, IaC, CI). Netlify config:
+root works. The target is **Cloudflare Workers via OpenNext** — the **per-app
+manifest lives with the app** (`code/apps/web/wrangler.toml`), not here; infra
+holds the _shared_ deploy topology (DNS, zones, envs, IaC, CI). Per app:
 
-- Package directory = `code/apps/web` · Base directory = unset (install from root)
-- `command = pnpm build`
-- `publish = code/apps/web/.next`
+- OpenNext (`@opennextjs/cloudflare`) builds the Next app into a Worker bundle.
+- `wrangler.toml` names the Worker + its per-env bindings (R2, KV) — one Worker
+  per app × env (`<app>-<env>`).
+- Ship with `pnpm deploy:<app>:<env>` (→ `wrangler deploy`).
 
-Not locked to Netlify — swap the host, keep the root install. Each `apps/*` owns its
-own manifest; shared resources are provisioned from `code/infra/`.
+Not locked to Cloudflare — swap the host, keep the root install. Each `apps/*` owns
+its own manifest; shared resources are provisioned from `code/infra/` (the Terraform
+IaC — see [Cloudflare as code](/apps/web/setup/cloudflare-iac)).
 
 ## Where it sits
 

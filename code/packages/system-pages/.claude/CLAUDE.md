@@ -10,6 +10,8 @@ Auto-loads under `code/packages/system-pages/**`. Consumed as source via `transp
   - `ErrorContent` — the centered 500 card (`"use client"`, `@indiecrafts/ui/button`). The app's client `error.tsx` boundary resolves copy (bundled messages, never Sanity) + wraps it.
 - **`@indiecrafts/system-pages/proxy`** — `maintenanceRewrite(request, isDown)`: the 503 rewrite for an app's `proxy.ts`. **Pure** — the caller decides `isDown` (the app ORs the build-time `features.maintenance` flag with the live Sanity `siteSettings.maintenanceMode` toggle). Returns `null` when not down (caller continues to next-intl).
 
-**The split:** the brick owns *how the status pages look* + *the maintenance behaviour*; each app owns *the copy* (i18n + Sanity `getSystemPages`), *the fonts + `DefaultLayout` chrome*, *the routes*, and the tiny `maintenanceLocale()` cookie read. Anything rendering token classes needs its `@source` line in `ui-tokens/globals.css` (done).
+**The split:** the brick owns _how the status pages look_ + _the maintenance behaviour_; each app owns _the copy_ (i18n + Sanity `getSystemPages`), _the fonts + `DefaultLayout` chrome_, _the routes_, and the tiny `maintenanceLocale()` cookie read. Anything rendering token classes needs its `@source` line in `ui-tokens/globals.css` (done).
 
 Deps: `@indiecrafts/config` · `@indiecrafts/i18n` · `@indiecrafts/ui`. Never imports an app or a module.
+
+Full reference → [`docs/packages/system-pages.md`](../../../../docs/packages/system-pages.md).

@@ -14,8 +14,10 @@ Auto-loads under `code/packages/email/**`. Consumed as source via `transpilePack
   - `sendTestEmailAction` — the "Envoyer un test" document action on `emailStrings` (wired via `document.actions` in `sanity.config.ts`); POSTs `/api/emails/test`.
 - **`@indiecrafts/email/strings`** — `getEmailStrings()` (React-`cache`d read of the singleton) + `pick(localeValue, locale)`. `import "server-only"`; used by the senders.
 
-**Split of concerns:** the entity holds *what an email says + who gets it* (translated where it's visitor-facing); the templates hold *how it looks*; the feature (blog/newsletter/waitlist) reads config/Sanity and passes resolved strings. A module never imports another module for copy. **Each module owns its email group** (`emailGroups` in its `SanityModule` barrel) — the brick provides the factories, never the module-specific config.
+**Split of concerns:** the entity holds _what an email says + who gets it_ (translated where it's visitor-facing); the templates hold _how it looks_; the feature (blog/newsletter/waitlist) reads config/Sanity and passes resolved strings. A module never imports another module for copy. **Each module owns its email group** (`emailGroups` in its `SanityModule` barrel) — the brick provides the factories, never the module-specific config.
 
 **Adding an email:** add a group with a factory in the owning module's `src/sanity/email.ts` (exported as `emailGroups`) → a `templates/<name>.ts` (re-export the render fn from `src/index.ts`) → the feature reads `getEmailStrings()` + `sendEmail` → add its render to `buildSamples` in `/api/emails/test` so "Send test" covers it.
 
 Depends on `@indiecrafts/config` + `@indiecrafts/sanity`. Never imports an app or a module.
+
+Full reference → [`docs/packages/email.md`](../../../../docs/packages/email.md).

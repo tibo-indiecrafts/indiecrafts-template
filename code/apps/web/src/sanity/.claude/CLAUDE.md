@@ -1,6 +1,6 @@
-# Sanity infra — CLAUDE.md
+# Sanity infra (app) — core, feature-agnostic wiring
 
-Core, feature-agnostic Sanity wiring. The blog **content model** (schema / queries / types / desk) lives in `src/features/blog/sanity/` — see `src/features/blog/CLAUDE.md`.
+Auto-loads under `code/apps/web/src/sanity/**`. Core, feature-agnostic Sanity wiring for the web app. The blog **content model** (schema / queries / types / desk) lives in the blog module `code/modules/blog/` (`@indiecrafts/blog`) — see `code/modules/blog/.claude/CLAUDE.md`.
 
 **Stack:** Sanity v5 (Studio · GROQ · structure) · next-sanity · TypeScript. The CMS infrastructure layer.
 
@@ -37,4 +37,4 @@ Core, feature-agnostic Sanity wiring. The blog **content model** (schema / queri
 
 ## Wiring
 
-Set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (`.env.example`). The CSP in `next.config.ts` already allows `https://*.sanity.io` + `wss://*.api.sanity.io`. Root `sanity.config.ts` registers `coreSchemaTypes` (`src/sanity/schema`) **+** `src/features/blog/sanity/schema`, and composes the core SEO desk (`seoStructureItem`) into the blog `structure`.
+Set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (`.env.example`). The CSP in `next.config.ts` already allows `https://*.sanity.io` + `wss://*.api.sanity.io`. Root `sanity.config.ts` composes the Studio from `SanityModule` barrels via `composeStudio([...])` — the app-core (`coreSanity`/`homeSanity` from `src/sanity`, which contribute the core SEO desk `seoStructureItem`) + each module's barrel (`@indiecrafts/blog/sanity`, newsletter, waitlist, …) + shared/email. See `@indiecrafts/sanity/module` + `docs/packages/sanity.md`.

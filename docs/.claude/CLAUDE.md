@@ -17,7 +17,7 @@ pnpm docs:build     # static → .vitepress/dist
 
 ## Rules (VitePress gotchas)
 
-- **Put a doc where its code lives** — mirror the spine (`apps/web/…`, `features/<name>/` ↔ `src/features/<name>/`).
+- **Put a doc where its code lives** — mirror the spine (`apps/web/…`, `modules/<name>/` ↔ `code/modules/<name>/`, platform-wide docs → `shared/`).
 - **Add a page = drop the `.md` AND the sidebar line** in `.vitepress/config.mts`, same change. `ignoreDeadLinks` is on — broken links won't fail the build, so check by hand.
 - **Backtick bare `<placeholders>`** and JSX **`{{…}}`** inside inline code — the Vue parser treats them as markup/interpolation and the build hard-fails.
 - **Deps stay in `docs/`** — npm-managed, never touch the app's pnpm tree.
