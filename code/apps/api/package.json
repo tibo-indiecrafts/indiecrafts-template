@@ -1,0 +1,22 @@
+{
+  "name": "@indiecrafts/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "cf-typegen": "wrangler types",
+    "tsc": "tsc --noEmit",
+    "deploy:api:dev": "node scripts/deploy.mjs dev",
+    "deploy:api:staging": "node scripts/deploy.mjs staging",
+    "deploy:api:prod": "node scripts/deploy.mjs prod"
+  },
+  "dependencies": {
+    "@indiecrafts/logger": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250321.0",
+    "typescript": "^5",
+    "wrangler": "^4.0.0"
+  }
+}
