@@ -1,6 +1,5 @@
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
 import { UsersIcon } from "@sanity/icons";
-import { features } from "@indiecrafts/config";
 import { apiVersion } from "@indiecrafts/sanity/env";
 
 /**
@@ -43,10 +42,10 @@ function entriesItem(S: StructureBuilder) {
 
 /**
  * The waitlist's desk section(s) — the settings singleton + the entries list.
- * Shown only when `features.waitlist` is on; `composeSanity` stitches these in.
+ * Feature-gating is the app's job: `waitlistSanity(enabled)` returns `[]` here
+ * when the app's `features.waitlist` is off.
  */
 export function waitlistStructure(S: StructureBuilder): ListItemBuilder[] {
-  if (!features.waitlist) return [];
   return [
     S.listItem()
       .title("Liste d'attente (réglages)")

@@ -1,29 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { features, pages, site } from "./index";
+import { isPageVisible, locales, site } from "./index";
 
-// The config brick is the single source of truth for brand, feature flags, and
-// page visibility. These guard its shape so a typo (or a renamed flag) is caught
-// before it silently disables a surface.
+// The config brick is the shared primitives + the generic page-config contract.
+// (App-owned instance config — `features` / `pages` / `theme` / `fonts` — lives in
+// the app at `apps/web/src/config`; its shape is guarded by `as const satisfies`
+// there + the blog route-gate test.) These guard what the package still owns.
 describe("@indiecrafts/config", () => {
-  it("exposes the core capability flags as booleans", () => {
-    expect(typeof features.blog).toBe("boolean");
-    expect(typeof features.studio).toBe("boolean");
-    // Every flag is a boolean or a nested group of booleans — never undefined/other.
-    for (const [flag, value] of Object.entries(features)) {
-      const ok =
-        typeof value === "boolean" ||
-        (typeof value === "object" &&
-          value !== null &&
-          Object.values(value).every((v) => typeof v === "boolean"));
-      expect(
-        ok,
-        `features.${flag} must be a boolean or a group of booleans`,
-      ).toBe(true);
-    }
+  it("has a site url and at least one locale", () => {
+    expect(site.url).toMatch(/^https?:\/\//);
+    expect(locales.length).toBeGreaterThan(0);
   });
 
-  it("has a site url and a non-empty pages map", () => {
-    expect(site.url).toMatch(/^https?:\/\//);
-    expect(Object.keys(pages).length).toBeGreaterThan(0);
+  it("isPageVisible defaults to visible and honours an explicit false", () => {
+    expect(isPageVisible({ key: "/", id: "home", slug: "/" })).toBe(true);
+    expect(isPageVisible({ key: "/x", id: "x", slug: "/x", enabled: false })).toBe(false);
   });
 });

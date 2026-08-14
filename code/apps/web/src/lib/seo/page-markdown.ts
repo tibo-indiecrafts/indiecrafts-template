@@ -7,7 +7,7 @@
  * the rest of the SEO surface (Sanity is the sole source).
  */
 
-import type { Locale, PageConfig } from "@/config";
+import type { Locale, PageConfig, StaticAppPathname } from "@/config";
 import { site } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
 
@@ -47,7 +47,7 @@ export function renderPageMarkdown(
   seo?: PageMarkdownSeo,
 ): string {
   const title = seo?.title || page.id;
-  const url = `${site.url}${getStaticPathname(page.key, locale)}`;
+  const url = `${site.url}${getStaticPathname(page.key as StaticAppPathname, locale)}`;
 
   const parts = [`# ${title}`, "", `URL: ${url}`, ""];
   if (seo?.description) parts.push(seo.description, "");

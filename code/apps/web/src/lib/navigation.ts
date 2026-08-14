@@ -20,7 +20,7 @@ import {
   defaultLocale,
   type Locale,
   type StaticAppPathname,
-  type PageConfig,
+  type AppRoute,
 } from "@/config";
 import { client } from "@indiecrafts/sanity/client";
 import { navigationQuery } from "@/sanity/nav-queries";
@@ -54,8 +54,8 @@ export type Navigation = { header: NavItem[]; footerColumns: FooterColumn[] };
 
 const EMPTY: Navigation = { header: [], footerColumns: [] };
 
-/** `route key → PageConfig`, for visibility gating + route validation. */
-const PAGE_BY_KEY = new Map<string, PageConfig>(
+/** `route key → AppRoute`, for visibility gating + route validation. */
+const PAGE_BY_KEY = new Map<string, AppRoute>(
   Object.values(pages).map((page) => [page.key, page]),
 );
 

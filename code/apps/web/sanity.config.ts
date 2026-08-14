@@ -15,6 +15,7 @@ import { structureTool } from "sanity/structure";
 import { apiVersion, dataset, projectId, studioBasePath } from "@indiecrafts/sanity/env";
 import { composeStudio } from "@indiecrafts/sanity/module";
 import { locales } from "@indiecrafts/config";
+import { features } from "./src/config";
 import { sharedSanity } from "@indiecrafts/schema";
 import { emailSanity, sendTestEmailAction } from "@indiecrafts/email/sanity";
 import { blogSanity } from "@indiecrafts/blog/sanity";
@@ -28,7 +29,12 @@ import { coreSanity, homeSanity } from "./src/sanity";
 // UI messages via `coreSanity`, cookies/consent, and the composed E-mails entity).
 // `sharedSanity` registers objects only (no desk). `emailSanity(all)` builds the
 // one E-mails singleton from every module's `emailGroups`.
-const appModules = [homeSanity, blogSanity, newsletterSanity, waitlistSanity];
+const appModules = [
+  homeSanity,
+  blogSanity,
+  newsletterSanity(features.newsletter),
+  waitlistSanity(features.waitlist),
+];
 const sharedModules = [coreSanity, consentSanity, sharedSanity];
 const allModules = [...appModules, ...sharedModules];
 const sanity = composeStudio([

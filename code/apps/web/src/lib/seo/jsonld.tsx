@@ -9,7 +9,7 @@
  * - `<JsonLdScript>` renders the `<script type="application/ld+json">` tag.
  */
 
-import type { PageConfig } from "@/config";
+import type { PageConfig, StaticAppPathname } from "@/config";
 import { features, site } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
 import type { Locale } from "@/config";
@@ -51,7 +51,7 @@ export async function PageSchemas({
   const description = pageSeo?.description;
   const ogImage = pageSeo?.ogImage ?? siteSeo.ogImage;
 
-  const path = pathname ?? getStaticPathname(page.key, locale);
+  const path = pathname ?? getStaticPathname(page.key as StaticAppPathname, locale);
   const url = `${site.url}${path}`;
   // The image(s) Google may show next to the result: Sanity per-page
   // `schemaImage` > config per-page `schemaImage` > site `siteSettings.schemaImage`

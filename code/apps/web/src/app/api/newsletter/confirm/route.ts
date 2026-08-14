@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { site } from "@/config";
-import { isNewsletterEnabled } from "@indiecrafts/newsletter/lib/newsletter";
+import { features, site } from "@/config";
 import { confirmSubscriber } from "@indiecrafts/newsletter/lib/confirm";
 
 /**
@@ -9,7 +8,7 @@ import { confirmSubscriber } from "@indiecrafts/newsletter/lib/confirm";
  * with `?newsletter=confirmed|invalid` (the token is an opaque nonce, not PII).
  */
 export async function GET(request: Request) {
-  if (!isNewsletterEnabled()) {
+  if (!features.newsletter) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   const token = new URL(request.url).searchParams.get("token") ?? "";

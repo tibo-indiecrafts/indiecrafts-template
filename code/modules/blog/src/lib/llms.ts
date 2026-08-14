@@ -1,9 +1,10 @@
 import type { Locale } from "@indiecrafts/config";
-import { pages, site } from "@indiecrafts/config";
+import { site } from "@indiecrafts/config";
 import { localizedPathname } from "@indiecrafts/i18n";
 import { allPostsQuery, taxonomyForLlmsQuery } from "@indiecrafts/blog/sanity/queries";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
 import { sanityFetchLive } from "@indiecrafts/sanity/live";
+import { blogPage } from "./config";
 import { isBlogRouteEnabled } from "./route-gate";
 import { getBlogSettings } from "./settings";
 
@@ -18,7 +19,7 @@ import { getBlogSettings } from "./settings";
  * `metadata.noIndex` and scopes by locale.
  */
 export async function getBlogLlmsLines(locale: Locale): Promise<string[]> {
-  if (!isBlogRouteEnabled(pages.blog)) return [];
+  if (!isBlogRouteEnabled(blogPage())) return [];
 
   const posts = await sanityFetchLive<PostListItem[]>({
     query: allPostsQuery,
@@ -80,7 +81,7 @@ export async function getTaxonomyLlmsLines(
   locale: Locale,
   { full = false }: { full?: boolean } = {},
 ): Promise<string[]> {
-  if (!isBlogRouteEnabled(pages.blog)) return [];
+  if (!isBlogRouteEnabled(blogPage())) return [];
 
   const settings = await getBlogSettings();
   const out: string[] = [];

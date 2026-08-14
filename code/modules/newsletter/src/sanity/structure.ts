@@ -1,6 +1,5 @@
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
 import { EnvelopeIcon } from "@sanity/icons";
-import { features } from "@indiecrafts/config";
 import { apiVersion } from "@indiecrafts/sanity/env";
 
 /**
@@ -36,11 +35,10 @@ function subscriberStructureItem(S: StructureBuilder) {
 
 /**
  * The newsletter's desk section(s) — the settings singleton + the Abonnés
- * moderation list. Shown only when `features.newsletter` is on; the app's
- * `composeSanity` stitches these in with the other owners.
+ * moderation list. Feature-gating is the app's job: `newsletterSanity(enabled)`
+ * returns `[]` here when the app's `features.newsletter` is off.
  */
 export function newsletterStructure(S: StructureBuilder): ListItemBuilder[] {
-  if (!features.newsletter) return [];
   return [
     S.listItem()
       .title("Infolettre (réglages)")

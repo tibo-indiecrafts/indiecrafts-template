@@ -1,42 +1,21 @@
 /**
- * Per-route metadata + the routing types. SEO CONTENT (title, description, keywords,
- * OG card) is edited per locale in Sanity (`siteMeta.<locale>.pageSeo[pageId]`) — the
- * sole source, no config/messages fallback. This map carries only STRUCTURAL routing:
- * `key` / `id` / `slug` (route identity) + `enabled` (feature-gate a route on/off).
+ * The **generic page-config contract** — the shape any app's route entries conform
+ * to, shared so modules (blog route-gate, llms) can take a `PageConfig` without
+ * knowing a specific app's routes. The **route data itself** (the `pages` map + the
+ * app's `StaticAppPathname` union) is app-owned and lives in `apps/<app>/src/config`.
+ *
+ * SEO CONTENT (title, description, keywords, OG card) is edited per locale in Sanity
+ * (`siteMeta.<locale>.pageSeo[pageId]`) — the sole source, no config/messages
+ * fallback. A page entry carries only STRUCTURAL routing: `key` / `id` / `slug`
+ * (route identity) + `enabled` (feature-gate a route on/off).
  */
 
 import type { Robots } from "next/dist/lib/metadata/types/metadata-types";
 import type { Locale } from "./types";
-import { features } from "./features";
-
-// ── Routes ───────────────────────────────────────────────────
-
-/**
- * Every static route the `pages` map can hold. Single source of truth — adding a
- * static route means appending one literal here AND a matching `pages` entry.
- * Dynamic routes (`/blog/[slug]`, …) live in `src/app/routes.ts:DYNAMIC_PATHNAMES`.
- * Module-internal — the `StaticAppPathname` union derived from it is the public type.
- */
-const STATIC_PATHNAME_KEYS = [
-  "/",
-  "/legal-notice",
-  "/privacy-policy",
-  "/cookie-policy",
-  "/terms",
-  "/terms-of-sale",
-  "/blog",
-  "/blog/category",
-  "/blog/tag",
-  "/author",
-  "/waitlist",
-] as const;
-
-export type StaticAppPathname = (typeof STATIC_PATHNAME_KEYS)[number];
-
-// ── Page config types ────────────────────────────────────────
 
 export type RouteSlug = string | Partial<Record<Locale, string>>;
-export type CanonicalOverride = StaticAppPathname | `http${string}`;
+/** A canonical override — an app pathname (`/...`) or an absolute URL. */
+export type CanonicalOverride = `/${string}` | `http${string}`;
 export type OgImageUrl = "/opengraph-image" | `/${string}` | `http${string}`;
 
 export type PageSeo = {
@@ -81,12 +60,13 @@ export type PageSeo = {
 
 export type PageConfig = {
   /**
-   * Pathname union for static routes only. Dynamic routes
-   * (`/blog/[slug]`, `/blog/category/[slug]`, etc.) don't live in the
-   * `pages` map — they're declared separately in
-   * `src/app/routes.ts:DYNAMIC_PATHNAMES`.
+   * Route pathname key. In an app this is the app's `StaticAppPathname` literal
+   * union (its `pages` map is `satisfies Record<string, PageConfig>` re-tightened
+   * to that union); the shared contract keeps it a `string` so modules stay
+   * app-agnostic. Dynamic routes (`/blog/[slug]`, …) don't live in the `pages`
+   * map — they're declared in the app's `src/app/routes.ts:DYNAMIC_PATHNAMES`.
    */
-  key: StaticAppPathname;
+  key: string;
   id: string;
   slug: RouteSlug;
   /** `false` returns 404 site-wide. Defaults true. */
@@ -98,78 +78,3 @@ export type PageConfig = {
 export function isPageVisible(input: PageConfig): boolean {
   return input.enabled !== false;
 }
-
-// ── The pages map ────────────────────────────────────────────
-
-export const pages = {
-  home: {
-    key: "/",
-    id: "home",
-    slug: "/",
-  },
-  // Waitlist landing — the `module.waitlist` form on a full page. Content in
-  // Sanity (`waitlistSettings`), SEO in `siteMeta.pageSeo`. Gated by the flag.
-  waitlist: {
-    key: "/waitlist",
-    id: "waitlist",
-    slug: "/waitlist",
-    enabled: features.waitlist,
-  },
-  // Legal pages — content in Sanity (`legalPage` docs), SEO in `pageSeo`.
-  // Per-locale slugs (French primary). Each gated by its `features.legal.*` flag.
-  legalNotice: {
-    key: "/legal-notice",
-    id: "legal-notice",
-    slug: { en: "/legal-notice", fr: "/mentions-legales" },
-    enabled: features.legal.notice,
-  },
-  privacy: {
-    key: "/privacy-policy",
-    id: "privacy",
-    slug: { en: "/privacy-policy", fr: "/politique-de-confidentialite" },
-    enabled: features.legal.privacy,
-  },
-  cookies: {
-    key: "/cookie-policy",
-    id: "cookies",
-    slug: { en: "/cookie-policy", fr: "/politique-de-cookies" },
-    enabled: features.legal.cookies,
-  },
-  terms: {
-    key: "/terms",
-    id: "terms",
-    slug: { en: "/terms", fr: "/conditions-generales-utilisation" },
-    enabled: features.legal.terms,
-  },
-  termsOfSale: {
-    key: "/terms-of-sale",
-    id: "terms-of-sale",
-    slug: { en: "/terms-of-sale", fr: "/conditions-generales-de-vente" },
-    enabled: features.legal.sales,
-  },
-  blog: {
-    key: "/blog",
-    id: "blog",
-    slug: "/blog",
-    // Mirrors `features.blog` — sitemap + llms.txt + routing all gate off this.
-    enabled: features.blog,
-  },
-  author: {
-    key: "/author",
-    id: "author",
-    slug: "/author",
-    enabled: features.blog && features.blogTaxonomy.authors,
-  },
-  category: {
-    key: "/blog/category",
-    id: "category",
-    slug: "/blog/category",
-    enabled: features.blog && features.blogTaxonomy.categories,
-  },
-  tag: {
-    key: "/blog/tag",
-    id: "tag",
-    slug: "/blog/tag",
-    enabled: features.blog && features.blogTaxonomy.tags,
-  },
-} as const satisfies Record<string, PageConfig>;

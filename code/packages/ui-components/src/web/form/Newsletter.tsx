@@ -1,15 +1,15 @@
-import { features } from "@indiecrafts/config";
 import type { NewsletterModule } from "@indiecrafts/ui-components/shared/types";
+import { blockFeatures } from "../features";
 import { NewsletterForm } from "./NewsletterForm";
 
 /**
  * `module.newsletter` renderer — the server half. Owns the feature gate: with
- * `features.newsletter` off the block renders nothing (the `/api/newsletter`
- * route 404s in lockstep). Otherwise hands the resolved copy to the client
- * `<NewsletterForm>` (needs `useState` for the submit flow).
+ * the app-injected `newsletter` flag off (`configureBlocks`) the block renders
+ * nothing (the `/api/newsletter` route 404s in lockstep). Otherwise hands the
+ * resolved copy to the client `<NewsletterForm>` (needs `useState` for submit).
  */
 export function Newsletter(props: NewsletterModule) {
-  if (!features.newsletter) return null;
+  if (!blockFeatures().newsletter) return null;
   // `renderBlock` also injects `components` (the portable-text render-function
   // map) + `inline` at runtime for nested-content blocks. `NewsletterForm` is a
   // client component, so those must NOT cross the boundary — functions can't be

@@ -19,7 +19,7 @@
  * SEO copy is Sanity-only (no config/messages fallback) — see `getSiteSeo`.
  */
 
-import type { Locale, PageConfig } from "@/config";
+import type { Locale, PageConfig, StaticAppPathname } from "@/config";
 import { features, site } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
 import { ROUTES } from "@/app/routes";
@@ -99,7 +99,7 @@ function formatPageEntry(page: PageConfig, locale: Locale, siteSeo: SiteSeo): st
   const desc = (pageSeo?.llmsSummary ?? pageSeo?.description ?? "")
     .replace(/\s+/g, " ")
     .trim();
-  const pathname = getStaticPathname(page.key, locale);
+  const pathname = getStaticPathname(page.key as StaticAppPathname, locale);
   const url = `${site.url}${pathname}`;
   return desc ? `- [${title}](${url}): ${desc}` : `- [${title}](${url})`;
 }

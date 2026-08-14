@@ -77,7 +77,9 @@ export async function buildMetadata({
   } else if (configCanonical && isAbsoluteUrl(configCanonical)) {
     canonical = configCanonical;
   } else if (configCanonical) {
-    canonical = `${site.url}${href(locale, configCanonical)}`;
+    // A non-absolute canonical override is an app pathname — the config author's
+    // assertion it's a real static route (the contract widens it to `/${string}`).
+    canonical = `${site.url}${href(locale, configCanonical as StaticAppPathname)}`;
   } else if (pathname) {
     canonical = `${site.url}${pathname}`;
   } else {

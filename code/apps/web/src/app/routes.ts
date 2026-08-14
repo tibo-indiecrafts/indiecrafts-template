@@ -6,9 +6,9 @@
  */
 
 import { pages } from "@/config";
-import type { PageConfig } from "@/config";
+import type { AppRoute, PageConfig } from "@/config";
 
-export const ROUTES: readonly PageConfig[] = Object.values(pages);
+export const ROUTES: readonly AppRoute[] = Object.values(pages);
 
 /**
  * Dynamic routes that don't belong in the `pages` map (one entry per

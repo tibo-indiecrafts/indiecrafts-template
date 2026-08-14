@@ -126,7 +126,7 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
     getSiteSettings(),
     getCookieConsent(locale as Locale),
     getVersionPrompt(locale as Locale),
-    getLegalAcceptance(locale as Locale),
+    getLegalAcceptance(locale as Locale, features.legal),
   ]);
   const siteDescription = siteSeo.description;
   // Server-read the legal-acceptance cookie so the "policies updated" banner is

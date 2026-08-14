@@ -18,3 +18,6 @@ export * from "@indiecrafts/config";
 // App-owned instance config.
 export { theme, themeConfig } from "./theme";
 export { fonts } from "./fonts";
+export { features } from "./features";
+export { pages } from "./pages";
+export type { StaticAppPathname, AppRoute } from "./pages";

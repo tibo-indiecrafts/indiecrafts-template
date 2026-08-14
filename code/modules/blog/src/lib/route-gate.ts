@@ -1,7 +1,8 @@
 import "server-only";
 
 import { notFound } from "next/navigation";
-import { features, isPageVisible, pages, type PageConfig } from "@indiecrafts/config";
+import { isPageVisible, type PageConfig } from "@indiecrafts/config";
+import { blogFlags, blogPage } from "./config";
 import { getBlogSettings } from "./settings";
 
 /**
@@ -14,7 +15,7 @@ import { getBlogSettings } from "./settings";
  * `features.studio` — see `@indiecrafts/config`.
  */
 export function isBlogRouteEnabled(page: PageConfig): boolean {
-  return features.blog && isPageVisible(page);
+  return blogFlags().blog && isPageVisible(page);
 }
 
 /**
@@ -32,7 +33,7 @@ export function requireBlogRoute(page: PageConfig): void {
  * `<link rel="alternate" application/rss+xml>` discovery tags on blog pages.
  */
 export function isRssEnabled(): boolean {
-  return isBlogRouteEnabled(pages.blog) && features.rss;
+  return isBlogRouteEnabled(blogPage()) && blogFlags().rss;
 }
 
 /**
@@ -40,7 +41,7 @@ export function isRssEnabled(): boolean {
  * Drives the `/api/comments` route + whether the `<Comments>` section renders.
  */
 export function isCommentsEnabled(): boolean {
-  return features.blog && features.blogComments;
+  return blogFlags().blog && blogFlags().comments;
 }
 
 /**
@@ -48,7 +49,7 @@ export function isCommentsEnabled(): boolean {
  * the `/blog/search` route (404 when off) + whether the search box renders.
  */
 export function isSearchEnabled(): boolean {
-  return isBlogRouteEnabled(pages.blog) && features.blogSearch;
+  return isBlogRouteEnabled(blogPage()) && blogFlags().search;
 }
 
 /**
@@ -57,7 +58,7 @@ export function isSearchEnabled(): boolean {
  * sitemap series entries.
  */
 export function isSeriesEnabled(): boolean {
-  return isBlogRouteEnabled(pages.blog) && features.blogSeries;
+  return isBlogRouteEnabled(blogPage()) && blogFlags().series;
 }
 
 /** The three taxonomy surfaces — keys match `blog.display.taxonomy.*`. */

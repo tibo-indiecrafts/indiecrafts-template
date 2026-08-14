@@ -1,7 +1,7 @@
 import "server-only";
 
 import { logger } from "@indiecrafts/logger";
-import { features, site, defaultLocale } from "@indiecrafts/config";
+import { site, defaultLocale, isLocale, localeCodes } from "@indiecrafts/config";
 import { writeClient } from "@indiecrafts/sanity/write";
 import { renderWaitlistConfirmEmail, renderWaitlistNotificationEmail, sendEmail } from "@indiecrafts/email";
 import { getEmailStrings, pick, type EmailStrings } from "@indiecrafts/email/strings";
@@ -29,6 +29,8 @@ export type JoinInput = {
   language?: string;
   /** Hidden anti-spam field — must be empty for a real submission. */
   honeypot?: string;
+  /** Client form-render time (ms) — a near-instant submit is a bot. */
+  startedAt?: number;
 };
 
 export type JoinResult =
@@ -36,18 +38,27 @@ export type JoinResult =
   | { ok: false; error: "invalid" | "spam" | "server" };
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const MIN_SUBMIT_MS = 2000; // a human takes >2s; a near-instant submit is a bot
+
+/**
+ * Too-fast submit heuristic. Skew-safe: only a small POSITIVE gap counts, so a
+ * client clock running ahead (negative elapsed) never false-flags a real person.
+ */
+function tooFast(startedAt?: number): boolean {
+  if (typeof startedAt !== "number") return false;
+  const elapsed = Date.now() - startedAt;
+  return elapsed >= 0 && elapsed < MIN_SUBMIT_MS;
+}
 
 /** Pure validator — cheap to unit-check. */
 export function validateJoin(input: Partial<JoinInput>): JoinResult {
-  if ((input.honeypot ?? "").trim() !== "") return { ok: false, error: "spam" };
+  if ((input.honeypot ?? "").trim() !== "" || tooFast(input.startedAt)) {
+    return { ok: false, error: "spam" };
+  }
   const email = (input.email ?? "").trim().toLowerCase();
   if (!email || email.length > 254 || !EMAIL.test(email)) return { ok: false, error: "invalid" };
   if (input.consent !== true) return { ok: false, error: "invalid" };
   return { ok: true };
-}
-
-export function isWaitlistEnabled(): boolean {
-  return features.waitlist;
 }
 
 const clean = (list?: string[] | null) => (list ?? []).map((s) => s.trim()).filter(Boolean);
@@ -78,7 +89,9 @@ export async function join(
       ...(policyVersion ? { consentPolicyVersion: policyVersion.slice(0, 120) } : {}),
       ...(name ? { name: name.slice(0, 120) } : {}),
       ...(input.source ? { source: input.source.slice(0, 300) } : {}),
-      ...(input.language ? { language: input.language } : {}),
+      ...(input.language && isLocale(input.language, localeCodes)
+        ? { language: input.language }
+        : {}),
       createdAt,
     });
 

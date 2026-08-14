@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { features } from "@indiecrafts/config";
+import { blogFlags } from "./config";
 import { client } from "@indiecrafts/sanity/client";
 import { blogDisplayQuery } from "../sanity/queries";
 import type { BlogDisplay, BlogDisplayRaw } from "../sanity/types";
@@ -19,11 +19,12 @@ const on = (v: boolean | undefined) => v ?? true;
 export function resolveBlogDisplay(raw: BlogDisplayRaw | null | undefined): BlogDisplay {
   const t = raw?.taxonomy ?? {};
   const p = raw?.post ?? {};
+  const taxonomy = blogFlags().taxonomy;
   return {
     taxonomy: {
-      categories: features.blogTaxonomy.categories && on(t.categories),
-      tags: features.blogTaxonomy.tags && on(t.tags),
-      authors: features.blogTaxonomy.authors && on(t.authors),
+      categories: taxonomy.categories && on(t.categories),
+      tags: taxonomy.tags && on(t.tags),
+      authors: taxonomy.authors && on(t.authors),
     },
     post: {
       date: on(p.date),

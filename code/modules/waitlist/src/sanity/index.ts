@@ -5,12 +5,16 @@ import { emailGroups } from "./email";
 
 /**
  * The waitlist module's Sanity contribution — the `waitlistSettings` singleton +
- * `waitlistEntry` doc + the desk + its two `emailStrings` groups. Add to the
- * `composeSanity([...])` array in `sanity.config.ts` to activate.
+ * `waitlistEntry` doc + the desk + its two `emailStrings` groups. Called with the
+ * app's `features.waitlist` (like `emailSanity(...)`): `enabled` false hides the
+ * desk section (schema + email groups still register). Add
+ * `waitlistSanity(features.waitlist)` to the modules array in `sanity.config.ts`.
  */
-export const waitlistSanity: SanityModule = {
-  name: "waitlist",
-  schemaTypes,
-  structure: waitlistStructure,
-  emailGroups,
-};
+export function waitlistSanity(enabled: boolean): SanityModule {
+  return {
+    name: "waitlist",
+    schemaTypes,
+    structure: (S) => (enabled ? waitlistStructure(S) : []),
+    emailGroups,
+  };
+}

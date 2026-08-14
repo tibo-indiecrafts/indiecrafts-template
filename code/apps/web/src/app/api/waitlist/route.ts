@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { features } from "@/config";
 import { withGuard } from "@indiecrafts/security/guard";
-import { isWaitlistEnabled, join } from "@indiecrafts/waitlist/lib/waitlist";
+import { join } from "@indiecrafts/waitlist/lib/waitlist";
 import { getConsentPolicyVersion } from "@/lib/consent-policy";
 
 /**
@@ -20,6 +21,7 @@ const handle = withGuard(
         source: body.source ? String(body.source) : undefined,
         language: body.language ? String(body.language) : undefined,
         honeypot: body.honeypot ? String(body.honeypot) : undefined,
+        startedAt: typeof body.startedAt === "number" ? body.startedAt : undefined,
       },
       new Date().toISOString(),
       await getConsentPolicyVersion(),
@@ -39,7 +41,7 @@ const handle = withGuard(
 );
 
 export async function POST(request: Request) {
-  if (!isWaitlistEnabled()) {
+  if (!features.waitlist) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   return handle(request);
