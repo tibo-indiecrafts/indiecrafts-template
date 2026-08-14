@@ -1,20 +1,25 @@
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";
-import { features, type Locale } from "@indiecrafts/config";
-import { cn } from "@indiecrafts/utils";
-import { Link } from "@indiecrafts/i18n";
+import { site, type Locale } from "@indiecrafts/config";
+import { cn } from "@indiecrafts/utils/cn";
+import { Link, localizedPathname } from "@indiecrafts/i18n";
 import type { Post, PostListItem } from "@indiecrafts/blog/sanity/types";
+import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
+import { isSeriesEnabled } from "@indiecrafts/blog/lib/route-gate";
 import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
-import { FeaturedMedia } from "@indiecrafts/ui-components/renderers/FeaturedMedia";
+import { ShareButtons } from "@indiecrafts/blog/user-interface/post/components/ShareButtons";
+import { ReadingProgress } from "@indiecrafts/blog/user-interface/post/components/ReadingProgress";
+import { SeriesNav } from "@indiecrafts/blog/user-interface/post/components/SeriesNav";
+import { FeaturedMedia } from "@indiecrafts/ui-components/web/media/FeaturedMedia";
 import {
   Breadcrumbs,
   type Crumb,
 } from "@indiecrafts/blog/user-interface/shared/components/Breadcrumbs";
 import { Toc } from "@indiecrafts/blog/user-interface/post/components/Toc";
 import { MobileToc } from "@indiecrafts/blog/user-interface/post/components/MobileToc";
-import { portableComponents } from "@indiecrafts/ui-components/renderers/portable-text-components";
-import { formatPostDate } from "@indiecrafts/utils";
+import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
+import { formatDate } from "@indiecrafts/utils/format-date";
 
 /**
  * Server-rendered post page when no module-driven layout is configured.
@@ -44,21 +49,26 @@ export async function DefaultPostLayout({
   description?: string;
   related: PostListItem[];
 }) {
-  const [t, nav] = await Promise.all([
+  const [t, nav, display] = await Promise.all([
     getTranslations("pages.blog"),
     getTranslations("nav"),
+    getBlogSettings(),
   ]);
-  const date = formatPostDate(locale, post.publishedAt, { month: "long" });
-  const readTime = post.readTime && post.readTime > 0 ? post.readTime : null;
+  const date = display.post.date
+    ? formatDate(locale, post.publishedAt, { month: "long" })
+    : null;
+  const readTime =
+    display.post.readingTime && post.readTime && post.readTime > 0 ? post.readTime : null;
   const authors = post.authors ?? [];
   const categoryRef = post.categories?.[0];
   const tags = (post.tags ?? []).filter((tag) => tag.slug);
-  // Author / category / tag link to routes gated per-type by `features.blogTaxonomy`.
+  // Author / category / tag chips follow the editor's display toggles (which
+  // already fold in `features.blogTaxonomy`).
   const {
     authors: showAuthors,
     categories: showCategories,
     tags: showTags,
-  } = features.blogTaxonomy;
+  } = display.taxonomy;
 
   const breadcrumbs: Crumb[] = [
     { label: nav("blog"), href: "/blog" },
@@ -73,7 +83,8 @@ export async function DefaultPostLayout({
     { label: title },
   ];
 
-  const hasToc = (post.headings?.length ?? 0) > 0;
+  const hasToc = display.post.tableOfContents && (post.headings?.length ?? 0) > 0;
+  const shareUrl = `${site.url}${localizedPathname(`/blog/${post.slug ?? ""}`, locale)}`;
 
   // One hero structure for image and video alike: the cover — or an
   // inline-playable video — sits in a media block, and the title + meta read
@@ -83,7 +94,9 @@ export async function DefaultPostLayout({
   const hasHeroMedia = !!image || !!post.metadata?.video;
 
   return (
-    <article className="pb-16 md:pb-24">
+    <>
+      {display.post.readingProgress ? <ReadingProgress /> : null}
+      <article className="pb-16 md:pb-24">
       <div className="mx-auto max-w-(--max-container) px-(--gutter)">
         <header className="mt-8 mb-12 md:mt-12 md:mb-16">
           <Breadcrumbs
@@ -207,6 +220,16 @@ export async function DefaultPostLayout({
           </div>
         </header>
 
+        {isSeriesEnabled() && post.series ? (
+          <div className="mb-10 max-w-3xl">
+            <SeriesNav
+              series={post.series}
+              currentId={post._id}
+              labels={{ label: t("series.navLabel"), partOf: t("series.partOf") }}
+            />
+          </div>
+        ) : null}
+
         {hasToc ? <MobileToc headings={post.headings!} title={t("onThisPage")} /> : null}
 
         <div className="flex gap-8 lg:gap-12">
@@ -230,16 +253,30 @@ export async function DefaultPostLayout({
           </div>
         </div>
 
-        <footer className="border-border/60 mt-12 border-t py-8">
+        <footer className="border-border/60 mt-12 flex flex-col items-start gap-4 border-t py-8 sm:flex-row sm:items-center sm:justify-between">
           <Link
             href="/blog"
             className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             {t("backToList")}
           </Link>
+          {display.post.share ? (
+            <ShareButtons
+              url={shareUrl}
+              title={title}
+              labels={{
+                label: t("share.label"),
+                x: t("share.x"),
+                linkedin: t("share.linkedin"),
+                facebook: t("share.facebook"),
+                copy: t("share.copy"),
+                copied: t("share.copied"),
+              }}
+            />
+          ) : null}
         </footer>
 
-        {related.length > 0 ? (
+        {display.post.relatedPosts && related.length > 0 ? (
           <section aria-labelledby="related-posts-title" className="mt-12 pt-16">
             <header className="flex flex-col items-center gap-3 text-center">
               <h2 id="related-posts-title" className="text-2xl font-semibold md:text-3xl">
@@ -257,6 +294,7 @@ export async function DefaultPostLayout({
           </section>
         ) : null}
       </div>
-    </article>
+      </article>
+    </>
   );
 }

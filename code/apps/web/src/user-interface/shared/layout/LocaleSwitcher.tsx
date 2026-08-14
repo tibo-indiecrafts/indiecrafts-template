@@ -4,15 +4,15 @@ import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { defaultLocale, localeMap, locales, type Locale } from "@indiecrafts/config";
-import { Button } from "@indiecrafts/ui/button";
+import { Button } from "@indiecrafts/ui/web/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@indiecrafts/ui/dropdown-menu";
-import { cn } from "@indiecrafts/utils";
+} from "@indiecrafts/ui/web/dropdown-menu";
+import { cn } from "@indiecrafts/utils/cn";
 
 export type LocaleSwitcherProps = {
   shape?: "icon" | "code";

@@ -14,10 +14,9 @@ dev framework in-repo. New here? Read this first, then jump to
 These are what you build and **deploy**. Full layout + the deployment rules →
 [Workspace & deployment](/apps/web/setup/workspace).
 
-> The repo also carries internal team folders (`method/` · `work/`) — the dev
-> framework and the sprint lab. They're **private**: never deployed to a
-> client-reachable URL and excluded from client hand-offs. See
-> [Workspace § Private folders](/apps/web/setup/workspace).
+> The repo may also carry internal folders (`method/` · `work/`) — **private,
+> gitignored, and excluded from client hand-offs**. `pnpm build` (the app deploy)
+> never touches them.
 
 ## Run the monorepo
 
@@ -40,8 +39,8 @@ isolated from the pnpm workspace.
 
 The workspace installs at the **repo root**; the app builds to `code/apps/web/.next`.
 **Deploy only `code/apps/web` (the site) and, optionally, `docs/`** — the internal
-`method/` and `work/` folders stay private. Full guide, hosts, and the private-folder
-rule → [Workspace & deployment](/apps/web/setup/workspace).
+`method/` and `work/` folders stay private. Full guide and hosts →
+[Workspace & deployment](/apps/web/setup/workspace).
 
 ## Where to go next
 

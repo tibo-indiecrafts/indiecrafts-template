@@ -5,6 +5,8 @@ sibling, **npm-isolated** from the pnpm workspace. Foldered like the code:
 `shared/` + `apps/web/` (`setup/ config/ design/ seo/`) +
 `modules/` (`blog/`) + `packages/ db/ infra/`. `index.md` is the home (no README).
 
+**Stack:** VitePress (npm-isolated from the pnpm workspace). Product-docs site (:3002).
+
 ## Commands
 
 ```bash

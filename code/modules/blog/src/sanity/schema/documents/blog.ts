@@ -5,6 +5,20 @@ import { MODULE_TYPES } from "../modules";
 const moduleFieldRefs = MODULE_TYPES.map((type) => ({ type }));
 
 /**
+ * A display toggle — a boolean that defaults to ON, so an editor never
+ * has to opt into showing something that was always visible. The legend
+ * spells out what turning it off hides, then reminds that empty = shown.
+ */
+const toggle = (name: string, title: string, description?: string) =>
+  defineField({
+    name,
+    title,
+    type: "boolean",
+    initialValue: true,
+    description: description ? `${description} Vide = affiché.` : "Vide = affiché.",
+  });
+
+/**
  * Blog singleton — owns the per-post layout shell only.
  *
  * The `/blog` frontpage is intentionally NOT editor-configurable; it
@@ -40,6 +54,66 @@ export default defineType({
       of: moduleFieldRefs,
     }),
     defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
+    defineField({
+      name: "display",
+      title: "Affichage du blog",
+      description: "Activez ou masquez des éléments du blog — sans passer par un développeur.",
+      type: "object",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: "taxonomy",
+          title: "Catégories, tags, auteur·rice·s",
+          type: "object",
+          options: { collapsible: true },
+          description:
+            "Désactiver masque les puces ET la page de listing (retirée du plan de site et des liens).",
+          fields: [
+            toggle("categories", "Catégories", "Puces de catégorie + page /blog/category."),
+            toggle("tags", "Tags", "Puces de tag + page /blog/tag."),
+            toggle("authors", "Auteur·rice·s", "Signature d'auteur·rice + page /author."),
+          ],
+        }),
+        defineField({
+          name: "post",
+          title: "Page article",
+          type: "object",
+          options: { collapsible: true },
+          fields: [
+            toggle("date", "Date de publication"),
+            toggle("readingTime", "Temps de lecture"),
+            toggle("tableOfContents", "Sommaire (table des matières)"),
+            toggle("relatedPosts", "« À lire ensuite » (articles liés)"),
+            toggle("share", "Boutons de partage", "Partage vers X, LinkedIn, Facebook + copier le lien."),
+            toggle(
+              "readingProgress",
+              "Barre de progression de lecture",
+              "Fine barre en haut de l'écran qui avance pendant la lecture.",
+            ),
+          ],
+        }),
+        defineField({
+          name: "frontpage",
+          title: "Accueil du blog (/blog)",
+          type: "object",
+          options: { collapsible: true },
+          fields: [
+            toggle(
+              "featuredHero",
+              "Grille « à la une »",
+              "Mosaïque des articles en avant. Désactivé = grille simple.",
+            ),
+          ],
+        }),
+        defineField({
+          name: "cards",
+          title: "Cartes d'article",
+          type: "object",
+          options: { collapsible: true },
+          fields: [toggle("excerpt", "Extrait", "Résumé sous le titre dans les listes.")],
+        }),
+      ],
+    }),
     defineField({
       name: "comments",
       title: "Commentaires — textes",

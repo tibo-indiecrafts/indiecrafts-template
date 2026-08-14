@@ -1,0 +1,49 @@
+name: Backup (Cloudflare)
+
+# Scheduled dump of the Sanity dataset (+ D1 if configured) to the per-env R2
+# backups bucket. Manual: "Run workflow" → pick the env. The scripts prune LOCAL
+# copies to the last 10; rotate the R2 copies with a bucket lifecycle rule.
+# Setup + rotation: docs/apps/web/setup/backups.md
+on:
+  schedule:
+    - cron: "0 3 * * *" # daily 03:00 UTC (prod)
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Which env's R2 bucket to store into
+        type: choice
+        options: [prod, staging, dev]
+        default: prod
+
+concurrency:
+  group: backup-${{ github.event.inputs.environment || 'prod' }}
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'prod' }}
+    env:
+      ENV: ${{ github.event.inputs.environment || 'prod' }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+      NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+      SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+    defaults:
+      run:
+        working-directory: code/apps/web
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # `pnpm exec` puts node_modules/.bin (the sanity + wrangler CLIs) on PATH.
+      # The scripts read config from the job env above (no .env.local in CI).
+      - name: Sanity dataset → R2
+        run: pnpm exec node scripts/backup-sanity.mjs --remote --env "$ENV"
+      - name: D1 → R2 (no-op until D1 is configured)
+        run: pnpm exec node scripts/backup-d1.mjs "$ENV" --remote

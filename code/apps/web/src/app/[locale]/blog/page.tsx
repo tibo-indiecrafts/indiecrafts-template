@@ -1,7 +1,13 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, pages, type Locale } from "@indiecrafts/config";
-import { isRssEnabled, requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
+import {
+  isRssEnabled,
+  isSearchEnabled,
+  requireBlogRoute,
+} from "@indiecrafts/blog/lib/route-gate";
+import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
+import { BlogSearchForm } from "@indiecrafts/blog/user-interface/shared/components/BlogSearchForm";
 import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
@@ -67,7 +73,7 @@ export default async function BlogPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [blog, posts, authors, categories, tags, t] = await Promise.all([
+  const [blog, posts, authors, categories, tags, t, display] = await Promise.all([
     sanityFetchLive<BlogSingleton | null>({ query: blogSingletonQuery, params: {} }),
     sanityFetchLive<PostListItem[]>({ query: allPostsQuery, params: { locale } }),
     features.blogTaxonomy.authors
@@ -83,6 +89,7 @@ export default async function BlogPage({ params }: Props) {
       ? sanityFetchLive<Tag[]>({ query: tagsForLocaleQuery, params: { locale } })
       : Promise.resolve<Tag[]>([]),
     getTranslations("pages.blog"),
+    getBlogSettings(),
   ]);
 
   if (blog?.seo?.unpublished) notFound();
@@ -101,10 +108,39 @@ export default async function BlogPage({ params }: Props) {
         />
       ) : (
         <>
-          <h1 className="sr-only">{t("title")}</h1>
-          <BlogHero posts={posts} locale={locale} label={t("heroLabel")} />
+          {/* Editor toggle: the "à la une" mosaic, else a simple titled grid.
+              The mosaic's cards are h2/h3, so it needs an sr-only page h1;
+              BlogListing already renders its own visible h1. */}
+          {display.frontpage.featuredHero ? (
+            <>
+              <h1 className="sr-only">{t("title")}</h1>
+              <BlogHero posts={posts} locale={locale} label={t("heroLabel")} />
+            </>
+          ) : (
+            <BlogListing
+              posts={posts}
+              locale={locale}
+              heading={t("heading")}
+              subheading={t("subheading")}
+              noPostsLabel={t("noPosts")}
+              cols={3}
+            />
+          )}
 
-          {features.blogTaxonomy.categories && (
+          {isSearchEnabled() && (
+            <div className="mx-auto max-w-6xl px-(--gutter) py-10">
+              <BlogSearchForm
+                action={localizedPathname("/blog/search", locale)}
+                labels={{
+                  label: t("search.label"),
+                  placeholder: t("search.placeholder"),
+                  submit: t("search.submit"),
+                }}
+              />
+            </div>
+          )}
+
+          {display.taxonomy.categories && (
             <ExploreCategories
               categories={categories}
               posts={posts}
@@ -116,7 +152,7 @@ export default async function BlogPage({ params }: Props) {
             />
           )}
 
-          {features.blogTaxonomy.tags && (
+          {display.taxonomy.tags && (
             <ExploreTags
               tags={tags}
               heading={t("tags.heading")}
@@ -125,7 +161,7 @@ export default async function BlogPage({ params }: Props) {
             />
           )}
 
-          {features.blogTaxonomy.authors && (
+          {display.taxonomy.authors && (
             <TopAuthors
               authors={authors}
               heading={t("authors.heading")}

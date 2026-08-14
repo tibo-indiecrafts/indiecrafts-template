@@ -73,8 +73,8 @@ resolver returns typed `NavLeaf` / `NavGroup` / `FooterColumn` shapes.
 **Resources** dropdown (two rich external links), and a **Legal** footer column listing the
 five legal pages. Re-running updates it in place.
 
-## Not editable here
+## The maker credit
 
-The **maker credit** in the footer (`madeBy` in `@indiecrafts/config`,
-`code/packages/config/src/index.ts`) is fixed in config on purpose — it must survive a client
-rebrand — so it is not part of the Sanity `navigation` doc.
+The **maker credit** in the footer is edited in Sanity — **Paramètres du site → Logo & icônes →
+Crédit du créateur** (`siteSettings.madeBy`), seeded with the indiecrafts.dev values. It's not part of
+the `navigation` doc. A client can keep it, rebrand it, or clear it (an empty name → no credit renders).

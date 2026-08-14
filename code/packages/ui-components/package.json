@@ -6,6 +6,9 @@
   "exports": {
     "./*": "./src/*"
   },
+  "scripts": {
+    "test": "vitest run"
+  },
   "dependencies": {
     "@indiecrafts/config": "workspace:*",
     "@indiecrafts/ui": "workspace:*",
@@ -13,7 +16,8 @@
     "@portabletext/react": "^6.2.0",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^1.9.0",
-    "next-intl": "^4.9.1"
+    "next-intl": "^4.9.1",
+    "shiki": "^3.4.0"
   },
   "peerDependencies": {
     "next": "16.2.10",

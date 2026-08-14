@@ -5,26 +5,25 @@ import type { SchemaTypeDefinition } from "sanity";
 // with the blog feature removed. Registered directly in `sanity.config.ts`.
 import siteSettings from "./site-settings";
 import siteMeta from "./site-meta";
+import homePage from "./home-page";
+import uiMessages from "./ui-messages";
 import legalPage from "./legal-page";
 import navigation from "./navigation";
-import cookieConsent from "./cookie-consent";
 import pageSeo from "./objects/page-seo";
 import globalSchema from "./objects/global-schema";
 import navItem from "./objects/nav-item";
-import localeString from "./objects/locale-string";
-import cookieCategory from "./objects/cookie-category";
-import cookieEntry from "./objects/cookie-entry";
+// `cookieConsent` + `cookieCategory`/`cookieEntry` moved to the `@indiecrafts/consent` brick.
+// `localeString` + `seoMeta` moved to the shared `@indiecrafts/schema` brick
+// (registered via its `sharedSanity` contribution); referenced here by type name.
 
 export const coreSchemaTypes: SchemaTypeDefinition[] = [
   siteSettings,
   siteMeta,
+  homePage,
+  uiMessages,
   legalPage,
   navigation,
-  cookieConsent,
   pageSeo,
   globalSchema,
   navItem,
-  localeString,
-  cookieCategory,
-  cookieEntry,
 ];

@@ -1,0 +1,28 @@
+{
+  "name": "@indiecrafts/email",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./sanity": "./src/sanity/index.ts",
+    "./strings": "./src/strings.ts"
+  },
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*",
+    "@indiecrafts/sanity": "workspace:*",
+    "@sanity/icons": "^3.7.4",
+    "@sanity/ui": "^3.5.1",
+    "next-sanity": "^13.0.3",
+    "sanity": "^5.26.0"
+  },
+  "peerDependencies": {
+    "react": "19.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

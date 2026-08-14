@@ -24,38 +24,31 @@ Still seeing `Disallow: /`? Either `NEXT_PUBLIC_SITE_URL` is unset/wrong, or the
 
 ---
 
-## 2. Netlify setup
+## 2. Cloudflare Workers setup
 
-### Connect the repo
+The app deploys to Cloudflare Workers via OpenNext (dev / staging / prod). The **full runbook** — R2 buckets, secrets, GitHub Actions, custom domain, first-deploy checks — is [Deployment (Cloudflare)](./deployment). The launch-critical bits:
 
-Netlify → **Add new site** → **Import from Git** → pick the repo. Set **Package directory = `code/apps/web`** (Base directory unset) so Netlify reads `code/apps/web/netlify.toml` and installs the workspace from root. Netlify auto-detects Next.js and installs `@netlify/plugin-nextjs`.
+> **Reusing the template? Rename first.** Run `pnpm project:rename <slug>` before any staging/prod deploy — it sets `DEFAULT_SITE_PREFIX` + the `<slug>-web*` Worker/R2 names, and the deploy is **blocked** until you do (so one client can't overwrite another under a shared Cloudflare account). Give this client its **own** Resend key + (if on a shared Sanity project) its **own** dataset, not `production`.
 
-### Add the env vars
+### Env vars + secrets
 
-Site settings → **Environment variables** → Add. None are required to build, but you'll want these for production (full reference in [`environment.md`](./environment.md)):
+Public `NEXT_PUBLIC_*` go in `wrangler.toml [vars]` (and GitHub Environment **vars** for the CI build); server tokens are **secrets** (`wrangler secret put … --env <env>`, and GitHub Environment **secrets**). Full reference in [`environment.md`](./environment.md).
 
-| Key | When to set | Notes |
+| Key | Where | Notes |
 | --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Production | The real origin — flips the staging gate (§ 1) |
-| `NEXT_PUBLIC_ENVIRONMENT` | Preview deploys | `staging` tightens CSP; only `production` is indexable |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Always (Studio/blog on) | Public, safe to expose |
-| `NEXT_PUBLIC_SANITY_DATASET` | Always | `production` by default |
-| `NEXT_PUBLIC_SANITY_API_VERSION` | Always | `2025-01-01` — pin |
-| `SANITY_API_READ_TOKEN` | For draft preview | Viewer role; server-only |
-| `SANITY_API_WRITE_TOKEN` | Only for `pnpm seed` | Editor role; don't ship to runtime |
+| `NEXT_PUBLIC_SITE_URL` | prod var | The real origin — flips the staging gate (§ 1) |
+| `NEXT_PUBLIC_ENVIRONMENT` | per-env var | `wrangler.toml` sets `development` / `staging` / `production`; only prod is indexable |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` · `DATASET` · `API_VERSION` | build var | Public; needed at build (blog SSG + sitemap) |
+| `SANITY_API_READ_TOKEN` | secret | Viewer; draft preview + build-time fetch |
+| `SANITY_API_WRITE_TOKEN` | secret | Editor; comments + newsletter→sanity writes |
 
 ### Custom domain
 
-Site settings → **Domain management** → **Add domain alias**. Netlify gives you the DNS records:
+Uncomment the `[[env.prod.routes]]` block in `code/apps/web/wrangler.toml`, set your domain, and add it as a **Custom Domain** on the prod Worker (CF dashboard). With DNS on Cloudflare, HTTPS is automatic.
 
-- `A` on apex → Netlify load balancer IP (check current value in Netlify docs)
-- `CNAME` on `www` → `<your-site>.netlify.app`
+### Preview deploys
 
-Wait for DNS (5 min – 24 h), then enable HTTPS — Netlify provisions Let's Encrypt automatically.
-
-### Branch deploys + previews
-
-On by default. Every PR gets a `deploy-preview-N--<site>.netlify.app` URL with **its own CSP environment** if you set `NEXT_PUBLIC_ENVIRONMENT=staging` for branch contexts.
+The `dev` + `staging` Workers publish to `*.workers.dev` (robots Disallow — non-prod). Trigger one from the **Deploy (Cloudflare)** GitHub Action ("Run workflow" → env) or `pnpm deploy:web:staging`.
 
 ---
 
@@ -78,7 +71,7 @@ The Google Analytics id and consent behaviour are edited **in Sanity** (`siteSet
 - **Outside the EU** — set the GA id, banner off. GA loads on every page.
 - **EU traffic** — set the GA id, banner on. GA loads with [Consent Mode v2](https://developers.google.com/tag-platform/security/guidance/consent-mode) defaults `denied`; the banner flips them to `granted` only on accept.
 
-Details: [`analytics.md`](../seo/analytics.md) and [`cookie-consent.md`](../config/cookie-consent.md). The five legal pages (legal notice, privacy, cookies, terms, terms-of-sale) each toggle independently via `features.legal.*` — see [`legal-pages.md`](../config/legal-pages.md).
+Details: [`analytics.md`](../seo/analytics.md) and [`cookie-consent.md`](/packages/consent). The five legal pages (legal notice, privacy, cookies, terms, terms-of-sale) each toggle independently via `features.legal.*` — see [`legal-pages.md`](../config/legal-pages.md).
 
 **Verify after deploy:**
 

@@ -4,16 +4,15 @@ import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { useSyncExternalStore } from "react";
-import { Button } from "@indiecrafts/ui/button";
+import { Button } from "@indiecrafts/ui/web/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@indiecrafts/ui/dropdown-menu";
-import { cn } from "@indiecrafts/utils";
-import { THEME_MODES } from "@/lib/theme";
+} from "@indiecrafts/ui/web/dropdown-menu";
+import { cn } from "@indiecrafts/utils/cn";
 import type { ThemeMode } from "@indiecrafts/config";
 
 const subscribe = () => () => {};
@@ -26,16 +25,19 @@ const MODE_META: Record<ThemeMode, { Icon: typeof Sun; labelKey: string }> = {
 };
 
 export type ThemeToggleProps = {
+  /** Selectable modes, in menu order — from `themeModes(cfg)`, resolved server-side. */
+  modes: readonly ThemeMode[];
   size?: "icon" | "sm" | "default";
   variant?: "outline" | "ghost" | "secondary";
   className?: string;
 };
 
 export function ThemeToggle({
+  modes,
   size = "icon",
   variant = "outline",
   className,
-}: Readonly<ThemeToggleProps> = {}) {
+}: Readonly<ThemeToggleProps>) {
   const t = useTranslations("common");
   const { theme = "system", setTheme, resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -60,8 +62,11 @@ export function ThemeToggle({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-32">
-        <DropdownMenuRadioGroup value={theme} onValueChange={(value: string) => setTheme(value)}>
-          {THEME_MODES.map((mode) => {
+        <DropdownMenuRadioGroup
+          value={theme}
+          onValueChange={(value: string) => setTheme(value)}
+        >
+          {modes.map((mode) => {
             const { Icon, labelKey } = MODE_META[mode];
             return (
               <DropdownMenuRadioItem key={mode} value={mode}>

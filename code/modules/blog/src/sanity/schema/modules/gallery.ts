@@ -21,7 +21,7 @@ export default defineModule({
       title: "Titre (optionnel)",
       type: "string",
       description:
-        "Petit titre affiché au-dessus de la galerie. Laissez vide pour aucun.",
+        "Petit titre affiché au-dessus de la galerie. Entourez un mot de [[ ]] pour l'afficher dans la couleur d'accent, ex. « Nos [[derniers]] projets ». Laissez vide pour aucun.",
     }),
     defineField({
       name: "intro",

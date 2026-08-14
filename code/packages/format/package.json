@@ -1,0 +1,21 @@
+{
+  "name": "@indiecrafts/format",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./money": "./src/money.ts",
+    "./number": "./src/number.ts",
+    "./relative": "./src/relative.ts",
+    "./list": "./src/list.ts",
+    "./plural": "./src/plural.ts",
+    "./grammar": "./src/grammar.ts",
+    "./text": "./src/text.ts",
+    "./validate": "./src/validate.ts"
+  },
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*"
+  },
+  "scripts": { "test": "vitest run" }
+}

@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, pages, site, type Locale } from "@indiecrafts/config";
 import { localizedPathname } from "@/i18n/routing";
 import { isRssEnabled, requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
+import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
-import { buildArticleSchema } from "@/lib/seo/jsonld-factories";
+import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { DefaultPostLayout } from "@indiecrafts/blog/user-interface/post/layout/DefaultPostLayout";
 import { Modules } from "@indiecrafts/blog/user-interface/renderers/ModuleRenderer";
@@ -90,12 +91,14 @@ export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const [post, blog] = await Promise.all([
+  const [post, blog, display, nav] = await Promise.all([
     sanityFetchLive<Post | null>({ query: postBySlugQuery, params: { slug, locale } }),
     sanityFetchLive<BlogSingleton | null>({
       query: blogSingletonQuery,
       params: { locale },
     }),
+    getBlogSettings(),
+    getTranslations("nav"),
   ]);
   if (!post) notFound();
 
@@ -129,6 +132,23 @@ export default async function BlogPostPage({ params }: Props) {
   // only for a post with no publish date.
   const datePublished = post.publishedAt ?? new Date().toISOString();
 
+  // Breadcrumb trail for JSON-LD: Blog → (category) → post. The category
+  // crumb is included only when categories are enabled, so the schema never
+  // links to a 404'd taxonomy route.
+  const categoryCrumb = post.categories?.[0];
+  const breadcrumbItems = [
+    { name: nav("blog"), url: `${site.url}${localizedPathname("/blog", locale)}` },
+    ...(display.taxonomy.categories && categoryCrumb?.slug
+      ? [
+          {
+            name: categoryCrumb.title ?? "",
+            url: `${site.url}${localizedPathname(`/blog/category/${categoryCrumb.slug}`, locale)}`,
+          },
+        ]
+      : []),
+    { name: title, url: `${site.url}${path}` },
+  ];
+
   return (
     <DefaultLayout>
       <PageSchemas
@@ -140,10 +160,12 @@ export default async function BlogPostPage({ params }: Props) {
                 headline: title,
                 description,
                 datePublished,
+                dateModified: post.updatedAt,
                 authorNames: post.authors?.map((a) => a.name).filter(Boolean) as string[],
                 image,
                 url: `${site.url}${path}`,
               }),
+              buildBreadcrumbSchema(breadcrumbItems),
             ],
           },
         }}

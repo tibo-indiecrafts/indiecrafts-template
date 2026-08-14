@@ -14,3 +14,12 @@ export const legalPageQuery = defineQuery(`
     body
   }
 `);
+
+/**
+ * The privacy-policy page's last-updated date — stamped on newsletter/waitlist
+ * opt-ins as proof of which policy version the person consented to (GDPR). `null`
+ * when no privacy `legalPage` exists yet.
+ */
+export const consentPolicyVersionQuery = defineQuery(`
+  *[_type == "legalPage" && pageKey == "confidentialite"] | order(lastUpdated desc)[0].lastUpdated
+`);

@@ -1,9 +1,10 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@indiecrafts/i18n";
-import { features, type Locale } from "@indiecrafts/config";
-import { formatPostDate } from "@indiecrafts/utils";
+import { type Locale } from "@indiecrafts/config";
+import { formatDate } from "@indiecrafts/utils/format-date";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { FeaturedMedia } from "@indiecrafts/ui-components/renderers/FeaturedMedia";
+import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
+import { FeaturedMedia } from "@indiecrafts/ui-components/web/media/FeaturedMedia";
 
 /**
  * Post card used by the blog listing, category explorer, and author detail.
@@ -12,7 +13,7 @@ import { FeaturedMedia } from "@indiecrafts/ui-components/renderers/FeaturedMedi
  * The title link is stretched over the whole card, so a click anywhere that
  * isn't the play button or a raised link opens the post.
  */
-export function BlogCard({
+export async function BlogCard({
   post,
   locale,
   variant = "tall",
@@ -27,17 +28,21 @@ export function BlogCard({
   const categoryRef = post.categories?.[0];
   const category = categoryRef?.title;
   const categorySlug = categoryRef?.slug;
-  const date = formatPostDate(locale, post.publishedAt);
+  const date = formatDate(locale, post.publishedAt);
   const slug = post.slug ?? "";
   const title = post.metadata?.title ?? post.title ?? "";
   // Prefer the editorial excerpt; fall back to the SEO description.
-  const description = post.excerpt ?? post.metadata?.description;
   const authors = post.authors ?? [];
   const author = authors[0];
   const moreAuthors = authors.length - 1;
-  // Author / category link to routes gated per-type by `features.blogTaxonomy`.
-  const { authors: showAuthors, categories: showCategories } = features.blogTaxonomy;
-  const t = useTranslations("pages.blog");
+  // Author / category chips + excerpt follow the editor's display toggles
+  // (which already fold in `features.blogTaxonomy`).
+  const display = await getBlogSettings();
+  const { authors: showAuthors, categories: showCategories } = display.taxonomy;
+  const description = display.cards.excerpt
+    ? (post.excerpt ?? post.metadata?.description)
+    : undefined;
+  const t = await getTranslations({ locale, namespace: "pages.blog" });
 
   return (
     <article className="bg-card ring-border/60 group relative flex h-full flex-col overflow-hidden rounded-xl shadow-sm ring-1 transition hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0">

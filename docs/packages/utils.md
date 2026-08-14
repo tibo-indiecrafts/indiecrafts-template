@@ -4,12 +4,15 @@ The leaf brick: small, dependency-light functions, no React/Next runtime.
 
 | | |
 | --- | --- |
-| **Exports** | `.` → `src/index.ts` — a barrel re-exporting `cn` · `logger` · `slugify` · `video-embed` · `consent-signals` · `format-date` |
+| **Exports** | Subpath-only (no `.` barrel): `./cn` · `./slugify` · `./video-embed` · `./format-date`. Import one helper per path — `import { cn } from "@indiecrafts/utils/cn"`. (Logging moved to its own brick — [`@indiecrafts/logger`](./logger).) |
 | **Deps** | `@indiecrafts/config` (for `Locale` in `format-date`), `clsx`, `tailwind-merge` |
-| **Consumers** | app + blog (`ui` also depends on it for `cn`) |
+| **Consumers** | app + blog + `ui` (for `cn`) + `ui-components` |
 
-- **Gotcha:** this is the one brick you may safely barrel — it is a leaf and
-  side-effect-free. Deeper bricks stay barrel-less.
+- **Gotcha:** barrel-less like every brick. The `exports` map is
+  explicit-extension (`"./cn": "./src/cn.ts"`, sanity-style), so every consumer resolves
+  a subpath with no tsconfig `paths` entry. Add a helper file → add its `exports` line.
+- **Gotcha:** `format-date` exports `formatDate(locale, iso?, { month })` — a generic date
+  formatter (renamed from `formatPostDate`; it is not blog-specific).
 
 ## Wiring & conventions
 

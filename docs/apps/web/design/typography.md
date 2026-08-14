@@ -95,6 +95,37 @@ base element rules also cascade into `.prose` / `.typeset` article bodies (the
 typography plugin sets no heading font). Tailwind's `font-mono` utility resolves
 through `--font-mono` (registered in the `@theme inline` block).
 
+## Title highlights (`RichTitle`)
+
+Any title can colour a word in the brand accent by wrapping it in `[[ ]]`:
+
+```jsonc
+// messages/en.json
+"title": "Built to [[cover]] your needs"   // → "cover" renders in text-brand
+```
+
+Render the title through `RichTitle` (`@indiecrafts/ui-components/web/RichTitle`)
+instead of a raw `<hN>`:
+
+```tsx
+import { RichTitle } from "@indiecrafts/ui-components/web/RichTitle";
+
+<RichTitle as="h2" className="text-4xl font-semibold text-balance">
+  {t("title")}
+</RichTitle>
+```
+
+- **The reusable title primitive** — use it for app section titles (`messages/`) **and** Sanity
+  titles (an editor types `[[…]]` in the string field). One `[[word]]` parser serves both; it is
+  **i18n-agnostic** (the marker lives inside each already-localised string).
+- **`className` is the class-customisation surface** — `RichTitle` owns no type scale; pass the
+  element's Tailwind classes per call site (`cn`-merged, last wins). `as` picks the element
+  (`h1`–`h4`, `p`, `span`).
+- **Brand only** — the highlight is always `text-brand` (theme-aware; flips in dark mode via the
+  token). No palette, no per-span colour — see [`DESIGN.md`](../../../../code/packages/ui-tokens/DESIGN.md) § Colors.
+- **Safe to adopt anywhere** — a marker-free string renders as one plain segment, so wrapping an
+  existing title changes nothing until someone adds `[[…]]`.
+
 ## Prose (long-form body copy)
 
 `@tailwindcss/typography` is enabled at the top of `globals.css`

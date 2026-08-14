@@ -22,7 +22,7 @@ Injected in `src/app/[locale]/layout.tsx` (in `<head>`), only when `settings.ana
 
 ## The cookie banner
 
-The banner (`CookieBanner`) is a full consent manager — categories, a preferences dialog, a cookie inventory, and per-category Consent-Mode mapping, all edited in Sanity. It is mounted (inside the intl provider) only when `requireCookieConsent` is on. Accepting a category flips its mapped signals to `granted`; the layout's `default: denied` preamble runs first so prior state is respected. Full model, the `useConsent()` / `<ConsentGate>` / `<ConsentScript>` slots, and Consent-Mode mapping → **[Cookie consent](../config/cookie-consent.md)**.
+The banner (`CookieBanner`) is a full consent manager — categories, a preferences dialog, a cookie inventory, and per-category Consent-Mode mapping, all edited in Sanity. It is mounted (inside the intl provider) only when `requireCookieConsent` is on. Accepting a category flips its mapped signals to `granted`; the layout's `default: denied` preamble runs first so prior state is respected. Full model, the `useConsent()` / `<ConsentGate>` / `<ConsentScript>` slots, and Consent-Mode mapping → **[Cookie consent](/packages/consent)**.
 
 ## CSP note
 

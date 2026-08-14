@@ -83,7 +83,7 @@ For swipeable multi-image sets, use the [gallery module](./gallery.md) instead.
 
 ## 6. Inline modules (the "+" picker)
 
-On an empty line, click **+** to insert a fancy block. Nine modules are inline-embeddable (the allowlist is `INLINE_MODULES` in `blockContent.ts`, mirrored by `INLINE_TYPES` in `portable-text-components.tsx`). The Studio shows French labels matching each schema title.
+On an empty line, click **+** to insert a fancy block. Ten modules are inline-embeddable (the allowlist is `INLINE_MODULES` in `blockContent.ts`, mirrored by `INLINE_TYPES` in `portable-text-components.tsx`). The Studio shows French labels matching each schema title.
 
 | Studio label | Schema `_type` | What it does |
 | --- | --- | --- |
@@ -93,6 +93,7 @@ On an empty line, click **+** to insert a fancy block. Nine modules are inline-e
 | **Galerie d'images** | `module.gallery` | Swipeable carousel + thumbnails + click-to-zoom. See [gallery.md](./gallery.md). |
 | **Citations** | `module.quote-list` | Pull-quote stack referencing `quote` docs. |
 | **HTML personnalisé** | `module.custom-html` | Escape hatch — raw HTML via `dangerouslySetInnerHTML`. Trust the source. |
+| **Infolettre** | `module.newsletter` | Email capture — card / inline / banner. Posts to `/api/newsletter`; see [newsletter](../newsletter/). |
 | **Personnes** | `module.person-list` | Centered avatar grid referencing `person` docs. |
 | **Statistiques** | `module.stat-list` | Key-number grid with hairline separators. |
 | **Étapes** | `module.step-list` | Vertical numbered timeline — each step title + content. |

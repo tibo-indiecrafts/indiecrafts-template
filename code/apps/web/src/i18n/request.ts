@@ -1,15 +1,18 @@
 /**
- * Per-request i18n config — loads the active locale's single flat message
- * tree from `messages/<locale>.json`. No build-time merge, no per-route
- * aggregation, no per-block bake-in: every key the app reads at runtime
- * lives in that one file, including page content and block copy nested
- * under `pages.<id>.blocks.<simple>.*`.
+ * Per-request i18n config. The active locale's chrome strings are owned in
+ * Sanity (`uiMessages.<locale>`, read by `getUiMessages`) and **overlaid on the
+ * bundled `messages/<locale>.json` fallback** — Sanity is the edit surface, the
+ * JSON file is the resilience net (a Sanity hiccup never blanks the chrome, and
+ * `typography` — technical i18n/format rules — stays in the file, never in the
+ * CMS). Every `t(...)` call site is unchanged; only the source moved.
  *
  * next-intl calls this automatically via the plugin in next.config.ts.
  */
 
 import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
+import { getUiMessages } from "@/lib/ui-messages";
+import { overlayMessages } from "@/lib/overlay-messages";
 import { routing } from "./routing";
 
 export default getRequestConfig(async ({ requestLocale }) => {
@@ -18,7 +21,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
     ? requested
     : routing.defaultLocale;
 
-  const messages = (await import(`../../messages/${locale}.json`)).default;
+  const fallback = (await import(`../../messages/${locale}.json`)).default;
+  const overrides = await getUiMessages(locale);
+  const messages = overlayMessages(fallback, overrides) as Record<string, unknown>;
 
   return { locale, messages };
 });

@@ -1,0 +1,115 @@
+# Cloudflare Workers config for the Next.js app (via OpenNext).
+# Deploy: GitHub Actions runs `opennextjs-cloudflare build` then
+# `wrangler deploy --env <dev|staging|prod>`. Runbook + first-time setup
+# (R2 buckets, secrets, custom domain): docs/apps/web/setup/deployment.md
+#
+# Per client site, run `pnpm project:rename <slug>` — it rewrites every
+# `indiecrafts-web` resource name here AND `DEFAULT_SITE_PREFIX` in @indiecrafts/config,
+# then prints the R2 buckets to create. Do NOT hand-edit these names (a staging/prod
+# deploy is blocked until they differ from the template default — shared-account guard).
+
+name = "indiecrafts-web-dev"
+main = ".open-next/worker.js"
+compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat"]
+# Keep dashboard-set vars/secrets on deploy (don't wipe `wrangler secret put`).
+keep_vars = true
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+# Default bindings — used by `wrangler dev` / `opennextjs-cloudflare preview`
+# (no --env). Mirrors the dev environment.
+[[r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "indiecrafts-web-isr-dev"
+
+# ── Optional: Cloudflare D1 (relational data) + KV (cache) ───
+# The template's content lives in Sanity — add D1 only for data that ISN'T
+# content (orders, accounts, logs). `wrangler d1 create <name>` → paste the id,
+# then repeat the block under each [env.*] (like the R2 bucket). Docs: docs/db/.
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "indiecrafts-web-dev"
+# database_id = "<from `wrangler d1 create`>"
+# migrations_dir = "../../db/migrations"
+#
+# [[kv_namespaces]]
+# binding = "KV"
+# id = "<from `wrangler kv namespace create`>"
+#
+# In-app rate-limit fallback for @indiecrafts/security `withGuard`. OPTIONAL — the
+# Cloudflare WAF rate-limit rule on /api/* is the primary limiter; bind this and the
+# app-level fixed-window limiter also engages (and works in `wrangler dev`). Create:
+# `wrangler kv namespace create RATE_LIMIT_KV`.
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "<from `wrangler kv namespace create RATE_LIMIT_KV`>"
+
+# Workers Logs on for every environment (base + dev/staging/prod). `invocation_logs`
+# adds one summary line per request. View: dashboard → Worker → Logs, or `wrangler tail`.
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── dev ──────────────────────────────────────────────────────
+[env.dev]
+name = "indiecrafts-web-dev"
+workers_dev = true
+
+[env.dev.vars]
+# Non-production → robots.txt serves Disallow (see @indiecrafts/config env logic).
+NEXT_PUBLIC_ENVIRONMENT = "development"
+
+[[env.dev.r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "indiecrafts-web-isr-dev"
+
+[env.dev.observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── staging ──────────────────────────────────────────────────
+[env.staging]
+name = "indiecrafts-web-staging"
+workers_dev = true
+
+[env.staging.vars]
+NEXT_PUBLIC_ENVIRONMENT = "staging"
+
+[[env.staging.r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "indiecrafts-web-isr-staging"
+
+[env.staging.observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── prod ─────────────────────────────────────────────────────
+[env.prod]
+name = "indiecrafts-web"
+workers_dev = false
+
+[env.prod.vars]
+NEXT_PUBLIC_ENVIRONMENT = "production"
+# Set the production origin so canonical URLs / sitemap / OG resolve, and
+# `isSiteConfigured` flips true (until then robots.txt serves a full Disallow —
+# a safe default for an unconfigured prod).
+# NEXT_PUBLIC_SITE_URL = "https://your-domain.com"
+
+[[env.prod.r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "indiecrafts-web-isr-prod"
+
+[env.prod.observability.logs]
+enabled = true
+invocation_logs = true
+
+# Attach the production domain once DNS is on Cloudflare (uncomment + edit):
+# [[env.prod.routes]]
+# pattern = "your-domain.com"
+# custom_domain = true
+# [[env.prod.routes]]
+# pattern = "www.your-domain.com"
+# custom_domain = true

@@ -6,9 +6,8 @@ import { Logo } from "@/user-interface/shared/layout/Logo";
 import { LocaleSwitcher } from "@/user-interface/shared/layout/LocaleSwitcher";
 import { ThemeToggle } from "@/user-interface/shared/layout/ThemeToggle";
 import { NavIcon } from "@/user-interface/shared/components/NavIcon";
-import { SHOW_THEME_TOGGLE } from "@/lib/theme";
 import { Link } from "@/i18n/routing";
-import { features } from "@indiecrafts/config";
+import type { ThemeMode } from "@indiecrafts/config";
 import type { NavItem, NavLeaf } from "@/lib/navigation";
 import {
   NavigationMenu,
@@ -17,7 +16,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
-} from "@indiecrafts/ui/navigation-menu";
+} from "@indiecrafts/ui/web/navigation-menu";
 
 /**
  * Production site header. Logo + nav from the `navigation` singleton in Sanity
@@ -29,7 +28,16 @@ import {
  * so the production header can evolve independently. Fixed at the top —
  * DefaultLayout's `<main>` adds `pt-14 lg:pt-20` to clear the header height.
  */
-type HeaderProps = { name: string; logo?: string; logoDark?: string; items?: NavItem[] };
+type HeaderProps = {
+  name: string;
+  logo?: string;
+  logoDark?: string;
+  items?: NavItem[];
+  /** Resolved server-side from Sanity `themeModes` + `showLocaleSwitcher` (client can't await). */
+  showThemeToggle?: boolean;
+  themeModes?: readonly ThemeMode[];
+  showLocaleSwitcher?: boolean;
+};
 
 const topLinkClass =
   "text-muted-foreground hover:text-foreground flex-row items-center gap-1.5 px-3 py-2 font-normal";
@@ -60,7 +68,15 @@ function leafAnchor(leaf: NavLeaf, children: ReactNode) {
   );
 }
 
-export function Header({ name, logo, logoDark, items = [] }: HeaderProps) {
+export function Header({
+  name,
+  logo,
+  logoDark,
+  items = [],
+  showThemeToggle = false,
+  themeModes = [],
+  showLocaleSwitcher = true,
+}: HeaderProps) {
   const tNav = useTranslations("nav");
   return (
     <header className="bg-background/80 supports-[backdrop-filter]:bg-background/60 fixed inset-x-0 top-0 z-50 border-b backdrop-blur">
@@ -132,8 +148,8 @@ export function Header({ name, logo, logoDark, items = [] }: HeaderProps) {
               </NavigationMenuList>
             </NavigationMenu>
           ) : null}
-          {features.localeSwitcher ? <LocaleSwitcher /> : null}
-          {SHOW_THEME_TOGGLE ? <ThemeToggle /> : null}
+          {showLocaleSwitcher ? <LocaleSwitcher /> : null}
+          {showThemeToggle ? <ThemeToggle modes={themeModes} /> : null}
         </div>
       </div>
     </header>

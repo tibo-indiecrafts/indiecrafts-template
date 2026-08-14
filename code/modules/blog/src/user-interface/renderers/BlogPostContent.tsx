@@ -2,10 +2,12 @@ import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";
 import type { BlogPostContentModule, Post } from "@indiecrafts/blog/sanity/types";
-import { features, type Locale } from "@indiecrafts/config";
-import { formatPostDate } from "@indiecrafts/utils";
+import { type Locale } from "@indiecrafts/config";
+import { formatDate } from "@indiecrafts/utils/format-date";
+import { formatList } from "@indiecrafts/format/list";
 import { Link } from "@indiecrafts/i18n";
-import { portableComponents } from "@indiecrafts/ui-components/renderers/portable-text-components";
+import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
+import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
 
 /**
  * Renders the active post's header + body. The module schema itself has
@@ -25,17 +27,20 @@ export async function BlogPostContent({
   post: Post;
   locale: Locale;
 }) {
-  const t = await getTranslations({ locale, namespace: "pages.blog" });
+  const [t, display] = await Promise.all([
+    getTranslations({ locale, namespace: "pages.blog" }),
+    getBlogSettings(),
+  ]);
   const title = post.metadata?.title ?? post.title ?? "";
   const description = post.metadata?.description;
   const image = post.metadata?.image?.asset?.url;
-  const date = formatPostDate(locale, post.publishedAt, { month: "long" });
+  const date = display.post.date
+    ? formatDate(locale, post.publishedAt, { month: "long" })
+    : null;
   const categoryRef = post.categories?.[0];
   const authors = post.authors ?? [];
   const authorNames = authors.map((a) => a.name).filter(Boolean) as string[];
-  const authorsLabel = authorNames.length
-    ? new Intl.ListFormat(locale, { type: "conjunction" }).format(authorNames)
-    : "";
+  const authorsLabel = authorNames.length ? formatList(authorNames, locale) : "";
   // Only link the byline when there's a single author with a page.
   const singleAuthorHref =
     authors.length === 1 && authors[0]?.slug ? `/author/${authors[0].slug}` : null;
@@ -43,7 +48,7 @@ export async function BlogPostContent({
     authors: showAuthors,
     categories: showCategories,
     tags: showTags,
-  } = features.blogTaxonomy;
+  } = display.taxonomy;
 
   return (
     <article id={m.anchor} className="mx-auto max-w-3xl px-(--gutter) py-16 md:py-24">

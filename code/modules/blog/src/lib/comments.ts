@@ -1,7 +1,8 @@
 import "server-only";
 
-import { logger } from "@indiecrafts/utils";
+import { logger } from "@indiecrafts/logger";
 import { writeClient } from "@indiecrafts/sanity/write";
+import { notifyNewComment } from "./notify-comment";
 
 /**
  * Comment submission — the single runtime write path. Validates the input, then
@@ -70,6 +71,9 @@ export async function createComment(
       if (ok === input.postId) parent = { _type: "reference", _ref: input.parentId };
     }
 
+    // One-time token for the email moderation buttons (approve / spam / delete).
+    const moderationToken = crypto.randomUUID();
+
     await writeClient.create({
       _type: "comment", // hard-coded — never from the request
       approved: false,
@@ -80,7 +84,11 @@ export async function createComment(
       ...(parent ? { parent } : {}),
       consent: true,
       createdAt,
+      moderationToken,
     });
+    // Best-effort owner alert — `notifyNewComment` never throws, so a mail
+    // failure can't turn an already-saved comment into a 500.
+    await notifyNewComment(input, moderationToken);
     return { ok: true };
   } catch (error) {
     logger.error("comment create failed", { postId: input.postId, error });

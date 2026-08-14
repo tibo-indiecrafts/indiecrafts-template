@@ -47,6 +47,25 @@ import { fileURLToPath } from "node:url";
 
 /** Local seed media — checked-in assets uploaded to Sanity (vs the Unsplash URLs). */
 const MEDIA_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "seed-media");
+const MESSAGES_DIR = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "messages",
+);
+
+/**
+ * Seed the per-locale UI dictionary (`uiMessages.<locale>`) from the bundled
+ * `messages/<locale>.json` fallback — Sanity becomes the edit surface; the file
+ * stays the resilience net. `typography` is dropped (technical i18n/format rules
+ * that stay in the file, never in the CMS — matches the schema's exclusion).
+ */
+const buildUiMessages = () =>
+  ["en", "fr"].map((lang) => {
+    const { typography: _typography, ...copy } = JSON.parse(
+      readFileSync(path.join(MESSAGES_DIR, `${lang}.json`), "utf8"),
+    );
+    return { _id: `uiMessages.${lang}`, _type: "uiMessages", language: lang, ...copy };
+  });
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
@@ -150,6 +169,14 @@ const imgBlock = (name, alt = "") => {
     alt,
   };
 };
+
+const codeBlk = (language, filename, code) => ({
+  _type: "codeBlock",
+  _key: key("code"),
+  language,
+  filename,
+  code,
+});
 
 const pStrong = (lead, strong, tail = "") => ({
   _type: "block",
@@ -350,6 +377,29 @@ const buildSiteMeta = () => [
         homeLabel: "← Back home",
       },
     },
+    versionPrompt: {
+      message: "A new version is available.",
+      reload: "Reload",
+      dismiss: "Dismiss",
+    },
+    taxonomyPages: {
+      author: {
+        heading: "Creators behind the content",
+        subheading:
+          "Learn more about the talented writers and contributors shaping every story you read.",
+        empty: "No authors yet. Check back soon.",
+      },
+      category: {
+        heading: "Browse by category",
+        subheading: "Pick a topic to see every article filed under it.",
+        empty: "No categories yet. Check back soon.",
+      },
+      tag: {
+        heading: "Browse by tag",
+        subheading: "Pick a tag to see every article carrying that label.",
+        empty: "No tags yet. Check back soon.",
+      },
+    },
     pageSeo: [
       pgSeo(
         "home",
@@ -358,6 +408,14 @@ const buildSiteMeta = () => [
         "Next.js template, client websites, freelance",
         "## What Indie Crafts is\n\nA config-first Next.js 16 template for freelancers and studios shipping client websites. Edit one config file, compose sections, and deploy in a weekend.\n\n## Highlights\n\n- SEO, Open Graph, structured data, and llms.txt — all editable per language in Sanity.\n- i18n (English + French by default), accessibility-first, Tailwind v4 design tokens.\n- Optional Sanity-powered blog with a 13-module page builder.",
         "The config-first Next.js template for client websites — home page.",
+      ),
+      pgSeo(
+        "waitlist",
+        "Join the waitlist — early access",
+        "Sign up for early access and we'll let you know the moment we launch.",
+        "waitlist, early access, sign up",
+        undefined,
+        "Join the early-access waitlist.",
       ),
       pgSeo(
         "blog",
@@ -435,6 +493,29 @@ const buildSiteMeta = () => [
         homeLabel: "← Retour à l'accueil",
       },
     },
+    versionPrompt: {
+      message: "Une nouvelle version est disponible.",
+      reload: "Recharger",
+      dismiss: "Ignorer",
+    },
+    taxonomyPages: {
+      author: {
+        heading: "Les créateurs derrière les contenus",
+        subheading:
+          "Découvrez les autrices et auteurs talentueux qui façonnent chaque article que vous lisez.",
+        empty: "Aucun auteur pour le moment. Revenez bientôt.",
+      },
+      category: {
+        heading: "Parcourir par catégorie",
+        subheading: "Choisissez un thème pour voir tous les articles qui en relèvent.",
+        empty: "Aucune catégorie pour le moment. Revenez bientôt.",
+      },
+      tag: {
+        heading: "Parcourir par tag",
+        subheading: "Choisissez un tag pour voir tous les articles qui le portent.",
+        empty: "Aucun tag pour le moment. Revenez bientôt.",
+      },
+    },
     pageSeo: [
       pgSeo(
         "home",
@@ -443,6 +524,14 @@ const buildSiteMeta = () => [
         "template Next.js, sites clients, freelance",
         "## Ce qu'est Indie Crafts\n\nUn template Next.js 16 config-first pour freelances et studios qui livrent des sites clients. Éditez un fichier de config, composez des sections, et déployez en un week-end.\n\n## Points clés\n\n- SEO, Open Graph, données structurées et llms.txt — tout est éditable par langue dans Sanity.\n- i18n (anglais + français par défaut), accessibilité, tokens de design Tailwind v4.\n- Blog optionnel propulsé par Sanity avec un page-builder de 13 modules.",
         "Le template Next.js config-first pour sites clients — page d'accueil.",
+      ),
+      pgSeo(
+        "waitlist",
+        "Rejoignez la liste d'attente — accès anticipé",
+        "Inscrivez-vous pour l'accès anticipé — nous vous préviendrons dès le lancement.",
+        "liste d'attente, accès anticipé, inscription",
+        undefined,
+        "Rejoignez la liste d'attente pour l'accès anticipé.",
       ),
       pgSeo(
         "blog",
@@ -539,6 +628,22 @@ const buildSiteSettings = () => ({
       url: "https://indiecrafts.dev",
     },
   ],
+  // Theme availability + display toggles (Sanity overrides the config defaults).
+  themeModes: { light: true, dark: true, system: true, forced: "none" },
+  showLocaleSwitcher: true,
+  showStructuredData: true,
+  showFaq: true,
+  // Footer maker credit — the indiecrafts.dev values (`image` is a live external
+  // OG asset). A client can rebrand or clear it in the Studio.
+  madeBy: {
+    name: "L'Atelier Web Des Alpes",
+    href: "https://indiecrafts.dev",
+    domain: "indiecrafts.dev",
+    image: "https://indiecrafts.dev/brand/og-home.webp",
+    title: "Front-end Design Engineer — AI-accelerated interface design in code",
+    description:
+      "Freelance front-end design engineer in the French Alps — UX design, UI design, product design and design systems. I design and build websites and digital interfaces directly in code, accelerated by AI.",
+  },
 });
 
 // ─── Documents ─────────────────────────────────────────────────
@@ -669,6 +774,26 @@ const categories = [
     title: "Histoires",
     slug: slug("histoires"),
     description: "Récits de fondateurs, leçons apprises.",
+  },
+];
+
+const series = [
+  {
+    _id: "series.en.ship-mvp",
+    _type: "series",
+    language: "en",
+    title: "Ship your first MVP",
+    slug: slug("ship-your-first-mvp"),
+    description: "A three-part guide from blank repo to a deployed, configurable MVP.",
+  },
+  {
+    _id: "series.fr.ship-mvp",
+    _type: "series",
+    language: "fr",
+    title: "Lancez votre premier MVP",
+    slug: slug("lancez-votre-premier-mvp"),
+    description:
+      "Un guide en trois parties, du dépôt vide au MVP déployé et configurable.",
   },
 ];
 
@@ -1065,6 +1190,308 @@ const inline = {
     _key: key("m"),
     html,
   }),
+
+  newsletter: (fields) => ({
+    _type: "module.newsletter",
+    _key: key("m"),
+    variant: "banner",
+    ...fields,
+  }),
+};
+
+// ─── Homepage (page-builder) ──────────────────────────────────
+// Per-locale `homePage.<locale>` singletons: an ordered `pageModules[]` of the
+// same `module.*` blocks the blog body uses, rendered by the (home) route via
+// `renderBlock`. This copy used to live in `messages/pages.home.*`; it now
+// lives here (Sanity is the source, editable in Studio → Accueil).
+
+const extCta = (label, url, variant = "primary") => ({
+  _type: "cta",
+  variant,
+  link: { _type: "link", type: "external", label, external: url, newTab: false },
+});
+
+const EN_HOME = {
+  hero: {
+    eyebrow: "Config-first template",
+    title: "Ship [[client websites]] in a weekend",
+    subtitle:
+      "A modular Next.js foundation with i18n, SEO, a11y and Tailwind wired up — edit config, not code.",
+    ctaLabel: "See pricing",
+  },
+  features: {
+    title: "Built to [[cover]] your needs",
+    body: "Extensive customization, full control, and AI-assisted workflows — in one tidy package.",
+    items: [
+      [
+        "zap",
+        "Customizable",
+        "Extensive customization options, allowing you to tailor every aspect to meet your specific needs.",
+      ],
+      [
+        "settings",
+        "You have full control",
+        "From design elements to functionality, complete control to create a unique and personalized experience.",
+      ],
+      [
+        "sparkles",
+        "Powered by AI",
+        "Smart defaults, intelligent suggestions, and automated workflows built on modern AI primitives.",
+      ],
+    ],
+  },
+  pricing: {
+    title: "Pricing that scales with you",
+    body: "Start free. Upgrade when you need more seats, storage, or support.",
+    tiers: [
+      {
+        name: "Free",
+        price: "$0",
+        period: "/ mo",
+        description: "Per editor",
+        cta: "Get Started",
+        features: [
+          "Basic Analytics Dashboard",
+          "5GB Cloud Storage",
+          "Email and Chat Support",
+        ],
+      },
+      {
+        name: "Pro",
+        price: "$19",
+        period: "/ mo",
+        description: "Per editor",
+        cta: "Get Started",
+        highlighted: true,
+        badge: "Popular",
+        features: [
+          "Everything in Free Plan",
+          "Access to Community Forum",
+          "Single User Access",
+          "Access to Basic Templates",
+          "Mobile App Access",
+          "1 Custom Report Per Month",
+          "Monthly Product Updates",
+          "Standard Security Features",
+        ],
+      },
+      {
+        name: "Startup",
+        price: "$29",
+        period: "/ mo",
+        description: "Per editor",
+        cta: "Get Started",
+        features: [
+          "Everything in Pro Plan",
+          "50GB Cloud Storage",
+          "Priority Email and Chat Support",
+        ],
+      },
+    ],
+  },
+  testiTitle: "Testimonials",
+  cta: {
+    title: "Start Building",
+    body: "Drop your email — we'll send you the first steps.",
+    emailPlaceholder: "Your email address",
+    submit: "Get started",
+    consent: "I agree to receive occasional product emails. I can unsubscribe anytime.",
+  },
+  faq: {
+    title: "Frequently asked questions",
+    subtitle:
+      "Everything you need to know about the template. Can't find an answer? Reach out.",
+    items: [
+      [
+        "Do I need to touch code to rebrand?",
+        "No. Point the config at your brand — name, colors, logo, languages — and the whole site follows. You only write code to add new sections or logic.",
+      ],
+      [
+        "How does adding a language work?",
+        "Add one row to the locale config and drop in a translations file. URLs, SEO, the sitemap, and the language switcher all update on their own.",
+      ],
+      [
+        "Is it SEO-ready out of the box?",
+        "Yes. Titles, descriptions, canonical URLs, hreflang, Open Graph, and JSON-LD — including this FAQ's rich-result markup — are generated from your content.",
+      ],
+      [
+        "Can I turn features off?",
+        "Every surface — blog, legal page, RSS, LLM endpoints, this FAQ — is a single flag. Flip it off and its routes, links, and sitemap entries disappear together.",
+      ],
+    ],
+  },
+};
+
+const FR_HOME = {
+  hero: {
+    eyebrow: "Template piloté par la configuration",
+    title: "Livrez des [[sites clients]] en un week-end",
+    subtitle:
+      "Une base Next.js modulaire avec i18n, SEO, accessibilité et Tailwind — modifiez la config, pas le code.",
+    ctaLabel: "Voir les tarifs",
+  },
+  features: {
+    title: "Conçu pour [[couvrir]] vos besoins",
+    body: "Personnalisation poussée, contrôle total et flux de travail assistés par l'IA — le tout dans un seul package.",
+    items: [
+      [
+        "zap",
+        "Personnalisable",
+        "Des options de personnalisation poussées qui vous laissent ajuster chaque aspect à vos besoins.",
+      ],
+      [
+        "settings",
+        "Contrôle total",
+        "Des éléments de design à la logique, vous gardez la main pour créer une expérience unique.",
+      ],
+      [
+        "sparkles",
+        "Propulsé par l'IA",
+        "Valeurs par défaut intelligentes, suggestions contextuelles et workflows automatisés sur des primitives IA modernes.",
+      ],
+    ],
+  },
+  pricing: {
+    title: "Une tarification qui évolue avec vous",
+    body: "Commencez gratuitement. Évoluez quand vous avez besoin de plus de sièges, de stockage ou de support.",
+    tiers: [
+      {
+        name: "Gratuit",
+        price: "0 €",
+        period: "/ mois",
+        description: "Par éditeur",
+        cta: "Commencer",
+        features: [
+          "Tableau de bord analytique de base",
+          "5 Go de stockage cloud",
+          "Support email et chat",
+        ],
+      },
+      {
+        name: "Pro",
+        price: "19 €",
+        period: "/ mois",
+        description: "Par éditeur",
+        cta: "Commencer",
+        highlighted: true,
+        badge: "Populaire",
+        features: [
+          "Tout le plan Gratuit",
+          "Accès au forum communautaire",
+          "Un seul utilisateur",
+          "Accès aux templates de base",
+          "Application mobile",
+          "1 rapport personnalisé par mois",
+          "Mises à jour mensuelles",
+          "Sécurité standard",
+        ],
+      },
+      {
+        name: "Startup",
+        price: "29 €",
+        period: "/ mois",
+        description: "Par éditeur",
+        cta: "Commencer",
+        features: [
+          "Tout le plan Pro",
+          "50 Go de stockage cloud",
+          "Support email et chat prioritaire",
+        ],
+      },
+    ],
+  },
+  testiTitle: "Témoignages",
+  cta: {
+    title: "Lancez-vous",
+    body: "Laissez-nous votre email — on vous envoie les premières étapes.",
+    emailPlaceholder: "Votre adresse email",
+    submit: "Commencer",
+    consent:
+      "J'accepte de recevoir occasionnellement des emails. Je peux me désinscrire à tout moment.",
+  },
+  faq: {
+    title: "Questions fréquentes",
+    subtitle:
+      "Tout ce qu'il faut savoir sur le template. Vous ne trouvez pas ? Écrivez-nous.",
+    items: [
+      [
+        "Faut-il coder pour changer de marque ?",
+        "Non. Renseignez la config avec votre marque — nom, couleurs, logo, langues — et tout le site suit. Le code ne sert qu'à ajouter des sections ou de la logique.",
+      ],
+      [
+        "Comment ajouter une langue ?",
+        "Ajoutez une ligne à la config des langues et déposez un fichier de traductions. URLs, SEO, sitemap et sélecteur de langue se mettent à jour automatiquement.",
+      ],
+      [
+        "Le SEO est-il prêt d'emblée ?",
+        "Oui. Titres, descriptions, URLs canoniques, hreflang, Open Graph et JSON-LD — y compris le balisage rich result de cette FAQ — sont générés à partir de votre contenu.",
+      ],
+      [
+        "Peut-on désactiver des fonctionnalités ?",
+        "Chaque surface — blog, page légale, RSS, endpoints LLM, cette FAQ — est un simple drapeau. Désactivez-le et ses routes, liens et entrées de sitemap disparaissent ensemble.",
+      ],
+    ],
+  },
+};
+
+const buildHomePage = () => {
+  const doc = (lang, c) => ({
+    _id: `homePage.${lang}`,
+    _type: "homePage",
+    language: lang,
+    pageModules: [
+      {
+        _type: "module.hero",
+        _key: key("m"),
+        eyebrow: c.hero.eyebrow,
+        title: c.hero.title,
+        subtitle: c.hero.subtitle,
+        cta: extCta(c.hero.ctaLabel, "#pricing"),
+      },
+      {
+        _type: "module.feature-grid",
+        _key: key("m"),
+        title: c.features.title,
+        intro: c.features.body,
+        items: c.features.items.map(([icon, title, body]) => ({
+          _key: key("f"),
+          icon,
+          title,
+          body,
+        })),
+      },
+      {
+        _type: "module.pricing",
+        _key: key("m"),
+        anchor: "pricing",
+        title: c.pricing.title,
+        intro: c.pricing.body,
+        tiers: c.pricing.tiers.map((t) => ({
+          _key: key("t"),
+          name: t.name,
+          price: t.price,
+          period: t.period,
+          description: t.description,
+          ...(t.highlighted ? { highlighted: true, badge: t.badge } : {}),
+          features: t.features,
+          cta: extCta(t.cta, "#get-started", t.highlighted ? "primary" : "secondary"),
+        })),
+      },
+      inline.quoteList(c.testiTitle, [`quote.${lang}.lovelace`, `quote.${lang}.hopper`]),
+      {
+        ...inline.newsletter({
+          heading: c.cta.title,
+          body: c.cta.body,
+          emailPlaceholder: c.cta.emailPlaceholder,
+          buttonLabel: c.cta.submit,
+          consentText: c.cta.consent,
+        }),
+        anchor: "get-started",
+      },
+      inline.accordionList(c.faq.title, c.faq.subtitle, c.faq.items),
+    ],
+  });
+  return [doc("en", EN_HOME), doc("fr", FR_HOME)];
 };
 
 // `blog.postModules` is shared across locales — anything hardcoded here
@@ -1181,6 +1608,16 @@ const showcaseBody = ({ quoteLocale, copy }) => [
     `<div style="padding: 1.25rem; text-align: center; border-radius: 0.75rem; background: var(--muted); color: var(--muted-foreground); font-size: 0.875rem;">${copy.customHtmlBody}</div>`,
   ),
   p(copy.afterCustomHtml),
+  inline.newsletter({
+    heading: copy.newsletterHeading,
+    body: copy.newsletterBody,
+    buttonLabel: copy.newsletterButton,
+    consentText: copy.newsletterConsent,
+    successMessage: copy.newsletterSuccess,
+    alreadyMessage: copy.newsletterAlready,
+    errorMessage: copy.newsletterError,
+  }),
+  p(copy.afterNewsletter),
 
   h(2, copy.closingHeading),
   pLink(
@@ -1323,6 +1760,17 @@ const showcaseCopyEn = {
     "Most newsletters and embed widgets live in a block exactly like this one — a centred frame of arbitrary HTML the editor controls end to end.",
   afterCustomHtml:
     "That is the entire surface area of the body editor. From here on out, what shows up on the page is whatever you write.",
+  newsletterHeading: "Ship it, then keep in touch",
+  newsletterBody:
+    "One email a month — new guides, nothing else. The signup block is a page-builder module like every other on this page.",
+  newsletterButton: "Subscribe",
+  newsletterConsent:
+    "I agree to receive the newsletter and to my email being stored for that purpose.",
+  newsletterSuccess: "Thanks! Your signup is saved.",
+  newsletterAlready: "You're already on the list — thanks!",
+  newsletterError: "Something went wrong. Please try again.",
+  afterNewsletter:
+    "Every submission lands in the Studio under Abonnés, or forwards to your email provider — your choice, set once in config.",
   closingHeading: "Closing thought",
   closingLead: "The template this guide ships with — ",
   closingLinkText: "indiecrafts.dev",
@@ -1467,6 +1915,17 @@ const showcaseCopyFr = {
     "La plupart des newsletters et widgets embed atterrissent dans un bloc exactement comme celui-ci — un cadre centré de HTML arbitraire que l'éditeur contrôle de bout en bout.",
   afterCustomHtml:
     "Voilà la surface complète de l'éditeur de corps. À partir d'ici, ce qui s'affiche sur la page, c'est ce que vous écrivez.",
+  newsletterHeading: "Livrez, puis restez en contact",
+  newsletterBody:
+    "Un e-mail par mois — de nouveaux guides, rien d'autre. Ce bloc d'inscription est un module du page builder comme les autres sur cette page.",
+  newsletterButton: "S'inscrire",
+  newsletterConsent:
+    "J'accepte de recevoir l'infolettre et que mon adresse e-mail soit conservée à cette fin.",
+  newsletterSuccess: "Merci ! Votre inscription est bien enregistrée.",
+  newsletterAlready: "Vous êtes déjà inscrit·e — merci !",
+  newsletterError: "Une erreur s'est produite. Merci de réessayer.",
+  afterNewsletter:
+    "Chaque inscription arrive dans le Studio sous Abonnés, ou est transmise à votre fournisseur d'e-mails — au choix, réglé une fois dans la config.",
   closingHeading: "Pour conclure",
   closingLead: "Le template fourni avec ce guide — ",
   closingLinkText: "indiecrafts.dev",
@@ -1503,6 +1962,9 @@ const post = (
     featured,
     body,
     imageKey,
+    // Optional series membership: a `series` doc `_id` + a 1-based order.
+    series,
+    seriesOrder,
     // Optional featured video: an embed link (YouTube/Vimeo/Dailymotion). An
     // uploaded file goes in the `videoFile` field in the Studio — the seed only
     // demos the link path. `videoAutoplay`/`videoControls` are honored on the hero.
@@ -1526,6 +1988,8 @@ const post = (
   categories: cats.map((c) => ({ _type: "reference", _ref: c, _key: key("c") })),
   tags: postTags.map((t) => ({ _type: "reference", _ref: t, _key: key("t") })),
   featured: !!featured,
+  ...(series ? { series: { _type: "reference", _ref: series } } : {}),
+  ...(seriesOrder !== undefined ? { seriesOrder } : {}),
   body,
   metadata: {
     title,
@@ -1545,6 +2009,8 @@ const buildPosts = () => [
     language: "en",
     title: "Fast prototyping with Next.js: zero to MVP in a weekend",
     slug: "fast-prototyping-with-nextjs",
+    series: "series.en.ship-mvp",
+    seriesOrder: 1,
     description:
       "A two-day playbook for going from blank repo to a deployed MVP. Tooling choices, escape hatches, and the steps to skip on the first pass.",
     excerpt:
@@ -1566,6 +2032,8 @@ const buildPosts = () => [
     language: "en",
     title: "Shipping a client site in a weekend",
     slug: "shipping-a-client-site-in-a-weekend",
+    series: "series.en.ship-mvp",
+    seriesOrder: 2,
     description:
       "A no-nonsense breakdown of how to deliver a brochure site Friday-to-Sunday: pricing, scope, tooling, and the exact words to use with the client.",
     daysOld: 4,
@@ -1592,6 +2060,8 @@ const buildPosts = () => [
     language: "en",
     title: "Why config-first beats convention-first for client work",
     slug: "config-first-vs-convention-first",
+    series: "series.en.ship-mvp",
+    seriesOrder: 3,
     description:
       "Every client has the same five pages and 27 unique opinions about each. Config-first templates let you accommodate the 27 without rewriting the five.",
     daysOld: 14,
@@ -1607,6 +2077,17 @@ const buildPosts = () => [
       li("Brand theming without touching components."),
       li("Per-client feature flags (does this one need a blog? cookies?)."),
       li("Faster onboarding — new contractor reads one file, ships the next day."),
+      p("A single feature map decides what each client site ships:"),
+      codeBlk(
+        "ts",
+        "config/features.ts",
+        `export const features = {
+  blog: true,
+  blogSearch: true,
+  blogSeries: true,
+  blogComments: false, // this client doesn't want comments
+} as const;`,
+      ),
     ],
   }),
 
@@ -1660,6 +2141,8 @@ const buildPosts = () => [
     language: "fr",
     title: "Prototypage rapide avec Next.js : de zéro au MVP en un week-end",
     slug: "prototypage-rapide-avec-nextjs",
+    series: "series.fr.ship-mvp",
+    seriesOrder: 1,
     description:
       "Un guide en deux jours pour passer du dépôt vide au MVP déployé. Choix d'outillage, échappatoires, et les étapes à sauter dès le premier jet.",
     excerpt:
@@ -1679,6 +2162,8 @@ const buildPosts = () => [
     language: "fr",
     title: "Livrer un site client en un week-end",
     slug: "livrer-un-site-client-en-un-week-end",
+    series: "series.fr.ship-mvp",
+    seriesOrder: 2,
     description:
       "Marche à suivre sans détour pour livrer un site vitrine du vendredi au dimanche : tarification, périmètre, outils, et les mots exacts à dire au client.",
     daysOld: 4,
@@ -1702,6 +2187,8 @@ const buildPosts = () => [
     language: "fr",
     title: "Pourquoi le « config-first » bat la convention en agence",
     slug: "config-first-vs-convention",
+    series: "series.fr.ship-mvp",
+    seriesOrder: 3,
     description:
       "Chaque client a les mêmes cinq pages et 27 opinions uniques sur chacune. Un template config-first absorbe les 27 sans réécrire les cinq.",
     daysOld: 14,
@@ -1765,6 +2252,22 @@ const blog = {
   // related-posts section. Populate from Studio to swap in a
   // module-driven shell that applies to every article.
   postModules: [],
+  // Display toggles — every element ON by default (an unset toggle also reads
+  // as shown). Editors hide taxonomy chips + their routes, post meta, the
+  // frontpage mosaic, or card excerpts from Studio → no code deploy.
+  display: {
+    taxonomy: { categories: true, tags: true, authors: true },
+    post: {
+      date: true,
+      readingTime: true,
+      tableOfContents: true,
+      relatedPosts: true,
+      share: true,
+      readingProgress: true,
+    },
+    frontpage: { featuredHero: true },
+    cards: { excerpt: true },
+  },
   // Editable per-locale copy for the comment section (a `localeString` per
   // field). Editors change the wording in Studio → no code deploy.
   comments: {
@@ -1828,6 +2331,158 @@ const comments = [
     parent: { _type: "reference", _ref: "comment.demo-approved" },
     consent: true,
     createdAt: daysAgo(0),
+  },
+];
+
+// ─── Newsletter subscribers — the "Abonnés" moderation desk demo ─
+// Captured via /api/newsletter (destination "sanity"). One per status so
+// each Studio sub-list (En attente / Confirmés / Désabonnés) has a row.
+const subscribers = [
+  {
+    _id: "subscriber.demo-pending",
+    _type: "subscriber",
+    email: "alan.turing@example.com",
+    status: "pending",
+    consent: true,
+    source: "/blog/fast-proto-nextjs",
+    language: "en",
+    createdAt: daysAgo(0),
+  },
+  {
+    _id: "subscriber.demo-confirmed",
+    _type: "subscriber",
+    email: "grace.hopper@example.com",
+    status: "confirmed",
+    consent: true,
+    source: "/blog/fast-proto-nextjs",
+    language: "en",
+    createdAt: daysAgo(3),
+  },
+  {
+    _id: "subscriber.demo-unsubscribed",
+    _type: "subscriber",
+    email: "ada.lovelace@example.com",
+    status: "unsubscribed",
+    consent: true,
+    source: "/fr/blog/fast-proto-nextjs",
+    language: "fr",
+    createdAt: daysAgo(9),
+  },
+];
+
+// ─── E-mails singleton — config + translated copy for every email ─
+// Owner alerts ship OFF (fill recipients + a Resend-verified From to enable).
+// The subscriber double opt-in copy is translated + ready; toggle it on + set a
+// verified From. The only secret is RESEND_API_KEY (env).
+const emailStrings = {
+  _id: "emailStrings",
+  _type: "emailStrings",
+  commentNotification: {
+    enabled: false,
+    subject: "Nouveau commentaire à modérer : {{post}}",
+  },
+  newsletterConfirm: {
+    enabled: false,
+    subject: { en: "Confirm your subscription", fr: "Confirmez votre inscription" },
+    heading: { en: "One last step", fr: "Plus qu'une étape" },
+    intro: {
+      en: "Thanks for signing up!\nConfirm your email address to start receiving the newsletter.",
+      fr: "Merci pour votre inscription !\nConfirmez votre adresse e-mail pour commencer à recevoir l'infolettre.",
+    },
+    buttonLabel: { en: "Confirm my subscription", fr: "Confirmer mon inscription" },
+    outro: {
+      en: "Didn't sign up? You can safely ignore this email.",
+      fr: "Vous n'avez pas demandé ceci ? Ignorez simplement cet e-mail.",
+    },
+  },
+  newsletterOwner: {
+    enabled: false,
+    subject: "Nouvel abonné à l'infolettre : {{email}}",
+  },
+  waitlistConfirm: {
+    enabled: false,
+    subject: { en: "You're on the waitlist", fr: "Vous êtes sur la liste d'attente" },
+    heading: { en: "Welcome to the list", fr: "Bienvenue sur la liste" },
+    intro: {
+      en: "Thanks for joining! Your spot on the waitlist is reserved — we'll reach out as soon as access is available.",
+      fr: "Merci de votre inscription ! Votre place sur la liste d'attente est réservée — nous vous contacterons dès que l'accès sera disponible.",
+    },
+    outro: {
+      en: "Didn't sign up? You can safely ignore this email.",
+      fr: "Vous n'avez pas demandé ceci ? Ignorez simplement cet e-mail.",
+    },
+  },
+  waitlistOwner: {
+    enabled: false,
+    subject: "Nouvelle inscription à la liste d'attente : {{email}}",
+  },
+};
+
+// ─── Waitlist — settings singleton + demo entries ───────────────
+const newsletterSettings = {
+  _id: "newsletterSettings",
+  _type: "newsletterSettings",
+  enabled: true,
+  heading: { en: "Get the newsletter", fr: "Recevez l'infolettre" },
+  description: {
+    en: "Occasional articles and updates — no spam, unsubscribe anytime.",
+    fr: "Des articles et actualités de temps en temps — sans spam, désinscription à tout moment.",
+  },
+  buttonLabel: { en: "Subscribe", fr: "S'abonner" },
+  consentLabel: {
+    en: "I agree to receive the newsletter and to my email being stored for that purpose.",
+    fr: "J'accepte de recevoir l'infolettre et que mon adresse e-mail soit conservée à cette fin.",
+  },
+  successMessage: {
+    en: "Almost there — check your inbox to confirm your subscription.",
+    fr: "Presque terminé — vérifiez votre boîte mail pour confirmer votre inscription.",
+  },
+};
+
+const waitlistSettings = {
+  _id: "waitlistSettings",
+  _type: "waitlistSettings",
+  enabled: true,
+  heading: { en: "Join the early access", fr: "Rejoignez l'accès anticipé" },
+  description: {
+    en: "Be the first to know when we launch.",
+    fr: "Soyez les premiers prévenus au lancement.",
+  },
+  nameLabel: { en: "Your name", fr: "Votre nom" },
+  buttonLabel: { en: "Join the list", fr: "Rejoindre la liste" },
+  consentLabel: {
+    en: "I agree to be contacted about early access and to my email being stored for that purpose.",
+    fr: "J'accepte d'être contacté·e au sujet de l'accès anticipé et que mon adresse e-mail soit conservée à cette fin.",
+  },
+  successMessage: {
+    en: "You're on the list — thanks! We'll keep you posted.",
+    fr: "Vous êtes sur la liste — merci ! Nous vous tiendrons au courant.",
+  },
+};
+
+// Captured via /api/waitlist (or added by hand). One per status for the desk demo.
+const waitlistEntries = [
+  {
+    _id: "waitlistEntry.demo-waiting",
+    _type: "waitlistEntry",
+    email: "grace.hopper@example.com",
+    name: "Grace Hopper",
+    status: "waiting",
+    consent: true,
+    source: "/",
+    language: "en",
+    createdAt: daysAgo(1),
+  },
+  {
+    _id: "waitlistEntry.demo-invited",
+    _type: "waitlistEntry",
+    email: "ada.lovelace@example.com",
+    name: "Ada Lovelace",
+    status: "invited",
+    consent: true,
+    source: "/fr",
+    language: "fr",
+    createdAt: daysAgo(5),
   },
 ];
 
@@ -2253,8 +2908,8 @@ const buildCookieConsent = () => ({
   banner: {
     title: navLabel("We respect your privacy", "Nous respectons votre vie privée"),
     body: navLabel(
-      "We use cookies to run the site and, with your consent, to measure and improve it.",
-      "Nous utilisons des cookies pour faire fonctionner le site et, avec votre accord, le mesurer et l'améliorer.",
+      "Essential cookies keep the site working. With your consent, we also use analytics and marketing cookies — you can accept, reject, or choose, and change your mind anytime.",
+      "Les cookies essentiels font fonctionner le site. Avec votre accord, nous utilisons aussi des cookies de mesure d'audience et marketing — vous pouvez accepter, refuser ou choisir, et changer d'avis à tout moment.",
     ),
   },
   categories: [
@@ -2321,6 +2976,19 @@ const buildCookieConsent = () => ({
     {
       _key: key("ck"),
       _type: "cookieEntry",
+      name: "legal-ack",
+      provider: "Indiecrafts",
+      categoryKey: "necessary",
+      purpose: navLabel(
+        "Remembers that you acknowledged the latest legal/policy update.",
+        "Mémorise que vous avez pris connaissance de la dernière mise à jour légale.",
+      ),
+      duration: "1 year",
+      party: "first",
+    },
+    {
+      _key: key("ck"),
+      _type: "cookieEntry",
       name: "_ga",
       provider: "Google Analytics",
       categoryKey: "analytics",
@@ -2360,6 +3028,24 @@ const buildCookieConsent = () => ({
   ],
 });
 
+// Legal re-acceptance singleton — copy for the "we updated our policies" banner.
+// Read by `getLegalAcceptance` (@indiecrafts/consent/sanity/legal). The effective
+// version is the tracked legal pages' lastUpdated; `version` here is an optional
+// manual bump.
+const buildLegalConsent = () => ({
+  _id: "legalConsent",
+  _type: "legalConsent",
+  version: "1",
+  banner: {
+    message: navLabel(
+      "We updated our Privacy Policy and Terms.",
+      "Nous avons mis à jour notre politique de confidentialité et nos conditions.",
+    ),
+    reviewLabel: navLabel("Review", "Consulter"),
+    acceptLabel: navLabel("Accept", "Accepter"),
+  },
+});
+
 async function run() {
   console.log(`Seeding into ${projectId}/${dataset}…`);
   console.log("");
@@ -2375,17 +3061,26 @@ async function run() {
     ...buildAuthors(),
     ...categories,
     ...tags,
+    ...series,
     ...buildQuotes(),
     ...buildPeople(),
     ...buildPosts(),
     ...buildTranslationMeta(),
     ...buildSiteMeta(),
+    ...buildHomePage(),
+    ...buildUiMessages(),
     buildSiteSettings(),
     ...buildLegalPages(),
     buildNavigation(),
     buildCookieConsent(),
+    buildLegalConsent(),
     blog,
     ...comments,
+    ...subscribers,
+    emailStrings,
+    newsletterSettings,
+    waitlistSettings,
+    ...waitlistEntries,
   ];
 
   console.log(`Committing ${allDocs.length} documents…`);

@@ -29,6 +29,7 @@ All live in `.env.example` and **all are optional** — the template runs as-is 
 | --- | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | yes | placeholder `https://example.com` | Production origin (scheme + host, no trailing slash). Feeds `site.url` → canonical, sitemap, JSON-LD, OG, robots. **Set only on the production deploy** — while unset, `isSiteConfigured` stays false and robots serves `Disallow: /`. |
 | `NEXT_PUBLIC_ENVIRONMENT` | yes | unset (NODE_ENV decides) | Overrides `getCurrentEnvironment()`. Drives CSP + robots: only `production` is indexable; every other value serves `Disallow: /`. Valid: `development` \| `test` \| `staging` \| `production`. Set `staging` on preview deploys for the tighter CSP. |
+| `NEXT_PUBLIC_SITE_PREFIX` | no | `DEFAULT_SITE_PREFIX` (`indiecrafts`) | Per-deployment namespace → `site.prefix`. Prefixes the consent/theme/locale browser keys so two instances never collide. Normally set via `pnpm project:rename <slug>` (which writes the config default); this env var is the escape hatch to override it without editing code. Must be unique per client. |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | yes | — | Sanity project. Required for the Studio at `/studio` and any Sanity query. Find under sanity.io/manage → your project → API. |
 | `NEXT_PUBLIC_SANITY_DATASET` | yes | `production` | Sanity dataset name. |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | yes | `2025-01-01` | Pinned API version — bump intentionally so query semantics stay stable. |

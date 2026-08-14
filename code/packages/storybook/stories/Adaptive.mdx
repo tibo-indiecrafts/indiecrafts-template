@@ -1,0 +1,99 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Adaptive & container queries" />
+
+# Adaptive & container queries
+
+How the template adapts UI to size. Full doctrine: `code/apps/web/.claude/rules/adaptive-design.md`
+· `docs/apps/web/design/adaptive-responsive.md` · `DESIGN.md § Responsive`. This page is the **live**
+version — drag the box below to watch a container query fire.
+
+## Four tiers — reach for the lightest that holds
+
+1. **Reflow** _(the default)_ — fluid grid (`repeat(auto-fit, minmax(…, 1fr))`), `clamp()` type,
+   flexbox. Much needs no breakpoint at all.
+2. **Viewport breakpoints** (`sm 640 · md 768 · lg 1024 · xl 1280`) — size the **page**: section
+   rhythm (`py-16 md:py-32`), page-level grids, global chrome.
+3. **Container queries** (`@container` on a parent + named `@sm`…`@7xl` on children) — size a
+   **component** by its own width, not the viewport.
+4. **Context swap** _(adaptive, only where earned)_ — different **markup** at a threshold, when the
+   **content** (not just the size) must change — a dense table becoming prioritised cards.
+
+Plus: `@media (pointer/hover)` for input method (never gate function on hover) and safe-area insets
+for notches.
+
+## The rule: viewport = PAGE, `@container` = COMPONENT
+
+A reusable block renders in **two widths** — the ~1152px full-width slot **and** the ~768px blog
+article column. A viewport grid (`lg:grid-cols-4`) reads **1440px even while squeezed into a 768px
+column**. So any inline-embeddable `module.*` block **must** be container-driven.
+
+| Use | For |
+| --- | --- |
+| **Viewport** (`md:`, `lg:`) | page sections, single-context surfaces (homepage, footer, header), vertical rhythm |
+| **`@container`** (`@2xl:`, `@4xl:`) | reusable blocks that appear in the blog column **and** full-width (card-list, stat-list, person-list) |
+| **Reflow / intrinsic** | media (carousel, `next/image`), single-column blocks — no breakpoint needed |
+
+**Syntax:** named sizes are `@4xl:` (min-width). `@min-[…]` / `@max-[…]` are only for **arbitrary**
+widths — `@min-4xl:` is invalid and generates nothing.
+
+## Live demo — drag to resize the CONTAINER
+
+Grab the box's bottom-right corner and drag it narrower/wider. The columns follow the **box** width,
+not your browser width — that is a container query. Resize your whole browser instead and it won't
+change until the box does.
+
+<div
+  style={{
+    containerType: "inline-size",
+    resize: "horizontal",
+    overflow: "auto",
+    width: 440,
+    minWidth: 260,
+    maxWidth: "100%",
+    border: "1px solid var(--border, #e5e7eb)",
+    borderRadius: 12,
+    padding: 16,
+    background: "var(--muted, #f5f5f5)",
+  }}
+>
+  <div className="cq-demo-grid">
+    {[1, 2, 3, 4, 5, 6].map((n) => (
+      <div
+        key={n}
+        style={{
+          background: "var(--card, #fff)",
+          border: "1px solid var(--border, #e5e7eb)",
+          borderRadius: 8,
+          padding: 16,
+          fontSize: 14,
+          fontWeight: 500,
+        }}
+      >
+        Card {n}
+      </div>
+    ))}
+  </div>
+  <p style={{ marginTop: 12, fontSize: 12, opacity: 0.7 }}>
+    1 col &lt; 384px · 2 cols ≥ 384px (`@sm`) · 3 cols ≥ 672px (`@2xl`)
+  </p>
+</div>
+
+<style>{`
+  .cq-demo-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @container (min-width: 384px) { .cq-demo-grid { grid-template-columns: repeat(2, 1fr); } }
+  @container (min-width: 672px) { .cq-demo-grid { grid-template-columns: repeat(3, 1fr); } }
+`}</style>
+
+In Tailwind v4 that same demo is `@container` on the box + `grid-cols-1 @sm:grid-cols-2
+@2xl:grid-cols-3` on the grid — no JS, no `ResizeObserver`. See the real thing in **UI Components ›
+CardList / StatList / PersonList**: resize their story frame and the column count tracks the frame.
+
+## Verify
+
+- **Container queries need width, not viewport** — resize the component's **frame** in Storybook (or
+  the box above), don't just resize the window.
+- App floor: **375 / 768 / 1280** + a touch device + the ~820px tablet gap.
+- A block inline in a blog post at a 1440px viewport shows the **narrow-column** count; the same
+  block full-width shows more. If it shows desktop columns in the article column, it's still on
+  viewport breakpoints — fix it.

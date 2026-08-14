@@ -5,23 +5,23 @@
  */
 
 import createMiddleware from "next-intl/middleware";
-import { type NextRequest, NextResponse } from "next/server";
+import { type NextRequest } from "next/server";
 import { features } from "@indiecrafts/config";
+import { maintenanceRewrite } from "@indiecrafts/system-pages/proxy";
+import { getMaintenanceMode } from "@/lib/maintenance";
 import { routing } from "@/i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-export default function proxy(request: NextRequest) {
-  // Maintenance mode: rewrite every matched request to the `/maintenance`
-  // page with a 503 (temporary). The matcher already excludes `/studio` and
-  // the metadata routes, so editors + crawlers' sitemap/robots stay reachable.
-  // The rewrite is invisible to the URL bar and never loops back on itself.
-  if (features.maintenance && !request.nextUrl.pathname.startsWith("/maintenance")) {
-    return NextResponse.rewrite(new URL("/maintenance", request.url), {
-      status: 503,
-      headers: { "Retry-After": "3600" },
-    });
-  }
+export default async function proxy(request: NextRequest) {
+  // Maintenance mode: rewrite every matched request to `/maintenance` (503) when
+  // EITHER the build-time hard override (`features.maintenance`) OR the live Sanity
+  // toggle (`siteSettings.maintenanceMode`, cached per-isolate, fail-open) is on.
+  // The `||` short-circuits, so the hard override skips the Sanity read. The matcher
+  // already excludes `/studio` + metadata routes, so editors + crawlers stay reachable.
+  const isDown = features.maintenance || (await getMaintenanceMode());
+  const maintenance = maintenanceRewrite(request, isDown);
+  if (maintenance) return maintenance;
   return intlMiddleware(request);
 }
 

@@ -25,12 +25,12 @@ Contenu
 ├─ Blog
 │  ├─ Mise en page (singleton)   ← the one blog doc that governs /blog/[slug] chrome
 │  ├─ Articles                   ← posts, split English / Français (+ Toutes les langues)
-│  ├─ Auteurs                    ← writer profiles, split by language
+│  ├─ Auteurs                    ← writer profiles (+ social links), split by language
 │  ├─ Catégories                 ← topic taxonomy, split by language
-│  └─ Tags                       ← finer labels, split by language
-├─ Références
-│  ├─ Citations                  ← reusable quote docs, split by language
-│  └─ Personnes                  ← reusable person docs, split by language
+│  ├─ Tags                       ← finer labels, split by language
+│  └─ Séries                     ← ordered multi-part collections, split by language
+├─ Témoignages                   ← quote docs (data for the quote-list block), split by language
+├─ Équipe                        ← person docs (data for the person-list block), split by language
 ├─ SEO & métadonnées             ← site-wide SEO singletons (core, not blog)
 ├─ Navigation
 ├─ Cookies & consentement
@@ -57,11 +57,13 @@ The post document has a hidden `language` field (set by the language leaf you en
 | --- | --- |
 | **Titre** | Display title. Required. |
 | **Extrait** | Teaser on listing cards + top of the post. Falls back to the SEO **Description** (Métadonnées) when empty. |
-| **Publié le** | `datetime`. Leave blank and it stays unset — set it when you want a fixed publication date. |
+| **Publié le** | `datetime`. Blank = published now (uses the created date). **Set a future date to schedule** — the post stays out of every listing, feed, sitemap, and related grid until that date passes (its own URL still works, so you can share a preview link). |
 | **Auteur·rice·s** | A list — add **one or several** authors (drag to reorder; the first leads on cards). Language-filtered picker: an EN post only lists EN authors. A co-written post shows on every author's page. |
 | **Catégories** | Reference array, language-filtered. A post can sit in several. |
 | **Tags** | Reference array, language-filtered. Each tag gets `/blog/tag/<slug>`. |
 | **Mis en avant** | Boolean. When true the post is eligible for the featured hero grid on `/blog` (`featuredPostsQuery`). |
+| **Série** | Optional. Attach the post to a series (a multi-part guide). Create series under **Blog → Séries**. Empty = standalone post. |
+| **Ordre dans la série** | The post's position in the series (1, 2, 3…). Shown only when a **Série** is set. Empty = ordered by date. |
 | **Corps** | The rich-text body — see [§4](#4-the-body-editor). |
 
 ### 3.3 Métadonnées fields
@@ -105,6 +107,7 @@ The **Corps** field is Sanity Portable Text (`blockContent`). Hit the **+** at t
 - **Lists** — Puces (bullet) and Numéros (numbered)
 - **Marks** — Gras, Italique, Code, Souligné, Barré, and URL links
 - **Inline image** — hotspot-enabled
+- **Bloc de code** — syntax-highlighted code (set the language, e.g. `tsx`; optional filename). Colours adapt to light/dark automatically (Shiki)
 - **Inline modules** — 9 blocks droppable anywhere in the flow: Encadré (callout), Cartes (card list), Galerie d'images, Personnes (person list), Statistiques (stat list), Étapes (step list), Citations (quote list), Accordéon, HTML personnalisé
 
 The four page-chrome modules — Prose, Hero du blog, Contenu d'article, Articles — are **not** in the body picker. They live in the `blog` singleton's `Modules par article` (`postModules`) layout slot ([§6](#6-post-layout-the-singleton)).
@@ -136,18 +139,38 @@ Preview a saved draft **on the live site** before publishing.
 
 **Blog → Mise en page** opens the single `blog` document. Its **Modules par article** (`postModules`) composes the chrome wrapped around **every** `/blog/[slug]`: a Contenu d'article module renders the body, with Hero du blog / Articles around it. Leave the array empty and posts fall back to the built-in `DefaultPostLayout`.
 
-The `/blog` frontpage itself is **not** editor-configurable — it always renders the default (featured hero grid + categories + tags + top authors). Change it in code.
+The `/blog` frontpage layout is **not** module-composable, but its major elements toggle on and off — see §6.1.
+
+### 6.1 Display settings (Affichage du blog)
+
+The same **Blog → Mise en page** document holds an **Affichage du blog** group. Each toggle shows or hides a blog element without a code deploy. Every toggle is ON by default; an empty toggle also reads as shown (the legend says "Vide = affiché").
+
+| Group | Toggle | Turning it off |
+| --- | --- | --- |
+| **Catégories, tags, auteur·rice·s** | Catégories | Hides category chips **and** the `/blog/category` pages (dropped from the sitemap + AI files). |
+| | Tags | Hides tag chips **and** the `/blog/tag` pages. |
+| | Auteur·rice·s | Hides author bylines **and** the `/author` pages. |
+| **Page article** | Date de publication | Hides the published date on a post. |
+| | Temps de lecture | Hides the "N min" reading estimate. |
+| | Sommaire | Hides the table of contents. |
+| | À lire ensuite | Hides the related-posts grid. |
+| | Boutons de partage | Hides the X / LinkedIn / Facebook / copy-link row in the post footer. |
+| | Barre de progression de lecture | Hides the thin scroll-progress bar at the top of a post. |
+| **Accueil du blog** | Grille « à la une » | Swaps the featured mosaic for a simple grid. |
+| **Cartes d'article** | Extrait | Hides the teaser under each card title. |
+
+**Taxonomy toggles remove routes, not just chips.** Turning **Catégories** off returns 404 on every `/blog/category/...` URL and drops them from the sitemap and `/llms.txt`. It stays off until you turn it back on — no deploy either way. A toggle only appears when its capability is compiled in (`features.blogTaxonomy.*`); see [`blog-architecture.md`](./blog-architecture.md).
 
 ---
 
 ## 7. Reuse content across posts (References)
 
-**Références** holds docs you pick from inside modules:
+Two top-level sections hold docs you pick from inside modules:
 
-- **Citations** (quote docs) — author + role + body + portrait. Insert a Citations (quote list) module and pick existing quotes; editing the quote doc updates every post that references it.
-- **Personnes** (person docs) — used by the Personnes (person list) module, same pattern.
+- **Témoignages** (quote docs) — author + role + body + portrait. Insert a Citations (quote list) module and pick existing testimonials; editing the doc updates every post that references it.
+- **Équipe** (person docs) — used by the Personnes (person list) module, same pattern.
 
-Create via **Références → Citations / Personnes → + Create**. Both are language-split — create the quote/person in the locale you'll reference it from.
+Create via **Témoignages** / **Équipe → + Create**. Both are language-split — create the doc in the locale you'll reference it from. _(These are promoted to first-class domains; a future release generalizes them to full `testimonial` / `team` entities — see `temp-sanity.md` Pack 1.)_
 
 ---
 
@@ -166,6 +189,7 @@ Wrong-language post? There's no editable `Langue` field (hidden by the plugin) �
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | Post saved but missing from `/blog` | `metadata.noIndex`, `hideFromDiscovery`, or `unpublished` is on — or the language doesn't match the route | Untick the visibility flag; confirm the locale badge in **Translations** matches the URL |
+| Post saved but missing from listings, feed still shows old count | **Publié le** is a **future** date (scheduled) | Set **Publié le** to now (or past) to publish immediately; it appears automatically once the date passes |
 | Post 404s at its own URL | `metadata.unpublished` is on | Untick **Dépublier** |
 | Cover image cropped oddly | Hotspot is centered but the subject isn't | Click the image → drag the round dot onto the subject |
 | Post renders without a hero image | `metadata.image` is empty | Set **Image sociale** on the Métadonnées tab |

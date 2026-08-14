@@ -21,6 +21,7 @@ Load when building or reviewing any UI. `jsx-a11y` rules are eslint errors.
 
 **Verify**
 
+- **On the fly:** the `.claude/hooks/a11y-check.mjs` hook cards `jsx-a11y` findings as you edit UI (structural a11y — alt/labels/roles/aria/keyboard); the commit `lint-staged` run is the hard gate. Details → `docs/apps/web/setup/on-the-fly-checks.md`.
 - `pnpm verify:contrast` gates WCAG **AA** on theme tokens — run after any color change.
-- Check every change at **375 / 768 / 1280**; nothing overflows or clips.
-- Deeper guide: `docs/apps/web/design/responsive-design.md`.
+- Check every change at **375 / 768 / 1280** (the floor) + a coarse-pointer (touch) device; nothing overflows or clips. Adaptive-aware layout → `rules/adaptive-design.md`.
+- Deeper guide: `docs/apps/web/design/adaptive-responsive.md`.

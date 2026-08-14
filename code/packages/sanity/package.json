@@ -6,6 +6,7 @@
   "exports": {
     "./client": "./src/client.ts",
     "./image": "./src/image.ts",
+    "./module": "./src/module.ts",
     "./write": "./src/write.ts",
     "./live": "./src/live.ts",
     "./env": "./src/env.ts",

@@ -20,7 +20,7 @@ Companion docs:
 | Model | Sanity | When to pick |
 | --- | --- | --- |
 | **Fork + new Sanity project** | Brand-new project; the client owns the bill + permissions | Default for paid client work |
-| **Fork + new dataset on a shared project** | Same project id, dataset like `acme-prod` | Internal projects or many low-traffic clients you maintain |
+| **Fork + new dataset on a shared project** | Same project id, dataset like `acme-prod` (**never reuse `production`** — clients on one project would share content) | Internal projects or many low-traffic clients you maintain |
 | **Fork without Sanity** | `features.blog: false` + `features.studio: false`, no Studio | Brochure site with no blog or editor surface |
 
 The rest of this doc assumes the **first model**.
@@ -37,6 +37,14 @@ pnpm install
 
 This is a pnpm + Turbo monorepo; the workspace root is the repo root. All app scripts run from there (`pnpm dev`, `pnpm build`, `pnpm seed`, …) and fan out through Turbo to `@indiecrafts/web` at `code/apps/web`. Rename the root `package.json` `name` while you are here if you want the workspace to read as the client's.
 
+**Then rename the project namespace — one command, do it now:**
+
+```bash
+pnpm project:rename <slug>     # e.g. acme  (lowercase, unique per client)
+```
+
+This sets `DEFAULT_SITE_PREFIX` in `@indiecrafts/config` **and** every `wrangler.toml` resource name (`<slug>-web*`) together. The prefix namespaces the browser keys (consent record, theme, locale cookie) and the Cloudflare Worker + R2 buckets, so two clients never collide. A `staging`/`prod` deploy is **blocked** until you do this (a shared-Cloudflare-account guard). It then prints the R2 buckets to create (§10).
+
 ---
 
 ## 3. Environment variables
@@ -50,12 +58,14 @@ Every var is optional — the template boots with none set (placeholder origin, 
 | Variable | Scope | Notes |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | production only | Scheme + host, no trailing slash (`https://acme.com`). Feeds `site.url` → `metadataBase`, canonicals, sitemap, JSON-LD, OG, robots. While unset the site keeps the placeholder origin, `isSiteConfigured` stays `false`, and robots serves a full `Disallow: /`. |
+| `NEXT_PUBLIC_SITE_PREFIX` | optional | The per-deployment namespace. Usually **unset** — `pnpm project:rename` (§2) sets `DEFAULT_SITE_PREFIX` in config instead. Set this only to override the namespace by env without editing code. Prefixes the consent/theme/locale keys; must be unique per client. |
 | `NEXT_PUBLIC_ENVIRONMENT` | optional | `development` \| `test` \| `staging` \| `production`. Only `production` is indexable; every other value serves `Disallow: /`. Drives the CSP in `next.config.ts`. When unset, `NODE_ENV` decides. Set `staging` on preview deploys for the tighter CSP. |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | all envs | Public. Required for the Studio and any `@indiecrafts/sanity/client` query. |
 | `NEXT_PUBLIC_SANITY_DATASET` | all envs | Public. Usually `production`. |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | all envs | Pins query semantics. Defaults to `2025-01-01`; bump intentionally. |
 | `SANITY_API_READ_TOKEN` | all envs | **Server-only.** Viewer role is enough. Powers draft-mode preview (`/api/draft-mode/enable`) and the live-preview fetch used by blog routes. |
 | `SANITY_API_WRITE_TOKEN` | local only | Editor role. Read **only** by `pnpm seed`. Never set it in a deploy env. |
+| `RESEND_API_KEY` | server-only | Transactional email. **Reusing the template:** one key = one shared Resend account (shared quota/logs/verified domains). Give each client its **own** Resend account/key for real isolation — the per-site `From` (Sanity) is not enough. Verify with Studio → E-mails → "Envoyer un test". |
 
 Never commit `.env.local` — `.gitignore` already blocks every `.env*` except `.env.example`. Never move a server token under a `NEXT_PUBLIC_` prefix.
 
@@ -171,7 +181,7 @@ export const features = {
 
 `blog: false` drops every blog route from routing, sitemap, llms, RSS, and nav. `studio` is gated **separately**, so `studio: true` keeps editors working while the public blog is hidden. Each `legal.*` and `blogTaxonomy.*` toggles a route independently. Full per-flag behaviour: [`../config/feature-flags.md`](../config/feature-flags.md). Maintenance mode: [`./maintenance-mode.md`](./maintenance-mode.md).
 
-Note: analytics id and the cookie-consent banner are **not** flags here — both are edited in Sanity (`siteSettings.analytics`). See [`../seo/analytics.md`](../seo/analytics.md) and [`../config/cookie-consent.md`](../config/cookie-consent.md).
+Note: analytics id and the cookie-consent banner are **not** flags here — both are edited in Sanity (`siteSettings.analytics`). See [`../seo/analytics.md`](../seo/analytics.md) and [`/packages/consent`](/packages/consent).
 
 ### 5.6 — `seoDefaults`
 
@@ -291,11 +301,12 @@ Then walk the smoke test in [`../../../modules/blog/sanity-setup.md`](../../../m
 
 ## 10. Deploy
 
-Host-agnostic — Vercel, Netlify, self-hosted Docker all work. Set these in the platform's env config:
+The app deploys to **Cloudflare Workers** ([runbook](./deployment)). **You must have run `pnpm project:rename <slug>` (§2)** — a `staging`/`prod` deploy is blocked while the Worker/R2 names are the template default (shared-account clobber guard). Then create the `<slug>-web-isr-*` R2 buckets it printed and set these as Worker vars/secrets (and GitHub Environment vars/secrets for CI):
 
 | Variable | Where | Notes |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | production | Real origin — unlocks live canonical/sitemap/OG and indexable robots |
+| `RESEND_API_KEY` | server secret | Transactional email — give each client its **own** Resend account/key (see §3) |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | all envs | Public — the Studio uses it too |
 | `NEXT_PUBLIC_SANITY_DATASET` | all envs | Usually `production` |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | all envs | Match local (`2025-01-01` default) |
@@ -311,6 +322,7 @@ Robots: with `NEXT_PUBLIC_SITE_URL` set and `NEXT_PUBLIC_ENVIRONMENT=production`
 
 | Want to change | Where |
 | --- | --- |
+| Project namespace (deploy names + browser keys) | `pnpm project:rename <slug>` → `DEFAULT_SITE_PREFIX` (config) + `wrangler.toml` |
 | Production origin (canonicals, sitemap, robots) | `NEXT_PUBLIC_SITE_URL` env |
 | Brand name, tagline, description, social, contact, business/legal | Sanity → SEO & métadonnées / site settings |
 | Logo, favicon, OG cards | Sanity (`siteSettings.logo`/`icon`, `siteMeta.<locale>.ogImage`) |

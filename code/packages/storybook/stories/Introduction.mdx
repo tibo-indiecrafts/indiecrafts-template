@@ -1,0 +1,27 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Introduction" />
+
+# indiecrafts design system
+
+Live documentation for the three design-system packages. Flip **light / dark** with the
+theme toolbar (top bar) — everything keys on `data-theme`, so tokens, components, code blocks,
+and prose all invert together.
+
+## Packages
+
+- **`@indiecrafts/ui-tokens`** — the source of truth: OKLCH color roles, radius, typography
+  (`globals.css` + `typeset.css`). See **Design Tokens** in the sidebar. The visual contract is
+  `code/packages/ui-tokens/DESIGN.md`.
+- **`@indiecrafts/ui`** — 61 shadcn/ui primitives (Button, Card, Dialog, Form…). CLI-managed;
+  styled entirely by the tokens. See **UI** in the sidebar. Each primitive keeps a colocated
+  `.md` usage doc.
+- **`@indiecrafts/ui-components`** — the page-builder block renderers (Callout, CardList,
+  Gallery, CodeBlock…) shared by the app and the blog. See **UI Components** in the sidebar.
+
+## How the stories are organized
+
+Stories live **next to their component** in each package (`button.stories.tsx` beside
+`button.tsx`), so docs never drift from source. This Storybook package only aggregates them.
+
+> When you add or change a component, add or update its story in the same change.

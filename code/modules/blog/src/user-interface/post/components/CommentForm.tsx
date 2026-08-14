@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@indiecrafts/ui/button";
-import { Input } from "@indiecrafts/ui/input";
-import { Textarea } from "@indiecrafts/ui/textarea";
-import { Checkbox } from "@indiecrafts/ui/checkbox";
-import { Label } from "@indiecrafts/ui/label";
+import { Button } from "@indiecrafts/ui/web/button";
+import { Input } from "@indiecrafts/ui/web/input";
+import { Textarea } from "@indiecrafts/ui/web/textarea";
+import { Checkbox } from "@indiecrafts/ui/web/checkbox";
+import { Label } from "@indiecrafts/ui/web/label";
 
 type Status = "idle" | "submitting" | "success" | "error";
 

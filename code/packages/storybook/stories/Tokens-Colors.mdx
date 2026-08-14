@@ -1,0 +1,44 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { Swatch, SwatchGrid } from "./_swatch";
+
+<Meta title="Design Tokens/Colors" />
+
+# Color roles
+
+The authoritative colors, defined in OKLCH on `:root` in
+`@indiecrafts/ui-tokens/globals.css`. Chips paint from the live CSS variable — flip the theme
+toolbar to see each role in dark mode.
+
+## Base roles
+
+<SwatchGrid>
+  <Swatch token="--background" name="Page background" />
+  <Swatch token="--foreground" name="Body text" />
+  <Swatch token="--muted" name="Muted surface" />
+  <Swatch token="--muted-foreground" name="Muted text" />
+  <Swatch token="--brand" name="Brand / primary action" />
+  <Swatch token="--brand-foreground" name="On brand" />
+  <Swatch token="--destructive" name="Destructive / error" />
+  <Swatch token="--destructive-foreground" name="On destructive" />
+  <Swatch token="--border" name="Borders + rings base" />
+  <Swatch token="--ring" name="Focus ring" />
+  <Swatch token="--illustration" name="Illustration accent" />
+</SwatchGrid>
+
+## shadcn aliases
+
+These map onto the base roles so shadcn primitives inherit the same palette.
+
+<SwatchGrid>
+  <Swatch token="--primary" name="= brand" />
+  <Swatch token="--primary-foreground" />
+  <Swatch token="--secondary" name="= muted" />
+  <Swatch token="--secondary-foreground" />
+  <Swatch token="--accent" name="= muted" />
+  <Swatch token="--accent-foreground" />
+  <Swatch token="--card" name="= background" />
+  <Swatch token="--card-foreground" />
+  <Swatch token="--popover" />
+  <Swatch token="--popover-foreground" />
+  <Swatch token="--input" name="= border" />
+</SwatchGrid>

@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/config";
-import { getCookieConsent, type CookieRow } from "@/lib/cookies";
-import { ManagePreferencesButton } from "@/user-interface/shared/layout/ManagePreferencesButton";
+import type { CookieRow } from "@indiecrafts/consent/consent-signals";
+import { getCookieConsent } from "@indiecrafts/consent/sanity/cookies";
+import { ManagePreferencesButton } from "@indiecrafts/consent/ManagePreferencesButton";
 
 /**
  * The cookie declaration table, rendered on the cookie-policy page from the Sanity
@@ -41,7 +42,11 @@ export async function CookieDeclaration({ locale }: { locale: Locale }) {
             </h3>
             <ul className="mt-3 space-y-2">
               {rows.map((row) => (
-                <CookieCard key={row.name} row={row} party={t(`party.${row.party ?? "first"}`)} />
+                <CookieCard
+                  key={row.name}
+                  row={row}
+                  party={t(`party.${row.party ?? "first"}`)}
+                />
               ))}
             </ul>
           </div>

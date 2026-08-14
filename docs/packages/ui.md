@@ -1,5 +1,7 @@
 # `@indiecrafts/ui` — design-system component layer
 
+> **Browse it:** every primitive has a live story — `pnpm storybook` ([storybook package](./storybook)).
+
 The 61 shadcn/ui primitives + `use-mobile`. CLI-managed — **don't hand-edit**; `shadcn add`
 regenerates these files (its `components.json` aliases point here). Each primitive's usage
 doc is colocated with its source (`code/packages/ui/src/<name>.md` beside `<name>.tsx`),
@@ -7,7 +9,7 @@ indexed from the [`DESIGN.md` component catalog](../../code/packages/ui-tokens/D
 
 | | |
 | --- | --- |
-| **Exports** | `./use-mobile` → `src/use-mobile.ts`; `./*` → `src/*.tsx` (import a primitive by name, e.g. `@indiecrafts/ui/button`) |
+| **Exports** | Platform-nested. `./web/use-mobile` → `src/web/use-mobile.ts`; `./web/*` → `src/web/*.tsx` (import a primitive by name, e.g. `@indiecrafts/ui/web/button`); `./shared/*` → `src/shared/*.ts` (platform-agnostic contracts). `src/native/` reserved for React-Native primitives. |
 | **Deps** | `@indiecrafts/utils` (`cn`) + primitive libs: `@base-ui/react`, `radix-ui`, `@shadcn/react`, `class-variance-authority`, `cmdk`, `embla-carousel-react`, `input-otp`, `lucide-react`, `next-themes`, `react-day-picker`, `react-hook-form`, `react-resizable-panels`, `sonner`, `vaul`; `@types/react`/`@types/react-dom` (dev). **Peer:** `react`/`react-dom 19.2.4` |
 | **Consumers** | app + blog |
 

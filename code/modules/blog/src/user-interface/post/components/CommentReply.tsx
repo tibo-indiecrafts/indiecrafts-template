@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@indiecrafts/ui/button";
+import { Button } from "@indiecrafts/ui/web/button";
 import { CommentForm } from "@indiecrafts/blog/user-interface/post/components/CommentForm";
 
 /**

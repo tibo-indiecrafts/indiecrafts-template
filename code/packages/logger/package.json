@@ -1,0 +1,16 @@
+{
+  "name": "@indiecrafts/logger",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./sentry": "./src/sentry.ts"
+  },
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

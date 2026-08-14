@@ -1,0 +1,37 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { Swatch, SwatchGrid } from "./_swatch";
+
+<Meta title="Design Tokens/Sidebar & Charts" />
+
+# Sidebar & chart palettes
+
+Two grouped palettes from `@indiecrafts/ui-tokens/globals.css`. Flip the theme toolbar to see
+their dark values.
+
+## Sidebar
+
+Drives the shadcn `sidebar` primitive (its own surface + accent, kept distinct from the page).
+
+<SwatchGrid>
+  <Swatch token="--sidebar" name="Sidebar surface" />
+  <Swatch token="--sidebar-foreground" name="Sidebar text" />
+  <Swatch token="--sidebar-primary" name="Active item" />
+  <Swatch token="--sidebar-primary-foreground" />
+  <Swatch token="--sidebar-accent" name="Hover / accent" />
+  <Swatch token="--sidebar-accent-foreground" />
+  <Swatch token="--sidebar-border" name="Divider" />
+  <Swatch token="--sidebar-ring" name="Focus ring" />
+</SwatchGrid>
+
+## Chart palette
+
+Five categorical colors (`color-1…5`) for charts + data viz — chosen to stay distinguishable in
+both themes.
+
+<SwatchGrid>
+  <Swatch token="--color-1" name="Series 1" />
+  <Swatch token="--color-2" name="Series 2" />
+  <Swatch token="--color-3" name="Series 3" />
+  <Swatch token="--color-4" name="Series 4" />
+  <Swatch token="--color-5" name="Series 5" />
+</SwatchGrid>

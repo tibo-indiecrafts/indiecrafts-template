@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { getLocale } from "next-intl/server";
-import type { Locale } from "@indiecrafts/config";
+import { features, type Locale } from "@indiecrafts/config";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
+import { resolveThemeConfig, showThemeToggle, themeModes } from "@/lib/theme";
 import { getNavigation } from "@/lib/navigation";
 import { SkipLink } from "./SkipLink";
 import { Header } from "./Header";
@@ -36,12 +37,25 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
   ]);
   const { brand, social, business } = settings;
   const name = settings.siteName || DEFAULT_SITE_NAME;
+  // Theme + display toggles: Sanity (`themeModes`/`showLocaleSwitcher`) over the code
+  // default/master, resolved server-side and prop-fed (Header/ThemeToggle are client).
+  const cfg = resolveThemeConfig(settings.themeModes);
+  const showLocaleSwitcher =
+    features.localeSwitcher && settings.showLocaleSwitcher !== false;
   return (
     <>
       <SkipLink />
       {resolveSlot(
         header,
-        <Header name={name} logo={brand.logo} logoDark={brand.logoDark} items={nav.header} />,
+        <Header
+          name={name}
+          logo={brand.logo}
+          logoDark={brand.logoDark}
+          items={nav.header}
+          showThemeToggle={showThemeToggle(cfg)}
+          themeModes={themeModes(cfg)}
+          showLocaleSwitcher={showLocaleSwitcher}
+        />,
       )}
       <main id="main" tabIndex={-1} className="flex-1 pt-14 outline-none lg:pt-20">
         {children}
@@ -56,6 +70,7 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
           logoDark={brand.logoDark}
           social={social}
           columns={nav.footerColumns}
+          madeBy={settings.madeBy}
         />,
       )}
     </>

@@ -10,6 +10,13 @@ import { defineQuery } from "next-sanity";
  * (matches the schema's `initialValue`); legacy un-tagged docs default
  * to "en" too, so existing content still appears on /en after the
  * schema change.
+ *
+ * **Scheduling** — every public *listing/discovery* read adds
+ * `coalesce(publishedAt, _createdAt) <= now()`, so a future `publishedAt`
+ * keeps a post out of listings, feeds, related, sitemap, and llms until
+ * its date passes. `postBySlugQuery` (the direct URL) is intentionally
+ * NOT filtered — a scheduled post is shareable/previewable by URL before
+ * it goes live; a hard 404-until-date would break draft preview.
  */
 
 // ─── Fragments ─────────────────────────────────────────────────
@@ -61,6 +68,7 @@ const AUTHOR_FRAGMENT = `
   "slug": slug.current,
   "bio": pt::text(bio),
   image { asset->{ url } },
+  social[]{ platform, url },
   ${SEO_FRAGMENT}
 `;
 
@@ -90,9 +98,13 @@ const CTA_FRAGMENT = `
  * field, but they're not `$locale`-filtered here); other refs (people)
  * aren't locale-tagged.
  */
-const MODULES_FRAGMENT = `
+export const MODULES_FRAGMENT = `
   ...,
   _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },
+  _type == "module.hero" => { cta { ${CTA_FRAGMENT} } },
+  _type == "module.pricing" => {
+    tiers[] { ..., cta { ${CTA_FRAGMENT} } }
+  },
   _type == "module.callout" => { cta { ${CTA_FRAGMENT} } },
   _type == "module.card-list" => {
     cards[] { ..., cta { ${CTA_FRAGMENT} } }
@@ -138,6 +150,7 @@ export const allPostsQuery = defineQuery(`
     && metadata.noIndex != true
     && metadata.hideFromDiscovery != true
     && metadata.unpublished != true
+    && coalesce(publishedAt, _createdAt) <= now()
     && coalesce(language, "en") == $locale]
   | order(coalesce(publishedAt, _createdAt) desc) {
     ${POST_LIST_FRAGMENT}
@@ -149,6 +162,7 @@ export const featuredPostsQuery = defineQuery(`
     && defined(metadata.slug.current)
     && metadata.noIndex != true
     && featured == true
+    && coalesce(publishedAt, _createdAt) <= now()
     && coalesce(language, "en") == $locale]
   | order(coalesce(publishedAt, _createdAt) desc) {
     ${POST_LIST_FRAGMENT}
@@ -164,6 +178,7 @@ export const postBySlugQuery = defineQuery(`
     title,
     excerpt,
     publishedAt,
+    "updatedAt": _updatedAt,
     featured,
     language,
     // Project the body with module-aware reference expansion. Plain
@@ -187,6 +202,22 @@ export const postBySlugQuery = defineQuery(`
     authors[]->{ name, position, "slug": slug.current, image { asset->{ url } } },
     categories[]->{ _id, title, "slug": slug.current },
     tags[]->{ _id, title, "slug": slug.current },
+    series->{
+      title,
+      "slug": slug.current,
+      // Sibling parts, ordered — drives the on-post "Part N of M" nav. Same
+      // public filter as the listings so unpublished/scheduled parts drop out.
+      "parts": *[_type == "post"
+        && references(^._id)
+        && defined(metadata.slug.current)
+        && metadata.noIndex != true
+        && metadata.unpublished != true
+        && coalesce(publishedAt, _createdAt) <= now()
+        && coalesce(language, "en") == $locale]
+        | order(coalesce(seriesOrder, 9999) asc, coalesce(publishedAt, _createdAt) asc){
+          _id, title, "slug": metadata.slug.current
+        }
+    },
     // Derived — keep these in the same shape the components expect.
     "readTime": round(length(string::split(pt::text(body), " ")) / 200),
     "headings": body[style in ["h2", "h3", "h4"]]{
@@ -212,6 +243,7 @@ export const relatedPostsQuery = defineQuery(`
     && metadata.unpublished != true
     && coalesce(language, "en") == $locale
     && _id != $id
+    && coalesce(publishedAt, _createdAt) <= now()
     && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]
   | order(coalesce(publishedAt, _createdAt) desc)[0...3] {
     ${POST_LIST_FRAGMENT}
@@ -225,7 +257,8 @@ export const allPostSlugsQuery = defineQuery(`
   *[_type == "post"
     && defined(metadata.slug.current)
     && metadata.noIndex != true
-    && metadata.unpublished != true]{
+    && metadata.unpublished != true
+    && coalesce(publishedAt, _createdAt) <= now()]{
     "slug": metadata.slug.current,
     "language": coalesce(language, "en")
   }
@@ -238,6 +271,7 @@ export const rssPostsQuery = defineQuery(`
     && metadata.noIndex != true
     && metadata.hideFromDiscovery != true
     && metadata.unpublished != true
+    && coalesce(publishedAt, _createdAt) <= now()
     && coalesce(language, "en") == $locale]
   | order(coalesce(publishedAt, _createdAt) desc) {
     title,
@@ -246,6 +280,88 @@ export const rssPostsQuery = defineQuery(`
     metadata { title, description, image { asset->{ url } } },
     authors[]->{ name },
     categories[]->{ title }
+  }
+`);
+
+// ─── Series queries ───────────────────────────────────────────
+
+export const seriesBySlugQuery = defineQuery(`
+  *[_type == "series"
+    && slug.current == $slug
+    && seo.unpublished != true
+    && coalesce(language, "en") == $locale][0]{
+    _id,
+    title,
+    description,
+    "slug": slug.current,
+    ${SEO_FRAGMENT}
+  }
+`);
+
+/** Posts in a series — ordered by `seriesOrder` (then date), paginated. */
+export const postsBySeriesSlugQuery = defineQuery(`
+  *[_type == "post"
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
+    && coalesce(publishedAt, _createdAt) <= now()
+    && coalesce(language, "en") == $locale
+    && series->slug.current == $slug]
+  | order(coalesce(seriesOrder, 9999) asc, coalesce(publishedAt, _createdAt) asc)[$start...$end] {
+    ${POST_LIST_FRAGMENT}
+  }
+`);
+
+/** Total posts in a series (for pagination) — mirrors the listing filter. */
+export const postsBySeriesCountQuery = defineQuery(`
+  count(*[_type == "post"
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
+    && coalesce(language, "en") == $locale
+    && coalesce(publishedAt, _createdAt) <= now()
+    && series->slug.current == $slug])
+`);
+
+export const allSeriesSlugsQuery = defineQuery(`
+  *[_type == "series" && defined(slug.current)
+    && seo.noIndex != true
+    && seo.unpublished != true]{
+    "slug": slug.current,
+    "language": coalesce(language, "en")
+  }
+`);
+
+// ─── Search ───────────────────────────────────────────────────
+
+/**
+ * Full-text-ish post search — one locale. `$q` is a GROQ `match` pattern
+ * (the route appends `*` for a prefix match); it's tested against the
+ * title, excerpt, SEO description, and the flattened body text. Same
+ * public filter as the listings (noindex / unpublished / scheduled).
+ *
+ * `match` is prefix + word-boundary only (no ranking, no typo tolerance) —
+ * good enough at template scale; swap in Algolia/Orama when a dataset
+ * outgrows it.
+ */
+export const searchPostsQuery = defineQuery(`
+  *[_type == "post"
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
+    && coalesce(publishedAt, _createdAt) <= now()
+    && coalesce(language, "en") == $locale
+    && (
+      title match $q
+      || excerpt match $q
+      || metadata.description match $q
+      || pt::text(body) match $q
+    )]
+  | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] {
+    ${POST_LIST_FRAGMENT}
   }
 `);
 
@@ -263,6 +379,13 @@ export const blogSingletonQuery = defineQuery(`
     ${SEO_FRAGMENT}
   }
 `);
+
+/**
+ * The editor's display toggles only (`blog.display`) — a tiny read used
+ * everywhere the UI, sitemap, and llms endpoints decide what to show.
+ * Resolved against the feature flags by `getBlogSettings` (`lib/settings`).
+ */
+export const blogDisplayQuery = defineQuery(`*[_type == "blog"][0].display`);
 
 // ─── Comments ─────────────────────────────────────────────────
 
@@ -340,10 +463,23 @@ export const postsByCategorySlugQuery = defineQuery(`
     && metadata.hideFromDiscovery != true
     && metadata.unpublished != true
     && coalesce(language, "en") == $locale
+    && coalesce(publishedAt, _createdAt) <= now()
     && count(categories[@->slug.current == $slug]) > 0]
-  | order(coalesce(publishedAt, _createdAt) desc) {
+  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {
     ${POST_LIST_FRAGMENT}
   }
+`);
+
+/** Total posts in a category (for pagination) — mirrors the listing filter. */
+export const postsByCategoryCountQuery = defineQuery(`
+  count(*[_type == "post"
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
+    && coalesce(language, "en") == $locale
+    && coalesce(publishedAt, _createdAt) <= now()
+    && count(categories[@->slug.current == $slug]) > 0])
 `);
 
 /** Locale-tagged slugs — `generateStaticParams` builds one entry per pair. */
@@ -404,10 +540,23 @@ export const postsByTagSlugQuery = defineQuery(`
     && metadata.hideFromDiscovery != true
     && metadata.unpublished != true
     && coalesce(language, "en") == $locale
+    && coalesce(publishedAt, _createdAt) <= now()
     && count(tags[@->slug.current == $slug]) > 0]
-  | order(coalesce(publishedAt, _createdAt) desc) {
+  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {
     ${POST_LIST_FRAGMENT}
   }
+`);
+
+/** Total posts carrying a tag (for pagination) — mirrors the listing filter. */
+export const postsByTagCountQuery = defineQuery(`
+  count(*[_type == "post"
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
+    && coalesce(language, "en") == $locale
+    && coalesce(publishedAt, _createdAt) <= now()
+    && count(tags[@->slug.current == $slug]) > 0])
 `);
 
 export const allTagSlugsQuery = defineQuery(`
@@ -465,14 +614,27 @@ export const authorBySlugQuery = defineQuery(`
 export const postsByAuthorSlugQuery = defineQuery(`
   *[_type == "post"
     && $slug in authors[]->slug.current
+    && coalesce(publishedAt, _createdAt) <= now()
     && defined(metadata.slug.current)
     && metadata.noIndex != true
     && metadata.hideFromDiscovery != true
     && metadata.unpublished != true
     && coalesce(language, "en") == $locale]
-  | order(coalesce(publishedAt, _createdAt) desc) {
+  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {
     ${POST_LIST_FRAGMENT}
   }
+`);
+
+/** Total posts by an author (for pagination) — mirrors the listing filter. */
+export const postsByAuthorCountQuery = defineQuery(`
+  count(*[_type == "post"
+    && $slug in authors[]->slug.current
+    && defined(metadata.slug.current)
+    && metadata.noIndex != true
+    && metadata.hideFromDiscovery != true
+    && metadata.unpublished != true
+    && coalesce(language, "en") == $locale
+    && coalesce(publishedAt, _createdAt) <= now()])
 `);
 
 export const allAuthorSlugsQuery = defineQuery(`
@@ -516,6 +678,7 @@ export const moduleBlogPostListQuery = defineQuery(`
     && metadata.unpublished != true
     && coalesce(language, "en") == $locale
     && (count($categoryIds) == 0 || count((categories[]._ref)[@ in $categoryIds]) > 0)
+    && coalesce(publishedAt, _createdAt) <= now()
     && (!$featuredOnly || featured == true)]
   | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] {
     ${POST_LIST_FRAGMENT}

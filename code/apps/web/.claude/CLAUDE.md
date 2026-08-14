@@ -6,9 +6,9 @@ _how to code_. **Design-context pair:** this file = _how to build_ · **[`DESIGN
 
 **Stack:** Next.js 16.x (App Router) · React 19.x · TypeScript 5.x (strict) · Tailwind v4 · shadcn/ui · Sanity v5 · next-intl v4 · pnpm 10 / Node 22. Production-only — the Storybook component library is an internal component-library repo.
 
-**Focused rules auto-load** (self-contained) from `.claude/rules/` when you work here: naming · accessibility · component-architecture · design-token-usage · figma-handoff · sanity-images · sanity-legends — plus the ❌/✅ [`code-patterns`](rules/code-patterns.md) library and the [`self-review`](rules/self-review.md) checklist. Global `writing-style` auto-loads from the root.
+**Focused rules auto-load** (self-contained) from `.claude/rules/` when you work here: naming · accessibility · adaptive-design · component-architecture · design-token-usage · figma-handoff · sanity-images · sanity-legends — plus the ❌/✅ [`code-patterns`](rules/code-patterns.md) library and the [`self-review`](rules/self-review.md) checklist. Global `writing-style` auto-loads from the root.
 
-**Repeatable multi-file tasks** have step-by-step checklists in [`method/apps/web/workflows/`](../../../../method/apps/web/workflows/) — follow the matching one instead of reconstructing the steps: [`add-page`](../../../../method/apps/web/workflows/add-page.md), [`adapt-library-section`](../../../../method/apps/web/workflows/adapt-library-section.md), [`add-blog-module`](../../../../method/apps/web/workflows/add-blog-module.md), [`remove-blog-module`](../../../../method/apps/web/workflows/remove-blog-module.md).
+**Repeatable multi-file tasks** — add a page · adapt a library section · add/remove a blog page-builder block — have step-by-step checklists in the internal dev framework. Follow the matching one instead of reconstructing the steps.
 
 **Design system:** follow @../../../packages/ui-tokens/DESIGN.md. Before creating or modifying UI — (1) read the component implementation, (2) reuse existing tokens and parts, (3) check the responsive + accessibility + motion rules, (4) flag any `DESIGN.md` ↔ production-code conflict. Verify what's loaded with `/context`.
 
@@ -21,7 +21,7 @@ Full rationale in `docs/apps/web/config/project-organization.md`.
 **Workspace packages + module** (import via `@indiecrafts/*`):
 
 - `@indiecrafts/config` — site config data + types/helpers
-- `@indiecrafts/utils` — `cn` · logger · slugify · video-embed · consent-signals · format-date
+- `@indiecrafts/utils` — `cn` · logger · slugify · video-embed · format-date (subpath-only)
 - `@indiecrafts/sanity` — Sanity infra: `client · live · env · token · structure` builders
 - `@indiecrafts/ui` — shadcn primitives + `use-mobile`
 - `@indiecrafts/ui-tokens` — `globals.css` · `typeset.css` · `DESIGN.md`
@@ -33,8 +33,9 @@ The app (`src/`):
 ```
 src/app/                   ROUTES ONLY (thin page.tsx / route.ts) — [locale]/<seg>, api/, studio/,
                            maintenance/; routes.ts aggregates the `pages` map → ROUTES + PATHNAMES
-src/user-interface/        app UI, by page then category: homepage/sections/ · error/ maintenance/
-                           not-found/ · shared/{layout,components}  (primitives → @indiecrafts/ui)
+src/user-interface/        app UI, by page then category: homepage/sections/ · legal/ ·
+                           shared/{layout,components}  (primitives → @indiecrafts/ui; the branded
+                           maintenance/404/error status pages → @indiecrafts/system-pages)
 src/lib/                   app services: metadata · fonts · theme · navigation · cookies · social ·
                            faq · system-pages · seo/{jsonld,jsonld-factories,page-markdown}
 src/sanity/                app Sanity: {nav,legal,cookie,seo}-queries · schema/ · Studio.tsx
@@ -70,7 +71,7 @@ messages/<locale>.json     chrome + pages.<id>.{title, description, blocks}
 
 ## Adding a page
 
-_Checklist: [`method/apps/web/workflows/add-page.md`](../../../../method/apps/web/workflows/add-page.md)._
+_Checklist: the internal add-page workflow._
 
 1. `src/app/[locale]/<seg>/page.tsx`
 2. Entry in `pages` (config/index.ts): `{ key, id, slug, seo: { keywords } }`
@@ -81,7 +82,7 @@ Propagates automatically: sitemap, routing, llms.txt × locales, SEO metadata, J
 
 ## Working with the library (shadcn/ui + `<your-component-library>`)
 
-_Checklist: [`method/apps/web/workflows/adapt-library-section.md`](../../../../method/apps/web/workflows/adapt-library-section.md)._
+_Checklist: the internal adapt-library-section workflow._
 
 Two building blocks feed the UI: **shadcn/ui** primitives (`@indiecrafts/ui`, CLI-managed) and your **component library** — a Storybook-only browse surface with **zero runtime imports** from the app. The pattern is always **copy then adapt to the template's conventions**, never depend.
 
@@ -147,10 +148,10 @@ The **visual system** — colors, typography, spacing, dark mode, motion, contra
 - NEVER instantiate a Sanity `createClient` per route — use `@/sanity/client`.
 - NEVER expose `SANITY_API_READ_TOKEN` (or any non-public Sanity token) under a `NEXT_PUBLIC_` prefix.
 - ALWAYS maximise use of the `frontend-design` skill when building or reshaping UI — lean on it for aesthetic direction, typography, and layout so nothing reads as a templated default.
-- ALWAYS ship responsive UI optimised for every screen size we support (Tailwind `sm 640 · md 768 · lg 1024 · xl 1280`, mobile-first) — verify each change at **375 / 768 / 1280** before shipping. See `DESIGN.md` § Responsive behavior.
+- ALWAYS be **adaptive-aware**: same content reflowing = **responsive** (the default, one markup tree); different content by context = **adaptive**, for that component only — **name the mechanism** in the PR. Design each device class deliberately (Tailwind `sm 640 · md 768 · lg 1024 · xl 1280`, mobile-first; container queries where a component's width drives layout; `pointer`/`hover` for input method). Verify at **375 / 768 / 1280** (the floor, not the definition). See `DESIGN.md` § Responsive & adaptive behavior + `rules/adaptive-design.md`.
 - ALWAYS `setRequestLocale(locale)` at the top of server components using translations or metadata.
 - ALWAYS update the docs when you change what they describe — every change to a feature, flag, config shape, route, or convention updates the matching `docs/` page **and** the `docs/.vitepress/config.mts` sidebar (add/rename/remove in lockstep). Docs are part of the change, not a follow-up.
-- ALWAYS log behavior/config/route/convention **and** design-token changes in the **app** changelog `code/apps/web/CHANGELOG.md` (one file for code + design) with a plain-language _why_. Other areas log elsewhere — docs-site → `docs/CHANGELOG.md`, method → `method/CHANGELOG.md`, lab → `work/CHANGELOG.md`; the root `CHANGELOG.md` is the release roll-up. Log a change in exactly one area log.
+- ALWAYS log behavior/config/route/convention **and** design-token changes in the **app** changelog `code/apps/web/CHANGELOG.md` (one file for code + design) with a plain-language _why_. Other areas log elsewhere (docs-site → `docs/CHANGELOG.md`); the root `CHANGELOG.md` is the release roll-up. Log a change in exactly one area log.
 - ALWAYS run `pnpm verify:quick` before opening a PR — there's no pre-push hook, so nothing blocks a push; the commit hook only runs `tsc` + staged-file lint.
 
 ## File-size discipline

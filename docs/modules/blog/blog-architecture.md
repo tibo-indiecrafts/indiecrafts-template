@@ -22,14 +22,20 @@ Every blog route file lives under `code/apps/web/src/app/[locale]/` (except the 
 | `/<locale>/blog` | `blog/page.tsx` | Frontpage. Hero grid + ExploreCategories + ExploreTags + TopAuthors. **Never module-driven** — chrome stays uniform. |
 | `/<locale>/blog/<slug>` | `blog/[slug]/page.tsx` | Post detail. Module-driven when the `blog` singleton's `postModules` is non-empty; otherwise `DefaultPostLayout`. |
 | `/<locale>/blog/<slug>/md` | `blog/[slug]/md/route.ts` | Markdown export — YAML frontmatter + body serialised by `sanity/portable-to-markdown.ts` (§9). |
+| `/<locale>/blog/search` | `blog/search/page.tsx` | Search results (`?q=`). No-JS GET form → `searchPostsQuery` (GROQ `match` on title/excerpt/description/body). `noindex`. Gated by `features.blogSearch`. |
+| `/<locale>/blog/series/<slug>` | `blog/series/[slug]/page.tsx` | Series landing — posts in reading order (`seriesOrder`), paginated. Gated by `features.blogSeries`. |
 | `/<locale>/blog/rss.xml` | `blog/rss.xml/route.ts` | RSS 2.0, locale-filtered. One feed per locale. |
 | `/<locale>/blog/atom.xml` | `blog/atom.xml/route.ts` | Atom 1.0 — same data (`rssPostsQuery`), same `isRssEnabled()` gate; ISO-8601 dates, `<feed>`/`<entry>` shape. |
 | `/<locale>/blog/category` | `blog/category/page.tsx` | Category listing (topics with ≥1 post in the locale). |
-| `/<locale>/blog/category/<slug>` | `blog/category/[slug]/page.tsx` | Single category — posts filtered by category slug. |
+| `/<locale>/blog/category/<slug>` | `blog/category/[slug]/page.tsx` | Single category — posts filtered by category slug. **Paginated** (`?page=N`). |
 | `/<locale>/blog/tag` | `blog/tag/page.tsx` | Tag listing. |
-| `/<locale>/blog/tag/<slug>` | `blog/tag/[slug]/page.tsx` | Single tag. |
+| `/<locale>/blog/tag/<slug>` | `blog/tag/[slug]/page.tsx` | Single tag. **Paginated** (`?page=N`). |
 | `/<locale>/author` | `author/page.tsx` | Author listing (top-level, not under `blog/`). |
-| `/<locale>/author/<slug>` | `author/[slug]/page.tsx` | Author profile + their posts. Authors are translated — the doc is locale-filtered. |
+| `/<locale>/author/<slug>` | `author/[slug]/page.tsx` | Author profile + their posts. Authors are translated — the doc is locale-filtered. **Paginated** (`?page=N`). |
+
+**Pagination.** The three taxonomy detail routes page their post lists at `POSTS_PER_PAGE = 12` (`lib/pagination.ts`). Each route reads `?page=N`, fetches a `[$start...$end]` slice **plus** a matching `count(...)` query (`postsBy{Category,Tag,Author}CountQuery`), and renders a shared `<Pager>` (prev/next, page X of Y). Page 1 is the bare URL (one canonical); deeper pages are crawlable `<a>` links. The `/blog` frontpage is **not** paginated — it is curated (hero + explore), sized by design.
+
+**Scheduling.** Every public *listing/discovery* query filters `coalesce(publishedAt, _createdAt) <= now()`, so a future **Publié le** keeps a post out of listings, feeds, related, sitemap, and llms until its date. The direct URL (`postBySlugQuery`) is intentionally not filtered, so a scheduled post stays shareable/previewable.
 | `/api/draft-mode/{enable,disable}` | `app/api/draft-mode/.../route.ts` | Preview toggles. Gated by `features.studio` (404 when off); `/enable` 503s when `SANITY_API_READ_TOKEN` is unset. |
 | `/studio/[[...tool]]` | `app/studio/[[...tool]]/page.tsx` | Embedded Sanity Studio. Gated by `features.studio`. Own root layout (`app/studio/layout.tsx`) — sits outside `[locale]/` because Studio owns its HTML shell. |
 
@@ -38,8 +44,11 @@ Every blog route file lives under `code/apps/web/src/app/[locale]/` (except the 
 - `isBlogRouteEnabled(page)` = `features.blog && isPageVisible(page)` — folds the flag **and** the page's `enabled` so a route can't drift by checking one half.
 - `requireBlogRoute(page)` — 404s in Server Components (`notFound()`).
 - `isRssEnabled()` = `isBlogRouteEnabled(pages.blog) && features.rss` — gates both feeds and their `<link rel="alternate">` discovery tags.
+- `isTaxonomyRouteEnabled(kind, page)` / `requireTaxonomyRoute(kind, page)` (async) — `isBlogRouteEnabled(page)` **and** the editor's `blog.display.taxonomy[kind]` toggle. Used by every taxonomy route + its `generateStaticParams`, the sitemap, and llms.
 
-All `/<locale>/blog/*` and `/<locale>/author/*` routes 404 when `features.blog === false`. The Studio + draft-mode surface is gated **independently** by `features.studio`. Taxonomy sub-routes additionally read `features.blogTaxonomy.{authors,categories,tags}`.
+All `/<locale>/blog/*` and `/<locale>/author/*` routes 404 when `features.blog === false`. The Studio + draft-mode surface is gated **independently** by `features.studio`.
+
+**Two-tier taxonomy gating.** A taxonomy surface is visible only when **both** are true: the code capability `features.blogTaxonomy.{authors,categories,tags}` (compiled in) **and** the editor toggle `blog.display.taxonomy.*` (Sanity, flippable without a deploy). `lib/settings.ts` — `getBlogSettings()` (React-`cache`d, build-safe `client.fetch`) — folds both into one resolved `BlogDisplay`; every consumer reads that, so a taxonomy toggled off in Studio is **truly gone**: chips hidden, routes 404, entries dropped from the sitemap + `/llms.txt`. The same `blog.display` object also carries render-only toggles (`post.{date,readingTime,tableOfContents,relatedPosts}`, `frontpage.featuredHero`, `cards.excerpt`) that hide elements without touching routes.
 
 ---
 
@@ -121,9 +130,9 @@ const posts = await sanityFetchLive<PostListItem[]>({
 
 | Kind | Files |
 | --- | --- |
-| Documents | `post.ts`, `author.ts`, `category.ts`, `tag.ts`, `documents/blog.ts` (singleton), `documents/quote.ts`, `documents/person.ts` |
-| Objects | `blockContent.ts`, `objects/metadata.ts`, `objects/seo-meta.ts`, `objects/link.ts`, `objects/cta.ts`, `objects/define-module.ts` |
-| Modules | `modules/` — 13 `module.*` schemas + `modules/index.ts` |
+| Documents | `post.ts`, `author.ts`, `category.ts`, `tag.ts`, `series.ts`, `documents/blog.ts` (singleton), `documents/quote.ts`, `documents/person.ts` |
+| Objects | `blockContent.ts`, `objects/metadata.ts`, `objects/link.ts`, `objects/cta.ts`, `objects/define-module.ts` (shared `seoMeta` + `localeString` → `@indiecrafts/schema`) |
+| Modules | `modules/` — 17 `module.*` schemas + `modules/index.ts` |
 
 | Document | Localized (`language`)? | Notes |
 | --- | --- | --- |
@@ -151,6 +160,7 @@ export const MODULE_TYPES = [
   "module.step-list",
   "module.quote-list",
   "module.custom-html",
+  "module.newsletter",
   "module.blog-index",
   "module.blog-post-content",
   "module.blog-post-list",
@@ -161,7 +171,7 @@ export const MODULE_TYPES = [
 
 Every module schema is declared via `defineModule` (`objects/define-module.ts`), which auto-injects two fields on top of the module's own: `anchor` (optional id for in-page links) and `hidden` (soft-disable without deleting).
 
-**Inline-embeddable subset (9 of 13)** — the modules editors can drop directly inside a post body. This allowlist lives in `blockContent.ts` (`INLINE_MODULES`) and must stay in lockstep with `INLINE_TYPES` in `portable-text-components.tsx`: `accordion-list`, `callout`, `card-list`, `gallery`, `person-list`, `stat-list`, `step-list`, `quote-list`, `custom-html`. The other four (`blog-index`, `blog-post-content`, `blog-post-list`, `prose`) are `postModules`-only page chrome.
+**Inline-embeddable subset (10 of 14)** — the modules editors can drop directly inside a post body. This allowlist lives in `blockContent.ts` (`INLINE_MODULES`) and must stay in lockstep with `INLINE_TYPES` in `portable-text-components.tsx`: `accordion-list`, `callout`, `card-list`, `gallery`, `person-list`, `stat-list`, `step-list`, `quote-list`, `custom-html`, `newsletter`. The other four (`blog-index`, `blog-post-content`, `blog-post-list`, `prose`) are `postModules`-only page chrome.
 
 ---
 
@@ -171,7 +181,8 @@ Runtime lives under `code/modules/blog/src/user-interface/renderers/`, all pivot
 
 - **`registry.tsx`** — `SIMPLE_MODULES` (`_type` → component), declared `satisfies { [K in SimpleModuleType]: SimpleRenderer<K> }` so a missing entry or a drifted `_type` is a **compile error**. It holds the **11 simple modules** (everything except the two context-aware ones). Exports `SIMPLE_MODULES` + `renderSimpleModule(module, components)`.
 - **`ModuleRenderer.tsx`** — the async `<Modules>` component + `ModuleSwitch`. Skips `hidden` modules, special-cases the two context-aware types (`module.blog-post-list` needs the locale, `module.blog-post-content` needs the active `Post`), and delegates the rest to `renderSimpleModule`. Drives the singleton's `postModules` slot. Returns `null` on an empty array so routes fall back to their default layout.
-- **`portable-text-components.tsx`** — `portableComponents`, passed to `<PortableText>`. Overrides only what the `prose` plugin can't infer: h2/h3/h4 (slug `id` + `scroll-mt-24` for the TOC), the external-link mark, standalone inline images, and the 9 inline modules (derived from `SIMPLE_MODULES` via `INLINE_TYPES`). Everything else falls through to `@portabletext/react` defaults, styled by the `.prose` wrapper.
+- **`portable-text-components.tsx`** — `portableComponents`, passed to `<PortableText>`. Overrides only what the `prose` plugin can't infer: h2/h3/h4 (slug `id` + `scroll-mt-24` for the TOC), the external-link mark, standalone inline images, the `codeBlock` type, and the 10 inline modules (derived from `SIMPLE_MODULES` via `INLINE_TYPES`). Everything else falls through to `@portabletext/react` defaults, styled by the `.prose` wrapper.
+- **`CodeBlock.tsx`** (`@indiecrafts/ui-components`) — renders the body's `codeBlock` object (`language` / optional `filename` / `code`) with **Shiki**, server-side + async, light+dark theme pair (`defaultColor: "light"`). The dark colours swap under `[data-theme="dark"]` via `.shiki` rules in `@indiecrafts/ui-tokens/globals.css`. An unsupported language degrades to a plain `<pre>`.
 
 Because inline modules and `postModules` pull from the same registry, a `Callout` in a post body renders identically to a `Callout` in `postModules`.
 
@@ -199,7 +210,11 @@ When `blog.postModules` is empty (the seed default), each post renders through `
 - **Sticky right sidebar** — `Toc` (mounted only when `post.headings.length > 0`) + meta (published date, read time, author, category, tags). A `MobileToc` covers small screens.
 - **Footer back-link**, then the **"Keep reading"** related-posts grid.
 
-The TOC is fed by `postBySlugQuery`'s derived `headings` (`body[style in ["h2","h3","h4"]]` via `pt::text`); `readTime` is derived in the same query (≈200 wpm). Author/category/tag links are gated per-type by `features.blogTaxonomy`.
+The TOC is fed by `postBySlugQuery`'s derived `headings` (`body[style in ["h2","h3","h4"]]` via `pt::text`); `readTime` is derived in the same query (≈200 wpm). Author/category/tag chips, the date, reading time, TOC, and related grid each read a toggle from `getBlogSettings()` (`blog.display.*`) — see §1 (two-tier taxonomy gating).
+
+**Post extras.** A `ShareButtons` row (X / LinkedIn / Facebook + copy-link; a client component for the clipboard) sits in the footer, and a `ReadingProgress` bar (client, direct-DOM `scaleX` on scroll, `aria-hidden`) pins to the top — each gated by `blog.display.post.{share,readingProgress}`. Social brand glyphs are inlined in `shared/components/BrandIcons.tsx` (lucide dropped brand logos). Authors carry an optional `social[]` (`{ platform, url }`) rendered as icon links on `/author/[slug]`.
+
+**Structured data.** The post route emits `Article` JSON-LD (`buildArticleSchema`) — `datePublished` from `publishedAt`, `dateModified` from the projected `_updatedAt` (`post.updatedAt`, a real freshness signal) — **plus** a `BreadcrumbList` (`buildBreadcrumbSchema`): Blog → category → post, with the category crumb dropped when categories are toggled off so the schema never links a 404'd route. The category / tag / author detail routes emit their own `BreadcrumbList` the same way (author keeps its existing `Person` too). The visual `<Breadcrumbs>` and the JSON-LD are built separately — trail in the body, machine trail in the head.
 
 To swap in a module-driven shell, populate `blog.postModules` from the Studio — typically `module.blog-post-content` (header + body), then `module.quote-list`, then `module.blog-post-list` ("keep reading"). Anything in `postModules` runs through `ModuleRenderer`, so you can re-order, hide, or theme per dataset without touching code.
 
@@ -207,7 +222,7 @@ To swap in a module-driven shell, populate `blog.postModules` from the Studio �
 
 ## 8. Adding / removing a module
 
-A module touches ~8 code locations. Don't reconstruct the steps — follow the canonical checklists at `method/apps/web/workflows/add-blog-module.md` and `remove-blog-module.md`. The touch-points, in dependency order:
+A module touches ~8 code locations. Don't reconstruct the steps — follow the internal add/remove-block workflow checklist. The touch-points, in dependency order:
 
 1. **Schema** — `sanity/schema/modules/<name>.ts` via `defineModule`.
 2. **Catalog** — import into `modules/index.ts`; add to `moduleSchemas` **and** `MODULE_TYPES`.

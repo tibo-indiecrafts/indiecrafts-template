@@ -6,7 +6,7 @@ Rolls up to the [root `CHANGELOG.md`](../../CHANGELOG.md) at release.
 
 **Not here:** app behavior/routes/tokens → [`code/apps/web/CHANGELOG.md`](../apps/web/CHANGELOG.md);
 shared bricks → [`code/packages/CHANGELOG.md`](../packages/CHANGELOG.md); docs-site →
-[`docs/CHANGELOG.md`](../../docs/CHANGELOG.md); method → [`method/CHANGELOG.md`](../../method/CHANGELOG.md).
+[`docs/CHANGELOG.md`](../../docs/CHANGELOG.md).
 
 Format follows [Keep a Changelog](https://keepachangelog.com). Categories: **Added ·
 Changed · Deprecated · Removed · Fixed**.
@@ -14,6 +14,141 @@ Changed · Deprecated · Removed · Fixed**.
 ## [Unreleased]
 
 ### Added
+
+- **blog · newsletter · waitlist — each module now owns its E-mails groups.** The transactional-email
+  config that used to live in `@indiecrafts/email` moved **into the modules** (`src/sanity/email.ts`,
+  exported as `emailGroups` on each `SanityModule` barrel): blog → `commentNotification`; newsletter →
+  `newsletterConfirm` + `newsletterOwner`; waitlist → `waitlistConfirm` + `waitlistOwner`. Built with
+  the shared `confirmationGroup`/`ownerAlertGroup` factories, so the brick stays generic and a module's
+  email appears in Studio only when the module is composed in. **Per-email BCC:** the confirmation
+  engines (`newsletter`/`waitlist`) now pass `bcc: clean(cfg?.bcc)` to `sendEmail`, so an admin can BCC
+  themselves on user-facing confirmations. See [`docs/packages/email.md`](../../docs/packages/email.md).
+- **`@indiecrafts/waitlist` — early-access signups (collect + export).** A new module modeled on the
+  newsletter, with **two public surfaces** (same `WaitlistForm`): a full **`/waitlist` landing page**
+  (the view — `src/user-interface/WaitlistLanding.tsx` — lives in the module; the app route is a thin
+  shell) **and** a public **`module.waitlist`** page-builder block (schema in the blog, `Waitlist`/
+  `WaitlistForm` renderer in `@indiecrafts/ui-components`, 3 variants + an optional name field). Both
+  POST the thin `/api/waitlist` route → the `join()` engine → a `waitlistEntry` doc (deduped,
+  whitelisted). **All copy is Sanity-only** (form on `waitlistSettings`, page SEO on `siteMeta.pageSeo`).
+  **No runtime gating** — collect + export only. Unlike `subscriber`, the entry doc is
+  **editor-creatable** (the "Liste d'attente" desk's "Tous·tes" list carries **+ Create**, so an admin
+  adds rows by hand; status sub-lists En attente / Invité·e·s). Optional best-effort emails via
+  `@indiecrafts/email` (a translated "you're on the list" confirmation + an owner alert, on the shared
+  E-mails entity). Gated by **`features.waitlist`**; `waitlistSanity` activates with one line in
+  `composeSanity`. Export: `pnpm waitlist:export` → CSV. Seed ships settings + 2 demo entries. Doc:
+  [`docs/modules/waitlist/`](../../docs/modules/waitlist/).
+- **One-click comment moderation from the email.** The comment-alert email now carries **Approuver ·
+  Spam · Supprimer** buttons (toggle `commentNotification.moderationButtons` on the E-mails entity,
+  default on). **Prefetch-safe:** a button opens a branded **confirm page** (`GET
+  /api/comments/moderate`) and the mutation only happens on that page's **POST**, so a link-scanner
+  can't auto-moderate. Each comment carries a single-use `moderationToken` (`lib/moderate.ts` —
+  approve → `approved:true`, spam → `spam:true`, delete → removes the doc; token cleared after).
+  Desk: "En attente" now excludes spam (`approved != true && spam != true`) + a new **Spam** list, so
+  the Spam action actually clears the queue. Export comments with `pnpm comments:export` → CSV. Guide:
+  [`docs/modules/blog/comments.md`](../../docs/modules/blog/comments.md).
+- **Newsletter — double opt-in + owner alert, and providers simplified away.** New subscribers can
+  now get a **double opt-in confirmation** (a one-time `confirmToken` on the `subscriber`; the
+  confirm link `/api/newsletter/confirm?token=…` flips `pending → confirmed` and clears the token,
+  single-use — `lib/confirm.ts`), and the owner an **new-subscriber alert**. Both are best-effort
+  (never fail a signup), via `@indiecrafts/email`, configured on the shared **E-mails** entity —
+  the confirmation copy is **translated per language** (seeded EN + FR). **Removed the provider
+  machinery** (`destination`/`provider` config + the buttondown/mailchimp/resend adapters +
+  `getProvider` + the block's `listId`): the engine now **always stores** the subscriber in Sanity.
+  To use an external ESP, drop its own embed form in a `custom-html` block (posts to the provider
+  directly, nothing stored our side; add the host to `EMBED_HOSTS` in `next.config.ts`). Export the
+  list with `pnpm subscribers:export` → CSV. Doc: [`docs/modules/newsletter/`](../../docs/modules/newsletter/).
+- **Comment email notifications (Resend).** A best-effort email fires when a comment is submitted
+  (`createComment` → `notifyNewComment`), so the owner is alerted to moderate instead of polling the
+  desk. Configured on the shared **E-mails** entity (Studio → E-mails → `commentNotification`): an
+  `enabled` toggle + **To / CC / BCC** as multi-email arrays (each `Rule.email()`-validated, tag
+  input) + `from` (a Resend-verified domain) + `replyTo` (empty = the commenter) + a
+  `{{author}}`/`{{post}}` subject. The only secret is `RESEND_API_KEY` (env, server-only). The blog
+  reads the entity in `lib/notify-comment.ts`; the layout + sender live in **`@indiecrafts/email`**
+  (`renderCommentNotificationEmail` → `sendEmail`). Never throws — a mail failure can't turn a saved
+  comment into a `500`; honeypot spam drops before the write, so only real comments notify. Guide:
+  [`docs/modules/blog/comments.md`](../../docs/modules/blog/comments.md).
+- **`@indiecrafts/newsletter` — the newsletter feature extracted to a module.** The subscribe
+  engine (`lib/newsletter.ts`), the `subscriber` doc, and a new editable
+  **`newsletterSettings`** singleton moved into `code/modules/newsletter/`, shipped as the
+  `newsletterSanity` **`SanityModule`** barrel — activate with one line in `composeSanity([...])`
+  + `features.newsletter`. The public form stays a page-builder block (schema in the blog,
+  renderer in `@indiecrafts/ui-components`); the thin `/api/newsletter` route now calls the
+  module's engine. Doc: [`docs/modules/newsletter/`](../../docs/modules/newsletter/).
+- **`module.newsletter` page-builder block (`@indiecrafts/blog`).** New `defineModule` schema
+  (`sanity/schema/modules/newsletter.ts`, "Infolettre") — per-instance, per-locale copy (heading,
+  body, placeholder, button, consent, success/already/error) + a `variant` (card/inline/banner).
+  No refs, no image, so it passes straight through `MODULES_FRAGMENT`.
+  Registered in `moduleSchemas` + `MODULE_TYPES` + the `INLINE_MODULES` inline allowlist (10 of 14
+  now). The renderer + backend live in `@indiecrafts/ui-components` + the app — this is the schema
+  half only.
+
+### Changed
+
+- **Studio desk: `quote`/`person` promoted to top-level domains.** The reference docs moved out of the
+  nested **Références** list into two first-class top-level sections — **Témoignages** (`quote`, ★) +
+  **Équipe** (`person`, 👥) — via `blogStructure` (temp-sanity §7; `composeSanity` already flattens each
+  owner's items, so no resolver change). Doc titles renamed (Citation → Témoignage, Personne → Membre
+  d'équipe); doc **types**, fields, i18n templates, and the `quote-list` / `person-list` blocks are
+  unchanged. The full generalization to `testimonial` / `team` entities (rating, company, department,
+  order + a `/team` route + a shared/core home) stays temp-sanity **Pack 1**.
+
+### Added
+
+- **Blog code blocks — Shiki syntax highlighting.** A new `codeBlock` body object (`language` /
+  optional `filename` / `code`) renders through a server-side, async `CodeBlock`
+  (`@indiecrafts/ui-components`, new `shiki ^3` dep) with a light+dark theme pair; the dark colours
+  swap under `[data-theme="dark"]` via `.shiki` rules in `@indiecrafts/ui-tokens/globals.css`. An
+  unsupported language degrades to a plain `<pre>`. Registered in the shared
+  `portable-text-components` map, so app pages and blog posts highlight identically. Seed adds a
+  demo block. _(Renderer + dependency live in `code/packages/ui-components`; logged here to keep the
+  blog sprint together.)_
+- **Blog series / collections.** A new `series` document (localized like the taxonomies) + a
+  `post.series` reference and `post.seriesOrder` number group posts into an ordered multi-part
+  guide. Each post shows a "Part N of M" `SeriesNav` (ordered sibling list, current marked), and
+  every series gets a paginated `/blog/series/<slug>` landing (posts in `seriesOrder`, then date),
+  with a `BreadcrumbList` + sitemap entries. Gated by a new **`features.blogSeries`** flag
+  (`isSeriesEnabled`, requires `blog`). Studio: a **Séries** desk section + EN/FR create templates.
+  Seed ships a demo "Ship your first MVP" 3-part series (EN + FR).
+- **Blog post extras — share, reading progress, author socials.** A share row (X / LinkedIn /
+  Facebook + copy-link) and a scroll `ReadingProgress` bar on each post, each gated by a new
+  `blog.display.post.{share,readingProgress}` editor toggle (default on). Authors gain an optional
+  `social[]` (`{ platform, url }` — X / LinkedIn / GitHub / Instagram / Mastodon / website) shown as
+  icon links on `/author/[slug]`. Brand glyphs are inlined in `shared/components/BrandIcons.tsx`
+  (lucide removed brand logos).
+- **Blog search.** A `/blog/search?q=` route + a no-JS GET search box (on the search page and the
+  frontpage). `searchPostsQuery` runs GROQ `match` over title / excerpt / SEO description / body
+  text, sharing the public listing filter (noindex / unpublished / scheduled). Results are
+  `noindex`, capped at 30 (no pagination — `match` is prefix-only, swap to Algolia/Orama at scale).
+  Gated by a new **`features.blogSearch`** flag (`isSearchEnabled`, requires `blog`).
+- **Blog `BreadcrumbList` JSON-LD + real `dateModified`.** The post route now emits a
+  `BreadcrumbList` (Blog → category → post; the category crumb drops when categories are toggled
+  off, so the schema never links a 404'd route) alongside its `Article`, and the category / tag /
+  author detail routes emit one too (via the shared `buildBreadcrumbSchema`). `Article.dateModified`
+  now reads the projected `_updatedAt` (`post.updatedAt`) instead of falling back to
+  `datePublished` — a genuine freshness signal for search. Visual `<Breadcrumbs>` + the JSON-LD are
+  built separately (trail in the body, machine trail in the head).
+- **Blog scheduled publishing.** Every public listing/discovery query now filters
+  `coalesce(publishedAt, _createdAt) <= now()`, so setting a **future** `publishedAt` keeps a
+  post out of listings, feeds, related, sitemap, and llms until its date passes. The direct URL
+  stays resolvable (shareable preview) — a hard 404-until-date would break draft preview.
+- **Blog listing pagination.** The category / tag / author detail routes page their post lists
+  at `POSTS_PER_PAGE = 12` (`lib/pagination.ts`) via `?page=N`: a `[$start...$end]` slice + a
+  matching `count(...)` query, rendered with a shared `<Pager>` (prev/next, "Page X of Y", `rel`
+  prev/next). Page 1 is the canonical bare URL. The curated `/blog` frontpage is not paginated.
+
+- **Blog display settings — editor-toggled, no deploy.** A new **Affichage du blog** group on
+  the `blog` singleton (`display`) lets a non-technical editor show or hide blog elements from
+  Studio: category/tag/author chips, the post date, reading time, table of contents, related
+  grid, the frontpage "à la une" mosaic, and card excerpts. All default ON (an unset toggle
+  also reads as shown). `lib/settings.ts` — `getBlogSettings()` (React-`cache`d, build-safe
+  `client.fetch`) — resolves the raw toggles against the feature flags into one `BlogDisplay`;
+  every renderer reads it (`BlogCard`/`HeroCard` became async server components to do so). The
+  three **taxonomy** toggles are two-tier — visible only when the code capability
+  (`features.blogTaxonomy.*`) **and** the editor toggle agree — and gate more than chips: new
+  `requireTaxonomyRoute` / `isTaxonomyRouteEnabled` (route-gate) 404 the `/blog/category`,
+  `/blog/tag`, `/author` routes and drop them from the sitemap + `/llms.txt` when off ("off =
+  truly gone"). Guide: `docs/modules/blog/editor-guide.md` §6.1; architecture:
+  `docs/modules/blog/blog-architecture.md` §1.
 
 - **Blog comments — moderated, Sanity-backed, per-locale editable.** A public comment form
   under each post: `POST /api/comments` → `createComment` validates + writes a `comment` doc

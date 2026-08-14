@@ -1,23 +1,19 @@
 # Workspace & deployment
 
-How the monorepo is laid out, what you deploy for a client, and how the internal
-folders stay private.
+How the monorepo is laid out and what you deploy.
 
 ## Layout
 
-The repo is a pnpm + Turborepo monorepo. Two folders are client-facing and deployable;
-two are internal and private.
+The repo is a pnpm + Turborepo monorepo. The deliverable is two folders — `code/` and `docs/`.
 
 | Folder | Deployed? | Role |
 | --- | --- | --- |
 | **`code/`** | ✅ the app | The workspace — `apps/web` (the Next site), plus `packages/ modules/ db/ infra/`. |
 | **`docs/`** | ✅ optional | This documentation site (VitePress). Product docs, safe to share. |
-| **`method/`** | ❌ **private** | The dev framework — sprint process, rules, engineering brain. Internal only. |
-| **`work/`** | ❌ **private** | The sprint lab — thinking, `MEMORY`, `backlog`, `scratch`. Internal only. |
 
-`method/` and `work/` are their own npm-managed VitePress sites, **outside** the pnpm/turbo
-workspace — so `pnpm build` (the app deploy) never touches them. They only ever reach a
-client if you deploy them to a public URL or hand over the whole repo. Don't.
+The repo may also carry internal folders (`method/`, `work/`) that are **private, gitignored,
+and never part of a handoff** — they sit outside the pnpm/turbo workspace, so `pnpm build`
+(the app deploy) never touches them.
 
 ## Run it
 
@@ -35,35 +31,20 @@ pnpm docs          # http://localhost:3002  (this site)
 
 **Deploy `code/apps/web` (the site), and optionally `docs/`. Nothing else.**
 
-- **App** — install at the repo root, build `pnpm build`, output `code/apps/web/.next`; set
-  the host's Root/Package directory to `code/apps/web`. Netlify uses the per-app
-  `code/apps/web/netlify.toml`. Vercel/Cloudflare/anywhere: point at the repo, keep install
-  at the root. First-deploy steps → [New client](/apps/web/setup/new-client).
+- **App** — Cloudflare Workers via OpenNext: per-app `code/apps/web/wrangler.toml` +
+  `open-next.config.ts`, deployed by GitHub Actions (`wrangler deploy --env <env>`) or
+  `pnpm deploy:web:<env>`. Install stays at the repo root. Runbook →
+  [Deployment (Cloudflare)](/apps/web/setup/deployment).
 - **Docs** (optional) — its own npm package; `pnpm docs:build` → `docs/.vitepress/dist`.
   Deploy it only if the client should read the product docs.
-- **`method/` + `work/`** — **do not create a public deploy for these.** They build with
-  `pnpm method:build` / `pnpm work:build` for local/internal use, not for a client URL.
 
-## Private folders — keeping `method/` + `work/` from clients
+Most clients never touch the repo at all: they get the **live site**, the **Sanity Studio**
+(content editing), and — if you choose — this **docs site**.
 
-Two surfaces could leak them; close both.
+### One namespace per client (multi-instance under one account)
 
-**1. Deployment.** Never give `method`/`work` a client-reachable URL. If your team wants
-them hosted, put each on a **separate private project with authentication** (e.g. Vercel
-Authentication / password protection) — clients never get the URL, and it's gated anyway.
-The docs site's internal cross-links to the Method/Lab sites are **dev-only** (hidden when
-`NODE_ENV=production`), so a deployed docs site never points inward.
-
-**2. Repo hand-off.** If a client ever receives code, they get **`code/` (+ `docs/`) only** —
-never the monorepo. Two clean ways:
-
-- **Separate private repo (best):** keep `method/` + `work/` in their own private repo from
-  the start; the client repo carries `code/` + `docs/`. No per-hand-off filtering.
-- **Filtered export:** ship a mirror of `code/` (+ `docs/`) via `git subtree split` or a
-  scripted export. Do **not** `git rm --cached method work` on a shared branch — it fights
-  your own history.
-
-> Most clients never touch the repo at all: they get the **live site**, the **Sanity
-> Studio** (content editing), and — if you choose — this **docs site**. In that model
-> `method/` and `work/` are already invisible; the only thing to double-check is that you
-> haven't deployed their sites to a public URL.
+Every reuse of the template gets a unique **namespace** via `pnpm project:rename <slug>` — it sets
+`DEFAULT_SITE_PREFIX` (`@indiecrafts/config`) + the `<slug>-web*` Worker/R2 names together. The prefix
+namespaces the browser keys (consent · theme · locale) and the Cloudflare resources, so **many clients
+under one Cloudflare account never collide** — and a `staging`/`prod` deploy is blocked until you
+rename (a shared-account clobber guard). New-client runbook → [New client](/apps/web/setup/new-client).

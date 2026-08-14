@@ -3,7 +3,7 @@ import type {
   ImageRef,
   ModuleBase,
   BlockModule,
-} from "@indiecrafts/ui-components/types";
+} from "@indiecrafts/ui-components/shared/types";
 
 // The generic block types + shared presentational types now live in
 // `@indiecrafts/ui-components`. Re-export them so existing importers of
@@ -24,7 +24,7 @@ export type {
   StepListModule,
   QuoteListModule,
   CustomHtmlModule,
-} from "@indiecrafts/ui-components/types";
+} from "@indiecrafts/ui-components/shared/types";
 
 /**
  * Lightweight author reference embedded inside post fragments.
@@ -36,7 +36,7 @@ export type {
  * rich-text bios on the public site, switch the projections back to
  * `bio` and update this type to `PortableTextBlock[]`.
  */
-/** Slug-less SEO + visibility override — see `schema/objects/seo-meta.ts`. */
+/** Slug-less SEO + visibility override — schema in `@indiecrafts/schema` (`seoMeta`). */
 export type SeoMeta = {
   title?: string;
   description?: string;
@@ -58,6 +58,12 @@ export type AuthorRef = {
   image?: { asset?: { url?: string } };
 };
 
+/** One external profile link on an author (platform + URL). */
+export type AuthorSocial = {
+  platform?: "x" | "linkedin" | "github" | "instagram" | "mastodon" | "website";
+  url?: string;
+};
+
 /** Full author document — used by /author and /author/[slug]. */
 export type Author = {
   _id: string;
@@ -66,6 +72,7 @@ export type Author = {
   slug?: string;
   bio?: string;
   image?: { asset?: { url?: string } };
+  social?: AuthorSocial[];
   /** Computed in GROQ — count of posts attributed to this author. */
   postCount?: number;
   seo?: SeoMeta;
@@ -104,6 +111,23 @@ export type Tag = {
   /** Computed in GROQ — count of posts with this tag, locale-filtered. */
   postCount?: number;
   seo?: SeoMeta;
+};
+
+/** Full series document — used by /blog/series/[slug]. */
+export type Series = {
+  _id: string;
+  title?: string;
+  slug?: string;
+  description?: string;
+  postCount?: number;
+  seo?: SeoMeta;
+};
+
+/** A post's series membership + its ordered sibling parts (from `postBySlugQuery`). */
+export type SeriesRef = {
+  title?: string;
+  slug?: string;
+  parts?: { _id: string; title?: string; slug?: string }[];
 };
 
 /** Reusable `metadata` object — see `src/sanity/schema/objects/metadata.ts`. */
@@ -158,6 +182,10 @@ export type Post = PostListItem & {
   readTime?: number;
   /** Flat heading list — derived in GROQ, drives the Table of Contents. */
   headings?: Heading[];
+  /** Sanity `_updatedAt` — feeds Article `dateModified` (SEO freshness). */
+  updatedAt?: string;
+  /** Series membership + ordered parts — drives the "Part N of M" nav. */
+  series?: SeriesRef;
 };
 
 export type PostSlug = { slug?: string; language?: string };
@@ -207,6 +235,44 @@ export type BlogSingleton = {
   postModules?: AnyModule[];
   comments?: CommentsCopy;
   seo?: SeoMeta;
+};
+
+/**
+ * Raw `blog.display` as stored in Sanity — every toggle optional. An unset
+ * toggle means "shown" (the schema defaults each to `true`, but older docs
+ * may lack the field entirely). Resolve via `getBlogSettings`.
+ */
+export type BlogDisplayRaw = {
+  taxonomy?: { categories?: boolean; tags?: boolean; authors?: boolean };
+  post?: {
+    date?: boolean;
+    readingTime?: boolean;
+    tableOfContents?: boolean;
+    relatedPosts?: boolean;
+    share?: boolean;
+    readingProgress?: boolean;
+  };
+  frontpage?: { featuredHero?: boolean };
+  cards?: { excerpt?: boolean };
+};
+
+/**
+ * Resolved display settings — every toggle a concrete boolean. Taxonomy folds
+ * in `features.blogTaxonomy.*` (code capability AND editor toggle); the rest
+ * are editor-only. Produced by `getBlogSettings` / `resolveBlogDisplay`.
+ */
+export type BlogDisplay = {
+  taxonomy: { categories: boolean; tags: boolean; authors: boolean };
+  post: {
+    date: boolean;
+    readingTime: boolean;
+    tableOfContents: boolean;
+    relatedPosts: boolean;
+    share: boolean;
+    readingProgress: boolean;
+  };
+  frontpage: { featuredHero: boolean };
+  cards: { excerpt: boolean };
 };
 
 /** A public blog comment, as shown on a post (email is never fetched). */

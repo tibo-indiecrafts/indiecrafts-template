@@ -9,7 +9,8 @@
  */
 
 import { cache } from "react";
-import type { Locale } from "@indiecrafts/config";
+import { getCurrentEnvironment, type Locale } from "@indiecrafts/config";
+import { logger } from "@indiecrafts/logger";
 import { client } from "@indiecrafts/sanity/client";
 import { siteSeoQuery, siteSettingsQuery } from "@/sanity/seo-queries";
 
@@ -63,6 +64,21 @@ export type SiteSeo = {
  */
 export const DEFAULT_SITE_NAME = "indiecrafts.dev";
 
+/**
+ * Fail loud when a **production** site ships with no `siteName` — otherwise the
+ * template brand (`DEFAULT_SITE_NAME`) silently renders as the client's name in
+ * titles / OG / manifest / JSON-LD. Non-fatal (a hard fail would break every
+ * render); fires once per request via the `getSiteSettings` React cache.
+ */
+function auditSiteName(settings: SiteSettings): SiteSettings {
+  if (!settings.siteName && getCurrentEnvironment() === "production") {
+    logger.error(
+      `siteName is empty — the site falls back to the template brand "${DEFAULT_SITE_NAME}". Set it in Studio → Site settings.`,
+    );
+  }
+  return settings;
+}
+
 export type SiteSettings = {
   /** Brand/site name — titles, OG siteName, manifest, JSON-LD WebSite.name. */
   siteName?: string;
@@ -91,6 +107,23 @@ export type SiteSettings = {
   verification: { google?: string; bing?: string };
   analytics: { googleAnalyticsId?: string; requireCookieConsent?: boolean };
   globalSchemas: GlobalSchemaEntry[];
+  /** Which color-theme modes the site offers (overrides the `themeConfig` code default). */
+  themeModes?: { light?: boolean; dark?: boolean; system?: boolean; forced?: string };
+  /** Editor overrides for display toggles — `false` hides; unset = the code `features.*` default. */
+  showLocaleSwitcher?: boolean;
+  showStructuredData?: boolean;
+  showFaq?: boolean;
+  /** Site-wide rich-result image (WebPage JSON-LD fallback). */
+  schemaImage?: string;
+  /** Footer maker credit (was `config.madeBy`). */
+  madeBy?: {
+    name?: string;
+    href?: string;
+    domain?: string;
+    image?: string;
+    title?: string;
+    description?: string;
+  };
 };
 
 /** Filter raw GROQ schema entries to valid ones (require type + name). */
@@ -168,8 +201,8 @@ export const getSiteSeo = cache(async (locale: Locale): Promise<SiteSeo> => {
 export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
   try {
     const data = await client.fetch(siteSettingsQuery);
-    if (!data) return EMPTY_SETTINGS;
-    return {
+    if (!data) return auditSiteName(EMPTY_SETTINGS);
+    return auditSiteName({
       siteName: data.siteName ?? undefined,
       brand: {
         logo: data.logo ?? undefined,
@@ -197,7 +230,29 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
         requireCookieConsent: data.analytics?.requireCookieConsent ?? undefined,
       },
       globalSchemas: normalizeSchemas(data.globalSchemas),
-    };
+      themeModes: data.themeModes
+        ? {
+            light: data.themeModes.light ?? undefined,
+            dark: data.themeModes.dark ?? undefined,
+            system: data.themeModes.system ?? undefined,
+            forced: data.themeModes.forced ?? undefined,
+          }
+        : undefined,
+      showLocaleSwitcher: data.showLocaleSwitcher ?? undefined,
+      showStructuredData: data.showStructuredData ?? undefined,
+      showFaq: data.showFaq ?? undefined,
+      schemaImage: data.schemaImage ?? undefined,
+      madeBy: data.madeBy
+        ? {
+            name: data.madeBy.name ?? undefined,
+            href: data.madeBy.href ?? undefined,
+            domain: data.madeBy.domain ?? undefined,
+            image: data.madeBy.image ?? undefined,
+            title: data.madeBy.title ?? undefined,
+            description: data.madeBy.description ?? undefined,
+          }
+        : undefined,
+    });
   } catch {
     return EMPTY_SETTINGS;
   }

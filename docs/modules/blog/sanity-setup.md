@@ -125,7 +125,7 @@ All seven content types are registered with `@sanity/document-internationalizati
 | Object         | File                  | Used by                                            |
 | -------------- | --------------------- | -------------------------------------------------- |
 | `metadata`     | `objects/metadata.ts` | post (title/description/image/slug/noIndex)        |
-| `seoMeta`      | `objects/seo-meta.ts` | shared SEO override shape                           |
+| `seoMeta`      | `@indiecrafts/schema` | shared SEO override shape (moved out of the blog)   |
 | `blockContent` | `blockContent.ts`     | post body, accordion items, callout content, cards |
 | `link`         | `objects/link.ts`     | inside `cta`. Internal refs target `post` only.    |
 | `cta`          | `objects/cta.ts`      | callout, card-list, etc.                            |
@@ -146,11 +146,12 @@ Embedded inside `blog.postModules` and (for the inline set) directly in a post b
 | `module.step-list`         | `modules/step-list.ts`         | title + intro + steps[{title, content}]               |
 | `module.quote-list`        | `modules/quote-list.ts`        | refs to `quote` (locale-filtered)                     |
 | `module.custom-html`       | `modules/custom-html.ts`       | raw HTML — `dangerouslySetInnerHTML`                  |
+| `module.newsletter`        | `modules/newsletter.ts`        | email capture — card/inline/banner, → `/api/newsletter` |
 | `module.blog-index`        | `modules/blog-index.ts`        | frontpage hero                                        |
 | `module.blog-post-content` | `modules/blog-post-content.ts` | renders the active post (slot)                        |
 | `module.blog-post-list`    | `modules/blog-post-list.ts`    | filtered post grid (limit, categories, featuredOnly)  |
 
-**9 are inline-embeddable** in a post body (`INLINE_MODULES` in `blockContent.ts`): accordion-list, callout, card-list, custom-html, gallery, person-list, quote-list, stat-list, step-list. The other **4 are `postModules`-only**: prose, blog-index, blog-post-content, blog-post-list.
+**10 are inline-embeddable** in a post body (`INLINE_MODULES` in `blockContent.ts`): accordion-list, callout, card-list, custom-html, gallery, newsletter, person-list, quote-list, stat-list, step-list. The other **4 are `postModules`-only**: prose, blog-index, blog-post-content, blog-post-list.
 
 ### Renderer
 
@@ -241,7 +242,7 @@ pnpm dev
 
 The script prints the exact document total (`allDocs.length`) at commit time — it grows if you add content, so trust the console, not a fixed number.
 
-The "fast prototyping" showcase post exercises **every body-editor primitive** (H1–H6, numbered + bulleted lists, code / strong / em / strike-through marks, inline image, link, blockquote) plus **11 inline module instances across 8 module types** (callout ×4 variants, stat-list, card-list, step-list, accordion-list, quote-list, person-list, custom-html). The gallery, prose, and `blog-*` modules are excluded — gallery needs uploaded images; the rest are `postModules`-only.
+The "fast prototyping" showcase post exercises **every body-editor primitive** (H1–H6, numbered + bulleted lists, code / strong / em / strike-through marks, inline image, link, blockquote) plus **12 inline module instances across 9 module types** (callout ×4 variants, stat-list, card-list, step-list, accordion-list, quote-list, person-list, custom-html, newsletter). The gallery, prose, and `blog-*` modules are excluded — gallery needs uploaded images; the rest are `postModules`-only.
 
 Before the transaction commits, `cleanupLegacy()` scrubs any leftover `module.hero-split` / `module.logo-list` blocks from post bodies and deletes orphan `logo` docs in the correct reference order — so re-running the seed is safe even against an older dataset that predates this template.
 
@@ -445,7 +446,7 @@ Likely an unset `NEXT_PUBLIC_SANITY_PROJECT_ID` — `env.ts` asserts it. Check `
 
 ### Add or remove a module
 
-Touches ~8 code locations plus doc count-refs — follow the checklist rather than reconstructing it: `method/apps/web/workflows/add-blog-module.md` / `remove-blog-module.md`. The shape:
+Touches ~8 code locations plus doc count-refs — follow the internal add/remove-block workflow checklist rather than reconstructing it. The shape:
 
 1. **Schema** — `code/modules/blog/src/sanity/schema/modules/<name>.ts` via `defineModule`.
 2. **Register** — add to `moduleSchemas` + `MODULE_TYPES` in `schema/modules/index.ts`.
@@ -496,7 +497,7 @@ code/modules/blog/src/                             THE BLOG MODULE (gated by fea
 │       ├── post.ts, author.ts, category.ts, tag.ts, blockContent.ts
 │       ├── documents/           blog (singleton), quote, person
 │       ├── objects/             metadata, seo-meta, link, cta, define-module
-│       └── modules/             13 module schemas + index.ts (moduleSchemas, MODULE_TYPES)
+│       └── modules/             14 module schemas + index.ts (moduleSchemas, MODULE_TYPES)
 └── user-interface/
     ├── blog/  post/  author/  category/  tag/  shared/   route-grouped UI
     └── renderers/               registry.tsx (SIMPLE_MODULES) + ModuleRenderer.tsx + module components

@@ -1,0 +1,70 @@
+// Rename the project's namespace in ONE command — for reusing this template per
+// client. Rewrites `DEFAULT_SITE_PREFIX` (config) + the `<prefix>-web*` resource
+// names in `wrangler.toml`, then prints the R2 buckets to create. Run from
+// `code/apps/web`:
+//
+//   pnpm project:rename <slug>      # e.g. acme  →  DEFAULT_SITE_PREFIX="acme", worker "acme-web"
+//
+// The slug is the per-client namespace: it prefixes browser keys (consent/theme/
+// locale) AND the Cloudflare Worker/R2 names, so two clients under one account
+// never collide. Must be unique per client.
+
+import { readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { TEMPLATE_SLUG } from "./lib/project.mjs";
+
+const slug = process.argv[2];
+if (!slug || !/^[a-z][a-z0-9-]{2,40}$/.test(slug)) {
+  console.error(
+    "Usage: project:rename <slug>   (lowercase, a-z 0-9 -, 3–41 chars, starts with a letter)",
+  );
+  process.exit(1);
+}
+if (slug === "indiecrafts") {
+  console.error(
+    "✗ 'indiecrafts' is the template default — pick a slug unique to this client.",
+  );
+  process.exit(1);
+}
+
+const CONFIG_INDEX = resolve("../../packages/config/src/index.ts");
+const WRANGLER = resolve("wrangler.toml");
+const newStem = `${slug}-web`; // wrangler resource stem = <prefix>-web
+
+// 1. Config: DEFAULT_SITE_PREFIX = "indiecrafts" → "<slug>"
+const config = readFileSync(CONFIG_INDEX, "utf8");
+const nextConfig = config.replace(/(DEFAULT_SITE_PREFIX\s*=\s*)"[^"]*"/, `$1"${slug}"`);
+if (nextConfig === config) {
+  console.error(
+    "✗ Could not find DEFAULT_SITE_PREFIX in @indiecrafts/config — aborting (nothing changed).",
+  );
+  process.exit(1);
+}
+writeFileSync(CONFIG_INDEX, nextConfig);
+
+// 2. wrangler.toml: rewrite the "<TEMPLATE_SLUG>" stem ONLY on resource-name lines
+//    (name / bucket_name / database_name) — comments + docs are left untouched.
+const wrangler = readFileSync(WRANGLER, "utf8");
+const nextWrangler = wrangler
+  .split("\n")
+  .map((line) =>
+    /^\s*(name|bucket_name|database_name)\s*=/.test(line)
+      ? line.replaceAll(TEMPLATE_SLUG, newStem)
+      : line,
+  )
+  .join("\n");
+writeFileSync(WRANGLER, nextWrangler);
+
+console.log(`✓ Renamed project namespace → "${slug}"`);
+console.log(`  · @indiecrafts/config  DEFAULT_SITE_PREFIX = "${slug}"`);
+console.log(`  · wrangler.toml         Worker/R2 stem = "${newStem}"`);
+console.log("\nNext:");
+console.log("  1. Create the R2 buckets (one per env):");
+for (const env of ["dev", "staging", "prod"]) {
+  console.log(`       wrangler r2 bucket create ${newStem}-isr-${env}`);
+  console.log(`       wrangler r2 bucket create ${newStem}-backups-${env}`);
+}
+console.log(
+  "  2. Set NEXT_PUBLIC_SITE_PREFIX in your env only if it must differ from the config default.",
+);
+console.log("  3. pnpm verify:quick  →  commit.");

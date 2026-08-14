@@ -21,7 +21,7 @@ Restraint (see `code/packages/ui-tokens/DESIGN.md`): the gallery is quiet chrome
 
 | Field | Purpose |
 | --- | --- |
-| **Titre** (optional) | A small heading above the gallery. |
+| **Titre** (optional) | A small heading above the gallery. Wrap a word in `[[ ]]` to colour it in the brand accent — e.g. `Nos [[derniers]] projets`. |
 | **Intro** (optional) | A line of context under the title. |
 | **Format des images** | The frame every image sits in inside the carousel: **3:2** (default), 4:3, 16:9, 1:1, or 4:5. Fullscreen ignores this and shows each image whole. |
 | **Images** | Drag to reorder — carousel and thumbnails follow this order. Each takes an optional **Texte alternatif**. At least one image is required (`Rule.min(1)`). |
@@ -34,12 +34,12 @@ Inside the carousel, images are cropped (`object-cover`) to fill the chosen **Fo
 
 ## How it's wired (developer)
 
-A standard page-builder module (general shape in [blog-architecture](./blog-architecture.md); full add/remove checklist at `method/apps/web/workflows/add-blog-module.md`). The gallery-specific pieces:
+A standard page-builder module (general shape + full add/remove checklist in [blog-architecture](./blog-architecture.md#8-adding-removing-a-module)). The gallery-specific pieces:
 
 - **Schema** — `sanity/schema/modules/gallery.ts` (via `defineModule`, `ImagesIcon`). Registered in `modules/index.ts` (`moduleSchemas` + `MODULE_TYPES`), the inline allowlist (`blockContent.ts` `INLINE_MODULES`) and `portable-text-components.tsx` `INLINE_TYPES`.
 - **Query** — `MODULES_FRAGMENT` (`queries.ts`) projects each image via `asset->` to `{ _key, url, alt, lqip, aspectRatio, width, height }`. The `lqip` drives the blur placeholder.
 - **Types** — `GalleryModule` / `GalleryImage` in `sanity/types.ts`, added to `AnyModule`.
-- **Renderers** — `renderers/Gallery.tsx` is the **server** wrapper (owns spacing via `not-prose my-5 md:my-10` + the optional title/intro; the registry invokes module renderers as plain functions, which only works server-side). It renders the **client** `renderers/GalleryCarousel.tsx`, which holds two synced [embla](https://www.embla-carousel.com/) instances (main + drag-free thumbnails) and the lightbox (a `Dialog` + the shared `@indiecrafts/ui/embla-carousel` `Carousel`). Registered in `registry.tsx` `SIMPLE_MODULES`.
+- **Renderers** — `renderers/Gallery.tsx` is the **server** wrapper (owns spacing via `not-prose my-5 md:my-10` + the optional title/intro; the registry invokes module renderers as plain functions, which only works server-side). It renders the **client** `renderers/GalleryCarousel.tsx`, which holds two synced [embla](https://www.embla-carousel.com/) instances (main + drag-free thumbnails) and the lightbox (a `Dialog` + the shared `@indiecrafts/ui/web/embla-carousel` `Carousel`). Registered in `registry.tsx` `SIMPLE_MODULES`.
 - **Dependency** — `embla-carousel-react` (also backs the shared `@indiecrafts/ui` carousel).
 - **Strings** — `pages.blog.gallery.*` in `messages/<locale>.json` (`regionLabel`, `imageLabel`, `open`, `close`, `goToImage`); arrow labels reuse `common.previous` / `common.next`.
 

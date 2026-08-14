@@ -1,14 +1,16 @@
 # Theme modes
 
-Which color modes the site offers — and whether it's locked to one — is declared in
-`themeConfig` (`@indiecrafts/config`, `code/packages/config/src/index.ts`). `@/lib/theme`
-turns those flags into next-themes provider props and decides whether the toggle renders, so
-the config can never be interpreted two different ways.
+Which color modes the site offers — and whether it's locked to one — is edited in **Sanity**:
+**Paramètres du site → Affichage & thème → Modes de thème** (`siteSettings.themeModes`), so a client
+changes it without a deploy. `themeConfig` (`@indiecrafts/config`, `code/packages/config/src/theme.ts`)
+is the **code default** used when the Sanity field is unset. `@/lib/theme` (`resolveThemeConfig` →
+`themeProviderProps`/`themeModes`/`showThemeToggle`) resolves Sanity-over-default and the layout
+prop-feeds the client ThemeProvider/toggle (next-themes' pre-paint script still prevents a flash).
 
 For the color **values** themselves (the oklch/hex tokens), see
 [Brand setup](../setup/brand-setup.md); this page is about mode availability.
 
-## The `themeConfig` object
+## The default (`themeConfig`)
 
 ```ts
 export const themeConfig: {

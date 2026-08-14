@@ -4,6 +4,8 @@ Auto-loads for **everything under `code/**`** — apps · packages · modules ·
 under the root `CLAUDE.md` and above each sub-project's own `CLAUDE.md`. Universal coding hygiene
 for this repo; the app/package/module files add their domain specifics on top.
 
+**Stack:** the app stack — Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui · Sanity v5, pnpm + Turborepo. Governs all execution work under code/** (apps · packages · modules · db · infra).
+
 1. **Reuse before invent.** Do not create a new pattern when one already exists here — reuse the
    helper, util, type, or pattern that already lives in the codebase.
 2. **Edit over create.** Prefer editing an existing file to creating a new one; fewest files.

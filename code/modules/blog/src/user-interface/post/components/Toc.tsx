@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import type { Heading } from "@indiecrafts/blog/sanity/types";
-import { slugify } from "@indiecrafts/utils";
-import { cn } from "@indiecrafts/utils";
+import { slugify } from "@indiecrafts/utils/slugify";
+import { cn } from "@indiecrafts/utils/cn";
 
 /**
  * Sidebar Table of Contents — anchors to h2/h3/h4 in the post body.

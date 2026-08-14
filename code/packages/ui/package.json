@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./use-mobile": "./src/use-mobile.ts",
-    "./*": "./src/*.tsx"
+    "./web/use-mobile": "./src/web/use-mobile.ts",
+    "./web/*": "./src/web/*.tsx",
+    "./shared/*": "./src/shared/*.ts"
   },
   "dependencies": {
     "@indiecrafts/utils": "workspace:*",

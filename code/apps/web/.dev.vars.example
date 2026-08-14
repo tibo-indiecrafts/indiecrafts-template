@@ -1,0 +1,9 @@
+# Local Cloudflare Worker preview secrets — copy to `.dev.vars` (gitignored).
+# `wrangler dev` / `opennextjs-cloudflare preview` load these; `next dev` uses
+# `.env.local` instead. Public NEXT_PUBLIC_* values live in wrangler.toml [vars].
+# On the deployed Workers, set these with `wrangler secret put <NAME> --env <env>`.
+
+SANITY_API_READ_TOKEN=
+SANITY_API_WRITE_TOKEN=
+# RESEND_API_KEY=
+# BUTTONDOWN_API_KEY=

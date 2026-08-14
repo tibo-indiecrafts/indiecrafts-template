@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import bundleAnalyzer from "@next/bundle-analyzer";
-import { getCSPConnectSources, getCurrentEnvironment } from "@indiecrafts/config";
+import { getCurrentEnvironment } from "@indiecrafts/config";
+import { imageDefaults, securityHeaders } from "@indiecrafts/security";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const withBundleAnalyzer = bundleAnalyzer({
@@ -9,107 +10,80 @@ const withBundleAnalyzer = bundleAnalyzer({
   openAnalyzer: false,
 });
 
-const env = getCurrentEnvironment();
-const cspConnectSources = getCSPConnectSources(env).join(" ");
-
-// Google Analytics (gtag) domains. The measurement ID is edited in Sanity
-// (`siteSettings.analytics.googleAnalyticsId`) — a runtime value the build-time
-// CSP can't read — so GA's hosts are allowed unconditionally. Harmless when GA
-// is off (no script is emitted); the alternative would be a runtime CSP.
-const gaScriptSrc = " https://*.googletagmanager.com";
-const gaConnectSrc =
-  " https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com";
-
-const csp = [
-  `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline'${env === "development" ? " 'unsafe-eval'" : ""}${gaScriptSrc}`,
-  `style-src 'self' 'unsafe-inline'`,
-  `img-src 'self' data: blob: https:`,
-  // Uploaded featured videos are served as Sanity file assets — `<video src>`
-  // falls back to default-src ('self') without this, so allow the CDN + blobs.
-  `media-src 'self' blob: https://cdn.sanity.io`,
-  `font-src 'self' data:`,
-  `connect-src ${cspConnectSources}${gaConnectSrc}`,
-  // Featured-video embeds — the only third-party frames we ever render, and
-  // only from these validated hosts (see `parseVideoEmbed` + `HeroVideo`).
-  `frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com https://www.dailymotion.com`,
-  `frame-ancestors 'none'`,
-  `base-uri 'self'`,
-  `form-action 'self'`,
-].join("; ");
+// Extra origins allowed for editor-pasted embeds — e.g. an external newsletter
+// provider's form dropped in a `custom-html` block (Mailchimp/ConvertKit/…). Empty
+// by default; add the provider's origin (e.g. "https://*.list-manage.com") so its
+// form can submit + load past the CSP. See docs/modules/newsletter.
+const EMBED_HOSTS: string[] = [];
 
 const nextConfig: NextConfig = {
   // Workspace packages consumed as source (no build step) — Next transpiles them.
   transpilePackages: [
     "@indiecrafts/config",
+    "@indiecrafts/logger",
+    "@indiecrafts/format",
+    "@indiecrafts/email",
+    "@indiecrafts/security",
     "@indiecrafts/sanity",
+    "@indiecrafts/schema",
     "@indiecrafts/utils",
+    "@indiecrafts/version",
     "@indiecrafts/ui",
     "@indiecrafts/ui-components",
     "@indiecrafts/ui-tokens",
     "@indiecrafts/i18n",
+    "@indiecrafts/system-pages",
     "@indiecrafts/blog",
+    "@indiecrafts/newsletter",
+    "@indiecrafts/waitlist",
+    "@indiecrafts/consent",
   ],
   reactStrictMode: true,
   poweredByHeader: false,
   typescript: { ignoreBuildErrors: false },
   images: {
-    remotePatterns: [
-      // Demo content seed pulls cover images + portraits from Unsplash.
-      { protocol: "https", hostname: "images.unsplash.com" },
-      // Sanity-hosted assets — uploaded post covers, author portraits, etc.
-      { protocol: "https", hostname: "cdn.sanity.io" },
-    ],
-    formats: ["image/avif", "image/webp"],
-    // 1 year — once next/image hashes an asset's source it's immutable, so
-    // cache aggressively. Default is 60s which forces unnecessary revalidation.
-    minimumCacheTTL: 31536000,
-    // Every `next/image` src is rewritten to a CDN-sized source (Sanity +
-    // Unsplash resize at the edge) instead of fetching the full-res original
-    // through Next's own optimizer. See `src/lib/sanity-image-loader.ts` →
-    // `@indiecrafts/sanity/image`. Rule: `method/apps/web/rules/sanity-images.md`.
+    // Allowed image hosts + formats + 1-year TTL from @indiecrafts/security.
+    ...imageDefaults,
+    // Every `next/image` src is rewritten to a CDN-sized source (Sanity + Unsplash
+    // resize at the edge) instead of Next's optimizer. See
+    // `src/lib/sanity-image-loader.ts` → `@indiecrafts/sanity/image`. Rule: `.claude/rules/sanity-images.md`.
     loaderFile: "./src/lib/sanity-image-loader.ts",
   },
-  // Auto-memoize components and hooks. Stable in Next 16 — top-level flag.
-  // Prod-only: the React Compiler's memoization pass adds real per-file compile
-  // cost, and on every edit in dev — gating it to production keeps HMR fast while
-  // still shipping the optimization in the build. Flip to `true` to debug a
-  // compiler-specific issue locally.
+  // Auto-memoize components and hooks. Stable in Next 16 — prod-only so HMR stays fast.
   reactCompiler: process.env.NODE_ENV === "production",
   experimental: {
-    // Tighter bundle: only import icons you actually reference. All three
-    // icon sets are barrel-exported + tree-shakeable; this optimizes the
-    // named-import form so unused icons never reach the bundle.
+    // Tighter bundle: only import icons you actually reference.
     optimizePackageImports: ["lucide-react", "lucide", "reicon-react", "reicon-brands"],
   },
   async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "X-Frame-Options", value: "DENY" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
-          },
-          { key: "Content-Security-Policy", value: csp },
+    // Hardened CSP + security headers (+ HSTS/COOP in production) from the shared
+    // brick; the app declares only its own extra hosts. The brick's defaults keep
+    // the Sanity Studio working. See docs/apps/web/seo/security-headers.
+    return securityHeaders({
+      env: getCurrentEnvironment(),
+      csp: {
+        // Featured-video embeds — the only third-party frames we ever render
+        // (see `parseVideoEmbed` + `HeroVideo`).
+        frameSrc: [
+          "https://www.youtube-nocookie.com",
+          "https://player.vimeo.com",
+          "https://www.dailymotion.com",
         ],
+        // Uploaded featured videos are served as Sanity file assets.
+        mediaSrc: ["https://cdn.sanity.io"],
+        googleAnalytics: true,
+        embedHosts: EMBED_HOSTS,
       },
-      {
-        // Brand assets (favicons, PWA icons, OG cards) are immutable —
-        // swap by editing the file, not the URL. Long cache cuts mobile
-        // re-visit bytes to zero.
-        source: "/brand/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
-      {
-        source: "/logo.svg",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
-    ];
+      // Brand assets (favicons, PWA icons, OG cards) + logo are immutable.
+      immutablePaths: ["/brand/:path*", "/logo.svg"],
+    });
   },
 };
 
 export default withBundleAnalyzer(withNextIntl(nextConfig));
+
+// Cloudflare Workers (OpenNext) local-dev integration — makes `wrangler dev`
+// bindings (R2 ISR cache, vars, secrets from `.dev.vars`) available while
+// running `next dev`. No-op in production. See `docs/apps/web/setup/deployment.md`.
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+void initOpenNextCloudflareForDev();

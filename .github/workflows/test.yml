@@ -1,0 +1,104 @@
+# CI — the PR gate. `verify` (types/lint/format/contrast/tests + tooling gates) and
+# `build` (the real OpenNext Worker build) BLOCK; `browser` (Storybook a11y + e2e/visual)
+# is advisory until baselines are trusted; `docs` builds the VitePress site;
+# `dependency-review` flags risky deps on PRs. React Doctor runs in react-doctor.yml.
+
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Types + lint + format + WCAG contrast + unit tests + tooling gates. BLOCKING.
+  # (React Doctor is the advisory react-doctor.yml; `verify`'s doctor:changed is the
+  # local gate, so it's intentionally not duplicated here.)
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tsc
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm --filter @indiecrafts/web verify:contrast
+      - run: pnpm tags:check
+      - run: pnpm lint:scripts
+      - run: pnpm test:scripts
+      - run: pnpm test
+
+  # The real Cloudflare Worker build (OpenNext) — proves every route prerenders ×
+  # locale AND catches CF-only breakage (Shiki WASM, node-compat) before deploy.
+  # Needs Sanity read access (blog SSG + sitemap fetch) from repo vars/secrets.
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+      NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+      NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
+      SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @indiecrafts/web build:cf
+
+  # Browser suites: Storybook stories-as-tests (component + a11y), Playwright e2e +
+  # visual regression. ADVISORY (`continue-on-error`) until linux baselines are
+  # committed — then drop `continue-on-error` to graduate the gate.
+  browser:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:stories # every story as a component + a11y test
+      - run: pnpm --filter @indiecrafts/storybook storybook:build
+      - run: pnpm --filter @indiecrafts/web e2e # journeys + visual regression
+
+  # The VitePress docs build (catches Vue-parser breaks + structural errors).
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm docs:install
+      - run: pnpm docs:build
+
+  # Flags vulnerable / disallowed dependencies added in a PR (GitHub-native).
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/dependency-review-action@v4

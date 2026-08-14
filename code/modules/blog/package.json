@@ -8,7 +8,10 @@
   },
   "dependencies": {
     "@indiecrafts/config": "workspace:*",
+    "@indiecrafts/email": "workspace:*",
+    "@indiecrafts/format": "workspace:*",
     "@indiecrafts/i18n": "workspace:*",
+    "@indiecrafts/logger": "workspace:*",
     "@indiecrafts/sanity": "workspace:*",
     "@indiecrafts/ui": "workspace:*",
     "@indiecrafts/ui-components": "workspace:*",
@@ -29,5 +32,8 @@
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19"
+  },
+  "scripts": {
+    "test": "vitest run"
   }
 }

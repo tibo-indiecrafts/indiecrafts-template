@@ -3,30 +3,29 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { features, isPageVisible, pages } from "@indiecrafts/config";
 import type { Locale } from "@indiecrafts/config";
 import { buildMetadata } from "@/lib/metadata";
+import { getHomePage } from "@/lib/home";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { Features } from "@/user-interface/homepage/sections/Features";
-import { Faq } from "@/user-interface/homepage/sections/Faq";
-import { Cta } from "@/user-interface/homepage/sections/Cta";
-import { Pricing } from "@/user-interface/homepage/sections/Pricing";
-import { Testimonials } from "@/user-interface/homepage/sections/Testimonials";
 import { FeaturedArticles } from "@/user-interface/homepage/sections/FeaturedArticles";
 import { IconShowcase } from "@/user-interface/homepage/sections/IconShowcase";
 import { MorphiconsShowcase } from "@/user-interface/homepage/sections/MorphiconsShowcase";
 import { BlocksShowcase } from "@/user-interface/homepage/sections/BlocksShowcase";
+import { renderBlock } from "@indiecrafts/ui-components/web/registry";
+import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
 import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import { featuredPostsQuery } from "@indiecrafts/blog/sanity/queries";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
 
 /**
- * Production home page. Section components live in `src/user-interface/sections/`
- * and are mounted with a single `namespace` prop pointing at
- * `pages.home.blocks.<name>` in `messages/<locale>.json`. The section reads
- * its own `title`, `body`, `items`, etc. relative to that namespace.
+ * Production home page. The editorial sections are an editor-composed
+ * page-builder: an ordered `pageModules[]` on the `homePage.<locale>` Sanity
+ * singleton (read by `getHomePage`), painted by the shared `renderBlock`
+ * registry — the same blocks the blog body uses. Add / reorder / hide sections
+ * from Studio → Accueil, no code change.
  *
- * To swap in a new section variant: browse the sibling library repo
- * (`component-library`, `pnpm storybook`), copy the section file into
- * `src/user-interface/sections/`, drop its block keys into messages/, mount here.
+ * The dynamic `FeaturedArticles` (live blog posts) and the template's icon /
+ * motion / blocks showcases stay in code — they demo template capabilities and
+ * a real client removes them.
  */
 
 type Props = { params: Promise<{ locale: Locale }> };
@@ -41,7 +40,8 @@ export default async function HomePage({ params }: Props) {
   if (!isPageVisible(pages.home)) notFound();
   setRequestLocale(locale);
 
-  const t = await getTranslations("pages.home");
+  // The editor-composed page body — an ordered list of page-builder blocks.
+  const { pageModules } = await getHomePage(locale);
 
   // Featured articles — only when the blog feature is on. `sanityFetchLive` so
   // the home page live-updates via `<SanityLive>` when a post changes (opts the
@@ -60,72 +60,15 @@ export default async function HomePage({ params }: Props) {
   return (
     <DefaultLayout>
       <PageSchemas page={pages.home} locale={locale} />
-      <h1 className="sr-only">{t("title")}</h1>
 
-      <Features
-        type="features"
-        id="home-features"
-        namespace="pages.home.blocks.features"
-        items={[
-          { id: "customizable", iconKey: "zap" },
-          { id: "fullControl", iconKey: "settings" },
-          { id: "poweredByAi", iconKey: "sparkles" },
-        ]}
-      />
+      {pageModules.map((block) => (
+        <div key={block._key}>{renderBlock(block, portableComponents)}</div>
+      ))}
 
+      {/* Template showcases — code, not CMS (their content is code). */}
       <IconShowcase id="home-icons" namespace="pages.home.blocks.icons" />
-
       <MorphiconsShowcase id="home-morphicons" namespace="pages.home.blocks.morphicons" />
-
       <BlocksShowcase id="home-blocks" namespace="pages.home.blocks.blocks" />
-
-      <Cta type="cta" id="home-cta" namespace="pages.home.blocks.cta" />
-
-      <Pricing
-        type="pricing"
-        id="home-pricing"
-        namespace="pages.home.blocks.pricing"
-        tiers={[
-          {
-            id: "free",
-            cta: { href: "/" },
-            featureIds: ["analytics", "storage", "support"],
-          },
-          {
-            id: "pro",
-            cta: { href: "/" },
-            highlighted: true,
-            featureIds: [
-              "everything",
-              "community",
-              "singleUser",
-              "templates",
-              "mobile",
-              "reports",
-              "updates",
-              "security",
-            ],
-          },
-          {
-            id: "startup",
-            cta: { href: "/" },
-            featureIds: ["everything", "storage", "support"],
-          },
-        ]}
-      />
-
-      <Testimonials
-        type="testimonials"
-        id="home-testimonials"
-        namespace="pages.home.blocks.testimonials"
-        quotes={[
-          {
-            id: "lovelace",
-            avatarUrl:
-              "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=160&h=160&q=80",
-          },
-        ]}
-      />
 
       {featured.length > 0 ? (
         <FeaturedArticles
@@ -138,8 +81,6 @@ export default async function HomePage({ params }: Props) {
           viewAllLabel={tf("viewAll")}
         />
       ) : null}
-
-      <Faq pageId="home" />
     </DefaultLayout>
   );
 }

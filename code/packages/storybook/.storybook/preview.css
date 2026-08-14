@@ -1,0 +1,9 @@
+/* Storybook Tailwind entry. `globals.css` pulls in `@import "tailwindcss"`,
+ * the full token system, `typeset.css`, and its own `@source` lines (which
+ * already scan ../ui/src + ../ui-components/src, covering colocated component
+ * stories). Here we only add this package's own dirs (token doc pages +
+ * .storybook decorators) so their utility classes aren't purged. Tailwind v4
+ * skips node_modules + gitignored paths automatically. */
+@import "@indiecrafts/ui-tokens/globals.css";
+
+@source "../";

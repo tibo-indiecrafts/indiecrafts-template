@@ -14,8 +14,8 @@
   "aliases": {
     "components": "@/user-interface/shared/components",
     "utils": "@indiecrafts/utils",
-    "ui": "@indiecrafts/ui",
+    "ui": "@indiecrafts/ui/web",
     "lib": "@/lib",
-    "hooks": "@indiecrafts/ui"
+    "hooks": "@indiecrafts/ui/web"
   }
 }

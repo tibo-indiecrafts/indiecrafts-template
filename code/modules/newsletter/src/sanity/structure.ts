@@ -1,0 +1,53 @@
+import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
+import { EnvelopeIcon } from "@sanity/icons";
+import { features } from "@indiecrafts/config";
+import { apiVersion } from "@indiecrafts/sanity/env";
+
+/**
+ * "Abonnés" desk — subscribers captured via `/api/newsletter`, grouped by
+ * `status` (mirrors the blog Commentaires moderation desk).
+ */
+function subscriberStructureItem(S: StructureBuilder) {
+  const byStatus = (title: string, status: string) =>
+    S.listItem()
+      .title(title)
+      .child(
+        S.documentList()
+          .title(title)
+          .schemaType("subscriber")
+          .apiVersion(apiVersion)
+          .filter('_type == "subscriber" && status == $status')
+          .params({ status })
+          .defaultOrdering([{ field: "createdAt", direction: "desc" }]),
+      );
+  return S.listItem()
+    .title("Abonnés")
+    .icon(EnvelopeIcon)
+    .child(
+      S.list()
+        .title("Abonnés")
+        .items([
+          byStatus("En attente", "pending"),
+          byStatus("Confirmés", "confirmed"),
+          byStatus("Désabonnés", "unsubscribed"),
+        ]),
+    );
+}
+
+/**
+ * The newsletter's desk section(s) — the settings singleton + the Abonnés
+ * moderation list. Shown only when `features.newsletter` is on; the app's
+ * `composeSanity` stitches these in with the other owners.
+ */
+export function newsletterStructure(S: StructureBuilder): ListItemBuilder[] {
+  if (!features.newsletter) return [];
+  return [
+    S.listItem()
+      .title("Infolettre (réglages)")
+      .icon(EnvelopeIcon)
+      .child(
+        S.editor().id("newsletterSettings").schemaType("newsletterSettings").documentId("newsletterSettings"),
+      ),
+    subscriberStructureItem(S),
+  ];
+}

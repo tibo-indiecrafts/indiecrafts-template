@@ -10,8 +10,8 @@ The repo root holds four sibling pillars that mirror each other's shape:
 
 ```text
 code/     EXECUTION — the pnpm + Turbo workspace (workspace root = repo root)
-method/   HOW we work — 7-phase sprint, rules, workflows (read-mostly canon)
 docs/     CANON — product docs (this VitePress site)
+method/   HOW we work — internal dev framework (private · not in a client handoff)
 ```
 
 `docs/`, `method/`, `work/` are **npm-isolated** from the pnpm workspace (each has its own
@@ -38,9 +38,9 @@ Extracted when **≥2 consumers** use them; consumed **as source** (no build ste
 | Package | Holds | Exports |
 | --- | --- | --- |
 | `@indiecrafts/config` | site config data + types/helpers; `localizedPathname` | `.`, `./types` |
-| `@indiecrafts/utils` | `cn` · logger · slugify · video-embed · consent-signals · format-date | `.` (barrel) |
+| `@indiecrafts/utils` | `cn` · logger · slugify · video-embed · format-date | subpath-only (no `.`) |
 | `@indiecrafts/sanity` | Sanity infra: client · live · env · token · structure | subpath-only (no `.`) |
-| `@indiecrafts/ui` | shadcn primitives + `use-mobile` | `./*` → `src/*.tsx`, `./use-mobile` |
+| `@indiecrafts/ui` | shadcn primitives + `use-mobile` (platform-nested) | `./web/*` → `src/web/*.tsx`, `./web/use-mobile`, `./shared/*` |
 | `@indiecrafts/ui-tokens` | `globals.css` · `typeset.css` · `DESIGN.md` | CSS-only (`./globals.css`, `./typeset.css`) |
 | `@indiecrafts/i18n` | shared next-intl navigation for **modules** (untyped `Link`) | `.` |
 
@@ -66,8 +66,9 @@ src/
 │
 ├── user-interface/ app UI — by page, then category
 │   ├── homepage/       homepage-specific UI → sections/
-│   ├── error/ maintenance/ not-found/ legal/   per-surface folders
+│   ├── legal/          legal-page surfaces
 │   └── shared/         layout/ (Header, Footer, ThemeToggle, CookieBanner…) + components/
+│   (the branded maintenance / 404 / error status pages → @indiecrafts/system-pages)
 │
 ├── lib/            app services: metadata · seo/ · theme · fonts · navigation · cookies ·
 │                   social · faq · system-pages

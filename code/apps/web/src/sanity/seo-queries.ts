@@ -77,6 +77,15 @@ export const taxonomyPagesQuery = defineQuery(`
   }
 `);
 
+/**
+ * Version-update banner copy for one locale. Param `id = "siteMeta.<locale>"`.
+ * Read by `getVersionPrompt` (`src/lib/system-pages.ts`); NO `messages` fallback
+ * — an unset banner is simply off.
+ */
+export const versionPromptQuery = defineQuery(`
+  *[_id == $id][0].versionPrompt{ message, reload, dismiss }
+`);
+
 export const siteSettingsQuery = defineQuery(`
   *[_id == "siteSettings"][0]{
     siteName,
@@ -98,6 +107,12 @@ export const siteSettingsQuery = defineQuery(`
     robots,
     verification,
     analytics{ googleAnalyticsId, requireCookieConsent },
+    themeModes,
+    showLocaleSwitcher,
+    showStructuredData,
+    showFaq,
+    madeBy,
+    "schemaImage": schemaImage.asset->url,
     "globalSchemas": globalSchemas[]{
       schemaType,
       name,

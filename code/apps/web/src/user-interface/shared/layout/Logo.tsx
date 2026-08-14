@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { cn } from "@indiecrafts/utils";
+import { cn } from "@indiecrafts/utils/cn";
 import { sanityImageLoader } from "@indiecrafts/sanity/image";
 
 type LogoImgProps = { src: string; alt: string; className?: string };
@@ -53,7 +53,11 @@ export function Logo({ name, logo, logoDark, className, iconClassName }: LogoPro
       {logo ? (
         logoDark ? (
           <>
-            <LogoImg src={logo} alt={name} className={cn("block dark:hidden", iconClassName)} />
+            <LogoImg
+              src={logo}
+              alt={name}
+              className={cn("block dark:hidden", iconClassName)}
+            />
             <LogoImg
               src={logoDark}
               alt={name}

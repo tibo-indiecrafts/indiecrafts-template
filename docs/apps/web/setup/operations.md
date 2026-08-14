@@ -14,8 +14,8 @@ Day-to-day for whoever runs the site. Where things live, what to bookmark, what 
 | `/<locale>/blog/rss.xml` | RSS feed per locale — pasteable into Feedly / a Slack RSS bot |
 | `/<locale>/blog/<slug>/md` | Markdown export of a single post |
 | `/<locale>/llms.txt` | LLM-readable site summary per locale |
-| Netlify → **Forms** | Every form submission, by form name |
-| Netlify → **Deploys** | Build logs, preview URLs, rollbacks |
+| Studio → **Abonnés** / **Commentaires** | Newsletter signups + blog comments (they POST to `/api/*` → Sanity) |
+| Cloudflare → **Workers** → your worker → **Deployments** | Deploy history, versions, rollback (CI logs: GitHub → Actions → Deploy) |
 | Google Search Console → **Coverage** + **Sitemaps** | What Google sees + indexing errors |
 | sanity.io/manage → your project | API tokens, members, CORS allowlist |
 
@@ -41,22 +41,20 @@ Post never appears? See § Troubleshooting → "Post published but 404".
 
 ---
 
-## 3. Form submissions (Netlify Forms)
+## 3. Form submissions
 
-The template ships `public/__forms.html` (Netlify's build-time form registry). Submissions land in **Netlify → Forms** under each form's `name=` attribute. For email/Slack/webhook notifications, use **Forms → Settings → Notifications**.
+Forms POST to **API routes**, not a host feature, and land in **Sanity** — read them in the Studio:
 
-```bash
-# Confirm Netlify found the form schema
-curl -sSL -o /dev/null -w "%{http_code}\n" https://acme.com/__forms.html   # → 200
-```
+- **Newsletter** (`/api/newsletter`) → Studio → **Abonnés** (grouped by status). Config + provider forwarding: [Newsletter](../config/newsletter.md).
+- **Blog comments** (`/api/comments`) → Studio → **Commentaires** (moderation). See [Comments](../../../modules/blog/comments.md).
 
-Submits succeed but nothing shows in the dashboard? Check the form `name` in the component matches an entry in `public/__forms.html`, the hidden `<input name="form-name" value="<name>" />` is present, and re-deploy — Netlify's parser only scans static files at build time.
+Each uses a honeypot + a gated route + a server-only Sanity write. A submit that `500`s → check the worker logs (`wrangler tail --env prod`) and confirm `SANITY_API_WRITE_TOKEN` is set as a Worker secret.
 
 ---
 
 ## 4. Analytics + consent
 
-Analytics (the GA id) and the cookie banner are configured in **Sanity** (`siteSettings.analytics`), not config — see [`analytics.md`](../seo/analytics.md) and [`cookie-consent.md`](../config/cookie-consent.md).
+Analytics (the GA id) and the cookie banner are configured in **Sanity** (`siteSettings.analytics`), not config — see [`analytics.md`](../seo/analytics.md) and [`cookie-consent.md`](/packages/consent).
 
 Consent is stored client-side as a **JSON record of per-category choices** under `localStorage["cookie-consent"]`. Reactive state changes fire the `cookie-consent-change` window event; the banner/preferences dialog opens on the `cookie-preferences-open` event (footer "cookie settings" link, or `useConsent().openPreferences()`).
 
@@ -107,13 +105,13 @@ Colours, fonts, logo, and social links change in code (tokens + `@indiecrafts/co
 
 | Symptom | First place to look | Detail |
 | --- | --- | --- |
-| Site fully down | Netlify → Deploys → latest build log | A failed build usually rolls back to the previous version |
+| Site fully down | Cloudflare → Workers → Deployments (or GitHub → Actions → Deploy log) | Roll back to a prior version in the CF dashboard |
 | Post published but 404 | Studio post's metadata → check `noIndex`, slug, language | Common cause: saved as draft, never published |
 | Image not loading | Browser console → `next/image` error | Host not in `next.config.ts` `remotePatterns` — see [`brand-setup.md`](./brand-setup.md) § Image hosts |
 | Studio "CorsOriginError" | sanity.io/manage → API → CORS origins | Add the exact origin (protocol + port) with **Allow credentials** ticked |
 | Studio "Configuration error" | Deploy env vars | `NEXT_PUBLIC_SANITY_PROJECT_ID` missing or typo'd |
 | Draft preview returns 503 | Deploy env vars | `SANITY_API_READ_TOKEN` not set — see [`sanity-tokens.md`](../../../modules/blog/sanity-tokens.md) |
-| Form submits, no email | Netlify → Forms → Settings → Notifications | Add an email / Slack / webhook destination |
+| Form submits, nothing in Studio | Worker logs (`wrangler tail --env prod`) | Confirm `SANITY_API_WRITE_TOKEN` is a Worker secret; the route returns `201` even for a honeypot hit |
 | `robots.txt` still `Disallow: /` | Deploy env vars | `NEXT_PUBLIC_SITE_URL` unset, or environment isn't `production` — see [`robots-and-environments.md`](../seo/robots-and-environments.md) |
 | `/sitemap.xml` missing entries | Build at the wrong revision | Re-deploy from `main` — sitemap regenerates at build time |
 | Cookie banner won't dismiss | DevTools → Application → Local Storage | `cookie-consent` key isn't being written; banner reappears every visit until it is |
@@ -127,10 +125,10 @@ Deeper Sanity-specific symptoms (schema migration, legacy fields) are in [`sanit
 - **Code** — the git repo. Pushes to the remote are the backup. Tag releases (`git tag -a v1.0.0 -m "Launch"`) at milestones.
 - **Sanity dataset** — the content:
   ```bash
-  pnpm dlx sanity@latest dataset export production ./backup-$(date +%Y-%m-%d).tar.gz --project-id <ID>
+  pnpm backup:web:sanity                # → backups/sanity/  (add -- --remote for an R2 copy)
   ```
-  Re-importable with `sanity dataset import` if the live dataset breaks.
-- **Form submissions** — Netlify → Forms → Submissions → **Export CSV**.
+  Re-importable with `pnpm --filter @indiecrafts/web content:import -- <file>` if the live dataset breaks.
+- **Form submissions** — they're Sanity docs (Abonnés / Commentaires); the dataset export above already includes them.
 
 Brand assets in Sanity are covered by the dataset export; code-side assets (fonts) by the git backup.
 
@@ -140,7 +138,7 @@ Brand assets in Sanity are covered by the dataset export; code-side assets (font
 
 | Cadence | Action |
 | --- | --- |
-| Weekly | Glance at Netlify Forms → Spam; promote false positives |
+| Weekly | Glance at Studio → **Abonnés** / **Commentaires** for spam (honeypot catches most) |
 | Monthly | Run `pnpm verify` on latest `main` (tsc + lint + format + contrast + doctor) |
 | Monthly | Export the Sanity dataset (§ 9) |
 | Monthly | `node --env-file=.env.local scripts/audit-dataset.mjs` — catch content drift (broken refs, stale drafts) |

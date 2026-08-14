@@ -1,112 +1,95 @@
-import type { StructureBuilder, StructureResolver } from "sanity/structure";
-import { CommentIcon } from "@sanity/icons";
+import type { StructureBuilder, ListItemBuilder } from "sanity/structure";
+import { CommentIcon, StarIcon, UsersIcon } from "@sanity/icons";
 import { apiVersion } from "@indiecrafts/sanity/env";
 import { locales, type Locale } from "@indiecrafts/config";
-import {
-  seoStructureItem,
-  legalStructureItem,
-  navStructureItem,
-  cookieStructureItem,
-} from "@indiecrafts/sanity/structure";
 
 /**
- * Sidebar du Studio — regroupe Blog (singleton + articles/auteurs/
- * catégories/tags), les documents référencés par les modules de
- * page-builder (Citations/Personnes), et masque tout
- * le reste de la liste racine.
+ * The blog's own desk section(s) — Blog (singleton + articles/auteurs/
+ * catégories/tags), Références (page-builder Citations/Personnes), and
+ * Commentaires (moderation). Returned as a plain list of top-level items; the
+ * app's `composeSanity` stitches these together with the app-core sections into
+ * one "Contenu" list. This module no longer owns the whole resolver.
  *
- * Tous les types de documents de contenu (`post`, `author`, `category`,
- * `tag`, `quote`, `person`) sont localisés — chacun expose une liste parente
- * avec des enfants « English » / « Français » pour que les éditeurs bilingues
- * ne parcourent pas une seule liste mélangée. Les templates de création par
- * (type, locale) sont définis dans `sanity.config.ts`.
- *
- * Les modules de page-builder (Encadré / Liste de cartes / etc.) sont
- * des types objet imbriqués dans `blog.postModules` — ils
- * n'apparaissent pas dans la sidebar.
+ * Localized types (`post`, `author`, `category`, `tag`, `quote`, `person`) each
+ * expose EN/FR children so bilingual editors don't browse one mixed list.
+ * Page-builder modules are object types nested in `blog.postModules` — not here.
  */
-export const structure: StructureResolver = (S) =>
-  S.list()
-    .title("Contenu")
-    .items([
-      // ── Blog ──────────────────────────────────────────────
-      S.listItem()
-        .title("Blog")
-        .child(
-          S.list()
-            .title("Blog")
-            .items([
-              S.listItem()
-                .title("Mise en page (singleton)")
-                .child(
-                  S.editor().id("blog-singleton").schemaType("blog").documentId("blog"),
-                ),
-              S.divider(),
-              languageSplit(S, "post", "Articles"),
-              languageSplit(S, "author", "Auteurs"),
-              languageSplit(S, "category", "Catégories"),
-              languageSplit(S, "tag", "Tags"),
-            ]),
-        ),
+export function blogStructure(S: StructureBuilder): ListItemBuilder[] {
+  return [
+    // ── Blog ──────────────────────────────────────────────
+    S.listItem()
+      .title("Blog")
+      .child(
+        S.list()
+          .title("Blog")
+          .items([
+            S.listItem()
+              .title("Mise en page (singleton)")
+              .child(S.editor().id("blog-singleton").schemaType("blog").documentId("blog")),
+            S.divider(),
+            languageSplit(S, "post", "Articles"),
+            languageSplit(S, "author", "Auteurs"),
+            languageSplit(S, "category", "Catégories"),
+            languageSplit(S, "tag", "Tags"),
+            languageSplit(S, "series", "Séries"),
+          ]),
+      ),
 
-      S.divider(),
+    // ── Témoignages (quote docs) — social-proof domain ──
+    // Promoted from the old nested "Références" list to a first-class
+    // top-level section (temp-sanity §7). Still the data behind the
+    // `module.quote-list` block; generalizes to a `testimonial` doc in
+    // temp-sanity Pack 1 (rating, company →) — deferred.
+    languageSplit(S, "quote", "Témoignages", StarIcon),
 
-      // ── References for the page-builder modules ─────────
-      S.listItem()
-        .title("Références")
-        .child(
-          S.list()
-            .title("Références")
-            .items([
-              languageSplit(S, "quote", "Citations"),
-              languageSplit(S, "person", "Personnes"),
-            ]),
-        ),
+    // ── Équipe (person docs) — people domain ────────────
+    // The data behind `module.person-list`; generalizes to a `team` doc
+    // (department, order) in temp-sanity Pack 1 — deferred.
+    languageSplit(S, "person", "Équipe", UsersIcon),
 
-      S.divider(),
-
-      // ── Comments moderation ─────────────────────────────
-      // Submitted via /api/comments as `approved: false`; tick "Approuvé"
-      // on a comment to publish it. "En attente" = the moderation queue.
-      S.listItem()
-        .title("Commentaires")
-        .icon(CommentIcon)
-        .child(
-          S.list()
-            .title("Commentaires")
-            .items([
-              S.listItem()
-                .title("En attente")
-                .child(
-                  S.documentList()
-                    .title("En attente")
-                    .schemaType("comment")
-                    .filter('_type == "comment" && approved != true')
-                    .defaultOrdering([{ field: "createdAt", direction: "desc" }]),
-                ),
-              S.listItem()
-                .title("Approuvés")
-                .child(
-                  S.documentList()
-                    .title("Approuvés")
-                    .schemaType("comment")
-                    .filter('_type == "comment" && approved == true')
-                    .defaultOrdering([{ field: "createdAt", direction: "desc" }]),
-                ),
-            ]),
-        ),
-
-      S.divider(),
-
-      // ── Site-wide SEO & structured data (core, feature-independent) ──
-      seoStructureItem(S),
-      S.divider(),
-      navStructureItem(S),
-      S.divider(),
-      cookieStructureItem(S),
-      S.divider(),
-      legalStructureItem(S),
-    ]);
+    // ── Comments moderation ─────────────────────────────
+    // Submitted via /api/comments as `approved: false`; tick "Approuvé" on a
+    // comment to publish it. "En attente" = the moderation queue.
+    S.listItem()
+      .title("Commentaires")
+      .icon(CommentIcon)
+      .child(
+        S.list()
+          .title("Commentaires")
+          .items([
+            S.listItem()
+              .title("En attente")
+              .child(
+                S.documentList()
+                  .title("En attente")
+                  // Spam leaves the queue — the email "Spam" action + the Studio
+                  // "Spam" list below both set `spam: true`.
+                  .schemaType("comment")
+                  .filter('_type == "comment" && approved != true && spam != true')
+                  .defaultOrdering([{ field: "createdAt", direction: "desc" }]),
+              ),
+            S.listItem()
+              .title("Approuvés")
+              .child(
+                S.documentList()
+                  .title("Approuvés")
+                  .schemaType("comment")
+                  .filter('_type == "comment" && approved == true')
+                  .defaultOrdering([{ field: "createdAt", direction: "desc" }]),
+              ),
+            S.listItem()
+              .title("Spam")
+              .child(
+                S.documentList()
+                  .title("Spam")
+                  .schemaType("comment")
+                  .filter('_type == "comment" && spam == true')
+                  .defaultOrdering([{ field: "createdAt", direction: "desc" }]),
+              ),
+          ]),
+      ),
+  ];
+}
 
 /**
  * Entrée à deux niveaux dans la sidebar : un parent étiqueté p.ex.
@@ -116,10 +99,11 @@ export const structure: StructureResolver = (S) =>
  */
 function languageSplit(
   S: StructureBuilder,
-  type: "post" | "category" | "tag" | "quote" | "author" | "person",
+  type: "post" | "category" | "tag" | "series" | "quote" | "author" | "person",
   title: string,
+  icon?: Parameters<ListItemBuilder["icon"]>[0],
 ) {
-  return S.listItem()
+  const item = S.listItem()
     .title(title)
     .child(
       S.list()
@@ -130,6 +114,7 @@ function languageSplit(
           S.documentTypeListItem(type).title("Toutes les langues"),
         ]),
     );
+  return icon ? item.icon(icon) : item;
 }
 
 function languageList(S: StructureBuilder, type: string, lang: Locale, label: string) {

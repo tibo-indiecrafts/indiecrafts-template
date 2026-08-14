@@ -1,9 +1,9 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@indiecrafts/config";
-import { formatPostDate } from "@indiecrafts/utils";
+import { formatDate } from "@indiecrafts/utils/format-date";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { FeaturedMedia } from "@indiecrafts/ui-components/renderers/FeaturedMedia";
+import { FeaturedMedia } from "@indiecrafts/ui-components/web/media/FeaturedMedia";
 
 /**
  * Homepage "editor's desk" — a curated strip of featured articles, laid out
@@ -165,10 +165,6 @@ function SecondaryRow({ post, locale }: { post: PostListItem; locale: Locale }) 
       </div>
     </Link>
   );
-}
-
-function formatDate(locale: Locale, iso?: string | null): string | null {
-  return formatPostDate(locale, iso);
 }
 
 /** First author's name, plus a compact "+N" when a post has several. */

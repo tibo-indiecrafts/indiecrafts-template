@@ -5,19 +5,32 @@ Single-purpose, **consumed as source** (no per-brick build) through pnpm workspa
 symlinks + Next `transpilePackages`. Dependencies point **down** and never up:
 `app → module → package`. A brick that imports an app is a design error.
 
-**Seven bricks are live** — one page each below (exports · deps · consumers · gotchas). All
+**Fifteen bricks are live** — one page each below (exports · deps · consumers · gotchas). All
 ship `version: 0.0.0`, `private: true`, `type: module`. The roster and reserved names live in
 [`code/packages/_registry.md`](../../code/packages/_registry.md).
 
-| Brick | What it holds | Consumers |
-| --- | --- | --- |
-| [`@indiecrafts/config`](./config.md) | site config DATA + types/helpers (`isLocale`, env, CSP, `localizedPathname`) | app + blog |
-| [`@indiecrafts/utils`](./utils.md) | `cn` · logger · slugify · video-embed · consent-signals · format-date | app + blog |
-| [`@indiecrafts/sanity`](./sanity.md) | Sanity infra — `client · live · env · token · structure` builders | app + blog |
-| [`@indiecrafts/ui`](./ui.md) | 61 shadcn primitives + `use-mobile` (CLI-managed, docs colocated) | app + blog |
-| [`@indiecrafts/ui-components`](./ui-components.md) | generic page-builder block renderers + `BLOCK_RENDERERS` registry | app + blog |
-| [`@indiecrafts/ui-tokens`](./ui-tokens.md) | `globals.css` (OKLCH) · `typeset.css` · `DESIGN.md` — the design system | app |
-| [`@indiecrafts/i18n`](./i18n.md) | shared next-intl navigation (`Link`) — modules use it (app keeps typed routing) | blog |
+Grouped by **category** — `foundation` (the base every layer builds on) · `design-system` (the
+presentation layer) · `domain` (cross-cutting product capabilities). The roster is **flat on
+disk** while scannable; it folds into `packages/<category>/` only past a trigger — see the
+[categorisation convention](../../code/packages/.claude/CLAUDE.md).
+
+| Brick | Category | What it holds | Consumers |
+| --- | --- | --- | --- |
+| [`@indiecrafts/config`](./config.md) | foundation | site config DATA + types/helpers (`isLocale`, env, CSP, `localizedPathname`) | app + blog |
+| [`@indiecrafts/logger`](./logger.md) | foundation | structured logging — `logger` (levels · `child` scopes) + per-env config + reporters (pretty/json) + opt-in Sentry transport; edge/Workers-safe | app + blog · newsletter · waitlist |
+| [`@indiecrafts/utils`](./utils.md) | foundation | `cn` · slugify · video-embed · format-date | app + blog |
+| [`@indiecrafts/schema`](./schema.md) | foundation | shared Sanity object primitives (`localeString · seoMeta`) + `sharedSanity` | app + blog |
+| [`@indiecrafts/i18n`](./i18n.md) | foundation | shared next-intl navigation (`Link`) — modules use it (app keeps typed routing) | blog |
+| [`@indiecrafts/sanity`](./sanity.md) | foundation | Sanity infra — `client · live · env · token · structure · image · write` + the `composeSanity` contribution model | app + blog |
+| [`@indiecrafts/format`](./format.md) | foundation | locale money/number/time/list/plural formatters + grammar for generated content + text helpers + validators (phone/IBAN/VAT/postal); per-locale rules on `config` | app + blog |
+| [`@indiecrafts/ui`](./ui.md) | design-system | 61 shadcn primitives + `use-mobile` (CLI-managed, docs colocated) | app + blog |
+| [`@indiecrafts/ui-tokens`](./ui-tokens.md) | design-system | `globals.css` (OKLCH) · `typeset.css` · `DESIGN.md` — the design system | app |
+| [`@indiecrafts/ui-components`](./ui-components.md) | design-system | generic page-builder block renderers + `BLOCK_RENDERERS` registry | app + blog |
+| [`@indiecrafts/storybook`](./storybook.md) | design-system | Storybook documenting `ui` + `ui-components` + `ui-tokens` — colocated stories + token doc pages | — (docs tool) |
+| [`@indiecrafts/consent`](./consent.md) | domain | cookie-consent runtime (banner · store · Consent-Mode gates) + Sanity schema + `getCookieConsent` | app |
+| [`@indiecrafts/email`](./email.md) | domain | transactional email — `sendEmail` (Resend REST) + `renderEmailLayout` + per-email templates + the composed **E-mails** entity + "Send test" | blog · newsletter · waitlist · app |
+| [`@indiecrafts/system-pages`](./system-pages.md) | domain | branded status pages — `Maintenance` · `NotFoundContent` · `ErrorContent` + `maintenanceRewrite` | app |
+| [`@indiecrafts/security`](./security.md) | domain | CSP + hardened headers (HSTS/COOP) + image allowlist **and** request hardening — `withGuard` (origin · body-cap · rate-limit · Turnstile) for the public form routes | app |
 
 ## How a brick is wired
 
@@ -26,9 +39,10 @@ ship `version: 0.0.0`, `private: true`, `type: module`. The roster and reserved 
 2. **`next.config` `transpilePackages`** lists every `@indiecrafts/*` — Next compiles the
    TS/TSX source directly, no build step.
 3. **Resolution — `exports` vs. tsconfig `paths`.** Single-extension packages resolve via
-   their `exports` map + workspace symlinks. A **mixed `.ts`/`.tsx`** package needs a tsconfig
-   `paths` entry to resolve — the app declares three: `@/*`, `@indiecrafts/blog/*`, and
-   `@indiecrafts/ui-components/*`.
+   their `exports` map + workspace symlinks. A **mixed `.ts`/`.tsx`** package (or one imported
+   by a deep subpath) needs a tsconfig `paths` entry to resolve — the app declares `@/*` plus one
+   `@indiecrafts/<x>/*` line per such brick/module (`utils`, `email`, `system-pages`, `consent`,
+   `ui/web`, `ui-components`, `blog`, `newsletter`, `waitlist`).
 4. **Tailwind v4** scans code outside `node_modules` only via `@source` in
    `ui-tokens/globals.css` — one line per package that renders classes (`ui`, `ui-components`,
    the blog module, the app).
@@ -66,3 +80,9 @@ pages).
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — the brick roster + rule
 - [`DESIGN.md`](../../code/packages/ui-tokens/DESIGN.md) — the `ui-tokens` design contract
 - [Packages changelog](./changelog.md) — the `code/packages/` area log
+
+## Links
+
+- **Live:** `<production URL>` · **Repo:** `<git URL>` · **Deploy:** `<Cloudflare dashboard>`
+
+<!-- Template placeholders — fill per project; canonical URLs live in the root README. -->

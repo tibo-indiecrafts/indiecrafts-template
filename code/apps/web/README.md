@@ -73,18 +73,13 @@ All per-locale, all auto-built from `messages.<locale>.pages.*` — no separate 
 - `/<locale>/llms-full.txt` — every page's content concatenated as Markdown
 - `/<locale>/llms/<id>` — single page as Markdown
 
-## Deployment (Netlify)
+## Deployment (Cloudflare Workers)
 
-Build settings are pre-filled from this app's `netlify.toml` (build `pnpm build`, publish `code/apps/web/.next`). In the Netlify UI set **Package directory = `code/apps/web`** and leave **Base directory unset** (install runs from the repo root — pnpm workspace). Netlify auto-detects Next.js and installs `@netlify/plugin-nextjs`. **Edit `src/config/index.ts`** before the first deploy: set `site.url` to your real URL (the template ships `https://example.com`, which flips `robots.ts` to `Disallow: /` — the staging gate). Env vars live in Netlify → Site settings → Environment variables (see `.env.example`). Branch deploys, previews, and rollbacks work out of the box.
+The app deploys to **Cloudflare Workers** via OpenNext, across **dev / staging / prod**, with an R2-backed ISR cache and GitHub Actions auto-deploy (push to `main` → prod). Deploy scripts are **app-namespaced** — `pnpm deploy:web:{dev,staging,prod}` from the root. Config: `wrangler.toml`, `open-next.config.ts`. Set `NEXT_PUBLIC_SITE_URL` on the prod worker before launch (until then `robots.ts` serves `Disallow: /` — the staging gate). **Full runbook** (R2 buckets, secrets, custom domain, first-deploy checks): [`docs/apps/web/setup/deployment.md`](../../../docs/apps/web/setup/deployment.md).
 
-## Forms (Netlify Forms — zero backend)
+## Forms
 
-Submissions are stored on Netlify (dashboard → Forms). No API route, no email service setup.
-
-- `public/__forms.html` declares each form schema (Netlify's HTML parser only scans static files). Add a `<form>` block here for every form your site renders.
-- React forms include a matching `name`, `data-netlify="true"`, a hidden `form-name` input, and a honeypot `bot-field`. They POST URL-encoded data to `/`; Netlify routes by `form-name`.
-
-The library ships ready-to-copy newsletter + contact variants. Local dev posts to the dev server and quietly fails — test via a Netlify branch preview.
+Forms POST to **API routes**, not a host feature — so they work the same on any deploy target. The template ships the newsletter (`/api/newsletter`) and blog comments (`/api/comments`): a client form + honeypot → a gated route → a server-only Sanity write (or an email provider). Copy that pattern for a contact form. See [Newsletter](../../../docs/apps/web/config/newsletter.md) + [Comments](../../../docs/modules/blog/comments.md).
 
 ## Cookie banner + legal page (feature-flagged)
 
@@ -105,3 +100,15 @@ Full list in [`CLAUDE.md`](./CLAUDE.md) § Critical rules. The essentials:
 - Never depend on `../../../component-library` at runtime — browse-only.
 - Always `setRequestLocale(locale)` in server components that use translations.
 - Always run `pnpm verify:quick` before opening a PR.
+
+## Links
+
+|                  | URL                                                                      |
+| ---------------- | ------------------------------------------------------------------------ |
+| Live site        | `<https://your-domain.com>`                                              |
+| Repo             | `<https://github.com/you/your-repo>`                                     |
+| Deploy dashboard | `<Cloudflare Workers project URL>`                                       |
+| Sanity Studio    | `<https://your-domain.com/studio>` — local: http://localhost:3000/studio |
+| Product docs     | `<https://docs.your-domain.com>` — local: http://localhost:3002          |
+
+<!-- Template placeholders — fill in per project. -->

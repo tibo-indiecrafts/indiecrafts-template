@@ -12,7 +12,7 @@ primary), its own feature flag, and a **client-editable body in Sanity**.
 | Conditions générales de vente | `sales` | `/terms-of-sale` | `/conditions-generales-de-vente` | for selling |
 
 > The **cookie-policy** page appends a live cookie declaration (the inventory + a "Manage
-> preferences" button) below its editable intro — see [Cookie consent](./cookie-consent.md).
+> preferences" button) below its editable intro — see [Cookie consent](/packages/consent).
 
 > ⚠️ **The seeded content is a starter template, not legal advice.** Every page opens with a
 > warning and `[bracketed]` placeholders. **Have a lawyer review and complete each page**

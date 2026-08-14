@@ -2,6 +2,8 @@
 
 Core, feature-agnostic Sanity wiring. The blog **content model** (schema / queries / types / desk) lives in `src/features/blog/sanity/` — see `src/features/blog/CLAUDE.md`.
 
+**Stack:** Sanity v5 (Studio · GROQ · structure) · next-sanity · TypeScript. The CMS infrastructure layer.
+
 ## Modules
 
 - `client.ts` — read client for RSC queries (`useCdn: false`).

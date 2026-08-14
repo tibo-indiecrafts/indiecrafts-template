@@ -1,10 +1,12 @@
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Play } from "lucide-react";
 import { Link } from "@indiecrafts/i18n";
-import { features, type Locale } from "@indiecrafts/config";
-import { formatPostDate, parseVideoEmbed } from "@indiecrafts/utils";
+import { type Locale } from "@indiecrafts/config";
+import { formatDate } from "@indiecrafts/utils/format-date";
+import { parseVideoEmbed } from "@indiecrafts/utils/video-embed";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
+import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
 
 /**
  * Five-card hero — mirrors the blog-forge home grid. First two cards
@@ -45,7 +47,7 @@ export function BlogHero({
   );
 }
 
-function HeroCard({
+async function HeroCard({
   post,
   locale,
   span,
@@ -58,7 +60,7 @@ function HeroCard({
   height: string;
   size: "lg" | "sm";
 }) {
-  const t = useTranslations("pages.blog");
+  const t = await getTranslations({ locale, namespace: "pages.blog" });
   const slug = post.slug ?? "";
   const image = post.metadata?.image?.asset?.url;
   const lqip = post.metadata?.image?.asset?.metadata?.lqip;
@@ -70,8 +72,9 @@ function HeroCard({
   const authors = post.authors ?? [];
   const author = authors[0];
   const moreAuthors = authors.length - 1;
-  const { authors: showAuthors, categories: showCategories } = features.blogTaxonomy;
-  const date = formatPostDate(locale, post.publishedAt);
+  const { authors: showAuthors, categories: showCategories } = (await getBlogSettings())
+    .taxonomy;
+  const date = formatDate(locale, post.publishedAt);
   const hasVideo = !!parseVideoEmbed(post.metadata?.video);
 
   return (

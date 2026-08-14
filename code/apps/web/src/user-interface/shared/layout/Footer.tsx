@@ -25,6 +25,8 @@ type FooterProps = {
   logoDark?: string;
   social?: SiteSettings["social"];
   columns?: FooterColumn[];
+  /** Footer maker credit — Sanity `siteSettings.madeBy`. Omitted → no credit. */
+  madeBy?: SiteSettings["madeBy"];
 };
 
 const linkClass =
@@ -62,6 +64,7 @@ export function Footer({
   logoDark,
   social,
   columns = [],
+  madeBy,
 }: FooterProps) {
   const tFooter = useTranslations("footer");
   const year = new Date().getFullYear();
@@ -96,7 +99,7 @@ export function Footer({
         <p className="text-muted-foreground mt-12 text-xs">
           © {year} {company ?? name}. {tFooter("rights")}
         </p>
-        <MadeByCredit />
+        {madeBy ? <MadeByCredit madeBy={madeBy} /> : null}
       </div>
     </footer>
   );

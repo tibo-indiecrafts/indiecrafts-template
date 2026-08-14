@@ -5,7 +5,7 @@ Sections are the reusable marketing blocks a home (or landing) page is built fro
 `IconShowcase`, `MorphiconsShowcase`. They live in
 `src/user-interface/homepage/sections/` and import via the
 `@/user-interface/homepage/sections/*` alias. UI primitives come from the
-`@indiecrafts/ui` package (e.g. `@indiecrafts/ui/card`).
+`@indiecrafts/ui` package (e.g. `@indiecrafts/ui/web/card`).
 
 ## Where sections come from
 

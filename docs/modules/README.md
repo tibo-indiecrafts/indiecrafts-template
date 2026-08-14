@@ -81,3 +81,9 @@ support · crm`.
 - [`code/modules/CLAUDE.md`](../../code/modules/CLAUDE.md) — agent conventions for this slot
 - [`code/modules/_registry.md`](../../code/modules/_registry.md) — the module roster + rule
 - The live reference → `code/modules/blog/src/`
+
+## Links
+
+- **Live:** `<production URL>` · **Repo:** `<git URL>` · **Deploy:** `<Cloudflare dashboard>`
+
+<!-- Template placeholders — fill per project; canonical URLs live in the root README. -->

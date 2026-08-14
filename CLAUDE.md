@@ -5,6 +5,8 @@ the folder map, the always-true non-negotiables, and pointers. The web app's ful
 _how to code_ lives in **[`code/apps/web/CLAUDE.md`](code/apps/web/CLAUDE.md)** (auto-loads when you
 touch files under `code/apps/web/**`); design tokens in **[`code/packages/ui-tokens/DESIGN.md`](code/packages/ui-tokens/DESIGN.md)**.
 
+**Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui · Sanity v5 · next-intl v4 · pnpm 10 + Turborepo (Node 22). Config-first monorepo for marketing sites + a blog/page-builder.
+
 **Top non-negotiables** (the app brief has the full list):
 
 - Never commit `.env*` (only `.env.example`); never expose a non-public token under `NEXT_PUBLIC_`.
@@ -43,7 +45,7 @@ Guardrails against common LLM coding mistakes — bias to caution over speed (us
 
 ```bash
 pnpm dev / build / tsc / lint / format    # standard (turbo → @indiecrafts/web)
-pnpm verify                               # CI gate (tsc + lint + format + contrast + react-doctor on changed code)
+pnpm verify                               # CI gate (tsc + lint + format + contrast + react-doctor + issue-tag check)
 pnpm verify:quick                         # tsc + lint (manual pre-PR check)
 pnpm shadscan                             # shadcn/ui fundamentals audit — scores UX 0–100 (62 rules); --prompt for an AI fix-plan
 pnpm docs                                 # the product-docs VitePress site (port 3002)

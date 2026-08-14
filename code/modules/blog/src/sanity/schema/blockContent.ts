@@ -28,6 +28,8 @@ const INLINE_MODULES = [
   "module.quote-list",
   "module.accordion-list",
   "module.custom-html",
+  "module.newsletter",
+  "module.waitlist",
 ];
 
 export default defineType({
@@ -73,6 +75,39 @@ export default defineType({
     defineArrayMember({
       type: "image",
       options: { hotspot: true },
+    }),
+    defineArrayMember({
+      type: "object",
+      name: "codeBlock",
+      title: "Bloc de code",
+      fields: [
+        {
+          name: "language",
+          title: "Langage",
+          type: "string",
+          description: "Ex. « ts », « tsx », « js », « bash », « json », « css », « html ».",
+        },
+        {
+          name: "filename",
+          title: "Nom de fichier",
+          type: "string",
+          description: "Optionnel, affiché en haut du bloc. Ex. « app/page.tsx ».",
+        },
+        {
+          name: "code",
+          title: "Code",
+          type: "text",
+          rows: 8,
+          validation: (Rule) => Rule.required(),
+        },
+      ],
+      preview: {
+        select: { language: "language", filename: "filename", code: "code" },
+        prepare: ({ language, filename, code }) => ({
+          title: filename || "Bloc de code",
+          subtitle: [language, (code ?? "").split("\n")[0]].filter(Boolean).join(" · "),
+        }),
+      },
     }),
     // Inline content modules — editors pick from the "+" menu in the
     // body editor. Each refers to the same `defineType` registered via

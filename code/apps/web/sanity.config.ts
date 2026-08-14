@@ -1,11 +1,11 @@
 /**
  * Sanity Studio configuration — embedded Studio at /studio.
  *
- * Schemas live under `src/features/blog/sanity/schema/`; the Studio sidebar
- * layout lives in `src/features/blog/sanity/structure.ts`. Ported from
- * GetNextjsTemplates/blog-forge then enhanced with patterns from
- * nuotsu/sanitypress-with-typegen (metadata object, groups, orderings,
- * sidebar structure).
+ * This file is a thin **composer**: each owner (the shared-schema brick, the app
+ * core, each module) exports a `SanityModule` contribution — its schema, desk
+ * section, create templates, and i18n types — and `composeSanity` merges them.
+ * Adding or removing a module is **one line in the array below**, not surgery
+ * across four hardcoded lists. See `@indiecrafts/sanity/module`.
  */
 
 import { visionTool } from "@sanity/vision";
@@ -13,64 +13,55 @@ import { documentInternationalization } from "@sanity/document-internationalizat
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { apiVersion, dataset, projectId, studioBasePath } from "@indiecrafts/sanity/env";
+import { composeSanity } from "@indiecrafts/sanity/module";
 import { locales } from "@indiecrafts/config";
-import { schemaTypes } from "@indiecrafts/blog/sanity/schema";
-import { structure } from "@indiecrafts/blog/sanity/structure";
-import { coreSchemaTypes } from "./src/sanity/schema";
+import { sharedSanity } from "@indiecrafts/schema";
+import { emailSanity, sendTestEmailAction } from "@indiecrafts/email/sanity";
+import { blogSanity } from "@indiecrafts/blog/sanity";
+import { newsletterSanity } from "@indiecrafts/newsletter/sanity";
+import { waitlistSanity } from "@indiecrafts/waitlist/sanity";
+import { consentSanity } from "@indiecrafts/consent/sanity";
+import { coreSanity } from "./src/sanity";
 
-/**
- * Per-(type, locale) initial-value templates. Wired into the sidebar via
- * `S.initialValueTemplateItem(...)` in `structure.ts` so the "+ Create"
- * button on the "Français" leaf of e.g. Posts seeds `language: "fr"`.
- *
- * Without these, every new doc lands with the schema's `initialValue`
- * (always "en"), and editors have to remember to switch the radio.
- */
-const LOCALE_TEMPLATE_TITLES: Record<
-  "post" | "category" | "tag" | "quote" | "author" | "person" | "legalPage",
-  string
-> = {
-  post: "Article",
-  category: "Catégorie",
-  tag: "Tag",
-  quote: "Citation",
-  author: "Auteur",
-  person: "Personne",
-  legalPage: "Page légale",
-};
-
-const localeTemplates = (
-  ["post", "category", "tag", "quote", "author", "person", "legalPage"] as const
-).flatMap((type) =>
-  locales.map(({ code: lang }) => ({
-    id: `${type}-${lang}`,
-    title: `${LOCALE_TEMPLATE_TITLES[type]} (${lang.toUpperCase()})`,
-    schemaType: type,
-    value: { language: lang },
-  })),
-);
+// Order = desk order. `sharedSanity` contributes only objects (no desk section);
+// add a new module's contribution here (blog → shop → events …) and nothing else.
+// `emailSanity(modules)` builds the one "E-mails" singleton from every module's
+// `emailGroups` (order = module order), so its fields track this list too.
+const modules = [
+  sharedSanity,
+  blogSanity,
+  newsletterSanity,
+  waitlistSanity,
+  coreSanity,
+  consentSanity,
+];
+const sanity = composeSanity([...modules, emailSanity(modules)]);
 
 export default defineConfig({
   basePath: studioBasePath,
   projectId,
   dataset,
   schema: {
-    types: [...coreSchemaTypes, ...schemaTypes],
-    templates: () => localeTemplates,
+    types: sanity.schemaTypes,
+    templates: () => sanity.templates,
+  },
+  // "Envoyer un test" on the E-mails singleton — sends a sample of every enabled
+  // email so an editor can verify deliverability. Owned by `@indiecrafts/email`.
+  document: {
+    actions: (prev, ctx) =>
+      ctx.schemaType === "emailStrings" ? [...prev, sendTestEmailAction] : prev,
   },
   plugins: [
-    structureTool({ structure }),
+    structureTool({ structure: sanity.structure }),
     // Links each localized document to its translations (a `translation.metadata`
-    // doc per translation set), so the Studio can create/jump between languages
-    // and the front-end can resolve a doc's slug in another locale. Every content
-    // document is translated — `languageField` reuses the flat `language` field.
+    // doc per translation set) so the Studio can create/jump between languages and
+    // the front-end can resolve a doc's slug in another locale.
     documentInternationalization({
-      // Derived from the app's single locale source (`@indiecrafts/config`) so Studio and
-      // the front-end can never disagree on which languages exist.
+      // Derived from the app's single locale source (`@indiecrafts/config`) so
+      // Studio and the front-end can never disagree on which languages exist.
       supportedLanguages: locales.map(({ code, label }) => ({ id: code, title: label })),
-      schemaTypes: ["post", "category", "tag", "quote", "author", "person", "legalPage"],
+      schemaTypes: sanity.i18nSchemaTypes,
       languageField: "language",
-      // Keep the plugin's `translation.metadata` link docs out of global search.
       metadataOmnisearchVisibility: false,
     }),
     visionTool({ defaultApiVersion: apiVersion }),

@@ -12,7 +12,7 @@ a footnote:
 - **Errors handled** — no swallowed catch; `logger.error` minimum; loading/empty/error states covered.
 - **i18n** — every user-facing string in `messages/<locale>.json`; `@/i18n/routing` (not `next/link`); `setRequestLocale` at the top of server components using translations.
 - **A11y** — keyboard + visible `focus-visible` ring; no state by color alone; one `<main id="main">`; icons `aria-hidden` unless the label.
-- **Responsive** — verified at 375 / 768 / 1280; nothing clips or reflows wrong.
+- **Adaptive-aware** — named the mechanism (reflow vs context-swap); each device class deliberate; input-method (`pointer`/`hover`) handled, not hover-gated; container queries where a component's own width drives layout; verified at 375 / 768 / 1280 + a touch device (see `adaptive-design`).
 - **Docs + changelog** — the matching `docs/` page **and** its sidebar updated in lockstep; the change logged in `code/apps/web/CHANGELOG.md` with a plain-language _why_.
 - **Verify** — `pnpm verify:quick` (tsc + lint) passes; `pnpm verify:contrast` if tokens changed.
 

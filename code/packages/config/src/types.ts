@@ -1,17 +1,14 @@
 /**
- * Config types + helpers. Everything that is NOT pure data lives here —
- * the matching data is in `./index.ts`.
+ * Config TYPES only — no data, no functions, no `process.env`. The matching data
+ * + helpers live in the per-concern modules (`./site`, `./i18n`, `./pages`, …),
+ * all re-exported through `./index`.
  *
- * Three things to know:
- *  - `Locale` is derived from the `locales` data in `./index.ts` via a
- *    type-only import (no runtime cycle since the import is erased).
- *  - Adding a new route: extend `AppPathname` below.
- *  - Adding a new locale: append a row to `locales` in `./index.ts`; the
- *    `Locale` union here updates automatically.
+ * `Locale` is derived from the `i18n.locales` data via a **type-only** import
+ * (erased at runtime, so the `types ↔ i18n` cycle is types-only and safe).
+ * Adding a locale: append a row to `locales` in `./i18n` — this union follows.
  */
 
-import type { Robots } from "next/dist/lib/metadata/types/metadata-types";
-import type { i18n } from "./index";
+import type { i18n } from "./i18n";
 
 // ── Locales ──────────────────────────────────────────────────
 
@@ -25,6 +22,15 @@ export type LocaleConfig = {
   abbr: string;
   /** Text direction. Drives `<html dir>`; set `"rtl"` for Arabic/Hebrew/etc. */
   dir: "ltr" | "rtl";
+  // ── Formatting rules (consumed by @indiecrafts/format) ──────
+  /** BCP-47 tag for `Intl` (money/number/date). Defaults to `code` when unset (e.g. `fr` → `fr`). */
+  numberLocale?: string;
+  /** Default currency for money in this locale (ISO 4217, e.g. `"EUR"`). Falls back to `formatDefaults.currency`. */
+  currency?: string;
+  /** Title-Case inline labels (`true` EN/DE) vs sentence-case (`false` FR). Drives `capitalize`. */
+  capitalizeInlineNouns?: boolean;
+  /** Adjective BEFORE the noun (`true` EN/DE: "custom product") vs after (`false` FR: "produit personnalisé"). */
+  adjBeforeNoun?: boolean;
 };
 
 /** Union of registered locale codes — derived from the `i18n.locales` data. */
@@ -58,163 +64,26 @@ export type FontRoles = {
   mono: FontKey;
 };
 
-// ── Structured data ──────────────────────────────────────────
-
-/**
- * schema.org type emitted for the site's business entity (`site.legal.businessType`).
- * `"Organization"` is the neutral default. Every other value is a LocalBusiness
- * subtype — it emits the richer local-business schema (geo, opening hours, price
- * range, areaServed) from `site.legal`. Pick the closest match for the client.
- */
-export type BusinessType =
-  | "Organization"
-  | "LocalBusiness"
-  | "ProfessionalService"
-  | "HomeAndConstructionBusiness"
-  | "LegalService"
-  | "MedicalBusiness"
-  | "FinancialService"
-  | "Store"
-  | "Restaurant"
-  | "FoodEstablishment";
-
-// ── Routes ───────────────────────────────────────────────────
-
-/**
- * Every static route the `pages` map can hold. Single source of truth —
- * adding a new static route means appending one literal here AND adding
- * the matching entry under `pages` in `./index.ts`.
- *
- * Dynamic routes (`/blog/[slug]`, etc.) live in
- * `src/app/routes.ts:DYNAMIC_PATHNAMES`. They don't appear in the
- * `pages` map (one entry per URL pattern, not per content item).
- */
-export const STATIC_PATHNAME_KEYS = [
-  "/",
-  "/legal-notice",
-  "/privacy-policy",
-  "/cookie-policy",
-  "/terms",
-  "/terms-of-sale",
-  "/blog",
-  "/blog/category",
-  "/blog/tag",
-  "/author",
-] as const;
-
-export type StaticAppPathname = (typeof STATIC_PATHNAME_KEYS)[number];
-
-// ── Page config ──────────────────────────────────────────────
-
-export type RouteSlug = string | Partial<Record<Locale, string>>;
-export type CanonicalOverride = StaticAppPathname | `http${string}`;
-export type OgImageUrl = "/opengraph-image" | `/${string}` | `http${string}`;
-
-export type PageSeo = {
-  titleKey?: string;
-  descriptionKey?: string;
-  /**
-   * Override the message key for keywords. Defaults to `pages.<id>.keywords`
-   * — a comma-separated, translated string in `messages/<locale>.json`
-   * (leave the key out entirely to emit no `<meta keywords>`).
-   */
-  keywordsKey?: string;
-  canonical?: CanonicalOverride;
-  /** Convenience for `robots: { index: false, follow: false }`. */
-  noindex?: boolean;
-  /** Full robots override — overrides `noindex`. */
-  robots?: Robots;
-  /**
-   * Include this page in the LLM endpoints (`/llms.txt`, `/llms-full.txt`,
-   * `/llms/<id>`). Defaults to `true`. Automatically forced off for
-   * `noindex` pages, so you only set `llms: false` to exclude a page from AI
-   * assistants while keeping it indexed by search engines.
-   */
-  llms?: boolean;
-  openGraph?: {
-    type?: "website" | "article" | "profile";
-    imageUrl?: OgImageUrl;
-  };
-  /**
-   * Override the image(s) Google may show next to this page's search result
-   * (the WebPage JSON-LD `image`). A single path/URL or an array. Falls back
-   * to `seoDefaults.schemaImage`, then the page's OG image.
-   */
-  schemaImage?: string | readonly string[];
-  /**
-   * Per-page JSON-LD blocks. Each entry needs `"@type"`. Rendered into the
-   * page <head> by `<PageSchemas page={pageConfig} />` (imported from
-   * `@/lib/seo/jsonld`). Use the `build*Schema(...)` factories where
-   * possible — they fill `@id` + `@type` correctly.
-   */
-  structuredData?: readonly Record<string, unknown>[];
-};
-
-export type PageConfig = {
-  /**
-   * Pathname union for static routes only. Dynamic routes
-   * (`/blog/[slug]`, `/blog/category/[slug]`, etc.) don't live in the
-   * `pages` map — they're declared separately in
-   * `src/app/routes.ts:DYNAMIC_PATHNAMES`.
-   */
-  key: StaticAppPathname;
-  id: string;
-  slug: RouteSlug;
-  /** `false` returns 404 site-wide. Defaults true. */
-  enabled?: boolean;
-  seo?: PageSeo;
-};
-
 // ── Environment ──────────────────────────────────────────────
 
 export type Environment = "development" | "test" | "staging" | "production";
 
-// ── Helpers ──────────────────────────────────────────────────
+// ── Logging ──────────────────────────────────────────────────
 
-/**
- * Locale type-guard. Pass the registered `localeCodes` (from `./index`).
- *
- *   import { isLocale, localeCodes } from "@/config";
- *   if (isLocale(input, localeCodes)) { … }
- */
-export function isLocale<L extends string>(
-  value: string,
-  supported: readonly L[],
-): value is L {
-  return (supported as readonly string[]).includes(value);
-}
+/** Log severities, low → high; `silent` gates everything off. Consumed by `@indiecrafts/logger`. */
+export type LogLevel =
+  | "trace"
+  | "debug"
+  | "info"
+  | "warn"
+  | "error"
+  | "fatal"
+  | "silent";
 
-export function isPageVisible(input: PageConfig): boolean {
-  return input.enabled !== false;
-}
-
-export function getCurrentEnvironment(): Environment {
-  const explicit = process.env.NEXT_PUBLIC_ENVIRONMENT;
-  if (explicit === "staging") return "staging";
-  if (explicit === "test") return "test";
-  switch (process.env.NODE_ENV) {
-    case "production":
-      return "production";
-    case "test":
-      return "test";
-    default:
-      return "development";
-  }
-}
-
-export function getCSPConnectSources(env: Environment): readonly string[] {
-  // Sanity Studio at /studio needs to reach the project API + CDN.
-  // Safe to leave in prod CSP: the wildcard is locked to *.sanity.io.
-  //
-  // `registry.npmjs.org` — the embedded Studio polls npm for its own
-  // package version ("you're running an outdated Studio" check). Not
-  // critical, but without this entry the dev console fills with
-  // `TypeError: Failed to fetch` from CSP blocking the request.
-  const sanity = ["https://*.sanity.io", "wss://*.api.sanity.io"];
-  const npm = ["https://registry.npmjs.org"];
-  const common = ["'self'", ...sanity, ...npm];
-  if (env === "development" || env === "test") {
-    return [...common, "ws://localhost:*", "http://localhost:*", "https://*.vercel.app"];
-  }
-  return common;
-}
+/** The `logging` config shape — DATA only; the resolution logic lives in `@indiecrafts/logger`. */
+export type LoggingConfig = {
+  /** Minimum console level per environment. `"silent"` = no console output at all. */
+  levels: Record<Environment, LogLevel>;
+  /** Context keys whose values are replaced with `"[REDACTED]"` (case-insensitive match). */
+  redactKeys: readonly string[];
+};

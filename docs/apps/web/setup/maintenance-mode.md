@@ -1,38 +1,43 @@
 # Maintenance mode
 
-One flag takes the whole public site offline behind a branded "we'll be back" page — while the Studio and crawler-facing metadata stay up. Use it for planned downtime (a risky content migration, a DNS cutover) without deploying a separate holding page.
+Maintenance takes the whole public site offline behind a branded "we'll be back" page — while the Studio and crawler-facing metadata stay up. Use it for planned downtime (a risky content migration, a DNS cutover) without deploying a separate holding page.
 
-It lives in three places: the `features.maintenance` flag in `@indiecrafts/config`, the rewrite in `src/proxy.ts`, and the standalone `/maintenance` route under `src/app/maintenance/`.
+**Two ways to trigger it — a live toggle and a hard override:**
+
+| | Where | Effect | Use for |
+| --- | --- | --- | --- |
+| **Live toggle** (recommended) | Sanity → **Paramètres du site → Indexation → Mode maintenance** | Flips on within ~1 minute, **no redeploy** | Ops flipping the site off/on |
+| **Hard override** | `features.maintenance` in `@indiecrafts/config` | On at build time, **skips the Sanity read** | Forcing maintenance during a known deploy |
+
+The proxy trips on **either** (`features.maintenance || getMaintenanceMode()`). It lives in six places: the Sanity `siteSettings.maintenanceMode` field, the cached reader `getMaintenanceMode()` (`src/lib/maintenance.ts`), the `features.maintenance` flag, the rewrite in `src/proxy.ts` (via `maintenanceRewrite` from **[`@indiecrafts/system-pages`](/packages/system-pages)**), the standalone `/maintenance` route, and the shared `Maintenance` component.
 
 ---
 
 ## 1. Turn it on
 
-```ts
-// @indiecrafts/config
-features = {
-  // …
-  maintenance: true, // was false
-};
-```
+**Live (no deploy) — the usual way:** in the Studio, open **Paramètres du site → Indexation → Mode maintenance** and switch it on. The proxy reads it from Sanity's CDN with a ~30s per-isolate cache, so it takes effect within a minute. Switch it off to bring the site back — again, no deploy.
 
-It's a **build-time flag**, not an env var — flip it, commit, redeploy (or restart `pnpm dev` locally). Set it back to `false` and redeploy to bring the site back.
+**Hard override (build-time):** set `features.maintenance: true` in `@indiecrafts/config`, commit, redeploy. This forces maintenance **and skips the Sanity read entirely** — handy when you're deploying and know the site is down. Set back to `false` to re-enable the live toggle.
 
 ---
 
 ## 2. What happens when it's on
 
-`src/proxy.ts` rewrites every matched request to `/maintenance` and answers HTTP **503** with `Retry-After: 3600`:
+`src/proxy.ts` resolves `isDown` (the hard override OR the live Sanity toggle) and hands it to `maintenanceRewrite`, which rewrites every matched request to `/maintenance` and answers HTTP **503** with `Retry-After: 3600`:
 
 ```ts
 // src/proxy.ts
-if (features.maintenance && !request.nextUrl.pathname.startsWith("/maintenance")) {
-  return NextResponse.rewrite(new URL("/maintenance", request.url), {
-    status: 503,
-    headers: { "Retry-After": "3600" },
-  });
-}
+import { features } from "@indiecrafts/config";
+import { maintenanceRewrite } from "@indiecrafts/system-pages/proxy";
+import { getMaintenanceMode } from "@/lib/maintenance";
+
+const isDown = features.maintenance || (await getMaintenanceMode()); // || short-circuits the Sanity read
+const maintenance = maintenanceRewrite(request, isDown); // 503 rewrite, or null when up
+if (maintenance) return maintenance;
+return intlMiddleware(request);
 ```
+
+`getMaintenanceMode()` reads `siteSettings.maintenanceMode` from Sanity's **CDN** endpoint (public field, no token), cached in-memory per isolate (~30s). It's **fail-open** — any error → not in maintenance, so a Sanity hiccup never 503s the whole site. `maintenanceRewrite` itself is now **pure** (`(request, isDown)`); the app owns the decision, the brick stays Sanity-free.
 
 - The rewrite is **invisible to the URL bar** — visitors keep the URL they asked for, they just get the maintenance page.
 - **503** tells crawlers the outage is temporary, so Google doesn't drop your pages from the index; `Retry-After` hints when to come back.
@@ -102,7 +107,7 @@ Keep the same keys in every locale file, translated. Two values come from Sanity
 
 ## 5. The page itself
 
-`src/user-interface/maintenance/components/Maintenance.tsx` is purely presentational — the route resolves the copy + identity and passes them as props (`statusLabel`, `title`, `body`, `contactLabel`, `name`, optional `email`). It renders a centered card: a status pill with a pulsing brand dot, the headline, the body, the optional `mailto:` line, and `name` pinned at the bottom.
+The `Maintenance` component (`@indiecrafts/system-pages`) is purely presentational — the route resolves the copy + identity and passes them as props (`statusLabel`, `title`, `body`, `contactLabel`, `name`, optional `email`). It renders a centered card: a status pill with a pulsing brand dot, the headline, the body, the optional `mailto:` line, and `name` pinned at the bottom. It's token-based, so a second app gets the same page in its own theme.
 
 The pulsing dot is an honest "actively working" signal, not decoration — and the page's only motion, so it holds still under `prefers-reduced-motion` (`motion-reduce:hidden` on the ping layer).
 
@@ -110,7 +115,7 @@ The pulsing dot is an honest "actively working" signal, not decoration — and t
 
 ## 6. Verify
 
-With `features.maintenance: true` locally:
+Either flip `siteSettings.maintenanceMode` on in the Studio (wait up to ~30s for the cache) **or** set `features.maintenance: true` locally, then:
 
 ```bash
 pnpm dev
@@ -127,4 +132,4 @@ curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/studio      # �
 curl -sSL -o /dev/null -w "%{http_code}\n" http://localhost:3000/robots.txt  # → 200
 ```
 
-Flip the flag back to `false` before your normal production deploy.
+Flip the Sanity toggle (or the flag) back off to bring the site back.

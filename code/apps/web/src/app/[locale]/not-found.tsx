@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/config";
+import { NotFoundContent } from "@indiecrafts/system-pages";
 import { getSystemPages } from "@/lib/system-pages";
-import { NotFound as NotFoundPage } from "@/user-interface/not-found/components/NotFound";
+import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 
 // Belt-and-suspenders: the 404 HTTP status already deindexes this, but state it.
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -19,11 +20,13 @@ export default async function NotFound() {
   ]);
   const nf = sys.notFound ?? {};
   return (
-    <NotFoundPage
-      eyebrow={nf.eyebrow ?? t("eyebrow")}
-      title={nf.title ?? t("title")}
-      description={nf.description ?? t("description")}
-      homeLabel={nf.homeLabel ?? t("homeLabel")}
-    />
+    <DefaultLayout>
+      <NotFoundContent
+        eyebrow={nf.eyebrow ?? t("eyebrow")}
+        title={nf.title ?? t("title")}
+        description={nf.description ?? t("description")}
+        homeLabel={nf.homeLabel ?? t("homeLabel")}
+      />
+    </DefaultLayout>
   );
 }

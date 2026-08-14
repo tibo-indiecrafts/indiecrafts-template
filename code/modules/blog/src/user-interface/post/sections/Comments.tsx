@@ -1,5 +1,5 @@
 import type { Locale } from "@indiecrafts/config";
-import { formatPostDate } from "@indiecrafts/utils";
+import { formatDate } from "@indiecrafts/utils/format-date";
 import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import { approvedCommentsQuery } from "@indiecrafts/blog/sanity/queries";
 import type { Comment, CommentsCopy } from "@indiecrafts/blog/sanity/types";
@@ -73,7 +73,7 @@ export async function Comments({
             <span className="font-medium">{c.authorName}</span>
             {c.createdAt ? (
               <time dateTime={c.createdAt} className="text-muted-foreground text-xs">
-                {formatPostDate(locale, c.createdAt)}
+                {formatDate(locale, c.createdAt)}
               </time>
             ) : null}
           </p>

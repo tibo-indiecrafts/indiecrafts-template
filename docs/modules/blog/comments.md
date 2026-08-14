@@ -65,3 +65,50 @@ With comments on, **`SANITY_API_WRITE_TOKEN` becomes a runtime dependency** (it 
 seed-only) — set it in production. It's Editor-role and server-only (never `NEXT_PUBLIC_`);
 prefer a dedicated, independently-rotatable token. See
 [`@indiecrafts/sanity`](/packages/sanity) → `./write`.
+
+## Email notifications (Resend)
+
+Get an email the moment a comment needs moderation — best-effort, configured in the Studio on the
+shared **E-mails** entity (→ **E-mails → commentNotification**); the only secret lives in the env.
+
+- **On/off + recipients — in Sanity.** An `enabled` toggle · **To / CC / BCC**, each accepting
+  **multiple addresses** (tag input, each `Rule.email()`-validated) · **From** (must be a
+  Resend-verified domain) · **Reply-To** (empty = the commenter's email) · **Subject** with
+  `{{author}}` / `{{post}}` placeholders. (This alert is owner-facing, so its subject is a plain
+  string; the visitor-facing newsletter confirmation is translated per language — see
+  [Email](/packages/email).)
+- **The key — in the env.** `RESEND_API_KEY`, server-only (never `NEXT_PUBLIC_`). Unset →
+  comments still work; the notification is skipped and logged.
+- **Best-effort.** The email is sent after the comment is written; a failure is logged and
+  **never** turns a saved comment into an error — the visitor always gets `201`.
+- **Only real comments** trigger it (honeypot spam drops before the write). The mail carries the
+  author + a body excerpt + the post link + a Studio link to moderate, wrapped in a branded HTML
+  layout.
+- **Where it lives.** The blog reads the entity in `lib/notify-comment.ts` (`getEmailStrings()`); the
+  layout, copy, and Resend sender live in [`@indiecrafts/email`](/packages/email)
+  (`renderCommentNotificationEmail` → `sendEmail`) — no SDK, one server-side `fetch`. Every email
+  shares that one layout + entity.
+
+### One-click moderation buttons
+
+The notification email carries **Approuver · Spam · Supprimer** buttons — moderate without opening the
+Studio. Toggle them on the entity (`commentNotification.moderationButtons`, default **on**).
+
+- **Safe by design.** A button does **not** mutate on click. It opens a small branded **confirm page**
+  (`GET /api/comments/moderate`) showing the comment; a **Confirmer** button **POSTs** the action. So a
+  link-scanner or prefetcher (Outlook SafeLinks, etc.) that auto-fetches the link can't approve/delete
+  — only a human POST changes state.
+- **One-time token.** Each comment carries a single-use `moderationToken` (hidden). Approve →
+  `approved: true`; Spam → `spam: true` (leaves the "En attente" queue → the **Spam** desk list);
+  Delete → removes the doc. After the action the token is cleared, so the link expires.
+- Requires `features.blogComments` + `SANITY_API_WRITE_TOKEN` (the route writes). The token is an
+  opaque nonce, not PII.
+
+## Exporting comments
+
+```bash
+pnpm comments:export   # → backups/comments/comments-<timestamp>.csv
+```
+
+Read-only; needs `SANITY_API_READ_TOKEN`. Columns: `authorName, authorEmail, body, approved, spam,
+post, createdAt`. (Owner-only — `authorEmail` is private and never leaves this export / the Studio.)

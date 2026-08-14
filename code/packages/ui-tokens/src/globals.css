@@ -3,7 +3,12 @@
 @source "../../../apps/web/src";
 @source "../../ui/src";
 @source "../../ui-components/src";
+@source "../../version/src";
+@source "../../consent/src";
+@source "../../system-pages/src";
 @source "../../../modules/blog/src";
+@source "../../../modules/newsletter/src";
+@source "../../../modules/waitlist/src";
 @plugin "@tailwindcss/typography";
 /* shadcn Typeset preset — long-form prose, fonts linked to config (src/app/typeset.css). */
 @import "./typeset.css";
@@ -644,4 +649,27 @@
   --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
   --sidebar-border: hsl(240 3.7% 15.9%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+/* ── Shiki code blocks ────────────────────────────────────────────────
+ * `CodeBlock` (@indiecrafts/ui-components) renders Shiki with a light + dark
+ * theme pair (`defaultColor: "light"`): light colours are inline, dark ones
+ * ride along as `--shiki-dark*` CSS vars. Activate the dark set under the
+ * same conditions the rest of the theme flips — an explicit
+ * `[data-theme="dark"]`, or OS-dark when the user hasn't forced light. */
+[data-theme="dark"] .shiki {
+  background-color: var(--shiki-dark-bg) !important;
+}
+[data-theme="dark"] .shiki,
+[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark) !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .shiki {
+    background-color: var(--shiki-dark-bg) !important;
+  }
+  :root:not([data-theme="light"]) .shiki,
+  :root:not([data-theme="light"]) .shiki span {
+    color: var(--shiki-dark) !important;
+  }
 }

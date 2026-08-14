@@ -21,9 +21,12 @@ Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling o
 | `localeSwitcher` | `boolean` | `true` | The header locale picker |
 | `legal.*` | `object` | see below | The five legal pages, each toggled independently |
 | `faq` | `boolean` | `true` | Per-page `<Faq>` accordion + FAQPage JSON-LD + llms FAQ block |
+| `newsletter` | `boolean` | `true` | Newsletter capture block (`module.newsletter`) + the `/api/newsletter` route + the **Abonnés** desk — site-wide, **independent of `blog`** ([guide](/modules/newsletter/)) |
 | `blog` | `boolean` | `true` | The entire public blog surface (routes, feeds, discovery, `<SanityLive>`) |
 | `blogTaxonomy.*` | `object` | all `true` | Author/category/tag routes, each `&& blog` |
 | `blogComments` | `boolean` | `true` | Moderated comments on each post (`/api/comments` + the `<Comments>` section) — **requires `blog`** ([guide](/modules/blog/comments)) |
+| `blogSearch` | `boolean` | `true` | The `/blog/search` route + the frontpage search box (`isSearchEnabled`) — **requires `blog`** |
+| `blogSeries` | `boolean` | `true` | The `/blog/series/<slug>` landing + on-post "Part N of M" nav (`isSeriesEnabled`) — **requires `blog`** |
 | `studio` | `boolean` | `true` | `/studio` + the draft-mode preview API |
 | `maintenance` | `boolean` | `false` | Site-wide 503 rewrite to `/maintenance` (via `proxy.ts`) |
 
@@ -170,7 +173,7 @@ Google Analytics and the cookie banner are **not** config flags — the measurem
 the "require consent" toggle are edited in Sanity (`siteSettings.analytics`,
 `googleAnalyticsId` + `requireCookieConsent`), read by `getSiteSettings()`. Empty id = no GA
 script, no network call. See [Analytics](../seo/analytics.md) and
-[Cookie consent](./cookie-consent.md).
+[Cookie consent](/packages/consent).
 
 ::: warning Never re-implement a gate
 Every gate already has one canonical home (the `pages` map, `route-gate.ts`, the layout,

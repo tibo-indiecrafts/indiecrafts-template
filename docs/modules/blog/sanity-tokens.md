@@ -95,7 +95,7 @@ pnpm dlx sanity@latest debug --secrets             # diagnose auth / env
 1. **Server-only by default.** `.env.local` is gitignored; only `.env.example` is tracked.
 2. **Never prefix a token with `NEXT_PUBLIC_`** — it would bake into the client bundle.
 3. **One token per use case.** Don't reuse the seed Editor token for runtime reads — if it leaks, write access leaks.
-4. **On Vercel / Netlify** put the same vars in the dashboard's Environment Variables panel and re-deploy.
+4. **On Cloudflare** set the same values on the Worker — public vars in `wrangler.toml` / GitHub Environment **vars**, tokens as **secrets** (`wrangler secret put … --env <env>`) — then re-deploy.
 5. **Rotate by revoke + reissue.** Manage → API → Tokens → row → **Revoke**; recreate with a new name, update env, redeploy.
 
 ---

@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import Script from "next/script";
 import {
   features,
@@ -14,15 +15,22 @@ import {
   type Locale,
 } from "@indiecrafts/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
-import { CookieBanner } from "@/user-interface/shared/layout/CookieBanner";
+import { CookieBanner } from "@indiecrafts/consent/CookieBanner";
+import { LegalNotice } from "@indiecrafts/consent/LegalNotice";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/user-interface/shared/layout/ThemeProvider";
+import { resolveThemeConfig, themeProviderProps } from "@/lib/theme";
 import { JsonLdScript } from "@/lib/seo/jsonld";
 import { buildSiteSchemas } from "@/lib/seo/jsonld-core";
 import { buildGlobalSchemas } from "@/lib/seo/jsonld-factories";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
-import { getCookieConsent } from "@/lib/cookies";
+import { getVersionPrompt } from "@/lib/system-pages";
+import { getCookieConsent } from "@indiecrafts/consent/sanity/cookies";
+import { getLegalAcceptance } from "@indiecrafts/consent/sanity/legal";
+import { LEGAL_ACK_COOKIE } from "@indiecrafts/consent/legal-store";
 import { SanityLive } from "@indiecrafts/sanity/live";
+import { UpdatePrompt } from "@indiecrafts/version/update-prompt";
+import { buildInfo } from "@/lib/build-info";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -113,12 +121,23 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   setRequestLocale(locale);
 
   const messages = await getMessages();
-  const [siteSeo, settings, cookieConsent] = await Promise.all([
+  const [siteSeo, settings, cookieConsent, versionPrompt, legal] = await Promise.all([
     getSiteSeo(locale as Locale),
     getSiteSettings(),
     getCookieConsent(locale as Locale),
+    getVersionPrompt(locale as Locale),
+    getLegalAcceptance(locale as Locale),
   ]);
   const siteDescription = siteSeo.description;
+  // Server-read the legal-acceptance cookie so the "policies updated" banner is
+  // decided server-side (no flash) — shown only when the deposited version is stale.
+  const legalAck = (await cookies()).get(LEGAL_ACK_COOKIE)?.value;
+  // Review link → the first flag-enabled tracked legal page (CGV is off by default).
+  const legalReviewHref = features.legal.privacy
+    ? "/privacy-policy"
+    : features.legal.terms
+      ? "/terms"
+      : "/terms-of-sale";
 
   return (
     <html
@@ -171,7 +190,7 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
         ) : null}
       </head>
       <body className="bg-background text-foreground flex min-h-screen flex-col">
-        <ThemeProvider>
+        <ThemeProvider {...themeProviderProps(resolveThemeConfig(settings.themeModes))}>
           <NextIntlClientProvider messages={messages} locale={locale}>
             {children}
             {/* Inside the intl provider — CookieBanner is a client component that
@@ -184,9 +203,36 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                 body={cookieConsent.banner.body}
               />
             ) : null}
+            {/* "Policies updated — please Accept" banner. Copy edited per language
+                in Sanity (`legalConsent`); version = the tracked legal pages'
+                lastUpdated. Server-gated on the deposited cookie; no fallback. */}
+            {legal.version &&
+            legal.message &&
+            legal.reviewLabel &&
+            legal.acceptLabel &&
+            legalAck !== legal.version ? (
+              <LegalNotice
+                version={legal.version}
+                message={legal.message}
+                reviewLabel={legal.reviewLabel}
+                reviewHref={legalReviewHref}
+                acceptLabel={legal.acceptLabel}
+              />
+            ) : null}
+            {/* "New version available" banner — copy is edited per language in
+                Sanity (`siteMeta.<locale>.versionPrompt`), no fallback. Mounted
+                only when fully configured; an unset banner is simply off. */}
+            {versionPrompt.message && versionPrompt.reload && versionPrompt.dismiss ? (
+              <UpdatePrompt
+                current={buildInfo.commit}
+                message={versionPrompt.message}
+                reloadLabel={versionPrompt.reload}
+                dismissLabel={versionPrompt.dismiss}
+              />
+            ) : null}
           </NextIntlClientProvider>
         </ThemeProvider>
-        {features.structuredData ? (
+        {features.structuredData && settings.showStructuredData !== false ? (
           <JsonLdScript
             data={buildSiteSchemas(
               settings,

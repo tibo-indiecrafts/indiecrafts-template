@@ -1,42 +1,44 @@
 /**
- * FAQ content lives in `messages.<locale>.pages.<id>.faq` — a translated
- * array of `{ question, answer }`. One source, three automatic consumers:
+ * FAQ content now lives in the page-builder: the first `module.accordion-list`
+ * block on the `homePage.<locale>` document. One source, two consumers:
  *
- *   - `<Faq pageId="…">`            renders the accordion (display)
- *   - `PageSchemas`                 emits FAQPage JSON-LD (rich result)
- *   (the llms endpoints no longer auto-emit FAQ — llms bodies come from the
- *    Sanity `pageSeo.llmsFull` field)
+ *   - the visible `<AccordionList>` block (rendered in the homepage `pageModules`)
+ *   - `PageSchemas` — emits FAQPage JSON-LD (rich result) from the same block
  *
- * Add a FAQ to any page: drop the `faq` array into that page's messages and
- * mount `<Faq pageId="…">` where you want it shown. SEO + llms pick it up on
- * their own. All gated by `features.faq`.
+ * Add/curate the FAQ by editing that accordion-list block in the Studio; the
+ * rich result follows. Gated by `features.faq`.
  */
+
+import type { Locale } from "@indiecrafts/config";
+import type { PortableTextBlock } from "@portabletext/react";
+import type { AccordionListModule } from "@indiecrafts/ui-components/shared/types";
+import { getHomePage } from "@/lib/home";
 
 export type FaqItem = { question: string; answer: string };
 
-function isFaqItem(x: unknown): x is FaqItem {
-  return (
-    !!x &&
-    typeof x === "object" &&
-    typeof (x as FaqItem).question === "string" &&
-    typeof (x as FaqItem).answer === "string"
-  );
-}
-
-/** Validate an unknown value (a raw messages node) into FAQ items. */
-export function parseFaqItems(value: unknown): FaqItem[] {
-  return Array.isArray(value) ? value.filter(isFaqItem) : [];
+/** Flatten a PortableText answer to plain text for the JSON-LD `acceptedAnswer`. */
+function blocksToText(blocks?: PortableTextBlock[]): string {
+  return (blocks ?? [])
+    .filter((b) => b._type === "block")
+    .map((b) =>
+      ((b.children ?? []) as { text?: string }[]).map((c) => c.text ?? "").join(""),
+    )
+    .join("\n\n")
+    .trim();
 }
 
 /**
- * Read a page's FAQ items via next-intl's `t.raw` (works on both the client
- * `useTranslations()` and server `getTranslations()` translators). Returns
- * `[]` when the key is absent or malformed.
+ * The page's FAQ items. Today only the homepage carries an FAQ (the first
+ * accordion-list block); other pages return `[]`. Question = the item title,
+ * answer = its rich-text content flattened to plain text.
  */
-export function getFaqItems(raw: (key: string) => unknown, pageId: string): FaqItem[] {
-  try {
-    return parseFaqItems(raw(`pages.${pageId}.faq`));
-  } catch {
-    return [];
-  }
+export async function getFaqItems(locale: Locale, pageId: string): Promise<FaqItem[]> {
+  if (pageId !== "home") return [];
+  const { pageModules } = await getHomePage(locale);
+  const block = pageModules.find(
+    (m): m is AccordionListModule => m._type === "module.accordion-list",
+  );
+  return (block?.items ?? [])
+    .map((item) => ({ question: item.title ?? "", answer: blocksToText(item.content) }))
+    .filter((f) => f.question && f.answer);
 }

@@ -1,6 +1,7 @@
 import type { Locale } from "@indiecrafts/config";
 import type { PostListItem, Tag } from "@indiecrafts/blog/sanity/types";
 import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
+import { Pager } from "@indiecrafts/blog/user-interface/shared/components/Pager";
 import {
   Breadcrumbs,
   type Crumb,
@@ -19,6 +20,10 @@ export function TagDetail({
   breadcrumbsLabel,
   postsLabel,
   noPostsLabel,
+  page,
+  pageCount,
+  basePath,
+  pagerLabels,
 }: {
   tag: Tag;
   posts: PostListItem[];
@@ -27,6 +32,10 @@ export function TagDetail({
   breadcrumbsLabel: string;
   postsLabel?: string;
   noPostsLabel: string;
+  page: number;
+  pageCount: number;
+  basePath: string;
+  pagerLabels: { label: string; previous: string; next: string; status: string };
 }) {
   const count = tag.postCount ?? posts.length;
   const countLabel = postsLabel
@@ -56,13 +65,21 @@ export function TagDetail({
         {posts.length === 0 ? (
           <p className="text-muted-foreground text-center">{noPostsLabel}</p>
         ) : (
-          <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
-              <li key={post._id}>
-                <BlogCard post={post} locale={locale} />
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {posts.map((post) => (
+                <li key={post._id}>
+                  <BlogCard post={post} locale={locale} />
+                </li>
+              ))}
+            </ul>
+            <Pager
+              page={page}
+              pageCount={pageCount}
+              basePath={basePath}
+              labels={pagerLabels}
+            />
+          </>
         )}
       </div>
     </section>

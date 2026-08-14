@@ -82,6 +82,15 @@ export default defineType({
       initialValue: false,
       description: "Marquez un commentaire indésirable (il reste masqué du site).",
     }),
+    // One-time token for the email moderation buttons (approve / spam / delete);
+    // set on create, cleared on the first action. Hidden — it's plumbing.
+    defineField({
+      name: "moderationToken",
+      title: "Jeton de modération",
+      type: "string",
+      hidden: true,
+      readOnly: true,
+    }),
   ],
   orderings: [
     { name: "newest", title: "Plus récents", by: [{ field: "createdAt", direction: "desc" }] },

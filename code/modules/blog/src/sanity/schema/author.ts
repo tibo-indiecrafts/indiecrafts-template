@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({
   name: "author",
@@ -52,6 +52,45 @@ export default defineType({
           styles: [{ title: "Normal", value: "normal" }],
           lists: [],
         },
+      ],
+    }),
+    defineField({
+      name: "social",
+      title: "Réseaux sociaux",
+      description: "Liens affichés sur la page de l'auteur·rice. Vide = aucun lien.",
+      type: "array",
+      of: [
+        defineArrayMember({
+          name: "socialLink",
+          type: "object",
+          fields: [
+            defineField({
+              name: "platform",
+              title: "Plateforme",
+              type: "string",
+              options: {
+                list: [
+                  { title: "X (Twitter)", value: "x" },
+                  { title: "LinkedIn", value: "linkedin" },
+                  { title: "GitHub", value: "github" },
+                  { title: "Instagram", value: "instagram" },
+                  { title: "Mastodon", value: "mastodon" },
+                  { title: "Site web", value: "website" },
+                ],
+                layout: "dropdown",
+              },
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: "url",
+              title: "Lien",
+              type: "url",
+              description: "Ex. « https://x.com/pseudo ».",
+              validation: (Rule) => Rule.required().uri({ scheme: ["http", "https"] }),
+            }),
+          ],
+          preview: { select: { title: "platform", subtitle: "url" } },
+        }),
       ],
     }),
     defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),

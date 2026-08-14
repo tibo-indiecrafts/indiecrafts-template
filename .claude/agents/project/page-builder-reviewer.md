@@ -8,7 +8,7 @@ model: sonnet
 You review a **page-builder block** change for **completeness across every file it must touch**.
 A `module.<name>` block is easy to half-wire; a miss breaks the Studio picker, the TS exhaustiveness
 `satisfies` check, or leaves doc counts stale. Authority: the workflow
-`method/apps/web/workflows/add-blog-module.md` (+ `remove-blog-module.md`). Read it first.
+`method/apps/web/workflows/add-page-builder-block.md` (+ `remove-page-builder-block.md`). Read it first.
 
 The block system is **shared**: **generic** renderer/registry/type live in `@indiecrafts/ui-components`
 (the same blocks paint marketing pages and blog posts); the **schema** currently lives in

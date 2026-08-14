@@ -141,6 +141,33 @@ export default defineType({
       group: "content",
     }),
     defineField({
+      name: "series",
+      title: "Série",
+      type: "reference",
+      to: [{ type: "series" }],
+      description:
+        "Rattache l'article à une série (guide en plusieurs parties). Vide = article autonome.",
+      options: {
+        filter: ({ document }) =>
+          document.language
+            ? {
+                filter: "language == $lang",
+                params: { lang: document.language as string },
+              }
+            : { filter: "" },
+      },
+      group: "content",
+    }),
+    defineField({
+      name: "seriesOrder",
+      title: "Ordre dans la série",
+      type: "number",
+      description: "Position dans la série (1, 2, 3…). Vide = classé par date.",
+      hidden: ({ document }) => !document?.series,
+      validation: (Rule) => Rule.min(1).integer(),
+      group: "content",
+    }),
+    defineField({
       name: "body",
       title: "Corps",
       type: "blockContent",

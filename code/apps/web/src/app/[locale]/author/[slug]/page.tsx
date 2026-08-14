@@ -1,11 +1,15 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, pages, site } from "@indiecrafts/config";
+import { pages, site } from "@indiecrafts/config";
 import type { Locale } from "@indiecrafts/config";
 import { localizedPathname } from "@/i18n/routing";
-import { requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
+import {
+  isTaxonomyRouteEnabled,
+  requireTaxonomyRoute,
+} from "@indiecrafts/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
+import { buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { AuthorDetail } from "@indiecrafts/blog/user-interface/author/sections/AuthorDetail";
 import { client } from "@indiecrafts/sanity/client";
@@ -13,14 +17,19 @@ import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import {
   allAuthorSlugsQuery,
   authorBySlugQuery,
+  postsByAuthorCountQuery,
   postsByAuthorSlugQuery,
 } from "@indiecrafts/blog/sanity/queries";
 import type { Author, PostListItem } from "@indiecrafts/blog/sanity/types";
+import { pageCount, pageRange, parsePage } from "@indiecrafts/blog/lib/pagination";
 
-type Props = { params: Promise<{ locale: Locale; slug: string }> };
+type Props = {
+  params: Promise<{ locale: Locale; slug: string }>;
+  searchParams: Promise<{ page?: string }>;
+};
 
 export async function generateStaticParams() {
-  if (!features.blog || !features.blogTaxonomy.authors) return [];
+  if (!(await isTaxonomyRouteEnabled("authors", pages.author))) return [];
   const rows =
     await client.fetch<{ slug?: string; language?: string }[]>(allAuthorSlugsQuery);
   // Authors are translated — each doc belongs to one locale, so emit the
@@ -57,26 +66,35 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function AuthorDetailPage({ params }: Props) {
-  requireBlogRoute(pages.author);
+export default async function AuthorDetailPage({ params, searchParams }: Props) {
+  await requireTaxonomyRoute("authors", pages.author);
   const { locale, slug } = await params;
+  const page = parsePage((await searchParams).page);
+  const { start, end } = pageRange(page);
   setRequestLocale(locale);
 
-  const [author, posts, t, nav] = await Promise.all([
+  const [author, posts, total, t, nav, pagerT] = await Promise.all([
     sanityFetchLive<Author | null>({
       query: authorBySlugQuery,
       params: { slug, locale },
     }),
     sanityFetchLive<PostListItem[]>({
       query: postsByAuthorSlugQuery,
-      params: { slug, locale },
+      params: { slug, locale, start, end },
     }),
+    sanityFetchLive<number>({ query: postsByAuthorCountQuery, params: { slug, locale } }),
     getTranslations("pages.author"),
     getTranslations("nav"),
+    getTranslations("pages.blog.pagination"),
   ]);
   if (!author) notFound();
 
   const path = localizedPathname(`/author/${slug}`, locale);
+  const breadcrumbItems = [
+    { name: nav("blog"), url: `${site.url}${localizedPathname("/blog", locale)}` },
+    { name: nav("author"), url: `${site.url}${localizedPathname("/author", locale)}` },
+    { name: author.name ?? slug, url: `${site.url}${path}` },
+  ];
 
   return (
     <DefaultLayout>
@@ -93,6 +111,7 @@ export default async function AuthorDetailPage({ params }: Props) {
                 jobTitle: author.position,
                 url: `${site.url}${path}`,
               },
+              buildBreadcrumbSchema(breadcrumbItems),
             ],
           },
         }}
@@ -102,6 +121,7 @@ export default async function AuthorDetailPage({ params }: Props) {
       <AuthorDetail
         author={author}
         posts={posts}
+        total={total}
         locale={locale}
         breadcrumbs={[
           { label: nav("blog"), href: "/blog" },
@@ -111,6 +131,23 @@ export default async function AuthorDetailPage({ params }: Props) {
         breadcrumbsLabel={t("breadcrumbs")}
         postsLabel={t.raw("posts")}
         noPostsLabel={t("noPosts")}
+        socialLabels={{
+          x: t("social.x"),
+          linkedin: t("social.linkedin"),
+          github: t("social.github"),
+          instagram: t("social.instagram"),
+          mastodon: t("social.mastodon"),
+          website: t("social.website"),
+        }}
+        page={page}
+        pageCount={pageCount(total)}
+        basePath={`/author/${slug}`}
+        pagerLabels={{
+          label: pagerT("label"),
+          previous: pagerT("previous"),
+          next: pagerT("next"),
+          status: pagerT("status"),
+        }}
       />
     </DefaultLayout>
   );

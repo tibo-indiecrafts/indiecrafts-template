@@ -6,7 +6,7 @@ something on purpose. It complements, never duplicates:
 
 - **`code/apps/web/CHANGELOG.md`** — *what* changed and when (code + design share one log).
 - **`code/packages/ui-tokens/DESIGN.md`** — the current token contract (the *what is*, not the *why*).
-- **The topic guides in this folder** — per-subject deep dives ([typography](./typography.md), [responsive](./responsive-design.md), [sections](./sections.md), [icons](./icons.md), …).
+- **The topic guides in this folder** — per-subject deep dives ([typography](./typography.md), [adaptive & responsive](./adaptive-responsive.md), [sections](./sections.md), [icons](./icons.md), …).
 
 Record a decision here when a choice was non-obvious, contested, or a maintainer
 might otherwise reverse it by mistake. Keep each entry tight.

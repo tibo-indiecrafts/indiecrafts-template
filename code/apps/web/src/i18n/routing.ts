@@ -12,6 +12,7 @@ import { defineRouting } from "next-intl/routing";
 import {
   i18n,
   localeCodes,
+  localeCookieName,
   type Locale,
   type StaticAppPathname,
 } from "@indiecrafts/config";
@@ -22,6 +23,9 @@ export const routing = defineRouting({
   defaultLocale: i18n.defaultLocale,
   localePrefix: i18n.localePrefix,
   localeDetection: i18n.localeDetection,
+  // Namespaced per deployment (`site.prefix`) so two instances on a shared origin
+  // don't share the visitor's language choice. Read back in `maintenance/locale.ts`.
+  localeCookie: { name: localeCookieName },
   pathnames: PATHNAMES,
 });
 

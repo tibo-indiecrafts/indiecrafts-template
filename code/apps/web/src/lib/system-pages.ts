@@ -12,7 +12,11 @@
 import { cache } from "react";
 import type { Locale } from "@indiecrafts/config";
 import { client } from "@indiecrafts/sanity/client";
-import { systemPagesQuery, taxonomyPagesQuery } from "@/sanity/seo-queries";
+import {
+  systemPagesQuery,
+  taxonomyPagesQuery,
+  versionPromptQuery,
+} from "@/sanity/seo-queries";
 
 export type SystemPages = {
   maintenance?: {
@@ -59,6 +63,27 @@ export type TaxonomyPages = {
 export const getTaxonomyPages = cache(async (locale: Locale): Promise<TaxonomyPages> => {
   try {
     const data = await client.fetch(taxonomyPagesQuery, { id: `siteMeta.${locale}` });
+    return data ?? {};
+  } catch {
+    return {};
+  }
+});
+
+/** Version-update banner copy from `siteMeta.<locale>.versionPrompt`. */
+export type VersionPrompt = {
+  message?: string;
+  reload?: string;
+  dismiss?: string;
+};
+
+/**
+ * Version-update banner copy. UNLIKE the system/taxonomy pages, there is NO
+ * `messages` fallback — an unset banner is simply off (the layout mounts it only
+ * when all three strings are present). Returns empty on any error.
+ */
+export const getVersionPrompt = cache(async (locale: Locale): Promise<VersionPrompt> => {
+  try {
+    const data = await client.fetch(versionPromptQuery, { id: `siteMeta.${locale}` });
     return data ?? {};
   } catch {
     return {};

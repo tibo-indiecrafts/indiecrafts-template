@@ -171,8 +171,9 @@ matched to `--background`. Always use utilities (`bg-brand`,
 `text-muted-foreground`), never raw hex.
 
 - **`brand` — `oklch(0.55 0.18 260)` · `#4f69d9` (indigo, hue 260)** — primary
-  actions, focus rings, active nav, the single eyebrow accent. It marks _the one
-  important thing_ on a surface. **Never** a decorative fill; never error/success.
+  actions, focus rings, active nav, the single eyebrow accent, and the `[[word]]`
+  highlight span inside titles (via `RichTitle`). It marks _the one important
+  thing_ on a surface. **Never** a decorative fill; never error/success.
   Lightens to `brand-dark` (`oklch(0.72 0.16 260)`) in dark mode to hold contrast.
 - **`foreground` — `#171717` / `muted-foreground` — `#696969`** — primary text /
   secondary + captions. The only two text colors — don't invent greys.
@@ -220,13 +221,26 @@ base rules don't cover). Flips light/dark via the tokens; coexists with `prose`.
   (13px, 27px) usually means the wrong two elements are spaced — flag it, don't
   invent a value.
 
-## Responsive behavior
+## Responsive & adaptive behavior
 
-**Every UI must be responsive and optimised for all screen sizes we support** —
-no exceptions. Lean on the `frontend-design` skill for layout and visual
-direction, and build mobile-first: mobile is a different context, not a squeezed
-desktop. Breakpoints are Tailwind's (`sm 640 · md 768 · lg 1024 · xl 1280`);
-verify every change at **375 / 768 / 1280**.
+**Every UI must adapt to all the screen sizes + input methods we support** — no
+exceptions. Lean on the `frontend-design` skill for direction, and build
+mobile-first: mobile is a different context, not a squeezed desktop.
+
+**Name the mechanism.** _Same content reflowing_ = **responsive** (the default —
+one markup tree, fluid). _Different content by context_ = **adaptive**, for that
+component only (a deliberate swap, not a shrink — e.g. a dense table becoming
+prioritised cards). Most surfaces are responsive; a component earns an adaptive
+swap where its **content**, not just its size, must change.
+
+Breakpoints are Tailwind's (`sm 640 · md 768 · lg 1024 · xl 1280`); verify at
+**375 / 768 / 1280** — the floor, not the definition (also a touch device + the
+~820px tablet gap). Use **container queries** (`@container` on the parent + named `@4xl:`
+variants — not `@min-4xl:`) where a component's own width drives its layout — a block that can
+render **inline in the blog column** (`module.*`) MUST be container-driven, never viewport;
+**`pointer` / `hover`** queries for input method (never gate function on hover); **safe-area
+insets** for notches. Full guide: `docs/apps/web/design/adaptive-responsive.md` +
+`code/apps/web/.claude/rules/adaptive-design.md`.
 
 - Grids collapse `grid-cols-1 → md:2 → lg:3`; hero type scales
   `text-3xl → md:5xl → xl:6xl`.
@@ -271,7 +285,7 @@ status dots use `full`. Don't mix radii within one component.
 ## Component conventions
 
 Build on the shadcn primitives the shadcn way — full rules in
-[`method/apps/web/rules/component-architecture.md`](../../../method/apps/web/rules/component-architecture.md):
+[`.claude/rules/component-architecture.md`](../../apps/web/.claude/rules/component-architecture.md):
 `cn()` not string-concat, `cva` not forks, `asChild`/`data-slot`, semantic tokens
 over `dark:`, container queries, never hand-edit `@indiecrafts/ui` primitives.
 
@@ -330,7 +344,7 @@ Every data view handles three states with real components — never a blank scre
 
 ## Accessibility
 
-Visual a11y contract (structural code rules → `method/apps/web/rules/accessibility.md`):
+Visual a11y contract (structural code rules → `code/apps/web/.claude/rules/accessibility.md`):
 
 - **Contrast** — WCAG **AA** on every token pair; `pnpm verify:contrast` gates it.
 - **Focus** — visible `focus-visible:ring-2 ring-ring` on every interactive element.

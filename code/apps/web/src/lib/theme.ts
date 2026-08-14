@@ -1,43 +1,66 @@
 /**
- * Theme resolution — turns the declarative `themeConfig` flags in `@indiecrafts/config`
- * into the concrete values next-themes needs, plus a single flag for whether
- * the toggle should render. ThemeProvider, ThemeToggle, and Header all read
- * from here so the config can never be interpreted two different ways.
- *
- * See `themeConfig` in `@indiecrafts/config` for the flag semantics.
+ * Theme resolution — turns a `ThemeConfig` (which color modes the site offers)
+ * into the concrete values next-themes needs, plus whether the toggle should
+ * render. The effective config is **Sanity `siteSettings.themeModes` over the
+ * `themeConfig` code default** (`resolveThemeConfig`), so a client can change the
+ * offered modes without a deploy. These are now **functions of a runtime config**
+ * (was module-constants) — the layout resolves it server-side and prop-feeds the
+ * client ThemeProvider / Header / ThemeToggle (they can't await Sanity).
  */
-import { themeConfig } from "@indiecrafts/config";
+import { site, themeConfig } from "@indiecrafts/config";
 import type { ThemeMode, ThemeName } from "@indiecrafts/config";
+import type { SiteSettings } from "@/lib/seo/site-seo";
 
-/**
- * User-selectable theme options, in menu order. When `forced` is set it's the
- * only entry; "system" is offered only when both concrete themes exist.
- */
-export const THEME_MODES: readonly ThemeMode[] = themeConfig.forced
-  ? [themeConfig.forced]
-  : [
-      ...(themeConfig.light ? (["light"] as const) : []),
-      ...(themeConfig.dark ? (["dark"] as const) : []),
-      ...(themeConfig.system && themeConfig.light && themeConfig.dark
-        ? (["system"] as const)
-        : []),
-    ];
+/** The resolved theme availability — the code default's shape. */
+export type ThemeConfig = {
+  light: boolean;
+  dark: boolean;
+  system: boolean;
+  forced: ThemeName | null;
+};
 
-/** Concrete (paintable) themes — next-themes' `themes` list excludes "system". */
-const CONCRETE_THEMES = THEME_MODES.filter((m): m is ThemeName => m !== "system");
+/** Sanity `themeModes` (if set) over the `themeConfig` code default. Unset → the default. */
+export function resolveThemeConfig(modes: SiteSettings["themeModes"]): ThemeConfig {
+  if (!modes) return themeConfig;
+  const forced =
+    modes.forced === "light" || modes.forced === "dark" ? modes.forced : null;
+  return {
+    light: modes.light ?? true,
+    dark: modes.dark ?? true,
+    system: modes.system ?? true,
+    forced,
+  };
+}
 
-const ENABLE_SYSTEM = THEME_MODES.includes("system");
+/** User-selectable modes in menu order. `forced` → only that; "system" only when both concretes exist. */
+export function themeModes(cfg: ThemeConfig): ThemeMode[] {
+  if (cfg.forced) return [cfg.forced];
+  const list: ThemeMode[] = [];
+  if (cfg.light) list.push("light");
+  if (cfg.dark) list.push("dark");
+  if (cfg.system && cfg.light && cfg.dark) list.push("system");
+  return list;
+}
 
 /** Hide the toggle when a theme is forced or only one option is available. */
-export const SHOW_THEME_TOGGLE = !themeConfig.forced && THEME_MODES.length > 1;
+export function showThemeToggle(cfg: ThemeConfig): boolean {
+  return !cfg.forced && themeModes(cfg).length > 1;
+}
 
-/** Props for the next-themes `<ThemeProvider>`, derived from `themeConfig`. */
-export const THEME_PROVIDER_PROPS = {
-  attribute: "data-theme",
-  themes: CONCRETE_THEMES.length ? [...CONCRETE_THEMES] : ["light"],
-  enableSystem: ENABLE_SYSTEM,
-  defaultTheme:
-    themeConfig.forced ?? (ENABLE_SYSTEM ? "system" : (CONCRETE_THEMES[0] ?? "light")),
-  forcedTheme: themeConfig.forced ?? undefined,
-  disableTransitionOnChange: true,
-} as const;
+/** Props for the next-themes `<ThemeProvider>`, derived from a resolved config. */
+export function themeProviderProps(cfg: ThemeConfig) {
+  const modes = themeModes(cfg);
+  const concrete = modes.filter((m): m is ThemeName => m !== "system");
+  const enableSystem = modes.includes("system");
+  return {
+    attribute: "data-theme" as const,
+    // Namespaced by `site.prefix` so two instances on a shared origin don't share
+    // the stored theme choice (next-themes' default key is the bare "theme").
+    storageKey: `${site.prefix}-theme`,
+    themes: concrete.length ? [...concrete] : ["light"],
+    enableSystem,
+    defaultTheme: cfg.forced ?? (enableSystem ? "system" : (concrete[0] ?? "light")),
+    forcedTheme: cfg.forced ?? undefined,
+    disableTransitionOnChange: true,
+  };
+}

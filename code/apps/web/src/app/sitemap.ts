@@ -15,13 +15,23 @@ import {
   allAuthorSlugsQuery,
   allCategorySlugsQuery,
   allPostSlugsQuery,
+  allSeriesSlugsQuery,
   allTagSlugsQuery,
 } from "@indiecrafts/blog/sanity/queries";
+import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
 import { ROUTES } from "./routes";
 
 // O(1) membership test for the per-document locale loop below (vs re-scanning
 // the locale array on every Sanity doc).
 const localeCodeSet = new Set<Locale>(localeCodes);
+
+// Taxonomy index page id → its `blog.display.taxonomy.*` key, so an editor
+// toggling a taxonomy off also drops its index page from the sitemap.
+const TAXONOMY_PAGE_KEY: Record<string, "categories" | "tags" | "authors"> = {
+  category: "categories",
+  tag: "tags",
+  author: "authors",
+};
 
 /**
  * Sitemap — every (route × locale) combination with hreflang alternates.
@@ -42,6 +52,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const now = new Date();
 
+  // Editor display toggles — gate the taxonomy index pages (below) and the
+  // dynamic taxonomy entries; folds in `features.blogTaxonomy.*`.
+  const display = await getBlogSettings();
+
   // ── Static pages ────────────────────────────────────────────
   // Per-locale Sanity `pageSeo.noindex` can hide a page in some languages only,
   // so drop those locales from the alternates (and the whole page if all hidden).
@@ -51,6 +65,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries: MetadataRoute.Sitemap = ROUTES.flatMap((page) => {
     if (page.seo?.noindex || page.seo?.robots?.index === false || !isPageVisible(page))
       return [];
+    const taxKey = TAXONOMY_PAGE_KEY[page.id];
+    if (taxKey && !display.taxonomy[taxKey]) return [];
     const activeLocales = localeCodes.filter(
       (l) => !seoByLocale.get(l)?.pageSeo.get(page.id)?.noindex,
     );
@@ -76,11 +92,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // ── Dynamic Sanity-driven entries (blog only) ───────────────
   if (!features.blog) return staticEntries;
 
-  const [posts, categories, tags, authors] = await Promise.all([
+  // Each taxonomy is fetched only when its editor toggle is on — off means no
+  // entries, matching the 404'd routes ("off = truly gone").
+  const emptySlugs = Promise.resolve<{ slug: string | null; language?: string }[]>([]);
+  const [posts, categories, tags, authors, series] = await Promise.all([
     client.fetch(allPostSlugsQuery),
-    client.fetch(allCategorySlugsQuery),
-    client.fetch(allTagSlugsQuery),
-    client.fetch(allAuthorSlugsQuery),
+    display.taxonomy.categories ? client.fetch(allCategorySlugsQuery) : emptySlugs,
+    display.taxonomy.tags ? client.fetch(allTagSlugsQuery) : emptySlugs,
+    display.taxonomy.authors ? client.fetch(allAuthorSlugsQuery) : emptySlugs,
+    features.blogSeries ? client.fetch(allSeriesSlugsQuery) : emptySlugs,
   ]);
 
   // Build a per-document map for posts/categories/tags so we know which
@@ -151,6 +171,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       : (locales.values().next().value as Locale);
     dynamicEntries.push({
       url: `${site.url}${localePrefix(primary)}/blog/tag/${slug}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.5,
+      alternates: { languages },
+    });
+  }
+
+  // Series — one entry per slug, alternates for each locale it exists in.
+  const seriesByLocale = groupByLocale(series);
+  for (const [slug, locales] of seriesByLocale) {
+    const languages: Record<string, string> = {};
+    for (const locale of locales) {
+      languages[locale] = `${site.url}${localePrefix(locale)}/blog/series/${slug}`;
+    }
+    const primary = locales.has(defaultLocale)
+      ? defaultLocale
+      : (locales.values().next().value as Locale);
+    dynamicEntries.push({
+      url: `${site.url}${localePrefix(primary)}/blog/series/${slug}`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.5,

@@ -5,7 +5,7 @@ export type LegalBodyValue = ComponentProps<typeof PortableText>["value"];
 
 /**
  * Minimal PortableText renderer for legal-page bodies — headings, lists, marks,
- * and links only (no blog modules), so legal pages stay decoupled from the blog.
+ * and links only (no page-builder blocks), so legal pages stay decoupled from the blog.
  * Styled with design tokens for a readable prose measure.
  */
 const components: PortableTextComponents = {
@@ -16,16 +16,16 @@ const components: PortableTextComponents = {
     h2: ({ children }) => (
       <h2 className="mt-10 mb-3 text-xl font-semibold md:text-2xl">{children}</h2>
     ),
-    h3: ({ children }) => (
-      <h3 className="mt-6 mb-2 text-lg font-semibold">{children}</h3>
-    ),
+    h3: ({ children }) => <h3 className="mt-6 mb-2 text-lg font-semibold">{children}</h3>,
   },
   list: {
     bullet: ({ children }) => (
       <ul className="text-muted-foreground mb-4 list-disc space-y-1 pl-6">{children}</ul>
     ),
     number: ({ children }) => (
-      <ol className="text-muted-foreground mb-4 list-decimal space-y-1 pl-6">{children}</ol>
+      <ol className="text-muted-foreground mb-4 list-decimal space-y-1 pl-6">
+        {children}
+      </ol>
     ),
   },
   marks: {

@@ -188,6 +188,37 @@ export default defineType({
       ],
     }),
 
+    // ── Version-update banner ──────────────────────────────────
+    defineField({
+      name: "versionPrompt",
+      title: "Bandeau « nouvelle version »",
+      type: "object",
+      group: "system",
+      description:
+        "Le petit bandeau en bas de page qui prévient le visiteur qu'une nouvelle version du site est disponible. Vide = aucun bandeau.",
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({
+          name: "message",
+          title: "Message",
+          type: "string",
+          description: "Ex. « Une nouvelle version est disponible. »",
+        }),
+        defineField({
+          name: "reload",
+          title: "Bouton « recharger »",
+          type: "string",
+          description: "Texte du bouton qui recharge la page. Ex. « Recharger ».",
+        }),
+        defineField({
+          name: "dismiss",
+          title: "Bouton « ignorer »",
+          type: "string",
+          description: "Texte du bouton qui masque le bandeau. Ex. « Ignorer ».",
+        }),
+      ],
+    }),
+
     // ── llms.txt ───────────────────────────────────────────────
     defineField({
       name: "llms",

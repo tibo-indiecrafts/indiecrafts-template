@@ -37,6 +37,7 @@ export default defineType({
     { name: "business", title: "Votre activité" },
     { name: "schemas", title: "Infos Google en plus" },
     { name: "indexing", title: "Indexation" },
+    { name: "display", title: "Affichage & thème" },
     { name: "verification", title: "Vérification Google / Bing" },
     { name: "analytics", title: "Analytics & cookies" },
   ],
@@ -100,7 +101,8 @@ export default defineType({
           name: "linkedin",
           title: "LinkedIn",
           type: "url",
-          description: "Adresse complète du profil ou de la page, ex. « https://linkedin.com/company/… ».",
+          description:
+            "Adresse complète du profil ou de la page, ex. « https://linkedin.com/company/… ».",
         }),
         defineField({
           name: "instagram",
@@ -112,7 +114,8 @@ export default defineType({
           name: "github",
           title: "GitHub",
           type: "url",
-          description: "Adresse complète du profil ou de l'organisation, ex. « https://github.com/… ».",
+          description:
+            "Adresse complète du profil ou de l'organisation, ex. « https://github.com/… ».",
         }),
         defineField({
           name: "mastodon",
@@ -234,6 +237,15 @@ export default defineType({
 
     // ── Site-wide indexing ─────────────────────────────────────
     defineField({
+      name: "maintenanceMode",
+      title: "Mode maintenance",
+      type: "boolean",
+      group: "indexing",
+      description:
+        "Activé, tout le site affiche une page « en maintenance » (erreur 503) — sauf le Studio. Se déclenche en moins d'une minute, sans redéploiement. Laissez désactivé en fonctionnement normal.",
+      initialValue: false,
+    }),
+    defineField({
       name: "robots",
       title: "Indexation du site",
       type: "object",
@@ -313,6 +325,124 @@ export default defineType({
       of: [{ type: "globalSchema" }],
       description:
         "Informations que Google peut mettre en avant sur tout le site : un service, un produit, une personne ou un événement.",
+    }),
+
+    // ── Rich-result image (site-wide default) ──────────────────
+    defineField({
+      name: "schemaImage",
+      title: "Image pour les résultats Google (par défaut)",
+      type: "image",
+      group: "schemas",
+      description:
+        "L'image que Google peut afficher à côté d'un résultat, pour tout le site. Vide = l'image de partage de chaque page est utilisée. Une page peut la remplacer dans ses métadonnées.",
+      options: { hotspot: true },
+    }),
+
+    // ── Display & theme ────────────────────────────────────────
+    defineField({
+      name: "themeModes",
+      title: "Modes de thème (clair / sombre)",
+      type: "object",
+      group: "display",
+      description:
+        "Quels thèmes de couleur le site propose. Vide = clair + sombre + automatique (le réglage par défaut).",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: "light",
+          title: "Proposer le thème clair",
+          type: "boolean",
+          initialValue: true,
+        }),
+        defineField({
+          name: "dark",
+          title: "Proposer le thème sombre",
+          type: "boolean",
+          initialValue: true,
+        }),
+        defineField({
+          name: "system",
+          title: "Proposer « automatique » (suivre l'appareil)",
+          type: "boolean",
+          initialValue: true,
+        }),
+        defineField({
+          name: "forced",
+          title: "Forcer un seul thème",
+          type: "string",
+          description:
+            "Verrouille tout le site sur un thème et masque le bouton de changement. « Aucun » = le visiteur choisit.",
+          options: {
+            list: [
+              { title: "Aucun (le visiteur choisit)", value: "none" },
+              { title: "Toujours clair", value: "light" },
+              { title: "Toujours sombre", value: "dark" },
+            ],
+          },
+          initialValue: "none",
+        }),
+      ],
+    }),
+    defineField({
+      name: "showLocaleSwitcher",
+      title: "Afficher le sélecteur de langue",
+      type: "boolean",
+      group: "display",
+      description:
+        "Décoche pour masquer le sélecteur de langue dans l'en-tête. (Sans effet si le site n'a qu'une langue.)",
+      initialValue: true,
+    }),
+    defineField({
+      name: "showStructuredData",
+      title: "Activer les données structurées (JSON-LD)",
+      type: "boolean",
+      group: "display",
+      description:
+        "Les balises que Google lit pour les résultats enrichis. Décoche pour tout désactiver (rare — réduit la visibilité).",
+      initialValue: true,
+    }),
+    defineField({
+      name: "showFaq",
+      title: "Activer la FAQ enrichie (Google)",
+      type: "boolean",
+      group: "display",
+      description:
+        "Émet le balisage FAQ que Google peut afficher. Décoche pour le retirer sans masquer la FAQ visible sur la page.",
+      initialValue: true,
+    }),
+
+    // ── Footer maker credit ────────────────────────────────────
+    defineField({
+      name: "madeBy",
+      title: "Crédit du créateur (pied de page)",
+      type: "object",
+      group: "brand",
+      description:
+        "La mention « conçu par » dans le pied de page, avec un aperçu au survol. Vide = aucun crédit affiché.",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({ name: "name", title: "Nom", type: "string" }),
+        defineField({ name: "href", title: "Lien", type: "url" }),
+        defineField({
+          name: "domain",
+          title: "Domaine affiché",
+          type: "string",
+          description: "Ex. « indiecrafts.dev ».",
+        }),
+        defineField({
+          name: "image",
+          title: "Image d'aperçu (URL)",
+          type: "url",
+          description: "L'image montrée dans l'aperçu au survol du lien.",
+        }),
+        defineField({ name: "title", title: "Titre de l'aperçu", type: "string" }),
+        defineField({
+          name: "description",
+          title: "Description de l'aperçu",
+          type: "text",
+          rows: 3,
+        }),
+      ],
     }),
   ],
   preview: {

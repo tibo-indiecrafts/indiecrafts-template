@@ -14,7 +14,10 @@ Load when adding or changing UI components (shadcn/ui + Tailwind v4).
 - Vary with `cva`, not forks — add a case to the map + its union type.
 - `asChild` to change the rendered element; `data-slot` is the styling hook — target `[data-slot="…"]`, don't reach into internals.
 - Semantic tokens over `dark:` — `bg-card`/`text-foreground` flip automatically.
-- Container queries (`@container`/`@xl`) when a component's own width drives layout.
+- Container queries (`@container` on the wrapper + named `@4xl:` variants — not `@min-4xl:`) when a
+  component's own width drives layout. **Required** for any reusable block renderer that appears in
+  both the full-width slot AND the ~768px blog column (the inline `module.*` types) — put `@container`
+  on the block's own wrapper (like `PersonList`/`CardList`/`StatList`), not on `ModuleSection`.
 
 **Never**
 

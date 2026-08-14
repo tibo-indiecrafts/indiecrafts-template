@@ -1,5 +1,7 @@
 # `@indiecrafts/ui-tokens` — the design system
 
+> **Browse it:** live token swatches (light/dark) — `pnpm storybook` ([storybook package](./storybook)).
+
 The runtime style source + the design contract, shipped together. CSS-only, no JS.
 
 | | |

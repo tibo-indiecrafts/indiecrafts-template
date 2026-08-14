@@ -2,6 +2,7 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 import { features, isPageVisible, pages, type PageConfig } from "@indiecrafts/config";
+import { getBlogSettings } from "./settings";
 
 /**
  * Single source of truth for gating the public blog surface. A blog route
@@ -40,4 +41,51 @@ export function isRssEnabled(): boolean {
  */
 export function isCommentsEnabled(): boolean {
   return features.blog && features.blogComments;
+}
+
+/**
+ * Search is a blog surface: gated by the blog flag AND `blogSearch`. Drives
+ * the `/blog/search` route (404 when off) + whether the search box renders.
+ */
+export function isSearchEnabled(): boolean {
+  return isBlogRouteEnabled(pages.blog) && features.blogSearch;
+}
+
+/**
+ * Series are a blog surface: gated by the blog flag AND `blogSeries`. Drives
+ * the `/blog/series/<slug>` route + the on-post "Part N of M" nav + the
+ * sitemap series entries.
+ */
+export function isSeriesEnabled(): boolean {
+  return isBlogRouteEnabled(pages.blog) && features.blogSeries;
+}
+
+/** The three taxonomy surfaces — keys match `blog.display.taxonomy.*`. */
+export type TaxonomyKind = "categories" | "tags" | "authors";
+
+/**
+ * A taxonomy route (author / category / tag) is reachable only when its page
+ * is code-enabled (`isBlogRouteEnabled`) AND the editor's display toggle is on
+ * (`blog.display.taxonomy.*` in Sanity). Turning a taxonomy off in the Studio
+ * therefore 404s its routes and drops them from sitemap + llms — "off = truly
+ * gone", no deploy. Async because it reads the blog singleton.
+ */
+export async function isTaxonomyRouteEnabled(
+  kind: TaxonomyKind,
+  page: PageConfig,
+): Promise<boolean> {
+  if (!isBlogRouteEnabled(page)) return false;
+  return (await getBlogSettings()).taxonomy[kind];
+}
+
+/**
+ * Guard for taxonomy page components (Server Components): 404s when the code
+ * flag is off OR the editor toggled the taxonomy off. `generateStaticParams`
+ * should call `isTaxonomyRouteEnabled` and return `[]` instead.
+ */
+export async function requireTaxonomyRoute(
+  kind: TaxonomyKind,
+  page: PageConfig,
+): Promise<void> {
+  if (!(await isTaxonomyRouteEnabled(kind, page))) notFound();
 }

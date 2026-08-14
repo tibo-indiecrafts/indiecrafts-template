@@ -1,12 +1,14 @@
 import { ChevronRight } from "lucide-react";
 import { Link } from "@indiecrafts/i18n";
-import { cn } from "@indiecrafts/utils";
+import { cn } from "@indiecrafts/utils/cn";
 
 /**
  * Reusable breadcrumbs trail — used by author + category routes.
  * Pass items in order; the last item is rendered as plain text (current
  * page) and gets `aria-current="page"`. Renders the visual + ARIA trail
- * only — it does not emit `BreadcrumbList` JSON-LD.
+ * only — the `BreadcrumbList` JSON-LD is emitted separately by each route's
+ * `<PageSchemas>` (`buildBreadcrumbSchema`), so the crumbs live in two
+ * places on purpose: the visual trail here, the machine trail in the head.
  *
  * Link + current-page styling uses opacity + font-weight rather than
  * hard-coded colours, so passing `className="text-white/85"` (or similar)

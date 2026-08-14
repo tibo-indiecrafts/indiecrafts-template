@@ -4,6 +4,8 @@ Auto-loads when you work under `code/apps/**`. Each app is **self-contained**: i
 its `CLAUDE.md` (how to code), `DESIGN.md` (tokens), `README.md`, and `CHANGELOG.md`.
 Today there's one — `web/` (`@indiecrafts/web`). See `_registry.md` for the app roster.
 
+**Stack:** per-app. Today one — @indiecrafts/web: Next.js 16 · React 19 · TypeScript · Tailwind v4 · shadcn/ui · Sanity v5.
+
 ## Rules
 
 - **Run from the repo root** — `pnpm dev/build/verify` (turbo → the app). Don't `cd` into an app to run scripts.

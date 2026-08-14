@@ -1,27 +1,23 @@
 # indiecrafts.dev — platform
 
-Config-first Next.js 16 template, structured as a **full-platform monorepo** with the
-dev framework in-repo. **Four root folders that mirror each other** — same
-`apps/web · modules · packages · db · infra` spine:
+Config-first Next.js 16 template, structured as a **full-platform monorepo**. The
+deliverable is **two folders** that mirror each other's `apps/web · modules · packages ·
+db · infra` spine:
 
 - **`code/`** — EXECUTION: the pnpm + Turborepo workspace (the product). `apps/web` is the
   Next.js app (`@indiecrafts/web`); `packages/ modules/ db/ infra/` are slots for growth.
-- **`method/`** — HOW we work: the `claude-tasks` dev framework, foldered like the code —
-  `shared/` (7-phase `process/`, the `engineering/` brain, `templates/`), `apps/web/`,
-  `modules/ packages/ db/ infra/`. Browsable as its own docs site.
-- **[`work/`](./work/)** — DOING: the lab. Per-app/feature sprints (`00_BRIEF…09_OUTPUTS`), plus
-  `MEMORY`, `backlog`, `archive`, `scratch` (gitignored). Browsable as its own site (`pnpm work`).
 - **`docs/`** — CANON: the product documentation site (VitePress), foldered like the code —
   `shared/`, `apps/web/`, `modules/ packages/ db/ infra/`.
 
-Flow: think in `work/` → build in `code/` → promote what sticks to `docs/`.
+The repo may also carry private internal folders (`method/`, `work/`) — the dev framework
+and the sprint lab. They're **gitignored and never part of a client handoff**.
 
 **Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · next-intl v4 ·
 next-themes · shadcn/ui · Sanity. Workspace: pnpm + Turborepo.
 
 The web app has its own briefs: **how to code** → [`code/apps/web/CLAUDE.md`](./code/apps/web/CLAUDE.md) ·
 **how to design** → [`code/packages/tokens/DESIGN.md`](./code/packages/tokens/DESIGN.md) ·
-**app README** → [`code/apps/web/README.md`](./code/apps/web/README.md) · **framework** → [`method/`](./method/).
+**app README** → [`code/apps/web/README.md`](./code/apps/web/README.md).
 
 ## Getting started
 
@@ -35,24 +31,34 @@ pnpm verify             # tsc + lint + format:check + contrast + react-doctor (C
 pnpm verify:quick       # tsc + lint (manual pre-PR check)
 ```
 
-## Deploy — not locked to one host
+## Deploy — Cloudflare Workers
 
-The workspace installs at the **repo root**; the app builds to `code/apps/web/.next`.
+The app deploys to **Cloudflare Workers** via OpenNext (`@opennextjs/cloudflare`) across **dev / staging / prod**, with an R2-backed ISR cache. GitHub Actions builds + deploys on push to `main`; run manually with `pnpm deploy:web:{dev,staging,prod}`. Per-app config: `code/apps/web/wrangler.toml` + `open-next.config.ts`.
 
-- **Netlify** — per-app manifest `code/apps/web/netlify.toml` (`command = pnpm build`, `publish = code/apps/web/.next`); in the Netlify UI set **Package directory = `code/apps/web`** and leave **Base directory unset** so pnpm installs the workspace from root. First-deploy steps → [`code/apps/web/README.md`](./code/apps/web/README.md) § Deployment.
-- **Vercel / Cloudflare / anywhere** — point the project at this repo, keep **install at the repo root**, set build `pnpm build` and Root Directory / output to `code/apps/web`. Each `apps/*` you add later is its own deploy target.
+The workspace installs at the **repo root**; deploy scripts are app-namespaced, so each `apps/*` you add later is its own target (`deploy:<app>:<env>`). First-deploy steps (R2 buckets, secrets, custom domain, first-deploy checks) → [Deployment (Cloudflare)](./docs/apps/web/setup/deployment.md).
 
-## Documentation — two VitePress sites
+## Documentation
 
-Each is its own npm package, isolated from the pnpm workspace:
+`docs/` is the product documentation site — its own npm package, isolated from the pnpm workspace:
 
 ```bash
-pnpm docs:install   # once           pnpm method:install # once
-pnpm docs           # → :3002        pnpm method         # → :3003
-pnpm docs:build                      pnpm method:build
+pnpm docs:install   # once
+pnpm docs           # → :3002
+pnpm docs:build
 ```
 
 - **Product docs** ([`docs/`](./docs/)) — how the template works: setup, config, design, SEO, blog, client-intake. Mirrors the code spine.
-- **Method / framework** ([`method/`](./method/)) — how we work: the 7-phase sprint, the engineering brain, rules, workflows.
 
 The app's own how-to (adding a page/section, i18n, SEO, forms, cookie/legal, critical rules) lives in [`code/apps/web/README.md`](./code/apps/web/README.md).
+
+## Links
+
+| | URL |
+| --- | --- |
+| Live site | `<https://your-domain.com>` |
+| Repo | `<https://github.com/you/your-repo>` |
+| Deploy dashboard | `<Cloudflare Workers project URL>` |
+| Sanity Studio | `<https://your-domain.com/studio>` — local: http://localhost:3000/studio |
+| Product docs | `<https://docs.your-domain.com>` — local: http://localhost:3002 |
+
+<!-- Template placeholders — fill in per project. -->

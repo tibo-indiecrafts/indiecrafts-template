@@ -1,0 +1,45 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Design Tokens/Typography & Radius" />
+
+# Typography & radius
+
+## Radius
+
+One radius token, `--radius` (`0.5rem`), scales the shadcn `rounded-*` steps. Boxes below paint
+`background: var(--muted)` with increasing `border-radius`.
+
+<div style={{ display: "flex", gap: "1rem", alignItems: "flex-end", margin: "1.25rem 0" }}>
+  {[
+    ["calc(var(--radius) - 4px)", "sm"],
+    ["calc(var(--radius) - 2px)", "md"],
+    ["var(--radius)", "base"],
+    ["calc(var(--radius) + 4px)", "lg"],
+    ["9999px", "full"],
+  ].map(([r, label]) => (
+    <div key={label} style={{ textAlign: "center" }}>
+      <div style={{ width: 72, height: 72, background: "var(--muted)", borderRadius: r, boxShadow: "inset 0 0 0 1px var(--border)" }} />
+      <code style={{ fontSize: 12 }}>{label}</code>
+    </div>
+  ))}
+</div>
+
+## Typeset (long-form prose)
+
+`typeset.css` styles long-form content via `.typeset-docs` — headings, paragraphs, lists, inline
+`code`, and block code — all pulling theme tokens, so it flips light/dark automatically.
+
+<div className="typeset-docs" style={{ maxWidth: "68ch", marginTop: "1.25rem" }}>
+  <h1>The quick brown fox</h1>
+  <p>
+    Long-form body copy uses a comfortable measure and rhythm. Inline <code>code</code> and links
+    inherit the <strong>brand</strong> token. Below, a block quote and a code block.
+  </p>
+  <blockquote>Design is how it works, not only how it looks.</blockquote>
+  <h2>A second-level heading</h2>
+  <ul>
+    <li>Bullet one</li>
+    <li>Bullet two</li>
+  </ul>
+  <pre><code>const answer = 42;</code></pre>
+</div>

@@ -10,8 +10,7 @@
  */
 
 import type { PageConfig } from "@indiecrafts/config";
-import { features, seoDefaults, site } from "@indiecrafts/config";
-import { getTranslations } from "next-intl/server";
+import { features, site } from "@indiecrafts/config";
 import { getStaticPathname } from "@/i18n/routing";
 import type { Locale } from "@indiecrafts/config";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
@@ -42,12 +41,11 @@ export async function PageSchemas({
   locale,
   pathname,
 }: Readonly<{ page: PageConfig; locale: Locale; pathname?: string }>) {
-  if (!features.structuredData) return null;
-
-  const t = await getTranslations({ locale });
   // SEO copy — Sanity only. WebPage `name` is required, so fall back to the
   // brand name (identity, not editorial copy) when the locale has no entry.
   const [siteSeo, settings] = await Promise.all([getSiteSeo(locale), getSiteSettings()]);
+  // Gate: code `features.structuredData` (master) + the Sanity editor toggle.
+  if (!features.structuredData || settings.showStructuredData === false) return null;
   const pageSeo = siteSeo.pageSeo.get(page.id);
   const title = pageSeo?.title ?? settings.siteName ?? DEFAULT_SITE_NAME;
   const description = pageSeo?.description;
@@ -56,11 +54,11 @@ export async function PageSchemas({
   const path = pathname ?? getStaticPathname(page.key, locale);
   const url = `${site.url}${path}`;
   // The image(s) Google may show next to the result: Sanity per-page
-  // `schemaImage` > config per-page `schemaImage` > site `seoDefaults.schemaImage`
+  // `schemaImage` > config per-page `schemaImage` > site `siteSettings.schemaImage`
   // > the page's Sanity OG image. Emit a string for one, an array for many.
   const sanitySchemaImage = toImageList(pageSeo?.schemaImage);
   const pageImages = toImageList(page.seo?.schemaImage);
-  const defaultImages = toImageList(seoDefaults.schemaImage);
+  const defaultImages = toImageList(settings.schemaImage);
   const schemaImages =
     sanitySchemaImage.length > 0
       ? sanitySchemaImage
@@ -96,7 +94,8 @@ export async function PageSchemas({
 
   // Auto-emit FAQPage rich-result markup from the page's translated `faq`
   // array — zero per-page config, in sync with what the <Faq> section shows.
-  const faqItems = features.faq ? getFaqItems(t.raw, page.id) : [];
+  const faqItems =
+    features.faq && settings.showFaq !== false ? await getFaqItems(locale, page.id) : [];
   const faqSchema: SchemaObject[] = faqItems.length ? [buildFAQPageSchema(faqItems)] : [];
 
   return <JsonLdScript data={[webPage, ...extras, ...faqSchema]} />;

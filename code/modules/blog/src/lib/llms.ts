@@ -1,10 +1,11 @@
 import type { Locale } from "@indiecrafts/config";
-import { features, pages, site } from "@indiecrafts/config";
+import { pages, site } from "@indiecrafts/config";
 import { localizedPathname } from "@indiecrafts/i18n";
 import { allPostsQuery, taxonomyForLlmsQuery } from "@indiecrafts/blog/sanity/queries";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
 import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import { isBlogRouteEnabled } from "./route-gate";
+import { getBlogSettings } from "./settings";
 
 /**
  * The blog's contribution to the LLM endpoints: a `## Blog` section listing
@@ -51,19 +52,19 @@ type TaxonomyLlmsItem = {
 const TAXONOMIES = [
   {
     type: "category",
-    enabled: () => features.blogTaxonomy.categories,
+    key: "categories",
     heading: "Categories",
     path: (slug: string) => `/blog/category/${slug}` as const,
   },
   {
     type: "tag",
-    enabled: () => features.blogTaxonomy.tags,
+    key: "tags",
     heading: "Tags",
     path: (slug: string) => `/blog/tag/${slug}` as const,
   },
   {
     type: "author",
-    enabled: () => features.blogTaxonomy.authors,
+    key: "authors",
     heading: "Authors",
     path: (slug: string) => `/author/${slug}` as const,
   },
@@ -81,9 +82,10 @@ export async function getTaxonomyLlmsLines(
 ): Promise<string[]> {
   if (!isBlogRouteEnabled(pages.blog)) return [];
 
+  const settings = await getBlogSettings();
   const out: string[] = [];
   for (const tax of TAXONOMIES) {
-    if (!tax.enabled()) continue;
+    if (!settings.taxonomy[tax.key]) continue;
 
     const items = await sanityFetchLive<TaxonomyLlmsItem[]>({
       query: taxonomyForLlmsQuery,

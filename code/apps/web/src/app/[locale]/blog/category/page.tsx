@@ -1,6 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, type Locale } from "@indiecrafts/config";
-import { requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
+import { requireTaxonomyRoute } from "@indiecrafts/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function CategoryIndexPage({ params }: Props) {
-  requireBlogRoute(pages.category);
+  await requireTaxonomyRoute("categories", pages.category);
   const { locale } = await params;
   setRequestLocale(locale);
 
@@ -41,9 +41,9 @@ export default async function CategoryIndexPage({ params }: Props) {
         categories={categories}
         breadcrumbs={[{ label: nav("blog"), href: "/blog" }, { label: t("title") }]}
         breadcrumbsLabel={t("breadcrumbs")}
-        heading={c?.heading ?? t("heading")}
-        subheading={c?.subheading ?? t("subheading")}
-        emptyLabel={c?.empty ?? t("empty")}
+        heading={c?.heading ?? ""}
+        subheading={c?.subheading ?? ""}
+        emptyLabel={c?.empty ?? ""}
         postsLabel={t.raw("posts")}
       />
     </DefaultLayout>

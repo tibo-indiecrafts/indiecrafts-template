@@ -1,11 +1,16 @@
 "use client";
 
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import type { ReactNode } from "react";
-import { THEME_PROVIDER_PROPS } from "@/lib/theme";
+import {
+  ThemeProvider as NextThemesProvider,
+  type ThemeProviderProps,
+} from "next-themes";
 
-type Props = Readonly<{ children: ReactNode }>;
-
-export function ThemeProvider({ children }: Props) {
-  return <NextThemesProvider {...THEME_PROVIDER_PROPS}>{children}</NextThemesProvider>;
+/**
+ * Thin client wrapper around next-themes. The provider props are resolved
+ * server-side in the layout (`themeProviderProps(resolveThemeConfig(settings.themeModes))`)
+ * and passed in — so the offered theme modes are Sanity-driven, and next-themes'
+ * pre-paint blocking script (built from these props) still prevents a flash.
+ */
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }

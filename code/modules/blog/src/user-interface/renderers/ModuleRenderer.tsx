@@ -1,8 +1,8 @@
 import type { AnyModule, Post } from "@indiecrafts/blog/sanity/types";
-import type { BlockModule } from "@indiecrafts/ui-components/types";
+import type { BlockModule } from "@indiecrafts/ui-components/shared/types";
 import type { Locale } from "@indiecrafts/config";
-import { renderBlock } from "@indiecrafts/ui-components/renderers/registry";
-import { portableComponents } from "@indiecrafts/ui-components/renderers/portable-text-components";
+import { renderBlock } from "@indiecrafts/ui-components/web/registry";
+import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
 import { BlogIndex } from "./BlogIndex";
 import { BlogPostContent } from "./BlogPostContent";
 import { BlogPostList } from "./BlogPostList";

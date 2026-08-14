@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getSystemPages } from "@/lib/system-pages";
 import { DEFAULT_SITE_NAME, getSiteSettings } from "@/lib/seo/site-seo";
-import { Maintenance } from "@/user-interface/maintenance/components/Maintenance";
+import { Maintenance } from "@indiecrafts/system-pages";
 import { maintenanceLocale } from "./locale";
 
 export async function generateMetadata(): Promise<Metadata> {

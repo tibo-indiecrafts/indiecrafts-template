@@ -7,6 +7,23 @@ URLs. `src/i18n/routing.ts` and the proxy (`src/proxy.ts`) consume it directly; 
 downstream — routing, sitemap, hreflang, the llms endpoints, the locale switcher — follows
 automatically.
 
+## Where UI text lives (Sanity + fallback)
+
+The app's chrome strings (nav, cookies, validation, blog UI, system pages) are **owned in
+Sanity** — one per-locale `uiMessages.<locale>` singleton (Studio → **Textes de l'interface**).
+`src/i18n/request.ts` reads it (`getUiMessages`) and **overlays it on the bundled
+`messages/<locale>.json` file** (`overlayMessages`): Sanity is the edit surface, the JSON file
+is a **fallback** so a Sanity hiccup or a blank field never blanks the chrome. Every
+`useTranslations(...)`/`t(...)` call site is unchanged — only the source moved.
+
+- **`typography`** stays in the JSON file only (never in the CMS): it is machine i18n/format
+  config (quote style, date format, oxford comma) consumed by `@indiecrafts/format`, not editorial
+  copy — a wrong edit would break formatting site-wide.
+- **Homepage editorial copy** is separate again — the page-builder `homePage.<locale>` singleton
+  (see [Homepage](../features/homepage)).
+- The `uiMessages` schema fields are **generated from the message shape** (`en.json`) so they can't
+  drift; `pnpm seed` populates the Sanity docs from the JSON files.
+
 ## The `i18n` object
 
 ```ts
@@ -170,3 +187,32 @@ Every key the app reads at runtime lives in that one file, including on-page blo
 The `Locale` union, routing, sitemap, hreflang, the llms endpoints, and the locale switcher
 all follow automatically. Going monolingual? Strip the extra row and delete the matching
 `messages/<code>.json`.
+
+### Don't pre-fill locales
+
+Add a locale only when a real audience or translation exists. An empty or machine-filled
+`messages/<code>.json` ships an English-looking page under a foreign URL, and every locale adds
+build, SEO, sitemap, and `llms` surface. The two steps above make a locale cheap to add later — add
+on demand, not "just in case".
+
+### Where each kind of content lives
+
+Adding a locale touches three homes, by content type:
+
+| Kind | Home | Per locale |
+| --- | --- | --- |
+| **Editorial content + UI copy** | Sanity (`localeString` / `localeText`) + `messages/<locale>.json` | translated |
+| **Page SEO** (title / description / OG) | Sanity (`siteMeta`, per page) — **not** `messages/` | translated |
+| **Technical format rules** (number / money / date / grammar) | `config` `i18n.locales` rows + `formatDefaults` — **not** Sanity, **not** `messages/` | rule per locale |
+
+**As much _content_ as possible is editable in Sanity** — copy, SEO, cookie/legal text, and email
+strings all resolve `value[locale] ?? value[defaultLocale]`. What is **not** content — number
+grouping, currency, adjective position, article agreement — lives in `config` and is served by
+[`@indiecrafts/format`](../../../packages/format.md) (`localeFormat(locale)`), because it is a
+language _rule_, not editable copy.
+
+### RTL
+
+`dir: "rtl"` on the locale row drives `<html dir>` (via `localeDir` — the layout already reads it),
+so a right-to-left locale needs no code change beyond the row + its `messages/<code>.json`. When you
+first ship one, audit directional utilities in components (`ml-`/`pl-` → logical `ms-`/`ps-`).

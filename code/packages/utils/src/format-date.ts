@@ -26,7 +26,7 @@ function formatterFor(locale: Locale, month: "short" | "long"): Intl.DateTimeFor
  * Format a post's publish date for `locale` (e.g. `"Jul 14, 2026"`), or `null`
  * when there's no date. Pass `month: "long"` for the fuller `"July 14, 2026"`.
  */
-export function formatPostDate(
+export function formatDate(
   locale: Locale,
   iso?: string | null,
   { month = "short" }: { month?: "short" | "long" } = {},

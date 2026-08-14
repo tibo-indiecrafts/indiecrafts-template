@@ -1,10 +1,14 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, pages, type Locale } from "@indiecrafts/config";
+import { pages, site, type Locale } from "@indiecrafts/config";
 import { localizedPathname } from "@/i18n/routing";
-import { requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
+import {
+  isTaxonomyRouteEnabled,
+  requireTaxonomyRoute,
+} from "@indiecrafts/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
+import { buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { CategoryDetail } from "@indiecrafts/blog/user-interface/category/sections/CategoryDetail";
 import { client } from "@indiecrafts/sanity/client";
@@ -12,14 +16,19 @@ import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import {
   allCategorySlugsQuery,
   categoryBySlugQuery,
+  postsByCategoryCountQuery,
   postsByCategorySlugQuery,
 } from "@indiecrafts/blog/sanity/queries";
 import type { Category, PostListItem } from "@indiecrafts/blog/sanity/types";
+import { pageCount, pageRange, parsePage } from "@indiecrafts/blog/lib/pagination";
 
-type Props = { params: Promise<{ locale: Locale; slug: string }> };
+type Props = {
+  params: Promise<{ locale: Locale; slug: string }>;
+  searchParams: Promise<{ page?: string }>;
+};
 
 export async function generateStaticParams() {
-  if (!features.blog || !features.blogTaxonomy.categories) return [];
+  if (!(await isTaxonomyRouteEnabled("categories", pages.category))) return [];
   const rows =
     await client.fetch<{ slug?: string; language?: string }[]>(allCategorySlugsQuery);
   // Categories have `language` (required + initialValue "en" in the
@@ -49,30 +58,52 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function CategoryDetailPage({ params }: Props) {
-  requireBlogRoute(pages.category);
+export default async function CategoryDetailPage({ params, searchParams }: Props) {
+  await requireTaxonomyRoute("categories", pages.category);
   const { locale, slug } = await params;
+  const page = parsePage((await searchParams).page);
+  const { start, end } = pageRange(page);
   setRequestLocale(locale);
 
-  const [category, posts, t, catT, nav] = await Promise.all([
+  const [category, posts, total, t, catT, nav, pagerT] = await Promise.all([
     sanityFetchLive<Category | null>({
       query: categoryBySlugQuery,
       params: { slug, locale },
     }),
     sanityFetchLive<PostListItem[]>({
       query: postsByCategorySlugQuery,
+      params: { slug, locale, start, end },
+    }),
+    sanityFetchLive<number>({
+      query: postsByCategoryCountQuery,
       params: { slug, locale },
     }),
     getTranslations("pages.blog.category"),
     getTranslations("pages.category"),
     getTranslations("nav"),
+    getTranslations("pages.blog.pagination"),
   ]);
   if (!category) notFound();
+
+  const breadcrumbItems = [
+    { name: nav("blog"), url: `${site.url}${localizedPathname("/blog", locale)}` },
+    {
+      name: catT("title"),
+      url: `${site.url}${localizedPathname("/blog/category", locale)}`,
+    },
+    {
+      name: category.title ?? slug,
+      url: `${site.url}${localizedPathname(`/blog/category/${slug}`, locale)}`,
+    },
+  ];
 
   return (
     <DefaultLayout>
       <PageSchemas
-        page={pages.category}
+        page={{
+          ...pages.category,
+          seo: { structuredData: [buildBreadcrumbSchema(breadcrumbItems)] },
+        }}
         locale={locale}
         pathname={localizedPathname(`/blog/category/${slug}`, locale)}
       />
@@ -88,6 +119,15 @@ export default async function CategoryDetailPage({ params }: Props) {
         breadcrumbsLabel={catT("breadcrumbs")}
         postsLabel={catT.raw("posts")}
         noPostsLabel={t("noPosts")}
+        page={page}
+        pageCount={pageCount(total)}
+        basePath={`/blog/category/${slug}`}
+        pagerLabels={{
+          label: pagerT("label"),
+          previous: pagerT("previous"),
+          next: pagerT("next"),
+          status: pagerT("status"),
+        }}
       />
     </DefaultLayout>
   );
