@@ -21,7 +21,7 @@ import {
   type Locale,
   type StaticAppPathname,
   type PageConfig,
-} from "@indiecrafts/config";
+} from "@/config";
 import { client } from "@indiecrafts/sanity/client";
 import { navigationQuery } from "@/sanity/nav-queries";
 
@@ -39,7 +39,12 @@ export type NavLeaf = (
 };
 
 /** A header item that opens a dropdown of leaf links (no link of its own). */
-export type NavGroup = { kind: "group"; label: string; icon?: string; children: NavLeaf[] };
+export type NavGroup = {
+  kind: "group";
+  label: string;
+  icon?: string;
+  children: NavLeaf[];
+};
 
 /** Header items may be leaves or dropdown groups; footer links are always leaves. */
 export type NavItem = NavLeaf | NavGroup;
@@ -101,7 +106,9 @@ function resolveHeaderItem(raw: RawNavItem, locale: Locale): NavItem | null {
     const label = localized(raw.label ?? null, locale);
     if (!label) return null;
     const children = resolveLeaves(raw.children, locale);
-    return children.length ? { kind: "group", label, icon: raw.icon ?? undefined, children } : null;
+    return children.length
+      ? { kind: "group", label, icon: raw.icon ?? undefined, children }
+      : null;
   }
   return resolveLeaf(raw, locale);
 }
@@ -111,7 +118,7 @@ export const getNavigation = cache(async (locale: Locale): Promise<Navigation> =
     const data = await client.fetch(navigationQuery);
     if (!data) return EMPTY;
     return {
-      header: (data.header as RawNavItem[] | null | undefined ?? [])
+      header: ((data.header as RawNavItem[] | null | undefined) ?? [])
         .map((item) => resolveHeaderItem(item, locale))
         .filter((item): item is NavItem => item !== null),
       footerColumns: (

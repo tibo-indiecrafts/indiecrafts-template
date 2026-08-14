@@ -1,4 +1,4 @@
-import { pages, site } from "@indiecrafts/config";
+import { pages, site } from "@/config";
 import { isBlogRouteEnabled } from "@indiecrafts/blog/lib/route-gate";
 import { sanityFetchLive } from "@indiecrafts/sanity/live";
 import { portableTextToMarkdown } from "@indiecrafts/blog/sanity/portable-to-markdown";

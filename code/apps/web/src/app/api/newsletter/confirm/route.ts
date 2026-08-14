@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { site } from "@indiecrafts/config";
+import { site } from "@/config";
 import { isNewsletterEnabled } from "@indiecrafts/newsletter/lib/newsletter";
 import { confirmSubscriber } from "@indiecrafts/newsletter/lib/confirm";
 

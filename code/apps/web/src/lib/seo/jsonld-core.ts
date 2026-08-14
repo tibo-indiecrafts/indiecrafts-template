@@ -6,7 +6,7 @@
  * the component module (which would form an import cycle).
  */
 
-import { site } from "@indiecrafts/config";
+import { site } from "@/config";
 import { DEFAULT_SITE_NAME, type SiteSettings } from "@/lib/seo/site-seo";
 import { socialLinks } from "@/lib/social";
 
@@ -125,9 +125,11 @@ export type JsonLdWebSite = SchemaBase<"WebSite"> & {
   potentialAction?: Record<string, unknown>;
 };
 
-export function buildWebSiteSchema(
-  options: { name: string; description?: string; searchUrlTemplate?: string },
-): JsonLdWebSite {
+export function buildWebSiteSchema(options: {
+  name: string;
+  description?: string;
+  searchUrlTemplate?: string;
+}): JsonLdWebSite {
   return compact({
     "@type": "WebSite",
     "@id": `${site.url}#website`,

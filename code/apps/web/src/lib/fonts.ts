@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import type { CSSProperties } from "react";
-import { fonts, type FontKey } from "@indiecrafts/config";
+import { fonts, type FontKey } from "@/config";
 
 /**
  * Font registry — the single place `next/font` is called.

@@ -1,5 +1,5 @@
 import { defineEnableDraftMode } from "next-sanity/draft-mode";
-import { features } from "@indiecrafts/config";
+import { features } from "@/config";
 import { client } from "@indiecrafts/sanity/client";
 import { token } from "@indiecrafts/sanity/token";
 

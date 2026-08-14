@@ -1,5 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { pages, type Locale } from "@indiecrafts/config";
+import { pages, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
 import { isSearchEnabled } from "@indiecrafts/blog/lib/route-gate";
 import { notFound } from "next/navigation";

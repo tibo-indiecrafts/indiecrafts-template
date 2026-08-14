@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { site } from "@indiecrafts/config";
+import { site } from "@/config";
 import { escapeHtml } from "@indiecrafts/email";
 import { isCommentsEnabled } from "@indiecrafts/blog/lib/route-gate";
 import {

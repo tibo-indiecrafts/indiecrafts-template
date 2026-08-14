@@ -13,8 +13,8 @@
  * format explicit.
  */
 
-import type { Locale } from "@indiecrafts/config";
-import { features } from "@indiecrafts/config";
+import type { Locale } from "@/config";
+import { features } from "@/config";
 import { ROUTES } from "@/app/routes";
 import { isLlmsPage, renderPageMarkdown } from "@/lib/seo/page-markdown";
 import { getSiteSeo } from "@/lib/seo/site-seo";

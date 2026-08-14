@@ -9,7 +9,7 @@
  * rich result follows. Gated by `features.faq`.
  */
 
-import type { Locale } from "@indiecrafts/config";
+import type { Locale } from "@/config";
 import type { PortableTextBlock } from "@portabletext/react";
 import type { AccordionListModule } from "@indiecrafts/ui-components/shared/types";
 import { getHomePage } from "@/lib/home";

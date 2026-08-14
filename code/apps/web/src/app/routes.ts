@@ -5,8 +5,8 @@
  * `sitemap.ts` consume.
  */
 
-import { pages } from "@indiecrafts/config";
-import type { PageConfig } from "@indiecrafts/config";
+import { pages } from "@/config";
+import type { PageConfig } from "@/config";
 
 export const ROUTES: readonly PageConfig[] = Object.values(pages);
 

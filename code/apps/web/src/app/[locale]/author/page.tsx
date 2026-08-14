@@ -1,6 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { pages } from "@indiecrafts/config";
-import type { Locale } from "@indiecrafts/config";
+import { pages } from "@/config";
+import type { Locale } from "@/config";
 import { requireTaxonomyRoute } from "@indiecrafts/blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";

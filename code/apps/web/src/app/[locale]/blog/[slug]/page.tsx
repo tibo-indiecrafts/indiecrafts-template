@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, pages, site, type Locale } from "@indiecrafts/config";
+import { features, pages, site, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
 import { isRssEnabled, requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
 import { getBlogSettings } from "@indiecrafts/blog/lib/settings";

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { features, pages, type Locale } from "@indiecrafts/config";
+import { features, pages, type Locale } from "@/config";
 import {
   isRssEnabled,
   isSearchEnabled,

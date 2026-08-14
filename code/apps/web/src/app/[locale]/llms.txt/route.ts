@@ -19,8 +19,8 @@
  * SEO copy is Sanity-only (no config/messages fallback) — see `getSiteSeo`.
  */
 
-import type { Locale, PageConfig } from "@indiecrafts/config";
-import { features, site } from "@indiecrafts/config";
+import type { Locale, PageConfig } from "@/config";
+import { features, site } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
 import { ROUTES } from "@/app/routes";
 import { isLlmsPage } from "@/lib/seo/page-markdown";

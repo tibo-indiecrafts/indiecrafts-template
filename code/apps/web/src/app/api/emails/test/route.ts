@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { defaultLocale, features, site } from "@indiecrafts/config";
+import { defaultLocale, features, site } from "@/config";
 import { projectId } from "@indiecrafts/sanity/env";
 import { logger } from "@indiecrafts/logger";
 import {

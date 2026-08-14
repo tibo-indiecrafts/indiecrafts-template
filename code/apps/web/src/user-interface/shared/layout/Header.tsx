@@ -7,7 +7,7 @@ import { LocaleSwitcher } from "@/user-interface/shared/layout/LocaleSwitcher";
 import { ThemeToggle } from "@/user-interface/shared/layout/ThemeToggle";
 import { NavIcon } from "@/user-interface/shared/components/NavIcon";
 import { Link } from "@/i18n/routing";
-import type { ThemeMode } from "@indiecrafts/config";
+import type { ThemeMode } from "@/config";
 import type { NavItem, NavLeaf } from "@/lib/navigation";
 import {
   NavigationMenu,

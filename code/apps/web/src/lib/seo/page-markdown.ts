@@ -7,8 +7,8 @@
  * the rest of the SEO surface (Sanity is the sole source).
  */
 
-import type { Locale, PageConfig } from "@indiecrafts/config";
-import { site } from "@indiecrafts/config";
+import type { Locale, PageConfig } from "@/config";
+import { site } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
 
 /**

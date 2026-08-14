@@ -1,4 +1,4 @@
-import { pages, type Locale } from "@indiecrafts/config";
+import { pages, type Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { LegalPageView } from "@/user-interface/legal/LegalPageView";
 

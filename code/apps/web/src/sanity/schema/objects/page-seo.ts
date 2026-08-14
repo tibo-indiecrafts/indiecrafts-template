@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { pages } from "@indiecrafts/config";
+import { pages } from "@/config";
 
 /**
  * Per-page SEO override — one entry per static route in the `pages` map

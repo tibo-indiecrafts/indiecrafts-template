@@ -1,4 +1,4 @@
-import { pages, type Locale } from "@indiecrafts/config";
+import { pages, type Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { LegalPageView } from "@/user-interface/legal/LegalPageView";
 
@@ -11,5 +11,7 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function LegalNoticePage({ params }: Props) {
   const { locale } = await params;
-  return <LegalPageView page={pages.legalNotice} pageKey="mentions-legales" locale={locale} />;
+  return (
+    <LegalPageView page={pages.legalNotice} pageKey="mentions-legales" locale={locale} />
+  );
 }

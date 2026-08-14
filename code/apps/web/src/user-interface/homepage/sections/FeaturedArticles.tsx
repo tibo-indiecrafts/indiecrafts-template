@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import type { Locale } from "@indiecrafts/config";
+import type { Locale } from "@/config";
 import { formatDate } from "@indiecrafts/utils/format-date";
 import type { PostListItem } from "@indiecrafts/blog/sanity/types";
 import { FeaturedMedia } from "@indiecrafts/ui-components/web/media/FeaturedMedia";

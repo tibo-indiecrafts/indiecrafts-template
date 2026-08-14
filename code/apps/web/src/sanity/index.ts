@@ -1,5 +1,5 @@
 import type { SanityModule } from "@indiecrafts/sanity/module";
-import { locales } from "@indiecrafts/config";
+import { locales } from "@/config";
 import {
   seoStructureItem,
   navStructureItem,

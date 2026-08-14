@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { defaultLocale, theme } from "@indiecrafts/config";
+import { defaultLocale, theme } from "@/config";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 
 /**

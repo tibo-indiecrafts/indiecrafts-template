@@ -13,7 +13,7 @@ import {
   site,
   theme,
   type Locale,
-} from "@indiecrafts/config";
+} from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
 import { CookieBanner } from "@indiecrafts/consent/CookieBanner";
 import { LegalNotice } from "@indiecrafts/consent/LegalNotice";

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { site } from "@indiecrafts/config";
-import type { Locale } from "@indiecrafts/config";
+import { site } from "@/config";
+import type { Locale } from "@/config";
 import { isRssEnabled } from "@indiecrafts/blog/lib/route-gate";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { localizedPathname } from "@/i18n/routing";

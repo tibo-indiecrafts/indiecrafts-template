@@ -7,8 +7,8 @@
  * (was module-constants) — the layout resolves it server-side and prop-feeds the
  * client ThemeProvider / Header / ThemeToggle (they can't await Sanity).
  */
-import { site, themeConfig } from "@indiecrafts/config";
-import type { ThemeMode, ThemeName } from "@indiecrafts/config";
+import { site, themeConfig } from "@/config";
+import type { ThemeMode, ThemeName } from "@/config";
 import type { SiteSettings } from "@/lib/seo/site-seo";
 
 /** The resolved theme availability — the code default's shape. */

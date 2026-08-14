@@ -15,7 +15,7 @@ import {
   localeCookieName,
   type Locale,
   type StaticAppPathname,
-} from "@indiecrafts/config";
+} from "@/config";
 import { PATHNAMES } from "@/app/routes";
 
 export const routing = defineRouting({
@@ -51,4 +51,4 @@ export function getStaticPathname(href: StaticAppPathname, locale: Locale): stri
 
 // `localizedPathname` is config-only (no app routes) — it lives in @indiecrafts/config
 // so modules can use it too; re-exported here for the app's existing import sites.
-export { localizedPathname } from "@indiecrafts/config";
+export { localizedPathname } from "@/config";

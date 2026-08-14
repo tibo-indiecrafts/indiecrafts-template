@@ -6,7 +6,7 @@
 
 import createMiddleware from "next-intl/middleware";
 import { type NextRequest } from "next/server";
-import { features } from "@indiecrafts/config";
+import { features } from "@/config";
 import { maintenanceRewrite } from "@indiecrafts/system-pages/proxy";
 import { getMaintenanceMode } from "@/lib/maintenance";
 import { routing } from "@/i18n/routing";

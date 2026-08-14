@@ -1,10 +1,12 @@
 /**
- * Theme + fonts. Color tokens themselves are oklch in `globals.css` (the
- * authoritative source); only the PWA-manifest hex mirror + the container widths +
- * the font-role pairing + the theme-availability flags live here as code.
+ * Theme + fonts availability — **this app's** design identity. Color tokens
+ * themselves are oklch in `globals.css` (the authoritative source); only the
+ * PWA-manifest hex mirror + the container widths + the theme-availability flags
+ * live here as code. App-owned (a second app ships its own look), so this is in
+ * `apps/web/src/config`, not the shared `@indiecrafts/config` primitives.
  */
 
-import type { FontRoles, ThemeName } from "./types";
+import type { ThemeName } from "@indiecrafts/config";
 
 export const theme = {
   /**
@@ -19,24 +21,6 @@ export const theme = {
   },
   container: { maxWidth: "1280px", gutter: "1rem" },
 } as const;
-
-/**
- * Active font pairing — one registered font (see `@/lib/fonts`) per role.
- *
- * `next/font` requires its loader calls to be static literals, so the fonts
- * themselves live in the registry; this just picks which plays each role.
- * `display` drives headings (`--font-display`); set it equal to `body` for a
- * single-typeface look. Swapping the whole pairing is a one-line edit here.
- *
- * Ships a display/body split: Satoshi (self-hosted local variable font) for
- * headings, Geist (Google, auto-subset + self-hosted) for body, Geist Mono
- * for code. Add a font → extend `FontKey` + the registry, then name it here.
- */
-export const fonts = {
-  display: "satoshi",
-  body: "geist",
-  mono: "geist-mono",
-} as const satisfies FontRoles;
 
 /**
  * Theme availability — which color modes the site offers and whether it's

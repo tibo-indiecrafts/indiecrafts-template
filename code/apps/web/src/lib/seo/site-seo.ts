@@ -9,7 +9,7 @@
  */
 
 import { cache } from "react";
-import { getCurrentEnvironment, type Locale } from "@indiecrafts/config";
+import { getCurrentEnvironment, type Locale } from "@/config";
 import { logger } from "@indiecrafts/logger";
 import { client } from "@indiecrafts/sanity/client";
 import { siteSeoQuery, siteSettingsQuery } from "@/sanity/seo-queries";

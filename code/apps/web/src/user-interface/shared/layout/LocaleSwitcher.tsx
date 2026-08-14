@@ -3,7 +3,7 @@
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { defaultLocale, localeMap, locales, type Locale } from "@indiecrafts/config";
+import { defaultLocale, localeMap, locales, type Locale } from "@/config";
 import { Button } from "@indiecrafts/ui/web/button";
 import {
   DropdownMenu,

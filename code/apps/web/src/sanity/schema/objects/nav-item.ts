@@ -1,6 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { LinkIcon } from "@sanity/icons";
-import { pages, defaultLocale } from "@indiecrafts/config";
+import { pages, defaultLocale } from "@/config";
 
 /**
  * A single reusable menu link — used in the header bar and in every footer
@@ -126,7 +126,12 @@ export default defineType({
       const count = Array.isArray(children) ? children.length : 0;
       return {
         title: label || "(sans texte)",
-        subtitle: count > 0 ? `Menu déroulant · ${count} lien(s)` : linkType === "external" ? external : route,
+        subtitle:
+          count > 0
+            ? `Menu déroulant · ${count} lien(s)`
+            : linkType === "external"
+              ? external
+              : route,
       };
     },
   },

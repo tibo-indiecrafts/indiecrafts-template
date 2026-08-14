@@ -5,7 +5,7 @@ import {
   localeCodes,
   localeCookieName,
   type Locale,
-} from "@indiecrafts/config";
+} from "@/config";
 
 /**
  * Best-effort locale for the standalone `/maintenance` route. It lives

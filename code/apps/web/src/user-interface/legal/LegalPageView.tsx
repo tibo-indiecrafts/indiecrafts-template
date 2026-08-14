@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { isPageVisible, type Locale, type PageConfig } from "@indiecrafts/config";
+import { isPageVisible, type Locale, type PageConfig } from "@/config";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { sanityFetchLive } from "@indiecrafts/sanity/live";

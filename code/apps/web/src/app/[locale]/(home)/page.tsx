@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { features, isPageVisible, pages } from "@indiecrafts/config";
-import type { Locale } from "@indiecrafts/config";
+import { features, isPageVisible, pages } from "@/config";
+import type { Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { getHomePage } from "@/lib/home";
 import { PageSchemas } from "@/lib/seo/jsonld";

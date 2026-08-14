@@ -7,7 +7,7 @@ import {
   localePrefix,
   site,
   type Locale,
-} from "@indiecrafts/config";
+} from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
 import { getSiteSeo } from "@/lib/seo/site-seo";
 import { client } from "@indiecrafts/sanity/client";

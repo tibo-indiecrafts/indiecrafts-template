@@ -1,4 +1,4 @@
-import { features, getCurrentEnvironment, isSiteConfigured, site } from "@indiecrafts/config";
+import { features, getCurrentEnvironment, isSiteConfigured, site } from "@/config";
 
 /**
  * robots.txt as a Route Handler (not the typed `robots.ts` metadata route) so

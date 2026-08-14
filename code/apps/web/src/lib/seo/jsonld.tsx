@@ -9,10 +9,10 @@
  * - `<JsonLdScript>` renders the `<script type="application/ld+json">` tag.
  */
 
-import type { PageConfig } from "@indiecrafts/config";
-import { features, site } from "@indiecrafts/config";
+import type { PageConfig } from "@/config";
+import { features, site } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
-import type { Locale } from "@indiecrafts/config";
+import type { Locale } from "@/config";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { getFaqItems } from "@/lib/faq";
 import { buildFAQPageSchema, buildGlobalSchemas } from "./jsonld-factories";

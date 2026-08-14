@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@indiecrafts/ui/web/dropdown-menu";
 import { cn } from "@indiecrafts/utils/cn";
-import type { ThemeMode } from "@indiecrafts/config";
+import type { ThemeMode } from "@/config";
 
 const subscribe = () => () => {};
 

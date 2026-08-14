@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { pages, site } from "@indiecrafts/config";
-import type { Locale } from "@indiecrafts/config";
+import { pages, site } from "@/config";
+import type { Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
 import {
   isTaxonomyRouteEnabled,

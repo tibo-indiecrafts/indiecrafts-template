@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { getLocale } from "next-intl/server";
-import { features, type Locale } from "@indiecrafts/config";
+import { features, type Locale } from "@/config";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { resolveThemeConfig, showThemeToggle, themeModes } from "@/lib/theme";
 import { getNavigation } from "@/lib/navigation";

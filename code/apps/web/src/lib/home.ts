@@ -1,5 +1,5 @@
 import { cache } from "react";
-import type { Locale } from "@indiecrafts/config";
+import type { Locale } from "@/config";
 import type { BlockModule } from "@indiecrafts/ui-components/shared/types";
 import { client } from "@indiecrafts/sanity/client";
 import { logger } from "@indiecrafts/logger";
