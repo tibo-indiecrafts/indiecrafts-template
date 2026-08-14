@@ -1,0 +1,26 @@
+# Cloudflare Workers config for the admin Next app (via OpenNext).
+# Deploy: `pnpm deploy:admin:<env>`. Internal/auth-gated — put it on a private
+# subdomain + Cloudflare Access. `pnpm project:rename <slug>` rewrites the names.
+
+name = "indiecrafts-admin-dev"
+main = ".open-next/worker.js"
+compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat"]
+keep_vars = true
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[env.dev]
+name = "indiecrafts-admin-dev"
+
+[env.staging]
+name = "indiecrafts-admin-staging"
+
+[env.prod]
+name = "indiecrafts-admin-prod"

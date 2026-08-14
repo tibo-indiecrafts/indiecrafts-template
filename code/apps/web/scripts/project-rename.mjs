@@ -9,7 +9,7 @@
 // locale) AND the Cloudflare Worker/R2 names, so two clients under one account
 // never collide. Must be unique per client.
 
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { TEMPLATE_SLUG } from "./lib/project.mjs";
 
@@ -55,6 +55,45 @@ const nextWrangler = wrangler
   .join("\n");
 writeFileSync(WRANGLER, nextWrangler);
 
+// 2b. Other apps (api, cron, workers, …): rename each app's own wrangler.toml stem
+//     `indiecrafts-<app>` → `<slug>-<app>` on resource-name lines (+ its tfvars, if
+//     any). Same clobber guard applies — a worker won't deploy to staging/prod until
+//     renamed. Discovered from `code/apps/*/wrangler.toml`, so new apps are covered
+//     with no edit here.
+const APPS_DIR = resolve("..");
+const renamedApps = [];
+for (const app of readdirSync(APPS_DIR, { withFileTypes: true })) {
+  if (!app.isDirectory() || app.name === "web") continue;
+  const appWrangler = `${APPS_DIR}/${app.name}/wrangler.toml`;
+  if (!existsSync(appWrangler)) continue;
+  const stem = `${TEMPLATE_SLUG.replace(/-web$/, "")}-${app.name}`; // indiecrafts-<app>
+  const newAppStem = `${slug}-${app.name}`;
+  const src = readFileSync(appWrangler, "utf8");
+  const out = src
+    .split("\n")
+    .map((line) =>
+      /^\s*(name|bucket_name|database_name)\s*=/.test(line)
+        ? line.replaceAll(stem, newAppStem)
+        : line,
+    )
+    .join("\n");
+  if (out !== src) {
+    writeFileSync(appWrangler, out);
+    renamedApps.push(app.name);
+  }
+  const appTfvars = resolve(`../../infra/iac/cloudflare/apps/${app.name}/env`);
+  for (const env of ["dev", "staging", "prod"]) {
+    const file = `${appTfvars}/${env}.tfvars`;
+    if (!existsSync(file)) continue;
+    const tf = readFileSync(file, "utf8");
+    const nextTf = tf
+      .split("\n")
+      .map((line) => (/^\s*worker_name\s*=/.test(line) ? line.replaceAll(stem, newAppStem) : line))
+      .join("\n");
+    if (nextTf !== tf) writeFileSync(file, nextTf);
+  }
+}
+
 // 3. Terraform tfvars: rewrite `worker_name` so the IaC targets the renamed Worker
 //    (else Terraform would manage a dead worker). Only the `worker_name` line; the
 //    infra layer is optional, so skip silently if the dir is absent.
@@ -79,6 +118,10 @@ for (const env of ["dev", "staging", "prod"]) {
 console.log(`✓ Renamed project namespace → "${slug}"`);
 console.log(`  · @indiecrafts/config  DEFAULT_SITE_PREFIX = "${slug}"`);
 console.log(`  · wrangler.toml         Worker/R2 stem = "${newStem}"`);
+if (renamedApps.length)
+  console.log(
+    `  · other apps            ${renamedApps.map((a) => `"${slug}-${a}"`).join(", ")}`,
+  );
 if (tfvarsCount)
   console.log(
     `  · Terraform tfvars      worker_name → "${newStem}*" (${tfvarsCount} env${tfvarsCount > 1 ? "s" : ""})`,
