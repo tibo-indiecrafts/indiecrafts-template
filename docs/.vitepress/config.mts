@@ -79,6 +79,7 @@ export default defineConfig({
             text: "Project organization",
             link: "/apps/web/config/project-organization",
           },
+          { text: "Multi-app architecture", link: "/apps/web/config/multi-app" },
           { text: "Feature flags", link: "/apps/web/config/feature-flags" },
           { text: "Navigation", link: "/apps/web/config/navigation" },
           { text: "Legal pages", link: "/apps/web/config/legal-pages" },

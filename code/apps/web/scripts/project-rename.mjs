@@ -1,7 +1,7 @@
 // Rename the project's namespace in ONE command — for reusing this template per
 // client. Rewrites `DEFAULT_SITE_PREFIX` (config) + the `<prefix>-web*` resource
-// names in `wrangler.toml`, then prints the R2 buckets to create. Run from
-// `code/apps/web`:
+// names in `wrangler.toml` + `worker_name` in the Terraform tfvars, then prints the
+// R2 buckets to create. Run from `code/apps/web`:
 //
 //   pnpm project:rename <slug>      # e.g. acme  →  DEFAULT_SITE_PREFIX="acme", worker "acme-web"
 //
@@ -9,7 +9,7 @@
 // locale) AND the Cloudflare Worker/R2 names, so two clients under one account
 // never collide. Must be unique per client.
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { TEMPLATE_SLUG } from "./lib/project.mjs";
 
@@ -55,9 +55,34 @@ const nextWrangler = wrangler
   .join("\n");
 writeFileSync(WRANGLER, nextWrangler);
 
+// 3. Terraform tfvars: rewrite `worker_name` so the IaC targets the renamed Worker
+//    (else Terraform would manage a dead worker). Only the `worker_name` line; the
+//    infra layer is optional, so skip silently if the dir is absent.
+const TFVARS_DIR = resolve("../../infra/iac/cloudflare/apps/web/env");
+let tfvarsCount = 0;
+for (const env of ["dev", "staging", "prod"]) {
+  const file = `${TFVARS_DIR}/${env}.tfvars`;
+  if (!existsSync(file)) continue;
+  const tf = readFileSync(file, "utf8");
+  const nextTf = tf
+    .split("\n")
+    .map((line) =>
+      /^\s*worker_name\s*=/.test(line) ? line.replaceAll(TEMPLATE_SLUG, newStem) : line,
+    )
+    .join("\n");
+  if (nextTf !== tf) {
+    writeFileSync(file, nextTf);
+    tfvarsCount++;
+  }
+}
+
 console.log(`✓ Renamed project namespace → "${slug}"`);
 console.log(`  · @indiecrafts/config  DEFAULT_SITE_PREFIX = "${slug}"`);
 console.log(`  · wrangler.toml         Worker/R2 stem = "${newStem}"`);
+if (tfvarsCount)
+  console.log(
+    `  · Terraform tfvars      worker_name → "${newStem}*" (${tfvarsCount} env${tfvarsCount > 1 ? "s" : ""})`,
+  );
 console.log("\nNext:");
 console.log("  1. Create the R2 buckets (one per env):");
 for (const env of ["dev", "staging", "prod"]) {

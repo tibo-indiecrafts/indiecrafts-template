@@ -79,6 +79,12 @@ Turnstile just no-ops. See [Security headers](./security-headers.md) + `@indiecr
 Copy `apps/web/` → `apps/<app>/`, point the tfvars at that app's Worker names + domain, and add
 `infra:<app>:<action>:<env>` delegators (mirroring `infra:web:*`). The module is shared.
 
+> **One app = one Cloudflare zone.** The zone-level resources — SSL/TLS/HTTPS settings, Bot Fight
+> Mode, Tiered Cache, and the ruleset entrypoints (a zone has exactly one ruleset per phase) — are
+> keyed by `zone_id`, not by `worker_name`. If two apps' states manage the **same** zone they will
+> fight over those objects. Give each app its **own zone/domain** (a subdomain on the *same* zone is
+> the collision case). A future `enable_zone_settings` toggle could let a subdomain app skip them.
+
 ## State
 
 Local per-workspace state (`terraform.tfstate.d/<env>/`, gitignored — it holds the Turnstile
