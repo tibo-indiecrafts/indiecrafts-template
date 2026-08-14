@@ -2,8 +2,8 @@
 layout: home
 hero:
   name: indiecrafts.dev
-  text: Template documentation
-  tagline: Config-first Next.js 16 template — setup, configuration, SEO, and the Sanity blog.
+  text: Platform documentation
+  tagline: A config-first Next.js 16 platform — a monorepo of apps (web today), shared packages, and product modules. Built so a second app lands beside the first.
   actions:
     - theme: brand
       text: New client setup
@@ -15,6 +15,9 @@ hero:
       text: Launch checklist
       link: /apps/web/setup/launch-checklist
 features:
+  - title: The apps
+    details: The deployable apps — web today, read-lenses over one tenant's content, built for a second app to join.
+    link: /apps/README
   - title: Setup & operations
     details: Fork for a new client, brand it, launch, and run it day-to-day.
     link: /apps/web/setup/new-client

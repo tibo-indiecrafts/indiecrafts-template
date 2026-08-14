@@ -17,7 +17,7 @@ When `features.blog: false`, every route above 404s, sitemap drops the entry, th
 
 ## How it's organised
 
-Feature-based: shared code in flat top-level folders; each domain owns a `features/<name>/` folder. Full tree + rationale in [`CLAUDE.md`](./CLAUDE.md) § Architecture and [`../../docs/apps/web/config/project-organization.md`](../../docs/apps/web/config/project-organization.md).
+Shared code in flat top-level folders (`user-interface/`, `lib/`, `sanity/`, `i18n/`, `config/`); heavy features are extracted to workspace packages + modules (`@indiecrafts/*`), consumed as source. Full tree + rationale in [`CLAUDE.md`](./CLAUDE.md) § Architecture and [`../../docs/apps/web/config/project-organization.md`](../../docs/apps/web/config/project-organization.md).
 
 ```
 messages/<locale>.json     Single source of truth for ALL user-facing copy
