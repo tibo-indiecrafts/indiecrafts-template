@@ -1,0 +1,19 @@
+{
+  "//": "Studio on-the-fly hooks — the wiring for the local Claude Code guardrails. Copy to .claude/settings.local.json (gitignored, local-by-design) via hooks/install.sh, or merge this `hooks` block into your existing settings.local.json. Approve the hooks on first run. The impeccable card + deep-pass need the global ~/.claude/skills/impeccable skill installed separately.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "[ ! -f \"$HOME/.claude/skills/impeccable/scripts/hook.mjs\" ] || node \"$HOME/.claude/skills/impeccable/scripts/hook.mjs\"", "timeout": 5, "statusMessage": "Checking UI changes" },
+          { "type": "command", "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\"", "timeout": 15, "statusMessage": "Checking accessibility" }
+        ]
+      }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "[ ! -f \"$HOME/.claude/skills/impeccable/scripts/hook.mjs\" ] || node \"$HOME/.claude/skills/impeccable/scripts/hook.mjs\"", "timeout": 30, "statusMessage": "Design deep pass" } ] },
+      { "hooks": [ { "type": "command", "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\"", "timeout": 30, "statusMessage": "Accessibility deep pass" } ] },
+      { "hooks": [ { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/change-hygiene.sh\"", "timeout": 10, "statusMessage": "Change-hygiene (docs + tests)" } ] }
+    ]
+  }
+}

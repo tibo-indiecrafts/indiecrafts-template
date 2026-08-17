@@ -18,9 +18,13 @@ touch files under `code/projects/web/**`); design tokens in **[`code/packages/ui
 
 ## Repo layout — the in-repo folders
 
-`code/` (execution) · `docs/` (canon). The internal dev framework (`method/`) and sprint
-lab (`work/`) live in a **separate private repo** — never tracked here, never in a client
-hand-off (see [`docs/apps/web/setup/workspace.md`](docs/apps/web/setup/workspace.md)).
+`code/` (execution) · `docs/` (canon) · `method/` (dev framework) · `work/` (sprint lab).
+`method/` + `work/` are **tracked here but delivery-excluded**: `.gitattributes`
+`export-ignore` keeps them out of every `git archive`, the a-la-carte CLI ships only
+registry bricks, and `scripts/delivery-canary.mjs` (in `verify` + CI) fails if `work/`
+ever reaches an export. **`work/` is private (real sprints/notes) — never deliver by
+handing over a repo clone; deliver only by allowlist** (see
+[`docs/apps/web/setup/workspace.md`](docs/apps/web/setup/workspace.md)).
 
 - **`code/`** — EXECUTION: the pnpm + Turbo workspace. `apps/web` (the Next app `@indiecrafts/web`; scaffolded slots for marketing · admin · mobile · hybrid · api · workers — see `code/projects/_registry.md`), `packages/` (shared bricks), `modules/` (product features: blog/shop/events…), `db/`, `infra/`. Workspace root is the **repo root** (`package.json`, `pnpm-workspace.yaml`, `turbo.json`).
 - **`docs/`** — CANON (product docs): a standalone VitePress site, **foldered like the code**: `shared/`, `apps/web/` (`setup/ config/ design/ seo/ features/blog/`), and `modules/ packages/ db/ infra/` stubs. Root sibling; npm-isolated from the pnpm workspace.

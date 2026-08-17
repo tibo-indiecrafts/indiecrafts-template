@@ -52,11 +52,13 @@ CLAUDE.local.md
 # machine-local index caches from optional dev tooling — never committed
 .codegraph/
 
-# Internal dev framework (method/) + sprint lab (work/) — kept in a separate
-# private repo, never tracked here. Left on disk locally but git-ignored so they
-# can't re-enter the repo or reach a client hand-off.
-method/
-work/
+# Internal dev framework (method/) + sprint lab (work/) now live IN the monorepo,
+# TRACKED — but delivery-EXCLUDED (see `.gitattributes` export-ignore + the delivery
+# canary, scripts/delivery-canary.mjs). `work/` must never reach a user; that holds
+# ONLY because delivery is by allowlist (CLI copy / `git archive`), never a repo
+# clone/hand-off. Their throwaway + machine-local state stays ignored:
+work/scratch/
+**/settings.local.json
 .gstack/
 **/_gstack
 .context/
