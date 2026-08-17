@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 
 test("doctor-env fails clearly when .env.local is missing", () => {
   // Run from an empty temp cwd so there is definitely no .env.local.
-  const r = spawnSync(process.execPath, [resolve("code/apps/web/scripts/doctor-env.mjs")], {
+  const r = spawnSync(process.execPath, [resolve("code/projects/web/scripts/doctor-env.mjs")], {
     cwd: tmpdir(),
     encoding: "utf8",
   });

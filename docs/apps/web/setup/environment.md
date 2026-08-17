@@ -6,13 +6,24 @@
 
 ```bash
 # prerequisites: Node 22+, pnpm 10 (corepack enable && corepack use pnpm@10)
-pnpm install
-cp .env.example .env.local      # every var is optional — fill Sanity keys if features.blog / studio are on
+pnpm install                                              # supply-chain gate? see the note below
+cp code/projects/web/.env.example code/projects/web/.env.local    # fill Sanity keys if features.blog / studio are on
 pnpm dev                        # http://localhost:3000
 pnpm verify:quick               # tsc + lint (manual; the commit hook already runs tsc)
 ```
 
-Run every command from the **repo root** — turbo delegates to `@indiecrafts/web`. Don't `cd` into `code/apps/web` to run scripts. That's a working dev environment; nothing below is required to build or ship.
+Run every command from the **repo root** — turbo delegates to `@indiecrafts/web`. Don't `cd` into `code/projects/web` to run scripts. `.env.example` lives in the app (`code/projects/web/`), so its copy does too. That's a working dev environment; nothing below is required to build or ship.
+
+> **`pnpm install` blocked?** The workspace pins a supply-chain policy in `pnpm-workspace.yaml`:
+> a **3-day** `minimumReleaseAge` (a fresh version waits 3 days — malware is usually caught +
+> unpublished within 24–72h) plus `trustPolicy: no-downgrade` (rejects a version that lost its npm
+> provenance). Fast-moving trusted toolchains (Cloudflare/Workers, electron, expo/react-native,
+> next/sanity/vitest/playwright…) are in `minimumReleaseAgeExclude`, and a handful of
+> provenance-gap false positives (undici-types, `@aws-sdk/*`, `@smithy/*`, flow-*, …) in
+> `trustPolicyExclude`. If a **new** legitimate package trips either gate, add its name to the
+> matching exclude list — don't disable the gate. (Build scripts: pnpm 10 blocks them by default;
+> the ones that must run — esbuild · workerd · @swc/core · electron · @parcel/watcher — are in
+> `onlyBuiltDependencies`.)
 
 Optional app extras:
 
@@ -23,7 +34,11 @@ pnpm docs:install && pnpm docs  # VitePress docs → http://localhost:3002
 
 ## Environment variables
 
-All live in `.env.example` and **all are optional** — the template runs as-is with none set. Copy it to `.env.local` and fill what you need. **Never commit `.env*`** (only `.env.example`); the pre-commit gate and `.gitignore` guard it. Never put a server-only token under a `NEXT_PUBLIC_` prefix — that ships it to the browser.
+All live in `.env.example`. The template **boots** with none set (marketing pages render), but the
+three Sanity vars (`NEXT_PUBLIC_SANITY_PROJECT_ID` · `_DATASET` · `_API_VERSION`) are **required for
+any Sanity feature** — the blog, the Studio, `pnpm seed`, and the e2e journeys — and `pnpm doctor:env`
+fails fast if they're missing. Copy `.env.example` to `.env.local` and fill what your enabled features
+need. **Never commit `.env*`** (only `.env.example`); the pre-commit gate and `.gitignore` guard it. Never put a server-only token under a `NEXT_PUBLIC_` prefix — that ships it to the browser.
 
 | Variable | Public? | Default | Purpose |
 | --- | --- | --- | --- |
@@ -43,3 +58,22 @@ The public/private split is load-bearing: everything a browser may read carries 
 Optional AI coding tooling is **internal** — per-developer, global (`~/.claude`), and never
 committed, so client sites never depend on it. It is not part of this deliverable and is set up
 outside this repo.
+
+### Cloudflare (Workers · Pages · D1 · KV · R2)
+
+This repo ships to Cloudflare (a `wrangler.toml` per app in `code/projects/*`). To give Claude Code the
+official Cloudflare skills + docs/API MCP servers, run once (global, `~/.claude`, per-developer):
+
+```bash
+claude plugin marketplace add cloudflare/skills
+claude plugin install cloudflare@cloudflare
+```
+
+Then, inside Claude, run **`/reload-plugins`** to activate. This installs the `cloudflare` · `wrangler` ·
+`workers-best-practices` · `durable-objects` · `agents-sdk` skills plus five MCP servers —
+`cloudflare-docs` (public, no auth) and `cloudflare-api` · `-bindings` · `-builds` · `-observability`
+(**OAuth on first use**). For the CLI, authenticate with
+`pnpm --filter @indiecrafts/web exec wrangler login`. Prerequisites are already in-repo: **wrangler
+`^4`** (a devDep — invoke via `pnpm exec wrangler`, no global install needed), Node 22, pnpm 10. Do
+**not** use `npx skills` or `claude mcp add` — the plugin commands register both skills and MCP servers.
+Source: [`developers.cloudflare.com/agent-setup`](https://developers.cloudflare.com/agent-setup/).

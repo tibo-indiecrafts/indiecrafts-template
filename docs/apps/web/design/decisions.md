@@ -4,7 +4,7 @@ A short, ADR-style log of *why* non-obvious visual-system and UI-architecture
 choices were made — the reasoning a future maintainer needs before they "fix"
 something on purpose. It complements, never duplicates:
 
-- **`code/apps/web/CHANGELOG.md`** — *what* changed and when (code + design share one log).
+- **`code/projects/web/CHANGELOG.md`** — *what* changed and when (code + design share one log).
 - **`code/packages/ui-tokens/DESIGN.md`** — the current token contract (the *what is*, not the *why*).
 - **The topic guides in this folder** — per-subject deep dives ([typography](./typography.md), [adaptive & responsive](./adaptive-responsive.md), [sections](./sections.md), [icons](./icons.md), …).
 

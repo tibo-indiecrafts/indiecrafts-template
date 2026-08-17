@@ -1,0 +1,34 @@
+{
+  "name": "@indiecrafts/admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "tsc": "tsc --noEmit",
+    "build:cf": "opennextjs-cloudflare build",
+    "preview:cf": "opennextjs-cloudflare preview",
+    "deploy:admin:dev": "node scripts/deploy.mjs dev",
+    "deploy:admin:staging": "node scripts/deploy.mjs staging",
+    "deploy:admin:prod": "node scripts/deploy.mjs prod"
+  },
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*",
+    "@indiecrafts/sanity": "workspace:*",
+    "@indiecrafts/security": "workspace:*",
+    "@indiecrafts/ui": "workspace:*",
+    "@indiecrafts/ui-tokens": "workspace:*",
+    "@indiecrafts/utils": "workspace:*",
+    "next": "16.2.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5",
+    "wrangler": "^4.0.0"
+  }
+}

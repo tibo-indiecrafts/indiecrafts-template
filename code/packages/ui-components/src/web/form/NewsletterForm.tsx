@@ -7,6 +7,7 @@ import { Checkbox } from "@indiecrafts/ui/web/checkbox";
 import { Label } from "@indiecrafts/ui/web/label";
 import { cn } from "@indiecrafts/utils/cn";
 import type { NewsletterModule } from "@indiecrafts/ui-components/shared/types";
+import { TurnstileWidget, turnstileActive } from "./TurnstileWidget";
 
 type Status = "idle" | "submitting" | "success" | "already" | "error";
 
@@ -36,8 +37,17 @@ export function NewsletterForm({
   const [consent, setConsent] = useState(false);
   const [website, setWebsite] = useState(""); // honeypot
   const [status, setStatus] = useState<Status>("idle");
+  const [tsToken, setTsToken] = useState<string | null>(null);
+  const [tsKey, setTsKey] = useState(0); // bump to reset the Turnstile widget after a failed submit
+  const [startedAt] = useState(() => Date.now()); // anti-bot: reject near-instant submits server-side
   const uid = useId();
   const banner = variant === "banner";
+
+  function fail() {
+    setStatus("error");
+    setTsToken(null);
+    setTsKey((k) => k + 1);
+  }
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -51,14 +61,16 @@ export function NewsletterForm({
           consent,
           source: window.location.pathname,
           honeypot: website,
+          startedAt,
+          ...(tsToken ? { "cf-turnstile-response": tsToken } : {}),
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { already?: boolean };
       if (res.status === 201) setStatus("success");
       else if (res.status === 200 && data.already) setStatus("already");
-      else setStatus("error");
+      else fail();
     } catch {
-      setStatus("error");
+      fail();
     }
   }
 
@@ -152,7 +164,7 @@ export function NewsletterForm({
                 <Button
                   type="submit"
                   variant={banner ? "secondary" : "default"}
-                  disabled={status === "submitting" || !consent}
+                  disabled={status === "submitting" || !consent || (turnstileActive() && !tsToken)}
                   className="shrink-0"
                 >
                   {buttonLabel}
@@ -178,6 +190,8 @@ export function NewsletterForm({
                   </Label>
                 </div>
               ) : null}
+
+              <TurnstileWidget key={tsKey} onToken={setTsToken} />
 
               {status === "error" ? (
                 <p

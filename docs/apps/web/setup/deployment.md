@@ -5,10 +5,10 @@ The app deploys to **Cloudflare Workers** via [OpenNext](https://opennext.js.org
 **R2-backed incremental cache** (so ISR / `revalidate` survive the stateless isolates).
 GitHub Actions builds + deploys. Deploy scripts are **app-namespaced**: run
 `pnpm deploy:web:<env>` from the workspace root — it delegates to the app, whose real
-`deploy:<env>` scripts live in `code/apps/web`. A second app gets its own `deploy:<app>:<env>`,
+`deploy:<env>` scripts live in `code/projects/web`. A second app gets its own `deploy:<app>:<env>`,
 so the root never has an ambiguous `deploy:prod`.
 
-Config files (all in `code/apps/web/`): `wrangler.toml` (envs, bindings), `open-next.config.ts`
+Config files (all in `code/projects/web/`): `wrangler.toml` (envs, bindings), `open-next.config.ts`
 (R2 cache), `next.config.ts` (`initOpenNextCloudflareForDev()` for local bindings).
 
 ## Environments
@@ -38,8 +38,17 @@ Config files (all in `code/apps/web/`): `wrangler.toml` (envs, bindings), `open-
    pnpm --filter @indiecrafts/web exec wrangler r2 bucket create <slug>-web-isr-staging
    pnpm --filter @indiecrafts/web exec wrangler r2 bucket create <slug>-web-isr-prod
    ```
-3. **Worker secrets** — per env (runtime server tokens; never in `wrangler.toml`). Fill
-   `code/apps/web/.dev.vars` (from `.dev.vars.example`), then **bulk-push** them:
+3. **Rate-limit KV** — the in-app form rate limiter (`@indiecrafts/security` `withGuard`, on the
+   newsletter / waitlist / comment routes) needs a KV namespace. Run it once — it creates the namespace
+   and uncomments + fills the id in `wrangler.toml` (base + every env):
+   ```bash
+   pnpm setup:kv
+   ```
+   Until this runs the limiter **fails open** (allows every request). The Cloudflare WAF rule on
+   `/api/*` (Terraform) is a separate edge layer; the KV limiter is the app's own guarantee, independent
+   of Terraform.
+4. **Worker secrets** — per env (runtime server tokens; never in `wrangler.toml`). Fill
+   `code/projects/web/.dev.vars` (from `.dev.vars.example`), then **bulk-push** them:
    ```bash
    pnpm secrets:sync:web:dev        # reads .dev.vars → `wrangler secret bulk` on the dev Worker
    pnpm secrets:sync:web:staging
@@ -47,7 +56,7 @@ Config files (all in `code/apps/web/`): `wrangler.toml` (envs, bindings), `open-
    ```
    It skips `NEXT_PUBLIC_*` + unfilled placeholders. One dataset → the same tokens go to every
    env. (A one-off still works: `wrangler secret put <NAME> --env <env>`.)
-4. **Production domain** — uncomment the `[[env.prod.routes]]` block in `wrangler.toml`, set your
+5. **Production domain** — uncomment the `[[env.prod.routes]]` block in `wrangler.toml`, set your
    domain, and set `NEXT_PUBLIC_SITE_URL` in the prod vars (until then robots.txt serves Disallow).
 
 ## GitHub Actions (auto-deploy)
@@ -76,13 +85,13 @@ Sanity vars/read-token, so a build/prerender break is caught before merge.
 ## Local preview + manual deploy
 
 ```bash
-cp code/apps/web/.dev.vars.example code/apps/web/.dev.vars   # fill the tokens
+cp code/projects/web/.dev.vars.example code/projects/web/.dev.vars   # fill the tokens
 pnpm preview:web:cf                                           # OpenNext build → wrangler dev
 pnpm deploy:web:dev                                           # manual deploy (or :staging / :prod)
 ```
 
 `preview:web:cf` runs on the real workerd runtime (catches CF-only issues `next dev` misses).
-The root scripts delegate to `code/apps/web`, whose scripts carry the same
+The root scripts delegate to `code/projects/web`, whose scripts carry the same
 `deploy:web:<env>` names (per app **and** per env), so you can run them from either place.
 
 ## Verify after the first deploy

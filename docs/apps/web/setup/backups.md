@@ -7,7 +7,7 @@ data. Each has a backup script that writes a **local** dump by default and can a
 ## Folder layout (gitignored)
 
 ```
-code/apps/web/backups/
+code/projects/web/backups/
 ├── sanity/       <dataset>-<timestamp>.tar.gz
 ├── d1/           <db>-<env>-<timestamp>.sql
 └── subscribers/  subscribers-<timestamp>.csv

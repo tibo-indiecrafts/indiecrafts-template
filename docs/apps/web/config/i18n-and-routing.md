@@ -19,7 +19,7 @@ is a **fallback** so a Sanity hiccup or a blank field never blanks the chrome. E
 - **`typography`** stays in the JSON file only (never in the CMS): it is machine i18n/format
   config (quote style, date format, oxford comma) consumed by `@indiecrafts/format`, not editorial
   copy — a wrong edit would break formatting site-wide.
-- **Homepage editorial copy** is separate again — the page-builder `homePage.<locale>` singleton
+- **Homepage editorial copy** is separate again — the home `page` (the `page` with `isHome`)
   (see [Homepage](../features/homepage)).
 - The `uiMessages` schema fields are **generated from the message shape** (`en.json`) so they can't
   drift; `pnpm seed` populates the Sanity docs from the JSON files.

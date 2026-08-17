@@ -16,6 +16,8 @@ const config: StorybookConfig = {
     "../stories/**/*.mdx",
     "../../ui/src/**/*.stories.@(ts|tsx)",
     "../../ui-components/src/**/*.stories.@(ts|tsx)",
+    "../../announcement/src/**/*.stories.@(ts|tsx)",
+    "../../locale-suggest/src/**/*.stories.@(ts|tsx)",
   ],
   addons: [
     "@storybook/addon-docs",

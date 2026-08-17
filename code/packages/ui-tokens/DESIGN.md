@@ -147,7 +147,7 @@ build rules in [`CLAUDE.md`](../../apps/web/CLAUDE.md).
    `rounded-md` — never a raw hex, px, or rem in a component.
 4. **Deeper detail** → `docs/apps/web/design/*` (typography, responsive, sections, icons…).
    Read this file first, then the topic guide.
-5. **Log every change** in the app changelog `code/apps/web/CHANGELOG.md` (code + design share one).
+5. **Log every change** in the app changelog `code/projects/web/CHANGELOG.md` (code + design share one).
 6. **Unsure which rule applies? Ask — never "use your best judgment."**
 7. **Uncovered case? Match the nearest existing screen** before inventing a
    pattern — consistency beats local perfection.
@@ -240,7 +240,7 @@ variants — not `@min-4xl:`) where a component's own width drives its layout �
 render **inline in the blog column** (`module.*`) MUST be container-driven, never viewport;
 **`pointer` / `hover`** queries for input method (never gate function on hover); **safe-area
 insets** for notches. Full guide: `docs/apps/web/design/adaptive-responsive.md` +
-`code/apps/web/.claude/rules/adaptive-design.md`.
+`code/projects/web/.claude/rules/adaptive-design.md`.
 
 - Grids collapse `grid-cols-1 → md:2 → lg:3`; hero type scales
   `text-3xl → md:5xl → xl:6xl`.
@@ -344,7 +344,7 @@ Every data view handles three states with real components — never a blank scre
 
 ## Accessibility
 
-Visual a11y contract (structural code rules → `code/apps/web/.claude/rules/accessibility.md`):
+Visual a11y contract (structural code rules → `code/projects/web/.claude/rules/accessibility.md`):
 
 - **Contrast** — WCAG **AA** on every token pair; `pnpm verify:contrast` gates it.
 - **Focus** — visible `focus-visible:ring-2 ring-ring` on every interactive element.
@@ -404,7 +404,7 @@ needs one — the point is to stop and ask, not to ban thinking.
 - **Do** keep OKLCH authoritative; edit color in `globals.css`, re-sync
   `theme.hexColors.background` only when `--background` changes, and run
   `pnpm verify:contrast` (WCAG **AA**) after.
-- **Do** log every brand/token/component change in the app changelog `code/apps/web/CHANGELOG.md`
+- **Do** log every brand/token/component change in the app changelog `code/projects/web/CHANGELOG.md`
   with a plain-language _why_ — the same file dev changes land in.
 - **Do** guard every transform with `motion-reduce:`, and spend boldness once per
   surface — keep everything around it quiet.
@@ -436,7 +436,7 @@ A screen that renders is not done. Before calling a UI task complete:
 - **Single source of truth:** OKLCH in `globals.css`. Change the background →
   re-sync `theme.hexColors.background` (the only hex mirror, for the PWA manifest)
   → run `pnpm verify:contrast` (WCAG AA).
-- **Log it:** every token/component/design change → app changelog `code/apps/web/CHANGELOG.md`
+- **Log it:** every token/component/design change → app changelog `code/projects/web/CHANGELOG.md`
   with a plain-language _why_; deeper rationale → `docs/apps/web/design/decisions.md`.
 - **Keep current:** delete anything that no longer matches production — a stale
   rule an agent follows confidently is worse than a missing one.

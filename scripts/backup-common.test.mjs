@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { prune } from "../code/apps/web/scripts/lib/backup-common.mjs";
+import { prune } from "../code/projects/web/scripts/lib/backup-common.mjs";
 
 test("prune keeps the newest N and drops the oldest", () => {
   const dir = mkdtempSync(join(tmpdir(), "bk-"));

@@ -8,7 +8,7 @@ Project ID: `qy2pp5sn` (the value in this repo's `.env.local`; override per clie
 
 ## 1. Env slots
 
-`code/apps/web/.env.example` documents four Sanity slots. Public values are safe in the browser bundle; tokens are server-only.
+`code/projects/web/.env.example` documents four Sanity slots. Public values are safe in the browser bundle; tokens are server-only.
 
 ```bash
 # .env.local (never committed — .gitignore keeps only .env.example)
@@ -28,7 +28,7 @@ SANITY_API_WRITE_TOKEN=sk_...  # Editor role
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` + `_DATASET` | — | `@indiecrafts/sanity/env` (asserted — throws if missing) → Studio + every client read | always, when Studio/blog are on |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | — | `@indiecrafts/sanity/env` (defaults to `2025-01-01` if unset) | optional; pin it to keep query semantics stable |
 | `SANITY_API_READ_TOKEN` | **Viewer** | `@indiecrafts/sanity/token` → `@indiecrafts/sanity/client` + `@indiecrafts/sanity/live` (`sanityFetch` / `sanityFetchLive`) + `/api/draft-mode/enable` | draft preview + live updates. Without it: public reads still work; the enable endpoint returns 503 |
-| `SANITY_API_WRITE_TOKEN` | **Editor** | `code/apps/web/scripts/seed-demo.mjs` only (`pnpm seed`) | running the seed. Never read at runtime |
+| `SANITY_API_WRITE_TOKEN` | **Editor** | `code/projects/web/scripts/seed-demo.mjs` only (`pnpm seed`) | running the seed. Never read at runtime |
 
 The Studio at `/studio` needs **no token** — visitors authenticate with their own Sanity session cookie.
 
@@ -136,7 +136,7 @@ pnpm dlx sanity@latest tokens add "indiecrafts-template-seed" \
   --project qy2pp5sn --role=editor
 
 # 4. Write tokens into .env.local
-cat >> code/apps/web/.env.local <<EOF
+cat >> code/projects/web/.env.local <<EOF
 SANITY_API_READ_TOKEN=<paste viewer token>
 SANITY_API_WRITE_TOKEN=<paste editor token>
 EOF
@@ -166,7 +166,7 @@ open "https://www.sanity.io/manage/personal/project/qy2pp5sn/api/tokens"
 
 # 2. Add 'indiecrafts-template-read' role=Viewer; copy the token.
 # 3. Add 'indiecrafts-template-seed' role=Editor; copy the token.
-# 4. Paste both into code/apps/web/.env.local:
+# 4. Paste both into code/projects/web/.env.local:
 #      SANITY_API_READ_TOKEN=<viewer token>
 #      SANITY_API_WRITE_TOKEN=<editor token>
 # 5. Seed + verify — same as Path A steps 5-8

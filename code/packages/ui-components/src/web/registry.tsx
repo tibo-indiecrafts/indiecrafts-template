@@ -9,6 +9,7 @@ import { Gallery } from "./media/Gallery";
 import { Hero } from "./layout/Hero";
 import { Newsletter } from "./form/Newsletter";
 import { Waitlist } from "./form/Waitlist";
+import { LeadMagnet } from "./form/LeadMagnet";
 import { PersonList } from "./collection/PersonList";
 import { Pricing } from "./collection/Pricing";
 import { Prose } from "./content/Prose";
@@ -54,6 +55,7 @@ export const BLOCK_RENDERERS = {
   "module.custom-html": CustomHtml,
   "module.newsletter": Newsletter,
   "module.waitlist": Waitlist,
+  "module.lead-magnet": LeadMagnet,
 } satisfies { [K in BlockModule["_type"]]: BlockRenderer<K> };
 
 /** Render one block by `_type`; `components` is the map for its nested content. */

@@ -25,7 +25,7 @@ Everything runs from the **repo root** (scripts delegate to the app via Turborep
 ```bash
 pnpm install       # installs the whole workspace (all of code/)
 pnpm dev           # http://localhost:3000  (turbo → @indiecrafts/web)
-pnpm build         # production build → code/apps/web/.next
+pnpm build         # production build → code/projects/web/.next
 pnpm verify        # tsc + lint + format + contrast + react-doctor (CI gate)
 pnpm verify:quick  # tsc + lint (manual pre-PR check)
 ```
@@ -37,8 +37,8 @@ isolated from the pnpm workspace.
 
 ## Deploy — app + docs only
 
-The workspace installs at the **repo root**; the app builds to `code/apps/web/.next`.
-**Deploy only `code/apps/web` (the site) and, optionally, `docs/`** — the internal
+The workspace installs at the **repo root**; the app builds to `code/projects/web/.next`.
+**Deploy only `code/projects/web` (the site) and, optionally, `docs/`** — the internal
 `method/` and `work/` folders stay private. Full guide and hosts →
 [Workspace & deployment](/shared/architecture/workspace).
 

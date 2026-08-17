@@ -15,25 +15,25 @@ and the sprint lab. They're **gitignored and never part of a client handoff**.
 **Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · next-intl v4 ·
 next-themes · shadcn/ui · Sanity. Workspace: pnpm + Turborepo.
 
-The web app has its own briefs: **how to code** → [`code/apps/web/CLAUDE.md`](./code/apps/web/CLAUDE.md) ·
+The web app has its own briefs: **how to code** → [`code/projects/web/CLAUDE.md`](./code/projects/web/CLAUDE.md) ·
 **how to design** → [`code/packages/tokens/DESIGN.md`](./code/packages/tokens/DESIGN.md) ·
-**app README** → [`code/apps/web/README.md`](./code/apps/web/README.md).
+**app README** → [`code/projects/web/README.md`](./code/projects/web/README.md).
 
 ## Getting started
 
-Run everything from the **repo root** — scripts delegate to the app (`@indiecrafts/web`) via Turborepo. The app lives at `code/apps/web`.
+Run everything from the **repo root** — scripts delegate to the app (`@indiecrafts/web`) via Turborepo. The app lives at `code/projects/web`.
 
 ```bash
 pnpm install            # installs the whole workspace (all of code/)
 pnpm dev                # http://localhost:3000  (turbo → @indiecrafts/web)
-pnpm build              # production build → code/apps/web/.next
+pnpm build              # production build → code/projects/web/.next
 pnpm verify             # tsc + lint + format:check + contrast + react-doctor (CI gate)
 pnpm verify:quick       # tsc + lint (manual pre-PR check)
 ```
 
 ## Deploy — Cloudflare Workers
 
-The app deploys to **Cloudflare Workers** via OpenNext (`@opennextjs/cloudflare`) across **dev / staging / prod**, with an R2-backed ISR cache. GitHub Actions builds + deploys on push to `main`; run manually with `pnpm deploy:web:{dev,staging,prod}`. Per-app config: `code/apps/web/wrangler.toml` + `open-next.config.ts`.
+The app deploys to **Cloudflare Workers** via OpenNext (`@opennextjs/cloudflare`) across **dev / staging / prod**, with an R2-backed ISR cache. GitHub Actions builds + deploys on push to `main`; run manually with `pnpm deploy:web:{dev,staging,prod}`. Per-app config: `code/projects/web/wrangler.toml` + `open-next.config.ts`.
 
 The workspace installs at the **repo root**; deploy scripts are app-namespaced, so each `apps/*` you add later is its own target (`deploy:<app>:<env>`). First-deploy steps (R2 buckets, secrets, custom domain, first-deploy checks) → [Deployment (Cloudflare)](./docs/apps/web/setup/deployment.md).
 
@@ -49,7 +49,7 @@ pnpm docs:build
 
 - **Product docs** ([`docs/`](./docs/)) — how the template works: setup, config, design, SEO, blog, client-intake. Mirrors the code spine.
 
-The app's own how-to (adding a page/section, i18n, SEO, forms, cookie/legal, critical rules) lives in [`code/apps/web/README.md`](./code/apps/web/README.md).
+The app's own how-to (adding a page/section, i18n, SEO, forms, cookie/legal, critical rules) lives in [`code/projects/web/README.md`](./code/projects/web/README.md).
 
 ## Links
 

@@ -29,7 +29,7 @@ the contract they'll grow into.
 
 The whole workspace installs at the **repo root**, so any host that installs at
 root works. The target is **Cloudflare Workers via OpenNext** — the **per-app
-manifest lives with the app** (`code/apps/web/wrangler.toml`), not here; infra
+manifest lives with the app** (`code/projects/web/wrangler.toml`), not here; infra
 holds the _shared_ deploy topology (DNS, zones, envs, IaC, CI). Per app:
 
 - OpenNext (`@opennextjs/cloudflare`) builds the Next app into a Worker bundle.

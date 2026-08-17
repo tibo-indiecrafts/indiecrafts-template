@@ -11,9 +11,9 @@ After any change, run `pnpm verify` to confirm types, lint, format, and contrast
 | Surface | Home | Edited by |
 | --- | --- | --- |
 | Colours (light + dark) | `@indiecrafts/ui-tokens` → `code/packages/ui-tokens/src/globals.css` (OKLCH) | developer |
-| PWA install/splash colour | `theme.hexColors.background` in `code/apps/web/src/config/theme.ts` (app-owned) | developer |
-| Container width + gutter | `theme.container` in `code/apps/web/src/config/theme.ts` | developer |
-| Font pairing | `fonts` in `code/apps/web/src/config/fonts.ts` + registry in `src/lib/fonts.ts` | developer |
+| PWA install/splash colour | `theme.hexColors.background` in `code/projects/web/src/config/theme.ts` (app-owned) | developer |
+| Container width + gutter | `theme.container` in `code/projects/web/src/config/theme.ts` | developer |
+| Font pairing | `fonts` in `code/projects/web/src/config/fonts.ts` + registry in `src/lib/fonts.ts` | developer |
 | Logo / dark logo / favicon | Sanity `siteSettings.{logo,logoDark,icon}` | editor |
 | Open Graph share card | Sanity `siteMeta.<locale>.ogImage` (+ per-page `pageSeo.ogImage`) | editor |
 | Site name, tagline, social, business/legal | Sanity `siteSettings` / `siteMeta` | editor |
@@ -30,7 +30,7 @@ To rebrand a colour, edit the token — never a hex literal in a component.
 
 ### The one hex mirror
 
-The single value that can't be OKLCH is `theme.hexColors.background` in `code/apps/web/src/config/theme.ts`. The PWA manifest (`src/app/manifest.ts` → `background_color` / `theme_color`) is read by the browser for the install/splash screen and the manifest spec only accepts hex/named colours. Keep it matched to `--background` in `globals.css`. No other colour needs a mirror.
+The single value that can't be OKLCH is `theme.hexColors.background` in `code/projects/web/src/config/theme.ts`. The PWA manifest (`src/app/manifest.ts` → `background_color` / `theme_color`) is read by the browser for the install/splash screen and the manifest spec only accepts hex/named colours. Keep it matched to `--background` in `globals.css`. No other colour needs a mirror.
 
 ```ts
 // @indiecrafts/config

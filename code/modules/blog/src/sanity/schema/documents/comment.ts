@@ -76,6 +76,14 @@ export default defineType({
       description: "La personne a accepté le stockage de son nom + commentaire.",
     }),
     defineField({
+      name: "consentPolicyVersion",
+      title: "Version de la politique acceptée",
+      type: "string",
+      readOnly: true,
+      description:
+        "Version de la politique de confidentialité en vigueur au moment du commentaire (preuve de consentement RGPD). Vide = non enregistrée.",
+    }),
+    defineField({
       name: "spam",
       title: "Spam",
       type: "boolean",

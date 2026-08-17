@@ -4,7 +4,7 @@ The leaf brick: small, dependency-light functions, no React/Next runtime.
 
 | | |
 | --- | --- |
-| **Exports** | Subpath-only (no `.` barrel): `./cn` · `./slugify` · `./video-embed` · `./format-date`. Import one helper per path — `import { cn } from "@indiecrafts/utils/cn"`. (Logging moved to its own brick — [`@indiecrafts/logger`](./logger).) |
+| **Exports** | Subpath-only (no `.` barrel): `./cn` · `./slugify` · `./video-embed` · `./format-date` · `./error-message` · `./truncate` · `./filename`. Import one helper per path — `import { cn } from "@indiecrafts/utils/cn"`. (Logging moved to its own brick — [`@indiecrafts/logger`](./logger).) |
 | **Deps** | `@indiecrafts/config` (for `Locale` in `format-date`), `clsx`, `tailwind-merge` |
 | **Consumers** | app + blog + `ui` (for `cn`) + `ui-components` |
 
@@ -13,6 +13,13 @@ The leaf brick: small, dependency-light functions, no React/Next runtime.
   a subpath with no tsconfig `paths` entry. Add a helper file → add its `exports` line.
 - **Gotcha:** `format-date` exports `formatDate(locale, iso?, { month })` — a generic date
   formatter (renamed from `formatPostDate`; it is not blog-specific).
+- **`./error-message`** — `getErrorMessage(e: unknown): string`. Reads a Zod-style `issues[]`
+  (joined) → `Error.message` → `String(e)`. **Duck-types Zod** so `utils` keeps no `zod` dep.
+- **`./truncate`** — `truncateText(text, maxLength, ellipsis?)`. Word-boundary-safe cut + ellipsis;
+  returns the text unchanged when it fits. Not a date/number job — that's [`@indiecrafts/format`](./format).
+- **`./filename`** — `sanitizeAndCropFilename(name, maxLength?)` + `validateFilenameLength(name)`.
+  Strips the path + unsafe chars, preserves the extension, and crops by **UTF-8 byte length**
+  (binary search) so a multi-byte char is never split — for upload / asset filenames.
 
 ## Wiring & conventions
 

@@ -97,6 +97,71 @@ export type LocaleString = {
   fr?: string;
 };
 
+export type SeoMeta = {
+  _type: "seoMeta";
+  title?: string;
+  description?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  noIndex?: boolean;
+  hideFromDiscovery?: boolean;
+  unpublished?: boolean;
+  llmsSummary?: string;
+  llmsFull?: string;
+};
+
+export type LocaleSuggest = {
+  _id: string;
+  _type: "localeSuggest";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  message?: LocaleString;
+  switchLabel?: LocaleString;
+  dismissLabel?: LocaleString;
+};
+
+export type AnnouncementLink = {
+  _type: "announcementLink";
+  linkType?: "internal" | "external";
+  href?: string;
+  newTab?: boolean;
+  label?: LocaleString;
+};
+
+export type AnnouncementItem = {
+  _type: "announcementItem";
+  message?: LocaleString;
+  discountCode?: string;
+  link?: AnnouncementLink;
+  start?: string;
+  end?: string;
+};
+
+export type AnnouncementBar = {
+  _id: string;
+  _type: "announcementBar";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  enabled?: boolean;
+  dismissible?: boolean;
+  variant?: "brand" | "neutral" | "contrast";
+  start?: string;
+  end?: string;
+  items?: Array<
+    {
+      _key: string;
+    } & AnnouncementItem
+  >;
+};
+
 export type LegalConsent = {
   _id: string;
   _type: "legalConsent";
@@ -312,6 +377,9 @@ export type UiMessages = {
     themeSystem?: string;
     previous?: string;
     next?: string;
+    dismiss?: string;
+    copy?: string;
+    copied?: string;
   };
   cookies?: {
     learnMore?: string;
@@ -515,62 +583,6 @@ export type UiMessages = {
       };
     };
   };
-};
-
-export type HomePage = {
-  _id: string;
-  _type: "homePage";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  language?: string;
-  pageModules?: Array<
-    | ({
-        _key: string;
-      } & ModuleHero)
-    | ({
-        _key: string;
-      } & ModuleFeatureGrid)
-    | ({
-        _key: string;
-      } & ModulePricing)
-    | ({
-        _key: string;
-      } & ModuleAccordionList)
-    | ({
-        _key: string;
-      } & ModuleCallout)
-    | ({
-        _key: string;
-      } & ModuleCardList)
-    | ({
-        _key: string;
-      } & ModuleGallery)
-    | ({
-        _key: string;
-      } & ModulePersonList)
-    | ({
-        _key: string;
-      } & ModuleProse)
-    | ({
-        _key: string;
-      } & ModuleStatList)
-    | ({
-        _key: string;
-      } & ModuleStepList)
-    | ({
-        _key: string;
-      } & ModuleQuoteList)
-    | ({
-        _key: string;
-      } & ModuleCustomHtml)
-    | ({
-        _key: string;
-      } & ModuleNewsletter)
-    | ({
-        _key: string;
-      } & ModuleWaitlist)
-  >;
 };
 
 export type SiteMeta = {
@@ -876,6 +888,214 @@ export type ModuleBlogIndex = {
   hidden?: boolean;
 };
 
+export type SanityFileAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+};
+
+export type Metadata = {
+  _type: "metadata";
+  title?: string;
+  description?: string;
+  slug?: Slug;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  videoUrl?: string;
+  videoFile?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
+  videoAutoplay?: boolean;
+  videoControls?: boolean;
+  noIndex?: boolean;
+  hideFromDiscovery?: boolean;
+  unpublished?: boolean;
+  llmsSummary?: string;
+  llmsFull?: string;
+};
+
+export type PostReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "post";
+};
+
+export type CommentReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "comment";
+};
+
+export type Comment = {
+  _id: string;
+  _type: "comment";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  approved?: boolean;
+  authorName?: string;
+  authorEmail?: string;
+  body?: string;
+  post?: PostReference;
+  parent?: CommentReference;
+  createdAt?: string;
+  consent?: boolean;
+  consentPolicyVersion?: string;
+  spam?: boolean;
+  moderationToken?: string;
+};
+
+export type Blog = {
+  _id: string;
+  _type: "blog";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  postModules?: Array<
+    | ({
+        _key: string;
+      } & ModuleHero)
+    | ({
+        _key: string;
+      } & ModuleFeatureGrid)
+    | ({
+        _key: string;
+      } & ModulePricing)
+    | ({
+        _key: string;
+      } & ModuleAccordionList)
+    | ({
+        _key: string;
+      } & ModuleCallout)
+    | ({
+        _key: string;
+      } & ModuleCardList)
+    | ({
+        _key: string;
+      } & ModuleGallery)
+    | ({
+        _key: string;
+      } & ModulePersonList)
+    | ({
+        _key: string;
+      } & ModuleProse)
+    | ({
+        _key: string;
+      } & ModuleStatList)
+    | ({
+        _key: string;
+      } & ModuleStepList)
+    | ({
+        _key: string;
+      } & ModuleQuoteList)
+    | ({
+        _key: string;
+      } & ModuleCustomHtml)
+    | ({
+        _key: string;
+      } & ModuleNewsletter)
+    | ({
+        _key: string;
+      } & ModuleWaitlist)
+    | ({
+        _key: string;
+      } & ModuleLeadMagnet)
+    | ({
+        _key: string;
+      } & ModuleBlogIndex)
+    | ({
+        _key: string;
+      } & ModuleBlogPostContent)
+    | ({
+        _key: string;
+      } & ModuleBlogPostList)
+  >;
+  seo?: SeoMeta;
+  display?: {
+    taxonomy?: {
+      categories?: boolean;
+      tags?: boolean;
+      authors?: boolean;
+    };
+    post?: {
+      date?: boolean;
+      readingTime?: boolean;
+      tableOfContents?: boolean;
+      relatedPosts?: boolean;
+      share?: boolean;
+      readingProgress?: boolean;
+    };
+    frontpage?: {
+      featuredHero?: boolean;
+    };
+    cards?: {
+      excerpt?: boolean;
+    };
+  };
+  comments?: {
+    heading?: LocaleString;
+    nameLabel?: LocaleString;
+    emailLabel?: LocaleString;
+    bodyLabel?: LocaleString;
+    consentLabel?: LocaleString;
+    submitLabel?: LocaleString;
+    replyLabel?: LocaleString;
+    cancelLabel?: LocaleString;
+    successMessage?: LocaleString;
+    emptyMessage?: LocaleString;
+    errorMessage?: LocaleString;
+  };
+};
+
+export type LeadMagnetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "leadMagnet";
+};
+
+export type ModuleLeadMagnet = {
+  _type: "module.lead-magnet";
+  magnet?: LeadMagnetReference;
+  heading?: string;
+  body?: string;
+  emailPlaceholder?: string;
+  buttonLabel?: string;
+  consentText?: string;
+  successMessage?: string;
+  alreadyMessage?: string;
+  errorMessage?: string;
+  variant?: "card" | "inline" | "banner";
+  anchor?: string;
+  hidden?: boolean;
+};
+
+export type LeadMagnet = {
+  _id: string;
+  _type: "leadMagnet";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  asset?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
+  enabled?: boolean;
+};
+
 export type ModuleWaitlist = {
   _type: "module.waitlist";
   heading?: string;
@@ -1098,55 +1318,20 @@ export type Cta = {
   variant?: "primary" | "secondary" | "ghost";
 };
 
-export type PostReference = {
+export type PageReference = {
   _ref: string;
   _type: "reference";
   _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "post";
+  [internalGroqTypeReferenceTo]?: "page";
 };
 
 export type Link = {
   _type: "link";
   type?: "internal" | "external";
   label?: string;
-  internal?: PostReference;
+  internal?: PageReference | PostReference;
   external?: string;
   newTab?: boolean;
-};
-
-export type SanityFileAssetReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
-};
-
-export type Metadata = {
-  _type: "metadata";
-  title?: string;
-  description?: string;
-  slug?: Slug;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-  };
-  videoUrl?: string;
-  videoFile?: {
-    asset?: SanityFileAssetReference;
-    media?: unknown;
-    _type: "file";
-  };
-  videoAutoplay?: boolean;
-  videoControls?: boolean;
-  noIndex?: boolean;
-  hideFromDiscovery?: boolean;
-  unpublished?: boolean;
-  llmsSummary?: string;
-  llmsFull?: string;
 };
 
 export type BlockContent = Array<
@@ -1216,150 +1401,10 @@ export type BlockContent = Array<
   | ({
       _key: string;
     } & ModuleWaitlist)
+  | ({
+      _key: string;
+    } & ModuleLeadMagnet)
 >;
-
-export type CommentReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "comment";
-};
-
-export type Comment = {
-  _id: string;
-  _type: "comment";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  approved?: boolean;
-  authorName?: string;
-  authorEmail?: string;
-  body?: string;
-  post?: PostReference;
-  parent?: CommentReference;
-  createdAt?: string;
-  consent?: boolean;
-  spam?: boolean;
-  moderationToken?: string;
-};
-
-export type Blog = {
-  _id: string;
-  _type: "blog";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  postModules?: Array<
-    | ({
-        _key: string;
-      } & ModuleHero)
-    | ({
-        _key: string;
-      } & ModuleFeatureGrid)
-    | ({
-        _key: string;
-      } & ModulePricing)
-    | ({
-        _key: string;
-      } & ModuleAccordionList)
-    | ({
-        _key: string;
-      } & ModuleCallout)
-    | ({
-        _key: string;
-      } & ModuleCardList)
-    | ({
-        _key: string;
-      } & ModuleGallery)
-    | ({
-        _key: string;
-      } & ModulePersonList)
-    | ({
-        _key: string;
-      } & ModuleProse)
-    | ({
-        _key: string;
-      } & ModuleStatList)
-    | ({
-        _key: string;
-      } & ModuleStepList)
-    | ({
-        _key: string;
-      } & ModuleQuoteList)
-    | ({
-        _key: string;
-      } & ModuleCustomHtml)
-    | ({
-        _key: string;
-      } & ModuleNewsletter)
-    | ({
-        _key: string;
-      } & ModuleWaitlist)
-    | ({
-        _key: string;
-      } & ModuleBlogIndex)
-    | ({
-        _key: string;
-      } & ModuleBlogPostContent)
-    | ({
-        _key: string;
-      } & ModuleBlogPostList)
-  >;
-  seo?: SeoMeta;
-  display?: {
-    taxonomy?: {
-      categories?: boolean;
-      tags?: boolean;
-      authors?: boolean;
-    };
-    post?: {
-      date?: boolean;
-      readingTime?: boolean;
-      tableOfContents?: boolean;
-      relatedPosts?: boolean;
-      share?: boolean;
-      readingProgress?: boolean;
-    };
-    frontpage?: {
-      featuredHero?: boolean;
-    };
-    cards?: {
-      excerpt?: boolean;
-    };
-  };
-  comments?: {
-    heading?: LocaleString;
-    nameLabel?: LocaleString;
-    emailLabel?: LocaleString;
-    bodyLabel?: LocaleString;
-    consentLabel?: LocaleString;
-    submitLabel?: LocaleString;
-    replyLabel?: LocaleString;
-    cancelLabel?: LocaleString;
-    successMessage?: LocaleString;
-    emptyMessage?: LocaleString;
-    errorMessage?: LocaleString;
-  };
-};
-
-export type SeoMeta = {
-  _type: "seoMeta";
-  title?: string;
-  description?: string;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-  };
-  noIndex?: boolean;
-  hideFromDiscovery?: boolean;
-  unpublished?: boolean;
-  llmsSummary?: string;
-  llmsFull?: string;
-};
 
 export type TranslationMetadata = {
   _id: string;
@@ -1408,13 +1453,14 @@ export type LegalPageReference = {
 export type InternationalizedArrayReferenceValue = {
   _type: "internationalizedArrayReferenceValue";
   value?:
+    | PageReference
+    | QuoteReference
+    | PersonReference
     | PostReference
     | CategoryReference
     | TagReference
     | SeriesReference
-    | QuoteReference
     | AuthorReference
-    | PersonReference
     | LegalPageReference;
   language?: string;
 };
@@ -1447,30 +1493,6 @@ export type LegalPage = {
     _type: "block";
     _key: string;
   }>;
-};
-
-export type Person = {
-  _id: string;
-  _type: "person";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  language?: string;
-  name?: string;
-  role?: string;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  bio?: string;
-  social?: Array<
-    {
-      _key: string;
-    } & Link
-  >;
 };
 
 export type Author = {
@@ -1529,25 +1551,6 @@ export type Slug = {
   source?: string;
 };
 
-export type Quote = {
-  _id: string;
-  _type: "quote";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  language?: string;
-  content?: string;
-  author?: string;
-  role?: string;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-};
-
 export type Tag = {
   _id: string;
   _type: "tag";
@@ -1600,6 +1603,7 @@ export type Post = {
     } & TagReference
   >;
   featured?: boolean;
+  priority?: number;
   series?: SeriesReference;
   seriesOrder?: number;
   body?: BlockContent;
@@ -1616,6 +1620,112 @@ export type Series = {
   title?: string;
   slug?: Slug;
   description?: string;
+  seo?: SeoMeta;
+};
+
+export type Person = {
+  _id: string;
+  _type: "person";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  language?: string;
+  name?: string;
+  role?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  bio?: string;
+  social?: Array<
+    {
+      _key: string;
+    } & Link
+  >;
+};
+
+export type Quote = {
+  _id: string;
+  _type: "quote";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  language?: string;
+  content?: string;
+  author?: string;
+  role?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+};
+
+export type Page = {
+  _id: string;
+  _type: "page";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  language?: string;
+  isHome?: boolean;
+  title?: string;
+  slug?: Slug;
+  sections?: Array<
+    | ({
+        _key: string;
+      } & ModuleHero)
+    | ({
+        _key: string;
+      } & ModuleFeatureGrid)
+    | ({
+        _key: string;
+      } & ModulePricing)
+    | ({
+        _key: string;
+      } & ModuleAccordionList)
+    | ({
+        _key: string;
+      } & ModuleCallout)
+    | ({
+        _key: string;
+      } & ModuleCardList)
+    | ({
+        _key: string;
+      } & ModuleGallery)
+    | ({
+        _key: string;
+      } & ModulePersonList)
+    | ({
+        _key: string;
+      } & ModuleProse)
+    | ({
+        _key: string;
+      } & ModuleStatList)
+    | ({
+        _key: string;
+      } & ModuleStepList)
+    | ({
+        _key: string;
+      } & ModuleQuoteList)
+    | ({
+        _key: string;
+      } & ModuleCustomHtml)
+    | ({
+        _key: string;
+      } & ModuleNewsletter)
+    | ({
+        _key: string;
+      } & ModuleWaitlist)
+    | ({
+        _key: string;
+      } & ModuleLeadMagnet)
+  >;
   seo?: SeoMeta;
 };
 
@@ -1722,6 +1832,11 @@ export type AllSanitySchemaTypes =
   | EmailStrings
   | LocaleText
   | LocaleString
+  | SeoMeta
+  | LocaleSuggest
+  | AnnouncementLink
+  | AnnouncementItem
+  | AnnouncementBar
   | LegalConsent
   | CookieEntry
   | CookieCategory
@@ -1731,7 +1846,6 @@ export type AllSanitySchemaTypes =
   | PageSeo
   | Navigation
   | UiMessages
-  | HomePage
   | SiteMeta
   | SanityImageCrop
   | SanityImageHotspot
@@ -1744,6 +1858,15 @@ export type AllSanitySchemaTypes =
   | ModuleBlogPostList
   | ModuleBlogPostContent
   | ModuleBlogIndex
+  | SanityFileAssetReference
+  | Metadata
+  | PostReference
+  | CommentReference
+  | Comment
+  | Blog
+  | LeadMagnetReference
+  | ModuleLeadMagnet
+  | LeadMagnet
   | ModuleWaitlist
   | ModuleNewsletter
   | ModuleCustomHtml
@@ -1762,15 +1885,9 @@ export type AllSanitySchemaTypes =
   | ModuleFeatureGrid
   | ModuleHero
   | Cta
-  | PostReference
+  | PageReference
   | Link
-  | SanityFileAssetReference
-  | Metadata
   | BlockContent
-  | CommentReference
-  | Comment
-  | Blog
-  | SeoMeta
   | TranslationMetadata
   | InternationalizedArrayReference
   | TagReference
@@ -1779,14 +1896,15 @@ export type AllSanitySchemaTypes =
   | LegalPageReference
   | InternationalizedArrayReferenceValue
   | LegalPage
-  | Person
   | Author
   | Slug
-  | Quote
   | Tag
   | Category
   | Post
   | Series
+  | Person
+  | Quote
+  | Page
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -1806,7 +1924,7 @@ export type PostQueryResult = {
 
 // Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: allPostsQuery
-// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(publishedAt, _createdAt) <= now()    && coalesce(language, "en") == $locale]  | order(coalesce(publishedAt, _createdAt) desc) {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
+// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(publishedAt, _createdAt) <= now()    && coalesce(language, "en") == $locale]  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc) {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
 export type AllPostsQueryResult = Array<{
   _id: string;
   title: string | null;
@@ -1857,7 +1975,7 @@ export type AllPostsQueryResult = Array<{
 
 // Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: featuredPostsQuery
-// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && featured == true    && coalesce(publishedAt, _createdAt) <= now()    && coalesce(language, "en") == $locale]  | order(coalesce(publishedAt, _createdAt) desc) {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
+// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && featured == true    && coalesce(publishedAt, _createdAt) <= now()    && coalesce(language, "en") == $locale]  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc) {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
 export type FeaturedPostsQueryResult = Array<{
   _id: string;
   title: string | null;
@@ -1907,324 +2025,8 @@ export type FeaturedPostsQueryResult = Array<{
 }>;
 
 // Source: ../../modules/blog/src/sanity/queries.ts
-// Variable: postBySlugQuery
-// Query: *[_type == "post"    && metadata.slug.current == $slug    && metadata.unpublished != true    && coalesce(language, "en") == $locale][0]{    _id,    title,    excerpt,    publishedAt,    "updatedAt": _updatedAt,    featured,    language,    // Project the body with module-aware reference expansion. Plain    // PortableText blocks pass through unchanged via the spread; module    // blocks (module.quote-list, etc.) get their refs dereferenced via    // MODULES_FRAGMENT. Without this, modules embedded inline render    // with empty quotes / people.    body[]{   ...,  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },  _type == "module.hero" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.pricing" => {    tiers[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.callout" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.card-list" => {    cards[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.gallery" => {    images[]{      _key,      "url": asset->url,      "alt": coalesce(alt, ""),      "lqip": asset->metadata.lqip,      "aspectRatio": asset->metadata.dimensions.aspectRatio,      "width": asset->metadata.dimensions.width,      "height": asset->metadata.dimensions.height    }  },  _type == "module.person-list" => {    people[]->{      _id, name, role, bio,      image { asset->{ url } },      social[] {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) }    }  },  _type == "module.quote-list" => {    "quotes": quotes[]->{      _id, content, author, role, language,      image { asset->{ url } }    }  },  _type == "module.blog-post-list" => {    categories[]->{ _id }  } },    "slug": metadata.slug.current,    metadata {      title,      description,      noIndex,      "video": coalesce(videoFile.asset->url, videoUrl),      videoAutoplay,      videoControls,      image { asset->{ url, metadata }, alt },      llmsSummary,      llmsFull    },    authors[]->{ name, position, "slug": slug.current, image { asset->{ url } } },    categories[]->{ _id, title, "slug": slug.current },    tags[]->{ _id, title, "slug": slug.current },    series->{      title,      "slug": slug.current,      // Sibling parts, ordered — drives the on-post "Part N of M" nav. Same      // public filter as the listings so unpublished/scheduled parts drop out.      "parts": *[_type == "post"        && references(^._id)        && defined(metadata.slug.current)        && metadata.noIndex != true        && metadata.unpublished != true        && coalesce(publishedAt, _createdAt) <= now()        && coalesce(language, "en") == $locale]        | order(coalesce(seriesOrder, 9999) asc, coalesce(publishedAt, _createdAt) asc){          _id, title, "slug": metadata.slug.current        }    },    // Derived — keep these in the same shape the components expect.    "readTime": round(length(string::split(pt::text(body), " ")) / 200),    "headings": body[style in ["h2", "h3", "h4"]]{      style,      "text": pt::text(@)    }  }
-export type PostBySlugQueryResult = {
-  _id: string;
-  title: string | null;
-  excerpt: string | null;
-  publishedAt: string | null;
-  updatedAt: string;
-  featured: boolean | null;
-  language: string | null;
-  body: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?:
-          | "blockquote"
-          | "h1"
-          | "h2"
-          | "h3"
-          | "h4"
-          | "h5"
-          | "h6"
-          | "normal";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "block";
-        _key: string;
-      }
-    | {
-        language?: string;
-        filename?: string;
-        code?: string;
-        _type: "codeBlock";
-        _key: string;
-      }
-    | {
-        asset: {
-          url: string | null;
-        } | null;
-        media?: unknown;
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        _type: "image";
-        _key: string;
-        alt: "";
-      }
-    | {
-        _key: string;
-        _type: "module.accordion-list";
-        title?: string;
-        intro?: string;
-        items?: Array<{
-          title?: string;
-          content?: BlockContent;
-          _type: "item";
-          _key: string;
-        }>;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.callout";
-        variant?: "danger" | "info" | "success" | "warning";
-        content?: BlockContent;
-        cta: {
-          _type: "cta";
-          link: {
-            _type: "link";
-            type?: "external" | "internal";
-            label?: string;
-            internal?: PostReference;
-            external?: string;
-            newTab?: boolean;
-            href: string | "" | null;
-          } | null;
-          variant?: "ghost" | "primary" | "secondary";
-        } | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.card-list";
-        title?: string;
-        intro?: string;
-        columns?: number;
-        cards: Array<{
-          title?: string;
-          content?: BlockContent;
-          image?: CardImage;
-          cta: {
-            _type: "cta";
-            link: {
-              _type: "link";
-              type?: "external" | "internal";
-              label?: string;
-              internal?: PostReference;
-              external?: string;
-              newTab?: boolean;
-              href: string | "" | null;
-            } | null;
-            variant?: "ghost" | "primary" | "secondary";
-          } | null;
-          _type: "card";
-          _key: string;
-        }> | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.custom-html";
-        html?: string;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.gallery";
-        title?: string;
-        intro?: string;
-        ratio?: "1:1" | "16:9" | "3:2" | "4:3" | "4:5";
-        images: Array<{
-          _key: string;
-          url: string | null;
-          alt: string | "";
-          lqip: string | null;
-          aspectRatio: number | null;
-          width: number | null;
-          height: number | null;
-        }> | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.newsletter";
-        heading?: string;
-        body?: string;
-        emailPlaceholder?: string;
-        buttonLabel?: string;
-        consentText?: string;
-        successMessage?: string;
-        alreadyMessage?: string;
-        errorMessage?: string;
-        variant?: "banner" | "card" | "inline";
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.person-list";
-        title?: string;
-        intro?: string;
-        people: Array<{
-          _id: string;
-          name: string | null;
-          role: string | null;
-          bio: string | null;
-          image: {
-            asset: {
-              url: string | null;
-            } | null;
-          } | null;
-          social: Array<{
-            _key: string;
-            _type: "link";
-            type?: "external" | "internal";
-            label?: string;
-            internal?: PostReference;
-            external?: string;
-            newTab?: boolean;
-            href: string | "" | null;
-          }> | null;
-        }> | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.quote-list";
-        title?: string;
-        quotes: Array<{
-          _id: string;
-          content: string | null;
-          author: string | null;
-          role: string | null;
-          language: string | null;
-          image: {
-            asset: {
-              url: string | null;
-            } | null;
-          } | null;
-        }> | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.stat-list";
-        title?: string;
-        intro?: string;
-        stats?: Array<{
-          value?: string;
-          label?: string;
-          _type: "stat";
-          _key: string;
-        }>;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.step-list";
-        title?: string;
-        intro?: string;
-        steps?: Array<{
-          title?: string;
-          content?: BlockContent;
-          _type: "step";
-          _key: string;
-        }>;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.waitlist";
-        heading?: string;
-        body?: string;
-        emailPlaceholder?: string;
-        namePlaceholder?: string;
-        buttonLabel?: string;
-        consentText?: string;
-        successMessage?: string;
-        alreadyMessage?: string;
-        errorMessage?: string;
-        variant?: "banner" | "card" | "inline";
-        anchor?: string;
-        hidden?: boolean;
-      }
-  > | null;
-  slug: string | null;
-  metadata: {
-    title: string | null;
-    description: string | null;
-    noIndex: boolean | null;
-    video: string | null;
-    videoAutoplay: boolean | null;
-    videoControls: boolean | null;
-    image: {
-      asset: {
-        url: string | null;
-        metadata: SanityImageMetadata | null;
-      } | null;
-      alt: string | null;
-    } | null;
-    llmsSummary: string | null;
-    llmsFull: string | null;
-  } | null;
-  authors: Array<{
-    name: string | null;
-    position: string | null;
-    slug: string | null;
-    image: {
-      asset: {
-        url: string | null;
-      } | null;
-    } | null;
-  }> | null;
-  categories: Array<{
-    _id: string;
-    title: string | null;
-    slug: string | null;
-  }> | null;
-  tags: Array<{
-    _id: string;
-    title: string | null;
-    slug: string | null;
-  }> | null;
-  series: {
-    title: string | null;
-    slug: string | null;
-    parts: Array<{
-      _id: string;
-      title: string | null;
-      slug: string | null;
-    }>;
-  } | null;
-  readTime: number;
-  headings: Array<{
-    style:
-      | "blockquote"
-      | "h1"
-      | "h2"
-      | "h3"
-      | "h4"
-      | "h5"
-      | "h6"
-      | "normal"
-      | null;
-    text: string;
-  }> | null;
-} | null;
-
-// Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: relatedPostsQuery
-// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale    && _id != $id    && coalesce(publishedAt, _createdAt) <= now()    && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]  | order(coalesce(publishedAt, _createdAt) desc)[0...3] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
+// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale    && _id != $id    && coalesce(publishedAt, _createdAt) <= now()    && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[0...3] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
 export type RelatedPostsQueryResult = Array<{
   _id: string;
   title: string | null;
@@ -2283,7 +2085,7 @@ export type AllPostSlugsQueryResult = Array<{
 
 // Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: rssPostsQuery
-// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(publishedAt, _createdAt) <= now()    && coalesce(language, "en") == $locale]  | order(coalesce(publishedAt, _createdAt) desc) {    title,    publishedAt,    "slug": metadata.slug.current,    metadata { title, description, image { asset->{ url } } },    authors[]->{ name },    categories[]->{ title }  }
+// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(publishedAt, _createdAt) <= now()    && coalesce(language, "en") == $locale]  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc) {    title,    publishedAt,    "slug": metadata.slug.current,    metadata { title, description, image { asset->{ url } } },    authors[]->{ name },    categories[]->{ title }  }
 export type RssPostsQueryResult = Array<{
   title: string | null;
   publishedAt: string | null;
@@ -2395,7 +2197,7 @@ export type AllSeriesSlugsQueryResult = Array<{
 
 // Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: searchPostsQuery
-// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(publishedAt, _createdAt) <= now()    && coalesce(language, "en") == $locale    && (      title match $q      || excerpt match $q      || metadata.description match $q      || pt::text(body) match $q    )]  | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
+// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(publishedAt, _createdAt) <= now()    && coalesce(language, "en") == $locale    && (      title match $q      || excerpt match $q      || metadata.description match $q      || pt::text(body) match $q    )]  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[0...$limit] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
 export type SearchPostsQueryResult = Array<{
   _id: string;
   title: string | null;
@@ -2443,342 +2245,6 @@ export type SearchPostsQueryResult = Array<{
     slug: string | null;
   }> | null;
 }>;
-
-// Source: ../../modules/blog/src/sanity/queries.ts
-// Variable: blogSingletonQuery
-// Query: *[_type == "blog"][0]{    postModules[]{   ...,  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },  _type == "module.hero" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.pricing" => {    tiers[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.callout" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.card-list" => {    cards[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.gallery" => {    images[]{      _key,      "url": asset->url,      "alt": coalesce(alt, ""),      "lqip": asset->metadata.lqip,      "aspectRatio": asset->metadata.dimensions.aspectRatio,      "width": asset->metadata.dimensions.width,      "height": asset->metadata.dimensions.height    }  },  _type == "module.person-list" => {    people[]->{      _id, name, role, bio,      image { asset->{ url } },      social[] {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) }    }  },  _type == "module.quote-list" => {    "quotes": quotes[]->{      _id, content, author, role, language,      image { asset->{ url } }    }  },  _type == "module.blog-post-list" => {    categories[]->{ _id }  } },    comments,      seo {    noIndex,    hideFromDiscovery,    unpublished,    title,    description,    image { asset->{ url, metadata }, alt }  }  }
-export type BlogSingletonQueryResult = {
-  postModules: Array<
-    | {
-        _key: string;
-        _type: "module.accordion-list";
-        title?: string;
-        intro?: string;
-        items?: Array<{
-          title?: string;
-          content?: BlockContent;
-          _type: "item";
-          _key: string;
-        }>;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.blog-index";
-        eyebrow?: string;
-        title?: string;
-        intro?: string;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.blog-post-content";
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.blog-post-list";
-        title?: string;
-        intro?: string;
-        limit?: number;
-        categories: Array<{
-          _id: string;
-        }> | null;
-        featuredOnly?: boolean;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.callout";
-        variant?: "danger" | "info" | "success" | "warning";
-        content?: BlockContent;
-        cta: {
-          _type: "cta";
-          link: {
-            _type: "link";
-            type?: "external" | "internal";
-            label?: string;
-            internal?: PostReference;
-            external?: string;
-            newTab?: boolean;
-            href: string | "" | null;
-          } | null;
-          variant?: "ghost" | "primary" | "secondary";
-        } | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.card-list";
-        title?: string;
-        intro?: string;
-        columns?: number;
-        cards: Array<{
-          title?: string;
-          content?: BlockContent;
-          image?: CardImage;
-          cta: {
-            _type: "cta";
-            link: {
-              _type: "link";
-              type?: "external" | "internal";
-              label?: string;
-              internal?: PostReference;
-              external?: string;
-              newTab?: boolean;
-              href: string | "" | null;
-            } | null;
-            variant?: "ghost" | "primary" | "secondary";
-          } | null;
-          _type: "card";
-          _key: string;
-        }> | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.custom-html";
-        html?: string;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.feature-grid";
-        title?: string;
-        intro?: string;
-        items?: Array<{
-          icon?: "globe" | "settings" | "shield" | "sparkles" | "users" | "zap";
-          title?: string;
-          body?: string;
-          _type: "feature";
-          _key: string;
-        }>;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.gallery";
-        title?: string;
-        intro?: string;
-        ratio?: "1:1" | "16:9" | "3:2" | "4:3" | "4:5";
-        images: Array<{
-          _key: string;
-          url: string | null;
-          alt: string | "";
-          lqip: string | null;
-          aspectRatio: number | null;
-          width: number | null;
-          height: number | null;
-        }> | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.hero";
-        eyebrow?: string;
-        title?: string;
-        subtitle?: string;
-        cta: {
-          _type: "cta";
-          link: {
-            _type: "link";
-            type?: "external" | "internal";
-            label?: string;
-            internal?: PostReference;
-            external?: string;
-            newTab?: boolean;
-            href: string | "" | null;
-          } | null;
-          variant?: "ghost" | "primary" | "secondary";
-        } | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.newsletter";
-        heading?: string;
-        body?: string;
-        emailPlaceholder?: string;
-        buttonLabel?: string;
-        consentText?: string;
-        successMessage?: string;
-        alreadyMessage?: string;
-        errorMessage?: string;
-        variant?: "banner" | "card" | "inline";
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.person-list";
-        title?: string;
-        intro?: string;
-        people: Array<{
-          _id: string;
-          name: string | null;
-          role: string | null;
-          bio: string | null;
-          image: {
-            asset: {
-              url: string | null;
-            } | null;
-          } | null;
-          social: Array<{
-            _key: string;
-            _type: "link";
-            type?: "external" | "internal";
-            label?: string;
-            internal?: PostReference;
-            external?: string;
-            newTab?: boolean;
-            href: string | "" | null;
-          }> | null;
-        }> | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.pricing";
-        title?: string;
-        intro?: string;
-        tiers: Array<{
-          name?: string;
-          price?: string;
-          period?: string;
-          description?: string;
-          highlighted?: boolean;
-          badge?: string;
-          features?: Array<string>;
-          cta: {
-            _type: "cta";
-            link: {
-              _type: "link";
-              type?: "external" | "internal";
-              label?: string;
-              internal?: PostReference;
-              external?: string;
-              newTab?: boolean;
-              href: string | "" | null;
-            } | null;
-            variant?: "ghost" | "primary" | "secondary";
-          } | null;
-          _type: "tier";
-          _key: string;
-        }> | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.prose";
-        content?: BlockContent;
-        width?: "narrow" | "wide";
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.quote-list";
-        title?: string;
-        quotes: Array<{
-          _id: string;
-          content: string | null;
-          author: string | null;
-          role: string | null;
-          language: string | null;
-          image: {
-            asset: {
-              url: string | null;
-            } | null;
-          } | null;
-        }> | null;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.stat-list";
-        title?: string;
-        intro?: string;
-        stats?: Array<{
-          value?: string;
-          label?: string;
-          _type: "stat";
-          _key: string;
-        }>;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.step-list";
-        title?: string;
-        intro?: string;
-        steps?: Array<{
-          title?: string;
-          content?: BlockContent;
-          _type: "step";
-          _key: string;
-        }>;
-        anchor?: string;
-        hidden?: boolean;
-      }
-    | {
-        _key: string;
-        _type: "module.waitlist";
-        heading?: string;
-        body?: string;
-        emailPlaceholder?: string;
-        namePlaceholder?: string;
-        buttonLabel?: string;
-        consentText?: string;
-        successMessage?: string;
-        alreadyMessage?: string;
-        errorMessage?: string;
-        variant?: "banner" | "card" | "inline";
-        anchor?: string;
-        hidden?: boolean;
-      }
-  > | null;
-  comments: {
-    heading?: LocaleString;
-    nameLabel?: LocaleString;
-    emailLabel?: LocaleString;
-    bodyLabel?: LocaleString;
-    consentLabel?: LocaleString;
-    submitLabel?: LocaleString;
-    replyLabel?: LocaleString;
-    cancelLabel?: LocaleString;
-    successMessage?: LocaleString;
-    emptyMessage?: LocaleString;
-    errorMessage?: LocaleString;
-  } | null;
-  seo: {
-    noIndex: boolean | null;
-    hideFromDiscovery: boolean | null;
-    unpublished: boolean | null;
-    title: string | null;
-    description: string | null;
-    image: {
-      asset: {
-        url: string | null;
-        metadata: SanityImageMetadata | null;
-      } | null;
-      alt: string | null;
-    } | null;
-  } | null;
-} | null;
 
 // Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: blogDisplayQuery
@@ -2854,7 +2320,7 @@ export type CategoryBySlugQueryResult = {
 
 // Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: postsByCategorySlugQuery
-// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale    && coalesce(publishedAt, _createdAt) <= now()    && count(categories[@->slug.current == $slug]) > 0]  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
+// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale    && coalesce(publishedAt, _createdAt) <= now()    && count(categories[@->slug.current == $slug]) > 0]  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[$start...$end] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
 export type PostsByCategorySlugQueryResult = Array<{
   _id: string;
   title: string | null;
@@ -2968,7 +2434,7 @@ export type TagBySlugQueryResult = {
 
 // Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: postsByTagSlugQuery
-// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale    && coalesce(publishedAt, _createdAt) <= now()    && count(tags[@->slug.current == $slug]) > 0]  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
+// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale    && coalesce(publishedAt, _createdAt) <= now()    && count(tags[@->slug.current == $slug]) > 0]  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[$start...$end] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
 export type PostsByTagSlugQueryResult = Array<{
   _id: string;
   title: string | null;
@@ -3115,7 +2581,7 @@ export type AuthorBySlugQueryResult = {
 
 // Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: postsByAuthorSlugQuery
-// Query: *[_type == "post"    && $slug in authors[]->slug.current    && coalesce(publishedAt, _createdAt) <= now()    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale]  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
+// Query: *[_type == "post"    && $slug in authors[]->slug.current    && coalesce(publishedAt, _createdAt) <= now()    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale]  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[$start...$end] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
 export type PostsByAuthorSlugQueryResult = Array<{
   _id: string;
   title: string | null;
@@ -3197,7 +2663,7 @@ export type TaxonomyForLlmsQueryResult = Array<
 
 // Source: ../../modules/blog/src/sanity/queries.ts
 // Variable: moduleBlogPostListQuery
-// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale    && (count($categoryIds) == 0 || count((categories[]._ref)[@ in $categoryIds]) > 0)    && coalesce(publishedAt, _createdAt) <= now()    && (!$featuredOnly || featured == true)]  | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
+// Query: *[_type == "post"    && defined(metadata.slug.current)    && metadata.noIndex != true    && metadata.hideFromDiscovery != true    && metadata.unpublished != true    && coalesce(language, "en") == $locale    && (count($categoryIds) == 0 || count((categories[]._ref)[@ in $categoryIds]) > 0)    && coalesce(publishedAt, _createdAt) <= now()    && (!$featuredOnly || featured == true)]  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[0...$limit] {      _id,  title,  excerpt,  publishedAt,  featured,  language,  "slug": metadata.slug.current,  metadata {    title,    description,    noIndex,    "video": coalesce(videoFile.asset->url, videoUrl),    videoAutoplay,    videoControls,    image { asset->{ url, metadata }, alt },    llmsSummary  },  authors[]->{    _id, name, position, "slug": slug.current,    "bio": pt::text(bio),    image { asset->{ url } }  },  categories[]->{ _id, title, "slug": slug.current },  tags[]->{ _id, title, "slug": slug.current }  }
 export type ModuleBlogPostListQueryResult = Array<{
   _id: string;
   title: string | null;
@@ -3248,326 +2714,302 @@ export type ModuleBlogPostListQueryResult = Array<{
 
 // Source: src/sanity/home-queries.ts
 // Variable: homePageQuery
-// Query: *[_id == $id][0]{    "pageModules": pageModules[hidden != true]{   ...,  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },  _type == "module.hero" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.pricing" => {    tiers[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.callout" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.card-list" => {    cards[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.gallery" => {    images[]{      _key,      "url": asset->url,      "alt": coalesce(alt, ""),      "lqip": asset->metadata.lqip,      "aspectRatio": asset->metadata.dimensions.aspectRatio,      "width": asset->metadata.dimensions.width,      "height": asset->metadata.dimensions.height    }  },  _type == "module.person-list" => {    people[]->{      _id, name, role, bio,      image { asset->{ url } },      social[] {   ...,  "href": select(    type == "internal" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) }    }  },  _type == "module.quote-list" => {    "quotes": quotes[]->{      _id, content, author, role, language,      image { asset->{ url } }    }  },  _type == "module.blog-post-list" => {    categories[]->{ _id }  } }  }
-export type HomePageQueryResult =
-  | {
-      pageModules: null;
-    }
-  | {
-      pageModules: Array<
-        | {
-            _key: string;
-            _type: "module.accordion-list";
-            title?: string;
-            intro?: string;
-            items?: Array<{
-              title?: string;
-              content?: BlockContent;
-              _type: "item";
-              _key: string;
-            }>;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.callout";
-            variant?: "danger" | "info" | "success" | "warning";
-            content?: BlockContent;
-            cta: {
-              _type: "cta";
-              link: {
-                _type: "link";
-                type?: "external" | "internal";
-                label?: string;
-                internal?: PostReference;
-                external?: string;
-                newTab?: boolean;
-                href: string | "" | null;
-              } | null;
-              variant?: "ghost" | "primary" | "secondary";
-            } | null;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.card-list";
-            title?: string;
-            intro?: string;
-            columns?: number;
-            cards: Array<{
-              title?: string;
-              content?: BlockContent;
-              image?: CardImage;
-              cta: {
-                _type: "cta";
-                link: {
-                  _type: "link";
-                  type?: "external" | "internal";
-                  label?: string;
-                  internal?: PostReference;
-                  external?: string;
-                  newTab?: boolean;
-                  href: string | "" | null;
-                } | null;
-                variant?: "ghost" | "primary" | "secondary";
-              } | null;
-              _type: "card";
-              _key: string;
-            }> | null;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.custom-html";
-            html?: string;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.feature-grid";
-            title?: string;
-            intro?: string;
-            items?: Array<{
-              icon?:
-                | "globe"
-                | "settings"
-                | "shield"
-                | "sparkles"
-                | "users"
-                | "zap";
-              title?: string;
-              body?: string;
-              _type: "feature";
-              _key: string;
-            }>;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.gallery";
-            title?: string;
-            intro?: string;
-            ratio?: "1:1" | "16:9" | "3:2" | "4:3" | "4:5";
-            images: Array<{
-              _key: string;
-              url: string | null;
-              alt: string | "";
-              lqip: string | null;
-              aspectRatio: number | null;
-              width: number | null;
-              height: number | null;
-            }> | null;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.hero";
-            eyebrow?: string;
-            title?: string;
-            subtitle?: string;
-            cta: {
-              _type: "cta";
-              link: {
-                _type: "link";
-                type?: "external" | "internal";
-                label?: string;
-                internal?: PostReference;
-                external?: string;
-                newTab?: boolean;
-                href: string | "" | null;
-              } | null;
-              variant?: "ghost" | "primary" | "secondary";
-            } | null;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.newsletter";
-            heading?: string;
-            body?: string;
-            emailPlaceholder?: string;
-            buttonLabel?: string;
-            consentText?: string;
-            successMessage?: string;
-            alreadyMessage?: string;
-            errorMessage?: string;
-            variant?: "banner" | "card" | "inline";
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.person-list";
-            title?: string;
-            intro?: string;
-            people: Array<{
-              _id: string;
-              name: string | null;
-              role: string | null;
-              bio: string | null;
-              image: {
-                asset: {
-                  url: string | null;
-                } | null;
-              } | null;
-              social: Array<{
-                _key: string;
-                _type: "link";
-                type?: "external" | "internal";
-                label?: string;
-                internal?: PostReference;
-                external?: string;
-                newTab?: boolean;
-                href: string | "" | null;
-              }> | null;
-            }> | null;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.pricing";
-            title?: string;
-            intro?: string;
-            tiers: Array<{
-              name?: string;
-              price?: string;
-              period?: string;
-              description?: string;
-              highlighted?: boolean;
-              badge?: string;
-              features?: Array<string>;
-              cta: {
-                _type: "cta";
-                link: {
-                  _type: "link";
-                  type?: "external" | "internal";
-                  label?: string;
-                  internal?: PostReference;
-                  external?: string;
-                  newTab?: boolean;
-                  href: string | "" | null;
-                } | null;
-                variant?: "ghost" | "primary" | "secondary";
-              } | null;
-              _type: "tier";
-              _key: string;
-            }> | null;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.prose";
-            content?: BlockContent;
-            width?: "narrow" | "wide";
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.quote-list";
-            title?: string;
-            quotes: Array<{
-              _id: string;
-              content: string | null;
-              author: string | null;
-              role: string | null;
-              language: string | null;
-              image: {
-                asset: {
-                  url: string | null;
-                } | null;
-              } | null;
-            }> | null;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.stat-list";
-            title?: string;
-            intro?: string;
-            stats?: Array<{
-              value?: string;
+// Query: *[_type == "page" && isHome == true && language == $locale][0]{    "pageModules": sections[hidden != true]{   ...,  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },  _type == "module.hero" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.pricing" => {    tiers[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.callout" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.card-list" => {    cards[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.gallery" => {    images[]{      _key,      "url": asset->url,      "alt": coalesce(alt, ""),      "lqip": asset->metadata.lqip,      "aspectRatio": asset->metadata.dimensions.aspectRatio,      "width": asset->metadata.dimensions.width,      "height": asset->metadata.dimensions.height    }  },  _type == "module.person-list" => {    people[]->{      _id, name, role, bio,      image { asset->{ url } },      social[] {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) }    }  },  _type == "module.quote-list" => {    "quotes": quotes[]->{      _id, content, author, role, language,      image { asset->{ url } }    }  },  _type == "module.lead-magnet" => { magnet->{ "id": _id } } }  }
+export type HomePageQueryResult = {
+  pageModules: Array<
+    | {
+        _key: string;
+        _type: "module.accordion-list";
+        title?: string;
+        intro?: string;
+        items?: Array<{
+          title?: string;
+          content?: BlockContent;
+          _type: "item";
+          _key: string;
+        }>;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.callout";
+        variant?: "danger" | "info" | "success" | "warning";
+        content?: BlockContent;
+        cta: {
+          _type: "cta";
+          link: {
+            _type: "link";
+            type?: "external" | "internal";
+            label?: string;
+            internal?: PageReference | PostReference;
+            external?: string;
+            newTab?: boolean;
+            href: string | "" | null;
+          } | null;
+          variant?: "ghost" | "primary" | "secondary";
+        } | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.card-list";
+        title?: string;
+        intro?: string;
+        columns?: number;
+        cards: Array<{
+          title?: string;
+          content?: BlockContent;
+          image?: CardImage;
+          cta: {
+            _type: "cta";
+            link: {
+              _type: "link";
+              type?: "external" | "internal";
               label?: string;
-              _type: "stat";
-              _key: string;
-            }>;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
+              internal?: PageReference | PostReference;
+              external?: string;
+              newTab?: boolean;
+              href: string | "" | null;
+            } | null;
+            variant?: "ghost" | "primary" | "secondary";
+          } | null;
+          _type: "card";
+          _key: string;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.custom-html";
+        html?: string;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.feature-grid";
+        title?: string;
+        intro?: string;
+        items?: Array<{
+          icon?: "globe" | "settings" | "shield" | "sparkles" | "users" | "zap";
+          title?: string;
+          body?: string;
+          _type: "feature";
+          _key: string;
+        }>;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.gallery";
+        title?: string;
+        intro?: string;
+        ratio?: "1:1" | "16:9" | "3:2" | "4:3" | "4:5";
+        images: Array<{
+          _key: string;
+          url: string | null;
+          alt: string | "";
+          lqip: string | null;
+          aspectRatio: number | null;
+          width: number | null;
+          height: number | null;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.hero";
+        eyebrow?: string;
+        title?: string;
+        subtitle?: string;
+        cta: {
+          _type: "cta";
+          link: {
+            _type: "link";
+            type?: "external" | "internal";
+            label?: string;
+            internal?: PageReference | PostReference;
+            external?: string;
+            newTab?: boolean;
+            href: string | "" | null;
+          } | null;
+          variant?: "ghost" | "primary" | "secondary";
+        } | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.lead-magnet";
+        magnet: {
+          id: string;
+        } | null;
+        heading?: string;
+        body?: string;
+        emailPlaceholder?: string;
+        buttonLabel?: string;
+        consentText?: string;
+        successMessage?: string;
+        alreadyMessage?: string;
+        errorMessage?: string;
+        variant?: "banner" | "card" | "inline";
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.newsletter";
+        heading?: string;
+        body?: string;
+        emailPlaceholder?: string;
+        buttonLabel?: string;
+        consentText?: string;
+        successMessage?: string;
+        alreadyMessage?: string;
+        errorMessage?: string;
+        variant?: "banner" | "card" | "inline";
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.person-list";
+        title?: string;
+        intro?: string;
+        people: Array<{
+          _id: string;
+          name: string | null;
+          role: string | null;
+          bio: string | null;
+          image: {
+            asset: {
+              url: string | null;
+            } | null;
+          } | null;
+          social: Array<{
             _key: string;
-            _type: "module.step-list";
-            title?: string;
-            intro?: string;
-            steps?: Array<{
-              title?: string;
-              content?: BlockContent;
-              _type: "step";
-              _key: string;
-            }>;
-            anchor?: string;
-            hidden?: boolean;
-          }
-        | {
-            _key: string;
-            _type: "module.waitlist";
-            heading?: string;
-            body?: string;
-            emailPlaceholder?: string;
-            namePlaceholder?: string;
-            buttonLabel?: string;
-            consentText?: string;
-            successMessage?: string;
-            alreadyMessage?: string;
-            errorMessage?: string;
-            variant?: "banner" | "card" | "inline";
-            anchor?: string;
-            hidden?: boolean;
-          }
-      > | null;
-    }
-  | null;
-
-// Source: src/sanity/legal-queries.ts
-// Variable: legalPageQuery
-// Query: *[_type == "legalPage"    && pageKey == $pageKey    && coalesce(language, "en") == $locale][0]{    title,    lastUpdated,    body  }
-export type LegalPageQueryResult = {
-  title: string | null;
-  lastUpdated: string | null;
-  body: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "h2" | "h3" | "normal";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }> | null;
+            _type: "link";
+            type?: "external" | "internal";
+            label?: string;
+            internal?: PageReference | PostReference;
+            external?: string;
+            newTab?: boolean;
+            href: string | "" | null;
+          }> | null;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.pricing";
+        title?: string;
+        intro?: string;
+        tiers: Array<{
+          name?: string;
+          price?: string;
+          period?: string;
+          description?: string;
+          highlighted?: boolean;
+          badge?: string;
+          features?: Array<string>;
+          cta: {
+            _type: "cta";
+            link: {
+              _type: "link";
+              type?: "external" | "internal";
+              label?: string;
+              internal?: PageReference | PostReference;
+              external?: string;
+              newTab?: boolean;
+              href: string | "" | null;
+            } | null;
+            variant?: "ghost" | "primary" | "secondary";
+          } | null;
+          _type: "tier";
+          _key: string;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.prose";
+        content?: BlockContent;
+        width?: "narrow" | "wide";
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.quote-list";
+        title?: string;
+        quotes: Array<{
+          _id: string;
+          content: string | null;
+          author: string | null;
+          role: string | null;
+          language: string | null;
+          image: {
+            asset: {
+              url: string | null;
+            } | null;
+          } | null;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.stat-list";
+        title?: string;
+        intro?: string;
+        stats?: Array<{
+          value?: string;
+          label?: string;
+          _type: "stat";
+          _key: string;
+        }>;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.step-list";
+        title?: string;
+        intro?: string;
+        steps?: Array<{
+          title?: string;
+          content?: BlockContent;
+          _type: "step";
+          _key: string;
+        }>;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.waitlist";
+        heading?: string;
+        body?: string;
+        emailPlaceholder?: string;
+        namePlaceholder?: string;
+        buttonLabel?: string;
+        consentText?: string;
+        successMessage?: string;
+        alreadyMessage?: string;
+        errorMessage?: string;
+        variant?: "banner" | "card" | "inline";
+        anchor?: string;
+        hidden?: boolean;
+      }
+  > | null;
 } | null;
-
-// Source: src/sanity/legal-queries.ts
-// Variable: consentPolicyVersionQuery
-// Query: *[_type == "legalPage" && pageKey == "confidentialite"] | order(lastUpdated desc)[0].lastUpdated
-export type ConsentPolicyVersionQueryResult = string | null;
 
 // Source: src/sanity/nav-queries.ts
 // Variable: navigationQuery
@@ -3644,6 +3086,338 @@ export type NavigationQueryResult =
       }> | null;
     }
   | null;
+
+// Source: src/sanity/page-queries.ts
+// Variable: pageBySlugQuery
+// Query: *[_type == "page" && isHome != true && slug.current == $slug && language == $locale][0]{    title,    seo{ ..., image{ asset->{ url }, alt } },    "sections": sections[hidden != true]{   ...,  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },  _type == "module.hero" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.pricing" => {    tiers[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.callout" => { cta {   ...,  link {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } },  _type == "module.card-list" => {    cards[] { ..., cta {   ...,  link {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) } } }  },  _type == "module.gallery" => {    images[]{      _key,      "url": asset->url,      "alt": coalesce(alt, ""),      "lqip": asset->metadata.lqip,      "aspectRatio": asset->metadata.dimensions.aspectRatio,      "width": asset->metadata.dimensions.width,      "height": asset->metadata.dimensions.height    }  },  _type == "module.person-list" => {    people[]->{      _id, name, role, bio,      image { asset->{ url } },      social[] {   ...,  "href": select(    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,    type == "external" => external,    ""  ) }    }  },  _type == "module.quote-list" => {    "quotes": quotes[]->{      _id, content, author, role, language,      image { asset->{ url } }    }  },  _type == "module.lead-magnet" => { magnet->{ "id": _id } } }  }
+export type PageBySlugQueryResult = {
+  title: string | null;
+  seo: {
+    _type: "seoMeta";
+    title?: string;
+    description?: string;
+    image: {
+      asset: {
+        url: string | null;
+      } | null;
+      alt: string | null;
+    } | null;
+    noIndex?: boolean;
+    hideFromDiscovery?: boolean;
+    unpublished?: boolean;
+    llmsSummary?: string;
+    llmsFull?: string;
+  } | null;
+  sections: Array<
+    | {
+        _key: string;
+        _type: "module.accordion-list";
+        title?: string;
+        intro?: string;
+        items?: Array<{
+          title?: string;
+          content?: BlockContent;
+          _type: "item";
+          _key: string;
+        }>;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.callout";
+        variant?: "danger" | "info" | "success" | "warning";
+        content?: BlockContent;
+        cta: {
+          _type: "cta";
+          link: {
+            _type: "link";
+            type?: "external" | "internal";
+            label?: string;
+            internal?: PageReference | PostReference;
+            external?: string;
+            newTab?: boolean;
+            href: string | "" | null;
+          } | null;
+          variant?: "ghost" | "primary" | "secondary";
+        } | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.card-list";
+        title?: string;
+        intro?: string;
+        columns?: number;
+        cards: Array<{
+          title?: string;
+          content?: BlockContent;
+          image?: CardImage;
+          cta: {
+            _type: "cta";
+            link: {
+              _type: "link";
+              type?: "external" | "internal";
+              label?: string;
+              internal?: PageReference | PostReference;
+              external?: string;
+              newTab?: boolean;
+              href: string | "" | null;
+            } | null;
+            variant?: "ghost" | "primary" | "secondary";
+          } | null;
+          _type: "card";
+          _key: string;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.custom-html";
+        html?: string;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.feature-grid";
+        title?: string;
+        intro?: string;
+        items?: Array<{
+          icon?: "globe" | "settings" | "shield" | "sparkles" | "users" | "zap";
+          title?: string;
+          body?: string;
+          _type: "feature";
+          _key: string;
+        }>;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.gallery";
+        title?: string;
+        intro?: string;
+        ratio?: "1:1" | "16:9" | "3:2" | "4:3" | "4:5";
+        images: Array<{
+          _key: string;
+          url: string | null;
+          alt: string | "";
+          lqip: string | null;
+          aspectRatio: number | null;
+          width: number | null;
+          height: number | null;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.hero";
+        eyebrow?: string;
+        title?: string;
+        subtitle?: string;
+        cta: {
+          _type: "cta";
+          link: {
+            _type: "link";
+            type?: "external" | "internal";
+            label?: string;
+            internal?: PageReference | PostReference;
+            external?: string;
+            newTab?: boolean;
+            href: string | "" | null;
+          } | null;
+          variant?: "ghost" | "primary" | "secondary";
+        } | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.lead-magnet";
+        magnet: {
+          id: string;
+        } | null;
+        heading?: string;
+        body?: string;
+        emailPlaceholder?: string;
+        buttonLabel?: string;
+        consentText?: string;
+        successMessage?: string;
+        alreadyMessage?: string;
+        errorMessage?: string;
+        variant?: "banner" | "card" | "inline";
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.newsletter";
+        heading?: string;
+        body?: string;
+        emailPlaceholder?: string;
+        buttonLabel?: string;
+        consentText?: string;
+        successMessage?: string;
+        alreadyMessage?: string;
+        errorMessage?: string;
+        variant?: "banner" | "card" | "inline";
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.person-list";
+        title?: string;
+        intro?: string;
+        people: Array<{
+          _id: string;
+          name: string | null;
+          role: string | null;
+          bio: string | null;
+          image: {
+            asset: {
+              url: string | null;
+            } | null;
+          } | null;
+          social: Array<{
+            _key: string;
+            _type: "link";
+            type?: "external" | "internal";
+            label?: string;
+            internal?: PageReference | PostReference;
+            external?: string;
+            newTab?: boolean;
+            href: string | "" | null;
+          }> | null;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.pricing";
+        title?: string;
+        intro?: string;
+        tiers: Array<{
+          name?: string;
+          price?: string;
+          period?: string;
+          description?: string;
+          highlighted?: boolean;
+          badge?: string;
+          features?: Array<string>;
+          cta: {
+            _type: "cta";
+            link: {
+              _type: "link";
+              type?: "external" | "internal";
+              label?: string;
+              internal?: PageReference | PostReference;
+              external?: string;
+              newTab?: boolean;
+              href: string | "" | null;
+            } | null;
+            variant?: "ghost" | "primary" | "secondary";
+          } | null;
+          _type: "tier";
+          _key: string;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.prose";
+        content?: BlockContent;
+        width?: "narrow" | "wide";
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.quote-list";
+        title?: string;
+        quotes: Array<{
+          _id: string;
+          content: string | null;
+          author: string | null;
+          role: string | null;
+          language: string | null;
+          image: {
+            asset: {
+              url: string | null;
+            } | null;
+          } | null;
+        }> | null;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.stat-list";
+        title?: string;
+        intro?: string;
+        stats?: Array<{
+          value?: string;
+          label?: string;
+          _type: "stat";
+          _key: string;
+        }>;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.step-list";
+        title?: string;
+        intro?: string;
+        steps?: Array<{
+          title?: string;
+          content?: BlockContent;
+          _type: "step";
+          _key: string;
+        }>;
+        anchor?: string;
+        hidden?: boolean;
+      }
+    | {
+        _key: string;
+        _type: "module.waitlist";
+        heading?: string;
+        body?: string;
+        emailPlaceholder?: string;
+        namePlaceholder?: string;
+        buttonLabel?: string;
+        consentText?: string;
+        successMessage?: string;
+        alreadyMessage?: string;
+        errorMessage?: string;
+        variant?: "banner" | "card" | "inline";
+        anchor?: string;
+        hidden?: boolean;
+      }
+  > | null;
+} | null;
+
+// Source: src/sanity/page-queries.ts
+// Variable: allPageParamsQuery
+// Query: *[_type == "page" && isHome != true && defined(slug.current) && seo.unpublished != true]{    "slug": slug.current,    "locale": language  }
+export type AllPageParamsQueryResult = Array<{
+  slug: string | null;
+  locale: string | null;
+}>;
+
+// Source: src/sanity/page-queries.ts
+// Variable: sitemapPagesQuery
+// Query: *[_type == "page" && isHome != true && defined(slug.current)    && seo.unpublished != true && seo.noIndex != true && seo.hideFromDiscovery != true]{    "slug": slug.current,    "language": language  }
+export type SitemapPagesQueryResult = Array<{
+  slug: string | null;
+  language: string | null;
+}>;
 
 // Source: src/sanity/seo-queries.ts
 // Variable: siteSeoQuery
@@ -3974,6 +3748,23 @@ export type SiteSettingsQueryResult =
 export type UiMessagesQueryResult =
   | {
       _id: string;
+      _type: "announcementBar";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      enabled?: boolean;
+      dismissible?: boolean;
+      variant?: "brand" | "contrast" | "neutral";
+      start?: string;
+      end?: string;
+      items?: Array<
+        {
+          _key: string;
+        } & AnnouncementItem
+      >;
+    }
+  | {
+      _id: string;
       _type: "author";
       _createdAt: string;
       _updatedAt: string;
@@ -4058,6 +3849,9 @@ export type UiMessagesQueryResult =
         | ({
             _key: string;
           } & ModuleHero)
+        | ({
+            _key: string;
+          } & ModuleLeadMagnet)
         | ({
             _key: string;
           } & ModuleNewsletter)
@@ -4145,6 +3939,7 @@ export type UiMessagesQueryResult =
       parent?: CommentReference;
       createdAt?: string;
       consent?: boolean;
+      consentPolicyVersion?: string;
       spam?: boolean;
       moderationToken?: string;
     }
@@ -4226,58 +4021,17 @@ export type UiMessagesQueryResult =
     }
   | {
       _id: string;
-      _type: "homePage";
+      _type: "leadMagnet";
       _createdAt: string;
       _updatedAt: string;
       _rev: string;
-      language?: string;
-      pageModules?: Array<
-        | ({
-            _key: string;
-          } & ModuleAccordionList)
-        | ({
-            _key: string;
-          } & ModuleCallout)
-        | ({
-            _key: string;
-          } & ModuleCardList)
-        | ({
-            _key: string;
-          } & ModuleCustomHtml)
-        | ({
-            _key: string;
-          } & ModuleFeatureGrid)
-        | ({
-            _key: string;
-          } & ModuleGallery)
-        | ({
-            _key: string;
-          } & ModuleHero)
-        | ({
-            _key: string;
-          } & ModuleNewsletter)
-        | ({
-            _key: string;
-          } & ModulePersonList)
-        | ({
-            _key: string;
-          } & ModulePricing)
-        | ({
-            _key: string;
-          } & ModuleProse)
-        | ({
-            _key: string;
-          } & ModuleQuoteList)
-        | ({
-            _key: string;
-          } & ModuleStatList)
-        | ({
-            _key: string;
-          } & ModuleStepList)
-        | ({
-            _key: string;
-          } & ModuleWaitlist)
-      >;
+      title?: string;
+      asset?: {
+        asset?: SanityFileAssetReference;
+        media?: unknown;
+        _type: "file";
+      };
+      enabled?: boolean;
     }
   | {
       _id: string;
@@ -4328,6 +4082,16 @@ export type UiMessagesQueryResult =
     }
   | {
       _id: string;
+      _type: "localeSuggest";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      message?: LocaleString;
+      switchLabel?: LocaleString;
+      dismissLabel?: LocaleString;
+    }
+  | {
+      _id: string;
       _type: "navigation";
       _createdAt: string;
       _updatedAt: string;
@@ -4360,6 +4124,68 @@ export type UiMessagesQueryResult =
       buttonLabel?: LocaleString;
       consentLabel?: LocaleString;
       successMessage?: LocaleString;
+    }
+  | {
+      _id: string;
+      _type: "page";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      language?: string;
+      isHome?: boolean;
+      title?: string;
+      slug?: Slug;
+      sections?: Array<
+        | ({
+            _key: string;
+          } & ModuleAccordionList)
+        | ({
+            _key: string;
+          } & ModuleCallout)
+        | ({
+            _key: string;
+          } & ModuleCardList)
+        | ({
+            _key: string;
+          } & ModuleCustomHtml)
+        | ({
+            _key: string;
+          } & ModuleFeatureGrid)
+        | ({
+            _key: string;
+          } & ModuleGallery)
+        | ({
+            _key: string;
+          } & ModuleHero)
+        | ({
+            _key: string;
+          } & ModuleLeadMagnet)
+        | ({
+            _key: string;
+          } & ModuleNewsletter)
+        | ({
+            _key: string;
+          } & ModulePersonList)
+        | ({
+            _key: string;
+          } & ModulePricing)
+        | ({
+            _key: string;
+          } & ModuleProse)
+        | ({
+            _key: string;
+          } & ModuleQuoteList)
+        | ({
+            _key: string;
+          } & ModuleStatList)
+        | ({
+            _key: string;
+          } & ModuleStepList)
+        | ({
+            _key: string;
+          } & ModuleWaitlist)
+      >;
+      seo?: SeoMeta;
     }
   | {
       _id: string;
@@ -4410,6 +4236,7 @@ export type UiMessagesQueryResult =
         } & TagReference
       >;
       featured?: boolean;
+      priority?: number;
       series?: SeriesReference;
       seriesOrder?: number;
       body?: BlockContent;
@@ -4758,6 +4585,9 @@ export type UiMessagesQueryResult =
         themeSystem?: string;
         previous?: string;
         next?: string;
+        dismiss?: string;
+        copy?: string;
+        copied?: string;
       };
       cookies?: {
         learnMore?: string;
@@ -4998,41 +4828,40 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     '*[_type == "post" && _id == $id][0]{ title, "slug": slug.current }': PostQueryResult;
-    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(publishedAt, _createdAt) <= now()\n    && coalesce(language, "en") == $locale]\n  | order(coalesce(publishedAt, _createdAt) desc) {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': AllPostsQueryResult;
-    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && featured == true\n    && coalesce(publishedAt, _createdAt) <= now()\n    && coalesce(language, "en") == $locale]\n  | order(coalesce(publishedAt, _createdAt) desc) {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': FeaturedPostsQueryResult;
-    '\n  *[_type == "post"\n    && metadata.slug.current == $slug\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale][0]{\n    _id,\n    title,\n    excerpt,\n    publishedAt,\n    "updatedAt": _updatedAt,\n    featured,\n    language,\n    // Project the body with module-aware reference expansion. Plain\n    // PortableText blocks pass through unchanged via the spread; module\n    // blocks (module.quote-list, etc.) get their refs dereferenced via\n    // MODULES_FRAGMENT. Without this, modules embedded inline render\n    // with empty quotes / people.\n    body[]{ \n  ...,\n  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },\n  _type == "module.hero" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.pricing" => {\n    tiers[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.callout" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.card-list" => {\n    cards[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.gallery" => {\n    images[]{\n      _key,\n      "url": asset->url,\n      "alt": coalesce(alt, ""),\n      "lqip": asset->metadata.lqip,\n      "aspectRatio": asset->metadata.dimensions.aspectRatio,\n      "width": asset->metadata.dimensions.width,\n      "height": asset->metadata.dimensions.height\n    }\n  },\n  _type == "module.person-list" => {\n    people[]->{\n      _id, name, role, bio,\n      image { asset->{ url } },\n      social[] { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n    }\n  },\n  _type == "module.quote-list" => {\n    "quotes": quotes[]->{\n      _id, content, author, role, language,\n      image { asset->{ url } }\n    }\n  },\n  _type == "module.blog-post-list" => {\n    categories[]->{ _id }\n  }\n },\n    "slug": metadata.slug.current,\n    metadata {\n      title,\n      description,\n      noIndex,\n      "video": coalesce(videoFile.asset->url, videoUrl),\n      videoAutoplay,\n      videoControls,\n      image { asset->{ url, metadata }, alt },\n      llmsSummary,\n      llmsFull\n    },\n    authors[]->{ name, position, "slug": slug.current, image { asset->{ url } } },\n    categories[]->{ _id, title, "slug": slug.current },\n    tags[]->{ _id, title, "slug": slug.current },\n    series->{\n      title,\n      "slug": slug.current,\n      // Sibling parts, ordered \u2014 drives the on-post "Part N of M" nav. Same\n      // public filter as the listings so unpublished/scheduled parts drop out.\n      "parts": *[_type == "post"\n        && references(^._id)\n        && defined(metadata.slug.current)\n        && metadata.noIndex != true\n        && metadata.unpublished != true\n        && coalesce(publishedAt, _createdAt) <= now()\n        && coalesce(language, "en") == $locale]\n        | order(coalesce(seriesOrder, 9999) asc, coalesce(publishedAt, _createdAt) asc){\n          _id, title, "slug": metadata.slug.current\n        }\n    },\n    // Derived \u2014 keep these in the same shape the components expect.\n    "readTime": round(length(string::split(pt::text(body), " ")) / 200),\n    "headings": body[style in ["h2", "h3", "h4"]]{\n      style,\n      "text": pt::text(@)\n    }\n  }\n': PostBySlugQueryResult;
-    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && _id != $id\n    && coalesce(publishedAt, _createdAt) <= now()\n    && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]\n  | order(coalesce(publishedAt, _createdAt) desc)[0...3] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': RelatedPostsQueryResult;
+    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(publishedAt, _createdAt) <= now()\n    && coalesce(language, "en") == $locale]\n  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc) {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': AllPostsQueryResult;
+    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && featured == true\n    && coalesce(publishedAt, _createdAt) <= now()\n    && coalesce(language, "en") == $locale]\n  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc) {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': FeaturedPostsQueryResult;
+    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && _id != $id\n    && coalesce(publishedAt, _createdAt) <= now()\n    && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]\n  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[0...3] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': RelatedPostsQueryResult;
     '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.unpublished != true\n    && coalesce(publishedAt, _createdAt) <= now()]{\n    "slug": metadata.slug.current,\n    "language": coalesce(language, "en")\n  }\n': AllPostSlugsQueryResult;
-    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(publishedAt, _createdAt) <= now()\n    && coalesce(language, "en") == $locale]\n  | order(coalesce(publishedAt, _createdAt) desc) {\n    title,\n    publishedAt,\n    "slug": metadata.slug.current,\n    metadata { title, description, image { asset->{ url } } },\n    authors[]->{ name },\n    categories[]->{ title }\n  }\n': RssPostsQueryResult;
+    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(publishedAt, _createdAt) <= now()\n    && coalesce(language, "en") == $locale]\n  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc) {\n    title,\n    publishedAt,\n    "slug": metadata.slug.current,\n    metadata { title, description, image { asset->{ url } } },\n    authors[]->{ name },\n    categories[]->{ title }\n  }\n': RssPostsQueryResult;
     '\n  *[_type == "series"\n    && slug.current == $slug\n    && seo.unpublished != true\n    && coalesce(language, "en") == $locale][0]{\n    _id,\n    title,\n    description,\n    "slug": slug.current,\n    \n  seo {\n    noIndex,\n    hideFromDiscovery,\n    unpublished,\n    title,\n    description,\n    image { asset->{ url, metadata }, alt }\n  }\n\n  }\n': SeriesBySlugQueryResult;
     '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(publishedAt, _createdAt) <= now()\n    && coalesce(language, "en") == $locale\n    && series->slug.current == $slug]\n  | order(coalesce(seriesOrder, 9999) asc, coalesce(publishedAt, _createdAt) asc)[$start...$end] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': PostsBySeriesSlugQueryResult;
     '\n  count(*[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && coalesce(publishedAt, _createdAt) <= now()\n    && series->slug.current == $slug])\n': PostsBySeriesCountQueryResult;
     '\n  *[_type == "series" && defined(slug.current)\n    && seo.noIndex != true\n    && seo.unpublished != true]{\n    "slug": slug.current,\n    "language": coalesce(language, "en")\n  }\n': AllSeriesSlugsQueryResult;
-    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(publishedAt, _createdAt) <= now()\n    && coalesce(language, "en") == $locale\n    && (\n      title match $q\n      || excerpt match $q\n      || metadata.description match $q\n      || pt::text(body) match $q\n    )]\n  | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': SearchPostsQueryResult;
-    '\n  *[_type == "blog"][0]{\n    postModules[]{ \n  ...,\n  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },\n  _type == "module.hero" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.pricing" => {\n    tiers[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.callout" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.card-list" => {\n    cards[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.gallery" => {\n    images[]{\n      _key,\n      "url": asset->url,\n      "alt": coalesce(alt, ""),\n      "lqip": asset->metadata.lqip,\n      "aspectRatio": asset->metadata.dimensions.aspectRatio,\n      "width": asset->metadata.dimensions.width,\n      "height": asset->metadata.dimensions.height\n    }\n  },\n  _type == "module.person-list" => {\n    people[]->{\n      _id, name, role, bio,\n      image { asset->{ url } },\n      social[] { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n    }\n  },\n  _type == "module.quote-list" => {\n    "quotes": quotes[]->{\n      _id, content, author, role, language,\n      image { asset->{ url } }\n    }\n  },\n  _type == "module.blog-post-list" => {\n    categories[]->{ _id }\n  }\n },\n    comments,\n    \n  seo {\n    noIndex,\n    hideFromDiscovery,\n    unpublished,\n    title,\n    description,\n    image { asset->{ url, metadata }, alt }\n  }\n\n  }\n': BlogSingletonQueryResult;
+    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(publishedAt, _createdAt) <= now()\n    && coalesce(language, "en") == $locale\n    && (\n      title match $q\n      || excerpt match $q\n      || metadata.description match $q\n      || pt::text(body) match $q\n    )]\n  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[0...$limit] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': SearchPostsQueryResult;
     '*[_type == "blog"][0].display': BlogDisplayQueryResult;
     '\n  *[_type == "comment" && post._ref == $postId && approved == true]\n  | order(coalesce(createdAt, _createdAt) asc) {\n    _id,\n    authorName,\n    body,\n    "parentId": parent._ref,\n    "createdAt": coalesce(createdAt, _createdAt)\n  }\n': ApprovedCommentsQueryResult;
     '\n  *[_type == "category"\n    && coalesce(language, "en") == $locale\n    && defined(slug.current)\n    && seo.hideFromDiscovery != true\n    && seo.unpublished != true\n    && count(*[_type == "post"\n      && references(^._id)\n      && coalesce(language, "en") == $locale\n      && metadata.noIndex != true\n      && metadata.unpublished != true]) > 0\n  ] | order(title asc) {\n    _id,\n    title,\n    description,\n    "slug": slug.current,\n    "postCount": count(*[_type == "post"\n      && references(^._id)\n      && coalesce(language, "en") == $locale\n      && metadata.noIndex != true\n      && metadata.unpublished != true])\n  }\n': CategoriesForLocaleQueryResult;
     '\n  *[_type == "category"\n    && slug.current == $slug\n    && seo.unpublished != true\n    && coalesce(language, "en") == $locale][0]{\n    _id,\n    title,\n    description,\n    "slug": slug.current,\n    "postCount": count(*[_type == "post"\n      && references(^._id)\n      && coalesce(language, "en") == $locale\n      && metadata.noIndex != true\n      && metadata.unpublished != true]),\n    \n  seo {\n    noIndex,\n    hideFromDiscovery,\n    unpublished,\n    title,\n    description,\n    image { asset->{ url, metadata }, alt }\n  }\n\n  }\n': CategoryBySlugQueryResult;
-    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && coalesce(publishedAt, _createdAt) <= now()\n    && count(categories[@->slug.current == $slug]) > 0]\n  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': PostsByCategorySlugQueryResult;
+    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && coalesce(publishedAt, _createdAt) <= now()\n    && count(categories[@->slug.current == $slug]) > 0]\n  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[$start...$end] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': PostsByCategorySlugQueryResult;
     '\n  count(*[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && coalesce(publishedAt, _createdAt) <= now()\n    && count(categories[@->slug.current == $slug]) > 0])\n': PostsByCategoryCountQueryResult;
     '\n  *[_type == "category" && defined(slug.current)\n    && seo.noIndex != true\n    && seo.unpublished != true]{\n    "slug": slug.current,\n    "language": coalesce(language, "en")\n  }\n': AllCategorySlugsQueryResult;
     '\n  *[_type == "tag"\n    && coalesce(language, "en") == $locale\n    && defined(slug.current)\n    && seo.hideFromDiscovery != true\n    && seo.unpublished != true\n    && count(*[_type == "post"\n      && references(^._id)\n      && coalesce(language, "en") == $locale\n      && metadata.noIndex != true\n      && metadata.unpublished != true]) > 0\n  ] | order(title asc) {\n    \n  _id,\n  title,\n  description,\n  "slug": slug.current,\n  "postCount": count(*[_type == "post"\n    && references(^._id)\n    && coalesce(language, "en") == $locale\n    && metadata.noIndex != true\n    && metadata.unpublished != true]),\n  \n  seo {\n    noIndex,\n    hideFromDiscovery,\n    unpublished,\n    title,\n    description,\n    image { asset->{ url, metadata }, alt }\n  }\n\n\n  }\n': TagsForLocaleQueryResult;
     '\n  *[_type == "tag"\n    && slug.current == $slug\n    && seo.unpublished != true\n    && coalesce(language, "en") == $locale][0]{\n    \n  _id,\n  title,\n  description,\n  "slug": slug.current,\n  "postCount": count(*[_type == "post"\n    && references(^._id)\n    && coalesce(language, "en") == $locale\n    && metadata.noIndex != true\n    && metadata.unpublished != true]),\n  \n  seo {\n    noIndex,\n    hideFromDiscovery,\n    unpublished,\n    title,\n    description,\n    image { asset->{ url, metadata }, alt }\n  }\n\n\n  }\n': TagBySlugQueryResult;
-    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && coalesce(publishedAt, _createdAt) <= now()\n    && count(tags[@->slug.current == $slug]) > 0]\n  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': PostsByTagSlugQueryResult;
+    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && coalesce(publishedAt, _createdAt) <= now()\n    && count(tags[@->slug.current == $slug]) > 0]\n  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[$start...$end] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': PostsByTagSlugQueryResult;
     '\n  count(*[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && coalesce(publishedAt, _createdAt) <= now()\n    && count(tags[@->slug.current == $slug]) > 0])\n': PostsByTagCountQueryResult;
     '\n  *[_type == "tag" && defined(slug.current)\n    && seo.noIndex != true\n    && seo.unpublished != true]{\n    "slug": slug.current,\n    "language": coalesce(language, "en")\n  }\n': AllTagSlugsQueryResult;
     '\n  *[_type == "author"\n    && coalesce(language, "en") == $locale\n    && defined(slug.current)\n    && seo.hideFromDiscovery != true\n    && seo.unpublished != true\n    && count(*[_type == "post"\n      && references(^._id)\n      && coalesce(language, "en") == $locale\n      && metadata.noIndex != true\n      && metadata.unpublished != true]) > 0\n  ] | order(name asc) {\n    \n  _id,\n  name,\n  position,\n  "slug": slug.current,\n  "bio": pt::text(bio),\n  image { asset->{ url } },\n  social[]{ platform, url },\n  \n  seo {\n    noIndex,\n    hideFromDiscovery,\n    unpublished,\n    title,\n    description,\n    image { asset->{ url, metadata }, alt }\n  }\n\n,\n    "postCount": count(*[_type == "post"\n      && references(^._id)\n      && coalesce(language, "en") == $locale\n      && metadata.noIndex != true\n      && metadata.unpublished != true])\n  }\n': AuthorsForLocaleQueryResult;
     '\n  *[_type == "author"\n    && slug.current == $slug\n    && coalesce(language, "en") == $locale\n    && seo.unpublished != true][0]{\n    \n  _id,\n  name,\n  position,\n  "slug": slug.current,\n  "bio": pt::text(bio),\n  image { asset->{ url } },\n  social[]{ platform, url },\n  \n  seo {\n    noIndex,\n    hideFromDiscovery,\n    unpublished,\n    title,\n    description,\n    image { asset->{ url, metadata }, alt }\n  }\n\n\n  }\n': AuthorBySlugQueryResult;
-    '\n  *[_type == "post"\n    && $slug in authors[]->slug.current\n    && coalesce(publishedAt, _createdAt) <= now()\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale]\n  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': PostsByAuthorSlugQueryResult;
+    '\n  *[_type == "post"\n    && $slug in authors[]->slug.current\n    && coalesce(publishedAt, _createdAt) <= now()\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale]\n  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[$start...$end] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': PostsByAuthorSlugQueryResult;
     '\n  count(*[_type == "post"\n    && $slug in authors[]->slug.current\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && coalesce(publishedAt, _createdAt) <= now()])\n': PostsByAuthorCountQueryResult;
     '\n  *[_type == "author" && defined(slug.current)\n    && seo.noIndex != true\n    && seo.unpublished != true]{\n    "slug": slug.current,\n    "language": coalesce(language, "en")\n  }\n': AllAuthorSlugsQueryResult;
     '\n  *[_type == $type && defined(slug.current)\n    && seo.noIndex != true\n    && seo.unpublished != true\n    && coalesce(language, "en") == $locale]\n    | order(coalesce(title, name) asc){\n    "slug": slug.current,\n    "title": coalesce(title, name),\n    "summary": coalesce(seo.llmsSummary, seo.description, description, pt::text(bio)),\n    "full": seo.llmsFull\n  }\n': TaxonomyForLlmsQueryResult;
-    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && (count($categoryIds) == 0 || count((categories[]._ref)[@ in $categoryIds]) > 0)\n    && coalesce(publishedAt, _createdAt) <= now()\n    && (!$featuredOnly || featured == true)]\n  | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': ModuleBlogPostListQueryResult;
-    '\n  *[_id == $id][0]{\n    "pageModules": pageModules[hidden != true]{ \n  ...,\n  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },\n  _type == "module.hero" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.pricing" => {\n    tiers[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.callout" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.card-list" => {\n    cards[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.gallery" => {\n    images[]{\n      _key,\n      "url": asset->url,\n      "alt": coalesce(alt, ""),\n      "lqip": asset->metadata.lqip,\n      "aspectRatio": asset->metadata.dimensions.aspectRatio,\n      "width": asset->metadata.dimensions.width,\n      "height": asset->metadata.dimensions.height\n    }\n  },\n  _type == "module.person-list" => {\n    people[]->{\n      _id, name, role, bio,\n      image { asset->{ url } },\n      social[] { \n  ...,\n  "href": select(\n    type == "internal" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n    }\n  },\n  _type == "module.quote-list" => {\n    "quotes": quotes[]->{\n      _id, content, author, role, language,\n      image { asset->{ url } }\n    }\n  },\n  _type == "module.blog-post-list" => {\n    categories[]->{ _id }\n  }\n }\n  }\n': HomePageQueryResult;
-    '\n  *[_type == "legalPage"\n    && pageKey == $pageKey\n    && coalesce(language, "en") == $locale][0]{\n    title,\n    lastUpdated,\n    body\n  }\n': LegalPageQueryResult;
-    '\n  *[_type == "legalPage" && pageKey == "confidentialite"] | order(lastUpdated desc)[0].lastUpdated\n': ConsentPolicyVersionQueryResult;
+    '\n  *[_type == "post"\n    && defined(metadata.slug.current)\n    && metadata.noIndex != true\n    && metadata.hideFromDiscovery != true\n    && metadata.unpublished != true\n    && coalesce(language, "en") == $locale\n    && (count($categoryIds) == 0 || count((categories[]._ref)[@ in $categoryIds]) > 0)\n    && coalesce(publishedAt, _createdAt) <= now()\n    && (!$featuredOnly || featured == true)]\n  | order(coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc)[0...$limit] {\n    \n  _id,\n  title,\n  excerpt,\n  publishedAt,\n  featured,\n  language,\n  "slug": metadata.slug.current,\n  metadata {\n    title,\n    description,\n    noIndex,\n    "video": coalesce(videoFile.asset->url, videoUrl),\n    videoAutoplay,\n    videoControls,\n    image { asset->{ url, metadata }, alt },\n    llmsSummary\n  },\n  authors[]->{\n    _id, name, position, "slug": slug.current,\n    "bio": pt::text(bio),\n    image { asset->{ url } }\n  },\n  categories[]->{ _id, title, "slug": slug.current },\n  tags[]->{ _id, title, "slug": slug.current }\n\n  }\n': ModuleBlogPostListQueryResult;
+    '\n  *[_type == "page" && isHome == true && language == $locale][0]{\n    "pageModules": sections[hidden != true]{ \n  ...,\n  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },\n  _type == "module.hero" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.pricing" => {\n    tiers[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.callout" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.card-list" => {\n    cards[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.gallery" => {\n    images[]{\n      _key,\n      "url": asset->url,\n      "alt": coalesce(alt, ""),\n      "lqip": asset->metadata.lqip,\n      "aspectRatio": asset->metadata.dimensions.aspectRatio,\n      "width": asset->metadata.dimensions.width,\n      "height": asset->metadata.dimensions.height\n    }\n  },\n  _type == "module.person-list" => {\n    people[]->{\n      _id, name, role, bio,\n      image { asset->{ url } },\n      social[] { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n    }\n  },\n  _type == "module.quote-list" => {\n    "quotes": quotes[]->{\n      _id, content, author, role, language,\n      image { asset->{ url } }\n    }\n  },\n  _type == "module.lead-magnet" => { magnet->{ "id": _id } }\n }\n  }\n': HomePageQueryResult;
     '\n  *[_id == "navigation"][0]{\n    header[]{\n      label, linkType, route, external, newTab, icon, description,\n      "children": children[]{ label, linkType, route, external, newTab, icon, description }\n    },\n    footerColumns[]{\n      title,\n      "links": links[]{ label, linkType, route, external, newTab }\n    }\n  }\n': NavigationQueryResult;
+    '\n  *[_type == "page" && isHome != true && slug.current == $slug && language == $locale][0]{\n    title,\n    seo{ ..., image{ asset->{ url }, alt } },\n    "sections": sections[hidden != true]{ \n  ...,\n  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },\n  _type == "module.hero" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.pricing" => {\n    tiers[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.callout" => { cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } },\n  _type == "module.card-list" => {\n    cards[] { ..., cta { \n  ...,\n  link { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n } }\n  },\n  _type == "module.gallery" => {\n    images[]{\n      _key,\n      "url": asset->url,\n      "alt": coalesce(alt, ""),\n      "lqip": asset->metadata.lqip,\n      "aspectRatio": asset->metadata.dimensions.aspectRatio,\n      "width": asset->metadata.dimensions.width,\n      "height": asset->metadata.dimensions.height\n    }\n  },\n  _type == "module.person-list" => {\n    people[]->{\n      _id, name, role, bio,\n      image { asset->{ url } },\n      social[] { \n  ...,\n  "href": select(\n    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,\n    type == "internal" && internal->_type == "post" => "/blog/" + internal->metadata.slug.current,\n    type == "external" => external,\n    ""\n  )\n }\n    }\n  },\n  _type == "module.quote-list" => {\n    "quotes": quotes[]->{\n      _id, content, author, role, language,\n      image { asset->{ url } }\n    }\n  },\n  _type == "module.lead-magnet" => { magnet->{ "id": _id } }\n }\n  }\n': PageBySlugQueryResult;
+    '\n  *[_type == "page" && isHome != true && defined(slug.current) && seo.unpublished != true]{\n    "slug": slug.current,\n    "locale": language\n  }\n': AllPageParamsQueryResult;
+    '\n  *[_type == "page" && isHome != true && defined(slug.current)\n    && seo.unpublished != true && seo.noIndex != true && seo.hideFromDiscovery != true]{\n    "slug": slug.current,\n    "language": language\n  }\n': SitemapPagesQueryResult;
     '\n  *[_id == $id][0]{\n    tagline,\n    description,\n    keywords,\n    "ogImage": ogImage.asset->url,\n    "ogImageAlt": ogImage.alt,\n    "pageSeo": pageSeo[]{\n      pageId,\n      title,\n      description,\n      keywords,\n      "ogImage": ogImage.asset->url,\n      "ogImageAlt": ogImage.alt,\n      "schemaImage": schemaImage.asset->url,\n      canonical,\n      noindex,\n      llmsSummary,\n      llmsFull,\n      "structuredData": structuredData[]{\n        schemaType,\n        name,\n        description,\n        url,\n        "image": image.asset->url,\n        price,\n        priceCurrency\n      }\n    },\n    llms{\n      summary,\n      paragraph,\n      full,\n      "resources": resources[]{ name, href }\n    }\n  }\n': SiteSeoQueryResult;
     "\n  *[_id == $id][0].systemPages{\n    maintenance{ status, title, body, contact },\n    notFound{ eyebrow, title, description, homeLabel }\n  }\n": SystemPagesQueryResult;
     "\n  *[_id == $id][0].taxonomyPages{\n    category{ heading, subheading, empty },\n    tag{ heading, subheading, empty },\n    author{ heading, subheading, empty }\n  }\n": TaxonomyPagesQueryResult;

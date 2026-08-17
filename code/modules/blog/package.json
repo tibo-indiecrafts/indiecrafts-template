@@ -12,6 +12,7 @@
     "@indiecrafts/format": "workspace:*",
     "@indiecrafts/i18n": "workspace:*",
     "@indiecrafts/logger": "workspace:*",
+    "@indiecrafts/page-builder": "workspace:*",
     "@indiecrafts/sanity": "workspace:*",
     "@indiecrafts/ui": "workspace:*",
     "@indiecrafts/ui-components": "workspace:*",

@@ -40,7 +40,7 @@ bricks:
 
 1. **`exports`** — `"./*": "./src/*"` (no extension in the map; Next resolves the
    dir-index / `.ts` / `.tsx` at runtime).
-2. **tsconfig `paths`** in `code/apps/web/tsconfig.json`:
+2. **tsconfig `paths`** in `code/projects/web/tsconfig.json`:
    `"@indiecrafts/blog/*": ["../../modules/blog/src/*"]` — needed because the wildcard has
    no extension (the other bricks resolve via workspace symlinks + `exports`).
 3. **`transpilePackages`** in `next.config.ts` lists `@indiecrafts/blog` alongside every

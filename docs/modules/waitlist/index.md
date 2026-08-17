@@ -6,7 +6,7 @@ out of the box with **no API keys** — a signup lands as a Sanity `waitlistEntr
 Studio. **Collect + export only** — no runtime gating. Modeled on the [newsletter](../newsletter/).
 
 Lives in the **`@indiecrafts/waitlist`** module (`code/modules/waitlist`): the join engine, the
-`waitlistEntry` doc, and an editable **`waitlistSettings`** singleton — a one-line `composeSanity`
+`waitlistEntry` doc, and an editable **`waitlistSettings`** singleton — a one-line `composeStudio`-group
 contribution. The public form stays a page-builder block (renderer in `@indiecrafts/ui-components`).
 
 ## One switch

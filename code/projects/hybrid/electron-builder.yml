@@ -1,0 +1,17 @@
+# electron-builder — packages the app into installers (.dmg / .exe / .AppImage).
+# Deploy = ship these artifacts (code-sign + notarize for distribution) — NOT wrangler.
+# Per client, rename appId + productName (extend `project:rename` to cover them).
+appId: dev.indiecrafts.hybrid
+productName: indiecrafts
+directories:
+  output: release
+files:
+  # electron-vite builds to out/ (see electron.vite.config.ts + package.json main).
+  - out/**
+mac:
+  category: public.app-category.productivity
+  target: [dmg]
+win:
+  target: [nsis]
+linux:
+  target: [AppImage]

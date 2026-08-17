@@ -1,4 +1,5 @@
 import { defineQuery } from "next-sanity";
+import { MODULES_FRAGMENT as GENERIC_MODULES_FRAGMENT } from "@indiecrafts/page-builder/sanity/queries";
 
 /**
  * GROQ queries — `defineQuery` flags them for future `sanity typegen`
@@ -73,72 +74,25 @@ const AUTHOR_FRAGMENT = `
 `;
 
 /**
- * Link fragment — resolves the internal/external union into a single
- * `href` string plus the original label. Internal references get
- * `/blog/<slug>`; external URLs pass through. Empty string when nothing
- * is set.
- */
-const LINK_FRAGMENT = `
-  ...,
-  "href": select(
-    type == "internal" => "/blog/" + internal->metadata.slug.current,
-    type == "external" => external,
-    ""
-  )
-`;
-
-const CTA_FRAGMENT = `
-  ...,
-  link { ${LINK_FRAGMENT} }
-`;
-
-/**
- * Modules fragment — expands every referenced field per module type.
- * `quote-list` dereferences all its quotes (each carries a `language`
- * field, but they're not `$locale`-filtered here); other refs (people)
- * aren't locale-tagged.
+ * Modules fragment — the generic page-builder projection
+ * (`@indiecrafts/page-builder`) plus the blog-specific `blog-post-list`. Used by
+ * post bodies (inline modules) + the blog singleton's `postModules`.
  */
 export const MODULES_FRAGMENT = `
-  ...,
-  _type == "image" => { asset->{ url }, "alt": coalesce(alt, "") },
-  _type == "module.hero" => { cta { ${CTA_FRAGMENT} } },
-  _type == "module.pricing" => {
-    tiers[] { ..., cta { ${CTA_FRAGMENT} } }
-  },
-  _type == "module.callout" => { cta { ${CTA_FRAGMENT} } },
-  _type == "module.card-list" => {
-    cards[] { ..., cta { ${CTA_FRAGMENT} } }
-  },
-  _type == "module.gallery" => {
-    images[]{
-      _key,
-      "url": asset->url,
-      "alt": coalesce(alt, ""),
-      "lqip": asset->metadata.lqip,
-      "aspectRatio": asset->metadata.dimensions.aspectRatio,
-      "width": asset->metadata.dimensions.width,
-      "height": asset->metadata.dimensions.height
-    }
-  },
-  _type == "module.person-list" => {
-    people[]->{
-      _id, name, role, bio,
-      image { asset->{ url } },
-      social[] { ${LINK_FRAGMENT} }
-    }
-  },
-  _type == "module.quote-list" => {
-    "quotes": quotes[]->{
-      _id, content, author, role, language,
-      image { asset->{ url } }
-    }
-  },
+  ${GENERIC_MODULES_FRAGMENT},
   _type == "module.blog-post-list" => {
     categories[]->{ _id }
   }
 `;
 
 // ─── Queries ───────────────────────────────────────────────────
+
+/**
+ * Public listing order — the editor's manual `priority` (desc) first, then
+ * newest. `coalesce(priority, 0)` so an unranked post falls through to pure
+ * date order. Series listings keep their own `seriesOrder` sort.
+ */
+const ORDER_BY_PRIORITY = `coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc`;
 
 /**
  * All public posts, locale-filtered.
@@ -152,7 +106,7 @@ export const allPostsQuery = defineQuery(`
     && metadata.unpublished != true
     && coalesce(publishedAt, _createdAt) <= now()
     && coalesce(language, "en") == $locale]
-  | order(coalesce(publishedAt, _createdAt) desc) {
+  | order(${ORDER_BY_PRIORITY}) {
     ${POST_LIST_FRAGMENT}
   }
 `);
@@ -164,7 +118,7 @@ export const featuredPostsQuery = defineQuery(`
     && featured == true
     && coalesce(publishedAt, _createdAt) <= now()
     && coalesce(language, "en") == $locale]
-  | order(coalesce(publishedAt, _createdAt) desc) {
+  | order(${ORDER_BY_PRIORITY}) {
     ${POST_LIST_FRAGMENT}
   }
 `);
@@ -245,7 +199,7 @@ export const relatedPostsQuery = defineQuery(`
     && _id != $id
     && coalesce(publishedAt, _createdAt) <= now()
     && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]
-  | order(coalesce(publishedAt, _createdAt) desc)[0...3] {
+  | order(${ORDER_BY_PRIORITY})[0...3] {
     ${POST_LIST_FRAGMENT}
   }
 `);
@@ -273,7 +227,7 @@ export const rssPostsQuery = defineQuery(`
     && metadata.unpublished != true
     && coalesce(publishedAt, _createdAt) <= now()
     && coalesce(language, "en") == $locale]
-  | order(coalesce(publishedAt, _createdAt) desc) {
+  | order(${ORDER_BY_PRIORITY}) {
     title,
     publishedAt,
     "slug": metadata.slug.current,
@@ -360,7 +314,7 @@ export const searchPostsQuery = defineQuery(`
       || metadata.description match $q
       || pt::text(body) match $q
     )]
-  | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] {
+  | order(${ORDER_BY_PRIORITY})[0...$limit] {
     ${POST_LIST_FRAGMENT}
   }
 `);
@@ -465,7 +419,7 @@ export const postsByCategorySlugQuery = defineQuery(`
     && coalesce(language, "en") == $locale
     && coalesce(publishedAt, _createdAt) <= now()
     && count(categories[@->slug.current == $slug]) > 0]
-  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {
+  | order(${ORDER_BY_PRIORITY})[$start...$end] {
     ${POST_LIST_FRAGMENT}
   }
 `);
@@ -542,7 +496,7 @@ export const postsByTagSlugQuery = defineQuery(`
     && coalesce(language, "en") == $locale
     && coalesce(publishedAt, _createdAt) <= now()
     && count(tags[@->slug.current == $slug]) > 0]
-  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {
+  | order(${ORDER_BY_PRIORITY})[$start...$end] {
     ${POST_LIST_FRAGMENT}
   }
 `);
@@ -620,7 +574,7 @@ export const postsByAuthorSlugQuery = defineQuery(`
     && metadata.hideFromDiscovery != true
     && metadata.unpublished != true
     && coalesce(language, "en") == $locale]
-  | order(coalesce(publishedAt, _createdAt) desc)[$start...$end] {
+  | order(${ORDER_BY_PRIORITY})[$start...$end] {
     ${POST_LIST_FRAGMENT}
   }
 `);
@@ -680,7 +634,7 @@ export const moduleBlogPostListQuery = defineQuery(`
     && (count($categoryIds) == 0 || count((categories[]._ref)[@ in $categoryIds]) > 0)
     && coalesce(publishedAt, _createdAt) <= now()
     && (!$featuredOnly || featured == true)]
-  | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] {
+  | order(${ORDER_BY_PRIORITY})[0...$limit] {
     ${POST_LIST_FRAGMENT}
   }
 `);

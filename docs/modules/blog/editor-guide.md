@@ -62,6 +62,7 @@ The post document has a hidden `language` field (set by the language leaf you en
 | **Catégories** | Reference array, language-filtered. A post can sit in several. |
 | **Tags** | Reference array, language-filtered. Each tag gets `/blog/tag/<slug>`. |
 | **Mis en avant** | Boolean. When true the post is eligible for the featured hero grid on `/blog` (`featuredPostsQuery`). |
+| **Priorité de classement** | A slider (0–10). Ranks the post **above the date order** in every listing — search, category, tag, author, related, RSS, and the `blog-post-list` module. `0` = ranked by date (the default); higher pins it toward the top. Distinct from **Mis en avant**: featured picks _which_ posts show in the hero block; priority sets _the order_ within a listing. |
 | **Série** | Optional. Attach the post to a series (a multi-part guide). Create series under **Blog → Séries**. Empty = standalone post. |
 | **Ordre dans la série** | The post's position in the series (1, 2, 3…). Shown only when a **Série** is set. Empty = ordered by date. |
 | **Corps** | The rich-text body — see [§4](#4-the-body-editor). |
@@ -170,7 +171,7 @@ Two top-level sections hold docs you pick from inside modules:
 - **Témoignages** (quote docs) — author + role + body + portrait. Insert a Citations (quote list) module and pick existing testimonials; editing the doc updates every post that references it.
 - **Équipe** (person docs) — used by the Personnes (person list) module, same pattern.
 
-Create via **Témoignages** / **Équipe → + Create**. Both are language-split — create the doc in the locale you'll reference it from. _(These are promoted to first-class domains; a future release generalizes them to full `testimonial` / `team` entities — see `temp-sanity.md` Pack 1.)_
+Create via **Témoignages** / **Équipe → + Create**. Both are language-split — create the doc in the locale you'll reference it from. _(These are promoted to first-class domains; a future release generalizes them to full `testimonial` / `team` entities.)_
 
 ---
 

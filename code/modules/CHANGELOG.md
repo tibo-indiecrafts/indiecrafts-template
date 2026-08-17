@@ -4,7 +4,7 @@ One record for the product modules under `code/modules/`. Every change that adds
 or reshapes a module's public surface or wiring lands here in plain language with the _why_.
 Rolls up to the [root `CHANGELOG.md`](../../CHANGELOG.md) at release.
 
-**Not here:** app behavior/routes/tokens → [`code/apps/web/CHANGELOG.md`](../apps/web/CHANGELOG.md);
+**Not here:** app behavior/routes/tokens → [`code/projects/web/CHANGELOG.md`](../apps/web/CHANGELOG.md);
 shared bricks → [`code/packages/CHANGELOG.md`](../packages/CHANGELOG.md); docs-site →
 [`docs/CHANGELOG.md`](../../docs/CHANGELOG.md).
 
@@ -15,6 +15,33 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **blog — page-builder extracted to `@indiecrafts/page-builder`.** The blog held the generic
+  page-builder (16 blocks + `blockContent`/`link`/`cta` + `quote`/`person`) even though the app's
+  marketing pages used it. Moved all of it to the new `@indiecrafts/page-builder` package; the blog now
+  owns only its docs (`post`/`author`/`category`/`tag`/`series`/`comment` + `metadata`) and its **3**
+  blog-specific blocks (`blog-index`, `blog-post-*`), and imports `MODULES_FRAGMENT` + `defineModule`
+  from the package (composing its own `blog-post-list` projection on top). Desk sections Témoignages
+  (`quote`) + Équipe (`person`) moved to the page-builder desk. _Why:_ decouple site-wide page-building
+  from the blog feature — a marketing/admin app can now build pages without pulling in the blog.
+- **Lead magnet — capture block + gated delivery (newsletter + blog).** A new `module.lead-magnet`
+  page-builder block (schema in blog, renderer in `@indiecrafts/ui-components`, inline-embeddable)
+  captures an e-mail against a referenced `leadMagnet` document, then — after double opt-in — e-mails
+  a signed, expiring download link. **One subscriber list:** a magnet lead is a normal `subscriber`
+  tagged `source: "lead-magnet"` + the magnet id in `tags` (no second list). New `leadMagnet` document
+  (title · file · enabled) + a desk section in the newsletter module; `lib/deliver-magnet.ts` signs the
+  link (`@indiecrafts/gated-delivery`) and delivers on confirm (`confirm.ts`), best-effort. _Why:_
+  inbound lead-gen that reuses the existing capture + opt-in + subscriber list, not a parallel system.
+- **blog — post `priority` ranking (slider).** A new **Priorité de classement** field on `post` (a
+  native `<input type="range">` slider, 0–10) ranks a post **above the date order** in every public
+  listing. All 9 listing queries (all-posts · featured · related · search · category · tag · author ·
+  RSS · the `blog-post-list` module) now sort by a shared `ORDER_BY_PRIORITY`
+  (`coalesce(priority, 0) desc, coalesce(publishedAt, _createdAt) desc`); `0`/unset falls through to
+  pure date order, so existing content is unaffected. Series listings keep their own `seriesOrder`
+  sort. The slider is the **only custom Studio input** in the repo — kept dependency-free on purpose
+  (`sanity/components/PrioritySlider.tsx`, no `@sanity/ui`/Radix). `priority` is read straight by
+  `order()` (not projected), so types/renderers/typegen are untouched. Distinct from `featured`
+  (which _picks_ the hero posts); priority sets _the order_. Editor doc:
+  [`docs/modules/blog/editor-guide.md`](../../docs/modules/blog/editor-guide.md).
 - **blog · newsletter · waitlist — each module now owns its E-mails groups.** The transactional-email
   config that used to live in `@indiecrafts/email` moved **into the modules** (`src/sanity/email.ts`,
   exported as `emailGroups` on each `SanityModule` barrel): blog → `commentNotification`; newsletter →
@@ -86,11 +113,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 - **Studio desk: `quote`/`person` promoted to top-level domains.** The reference docs moved out of the
   nested **Références** list into two first-class top-level sections — **Témoignages** (`quote`, ★) +
-  **Équipe** (`person`, 👥) — via `blogStructure` (temp-sanity §7; `composeSanity` already flattens each
+  **Équipe** (`person`, 👥) — via `blogStructure` (`composeSanity` already flattens each
   owner's items, so no resolver change). Doc titles renamed (Citation → Témoignage, Personne → Membre
   d'équipe); doc **types**, fields, i18n templates, and the `quote-list` / `person-list` blocks are
   unchanged. The full generalization to `testimonial` / `team` entities (rating, company, department,
-  order + a `/team` route + a shared/core home) stays temp-sanity **Pack 1**.
+  order + a `/team` route + a shared/core home) is a future release.
 
 ### Added
 

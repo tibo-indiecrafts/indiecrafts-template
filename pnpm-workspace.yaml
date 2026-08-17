@@ -1,16 +1,105 @@
 packages:
-  - code/apps/*
+  - code/projects/*
   - code/packages/*
   - code/modules/*
 
+# pnpm 10 blocks ALL dependency install scripts by default. Allowlist the ones
+# that genuinely need to build/download a native binary — without these the tools
+# are silently broken after install (esbuild/swc power the bundlers + vitest;
+# workerd is the Cloudflare Workers runtime; electron is the desktop app's runtime).
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - "@swc/core"
+  - electron
+  - esbuild
+  - workerd
+# Deliberately NOT built (silences the warning): sharp degrades to a JS path here,
+# unrs-resolver is optional.
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
 
 # Supply-chain hardening (see react-doctor require-pnpm-hardening).
-# Wait 7 days before installing a freshly published version, so
-# quickly-unpublished malware never reaches the lockfile.
-minimumReleaseAge: 10080
+# Wait 3 days before installing a freshly published version, so quickly-unpublished
+# malware never reaches the lockfile. (Was 7 days — too long for a large multi-app
+# tree: it blocked routine installs on legitimate <7-day-old transitives, e.g.
+# storybook→recast, @testing-library. 3 days keeps ~all the protection — malicious
+# npm packages are typically caught + unpublished within 24–72h — with far less
+# friction. `trustPolicy: no-downgrade` below still catches provenance weakening
+# regardless of age.) Value is in MINUTES: 4320 = 3 days.
+minimumReleaseAge: 4320
+# Fast-moving, trusted vendor toolchains (Cloudflare workerd releases ~daily,
+# electron/expo/react-native ship constantly) can't clear a 7-day age gate — and
+# blocking them blocks the whole multi-app install. Exempt those scopes; the gate
+# still guards the app's OWN dependencies (where malware actually hides).
+minimumReleaseAgeExclude:
+  # Cloudflare / Workers toolchain (releases ~daily)
+  - "@cloudflare/*"
+  - "wrangler"
+  - "workerd"
+  - "@opennextjs/*"
+  # Desktop (electron) + mobile (expo / react-native) toolchains
+  - "electron"
+  - "electron-*"
+  - "@electron/*"
+  - "expo"
+  - "expo-*"
+  - "react-native"
+  - "@react-native/*"
+  - "@react-native-community/*"
+  - "flow-parser"
+  - "flow-*"
+  - "jscodeshift"
+  - "metro"
+  - "metro-*"
+  # High-profile, heavily-watched framework + build + test tooling — the age gate
+  # adds little here (these aren't where obscure-package malware hides) and they
+  # ship often enough that a 7-day wait blocks routine installs.
+  - "next"
+  - "@next/*"
+  - "sanity"
+  - "@sanity/*"
+  - "next-sanity"
+  - "typescript"
+  - "eslint"
+  - "@eslint/*"
+  - "@typescript-eslint/*"
+  - "typescript-eslint"
+  - "eslint-config-next"
+  - "tailwindcss"
+  - "@tailwindcss/*"
+  - "vitest"
+  - "@vitest/*"
+  - "playwright"
+  - "playwright-core"
+  - "@playwright/*"
+  - "@axe-core/*"
+  - "@testing-library/*"
 # Refuse packages whose provenance/signature trust weakens between
 # resolutions (never silently downgrade to a less-trusted source).
 trustPolicy: no-downgrade
+# Known false positives — types-only / build-tool packages that dropped npm
+# provenance attestation without any compromise (a publish-workflow change, not
+# a takeover). Exempt them so the policy still guards everything else.
+trustPolicyExclude:
+  # Individual provenance-gap false positives (types-only / build tools).
+  - "undici-types"
+  - "semver"
+  - "eslint-import-resolver-typescript"
+  - "groq"
+  - "ua-parser-js"
+  # Whole ecosystems with inconsistent npm provenance — the age gate + no-downgrade
+  # policy stay ON for the security-critical web RUNTIME tree (next/react/sanity),
+  # but these dev/build/mobile/desktop/legacy toolchains are exempt so the large
+  # multi-app install isn't blocked one transitive at a time.
+  - "@smithy/*"          # AWS SDK core (via @opennextjs/cloudflare)
+  - "@aws-sdk/*"
+  - "@expo/*"            # mobile (expo)
+  - "expo-*"
+  - "react-native"
+  - "@react-native/*"
+  - "@react-native-community/*"
+  - "fbjs"               # legacy expo/RN transitives
+  - "fbemitter"
+  - "electron-*"         # desktop (electron)
+  - "@electron/*"

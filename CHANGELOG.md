@@ -8,7 +8,7 @@ template's history at a glance.
 
 | Area | Log | Covers |
 | --- | --- | --- |
-| App (`@indiecrafts/web`) | [`code/apps/web/CHANGELOG.md`](./code/apps/web/CHANGELOG.md) | behavior, config, routes, conventions, design tokens |
+| App (`@indiecrafts/web`) | [`code/projects/web/CHANGELOG.md`](./code/projects/web/CHANGELOG.md) | behavior, config, routes, conventions, design tokens |
 | Packages (`@indiecrafts/*` bricks) | [`code/packages/CHANGELOG.md`](./code/packages/CHANGELOG.md) | a brick's public surface — exports, deps, splits |
 | Modules (product slices) | [`code/modules/CHANGELOG.md`](./code/modules/CHANGELOG.md) | a module's surface/wiring — extraction, blocks, gating |
 | Docs site | [`docs/CHANGELOG.md`](./docs/CHANGELOG.md) | pages added/removed/moved, structure, sidebar |
@@ -21,6 +21,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 ## [Unreleased]
 
 - **Navigation + footer menus moved into Sanity** (editable per client, no config fallback,
-  header dropdowns with icon + description). Detail → [app log](./code/apps/web/CHANGELOG.md).
+  header dropdowns with icon + description). Detail → [app log](./code/projects/web/CHANGELOG.md).
 - **Per-area changelog system** — this roll-up plus four area logs; app/docs/method/work each
   own their own history.

@@ -1,0 +1,117 @@
+import "server-only";
+
+import { logger } from "@indiecrafts/logger";
+import { site } from "@indiecrafts/config";
+import { writeClient } from "@indiecrafts/sanity/write";
+import { renderLeadMagnetEmail, sendEmail } from "@indiecrafts/email";
+import { getEmailStrings } from "@indiecrafts/email/strings";
+import { resolveGatedDownload, signDownloadToken } from "@indiecrafts/gated-delivery";
+
+/**
+ * Lead-magnet delivery — the step that fires AFTER a subscriber confirms their
+ * e-mail. A `module.lead-magnet` capture block tags the subscriber with the
+ * referenced `leadMagnet` doc id; on confirm (`lib/confirm.ts`) we sign a short
+ * gated-delivery token (`@indiecrafts/gated-delivery`) and e-mail the download
+ * link. The `/api/download` route verifies the token, then resolves the file URL.
+ *
+ * Delivery is gated on `LEAD_MAGNET_SECRET` (server-only, never `NEXT_PUBLIC_`) —
+ * absent, no token can be signed or verified, so the feature is off. The link is
+ * signed + expiring, not single-use.
+ */
+const SECRET = process.env.LEAD_MAGNET_SECRET;
+const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+/** Subscriber-locale delivery copy. Kept minimal; a magnet's title is interpolated. */
+const COPY = {
+  fr: {
+    subject: "Votre document est prêt",
+    heading: "Merci — voici votre document",
+    intro: (title: string) =>
+      `Cliquez sur le bouton ci-dessous pour télécharger « ${title} ». Le lien expire dans 7 jours.`,
+    buttonLabel: "Télécharger le document",
+  },
+  en: {
+    subject: "Your download is ready",
+    heading: "Thanks — here's your download",
+    intro: (title: string) =>
+      `Click the button below to download “${title}”. The link expires in 7 days.`,
+    buttonLabel: "Download the file",
+  },
+} as const;
+
+type Magnet = { _id: string; title?: string };
+
+/** Fetch an enabled magnet that has a file, by id. Null = not a magnet / disabled. */
+async function getMagnet(id: string): Promise<Magnet | null> {
+  return writeClient.fetch<Magnet | null>(
+    `*[_type == "leadMagnet" && _id == $id && enabled == true && defined(asset.asset)][0]{ _id, title }`,
+    { id },
+  );
+}
+
+/**
+ * Resolve a magnet's file URL — called by `/api/download` ONLY after the signed
+ * token verifies, so the CDN URL is never exposed to an unconfirmed request.
+ */
+export async function getLeadMagnetAssetUrl(id: string): Promise<string | null> {
+  return writeClient.fetch<string | null>(
+    `*[_type == "leadMagnet" && _id == $id && enabled == true][0].asset.asset->url`,
+    { id },
+  );
+}
+
+/**
+ * Verify a download token + resolve the file URL. The app's `/api/download`
+ * route delegates here so the app never imports `@indiecrafts/gated-delivery`
+ * directly (the newsletter module owns the magnet data + the secret).
+ */
+export async function resolveMagnetDownload(
+  token: string,
+): Promise<{ ok: true; url: string } | { ok: false; status: 403 }> {
+  if (!SECRET || !token) return { ok: false, status: 403 };
+  return resolveGatedDownload(token, SECRET, getLeadMagnetAssetUrl);
+}
+
+/**
+ * Deliver every lead magnet a confirmed subscriber signed up for. The capture
+ * block stores the magnet doc id in `tags`; a tag that isn't a magnet is a no-op.
+ * Best-effort — a mail/lookup failure must never fail the confirmation.
+ */
+export async function deliverMagnetsForTags(
+  email: string,
+  tags: string[] | undefined,
+  language: string | undefined,
+): Promise<void> {
+  if (!SECRET || !tags?.length) return;
+  for (const tag of tags) {
+    try {
+      const magnet = await getMagnet(tag);
+      if (!magnet) continue;
+      await sendMagnetEmail(email, magnet, language);
+    } catch (error) {
+      logger.error("lead magnet delivery failed", { tag, error });
+    }
+  }
+}
+
+/** Sign the download link + send it. Reuses the newsletter sender identity. */
+async function sendMagnetEmail(
+  email: string,
+  magnet: Magnet,
+  language: string | undefined,
+): Promise<void> {
+  if (!SECRET || !process.env.RESEND_API_KEY) return;
+  const from = (await getEmailStrings())?.newsletterConfirm?.from?.trim();
+  if (!from) return;
+
+  const copy = language === "en" ? COPY.en : COPY.fr;
+  const token = await signDownloadToken({ assetId: magnet._id, exp: Date.now() + TTL_MS }, SECRET);
+  const message = renderLeadMagnetEmail({
+    subject: copy.subject,
+    heading: copy.heading,
+    intro: copy.intro(magnet.title ?? ""),
+    buttonLabel: copy.buttonLabel,
+    downloadUrl: `${site.url}/api/download?token=${encodeURIComponent(token)}`,
+  });
+  await sendEmail({ from, to: [email], ...message });
+}

@@ -35,7 +35,7 @@ cd client-acme
 pnpm install
 ```
 
-This is a pnpm + Turbo monorepo; the workspace root is the repo root. All app scripts run from there (`pnpm dev`, `pnpm build`, `pnpm seed`, …) and fan out through Turbo to `@indiecrafts/web` at `code/apps/web`. Rename the root `package.json` `name` while you are here if you want the workspace to read as the client's.
+This is a pnpm + Turbo monorepo; the workspace root is the repo root. All app scripts run from there (`pnpm dev`, `pnpm build`, `pnpm seed`, …) and fan out through Turbo to `@indiecrafts/web` at `code/projects/web`. Rename the root `package.json` `name` while you are here if you want the workspace to read as the client's.
 
 **Then rename the project namespace — one command, do it now:**
 
@@ -50,7 +50,7 @@ This sets `DEFAULT_SITE_PREFIX` in `@indiecrafts/config` **and** every `wrangler
 ## 3. Environment variables
 
 ```bash
-cp code/apps/web/.env.example code/apps/web/.env.local
+cp code/projects/web/.env.example code/projects/web/.env.local
 ```
 
 Every var is optional — the template boots with none set (placeholder origin, no Sanity). Fill in what the client needs:
@@ -145,7 +145,7 @@ export const themeConfig = { light: true, dark: true, system: true, forced: null
 export const fonts = { display: "satoshi", body: "geist", mono: "geist-mono" };
 ```
 
-One registered font per role; swapping the whole pairing is this one line. `display` drives headings — set it equal to `body` for a single-face look. The fonts themselves are loaded in the registry (`src/lib/fonts.ts`), because `next/font` needs static literal loader calls. The template ships **Satoshi** (self-hosted variable font, `.woff2` in `src/assets/fonts/`) + **Geist** / **Geist Mono** (Google). Add a font → register a `Google(...)` / `localFont(...)` call in `src/lib/fonts.ts`, extend the shared `FontKey` type in `code/packages/config/src/types.ts`, then name it here (`code/apps/web/src/config/fonts.ts`). Full guide: [`../design/typography.md`](../design/typography.md).
+One registered font per role; swapping the whole pairing is this one line. `display` drives headings — set it equal to `body` for a single-face look. The fonts themselves are loaded in the registry (`src/lib/fonts.ts`), because `next/font` needs static literal loader calls. The template ships **Satoshi** (self-hosted variable font, `.woff2` in `src/assets/fonts/`) + **Geist** / **Geist Mono** (Google). Add a font → register a `Google(...)` / `localFont(...)` call in `src/lib/fonts.ts`, extend the shared `FontKey` type in `code/packages/config/src/types.ts`, then name it here (`code/projects/web/src/config/fonts.ts`). Full guide: [`../design/typography.md`](../design/typography.md).
 
 ### 5.4 — `i18n` (locales)
 
@@ -215,13 +215,13 @@ Brand assets are Sanity-only — nothing lives in `/public`:
 - `siteSettings.icon` — favicon + apple-touch + PWA icons (square PNG ≥ 512×512)
 - `siteMeta.<locale>.ogImage` — Open Graph card, per language (1200×630)
 
-Favicon and OG are emitted with no fallback: empty = no favicon / no `og:image`. `pnpm seed` (§8) uploads defaults from `code/apps/web/scripts/seed-media/` (`logo.png`, `icon.png`, `og.png`, `og-fr.png`). Deeper walkthrough: [`./brand-setup.md`](./brand-setup.md) and [`../seo/editing-seo-in-sanity.md`](../seo/editing-seo-in-sanity.md).
+Favicon and OG are emitted with no fallback: empty = no favicon / no `og:image`. `pnpm seed` (§8) uploads defaults from `code/projects/web/scripts/seed-media/` (`logo.png`, `icon.png`, `og.png`, `og-fr.png`). Deeper walkthrough: [`./brand-setup.md`](./brand-setup.md) and [`../seo/editing-seo-in-sanity.md`](../seo/editing-seo-in-sanity.md).
 
 ---
 
 ## 7. Edit `messages/<locale>.json`
 
-One flat file per locale (`code/apps/web/messages/en.json`, `fr.json`). These drive **chrome + on-page block copy** — not SEO metadata (that is Sanity, §6). Keys worth attention per client:
+One flat file per locale (`code/projects/web/messages/en.json`, `fr.json`). These drive **chrome + on-page block copy** — not SEO metadata (that is Sanity, §6). Keys worth attention per client:
 
 - **Site-level** — `common` (skip-link, theme toggle, locale switcher), `typography` (quote marks, decimal separator, date format), `validation` (form errors).
 - **Marketing home** — `pages.home.*`: `hero` + the block copy under `blocks` (features, cta, pricing, testimonials, featured, icons). Drop a section you don't need by removing its mount in `src/app/[locale]/(home)/page.tsx` and deleting its keys.
@@ -239,7 +239,7 @@ Skip the seed. With `pnpm dev` running, open `/studio` and create your first doc
 
 ### Option B — re-seed with your own demo content
 
-`pnpm seed` runs `node --env-file=.env.local scripts/seed-demo.mjs` (needs `SANITY_API_WRITE_TOKEN`). It seeds EN+FR authors, categories, tags, posts, quotes, people, the `siteMeta` + `siteSettings` singletons, and an empty-`postModules` blog singleton. Edit the data arrays and image URLs at the top of `code/apps/web/scripts/seed-demo.mjs`, then:
+`pnpm seed` runs `node --env-file=.env.local scripts/seed-demo.mjs` (needs `SANITY_API_WRITE_TOKEN`). It seeds EN+FR authors, categories, tags, posts, quotes, people, the `siteMeta` + `siteSettings` singletons, and an empty-`postModules` blog singleton. Edit the data arrays and image URLs at the top of `code/projects/web/scripts/seed-demo.mjs`, then:
 
 ```bash
 pnpm seed
@@ -330,8 +330,8 @@ Robots: with `NEXT_PUBLIC_SITE_URL` set and `NEXT_PUBLIC_ENVIRONMENT=production`
 | Per-page SEO copy | Sanity (`siteMeta.<locale>.pageSeo`) |
 | Analytics id, cookie banner | Sanity (`siteSettings.analytics`) |
 | Brand palette (OKLCH) | `@indiecrafts/ui-tokens/globals.css` |
-| PWA manifest bg color | `code/apps/web/src/config/theme.ts` → `theme.hexColors` |
-| Font pairing | `code/apps/web/src/config/fonts.ts` → `fonts` (+ registry `src/lib/fonts.ts`, shared `FontKey` type in `packages/config/src/types.ts`) |
+| PWA manifest bg color | `code/projects/web/src/config/theme.ts` → `theme.hexColors` |
+| Font pairing | `code/projects/web/src/config/fonts.ts` → `fonts` (+ registry `src/lib/fonts.ts`, shared `FontKey` type in `packages/config/src/types.ts`) |
 | Theme modes (light/dark/forced) | `config/src/index.ts` → `themeConfig` |
 | Locales | `config/src/index.ts` → `i18n.locales` + `messages/<code>.json` |
 | Feature flags | `config/src/index.ts` → `features` |
@@ -353,4 +353,4 @@ Robots: with `NEXT_PUBLIC_SITE_URL` set and `NEXT_PUBLIC_ENVIRONMENT=production`
 - NEVER expose `SANITY_API_READ_TOKEN` (or the write token) under a `NEXT_PUBLIC_` prefix.
 - NEVER instantiate a Sanity `createClient` per route — use `@indiecrafts/sanity/client`.
 
-Full list in the app brief, [`code/apps/web/CLAUDE.md`](../../../../code/apps/web/CLAUDE.md).
+Full list in the app brief, [`code/projects/web/CLAUDE.md`](../../../../code/projects/web/CLAUDE.md).

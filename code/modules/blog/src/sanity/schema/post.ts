@@ -1,6 +1,8 @@
 import { EditIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 
+import PrioritySlider from "../components/PrioritySlider";
+
 /**
  * Blog post — title + body + structured metadata block.
  *
@@ -141,6 +143,16 @@ export default defineType({
       group: "content",
     }),
     defineField({
+      name: "priority",
+      title: "Priorité de classement",
+      type: "number",
+      components: { input: PrioritySlider },
+      description:
+        "Fait remonter l'article dans les listings : 0 = classé par date, 10 = épinglé en tête. Glissez le curseur.",
+      validation: (Rule) => Rule.min(0).max(10).integer(),
+      group: "content",
+    }),
+    defineField({
       name: "series",
       title: "Série",
       type: "reference",
@@ -201,6 +213,14 @@ export default defineType({
     },
   },
   orderings: [
+    {
+      name: "priorityThenDate",
+      title: "Priorité puis date",
+      by: [
+        { field: "priority", direction: "desc" },
+        { field: "publishedAt", direction: "desc" },
+      ],
+    },
     {
       name: "publishedAtDesc",
       title: "Publication (récents)",

@@ -19,3 +19,4 @@ export const { Link, redirect, usePathname, useRouter, getPathname } =
   createNavigation(routing);
 
 export { localizedPathname } from "@indiecrafts/config";
+export { useLocaleSwitch } from "./use-locale-switch";

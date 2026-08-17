@@ -6,24 +6,32 @@ Auto-loads under `code/modules/blog/**`. Self-contained Sanity-backed blog + pag
 
 ## Layout
 
-- `user-interface/` — the blog's UI, organized by route like `src/user-interface/`: `blog/` (frontpage), `post/` (single post), `author/`, `category/`, `tag/` — each split into `sections/` (big views + blocks), `components/` (small: cards, TOC, badges), `layout/` (page shells, e.g. `post/layout/DefaultPostLayout`) as needed. Multi-page pieces live in `shared/` (`sections/PageHero`, `components/{BlogCard,Breadcrumbs}`); the shared **`FeaturedMedia`** in `@indiecrafts/ui-components` (`renderers/`) renders a cover **image or inline-playable video** in one structure (no dialog — plays in place), used by the post hero, blog frontpage, and every card — `parseVideoEmbed` (from `@indiecrafts/utils`) resolves `metadata.videoUrl` inside it. `renderers/` holds the 3 blog-specific module renderers (`blog-index · blog-post-list · blog-post-content`) + `ModuleRenderer` (composes `BLOCK_RENDERERS` from `@indiecrafts/ui-components` with the 3 blog dispatchers); the 14 generic renderers live in `@indiecrafts/ui-components`.
+- `user-interface/` — the blog's UI, organized by route like `src/user-interface/`: `blog/` (frontpage), `post/` (single post), `author/`, `category/`, `tag/` — each split into `sections/` (big views + blocks), `components/` (small: cards, TOC, badges), `layout/` (page shells, e.g. `post/layout/DefaultPostLayout`) as needed. Multi-page pieces live in `shared/` (`sections/PageHero`, `components/{BlogCard,Breadcrumbs}`); the shared **`FeaturedMedia`** in `@indiecrafts/ui-components` (`renderers/`) renders a cover **image or inline-playable video** in one structure (no dialog — plays in place), used by the post hero, blog frontpage, and every card — `parseVideoEmbed` (from `@indiecrafts/utils`) resolves `metadata.videoUrl` inside it. `renderers/` holds the 3 blog-specific module renderers (`blog-index · blog-post-list · blog-post-content`) + `ModuleRenderer` (composes `BLOCK_RENDERERS` from `@indiecrafts/ui-components` with the 3 blog dispatchers); the 16 generic renderers live in `@indiecrafts/ui-components`.
 - `sanity/` — `schema/` + `queries.ts` + `types.ts` + `structure.ts` (Studio desk) + `portable-to-markdown.ts`
 - `lib/route-gate.ts` — `requireBlogRoute(page)` (page components) / `isBlogRouteEnabled(page)` (route handlers) / `isRssEnabled()`. Each folds in the flag **and** `page.enabled`, so a new route can't drift by checking only one.
 
 ## Schemas (`sanity/schema/`)
 
-| Surface      | Documents                                                         | Objects                                     |
-| ------------ | ----------------------------------------------------------------- | ------------------------------------------- |
-| Blog         | `blog` (singleton), `post`, `author`, `category`, `tag`, `series` | `blockContent`, `metadata`                  |
-| Module refs  | `quote`, `person`                                                 | `link`, `cta`                               |
-| Page-builder | —                                                                 | 17 `module.*` types (see `schema/modules/`) |
+The generic page-builder (16 blocks + `blockContent`/`link`/`cta` + `quote`/`person`) now lives in
+**`@indiecrafts/page-builder`**. The blog owns only its own docs + its 3 blog-specific blocks.
 
-## Page-builder modules (14 `object` types, all gated)
+| Surface      | Documents                                                         | Objects      |
+| ------------ | ----------------------------------------------------------------- | ------------ |
+| Blog         | `blog` (singleton), `post`, `author`, `category`, `tag`, `series` | `metadata`   |
+| Page-builder | 3 blog-specific `module.*` (see `schema/modules/`)                | —            |
 
-- **Inline-embeddable in body + `postModules`** (10): accordion-list, callout, card-list, custom-html, gallery, newsletter, person-list, quote-list, stat-list, step-list
-- **`postModules`-only** (4): blog-index, blog-post-content, blog-post-list, prose
+## Page-builder modules
 
-Inline allowlist → `sanity/schema/blockContent.ts` (`INLINE_MODULES`). Renderer → `user-interface/renderers/ModuleRenderer.tsx` (switch on `_type`, TS exhaustiveness enforces). **Adding or removing a module touches ~8 code locations + 4 doc count-refs** — follow the internal add/remove-block workflow checklist, don't reconstruct it. The touch-points, in dependency order, are also listed in [`docs/modules/blog/blog-architecture.md`](../../../../docs/modules/blog/blog-architecture.md).
+- **The 16 generic blocks** (hero · feature-grid · pricing · callout · card-list · gallery ·
+  person-list · prose · stat-list · step-list · quote-list · accordion-list · custom-html ·
+  newsletter · waitlist · lead-magnet) — schemas in `@indiecrafts/page-builder`, renderers in
+  `@indiecrafts/ui-components`. Adding one → `method/apps/web/workflows/add-page-builder-block.md`.
+- **3 blog-specific** (`postModules`-only): `blog-index`, `blog-post-content`, `blog-post-list` —
+  schema + renderer here, composed by `user-interface/renderers/ModuleRenderer.tsx` on top of the
+  generic `BLOCK_RENDERERS`.
+
+The blog composes the generic `MODULES_FRAGMENT` (`@indiecrafts/page-builder`) + its own
+`blog-post-list` projection in `sanity/queries.ts`.
 
 Field **legends** (every `title` + `description` an editor sees) are written for non-technical editors — plain words, no jargon. Follow [`.claude/rules/sanity-legends.md`](../../../apps/web/.claude/rules/sanity-legends.md).
 
@@ -36,7 +44,7 @@ Field **legends** (every `title` + `description` an editor sees) are written for
 
 ## Studio
 
-Embedded catch-all at `src/app/studio/[[...tool]]/page.tsx` with its own root layout (sits outside `[locale]/`, so needs its own `<html>`/`<body>`). The desk (`sanity/structure.ts`) groups Blog (singleton + posts/authors/categories/tags/series), two top-level reference domains **Témoignages** (`quote`) + **Équipe** (`person`) — promoted from the old nested "Références" (temp-sanity §7; generalize to `testimonial`/`team` in Pack 1), Commentaires, and the core **SEO & métadonnées** section (`seoStructureItem` from `@/sanity/structure` — `siteSettings` + `siteMeta.<locale>`).
+Embedded catch-all at `src/app/studio/[[...tool]]/page.tsx` with its own root layout (sits outside `[locale]/`, so needs its own `<html>`/`<body>`). The desk (`sanity/structure.ts`) groups Blog (singleton + posts/authors/categories/tags/series), two top-level reference domains **Témoignages** (`quote`) + **Équipe** (`person`) — now owned by `@indiecrafts/page-builder` (the generic entities its blocks reference; a future release generalizes them to `testimonial`/`team`), Commentaires, and the core **SEO & métadonnées** section (`seoStructureItem` from `@/sanity/structure` — `siteSettings` + `siteMeta.<locale>`).
 
 ## Gating
 

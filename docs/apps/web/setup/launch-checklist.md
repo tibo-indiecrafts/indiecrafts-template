@@ -30,6 +30,11 @@ The app deploys to Cloudflare Workers via OpenNext (dev / staging / prod). The *
 
 > **Reusing the template? Rename first.** Run `pnpm project:rename <slug>` before any staging/prod deploy — it sets `DEFAULT_SITE_PREFIX` + the `<slug>-web*` Worker/R2 names, and the deploy is **blocked** until you do (so one client can't overwrite another under a shared Cloudflare account). Give this client its **own** Resend key + (if on a shared Sanity project) its **own** dataset, not `production`.
 
+**Turn on rate-limiting + CAPTCHA.** Run `pnpm setup:kv` once — it creates a `RATE_LIMIT_KV` namespace
+**per env** and activates the in-app form rate limiter (it fails **open** until you do). To also enable
+Turnstile CAPTCHA on the public forms, set **both** `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET`
+(set only one and submissions are rejected) — see the Turnstile block in [`environment.md`](./environment.md).
+
 ### Env vars + secrets
 
 Public `NEXT_PUBLIC_*` go in `wrangler.toml [vars]` (and GitHub Environment **vars** for the CI build); server tokens are **secrets** (`wrangler secret put … --env <env>`, and GitHub Environment **secrets**). Full reference in [`environment.md`](./environment.md).
@@ -44,7 +49,7 @@ Public `NEXT_PUBLIC_*` go in `wrangler.toml [vars]` (and GitHub Environment **va
 
 ### Custom domain
 
-Uncomment the `[[env.prod.routes]]` block in `code/apps/web/wrangler.toml`, set your domain, and add it as a **Custom Domain** on the prod Worker (CF dashboard). With DNS on Cloudflare, HTTPS is automatic.
+Uncomment the `[[env.prod.routes]]` block in `code/projects/web/wrangler.toml`, set your domain, and add it as a **Custom Domain** on the prod Worker (CF dashboard). With DNS on Cloudflare, HTTPS is automatic.
 
 ### Preview deploys
 

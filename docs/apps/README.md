@@ -28,15 +28,15 @@ _how to build_ lives in its `CLAUDE.md`.
 | API  | `@indiecrafts/api`  | a bare Cloudflare Worker — HTTP API (deploy shell; logic from bricks)               | `wrangler deploy`    |
 | Cron | `@indiecrafts/cron` | a bare Cloudflare Worker — scheduled tasks (`[triggers] crons`)                     | `wrangler deploy`    |
 
-All ship with `pnpm deploy:<app>:<env>`; `pnpm deploy:all:<env>` deploys the fleet in order. Workers are apps — a deployable belongs in `code/apps/`, not a package (see below).
+All ship with `pnpm deploy:<app>:<env>`; `pnpm deploy:all:<env>` deploys the fleet in order. Workers are apps — a deployable belongs in `code/projects/`, not a package (see below).
 
 ## Adding app #2
 
 One app today; the platform is **multi-app-ready** (the config split + `composeStudio` landed —
 [Multi-app architecture](/shared/architecture/multi-app)). When a second app is real:
 
-1. **Code** — `code/apps/<name>/` with its own `CLAUDE.md` · `DESIGN.md` · `README.md`; add it to
-   `pnpm-workspace.yaml` (already globs `code/apps/*`) + `code/apps/_registry.md`.
+1. **Code** — `code/projects/<name>/` with its own `CLAUDE.md` · `DESIGN.md` · `README.md`; add it to
+   `pnpm-workspace.yaml` (already globs `code/projects/*`) + `code/projects/_registry.md`.
 2. **Docs** — a sibling `docs/apps/<name>/` mirroring `web` (`setup/ config/ design/ seo/`), a row in
    the table above, and its sidebar group in `docs/.vitepress/config.mts`.
 3. **Islands** — mount the shared modules it needs (blog, newsletter, …); each reads the app-injected

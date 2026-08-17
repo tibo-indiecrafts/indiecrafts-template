@@ -1,4 +1,5 @@
 import "server-only";
+import { sanitizeIpAddress } from "./ip";
 import { isSameSiteRequest } from "./origin";
 import { verifyTurnstile } from "./turnstile";
 import { rateLimit } from "./rate-limit";
@@ -30,9 +31,11 @@ export type GuardOptions = {
   turnstile?: boolean;
 };
 
+// Prefer Cloudflare's trusted `cf-connecting-ip`, then the first `x-forwarded-for`
+// hop — both are validated, so a spoofed/garbage header can't poison the rate-limit key.
 const clientIp = (req: Request): string =>
-  req.headers.get("cf-connecting-ip") ??
-  req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+  sanitizeIpAddress(req.headers.get("cf-connecting-ip")) ??
+  sanitizeIpAddress(req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()) ??
   "unknown";
 
 const json = (body: unknown, status: number): Response =>

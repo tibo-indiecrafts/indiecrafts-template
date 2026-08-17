@@ -35,7 +35,7 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
 place that configures every transactional email: who receives it, the sender, and the copy. The
 document is **field-less on its own**; each module contributes its group(s) via
 `SanityModule.emailGroups`, and `emailSanity` composes them into the one document. **The brick never
-names a module** — remove a module from `composeSanity([...])` and its email group disappears.
+names a module** — remove a module from the `composeStudio` groups and its email group disappears.
 
 Two group factories cover every email:
 
@@ -57,7 +57,7 @@ Groups today:
 
 A sender reads the whole entity once (`getEmailStrings()`), picks its group, resolves the locale
 strings, and passes them to the matching template. Seeded EN + FR by `pnpm seed`. **Order in the
-Studio = module order** in `composeSanity([...])`.
+Studio = module order** in the `composeStudio` groups.
 
 ## Adding an email
 
@@ -67,7 +67,7 @@ Studio = module order** in `composeSanity([...])`.
 2. Add `templates/<name>.ts` exporting `render<Name>Email(input) => { subject, text, html }` — build
    the HTML via `renderEmailLayout`, escape every value. Re-export from `src/index.ts`.
 3. Call it from the feature: read `getEmailStrings()`, `pick(...)` the locale strings, `sendEmail`.
-4. Add the render to `buildSamples` in `code/apps/web/src/app/api/emails/test/route.ts` so the
+4. Add the render to `buildSamples` in `code/projects/web/src/app/api/emails/test/route.ts` so the
    "Send test" action covers it.
 
 ## BCC — per email, editor-owned

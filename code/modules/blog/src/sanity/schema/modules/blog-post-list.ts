@@ -1,6 +1,6 @@
 import { BlockContentIcon } from "@sanity/icons";
 import { defineField } from "sanity";
-import { defineModule } from "../objects/define-module";
+import { defineModule } from "@indiecrafts/page-builder/sanity/schema/objects/define-module";
 
 export default defineModule({
   name: "module.blog-post-list",

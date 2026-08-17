@@ -1,5 +1,5 @@
 import type { StructureBuilder, ListItemBuilder } from "sanity/structure";
-import { CommentIcon, StarIcon, UsersIcon } from "@sanity/icons";
+import { CommentIcon } from "@sanity/icons";
 import { apiVersion } from "@indiecrafts/sanity/env";
 import { locales, type Locale } from "@indiecrafts/config";
 
@@ -35,17 +35,8 @@ export function blogStructure(S: StructureBuilder): ListItemBuilder[] {
           ]),
       ),
 
-    // ── Témoignages (quote docs) — social-proof domain ──
-    // Promoted from the old nested "Références" list to a first-class
-    // top-level section (temp-sanity §7). Still the data behind the
-    // `module.quote-list` block; generalizes to a `testimonial` doc in
-    // temp-sanity Pack 1 (rating, company →) — deferred.
-    languageSplit(S, "quote", "Témoignages", StarIcon),
-
-    // ── Équipe (person docs) — people domain ────────────
-    // The data behind `module.person-list`; generalizes to a `team` doc
-    // (department, order) in temp-sanity Pack 1 — deferred.
-    languageSplit(S, "person", "Équipe", UsersIcon),
+    // Témoignages (`quote`) + Équipe (`person`) now live in the page-builder desk
+    // (`@indiecrafts/page-builder`) — they're the generic entities its blocks reference.
 
     // ── Comments moderation ─────────────────────────────
     // Submitted via /api/comments as `approved: false`; tick "Approuvé" on a
@@ -99,7 +90,7 @@ export function blogStructure(S: StructureBuilder): ListItemBuilder[] {
  */
 function languageSplit(
   S: StructureBuilder,
-  type: "post" | "category" | "tag" | "series" | "quote" | "author" | "person",
+  type: "post" | "category" | "tag" | "series" | "author",
   title: string,
   icon?: Parameters<ListItemBuilder["icon"]>[0],
 ) {

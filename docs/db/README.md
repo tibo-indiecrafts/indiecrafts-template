@@ -19,7 +19,7 @@ Don't duplicate Sanity content into D1 — one source of truth per kind of data.
 - **Migrations are forward-only** — `wrangler d1 migrations create/apply`, files committed +
   ordered under `code/db/migrations/`. Never a manual dashboard edit. Renames/drops are
   two-step across releases (expand → migrate → contract).
-- **D1 is a binding.** No secret URL — bound per env in `code/apps/web/wrangler.toml`
+- **D1 is a binding.** No secret URL — bound per env in `code/projects/web/wrangler.toml`
   (`[[d1_databases]]`, like the R2 ISR bucket); reached via `getCloudflareContext().env.DB`.
   Local dev (`preview:cf`) uses a local SQLite.
 - **The app never scatters raw SQL** — access goes through a `code/packages/` data brick

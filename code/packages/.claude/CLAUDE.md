@@ -61,7 +61,7 @@ specifier moves.** `code/modules/` follows the identical rule (`modules/<categor
 
 A new brick lands in known places — do all five in the same change:
 
-1. **Code** — `code/packages/<name>/` (`package.json` `@indiecrafts/<name>` + `exports`; declare its own deps). Mixed `.ts`/`.tsx` also needs an app `tsconfig` `paths` entry; anything rendering classes needs a `@source` line in `ui-tokens/globals.css`.
+1. **Code** — `code/packages/<name>/` (`package.json` `@indiecrafts/<name>` + `exports`; declare its own deps). **To consume it in an app, five wires** (only the applicable ones): (a) add it to `transpilePackages` in the app `next.config.ts` — **always** (consumed as TS source); (b) a `workspace:*` dep in the app `package.json` — **always**; (c) a `tsconfig` `paths` entry **iff it has a wildcard subpath export** (`"./*"` / `"./web/*"`, which tsc + the Sanity schema-extract can't map to a 1:1 extension) — packages with explicit per-file exports (e.g. `version`) skip it; (d) a `@source` line in `ui-tokens/globals.css` **iff it renders Tailwind classes**; (e) its `SanityModule` barrel into a `composeStudio` group in `sanity.config.ts` **iff it ships Sanity content**. A pure-logic brick needs only (a)+(b); a UI+Sanity brick needs all five.
 2. **Registry** — a row in [`_registry.md`](../_registry.md).
 3. **Doc** — one page `docs/packages/<name>.md` (exports · deps · consumers · gotchas), split from the shape of the others.
 4. **Sidebar** — one line under the Packages group in `docs/.vitepress/config.mts`.

@@ -1,0 +1,66 @@
+# Cloudflare Worker config for the background-jobs Worker (cron / queues / tasks).
+# Deployed separately from the web app: `pnpm --filter @indiecrafts/workers deploy:workers:<env>`.
+# Per client, rename `indiecrafts-workers-*` (mirror the web app's `project:rename`).
+
+name = "indiecrafts-workers-dev"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat"]
+keep_vars = true
+
+# Cron schedule(s), UTC. Example: every day at 06:00. Edit or remove; the `scheduled`
+# handler in src/index.ts fires on these. https://developers.cloudflare.com/workers/configuration/cron-triggers/
+[triggers]
+crons = ["0 6 * * *"]
+
+# Workers Logs on for every env (view: dashboard → Worker → Logs, or `wrangler tail`).
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── dev ──────────────────────────────────────────────────────
+[env.dev]
+name = "indiecrafts-workers-dev"
+workers_dev = true
+
+[env.dev.vars]
+NEXT_PUBLIC_ENVIRONMENT = "development"
+
+[env.dev.observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── staging ──────────────────────────────────────────────────
+[env.staging]
+name = "indiecrafts-workers-staging"
+workers_dev = true
+
+[env.staging.vars]
+NEXT_PUBLIC_ENVIRONMENT = "staging"
+
+[env.staging.observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── prod ─────────────────────────────────────────────────────
+[env.prod]
+name = "indiecrafts-workers"
+workers_dev = false
+
+[env.prod.vars]
+NEXT_PUBLIC_ENVIRONMENT = "production"
+
+[env.prod.observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── Bindings (add as jobs need them) ─────────────────────────
+# Mirror the web app's wrangler.toml — declare per env. Examples:
+# [[env.prod.kv_namespaces]]
+# binding = "JOBS_KV"
+# id = "<from `wrangler kv namespace create JOBS_KV`>"
+#
+# [[env.prod.queues.consumers]]
+# queue = "indiecrafts-jobs"
+#
+# Secrets are never here — `wrangler secret put <NAME> --env <env>`.

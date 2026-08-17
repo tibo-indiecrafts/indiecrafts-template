@@ -184,5 +184,5 @@ coarse-pointer / touch view and a ~820px tablet — the three widths are the flo
 **Keep the check honest and scoped.** Stub dynamic data so live content does not read as breakage.
 Record intentional asymmetry so it does not get "fixed". A screenshot is one frame of one state — it
 does not replace hover, focus, keyboard, or `e2e` QA. The engineering rule lives in
-[`visual-verification`](../../../../code/apps/web/.claude/rules/visual-verification.md) and the
-[self-review](../../../../code/apps/web/.claude/rules/self-review.md) checklist.
+[`visual-verification`](../../../../code/projects/web/.claude/rules/visual-verification.md) and the
+[self-review](../../../../code/projects/web/.claude/rules/self-review.md) checklist.

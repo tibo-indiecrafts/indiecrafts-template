@@ -39,4 +39,16 @@ describe("validateJoin", () => {
       error: "invalid",
     });
   });
+
+  it("drops a near-instant (bot) submit as spam", () => {
+    expect(validateJoin({ ...ok, startedAt: Date.now() })).toEqual({ ok: false, error: "spam" });
+  });
+
+  it("accepts a submit after a human delay", () => {
+    expect(validateJoin({ ...ok, startedAt: Date.now() - 5000 })).toEqual({ ok: true });
+  });
+
+  it("ignores a client clock running ahead (negative elapsed → not flagged)", () => {
+    expect(validateJoin({ ...ok, startedAt: Date.now() + 60_000 })).toEqual({ ok: true });
+  });
 });

@@ -4,7 +4,7 @@
   "private": true,
   "description": "Documentation site for the indiecrafts.dev template (VitePress).",
   "scripts": {
-    "sync:changelog": "cp ../code/apps/web/CHANGELOG.md apps/web/changelog.md && cp ../code/packages/CHANGELOG.md packages/changelog.md && cp ../code/modules/CHANGELOG.md modules/changelog.md",
+    "sync:changelog": "cp ../code/projects/web/CHANGELOG.md apps/web/changelog.md && cp ../code/packages/CHANGELOG.md packages/changelog.md && cp ../code/modules/CHANGELOG.md modules/changelog.md",
     "predocs:dev": "npm run sync:changelog",
     "predev": "npm run sync:changelog",
     "docs:dev": "kill-port 3002 && vitepress dev --port 3002",

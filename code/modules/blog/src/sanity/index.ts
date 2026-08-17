@@ -10,24 +10,14 @@ import { emailGroups } from "./email";
  * locale) create templates, and the list of its document-internationalized
  * types. Adding/removing the blog is one line in `sanity.config.ts`.
  */
-const I18N_TYPES = [
-  "post",
-  "category",
-  "tag",
-  "series",
-  "quote",
-  "author",
-  "person",
-] as const;
+const I18N_TYPES = ["post", "category", "tag", "series", "author"] as const;
 
 const TEMPLATE_TITLES: Record<(typeof I18N_TYPES)[number], string> = {
   post: "Article",
   category: "Catégorie",
   tag: "Tag",
   series: "Série",
-  quote: "Témoignage",
   author: "Auteur",
-  person: "Membre d'équipe",
 };
 
 export const blogSanity: SanityModule = {

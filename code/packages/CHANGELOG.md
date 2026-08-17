@@ -4,7 +4,7 @@ One record for the shared bricks under `code/packages/`. Every change that adds,
 splits, or reshapes a brick's public surface lands here in plain language with the
 _why_. Rolls up to the [root `CHANGELOG.md`](../../CHANGELOG.md) at release.
 
-**Not here:** app behavior/routes/tokens → [`code/apps/web/CHANGELOG.md`](../apps/web/CHANGELOG.md);
+**Not here:** app behavior/routes/tokens → [`code/projects/web/CHANGELOG.md`](../apps/web/CHANGELOG.md);
 docs-site → [`docs/CHANGELOG.md`](../../docs/CHANGELOG.md).
 
 Format follows [Keep a Changelog](https://keepachangelog.com). Categories: **Added ·
@@ -14,6 +14,80 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/page-builder` — new package: the page-builder, extracted from the blog.** The 16
+  generic block **schemas** + `blockContent`/`link`/`cta` objects + `quote`/`person` entities +
+  `MODULES_FRAGMENT` GROQ + a new generic **`page` document** + the `pageBuilderSanity` barrel moved out
+  of `@indiecrafts/blog` into their own package. Renderers stay in `ui-components`; the app, the blog,
+  and future apps now compose pages **without depending on the blog module**. `link`'s internal target
+  generalized `post` → `page` | `post` (the `LINK_FRAGMENT` href resolves per type, dropping the
+  hardcoded `/blog/` prefix). _Why:_ the page-builder is site-wide infra, not a blog concern — the app's
+  homepage no longer reaches into `@indiecrafts/blog` for its blocks. The `page` doc carries an `isHome`
+  flag + an "Accueil" desk section so the **home is the same `page` model** (one model everywhere).
+- **`@indiecrafts/gated-delivery` — new brick: signed, expiring download links.** Pure Web-Crypto
+  (HMAC-SHA256, zero deps, Node 22 + Workers): `signDownloadToken` / `verifyDownloadToken` + a
+  `resolveGatedDownload` route helper. The consumer injects the secret + asset resolver; the brick
+  holds no keys and no storage. Gates link *discovery* (a signed, expiring token), **not** the CDN
+  object. First consumer: newsletter lead-magnet delivery. 8/8 unit tests. _Why:_ a reusable delivery
+  seam so any capture channel can gate an asset without re-implementing token crypto.
+- **`@indiecrafts/email` — `renderLeadMagnetEmail` template.** One more template (mirrors
+  `newsletter-confirm`) — the branded delivery e-mail carrying the gated download button. Copy is
+  resolved by the caller (newsletter), per the package's copy-agnostic template rule.
+- **`@indiecrafts/utils` — three new leaf helpers (ported + curated).** `./error-message`
+  (`getErrorMessage(unknown)` — joins a Zod-style `issues[]`, then `Error.message`, then `String()`;
+  duck-types Zod so utils stays dependency-free), `./truncate` (`truncateText` — word-safe cut +
+  ellipsis), `./filename` (`sanitizeAndCropFilename` + `validateFilenameLength` — path/char-safe,
+  crops by UTF-8 **byte** length so a multi-byte char never splits). Each subpath-only + colocated
+  test. Sourced from an in-house project's utils, filtered against `format` (no date/number overlap).
+- **`@indiecrafts/security` — `./ip` + `./crypto`.** `./ip` = `isValidIpAddress` /
+  `sanitizeIpAddress` / `extractIpFromHeadersList` (thorough IPv4/IPv6, zero-dep, Edge-safe). `./crypto`
+  = AES-256-GCM (integrity tag) + salted SHA-256 (`encrypt`/`decrypt`/`encryptObject`/`decryptObject`/
+  `hashIpAddress`/`verifyIpHash`/`isEncryptedData`) on **Web Crypto** (`crypto.subtle`) — zero-dep, runs
+  on Node 22 **and** Workers, all async; the secret/salt is caller-injected (no keys in the brick).
+
+### Changed
+
+- **`@indiecrafts/consent` → `@indiecrafts/compliance` — legal pages folded into the brick.**
+  Renamed the cookie-consent brick to `@indiecrafts/compliance` and moved the whole legal-pages
+  surface **down into it** from the app: the `legalPage` schema (+ its desk section + i18n
+  templates), the `LegalPageContent` renderer + `LegalBody` + `CookieDeclaration`, the
+  `legalPageQuery` / `consentPolicyVersionQuery`, and the `getConsentPolicyVersion` reader (now
+  `@indiecrafts/compliance/sanity/policy-version`, used by the newsletter/waitlist/comment opt-ins).
+  **Why:** the consent package already read the app-owned `legalPage` doc through a runtime GROQ
+  string — an inverted dependency (package reaching up into app content). Co-locating the schema
+  with the queries that read it makes the link compile-time and gives the site one self-contained
+  legal + data-protection brick. Reorganized into `src/pages/` · `src/consent/` · `src/reacceptance/`
+  under one `complianceSanity` barrel. The 5 legal routes stay in the app as thin shells (Next.js
+  routes can't live in a package); the app keeps the `pages` map, `features.legal.*`, and page SEO.
+
+- **`withGuard` validates the client IP.** `guard.ts`'s `clientIp` now runs the trusted
+  `cf-connecting-ip` / first `x-forwarded-for` hop through `sanitizeIpAddress` (`./ip`), so a spoofed
+  or malformed header can no longer poison the fixed-window rate-limit key.
+
+- **`@indiecrafts/announcement` + `@indiecrafts/locale-suggest` — two site-chrome bricks (domain · web).**
+  **Announcement:** an editor-managed discount/announcement strip under the nav — an `announcementBar`
+  Sanity singleton (enable toggle · schedule window · style variant · an array of rotating items, each
+  with a per-locale message + a click-to-copy discount code + an internal/external link) read by
+  `getAnnouncement` (live-now filter + a content `version` hash), rendered by the normal-flow
+  `AnnouncementBar` (dismiss remembered in a server-read cookie → no flash; a new announcement re-shows).
+  **Locale-suggest:** a "this site is available in {your language}" strip — pure unit-tested
+  `detectPreferredLocale` (Accept-Language vs active), a `localeSuggest` copy singleton, and a
+  `LocaleSuggest` banner that **suggests, never auto-redirects** (best practice; native language names,
+  no flags) and remembers the answer in a cookie. Both singletons join `sharedModules` in one line.
+  _Why:_ common marketing chrome that a client edits in Sanity, kept out of the app codebase.
+- **`@indiecrafts/i18n` — `useLocaleSwitch()`.** Extracted the locale-switch logic (next-intl prefix swap
+  + the blog translated-slug resolve via `/api/i18n/translated-slug`) out of the app's `LocaleSwitcher`
+  into the shared i18n brick, so the header switcher **and** the new locale-suggestion banner share one
+  implementation. Doc: [`docs/packages/announcement.md`](../../docs/packages/announcement.md) ·
+  [`docs/packages/locale-suggest.md`](../../docs/packages/locale-suggest.md).
+
+
+- **`@indiecrafts/ui-components` — `TurnstileWidget` (client Cloudflare Turnstile).** The client half of
+  `@indiecrafts/security`'s server `verifyTurnstile`: renders only when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is
+  set (else nothing, form unchanged), loads the CF script once, and reports the token via `onToken` — the
+  forms send it as `cf-turnstile-response` and gate submit on `turnstileActive()`. A `siteKey` prop
+  override + colocated stories drive it with Cloudflare's test keys. Wired into the newsletter / waitlist /
+  comment forms (see the app changelog). Also recorded the **stories-are-mandatory** convention in the
+  ui-components brief. Doc: [`docs/packages/ui-components.md`](../../docs/packages/ui-components.md).
 - **`@indiecrafts/sanity` — `composeStudio(groups)`, the hub-Studio composer (per-app desk).** Alongside
   `composeSanity` (flat "Contenu" desk), the new `composeStudio([{ title, modules }])` aggregates the same
   schema/templates/i18n but renders the desk **grouped per app** — one top-level list per group. It's how
@@ -152,7 +226,7 @@ Changed · Deprecated · Removed · Fixed**.
   framework-agnostic brick (domain · server) that **builds** the CSP + security headers from hardened
   defaults + per-app hosts: `buildCsp(env, csp?)`, `securityHeaders(opts)` (the full Next `headers()`
   array), and `imageDefaults`/`imageRemotePatterns` (the Next image allowlist). Moved out of
-  `code/apps/web/next.config.ts` (that block collapses to one call). **Composes, doesn't replace,
+  `code/projects/web/next.config.ts` (that block collapses to one call). **Composes, doesn't replace,
   `@indiecrafts/config`** — `getCurrentEnvironment` + `getCSPConnectSources` stay in config; the brick
   imports them. **Hardened** (new headers): `Strict-Transport-Security` (prod only, no `preload`),
   `Cross-Origin-Opener-Policy: same-origin-allow-popups`, `upgrade-insecure-requests` (prod) — all
@@ -192,7 +266,7 @@ Changed · Deprecated · Removed · Fixed**.
   alert) — plus the `waitlist-confirm` + `waitlist-notification` templates. Consumed by the new
   `@indiecrafts/waitlist` module (see modules changelog).
 - **`@indiecrafts/system-pages` — the shared status pages extracted to a brick.** The **maintenance**
-  page, **404**, and **error (500)** presentational components moved out of `code/apps/web`
+  page, **404**, and **error (500)** presentational components moved out of `code/projects/web`
   (`src/user-interface/{maintenance,not-found,error}/`) into a token-based, app-agnostic brick, plus a
   `maintenanceRewrite(request)` proxy helper (`./proxy`) — the `features.maintenance` 503 rewrite. So a
   second app inherits the same branded status pages + behaviour for free. Decoupling: `NotFoundContent`

@@ -22,16 +22,16 @@ Everything runs from the **repo root** (scripts delegate to the app via Turborep
 ```bash
 pnpm install       # installs the whole workspace (all of code/)
 pnpm dev           # http://localhost:3000  (turbo → @indiecrafts/web)
-pnpm build         # production build → code/apps/web/.next
+pnpm build         # production build → code/projects/web/.next
 pnpm verify        # tsc + lint + format + contrast + react-doctor (CI gate)
 pnpm docs          # http://localhost:3002  (this site)
 ```
 
 ## Deployment — app + docs only
 
-**Deploy `code/apps/web` (the site), and optionally `docs/`. Nothing else.**
+**Deploy `code/projects/web` (the site), and optionally `docs/`. Nothing else.**
 
-- **App** — Cloudflare Workers via OpenNext: per-app `code/apps/web/wrangler.toml` +
+- **App** — Cloudflare Workers via OpenNext: per-app `code/projects/web/wrangler.toml` +
   `open-next.config.ts`, deployed by GitHub Actions (`wrangler deploy --env <env>`) or
   `pnpm deploy:web:<env>`. Install stays at the repo root. Runbook →
   [Deployment (Cloudflare)](/apps/web/setup/deployment).

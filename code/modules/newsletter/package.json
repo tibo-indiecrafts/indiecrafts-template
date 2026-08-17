@@ -9,6 +9,7 @@
   "dependencies": {
     "@indiecrafts/config": "workspace:*",
     "@indiecrafts/email": "workspace:*",
+    "@indiecrafts/gated-delivery": "workspace:*",
     "@indiecrafts/logger": "workspace:*",
     "@indiecrafts/sanity": "workspace:*",
     "@indiecrafts/schema": "workspace:*",

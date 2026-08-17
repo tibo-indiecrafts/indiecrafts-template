@@ -4,7 +4,9 @@
 @source "../../ui/src";
 @source "../../ui-components/src";
 @source "../../version/src";
-@source "../../consent/src";
+@source "../../compliance/src";
+@source "../../announcement/src";
+@source "../../locale-suggest/src";
 @source "../../system-pages/src";
 @source "../../../modules/blog/src";
 @source "../../../modules/newsletter/src";

@@ -18,4 +18,9 @@ Auto-loads under `code/packages/ui-components/**`. Generic block renderers + the
 - **Renderers moved here; schemas stay in the blog** — a generic `module.*` = renderer here + schema in `code/modules/blog`.
 - Mixed `.ts`/`.tsx` → resolved via the app's tsconfig `paths` + a `@source` line in `ui-tokens/globals.css`.
 - Pure presentational; takes resolved Sanity data, never imports an app.
+- **Every rendered component ships a colocated `<Name>.stories.tsx` + a `<Name>.md` doc** — the
+  `@indiecrafts/storybook` package auto-discovers them, so a new component without a story is
+  incomplete. Match a sibling (e.g. `form/PhoneInput.stories.tsx`): `title: "UI Components/<Name>"`,
+  `tags: ["autodocs"]`, description from `./<Name>.md?raw`. A component that can't render without an
+  env var / external key takes a prop override so a story can drive it (see `TurnstileWidget`'s `siteKey`).
 - Full reference → [`docs/packages/ui-components.md`](../../../../docs/packages/ui-components.md).

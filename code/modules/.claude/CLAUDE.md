@@ -19,7 +19,7 @@ the internal dev framework. **What they are** → `docs/modules/`.
 Extract at a **genuine vertical slice or ≥2 consumers** (the blog earned it). On extraction,
 do all of these in the same change:
 
-1. **Code** — `git mv` the slice; add `package.json` (`@indiecrafts/<name>`, `exports`) + the app's `transpilePackages` + a `tsconfig` `paths` entry (mixed `.ts`/`.tsx`) + a `@source` line in `ui-tokens/globals.css`; if it has Sanity content, export a **`SanityModule` barrel** at `src/sanity/index.ts` (schema + its desk section + create templates + i18n types) and add it to the `composeSanity([...])` array in `sanity.config.ts` — one line, not four hand-wired lists (see `@indiecrafts/sanity/module`).
+1. **Code** — `git mv` the slice; add `package.json` (`@indiecrafts/<name>`, `exports`) + the app's `transpilePackages` + a `workspace:*` dep + a `tsconfig` `paths` entry (if it has a **wildcard subpath export** `"./*"`) + a `@source` line in `ui-tokens/globals.css` (if it renders classes); if it has Sanity content, export a **`SanityModule` barrel** (or a `xSanity(enabled)` factory) at `src/sanity/index.ts` (schema + its desk section + create templates + i18n types) and add it to a `composeStudio([...])` group (`appModules`) in `sanity.config.ts` — one line, not four hand-wired lists (see `@indiecrafts/sanity/module`).
 2. **Registry** — a row in [`_registry.md`](../_registry.md).
 3. **Its own `CLAUDE.md`** at the module root (module-level agent conventions).
 4. **Docs** — a folder `docs/modules/<name>/` + its sidebar lines in `docs/.vitepress/config.mts`.

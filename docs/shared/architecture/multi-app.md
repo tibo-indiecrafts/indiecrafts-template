@@ -16,7 +16,7 @@ is the **target model**; today there is one app (`web`), which _is_ the hub. New
 ## Decision A — one dataset per tenant; apps are lenses (not per-app datasets)
 
 A tenant's content is **one graph**: `post` / `quote` / `person` are read by more than one app, the
-marketing homepage's page-builder reuses the blog's `module.*` object types, and the shared primitives
+page-builder (`@indiecrafts/page-builder`) `module.*` blocks compose every page + the blog body, and the shared primitives
 (`localeString`, `seoMeta`) + the `emailStrings` singleton assume a single schema registry. Splitting by
 app-dataset would fork all of that and break content sharing.
 
@@ -85,7 +85,7 @@ prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
   (the per-app-grouped hub desk). **Still readiness work:** the `Island` manifest + `composeApp` (Decision
   C — one line per island composing `transpilePackages`/features/pages), and graduation of a module into
   its own app (e.g. `apps/blog`) — a cheap follow-up _because_ of the split, not built yet.
-- **Adding an app** (when it lands): scaffold `code/apps/<name>/` (own `CLAUDE.md`/`DESIGN.md`/`README`,
-  `_registry` row — `pnpm-workspace.yaml` already globs `code/apps/*`), an `islands.ts`, per-app config,
+- **Adding an app** (when it lands): scaffold `code/projects/<name>/` (own `CLAUDE.md`/`DESIGN.md`/`README`,
+  `_registry` row — `pnpm-workspace.yaml` already globs `code/projects/*`), an `islands.ts`, per-app config,
   route files (thin), its Terraform dir + a distinct zone; it reads the shared dataset and edits through
   the one hub Studio.

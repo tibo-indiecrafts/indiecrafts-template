@@ -1,5 +1,5 @@
 // Deploy EVERY deployable app to one env, in order, fail-fast. A "deployable" is
-// any `code/apps/*` dir with a `wrangler.toml`. Each app self-deploys via its own
+// any `code/projects/*` dir with a `wrangler.toml`. Each app self-deploys via its own
 // `deploy:<slug>:<env>` script, so this runner never hardcodes per-app steps
 // (web builds with OpenNext; a bare worker just runs `wrangler deploy`).
 //
@@ -28,7 +28,7 @@ const rank = (name) => {
   return i < 0 ? ORDER.length + 1 : i;
 };
 
-const APPS_DIR = "code/apps";
+const APPS_DIR = "code/projects";
 const deployable = readdirSync(APPS_DIR, { withFileTypes: true })
   .filter((d) => d.isDirectory() && existsSync(`${APPS_DIR}/${d.name}/wrangler.toml`))
   .map((d) => d.name)

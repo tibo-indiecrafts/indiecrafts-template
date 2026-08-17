@@ -1,13 +1,14 @@
 # Homepage (page-builder)
 
-The homepage is **editor-composed in Sanity**, not hard-coded. Its editorial sections live in a
-per-locale singleton and render through the same page-builder blocks the blog body uses.
+The homepage is **editor-composed in Sanity**, not hard-coded. It's the same `page` model as every
+other page (there is **one page model everywhere**) — the home is a `page` with `isHome` on, rendering
+through the shared page-builder blocks.
 
 ## Where the content lives
 
-- **Studio → Accueil** — one document per language (`homePage.en`, `homePage.fr`), each an ordered
-  **`pageModules[]`** of `module.*` blocks. Add, reorder, or hide a block from the Studio; the page
-  follows, no code change.
+- **Studio → Accueil** — one home `page` per language (`isHome`, fixed id `page-home-en` /
+  `page-home-fr`), an ordered **`sections[]`** of `module.*` blocks. Add, reorder, or hide a block from
+  the Studio; the page follows, no code change. Every *other* page lives in **Studio → Pages**.
 - Read at request time by `getHomePage(locale)` (`src/lib/home.ts` → `home-queries.ts`), painted by
   the shared `renderBlock` registry (`@indiecrafts/ui-components/web/registry`) in
   `src/app/[locale]/(home)/page.tsx`.
@@ -39,5 +40,5 @@ source for the visible FAQ and the JSON-LD.
 
 ## Seeding
 
-`pnpm seed` authors `homePage.en` / `homePage.fr` from `buildHomePage()` in `scripts/seed-demo.mjs` —
-the reference content you can edit or replace per client.
+`pnpm seed` authors the home `page` per locale (`page-home-en` / `page-home-fr`, `isHome`) from
+`buildHomePage()` in `scripts/seed-demo.mjs` — the reference content you can edit or replace per client.

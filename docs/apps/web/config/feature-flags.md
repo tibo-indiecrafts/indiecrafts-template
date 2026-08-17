@@ -1,7 +1,7 @@
 # Feature flags & feature-gate
 
 Every optional surface is a boolean in one object: `features`, **app-owned** in
-`code/apps/web/src/config/features.ts` (imported via `@/config`). Flip a flag and the routes,
+`code/projects/web/src/config/features.ts` (imported via `@/config`). Flip a flag and the routes,
 discovery files, nav links, and `<head>` emissions that depend on it all follow — the gate is
 already wired at every consumer. Islands (blog, newsletter, waitlist) don't read `features`
 directly — the app **injects** their flags at boot (`src/instrumentation.ts` → `configureIslands`),
@@ -33,8 +33,10 @@ Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling a
 | `studio` | `boolean` | `true` | `/studio` + the draft-mode preview API |
 | `maintenance` | `boolean` | `false` | Site-wide 503 rewrite to `/maintenance` (via `proxy.ts`) |
 
-Everything reads these from `@indiecrafts/config` — never re-declare a flag or its
-condition locally.
+Everything reads these from `@/config` — the app-owned `src/config/features.ts` (flags,
+theme, fonts, and the `pages` map are app-instance config so a second app ships its own;
+`@indiecrafts/config` holds only shared primitives). Never re-declare a flag or its condition
+locally.
 
 ## LLM endpoints — `llms.{index,full,pages}`
 
@@ -180,6 +182,6 @@ script, no network call. See [Analytics](../seo/analytics.md) and
 
 ::: warning Never re-implement a gate
 Every gate already has one canonical home (the `pages` map, `route-gate.ts`, the layout,
-`proxy.ts`). Read the flag from `@indiecrafts/config`; don't add a second condition that can
+`proxy.ts`). Read the flag from `@/config`; don't add a second condition that can
 fall out of sync.
 :::

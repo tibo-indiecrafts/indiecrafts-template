@@ -18,3 +18,6 @@ export type { WaitlistConfirmInput } from "./templates/waitlist-confirm";
 
 export { renderWaitlistNotificationEmail } from "./templates/waitlist-notification";
 export type { WaitlistNotificationInput } from "./templates/waitlist-notification";
+
+export { renderLeadMagnetEmail } from "./templates/lead-magnet";
+export type { LeadMagnetInput } from "./templates/lead-magnet";

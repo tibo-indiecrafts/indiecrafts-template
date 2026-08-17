@@ -16,6 +16,8 @@ Extracted from `next.config.ts` so a second app reuses the hardening and passes 
 | `buildCsp(env, csp?)` (`./csp`) | The CSP string. Hardened defaults + `connect-src` from `getCSPConnectSources(env)`. App extras via `CspHosts` (`frameSrc`, `mediaSrc`, `embedHosts`, `googleAnalytics`, …). |
 | `securityHeaders(opts)` (`./headers`) | The full Next `headers()` array — the security set + CSP (+ HSTS/COOP in prod) + immutable `Cache-Control` on `immutablePaths`. |
 | `imageDefaults` / `imageRemotePatterns` (`./images`) | The Next image allowlist (`images.unsplash.com` + `cdn.sanity.io`) + formats + 1-year TTL. Spread into `images`. |
+| `isValidIpAddress` / `sanitizeIpAddress` / `extractIpFromHeadersList` (`./ip`) | Validate + sanitize a client IP (thorough IPv4/IPv6) before it is trusted. `withGuard`'s `clientIp` now runs the trusted `cf-connecting-ip` / first `x-forwarded-for` hop through `sanitizeIpAddress`, so a spoofed header can't poison the rate-limit key. Zero-dep, Edge-safe. |
+| `encrypt` / `decrypt` / `encryptObject` / `decryptObject` / `hashIpAddress` / `verifyIpHash` / `isEncryptedData` (`./crypto`) | AES-256-GCM (with integrity tag) + salted SHA-256, on **Web Crypto** (`crypto.subtle`) — zero-dep, runs on Node 22 **and** Workers, all async. The secret/salt is injected by the caller (no keys in the brick). For at-rest PII + GDPR IP-hashing. |
 
 ## Using it (`next.config.ts`)
 

@@ -6,19 +6,16 @@ import blog from "./documents/blog";
 import category from "./category";
 import tag from "./tag";
 import series from "./series";
-import person from "./documents/person";
 import post from "./post";
-import quote from "./documents/quote";
 import comment from "./documents/comment";
 
-// Reusable objects (shared `localeString` + `seoMeta` live in @indiecrafts/schema)
-import blockContent from "./blockContent";
-import cta from "./objects/cta";
-import link from "./objects/link";
+// Reusable objects. `blockContent` · `cta` · `link` and the `quote`/`person`
+// entities now live in @indiecrafts/page-builder (registered via pageBuilderSanity);
+// blog references them by type name. `metadata` is post-specific, stays here.
 import metadata from "./objects/metadata";
 
-// Blog page-builder modules (object types)
-import { moduleSchemas } from "./modules";
+// Blog-specific page-builder modules (blog-index · blog-post-content · blog-post-list)
+import { blogModuleSchemas } from "./modules";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Documents
@@ -28,14 +25,9 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   category,
   tag,
   series,
-  quote,
-  person,
   comment,
   // Reusable objects
-  blockContent,
   metadata,
-  link,
-  cta,
-  // Modules
-  ...moduleSchemas,
+  // Blog modules
+  ...blogModuleSchemas,
 ];

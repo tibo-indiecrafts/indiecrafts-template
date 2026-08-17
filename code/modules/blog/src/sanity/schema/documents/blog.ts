@@ -1,8 +1,10 @@
 import { defineField, defineType } from "sanity";
 import { BlockContentIcon } from "@sanity/icons";
-import { MODULE_TYPES } from "../modules";
+import { MODULE_TYPES } from "@indiecrafts/page-builder/sanity/schema/modules";
+import { BLOG_MODULE_TYPES } from "../modules";
 
-const moduleFieldRefs = MODULE_TYPES.map((type) => ({ type }));
+// The per-post layout can compose the generic blocks + the 3 blog-specific ones.
+const moduleFieldRefs = [...MODULE_TYPES, ...BLOG_MODULE_TYPES].map((type) => ({ type }));
 
 /**
  * A display toggle — a boolean that defaults to ON, so an editor never

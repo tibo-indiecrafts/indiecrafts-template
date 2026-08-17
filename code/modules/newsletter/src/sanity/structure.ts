@@ -1,5 +1,5 @@
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon, DownloadIcon } from "@sanity/icons";
 import { apiVersion } from "@indiecrafts/sanity/env";
 
 /**
@@ -47,5 +47,15 @@ export function newsletterStructure(S: StructureBuilder): ListItemBuilder[] {
         S.editor().id("newsletterSettings").schemaType("newsletterSettings").documentId("newsletterSettings"),
       ),
     subscriberStructureItem(S),
+    S.listItem()
+      .title("Aimants à prospects")
+      .icon(DownloadIcon)
+      .child(
+        S.documentList()
+          .title("Aimants à prospects")
+          .schemaType("leadMagnet")
+          .apiVersion(apiVersion)
+          .filter('_type == "leadMagnet"'),
+      ),
   ];
 }

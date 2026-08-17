@@ -52,7 +52,7 @@ a tsconfig `paths` entry (`"@indiecrafts/blog/*": ["../../modules/blog/src/*"]`)
 `transpilePackages` list, an `@source` line in `tokens/globals.css` (Tailwind scans its UI),
 schema + structure registration in `sanity.config.ts`, the `route-gate`, and the `blog` flag.
 
-## App internals — `code/apps/web/src/`
+## App internals — `code/projects/web/src/`
 
 ```text
 src/
@@ -110,9 +110,12 @@ import the primitives from `@indiecrafts/config` directly. See [Multi-app](./mul
 
 ## Imports & conventions
 
-- Alias: `@/*` → `src/*`. Only `@/*` and `@indiecrafts/blog/*` are declared in tsconfig
-  `paths`; the other `@indiecrafts/*` packages resolve via pnpm workspace symlinks + their
-  `exports` maps.
+- Alias: `@/*` → `src/*`. tsconfig `paths` also declares each `@indiecrafts/*` package that has
+  a **wildcard subpath export** (`"./*"` / `"./web/*"`) — `consent`, `announcement`,
+  `locale-suggest`, `ui`/`ui-components`, and the modules `blog`/`newsletter`/`waitlist` — so tsc
+  (and the Sanity schema-extract) can map `@pkg/x` → `src/x.{ts,tsx}` under `moduleResolution:
+  bundler`. Packages with explicit per-file exports (e.g. `version`) need no entry and resolve via
+  pnpm workspace symlinks + their `exports` maps.
 - **No barrel files.** Import deep
   (`@indiecrafts/blog/user-interface/post/layout/DefaultPostLayout`,
   `@/user-interface/homepage/sections/Features`), not through an `index.ts` — a single barrel

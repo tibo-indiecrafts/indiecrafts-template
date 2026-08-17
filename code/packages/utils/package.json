@@ -5,8 +5,11 @@
   "type": "module",
   "exports": {
     "./cn": "./src/cn.ts",
+    "./error-message": "./src/error-message.ts",
+    "./filename": "./src/filename.ts",
     "./format-date": "./src/format-date.ts",
     "./slugify": "./src/slugify.ts",
+    "./truncate": "./src/truncate.ts",
     "./video-embed": "./src/video-embed.ts"
   },
   "dependencies": {

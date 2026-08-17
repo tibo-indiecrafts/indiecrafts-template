@@ -1,1 +1,1 @@
-cd code/apps/web && pnpm lint-staged && pnpm tsc
+cd code/projects/web && pnpm lint-staged && pnpm tsc

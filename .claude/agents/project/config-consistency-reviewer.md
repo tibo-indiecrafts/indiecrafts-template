@@ -6,7 +6,7 @@ model: sonnet
 ---
 
 You audit an app change for **config-first / one-home-per-fact** compliance — the core of this
-template. Authority: `code/apps/web/.claude/CLAUDE.md` (the NEVERs) + `code/apps/web/.claude/rules/`.
+template. Authority: `code/projects/web/.claude/CLAUDE.md` (the NEVERs) + `code/projects/web/.claude/rules/`.
 Scope to changed files (`git diff --name-only`).
 
 Check, reporting ✅/❌ with `file:line`:

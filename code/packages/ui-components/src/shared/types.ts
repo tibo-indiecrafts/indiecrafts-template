@@ -159,6 +159,20 @@ export type WaitlistModule = ModuleBase & {
   variant?: "card" | "inline" | "banner";
 };
 
+export type LeadMagnetModule = ModuleBase & {
+  _type: "module.lead-magnet";
+  heading?: string;
+  body?: string;
+  emailPlaceholder?: string;
+  buttonLabel?: string;
+  consentText?: string;
+  successMessage?: string;
+  alreadyMessage?: string;
+  errorMessage?: string;
+  variant?: "card" | "inline" | "banner";
+  magnet?: { id?: string };
+};
+
 // ── Marketing / page blocks ──────────────────────────────────
 
 export type HeroModule = ModuleBase & {
@@ -214,4 +228,5 @@ export type BlockModule =
   | QuoteListModule
   | CustomHtmlModule
   | NewsletterModule
-  | WaitlistModule;
+  | WaitlistModule
+  | LeadMagnetModule;

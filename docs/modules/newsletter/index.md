@@ -6,7 +6,7 @@ box with **no API keys** — a signup lands as a Sanity `subscriber` document yo
 
 Lives in the **`@indiecrafts/newsletter`** module (`code/modules/newsletter`): the subscribe
 engine, the `subscriber` doc, and an editable **`newsletterSettings`** singleton — shipped as a
-one-line `composeSanity` contribution. The public form stays a page-builder block (renderer in
+one-line `composeStudio`-group contribution. The public form stays a page-builder block (renderer in
 `@indiecrafts/ui-components`). The emails' config + copy live on the shared **E-mails** entity
 (`@indiecrafts/email`).
 
@@ -78,7 +78,7 @@ which block you drop.
 
 One gotcha: the app's Content-Security-Policy blocks cross-origin form submits and third-party
 scripts by default. Add the provider's origin to **`EMBED_HOSTS`** in
-`code/apps/web/next.config.ts` so the embed can submit and load:
+`code/projects/web/next.config.ts` so the embed can submit and load:
 
 ```ts
 const EMBED_HOSTS: string[] = ["https://*.list-manage.com"]; // e.g. Mailchimp

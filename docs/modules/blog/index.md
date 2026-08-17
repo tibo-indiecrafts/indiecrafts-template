@@ -12,7 +12,7 @@ See [`docs/modules/`](../) for the general module contract and [`docs/packages/`
 
 ## How it's wired into the app
 
-Six mechanisms, all in `code/apps/web/`:
+Six mechanisms, all in `code/projects/web/`:
 
 | # | Mechanism | Where |
 | --- | --- | --- |
@@ -37,4 +37,4 @@ Six mechanisms, all in `code/apps/web/`:
 ## Where the code lives
 
 - **Feature source** → `code/modules/blog/src/` — `sanity/` (schema + queries + structure), `user-interface/` (renderers + per-surface sections), `lib/` (`route-gate.ts`, `llms.ts`). Start with the module's own `CLAUDE.md`.
-- **App integration** → `code/apps/web/src/app/[locale]/{blog,author}/**` routes (including `blog/rss.xml`, `blog/atom.xml`, `blog/[slug]/md`), the home `FeaturedArticles`, `sitemap.ts`, `llms*.txt`, and `sanity.config.ts`.
+- **App integration** → `code/projects/web/src/app/[locale]/{blog,author}/**` routes (including `blog/rss.xml`, `blog/atom.xml`, `blog/[slug]/md`), the home `FeaturedArticles`, `sitemap.ts`, `llms*.txt`, and `sanity.config.ts`.

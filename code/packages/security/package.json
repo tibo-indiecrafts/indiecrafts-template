@@ -11,7 +11,9 @@
     "./guard": "./src/guard.ts",
     "./origin": "./src/origin.ts",
     "./turnstile": "./src/turnstile.ts",
-    "./rate-limit": "./src/rate-limit.ts"
+    "./rate-limit": "./src/rate-limit.ts",
+    "./ip": "./src/ip.ts",
+    "./crypto": "./src/crypto.ts"
   },
   "dependencies": {
     "@indiecrafts/config": "workspace:*"

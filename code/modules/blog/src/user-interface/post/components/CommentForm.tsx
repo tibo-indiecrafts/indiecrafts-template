@@ -6,6 +6,10 @@ import { Input } from "@indiecrafts/ui/web/input";
 import { Textarea } from "@indiecrafts/ui/web/textarea";
 import { Checkbox } from "@indiecrafts/ui/web/checkbox";
 import { Label } from "@indiecrafts/ui/web/label";
+import {
+  TurnstileWidget,
+  turnstileActive,
+} from "@indiecrafts/ui-components/web/form/TurnstileWidget";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -49,6 +53,15 @@ export function CommentForm({
   const [consent, setConsent] = useState(false);
   const [website, setWebsite] = useState(""); // honeypot
   const [status, setStatus] = useState<Status>("idle");
+  const [tsToken, setTsToken] = useState<string | null>(null);
+  const [tsKey, setTsKey] = useState(0); // bump to reset the Turnstile widget after a failed submit
+  const [startedAt] = useState(() => Date.now()); // anti-bot: reject near-instant submits server-side
+
+  function fail() {
+    setStatus("error");
+    setTsToken(null);
+    setTsKey((k) => k + 1);
+  }
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -65,6 +78,8 @@ export function CommentForm({
           body,
           consent,
           honeypot: website,
+          startedAt,
+          ...(tsToken ? { "cf-turnstile-response": tsToken } : {}),
         }),
       });
       if (res.status === 201) {
@@ -74,10 +89,10 @@ export function CommentForm({
         setBody("");
         setConsent(false);
       } else {
-        setStatus("error");
+        fail();
       }
     } catch {
-      setStatus("error");
+      fail();
     }
   }
 
@@ -157,7 +172,12 @@ export function CommentForm({
         </p>
       ) : null}
 
-      <Button type="submit" disabled={status === "submitting" || !consent}>
+      <TurnstileWidget key={tsKey} onToken={setTsToken} />
+
+      <Button
+        type="submit"
+        disabled={status === "submitting" || !consent || (turnstileActive() && !tsToken)}
+      >
         {submitLabel}
       </Button>
     </form>

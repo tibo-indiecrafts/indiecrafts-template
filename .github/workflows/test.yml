@@ -78,8 +78,17 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:stories # every story as a component + a11y test
+      # Visual regression against the built Storybook.
       - run: pnpm --filter @indiecrafts/storybook storybook:build
-      - run: pnpm --filter @indiecrafts/web e2e # journeys + visual regression
+      - run: pnpm --filter @indiecrafts/web e2e:visual
+      # App journeys: global-setup seeds a throwaway `e2e` Sanity dataset, then the
+      # webServer builds + serves the app against it. Needs the Sanity secrets.
+      - run: pnpm --filter @indiecrafts/web e2e
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+          E2E_SANITY_DATASET: e2e
 
   # The VitePress docs build (catches Vue-parser breaks + structural errors).
   docs:

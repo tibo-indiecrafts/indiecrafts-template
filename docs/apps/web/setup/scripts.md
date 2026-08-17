@@ -1,12 +1,31 @@
 # CLI scripts & verification
 
-Every `pnpm` script, every standalone file in `code/apps/web/scripts/`, and the Git hook that runs automatically. Reach here when you're unsure which command does what, or which token a data script needs. Run everything from the **repo root** (turbo delegates to `@indiecrafts/web`).
+Every `pnpm` script, every standalone file in `code/projects/web/scripts/`, and the Git hook that runs automatically. Reach here when you're unsure which command does what, or which token a data script needs. Run everything from the **repo root** (turbo delegates to `@indiecrafts/web`).
 
 ---
 
 ## 1. `package.json` scripts
 
 Run with `pnpm <name>`.
+
+### Where a script lives (root vs app)
+
+Scripts sit at **two tiers**, split by blast radius — the same script is never duplicated across them:
+
+- **App tier** (`code/projects/web/scripts/` + `code/projects/web/package.json`) — anything that touches **one
+  app's** dataset, Cloudflare resources, env, or tokens (`seed`, `backup-*`, `deploy`, `setup:kv`,
+  `sync-secrets`, `check-contrast`, `doctor-env`). Travels with the app; can't reach a sibling app.
+- **Root tier** (`/scripts` + root `package.json`) — anything **repo-wide**: governance
+  (`tags-report`, `scan-placeholders`), git/toolchain (`clean`, `worktree`, `sync-agents`), and the
+  **multi-app dispatcher** (`infra.mjs web …`). Governed — shellcheck + `node:test` (§4).
+
+The root **re-exposes** app scripts through `pnpm --filter @indiecrafts/web …`, so you run everything
+from the root. **Naming rule:** a script whose name has an axis a second app would collide on carries
+`:<app>:` — `deploy:web:prod`, `backup:web:d1:prod`, `secrets:sync:web:prod` (app #2 gets
+`deploy:admin:prod`, no clash). Single-instance, dev-ergonomic aliases stay short (`seed`, `doctor:env`,
+`sanity:typegen`) on purpose — the `:web:` façade is reserved for the env/infra scripts that need it.
+**Docs commands** (`docs`, `docs:build`, `docs:install`) live **only at root** — `docs/` is an
+npm-isolated repo-root sibling, not an app concern.
 
 ### Dev & build
 
@@ -82,25 +101,27 @@ Because it runs via `npx …@latest`, the first run fetches the CLI (needs netwo
 
 ### Deploy (Cloudflare)
 
-**Per app and per env** — every deploy script name is `deploy:<app>:<env>` at both levels (the root delegates to `code/apps/web`, whose scripts share the same `deploy:web:<env>` names). A second app reads `deploy:admin:<env>`, so nothing is env-generic or ambiguous. Full runbook → [Deployment (Cloudflare)](./deployment).
+**Per app and per env** — every deploy script name is `deploy:<app>:<env>` at both levels (the root delegates to `code/projects/web`, whose scripts share the same `deploy:web:<env>` names). A second app reads `deploy:admin:<env>`, so nothing is env-generic or ambiguous. Full runbook → [Deployment (Cloudflare)](./deployment).
 
 | Script | Command | What it does |
 | --- | --- | --- |
 | `project:rename` | `node scripts/project-rename.mjs <slug>` | **Reuse the template per client.** Rewrites `DEFAULT_SITE_PREFIX` (`@indiecrafts/config`) + every `wrangler.toml` resource name to `<slug>-web*` in one command, then prints the R2 buckets to create. Run once, right after cloning. |
+| `setup:kv` | `node scripts/setup-kv.mjs` | **One-time.** Creates a `RATE_LIMIT_KV` namespace **per env** (dev/staging/prod, like the R2 buckets) and uncomments + fills each id in `wrangler.toml`, activating the in-app form rate limiter (`@indiecrafts/security` `withGuard`). Until run, the limiter fails **open**. Idempotent. |
 | `deploy:web:dev` / `:staging` / `:prod` | `node scripts/deploy.mjs <env>` | Version-stamp → OpenNext build → `wrangler deploy --env <env>`. Prod prompts for confirmation unless CI or `--yes`. **Guarded:** a `staging`/`prod` deploy aborts while the Worker/R2 names are still the template default `indiecrafts-web` (shared-account clobber guard) — run `project:rename` first, or set `ALLOW_DEFAULT_SLUG=true` for the template's own deploy. Runs in CI on push to `main` (prod) via `deploy.yml`. |
+| `deploy:all:dev` / `:staging` / `:prod` | `node scripts/deploy-all.mjs <env>` | **Deploy every deployable app to one env, in order, fail-fast** (repo-root dispatcher, §4). Discovers apps from `code/projects/*` (any dir with a **`wrangler.toml`**), orders standalone services before the web app (`api` · `cron` · `web`, then the rest alphabetically), and runs each one's `deploy:<app>:<env>` — so a new app is picked up automatically (an app missing that script is reported + skipped, not silently dropped). `--dry-run` lists the plan; `--yes` passes through to each app's deploy. Each app keeps its own guards (prod confirm, rename clobber-guard). |
 | `secrets:sync:web:dev` / `:staging` / `:prod` | `wrangler secret bulk` from `.dev.vars` | Bulk-provision the Worker's server secrets per env (skips `NEXT_PUBLIC_*` + unfilled placeholders). One dataset → same secrets to every env. Same rename-guard as deploy. |
 | `preview:web:cf` | `opennextjs-cloudflare preview` | Build + serve on the real workerd runtime locally (needs `.dev.vars`). |
 | `build:cf` · `version` | `version.mjs` (+ OpenNext build) | Stamp `src/lib/build-info.ts` (version · sha · time); `build:cf` also builds the Worker bundle. |
-| `docs:install` | `npm --prefix docs install` | Installs the isolated docs package's deps. Run once before working on docs. |
-| `docs` | `npm --prefix docs run docs:dev` | Docs dev server at `http://localhost:3002`. |
-| `docs:build` | `npm --prefix docs run docs:build` | Static docs build → `docs/.vitepress/dist`. |
 | `prepare` | `""` | Empty no-op in the app — Husky is installed from the **repo root** `prepare` (§ 3). |
+
+> **Docs** — `pnpm docs` / `docs:build` / `docs:install` are **root-only** (`npm --prefix docs …`);
+> the app no longer duplicates them (`docs/` is a repo-root sibling, npm-isolated from the app).
 
 ---
 
 ## 2. `scripts/*.mjs`
 
-Node scripts in `code/apps/web/scripts/`. The contrast checker + env preflight run with plain `node` (no token, no network); the Sanity scripts need a token (exported, or loaded from `.env.local` via `--env-file`). `scripts/seed-media/` alongside them holds the demo brand assets the seeder uploads.
+Node scripts in `code/projects/web/scripts/`. The contrast checker + env preflight run with plain `node` (no token, no network); the Sanity scripts need a token (exported, or loaded from `.env.local` via `--env-file`). `scripts/seed-media/` alongside them holds the demo brand assets the seeder uploads.
 
 - **`doctor-env.mjs`** — the `pnpm doctor:env` preflight. Parses `.env.local` itself (so a missing file is a clear message, not a crash), checks required Sanity keys, warns on optional ones. `--for=seed` also requires the write token. No token, no network.
 - **`backup-sanity.mjs` / `content-import.mjs`** — `pnpm backup:web:sanity` / `content:import`. Export the Sanity dataset → `backups/sanity/` (`--remote` also uploads to the R2 backups bucket, keeps the last 10); import is **destructive** (`--replace`) and prompts unless `--yes`. Shared helpers in `lib/backup-common.mjs`. Full story → [Backups](./backups).
@@ -108,6 +129,10 @@ Node scripts in `code/apps/web/scripts/`. The contrast checker + env preflight r
 - **`subscribers-export.mjs`** — `pnpm subscribers:export`. GROQ-queries every `subscriber` and writes a CSV to `backups/subscribers/` (read-only; `SANITY_API_READ_TOKEN`). The escape hatch for newsletter lists stored in Sanity.
 - **`comments-export.mjs`** — `pnpm comments:export`. Same shape for blog comments → `backups/comments/` (read-only; `SANITY_API_READ_TOKEN`). Includes the private `authorEmail` — owner-only.
 - **`waitlist-export.mjs`** — `pnpm waitlist:export`. Same shape for waitlist entries → `backups/waitlist/` (read-only; `SANITY_API_READ_TOKEN`).
+- **`lib/csv.mjs`** — shared `csvCell(value)` used by all three exporters. RFC-4180 quoting **plus a
+  formula-injection guard**: a cell starting with `= + - @` (or tab/CR) is prefixed with `'` so a
+  spreadsheet treats it as text, not a formula (user content like a comment body can carry
+  `=HYPERLINK(...)`). Unit-tested in `lib/csv.test.mjs` (run by `pnpm test:scripts`).
 
 ### `check-contrast.mjs` — WCAG contrast checker
 
@@ -149,11 +174,11 @@ Husky is installed by the **repo-root** `prepare` script on `pnpm install` (the 
 
 | Hook | Runs | What it does |
 | --- | --- | --- |
-| `pre-commit` | `cd code/apps/web && pnpm lint-staged && pnpm tsc` | Lints + formats **staged files only** (fast), then a full `tsc` typecheck. Blocks the commit on any error. |
+| `pre-commit` | `cd code/projects/web && pnpm lint-staged && pnpm tsc` | Lints + formats **staged files only** (fast), then a full `tsc` typecheck. Blocks the commit on any error. |
 
 There is **no pre-push hook** — the commit gate plus CI cover it. Run `pnpm verify:quick` yourself before opening a PR for a full-repo lint.
 
-`lint-staged` (`code/apps/web/.lintstagedrc.json`):
+`lint-staged` (`code/projects/web/.lintstagedrc.json`):
 
 ```json
 {
@@ -168,10 +193,11 @@ So committing auto-fixes lint + formats the staged files, then typechecks. Pushi
 
 ## 4. Repo-root scripts (`/scripts`)
 
-Workspace-wide tooling, run from the repo root. Shell scripts are shellcheck-clean (`pnpm lint:scripts`, warning+); the `.mjs` have colocated `*.test.mjs` run by Node's built-in test runner (`pnpm test:scripts`). Both are in `pnpm verify` + CI.
+Workspace-wide tooling, run from the repo root. Shell scripts are shellcheck-clean (`pnpm lint:scripts`, warning+); the `.mjs` have colocated `*.test.mjs` run by Node's built-in test runner (`pnpm test:scripts`, which now also covers `code/projects/web/scripts/lib/*.test.mjs`). Both are in `pnpm verify` + CI.
 
 | File | Script | What it does |
 | --- | --- | --- |
+| `deploy-all.mjs` | `pnpm deploy:all:<env>` | Deploy every `code/projects/*` app to one env, sequential + fail-fast. Multi-app dispatcher (mirrors `infra.mjs`); each app keeps its own deploy guards. |
 | `tags-report.mjs` | `pnpm tags:report` / `tags:check` | Inventory + validate the `@complexity`/`@refactor`/`@debt` issue tags (vocabulary in the dev framework's *Issue tags*). |
 | `scan-placeholders.mjs` | `pnpm scan:placeholders` | Pre-handoff scan for leftover template scaffolding in `code/` + `docs/`. |
 | `clean.sh` | `pnpm clean` | Wipe build artifacts (`--all` also `node_modules`). |

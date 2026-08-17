@@ -16,12 +16,16 @@ const SCAN_DIRS = ["code", "docs", "method"];
 const SKIP_DIRS = new Set([
   "node_modules", ".git", ".next", ".turbo", "dist", "build", "out", ".vitepress",
 ]);
-// Tags are a CODE convention (docs describe them, code uses them) — scanning code
-// files only avoids counting the docs that define or illustrate the vocabulary.
+// Scans code AND docs (`.md`): tags live in code comments and, for visibility, in a
+// doc's `## Issue tags` footer (mirroring real gaps). The vocabulary-defining /
+// illustrating docs are excluded via SKIP_FILES so their example tokens aren't counted.
 const EXT = new Set([
-  ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".css", ".scss", ".sql", ".sh",
+  ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".css", ".scss", ".sql", ".sh", ".md",
 ]);
-const SKIP_FILES = new Set();
+// Docs that DEFINE, illustrate, or narrate tags — their tokens are examples/history, not
+// real flags — so exclude them from the scan (matched by basename). CHANGELOG.md entries
+// describe tag-related changes in prose; a live flag lives in code or a doc footer.
+const SKIP_FILES = new Set(["issue-tags.md", "scripts.md", "CHANGELOG.md"]);
 
 // Canonical vocabulary (mirror of method/shared/engineering/issue-tags.md).
 const CANON = {
