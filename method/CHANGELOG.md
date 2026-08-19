@@ -11,6 +11,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **Ordered design-critique — a refinement loop that sequences the existing reviewers.** New
+  `design-critique` skill runs four focused passes in a fixed order — **accessibility → visual hierarchy
+  → content → interaction-states** — one lens at a time, fixing before the next (a11y first = the
+  foundation a later fix must not regress). It reuses the existing reviewer agents; only the one uncovered
+  lens got a new agent, `interaction-states-reviewer` (critiques hover/focus/loading/empty/error/… against
+  `DESIGN.md §Interaction & States`). Added `workflows/design-critique.md` (the framework checklist), the
+  `DESIGN.md §Definition of done` ordering principle, and shipped reference `docs/apps/web/design/design-critique.md`.
+  _Why:_ the repo reviewed in parallel batches (a fast PR read) but had no ordered critique-then-fix loop
+  for *refining one screen* — the two now coexist, one per job.
 - **Superpowers documented as the method-fallback skill set.** Installed obra's
   `superpowers@claude-plugins-official` plugin (user scope) + archived the redundant loose copies from
   `~/.claude/skills/`. Documented the **method-first, Superpowers-fallback** rule + an overlap map (brainstorm

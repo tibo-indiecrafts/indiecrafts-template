@@ -97,6 +97,7 @@ export default defineConfig({
             link: "/shared/architecture/multi-app",
           },
           { text: "Feature flags", link: "/apps/web/config/feature-flags" },
+          { text: "API security limits", link: "/apps/web/config/security-limits" },
           { text: "Navigation", link: "/apps/web/config/navigation" },
           { text: "Legal pages", link: "/apps/web/config/legal-pages" },
           { text: "i18n & routing", link: "/apps/web/config/i18n-and-routing" },
@@ -115,6 +116,10 @@ export default defineConfig({
           {
             text: "Design decisions (log)",
             link: "/apps/web/design/decisions",
+          },
+          {
+            text: "Design critique (ordered)",
+            link: "/apps/web/design/design-critique",
           },
           {
             text: "Homepage (page-builder)",

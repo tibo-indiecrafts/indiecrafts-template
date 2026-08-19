@@ -33,7 +33,9 @@ export type GuardOptions = {
 
 // Prefer Cloudflare's trusted `cf-connecting-ip`, then the first `x-forwarded-for`
 // hop — both are validated, so a spoofed/garbage header can't poison the rate-limit key.
-const clientIp = (req: Request): string =>
+// Exported so a route that can't adopt `withGuard` (e.g. a cross-site form POST) can
+// still key `rateLimit` off the same trusted IP derivation.
+export const clientIp = (req: Request): string =>
   sanitizeIpAddress(req.headers.get("cf-connecting-ip")) ??
   sanitizeIpAddress(
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim(),

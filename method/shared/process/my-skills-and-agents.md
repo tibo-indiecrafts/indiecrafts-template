@@ -17,8 +17,8 @@ task isn't covered by `method/`** (no gstack sprint / no matching workflow). Rul
 [`tooling/index.md`](../tooling/index.md#superpowers--the-method-fallback).
 
 **Policy:** the general agent suite is **vendored** for packaging; **skills stay
-register-don't-vendor** unless project-specific. Today `[local]` = **4 skills + 6 agents**
-(`.claude/agents/project/`: design-system · accessibility · ux · copy reviewers + `page-builder-reviewer`
+register-don't-vendor** unless project-specific. Today `[local]` = **5 skills + 7 agents**
+(`.claude/agents/project/`: design-system · accessibility · ux · copy · interaction-states reviewers + `page-builder-reviewer`
 
 - `config-consistency-reviewer`). Adding one → [`adding-skills.md`](./adding-skills.md).
 
@@ -64,9 +64,9 @@ never all at once. Order below reflects that: **gstack → skills → agents (ba
 ## REVIEW (05)
 
 - **gstack:** `/review` `/codex` `/cso` `/design-review`
-- **Skills:** `visual-critique:*` · `web-design-guidelines` · `improve-codebase-architecture` (deletion-test refactor audit — flags 1000-line files + hot-churn modules from the commit log; complements the in-change `ponytail-audit`) `[plugin]`
-- **Agents (batch)** — run as parallel groups, not serially:
-  - _design batch:_ `design-system-reviewer` · `ux-reviewer` · `copy-reviewer` (brand voice / tone) `[local]`
+- **Skills:** `visual-critique:*` · `web-design-guidelines` · `improve-codebase-architecture` (deletion-test refactor audit — flags 1000-line files + hot-churn modules from the commit log; complements the in-change `ponytail-audit`) `[plugin]` · `design-critique` `[local]` (apps/web — the **ordered** a11y → hierarchy → content → interaction refinement loop for *one screen*; sequences the design + a11y batches instead of running them parallel)
+- **Agents (batch)** — run as parallel groups, not serially (the `design-critique` skill is the ordered alternative when refining a single screen):
+  - _design batch:_ `design-system-reviewer` · `ux-reviewer` · `copy-reviewer` (brand voice / tone) · `interaction-states-reviewer` (hover/focus/loading/empty/error states) `[local]`
   - _a11y batch:_ `accessibility-reviewer` `[local]` · `accessibility-tester` `[vendored]`
   - _correctness batch:_ `config-consistency-reviewer` · `page-builder-reviewer` `[local]` · `code-reviewer` · `architect-reviewer` `[vendored]`
   - _security batch (`/cso`):_ `security-analyzer` · `security-auditor` · `penetration-tester` `[vendored]` (the edit-time `security-guidance` scan already ran in BUILD; this batch is the deeper review)

@@ -8,7 +8,7 @@ _how to code_. **Design-context pair:** this file = _how to build_ · **[`DESIGN
 
 **Focused rules auto-load** (self-contained) from `.claude/rules/` when you work here: naming · accessibility · adaptive-design · component-architecture · design-token-usage · figma-handoff · sanity-images · sanity-legends · visual-verification — plus the ❌/✅ [`code-patterns`](rules/code-patterns.md) library and the [`self-review`](rules/self-review.md) checklist. Global `writing-style` auto-loads from the root.
 
-**Repeatable multi-file tasks** — add a page · adapt a library section · add/remove a blog page-builder block — have step-by-step checklists in the internal dev framework. Follow the matching one instead of reconstructing the steps.
+**Repeatable multi-file tasks** — add a page · adapt a library section · add/remove a blog page-builder block · critique a screen (the ordered `design-critique` skill) — have step-by-step checklists in the internal dev framework. Follow the matching one instead of reconstructing the steps.
 
 **Design system:** follow @../../../packages/shared/ui-tokens/DESIGN.md. Before creating or modifying UI — (1) read the component implementation, (2) reuse existing tokens and parts, (3) check the responsive + accessibility + motion rules, (4) flag any `DESIGN.md` ↔ production-code conflict. Verify what's loaded with `/context`.
 

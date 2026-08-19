@@ -12,6 +12,30 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **`@indiecrafts/email` — the email palette is now the design tokens (resolved hex), not hand-maintained.**
+  New `theme.ts` `EMAIL_COLORS` maps every email role to the generated token hex
+  (`@indiecrafts/ui-tokens/native`, light) — mail clients strip `var()`/CSS, so email inlines the hex the
+  same way the PWA manifest + React Native do. The **8 duplicated `const C = {…}` palettes** (layout + 7
+  templates) collapse into that one source, so a rebrand (`tokens.json` → `pnpm tokens:build`) now flows to
+  every email — buttons finally match the real brand instead of a stale `#4f46e5`. `@indiecrafts/email` gains
+  a `@indiecrafts/ui-tokens` dep (pure data). Full remap: dark CTAs → `foreground`/`background`, delete →
+  `destructive`; the only email-specific hex left is the moderation "approve" green (no success token).
+
+- **`@indiecrafts/email` — every service email now editable in Sanity (owner-alert bodies + lead-magnet).**
+  `ownerAlertGroup` gained **translated `heading` · `intro` · `outro`** fields, so the four internal alerts
+  (`newsletterOwner` · `waitlistOwner` · `commentNotification` · `dataRequestOwner`) are no longer
+  hardcoded FR — the render fns thread the resolved copy (sent in the default locale) with the previous
+  text as the per-field fallback (**empty = today's mail, no regression**). The newsletter **lead-magnet
+  delivery** email — the one subscriber email with no group — got a `confirmationGroup` (`leadMagnet`);
+  `deliver-magnet.ts` reads `getEmailStrings()?.leadMagnet` (`{{title}}` = the document title) with the old
+  `COPY` const kept as the fallback. Both flow through the existing `emailStrings` singleton + "Send test"
+  (buildSamples now covers lead-magnet). _Why:_ subscriber confirmations were already Sanity-editable
+  per-locale; this closes the gap so **all** transactional copy is editor-owned, no deploy. Touched:
+  `email/sanity/groups.ts` · `email/strings.ts` · newsletter/waitlist/blog/compliance render fns + callers
+  + `newsletter/sanity/email.ts` · `deliver-magnet.ts` · the app `/api/emails/test` route.
+
 ### Changed
 
 - **`@indiecrafts/config` — `site.cdnUrl` (first-party asset CDN).** New `site.cdnUrl` primitive

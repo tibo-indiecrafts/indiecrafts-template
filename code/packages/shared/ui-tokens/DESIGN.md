@@ -431,6 +431,14 @@ A screen that renders is not done. Before calling a UI task complete:
 6. `pnpm verify:quick` passes and the result matches the reference.
 7. **Listed** any intentional deviation, and any new component / variant / token.
 
+**Refining a screen? Critique it in order, one lens at a time.** Don't ask "what's wrong" once — run
+four focused passes in this fixed order, fixing before the next: **1 Accessibility → 2 Visual hierarchy
+→ 3 Content → 4 Interaction-states**. Accessibility is first because it is the foundation — a later fix
+must never regress it (fix hierarchy without breaking a11y, refine copy without breaking hierarchy).
+Each pass critiques against its section here (§Accessibility, §Typography/§Layout, §Product Content,
+§Interaction & States) and re-screenshots at 375 / 768 / 1280 before the next. The `design-critique`
+skill runs this loop, sequencing the reviewer agents; the parallel review batch stays the fast PR read.
+
 ## Maintenance & Validation
 
 - **Single source of truth:** OKLCH in `globals.css`. Change the background →

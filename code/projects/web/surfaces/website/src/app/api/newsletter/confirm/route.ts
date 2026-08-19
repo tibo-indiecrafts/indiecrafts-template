@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { features } from "@/config";
+import { features, security } from "@/config";
 import { withGuard } from "@indiecrafts/security/guard";
 import { confirmSubscriber } from "@indiecrafts/newsletter/lib/confirm";
 
@@ -10,14 +10,11 @@ import { confirmSubscriber } from "@indiecrafts/newsletter/lib/confirm";
  * POSTs the one-time `token` here. `withGuard` rate-limits (the token is the auth,
  * so no Turnstile). Returns `{ status: "confirmed" | "invalid" }`.
  */
-const handle = withGuard(
-  async (_req, data) => {
-    const token = String((data as Record<string, unknown> | null)?.token ?? "");
-    const status = await confirmSubscriber(token);
-    return NextResponse.json({ status });
-  },
-  { rateLimit: { limit: 10, windowSec: 600 }, bodyMax: 2000 },
-);
+const handle = withGuard(async (_req, data) => {
+  const token = String((data as Record<string, unknown> | null)?.token ?? "");
+  const status = await confirmSubscriber(token);
+  return NextResponse.json({ status });
+}, security.confirm);
 
 export async function POST(request: Request) {
   if (!features.newsletter) {

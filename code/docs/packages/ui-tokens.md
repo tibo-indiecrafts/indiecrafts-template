@@ -2,17 +2,49 @@
 
 > **Browse it:** live token swatches (light/dark) — `pnpm storybook` ([storybook package](./storybook)).
 
-The runtime style source + the design contract, shipped together. CSS-only, no JS.
+The runtime style source + the design contract, shipped together. **One JSON source of truth
+generates every platform output** — web CSS, React-Native hex, and the PWA-manifest hex mirror.
 
 |               |                                                                                                                                                                               |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Exports**   | `./globals.css` (OKLCH color tokens, `@theme`, `@source` scan directives, base `--font-*` rules; imports Tailwind + `typeset.css`) · `./typeset.css` (long-form prose rhythm) |
-| **Deps**      | `tailwindcss ^4`, `@tailwindcss/typography ^0.5.19`. **Peer:** none                                                                                                           |
-| **Consumers** | app imports `@indiecrafts/ui-tokens/globals.css` in the root layout; it is the design-system source for `ui` and blog too, coupled via CSS scanning, not a JS import          |
+| **Exports**   | `./globals.css` (web — Tailwind scaffolding + `@import "./generated/tokens.css"`) · `./typeset.css` (long-form prose rhythm) · `./native` (React-Native `{ light, dark }` hex object) · `./hex` (manifest hex mirror) · `./tokens.json` (the DTCG source)                                            |
+| **Deps**      | `tailwindcss ^4`, `@tailwindcss/typography ^0.5.19`, `culori ^4` (build-time oklch→hex). **Peer:** none                                                                       |
+| **Consumers** | app imports `@indiecrafts/ui-tokens/globals.css` in the root layout; a native app imports `./native`; the manifest reads `./hex`. Design-system source for `ui` + blog too, coupled via CSS scanning, not a JS import |
 
 Also ships [`DESIGN.md`](../../code/packages/shared/ui-tokens/DESIGN.md) — the authoritative token
 contract (colors, typography scale, spacing, a11y), colocated so contract and
 implementation travel as one package.
+
+## Token source & generation
+
+The **source of truth is `src/shared/tokens.json`** (DTCG 2025.10, OKLCH, 3-tier
+primitive→semantic→component). `pnpm tokens:build` (`scripts/build-tokens.mjs`, uses `culori`)
+generates three outputs — **never hand-edit them** (a PreToolUse hook blocks it):
+
+- `src/generated/tokens.css` — web `:root` (light) + the two dark blocks; imported by `globals.css`.
+- `src/native/tokens.ts` — React Native `{ light, dark }` hex (no CSS/oklch on RN).
+- `src/generated/hex.ts` — hex mirror the PWA manifest reads (`app/manifest.ts` can't take oklch).
+
+`pnpm tokens:check` (in `pnpm verify` + CI) regenerates and diffs — it fails if a generated file
+drifted from the JSON. Change a color: edit `tokens.json`, run `tokens:build`, then `verify:contrast`.
+The 3-tier rule: **component** tokens reference only **semantic**, **semantic** only **primitive** —
+never a component→primitive ref or a raw value.
+
+## Colocated component tokens (`<Component>.tokens.json`)
+
+A component's own themeable token surface lives **beside its `.tsx`** as a `<Component>.tokens.json`
+sidecar (like `.stories.tsx`/`.md`) — every component in `ui` (61) and `ui-components` (28) ships one.
+Each is a **component-tier DTCG fragment**: keys namespaced by component (`button-bg`), values
+referencing only `{semantic.*}` or `{component.*}`. `tokens:build` globs `code/**/*.tokens.json` and
+**merges** them into the same outputs, so a colocated token reaches web CSS **and** React Native
+(resolved to hex through its semantic ref). The generator hard-errors on a duplicate name, a primitive
+ref, or a non-`component` top-level key.
+
+`tokens:check` also **drift-checks** each sidecar against its sibling `.tsx`: if the component uses a
+token as a plain `bg-/text-/border-/ring-…` utility (no `/opacity`) that its sidecar omits, the check
+fails, naming the file. So a sidecar can't silently fall out of sync when the component changes.
+A sidecar is a **contract, not an edit** — the `ui` primitives stay shadcn-CLI-managed; the guard hook
+allows `*.tokens.json` there but nothing else.
 
 - **Gotcha — Tailwind v4 does not scan `node_modules`.** `globals.css` carries explicit
   `@source` lines for the app, the design-system bricks (`ui`, `ui-components`), every domain

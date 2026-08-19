@@ -68,6 +68,29 @@ strict-origin-when-cross-origin` · `Permissions-Policy: camera=(), microphone=(
   `img-src` stays `https:`-permissive for editor-embedded images (tighten to specific hosts if you
   don't allow arbitrary embeds).
 
+## Request-side guard (public POSTs)
+
+Beyond the response headers, the brick ships the **request-boundary** hardening every public form POST
+adopts:
+
+| Import | What it is |
+| --- | --- |
+| `withGuard(handler, opts)` (`./guard`) | Wraps a POST handler: same-site **origin** check (fail-closed) → **body cap** → optional KV **rate-limit** → optional **Turnstile** → single JSON parse. `opts` = `{ origin?, bodyMax?, rateLimit?: {limit, windowSec}, turnstile? }`. Also exports `clientIp(req)` — the trusted `cf-connecting-ip` / `x-forwarded-for` derivation — for a route that can't adopt `withGuard` but still wants to key `rateLimit`. |
+| `rateLimit(key, limit, windowSec)` (`./rate-limit`) | Fixed-window limiter on the `RATE_LIMIT_KV` binding. **Fails open** when the binding is unbound (the CF WAF `/api/*` rule is primary). |
+| `verifyTurnstile(token, ip?)` (`./turnstile`) | Cloudflare siteverify. **No-ops (passes)** until `TURNSTILE_SECRET` is set; fails closed once it is. |
+
+The per-route limits (`rateLimit`, `bodyMax`, `turnstile`) are **not** inline in each route — they live
+in one app-owned config, [`src/config/security.ts`](../apps/web/config/security-limits), passed in as
+`withGuard(handler, security.<name>)`.
+
+### Enforcing adoption — `verify:api-guards`
+
+`pnpm verify:api-guards` (in `pnpm verify` + CI — see [Scripts](../apps/web/setup/scripts)) scans every
+`src/app/**/route.ts` and **fails** if a mutating handler (POST/PUT/PATCH/DELETE) neither wraps
+`withGuard` nor is allowlisted with its reason (a capability token, a Bearer session) in
+`code/shared/scripts/checks/api-guards.mjs`. So a new public POST can't ship unguarded by accident.
+GET handlers are exempt (`withGuard` is form-POST hardening).
+
 ## Not Sanity
 
 This is **build config** — no editor/Sanity fields (config-first). The GA measurement ID is edited in

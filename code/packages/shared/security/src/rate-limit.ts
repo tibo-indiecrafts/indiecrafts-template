@@ -4,7 +4,8 @@ import "server-only";
  * Best-effort **fixed-window** limiter backed by Workers KV (binding
  * `RATE_LIMIT_KV`). **No-ops (allows)** when the binding isn't bound — the
  * Cloudflare **WAF rate-limit rule** on `/api/*` is the PRIMARY limiter (see
- * `code/docs/apps/web/setup/security-hardening.md`); this is the portable in-app
+ * `code/docs/apps/web/setup/deployment.md` + `code/docs/infra/cloudflare-iac.md`);
+ * this is the portable in-app
  * fallback that also works in local `wrangler`/dev when a KV namespace is wired.
  *
  * The window resets `windowSec` after the first hit; a KV read/write error never

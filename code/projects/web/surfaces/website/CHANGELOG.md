@@ -19,6 +19,12 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **DESIGN.md gains an ordered design-critique principle _(design)_.** §Definition of done now says:
+  to refine a screen, run four critique passes in a fixed order — accessibility → visual hierarchy →
+  content → interaction-states — one lens at a time, fixing before the next (a11y first = the foundation
+  a later fix must not regress). Each pass cites its DESIGN.md section. Runnable via the `design-critique`
+  skill; shipped reference at `docs/apps/web/design/design-critique.md`. _Why: the template reviewed in
+  parallel batches but had no ordered critique-then-fix loop for polishing one screen._
 - **API safety: one reviewable security surface + a check that keeps it that way.** After auditing
   every route handler (all safe by design — writes are whitelisted with bound GROQ params, secrets
   are server-only, redirects/tokens are HMAC-signed), two hardening changes landed. (1) The one-click

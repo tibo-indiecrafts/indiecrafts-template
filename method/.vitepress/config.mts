@@ -142,6 +142,10 @@ export default defineConfig({
             text: "Workflow · remove a page-builder block",
             link: "/apps/web/workflows/remove-page-builder-block",
           },
+          {
+            text: "Workflow · design critique",
+            link: "/apps/web/workflows/design-critique",
+          },
         ],
       },
       {

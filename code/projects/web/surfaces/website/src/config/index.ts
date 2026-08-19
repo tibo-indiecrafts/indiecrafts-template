@@ -19,5 +19,6 @@ export * from "@indiecrafts/config";
 export { theme, themeConfig } from "./theme";
 export { fonts } from "./fonts";
 export { features } from "./features";
+export { security } from "./security";
 export { pages } from "./pages";
 export type { StaticAppPathname, AppRoute } from "./pages";

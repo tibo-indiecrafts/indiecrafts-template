@@ -9,6 +9,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Added
+
+- **Design critique (ordered) reference page.** New `apps/web/design/design-critique.md` under "Web app ·
+  Design & content" — the four-lens ordered critique (accessibility → visual hierarchy → content →
+  interaction-states), why the order matters, ready prompts, and ordered-vs-parallel guidance. Also added
+  the **API security limits** config page (`apps/web/config/security-limits.md`) and refreshed
+  `packages/ui-tokens.md` (DTCG source + colocated sidecars) and `packages/security.md` (request-side
+  guard + `verify:api-guards`).
+
 ### Fixed
 
 - **Sidebar + cross-link drift.** Three sidebar links pointed at pages that had moved

@@ -3,7 +3,7 @@
 Conventions + repeatable tasks for the Next.js app (`code/projects/web/surfaces/website`).
 
 - [`rules/`](./rules/naming) — coding rules (naming · a11y · component-architecture · design-tokens · figma · sanity-legends).
-- [`workflows/`](./workflows/add-page) — repeatable multi-file tasks (add-page · adapt-library-section · page-builder blocks).
+- [`workflows/`](./workflows/add-page) — repeatable multi-file tasks (add-page · adapt-library-section · page-builder blocks · design-critique).
 
 ## Links
 

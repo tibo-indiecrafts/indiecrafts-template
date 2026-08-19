@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { site } from "@/config";
+import { security, site } from "@/config";
 import { escapeHtml } from "@indiecrafts/email";
+import { clientIp } from "@indiecrafts/security/guard";
+import { rateLimit } from "@indiecrafts/security/rate-limit";
 import { isCommentsEnabled } from "@indiecrafts/blog/lib/route-gate";
 import {
   getModerationComment,
@@ -96,6 +98,21 @@ ${action === "delete" ? `<p style="margin:0 0 20px;font-size:14px;color:#dc2626"
 export async function POST(request: Request) {
   if (!isCommentsEnabled())
     return NextResponse.json({ error: "not_found" }, { status: 404 });
+
+  // This is a cross-site form POST from the email client, so it can't adopt
+  // `withGuard` (JSON body + same-origin). The token is the auth; this rate limit
+  // is defence-in-depth against token brute-force (no-ops until RATE_LIMIT_KV is bound).
+  const { ok } = await rateLimit(
+    `${clientIp(request)}:/api/comments/moderate`,
+    security.moderate.rateLimit.limit,
+    security.moderate.rateLimit.windowSec,
+  );
+  if (!ok)
+    return page(
+      "Trop de requêtes",
+      `<p style="margin:0">Trop de requêtes — réessayez dans quelques minutes.</p>`,
+      429,
+    );
 
   const form = await request.formData().catch(() => null);
   const token = String(form?.get("token") ?? "");
