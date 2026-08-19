@@ -1,0 +1,7 @@
+{
+  "$description": "Component token surface for slider — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "slider-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "slider-primary": { "$type": "color", "$value": "{component.primary}" }
+  }
+}

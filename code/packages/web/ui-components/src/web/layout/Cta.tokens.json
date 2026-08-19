@@ -1,0 +1,10 @@
+{
+  "$description": "Component token surface for Cta — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "cta-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "cta-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "cta-background": { "$type": "color", "$value": "{semantic.background}" },
+    "cta-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "cta-border": { "$type": "color", "$value": "{semantic.border}" }
+  }
+}

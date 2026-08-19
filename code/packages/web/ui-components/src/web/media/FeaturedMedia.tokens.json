@@ -1,0 +1,9 @@
+{
+  "$description": "Component token surface for FeaturedMedia — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "featured-media-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "featured-media-background": { "$type": "color", "$value": "{semantic.background}" },
+    "featured-media-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "featured-media-foreground": { "$type": "color", "$value": "{semantic.foreground}" }
+  }
+}

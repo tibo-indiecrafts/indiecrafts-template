@@ -1,0 +1,15 @@
+{
+  "$description": "Component token surface for button — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "button-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "button-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "button-primary": { "$type": "color", "$value": "{component.primary}" },
+    "button-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" },
+    "button-background": { "$type": "color", "$value": "{semantic.background}" },
+    "button-accent": { "$type": "color", "$value": "{component.accent}" },
+    "button-accent-foreground": { "$type": "color", "$value": "{component.accent-foreground}" },
+    "button-input": { "$type": "color", "$value": "{component.input}" },
+    "button-secondary": { "$type": "color", "$value": "{component.secondary}" },
+    "button-secondary-foreground": { "$type": "color", "$value": "{component.secondary-foreground}" }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@indiecrafts/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./web/use-mobile": "./src/web/use-mobile.ts",
+    "./web/*": "./src/web/*.tsx",
+    "./shared/*": "./src/shared/*.ts",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.7.0",
+    "@indiecrafts/utils": "workspace:*",
+    "@shadcn/react": "^0.3.0",
+    "class-variance-authority": "^0.7.1",
+    "cmdk": "^1.1.1",
+    "embla-carousel-react": "^8.6.0",
+    "input-otp": "^1.4.2",
+    "lucide-react": "^1.31.0",
+    "next-themes": "^0.4.6",
+    "radix-ui": "^1.6.7",
+    "react-day-picker": "^10.0.1",
+    "react-hook-form": "^7.85.0",
+    "react-resizable-panels": "^4",
+    "sonner": "^2.0.8",
+    "vaul": "^1.1.2"
+  },
+  "peerDependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  }
+}

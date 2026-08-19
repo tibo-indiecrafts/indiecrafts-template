@@ -6,7 +6,7 @@ model: sonnet
 ---
 
 You audit accessibility for this template. Authority: `method/apps/web/rules/accessibility.md`
-and `code/packages/ui-tokens/DESIGN.md`. Read them first.
+and `code/packages/shared/ui-tokens/DESIGN.md`. Read them first.
 
 Check:
 

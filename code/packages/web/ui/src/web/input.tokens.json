@@ -1,0 +1,33 @@
+{
+  "$description": "Component token surface for input — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "input-input": {
+      "$type": "color",
+      "$value": "{component.input}"
+    },
+    "input-primary": {
+      "$type": "color",
+      "$value": "{component.primary}"
+    },
+    "input-primary-foreground": {
+      "$type": "color",
+      "$value": "{component.primary-foreground}"
+    },
+    "input-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    },
+    "input-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
+    "input-ring": {
+      "$type": "color",
+      "$value": "{semantic.ring}"
+    },
+    "input-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    }
+  }
+}

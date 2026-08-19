@@ -6,12 +6,12 @@ per step/feature. Draft here freely; only what _sticks_ graduates to `docs/`
 
 ## Layout
 
-| Path                   | What                                                                                                  |
-| ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| Path                                                       | What                                                                                                                                                                                           |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `apps/<app>/` and `apps/<app>/features/YYYY-MM-DD_<name>/` | a sprint — fully self-contained: `00_BRIEF/` · `01_REFERENCE/` (inputs) · `02_THINK … 08_REFLECT/` (phases) · `09_OUTPUTS/` (deliverables). Stamp from `method/shared/templates/{app,feature}` |
-| `backlog.md`           | ideas · next · icebox                                                                                 |
-| `archive/`             | old, searchable                                                                                       |
-| `scratch/`             | raw personal thinking — **gitignored**, throwaway                                                     |
+| `backlog.md`                                               | ideas · next · icebox                                                                                                                                                                          |
+| `archive/`                                                 | old, searchable                                                                                                                                                                                |
+| `scratch/`                                                 | raw personal thinking — **gitignored**, throwaway                                                                                                                                              |
 
 ## Flow
 

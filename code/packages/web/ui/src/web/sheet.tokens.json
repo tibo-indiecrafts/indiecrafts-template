@@ -1,0 +1,10 @@
+{
+  "$description": "Component token surface for sheet — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "sheet-background": { "$type": "color", "$value": "{semantic.background}" },
+    "sheet-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "sheet-secondary": { "$type": "color", "$value": "{component.secondary}" },
+    "sheet-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "sheet-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+  }
+}

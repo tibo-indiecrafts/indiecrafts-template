@@ -1,0 +1,9 @@
+{
+  "$description": "Component token surface for radio-group — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "radio-group-input": { "$type": "color", "$value": "{component.input}" },
+    "radio-group-primary": { "$type": "color", "$value": "{component.primary}" },
+    "radio-group-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "radio-group-destructive": { "$type": "color", "$value": "{semantic.destructive}" }
+  }
+}

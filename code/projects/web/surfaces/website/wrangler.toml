@@ -1,0 +1,158 @@
+# Cloudflare Workers config for the Next.js app (via OpenNext).
+# Deploy: GitHub Actions runs `opennextjs-cloudflare build` then
+# `wrangler deploy --env <dev|staging|prod>`. Runbook + first-time setup
+# (R2 buckets, secrets, custom domain): docs/apps/web/setup/deployment.md
+#
+# Per client site, run `pnpm project:rename <slug>` — it rewrites every
+# `indiecrafts-web` resource name here AND `DEFAULT_SITE_PREFIX` in @indiecrafts/config,
+# then prints the R2 buckets to create. Do NOT hand-edit these names (a staging/prod
+# deploy is blocked until they differ from the template default — shared-account guard).
+
+name = "indiecrafts-web-dev"
+main = ".open-next/worker.js"
+compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat"]
+# Keep dashboard-set vars/secrets on deploy (don't wipe `wrangler secret put`).
+keep_vars = true
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+# Default bindings — used by `wrangler dev` / `opennextjs-cloudflare preview`
+# (no --env). Mirrors the dev environment.
+[[r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "indiecrafts-web-isr-dev"
+
+# ── Optional: Cloudflare D1 (relational data) + KV (cache) ───
+# The template's content lives in Sanity — add D1 only for data that ISN'T
+# content (orders, accounts, logs). `wrangler d1 create <name>` → paste the id,
+# then repeat the block under each [env.*] (like the R2 bucket). Docs: docs/db/.
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "indiecrafts-web-dev"
+# database_id = "<from `wrangler d1 create`>"
+# migrations_dir = "db/d1/<name>/migrations"
+#
+# [[kv_namespaces]]
+# binding = "KV"
+# id = "<from `wrangler kv namespace create`>"
+#
+# In-app rate-limit store for @indiecrafts/security `withGuard` — the app's own
+# fixed-window limiter (5–8 req / 10 min per IP on the public form routes). RUN
+# `pnpm setup:kv` ONCE: it creates ONE namespace PER ENV (like the R2 buckets below)
+# and uncomments + fills each `RATE_LIMIT_KV` block — base shares the dev namespace,
+# staging + prod get their own, so a staging load-test can't burn prod's budget. Until
+# then the limiter fails OPEN (allows). The Cloudflare WAF rule on /api/* is a separate edge layer.
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "PASTE_KV_ID_HERE"
+
+# ── Optional: call a sibling Worker in-process (a service binding) ───
+# Reach the `api` app (or `workers`/`cron`) with no public hop. The target name is
+# per-env (`indiecrafts-api-<env>`, rewritten by `project:rename`), so repeat under
+# each [env.*] like the R2 buckets. Then `env.API.fetch(request)` from a route.
+# [[services]]
+# binding = "API"
+# service = "indiecrafts-api-dev"
+#
+# ── Optional: produce to a Queue (a consumer lives in `cron`/`workers`) ───
+# Offload slow work (emails, webhooks) to a queue-consumer Worker. `wrangler queues
+# create <name>` first; repeat under each [env.*]. Then `env.JOBS.send(msg)`.
+# [[queues.producers]]
+# binding = "JOBS"
+# queue = "indiecrafts-jobs-dev"
+
+# Workers Logs on for every environment (base + dev/staging/prod). `invocation_logs`
+# adds one summary line per request. View: dashboard → Worker → Logs, or `wrangler tail`.
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── dev ──────────────────────────────────────────────────────
+[env.dev]
+name = "indiecrafts-web-dev"
+workers_dev = true
+
+[env.dev.vars]
+# Non-production → robots.txt serves Disallow (see @indiecrafts/config env logic).
+NEXT_PUBLIC_ENVIRONMENT = "development"
+# First-party asset CDN for this env (→ Next `assetPrefix`; empty = serve from origin).
+# It's baked at BUILD, so set it in the deploy env too (GitHub Environment var). Sanity
+# content is NOT served here — it keeps `cdn.sanity.io`. Docs: config/images.md.
+# NEXT_PUBLIC_CDN_URL = "https://cdn-dev.your-domain.com"
+
+[[env.dev.r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "indiecrafts-web-isr-dev"
+
+# RATE_LIMIT_KV (dev) — uncommented + filled by `pnpm setup:kv`.
+# [[env.dev.kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "PASTE_KV_ID_HERE"
+
+[env.dev.observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── staging ──────────────────────────────────────────────────
+[env.staging]
+name = "indiecrafts-web-staging"
+workers_dev = true
+
+[env.staging.vars]
+NEXT_PUBLIC_ENVIRONMENT = "staging"
+# First-party asset CDN for this env (→ Next `assetPrefix`). Set it in the deploy env too.
+# NEXT_PUBLIC_CDN_URL = "https://cdn-staging.your-domain.com"
+
+[[env.staging.r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "indiecrafts-web-isr-staging"
+
+# RATE_LIMIT_KV (staging) — uncommented + filled by `pnpm setup:kv`.
+# [[env.staging.kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "PASTE_KV_ID_HERE"
+
+[env.staging.observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── prod ─────────────────────────────────────────────────────
+[env.prod]
+name = "indiecrafts-web"
+workers_dev = false
+
+[env.prod.vars]
+NEXT_PUBLIC_ENVIRONMENT = "production"
+# Set the production origin so canonical URLs / sitemap / OG resolve, and
+# `isSiteConfigured` flips true (until then robots.txt serves a full Disallow —
+# a safe default for an unconfigured prod).
+# NEXT_PUBLIC_SITE_URL = "https://your-domain.com"
+# First-party asset CDN for prod (→ Next `assetPrefix`). Set it in the deploy env too.
+# NEXT_PUBLIC_CDN_URL = "https://cdn.your-domain.com"
+
+[[env.prod.r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "indiecrafts-web-isr-prod"
+
+# RATE_LIMIT_KV (prod) — uncommented + filled by `pnpm setup:kv`.
+# [[env.prod.kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "PASTE_KV_ID_HERE"
+
+[env.prod.observability.logs]
+enabled = true
+invocation_logs = true
+
+# Custom domain — the host is declared ONCE in the domain registry
+# (code/shared/scripts/lib/domains.mjs). Generate the route block to paste
+# here with:  pnpm domains:print website prod  (also prints the tfvars + the origin).
+# The deploy runner exports NEXT_PUBLIC_SITE_URL from the same registry.
+# [[env.prod.routes]]
+# pattern = "example.com"
+# custom_domain = true
+# [[env.prod.routes]]
+# pattern = "www.example.com"
+# custom_domain = true

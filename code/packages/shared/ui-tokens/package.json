@@ -1,0 +1,25 @@
+{
+  "name": "@indiecrafts/ui-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "tokens:build": "node scripts/build-tokens.mjs",
+    "tokens:check": "node scripts/build-tokens.mjs --check"
+  },
+  "exports": {
+    "./globals.css": "./src/globals.css",
+    "./typeset.css": "./src/typeset.css",
+    "./native": "./src/native/tokens.ts",
+    "./hex": "./src/generated/hex.ts",
+    "./tokens.json": "./src/shared/tokens.json"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.20",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "culori": "^4.0.1"
+  }
+}

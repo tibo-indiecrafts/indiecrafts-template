@@ -59,8 +59,8 @@ Build the audience and the channels **before** launch — the bulk of the old LA
 - **gstack:** `marketing:campaign-plan` · **Skills:** `pm-go-to-market:*` (gtm-strategy · plan-launch ·
   ICP · beachhead · growth-loops · battlecard) · `pm-marketing-growth:*` ·
   `marketing:{content-creation,email-sequence,seo-audit}` · `avoid-ai-writing` ·
-  **Agents:** `growth-hacker` (anchor — AARRR) + channels (`instagram-curator` · `reddit-community-builder` ·
-  `tiktok-strategist` · `twitter-engager`) · **MCP:** `hubspot` (CRM) · `klaviyo` (email) ·
+  **Agents:** growth + content agents run in the **studio content vault** (`~/Code/indie-brain/.claude/agents/`),
+  not this code framework · **MCP:** `hubspot` (CRM) · `klaviyo` (email) ·
   `notion` (content ops) · `canva` / `figma` (creative) · `koboyo` (pitch / explainer slide deck) ·
   `slack` (community) · `apollo` / `clay` / `zoominfo` (outreach lists).
 

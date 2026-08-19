@@ -17,15 +17,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  preview:
+  # The Next apps to preview come from the registry (next-cf class). Same-repo PRs
+  # only — forks don't receive secrets.
+  discover:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.registry.outputs.apps }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: registry
+        run: echo "apps=$(node code/shared/scripts/lib/apps.mjs --json --class next-cf)" >> "$GITHUB_OUTPUT"
+
+  preview:
+    needs: discover
+    runs-on: ubuntu-latest
     environment: dev
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJson(needs.discover.outputs.apps) }}
     defaults:
       run:
-        working-directory: code/projects/web
+        working-directory: ${{ matrix.app.dir }}
     env:
       NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      NEXT_PUBLIC_CDN_URL: ${{ vars.NEXT_PUBLIC_CDN_URL }} # first-party asset CDN (assetPrefix); empty = origin
       NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
       NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
       NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
@@ -34,12 +51,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
         working-directory: .
       - name: Build (OpenNext)
         run: pnpm build:cf
@@ -47,7 +59,7 @@ jobs:
         id: preview
         run: |
           set -o pipefail
-          out=$(pnpm exec wrangler versions upload --env dev --message "PR #${{ github.event.pull_request.number }}" 2>&1) || { echo "$out"; exit 1; }
+          out=$(pnpm exec wrangler versions upload --env dev --message "PR #${{ github.event.pull_request.number }} (${{ matrix.app.slug }})" 2>&1) || { echo "$out"; exit 1; }
           echo "$out"
           url=$(echo "$out" | grep -oE 'https://[a-z0-9.-]+workers\.dev' | tail -1)
           echo "url=$url" >> "$GITHUB_OUTPUT"
@@ -56,9 +68,10 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const app = "${{ matrix.app.slug }}";
             const url = "${{ steps.preview.outputs.url }}";
-            const marker = "<!-- cf-preview -->";
-            const body = `${marker}\n🔎 **Preview:** ${url}\n\n_Cloudflare version preview — not the live worker. Updates on each push._`;
+            const marker = `<!-- cf-preview-${app} -->`;
+            const body = `${marker}\n🔎 **Preview (${app}):** ${url}\n\n_Cloudflare version preview — not the live worker. Updates on each push._`;
             const { data: comments } = await github.rest.issues.listComments({ ...context.repo, issue_number: context.issue.number });
             const mine = comments.find((c) => c.body?.includes(marker));
             if (mine) await github.rest.issues.updateComment({ ...context.repo, comment_id: mine.id, body });

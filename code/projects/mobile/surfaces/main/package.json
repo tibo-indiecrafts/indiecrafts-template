@@ -1,0 +1,34 @@
+{
+  "name": "@indiecrafts/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "tsc": "tsc --noEmit",
+    "verify": "pnpm tsc",
+    "build:ios": "eas build --platform ios",
+    "build:android": "eas build --platform android",
+    "submit:ios": "eas submit --platform ios",
+    "submit:android": "eas submit --platform android",
+    "deploy:mobile:dev": "node ../../../../shared/scripts/deploy/expo.mjs dev",
+    "deploy:mobile:staging": "node ../../../../shared/scripts/deploy/expo.mjs staging",
+    "deploy:mobile:prod": "node ../../../../shared/scripts/deploy/expo.mjs prod"
+  },
+  "//": "SEPARATE PLATFORM: React Native / Expo. Deploys via EAS to the App/Play Store — NOT wrangler, NOT in deploy:all. Finalize versions on install (RN pins its own React major, older than the web apps' React 19; only React-FREE bricks are shared).",
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*",
+    "@indiecrafts/format": "workspace:*",
+    "@indiecrafts/utils": "workspace:*",
+    "expo": "~52.0.0",
+    "expo-router": "~4.0.0",
+    "react": "18.3.1",
+    "react-native": "0.76.5"
+  },
+  "devDependencies": {
+    "@types/react": "~18.3.0",
+    "typescript": "^5"
+  }
+}

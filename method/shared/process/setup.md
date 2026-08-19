@@ -6,13 +6,13 @@ is **global/personal** — it never gets committed to a client repo.
 
 ## Install
 
-| Tool | What | Verify |
-| --- | --- | --- |
-| **Node + pnpm** | the workspace package manager (`pnpm@10.x`, see root `package.json` `packageManager`) | `pnpm -v` |
-| **gstack** | the sprint engine — installs the phase commands (`/office-hours` `/autoplan` `/review` `/qa` `/ship` `/retro` …) into `~/.claude/skills/`. State lands in `~/.gstack/`. | the commands appear in `/context`; `~/.gstack/` exists |
+| Tool                 | What                                                                                                                                                                              | Verify                                                            |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Node + pnpm**      | the workspace package manager (`pnpm@10.x`, see root `package.json` `packageManager`)                                                                                             | `pnpm -v`                                                         |
+| **gstack**           | the sprint engine — installs the phase commands (`/office-hours` `/autoplan` `/review` `/qa` `/ship` `/retro` …) into `~/.claude/skills/`. State lands in `~/.gstack/`.           | the commands appear in `/context`; `~/.gstack/` exists            |
 | **Behavior plugins** | `caveman` (terse output), `ponytail` (least code) — global Claude Code plugins, on every phase; `headroom` (context compression) is a separate `headroom wrap claude` CLI wrapper | `/caveman`, `/ponytail` respond; `headroom --version` for the CLI |
-| **grill-me** | THINK-phase skill — adversarial interrogation of the approach before PLAN. Install: `npx skills@latest add JuliusBrussee/skills --skill grill-me --global` | `grill-me` appears in `/context` |
-| **bun** | fast runner some skills/scripts use | `bun -v` |
+| **grill-me**         | THINK-phase skill — adversarial interrogation of the approach before PLAN. Install: `npx skills@latest add JuliusBrussee/skills --skill grill-me --global`                        | `grill-me` appears in `/context`                                  |
+| **bun**              | fast runner some skills/scripts use                                                                                                                                               | `bun -v`                                                          |
 
 Install gstack + the behavior plugins through your Claude Code plugin manager (they land
 in `~/.claude/`, not the repo). The **registry** — which command/skill serves which phase —

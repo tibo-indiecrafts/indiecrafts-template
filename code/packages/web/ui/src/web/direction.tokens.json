@@ -1,0 +1,3 @@
+{
+  "$description": "Component token surface for direction — no design color tokens; layout/semantic utilities only. Sidecar (never edits the component); merged by `pnpm tokens:build`."
+}

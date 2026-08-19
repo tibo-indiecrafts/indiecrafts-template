@@ -20,7 +20,13 @@ export default defineConfig({
   ignoreDeadLinks: true,
   cleanUrls: true,
   lastUpdated: true,
-  srcExclude: ["scratch/**", "**/CLAUDE.md", "**/.claude/**", "**/_gstack/**", "archive/**"],
+  srcExclude: [
+    "scratch/**",
+    "**/CLAUDE.md",
+    "**/.claude/**",
+    "**/_gstack/**",
+    "archive/**",
+  ],
   themeConfig: {
     search: { provider: "local" },
     nav: [

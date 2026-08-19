@@ -1,0 +1,12 @@
+{
+  "$description": "Component token surface for dropdown-menu — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "dropdown-menu-popover": { "$type": "color", "$value": "{component.popover}" },
+    "dropdown-menu-popover-foreground": { "$type": "color", "$value": "{component.popover-foreground}" },
+    "dropdown-menu-accent": { "$type": "color", "$value": "{component.accent}" },
+    "dropdown-menu-accent-foreground": { "$type": "color", "$value": "{component.accent-foreground}" },
+    "dropdown-menu-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "dropdown-menu-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "dropdown-menu-border": { "$type": "color", "$value": "{semantic.border}" }
+  }
+}

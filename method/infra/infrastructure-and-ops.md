@@ -11,15 +11,15 @@ a flag; roll back by flipping it.
 - Cache / CDN implications?
 - How do we turn it off fast if it breaks?
 
-| Concern     | Generic rule                                             | In indiecrafts-template            |
-| ----------- | -------------------------------------------------------- | ---------------------------------- |
+| Concern     | Generic rule                                             | In indiecrafts-template                                                                        |
+| ----------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | Config      | shared primitives + per-app instance data                | `@indiecrafts/config` + `apps/web/src/config/{theme,fonts,features,pages}.ts` (via `@/config`) |
-| Secrets     | server-only env; commit the example, never the real file | `.env.example` (never `.env*`)     |
-| Flags       | data flags gate routes + features                        | `features.*`, `pages.<id>.enabled` |
-| CI gate     | typecheck + lint + format + build                        | `pnpm verify`                      |
-| Commit gate | fast staged lint + full typecheck                        | pre-commit `lint-staged && tsc`    |
-| Build       | prerender static routes × locales                        | `pnpm build`                       |
-| Logging     | structured logger, never console-swallow                 | `lib/logger.ts`                    |
+| Secrets     | server-only env; commit the example, never the real file | `.env.example` (never `.env*`)                                                                 |
+| Flags       | data flags gate routes + features                        | `features.*`, `pages.<id>.enabled`                                                             |
+| CI gate     | typecheck + lint + format + build                        | `pnpm verify`                                                                                  |
+| Commit gate | fast staged lint + full typecheck                        | pre-commit `lint-staged && tsc`                                                                |
+| Build       | prerender static routes × locales                        | `pnpm build`                                                                                   |
+| Logging     | structured logger, never console-swallow                 | `lib/logger.ts`                                                                                |
 
 ## Best practice
 

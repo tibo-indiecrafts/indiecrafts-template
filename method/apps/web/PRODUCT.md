@@ -61,7 +61,7 @@ can't copy without also adopting the "one home per fact" discipline.
 ## Evidence on Hand
 
 - The template repository itself; a Sanity demo dataset seeded by `pnpm seed`
-  (`code/apps/web/scripts/seed-demo.mjs`). **No real customer testimonials, logos, pricing, or
+  (`code/projects/web/surfaces/website/scripts/seed-demo.mjs`). **No real customer testimonials, logos, pricing, or
   case studies** ship with the template — future work must not fabricate them.
 
 ## Product Principles

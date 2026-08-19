@@ -12,21 +12,21 @@ sprint phases). Per-stage tasks + tools → [`launch-playbook.md`](./launch-play
 
 _Tasks + tools per stage → [`launch-playbook.md`](./launch-playbook)._
 
-| #   | Stage                        | Tools                                                                  | Output               |
-| --- | ---------------------------- | ---------------------------------------------------------------------- | -------------------- |
-| 1   | **Idea / reframe**           | `/office-hours` (startup), `brainstorming`, `deep-research`, `storm`   | `by-skill/research/` |
-| 2   | **Discovery**                | `pm-product-discovery:*`, `layers-orient`                              | research             |
-| 3   | **Validate market**          | `pm-market-research:*` (sizing, ICP, competitor), `firecrawl`          | research             |
-| 4   | **Business model**           | `00_BRIEF/BUSINESS.md` → lean-canvas, business-model, value-prop             | `00_BRIEF/BUSINESS.md`     |
-| 5   | **Pricing + unit economics** | `pm:pricing-strategy`, `00_BRIEF/UNIT-ECONOMICS.md`, `data:*`                | data/                |
-| 6   | **GTM plan**                 | `pm-go-to-market:*`, `marketing:campaign-plan`                         | marketing/           |
-| 7   | **Legal**                    | `legal:review-contract` `triage-nda` `compliance-check`                | legal/               |
-| 8   | **Design system**            | `/design-consultation`, `ui-ux-pro-max`→`DESIGN.md`, `frontend-design` | `DESIGN.md`          |
-| 9   | **Deploy pipeline**          | `/setup-deploy`, netlify skills                                        | `CLAUDE.md`          |
-| 10  | **Build features**           | ↓ the feature lane, one branch each                                    | PRs                  |
-| 11  | **Launch**                   | `marketing:seo-audit`+`content`, `/land-and-deploy`, `/canary`         | content/             |
-| 12  | **Grow / measure**           | `data:*` (cohorts, A/B, dashboards), `marketing:performance-report`    | data/, reports/      |
-| 13  | **Reflect / iterate**        | `/retro global`, `/learn`, next features                               | retros/              |
+| #   | Stage                        | Tools                                                                  | Output                 |
+| --- | ---------------------------- | ---------------------------------------------------------------------- | ---------------------- |
+| 1   | **Idea / reframe**           | `/office-hours` (startup), `brainstorming`, `deep-research`, `storm`   | `by-skill/research/`   |
+| 2   | **Discovery**                | `pm-product-discovery:*`, `layers-orient`                              | research               |
+| 3   | **Validate market**          | `pm-market-research:*` (sizing, ICP, competitor), `firecrawl`          | research               |
+| 4   | **Business model**           | `00_BRIEF/BUSINESS.md` → lean-canvas, business-model, value-prop       | `00_BRIEF/BUSINESS.md` |
+| 5   | **Pricing + unit economics** | `pm:pricing-strategy`, `00_BRIEF/UNIT-ECONOMICS.md`, `data:*`          | data/                  |
+| 6   | **GTM plan**                 | `pm-go-to-market:*`, `marketing:campaign-plan`                         | marketing/             |
+| 7   | **Legal**                    | `legal:review-contract` `triage-nda` `compliance-check`                | legal/                 |
+| 8   | **Design system**            | `/design-consultation`, `ui-ux-pro-max`→`DESIGN.md`, `frontend-design` | `DESIGN.md`            |
+| 9   | **Deploy pipeline**          | `/setup-deploy`, netlify skills                                        | `CLAUDE.md`            |
+| 10  | **Build features**           | ↓ the feature lane, one branch each                                    | PRs                    |
+| 11  | **Launch**                   | `marketing:seo-audit`+`content`, `/land-and-deploy`, `/canary`         | content/               |
+| 12  | **Grow / measure**           | `data:*` (cohorts, A/B, dashboards), `marketing:performance-report`    | data/, reports/        |
+| 13  | **Reflect / iterate**        | `/retro global`, `/learn`, next features                               | retros/                |
 
 ## Feature lane (one branch → one PR)
 

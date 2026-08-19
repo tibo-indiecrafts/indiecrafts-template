@@ -1,0 +1,17 @@
+{
+  "$description": "Component token surface for popover — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "popover-popover": {
+      "$type": "color",
+      "$value": "{component.popover}"
+    },
+    "popover-popover-foreground": {
+      "$type": "color",
+      "$value": "{component.popover-foreground}"
+    },
+    "popover-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
+  }
+}

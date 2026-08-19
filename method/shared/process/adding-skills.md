@@ -11,12 +11,12 @@ structure lives in the [registry](./my-skills-and-agents.md), not in folders.
 
 ## 1. Decide: `[local]` or register-global
 
-| | `[local]` — vendor in `.claude/` | register-global |
-| --- | --- | --- |
-| **When** | encodes _this repo's_ conventions; self-contained; useless outside this repo | reusable anywhere; a machine-wide plugin or gstack skill |
-| **Example** | a `page-builder-reviewer` for the Sanity page-builder | `frontend-design`, `ponytail-audit`, `/qa` |
-| **Cost** | travels with a clone; **you** maintain it | zero maintenance; a machine prerequisite (`project-bootstrap.md`) |
-| **Risk** | drift if it duplicates a global | absent on a fresh machine until installed |
+|             | `[local]` — vendor in `.claude/`                                             | register-global                                                   |
+| ----------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **When**    | encodes _this repo's_ conventions; self-contained; useless outside this repo | reusable anywhere; a machine-wide plugin or gstack skill          |
+| **Example** | a `page-builder-reviewer` for the Sanity page-builder                        | `frontend-design`, `ponytail-audit`, `/qa`                        |
+| **Cost**    | travels with a clone; **you** maintain it                                    | zero maintenance; a machine prerequisite (`project-bootstrap.md`) |
+| **Risk**    | drift if it duplicates a global                                              | absent on a fresh machine until installed                         |
 
 Rule of thumb: **if a second project would want it, don't vendor it** — register it and
 list the install in [`project-bootstrap.md`](./project-bootstrap.md). Today only

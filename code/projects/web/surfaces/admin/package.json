@@ -1,0 +1,35 @@
+{
+  "name": "@indiecrafts/admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "tsc": "tsc --noEmit",
+    "verify": "pnpm tsc",
+    "build:cf": "opennextjs-cloudflare build",
+    "preview:cf": "opennextjs-cloudflare preview",
+    "deploy:admin:dev": "node ../../../../shared/scripts/deploy/next.mjs admin dev",
+    "deploy:admin:staging": "node ../../../../shared/scripts/deploy/next.mjs admin staging",
+    "deploy:admin:prod": "node ../../../../shared/scripts/deploy/next.mjs admin prod"
+  },
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*",
+    "@indiecrafts/sanity": "workspace:*",
+    "@indiecrafts/security": "workspace:*",
+    "@indiecrafts/ui": "workspace:*",
+    "@indiecrafts/ui-tokens": "workspace:*",
+    "@indiecrafts/utils": "workspace:*",
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5",
+    "wrangler": "^4.0.0"
+  }
+}

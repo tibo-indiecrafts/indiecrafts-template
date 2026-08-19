@@ -1,0 +1,9 @@
+{
+  "$description": "Component token surface for StatList — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "stat-list-border": { "$type": "color", "$value": "{semantic.border}" },
+    "stat-list-card": { "$type": "color", "$value": "{component.card}" },
+    "stat-list-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "stat-list-foreground": { "$type": "color", "$value": "{semantic.foreground}" }
+  }
+}

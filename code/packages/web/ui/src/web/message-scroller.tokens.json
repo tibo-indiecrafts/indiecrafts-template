@@ -1,0 +1,21 @@
+{
+  "$description": "Component token surface for message-scroller — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "message-scroller-border": {
+      "$type": "color",
+      "$value": "{semantic.border}"
+    },
+    "message-scroller-background": {
+      "$type": "color",
+      "$value": "{semantic.background}"
+    },
+    "message-scroller-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    },
+    "message-scroller-muted": {
+      "$type": "color",
+      "$value": "{semantic.muted}"
+    }
+  }
+}

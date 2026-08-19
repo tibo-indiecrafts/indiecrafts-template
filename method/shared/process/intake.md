@@ -15,13 +15,13 @@ brief's date, name, and branch (`feat/<slug>`), drops the card's title into **Go
 into **Why**, and makes every unfilled placeholder build-safe. Alias: `npm --prefix method run
 sprint:new -- "<name>" …`.
 
-| Flag | Default | Effect |
-| --- | --- | --- |
-| `<name>` | — | Required. The human feature name; also the folder slug + `feat/<slug>` branch. |
-| `--title` | — | Trello card title → the brief's **Goal**. |
-| `--desc` | — | Trello card body → the brief's **Why**. |
-| `--app` | `web` | Which app the sprint belongs to (`work/apps/<app>/`). |
-| `--kind` | `feature` | `feature` → dated feature folder; `app` → stamp an app-altitude sprint at `work/apps/<app>/`. |
+| Flag      | Default   | Effect                                                                                        |
+| --------- | --------- | --------------------------------------------------------------------------------------------- |
+| `<name>`  | —         | Required. The human feature name; also the folder slug + `feat/<slug>` branch.                |
+| `--title` | —         | Trello card title → the brief's **Goal**.                                                     |
+| `--desc`  | —         | Trello card body → the brief's **Why**.                                                       |
+| `--app`   | `web`     | Which app the sprint belongs to (`work/apps/<app>/`).                                         |
+| `--kind`  | `feature` | `feature` → dated feature folder; `app` → stamp an app-altitude sprint at `work/apps/<app>/`. |
 
 ## Steps
 
@@ -34,8 +34,9 @@ sprint:new -- "<name>" …`.
 
 ## Notes
 
-- **Private tooling.** The script lives in `method/` and writes into gitignored `work/` — it
-  never ships to a client, and there is no root `package.json` alias for the same reason.
+- **Private tooling.** The script lives in `method/` and writes into the delivery-excluded `work/`
+  (tracked, `export-ignore`d — kept out of `git archive`, so it never ships in a clean hand-off), and
+  there is no root `package.json` alias for the same reason.
 - **No Trello API.** You paste the card's fields; the script does not call Trello. Wire an API
   pull later if the manual paste becomes a chore.
 - **Backlog is the queue.** Promote a `work/backlog.md` item by running this command when you

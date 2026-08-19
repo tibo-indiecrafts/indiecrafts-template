@@ -33,5 +33,55 @@
       "Read(**/.vitepress/dist/**)",
       "Read(**/.vitepress/cache/**)"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.mjs\"",
+            "timeout": 5,
+            "statusMessage": "Guard (protected paths)"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\"",
+            "timeout": 15,
+            "statusMessage": "Checking accessibility"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\"",
+            "timeout": 30,
+            "statusMessage": "Accessibility deep pass"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/change-hygiene.sh\" ] || \"$CLAUDE_PROJECT_DIR/.claude/hooks/change-hygiene.sh\"",
+            "timeout": 10,
+            "statusMessage": "Change-hygiene (docs + tests)"
+          }
+        ]
+      }
+    ]
   }
 }

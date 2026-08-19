@@ -1,0 +1,17 @@
+{
+  "$description": "Component token surface for kbd — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "kbd-muted": {
+      "$type": "color",
+      "$value": "{semantic.muted}"
+    },
+    "kbd-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
+    "kbd-background": {
+      "$type": "color",
+      "$value": "{semantic.background}"
+    }
+  }
+}

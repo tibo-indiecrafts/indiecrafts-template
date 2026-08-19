@@ -1,0 +1,37 @@
+{
+  "$description": "Component token surface for menubar — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "menubar-background": {
+      "$type": "color",
+      "$value": "{semantic.background}"
+    },
+    "menubar-accent": {
+      "$type": "color",
+      "$value": "{component.accent}"
+    },
+    "menubar-accent-foreground": {
+      "$type": "color",
+      "$value": "{component.accent-foreground}"
+    },
+    "menubar-popover": {
+      "$type": "color",
+      "$value": "{component.popover}"
+    },
+    "menubar-popover-foreground": {
+      "$type": "color",
+      "$value": "{component.popover-foreground}"
+    },
+    "menubar-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    },
+    "menubar-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
+    "menubar-border": {
+      "$type": "color",
+      "$value": "{semantic.border}"
+    }
+  }
+}

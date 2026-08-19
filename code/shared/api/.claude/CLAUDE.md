@@ -1,0 +1,22 @@
+# @indiecrafts/api — standalone API (worker-cf)
+
+Auto-loads under `code/shared/api/**`. A **dedicated JSON/GraphQL API** for the non-web clients (`mobile`,
+`hybrid`, partners). The web app keeps its own co-located `/api` routes; this is the shared, versioned API
+those clients call — its own domain, its own deploy. **Activated bare-Worker scaffold — a `/health` handler
+today (compiles + tested); the real routes are TBD.**
+
+**Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
+no Next/OpenNext). Same runtime as the `workers`/`cron` slots.
+
+**Next steps** (not built yet): add **Hono** — `src/index.ts` becomes a Hono app (`app.get("/v1/...")`
+reading Sanity via `@indiecrafts/sanity`, guarded by `@indiecrafts/security` `withGuard` + a bearer/JWT check);
+version routes (`/v1`); CORS-allowlist the mobile/hybrid origins. Compose
+`@indiecrafts/config`/`logger`/`security`/`sanity`/`schema` (add `@types/node` — see the `workers` brief's
+isomorphic-types caveat).
+
+- **Deploy:** `pnpm deploy:api:<dev|staging|prod>` → the shared `scripts/deploy-worker.mjs` (rename guard +
+  `wrangler deploy`); or `pnpm deploy:all:<env>`. Bind KV/D1/queues via `scripts/setup-bindings.mjs`.
+- **Registry:** a row in [`scripts/lib/apps.mjs`](../../../../../scripts/lib/apps.mjs); full deploy model →
+  [`code/docs/shared/architecture/platform-deploy.md`](../../../../docs/shared/architecture/platform-deploy.md).
+
+**Rules:** compose bricks; **no cross-app imports**; auth every mutating route; never expose a write token.

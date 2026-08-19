@@ -1,0 +1,6 @@
+{
+  "$description": "Component token surface for skeleton — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "skeleton-accent": { "$type": "color", "$value": "{component.accent}" }
+  }
+}

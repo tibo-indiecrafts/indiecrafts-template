@@ -1,0 +1,8 @@
+{
+  "$description": "Component token surface for Pricing — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "pricing-brand": { "$type": "color", "$value": "{semantic.brand}" },
+    "pricing-brand-foreground": { "$type": "color", "$value": "{semantic.brand-foreground}" },
+    "pricing-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+  }
+}

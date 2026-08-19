@@ -1,0 +1,13 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    // Expo's base uses classic "node" resolution, which ignores package `exports`
+    // subpaths. Metro honors them at runtime (SDK 50+); align tsc so
+    // `@indiecrafts/config/mobile` (a subpath export) type-resolves too.
+    "moduleResolution": "bundler",
+    "paths": { "@/*": ["./*"] }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+}

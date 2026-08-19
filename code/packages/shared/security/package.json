@@ -1,0 +1,24 @@
+{
+  "name": "@indiecrafts/security",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./csp": "./src/csp.ts",
+    "./headers": "./src/headers.ts",
+    "./images": "./src/images.ts",
+    "./guard": "./src/guard.ts",
+    "./origin": "./src/origin.ts",
+    "./turnstile": "./src/turnstile.ts",
+    "./rate-limit": "./src/rate-limit.ts",
+    "./ip": "./src/ip.ts",
+    "./crypto": "./src/crypto.ts"
+  },
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

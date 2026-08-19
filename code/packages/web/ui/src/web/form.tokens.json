@@ -1,0 +1,7 @@
+{
+  "$description": "Component token surface for form — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "form-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "form-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+  }
+}

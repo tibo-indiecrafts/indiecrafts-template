@@ -1,0 +1,25 @@
+{
+  "$description": "Component token surface for item — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "item-ring": {
+      "$type": "color",
+      "$value": "{semantic.ring}"
+    },
+    "item-border": {
+      "$type": "color",
+      "$value": "{semantic.border}"
+    },
+    "item-muted": {
+      "$type": "color",
+      "$value": "{semantic.muted}"
+    },
+    "item-primary": {
+      "$type": "color",
+      "$value": "{component.primary}"
+    },
+    "item-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
+  }
+}

@@ -6,11 +6,16 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
+    "build:cf": {
+      "dependsOn": ["^build"],
+      "outputs": [".open-next/**"]
+    },
     "dev": { "cache": false, "persistent": true },
     "storybook": { "cache": false, "persistent": true },
     "storybook:build": { "outputs": ["storybook-static/**"] },
     "lint": {},
     "tsc": { "dependsOn": ["^build"] },
-    "test": { "dependsOn": ["^build"] }
+    "test": { "dependsOn": ["^build"] },
+    "verify": { "dependsOn": ["^build"], "cache": false }
   }
 }

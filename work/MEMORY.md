@@ -7,14 +7,14 @@ single change. Committed and team-shared.
 information in dedicated places; MEMORY.md just indexes them so an agent (or a new
 teammate) has one entry point:
 
-| What                                              | Where it lives                              |
-| ------------------------------------------------- | ------------------------------------------- |
-| How to code — architecture, conventions, workflow | `CLAUDE.md` (+ scoped `src/**/CLAUDE.md`)   |
-| How to design — visual token contract             | `code/packages/tokens/DESIGN.md`                   |
-| Focused conventions, loaded on demand             | `method/apps/web/rules/*`                           |
-| What changed and _why_ (code + design)            | `code/apps/web/CHANGELOG.md` (app; root roll-up in `/CHANGELOG.md`) |
-| Design rationale, per-topic deep dives            | `docs/apps/web/design/*`, `docs/apps/web/design/decisions.md` |
-| Human-facing docs (VitePress)                     | `docs/`                                     |
+| What                                              | Where it lives                                                                           |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| How to code — architecture, conventions, workflow | `CLAUDE.md` (+ scoped `src/**/CLAUDE.md`)                                                |
+| How to design — visual token contract             | `code/packages/tokens/DESIGN.md`                                                         |
+| Focused conventions, loaded on demand             | `method/apps/web/rules/*`                                                                |
+| What changed and _why_ (code + design)            | `code/projects/web/surfaces/website/CHANGELOG.md` (app; root roll-up in `/CHANGELOG.md`) |
+| Design rationale, per-topic deep dives            | `docs/apps/web/design/*`, `docs/apps/web/design/decisions.md`                            |
+| Human-facing docs (VitePress)                     | `docs/`                                                                                  |
 
 ## Durable decisions (add as they're made)
 

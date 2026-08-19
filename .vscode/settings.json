@@ -1,5 +1,74 @@
 {
-  "snyk.advanced.autoSelectOrganization": true,
+  // ── Format + lint on save ─────────────────────────────────────────────
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    // Auto-fix ESLint on save. NOT organizeImports — no import-sort is configured and it
+    // fights prettier-plugin-tailwindcss's class sorting.
+    "source.fixAll.eslint": "explicit"
+  },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.wordWrap": "on"
+  },
+
+  // ── ESLint (pnpm monorepo, flat config) ───────────────────────────────
+  // "auto" lets ESLint resolve the nearest flat eslint.config.mjs per package.
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+
+  // ── Tailwind v4 (CSS-based tokens in @indiecrafts/ui-tokens) ───────────
+  "tailwindCSS.classFunctions": ["cva", "cx", "cn"],
+  "files.associations": { "*.css": "tailwindcss" },
+  "editor.quickSuggestions": { "strings": "on" },
+  // If IntelliSense doesn't auto-find the v4 entry, uncomment to point it at the token file:
+  // "tailwindCSS.experimental.configFile": "code/packages/shared/ui-tokens/src/globals.css",
+
+  // ── TypeScript (use the workspace TS; big monorepo) ───────────────────
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.preferences.importModuleSpecifier": "shortest",
+
+  // ── Perf: don't index build output ────────────────────────────────────
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/.open-next": true,
+    "**/dist": true,
+    "**/.turbo": true,
+    "**/coverage": true,
+    "**/.vitepress/cache": true,
+    "**/.vitepress/dist": true,
+    "**/pnpm-lock.yaml": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.next/**": true,
+    "**/.open-next/**": true,
+    "**/dist/**": true,
+    "**/.turbo/**": true,
+    "**/coverage/**": true,
+    "**/.vitepress/cache/**": true
+  },
+
+  // ── File nesting — mirrors the colocation convention ──────────────────
+  // (<Name>.tsx groups its .stories.tsx / .test.tsx / .md; config files group under their anchor)
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.tsx": "${capture}.stories.tsx, ${capture}.test.tsx, ${capture}.md",
+    "*.ts": "${capture}.test.ts, ${capture}.stories.ts",
+    "package.json": ".npmrc, pnpm-lock.yaml, pnpm-workspace.yaml, turbo.json, .nvmrc",
+    "next.config.ts": "open-next.config.ts, postcss.config.mjs, next-env.d.ts, wrangler.toml",
+    "tsconfig.json": "tsconfig.*.json",
+    "vitest.config.ts": "vitest.setup.ts, vitest.shared.ts"
+  },
+
+  // ── Misc ──────────────────────────────────────────────────────────────
+  "npm.packageManager": "pnpm"
 }

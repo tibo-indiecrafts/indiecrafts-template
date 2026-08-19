@@ -26,41 +26,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
       - run: pnpm tsc
       - run: pnpm lint
       - run: pnpm format:check
-      - run: pnpm --filter @indiecrafts/web verify:contrast
+      - run: pnpm --filter @indiecrafts/website verify:contrast
       - run: pnpm tags:check
       - run: pnpm lint:scripts
       - run: pnpm test:scripts
       - run: pnpm test
+      - run: node code/shared/scripts/checks/delivery-canary.mjs # work/ + secrets must never reach an export
 
-  # The real Cloudflare Worker build (OpenNext) — proves every route prerenders ×
+  # The real Cloudflare Worker build (OpenNext) for every AFFECTED Next app
+  # (web · marketing · admin) — turbo fans out via the `build:cf` task and skips
+  # unchanged apps (a docs-only PR builds none). Proves every route prerenders ×
   # locale AND catches CF-only breakage (Shiki WASM, node-compat) before deploy.
   # Needs Sanity read access (blog SSG + sitemap fetch) from repo vars/secrets.
   build:
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      NEXT_PUBLIC_CDN_URL: ${{ vars.NEXT_PUBLIC_CDN_URL }} # first-party asset CDN (assetPrefix); empty = origin
       NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
       NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
       NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
       SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @indiecrafts/web build:cf
+          fetch-depth: 0 # full history so `turbo --affected` can diff against main
+      - uses: ./.github/actions/setup
+      - run: pnpm exec turbo run build:cf --affected
 
   # Browser suites: Storybook stories-as-tests (component + a11y), Playwright e2e +
   # visual regression. ADVISORY (`continue-on-error`) until linux baselines are
@@ -70,20 +66,15 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:stories # every story as a component + a11y test
       # Visual regression against the built Storybook.
       - run: pnpm --filter @indiecrafts/storybook storybook:build
-      - run: pnpm --filter @indiecrafts/web e2e:visual
+      - run: pnpm --filter @indiecrafts/website e2e:visual
       # App journeys: global-setup seeds a throwaway `e2e` Sanity dataset, then the
       # webServer builds + serves the app against it. Needs the Sanity secrets.
-      - run: pnpm --filter @indiecrafts/web e2e
+      - run: pnpm --filter @indiecrafts/website e2e
         env:
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
@@ -95,12 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
       - run: pnpm docs:install
       - run: pnpm docs:build
 

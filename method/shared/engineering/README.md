@@ -10,25 +10,25 @@ Grow the system by adding one file plus one index line, never by editing a monol
 
 ## Cross-cutting (here in `shared/`)
 
-| Doc                                                      | Read before     | Covers                                                                   |
-| -------------------------------------------------------- | --------------- | ------------------------------------------------------------------------ |
-| [`principles.md`](./principles.md)                       | **every build** | Karpathy rules + simple/hyper-scalable/maintainable doctrine             |
-| [`tech-debt.md`](./tech-debt.md)                         | **every build** | compulsory reduce-while-coding gate — blocks commit                      |
+| Doc                                                      | Read before     | Covers                                                                                |
+| -------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------- |
+| [`principles.md`](./principles.md)                       | **every build** | Karpathy rules + simple/hyper-scalable/maintainable doctrine                          |
+| [`tech-debt.md`](./tech-debt.md)                         | **every build** | compulsory reduce-while-coding gate — blocks commit                                   |
 | [`issue-tags.md`](./issue-tags.md)                       | review/build    | the fixed `@complexity`/`@refactor`/`@debt` triage vocabulary + `tags-report` tooling |
-| [`testing.md`](./testing.md)                             | plan/test       | Vitest + Testing Library + Playwright stack, what to test                |
-| [`git-and-pr.md`](./git-and-pr.md)                       | build/ship      | branch · commit · PR convention                              |
-| [`engineering-standards.md`](./engineering-standards.md) | review/test     | testing, security, perf, a11y, Definition of Done                        |
-| [`../writing-style.md`](../writing-style.md)             | any output      | how the agent writes docs/comments/commits (STE)                         |
+| [`testing.md`](./testing.md)                             | plan/test       | Vitest + Testing Library + Playwright stack, what to test                             |
+| [`git-and-pr.md`](./git-and-pr.md)                       | build/ship      | branch · commit · PR convention                                                       |
+| [`engineering-standards.md`](./engineering-standards.md) | review/test     | testing, security, perf, a11y, Definition of Done                                     |
+| [`../writing-style.md`](../writing-style.md)             | any output      | how the agent writes docs/comments/commits (STE)                                      |
 
 ## Concern-specific (mirrors the code)
 
-| Concern | Method | Covers |
-|---------|--------|--------|
-| `code/apps/web` | [`../../apps/web/`](../../apps/web/README) | frontend rules + repeatable task workflows |
-| `code/modules`  | [`../../modules/architecture.md`](../../modules/architecture) | vertical-slice feature architecture (RSC, gating, seams) |
-| `code/packages` | [`../../packages/api-and-data.md`](../../packages/api-and-data) | API surface + data layer (validation, one client) |
-| `code/infra`    | [`../../infra/`](../../infra/README) | infrastructure-and-ops · observability |
-| `code/db`       | [`../../db/database.md`](../../db/database) | Cloudflare D1: schema · forward-only migrations · seed · Time Travel backups |
+| Concern                              | Method                                                          | Covers                                                                       |
+| ------------------------------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `code/projects/web/surfaces/website` | [`../../apps/web/`](../../apps/web/README)                      | frontend rules + repeatable task workflows                                   |
+| `code/modules`                       | [`../../modules/architecture.md`](../../modules/architecture)   | vertical-slice feature architecture (RSC, gating, seams)                     |
+| `code/packages`                      | [`../../packages/api-and-data.md`](../../packages/api-and-data) | API surface + data layer (validation, one client)                            |
+| `code/infra`                         | [`../../infra/`](../../infra/README)                            | infrastructure-and-ops · observability                                       |
+| `code/shared/db`                     | [`../../db/database.md`](../../db/database)                     | Cloudflare D1: schema · forward-only migrations · seed · Time Travel backups |
 
 ## How to use
 

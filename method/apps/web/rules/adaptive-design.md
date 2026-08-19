@@ -1,8 +1,8 @@
 # Adaptive-aware design
 
 Load when building or changing any layout. "Responsive" gets used for five different things, and the
-failure mode is ambiguity — a designer hands off three fixed frames meaning *adaptive*, a dev builds
-fluid CSS meaning *responsive*, both say "responsive." Be specific about the mechanism.
+failure mode is ambiguity — a designer hands off three fixed frames meaning _adaptive_, a dev builds
+fluid CSS meaning _responsive_, both say "responsive." Be specific about the mechanism.
 
 ## The decision (state it in the PR)
 

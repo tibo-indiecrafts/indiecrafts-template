@@ -18,27 +18,43 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Read the app registry → the Cloudflare apps to deploy (code/shared/scripts/lib/apps.mjs).
+  # Adding an app = a row there, no workflow edit. (Native apps — expo/electron —
+  # ship from their own workflow; they need store/signing credentials.)
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.registry.outputs.apps }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: registry
+        run: echo "apps=$(node code/shared/scripts/lib/apps.mjs --json --cloudflare)" >> "$GITHUB_OUTPUT"
+
   deploy:
+    needs: discover
     runs-on: ubuntu-latest
     # GitHub Environment — holds the per-target vars + secrets below.
     environment: ${{ github.event.inputs.environment || 'prod' }}
+    strategy:
+      fail-fast: false # one app failing shouldn't abort the others
+      matrix:
+        app: ${{ fromJson(needs.discover.outputs.apps) }}
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      # Builds with OpenNext, then `wrangler deploy --env <target>`. Root scripts
-      # are app-namespaced (`deploy:web:<env>`) so a second app can't collide.
-      - run: pnpm run deploy:web:${{ github.event.inputs.environment || 'prod' }}
+      - uses: ./.github/actions/setup
+      # Each app self-deploys via its registry `deploy:<slug>:<env>` script (a next-cf
+      # app builds with OpenNext, a worker just `wrangler deploy`s). Apps deploy in
+      # parallel — CF workers are independent (service bindings resolve at runtime).
+      - run: pnpm run deploy:${{ matrix.app.slug }}:${{ github.event.inputs.environment || 'prod' }}
         env:
           # Cloudflare auth — account-scoped API token with Workers + R2 edit.
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           # Build-time env (blog generateStaticParams / sitemap fetch Sanity).
           NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+          # First-party asset CDN — set this per-env GitHub Environment var to bake
+          # `assetPrefix` for that env. Empty = serve from origin. (Sanity content unaffected.)
+          NEXT_PUBLIC_CDN_URL: ${{ vars.NEXT_PUBLIC_CDN_URL }}
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
           NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}

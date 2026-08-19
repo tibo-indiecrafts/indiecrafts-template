@@ -1,0 +1,40 @@
+{
+  "name": "@indiecrafts/blog",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*"
+  },
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*",
+    "@indiecrafts/email": "workspace:*",
+    "@indiecrafts/format": "workspace:*",
+    "@indiecrafts/i18n": "workspace:*",
+    "@indiecrafts/logger": "workspace:*",
+    "@indiecrafts/page-builder": "workspace:*",
+    "@indiecrafts/sanity": "workspace:*",
+    "@indiecrafts/ui": "workspace:*",
+    "@indiecrafts/ui-components": "workspace:*",
+    "@indiecrafts/utils": "workspace:*",
+    "@portabletext/react": "^6.2.0",
+    "@sanity/icons": "^3.7.4",
+    "embla-carousel-react": "^8.6.0",
+    "lucide-react": "^1.31.0",
+    "next-intl": "^4.13.6",
+    "next-sanity": "^13.3.3",
+    "sanity": "^5.31.1"
+  },
+  "peerDependencies": {
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

@@ -1,0 +1,3 @@
+{
+  "$description": "Component token surface for carousel — uses only literal and non-token colors (white/black/neutral/arbitrary); no direct design color tokens."
+}

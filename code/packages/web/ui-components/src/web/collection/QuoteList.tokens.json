@@ -1,0 +1,7 @@
+{
+  "$description": "Component token surface for QuoteList — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "quote-list-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "quote-list-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+  }
+}

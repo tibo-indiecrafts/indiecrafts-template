@@ -1,0 +1,13 @@
+{
+  "$description": "Component token surface for message — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "message-muted": {
+      "$type": "color",
+      "$value": "{semantic.muted}"
+    },
+    "message-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
+  }
+}

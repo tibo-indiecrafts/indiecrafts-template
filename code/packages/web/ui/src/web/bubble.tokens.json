@@ -1,0 +1,17 @@
+{
+  "$description": "Component token surface for bubble — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "bubble-primary": { "$type": "color", "$value": "{component.primary}" },
+    "bubble-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" },
+    "bubble-secondary": { "$type": "color", "$value": "{component.secondary}" },
+    "bubble-secondary-foreground": { "$type": "color", "$value": "{component.secondary-foreground}" },
+    "bubble-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "bubble-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "bubble-border": { "$type": "color", "$value": "{semantic.border}" },
+    "bubble-background": { "$type": "color", "$value": "{semantic.background}" },
+    "bubble-input": { "$type": "color", "$value": "{component.input}" },
+    "bubble-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "bubble-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "bubble-card": { "$type": "color", "$value": "{component.card}" }
+  }
+}

@@ -43,4 +43,4 @@ if this module was the only one, remove it too.
 
 - Sync counts **down** in the same four docs as `add-page-builder-block.md`.
 - `grep -rn 'module\.<name>'` again → must be empty (ignore `docs/.vitepress/dist`).
-- `pnpm tsc`, then log in the app changelog `code/apps/web/CHANGELOG.md`.
+- `pnpm tsc`, then log in the app changelog `code/projects/web/surfaces/website/CHANGELOG.md`.

@@ -1,0 +1,570 @@
+{
+  "version": "2.0.0",
+  // Every root package.json script, runnable from Terminal → Run Task (Cmd/Ctrl-Shift-P → "Run Task").
+  // Labels mirror the script names; `detail` documents each. Keep in sync with package.json when scripts
+  // change. (VS Code also auto-detects npm scripts under the "npm" task type — this file adds the docs,
+  // grouping, background panels, and problem matchers that auto-detection can't.)
+  // `prepare` (husky lifecycle) is intentionally omitted — it runs on install, not on demand.
+  "tasks": [
+    // ── Dev & build ──────────────────────────────────────────────────────
+    {
+      "label": "dev",
+      "detail": "turbo run dev — the app on :3000",
+      "type": "shell",
+      "command": "pnpm dev",
+      "isBackground": true,
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "build",
+      "detail": "turbo run build — production build, all workspaces",
+      "type": "shell",
+      "command": "pnpm build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "start",
+      "detail": "next start — serve the built website",
+      "type": "shell",
+      "command": "pnpm start",
+      "isBackground": true,
+      "presentation": { "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "storybook",
+      "detail": "the component library (:6006)",
+      "type": "shell",
+      "command": "pnpm storybook",
+      "isBackground": true,
+      "presentation": { "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "storybook:build",
+      "detail": "static Storybook build",
+      "type": "shell",
+      "command": "pnpm storybook:build",
+      "problemMatcher": []
+    },
+    {
+      "label": "docs",
+      "detail": "VitePress product docs (:3002)",
+      "type": "shell",
+      "command": "pnpm docs",
+      "isBackground": true,
+      "presentation": { "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "docs:build",
+      "detail": "static docs build",
+      "type": "shell",
+      "command": "pnpm docs:build",
+      "problemMatcher": []
+    },
+    {
+      "label": "docs:install",
+      "detail": "npm install inside code/docs (once)",
+      "type": "shell",
+      "command": "pnpm docs:install",
+      "problemMatcher": []
+    },
+
+    // ── Quality gates ────────────────────────────────────────────────────
+    {
+      "label": "verify",
+      "detail": "full CI gate — tsc+lint+format+contrast+doctor+test + tags + canary",
+      "type": "shell",
+      "command": "pnpm verify",
+      "group": "build",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "verify:quick",
+      "detail": "tsc + lint (manual pre-PR check)",
+      "type": "shell",
+      "command": "pnpm verify:quick",
+      "group": "build",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "lint",
+      "detail": "turbo run lint (eslint)",
+      "type": "shell",
+      "command": "pnpm lint",
+      "group": "build",
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "tsc",
+      "detail": "turbo run tsc --noEmit (type-check all)",
+      "type": "shell",
+      "command": "pnpm tsc",
+      "group": "build",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "format",
+      "detail": "prettier --write .",
+      "type": "shell",
+      "command": "pnpm format",
+      "problemMatcher": []
+    },
+    {
+      "label": "format:check",
+      "detail": "prettier --check .",
+      "type": "shell",
+      "command": "pnpm format:check",
+      "problemMatcher": []
+    },
+    {
+      "label": "tags:check",
+      "detail": "issue-tag vocabulary guard (fails on off-list)",
+      "type": "shell",
+      "command": "pnpm tags:check",
+      "problemMatcher": []
+    },
+    {
+      "label": "tags:report",
+      "detail": "inventory issue tags",
+      "type": "shell",
+      "command": "pnpm tags:report",
+      "problemMatcher": []
+    },
+    {
+      "label": "lint:scripts",
+      "detail": "shellcheck the shared shell scripts",
+      "type": "shell",
+      "command": "pnpm lint:scripts",
+      "problemMatcher": []
+    },
+    {
+      "label": "scan:placeholders",
+      "detail": "scan for unfilled template placeholders",
+      "type": "shell",
+      "command": "pnpm scan:placeholders",
+      "problemMatcher": []
+    },
+
+    // ── Tests ────────────────────────────────────────────────────────────
+    {
+      "label": "test",
+      "detail": "turbo run test (vitest, all packages)",
+      "type": "shell",
+      "command": "pnpm test",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "test:coverage",
+      "detail": "vitest with coverage",
+      "type": "shell",
+      "command": "pnpm test:coverage",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "test:workers",
+      "detail": "worker apps' tests (api · cron · workers)",
+      "type": "shell",
+      "command": "pnpm test:workers",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "test:stories",
+      "detail": "Storybook story tests (Playwright runner)",
+      "type": "shell",
+      "command": "pnpm test:stories",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "test:scripts",
+      "detail": "node --test on the shared/app scripts",
+      "type": "shell",
+      "command": "pnpm test:scripts",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "e2e",
+      "detail": "Playwright app-journey e2e",
+      "type": "shell",
+      "command": "pnpm e2e",
+      "group": "test",
+      "problemMatcher": []
+    },
+
+    // ── Data · DB · content ──────────────────────────────────────────────
+    {
+      "label": "seed",
+      "detail": "seed demo content into Sanity",
+      "type": "shell",
+      "command": "pnpm seed",
+      "problemMatcher": []
+    },
+    {
+      "label": "content:import",
+      "detail": "import content into Sanity",
+      "type": "shell",
+      "command": "pnpm content:import",
+      "problemMatcher": []
+    },
+    {
+      "label": "subscribers:export",
+      "detail": "export newsletter subscribers → CSV",
+      "type": "shell",
+      "command": "pnpm subscribers:export",
+      "problemMatcher": []
+    },
+    {
+      "label": "doctor:env",
+      "detail": "validate .env.local + print site identity",
+      "type": "shell",
+      "command": "pnpm doctor:env",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate",
+      "detail": "run D1 database migrations",
+      "type": "shell",
+      "command": "pnpm db:migrate",
+      "problemMatcher": []
+    },
+    {
+      "label": "backup:content:prod",
+      "detail": "back up the prod Sanity dataset (local)",
+      "type": "shell",
+      "command": "pnpm backup:content:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "backup:content:prod:remote",
+      "detail": "back up prod Sanity + upload to R2",
+      "type": "shell",
+      "command": "pnpm backup:content:prod:remote",
+      "problemMatcher": []
+    },
+    {
+      "label": "backup:all:dev",
+      "detail": "back up all data stores — dev",
+      "type": "shell",
+      "command": "pnpm backup:all:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "backup:all:staging",
+      "detail": "back up all data stores — staging",
+      "type": "shell",
+      "command": "pnpm backup:all:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "backup:all:prod",
+      "detail": "back up all data stores — prod",
+      "type": "shell",
+      "command": "pnpm backup:all:prod",
+      "problemMatcher": []
+    },
+
+    // ── Deploy · secrets · domains (Cloudflare) ──────────────────────────
+    {
+      "label": "preview:website:cf",
+      "detail": "OpenNext local Cloudflare preview of the website",
+      "type": "shell",
+      "command": "pnpm preview:website:cf",
+      "isBackground": true,
+      "presentation": { "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "domains:print",
+      "detail": "print the resolved per-env domains",
+      "type": "shell",
+      "command": "pnpm domains:print",
+      "problemMatcher": []
+    },
+    {
+      "label": "domains:url",
+      "detail": "print a single resolved domain URL",
+      "type": "shell",
+      "command": "pnpm domains:url",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:website:dev",
+      "detail": "deploy website — dev",
+      "type": "shell",
+      "command": "pnpm deploy:website:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:website:staging",
+      "detail": "deploy website — staging",
+      "type": "shell",
+      "command": "pnpm deploy:website:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:website:prod",
+      "detail": "deploy website — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:website:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:admin:dev",
+      "detail": "deploy admin — dev",
+      "type": "shell",
+      "command": "pnpm deploy:admin:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:admin:staging",
+      "detail": "deploy admin — staging",
+      "type": "shell",
+      "command": "pnpm deploy:admin:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:admin:prod",
+      "detail": "deploy admin — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:admin:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:api:dev",
+      "detail": "deploy api worker — dev",
+      "type": "shell",
+      "command": "pnpm deploy:api:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:api:staging",
+      "detail": "deploy api worker — staging",
+      "type": "shell",
+      "command": "pnpm deploy:api:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:api:prod",
+      "detail": "deploy api worker — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:api:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:cron:dev",
+      "detail": "deploy cron worker — dev",
+      "type": "shell",
+      "command": "pnpm deploy:cron:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:cron:staging",
+      "detail": "deploy cron worker — staging",
+      "type": "shell",
+      "command": "pnpm deploy:cron:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:cron:prod",
+      "detail": "deploy cron worker — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:cron:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:workers:dev",
+      "detail": "deploy workers — dev",
+      "type": "shell",
+      "command": "pnpm deploy:workers:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:workers:staging",
+      "detail": "deploy workers — staging",
+      "type": "shell",
+      "command": "pnpm deploy:workers:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:workers:prod",
+      "detail": "deploy workers — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:workers:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:mobile:dev",
+      "detail": "deploy mobile (expo) — dev",
+      "type": "shell",
+      "command": "pnpm deploy:mobile:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:mobile:staging",
+      "detail": "deploy mobile (expo) — staging",
+      "type": "shell",
+      "command": "pnpm deploy:mobile:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:mobile:prod",
+      "detail": "deploy mobile (expo) — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:mobile:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:hybrid:dev",
+      "detail": "deploy hybrid (electron) — dev",
+      "type": "shell",
+      "command": "pnpm deploy:hybrid:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:hybrid:staging",
+      "detail": "deploy hybrid (electron) — staging",
+      "type": "shell",
+      "command": "pnpm deploy:hybrid:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:hybrid:prod",
+      "detail": "deploy hybrid (electron) — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:hybrid:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:all:dev",
+      "detail": "deploy every app — dev",
+      "type": "shell",
+      "command": "pnpm deploy:all:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:all:staging",
+      "detail": "deploy every app — staging",
+      "type": "shell",
+      "command": "pnpm deploy:all:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:all:prod",
+      "detail": "deploy every app — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:all:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "secrets:sync:website:dev",
+      "detail": "push website secrets → Cloudflare (dev)",
+      "type": "shell",
+      "command": "pnpm secrets:sync:website:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "secrets:sync:website:staging",
+      "detail": "push website secrets → Cloudflare (staging)",
+      "type": "shell",
+      "command": "pnpm secrets:sync:website:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "secrets:sync:website:prod",
+      "detail": "push website secrets → Cloudflare (PROD)",
+      "type": "shell",
+      "command": "pnpm secrets:sync:website:prod",
+      "problemMatcher": []
+    },
+
+    // ── Infra (Terraform) ────────────────────────────────────────────────
+    {
+      "label": "setup:kv",
+      "detail": "create the website's Workers KV namespaces",
+      "type": "shell",
+      "command": "pnpm setup:kv",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:website:init",
+      "detail": "terraform init (website, dev)",
+      "type": "shell",
+      "command": "pnpm infra:website:init",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:website:plan:dev",
+      "detail": "terraform plan — website dev",
+      "type": "shell",
+      "command": "pnpm infra:website:plan:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:website:plan:staging",
+      "detail": "terraform plan — website staging",
+      "type": "shell",
+      "command": "pnpm infra:website:plan:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:website:plan:prod",
+      "detail": "terraform plan — website PROD",
+      "type": "shell",
+      "command": "pnpm infra:website:plan:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:website:apply:dev",
+      "detail": "terraform apply — website dev",
+      "type": "shell",
+      "command": "pnpm infra:website:apply:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:website:apply:staging",
+      "detail": "terraform apply — website staging",
+      "type": "shell",
+      "command": "pnpm infra:website:apply:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:website:apply:prod",
+      "detail": "terraform apply — website PROD",
+      "type": "shell",
+      "command": "pnpm infra:website:apply:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:website:output:prod",
+      "detail": "terraform output — website PROD",
+      "type": "shell",
+      "command": "pnpm infra:website:output:prod",
+      "problemMatcher": []
+    },
+
+    // ── Maintenance ──────────────────────────────────────────────────────
+    {
+      "label": "clean",
+      "detail": "remove build artifacts + caches",
+      "type": "shell",
+      "command": "pnpm clean",
+      "problemMatcher": []
+    },
+    {
+      "label": "agents:sync",
+      "detail": "re-vendor the agent suite from the global bench",
+      "type": "shell",
+      "command": "pnpm agents:sync",
+      "problemMatcher": []
+    }
+  ]
+}

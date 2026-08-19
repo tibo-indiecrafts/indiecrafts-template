@@ -150,7 +150,7 @@ Every native slash command + bundled skill. Source: `code.claude.com/docs/en/com
 | `/pr-comments`                                                               | Post review findings as inline PR comments                     |
 | `/autofix-pr [prompt]`                                                       | Web session watches a PR, pushes fixes when CI fails           |
 | `/verify`                                                                    | Verify code quality + correctness                              |
-| `/batch <instruction>`                                                       | Large change → 5–30 parallel units (branch + PR each)        |
+| `/batch <instruction>`                                                       | Large change → 5–30 parallel units (branch + PR each)          |
 | `/deep-research <question>`                                                  | Fan-out web research → cited report                            |
 | `/dataviz [request]`                                                         | Chart/dashboard design guidance                                |
 | `/loop [interval] [prompt]` (`/proactive`)                                   | Run a prompt on a schedule                                     |

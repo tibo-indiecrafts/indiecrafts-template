@@ -1,7 +1,7 @@
 # The CLAUDE.md system (monorepo)
 
 How this template feeds AI coding agents their rules of engagement — layered per sub-project,
-so an agent working in `code/apps/web` gets Next/React rules and one in `code/packages/utils`
+so an agent working in `code/projects/web/surfaces/website` gets Next/React rules and one in `code/packages/utils`
 gets leaf-brick rules, without you switching modes.
 
 ## The `.claude/` per sub-project
@@ -14,7 +14,7 @@ when their files are read), so rules layer instead of overriding:
 CLAUDE.md                              # root — universal laws (platform, four-folder layout, principles)
 .claude/{settings.json, rules/, skills/, agents/}   # settings (ROOT-ONLY) + global rule (writing-style)
                                        # + skills/agents at ROOT so they're available wherever you start
-code/apps/web/.claude/
+code/projects/web/surfaces/website/.claude/
   CLAUDE.md                            # the app's how-to-code
   rules/                               # auto-loading rules (import method canon) + code-patterns + self-review
 code/packages/<name>/.claude/CLAUDE.md # per-brick specifics
@@ -23,16 +23,16 @@ code/modules/blog/.claude/CLAUDE.md    # the module
 
 ## What nests, and what doesn't — the two loading behaviors
 
-The catch: **CLAUDE.md and rules load by the *files Claude reads*, but skills/agents/commands are
-discovered by *walking up from where you launched Claude*.** Since you run from the repo root,
+The catch: **CLAUDE.md and rules load by the _files Claude reads_, but skills/agents/commands are
+discovered by _walking up from where you launched Claude_.** Since you run from the repo root,
 skills/agents live at **root** (always available) while CLAUDE.md + rules nest (auto-load by location).
 
-| Component | Where we put it | Loads |
-| --- | --- | --- |
-| `CLAUDE.md` | nested per unit | ancestors at launch; a subtree's file when Claude reads a file under it — **no `cd`** |
-| `rules/` | nested (app) + root (global) | with the subtree's CLAUDE.md; `paths:` frontmatter scopes further — **no `cd`** |
-| `skills/` · `agents/` · `commands/` | **root** | discovered by walking **up** from the start dir → nest them and they vanish unless you launch inside that subtree |
-| **`settings.json` / `settings.local.json`** | **root** | start dir only — **never nest it** |
+| Component                                   | Where we put it              | Loads                                                                                                             |
+| ------------------------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `CLAUDE.md`                                 | nested per unit              | ancestors at launch; a subtree's file when Claude reads a file under it — **no `cd`**                             |
+| `rules/`                                    | nested (app) + root (global) | with the subtree's CLAUDE.md; `paths:` frontmatter scopes further — **no `cd`**                                   |
+| `skills/` · `agents/` · `commands/`         | **root**                     | discovered by walking **up** from the start dir → nest them and they vanish unless you launch inside that subtree |
+| **`settings.json` / `settings.local.json`** | **root**                     | start dir only — **never nest it**                                                                                |
 
 Bare `<dir>/CLAUDE.md` and `<dir>/.claude/CLAUDE.md` are interchangeable; we use `.claude/` so the
 nested rules live beside their CLAUDE.md.
@@ -53,7 +53,7 @@ Per unit: **`CLAUDE.md`** (how to build) · **`DESIGN.md`** (how it looks — to
 
 The template is **packaged**: the general agent suite (~79, from
 [contains-studio/agents](https://github.com/contains-studio/agents)) is **vendored** under
-`.claude/agents/` — phase-wired agents in the topic folders, the rest in `bench/<topic>/` — so a
+`.claude/agents/` — all agents categorised in topic folders (no bench) — so a
 clone needs no `~/.claude` setup. The **template-tuned** reviewers
 live in `.claude/agents/project/` (`design-system` · `accessibility` · `ux` · `copy` · `page-builder` ·
 `config-consistency`). Refresh the general suite with `pnpm agents:sync` (it never touches
@@ -70,7 +70,7 @@ sit alongside it.
 
 - **Keep each `CLAUDE.md` short** (aim < ~100 lines) and **specific** — exact versions, a real
   structure tree, **verifiable** NEVERs. If an agent can't tell whether a rule was followed, cut it.
-- **Show, don't tell** — concrete wrong→right examples live in `code/apps/web/.claude/rules/code-patterns.md` (the ❌/✅ library), which auto-loads.
+- **Show, don't tell** — concrete wrong→right examples live in `code/projects/web/surfaces/website/.claude/rules/code-patterns.md` (the ❌/✅ library), which auto-loads.
 - **Self-audit before finishing** — `.claude/rules/self-review.md`.
 - **New unit?** Stamp `method/shared/templates/claude-md/` and register it (`_registry.md` + docs page + sidebar + area changelog).
 - Committed to git (never secrets — describe config, never values); updated in the same change as the code it describes.

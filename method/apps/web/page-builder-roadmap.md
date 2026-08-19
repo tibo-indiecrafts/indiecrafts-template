@@ -73,7 +73,7 @@ Sources: [Sanity Learn — Page building](https://www.sanity.io/learn/course/pag
 
 ## 1. What exists today (the honest baseline)
 
-**Core (app, feature-independent) — `code/apps/web/src/sanity/schema`**
+**Core (app, feature-independent) — `code/projects/web/surfaces/website/src/sanity/schema`**
 
 - Singletons: `siteSettings` (brand · analytics · verification), `siteMeta` (per-locale
   SEO defaults + `pageSeo[pageId]` map), `navigation` (header/footer menus),
@@ -103,7 +103,7 @@ post bodies** (+ the homepage `BlocksShowcase` demo). Marketing pages are **code
 
 | Page                                            | Backed by                                    | Route                           | Status                   |
 | ----------------------------------------------- | -------------------------------------------- | ------------------------------- | ------------------------ |
-| **Home**                                        | `page` doc with `isHome` (`sections[]`)      | `/`                             | ✅ done (one page model)  |
+| **Home**                                        | `page` doc with `isHome` (`sections[]`)      | `/`                             | ✅ done (one page model) |
 | **Generic marketing page**                      | `page` doc (`sections[]` + slug)             | `/[[...slug]]` catch-all        | ✳ **the core new piece** |
 | About / Contact / Landing / Legal-marketing     | `page` docs                                  | `/about`, `/contact`, …         | ✳ via `page`             |
 | **Blog** index + post + author + category + tag | `blog`, `post`, `author`, `category`, `tag`  | `/blog/**`                      | ✓ exists                 |
@@ -145,36 +145,36 @@ unless noted. ✓ exists · ✳ new · ↑ extend existing.
 
 ### People & social proof (new)
 
-| Doc                                | Fields                                               | Powers                               |
-| ---------------------------------- | ---------------------------------------------------- | ------------------------------------ |
-| `testimonial` ✳ (from `quote`)     | quote · author · role · `company`→ · rating · avatar | testimonial blocks, JSON-LD Review   |
-| `client` / `partner` ✳             | name · logo(mono+color) · url · tier                 | logo-wall, directory, `company` refs |
+| Doc                                                    | Fields                                                                                                                                                | Powers                                                                                                                                                                                                        |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `testimonial` ✳ (from `quote`)                         | quote · author · role · `company`→ · rating · avatar                                                                                                  | testimonial blocks, JSON-LD Review                                                                                                                                                                            |
+| `client` / `partner` ✳                                 | name · logo(mono+color) · url · tier                                                                                                                  | logo-wall, directory, `company` refs                                                                                                                                                                          |
 | `caseStudy` = **`project`** (recommended, don't split) | the case-study fields live **on `project`**: `client`→ · `challenge` · `solution` · `results[]`(stat) · `testimonials[]`→ · `gallery` · `services[]`→ | proof + portfolio at `/work/[slug]`. Split into a separate `caseStudy` doc **only** if "portfolio piece" and "written case study" are genuinely different content types for the client — usually they aren't. |
 
 ### Portfolio & offerings (new)
 
-| Doc                | Fields                                                                                | Route                     |
-| ------------------ | ------------------------------------------------------------------------------------- | ------------------------- |
-| `project` ✳ (= case study) | title · client→ · services[]→ · summary · **`challenge` · `solution`** · body(PT) · gallery · `results[]`(stat) · `testimonials[]`→ · date · `featured` | `/work/[slug]` — **is the case study** |
-| `service` ✳        | title · icon · summary · body(PT) · price→ · faqs[]→ · relatedProjects[]→             | `/services/[slug]`        |
-| `feature` ✳ (capability) | title · slug · icon · summary · body(PT) · media/screenshots · `category`→ · `related[]`→feature · order · featured | **`/features`** + **`/features/[slug]`** — the reusable capability: shown in the grid, on its own page, **and** inside pricing tiers |
-| `plan` (pricing) ✳ | name · price · interval · **`features[]`** (`planFeature`: `feature`→ · included · note) · cta · highlighted                   | pricing-table block       |
-| `product` ✳        | title · **`type`(physical \| digital)** · `price`(→`price` obj, i18n) · variants[] · gallery · category→ · specs · **physical:** shipping · weight · stock; **digital:** file→ · license · downloadLimit | shop (`/products`) — **checkout routes by `type`: physical → Stripe, digital → LemonSqueezy** (see Payments note below) |
-| `bundle` ✳         | title · summary · **`items[]`→ (`service` \| `product`, mixed)** · pricing (`bundlePrice`→`plan` \| inline · `compareAt` for the savings) · `badge` · gallery | groups offerings into a package — `/bundles/[slug]` or a highlighted card in `service-grid`/`product-list` |
+| Doc                        | Fields                                                                                                                                                                                                   | Route                                                                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `project` ✳ (= case study) | title · client→ · services[]→ · summary · **`challenge` · `solution`** · body(PT) · gallery · `results[]`(stat) · `testimonials[]`→ · date · `featured`                                                  | `/work/[slug]` — **is the case study**                                                                                               |
+| `service` ✳                | title · icon · summary · body(PT) · price→ · faqs[]→ · relatedProjects[]→                                                                                                                                | `/services/[slug]`                                                                                                                   |
+| `feature` ✳ (capability)   | title · slug · icon · summary · body(PT) · media/screenshots · `category`→ · `related[]`→feature · order · featured                                                                                      | **`/features`** + **`/features/[slug]`** — the reusable capability: shown in the grid, on its own page, **and** inside pricing tiers |
+| `plan` (pricing) ✳         | name · price · interval · **`features[]`** (`planFeature`: `feature`→ · included · note) · cta · highlighted                                                                                             | pricing-table block                                                                                                                  |
+| `product` ✳                | title · **`type`(physical \| digital)** · `price`(→`price` obj, i18n) · variants[] · gallery · category→ · specs · **physical:** shipping · weight · stock; **digital:** file→ · license · downloadLimit | shop (`/products`) — **checkout routes by `type`: physical → Stripe, digital → LemonSqueezy** (see Payments note below)              |
+| `bundle` ✳                 | title · summary · **`items[]`→ (`service` \| `product`, mixed)** · pricing (`bundlePrice`→`plan` \| inline · `compareAt` for the savings) · `badge` · gallery                                            | groups offerings into a package — `/bundles/[slug]` or a highlighted card in `service-grid`/`product-list`                           |
 
 > **Bundling is a cross-offer pattern, not a product hack.** A `bundle` groups **mixed
 > `service` + `product` refs** into one priced package (`compareAt` shows the saving). Where else
-> it makes sense — model as the same shape, not new types: **`event`** → a *series/pass* (bundle
-> of event refs); **`course`** → a *track/curriculum* (bundle of lessons/courses); **`plan`** → a
+> it makes sense — model as the same shape, not new types: **`event`** → a _series/pass_ (bundle
+> of event refs); **`course`** → a _track/curriculum_ (bundle of lessons/courses); **`plan`** → a
 > tier that _is_ a bundle of `feature`s. Keep bundling a **reference array + a price**, so any
 > offering entity can adopt it without a bespoke schema.
 
 ### Commerce & pricing (new)
 
-| Doc | Fields | Powers |
-| --- | --- | --- |
-| `market` / `region` ✳ | `code`(eu/us/uk) · `label` · `currency`(ISO 4217) · **`locales[]`** (which site locales resolve to this market) · `taxRate` · `taxIncluded` · `default?` | **internationalised pricing** — every `price.byMarket` resolves here; render picks the market for the active locale (or geo/cookie), falls back to `default`, formats via `@indiecrafts/format` (locale `currency` is already on `i18n.locales`) |
-| `promotion` / `discount` ✳ | `code` · `type`(percent\|fixed) · `value` · `validFrom/To` · **`appliesTo[]`→ `service`/`product`/`bundle`/`event`** · `byMarket?` | discount badge on the offering + a checkout price rule; optionally scoped per market |
+| Doc                        | Fields                                                                                                                                                   | Powers                                                                                                                                                                                                                                           |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `market` / `region` ✳      | `code`(eu/us/uk) · `label` · `currency`(ISO 4217) · **`locales[]`** (which site locales resolve to this market) · `taxRate` · `taxIncluded` · `default?` | **internationalised pricing** — every `price.byMarket` resolves here; render picks the market for the active locale (or geo/cookie), falls back to `default`, formats via `@indiecrafts/format` (locale `currency` is already on `i18n.locales`) |
+| `promotion` / `discount` ✳ | `code` · `type`(percent\|fixed) · `value` · `validFrom/To` · **`appliesTo[]`→ `service`/`product`/`bundle`/`event`** · `byMarket?`                       | discount badge on the offering + a checkout price rule; optionally scoped per market                                                                                                                                                             |
 
 > **Pricing is a `price` object, never a scalar.** Replace every `price`/`amount` field on
 > `plan`/`product`/`bundle`/`event` with the shared `price` object (§4: `base: money` +
@@ -182,13 +182,14 @@ unless noted. ✓ exists · ✳ new · ↑ extend existing.
 > come from the resolved `market`, so adding a market is a doc, not a schema change.
 
 > **Payments route by type — two providers.** **Physical** goods → **Stripe** (Checkout + shipping
-> + per-`market` tax). **Digital** goods (files · licenses · webinar/event access) → **LemonSqueezy**,
-> a **Merchant of Record** — it collects + remits global VAT/sales-tax and delivers the file, so the
-> site never owns tax compliance. `payment.provider` (`stripe` \| `lemonsqueezy`) is chosen by the
-> order's line `type`; both **webhook back** to flip `payment.status` + fulfil the `order`/`booking`.
-> Reserved **`billing`** package; provider-hosted checkout only — never store card data. This pairs
-> with the `market`/`price` model: LemonSqueezy handles digital tax across markets; Stripe handles
-> physical shipping + tax per market.
+>
+> - per-`market` tax). **Digital** goods (files · licenses · webinar/event access) → **LemonSqueezy**,
+>   a **Merchant of Record** — it collects + remits global VAT/sales-tax and delivers the file, so the
+>   site never owns tax compliance. `payment.provider` (`stripe` \| `lemonsqueezy`) is chosen by the
+>   order's line `type`; both **webhook back** to flip `payment.status` + fulfil the `order`/`booking`.
+>   Reserved **`billing`** package; provider-hosted checkout only — never store card data. This pairs
+>   with the `market`/`price` model: LemonSqueezy handles digital tax across markets; Stripe handles
+>   physical shipping + tax per market.
 
 ### Knowledge, help & FAQ (new)
 
@@ -199,11 +200,11 @@ unless noted. ✓ exists · ✳ new · ↑ extend existing.
 
 ### Learning & training (new)
 
-| Doc | Fields | Route |
-| --- | --- | --- |
-| `course` ✳ (= training / class) | title · slug · **`delivery`(self-paced \| live-class \| cohort \| 1:1-coaching \| group-coaching)** · **`format`(online \| in-person \| hybrid)** · summary · body(PT) · `instructor`/`coach`→person · `lessons[]`→ · `sessions[]`→ (live cohorts) · `price`→ · `enrollmentForm`→form · `category`→ | `/training` + `/training/[slug]`, `Course` JSON-LD |
-| `lesson` ✳ | title · `course`→ · order · video/`content`(PT) · duration · `free`(preview) | inside a course — drip / gated |
-| `enrollment` ✳ (submission) | course→ · person→/email · status · progress · `payment`?→ · createdAt | signup — `booking`'s sibling; paid → LemonSqueezy (digital access) |
+| Doc                             | Fields                                                                                                                                                                                                                                                                                              | Route                                                              |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `course` ✳ (= training / class) | title · slug · **`delivery`(self-paced \| live-class \| cohort \| 1:1-coaching \| group-coaching)** · **`format`(online \| in-person \| hybrid)** · summary · body(PT) · `instructor`/`coach`→person · `lessons[]`→ · `sessions[]`→ (live cohorts) · `price`→ · `enrollmentForm`→form · `category`→ | `/training` + `/training/[slug]`, `Course` JSON-LD                 |
+| `lesson` ✳                      | title · `course`→ · order · video/`content`(PT) · duration · `free`(preview)                                                                                                                                                                                                                        | inside a course — drip / gated                                     |
+| `enrollment` ✳ (submission)     | course→ · person→/email · status · progress · `payment`?→ · createdAt                                                                                                                                                                                                                               | signup — `booking`'s sibling; paid → LemonSqueezy (digital access) |
 
 > **Online training + coaching reuse `course`, they aren't new types.** A **live online class** =
 > `delivery:"live-class"` + `format:"online"` + `sessions[]` (each a webinar `event`/`session`). A
@@ -213,19 +214,29 @@ unless noted. ✓ exists · ✳ new · ↑ extend existing.
 
 ### Place & time (new)
 
-| Doc                     | Fields                                                                   | Powers                                                               |
-| ----------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| `location` ✳            | name · `address`(obj) · `geopoint` · `openingHours`(obj) · phone · email | `/locations/**`, map block, `LocalBusiness` JSON-LD                  |
-| `event` ✳               | title · **`format`(in-person \| hybrid \| `online`/`webinar`)** · start/end(datetime) · `location`→ **or** `streamUrl` + `recording`→ (webinar) · `speakers[]`→person · `sponsors[]`→org · **`services[]`→ · `products[]`→ · `testimonials[]`→ · `related[]`→event** (series/sessions) · `ticketTypes[]`(→`price`) · `capacity` · `registration`(none \| rsvp \| paid) · body(PT) · ics | `/events/[slug]`, `Event` + `eventAttendanceMode` JSON-LD, **calendar view**, **bookings**. A **webinar** is just `format:"online"` — no new type. |
-| `booking` ✳ (submission)| event→ · `ticketType`→ · name · email · `qty` · `status`(pending/confirmed/cancelled) · `payment`→ (if paid) · `joinToken` · createdAt | **event + webinar registration** — one submission for RSVP · ticket · **webinar signup**. Reserved **`booking`** module: submit API + spam guard + capacity check + notify. **Confirm delivers by `event.format`:** in-person → ticket/QR; **online/webinar → the `streamUrl` (per-registrant `joinToken`) + `.ics` + reminder emails.** Paid webinar → LemonSqueezy (digital access); paid seat → Stripe. |
-| `listing` (directory) ✳ | name · taxonomy[]→ · url · logo · description                            | `/directory/**` (third-party entries — distinct from own `location`) |
+| Doc                      | Fields                                                                                                                                                                                                                                                                                                                                                                                  | Powers                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `location` ✳             | name · `address`(obj) · `geopoint` · `openingHours`(obj) · phone · email                                                                                                                                                                                                                                                                                                                | `/locations/**`, map block, `LocalBusiness` JSON-LD                                                                                                                                                                                                                                                                                                                                                        |
+| `event` ✳                | title · **`format`(in-person \| hybrid \| `online`/`webinar`)** · start/end(datetime) · `location`→ **or** `streamUrl` + `recording`→ (webinar) · `speakers[]`→person · `sponsors[]`→org · **`services[]`→ · `products[]`→ · `testimonials[]`→ · `related[]`→event** (series/sessions) · `ticketTypes[]`(→`price`) · `capacity` · `registration`(none \| rsvp \| paid) · body(PT) · ics | `/events/[slug]`, `Event` + `eventAttendanceMode` JSON-LD, **calendar view**, **bookings**. A **webinar** is just `format:"online"` — no new type.                                                                                                                                                                                                                                                         |
+| `booking` ✳ (submission) | event→ · `ticketType`→ · name · email · `qty` · `status`(pending/confirmed/cancelled) · `payment`→ (if paid) · `joinToken` · createdAt                                                                                                                                                                                                                                                  | **event + webinar registration** — one submission for RSVP · ticket · **webinar signup**. Reserved **`booking`** module: submit API + spam guard + capacity check + notify. **Confirm delivers by `event.format`:** in-person → ticket/QR; **online/webinar → the `streamUrl` (per-registrant `joinToken`) + `.ics` + reminder emails.** Paid webinar → LemonSqueezy (digital access); paid seat → Stripe. |
+| `listing` (directory) ✳  | name · taxonomy[]→ · url · logo · description                                                                                                                                                                                                                                                                                                                                           | `/directory/**` (third-party entries — distinct from own `location`)                                                                                                                                                                                                                                                                                                                                       |
 
 ### Forms (**the biggest omission — flagged in the old draft**)
 
-| Doc                | Fields                                                                                                       | Notes                                                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `form` ✳           | **`type`(contact \| booking)** · title · fields(`formField`[]) · submitLabel · successMessage · notifyEmail · action(native/Resend/Formspree) · **booking:** `slots`/`availability` · duration · capacity · `payment`?→ | the `module.form` block **and** an entity's `form`→ ref (below). A **booking form** captures a slot → a `booking`; a **contact form** → a `formSubmission`. |
-| `formSubmission` ✳ | form→ · `entity`→ (what it was submitted from) · values(obj) · createdAt · meta                               | native → API route + spam guard (honeypot/turnstile) + `logger` + notify; **or** POST to an external provider |
+| Doc      | Fields                                                                                                                                                                                                                           | Notes                                                                                                                                                                                             |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `form` ✳ | **`type`(contact \| booking \| quote)** · title · fields(`formField`[]) · submitLabel · successMessage · notifyEmail · action(native/Resend/Formspree) · **booking:** `slots`/`availability` · duration · capacity · `payment`?→ | the `module.form` block **and** an entity's `form`→ ref (below). A **contact form** → a `contactMessage`/`formSubmission`; a **quote form** → a `quoteRequest`; a **booking form** → a `booking`. |
+
+> **Decided (approved plan — near-term).** The first cut ships **three concrete inline form blocks** —
+> `module.contact-form` · `module.booking-form` · `module.quote-form` — on the **existing `withGuard`
+> spine** (newsletter/waitlist pattern: honeypot + `tooFast` + Turnstile → validate → `writeClient.create`
+> → best-effort `sendEmail`), housed in one new `code/modules/contact-forms/` module (docs `contactMessage`
+> · `booking` · `quoteRequest`). **Booking is request-only** — a preferred date/time (native `<input
+type="date">`/`type="time">`) → a `booking` doc + owner alert + requester confirm; the owner confirms
+> manually. The full **slot/availability/capacity/payment** booking (this row's booking fields) + the
+> generalized `form`/`formField` builder-entity are **deferred to Pack 4/5b** — the near-term blocks are
+> fixed-field, not the dynamic `form` doc. A Cal.com/Calendly `module.booking-embed` is a documented alt.
+> | `formSubmission` ✳ | form→ · `entity`→ (what it was submitted from) · values(obj) · createdAt · meta | native → API route + spam guard (honeypot/turnstile) + `logger` + notify; **or** POST to an external provider |
 
 > **Eligible entities carry a `form`→** — attach a **booking** or **contact/enquiry** form where a
 > page invites action: `service` (request a quote / book), `event` + **webinar** (register →
@@ -237,8 +248,8 @@ unless noted. ✓ exists · ✳ new · ↑ extend existing.
 
 ### Company / global (new)
 
-| Doc                         | Fields                                                       | Notes                                         |
-| --------------------------- | ------------------------------------------------------------ | --------------------------------------------- |
+| Doc                         | Fields                                                                                                                                                                                            | Notes                                                                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `companyInfo` ✳ (singleton) | **Golden Circle: `why`(purpose) · `how`(approach) · `what`(offering)** · mission · vision · **`values[]`** (`value`: title·description·icon) · foundedYear · stats[] · timeline[] · socialLinks[] | feeds About (why/how/what + mission + values) + the `module.values` / `module.golden-circle` blocks + footer + `Organization` JSON-LD |
 
 ### Taxonomy (generalize)
@@ -264,10 +275,10 @@ express each of those as a **role played by reference**, never a copy per contex
 
 ### 3G.1 · Two identity super-entities (the hubs everything references)
 
-| Doc | Is | Plays (facet) | Never |
-| --- | --- | --- | --- |
-| **`person`** ✳ (absorbs `author`) | one human | `author` · `teamMember` · `speaker` · `instructor` · `contact` · `testimonialVoice` | duplicated per role |
-| **`organization`** ✳ (absorbs `client`/`partner`) | one company / group | `client` · `partner` · `sponsor` · `vendor` · `self` (the site owner) | a logo trapped in a block |
+| Doc                                               | Is                  | Plays (facet)                                                                       | Never                     |
+| ------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------- | ------------------------- |
+| **`person`** ✳ (absorbs `author`)                 | one human           | `author` · `teamMember` · `speaker` · `instructor` · `contact` · `testimonialVoice` | duplicated per role       |
+| **`organization`** ✳ (absorbs `client`/`partner`) | one company / group | `client` · `partner` · `sponsor` · `vendor` · `self` (the site owner)               | a logo trapped in a block |
 
 Both are **plain reference targets** — authored once in **People** / **Organizations**, pulled
 into any context by a `reference`. A role is `person.roles[]` (a checkbox set) **plus** the
@@ -448,47 +459,47 @@ Legend: **Kind** — 🟦 identity · 📄 content (own route) · 🔗 join · �
 
 **🟦 Identity — referenced everywhere, multi-role**
 
-| Entity | Plays | Own page | Rendered by (modules) | Key edges |
-| --- | --- | --- | --- | --- |
-| `person` | author · team · speaker · instructor · contact · testimonial-voice | `/team`, `/blog/author/[slug]` | `team` · `author-bio` · `speaker-list` | ← post.authors · project.team · event.speakers · course.instructor · testimonial.person · service.lead |
-| `organization` | client · partner · sponsor · vendor · self | `/clients` or a `page` | `logo-wall` · `client-list` · `partner-grid` | ← project.client · testimonial.company · event.sponsors · jobPosting.dept · person.contact-of |
+| Entity         | Plays                                                              | Own page                       | Rendered by (modules)                        | Key edges                                                                                              |
+| -------------- | ------------------------------------------------------------------ | ------------------------------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `person`       | author · team · speaker · instructor · contact · testimonial-voice | `/team`, `/blog/author/[slug]` | `team` · `author-bio` · `speaker-list`       | ← post.authors · project.team · event.speakers · course.instructor · testimonial.person · service.lead |
+| `organization` | client · partner · sponsor · vendor · self                         | `/clients` or a `page`         | `logo-wall` · `client-list` · `partner-grid` | ← project.client · testimonial.company · event.sponsors · jobPosting.dept · person.contact-of          |
 
 **📄 Content — its own route, references the identities**
 
-| Entity | Module (list → detail) | → references | Reserved module |
-| --- | --- | --- | --- |
-| `post` ✓ | `blog-post-list` → `PostDetail` | author→person · categories[] · tags[] | blog (live) |
-| `project` / `caseStudy` | `featured-projects` → `ProjectDetail` | client→org · team[]→person · services[]→ · testimonials[]→ | core / crm |
-| `service` | `service-grid` → `ServiceDetail` | lead→person · plans[]→ · faqs[]→ · relatedProjects[]→ | services |
-| `product` | `product-list` → `ProductDetail` | category→ · variants · reviews[]→testimonial | shop |
-| `bundle` | `bundle-grid` → `BundleDetail` | items[]→ (service \| product) · bundlePrice→plan | shop / services |
-| `event` | `event-list` / `event-calendar` → `EventDetail` | speakers[]→person · sponsors[]→org · location→ · ticket→plan | events |
-| `course` / `lesson` | `course-list` → `CourseDetail` | instructor→person · lessons[] | learning |
-| `jobPosting` | `job-list` → `JobDetail` | department · location→ · applications[]← | jobs |
-| `location` | `location-list` / map → `LocationDetail` | address · geopoint · hours (hosts events + team) | core |
-| `article` (KB) | `article-list` → `ArticleDetail` | category→ · related[]→ | support |
-| `faq` | `faq` (+ FAQPage JSON-LD) | category→ | core |
-| `plan` | `pricing-table` | features[] | services / billing |
-| `page` / `homePage` | `page.sections[]` (the builder) | any block / any ref | core (Pack 0) |
+| Entity                  | Module (list → detail)                          | → references                                                 | Reserved module    |
+| ----------------------- | ----------------------------------------------- | ------------------------------------------------------------ | ------------------ |
+| `post` ✓                | `blog-post-list` → `PostDetail`                 | author→person · categories[] · tags[]                        | blog (live)        |
+| `project` / `caseStudy` | `featured-projects` → `ProjectDetail`           | client→org · team[]→person · services[]→ · testimonials[]→   | core / crm         |
+| `service`               | `service-grid` → `ServiceDetail`                | lead→person · plans[]→ · faqs[]→ · relatedProjects[]→        | services           |
+| `product`               | `product-list` → `ProductDetail`                | category→ · variants · reviews[]→testimonial                 | shop               |
+| `bundle`                | `bundle-grid` → `BundleDetail`                  | items[]→ (service \| product) · bundlePrice→plan             | shop / services    |
+| `event`                 | `event-list` / `event-calendar` → `EventDetail` | speakers[]→person · sponsors[]→org · location→ · ticket→plan | events             |
+| `course` / `lesson`     | `course-list` → `CourseDetail`                  | instructor→person · lessons[]                                | learning           |
+| `jobPosting`            | `job-list` → `JobDetail`                        | department · location→ · applications[]←                     | jobs               |
+| `location`              | `location-list` / map → `LocationDetail`        | address · geopoint · hours (hosts events + team)             | core               |
+| `article` (KB)          | `article-list` → `ArticleDetail`                | category→ · related[]→                                       | support            |
+| `faq`                   | `faq` (+ FAQPage JSON-LD)                       | category→                                                    | core               |
+| `plan`                  | `pricing-table`                                 | features[]                                                   | services / billing |
+| `page` / `homePage`     | `page.sections[]` (the builder)                 | any block / any ref                                          | core (Pack 0)      |
 
 **🔗 Join — links identities to content (the "reference" docs)**
 
-| Entity | Links | Powers |
-| --- | --- | --- |
-| `testimonial` (from `quote`) | `person`→ + `organization`→ + about `project`/`service`→ + rating | `testimonial-list`, Review JSON-LD |
-| `postAuthorship` _(implicit)_ | `post` ↔ `person` via `post.authors[]` | byline, author page |
-| `promotion` / `discount` | `appliesTo[]`→ `service` · `product` · `bundle` · **`event`** (+ code · %\|fixed · valid dates) | discount badges · checkout price rule |
+| Entity                        | Links                                                                                           | Powers                                |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `testimonial` (from `quote`)  | `person`→ + `organization`→ + about `project`/`service`→ + rating                               | `testimonial-list`, Review JSON-LD    |
+| `postAuthorship` _(implicit)_ | `post` ↔ `person` via `post.authors[]`                                                          | byline, author page                   |
+| `promotion` / `discount`      | `appliesTo[]`→ `service` · `product` · `bundle` · **`event`** (+ code · %\|fixed · valid dates) | discount badges · checkout price rule |
 
 **📥 Submission — data in, no page (spam-guarded API + notify + `logger`)**
 
-| Entity | From | Reserved module |
-| --- | --- | --- |
-| `comment` | post/page→ + name/email + status | community / moderation |
-| `booking` | event→ + person/email + status + payment→ | booking / billing |
-| `formSubmission` | form→ + values | core |
-| `subscriber` ✓ / `waitlistEntry` ✓ | email + status | newsletter / waitlist (live) |
-| `jobApplication` | jobPosting→ + person + CV | jobs |
-| `order` | product[]→ + payment→ + customer→person/org | shop / billing |
+| Entity                             | From                                        | Reserved module              |
+| ---------------------------------- | ------------------------------------------- | ---------------------------- |
+| `comment`                          | post/page→ + name/email + status            | community / moderation       |
+| `booking`                          | event→ + person/email + status + payment→   | booking / billing            |
+| `formSubmission`                   | form→ + values                              | core                         |
+| `subscriber` ✓ / `waitlistEntry` ✓ | email + status                              | newsletter / waitlist (live) |
+| `jobApplication`                   | jobPosting→ + person + CV                   | jobs                         |
+| `order`                            | product[]→ + payment→ + customer→person/org | shop / billing               |
 
 **⚙️ Config singletons** — `siteSettings` · `siteMeta` · `navigation` · `cookieConsent` ·
 `homePage` · **`companyInfo`** (mission · **values[]** · why/how/what) · `uiMessages`.
@@ -505,47 +516,47 @@ field-level `localeString` · `·` none. **Shared:** `✓✓` referenced by many
 **$** carries a `price` object. **Builder:** `✓✓` pure `sections[]` · `✓` PT `body` · `·` none.
 **Create:** `✓` editor-creatable · `S` singleton · `API` submission-only.
 
-| Entity | Kind | Own route | i18n | Shared | $ | Builder | Create | Module | JSON-LD |
-| --- | --- | --- | :-: | :-: | :-: | :-: | :-: | --- | --- |
-| `person` | 🟦 id | `/team` · `/blog/author/[s]` | ✓ | ✓✓ | · | · | ✓ | core | Person |
-| `organization` | 🟦 id | `/clients` | ✓ | ✓✓ | · | · | ✓ | core·crm | Organization |
-| `post` | 📄 | `/blog/[s]` | ✓ | ✓ | · | ✓ | ✓ | blog | Article |
-| `project` | 📄 | `/work/[s]` | ✓ | ✓ | · | ✓ | ✓ | core·crm | CreativeWork |
-| `service` | 📄 | `/services/[s]` | ✓ | ✓ | ✓ | ✓ | ✓ | services | Service |
-| `product` | 📄 | `/products/[s]` | ✓ | · | ✓ | · | ✓ | shop | Product |
-| `bundle` | 📄 | `/bundles/[s]` | ✓ | · | ✓ | · | ✓ | shop·services | Product·Offer |
-| `event` | 📄 | `/events/[s]` | ✓ | · | ✓ | ✓ | ✓ | events | Event |
-| `course` (training · coaching) | 📄 | `/training/[s]` | ✓ | · | ✓ | ✓ | ✓ | learning | Course |
-| `lesson` | 📄 embed | — (course child) | ✓ | · | · | ✓ | ✓ | learning | — |
-| `feature` (capability) | 📄 | `/features/[s]` | ✓ | ✓✓ | · | ✓ | ✓ | core | — |
-| `jobPosting` | 📄 | `/jobs/[s]` | ✓ | · | · | ✓ | ✓ | jobs | JobPosting |
-| `location` | 📄 | `/locations/[s]` | ✓ | ✓ | · | · | ✓ | core | LocalBusiness |
-| `article` (KB) | 📄 | `/help/[s]` | ✓ | · | · | ✓ | ✓ | support | Article |
-| `faq` | 📄 embed | — (block) | ✓ | ✓ | · | · | ✓ | core | FAQPage |
-| `page` / `homePage` | 📄 | `/[[...slug]]` · `/` | ✓ | · | · | ✓✓ | ✓ / **S** | core | WebPage |
-| `plan` | 💳 | — (block) | ✓ | ✓ | ✓ | · | ✓ | services | Offer |
-| `testimonial` | 🔗 join | — (block) | ✓ | ✓ | · | · | ✓ | core | Review |
-| `market` / `region` | 💳 | — | · | ✓ | (defines $) | · | ✓ | shop | — |
-| `promotion` | 💳 | — | · | ✓ | (is a rule) | · | ✓ | shop | — |
-| `comment` | 📥 | — | · | · | · | · | **API** | community | — |
-| `booking` | 📥 | — | · | · | ✓ | · | **API** | booking | — |
-| `order` | 📥 | — | · | · | ✓ | · | **API** | shop | — |
-| `formSubmission` | 📥 | — | · | · | · | · | **API** | core | — |
-| `subscriber` ✓ / `waitlistEntry` ✓ | 📥 | — | · | · | · | · | **API** | newsletter·waitlist | — |
-| `jobApplication` | 📥 | — | · | · | · | · | **API** | jobs | — |
-| `companyInfo` | ⚙️ | — | ~ | ✓ (self) | · | · | **S** | core | Organization |
-| `category` | 🏷 | `/blog/category/[s]` | ✓ | ✓✓ | · | · | ✓ | blog·core | — |
-| `tag` | 🏷 | `/blog/tag/[s]` | ✓ | ✓✓ | · | · | ✓ | blog | — |
-| `form` | 📥 def | — (block/ref) | ✓ | ✓ | · | · | ✓ | core | — |
-| `resource` / `download` | 📄 | `/resources/[s]` (gated) | ✓ | · | · | ✓ | ✓ | core·growth | CreativeWork |
-| `ticketType` | 💳 | — (event child) | · | · | ✓ | · | ✓ | events | Offer |
-| `session` | 📄 embed | — (event child) | ✓ | · | · | · | ✓ | events | Event |
-| `enrollment` | 📥 | — | · | · | ✓ | · | **API** | learning | — |
-| `redirect` | ⚙️ | — | · | · | · | · | ✓ | core | — |
-| `announcement` | ⚙️ | — | ~ | · | · | · | **S** | core | — |
-| `press` / `award` | 🔗 | — (block) | ~ | ✓ | · | · | ✓ | core | — |
-| `salesQuote` | 📥 | — | · | · | ✓ | · | ✓/API | crm | — |
-| `siteSettings` · `siteMeta` · `navigation` · `cookieConsent` · `uiMessages` | ⚙️ | — | ~ / per-locale | · | · | · | **S** | core | Org·WebSite |
+| Entity                                                                      | Kind     | Own route                    |      i18n      |  Shared  |      $      | Builder |  Create   | Module              | JSON-LD       |
+| --------------------------------------------------------------------------- | -------- | ---------------------------- | :------------: | :------: | :---------: | :-----: | :-------: | ------------------- | ------------- |
+| `person`                                                                    | 🟦 id    | `/team` · `/blog/author/[s]` |       ✓        |    ✓✓    |      ·      |    ·    |     ✓     | core                | Person        |
+| `organization`                                                              | 🟦 id    | `/clients`                   |       ✓        |    ✓✓    |      ·      |    ·    |     ✓     | core·crm            | Organization  |
+| `post`                                                                      | 📄       | `/blog/[s]`                  |       ✓        |    ✓     |      ·      |    ✓    |     ✓     | blog                | Article       |
+| `project`                                                                   | 📄       | `/work/[s]`                  |       ✓        |    ✓     |      ·      |    ✓    |     ✓     | core·crm            | CreativeWork  |
+| `service`                                                                   | 📄       | `/services/[s]`              |       ✓        |    ✓     |      ✓      |    ✓    |     ✓     | services            | Service       |
+| `product`                                                                   | 📄       | `/products/[s]`              |       ✓        |    ·     |      ✓      |    ·    |     ✓     | shop                | Product       |
+| `bundle`                                                                    | 📄       | `/bundles/[s]`               |       ✓        |    ·     |      ✓      |    ·    |     ✓     | shop·services       | Product·Offer |
+| `event`                                                                     | 📄       | `/events/[s]`                |       ✓        |    ·     |      ✓      |    ✓    |     ✓     | events              | Event         |
+| `course` (training · coaching)                                              | 📄       | `/training/[s]`              |       ✓        |    ·     |      ✓      |    ✓    |     ✓     | learning            | Course        |
+| `lesson`                                                                    | 📄 embed | — (course child)             |       ✓        |    ·     |      ·      |    ✓    |     ✓     | learning            | —             |
+| `feature` (capability)                                                      | 📄       | `/features/[s]`              |       ✓        |    ✓✓    |      ·      |    ✓    |     ✓     | core                | —             |
+| `jobPosting`                                                                | 📄       | `/jobs/[s]`                  |       ✓        |    ·     |      ·      |    ✓    |     ✓     | jobs                | JobPosting    |
+| `location`                                                                  | 📄       | `/locations/[s]`             |       ✓        |    ✓     |      ·      |    ·    |     ✓     | core                | LocalBusiness |
+| `article` (KB)                                                              | 📄       | `/help/[s]`                  |       ✓        |    ·     |      ·      |    ✓    |     ✓     | support             | Article       |
+| `faq`                                                                       | 📄 embed | — (block)                    |       ✓        |    ✓     |      ·      |    ·    |     ✓     | core                | FAQPage       |
+| `page` / `homePage`                                                         | 📄       | `/[[...slug]]` · `/`         |       ✓        |    ·     |      ·      |   ✓✓    | ✓ / **S** | core                | WebPage       |
+| `plan`                                                                      | 💳       | — (block)                    |       ✓        |    ✓     |      ✓      |    ·    |     ✓     | services            | Offer         |
+| `testimonial`                                                               | 🔗 join  | — (block)                    |       ✓        |    ✓     |      ·      |    ·    |     ✓     | core                | Review        |
+| `market` / `region`                                                         | 💳       | —                            |       ·        |    ✓     | (defines $) |    ·    |     ✓     | shop                | —             |
+| `promotion`                                                                 | 💳       | —                            |       ·        |    ✓     | (is a rule) |    ·    |     ✓     | shop                | —             |
+| `comment`                                                                   | 📥       | —                            |       ·        |    ·     |      ·      |    ·    |  **API**  | community           | —             |
+| `booking`                                                                   | 📥       | —                            |       ·        |    ·     |      ✓      |    ·    |  **API**  | booking             | —             |
+| `order`                                                                     | 📥       | —                            |       ·        |    ·     |      ✓      |    ·    |  **API**  | shop                | —             |
+| `formSubmission`                                                            | 📥       | —                            |       ·        |    ·     |      ·      |    ·    |  **API**  | core                | —             |
+| `subscriber` ✓ / `waitlistEntry` ✓                                          | 📥       | —                            |       ·        |    ·     |      ·      |    ·    |  **API**  | newsletter·waitlist | —             |
+| `jobApplication`                                                            | 📥       | —                            |       ·        |    ·     |      ·      |    ·    |  **API**  | jobs                | —             |
+| `companyInfo`                                                               | ⚙️       | —                            |       ~        | ✓ (self) |      ·      |    ·    |   **S**   | core                | Organization  |
+| `category`                                                                  | 🏷        | `/blog/category/[s]`         |       ✓        |    ✓✓    |      ·      |    ·    |     ✓     | blog·core           | —             |
+| `tag`                                                                       | 🏷        | `/blog/tag/[s]`              |       ✓        |    ✓✓    |      ·      |    ·    |     ✓     | blog                | —             |
+| `form`                                                                      | 📥 def   | — (block/ref)                |       ✓        |    ✓     |      ·      |    ·    |     ✓     | core                | —             |
+| `resource` / `download`                                                     | 📄       | `/resources/[s]` (gated)     |       ✓        |    ·     |      ·      |    ✓    |     ✓     | core·growth         | CreativeWork  |
+| `ticketType`                                                                | 💳       | — (event child)              |       ·        |    ·     |      ✓      |    ·    |     ✓     | events              | Offer         |
+| `session`                                                                   | 📄 embed | — (event child)              |       ✓        |    ·     |      ·      |    ·    |     ✓     | events              | Event         |
+| `enrollment`                                                                | 📥       | —                            |       ·        |    ·     |      ✓      |    ·    |  **API**  | learning            | —             |
+| `redirect`                                                                  | ⚙️       | —                            |       ·        |    ·     |      ·      |    ·    |     ✓     | core                | —             |
+| `announcement`                                                              | ⚙️       | —                            |       ~        |    ·     |      ·      |    ·    |   **S**   | core                | —             |
+| `press` / `award`                                                           | 🔗       | — (block)                    |       ~        |    ✓     |      ·      |    ·    |     ✓     | core                | —             |
+| `salesQuote`                                                                | 📥       | —                            |       ·        |    ·     |      ✓      |    ·    |   ✓/API   | crm                 | —             |
+| `siteSettings` · `siteMeta` · `navigation` · `cookieConsent` · `uiMessages` | ⚙️       | —                            | ~ / per-locale |    ·     |      ·      |    ·    |   **S**   | core                | Org·WebSite   |
 
 **Reading the columns for a _new_ entity:** own route + `✓` builder + document-i18n → a **content**
 doc like `service`; no route + `✓✓ shared` → a **reference** doc like `person`/`plan`; no route +
@@ -595,17 +606,17 @@ module's pack. This table is the index.
 
 **Entities (module home):**
 
-| Entity | What | Module |
-| --- | --- | --- |
-| `resource` / `download` ✳ | gated lead-magnet — whitepaper · media kit · template (`file`→ · `gate`→ form, feeds the `subscriber` list) | core · growth |
-| `redirect` ✳ | `from · to · permanent` — slug renames → `next.config` redirects (SEO, §12.6) | core |
-| `ticketType` ✳ | per-event tier — name · `price`→ · capacity · salesWindow (early-bird / VIP) | events |
-| `session` ✳ | agenda item of a multi-session event — title · start/end · `speaker`→person · track | events |
-| `enrollment` ✳ (submission) | course signup — `booking`'s sibling for `course` | learning |
-| `press` / `mediaMention` ✳ | "as seen in" — outlet · logo · url · date · quote | core |
-| `award` / `certification` ✳ | on `person` / `organization` — title · issuer · year | core |
-| `announcement` ✳ (singleton) | drives `module.banner` — text · cta · dismissible · dates | core |
-| `salesQuote` / `estimate` ✳ | client-facing price proposal (distinct from a testimonial "quote") | crm |
+| Entity                       | What                                                                                                        | Module        |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------- |
+| `resource` / `download` ✳    | gated lead-magnet — whitepaper · media kit · template (`file`→ · `gate`→ form, feeds the `subscriber` list) | core · growth |
+| `redirect` ✳                 | `from · to · permanent` — slug renames → `next.config` redirects (SEO, §12.6)                               | core          |
+| `ticketType` ✳               | per-event tier — name · `price`→ · capacity · salesWindow (early-bird / VIP)                                | events        |
+| `session` ✳                  | agenda item of a multi-session event — title · start/end · `speaker`→person · track                         | events        |
+| `enrollment` ✳ (submission)  | course signup — `booking`'s sibling for `course`                                                            | learning      |
+| `press` / `mediaMention` ✳   | "as seen in" — outlet · logo · url · date · quote                                                           | core          |
+| `award` / `certification` ✳  | on `person` / `organization` — title · issuer · year                                                        | core          |
+| `announcement` ✳ (singleton) | drives `module.banner` — text · cta · dismissible · dates                                                   | core          |
+| `salesQuote` / `estimate` ✳  | client-facing price proposal (distinct from a testimonial "quote")                                          | crm           |
 
 **Cross-reference gaps ("can X reference Y?"):**
 
@@ -623,19 +634,20 @@ module's pack. This table is the index.
 `navItem`, `localeString`.
 
 **Add:**
-| Object | For |
-| --- | --- |
-| `address` · `geopoint` · `openingHours` | `location` |
-| `formField` (text/email/tel/textarea/select/checkbox/radio/consent + label/required/placeholder) | `form` |
-| `feature` (label · included · note) | `plan`, `service` |
-| `value` (title · description · icon) | `companyInfo` values → About-page `module.values` grid |
-| `stat` (value · label) | results, stats-band (today inline in `stat-list`) |
-| `logoItem` (image · url · alt) | logo-wall |
-| `money` (`amount`(number) · `currency`(ISO 4217)) | the atomic price — used inside `price`, `payment`, `order` |
-| `price` (`base`: `money` · `byMarket[]`: `{ market→, amount }`) | **internationalised pricing** on `plan` · `product` · `bundle` · `event` ticket — one base + per-market overrides; currency comes from the `market`, formatting from `@indiecrafts/format` |
-| `payment` (provider(stripe/…) · amount · currency · `status`(pending/paid/refunded) · providerRef) | `booking` (paid ticket), `order`/`product` checkout — reserved **`billing`** package |
-| `mediaBlock` (image \| video-embed \| iframe, validated hosts) | hero, media-text, `embed` block |
-| `seo` | already `seoMeta` — keep one canonical SEO object, don't fork |
+
+| Object                                                                                             | For                                                                                                                                                                                        |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `address` · `geopoint` · `openingHours`                                                            | `location`                                                                                                                                                                                 |
+| `formField` (text/email/tel/textarea/select/checkbox/radio/consent + label/required/placeholder)   | `form`                                                                                                                                                                                     |
+| `feature` (label · included · note)                                                                | `plan`, `service`                                                                                                                                                                          |
+| `value` (title · description · icon)                                                               | `companyInfo` values → About-page `module.values` grid                                                                                                                                     |
+| `stat` (value · label)                                                                             | results, stats-band (today inline in `stat-list`)                                                                                                                                          |
+| `logoItem` (image · url · alt)                                                                     | logo-wall                                                                                                                                                                                  |
+| `money` (`amount`(number) · `currency`(ISO 4217))                                                  | the atomic price — used inside `price`, `payment`, `order`                                                                                                                                 |
+| `price` (`base`: `money` · `byMarket[]`: `{ market→, amount }`)                                    | **internationalised pricing** on `plan` · `product` · `bundle` · `event` ticket — one base + per-market overrides; currency comes from the `market`, formatting from `@indiecrafts/format` |
+| `payment` (provider(stripe/…) · amount · currency · `status`(pending/paid/refunded) · providerRef) | `booking` (paid ticket), `order`/`product` checkout — reserved **`billing`** package                                                                                                       |
+| `mediaBlock` (image \| video-embed \| iframe, validated hosts)                                     | hero, media-text, `embed` block                                                                                                                                                            |
+| `seo`                                                                                              | already `seoMeta` — keep one canonical SEO object, don't fork                                                                                                                              |
 
 ---
 
@@ -651,38 +663,40 @@ Extend the composable registry: `PAGE_RENDERERS = { ...BLOCK_RENDERERS, ...secti
 
 ### 5a. Section blocks (inline objects) — new
 
-| Block `_type`                                                                                           | Fields                                              | Renderer (new)                    |
-| ------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------- |
-| `module.hero` ✳                                                                                         | eyebrow · headline · sub · media · ctas[] · variant | `Hero` — **the #1 missing block** |
-| `module.feature-grid` ✳                                                                                 | title · items(icon·title·body) · columns            | `FeatureGrid`                     |
-| `module.media-text` ✳                                                                                   | media · body(PT) · side(left/right) · cta           | `MediaText`                       |
-| `module.cta-banner` ✳                                                                                   | headline · body · ctas[] · variant                  | `CtaBanner`                       |
-| `module.logo-wall` ✳                                                                                    | title · logos(`logoItem`[]) **or** clients[]→       | `LogoWall`                        |
-| `module.pricing-table` ✳                                                                                | title · plans[]→ · interval-toggle                  | `PricingTable`                    |
-| `module.values` ✳                                                                                       | title · values(`value`[]) **or** companyInfo→       | `ValuesGrid` (About-page values)  |
-| `module.golden-circle` ✳                                                                                | companyInfo→ (why · how · what) **or** inline        | `GoldenCircle` (why/how/what band) |
-| `module.newsletter` ✳                                                                                   | title · body · form→                                | `Newsletter`                      |
-| `module.form` ✳                                                                                         | form→ · layout                                      | `FormBlock`                       |
-| `module.embed` ✳                                                                                        | url(validated) · caption                            | `Embed` (reuse `parseVideoEmbed`) |
-| `module.banner` ✳                                                                                       | text · cta · dismissible                            | `AnnouncementBanner`              |
-| `module.divider` / `module.spacer` ✳                                                                    | size                                                | trivial                           |
-| _exist_: `callout · card-list · gallery · prose · stat-list · step-list · accordion-list · custom-html` |                                                     | ✓ reuse as-is                     |
+| Block `_type`                                                                                           | Fields                                                                  | Renderer (new)                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `module.hero` ✳                                                                                         | eyebrow · headline · sub · media · ctas[] · variant                     | `Hero` — **the #1 missing block**                                                                                                 |
+| `module.feature-grid` ✳                                                                                 | title · items(icon·title·body) · columns                                | `FeatureGrid`                                                                                                                     |
+| `module.media-text` ✳                                                                                   | media · body(PT) · side(left/right) · cta                               | `MediaText`                                                                                                                       |
+| `module.cta-banner` ✳                                                                                   | headline · body · ctas[] · variant                                      | `CtaBanner`                                                                                                                       |
+| `module.logo-wall` ✳                                                                                    | title · logos(`logoItem`[]) **or** clients[]→                           | `LogoWall`                                                                                                                        |
+| `module.pricing-table` ✳                                                                                | title · plans[]→ · interval-toggle                                      | `PricingTable`                                                                                                                    |
+| `module.values` ✳                                                                                       | title · values(`value`[]) **or** companyInfo→                           | `ValuesGrid` (About-page values)                                                                                                  |
+| `module.golden-circle` ✳                                                                                | companyInfo→ (why · how · what) **or** inline                           | `GoldenCircle` (why/how/what band)                                                                                                |
+| `module.newsletter` ✳                                                                                   | title · body · form→                                                    | `Newsletter`                                                                                                                      |
+| `module.form` ✳                                                                                         | form→ · layout                                                          | `FormBlock`                                                                                                                       |
+| `module.embed` ✳                                                                                        | url(validated) · caption                                                | `Embed` (reuse `parseVideoEmbed`)                                                                                                 |
+| `module.banner` ✳                                                                                       | text · cta · dismissible                                                | `AnnouncementBanner`                                                                                                              |
+| `module.divider` / `module.spacer` ✳                                                                    | size                                                                    | trivial                                                                                                                           |
+| `module.tech-stack` ✳ **(net-new — no prior model)**                                                    | title · items(`technology`: name · logo · description · category · url) | `TechStack` — the build-stack / skills / "technologies" grid                                                                      |
+| `module.portfolio` ✳ **(inline, near-term)**                                                            | title · items(title · summary · image · url · client · tags[] · nda)    | `Portfolio` — inline case-studies; the lightweight stepping-stone to §5b `module.featured-projects` (which derefs `project` docs) |
+| _exist_: `callout · card-list · gallery · prose · stat-list · step-list · accordion-list · custom-html` |                                                                         | ✓ reuse as-is                                                                                                                     |
 
 ### 5b. Reference blocks (reference entity docs) — new
 
-| Block `_type`                | References                          | Renderer (new)                                   |
-| ---------------------------- | ----------------------------------- | ------------------------------------------------ |
-| `module.featured-projects` ✳ | `project`[] (or auto by `featured`) | `ProjectList`                                    |
-| `module.service-grid` ✳      | `service`[]                         | `ServiceGrid`                                    |
-| `module.testimonial-list` ✳  | `testimonial`[]                     | `TestimonialList` (today `quote-list` is inline) |
-| `module.team` ✳              | `person`[]                          | `Team` (today `person-list` is inline)           |
-| `module.faq` ✳               | `faq`[]                             | `FaqList` (+ FAQPage JSON-LD)                    |
-| `module.event-list` ✳        | `event`[] (upcoming)                | `EventList`                                      |
+| Block `_type`                | References                          | Renderer (new)                                                 |
+| ---------------------------- | ----------------------------------- | -------------------------------------------------------------- |
+| `module.featured-projects` ✳ | `project`[] (or auto by `featured`) | `ProjectList`                                                  |
+| `module.service-grid` ✳      | `service`[]                         | `ServiceGrid`                                                  |
+| `module.testimonial-list` ✳  | `testimonial`[]                     | `TestimonialList` (today `quote-list` is inline)               |
+| `module.team` ✳              | `person`[]                          | `Team` (today `person-list` is inline)                         |
+| `module.faq` ✳               | `faq`[]                             | `FaqList` (+ FAQPage JSON-LD)                                  |
+| `module.event-list` ✳        | `event`[] (upcoming)                | `EventList`                                                    |
 | `module.event-calendar` ✳    | `event`[] (by month)                | `EventCalendar` (month/agenda view · `.ics` export · book CTA) |
-| `module.location-list` ✳     | `location`[]                        | `LocationList` / map                             |
-| `module.product-list` ✳      | `product`[]                         | `ProductList`                                    |
-| `module.bundle-grid` ✳       | `bundle`[]                          | `BundleGrid` (package cards + savings)           |
-| _exist_: `blog-post-list`    | `post`[]                            | ✓ blog module                                    |
+| `module.location-list` ✳     | `location`[]                        | `LocationList` / map                                           |
+| `module.product-list` ✳      | `product`[]                         | `ProductList`                                                  |
+| `module.bundle-grid` ✳       | `bundle`[]                          | `BundleGrid` (package cards + savings)                         |
+| _exist_: `blog-post-list`    | `post`[]                            | ✓ blog module                                                  |
 
 > **Naming:** keep the `module.*` prefix (renaming to `block.*` is a breaking migration
 > for zero gain). Inline vs reference blocks share the registry; only their schema differs
@@ -747,6 +761,9 @@ Each new pack registers its schema + a structure section (extend
 7. **`quote`/`person` are half-entities** — generalize to `testimonial`/team.
 8. **No shared taxonomy** beyond blog; no hierarchical category.
 9. **No Presentation/visual-editing** on marketing pages.
+10. **No `technologies` / build-stack model** — the predecessor site's `HeroLogoCloud` (name · logo ·
+    description) has no equivalent here. Ships as the inline `module.tech-stack` (net-new); doubles as a
+    structured-data entity (`ItemList` / Organization `knowsAbout`) for the AIO workstream.
 
 ---
 
@@ -757,7 +774,7 @@ Each new pack registers its schema + a structure section (extend
   form, so it never shadows `(home)`) + SEO metadata + sitemap + JSON-LD `WebPage`; the existing
   `renderBlock` registry is reused (no separate `<PageSections>` for generic pages); `hero`/`feature-grid`
   exist + `lead-magnet` added. **Remaining:** the new marketing blocks (`media-text · cta-banner ·
-  logo-wall`), the Presentation tool, `llms.txt` for pages, and migrating the coded homepage sections →
+logo-wall`), the Presentation tool, `llms.txt` for pages, and migrating the coded homepage sections →
   blocks.
 - **Pack 1 — Identity graph & social proof** (§3G): `person` **absorbs `author`** (role facets),
   `organization` **absorbs `client`/`partner`** (relationship facet), `testimonial` **joins**
@@ -904,6 +921,11 @@ every later pack, then content packs by client demand:
 Pack 0  page builder foundation          ← do this first
   └─ then  §12.1 Typegen  +  §12.2 sectionOptions   (before more blocks land)
   └─ then  §12.3 Presentation             (once a page route renders)
+Next ✅ APPROVED  entity blocks + advanced forms   ← committed next slice
+  ├─ blocks:  module.tech-stack (net-new) · module.logo-wall · module.portfolio (inline)
+  └─ forms:   module.{contact,booking,quote}-form on the existing withGuard spine
+              (one `contact-forms` module; docs contactMessage/booking/quoteRequest;
+               booking = request-only, no scheduler; slots/availability/payment → Pack 5b)
 Pack 1  social proof & people
 Pack 2  portfolio & services
 Pack 3  FAQ & pricing → Sanity
@@ -914,7 +936,7 @@ Pack 6  catalog & KB
 
 ### Pack 0 — exact deliverables
 
-**Schema (core, `code/apps/web/src/sanity/schema/`)**
+**Schema (core, `code/projects/web/surfaces/website/src/sanity/schema/`)**
 
 - `documents/page.ts` — `page` doc: `language` · `title` · `metadata` (slug/excerpt/social)
   · `seoMeta` · `template` (default|full-width|sidebar|landing) · `sectionOptions`-aware
@@ -938,7 +960,7 @@ Pack 6  catalog & KB
   `{ ...BLOCK_RENDERERS, ...referenceBlocks }`, wraps each block in the `sectionOptions`
   shell.
 
-**Query + route (`code/apps/web/src/`)**
+**Query + route (`code/projects/web/surfaces/website/src/`)**
 
 - `sanity/queries` — `pageBySlugQuery` (resolve `sections[]` + refs), `homePageQuery`,
   `allPageSlugsQuery` (for `generateStaticParams` + sitemap).
@@ -978,15 +1000,15 @@ not accidental. Almost everything WP ships is **already built or already in Pack
 genuine blind spots are the **user-generated / gated** features, and the template already
 _reserves the names_ for them (`community` module · `moderation`/`auth`/`billing` packages).
 
-| WordPress feature | Today | roadmap plan | Verdict |
-| --- | --- | --- | --- |
-| Pages / page builder · custom post types · forms · site search · shop · redirects | ❌ | ✅ Packs 0–6 + §12 | **planned** |
-| Posts/blog · categories/tags · menus · SEO+schema · multilingual · RSS · breadcrumbs · related · media library | ✅ | — | **have it** |
-| Revisions / drafts / scheduling | ~ Sanity drafts | §12.10 (optional) | thin — add scheduled-publishing plugin when needed |
-| Roles (admin/editor/author…) | ~ Sanity project roles | §12.10 | thin — Sanity roles cover the core |
-| **Comments / discussion** | ❌ | **❌ absent** | **deliberate gap → see below** |
-| **Membership / login / gated content** | ❌ | **❌ absent** | **deliberate gap → reserved `auth`/`billing`** |
-| Reviews / ratings (product/service) | ~ testimonial `rating` + Review JSON-LD | partial | fold into `product`/`service` when Pack 2/6 lands |
+| WordPress feature                                                                                              | Today                                   | roadmap plan       | Verdict                                            |
+| -------------------------------------------------------------------------------------------------------------- | --------------------------------------- | ------------------ | -------------------------------------------------- |
+| Pages / page builder · custom post types · forms · site search · shop · redirects                              | ❌                                      | ✅ Packs 0–6 + §12 | **planned**                                        |
+| Posts/blog · categories/tags · menus · SEO+schema · multilingual · RSS · breadcrumbs · related · media library | ✅                                      | —                  | **have it**                                        |
+| Revisions / drafts / scheduling                                                                                | ~ Sanity drafts                         | §12.10 (optional)  | thin — add scheduled-publishing plugin when needed |
+| Roles (admin/editor/author…)                                                                                   | ~ Sanity project roles                  | §12.10             | thin — Sanity roles cover the core                 |
+| **Comments / discussion**                                                                                      | ❌                                      | **❌ absent**      | **deliberate gap → see below**                     |
+| **Membership / login / gated content**                                                                         | ❌                                      | **❌ absent**      | **deliberate gap → reserved `auth`/`billing`**     |
+| Reviews / ratings (product/service)                                                                            | ~ testimonial `rating` + Review JSON-LD | partial            | fold into `product`/`service` when Pack 2/6 lands  |
 
 ### 14a. Comments / UGC — deferred, deliberate (reserved `community` module + `moderation` package)
 
@@ -1010,7 +1032,7 @@ All content is public today, correctly, for a marketing template. Member areas, 
 and subscriptions are the reserved **`auth`/`billing`** vertical — a genuine module, not a field.
 Defer until a client's brief actually requires accounts; note it here so the boundary is explicit.
 
-**The line:** everything else WP has is built or in Packs 0–6 — adding more to the *content* plan
+**The line:** everything else WP has is built or in Packs 0–6 — adding more to the _content_ plan
 is scope creep. §14 exists to **name the boundary** (comments, membership), not to fill it.
 
 > **Pack 0 core has shipped.** This is the canonical page-builder roadmap

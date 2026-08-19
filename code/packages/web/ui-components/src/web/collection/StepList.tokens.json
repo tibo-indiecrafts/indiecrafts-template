@@ -1,0 +1,7 @@
+{
+  "$description": "Component token surface for StepList — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "step-list-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "step-list-background": { "$type": "color", "$value": "{semantic.background}" }
+  }
+}

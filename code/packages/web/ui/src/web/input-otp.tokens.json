@@ -1,0 +1,21 @@
+{
+  "$description": "Component token surface for input-otp — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "input-otp-input": {
+      "$type": "color",
+      "$value": "{component.input}"
+    },
+    "input-otp-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    },
+    "input-otp-ring": {
+      "$type": "color",
+      "$value": "{semantic.ring}"
+    },
+    "input-otp-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    }
+  }
+}

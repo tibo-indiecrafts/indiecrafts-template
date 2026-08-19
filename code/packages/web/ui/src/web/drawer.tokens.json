@@ -1,0 +1,9 @@
+{
+  "$description": "Component token surface for drawer — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "drawer-background": { "$type": "color", "$value": "{semantic.background}" },
+    "drawer-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "drawer-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "drawer-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+  }
+}

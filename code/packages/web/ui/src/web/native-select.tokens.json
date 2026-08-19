@@ -1,0 +1,29 @@
+{
+  "$description": "Component token surface for native-select — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "native-select-input": {
+      "$type": "color",
+      "$value": "{component.input}"
+    },
+    "native-select-primary": {
+      "$type": "color",
+      "$value": "{component.primary}"
+    },
+    "native-select-primary-foreground": {
+      "$type": "color",
+      "$value": "{component.primary-foreground}"
+    },
+    "native-select-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
+    "native-select-ring": {
+      "$type": "color",
+      "$value": "{semantic.ring}"
+    },
+    "native-select-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    }
+  }
+}

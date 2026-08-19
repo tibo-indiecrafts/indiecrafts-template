@@ -1,0 +1,14 @@
+{
+  "$description": "Component token surface for calendar — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "calendar-background": { "$type": "color", "$value": "{semantic.background}" },
+    "calendar-input": { "$type": "color", "$value": "{component.input}" },
+    "calendar-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "calendar-popover": { "$type": "color", "$value": "{component.popover}" },
+    "calendar-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "calendar-accent": { "$type": "color", "$value": "{component.accent}" },
+    "calendar-accent-foreground": { "$type": "color", "$value": "{component.accent-foreground}" },
+    "calendar-primary": { "$type": "color", "$value": "{component.primary}" },
+    "calendar-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" }
+  }
+}

@@ -1,3 +1,23 @@
 {
-  "recommendations": ["esbenp.prettier-vscode"]
+  // Recommended extensions for this stack (Next.js 16 · React 19 · TS strict · Tailwind v4 ·
+  // shadcn/ui · Sanity v5 · next-intl · Vitest · Playwright · Cloudflare/Terraform · pnpm+Turbo).
+  // VS Code shows a "recommended" toast on first open. All are editor DX only — nothing here is
+  // required to build or ship.
+  "recommendations": [
+    "dbaeumer.vscode-eslint", // ESLint (flat config)
+    "esbenp.prettier-vscode", // Prettier (config in root package.json)
+    "bradlc.vscode-tailwindcss", // Tailwind v4 IntelliSense (cva/cn, CSS @theme/@source)
+    "vitest.explorer", // Vitest test explorer + inline run/debug
+    "ms-playwright.playwright", // Playwright test runner + codegen (e2e/)
+    "sanity-io.vscode-sanity", // GROQ syntax + query running
+    "lokalise.i18n-ally", // next-intl messages/{en,fr}.json — previews, missing-key/parity
+    "hashicorp.terraform", // the Cloudflare infra/**/*.tf
+    "yoavbls.pretty-ts-errors", // readable strict-TS errors
+    "usernamehw.errorlens", // inline eslint/tsc diagnostics
+    "editorconfig.editorconfig", // honor the root .editorconfig
+    "streetsidesoftware.code-spell-checker", // typos in docs + messages/ copy
+    "bierner.markdown-mermaid" // preview mermaid diagrams in docs/method
+  ],
+  // Formatters that fight Prettier/ESLint — VS Code will advise against installing them.
+  "unwantedRecommendations": ["hookyqr.beautify", "dbaeumer.jshint"]
 }

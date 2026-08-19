@@ -11,8 +11,8 @@ root="$(git rev-parse --show-toplevel)"
 here="$(cd "$(dirname "$0")" && pwd)"
 
 mkdir -p "$root/.claude/hooks"
-cp "$here/change-hygiene.sh" "$here/a11y-check.mjs" "$root/.claude/hooks/"
-chmod +x "$root/.claude/hooks/change-hygiene.sh"
+cp "$here/change-hygiene.sh" "$here/visual-verify.sh" "$here/guard.mjs" "$here/a11y-check.mjs" "$here/tokens-fresh.mjs" "$root/.claude/hooks/"
+chmod +x "$root/.claude/hooks/change-hygiene.sh" "$root/.claude/hooks/visual-verify.sh"
 echo "✓ scripts → $root/.claude/hooks/"
 
 target="$root/.claude/settings.local.json"

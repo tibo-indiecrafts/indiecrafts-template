@@ -10,23 +10,23 @@ docs, and can grow the Terraform edge).
 so `.mcp.json` is safe to commit. Manage connections with **`/mcp`** (reconnect · enable · disable ·
 OAuth).
 
-| Server | Type | What it's for | Needs |
-| --- | --- | --- | --- |
-| `shadcn` | stdio (`npx`) | shadcn/ui registry — add/inspect primitives | — |
-| `magicui` | stdio (`npx`) | Magic UI component registry | — |
-| **`sanity`** | stdio (`npx @sanity/mcp-server`) | query + edit the CMS (content ops, GROQ, schema-aware) | `NEXT_PUBLIC_SANITY_PROJECT_ID` · `NEXT_PUBLIC_SANITY_DATASET` · `SANITY_API_READ_TOKEN` (env) |
-| **`terraform`** | stdio (`docker … hashicorp/terraform-mcp-server`) | live Terraform **registry + provider docs** — accurate `cloudflare` resource schemas for `code/infra/iac/` | **Docker** running (read-only; no CF creds) |
-| **`vercel`** | http (`mcp.vercel.com`) | the **docs site** deploys to Vercel — deployments, logs, project ops | OAuth on first connect |
-| **`supabase`** | stdio (`npx @supabase/mcp-server-supabase`) | query a Supabase project (DB · schema · branches) — runs **`--read-only`** + pinned to one `--project-ref` | `SUPABASE_ACCESS_TOKEN` + `SUPABASE_PROJECT_REF` (env). Not in the stack today (Sanity + Cloudflare D1) — available for a Supabase-backed app/lens. |
+| Server          | Type                                              | What it's for                                                                                              | Needs                                                                                                                                               |
+| --------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shadcn`        | stdio (`npx`)                                     | shadcn/ui registry — add/inspect primitives                                                                | —                                                                                                                                                   |
+| `magicui`       | stdio (`npx`)                                     | Magic UI component registry                                                                                | —                                                                                                                                                   |
+| **`sanity`**    | stdio (`npx @sanity/mcp-server`)                  | query + edit the CMS (content ops, GROQ, schema-aware)                                                     | `NEXT_PUBLIC_SANITY_PROJECT_ID` · `NEXT_PUBLIC_SANITY_DATASET` · `SANITY_API_READ_TOKEN` (env)                                                      |
+| **`terraform`** | stdio (`docker … hashicorp/terraform-mcp-server`) | live Terraform **registry + provider docs** — accurate `cloudflare` resource schemas for `code/infra/iac/` | **Docker** running (read-only; no CF creds)                                                                                                         |
+| **`vercel`**    | http (`mcp.vercel.com`)                           | the **docs site** deploys to Vercel — deployments, logs, project ops                                       | OAuth on first connect                                                                                                                              |
+| **`supabase`**  | stdio (`npx @supabase/mcp-server-supabase`)       | query a Supabase project (DB · schema · branches) — runs **`--read-only`** + pinned to one `--project-ref` | `SUPABASE_ACCESS_TOKEN` + `SUPABASE_PROJECT_REF` (env). Not in the stack today (Sanity + Cloudflare D1) — available for a Supabase-backed app/lens. |
 
 ## Notes
 
-- **Sanity** defaults to the **read** token (`SANITY_API_READ_TOKEN`) — the agent can *read* content
+- **Sanity** defaults to the **read** token (`SANITY_API_READ_TOKEN`) — the agent can _read_ content
   safely. To let it **write** (create/patch docs), point `SANITY_API_TOKEN` at a write token **and a
   non-production dataset** — an agent editing a live prod dataset is a real risk. `MCP_USER_ROLE` is
   `developer`.
 - **Terraform** MCP is registry/provider **documentation** — it does not touch your Cloudflare account
-  (that's `CLOUDFLARE_API_TOKEN` + `pnpm infra:web:*`). It exists so IaC schemas are current, not
+  (that's `CLOUDFLARE_API_TOKEN` + `pnpm infra:website:*`). It exists so IaC schemas are current, not
   hallucinated. Requires a local Docker daemon; if Docker is absent the server just doesn't connect.
 - **Vercel** is a remote HTTP MCP (hosted by Vercel) — the docs site's deploy target
   (`docs/.vitepress` → Vercel). The app itself deploys to **Cloudflare** via `wrangler`, not here.
@@ -39,11 +39,11 @@ OAuth).
 personal account token, so it stays **out** of `.mcp.json`. It draws diagrams and slide decks onto a
 real, editable canvas and searches a 70k hand-drawn SVG icon library. Three tool groups:
 
-| Group | Tools | Use it for |
-| --- | --- | --- |
-| **Diagrams** | `get_syntax` · `create_diagram` · `update_diagram` · `get_diagram` · `list_canvases` · `whoami` | architecture · flowchart · sequence · erd · statemachine · wireframe · bpmn · mindmap · gantt (18 kinds). Returns an edit link, light/dark embed URLs for a README, and the rendered PNG inline. Frames stay editable by a human. |
-| **Slides** | `create_slides` · `add_slide` | a designed deck — one editable slide per frame, full-screen presentable, PDF-exportable. You write content + accent hue; the server designs. |
-| **Icons** | `find_icons_for` · `search_icons` · `get_icon_svg` · `list_categories` · `list_icons` · `get_icon` | 70k monochrome (`fill="currentColor"`) SVG icons. `find_icons_for(['home','billing',…])` matches many concepts in one call. |
+| Group        | Tools                                                                                              | Use it for                                                                                                                                                                                                                        |
+| ------------ | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Diagrams** | `get_syntax` · `create_diagram` · `update_diagram` · `get_diagram` · `list_canvases` · `whoami`    | architecture · flowchart · sequence · erd · statemachine · wireframe · bpmn · mindmap · gantt (18 kinds). Returns an edit link, light/dark embed URLs for a README, and the rendered PNG inline. Frames stay editable by a human. |
+| **Slides**   | `create_slides` · `add_slide`                                                                      | a designed deck — one editable slide per frame, full-screen presentable, PDF-exportable. You write content + accent hue; the server designs.                                                                                      |
+| **Icons**    | `find_icons_for` · `search_icons` · `get_icon_svg` · `list_categories` · `list_icons` · `get_icon` | 70k monochrome (`fill="currentColor"`) SVG icons. `find_icons_for(['home','billing',…])` matches many concepts in one call.                                                                                                       |
 
 **Add it (per machine, per account):**
 
@@ -62,9 +62,15 @@ claude mcp add --transport http koboyo https://api.koboyo.com/v1-mcp \
 
 ## Optional: security MCPs (opt-in — not committed)
 
+> **Deferred — OFF for now.** SonarQube + Snyk are **not** wired anywhere: not in CI (the 5
+> `.github/workflows`), not in `.mcp.json`, and no CLI hook fires them. CI dependency scanning is
+> GitHub's `dependency-review-action` (test.yml), **not** Snyk. Treat the config below as a future
+> opt-in, not an active tool — do not add either until we decide to turn them on. The snippets stay
+> for that day.
+
 SonarQube + Snyk both ship MCP servers. They're **not** in the committed `.mcp.json` — like
 `codegraph`/`headroom`, they need a per-account token most client sites won't have, so committing
-them would spawn a failing server for everyone. Add them per-machine when a project uses them
+them would spawn a failing server for everyone. Add them per-machine **only if we re-enable them**
 (`claude mcp add …`, or paste into `.mcp.json` with the env in your shell):
 
 ```jsonc
@@ -89,6 +95,25 @@ the underlying **CLI** in a hook (the way `a11y-check.mjs` wraps `eslint`):
 - **SonarQube — not a per-edit hook.** It needs a scanner + a running server (full-project scan), so
   use its **MCP** (on-demand, in-loop) or a **CI gate** (`sonar-scanner`), not a `PostToolUse` hook.
 
+## Optional: dev-loop MCPs (opt-in — plugin servers, not committed)
+
+Per-developer connectors for the **feature lane** (not client-universal, so out of `.mcp.json`).
+Each ships as an installed **plugin**; enable + authenticate per machine. Mapped per phase in
+[`my-skills-and-agents.md`](../process/my-skills-and-agents).
+
+| Server                       | Phase                  | What it's for                                                                                                                                | Coexistence                                                                                                                         |
+| ---------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **`context7`** (`find-docs`) | THINK · BUILD          | Injects **live, version-accurate** API docs (Next 16 · React 19 · Tailwind 4 · Sanity 5) into context — kills deprecated-API hallucinations. | — (fills a real gap)                                                                                                                |
+| **`firecrawl`**              | THINK · Project-lane 3 | Renders JS + returns clean markdown / structured JSON; scrape · crawl · search · map (`/firecrawl:*`).                                       | Stronger than `WebFetch`/`claude-in-chrome` scrape for crawl + structured extraction.                                               |
+| **`playwright`**             | TEST                   | Natural-language / scripted cross-browser flows in a watchable Chrome.                                                                       | `claude-in-chrome` + `webapp-testing` + repo `e2e/` stay the default + CI gate.                                                     |
+| **`chrome-devtools`**        | TEST · debug           | Live network / console / performance on your **authenticated** Chrome session (`/chrome` to set up).                                         | `claude-in-chrome` stays the default driver; reach here for deep DevTools state.                                                    |
+| **`figma`**                  | BUILD · Project-lane 8 | Direct read of real Figma frames/components/layout for design→code.                                                                          | **Supersedes** the marketing-bundle figma; map into tokens/`@/config` via [`figma-handoff`](../../apps/web/rules/figma-handoff.md). |
+
+**Install** (per machine — see [`../process/project-bootstrap.md`](../process/project-bootstrap)):
+`/plugin install context7@context7` · `firecrawl@firecrawl-dev` (+ `/firecrawl:setup`) ·
+`playwright@microsoft` · `chrome-devtools@chrome` (+ `/chrome`) · `figma@figma`. Each needs its
+own key/OAuth (Firecrawl API key, Figma auth, the Chrome extension) — none in the repo.
+
 ## Optional: go-to-market MCPs (opt-in — plugin servers, not committed)
 
 The **project-lane** GTM stages ([`launch-playbook.md`](../process/launch-playbook)) fire once a real
@@ -96,17 +121,17 @@ product ships — so their connectors are **on-demand plugin MCP servers**, not 
 client site never needs them, and each needs a per-account OAuth). Enable + `authenticate` the ones
 a product actually uses, per stage. **No secrets in the repo — OAuth is per-account, per-machine.**
 
-| Stage | MCP | What it's for |
-| --- | --- | --- |
-| 3 Validate | `ahrefs` · `similarweb` | keyword/SEO gaps · competitor traffic |
-| 6 GTM | `hubspot` · `klaviyo` | CRM/marketing automation · email lists + flows |
-| 6 GTM | `notion` · `canva` · `figma` | content ops · creative assets |
-| 6 GTM | `slack` | community / launch-platform presence |
-| 6 GTM · outreach | `apollo` · `clay` · `zoominfo` | build + enrich the outreach list |
-| 7 Legal | `docusign` · `atlassian` | signatures · legal ops |
-| 12 Grow | `amplitude` · `pendo` · `supermetrics` | product analytics · marketing-data warehouse |
-| 12 Grow · data | `bigquery` · `hex` · `definite` | SQL warehouse · notebooks · metrics |
-| 6/11 Sales (outbound) | `apollo` · `close` · `outreach` · `fireflies` | outbound CRM · call notes |
+| Stage                 | MCP                                           | What it's for                                  |
+| --------------------- | --------------------------------------------- | ---------------------------------------------- |
+| 3 Validate            | `ahrefs` · `similarweb`                       | keyword/SEO gaps · competitor traffic          |
+| 6 GTM                 | `hubspot` · `klaviyo`                         | CRM/marketing automation · email lists + flows |
+| 6 GTM                 | `notion` · `canva` · `figma`                  | content ops · creative assets                  |
+| 6 GTM                 | `slack`                                       | community / launch-platform presence           |
+| 6 GTM · outreach      | `apollo` · `clay` · `zoominfo`                | build + enrich the outreach list               |
+| 7 Legal               | `docusign` · `atlassian`                      | signatures · legal ops                         |
+| 12 Grow               | `amplitude` · `pendo` · `supermetrics`        | product analytics · marketing-data warehouse   |
+| 12 Grow · data        | `bigquery` · `hex` · `definite`               | SQL warehouse · notebooks · metrics            |
+| 6/11 Sales (outbound) | `apollo` · `close` · `outreach` · `fireflies` | outbound CRM · call notes                      |
 
 **How to enable:** these ship as **plugin** MCP servers (installed plugin marketplace, e.g.
 `mcp__plugin_marketing_*` · `mcp__plugin_sales_*` · `mcp__plugin_data_*`). Turn one on when you reach

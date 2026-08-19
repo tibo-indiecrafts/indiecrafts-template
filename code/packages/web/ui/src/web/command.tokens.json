@@ -1,0 +1,12 @@
+{
+  "$description": "Component token surface for command — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "command-popover": { "$type": "color", "$value": "{component.popover}" },
+    "command-popover-foreground": { "$type": "color", "$value": "{component.popover-foreground}" },
+    "command-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "command-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "command-border": { "$type": "color", "$value": "{semantic.border}" },
+    "command-accent": { "$type": "color", "$value": "{component.accent}" },
+    "command-accent-foreground": { "$type": "color", "$value": "{component.accent-foreground}" }
+  }
+}

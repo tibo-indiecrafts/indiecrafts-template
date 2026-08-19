@@ -1,0 +1,66 @@
+import { describe, expect, it } from "vitest";
+
+import {
+  decrypt,
+  decryptObject,
+  encrypt,
+  encryptObject,
+  hashIpAddress,
+  isEncryptedData,
+  verifyIpHash,
+} from "./crypto";
+
+const SECRET = "test-secret-key-do-not-use-in-prod";
+
+describe("encrypt / decrypt", () => {
+  it("round-trips a string", async () => {
+    const enc = await encrypt("42 Sunny Lane, Apt 3", SECRET);
+    expect(enc.version).toBe(1);
+    expect(enc.ciphertext).not.toContain("Sunny");
+    expect(await decrypt(enc, SECRET)).toBe("42 Sunny Lane, Apt 3");
+  });
+
+  it("round-trips an object", async () => {
+    const value = { street: "1 Rue de la Paix", zip: "75002" };
+    expect(
+      await decryptObject(await encryptObject(value, SECRET), SECRET),
+    ).toEqual(value);
+  });
+
+  it("rejects a wrong key or tampered ciphertext (auth tag)", async () => {
+    const enc = await encrypt("secret", SECRET);
+    await expect(decrypt(enc, "wrong-key")).rejects.toThrow();
+    await expect(
+      decrypt(
+        { ...enc, ciphertext: `${enc.ciphertext.slice(0, -2)}00` },
+        SECRET,
+      ),
+    ).rejects.toThrow();
+  });
+
+  it("uses a fresh IV each call (same plaintext → different ciphertext)", async () => {
+    const a = await encrypt("x", SECRET);
+    const b = await encrypt("x", SECRET);
+    expect(a.ciphertext).not.toBe(b.ciphertext);
+  });
+});
+
+describe("hashIpAddress", () => {
+  it("is deterministic, salted, and one-way", async () => {
+    const h = await hashIpAddress("192.168.1.1", "salt");
+    expect(h).toBe(await hashIpAddress("192.168.1.1", "salt"));
+    expect(h).not.toBe(await hashIpAddress("192.168.1.1", "other-salt"));
+    expect(h).not.toContain("192.168");
+    expect(await verifyIpHash("192.168.1.1", h, "salt")).toBe(true);
+    expect(await verifyIpHash("10.0.0.1", h, "salt")).toBe(false);
+  });
+});
+
+describe("isEncryptedData", () => {
+  it("recognises the shape, rejects others", async () => {
+    expect(isEncryptedData(await encrypt("x", SECRET))).toBe(true);
+    expect(isEncryptedData({ ciphertext: "x" })).toBe(false);
+    expect(isEncryptedData(null)).toBe(false);
+    expect(isEncryptedData("nope")).toBe(false);
+  });
+});

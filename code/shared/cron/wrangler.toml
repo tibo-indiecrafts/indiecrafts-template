@@ -1,0 +1,37 @@
+# Cloudflare Worker — scheduled / cron (a BARE worker, no Next/OpenNext).
+# Deploy: `pnpm deploy:cron:<env>` (→ scripts/deploy.mjs → `wrangler deploy --env <env>`).
+# The schedule is the `[triggers] crons` list below (Cloudflare runs it — no HTTP needed).
+#
+# Per client site, `pnpm project:rename <slug>` rewrites every `indiecrafts-cron`
+# name here. Do NOT hand-edit the names (a staging/prod deploy is blocked until they
+# differ from the template default — shared-account clobber guard, scripts/deploy.mjs).
+
+name = "indiecrafts-cron-dev"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat"]
+keep_vars = true
+
+# Cron schedule(s) — UTC. Example: hourly. https://crontab.guru
+[triggers]
+crons = ["0 * * * *"]
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+# ── Optional bindings (uncomment as needed) ──────────────────
+# [[kv_namespaces]]   binding = "KV"      id = "<wrangler kv namespace create>"
+# [[r2_buckets]]      binding = "BUCKET"  bucket_name = "indiecrafts-cron-<env>"
+# [[d1_databases]]    binding = "DB"      database_name = "…"  database_id = "…"  migrations_dir = "db/d1/<name>/migrations"
+# [[queues.consumers]] queue = "…"   # a cron worker can also drain a queue
+
+# ── per-env (mirror the deploy scripts) ──────────────────────
+[env.dev]
+name = "indiecrafts-cron-dev"
+
+[env.staging]
+name = "indiecrafts-cron-staging"
+
+[env.prod]
+name = "indiecrafts-cron-prod"

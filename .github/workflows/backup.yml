@@ -3,6 +3,8 @@ name: Backup (Cloudflare)
 # Scheduled dump of the Sanity dataset (+ D1 if configured) to the per-env R2
 # backups bucket. Manual: "Run workflow" → pick the env. The scripts prune LOCAL
 # copies to the last 10; rotate the R2 copies with a bucket lifecycle rule.
+# Hub-scoped by design: one Sanity dataset per tenant, and the hub Studio (on `web`)
+# holds the write token + all content — so backup is NOT a per-app fan-out.
 # Setup + rotation: docs/apps/web/setup/backups.md
 on:
   schedule:
@@ -30,20 +32,12 @@ jobs:
       NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
       NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
       SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
-    defaults:
-      run:
-        working-directory: code/projects/web
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      # `pnpm exec` puts node_modules/.bin (the sanity + wrangler CLIs) on PATH.
-      # The scripts read config from the job env above (no .env.local in CI).
-      - name: Sanity dataset → R2
-        run: pnpm exec node scripts/backup-sanity.mjs --remote --env "$ENV"
-      - name: D1 → R2 (no-op until D1 is configured)
-        run: pnpm exec node scripts/backup-d1.mjs "$ENV" --remote
+      - uses: ./.github/actions/setup
+      # Registry-driven: backs up every db in code/shared/scripts/lib/databases.mjs, dispatching
+      # on kind (sanity → dataset export, d1 → wrangler export, others reserved). The
+      # runner puts each owner's node_modules/.bin (sanity + wrangler CLIs) on PATH and
+      # reads config from the job env above (no .env.local in CI).
+      - name: Back up all databases → R2
+        run: node code/shared/scripts/data/backup.mjs --all "$ENV" --remote

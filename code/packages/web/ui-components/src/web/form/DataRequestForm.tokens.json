@@ -1,0 +1,10 @@
+{
+  "$description": "Component token surface for DataRequestForm — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "data-request-form-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "data-request-form-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "data-request-form-card": { "$type": "color", "$value": "{component.card}" },
+    "data-request-form-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "data-request-form-destructive": { "$type": "color", "$value": "{semantic.destructive}" }
+  }
+}

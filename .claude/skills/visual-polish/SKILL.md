@@ -6,7 +6,7 @@ description: Final visual-polish pass on a built UI in this template — rhythm,
 # Visual polish
 
 The last pass before a UI is "done" — from correct to crafted. Authority:
-`code/packages/ui-tokens/DESIGN.md` (Brand & Style: "restraint is the brand"). Pair with the
+`code/packages/shared/ui-tokens/DESIGN.md` (Brand & Style: "restraint is the brand"). Pair with the
 `frontend-design` skill for aesthetic direction.
 
 ## Checklist

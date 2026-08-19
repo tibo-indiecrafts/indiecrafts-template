@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@indiecrafts/utils/*": ["../../../../packages/shared/utils/src/*"],
+      "@indiecrafts/email/*": ["../../../../packages/shared/email/src/*"],
+      "@indiecrafts/system-pages/*": ["../../../../packages/web/system-pages/src/*"],
+      "@indiecrafts/blog/*": ["../../../../modules/web/blog/src/*"],
+      "@indiecrafts/newsletter/*": ["../../../../modules/web/newsletter/src/*"],
+      "@indiecrafts/waitlist/*": ["../../../../modules/web/waitlist/src/*"],
+      "@indiecrafts/compliance/*": ["../../../../packages/web/compliance/src/*"],
+      "@indiecrafts/announcement/*": ["../../../../packages/web/announcement/src/*"],
+      "@indiecrafts/locale-suggest/*": ["../../../../packages/web/locale-suggest/src/*"],
+      "@indiecrafts/ui/web/*": ["../../../../packages/web/ui/src/web/*"],
+      "@indiecrafts/ui-components/*": ["../../../../packages/web/ui-components/src/*"],
+      "@indiecrafts/page-builder/*": ["../../../../packages/shared/page-builder/src/*"],
+      "@indiecrafts/gated-delivery": [
+        "../../../../packages/shared/gated-delivery/src/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}

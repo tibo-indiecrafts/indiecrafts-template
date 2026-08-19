@@ -14,7 +14,13 @@ const shared: ViteUserConfig = {
     environment: "happy-dom",
     setupFiles: [fileURLToPath(new URL("./vitest.setup.ts", import.meta.url))],
     include: ["**/*.test.{ts,tsx}"],
-    exclude: ["**/node_modules/**", "**/.next/**", "**/dist/**", "**/storybook-static/**", "**/e2e/**"],
+    exclude: [
+      "**/node_modules/**",
+      "**/.next/**",
+      "**/dist/**",
+      "**/storybook-static/**",
+      "**/e2e/**",
+    ],
     coverage: {
       provider: "v8",
       exclude: ["**/*.stories.tsx", "**/*.test.*", "**/user-interface/ui/**"],
@@ -23,7 +29,9 @@ const shared: ViteUserConfig = {
   resolve: {
     alias: {
       // Server-only guard is a no-op in tests — we exercise the pure logic directly.
-      "server-only": fileURLToPath(new URL("./vitest/server-only-stub.ts", import.meta.url)),
+      "server-only": fileURLToPath(
+        new URL("./vitest/server-only-stub.ts", import.meta.url),
+      ),
     },
   },
 };

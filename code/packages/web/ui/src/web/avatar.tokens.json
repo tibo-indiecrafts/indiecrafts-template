@@ -1,0 +1,10 @@
+{
+  "$description": "Component token surface for avatar — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "avatar-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "avatar-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "avatar-primary": { "$type": "color", "$value": "{component.primary}" },
+    "avatar-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" },
+    "avatar-background": { "$type": "color", "$value": "{semantic.background}" }
+  }
+}

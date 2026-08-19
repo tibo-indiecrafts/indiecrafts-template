@@ -1,0 +1,8 @@
+{
+  "$description": "Component token surface for FeatureGrid — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "feature-grid-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "feature-grid-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "feature-grid-foreground": { "$type": "color", "$value": "{semantic.foreground}" }
+  }
+}

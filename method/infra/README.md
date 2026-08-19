@@ -1,6 +1,6 @@
 # Infra method
 
-How we stand up + run infrastructure (mirrors `code/infra` + `code/db`).
+How we stand up + run infrastructure (mirrors `code/infra` + `code/shared/db`).
 
 - infrastructure-and-ops · observability
 

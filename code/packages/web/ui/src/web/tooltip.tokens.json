@@ -1,0 +1,7 @@
+{
+  "$description": "Component token surface for tooltip — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "tooltip-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "tooltip-background": { "$type": "color", "$value": "{semantic.background}" }
+  }
+}

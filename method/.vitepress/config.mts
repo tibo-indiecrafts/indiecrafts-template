@@ -10,7 +10,8 @@ import { defineConfig } from "vitepress";
 // not pages — excluded. The lab (work/) is a top-level sibling, not part of method.
 export default defineConfig({
   title: "method",
-  description: "The dev framework — how we work (claude-tasks). Mirrors the code.",
+  description:
+    "The dev framework — how we work (claude-tasks). Mirrors the code.",
   ignoreDeadLinks: true,
   cleanUrls: true,
   lastUpdated: true,
@@ -40,18 +41,39 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: "1 · Machine setup", link: "/shared/process/setup" },
-          { text: "2 · Project bootstrap", link: "/shared/process/project-bootstrap" },
-          { text: "3 · Intake — Trello → brief", link: "/shared/process/intake" },
+          {
+            text: "2 · Project bootstrap",
+            link: "/shared/process/project-bootstrap",
+          },
+          {
+            text: "3 · Intake — Trello → brief",
+            link: "/shared/process/intake",
+          },
           { text: "4 · Workflow — 7 phases", link: "/shared/process/workflow" },
           { text: "System rules", link: "/shared/process/system-rules" },
           { text: "Decision matrix", link: "/shared/process/decision-matrix" },
-          { text: "Skills & agents registry", link: "/shared/process/my-skills-and-agents" },
-          { text: "Bench map (agents × phases)", link: "/shared/process/bench-map" },
-          { text: "Adding a skill or agent", link: "/shared/process/adding-skills" },
+          {
+            text: "Skills & agents registry",
+            link: "/shared/process/my-skills-and-agents",
+          },
+          {
+            text: "Bench map (agents × phases)",
+            link: "/shared/process/bench-map",
+          },
+          {
+            text: "Adding a skill or agent",
+            link: "/shared/process/adding-skills",
+          },
           { text: "End to end", link: "/shared/process/end-to-end" },
-          { text: "Launch playbook — project lane", link: "/shared/process/launch-playbook" },
+          {
+            text: "Launch playbook — project lane",
+            link: "/shared/process/launch-playbook",
+          },
           { text: "Commands", link: "/shared/process/command" },
-          { text: "Client handoff (yours vs client's)", link: "/shared/process/client-handoff" },
+          {
+            text: "Client handoff (yours vs client's)",
+            link: "/shared/process/client-handoff",
+          },
         ],
       },
       {
@@ -62,28 +84,64 @@ export default defineConfig({
           { text: "Principles", link: "/shared/engineering/principles" },
           { text: "Testing", link: "/shared/engineering/testing" },
           { text: "Git & PR", link: "/shared/engineering/git-and-pr" },
-          { text: "Tech debt (the gate)", link: "/shared/engineering/tech-debt" },
+          {
+            text: "Tech debt (the gate)",
+            link: "/shared/engineering/tech-debt",
+          },
           { text: "Issue tags", link: "/shared/engineering/issue-tags" },
-          { text: "Standards & DoD", link: "/shared/engineering/engineering-standards" },
+          {
+            text: "Standards & DoD",
+            link: "/shared/engineering/engineering-standards",
+          },
           { text: "Writing style", link: "/shared/writing-style" },
         ],
       },
       {
-        text: "Web app (code/apps/web)",
+        text: "Web app (code/projects/web/surfaces/website)",
         collapsed: false,
         items: [
           { text: "Index", link: "/apps/web/README" },
           { text: "Rules · naming", link: "/apps/web/rules/naming" },
-          { text: "Rules · accessibility", link: "/apps/web/rules/accessibility" },
-          { text: "Rules · component architecture", link: "/apps/web/rules/component-architecture" },
-          { text: "Rules · design-token usage", link: "/apps/web/rules/design-token-usage" },
-          { text: "Rules · figma handoff", link: "/apps/web/rules/figma-handoff" },
-          { text: "Rules · sanity images", link: "/apps/web/rules/sanity-images" },
-          { text: "Rules · sanity legends", link: "/apps/web/rules/sanity-legends" },
-          { text: "Workflow · add a page", link: "/apps/web/workflows/add-page" },
-          { text: "Workflow · adapt a library section", link: "/apps/web/workflows/adapt-library-section" },
-          { text: "Workflow · add a page-builder block", link: "/apps/web/workflows/add-page-builder-block" },
-          { text: "Workflow · remove a page-builder block", link: "/apps/web/workflows/remove-page-builder-block" },
+          {
+            text: "Rules · accessibility",
+            link: "/apps/web/rules/accessibility",
+          },
+          {
+            text: "Rules · component architecture",
+            link: "/apps/web/rules/component-architecture",
+          },
+          {
+            text: "Rules · design-token usage",
+            link: "/apps/web/rules/design-token-usage",
+          },
+          {
+            text: "Rules · figma handoff",
+            link: "/apps/web/rules/figma-handoff",
+          },
+          {
+            text: "Rules · sanity images",
+            link: "/apps/web/rules/sanity-images",
+          },
+          {
+            text: "Rules · sanity legends",
+            link: "/apps/web/rules/sanity-legends",
+          },
+          {
+            text: "Workflow · add a page",
+            link: "/apps/web/workflows/add-page",
+          },
+          {
+            text: "Workflow · adapt a library section",
+            link: "/apps/web/workflows/adapt-library-section",
+          },
+          {
+            text: "Workflow · add a page-builder block",
+            link: "/apps/web/workflows/add-page-builder-block",
+          },
+          {
+            text: "Workflow · remove a page-builder block",
+            link: "/apps/web/workflows/remove-page-builder-block",
+          },
         ],
       },
       {
@@ -103,7 +161,7 @@ export default defineConfig({
         ],
       },
       {
-        text: "Db (code/db)",
+        text: "Db (code/shared/db)",
         collapsed: true,
         items: [
           { text: "Index", link: "/db/README" },
@@ -115,7 +173,10 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: "Index", link: "/infra/README" },
-          { text: "Infrastructure & ops", link: "/infra/infrastructure-and-ops" },
+          {
+            text: "Infrastructure & ops",
+            link: "/infra/infrastructure-and-ops",
+          },
           { text: "Observability", link: "/infra/observability" },
         ],
       },
@@ -133,9 +194,18 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: "Overview — the whole toolchain", link: "/shared/tooling/" },
-          { text: "Behavior plugins", link: "/shared/tooling/behavior-plugins" },
-          { text: "CLAUDE.md system", link: "/shared/tooling/claude-md-system" },
-          { text: "Code intelligence (LSP)", link: "/shared/tooling/code-intelligence" },
+          {
+            text: "Behavior plugins",
+            link: "/shared/tooling/behavior-plugins",
+          },
+          {
+            text: "CLAUDE.md system",
+            link: "/shared/tooling/claude-md-system",
+          },
+          {
+            text: "Code intelligence (LSP)",
+            link: "/shared/tooling/code-intelligence",
+          },
           { text: "CodeGraph", link: "/shared/tooling/codegraph" },
           { text: "Headroom", link: "/shared/tooling/headroom" },
           { text: "MCP servers", link: "/shared/tooling/mcp-servers" },
@@ -147,7 +217,10 @@ export default defineConfig({
         items: [
           { text: "Overview (README)", link: "/README" },
           { text: "Product brief", link: "/apps/web/PRODUCT" },
-          { text: "Page-builder roadmap", link: "/apps/web/page-builder-roadmap" },
+          {
+            text: "Page-builder roadmap",
+            link: "/apps/web/page-builder-roadmap",
+          },
         ],
       },
     ],

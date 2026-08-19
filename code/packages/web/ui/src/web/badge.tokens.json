@@ -1,0 +1,15 @@
+{
+  "$description": "Component token surface for badge — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "badge-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "badge-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "badge-primary": { "$type": "color", "$value": "{component.primary}" },
+    "badge-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" },
+    "badge-secondary": { "$type": "color", "$value": "{component.secondary}" },
+    "badge-secondary-foreground": { "$type": "color", "$value": "{component.secondary-foreground}" },
+    "badge-border": { "$type": "color", "$value": "{semantic.border}" },
+    "badge-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "badge-accent": { "$type": "color", "$value": "{component.accent}" },
+    "badge-accent-foreground": { "$type": "color", "$value": "{component.accent-foreground}" }
+  }
+}

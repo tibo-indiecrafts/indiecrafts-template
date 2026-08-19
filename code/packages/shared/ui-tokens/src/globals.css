@@ -1,0 +1,554 @@
+@import "tailwindcss";
+/* content sources — CSS now lives in a package, so scan the app + ui explicitly.
+   Paths are relative to this file's home: code/packages/shared/ui-tokens/src/. */
+@source "../../../../projects/web/src";
+@source "../../../web/ui/src";
+@source "../../../web/ui-components/src";
+@source "../../../web/version/src";
+@source "../../../web/compliance/src";
+@source "../../../web/announcement/src";
+@source "../../../web/locale-suggest/src";
+@source "../../../web/system-pages/src";
+@source "../../../../modules/web/blog/src";
+@source "../../../../modules/web/newsletter/src";
+@source "../../../../modules/web/waitlist/src";
+@plugin "@tailwindcss/typography";
+/* shadcn Typeset preset — long-form prose, fonts linked to config (src/app/typeset.css). */
+@import "./typeset.css";
+
+/*
+ * Component-co-located animation tokens.
+ *
+ * When you copy a component from the sibling component-library and it
+ * ships its own `.css` file (Tailwind v4 merges every `@theme inline`
+ * block reachable through the @import graph), add a one-line @import here
+ * pointing at the local copy. Components without a co-located .css need
+ * no entry here.
+ */
+
+/*
+ * Theme tokens — mirror `src/config/theme.colors`.
+ *
+ * ─ Why OKLCH ───────────────────────────────────────────────────
+ * Lightness (L) is perceptually uniform: equal L jumps look like equal
+ * brightness jumps, regardless of hue. Chroma (C) behaves the same way
+ * for saturation. HSL doesn't have either property — that's why dark-
+ * mode palettes built by inverting HSL look uneven.
+ *
+ * Tailwind v4 ships its entire colour scale in OKLCH. The comments
+ * after each value below (`/* slate-200 *​/`, etc.) map to the closest
+ * named Tailwind v4 colour so the design reference is recoverable
+ * without reverse-engineering OKLCH triples.
+ *
+ * ─ Where the hex mirror lives ──────────────────────────────────
+ * `src/config/index.ts:theme.hexColors` exists because the PWA manifest
+ * (`app/manifest.ts`) can't take OKLCH for `theme_color`/`background_color`.
+ * If you change a colour here, update both. See docs/apps/web/setup/brand-setup.md
+ * § "The hex / oklch trap".
+ *
+ * ─ Two dark triggers ───────────────────────────────────────────
+ *   1. `html[data-theme="dark"]` — user-chosen via ThemeProvider/toggle
+ *   2. `@media (prefers-color-scheme: dark)` when `data-theme` isn't
+ *      forcing light
+ *
+ * The `@custom-variant dark` directive below makes `dark:` utilities
+ * match on the data-theme attribute (Tailwind v4 pattern). Keep both
+ * triggers so a first-paint visitor without JS still sees their OS
+ * preference respected.
+ */
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Design tokens — GENERATED from src/shared/tokens.json (DTCG). Edit the JSON,
+   then `pnpm tokens:build`. The Tailwind scaffolding below stays hand-authored. */
+@import "./generated/tokens.css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  /**
+   * Decorative softer-than-border token used by Tailark Pro hero
+   * registry blocks (cross-frames around announcement chips, dotted
+   * accents, pixel-stripe rows). Must remain defined or those
+   * decorations vanish silently.
+   */
+  --color-border-illustration: color-mix(
+    in oklab,
+    var(--border) 70%,
+    var(--background)
+  );
+  /**
+   * Theme-aware soft surface used by Tailark Pro illustration panels
+   * (e.g. credit-card mock in `payments-diagram`, AI chat card inside
+   * `meet-illustration`). Light mode = near-white surface, dark mode
+   * = near-black. Subtrees that force-flip via `data-theme="dark"`
+   * (chat panel) inherit the dark value automatically through the
+   * generalized data-theme rule.
+   */
+  --color-illustration: var(--illustration);
+  --color-ring: var(--ring);
+  /* Standard shadcn utility names — `bg-primary`, `bg-card`, etc. */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-input: var(--input);
+  --radius-md: var(--radius);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  --animate-blink-cursor: blink-cursor 1.2s step-end infinite;
+  --animate-aurora: aurora 8s ease-in-out infinite alternate;
+  --animate-gradient: gradient 8s linear infinite;
+  --animate-shiny-text: shiny-text 8s infinite;
+  --animate-line-shadow: line-shadow 15s linear infinite;
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes blink-cursor {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes aurora {
+    0% {
+      background-position: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
+    }
+    25% {
+      background-position: 50% 100%;
+      transform: rotate(5deg) scale(1.1);
+    }
+    50% {
+      background-position: 100% 50%;
+      transform: rotate(-3deg) scale(0.95);
+    }
+    75% {
+      background-position: 50% 0%;
+      transform: rotate(3deg) scale(1.05);
+    }
+    100% {
+      background-position: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
+    }
+  }
+  @keyframes gradient {
+    to {
+      background-position: var(--bg-size, 300%) 0;
+    }
+  }
+  @keyframes shiny-text {
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
+    }
+  }
+  @keyframes line-shadow {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 100% -100%;
+    }
+  }
+  /* meteor-effect — extracted to src/components/ui/meteors.css */
+  --animate-ripple: ripple var(--duration, 2s) ease calc(var(--i, 0) * 0.2s)
+    infinite;
+  @keyframes ripple {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+  }
+  --animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+  --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite
+    alternate;
+  --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
+  --animate-rippling: rippling var(--duration) ease-out;
+  /* pulse + pulse-ripple — extracted to src/components/ui/pulsating-button.css */
+  --animate-orbit: orbit calc(var(--duration) * 1s) linear infinite;
+  --animate-background-position-spin: background-position-spin 3000ms infinite
+    alternate;
+  --color-color-5: var(--color-5);
+  --color-color-4: var(--color-4);
+  --color-color-3: var(--color-3);
+  --color-color-2: var(--color-2);
+  --color-color-1: var(--color-1);
+  @keyframes rainbow {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 200%;
+    }
+  }
+  @keyframes shimmer-slide {
+    to {
+      transform: translate(calc(100cqw - 100%), 0);
+    }
+  }
+  @keyframes spin-around {
+    0% {
+      transform: translateZ(0) rotate(0);
+    }
+    15%,
+    35% {
+      transform: translateZ(0) rotate(90deg);
+    }
+    65%,
+    85% {
+      transform: translateZ(0) rotate(270deg);
+    }
+    100% {
+      transform: translateZ(0) rotate(360deg);
+    }
+  }
+  @keyframes rippling {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  @keyframes orbit {
+    0% {
+      transform: rotate(calc(var(--angle) * 1deg))
+        translateY(calc(var(--radius) * 1px)) rotate(calc(var(--angle) * -1deg));
+    }
+    100% {
+      transform: rotate(calc(var(--angle) * 1deg + 360deg))
+        translateY(calc(var(--radius) * 1px))
+        rotate(calc((var(--angle) * -1deg) - 360deg));
+    }
+  }
+  @keyframes background-position-spin {
+    0% {
+      background-position: top center;
+    }
+    100% {
+      background-position: bottom center;
+    }
+  }
+  /* scroll — extracted to src/components/ui/infinite-moving-cards.css */
+  --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
+  @keyframes spotlight {
+    0% {
+      opacity: 0;
+      transform: translate(-72%, -62%) scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -40%) scale(1);
+    }
+  }
+
+  /*
+   * Tailark Pro animation tokens. Sourced from the upstream Tailark
+   * theme — registered here so registry blocks (illustrations,
+   * expandable-features sections, etc.) animate correctly without
+   * each consumer co-locating its own keyframes.
+   */
+  --animate-hue-rotate: hue-rotate 4s infinite;
+  @keyframes hue-rotate {
+    from {
+      filter: hue-rotate(0deg);
+    }
+    to {
+      filter: hue-rotate(360deg);
+    }
+  }
+}
+
+/*
+ * Tailark Pro corner-bevel marker utilities. These are no-ops on
+ * their own — the visible bevel comes from sibling `rounded-tr-[Nrem]`
+ * / `rounded-bl-[Nrem]` classes. They exist so that upstream Tailark
+ * blocks (`flow-illustration`, `features-expandable-4`) keep the same
+ * tag set as the registry source, and so the project can attach
+ * additional accent CSS to either corner later (inset shadow, border
+ * highlight, etc.) without renaming any classes.
+ *
+ * Implemented as Tailwind v4 `@utility` declarations rather than plain
+ * CSS classes so they survive the Tailwind purge regardless of where
+ * the markers are referenced in JSX.
+ */
+/*
+ * Tailark Pro corner-shape utilities. The class names mirror Tailark's
+ * live CSS (https://pro.tailark.com/_next/static/chunks/) but the
+ * implementation uses `clip-path` polygons UNCONDITIONALLY rather than
+ * the bleeding-edge `corner-shape` CSS property — `corner-shape` is
+ * Chrome-139+ only, not yet shipped in Brave / Safari / Firefox.
+ *
+ * How it works: each utility sets ONE corner's `--bevel-{corner}`
+ * variable (default `var(--bevel-size, 1.5rem)`). The polygon reads
+ * all four corner vars and falls back to `0` when unset. Stacking
+ * `corner-tr-bevel corner-bl-bevel` chamfers both corners; the polygon
+ * is byte-identical inside every utility so cascade order is moot.
+ *
+ * Override per-element: `style={{ "--bevel-size": "5rem" }}` on the
+ * card to match `rounded-tr-[5rem]`. Or set individual corners:
+ * `{ "--bevel-tr": "5rem" }`.
+ */
+@utility corner-bevel {
+  --bevel-tl: var(--bevel-size, 1.5rem);
+  --bevel-tr: var(--bevel-size, 1.5rem);
+  --bevel-br: var(--bevel-size, 1.5rem);
+  --bevel-bl: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-tl-bevel {
+  --bevel-tl: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-tr-bevel {
+  --bevel-tr: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-bl-bevel {
+  --bevel-bl: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-br-bevel {
+  --bevel-br: var(--bevel-size, 1.5rem);
+  clip-path: polygon(
+    0 var(--bevel-tl, 0),
+    var(--bevel-tl, 0) 0,
+    calc(100% - var(--bevel-tr, 0)) 0,
+    100% var(--bevel-tr, 0),
+    100% calc(100% - var(--bevel-br, 0)),
+    calc(100% - var(--bevel-br, 0)) 100%,
+    var(--bevel-bl, 0) 100%,
+    0 calc(100% - var(--bevel-bl, 0))
+  );
+}
+@utility corner-squircle {
+  /* squircle has no clip-path equivalent; rely on `corner-shape` where supported */
+  corner-shape: squircle;
+}
+@utility corner-t-notch {
+  /* notch isn't supported by clip-path; falls back to rounded corners */
+  corner-top-left-shape: notch;
+  corner-top-right-shape: notch;
+}
+
+/* Font-family lives in `@layer base` so Tailwind utilities (`font-sans`,
+   `font-display`) can override it per element — an *unlayered* rule would beat
+   the utility (unlayered CSS wins over `@layer`), silently breaking any
+   `<h2 className="font-sans">`. The base element rules still cascade into
+   `.prose` / `.typeset` descendants — the typography plugin sets no heading
+   font-family — so headings keep the display face there without being unlayered. */
+@layer base {
+  body {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* Headings pick up the display face (`config.fonts.display`); falls back to
+     the body font when display and body are the same key. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family:
+      var(--font-display, var(--font-sans)), ui-sans-serif, system-ui,
+      sans-serif;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/*
+ * Branded text selection — replaces the OS default (Win/Mac/Linux all
+ * differ). Uses tokens so it auto-adapts to light/dark and any future
+ * brand reskin. `text-shadow: none` resets the hero h1's drop-shadow
+ * during selection so the selected text never goes blurry.
+ */
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-fg);
+  text-shadow: none;
+}
+
+/*
+ * Windows High Contrast Mode (forced-colors). When active, the user's
+ * OS forces text + UI to a tiny palette of system colors that the
+ * browser exposes as CSS keywords (Canvas, CanvasText, Highlight,
+ * LinkText, ButtonText). Mapping our tokens here makes every component
+ * that reads them automatically respect the OS theme.
+ *
+ * Doesn't fire for ~95 % of visitors but covers a real accessibility
+ * class (vision-impaired Windows users who turn on High Contrast).
+ */
+@media (forced-colors: active) {
+  :root {
+    --background: Canvas;
+    --foreground: CanvasText;
+    --muted: Canvas;
+    --muted-foreground: CanvasText;
+    --brand: LinkText;
+    --brand-foreground: Canvas;
+    --destructive: Mark;
+    --destructive-foreground: MarkText;
+    --border: CanvasText;
+    --ring: Highlight;
+    --selection-bg: Highlight;
+    --selection-fg: HighlightText;
+  }
+}
+
+/*
+ ---break---
+ */
+
+/*
+ * shadcn/ui defaults — apply the theme's `--border` token to every
+ * element's border-color and `--ring` to every focus outline. Tailwind v4
+ * no longer auto-defaults border-color to gray-200, so without this rule
+ * `<div className="border">` renders with `currentColor` (text color),
+ * which produces wrong-looking borders inside cards, inputs, etc.
+ */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-border, currentColor);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}
+
+/* (Removed a dead `.dark {}` CLASS block — the app keys dark mode on
+   `[data-theme="dark"]` (next-themes `attribute="data-theme"`), so `.dark` never
+   matched. Its `--sidebar-*` were already themed above; the chart `--color-1..5`
+   are a single palette across themes — add a `[data-theme="dark"]` override here
+   if the charts ever need to re-theme.) */
+
+/* ── Shiki code blocks ────────────────────────────────────────────────
+ * `CodeBlock` (@indiecrafts/ui-components) renders Shiki with a light + dark
+ * theme pair (`defaultColor: "light"`): light colours are inline, dark ones
+ * ride along as `--shiki-dark*` CSS vars. Activate the dark set under the
+ * same conditions the rest of the theme flips — an explicit
+ * `[data-theme="dark"]`, or OS-dark when the user hasn't forced light. */
+[data-theme="dark"] .shiki {
+  background-color: var(--shiki-dark-bg) !important;
+}
+[data-theme="dark"] .shiki,
+[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark) !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .shiki {
+    background-color: var(--shiki-dark-bg) !important;
+  }
+  :root:not([data-theme="light"]) .shiki,
+  :root:not([data-theme="light"]) .shiki span {
+    color: var(--shiki-dark) !important;
+  }
+}

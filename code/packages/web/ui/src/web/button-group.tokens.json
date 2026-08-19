@@ -1,0 +1,7 @@
+{
+  "$description": "Component token surface for button-group — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "button-group-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "button-group-input": { "$type": "color", "$value": "{component.input}" }
+  }
+}

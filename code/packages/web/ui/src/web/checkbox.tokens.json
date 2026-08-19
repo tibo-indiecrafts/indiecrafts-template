@@ -1,0 +1,10 @@
+{
+  "$description": "Component token surface for checkbox — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "checkbox-input": { "$type": "color", "$value": "{component.input}" },
+    "checkbox-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "checkbox-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "checkbox-primary": { "$type": "color", "$value": "{component.primary}" },
+    "checkbox-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" }
+  }
+}

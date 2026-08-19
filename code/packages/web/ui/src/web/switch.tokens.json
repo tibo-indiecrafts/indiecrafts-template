@@ -1,0 +1,11 @@
+{
+  "$description": "Component token surface for switch — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "switch-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "switch-primary": { "$type": "color", "$value": "{component.primary}" },
+    "switch-input": { "$type": "color", "$value": "{component.input}" },
+    "switch-background": { "$type": "color", "$value": "{semantic.background}" },
+    "switch-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" },
+    "switch-foreground": { "$type": "color", "$value": "{semantic.foreground}" }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "$description": "Component token surface for empty — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "empty-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "empty-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "empty-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "empty-primary": { "$type": "color", "$value": "{component.primary}" }
+  }
+}

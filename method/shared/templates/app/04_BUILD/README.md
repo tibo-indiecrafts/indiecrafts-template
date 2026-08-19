@@ -43,5 +43,5 @@ parts composed at clean seams, not a clever monolith (`method/shared/engineering
 
 ## Out
 
-`code/packages/tokens/DESIGN.md` + `code/apps/web/CLAUDE.md` (app briefs) · decisions → `docs/apps/web/design/decisions.md` ·
+`code/packages/tokens/DESIGN.md` + `code/projects/web/surfaces/website/CLAUDE.md` (app briefs) · decisions → `docs/apps/web/design/decisions.md` ·
 notes → `09_OUTPUTS/design/`. Runs rarely; re-run when the system evolves.

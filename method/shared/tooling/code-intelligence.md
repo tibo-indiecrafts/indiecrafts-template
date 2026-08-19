@@ -39,13 +39,13 @@ noise ever appears for an internal brick, add a `paths` entry for it.
 separate LSP plugin per language — install the matching one **and** its server binary. There
 is **no generic multi-language bridge**; stack them for a polyglot repo.
 
-| Language | Plugin | Server binary |
-| --- | --- | --- |
-| Python | `pyright-lsp` | `pyright-langserver` |
-| Go | `gopls-lsp` | `gopls` |
-| Rust | `rust-analyzer-lsp` | `rust-analyzer` |
-| C / C++ | `clangd-lsp` | `clangd` |
-| C#, Java, Kotlin, Lua, PHP, Swift | one plugin each | its language server |
+| Language                          | Plugin              | Server binary        |
+| --------------------------------- | ------------------- | -------------------- |
+| Python                            | `pyright-lsp`       | `pyright-langserver` |
+| Go                                | `gopls-lsp`         | `gopls`              |
+| Rust                              | `rust-analyzer-lsp` | `rust-analyzer`      |
+| C / C++                           | `clangd-lsp`        | `clangd`             |
+| C#, Java, Kotlin, Lua, PHP, Swift | one plugin each     | its language server  |
 
 ## Safety
 

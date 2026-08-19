@@ -1,0 +1,29 @@
+{
+  "name": "@indiecrafts/announcement",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*",
+    "@indiecrafts/i18n": "workspace:*",
+    "@indiecrafts/sanity": "workspace:*",
+    "@indiecrafts/ui": "workspace:*",
+    "@indiecrafts/utils": "workspace:*",
+    "@sanity/icons": "^3.7.4",
+    "next-sanity": "^13.3.3",
+    "sanity": "^5.31.1"
+  },
+  "peerDependencies": {
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  }
+}

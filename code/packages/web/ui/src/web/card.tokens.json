@@ -1,0 +1,8 @@
+{
+  "$description": "Component token surface for card — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "card-card": { "$type": "color", "$value": "{component.card}" },
+    "card-card-foreground": { "$type": "color", "$value": "{component.card-foreground}" },
+    "card-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+  }
+}

@@ -35,5 +35,5 @@ a part that already exists under a different name.
 - New runtime dep introduced by the section? Install it, and check it doesn't
   duplicate an existing `ui/` primitive (e.g. embla already ships `ui/embla-carousel.tsx`).
 - **State the mechanism** for the section: same content reflowing (responsive — the default) vs different content by context (adaptive swap, only where the content earns it). See `rules/adaptive-design.md`.
-- `pnpm verify:quick`; verify at 375 / 768 / 1280 (the floor) + a touch device; log design-token changes in the app changelog `code/apps/web/CHANGELOG.md`.
+- `pnpm verify:quick`; verify at 375 / 768 / 1280 (the floor) + a touch device; log design-token changes in the app changelog `code/projects/web/surfaces/website/CHANGELOG.md`.
 - When the library later improves the component, re-copy by hand + re-verify.

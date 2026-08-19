@@ -1,0 +1,7 @@
+{
+  "$description": "Component token surface for accordion — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "accordion-ring": { "$type": "color", "$value": "{semantic.ring}" },
+    "accordion-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+  }
+}

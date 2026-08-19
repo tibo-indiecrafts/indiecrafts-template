@@ -1,0 +1,33 @@
+{
+  "$description": "Component token surface for navigation-menu — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "navigation-menu-background": {
+      "$type": "color",
+      "$value": "{semantic.background}"
+    },
+    "navigation-menu-accent": {
+      "$type": "color",
+      "$value": "{component.accent}"
+    },
+    "navigation-menu-accent-foreground": {
+      "$type": "color",
+      "$value": "{component.accent-foreground}"
+    },
+    "navigation-menu-popover": {
+      "$type": "color",
+      "$value": "{component.popover}"
+    },
+    "navigation-menu-popover-foreground": {
+      "$type": "color",
+      "$value": "{component.popover-foreground}"
+    },
+    "navigation-menu-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
+    "navigation-menu-border": {
+      "$type": "color",
+      "$value": "{semantic.border}"
+    }
+  }
+}

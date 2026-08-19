@@ -1,0 +1,23 @@
+{
+  "name": "@indiecrafts/system-pages",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./proxy": "./src/proxy.ts"
+  },
+  "dependencies": {
+    "@indiecrafts/i18n": "workspace:*",
+    "@indiecrafts/ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  }
+}

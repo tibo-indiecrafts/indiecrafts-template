@@ -6,9 +6,9 @@
  *   • Stop                              → lint the whole changed UI set, once.
  *
  * Each file is fed to the app's REAL eslint via `--stdin` + an in-base-path
- * `--stdin-filename`, so the exact `jsx-a11y` rule set (code/apps/web/
+ * `--stdin-filename`, so the exact `jsx-a11y` rule set (code/projects/web/surfaces/website/
  * eslint.config.mjs) + the TS parser apply — no rule drift, and it works for
- * files outside code/apps/web that eslint-config-next would otherwise skip
+ * files outside code/projects/web/surfaces/website that eslint-config-next would otherwise skip
  * ("File ignored because outside of base path").
  *
  * Findings print as cards (a hook's stdout is surfaced as additional context).
@@ -20,7 +20,7 @@ import { execFileSync } from "node:child_process";
 import path from "node:path";
 
 const ROOT = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-const APP = path.join(ROOT, "code/apps/web");
+const APP = path.join(ROOT, "code/projects/web/surfaces/website");
 // Synthetic in-base-path name so the app config lints the piped source; the real
 // path is substituted back into each card. Any src/*.tsx name works.
 const STDIN_NAME = "src/__a11y_hook__.tsx";
@@ -57,10 +57,14 @@ if (single) {
 }
 
 // Keep only UI component sources (skip stories/tests/non-tsx and non-src paths).
+// Match the real layouts: code/{packages,modules}/<name>/src/ AND the nested
+// projects tree code/projects/<platform>/<kind>/<name>/src/ (surfaces|services|tools).
 const isUI = (f) =>
   /\.(tsx|jsx)$/.test(f) &&
   !/\.(stories|test|spec)\.[jt]sx?$/.test(f) &&
-  /[/\\]code[/\\](apps|packages|modules)[/\\][^/\\]+[/\\]src[/\\]/.test(f);
+  /[/\\]code[/\\](?:(?:packages|modules)[/\\][^/\\]+|projects[/\\][^/\\]+[/\\](?:surfaces|services|tools)[/\\][^/\\]+)[/\\]src[/\\]/.test(
+    f,
+  );
 files = [...new Set(files)].filter(isUI).slice(0, stop ? MAX_STOP_FILES : 1);
 if (!files.length) process.exit(0);
 
@@ -75,7 +79,15 @@ function lint(file) {
   try {
     out = execFileSync(
       "pnpm",
-      ["exec", "eslint", "--stdin", "--stdin-filename", STDIN_NAME, "--format", "json"],
+      [
+        "exec",
+        "eslint",
+        "--stdin",
+        "--stdin-filename",
+        STDIN_NAME,
+        "--format",
+        "json",
+      ],
       {
         cwd: APP,
         input: src,
@@ -98,16 +110,23 @@ function lint(file) {
   }
   return (results[0]?.messages || [])
     .filter((m) => m.ruleId && m.ruleId.startsWith("jsx-a11y/"))
-    .map((m) => ({ line: m.line, rule: m.ruleId.replace("jsx-a11y/", ""), msg: m.message }));
+    .map((m) => ({
+      line: m.line,
+      rule: m.ruleId.replace("jsx-a11y/", ""),
+      msg: m.message,
+    }));
 }
 
 const cards = [];
-for (const f of files) for (const x of lint(f)) cards.push({ file: path.relative(ROOT, f), ...x });
+for (const f of files)
+  for (const x of lint(f)) cards.push({ file: path.relative(ROOT, f), ...x });
 if (!cards.length) process.exit(0);
 
 let out = `[a11y] ${cards.length} accessibility finding(s) — ${stop ? "deep pass" : "edit"} · jsx-a11y (WCAG structural):\n`;
-for (const c of cards.slice(0, 25)) out += `  · ${c.file}:${c.line} — ${c.rule}: ${c.msg}\n`;
+for (const c of cards.slice(0, 25))
+  out += `  · ${c.file}:${c.line} — ${c.rule}: ${c.msg}\n`;
 if (cards.length > 25) out += `  · …+${cards.length - 25} more\n`;
-out += "Fix now (alt text · labels · roles · aria · keyboard) — the commit hook blocks on these.";
+out +=
+  "Fix now (alt text · labels · roles · aria · keyboard) — the commit hook blocks on these.";
 process.stdout.write(out);
 process.exit(0);

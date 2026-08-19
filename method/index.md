@@ -24,11 +24,11 @@ New feature? Same chain — stamp `templates/feature/` and follow its `00_BRIEF/
 - **[Shared](/shared/process/workflow)** — cross-cutting: the 7-phase
   [process](/shared/process/workflow), the [engineering brain](/shared/engineering/README)
   (principles · testing · tech-debt · git-and-pr · standards), templates, context.
-- **[Web app](/apps/web/README)** ↔ `code/apps/web` — frontend
+- **[Web app](/apps/web/README)** ↔ `code/projects/web/surfaces/website` — frontend
   [rules](/apps/web/rules/naming) + task [workflows](/apps/web/workflows/add-page).
 - **[Modules](/modules/README)** ↔ `code/modules` — [feature-slice architecture](/modules/architecture).
 - **[Packages](/packages/README)** ↔ `code/packages` — [api & data](/packages/api-and-data).
-- **[Db](/db/README)** ↔ `code/db` — [database](/db/database) (migrations, schema).
+- **[Db](/db/README)** ↔ `code/shared/db` — [database](/db/database) (migrations, schema).
 - **[Infra](/infra/README)** ↔ `code/infra` — [infrastructure & ops](/infra/infrastructure-and-ops), observability.
 
 ## Not rendered here

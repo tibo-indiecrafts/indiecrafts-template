@@ -1,7 +1,16 @@
 packages:
-  - code/projects/*
-  - code/packages/*
-  - code/modules/*
+  # Deployables nest by platform → kind: code/projects/<platform>/<kind>/<app>.
+  - code/projects/*/surfaces/*
+  - code/projects/*/services/*
+  - code/projects/*/tools/*
+  - code/shared/*
+  # `code/docs` (VitePress) is top-level + npm-isolated (its own lockfile) —
+  # it matches none of the globs above, so it stays out of the pnpm workspace.
+  # Bricks + modules nest by platform-scope: code/<packages|modules>/<scope>/<name>
+  # (scope = shared · web · mobile · hybrid). Reserved scope dirs hold only a
+  # README marker (no package.json) and are skipped.
+  - code/packages/*/*
+  - code/modules/*/*
 
 # pnpm 10 blocks ALL dependency install scripts by default. Allowlist the ones
 # that genuinely need to build/download a native binary — without these the tools
@@ -92,14 +101,14 @@ trustPolicyExclude:
   # policy stay ON for the security-critical web RUNTIME tree (next/react/sanity),
   # but these dev/build/mobile/desktop/legacy toolchains are exempt so the large
   # multi-app install isn't blocked one transitive at a time.
-  - "@smithy/*"          # AWS SDK core (via @opennextjs/cloudflare)
+  - "@smithy/*" # AWS SDK core (via @opennextjs/cloudflare)
   - "@aws-sdk/*"
-  - "@expo/*"            # mobile (expo)
+  - "@expo/*" # mobile (expo)
   - "expo-*"
   - "react-native"
   - "@react-native/*"
   - "@react-native-community/*"
-  - "fbjs"               # legacy expo/RN transitives
+  - "fbjs" # legacy expo/RN transitives
   - "fbemitter"
-  - "electron-*"         # desktop (electron)
+  - "electron-*" # desktop (electron)
   - "@electron/*"

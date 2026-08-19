@@ -56,4 +56,4 @@ Always ask:
 
 1. **What are the primitives?** - What core data flows through this system?
 2. **Where are the black box boundaries?** - What should be hidden vs. exposed?
-3
+   3

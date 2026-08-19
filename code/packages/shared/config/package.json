@@ -1,0 +1,16 @@
+{
+  "name": "@indiecrafts/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./shared": "./src/shared/index.ts",
+    "./web": "./src/web/index.ts",
+    "./mobile": "./src/mobile/index.ts",
+    "./hybrid": "./src/hybrid/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

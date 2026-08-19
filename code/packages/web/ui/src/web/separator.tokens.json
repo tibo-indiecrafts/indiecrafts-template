@@ -1,0 +1,6 @@
+{
+  "$description": "Component token surface for separator — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "separator-border": { "$type": "color", "$value": "{semantic.border}" }
+  }
+}

@@ -1,5 +1,0 @@
-{
-  "path": ["./src/**/*.{ts,tsx}", "../../modules/blog/src/**/*.{ts,tsx}"],
-  "schema": "schema.json",
-  "generates": "../../packages/schema/src/generated.ts"
-}

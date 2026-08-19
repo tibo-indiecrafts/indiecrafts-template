@@ -1,0 +1,20 @@
+{
+  "name": "@indiecrafts/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@indiecrafts/config": "workspace:*",
+    "next-intl": "^4.13.6"
+  },
+  "peerDependencies": {
+    "next": "16.3.1",
+    "react": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19"
+  }
+}

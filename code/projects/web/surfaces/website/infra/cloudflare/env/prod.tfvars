@@ -1,0 +1,16 @@
+# web · prod. Fill account_id + zone_id + domain (the zone must be on this CF account).
+env               = "prod"
+worker_name       = "indiecrafts-web"
+attach_domain     = true
+account_id        = ""              # REQUIRED
+zone_id           = ""              # REQUIRED (the domain's zone)
+domain            = "example.com"   # REQUIRED — your production host
+turnstile_domains = ["example.com", "www.example.com"]
+
+# Optional edge tunables — module defaults (uncomment here AND in main.tf to override):
+# rate_limit_requests = 20
+# rate_limit_period   = 60
+# enable_managed_waf  = true
+# enable_bot_fight    = true
+# enable_cache_rules  = true
+# enable_tiered_cache = true

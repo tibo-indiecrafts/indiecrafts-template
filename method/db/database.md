@@ -1,18 +1,18 @@
 # Database & migrations (Cloudflare D1)
 
 **Principle:** relational/transactional app data lives in **Cloudflare D1** (serverless
-SQLite, bound to the Worker). Content stays in **Sanity** — D1 is for data that is *not*
+SQLite, bound to the Worker). Content stays in **Sanity** — D1 is for data that is _not_
 content: orders, accounts, events, counters. Schema changes are versioned, forward-only,
 and applied in a safe order.
 
 ## The data stores
 
-| Store | For | Access |
-| --- | --- | --- |
-| **Sanity** | Editable content (pages, blog, settings) | GROQ via `@indiecrafts/sanity` |
-| **D1** | Relational app data (orders, users, logs) | Worker binding `env.DB` |
-| **KV** | Ephemeral / cache (sessions, rate-limit, flags) | Worker binding `env.KV` |
-| **R2** | Objects (already the ISR cache; user uploads) | Worker binding |
+| Store      | For                                             | Access                         |
+| ---------- | ----------------------------------------------- | ------------------------------ |
+| **Sanity** | Editable content (pages, blog, settings)        | GROQ via `@indiecrafts/sanity` |
+| **D1**     | Relational app data (orders, users, logs)       | Worker binding `env.DB`        |
+| **KV**     | Ephemeral / cache (sessions, rate-limit, flags) | Worker binding `env.KV`        |
+| **R2**     | Objects (already the ISR cache; user uploads)   | Worker binding                 |
 
 Don't copy Sanity content into D1 — that's two sources of truth. Reach for D1 only when the
 data isn't editorial.
@@ -26,12 +26,12 @@ ISR bucket) and reached in server code via `getCloudflareContext().env.DB`
 ## Best practice
 
 - **Every schema change is a migration file** — `wrangler d1 migrations create <db> <name>`,
-  committed + ordered under `code/db/migrations/`. Never a manual dashboard edit.
+  committed + ordered under `code/shared/db/migrations/`. Never a manual dashboard edit.
 - **Forward-only.** Apply with `wrangler d1 migrations apply <db> --local` (dev) then
   `--env <env>` (remote). D1 has no down-migrations — roll forward.
 - **Expand → migrate → contract** for renames/drops: add the new column/table, backfill,
   switch reads/writes, then drop the old — never drop-then-add in one release.
-- **Back up before a destructive migration** — `pnpm backup:web:d1:<env>` (dumps to `backups/d1/`;
+- **Back up before a destructive migration** — `node code/shared/scripts/data/backup.mjs <name> <env>` (dumps to `backups/d1/`;
   `--remote` → the R2 backups bucket). D1 **Time Travel** also restores up to 30 days. A nightly
   GitHub Action backs up prod. Full story → `docs/apps/web/setup/backups.md`.
 - **The app never scatters raw SQL** — access goes through a `code/packages/` data brick

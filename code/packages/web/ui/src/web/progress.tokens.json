@@ -1,0 +1,9 @@
+{
+  "$description": "Component token surface for progress — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "progress-primary": {
+      "$type": "color",
+      "$value": "{component.primary}"
+    }
+  }
+}

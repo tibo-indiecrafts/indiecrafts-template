@@ -1,0 +1,149 @@
+import Image from "next/image";
+import { PortableText } from "@portabletext/react";
+import { getTranslations } from "next-intl/server";
+import type {
+  BlogPostContentModule,
+  Post,
+} from "@indiecrafts/blog/sanity/types";
+import { type Locale } from "@indiecrafts/config";
+import { formatDate } from "@indiecrafts/utils/format-date";
+import { formatList } from "@indiecrafts/format/list";
+import { Link } from "@indiecrafts/i18n";
+import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
+import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
+
+/**
+ * Renders the active post's header + body. The module schema itself has
+ * no fields — content comes from the post passed via render context.
+ *
+ * When the surrounding `postModules` array is empty, the /blog/[slug]
+ * route uses this same layout as its fallback. Editors only need a
+ * `module.blog-post-content` instance when they're composing extra
+ * modules above or below the body.
+ */
+export async function BlogPostContent({
+  module: m,
+  post,
+  locale,
+}: {
+  module: BlogPostContentModule;
+  post: Post;
+  locale: Locale;
+}) {
+  const [t, display] = await Promise.all([
+    getTranslations({ locale, namespace: "pages.blog" }),
+    getBlogSettings(),
+  ]);
+  const title = post.metadata?.title ?? post.title ?? "";
+  const description = post.metadata?.description;
+  const image = post.metadata?.image?.asset?.url;
+  const date = display.post.date
+    ? formatDate(locale, post.publishedAt, { month: "long" })
+    : null;
+  const categoryRef = post.categories?.[0];
+  const authors = post.authors ?? [];
+  const authorNames = authors.map((a) => a.name).filter(Boolean) as string[];
+  const authorsLabel = authorNames.length
+    ? formatList(authorNames, locale)
+    : "";
+  // Only link the byline when there's a single author with a page.
+  const singleAuthorHref =
+    authors.length === 1 && authors[0]?.slug
+      ? `/author/${authors[0].slug}`
+      : null;
+  const {
+    authors: showAuthors,
+    categories: showCategories,
+    tags: showTags,
+  } = display.taxonomy;
+
+  return (
+    <article
+      id={m.anchor}
+      className="mx-auto max-w-3xl px-(--gutter) py-16 md:py-24"
+    >
+      <header className="flex flex-col gap-4">
+        {categoryRef?.title && showCategories ? (
+          categoryRef.slug ? (
+            <Link
+              href={`/blog/category/${categoryRef.slug}`}
+              className="bg-muted text-muted-foreground hover:bg-foreground hover:text-background focus-visible:ring-ring w-fit rounded-md px-2 py-1 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {categoryRef.title}
+            </Link>
+          ) : (
+            <span className="bg-muted text-muted-foreground w-fit rounded-md px-2 py-1 text-xs font-medium">
+              {categoryRef.title}
+            </span>
+          )
+        ) : null}
+        <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
+          {title}
+        </h1>
+        {description ? (
+          <p className="text-muted-foreground text-balance">{description}</p>
+        ) : null}
+        <div className="text-muted-foreground flex items-center gap-3 text-sm">
+          {authorsLabel && showAuthors ? (
+            singleAuthorHref ? (
+              <Link
+                href={singleAuthorHref}
+                className="hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
+              >
+                {t("by", { name: authorsLabel })}
+              </Link>
+            ) : (
+              <span>{t("by", { name: authorsLabel })}</span>
+            )
+          ) : null}
+          {authorsLabel && showAuthors && date ? (
+            <span aria-hidden="true">·</span>
+          ) : null}
+          {date ? <time dateTime={post.publishedAt}>{date}</time> : null}
+        </div>
+      </header>
+
+      {image ? (
+        <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-xl">
+          <Image
+            src={image}
+            alt={post.metadata?.image?.alt ?? title}
+            fill
+            sizes="(min-width: 768px) 768px, 100vw"
+            priority
+            className="object-cover"
+          />
+        </div>
+      ) : null}
+
+      {post.body ? (
+        <div className="prose prose-neutral dark:prose-invert mt-12 max-w-none">
+          <PortableText value={post.body} components={portableComponents} />
+        </div>
+      ) : null}
+
+      {post.tags && post.tags.length > 0 && showTags ? (
+        <div className="border-border/60 mt-10 flex flex-wrap items-center gap-2 border-t pt-6">
+          {post.tags.map((tag) =>
+            tag.slug ? (
+              <Link
+                key={tag._id}
+                href={`/blog/tag/${tag.slug}`}
+                className="bg-muted text-muted-foreground hover:bg-foreground hover:text-background focus-visible:ring-ring rounded-md px-2 py-1 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              >
+                #{tag.title}
+              </Link>
+            ) : (
+              <span
+                key={tag._id}
+                className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs font-medium"
+              >
+                #{tag.title}
+              </span>
+            ),
+          )}
+        </div>
+      ) : null}
+    </article>
+  );
+}

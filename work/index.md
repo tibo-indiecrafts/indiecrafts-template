@@ -31,7 +31,7 @@ bootstrap → 0 · Intake** (`node method/scripts/new-sprint.mjs "<name>"`) → 
 
 ## The four pillars
 
-- **Code** — the app (`code/apps/web`) · runs at <http://localhost:3000>
+- **Code** — the app (`code/projects/web/surfaces/website`) · runs at <http://localhost:3000>
 - **[Docs](http://localhost:3002)** — product canon (what it is + why)
 - **[Method](http://localhost:3003)** — how we work (the 7-phase sprint, rules, engineering brain)
 - **Lab** (this site) — the deliverables + working memory

@@ -1,8 +1,8 @@
 # Changelog — method / framework
 
 Changes to **how we work** (`method/`): the rules, workflows, process phases, templates, and
-the engineering brain. Log here when you change the *method*, not the product. Product/app
-history → [`code/apps/web/CHANGELOG.md`](../code/apps/web/CHANGELOG.md); repo-wide roll-up →
+the engineering brain. Log here when you change the _method_, not the product. Product/app
+history → [`code/projects/web/CHANGELOG.md`](../code/projects/web/CHANGELOG.md); repo-wide roll-up →
 [root changelog](../CHANGELOG.md).
 
 Format follows [Keep a Changelog](https://keepachangelog.com).
@@ -11,6 +11,54 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **Superpowers documented as the method-fallback skill set.** Installed obra's
+  `superpowers@claude-plugins-official` plugin (user scope) + archived the redundant loose copies from
+  `~/.claude/skills/`. Documented the **method-first, Superpowers-fallback** rule + an overlap map (brainstorm
+  ↔ `/office-hours`, plans ↔ `/autoplan`, review ↔ `/review`/`/codex`/`/cso`, …) in
+  `shared/tooling/index.md` + a registry line in `shared/process/my-skills-and-agents.md` (and the global
+  `~/.claude/TOOLING.md`). Kept **out of the shipped `docs/`** — Superpowers is a studio/global tool; it must
+  not leak into a client hand-off.
+
+### Changed
+
+- **Removed the `.claude/agents/bench/` folder — all agents are kept + categorised.** Promoted the 14
+  formerly-benched agents into their topic folders (`agent-coordinator` back to the agents root),
+  deleted `bench/`, and rewrote `scripts/sync-agents.sh` to drop the wired/bench split (it now re-vendors
+  topic folders only — no `WIRED` list, no `--split-only`, no bench, ever). Reframed the docs
+  (`.claude/agents/README.md`, `bench-map.md` → "reach-for map", `my-skills-and-agents.md`,
+  `claude-md-system.md`): the off-hot-path agents are now presented as **options with a use-case**
+  (`electron-pro` → the `apps/hybrid` slot · `mobile-app-builder` → `apps/mobile` · etc.), not "benched".
+- **Content generation moved out to the indie-brain vault — this framework is now code/dev-only.**
+  The 7 marketing agents (`growth-hacker` + channels · `app-store-optimizer` · `content-creator`) +
+  5 content/research agents left the repo **and** the global bench for
+  `~/Code/indie-brain/.claude/agents/` (a new vault `_content/` system holds brand voice, audience,
+  templates, and the lead-gen marketing engine; outputs route to each project's `notes/`). Removed the
+  `marketing/` category + the Growth-lane names from `scripts/sync-agents.sh` (so `agents:sync` can't
+  re-vendor them), deleted `shared/process/lead-generation.md` (its marketing half is now in the vault;
+  the inbound-capture bricks stay a product feature), and neutralized the moved-agent references in
+  `launch-playbook.md` · `my-skills-and-agents.md` · `bench-map.md` · `.claude/agents/README.md`. Voice
+  stays split, no sync: studio marketing voice in the vault, per-client product voice in each repo's
+  `DESIGN.md § Product Content`.
+
+### Fixed
+
+- **Corrected a delivery-safety inaccuracy: `method/` + `work/` are tracked + `export-ignore`d, NOT
+  gitignored.** `client-handoff.md` claimed _"a clone can't carry them"_ — false, and dangerous: a raw
+  `git clone` **does** carry them; only `git archive` omits them. Fixed the handoff table + prose,
+  `method/.claude/CLAUDE.md`, `intake.md`, and `tooling/index.md` to say **deliver by allowlist/`git
+archive`, never a clone**. (Genuinely-gitignored artifacts — `.claude/hooks/*`, `settings.local.json`,
+  `.gstack`, `.codegraph`, `.env` — left unchanged.)
+
+### Added
+
+- **`apps/web/page-builder-roadmap.md` — folded in the approved "entity blocks + advanced forms" slice.**
+  Added the net-new `module.tech-stack` (the "technologies" grid — the predecessor site's `HeroLogoCloud`
+  had no model here) + an inline `module.portfolio` (stepping-stone to the `project`-ref `featured-projects`)
+  to §5a; added a §8 gap for the missing technologies model; extended the `form` entity type to
+  `contact | booking | quote`; recorded the **near-term decision** — three fixed-field form blocks
+  (`contact`/`booking`/`quote`) on the existing `withGuard` spine in one `contact-forms` module,
+  **booking request-only** (slots/availability/payment deferred to Pack 4/5b); and inserted the committed
+  "Next ✅ APPROVED" slice into the §13 build order.
 - **`shared/tooling/index.md` — one unified toolchain index (the single entry point).** Two layers:
   Layer 1 (run the app — Node/pnpm/env/gate, in the shipped `docs/`) and Layer 2 (the studio
   per-developer agent toolchain — codegraph · mcp · on-the-fly hooks · behavior plugins · LSP ·
@@ -21,6 +69,37 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
   `change-hygiene.sh` + `a11y-check.mjs` + `settings.local.example.json` live here, and `install.sh`
   copies them into `.claude/hooks/` + seeds `.claude/settings.local.json` (both stay gitignored —
   local-by-design preserved; the shipped template stays clean).
+- **Tool map — 8 plugins/skills integrated into the phase workflow (closed the map↔install gap).**
+  A plugin review found the map named tools that weren't installed. Confirmed/added across the phases:
+  `context7` (`find-docs`, THINK+BUILD live docs) · `firecrawl` (THINK + project-lane market research) ·
+  `grill-me` (already mapped); **new to the map** — `adhd` (THINK/PLAN divergent ideation),
+  `improve-codebase-architecture` (REVIEW deletion-test audit), `teach` (REFLECT/cross-cutting learning),
+  `ralph-loop` (BUILD PRD-autonomy vs gstack `/loop` — new `workflow.md#autonomy`), `security-guidance`
+  (Always-on edit-time vuln scan, runs **alongside** `safety-net` — both scan edits, defense in depth), plus the dedicated `playwright` ·
+  `chrome-devtools` · `figma` MCPs (TEST/BUILD, beside `claude-in-chrome` + the marketing-bundle figma).
+  Registered in `my-skills-and-agents.md` · `mcp-servers.md` (new dev-loop MCP table) ·
+  `behavior-plugins.md` · `workflow.md` · `project-bootstrap.md` (install rows 11–14) + root `TOOLING.md`.
+  Skipped: Linear (productivity-bundle MCP covers it) + Code Review (`pr-review-toolkit` + gstack `/review`).
+- **Browser-verify is now gated + connect-tab explicit.** The `visual-verification` rule + the TEST
+  phase already required render→screenshot, but it was the one discipline not enforced (docs + tests
+  are). Closed three gaps: (1) new **`visual-verify.sh` Stop hook** (`shared/tooling/hooks/`) blocks a
+  turn that changed a UI file (`*.tsx` under `user-interface/` · `components/` · `renderers/` ·
+  `packages/ui*`) without a browser check — waivable + once per stop-chain, mirrors `change-hygiene.sh`
+  — wired in `install.sh` + `settings.local.example.json`; (2) the **connect-the-dev-tab** step
+  (`/connect-chrome`, not a blank tab) is now explicit in the rule + the map's TEST line; (3) the
+  discipline is **hoisted** into `templates/feature/06_TEST/README.md` so every app inherits it. _Why:_
+  the strongest instruction in the repo ("a screen you haven't looked at isn't done") was ungated.
+- **Guardrails for the "maintenance is the skill" silent failures.** Three failure classes closed:
+  (1) new **`guard.mjs` PreToolUse hook** (`shared/tooling/hooks/`) denies destructive / irreversible
+  tool calls at the system level — force-push, `rm -rf`, `wrangler … delete`, a Sanity write against
+  the `production` dataset — because a CLAUDE.md "never do X" is a _suggestion_ the model resolves
+  arbitrarily while a hook intercepts the call (wired in `install.sh` + `settings.local.example.json`;
+  a "pre" tier in the on-the-fly-checks doc). (2) **`system-rules.md` § Context, memory & subagent
+  hygiene** — the context rhythm (clear after 2 repeat corrections · `/compact keep:` at ~60% · the
+  compaction deadlock), auto-memory **feed + prune** (tiered cache, `MEMORY.md` < 200 lines, poisoning),
+  and **verify subagents against `git diff`** (headless denies silently + hallucinates success). (3) the
+  **REFLECT** phase gains a memory feed/prune step. _Why:_ the setup is the easy 20% — these are the
+  daily-distrust rules that keep it working, and none of the failures throws an error.
 
 ### Changed
 
@@ -77,7 +156,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
   — **`PROJECTS`** (project lane) + **`FEATURES`** (feature lane) — each seeded with a template sample;
   the existing `LAUNCH LIST` stays the master template. _Why:_ one end-to-end workflow across both
   lanes — the framework now covers go-to-market, not just build.
-- **Bench = only the "Skip" agents now.** An agent a method step *names* belongs in a topic folder,
+- **Bench = only the "Skip" agents now.** An agent a method step _names_ belongs in a topic folder,
   not bench. The 10 **Optional** agents (`bench-map.md` § A — `tool-evaluator` · `ui-designer` ·
   `interface-designer` · `modular-systems-architect` · `design-reviewer` · `config-expert` ·
   `code-commentator` · `build-engineer` · `dx-optimizer` · `compliance-auditor`) carry a use-case
@@ -93,17 +172,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
   `wrangler d1 migrations` forward-only, `--local` then `--env`; Time Travel + `wrangler d1 export`
   backups; a `code/packages/` data brick via Drizzle/prepared statements) + **KV** for cache. Sanity
   stays the content store; D1 is for non-content relational data. A commented `[[d1_databases]]` +
-  `[[kv_namespaces]]` scaffold was added to `code/apps/web/wrangler.toml`. Replaces the generic-SQL
-  + `../wahio` backup references.
+  `[[kv_namespaces]]` scaffold was added to `code/projects/web/wrangler.toml`. Replaces the generic-SQL
+  - `../wahio` backup references.
 
 ### Added
 
 - **Issue-tag triage vocabulary + tooling.** New `shared/engineering/issue-tags.md` (the fixed
   `@complexity`/`@refactor`/`@debt`/`@bug`/`@optimisation` families + qualifiers), linked from the
   engineering index + `tech-debt.md` + the method sidebar. **Adapted to this repo's philosophy:**
-  unlike a triage-later codebase, tags here are a *fix-now marker* or a *recorded decision* (paired
+  unlike a triage-later codebase, tags here are a _fix-now marker_ or a _recorded decision_ (paired
   with `ponytail:`), never a backlog — a rising tag count is a smell. Ships with a `.claude/rules/
-  issue-tags.md` agent rule + `scripts/tags-report.mjs` (`pnpm tags:report` / `tags:check` — the
+issue-tags.md` agent rule + `scripts/tags-report.mjs` (`pnpm tags:report` / `tags:check` — the
   check guards the vocabulary against typos). Ported the vocabulary from an internal reference system;
   reframed around `tech-debt.md`'s "pay it in the same diff" gate.
 

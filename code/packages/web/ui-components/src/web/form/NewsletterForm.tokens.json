@@ -1,0 +1,13 @@
+{
+  "$description": "Component token surface for NewsletterForm — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "newsletter-form-card": { "$type": "color", "$value": "{component.card}" },
+    "newsletter-form-primary": { "$type": "color", "$value": "{component.primary}" },
+    "newsletter-form-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" },
+    "newsletter-form-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "newsletter-form-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "newsletter-form-muted": { "$type": "color", "$value": "{semantic.muted}" },
+    "newsletter-form-background": { "$type": "color", "$value": "{semantic.background}" },
+    "newsletter-form-destructive": { "$type": "color", "$value": "{semantic.destructive}" }
+  }
+}

@@ -13,6 +13,6 @@ deploy → verify) · `/canary` (post-deploy watch) · `/document-release`
   and approves **before** `/land-and-deploy`. Don't self-merge non-trivial changes.
 
 **Changelog roll-up:** at release/tag, cut a rolled-up entry in the root `/CHANGELOG.md`
-linking down to the area logs (`code/apps/web/CHANGELOG.md` etc.) — never copy detail up.
+linking down to the area logs (`code/projects/web/surfaces/website/CHANGELOG.md` etc.) — never copy detail up.
 
 Save here: PR link, release notes, deploy result, canary outcome.

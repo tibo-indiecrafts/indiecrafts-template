@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  // Test debugging is best driven by the Vitest + Playwright extensions (recommended in
+  // extensions.json) — click the gutter "Debug" on a test. These configs cover the app + a
+  // convenience Vitest run. `node-terminal` runs the script in a terminal and auto-attaches the
+  // debugger to child Node processes, which survives the pnpm → turbo → next indirection.
+  "configurations": [
+    {
+      "name": "Next.js: server-side",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm dev",
+      "cwd": "${workspaceFolder}"
+      // Turbopack can make some breakpoints flaky; if one won't bind, run `pnpm dev` in a
+      // terminal and use "Attach to Node" (Command Palette → Debug: Attach to Node Process).
+    },
+    {
+      "name": "Next.js: client (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/code/projects/web/surfaces/website"
+    },
+    {
+      "name": "Vitest: debug current file",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm exec vitest run ${relativeFile}",
+      "cwd": "${fileDirname}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Next.js: full stack",
+      "configurations": ["Next.js: server-side", "Next.js: client (Chrome)"],
+      "stopAll": true
+    }
+  ]
+}

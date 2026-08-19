@@ -1,0 +1,13 @@
+{
+  "$description": "Component token surface for context-menu — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "context-menu-accent": { "$type": "color", "$value": "{component.accent}" },
+    "context-menu-accent-foreground": { "$type": "color", "$value": "{component.accent-foreground}" },
+    "context-menu-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "context-menu-popover": { "$type": "color", "$value": "{component.popover}" },
+    "context-menu-popover-foreground": { "$type": "color", "$value": "{component.popover-foreground}" },
+    "context-menu-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "context-menu-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "context-menu-border": { "$type": "color", "$value": "{semantic.border}" }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$description": "Component token surface for sidebar — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "sidebar-sidebar": { "$type": "color", "$value": "{semantic.sidebar}" },
+    "sidebar-sidebar-foreground": { "$type": "color", "$value": "{semantic.sidebar-foreground}" },
+    "sidebar-sidebar-border": { "$type": "color", "$value": "{semantic.sidebar-border}" },
+    "sidebar-background": { "$type": "color", "$value": "{semantic.background}" },
+    "sidebar-sidebar-ring": { "$type": "color", "$value": "{semantic.sidebar-ring}" },
+    "sidebar-sidebar-accent": { "$type": "color", "$value": "{semantic.sidebar-accent}" },
+    "sidebar-sidebar-accent-foreground": { "$type": "color", "$value": "{semantic.sidebar-accent-foreground}" }
+  }
+}

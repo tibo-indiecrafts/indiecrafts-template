@@ -1,0 +1,17 @@
+{
+  "$description": "Component token surface for marker — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "marker-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
+    "marker-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    },
+    "marker-border": {
+      "$type": "color",
+      "$value": "{semantic.border}"
+    }
+  }
+}

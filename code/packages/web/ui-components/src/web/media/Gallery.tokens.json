@@ -1,0 +1,7 @@
+{
+  "$description": "Component token surface for Gallery — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
+  "component": {
+    "gallery-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "gallery-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+  }
+}

@@ -1,6 +1,6 @@
 # Db method
 
-How we design + evolve data (mirrors `code/db`) on **Cloudflare D1** (+ KV for cache):
+How we design + evolve data (mirrors `code/shared/db`) on **Cloudflare D1** (+ KV for cache):
 schema, migrations (forward-only, expand→migrate→contract), seed, Time Travel backups.
 
 - [`database.md`](./database) — D1 bindings, migrations, safe rollout, PII.

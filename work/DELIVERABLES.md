@@ -23,9 +23,9 @@ When a deliverable lands in `apps/<app>/[features/YYYY-MM-DD_<name>/]09_OUTPUTS/
 
 _No sprints stamped yet._ As sprints land, list their deliverables, newest first:
 
-| Date | Kind | App / Feature | Deliverable | Source | Link |
-| ---- | ---- | ------------- | ----------- | ------ | ---- |
-| _YYYY-MM-DD_ | design | `apps/<app>` · `<feature>` | what it is | [#123](#) | [file](./apps/<app>/features/YYYY-MM-DD_<name>/09_OUTPUTS/YYYY-MM-DD_topic_final.md) |
+| Date         | Kind   | App / Feature              | Deliverable | Source    | Link                                                                                 |
+| ------------ | ------ | -------------------------- | ----------- | --------- | ------------------------------------------------------------------------------------ |
+| _YYYY-MM-DD_ | design | `apps/<app>` · `<feature>` | what it is  | [#123](#) | [file](./apps/<app>/features/YYYY-MM-DD_<name>/09_OUTPUTS/YYYY-MM-DD_topic_final.md) |
 
 > Links resolve once the sprint's `09_OUTPUTS/` file exists and its brief is filled (an
 > unfilled `<placeholder>` brief won't render — see the site config note).
