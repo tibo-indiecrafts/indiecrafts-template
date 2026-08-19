@@ -7,7 +7,7 @@ rate-limit rules, cache rules, bot mode). Clean split:
 - **Terraform** owns the **edge**: auto custom domain · WAF · rate-limit · Bot Fight Mode · cache
   rules · Tiered Cache · zone hardening · the Turnstile widget.
 
-The Terraform is **co-located with each app and self-contained**: `code/projects/<app>/infra/` holds one
+The Terraform is **co-located with each app and self-contained**: `code/projects/<platform>/<kind>/<app>/infra/` holds one
 `main.tf` (provider + vars + all edge resources + outputs) + **per-env** tfvars — no shared module.
 Written for the `cloudflare/cloudflare ~> 5` provider.
 
@@ -43,7 +43,7 @@ select <env>`, `-var-file=env/<env>.tfvars`.
 
 | Resource                                 | Effect                                                                                                                          |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `cloudflare_workers_custom_domain`       | **auto domain** — attaches `<domain>` to the env's Worker; CF makes the DNS record + cert                                       |
+| `cloudflare_workers_custom_domain`       | **auto domain** — attaches `<domain>` to the env's Worker; CF makes the DNS record + cert. **Authoritative** — do NOT also uncomment the `[[env.*.routes]]` block in `wrangler.toml` (both claim the hostname and fight); gate with `attach_domain` |
 | `cloudflare_ruleset` (http_ratelimit)    | **rate-limit on `/api/*`** — the `@indiecrafts/security` `withGuard` **primary** limiter                                        |
 | `cloudflare_ruleset` (firewall_managed)  | Cloudflare **Managed WAF** ruleset                                                                                              |
 | `cloudflare_bot_management` `fight_mode` | **Bot Fight Mode** (free). Note: separate pipeline — no skip/exceptions (upgrade to Super Bot Fight Mode on Pro for skip rules) |
@@ -53,6 +53,20 @@ select <env>`, `-var-file=env/<env>.tfvars`.
 | `cloudflare_turnstile_widget`            | provisions the widget → outputs the keys (below)                                                                                |
 
 Toggle any off per env via the `enable_*` variables in the tfvars.
+
+**Commented optionals in `main.tf`** (uncomment + fill to activate — configure a maximum at the edge):
+
+| Resource                                    | For                                                                                              |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `cloudflare_workers_custom_domain` (cdn)    | a first-party asset CDN on `cdn.<domain>` (`assetPrefix`)                                         |
+| `cloudflare_zone_setting` (image_resizing)  | CF Image Transformations for first-party images                                                  |
+| `cloudflare_zero_trust_access_application` + `_policy` | **gate the admin app behind SSO** — copy into admin's own `infra/cloudflare` when it ships |
+| `cloudflare_ruleset` (dynamic_redirect)     | www → apex (single redirect at the edge)                                                          |
+| `cloudflare_dns_record`                     | extra records (SPF/TXT/verification) when CF isn't already fronting the apex                      |
+| `cloudflare_logpush_job`                    | ship HTTP/Worker logs to R2/SIEM (retention / compliance)                                         |
+
+The Worker's own bindings (KV · R2 · D1 · queues · services · Durable Objects · AI · Hyperdrive · placement ·
+limits · tail) live in `wrangler.toml`, not here — the **full commented reference is `code/shared/api/wrangler.toml`**.
 
 ## Turnstile keys → the app
 
@@ -77,9 +91,9 @@ Turnstile just no-ops. See [Security headers](/apps/web/seo/security-headers) + 
 
 ## Add app #2
 
-Copy `code/projects/web/surfaces/website/infra/` → `code/projects/<app>/infra/`, point the tfvars at that app's Worker
+Copy `code/projects/web/surfaces/website/infra/` → `code/projects/<platform>/<kind>/<app>/infra/`, point the tfvars at that app's Worker
 names + domain, and add `infra:<app>:<action>:<env>` delegators (mirroring `infra:website:*`). `main.tf` is
-self-contained (no shared module); `code/shared/scripts/infra/run.mjs` resolves `code/projects/<app>/infra`.
+self-contained (no shared module); `code/shared/scripts/infra/run.mjs` resolves `code/projects/<platform>/<kind>/<app>/infra`.
 
 > **One app = one Cloudflare zone.** The zone-level resources — SSL/TLS/HTTPS settings, Bot Fight
 > Mode, Tiered Cache, and the ruleset entrypoints (a zone has exactly one ruleset per phase) — are

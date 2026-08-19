@@ -43,7 +43,7 @@ This is a pnpm + Turbo monorepo; the workspace root is the repo root. All app sc
 pnpm project:rename <slug>     # e.g. acme  (lowercase, unique per client)
 ```
 
-This sets `DEFAULT_SITE_PREFIX` in `@indiecrafts/config` **and** every `wrangler.toml` resource name (`<slug>-web*`) together. The prefix namespaces the browser keys (consent record, theme, locale cookie) and the Cloudflare Worker + R2 buckets, so two clients never collide. A `staging`/`prod` deploy is **blocked** until you do this (a shared-Cloudflare-account guard). It then prints the R2 buckets to create (§10).
+This sets `DEFAULT_SITE_PREFIX` in `@indiecrafts/config` **and** every `wrangler.toml` resource name (`<prefix>-<env>-web-website*`) together. The prefix namespaces the browser keys (consent record, theme, locale cookie) and the Cloudflare Worker + R2 buckets, so two clients never collide. A `staging`/`prod` deploy is **blocked** until you do this (a shared-Cloudflare-account guard). It then prints the R2 buckets to create (§10).
 
 ---
 
@@ -312,7 +312,7 @@ Then walk the smoke test in [`../../../modules/blog/sanity-setup.md`](../../../m
 
 ## 10. Deploy
 
-The app deploys to **Cloudflare Workers** ([runbook](./deployment)). **You must have run `pnpm project:rename <slug>` (§2)** — a `staging`/`prod` deploy is blocked while the Worker/R2 names are the template default (shared-account clobber guard). Then create the `<slug>-web-isr-*` R2 buckets it printed and set these as Worker vars/secrets (and GitHub Environment vars/secrets for CI):
+The app deploys to **Cloudflare Workers** ([runbook](./deployment)). **You must have run `pnpm project:rename <slug>` (§2)** — a `staging`/`prod` deploy is blocked while the Worker/R2 names are the template default (shared-account clobber guard). Then create the `<slug>-<env>-web-website-isr` R2 buckets it printed and set these as Worker vars/secrets (and GitHub Environment vars/secrets for CI):
 
 | Variable                         | Where         | Notes                                                                          |
 | -------------------------------- | ------------- | ------------------------------------------------------------------------------ |

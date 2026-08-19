@@ -2,7 +2,7 @@
 # Deployed separately from the web app: `pnpm --filter @indiecrafts/workers deploy:workers:<env>`.
 # Per client, rename `indiecrafts-workers-*` (mirror the web app's `project:rename`).
 
-name = "indiecrafts-workers-dev"
+name = "indiecrafts-dev-shared-workers"
 main = "src/index.ts"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
@@ -20,7 +20,7 @@ invocation_logs = true
 
 # ── dev ──────────────────────────────────────────────────────
 [env.dev]
-name = "indiecrafts-workers-dev"
+name = "indiecrafts-dev-shared-workers"
 workers_dev = true
 
 [env.dev.vars]
@@ -32,7 +32,7 @@ invocation_logs = true
 
 # ── staging ──────────────────────────────────────────────────
 [env.staging]
-name = "indiecrafts-workers-staging"
+name = "indiecrafts-staging-shared-workers"
 workers_dev = true
 
 [env.staging.vars]
@@ -44,7 +44,7 @@ invocation_logs = true
 
 # ── prod ─────────────────────────────────────────────────────
 [env.prod]
-name = "indiecrafts-workers"
+name = "indiecrafts-prod-shared-workers"
 workers_dev = false
 
 [env.prod.vars]
@@ -54,13 +54,32 @@ NEXT_PUBLIC_ENVIRONMENT = "production"
 enabled = true
 invocation_logs = true
 
-# ── Bindings (add as jobs need them) ─────────────────────────
-# Mirror the web app's wrangler.toml — declare per env. Examples:
-# [[env.prod.kv_namespaces]]
+# ── Bindings & options (queue/background worker — declare PER ENV) ───────
+# FULL reference (every binding + placement/limits/DO/AI/…): code/shared/api/wrangler.toml.
+# These are per-env (`[[env.<env>.*]]`); shown for prod — repeat for dev/staging.
+#
+# [[env.prod.queues.consumers]]   # DRAIN the jobs queue (this worker's main job)
+# queue = "indiecrafts-prod-jobs"
+# max_batch_size = 10
+# max_retries = 3
+# dead_letter_queue = "indiecrafts-prod-jobs-dlq"
+#
+# [[env.prod.queues.producers]]   # also enqueue follow-up work
+# binding = "JOBS"
+# queue = "indiecrafts-prod-jobs"
+#
+# [[env.prod.kv_namespaces]]      # env.JOBS_KV — dedupe / rate state
 # binding = "JOBS_KV"
-# id = "<from `wrangler kv namespace create JOBS_KV`>"
+# id = "<wrangler kv namespace create JOBS_KV>"
 #
-# [[env.prod.queues.consumers]]
-# queue = "indiecrafts-jobs"
+# [[env.prod.r2_buckets]]         # env.BUCKET — write reports / exports
+# binding = "BUCKET"
+# bucket_name = "indiecrafts-prod-shared-workers-out"
 #
-# Secrets are never here — `wrangler secret put <NAME> --env <env>`.
+# [[env.prod.services]]           # call the api/cron worker in-process
+# binding = "API"
+# service = "indiecrafts-prod-shared-api"
+#
+# Durable Objects (add `[[migrations]]` too — see api reference), [placement]
+# mode="smart", [limits] cpu_ms, [[tail_consumers]] all apply here as well.
+# Secrets are never in this file — `wrangler secret put <NAME> --env <env>`.

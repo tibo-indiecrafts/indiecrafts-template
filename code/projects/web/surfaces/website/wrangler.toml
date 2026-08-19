@@ -3,12 +3,14 @@
 # `wrangler deploy --env <dev|staging|prod>`. Runbook + first-time setup
 # (R2 buckets, secrets, custom domain): docs/apps/web/setup/deployment.md
 #
-# Per client site, run `pnpm project:rename <slug>` — it rewrites every
-# `indiecrafts-web` resource name here AND `DEFAULT_SITE_PREFIX` in @indiecrafts/config,
-# then prints the R2 buckets to create. Do NOT hand-edit these names (a staging/prod
-# deploy is blocked until they differ from the template default — shared-account guard).
+# Names follow `<prefix>-<env>-<platform>-<slug>` (here `indiecrafts-<env>-web-website`),
+# the single formula in scripts/lib/apps.mjs `resourceName`. Per client site, run
+# `pnpm project:rename <slug>` — it swaps only the `<prefix>` here + in
+# `DEFAULT_SITE_PREFIX` (@indiecrafts/config), then prints the R2 buckets to create. Do
+# NOT hand-edit these names (a staging/prod deploy is blocked until the prefix differs
+# from the template default — shared-account guard).
 
-name = "indiecrafts-web-dev"
+name = "indiecrafts-dev-web-website"
 main = ".open-next/worker.js"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
@@ -23,7 +25,7 @@ binding = "ASSETS"
 # (no --env). Mirrors the dev environment.
 [[r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
-bucket_name = "indiecrafts-web-isr-dev"
+bucket_name = "indiecrafts-dev-web-website-isr"
 
 # ── Optional: Cloudflare D1 (relational data) + KV (cache) ───
 # The template's content lives in Sanity — add D1 only for data that ISN'T
@@ -31,7 +33,7 @@ bucket_name = "indiecrafts-web-isr-dev"
 # then repeat the block under each [env.*] (like the R2 bucket). Docs: docs/db/.
 # [[d1_databases]]
 # binding = "DB"
-# database_name = "indiecrafts-web-dev"
+# database_name = "indiecrafts-dev-web-website"
 # database_id = "<from `wrangler d1 create`>"
 # migrations_dir = "db/d1/<name>/migrations"
 #
@@ -51,18 +53,31 @@ bucket_name = "indiecrafts-web-isr-dev"
 
 # ── Optional: call a sibling Worker in-process (a service binding) ───
 # Reach the `api` app (or `workers`/`cron`) with no public hop. The target name is
-# per-env (`indiecrafts-api-<env>`, rewritten by `project:rename`), so repeat under
+# per-env (`indiecrafts-<env>-shared-api`, rewritten by `project:rename`), so repeat under
 # each [env.*] like the R2 buckets. Then `env.API.fetch(request)` from a route.
 # [[services]]
 # binding = "API"
-# service = "indiecrafts-api-dev"
+# service = "indiecrafts-dev-shared-api"
 #
 # ── Optional: produce to a Queue (a consumer lives in `cron`/`workers`) ───
 # Offload slow work (emails, webhooks) to a queue-consumer Worker. `wrangler queues
 # create <name>` first; repeat under each [env.*]. Then `env.JOBS.send(msg)`.
 # [[queues.producers]]
 # binding = "JOBS"
-# queue = "indiecrafts-jobs-dev"
+# queue = "indiecrafts-dev-jobs"
+
+# ── Optional: advanced runtime options (full reference: code/shared/api/wrangler.toml) ─
+# OpenNext manages the Worker entry, but these still apply — uncomment as needed:
+# [placement]
+# mode = "smart"                       # run near your DB (e.g. Hyperdrive-fronted Postgres)
+# [limits]
+# cpu_ms = 100                         # SSR/ISR can be CPU-heavy; raise on the paid plan
+# upload_source_maps = true            # readable stack traces in Workers Logs
+# [[hyperdrive]]                       # pooled Postgres for a non-Sanity data source
+# binding = "PG"
+# id = "<hyperdrive config id>"
+# [[tail_consumers]]                   # stream this app's logs to the `workers` Worker
+# service = "indiecrafts-dev-shared-workers"
 
 # Workers Logs on for every environment (base + dev/staging/prod). `invocation_logs`
 # adds one summary line per request. View: dashboard → Worker → Logs, or `wrangler tail`.
@@ -72,7 +87,7 @@ invocation_logs = true
 
 # ── dev ──────────────────────────────────────────────────────
 [env.dev]
-name = "indiecrafts-web-dev"
+name = "indiecrafts-dev-web-website"
 workers_dev = true
 
 [env.dev.vars]
@@ -85,7 +100,7 @@ NEXT_PUBLIC_ENVIRONMENT = "development"
 
 [[env.dev.r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
-bucket_name = "indiecrafts-web-isr-dev"
+bucket_name = "indiecrafts-dev-web-website-isr"
 
 # RATE_LIMIT_KV (dev) — uncommented + filled by `pnpm setup:kv`.
 # [[env.dev.kv_namespaces]]
@@ -98,7 +113,7 @@ invocation_logs = true
 
 # ── staging ──────────────────────────────────────────────────
 [env.staging]
-name = "indiecrafts-web-staging"
+name = "indiecrafts-staging-web-website"
 workers_dev = true
 
 [env.staging.vars]
@@ -108,7 +123,7 @@ NEXT_PUBLIC_ENVIRONMENT = "staging"
 
 [[env.staging.r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
-bucket_name = "indiecrafts-web-isr-staging"
+bucket_name = "indiecrafts-staging-web-website-isr"
 
 # RATE_LIMIT_KV (staging) — uncommented + filled by `pnpm setup:kv`.
 # [[env.staging.kv_namespaces]]
@@ -121,7 +136,7 @@ invocation_logs = true
 
 # ── prod ─────────────────────────────────────────────────────
 [env.prod]
-name = "indiecrafts-web"
+name = "indiecrafts-prod-web-website"
 workers_dev = false
 
 [env.prod.vars]
@@ -135,7 +150,7 @@ NEXT_PUBLIC_ENVIRONMENT = "production"
 
 [[env.prod.r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
-bucket_name = "indiecrafts-web-isr-prod"
+bucket_name = "indiecrafts-prod-web-website-isr"
 
 # RATE_LIMIT_KV (prod) — uncommented + filled by `pnpm setup:kv`.
 # [[env.prod.kv_namespaces]]
@@ -147,9 +162,13 @@ enabled = true
 invocation_logs = true
 
 # Custom domain — the host is declared ONCE in the domain registry
-# (code/shared/scripts/lib/domains.mjs). Generate the route block to paste
-# here with:  pnpm domains:print website prod  (also prints the tfvars + the origin).
-# The deploy runner exports NEXT_PUBLIC_SITE_URL from the same registry.
+# (code/shared/scripts/lib/domains.mjs). By DEFAULT the Terraform edge layer
+# (infra/cloudflare) attaches it (`cloudflare_workers_custom_domain`, gated by
+# `attach_domain`), so these routes stay COMMENTED — uncommenting them here while
+# Terraform also manages the domain makes the two fight over the hostname.
+# Uncomment ONLY if you deploy WITHOUT the infra/ layer (then set attach_domain=false).
+# `pnpm domains:print website prod` prints both options (pick one) + the origin;
+# the deploy runner exports NEXT_PUBLIC_SITE_URL from the same registry either way.
 # [[env.prod.routes]]
 # pattern = "example.com"
 # custom_domain = true

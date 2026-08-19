@@ -199,6 +199,66 @@ resource "cloudflare_turnstile_widget" "forms" {
 #   setting_id = "image_resizing"
 #   value      = "on"
 # }
+#
+# ── Zero Trust Access — gate the ADMIN app behind SSO (the registry says: add a
+#    Cloudflare Access gate before shipping admin). This block belongs in the ADMIN
+#    app's OWN infra/cloudflare (copy this dir there); shown here as the reference.
+#    Protects `admin.<domain>` — only the listed emails/domain reach the Worker.
+# resource "cloudflare_zero_trust_access_application" "admin" {
+#   account_id       = var.account_id
+#   zone_id          = var.zone_id
+#   name             = "${var.worker_name}-admin"
+#   domain           = "admin.${var.domain}"
+#   type             = "self_hosted"
+#   session_duration = "24h"
+# }
+# resource "cloudflare_zero_trust_access_policy" "admin_allow" {
+#   account_id     = var.account_id
+#   application_id = cloudflare_zero_trust_access_application.admin.id
+#   name           = "team-only"
+#   decision       = "allow"
+#   precedence     = 1
+#   include        = [{ email_domain = { domain = "your-company.com" } }]
+#   # or: include = [{ email = { email = "you@your-company.com" } }]
+# }
+#
+# ── Redirect rule — www → apex (or apex → www). Single-redirect, at the edge.
+# resource "cloudflare_ruleset" "redirect" {
+#   zone_id = var.zone_id
+#   name    = "${var.worker_name}-redirects"
+#   kind    = "zone"
+#   phase   = "http_request_dynamic_redirect"
+#   rules = [{
+#     ref         = "www_to_apex"
+#     description = "www → apex"
+#     expression  = "(http.host eq \"www.${var.domain}\")"
+#     action      = "redirect"
+#     action_parameters = { from_value = {
+#       status_code = 301
+#       target_url  = { expression = "concat(\"https://${var.domain}\", http.request.uri.path)" }
+#       preserve_query_string = true
+#     } }
+#   }]
+# }
+#
+# ── DNS record — only if CF is NOT already fronting the apex (the custom-domain
+#    resource makes its own record). Example: a mail/verification TXT.
+# resource "cloudflare_dns_record" "txt" {
+#   zone_id = var.zone_id
+#   name    = var.domain
+#   type    = "TXT"
+#   content = "v=spf1 include:_spf.mx.cloudflare.net ~all"
+#   ttl     = 1
+# }
+#
+# ── Logpush — ship Worker/HTTP logs to R2/S3/a SIEM (compliance / retention).
+# resource "cloudflare_logpush_job" "http" {
+#   zone_id          = var.zone_id
+#   name             = "${var.worker_name}-http"
+#   dataset          = "http_requests"
+#   destination_conf = "r2://indiecrafts-prod-web-website-logs/http?account-id=${var.account_id}&access-key-id=<>&secret-access-key=<>"
+#   enabled          = true
+# }
 
 # ── Outputs (feed the app env) ────────────────────────────────────────────────
 output "turnstile_site_key" {

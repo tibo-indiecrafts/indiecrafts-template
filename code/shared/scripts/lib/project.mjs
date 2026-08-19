@@ -1,25 +1,34 @@
 // Project-identity helpers shared by the deploy / secrets / backup / doctor
 // scripts across ALL apps. The one namespace is `DEFAULT_SITE_PREFIX` (config,
-// env-overridable via NEXT_PUBLIC_SITE_PREFIX); each app's `wrangler.toml` mirrors
-// it as `<prefix>-<app>*`. These guard a shared-account deploy from clobbering
-// another client under the template default.
+// env-overridable via NEXT_PUBLIC_SITE_PREFIX); every Cloudflare resource name is
+// `<prefix>-<env>-<platform>-<slug>` (see `resourceName` in apps.mjs), so a client
+// rename only swaps `<prefix>`. The clobber guard refuses a staging/prod deploy
+// while a name is still on the template prefix.
 //
-// Path reads are CWD-relative: every deploy/secrets script runs from its own app
-// dir (`code/projects/<app>`), so `wrangler.toml` / `.env.local` resolve there and
-// `../../packages/config` resolves to `code/packages/shared/config` from any app dir.
+// Per-app files (`wrangler.toml`, `.env.local`) are CWD-relative (each deploy
+// script runs from its own app dir). The one shared file (`@indiecrafts/config`)
+// resolves against THIS script's location instead, so it is correct whether the
+// caller runs from a 4-deep surface or a 2-deep shared service.
 
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { resourceName } from "./apps.mjs";
 
-/** The wrangler resource stem the template SHIPS with for `web` — kept for `project-rename` (its base is `indiecrafts`). */
-export const TEMPLATE_SLUG = "indiecrafts-web";
+/** The namespace the template SHIPS with. A client swaps it via `project-rename`; the clobber guard treats any name still on this prefix as "not renamed". */
+export const TEMPLATE_PREFIX = "indiecrafts";
 
-/** The "not renamed yet" sentinel for a given app (`indiecrafts-<app>`). */
-export const templateSlug = (app) => `indiecrafts-${app}`;
-
+// `wrangler.toml` + `.env.local` are per-app → CWD-relative (each deploy script
+// runs from its own app dir). The config is ONE shared file → resolve it against
+// THIS script's location, so it's correct from any app depth (surfaces are 4 deep,
+// shared services 2 deep — a single CWD-relative path can't serve both).
 const WRANGLER = resolve("wrangler.toml");
-const CONFIG_INDEX = resolve("../../packages/shared/config/src/index.ts");
 const ENV_LOCAL = resolve(".env.local");
+const HERE = dirname(fileURLToPath(import.meta.url)); // code/shared/scripts/lib
+export const CONFIG_INDEX = resolve(
+  HERE,
+  "../../../packages/shared/config/src/index.ts",
+);
 
 function readFileOr(path, fallback = "") {
   try {
@@ -60,16 +69,20 @@ export function readSitePrefix() {
 
 /**
  * Guard against a shared-Cloudflare-account clobber: refuse a staging/prod deploy
- * while the current app's Worker + R2 names are still the template default
- * (`indiecrafts-<app>`). `dev` is exempt (the template self-tests there);
+ * while the app's Worker + R2 names are still on the template prefix
+ * (`indiecrafts-<env>-<platform>-<slug>`). Works for EVERY app — it compares the
+ * app's prod name against `resourceName(app, "prod", TEMPLATE_PREFIX)`, so there is
+ * no per-app special case (the old `web`-vs-`website` mismatch that left the flagship
+ * unguarded is gone). `dev` is exempt (the template self-tests there);
  * `ALLOW_DEFAULT_SLUG=true` lets the template's OWN deploy through. Exits non-zero.
  */
 export function assertRenamed(app, env) {
   if (env === "dev" || process.env.ALLOW_DEFAULT_SLUG === "true") return;
-  if (getWranglerSlug() === templateSlug(app)) {
+  const templateName = resourceName(app, "prod", TEMPLATE_PREFIX);
+  if (getWranglerSlug() === templateName) {
     console.error(
       `✗ Refusing to deploy ${app} to ${env}: the Worker + R2 names are still the template default ` +
-        `"${templateSlug(app)}".\n` +
+        `"${templateName}".\n` +
         `  Deploying would OVERWRITE another client's Worker in a shared Cloudflare account.\n` +
         `  Run  pnpm project:rename <your-slug>  first (or set ALLOW_DEFAULT_SLUG=true for the template's own deploy).`,
     );

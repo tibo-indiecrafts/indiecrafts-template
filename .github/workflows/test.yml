@@ -1,7 +1,9 @@
-# CI — the PR gate. `verify` (types/lint/format/contrast/tests + tooling gates) and
-# `build` (the real OpenNext Worker build) BLOCK; `browser` (Storybook a11y + e2e/visual)
+# CI — the PR gate. `verify` (types/lint/format/contrast/tests + tooling gates),
+# `build` (the real OpenNext Worker build), `infra` (terraform validate) and
+# `wrangler` (worker config dry-run) BLOCK; `browser` (Storybook a11y + e2e/visual)
 # is advisory until baselines are trusted; `docs` builds the VitePress site;
-# `dependency-review` flags risky deps on PRs. React Doctor runs in react-doctor.yml.
+# `dependency-review` + `secrets-scan` flag risky deps / leaked secrets on PRs.
+# React Doctor runs in react-doctor.yml.
 
 name: CI
 
@@ -38,7 +40,7 @@ jobs:
       - run: node code/shared/scripts/checks/delivery-canary.mjs # work/ + secrets must never reach an export
 
   # The real Cloudflare Worker build (OpenNext) for every AFFECTED Next app
-  # (web · marketing · admin) — turbo fans out via the `build:cf` task and skips
+  # (website · admin) — turbo fans out via the `build:cf` task and skips
   # unchanged apps (a docs-only PR builds none). Proves every route prerenders ×
   # locale AND catches CF-only breakage (Shiki WASM, node-compat) before deploy.
   # Needs Sanity read access (blog SSG + sitemap fetch) from repo vars/secrets.
@@ -97,3 +99,48 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: actions/dependency-review-action@v4
+
+  # Terraform for the Cloudflare edge — `fmt` + `validate` on every PR. Creds-free
+  # (`init -backend=false`, no CF API call); `plan`/`apply` stay manual (they need
+  # CLOUDFLARE_API_TOKEN + state). Catches HCL / provider-schema errors before merge.
+  infra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+      - name: fmt + validate (website Cloudflare edge)
+        working-directory: code/projects/web/surfaces/website/infra/cloudflare
+        run: |
+          terraform fmt -check -recursive
+          terraform init -backend=false
+          terraform validate
+
+  # Validate each BARE Worker's wrangler.toml + bundle its entry WITHOUT deploying
+  # (no Cloudflare auth needed). The next-cf apps (website · admin) are covered by
+  # the `build` job (turbo build:cf), so this is just the api · cron · workers slots.
+  wrangler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: wrangler deploy --dry-run (api · cron · workers)
+        run: |
+          for svc in api cron workers; do
+            echo "── $svc ──"
+            pnpm --filter "@indiecrafts/$svc" exec wrangler deploy --dry-run --outdir "/tmp/$svc-dryrun"
+          done
+
+  # Secret scanning — fails the PR if a credential is committed (defence in depth on
+  # top of the .gitignore + delivery-canary). Scans the PR's commits.
+  secrets-scan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # full history so gitleaks can scan the PR's commit range
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

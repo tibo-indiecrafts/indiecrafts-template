@@ -1,12 +1,13 @@
 # Cloudflare Worker — scheduled / cron (a BARE worker, no Next/OpenNext).
-# Deploy: `pnpm deploy:cron:<env>` (→ scripts/deploy.mjs → `wrangler deploy --env <env>`).
+# Deploy: `pnpm deploy:cron:<env>` (→ scripts/deploy/worker.mjs → `wrangler deploy --env <env>`).
 # The schedule is the `[triggers] crons` list below (Cloudflare runs it — no HTTP needed).
 #
-# Per client site, `pnpm project:rename <slug>` rewrites every `indiecrafts-cron`
-# name here. Do NOT hand-edit the names (a staging/prod deploy is blocked until they
-# differ from the template default — shared-account clobber guard, scripts/deploy.mjs).
+# Names follow `<prefix>-<env>-<platform>-<slug>` (here `indiecrafts-<env>-shared-cron`),
+# the single formula in scripts/lib/apps.mjs `resourceName`. `pnpm project:rename <slug>`
+# swaps only the `<prefix>`. Do NOT hand-edit the names (a staging/prod deploy is blocked
+# until the prefix differs from the template default — shared-account clobber guard).
 
-name = "indiecrafts-cron-dev"
+name = "indiecrafts-dev-shared-cron"
 main = "src/index.ts"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
@@ -20,18 +21,44 @@ crons = ["0 * * * *"]
 enabled = true
 invocation_logs = true
 
-# ── Optional bindings (uncomment as needed) ──────────────────
-# [[kv_namespaces]]   binding = "KV"      id = "<wrangler kv namespace create>"
-# [[r2_buckets]]      binding = "BUCKET"  bucket_name = "indiecrafts-cron-<env>"
-# [[d1_databases]]    binding = "DB"      database_name = "…"  database_id = "…"  migrations_dir = "db/d1/<name>/migrations"
-# [[queues.consumers]] queue = "…"   # a cron worker can also drain a queue
+# ── Bindings & options (the ones a scheduled worker usually wants) ───────
+# FULL reference (every binding + placement/limits/DO/AI/…): code/shared/api/wrangler.toml.
+# Repeat each under `[env.<env>.*]` to differ per env.
+#
+# [vars]
+# DIGEST_HOUR = "6"
+# Secrets → `wrangler secret put <NAME> --env <env>` (never in this file).
+#
+# [[kv_namespaces]]        # env.KV — cursors / last-run markers
+# binding = "KV"
+# id = "<wrangler kv namespace create KV>"
+#
+# [[d1_databases]]         # env.DB — read/write app data on a schedule
+# binding = "DB"
+# database_name = "indiecrafts-dev-shared-cron"
+# database_id = "<wrangler d1 create …>"
+#
+# [[queues.consumers]]     # a cron worker can also DRAIN a queue (add a queue() handler)
+# queue = "indiecrafts-dev-jobs"
+# max_batch_size = 10
+# dead_letter_queue = "indiecrafts-dev-jobs-dlq"
+#
+# [[services]]             # call a sibling worker in-process
+# binding = "API"
+# service = "indiecrafts-dev-shared-api"
+#
+# [placement]              # run near your DB
+# mode = "smart"
+# [limits]
+# cpu_ms = 50
+# upload_source_maps = true
 
 # ── per-env (mirror the deploy scripts) ──────────────────────
 [env.dev]
-name = "indiecrafts-cron-dev"
+name = "indiecrafts-dev-shared-cron"
 
 [env.staging]
-name = "indiecrafts-cron-staging"
+name = "indiecrafts-staging-shared-cron"
 
 [env.prod]
-name = "indiecrafts-cron-prod"
+name = "indiecrafts-prod-shared-cron"

@@ -2,7 +2,7 @@
 # Deploy: `pnpm deploy:admin:<env>`. Internal/auth-gated — put it on a private
 # subdomain + Cloudflare Access. `pnpm project:rename <slug>` rewrites the names.
 
-name = "indiecrafts-admin-dev"
+name = "indiecrafts-dev-web-admin"
 main = ".open-next/worker.js"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
@@ -17,10 +17,10 @@ enabled = true
 invocation_logs = true
 
 [env.dev]
-name = "indiecrafts-admin-dev"
+name = "indiecrafts-dev-web-admin"
 
 [env.staging]
-name = "indiecrafts-admin-staging"
+name = "indiecrafts-staging-web-admin"
 
 [env.prod]
-name = "indiecrafts-admin-prod"
+name = "indiecrafts-prod-web-admin"

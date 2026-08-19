@@ -15,28 +15,28 @@ Config files (all in `code/projects/web/surfaces/website/`): `wrangler.toml` (en
 
 | Env     | Worker               | URL                | Robots                                                      |
 | ------- | -------------------- | ------------------ | ----------------------------------------------------------- |
-| dev     | `<slug>-web-dev`     | `*.workers.dev`    | Disallow (`NEXT_PUBLIC_ENVIRONMENT=development`)            |
-| staging | `<slug>-web-staging` | `*.workers.dev`    | Disallow (`…=staging`)                                      |
-| prod    | `<slug>-web`         | your custom domain | Indexed once `NEXT_PUBLIC_SITE_URL` is set (`…=production`) |
+| dev     | `<slug>-dev-web-website`     | `*.workers.dev`    | Disallow (`NEXT_PUBLIC_ENVIRONMENT=development`)            |
+| staging | `<slug>-staging-web-website` | `*.workers.dev`    | Disallow (`…=staging`)                                      |
+| prod    | `<slug>-prod-web-website`         | your custom domain | Indexed once `NEXT_PUBLIC_SITE_URL` is set (`…=production`) |
 
 > **Rename first — `pnpm project:rename <slug>`.** The template ships with the stem
-> `indiecrafts-web`. `project:rename` rewrites every `wrangler.toml` resource name **and**
+> `indiecrafts-prod-web-website`. `project:rename` rewrites every `wrangler.toml` resource name **and**
 > `DEFAULT_SITE_PREFIX` in `@indiecrafts/config` in one command, then prints the R2 buckets to
 > create. **Don't hand-edit the names** — Worker + R2 names are account-global, so
-> `deploy:website:staging|prod` is **blocked** while they're still `indiecrafts-web` (a shared-account
+> `deploy:website:staging|prod` is **blocked** while they're still `indiecrafts-prod-web-website` (a shared-account
 > guard that stops one client overwriting another). The template's own deploy passes it with
 > `ALLOW_DEFAULT_SLUG=true`.
 
 ## One-time setup
 
 0. **Rename the project** — `pnpm project:rename <slug>` (unique per client). Everything below uses
-   `<slug>-web` in place of `indiecrafts-web`.
+   `<slug>-prod-web-website` in place of `indiecrafts-prod-web-website`.
 1. **Install** — `pnpm install` (resolves `@opennextjs/cloudflare` + `wrangler`, writes the lockfile).
 2. **R2 buckets** — one incremental cache per env (names follow your slug):
    ```bash
-   pnpm --filter @indiecrafts/website exec wrangler r2 bucket create <slug>-web-isr-dev
-   pnpm --filter @indiecrafts/website exec wrangler r2 bucket create <slug>-web-isr-staging
-   pnpm --filter @indiecrafts/website exec wrangler r2 bucket create <slug>-web-isr-prod
+   pnpm --filter @indiecrafts/website exec wrangler r2 bucket create <slug>-dev-web-website-isr
+   pnpm --filter @indiecrafts/website exec wrangler r2 bucket create <slug>-staging-web-website-isr
+   pnpm --filter @indiecrafts/website exec wrangler r2 bucket create <slug>-prod-web-website-isr
    ```
 3. **Rate-limit KV** — the in-app form rate limiter (`@indiecrafts/security` `withGuard`, on the
    newsletter / waitlist / comment routes) needs a KV namespace. Run it once — it creates the namespace
@@ -56,13 +56,21 @@ Config files (all in `code/projects/web/surfaces/website/`): `wrangler.toml` (en
    ```
    It skips `NEXT_PUBLIC_*` + unfilled placeholders. One dataset → the same tokens go to every
    env. (A one-off still works: `wrangler secret put <NAME> --env <env>`.)
-5. **Production domain** — uncomment the `[[env.prod.routes]]` block in `wrangler.toml`, set your
-   domain, and set `NEXT_PUBLIC_SITE_URL` in the prod vars (until then robots.txt serves Disallow).
+5. **Production domain** — declare the host once in the registry (`code/shared/scripts/lib/domains.mjs`),
+   then `pnpm domains:print website prod` and attach it with **ONE** of the two options it prints — never
+   both (they each claim the hostname and fight). **Default: Terraform owns it** — set `domain` +
+   `attach_domain = true` in `infra/cloudflare/env/prod.tfvars` and `pnpm infra:website:apply:prod` (the
+   same layer that owns the WAF / rate-limit / SSL). Only if you deploy **without** the infra/ layer,
+   uncomment the `[[env.prod.routes]]` block in `wrangler.toml` instead (and keep `attach_domain = false`).
+   The deploy runner exports `NEXT_PUBLIC_SITE_URL` from the registry either way (until a real host is set,
+   robots.txt serves Disallow).
 
 ## GitHub Actions (auto-deploy)
 
 `.github/workflows/deploy.yml`: **push to `main` → prod**; **Run workflow** → pick dev/staging/prod.
-It builds with OpenNext and runs `wrangler deploy --env <target>`.
+It fans out from the registry, builds with OpenNext (next-cf) / bundles (worker-cf), runs
+`wrangler deploy --env <target>`, then a **best-effort smoke test** — it curls the app's custom-domain
+origin (from the domain registry via `domains:url`); no custom domain yet ⇒ skipped.
 
 Add these in the repo, scoped to GitHub **Environments** `dev` / `staging` / `prod`:
 
@@ -81,6 +89,21 @@ Cloudflare **version preview URL** (isolated per push; does **not** touch the de
 comments the link. Same-repo PRs only (forks don't receive secrets). It reuses the `dev` Environment
 secrets/vars above. Separately, CI's `build` job (`test.yml`) runs `build:cf` on every PR with the
 Sanity vars/read-token, so a build/prerender break is caught before merge.
+
+## PR checks (`test.yml`)
+
+Every PR runs these (all **blocking** except `browser`):
+
+| Job | What |
+| --- | --- |
+| `verify` | tsc · lint · format · WCAG contrast · unit tests · script tests · tooling gates |
+| `build` | the real OpenNext `build:cf` for every affected next-cf app |
+| `infra` | `terraform fmt -check` + `init -backend=false` + `validate` on the Cloudflare edge (creds-free; `plan`/`apply` stay manual) |
+| `wrangler` | `wrangler deploy --dry-run` for each bare worker (api · cron · workers) — validates the toml + bundle, no auth |
+| `docs` | the VitePress build (Vue-parser + structural errors) |
+| `dependency-review` | GitHub-native — flags vulnerable / disallowed deps |
+| `secrets-scan` | gitleaks — fails on a committed credential |
+| `browser` | advisory — Storybook a11y + Playwright e2e/visual |
 
 ## Local preview + manual deploy
 

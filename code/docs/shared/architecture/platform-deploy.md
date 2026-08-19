@@ -54,8 +54,11 @@ pnpm deploy:mobile:prod     → node ../../../../../code/shared/scripts/deploy/e
 
 The runners share `code/shared/scripts/lib/deploy-shared.mjs` (`run` + the prod confirm) and
 `code/shared/scripts/lib/project.mjs` (`assertRenamed(app, env)` — the shared-account clobber guard: refuses a
-staging/prod deploy while the Worker names are still the template default `indiecrafts-<app>`; run
-`pnpm project:rename <slug>` first).
+staging/prod deploy while a Worker name is still on the template prefix). Every Cloudflare resource name is
+**`<prefix>-<env>-<platform>-<slug>`** (env-first; e.g. `indiecrafts-prod-web-website`, `indiecrafts-dev-shared-api`),
+the one formula in `code/shared/scripts/lib/apps.mjs` `resourceName(slug, env, prefix)` — so `pnpm project:rename <slug>`
+swaps only the `<prefix>` (reaching `code/shared/*`), and the guard compares each app against
+`resourceName(app, "prod", TEMPLATE_PREFIX)` — one rule, every app.
 
 ### Ship several at once
 
@@ -85,12 +88,12 @@ CI reads the same registry — no app is hard-coded:
 ## IaC (Terraform)
 
 The Cloudflare **edge** config that `wrangler.toml` can't express (DNS, WAF, rate-limit, cache rules,
-Turnstile) is Terraform, **co-located with each app and self-contained**: `code/projects/<app>/infra/`
+Turnstile) is Terraform, **co-located with each app and self-contained**: `code/projects/<platform>/<kind>/<app>/infra/`
 holds one `main.tf` (provider + vars + all edge resources + outputs — no shared module) plus per-env
 tfvars, so the app owns its whole deploy surface — `wrangler.toml` ships the Worker, `infra/` owns the
-edge. Wired for `web` today; a new app **copies `code/projects/web/surfaces/website/infra/`** → `code/projects/<app>/infra/`
+edge. Wired for `web` today; a new app **copies `code/projects/web/surfaces/website/infra/`** → `code/projects/<platform>/<kind>/<app>/infra/`
 and retargets the tfvars. Runner: `node code/shared/scripts/infra/run.mjs <app> <plan|apply> <env>` (resolves
-`code/projects/<app>/infra`).
+`code/projects/<platform>/<kind>/<app>/infra`).
 
 ## Adding an app
 

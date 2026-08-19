@@ -1,12 +1,13 @@
 # Cloudflare Worker — HTTP API (a BARE worker, no Next/OpenNext).
-# Deploy: `pnpm deploy:api:<env>` (→ scripts/deploy.mjs → `wrangler deploy --env <env>`).
+# Deploy: `pnpm deploy:api:<env>` (→ scripts/deploy/worker.mjs → `wrangler deploy --env <env>`).
 # Wrangler/esbuild bundles src/index.ts + its `@indiecrafts/*` imports — no build step.
 #
-# Per client site, `pnpm project:rename <slug>` rewrites every `indiecrafts-api`
-# name here. Do NOT hand-edit the names (a staging/prod deploy is blocked until they
-# differ from the template default — shared-account clobber guard, scripts/deploy.mjs).
+# Names follow `<prefix>-<env>-<platform>-<slug>` (here `indiecrafts-<env>-shared-api`),
+# the single formula in scripts/lib/apps.mjs `resourceName`. `pnpm project:rename <slug>`
+# swaps only the `<prefix>`. Do NOT hand-edit the names (a staging/prod deploy is blocked
+# until the prefix differs from the template default — shared-account clobber guard).
 
-name = "indiecrafts-api-dev"
+name = "indiecrafts-dev-shared-api"
 main = "src/index.ts"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
@@ -17,21 +18,92 @@ keep_vars = true
 enabled = true
 invocation_logs = true
 
-# ── Optional bindings (uncomment as needed) ──────────────────
-# [[kv_namespaces]]   binding = "KV"      id = "<wrangler kv namespace create>"
-# [[r2_buckets]]      binding = "BUCKET"  bucket_name = "indiecrafts-api-<env>"
-# [[d1_databases]]    binding = "DB"      database_name = "…"  database_id = "…"  migrations_dir = "db/d1/<name>/migrations"
-#
-# To let the web app CALL this API in-process (no public hop), add a service
-# binding to the WEB app's wrangler.toml (not here):
-#   [[services]]  binding = "API"  service = "indiecrafts-api-<env>"
+# ═══════════════════════════════════════════════════════════════════════
+# Bindings & runtime options — uncomment ONLY what this Worker needs.
+# The blocks here are the BASE (used by `wrangler dev` + the default deploy);
+# repeat each under `[env.<env>.*]` to differ per env (like the name lines).
+# Bucket/DB names follow the resource scheme `indiecrafts-<env>-shared-api-<x>`.
+# Full reference: https://developers.cloudflare.com/workers/wrangler/configuration/
+# ═══════════════════════════════════════════════════════════════════════
+
+# ── Plain vars (non-secret; visible in the dashboard) ────────────────────
+# [vars]
+# API_VERSION = "v1"
+# Secrets are NEVER here → `wrangler secret put <NAME> --env <env>` (or
+# `pnpm secrets:sync:*`). They surface on `env.<NAME>`.
+
+# ── KV — edge key-value (cache · sessions · flags) ───────────────────────
+# [[kv_namespaces]]
+# binding = "KV"                       # env.KV
+# id = "<wrangler kv namespace create KV>"
+
+# ── R2 — S3-compatible object storage ────────────────────────────────────
+# [[r2_buckets]]
+# binding = "BUCKET"                   # env.BUCKET
+# bucket_name = "indiecrafts-dev-shared-api-assets"
+
+# ── D1 — serverless SQLite ───────────────────────────────────────────────
+# [[d1_databases]]
+# binding = "DB"                       # env.DB
+# database_name = "indiecrafts-dev-shared-api"
+# database_id = "<wrangler d1 create …>"
+# migrations_dir = "db/d1/<name>/migrations"
+
+# ── Queues — produce / consume (add a `queue()` handler to consume) ──────
+# [[queues.producers]]
+# binding = "JOBS"                     # env.JOBS.send(msg)
+# queue = "indiecrafts-dev-jobs"
+# [[queues.consumers]]
+# queue = "indiecrafts-dev-jobs"
+# max_batch_size = 10
+# max_retries = 3
+# dead_letter_queue = "indiecrafts-dev-jobs-dlq"
+
+# ── Service binding — call a sibling Worker in-process (no public hop) ───
+# [[services]]
+# binding = "WORKERS"                  # env.WORKERS.fetch(req)
+# service = "indiecrafts-dev-shared-workers"
+
+# ── Durable Objects — strongly-consistent coordination ──────────────────
+# [[durable_objects.bindings]]
+# name = "COUNTER"                     # env.COUNTER
+# class_name = "Counter"
+# [[migrations]]
+# tag = "v1"
+# new_classes = ["Counter"]
+
+# ── Data / AI / integration bindings (one line each — uncomment + fill) ──
+# [ai]                            binding = "AI"                            # Workers AI
+# [[vectorize]]                   binding = "VEC"       index_name = "…"    # vector search
+# [[hyperdrive]]                  binding = "PG"        id = "<config id>"  # pooled Postgres
+# [browser]                       binding = "BROWSER"                       # headless Chrome
+# [[analytics_engine_datasets]]   binding = "AE"        dataset = "…"       # write-time analytics
+# [[mtls_certificates]]           binding = "CLIENT_CERT"  certificate_id = "…"
+# [[send_email]]                  name = "MAILER"                           # CF Email Routing send
+# [version_metadata]              binding = "CF_VERSION"                    # deployed version id/tag
+
+# ── Smart placement — run near your DB/backend, not the eyeball ──────────
+# [placement]
+# mode = "smart"
+
+# ── Limits + source maps + tail ──────────────────────────────────────────
+# [limits]
+# cpu_ms = 50                          # raise for heavy requests (paid)
+# upload_source_maps = true            # readable stack traces in Workers Logs
+# [[tail_consumers]]
+# service = "indiecrafts-dev-shared-workers"   # stream this Worker's logs elsewhere
+
+# ── Local dev (`wrangler dev`) ───────────────────────────────────────────
+# [dev]
+# port = 8787
+# local_protocol = "http"
 
 # ── per-env (mirror the deploy scripts) ──────────────────────
 [env.dev]
-name = "indiecrafts-api-dev"
+name = "indiecrafts-dev-shared-api"
 
 [env.staging]
-name = "indiecrafts-api-staging"
+name = "indiecrafts-staging-shared-api"
 
 [env.prod]
-name = "indiecrafts-api-prod"
+name = "indiecrafts-prod-shared-api"

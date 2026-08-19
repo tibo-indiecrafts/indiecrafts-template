@@ -77,9 +77,9 @@ app, shared runners dispatched by platform class, and CI that fans out from the 
 [**Platform deploy**](./platform-deploy.md).
 
 **Terraform** (the Cloudflare edge config `wrangler.toml` can't express) is already multi-app: each app's
-per-app root is **co-located with the app and self-contained** at `code/projects/<app>/infra/` (one
+per-app root is **co-located with the app and self-contained** at `code/projects/<platform>/<kind>/<app>/infra/` (one
 `main.tf` with all edge resources inlined — no shared module), keyed by `worker_name`, state isolated per
-env workspace. A new app = copy `code/projects/web/surfaces/website/infra/` → `code/projects/<app>/infra/` + its tfvars +
+env workspace. A new app = copy `code/projects/web/surfaces/website/infra/` → `code/projects/<platform>/<kind>/<app>/infra/` + its tfvars +
 `infra:<app>:*` delegators. **One app = one Cloudflare zone** (the zone-level rules are singletons — see
 [Cloudflare IaC](/infra/cloudflare-iac#add-app-2)). `pnpm project:rename <slug>` keeps the config
 prefix, the wrangler names, **and** the tfvars `worker_name` in sync.

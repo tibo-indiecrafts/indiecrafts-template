@@ -121,6 +121,30 @@ export function deployable({ only = "cloudflare" } = {}) {
 /** Every app of a given platform class. */
 export const byClass = (cls) => APPS.filter((a) => a.class === cls);
 
+/** Find an app row by slug. */
+export const bySlug = (slug) => APPS.find((a) => a.slug === slug);
+
+/**
+ * The Cloudflare resource name for an app in one env — the SINGLE source of the
+ * naming convention. It mirrors the folder tree: **`<prefix>-<env>-<platform>-<slug>`**
+ * (env-first; prod is explicit, not bare). Examples:
+ *   website → `indiecrafts-prod-web-website`   (code/projects/web/surfaces/website)
+ *   api     → `indiecrafts-dev-shared-api`     (code/shared/api)
+ * Every wrangler `name`, the R2/KV/D1 stems, and the tfvars `worker_name` derive
+ * from here, so a client rename only swaps `<prefix>` (see `project-rename`).
+ * @param {string} slug  an `APPS` row slug
+ * @param {"dev"|"staging"|"prod"} env
+ * @param {string} prefix  the deployment namespace (`DEFAULT_SITE_PREFIX`, e.g. `indiecrafts`, or a client slug)
+ * @returns {string}
+ */
+export function resourceName(slug, env, prefix) {
+  const app = bySlug(slug);
+  if (!app) throw new Error(`resourceName: unknown app slug "${slug}"`);
+  if (!ENVS.includes(env)) throw new Error(`resourceName: bad env "${env}"`);
+  if (!prefix) throw new Error("resourceName: a prefix is required");
+  return `${prefix}-${env}-${app.platform}-${app.slug}`;
+}
+
 // ── CLI: emit the app list for the CI matrix ──────────────────────────────────
 //   node scripts/lib/apps.mjs [--json] [--cloudflare] [--class <next-cf|worker-cf|expo|electron>]
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

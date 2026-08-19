@@ -19,6 +19,51 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **API safety: one reviewable security surface + a check that keeps it that way.** After auditing
+  every route handler (all safe by design — writes are whitelisted with bound GROQ params, secrets
+  are server-only, redirects/tokens are HMAC-signed), two hardening changes landed. (1) The one-click
+  email **`/api/comments/moderate`** POST — the sole mutating route with no app-layer throttle — now
+  calls `rateLimit` (20/600s, defence-in-depth on its single-use token; `clientIp` was exported from
+  `@indiecrafts/security/guard` to share the trusted IP derivation). (2) A new **`pnpm verify:api-guards`**
+  (`code/shared/scripts/checks/api-guards.mjs`, in `verify` + CI) fails if any public **mutating** route
+  ships without `withGuard` or an allowlisted reason — so "all API safe" holds without a manual re-audit.
+  _Why: the surface was safe but unenforced; a future POST could regress it silently._
+- **Cloudflare configs expose the full option surface (commented) + a domain-authority + admin-Access.**
+  The bare workers gain a commented **bindings & runtime-options reference** — `code/shared/api/wrangler.toml`
+  is the full list (KV · R2 · D1 · queues · services · Durable Objects · AI · Vectorize · Hyperdrive · Browser ·
+  Analytics Engine · mTLS · send_email · `[placement] smart` · `[limits]` · `[[tail_consumers]]` · `[vars]` ·
+  `[dev]` · source maps); `cron`/`workers` carry the scheduled/queue subset + a pointer; the website adds
+  placement/limits/hyperdrive/tail. Terraform (`infra/cloudflare/main.tf`) gains commented **Zero-Trust Access**
+  (gate the admin app behind SSO — copy into admin's own infra when it ships), a **www→apex redirect ruleset**,
+  a **DNS record**, and a **Logpush job**. **Domain double-attach resolved:** Terraform
+  `cloudflare_workers_custom_domain` is authoritative; `domains:print` now prints the wrangler-route and tfvars
+  paths as **mutually exclusive** ("pick one"), and the wrangler comment + `deployment.md` + `cloudflare-iac.md`
+  say so. _Why:_ configure a maximum at the edge without leaving the tree, and stop the two domain mechanisms
+  fighting. Env-file check: `.env.example` was already complete (opt-in secrets shown commented); added the
+  optional `NEXT_PUBLIC_SANITY_STUDIO_BASE_PATH`.
+
+### Changed
+
+- **Per-route API guard limits moved to one app-owned config, `src/config/security.ts`.** The
+  `rateLimit` / `bodyMax` / `turnstile` options that were inline literals in each public POST route
+  (repeating `windowSec: 600` and the body-cap tiers across six files) now live in one reviewable
+  `security` object, imported via `@/config` and passed as `withGuard(handler, security.<name>)`.
+  Values are byte-identical — no runtime change. _Why: one home per fact, and a single place to review
+  or tune the whole API's abuse policy (documented in `docs/apps/web/config/security-limits.md`)._
+- **Cloudflare resource names now follow the folder tree — `<prefix>-<env>-<platform>-<slug>`, env-first.**
+  One formula (`resourceName` in `scripts/lib/apps.mjs`) replaces the hand-typed, special-cased names:
+  `indiecrafts-web` → `indiecrafts-<env>-web-website`, `indiecrafts-admin` → `…-web-admin`,
+  `indiecrafts-{api,cron}-prod` (stray `-prod`) → `indiecrafts-prod-shared-{api,cron}`. R2/KV/D1 stems +
+  Terraform `worker_name` follow (e.g. `…-web-website-isr`). **Fixes two deploy blockers:** (1) the
+  clobber-guard was **dead for the flagship** (`web`≠`website` slug/stem mismatch) and **unreachable for
+  `code/shared/*`** — it now compares every app against `resourceName(app,"prod",TEMPLATE_PREFIX)` and fires
+  for all five; (2) `project:rename` is registry-driven, reaches `code/shared/*`, and a client rename is a
+  single `<prefix>` swap (was a broken loop over the wrong directory). `project.mjs` reads `@indiecrafts/config`
+  by script-relative path (was CWD-relative → wrong at surface depth). _Why:_ names mirror `code/`, prod stops
+  clobbering under a shared account, and adding an app gets a correct name for free. `resourceName` is unit-tested.
+
+### Added
+
 - **Editor-curated `/llms.txt` sections + a last-reviewed date — all in Sanity, per language.**
   Each page's **SEO & visibilité** gains **Section pour les IA** (`seoMeta.llmsSection`): the `## H2`
   the page groups under in `/llms.txt` (empty = the default « Pages »). The per-language **Résumé pour

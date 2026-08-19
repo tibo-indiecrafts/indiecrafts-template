@@ -46,7 +46,7 @@ Most clients never touch the repo at all: they get the **live site**, the **Sani
 ### One namespace per client (multi-instance under one account)
 
 Every reuse of the template gets a unique **namespace** via `pnpm project:rename <slug>` — it sets
-`DEFAULT_SITE_PREFIX` (`@indiecrafts/config`) + the `<slug>-web*` Worker/R2 names together. The prefix
+`DEFAULT_SITE_PREFIX` (`@indiecrafts/config`) + the `<prefix>-<env>-web-website*` Worker/R2 names together. The prefix
 namespaces the browser keys (consent · theme · locale) and the Cloudflare resources, so **many clients
 under one Cloudflare account never collide** — and a `staging`/`prod` deploy is blocked until you
 rename (a shared-account clobber guard). New-client runbook → [New client](/apps/web/setup/new-client).

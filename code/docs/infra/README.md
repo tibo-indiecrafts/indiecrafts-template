@@ -3,7 +3,7 @@
 Infrastructure for the platform. There is **no central `code/infra/` folder** — infra is split by
 concern, close to what it configures:
 
-- **Edge IaC (Terraform)** — **co-located + self-contained** at `code/projects/<app>/infra/` (one
+- **Edge IaC (Terraform)** — **co-located + self-contained** at `code/projects/<platform>/<kind>/<app>/infra/` (one
   `main.tf` with the provider + vars + all edge resources + outputs, plus per-env tfvars). DNS · WAF ·
   rate-limit · cache · Turnstile, per app × per env. Run: `pnpm infra:<app>:{init,plan,apply,output}:<env>`.
   Full runbook → [Cloudflare as code](/infra/cloudflare-iac).

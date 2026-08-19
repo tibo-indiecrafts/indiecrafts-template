@@ -28,7 +28,7 @@ Still seeing `Disallow: /`? Either `NEXT_PUBLIC_SITE_URL` is unset/wrong, or the
 
 The app deploys to Cloudflare Workers via OpenNext (dev / staging / prod). The **full runbook** — R2 buckets, secrets, GitHub Actions, custom domain, first-deploy checks — is [Deployment (Cloudflare)](./deployment). The launch-critical bits:
 
-> **Reusing the template? Rename first.** Run `pnpm project:rename <slug>` before any staging/prod deploy — it sets `DEFAULT_SITE_PREFIX` + the `<slug>-web*` Worker/R2 names, and the deploy is **blocked** until you do (so one client can't overwrite another under a shared Cloudflare account). Give this client its **own** Resend key + (if on a shared Sanity project) its **own** dataset, not `production`.
+> **Reusing the template? Rename first.** Run `pnpm project:rename <slug>` before any staging/prod deploy — it sets `DEFAULT_SITE_PREFIX` + the `<prefix>-<env>-web-website*` Worker/R2 names, and the deploy is **blocked** until you do (so one client can't overwrite another under a shared Cloudflare account). Give this client its **own** Resend key + (if on a shared Sanity project) its **own** dataset, not `production`.
 
 **Turn on rate-limiting + CAPTCHA.** Run `pnpm setup:kv` once — it creates a `RATE_LIMIT_KV` namespace
 **per env** and activates the in-app form rate limiter (it fails **open** until you do). To also enable

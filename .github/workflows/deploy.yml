@@ -59,3 +59,19 @@ jobs:
           NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
           NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+
+      # Post-deploy smoke test — best-effort. Curls the app's custom-domain origin
+      # from the registry (`domains:url`); if the app/env has no custom domain (still
+      # on *.workers.dev, whose URL isn't in the registry), it's skipped. Once a real
+      # host is set, a failed fetch fails the deploy so a broken ship is caught here.
+      - name: Smoke test
+        run: |
+          env="${{ github.event.inputs.environment || 'prod' }}"
+          url="$(pnpm -s domains:url ${{ matrix.app.slug }} "$env" || true)"
+          if [ -n "$url" ]; then
+            echo "Smoke: GET $url"
+            curl -fsS --retry 3 --retry-delay 5 -o /dev/null "$url"
+            echo "✓ ${{ matrix.app.slug }} ($env) reachable at $url"
+          else
+            echo "No custom-domain origin for ${{ matrix.app.slug }} ($env) — skipping (workers.dev URL not in the registry)."
+          fi

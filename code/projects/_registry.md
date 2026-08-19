@@ -99,7 +99,19 @@ or their own `deploy:<slug>:<env>`.
 
 **Legend:** ● live · ◐ activated scaffold (real `package.json` + workspace member; placeholder content) · ○ reserved.
 
-**Adding an app:** one row in [`scripts/lib/apps.mjs`](../../scripts/lib/apps.mjs) + the slot's own
+**Cloudflare resource naming** — one formula, derived from the tree, single-sourced in
+[`scripts/lib/apps.mjs`](../shared/scripts/lib/apps.mjs) `resourceName(slug, env, prefix)`:
+
+> **`<prefix>-<env>-<platform>-<slug>`** — env-first (prod is explicit, not bare).
+
+It reads straight off `code/`: `web/surfaces/website` → `indiecrafts-<env>-web-website`;
+`shared/api` → `indiecrafts-<env>-shared-api`. Every wrangler `name`, R2/KV/D1 stem, and
+Terraform `worker_name` derives from it, so `pnpm project:rename <slug>` swaps only the
+`<prefix>` (and reaches `code/shared/*`). The clobber guard (`assertRenamed`) refuses a
+staging/prod deploy while a name is still on the template prefix `indiecrafts` — one rule,
+every app (no `web`-vs-`website` special case).
+
+**Adding an app:** one row in [`scripts/lib/apps.mjs`](../shared/scripts/lib/apps.mjs) + the slot's own
 `deploy:<slug>:<env>` script (delegating to a shared runner) + the shared-brick wiring — full steps in
 [`.claude/CLAUDE.md`](.claude/CLAUDE.md). CI (build · deploy · preview) fans out from the registry, so
 no workflow edit is needed.
