@@ -1,12 +1,12 @@
-# Blog module (`@indiecrafts/blog`)
+# Blog module (`@indiecrafts/modules-web-blog`)
 
 The template's **live reference module** — a self-contained, feature-flagged vertical slice at `code/modules/web/blog/`, consumed by the app **as source** via Next `transpilePackages`. Everything the feature owns — UI, GROQ queries, Sanity schema, route-gating, `llms.txt` lines — lives under one folder. Flip `features.blog` off and every public surface 404s and drops from sitemap/nav.
 
 ## What it is
 
-- **Package:** `@indiecrafts/blog` → `code/modules/web/blog/`. Source under `src/{sanity, user-interface, lib}`.
+- **Package:** `@indiecrafts/modules-web-blog` → `code/modules/web/blog/`. Source under `src/{sanity, user-interface, lib}`.
 - **Exports:** `"./*": "./src/*"` — subpath wildcard, no extension in the map (Next + TS resolution fill in `.ts`/`.tsx`/dir index).
-- **Deps point down:** it imports all five shared bricks (`@indiecrafts/config` · `utils` · `sanity` · `ui`) and uses `@indiecrafts/i18n` for navigation — the app keeps its own typed `@/i18n/routing`. The module **never** imports the app.
+- **Deps point down:** it imports all five shared bricks (`@indiecrafts/packages-shared-config` · `utils` · `sanity` · `ui`) and uses `@indiecrafts/packages-web-i18n` for navigation — the app keeps its own typed `@/i18n/routing`. The module **never** imports the app.
 
 See [`docs/modules/`](../) for the general module contract and [`docs/packages/`](../../packages/) for the bricks it composes.
 
@@ -16,11 +16,11 @@ Six mechanisms, all in `code/projects/web/surfaces/website/`:
 
 | #   | Mechanism                                                                                                                   | Where                                                                         |
 | --- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| 1   | tsconfig path `"@indiecrafts/blog/*": ["../../modules/web/blog/src/*"]` (mixed `.ts`/`.tsx`)                                    | `tsconfig.json`                                                               |
-| 2   | `transpilePackages` lists `@indiecrafts/blog` (with every other brick)                                                      | `next.config.ts`                                                              |
-| 3   | `@source "../../../modules/web/blog/src"` so Tailwind scans blog UI                                                             | `@indiecrafts/ui-tokens/globals.css`                                          |
-| 4   | Studio registers `schemaTypes` + `structure` from `@indiecrafts/blog/sanity/*`                                              | `sanity.config.ts`                                                            |
-| 5   | Route-gate `isBlogRouteEnabled` / `requireBlogRoute` / `isRssEnabled`                                                       | `@indiecrafts/blog/lib/route-gate`                                            |
+| 1   | tsconfig path `"@indiecrafts/modules-web-blog/*": ["../../modules/web/blog/src/*"]` (mixed `.ts`/`.tsx`)                                    | `tsconfig.json`                                                               |
+| 2   | `transpilePackages` lists `@indiecrafts/modules-web-blog` (with every other brick)                                                      | `next.config.ts`                                                              |
+| 3   | `@source "../../../modules/web/blog/src"` so Tailwind scans blog UI                                                             | `@indiecrafts/packages-shared-ui-tokens/globals.css`                                          |
+| 4   | Studio registers `schemaTypes` + `structure` from `@indiecrafts/modules-web-blog/sanity/*`                                              | `sanity.config.ts`                                                            |
+| 5   | Route-gate `isBlogRouteEnabled` / `requireBlogRoute` / `isRssEnabled`                                                       | `@indiecrafts/modules-web-blog/lib/route-gate`                                            |
 | 6   | Feature flags `features.blog` + `features.blogTaxonomy.{authors,categories,tags}`; draft preview gates on `features.studio` | app-owned `features` (`@/config`), injected into the blog via `configureBlog` |
 
 ## Guides

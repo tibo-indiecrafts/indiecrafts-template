@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/waitlist",
+  "name": "@indiecrafts/modules-web-waitlist",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,11 +7,12 @@
     "./*": "./src/*"
   },
   "dependencies": {
-    "@indiecrafts/config": "workspace:*",
-    "@indiecrafts/email": "workspace:*",
-    "@indiecrafts/logger": "workspace:*",
-    "@indiecrafts/sanity": "workspace:*",
-    "@indiecrafts/ui-components": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*",
+    "@indiecrafts/packages-web-email": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
+    "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@indiecrafts/packages-web-ui-components": "workspace:*",
     "@sanity/icons": "^3.7.4",
     "next-sanity": "^13.3.3",
     "sanity": "^5.31.1"

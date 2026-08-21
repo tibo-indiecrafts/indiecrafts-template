@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { defineQuery } from "next-sanity";
-import { client } from "@indiecrafts/sanity/client";
+import { client } from "@indiecrafts/packages-web-sanity/client";
 
 const waitlistSettingsQuery = defineQuery(
   `*[_type == "waitlistSettings"][0]{ enabled, heading, description, nameLabel, buttonLabel, consentLabel, successMessage }`,

@@ -28,6 +28,6 @@ imports no app messages.
 ## Where it's used
 
 The app's `/data-request` route shell resolves the copy from `messages.legal.dataRequest.*` and the
-option labels for the seven `DATA_REQUEST_TYPES` (`@indiecrafts/compliance/requests/request-types`),
-then renders this form. Logic lives in `@indiecrafts/compliance` (`submitDataRequest`); the request
+option labels for the seven `DATA_REQUEST_TYPES` (`@indiecrafts/packages-web-compliance/requests/request-types`),
+then renders this form. Logic lives in `@indiecrafts/packages-web-compliance` (`submitDataRequest`); the request
 type list, validator, and record schema all read the one `DATA_REQUEST_TYPES` set.

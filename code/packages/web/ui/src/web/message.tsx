@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@indiecrafts/utils/cn";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (

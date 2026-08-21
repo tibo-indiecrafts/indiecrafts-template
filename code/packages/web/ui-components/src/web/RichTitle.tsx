@@ -1,4 +1,4 @@
-import { cn } from "@indiecrafts/utils/cn";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { splitHighlights } from "../shared/rich-title";
 
 /**

@@ -2,31 +2,34 @@ import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, pages, site, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
-import { isRssEnabled, requireBlogRoute } from "@indiecrafts/blog/lib/route-gate";
-import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
+import {
+  isRssEnabled,
+  requireBlogRoute,
+} from "@indiecrafts/modules-web-blog/lib/route-gate";
+import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { buildMetadata } from "@/lib/metadata";
 import { translationAlternates } from "@/lib/seo/translations";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { DefaultPostLayout } from "@indiecrafts/blog/user-interface/post/layout/DefaultPostLayout";
-import { Modules } from "@indiecrafts/blog/user-interface/renderers/ModuleRenderer";
-import { Comments } from "@indiecrafts/blog/user-interface/post/sections/Comments";
-import { isCommentsEnabled } from "@indiecrafts/blog/lib/route-gate";
-import { client } from "@indiecrafts/sanity/client";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
+import { DefaultPostLayout } from "@indiecrafts/modules-web-blog/user-interface/post/layout/DefaultPostLayout";
+import { Modules } from "@indiecrafts/modules-web-blog/user-interface/renderers/ModuleRenderer";
+import { Comments } from "@indiecrafts/modules-web-blog/user-interface/post/sections/Comments";
+import { isCommentsEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
+import { client } from "@indiecrafts/packages-web-sanity/client";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import {
   allPostSlugsQuery,
   blogSingletonQuery,
   postBySlugQuery,
   relatedPostsQuery,
-} from "@indiecrafts/blog/sanity/queries";
+} from "@indiecrafts/modules-web-blog/sanity/queries";
 import type {
   BlogSingleton,
   Post,
   PostListItem,
   PostSlug,
-} from "@indiecrafts/blog/sanity/types";
+} from "@indiecrafts/modules-web-blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 

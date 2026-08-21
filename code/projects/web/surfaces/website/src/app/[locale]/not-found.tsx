@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/config";
-import { NotFoundContent } from "@indiecrafts/system-pages";
+import { NotFoundContent } from "@indiecrafts/packages-shared-system-pages/web";
+import { Link } from "@/i18n/routing";
 import { getSystemPages } from "@/lib/system-pages";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 
@@ -26,6 +27,7 @@ export default async function NotFound() {
         title={nf.title ?? t("title")}
         description={nf.description ?? t("description")}
         homeLabel={nf.homeLabel ?? t("homeLabel")}
+        LinkComponent={Link}
       />
     </DefaultLayout>
   );

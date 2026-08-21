@@ -1,0 +1,62 @@
+# Changelog — admin app (`@indiecrafts/web-surfaces-admin`)
+
+One record for the internal admin dashboard (next-cf) — every change that alters behavior, a
+route, config, or a convention lands here in plain language with the _why_.
+
+**Not here:** shared-brick changes → [`code/packages/CHANGELOG.md`](../../../../packages/CHANGELOG.md);
+docs-site → [`code/docs/CHANGELOG.md`](../../../../docs/CHANGELOG.md); the repo-wide roll-up →
+[root `CHANGELOG.md`](../../../../../CHANGELOG.md).
+
+Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
+**Added · Changed · Deprecated · Removed · Fixed**.
+
+## [Unreleased]
+
+### Added
+
+- **Clerk auth + full i18n scaffold — the admin gate (opt-in).** The admin app moves from a single-page
+  scaffold to a next-intl surface (parity with website/app: `[locale]` segment,
+  `i18n/{routing,request}.ts`, `messages/{en,fr}.json`) behind a Clerk `admin`-role gate. `src/proxy.ts`
+  wraps next-intl in `clerkMiddleware` and redirects every non-`admin` request to `/sign-in` (**fails
+  closed**); the `(dashboard)` route-group layout re-checks `isAdmin(await auth())` server-side
+  (defense-in-depth — middleware is bypassable, Next.js CVE-2025-29927). Sign-in is Clerk's hosted
+  `<SignIn>` at `/[locale]/sign-in` — **sign-in only, no open sign-up**. Auth is **opt-in**: with no
+  `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` the scaffold runs UNGATED (configure Clerk before shipping — see
+  `.env.example`). Replaces the planned Cloudflare Access gate. **Why:** one auth system across every app,
+  and the admin surface is the one that enforces the role.
+- **Privilege model — grant/revoke admin, audited, with session revocation.** `(dashboard)/actions.ts`
+  server actions `grantAdmin` / `revokeAdmin` are the crown-jewel path: re-authorized server-side
+  (`isAdmin(await auth())`), validate the target `user_…` id, then `clerkClient().users.updateUserMetadata`.
+  **Revoke also ends the target's live sessions** (`sessions.getSessionList` → `revokeSession`) so a
+  demotion is immediate, not "≤ token TTL". Every action writes a structured **audit** line
+  (`lib/audit.ts`) captured by Cloudflare Workers Logs → Logpush (no database) — a deliberate `console.log`
+  because the shared logger silences `info` in prod and its Cloudflare transport forwards only
+  `error`/`fatal`. `(dashboard)/admin-role-form.tsx` (client) drives it; strings in `messages` (`admin.roles.*`).
+  **Why:** open passwordless sign-up means this write is the only thing between a stranger and admin — so it
+  is gated, validated, audited, and immediate.
+- **Sign-in uses the shared `<SignInView>`.** Admin's inline `<SignIn>` is replaced by
+  `@indiecrafts/packages-web-auth`'s `<SignInView>` (themed + `fallbackRedirectUrl`), so every web surface
+  shares one sign-in surface and redirect behavior.
+- **Audit writes to the EU D1 via the api (was a console line).** `lib/audit.ts` now POSTs each
+  `admin.grant`/`admin.revoke` to the shared api `/v1/events` (bearer `APP_API_TOKEN`), which writes the
+  EU `admin_audit` table; country from `cf-ipcountry`, **no IP stored** (minimization). Durable fallback:
+  on an api failure it logs one structured Workers-Logs line, so an audit is never lost. Needs `API_URL` +
+  `APP_API_TOKEN` (see `.env.example`). **Why:** an EU-resident, queryable audit trail (replaces Logpush).
+- **Session tracking + a "view sessions" screen.** `SessionLogger` (mounted in `[locale]/layout`) logs each
+  admin sign-in via `/api/session-log` → the api → EU D1. New `(dashboard)/sessions` page reads
+  `GET /v1/sessions` server-side and lists recent sign-ins across **all** surfaces (when · surface · user ·
+  country, no IP); linked from the dashboard. **Why:** operators can see who signed in, where, and on which
+  surface. Live-session **revocation** stays Clerk-backed (already wired on role demotion).
+- **Richer sessions + revoke.** Each row expands to the user's **live Clerk sessions** (device · browser ·
+  location · last-active — fetched live, never stored) with a per-session **Revoke** and a **"sign out
+  user"** (all active). New audited server actions `listUserSessions` / `revokeSession` /
+  `revokeUserSessions` (`admin.revoke_session` / `admin.revoke_user_sessions`); the D1 `session_events` now
+  carries the Clerk `session_id` so a history row is revocable. **Why:** see and end active sessions, not
+  just history — the source of truth for "active" is Clerk.
+- **Users browse + System status.** `(dashboard)/users` searches Clerk users (`getUserList` — email · role ·
+  created · last-sign-in, with a search box). `(dashboard)/system` (replaces the versions page) shows three
+  sections: **Surfaces** (each `/api/version`), **Workers** (api/agent `/health`; cron/workers marked
+  scheduled/queue), and **Databases** (audit + security D1 status via the api's bearer-authed `/health`;
+  Sanity marked external). Env: `WEBSITE_URL` · `APP_URL` · `API_URL` · `AGENT_URL`. Both admin-gated,
+  read-only, linked from the dashboard. **Why:** operator visibility over accounts, deploys, workers, and
+  DBs — reusing the Clerk secret + the public health/version endpoints (no new infra).

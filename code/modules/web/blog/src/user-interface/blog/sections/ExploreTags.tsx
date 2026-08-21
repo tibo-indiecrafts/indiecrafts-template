@@ -1,5 +1,5 @@
-import { Link } from "@indiecrafts/i18n";
-import type { Tag } from "@indiecrafts/blog/sanity/types";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import type { Tag } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /**
  * Tag explorer for the /blog frontpage. Chip styling mirrors

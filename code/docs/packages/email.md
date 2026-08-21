@@ -2,8 +2,8 @@
 
 The one home for **sending** transactional email, for **every email's layout**, and for the
 **translated content entity** that configures them — so all outbound mail is one branded,
-mail-client-safe, editor-controlled system. Lives in the **`@indiecrafts/email`** brick
-(`code/packages/shared/email`), consumed as source. No SDK — one `fetch` to the Resend REST API.
+mail-client-safe, editor-controlled system. Lives in the **`@indiecrafts/packages-web-email`** brick
+(`code/packages/web/email`), consumed as source. No SDK — one `fetch` to the Resend REST API.
 
 Extracted from the blog so any module or app can send: modules can't depend on modules, so a second
 sender (the newsletter's double opt-in) could never reach a helper stuck in the blog.
@@ -12,9 +12,9 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
 
 | Import                       | Side   | What it is                                                                                                                                               |
 | ---------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@indiecrafts/email`         | pure   | `sendEmail` · `renderEmailLayout` · `escapeHtml` · the `RenderedEmail` render contract (templates live with their feature)                               |
-| `@indiecrafts/email/strings` | server | `getEmailStrings()` (React-`cache`d generic read) + `pick(value, locale)` + the `OwnerAlertConfig`/`ConfirmationConfig` read shapes                      |
-| `@indiecrafts/email/sanity`  | Studio | `emailSanity(modules)` (builds the singleton) · `confirmationGroup`/`ownerAlertGroup` (group factories) · `sendTestEmailAction` (the "Send test" action) |
+| `@indiecrafts/packages-web-email`         | pure   | `sendEmail` · `renderEmailLayout` · `escapeHtml` · the `RenderedEmail` render contract (templates live with their feature)                               |
+| `@indiecrafts/packages-web-email/strings` | server | `getEmailStrings()` (React-`cache`d generic read) + `pick(value, locale)` + the `OwnerAlertConfig`/`ConfirmationConfig` read shapes                      |
+| `@indiecrafts/packages-web-email/sanity`  | Studio | `emailSanity(modules)` (builds the singleton) · `confirmationGroup`/`ownerAlertGroup` (group factories) · `sendTestEmailAction` (the "Send test" action) |
 
 ## Sending + layout
 
@@ -30,7 +30,7 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
   `src/emails/` — `comment-notification` (blog) · `newsletter-confirm`/`newsletter-notification`/
   `lead-magnet` (newsletter) · `waitlist-confirm`/`waitlist-notification` (waitlist) ·
   `data-request-notification` (compliance) — and imports `renderEmailLayout`/`escapeHtml`/
-  `RenderedEmail` from `@indiecrafts/email`. The brick owns the shared _system_ (send + layout + the
+  `RenderedEmail` from `@indiecrafts/packages-web-email`. The brick owns the shared _system_ (send + layout + the
   render contract + the Sanity group factories) and names **no feature**.
 
 ## The E-mails entity (Sanity) — composed per module
@@ -76,7 +76,7 @@ matching template. Seeded EN + FR by `pnpm seed`. **Order in the Studio = module
    `ownerAlertGroup`; a genuinely new shape earns a new factory here, not a per-module one-off.
 2. In the **same module**, add `src/emails/<name>.ts` exporting
    `render<Name>Email(input) => RenderedEmail` — build the HTML via `renderEmailLayout` (imported from
-   `@indiecrafts/email`), escape every value. Colocate a `*.test.ts`. No brick edit, no re-export.
+   `@indiecrafts/packages-web-email`), escape every value. Colocate a `*.test.ts`. No brick edit, no re-export.
 3. Call it from the feature: `getEmailStrings()`, narrow to your group (`OwnerAlertConfig` /
    `ConfirmationConfig`), `pick(...)` the locale strings, `sendEmail`.
 4. Add the render to `buildSamples` in `code/projects/web/surfaces/website/src/app/api/emails/test/route.ts`
@@ -121,7 +121,7 @@ the **Send test** action after any DNS or `From` change.
 - **Recipients · from · reply-to · BCC · copy · on/off toggles → Sanity** (the E-mails entity).
   Editor-owned, no deploy, translated where visitor-facing.
 - **`RESEND_API_KEY` → env** (server-only, never `NEXT_PUBLIC_`). The one secret.
-- **Nothing in `@indiecrafts/config`** — email settings are editor content, not technical rules.
+- **Nothing in `@indiecrafts/packages-shared-config`** — email settings are editor content, not technical rules.
 - **Per module → compose.** Each module owns its group (`emailGroups`); the brick stays generic. A
   second app that mounts only some modules gets only those emails — no coupling.
 
@@ -137,15 +137,15 @@ Resend account/key.
 
 ## Consumers
 
-- **`@indiecrafts/blog`** — comment-moderation alert (`lib/notify-comment.ts`).
+- **`@indiecrafts/modules-web-blog`** — comment-moderation alert (`lib/notify-comment.ts`).
   See [Blog comments → Email notifications](../modules/blog/comments.md).
-- **`@indiecrafts/newsletter`** — double opt-in confirmation + new-subscriber alert
+- **`@indiecrafts/modules-web-newsletter`** — double opt-in confirmation + new-subscriber alert
   (`lib/newsletter.ts`). See [Newsletter](../modules/newsletter/).
-- **`@indiecrafts/waitlist`** — "you're on the list" confirmation + new-entry alert
+- **`@indiecrafts/modules-web-waitlist`** — "you're on the list" confirmation + new-entry alert
   (`lib/waitlist.ts`). See [Waitlist](../modules/waitlist/).
 
 ## Deps
 
-`@indiecrafts/config` (`site.url`) + `@indiecrafts/sanity` (the read client + `SanityModule`) +
+`@indiecrafts/packages-shared-config` (`site.url`) + `@indiecrafts/packages-web-sanity` (the read client + `SanityModule`) +
 `@sanity/ui` (the "Send test" dialog). The translated fields use the shared
-`localeString`/`localeText` primitives from `@indiecrafts/schema`. Never imports an app or a module.
+`localeString`/`localeText` primitives from `@indiecrafts/packages-web-schema`. Never imports an app or a module.

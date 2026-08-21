@@ -6,25 +6,23 @@ code stays in the app.** Flipping a `features.*` flag maps cleanly onto a folder
 
 ## Four root folders
 
-The repo root holds four sibling pillars that mirror each other's shape:
+The repo root holds two sibling pillars that mirror each other's shape:
 
 ```text
 code/     EXECUTION — the pnpm + Turbo workspace (workspace root = repo root)
 docs/     CANON — product docs (this VitePress site)
-method/   HOW we work — internal dev framework (private · not in a client handoff)
 ```
 
-`docs/`, `method/`, `work/` are **npm-isolated** from the pnpm workspace (each has its own
-lockfile + `node_modules`). Run app scripts from the repo root — `pnpm dev`/`build`/… delegate
-to `--filter @indiecrafts/website`.
+`code/docs/` is **npm-isolated** from the pnpm workspace (its own lockfile + `node_modules`). Run app
+scripts from the repo root — `pnpm dev`/`build`/… delegate to `--filter @indiecrafts/web-surfaces-website`.
 
 ## `code/` internals
 
 ```text
 code/
-├── apps/web/       the Next.js app (@indiecrafts/website) — its src/ is detailed below
+├── apps/web/       the Next.js app (@indiecrafts/web-surfaces-website) — its src/ is detailed below
 ├── packages/       shared bricks (config · utils · sanity · ui · ui-tokens · i18n)
-├── modules/        product features — blog (@indiecrafts/blog); shop/events… reserved
+├── modules/        product features — blog (@indiecrafts/modules-web-blog); shop/events… reserved
 ├── db/  infra/     reserved (schema·migrations·seed · envs·iac·ci)
 ```
 
@@ -37,18 +35,18 @@ Extracted when **≥2 consumers** use them; consumed **as source** (no build ste
 
 | Package                  | Holds                                                                                                                                                 | Exports                                                       |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `@indiecrafts/config`    | shared config primitives (i18n · format · env · logging · `site` env) + the generic page contract (`PageConfig`/`isPageVisible`); `localizedPathname` | `.` (no `./types`)                                            |
-| `@indiecrafts/utils`     | `cn` · logger · slugify · video-embed · format-date                                                                                                   | subpath-only (no `.`)                                         |
-| `@indiecrafts/sanity`    | Sanity infra: client · live · env · token · structure                                                                                                 | subpath-only (no `.`)                                         |
-| `@indiecrafts/ui`        | shadcn primitives + `use-mobile` (platform-nested)                                                                                                    | `./web/*` → `src/web/*.tsx`, `./web/use-mobile`, `./shared/*` |
-| `@indiecrafts/ui-tokens` | `globals.css` · `typeset.css` · `DESIGN.md`                                                                                                           | CSS-only (`./globals.css`, `./typeset.css`)                   |
-| `@indiecrafts/i18n`      | shared next-intl navigation for **modules** (untyped `Link`)                                                                                          | `.`                                                           |
+| `@indiecrafts/packages-shared-config`    | shared config primitives (i18n · format · env · logging · `site` env) + the generic page contract (`PageConfig`/`isPageVisible`); `localizedPathname` | `.` (no `./types`)                                            |
+| `@indiecrafts/packages-shared-utils`     | `cn` · logger · slugify · video-embed · format-date                                                                                                   | subpath-only (no `.`)                                         |
+| `@indiecrafts/packages-web-sanity`    | Sanity infra: client · live · env · token · structure                                                                                                 | subpath-only (no `.`)                                         |
+| `@indiecrafts/packages-web-ui`        | shadcn primitives + `use-mobile` (platform-nested)                                                                                                    | `./web/*` → `src/web/*.tsx`, `./web/use-mobile`, `./shared/*` |
+| `@indiecrafts/packages-shared-ui-tokens` | `globals.css` · `typeset.css` · `DESIGN.md`                                                                                                           | CSS-only (`./globals.css`, `./typeset.css`)                   |
+| `@indiecrafts/packages-web-i18n`      | shared next-intl navigation for **modules** (untyped `Link`)                                                                                          | `.`                                                           |
 
 ### The blog module — `code/modules/web/blog`
 
-`@indiecrafts/blog` is a self-contained vertical slice (`user-interface/ sanity/ lib/`),
+`@indiecrafts/modules-web-blog` is a self-contained vertical slice (`user-interface/ sanity/ lib/`),
 gated by `features.blog` + `features.studio`. It's wired into the app by six mechanisms:
-a tsconfig `paths` entry (`"@indiecrafts/blog/*": ["../../modules/web/blog/src/*"]`), the
+a tsconfig `paths` entry (`"@indiecrafts/modules-web-blog/*": ["../../modules/web/blog/src/*"]`), the
 `transpilePackages` list, an `@source` line in `tokens/globals.css` (Tailwind scans its UI),
 schema + structure registration in `sanity.config.ts`, the `route-gate`, and the `blog` flag.
 
@@ -68,7 +66,7 @@ src/
 │   ├── homepage/       homepage-specific UI → sections/
 │   ├── legal/          legal-page surfaces
 │   └── shared/         layout/ (Header, Footer, ThemeToggle, CookieBanner…) + components/
-│   (the branded maintenance / 404 / error status pages → @indiecrafts/system-pages)
+│   (the branded maintenance / 404 / error status pages → @indiecrafts/packages-shared-system-pages)
 │
 ├── lib/            app services: metadata · seo/ · theme · fonts · navigation · cookies ·
 │                   social · faq · system-pages
@@ -79,11 +77,11 @@ src/
 └── (public/)       — sibling of src/ — URL-served static files
 ```
 
-App primitives come from the `@indiecrafts/ui` **package**, not a local `ui/` dir.
+App primitives come from the `@indiecrafts/packages-web-ui` **package**, not a local `ui/` dir.
 `src/config/` holds the app's **instance** config (`theme` · `fonts` · `features` · the `pages`
-map); its `index.ts` re-exports the shared `@indiecrafts/config` primitives, so `@/config` (the
+map); its `index.ts` re-exports the shared `@indiecrafts/packages-shared-config` primitives, so `@/config` (the
 `@/*` → `src/*` tsconfig path) is the app's one config import surface. Packages + modules still
-import the primitives from `@indiecrafts/config` directly. See [Multi-app](./multi-app).
+import the primitives from `@indiecrafts/packages-shared-config` directly. See [Multi-app](./multi-app).
 
 ## The "where does a file go?" rules
 
@@ -117,12 +115,12 @@ import the primitives from `@indiecrafts/config` directly. See [Multi-app](./mul
 bundler`. Packages with explicit per-file exports (e.g. `version`) need no entry and resolve via
   pnpm workspace symlinks + their `exports` maps.
 - **No barrel files.** Import deep
-  (`@indiecrafts/blog/user-interface/post/layout/DefaultPostLayout`,
+  (`@indiecrafts/modules-web-blog/user-interface/post/layout/DefaultPostLayout`,
   `@/user-interface/homepage/sections/Features`), not through an `index.ts` — a single barrel
   would taint on `route-gate`'s `server-only` import and defeat tree-shaking.
 - Naming: `PascalCase.tsx` for components, `kebab-case.ts` for lib/util modules.
 - Never import from `next/link` / `next-intl/navigation` directly — use `@/i18n/routing`.
-  Never hand-edit shadcn primitives in `@indiecrafts/ui` (CLI-managed).
+  Never hand-edit shadcn primitives in `@indiecrafts/packages-web-ui` (CLI-managed).
 
 ## Adding a new feature module
 

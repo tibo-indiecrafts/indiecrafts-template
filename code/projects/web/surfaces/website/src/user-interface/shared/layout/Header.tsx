@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Logo } from "@/user-interface/shared/layout/Logo";
 import { LocaleSwitcher } from "@/user-interface/shared/layout/LocaleSwitcher";
 import { ThemeToggle } from "@/user-interface/shared/layout/ThemeToggle";
+import { AuthMenu } from "@/user-interface/shared/layout/AuthMenu";
 import { NavIcon } from "@/user-interface/shared/components/NavIcon";
 import { Link } from "@/i18n/routing";
 import type { ThemeMode } from "@/config";
@@ -16,7 +17,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
-} from "@indiecrafts/ui/web/navigation-menu";
+} from "@indiecrafts/packages-web-ui/web/navigation-menu";
 
 /**
  * Production site header. Logo + nav from the `navigation` singleton in Sanity
@@ -150,6 +151,7 @@ export function Header({
           ) : null}
           {showLocaleSwitcher ? <LocaleSwitcher /> : null}
           {showThemeToggle ? <ThemeToggle modes={themeModes} /> : null}
+          <AuthMenu />
         </div>
       </div>
     </header>

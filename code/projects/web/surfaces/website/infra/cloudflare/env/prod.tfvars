@@ -1,6 +1,6 @@
 # web · prod. Fill account_id + zone_id + domain (the zone must be on this CF account).
 env               = "prod"
-worker_name       = "indiecrafts-prod-web-website"
+worker_name       = "indiecrafts-prod-web-surfaces-website"
 attach_domain     = true
 account_id        = ""              # REQUIRED
 zone_id           = ""              # REQUIRED (the domain's zone)

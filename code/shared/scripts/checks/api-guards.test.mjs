@@ -41,7 +41,7 @@ test("a mutating route without withGuard and not allowlisted fails", () => {
 
 test("a mutating route wrapped in withGuard passes", () => {
   const r = runWith({
-    "app/api/thing/route.ts": `import { withGuard } from "@indiecrafts/security/guard";
+    "app/api/thing/route.ts": `import { withGuard } from "@indiecrafts/packages-shared-security/guard";
 const h = withGuard(async () => new Response("ok"));
 export async function POST(req) { return h(req); }`,
   });

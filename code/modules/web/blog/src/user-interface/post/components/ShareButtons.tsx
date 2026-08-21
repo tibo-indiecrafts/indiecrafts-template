@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { Link2, Check } from "lucide-react";
-import { logger } from "@indiecrafts/logger";
+import { logger } from "@indiecrafts/packages-shared-logger";
 import {
-  XIcon,
-  LinkedInIcon,
-  FacebookIcon,
-} from "@indiecrafts/blog/user-interface/shared/components/BrandIcons";
+  BrandIcon,
+  type BrandName,
+} from "@indiecrafts/packages-shared-ui-icons/web";
 
 /**
  * Post share row — X / LinkedIn / Facebook open a share intent in a new tab
@@ -35,26 +34,27 @@ export function ShareButtons({
   const u = encodeURIComponent(url);
   const t = encodeURIComponent(title);
 
-  const targets = [
-    {
-      key: "x",
-      label: labels.x,
-      href: `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
-      Icon: XIcon,
-    },
-    {
-      key: "linkedin",
-      label: labels.linkedin,
-      href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
-      Icon: LinkedInIcon,
-    },
-    {
-      key: "facebook",
-      label: labels.facebook,
-      href: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
-      Icon: FacebookIcon,
-    },
-  ];
+  const targets: { key: string; label: string; href: string; brand: BrandName }[] =
+    [
+      {
+        key: "x",
+        label: labels.x,
+        href: `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
+        brand: "x",
+      },
+      {
+        key: "linkedin",
+        label: labels.linkedin,
+        href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+        brand: "linkedin",
+      },
+      {
+        key: "facebook",
+        label: labels.facebook,
+        href: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+        brand: "facebook",
+      },
+    ];
 
   const copy = async () => {
     try {
@@ -73,7 +73,7 @@ export function ShareButtons({
     <div className="flex items-center gap-3">
       <span className="text-muted-foreground text-sm">{labels.label}</span>
       <ul className="flex items-center gap-2">
-        {targets.map(({ key, label, href, Icon }) => (
+        {targets.map(({ key, label, href, brand }) => (
           <li key={key}>
             <a
               href={href}
@@ -82,7 +82,7 @@ export function ShareButtons({
               aria-label={label}
               className={btn}
             >
-              <Icon aria-hidden="true" className="size-4" />
+              <BrandIcon name={brand} aria-hidden="true" className="size-4" />
             </a>
           </li>
         ))}

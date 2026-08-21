@@ -1,10 +1,10 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@indiecrafts/i18n";
-import { type Locale } from "@indiecrafts/config";
-import { formatDate } from "@indiecrafts/utils/format-date";
-import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
-import { FeaturedMedia } from "@indiecrafts/ui-components/web/media/FeaturedMedia";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import { type Locale } from "@indiecrafts/packages-shared-config";
+import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
+import type { PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
+import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
+import { FeaturedMedia } from "@indiecrafts/packages-web-ui-components/web/media/FeaturedMedia";
 
 /**
  * Post card used by the blog listing, category explorer, and author detail.

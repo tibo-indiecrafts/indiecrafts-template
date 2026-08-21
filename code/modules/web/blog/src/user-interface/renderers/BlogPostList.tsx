@@ -2,11 +2,11 @@ import { getTranslations } from "next-intl/server";
 import type {
   BlogPostListModule,
   PostListItem,
-} from "@indiecrafts/blog/sanity/types";
-import type { Locale } from "@indiecrafts/config";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
-import { moduleBlogPostListQuery } from "@indiecrafts/blog/sanity/queries";
-import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
+} from "@indiecrafts/modules-web-blog/sanity/types";
+import type { Locale } from "@indiecrafts/packages-shared-config";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
+import { moduleBlogPostListQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
+import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
 
 /**
  * Server component — fetches its own posts using the module's filters

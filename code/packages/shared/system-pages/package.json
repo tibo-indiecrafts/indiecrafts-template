@@ -1,0 +1,40 @@
+{
+  "name": "@indiecrafts/packages-shared-system-pages",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./shared": "./src/shared/index.ts",
+    "./web": "./src/web/index.ts",
+    "./web/*": "./src/web/*.tsx",
+    "./native": "./src/native/index.ts",
+    "./native/*": "./src/native/*.tsx",
+    "./proxy": "./src/proxy.ts",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
+    "@indiecrafts/packages-web-ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-native": "*"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  }
+}

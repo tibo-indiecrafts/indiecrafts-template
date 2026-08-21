@@ -5,9 +5,22 @@
     "noEmit": true,
     // Expo's base uses classic "node" resolution, which ignores package `exports`
     // subpaths. Metro honors them at runtime (SDK 50+); align tsc so
-    // `@indiecrafts/config/mobile` (a subpath export) type-resolves too.
+    // `@indiecrafts/packages-shared-config/mobile` (a subpath export) type-resolves too.
     "moduleResolution": "bundler",
-    "paths": { "@/*": ["./*"] }
+    "resolveJsonModule": true,
+    // Pin React's TYPES to this app's @types/react (18, matching RN 0.76) for the
+    // WHOLE program — including consumed shared-brick native sources
+    // (system-pages/native, ui-native). Without this, tsc resolves those brick
+    // `.tsx` files' `react` types from the workspace root, where the web apps'
+    // @types/react@19 lives; its `ReactNode` (adds `bigint`) is incompatible with
+    // react-native's React-18 component types. Metro resolves the real `react` at
+    // runtime — this alias is types-only. See docs/shared/architecture/cross-platform-shell.md.
+    "paths": {
+      "@/*": ["./*"],
+      "react": ["./node_modules/@types/react"],
+      "react/jsx-runtime": ["./node_modules/@types/react/jsx-runtime"],
+      "react/jsx-dev-runtime": ["./node_modules/@types/react/jsx-dev-runtime"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

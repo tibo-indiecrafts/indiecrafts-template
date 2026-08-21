@@ -10,15 +10,15 @@ import {
 } from "@/config";
 import { getStaticPathname } from "@/i18n/routing";
 import { getPageSeo } from "@/lib/seo/site-seo";
-import { client } from "@indiecrafts/sanity/client";
+import { client } from "@indiecrafts/packages-web-sanity/client";
 import {
   allAuthorSlugsQuery,
   allCategorySlugsQuery,
   allPostSlugsQuery,
   allSeriesSlugsQuery,
   allTagSlugsQuery,
-} from "@indiecrafts/blog/sanity/queries";
-import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
+} from "@indiecrafts/modules-web-blog/sanity/queries";
+import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { sitemapPagesQuery } from "@/sanity/page-queries";
 import { ROUTES } from "./routes";
 

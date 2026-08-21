@@ -1,12 +1,12 @@
 import { getTranslations } from "next-intl/server";
 import { site } from "@/config";
 import type { Locale } from "@/config";
-import { isRssEnabled } from "@indiecrafts/blog/lib/route-gate";
+import { isRssEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { localizedPathname } from "@/i18n/routing";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
-import { rssPostsQuery } from "@indiecrafts/blog/sanity/queries";
-import type { RssPost } from "@indiecrafts/blog/sanity/types";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
+import { rssPostsQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
+import type { RssPost } from "@indiecrafts/modules-web-blog/sanity/types";
 
 type Props = { params: Promise<{ locale: string }> };
 

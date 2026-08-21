@@ -1,3 +1,10 @@
 # Local secrets for `wrangler dev` — copy to `.dev.vars` (gitignored) and fill.
 # In staging/prod these are set with `wrangler secret put <NAME> --env <env>`.
-# EXAMPLE_TOKEN=""
+
+# Audit + session sink (POST /v1/events → EU D1):
+# APP_API_TOKEN=""   # the bearer token the mobile/hybrid apps send (Authorization: Bearer …)
+# IP_HASH_SALT=""    # salt for hashing IPs before storage (never a raw IP is stored)
+
+# Announcements (GET /v1/announcements → Sanity). PROJECT_ID/DATASET go in wrangler.toml
+# [vars] (public); the read token is a secret, needed only if the dataset is not public-read:
+# SANITY_API_READ_TOKEN=""   # server-side Sanity read token (never shipped to clients)

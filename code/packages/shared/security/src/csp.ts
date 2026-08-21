@@ -1,4 +1,4 @@
-import { getCSPConnectSources, type Environment } from "@indiecrafts/config";
+import { getCSPConnectSources, type Environment } from "@indiecrafts/packages-shared-config";
 
 /**
  * Content-Security-Policy builder. Hardened defaults are baked in; an app passes

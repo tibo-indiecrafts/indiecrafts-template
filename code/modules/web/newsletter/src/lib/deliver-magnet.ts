@@ -1,25 +1,25 @@
 import "server-only";
 
-import { logger } from "@indiecrafts/logger";
-import { site, defaultLocale } from "@indiecrafts/config";
-import { writeClient } from "@indiecrafts/sanity/write";
-import { sendEmail } from "@indiecrafts/email";
+import { logger } from "@indiecrafts/packages-shared-logger";
+import { site, defaultLocale } from "@indiecrafts/packages-shared-config";
+import { writeClient } from "@indiecrafts/packages-web-sanity/write";
+import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
   getEmailStrings,
   pick,
   type ConfirmationConfig,
-} from "@indiecrafts/email/strings";
+} from "@indiecrafts/packages-web-email/strings";
 import { renderLeadMagnetEmail } from "../emails/lead-magnet";
 import {
   resolveGatedDownload,
   signDownloadToken,
-} from "@indiecrafts/gated-delivery";
+} from "@indiecrafts/packages-shared-gated-delivery";
 
 /**
  * Lead-magnet delivery — the step that fires AFTER a subscriber confirms their
  * e-mail. A `module.lead-magnet` capture block tags the subscriber with the
  * referenced `leadMagnet` doc id; on confirm (`lib/confirm.ts`) we sign a short
- * gated-delivery token (`@indiecrafts/gated-delivery`) and e-mail the download
+ * gated-delivery token (`@indiecrafts/packages-shared-gated-delivery`) and e-mail the download
  * link. The `/api/download` route verifies the token, then resolves the file URL.
  *
  * Delivery is gated on `LEAD_MAGNET_SECRET` (server-only, never `NEXT_PUBLIC_`) —
@@ -72,7 +72,7 @@ export async function getLeadMagnetAssetUrl(
 
 /**
  * Verify a download token + resolve the file URL. The app's `/api/download`
- * route delegates here so the app never imports `@indiecrafts/gated-delivery`
+ * route delegates here so the app never imports `@indiecrafts/packages-shared-gated-delivery`
  * directly (the newsletter module owns the magnet data + the secret).
  */
 export async function resolveMagnetDownload(

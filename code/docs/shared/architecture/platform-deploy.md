@@ -15,7 +15,7 @@ built on three ideas:
 [`code/shared/scripts/lib/apps.mjs`](../../../code/shared/scripts/lib/apps.mjs) — one row per app:
 
 ```js
-{ slug: "web", pkg: "@indiecrafts/website", class: "next-cf", order: 30 }
+{ slug: "web", pkg: "@indiecrafts/web-surfaces-website", class: "next-cf", order: 30 }
 ```
 
 - **`slug`** — the id, the `code/projects/<slug>` dir, and the `deploy:<slug>:<env>` script name.
@@ -31,7 +31,7 @@ every row has a matching `code/projects/<slug>` dir, so the registry can't drift
 
 | Class       | Apps                 | Ships via                            | Runner                                    |
 | ----------- | -------------------- | ------------------------------------ | ----------------------------------------- |
-| `next-cf`   | website · admin      | OpenNext build → Cloudflare Worker   | `code/shared/scripts/deploy/next.mjs`     |
+| `next-cf`   | website · admin · app | OpenNext build → Cloudflare Worker   | `code/shared/scripts/deploy/next.mjs`     |
 | `worker-cf` | api · cron · workers | `wrangler deploy` (bare Worker)      | `code/shared/scripts/deploy/worker.mjs`   |
 | `expo`      | mobile               | EAS build (+ submit)                 | `code/shared/scripts/deploy/expo.mjs`     |
 | `electron`  | hybrid               | electron-builder (host-OS installer) | `code/shared/scripts/deploy/electron.mjs` |
@@ -40,6 +40,12 @@ every row has a matching `code/projects/<slug>` dir, so the registry can't drift
 their own credentials (EAS / Apple / signing) and are **structure-first stubs** today: the command +
 guards are wired so they follow the same contract, but full store/signing pipelines are a follow-up
 (see each app's README).
+
+The `electron` renderer ships **hardened defaults** (see the hybrid app's `CLAUDE.md` + `CHANGELOG.md`):
+`contextIsolation` + `sandbox` on, `nodeIntegration` off, a `will-navigate` / `setWindowOpenHandler`
+allowlist (no cross-origin navigation or new windows; external `http(s)` links open in the OS browser via
+`isSafeExternalUrl`), and a strict renderer CSP. Code-signing + notarization (to actually distribute the
+installer) are the remaining follow-up.
 
 ## The deploy contract
 
@@ -55,7 +61,7 @@ pnpm deploy:mobile:prod     → node ../../../../../code/shared/scripts/deploy/e
 The runners share `code/shared/scripts/lib/deploy-shared.mjs` (`run` + the prod confirm) and
 `code/shared/scripts/lib/project.mjs` (`assertRenamed(app, env)` — the shared-account clobber guard: refuses a
 staging/prod deploy while a Worker name is still on the template prefix). Every Cloudflare resource name is
-**`<prefix>-<env>-<platform>-<slug>`** (env-first; e.g. `indiecrafts-prod-web-website`, `indiecrafts-dev-shared-api`),
+**`<prefix>-<env>-<folder-tail>`** (env-first; the folder tail — `dir` under `code/`, minus a leading `projects/`, dash-joined; e.g. `indiecrafts-prod-web-surfaces-website`, `indiecrafts-dev-shared-api`),
 the one formula in `code/shared/scripts/lib/apps.mjs` `resourceName(slug, env, prefix)` — so `pnpm project:rename <slug>`
 swaps only the `<prefix>` (reaching `code/shared/*`), and the guard compares each app against
 `resourceName(app, "prod", TEMPLATE_PREFIX)` — one rule, every app.

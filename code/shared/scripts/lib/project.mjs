@@ -6,7 +6,7 @@
 // while a name is still on the template prefix.
 //
 // Per-app files (`wrangler.toml`, `.env.local`) are CWD-relative (each deploy
-// script runs from its own app dir). The one shared file (`@indiecrafts/config`)
+// script runs from its own app dir). The one shared file (`@indiecrafts/packages-shared-config`)
 // resolves against THIS script's location instead, so it is correct whether the
 // caller runs from a 4-deep surface or a 2-deep shared service.
 
@@ -17,6 +17,30 @@ import { resourceName } from "./apps.mjs";
 
 /** The namespace the template SHIPS with. A client swaps it via `project-rename`; the clobber guard treats any name still on this prefix as "not renamed". */
 export const TEMPLATE_PREFIX = "indiecrafts";
+
+/** Assignment lines whose quoted value carries the prefix — the resource-name lines a
+ *  rename rewrites. `dataset` = an Analytics Engine dataset name (else it drifts on rename). */
+const RESOURCE_LINE =
+  /^\s*(name|bucket_name|database_name|dataset|service|queue|worker_name)\s*=/;
+
+/**
+ * Swap the resource-name `<from>-` prefix → `<to>-` across a wrangler.toml / tfvars body.
+ * Two line kinds carry the prefix: (1) a quoted resource VALUE on a `name` / `database_name`
+ * / `dataset` / … assignment; (2) a `wrangler … create <from>-…` COMMENT example — rewritten
+ * too, so a renamed project's copy-paste create commands produce correctly-named resources.
+ * Prose comments are left untouched (only the create-command examples match).
+ */
+export function renameResourcePrefix(text, from, to) {
+  return text
+    .split("\n")
+    .map((line) => {
+      if (RESOURCE_LINE.test(line)) return line.replaceAll(`"${from}-`, `"${to}-`);
+      if (/^\s*#/.test(line) && /\bcreate\b/.test(line))
+        return line.replaceAll(`${from}-`, `${to}-`);
+      return line;
+    })
+    .join("\n");
+}
 
 // `wrangler.toml` + `.env.local` are per-app → CWD-relative (each deploy script
 // runs from its own app dir). The config is ONE shared file → resolve it against
@@ -46,7 +70,7 @@ export function getWranglerSlug() {
   return m ? m[1] : "";
 }
 
-/** `DEFAULT_SITE_PREFIX` from `@indiecrafts/config` source (single source of truth for the prefix). */
+/** `DEFAULT_SITE_PREFIX` from `@indiecrafts/packages-shared-config` source (single source of truth for the prefix). */
 export function readDefaultPrefix() {
   const m = readFileOr(CONFIG_INDEX).match(
     /DEFAULT_SITE_PREFIX\s*=\s*"([^"]+)"/,

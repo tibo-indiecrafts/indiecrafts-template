@@ -5,16 +5,24 @@ import { features, localeCodes, localeMap, type Locale } from "@/config";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { resolveThemeConfig, showThemeToggle, themeModes } from "@/lib/theme";
 import { getNavigation } from "@/lib/navigation";
-import { AnnouncementBar } from "@indiecrafts/announcement/AnnouncementBar";
-import { getAnnouncement } from "@indiecrafts/announcement/sanity/announcement";
-import { ANNOUNCEMENT_COOKIE } from "@indiecrafts/announcement/announcement-store";
-import { LocaleSuggest } from "@indiecrafts/locale-suggest/LocaleSuggest";
-import { getLocaleSuggest } from "@indiecrafts/locale-suggest/sanity/reader";
-import { detectPreferredLocale } from "@indiecrafts/locale-suggest/detect";
-import { LOCALE_SUGGEST_COOKIE } from "@indiecrafts/locale-suggest/locale-suggest-store";
+import { AnnouncementBar } from "@indiecrafts/packages-web-announcement/AnnouncementBar";
+import { AnnouncementToast } from "@indiecrafts/packages-web-announcement/AnnouncementToast";
+import {
+  getAnnouncement,
+  getAnnouncementToast,
+} from "@indiecrafts/packages-web-announcement/sanity/announcement";
+import {
+  ANNOUNCEMENT_COOKIE,
+  ANNOUNCEMENT_TOAST_COOKIE,
+} from "@indiecrafts/packages-web-announcement/announcement-store";
+import { LocaleSuggest } from "@indiecrafts/packages-web-locale-suggest/LocaleSuggest";
+import { getLocaleSuggest } from "@indiecrafts/packages-web-locale-suggest/sanity/reader";
+import { detectPreferredLocale } from "@indiecrafts/packages-web-locale-suggest/detect";
+import { LOCALE_SUGGEST_COOKIE } from "@indiecrafts/packages-web-locale-suggest/locale-suggest-store";
 import { SkipLink } from "./SkipLink";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { OfflineBanner } from "./OfflineBanner";
 
 /**
  * Production default layout, colocated in `@/user-interface/layout` so the app owns
@@ -53,15 +61,19 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
 
   // Top-of-main chrome (announcement bar + language suggestion) — both decided
   // server-side (cookie + Accept-Language) so they never flash.
-  const [announcement, suggestCopy] = await Promise.all([
-    getAnnouncement(locale),
+  const [announcement, toast, suggestCopy] = await Promise.all([
+    getAnnouncement(locale, "website"),
+    getAnnouncementToast(locale, "website"),
     getLocaleSuggest(locale),
   ]);
   const jar = await cookies();
   const t = await getTranslations("common");
+  const tOffline = await getTranslations("offline");
   const showAnnouncement =
     announcement.items.length > 0 &&
     jar.get(ANNOUNCEMENT_COOKIE)?.value !== announcement.version;
+  // Toast dismissal decided server-side too (no flash), same as the bar.
+  const showToast = toast && jar.get(ANNOUNCEMENT_TOAST_COOKIE)?.value !== toast.version;
   const suggested =
     jar.get(LOCALE_SUGGEST_COOKIE) || !suggestCopy.message
       ? null
@@ -87,6 +99,7 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
         />,
       )}
       <main id="main" tabIndex={-1} className="flex-1 pt-14 outline-none lg:pt-20">
+        <OfflineBanner message={tOffline("banner")} />
         {showAnnouncement ? (
           <AnnouncementBar
             items={announcement.items}
@@ -98,6 +111,7 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
             copiedLabel={t("copied")}
           />
         ) : null}
+        <AnnouncementToast toast={showToast ? toast : null} dismissLabel={t("dismiss")} />
         {suggested &&
         suggestCopy.message &&
         suggestCopy.switchLabel &&

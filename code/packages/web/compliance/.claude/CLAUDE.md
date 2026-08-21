@@ -1,4 +1,4 @@
-# @indiecrafts/compliance — legal pages + cookie consent
+# @indiecrafts/packages-web-compliance — legal pages + cookie consent
 
 **Stack:** React 19 · TypeScript · Tailwind v4 · Sanity v5 · next-intl. The site's legal +
 data-protection surface: the legal pages, the cookie-consent runtime, and legal re-acceptance.
@@ -19,9 +19,9 @@ Three domains under one Sanity barrel:
   `legal-store.ts` cookie ("policies updated, please Accept" for privacy/terms/CGV).
 - **`src/requests/`** — the **data-subject request** flow (GDPR Art. 15–21 form): `submitDataRequest`
   (validate → store `dataRequest` → alert), `validate.ts`, `request-types.ts` (the 7 rights). The
-  form UI (`DataRequestForm`) is in `@indiecrafts/ui-components`; the record + desk are in `src/sanity/`.
+  form UI (`DataRequestForm`) is in `@indiecrafts/packages-web-ui-components`; the record + desk are in `src/sanity/`.
 - **`src/emails/`** — the compliance email templates (`data-request-notification`), rendering via
-  `@indiecrafts/email`'s `renderEmailLayout`. This brick owns its email end-to-end (group in
+  `@indiecrafts/packages-web-email`'s `renderEmailLayout`. This brick owns its email end-to-end (group in
   `src/sanity/email.ts`, template here, send in `src/requests/submit.ts`).
 - **`src/sanity/`** — the **one** `complianceSanity` **`SanityModule`** barrel: `cookieConsent` +
   `cookieCategory`/`cookieEntry` + `legalConsent` + `legalPage` schema, their desk sections

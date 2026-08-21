@@ -1,0 +1,16 @@
+{
+  "name": "@indiecrafts/packages-web-page-builder",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*"
+  },
+  "dependencies": {
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-ui-icons": "workspace:*",
+    "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@sanity/icons": "^3.7.4",
+    "sanity": "^5.31.1"
+  }
+}

@@ -22,7 +22,7 @@ export type LocaleConfig = {
   abbr: string;
   /** Text direction. Drives `<html dir>`; set `"rtl"` for Arabic/Hebrew/etc. */
   dir: "ltr" | "rtl";
-  // ── Formatting rules (consumed by @indiecrafts/format) ──────
+  // ── Formatting rules (consumed by @indiecrafts/packages-shared-format) ──────
   /** BCP-47 tag for `Intl` (money/number/date). Defaults to `code` when unset (e.g. `fr` → `fr`). */
   numberLocale?: string;
   /** Default currency for money in this locale (ISO 4217, e.g. `"EUR"`). Falls back to `formatDefaults.currency`. */
@@ -41,8 +41,8 @@ export type Locale = (typeof i18n.locales)[number]["code"];
 /** A concrete, paintable theme. */
 export type ThemeName = "light" | "dark";
 
-/** A theme option offered in the toggle — concrete themes plus "system". */
-export type ThemeMode = ThemeName | "system";
+/** A theme option offered in the toggle. "System" (follow-OS) is the default auto-detect behaviour, not a selectable mode. */
+export type ThemeMode = ThemeName;
 
 // ── Fonts ────────────────────────────────────────────────────
 
@@ -70,11 +70,11 @@ export type Environment = "development" | "test" | "staging" | "production";
 
 // ── Logging ──────────────────────────────────────────────────
 
-/** Log severities, low → high; `silent` gates everything off. Consumed by `@indiecrafts/logger`. */
+/** Log severities, low → high; `silent` gates everything off. Consumed by `@indiecrafts/packages-shared-logger`. */
 export type LogLevel =
   "trace" | "debug" | "info" | "warn" | "error" | "fatal" | "silent";
 
-/** The `logging` config shape — DATA only; the resolution logic lives in `@indiecrafts/logger`. */
+/** The `logging` config shape — DATA only; the resolution logic lives in `@indiecrafts/packages-shared-logger`. */
 export type LoggingConfig = {
   /** Minimum console level per environment. `"silent"` = no console output at all. */
   levels: Record<Environment, LogLevel>;

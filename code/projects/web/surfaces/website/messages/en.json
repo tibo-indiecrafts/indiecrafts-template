@@ -1,10 +1,32 @@
 {
+  "offline": {
+    "banner": "You're offline — some features may be unavailable."
+  },
+  "agent": {
+    "title": "AI content research",
+    "description": "Give the agent a goal — it drafts 5 article ideas for you to review. It suggests; you decide.",
+    "goalLabel": "Your goal",
+    "goalPlaceholder": "e.g. article ideas for freelance designers about AI tools",
+    "submit": "Generate ideas",
+    "submitting": "Working…",
+    "error": "Something went wrong. Please try again.",
+    "reviewNote": "Draft ideas — review before you use them.",
+    "empty": "No ideas returned. Try a more specific goal.",
+    "field": {
+      "reader": "Reader",
+      "problem": "Problem",
+      "intent": "Search intent",
+      "headline": "Headline",
+      "why": "Why"
+    }
+  },
   "site": {
     "tagline": "The config-first Next.js template for client websites.",
     "description": "A highly modular, SEO-ready, i18n-ready, accessibility-first Next.js template. Fork it, edit the config, ship."
   },
   "nav": {
     "home": "Home",
+    "signIn": "Sign in",
     "about": "About",
     "blog": "Blog",
     "author": "Authors",
@@ -58,7 +80,6 @@
     "switchTheme": "Switch theme",
     "themeLight": "Light",
     "themeDark": "Dark",
-    "themeSystem": "System",
     "previous": "Previous",
     "next": "Next",
     "dismiss": "Dismiss",

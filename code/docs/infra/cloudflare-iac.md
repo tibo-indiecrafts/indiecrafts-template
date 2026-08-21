@@ -44,7 +44,7 @@ select <env>`, `-var-file=env/<env>.tfvars`.
 | Resource                                 | Effect                                                                                                                          |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `cloudflare_workers_custom_domain`       | **auto domain** — attaches `<domain>` to the env's Worker; CF makes the DNS record + cert. **Authoritative** — do NOT also uncomment the `[[env.*.routes]]` block in `wrangler.toml` (both claim the hostname and fight); gate with `attach_domain` |
-| `cloudflare_ruleset` (http_ratelimit)    | **rate-limit on `/api/*`** — the `@indiecrafts/security` `withGuard` **primary** limiter                                        |
+| `cloudflare_ruleset` (http_ratelimit)    | **rate-limit on `/api/*`** — the `@indiecrafts/packages-shared-security` `withGuard` **primary** limiter                                        |
 | `cloudflare_ruleset` (firewall_managed)  | Cloudflare **Managed WAF** ruleset                                                                                              |
 | `cloudflare_bot_management` `fight_mode` | **Bot Fight Mode** (free). Note: separate pipeline — no skip/exceptions (upgrade to Super Bot Fight Mode on Pro for skip rules) |
 | `cloudflare_ruleset` (cache_settings)    | **Cache Rules** — immutable `/_next/static`, **bypass** `/api` + `/studio`                                                      |
@@ -80,7 +80,7 @@ pnpm infra:website:output:prod
 
 Put the **site key** in the app env (public) and the **secret** via `secrets:sync:website:prod` (never
 commit it). Until they're set, the form guard runs on honeypot + origin + rate-limit + body-cap;
-Turnstile just no-ops. See [Security headers](/apps/web/seo/security-headers) + `@indiecrafts/security`.
+Turnstile just no-ops. See [Security headers](/apps/web/seo/security-headers) + `@indiecrafts/packages-shared-security`.
 
 ## Caching, end to end
 

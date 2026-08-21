@@ -2,8 +2,8 @@
 
 Auto-loads when you work under `code/packages/**`. Internal TypeScript packages shared
 by apps + modules, **foldered by platform-scope** — `code/packages/<scope>/<brick>/`
-(scope = `shared · web · mobile · hybrid`). 19 live: 12 in `shared/`, 7 in `web/`;
-`mobile/`/`hybrid/` are reserved README markers. `_registry.md` lists the roster + the
+(scope = `shared · web · mobile · hybrid`). 27 live: 15 in `shared/`, 11 in `web/`, 1 in `mobile/`
+(`ui-native`); `hybrid/` is a reserved README marker. `_registry.md` lists the roster + the
 reserved bricks (auth · billing · data · …).
 **How we build packages** → the internal dev framework. **What they are** →
 `code/docs/packages/`.
@@ -16,7 +16,7 @@ reserved bricks (auth · billing · data · …).
 
 ## Conventions
 
-- Name `@indiecrafts/<brick>`; ship a typed `exports` map; source stays TS (apps consume via Next `transpilePackages` — no build step per brick until needed).
+- Name `@indiecrafts/packages-<scope>-<brick>` — the **folder tail** (`packages-shared-<brick>` or `packages-web-<brick>`), matching the dir; ship a typed `exports` map; source stays TS (apps consume via Next `transpilePackages` — no build step per brick until needed).
 - **A package NEVER imports an app** — dependencies point down (app → module → package → db), never up or sideways between apps.
 - Keep each brick single-purpose; a brick that needs another brick is fine, a brick that needs an app is a design error.
 
@@ -30,7 +30,7 @@ Two axes govern where a brick lives. **Scope is the folder; category is a tag.**
 - **`shared/`** — cross-platform: `agnostic` (pure TS/data), `server-side` (used by every backend),
   or a cross-platform contract. A brick that runs on ≥2 platforms lives here.
 - **`web/`** — web-client-only (DOM + Tailwind + Next).
-- **`mobile/`** · **`hybrid/`** — reserved README markers (Expo / Electron bricks).
+- **`mobile/`** — the native design system `ui-native` (Expo). **`hybrid/`** — a reserved README marker (Electron bricks).
 
 **A brick lives at the highest scope it runs on** — `shared/` if it works on ≥2 platforms, else its
 single client platform. `sanity`/`email`/`security` are server-side but serve every platform's
@@ -52,17 +52,18 @@ are `web/` today (shadcn is DOM); when the native design system is real, either 
 dependency graphs diverge. The token _values_ (`ui-tokens`) already live in `shared/`; only the
 components fork per platform.
 
-**Moving a brick between scopes** (e.g. `web/ui` → `shared/ui`) is mechanical and low-risk: a
-package's **name** is path-independent (pnpm resolves by name, `transpilePackages` matches by name),
-so only `pnpm-workspace.yaml` globs, tsconfig `paths` (relative), the `@source` lines in
-`shared/ui-tokens/globals.css`, and doc links change — **no import specifier moves.** `code/modules/`
-follows the identical rule (`modules/<scope>/<module>/`).
+**Moving a brick between scopes** (e.g. `web/i18n` → `shared/i18n`) renames the package, because the
+name is the **folder tail** (`packages-web-i18n` → `packages-shared-i18n`). So it is mechanical but
+touches importers: `git mv` the folder, then rewrite the name across every importer (a boundary-safe
+codemod), plus the moved `package.json` `name`, tsconfig `paths` (key **and** value), any `@source`
+line in `shared/ui-tokens/globals.css`, and doc links. Verify with `pnpm tsc` (all workspaces) +
+`pnpm test`. `code/modules/` follows the identical rule (`modules/<scope>/<module>/`).
 
 ## Adding a brick (the repeatable shape)
 
 A new brick lands in known places — do all five in the same change:
 
-1. **Code** — `code/packages/<scope>/<name>/` (scope = the highest platform it runs on: `shared` if ≥2 platforms, else `web`/`mobile`/`hybrid`) — `package.json` `@indiecrafts/<name>` + `exports`; declare its own deps. **To consume it in an app, five wires** (only the applicable ones): (a) add it to `transpilePackages` in the app `next.config.ts` — **always** (consumed as TS source); (b) a `workspace:*` dep in the app `package.json` — **always**; (c) a `tsconfig` `paths` entry **iff it has a wildcard subpath export** (`"./*"` / `"./web/*"`, which tsc + the Sanity schema-extract can't map to a 1:1 extension) — packages with explicit per-file exports (e.g. `version`) skip it; (d) a `@source` line in `ui-tokens/globals.css` **iff it renders Tailwind classes**; (e) its `SanityModule` barrel into a `composeStudio` group in `sanity.config.ts` **iff it ships Sanity content**. A pure-logic brick needs only (a)+(b); a UI+Sanity brick needs all five.
+1. **Code** — `code/packages/<scope>/<name>/` (scope = the highest platform it runs on: `shared` if ≥2 platforms, else `web`/`mobile`/`hybrid`) — `package.json` `@indiecrafts/packages-<scope>-<name>` (folder tail) + `exports`; declare its own deps. **To consume it in an app, five wires** (only the applicable ones): (a) add it to `transpilePackages` in the app `next.config.ts` — **always** (consumed as TS source); (b) a `workspace:*` dep in the app `package.json` — **always**; (c) a `tsconfig` `paths` entry **iff it has a wildcard subpath export** (`"./*"` / `"./web/*"`, which tsc + the Sanity schema-extract can't map to a 1:1 extension) — packages with explicit per-file exports (e.g. `version`) skip it; (d) a `@source` line in `ui-tokens/globals.css` **iff it renders Tailwind classes**; (e) its `SanityModule` barrel into a `composeStudio` group in `sanity.config.ts` **iff it ships Sanity content**. A pure-logic brick needs only (a)+(b); a UI+Sanity brick needs all five.
 2. **Registry** — a row in [`_registry.md`](../_registry.md).
 3. **Doc** — one page `code/docs/packages/<name>.md` (exports · deps · consumers · gotchas), split from the shape of the others.
 4. **Sidebar** — one line under the Packages group in `code/docs/.vitepress/config.mts`.

@@ -11,9 +11,9 @@ is the foundation**, so it goes first; a later pass must never regress an earlie
 without breaking a11y, refine copy without breaking hierarchy). Authority for every pass:
 `code/packages/shared/ui-tokens/DESIGN.md`.
 
-This is the **refinement** loop (polishing one screen). For a fast PR read, the phase-05 **parallel**
-review batch (`method/shared/process/my-skills-and-agents.md`) stays the tool — the two coexist, they
-do different jobs. Run this after the pixels exist (`rules/visual-verification.md` — screenshot at
+This is the **refinement** loop (polishing one screen). For a fast PR read, run the reviewer agents in
+**parallel** instead (design + a11y at once) — the two coexist, they do different jobs. Run this after
+the pixels exist (`rules/visual-verification.md` — screenshot at
 375 / 768 / 1280) so each pass interprets real frames.
 
 ## The four passes — in order, each: critique → fix one-by-one → re-screenshot → next
@@ -31,7 +31,7 @@ do different jobs. Run this after the pixels exist (`rules/visual-verification.m
 3. **Content / copy**. Lens: ambiguous, overly technical, too-long labels; does each label describe the
    *consequence* of its action? Brand voice, one-term consistency, locale parity, strings in
    `messages/<locale>.json`. Delegate to the **`copy-reviewer`** agent. Authority: DESIGN.md §Product
-   Content + `method/shared/context/voice-guide.md`.
+   Content.
 4. **Interaction-states** (last — the screen is now accessible, well-ordered, well-worded). Lens: hover,
    `focus-visible`, active/pressed, disabled, loading, empty, error, success, destructive-confirm — do
    they all exist and read right? Delegate to the **`interaction-states-reviewer`** agent. Authority:

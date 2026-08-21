@@ -2,7 +2,11 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Popover, PopoverContent, PopoverTrigger } from "@indiecrafts/ui/web/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@indiecrafts/packages-web-ui/web/popover";
 
 /**
  * Footer maker-credit: "Made with <name>" where the brand name opens a **link

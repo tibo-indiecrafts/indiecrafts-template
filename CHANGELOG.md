@@ -8,19 +8,22 @@ template's history at a glance.
 
 | Area                               | Log                                                                  | Covers                                                 |
 | ---------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------ |
-| App (`@indiecrafts/website`)       | [`code/projects/web/CHANGELOG.md`](./code/projects/web/CHANGELOG.md) | behavior, config, routes, conventions, design tokens   |
+| App (`@indiecrafts/website`)       | [`code/projects/web/surfaces/website/CHANGELOG.md`](./code/projects/web/surfaces/website/CHANGELOG.md) | behavior, config, routes, conventions, design tokens   |
 | Packages (`@indiecrafts/*` bricks) | [`code/packages/CHANGELOG.md`](./code/packages/CHANGELOG.md)         | a brick's public surface — exports, deps, splits       |
 | Modules (product slices)           | [`code/modules/CHANGELOG.md`](./code/modules/CHANGELOG.md)           | a module's surface/wiring — extraction, blocks, gating |
-| Docs site                          | [`docs/CHANGELOG.md`](./docs/CHANGELOG.md)                           | pages added/removed/moved, structure, sidebar          |
-| Method / framework                 | [`method/CHANGELOG.md`](./method/CHANGELOG.md)                       | rules, workflows, process, templates                   |
-| Lab                                | [`work/CHANGELOG.md`](./work/CHANGELOG.md)                           | what graduated work/ → docs/, sprint outcomes          |
+| Docs site                          | [`code/docs/CHANGELOG.md`](./code/docs/CHANGELOG.md)                 | pages added/removed/moved, structure, sidebar          |
 
 This file stays **coarse**: cut a rolled-up entry at release/tag time, link down for specifics.
 Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[major.minor.patch]`.
 
 ## [Unreleased]
 
+- **Removed the `method/` and `work/` folders** — the internal dev-framework site (rules, workflows,
+  process, sprint templates, tooling, the page-builder roadmap) and the private sprint lab are deleted.
+  Conventions now live in-repo (`.claude/` + app rules + `code/docs/`); reviewer agents/skills repoint
+  to the surviving `.claude/rules/` + `DESIGN.md`. The delivery machinery that guarded them
+  (`delivery-canary` + its CI step + `method`/`work` `export-ignore`) is removed as redundant.
 - **Navigation + footer menus moved into Sanity** (editable per client, no config fallback,
-  header dropdowns with icon + description). Detail → [app log](./code/projects/web/CHANGELOG.md).
-- **Per-area changelog system** — this roll-up plus four area logs; app/docs/method/work each
-  own their own history.
+  header dropdowns with icon + description). Detail → [app log](./code/projects/web/surfaces/website/CHANGELOG.md).
+- **Per-area changelog system** — this roll-up plus the app/packages/modules/docs area logs, each
+  owning its own history.

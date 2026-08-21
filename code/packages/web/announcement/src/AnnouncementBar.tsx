@@ -1,18 +1,28 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
-import { Link } from "@indiecrafts/i18n";
-import { cn } from "@indiecrafts/utils/cn";
-import type { AnnouncementItem, AnnouncementLink } from "./sanity/announcement";
-import { dismissAnnouncement } from "./announcement-store";
+import {
+  useEffect,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
+import type {
+  BannerItem,
+  AnnouncementLink,
+} from "@indiecrafts/packages-shared-announcement";
+import { dismissAnnouncement, readAnnouncementAck } from "./announcement-store";
 
 /**
  * Announcement / discount strip under the site nav. Non-fixed — it sits at the top
  * of `<main>`, so page content flows below it and a dismiss reclaims the space by
  * unmounting (no offset math). Rotates through multiple items; a single item is
- * static. The layout renders it only when there are live items and the deposited
- * `announcement-ack` cookie ≠ the current `version` (decided server-side, no flash).
- * i18n-agnostic — copy comes in as props.
+ * static. On the website the layout renders it only when the deposited
+ * `announcement-ack` cookie ≠ the current `version` (decided server-side, no flash);
+ * the same cookie is ALSO read here (`useSyncExternalStore`) so the client-gated
+ * surfaces (app, hybrid) — which have no server pre-check — stay dismissed across a
+ * reload. i18n-agnostic — copy comes in as props.
  */
 
 const VARIANT = {
@@ -33,7 +43,7 @@ export function AnnouncementBar({
   copyLabel = "Copier",
   copiedLabel = "Copié",
 }: {
-  items: AnnouncementItem[];
+  items: BannerItem[];
   variant?: keyof typeof VARIANT;
   dismissible?: boolean;
   version: string;
@@ -44,6 +54,11 @@ export function AnnouncementBar({
 }) {
   const [hidden, setHidden] = useState(false);
   const [i, setI] = useState(0);
+  const acked = useSyncExternalStore(
+    () => () => {},
+    readAnnouncementAck,
+    () => "",
+  );
 
   useEffect(() => {
     if (items.length < 2) return;
@@ -54,7 +69,7 @@ export function AnnouncementBar({
     return () => clearInterval(id);
   }, [items.length]);
 
-  if (hidden || items.length === 0) return null;
+  if (hidden || acked === version || items.length === 0) return null;
   const item = items[i % items.length];
   if (!item) return null; // narrow: noUncheckedIndexedAccess widens the indexed access to `| undefined`
 

@@ -17,19 +17,40 @@
     "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./src/*"],
-      "@indiecrafts/utils/*": ["../../../../packages/shared/utils/src/*"],
-      "@indiecrafts/email/*": ["../../../../packages/shared/email/src/*"],
-      "@indiecrafts/system-pages/*": ["../../../../packages/web/system-pages/src/*"],
-      "@indiecrafts/blog/*": ["../../../../modules/web/blog/src/*"],
-      "@indiecrafts/newsletter/*": ["../../../../modules/web/newsletter/src/*"],
-      "@indiecrafts/waitlist/*": ["../../../../modules/web/waitlist/src/*"],
-      "@indiecrafts/compliance/*": ["../../../../packages/web/compliance/src/*"],
-      "@indiecrafts/announcement/*": ["../../../../packages/web/announcement/src/*"],
-      "@indiecrafts/locale-suggest/*": ["../../../../packages/web/locale-suggest/src/*"],
-      "@indiecrafts/ui/web/*": ["../../../../packages/web/ui/src/web/*"],
-      "@indiecrafts/ui-components/*": ["../../../../packages/web/ui-components/src/*"],
-      "@indiecrafts/page-builder/*": ["../../../../packages/shared/page-builder/src/*"],
-      "@indiecrafts/gated-delivery": [
+      "@indiecrafts/packages-shared-utils/*": ["../../../../packages/shared/utils/src/*"],
+      "@indiecrafts/packages-web-email/*": ["../../../../packages/web/email/src/*"],
+      "@indiecrafts/packages-shared-system-pages/*": [
+        "../../../../packages/shared/system-pages/src/*"
+      ],
+      "@indiecrafts/packages-shared-compliance/*": [
+        "../../../../packages/shared/compliance/src/*"
+      ],
+      "@indiecrafts/modules-web-blog/*": ["../../../../modules/web/blog/src/*"],
+      "@indiecrafts/modules-web-newsletter/*": [
+        "../../../../modules/web/newsletter/src/*"
+      ],
+      "@indiecrafts/modules-web-waitlist/*": ["../../../../modules/web/waitlist/src/*"],
+      "@indiecrafts/modules-web-contact/*": ["../../../../modules/web/contact/src/*"],
+      "@indiecrafts/packages-web-compliance/*": [
+        "../../../../packages/web/compliance/src/*"
+      ],
+      "@indiecrafts/packages-web-announcement/*": [
+        "../../../../packages/web/announcement/src/*"
+      ],
+      "@indiecrafts/packages-web-locale-suggest/*": [
+        "../../../../packages/web/locale-suggest/src/*"
+      ],
+      "@indiecrafts/packages-web-ui/web/*": ["../../../../packages/web/ui/src/web/*"],
+      "@indiecrafts/packages-web-ui-components/*": [
+        "../../../../packages/web/ui-components/src/*"
+      ],
+      "@indiecrafts/packages-shared-ui-icons/*": [
+        "../../../../packages/shared/ui-icons/src/*"
+      ],
+      "@indiecrafts/packages-web-page-builder/*": [
+        "../../../../packages/web/page-builder/src/*"
+      ],
+      "@indiecrafts/packages-shared-gated-delivery": [
         "../../../../packages/shared/gated-delivery/src/index.ts"
       ]
     }

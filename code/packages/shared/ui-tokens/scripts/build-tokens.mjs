@@ -6,15 +6,22 @@
  * → three platform outputs. NEVER hand-edit the generated files; edit the JSON +
  * run `pnpm tokens:build` (or `--check` to verify sync).
  *
- *   1. ../src/generated/tokens.css  — web: :root (light) + the two dark blocks.
- *   2. ../src/native/tokens.ts      — React Native: { light, dark } hex objects.
- *   3. ../src/generated/hex.ts      — hex mirror for the PWA manifest (@/config).
+ *   1. ../src/generated/tokens.css      — web: :root (light) + the two dark blocks.
+ *   2. ../src/native/tokens.ts          — React Native: { light, dark } hex objects.
+ *   3. ../src/generated/nativewind.css  — NativeWind (RN Tailwind): :root + .dark:root hex vars.
+ *   4. ../src/generated/hex.ts          — hex mirror for the PWA manifest (@/config).
  *
  * Colocated fragments: `{ "component": { "<name>": { "$type", "$value": "{semantic.x}" } } }`.
  * They may ONLY add to the component tier, reference only `{semantic.*}`/`{component.*}`
  * (never a primitive or raw value), and must use globally-unique token names.
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+} from "node:fs";
 import { fileURLToPath } from "node:url";
 import { converter } from "culori";
 
@@ -22,7 +29,10 @@ const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 const CENTRAL = here("../src/shared/tokens.json");
 // Glob root for colocated fragments. Overridable (TOKENS_CODE_DIR) so a test can
 // point it at a fixture dir; defaults to the repo's code/ tree.
-const CODE_DIR = (process.env.TOKENS_CODE_DIR || here("../../../../")).replace(/\/$/, ""); // .../code
+const CODE_DIR = (process.env.TOKENS_CODE_DIR || here("../../../../")).replace(
+  /\/$/,
+  "",
+); // .../code
 const tokens = JSON.parse(readFileSync(CENTRAL, "utf8"));
 const toRgb = converter("rgb");
 
@@ -30,7 +40,8 @@ const CHECK = process.argv.slice(2).includes("--check");
 
 // ── ref helpers ──────────────────────────────────────────────────────
 const node = (path) => path.split(".").reduce((o, k) => o?.[k], tokens);
-const isRef = (v) => typeof v === "string" && v.startsWith("{") && v.endsWith("}");
+const isRef = (v) =>
+  typeof v === "string" && v.startsWith("{") && v.endsWith("}");
 const refPath = (v) => v.slice(1, -1);
 
 // ── merge colocated component fragments ──────────────────────────────
@@ -48,7 +59,8 @@ function findFragments(dir, acc = []) {
 
 // mergedComponent = central component tier (base) + every colocated fragment.
 const mergedComponent = {};
-for (const [k, v] of Object.entries(tokens.component)) if (k !== "$description") mergedComponent[k] = v;
+for (const [k, v] of Object.entries(tokens.component))
+  if (k !== "$description") mergedComponent[k] = v;
 const componentSource = {}; // name -> file, for duplicate errors
 
 const fragmentFiles = findFragments(CODE_DIR);
@@ -62,17 +74,23 @@ for (const file of fragmentFiles) {
   for (const key of Object.keys(frag)) {
     if (key === "$description") continue;
     if (key !== "component")
-      throw new Error(`${file}: colocated token files may only add to "component" (found "${key}"). Primitives/semantics stay central.`);
+      throw new Error(
+        `${file}: colocated token files may only add to "component" (found "${key}"). Primitives/semantics stay central.`,
+      );
   }
   for (const [name, tok] of Object.entries(frag.component ?? {})) {
     if (name === "$description") continue;
     if (mergedComponent[name])
-      throw new Error(`duplicate component token "${name}" in ${file} (already defined${componentSource[name] ? ` in ${componentSource[name]}` : " centrally"}). Namespace by component (e.g. button-${name}).`);
+      throw new Error(
+        `duplicate component token "${name}" in ${file} (already defined${componentSource[name] ? ` in ${componentSource[name]}` : " centrally"}). Namespace by component (e.g. button-${name}).`,
+      );
     const v = tok.$value;
     if (isRef(v)) {
       const p = refPath(v);
       if (!p.startsWith("semantic.") && !p.startsWith("component."))
-        throw new Error(`${file}: token "${name}" references {${p}} — component tokens may reference only {semantic.*} or {component.*}, never a primitive or raw value.`);
+        throw new Error(
+          `${file}: token "${name}" references {${p}} — component tokens may reference only {semantic.*} or {component.*}, never a primitive or raw value.`,
+        );
     }
     mergedComponent[name] = tok;
     componentSource[name] = file;
@@ -89,8 +107,12 @@ const VOCAB = [
   ...Object.keys(tokens.semantic.light),
   ...Object.keys(tokens.component).filter((k) => k !== "$description"),
 ].sort((a, b) => b.length - a.length); // longest first so `accent-foreground` wins over `accent`
-const PREFIX = "bg|text|border|ring|fill|stroke|outline|from|via|to|divide|caret|decoration|shadow";
-const USE_RE = new RegExp(`(?<![\\w-])(?:${PREFIX})-(${VOCAB.join("|")})(?![\\w/-])`, "g");
+const PREFIX =
+  "bg|text|border|ring|fill|stroke|outline|from|via|to|divide|caret|decoration|shadow";
+const USE_RE = new RegExp(
+  `(?<![\\w-])(?:${PREFIX})-(${VOCAB.join("|")})(?![\\w/-])`,
+  "g",
+);
 
 /** Tail token name a sidecar entry references, e.g. {semantic.ring} -> "ring". */
 const declaredTails = (frag) =>
@@ -106,7 +128,11 @@ function checkDrift() {
   for (const file of fragmentFiles) {
     const tsx = file.replace(/\.tokens\.json$/, ".tsx");
     let source;
-    try { source = readFileSync(tsx, "utf8"); } catch { continue; } // no sibling component — skip
+    try {
+      source = readFileSync(tsx, "utf8");
+    } catch {
+      continue;
+    } // no sibling component — skip
     const declared = declaredTails(JSON.parse(readFileSync(file, "utf8")));
     const used = new Set([...source.matchAll(USE_RE)].map((m) => m[1]));
     const missing = [...used].filter((tok) => !declared.has(tok));
@@ -125,19 +151,36 @@ function concrete(value) {
 const num = (n) => String(n);
 function colorCss(v) {
   const c = v.components;
-  if (v.colorSpace === "oklch") return `oklch(${num(c[0])} ${num(c[1])} ${num(c[2])})`;
-  if (v.colorSpace === "hsl") return `hsl(${num(c[0])} ${num(c[1])}% ${num(c[2])}%)`;
+  if (v.colorSpace === "oklch")
+    return `oklch(${num(c[0])} ${num(c[1])} ${num(c[2])})`;
+  if (v.colorSpace === "hsl")
+    return `hsl(${num(c[0])} ${num(c[1])}% ${num(c[2])}%)`;
   throw new Error(`unsupported colorSpace: ${v.colorSpace}`);
 }
 const dimCss = (v) => `${v.value}${v.unit}`;
 function toHex(v) {
-  if (v.colorSpace === "oklch") return hex({ mode: "oklch", l: v.components[0], c: v.components[1], h: v.components[2] });
-  if (v.colorSpace === "hsl") return hex({ mode: "hsl", h: v.components[0], s: v.components[1] / 100, l: v.components[2] / 100 });
+  if (v.colorSpace === "oklch")
+    return hex({
+      mode: "oklch",
+      l: v.components[0],
+      c: v.components[1],
+      h: v.components[2],
+    });
+  if (v.colorSpace === "hsl")
+    return hex({
+      mode: "hsl",
+      h: v.components[0],
+      s: v.components[1] / 100,
+      l: v.components[2] / 100,
+    });
   throw new Error(`cannot hex a ${v.colorSpace}`);
 }
 function hex(color) {
   const { r, g, b } = toRgb(color);
-  const ch = (x) => Math.round(Math.max(0, Math.min(1, x)) * 255).toString(16).padStart(2, "0");
+  const ch = (x) =>
+    Math.round(Math.max(0, Math.min(1, x)) * 255)
+      .toString(16)
+      .padStart(2, "0");
   return `#${ch(r)}${ch(g)}${ch(b)}`;
 }
 
@@ -155,13 +198,17 @@ function cssDecl(name, value) {
   throw new Error(`cannot emit --${name}`);
 }
 const semanticBlock = (theme) =>
-  Object.entries(tokens.semantic[theme]).map(([name, t]) => cssDecl(name, t.$value)).join("\n");
+  Object.entries(tokens.semantic[theme])
+    .map(([name, t]) => cssDecl(name, t.$value))
+    .join("\n");
 
 function buildCss() {
   const light = [
     semanticBlock("light"),
     `  --radius: ${dimCss(concrete(tokens.semantic.radius.$value))};`,
-    ...Object.entries(mergedComponent).map(([name, t]) => cssDecl(name, t.$value)),
+    ...Object.entries(mergedComponent).map(([name, t]) =>
+      cssDecl(name, t.$value),
+    ),
   ].join("\n");
   const dark = semanticBlock("dark");
   return `/* GENERATED by scripts/build-tokens.mjs from src/shared/tokens.json + colocated *.tokens.json — DO NOT EDIT.
@@ -192,23 +239,30 @@ function resolveHex(value, theme) {
   let v = value;
   while (isRef(v)) {
     const p = refPath(v);
-    if (p.startsWith("semantic.")) v = tokens.semantic[theme][p.split(".").pop()].$value;
-    else if (p.startsWith("component.")) v = mergedComponent[p.split(".").pop()].$value;
+    if (p.startsWith("semantic."))
+      v = tokens.semantic[theme][p.split(".").pop()].$value;
+    else if (p.startsWith("component."))
+      v = mergedComponent[p.split(".").pop()].$value;
     else v = node(p).$value;
   }
   return toHex(v);
 }
 function themeColors(theme) {
   const out = {};
-  for (const [name, t] of Object.entries(tokens.semantic[theme])) out[name] = resolveHex(t.$value, theme);
-  for (const [name, t] of Object.entries(mergedComponent)) out[name] = resolveHex(t.$value, theme);
+  for (const [name, t] of Object.entries(tokens.semantic[theme]))
+    out[name] = resolveHex(t.$value, theme);
+  for (const [name, t] of Object.entries(mergedComponent))
+    out[name] = resolveHex(t.$value, theme);
   return out;
 }
 function buildNative() {
   const light = themeColors("light");
   const dark = themeColors("dark");
   const radius = concrete(tokens.semantic.radius.$value);
-  const asColor = (o) => Object.entries(o).map(([k, v]) => `      "${k}": "${v}",`).join("\n");
+  const asColor = (o) =>
+    Object.entries(o)
+      .map(([k, v]) => `      "${k}": "${v}",`)
+      .join("\n");
   return `// GENERATED by scripts/build-tokens.mjs — DO NOT EDIT.
 // React Native has no CSS/oklch(); these are hex, ready for StyleSheet.
 export const tokens = {
@@ -228,6 +282,30 @@ ${asColor(dark)}
 
 export type ThemeName = keyof typeof tokens;
 export type ColorToken = keyof typeof tokens.light.color;
+`;
+}
+/** NativeWind (react-native-reusables) theme: the same semantic names as web, hex values.
+ * NativeWind reads CSS vars from a global.css; the RN Tailwind preset maps each token to
+ * `var(--<name>)`, so `bg-background`/`text-foreground` re-theme on the `.dark` class. */
+function buildNativeWind() {
+  const light = themeColors("light");
+  const dark = themeColors("dark");
+  const vars = (o) =>
+    Object.entries(o)
+      .map(([k, v]) => `  --${k}: ${v};`)
+      .join("\n");
+  return `/* GENERATED by scripts/build-tokens.mjs — DO NOT EDIT.
+   NativeWind theme (react-native-reusables). Hex — RN has no oklch(). Import once in the
+   mobile app's global.css; the preset maps each token to var(--name). Dark = the .dark class. */
+
+:root {
+${vars(light)}
+  --radius: ${concrete(tokens.semantic.radius.$value).value * 16};
+}
+
+.dark:root {
+${vars(dark)}
+}
 `;
 }
 function buildHex() {
@@ -256,17 +334,22 @@ const nColo = Object.keys(componentSource).length;
 const drift = checkDrift();
 if (drift.length) {
   for (const { tsx, missing } of drift)
-    console.error(`✗ drift: ${tsx} uses ${missing.map((t) => `\`${t}\``).join(", ")} but its .tokens.json omits ${missing.length === 1 ? "it" : "them"}.`);
+    console.error(
+      `✗ drift: ${tsx} uses ${missing.map((t) => `\`${t}\``).join(", ")} but its .tokens.json omits ${missing.length === 1 ? "it" : "them"}.`,
+    );
 }
 if (VALIDATE_ONLY) {
   if (drift.length) process.exit(1);
-  console.log(`✓ validate — ${nColo} component tokens, ${fragmentFiles.length} sidecars, no drift`);
+  console.log(
+    `✓ validate — ${nColo} component tokens, ${fragmentFiles.length} sidecars, no drift`,
+  );
   process.exit(0);
 }
 
 const outputs = [
   ["../src/generated/tokens.css", buildCss()],
   ["../src/native/tokens.ts", buildNative()],
+  ["../src/generated/nativewind.css", buildNativeWind()],
   ["../src/generated/hex.ts", buildHex()],
 ];
 mkdirSync(here("../src/generated"), { recursive: true });
@@ -277,18 +360,40 @@ for (const [rel, content] of outputs) {
   const path = here(rel);
   if (CHECK) {
     let current = "";
-    try { current = readFileSync(path, "utf8"); } catch {}
-    if (current !== content) { stale++; console.error(`✗ stale: ${rel}`); }
+    try {
+      current = readFileSync(path, "utf8");
+    } catch {}
+    if (current !== content) {
+      stale++;
+      console.error(`✗ stale: ${rel}`);
+    }
   } else {
     writeFileSync(path, content);
     console.log(`✓ wrote ${rel}`);
   }
 }
 if (CHECK) {
-  if (stale) { console.error(`\n✗ tokens:check FAILED — ${stale} file(s) out of sync. Run \`pnpm tokens:build\`.`); process.exit(1); }
-  if (drift.length) { console.error(`\n✗ tokens:check FAILED — ${drift.length} sidecar(s) drifted from their component. Add the missing token(s) to the .tokens.json.`); process.exit(1); }
-  console.log(`✓ tokens:check — in sync (${nColo} colocated component token${nColo === 1 ? "" : "s"} merged, ${fragmentFiles.length} sidecars drift-checked)`);
+  if (stale) {
+    console.error(
+      `\n✗ tokens:check FAILED — ${stale} file(s) out of sync. Run \`pnpm tokens:build\`.`,
+    );
+    process.exit(1);
+  }
+  if (drift.length) {
+    console.error(
+      `\n✗ tokens:check FAILED — ${drift.length} sidecar(s) drifted from their component. Add the missing token(s) to the .tokens.json.`,
+    );
+    process.exit(1);
+  }
+  console.log(
+    `✓ tokens:check — in sync (${nColo} colocated component token${nColo === 1 ? "" : "s"} merged, ${fragmentFiles.length} sidecars drift-checked)`,
+  );
 } else {
-  if (drift.length) console.log(`  (${drift.length} sidecar(s) drifted — see ✗ above; run \`pnpm tokens:check\` details)`);
-  console.log(`  (${nColo} colocated component token${nColo === 1 ? "" : "s"} merged from *.tokens.json)`);
+  if (drift.length)
+    console.log(
+      `  (${drift.length} sidecar(s) drifted — see ✗ above; run \`pnpm tokens:check\` details)`,
+    );
+  console.log(
+    `  (${nColo} colocated component token${nColo === 1 ? "" : "s"} merged from *.tokens.json)`,
+  );
 }

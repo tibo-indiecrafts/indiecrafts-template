@@ -10,7 +10,7 @@ After any change, run `pnpm verify` to confirm types, lint, format, and contrast
 
 | Surface                                    | Home                                                                                                 | Edited by |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- | --------- |
-| Colours (light + dark)                     | `@indiecrafts/ui-tokens` → `code/packages/shared/ui-tokens/src/globals.css` (OKLCH)                         | developer |
+| Colours (light + dark)                     | `@indiecrafts/packages-shared-ui-tokens` → `code/packages/shared/ui-tokens/src/globals.css` (OKLCH)                         | developer |
 | PWA install/splash colour                  | `theme.hexColors.background` in `code/projects/web/surfaces/website/src/config/theme.ts` (app-owned) | developer |
 | Container width + gutter                   | `theme.container` in `code/projects/web/surfaces/website/src/config/theme.ts`                        | developer |
 | Font pairing                               | `fonts` in `code/projects/web/surfaces/website/src/config/fonts.ts` + registry in `src/lib/fonts.ts` | developer |
@@ -24,7 +24,7 @@ Brand name, contact, social profiles, and structured-data business fields no lon
 
 ## 1. Colours — OKLCH tokens
 
-Colour lives in **one place**: the OKLCH tokens in `@indiecrafts/ui-tokens/globals.css`, consumed through Tailwind utilities (modern browsers parse `oklch()` natively). Light values sit under `:root`; dark values under `:root[data-theme="dark"]` and a `prefers-color-scheme: dark` block.
+Colour lives in **one place**: the OKLCH tokens in `@indiecrafts/packages-shared-ui-tokens/globals.css`, consumed through Tailwind utilities (modern browsers parse `oklch()` natively). Light values sit under `:root`; dark values under `:root[data-theme="dark"]` and a `prefers-color-scheme: dark` block.
 
 To rebrand a colour, edit the token — never a hex literal in a component.
 
@@ -33,7 +33,7 @@ To rebrand a colour, edit the token — never a hex literal in a component.
 The single value that can't be OKLCH is `theme.hexColors.background` in `code/projects/web/surfaces/website/src/config/theme.ts`. The PWA manifest (`src/app/manifest.ts` → `background_color` / `theme_color`) is read by the browser for the install/splash screen and the manifest spec only accepts hex/named colours. Keep it matched to `--background` in `globals.css`. No other colour needs a mirror.
 
 ```ts
-// @indiecrafts/config
+// @indiecrafts/packages-shared-config
 theme = {
   hexColors: { background: "#ffffff" }, // mirror of --background for the PWA manifest
   container: { maxWidth: "1280px", gutter: "1rem" },
@@ -67,10 +67,10 @@ A `@media (forced-colors: active)` block at the bottom of `globals.css` remaps e
 
 ## 2. Fonts
 
-The active pairing is one line in `@indiecrafts/config`:
+The active pairing is one line in `@indiecrafts/packages-shared-config`:
 
 ```ts
-// @indiecrafts/config
+// @indiecrafts/packages-shared-config
 fonts = {
   display: "satoshi", // headings → --font-display
   body: "geist", // body     → --font-sans
@@ -80,7 +80,7 @@ fonts = {
 
 `next/font` needs statically-analyzable literal calls, so the fonts themselves are instantiated once in **`src/lib/fonts.ts`** (the registry) and given `--f-<key>` CSS variables. Config just picks which registered font plays each role. Ships a display/body split: **Satoshi** (self-hosted local variable font, `src/assets/fonts/Satoshi-Variable.woff2` + italic), **Geist** and **Geist Mono** (Google, auto-subset + self-hosted + preloaded). Set `display` equal to `body` for a single-typeface look.
 
-**Add a font:** register a `Google(...)` or `localFont(...)` call in `src/lib/fonts.ts`, add its key to the `FontKey` type (still shared in `@indiecrafts/config`), then name it in `fonts` (`src/config/fonts.ts`). The `satisfies FontRoles` check keeps the registry and config in lockstep. Local fonts drop their `.woff2` in `src/assets/fonts/`.
+**Add a font:** register a `Google(...)` or `localFont(...)` call in `src/lib/fonts.ts`, add its key to the `FontKey` type (still shared in `@indiecrafts/packages-shared-config`), then name it in `fonts` (`src/config/fonts.ts`). The `satisfies FontRoles` check keeps the registry and config in lockstep. Local fonts drop their `.woff2` in `src/assets/fonts/`.
 
 Font details also covered in [`theme-modes.md`](../config/theme-modes.md).
 

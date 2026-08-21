@@ -1,4 +1,4 @@
-import type { PricingModule } from "@indiecrafts/ui-components/shared/types";
+import type { PricingModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { Check } from "lucide-react";
 import {
   Card,
@@ -6,8 +6,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@indiecrafts/ui/web/card";
-import { cn } from "@indiecrafts/utils/cn";
+} from "@indiecrafts/packages-web-ui/web/card";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { RichTitle } from "../RichTitle";
 import { ModuleSection } from "../layout/ModuleSection";
 import { ModuleCta } from "../layout/Cta";

@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { Link } from "@indiecrafts/i18n";
-import type { Author } from "@indiecrafts/blog/sanity/types";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import type { Author } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /**
  * Top authors block — ported from `sections-team/team-05` in the

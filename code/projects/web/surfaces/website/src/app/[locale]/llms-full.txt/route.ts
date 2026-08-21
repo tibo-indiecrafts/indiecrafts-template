@@ -22,7 +22,10 @@ import {
   type PageMarkdownSeo,
 } from "@/lib/seo/page-markdown";
 import { getPageSeo, getSiteSeo } from "@/lib/seo/site-seo";
-import { getBlogLlmsLines, getTaxonomyLlmsLines } from "@indiecrafts/blog/lib/llms";
+import {
+  getBlogLlmsLines,
+  getTaxonomyLlmsLines,
+} from "@indiecrafts/modules-web-blog/lib/llms";
 
 export async function GET(
   _request: Request,

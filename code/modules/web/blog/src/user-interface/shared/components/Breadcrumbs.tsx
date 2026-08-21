@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
-import { Link } from "@indiecrafts/i18n";
-import { cn } from "@indiecrafts/utils/cn";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /**
  * Reusable breadcrumbs trail — used by author + category routes.

@@ -1,5 +1,5 @@
-import { defaultLocale, type Locale } from "@indiecrafts/config";
-import type { LocaleString } from "@indiecrafts/blog/sanity/types";
+import { defaultLocale, type Locale } from "@indiecrafts/packages-shared-config";
+import type { LocaleString } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /**
  * Resolve a `localeString` value (`{ en, fr }`) for the active locale, falling

@@ -1,7 +1,7 @@
 /**
  * **This app's** route table — the `pages` map + the `StaticAppPathname` union it
  * derives. App-owned instance config (a second app has its own routes), so it lives
- * here, not in the shared `@indiecrafts/config` package; it conforms to that
+ * here, not in the shared `@indiecrafts/packages-shared-config` package; it conforms to that
  * package's generic `PageConfig` contract.
  *
  * SEO CONTENT (title, description, keywords, OG) is edited in Sanity on the doc
@@ -10,7 +10,8 @@
  * `slug` (route identity) + `enabled` (feature-gate a route on/off).
  */
 
-import type { PageConfig } from "@indiecrafts/config";
+import type { PageConfig } from "@indiecrafts/packages-shared-config";
+import { LEGAL_PAGES } from "@indiecrafts/packages-shared-compliance/shared";
 import { features } from "./features";
 
 // ── Route types (derived from the `pages` map below) ─────────
@@ -47,47 +48,27 @@ export const pages = {
     slug: "/waitlist",
     enabled: features.waitlist,
   },
-  // Legal pages — content + SEO in Sanity (`legalPage` docs + their `.seo`).
-  // Per-locale slugs (French primary). Each gated by its `features.legal.*` flag.
-  legalNotice: {
-    key: "/legal-notice",
-    id: "legal-notice",
-    slug: { en: "/legal-notice", fr: "/mentions-legales" },
-    enabled: features.legal.notice,
+  // Contact page — the `module.contact` form on a full page. Content + SEO in
+  // Sanity (`contactSettings` + its `.seo`). Gated by the flag.
+  contact: {
+    key: "/contact",
+    id: "contact",
+    slug: "/contact",
+    enabled: features.contact,
   },
-  privacy: {
-    key: "/privacy-policy",
-    id: "privacy",
-    slug: { en: "/privacy-policy", fr: "/politique-de-confidentialite" },
-    enabled: features.legal.privacy,
-  },
-  cookies: {
-    key: "/cookie-policy",
-    id: "cookies",
-    slug: { en: "/cookie-policy", fr: "/politique-de-cookies" },
-    enabled: features.legal.cookies,
-  },
-  terms: {
-    key: "/terms",
-    id: "terms",
-    slug: { en: "/terms", fr: "/conditions-generales-utilisation" },
-    enabled: features.legal.terms,
-  },
-  termsOfSale: {
-    key: "/terms-of-sale",
-    id: "terms-of-sale",
-    slug: { en: "/terms-of-sale", fr: "/conditions-generales-de-vente" },
-    enabled: features.legal.sales,
-  },
-  // GDPR data-subject request form — the form is a `@indiecrafts/ui-components`
-  // component; logic + record + email in `@indiecrafts/compliance`. Owns no
+  // Legal pages — content + SEO in Sanity (`legalPage` docs + their `.seo`). The route
+  // identity (key/id + per-locale slug, French primary) is the ONE source of truth in
+  // `LEGAL_PAGES` (`@indiecrafts/packages-shared-compliance`), so the shells' `legalUrl`
+  // link-out and these routes never drift. Each gated by its `features.legal.*` flag.
+  legalNotice: { ...LEGAL_PAGES.legalNotice, enabled: features.legal.notice },
+  privacy: { ...LEGAL_PAGES.privacy, enabled: features.legal.privacy },
+  cookies: { ...LEGAL_PAGES.cookies, enabled: features.legal.cookies },
+  terms: { ...LEGAL_PAGES.terms, enabled: features.legal.terms },
+  termsOfSale: { ...LEGAL_PAGES.termsOfSale, enabled: features.legal.sales },
+  // GDPR data-subject request form — the form is a `@indiecrafts/packages-web-ui-components`
+  // component; logic + record + email in `@indiecrafts/packages-web-compliance`. Owns no
   // Sanity doc → uses the layout default SEO. Gated by `features.legal.dataRequest`.
-  dataRequest: {
-    key: "/data-request",
-    id: "data-request",
-    slug: { en: "/data-request", fr: "/exercer-mes-droits" },
-    enabled: features.legal.dataRequest,
-  },
+  dataRequest: { ...LEGAL_PAGES.dataRequest, enabled: features.legal.dataRequest },
   blog: {
     key: "/blog",
     id: "blog",

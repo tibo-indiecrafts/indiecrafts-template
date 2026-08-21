@@ -4,8 +4,8 @@ One record for the shared bricks under `code/packages/`. Every change that adds,
 splits, or reshapes a brick's public surface lands here in plain language with the
 _why_. Rolls up to the [root `CHANGELOG.md`](../../CHANGELOG.md) at release.
 
-**Not here:** app behavior/routes/tokens → [`code/projects/web/CHANGELOG.md`](../apps/web/CHANGELOG.md);
-docs-site → [`docs/CHANGELOG.md`](../projects/docs/CHANGELOG.md).
+**Not here:** app behavior/routes/tokens → [`code/projects/web/CHANGELOG.md`](../projects/web/surfaces/website/CHANGELOG.md);
+docs-site → [`docs/CHANGELOG.md`](../docs/CHANGELOG.md).
 
 Format follows [Keep a Changelog](https://keepachangelog.com). Categories: **Added ·
 Changed · Deprecated · Removed · Fixed**.
@@ -13,6 +13,178 @@ Changed · Deprecated · Removed · Fixed**.
 ## [Unreleased]
 
 ### Added
+
+- **`@indiecrafts/packages-shared-announcement` — the portable announcement core (new brick).** The
+  React/Next-free resolve path (`resolveBanner`/`resolveToast`: live-window + per-surface targeting +
+  localize + link + version hash + CDN image URL), the `SURFACES` list (**no admin**), the GROQ
+  strings, and `fetchAnnouncements`. **Why:** the Next server readers AND the bare `code/shared/api`
+  Worker must run the SAME transform (website reads Sanity server-side; app/mobile/hybrid read the
+  Worker) — one home for the logic, and `web/announcement` stays web-only.
+- **`@indiecrafts/packages-web-announcement` — a rich toast + per-surface targeting.** New
+  `announcementToast` singleton (title/body/optional image/link, editor `autoDismissSeconds`) rendered
+  by a self-contained `AnnouncementToast` card (not sonner — a must-click link must never auto-dismiss);
+  the `announcementBar` gains a `surfaces` field; the readers became thin adapters over
+  `packages-shared-announcement`; the bar/toast self-suppress a dismissal client-side so the
+  logged-in surfaces stay dismissed across a reload. **Why:** announcements now reach every surface,
+  gated to logged-in users on app/mobile/hybrid.
+- **`@indiecrafts/packages-shared-auth` — the DOM-free authorization contract (new brick).** `Roles`
+  (the gated-role union, `"admin"` today) + `AppSessionClaims` (the `metadata.role` session-token claim
+  shape — the single home each app augments Clerk's `CustomJwtSessionClaims` from) + `isAdmin(claims)`
+  (strict `role === "admin"`; safe on `null` / malformed). Zero-dep, no Clerk/React/Next — so every
+  platform's Clerk SDK reads the same role off the signed JWT. **Why:** one home for the role string and
+  the claim shape, so the four apps never drift. Activates the reserved `domain: auth` slot.
+- **`@indiecrafts/packages-web-auth` — the themed Clerk provider (new brick, web tier).**
+  `AppClerkProvider` (wraps `<ClerkProvider>` for the root layout; **opt-in** — inert with no publishable
+  key bound, like Turnstile/Resend; server-component-safe) + `authAppearance()` (Clerk
+  `appearance.variables` → `ui-tokens` CSS vars, so sign-in UI is token-themed with **no hard-coded
+  color**; a colocated test fails on a raw hex). DOM-coupled → web scope. **Why:** the appearance bridge
+  themes DOM sign-in components, so it can't sit in the DOM-free `shared/auth`; four consumers (the 3
+  Next surfaces + the Electron renderer).
+- **`@indiecrafts/packages-web-auth` — shared sign-in surface + validated redirects.** Adds
+  `<SignInView>` (Clerk's prebuilt `<SignIn>` themed from tokens, `fallbackRedirectUrl` = the app's home),
+  re-exports `<SignInButton>` / `<UserButton>` / `<SignedIn>` / `<SignedOut>` so app code imports auth UI
+  from one place, and **`resolveSignInRedirect` / `isSafeRelativePath`** — the open-redirect guard (a
+  `redirect_url` is kept only when it's a same-origin RELATIVE path; anything absolute / protocol-relative
+  / cross-origin falls back to the app home). A colocated test covers the validator. **Why:** standardize
+  sign-in across the web surfaces and close the open-redirect vector in one home.
+- **`@indiecrafts/packages-web-auth` — session logging (`SessionLogger` + `logSession`).** `SessionLogger`
+  (client) fires one ping per Clerk session (deduped in `sessionStorage`) to the app's same-origin
+  `/api/session-log` route; `logSession` (server, `./session-log`) forwards it to the audit api's
+  `/v1/events` holding `APP_API_TOKEN` — **the token never reaches the browser**. **Why:** per-surface
+  sign-in tracking on every web surface without exposing the api secret client-side.
+
+- **`@indiecrafts/packages-shared-system-pages` — `OfflineContent` page (web + native fork).** A branded
+  offline status screen for a route/screen that cannot render without the network, forked `./web` (DOM,
+  `"use client"` + `packages-web-ui` Button) + `./native` (RN) exactly like the Maintenance/404/500 trio;
+  `OfflineContentProps` (`title, description, retryLabel, onRetry?`) in `./shared`, plus a `SHELL_COPY.offline`
+  default (adds a short `banner` string) so the non-CMS shells render consistent wording. **Why:** offline
+  was a silent failure — now every surface reuses one branded state. **Wired on all three surfaces:** web
+  (`useOnlineStatus` + banner in `DefaultLayout`), mobile (`@react-native-community/netinfo` hook + a
+  `ShellOverlays` banner — see the mobile changelog), and the hybrid renderer (a `navigator.onLine`
+  `useOnlineStatus` twin + a banner in `App.tsx`). The full-screen `OfflineContent` (for a route that can't
+  render offline) is available on both `./web` and `./native`.
+- **`@indiecrafts/packages-mobile-ui-native` — accessibility baseline on the primitives.** `Button` now
+  ships `accessibilityLabel` (its `label`) + `accessibilityState` (disabled announced to AT, not by opacity
+  alone) + an optional `accessibilityHint` (`accessibilityRole="button"` and the 44 pt touch target were
+  already there). `ThemedText variant="title"` gets `accessibilityRole="header"` (screen-reader heading
+  navigation), overridable via a new `accessibilityRole` prop. `Card`/`Screen` stay transparent containers
+  (children individually focusable). **Why:** the native design system had ~zero a11y props, so every screen
+  built on it would inherit that gap; now VoiceOver/TalkBack get a role + name on the interactive
+  primitives out of the box. Native a11y rule: the mobile app's `.claude/rules/accessibility.md` (mirrors
+  the web rule). RNTL component assertions land with the native component-test harness (deferred P1.5).
+- **`@indiecrafts/packages-shared-query` — shared TanStack Query setup for the client SPAs
+  (`code/packages/shared/query`).** `queryDefaults` (one `QueryClient` config — brief freshness, no
+  focus-refetch, retries) + `queryKeys` (namespaced key factory: `all`/`list`/`detail` — the cache
+  equivalent of `STORAGE_KEYS`). **React-free + zero-dep** so mobile (React 18) and hybrid (React 19) never
+  share a React or a client instance — each app does `new QueryClient({ defaultOptions: queryDefaults })`
+  and renders its own provider (mobile `app/_layout.tsx`, hybrid `main.tsx`). The `queryFn` is the P0.1
+  api-client. **Why:** both client apps needed a server-state cache foundation (the ≥2-consumer extraction
+  trigger); the website deliberately does **not** use it (RSC + `cache()`/`sanityFetchLive` is its data
+  layer). **Not yet:** query/mutation hooks land with the first data screen (pattern documented); the
+  offline persister layers on with the first cached query.
+- **`@indiecrafts/packages-shared-logger` — `./cloudflare` transport (Cloudflare Workers Logs sink).**
+  `cloudflareTransport()` forwards `error`/`fatal` records to `console.error` (one JSON line, via the prod
+  `jsonReporter`) **independent of the console gate**, so production errors reach Workers Logs even though
+  the prod console is `silent`. Cloudflare-native — no vendor SDK, no DSN; the counterpart to `./sentry`.
+  Wired (production-gated, self-correcting) at the `code/shared/api` + `code/shared/cron` Workers and the
+  website's `instrumentation.ts`; the hybrid renderer ErrorBoundary now logs its (previously swallowed)
+  error via the shared `logger` too. **Why:** the platform runs on Cloudflare Workers, so Workers Logs is
+  the native observability channel — this makes prod errors visible there without turning the whole console
+  back on or adding Sentry. **Not covered:** native/desktop client errors → a POST-to-Worker ingestion sink
+  (later); mobile does not consume the logger yet (it imports config's web slice — a `/shared` move is the
+  prerequisite).
+- **`@indiecrafts/packages-shared-agent-client` — the AI-agent client half (`code/packages/shared/agent-client`).**
+  `callAgent(name, { context, locale }, { urlPrefix, token, extraBody, fetch, timeoutMs })` — the ONE typed,
+  never-throw caller for an agent endpoint. Injected URL prefix + auth (no env reads), a 30s AbortController
+  timeout, and the `{ ok: true, data } | { ok: false, error }` contract; parses the agent core's `{ data }`
+  envelope. **Why:** three callers hand-rolled the same `fetch` + parse + never-throw block and had drifted
+  (different Result shapes, no timeout) — the web `ContentResearchAgent`, the mobile `lib/agent.ts`, and the
+  hybrid main process. Now they share one copy: the web injects `/api/agent` + a Turnstile token, the shells
+  inject `${base}/v1/agent` + their bearer. Pairs with `packages-shared-agent` (the server half). Zero-dep,
+  edge/browser/Electron-safe.
+- **`@indiecrafts/packages-shared-compliance` — the portable compliance core (`code/packages/shared/compliance`).**
+  The half of the compliance surface the shells can share, forked like `system-pages`: `./shared` (consent
+  decision math `grantedKeys`/`consentUpdate` + the `Store`/`ConsentStore` contract + the default taxonomy +
+  signal types; the legal-route contract `LEGAL_PAGES`/`legalUrl` + `LegalAcceptanceRecord`/`needsReacceptance`),
+  `./web` (shadcn, Next-free) + `./native` (RN) — `ConsentBanner`/`ConsentPreferences` + the legal
+  re-acceptance popup `LegalReacceptancePrompt` + `localStorage`/`AsyncStorage` store adapters. **Why:** the
+  `app`/Electron/Expo shells had no compliance and can't reuse the Next/Sanity-coupled web brick; now they link
+  out to the website's legal pages and ship a compliant-ready consent + re-acceptance UI out of the box. The
+  website keeps its Sanity banner over the same math; `packages-web-compliance` re-exports the moved
+  `consent-signals` (unchanged import path) and imports the math from here.
+- **`@indiecrafts/packages-shared-version` — the portable version-check core (`code/packages/shared/version`).**
+  `isUpdateAvailable(current, latest)` (string-identity deploy-id compare, **not** semver) + `VersionResponse`
+  + `versionId` + `VERSION_ENDPOINT`. **Why:** all three shells now detect a new deploy the same way;
+  `packages-web-version` re-exports the compare instead of inlining it. The poll mechanism stays per-platform
+  (DOM `visibilitychange`/`online`; RN `AppState`).
+- **`packages-shared-config` — `site.websiteUrl` + `pickSuggestedLocale`.** `site.websiteUrl`
+  (`NEXT_PUBLIC_WEBSITE_URL`, else `site.url`) = the marketing-site origin the shells link to for legal pages.
+  `pickSuggestedLocale(rankedPrefs, active, supported)` (`./shared`) = the shared "suggest a language switch?"
+  decision, lifted from `locale-suggest` so the native shells reuse it over `getLocales()`/`navigator.languages`.
+
+### Changed
+
+- **`packages-web-compliance` split — the portable half moved to `packages-shared-compliance`.** `consent-signals`
+  is now a 1-line re-export (every importer unchanged); `consent-store` imports `grantedKeys`/`consentUpdate`/
+  `ConsentRecord` from the shared brick and re-exports them (public surface unchanged). **Why:** one source of
+  truth for the consent math + the legal-route slugs across every platform.
+- **`packages-web-version` — re-exports `isUpdateAvailable` from `packages-shared-version`** (dedupes the inline
+  deploy-id compare); `packages-web-locale-suggest`'s `detectPreferredLocale` now calls the shared
+  `pickSuggestedLocale` (the HTTP-header parser stays web-only). Behaviour unchanged.
+
+- **`@indiecrafts/packages-shared-agent` — a simple, shared AI-agent core (`code/packages/shared/agent`).**
+  One zero-dep, edge/Node-safe brick: the 5-part `AgentSpec` (Goal·Instructions·Context·Tools·Output) +
+  `runAgent` (raw-fetch Anthropic Messages API, **forced structured output** via one `output` tool,
+  locale-aware, never throws) + a `SPECS` registry (demo `content-research`). Reason-only,
+  human-in-the-loop; the caller injects `ANTHROPIC_API_KEY`. Consumed by **all surfaces**: the web app's
+  Next route (behind `withGuard`), and the `code/shared/api` Worker (bearer-gated) that the native (Expo)
+  + hybrid (Electron) apps call. _Why: give a client one small, secure, translated agent that works the
+  same everywhere, with the key always server-side._
+
+- **New brick `@indiecrafts/packages-mobile-ui-native` — the native design system (shadcn-for-RN start).**
+  The mobile counterpart of the web `ui` shadcn brick: `ThemeProvider`/`useTheme`/`useColor` over
+  `ui-tokens/native` (system light/dark) + the shell component set (`Screen` · `ThemedText` · `Button` ·
+  `Card`), StyleSheet on the **same** design tokens as web. Scoped `mobile/` (RN-only). NativeWind
+  (`className`) is the drop-in upgrade — the token names already match. Consumed by the mobile shell +
+  `system-pages/native`. Docs → [`docs/packages/ui-native.md`](../docs/packages/ui-native.md).
+- **`@indiecrafts/packages-shared-ui-tokens` — a 4th generated output: `nativewind.css`.**
+  `build-tokens.mjs` now emits a NativeWind theme (`:root` + `.dark:root` hex vars) from the same
+  `tokens.json`, so react-native-reusables/NativeWind consume one palette with the web. New `./nativewind.css`
+  export. `pnpm tokens:build`/`tokens:check` cover it.
+- **New brick `@indiecrafts/packages-shared-ui-fonts` — the self-hosted font files.** Moves Satoshi's
+  `.woff2` (+ license) out of the website surface into a shared design-system brick (like `ui-tokens`),
+  so a second surface ships the same fonts from one place. `next/font` needs static-literal loader
+  calls, so the app keeps its `localFont(...)` in `src/lib/fonts.ts` and points `src.path` at the
+  brick's `fonts/*.woff2` by relative path; a native app loads the same file via `expo-font`. `src/index.ts`
+  carries a `FONT_FILES` registry; `FontKey`/`FontRoles` **types** stay in `config`. Geist (Google) unchanged.
+- **New brick `@indiecrafts/packages-shared-ui-icons` — one cross-platform icon system.** A shared
+  contract (`./shared`: `GLYPHS` glyph-name set + `glyphOptions()` for Sanity pickers + `SVGS`
+  custom-SVG registry + `BRANDS` brand/social SVG-path data) with platform-forked renderers. **Four
+  families:** `Icon` (lucide, cross-platform base), `ReiconIcon` (reicon — web/hybrid; no RN build),
+  `SvgIcon` (custom SVGs, cross-platform), `BrandIcon` (brand marks, cross-platform). `./web` serves the
+  web surfaces **and the Electron renderer**; `./native` (lucide-react-native + react-native-svg, optional
+  peers) omits reicon. The `FeatureGrid` renderer + its Studio picker now derive from **one** `GLYPHS`
+  list (was hand-synced in two files); `ui-components`' `FeatureIcon` re-exports `GlyphName` (stored
+  content stays valid, set widens 6→~28). **Brand icons deduped** — the website footer/social + the blog
+  share/author rows + the homepage showcase render from `BrandIcon`; the website's `reicon-brands` +
+  `BrandIcon.tsx` and the blog's inline `BrandIcons.tsx` are removed. Native renderers are ready (`npx
+expo install`).
+- **`module.custom-html` gains a `width` option (`contained` | `full`).** The custom-HTML block — the
+  escape hatch for an editor-pasted embed or a third-party newsletter form — used to render full-bleed
+  with no gutter (the only block without a width cap), so a custom form spanned the whole viewport and
+  touched the screen edges on mobile. It now defaults to **`contained`** (`max-w-6xl` + gutter, sits with
+  the other blocks) with an opt-in **`full`** that keeps a gutter; the renderer is also inline-aware (in
+  a blog body the `.prose` column owns width). `<iframe>` embeds stay auto-full-width; a raw
+  `<input>`/`<button>` styles its own width. Schema (page-builder) + `CustomHtmlModule` type + `CustomHtml`
+  renderer + stories/doc (ui-components). _Why: make "add a custom form and it displays 100% correctly"
+  predictable — full width when you want it, with a gutter, and consistent with sibling blocks otherwise._
+- **`@indiecrafts/page-builder` + `@indiecrafts/ui-components` — a `module.contact` block.** New
+  `module.contact` schema (page-builder) + `Contact`/`ContactForm` renderer (ui-components, tokens +
+  Storybook story + `Contact.md`), registered across the sync surface: `moduleSchemas`,
+  `MODULE_TYPES`, `blockContent` inline list, `BlockModule` union, `BLOCK_RENDERERS`,
+  `portable-text` inline list, and the `BlockFeatures`/`configureBlocks` gate (adds a `contact`
+  flag). Renders the contact form for the new `@indiecrafts/contact` module. _Why:_ the form needed
+  a droppable block + a self-hiding renderer like newsletter/waitlist.
 
 - **`@indiecrafts/email` — the email palette is now the design tokens (resolved hex), not hand-maintained.**
   New `theme.ts` `EMAIL_COLORS` maps every email role to the generated token hex
@@ -34,10 +206,17 @@ Changed · Deprecated · Removed · Fixed**.
   (buildSamples now covers lead-magnet). _Why:_ subscriber confirmations were already Sanity-editable
   per-locale; this closes the gap so **all** transactional copy is editor-owned, no deploy. Touched:
   `email/sanity/groups.ts` · `email/strings.ts` · newsletter/waitlist/blog/compliance render fns + callers
-  + `newsletter/sanity/email.ts` · `deliver-magnet.ts` · the app `/api/emails/test` route.
+  - `newsletter/sanity/email.ts` · `deliver-magnet.ts` · the app `/api/emails/test` route.
 
 ### Changed
 
+- **`system-pages` promoted to a shared brick + made Next-agnostic.** `@indiecrafts/packages-web-system-pages`
+  → **`@indiecrafts/packages-shared-system-pages`** (`packages/shared/system-pages`), forked inside like
+  `ui-icons`: `./shared` (prop contracts) · `./web` (DOM — the 404 home link is now **injected**
+  (`LinkComponent`, default `<a>`), so **no `next-intl` dep**: one fork serves the Next website AND the
+  plain-React Electron renderer) · `./native` (React Native, `onGoHome`/`onRetry`) · `./proxy` (web-only).
+  Rename + `@source` + tsconfig `paths` updated; the website passes its typed `Link`. Model →
+  [`docs/shared/architecture/cross-platform-shell.md`](../docs/shared/architecture/cross-platform-shell.md).
 - **`@indiecrafts/config` — `site.cdnUrl` (first-party asset CDN).** New `site.cdnUrl` primitive
   (`NEXT_PUBLIC_CDN_URL`, empty = origin), fed into each app's Next `assetPrefix` so the app's own build
   assets (`/_next/*` + first-party `/public`) serve from a CDN — **per env** (each env bakes its own build)
@@ -183,8 +362,8 @@ Changed · Deprecated · Removed · Fixed**.
 - **`@indiecrafts/i18n` — `useLocaleSwitch()`.** Extracted the locale-switch logic (next-intl prefix swap
   - the blog translated-slug resolve via `/api/i18n/translated-slug`) out of the app's `LocaleSwitcher`
     into the shared i18n brick, so the header switcher **and** the new locale-suggestion banner share one
-    implementation. Doc: [`docs/packages/announcement.md`](../projects/docs/packages/announcement.md) ·
-    [`docs/packages/locale-suggest.md`](../projects/docs/packages/locale-suggest.md).
+    implementation. Doc: [`docs/packages/announcement.md`](../docs/packages/announcement.md) ·
+    [`docs/packages/locale-suggest.md`](../docs/packages/locale-suggest.md).
 
 - **`@indiecrafts/ui-components` — `TurnstileWidget` (client Cloudflare Turnstile).** The client half of
   `@indiecrafts/security`'s server `verifyTurnstile`: renders only when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is
@@ -192,14 +371,14 @@ Changed · Deprecated · Removed · Fixed**.
   forms send it as `cf-turnstile-response` and gate submit on `turnstileActive()`. A `siteKey` prop
   override + colocated stories drive it with Cloudflare's test keys. Wired into the newsletter / waitlist /
   comment forms (see the app changelog). Also recorded the **stories-are-mandatory** convention in the
-  ui-components brief. Doc: [`docs/packages/ui-components.md`](../projects/docs/packages/ui-components.md).
+  ui-components brief. Doc: [`docs/packages/ui-components.md`](../docs/packages/ui-components.md).
 - **`@indiecrafts/sanity` — `composeStudio(groups)`, the hub-Studio composer (per-app desk).** Alongside
   `composeSanity` (flat "Contenu" desk), the new `composeStudio([{ title, modules }])` aggregates the same
   schema/templates/i18n but renders the desk **grouped per app** — one top-level list per group. It's how
   **one Studio edits many apps' content, organized by app** (multi-app readiness — the web app now groups
   its desk into "Site web" vs "Contenu partagé"). `@indiecrafts/schema`'s `sharedSanity` (objects-only)
-  registers schema without a desk item. Doc: [`docs/packages/sanity.md`](../projects/docs/packages/sanity.md) +
-  [`docs/apps/web/config/multi-app.md`](../projects/docs/apps/web/config/multi-app.md).
+  registers schema without a desk item. Doc: [`docs/packages/sanity.md`](../docs/packages/sanity.md) +
+  [`docs/apps/web/config/multi-app.md`](../docs/shared/architecture/multi-app.md).
 
 - **`@indiecrafts/consent` — legal re-acceptance (the compliance brick now covers terms, not just cookies).**
   New non-blocking `LegalNotice` banner (`./LegalNotice`) + `getLegalAcceptance` reader (`./sanity/legal`)
@@ -209,7 +388,7 @@ Changed · Deprecated · Removed · Fixed**.
     differs — but deposits a **real cookie** (not localStorage) so the app layout gates it **server-side,
     no flash**. Copy from Sanity, no `messages` fallback. The wildcard `exports` (`./*`) needed no change.
     _Why:_ terms/privacy changes deserve the same "please re-accept" flow cookies already had, kept
-    separate from cookie consent (don't bundle). Doc: [`docs/packages/consent.md`](../projects/docs/packages/consent.md).
+    separate from cookie consent (don't bundle). Doc: [`docs/packages/consent.md`](../docs/packages/compliance.md).
 - **`@indiecrafts/version` — the "new version available" prompt brick.** Notices when a new deploy
   shipped while a tab was open and offers a one-click reload. Service-worker-free (the app is
   OpenNext/Cloudflare): `useVersionCheck` (`./use-version-check`) polls `/api/version` (`no-store`) and
@@ -219,7 +398,7 @@ Changed · Deprecated · Removed · Fixed**.
   Reload button and an automatic reload on the **next** navigation — never a forced one. i18n-agnostic
   (copy in as props). Category `domain · web`; deps `ui` + `utils`. _Why:_ a config-first template
   deploys often; an open tab shouldn't silently run stale code. Doc:
-  [`docs/packages/version.md`](../projects/docs/packages/version.md).
+  [`docs/packages/version.md`](../docs/packages/version.md).
 
 ### Changed
 
@@ -232,7 +411,7 @@ env}.ts` + a **types-only** `types.ts` (data/functions/env moved out; `env.ts` i
   `tsc`. **Tidied:** deleted the fully-dead `BusinessType`; un-exported ~13 zero-consumer internals
   (`PLACEHOLDER_SITE_URL`, `isDefaultLocale`, `STATIC_PATHNAME_KEYS`, and internal-only types); **dropped
   the `./types` subpath** (0 importers). No behavior change. Doc:
-  [`docs/packages/config.md`](../projects/docs/packages/config.md). _Follow-up:_ `seo.ts` then dropped
+  [`docs/packages/config.md`](../docs/packages/config.md). _Follow-up:_ `seo.ts` then dropped
   `madeBy` + `seoDefaults.schemaImage` (moved to Sanity `siteSettings`); `themeConfig` stays as the
   code default behind the new Sanity `themeModes` override — see the app changelog.
 - **`@indiecrafts/system-pages` — `maintenanceRewrite(request, isDown)` is now pure.** It no longer
@@ -260,7 +439,7 @@ env}.ts` + a **types-only** `types.ts` (data/functions/env moved out; `env.ts` i
   (`isSameSiteRequest`) is pure + unit-tested. CSP now allows `challenges.cloudflare.com` (the
   Turnstile widget). Injection/XSS were already covered (React escaping · structured Portable Text ·
   whitelisted Sanity writes · `escapeHtml`); this closes the **abuse** gaps — rate-limit · CSRF/origin ·
-  bot. Doc: [`docs/packages/security.md`](../projects/docs/packages/security.md).
+  bot. Doc: [`docs/packages/security.md`](../docs/packages/security.md).
 - **`@indiecrafts/logger` — a real logging brick (beautiful · edge-safe · Sentry-ready).** Replaces the
   26-line `@indiecrafts/utils/logger` placeholder with a proper foundation·agnostic system: six levels
   (`trace…fatal`) + `child(scope)` scoped loggers + `time/timeEnd`; **per-environment config** in
@@ -274,7 +453,7 @@ env}.ts` + a **types-only** `types.ts` (data/functions/env moved out; `env.ts` i
   `console`-based + `typeof`-guarded `process` reads → runs on browser/server/edge/Workers. `error(msg,
 err?, ctx?)` accepts both the positional-Error and the `{ error }`-in-context shapes, so all existing
   call sites migrate untouched. Zero-dep-but-config. Doc:
-  [`docs/packages/logger.md`](../projects/docs/packages/logger.md).
+  [`docs/packages/logger.md`](../docs/packages/logger.md).
 - **`@indiecrafts/config` — `DEFAULT_SITE_PREFIX` / `site.prefix`, the per-deployment namespace.** New
   `DEFAULT_SITE_PREFIX` constant (env-overridable via `NEXT_PUBLIC_SITE_PREFIX`) exposed as `site.prefix`,
   plus a derived `localeCookieName` (`${prefix}_NEXT_LOCALE`). It namespaces the browser-owned keys so
@@ -282,7 +461,7 @@ err?, ctx?)` accepts both the positional-Error and the `{ error }`-in-context sh
   `STORAGE_KEY` becomes `${site.prefix}.cookie-consent`, and the app's next-themes `storageKey` +
   next-intl locale cookie follow. Kept in sync with the `wrangler.toml` deploy names by
   `pnpm project:rename <slug>` (app script). _Why:_ one documented identity + a deploy guard make
-  many-clients-under-one-Cloudflare-account safe. Doc: [`docs/packages/config.md`](../projects/docs/packages/config.md).
+  many-clients-under-one-Cloudflare-account safe. Doc: [`docs/packages/config.md`](../docs/packages/config.md).
 - **`@indiecrafts/ui-components` — `RichTitle`, the shared title primitive.** Titles were raw
   `<hN className="…">{title}</hN>` duplicated across the app's marketing sections and every module
   renderer, with no way to emphasise a word or customise a title's classes from one place. New
@@ -293,7 +472,7 @@ err?, ctx?)` accepts both the positional-Error and the `{ error }`-in-context sh
   the CMS — **i18n-agnostic** (the marker lives inside each already-localised string). Brand-only by
   design (no palette); a marker-free string is a no-op, so any title is safe to wrap. Wired into the
   `Gallery` module title as the CMS example. New Storybook story + `@source`-scanned `text-brand` stays
-  purge-safe. Doc: [`docs/apps/web/design/typography.md`](../projects/docs/apps/web/design/typography.md) § Title highlights.
+  purge-safe. Doc: [`docs/apps/web/design/typography.md`](../docs/apps/web/design/typography.md) § Title highlights.
 - **`@indiecrafts/email` — per-module compose + Studio "Send test" + deliverability.** The E-mails
   entity no longer hardcodes each module's groups (a brick must not name modules; a 2nd app using only
   some modules couldn't). Now: `emailSanity(modules)` builds the **field-less** `emailStrings` singleton
@@ -307,7 +486,7 @@ err?, ctx?)` accepts both the positional-Error and the `{ error }`-in-context sh
   relay. New dep `@sanity/ui` (the action dialog). Doc rewritten with a **deliverability** section
   (Resend verified domain, SPF/DKIM/DMARC, valid From) + the **config-placement** answer (recipients/
   copy/BCC → Sanity; `RESEND_API_KEY` → env; per-module → compose):
-  [`docs/packages/email.md`](../projects/docs/packages/email.md). _Read path unchanged: `getEmailStrings()`
+  [`docs/packages/email.md`](../docs/packages/email.md). _Read path unchanged: `getEmailStrings()`
   still returns the whole doc; consumers pick their group by key._
 - **`@indiecrafts/sanity` — `SanityModule.emailGroups`.** The contribution contract gains an optional
   `emailGroups?: FieldDefinition[]` so a module hands its transactional-email group(s) to
@@ -324,7 +503,7 @@ err?, ctx?)` accepts both the positional-Error and the `{ error }`-in-context sh
   passed to the module engines — defensible GDPR proof of email consent (Art. 7). Banner copy
   (`messages.cookies.body`, en/fr) tightened to name the legal basis + free withdrawal; the Sanity
   `cookieConsent.banner` override stays the editable primary. Doc:
-  [`docs/packages/consent.md`](../projects/docs/packages/consent.md). _Not ported from the SaaS: DB
+  [`docs/packages/consent.md`](../docs/packages/compliance.md). _Not ported from the SaaS: DB
   consent-history, GDPR data export/anonymization, account deletion, IP-salt hashing — they need user
   accounts a marketing template doesn't have._
 - **`@indiecrafts/security-headers` — CSP + headers extracted to a brick (and hardened).** A new pure,
@@ -336,7 +515,7 @@ err?, ctx?)` accepts both the positional-Error and the `{ error }`-in-context sh
   imports them. **Hardened** (new headers): `Strict-Transport-Security` (prod only, no `preload`),
   `Cross-Origin-Opener-Policy: same-origin-allow-popups`, `upgrade-insecure-requests` (prod) — all
   chosen to keep the embedded **Sanity Studio** working (COOP allow-popups for its OAuth login; COEP/CORP
-  skipped). Doc: [`docs/packages/security-headers.md`](../projects/docs/packages/security-headers.md).
+  skipped). Doc: [`docs/packages/security-headers.md`](../docs/packages/security.md).
 - **`@indiecrafts/format` — locale formatting & grammar brick.** A new pure, framework-agnostic
   brick (foundation · agnostic, `Intl`-based, dep: `@indiecrafts/config`) for **money** (`formatMoney`
   - `convert`/`withVat`/`parseMoney`), **number** (percent/compact/unit/ordinal/bytes/range),
@@ -349,7 +528,7 @@ err?, ctx?)` accepts both the positional-Error and the `{ error }`-in-context sh
     rules on the `i18n.locales` rows (`numberLocale` · `currency` · `capitalizeInlineNouns` ·
     `adjBeforeNoun`) + a site-wide `formatDefaults` (`currency`/`vatRate`/`rates`) + `localeFormat(locale)`
     — **not Sanity, not `messages/`** (technical i18n rules). Doc:
-    [`docs/packages/format.md`](../projects/docs/packages/format.md).
+    [`docs/packages/format.md`](../docs/packages/format.md).
 - **`@indiecrafts/ui-components` — `PhoneInput`.** A lightweight international phone field (dial-code
   select + national `tel` input → emits E.164) at `web/form/PhoneInput.tsx`; validation via
   `@indiecrafts/format/validate`. Address autocomplete + payment-card fields deliberately **not**
@@ -381,7 +560,7 @@ Categorisation & platform`: platform splits **inside** the one package that need
   `messages` fallbacks, `@/lib/fonts`, `DefaultLayout`, and `maintenanceLocale()`. Wired via
   `transpilePackages` + a tsconfig `paths` entry + a `@source` line in `ui-tokens/globals.css`. 1
   consumer today (extracted for multi-app reuse, like `consent`). Doc:
-  [`docs/packages/system-pages.md`](../projects/docs/packages/system-pages.md).
+  [`docs/packages/system-pages.md`](../docs/packages/system-pages.md).
 - **`@indiecrafts/email` — the E-mails entity: config + translated copy in Sanity.** The brick now
   owns an **`emailStrings` singleton** (Studio → **E-mails**, via the new `emailSanity`
   `SanityModule`) — one place that configures every transactional email: recipients, sender, and
@@ -390,7 +569,7 @@ Categorisation & platform`: platform splits **inside** the one package that need
 strings` (`getEmailStrings()` React-`cache`d read + `pick`) and `@indiecrafts/email/sanity` (the
   barrel). Two new templates — `newsletter-confirm` (translated) + `newsletter-notification`. Copy no
   longer lives hardcoded in the templates; the senders read the entity and pass resolved strings.
-  Adds a `@indiecrafts/sanity` dep. Doc: [`docs/packages/email.md`](../projects/docs/packages/email.md).
+  Adds a `@indiecrafts/sanity` dep. Doc: [`docs/packages/email.md`](../docs/packages/email.md).
 - **`@indiecrafts/schema` — `localeText` primitive.** The multi-line sibling of `localeString`
   (`type:"text"` per registered locale) for longer editor-managed translated copy (email bodies).
   Registered in `sharedSanity`; same generation + `value[locale] ?? value[defaultLocale]` read path.
@@ -402,7 +581,7 @@ strings` (`getEmailStrings()` React-`cache`d read + `pick`) and `@indiecrafts/em
 text, html }` from plain data. Moved out of the blog so any module/app can send — **modules can't
   depend on modules**, so a second sender could never reach a helper stuck in the blog. Adding an
   email = drop a `templates/<name>.ts` + re-export; the feature passes data, the brick renders. Doc:
-  [`docs/packages/email.md`](../projects/docs/packages/email.md).
+  [`docs/packages/email.md`](../docs/packages/email.md).
 - **`@indiecrafts/schema/generated` — the shared home for Sanity typegen output.** The schema is
   composed at the app, so `pnpm sanity:typegen` (app) extracts it → `schema.json` and generates typed
   GROQ document + query-result types into `code/packages/schema/src/generated.ts`, imported via
@@ -418,7 +597,7 @@ text, html }` from plain data. Moved out of the blog so any module/app can send 
   `@indiecrafts/sanity`) now live in `code/packages/consent/`, shipped as the `consentSanity`
   **`SanityModule`** barrel — one line in `composeSanity([...])`. Signal types live in
   `@indiecrafts/consent/consent-signals`; the banner mount + GA `<head>` script stay in the app. Doc:
-  [`docs/packages/consent.md`](../projects/docs/packages/consent.md).
+  [`docs/packages/consent.md`](../docs/packages/compliance.md).
 - **`@indiecrafts/config` newsletter config + `features.newsletter`.** New `newsletter` object —
   `destination: "sanity" | "provider" | "both"` (default `sanity` → zero config) and `provider:
 "none" | "buttondown" | "mailchimp" | "resend"` — plus the `features.newsletter` flag. Provider
@@ -457,7 +636,7 @@ text, html }` from plain data. Moved out of the blog so any module/app can send 
   graph); `@indiecrafts/consent` dropped its now-unused `@indiecrafts/utils` dep. `formatPostDate` →
   `formatDate` (a generic date formatter, not blog-flavored). ~93 import sites updated to subpaths;
   `@indiecrafts/consent` added to the app's declared deps (it was a phantom import). Doc:
-  [`docs/packages/utils.md`](../projects/docs/packages/utils.md).
+  [`docs/packages/utils.md`](../docs/packages/utils.md).
 - **`@indiecrafts/ui-components` reorganized platform → domain.** Renderers moved from a flat
   `src/renderers/` into `src/renderers/web/<domain>/` — `content` · `media` · `collection` ·
   `layout` — with the registry + portable-text map at `renderers/web/`. `src/types.ts` stays the
@@ -487,7 +666,7 @@ text, html }` from plain data. Moved out of the blog so any module/app can send 
   (`sharedSanity`, `coreSanity`, `blogSanity`) exports its schema + desk section + create
   templates + i18n types, and `sanity.config.ts` composes them — **one line per module**,
   no more four hand-wired lists. Makes each module's Sanity config standalone. Guide:
-  [`docs/packages/sanity.md` → Composing the Studio config](../projects/docs/packages/sanity.md).
+  [`docs/packages/sanity.md` → Composing the Studio config](../docs/packages/sanity.md).
 - **`@indiecrafts/sanity/write` — server-only authenticated write client.** New `./write`
   export: `writeClient` (Editor-role `SANITY_API_WRITE_TOKEN`, `import "server-only"`). The one
   runtime write path (blog comments today); callers hard-code `_type` + whitelist fields so no

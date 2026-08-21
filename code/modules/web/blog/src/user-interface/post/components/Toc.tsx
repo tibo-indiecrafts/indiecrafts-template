@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Heading } from "@indiecrafts/blog/sanity/types";
-import { slugify } from "@indiecrafts/utils/slugify";
-import { cn } from "@indiecrafts/utils/cn";
+import type { Heading } from "@indiecrafts/modules-web-blog/sanity/types";
+import { slugify } from "@indiecrafts/packages-shared-utils/slugify";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /**
  * Sidebar Table of Contents — anchors to h2/h3/h4 in the post body.

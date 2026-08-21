@@ -31,10 +31,10 @@ const config: StorybookConfig = {
   // docs live here in `../stories`.
   stories: [
     "../stories/**/*.mdx",
-    brickStories("@indiecrafts/ui"),
-    brickStories("@indiecrafts/ui-components"),
-    brickStories("@indiecrafts/announcement"),
-    brickStories("@indiecrafts/locale-suggest"),
+    brickStories("@indiecrafts/packages-web-ui"),
+    brickStories("@indiecrafts/packages-web-ui-components"),
+    brickStories("@indiecrafts/packages-web-announcement"),
+    brickStories("@indiecrafts/packages-web-locale-suggest"),
   ],
   addons: [
     "@storybook/addon-docs",

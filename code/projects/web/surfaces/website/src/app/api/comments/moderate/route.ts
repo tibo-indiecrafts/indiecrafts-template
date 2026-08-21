@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import { security, site } from "@/config";
-import { escapeHtml } from "@indiecrafts/email";
-import { clientIp } from "@indiecrafts/security/guard";
-import { rateLimit } from "@indiecrafts/security/rate-limit";
-import { isCommentsEnabled } from "@indiecrafts/blog/lib/route-gate";
+import { escapeHtml } from "@indiecrafts/packages-web-email";
+import { clientIp } from "@indiecrafts/packages-shared-security/guard";
+import { rateLimit } from "@indiecrafts/packages-shared-security/rate-limit";
+import { isCommentsEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import {
   getModerationComment,
   isModerationAction,
   moderateComment,
   type ModerationAction,
-} from "@indiecrafts/blog/lib/moderate";
+} from "@indiecrafts/modules-web-blog/lib/moderate";
 
 /**
  * One-click comment moderation from the notification email. **GET renders a

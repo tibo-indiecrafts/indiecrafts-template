@@ -8,7 +8,6 @@
 // drizzle-kit / supabase CLI (reserved — not wired) · kv/sanity → no schema migrations.
 
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DATABASES, ENVS } from "../lib/databases.mjs";
@@ -43,8 +42,12 @@ if (db.kind === "kv" || db.kind === "sanity") {
   process.exit(0);
 }
 if (dry) {
+  const target =
+    db.kind === "d1"
+      ? `binding ${db.binding ?? "<none>"} → ${env === "dev" ? "local" : `${env} remote`}`
+      : db.backup;
   console.log(
-    `[dry-run] would migrate ${db.name} (${db.kind}) via its recipe from ${ownerDir ?? "<no owner dir>"}`,
+    `[dry-run] would migrate ${db.name} (${db.kind}) via ${target} from ${ownerDir ?? "<no owner dir>"}`,
   );
   process.exit(0);
 }
@@ -53,23 +56,24 @@ if (db.kind !== "d1") {
   process.exit(1);
 }
 
-// d1 → wrangler migrations apply, from the owner's dir.
+// d1 → wrangler migrations apply, from the owner's dir. Pass the BINDING (not a grepped
+// `database_name`): with `--env`, wrangler resolves the binding to the RIGHT per-env
+// database. A wrangler.toml may hold several D1 blocks across envs (and across bindings),
+// so grepping the first `database_name` picked the wrong DB and the wrong env.
 process.chdir(path.resolve(REPO_ROOT, ownerDir ?? "."));
-const active = readFileSync(path.resolve("wrangler.toml"), "utf8")
-  .split("\n")
-  .filter((l) => !l.trim().startsWith("#"))
-  .join("\n");
-const dbName = active.match(/database_name\s*=\s*["']([^"']+)["']/)?.[1];
-if (!dbName) {
+if (!db.binding) {
   console.error(
-    "D1 not configured (no active [[d1_databases]] in wrangler.toml).",
+    `D1 "${db.name}" has no "binding" in the registry — add it (e.g. binding: "DB").`,
   );
   process.exit(1);
 }
-const scope = env === "dev" ? ["--local"] : ["--env", env, "--remote"];
+// dev migrates the LOCAL (miniflare) D1; staging/prod hit the REMOTE. The template keeps
+// all D1 config under [env.<env>], so every env passes --env.
+const scope =
+  env === "dev" ? ["--env", "dev", "--local"] : ["--env", env, "--remote"];
 const r = spawnSync(
   "wrangler",
-  ["d1", "migrations", "apply", dbName, ...scope],
+  ["d1", "migrations", "apply", db.binding, ...scope],
   {
     stdio: "inherit",
     env: {

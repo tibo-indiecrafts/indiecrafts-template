@@ -3,7 +3,7 @@ import {
   escapeHtml,
   renderEmailLayout,
   type RenderedEmail,
-} from "@indiecrafts/email";
+} from "@indiecrafts/packages-web-email";
 
 /**
  * "You're on the list" confirmation → the new waitlist joiner. **Copy-agnostic**:

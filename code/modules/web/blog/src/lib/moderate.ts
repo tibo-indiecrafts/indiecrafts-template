@@ -1,7 +1,7 @@
 import "server-only";
 
-import { logger } from "@indiecrafts/logger";
-import { writeClient } from "@indiecrafts/sanity/write";
+import { logger } from "@indiecrafts/packages-shared-logger";
+import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 
 export type ModerationAction = "approve" | "spam" | "delete";
 

@@ -52,20 +52,6 @@
         "files": ["src/features/blog/user-interface/renderers/CustomHtml.tsx"],
         "rules": ["react-doctor/dangerous-html-sink"],
       },
-      {
-        // BrandIcon injects `icon.svgContent`, a static `<path>` constant from
-        // the `reicon-brands` library (the only SSR-safe render path it
-        // exposes) — not user- or request-derived data, so no XSS surface.
-        "files": ["src/user-interface/components/BrandIcon.tsx"],
-        "rules": ["react-doctor/dangerous-html-sink"],
-      },
-      {
-        // IconShowcase renders fixed, hardcoded icon arrays that never reorder
-        // or filter — the one case React's docs sanction using the array index
-        // as a key. No stable domain id exists (they're bare component refs).
-        "files": ["src/user-interface/sections/IconShowcase.tsx"],
-        "rules": ["react-doctor/no-array-index-as-key"],
-      },
     ],
   },
 }

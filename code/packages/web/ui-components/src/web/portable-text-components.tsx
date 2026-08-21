@@ -3,7 +3,7 @@ import type {
   PortableTextBlock,
   PortableTextComponents,
 } from "@portabletext/react";
-import { slugify } from "@indiecrafts/utils/slugify";
+import { slugify } from "@indiecrafts/packages-shared-utils/slugify";
 import { BLOCK_RENDERERS } from "./registry";
 import { CodeBlock } from "./content/CodeBlock";
 
@@ -49,7 +49,7 @@ const m =
 
 /**
  * Inline-embeddable module types — must stay in lockstep with
- * `INLINE_MODULES` in `@indiecrafts/page-builder` (`sanity/schema/blockContent.ts`). The 12 types
+ * `INLINE_MODULES` in `@indiecrafts/packages-web-page-builder` (`sanity/schema/blockContent.ts`). The 12 types
  * listed here are the subset of the full module catalogue that editors
  * can drop directly into a post body (the others are layout-slot only).
  */
@@ -66,6 +66,7 @@ const INLINE_TYPES = [
   "module.newsletter",
   "module.waitlist",
   "module.lead-magnet",
+  "module.contact",
 ] as const;
 
 const inlineTypes = Object.fromEntries(
@@ -124,7 +125,7 @@ export const portableComponents: PortableTextComponents = {
       );
     },
     // Syntax-highlighted code block (Shiki, server-rendered). Schema
-    // `codeBlock` lives in `@indiecrafts/page-builder` (`blockContent.ts`).
+    // `codeBlock` lives in `@indiecrafts/packages-web-page-builder` (`blockContent.ts`).
     codeBlock: CodeBlock,
     ...inlineTypes,
   },

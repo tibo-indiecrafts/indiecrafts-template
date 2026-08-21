@@ -1,0 +1,32 @@
+{
+  "name": "@indiecrafts/modules-web-contact",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*"
+  },
+  "dependencies": {
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*",
+    "@indiecrafts/packages-web-email": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
+    "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@indiecrafts/packages-web-ui-components": "workspace:*",
+    "@sanity/icons": "^3.7.4",
+    "next-sanity": "^13.3.3",
+    "sanity": "^5.31.1"
+  },
+  "peerDependencies": {
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

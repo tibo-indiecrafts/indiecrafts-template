@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { features, pages, type Locale } from "@/config";
-import { getWaitlistSettings } from "@indiecrafts/waitlist/lib/settings";
-import { WaitlistLanding } from "@indiecrafts/waitlist/user-interface/WaitlistLanding";
+import { getWaitlistSettings } from "@indiecrafts/modules-web-waitlist/lib/settings";
+import { WaitlistLanding } from "@indiecrafts/modules-web-waitlist/user-interface/WaitlistLanding";
 import { buildMetadata } from "@/lib/metadata";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 

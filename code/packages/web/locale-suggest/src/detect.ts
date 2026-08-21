@@ -3,7 +3,13 @@
  * already redirects a FIRST visit to `/` to the browser language, so this targets
  * the residual mismatch: a returning visitor or a shared `/fr/…` link whose active
  * locale differs from what the browser asks for.
+ *
+ * Only the HTTP `Accept-Language` PARSER is web-specific; the ranked-preference
+ * DECISION is shared (`pickSuggestedLocale`, `@indiecrafts/packages-shared-config`), so
+ * the native shells reuse it over `getLocales()` / `navigator.languages`.
  */
+
+import { pickSuggestedLocale } from "@indiecrafts/packages-shared-config/shared";
 
 /**
  * The top-ranked `Accept-Language` locale that's supported and ≠ the active one.
@@ -26,11 +32,8 @@ export function detectPreferredLocale(
       };
     })
     .filter((x) => x.code && !Number.isNaN(x.q))
-    .sort((a, b) => b.q - a.q);
+    .sort((a, b) => b.q - a.q)
+    .map((x) => x.code);
 
-  for (const { code } of ranked) {
-    if (!locales.includes(code)) continue; // skip unsupported languages
-    return code === active ? null : code; // the first supported preference decides
-  }
-  return null;
+  return pickSuggestedLocale(ranked, active, locales);
 }

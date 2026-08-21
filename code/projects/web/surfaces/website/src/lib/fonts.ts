@@ -17,11 +17,13 @@ import { fonts, type FontKey } from "@/config";
  *     `--font-sans`/`--font-mono` at the chosen fonts' `--f-*` vars.
  *
  * Google fonts (Geist) are auto-subset + self-hosted + preloaded by Next.
- * Local fonts (Satoshi) are self-hosted from `src/fonts/`. All use
+ * Local fonts (Satoshi) are self-hosted from the shared brick
+ * `@indiecrafts/packages-shared-ui-fonts` (`fonts/*.woff2`). All use
  * `display: "swap"` with the size-adjusted fallback Next generates.
  *
- * Add a font: register it below, then add its key to `FontKey` in
- * `config/types.ts`. The `satisfies` check keeps the two in lockstep.
+ * Add a font: drop the `.woff2` in `@indiecrafts/packages-shared-ui-fonts`,
+ * register it below, then add its key to `FontKey` in the shared config.
+ * The `satisfies` check keeps the two in lockstep.
  */
 
 const geist = Geist({ subsets: ["latin"], display: "swap", variable: "--f-geist" });
@@ -33,17 +35,19 @@ const geistMono = Geist_Mono({
 });
 
 // Local (self-hosted) variable font — the showcase for the local pipeline.
-// Drop a `.woff2` in `src/fonts/`, add a `localFont(...)` call + a `FontKey`,
-// and it's selectable in `config.fonts` exactly like a Google font.
+// Files in `@indiecrafts/packages-shared-ui-fonts`; add a `localFont(...)` call
+// + a `FontKey`, and it's selectable in `config.fonts` like a Google font.
 const satoshi = localFont({
+  // Files live in @indiecrafts/packages-shared-ui-fonts (shared design brick);
+  // next/font needs a static-literal path, so this is a relative path (not an import).
   src: [
     {
-      path: "../assets/fonts/Satoshi-Variable.woff2",
+      path: "../../../../../../packages/shared/ui-fonts/fonts/Satoshi-Variable.woff2",
       weight: "300 900",
       style: "normal",
     },
     {
-      path: "../assets/fonts/Satoshi-VariableItalic.woff2",
+      path: "../../../../../../packages/shared/ui-fonts/fonts/Satoshi-VariableItalic.woff2",
       weight: "300 900",
       style: "italic",
     },

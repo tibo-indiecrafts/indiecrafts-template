@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 // The helper reads Sanity via the published client; stub it so the tests drive
 // the two-step (find doc → follow translation.metadata) lookup directly.
 const { fetch } = vi.hoisted(() => ({ fetch: vi.fn() }));
-vi.mock("@indiecrafts/sanity/client", () => ({ client: { fetch } }));
+vi.mock("@indiecrafts/packages-web-sanity/client", () => ({ client: { fetch } }));
 
 const { translatedSlugPath, translationAlternates } = await import("./translations");
 

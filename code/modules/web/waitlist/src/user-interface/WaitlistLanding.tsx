@@ -1,5 +1,5 @@
-import { defaultLocale, type Locale } from "@indiecrafts/config";
-import { WaitlistForm } from "@indiecrafts/ui-components/web/form/WaitlistForm";
+import { defaultLocale, type Locale } from "@indiecrafts/packages-shared-config";
+import { WaitlistForm } from "@indiecrafts/packages-web-ui-components/web/form/WaitlistForm";
 import { getWaitlistSettings } from "../lib/settings";
 
 type LocaleString = Record<string, string | undefined> | null | undefined;

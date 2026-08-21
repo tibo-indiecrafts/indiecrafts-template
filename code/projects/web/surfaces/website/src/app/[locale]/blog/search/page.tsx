@@ -1,16 +1,16 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
-import { isSearchEnabled } from "@indiecrafts/blog/lib/route-gate";
+import { isSearchEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { notFound } from "next/navigation";
 import { buildMetadata } from "@/lib/metadata";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
-import { BlogSearchForm } from "@indiecrafts/blog/user-interface/shared/components/BlogSearchForm";
-import { Breadcrumbs } from "@indiecrafts/blog/user-interface/shared/components/Breadcrumbs";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
-import { searchPostsQuery } from "@indiecrafts/blog/sanity/queries";
-import type { PostListItem } from "@indiecrafts/blog/sanity/types";
+import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
+import { BlogSearchForm } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogSearchForm";
+import { Breadcrumbs } from "@indiecrafts/modules-web-blog/user-interface/shared/components/Breadcrumbs";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
+import { searchPostsQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
+import type { PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /** Results shown for a query — no pagination (see `searchPostsQuery` ceiling). */
 const SEARCH_LIMIT = 30;
@@ -41,7 +41,7 @@ export default async function BlogSearchPage({ params, searchParams }: Props) {
   setRequestLocale(locale);
 
   const rawQ = (await searchParams).q;
-  const q = (Array.isArray(rawQ) ? rawQ[0] : (rawQ ?? "")).trim();
+  const q = (Array.isArray(rawQ) ? (rawQ[0] ?? "") : (rawQ ?? "")).trim();
 
   const [t, nav] = await Promise.all([
     getTranslations("pages.blog.search"),

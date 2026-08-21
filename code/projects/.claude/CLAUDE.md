@@ -5,9 +5,11 @@ Auto-loads when you work under `code/projects/**`. Deployables nest **by platfor
 **self-contained**: it owns its `CLAUDE.md` (how to code), `README.md`, and `CHANGELOG.md`.
 
 - **`web/`** — `next-cf` apps (`surfaces/website` — live + the hub Studio — · `surfaces/admin`) + `tools/storybook`.
-- **`mobile/`** — `expo` (`surfaces/main`) · **`hybrid/`** — `electron` (`surfaces/main`).
+- **`mobile/`** — `expo` (`surfaces/main`) · **`hybrid/`** — `electron` (`surfaces/main`). Each carries a
+  reserved `tools/` marker (like `web/tools/storybook`) — every platform has the same `surfaces · tools`
+  kind skeleton; activate a tool when the platform needs one.
 - **The cross-platform `shared/` tier moved up** — the `worker-cf` services (`api` · `cron` · `workers`)
-  - the ops layer (`db · infra · domains · scripts` toolchain + registries) now live at **`code/shared/`**
+  - the ops layer (`db · infra` folders + the `scripts` toolchain + registries; `domains` is toolchain-only) now live at **`code/shared/`**
     (top-level, a sibling of `projects/`), **not here**. `projects/` is per-platform only.
 - **Product docs** live one level up at `code/docs/` (a sibling of `projects/`), **not here** — VitePress, npm-isolated; documents the whole product, not one platform.
 - **Service scoping** — the same `api`/`cron`/`workers` trio is reserved at two lower altitudes as

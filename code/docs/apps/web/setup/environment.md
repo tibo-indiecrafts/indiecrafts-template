@@ -12,7 +12,7 @@ pnpm dev                        # http://localhost:3000
 pnpm verify:quick               # tsc + lint (manual; the commit hook already runs tsc)
 ```
 
-Run every command from the **repo root** — turbo delegates to `@indiecrafts/website`. Don't `cd` into `code/projects/web/surfaces/website` to run scripts. `.env.example` lives in the app (`code/projects/web/surfaces/website/`), so its copy does too. That's a working dev environment; nothing below is required to build or ship.
+Run every command from the **repo root** — turbo delegates to `@indiecrafts/web-surfaces-website`. Don't `cd` into `code/projects/web/surfaces/website` to run scripts. `.env.example` lives in the app (`code/projects/web/surfaces/website/`), so its copy does too. That's a working dev environment; nothing below is required to build or ship.
 
 > **`pnpm install` blocked?** The workspace pins a supply-chain policy in `pnpm-workspace.yaml`:
 > a **3-day** `minimumReleaseAge` (a fresh version waits 3 days — malware is usually caught +
@@ -73,10 +73,52 @@ Then, inside Claude, run **`/reload-plugins`** to activate. This installs the `c
 `workers-best-practices` · `durable-objects` · `agents-sdk` skills plus five MCP servers —
 `cloudflare-docs` (public, no auth) and `cloudflare-api` · `-bindings` · `-builds` · `-observability`
 (**OAuth on first use**). For the CLI, authenticate with
-`pnpm --filter @indiecrafts/website exec wrangler login`. Prerequisites are already in-repo: **wrangler
+`pnpm --filter @indiecrafts/web-surfaces-website exec wrangler login`. Prerequisites are already in-repo: **wrangler
 `^4`** (a devDep — invoke via `pnpm exec wrangler`, no global install needed), Node 22, pnpm 10. Do
 **not** use `npx skills` or `claude mcp add` — the plugin commands register both skills and MCP servers.
 Source: [`developers.cloudflare.com/agent-setup`](https://developers.cloudflare.com/agent-setup/).
+
+### TypeScript LSP (types on the fly)
+
+Live type diagnostics as you edit — the "types on the fly" tier
+([on-the-fly-checks](./on-the-fly-checks.md)). Per-file `tsc` isn't feasible in this monorepo
+(whole-program), so type feedback comes from the official LSP plugin instead. Install once (global,
+per-developer):
+
+```bash
+claude plugin install typescript-lsp@claude-plugins-official
+```
+
+Then **`/reload-plugins`**. It surfaces the same errors the commit hook + CI `tsc` enforce, in real
+time. Nothing to configure — it reads each project's `tsconfig.json`.
+
+### Expo / React Native (the `mobile` surface)
+
+The `mobile` surface (`code/projects/mobile/surfaces/main`, Expo SDK 52 · RN 0.76) gets the **official
+Expo plugin** — Expo Skills (`expo-router` · `expo-native-ui` · `expo-design-system` · `expo-tailwind-setup`
+/ NativeWind · `expo-animation` · `expo-upgrade` · the `eas-*` build/deploy/update workflows) **plus the
+Expo MCP server** for version-correct docs (your SDK 52 is bleeding-edge, where model priors are stale).
+Install once (global, per-developer), from the same `claude-plugins-official` marketplace as the LSP:
+
+```bash
+claude plugin install expo@claude-plugins-official
+```
+
+Then **`/reload-plugins`**. Reach for its skills when working under `code/projects/mobile/**` (and, for the
+shared RN bits, `code/packages/mobile/ui-native`). Source:
+[`docs.expo.dev/agents/claude`](https://docs.expo.dev/agents/claude/).
+
+### Project MCP servers (`.mcp.json`)
+
+The repo commits its MCP servers in `.mcp.json` (approve them on first run): **shadcn** + **magicui**
+(component registries), **sanity** (`@sanity/mcp-server` — query the dataset + schema; reads
+`SANITY_API_READ_TOKEN`), **supabase** (read-only, for the DB surfaces), **terraform** (Cloudflare IaC,
+via Docker), and **figma** (the remote Dev-Mode MCP at `mcp.figma.com/mcp` — OAuth on first use, all
+plans/seats, no local app) for the
+[figma-handoff](../../../projects/web/surfaces/website/.claude/rules/figma-handoff.md) workflow. For the
+richer Figma experience (MCP **+** Agent Skills) install the plugin instead:
+`claude plugin install figma@claude-plugins-official`. (The `vercel` MCP was removed — this repo deploys
+to **Cloudflare** via OpenNext, not Vercel.)
 
 ### Browser verification
 

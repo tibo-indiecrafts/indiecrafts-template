@@ -35,7 +35,7 @@ Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling a
 
 Everything reads these from `@/config` — the app-owned `src/config/features.ts` (flags,
 theme, fonts, and the `pages` map are app-instance config so a second app ships its own;
-`@indiecrafts/config` holds only shared primitives). Never re-declare a flag or its condition
+`@indiecrafts/packages-shared-config` holds only shared primitives). Never re-declare a flag or its condition
 locally.
 
 ## LLM endpoints — `llms.{index,full,pages}`
@@ -55,12 +55,12 @@ When `index` is off the route 404s **and** the layout stops emitting the
 `src/app/[locale]/layout.tsx`). All three are auto-populated from the `pages` map — adding
 a page makes it appear in every enabled endpoint, in every locale, with zero per-page
 config. A page opts out individually with `seo.llms: false` (`PageSeo` in
-`@indiecrafts/config` `./types`).
+`@indiecrafts/packages-shared-config` `./types`).
 
 ## `rss` — depends on `blog`
 
 RSS lists blog posts, so it can only be on when the blog is reachable. The dependency is
-enforced in `isRssEnabled()` (`@indiecrafts/blog/lib/route-gate`):
+enforced in `isRssEnabled()` (`@indiecrafts/modules-web-blog/lib/route-gate`):
 
 ```ts
 export function isRssEnabled(): boolean {
@@ -128,7 +128,7 @@ The Sanity-powered public blog. When off, everything blog-related disappears:
   nav link is added only when on.
 - **`<SanityLive>`** — mounted only when on (it revalidates public blog pages).
 
-Route gating is centralized in `@indiecrafts/blog/lib/route-gate` — call
+Route gating is centralized in `@indiecrafts/modules-web-blog/lib/route-gate` — call
 `requireBlogRoute(page)` in page components (it `notFound()`s) and `isBlogRouteEnabled(page)`
 in route handlers. Both fold in `features.blog` **and** the page's `enabled` field, so a
 new blog route can't drift by checking only one half.

@@ -33,7 +33,7 @@ export default async function NewsletterConfirmPage({ params, searchParams }: Pr
   if (!features.newsletter) notFound();
 
   const rawToken = (await searchParams).token;
-  const token = (Array.isArray(rawToken) ? rawToken[0] : (rawToken ?? "")).trim();
+  const token = (Array.isArray(rawToken) ? (rawToken[0] ?? "") : (rawToken ?? "")).trim();
   const t = await getTranslations("pages.newsletterConfirm");
 
   return (

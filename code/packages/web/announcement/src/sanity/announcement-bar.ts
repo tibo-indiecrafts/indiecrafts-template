@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { BellIcon } from "@sanity/icons";
+import { surfacesField } from "./surfaces";
 
 /**
  * Announcement bar — a single, language-independent singleton (`_id:
@@ -137,6 +138,7 @@ export default defineType({
       },
       initialValue: "brand",
     }),
+    surfacesField,
     defineField({
       name: "start",
       title: "Afficher à partir du",

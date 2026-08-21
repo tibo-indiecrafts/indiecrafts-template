@@ -5,33 +5,33 @@ import {
   isRssEnabled,
   isSearchEnabled,
   requireBlogRoute,
-} from "@indiecrafts/blog/lib/route-gate";
-import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
-import { BlogSearchForm } from "@indiecrafts/blog/user-interface/shared/components/BlogSearchForm";
+} from "@indiecrafts/modules-web-blog/lib/route-gate";
+import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
+import { BlogSearchForm } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogSearchForm";
 import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { BlogHero } from "@indiecrafts/blog/user-interface/blog/sections/BlogHero";
-import { ExploreCategories } from "@indiecrafts/blog/user-interface/blog/sections/ExploreCategories";
-import { ExploreTags } from "@indiecrafts/blog/user-interface/blog/sections/ExploreTags";
-import { TopAuthors } from "@indiecrafts/blog/user-interface/blog/sections/TopAuthors";
-import { BlogListing } from "@indiecrafts/blog/user-interface/blog/sections/BlogListing";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
+import { BlogHero } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/BlogHero";
+import { ExploreCategories } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/ExploreCategories";
+import { ExploreTags } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/ExploreTags";
+import { TopAuthors } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/TopAuthors";
+import { BlogListing } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/BlogListing";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import {
   allPostsQuery,
   authorsForLocaleQuery,
   blogSingletonQuery,
   categoriesForLocaleQuery,
   tagsForLocaleQuery,
-} from "@indiecrafts/blog/sanity/queries";
+} from "@indiecrafts/modules-web-blog/sanity/queries";
 import type {
   Author,
   BlogSingleton,
   Category,
   PostListItem,
   Tag,
-} from "@indiecrafts/blog/sanity/types";
+} from "@indiecrafts/modules-web-blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale }> };
 

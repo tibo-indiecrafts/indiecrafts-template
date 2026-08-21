@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 /**
  * Gated lead-magnet download (`/api/download`). The route verifies a signed,
- * expiring token (`@indiecrafts/gated-delivery`, via the newsletter module)
+ * expiring token (`@indiecrafts/packages-shared-gated-delivery`, via the newsletter module)
  * BEFORE it reveals the file URL — so a missing, garbage, or tampered token is a
  * `403`, never a redirect to the CDN. The guard short-circuits before any Sanity
  * read: fully deterministic, no fixtures (like `api-guard`).

@@ -5,23 +5,27 @@ import { localizedPathname } from "@/i18n/routing";
 import {
   isTaxonomyRouteEnabled,
   requireTaxonomyRoute,
-} from "@indiecrafts/blog/lib/route-gate";
+} from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { translationAlternates } from "@/lib/seo/translations";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { TagDetail } from "@indiecrafts/blog/user-interface/tag/sections/TagDetail";
-import { client } from "@indiecrafts/sanity/client";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
+import { TagDetail } from "@indiecrafts/modules-web-blog/user-interface/tag/sections/TagDetail";
+import { client } from "@indiecrafts/packages-web-sanity/client";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import {
   allTagSlugsQuery,
   postsByTagCountQuery,
   postsByTagSlugQuery,
   tagBySlugQuery,
-} from "@indiecrafts/blog/sanity/queries";
-import type { PostListItem, Tag } from "@indiecrafts/blog/sanity/types";
-import { pageCount, pageRange, parsePage } from "@indiecrafts/blog/lib/pagination";
+} from "@indiecrafts/modules-web-blog/sanity/queries";
+import type { PostListItem, Tag } from "@indiecrafts/modules-web-blog/sanity/types";
+import {
+  pageCount,
+  pageRange,
+  parsePage,
+} from "@indiecrafts/modules-web-blog/lib/pagination";
 
 type Props = {
   params: Promise<{ locale: Locale; slug: string }>;

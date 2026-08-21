@@ -1,0 +1,157 @@
+"use server";
+
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { isAdmin, type Roles } from "@indiecrafts/packages-shared-auth";
+import { audit } from "@/lib/audit";
+
+/**
+ * The role-grant path — the crown jewel. Open passwordless sign-up means anyone can
+ * create an account, so the ONLY thing between a stranger and admin is this write. It
+ * is admin-gated server-side, validates the target id, audit-logged, and (on revoke)
+ * revokes the target's live sessions so a demotion is immediate — not "≤ token TTL".
+ */
+type Result =
+  | { ok: true }
+  | { ok: false; error: "forbidden" | "invalid_user" | "failed" };
+
+const USER_ID = /^user_[A-Za-z0-9]+$/;
+
+/** The caller must be a signed-in admin (checked on the server, never trusted from the client). */
+async function requireAdmin(): Promise<string> {
+  const { userId, sessionClaims } = await auth();
+  if (!userId || !isAdmin(sessionClaims)) throw new Error("forbidden");
+  return userId;
+}
+
+export async function grantAdmin(targetUserId: string): Promise<Result> {
+  let actor: string;
+  try {
+    actor = await requireAdmin();
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+  if (!USER_ID.test(targetUserId)) return { ok: false, error: "invalid_user" };
+  try {
+    const client = await clerkClient();
+    await client.users.updateUserMetadata(targetUserId, {
+      publicMetadata: { role: "admin" satisfies Roles },
+    });
+    await audit("admin.grant", { actor, target: targetUserId });
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "failed" };
+  }
+}
+
+export async function revokeAdmin(targetUserId: string): Promise<Result> {
+  let actor: string;
+  try {
+    actor = await requireAdmin();
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+  if (!USER_ID.test(targetUserId)) return { ok: false, error: "invalid_user" };
+  try {
+    const client = await clerkClient();
+    // Clear the role...
+    await client.users.updateUserMetadata(targetUserId, {
+      publicMetadata: { role: null },
+    });
+    // ...and revoke live sessions so the demotion takes effect now, not on next refresh.
+    const sessions = await client.sessions.getSessionList({
+      userId: targetUserId,
+      status: "active",
+    });
+    await Promise.all(
+      sessions.data.map((s) => client.sessions.revokeSession(s.id)),
+    );
+    await audit("admin.revoke", { actor, target: targetUserId });
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "failed" };
+  }
+}
+
+const SESSION_ID = /^sess_[A-Za-z0-9]+$/;
+
+/** A live Clerk session, sanitized for the admin view — device/location are fetched
+ *  live from Clerk, never stored (GDPR minimization). */
+export type LiveSession = {
+  id: string;
+  lastActiveAt: number;
+  device?: string;
+  browser?: string;
+  location?: string;
+};
+
+/** The target user's currently-active Clerk sessions (the source of truth for "active"),
+ *  for the admin sessions screen. Read-only; returns [] on any failure. */
+export async function listUserSessions(userId: string): Promise<LiveSession[]> {
+  try {
+    await requireAdmin();
+  } catch {
+    return [];
+  }
+  if (!USER_ID.test(userId)) return [];
+  try {
+    const client = await clerkClient();
+    const { data } = await client.sessions.getSessionList({
+      userId,
+      status: "active",
+    });
+    return data.map((s) => ({
+      id: s.id,
+      lastActiveAt: s.lastActiveAt,
+      device: s.latestActivity?.deviceType ?? undefined,
+      browser: s.latestActivity?.browserName ?? undefined,
+      location:
+        [s.latestActivity?.city, s.latestActivity?.country]
+          .filter(Boolean)
+          .join(", ") || undefined,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+/** Revoke one live session — immediate sign-out on that device. Audited. */
+export async function revokeSession(sessionId: string): Promise<Result> {
+  let actor: string;
+  try {
+    actor = await requireAdmin();
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+  if (!SESSION_ID.test(sessionId)) return { ok: false, error: "invalid_user" };
+  try {
+    const client = await clerkClient();
+    await client.sessions.revokeSession(sessionId);
+    await audit("admin.revoke_session", { actor, target: sessionId });
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "failed" };
+  }
+}
+
+/** Revoke ALL of a user's active sessions ("sign out everywhere"). Audited. */
+export async function revokeUserSessions(userId: string): Promise<Result> {
+  let actor: string;
+  try {
+    actor = await requireAdmin();
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+  if (!USER_ID.test(userId)) return { ok: false, error: "invalid_user" };
+  try {
+    const client = await clerkClient();
+    const { data } = await client.sessions.getSessionList({
+      userId,
+      status: "active",
+    });
+    await Promise.all(data.map((s) => client.sessions.revokeSession(s.id)));
+    await audit("admin.revoke_user_sessions", { actor, target: userId });
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "failed" };
+  }
+}

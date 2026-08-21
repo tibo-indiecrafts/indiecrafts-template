@@ -1,7 +1,7 @@
 import type { StructureBuilder, ListItemBuilder } from "sanity/structure";
 import { CommentIcon } from "@sanity/icons";
-import { apiVersion } from "@indiecrafts/sanity/env";
-import { locales, type Locale } from "@indiecrafts/config";
+import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
+import { locales, type Locale } from "@indiecrafts/packages-shared-config";
 
 /**
  * The blog's own desk section(s) — Blog (singleton + articles/auteurs/
@@ -41,7 +41,7 @@ export function blogStructure(S: StructureBuilder): ListItemBuilder[] {
       ),
 
     // Témoignages (`quote`) + Équipe (`person`) now live in the page-builder desk
-    // (`@indiecrafts/page-builder`) — they're the generic entities its blocks reference.
+    // (`@indiecrafts/packages-web-page-builder`) — they're the generic entities its blocks reference.
 
     // ── Comments moderation ─────────────────────────────
     // Submitted via /api/comments as `approved: false`; tick "Approuvé" on a

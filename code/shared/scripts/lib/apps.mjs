@@ -36,7 +36,7 @@ export const ENVS = ["dev", "staging", "prod"];
 export const APPS = [
   {
     slug: "api",
-    pkg: "@indiecrafts/api",
+    pkg: "@indiecrafts/shared-api",
     class: "worker-cf",
     platform: "shared",
     kind: "service",
@@ -45,7 +45,7 @@ export const APPS = [
   },
   {
     slug: "cron",
-    pkg: "@indiecrafts/cron",
+    pkg: "@indiecrafts/shared-cron",
     class: "worker-cf",
     platform: "shared",
     kind: "service",
@@ -54,7 +54,7 @@ export const APPS = [
   },
   {
     slug: "workers",
-    pkg: "@indiecrafts/workers",
+    pkg: "@indiecrafts/shared-workers",
     class: "worker-cf",
     platform: "shared",
     kind: "service",
@@ -62,8 +62,17 @@ export const APPS = [
     order: 10,
   },
   {
+    slug: "agent",
+    pkg: "@indiecrafts/shared-agent",
+    class: "worker-cf",
+    platform: "shared",
+    kind: "service",
+    dir: "code/shared/agent",
+    order: 10,
+  },
+  {
     slug: "website",
-    pkg: "@indiecrafts/website",
+    pkg: "@indiecrafts/web-surfaces-website",
     class: "next-cf",
     platform: "web",
     kind: "surface",
@@ -72,7 +81,7 @@ export const APPS = [
   },
   {
     slug: "admin",
-    pkg: "@indiecrafts/admin",
+    pkg: "@indiecrafts/web-surfaces-admin",
     class: "next-cf",
     platform: "web",
     kind: "surface",
@@ -80,8 +89,17 @@ export const APPS = [
     order: 40,
   },
   {
+    slug: "app",
+    pkg: "@indiecrafts/web-surfaces-app",
+    class: "next-cf",
+    platform: "web",
+    kind: "surface",
+    dir: "code/projects/web/surfaces/app",
+    order: 45,
+  },
+  {
     slug: "mobile",
-    pkg: "@indiecrafts/mobile",
+    pkg: "@indiecrafts/mobile-surfaces-main",
     class: "expo",
     platform: "mobile",
     kind: "surface",
@@ -90,7 +108,7 @@ export const APPS = [
   },
   {
     slug: "hybrid",
-    pkg: "@indiecrafts/hybrid",
+    pkg: "@indiecrafts/hybrid-surfaces-main",
     class: "electron",
     platform: "hybrid",
     kind: "surface",
@@ -126,10 +144,12 @@ export const bySlug = (slug) => APPS.find((a) => a.slug === slug);
 
 /**
  * The Cloudflare resource name for an app in one env — the SINGLE source of the
- * naming convention. It mirrors the folder tree: **`<prefix>-<env>-<platform>-<slug>`**
+ * naming convention. It mirrors the folder tree: **`<prefix>-<env>-<tail>`**, where
+ * `<tail>` is the app's `dir` under `code/` with a leading `projects/` stripped,
+ * dash-joined — the same tail as the npm package name (`@indiecrafts/<tail>`).
  * (env-first; prod is explicit, not bare). Examples:
- *   website → `indiecrafts-prod-web-website`   (code/projects/web/surfaces/website)
- *   api     → `indiecrafts-dev-shared-api`     (code/shared/api)
+ *   website → `indiecrafts-prod-web-surfaces-website`  (code/projects/web/surfaces/website)
+ *   api     → `indiecrafts-dev-shared-api`             (code/shared/api)
  * Every wrangler `name`, the R2/KV/D1 stems, and the tfvars `worker_name` derive
  * from here, so a client rename only swaps `<prefix>` (see `project-rename`).
  * @param {string} slug  an `APPS` row slug
@@ -142,7 +162,11 @@ export function resourceName(slug, env, prefix) {
   if (!app) throw new Error(`resourceName: unknown app slug "${slug}"`);
   if (!ENVS.includes(env)) throw new Error(`resourceName: bad env "${env}"`);
   if (!prefix) throw new Error("resourceName: a prefix is required");
-  return `${prefix}-${env}-${app.platform}-${app.slug}`;
+  const tail = app.dir
+    .replace(/^code\//, "")
+    .replace(/^projects\//, "")
+    .replaceAll("/", "-");
+  return `${prefix}-${env}-${tail}`;
 }
 
 // ── CLI: emit the app list for the CI matrix ──────────────────────────────────

@@ -2,7 +2,7 @@
 # its whole deploy surface: `wrangler.toml` ships the Worker, this owns the edge).
 # One instance = one app, one environment. Provisions the EDGE config wrangler can't:
 #   · auto custom domain (CF makes the DNS record + cert)
-#   · rate-limit on /api/* (the @indiecrafts/security `withGuard` PRIMARY limiter)
+#   · rate-limit on /api/* (the @indiecrafts/packages-shared-security `withGuard` PRIMARY limiter)
 #   · Cloudflare Managed WAF · Bot Fight Mode
 #   · cache rules (immutable /_next/static, bypass /api + /studio) + Tiered Cache
 #   · zone hardening (SSL strict, min TLS 1.2, Always-HTTPS)
@@ -60,6 +60,7 @@ variable "rate_limit_requests" { type = number, default = 20 }
 variable "rate_limit_period" { type = number, default = 60 } # seconds
 variable "enable_managed_waf" { type = bool, default = true }
 variable "enable_bot_fight" { type = bool, default = true }
+variable "enable_leaked_credentials" { type = bool, default = true } # managed-challenge known-leaked creds (Free: one field)
 variable "enable_cache_rules" { type = bool, default = true }
 variable "enable_tiered_cache" { type = bool, default = true }
 
@@ -110,10 +111,32 @@ resource "cloudflare_ruleset" "waf_managed" {
 }
 
 # ── Bot Fight Mode (free) ─────────────────────────────────────────────────────
+# `fight_mode` challenges known bots on the Free plan. Turn on **Block AI Bots** too
+# (Security → Settings → Bot traffic) to block AI crawlers (GPTBot, ClaudeBot, …) — the
+# provider field for that varies by version, so it's a dashboard toggle here.
 resource "cloudflare_bot_management" "bots" {
   count      = var.enable_bot_fight ? 1 : 0
   zone_id    = var.zone_id
   fight_mode = true
+}
+
+# ── Leaked-credentials detection (free: one field) ────────────────────────────
+# Managed-challenge any request Cloudflare flags as carrying a known-breached
+# username+password (credential stuffing). Requires leaked-credentials DETECTION to be
+# enabled on the zone first (Security → Settings). The `cf.waf.credential_check.*`
+# field is available on Free (one field); paid plans get more granular fields.
+resource "cloudflare_ruleset" "leaked_credentials" {
+  count   = var.enable_leaked_credentials ? 1 : 0
+  zone_id = var.zone_id
+  name    = "${var.worker_name}-leaked-creds"
+  kind    = "zone"
+  phase   = "http_request_firewall_custom"
+  rules = [{
+    ref         = "leaked_creds_challenge"
+    description = "Managed-challenge requests with known-leaked credentials (${var.env})"
+    expression  = "(cf.waf.credential_check.username_and_password_leaked)"
+    action      = "managed_challenge"
+  }]
 }
 
 # ── Cache Rules: immutable static at the edge, never cache dynamic ───────────

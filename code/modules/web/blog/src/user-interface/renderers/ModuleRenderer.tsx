@@ -1,8 +1,8 @@
-import type { AnyModule, Post } from "@indiecrafts/blog/sanity/types";
-import type { BlockModule } from "@indiecrafts/ui-components/shared/types";
-import type { Locale } from "@indiecrafts/config";
-import { renderBlock } from "@indiecrafts/ui-components/web/registry";
-import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
+import type { AnyModule, Post } from "@indiecrafts/modules-web-blog/sanity/types";
+import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";
+import type { Locale } from "@indiecrafts/packages-shared-config";
+import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
+import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
 import { BlogIndex } from "./BlogIndex";
 import { BlogPostContent } from "./BlogPostContent";
 import { BlogPostList } from "./BlogPostList";
@@ -10,7 +10,7 @@ import { BlogPostList } from "./BlogPostList";
 /**
  * Drives the blog page-builder. The three blog-specific modules (index, post
  * list, post content — they fetch/render live posts) are handled here; every
- * other module is a generic **block** rendered by `@indiecrafts/ui-components`
+ * other module is a generic **block** rendered by `@indiecrafts/packages-web-ui-components`
  * via `renderBlock`. Composing the shared registry + these three is the whole
  * dispatcher.
  *

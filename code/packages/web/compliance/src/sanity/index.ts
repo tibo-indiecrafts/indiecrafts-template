@@ -1,6 +1,6 @@
 import type { SchemaTypeDefinition } from "sanity";
-import type { SanityModule } from "@indiecrafts/sanity/module";
-import { locales } from "@indiecrafts/config";
+import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
+import { locales } from "@indiecrafts/packages-shared-config";
 import cookieCategory from "./cookie-category";
 import cookieConsent from "./cookie-consent";
 import cookieEntry from "./cookie-entry";

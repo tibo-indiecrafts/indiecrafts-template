@@ -3,7 +3,7 @@ import {
   formatDefaults,
   localeFormat,
   type Locale,
-} from "@indiecrafts/config";
+} from "@indiecrafts/packages-shared-config";
 
 /**
  * Money formatting + math. `formatMoney` is the display path (memoized

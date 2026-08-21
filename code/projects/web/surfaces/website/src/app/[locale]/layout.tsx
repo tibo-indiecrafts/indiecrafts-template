@@ -1,4 +1,4 @@
-import "@indiecrafts/ui-tokens/globals.css";
+import "@indiecrafts/packages-shared-ui-tokens/globals.css";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
@@ -15,9 +15,10 @@ import {
   type Locale,
 } from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
-import { CookieBanner } from "@indiecrafts/compliance/consent/CookieBanner";
-import { LegalNotice } from "@indiecrafts/compliance/reacceptance/LegalNotice";
+import { CookieBanner } from "@indiecrafts/packages-web-compliance/consent/CookieBanner";
+import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
 import { routing } from "@/i18n/routing";
+import { SessionLogger } from "@indiecrafts/packages-web-auth";
 import { ThemeProvider } from "@/user-interface/shared/layout/ThemeProvider";
 import { LocaleSwitchBoundary } from "@/user-interface/shared/layout/LocaleSwitchBoundary";
 import { resolveThemeConfig, themeProviderProps } from "@/lib/theme";
@@ -26,11 +27,11 @@ import { buildSiteSchemas } from "@/lib/seo/jsonld-core";
 import { buildGlobalSchemas } from "@/lib/seo/jsonld-factories";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { getVersionPrompt } from "@/lib/system-pages";
-import { getCookieConsent } from "@indiecrafts/compliance/sanity/cookies";
-import { getLegalAcceptance } from "@indiecrafts/compliance/sanity/legal";
-import { LEGAL_ACK_COOKIE } from "@indiecrafts/compliance/reacceptance/legal-store";
-import { SanityLive } from "@indiecrafts/sanity/live";
-import { UpdatePrompt } from "@indiecrafts/version/update-prompt";
+import { getCookieConsent } from "@indiecrafts/packages-web-compliance/sanity/cookies";
+import { getLegalAcceptance } from "@indiecrafts/packages-web-compliance/sanity/legal";
+import { LEGAL_ACK_COOKIE } from "@indiecrafts/packages-web-compliance/reacceptance/legal-store";
+import { SanityLive } from "@indiecrafts/packages-web-sanity/live";
+import { UpdatePrompt } from "@indiecrafts/packages-web-version/update-prompt";
 import { buildInfo } from "@/lib/build-info";
 
 export function generateStaticParams() {
@@ -233,6 +234,9 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                 />
               ) : null}
             </LocaleSwitchBoundary>
+            {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+              <SessionLogger surface="website" />
+            ) : null}
           </NextIntlClientProvider>
         </ThemeProvider>
         {features.structuredData && settings.showStructuredData !== false ? (

@@ -1,5 +1,5 @@
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import type { StepListModule } from "@indiecrafts/ui-components/shared/types";
+import type { StepListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { ModuleSection } from "../layout/ModuleSection";
 
 /**

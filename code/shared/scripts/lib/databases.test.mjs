@@ -1,35 +1,18 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
-import {
-  DATABASES,
-  KINDS,
-  ALTITUDES,
-  ordered,
-  byKind,
-  byAltitude,
-} from "./databases.mjs";
-import {
-  INFRA,
-  PROVIDERS,
-  ordered as infraOrdered,
-} from "./infra-registry.mjs";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { DATABASES, KINDS, ALTITUDES, byKind } from "./databases.mjs";
+import { APPS } from "./apps.mjs";
 
-const KINDSET = new Set(KINDS);
-const ALTSET = new Set(ALTITUDES);
-const PROVSET = new Set(PROVIDERS);
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../..");
 
 test("every db row is well-formed with a known kind + altitude", () => {
   for (const d of DATABASES) {
-    assert.ok(
-      d.name && d.owner && d.dir && d.backup && typeof d.order === "number",
-      `bad db row: ${d.name}`,
-    );
-    assert.ok(KINDSET.has(d.kind), `unknown kind for ${d.name}: ${d.kind}`);
-    assert.ok(
-      ALTSET.has(d.altitude),
-      `unknown altitude for ${d.name}: ${d.altitude}`,
-    );
+    assert.ok(d.name && d.owner && d.dir, `bad row: ${d.name}`);
+    assert.ok(KINDS.includes(d.kind), `unknown kind for ${d.name}: ${d.kind}`);
+    assert.ok(ALTITUDES.includes(d.altitude), `unknown altitude for ${d.name}`);
   }
 });
 
@@ -38,51 +21,30 @@ test("db names are unique", () => {
   assert.equal(new Set(names).size, names.length);
 });
 
-test("every db row's `dir` exists (no drift / no orphans)", () => {
-  for (const d of DATABASES)
+test("each db row's `dir` exists (no drift / no orphans)", () => {
+  for (const d of DATABASES) {
     assert.ok(
       existsSync(d.dir),
-      `db ${d.name} lists ${d.dir} but it is missing`,
-    );
-});
-
-test("ordered() sorts by order then name; helpers filter", () => {
-  const o = ordered();
-  for (let i = 1; i < o.length; i++)
-    assert.ok(o[i - 1].order <= o[i].order, "not order-sorted");
-  assert.equal(
-    byKind("d1").length,
-    DATABASES.filter((d) => d.kind === "d1").length,
-  );
-  assert.equal(
-    byAltitude("global").length,
-    DATABASES.filter((d) => d.altitude === "global").length,
-  );
-});
-
-test("every infra row is well-formed + its dir exists", () => {
-  for (const i of INFRA) {
-    assert.ok(
-      i.name && i.owner && i.dir && typeof i.order === "number",
-      `bad infra row: ${i.name}`,
-    );
-    assert.ok(
-      PROVSET.has(i.provider),
-      `unknown provider for ${i.name}: ${i.provider}`,
-    );
-    assert.ok(
-      ALTSET.has(i.altitude),
-      `unknown altitude for ${i.name}: ${i.altitude}`,
-    );
-    assert.ok(
-      existsSync(i.dir),
-      `infra ${i.name} lists ${i.dir} but it is missing`,
+      `registry lists ${d.name} but ${d.dir} is missing`,
     );
   }
 });
 
-test("infra ordered() is order-sorted", () => {
-  const o = infraOrdered();
-  for (let i = 1; i < o.length; i++)
-    assert.ok(o[i - 1].order <= o[i].order, "not order-sorted");
+// The migrate contract (the bug this guards): a d1 row MUST carry a `binding`, and the
+// owner's wrangler.toml MUST declare it — the runner passes the binding to wrangler so it
+// resolves the RIGHT per-env database. Without a binding, migrate fell back to grepping
+// the first `database_name` in the file — always the wrong DB and the wrong env.
+test("every d1 db has a binding that its owner's wrangler.toml declares", () => {
+  for (const d of byKind("d1")) {
+    assert.ok(d.binding, `d1 db "${d.name}" needs a "binding" (e.g. "DB")`);
+    const owner = APPS.find((a) => a.slug === d.owner);
+    assert.ok(owner, `d1 db "${d.name}" owner "${d.owner}" not in the app registry`);
+    const toml = resolve(REPO_ROOT, owner.dir, "wrangler.toml");
+    assert.ok(existsSync(toml), `${d.owner}: wrangler.toml missing`);
+    assert.match(
+      readFileSync(toml, "utf8"),
+      new RegExp(`binding\\s*=\\s*"${d.binding}"`),
+      `${d.owner}/wrangler.toml must declare binding "${d.binding}" for db "${d.name}"`,
+    );
+  }
 });

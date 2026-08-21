@@ -30,7 +30,7 @@ a test with the code it guards (and keeps the blog module deletable as one folde
 file, so they live in a dedicated dir with `playwright.config.ts`. **App journeys** sit in
 `e2e/journeys/*.spec.ts`; the Storybook visual spec stays at `e2e/visual.spec.ts`.
 
-**Visual = your Storybook.** Every `@indiecrafts/ui` + `ui-components` component already has a
+**Visual = your Storybook.** Every `@indiecrafts/packages-web-ui` + `ui-components` component already has a
 story; the visual suite screenshots them all, so you don't author screenshots by hand.
 
 ## Running
@@ -39,15 +39,27 @@ story; the visual suite screenshots them all, so you don't author screenshots by
 pnpm test              # Vitest unit + integration + parity — turbo fan-out, per-package cached
 pnpm test:coverage     # same, with v8 coverage
 pnpm test:stories      # every Storybook story as a component + a11y test (headless Chromium)
-pnpm --filter @indiecrafts/website e2e          # app journeys — seeds an `e2e` dataset, builds + serves the app
-pnpm --filter @indiecrafts/website e2e:visual   # visual regression against the built Storybook
-pnpm --filter @indiecrafts/website e2e:update   # (re)generate visual baselines
+pnpm --filter @indiecrafts/web-surfaces-website e2e          # app journeys — seeds an `e2e` dataset, builds + serves the app
+pnpm --filter @indiecrafts/web-surfaces-website e2e:visual   # visual regression against the built Storybook
+pnpm --filter @indiecrafts/web-surfaces-website e2e:update   # (re)generate visual baselines
 pnpm verify            # the full gate — now ends with `pnpm test`
 ```
 
 `pnpm test` is folded into `pnpm verify` (fast + deterministic; per-package via turbo). The
 browser suites — `test:stories`, `e2e`, visual — need a browser, so they stay **out** of
 `verify` (like `pnpm build`), and run in the advisory CI `browser` job.
+
+### Native (Expo mobile) — jest, not Vitest
+
+The **mobile** app runs on React Native, so its suite is **`jest` + `jest-expo`** (the RN transform),
+not Vitest — colocated `*.test.ts(x)` beside the source, same as the web rule. Config:
+`code/projects/mobile/surfaces/main/jest.config.js` (`preset: "jest-expo"`; `transformIgnorePatterns`
+is **pnpm-aware** — it transpiles RN/Expo packages under `node_modules/.pnpm/…`; `jest.setup.js` mocks
+the native `AsyncStorage`). Run with `pnpm --filter @indiecrafts/mobile-surfaces-main test`; it is folded
+into that app's `verify` (`tsc && test`), so `pnpm verify` covers it via the turbo fan-out. Component
+tests add React Native Testing Library + `testID`s when the first screen lands (not before). The
+Electron (hybrid) main/preload logic will test under Vitest when it holds logic beyond delegating to
+already-tested bricks.
 
 ### Visual baselines are platform-specific
 

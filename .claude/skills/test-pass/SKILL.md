@@ -23,7 +23,7 @@ The write→run→fix loop for a change. Authority: `docs/apps/web/setup/testing
    - **E2e / visual** — a new user journey → a Playwright spec in `code/projects/web/surfaces/website/e2e/journeys/`
      (role locators, web-first assertions, mock `**/api/*` for happy paths); a new component → its
      story already feeds the visual suite.
-3. **Run:** `pnpm test` (Vitest) until green; `pnpm --filter @indiecrafts/website e2e` for app journeys
+3. **Run:** `pnpm test` (Vitest) until green; `pnpm --filter @indiecrafts/web-surfaces-website e2e` for app journeys
    (seeds a throwaway `e2e` dataset), `e2e:visual` for visual (baselines via `e2e:update`).
 4. **Fix**, don't delete the test. Re-run. `pnpm test` also runs inside `pnpm verify`.
 

@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 
-You audit accessibility for this template. Authority: `method/apps/web/rules/accessibility.md`
+You audit accessibility for this template. Authority: `code/projects/web/surfaces/website/.claude/rules/accessibility.md`
 and `code/packages/shared/ui-tokens/DESIGN.md`. Read them first.
 
 Check:

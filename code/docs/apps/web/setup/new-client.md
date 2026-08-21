@@ -2,7 +2,7 @@
 
 Fork this template into a client site: clone, wire Sanity, set the handful of code-level config values, then author brand + content in the Studio. Read top-to-bottom on first use; keep it open as a checklist afterwards.
 
-The split to internalise up front: **code carries structure, Sanity carries content.** Only a thin slice lives in `@indiecrafts/config` (`code/packages/shared/config/src/index.ts`) — origin URL, feature flags, locales, theme modes, font pairing, route map. Everything a client actually rebrands — name, tagline, description, logo, favicon, OG cards, social profiles, nav, business/legal fields, SEO copy, analytics id, cookie banner — is edited in the Studio at `/studio`.
+The split to internalise up front: **code carries structure, Sanity carries content.** Only a thin slice lives in `@indiecrafts/packages-shared-config` (`code/packages/shared/config/src/index.ts`) — origin URL, feature flags, locales, theme modes, font pairing, route map. Everything a client actually rebrands — name, tagline, description, logo, favicon, OG cards, social profiles, nav, business/legal fields, SEO copy, analytics id, cookie banner — is edited in the Studio at `/studio`.
 
 Companion docs:
 
@@ -35,7 +35,7 @@ cd client-acme
 pnpm install
 ```
 
-This is a pnpm + Turbo monorepo; the workspace root is the repo root. All app scripts run from there (`pnpm dev`, `pnpm build`, `pnpm seed`, …) and fan out through Turbo to `@indiecrafts/website` at `code/projects/web/surfaces/website`. Rename the root `package.json` `name` while you are here if you want the workspace to read as the client's.
+This is a pnpm + Turbo monorepo; the workspace root is the repo root. All app scripts run from there (`pnpm dev`, `pnpm build`, `pnpm seed`, …) and fan out through Turbo to `@indiecrafts/web-surfaces-website` at `code/projects/web/surfaces/website`. Rename the root `package.json` `name` while you are here if you want the workspace to read as the client's.
 
 **Then rename the project namespace — one command, do it now:**
 
@@ -43,7 +43,7 @@ This is a pnpm + Turbo monorepo; the workspace root is the repo root. All app sc
 pnpm project:rename <slug>     # e.g. acme  (lowercase, unique per client)
 ```
 
-This sets `DEFAULT_SITE_PREFIX` in `@indiecrafts/config` **and** every `wrangler.toml` resource name (`<prefix>-<env>-web-website*`) together. The prefix namespaces the browser keys (consent record, theme, locale cookie) and the Cloudflare Worker + R2 buckets, so two clients never collide. A `staging`/`prod` deploy is **blocked** until you do this (a shared-Cloudflare-account guard). It then prints the R2 buckets to create (§10).
+This sets `DEFAULT_SITE_PREFIX` in `@indiecrafts/packages-shared-config` **and** every `wrangler.toml` resource name (`<prefix>-<env>-web-website*`) together. The prefix namespaces the browser keys (consent record, theme, locale cookie) and the Cloudflare Worker + R2 buckets, so two clients never collide. A `staging`/`prod` deploy is **blocked** until you do this (a shared-Cloudflare-account guard). It then prints the R2 buckets to create (§10).
 
 ---
 
@@ -60,7 +60,7 @@ Every var is optional — the template boots with none set (placeholder origin, 
 | `NEXT_PUBLIC_SITE_URL`           | production only | Scheme + host, no trailing slash (`https://acme.com`). Feeds `site.url` → `metadataBase`, canonicals, sitemap, JSON-LD, OG, robots. While unset the site keeps the placeholder origin, `isSiteConfigured` stays `false`, and robots serves a full `Disallow: /`.                            |
 | `NEXT_PUBLIC_SITE_PREFIX`        | optional        | The per-deployment namespace. Usually **unset** — `pnpm project:rename` (§2) sets `DEFAULT_SITE_PREFIX` in config instead. Set this only to override the namespace by env without editing code. Prefixes the consent/theme/locale keys; must be unique per client.                          |
 | `NEXT_PUBLIC_ENVIRONMENT`        | optional        | `development` \| `test` \| `staging` \| `production`. Only `production` is indexable; every other value serves `Disallow: /`. Drives the CSP in `next.config.ts`. When unset, `NODE_ENV` decides. Set `staging` on preview deploys for the tighter CSP.                                     |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID`  | all envs        | Public. Required for the Studio and any `@indiecrafts/sanity/client` query.                                                                                                                                                                                                                 |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID`  | all envs        | Public. Required for the Studio and any `@indiecrafts/packages-web-sanity/client` query.                                                                                                                                                                                                                 |
 | `NEXT_PUBLIC_SANITY_DATASET`     | all envs        | Public. Usually `production`.                                                                                                                                                                                                                                                               |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | all envs        | Pins query semantics. Defaults to `2025-01-01`; bump intentionally.                                                                                                                                                                                                                         |
 | `SANITY_API_READ_TOKEN`          | all envs        | **Server-only.** Viewer role is enough. Powers draft-mode preview (`/api/draft-mode/enable`) and the live-preview fetch used by blog routes.                                                                                                                                                |
@@ -112,7 +112,7 @@ Web UI alternative: Sanity manage → your project → API → CORS origins → 
 
 ---
 
-## 5. Set the code-level config (`@indiecrafts/config`)
+## 5. Set the code-level config (`@indiecrafts/packages-shared-config`)
 
 Edit `code/packages/shared/config/src/index.ts`. It is almost pure data — every field is commented in-file, so open it side by side. What matters per client:
 
@@ -129,7 +129,7 @@ export const theme = {
 } as const;
 ```
 
-`hexColors.background` exists only because the PWA manifest (`app/manifest.ts` → `theme_color` / `background_color`) can't read OKLCH — keep it matched to `--background`. The actual palette (brand colors and all) is authored in OKLCH in `@indiecrafts/ui-tokens/globals.css`, the authoritative color source — see [`./brand-setup.md`](./brand-setup.md). After any palette change run `pnpm verify:contrast` to confirm WCAG AA holds.
+`hexColors.background` exists only because the PWA manifest (`app/manifest.ts` → `theme_color` / `background_color`) can't read OKLCH — keep it matched to `--background`. The actual palette (brand colors and all) is authored in OKLCH in `@indiecrafts/packages-shared-ui-tokens/globals.css`, the authoritative color source — see [`./brand-setup.md`](./brand-setup.md). After any palette change run `pnpm verify:contrast` to confirm WCAG AA holds.
 
 Theme **modes** are a separate `themeConfig` object:
 
@@ -340,7 +340,7 @@ Robots: with `NEXT_PUBLIC_SITE_URL` set and `NEXT_PUBLIC_ENVIRONMENT=production`
 | Header/footer nav                                                 | Sanity → Navigation                                                                                                                                                                                        |
 | Per-page SEO copy                                                 | Sanity (each document's **SEO & visibilité** section — the shared `seoMeta`)                                                                                                                               |
 | Analytics id, cookie banner                                       | Sanity (`siteSettings.analytics`)                                                                                                                                                                          |
-| Brand palette (OKLCH)                                             | `@indiecrafts/ui-tokens/globals.css`                                                                                                                                                                       |
+| Brand palette (OKLCH)                                             | `@indiecrafts/packages-shared-ui-tokens/globals.css`                                                                                                                                                                       |
 | PWA manifest bg color                                             | `code/projects/web/surfaces/website/src/config/theme.ts` → `theme.hexColors`                                                                                                                               |
 | Font pairing                                                      | `code/projects/web/surfaces/website/src/config/fonts.ts` → `fonts` (+ registry `src/lib/fonts.ts`, shared `FontKey` type in `packages/shared/config/src/types.ts`)                                                |
 | Theme modes (light/dark/forced)                                   | `config/src/index.ts` → `themeConfig`                                                                                                                                                                      |
@@ -358,10 +358,10 @@ Robots: with `NEXT_PUBLIC_SITE_URL` set and `NEXT_PUBLIC_ENVIRONMENT=production`
 ## Critical rules (the NEVERs)
 
 - NEVER commit `.env*` except `.env.example`.
-- NEVER hard-code brand strings, URLs, colors, or nav — read from `@indiecrafts/config` (or the relevant Sanity singleton).
+- NEVER hard-code brand strings, URLs, colors, or nav — read from `@indiecrafts/packages-shared-config` (or the relevant Sanity singleton).
 - NEVER inline user-facing strings — every visible string lives in `messages/<locale>.json`.
 - NEVER import from `next/link` or `next-intl/navigation` — the app uses typed `@/i18n/routing`.
 - NEVER expose `SANITY_API_READ_TOKEN` (or the write token) under a `NEXT_PUBLIC_` prefix.
-- NEVER instantiate a Sanity `createClient` per route — use `@indiecrafts/sanity/client`.
+- NEVER instantiate a Sanity `createClient` per route — use `@indiecrafts/packages-web-sanity/client`.
 
 Full list in the app brief, [`code/projects/web/surfaces/website/CLAUDE.md`](../../../../code/projects/web/surfaces/website/CLAUDE.md).

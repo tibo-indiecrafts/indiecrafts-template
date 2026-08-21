@@ -1,6 +1,6 @@
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
 import { EnvelopeIcon, DownloadIcon } from "@sanity/icons";
-import { apiVersion } from "@indiecrafts/sanity/env";
+import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
 
 /**
  * "Abonnés" desk — subscribers captured via `/api/newsletter`, grouped by

@@ -2,7 +2,7 @@
 
 For developers extending or debugging the blog. One map of how a request lands on a rendered page — URL → GROQ → JSX.
 
-The blog is the `@indiecrafts/blog` module (`code/modules/web/blog`), consumed as source by the app via `transpilePackages`. Routes live in the app (`code/projects/web/surfaces/website/src/app`); data, schema, and renderers live in the module.
+The blog is the `@indiecrafts/modules-web-blog` module (`code/modules/web/blog`), consumed as source by the app via `transpilePackages`. Routes live in the app (`code/projects/web/surfaces/website/src/app`); data, schema, and renderers live in the module.
 
 Companion docs:
 
@@ -64,8 +64,8 @@ Defined in `code/modules/web/blog/src/sanity/queries.ts`, each wrapped in `defin
 | `SEO_FRAGMENT`                   | Slug-less `seo` override on taxonomy docs (`noIndex`, `hideFromDiscovery`, `unpublished`, title/description/image).                                                                                                  |
 | `AUTHOR_FRAGMENT`                | Author detail + listing (`pt::text(bio)` flattens the rich-text bio).                                                                                                                                                |
 | `TAG_FRAGMENT`                   | Tag detail + listing, with a locale-filtered `postCount`.                                                                                                                                                            |
-| `LINK_FRAGMENT` · `CTA_FRAGMENT` | In `@indiecrafts/page-builder` (`sanity/queries.ts`) — collapse the `internal`/`external` link union into one `href` (a page → `/<slug>`, a post → `/blog/<slug>`).                                                  |
-| `MODULES_FRAGMENT`               | The blog's fragment = the **generic** `MODULES_FRAGMENT` (imported from `@indiecrafts/page-builder`) **+** the blog-specific `module.blog-post-list` projection. Used by `postBySlugQuery` and `blogSingletonQuery`. |
+| `LINK_FRAGMENT` · `CTA_FRAGMENT` | In `@indiecrafts/packages-web-page-builder` (`sanity/queries.ts`) — collapse the `internal`/`external` link union into one `href` (a page → `/<slug>`, a post → `/blog/<slug>`).                                                  |
+| `MODULES_FRAGMENT`               | The blog's fragment = the **generic** `MODULES_FRAGMENT` (imported from `@indiecrafts/packages-web-page-builder`) **+** the blog-specific `module.blog-post-list` projection. Used by `postBySlugQuery` and `blogSingletonQuery`. |
 
 `MODULES_FRAGMENT` is what lets an inline module resolve its references without a second round-trip:
 
@@ -107,7 +107,7 @@ Every locale-filtered read uses `coalesce(language, "en") == $locale`, so legacy
 
 ## 3. Fetch + draft mode
 
-Every route reads through the single `sanityFetchLive` helper from `@indiecrafts/sanity/live` (built on `next-sanity`'s `defineLive`):
+Every route reads through the single `sanityFetchLive` helper from `@indiecrafts/packages-web-sanity/live` (built on `next-sanity`'s `defineLive`):
 
 ```ts
 const posts = await sanityFetchLive<PostListItem[]>({
@@ -119,7 +119,7 @@ const posts = await sanityFetchLive<PostListItem[]>({
 - **Live content** — `<SanityLive />` is mounted in `app/[locale]/layout.tsx` (gated by `features.blog`). It subscribes to GROQ websocket updates, so Studio edits reflect on the page within seconds, no redeploy.
 - **Draft awareness** — when `draftMode().isEnabled === true`, `sanityFetchLive` switches the Sanity perspective to drafts and surfaces unpublished documents.
 
-**Build-time reads cannot call `sanityFetchLive`** — it reads `draftMode()`, which isn't allowed inside `generateStaticParams` or `app/sitemap.ts`. Those use the plain `client.fetch(query)` from `@indiecrafts/sanity/client` instead. Everywhere else — pages **and** route handlers — uses `sanityFetchLive`. Copy `blog/[slug]/page.tsx` when adding a new dynamic route.
+**Build-time reads cannot call `sanityFetchLive`** — it reads `draftMode()`, which isn't allowed inside `generateStaticParams` or `app/sitemap.ts`. Those use the plain `client.fetch(query)` from `@indiecrafts/packages-web-sanity/client` instead. Everywhere else — pages **and** route handlers — uses `sanityFetchLive`. Copy `blog/[slug]/page.tsx` when adding a new dynamic route.
 
 ---
 
@@ -133,7 +133,7 @@ const posts = await sanityFetchLive<PostListItem[]>({
 | Objects   | `objects/metadata.ts` (per-post SEO override)                                                                         |
 | Modules   | `modules/` — **3** blog-specific `module.*` schemas + `modules/index.ts`                                              |
 
-The generic page-builder schemas — the **16** generic `module.*` blocks, the `blockContent` / `link` / `cta` objects, `define-module` (which pulls `seoMeta` + `localeString` from `@indiecrafts/schema`), and the `quote` / `person` entity docs — now live in **`@indiecrafts/page-builder`**; the blog references them by type name.
+The generic page-builder schemas — the **16** generic `module.*` blocks, the `blockContent` / `link` / `cta` objects, `define-module` (which pulls `seoMeta` + `localeString` from `@indiecrafts/packages-web-schema`), and the `quote` / `person` entity docs — now live in **`@indiecrafts/packages-web-page-builder`**; the blog references them by type name.
 
 | Document           | Localized (`language`)? | Notes                                                                     |
 | ------------------ | ----------------------- | ------------------------------------------------------------------------- |
@@ -145,10 +145,10 @@ The generic page-builder schemas — the **16** generic `module.*` blocks, the `
 
 ### The page-builder catalog — 16 generic + 3 blog-specific
 
-The **16 generic** blocks are the single source in **`@indiecrafts/page-builder`** (`sanity/schema/modules/index.ts` → `MODULE_TYPES` + `moduleSchemas`, both in catalog order); their renderers live in `@indiecrafts/ui-components`. The blog adds **3** blog-specific blocks in its own `modules/index.ts` (`BLOG_MODULE_TYPES` + `blogModuleSchemas`):
+The **16 generic** blocks are the single source in **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/index.ts` → `MODULE_TYPES` + `moduleSchemas`, both in catalog order); their renderers live in `@indiecrafts/packages-web-ui-components`. The blog adds **3** blog-specific blocks in its own `modules/index.ts` (`BLOG_MODULE_TYPES` + `blogModuleSchemas`):
 
 ```ts
-// @indiecrafts/page-builder — sanity/schema/modules/index.ts
+// @indiecrafts/packages-web-page-builder — sanity/schema/modules/index.ts
 export const MODULE_TYPES = [
   "module.hero",
   "module.feature-grid",
@@ -168,7 +168,7 @@ export const MODULE_TYPES = [
   "module.lead-magnet",
 ] as const;
 
-// @indiecrafts/blog — sanity/schema/modules/index.ts
+// @indiecrafts/modules-web-blog — sanity/schema/modules/index.ts
 export const BLOG_MODULE_TYPES = [
   "module.blog-index",
   "module.blog-post-content",
@@ -178,21 +178,21 @@ export const BLOG_MODULE_TYPES = [
 
 `documents/blog.ts` composes `[...MODULE_TYPES, ...BLOG_MODULE_TYPES]` (19 `module.*` types) to build its `postModules` array `of: [...]`, so every generic **and** blog-specific block is pickable in the singleton. Order here controls the Studio picker order.
 
-Every module schema is declared via `defineModule` (`@indiecrafts/page-builder`), which auto-injects two fields on top of the module's own: `anchor` (optional id for in-page links) and `hidden` (soft-disable without deleting).
+Every module schema is declared via `defineModule` (`@indiecrafts/packages-web-page-builder`), which auto-injects two fields on top of the module's own: `anchor` (optional id for in-page links) and `hidden` (soft-disable without deleting).
 
-**Inline-embeddable subset (12 generic blocks)** — the blocks editors can drop directly inside a post body. This allowlist lives in `@indiecrafts/page-builder`'s `blockContent.ts` (`INLINE_MODULES`) and must stay in lockstep with `INLINE_TYPES` in the PortableText renderer: `accordion-list`, `callout`, `card-list`, `custom-html`, `gallery`, `lead-magnet`, `newsletter`, `person-list`, `quote-list`, `stat-list`, `step-list`, `waitlist`. Everything else — `prose`, the page-level generics (`hero`, `feature-grid`, `pricing`), and the 3 blog-specific blocks — is `postModules`-only.
+**Inline-embeddable subset (12 generic blocks)** — the blocks editors can drop directly inside a post body. This allowlist lives in `@indiecrafts/packages-web-page-builder`'s `blockContent.ts` (`INLINE_MODULES`) and must stay in lockstep with `INLINE_TYPES` in the PortableText renderer: `accordion-list`, `callout`, `card-list`, `custom-html`, `gallery`, `lead-magnet`, `newsletter`, `person-list`, `quote-list`, `stat-list`, `step-list`, `waitlist`. Everything else — `prose`, the page-level generics (`hero`, `feature-grid`, `pricing`), and the 3 blog-specific blocks — is `postModules`-only.
 
 ---
 
 ## 5. Renderer
 
-The **generic** block renderers + registry live in `@indiecrafts/ui-components/web/`; the blog's own
+The **generic** block renderers + registry live in `@indiecrafts/packages-web-ui-components/web/`; the blog's own
 renderers + the composition live under `code/modules/web/blog/src/user-interface/renderers/`. All pivot on one map:
 
-- **`registry.tsx`** (`@indiecrafts/ui-components/web/`) — `BLOCK_RENDERERS` (`_type` → component), declared `satisfies { [K in BlockModule["_type"]]: BlockRenderer<K> }` so a missing entry or a drifted `_type` is a **compile error**. Holds the **16 generic** blocks. Exports `BLOCK_RENDERERS` + `renderBlock(module, components)`.
+- **`registry.tsx`** (`@indiecrafts/packages-web-ui-components/web/`) — `BLOCK_RENDERERS` (`_type` → component), declared `satisfies { [K in BlockModule["_type"]]: BlockRenderer<K> }` so a missing entry or a drifted `_type` is a **compile error**. Holds the **16 generic** blocks. Exports `BLOCK_RENDERERS` + `renderBlock(module, components)`.
 - **`ModuleRenderer.tsx`** (blog) — the async `<Modules>` component + `ModuleSwitch`. Skips `hidden` modules, special-cases the **3 blog-specific** types (`module.blog-post-list` needs the locale, `module.blog-post-content` needs the active `Post`, `module.blog-index`), and delegates every generic block to `renderBlock` — composing `{ ...BLOCK_RENDERERS, ...blog dispatchers }`. Drives the singleton's `postModules` slot. Returns `null` on an empty array so routes fall back to their default layout.
-- **`portable-text-components.tsx`** (`@indiecrafts/ui-components/web/`) — `portableComponents`, passed to `<PortableText>`. Overrides only what the `prose` plugin can't infer: h2/h3/h4 (slug `id` + `scroll-mt-24` for the TOC), the external-link mark, standalone inline images, the `codeBlock` type, and the inline modules (via `INLINE_TYPES`). Everything else falls through to `@portabletext/react` defaults, styled by the `.prose` wrapper.
-- **`CodeBlock.tsx`** (`@indiecrafts/ui-components`) — renders the body's `codeBlock` object (`language` / optional `filename` / `code`) with **Shiki**, server-side + async, light+dark theme pair (`defaultColor: "light"`). The dark colours swap under `[data-theme="dark"]` via `.shiki` rules in `@indiecrafts/ui-tokens/globals.css`. An unsupported language degrades to a plain `<pre>`.
+- **`portable-text-components.tsx`** (`@indiecrafts/packages-web-ui-components/web/`) — `portableComponents`, passed to `<PortableText>`. Overrides only what the `prose` plugin can't infer: h2/h3/h4 (slug `id` + `scroll-mt-24` for the TOC), the external-link mark, standalone inline images, the `codeBlock` type, and the inline modules (via `INLINE_TYPES`). Everything else falls through to `@portabletext/react` defaults, styled by the `.prose` wrapper.
+- **`CodeBlock.tsx`** (`@indiecrafts/packages-web-ui-components`) — renders the body's `codeBlock` object (`language` / optional `filename` / `code`) with **Shiki**, server-side + async, light+dark theme pair (`defaultColor: "light"`). The dark colours swap under `[data-theme="dark"]` via `.shiki` rules in `@indiecrafts/packages-shared-ui-tokens/globals.css`. An unsupported language degrades to a plain `<pre>`.
 
 Because inline modules and `postModules` pull from the same registry, a `Callout` in a post body renders identically to a `Callout` in `postModules`.
 
@@ -202,7 +202,7 @@ Because inline modules and `postModules` pull from the same registry, a `Callout
 
 ## 6. Locale strategy
 
-Every route mounts under `[locale]/`; the app's typed `routing.ts` defines the supported locales (`en`, `fr`). Server components call `setRequestLocale(locale)` at the top. Blog links inside the module use `Link` from `@indiecrafts/i18n` (the shared, untyped module navigation); the app's own pages use the typed `@/i18n/routing`.
+Every route mounts under `[locale]/`; the app's typed `routing.ts` defines the supported locales (`en`, `fr`). Server components call `setRequestLocale(locale)` at the top. Blog links inside the module use `Link` from `@indiecrafts/packages-web-i18n` (the shared, untyped module navigation); the app's own pages use the typed `@/i18n/routing`.
 
 For content: every localized read filters by `$locale`. Shared docs (`person`, `blog` singleton) are visible to both locales.
 
@@ -222,7 +222,7 @@ When `blog.postModules` is empty (the seed default), each post renders through `
 
 The TOC is fed by `postBySlugQuery`'s derived `headings` (`body[style in ["h2","h3","h4"]]` via `pt::text`); `readTime` is derived in the same query (≈200 wpm). Author/category/tag chips, the date, reading time, TOC, and related grid each read a toggle from `getBlogSettings()` (`blog.display.*`) — see §1 (two-tier taxonomy gating).
 
-**Post extras.** A `ShareButtons` row (X / LinkedIn / Facebook + copy-link; a client component for the clipboard) sits in the footer, and a `ReadingProgress` bar (client, direct-DOM `scaleX` on scroll, `aria-hidden`) pins to the top — each gated by `blog.display.post.{share,readingProgress}`. Social brand glyphs are inlined in `shared/components/BrandIcons.tsx` (lucide dropped brand logos). Authors carry an optional `social[]` (`{ platform, url }`) rendered as icon links on `/author/[slug]`.
+**Post extras.** A `ShareButtons` row (X / LinkedIn / Facebook + copy-link; a client component for the clipboard) sits in the footer, and a `ReadingProgress` bar (client, direct-DOM `scaleX` on scroll, `aria-hidden`) pins to the top — each gated by `blog.display.post.{share,readingProgress}`. Social brand glyphs render via `BrandIcon` from the shared `@indiecrafts/packages-shared-ui-icons` brick (one source for every mark). Authors carry an optional `social[]` (`{ platform, url }`) rendered as icon links on `/author/[slug]`.
 
 **Structured data.** The post route emits `Article` JSON-LD (`buildArticleSchema`) — `datePublished` from `publishedAt`, `dateModified` from the projected `_updatedAt` (`post.updatedAt`, a real freshness signal) — **plus** a `BreadcrumbList` (`buildBreadcrumbSchema`): Blog → category → post, with the category crumb dropped when categories are toggled off so the schema never links a 404'd route. The category / tag / author detail routes emit their own `BreadcrumbList` the same way (author keeps its existing `Person` too). The visual `<Breadcrumbs>` and the JSON-LD are built separately — trail in the body, machine trail in the head.
 
@@ -232,9 +232,9 @@ To swap in a module-driven shell, populate `blog.postModules` from the Studio �
 
 ## 8. Adding / removing a module
 
-Follow `method/apps/web/workflows/add-page-builder-block.md` — don't reconstruct the steps. **Where the block lives depends on what it is:**
+Follow [`packages/page-builder`](/packages/page-builder) § "Adding a block" — don't reconstruct the steps. **Where the block lives depends on what it is:**
 
-- A **generic** block (reusable across apps) lands in **`@indiecrafts/page-builder`** — schema in its `sanity/schema/modules/<name>.ts` via `defineModule`, added to `moduleSchemas` **and** `MODULE_TYPES` in that package's `modules/index.ts`; renderer in `@indiecrafts/ui-components`; GROQ branch (only if it has refs) in the package's `MODULES_FRAGMENT`; inline allowlist via `INLINE_MODULES` (`blockContent.ts`).
+- A **generic** block (reusable across apps) lands in **`@indiecrafts/packages-web-page-builder`** — schema in its `sanity/schema/modules/<name>.ts` via `defineModule`, added to `moduleSchemas` **and** `MODULE_TYPES` in that package's `modules/index.ts`; renderer in `@indiecrafts/packages-web-ui-components`; GROQ branch (only if it has refs) in the package's `MODULES_FRAGMENT`; inline allowlist via `INLINE_MODULES` (`blockContent.ts`).
 - A **blog-specific** block (`postModules`-only, needs the active `Post`/locale) stays in the **blog** — schema in `sanity/schema/modules/<name>.ts`, added to `blogModuleSchemas` **and** `BLOG_MODULE_TYPES` in the blog's `modules/index.ts`; renderer in `user-interface/renderers/` + special-cased in `ModuleRenderer.tsx`; the blog appends its projection to the composed `MODULES_FRAGMENT` (`sanity/queries.ts`).
 
 Both add a `<Name>Module` type + a member in `AnyModule` (in their own `sanity/types.ts`), which makes a missing renderer entry a compile error.
@@ -264,4 +264,4 @@ For ad-hoc GROQ, the Vision plugin is embedded in the Studio: `/studio` → **Vi
 
 ## 11. CSP allowlist
 
-The embedded Studio and `<SanityLive />` need Sanity's REST + websocket hosts in the CSP `connect-src`. `getCSPConnectSources(env)` (in `@indiecrafts/config`, `code/packages/shared/config/src/types.ts`) returns `https://*.sanity.io` (REST) and `wss://*.api.sanity.io` (live subscriptions), consumed by `next.config.ts`. Removing them breaks live content + Studio in staging/production.
+The embedded Studio and `<SanityLive />` need Sanity's REST + websocket hosts in the CSP `connect-src`. `getCSPConnectSources(env)` (in `@indiecrafts/packages-shared-config`, `code/packages/shared/config/src/types.ts`) returns `https://*.sanity.io` (REST) and `wss://*.api.sanity.io` (live subscriptions), consumed by `next.config.ts`. Removing them breaks live content + Studio in staging/production.

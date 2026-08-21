@@ -3041,7 +3041,7 @@ const buildCookieConsent = () => ({
 });
 
 // Legal re-acceptance singleton — copy for the "we updated our policies" banner.
-// Read by `getLegalAcceptance` (@indiecrafts/compliance/sanity/legal). The effective
+// Read by `getLegalAcceptance` (@indiecrafts/packages-web-compliance/sanity/legal). The effective
 // version is the tracked legal pages' lastUpdated; `version` here is an optional
 // manual bump.
 const buildLegalConsent = () => ({
@@ -3059,7 +3059,7 @@ const buildLegalConsent = () => ({
 });
 
 // Announcement bar singleton — the strip under the nav. Read by `getAnnouncement`
-// (@indiecrafts/announcement). Multiple items rotate.
+// (@indiecrafts/packages-web-announcement). Multiple items rotate.
 const buildAnnouncementBar = () => ({
   _id: "announcementBar",
   _type: "announcementBar",
@@ -3094,8 +3094,31 @@ const buildAnnouncementBar = () => ({
   ],
 });
 
+// Announcement toast singleton — the richer corner card (title + body + optional
+// image + link). Read by `getAnnouncementToast` / the api Worker. `surfaces` empty =
+// every surface; here it targets all. No image → an editor adds one in the Studio.
+const buildAnnouncementToast = () => ({
+  _id: "announcementToast",
+  _type: "announcementToast",
+  enabled: true,
+  surfaces: ["website", "app", "mobile", "hybrid"],
+  title: navLabel("Meet the new dashboard", "Découvrez le nouveau tableau de bord"),
+  body: {
+    _type: "localeText",
+    en: "A faster place to manage everything — try it now.",
+    fr: "Un espace plus rapide pour tout gérer — essayez-le.",
+  },
+  link: {
+    _type: "announcementLink",
+    linkType: "internal",
+    href: "/waitlist",
+    newTab: false,
+    label: navLabel("Take a look", "Voir"),
+  },
+});
+
 // Language-suggestion copy singleton — read by `getLocaleSuggest`
-// (@indiecrafts/locale-suggest). `{language}` = the target language's native name.
+// (@indiecrafts/packages-web-locale-suggest). `{language}` = the target language's native name.
 const buildLocaleSuggest = () => ({
   _id: "localeSuggest",
   _type: "localeSuggest",
@@ -3136,6 +3159,7 @@ async function run() {
     buildCookieConsent(),
     buildLegalConsent(),
     buildAnnouncementBar(),
+    buildAnnouncementToast(),
     buildLocaleSuggest(),
     blog,
     ...comments,

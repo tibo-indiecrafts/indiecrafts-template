@@ -8,10 +8,11 @@
 @source "../../../web/compliance/src";
 @source "../../../web/announcement/src";
 @source "../../../web/locale-suggest/src";
-@source "../../../web/system-pages/src";
+@source "../../system-pages/src";
 @source "../../../../modules/web/blog/src";
 @source "../../../../modules/web/newsletter/src";
 @source "../../../../modules/web/waitlist/src";
+@source "../../../../modules/web/contact/src";
 @plugin "@tailwindcss/typography";
 /* shadcn Typeset preset — long-form prose, fonts linked to config (src/app/typeset.css). */
 @import "./typeset.css";
@@ -531,7 +532,7 @@
    if the charts ever need to re-theme.) */
 
 /* ── Shiki code blocks ────────────────────────────────────────────────
- * `CodeBlock` (@indiecrafts/ui-components) renders Shiki with a light + dark
+ * `CodeBlock` (@indiecrafts/packages-web-ui-components) renders Shiki with a light + dark
  * theme pair (`defaultColor: "light"`): light colours are inline, dark ones
  * ride along as `--shiki-dark*` CSS vars. Activate the dark set under the
  * same conditions the rest of the theme flips — an explicit

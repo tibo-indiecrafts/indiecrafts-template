@@ -1,9 +1,9 @@
-import type { SanityModule } from "@indiecrafts/sanity/module";
+import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import {
   seoStructureItem,
   navStructureItem,
   uiMessagesStructureItem,
-} from "@indiecrafts/sanity/structure";
+} from "@indiecrafts/packages-web-sanity/structure";
 import { coreSchemaTypes } from "./schema";
 
 /**
@@ -12,8 +12,8 @@ import { coreSchemaTypes } from "./schema";
  * and are read by every app/lens. Goes in the **"Contenu partagé"** Studio group.
  *
  * The home page is no longer a singleton — it's a `page` (`isHome`) owned by
- * `@indiecrafts/page-builder` (desk: "Accueil"). Legal pages (`legalPage`) moved to
- * `@indiecrafts/compliance`, also under "Contenu partagé".
+ * `@indiecrafts/packages-web-page-builder` (desk: "Accueil"). Legal pages (`legalPage`) moved to
+ * `@indiecrafts/packages-web-compliance`, also under "Contenu partagé".
  */
 export const coreSanity: SanityModule = {
   name: "core",

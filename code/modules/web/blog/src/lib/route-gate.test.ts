@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // pure gating logic can be tested without a live dataset.
 vi.mock("./settings", () => ({ getBlogSettings: vi.fn() }));
 
-import { isPageVisible, type PageConfig } from "@indiecrafts/config";
+import { isPageVisible, type PageConfig } from "@indiecrafts/packages-shared-config";
 import { blogFlags, blogPage, configureBlog, type BlogFlags } from "./config";
 import {
   isBlogRouteEnabled,

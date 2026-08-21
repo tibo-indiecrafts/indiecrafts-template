@@ -7,7 +7,7 @@
  * client component (for the writer).
  */
 
-import { site } from "@indiecrafts/config";
+import { site } from "@indiecrafts/packages-shared-config";
 
 /**
  * Cookie name, namespaced by `site.prefix` so two template instances on a shared

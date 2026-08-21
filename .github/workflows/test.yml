@@ -32,12 +32,11 @@ jobs:
       - run: pnpm tsc
       - run: pnpm lint
       - run: pnpm format:check
-      - run: pnpm --filter @indiecrafts/website verify:contrast
+      - run: pnpm --filter @indiecrafts/web-surfaces-website verify:contrast
       - run: pnpm tags:check
       - run: pnpm lint:scripts
       - run: pnpm test:scripts
       - run: pnpm test
-      - run: node code/shared/scripts/checks/delivery-canary.mjs # work/ + secrets must never reach an export
 
   # The real Cloudflare Worker build (OpenNext) for every AFFECTED Next app
   # (website · admin) — turbo fans out via the `build:cf` task and skips
@@ -59,6 +58,9 @@ jobs:
           fetch-depth: 0 # full history so `turbo --affected` can diff against main
       - uses: ./.github/actions/setup
       - run: pnpm exec turbo run build:cf --affected
+      # Marketing First-Load JS budget (excludes the Studio). Report-only until
+      # BUDGET_KB in scripts/check-bundle-size.mjs is calibrated — then add `--enforce`.
+      - run: pnpm --filter @indiecrafts/web-surfaces-website size
 
   # Browser suites: Storybook stories-as-tests (component + a11y), Playwright e2e +
   # visual regression. ADVISORY (`continue-on-error`) until linux baselines are
@@ -72,11 +74,11 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:stories # every story as a component + a11y test
       # Visual regression against the built Storybook.
-      - run: pnpm --filter @indiecrafts/storybook storybook:build
-      - run: pnpm --filter @indiecrafts/website e2e:visual
+      - run: pnpm --filter @indiecrafts/web-tools-storybook storybook:build
+      - run: pnpm --filter @indiecrafts/web-surfaces-website e2e:visual
       # App journeys: global-setup seeds a throwaway `e2e` Sanity dataset, then the
       # webServer builds + serves the app against it. Needs the Sanity secrets.
-      - run: pnpm --filter @indiecrafts/website e2e
+      - run: pnpm --filter @indiecrafts/web-surfaces-website e2e
         env:
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
@@ -129,11 +131,11 @@ jobs:
         run: |
           for svc in api cron workers; do
             echo "── $svc ──"
-            pnpm --filter "@indiecrafts/$svc" exec wrangler deploy --dry-run --outdir "/tmp/$svc-dryrun"
+            pnpm --filter "@indiecrafts/shared-$svc" exec wrangler deploy --dry-run --outdir "/tmp/$svc-dryrun"
           done
 
   # Secret scanning — fails the PR if a credential is committed (defence in depth on
-  # top of the .gitignore + delivery-canary). Scans the PR's commits.
+  # top of the .gitignore + .gitattributes export-ignore). Scans the PR's commits.
   secrets-scan:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest

@@ -3,14 +3,14 @@ import {
   escapeHtml,
   renderEmailLayout,
   type RenderedEmail,
-} from "@indiecrafts/email";
+} from "@indiecrafts/packages-web-email";
 
 /**
  * Lead-magnet delivery → a subscriber who just confirmed their e-mail. Sends the
  * gated download link. **Copy-agnostic**: the caller (the newsletter module)
  * resolves the subscriber-locale strings and passes them in. `intro` may be
  * multi-line (rendered one `<p>` per line). The link is a signed, expiring token
- * URL (`@indiecrafts/gated-delivery`) — opaque here, just interpolated.
+ * URL (`@indiecrafts/packages-shared-gated-delivery`) — opaque here, just interpolated.
  */
 export type LeadMagnetInput = {
   subject: string;

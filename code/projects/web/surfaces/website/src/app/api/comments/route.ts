@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { security } from "@/config";
-import { withGuard } from "@indiecrafts/security/guard";
-import { isCommentsEnabled } from "@indiecrafts/blog/lib/route-gate";
-import { createComment } from "@indiecrafts/blog/lib/comments";
-import { getConsentPolicyVersion } from "@indiecrafts/compliance/sanity/policy-version";
+import { withGuard } from "@indiecrafts/packages-shared-security/guard";
+import { isCommentsEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
+import { createComment } from "@indiecrafts/modules-web-blog/lib/comments";
+import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sanity/policy-version";
 
 /**
  * Public comment submission. `withGuard` hardens the boundary (same-site origin,

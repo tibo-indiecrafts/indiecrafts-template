@@ -1,22 +1,66 @@
-# @indiecrafts/mobile — mobile app (expo)
+# @indiecrafts/mobile-surfaces-main — mobile app (expo)
 
 Auto-loads under `code/projects/mobile/**`. The **React Native (Expo)** mobile client. Talks to the `api`
-slot (or the web `/api` routes) for data; renders content from the same Sanity dataset. **Activated Expo
-scaffold — one placeholder screen; the real app is TBD.**
+slot (or the web `/api` routes) for data; renders content from the same Sanity dataset. **Shell wired —
+theme · i18n · status pages · native UI foundation; product screens are TBD.**
+
+> **AI tooling — install the official Expo plugin** (`claude plugin install expo@claude-plugins-official`,
+> then `/reload-plugins`): the Expo **Skills** (`expo-router` · `expo-native-ui` · `expo-design-system` ·
+> `expo-tailwind-setup` · `expo-upgrade` · `eas-*`) + the Expo **MCP** for version-correct SDK-52 docs.
+> Reach for them here — the model's RN/Expo priors are stale. Setup:
+> [environment → Expo / React Native](../../../../../docs/apps/web/setup/environment.md). **Lint here is
+> `npx expo lint`** (Expo's own `eslint-config-expo`, RN-appropriate — it self-configures on first run),
+> **not** the website's Next config; the on-the-fly lint hook **skips** these files and the Stop
+> review-nudge prompts `expo lint` / `expo-doctor` when you touch `mobile/**`.
+
+## The shell (built)
+
+- **Providers** — `app/_layout.tsx`: `QueryClientProvider` (TanStack Query — shared `queryDefaults` from
+  [`packages-shared-query`](../../../../../packages/shared/query); server-state cache for the client SPAs) →
+  `ThemeProvider` (from `ui-native`, follows OS dark/light over the shared tokens) → `IntlProvider`
+  (`react-intl`) → the router `Stack`. Data screens fetch with `useQuery`/`useMutation`, the `queryFn`
+  calling the api-client (`lib/agent`).
+- **i18n** — `lib/i18n.ts`: `expo-localization` detects the device locale → `react-intl` formats the
+  app's own `messages/{en,fr}.json` (same ICU format as web; flattened for react-intl). Vocabulary
+  (`isLocale`/`localeCodes`) from `@/config`.
+- **UI foundation** — [`@indiecrafts/packages-mobile-ui-native`](../../../../../packages/mobile/ui-native)
+  (shadcn-for-RN start: `Screen` · `ThemedText` · `Button` · `Card`) over `ui-tokens/native`.
+- **Status pages** — `app/+not-found.tsx` + the `ErrorBoundary` export use
+  `system-pages/native` (404 · 500), themed at the shell.
+- **Compliance + version + locale** — `components/ShellOverlays.tsx` (mounted in `_layout`):
+  the shared `compliance/native` consent banner + legal re-acceptance popup (AsyncStorage store,
+  gated by `config.features.requireConsent`, off by default), an `AppState` version poll of the
+  website's `/api/version`, a first-run locale suggestion (`pickSuggestedLocale`), and an offline banner
+  (`hooks/useNetworkStatus` via `@react-native-community/netinfo` → `components/OfflineBanner`, copy from
+  `SHELL_COPY.offline`). `app/legal.tsx`
+  links out to the website's legal pages (`Linking.openURL(legalUrl(websiteUrl, …))`). Locale switches
+  at runtime + persists (`lib/i18n.ts` `getStoredLocale`/`setStoredLocale`). Instance config
+  (`sitePrefix` · `websiteUrl` · `features` · `policyVersion`) in `config/index.ts`.
+- **Persistence** — every storage key lives in `STORAGE_KEYS` (`@/config`); read a name, never inline
+  `${sitePrefix}.…`. `lib/storage` wraps `AsyncStorage` never-throw for app **prefs** (non-secret). A
+  runtime **session token** belongs in `expo-secure-store` (OS keychain) once the `auth` brick lands — not
+  here; today's agent bearer is a build-time bundle gate, so it stays in env.
+- **Fonts** — deferred: Satoshi ships as web `.woff2`; RN needs `.ttf`/`.otf`, so the shell renders with
+  the system font until an `.otf` lands in `ui-fonts`. Wire `expo-font` `useFonts` then.
+
+Model → [`cross-platform-shell.md`](../../../../../docs/shared/architecture/cross-platform-shell.md).
 
 **Framework:** React Native · Expo (managed) · TypeScript · Expo Router. **Platform class:** `expo` — ships
 via **EAS Build → App Store / Play Store** (OTA via EAS Update), **NOT** Cloudflare, so it sits outside the
 default `deploy:all` (Cloudflare) set.
 
-- Consume the shared bricks' **`native/` layer**, not the web one: `@indiecrafts/ui/native/*`,
-  `@indiecrafts/ui-components/native/*` (**reserved** today — a README, not code; see
-  `code/packages/web/ui-components/src/native/README.md`). Token _values_ (`ui-tokens`) + the `shared/` contracts
-  are one home; only the components fork per platform. Reuse the agnostic bricks as-is
-  (`@indiecrafts/config`/`format`; Sanity reads via the API).
-- **Deploy:** `pnpm deploy:mobile:<dev|staging|prod>` → `scripts/deploy-expo.mjs` (env → EAS profile;
+- Consume the **native** design system `@indiecrafts/packages-mobile-ui-native` (NOT the web shadcn `ui`)
+  and the shared bricks' **`native/` layer** (`ui-icons/native`, `system-pages/native`). Page-builder block
+  renderers stay web-only (`@indiecrafts/packages-web-ui-components/native/*` is still a reserved README).
+  Token _values_ (`ui-tokens`) + the `shared/` contracts are one home; only the components fork per
+  platform. Reuse the agnostic bricks as-is (`@indiecrafts/packages-shared-config`/`format`; Sanity reads
+  via the API).
+- **Deploy:** `pnpm deploy:mobile:<dev|staging|prod>` → `shared/scripts/deploy/expo.mjs` (env → EAS profile;
   structure-first — full EAS setup is a follow-up). Reached by `pnpm deploy:all:<env> --only all`.
-- **Registry:** a row in [`scripts/lib/apps.mjs`](../../../../scripts/lib/apps.mjs); full deploy model →
-  [`code/docs/shared/architecture/platform-deploy.md`](../../docs/shared/architecture/platform-deploy.md).
+- **Registry:** a row in [`scripts/lib/apps.mjs`](../../../../../shared/scripts/lib/apps.mjs); full deploy model →
+  [`code/docs/shared/architecture/platform-deploy.md`](../../../../../docs/shared/architecture/platform-deploy.md).
 
-**Rules:** compose bricks (native layer); **no cross-app imports**; no `next/*` or DOM. This is the day the
-`src/native/` layers earn their keep — build them here, mirroring the web domain folders.
+**Rules:** compose bricks (native layer); **no cross-app imports**; no `next/*` or DOM; follow
+[`.claude/rules/accessibility.md`](rules/accessibility.md) (roles + labels on every touchable,
+`title` = heading, 44 pt targets, dynamic type on). This is the day the `src/native/` layers earn their
+keep — build them here, mirroring the web domain folders.

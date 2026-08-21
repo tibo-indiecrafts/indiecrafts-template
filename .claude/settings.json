@@ -56,7 +56,25 @@
             "type": "command",
             "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\"",
             "timeout": 15,
-            "statusMessage": "Checking accessibility"
+            "statusMessage": "Lint cards (incl. a11y)"
+          },
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/config-first.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/config-first.mjs\"",
+            "timeout": 5,
+            "statusMessage": "Config-first (tokens · @/config)"
+          },
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/i18n-parity.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/i18n-parity.mjs\"",
+            "timeout": 5,
+            "statusMessage": "i18n key parity"
+          },
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/tokens-fresh.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/tokens-fresh.mjs\"",
+            "timeout": 60,
+            "statusMessage": "Tokens fresh (regenerate)"
           }
         ]
       }
@@ -68,7 +86,7 @@
             "type": "command",
             "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/a11y-check.mjs\"",
             "timeout": 30,
-            "statusMessage": "Accessibility deep pass"
+            "statusMessage": "Lint deep pass (incl. a11y)"
           }
         ]
       },
@@ -79,6 +97,36 @@
             "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/change-hygiene.sh\" ] || \"$CLAUDE_PROJECT_DIR/.claude/hooks/change-hygiene.sh\"",
             "timeout": 10,
             "statusMessage": "Change-hygiene (docs + tests)"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/claude-hygiene.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/claude-hygiene.mjs\"",
+            "timeout": 10,
+            "statusMessage": "CLAUDE.md hygiene (brief proposals)"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/security-scan.sh\" ] || \"$CLAUDE_PROJECT_DIR/.claude/hooks/security-scan.sh\"",
+            "timeout": 60,
+            "statusMessage": "Security scan (semgrep · gitleaks · audit)"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/review-nudge.sh\" ] || \"$CLAUDE_PROJECT_DIR/.claude/hooks/review-nudge.sh\"",
+            "timeout": 10,
+            "statusMessage": "Review nudge (diff scan)"
           }
         ]
       }

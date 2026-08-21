@@ -1,5 +1,5 @@
 import type { PortableTextBlock } from "@portabletext/react";
-import { logger } from "@indiecrafts/logger";
+import { logger } from "@indiecrafts/packages-shared-logger";
 
 /**
  * Minimal PortableText → Markdown serializer. Handles the block / span /

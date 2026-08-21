@@ -1,20 +1,9 @@
-# ── Delivery boundary ─────────────────────────────────────────────────────────
 # `git archive` (the clean-export / hand-off tool) OMITS files with `export-ignore`.
-# These stay TRACKED in the monorepo but never appear in an export artifact.
-#
-# `work/` is strictly private — the dev's real lab (sprints, notes, business data). It
-# must never reach a user. `method/` defaults to internal too; to SELL `method`, delete
-# its line below AND add a `method` product entry to the a-la-carte CLI registry.
-#
-# NOTE: export-ignore only guards `git archive`. It does NOT protect a raw `git clone`
-# / repo hand-off (that ships everything, incl. history) — so NEVER deliver by handing
-# over the repo. Deliver only by allowlist: the CLI copy, or `git archive`. The delivery
-# canary (scripts/delivery-canary.mjs, in `verify` + CI) enforces this.
-#
-# Patterns need `/**` (a bare `dir/` does not match files beneath it for attributes).
+# Belt-and-suspenders: secrets + scratch are already gitignored (so untracked, and a
+# `git archive` only ever contains tracked files), but keep them export-ignored in case
+# one is ever force-added. `git archive` is the only safe hand-off — a raw `git clone`
+# ships everything, including history, so never deliver by handing over the repo.
 
-work/**                  export-ignore
-method/**                export-ignore
 **/scratch/**            export-ignore
 **/settings.local.json   export-ignore
 .env                     export-ignore

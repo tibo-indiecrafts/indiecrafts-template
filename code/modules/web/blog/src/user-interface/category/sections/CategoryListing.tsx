@@ -1,13 +1,13 @@
-import type { Category } from "@indiecrafts/blog/sanity/types";
-import { CategoryCard } from "@indiecrafts/blog/user-interface/category/components/CategoryCard";
+import type { Category } from "@indiecrafts/modules-web-blog/sanity/types";
+import { CategoryCard } from "@indiecrafts/modules-web-blog/user-interface/category/components/CategoryCard";
 import {
   Breadcrumbs,
   type Crumb,
-} from "@indiecrafts/blog/user-interface/shared/components/Breadcrumbs";
+} from "@indiecrafts/modules-web-blog/user-interface/shared/components/Breadcrumbs";
 import {
   PageHero,
   type PageHeroPill,
-} from "@indiecrafts/blog/user-interface/shared/sections/PageHero";
+} from "@indiecrafts/modules-web-blog/user-interface/shared/sections/PageHero";
 
 /**
  * Category index page section — `/blog/category`. Sorted by post count

@@ -1,4 +1,4 @@
-import type { BlogIndexModule } from "@indiecrafts/blog/sanity/types";
+import type { BlogIndexModule } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /** Frontpage hero for /blog — title + intro. Posts go in BlogPostList. */
 export function BlogIndex(props: BlogIndexModule) {

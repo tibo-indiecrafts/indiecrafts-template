@@ -68,7 +68,7 @@ pages: {
 
 ```ts
 import { buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
-import { site } from "@indiecrafts/config";
+import { site } from "@indiecrafts/packages-shared-config";
 
 structuredData: [
   buildBreadcrumbSchema([
@@ -85,7 +85,7 @@ Blog posts already emit this — the post route calls `buildArticleSchema(...)`.
 
 ```ts
 import { buildArticleSchema } from "@/lib/seo/jsonld-factories";
-import { site } from "@indiecrafts/config";
+import { site } from "@indiecrafts/packages-shared-config";
 
 structuredData: [
   buildArticleSchema({
@@ -124,7 +124,7 @@ structuredData: [
 
 ```ts
 import { buildProductSchema } from "@/lib/seo/jsonld-factories";
-import { site } from "@indiecrafts/config";
+import { site } from "@indiecrafts/packages-shared-config";
 
 structuredData: [
   buildProductSchema({
@@ -193,7 +193,7 @@ structuredData: [
 No factory needed — any object with `@type` is emitted verbatim.
 
 ```ts
-import { site } from "@indiecrafts/config";
+import { site } from "@indiecrafts/packages-shared-config";
 
 structuredData: [
   {

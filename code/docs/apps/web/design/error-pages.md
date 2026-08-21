@@ -2,13 +2,13 @@
 
 Three failure states each get a dedicated page: an uncaught render error (500), a
 404, and site-wide maintenance. Each is a **presentational component** in the shared
-**[`@indiecrafts/system-pages`](/packages/system-pages)** brick, mounted by a **thin
+**[`@indiecrafts/packages-shared-system-pages`](/packages/system-pages)** brick, mounted by a **thin
 route file** in the app. No copy is inlined — but where it comes from differs by
 state, and that difference is the whole design.
 
 ## The split
 
-| State                | Component (`@indiecrafts/system-pages`) | Route (app)                         | Copy source                                                    |
+| State                | Component (`@indiecrafts/packages-shared-system-pages`) | Route (app)                         | Copy source                                                    |
 | -------------------- | --------------------------------------- | ----------------------------------- | -------------------------------------------------------------- |
 | Uncaught error (500) | `ErrorContent`                          | `app/[locale]/error.tsx`            | `messages` only (`pages.error`)                                |
 | 404 not found        | `NotFoundContent`                       | `app/[locale]/not-found.tsx`        | Sanity `systemPages.notFound` ?? `messages` (`pages.notFound`) |
@@ -34,15 +34,15 @@ render even when Sanity is the thing that broke. Keeping its copy on bundled
 
 `ErrorContent` is a `"use client"` component that takes copy as **props**
 (`title`, `description`, `retryLabel`) plus an `onRetry` callback (wired to the retry
-`Button` from `@indiecrafts/ui/web/button`). The app's `error.tsx` boundary reads
+`Button` from `@indiecrafts/packages-web-ui/web/button`). The app's `error.tsx` boundary reads
 `pages.error`, hands Next's `reset` in as `onRetry`, wraps it in `DefaultLayout`, and
 logs first:
 
 ```tsx
 "use client";
 import { useTranslations } from "next-intl";
-import { ErrorContent } from "@indiecrafts/system-pages";
-import { logger } from "@indiecrafts/logger";
+import { ErrorContent } from "@indiecrafts/packages-shared-system-pages/web";
+import { logger } from "@indiecrafts/packages-shared-logger";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 
 export default function ErrorBoundary({ error, reset }: Props) {
@@ -92,14 +92,14 @@ return (
 
 The route also exports `metadata = { robots: { index: false, follow: false } }` —
 belt-and-suspenders over the 404 status. The "back home" link uses the locale-aware
-`Link` from **`@indiecrafts/i18n`** (the shared navigation, never `next/link`), so it
+`Link` from **`@indiecrafts/packages-web-i18n`** (the shared navigation, never `next/link`), so it
 stays inside the active locale.
 
 ## Maintenance page (503)
 
 `Maintenance` is the full standalone page served at `/maintenance` when
 `features.maintenance` is on — `proxy.ts` rewrites all traffic to it with a 503 (via
-`maintenanceRewrite` from `@indiecrafts/system-pages/proxy`). The route sits
+`maintenanceRewrite` from `@indiecrafts/packages-shared-system-pages/proxy`). The route sits
 **outside** `[locale]/` with its own root layout (the app fonts). Also props-driven:
 the route resolves copy via i18n and the brand identity (name + contact email) from
 Sanity and passes them in. Its one motion — the pulsing status dot — is an honest

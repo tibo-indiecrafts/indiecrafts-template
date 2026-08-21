@@ -1,6 +1,6 @@
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import type { CalloutModule } from "@indiecrafts/ui-components/shared/types";
-import { cn } from "@indiecrafts/utils/cn";
+import type { CalloutModule } from "@indiecrafts/packages-web-ui-components/shared/types";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { ModuleCta } from "../layout/Cta";
 
 const VARIANT_STYLES: Record<NonNullable<CalloutModule["variant"]>, string> = {

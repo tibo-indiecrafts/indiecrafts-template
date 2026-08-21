@@ -63,7 +63,7 @@ export function NextIntlClientProvider({ children }: { children: ReactNode }) {
 }
 
 /**
- * `next-intl/navigation` stub. `@indiecrafts/i18n` builds `Link` / `useRouter` /
+ * `next-intl/navigation` stub. `@indiecrafts/packages-web-i18n` builds `Link` / `useRouter` /
  * `usePathname` via `createNavigation`; in Storybook there is no Next router, so
  * return inert hooks (a plain `<a>` for `Link`) — enough to render the components
  * that call `useLocaleSwitch` (e.g. `LocaleSuggest`), with navigation a no-op.

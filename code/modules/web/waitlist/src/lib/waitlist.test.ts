@@ -11,17 +11,19 @@ const { fetch, create, getEmailStrings, sendEmail } = vi.hoisted(() => ({
   sendEmail: vi.fn(async () => undefined),
 }));
 
-vi.mock("@indiecrafts/sanity/write", () => ({
+vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
   writeClient: { fetch, create },
 }));
-vi.mock("@indiecrafts/email/strings", () => ({
+vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   getEmailStrings,
   pick: () => "",
 }));
-vi.mock("@indiecrafts/email", () => ({
+vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail,
   renderEmailLayout: () => "",
   escapeHtml: (s: string) => s,
+  // Templates read `const C = EMAIL_COLORS` at load; a Proxy answers any token key.
+  EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
 }));
 
 const { validateJoin, join } = await import("./waitlist");

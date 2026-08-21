@@ -1,9 +1,9 @@
 # Format (locale money · number · time · grammar)
 
 Pure, framework-agnostic locale formatting — money, numbers, dates, lists, plurals, **grammar for
-generated content**, text helpers, and contact validators. Lives in the **`@indiecrafts/format`**
+generated content**, text helpers, and contact validators. Lives in the **`@indiecrafts/packages-shared-format`**
 brick (`code/packages/shared/format`), consumed as source. `Intl`-based (correct per locale, not hardcoded);
-dep: `@indiecrafts/config` only.
+dep: `@indiecrafts/packages-shared-config` only.
 
 **The rule:** format **numbers** here; keep **words** (labels, "read", "more") in `messages/`.
 
@@ -20,7 +20,7 @@ dep: `@indiecrafts/config` only.
 | `/text`     | `truncate` · `initials` · `wordCount` · `readingTime` · `excerpt` · `maskEmail` · `nameFormat` · `prettyUrl` · `fileExtension`.                                                      |
 | `/validate` | `isEmail` · `isPhone`/`formatPhone` · `isPostalCode` · `isIban`/`formatIban` (mod-97) · `isVatNumber`.                                                                               |
 
-## Per-locale config (in `@indiecrafts/config`)
+## Per-locale config (in `@indiecrafts/packages-shared-config`)
 
 Each `i18n.locales` row carries the rules: `numberLocale` (BCP-47 for `Intl`), `currency`,
 `capitalizeInlineNouns` (Title-Case EN/DE vs sentence-case FR), `adjBeforeNoun` (adjective position).
@@ -36,7 +36,7 @@ import {
   capitalize,
   placeAdjective,
   article,
-} from "@indiecrafts/format/grammar";
+} from "@indiecrafts/packages-shared-format/grammar";
 placeAdjective("produit", "personnalisé", "fr"); // "produit personnalisé"  (EN: "custom product")
 article("thème", { locale: "fr", gender: "m", kind: "de" }); // "du thème"
 capitalize("produit personnalisé", "fr"); // "Produit personnalisé" (FR sentence-case)
@@ -47,6 +47,6 @@ applies the locale's rules. Scope is casing · order · agreement — **not** co
 
 ## Consumers
 
-- **`@indiecrafts/blog`** — the post byline uses `formatList` (author names).
+- **`@indiecrafts/modules-web-blog`** — the post byline uses `formatList` (author names).
 - Adjacent UI: **`PhoneInput`** ([ui-components](/packages/ui-components)) pairs with `/validate`.
   Address autocomplete + payment cards are deliberately **not** shipped (external API + privacy; PCI).

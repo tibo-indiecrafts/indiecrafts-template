@@ -13,17 +13,13 @@ The repo is a pnpm + Turborepo monorepo. The deliverable is the `code/` folder; 
 | **`code/docs`**                          | ✅ optional | This documentation site (VitePress). Product docs, safe to share. **npm-isolated** — its own lockfile, excluded from the pnpm workspace. |
 | **`code/projects/web/tools/storybook`**  | ◐ optional  | The component gallery (Storybook static build). A design-system reference.                                                               |
 
-The repo may also carry internal folders (`method/`, `work/`) that are **private, gitignored,
-and never part of a handoff** — they sit outside the pnpm/turbo workspace, so `pnpm build`
-(the app deploy) never touches them.
-
 ## Run it
 
 Everything runs from the **repo root** (scripts delegate to the app via Turborepo):
 
 ```bash
 pnpm install       # installs the whole workspace (all of code/)
-pnpm dev           # http://localhost:3000  (turbo → @indiecrafts/website)
+pnpm dev           # http://localhost:3000  (turbo → @indiecrafts/web-surfaces-website)
 pnpm build         # production build → code/projects/web/surfaces/website/.next
 pnpm verify        # tsc + lint + format + contrast + react-doctor (CI gate)
 pnpm docs          # http://localhost:3002  (this site)
@@ -46,7 +42,7 @@ Most clients never touch the repo at all: they get the **live site**, the **Sani
 ### One namespace per client (multi-instance under one account)
 
 Every reuse of the template gets a unique **namespace** via `pnpm project:rename <slug>` — it sets
-`DEFAULT_SITE_PREFIX` (`@indiecrafts/config`) + the `<prefix>-<env>-web-website*` Worker/R2 names together. The prefix
+`DEFAULT_SITE_PREFIX` (`@indiecrafts/packages-shared-config`) + the `<prefix>-<env>-web-website*` Worker/R2 names together. The prefix
 namespaces the browser keys (consent · theme · locale) and the Cloudflare resources, so **many clients
 under one Cloudflare account never collide** — and a `staging`/`prod` deploy is blocked until you
 rename (a shared-account clobber guard). New-client runbook → [New client](/apps/web/setup/new-client).

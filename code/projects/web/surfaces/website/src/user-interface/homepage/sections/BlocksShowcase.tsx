@@ -1,11 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { renderBlock } from "@indiecrafts/ui-components/web/registry";
-import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
-import type { BlockModule } from "@indiecrafts/ui-components/shared/types";
+import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
+import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
+import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 
 /**
  * Page-builder blocks showcase for the homepage. Renders the same
- * `@indiecrafts/ui-components` block renderers the blog body uses — proof the
+ * `@indiecrafts/packages-web-ui-components` block renderers the blog body uses — proof the
  * marketing page and blog posts share one component system and look identical.
  *
  * The block payloads below stand in for Sanity-authored content (a real `page`

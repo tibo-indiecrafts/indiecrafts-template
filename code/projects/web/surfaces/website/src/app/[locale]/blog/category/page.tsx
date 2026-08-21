@@ -1,14 +1,14 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, type Locale } from "@/config";
-import { requireTaxonomyRoute } from "@indiecrafts/blog/lib/route-gate";
+import { requireTaxonomyRoute } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { CategoryListing } from "@indiecrafts/blog/user-interface/category/sections/CategoryListing";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
+import { CategoryListing } from "@indiecrafts/modules-web-blog/user-interface/category/sections/CategoryListing";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import { getTaxonomyPages } from "@/lib/system-pages";
-import { categoriesForLocaleQuery } from "@indiecrafts/blog/sanity/queries";
-import type { Category } from "@indiecrafts/blog/sanity/types";
+import { categoriesForLocaleQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
+import type { Category } from "@indiecrafts/modules-web-blog/sanity/types";
 
 type Props = { params: Promise<{ locale: Locale }> };
 

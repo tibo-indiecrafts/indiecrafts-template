@@ -37,11 +37,11 @@ yarn-error.log*
 .env*
 !.env.example
 
-# .claude — commit the team toolkit (agents/skills/settings.json); rules + workflows moved to method/,
-# ignore personal + machine-local state
+# .claude — commit the team toolkit (agents/skills/hooks/settings.json); ignore personal + machine-local state
 .claude/*
 !.claude/agents/
 !.claude/skills/
+!.claude/hooks/
 !.claude/settings.json
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
@@ -52,12 +52,7 @@ CLAUDE.local.md
 # machine-local index caches from optional dev tooling — never committed
 .codegraph/
 
-# Internal dev framework (method/) + sprint lab (work/) now live IN the monorepo,
-# TRACKED — but delivery-EXCLUDED (see `.gitattributes` export-ignore + the delivery
-# canary, scripts/delivery-canary.mjs). `work/` must never reach a user; that holds
-# ONLY because delivery is by allowlist (CLI copy / `git archive`), never a repo
-# clone/hand-off. Their throwaway + machine-local state stays ignored:
-work/scratch/
+# machine-local state — never committed
 **/settings.local.json
 .gstack/
 **/_gstack

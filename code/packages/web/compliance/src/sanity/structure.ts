@@ -1,6 +1,6 @@
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
-import { locales } from "@indiecrafts/config";
-import { apiVersion } from "@indiecrafts/sanity/env";
+import { locales } from "@indiecrafts/packages-shared-config";
+import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
 
 /** "Cookies & consentement" desk — the editable consent singleton. */
 export function cookieStructureItem(S: StructureBuilder): ListItemBuilder {

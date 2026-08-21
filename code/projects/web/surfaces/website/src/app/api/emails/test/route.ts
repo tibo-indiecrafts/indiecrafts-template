@@ -1,23 +1,25 @@
 import { NextResponse } from "next/server";
 import { defaultLocale, features, site } from "@/config";
-import { projectId } from "@indiecrafts/sanity/env";
-import { logger } from "@indiecrafts/logger";
-import { sendEmail, type RenderedEmail } from "@indiecrafts/email";
+import { projectId } from "@indiecrafts/packages-web-sanity/env";
+import { logger } from "@indiecrafts/packages-shared-logger";
+import { sendEmail, type RenderedEmail } from "@indiecrafts/packages-web-email";
 import {
   getEmailStrings,
   pick,
   type ConfirmationConfig,
   type OwnerAlertConfig,
-} from "@indiecrafts/email/strings";
+} from "@indiecrafts/packages-web-email/strings";
 // Templates now live with their owning feature — the aggregator (the app) is the
 // one place allowed to reach into every module, like `sanity.config.ts`.
-import { renderCommentNotificationEmail } from "@indiecrafts/blog/emails/comment-notification";
-import { renderNewsletterConfirmEmail } from "@indiecrafts/newsletter/emails/newsletter-confirm";
-import { renderNewsletterNotificationEmail } from "@indiecrafts/newsletter/emails/newsletter-notification";
-import { renderWaitlistConfirmEmail } from "@indiecrafts/waitlist/emails/waitlist-confirm";
-import { renderWaitlistNotificationEmail } from "@indiecrafts/waitlist/emails/waitlist-notification";
-import { renderLeadMagnetEmail } from "@indiecrafts/newsletter/emails/lead-magnet";
-import { renderDataRequestNotificationEmail } from "@indiecrafts/compliance/emails/data-request-notification";
+import { renderCommentNotificationEmail } from "@indiecrafts/modules-web-blog/emails/comment-notification";
+import { renderNewsletterConfirmEmail } from "@indiecrafts/modules-web-newsletter/emails/newsletter-confirm";
+import { renderNewsletterNotificationEmail } from "@indiecrafts/modules-web-newsletter/emails/newsletter-notification";
+import { renderWaitlistConfirmEmail } from "@indiecrafts/modules-web-waitlist/emails/waitlist-confirm";
+import { renderWaitlistNotificationEmail } from "@indiecrafts/modules-web-waitlist/emails/waitlist-notification";
+import { renderContactConfirmEmail } from "@indiecrafts/modules-web-contact/emails/contact-confirm";
+import { renderContactNotificationEmail } from "@indiecrafts/modules-web-contact/emails/contact-notification";
+import { renderLeadMagnetEmail } from "@indiecrafts/modules-web-newsletter/emails/lead-magnet";
+import { renderDataRequestNotificationEmail } from "@indiecrafts/packages-web-compliance/emails/data-request-notification";
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -110,6 +112,8 @@ type EmailConfig = {
   leadMagnet?: ConfirmationConfig;
   waitlistConfirm?: ConfirmationConfig;
   waitlistOwner?: OwnerAlertConfig;
+  contactConfirm?: ConfirmationConfig;
+  contactOwner?: OwnerAlertConfig;
   dataRequestOwner?: OwnerAlertConfig;
 };
 
@@ -220,6 +224,40 @@ async function buildSamples(to: string): Promise<Sample[]> {
         heading: pick(wlOwner.heading, locale) || undefined,
         intro: pick(wlOwner.intro, locale) || undefined,
         outro: pick(wlOwner.outro, locale) || undefined,
+      }),
+    });
+  }
+
+  const ctConfirm = strings?.contactConfirm;
+  if (ctConfirm?.enabled && ctConfirm.from?.trim()) {
+    samples.push({
+      label: "contactConfirm",
+      from: ctConfirm.from.trim(),
+      message: renderContactConfirmEmail({
+        subject: pick(ctConfirm.subject, locale) || "Nous avons bien reçu votre message",
+        heading: pick(ctConfirm.heading, locale) || "Merci de nous avoir écrit",
+        intro: pick(ctConfirm.intro, locale) || "Ceci est un e-mail de test.",
+        outro: pick(ctConfirm.outro, locale) || undefined,
+      }),
+    });
+  }
+
+  const ctOwner = strings?.contactOwner;
+  if (ctOwner?.enabled && ctOwner.from?.trim()) {
+    samples.push({
+      label: "contactOwner",
+      from: ctOwner.from.trim(),
+      message: renderContactNotificationEmail({
+        email: to,
+        name: "Test",
+        subject: "Message de démonstration",
+        message: "Ceci est un e-mail de test — vérification de l'alerte contact.",
+        source: "test",
+        studioUrl,
+        subjectTemplate: ctOwner.subject ?? undefined,
+        heading: pick(ctOwner.heading, locale) || undefined,
+        intro: pick(ctOwner.intro, locale) || undefined,
+        outro: pick(ctOwner.outro, locale) || undefined,
       }),
     });
   }

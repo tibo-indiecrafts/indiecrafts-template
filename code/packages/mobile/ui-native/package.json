@@ -1,0 +1,17 @@
+{
+  "name": "@indiecrafts/packages-mobile-ui-native",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./theme": "./src/theme.tsx"
+  },
+  "dependencies": {
+    "@indiecrafts/packages-shared-ui-tokens": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  }
+}

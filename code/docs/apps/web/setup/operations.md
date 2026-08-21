@@ -47,8 +47,24 @@ Forms POST to **API routes**, not a host feature, and land in **Sanity** — rea
 
 - **Newsletter** (`/api/newsletter`) → Studio → **Abonnés** (grouped by status). Config + provider forwarding: [Newsletter](../config/newsletter.md).
 - **Blog comments** (`/api/comments`) → Studio → **Commentaires** (moderation). See [Comments](../../../modules/blog/comments.md).
+- **Waitlist** (`/api/waitlist`) → Studio → **Liste d'attente**. See [Waitlist](../../../modules/waitlist/).
+- **Contact** (`/api/contact`) → Studio → **Contact** (message inbox). See [Contact](../../../modules/contact/).
 
 Each uses a honeypot + a gated route + a server-only Sanity write. A submit that `500`s → check the worker logs (`wrangler tail --env prod`) and confirm `SANITY_API_WRITE_TOKEN` is set as a Worker secret.
+
+### Every stored entity works the same
+
+| Entity                | Ingest route      | Rate-limit + Turnstile    | Studio inbox    | Export                    | Delete | Live toggle                             |
+| --------------------- | ----------------- | ------------------------- | --------------- | ------------------------- | ------ | --------------------------------------- |
+| Newsletter subscriber | `/api/newsletter` | ✓ (`security.newsletter`) | Abonnés         | `pnpm subscribers:export` | Studio | code flag                               |
+| Blog comment          | `/api/comments`   | ✓ (`security.comments`)   | Commentaires    | `pnpm comments:export`    | Studio | code flag                               |
+| Waitlist entry        | `/api/waitlist`   | ✓ (`security.waitlist`)   | Liste d'attente | `pnpm waitlist:export`    | Studio | `waitlistSettings.enabled` (page + API) |
+| Contact message       | `/api/contact`    | ✓ (`security.contact`)    | Contact         | `pnpm contact:export`     | Studio | `contactSettings.enabled` (page + API)  |
+
+- **Secure ingest** — every route is a whitelisted server-only write behind `withGuard` (same-site origin, body cap, rate limit, Turnstile) + a honeypot + a too-fast heuristic + a GDPR consent-version stamp.
+- **Export** — every entity has a read-only CSV escape hatch → `backups/<entity>/` (`SANITY_API_READ_TOKEN`). See [scripts](./scripts.md).
+- **Delete** — select one or more docs in a Studio list → built-in **Delete**. Uniform across all four.
+- **Live toggle** — the waitlist + contact Studio `enabled` toggles kill the page **and** the API with no deploy. Newsletter/comments gate on the code feature flag only.
 
 ---
 
@@ -127,7 +143,7 @@ Deeper Sanity-specific symptoms (schema migration, legacy fields) are in [`sanit
   ```bash
   pnpm backup:content:prod                  # → website/backups/sanity/  (backup:content:prod:remote for an R2 copy)
   ```
-  Re-importable with `pnpm --filter @indiecrafts/website content:import -- <file>` if the live dataset breaks.
+  Re-importable with `pnpm --filter @indiecrafts/web-surfaces-website content:import -- <file>` if the live dataset breaks.
 - **Form submissions** — they're Sanity docs (Abonnés / Commentaires); the dataset export above already includes them.
 
 Brand assets in Sanity are covered by the dataset export; code-side assets (fonts) by the git backup.

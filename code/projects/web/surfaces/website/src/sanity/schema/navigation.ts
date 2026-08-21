@@ -7,7 +7,7 @@ import { MenuIcon } from "@sanity/icons";
  * label is a `localeString` (per-language text), so reordering/renaming a menu
  * item changes every language at once.
  *
- * SOLE runtime source for the menus (no `@indiecrafts/config` fallback) — read by
+ * SOLE runtime source for the menus (no `@indiecrafts/packages-shared-config` fallback) — read by
  * `getNavigation` (`src/lib/navigation.ts`) and rendered by the Header/Footer.
  * Empty = the header shows just the logo and the footer just the social block.
  */

@@ -1,6 +1,6 @@
 # Sanity infra (app) — core, feature-agnostic wiring
 
-Auto-loads under `code/projects/web/surfaces/website/src/sanity/**`. Core, feature-agnostic Sanity wiring for the web app. The blog **content model** (schema / queries / types / desk) lives in the blog module `code/modules/web/blog/` (`@indiecrafts/blog`) — see `code/modules/web/blog/.claude/CLAUDE.md`.
+Auto-loads under `code/projects/web/surfaces/website/src/sanity/**`. Core, feature-agnostic Sanity wiring for the web app. The blog **content model** (schema / queries / types / desk) lives in the blog module `code/modules/web/blog/` (`@indiecrafts/modules-web-blog`) — see `code/modules/web/blog/.claude/CLAUDE.md`.
 
 **Stack:** Sanity v5 (Studio · GROQ · structure) · next-sanity · TypeScript. The CMS infrastructure layer.
 
@@ -17,7 +17,7 @@ Auto-loads under `code/projects/web/surfaces/website/src/sanity/**`. Core, featu
   desk section. `seo-queries.ts` → `siteSettingsQuery` / `siteSeoQuery` + the per-doc
   `seoMeta` queries (`homeSeoQuery` / `blogSeoQuery` / `legalSeoQuery` / `waitlistSeoQuery`).
 - **Per-page SEO** is NOT a central array — each doc a route renders carries its own
-  `.seo` (the shared `seoMeta`, `@indiecrafts/schema`). `getPageSeo(pageId, locale)`
+  `.seo` (the shared `seoMeta`, `@indiecrafts/packages-web-schema`). `getPageSeo(pageId, locale)`
   (`src/lib/seo/site-seo.ts`) dispatches each static route to its owning doc's `.seo`.
 - SEO read path: `src/lib/seo/site-seo.ts` (`getSiteSeo` / `getSiteSettings` /
   `getPageSeo`, React `cache()`) is the **sole** runtime source for the SEO surface —
@@ -41,4 +41,4 @@ Auto-loads under `code/projects/web/surfaces/website/src/sanity/**`. Core, featu
 
 ## Wiring
 
-Set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (`.env.example`). The CSP in `next.config.ts` already allows `https://*.sanity.io` + `wss://*.api.sanity.io`. Root `sanity.config.ts` composes the Studio from `SanityModule` barrels via `composeStudio([...])` — the app-core (`coreSanity` from `src/sanity`, which contributes the core SEO desk `seoStructureItem`) + each module's barrel (`@indiecrafts/page-builder/sanity` — the `page` model incl. the home, `@indiecrafts/blog/sanity`, newsletter, waitlist, …) + shared/email. See `@indiecrafts/sanity/module` + `code/docs/packages/sanity.md`.
+Set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (`.env.example`). The CSP in `next.config.ts` already allows `https://*.sanity.io` + `wss://*.api.sanity.io`. Root `sanity.config.ts` composes the Studio from `SanityModule` barrels via `composeStudio([...])` — the app-core (`coreSanity` from `src/sanity`, which contributes the core SEO desk `seoStructureItem`) + each module's barrel (`@indiecrafts/packages-web-page-builder/sanity` — the `page` model incl. the home, `@indiecrafts/modules-web-blog/sanity`, newsletter, waitlist, …) + shared/email. See `@indiecrafts/packages-web-sanity/module` + `code/docs/packages/sanity.md`.

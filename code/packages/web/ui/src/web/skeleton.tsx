@@ -1,4 +1,4 @@
-import { cn } from "@indiecrafts/utils/cn";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (

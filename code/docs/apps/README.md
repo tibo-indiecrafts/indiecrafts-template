@@ -1,7 +1,7 @@
 # Apps — the deployable apps
 
 **A Next app is a read-lens over one tenant's content** + its own Worker/domain. Today there is
-one — `web` (`@indiecrafts/website`) — but the platform is built so a second app (admin · standalone
+one — `web` (`@indiecrafts/web-surfaces-website`) — but the platform is built so a second app (admin · standalone
 blog · …) lands beside it without a rewrite. This page is _what the apps layer is_; each app's own
 _how to build_ lives in its `CLAUDE.md`.
 
@@ -15,7 +15,7 @@ _how to build_ lives in its `CLAUDE.md`.
   reaching into each other.
 - **Its own instance config.** Design (`theme`/`fonts`), feature set (`features`), and routes
   (`pages`) are app-owned in `src/config` (imported via `@/config`); the shared
-  [`@indiecrafts/config`](/packages/config) holds only primitives, so a second app ships its own look
+  [`@indiecrafts/packages-shared-config`](/packages/config) holds only primitives, so a second app ships its own look
   and feature set. See [Feature flags](/apps/web/config/feature-flags).
 - **Its own Worker + domain.** One Cloudflare Worker per app × env (`<app>-<env>`), one zone per app.
   See [Cloudflare as code](/infra/cloudflare-iac).
@@ -24,9 +24,9 @@ _how to build_ lives in its `CLAUDE.md`.
 
 | App  | Package                | Is                                                                                 | Deploy                      |
 | ---- | ---------------------- | ---------------------------------------------------------------------------------- | --------------------------- |
-| Web  | `@indiecrafts/website` | the marketing site + Sanity-backed blog/page-builder (the hub Studio at `/studio`) | Next + OpenNext → CF Worker |
-| API  | `@indiecrafts/api`     | a bare Cloudflare Worker — HTTP API (deploy shell; logic from bricks)              | `wrangler deploy`           |
-| Cron | `@indiecrafts/cron`    | a bare Cloudflare Worker — scheduled tasks (`[triggers] crons`)                    | `wrangler deploy`           |
+| Web  | `@indiecrafts/web-surfaces-website` | the marketing site + Sanity-backed blog/page-builder (the hub Studio at `/studio`) | Next + OpenNext → CF Worker |
+| API  | `@indiecrafts/shared-api`     | a bare Cloudflare Worker — HTTP API (deploy shell; logic from bricks)              | `wrangler deploy`           |
+| Cron | `@indiecrafts/shared-cron`    | a bare Cloudflare Worker — scheduled tasks (`[triggers] crons`)                    | `wrangler deploy`           |
 
 All ship with `pnpm deploy:<app>:<env>`; `pnpm deploy:all:<env>` deploys the fleet in order. Workers are apps — a deployable belongs in `code/projects/`, not a package (see below).
 

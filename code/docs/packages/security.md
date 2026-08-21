@@ -2,11 +2,11 @@
 
 The hardened HTTP-header baseline every app shares — the **CSP builder**, the security header set
 (HSTS, COOP, X-Frame, Referrer, Permissions), immutable cache-control, and the Next **image
-allowlist**. Lives in the **`@indiecrafts/security`** brick (`code/packages/shared/security`),
-consumed as source. Pure TS (no React/Next imports); dep: `@indiecrafts/config`.
+allowlist**. Lives in the **`@indiecrafts/packages-shared-security`** brick (`code/packages/shared/security`),
+consumed as source. Pure TS (no React/Next imports); dep: `@indiecrafts/packages-shared-config`.
 
 Extracted from `next.config.ts` so a second app reuses the hardening and passes only its own hosts.
-**It composes `@indiecrafts/config`, it doesn't replace it** — `getCurrentEnvironment` +
+**It composes `@indiecrafts/packages-shared-config`, it doesn't replace it** — `getCurrentEnvironment` +
 `getCSPConnectSources` stay in config; the brick imports them.
 
 ## Exports
@@ -22,8 +22,8 @@ Extracted from `next.config.ts` so a second app reuses the hardening and passes 
 ## Using it (`next.config.ts`)
 
 ```ts
-import { getCurrentEnvironment } from "@indiecrafts/config";
-import { imageDefaults, securityHeaders } from "@indiecrafts/security";
+import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
+import { imageDefaults, securityHeaders } from "@indiecrafts/packages-shared-security";
 
 const EMBED_HOSTS: string[] = []; // app knob — external embed origins (newsletter provider)
 

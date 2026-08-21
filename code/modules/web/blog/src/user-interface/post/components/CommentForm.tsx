@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@indiecrafts/ui/web/button";
-import { Input } from "@indiecrafts/ui/web/input";
-import { Textarea } from "@indiecrafts/ui/web/textarea";
-import { Checkbox } from "@indiecrafts/ui/web/checkbox";
-import { Label } from "@indiecrafts/ui/web/label";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { Input } from "@indiecrafts/packages-web-ui/web/input";
+import { Textarea } from "@indiecrafts/packages-web-ui/web/textarea";
+import { Checkbox } from "@indiecrafts/packages-web-ui/web/checkbox";
+import { Label } from "@indiecrafts/packages-web-ui/web/label";
 import {
   TurnstileWidget,
   turnstileActive,
-} from "@indiecrafts/ui-components/web/form/TurnstileWidget";
+} from "@indiecrafts/packages-web-ui-components/web/form/TurnstileWidget";
 
 type Status = "idle" | "submitting" | "success" | "error";
 

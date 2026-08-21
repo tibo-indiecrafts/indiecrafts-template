@@ -2,7 +2,7 @@
 
 A pure, framework-agnostic brick that hands out **gated file links** — a URL that only a
 verified request can open. Used to deliver a **lead magnet** after a subscriber confirms
-their e-mail. Lives in **`@indiecrafts/gated-delivery`** (`code/packages/shared/gated-delivery`),
+their e-mail. Lives in **`@indiecrafts/packages-shared-gated-delivery`** (`code/packages/shared/gated-delivery`),
 consumed as source. Pure TypeScript on **Web Crypto** — zero dependencies, no React/Next,
 runs on Node 22 **and** the Workers runtime.
 
@@ -23,7 +23,7 @@ consumer injects the secret and the asset resolver.
 import {
   signDownloadToken,
   resolveGatedDownload,
-} from "@indiecrafts/gated-delivery";
+} from "@indiecrafts/packages-shared-gated-delivery";
 
 // 1. On confirm — sign a 7-day link and e-mail it.
 const token = await signDownloadToken(

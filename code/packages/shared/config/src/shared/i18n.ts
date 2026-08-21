@@ -116,7 +116,7 @@ export const localeDir = (code: Locale): "ltr" | "rtl" =>
 /**
  * Locale type-guard. Pass the registered `localeCodes`.
  *
- *   import { isLocale, localeCodes } from "@indiecrafts/config";
+ *   import { isLocale, localeCodes } from "@indiecrafts/packages-shared-config";
  *   if (isLocale(input, localeCodes)) { … }
  */
 export function isLocale<L extends string>(
@@ -124,4 +124,43 @@ export function isLocale<L extends string>(
   supported: readonly L[],
 ): value is L {
   return (supported as readonly string[]).includes(value);
+}
+
+/**
+ * The first RANKED preference that's supported and differs from the `active` locale —
+ * the platform-agnostic "should we suggest a language switch?" decision. Returns `null`
+ * when the top supported preference already matches `active` (or none is supported), so
+ * no suggestion is shown. Each platform supplies its own ranked, region-stripped list:
+ * the web `Accept-Language` parser (`detectPreferredLocale`), Expo `getLocales()`, or
+ * `navigator.languages` on Electron.
+ */
+export function pickSuggestedLocale<L extends string>(
+  rankedPrefs: readonly string[],
+  active: string,
+  supported: readonly L[],
+): L | null {
+  for (const code of rankedPrefs) {
+    if (!isLocale(code, supported)) continue; // skip unsupported languages
+    return code === active ? null : code; // the first supported preference decides
+  }
+  return null;
+}
+
+/**
+ * Nested ICU message object → flat `{ "a.b.c": "msg" }` map. Shared by the mobile
+ * (Expo) and hybrid (Electron) shells, which format with `react-intl` and need a
+ * FLAT id map (react-intl has no nested-message support, unlike next-intl on web).
+ */
+export function flattenMessages(
+  obj: Record<string, unknown>,
+  prefix = "",
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    const key = prefix ? `${prefix}.${k}` : k;
+    if (v && typeof v === "object")
+      Object.assign(out, flattenMessages(v as Record<string, unknown>, key));
+    else out[key] = String(v);
+  }
+  return out;
 }

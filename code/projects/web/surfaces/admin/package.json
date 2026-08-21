@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/admin",
+  "name": "@indiecrafts/web-surfaces-admin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,18 +14,23 @@
     "deploy:admin:prod": "node ../../../../shared/scripts/deploy/next.mjs admin prod"
   },
   "dependencies": {
-    "@indiecrafts/config": "workspace:*",
-    "@indiecrafts/sanity": "workspace:*",
-    "@indiecrafts/security": "workspace:*",
-    "@indiecrafts/ui": "workspace:*",
-    "@indiecrafts/ui-tokens": "workspace:*",
-    "@indiecrafts/utils": "workspace:*",
+    "@clerk/nextjs": "^7.7.7",
+    "@indiecrafts/packages-shared-auth": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-web-auth": "workspace:*",
+    "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@indiecrafts/packages-shared-security": "workspace:*",
+    "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*",
     "next": "16.3.1",
+    "next-intl": "^4.13.6",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@opennextjs/cloudflare": "^1.0.0",
+    "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -1,4 +1,4 @@
-import { ownerAlertGroup } from "@indiecrafts/email/sanity";
+import { ownerAlertGroup } from "@indiecrafts/packages-web-email/sanity";
 
 /**
  * The blog's transactional-email group on the shared `emailStrings` singleton —

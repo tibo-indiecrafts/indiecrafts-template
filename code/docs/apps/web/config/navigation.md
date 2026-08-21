@@ -42,11 +42,20 @@ change and is localized automatically at render time.
 
 ## Flag-gating (no dead links)
 
-Internal links are gated by the same feature flags as the routes themselves. `getNavigation`
-looks the route key up in the `pages` map and drops it when `isPageVisible` is false (e.g.
-**CGV** with `features.legal.sales` off, or any blog route with `features.blog` off) — the
-item silently disappears, no 404. Toggle the flag on and the link comes back. You don't have
-to prune the menu when you flip a flag.
+Internal links are gated by the same feature flags as the routes themselves, at **two** layers:
+
+- **The route dropdown lists only activated pages.** `route`'s options are the `pages` map
+  filtered to `enabled !== false`, so an editor **can't pick a disabled route** in the first
+  place — a page appears here the moment its feature flag is on (blog + contact + waitlist +
+  the legal pages all follow this). A page also needs a friendly name in `ROUTE_LABELS`
+  (`src/sanity/schema/objects/nav-item.ts`), else the dropdown shows its raw path.
+- **Render-time drop.** `getNavigation` also looks the route key up in the `pages` map and drops
+  an already-saved link when `isPageVisible` is false (e.g. **CGV** with `features.legal.sales`
+  off) — the item silently disappears, no 404. Toggle the flag on and the link comes back.
+
+**The pattern for every page** (blog + contact today; others follow): add it to the `pages` map
+with an `enabled` flag + a `ROUTE_LABELS` entry, and it becomes linkable in the menu editor the
+moment it's activated — no other nav wiring.
 
 ## Dropdowns + rich links (header only)
 

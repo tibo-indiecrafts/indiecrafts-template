@@ -1,4 +1,4 @@
-# `@indiecrafts/sanity` — Sanity infra
+# `@indiecrafts/packages-web-sanity` — Sanity infra
 
 The client/config plumbing shared by the app's Studio and the blog module. Infra only —
 schemas and GROQ stay in their owning feature.
@@ -6,7 +6,7 @@ schemas and GROQ stay in their owning feature.
 |                                         |                                                                                                      |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | **Exports (subpath-only, no `.` root)** | `./client` · `./live` · `./env` · `./token` · `./structure` · `./image` · `./write` · `./module`     |
-| **Deps**                                | `next-sanity ^13.0.3`, `@indiecrafts/config`. **Peer:** `next 16.3.1`, `react 19.2.8`, `sanity: "*"` |
+| **Deps**                                | `next-sanity ^13.0.3`, `@indiecrafts/packages-shared-config`. **Peer:** `next 16.3.1`, `react 19.2.8`, `sanity: "*"` |
 | **Consumers**                           | app + blog                                                                                           |
 
 - **`env.ts`** derives `projectId`/`dataset` (from `NEXT_PUBLIC_SANITY_PROJECT_ID` /
@@ -23,8 +23,8 @@ schemas and GROQ stay in their owning feature.
 - **`image.ts`** exports `sanityImageLoader` — the isomorphic `next/image` loader that
   rewrites every image `src` to a CDN-sized source (`?w=&q=&auto=format&fit=max`), wired
   app-side via `images.loaderFile`. Details: [Images](/apps/web/config/images).
-- **Gotcha — no `.` root export.** Always import a subpath (`@indiecrafts/sanity/env`,
-  `@indiecrafts/sanity/client`, …).
+- **Gotcha — no `.` root export.** Always import a subpath (`@indiecrafts/packages-web-sanity/env`,
+  `@indiecrafts/packages-web-sanity/client`, …).
 - **Gotcha — `Studio.tsx` and the app's `sanity/structure.ts` stay in the app** (they
   import `sanity.config`); only the reusable _builders_ moved here. Pin `sanity` to the
   app's major (v5) — a version skew breaks types across the boundary.
@@ -45,7 +45,7 @@ export type SanityModule = {
   structure?: (S) => ListItemBuilder[]; // this owner's desk items (no dividers)
   templates?: Template[]; // "+ Create" initial-value templates
   i18nSchemaTypes?: string[]; // document-internationalized types
-  emailGroups?: FieldDefinition[]; // E-mails singleton groups (→ @indiecrafts/email)
+  emailGroups?: FieldDefinition[]; // E-mails singleton groups (→ @indiecrafts/packages-web-email)
 };
 ```
 
@@ -76,12 +76,12 @@ const sanity = composeStudio([
 already needs); **removing** = delete the line — no dangling references across four hardcoded lists. A
 module's barrel lives at `@indiecrafts/<module>/sanity`; app-core at `code/projects/web/surfaces/website/src/sanity` (`coreSanity`
 = shared surfaces, `homeSanity` = the app's home desk entry); shared primitives at
-[`@indiecrafts/schema`](/packages/schema).
+[`@indiecrafts/packages-web-schema`](/packages/schema).
 
 ## Wiring & conventions
 
 How every brick is consumed (exports · `transpilePackages` · resolution · Tailwind `@source`
 · hardening), the ≥2-consumer rule → **[Packages overview](./)**.
 
-- [`code/packages/shared/sanity/`](../../code/packages/shared/sanity/) — the source
+- [`code/packages/web/sanity/`](../../code/packages/web/sanity/) — the source
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — roster + rule

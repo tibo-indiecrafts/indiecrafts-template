@@ -2,12 +2,12 @@
 
 import { useId, useState } from "react";
 import { useLocale } from "next-intl";
-import { Button } from "@indiecrafts/ui/web/button";
-import { Input } from "@indiecrafts/ui/web/input";
-import { Checkbox } from "@indiecrafts/ui/web/checkbox";
-import { Label } from "@indiecrafts/ui/web/label";
-import { cn } from "@indiecrafts/utils/cn";
-import type { NewsletterModule } from "@indiecrafts/ui-components/shared/types";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { Input } from "@indiecrafts/packages-web-ui/web/input";
+import { Checkbox } from "@indiecrafts/packages-web-ui/web/checkbox";
+import { Label } from "@indiecrafts/packages-web-ui/web/label";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
+import type { NewsletterModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { TurnstileWidget, turnstileActive } from "./TurnstileWidget";
 
 type Status = "idle" | "submitting" | "success" | "error";

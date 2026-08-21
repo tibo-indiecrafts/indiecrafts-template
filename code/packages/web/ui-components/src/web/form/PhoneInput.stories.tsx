@@ -6,7 +6,7 @@ import docs from "./PhoneInput.md?raw";
 /**
  * A dial-code select + national `type="tel"` input → emits an E.164 string via
  * `onChange` (inert in Storybook). Validation is the caller's job
- * (`@indiecrafts/format/validate`).
+ * (`@indiecrafts/packages-shared-format/validate`).
  */
 const meta = {
   title: "UI Components/PhoneInput",

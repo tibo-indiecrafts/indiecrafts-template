@@ -1,4 +1,4 @@
-import type { PageConfig } from "@indiecrafts/config";
+import type { PageConfig } from "@indiecrafts/packages-shared-config";
 
 /**
  * The blog island's compiled config — the feature flags + the `/blog` page entry

@@ -10,7 +10,7 @@ through the shared page-builder blocks.
   `page-home-fr`), an ordered **`sections[]`** of `module.*` blocks. Add, reorder, or hide a block from
   the Studio; the page follows, no code change. Every _other_ page lives in **Studio → Pages**.
 - Read at request time by `getHomePage(locale)` (`src/lib/home.ts` → `home-queries.ts`), painted by
-  the shared `renderBlock` registry (`@indiecrafts/ui-components/web/registry`) in
+  the shared `renderBlock` registry (`@indiecrafts/packages-web-ui-components/web/registry`) in
   `src/app/[locale]/(home)/page.tsx`.
 
 ## Blocks a homepage can use

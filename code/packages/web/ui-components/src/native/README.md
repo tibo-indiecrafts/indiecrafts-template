@@ -1,6 +1,6 @@
 # `native/` — reserved for a React-Native renderer set
 
-Empty on purpose. The `@indiecrafts/ui-components` renderers under `../web/` are **web** — Tailwind
+Empty on purpose. The `@indiecrafts/packages-web-ui-components` renderers under `../web/` are **web** — Tailwind
 class strings, DOM elements, `next/image`, `@portabletext/react`. React Native can't reuse them
 (it renders `View`/`Text`/`StyleSheet`, no DOM, no Tailwind classes).
 
@@ -9,7 +9,7 @@ When a native app lands, mirror the **same domain folders** here (`native/conten
 **contract**:
 
 - block types → `../shared/types.ts`
-- design tokens → `@indiecrafts/ui-tokens`
+- design tokens → `@indiecrafts/packages-shared-ui-tokens`
 - a per-platform registry → mirror `../web/registry.tsx`.
 
 Until then keep it empty — don't pre-scaffold empty domain files (YAGNI / the repo's "extract at

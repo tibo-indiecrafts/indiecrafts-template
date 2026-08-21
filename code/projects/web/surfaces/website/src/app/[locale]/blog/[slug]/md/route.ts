@@ -1,9 +1,9 @@
 import { pages, site } from "@/config";
-import { isBlogRouteEnabled } from "@indiecrafts/blog/lib/route-gate";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
-import { portableTextToMarkdown } from "@indiecrafts/blog/sanity/portable-to-markdown";
-import { postBySlugQuery } from "@indiecrafts/blog/sanity/queries";
-import type { Post } from "@indiecrafts/blog/sanity/types";
+import { isBlogRouteEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
+import { portableTextToMarkdown } from "@indiecrafts/modules-web-blog/sanity/portable-to-markdown";
+import { postBySlugQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
+import type { Post } from "@indiecrafts/modules-web-blog/sanity/types";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 

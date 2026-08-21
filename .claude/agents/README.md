@@ -19,14 +19,10 @@ content agents moved to the studio content vault** (`~/Code/indie-brain/.claude/
 framework is dev-only. The project lane's **launch orchestration** stays here: `project-shipper` /
 `uat-coordinator` (`deployment/`, `project-management/`) at launch and `experiment-tracker` at grow.
 
-Per-phase mapping (which agent at which sprint step) + the per-project-stage mapping →
-[`method/shared/process/my-skills-and-agents.md`](../../method/shared/process/my-skills-and-agents.md)
-(the project lane is [`launch-playbook.md`](../../method/shared/process/launch-playbook.md)).
-
 ## Situational agents (kept, categorised — reach for them when the use-case fits)
 
 No bench: every agent lives in its topic folder and is invokable by name. Some aren't on the default hot
-path — reach for them when the project calls for it (options, per [`bench-map.md`](../../method/shared/process/bench-map.md)):
+path — reach for them when the project calls for it:
 
 - `electron-pro` — the **`hybrid` (electron)** app slot · `mobile-app-builder` — the **`mobile` (expo)** app slot.
 - `ai-engineer` — when a feature is genuinely AI-heavy · `wordpress-master` / `microservices-architect` /

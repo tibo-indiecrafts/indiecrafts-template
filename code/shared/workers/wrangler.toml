@@ -1,5 +1,5 @@
 # Cloudflare Worker config for the background-jobs Worker (cron / queues / tasks).
-# Deployed separately from the web app: `pnpm --filter @indiecrafts/workers deploy:workers:<env>`.
+# Deployed separately from the web app: `pnpm --filter @indiecrafts/shared-workers deploy:workers:<env>`.
 # Per client, rename `indiecrafts-workers-*` (mirror the web app's `project:rename`).
 
 name = "indiecrafts-dev-shared-workers"

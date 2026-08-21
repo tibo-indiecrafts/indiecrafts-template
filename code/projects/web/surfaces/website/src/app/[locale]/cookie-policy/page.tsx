@@ -2,7 +2,7 @@ import { pages, isPageVisible, type Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { LegalPageContent } from "@indiecrafts/compliance/pages/LegalPageContent";
+import { LegalPageContent } from "@indiecrafts/packages-web-compliance/pages/LegalPageContent";
 import { notFound } from "next/navigation";
 
 type Props = { params: Promise<{ locale: Locale }> };

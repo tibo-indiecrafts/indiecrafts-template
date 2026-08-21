@@ -21,7 +21,7 @@ Changed · Deprecated · Removed · Fixed**.
   human click (see the app log) to stop mail-scanner auto-confirm.
 
 - **blog · newsletter · waitlist — email templates now live in the module (`src/emails/`).** Each
-  module's transactional-email `render…Email` template + test moved out of `@indiecrafts/email`'s
+  module's transactional-email `render…Email` template + test moved out of `@indiecrafts/packages-web-email`'s
   shared `templates/` into its own `src/emails/` (blog: `comment-notification`; newsletter:
   `newsletter-confirm`/`newsletter-notification`/`lead-magnet`; waitlist: `waitlist-confirm`/
   `waitlist-notification`), importing `renderEmailLayout`/`escapeHtml`/`RenderedEmail` from the brick.
@@ -37,21 +37,21 @@ Changed · Deprecated · Removed · Fixed**.
   and `resolveBlogDisplay`. _Why:_ the security-critical write paths (field whitelisting, `_type`
   pinning, consent stamping, dedupe, opt-in) shipped with no coverage.
 
-- **blog — page-builder extracted to `@indiecrafts/page-builder`.** The blog held the generic
+- **blog — page-builder extracted to `@indiecrafts/packages-web-page-builder`.** The blog held the generic
   page-builder (16 blocks + `blockContent`/`link`/`cta` + `quote`/`person`) even though the app's
-  marketing pages used it. Moved all of it to the new `@indiecrafts/page-builder` package; the blog now
+  marketing pages used it. Moved all of it to the new `@indiecrafts/packages-web-page-builder` package; the blog now
   owns only its docs (`post`/`author`/`category`/`tag`/`series`/`comment` + `metadata`) and its **3**
   blog-specific blocks (`blog-index`, `blog-post-*`), and imports `MODULES_FRAGMENT` + `defineModule`
   from the package (composing its own `blog-post-list` projection on top). Desk sections Témoignages
   (`quote`) + Équipe (`person`) moved to the page-builder desk. _Why:_ decouple site-wide page-building
   from the blog feature — a marketing/admin app can now build pages without pulling in the blog.
 - **Lead magnet — capture block + gated delivery (newsletter + blog).** A new `module.lead-magnet`
-  page-builder block (schema in blog, renderer in `@indiecrafts/ui-components`, inline-embeddable)
+  page-builder block (schema in blog, renderer in `@indiecrafts/packages-web-ui-components`, inline-embeddable)
   captures an e-mail against a referenced `leadMagnet` document, then — after double opt-in — e-mails
   a signed, expiring download link. **One subscriber list:** a magnet lead is a normal `subscriber`
   tagged `source: "lead-magnet"` + the magnet id in `tags` (no second list). New `leadMagnet` document
   (title · file · enabled) + a desk section in the newsletter module; `lib/deliver-magnet.ts` signs the
-  link (`@indiecrafts/gated-delivery`) and delivers on confirm (`confirm.ts`), best-effort. _Why:_
+  link (`@indiecrafts/packages-shared-gated-delivery`) and delivers on confirm (`confirm.ts`), best-effort. _Why:_
   inbound lead-gen that reuses the existing capture + opt-in + subscriber list, not a parallel system.
 - **blog — post `priority` ranking (slider).** A new **Priorité de classement** field on `post` (a
   native `<input type="range">` slider, 0–10) ranks a post **above the date order** in every public
@@ -65,24 +65,24 @@ Changed · Deprecated · Removed · Fixed**.
   (which _picks_ the hero posts); priority sets _the order_. Editor doc:
   [`docs/modules/blog/editor-guide.md`](../projects/docs/modules/blog/editor-guide.md).
 - **blog · newsletter · waitlist — each module now owns its E-mails groups.** The transactional-email
-  config that used to live in `@indiecrafts/email` moved **into the modules** (`src/sanity/email.ts`,
+  config that used to live in `@indiecrafts/packages-web-email` moved **into the modules** (`src/sanity/email.ts`,
   exported as `emailGroups` on each `SanityModule` barrel): blog → `commentNotification`; newsletter →
   `newsletterConfirm` + `newsletterOwner`; waitlist → `waitlistConfirm` + `waitlistOwner`. Built with
   the shared `confirmationGroup`/`ownerAlertGroup` factories, so the brick stays generic and a module's
   email appears in Studio only when the module is composed in. **Per-email BCC:** the confirmation
   engines (`newsletter`/`waitlist`) now pass `bcc: clean(cfg?.bcc)` to `sendEmail`, so an admin can BCC
   themselves on user-facing confirmations. See [`docs/packages/email.md`](../projects/docs/packages/email.md).
-- **`@indiecrafts/waitlist` — early-access signups (collect + export).** A new module modeled on the
+- **`@indiecrafts/modules-web-waitlist` — early-access signups (collect + export).** A new module modeled on the
   newsletter, with **two public surfaces** (same `WaitlistForm`): a full **`/waitlist` landing page**
   (the view — `src/user-interface/WaitlistLanding.tsx` — lives in the module; the app route is a thin
   shell) **and** a public **`module.waitlist`** page-builder block (schema in the blog, `Waitlist`/
-  `WaitlistForm` renderer in `@indiecrafts/ui-components`, 3 variants + an optional name field). Both
+  `WaitlistForm` renderer in `@indiecrafts/packages-web-ui-components`, 3 variants + an optional name field). Both
   POST the thin `/api/waitlist` route → the `join()` engine → a `waitlistEntry` doc (deduped,
   whitelisted). **All copy is Sanity-only** (form on `waitlistSettings`, page SEO on `siteMeta.pageSeo`).
   **No runtime gating** — collect + export only. Unlike `subscriber`, the entry doc is
   **editor-creatable** (the "Liste d'attente" desk's "Tous·tes" list carries **+ Create**, so an admin
   adds rows by hand; status sub-lists En attente / Invité·e·s). Optional best-effort emails via
-  `@indiecrafts/email` (a translated "you're on the list" confirmation + an owner alert, on the shared
+  `@indiecrafts/packages-web-email` (a translated "you're on the list" confirmation + an owner alert, on the shared
   E-mails entity). Gated by **`features.waitlist`**; `waitlistSanity` activates with one line in
   `composeSanity`. Export: `pnpm waitlist:export` → CSV. Seed ships settings + 2 demo entries. Doc:
   [`docs/modules/waitlist/`](../projects/docs/modules/waitlist).
@@ -99,7 +99,7 @@ Changed · Deprecated · Removed · Fixed**.
   now get a **double opt-in confirmation** (a one-time `confirmToken` on the `subscriber`; the
   confirm link `/api/newsletter/confirm?token=…` flips `pending → confirmed` and clears the token,
   single-use — `lib/confirm.ts`), and the owner an **new-subscriber alert**. Both are best-effort
-  (never fail a signup), via `@indiecrafts/email`, configured on the shared **E-mails** entity —
+  (never fail a signup), via `@indiecrafts/packages-web-email`, configured on the shared **E-mails** entity —
   the confirmation copy is **translated per language** (seeded EN + FR). **Removed the provider
   machinery** (`destination`/`provider` config + the buttondown/mailchimp/resend adapters +
   `getProvider` + the block's `listId`): the engine now **always stores** the subscriber in Sanity.
@@ -112,23 +112,23 @@ Changed · Deprecated · Removed · Fixed**.
   `enabled` toggle + **To / CC / BCC** as multi-email arrays (each `Rule.email()`-validated, tag
   input) + `from` (a Resend-verified domain) + `replyTo` (empty = the commenter) + a
   `{{author}}`/`{{post}}` subject. The only secret is `RESEND_API_KEY` (env, server-only). The blog
-  reads the entity in `lib/notify-comment.ts`; the layout + sender live in **`@indiecrafts/email`**
+  reads the entity in `lib/notify-comment.ts`; the layout + sender live in **`@indiecrafts/packages-web-email`**
   (`renderCommentNotificationEmail` → `sendEmail`). Never throws — a mail failure can't turn a saved
   comment into a `500`; honeypot spam drops before the write, so only real comments notify. Guide:
   [`docs/modules/blog/comments.md`](../projects/docs/modules/blog/comments.md).
-- **`@indiecrafts/newsletter` — the newsletter feature extracted to a module.** The subscribe
+- **`@indiecrafts/modules-web-newsletter` — the newsletter feature extracted to a module.** The subscribe
   engine (`lib/newsletter.ts`), the `subscriber` doc, and a new editable
   **`newsletterSettings`** singleton moved into `code/modules/newsletter/`, shipped as the
   `newsletterSanity` **`SanityModule`** barrel — activate with one line in `composeSanity([...])`
   - `features.newsletter`. The public form stays a page-builder block (schema in the blog,
-    renderer in `@indiecrafts/ui-components`); the thin `/api/newsletter` route now calls the
+    renderer in `@indiecrafts/packages-web-ui-components`); the thin `/api/newsletter` route now calls the
     module's engine. Doc: [`docs/modules/newsletter/`](../projects/docs/modules/newsletter).
-- **`module.newsletter` page-builder block (`@indiecrafts/blog`).** New `defineModule` schema
+- **`module.newsletter` page-builder block (`@indiecrafts/modules-web-blog`).** New `defineModule` schema
   (`sanity/schema/modules/newsletter.ts`, "Infolettre") — per-instance, per-locale copy (heading,
   body, placeholder, button, consent, success/already/error) + a `variant` (card/inline/banner).
   No refs, no image, so it passes straight through `MODULES_FRAGMENT`.
   Registered in `moduleSchemas` + `MODULE_TYPES` + the `INLINE_MODULES` inline allowlist (10 of 14
-  now). The renderer + backend live in `@indiecrafts/ui-components` + the app — this is the schema
+  now). The renderer + backend live in `@indiecrafts/packages-web-ui-components` + the app — this is the schema
   half only.
 
 ### Changed
@@ -145,8 +145,8 @@ Changed · Deprecated · Removed · Fixed**.
 
 - **Blog code blocks — Shiki syntax highlighting.** A new `codeBlock` body object (`language` /
   optional `filename` / `code`) renders through a server-side, async `CodeBlock`
-  (`@indiecrafts/ui-components`, new `shiki ^3` dep) with a light+dark theme pair; the dark colours
-  swap under `[data-theme="dark"]` via `.shiki` rules in `@indiecrafts/ui-tokens/globals.css`. An
+  (`@indiecrafts/packages-web-ui-components`, new `shiki ^3` dep) with a light+dark theme pair; the dark colours
+  swap under `[data-theme="dark"]` via `.shiki` rules in `@indiecrafts/packages-shared-ui-tokens/globals.css`. An
   unsupported language degrades to a plain `<pre>`. Registered in the shared
   `portable-text-components` map, so app pages and blog posts highlight identically. Seed adds a
   demo block. _(Renderer + dependency live in `code/packages/ui-components`; logged here to keep the
@@ -243,16 +243,16 @@ videoUrl)` — so uploads and links share the same `parseVideoEmbed` path. The s
   in cards + hero — no modal.
 - **Blog featured video accepts Dailymotion + player extracted.** `metadata.videoUrl` now
   takes Dailymotion / `dai.ly` URLs (Studio legend updated). The video player moved out of
-  the blog (`post/components/HeroVideo` → `@indiecrafts/ui-components` `renderers/VideoEmbed`)
+  the blog (`post/components/HeroVideo` → `@indiecrafts/packages-web-ui-components` `renderers/VideoEmbed`)
   and the listing play-badge too (`shared/components/PlayBadge` → same package), so app pages
   and the blog share one player; `BlogCard` passes the badge `label` from `pages.blog`.
 
 ### Added
 
-- **`@indiecrafts/blog` — the blog extracted to a module.** The blog feature moved from the
+- **`@indiecrafts/modules-web-blog` — the blog extracted to a module.** The blog feature moved from the
   app (`src/features/blog`) to `code/modules/blog/` as a self-contained, feature-flagged
   vertical slice, consumed by the app as source. Wired via `transpilePackages`, a tsconfig
-  `paths` entry (`@indiecrafts/blog/*`, mixed `.ts`/`.tsx`), a `@source` line in
+  `paths` entry (`@indiecrafts/modules-web-blog/*`, mixed `.ts`/`.tsx`), a `@source` line in
   `ui-tokens/globals.css`, and schema/structure registration in `sanity.config.ts`. It
   depends on the shared bricks (`config`/`utils`/`sanity`/`ui`/`ui-components`/`i18n`) and
   never on the app. See [`docs/modules/blog/`](../projects/docs/modules/blog).

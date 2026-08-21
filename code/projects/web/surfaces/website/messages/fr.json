@@ -1,10 +1,32 @@
 {
+  "offline": {
+    "banner": "Vous êtes hors ligne — certaines fonctions peuvent être indisponibles."
+  },
+  "agent": {
+    "title": "Recherche de contenu par IA",
+    "description": "Donnez un objectif à l'agent — il propose 5 idées d'articles à relire. Il suggère, vous décidez.",
+    "goalLabel": "Votre objectif",
+    "goalPlaceholder": "ex. idées d'articles pour des designers freelance sur les outils IA",
+    "submit": "Générer des idées",
+    "submitting": "En cours…",
+    "error": "Une erreur s'est produite. Merci de réessayer.",
+    "reviewNote": "Idées à l'état de brouillon — relisez-les avant de les utiliser.",
+    "empty": "Aucune idée retournée. Essayez un objectif plus précis.",
+    "field": {
+      "reader": "Lecteur",
+      "problem": "Problème",
+      "intent": "Intention de recherche",
+      "headline": "Titre",
+      "why": "Pourquoi"
+    }
+  },
   "site": {
     "tagline": "Le template Next.js piloté par la configuration, pour les sites clients.",
     "description": "Un template Next.js hautement modulaire, prêt pour le SEO, l'i18n et l'accessibilité. Forkez, éditez la config, livrez."
   },
   "nav": {
     "home": "Accueil",
+    "signIn": "Se connecter",
     "about": "À propos",
     "blog": "Blog",
     "author": "Auteurs",
@@ -58,7 +80,6 @@
     "switchTheme": "Changer de thème",
     "themeLight": "Clair",
     "themeDark": "Sombre",
-    "themeSystem": "Système",
     "previous": "Précédent",
     "next": "Suivant",
     "dismiss": "Fermer",

@@ -22,7 +22,7 @@
   // "auto" lets ESLint resolve the nearest flat eslint.config.mjs per package.
   "eslint.workingDirectories": [{ "mode": "auto" }],
 
-  // ── Tailwind v4 (CSS-based tokens in @indiecrafts/ui-tokens) ───────────
+  // ── Tailwind v4 (CSS-based tokens in @indiecrafts/packages-shared-ui-tokens) ───────────
   "tailwindCSS.classFunctions": ["cva", "cx", "cn"],
   "files.associations": { "*.css": "tailwindcss" },
   "editor.quickSuggestions": { "strings": "on" },

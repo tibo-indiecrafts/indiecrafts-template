@@ -4,7 +4,7 @@
  * showing it. Mirrors the consent/announcement cookie stores.
  */
 
-import { site } from "@indiecrafts/config";
+import { site } from "@indiecrafts/packages-shared-config";
 
 /** Cookie name, namespaced by `site.prefix`. Presence = don't suggest again. */
 export const LOCALE_SUGGEST_COOKIE = `${site.prefix}.locale-suggest`;

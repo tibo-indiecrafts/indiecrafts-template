@@ -1,0 +1,59 @@
+# Repo SAST ruleset (Snyk-Code / SonarQube-lite) — high-confidence, low-false-positive
+# rules for THIS template's security NEVERs. Offline (no registry login). Run via the
+# `security-scan.sh` Stop hook (report-first) or by hand: `semgrep --config .semgrep.yml code/`.
+# Add registry packs for breadth: `semgrep --config .semgrep.yml --config p/typescript --config p/secrets`.
+rules:
+  - id: next-public-secret
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: >
+      A NEXT_PUBLIC_* / EXPO_PUBLIC_* env var named SECRET/PASSWORD/PRIVATE is inlined into
+      the client bundle. Never expose a secret under a public prefix (repo NEVER) — move it
+      to a server-only var. (A deliberate bundle abuse-gate TOKEN is the one documented
+      exception; secrets never are.)
+    patterns:
+      - pattern-regex: (NEXT_PUBLIC_|EXPO_PUBLIC_)[A-Z0-9_]*(SECRET|PASSWORD|PRIVATE)
+
+  - id: public-token-review
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: >
+      A NEXT_PUBLIC_*/EXPO_PUBLIC_* TOKEN/KEY is bundled to the client. Confirm it is a
+      PUBLISHABLE key or a deliberate abuse-gate (documented) — never a private token.
+    patterns:
+      - pattern-regex: (NEXT_PUBLIC_|EXPO_PUBLIC_)[A-Z0-9_]*(TOKEN|API_KEY|SECRET_KEY)
+      - pattern-not-regex: (SITE_KEY|PUBLISHABLE|PUBLIC_KEY)
+
+  - id: eval-injection
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: eval / new Function is a code-injection risk. Remove it.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+
+  - id: child-process-shell-interpolation
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: >
+      Shell exec with an interpolated template string is a command-injection risk. Use
+      execFile / spawn with an argument array instead of a shell string.
+    pattern-either:
+      - pattern: exec(`...`)
+      - pattern: execSync(`...`)
+
+  - id: dangerously-set-inner-html
+    languages: [typescript, tsx]
+    severity: WARNING
+    message: >
+      dangerouslySetInnerHTML bypasses React's escaping — confirm the HTML is sanitized or
+      from a trusted source (XSS risk).
+    pattern: dangerouslySetInnerHTML={...}
+
+  - id: math-random-for-secrets
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: >
+      Math.random() is not cryptographically secure — never use it for a token, id, or
+      secret. Use crypto.randomUUID() / crypto.getRandomValues().
+    pattern-regex: (token|secret|nonce|salt|apiKey)\s*=\s*.*Math\.random\(\)

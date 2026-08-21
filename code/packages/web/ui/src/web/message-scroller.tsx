@@ -9,7 +9,7 @@ import {
 } from "@shadcn/react/message-scroller";
 import { ArrowDownIcon } from "lucide-react";
 
-import { cn } from "@indiecrafts/utils/cn";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "./button";
 
 function MessageScrollerProvider(

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@indiecrafts/ui/web/button";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Link } from "@/i18n/routing";
 
 type Status = "idle" | "submitting" | "confirmed" | "invalid";

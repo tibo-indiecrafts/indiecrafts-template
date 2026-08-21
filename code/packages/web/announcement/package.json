@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/announcement",
+  "name": "@indiecrafts/packages-web-announcement",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,11 +8,12 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@indiecrafts/config": "workspace:*",
-    "@indiecrafts/i18n": "workspace:*",
-    "@indiecrafts/sanity": "workspace:*",
-    "@indiecrafts/ui": "workspace:*",
-    "@indiecrafts/utils": "workspace:*",
+    "@indiecrafts/packages-shared-announcement": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-web-i18n": "workspace:*",
+    "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*",
     "@sanity/icons": "^3.7.4",
     "next-sanity": "^13.3.3",
     "sanity": "^5.31.1"

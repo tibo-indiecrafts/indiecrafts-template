@@ -9,7 +9,9 @@
  * the two-layer pattern.
  */
 
-export const features = {
+import { defineFeatures } from "@indiecrafts/packages-shared-config";
+
+export const features = defineFeatures({
   /** LLM endpoints: index `/llms.txt` · full `/llms-full.txt` · pages `/llms/<id>`. */
   llms: {
     index: true,
@@ -54,6 +56,8 @@ export const features = {
   newsletter: true,
   /** Waitlist capture — the `module.waitlist` page-builder block + `/api/waitlist`. */
   waitlist: true,
+  /** Contact form — the `module.contact` block + the `/contact` page + `/api/contact`. */
+  contact: true,
   /** Sanity Studio at `/studio` + draft-mode preview. Independent of `blog`. */
   studio: true,
   /**
@@ -63,4 +67,4 @@ export const features = {
    * proxy trips on either. Keep this `false` in normal operation.
    */
   maintenance: false,
-} as const;
+} as const);

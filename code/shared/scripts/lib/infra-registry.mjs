@@ -15,7 +15,6 @@
 // Altitudes (mirrors the projects tree):
 //   global    — code/shared/infra          (account-level: DNS zone, account settings)
 //   platform  — code/projects/<platform>/shared/infra
-//   surface   — code/projects/<platform>/surfaces/infra
 //   leaf      — code/projects/<platform>/surfaces/<leaf>/infra   (e.g. website/infra/cloudflare — REAL)
 //
 // CLI: node scripts/lib/infra-registry.mjs --json [--provider <p>] [--altitude <a>]
@@ -50,6 +49,18 @@ export const INFRA = [
     altitude: "leaf",
     dir: "code/projects/web/surfaces/website/infra/cloudflare",
     order: 30,
+  },
+  // The shared api Worker's Cloudflare edge — a trimmed sibling of the website's stack
+  // (custom domain + rate-limit + WAF + bot + leaked-creds + zone hardening; no Turnstile).
+  // INERT until the api has a real zone (dev/staging on *.workers.dev); the inline guard in
+  // src/index.ts protects the Worker regardless. See code/shared/api/infra/cloudflare/main.tf.
+  {
+    name: "api",
+    provider: "cloudflare",
+    owner: "api",
+    altitude: "global",
+    dir: "code/shared/api/infra/cloudflare",
+    order: 20,
   },
   // Reserved examples — activate by adding a row + filling `<slot>/infra/<provider>/`:
   // { name: "account", provider: "cloudflare", owner: "shared", altitude: "global",

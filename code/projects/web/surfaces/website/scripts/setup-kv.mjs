@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// One-time setup for the in-app rate limiter (@indiecrafts/security `withGuard`).
+// One-time setup for the in-app rate limiter (@indiecrafts/packages-shared-security `withGuard`).
 // Creates ONE `RATE_LIMIT_KV` namespace PER ENV (like the R2 ISR buckets) so a
 // staging load-test can't burn a real prod user's rate-limit budget, then uncomments
 // + fills each block's id in wrangler.toml (base + dev share the dev namespace;

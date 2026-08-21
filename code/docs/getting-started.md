@@ -18,17 +18,13 @@ deployable surfaces:
 The site + docs are what you build and **deploy**. Full layout + the deployment rules →
 [Workspace & deployment](/shared/architecture/workspace).
 
-> The repo may also carry internal folders (`method/` · `work/`) — **private,
-> gitignored, and excluded from client hand-offs**. `pnpm build` (the app deploy)
-> never touches them.
-
 ## Run the monorepo
 
 Everything runs from the **repo root** (scripts delegate to the app via Turborepo):
 
 ```bash
 pnpm install       # installs the whole workspace (all of code/)
-pnpm dev           # http://localhost:3000  (turbo → @indiecrafts/website)
+pnpm dev           # http://localhost:3000  (turbo → @indiecrafts/web-surfaces-website)
 pnpm build         # production build → code/projects/web/surfaces/website/.next
 pnpm verify        # tsc + lint + format + contrast + react-doctor (CI gate)
 pnpm verify:quick  # tsc + lint (manual pre-PR check)
@@ -42,8 +38,7 @@ isolated from the pnpm workspace.
 ## Deploy — app + docs only
 
 The workspace installs at the **repo root**; the app builds to `code/projects/web/surfaces/website/.next`.
-**Deploy only `code/projects/web/surfaces/website` (the site) and, optionally, `docs/`** — the internal
-`method/` and `work/` folders stay private. Full guide and hosts →
+**Deploy only `code/projects/web/surfaces/website` (the site) and, optionally, `docs/`.** Full guide and hosts →
 [Workspace & deployment](/shared/architecture/workspace).
 
 ## Where to go next

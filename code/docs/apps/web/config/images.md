@@ -6,7 +6,7 @@ call an image builder or hand-write URLs — render with `next/image` and it hap
 ## How it works
 
 `next/image` never fetches the full-resolution original. A loader
-(`@indiecrafts/sanity/image`, wired via `images.loaderFile` in `next.config.ts`) rewrites
+(`@indiecrafts/packages-web-sanity/image`, wired via `images.loaderFile` in `next.config.ts`) rewrites
 each request to a CDN-sized source:
 
 ```
@@ -47,7 +47,7 @@ Local assets (`/logo.svg`, `/brand/*`), data URIs, and **SVGs** pass through unt
 ## Adding a resize-capable host
 
 If a new external image host resizes by query string, add it to `SIZED_HOSTS` in
-`code/packages/shared/sanity/src/image.ts` and to `images.remotePatterns` in `next.config.ts`.
+`code/packages/web/sanity/src/image.ts` and to `images.remotePatterns` in `next.config.ts`.
 
 ## Serving your own assets from a CDN (per env, per app)
 
@@ -88,7 +88,7 @@ the **mechanism is shared**; the **value is per-app × per-env**.
 
 ## Rule + code
 
-- Loader: [`@indiecrafts/sanity/image`](/packages/sanity) · shim:
+- Loader: [`@indiecrafts/packages-web-sanity/image`](/packages/sanity) · shim:
   `code/projects/web/surfaces/website/src/lib/sanity-image-loader.ts`.
-- Asset CDN: `site.cdnUrl` (`@indiecrafts/config`) → `assetPrefix` (`next.config.ts`); env `NEXT_PUBLIC_CDN_URL`.
+- Asset CDN: `site.cdnUrl` (`@indiecrafts/packages-shared-config`) → `assetPrefix` (`next.config.ts`); env `NEXT_PUBLIC_CDN_URL`.
 - Blog gallery lqip detail: [gallery](/modules/blog/gallery).

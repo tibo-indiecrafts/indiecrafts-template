@@ -1,7 +1,7 @@
-import { Link } from "@indiecrafts/i18n";
-import type { Locale } from "@indiecrafts/config";
-import type { Category, PostListItem } from "@indiecrafts/blog/sanity/types";
-import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import type { Locale } from "@indiecrafts/packages-shared-config";
+import type { Category, PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
+import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
 
 /**
  * Server-rendered category explorer for the /blog frontpage.

@@ -42,9 +42,9 @@
         "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
       }
     },
-    "vercel": {
+    "figma": {
       "type": "http",
-      "url": "https://mcp.vercel.com"
+      "url": "https://mcp.figma.com/mcp"
     }
   }
 }

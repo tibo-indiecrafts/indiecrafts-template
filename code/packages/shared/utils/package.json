@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/utils",
+  "name": "@indiecrafts/packages-shared-utils",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,12 +7,13 @@
     "./cn": "./src/cn.ts",
     "./error-message": "./src/error-message.ts",
     "./filename": "./src/filename.ts",
+    "./form": "./src/form.ts",
     "./format-date": "./src/format-date.ts",
     "./slugify": "./src/slugify.ts",
     "./video-embed": "./src/video-embed.ts"
   },
   "dependencies": {
-    "@indiecrafts/config": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.6.0"
   },

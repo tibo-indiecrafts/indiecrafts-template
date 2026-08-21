@@ -9,7 +9,7 @@ Maintenance takes the whole public site offline behind a branded "we'll be back"
 | **Live toggle** (recommended) | Sanity → **Paramètres du site → Indexation → Mode maintenance** | Flips on within ~1 minute, **no redeploy**  | Ops flipping the site off/on              |
 | **Hard override**             | `features.maintenance` in `apps/web/src/config/features.ts`     | On at build time, **skips the Sanity read** | Forcing maintenance during a known deploy |
 
-The proxy trips on **either** (`features.maintenance || getMaintenanceMode()`). It lives in six places: the Sanity `siteSettings.maintenanceMode` field, the cached reader `getMaintenanceMode()` (`src/lib/maintenance.ts`), the `features.maintenance` flag, the rewrite in `src/proxy.ts` (via `maintenanceRewrite` from **[`@indiecrafts/system-pages`](/packages/system-pages)**), the standalone `/maintenance` route, and the shared `Maintenance` component.
+The proxy trips on **either** (`features.maintenance || getMaintenanceMode()`). It lives in six places: the Sanity `siteSettings.maintenanceMode` field, the cached reader `getMaintenanceMode()` (`src/lib/maintenance.ts`), the `features.maintenance` flag, the rewrite in `src/proxy.ts` (via `maintenanceRewrite` from **[`@indiecrafts/packages-shared-system-pages`](/packages/system-pages)**), the standalone `/maintenance` route, and the shared `Maintenance` component.
 
 ---
 
@@ -27,8 +27,8 @@ The proxy trips on **either** (`features.maintenance || getMaintenanceMode()`). 
 
 ```ts
 // src/proxy.ts
-import { features } from "@indiecrafts/config";
-import { maintenanceRewrite } from "@indiecrafts/system-pages/proxy";
+import { features } from "@indiecrafts/packages-shared-config";
+import { maintenanceRewrite } from "@indiecrafts/packages-shared-system-pages/proxy";
 import { getMaintenanceMode } from "@/lib/maintenance";
 
 const isDown = features.maintenance || (await getMaintenanceMode()); // || short-circuits the Sanity read
@@ -69,7 +69,7 @@ Note the LLM and blog-feed endpoints (`/llms.txt`, `/llms-full.txt`, `/llms/<id>
 
 ```text
 src/app/maintenance/
-├── layout.tsx    Own <html>/<body> — imports @indiecrafts/ui-tokens/globals.css + @/lib/fonts
+├── layout.tsx    Own <html>/<body> — imports @indiecrafts/packages-shared-ui-tokens/globals.css + @/lib/fonts
 ├── page.tsx      Resolves i18n + Sanity copy, renders <Maintenance>
 └── locale.ts     Best-effort locale from the NEXT_LOCALE cookie
 ```
@@ -107,7 +107,7 @@ Keep the same keys in every locale file, translated. Two values come from Sanity
 
 ## 5. The page itself
 
-The `Maintenance` component (`@indiecrafts/system-pages`) is purely presentational — the route resolves the copy + identity and passes them as props (`statusLabel`, `title`, `body`, `contactLabel`, `name`, optional `email`). It renders a centered card: a status pill with a pulsing brand dot, the headline, the body, the optional `mailto:` line, and `name` pinned at the bottom. It's token-based, so a second app gets the same page in its own theme.
+The `Maintenance` component (`@indiecrafts/packages-shared-system-pages`) is purely presentational — the route resolves the copy + identity and passes them as props (`statusLabel`, `title`, `body`, `contactLabel`, `name`, optional `email`). It renders a centered card: a status pill with a pulsing brand dot, the headline, the body, the optional `mailto:` line, and `name` pinned at the bottom. It's token-based, so a second app gets the same page in its own theme.
 
 The pulsing dot is an honest "actively working" signal, not decoration — and the page's only motion, so it holds still under `prefers-reduced-motion` (`motion-reduce:hidden` on the ping layer).
 

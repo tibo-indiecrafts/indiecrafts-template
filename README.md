@@ -5,12 +5,9 @@ deliverable is **two folders** that mirror each other's `apps/web · modules · 
 db · infra` spine:
 
 - **`code/`** — EXECUTION: the pnpm + Turborepo workspace (the product). `apps/web` is the
-  Next.js app (`@indiecrafts/website`); `packages/ modules/ db/ infra/` are slots for growth.
+  Next.js app (`@indiecrafts/web-surfaces-website`); `packages/ modules/ db/ infra/` are slots for growth.
 - **`docs/`** — CANON: the product documentation site (VitePress), foldered like the code —
   `shared/`, `apps/web/`, `modules/ packages/ db/ infra/`.
-
-The repo may also carry private internal folders (`method/`, `work/`) — the dev framework
-and the sprint lab. They're **gitignored and never part of a client handoff**.
 
 **Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · next-intl v4 ·
 next-themes · shadcn/ui · Sanity. Workspace: pnpm + Turborepo.
@@ -21,11 +18,11 @@ The web app has its own briefs: **how to code** → [`code/projects/web/surfaces
 
 ## Getting started
 
-Run everything from the **repo root** — scripts delegate to the app (`@indiecrafts/website`) via Turborepo. The app lives at `code/projects/web/surfaces/website`.
+Run everything from the **repo root** — scripts delegate to the app (`@indiecrafts/web-surfaces-website`) via Turborepo. The app lives at `code/projects/web/surfaces/website`.
 
 ```bash
 pnpm install            # installs the whole workspace (all of code/)
-pnpm dev                # http://localhost:3000  (turbo → @indiecrafts/website)
+pnpm dev                # http://localhost:3000  (turbo → @indiecrafts/web-surfaces-website)
 pnpm build              # production build → code/projects/web/surfaces/website/.next
 pnpm verify             # tsc + lint + format:check + contrast + react-doctor (CI gate)
 pnpm verify:quick       # tsc + lint (manual pre-PR check)

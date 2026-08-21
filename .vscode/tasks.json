@@ -5,6 +5,9 @@
   // change. (VS Code also auto-detects npm scripts under the "npm" task type — this file adds the docs,
   // grouping, background panels, and problem matchers that auto-detection can't.)
   // `prepare` (husky lifecycle) is intentionally omitted — it runs on install, not on demand.
+  // Plus a few curated PER-APP tasks — label `<app>: <name>` (e.g. `website: verify:contrast`) — that
+  // have no root script. `pnpm tasks:check` guards the sync: every root script must have a task, and a
+  // task with no matching script must use the `<app>: ` prefix (else it is flagged as a stale orphan).
   "tasks": [
     // ── Dev & build ──────────────────────────────────────────────────────
     {
@@ -77,7 +80,7 @@
     // ── Quality gates ────────────────────────────────────────────────────
     {
       "label": "verify",
-      "detail": "full CI gate — tsc+lint+format+contrast+doctor+test + tags + canary",
+      "detail": "full CI gate — tsc+lint+format+contrast+doctor+test + tags + tasks + canary",
       "type": "shell",
       "command": "pnpm verify",
       "group": "build",
@@ -90,6 +93,37 @@
       "command": "pnpm verify:quick",
       "group": "build",
       "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "verify:api-guards",
+      "detail": "assert every API route adopts the shared guard",
+      "type": "shell",
+      "command": "pnpm verify:api-guards",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "tasks:check",
+      "detail": "assert .vscode/tasks.json mirrors every root package.json script",
+      "type": "shell",
+      "command": "pnpm tasks:check",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "tokens:build",
+      "detail": "regenerate design tokens (globals.css + native)",
+      "type": "shell",
+      "command": "pnpm tokens:build",
+      "problemMatcher": []
+    },
+    {
+      "label": "tokens:check",
+      "detail": "fail if generated tokens are stale",
+      "type": "shell",
+      "command": "pnpm tokens:check",
+      "group": "build",
+      "problemMatcher": []
     },
     {
       "label": "lint",
@@ -147,6 +181,28 @@
       "detail": "scan for unfilled template placeholders",
       "type": "shell",
       "command": "pnpm scan:placeholders",
+      "problemMatcher": []
+    },
+    {
+      "label": "website: verify:contrast",
+      "detail": "WCAG AA contrast on the website theme tokens (per-app)",
+      "type": "shell",
+      "command": "pnpm --filter @indiecrafts/web-surfaces-website verify:contrast",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "website: shadscan",
+      "detail": "shadcn/ui fundamentals audit — scores UX 0–100 (per-app)",
+      "type": "shell",
+      "command": "pnpm --filter @indiecrafts/web-surfaces-website shadscan",
+      "problemMatcher": []
+    },
+    {
+      "label": "website: doctor:changed",
+      "detail": "React Doctor on branch-introduced issues vs main (per-app)",
+      "type": "shell",
+      "command": "pnpm --filter @indiecrafts/web-surfaces-website doctor:changed",
       "problemMatcher": []
     },
 
@@ -339,6 +395,48 @@
       "problemMatcher": []
     },
     {
+      "label": "deploy:app:dev",
+      "detail": "deploy app — dev",
+      "type": "shell",
+      "command": "pnpm deploy:app:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:app:staging",
+      "detail": "deploy app — staging",
+      "type": "shell",
+      "command": "pnpm deploy:app:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:app:prod",
+      "detail": "deploy app — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:app:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:agent:dev",
+      "detail": "deploy agent worker — dev",
+      "type": "shell",
+      "command": "pnpm deploy:agent:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:agent:staging",
+      "detail": "deploy agent worker — staging",
+      "type": "shell",
+      "command": "pnpm deploy:agent:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:agent:prod",
+      "detail": "deploy agent worker — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:agent:prod",
+      "problemMatcher": []
+    },
+    {
       "label": "deploy:api:dev",
       "detail": "deploy api worker — dev",
       "type": "shell",
@@ -399,6 +497,27 @@
       "detail": "deploy workers — PROD",
       "type": "shell",
       "command": "pnpm deploy:workers:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:agent:dev",
+      "detail": "deploy agent worker — dev",
+      "type": "shell",
+      "command": "pnpm deploy:agent:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:agent:staging",
+      "detail": "deploy agent worker — staging",
+      "type": "shell",
+      "command": "pnpm deploy:agent:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:agent:prod",
+      "detail": "deploy agent worker — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:agent:prod",
       "problemMatcher": []
     },
     {
@@ -548,6 +667,62 @@
       "detail": "terraform output — website PROD",
       "type": "shell",
       "command": "pnpm infra:website:output:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:api:init",
+      "detail": "terraform init — api (dev workspace)",
+      "type": "shell",
+      "command": "pnpm infra:api:init",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:api:plan:dev",
+      "detail": "terraform plan — api dev",
+      "type": "shell",
+      "command": "pnpm infra:api:plan:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:api:plan:staging",
+      "detail": "terraform plan — api staging",
+      "type": "shell",
+      "command": "pnpm infra:api:plan:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:api:plan:prod",
+      "detail": "terraform plan — api PROD",
+      "type": "shell",
+      "command": "pnpm infra:api:plan:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:api:apply:dev",
+      "detail": "terraform apply — api dev",
+      "type": "shell",
+      "command": "pnpm infra:api:apply:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:api:apply:staging",
+      "detail": "terraform apply — api staging",
+      "type": "shell",
+      "command": "pnpm infra:api:apply:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:api:apply:prod",
+      "detail": "terraform apply — api PROD",
+      "type": "shell",
+      "command": "pnpm infra:api:apply:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "infra:api:output:prod",
+      "detail": "terraform output — api PROD",
+      "type": "shell",
+      "command": "pnpm infra:api:output:prod",
       "problemMatcher": []
     },
 

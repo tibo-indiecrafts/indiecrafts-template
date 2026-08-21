@@ -1,13 +1,13 @@
-import type { Tag } from "@indiecrafts/blog/sanity/types";
-import { TagCard } from "@indiecrafts/blog/user-interface/tag/components/TagCard";
+import type { Tag } from "@indiecrafts/modules-web-blog/sanity/types";
+import { TagCard } from "@indiecrafts/modules-web-blog/user-interface/tag/components/TagCard";
 import {
   Breadcrumbs,
   type Crumb,
-} from "@indiecrafts/blog/user-interface/shared/components/Breadcrumbs";
+} from "@indiecrafts/modules-web-blog/user-interface/shared/components/Breadcrumbs";
 import {
   PageHero,
   type PageHeroPill,
-} from "@indiecrafts/blog/user-interface/shared/sections/PageHero";
+} from "@indiecrafts/modules-web-blog/user-interface/shared/sections/PageHero";
 
 /**
  * Tag index page — `/blog/tag`. Sorted by post count desc so the most

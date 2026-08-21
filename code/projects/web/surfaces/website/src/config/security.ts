@@ -11,24 +11,26 @@
  * limiter, and both the KV rate-limit and Turnstile **fail open** until the operator
  * binds `RATE_LIMIT_KV` + sets `TURNSTILE_SECRET` (see
  * `code/docs/apps/web/config/security-limits.md`). App-owned (a second app ships its
- * own limits), like `features` — not the shared `@indiecrafts/config` package.
+ * own limits), like `features` — not the shared `@indiecrafts/packages-shared-config` package.
  */
+
+import { rateLimits } from "@indiecrafts/packages-shared-config";
 
 export const security = {
   /** Public newsletter subscribe — `/api/newsletter`. */
-  newsletter: { rateLimit: { limit: 5, windowSec: 600 }, bodyMax: 8000, turnstile: true },
+  newsletter: { rateLimit: rateLimits.strict, bodyMax: 8000, turnstile: true },
   /** Public waitlist join — `/api/waitlist`. */
-  waitlist: { rateLimit: { limit: 5, windowSec: 600 }, bodyMax: 8000, turnstile: true },
+  waitlist: { rateLimit: rateLimits.strict, bodyMax: 8000, turnstile: true },
+  /** Public contact form — `/api/contact` (carries a free-text message). */
+  contact: { rateLimit: rateLimits.strict, bodyMax: 12_000, turnstile: true },
   /** Public blog comment create — `/api/comments` (stored unapproved). */
-  comments: { rateLimit: { limit: 8, windowSec: 600 }, bodyMax: 12_000, turnstile: true },
+  comments: { rateLimit: rateLimits.standard, bodyMax: 12_000, turnstile: true },
   /** GDPR data-subject request — `/api/data-request`. */
-  dataRequest: {
-    rateLimit: { limit: 5, windowSec: 600 },
-    bodyMax: 8000,
-    turnstile: true,
-  },
+  dataRequest: { rateLimit: rateLimits.strict, bodyMax: 8000, turnstile: true },
   /** Double-opt-in confirm — `/api/newsletter/confirm`. The one-time token is the auth, so no Turnstile. */
-  confirm: { rateLimit: { limit: 10, windowSec: 600 }, bodyMax: 2000 },
+  confirm: { rateLimit: rateLimits.confirm, bodyMax: 2000 },
   /** One-click email moderation — `/api/comments/moderate`. Cross-site form POST, token-gated; rate-limit is defence-in-depth on the token. */
-  moderate: { rateLimit: { limit: 20, windowSec: 600 } },
+  moderate: { rateLimit: rateLimits.lenient },
+  // The AI agent moved to its own `code/shared/agent` Worker (its guard lives there); the
+  // browser calls it cross-origin with a Turnstile token — no `security.agent` entry here.
 } as const;

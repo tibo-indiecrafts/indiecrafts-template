@@ -1,15 +1,15 @@
-# @indiecrafts/workers
+# @indiecrafts/shared-workers
 
 A standalone **Cloudflare Worker** for background jobs — cron, queue consumers, and tasks that
-aren't a request in the Next app (`@indiecrafts/website`). Deployed separately, on its own schedule.
+aren't a request in the Next app (`@indiecrafts/web-surfaces-website`). Deployed separately, on its own schedule.
 
 ## Quick start
 
 ```bash
 pnpm install                                       # links the workspace deps
-pnpm --filter @indiecrafts/workers dev             # local: wrangler dev (http://localhost:8787)
-pnpm --filter @indiecrafts/workers tsc             # typecheck
-pnpm --filter @indiecrafts/workers deploy:workers:dev   # deploy to the dev Worker
+pnpm --filter @indiecrafts/shared-workers dev             # local: wrangler dev (http://localhost:8787)
+pnpm --filter @indiecrafts/shared-workers tsc             # typecheck
+pnpm --filter @indiecrafts/shared-workers deploy:workers:dev   # deploy to the dev Worker
 ```
 
 - `src/index.ts` — `fetch` (a `/health` probe) + `scheduled` (cron). Put the real job in `scheduled`.

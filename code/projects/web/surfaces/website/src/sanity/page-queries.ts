@@ -1,5 +1,5 @@
 import { defineQuery } from "next-sanity";
-import { MODULES_FRAGMENT } from "@indiecrafts/page-builder/sanity/queries";
+import { MODULES_FRAGMENT } from "@indiecrafts/packages-web-page-builder/sanity/queries";
 
 /**
  * A generic `page` document by slug + locale, with its `sections[]` resolved

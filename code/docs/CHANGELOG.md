@@ -2,8 +2,8 @@
 
 Changes to the **documentation site itself** (`code/projects/docs/`): pages added, removed, or moved;
 structure and sidebar; the docs build. **Not** product features — those are the app's
-history ([`code/projects/web/CHANGELOG.md`](../web/CHANGELOG.md)); the repo-wide
-roll-up is the [root changelog](../../../CHANGELOG.md).
+history ([`code/projects/web/CHANGELOG.md`](../projects/web/surfaces/website/CHANGELOG.md)); the repo-wide
+roll-up is the [root changelog](../../CHANGELOG.md).
 
 Format follows [Keep a Changelog](https://keepachangelog.com).
 
@@ -11,6 +11,94 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **`tasks:check` documented in `scripts.md`** (both the Quality-gates and repo-root-scripts tables) —
+  the new guard that keeps `.vscode/tasks.json` in sync with the root `package.json` scripts (per-app
+  tasks use an `<app>: ` label). It runs in `verify` + CI and is nudged by the change-hygiene hook.
+- **Three agent hooks — CLAUDE.md hygiene · security scan · grill-plan** (`on-the-fly-checks.md` tiers
+  table + new sections). **`claude-hygiene.mjs`** (`Stop`, committed) proposes a brief review when a code
+  unit's public surface grew (a new source file) but its `.claude/CLAUDE.md` didn't, or a unit has no
+  brief — never edits, just proposes concise. **`security-scan.sh`** (`Stop`, committed) is the local
+  Snyk/SonarQube-lite: report-first tiers — a sensitive-file agent nudge (no install), **semgrep** over the
+  repo ruleset `.semgrep.yml`, **gitleaks** secrets, and **`pnpm audit`** on lockfile change (each guarded,
+  the real SAST gate stays in CI). **`grill-plan.sh`** (`PreToolUse ExitPlanMode`, personal) fires an
+  imperative nudge to hard-grill a plan with the `grill-me` skill before it's presented; `/grill-plan` +
+  `/brief` are the companion commands, and `.claude/README.md` documents the whole extension contract.
+  **Why:** keep briefs current, shift security feedback left, and pressure-test plans — all advisory, so
+  the blocking gates stay `guard` + `change-hygiene`.
+- **Two authentication pages + sidebar.** `shared/architecture/auth.md` (the cross-app Clerk model —
+  bricks, role, per-platform SDK, suspicious-login stance) and `apps/web/config/auth.md` (the Next
+  provider + middleware wiring), each linked in `.vitepress/config.mts` under "Shared · Architecture" and
+  "Web app · Configuration & architecture". `apps/web/config/auth.md` later gained **Sign-in UI +
+  redirects** (the shared `<SignInView>`, the redirect precedence + open-redirect guard) and **Session
+  sharing** (subdomains, free; satellite as the paid alternative).
+
+- **Security hardening (Cloudflare) page + sidebar.** New `apps/web/config/security-hardening.md` — the
+  Cloudflare-native security posture (WAF · Bot Fight Mode · Block AI Bots · Free Managed Ruleset ·
+  leaked-credentials · rate-limit · Turnstile, free-vs-paid), the Terraform mapping, and the app-level
+  `security_events` EU D1 for what the edge can't see. Linked under "Web app · Configuration & architecture".
+- **Data retention + audit (GDPR) page + sidebar.** New `apps/web/config/data-retention.md` — the
+  record-of-processing (EU D1 audit + session log, 90-day retention, hashed IP, legitimate interest), the
+  operator's **privacy-policy disclosure checklist**, and the erasure procedure. Linked under "Web app ·
+  Configuration & architecture".
+
+### Changed
+
+- **Dropped every `method/` + `work/` reference** (those folders were removed from the repo). The
+  `page-builder.md` "Adding a block" section is now a self-contained checklist (was a pointer to the
+  deleted method workflow); the workspace / getting-started / project-organization pages no longer
+  mention the private folders; `on-the-fly-checks.md` reflects that the hooks live only as the local
+  gitignored `.claude/hooks/*` (the method installer is gone). Blog docs repoint the add-block how-to to
+  `packages/page-builder`.
+
+### Added
+
+- **Three convention hooks + Figma MCP.** New `PostToolUse` hooks that enforce documented rules eslint
+  can't: **`config-first.mjs`** (cards raw color literals + hardcoded URLs on components — the config-first
+  NEVERs), **`i18n-parity.mjs`** (message-key parity vs `en` on every surface, not just the website's
+  test), and **`tokens-fresh.mjs`** now **wired** (auto-`pnpm tokens:build` when `tokens.json` changes;
+  also fixed its stale package filter). MCP: added the remote **Figma** Dev-Mode MCP (`mcp.figma.com/mcp`)
+  for the figma-handoff workflow and **removed `vercel`** (this repo deploys to Cloudflare, not Vercel).
+  **Why:** make the config-first / i18n / token-freshness disciplines live + deterministic instead of
+  agent-remembered, and align the MCP set with the actual stack. Docs: `on-the-fly-checks.md` +
+  `environment.md`.
+- **Expo / React Native tooling** for the `mobile` surface (`environment.md` + the mobile brief). The
+  official **Expo plugin** (`claude plugin install expo@claude-plugins-official`) brings the Expo Skills
+  (`expo-router` · `expo-native-ui` · `expo-design-system` · `expo-tailwind-setup` · `expo-upgrade` ·
+  `eas-*`) + the Expo MCP for version-correct SDK-52 docs. RN hooks: the on-the-fly lint hook now **skips
+  React Native** files (`ui-native` + the `.../src/native/` forks) — the Next + jsx-a11y config is wrong
+  for RN, which lints with **`npx expo lint`** instead — and the Stop **review-nudge** prompts
+  `expo lint` + `expo-doctor` (+ the Expo skills) when `mobile/**` changes. **Why:** give the RN surface
+  real, RN-appropriate on-the-fly feedback + current-SDK knowledge, instead of misapplying the website's
+  web-only rules.
+- **Build-phase feedback ladder filled** (`apps/web/setup/on-the-fly-checks.md` + `environment.md`).
+  The `a11y-check` hook now surfaces the **full eslint config** as edit-tier cards (a11y is one subset;
+  also next core-web-vitals, typescript-eslint, the `next/link` import ban) — "lint on the fly." Added
+  the **`typescript-lsp` plugin** as the "types on the fly" tier (per-file `tsc` is impossible in a
+  whole-program monorepo, so live type diagnostics come from the LSP plugin). Added
+  **`@total-typescript/ts-reset`** as the type floor across all 9 projects (`Response.json()` →
+  `unknown`, `.filter(Boolean)` strips falsy — it caught two real latent `possibly-undefined` bugs).
+  **Why:** shift correctness feedback left to the moment of editing, on a foundation that makes the
+  trust-boundary parsing safe by default.
+- **Gate docs slimmed** (root `CLAUDE.md`, website brief + `rules/{self-review,figma-handoff}`). Dropped
+  the "run `pnpm verify:quick` before every PR" manual nag — the **commit hook + CI** still enforce
+  `tsc` + lint (unchanged), and the live lint cards + LSP plugin give that feedback continuously.
+  **Why:** stop telling humans to run by hand what the hooks + commit + CI already cover.
+- **Marketing bundle-size budget** — `scripts/check-bundle-size.mjs` (`pnpm size`) budgets the landing
+  route's **First-Load JS excluding the embedded Sanity Studio** (whose 4.7 MB bundle would make an
+  all-chunks budget meaningless), read from the production build manifest and wired into the CI `build`
+  job after `build:cf`. Ships a **coherent default budget (220 kB gz** — the recognized ~170 kB
+  First-Load-JS target + framework headroom); **report-first** (prints the live number, never blocks)
+  until you tighten to `measured + ~15%` and add `--enforce` to make it a hard gate. The Core Web Vitals half stays the
+  gstack `/benchmark` nudge (needs a live URL). **Why:** catch JS-weight regressions on the marketing
+  site without a browser, with a metric that isn't polluted by the Studio.
+- **Auto-review-trigger hooks documented** in `apps/web/setup/on-the-fly-checks.md` — two new advisory
+  hooks that nudge the matching gstack review skill: `review-nudge.sh` (a `Stop` diff scan → `/review` ·
+  `/codex` · `/cso` · `/qa`, wired in committed `settings.json`, gstack-aware so it degrades to a generic
+  nudge without gstack) and `plan-review-nudge.sh` (a `PreToolUse ExitPlanMode` nudge → `/autoplan` ·
+  `/plan-eng-review`, wired in gitignored `settings.local.json`). **Why:** surface the right review at
+  the right moment (large/sensitive diff, plan finalize) without another blocking gate — a hook can only
+  advise, the skill still runs in the main thread. Added the **plan** tier + the review-nudge to the stop
+  tier in the tiers table.
 - **Design critique (ordered) reference page.** New `apps/web/design/design-critique.md` under "Web app ·
   Design & content" — the four-lens ordered critique (accessibility → visual hierarchy → content →
   interaction-states), why the order matters, ready prompts, and ordered-vs-parallel guidance. Also added
@@ -272,7 +360,7 @@ newsletter`, the `destination` modes (sanity / provider / both), the submit flow
 - **Component docs colocated into the `@indiecrafts/ui` package.** The 61 per-primitive
   reference pages moved `apps/web/design/components/*.md` → `code/packages/ui/src/<name>.md`
   (beside each `.tsx`); they leave the VitePress site and are now indexed from a
-  `### Component catalog` in [`DESIGN.md`](../code/packages/ui-tokens/DESIGN.md).
+  `### Component catalog` in [`DESIGN.md`](../packages/shared/ui-tokens/DESIGN.md).
 - **Blog docs relocated** `apps/web/features/blog/` → `modules/blog/` (6 guides + index),
   matching the code move to `code/modules/blog/`; inbound links, sidebar, top-nav repointed.
 - Docs site moved from `code/docs/` to the repo-root `docs/`, mirroring the code spine.

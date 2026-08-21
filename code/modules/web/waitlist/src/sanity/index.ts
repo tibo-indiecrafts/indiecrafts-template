@@ -1,4 +1,4 @@
-import type { SanityModule } from "@indiecrafts/sanity/module";
+import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import { schemaTypes } from "./schema";
 import { waitlistStructure } from "./structure";
 import { emailGroups } from "./email";

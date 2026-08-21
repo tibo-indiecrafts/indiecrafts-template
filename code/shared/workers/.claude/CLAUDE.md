@@ -1,4 +1,4 @@
-# @indiecrafts/workers — Cloudflare Worker (background jobs)
+# @indiecrafts/shared-workers — Cloudflare Worker (background jobs)
 
 Auto-loads when you work under `code/shared/workers/**`. Platform-wide rules live in the root
 `CLAUDE.md`; this is the app's _how to code_.
@@ -11,8 +11,8 @@ DESIGN.md.**
 **Stack:** Cloudflare Workers · wrangler · TypeScript. The skeleton logs with `console` (captured by
 Workers Logs) and has **no shared deps**. When a job needs shared code, add the brick + `@types/node`
 (the shared bricks are isomorphic — they guard `process`/`window`, so a Worker-only tsconfig needs
-`node` + `dom` type libs, or wrap the brick behind a thin helper). `@indiecrafts/logger` is Workers-safe
-(structured, edge), `@indiecrafts/email` sends digests. **Never imports another app** (deps point down);
+`node` + `dom` type libs, or wrap the brick behind a thin helper). `@indiecrafts/packages-shared-logger` is Workers-safe
+(structured, edge), `@indiecrafts/packages-web-email` sends digests. **Never imports another app** (deps point down);
 bricks are consumed as source (wrangler/esbuild bundles the TS).
 
 ## Layout
@@ -25,11 +25,11 @@ bricks are consumed as source (wrangler/esbuild bundles the TS).
 
 ## Rules
 
-- **Run from the repo root** — `pnpm --filter @indiecrafts/workers <script>`; root delegators exist
+- **Run from the repo root** — `pnpm --filter @indiecrafts/shared-workers <script>`; root delegators exist
   (`deploy:workers:<env>`, `test:workers`), mirroring `deploy:website:*`.
-- **Deploy:** `deploy:workers:<env>` → the shared `scripts/deploy-worker.mjs workers <env>` (rename
+- **Deploy:** `deploy:workers:<env>` → the shared `shared/scripts/deploy/worker.mjs workers <env>` (rename
   guard + prod-confirm + `wrangler deploy --env <env>`). **Tail:** `tail:<env>`. **Typegen:** `cf-typegen`.
-- **Connectivity:** `node scripts/setup-bindings.mjs workers <env> <kv|d1|queue> <BINDING>` provisions +
+- **Connectivity:** `node shared/scripts/infra/bindings.mjs workers <env> <kv|d1|queue> <BINDING>` provisions +
   prints the `wrangler.toml` block. **Secrets:** `wrangler secret put <NAME> --env <env>` — never in
   `wrangler.toml`.
 - **Test:** colocated `src/index.test.ts` runs in **workerd** via `@cloudflare/vitest-pool-workers`
@@ -40,6 +40,6 @@ bricks are consumed as source (wrangler/esbuild bundles the TS).
 
 **Compilable skeleton — the structure + a health-check test are wired; the job isn't.** Fill in
 `scheduled` (logic in a brick), bind what it needs. **Platform class:** `worker-cf`; it's a row in
-[`scripts/lib/apps.mjs`](../../../../../scripts/lib/apps.mjs), so CI builds + deploys it from the registry — no
-per-app workflow to add. Full guide → [`code/docs/apps/workers/`](../../../../docs/apps/workers/index.md); deploy
-model → [`code/docs/shared/architecture/platform-deploy.md`](../../../../docs/shared/architecture/platform-deploy.md).
+[`scripts/lib/apps.mjs`](../../../shared/scripts/lib/apps.mjs), so CI builds + deploys it from the registry — no
+per-app workflow to add. Full guide → [`code/docs/apps/workers/`](../../../docs/apps/workers/index.md); deploy
+model → [`code/docs/shared/architecture/platform-deploy.md`](../../../docs/shared/architecture/platform-deploy.md).

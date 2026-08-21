@@ -5,7 +5,7 @@ declared in a registry and live at the altitude + kind that fits. This folder is
 conventions; the actual instances live at their altitude slots. **What it is** → `code/docs/db/`.
 
 **Stack:** multi-kind — `d1` · `kv` (Cloudflare) · `postgres` · `supabase` · `sanity` (content). Registry:
-`scripts/lib/databases.mjs`. Runners: `scripts/db-migrate.mjs` + `scripts/backup-db.mjs` (dispatch on `kind`).
+`scripts/lib/databases.mjs`. Runners: `shared/scripts/data/migrate.mjs` + `shared/scripts/data/backup.mjs` (dispatch on `kind`).
 
 ## Conventions
 
@@ -22,6 +22,6 @@ conventions; the actual instances live at their altitude slots. **What it is** �
   migrate → contract for renames/drops (D1 has no down-migrations).
 - **Content is Sanity, not D1** — `kind: "sanity"`, one dataset per client, one hub Studio. Don't duplicate
   Sanity content into D1 — one source of truth per kind of data.
-- **Back up before destructive migrations** (`backup-db.mjs`; D1 Time Travel restores 30 days). Never commit
+- **Back up before destructive migrations** (`data/backup.mjs`; D1 Time Travel restores 30 days). Never commit
   real data; never log or URL-expose PII.
 - Log schema changes in this area's own `CHANGELOG.md` (create with the first migration); roll up to root.

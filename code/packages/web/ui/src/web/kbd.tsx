@@ -1,4 +1,4 @@
-import { cn } from "@indiecrafts/utils/cn";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   return (

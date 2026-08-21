@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/ui-tokens",
+  "name": "@indiecrafts/packages-shared-ui-tokens",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,6 +11,7 @@
   "exports": {
     "./globals.css": "./src/globals.css",
     "./typeset.css": "./src/typeset.css",
+    "./nativewind.css": "./src/generated/nativewind.css",
     "./native": "./src/native/tokens.ts",
     "./hex": "./src/generated/hex.ts",
     "./tokens.json": "./src/shared/tokens.json"

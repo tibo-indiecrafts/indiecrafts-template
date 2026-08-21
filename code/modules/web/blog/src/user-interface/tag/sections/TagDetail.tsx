@@ -1,11 +1,11 @@
-import type { Locale } from "@indiecrafts/config";
-import type { PostListItem, Tag } from "@indiecrafts/blog/sanity/types";
-import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
-import { Pager } from "@indiecrafts/blog/user-interface/shared/components/Pager";
+import type { Locale } from "@indiecrafts/packages-shared-config";
+import type { PostListItem, Tag } from "@indiecrafts/modules-web-blog/sanity/types";
+import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
+import { Pager } from "@indiecrafts/modules-web-blog/user-interface/shared/components/Pager";
 import {
   Breadcrumbs,
   type Crumb,
-} from "@indiecrafts/blog/user-interface/shared/components/Breadcrumbs";
+} from "@indiecrafts/modules-web-blog/user-interface/shared/components/Breadcrumbs";
 
 /**
  * Tag detail section — `/blog/tag/[slug]`. Header card shows the tag

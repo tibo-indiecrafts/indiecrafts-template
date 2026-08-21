@@ -28,7 +28,7 @@ pnpm infra:website:output:prod     # read outputs (Turnstile keys)
 ```
 
 Needs a **scoped** `CLOUDFLARE_API_TOKEN` (Zone: DNS/Cache/WAF edit · Account: Workers/Turnstile edit).
-`scripts/infra.mjs` selects a Terraform **workspace per env** (state isolated per env).
+`shared/scripts/infra/run.mjs` selects a Terraform **workspace per env** (state isolated per env).
 
 ## Rules
 

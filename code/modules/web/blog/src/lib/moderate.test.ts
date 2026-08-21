@@ -11,7 +11,7 @@ const { fetch, patch, set, unset, commit, del } = vi.hoisted(() => {
   return { fetch, patch, set, unset, commit, del };
 });
 
-vi.mock("@indiecrafts/sanity/write", () => ({
+vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
   writeClient: { fetch, patch, delete: del },
 }));
 

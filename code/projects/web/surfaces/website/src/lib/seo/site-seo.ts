@@ -10,8 +10,8 @@
 
 import { cache } from "react";
 import { getCurrentEnvironment, type Locale } from "@/config";
-import { logger } from "@indiecrafts/logger";
-import { client } from "@indiecrafts/sanity/client";
+import { logger } from "@indiecrafts/packages-shared-logger";
+import { client } from "@indiecrafts/packages-web-sanity/client";
 import {
   blogSeoQuery,
   homeSeoQuery,
@@ -123,7 +123,7 @@ export type SiteSettings = {
   analytics: { googleAnalyticsId?: string; requireCookieConsent?: boolean };
   globalSchemas: GlobalSchemaEntry[];
   /** Which color-theme modes the site offers (overrides the `themeConfig` code default). */
-  themeModes?: { light?: boolean; dark?: boolean; system?: boolean; forced?: string };
+  themeModes?: { light?: boolean; dark?: boolean; forced?: string };
   /** Editor overrides for display toggles — `false` hides; unset = the code `features.*` default. */
   showLocaleSwitcher?: boolean;
   showStructuredData?: boolean;
@@ -329,7 +329,6 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
         ? {
             light: data.themeModes.light ?? undefined,
             dark: data.themeModes.dark ?? undefined,
-            system: data.themeModes.system ?? undefined,
             forced: data.themeModes.forced ?? undefined,
           }
         : undefined,

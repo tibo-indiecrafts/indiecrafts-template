@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
-import { withGuard } from "@indiecrafts/security/guard";
-import { subscribe } from "@indiecrafts/newsletter/lib/newsletter";
-import { getConsentPolicyVersion } from "@indiecrafts/compliance/sanity/policy-version";
+import { withGuard } from "@indiecrafts/packages-shared-security/guard";
+import { subscribe } from "@indiecrafts/modules-web-newsletter/lib/newsletter";
+import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sanity/policy-version";
 
 /**
  * Public newsletter signup. `withGuard` hardens the boundary (same-site origin,

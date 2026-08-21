@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/locale-suggest",
+  "name": "@indiecrafts/packages-web-locale-suggest",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,10 +11,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@indiecrafts/config": "workspace:*",
-    "@indiecrafts/i18n": "workspace:*",
-    "@indiecrafts/sanity": "workspace:*",
-    "@indiecrafts/ui": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-web-i18n": "workspace:*",
+    "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@indiecrafts/packages-web-ui": "workspace:*",
     "@sanity/icons": "^3.7.4",
     "next-sanity": "^13.3.3",
     "sanity": "^5.31.1"

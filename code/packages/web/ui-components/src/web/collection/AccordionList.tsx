@@ -1,5 +1,5 @@
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import type { AccordionListModule } from "@indiecrafts/ui-components/shared/types";
+import type { AccordionListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { RichTitle } from "../RichTitle";
 import { ModuleSection } from "../layout/ModuleSection";
 

@@ -10,7 +10,7 @@ const { fetch, create, notifyNewComment } = vi.hoisted(() => ({
   notifyNewComment: vi.fn(async () => undefined),
 }));
 
-vi.mock("@indiecrafts/sanity/write", () => ({
+vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
   writeClient: { fetch, create },
 }));
 vi.mock("./notify-comment", () => ({ notifyNewComment }));

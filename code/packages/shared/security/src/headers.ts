@@ -1,4 +1,4 @@
-import type { Environment } from "@indiecrafts/config";
+import type { Environment } from "@indiecrafts/packages-shared-config";
 import { buildCsp, type CspHosts } from "./csp";
 
 /** A Next `headers()` rule (kept as a plain shape — the brick imports no Next types). */

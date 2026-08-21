@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@indiecrafts/ui/web/button";
-import { CommentForm } from "@indiecrafts/blog/user-interface/post/components/CommentForm";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { CommentForm } from "@indiecrafts/modules-web-blog/user-interface/post/components/CommentForm";
 
 /**
  * Per-comment "Reply" toggle — reveals a compact `<CommentForm>` that threads

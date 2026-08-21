@@ -1,8 +1,8 @@
-import type { TranslatedPathResolver } from "@indiecrafts/i18n";
+import type { TranslatedPathResolver } from "@indiecrafts/packages-web-i18n";
 
 /**
  * The app's content-route → translated-path resolver, injected into the shared
- * locale switcher (`@indiecrafts/i18n`) via `LocaleSwitchProvider`. Keeps the blog
+ * locale switcher (`@indiecrafts/packages-web-i18n`) via `LocaleSwitchProvider`. Keeps the blog
  * route taxonomy + the `/api/i18n/translated-slug` endpoint in the APP, not the
  * foundation shim. Returns the target-locale path (or `/` homepage) for a content
  * detail route whose slug differs per language; `null` for anything else (→ the

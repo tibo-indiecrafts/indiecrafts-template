@@ -1,8 +1,8 @@
 import "server-only";
 
 import { cache } from "react";
-import { logger } from "@indiecrafts/logger";
-import { client } from "@indiecrafts/sanity/client";
+import { logger } from "@indiecrafts/packages-shared-logger";
+import { client } from "@indiecrafts/packages-web-sanity/client";
 import { consentPolicyVersionQuery } from "./queries";
 
 /**

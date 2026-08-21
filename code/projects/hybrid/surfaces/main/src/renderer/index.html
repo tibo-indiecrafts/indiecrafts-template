@@ -3,16 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Renderer runs Chromium; keep a strict CSP (no remote scripts) — the bridge
-         is the preload API, not network access. -->
+    <!-- Renderer runs Chromium; keep a strict CSP. `'self'` is the only origin for
+         scripts/connections EXCEPT Clerk's domains, which are required for sign-in
+         (ClerkJS + the Frontend API) — scoped to Clerk only, so a compromised renderer
+         still can't reach an arbitrary host. For a PROD Clerk instance on a custom
+         domain, add `https://clerk.<your-domain>` to script-src + connect-src.
+         ponytail: bundling `@clerk/clerk-js` locally would drop the Clerk script-src
+         entry (self-hosted), tightening this further — a follow-up if it's worth it. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; style-src 'self' 'unsafe-inline'"
+      content="default-src 'self'; script-src 'self' https://*.clerk.accounts.dev https://challenges.cloudflare.com; connect-src 'self' https://*.clerk.accounts.dev; img-src 'self' data: https://img.clerk.com https://*.clerk.accounts.dev; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; frame-src https://challenges.cloudflare.com"
     />
     <title>indiecrafts — desktop</title>
   </head>
   <body>
-    <main id="app">Loading…</main>
-    <script type="module" src="./src/renderer.ts"></script>
+    <div id="app">Loading…</div>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

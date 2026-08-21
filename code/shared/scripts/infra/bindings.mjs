@@ -25,9 +25,9 @@ if (
   process.exit(1);
 }
 
-const pkg = `@indiecrafts/${app}`;
-const projectDir =
-  APPS.find((a) => a.slug === app)?.dir ?? `code/projects/${app}`;
+const appRow = APPS.find((a) => a.slug === app);
+const pkg = appRow?.pkg ?? `@indiecrafts/${app}`;
+const projectDir = appRow?.dir ?? `code/projects/${app}`;
 const resource = `${binding.toLowerCase()}-${env}`;
 const create = {
   kv: ["kv", "namespace", "create", `${binding}_${env}`],

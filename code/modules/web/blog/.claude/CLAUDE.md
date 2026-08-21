@@ -1,6 +1,6 @@
-# @indiecrafts/blog — self-contained blog + page-builder
+# @indiecrafts/modules-web-blog — self-contained blog + page-builder
 
-Auto-loads under `code/modules/web/blog/**`. Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (public surface) and `features.studio` (editing) — both app-owned, injected into the module via `configureBlog` (`lib/config.ts`). Builds on the shared Sanity infra `@indiecrafts/sanity` (`code/docs/packages/sanity.md`). Human docs → `code/docs/modules/blog/`.
+Auto-loads under `code/modules/web/blog/**`. Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (public surface) and `features.studio` (editing) — both app-owned, injected into the module via `configureBlog` (`lib/config.ts`). Builds on the shared Sanity infra `@indiecrafts/packages-web-sanity` (`code/docs/packages/sanity.md`). Human docs → `code/docs/modules/blog/`.
 
 **Host message contract** — the module renders chrome copy from the **app's** `messages/<locale>.json`, so a host app MUST provide the `pages.blog.*` namespace (~25 keys incl. `series.*`, `share.*`, `minRead`, `onThisPage`, `related`, `by`, …) and `nav.blog` (the breadcrumb root). A missing key throws at render — declare these when mounting the blog island in a second app.
 
@@ -8,15 +8,15 @@ Auto-loads under `code/modules/web/blog/**`. Self-contained Sanity-backed blog +
 
 ## Layout
 
-- `user-interface/` — the blog's UI, organized by route like `src/user-interface/`: `blog/` (frontpage), `post/` (single post), `author/`, `category/`, `tag/` — each split into `sections/` (big views + blocks), `components/` (small: cards, TOC, badges), `layout/` (page shells, e.g. `post/layout/DefaultPostLayout`) as needed. Multi-page pieces live in `shared/` (`sections/PageHero`, `components/{BlogCard,Breadcrumbs}`); the shared **`FeaturedMedia`** in `@indiecrafts/ui-components` (`renderers/`) renders a cover **image or inline-playable video** in one structure (no dialog — plays in place), used by the post hero, blog frontpage, and every card — `parseVideoEmbed` (from `@indiecrafts/utils`) resolves `metadata.videoUrl` inside it. `renderers/` holds the 3 blog-specific module renderers (`blog-index · blog-post-list · blog-post-content`) + `ModuleRenderer` (composes `BLOCK_RENDERERS` from `@indiecrafts/ui-components` with the 3 blog dispatchers); the 16 generic renderers live in `@indiecrafts/ui-components`.
+- `user-interface/` — the blog's UI, organized by route like `src/user-interface/`: `blog/` (frontpage), `post/` (single post), `author/`, `category/`, `tag/` — each split into `sections/` (big views + blocks), `components/` (small: cards, TOC, badges), `layout/` (page shells, e.g. `post/layout/DefaultPostLayout`) as needed. Multi-page pieces live in `shared/` (`sections/PageHero`, `components/{BlogCard,Breadcrumbs}`); the shared **`FeaturedMedia`** in `@indiecrafts/packages-web-ui-components` (`renderers/`) renders a cover **image or inline-playable video** in one structure (no dialog — plays in place), used by the post hero, blog frontpage, and every card — `parseVideoEmbed` (from `@indiecrafts/packages-shared-utils`) resolves `metadata.videoUrl` inside it. `renderers/` holds the 3 blog-specific module renderers (`blog-index · blog-post-list · blog-post-content`) + `ModuleRenderer` (composes `BLOCK_RENDERERS` from `@indiecrafts/packages-web-ui-components` with the 3 blog dispatchers); the 17 generic renderers live in `@indiecrafts/packages-web-ui-components`.
 - `sanity/` — `schema/` + `queries.ts` + `types.ts` + `structure.ts` (Studio desk) + `portable-to-markdown.ts`
 - `lib/route-gate.ts` — `requireBlogRoute(page)` (page components) / `isBlogRouteEnabled(page)` (route handlers) / `isRssEnabled()`. Each folds in the flag **and** `page.enabled`, so a new route can't drift by checking only one.
-- `emails/` — the blog's transactional templates (`comment-notification`), rendering via `@indiecrafts/email`'s `renderEmailLayout`. The blog owns its email end-to-end (group in `sanity/`, template here, send in `lib/notify-comment.ts`).
+- `emails/` — the blog's transactional templates (`comment-notification`), rendering via `@indiecrafts/packages-web-email`'s `renderEmailLayout`. The blog owns its email end-to-end (group in `sanity/`, template here, send in `lib/notify-comment.ts`).
 
 ## Schemas (`sanity/schema/`)
 
-The generic page-builder (16 blocks + `blockContent`/`link`/`cta` + `quote`/`person`) now lives in
-**`@indiecrafts/page-builder`**. The blog owns only its own docs + its 3 blog-specific blocks.
+The generic page-builder (17 blocks + `blockContent`/`link`/`cta` + `quote`/`person`) now lives in
+**`@indiecrafts/packages-web-page-builder`**. The blog owns only its own docs + its 3 blog-specific blocks.
 
 | Surface      | Documents                                                         | Objects     |
 | ------------ | ----------------------------------------------------------------- | ----------- |
@@ -25,18 +25,18 @@ The generic page-builder (16 blocks + `blockContent`/`link`/`cta` + `quote`/`per
 
 ## Page-builder modules
 
-- **The 16 generic blocks** (hero · feature-grid · pricing · callout · card-list · gallery ·
+- **The 17 generic blocks** (hero · feature-grid · pricing · callout · card-list · gallery ·
   person-list · prose · stat-list · step-list · quote-list · accordion-list · custom-html ·
-  newsletter · waitlist · lead-magnet) — schemas in `@indiecrafts/page-builder`, renderers in
-  `@indiecrafts/ui-components`. Adding one → `method/apps/web/workflows/add-page-builder-block.md`.
+  newsletter · waitlist · lead-magnet · contact) — schemas in `@indiecrafts/packages-web-page-builder`, renderers in
+  `@indiecrafts/packages-web-ui-components`. Adding one → `code/docs/packages/page-builder.md` §"Adding a block".
 - **3 blog-specific** (`postModules`-only): `blog-index`, `blog-post-content`, `blog-post-list` —
   schema + renderer here, composed by `user-interface/renderers/ModuleRenderer.tsx` on top of the
   generic `BLOCK_RENDERERS`.
 
-The blog composes the generic `MODULES_FRAGMENT` (`@indiecrafts/page-builder`) + its own
+The blog composes the generic `MODULES_FRAGMENT` (`@indiecrafts/packages-web-page-builder`) + its own
 `blog-post-list` projection in `sanity/queries.ts`.
 
-Field **legends** (every `title` + `description` an editor sees) are written for non-technical editors — plain words, no jargon. Follow [`.claude/rules/sanity-legends.md`](../../../../projects/web/.claude/rules/sanity-legends.md).
+Field **legends** (every `title` + `description` an editor sees) are written for non-technical editors — plain words, no jargon. Follow [`.claude/rules/sanity-legends.md`](../../../../projects/web/surfaces/website/.claude/rules/sanity-legends.md).
 
 ## Per-post layout + extras
 
@@ -47,7 +47,7 @@ Field **legends** (every `title` + `description` an editor sees) are written for
 
 ## Studio
 
-Embedded catch-all at `src/app/studio/[[...tool]]/page.tsx` with its own root layout (sits outside `[locale]/`, so needs its own `<html>`/`<body>`). The desk (`sanity/structure.ts`) groups Blog (singleton + posts/authors/categories/tags/series), two top-level reference domains **Témoignages** (`quote`) + **Équipe** (`person`) — now owned by `@indiecrafts/page-builder` (the generic entities its blocks reference; a future release generalizes them to `testimonial`/`team`), Commentaires, and the core **SEO & métadonnées** section (`seoStructureItem` from `@/sanity/structure` — `siteSettings` + `siteMeta.<locale>`).
+Embedded catch-all at `src/app/studio/[[...tool]]/page.tsx` with its own root layout (sits outside `[locale]/`, so needs its own `<html>`/`<body>`). The desk (`sanity/structure.ts`) groups Blog (singleton + posts/authors/categories/tags/series), two top-level reference domains **Témoignages** (`quote`) + **Équipe** (`person`) — now owned by `@indiecrafts/packages-web-page-builder` (the generic entities its blocks reference; a future release generalizes them to `testimonial`/`team`), Commentaires, and the core **SEO & métadonnées** section (`seoStructureItem` from `@/sanity/structure` — `siteSettings` + `siteMeta.<locale>`).
 
 ## Gating
 

@@ -1,6 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { BlockContentIcon } from "@sanity/icons";
-import { MODULE_TYPES } from "@indiecrafts/page-builder/sanity/schema/modules";
+import { MODULE_TYPES } from "@indiecrafts/packages-web-page-builder/sanity/schema/modules";
 import { BLOG_MODULE_TYPES } from "../modules";
 
 // The per-post layout can compose the generic blocks + the 3 blog-specific ones.

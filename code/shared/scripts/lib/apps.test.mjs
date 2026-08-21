@@ -42,7 +42,7 @@ test("deployable() defaults to Cloudflare apps, in deploy order", () => {
   assert.ok(cf.every(isCloudflare), "default set must be Cloudflare-only");
   assert.deepEqual(
     cf.map((a) => a.slug),
-    ["api", "cron", "workers", "website", "admin"],
+    ["agent", "api", "cron", "workers", "website", "admin", "app"],
   );
 });
 
@@ -62,19 +62,20 @@ test("ENVS are the three Cloudflare deploy envs", () => {
   assert.deepEqual(ENVS, ["dev", "staging", "prod"]);
 });
 
-test("resourceName = <prefix>-<env>-<platform>-<slug> (env-first, tree-derived)", () => {
-  // Surfaces carry their platform; shared services carry `shared`.
+test("resourceName = <prefix>-<env>-<folder-tail> (env-first, tree-derived)", () => {
+  // Tail = dir under code/, minus a leading projects/, dash-joined. Surfaces
+  // carry their platform + `surfaces`; shared services stay flat (`shared`).
   assert.equal(
     resourceName("website", "prod", "indiecrafts"),
-    "indiecrafts-prod-web-website",
+    "indiecrafts-prod-web-surfaces-website",
   );
   assert.equal(
     resourceName("website", "dev", "indiecrafts"),
-    "indiecrafts-dev-web-website",
+    "indiecrafts-dev-web-surfaces-website",
   );
   assert.equal(
     resourceName("admin", "staging", "indiecrafts"),
-    "indiecrafts-staging-web-admin",
+    "indiecrafts-staging-web-surfaces-admin",
   );
   assert.equal(
     resourceName("api", "prod", "indiecrafts"),
@@ -94,10 +95,14 @@ test("resourceName rejects an unknown slug, bad env, or missing prefix", () => {
 
 test("every Cloudflare app resolves a name for each env (no throw)", () => {
   for (const a of deployable()) {
+    const tail = a.dir
+      .replace(/^code\//, "")
+      .replace(/^projects\//, "")
+      .replaceAll("/", "-");
     for (const env of ENVS) {
-      assert.match(
+      assert.equal(
         resourceName(a.slug, env, "indiecrafts"),
-        new RegExp(`^indiecrafts-${env}-${a.platform}-${a.slug}$`),
+        `indiecrafts-${env}-${tail}`,
       );
     }
   }

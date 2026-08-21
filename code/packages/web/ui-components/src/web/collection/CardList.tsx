@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import type { CardListModule } from "@indiecrafts/ui-components/shared/types";
-import { cn } from "@indiecrafts/utils/cn";
+import type { CardListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { ModuleCta } from "../layout/Cta";
 
 /**

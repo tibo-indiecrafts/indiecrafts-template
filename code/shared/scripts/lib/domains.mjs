@@ -49,8 +49,40 @@ export const DOMAINS = [
       },
     },
   },
-  // Add a row per app that gets a custom domain (admin on its own subdomain, an api
-  // host, …). Apps with no row serve only `*.workers.dev`.
+  // admin + app as SUBDOMAINS of the website root — so Clerk drops the session cookie
+  // on the parent domain and all three share the session (one login across surfaces),
+  // free, no satellite config. Placeholders (`example.com`) → served on `*.workers.dev`
+  // until the operator sets the real root here + in the website row above.
+  {
+    app: "admin",
+    envs: {
+      dev: null,
+      staging: null,
+      prod: { host: "admin.example.com", zone: "example.com" },
+    },
+  },
+  {
+    app: "app",
+    envs: {
+      dev: null,
+      staging: null,
+      prod: { host: "app.example.com", zone: "example.com" },
+    },
+  },
+  // The shared api Worker on its own host — so surfaces call `https://api.<root>`
+  // (their `API_URL`) instead of a long, sometimes-blocked `*.workers.dev` URL.
+  // Placeholder → workers.dev until the operator sets the real host + a `route` in
+  // `code/shared/api/wrangler.toml`.
+  {
+    app: "api",
+    envs: {
+      dev: null,
+      staging: null,
+      prod: { host: "api.example.com", zone: "example.com" },
+    },
+  },
+  // Add a row per app that gets a custom domain (another subdomain, …). Apps with no
+  // row serve only `*.workers.dev`.
 ];
 
 const PLACEHOLDER_HOSTS = new Set(["example.com", "your-domain.com", ""]);

@@ -1,0 +1,71 @@
+{
+  "app": {
+    "title": "indiecrafts",
+    "subtitle": "Desktop shell — shared UI, theme and i18n, offline.",
+    "toggleTheme": "Toggle theme",
+    "primary": "Primary action"
+  },
+  "auth": {
+    "signedIn": "You are signed in.",
+    "signOut": "Sign out",
+    "emailPrompt": "Enter your email and we'll send you a code.",
+    "emailPlaceholder": "you@example.com",
+    "sendCode": "Send code",
+    "codePrompt": "Enter the 6-digit code we emailed you.",
+    "codePlaceholder": "123456",
+    "verify": "Verify",
+    "or": "or",
+    "google": "Continue with Google",
+    "error": "Something went wrong. Please try again."
+  },
+  "consent": {
+    "title": "Cookies & privacy",
+    "body": "We use on-device storage to run the app. Choose what to allow.",
+    "accept": "Accept all",
+    "reject": "Reject",
+    "customize": "Customize",
+    "save": "Save",
+    "back": "Back",
+    "categories": {
+      "necessary": {
+        "title": "Necessary",
+        "description": "Required for the app to work. Always on."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Helps us understand how the app is used."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "description": "Personalized content and offers."
+      }
+    }
+  },
+  "legal": {
+    "heading": "Legal",
+    "legalNotice": "Legal notice",
+    "privacy": "Privacy policy",
+    "cookies": "Cookie policy",
+    "terms": "Terms of use",
+    "termsOfSale": "Terms of sale",
+    "reaccept": {
+      "title": "Our policies changed",
+      "body": "We updated our legal documents. Please review and accept to continue.",
+      "review": "Review",
+      "accept": "Accept"
+    }
+  },
+  "version": {
+    "message": "A new version is available.",
+    "reload": "Reload",
+    "dismiss": "Dismiss"
+  },
+  "locale": {
+    "suggest": "This app is available in {language}.",
+    "switch": "Switch",
+    "dismiss": "Dismiss"
+  },
+  "announcement": {
+    "dismiss": "Dismiss"
+  }
+}

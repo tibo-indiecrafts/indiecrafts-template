@@ -1,4 +1,4 @@
-# @indiecrafts/admin
+# @indiecrafts/web-surfaces-admin
 
 Reserved slot for a **separate, auth-gated Next.js admin dashboard** (moderation · ops · content review)
 over the shared Sanity dataset. Not public — behind auth, `noindex`, own subdomain.

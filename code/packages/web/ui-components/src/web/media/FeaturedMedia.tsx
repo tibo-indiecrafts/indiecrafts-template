@@ -3,11 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
-import { cn } from "@indiecrafts/utils/cn";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import {
   parseVideoEmbed,
   type VideoEmbed,
-} from "@indiecrafts/utils/video-embed";
+} from "@indiecrafts/packages-shared-utils/video-embed";
 
 /**
  * Featured media — the single structure for a post/page cover, whether it's an

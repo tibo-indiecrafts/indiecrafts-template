@@ -1,5 +1,5 @@
-import { Link } from "@indiecrafts/i18n";
-import type { Category } from "@indiecrafts/blog/sanity/types";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import type { Category } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /**
  * Single category card — used by /blog/category. Displays the title,

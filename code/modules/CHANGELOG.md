@@ -4,14 +4,26 @@ One record for the product modules under `code/modules/`. Every change that adds
 or reshapes a module's public surface or wiring lands here in plain language with the _why_.
 Rolls up to the [root `CHANGELOG.md`](../../CHANGELOG.md) at release.
 
-**Not here:** app behavior/routes/tokens → [`code/projects/web/CHANGELOG.md`](../apps/web/CHANGELOG.md);
+**Not here:** app behavior/routes/tokens → [`code/projects/web/CHANGELOG.md`](../projects/web/surfaces/website/CHANGELOG.md);
 shared bricks → [`code/packages/CHANGELOG.md`](../packages/CHANGELOG.md); docs-site →
-[`docs/CHANGELOG.md`](../projects/docs/CHANGELOG.md).
+[`docs/CHANGELOG.md`](../docs/CHANGELOG.md).
 
 Format follows [Keep a Changelog](https://keepachangelog.com). Categories: **Added ·
 Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
+
+### Added
+
+- **contact — a new `@indiecrafts/contact` module (contact form).** Submit engine (`submit()`) that
+  validates and writes a `contactMessage` doc, then fires two best-effort emails: a "we got your
+  message" acknowledgement to the sender and an owner alert that carries the message body with
+  `reply-to` set to the sender. Two public surfaces reuse one `ContactForm` — the `module.contact`
+  page-builder block and a full `/contact` page (copy + SEO from the `contactSettings` singleton).
+  Studio gets a **Contact** section: the settings singleton + a read-only message inbox. Emails are
+  configured on the shared `emailStrings` singleton (`contactConfirm` + `contactOwner`). _Why:_ the
+  template had newsletter/waitlist capture blocks but no way for a visitor to send a message and get
+  an acknowledgement. Modeled on `@indiecrafts/waitlist`.
 
 ### Changed
 
@@ -63,7 +75,7 @@ Changed · Deprecated · Removed · Fixed**.
   (`sanity/components/PrioritySlider.tsx`, no `@sanity/ui`/Radix). `priority` is read straight by
   `order()` (not projected), so types/renderers/typegen are untouched. Distinct from `featured`
   (which _picks_ the hero posts); priority sets _the order_. Editor doc:
-  [`docs/modules/blog/editor-guide.md`](../projects/docs/modules/blog/editor-guide.md).
+  [`docs/modules/blog/editor-guide.md`](../docs/modules/blog/editor-guide.md).
 - **blog · newsletter · waitlist — each module now owns its E-mails groups.** The transactional-email
   config that used to live in `@indiecrafts/email` moved **into the modules** (`src/sanity/email.ts`,
   exported as `emailGroups` on each `SanityModule` barrel): blog → `commentNotification`; newsletter →
@@ -71,7 +83,7 @@ Changed · Deprecated · Removed · Fixed**.
   the shared `confirmationGroup`/`ownerAlertGroup` factories, so the brick stays generic and a module's
   email appears in Studio only when the module is composed in. **Per-email BCC:** the confirmation
   engines (`newsletter`/`waitlist`) now pass `bcc: clean(cfg?.bcc)` to `sendEmail`, so an admin can BCC
-  themselves on user-facing confirmations. See [`docs/packages/email.md`](../projects/docs/packages/email.md).
+  themselves on user-facing confirmations. See [`docs/packages/email.md`](../docs/packages/email.md).
 - **`@indiecrafts/waitlist` — early-access signups (collect + export).** A new module modeled on the
   newsletter, with **two public surfaces** (same `WaitlistForm`): a full **`/waitlist` landing page**
   (the view — `src/user-interface/WaitlistLanding.tsx` — lives in the module; the app route is a thin
@@ -85,7 +97,7 @@ Changed · Deprecated · Removed · Fixed**.
   `@indiecrafts/email` (a translated "you're on the list" confirmation + an owner alert, on the shared
   E-mails entity). Gated by **`features.waitlist`**; `waitlistSanity` activates with one line in
   `composeSanity`. Export: `pnpm waitlist:export` → CSV. Seed ships settings + 2 demo entries. Doc:
-  [`docs/modules/waitlist/`](../projects/docs/modules/waitlist).
+  [`docs/modules/waitlist/`](../docs/modules/waitlist).
 - **One-click comment moderation from the email.** The comment-alert email now carries **Approuver ·
   Spam · Supprimer** buttons (toggle `commentNotification.moderationButtons` on the E-mails entity,
   default on). **Prefetch-safe:** a button opens a branded **confirm page** (`GET
@@ -94,7 +106,7 @@ Changed · Deprecated · Removed · Fixed**.
   approve → `approved:true`, spam → `spam:true`, delete → removes the doc; token cleared after).
   Desk: "En attente" now excludes spam (`approved != true && spam != true`) + a new **Spam** list, so
   the Spam action actually clears the queue. Export comments with `pnpm comments:export` → CSV. Guide:
-  [`docs/modules/blog/comments.md`](../projects/docs/modules/blog/comments.md).
+  [`docs/modules/blog/comments.md`](../docs/modules/blog/comments.md).
 - **Newsletter — double opt-in + owner alert, and providers simplified away.** New subscribers can
   now get a **double opt-in confirmation** (a one-time `confirmToken` on the `subscriber`; the
   confirm link `/api/newsletter/confirm?token=…` flips `pending → confirmed` and clears the token,
@@ -105,7 +117,7 @@ Changed · Deprecated · Removed · Fixed**.
   `getProvider` + the block's `listId`): the engine now **always stores** the subscriber in Sanity.
   To use an external ESP, drop its own embed form in a `custom-html` block (posts to the provider
   directly, nothing stored our side; add the host to `EMBED_HOSTS` in `next.config.ts`). Export the
-  list with `pnpm subscribers:export` → CSV. Doc: [`docs/modules/newsletter/`](../projects/docs/modules/newsletter).
+  list with `pnpm subscribers:export` → CSV. Doc: [`docs/modules/newsletter/`](../docs/modules/newsletter).
 - **Comment email notifications (Resend).** A best-effort email fires when a comment is submitted
   (`createComment` → `notifyNewComment`), so the owner is alerted to moderate instead of polling the
   desk. Configured on the shared **E-mails** entity (Studio → E-mails → `commentNotification`): an
@@ -115,14 +127,14 @@ Changed · Deprecated · Removed · Fixed**.
   reads the entity in `lib/notify-comment.ts`; the layout + sender live in **`@indiecrafts/email`**
   (`renderCommentNotificationEmail` → `sendEmail`). Never throws — a mail failure can't turn a saved
   comment into a `500`; honeypot spam drops before the write, so only real comments notify. Guide:
-  [`docs/modules/blog/comments.md`](../projects/docs/modules/blog/comments.md).
+  [`docs/modules/blog/comments.md`](../docs/modules/blog/comments.md).
 - **`@indiecrafts/newsletter` — the newsletter feature extracted to a module.** The subscribe
   engine (`lib/newsletter.ts`), the `subscriber` doc, and a new editable
   **`newsletterSettings`** singleton moved into `code/modules/newsletter/`, shipped as the
   `newsletterSanity` **`SanityModule`** barrel — activate with one line in `composeSanity([...])`
   - `features.newsletter`. The public form stays a page-builder block (schema in the blog,
     renderer in `@indiecrafts/ui-components`); the thin `/api/newsletter` route now calls the
-    module's engine. Doc: [`docs/modules/newsletter/`](../projects/docs/modules/newsletter).
+    module's engine. Doc: [`docs/modules/newsletter/`](../docs/modules/newsletter).
 - **`module.newsletter` page-builder block (`@indiecrafts/blog`).** New `defineModule` schema
   (`sanity/schema/modules/newsletter.ts`, "Infolettre") — per-instance, per-locale copy (heading,
   body, placeholder, button, consent, success/already/error) + a `variant` (card/inline/banner).
@@ -255,4 +267,4 @@ videoUrl)` — so uploads and links share the same `parseVideoEmbed` path. The s
   `paths` entry (`@indiecrafts/blog/*`, mixed `.ts`/`.tsx`), a `@source` line in
   `ui-tokens/globals.css`, and schema/structure registration in `sanity.config.ts`. It
   depends on the shared bricks (`config`/`utils`/`sanity`/`ui`/`ui-components`/`i18n`) and
-  never on the app. See [`docs/modules/blog/`](../projects/docs/modules/blog).
+  never on the app. See [`docs/modules/blog/`](../docs/modules/blog).

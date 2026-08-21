@@ -15,17 +15,19 @@ const { fetch, patch, set, unset, commit, create, getEmailStrings } =
     return { fetch, patch, set, unset, commit, create, getEmailStrings };
   });
 
-vi.mock("@indiecrafts/sanity/write", () => ({
+vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
   writeClient: { fetch, patch, create },
 }));
-vi.mock("@indiecrafts/email/strings", () => ({
+vi.mock("@indiecrafts/packages-web-email/strings", () => ({
   getEmailStrings,
   pick: () => "",
 }));
-vi.mock("@indiecrafts/email", () => ({
+vi.mock("@indiecrafts/packages-web-email", () => ({
   sendEmail: async () => undefined,
   renderEmailLayout: () => "",
   escapeHtml: (s: string) => s,
+  // Templates read `const C = EMAIL_COLORS` at load; a Proxy answers any token key.
+  EMAIL_COLORS: new Proxy({}, { get: () => "#000000" }),
 }));
 
 const { validateSubscribe, subscribe } = await import("./newsletter");

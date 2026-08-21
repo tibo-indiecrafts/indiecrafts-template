@@ -1,4 +1,4 @@
-# `@indiecrafts/ui-tokens` — the design system
+# `@indiecrafts/packages-shared-ui-tokens` — the design system
 
 > **Browse it:** live token swatches (light/dark) — `pnpm storybook` ([storybook package](./storybook)).
 
@@ -7,9 +7,9 @@ generates every platform output** — web CSS, React-Native hex, and the PWA-man
 
 |               |                                                                                                                                                                               |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Exports**   | `./globals.css` (web — Tailwind scaffolding + `@import "./generated/tokens.css"`) · `./typeset.css` (long-form prose rhythm) · `./native` (React-Native `{ light, dark }` hex object) · `./hex` (manifest hex mirror) · `./tokens.json` (the DTCG source)                                            |
+| **Exports**   | `./globals.css` (web — Tailwind scaffolding + `@import "./generated/tokens.css"`) · `./typeset.css` (long-form prose rhythm) · `./nativewind.css` (NativeWind hex vars) · `./native` (React-Native `{ light, dark }` hex object) · `./hex` (manifest hex mirror) · `./tokens.json` (the DTCG source)                                            |
 | **Deps**      | `tailwindcss ^4`, `@tailwindcss/typography ^0.5.19`, `culori ^4` (build-time oklch→hex). **Peer:** none                                                                       |
-| **Consumers** | app imports `@indiecrafts/ui-tokens/globals.css` in the root layout; a native app imports `./native`; the manifest reads `./hex`. Design-system source for `ui` + blog too, coupled via CSS scanning, not a JS import |
+| **Consumers** | app imports `@indiecrafts/packages-shared-ui-tokens/globals.css` in the root layout; a native app imports `./native`; the manifest reads `./hex`. Design-system source for `ui` + blog too, coupled via CSS scanning, not a JS import |
 
 Also ships [`DESIGN.md`](../../code/packages/shared/ui-tokens/DESIGN.md) — the authoritative token
 contract (colors, typography scale, spacing, a11y), colocated so contract and
@@ -23,6 +23,9 @@ generates three outputs — **never hand-edit them** (a PreToolUse hook blocks i
 
 - `src/generated/tokens.css` — web `:root` (light) + the two dark blocks; imported by `globals.css`.
 - `src/native/tokens.ts` — React Native `{ light, dark }` hex (no CSS/oklch on RN).
+- `src/generated/nativewind.css` — NativeWind theme (`:root` + `.dark:root` hex vars) for
+  react-native-reusables; token names match shadcn's, so native shares the palette. See
+  [`ui-native`](./ui-native).
 - `src/generated/hex.ts` — hex mirror the PWA manifest reads (`app/manifest.ts` can't take oklch).
 
 `pnpm tokens:check` (in `pnpm verify` + CI) regenerates and diffs — it fails if a generated file

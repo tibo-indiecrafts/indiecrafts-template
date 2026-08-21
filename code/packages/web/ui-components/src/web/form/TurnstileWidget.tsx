@@ -4,13 +4,13 @@ import { useEffect, useRef } from "react";
 
 /**
  * Cloudflare Turnstile widget — the client half of the server-side `verifyTurnstile`
- * (`@indiecrafts/security/turnstile`). Renders ONLY when a public site key is set
+ * (`@indiecrafts/packages-shared-security/turnstile`). Renders ONLY when a public site key is set
  * (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`); otherwise it renders nothing and the form
  * submits exactly as before (the server verify no-ops without the secret too).
  *
  * The public site key is inlined at build (client-safe). The secret never leaves
  * the server. Loads the Turnstile script once; CSP already allows
- * `challenges.cloudflare.com` (`@indiecrafts/security` csp). Reports the solved
+ * `challenges.cloudflare.com` (`@indiecrafts/packages-shared-security` csp). Reports the solved
  * token via `onToken`; on expiry/error it clears the token so the form re-blocks.
  * Remount (a changing `key`) resets the challenge after a failed submit.
  */

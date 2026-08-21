@@ -40,7 +40,7 @@ types + its desk section (+ i18n templates). Add it to a group in the `composeSt
 
 ```ts
 // code/projects/web/surfaces/website/sanity.config.ts
-import { complianceSanity } from "@indiecrafts/compliance/sanity";
+import { complianceSanity } from "@indiecrafts/packages-web-compliance/sanity";
 
 const sharedModules = [coreSanity, complianceSanity /* … */];
 ```
@@ -55,7 +55,7 @@ When a package renders a page, the **app** adds a thin `page.tsx` shell that wra
 
 ```tsx
 // code/projects/web/surfaces/website/src/app/[locale]/cookie-policy/page.tsx
-import { LegalPageContent } from "@indiecrafts/compliance/pages/LegalPageContent";
+import { LegalPageContent } from "@indiecrafts/packages-web-compliance/pages/LegalPageContent";
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;
@@ -79,7 +79,7 @@ The package stays **prop-driven** — no layout, no SEO, no flags inside. The ap
 the `pages` map entry, feature-flag gating, and SEO. Adding the one `pages` entry auto-propagates
 sitemap, llms.txt, typed routing, and the SEO chain. Full route detail →
 [Linking a module § Routes](../modules/linking-a-module.md#routes-app-owned-thin-shells). Live
-examples: `@indiecrafts/compliance` (5 legal pages), `@indiecrafts/system-pages` (404 · error ·
+examples: `@indiecrafts/packages-web-compliance` (5 legal pages), `@indiecrafts/packages-shared-system-pages` (404 · error ·
 maintenance).
 
 ## Checklist

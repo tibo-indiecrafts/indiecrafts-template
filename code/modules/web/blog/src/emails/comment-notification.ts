@@ -3,7 +3,7 @@ import {
   escapeHtml,
   renderEmailLayout,
   type RenderedEmail,
-} from "@indiecrafts/email";
+} from "@indiecrafts/packages-web-email";
 
 /** Everything the comment-notification email needs — plain data, no Sanity/blog types. */
 export type CommentNotificationInput = {

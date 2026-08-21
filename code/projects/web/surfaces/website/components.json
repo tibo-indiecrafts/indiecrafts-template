@@ -13,9 +13,9 @@
   "iconLibrary": "lucide",
   "aliases": {
     "components": "@/user-interface/shared/components",
-    "utils": "@indiecrafts/utils",
-    "ui": "@indiecrafts/ui/web",
+    "utils": "@indiecrafts/packages-shared-utils",
+    "ui": "@indiecrafts/packages-web-ui/web",
     "lib": "@/lib",
-    "hooks": "@indiecrafts/ui/web"
+    "hooks": "@indiecrafts/packages-web-ui/web"
   }
 }

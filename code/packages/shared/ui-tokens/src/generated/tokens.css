@@ -313,6 +313,14 @@
   --callout-destructive: var(--destructive);
   --callout-destructive-foreground: var(--destructive-foreground);
   --code-block-muted-foreground: var(--muted-foreground);
+  --contact-form-card: var(--card);
+  --contact-form-primary: var(--primary);
+  --contact-form-primary-foreground: var(--primary-foreground);
+  --contact-form-foreground: var(--foreground);
+  --contact-form-muted-foreground: var(--muted-foreground);
+  --contact-form-muted: var(--muted);
+  --contact-form-background: var(--background);
+  --contact-form-destructive: var(--destructive);
   --data-request-form-muted: var(--muted);
   --data-request-form-muted-foreground: var(--muted-foreground);
   --data-request-form-card: var(--card);

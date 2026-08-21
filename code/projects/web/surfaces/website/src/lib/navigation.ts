@@ -22,7 +22,7 @@ import {
   type StaticAppPathname,
   type AppRoute,
 } from "@/config";
-import { client } from "@indiecrafts/sanity/client";
+import { client } from "@indiecrafts/packages-web-sanity/client";
 import { navigationQuery } from "@/sanity/nav-queries";
 
 /** A resolved terminal link — points at an internal route or an external URL. */

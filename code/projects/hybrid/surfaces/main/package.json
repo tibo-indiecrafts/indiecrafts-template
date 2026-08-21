@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/hybrid",
+  "name": "@indiecrafts/hybrid-surfaces-main",
   "version": "0.1.0",
   "private": true,
   "main": "out/main/index.js",
@@ -7,7 +7,8 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "tsc": "tsc --noEmit",
-    "verify": "pnpm tsc",
+    "test": "vitest run",
+    "verify": "pnpm tsc && pnpm test",
     "dist:mac": "electron-vite build && electron-builder --mac",
     "dist:win": "electron-vite build && electron-builder --win",
     "dist:linux": "electron-vite build && electron-builder --linux",
@@ -17,14 +18,37 @@
   },
   "//": "SEPARATE PLATFORM: Electron (Chromium + Node). Ships as .dmg/.exe/.AppImage via electron-builder (code-sign + notarize) — NOT wrangler, NOT in deploy:all. The 'hybrid': a native shell around the shared web UI. Renderer reuses the web bricks (React 19); main/preload use React-free bricks only.",
   "dependencies": {
-    "@indiecrafts/config": "workspace:*",
-    "@indiecrafts/utils": "workspace:*"
+    "@clerk/clerk-react": "^5",
+    "@indiecrafts/packages-shared-agent-client": "workspace:*",
+    "@indiecrafts/packages-shared-announcement": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*",
+    "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
+    "@indiecrafts/packages-shared-ui-fonts": "workspace:*",
+    "@indiecrafts/packages-shared-system-pages": "workspace:*",
+    "@indiecrafts/packages-shared-compliance": "workspace:*",
+    "@indiecrafts/packages-shared-query": "workspace:*",
+    "@indiecrafts/packages-shared-version": "workspace:*",
+    "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-web-version": "workspace:*",
+    "@tanstack/react-query": "^5.66.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-intl": "^7.1.6"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.4",
     "electron": "^33.0.0",
     "electron-builder": "^25.0.0",
     "electron-vite": "^5.0.0",
-    "typescript": "^5"
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   }
 }

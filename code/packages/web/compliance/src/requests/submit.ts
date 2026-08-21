@@ -1,14 +1,14 @@
 import "server-only";
 
-import { logger } from "@indiecrafts/logger";
-import { site, isLocale, localeCodes, defaultLocale } from "@indiecrafts/config";
-import { writeClient } from "@indiecrafts/sanity/write";
-import { sendEmail } from "@indiecrafts/email";
+import { logger } from "@indiecrafts/packages-shared-logger";
+import { site, isLocale, localeCodes, defaultLocale } from "@indiecrafts/packages-shared-config";
+import { writeClient } from "@indiecrafts/packages-web-sanity/write";
+import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
   getEmailStrings,
   pick,
   type OwnerAlertConfig,
-} from "@indiecrafts/email/strings";
+} from "@indiecrafts/packages-web-email/strings";
 import { renderDataRequestNotificationEmail } from "../emails/data-request-notification";
 import { REQUEST_TYPE_LABELS_FR, type DataRequestType } from "./request-types";
 import {

@@ -1,0 +1,25 @@
+# Cloudflare Workers config for the app Next surface (via OpenNext).
+# Deploy: `pnpm deploy:app:<env>`. `pnpm project:rename <slug>` rewrites the names.
+
+name = "indiecrafts-dev-web-surfaces-app"
+main = ".open-next/worker.js"
+compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat"]
+keep_vars = true
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[env.dev]
+name = "indiecrafts-dev-web-surfaces-app"
+
+[env.staging]
+name = "indiecrafts-staging-web-surfaces-app"
+
+[env.prod]
+name = "indiecrafts-prod-web-surfaces-app"

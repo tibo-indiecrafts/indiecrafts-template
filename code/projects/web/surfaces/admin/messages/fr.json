@@ -1,0 +1,81 @@
+{
+  "admin": {
+    "title": "Admin",
+    "welcome": "Bienvenue sur le tableau de bord d'administration.",
+    "authNotConfigured": "L'authentification n'est pas configurée. Renseignez les clés Clerk pour activer la connexion.",
+    "roles": {
+      "title": "Gérer les administrateurs",
+      "label": "Identifiant utilisateur Clerk",
+      "grant": "Accorder admin",
+      "revoke": "Révoquer admin",
+      "granted": "Rôle accordé.",
+      "revoked": "Rôle révoqué et sessions terminées.",
+      "error": "Échec de l'action."
+    },
+    "sessions": {
+      "title": "Sessions",
+      "subtitle": "Connexions récentes sur toutes les surfaces (100 dernières).",
+      "empty": "Aucune session enregistrée pour l'instant.",
+      "when": "Quand",
+      "surface": "Surface",
+      "user": "Utilisateur",
+      "country": "Pays",
+      "link": "Voir les sessions",
+      "actions": "Actions",
+      "manage": "Gérer",
+      "hide": "Masquer",
+      "signOutUser": "Déconnecter l'utilisateur",
+      "revoke": "Révoquer",
+      "revoked": "Terminé.",
+      "error": "Échec de l'action.",
+      "loading": "Chargement…",
+      "noLive": "Aucune session active."
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "search": "Rechercher par e-mail ou nom…",
+      "go": "Rechercher",
+      "empty": "Aucun utilisateur trouvé.",
+      "email": "E-mail",
+      "role": "Rôle",
+      "created": "Créé",
+      "lastSignIn": "Dernière connexion",
+      "id": "ID",
+      "link": "Parcourir les utilisateurs"
+    },
+    "security": {
+      "title": "Sécurité",
+      "subtitle": "Incidents de sécurité applicatifs (100 derniers).",
+      "edgeLink": "Ouvrir Cloudflare Security Events",
+      "edgeNote": "— requêtes bloquées, mises au défi et limitées en débit à la périphérie.",
+      "edgeNotConfigured": "Définissez CLOUDFLARE_SECURITY_URL pour lier le tableau de bord Security Events.",
+      "loadError": "Impossible de charger le flux d'incidents — l'API de sécurité est injoignable.",
+      "empty": "Aucun incident de sécurité enregistré.",
+      "when": "Quand",
+      "event": "Événement",
+      "severity": "Gravité",
+      "surface": "Surface",
+      "user": "Utilisateur",
+      "country": "Pays",
+      "description": "Détail",
+      "link": "Voir la sécurité"
+    },
+    "system": {
+      "title": "État du système",
+      "surfaces": "Surfaces",
+      "workers": "Workers",
+      "databases": "Bases de données",
+      "name": "Nom",
+      "version": "Version",
+      "commit": "Commit",
+      "status": "État",
+      "live": "En ligne",
+      "down": "Hors ligne",
+      "noEndpoint": "Planifié / file (pas d'endpoint)",
+      "external": "Externe (Sanity)",
+      "unknown": "Inconnu",
+      "notConfigured": "Non configuré",
+      "link": "État du système"
+    }
+  }
+}

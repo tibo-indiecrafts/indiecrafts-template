@@ -6,7 +6,7 @@ import { EnvelopeIcon } from "@sanity/icons";
  * hard on/off; this is the editor-configurable layer — an `enabled` toggle +
  * per-locale **form** copy. The subscribe **emails** (double opt-in + owner
  * alert) live in the shared `emailStrings` singleton (Studio → E-mails), owned by
- * `@indiecrafts/email`. Read via `getNewsletterSettings()`.
+ * `@indiecrafts/packages-web-email`. Read via `getNewsletterSettings()`.
  */
 export default defineType({
   name: "newsletterSettings",

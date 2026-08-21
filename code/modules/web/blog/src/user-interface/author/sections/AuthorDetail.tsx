@@ -1,36 +1,21 @@
 import Image from "next/image";
 import { Globe } from "lucide-react";
-import type { Locale } from "@indiecrafts/config";
+import type { Locale } from "@indiecrafts/packages-shared-config";
 import type {
   Author,
   AuthorSocial,
   PostListItem,
-} from "@indiecrafts/blog/sanity/types";
-import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
-import { Pager } from "@indiecrafts/blog/user-interface/shared/components/Pager";
+} from "@indiecrafts/modules-web-blog/sanity/types";
+import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
+import { Pager } from "@indiecrafts/modules-web-blog/user-interface/shared/components/Pager";
 import {
-  XIcon,
-  LinkedInIcon,
-  GitHubIcon,
-  InstagramIcon,
-  MastodonIcon,
-} from "@indiecrafts/blog/user-interface/shared/components/BrandIcons";
+  BrandIcon,
+  isBrand,
+} from "@indiecrafts/packages-shared-ui-icons/web";
 import {
   Breadcrumbs,
   type Crumb,
-} from "@indiecrafts/blog/user-interface/shared/components/Breadcrumbs";
-
-const SOCIAL_ICONS: Record<
-  NonNullable<AuthorSocial["platform"]>,
-  React.ComponentType<React.SVGProps<SVGSVGElement>>
-> = {
-  x: XIcon,
-  linkedin: LinkedInIcon,
-  github: GitHubIcon,
-  instagram: InstagramIcon,
-  mastodon: MastodonIcon,
-  website: Globe,
-};
+} from "@indiecrafts/modules-web-blog/user-interface/shared/components/Breadcrumbs";
 
 /**
  * Author detail section — `/author/[slug]`. Hero block shows the
@@ -121,7 +106,6 @@ export function AuthorDetail({
               <ul className="mt-2 flex items-center gap-2">
                 {author.social.map((s, i) => {
                   if (!s.url || !s.platform) return null;
-                  const Icon = SOCIAL_ICONS[s.platform] ?? Globe;
                   return (
                     <li key={`${s.platform}-${i}`}>
                       <a
@@ -131,7 +115,15 @@ export function AuthorDetail({
                         aria-label={socialLabels[s.platform] ?? s.platform}
                         className="text-muted-foreground hover:text-foreground hover:border-foreground/30 ring-border/60 focus-visible:ring-ring inline-flex size-9 items-center justify-center rounded-full ring-1 transition-colors focus-visible:ring-2 focus-visible:outline-none"
                       >
-                        <Icon aria-hidden="true" className="size-4" />
+                        {isBrand(s.platform) ? (
+                          <BrandIcon
+                            name={s.platform}
+                            aria-hidden="true"
+                            className="size-4"
+                          />
+                        ) : (
+                          <Globe aria-hidden="true" className="size-4" />
+                        )}
                       </a>
                     </li>
                   );

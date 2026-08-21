@@ -42,7 +42,7 @@ export const Default: Story = {
       <div className="rounded-md border px-4 py-2 text-sm">@radix-ui/react</div>
       <CollapsibleContent className="space-y-2">
         <div className="rounded-md border px-4 py-2 text-sm">
-          @indiecrafts/ui
+          @indiecrafts/packages-web-ui
         </div>
         <div className="rounded-md border px-4 py-2 text-sm">next-intl</div>
       </CollapsibleContent>
@@ -56,6 +56,6 @@ export const Toggles: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole("button"));
-    await expect(await canvas.findByText("@indiecrafts/ui")).toBeVisible();
+    await expect(await canvas.findByText("@indiecrafts/packages-web-ui")).toBeVisible();
   },
 };

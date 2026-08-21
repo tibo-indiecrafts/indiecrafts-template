@@ -1,6 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import {
+  type VersionResponse,
+  versionId,
+  isUpdateAvailable,
+} from "@indiecrafts/packages-shared-version";
+
+// Re-export the portable compare so web consumers have one import surface.
+export { isUpdateAvailable } from "@indiecrafts/packages-shared-version";
 
 /**
  * Polls a version endpoint and reports when the **deployed** build differs from
@@ -28,8 +36,8 @@ export function useVersionCheck({
     try {
       const res = await fetch(endpoint, { cache: "no-store" });
       if (!res.ok) return;
-      const data = (await res.json()) as { commit?: string; version?: string };
-      const id = data.commit || data.version;
+      const data = (await res.json()) as VersionResponse;
+      const id = versionId(data);
       if (id) setLatest(id);
     } catch {
       // Network blip — ignore; the next interval / focus retries.
@@ -51,5 +59,5 @@ export function useVersionCheck({
     };
   }, [check, intervalMs, current]);
 
-  return { updateAvailable: latest !== null && latest !== current, latest };
+  return { updateAvailable: isUpdateAvailable(current, latest), latest };
 }

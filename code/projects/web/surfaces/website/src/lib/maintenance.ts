@@ -1,5 +1,5 @@
-import { apiVersion, dataset, projectId } from "@indiecrafts/sanity/env";
-import { logger } from "@indiecrafts/logger";
+import { apiVersion, dataset, projectId } from "@indiecrafts/packages-web-sanity/env";
+import { logger } from "@indiecrafts/packages-shared-logger";
 
 /**
  * The live, no-deploy maintenance switch — the editor flips

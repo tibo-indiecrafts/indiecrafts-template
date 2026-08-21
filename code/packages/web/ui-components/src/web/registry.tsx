@@ -1,8 +1,9 @@
 import type { PortableTextComponents } from "@portabletext/react";
-import type { BlockModule } from "@indiecrafts/ui-components/shared/types";
+import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { AccordionList } from "./collection/AccordionList";
 import { Callout } from "./content/Callout";
 import { CardList } from "./collection/CardList";
+import { Contact } from "./form/Contact";
 import { CustomHtml } from "./content/CustomHtml";
 import { FeatureGrid } from "./collection/FeatureGrid";
 import { Gallery } from "./media/Gallery";
@@ -59,6 +60,7 @@ export const BLOCK_RENDERERS = {
   "module.newsletter": Newsletter,
   "module.waitlist": Waitlist,
   "module.lead-magnet": LeadMagnet,
+  "module.contact": Contact,
 } satisfies { [K in BlockModule["_type"]]: BlockRenderer<K> };
 
 /** Render one block by `_type`; `components` is the map for its nested content. */

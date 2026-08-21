@@ -5,9 +5,9 @@ list an editor can also add to by hand, optional confirmation/owner emails, and 
 out of the box with **no API keys** — a signup lands as a Sanity `waitlistEntry` you read in the
 Studio. **Collect + export only** — no runtime gating. Modeled on the [newsletter](../newsletter/).
 
-Lives in the **`@indiecrafts/waitlist`** module (`code/modules/web/waitlist`): the join engine, the
+Lives in the **`@indiecrafts/modules-web-waitlist`** module (`code/modules/web/waitlist`): the join engine, the
 `waitlistEntry` doc, and an editable **`waitlistSettings`** singleton — a one-line `composeStudio`-group
-contribution. The public form stays a page-builder block (renderer in `@indiecrafts/ui-components`).
+contribution. The public form stays a page-builder block (renderer in `@indiecrafts/packages-web-ui-components`).
 
 ## One switch
 
@@ -17,7 +17,7 @@ contribution. The public form stays a page-builder block (renderer in `@indiecra
 ## The flow
 
 1. The block posts `{ email, name?, consent, source, honeypot }` to `/api/waitlist`.
-2. The route gates on `features.waitlist`, then `join()` (`@indiecrafts/waitlist/lib/waitlist`)
+2. The route gates on `features.waitlist`, then `join()` (`@indiecrafts/modules-web-waitlist/lib/waitlist`)
    validates: email shape, required consent, honeypot must be empty.
 3. Dedupe by email, then `writeClient.create` a `waitlistEntry` (`status: "waiting"`, whitelisted
    fields, `_type` hard-coded).
@@ -36,7 +36,7 @@ views. The API fills `source`/`language`/`consent`/`createdAt` (read-only).
 
 ## Emails (Studio → E-mails)
 
-Both off by default, configured on the shared `emailStrings` entity (owned by `@indiecrafts/email`).
+Both off by default, configured on the shared `emailStrings` entity (owned by `@indiecrafts/packages-web-email`).
 The only secret is `RESEND_API_KEY` (server-only). The `From` must be a **Resend-verified domain**.
 Verify delivery with the **Send test** action (Studio → E-mails → ⋯).
 
@@ -73,7 +73,7 @@ The same `WaitlistForm` renders two ways:
 ## The block
 
 `module.waitlist` is a page-builder block — droppable inline in a post body or a page's `postModules`,
-rendered by the shared `@indiecrafts/ui-components` registry. Three variants — **card**, **inline**,
+rendered by the shared `@indiecrafts/packages-web-ui-components` registry. Three variants — **card**, **inline**,
 **banner**. The **name** field only shows when a `namePlaceholder` is set. Every string is
 per-instance and per-locale. Renderer + field reference:
 [ui-components / Waitlist](/packages/ui-components).

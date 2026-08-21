@@ -6,7 +6,7 @@ variables the whole app reads.
 
 ## Three roles, three CSS variables
 
-The active pairing lives in `@indiecrafts/config`:
+The active pairing lives in `@indiecrafts/packages-shared-config`:
 
 ```ts
 export const fonts = {
@@ -17,7 +17,7 @@ export const fonts = {
 ```
 
 `FontRoles` and the allowed keys (`FontKey`) are defined in the config package
-(`code/packages/shared/config/src/types.ts`) and re-exported from `@indiecrafts/config`:
+(`code/packages/shared/config/src/types.ts`) and re-exported from `@indiecrafts/packages-shared-config`:
 
 ```ts
 export type FontKey = "geist" | "geist-mono" | "satoshi";
@@ -39,7 +39,7 @@ is a compile error.
 variable:
 
 ```ts
-import { fonts, type FontKey } from "@/config"; // fonts app-owned; FontKey re-exported from @indiecrafts/config
+import { fonts, type FontKey } from "@/config"; // fonts app-owned; FontKey re-exported from @indiecrafts/packages-shared-config
 
 const geist = Geist({
   subsets: ["latin"],
@@ -98,7 +98,7 @@ Both are applied in `src/app/[locale]/layout.tsx` on the `<html>` element:
 
 ## How the roles reach the page
 
-`globals.css` (in `@indiecrafts/ui-tokens`) maps the role vars onto elements inside
+`globals.css` (in `@indiecrafts/packages-shared-ui-tokens`) maps the role vars onto elements inside
 `@layer base` — so a Tailwind `font-sans` / `font-display` utility can still
 override per element:
 
@@ -131,11 +131,11 @@ Any title can colour a word in the brand accent by wrapping it in `[[ ]]`:
 "title": "Built to [[cover]] your needs"   // → "cover" renders in text-brand
 ```
 
-Render the title through `RichTitle` (`@indiecrafts/ui-components/web/RichTitle`)
+Render the title through `RichTitle` (`@indiecrafts/packages-web-ui-components/web/RichTitle`)
 instead of a raw `<hN>`:
 
 ```tsx
-import { RichTitle } from "@indiecrafts/ui-components/web/RichTitle";
+import { RichTitle } from "@indiecrafts/packages-web-ui-components/web/RichTitle";
 
 <RichTitle as="h2" className="text-4xl font-semibold text-balance">
   {t("title")}
@@ -169,7 +169,7 @@ still use the display face.
 ## Swapping a font
 
 **Change the pairing only** (both fonts already registered): edit `fonts` in
-`@indiecrafts/config` — e.g. set `display: "geist"` for a single-face look. Nothing
+`@indiecrafts/packages-shared-config` — e.g. set `display: "geist"` for a single-face look. Nothing
 else to touch.
 
 **Add a new font:**
@@ -187,7 +187,7 @@ else in the app should reference. Never hard-code a font family in a component.
 
 For rendered markdown / articles the template also ships shadcn's
 [**Typeset**](https://ui.shadcn.com/docs/typeset) preset — `typeset.css` in
-`@indiecrafts/ui-tokens`, imported right after Tailwind in `globals.css`
+`@indiecrafts/packages-shared-ui-tokens`, imported right after Tailwind in `globals.css`
 (`@import "./typeset.css"`).
 
 Wrap rendered content in the preset:

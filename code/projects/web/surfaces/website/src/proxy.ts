@@ -1,19 +1,28 @@
 /**
  * Next.js proxy (formerly "middleware" — renamed in Next 16).
- * Handles locale routing via next-intl, plus site-wide maintenance mode.
- * Extend here for auth, geo redirects, etc.
+ * Handles locale routing via next-intl, plus site-wide maintenance mode, and —
+ * when Clerk is configured — attaches the auth session so `auth()` works app-wide.
+ * Extend here for auth gates, geo redirects, etc.
  */
 
 import createMiddleware from "next-intl/middleware";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 import { type NextRequest } from "next/server";
 import { features } from "@/config";
-import { maintenanceRewrite } from "@indiecrafts/system-pages/proxy";
+import { maintenanceRewrite } from "@indiecrafts/packages-shared-system-pages/proxy";
 import { getMaintenanceMode } from "@/lib/maintenance";
 import { routing } from "@/i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-export default async function proxy(request: NextRequest) {
+// Auth is opt-in: only wrap in Clerk when a publishable key is bound (matches
+// AppClerkProvider + the repo's fail-open-until-configured pattern). Without it,
+// `clerkMiddleware` would throw on every request and break "runs as-is".
+const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
+// The maintenance → locale pipeline. When Clerk is on it runs INSIDE
+// `clerkMiddleware` (so the session is attached first); otherwise it runs directly.
+async function pipeline(request: NextRequest) {
   // Maintenance mode: rewrite every matched request to `/maintenance` (503) when
   // EITHER the build-time hard override (`features.maintenance`) OR the live Sanity
   // toggle (`siteSettings.maintenanceMode`, cached per-isolate, fail-open) is on.
@@ -24,6 +33,12 @@ export default async function proxy(request: NextRequest) {
   if (maintenance) return maintenance;
   return intlMiddleware(request);
 }
+
+const proxy = clerkConfigured
+  ? clerkMiddleware((_auth, request) => pipeline(request))
+  : (request: NextRequest) => pipeline(request);
+
+export default proxy;
 
 export const config = {
   matcher: [

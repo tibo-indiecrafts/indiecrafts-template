@@ -1,6 +1,6 @@
-import type { Locale } from "@indiecrafts/config";
-import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
+import type { Locale } from "@indiecrafts/packages-shared-config";
+import type { PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
+import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
 
 /**
  * Blog listing section — three-column on desktop by default, switch to

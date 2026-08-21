@@ -3,7 +3,7 @@ import {
   escapeHtml,
   renderEmailLayout,
   type RenderedEmail,
-} from "@indiecrafts/email";
+} from "@indiecrafts/packages-web-email";
 
 /** Owner alert on a new waitlist entry — operational (one team, not translated). */
 export type WaitlistNotificationInput = {

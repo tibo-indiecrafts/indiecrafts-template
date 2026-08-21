@@ -1,14 +1,14 @@
 # Security headers & CSP
 
-Security headers are built by the shared **[`@indiecrafts/security`](/packages/security)**
+Security headers are built by the shared **[`@indiecrafts/packages-shared-security`](/packages/security)**
 brick and applied in `next.config.ts` via one `securityHeaders({...})` call in the `headers()` hook —
 every route (`source: "/:path*"`), no per-page wiring. The brick owns the hardened defaults; the app
 passes only its own extra hosts.
 
 ```ts
 // next.config.ts
-import { getCurrentEnvironment } from "@indiecrafts/config";
-import { imageDefaults, securityHeaders } from "@indiecrafts/security";
+import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
+import { imageDefaults, securityHeaders } from "@indiecrafts/packages-shared-security";
 
 const EMBED_HOSTS: string[] = []; // external embed origins (newsletter provider)
 
@@ -61,9 +61,9 @@ per directive:
 | `form-action`               | `'self'` (+ embeds)                                               | Forms submit same-origin (or a whitelisted embed host). |
 | `upgrade-insecure-requests` | (production)                                                      | Auto-upgrades any `http:` subresource.                  |
 
-### `connect-src` is environment-aware (still in `@indiecrafts/config`)
+### `connect-src` is environment-aware (still in `@indiecrafts/packages-shared-config`)
 
-The `connect-src` base is `getCSPConnectSources(env)` in `@indiecrafts/config` — the brick imports it,
+The `connect-src` base is `getCSPConnectSources(env)` in `@indiecrafts/packages-shared-config` — the brick imports it,
 it did **not** move:
 
 ```ts
@@ -103,7 +103,7 @@ export function getCSPConnectSources(env: Environment): readonly string[] {
 
 ## Extending the CSP for a new external service
 
-- **API / analytics / fetch target:** add the host to `getCSPConnectSources()` in `@indiecrafts/config`
+- **API / analytics / fetch target:** add the host to `getCSPConnectSources()` in `@indiecrafts/packages-shared-config`
   (keeps the dev/prod split), or pass `csp.connectSrc: [...]` for an app-only host.
 - **Embedded iframe (video, widget):** add the origin to `csp.frameSrc` in the `securityHeaders({...})`
   call. Update `parseVideoEmbed`/`HeroVideo` too if it's a video host.

@@ -38,7 +38,7 @@ So two conditions must _both_ hold before crawlers are invited in:
 
 ### `getCurrentEnvironment()`
 
-Defined in `@indiecrafts/config` (`code/packages/shared/config/src/types.ts`). It reads `NEXT_PUBLIC_ENVIRONMENT` first (an explicit override), then falls back to `NODE_ENV`:
+Defined in `@indiecrafts/packages-shared-config` (`code/packages/shared/config/src/types.ts`). It reads `NEXT_PUBLIC_ENVIRONMENT` first (an explicit override), then falls back to `NODE_ENV`:
 
 ```ts
 export function getCurrentEnvironment(): Environment {
@@ -60,7 +60,7 @@ export function getCurrentEnvironment(): Environment {
 
 ### `isSiteConfigured`
 
-Defined in `@indiecrafts/config` (`code/packages/shared/config/src/index.ts`):
+Defined in `@indiecrafts/packages-shared-config` (`code/packages/shared/config/src/index.ts`):
 
 ```ts
 export const PLACEHOLDER_SITE_URL = "https://example.com";

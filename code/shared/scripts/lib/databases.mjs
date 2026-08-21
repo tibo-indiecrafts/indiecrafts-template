@@ -3,9 +3,9 @@
 // `scripts/lib/apps.mjs`. The migrate + backup runners read THIS and dispatch on
 // `kind` (like deploy dispatches on an app's `class`).
 //
-// Adding a database = one row here + fill its reserved slot (a README marker under
-// `<slot>/db/<kind>/`). That's it. There are NO active databases yet — every slot
-// is reserved.
+// Adding a database = one row here + fill its slot (real migrations, or a README marker
+// under `<slot>/db/<kind>/`). Active today: the api's `audit` D1 + `security-counters` KV.
+// Every OTHER altitude × kind slot is a reserved README marker (see the examples below).
 //
 // Kinds (engine → migrate/backup recipe):
 //   d1        — Cloudflare D1 (SQLite, a Worker binding). migrate: wrangler · backup: wrangler d1 export
@@ -18,8 +18,7 @@
 // Altitudes (who shares it — mirrors the projects tree):
 //   global    — code/shared/db          (every project; a shared-tier item)
 //   platform  — code/projects/<platform>/shared/db
-//   surface   — code/projects/<platform>/surfaces/db
-//   leaf      — code/projects/<platform>/surfaces/<leaf>/db
+//   leaf      — code/projects/<platform>/surfaces/<leaf>/db   (co-located with its one app)
 //   (a single-owner DB may instead co-locate in its owner, e.g. shared/api/db — the `dir` decides.)
 //
 // CLI (for CI / inspection): node scripts/lib/databases.mjs --json [--kind <k>] [--altitude <a>]
@@ -37,6 +36,8 @@ export const ALTITUDES = ["global", "platform", "surface", "leaf"];
  * @property {string} name   short id + `backup:<name>:<env>` / `db:migrate:<name>:<env>` script name
  * @property {"d1"|"kv"|"postgres"|"supabase"|"sanity"} kind  engine → migrate/backup recipe
  * @property {string} owner  the app/service slug that binds + migrates it (ONE owner; consumers use its API)
+ * @property {string} [binding]  the wrangler binding name (e.g. "DB") — d1/kv only; the migrate
+ *                               runner passes it to wrangler so it resolves the right per-env database
  * @property {"global"|"platform"|"surface"|"leaf"} altitude  who shares it
  * @property {string} dir    the db's directory (migrations/seed) — reserved until activated
  * @property {"wrangler"|"pg_dump"|"supabase"|"kv"|"sanity"} backup  backup recipe
@@ -55,6 +56,37 @@ export const DATABASES = [
     dir: "code/shared/db/sanity/content",
     backup: "sanity",
     order: 5,
+  },
+  // The api's EU-resident D1 — ONE database, three tables: admin_audit + session_events
+  // (audit trail + per-surface sign-ins) + security_events (app-level incidents the edge
+  // WAF can't see). One DB (not three) keeps the free-plan D1 count low; tables stay
+  // isolated. Create with `--location weur` (EU, create-time + immutable); binding `DB` on
+  // the `api` worker; 90-day retention purged by the `cron` worker. The edge firehose
+  // (blocked/challenged requests) stays in Cloudflare's own Security Events dashboard — not
+  // stored here (see docs/apps/web/config/security-hardening.md).
+  {
+    name: "audit",
+    kind: "d1",
+    owner: "api",
+    binding: "DB",
+    altitude: "global",
+    dir: "code/shared/api/db/d1",
+    backup: "wrangler",
+    order: 10,
+  },
+  // Ephemeral KV for the app-level detection layer — short-TTL failed-login counters
+  // (binding `SECURITY_COUNTERS`). KV has no schema migrations, and the data is disposable
+  // rate-state, so it is intentionally NOT backed up (`backup: "kv"` is a no-op here). Listed
+  // so the registry stays the full source of truth for which stores exist.
+  {
+    name: "security-counters",
+    kind: "kv",
+    owner: "api",
+    binding: "SECURITY_COUNTERS",
+    altitude: "global",
+    dir: "code/shared/api/db/kv/security-counters",
+    backup: "kv",
+    order: 15,
   },
   // Every other altitude × kind slot is a reserved README marker. Activate by adding
   // a row here + filling the matching `<slot>/db/<kind>/<name>/` folder:

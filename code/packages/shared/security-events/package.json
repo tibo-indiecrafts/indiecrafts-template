@@ -1,0 +1,15 @@
+{
+  "name": "@indiecrafts/packages-shared-security-events",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./events": "./src/events.ts",
+    "./thresholds": "./src/thresholds.ts",
+    "./kv-counter": "./src/kv-counter.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

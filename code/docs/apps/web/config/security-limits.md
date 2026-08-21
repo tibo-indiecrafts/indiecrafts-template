@@ -7,12 +7,12 @@ and bot-check so the security posture is reviewable in one place. Lives in
 
 ## Why it's here
 
-Each public POST is hardened by `withGuard` (`@indiecrafts/security` — see
+Each public POST is hardened by `withGuard` (`@indiecrafts/packages-shared-security` — see
 [Security headers](../../../packages/security)), which takes its limits as options. Those options used
 to be inline literals in every `route.ts`, so `windowSec: 600` and the body-cap tiers were copied
 across six routes. Centralizing them gives **one home per fact** and a single place to review or tune
 the whole API's abuse policy. It's app-owned (a second app ships its own limits), not in the shared
-`@indiecrafts/config` package.
+`@indiecrafts/packages-shared-config` package.
 
 ## The policy
 
@@ -31,7 +31,7 @@ A route reads its entry and passes it straight in:
 
 ```ts
 import { security } from "@/config";
-import { withGuard } from "@indiecrafts/security/guard";
+import { withGuard } from "@indiecrafts/packages-shared-security/guard";
 
 const handle = withGuard(async (req, body) => { /* … */ }, security.newsletter);
 ```

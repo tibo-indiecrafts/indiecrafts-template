@@ -1,5 +1,5 @@
 import { defineQuery } from "next-sanity";
-import { MODULES_FRAGMENT as GENERIC_MODULES_FRAGMENT } from "@indiecrafts/page-builder/sanity/queries";
+import { MODULES_FRAGMENT as GENERIC_MODULES_FRAGMENT } from "@indiecrafts/packages-web-page-builder/sanity/queries";
 
 /**
  * GROQ queries — `defineQuery` flags them for future `sanity typegen`
@@ -75,7 +75,7 @@ const AUTHOR_FRAGMENT = `
 
 /**
  * Modules fragment — the generic page-builder projection
- * (`@indiecrafts/page-builder`) plus the blog-specific `blog-post-list`. Used by
+ * (`@indiecrafts/packages-web-page-builder`) plus the blog-specific `blog-post-list`. Used by
  * post bodies (inline modules) + the blog singleton's `postModules`.
  */
 export const MODULES_FRAGMENT = `

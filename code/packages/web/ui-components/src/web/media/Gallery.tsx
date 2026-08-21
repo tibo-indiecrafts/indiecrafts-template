@@ -1,4 +1,4 @@
-import type { GalleryModule } from "@indiecrafts/ui-components/shared/types";
+import type { GalleryModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { RichTitle } from "../RichTitle";
 import { GalleryCarousel } from "./GalleryCarousel";
 

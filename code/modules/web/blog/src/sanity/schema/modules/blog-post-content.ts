@@ -1,5 +1,5 @@
 import { DocumentTextIcon } from "@sanity/icons";
-import { defineModule } from "@indiecrafts/page-builder/sanity/schema/objects/define-module";
+import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 
 /**
  * Rendu de l'en-tête (titre, auteur, date, couverture) + corps

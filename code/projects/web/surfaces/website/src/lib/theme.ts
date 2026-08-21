@@ -15,7 +15,6 @@ import type { SiteSettings } from "@/lib/seo/site-seo";
 export type ThemeConfig = {
   light: boolean;
   dark: boolean;
-  system: boolean;
   forced: ThemeName | null;
 };
 
@@ -27,18 +26,16 @@ export function resolveThemeConfig(modes: SiteSettings["themeModes"]): ThemeConf
   return {
     light: modes.light ?? true,
     dark: modes.dark ?? true,
-    system: modes.system ?? true,
     forced,
   };
 }
 
-/** User-selectable modes in menu order. `forced` → only that; "system" only when both concretes exist. */
+/** User-selectable modes in menu order. `forced` → only that. (OS auto-detect is the default behaviour, not a mode.) */
 export function themeModes(cfg: ThemeConfig): ThemeMode[] {
   if (cfg.forced) return [cfg.forced];
   const list: ThemeMode[] = [];
   if (cfg.light) list.push("light");
   if (cfg.dark) list.push("dark");
-  if (cfg.system && cfg.light && cfg.dark) list.push("system");
   return list;
 }
 
@@ -49,9 +46,11 @@ export function showThemeToggle(cfg: ThemeConfig): boolean {
 
 /** Props for the next-themes `<ThemeProvider>`, derived from a resolved config. */
 export function themeProviderProps(cfg: ThemeConfig) {
-  const modes = themeModes(cfg);
-  const concrete = modes.filter((m): m is ThemeName => m !== "system");
-  const enableSystem = modes.includes("system");
+  const concrete = themeModes(cfg);
+  // OS auto-detect (follow `prefers-color-scheme` on first load) whenever both
+  // concrete themes are offered and none is forced — "System" is the default
+  // behaviour, not a menu option, so it stays on even though the menu drops it.
+  const enableSystem = !cfg.forced && cfg.light && cfg.dark;
   return {
     attribute: "data-theme" as const,
     // Namespaced by `site.prefix` so two instances on a shared origin don't share

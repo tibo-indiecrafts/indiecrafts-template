@@ -1,45 +1,68 @@
-# Announcement bar
+# Announcements — bar + toast
 
-Editor-managed announcement / discount strip under the site nav. Lives in the
-**`@indiecrafts/announcement`** brick (`code/packages/web/announcement`) — a Sanity singleton
+Editor-managed announcements shown across every surface. The **web presentation + Sanity
+schema** live in **`@indiecrafts/packages-web-announcement`** (`code/packages/web/announcement`);
+the **portable resolve + types + fetch** live in
+[`@indiecrafts/packages-shared-announcement`](./announcement-shared) so the Next readers and the
+`code/shared/api` Worker share one transform. Two formats:
 
-- a small client strip, like `@indiecrafts/consent` / `version`. Site chrome, not a
-  product feature.
+- **Bar** — the rotating strip under the nav (message + optional copyable discount code + link).
+- **Toast** — a richer corner card: title + body + **optional image** + link. Not a sonner toast
+  (sonner's own guidance says never auto-dismiss a must-click link) — a self-contained
+  `role="status"` card like the version `UpdatePrompt`.
 
 ## Content (Sanity)
 
-The `announcementBar` singleton (Studio → **Bandeau d'annonce**), read by
-`getAnnouncement(locale)` (`@indiecrafts/announcement/sanity/announcement`):
+Two singletons, both with **per-surface targeting** (`surfaces` — empty = all;
+`website · app · mobile · hybrid`, **no admin**):
 
-| Field           | What it is                                                                                                                                                                               |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `enabled`       | Editor on/off — pull a promo without a deploy.                                                                                                                                           |
-| `dismissible`   | Whether the × shows.                                                                                                                                                                     |
-| `variant`       | `brand` / `neutral` / `contrast` — the strip style.                                                                                                                                      |
-| `start` / `end` | Optional schedule window (bar-wide).                                                                                                                                                     |
-| `items[]`       | The announcements — each `message` (`localeString`) + optional `discountCode` (click-to-copy) + optional `link` (internal path **or** external URL + target) + optional per-item window. |
+**`announcementBar`** (Studio → **Bandeau d'annonce**) — `enabled` · `dismissible` · `variant`
+(`brand`/`neutral`/`contrast`) · `surfaces` · `start`/`end` · `items[]` (each `message` +
+optional `discountCode` + optional `link` + per-item window).
 
-The reader computes "live now" (enable + windows), localizes, resolves each link, and
-hashes the live items into a `version`.
+**`announcementToast`** (Studio → **Toast d'annonce**) — `enabled` · `surfaces` · `title` · `body`
+· optional `image` + `imageAlt` · `link` · `autoDismissSeconds` (empty = persists until closed) ·
+`start`/`end`.
+
+Read by `getAnnouncement(locale, surface)` / `getAnnouncementToast(locale, surface)` (thin
+adapters over the shared `resolveBanner`/`resolveToast`).
+
+## Delivery per surface
+
+| Surface           | Reads from                         | Gate                          |
+| ----------------- | ---------------------------------- | ----------------------------- |
+| **website**       | Sanity server-side (no flash)      | public (ungated)              |
+| **app** (Next)    | api Worker (client fetch)          | logged-in (`<SignedIn>`), online |
+| **mobile** (RN)   | api Worker (client fetch)          | logged-in, online             |
+| **hybrid** (Electron) | api Worker (client fetch)      | logged-in, online             |
+
+The three product surfaces gate on **client-side** `<SignedIn>`, so they fetch the Worker (no
+server-render benefit); only the public website reads Sanity directly. app reuses the web
+`AnnouncementBar`/`AnnouncementToast`; mobile + hybrid render bespoke shells (next-intl can't run
+outside Next) — same tokens, `Linking`/`openExternal` for links.
 
 ## Behaviour
 
-- **Rotating** — multiple live items cycle on a gentle interval (single item = static).
-- **Under the nav, no offset math** — a normal-flow strip at the top of `<main>`; a
-  dismiss reclaims the space by unmounting.
-- **No flash** — `DefaultLayout` reads the `announcement-ack` cookie server-side and
-  renders the bar only when there are live items and the deposited version ≠ the current
-  one. A new announcement (new `version`) re-shows after a prior dismiss.
-- **Discount code** — a click-to-copy chip.
+- **Rotating bar** — multiple live items cycle; a single item is static.
+- **No flash (website)** — `DefaultLayout` reads the `announcement-ack` / `announcement-toast-ack`
+  cookies server-side and renders only when the deposited version ≠ the current one. The bar/toast
+  also self-suppress client-side (`useSyncExternalStore`) so the client-gated surfaces stay
+  dismissed across a reload.
+- **Re-shows on change** — the resolved content is hashed into a `version`; a new announcement
+  re-shows after a prior dismiss.
+- **Image** — CDN-sized by the resolver (`?w=128&auto=format&fit=max&q=75`).
 
 ## Wiring
 
-`announcementSanity` → the `sharedModules` array in `sanity.config.ts` (one line). Mounted
-in `DefaultLayout` at the top of `<main>`; `@source "../../announcement/src"` in
-`ui-tokens/globals.css`; `transpilePackages` + the app dep. Seed ships two demo items.
+`announcementSanity` → `sharedModules` in `sanity.config.ts` (registers both singletons + the two
+desk sections). `@source "../../announcement/src"` in `ui-tokens/globals.css`. Web surfaces:
+`transpilePackages` + deps (+ a `tsconfig` `paths` entry for the `./*` wildcard). The Worker route +
+the api URL env vars (`NEXT_PUBLIC_API_URL` / `EXPO_PUBLIC_API_URL` / `VITE_API_URL`) → see
+[the api Worker](../shared/api).
 
 ## Deps
 
-`@indiecrafts/ui` · `@indiecrafts/i18n` (`Link`) · `@indiecrafts/sanity` (`client`) ·
-`@indiecrafts/utils` (`cn`) · `@indiecrafts/config` (`site.prefix`). Story:
-`AnnouncementBar.stories.tsx` (Storybook › Chrome).
+`@indiecrafts/packages-shared-announcement` (resolve/types/fetch) · `@indiecrafts/packages-web-ui` ·
+`@indiecrafts/packages-web-i18n` (`Link`) · `@indiecrafts/packages-web-sanity` (`client`) ·
+`@indiecrafts/packages-shared-utils` (`cn`) · `@indiecrafts/packages-shared-config` (`site.prefix`).
+Story: `AnnouncementBar.stories.tsx` (Storybook › Chrome).

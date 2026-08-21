@@ -5,21 +5,21 @@ import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
-import { cn } from "@indiecrafts/utils/cn";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import {
   Dialog,
   DialogClose,
   DialogContent,
   DialogTitle,
-} from "@indiecrafts/ui/web/dialog";
+} from "@indiecrafts/packages-web-ui/web/dialog";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@indiecrafts/ui/web/embla-carousel";
-import type { GalleryImage } from "@indiecrafts/ui-components/shared/types";
+} from "@indiecrafts/packages-web-ui/web/embla-carousel";
+import type { GalleryImage } from "@indiecrafts/packages-web-ui-components/shared/types";
 
 /**
  * Image gallery carousel for the `module.gallery` page-builder block — the

@@ -1,16 +1,16 @@
 ---
 name: page-builder-reviewer
-description: Verifies adding/removing a page-builder block (`module.*`, rendered via @indiecrafts/ui-components — used by app pages AND blog posts) touched every synced file — schema, registry, types, renderer, inline lists, query, copy, and doc counts. Use after adding or removing a block, before shipping.
+description: Verifies adding/removing a page-builder block (`module.*`, rendered via @indiecrafts/packages-web-ui-components — used by app pages AND blog posts) touched every synced file — schema, registry, types, renderer, inline lists, query, copy, and doc counts. Use after adding or removing a block, before shipping.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 
 You review a **page-builder block** change for **completeness across every file it must touch**.
 A `module.<name>` block is easy to half-wire; a miss breaks the Studio picker, the TS exhaustiveness
-`satisfies` check, or leaves doc counts stale. Authority: the workflow
-`method/apps/web/workflows/add-page-builder-block.md` (+ `remove-page-builder-block.md`). Read it first.
+`satisfies` check, or leaves doc counts stale. Authority: `code/docs/packages/page-builder.md`
+§"Adding a block" (the synced-files list). Read it first.
 
-The block system is **shared**: **generic** renderer/registry/type live in `@indiecrafts/ui-components`
+The block system is **shared**: **generic** renderer/registry/type live in `@indiecrafts/packages-web-ui-components`
 (the same blocks paint marketing pages and blog posts); the **schema** currently lives in
 `code/modules/blog`. Verify each touchpoint is in sync:
 

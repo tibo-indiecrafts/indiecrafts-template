@@ -1,10 +1,10 @@
 # docs — product canon (VitePress)
 
 Auto-loads when you work under `code/docs/**`. The product documentation site — a top-level
-project at `code/docs/` (sibling of `projects/ packages/ modules/ db/`), **npm-isolated** from the
+project at `code/docs/` (sibling of `projects/ packages/ modules/ shared/`), **npm-isolated** from the
 pnpm workspace (matches no workspace glob, so it stays out; its own lockfile). Foldered like the code:
-`shared/` + `apps/web/` (`setup/ config/ design/ seo/`) +
-`modules/` (`blog/`) + `packages/ db/ infra/`. `index.md` is the home (no README).
+`shared/` + `apps/web/` (`setup/ config/ design/ seo/ features/`) +
+`modules/` (`blog/ contact/ newsletter/ waitlist/`) + `packages/ db/ infra/`. `index.md` is the home (no README).
 
 **Stack:** VitePress (npm-isolated from the pnpm workspace). Product-docs site (:3002).
 

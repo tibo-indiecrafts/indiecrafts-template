@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { defaultLocale } from "@indiecrafts/config";
+import { defaultLocale } from "@indiecrafts/packages-shared-config";
 
 /**
  * One row of the cookie declaration table shown on the cookie-policy page — a

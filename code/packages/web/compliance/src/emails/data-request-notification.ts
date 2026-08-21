@@ -3,11 +3,11 @@ import {
   escapeHtml,
   renderEmailLayout,
   type RenderedEmail,
-} from "@indiecrafts/email";
+} from "@indiecrafts/packages-web-email";
 
 /**
  * Owner alert on a new GDPR data-subject request — operational (one team, not
- * translated). The caller (`@indiecrafts/compliance`) resolves the request-type
+ * translated). The caller (`@indiecrafts/packages-web-compliance`) resolves the request-type
  * label and passes it as a plain string, so this template stays free of any
  * Sanity/compliance types.
  */

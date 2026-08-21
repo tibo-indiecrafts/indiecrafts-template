@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { PersonListModule } from "@indiecrafts/ui-components/shared/types";
+import type { PersonListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { ModuleSection } from "../layout/ModuleSection";
 
 /**

@@ -1,6 +1,6 @@
 # i18n & routing
 
-The entire internationalization surface is one object — `i18n` in `@indiecrafts/config`
+The entire internationalization surface is one object — `i18n` in `@indiecrafts/packages-shared-config`
 (`code/packages/shared/config/src/index.ts`, section `3. ─── i18n ───`). It declares the
 languages the site ships, which one is the unprefixed default, and how locales appear in
 URLs. `src/i18n/routing.ts` and the proxy (`src/proxy.ts`) consume it directly; everything
@@ -17,7 +17,7 @@ is a **fallback** so a Sanity hiccup or a blank field never blanks the chrome. E
 `useTranslations(...)`/`t(...)` call site is unchanged — only the source moved.
 
 - **`typography`** stays in the JSON file only (never in the CMS): it is machine i18n/format
-  config (quote style, date format, oxford comma) consumed by `@indiecrafts/format`, not editorial
+  config (quote style, date format, oxford comma) consumed by `@indiecrafts/packages-shared-format`, not editorial
   copy — a wrong edit would break formatting site-wide.
 - **Homepage editorial copy** is separate again — the home `page` (the `page` with `isHome`)
   (see [Homepage](../features/homepage)).
@@ -42,7 +42,7 @@ export const i18n = {
 } as const satisfies { … };
 ```
 
-Each locale row is a `LocaleConfig` (`@indiecrafts/config` `./types`):
+Each locale row is a `LocaleConfig` (`@indiecrafts/packages-shared-config` `./types`):
 
 | Field   | Meaning                                                                   |
 | ------- | ------------------------------------------------------------------------- |
@@ -61,7 +61,7 @@ Adding a locale row automatically widens `Locale` everywhere — no separate typ
 
 ## Derived helpers (the public API)
 
-`@indiecrafts/config` exposes flat aliases + lookups so the rest of the app imports one
+`@indiecrafts/packages-shared-config` exposes flat aliases + lookups so the rest of the app imports one
 stable name instead of re-deriving from `i18n`:
 
 - `locales` / `defaultLocale` / `localeCodes` — the raw list + codes.
@@ -73,7 +73,7 @@ stable name instead of re-deriving from `i18n`:
   route whose slug isn't in `PATHNAMES` (blog posts, categories, tags, authors). Lives in
   config so modules can use it; re-exported from `@/i18n/routing` for the app.
 - `localeDir(code)` — text direction, falling back to `"ltr"`.
-- `isLocale(value, supported)` — a type-guard (`@indiecrafts/config` `./types`) for narrowing
+- `isLocale(value, supported)` — a type-guard (`@indiecrafts/packages-shared-config` `./types`) for narrowing
   an unknown string to `Locale`.
 
 ## localePrefix modes
@@ -126,7 +126,7 @@ detail pages whose slug isn't in `PATHNAMES`, use `localizedPathname(pathname, l
 
 A page's `slug` in the `pages` map may be a plain string (same path everywhere) **or** a
 `{ [code]: string }` object for per-locale paths. The type is
-`RouteSlug = string | Partial<Record<Locale, string>>` (`@indiecrafts/config` `./types`):
+`RouteSlug = string | Partial<Record<Locale, string>>` (`@indiecrafts/packages-shared-config` `./types`):
 
 ```ts
 legalNotice: {
@@ -164,7 +164,7 @@ true }` on its slug, so a translation starts with a **blank** slug — each loca
 `coalesce(language,"en") == $locale`, and `generateStaticParams` emits one route per (slug, language).
 
 **Switching locale on a detail page.** Because the slugs differ, the switcher can't just re-prefix the
-path. `useLocaleSwitch` (`@indiecrafts/i18n`) posts to `/api/i18n/translated-slug`, which follows the
+path. `useLocaleSwitch` (`@indiecrafts/packages-web-i18n`) posts to `/api/i18n/translated-slug`, which follows the
 `translation.metadata` link to the target-locale slug (post · category · tag · author · series); with
 no translation it falls back to the target locale's homepage.
 
@@ -245,7 +245,7 @@ Adding a locale touches three homes, by content type:
 **As much _content_ as possible is editable in Sanity** — copy, SEO, cookie/legal text, and email
 strings all resolve `value[locale] ?? value[defaultLocale]`. What is **not** content — number
 grouping, currency, adjective position, article agreement — lives in `config` and is served by
-[`@indiecrafts/format`](../../../packages/format.md) (`localeFormat(locale)`), because it is a
+[`@indiecrafts/packages-shared-format`](../../../packages/format.md) (`localeFormat(locale)`), because it is a
 language _rule_, not editable copy.
 
 ### RTL

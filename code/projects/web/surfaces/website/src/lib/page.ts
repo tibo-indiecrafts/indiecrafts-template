@@ -1,7 +1,7 @@
 import { cache } from "react";
 import type { Locale } from "@/config";
-import { client } from "@indiecrafts/sanity/client";
-import { logger } from "@indiecrafts/logger";
+import { client } from "@indiecrafts/packages-web-sanity/client";
+import { logger } from "@indiecrafts/packages-shared-logger";
 import { pageBySlugQuery, allPageParamsQuery } from "@/sanity/page-queries";
 
 /**

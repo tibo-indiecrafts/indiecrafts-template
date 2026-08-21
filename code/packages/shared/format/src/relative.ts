@@ -1,4 +1,4 @@
-import { defaultLocale, localeFormat, type Locale } from "@indiecrafts/config";
+import { defaultLocale, localeFormat, type Locale } from "@indiecrafts/packages-shared-config";
 
 /** Relative time ("3 days ago" / "il y a 3 jours"), durations, and date ranges — all i18n via `Intl`. */
 

@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Indiecrafts
-description: Quiet, editorial minimalism — one indigo accent on near-neutral greys, generous whitespace, one signature moment per surface. Config-first (`@indiecrafts/config` data + this package's `src/globals.css`). OKLCH in globals.css is the authoritative color source; the hex below are reference values for tooling, and theme.hexColors.background mirrors --background for the PWA manifest.
+description: Quiet, editorial minimalism — one indigo accent on near-neutral greys, generous whitespace, one signature moment per surface. Config-first (`@indiecrafts/packages-shared-config` data + this package's `src/globals.css`). OKLCH in globals.css is the authoritative color source; the hex below are reference values for tooling, and theme.hexColors.background mirrors --background for the PWA manifest.
 colors:
   # Light (sRGB mirrors of the OKLCH tokens in globals.css)
   background: "#ffffff"
@@ -287,11 +287,11 @@ status dots use `full`. Don't mix radii within one component.
 Build on the shadcn primitives the shadcn way — full rules in
 [`.claude/rules/component-architecture.md`](../../apps/web/.claude/rules/component-architecture.md):
 `cn()` not string-concat, `cva` not forks, `asChild`/`data-slot`, semantic tokens
-over `dark:`, container queries, never hand-edit `@indiecrafts/ui` primitives.
+over `dark:`, container queries, never hand-edit `@indiecrafts/packages-web-ui` primitives.
 
 ### Component catalog
 
-Each primitive's usage doc is **colocated with its source** in the `@indiecrafts/ui`
+Each primitive's usage doc is **colocated with its source** in the `@indiecrafts/packages-web-ui`
 package — `code/packages/ui/src/web/<name>.md` sits beside `<name>.tsx`. Edit the component,
 its doc is right there. The 61 primitives:
 

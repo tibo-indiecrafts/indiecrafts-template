@@ -17,6 +17,6 @@ national part (keeps value parsing simple).
 ## Validation
 
 Validation is **the caller's job** — use `isPhone` / `formatPhone` from
-[`@indiecrafts/format/validate`](/packages/format). For strict per-country validity, swap in
+[`@indiecrafts/packages-shared-format/validate`](/packages/format). For strict per-country validity, swap in
 `libphonenumber-js` at the call site. Address autocomplete + payment-card fields are deliberately
 **not** shipped (address = external API + privacy; cards = Stripe Elements / PCI).

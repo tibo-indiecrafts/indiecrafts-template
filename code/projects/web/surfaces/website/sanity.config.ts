@@ -12,19 +12,25 @@ import { visionTool } from "@sanity/vision";
 import { documentInternationalization } from "@sanity/document-internationalization";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
-import { apiVersion, dataset, projectId, studioBasePath } from "@indiecrafts/sanity/env";
-import { composeStudio } from "@indiecrafts/sanity/module";
-import { locales } from "@indiecrafts/config";
+import {
+  apiVersion,
+  dataset,
+  projectId,
+  studioBasePath,
+} from "@indiecrafts/packages-web-sanity/env";
+import { composeStudio } from "@indiecrafts/packages-web-sanity/module";
+import { locales } from "@indiecrafts/packages-shared-config";
 import { features } from "./src/config";
-import { sharedSanity } from "@indiecrafts/schema";
-import { emailSanity, sendTestEmailAction } from "@indiecrafts/email/sanity";
-import { pageBuilderSanity } from "@indiecrafts/page-builder/sanity";
-import { blogSanity } from "@indiecrafts/blog/sanity";
-import { newsletterSanity } from "@indiecrafts/newsletter/sanity";
-import { waitlistSanity } from "@indiecrafts/waitlist/sanity";
-import { complianceSanity } from "@indiecrafts/compliance/sanity";
-import { announcementSanity } from "@indiecrafts/announcement/sanity";
-import { localeSuggestSanity } from "@indiecrafts/locale-suggest/sanity";
+import { sharedSanity } from "@indiecrafts/packages-web-schema";
+import { emailSanity, sendTestEmailAction } from "@indiecrafts/packages-web-email/sanity";
+import { pageBuilderSanity } from "@indiecrafts/packages-web-page-builder/sanity";
+import { blogSanity } from "@indiecrafts/modules-web-blog/sanity";
+import { newsletterSanity } from "@indiecrafts/modules-web-newsletter/sanity";
+import { waitlistSanity } from "@indiecrafts/modules-web-waitlist/sanity";
+import { contactSanity } from "@indiecrafts/modules-web-contact/sanity";
+import { complianceSanity } from "@indiecrafts/packages-web-compliance/sanity";
+import { announcementSanity } from "@indiecrafts/packages-web-announcement/sanity";
+import { localeSuggestSanity } from "@indiecrafts/packages-web-locale-suggest/sanity";
 import { coreSanity } from "./src/sanity";
 
 // Per-app desk groups. "Site web" = this app's own content (home + the feature
@@ -37,6 +43,7 @@ const appModules = [
   blogSanity,
   newsletterSanity(features.newsletter),
   waitlistSanity(features.waitlist),
+  contactSanity(features.contact),
 ];
 const sharedModules = [
   coreSanity,
@@ -60,7 +67,7 @@ export default defineConfig({
     templates: () => sanity.templates,
   },
   // "Envoyer un test" on the E-mails singleton — sends a sample of every enabled
-  // email so an editor can verify deliverability. Owned by `@indiecrafts/email`.
+  // email so an editor can verify deliverability. Owned by `@indiecrafts/packages-web-email`.
   document: {
     actions: (prev, ctx) =>
       ctx.schemaType === "emailStrings" ? [...prev, sendTestEmailAction] : prev,
@@ -71,7 +78,7 @@ export default defineConfig({
     // doc per translation set) so the Studio can create/jump between languages and
     // the front-end can resolve a doc's slug in another locale.
     documentInternationalization({
-      // Derived from the app's single locale source (`@indiecrafts/config`) so
+      // Derived from the app's single locale source (`@indiecrafts/packages-shared-config`) so
       // Studio and the front-end can never disagree on which languages exist.
       supportedLanguages: locales.map(({ code, label }) => ({ id: code, title: label })),
       schemaTypes: sanity.i18nSchemaTypes,

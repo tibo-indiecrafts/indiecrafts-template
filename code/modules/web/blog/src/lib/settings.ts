@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { blogFlags } from "./config";
-import { client } from "@indiecrafts/sanity/client";
+import { client } from "@indiecrafts/packages-web-sanity/client";
 import { blogDisplayQuery } from "../sanity/queries";
 import type { BlogDisplay, BlogDisplayRaw } from "../sanity/types";
 

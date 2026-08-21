@@ -10,11 +10,11 @@ import { FeaturedArticles } from "@/user-interface/homepage/sections/FeaturedArt
 import { IconShowcase } from "@/user-interface/homepage/sections/IconShowcase";
 import { MorphiconsShowcase } from "@/user-interface/homepage/sections/MorphiconsShowcase";
 import { BlocksShowcase } from "@/user-interface/homepage/sections/BlocksShowcase";
-import { renderBlock } from "@indiecrafts/ui-components/web/registry";
-import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
-import { featuredPostsQuery } from "@indiecrafts/blog/sanity/queries";
-import type { PostListItem } from "@indiecrafts/blog/sanity/types";
+import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
+import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
+import { featuredPostsQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
+import type { PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /**
  * Production home page. The editorial sections are an editor-composed

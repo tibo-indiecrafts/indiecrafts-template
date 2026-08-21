@@ -15,30 +15,30 @@ Config files (all in `code/projects/web/surfaces/website/`): `wrangler.toml` (en
 
 | Env     | Worker               | URL                | Robots                                                      |
 | ------- | -------------------- | ------------------ | ----------------------------------------------------------- |
-| dev     | `<slug>-dev-web-website`     | `*.workers.dev`    | Disallow (`NEXT_PUBLIC_ENVIRONMENT=development`)            |
-| staging | `<slug>-staging-web-website` | `*.workers.dev`    | Disallow (`…=staging`)                                      |
-| prod    | `<slug>-prod-web-website`         | your custom domain | Indexed once `NEXT_PUBLIC_SITE_URL` is set (`…=production`) |
+| dev     | `<slug>-dev-web-surfaces-website`     | `*.workers.dev`    | Disallow (`NEXT_PUBLIC_ENVIRONMENT=development`)            |
+| staging | `<slug>-staging-web-surfaces-website` | `*.workers.dev`    | Disallow (`…=staging`)                                      |
+| prod    | `<slug>-prod-web-surfaces-website`         | your custom domain | Indexed once `NEXT_PUBLIC_SITE_URL` is set (`…=production`) |
 
 > **Rename first — `pnpm project:rename <slug>`.** The template ships with the stem
-> `indiecrafts-prod-web-website`. `project:rename` rewrites every `wrangler.toml` resource name **and**
-> `DEFAULT_SITE_PREFIX` in `@indiecrafts/config` in one command, then prints the R2 buckets to
+> `indiecrafts-prod-web-surfaces-website`. `project:rename` rewrites every `wrangler.toml` resource name **and**
+> `DEFAULT_SITE_PREFIX` in `@indiecrafts/packages-shared-config` in one command, then prints the R2 buckets to
 > create. **Don't hand-edit the names** — Worker + R2 names are account-global, so
-> `deploy:website:staging|prod` is **blocked** while they're still `indiecrafts-prod-web-website` (a shared-account
+> `deploy:website:staging|prod` is **blocked** while they're still `indiecrafts-prod-web-surfaces-website` (a shared-account
 > guard that stops one client overwriting another). The template's own deploy passes it with
 > `ALLOW_DEFAULT_SLUG=true`.
 
 ## One-time setup
 
 0. **Rename the project** — `pnpm project:rename <slug>` (unique per client). Everything below uses
-   `<slug>-prod-web-website` in place of `indiecrafts-prod-web-website`.
+   `<slug>-prod-web-surfaces-website` in place of `indiecrafts-prod-web-surfaces-website`.
 1. **Install** — `pnpm install` (resolves `@opennextjs/cloudflare` + `wrangler`, writes the lockfile).
 2. **R2 buckets** — one incremental cache per env (names follow your slug):
    ```bash
-   pnpm --filter @indiecrafts/website exec wrangler r2 bucket create <slug>-dev-web-website-isr
-   pnpm --filter @indiecrafts/website exec wrangler r2 bucket create <slug>-staging-web-website-isr
-   pnpm --filter @indiecrafts/website exec wrangler r2 bucket create <slug>-prod-web-website-isr
+   pnpm --filter @indiecrafts/web-surfaces-website exec wrangler r2 bucket create <slug>-dev-web-surfaces-website-isr
+   pnpm --filter @indiecrafts/web-surfaces-website exec wrangler r2 bucket create <slug>-staging-web-surfaces-website-isr
+   pnpm --filter @indiecrafts/web-surfaces-website exec wrangler r2 bucket create <slug>-prod-web-surfaces-website-isr
    ```
-3. **Rate-limit KV** — the in-app form rate limiter (`@indiecrafts/security` `withGuard`, on the
+3. **Rate-limit KV** — the in-app form rate limiter (`@indiecrafts/packages-shared-security` `withGuard`, on the
    newsletter / waitlist / comment routes) needs a KV namespace. Run it once — it creates the namespace
    and uncomments + fills the id in `wrangler.toml` (base + every env):
    ```bash

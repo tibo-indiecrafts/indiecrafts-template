@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/format",
+  "name": "@indiecrafts/packages-shared-format",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "./validate": "./src/validate.ts"
   },
   "dependencies": {
-    "@indiecrafts/config": "workspace:*"
+    "@indiecrafts/packages-shared-config": "workspace:*"
   },
   "scripts": {
     "test": "vitest run"

@@ -13,3 +13,17 @@ export function announcementStructureItem(
         .documentId("announcementBar"),
     );
 }
+
+/** "Toast d'annonce" desk — the editable rich-toast singleton. */
+export function announcementToastStructureItem(
+  S: StructureBuilder,
+): ListItemBuilder {
+  return S.listItem()
+    .title("Toast d'annonce")
+    .child(
+      S.editor()
+        .id("announcementToast")
+        .schemaType("announcementToast")
+        .documentId("announcementToast"),
+    );
+}

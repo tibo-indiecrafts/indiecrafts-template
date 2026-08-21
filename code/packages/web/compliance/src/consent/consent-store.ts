@@ -6,12 +6,18 @@
  * `useSyncExternalStore` snapshot without a hydration effect.
  */
 
-import { site } from "@indiecrafts/config";
+import { site } from "@indiecrafts/packages-shared-config";
 import {
-  CONSENT_SIGNALS,
-  type ConsentCategory,
-  type ConsentSignal,
-} from "./consent-signals";
+  type ConsentRecord,
+  grantedKeys,
+  consentUpdate,
+} from "@indiecrafts/packages-shared-compliance/shared";
+import { type ConsentCategory } from "./consent-signals";
+
+// The pure decision math (`grantedKeys`, `consentUpdate`) + the `ConsentRecord` shape
+// moved to the portable brick so the shells reuse them; re-export here so this brick's
+// public surface is unchanged (`applyConsent` + any importer still resolve them).
+export { type ConsentRecord, grantedKeys, consentUpdate };
 
 /** GA / GTM injects `window.dataLayer` at runtime — augment the global to push consent updates. */
 declare global {
@@ -32,13 +38,6 @@ export const STORAGE_KEY = `${site.prefix}.cookie-consent`;
 export const CONSENT_EVENT = "cookie-consent-change";
 /** Fired to open the preferences dialog from anywhere (e.g. a footer link). */
 export const OPEN_PREFERENCES_EVENT = "cookie-preferences-open";
-
-/** `v` = consent version (bumping it re-prompts), `t` = timestamp, `choices` per category key. */
-export type ConsentRecord = {
-  v: string;
-  t: number;
-  choices: Record<string, boolean>;
-};
 
 // `useSyncExternalStore` requires get() to return a STABLE reference when nothing
 // changed — so cache the parsed record and only re-parse when the raw string differs.
@@ -114,30 +113,3 @@ export function applyConsent(
   }
 }
 
-/** Category keys currently granted — required categories are always granted. */
-export function grantedKeys(
-  categories: ConsentCategory[],
-  choices: Record<string, boolean>,
-): Set<string> {
-  const set = new Set<string>();
-  for (const c of categories) if (c.required || choices[c.key]) set.add(c.key);
-  return set;
-}
-
-/**
- * The gtag Consent-Mode `update` payload for a set of choices: each of the seven
- * signals is `granted` iff at least one granted category lists it, else `denied`.
- */
-export function consentUpdate(
-  categories: ConsentCategory[],
-  choices: Record<string, boolean>,
-): Record<ConsentSignal, "granted" | "denied"> {
-  const granted = grantedKeys(categories, choices);
-  const allowed = new Set<ConsentSignal>();
-  for (const c of categories) {
-    if (granted.has(c.key)) c.signals.forEach((s) => allowed.add(s));
-  }
-  return Object.fromEntries(
-    CONSENT_SIGNALS.map((s) => [s, allowed.has(s) ? "granted" : "denied"]),
-  ) as Record<ConsentSignal, "granted" | "denied">;
-}

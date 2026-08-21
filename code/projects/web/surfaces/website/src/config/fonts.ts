@@ -10,11 +10,11 @@
  *
  * Ships a display/body split: Satoshi (self-hosted local variable font) for
  * headings, Geist (Google, auto-subset + self-hosted) for body, Geist Mono
- * for code. Add a font → extend `FontKey` (in `@indiecrafts/config`) + the
+ * for code. Add a font → extend `FontKey` (in `@indiecrafts/packages-shared-config`) + the
  * registry, then name it here.
  */
 
-import type { FontRoles } from "@indiecrafts/config";
+import type { FontRoles } from "@indiecrafts/packages-shared-config";
 
 export const fonts = {
   display: "satoshi",

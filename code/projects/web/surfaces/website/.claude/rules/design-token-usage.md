@@ -12,4 +12,4 @@ Load when touching color, type, spacing, radius, elevation, or `DESIGN.md`.
 - **AI agents:** read `tokens.json` for color/space/type values and emit the **semantic** token (`var(--color-...)`/`bg-brand`), never an invented hex.
 - **Tokens are normative.** When prose and a token disagree, the token wins; a token overrides any hardcoded value.
 - **Missing token?** Name the semantic role and propose adding it to `DESIGN.md` — never bury a raw value in a component to paper over the gap.
-- Full contract: `@indiecrafts/ui-tokens/DESIGN.md`. Decision history: `code/docs/apps/web/design/decisions.md`.
+- Full contract: `@indiecrafts/packages-shared-ui-tokens/DESIGN.md`. Decision history: `code/docs/apps/web/design/decisions.md`.

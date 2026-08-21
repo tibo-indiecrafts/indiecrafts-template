@@ -2,17 +2,17 @@
 
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useLocaleSwitch } from "@indiecrafts/i18n";
+import { useLocaleSwitch } from "@indiecrafts/packages-web-i18n";
 import { localeMap, locales, type Locale } from "@/config";
-import { Button } from "@indiecrafts/ui/web/button";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@indiecrafts/ui/web/dropdown-menu";
-import { cn } from "@indiecrafts/utils/cn";
+} from "@indiecrafts/packages-web-ui/web/dropdown-menu";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 export type LocaleSwitcherProps = {
   shape?: "icon" | "code";
@@ -30,7 +30,7 @@ export function LocaleSwitcher({
   const t = useTranslations("common");
   const current = useLocale() as Locale;
   // Shared locale-switch logic (prefix swap + blog translated-slug) lives in
-  // `@indiecrafts/i18n`; the app's content-route resolver is injected via
+  // `@indiecrafts/packages-web-i18n`; the app's content-route resolver is injected via
   // `LocaleSwitchProvider` (in `LocaleSwitchBoundary`), read from context here.
   const switchTo = useLocaleSwitch();
 

@@ -7,7 +7,7 @@ import { CogIcon } from "@sanity/icons";
  * (Organization / LocalBusiness subtype) with its address / contact / geo
  * fields, and any extra global JSON-LD entities.
  *
- * SOLE runtime source for these (no `@indiecrafts/config` fallback) — read by
+ * SOLE runtime source for these (no `@indiecrafts/packages-shared-config` fallback) — read by
  * `getSiteSettings` (`src/lib/seo/site-seo.ts`) and fed to `buildSiteSchemas`
  * (`src/lib/seo/jsonld-core.ts`). Per-language SEO text lives in the separate
  * per-locale `siteMeta` singleton.
@@ -345,7 +345,7 @@ export default defineType({
       type: "object",
       group: "display",
       description:
-        "Quels thèmes de couleur le site propose. Vide = clair + sombre + automatique (le réglage par défaut).",
+        "Quels thèmes de couleur le site propose. Vide = clair + sombre (le réglage par défaut). Quand les deux sont proposés, le site adopte automatiquement le thème de l'appareil au premier chargement.",
       options: { collapsible: true, collapsed: true },
       fields: [
         defineField({
@@ -357,12 +357,6 @@ export default defineType({
         defineField({
           name: "dark",
           title: "Proposer le thème sombre",
-          type: "boolean",
-          initialValue: true,
-        }),
-        defineField({
-          name: "system",
-          title: "Proposer « automatique » (suivre l'appareil)",
           type: "boolean",
           initialValue: true,
         }),

@@ -1,9 +1,9 @@
-# @indiecrafts/format — locale formatting & grammar
+# @indiecrafts/packages-shared-format — locale formatting & grammar
 
 **Stack:** TypeScript. Pure, framework-agnostic (no React) `Intl`-based helpers. Foundation · agnostic.
 
 Auto-loads under `code/packages/shared/format/**`. Consumed as source via `transpilePackages`. Subpath-only
-(explicit-extension `exports` → no tsconfig `paths` entry). Dep: `@indiecrafts/config` only.
+(explicit-extension `exports` → no tsconfig `paths` entry). Dep: `@indiecrafts/packages-shared-config` only.
 
 - **`/money`** — `formatMoney` (memoized `Intl.NumberFormat` currency, `cents` support) · `parseMoney`
   · `toMajor`/`toCents` · `convert` (rates from `formatDefaults`, throws on a missing pair) ·
@@ -22,7 +22,7 @@ Auto-loads under `code/packages/shared/format/**`. Consumed as source via `trans
 - **`/validate`** — `isEmail` · `isPhone`/`formatPhone` · `isPostalCode` · `isIban`/`formatIban`
   (mod-97) · `isVatNumber`.
 
-**Config:** per-locale rules live on the `i18n.locales` rows in `@indiecrafts/config`
+**Config:** per-locale rules live on the `i18n.locales` rows in `@indiecrafts/packages-shared-config`
 (`numberLocale`, `currency`, `capitalizeInlineNouns`, `adjBeforeNoun`) + site-wide `formatDefaults`
 (`currency`, `vatRate`, `rates`); `localeFormat(locale)` resolves them. **Not Sanity, not `messages/`.**
 Formatting **numbers** here; **words** (labels, "read", "more") stay in `messages/`.

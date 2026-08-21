@@ -11,8 +11,7 @@ user-facing words carry the brand voice — not the UX flow (that's
 writing (the `writing-style` rule governs that).
 
 Read the intent first: `code/packages/shared/ui-tokens/DESIGN.md` § Product Content (the
-warm, editorial UI-copy contract) and, when present, the deeper
-`method/shared/context/voice-guide.md`. Then review the copy against them.
+warm, editorial UI-copy contract). Then review the copy against it.
 
 Scope — the product's user-facing strings:
 

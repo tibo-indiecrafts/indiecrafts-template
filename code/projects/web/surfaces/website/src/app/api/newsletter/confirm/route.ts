@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
-import { withGuard } from "@indiecrafts/security/guard";
-import { confirmSubscriber } from "@indiecrafts/newsletter/lib/confirm";
+import { withGuard } from "@indiecrafts/packages-shared-security/guard";
+import { confirmSubscriber } from "@indiecrafts/modules-web-newsletter/lib/confirm";
 
 /**
  * Double opt-in confirm — **POST only**. A bare GET never mutates, so a mail

@@ -1,21 +1,35 @@
 # System pages (maintenance · 404 · error)
 
 The branded **status pages** every app shares — the maintenance screen, the 404, and the error (500)
-boundary — plus the maintenance **proxy behaviour**. Lives in the **`@indiecrafts/system-pages`** brick
-(`code/packages/web/system-pages`), consumed as source. **Presentational only**: no Sanity, no fonts, no
+boundary — plus the maintenance **proxy behaviour**. Lives in the **`@indiecrafts/packages-shared-system-pages`** brick
+(`code/packages/shared/system-pages`), consumed as source. **Presentational only**: no Sanity, no fonts, no
 routes — each app owns those.
 
 Extracted so a second app (the platform reserves `admin`/`mobile`/… slots) inherits the same status
 pages + maintenance behaviour instead of re-implementing them.
 
-## Exports
+## Exports — forked by platform (like `ui-icons`)
 
-| Import                                            | What it is                                                                                                                                                                                                                        |
-| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Maintenance` (`.`)                               | The standalone full-page maintenance screen (own `min-h-dvh`). Props: `statusLabel, title, body, contactLabel, name, email?`.                                                                                                     |
-| `NotFoundContent` (`.`)                           | The centered 404 card. Props: `eyebrow, title, description, homeLabel`. Home link via the shared `@indiecrafts/i18n` `Link`.                                                                                                      |
-| `ErrorContent` (`.`)                              | The centered 500 card (`"use client"`, `@indiecrafts/ui/web/button`). Props: `title, description, retryLabel, onRetry?`.                                                                                                          |
-| `maintenanceRewrite(request, isDown)` (`./proxy`) | For an app's `proxy.ts`: returns a `503` rewrite to `/maintenance` when `isDown`, else `null`. **Pure** — the app decides `isDown` (build-time `features.maintenance` OR the live Sanity toggle), so the brick stays Sanity-free. |
+`./shared` = the prop **contracts** (`MaintenanceProps` · `NotFoundContentProps` · `ErrorContentProps` ·
+`OfflineContentProps` — copy only, no React) **+ `SHELL_COPY`** (default 404/500/offline copy per locale —
+the one source the non-CMS shells render). `./web` = the DOM components (**Next-agnostic** — the 404 home link is injected, so
+they serve the **Next website AND a plain-React Electron renderer**). `./native` = React Native components
+(same contracts; **themed from `ui-tokens/native`** so they read in light + dark; the app owns nav via
+`onGoHome`/`onRetry`). `./proxy` (web-only) = `maintenanceRewrite`.
+
+**`SHELL_COPY`** (`./shared`) is the shared default status-page copy (`{ notFound, error }` per locale)
+that the **mobile + hybrid** shells merge into their `react-intl` messages, so their wording never drifts.
+The **website owns its copy in Sanity** (`getSystemPages`) + its own `messages`, so it does **not** read
+`SHELL_COPY` — that keeps status copy editor-editable on the marketing site while the app shells share one
+static default.
+
+| Import                                            | What it is                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Maintenance` (`./web`, `./native`)               | The standalone full-page maintenance screen (own `min-h-dvh`). Props: `statusLabel, title, body, contactLabel, name, email?`.                                                                                                                                                                                                                                                              |
+| `NotFoundContent` (`.`)                           | The centered 404 card. Props: `eyebrow, title, description, homeLabel`, + **`LinkComponent?`/`homeHref?`** — the home link is **injected** (default a plain `<a>`). The website passes its `@/i18n/routing` `Link`; a plain-React host (Electron renderer) uses the default. This keeps the brick **Next-agnostic** (no `next-intl` dep), so the same component serves Next + plain React. |
+| `ErrorContent` (`.`)                              | The centered 500 card (`"use client"`, `@indiecrafts/packages-web-ui/web/button`). Props: `title, description, retryLabel, onRetry?`.                                                                                                                                                                                                                                                      |
+| `OfflineContent` (`./web`, `./native`)            | The centered offline card — for a route/screen that cannot render without the network (a non-blocking banner covers the common case; the app owns it). Props: `title, description, retryLabel, onRetry?`. Same shape as `ErrorContent`; distinct so copy + intent stay separate. `SHELL_COPY.offline` adds a short `banner` string too.                                                     |
+| `maintenanceRewrite(request, isDown)` (`./proxy`) | For an app's `proxy.ts`: returns a `503` rewrite to `/maintenance` when `isDown`, else `null`. **Pure** — the app decides `isDown` (build-time `features.maintenance` OR the live Sanity toggle), so the brick stays Sanity-free.                                                                                                                                                          |
 
 ## The split (brick vs app)
 
@@ -35,7 +49,7 @@ The brick owns **how the status pages look** + **the maintenance behaviour**. Ea
 ```ts
 // proxy.ts
 import { features } from "@/config";
-import { maintenanceRewrite } from "@indiecrafts/system-pages/proxy";
+import { maintenanceRewrite } from "@indiecrafts/packages-shared-system-pages/proxy";
 import { getMaintenanceMode } from "@/lib/maintenance";
 const res = maintenanceRewrite(
   request,
@@ -52,5 +66,5 @@ app). Turn maintenance on with the Sanity `siteSettings.maintenanceMode` toggle 
 
 ## Deps
 
-`@indiecrafts/config` (`features`) · `@indiecrafts/i18n` (`Link`) · `@indiecrafts/ui` (`Button`). Peer
+`@indiecrafts/packages-shared-config` (`features`) · `@indiecrafts/packages-web-ui` (`Button`; the 404 home link is injected, so **no `next-intl` dep**). Peer
 `react`/`react-dom`/`next`. Never imports an app or a module.

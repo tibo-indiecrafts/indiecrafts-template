@@ -1,13 +1,17 @@
 import { defineConfig } from "electron-vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 // electron-vite builds the three processes from their conventional entries —
-// src/main/index.ts · src/preload/index.ts · src/renderer/index.html — into
-// out/{main,preload,renderer} (which package.json `main` + the paths in
-// src/main/index.ts point at). Defaults are enough for the scaffold; the renderer
-// is plain Chromium/DOM here — swap in a web brick (React 19, like the web apps)
-// when the product needs shared UI (see .claude/CLAUDE.md).
+// src/main/index.ts · src/preload/index.ts · src/renderer/index.html (→ src/main.tsx)
+// — into out/{main,preload,renderer}. The renderer is a real React 19 app (plain
+// React + Vite, NOT Next), so it reuses the web bricks directly: shadcn
+// (@indiecrafts/packages-web-ui) + the Next-agnostic system-pages/web. Tailwind v4
+// (@tailwindcss/vite) compiles the token classes from src/renderer/src/globals.css.
 export default defineConfig({
   main: {},
   preload: {},
-  renderer: {},
+  renderer: {
+    plugins: [react(), tailwindcss()],
+  },
 });

@@ -1,4 +1,4 @@
-import type { WaitlistModule } from "@indiecrafts/ui-components/shared/types";
+import type { WaitlistModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { blockFeatures } from "../features";
 import { WaitlistForm } from "./WaitlistForm";
 

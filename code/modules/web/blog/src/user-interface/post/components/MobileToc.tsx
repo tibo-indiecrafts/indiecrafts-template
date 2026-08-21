@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
-import type { Heading } from "@indiecrafts/blog/sanity/types";
-import { slugify } from "@indiecrafts/utils/slugify";
-import { cn } from "@indiecrafts/utils/cn";
+import type { Heading } from "@indiecrafts/modules-web-blog/sanity/types";
+import { slugify } from "@indiecrafts/packages-shared-utils/slugify";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /**
  * Collapsed "On this page" jump list for the article — shown only below

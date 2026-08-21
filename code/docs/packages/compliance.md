@@ -1,6 +1,15 @@
 # Compliance — legal pages + cookie consent
 
-The **`@indiecrafts/compliance`** brick (`code/packages/web/compliance`) owns the site's whole
+> **Portable core split out.** The reusable half — the consent decision math, the store
+> contract, the legal-route contract, and a copy-injected consent + re-acceptance UI (web +
+> native) — now lives in **[`@indiecrafts/packages-shared-compliance`](./compliance-shared)**,
+> so the `app` / Electron / Expo shells reach the website's legal pages and ship a
+> compliant-ready consent UI. This brick (website only) keeps the Sanity cookie inventory,
+> the next-intl banner, the legal-page **content**, and the GDPR flow — it re-exports the
+> moved `consent-signals` (unchanged import path) and imports `grantedKeys`/`consentUpdate`/
+> `ConsentRecord` from the shared brick (one source of truth for the math).
+
+The **`@indiecrafts/packages-web-compliance`** brick (`code/packages/web/compliance`) owns the site's whole
 legal + data-protection surface, editor-managed in Sanity. Four domains, one brick:
 
 - **`src/pages/`** — the five **legal pages** (legal notice, privacy, cookies, CGU, CGV): the
@@ -11,7 +20,7 @@ legal + data-protection surface, editor-managed in Sanity. Four domains, one bri
 - **`src/requests/`** — the **data-subject request** flow (GDPR Art. 15–21 + consent withdrawal):
   `submitDataRequest` (validate → store → alert), the `dataRequest` record schema, and the
   `dataRequestOwner` email group. The form UI (`DataRequestForm`) lives in
-  `@indiecrafts/ui-components`.
+  `@indiecrafts/packages-web-ui-components`.
 
 Everything is a one-line `composeStudio` contribution (`complianceSanity` in `sharedModules`).
 No config flag for consent — content and switches live in Sanity; the data-request **surface**
@@ -33,7 +42,7 @@ Two Sanity homes:
 - **Master switch + GA id** — `siteSettings.analytics`: `requireCookieConsent` (show the
   banner, hold GA until accept) and `googleAnalyticsId` (see [Analytics](../seo/analytics.md)).
 - **Content** — the `cookieConsent` singleton (Studio → **Cookies & consentement**), read at
-  request time by `getCookieConsent(locale)` in `@indiecrafts/compliance/sanity/cookies`. It is the **sole**
+  request time by `getCookieConsent(locale)` in `@indiecrafts/packages-web-compliance/sanity/cookies`. It is the **sole**
   source (no config fallback); any fetch error returns the empty shape, never throws. `pnpm
 seed` ships demo content.
 
@@ -60,7 +69,7 @@ category lists stays `denied`. The layout emits `gtag('consent','default', …)`
 optional signals `denied` + `wait_for_update: 500`, then the store pushes a
 `['consent','update', …]` payload to `window.dataLayer` on every choice.
 
-The seven signals live in `CONSENT_SIGNALS` (`@indiecrafts/compliance/consent/consent-signals`): `analytics_storage`,
+The seven signals live in `CONSENT_SIGNALS` (`@indiecrafts/packages-web-compliance/consent/consent-signals`): `analytics_storage`,
 `ad_storage`, `ad_user_data`, `ad_personalization`, `functionality_storage`,
 `personalization_storage`, `security_storage`. The template's demo mapping:
 
@@ -90,7 +99,7 @@ The mapping is **data-driven** — edit a category's signals in Sanity, no code 
 - **Opt-in proof of consent** — newsletter/waitlist submissions are stamped with the
   **privacy-policy version** the person accepted + the timestamp (`consentPolicyVersion` on the
   `subscriber` / `waitlistEntry` doc). The version is derived **server-side** by the app route
-  (`getConsentPolicyVersion()`, `@indiecrafts/compliance/sanity/policy-version`) and passed to the module engine — never
+  (`getConsentPolicyVersion()`, `@indiecrafts/packages-web-compliance/sanity/policy-version`) and passed to the module engine — never
   from the request. Defensible proof for email marketing (GDPR Art. 7).
 
 _Out of scope:_ IAB TCF (needs a certified CMP), server-side consent **logging** (a DB history of
@@ -116,7 +125,7 @@ pages stay decoupled from the blog). SEO comes from the doc's own `seo` field (t
 visibilité** section, the shared `seoMeta`), per locale.
 
 **Rendering** — `LegalPageContent({ pageKey, locale })`
-(`@indiecrafts/compliance/pages/LegalPageContent`) fetches the doc via `legalPageQuery` and
+(`@indiecrafts/packages-web-compliance/pages/LegalPageContent`) fetches the doc via `legalPageQuery` and
 renders the title + date + body; the cookie page also appends the live cookie-declaration
 table. It is **app-agnostic** — no layout, no SEO, no feature-flag logic inside.
 
@@ -151,7 +160,7 @@ The app keeps the route shell, the `pages` map entry (drives the typed route), t
 
 **Proof-of-consent version** — opt-in forms (newsletter, waitlist, comments) stamp the
 **privacy-policy** `lastUpdated` on the stored record as GDPR proof. The date is read
-server-side by `getConsentPolicyVersion()` (`@indiecrafts/compliance/sanity/policy-version`,
+server-side by `getConsentPolicyVersion()` (`@indiecrafts/packages-web-compliance/sanity/policy-version`,
 via `consentPolicyVersionQuery`) in the API routes — never from the request.
 
 ## Legal re-acceptance (policy updates)
@@ -159,19 +168,19 @@ via `consentPolicyVersionQuery`) in the API routes — never from the request.
 A sibling of cookie consent, for the **contract** documents — Privacy, Terms (CGU), Terms of sale
 (CGV). The cookie policy keeps its own granular banner; the legal notice (imprint) is informational
 and excluded. When any tracked page's **Dernière mise à jour** date changes, a non-blocking bottom
-banner (`LegalNotice`, `@indiecrafts/compliance/reacceptance/LegalNotice`) tells the returning visitor and offers
+banner (`LegalNotice`, `@indiecrafts/packages-web-compliance/reacceptance/LegalNotice`) tells the returning visitor and offers
 **Review** + **Accept**.
 
 - **Copy** — the `legalConsent` singleton (Studio → **Mise à jour des documents légaux**):
   `banner.message` / `reviewLabel` / `acceptLabel` (`localeString`) + an optional manual `version`.
   Sole source, no `messages` fallback. Read by `getLegalAcceptance(locale)`
-  (`@indiecrafts/compliance/sanity/legal`).
+  (`@indiecrafts/packages-web-compliance/sanity/legal`).
 - **Version** — the effective version is the optional manual `version` (usually blank) joined with the
   `lastUpdated` of the **flag-enabled** tracked pages — privacy + terms + terms-of-sale, each gated on
   its `features.legal.*` flag (a disabled page like CGV, off by default, is skipped so it can't trigger a
   re-accept for a 404). Bumping any enabled date re-shows the banner — the same recipe as cookie
   re-consent. The **Review** link targets the first flag-enabled tracked page (app-computed).
-- **Deposit** — a first-party cookie `<site.prefix>.legal-ack` (`@indiecrafts/compliance/reacceptance/legal-store`),
+- **Deposit** — a first-party cookie `<site.prefix>.legal-ack` (`@indiecrafts/packages-web-compliance/reacceptance/legal-store`),
   `SameSite=Lax`, `Secure` on https, 1-year. **Server-read** in the layout so the banner is decided
   server-side — no flash; the client writes it on Accept. Unlike cookie consent (localStorage), this
   is a cookie precisely so the server can gate it.
@@ -186,7 +195,7 @@ banner (`LegalNotice`, `@indiecrafts/compliance/reacceptance/LegalNotice`) tells
 Beyond GA (which loads always and gates via Consent Mode), gate **any** cookie-setting
 script or embed on a category. Three tools:
 
-**`useConsent()`** (`@indiecrafts/compliance/consent/useConsent`) — reactive read of the visitor's choices via
+**`useConsent()`** (`@indiecrafts/packages-web-compliance/consent/useConsent`) — reactive read of the visitor's choices via
 `useSyncExternalStore`. Returns `{ choices, has, decided, openPreferences }`:
 
 ```tsx
@@ -196,7 +205,7 @@ if (has("marketing")) {
 }
 ```
 
-**`<ConsentGate category="…">`** (`@indiecrafts/compliance/consent/ConsentGate`) — render
+**`<ConsentGate category="…">`** (`@indiecrafts/packages-web-compliance/consent/ConsentGate`) — render
 children only while that category is granted (mounts on accept, unmounts on withdrawal).
 The canonical slot for a pixel/embed/widget:
 
@@ -207,7 +216,7 @@ The canonical slot for a pixel/embed/widget:
 </ConsentGate>
 ```
 
-**`<ConsentScript category src …>`** (`@indiecrafts/compliance/consent/ConsentScript`) — a
+**`<ConsentScript category src …>`** (`@indiecrafts/packages-web-compliance/consent/ConsentScript`) — a
 `next/script` gated on consent, for third-party tags without Consent-Mode support (Meta
 Pixel, Hotjar, LinkedIn Insight, …):
 
@@ -239,17 +248,17 @@ withdraw consent — gives an email + an optional message, and submits.
 
 The flow mirrors the newsletter form:
 
-1. **`DataRequestForm`** (`@indiecrafts/ui-components/web/form/DataRequestForm`) — the client
+1. **`DataRequestForm`** (`@indiecrafts/packages-web-ui-components/web/form/DataRequestForm`) — the client
    form. All copy is passed in from `messages.legal.dataRequest.*`; a honeypot + Turnstile block
    bots. POSTs `/api/data-request`.
 2. **The route** (`src/app/api/data-request/route.ts`) — `withGuard` (origin, rate limit, body
    cap, Turnstile) → `submitDataRequest`. Gated by `features.legal.dataRequest` (404 when off).
-3. **`submitDataRequest`** (`@indiecrafts/compliance/requests/submit`) — validates, **stores a
+3. **`submitDataRequest`** (`@indiecrafts/packages-web-compliance/requests/submit`) — validates, **stores a
    `dataRequest` record** in Sanity (the source of truth; never deduped), then sends a best-effort
    alert to the controller. A mail failure never fails a stored request.
 
 The seven rights are the one `DATA_REQUEST_TYPES` set
-(`@indiecrafts/compliance/requests/request-types`) — read by the form options, the validator, and
+(`@indiecrafts/packages-web-compliance/requests/request-types`) — read by the form options, the validator, and
 the `dataRequest` schema, so they never drift.
 
 **Studio.** Requests land in **Demandes RGPD** (newest first). Each carries the email, request

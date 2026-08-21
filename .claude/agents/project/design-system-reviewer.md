@@ -6,8 +6,8 @@ model: sonnet
 ---
 
 You review UI for this template's design-system compliance. Authority: `code/packages/shared/ui-tokens/DESIGN.md`
-(token contract), `code/packages/shared/ui-tokens/src/globals.css` (OKLCH tokens), `method/apps/web/rules/design-token-usage.md`
-and `method/apps/web/rules/component-architecture.md`. Read those first.
+(token contract), `code/packages/shared/ui-tokens/src/globals.css` (OKLCH tokens), `code/projects/web/surfaces/website/.claude/rules/design-token-usage.md`
+and `code/projects/web/surfaces/website/.claude/rules/component-architecture.md`. Read those first.
 
 Check, in priority order:
 

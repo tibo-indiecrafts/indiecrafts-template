@@ -1,13 +1,13 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Button } from "@indiecrafts/ui/web/button";
-import { Input } from "@indiecrafts/ui/web/input";
-import { Textarea } from "@indiecrafts/ui/web/textarea";
-import { Checkbox } from "@indiecrafts/ui/web/checkbox";
-import { Label } from "@indiecrafts/ui/web/label";
-import { RadioGroup, RadioGroupItem } from "@indiecrafts/ui/web/radio-group";
-import { cn } from "@indiecrafts/utils/cn";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { Input } from "@indiecrafts/packages-web-ui/web/input";
+import { Textarea } from "@indiecrafts/packages-web-ui/web/textarea";
+import { Checkbox } from "@indiecrafts/packages-web-ui/web/checkbox";
+import { Label } from "@indiecrafts/packages-web-ui/web/label";
+import { RadioGroup, RadioGroupItem } from "@indiecrafts/packages-web-ui/web/radio-group";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { TurnstileWidget, turnstileActive } from "./TurnstileWidget";
 
 /** One selectable right — `value` is a compliance request-type key, `label` is localized. */

@@ -11,7 +11,7 @@
 
 import { cache } from "react";
 import type { Locale } from "@/config";
-import { client } from "@indiecrafts/sanity/client";
+import { client } from "@indiecrafts/packages-web-sanity/client";
 import {
   systemPagesQuery,
   taxonomyPagesQuery,

@@ -3,11 +3,11 @@ import type {
   ImageRef,
   ModuleBase,
   BlockModule,
-} from "@indiecrafts/ui-components/shared/types";
+} from "@indiecrafts/packages-web-ui-components/shared/types";
 
 // The generic block types + shared presentational types now live in
-// `@indiecrafts/ui-components`. Re-export them so existing importers of
-// `@indiecrafts/blog/sanity/types` keep resolving them unchanged.
+// `@indiecrafts/packages-web-ui-components`. Re-export them so existing importers of
+// `@indiecrafts/modules-web-blog/sanity/types` keep resolving them unchanged.
 export type {
   ImageRef,
   ResolvedLink,
@@ -24,7 +24,7 @@ export type {
   StepListModule,
   QuoteListModule,
   CustomHtmlModule,
-} from "@indiecrafts/ui-components/shared/types";
+} from "@indiecrafts/packages-web-ui-components/shared/types";
 
 /**
  * Lightweight author reference embedded inside post fragments.
@@ -36,7 +36,7 @@ export type {
  * rich-text bios on the public site, switch the projections back to
  * `bio` and update this type to `PortableTextBlock[]`.
  */
-/** Slug-less SEO + visibility override — schema in `@indiecrafts/schema` (`seoMeta`). */
+/** Slug-less SEO + visibility override — schema in `@indiecrafts/packages-web-schema` (`seoMeta`). */
 export type SeoMeta = {
   title?: string;
   description?: string;
@@ -201,7 +201,7 @@ export type RssPost = {
 };
 
 // ─── Blog-specific page-builder modules ──────────────────────
-// The generic blocks (callout, card-list, …) live in `@indiecrafts/ui-components`
+// The generic blocks (callout, card-list, …) live in `@indiecrafts/packages-web-ui-components`
 // and are re-exported above. These three need the blog's own content/context.
 
 export type BlogIndexModule = ModuleBase & {

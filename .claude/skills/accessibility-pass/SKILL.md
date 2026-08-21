@@ -5,8 +5,8 @@ description: Run a structured accessibility pass on a page or component in this 
 
 # Accessibility pass
 
-Structured a11y check. Authority: `method/apps/web/rules/accessibility.md`, `code/packages/shared/ui-tokens/DESIGN.md`,
-`docs/apps/web/design/responsive-design.md`.
+Structured a11y check. Authority: `code/projects/web/surfaces/website/.claude/rules/accessibility.md`, `code/packages/shared/ui-tokens/DESIGN.md`,
+`code/docs/apps/web/design/adaptive-responsive.md`.
 
 ## Steps
 

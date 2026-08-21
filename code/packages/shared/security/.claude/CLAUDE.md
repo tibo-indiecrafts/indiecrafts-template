@@ -1,8 +1,8 @@
-# @indiecrafts/security — CSP · headers · request guard · crypto
+# @indiecrafts/packages-shared-security — CSP · headers · request guard · crypto
 
 **Stack:** TypeScript. Pure, framework-agnostic (no React/Next imports). Two sides: **response** —
 header **strings + arrays** an app's `next.config.ts` consumes; **request** — a route wrapper the
-public form routes consume. Domain · server. Dep: `@indiecrafts/config`.
+public form routes consume. Domain · server. Dep: `@indiecrafts/packages-shared-config`.
 
 Auto-loads under `code/packages/shared/security/**`. Subpath-only (explicit-extension `exports` → no
 tsconfig `paths`).
@@ -34,7 +34,7 @@ COOP defaults to `same-origin-allow-popups` **so the Studio OAuth login popup wo
 **not** added (they'd break Studio workers + cross-origin Sanity CDN). `script-src`/`connect-src` are
 unchanged from the app's prior policy, so the Studio keeps working.
 
-Integrates with, doesn't replace, `@indiecrafts/config` — `getCurrentEnvironment`/`getCSPConnectSources`
+Integrates with, doesn't replace, `@indiecrafts/packages-shared-config` — `getCurrentEnvironment`/`getCSPConnectSources`
 stay in config; this brick imports and composes them. Not Sanity (build config, config-first).
 
 Full reference → [`code/docs/packages/security.md`](../../../../docs/packages/security.md).

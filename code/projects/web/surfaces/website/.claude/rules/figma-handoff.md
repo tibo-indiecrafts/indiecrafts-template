@@ -19,4 +19,4 @@ Load when translating a Figma design (or MCP-pulled Figma data) into code. Map F
 - Frames map to **sections** (`src/user-interface/**/sections/`), not one giant page.
 - Match Figma's naming to the template's: PascalCase components, semantic token roles (a Figma "Primary/500" → `brand`, not `blue-500`). See [naming](./naming.md).
 - A Figma value that has no token yet → propose a token in `DESIGN.md`, don't hardcode the hex. See [design-token-usage](./design-token-usage.md).
-- Verify the result at 375 / 768 / 1280 and run `pnpm verify:quick`.
+- Verify the result at 375 / 768 / 1280; the live lint cards + `typescript-lsp` plugin + the commit hook cover tsc/lint (no manual `verify:quick` needed).

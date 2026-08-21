@@ -1,4 +1,4 @@
-import { defaultLocale, localeFormat, type Locale } from "@indiecrafts/config";
+import { defaultLocale, localeFormat, type Locale } from "@indiecrafts/packages-shared-config";
 
 /** Locale plural selection via `Intl.PluralRules` — pick the right message form. */
 

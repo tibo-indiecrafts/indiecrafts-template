@@ -25,14 +25,14 @@ SANITY_API_WRITE_TOKEN=sk_...  # Editor role
 
 | Slot                                         | Role       | Read by                                                                                                                                                | Required when                                                                                      |
 | -------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` + `_DATASET` | —          | `@indiecrafts/sanity/env` (asserted — throws if missing) → Studio + every client read                                                                  | always, when Studio/blog are on                                                                    |
-| `NEXT_PUBLIC_SANITY_API_VERSION`             | —          | `@indiecrafts/sanity/env` (defaults to `2025-01-01` if unset)                                                                                          | optional; pin it to keep query semantics stable                                                    |
-| `SANITY_API_READ_TOKEN`                      | **Viewer** | `@indiecrafts/sanity/token` → `@indiecrafts/sanity/client` + `@indiecrafts/sanity/live` (`sanityFetch` / `sanityFetchLive`) + `/api/draft-mode/enable` | draft preview + live updates. Without it: public reads still work; the enable endpoint returns 503 |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` + `_DATASET` | —          | `@indiecrafts/packages-web-sanity/env` (asserted — throws if missing) → Studio + every client read                                                                  | always, when Studio/blog are on                                                                    |
+| `NEXT_PUBLIC_SANITY_API_VERSION`             | —          | `@indiecrafts/packages-web-sanity/env` (defaults to `2025-01-01` if unset)                                                                                          | optional; pin it to keep query semantics stable                                                    |
+| `SANITY_API_READ_TOKEN`                      | **Viewer** | `@indiecrafts/packages-web-sanity/token` → `@indiecrafts/packages-web-sanity/client` + `@indiecrafts/packages-web-sanity/live` (`sanityFetch` / `sanityFetchLive`) + `/api/draft-mode/enable` | draft preview + live updates. Without it: public reads still work; the enable endpoint returns 503 |
 | `SANITY_API_WRITE_TOKEN`                     | **Editor** | `code/projects/web/surfaces/website/scripts/seed-demo.mjs` only (`pnpm seed`)                                                                          | running the seed. Never read at runtime                                                            |
 
 The Studio at `/studio` needs **no token** — visitors authenticate with their own Sanity session cookie.
 
-> **Note.** Sanity requires an auth token even for "public" datasets unless an explicit allow-public policy is set. `@indiecrafts/sanity/client` reads `SANITY_API_READ_TOKEN` inline: on the server it's sent on every request; in the browser bundle the non-`NEXT_PUBLIC_` var is stripped, so the client makes anonymous requests (fine — the only browser consumer is the embedded Studio with its cookie).
+> **Note.** Sanity requires an auth token even for "public" datasets unless an explicit allow-public policy is set. `@indiecrafts/packages-web-sanity/client` reads `SANITY_API_READ_TOKEN` inline: on the server it's sent on every request; in the browser bundle the non-`NEXT_PUBLIC_` var is stripped, so the client makes anonymous requests (fine — the only browser consumer is the embedded Studio with its cookie).
 
 ---
 
@@ -113,7 +113,7 @@ Manage → API → **CORS Origins → Add CORS origin**:
 
 Tick **Allow credentials** so the Studio's session cookie is sent.
 
-**Server-side reads (`sanityFetch` / `sanityFetchLive` in `@indiecrafts/sanity/live`) are not subject to CORS** — they originate from the Next.js server, not the browser. CORS only matters for browser-side requests (the embedded Studio + any client-side `@sanity/client` use).
+**Server-side reads (`sanityFetch` / `sanityFetchLive` in `@indiecrafts/packages-web-sanity/live`) are not subject to CORS** — they originate from the Next.js server, not the browser. CORS only matters for browser-side requests (the embedded Studio + any client-side `@sanity/client` use).
 
 ---
 

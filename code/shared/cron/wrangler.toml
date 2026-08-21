@@ -57,8 +57,25 @@ invocation_logs = true
 [env.dev]
 name = "indiecrafts-dev-shared-cron"
 
+# The api's EU D1 (binding `DB`) — bound here read/write so the scheduled purge can enforce
+# 90-day retention on all three tables. Same database_id the api uses (paste per env).
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "indiecrafts-dev-shared-api"
+database_id = "PASTE_D1_ID_HERE"
+
 [env.staging]
 name = "indiecrafts-staging-shared-cron"
 
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "indiecrafts-staging-shared-api"
+database_id = "PASTE_D1_ID_HERE"
+
 [env.prod]
 name = "indiecrafts-prod-shared-cron"
+
+[[env.prod.d1_databases]]
+binding = "DB"
+database_name = "indiecrafts-prod-shared-api"
+database_id = "PASTE_D1_ID_HERE"

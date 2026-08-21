@@ -2,23 +2,27 @@ import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, site, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";
-import { isSeriesEnabled } from "@indiecrafts/blog/lib/route-gate";
+import { isSeriesEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { buildMetadata } from "@/lib/metadata";
 import { translationAlternates } from "@/lib/seo/translations";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { SeriesDetail } from "@indiecrafts/blog/user-interface/series/sections/SeriesDetail";
-import { client } from "@indiecrafts/sanity/client";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
+import { SeriesDetail } from "@indiecrafts/modules-web-blog/user-interface/series/sections/SeriesDetail";
+import { client } from "@indiecrafts/packages-web-sanity/client";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import {
   allSeriesSlugsQuery,
   postsBySeriesCountQuery,
   postsBySeriesSlugQuery,
   seriesBySlugQuery,
-} from "@indiecrafts/blog/sanity/queries";
-import type { PostListItem, Series } from "@indiecrafts/blog/sanity/types";
-import { pageCount, pageRange, parsePage } from "@indiecrafts/blog/lib/pagination";
+} from "@indiecrafts/modules-web-blog/sanity/queries";
+import type { PostListItem, Series } from "@indiecrafts/modules-web-blog/sanity/types";
+import {
+  pageCount,
+  pageRange,
+  parsePage,
+} from "@indiecrafts/modules-web-blog/lib/pagination";
 
 type Props = {
   params: Promise<{ locale: Locale; slug: string }>;

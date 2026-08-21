@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/compliance",
+  "name": "@indiecrafts/packages-web-compliance",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,12 +10,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@indiecrafts/config": "workspace:*",
-    "@indiecrafts/email": "workspace:*",
-    "@indiecrafts/i18n": "workspace:*",
-    "@indiecrafts/logger": "workspace:*",
-    "@indiecrafts/sanity": "workspace:*",
-    "@indiecrafts/ui": "workspace:*",
+    "@indiecrafts/packages-shared-compliance": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-web-email": "workspace:*",
+    "@indiecrafts/packages-web-i18n": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
+    "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@indiecrafts/packages-web-ui": "workspace:*",
     "@portabletext/react": "^6.2.0",
     "@sanity/icons": "^3.7.4",
     "next-intl": "^4.13.6",

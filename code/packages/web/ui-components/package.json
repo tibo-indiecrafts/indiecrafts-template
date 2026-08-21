@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/ui-components",
+  "name": "@indiecrafts/packages-web-ui-components",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,9 +11,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@indiecrafts/config": "workspace:*",
-    "@indiecrafts/ui": "workspace:*",
-    "@indiecrafts/utils": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-ui-icons": "workspace:*",
+    "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*",
     "@portabletext/react": "^6.2.0",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^1.31.0",

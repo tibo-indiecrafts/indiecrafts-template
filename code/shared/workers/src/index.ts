@@ -1,11 +1,11 @@
 /**
- * `@indiecrafts/workers` — a standalone Cloudflare Worker for work that isn't a
+ * `@indiecrafts/shared-workers` — a standalone Cloudflare Worker for work that isn't a
  * request in the Next app: cron jobs, queue consumers, background tasks. Deployed
  * separately from `web` (its own Worker + `wrangler.toml`).
  *
  * The skeleton logs with `console` (captured by Workers Logs). When a real job needs
- * shared code, add the brick + `@types/node` (e.g. `@indiecrafts/logger` is
- * isomorphic — structured, edge-safe — or `@indiecrafts/email` to send digests).
+ * shared code, add the brick + `@types/node` (e.g. `@indiecrafts/packages-shared-logger` is
+ * isomorphic — structured, edge-safe — or `@indiecrafts/packages-web-email` to send digests).
  */
 
 /** Bindings + vars available to the Worker — extend as you add KV/R2/D1/queues. */

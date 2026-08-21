@@ -1,4 +1,4 @@
-import type { LogLevel } from "@indiecrafts/config";
+import type { LogLevel } from "@indiecrafts/packages-shared-config";
 
 export type { LogLevel };
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Link } from "@indiecrafts/i18n";
-import { Button } from "@indiecrafts/ui/web/button";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { useConsent } from "../consent/useConsent";
 import { acceptLegal } from "./legal-store";
 

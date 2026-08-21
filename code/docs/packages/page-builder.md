@@ -3,11 +3,11 @@
 The site-wide **page-builder content model** — the generic `page` document, the 16 generic
 `module.*` block **schemas**, the reusable `blockContent` / `link` / `cta` objects, the
 `quote` / `person` entities the blocks reference, and the `MODULES_FRAGMENT` GROQ that resolves
-them. Lives in **`@indiecrafts/page-builder`** (`code/packages/shared/page-builder`), consumed as
+them. Lives in **`@indiecrafts/packages-web-page-builder`** (`code/packages/web/page-builder`), consumed as
 source. Pure Sanity schema + GROQ — no React (the **renderers** live in
-`@indiecrafts/ui-components`).
+`@indiecrafts/packages-web-ui-components`).
 
-Extracted from `@indiecrafts/blog` so the app, the blog, and future apps all compose pages
+Extracted from `@indiecrafts/modules-web-blog` so the app, the blog, and future apps all compose pages
 from the same blocks **without depending on the blog module**. The blog keeps only its 3
 blog-specific blocks (`blog-index`, `blog-post-*`) and composes them on top.
 
@@ -32,13 +32,22 @@ blog-specific blocks (`blog-index`, `blog-post-*`) and composes them on top.
 
 ## Adding a block
 
-The schema goes here; the renderer + type go in `@indiecrafts/ui-components`. Follow the
-`method/apps/web/workflows/add-page-builder-block.md` checklist (schema path is
-`code/packages/shared/page-builder/src/sanity/schema/modules/`).
+A `module.<name>` block is easy to half-wire — a miss breaks the Studio picker, the TS exhaustiveness
+`satisfies` check, or leaves doc counts stale. Touch **every** file in the same change:
+
+1. **Schema** — `code/packages/web/page-builder/src/sanity/schema/modules/<name>.ts` (via `defineModule`);
+   register it in the schema index.
+2. **GROQ** — extend `MODULES_FRAGMENT` (`src/sanity/queries.ts`) **only if** the block dereferences
+   refs (`...` already spreads scalar fields).
+3. **Type** — add `<Name>Module` to the `BlockModule` union (`@indiecrafts/packages-web-ui-components`
+   `src/shared/types.ts`).
+4. **Renderer + registry** — `src/web/<domain>/<Name>.tsx` + add it to `BLOCK_RENDERERS`
+   (`src/web/registry.tsx`); the `satisfies` clause fails the build if the `_type` is missing.
+5. **Story + doc** — colocated `<Name>.stories.tsx` + `<Name>.md`.
+6. **Docs + changelog** — this page's block table + the packages `CHANGELOG.md`.
 
 ## Ceiling
 
 `custom-html` renders raw HTML (`dangerouslySetInnerHTML`) — a trusted-editor escape hatch, not
 the modelled default; keep it role-gated. Reference blocks (testimonial-list, team, faq, …),
-Presentation visual-editing, and array-group / preview-thumbnail picker UX are the roadmap's
-next packs (`method/apps/web/page-builder-roadmap.md`).
+Presentation visual-editing, and array-group / preview-thumbnail picker UX are the natural next packs.

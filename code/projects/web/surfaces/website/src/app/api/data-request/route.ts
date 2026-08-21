@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
-import { withGuard } from "@indiecrafts/security/guard";
-import { submitDataRequest } from "@indiecrafts/compliance/requests/submit";
-import { getConsentPolicyVersion } from "@indiecrafts/compliance/sanity/policy-version";
+import { withGuard } from "@indiecrafts/packages-shared-security/guard";
+import { submitDataRequest } from "@indiecrafts/packages-web-compliance/requests/submit";
+import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sanity/policy-version";
 
 /**
  * Public GDPR data-subject request. `withGuard` hardens the boundary (same-site

@@ -10,9 +10,9 @@ import post from "./post";
 import comment from "./documents/comment";
 
 // Reusable objects. `blockContent` · `cta` · `link` and the `quote`/`person`
-// entities now live in @indiecrafts/page-builder (registered via pageBuilderSanity);
+// entities now live in @indiecrafts/packages-web-page-builder (registered via pageBuilderSanity);
 // blog references them by type name. `postMedia` (slug + cover) is post-specific;
-// post SEO uses the shared `seoMeta` (@indiecrafts/schema) like every other doc.
+// post SEO uses the shared `seoMeta` (@indiecrafts/packages-web-schema) like every other doc.
 import postMedia from "./objects/post-media";
 
 // Blog-specific page-builder modules (blog-index · blog-post-content · blog-post-list)

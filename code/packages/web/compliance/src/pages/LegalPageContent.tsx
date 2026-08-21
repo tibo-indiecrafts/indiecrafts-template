@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import type { Locale } from "@indiecrafts/config";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
+import type { Locale } from "@indiecrafts/packages-shared-config";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import { legalPageQuery } from "../sanity/queries";
 import { LegalBody, type LegalBodyValue } from "./LegalBody";
 import { CookieDeclaration } from "./CookieDeclaration";

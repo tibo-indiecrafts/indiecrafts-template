@@ -1,5 +1,5 @@
 /**
- * `@indiecrafts/config/shared` — the PLATFORM-AGNOSTIC config core.
+ * `@indiecrafts/packages-shared-config/shared` — the PLATFORM-AGNOSTIC config core.
  *
  * Pure TypeScript, zero web-runtime coupling (no `next`, no DOM, no
  * `NEXT_PUBLIC_` env): locales + routing helpers, `Intl` format defaults, and
@@ -18,6 +18,8 @@ export {
   localizedPathname,
   localeDir,
   isLocale,
+  pickSuggestedLocale,
+  flattenMessages,
 } from "./i18n";
 export { formatDefaults, localeFormat } from "./format";
 

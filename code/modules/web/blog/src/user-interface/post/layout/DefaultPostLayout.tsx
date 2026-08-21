@@ -1,25 +1,25 @@
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";
-import { site, type Locale } from "@indiecrafts/config";
-import { cn } from "@indiecrafts/utils/cn";
-import { Link, localizedPathname } from "@indiecrafts/i18n";
-import type { Post, PostListItem } from "@indiecrafts/blog/sanity/types";
-import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
-import { isSeriesEnabled } from "@indiecrafts/blog/lib/route-gate";
-import { BlogCard } from "@indiecrafts/blog/user-interface/shared/components/BlogCard";
-import { ShareButtons } from "@indiecrafts/blog/user-interface/post/components/ShareButtons";
-import { ReadingProgress } from "@indiecrafts/blog/user-interface/post/components/ReadingProgress";
-import { SeriesNav } from "@indiecrafts/blog/user-interface/post/components/SeriesNav";
-import { FeaturedMedia } from "@indiecrafts/ui-components/web/media/FeaturedMedia";
+import { site, type Locale } from "@indiecrafts/packages-shared-config";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
+import { Link, localizedPathname } from "@indiecrafts/packages-web-i18n";
+import type { Post, PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
+import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
+import { isSeriesEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
+import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
+import { ShareButtons } from "@indiecrafts/modules-web-blog/user-interface/post/components/ShareButtons";
+import { ReadingProgress } from "@indiecrafts/modules-web-blog/user-interface/post/components/ReadingProgress";
+import { SeriesNav } from "@indiecrafts/modules-web-blog/user-interface/post/components/SeriesNav";
+import { FeaturedMedia } from "@indiecrafts/packages-web-ui-components/web/media/FeaturedMedia";
 import {
   Breadcrumbs,
   type Crumb,
-} from "@indiecrafts/blog/user-interface/shared/components/Breadcrumbs";
-import { Toc } from "@indiecrafts/blog/user-interface/post/components/Toc";
-import { MobileToc } from "@indiecrafts/blog/user-interface/post/components/MobileToc";
-import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
-import { formatDate } from "@indiecrafts/utils/format-date";
+} from "@indiecrafts/modules-web-blog/user-interface/shared/components/Breadcrumbs";
+import { Toc } from "@indiecrafts/modules-web-blog/user-interface/post/components/Toc";
+import { MobileToc } from "@indiecrafts/modules-web-blog/user-interface/post/components/MobileToc";
+import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
+import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
 
 /**
  * Server-rendered post page when no module-driven layout is configured.

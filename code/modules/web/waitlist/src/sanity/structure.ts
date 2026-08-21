@@ -1,6 +1,6 @@
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
 import { UsersIcon } from "@sanity/icons";
-import { apiVersion } from "@indiecrafts/sanity/env";
+import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
 
 /**
  * "Liste d'attente" desk — the settings singleton + the entries. The top

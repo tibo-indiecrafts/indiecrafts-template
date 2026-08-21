@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import type { QuoteListModule } from "@indiecrafts/ui-components/shared/types";
+import type { QuoteListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { RichTitle } from "../RichTitle";
 
 /**

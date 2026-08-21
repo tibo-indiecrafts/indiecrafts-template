@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/version",
+  "name": "@indiecrafts/packages-web-version",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,8 +8,9 @@
     "./update-prompt": "./src/UpdatePrompt.tsx"
   },
   "dependencies": {
-    "@indiecrafts/ui": "workspace:*",
-    "@indiecrafts/utils": "workspace:*"
+    "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*",
+    "@indiecrafts/packages-shared-version": "workspace:*"
   },
   "peerDependencies": {
     "next": "16.3.1",

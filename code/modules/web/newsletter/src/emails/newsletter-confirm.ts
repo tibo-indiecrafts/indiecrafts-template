@@ -3,7 +3,7 @@ import {
   escapeHtml,
   renderEmailLayout,
   type RenderedEmail,
-} from "@indiecrafts/email";
+} from "@indiecrafts/packages-web-email";
 
 /**
  * Double opt-in confirmation → the new subscriber. **Copy-agnostic**: the caller

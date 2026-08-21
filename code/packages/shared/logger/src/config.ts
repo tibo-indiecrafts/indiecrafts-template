@@ -3,7 +3,7 @@ import {
   logging,
   type Environment,
   type LogLevel,
-} from "@indiecrafts/config";
+} from "@indiecrafts/packages-shared-config";
 import { LEVEL_WEIGHT } from "./core";
 import {
   browserReporter,

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { cn } from "@indiecrafts/utils/cn";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (

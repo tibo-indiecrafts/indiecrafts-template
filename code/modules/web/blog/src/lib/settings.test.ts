@@ -9,7 +9,7 @@ const { blogFlags } = vi.hoisted(() => ({
   })),
 }));
 vi.mock("./config", () => ({ blogFlags }));
-vi.mock("@indiecrafts/sanity/client", () => ({ client: { fetch: vi.fn() } }));
+vi.mock("@indiecrafts/packages-web-sanity/client", () => ({ client: { fetch: vi.fn() } }));
 vi.mock("../sanity/queries", () => ({ blogDisplayQuery: "" }));
 
 const { resolveBlogDisplay } = await import("./settings");

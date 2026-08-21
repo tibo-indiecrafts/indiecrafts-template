@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@indiecrafts/ui/web/button";
-import { Switch } from "@indiecrafts/ui/web/switch";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { Switch } from "@indiecrafts/packages-web-ui/web/switch";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@indiecrafts/ui/web/dialog";
+} from "@indiecrafts/packages-web-ui/web/dialog";
 import type { ConsentCategory } from "./consent-signals";
 import { applyConsent } from "./consent-store";
 

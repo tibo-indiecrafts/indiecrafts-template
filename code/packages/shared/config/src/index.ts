@@ -1,5 +1,5 @@
 /**
- * `@indiecrafts/config` — the single import surface for site technical config.
+ * `@indiecrafts/packages-shared-config` — the single import surface for site technical config.
  * Almost entirely DATA an operator edits.
  *
  * Two scopes, split by portability:
@@ -9,7 +9,7 @@
  *   generic page-config contract `pages`). Next-flavored.
  *
  * This root barrel = `shared` + `web` (the web surface), so the web apps keep
- * one import (`@indiecrafts/config`). Mobile/hybrid import `@indiecrafts/config/mobile`
+ * one import (`@indiecrafts/packages-shared-config`). Mobile/hybrid import `@indiecrafts/packages-shared-config/mobile`
  * (or `/shared`) to avoid pulling the web slice.
  *
  * NOT here — **app-owned instance config** lives in each surface at

@@ -1,5 +1,5 @@
-import { Link } from "@indiecrafts/i18n";
-import type { SeriesRef } from "@indiecrafts/blog/sanity/types";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import type { SeriesRef } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /**
  * "Part N of M" series nav on a post — the ordered list of parts, current one

@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import bundleAnalyzer from "@next/bundle-analyzer";
-import { getCurrentEnvironment, site } from "@indiecrafts/config";
-import { imageDefaults, securityHeaders } from "@indiecrafts/security";
+import { getCurrentEnvironment, site } from "@indiecrafts/packages-shared-config";
+import { imageDefaults, securityHeaders } from "@indiecrafts/packages-shared-security";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const withBundleAnalyzer = bundleAnalyzer({
@@ -19,28 +19,35 @@ const EMBED_HOSTS: string[] = [];
 const nextConfig: NextConfig = {
   // Workspace packages consumed as source (no build step) — Next transpiles them.
   transpilePackages: [
-    "@indiecrafts/config",
-    "@indiecrafts/logger",
-    "@indiecrafts/format",
-    "@indiecrafts/email",
-    "@indiecrafts/gated-delivery",
-    "@indiecrafts/security",
-    "@indiecrafts/sanity",
-    "@indiecrafts/schema",
-    "@indiecrafts/utils",
-    "@indiecrafts/version",
-    "@indiecrafts/ui",
-    "@indiecrafts/ui-components",
-    "@indiecrafts/ui-tokens",
-    "@indiecrafts/page-builder",
-    "@indiecrafts/i18n",
-    "@indiecrafts/system-pages",
-    "@indiecrafts/blog",
-    "@indiecrafts/newsletter",
-    "@indiecrafts/waitlist",
-    "@indiecrafts/compliance",
-    "@indiecrafts/announcement",
-    "@indiecrafts/locale-suggest",
+    "@indiecrafts/packages-shared-config",
+    "@indiecrafts/packages-shared-logger",
+    "@indiecrafts/packages-shared-format",
+    "@indiecrafts/packages-web-email",
+    "@indiecrafts/packages-shared-gated-delivery",
+    "@indiecrafts/packages-shared-security",
+    "@indiecrafts/packages-shared-agent-client",
+    "@indiecrafts/packages-shared-auth",
+    "@indiecrafts/packages-web-auth",
+    "@indiecrafts/packages-web-sanity",
+    "@indiecrafts/packages-web-schema",
+    "@indiecrafts/packages-shared-utils",
+    "@indiecrafts/packages-web-version",
+    "@indiecrafts/packages-shared-version",
+    "@indiecrafts/packages-web-ui",
+    "@indiecrafts/packages-web-ui-components",
+    "@indiecrafts/packages-shared-ui-icons",
+    "@indiecrafts/packages-shared-ui-tokens",
+    "@indiecrafts/packages-web-page-builder",
+    "@indiecrafts/packages-web-i18n",
+    "@indiecrafts/packages-shared-system-pages",
+    "@indiecrafts/packages-shared-compliance",
+    "@indiecrafts/modules-web-blog",
+    "@indiecrafts/modules-web-newsletter",
+    "@indiecrafts/modules-web-waitlist",
+    "@indiecrafts/modules-web-contact",
+    "@indiecrafts/packages-web-compliance",
+    "@indiecrafts/packages-web-announcement",
+    "@indiecrafts/packages-web-locale-suggest",
   ],
   reactStrictMode: true,
   poweredByHeader: false,
@@ -51,18 +58,18 @@ const nextConfig: NextConfig = {
   // `cdn.sanity.io` loader (see `images` below). Docs: config/images.md.
   assetPrefix: site.cdnUrl || undefined,
   images: {
-    // Allowed image hosts + formats + 1-year TTL from @indiecrafts/security.
+    // Allowed image hosts + formats + 1-year TTL from @indiecrafts/packages-shared-security.
     ...imageDefaults,
     // Every `next/image` src is rewritten to a CDN-sized source (Sanity + Unsplash
     // resize at the edge) instead of Next's optimizer. See
-    // `src/lib/sanity-image-loader.ts` → `@indiecrafts/sanity/image`. Rule: `.claude/rules/sanity-images.md`.
+    // `src/lib/sanity-image-loader.ts` → `@indiecrafts/packages-web-sanity/image`. Rule: `.claude/rules/sanity-images.md`.
     loaderFile: "./src/lib/sanity-image-loader.ts",
   },
   // Auto-memoize components and hooks. Stable in Next 16 — prod-only so HMR stays fast.
   reactCompiler: process.env.NODE_ENV === "production",
   experimental: {
     // Tighter bundle: only import icons you actually reference.
-    optimizePackageImports: ["lucide-react", "lucide", "reicon-react", "reicon-brands"],
+    optimizePackageImports: ["lucide-react", "lucide"],
   },
   async headers() {
     // Hardened CSP + security headers (+ HSTS/COOP in production) from the shared

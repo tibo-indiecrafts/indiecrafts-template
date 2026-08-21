@@ -7,9 +7,9 @@ with editable per-locale copy and a honeypot spam guard. Gated by
 ## How it works
 
 1. A visitor submits the form under a post → `POST /api/comments`.
-2. The route hands it to `createComment` (`@indiecrafts/blog/lib/comments`), which validates,
+2. The route hands it to `createComment` (`@indiecrafts/modules-web-blog/lib/comments`), which validates,
    whitelists fields, and creates a `comment` document with **`approved: false`** using the
-   server-only write client (`@indiecrafts/sanity/write`).
+   server-only write client (`@indiecrafts/packages-web-sanity/write`).
 3. The comment is **invisible** until an editor ticks **Approuvé** in the Studio.
 4. The post page lists only approved comments (live, via `<SanityLive>`), so an approval
    appears without a redeploy.
@@ -64,7 +64,7 @@ English defaults.
 With comments on, **`SANITY_API_WRITE_TOKEN` becomes a runtime dependency** (it was
 seed-only) — set it in production. It's Editor-role and server-only (never `NEXT_PUBLIC_`);
 prefer a dedicated, independently-rotatable token. See
-[`@indiecrafts/sanity`](/packages/sanity) → `./write`.
+[`@indiecrafts/packages-web-sanity`](/packages/sanity) → `./write`.
 
 ## Email notifications (Resend)
 
@@ -85,7 +85,7 @@ shared **E-mails** entity (→ **E-mails → commentNotification**); the only se
   author + a body excerpt + the post link + a Studio link to moderate, wrapped in a branded HTML
   layout.
 - **Where it lives.** The blog reads the entity in `lib/notify-comment.ts` (`getEmailStrings()`); the
-  layout, copy, and Resend sender live in [`@indiecrafts/email`](/packages/email)
+  layout, copy, and Resend sender live in [`@indiecrafts/packages-web-email`](/packages/email)
   (`renderCommentNotificationEmail` → `sendEmail`) — no SDK, one server-side `fetch`. Every email
   shares that one layout + entity.
 

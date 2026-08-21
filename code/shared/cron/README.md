@@ -1,4 +1,4 @@
-# @indiecrafts/cron
+# @indiecrafts/shared-cron
 
 A **bare Cloudflare Worker** (no Next/OpenNext) that runs on a schedule
 (`[triggers] crons` in `wrangler.toml`). It's a deploy shell — the task logic is
@@ -7,7 +7,7 @@ imported from `code/packages/*` / `code/modules/*`, so this stays thin.
 ## Local
 
 ```bash
-pnpm --filter @indiecrafts/cron dev                     # wrangler dev
+pnpm --filter @indiecrafts/shared-cron dev                     # wrangler dev
 curl "http://localhost:8787/__scheduled?cron=0+*+*+*+*"  # trigger a run locally
 ```
 

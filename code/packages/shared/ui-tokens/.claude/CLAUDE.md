@@ -1,4 +1,4 @@
-# @indiecrafts/ui-tokens — the design system
+# @indiecrafts/packages-shared-ui-tokens — the design system
 
 Auto-loads under `code/packages/shared/ui-tokens/**`. `globals.css` (OKLCH tokens) · `typeset.css` ·
 `DESIGN.md`. Area rules → `../../../.claude/CLAUDE.md`.
@@ -9,7 +9,7 @@ Auto-loads under `code/packages/shared/ui-tokens/**`. `globals.css` (OKLCH token
   (imported by `globals.css`), `src/native/tokens.ts` (React Native, hex), and `src/generated/hex.ts` (manifest
   mirror) are **GENERATED** by `pnpm tokens:build` (`scripts/build-tokens.mjs`, uses `culori`). **Never hand-edit
   the generated files.** `pnpm tokens:check` (in `verify`) fails if they drift from the JSON.
-- **Exports:** `./globals.css` (web) · `./native` (React Native object) · `./tokens.json` (the DTCG source).
+- **Exports:** `./globals.css` (web) · `./typeset.css` · `./nativewind.css` · `./native` (React Native object) · `./tokens.json` (the DTCG source) · `./hex` (manifest mirror).
 - **`globals.css` = hand-authored Tailwind scaffolding** (`@import`/`@source`/`@theme`/`@custom-variant`/
   `@utility` + animations) + `@import "./generated/tokens.css"`. **Add a `@source` line whenever a new package
   renders classes**, or its styles vanish (Tailwind v4 skips node_modules).

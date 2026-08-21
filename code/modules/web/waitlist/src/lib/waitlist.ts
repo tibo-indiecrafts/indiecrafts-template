@@ -1,22 +1,27 @@
 import "server-only";
 
-import { logger } from "@indiecrafts/logger";
+import { logger } from "@indiecrafts/packages-shared-logger";
 import {
   site,
   defaultLocale,
   isLocale,
   localeCodes,
-} from "@indiecrafts/config";
-import { writeClient } from "@indiecrafts/sanity/write";
-import { sendEmail } from "@indiecrafts/email";
+} from "@indiecrafts/packages-shared-config";
+import { writeClient } from "@indiecrafts/packages-web-sanity/write";
+import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
   getEmailStrings,
   pick,
   type ConfirmationConfig,
   type OwnerAlertConfig,
-} from "@indiecrafts/email/strings";
+} from "@indiecrafts/packages-web-email/strings";
 import { renderWaitlistConfirmEmail } from "../emails/waitlist-confirm";
 import { renderWaitlistNotificationEmail } from "../emails/waitlist-notification";
+import {
+  isSpam,
+  isValidEmail,
+  cleanList,
+} from "@indiecrafts/packages-shared-utils/form";
 
 /**
  * Waitlist join — the single runtime write path for the `module.waitlist` block.
@@ -49,33 +54,13 @@ export type JoinResult =
   | { ok: true; already?: boolean }
   | { ok: false; error: "invalid" | "spam" | "server" };
 
-const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-const MIN_SUBMIT_MS = 2000; // a human takes >2s; a near-instant submit is a bot
-
-/**
- * Too-fast submit heuristic. Skew-safe: only a small POSITIVE gap counts, so a
- * client clock running ahead (negative elapsed) never false-flags a real person.
- */
-function tooFast(startedAt?: number): boolean {
-  if (typeof startedAt !== "number") return false;
-  const elapsed = Date.now() - startedAt;
-  return elapsed >= 0 && elapsed < MIN_SUBMIT_MS;
-}
-
-/** Pure validator — cheap to unit-check. */
+/** Pure validator — cheap to unit-check. Anti-spam + e-mail checks are shared. */
 export function validateJoin(input: Partial<JoinInput>): JoinResult {
-  if ((input.honeypot ?? "").trim() !== "" || tooFast(input.startedAt)) {
-    return { ok: false, error: "spam" };
-  }
-  const email = (input.email ?? "").trim().toLowerCase();
-  if (!email || email.length > 254 || !EMAIL.test(email))
-    return { ok: false, error: "invalid" };
+  if (isSpam(input)) return { ok: false, error: "spam" };
+  if (!isValidEmail(input.email)) return { ok: false, error: "invalid" };
   if (input.consent !== true) return { ok: false, error: "invalid" };
   return { ok: true };
 }
-
-const clean = (list?: string[] | null) =>
-  (list ?? []).map((s) => s.trim()).filter(Boolean);
 
 export async function join(
   input: JoinInput,
@@ -156,7 +141,7 @@ async function sendConfirmEmail(
     await sendEmail({
       from,
       to: [email],
-      bcc: clean(cfg?.bcc),
+      bcc: cleanList(cfg?.bcc),
       replyTo: cfg?.replyTo?.trim(),
       ...message,
     });
@@ -173,7 +158,7 @@ async function notifyOwner(
   cfg: OwnerAlertConfig | undefined,
 ): Promise<void> {
   try {
-    const to = clean(cfg?.to);
+    const to = cleanList(cfg?.to);
     if (!cfg?.enabled || to.length === 0 || !process.env.RESEND_API_KEY) return;
     const from = cfg.from?.trim();
     if (!from) {
@@ -193,8 +178,8 @@ async function notifyOwner(
     await sendEmail({
       from,
       to,
-      cc: clean(cfg.cc),
-      bcc: clean(cfg.bcc),
+      cc: cleanList(cfg.cc),
+      bcc: cleanList(cfg.bcc),
       ...message,
     });
   } catch (error) {

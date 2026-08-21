@@ -1,5 +1,5 @@
 /**
- * Production route table. Built from the `pages` map in `@indiecrafts/config` —
+ * Production route table. Built from the `pages` map in `@indiecrafts/packages-shared-config` —
  * adding a static route is one entry there. This file just turns the map
  * into the array + PATHNAMES table that `i18n/routing.ts` and
  * `sitemap.ts` consume.

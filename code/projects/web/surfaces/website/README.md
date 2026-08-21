@@ -1,7 +1,7 @@
-# @indiecrafts/website
+# @indiecrafts/web-surfaces-website
 
 The Next.js 16 app. Run everything from the **repo root** (`pnpm dev/build/verify` →
-turbo → `@indiecrafts/website`). Agent conventions → [`CLAUDE.md`](./CLAUDE.md) (sibling);
+turbo → `@indiecrafts/web-surfaces-website`). Agent conventions → [`CLAUDE.md`](./CLAUDE.md) (sibling);
 design tokens → [`DESIGN.md`](./DESIGN.md); product docs → [`../docs/apps/web/`](../docs/apps/web/).
 
 ## Blog (Sanity-powered, optional)

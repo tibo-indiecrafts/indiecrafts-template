@@ -1,5 +1,5 @@
-import type { Cta as CtaProps } from "@indiecrafts/ui-components/shared/types";
-import { cn } from "@indiecrafts/utils/cn";
+import type { Cta as CtaProps } from "@indiecrafts/packages-web-ui-components/shared/types";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /**
  * CTA button rendered from the page-builder `cta` block. Uses the

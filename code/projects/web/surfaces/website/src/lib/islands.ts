@@ -1,5 +1,5 @@
-import { configureBlog } from "@indiecrafts/blog/lib/config";
-import { configureBlocks } from "@indiecrafts/ui-components/web/features";
+import { configureBlog } from "@indiecrafts/modules-web-blog/lib/config";
+import { configureBlocks } from "@indiecrafts/packages-web-ui-components/web/features";
 import { features, pages } from "@/config";
 
 /**
@@ -24,5 +24,9 @@ export function configureIslands(): void {
     },
     blogPage: pages.blog,
   });
-  configureBlocks({ newsletter: features.newsletter, waitlist: features.waitlist });
+  configureBlocks({
+    newsletter: features.newsletter,
+    waitlist: features.waitlist,
+    contact: features.contact,
+  });
 }

@@ -1,13 +1,13 @@
-import type { Author } from "@indiecrafts/blog/sanity/types";
-import { AuthorCard } from "@indiecrafts/blog/user-interface/author/components/AuthorCard";
+import type { Author } from "@indiecrafts/modules-web-blog/sanity/types";
+import { AuthorCard } from "@indiecrafts/modules-web-blog/user-interface/author/components/AuthorCard";
 import {
   Breadcrumbs,
   type Crumb,
-} from "@indiecrafts/blog/user-interface/shared/components/Breadcrumbs";
+} from "@indiecrafts/modules-web-blog/user-interface/shared/components/Breadcrumbs";
 import {
   PageHero,
   type PageHeroPill,
-} from "@indiecrafts/blog/user-interface/shared/sections/PageHero";
+} from "@indiecrafts/modules-web-blog/user-interface/shared/sections/PageHero";
 
 /**
  * Author index page section — `/author`. Each author card links to its

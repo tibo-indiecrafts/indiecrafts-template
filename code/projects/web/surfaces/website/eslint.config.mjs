@@ -65,6 +65,15 @@ const eslintConfig = defineConfig([
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
 
+      // A declaration-merging augmentation is an empty interface by design —
+      // e.g. `interface CustomJwtSessionClaims extends AppSessionClaims {}` merges the
+      // shared role shape onto Clerk's ambient claims. Allow the single-extends case
+      // (a type alias can't declaration-merge), keeping the rule on for everything else.
+      "@typescript-eslint/no-empty-object-type": [
+        "error",
+        { allowInterfaces: "with-single-extends" },
+      ],
+
       // Routing: always go through @/i18n/routing so locale prefixes,
       // typed pathnames, and hreflang stay consistent. Direct imports
       // from next/link or next-intl/navigation bypass all of that.

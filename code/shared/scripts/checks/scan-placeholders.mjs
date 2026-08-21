@@ -1,6 +1,5 @@
 // Pre-handoff scan: catch leftover template scaffolding in the SHIPPED tree
-// (code/ + docs/) before a client site goes out. The internal method/ + work/
-// folders legitimately hold placeholders, so they are not scanned.
+// (code/ + docs/) before a client site goes out.
 //
 //   pnpm scan:placeholders            # report (always exit 0)
 //   pnpm scan:placeholders -- --strict   # exit 1 if any HARD placeholder remains

@@ -1,5 +1,5 @@
 /**
- * Site-wide formatting fallbacks for `@indiecrafts/format` (money/number/date/
+ * Site-wide formatting fallbacks for `@indiecrafts/packages-shared-format` (money/number/date/
  * grammar). Per-locale overrides live on each `i18n.locales` row (`numberLocale`,
  * `currency`, `capitalizeInlineNouns`, `adjBeforeNoun`); these are the defaults when
  * a row omits one. `rates` is the currency-conversion table the project maintains

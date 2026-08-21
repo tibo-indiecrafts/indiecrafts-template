@@ -31,6 +31,17 @@ export const site = {
    */
   url: process.env.NEXT_PUBLIC_SITE_URL || PLACEHOLDER_SITE_URL,
   /**
+   * The canonical **marketing-site** public URL (`NEXT_PUBLIC_WEBSITE_URL`, else this
+   * surface's own `url`). The website's own equals `url`; a non-website surface (the
+   * `app` web surface) sets `NEXT_PUBLIC_WEBSITE_URL` to reach the website's legal pages
+   * (`legalUrl(site.websiteUrl, …)`). The native shells read their own env
+   * (`EXPO_PUBLIC_WEBSITE_URL` / `VITE_WEBSITE_URL`) directly, since `site` is web-only.
+   */
+  websiteUrl:
+    process.env.NEXT_PUBLIC_WEBSITE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    PLACEHOLDER_SITE_URL,
+  /**
    * Per-deployment namespace (`NEXT_PUBLIC_SITE_PREFIX`, else `DEFAULT_SITE_PREFIX`).
    * Prefixes browser-owned keys — the consent record, the theme choice, the locale
    * cookie — so two instances never collide even on a shared origin or preview
@@ -61,7 +72,7 @@ export const isSiteConfigured = site.url !== PLACEHOLDER_SITE_URL;
 export const localeCookieName = `${site.prefix}_NEXT_LOCALE`;
 
 /**
- * Logging config (read by `@indiecrafts/logger`). Per-environment minimum console
+ * Logging config (read by `@indiecrafts/packages-shared-logger`). Per-environment minimum console
  * level — **`production` is `"silent"`** so live sites emit no console noise;
  * error/fatal still reach transports (e.g. Sentry) when one is wired. Override the
  * level live with `NEXT_PUBLIC_LOG_LEVEL` (e.g. to `"debug"` while chasing a prod

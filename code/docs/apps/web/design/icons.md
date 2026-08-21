@@ -6,41 +6,32 @@ code; the marks are edited in Sanity.
 
 ## Icon sets
 
-The template ships three sets, each for a different job (all demoed in
-`src/user-interface/homepage/sections/IconShowcase.tsx`):
+Icons come from **one brick** — [`@indiecrafts/packages-shared-ui-icons`](../../../packages/ui-icons)
+— so the app, blog, and (later) native surfaces draw from a single source. Import the renderers from
+`/web`; all are demoed in `src/user-interface/homepage/sections/IconShowcase.tsx`.
 
-| Set               | Package         | Use for                                                                |
-| ----------------- | --------------- | ---------------------------------------------------------------------- |
-| **Lucide**        | `lucide-react`  | The default outline UI glyph set — buttons, list bullets, nav.         |
-| **Reicon**        | `reicon-react`  | The same shapes in Outline **and** Filled weights (`weight="Filled"`). |
-| **Reicon Brands** | `reicon-brands` | Third-party logos painted in their official brand colors.              |
-
-Lucide icons are plain React components: `<Zap className="size-5" aria-hidden="true" />`.
-The design contract ([`DESIGN.md`](../../../../code/packages/shared/ui-tokens/DESIGN.md)):
-default **20px**, **16px** in compact controls, consistent **2px** stroke; don't mix
-filled + outline in one nav area. Mark decorative icons `aria-hidden="true"` — give
-them a label only when the icon is the sole content of a control.
-
-## BrandIcon
-
-Brand logos need a wrapper because `reicon-brands` icons are framework-agnostic
-factories that call `document.createElementNS` — which throws during SSR.
-`src/user-interface/shared/components/BrandIcon.tsx` sidesteps that by building the
-`<svg>` itself from the icon's static `svgContent`:
+| Renderer     | Family          | Use for                                                                       |
+| ------------ | --------------- | ----------------------------------------------------------------------------- |
+| `Icon`       | Lucide          | The default outline UI glyph set — buttons, list bullets, nav. Cross-platform. |
+| `ReiconIcon` | Reicon          | The same shapes in Outline **and** Filled weights (`weight="Filled"`). Web/hybrid only. |
+| `SvgIcon`    | Custom SVGs     | Project-specific marks (a logo glyph) — add path data to the brick's `SVGS`. Cross-platform. |
+| `BrandIcon`  | Brand / social  | Social logos painted in their official brand colors (`brandColor`). Cross-platform. |
 
 ```tsx
-import { Github } from "reicon-brands";
-import { BrandIcon } from "@/user-interface/shared/components/BrandIcon";
+import { Icon, BrandIcon } from "@indiecrafts/packages-shared-ui-icons/web";
 
-<BrandIcon icon={Github} size={28} brandColor />;
+<Icon name="zap" className="size-5" aria-hidden="true" />
+<BrandIcon name="github" size={20} brandColor />
 ```
 
-- `icon` is typed as the structural **`BrandMark`** (`{ hex, title, svgContent }`), not the library's own type. A `reicon-brands` icon satisfies it, and so does a hand-declared mark for a brand the set doesn't carry (e.g. LinkedIn, dropped from Simple Icons after a trademark request) — declare `{ hex, title, svgContent }` and pass it the same way.
-- `brandColor` paints the logo in its official hex (`` `#${icon.hex}` ``); omit it to inherit `currentColor`.
-- `size` defaults to `24`; the `<svg>` uses a fixed `viewBox="0 0 24 24"`, carries `role="img"`, and `aria-label` defaults to `icon.title` — so a brand mark is always named for assistive tech.
+The design contract ([`DESIGN.md`](../../../../code/packages/shared/ui-tokens/DESIGN.md)): default
+**20px**, **16px** in compact controls, consistent **2px** stroke; don't mix filled + outline in one
+nav area. Mark decorative icons `aria-hidden="true"` — give them a label only when the icon is the
+sole content of a control.
 
-Injecting `icon.svgContent` is safe: it's static path markup (no user input), and
-it's the only SSR-compatible render path `reicon-brands` exposes.
+**Cross-platform:** `Icon`/`SvgIcon`/`BrandIcon` also render on native (`/native`, via
+`lucide-react-native` + `react-native-svg`); `ReiconIcon` is web/hybrid only (reicon has no React
+Native build). Full reference + how to add a glyph or a custom SVG → the [`ui-icons` package doc](../../../packages/ui-icons).
 
 ## Favicon, app icon &amp; logo — edited in Sanity
 

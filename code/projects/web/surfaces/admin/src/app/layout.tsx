@@ -1,13 +1,10 @@
-import "@indiecrafts/ui-tokens/globals.css";
-import type { ReactNode } from "react";
-import { defaultLocale } from "@/config";
+import { AppClerkProvider } from "@indiecrafts/packages-web-auth";
 
-// Minimal root layout. Admin is internal/auth-gated — wire Cloudflare Access (or
-// your auth) at the edge + a session guard here. Copy the chrome you need from web.
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang={defaultLocale}>
-      <body>{children}</body>
-    </html>
-  );
+/**
+ * Root passthrough layout. The real <html>/<body> live in [locale]/layout.tsx so
+ * `lang`/`dir` follow the resolved locale. The Clerk provider wraps everything here
+ * (above the locale layout) so `auth()` + the hosted <SignIn> work app-wide.
+ */
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return <AppClerkProvider>{children}</AppClerkProvider>;
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/gated-delivery",
+  "name": "@indiecrafts/packages-shared-gated-delivery",
   "version": "0.0.0",
   "private": true,
   "type": "module",

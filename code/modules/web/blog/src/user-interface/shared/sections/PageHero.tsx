@@ -1,4 +1,4 @@
-import { Link } from "@indiecrafts/i18n";
+import { Link } from "@indiecrafts/packages-web-i18n";
 
 /**
  * Shared page hero — centered editorial header used by every top-level

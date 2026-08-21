@@ -1,7 +1,7 @@
 // Rename the project's namespace in ONE command — for reusing this template per
 // client. Cloudflare resource names are `<prefix>-<env>-<platform>-<slug>`
 // (`resourceName` in apps.mjs), so ONLY `<prefix>` is client-specific: this swaps
-// it in `@indiecrafts/config` (`DEFAULT_SITE_PREFIX`) + on every Cloudflare app's
+// it in `@indiecrafts/packages-shared-config` (`DEFAULT_SITE_PREFIX`) + on every Cloudflare app's
 // `wrangler.toml` resource names + Terraform `worker_name`. Registry-driven, so it
 // reaches `code/shared/*` (api·cron·workers) and any app added later — no per-dir
 // loop. Run from `code/projects/web/surfaces/website`:
@@ -23,6 +23,7 @@ import {
 import {
   CONFIG_INDEX,
   TEMPLATE_PREFIX,
+  renameResourcePrefix,
 } from "../../../../../shared/scripts/lib/project.mjs";
 
 const slug = process.argv[2];
@@ -47,27 +48,17 @@ const config = readFileSync(CONFIG_INDEX, "utf8");
 const nextConfig = config.replace(/(DEFAULT_SITE_PREFIX\s*=\s*)"[^"]*"/, `$1"${slug}"`);
 if (nextConfig === config) {
   console.error(
-    "✗ Could not find DEFAULT_SITE_PREFIX in @indiecrafts/config — aborting (nothing changed).",
+    "✗ Could not find DEFAULT_SITE_PREFIX in @indiecrafts/packages-shared-config — aborting (nothing changed).",
   );
   process.exit(1);
 }
 writeFileSync(CONFIG_INDEX, nextConfig);
 
-// On a resource-name / worker_name line, swap the LEADING `<template>-` prefix
-// inside the quoted value → `<slug>-`. Every name/bucket/db/service/queue value
-// starts with the prefix, so one swap covers them all; comments/docs are untouched
-// (only assignment lines match).
-const RESOURCE_LINE =
-  /^\s*(name|bucket_name|database_name|service|queue|worker_name)\s*=/;
-const swap = (text) =>
-  text
-    .split("\n")
-    .map((line) =>
-      RESOURCE_LINE.test(line)
-        ? line.replaceAll(`"${TEMPLATE_PREFIX}-`, `"${slug}-`)
-        : line,
-    )
-    .join("\n");
+// Swap the LEADING `<template>-` prefix → `<slug>-` on resource-name assignment lines
+// (name/bucket_name/database_name/dataset/service/queue/worker_name) AND on the
+// `wrangler … create <template>-…` comment examples — so both the live config and the
+// copy-paste create commands land on the client namespace. Prose comments stay untouched.
+const swap = (text) => renameResourcePrefix(text, TEMPLATE_PREFIX, slug);
 
 const renamed = [];
 for (const app of deployable()) {
@@ -93,7 +84,7 @@ for (const app of deployable()) {
 }
 
 console.log(`✓ Renamed project namespace → "${slug}"`);
-console.log(`  · @indiecrafts/config  DEFAULT_SITE_PREFIX = "${slug}"`);
+console.log(`  · @indiecrafts/packages-shared-config  DEFAULT_SITE_PREFIX = "${slug}"`);
 console.log(
   `  · wrangler.toml + tfvars  ${renamed.length} app(s): ${renamed.join(", ")}`,
 );

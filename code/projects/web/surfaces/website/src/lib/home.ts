@@ -1,8 +1,8 @@
 import { cache } from "react";
 import type { Locale } from "@/config";
-import type { BlockModule } from "@indiecrafts/ui-components/shared/types";
-import { client } from "@indiecrafts/sanity/client";
-import { logger } from "@indiecrafts/logger";
+import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";
+import { client } from "@indiecrafts/packages-web-sanity/client";
+import { logger } from "@indiecrafts/packages-shared-logger";
 import { homePageQuery } from "@/sanity/home-queries";
 
 /**

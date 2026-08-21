@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/newsletter",
+  "name": "@indiecrafts/modules-web-newsletter",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,11 +7,12 @@
     "./*": "./src/*"
   },
   "dependencies": {
-    "@indiecrafts/config": "workspace:*",
-    "@indiecrafts/email": "workspace:*",
-    "@indiecrafts/gated-delivery": "workspace:*",
-    "@indiecrafts/logger": "workspace:*",
-    "@indiecrafts/sanity": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*",
+    "@indiecrafts/packages-web-email": "workspace:*",
+    "@indiecrafts/packages-shared-gated-delivery": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
+    "@indiecrafts/packages-web-sanity": "workspace:*",
     "@sanity/icons": "^3.7.4",
     "next-sanity": "^13.3.3",
     "sanity": "^5.31.1"

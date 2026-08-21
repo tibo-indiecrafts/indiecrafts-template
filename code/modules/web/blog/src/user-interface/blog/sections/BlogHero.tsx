@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Play } from "lucide-react";
-import { Link } from "@indiecrafts/i18n";
-import { type Locale } from "@indiecrafts/config";
-import { formatDate } from "@indiecrafts/utils/format-date";
-import { parseVideoEmbed } from "@indiecrafts/utils/video-embed";
-import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import { type Locale } from "@indiecrafts/packages-shared-config";
+import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
+import { parseVideoEmbed } from "@indiecrafts/packages-shared-utils/video-embed";
+import type { PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
+import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 
 /**
  * Five-card hero — mirrors the blog-forge home grid. First two cards

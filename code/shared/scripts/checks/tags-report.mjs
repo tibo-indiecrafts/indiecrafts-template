@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Issue-tag report — inventory + validate the @complexity/@refactor/@debt tags.
-// Canonical vocabulary: method/shared/engineering/issue-tags.md.
+// Canonical vocabulary: .claude/rules/issue-tags.md.
 //
 //   node scripts/tags-report.mjs            # full report
 //   node scripts/tags-report.mjs --check    # CI: exit 1 on non-canonical tags
@@ -12,7 +12,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, basename, extname } from "node:path";
 
 const ROOT = process.cwd();
-const SCAN_DIRS = ["code", "docs", "method"];
+const SCAN_DIRS = ["code", "docs"];
 const SKIP_DIRS = new Set([
   "node_modules",
   ".git",
@@ -47,7 +47,7 @@ const SKIP_FILES = new Set(["issue-tags.md", "scripts.md", "CHANGELOG.md"]);
 // test) — never a real flag. Skip them by name.
 const isTestFile = (name) => /\.(test|spec)\.[cm]?[jt]sx?$/.test(name);
 
-// Canonical vocabulary (mirror of method/shared/engineering/issue-tags.md).
+// Canonical vocabulary (mirror of .claude/rules/issue-tags.md).
 const CANON = {
   complexity: ["LOW", "MEDIUM", "HIGH"],
   refactor: [

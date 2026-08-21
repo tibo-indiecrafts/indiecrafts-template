@@ -159,7 +159,7 @@ adaptive image _selection_ — a fixed set of files — inside a responsive layo
 
 Two layers honor `prefers-reduced-motion: reduce`:
 
-- **Global.** `globals.css` (in `@indiecrafts/ui-tokens`) neutralizes animation and transitions for everyone who asks:
+- **Global.** `globals.css` (in `@indiecrafts/packages-shared-ui-tokens`) neutralizes animation and transitions for everyone who asks:
 
   ```css
   @media (prefers-reduced-motion: reduce) {

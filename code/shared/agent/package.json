@@ -1,0 +1,31 @@
+{
+  "name": "@indiecrafts/shared-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "cf-typegen": "wrangler types",
+    "tsc": "tsc --noEmit",
+    "test": "vitest run",
+    "verify": "pnpm tsc && pnpm test",
+    "deploy:agent:dev": "node ../scripts/deploy/worker.mjs agent dev",
+    "deploy:agent:staging": "node ../scripts/deploy/worker.mjs agent staging",
+    "deploy:agent:prod": "node ../scripts/deploy/worker.mjs agent prod",
+    "tail:dev": "wrangler tail --env dev",
+    "tail:staging": "wrangler tail --env staging",
+    "tail:prod": "wrangler tail --env prod"
+  },
+  "dependencies": {
+    "@indiecrafts/packages-shared-agent": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250321.0",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/node": "^20",
+    "typescript": "^5",
+    "wrangler": "^4.0.0"
+  }
+}

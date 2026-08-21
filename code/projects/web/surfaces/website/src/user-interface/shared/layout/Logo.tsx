@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { cn } from "@indiecrafts/utils/cn";
-import { sanityImageLoader } from "@indiecrafts/sanity/image";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
+import { sanityImageLoader } from "@indiecrafts/packages-web-sanity/image";
 
 type LogoImgProps = { src: string; alt: string; className?: string };
 

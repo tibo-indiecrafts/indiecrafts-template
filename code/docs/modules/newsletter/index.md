@@ -4,11 +4,11 @@ An editor-droppable email capture block (`module.newsletter`) with a gated API r
 subscriber desk, optional **double opt-in** + owner-alert emails, and a CSV export. Works out of the
 box with **no API keys** — a signup lands as a Sanity `subscriber` document you read in the Studio.
 
-Lives in the **`@indiecrafts/newsletter`** module (`code/modules/web/newsletter`): the subscribe
+Lives in the **`@indiecrafts/modules-web-newsletter`** module (`code/modules/web/newsletter`): the subscribe
 engine, the `subscriber` doc, and an editable **`newsletterSettings`** singleton — shipped as a
 one-line `composeStudio`-group contribution. The public form stays a page-builder block (renderer in
-`@indiecrafts/ui-components`). The emails' config + copy live on the shared **E-mails** entity
-(`@indiecrafts/email`).
+`@indiecrafts/packages-web-ui-components`). The emails' config + copy live on the shared **E-mails** entity
+(`@indiecrafts/packages-web-email`).
 
 ## One switch
 
@@ -22,7 +22,7 @@ per-ESP adapters to manage. To use an external service, see [External provider](
 ## The flow
 
 1. The block posts `{ email, consent, source, honeypot }` to `/api/newsletter`.
-2. The route gates on `features.newsletter`, then `subscribe()` (`@indiecrafts/newsletter/lib/newsletter`)
+2. The route gates on `features.newsletter`, then `subscribe()` (`@indiecrafts/modules-web-newsletter/lib/newsletter`)
    validates: email shape, consent required, honeypot must be empty.
 3. Dedupe by email, then `writeClient.create` a `subscriber` (`status: "pending"`, whitelisted
    fields, `_type` hard-coded).
@@ -35,7 +35,7 @@ per-ESP adapters to manage. To use an external service, see [External provider](
 ## Emails (Studio → E-mails)
 
 Both are off by default and configured on the shared `emailStrings` entity (owned by
-`@indiecrafts/email`, Studio → **E-mails**). The email secret is `RESEND_API_KEY` (env, server-only,
+`@indiecrafts/packages-web-email`, Studio → **E-mails**). The email secret is `RESEND_API_KEY` (env, server-only,
 never `NEXT_PUBLIC_`); unset → emails are skipped and the signup still works. (Lead magnets add a
 second secret — see below.) The `From` must be a
 **Resend-verified domain**. Verify delivery with the **Send test** action (Studio → E-mails → ⋯).
@@ -98,6 +98,12 @@ const EMBED_HOSTS: string[] = ["https://*.list-manage.com"]; // e.g. Mailchimp
 It is concatenated into `form-action`, `frame-src`, `script-src`, and `connect-src`. See
 [Security headers](../../apps/web/seo/security-headers.md).
 
+**Display width.** The `custom-html` block has a **`width`** field — `Contenue` (default, same width as
+the other blocks) or `Pleine largeur` for a form/banner that should stretch (it keeps a page gutter, so
+content never touches the screen edges). Any embedded `<iframe>` is forced to full width automatically;
+a raw `<form>` fills the block, but style your own `<input>`/`<button>` widths in the pasted markup —
+provider embeds usually already do.
+
 ## GDPR
 
 The consent checkbox is required — the submit button stays disabled until it is ticked, and
@@ -108,7 +114,7 @@ a verified-intent step. No address is stored without an explicit opt-in.
 ## The block
 
 `module.newsletter` is a page-builder block — droppable inline in a post body or a page's
-`postModules`, rendered by the shared `@indiecrafts/ui-components` registry (so the app and the blog
+`postModules`, rendered by the shared `@indiecrafts/packages-web-ui-components` registry (so the app and the blog
 paint it identically). Three layout variants — **card**, **inline**, **banner** (a full-width token
 band, no image). Every string (heading, body, button, consent, success / error) is
 per-instance and per-locale. Renderer + field reference:

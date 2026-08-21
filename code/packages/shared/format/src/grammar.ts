@@ -1,4 +1,4 @@
-import { defaultLocale, localeFormat, type Locale } from "@indiecrafts/config";
+import { defaultLocale, localeFormat, type Locale } from "@indiecrafts/packages-shared-config";
 
 /**
  * Grammar for **generated content** — locale-aware casing, adjective position, and

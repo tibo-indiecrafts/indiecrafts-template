@@ -15,12 +15,12 @@ composed from `code/packages/` bricks, and mounted by an app. This page is _what
 
 | Module | Package             | Holds                                                            | Flag            | Consumed by |
 | ------ | ------------------- | ---------------------------------------------------------------- | --------------- | ----------- |
-| Blog   | `@indiecrafts/blog` | the blog slice — `user-interface/ · sanity/ · lib/` + route-gate | `features.blog` | app         |
+| Blog   | `@indiecrafts/modules-web-blog` | the blog slice — `user-interface/ · sanity/ · lib/` + route-gate | `features.blog` | app         |
 
 `code/modules/web/blog/` is the **live reference** — self-contained, depending on all five
 shared bricks (`config`/`utils`/`sanity`/`ui`/`i18n`) plus `@portabletext/react`,
 `@sanity/icons`, `embla-carousel-react`, `lucide-react`, `next-intl`, `next-sanity`, and
-`sanity ^5.26.0`. Its links use `@indiecrafts/i18n` navigation (the app keeps typed
+`sanity ^5.26.0`. Its links use `@indiecrafts/packages-web-i18n` navigation (the app keeps typed
 routing). Read it before extracting a module here.
 
 ### Its src shape (`code/modules/web/blog/src/`)
@@ -41,15 +41,15 @@ bricks:
 1. **`exports`** — `"./*": "./src/*"` (no extension in the map; Next resolves the
    dir-index / `.ts` / `.tsx` at runtime).
 2. **tsconfig `paths`** in `code/projects/web/surfaces/website/tsconfig.json`:
-   `"@indiecrafts/blog/*": ["../../modules/web/blog/src/*"]` — needed because the wildcard has
+   `"@indiecrafts/modules-web-blog/*": ["../../modules/web/blog/src/*"]` — needed because the wildcard has
    no extension (the other bricks resolve via workspace symlinks + `exports`).
-3. **`transpilePackages`** in `next.config.ts` lists `@indiecrafts/blog` alongside every
+3. **`transpilePackages`** in `next.config.ts` lists `@indiecrafts/modules-web-blog` alongside every
    `@indiecrafts/*` brick.
 4. **`@source`** line in `tokens/globals.css` (`../../../modules/web/blog/src`) so Tailwind
    scans its UI for classes.
 5. **`sanity.config.ts`** registration — imports `schemaTypes` from
-   `@indiecrafts/blog/sanity/schema` and `structure` from
-   `@indiecrafts/blog/sanity/structure`, merged into `schema.types` and `structureTool`.
+   `@indiecrafts/modules-web-blog/sanity/schema` and `structure` from
+   `@indiecrafts/modules-web-blog/sanity/structure`, merged into `schema.types` and `structureTool`.
 6. **Feature flag** `features.blog` gates the public surface; taxonomy sub-routes gate on
    `features.blogTaxonomy.{authors,categories,tags}`. Independent of `features.studio`
    (Studio + draft mode).

@@ -4,13 +4,13 @@ import { getTranslations } from "next-intl/server";
 import type {
   BlogPostContentModule,
   Post,
-} from "@indiecrafts/blog/sanity/types";
-import { type Locale } from "@indiecrafts/config";
-import { formatDate } from "@indiecrafts/utils/format-date";
-import { formatList } from "@indiecrafts/format/list";
-import { Link } from "@indiecrafts/i18n";
-import { getBlogSettings } from "@indiecrafts/blog/lib/settings";
-import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
+} from "@indiecrafts/modules-web-blog/sanity/types";
+import { type Locale } from "@indiecrafts/packages-shared-config";
+import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
+import { formatList } from "@indiecrafts/packages-shared-format/list";
+import { Link } from "@indiecrafts/packages-web-i18n";
+import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
+import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
 
 /**
  * Renders the active post's header + body. The module schema itself has

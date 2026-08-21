@@ -3,14 +3,14 @@
 # `wrangler deploy --env <dev|staging|prod>`. Runbook + first-time setup
 # (R2 buckets, secrets, custom domain): docs/apps/web/setup/deployment.md
 #
-# Names follow `<prefix>-<env>-<platform>-<slug>` (here `indiecrafts-<env>-web-website`),
+# Names follow `<prefix>-<env>-<platform>-<slug>` (here `indiecrafts-<env>-web-surfaces-website`),
 # the single formula in scripts/lib/apps.mjs `resourceName`. Per client site, run
 # `pnpm project:rename <slug>` — it swaps only the `<prefix>` here + in
-# `DEFAULT_SITE_PREFIX` (@indiecrafts/config), then prints the R2 buckets to create. Do
+# `DEFAULT_SITE_PREFIX` (@indiecrafts/packages-shared-config), then prints the R2 buckets to create. Do
 # NOT hand-edit these names (a staging/prod deploy is blocked until the prefix differs
 # from the template default — shared-account guard).
 
-name = "indiecrafts-dev-web-website"
+name = "indiecrafts-dev-web-surfaces-website"
 main = ".open-next/worker.js"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
@@ -25,7 +25,7 @@ binding = "ASSETS"
 # (no --env). Mirrors the dev environment.
 [[r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
-bucket_name = "indiecrafts-dev-web-website-isr"
+bucket_name = "indiecrafts-dev-web-surfaces-website-isr"
 
 # ── Optional: Cloudflare D1 (relational data) + KV (cache) ───
 # The template's content lives in Sanity — add D1 only for data that ISN'T
@@ -33,7 +33,7 @@ bucket_name = "indiecrafts-dev-web-website-isr"
 # then repeat the block under each [env.*] (like the R2 bucket). Docs: docs/db/.
 # [[d1_databases]]
 # binding = "DB"
-# database_name = "indiecrafts-dev-web-website"
+# database_name = "indiecrafts-dev-web-surfaces-website"
 # database_id = "<from `wrangler d1 create`>"
 # migrations_dir = "db/d1/<name>/migrations"
 #
@@ -41,7 +41,7 @@ bucket_name = "indiecrafts-dev-web-website-isr"
 # binding = "KV"
 # id = "<from `wrangler kv namespace create`>"
 #
-# In-app rate-limit store for @indiecrafts/security `withGuard` — the app's own
+# In-app rate-limit store for @indiecrafts/packages-shared-security `withGuard` — the app's own
 # fixed-window limiter (5–8 req / 10 min per IP on the public form routes). RUN
 # `pnpm setup:kv` ONCE: it creates ONE namespace PER ENV (like the R2 buckets below)
 # and uncomments + fills each `RATE_LIMIT_KV` block — base shares the dev namespace,
@@ -87,11 +87,11 @@ invocation_logs = true
 
 # ── dev ──────────────────────────────────────────────────────
 [env.dev]
-name = "indiecrafts-dev-web-website"
+name = "indiecrafts-dev-web-surfaces-website"
 workers_dev = true
 
 [env.dev.vars]
-# Non-production → robots.txt serves Disallow (see @indiecrafts/config env logic).
+# Non-production → robots.txt serves Disallow (see @indiecrafts/packages-shared-config env logic).
 NEXT_PUBLIC_ENVIRONMENT = "development"
 # First-party asset CDN for this env (→ Next `assetPrefix`; empty = serve from origin).
 # It's baked at BUILD, so set it in the deploy env too (GitHub Environment var). Sanity
@@ -100,7 +100,7 @@ NEXT_PUBLIC_ENVIRONMENT = "development"
 
 [[env.dev.r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
-bucket_name = "indiecrafts-dev-web-website-isr"
+bucket_name = "indiecrafts-dev-web-surfaces-website-isr"
 
 # RATE_LIMIT_KV (dev) — uncommented + filled by `pnpm setup:kv`.
 # [[env.dev.kv_namespaces]]
@@ -113,7 +113,7 @@ invocation_logs = true
 
 # ── staging ──────────────────────────────────────────────────
 [env.staging]
-name = "indiecrafts-staging-web-website"
+name = "indiecrafts-staging-web-surfaces-website"
 workers_dev = true
 
 [env.staging.vars]
@@ -123,7 +123,7 @@ NEXT_PUBLIC_ENVIRONMENT = "staging"
 
 [[env.staging.r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
-bucket_name = "indiecrafts-staging-web-website-isr"
+bucket_name = "indiecrafts-staging-web-surfaces-website-isr"
 
 # RATE_LIMIT_KV (staging) — uncommented + filled by `pnpm setup:kv`.
 # [[env.staging.kv_namespaces]]
@@ -136,7 +136,7 @@ invocation_logs = true
 
 # ── prod ─────────────────────────────────────────────────────
 [env.prod]
-name = "indiecrafts-prod-web-website"
+name = "indiecrafts-prod-web-surfaces-website"
 workers_dev = false
 
 [env.prod.vars]
@@ -150,7 +150,7 @@ NEXT_PUBLIC_ENVIRONMENT = "production"
 
 [[env.prod.r2_buckets]]
 binding = "NEXT_INC_CACHE_R2_BUCKET"
-bucket_name = "indiecrafts-prod-web-website-isr"
+bucket_name = "indiecrafts-prod-web-surfaces-website-isr"
 
 # RATE_LIMIT_KV (prod) — uncommented + filled by `pnpm setup:kv`.
 # [[env.prod.kv_namespaces]]

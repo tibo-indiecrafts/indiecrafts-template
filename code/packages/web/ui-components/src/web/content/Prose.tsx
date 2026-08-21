@@ -1,6 +1,6 @@
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import type { ProseModule } from "@indiecrafts/ui-components/shared/types";
-import { cn } from "@indiecrafts/utils/cn";
+import type { ProseModule } from "@indiecrafts/packages-web-ui-components/shared/types";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 export function Prose(
   props: ProseModule & { components: PortableTextComponents },

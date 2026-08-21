@@ -1,14 +1,14 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Input } from "@indiecrafts/ui/web/input";
-import { cn } from "@indiecrafts/utils/cn";
+import { Input } from "@indiecrafts/packages-web-ui/web/input";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /**
  * A lightweight international phone field — a country dial-code `<select>` + a
  * national-number `<input type="tel">`. Emits an E.164-ish string
  * (`+33612345678`) via `onChange`. Validation is the caller's job (use
- * `isPhone`/`formatPhone` from `@indiecrafts/format/validate`); for strict
+ * `isPhone`/`formatPhone` from `@indiecrafts/packages-shared-format/validate`); for strict
  * per-country rules, swap in `libphonenumber-js` there.
  *
  * Uncontrolled national part (keeps parsing simple) — pass `defaultCountry` /

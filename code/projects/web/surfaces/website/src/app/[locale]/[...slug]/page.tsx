@@ -8,13 +8,13 @@ import { buildWebPageSchema } from "@/lib/seo/jsonld-core";
 import { JsonLdScript } from "@/lib/seo/jsonld";
 import { getPage, getAllPageParams } from "@/lib/page";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
-import { renderBlock } from "@indiecrafts/ui-components/web/registry";
-import { portableComponents } from "@indiecrafts/ui-components/web/portable-text-components";
-import type { BlockModule } from "@indiecrafts/ui-components/shared/types";
+import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
+import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
+import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 
 /**
  * Generic editor-driven pages — the `/[locale]/<slug>` catch-all. Resolves a
- * `page` document (`@indiecrafts/page-builder`) by slug + locale and paints its
+ * `page` document (`@indiecrafts/packages-web-page-builder`) by slug + locale and paints its
  * `sections[]` through the shared `renderBlock` registry. A required catch-all
  * (`[...slug]`, not `[[...slug]]`) so it never shadows the `(home)` index; the 11
  * static route folders resolve first, this is the fallback (unknown path → 404).

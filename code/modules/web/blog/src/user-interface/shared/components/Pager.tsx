@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Link } from "@indiecrafts/i18n";
+import { Link } from "@indiecrafts/packages-web-i18n";
 
 /**
  * Previous / next pager for a blog listing. Pure presentational — the route

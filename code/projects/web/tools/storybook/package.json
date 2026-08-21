@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/storybook",
+  "name": "@indiecrafts/web-tools-storybook",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,14 +9,14 @@
     "test:stories": "vitest run"
   },
   "dependencies": {
-    "@indiecrafts/announcement": "workspace:*",
-    "@indiecrafts/config": "workspace:*",
-    "@indiecrafts/i18n": "workspace:*",
-    "@indiecrafts/locale-suggest": "workspace:*",
-    "@indiecrafts/ui": "workspace:*",
-    "@indiecrafts/ui-components": "workspace:*",
-    "@indiecrafts/ui-tokens": "workspace:*",
-    "@indiecrafts/utils": "workspace:*"
+    "@indiecrafts/packages-web-announcement": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-web-i18n": "workspace:*",
+    "@indiecrafts/packages-web-locale-suggest": "workspace:*",
+    "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-web-ui-components": "workspace:*",
+    "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "9.1.20",
@@ -25,6 +25,7 @@
     "@storybook/addon-vitest": "9.1.20",
     "@storybook/nextjs-vite": "^9.0.0",
     "@tailwindcss/vite": "^4.0.0",
+    "@total-typescript/ts-reset": "^0.6.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/browser": "^3.2.7",

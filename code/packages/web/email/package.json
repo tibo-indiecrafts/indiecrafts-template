@@ -1,0 +1,29 @@
+{
+  "name": "@indiecrafts/packages-web-email",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./sanity": "./src/sanity/index.ts",
+    "./strings": "./src/strings.ts"
+  },
+  "dependencies": {
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
+    "@sanity/icons": "^3.7.4",
+    "@sanity/ui": "^3.5.1",
+    "next-sanity": "^13.3.3",
+    "sanity": "^5.31.1"
+  },
+  "peerDependencies": {
+    "react": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

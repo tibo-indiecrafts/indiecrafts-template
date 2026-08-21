@@ -1,0 +1,56 @@
+import {
+  EMAIL_COLORS,
+  escapeHtml,
+  renderEmailLayout,
+  type RenderedEmail,
+} from "@indiecrafts/packages-web-email";
+
+/**
+ * "We got your message" acknowledgement → the person who sent the contact form.
+ * **Copy-agnostic**: the caller resolves the sender-locale strings (from Sanity
+ * `emailStrings`) and passes them in. No link — a contact ack just reassures;
+ * `intro`/`outro` may be multi-line (one `<p>` per line).
+ */
+export type ContactConfirmInput = {
+  subject: string;
+  heading: string;
+  intro: string;
+  outro?: string;
+};
+
+const C = EMAIL_COLORS;
+
+function paragraphs(text: string): string {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map(
+      (line) =>
+        `<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:${C.body}">${escapeHtml(line)}</p>`,
+    )
+    .join("");
+}
+
+export function renderContactConfirmEmail(
+  input: ContactConfirmInput,
+): RenderedEmail {
+  const text = [input.intro, ...(input.outro ? ["", input.outro] : [])].join(
+    "\n",
+  );
+
+  const contentHtml = [
+    paragraphs(input.intro),
+    input.outro
+      ? `<p style="margin:16px 0 0;font-size:13px;line-height:1.6;color:${C.muted}">${escapeHtml(input.outro).replaceAll("\n", "<br>")}</p>`
+      : "",
+  ].join("");
+
+  const html = renderEmailLayout({
+    title: input.heading,
+    preheader: input.intro.slice(0, 100),
+    contentHtml,
+  });
+
+  return { subject: input.subject, text, html };
+}

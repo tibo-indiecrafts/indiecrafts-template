@@ -1,9 +1,9 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";
-import { formatDate } from "@indiecrafts/utils/format-date";
-import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { FeaturedMedia } from "@indiecrafts/ui-components/web/media/FeaturedMedia";
+import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
+import type { PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
+import { FeaturedMedia } from "@indiecrafts/packages-web-ui-components/web/media/FeaturedMedia";
 
 /**
  * Homepage "editor's desk" — a curated strip of featured articles, laid out

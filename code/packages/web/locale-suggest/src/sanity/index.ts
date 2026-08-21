@@ -1,5 +1,5 @@
 import type { SchemaTypeDefinition } from "sanity";
-import type { SanityModule } from "@indiecrafts/sanity/module";
+import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import localeSuggest from "./locale-suggest";
 import { localeSuggestStructureItem } from "./structure";
 

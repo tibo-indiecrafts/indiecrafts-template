@@ -14,7 +14,7 @@ const { fetch, patch, set, unset, commit, deliverMagnetsForTags } = vi.hoisted(
   },
 );
 
-vi.mock("@indiecrafts/sanity/write", () => ({
+vi.mock("@indiecrafts/packages-web-sanity/write", () => ({
   writeClient: { fetch, patch },
 }));
 vi.mock("./deliver-magnet", () => ({ deliverMagnetsForTags }));

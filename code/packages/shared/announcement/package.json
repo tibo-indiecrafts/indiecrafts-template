@@ -1,0 +1,16 @@
+{
+  "name": "@indiecrafts/packages-shared-announcement",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@indiecrafts/packages-shared-config": "workspace:*"
+  }
+}

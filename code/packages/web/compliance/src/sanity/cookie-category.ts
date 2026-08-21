@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { defaultLocale } from "@indiecrafts/config";
+import { defaultLocale } from "@indiecrafts/packages-shared-config";
 
 /**
  * One consent category shown in the cookie banner / preferences dialog. `required`

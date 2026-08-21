@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { cn } from "@indiecrafts/utils/cn";
-import { Button } from "@indiecrafts/ui/web/button";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { useVersionCheck } from "./use-version-check";
 
 /**

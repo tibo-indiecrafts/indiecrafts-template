@@ -24,21 +24,31 @@ import { pages, defaultLocale } from "@/config";
 /** Human labels for the route dropdown — keyed by `pages.<key>.id`. */
 const ROUTE_LABELS: Record<string, string> = {
   home: "Accueil",
+  contact: "Contact",
+  waitlist: "Liste d'attente",
   "legal-notice": "Mentions légales",
   privacy: "Politique de confidentialité",
   cookies: "Politique de cookies",
   terms: "Conditions générales d'utilisation (CGU)",
   "terms-of-sale": "Conditions générales de vente (CGV)",
+  "data-request": "Exercer mes droits (RGPD)",
   blog: "Blog",
   author: "Auteurs",
   category: "Catégories",
   tag: "Tags",
 };
 
-const ROUTE_OPTIONS = Object.values(pages).map((page) => ({
-  title: ROUTE_LABELS[page.id] ?? page.key,
-  value: page.key,
-}));
+// Only **activated** routes are offered — a page whose feature flag is off
+// (`pages.<id>.enabled === false`) drops out of the menu editor, so a link can't
+// target a disabled route. `home` has no `enabled` field (always on). This is the
+// generic pattern every page follows: land in the `pages` map + a `ROUTE_LABELS`
+// entry, and it appears here the moment its flag is on.
+const ROUTE_OPTIONS = Object.values(pages)
+  .filter((page) => !("enabled" in page) || page.enabled !== false)
+  .map((page) => ({
+    title: ROUTE_LABELS[page.id] ?? page.key,
+    value: page.key,
+  }));
 
 export default defineType({
   name: "navItem",

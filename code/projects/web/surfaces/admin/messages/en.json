@@ -1,0 +1,81 @@
+{
+  "admin": {
+    "title": "Admin",
+    "welcome": "Welcome to the admin dashboard.",
+    "authNotConfigured": "Authentication is not configured. Set the Clerk keys to enable sign-in.",
+    "roles": {
+      "title": "Manage admins",
+      "label": "Clerk user ID",
+      "grant": "Grant admin",
+      "revoke": "Revoke admin",
+      "granted": "Role granted.",
+      "revoked": "Role revoked and sessions ended.",
+      "error": "Action failed."
+    },
+    "sessions": {
+      "title": "Sessions",
+      "subtitle": "Recent sign-ins across all surfaces (last 100).",
+      "empty": "No sessions recorded yet.",
+      "when": "When",
+      "surface": "Surface",
+      "user": "User",
+      "country": "Country",
+      "link": "View sessions",
+      "actions": "Actions",
+      "manage": "Manage",
+      "hide": "Hide",
+      "signOutUser": "Sign out user",
+      "revoke": "Revoke",
+      "revoked": "Done.",
+      "error": "Action failed.",
+      "loading": "Loading…",
+      "noLive": "No active sessions."
+    },
+    "users": {
+      "title": "Users",
+      "search": "Search by email or name…",
+      "go": "Search",
+      "empty": "No users found.",
+      "email": "Email",
+      "role": "Role",
+      "created": "Created",
+      "lastSignIn": "Last sign-in",
+      "id": "ID",
+      "link": "Browse users"
+    },
+    "security": {
+      "title": "Security",
+      "subtitle": "App-level security incidents (last 100).",
+      "edgeLink": "Open Cloudflare Security Events",
+      "edgeNote": "— blocked, challenged and rate-limited requests at the edge.",
+      "edgeNotConfigured": "Set CLOUDFLARE_SECURITY_URL to link the edge Security Events dashboard.",
+      "loadError": "Could not load the incident feed — the security API is unreachable.",
+      "empty": "No security incidents recorded.",
+      "when": "When",
+      "event": "Event",
+      "severity": "Severity",
+      "surface": "Surface",
+      "user": "User",
+      "country": "Country",
+      "description": "Detail",
+      "link": "View security"
+    },
+    "system": {
+      "title": "System status",
+      "surfaces": "Surfaces",
+      "workers": "Workers",
+      "databases": "Databases",
+      "name": "Name",
+      "version": "Version",
+      "commit": "Commit",
+      "status": "Status",
+      "live": "Live",
+      "down": "Down",
+      "noEndpoint": "Scheduled / queue (no endpoint)",
+      "external": "External (Sanity)",
+      "unknown": "Unknown",
+      "notConfigured": "Not configured",
+      "link": "System status"
+    }
+  }
+}

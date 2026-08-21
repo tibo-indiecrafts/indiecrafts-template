@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@indiecrafts/ui/web/button";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { openPreferences } from "./consent-store";
 
 /** Opens the cookie preferences dialog (mounted with the banner). */

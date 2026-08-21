@@ -1,5 +1,5 @@
 /**
- * `@indiecrafts/config/web` — the WEB-only config primitives.
+ * `@indiecrafts/packages-shared-config/web` — the WEB-only config primitives.
  *
  * Next-flavored: site origin/prefix read `NEXT_PUBLIC_*` env, `env` builds the
  * CSP, `pages` uses the `next` `Robots` type, `seo` is crawl mechanics. Import
@@ -17,6 +17,8 @@ export {
 export { seoDefaults } from "./seo";
 export { isPageVisible } from "./pages";
 export { getCurrentEnvironment, getCSPConnectSources } from "./env";
+export { rateLimits, RATE_WINDOW_SEC } from "./security";
+export { defineFeatures } from "./features";
 
 // ── Public types ─────────────────────────────────────────────
 export type {
@@ -26,3 +28,5 @@ export type {
   CanonicalOverride,
   OgImageUrl,
 } from "./pages";
+export type { RateLimitTier } from "./security";
+export type { FeatureValue, FeatureMap } from "./features";

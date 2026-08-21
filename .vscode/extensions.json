@@ -16,7 +16,7 @@
     "usernamehw.errorlens", // inline eslint/tsc diagnostics
     "editorconfig.editorconfig", // honor the root .editorconfig
     "streetsidesoftware.code-spell-checker", // typos in docs + messages/ copy
-    "bierner.markdown-mermaid" // preview mermaid diagrams in docs/method
+    "bierner.markdown-mermaid" // preview mermaid diagrams in docs
   ],
   // Formatters that fight Prettier/ESLint — VS Code will advise against installing them.
   "unwantedRecommendations": ["hookyqr.beautify", "dbaeumer.jshint"]

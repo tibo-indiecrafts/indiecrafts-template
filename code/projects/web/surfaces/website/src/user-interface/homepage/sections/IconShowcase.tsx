@@ -1,35 +1,44 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Bell, Globe, Heart, Rocket, Settings2, Sparkles, Star, Zap } from "lucide-react";
 import {
-  Bell as ReBell,
-  Home as ReHome,
-  Rocket as ReRocket,
-  ShieldCheck as ReShield,
-} from "reicon-react";
-import {
-  Figma,
-  Github,
-  Nextdotjs,
-  React as ReactLogo,
-  Sanity,
-  Tailwindcss,
-  Typescript,
-  Vercel,
-} from "reicon-brands";
-import { BrandIcon } from "@/user-interface/shared/components/BrandIcon";
+  Icon,
+  ReiconIcon,
+  BrandIcon,
+  type GlyphName,
+  type BrandName,
+} from "@indiecrafts/packages-shared-ui-icons/web";
 
 /**
- * Icon-systems showcase for the homepage. Demonstrates the three icon sets
- * the template ships, each doing the job it's best at:
- *   - Lucide — the outline UI glyph set (default across the app)
- *   - Reicon — the same icons in Outline *and* Filled weights
- *   - Reicon Brands — logos painted in their official brand colors
+ * Icon-systems showcase for the homepage. Demonstrates the icon sets the shared
+ * `@indiecrafts/packages-shared-ui-icons` brick ships, each doing the job it's best at:
+ *   - Lucide (`Icon`) — the outline UI glyph set, cross-platform (web + native)
+ *   - Reicon (`ReiconIcon`) — the same icons in Outline *and* Filled weights (web/hybrid)
+ *   - Brands (`BrandIcon`) — social marks painted in their official brand colors, from shared SVG data
  *
  * Client component — `reicon-react` icons are `"use client"`, so the whole
  * section renders on the client. Reads its copy from `namespace`.
  */
+const GLYPH_DEMO: GlyphName[] = [
+  "zap",
+  "settings",
+  "sparkles",
+  "heart",
+  "star",
+  "rocket",
+  "bell",
+  "globe",
+];
+const REICON_DEMO = ["Home", "ShieldCheck", "Bell", "Rocket"];
+const BRAND_DEMO: BrandName[] = [
+  "github",
+  "x",
+  "linkedin",
+  "instagram",
+  "facebook",
+  "mastodon",
+];
+
 export function IconShowcase({ id, namespace }: { id: string; namespace: string }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic namespace, matches the other sections
   const t = useTranslations(namespace as any);
@@ -52,39 +61,28 @@ export function IconShowcase({ id, namespace }: { id: string; namespace: string 
 
         <div className="mt-12 grid gap-4">
           <IconGroup label={t("lucide")}>
-            {[Zap, Settings2, Sparkles, Heart, Star, Rocket, Bell, Globe].map(
-              (Icon, i) => (
-                <Tile key={i}>
-                  <Icon className="size-5" aria-hidden="true" />
-                </Tile>
-              ),
-            )}
+            {GLYPH_DEMO.map((name) => (
+              <Tile key={name}>
+                <Icon name={name} className="size-5" aria-hidden="true" />
+              </Tile>
+            ))}
           </IconGroup>
 
           <IconGroup label={t("reicon")}>
-            {[ReHome, ReShield, ReBell, ReRocket].flatMap((Icon, i) => [
-              <Tile key={`o${i}`}>
-                <Icon size={20} />
+            {REICON_DEMO.flatMap((name) => [
+              <Tile key={`o-${name}`}>
+                <ReiconIcon name={name} size={20} />
               </Tile>,
-              <Tile key={`f${i}`} filled>
-                <Icon size={20} weight="Filled" />
+              <Tile key={`f-${name}`} filled>
+                <ReiconIcon name={name} size={20} weight="Filled" />
               </Tile>,
             ])}
           </IconGroup>
 
           <IconGroup label={t("brands")}>
-            {[
-              Github,
-              Figma,
-              ReactLogo,
-              Nextdotjs,
-              Typescript,
-              Tailwindcss,
-              Vercel,
-              Sanity,
-            ].map((icon, i) => (
-              <Tile key={i}>
-                <BrandIcon icon={icon} size={20} brandColor />
+            {BRAND_DEMO.map((name) => (
+              <Tile key={name}>
+                <BrandIcon name={name} size={20} brandColor />
               </Tile>
             ))}
           </IconGroup>

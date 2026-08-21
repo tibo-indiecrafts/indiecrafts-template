@@ -12,4 +12,4 @@ active locale differs from the browser preference. The app layout reads
 renders this only when they disagree. Copy is the `localeSuggest` Sanity singleton
 (`getLocaleSuggest`); `{language}` is filled with the target language's native name
 (`localeMap[code].label`) — never a flag. Switch reuses `useLocaleSwitch`
-(`@indiecrafts/i18n`).
+(`@indiecrafts/packages-web-i18n`).

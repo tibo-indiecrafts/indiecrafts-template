@@ -15,7 +15,7 @@ try { await publish(doc); } catch { /* ignore */ }
 ```
 ✅
 ```ts
-import { logger } from "@indiecrafts/logger";
+import { logger } from "@indiecrafts/packages-shared-logger";
 try {
   await publish(doc);
 } catch (error) {
@@ -58,7 +58,7 @@ import Link from "next/link"; // bypasses locale prefixing + typed routes
 ```
 ✅
 ```tsx
-import { Link } from "@/i18n/routing"; // app routes; modules use @indiecrafts/i18n
+import { Link } from "@/i18n/routing"; // app routes; modules use @indiecrafts/packages-web-i18n
 ```
 
 ## Color / spacing — tokens, never raw values
@@ -91,7 +91,7 @@ const client = createClient({ projectId, dataset }); // new client per route
 ```
 ✅
 ```ts
-import { client } from "@indiecrafts/sanity/client"; // one shared client
+import { client } from "@indiecrafts/packages-web-sanity/client"; // one shared client
 ```
 
 ## User-facing strings — `messages/`, never inline

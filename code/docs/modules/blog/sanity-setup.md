@@ -1,6 +1,6 @@
 # Sanity setup & test guide
 
-End-to-end reference for the Sanity-backed blog module (`@indiecrafts/blog`): configuration, schemas, routes, seeding, and the full QA matrix. The public surface stays gated by `features.blog` — flip it in the app's `features` (`code/projects/web/surfaces/website/src/config/features.ts`, imported via `@/config`) to activate; the app injects the blog's flags at boot (`configureBlog`), so the module never reads a central registry. The editing surface (Studio + draft preview) is a separate flag, `features.studio`.
+End-to-end reference for the Sanity-backed blog module (`@indiecrafts/modules-web-blog`): configuration, schemas, routes, seeding, and the full QA matrix. The public surface stays gated by `features.blog` — flip it in the app's `features` (`code/projects/web/surfaces/website/src/config/features.ts`, imported via `@/config`) to activate; the app injects the blog's flags at boot (`configureBlog`), so the module never reads a central registry. The editing surface (Studio + draft preview) is a separate flag, `features.studio`.
 
 ---
 
@@ -37,7 +37,7 @@ SANITY_API_READ_TOKEN=                  # Viewer role. Required for draft previe
 SANITY_API_WRITE_TOKEN=                 # Editor role. Only `pnpm seed` uses this.
 ```
 
-`projectId` and `dataset` are asserted at import (`code/packages/shared/sanity/src/env.ts` throws `Missing NEXT_PUBLIC_SANITY_…` if unset); `apiVersion` falls back to `"2025-01-01"`. Issue tokens at <https://www.sanity.io/manage> → your project → **API** → **Tokens** → **Add API token**. Full token reference (roles, CORS, security) in [`sanity-tokens.md`](./sanity-tokens.md).
+`projectId` and `dataset` are asserted at import (`code/packages/web/sanity/src/env.ts` throws `Missing NEXT_PUBLIC_SANITY_…` if unset); `apiVersion` falls back to `"2025-01-01"`. Issue tokens at <https://www.sanity.io/manage> → your project → **API** → **Tokens** → **Add API token**. Full token reference (roles, CORS, security) in [`sanity-tokens.md`](./sanity-tokens.md).
 
 ### Whitelist your dev origin (CORS)
 
@@ -50,7 +50,7 @@ pnpm dlx sanity@latest cors add http://localhost:3000 \
 
 `--credentials` lets the Studio's session cookie ride along. Repeat for every domain (staging, prod, preview branches) that talks to the project.
 
-### Feature flags (`@indiecrafts/config`)
+### Feature flags (`@indiecrafts/packages-shared-config`)
 
 Two **independent** flags govern the blog, in `code/packages/shared/config/src/index.ts`. `features.blog` is the public surface; `features.studio` is the editing surface. Keep the Studio on with `blog: false` so editors keep working while the public site is hidden, or turn `studio` off to freeze editing on a live site.
 
@@ -66,7 +66,7 @@ features: {
 
 **`features.blog` (public surface)** — when `false`:
 
-- `/blog`, `/blog/<slug>`, `/blog/<slug>/md`, `/blog/category` + `/<slug>`, `/blog/tag` + `/<slug>`, `/author` + `/<slug>`, `/blog/rss.xml`, `/blog/atom.xml` all 404 (gated via `@indiecrafts/blog/lib/route-gate`).
+- `/blog`, `/blog/<slug>`, `/blog/<slug>/md`, `/blog/category` + `/<slug>`, `/blog/tag` + `/<slug>`, `/author` + `/<slug>`, `/blog/rss.xml`, `/blog/atom.xml` all 404 (gated via `@indiecrafts/modules-web-blog/lib/route-gate`).
 - `<SanityLive />` is not mounted in the layout.
 - The header `/blog` link disappears.
 - `pages.{blog,author,category,tag}.enabled` mirror the flag → sitemap + llms.txt drop the entries.
@@ -84,15 +84,15 @@ features: {
 
 ### Sanity infra files
 
-Core Sanity infra is the shared package `@indiecrafts/sanity` (`code/packages/shared/sanity/src/`); everything blog-specific lives inside the module at `code/modules/web/blog/src/sanity/`. The `"use client"` Studio wrapper stays in the app.
+Core Sanity infra is the shared package `@indiecrafts/packages-web-sanity` (`code/packages/web/sanity/src/`); everything blog-specific lives inside the module at `code/modules/web/blog/src/sanity/`. The `"use client"` Studio wrapper stays in the app.
 
 ```text
 code/projects/web/surfaces/website/sanity.config.ts                          # schema list + structure + plugins
-code/packages/shared/sanity/src/env.ts                         # projectId, dataset, apiVersion, studioBasePath
-code/packages/shared/sanity/src/client.ts                      # read client (useCdn: false, stega.studioUrl)
-code/packages/shared/sanity/src/live.ts                        # defineLive — sanityFetch/sanityFetchLive + <SanityLive />
-code/packages/shared/sanity/src/token.ts                       # server-only SANITY_API_READ_TOKEN
-code/packages/shared/sanity/src/structure.ts                   # core desk builders (SEO/nav/cookie/legal)
+code/packages/web/sanity/src/env.ts                         # projectId, dataset, apiVersion, studioBasePath
+code/packages/web/sanity/src/client.ts                      # read client (useCdn: false, stega.studioUrl)
+code/packages/web/sanity/src/live.ts                        # defineLive — sanityFetch/sanityFetchLive + <SanityLive />
+code/packages/web/sanity/src/token.ts                       # server-only SANITY_API_READ_TOKEN
+code/packages/web/sanity/src/structure.ts                   # core desk builders (SEO/nav/cookie/legal)
 code/projects/web/surfaces/website/src/sanity/Studio.tsx                     # "use client" wrapper around <NextStudio>
 code/modules/web/blog/src/sanity/structure.ts               # blog Studio sidebar groups
 code/modules/web/blog/src/sanity/queries.ts                 # GROQ — every query filters by $locale
@@ -104,7 +104,7 @@ code/modules/web/blog/src/sanity/types.ts                   # TypeScript shapes 
 
 ## 3. Schemas
 
-Blog schemas register via `code/modules/web/blog/src/sanity/schema/index.ts` (exported as `schemaTypes`), merged in `sanity.config.ts` as `schema.types: [...coreSchemaTypes, ...schemaTypes]`. The **16 generic** `module.*` blocks register via **`@indiecrafts/page-builder`** (`sanity/schema/modules/index.ts` → `MODULE_TYPES` + `moduleSchemas`); the blog's own `code/modules/web/blog/src/sanity/schema/modules/index.ts` exports `BLOG_MODULE_TYPES` + `blogModuleSchemas` — the **3** blog-specific blocks. Paths below are relative to `code/modules/web/blog/src/sanity/schema/`.
+Blog schemas register via `code/modules/web/blog/src/sanity/schema/index.ts` (exported as `schemaTypes`), merged in `sanity.config.ts` as `schema.types: [...coreSchemaTypes, ...schemaTypes]`. The **16 generic** `module.*` blocks register via **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/index.ts` → `MODULE_TYPES` + `moduleSchemas`); the blog's own `code/modules/web/blog/src/sanity/schema/modules/index.ts` exports `BLOG_MODULE_TYPES` + `blogModuleSchemas` — the **3** blog-specific blocks. Paths below are relative to `code/modules/web/blog/src/sanity/schema/`.
 
 ### Documents
 
@@ -116,23 +116,23 @@ Blog schemas register via `code/modules/web/blog/src/sanity/schema/index.ts` (ex
 | `category`         | `category.ts`       | **yes** (`language`) | Title, description                                                                                          |
 | `tag`              | `tag.ts`            | **yes** (`language`) | Cross-cutting tags (title, slug)                                                                            |
 
-The blog's translated content types (`post`, `author`, `category`, `tag`) are registered with `@sanity/document-internationalization` in `sanity.config.ts` (`languageField: "language"`, `supportedLanguages` derived from `@indiecrafts/config` `locales`) — plus core `legalPage`. The `quote` / `person` entities are now registered by `@indiecrafts/page-builder`.
+The blog's translated content types (`post`, `author`, `category`, `tag`) are registered with `@sanity/document-internationalization` in `sanity.config.ts` (`languageField: "language"`, `supportedLanguages` derived from `@indiecrafts/packages-shared-config` `locales`) — plus core `legalPage`. The `quote` / `person` entities are now registered by `@indiecrafts/packages-web-page-builder`.
 
 ### Objects
 
 | Object         | File                        | Used by                                                      |
 | -------------- | --------------------------- | ------------------------------------------------------------ |
 | `metadata`     | `objects/metadata.ts`       | post (title/description/image/slug/noIndex)                  |
-| `seoMeta`      | `@indiecrafts/schema`       | shared SEO override shape (moved out of the blog)            |
-| `blockContent` | `@indiecrafts/page-builder` | post body, accordion items, callout content, cards           |
-| `link`         | `@indiecrafts/page-builder` | inside `cta`. Internal refs target a `page` **or** a `post`. |
-| `cta`          | `@indiecrafts/page-builder` | callout, card-list, etc.                                     |
+| `seoMeta`      | `@indiecrafts/packages-web-schema`       | shared SEO override shape (moved out of the blog)            |
+| `blockContent` | `@indiecrafts/packages-web-page-builder` | post body, accordion items, callout content, cards           |
+| `link`         | `@indiecrafts/packages-web-page-builder` | inside `cta`. Internal refs target a `page` **or** a `post`. |
+| `cta`          | `@indiecrafts/packages-web-page-builder` | callout, card-list, etc.                                     |
 
 ### Modules — 19 `module.*` types (16 generic + 3 blog-specific)
 
-Embedded inside `blog.postModules` and (for the inline set) directly in a post body. The **16 generic** blocks live in **`@indiecrafts/page-builder`** (`sanity/schema/modules/` → `moduleSchemas` + `MODULE_TYPES`); their renderers are in `@indiecrafts/ui-components`. The blog's `schema/modules/` holds only the **3 blog-specific** blocks. `defineModule` (`@indiecrafts/page-builder`) auto-injects an `anchor` + `hidden` field on every one.
+Embedded inside `blog.postModules` and (for the inline set) directly in a post body. The **16 generic** blocks live in **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/` → `moduleSchemas` + `MODULE_TYPES`); their renderers are in `@indiecrafts/packages-web-ui-components`. The blog's `schema/modules/` holds only the **3 blog-specific** blocks. `defineModule` (`@indiecrafts/packages-web-page-builder`) auto-injects an `anchor` + `hidden` field on every one.
 
-**Generic (`@indiecrafts/page-builder`)** — `hero`, `feature-grid`, `pricing`, `accordion-list`, `callout`, `card-list`, `gallery`, `person-list`, `prose`, `stat-list`, `step-list`, `quote-list`, `custom-html`, `newsletter`, `waitlist`, `lead-magnet`.
+**Generic (`@indiecrafts/packages-web-page-builder`)** — `hero`, `feature-grid`, `pricing`, `accordion-list`, `callout`, `card-list`, `gallery`, `person-list`, `prose`, `stat-list`, `step-list`, `quote-list`, `custom-html`, `newsletter`, `waitlist`, `lead-magnet`.
 
 **Blog-specific (`code/modules/web/blog/src/sanity/schema/modules/`):**
 
@@ -142,11 +142,11 @@ Embedded inside `blog.postModules` and (for the inline set) directly in a post b
 | `module.blog-post-content` | `modules/blog-post-content.ts` | renders the active post (slot)                       |
 | `module.blog-post-list`    | `modules/blog-post-list.ts`    | filtered post grid (limit, categories, featuredOnly) |
 
-**12 generic blocks are inline-embeddable** in a post body (`INLINE_MODULES` in `@indiecrafts/page-builder`'s `blockContent.ts`): accordion-list, callout, card-list, custom-html, gallery, lead-magnet, newsletter, person-list, quote-list, stat-list, step-list, waitlist. Everything else — `prose`, the page-level generics (`hero`, `feature-grid`, `pricing`), and the 3 blog-specific blocks — is `postModules`-only.
+**12 generic blocks are inline-embeddable** in a post body (`INLINE_MODULES` in `@indiecrafts/packages-web-page-builder`'s `blockContent.ts`): accordion-list, callout, card-list, custom-html, gallery, lead-magnet, newsletter, person-list, quote-list, stat-list, step-list, waitlist. Everything else — `prose`, the page-level generics (`hero`, `feature-grid`, `pricing`), and the 3 blog-specific blocks — is `postModules`-only.
 
 ### Renderer
 
-`@indiecrafts/ui-components/web/registry.tsx` holds the `BLOCK_RENDERERS` map (`_type` → component) for the 16 generic blocks, constrained with `satisfies` so a missing entry is a **compile error** — that's where TS exhaustiveness lives. The blog's `user-interface/renderers/ModuleRenderer.tsx` (`<Modules>` + `ModuleSwitch`) composes `BLOCK_RENDERERS` with its 3 blog-specific dispatchers, special-casing the context-aware blog modules.
+`@indiecrafts/packages-web-ui-components/web/registry.tsx` holds the `BLOCK_RENDERERS` map (`_type` → component) for the 16 generic blocks, constrained with `satisfies` so a missing entry is a **compile error** — that's where TS exhaustiveness lives. The blog's `user-interface/renderers/ModuleRenderer.tsx` (`<Modules>` + `ModuleSwitch`) composes `BLOCK_RENDERERS` with its 3 blog-specific dispatchers, special-casing the context-aware blog modules.
 
 ### Studio sidebar (`code/modules/web/blog/src/sanity/structure.ts`)
 
@@ -167,7 +167,7 @@ Contenu
 └─ Pages légales       ← core (legalStructureItem)
 ```
 
-Each localized type expands to `English` / `Français` leaves plus a `Toutes les langues` view; each leaf pre-seeds `language` via the per-`(type, locale)` create templates defined in `sanity.config.ts`. The core SEO/nav/cookie/legal sections come from `@indiecrafts/sanity/structure` (feature-independent). Modules are object types, so editors only meet them via the picker inside `postModules` or inline in a post body.
+Each localized type expands to `English` / `Français` leaves plus a `Toutes les langues` view; each leaf pre-seeds `language` via the per-`(type, locale)` create templates defined in `sanity.config.ts`. The core SEO/nav/cookie/legal sections come from `@indiecrafts/packages-web-sanity/structure` (feature-independent). Modules are object types, so editors only meet them via the picker inside `postModules` or inline in a post body.
 
 ---
 
@@ -437,9 +437,9 @@ Likely an unset `NEXT_PUBLIC_SANITY_PROJECT_ID` — `env.ts` asserts it. Check `
 
 ### Add or remove a module
 
-Follow `method/apps/web/workflows/add-page-builder-block.md` rather than reconstructing it. **Where it lands depends on the block:**
+Follow [`packages/page-builder`](/packages/page-builder) § "Adding a block" rather than reconstructing it. **Where it lands depends on the block:**
 
-- A **generic** block → **`@indiecrafts/page-builder`**: schema in `sanity/schema/modules/<name>.ts` via `defineModule`, added to `moduleSchemas` + `MODULE_TYPES` in that package's `schema/modules/index.ts`; renderer in `@indiecrafts/ui-components`; GROQ branch (only if it has refs) in the package's `MODULES_FRAGMENT`.
+- A **generic** block → **`@indiecrafts/packages-web-page-builder`**: schema in `sanity/schema/modules/<name>.ts` via `defineModule`, added to `moduleSchemas` + `MODULE_TYPES` in that package's `schema/modules/index.ts`; renderer in `@indiecrafts/packages-web-ui-components`; GROQ branch (only if it has refs) in the package's `MODULES_FRAGMENT`.
 - A **blog-specific** block → the **blog**: schema in `sanity/schema/modules/<name>.ts`, added to `blogModuleSchemas` + `BLOG_MODULE_TYPES` in the blog's `schema/modules/index.ts`; renderer in `renderers/` + special-cased in `ModuleRenderer.tsx`.
 
 Both add a `<Name>Module` discriminant to the `AnyModule` union in their own `sanity/types.ts`.
@@ -465,7 +465,7 @@ code/projects/web/surfaces/website/sanity.config.ts                     Studio c
 code/projects/web/surfaces/website/scripts/seed-demo.mjs                pnpm seed — populates the demo dataset
 code/projects/web/surfaces/website/scripts/unset-legacy-fields.mjs      one-shot field unset after a schema removal
 
-code/packages/shared/sanity/src/                          SHARED core infra
+code/packages/web/sanity/src/                          SHARED core infra
 ├── env.ts        projectId, dataset, apiVersion, studioBasePath
 ├── client.ts     read client (useCdn: false, stega.studioUrl)
 ├── token.ts      server-only SANITY_API_READ_TOKEN
@@ -481,7 +481,7 @@ code/modules/web/blog/src/                             THE BLOG MODULE (gated by
 │   ├── types.ts                 TypeScript shapes for query results
 │   ├── structure.ts             Studio sidebar layout
 │   ├── portable-to-markdown.ts  PortableText → Markdown serializer
-│   └── schema/                  (the 16 generic module schemas + blockContent/link/cta/define-module + quote/person live in @indiecrafts/page-builder)
+│   └── schema/                  (the 16 generic module schemas + blockContent/link/cta/define-module + quote/person live in @indiecrafts/packages-web-page-builder)
 │       ├── index.ts             schemaTypes registry
 │       ├── post.ts, author.ts, category.ts, tag.ts, series.ts
 │       ├── documents/           blog (singleton), comment
@@ -490,7 +490,7 @@ code/modules/web/blog/src/                             THE BLOG MODULE (gated by
 └── user-interface/
     ├── blog/  post/  author/  category/  tag/  shared/   route-grouped UI
     └── renderers/               ModuleRenderer.tsx (composes BLOCK_RENDERERS) + 3 blog dispatchers
-                                 (generic registry.tsx + renderers → @indiecrafts/ui-components)
+                                 (generic registry.tsx + renderers → @indiecrafts/packages-web-ui-components)
 
 code/projects/web/surfaces/website/src/app/
 ├── studio/layout.tsx                              Studio root layout (own <html>/<body>)

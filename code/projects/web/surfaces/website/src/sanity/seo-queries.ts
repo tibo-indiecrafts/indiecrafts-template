@@ -32,7 +32,7 @@ export const siteSeoQuery = defineQuery(`
 
 /**
  * The shared `seoMeta` shape — the ONE per-page SEO model, projected from any
- * doc's `.seo`. Kept in sync with the `seoMeta` schema (`@indiecrafts/schema`).
+ * doc's `.seo`. Kept in sync with the `seoMeta` schema (`@indiecrafts/packages-web-schema`).
  */
 const SEO_META_PROJECTION = `
   title,

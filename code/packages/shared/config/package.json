@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/config",
+  "name": "@indiecrafts/packages-shared-config",
   "version": "0.0.0",
   "private": true,
   "type": "module",

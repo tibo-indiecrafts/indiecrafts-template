@@ -1,9 +1,13 @@
 import type { PortableTextBlock } from "@portabletext/react";
+import type { GlyphName as FeatureIcon } from "@indiecrafts/packages-shared-ui-icons/shared";
+
+/** The feature-grid icon set — the shared curated glyph names (`@indiecrafts/packages-shared-ui-icons`). */
+export type { FeatureIcon };
 
 /**
  * Shared presentational types for the page-builder **blocks** — the generic,
- * feature-independent modules rendered by `@indiecrafts/ui-components/web/*`.
- * Consumed by the renderers here AND by `@indiecrafts/blog` (which composes
+ * feature-independent modules rendered by `@indiecrafts/packages-web-ui-components/web/*`.
+ * Consumed by the renderers here AND by `@indiecrafts/modules-web-blog` (which composes
  * `BlockModule` with its own blog-specific modules into `AnyModule`).
  *
  * These carry **resolved** data (GROQ has already dereferenced images, links,
@@ -130,6 +134,8 @@ export type QuoteListModule = ModuleBase & {
 export type CustomHtmlModule = ModuleBase & {
   _type: "module.custom-html";
   html?: string;
+  /** `contained` (default) sits with the other blocks; `full` spans the viewport (with a gutter). */
+  width?: "contained" | "full";
 };
 
 export type NewsletterModule = ModuleBase & {
@@ -159,6 +165,21 @@ export type WaitlistModule = ModuleBase & {
   variant?: "card" | "inline" | "banner";
 };
 
+export type ContactModule = ModuleBase & {
+  _type: "module.contact";
+  heading?: string;
+  body?: string;
+  emailPlaceholder?: string;
+  namePlaceholder?: string;
+  subjectPlaceholder?: string;
+  messagePlaceholder?: string;
+  buttonLabel?: string;
+  consentText?: string;
+  successMessage?: string;
+  errorMessage?: string;
+  variant?: "card" | "banner";
+};
+
 export type LeadMagnetModule = ModuleBase & {
   _type: "module.lead-magnet";
   heading?: string;
@@ -182,10 +203,6 @@ export type HeroModule = ModuleBase & {
   subtitle?: string;
   cta?: Cta;
 };
-
-/** The fixed icon set the feature grid offers — Lucide glyphs the UI ships. */
-export type FeatureIcon =
-  "zap" | "settings" | "sparkles" | "shield" | "globe" | "users";
 
 export type FeatureGridModule = ModuleBase & {
   _type: "module.feature-grid";
@@ -230,4 +247,5 @@ export type BlockModule =
   | CustomHtmlModule
   | NewsletterModule
   | WaitlistModule
-  | LeadMagnetModule;
+  | LeadMagnetModule
+  | ContactModule;

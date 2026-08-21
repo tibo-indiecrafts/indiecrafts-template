@@ -27,9 +27,16 @@ invocation_logs = true
 # ═══════════════════════════════════════════════════════════════════════
 
 # ── Plain vars (non-secret; visible in the dashboard) ────────────────────
-# [vars]
-# API_VERSION = "v1"
-# Secrets are NEVER here → `wrangler secret put <NAME> --env <env>` (or
+# Sanity read config for GET /v1/announcements (PUBLIC marketing content — same as the
+# website). PROJECT_ID + DATASET are public → safe here / in the dashboard; fill them per
+# deployment (repeat under [env.<env>.vars] if the dataset differs per env). Until set, the
+# route answers 503. SANITY_API_READ_TOKEN is a SECRET → `wrangler secret put
+# SANITY_API_READ_TOKEN --env <env>` (needed only if the dataset is not public-read).
+[vars]
+SANITY_API_VERSION = "2025-01-01"
+# SANITY_PROJECT_ID = "your_project_id"
+# SANITY_DATASET = "production"
+# Other secrets are NEVER here → `wrangler secret put <NAME> --env <env>` (or
 # `pnpm secrets:sync:*`). They surface on `env.<NAME>`.
 
 # ── KV — edge key-value (cache · sessions · flags) ───────────────────────
@@ -74,6 +81,9 @@ invocation_logs = true
 
 # ── Data / AI / integration bindings (one line each — uncomment + fill) ──
 # [ai]                            binding = "AI"                            # Workers AI
+# --- Audit + session sink (POST /v1/events → EU D1) — native rate limit + secrets ------
+# [[unsafe.bindings]]  name = "AGENT_RATELIMIT"  type = "ratelimit"  namespace_id = "1001"  simple = { limit = 20, period = 60 }
+# secrets (set out-of-band, never here): `wrangler secret put APP_API_TOKEN --env <env>` + `IP_HASH_SALT`
 # [[vectorize]]                   binding = "VEC"       index_name = "…"    # vector search
 # [[hyperdrive]]                  binding = "PG"        id = "<config id>"  # pooled Postgres
 # [browser]                       binding = "BROWSER"                       # headless Chrome
@@ -99,11 +109,51 @@ invocation_logs = true
 # local_protocol = "http"
 
 # ── per-env (mirror the deploy scripts) ──────────────────────
+# ONE EU D1 per env (binding `DB`), three tables: admin_audit · session_events ·
+# security_events. One database (not three) keeps the free-plan D1 count low; the tables
+# stay isolated (own indexes, own purges). EU-resident (`--location weur` is create-time
+# + immutable). Create per env, then paste the returned `database_id`:
+#   wrangler d1 create indiecrafts-dev-shared-api --location weur
+# `SECURITY_COUNTERS` (KV) holds ephemeral failed-login counters (TTL) so rates are counted
+# at the edge, never written per-request to D1:
+#   wrangler kv namespace create indiecrafts-dev-shared-api-security-counters
+# Secrets (out-of-band): APP_API_TOKEN · IP_HASH_SALT · CLERK_WEBHOOK_SECRET (Svix) —
+#   wrangler secret put <NAME> --env <env>
 [env.dev]
 name = "indiecrafts-dev-shared-api"
+
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "indiecrafts-dev-shared-api"
+database_id = "PASTE_D1_ID_HERE"
+migrations_dir = "db/d1/migrations"
+
+[[env.dev.kv_namespaces]]
+binding = "SECURITY_COUNTERS"
+id = "PASTE_KV_ID_HERE"
 
 [env.staging]
 name = "indiecrafts-staging-shared-api"
 
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "indiecrafts-staging-shared-api"
+database_id = "PASTE_D1_ID_HERE"
+migrations_dir = "db/d1/migrations"
+
+[[env.staging.kv_namespaces]]
+binding = "SECURITY_COUNTERS"
+id = "PASTE_KV_ID_HERE"
+
 [env.prod]
 name = "indiecrafts-prod-shared-api"
+
+[[env.prod.d1_databases]]
+binding = "DB"
+database_name = "indiecrafts-prod-shared-api"
+database_id = "PASTE_D1_ID_HERE"
+migrations_dir = "db/d1/migrations"
+
+[[env.prod.kv_namespaces]]
+binding = "SECURITY_COUNTERS"
+id = "PASTE_KV_ID_HERE"

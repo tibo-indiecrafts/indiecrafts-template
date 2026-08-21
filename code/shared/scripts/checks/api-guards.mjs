@@ -2,7 +2,7 @@
 // API guard adoption — proves every PUBLIC MUTATING route handler is hardened.
 //
 // Each POST/PUT/PATCH/DELETE route under a surface's `src/app/**` must either wrap
-// its handler in `withGuard` (@indiecrafts/security/guard — origin + body-cap +
+// its handler in `withGuard` (@indiecrafts/packages-shared-security/guard — origin + body-cap +
 // rate-limit + Turnstile) OR be listed in ALLOWLIST below with the reason it uses a
 // different auth (a capability token, a Bearer session). A new public POST that ships
 // without either FAILS this check — so "all API safe" holds without a manual audit.
@@ -26,6 +26,10 @@ const ALLOWLIST = {
     "single-use moderationToken + cross-site form POST from the email client (rate-limited via rateLimit()).",
   "api/emails/test/route.ts":
     "Sanity Bearer-token auth (isProjectUser) + manual body cap; authenticated editor only.",
+  "api/session-log/route.ts":
+    "Clerk auth() — a signed-in, same-origin caller only; forwards server-side to the audit api with APP_API_TOKEN (no secret reaches the browser).",
+  "src/app/api/session-log/route.ts":
+    "Same session-log route on the `app` surface (its folder name shifts the route key); Clerk auth(), signed-in same-origin caller only.",
 };
 
 const MUTATING = ["POST", "PUT", "PATCH", "DELETE"];
@@ -87,7 +91,7 @@ if (violations.length || stale.length) {
     console.error(`✗ api-guards: allowlisted route "${key}" no longer exists — remove it from ALLOWLIST.`);
   console.error(
     "\nEvery public mutating route must wrap its handler in `withGuard`\n" +
-      "(@indiecrafts/security/guard). If it authenticates another way, add it to\n" +
+      "(@indiecrafts/packages-shared-security/guard). If it authenticates another way, add it to\n" +
       "ALLOWLIST in this script with the reason.",
   );
   process.exit(1);

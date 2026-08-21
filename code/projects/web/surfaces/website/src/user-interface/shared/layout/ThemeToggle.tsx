@@ -2,26 +2,25 @@
 
 import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useSyncExternalStore } from "react";
-import { Button } from "@indiecrafts/ui/web/button";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@indiecrafts/ui/web/dropdown-menu";
-import { cn } from "@indiecrafts/utils/cn";
+} from "@indiecrafts/packages-web-ui/web/dropdown-menu";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import type { ThemeMode } from "@/config";
 
 const subscribe = () => () => {};
 
-/** Icon + label key for each selectable theme mode. */
+/** Icon + label key for each selectable theme mode (concrete only — OS auto-detect is the default, not a mode). */
 const MODE_META: Record<ThemeMode, { Icon: typeof Sun; labelKey: string }> = {
   light: { Icon: Sun, labelKey: "themeLight" },
   dark: { Icon: Moon, labelKey: "themeDark" },
-  system: { Icon: Monitor, labelKey: "themeSystem" },
 };
 
 export type ThemeToggleProps = {
@@ -46,7 +45,9 @@ export function ThemeToggle({
     () => false,
   );
 
-  const Icon = !mounted ? Monitor : resolvedTheme === "dark" ? Moon : Sun;
+  const Icon = !mounted ? Sun : resolvedTheme === "dark" ? Moon : Sun;
+  // Before an explicit pick, `theme` is "system" — highlight the OS-resolved theme.
+  const active = theme === "system" ? (resolvedTheme ?? "light") : theme;
 
   return (
     <DropdownMenu>
@@ -63,7 +64,7 @@ export function ThemeToggle({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-32">
         <DropdownMenuRadioGroup
-          value={theme}
+          value={active}
           onValueChange={(value: string) => setTheme(value)}
         >
           {modes.map((mode) => {

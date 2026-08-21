@@ -1,12 +1,12 @@
-import type { Locale } from "@indiecrafts/config";
-import { site } from "@indiecrafts/config";
-import { localizedPathname } from "@indiecrafts/i18n";
+import type { Locale } from "@indiecrafts/packages-shared-config";
+import { site } from "@indiecrafts/packages-shared-config";
+import { localizedPathname } from "@indiecrafts/packages-web-i18n";
 import {
   allPostsQuery,
   taxonomyForLlmsQuery,
-} from "@indiecrafts/blog/sanity/queries";
-import type { PostListItem } from "@indiecrafts/blog/sanity/types";
-import { sanityFetchLive } from "@indiecrafts/sanity/live";
+} from "@indiecrafts/modules-web-blog/sanity/queries";
+import type { PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
+import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import { blogPage } from "./config";
 import { isBlogRouteEnabled } from "./route-gate";
 import { getBlogSettings } from "./settings";

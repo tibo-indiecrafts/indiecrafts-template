@@ -61,7 +61,7 @@ There is no fixed convention, no message-tree walk, and no auto FAQ block — th
 
 ## Blog posts
 
-Blog posts live in their own Sanity docs, so they're contributed separately — but surface in the index and full dump. `getBlogLlmsLines(locale)` (`@indiecrafts/blog/lib/llms`, at `code/modules/web/blog/src/lib/llms.ts`) fetches every published post via `allPostsQuery` and returns a `## Blog` section, one bullet per post:
+Blog posts live in their own Sanity docs, so they're contributed separately — but surface in the index and full dump. `getBlogLlmsLines(locale)` (`@indiecrafts/modules-web-blog/lib/llms`, at `code/modules/web/blog/src/lib/llms.ts`) fetches every published post via `allPostsQuery` and returns a `## Blog` section, one bullet per post:
 
 ```text
 ## Blog

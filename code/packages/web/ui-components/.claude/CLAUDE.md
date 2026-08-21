@@ -1,4 +1,4 @@
-# @indiecrafts/ui-components — shared page-builder blocks
+# @indiecrafts/packages-web-ui-components — shared page-builder blocks
 
 Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers + the composable
 `BLOCK_RENDERERS` registry, so the app and the blog paint the **same** blocks. Area rules →
@@ -15,12 +15,12 @@ Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers +
   **platform-agnostic contract** (block types). `src/native/` is **reserved** for a future
   React-Native renderer set that mirrors the same domain folders + shares `shared/types` + tokens —
   empty until an RN app exists (see `src/native/README.md`). Consumers import
-  `@indiecrafts/ui-components/web/<domain>/<Name>` (or `web/{registry,portable-text-components}`, `shared/types`).
-- **Renderers moved here; schemas live in page-builder** — a generic `module.*` = renderer here + schema in `@indiecrafts/page-builder` (`code/packages/page-builder`), not the blog.
+  `@indiecrafts/packages-web-ui-components/web/<domain>/<Name>` (or `web/{registry,portable-text-components}`, `shared/types`).
+- **Renderers moved here; schemas live in page-builder** — a generic `module.*` = renderer here + schema in `@indiecrafts/packages-web-page-builder` (`code/packages/web/page-builder`), not the blog.
 - Mixed `.ts`/`.tsx` → resolved via the app's tsconfig `paths` + a `@source` line in `ui-tokens/globals.css`.
 - Pure presentational; takes resolved Sanity data, never imports an app.
 - **Every rendered component ships a colocated `<Name>.stories.tsx` + a `<Name>.md` doc** — the
-  `@indiecrafts/storybook` package auto-discovers them, so a new component without a story is
+  `@indiecrafts/web-tools-storybook` package auto-discovers them, so a new component without a story is
   incomplete. Match a sibling (e.g. `form/PhoneInput.stories.tsx`): `title: "UI Components/<Name>"`,
   `tags: ["autodocs"]`, description from `./<Name>.md?raw`. A component that can't render without an
   env var / external key takes a prop override so a story can drive it (see `TurnstileWidget`'s `siteKey`).

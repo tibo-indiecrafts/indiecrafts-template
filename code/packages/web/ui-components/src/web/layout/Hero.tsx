@@ -1,4 +1,4 @@
-import type { HeroModule } from "@indiecrafts/ui-components/shared/types";
+import type { HeroModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { RichTitle } from "../RichTitle";
 import { ModuleCta } from "./Cta";
 import { ModuleSection } from "./ModuleSection";

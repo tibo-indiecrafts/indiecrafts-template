@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useLocaleSwitch } from "@indiecrafts/i18n";
-import { Button } from "@indiecrafts/ui/web/button";
+import { useLocaleSwitch } from "@indiecrafts/packages-web-i18n";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { dismissLocaleSuggest } from "./locale-suggest-store";
 
 /**

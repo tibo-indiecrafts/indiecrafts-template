@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 
 const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), "tags-report.mjs");
 
-// The scanner uses process.cwd() as its root and scans code/ docs/ method/. Build a
+// The scanner uses process.cwd() as its root and scans code/ + docs/. Build a
 // throwaway repo root with just a docs/ tree and run the real script against it.
 function fixture(files) {
   const root = mkdtempSync(join(tmpdir(), "tags-"));

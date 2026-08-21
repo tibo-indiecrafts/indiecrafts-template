@@ -1,15 +1,15 @@
 import "server-only";
 
 import { defineQuery } from "next-sanity";
-import { site, defaultLocale } from "@indiecrafts/config";
-import { client } from "@indiecrafts/sanity/client";
-import { logger } from "@indiecrafts/logger";
-import { sendEmail } from "@indiecrafts/email";
+import { site, defaultLocale } from "@indiecrafts/packages-shared-config";
+import { client } from "@indiecrafts/packages-web-sanity/client";
+import { logger } from "@indiecrafts/packages-shared-logger";
+import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
   getEmailStrings,
   pick,
   type OwnerAlertConfig,
-} from "@indiecrafts/email/strings";
+} from "@indiecrafts/packages-web-email/strings";
 import { renderCommentNotificationEmail } from "../emails/comment-notification";
 import type { CommentInput } from "./comments";
 
@@ -24,7 +24,7 @@ const clean = (list?: string[] | null) =>
  * Best-effort email to the site owner when a comment is submitted. **Never
  * throws** — a mail failure must not fail an already-saved comment. Config +
  * copy live on the shared `emailStrings` entity (Studio → E-mails →
- * commentNotification); `@indiecrafts/email` owns the layout.
+ * commentNotification); `@indiecrafts/packages-web-email` owns the layout.
  */
 export async function notifyNewComment(
   input: CommentInput,

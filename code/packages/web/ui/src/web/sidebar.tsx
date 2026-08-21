@@ -7,7 +7,7 @@ import { PanelLeftIcon } from "lucide-react";
 import { Slot } from "radix-ui";
 
 import { useIsMobile } from "./use-mobile";
-import { cn } from "@indiecrafts/utils/cn";
+import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Separator } from "./separator";

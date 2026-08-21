@@ -6,8 +6,8 @@ description: Run a design-system compliance pass on UI changes in this template 
 # Design-system check
 
 A repeatable pass to confirm a UI change is on-system. Authority: `code/packages/shared/ui-tokens/DESIGN.md`,
-`code/packages/shared/ui-tokens/src/globals.css`, `method/apps/web/rules/design-token-usage.md`,
-`method/apps/web/rules/component-architecture.md`.
+`code/packages/shared/ui-tokens/src/globals.css`, `code/projects/web/surfaces/website/.claude/rules/design-token-usage.md`,
+`code/projects/web/surfaces/website/.claude/rules/component-architecture.md`.
 
 ## Steps
 

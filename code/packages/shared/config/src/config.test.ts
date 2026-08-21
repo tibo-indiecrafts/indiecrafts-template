@@ -5,7 +5,7 @@ import { isPageVisible, locales, site } from "./index";
 // (App-owned instance config — `features` / `pages` / `theme` / `fonts` — lives in
 // the app at `apps/web/src/config`; its shape is guarded by `as const satisfies`
 // there + the blog route-gate test.) These guard what the package still owns.
-describe("@indiecrafts/config", () => {
+describe("@indiecrafts/packages-shared-config", () => {
   it("has a site url and at least one locale", () => {
     expect(site.url).toMatch(/^https?:\/\//);
     expect(locales.length).toBeGreaterThan(0);

@@ -35,8 +35,8 @@ function toError(
  * lower levels as breadcrumbs (context, not noise). Opt-in — a project wires it:
  *
  *   import * as Sentry from "@sentry/nextjs";
- *   import { addTransport } from "@indiecrafts/logger";
- *   import { sentryTransport } from "@indiecrafts/logger/sentry";
+ *   import { addTransport } from "@indiecrafts/packages-shared-logger";
+ *   import { sentryTransport } from "@indiecrafts/packages-shared-logger/sentry";
  *   addTransport(sentryTransport(Sentry));
  *
  * Because the console gate is independent of transports, this still fires when the

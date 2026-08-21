@@ -6,7 +6,7 @@ import blogPostList from "./blog-post-list";
 /**
  * Blog-specific page-builder modules — dispatched by the blog's `ModuleRenderer`,
  * not by the generic `BLOCK_RENDERERS`. The 16 generic modules live in
- * `@indiecrafts/page-builder`.
+ * `@indiecrafts/packages-web-page-builder`.
  */
 export const blogModuleSchemas: SchemaTypeDefinition[] = [
   blogIndex,

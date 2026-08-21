@@ -6,7 +6,7 @@ import { DownloadIcon } from "@sanity/icons";
  * exchange for an e-mail. A `module.lead-magnet` capture block references one of
  * these; after the visitor confirms their e-mail (double opt-in), the file is
  * delivered as a signed, expiring link (`lib/deliver-magnet.ts` +
- * `@indiecrafts/gated-delivery`). Editors create + manage these in the "Aimants
+ * `@indiecrafts/packages-shared-gated-delivery`). Editors create + manage these in the "Aimants
  * à prospects" desk.
  */
 export default defineType({

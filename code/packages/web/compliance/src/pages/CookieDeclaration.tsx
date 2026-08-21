@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import type { Locale } from "@indiecrafts/config";
+import type { Locale } from "@indiecrafts/packages-shared-config";
 import type { CookieRow } from "../consent/consent-signals";
 import { getCookieConsent } from "../sanity/cookies";
 import { ManagePreferencesButton } from "../consent/ManagePreferencesButton";

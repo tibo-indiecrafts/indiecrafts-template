@@ -3,7 +3,7 @@
 A module (`code/modules/<name>`, `@indiecrafts/<name>`) is a **vertical product slice** — routes +
 UI + data + Studio, feature-flagged, that an app mounts. Linking a module is the same wiring as a
 package (see [Linking a package](../packages/linking-a-package.md)) **plus** the extras a
-self-contained, gated feature needs. The blog (`@indiecrafts/blog`) is the live reference.
+self-contained, gated feature needs. The blog (`@indiecrafts/modules-web-blog`) is the live reference.
 
 ## Module vs package
 

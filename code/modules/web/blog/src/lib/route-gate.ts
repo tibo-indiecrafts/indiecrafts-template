@@ -1,7 +1,7 @@
 import "server-only";
 
 import { notFound } from "next/navigation";
-import { isPageVisible, type PageConfig } from "@indiecrafts/config";
+import { isPageVisible, type PageConfig } from "@indiecrafts/packages-shared-config";
 import { blogFlags, blogPage } from "./config";
 import { getBlogSettings } from "./settings";
 
@@ -12,7 +12,7 @@ import { getBlogSettings } from "./settings";
  * can't drift by forgetting one half.
  *
  * The Studio + draft-mode editing surface is gated separately by
- * `features.studio` — see `@indiecrafts/config`.
+ * `features.studio` — see `@indiecrafts/packages-shared-config`.
  */
 export function isBlogRouteEnabled(page: PageConfig): boolean {
   return blogFlags().blog && isPageVisible(page);

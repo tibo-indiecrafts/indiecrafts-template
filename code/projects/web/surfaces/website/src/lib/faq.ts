@@ -11,7 +11,7 @@
 
 import type { Locale } from "@/config";
 import type { PortableTextBlock } from "@portabletext/react";
-import type { AccordionListModule } from "@indiecrafts/ui-components/shared/types";
+import type { AccordionListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { getHomePage } from "@/lib/home";
 
 export type FaqItem = { question: string; answer: string };

@@ -1,4 +1,4 @@
-# @indiecrafts/gated-delivery
+# @indiecrafts/packages-shared-gated-delivery
 
 A stateless, signed-token gated-delivery brick. It hands out a one-time-ish download
 link that only a verified request can open. It knows nothing about Sanity, newsletters,

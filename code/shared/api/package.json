@@ -1,5 +1,5 @@
 {
-  "name": "@indiecrafts/api",
+  "name": "@indiecrafts/shared-api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -17,10 +17,16 @@
     "tail:prod": "wrangler tail --env prod"
   },
   "dependencies": {
-    "@indiecrafts/logger": "workspace:*"
+    "@indiecrafts/packages-shared-agent": "workspace:*",
+    "@indiecrafts/packages-shared-announcement": "workspace:*",
+    "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
+    "@indiecrafts/packages-shared-security": "workspace:*",
+    "@indiecrafts/packages-shared-security-events": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250321.0",
+    "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^20",
     "typescript": "^5",
     "wrangler": "^4.0.0"

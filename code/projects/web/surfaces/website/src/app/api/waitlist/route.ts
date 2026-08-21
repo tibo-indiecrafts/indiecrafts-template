@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
-import { withGuard } from "@indiecrafts/security/guard";
-import { join } from "@indiecrafts/waitlist/lib/waitlist";
-import { getConsentPolicyVersion } from "@indiecrafts/compliance/sanity/policy-version";
+import { withGuard } from "@indiecrafts/packages-shared-security/guard";
+import { join } from "@indiecrafts/modules-web-waitlist/lib/waitlist";
+import { getWaitlistSettings } from "@indiecrafts/modules-web-waitlist/lib/settings";
+import { getConsentPolicyVersion } from "@indiecrafts/packages-web-compliance/sanity/policy-version";
 
 /**
  * Public waitlist join. `withGuard` hardens the boundary (same-site origin, body
@@ -36,6 +37,12 @@ const handle = withGuard(async (_req, data) => {
 
 export async function POST(request: Request) {
   if (!features.waitlist) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+  // The Studio `enabled` toggle is a live kill switch (no deploy): off → refuse
+  // joins, in lockstep with the `/waitlist` page 404ing.
+  const settings = await getWaitlistSettings();
+  if (settings?.enabled === false) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   return handle(request);
