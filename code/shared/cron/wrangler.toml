@@ -63,6 +63,7 @@ name = "indiecrafts-dev-shared-cron"
 binding = "DB"
 database_name = "indiecrafts-dev-shared-api"
 database_id = "PASTE_D1_ID_HERE"
+migrations_dir = "../api/db/d1/migrations"
 
 [env.staging]
 name = "indiecrafts-staging-shared-cron"
@@ -71,6 +72,7 @@ name = "indiecrafts-staging-shared-cron"
 binding = "DB"
 database_name = "indiecrafts-staging-shared-api"
 database_id = "PASTE_D1_ID_HERE"
+migrations_dir = "../api/db/d1/migrations"
 
 [env.prod]
 name = "indiecrafts-prod-shared-cron"
@@ -79,3 +81,4 @@ name = "indiecrafts-prod-shared-cron"
 binding = "DB"
 database_name = "indiecrafts-prod-shared-api"
 database_id = "PASTE_D1_ID_HERE"
+migrations_dir = "../api/db/d1/migrations"

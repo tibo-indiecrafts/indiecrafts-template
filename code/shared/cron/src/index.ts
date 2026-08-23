@@ -19,8 +19,8 @@ if (getCurrentEnvironment() === "production")
  */
 export interface Env {
   /** The api's EU D1 (binding `DB`) — the same database the api writes (admin_audit,
-   *  session_events, security_events, consent_events). The purge deletes rows past
-   *  retention from all four. */
+   *  session_events, security_events, consent_events, csp_reports). The purge deletes
+   *  rows past retention from all five. */
   DB?: D1Database;
 }
 
@@ -30,6 +30,9 @@ const RETENTION_DAYS = 90;
 /** consent_events is kept far longer than the audit tables — consent is a proof
  *  record with its own retention duty (spec §13). ~3 years. */
 const CONSENT_RETENTION_DAYS = 1095;
+
+/** CSP violation reports are operational signal, not a proof record — 30 days. */
+const CSP_RETENTION_DAYS = 30;
 
 /** ISO cutoff `days` before `scheduledTime` (ms epoch). */
 export function retentionCutoff(scheduledTime: number, days: number): string {
@@ -47,15 +50,20 @@ export default {
       scheduledTime: controller.scheduledTime,
     });
 
-    // Retention purge (GDPR storage limitation): purge all four tables past their
+    // Retention purge (GDPR storage limitation): purge all five tables past their
     // ceiling from the one EU D1. admin_audit + session_events + security_events use
     // the 90-day ceiling; consent_events uses its own, much longer 3-year window,
-    // because it is a consent proof record, not an audit trail. Idempotent — safe on
-    // every tick. No-ops until the DB is bound.
+    // because it is a consent proof record, not an audit trail. csp_reports uses the
+    // 30-day ceiling — CSP violations are operational signal, not proof records.
+    // Idempotent — safe on every tick. No-ops until the DB is bound.
     const cutoff = retentionCutoff(controller.scheduledTime, RETENTION_DAYS);
     const consentCutoff = retentionCutoff(
       controller.scheduledTime,
       CONSENT_RETENTION_DAYS,
+    );
+    const cspCutoff = retentionCutoff(
+      controller.scheduledTime,
+      CSP_RETENTION_DAYS,
     );
     if (env.DB) {
       try {
@@ -79,13 +87,20 @@ export default {
         )
           .bind(consentCutoff)
           .run();
+        const csp = await env.DB.prepare(
+          "DELETE FROM csp_reports WHERE last_seen < ?",
+        )
+          .bind(cspCutoff)
+          .run();
         logger.info("retention purge", {
           cutoff,
           consentCutoff,
+          cspCutoff,
           adminRows: admin.meta?.changes,
           sessionRows: session.meta?.changes,
           securityRows: security.meta?.changes,
           consentRows: consent.meta?.changes,
+          cspRows: csp.meta?.changes,
         });
       } catch (error) {
         logger.error("retention purge failed", {

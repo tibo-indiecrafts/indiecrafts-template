@@ -7,6 +7,12 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- **30-day CSP reports purge.** The scheduled handler deletes `csp_reports` rows older
+  than 30 days (on `last_seen`) from the api's shared **EU** D1. CSP violations are
+  operational signal for debugging, not proof records — no retention duty beyond
+  operational usefulness. **Why:** keep csp_reports table bounded; violations are
+  ephemeral, not audit-grade data.
+
 - feat(compliance): purge consent_events on a 3-year window.
 
 - **90-day retention purge (GDPR storage limitation).** The scheduled handler deletes `admin_audit` +
