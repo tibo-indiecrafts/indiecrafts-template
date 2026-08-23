@@ -14,6 +14,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- feat(compliance): D1 erasure adapter (pseudonymise profile/high-severity/consent; delete session + low/medium security).
 - feat(compliance): consent_events D1 table (migration 0003) — append-only consent log, 3-year retention.
 - feat(compliance): D1 user_profiles table (migration 0002) + workers-pool D1 test harness.
 - feat(compliance): Clerk webhook syncs user_profiles (upsert/re-fingerprint/pseudonymise) + GDPR_FINGERPRINT_SALT.
