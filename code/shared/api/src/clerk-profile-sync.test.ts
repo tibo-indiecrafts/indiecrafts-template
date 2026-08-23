@@ -124,6 +124,27 @@ describe("clerk webhook → user_profiles", () => {
     expect(after?.created_at).toBe(before?.created_at);
   });
 
+  it("user.updated with no resolvable email keeps the stored email + fingerprint", async () => {
+    await postWebhook(created("user_ne", "keep@x.com", "Keep"));
+    const before = await env.DB.prepare(
+      "SELECT email, email_fingerprint FROM user_profiles WHERE user_id = ?",
+    )
+      .bind("user_ne")
+      .first<Record<string, unknown>>();
+    await postWebhook({
+      type: "user.updated",
+      data: { id: "user_ne", first_name: "Keep", last_name: "Updated" },
+    });
+    const after = await env.DB.prepare(
+      "SELECT email, email_fingerprint, full_name FROM user_profiles WHERE user_id = ?",
+    )
+      .bind("user_ne")
+      .first<Record<string, unknown>>();
+    expect(after?.email).toBe(before?.email);
+    expect(after?.email_fingerprint).toBe(before?.email_fingerprint);
+    expect(after?.full_name).toBe("Keep Updated"); // full_name still propagates
+  });
+
   it("user.deleted pseudonymises but keeps the row + fingerprint", async () => {
     await postWebhook(created("user_d", "d@x.com", "Dee"));
     const fpBefore = (

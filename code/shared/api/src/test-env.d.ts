@@ -1,3 +1,4 @@
+/// <reference types="@cloudflare/vitest-pool-workers" />
 import type { Env } from "./index";
 
 declare module "cloudflare:test" {

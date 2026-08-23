@@ -562,10 +562,15 @@ export default {
                 email && env.GDPR_FINGERPRINT_SALT
                   ? await fingerprintEmail(email, env.GDPR_FINGERPRINT_SALT)
                   : null;
+              // COALESCE guards email + email_fingerprint: a degenerate payload with no
+              // resolvable email must not clear the stored ones. The fingerprint is the
+              // erasure key, so losing it breaks email-keyed erasure. A real incoming
+              // email still overwrites, via excluded. full_name has no such guard —
+              // a name clear/update should propagate; it is not the erasure key.
               await env.DB.prepare(
                 "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at, last_login_at) " +
                   "VALUES (?, ?, ?, ?, ?, NULL) " +
-                  "ON CONFLICT(user_id) DO UPDATE SET email = excluded.email, full_name = excluded.full_name, email_fingerprint = excluded.email_fingerprint",
+                  "ON CONFLICT(user_id) DO UPDATE SET email = COALESCE(excluded.email, email), full_name = excluded.full_name, email_fingerprint = COALESCE(excluded.email_fingerprint, email_fingerprint)",
               )
                 .bind(userId, email, fullName, fingerprint, now)
                 .run();
