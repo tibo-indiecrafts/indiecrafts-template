@@ -74,6 +74,7 @@
     "@indiecrafts/packages-web-page-builder": "workspace:*",
     "@indiecrafts/packages-web-sanity": "workspace:*",
     "@indiecrafts/packages-web-schema": "workspace:*",
+    "@indiecrafts/packages-web-security-reports": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
     "@indiecrafts/packages-web-ui-components": "workspace:*",
     "@indiecrafts/packages-web-version": "workspace:*",

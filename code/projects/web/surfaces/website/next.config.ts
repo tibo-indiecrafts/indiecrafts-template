@@ -48,6 +48,7 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-web-compliance",
     "@indiecrafts/packages-web-announcement",
     "@indiecrafts/packages-web-locale-suggest",
+    "@indiecrafts/packages-web-security-reports",
   ],
   reactStrictMode: true,
   poweredByHeader: false,
@@ -92,6 +93,13 @@ const nextConfig: NextConfig = {
       },
       // Brand assets (favicons, PWA icons, OG cards) + logo are immutable.
       immutablePaths: ["/brand/:path*", "/logo.svg"],
+      reporting: {
+        endpoint: "/api/csp-report",
+        // First Report-Only candidate: drop the blanket `https:` from img-src to
+        // learn the real image allowlist (Sanity, etc.) before enforcing it.
+        // Tighten further during rollout; nonces for script-src come in SP3.
+        reportOnly: { dropSources: ["https:"] },
+      },
     });
   },
 };

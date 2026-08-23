@@ -19,6 +19,15 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **CSP violation reporting + `/api/csp-report`.** `next.config.ts` now passes a `reporting` option
+  to `securityHeaders({...})`: the enforced CSP gains a `Reporting-Endpoints` header pointing at the
+  new same-origin `/api/csp-report` route, and a `Content-Security-Policy-Report-Only` candidate
+  ships alongside it that drops the blanket `https:` from `img-src` (`reportOnly: { dropSources:
+["https:"] }`), so we learn the real image allowlist from reports before enforcing it. The route
+  itself is a one-line delegate to `handleCspReport` from the new
+  `@indiecrafts/packages-web-security-reports` brick, which sanitizes and forwards violations
+  server-side. **Why:** turn the CSP from write-only into something we can observe and tighten —
+  starting with the image-source allowlist — without risking a live block.
 - **Geo-targeted cookie consent.** The `[locale]/layout` reads the visitor's `cf-ipcountry`
   server-side and passes a geo-resolved `mode` to `CookieBanner`: EU/EEA/UK + territories show the
   opt-in banner, the US gets no blocking banner (opt-out + preferences + GPC), elsewhere shows

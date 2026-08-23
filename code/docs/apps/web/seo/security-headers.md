@@ -22,6 +22,10 @@ async headers() {
       embedHosts: EMBED_HOSTS,
     },
     immutablePaths: ["/brand/:path*", "/logo.svg"],
+    reporting: {
+      endpoint: "/api/csp-report",
+      reportOnly: { dropSources: ["https:"] },
+    },
   });
 }
 ```
@@ -90,6 +94,25 @@ export function getCSPConnectSources(env: Environment): readonly string[] {
 
 `env` comes from `getCurrentEnvironment()` (the same helper that gates `robots.txt`). See
 [Robots & environments](./robots-and-environments.md).
+
+## CSP violation reporting
+
+Reporting is on: `reporting.endpoint: "/api/csp-report"` adds a `Reporting-Endpoints:
+csp-endpoint="/api/csp-report"` header and a `report-to`/`report-uri` clause on the enforced
+`Content-Security-Policy`. The browser POSTs violations to that same-origin route.
+
+The route (`src/app/api/csp-report/route.ts`) is thin — it delegates to
+**[`handleCspReport`](/packages/security-reports)** (`@indiecrafts/packages-web-security-reports/handle`),
+which accepts only the CSP content-types, caps the body, sanitizes each report, and forwards
+survivors to the api's `POST /v1/events` (`kind: "csp-report"`). No auth on the route itself — the
+handler is the trust boundary, and it always answers `204`.
+
+**Report-Only candidate.** `reporting.reportOnly: { dropSources: ["https:"] }` also emits a
+`Content-Security-Policy-Report-Only` header — a stricter candidate policy that removes the blanket
+`https:` from `img-src` so violations reveal the real image allowlist (Sanity, Unsplash, …) before
+that source is dropped from the enforced policy. The browser reports violations for both policies
+but only blocks on the enforced one, so this is safe to ship: nothing breaks, we just learn from the
+reports. Tighten the candidate further during rollout; nonces for `script-src` land in a later pass.
 
 ## Hardening — and why it's Sanity-Studio-safe
 
