@@ -28,9 +28,10 @@ export const buildId = import.meta.env.VITE_BUILD_ID ?? "dev";
 /**
  * Instance feature flags. `requireConsent` is OFF by default (mirroring the website's
  * `requireCookieConsent`) — the consent UI is compliant-ready, a client flips this on
- * when the app ships an analytics/ads SDK.
+ * when the app ships an analytics/ads SDK. `deleteAccount` gates the self-service GDPR
+ * erasure control in the signed-in view.
  */
-export const features = { requireConsent: false } as const;
+export const features = { requireConsent: false, deleteAccount: true } as const;
 
 /**
  * Consent geo config — flexible + regulation-named. `regulations` adds/overrides named

@@ -9,6 +9,11 @@ import {
   useAuth,
 } from "@clerk/clerk-react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import {
+  DeleteAccountSection,
+  type DeleteAccountCopy,
+} from "@indiecrafts/packages-shared-compliance/web";
+import { apiUrl, features } from "../../config";
 
 /** Publishable key (PUBLIC) from the renderer env — auth is opt-in on its presence. */
 export const CLERK_PUBLISHABLE_KEY =
@@ -59,15 +64,39 @@ export function AuthPanel() {
 
 function SignedInView() {
   const t = useIntl();
-  const { signOut } = useAuth();
+  const { signOut, getToken } = useAuth();
+  const deleteCopy: DeleteAccountCopy = {
+    heading: t.formatMessage({ id: "account.delete.heading" }),
+    body: t.formatMessage({ id: "account.delete.body" }),
+    emailLabel: t.formatMessage({ id: "account.delete.emailLabel" }),
+    emailPlaceholder: t.formatMessage({
+      id: "account.delete.emailPlaceholder",
+    }),
+    confirmButton: t.formatMessage({ id: "account.delete.confirmButton" }),
+    pending: t.formatMessage({ id: "account.delete.pending" }),
+    success: t.formatMessage({ id: "account.delete.success" }),
+    partial: t.formatMessage({ id: "account.delete.partial" }),
+    error: t.formatMessage({ id: "account.delete.error" }),
+    mismatch: t.formatMessage({ id: "account.delete.mismatch" }),
+  };
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-4">
       <p className="text-sm text-muted-foreground">
         {t.formatMessage({ id: "auth.signedIn" })}
       </p>
       <Button variant="outline" onClick={() => void signOut()}>
         {t.formatMessage({ id: "auth.signOut" })}
       </Button>
+      {features.deleteAccount && apiUrl ? (
+        <DeleteAccountSection
+          copy={deleteCopy}
+          apiUrl={apiUrl ?? ""}
+          getToken={() => getToken()}
+          onDeleted={async () => {
+            await signOut();
+          }}
+        />
+      ) : null}
     </div>
   );
 }

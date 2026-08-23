@@ -13,6 +13,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Self-service "Delete my account" control.** `SignedInView` (`src/renderer/src/auth.tsx`) mounts the
+  shared `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`), wired to `getToken`/
+  `signOut` from the existing `@clerk/clerk-react` `useAuth()`. Gated by the new `features.deleteAccount`
+  flag **and** `apiUrl` being configured — either missing hides the control rather than posting to an
+  empty origin. New `messages.account.delete.*` copy (react-intl). **Why:** lets a signed-in desktop user
+  exercise GDPR erasure without contacting support, posting the shared api's authenticated
+  `POST /v1/erasure/self`.
 - **Geo-targeted cookie consent.** The renderer `geo.ts` fetches the api `GET /v1/geo` on launch (the
   device's edge country), caches it in `localStorage`, and resolves the regulation with `src/config`
   overrides; the `ConsentBannerGate` blocks only for opt-in regions (opt-out/none auto-seed, honouring
