@@ -19,6 +19,16 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Self-service "Delete my account" (`/account`).** A new Clerk-authenticated page mounts the
+  shared `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`) via the
+  `AccountDeletePanel` client wrapper, which posts the authenticated `POST /v1/erasure/self` to
+  the shared api worker, then signs the visitor out and returns them home. New
+  `features.account.delete` flag + `pages.account` route entry; copy in
+  `messages.account.delete.*` (en + fr). Gated three ways — the flag, Clerk being configured
+  (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`), and the client api origin being set
+  (`NEXT_PUBLIC_API_URL`, new — added to `.env.example`) — any one missing 404s the route, so the
+  control never renders somewhere it can only fail on submit. **Why:** the GDPR data-request form
+  covers every right by email; this is the one-click erasure path for a signed-in account.
 - **Geo-targeted cookie consent.** The `[locale]/layout` reads the visitor's `cf-ipcountry`
   server-side and passes a geo-resolved `mode` to `CookieBanner`: EU/EEA/UK + territories show the
   opt-in banner, the US gets no blocking banner (opt-out + preferences + GPC), elsewhere shows

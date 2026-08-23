@@ -23,6 +23,7 @@ Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling a
 | `structuredData` | `boolean` | `true`     | All JSON-LD (Organization/WebSite site-wide, WebPage/FAQPage per page)                                                                                                     |
 | `localeSwitcher` | `boolean` | `true`     | The header locale picker                                                                                                                                                   |
 | `legal.*`        | `object`  | see below  | The five legal pages + the data-request form, each toggled independently                                                                                                   |
+| `account.delete` | `boolean` | `true`     | The self-service `/account` "Delete my account" page — requires Clerk configured                                                                                           |
 | `faq`            | `boolean` | `true`     | Per-page `<Faq>` accordion + FAQPage JSON-LD + llms FAQ block                                                                                                              |
 | `newsletter`     | `boolean` | `true`     | Newsletter capture block (`module.newsletter`) + the `/api/newsletter` route + the **Abonnés** desk — site-wide, **independent of `blog`** ([guide](/modules/newsletter/)) |
 | `blog`           | `boolean` | `true`     | The entire public blog surface (routes, feeds, discovery, `<SanityLive>`)                                                                                                  |
@@ -108,6 +109,21 @@ legal: { notice: true, privacy: true, cookies: true, terms: true, sales: false, 
 Each `pages` entry mirrors its flag (`enabled: features.legal.<key>`); turning one off 404s
 the route and drops it from the footer nav, the sitemap, and the llms endpoints. Legal-page
 content is edited in Sanity (`legalPage` docs) — see [Legal pages](./legal-pages.md).
+
+## `account`
+
+Self-service account actions, currently one:
+
+```ts
+account: { delete: true },
+```
+
+- `delete` — the **"Delete my account" page** at `/account`, gated by
+  `features.account.delete` **and** by Clerk being configured
+  (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`) **and** by the client api origin being set
+  (`NEXT_PUBLIC_API_URL`) — any one missing 404s the route. The page renders the shared
+  `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`), which posts the
+  authenticated `POST /v1/erasure/self` to the shared api worker, then signs the visitor out.
 
 ## `faq`
 

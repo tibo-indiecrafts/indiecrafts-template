@@ -27,6 +27,9 @@ export default async function AccountPage({ params }: Props) {
   setRequestLocale(locale);
   if (!isPageVisible(pages.account)) notFound();
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) notFound();
+  // Fail-safe: with no client api origin the control could only ever fail on
+  // submit (a relative `/v1/erasure/self` 404s) — 404 the whole page instead.
+  if (!process.env.NEXT_PUBLIC_API_URL) notFound();
 
   const t = await getTranslations({ locale, namespace: "account.delete" });
   const copy: DeleteAccountCopy = {

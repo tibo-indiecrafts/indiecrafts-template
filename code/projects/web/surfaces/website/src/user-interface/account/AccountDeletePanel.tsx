@@ -21,7 +21,7 @@ export function AccountDeletePanel({ copy }: { copy: DeleteAccountCopy }) {
 
   async function handleDeleted() {
     await signOut();
-    router.push("/");
+    router.replace("/");
   }
 
   return (
