@@ -41,11 +41,14 @@ not code.
 ## Erasure (Art. 17)
 
 On a data-subject **erasure** request (the `dataRequest` flow → Studio), purge the
-subject's rows:
+subject's rows. This manual block aligns with the engine policy below — it does not
+blanket-delete `security_events`, since high/critical severity rows get pseudonymised
+there, not deleted:
 
 ```sql
 DELETE FROM session_events  WHERE user_id = ?;
-DELETE FROM security_events  WHERE user_id = ?;
+DELETE FROM security_events WHERE user_id = ? AND severity NOT IN ('high', 'critical');
+UPDATE security_events SET user_id = ? WHERE user_id = ? AND severity IN ('high', 'critical');
 UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?;
 ```
 
@@ -108,6 +111,13 @@ The privacy policy (Sanity → Studio, per client) **must** now disclose:
 - [ ] The **location**: Cloudflare D1 in the EU.
 - [ ] The **processors**: Cloudflare + Clerk (link their DPAs).
 - [ ] How to exercise **erasure/access** — the existing data-request form.
+
+Before `POST /v1/erasure/request` goes live, the operator must also:
+
+- [ ] Arm `TURNSTILE_SECRET`, the bot gate. It fails **open** when unset.
+- [ ] Bind `AGENT_RATELIMIT`, the rate limit.
+
+Without both, the public form can be used to email-bomb a known subject.
 
 This template ships the schema + mechanism; the **prose is per-client** and is authored
 in the Studio legal pages, not in code.

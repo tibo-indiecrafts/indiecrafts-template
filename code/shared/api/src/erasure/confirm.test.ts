@@ -124,6 +124,28 @@ describe("GET /v1/erasure/confirm", () => {
 });
 
 describe("POST /v1/erasure/confirm", () => {
+  it("503s on a partial-config deploy (no Clerk/Sanity secrets) without running the engine, leaving the row retryable", async () => {
+    const fp = await seedProfile();
+    const token = await seedRequest({ fp });
+
+    // No 4th `build` arg — this exercises the real `defaultAdapters` path, against
+    // a testEnv() that has DB + salt but no Clerk/Sanity secrets.
+    const res = await handleErasureConfirm(
+      postForm({ token, email: EMAIL }),
+      testEnv(),
+    );
+    expect(res.status).toBe(503);
+
+    const row = await env.DB.prepare(
+      "SELECT status, attempts FROM erasure_requests WHERE email_fingerprint = ?",
+    )
+      .bind(fp)
+      .first<{ status: string; attempts: number }>();
+    expect(row?.status).toBe("email_sent");
+    expect(row?.attempts).toBe(0);
+    expect(await profileAnonymized()).toBe(0);
+  });
+
   it("erases on the correct token + email: D1 pseudonymised, row completed, audit written, Clerk/Sanity invoked", async () => {
     const fp = await seedProfile();
     const token = await seedRequest({ fp });

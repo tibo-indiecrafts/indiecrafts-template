@@ -160,6 +160,18 @@ export async function handleErasureConfirm(
   if (!env.DB || !env.GDPR_FINGERPRINT_SALT)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
 
+  // Production uses the real adapters, which need the Clerk + Sanity secrets. If a
+  // deploy armed DB + salt but not these, refuse with 503 so the request row stays
+  // `email_sent` (retryable) instead of half-erasing D1 while Clerk/Sanity fail.
+  if (
+    buildAdapters === defaultAdapters &&
+    (!env.CLERK_SECRET_KEY ||
+      !env.SANITY_API_WRITE_TOKEN ||
+      !env.SANITY_PROJECT_ID ||
+      !env.SANITY_DATASET)
+  )
+    return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
+
   if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
     return json({ error: "too_large" }, 413, PUBLIC_CORS_POST);
 
@@ -232,13 +244,21 @@ export async function handleErasureConfirm(
     )
     .run();
 
-  const country = request.headers.get("cf-ipcountry") ?? null;
-  const subjectId = row.user_id ?? row.email_fingerprint;
-  await env.DB.prepare(
-    "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, NULL)",
-  )
-    .bind(ts, "erasure.completed", subjectId, subjectId, country)
-    .run();
+  // The erasure row above is already committed — a failure writing the audit trail
+  // must never turn a completed erasure into a 500 on a single-use, non-retryable row.
+  try {
+    const country = request.headers.get("cf-ipcountry") ?? null;
+    const subjectId = row.user_id ?? row.email_fingerprint;
+    await env.DB.prepare(
+      "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, NULL)",
+    )
+      .bind(ts, "erasure.completed", subjectId, subjectId, country)
+      .run();
+  } catch (error) {
+    logger.error("erasure audit insert failed", {
+      name: (error as Error)?.name,
+    });
+  }
 
   // Best-effort: a failed completion email must never undo the erasure already committed.
   try {
