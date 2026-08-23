@@ -14,6 +14,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- feat(compliance): consent_events D1 table (migration 0003) — append-only consent log, 3-year retention.
 - feat(compliance): D1 user_profiles table (migration 0002) + workers-pool D1 test harness.
 - feat(compliance): Clerk webhook syncs user_profiles (upsert/re-fingerprint/pseudonymise) + GDPR_FINGERPRINT_SALT.
 - **`GET /v1/geo` — the geo signal for the native surfaces.** Public (no bearer, no DB); echoes the
