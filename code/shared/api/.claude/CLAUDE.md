@@ -6,6 +6,10 @@ those clients call — its own domain, its own deploy. **Activated bare-Worker s
 audit + session sink (`POST /v1/events` → EU D1, `GET /v1/sessions`)**, bearer-gated by `APP_API_TOKEN` +
 CORS allowlist + the native rate-limit binding; `withGuard` is Next-only, so the guard is inline. More
 routes TBD. (The AI agent moved to its own [`code/shared/agent`](../agent/.claude/CLAUDE.md) Worker.)
+`POST /v1/clerk-webhook` also keeps `user_profiles` in sync with Clerk (source of truth for email):
+upsert + re-fingerprint on `user.created`/`user.updated`, pseudonymise on `user.deleted`. Secrets:
+`APP_API_TOKEN` · `IP_HASH_SALT` · `CLERK_WEBHOOK_SECRET` · `GDPR_FINGERPRINT_SALT` (email fingerprint
+salt, identical across envs — see `wrangler.toml`).
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.

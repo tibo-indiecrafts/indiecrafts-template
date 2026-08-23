@@ -117,7 +117,8 @@ SANITY_API_VERSION = "2025-01-01"
 # `SECURITY_COUNTERS` (KV) holds ephemeral failed-login counters (TTL) so rates are counted
 # at the edge, never written per-request to D1:
 #   wrangler kv namespace create indiecrafts-dev-shared-api-security-counters
-# Secrets (out-of-band): APP_API_TOKEN · IP_HASH_SALT · CLERK_WEBHOOK_SECRET (Svix) —
+# Secrets (out-of-band): APP_API_TOKEN · IP_HASH_SALT · CLERK_WEBHOOK_SECRET (Svix) ·
+#   GDPR_FINGERPRINT_SALT (email pseudonymisation fingerprint; identical across envs) —
 #   wrangler secret put <NAME> --env <env>
 [env.dev]
 name = "indiecrafts-dev-shared-api"

@@ -5,7 +5,10 @@ import {
   defaultLocale,
   type Locale,
 } from "@indiecrafts/packages-shared-config";
-import { hashIpAddress } from "@indiecrafts/packages-shared-security/crypto";
+import {
+  hashIpAddress,
+  fingerprintEmail,
+} from "@indiecrafts/packages-shared-security/crypto";
 import {
   classifyFailedLogins,
   FAILED_LOGIN,
@@ -54,6 +57,10 @@ export interface Env {
   SECURITY_COUNTERS?: KVNamespace;
   /** `wrangler secret put IP_HASH_SALT` — salt for hashing IPs before storage (never raw). */
   IP_HASH_SALT?: string;
+  /** `wrangler secret put GDPR_FINGERPRINT_SALT` — salt for the email pseudonymisation
+   *  fingerprint on user_profiles/consent/erasure. MUST be identical across envs.
+   *  Optional (fingerprints are left null until set). */
+  GDPR_FINGERPRINT_SALT?: string;
   /** `wrangler secret put CLERK_WEBHOOK_SECRET` — Svix signing secret (`whsec_…`) for
    *  `POST /v1/clerk-webhook`. Optional (503 until set). */
   CLERK_WEBHOOK_SECRET?: string;
@@ -493,6 +500,70 @@ export default {
             name: (error as Error)?.name,
           });
           return json({ error: "server" }, 502, cors);
+        }
+      }
+
+      // ── Compliance: keep user_profiles in sync with Clerk (source of truth for
+      //    email). Upsert on create/update (re-fingerprints on email change);
+      //    pseudonymise on delete. Idempotent by PK — Clerk retries are safe.
+      //    No idempotency-key store: every op here is idempotent by primary key.
+      if (
+        env.DB &&
+        (evt.type === "user.created" ||
+          evt.type === "user.updated" ||
+          evt.type === "user.deleted")
+      ) {
+        const userId = typeof data.id === "string" ? data.id : null;
+        if (userId) {
+          const now = new Date().toISOString();
+          try {
+            if (evt.type === "user.deleted") {
+              await env.DB.prepare(
+                "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
+              )
+                .bind(
+                  `deleted_${userId}@anonymized.local`,
+                  "Deleted User",
+                  now,
+                  userId,
+                )
+                .run();
+            } else {
+              // Webhook payload is snake_case (unlike the @clerk/backend SDK).
+              const emails =
+                (data.email_addresses as
+                  | Array<{ id?: string; email_address?: string }>
+                  | undefined) ?? [];
+              const primaryId = data.primary_email_address_id as
+                | string
+                | undefined;
+              const email =
+                emails.find((e) => e.id === primaryId)?.email_address ??
+                emails[0]?.email_address ??
+                null;
+              const first =
+                typeof data.first_name === "string" ? data.first_name : "";
+              const last =
+                typeof data.last_name === "string" ? data.last_name : "";
+              const fullName = [first, last].filter(Boolean).join(" ") || null;
+              const fingerprint =
+                email && env.GDPR_FINGERPRINT_SALT
+                  ? await fingerprintEmail(email, env.GDPR_FINGERPRINT_SALT)
+                  : null;
+              await env.DB.prepare(
+                "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at, last_login_at) " +
+                  "VALUES (?, ?, ?, ?, ?, NULL) " +
+                  "ON CONFLICT(user_id) DO UPDATE SET email = excluded.email, full_name = excluded.full_name, email_fingerprint = excluded.email_fingerprint",
+              )
+                .bind(userId, email, fullName, fingerprint, now)
+                .run();
+            }
+          } catch (error) {
+            logger.error("clerk profile sync failed", {
+              name: (error as Error)?.name,
+            });
+            return json({ error: "server" }, 502, cors);
+          }
         }
       }
       return json({ ok: true }, 200, cors);
