@@ -46,9 +46,11 @@ subject's rows:
 ```sql
 DELETE FROM session_events  WHERE user_id = ?;
 DELETE FROM security_events  WHERE user_id = ?;
-DELETE FROM admin_audit      WHERE actor_user_id = ? OR target_user_id = ?;
 UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?;
 ```
+
+`admin_audit` is **retained**, not deleted — it is the accountability trail (see the
+erasure-engine policy table below).
 
 The manual `consent_events` step above closes a gap noted in Phase 2: the row already
 carries `email_fingerprint`, so erasure pseudonymises `subject_id` to that fingerprint
@@ -83,8 +85,17 @@ Every adapter supports a **dry run**: `preview()` reports what an erasure would 
 without mutating anything, so an operator can inspect the blast radius before
 confirming. `runExport` (Art. 15/20) reads every store the same way, keyed by email.
 
-The engine has **no live trigger yet**. Phase 4 wires a token-confirmed
-`POST /v1/erasure` route that verifies identity, then calls `runErasure` for real.
+## Live erasure flow
+
+Three routes on the `api` worker (`code/shared/api/src/erasure/`) drive the engine live:
+
+- `GET/POST /v1/erasure/request` — the subject submits their email; a matched subject
+  gets an emailed confirmation token (anti-enumeration: the response never reveals a
+  match).
+- `GET/POST /v1/erasure/confirm` — the subject opens the emailed link and types their
+  email again; a valid token + matching email runs `runErasure` for real.
+- `GET /v1/erasure/status/:token` — a public, no-PII poll of the request's lifecycle
+  state (`status`, `requested_at`, `due_at`, `completed_at`) by the same token.
 
 ## Privacy-policy disclosure — operator checklist
 

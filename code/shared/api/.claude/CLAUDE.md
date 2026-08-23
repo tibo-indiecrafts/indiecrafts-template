@@ -12,7 +12,9 @@ upsert + re-fingerprint on `user.created`/`user.updated`, pseudonymise on `user.
 salt, identical across envs — see `wrangler.toml`). `src/erasure/` holds the store-agnostic erasure
 adapters — D1 (real) + Clerk/Sanity/orders (dependency-injected) — implementing
 `@indiecrafts/packages-shared-compliance` `ErasureAdapter`, run by its `runErasure`/`runExport`
-orchestrator; no live `/v1/erasure` route yet (real Clerk/Sanity clients + the token-confirm flow land later).
+orchestrator. The `/v1/erasure` routes are live: `GET/POST /v1/erasure/request` (Turnstile-gated,
+anti-enumeration), `GET/POST /v1/erasure/confirm` (token + typed-email fingerprint + TTL + attempt
+cap → runs the engine live), and `GET /v1/erasure/status/:token` (public, no-PII status).
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.

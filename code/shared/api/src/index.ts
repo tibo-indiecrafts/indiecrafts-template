@@ -27,6 +27,7 @@ import {
 } from "@indiecrafts/packages-shared-announcement";
 import { handleErasureRequest } from "./erasure/request";
 import { handleErasureConfirm } from "./erasure/confirm";
+import { handleErasureStatus } from "./erasure/status";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -178,7 +179,7 @@ function json(
 
 // The announcements read is PUBLIC content (same as on the public website), so it
 // answers any origin — unlike the bearer-gated /v1/* routes above.
-const PUBLIC_CORS = {
+export const PUBLIC_CORS = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, OPTIONS",
   "access-control-allow-headers": "content-type",
@@ -764,6 +765,13 @@ export default {
     // in erasure/confirm.ts — this stays a thin dispatch.
     if (url.pathname === "/v1/erasure/confirm")
       return handleErasureConfirm(request, env, ctx);
+
+    // ── GDPR erasure status — GET /v1/erasure/status/:token (PUBLIC; no PII) ──
+    // The subject polls their request state by the plaintext token from their email.
+    if (url.pathname.startsWith("/v1/erasure/status/")) {
+      const token = url.pathname.slice("/v1/erasure/status/".length);
+      return handleErasureStatus(request, env, token);
+    }
 
     logger.info("api request", {
       method: request.method,
