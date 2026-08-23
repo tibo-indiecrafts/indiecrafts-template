@@ -13,6 +13,7 @@ import {
   consentUpdate,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type ConsentCategory } from "./consent-signals";
+import { reportConsent } from "./consent-report";
 
 // The pure decision math (`grantedKeys`, `consentUpdate`) + the `ConsentRecord` shape
 // moved to the portable brick so the shells reuse them; re-export here so this brick's
@@ -111,5 +112,7 @@ export function applyConsent(
       consentUpdate(categories, choices),
     ]);
   }
+  // Log the decision server-side (account-scoped) — one funnel covers accept /
+  // reject / customize / auto-seed. Fire-and-forget; the route gates anonymous.
+  reportConsent(choices, version);
 }
-
