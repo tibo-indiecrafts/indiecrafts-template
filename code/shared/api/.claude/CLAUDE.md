@@ -9,7 +9,8 @@ routes TBD. (The AI agent moved to its own [`code/shared/agent`](../agent/.claud
 `POST /v1/clerk-webhook` also keeps `user_profiles` in sync with Clerk (source of truth for email):
 upsert + re-fingerprint on `user.created`/`user.updated`, pseudonymise on `user.deleted`. Secrets:
 `APP_API_TOKEN` · `IP_HASH_SALT` · `CLERK_WEBHOOK_SECRET` · `GDPR_FINGERPRINT_SALT` (email fingerprint
-salt, identical across envs — see `wrangler.toml`).
+salt, identical across envs — see `wrangler.toml`). `POST /v1/events` also accepts `kind:csp-report` →
+the `csp_reports` D1 table (aggregated CSP violation reports, Report-Only pipeline; 30-day `cron` purge).
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.
