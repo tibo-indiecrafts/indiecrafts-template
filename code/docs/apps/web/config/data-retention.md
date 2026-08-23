@@ -47,11 +47,44 @@ subject's rows:
 DELETE FROM session_events  WHERE user_id = ?;
 DELETE FROM security_events  WHERE user_id = ?;
 DELETE FROM admin_audit      WHERE actor_user_id = ? OR target_user_id = ?;
+UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?;
 ```
+
+The manual `consent_events` step above closes a gap noted in Phase 2: the row already
+carries `email_fingerprint`, so erasure pseudonymises `subject_id` to that fingerprint
+instead of deleting the row. The erasure engine below does this automatically.
 
 Run via `wrangler d1 execute indiecrafts-<env>-shared-api --command "…"`. Security
 audit records _may_ be retained under legitimate interest where law allows — document
 the operator's decision per request.
+
+## Erasure engine
+
+`runErasure`/`runExport` (`@indiecrafts/packages-shared-compliance/shared`) orchestrate
+erasure across every store. The orchestrator is store-agnostic: it takes an array of
+`ErasureAdapter` and runs each one, so no single runtime holds every store's secret.
+A store can never be silently skipped — the receipt enumerates every adapter, even one
+that errors.
+
+`code/shared/api/src/erasure/` implements the adapters:
+
+| Adapter  | Store                        | Policy                                                                                              |
+| -------- | ---------------------------- | --------------------------------------------------------------------------------------------------- |
+| `d1`     | `user_profiles`              | pseudonymise (scrub email/name, keep the fingerprint)                                               |
+| `d1`     | `session_events`             | delete (low-sensitivity sign-in activity)                                                           |
+| `d1`     | `security_events`            | delete low/medium severity; pseudonymise high/critical (`user_id`→fingerprint)                      |
+| `d1`     | `consent_events`             | pseudonymise (`subject_id`→fingerprint, `subject_type`→`visitor`)                                   |
+| `d1`     | `admin_audit`                | retain (the accountability trail)                                                                   |
+| `clerk`  | the Clerk user               | delete (Clerk holds identity + credentials — there is no pseudonymised form)                        |
+| `sanity` | `subscriber`/`waitlistEntry` | pseudonymise (email replaced by its fingerprint)                                                    |
+| `orders` | future commerce D1           | no-op seam — orders/invoices carry a 7–10y anonymised retention duty, deferred until checkout ships |
+
+Every adapter supports a **dry run**: `preview()` reports what an erasure would touch
+without mutating anything, so an operator can inspect the blast radius before
+confirming. `runExport` (Art. 15/20) reads every store the same way, keyed by email.
+
+The engine has **no live trigger yet**. Phase 4 wires a token-confirmed
+`POST /v1/erasure` route that verifies identity, then calls `runErasure` for real.
 
 ## Privacy-policy disclosure — operator checklist
 
