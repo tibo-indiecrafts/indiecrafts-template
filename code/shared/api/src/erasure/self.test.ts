@@ -171,10 +171,19 @@ describe("handleErasureSelf", () => {
     );
     expect(res.status).toBe(207);
     const row = await env.DB.prepare(
-      "SELECT status FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
+      "SELECT status, completed_at FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
     )
       .bind(USER)
-      .first<{ status: string }>();
+      .first<{ status: string; completed_at: string | null }>();
     expect(row?.status).toBe("confirmed");
+    // A partial run is not "completed" — the completion timestamp stays null.
+    expect(row?.completed_at).toBeNull();
+    // The accountability trail is still written on the partial path.
+    const audit = await env.DB.prepare(
+      "SELECT event FROM admin_audit WHERE target_user_id = ? ORDER BY id DESC LIMIT 1",
+    )
+      .bind(USER)
+      .first<{ event: string }>();
+    expect(audit?.event).toBe("erasure.self");
   });
 });

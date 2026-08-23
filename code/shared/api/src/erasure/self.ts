@@ -12,7 +12,7 @@ import {
   runErasure,
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { type Env, PUBLIC_CORS_POST, safeEqual } from "../index";
+import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
 import { createD1ErasureAdapter } from "./d1";
 import { createClerkErasureAdapter } from "./clerk";
 import { createSanityErasureAdapter } from "./sanity";
@@ -146,9 +146,11 @@ export async function handleErasureSelf(
     return json({ error: "too_large" }, 413, PUBLIC_CORS_POST);
 
   if (env.AGENT_RATELIMIT) {
-    const auth0 = request.headers.get("authorization") ?? "";
+    // Key on the caller IP, not the bearer token: a Clerk JWT's leading bytes are
+    // identical across users (shared alg/kid/iss), so keying on the token would put
+    // every user in one bucket. Matches the /v1/events + request routes.
     const { success } = await env.AGENT_RATELIMIT.limit({
-      key: auth0.slice(0, 128),
+      key: clientIp(request),
     });
     if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);
   }
