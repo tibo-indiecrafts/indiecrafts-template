@@ -9,3 +9,12 @@ export { ConsentPreferences } from "./ConsentPreferences";
 export { LegalReacceptancePrompt } from "./LegalReacceptancePrompt";
 export { createWebStore } from "./store";
 export { browserSignalsDeny } from "./signals";
+export {
+  DeleteAccountSection,
+  submitAccountErasure,
+} from "./DeleteAccountSection";
+export type {
+  DeleteAccountCopy,
+  DeleteAccountSectionProps,
+  ErasureSelfResult,
+} from "./DeleteAccountSection";
