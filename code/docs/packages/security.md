@@ -58,13 +58,14 @@ strict-origin-when-cross-origin` · `Permissions-Policy: camera=(), microphone=(
 
 ## CSP violation reporting
 
-Pass `reporting: { endpoint, reportOnly? }` (`CspReporting`, `./csp`) to `securityHeaders` or
-`buildCsp` to turn on browser CSP reporting. It adds `Reporting-Endpoints` + `report-to`/`report-uri`
-to the enforced CSP. Add `reportOnly: { dropSources?, dropUnsafeEval? }` and `buildReportOnlyCsp`
-also emits a `Content-Security-Policy-Report-Only` header — the enforced policy minus
-`dropSources` (and `unsafe-eval`, dropped by default) — so a stricter candidate can be tried without
-blocking anything. See [Security headers](../apps/web/seo/security-headers) for the full
-`next.config.ts` example and the rollout story.
+Pass `reporting: { endpoint, reportOnly? }` (`CspReporting`, `./csp`) to `securityHeaders` to turn on
+browser CSP reporting. It adds a `Reporting-Endpoints` header plus `report-to`/`report-uri` to the
+enforced CSP. Add `reportOnly: { dropSources?, dropUnsafeEval? }` and `securityHeaders` also emits a
+`Content-Security-Policy-Report-Only` header — the enforced policy minus `dropSources` (and
+`unsafe-eval`, dropped by default) — so a stricter candidate can be tried without blocking anything.
+`buildCsp` alone (without `securityHeaders`) only appends `report-to`/`report-uri` to the CSP string —
+it never emits `Reporting-Endpoints`. See [Security headers](../apps/web/seo/security-headers) for the
+full `next.config.ts` example and the rollout story.
 
 The route side — parsing what the browser POSTs, sanitizing it, and forwarding it on — is the
 sibling [`security-reports`](./security-reports) brick; the pure parsing it calls

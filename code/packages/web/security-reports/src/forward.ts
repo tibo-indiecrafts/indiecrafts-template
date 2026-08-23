@@ -4,7 +4,9 @@ import type { SanitizedCspReport } from "@indiecrafts/packages-shared-security/c
 /**
  * Forward sanitized CSP reports to the api's POST /v1/events (kind:csp-report).
  * Server-only: holds APP_API_TOKEN, never runs in the browser. Fire-and-forget.
- * Batches of 10 keep each request under the worker's 4000-byte body cap.
+ * Batches of 5 keep each request well under the worker's 4000-byte BODY_MAX —
+ * 10 max-size sanitized reports could exceed it, and a 413 there silently drops
+ * the batch (fire-and-forget swallows the failed fetch).
  */
 export async function forwardCspReports(
   reports: SanitizedCspReport[],
@@ -12,8 +14,8 @@ export async function forwardCspReports(
   const url = process.env.API_URL;
   const token = process.env.APP_API_TOKEN;
   if (!url || !token || reports.length === 0) return;
-  for (let i = 0; i < reports.length; i += 10) {
-    const batch = reports.slice(i, i + 10);
+  for (let i = 0; i < reports.length; i += 5) {
+    const batch = reports.slice(i, i + 5);
     try {
       await fetch(`${url}/v1/events`, {
         method: "POST",

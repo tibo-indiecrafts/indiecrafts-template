@@ -30,6 +30,8 @@ const nextConfig: NextConfig = {
     // First security headers on app: hardened CSP + reporting. App loads no
     // third-party media, so no extra hosts. The Report-Only candidate drops the
     // blanket img-src `https:` to learn the real allowlist.
+    // @debt SECURITY - the enforced CSP omits Clerk's Frontend-API host; extend
+    // scriptSrc/connectSrc/frameSrc here before this surface ships with Clerk auth.
     return securityHeaders({
       env: getCurrentEnvironment(),
       reporting: {

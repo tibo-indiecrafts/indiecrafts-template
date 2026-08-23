@@ -24,6 +24,9 @@ export async function handleCspReport(
   if (!ACCEPTED.some((t) => contentType.includes(t)))
     return new Response(null, { status: 415 });
 
+  if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY)
+    return new Response(null, { status: 413 });
+
   const text = await request.text();
   if (new TextEncoder().encode(text).length > MAX_BODY)
     return new Response(null, { status: 413 });

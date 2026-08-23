@@ -82,6 +82,7 @@ function cspDirectives(
     `base-uri 'self'`,
     `form-action ${src(["'self'"], embed)}`,
   ];
+  // Auto-upgrade any http: subresource in production (never on localhost/dev).
   if (env === "production") directives.push("upgrade-insecure-requests");
   return directives;
 }
