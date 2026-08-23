@@ -14,6 +14,13 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- feat(compliance): `kind:csp-report` writes aggregated `csp_reports` (migration 0004). `POST
+  /v1/events` gains a fourth `kind`: the surface forwards sanitized CSP violation reports
+  (routes collapsed, samples redacted upstream), and the worker upserts one row per distinct
+  `surface|disposition|directive|documentPath|blockedSource` group, incrementing `count` and
+  `last_seen` on repeat. Capped at 10 reports per batch. No `country`, no `ip_hash` — a CSP
+  violation is about a resource, not a person. **Why:** report-only CSP collection needs a
+  bounded, queryable sink without per-request row growth or subject data.
 - feat(compliance): D1 erasure adapter (pseudonymise profile/high-severity/consent; delete session + low/medium security).
 - feat(compliance): consent_events D1 table (migration 0003) — append-only consent log, 3-year retention.
 - feat(compliance): D1 user_profiles table (migration 0002) + workers-pool D1 test harness.

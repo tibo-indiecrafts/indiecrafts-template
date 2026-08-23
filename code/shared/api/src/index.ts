@@ -50,8 +50,9 @@ export interface Env {
   AGENT_RATELIMIT?: {
     limit: (o: { key: string }) => Promise<{ success: boolean }>;
   };
-  /** The EU D1 (`[[d1_databases]] binding = "DB"`) — one database, three tables
-   *  (admin_audit · session_events · security_events). Optional (503 until bound). */
+  /** The EU D1 (`[[d1_databases]] binding = "DB"`) — one database, five tables
+   *  (admin_audit · session_events · security_events · consent_events · csp_reports).
+   *  Optional (503 until bound). */
   DB?: D1Database;
   /** KV (`binding = "SECURITY_COUNTERS"`) — ephemeral TTL counters for failed-login rates,
    *  so they're counted at the edge, not written per-request to D1. Optional. */
@@ -442,6 +443,51 @@ export default {
                 // real device IP.
                 null,
                 `${decisionId}:${type}`,
+              )
+              .run();
+          }
+        } else if (body.kind === "csp-report") {
+          // CSP violations, sanitized upstream by the surface route (routes
+          // collapsed, tokens stripped, samples redacted). Aggregate on write:
+          // one row per distinct group, count incremented. No IP/country — a CSP
+          // violation is about a resource, not a subject.
+          if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+          const reports = Array.isArray(body.reports)
+            ? body.reports.slice(0, 10)
+            : [];
+          if (reports.length === 0)
+            return json({ error: "invalid" }, 400, cors);
+          for (const raw of reports as Array<Record<string, unknown>>) {
+            const surface = str(raw.surface, 16);
+            const disposition =
+              str(raw.disposition, 8) === "enforce" ? "enforce" : "report";
+            const directive = str(raw.directive, 48);
+            const documentPath = str(raw.documentPath, 256);
+            const blockedSource = str(raw.blockedSource, 256);
+            if (!surface || !directive || !documentPath || !blockedSource)
+              continue;
+            const groupKey = `${surface}|${disposition}|${directive}|${documentPath}|${blockedSource}`;
+            const sampleSourceFile = str(raw.sampleSourceFile, 256) || null;
+            const sampleLine =
+              typeof raw.sampleLine === "number" ? raw.sampleLine : null;
+            const sampleSnippet = str(raw.sampleSnippet, 60) || null;
+            await env.DB.prepare(
+              "INSERT INTO csp_reports (group_key, first_seen, last_seen, count, surface, disposition, directive, document_path, blocked_source, sample_source_file, sample_line, sample_snippet) " +
+                "VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                "ON CONFLICT(group_key) DO UPDATE SET count = count + 1, last_seen = excluded.last_seen, sample_source_file = excluded.sample_source_file, sample_line = excluded.sample_line, sample_snippet = excluded.sample_snippet",
+            )
+              .bind(
+                groupKey,
+                ts,
+                ts,
+                surface,
+                disposition,
+                directive,
+                documentPath,
+                blockedSource,
+                sampleSourceFile,
+                sampleLine,
+                sampleSnippet,
               )
               .run();
           }
