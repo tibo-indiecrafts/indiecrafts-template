@@ -4,7 +4,8 @@ import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
 
 // A scheduled failure must not pass silently (see the NEVERs). Production console is
 // silent, so forward error/fatal to Workers Logs; non-prod already shows them.
-if (getCurrentEnvironment() === "production") addTransport(cloudflareTransport());
+if (getCurrentEnvironment() === "production")
+  addTransport(cloudflareTransport());
 
 /**
  * Scheduled (cron) worker — a **bare** Cloudflare Worker (no Next/OpenNext).
@@ -18,12 +19,22 @@ if (getCurrentEnvironment() === "production") addTransport(cloudflareTransport()
  */
 export interface Env {
   /** The api's EU D1 (binding `DB`) — the same database the api writes (admin_audit,
-   *  session_events, security_events). The purge deletes rows past retention from all three. */
+   *  session_events, security_events, consent_events). The purge deletes rows past
+   *  retention from all four. */
   DB?: D1Database;
 }
 
 /** GDPR storage-limitation ceiling for the audit + session records (Art. 5(1)(e)). */
 const RETENTION_DAYS = 90;
+
+/** consent_events is kept far longer than the audit tables — consent is a proof
+ *  record with its own retention duty (spec §13). ~3 years. */
+const CONSENT_RETENTION_DAYS = 1095;
+
+/** ISO cutoff `days` before `scheduledTime` (ms epoch). */
+export function retentionCutoff(scheduledTime: number, days: number): string {
+  return new Date(scheduledTime - days * 86_400_000).toISOString();
+}
 
 export default {
   async scheduled(
@@ -36,12 +47,16 @@ export default {
       scheduledTime: controller.scheduledTime,
     });
 
-    // 90-day retention (GDPR storage limitation): purge audit + session + security rows
-    // past the ceiling from the one EU D1. Idempotent — safe on every tick. No-ops until
-    // the DB is bound.
-    const cutoff = new Date(
-      controller.scheduledTime - RETENTION_DAYS * 86_400_000,
-    ).toISOString();
+    // Retention purge (GDPR storage limitation): purge all four tables past their
+    // ceiling from the one EU D1. admin_audit + session_events + security_events use
+    // the 90-day ceiling; consent_events uses its own, much longer 3-year window,
+    // because it is a consent proof record, not an audit trail. Idempotent — safe on
+    // every tick. No-ops until the DB is bound.
+    const cutoff = retentionCutoff(controller.scheduledTime, RETENTION_DAYS);
+    const consentCutoff = retentionCutoff(
+      controller.scheduledTime,
+      CONSENT_RETENTION_DAYS,
+    );
     if (env.DB) {
       try {
         const admin = await env.DB.prepare(
@@ -59,14 +74,23 @@ export default {
         )
           .bind(cutoff)
           .run();
+        const consent = await env.DB.prepare(
+          "DELETE FROM consent_events WHERE ts < ?",
+        )
+          .bind(consentCutoff)
+          .run();
         logger.info("retention purge", {
           cutoff,
+          consentCutoff,
           adminRows: admin.meta?.changes,
           sessionRows: session.meta?.changes,
           securityRows: security.meta?.changes,
+          consentRows: consent.meta?.changes,
         });
       } catch (error) {
-        logger.error("retention purge failed", { name: (error as Error)?.name });
+        logger.error("retention purge failed", {
+          name: (error as Error)?.name,
+        });
         throw error; // surface the failure on the scheduled run
       }
     }

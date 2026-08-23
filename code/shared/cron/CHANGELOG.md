@@ -7,6 +7,8 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- feat(compliance): purge consent_events on a 3-year window.
+
 - **90-day retention purge (GDPR storage limitation).** The scheduled handler deletes `admin_audit` +
   `session_events` + `security_events` rows older than 90 days from the api's shared **EU** D1 (binding
   `DB`, bound read/write, the same database the api writes). Idempotent; no-ops until the D1 is bound.
