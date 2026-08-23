@@ -32,3 +32,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   no gate. **Why:** the app surface joins the shared, opt-in auth.
 - **Session logging.** `SessionLogger` + a `/api/session-log` route forward each sign-in to the audit api
   (EU D1), surface `"app"`. Needs `API_URL` + `APP_API_TOKEN` (server-only, see `.env.example`).
+- **Self-service "Delete my account" page.** `/[locale]/account` renders the shared
+  `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`) via a new
+  `AccountDeletePanel` client wrapper (Clerk `getToken`/`signOut`, routes home on success). Gated
+  by the new `features.deleteAccount` flag **and** by Clerk **and** `NEXT_PUBLIC_API_URL` being
+  configured — any one missing 404s the route. New `messages.account.delete.*` copy. **Why:** lets
+  a signed-in visitor exercise GDPR erasure without contacting support, posting the shared api's
+  authenticated `POST /v1/erasure/self`.

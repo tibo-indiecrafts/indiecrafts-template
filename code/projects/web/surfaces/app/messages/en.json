@@ -27,6 +27,20 @@
       }
     }
   },
+  "account": {
+    "delete": {
+      "heading": "Delete your account",
+      "body": "This permanently deletes your account and personal data. We keep a minimal activity log, stripped of identifying details, for security and legal compliance.",
+      "emailLabel": "Confirm your email",
+      "emailPlaceholder": "you@example.com",
+      "confirmButton": "Delete my account",
+      "pending": "Deleting…",
+      "success": "Your account has been deleted. Signing you out…",
+      "partial": "Your account has been deleted; some data may take a little longer to clear.",
+      "error": "Something went wrong. Please try again.",
+      "mismatch": "That email doesn't match your account."
+    }
+  },
   "legal": {
     "heading": "Legal",
     "legalNotice": "Legal notice",
