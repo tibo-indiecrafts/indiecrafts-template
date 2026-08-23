@@ -1,4 +1,8 @@
-import { getCSPConnectSources, type Environment } from "@indiecrafts/packages-shared-config";
+import {
+  getCSPConnectSources,
+  getClerkCspHosts,
+  type Environment,
+} from "@indiecrafts/packages-shared-config";
 
 /**
  * Content-Security-Policy builder. Hardened defaults are baked in; an app passes
@@ -57,6 +61,10 @@ function cspDirectives(
   const ga = csp.googleAnalytics ?? false;
   const allowEval = dev && !opts.dropUnsafeEval;
   const drop = new Set(opts.dropSources ?? []);
+  // Clerk hosts, derived from NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY — all empty when Clerk
+  // is unconfigured, so the policy is unchanged until an operator sets the key. Needed
+  // on every surface that renders Clerk (admin/app/website) or the enforced CSP blocks sign-in.
+  const clerk = getClerkCspHosts();
   // Filter dropped tokens AFTER composing each source list.
   const keep = (value: string): string =>
     value
@@ -67,21 +75,25 @@ function cspDirectives(
   const directives = [
     `default-src 'self'`,
     keep(
-      `script-src ${src(["'self'", "'unsafe-inline'"], allowEval ? ["'unsafe-eval'"] : undefined, ga ? GA_SCRIPT : undefined, TURNSTILE, csp.scriptSrc, embed)}`,
+      `script-src ${src(["'self'", "'unsafe-inline'"], allowEval ? ["'unsafe-eval'"] : undefined, ga ? GA_SCRIPT : undefined, TURNSTILE, clerk.script, csp.scriptSrc, embed)}`,
     ),
     `style-src 'self' 'unsafe-inline'`,
-    keep(`img-src ${src(["'self'", "data:", "blob:", "https:"], csp.imgSrc)}`),
+    keep(`img-src ${src(["'self'", "data:", "blob:", "https:"], clerk.img, csp.imgSrc)}`),
     keep(`media-src ${src(["'self'", "blob:"], csp.mediaSrc)}`),
     keep(`font-src ${src(["'self'", "data:"], csp.fontSrc)}`),
     keep(
-      `connect-src ${src([...getCSPConnectSources(env)], ga ? GA_CONNECT : undefined, csp.connectSrc, embed)}`,
+      `connect-src ${src([...getCSPConnectSources(env)], ga ? GA_CONNECT : undefined, clerk.connect, csp.connectSrc, embed)}`,
     ),
-    keep(`frame-src ${src(["'self'"], TURNSTILE, csp.frameSrc, embed)}`),
+    keep(`frame-src ${src(["'self'"], TURNSTILE, clerk.frame, csp.frameSrc, embed)}`),
     `object-src 'none'`,
     `frame-ancestors 'none'`,
     `base-uri 'self'`,
     `form-action ${src(["'self'"], embed)}`,
   ];
+  // ClerkJS runs a blob web-worker; add worker-src only when Clerk is active (else
+  // default-src 'self' covers workers, unchanged).
+  if (clerk.worker.length)
+    directives.push(`worker-src ${src(["'self'"], clerk.worker)}`);
   // Auto-upgrade any http: subresource in production (never on localhost/dev).
   if (env === "production") directives.push("upgrade-insecure-requests");
   return directives;

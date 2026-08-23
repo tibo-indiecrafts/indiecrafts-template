@@ -43,6 +43,47 @@ export function getCurrentEnvironment(): Environment {
   }
 }
 
+/**
+ * Clerk CSP hosts, derived from `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`. Empty when Clerk
+ * is unconfigured, so the CSP is byte-for-byte unchanged until an operator sets the key.
+ * The key encodes Clerk's Frontend-API host — `pk_(test|live)_<base64(host + "$")>` — and
+ * ClerkJS loads from that host (script), talks to it + the telemetry host (XHR), opens an
+ * iframe there (frame), pulls avatars from img.clerk.com, and spins a blob worker. The
+ * enforced CSP must allow all of these or sign-in is blocked. Same env-gated pattern as
+ * `getCSPConnectSources`; consumed by `@indiecrafts/packages-shared-security`.
+ */
+export type ClerkCspHosts = {
+  script: string[];
+  connect: string[];
+  img: string[];
+  frame: string[];
+  worker: string[];
+};
+
+function clerkFrontendApi(key: string): string | null {
+  const b64 = key.replace(/^pk_(test|live)_/, "");
+  try {
+    // atob is global on Node 22 + Workers; a malformed key throws → fail safe (no hosts).
+    const host = atob(b64).replace(/\$+$/, "");
+    return host ? `https://${host}` : null;
+  } catch {
+    return null;
+  }
+}
+
+export function getClerkCspHosts(): ClerkCspHosts {
+  const key = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const fapi = key ? clerkFrontendApi(key) : null;
+  if (!fapi) return { script: [], connect: [], img: [], frame: [], worker: [] };
+  return {
+    script: [fapi],
+    connect: [fapi, "https://clerk-telemetry.com"],
+    img: ["https://img.clerk.com"],
+    frame: [fapi],
+    worker: ["blob:"],
+  };
+}
+
 export function getCSPConnectSources(env: Environment): readonly string[] {
   // Sanity Studio at /studio needs to reach the project API + CDN.
   // Safe to leave in prod CSP: the wildcard is locked to *.sanity.io.

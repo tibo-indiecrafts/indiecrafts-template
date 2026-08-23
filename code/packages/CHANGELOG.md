@@ -14,6 +14,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-shared-config` + `-shared-security` — the CSP now allows Clerk when it is configured.**
+  New `getClerkCspHosts()` (config `./web`, env-gated) derives Clerk's Frontend-API host from
+  `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`; `buildCsp` adds it to `script-src`/`connect-src`/`frame-src`, adds
+  `img.clerk.com` to `img-src`, the telemetry host to `connect-src`, and a `worker-src 'self' blob:`. All
+  empty when the key is unset, so the policy is byte-for-byte unchanged until an operator configures Clerk.
+  **Why:** admin and app now emit an enforced CSP — without this the enforced policy would block ClerkJS and
+  break sign-in.
 - **`@indiecrafts/packages-web-security-reports` — CSP report sink + forwarder (new brick).**
   `handleCspReport(request, opts)` (`./handle`) — the Next route trust boundary for browser CSP
   violation reports: accepts only the CSP content-types, caps the body, normalizes + sanitizes +

@@ -16,7 +16,12 @@ export {
 } from "./site";
 export { seoDefaults } from "./seo";
 export { isPageVisible } from "./pages";
-export { getCurrentEnvironment, getCSPConnectSources } from "./env";
+export {
+  getCurrentEnvironment,
+  getCSPConnectSources,
+  getClerkCspHosts,
+  type ClerkCspHosts,
+} from "./env";
 export { rateLimits, RATE_WINDOW_SEC } from "./security";
 export { defineFeatures } from "./features";
 

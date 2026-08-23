@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, afterEach } from "vitest";
 import { buildCsp, buildReportOnlyCsp } from "./csp";
 import { securityHeaders } from "./headers";
 
@@ -39,5 +39,30 @@ describe("csp reporting", () => {
     expect(global.find((h) => h.key === "Reporting-Endpoints")?.value).toBe(
       'csp-endpoint="/api/csp-report"',
     );
+  });
+});
+
+describe("clerk csp hosts (derived from the publishable key)", () => {
+  const KEY = "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY";
+  const original = process.env[KEY];
+  afterEach(() => {
+    if (original === undefined) delete process.env[KEY];
+    else process.env[KEY] = original;
+  });
+
+  it("adds Clerk hosts + worker-src when the key is set (so sign-in isn't blocked)", () => {
+    process.env[KEY] = "pk_test_Y2xlcmsuZXhhbXBsZS5jb20k"; // → clerk.example.com
+    const csp = buildCsp("production", {});
+    expect(csp).toContain("https://clerk.example.com");
+    expect(csp).toContain("https://img.clerk.com");
+    expect(csp).toContain("https://clerk-telemetry.com");
+    expect(csp).toContain("worker-src 'self' blob:");
+  });
+
+  it("adds no Clerk hosts and no worker-src when the key is unset", () => {
+    delete process.env[KEY];
+    const csp = buildCsp("production", {});
+    expect(csp).not.toContain("clerk");
+    expect(csp).not.toContain("worker-src");
   });
 });
