@@ -19,6 +19,7 @@
   "dependencies": {
     "@indiecrafts/packages-shared-agent": "workspace:*",
     "@indiecrafts/packages-shared-announcement": "workspace:*",
+    "@indiecrafts/packages-shared-compliance": "workspace:*",
     "@indiecrafts/packages-shared-config": "workspace:*",
     "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-shared-security": "workspace:*",

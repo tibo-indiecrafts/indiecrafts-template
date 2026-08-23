@@ -19,6 +19,12 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Geo-targeted cookie consent.** The `[locale]/layout` reads the visitor's `cf-ipcountry`
+  server-side and passes a geo-resolved `mode` to `CookieBanner`: EU/EEA/UK + territories show the
+  opt-in banner, the US gets no blocking banner (opt-out + preferences + GPC), elsewhere shows
+  nothing. Per-country/regulation config in `src/config/consent.ts` (`ConsentConfig` — named
+  regulations + overrides, cascading to territories). **Why:** don't show an opt-in banner where it
+  isn't required, while staying compliant everywhere. Design → `code/docs/apps/web/config/cookie-consent-geo.md`.
 - **Announcement toast + per-surface targeting.** `DefaultLayout` now also mounts the new
   `AnnouncementToast` (a self-contained corner card — title/body/optional image/link, editor-set
   dismiss) beside the existing bar, and passes `surface="website"` so an editor can target which

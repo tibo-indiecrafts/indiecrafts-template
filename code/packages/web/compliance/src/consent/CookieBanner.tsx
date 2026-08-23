@@ -4,6 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import type { ConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import type { ConsentCategory } from "./consent-signals";
 import { CookiePreferences } from "./CookiePreferences";
 import {
@@ -21,6 +22,10 @@ type Props = {
   body?: string;
   /** Honour a browser opt-out signal (GPC / Do-Not-Track) on first visit. Default on. */
   respectGpc?: boolean;
+  /** The geo-resolved consent mode (from the visitor's country). `opt-in` blocks with the
+   *  banner (default); `opt-out`/`none` never block — they auto-seed a default and rely on the
+   *  preferences dialog (open via `?cookies=manage` / a Manage-preferences button). */
+  mode?: ConsentMode;
 };
 
 const EMPTY_CHOICES: Record<string, boolean> = {};
@@ -43,6 +48,7 @@ export function CookieBanner({
   title,
   body,
   respectGpc = true,
+  mode = "opt-in",
 }: Props) {
   const t = useTranslations("cookies");
   const record = useSyncExternalStore(
@@ -60,24 +66,26 @@ export function CookieBanner({
     return () => window.removeEventListener(OPEN_PREFERENCES_EVENT, open);
   }, []);
 
-  // First visit with a browser opt-out signal (GPC / DNT): record reject-all
-  // silently so non-essential stays denied and the banner doesn't nag. The visitor
-  // can still opt in through the preferences dialog.
+  // Auto-decide on first visit without nagging, where the region + browser allow it:
+  //  - opt-in: only pre-seed a silent REJECT when a browser opt-out signal is present
+  //    (GPC / DNT). Otherwise the banner shows and the visitor chooses.
+  //  - opt-out / none: never block — seed the default (ACCEPT non-essential), but honour a
+  //    browser opt-out signal (GPC / DNT → reject). Changeable later via the preferences dialog.
   useEffect(() => {
-    if (
-      respectGpc &&
-      record === null &&
-      categories.length > 0 &&
-      browserSignalsDeny()
-    ) {
-      applyConsent(categories, optionalChoices(categories, false), version);
+    if (record !== null || categories.length === 0) return;
+    const deny = respectGpc && browserSignalsDeny();
+    if (mode === "opt-in") {
+      if (deny) applyConsent(categories, optionalChoices(categories, false), version);
+      return;
     }
-  }, [respectGpc, record, categories, version]);
+    applyConsent(categories, optionalChoices(categories, !deny), version);
+  }, [mode, respectGpc, record, categories, version]);
 
   if (categories.length === 0) return null;
 
   const needsConsent = record === null || record.v !== version;
-  const showBar = needsConsent && !prefsOpen;
+  // Only opt-in regions get the blocking banner; opt-out/none rely on the seed + preferences.
+  const showBar = mode === "opt-in" && needsConsent && !prefsOpen;
 
   return (
     <>

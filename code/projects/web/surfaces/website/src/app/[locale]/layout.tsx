@@ -3,9 +3,11 @@ import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import Script from "next/script";
+import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import {
+  consent,
   features,
   localeDir,
   localePrefix,
@@ -131,6 +133,12 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
     getLegalAcceptance(locale as Locale, features.legal),
   ]);
   const siteDescription = siteSeo.description;
+  // Geo-resolve the consent mode from the visitor's edge country (opt-in EU/UK · opt-out US ·
+  // none elsewhere), overridable per country in config. Drives whether the banner blocks.
+  const consentMode = resolveConsentMode(
+    (await headers()).get("cf-ipcountry"),
+    consent,
+  );
   // Server-read the legal-acceptance cookie so the "policies updated" banner is
   // decided server-side (no flash) — shown only when the deposited version is stale.
   const legalAck = (await cookies()).get(LEGAL_ACK_COOKIE)?.value;
@@ -204,6 +212,7 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                   version={cookieConsent.version}
                   title={cookieConsent.banner.title}
                   body={cookieConsent.banner.body}
+                  mode={consentMode}
                 />
               ) : null}
               {/* "Policies updated — please Accept" banner. Copy edited per language

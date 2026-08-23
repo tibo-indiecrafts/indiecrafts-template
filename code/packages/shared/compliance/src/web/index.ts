@@ -8,3 +8,4 @@ export { ConsentBanner } from "./ConsentBanner";
 export { ConsentPreferences } from "./ConsentPreferences";
 export { LegalReacceptancePrompt } from "./LegalReacceptancePrompt";
 export { createWebStore } from "./store";
+export { browserSignalsDeny } from "./signals";

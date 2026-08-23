@@ -1,4 +1,4 @@
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useIntl } from "react-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { useVersionCheck } from "@indiecrafts/packages-web-version/use-version-check";
@@ -7,6 +7,7 @@ import {
   ConsentBanner,
   LegalReacceptancePrompt,
   createWebStore,
+  browserSignalsDeny,
 } from "@indiecrafts/packages-shared-compliance/web";
 import {
   DEFAULT_CONSENT_CATEGORIES,
@@ -18,9 +19,11 @@ import {
   LEGAL_PAGE_KEYS,
   type Store,
   type ConsentRecord,
+  type ConsentMode,
   type LegalAcceptanceRecord,
   type LegalPageKey,
 } from "@indiecrafts/packages-shared-compliance/shared";
+import { loadConsentMode } from "./geo";
 import {
   localeCodes,
   localeMap,
@@ -75,10 +78,27 @@ export function LegalLinks() {
   );
 }
 
-function ConsentBannerGate() {
+function ConsentBannerGate({ mode }: { mode: ConsentMode | null }) {
   const t = useIntl();
   const record = useRecord(consentStore);
-  if (!features.requireConsent || record) return null;
+
+  // opt-out / none: no blocking banner — seed the default ONCE (accept-all unless a browser
+  // opt-out signal denies; the Electron renderer is Chromium, so GPC/DNT apply). `null` =
+  // geo still resolving, so seed nothing yet.
+  useEffect(() => {
+    if (!features.requireConsent || record || mode === null || mode === "opt-in")
+      return;
+    consentStore.save({
+      v: policyVersion,
+      t: Date.now(),
+      choices: browserSignalsDeny()
+        ? rejectAllChoices(DEFAULT_CONSENT_CATEGORIES)
+        : acceptAllChoices(DEFAULT_CONSENT_CATEGORIES),
+    });
+  }, [mode, record]);
+
+  // `null` = still resolving geo; only opt-in shows the blocking banner.
+  if (!features.requireConsent || record || mode !== "opt-in") return null;
 
   const cat = (key: string) => ({
     title: t.formatMessage({ id: `consent.categories.${key}.title` }),
@@ -200,12 +220,24 @@ function LocaleSuggest({ active }: { active: Locale }) {
 /** All the shell overlays — consent, legal re-acceptance, version, locale suggestion. */
 export function ShellOverlays() {
   const locale = useIntl().locale as Locale;
+  // Geo-resolve the consent mode once on launch (via the api `/v1/geo` — the renderer has no
+  // cf-ipcountry of its own). `null` until resolved, so the banner never flashes.
+  const [consentMode, setConsentMode] = useState<ConsentMode | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void loadConsentMode().then((m) => {
+      if (alive) setConsentMode(m);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
   return (
     <>
       {/* Logged-in-only announcements (banner + toast) from the api Worker. Gated on
           `hasClerk` so `useAuth` inside always has its provider. */}
       {hasClerk ? <AnnouncementChrome /> : null}
-      <ConsentBannerGate />
+      <ConsentBannerGate mode={consentMode} />
       <LegalReacceptGate locale={locale} />
       {websiteUrl ? <VersionPrompt endpoint={`${websiteUrl}${VERSION_ENDPOINT}`} /> : null}
       <LocaleSuggest active={locale} />

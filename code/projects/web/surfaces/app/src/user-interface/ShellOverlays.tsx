@@ -1,12 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { UpdatePrompt } from "@indiecrafts/packages-web-version/update-prompt";
 import {
   ConsentBanner,
   LegalReacceptancePrompt,
   createWebStore,
+  browserSignalsDeny,
 } from "@indiecrafts/packages-shared-compliance/web";
 import {
   DEFAULT_CONSENT_CATEGORIES,
@@ -17,6 +18,7 @@ import {
   legalUrl,
   type Store,
   type ConsentRecord,
+  type ConsentMode,
   type LegalAcceptanceRecord,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { site, features, policyVersion, type Locale } from "@/config";
@@ -29,10 +31,25 @@ function useRecord<T>(store: Store<T>): T | null {
   return useSyncExternalStore(store.subscribe, store.get, store.get);
 }
 
-function ConsentGate() {
+function ConsentGate({ mode }: { mode: ConsentMode }) {
   const t = useTranslations("consent");
   const record = useRecord(consentStore);
-  if (!features.requireConsent || record) return null;
+
+  // opt-out / none: no blocking banner — seed the default ONCE (accept-all unless a browser
+  // opt-out signal denies), so the record exists for the legal gate + the analytics default.
+  useEffect(() => {
+    if (!features.requireConsent || record || mode === "opt-in") return;
+    consentStore.save({
+      v: policyVersion,
+      t: Date.now(),
+      choices: browserSignalsDeny()
+        ? rejectAllChoices(DEFAULT_CONSENT_CATEGORIES)
+        : acceptAllChoices(DEFAULT_CONSENT_CATEGORIES),
+    });
+  }, [mode, record]);
+
+  // Only opt-in regions get the blocking banner; opt-out/none rely on the seed + preferences.
+  if (!features.requireConsent || record || mode !== "opt-in") return null;
 
   const cat = (key: string) => ({
     title: t(`categories.${key}.title`),
@@ -89,13 +106,20 @@ function LegalGate({ locale }: { locale: Locale }) {
   );
 }
 
-/** Compliance + version overlays for the app shell. Mounted in `[locale]/layout`. */
-export function ShellOverlays({ commit }: { commit: string }) {
+/** Compliance + version overlays for the app shell. Mounted in `[locale]/layout`.
+ *  `mode` is the geo-resolved consent mode (from the layout's `cf-ipcountry`). */
+export function ShellOverlays({
+  commit,
+  mode,
+}: {
+  commit: string;
+  mode: ConsentMode;
+}) {
   const tv = useTranslations("version");
   const locale = useLocale() as Locale;
   return (
     <>
-      <ConsentGate />
+      <ConsentGate mode={mode} />
       <LegalGate locale={locale} />
       <UpdatePrompt
         current={commit}

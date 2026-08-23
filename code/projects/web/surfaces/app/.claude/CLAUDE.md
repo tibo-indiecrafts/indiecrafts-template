@@ -20,7 +20,7 @@ Wired baseline:
 - **Version prompt** — `web-version`'s `UpdatePrompt` + its own `src/app/api/version/route.ts` +
   `src/lib/build-info.ts` (stamped by `scripts/version.mjs` in `build:cf`).
 
-Instance config (`features` · `policyVersion`) lives in `src/config/index.ts`. It is **not** a content
+Instance config (`features` · `consent` — geo cookie-consent regulations · `policyVersion`) lives in `src/config/index.ts`. It is **not** a content
 surface — add `packages-web-sanity` (reads), `packages-shared-security` (headers), or any content brick
 only when a real page needs it.
 

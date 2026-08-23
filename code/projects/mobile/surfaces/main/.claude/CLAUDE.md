@@ -29,7 +29,8 @@ theme · i18n · status pages · native UI foundation; product screens are TBD.*
   `system-pages/native` (404 · 500), themed at the shell.
 - **Compliance + version + locale** — `components/ShellOverlays.tsx` (mounted in `_layout`):
   the shared `compliance/native` consent banner + legal re-acceptance popup (AsyncStorage store,
-  gated by `config.features.requireConsent`, off by default), an `AppState` version poll of the
+  gated by `config.features.requireConsent`, off by default; **geo-targeted** per country via the api
+  `GET /v1/geo` + `config.consent` — `lib/geo.ts`), an `AppState` version poll of the
   website's `/api/version`, a first-run locale suggestion (`pickSuggestedLocale`), and an offline banner
   (`hooks/useNetworkStatus` via `@react-native-community/netinfo` → `components/OfflineBanner`, copy from
   `SHELL_COPY.offline`). `app/legal.tsx`

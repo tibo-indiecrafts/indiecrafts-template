@@ -37,3 +37,14 @@ export {
   type LegalReacceptanceCopy,
   needsReacceptance,
 } from "./legal";
+
+export {
+  type ConsentMode,
+  type Regulation,
+  type ConsentConfig,
+  REGULATIONS,
+  CONSENT_REGIONS,
+  TERRITORIES,
+  resolveRegulation,
+  resolveConsentMode,
+} from "./regions";

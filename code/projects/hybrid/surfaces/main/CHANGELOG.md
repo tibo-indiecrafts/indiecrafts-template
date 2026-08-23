@@ -13,6 +13,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Geo-targeted cookie consent.** The renderer `geo.ts` fetches the api `GET /v1/geo` on launch (the
+  device's edge country), caches it in `localStorage`, and resolves the regulation with `src/config`
+  overrides; the `ConsentBannerGate` blocks only for opt-in regions (opt-out/none auto-seed, honouring
+  GPC — the renderer is Chromium). Fails safe to opt-in when the api is unreachable; the banner never
+  flashes. Design → `code/docs/apps/web/config/cookie-consent-geo.md`.
 - **Logged-in announcements (banner + toast).** `src/renderer/src/announcement.tsx` (bespoke — the web
   `AnnouncementBar`/`AnnouncementToast` import next-intl and can't run in the Vite renderer) fetches the
   shared api Worker's `/v1/announcements` (`surface=hybrid`, via `VITE_API_URL`) ONLY when signed in AND

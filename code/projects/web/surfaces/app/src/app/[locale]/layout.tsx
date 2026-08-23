@@ -3,7 +3,9 @@ import type { ReactNode } from "react";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { localeDir, type Locale } from "@/config";
+import { headers } from "next/headers";
+import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
+import { consent, localeDir, type Locale } from "@/config";
 import { SessionLogger } from "@indiecrafts/packages-web-auth";
 import { routing } from "@/i18n/routing";
 import { ShellOverlays } from "@/user-interface/ShellOverlays";
@@ -27,6 +29,13 @@ export default async function LocaleLayout({
   // Enables static rendering for this locale (server components using translations).
   setRequestLocale(locale);
 
+  // Geo-resolve the consent mode from the visitor's edge country (opt-in EU/UK · opt-out US ·
+  // none elsewhere), overridable per country in config.
+  const consentMode = resolveConsentMode(
+    (await headers()).get("cf-ipcountry"),
+    consent,
+  );
+
   return (
     <html lang={locale} dir={localeDir(locale as Locale)}>
       <body>
@@ -40,7 +49,7 @@ export default async function LocaleLayout({
           ) : null}
           {children}
           {/* Compliance + version overlays (consent, legal re-acceptance, update prompt). */}
-          <ShellOverlays commit={buildInfo.commit} />
+          <ShellOverlays commit={buildInfo.commit} mode={consentMode} />
         </NextIntlClientProvider>
       </body>
     </html>

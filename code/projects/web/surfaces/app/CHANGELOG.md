@@ -14,6 +14,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Geo-targeted cookie consent.** `[locale]/layout` reads `cf-ipcountry` server-side → the
+  `ConsentGate` in `ShellOverlays` shows the opt-in banner only for opt-in regions; opt-out/none
+  auto-seed the consent record (honouring GPC) with no blocking banner. Per-country/regulation config
+  in `src/config` (`consent: ConsentConfig`). **Why:** each visitor sees the consent regime their
+  country requires. Design → `code/docs/apps/web/config/cookie-consent-geo.md`.
 - **Logged-in announcements (banner + toast).** `AnnouncementChrome` (mounted in `[locale]/layout`,
   gated on the Clerk key) fetches the shared api Worker's public `/v1/announcements` for `surface=app`
   ONLY when signed in, and renders the shared `AnnouncementBar` + `AnnouncementToast`. New

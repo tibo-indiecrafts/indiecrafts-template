@@ -16,6 +16,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 - feat(compliance): D1 user_profiles table (migration 0002) + workers-pool D1 test harness.
 - feat(compliance): Clerk webhook syncs user_profiles (upsert/re-fingerprint/pseudonymise) + GDPR_FINGERPRINT_SALT.
+- **`GET /v1/geo` — the geo signal for the native surfaces.** Public (no bearer, no DB); echoes the
+  caller's edge `cf-ipcountry` + the resolved consent mode (`resolveConsentMode` from
+  `@indiecrafts/packages-shared-compliance/shared`). Mobile + hybrid (which have no CF headers of their own)
+  fetch it on launch to geo-gate their cookie banner; the web surfaces read `cf-ipcountry` server-side.
+  **Why:** geo-targeted cookie consent on every surface — see `docs/apps/web/config/cookie-consent-geo.md`.
 - **`GET /v1/announcements?locale=&surface=` — the announcement read for the client-gated surfaces.**
   One GROQ round-trip → `resolveBanner`/`resolveToast` (`@indiecrafts/packages-shared-announcement`) →
   `{ banner, toast }`. **Public** (`access-control-allow-origin: *`, no bearer — it is the same

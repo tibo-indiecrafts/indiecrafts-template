@@ -1,0 +1,86 @@
+# Cookie consent — geo-targeted regulations
+
+The consent banner is **geo-targeted**: the visitor's country maps to a **named privacy
+regulation** (GDPR, UK GDPR, CCPA…), and each regulation carries the consent-UI **mode** it
+implies. So an EU-style opt-in banner never shows to visitors who don't legally need it — while
+the US opt-out obligation is still met. Everything is **configurable + extensible** (add your own
+regulations, reassign any country/territory), on **all four surfaces** (website · app · mobile ·
+hybrid).
+
+## Regulations → modes
+
+The built-in catalog (`REGULATIONS` in
+[`packages/shared/compliance/src/shared/regions.ts`](../../../packages/compliance-shared.md)); a
+client adds/overrides entries via config.
+
+| Key | Name | Mode | Behaviour |
+| --- | --- | --- | --- |
+| `gdpr` | GDPR | `opt-in` | Blocking banner; non-essential denied until consent; honours GPC. |
+| `ukgdpr` | UK GDPR | `opt-in` | Same as GDPR (UK/ePrivacy). |
+| `ccpa` | CCPA/CPRA | `opt-out` | **No** blocking banner; default accept, but a "manage preferences" affordance + **GPC honoured**. |
+| `none` | None | `none` | No banner; default accept; still honours GPC. |
+
+## Country / territory → regulation (the default map)
+
+`CONSENT_REGIONS` maps ISO-3166-1 alpha-2 codes (what `cf-ipcountry` returns) to a regulation key.
+
+- **`gdpr`** — EU-27 · EEA (`IS LI NO`) · the EU **outermost regions** with their own codes
+  (`GF GP MQ YT RE MF`) + Åland (`AX`).
+- **`ukgdpr`** — `GB` + Gibraltar (`GI`) + the Crown Dependencies (`JE GG IM`).
+- **`ccpa`** — `US` + its territories (`PR GU VI AS MP UM`). *(Country-level only: `cf-ipcountry`
+  can't see US states, so the whole US is CCPA — a safe superset of California. State refinement
+  via `request.cf.region` is a follow-up.)*
+- **`none`** — everything else, including the EU **OCTs** (Greenland `GL`, French Polynesia `PF`,
+  New Caledonia `NC`, Saint-Barthélemy `BL`, the Dutch Caribbean, …) which are *associated with*,
+  not part of, the EU, plus states with their own regimes (`CH`, `CA`, `BR` …).
+- **Unknown geo** (missing, or Cloudflare's `XX`/`T1`/`T2` sentinels) → fails safe to **`gdpr`** (opt-in).
+
+### External territories
+
+`TERRITORIES` maps a parent country to its overseas territories (`FR GB US NL DK NO FI NZ AU`).
+Each territory carries its own legally-correct default (EU outermost regions + UK GDPR-equivalent →
+opt-in; US territories → CCPA; the rest → none), **and** a parent assignment **cascades** to its
+territories.
+
+## Config — flexible, named, per country + territories
+
+Each surface exposes a `consent: ConsentConfig` in its `@/config`:
+
+```ts
+export const consent = {
+  // 1. Add or override NAMED regulations (merged over the built-ins):
+  regulations: {
+    lgpd: { name: "LGPD", mode: "opt-in" },
+  },
+  // 2. Assign a regulation key to a country/territory (uppercase alpha-2).
+  //    A parent-country assignment cascades to its territories; a territory entry wins over it.
+  overrides: {
+    BR: "lgpd", // Brazil → your custom LGPD regulation
+    CH: "gdpr", // Switzerland → treat as GDPR
+    FR: "gdpr", // …also covers GF, GP, PF, NC, … (all French territories)
+    GP: "none", // …except Guadeloupe, pinned individually
+  },
+};
+```
+
+`features.requireConsent` (app/mobile/hybrid) / `siteSettings.analytics.requireCookieConsent`
+(website) stays the **master off-switch** — off ⇒ no consent UI anywhere, geo ignored.
+
+## The country signal per surface
+
+- **website · app** (next-cf) — read `cf-ipcountry` **server-side** in the `[locale]/layout`,
+  resolve, and pass the `mode` to the banner. (These layouts are already dynamic.)
+- **mobile · hybrid** (native) — no CF headers, so they fetch the api **`GET /v1/geo`** once on
+  launch (`lib/geo.ts` / renderer `geo.ts`), which echoes the device's edge `cf-ipcountry` (+ the
+  default `regulation` + `mode`). The country is cached (AsyncStorage / localStorage) and the mode
+  re-resolved locally with the app's config; unreachable + nothing cached → fails safe to opt-in.
+  The banner stays hidden until geo resolves, so it never flashes.
+
+GPC / Do-Not-Track is honoured on every web surface (`browserSignalsDeny`); React Native has no GPC signal.
+
+## Verify
+
+- `pnpm --filter @indiecrafts/packages-shared-compliance test` — the resolver (regulations,
+  territories, cascade, custom regulation, CF sentinels).
+- `wrangler dev` the api → `curl -H "cf-ipcountry: FR" …/v1/geo` → `{"regulation":"GDPR","mode":"opt-in"}`;
+  `US` → `CCPA/CPRA` / `opt-out`; `JP` → `None` / `none`.

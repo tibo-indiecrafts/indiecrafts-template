@@ -5,6 +5,8 @@
  * hybrid-owned **instance** config here — window, updater channel, native env —
  * as the app grows.
  */
+import type { ConsentConfig } from "@indiecrafts/packages-shared-compliance/shared";
+
 export * from "@indiecrafts/packages-shared-config/hybrid";
 
 /**
@@ -29,6 +31,17 @@ export const buildId = import.meta.env.VITE_BUILD_ID ?? "dev";
  * when the app ships an analytics/ads SDK.
  */
 export const features = { requireConsent: false } as const;
+
+/**
+ * Consent geo config — flexible + regulation-named. `regulations` adds/overrides named
+ * regulations (built-ins: GDPR / UK GDPR / CCPA / None); `overrides` assigns a regulation key
+ * to a country/territory (uppercase ISO-3166-1 alpha-2, cascades from a parent country). Empty
+ * = the built-in defaults. e.g.
+ * `{ regulations: { lgpd: { name: "LGPD", mode: "opt-in" } }, overrides: { BR: "lgpd", CH: "gdpr" } }`.
+ */
+export const consent: ConsentConfig = {
+  overrides: {},
+};
 
 /**
  * The current compliance-document version. Bumping it re-prompts the visitor to review

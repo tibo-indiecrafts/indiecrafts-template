@@ -14,6 +14,7 @@ import {
   FAILED_LOGIN,
   bumpCounter,
 } from "@indiecrafts/packages-shared-security-events";
+import { resolveRegulation } from "@indiecrafts/packages-shared-compliance/shared";
 import {
   SURFACES,
   resolveBanner,
@@ -584,6 +585,31 @@ export default {
         }
       }
       return json({ ok: true }, 200, cors);
+    }
+
+    // ── Geo → consent mode — GET /v1/geo (PUBLIC; the native surfaces' geo signal) ──
+    // Echoes the caller's edge country + the resolved consent mode so mobile/hybrid (which
+    // have no CF headers of their own) can geo-gate their consent banner. The web surfaces
+    // read `cf-ipcountry` server-side directly; this is only for the native clients. No
+    // bearer (no PII — just the country), no DB. Unknown geo → the resolver returns opt-in.
+    if (url.pathname === "/v1/geo") {
+      if (request.method === "OPTIONS")
+        return new Response(null, { status: 204, headers: PUBLIC_CORS });
+      if (request.method !== "GET")
+        return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS);
+      const country = request.headers.get("cf-ipcountry") || null;
+      const reg = resolveRegulation(country);
+      return new Response(
+        JSON.stringify({ country, regulation: reg.name, mode: reg.mode }),
+        {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "cache-control": "public, max-age=3600",
+            ...PUBLIC_CORS,
+          },
+        },
+      );
     }
 
     // ── Announcements — GET /v1/announcements (PUBLIC; banner + toast per surface) ──

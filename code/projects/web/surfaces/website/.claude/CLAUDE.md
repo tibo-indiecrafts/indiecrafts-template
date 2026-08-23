@@ -33,7 +33,7 @@ The app (`src/`):
 ```
 src/app/                   ROUTES ONLY (thin page.tsx / route.ts) — [locale]/<seg>, api/, studio/,
                            maintenance/; routes.ts aggregates the `pages` map → ROUTES + PATHNAMES
-src/config/                app-owned config: theme · fonts · features · pages (+ StaticAppPathname);
+src/config/                app-owned config: theme · fonts · features · consent (geo cookie-consent regulations) · pages (+ StaticAppPathname);
                            index.ts re-exports @indiecrafts/packages-shared-config primitives → import via @/config
 src/user-interface/        app UI, by page then category: homepage/sections/ · legal/ ·
                            shared/{layout,components}  (primitives → @indiecrafts/packages-web-ui; the branded

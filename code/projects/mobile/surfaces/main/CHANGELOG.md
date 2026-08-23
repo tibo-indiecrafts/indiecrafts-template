@@ -13,6 +13,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Geo-targeted cookie consent.** `lib/geo.ts` fetches the api `GET /v1/geo` on launch (the device's
+  edge country — native has no `cf-ipcountry` of its own), caches it, and resolves the regulation with
+  `src/config` overrides; the `ConsentGate` in `ShellOverlays` blocks only for opt-in regions
+  (opt-out/none auto-seed accept). Fails safe to opt-in when the api is unreachable; the banner never
+  flashes (hidden until geo resolves). Design → `code/docs/apps/web/config/cookie-consent-geo.md`.
 - **Logged-in announcements (banner + toast).** `components/AnnouncementOverlay.tsx` (RN, mounted in
   `ShellOverlays` gated on `hasClerk`) fetches the shared api Worker's `/v1/announcements`
   (`surface=mobile`, via `lib/announcements.ts` + `EXPO_PUBLIC_API_URL`) ONLY when signed in AND online,

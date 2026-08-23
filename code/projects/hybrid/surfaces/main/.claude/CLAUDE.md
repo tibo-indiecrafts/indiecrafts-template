@@ -16,7 +16,8 @@ toggle) + `react-intl` (locale from `navigator.language`), wrapped in a TanStack
 preload bridge, so the api-client call stays in the main process). The main process shows a dependency-free error
 page on renderer `did-fail-load`. **Shell overlays** (`src/renderer/src/shell.tsx`): the shared
 `compliance/web` consent banner + legal re-acceptance popup (`localStorage` store, gated by
-`config.features.requireConsent`, off by default), a version prompt polling the website's `/api/version`
+`config.features.requireConsent`, off by default; **geo-targeted** per country via the api `GET /v1/geo`
++ `config.consent` — renderer `geo.ts`), a version prompt polling the website's `/api/version`
 (forked to drop `usePathname`; renderer reload applies), a legal link-out (`shell.openExternal` via the
 `open-external` ipc), and a first-run locale suggestion. Instance config (`sitePrefix` · `websiteUrl` ·
 `buildId` · `features` · `policyVersion`) in `src/config/index.ts`. **Still to finalize per product:**

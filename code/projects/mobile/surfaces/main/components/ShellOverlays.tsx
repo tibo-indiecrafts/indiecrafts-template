@@ -17,8 +17,10 @@ import {
   legalUrl,
   type Store,
   type ConsentRecord,
+  type ConsentMode,
   type LegalAcceptanceRecord,
 } from "@indiecrafts/packages-shared-compliance/shared";
+import { loadConsentMode } from "@/lib/geo";
 import {
   versionId,
   isUpdateAvailable,
@@ -52,10 +54,24 @@ function openLegal(key: Parameters<typeof legalUrl>[1], locale: Locale) {
   if (websiteUrl) void Linking.openURL(legalUrl(websiteUrl, key, locale));
 }
 
-function ConsentGate() {
+function ConsentGate({ mode }: { mode: ConsentMode | null }) {
   const t = useIntl();
   const record = useRecord(consentStore);
-  if (!features.requireConsent || record) return null;
+
+  // opt-out / none: no blocking banner — seed the default ONCE (accept-all; RN has no GPC
+  // signal to honour). `null` = geo still resolving, so seed nothing yet.
+  useEffect(() => {
+    if (!features.requireConsent || record || mode === null || mode === "opt-in")
+      return;
+    consentStore.save({
+      v: policyVersion,
+      t: Date.now(),
+      choices: acceptAllChoices(DEFAULT_CONSENT_CATEGORIES),
+    });
+  }, [mode, record]);
+
+  // `null` = still resolving geo; only opt-in shows the blocking banner.
+  if (!features.requireConsent || record || mode !== "opt-in") return null;
 
   const cat = (key: string) => ({
     title: t.formatMessage({ id: `consent.categories.${key}.title` }),
@@ -211,13 +227,25 @@ export function ShellOverlays({
   chooseLocale: (locale: Locale) => void;
   hasChoice: boolean;
 }) {
+  // Geo-resolve the consent mode once on launch (via the api `/v1/geo` — native has no
+  // cf-ipcountry of its own). `null` until resolved, so the banner never flashes.
+  const [consentMode, setConsentMode] = useState<ConsentMode | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void loadConsentMode().then((m) => {
+      if (alive) setConsentMode(m);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
   return (
     <>
       <OfflineBanner />
       {/* Logged-in-only announcements (banner + toast) from the api Worker. Gated on
           `hasClerk` so `useAuth` inside always has its provider. */}
       {hasClerk ? <AnnouncementOverlay locale={locale} /> : null}
-      <ConsentGate />
+      <ConsentGate mode={consentMode} />
       <LegalReacceptGate locale={locale} />
       {websiteUrl ? <VersionBanner endpoint={`${websiteUrl}${VERSION_ENDPOINT}`} /> : null}
       <LocaleSuggest active={locale} chooseLocale={chooseLocale} hasChoice={hasChoice} />

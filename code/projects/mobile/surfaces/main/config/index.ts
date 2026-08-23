@@ -7,6 +7,8 @@
  * Rule: mobile app code imports from `@/config`; it never pulls the web slice
  * (`@indiecrafts/packages-shared-config` root barrel). See `code/docs/shared/architecture/multi-app.md`.
  */
+import type { ConsentConfig } from "@indiecrafts/packages-shared-compliance/shared";
+
 export * from "@indiecrafts/packages-shared-config/mobile";
 
 /**
@@ -30,6 +32,8 @@ export const STORAGE_KEYS = {
   legalAck: `${sitePrefix}.legal-ack`,
   announcementAck: `${sitePrefix}.announcement-ack`,
   announcementToastAck: `${sitePrefix}.announcement-toast-ack`,
+  // Cached visitor country (from the api `/v1/geo`) for the consent geo decision.
+  geoCountry: `${sitePrefix}.geo-country`,
 } as const;
 
 /** The marketing-site origin — the legal link-out + version poll target. */
@@ -44,6 +48,17 @@ export const buildId = process.env.EXPO_PUBLIC_BUILD_ID ?? "dev";
  * analytics/ads SDK.
  */
 export const features = { requireConsent: false } as const;
+
+/**
+ * Consent geo config — flexible + regulation-named. `regulations` adds/overrides named
+ * regulations (built-ins: GDPR / UK GDPR / CCPA / None); `overrides` assigns a regulation key
+ * to a country/territory (uppercase ISO-3166-1 alpha-2, cascades from a parent country). Empty
+ * = the built-in defaults. e.g.
+ * `{ regulations: { lgpd: { name: "LGPD", mode: "opt-in" } }, overrides: { BR: "lgpd", CH: "gdpr" } }`.
+ */
+export const consent: ConsentConfig = {
+  overrides: {},
+};
 
 /**
  * The current compliance-document version. Bumping it re-prompts the visitor to review

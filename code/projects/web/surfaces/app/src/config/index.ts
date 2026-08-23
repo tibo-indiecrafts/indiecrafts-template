@@ -8,6 +8,8 @@
  * Rule: app code imports from `@/config`; packages/modules import
  * `@indiecrafts/packages-shared-config` directly. See `code/docs/shared/architecture/multi-app.md`.
  */
+import type { ConsentConfig } from "@indiecrafts/packages-shared-compliance/shared";
+
 export * from "@indiecrafts/packages-shared-config";
 
 /**
@@ -16,6 +18,18 @@ export * from "@indiecrafts/packages-shared-config";
  * when the surface ships an analytics/ads SDK.
  */
 export const features = { requireConsent: false } as const;
+
+/**
+ * Consent geo config — flexible + regulation-named. `regulations` adds/overrides named
+ * regulations (built-ins: GDPR / UK GDPR / CCPA / None); `overrides` assigns a regulation key
+ * to a country/territory (uppercase ISO-3166-1 alpha-2, cascades from a parent country). The
+ * built-in map already covers EU/EEA/UK + territories, the US + territories, and everything
+ * else — empty = defaults. e.g.
+ * `{ regulations: { lgpd: { name: "LGPD", mode: "opt-in" } }, overrides: { BR: "lgpd", CH: "gdpr" } }`.
+ */
+export const consent: ConsentConfig = {
+  overrides: {},
+};
 
 /**
  * The current compliance-document version. Bumping it re-prompts the visitor to review
