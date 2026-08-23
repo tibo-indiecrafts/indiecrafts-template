@@ -102,6 +102,7 @@ export function applyConsent(
   categories: ConsentCategory[],
   choices: Record<string, boolean>,
   version: string,
+  source: "banner" | "preferences" | "auto" = "banner",
 ) {
   consentStore.save({ v: version, t: Date.now(), choices });
   if (typeof window !== "undefined") {
@@ -114,5 +115,5 @@ export function applyConsent(
   }
   // Log the decision server-side (account-scoped) — one funnel covers accept /
   // reject / customize / auto-seed. Fire-and-forget; the route gates anonymous.
-  reportConsent(choices, version);
+  reportConsent(choices, version, source);
 }

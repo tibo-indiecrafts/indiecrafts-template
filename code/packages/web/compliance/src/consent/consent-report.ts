@@ -26,16 +26,21 @@ export function reportConsent(
   if (typeof window === "undefined") return;
   const events = consentEvents(choices);
   if (events.length === 0) return;
-  void fetch("/api/consent-log", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      events,
-      version,
-      source,
-      decisionId: crypto.randomUUID(),
-    }),
-  }).catch(() => {
-    // fire-and-forget: the local decision is already persisted
-  });
+  try {
+    void fetch("/api/consent-log", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        events,
+        version,
+        source,
+        decisionId: crypto.randomUUID(),
+      }),
+    }).catch(() => {
+      // fire-and-forget: the local decision is already persisted
+    });
+  } catch {
+    // e.g. crypto.randomUUID() throws in a non-secure context — the local
+    // decision (written before this call) is already persisted
+  }
 }

@@ -45,7 +45,7 @@ export function CookiePreferences({
   }
 
   const commit = (choices: Record<string, boolean>) => {
-    applyConsent(categories, choices, version);
+    applyConsent(categories, choices, version, "preferences");
     onOpenChange(false);
   };
   const allOptional = (value: boolean) =>

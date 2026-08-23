@@ -404,11 +404,6 @@ export default {
               .first<{ email_fingerprint: string | null }>();
             fingerprint = prof?.email_fingerprint ?? null;
           }
-          const ip = clientIp(request);
-          const ipHash =
-            env.IP_HASH_SALT && ip !== "unknown"
-              ? await hashIpAddress(ip, env.IP_HASH_SALT)
-              : null;
           const ALLOWED_CONSENT_TYPES = new Set([
             "cookie_analytics",
             "cookie_marketing",
@@ -438,7 +433,14 @@ export default {
                 surface,
                 source,
                 country,
-                ipHash,
+                // The website proxies this write (website server -> api), so
+                // the api's edge IP is the server, not the visitor — the same
+                // reason `country` is forwarded in the body instead of read
+                // from the edge. Store null rather than a misleading
+                // per-subject hash. When native surfaces call the api
+                // directly (a deferred fast-follow), that path can hash the
+                // real device IP.
+                null,
                 `${decisionId}:${type}`,
               )
               .run();

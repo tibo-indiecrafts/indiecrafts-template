@@ -75,10 +75,21 @@ export function CookieBanner({
     if (record !== null || categories.length === 0) return;
     const deny = respectGpc && browserSignalsDeny();
     if (mode === "opt-in") {
-      if (deny) applyConsent(categories, optionalChoices(categories, false), version);
+      if (deny)
+        applyConsent(
+          categories,
+          optionalChoices(categories, false),
+          version,
+          "auto",
+        );
       return;
     }
-    applyConsent(categories, optionalChoices(categories, !deny), version);
+    applyConsent(
+      categories,
+      optionalChoices(categories, !deny),
+      version,
+      "auto",
+    );
   }, [mode, respectGpc, record, categories, version]);
 
   if (categories.length === 0) return null;
@@ -119,6 +130,7 @@ export function CookieBanner({
                     categories,
                     optionalChoices(categories, false),
                     version,
+                    "banner",
                   )
                 }
               >
@@ -138,6 +150,7 @@ export function CookieBanner({
                     categories,
                     optionalChoices(categories, true),
                     version,
+                    "banner",
                   )
                 }
               >

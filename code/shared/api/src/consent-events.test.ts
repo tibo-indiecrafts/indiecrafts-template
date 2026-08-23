@@ -78,7 +78,7 @@ describe("kind:consent → consent_events", () => {
     expect(res.status).toBe(201);
 
     const { results } = await env.DB.prepare(
-      "SELECT consent_type, granted, subject_type, subject_id, email_fingerprint FROM consent_events WHERE subject_id = ? ORDER BY consent_type",
+      "SELECT consent_type, granted, subject_type, subject_id, email_fingerprint, ip_hash FROM consent_events WHERE subject_id = ? ORDER BY consent_type",
     )
       .bind("user_c1")
       .all<Record<string, unknown>>();
@@ -88,6 +88,9 @@ describe("kind:consent → consent_events", () => {
       granted: 1,
       subject_type: "user",
       email_fingerprint: "fp_c1",
+      // Proxied first-party write — the api's edge IP is the server, not the
+      // visitor, so ip_hash is always null on a consent row (see index.ts).
+      ip_hash: null,
     });
     expect(results[1]).toMatchObject({
       consent_type: "cookie_marketing",
