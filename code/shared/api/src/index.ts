@@ -320,10 +320,15 @@ export default {
             env.IP_HASH_SALT && ip !== "unknown"
               ? await hashIpAddress(ip, env.IP_HASH_SALT)
               : null;
-          const insertSecurity = (et: string, sev: string, desc: string | null) =>
-            env.DB!.prepare(
-              "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            )
+          const insertSecurity = (
+            et: string,
+            sev: string,
+            desc: string | null,
+          ) =>
+            env
+              .DB!.prepare(
+                "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+              )
               .bind(ts, et, sev, secSurface, secUserId, country, ipHash, desc)
               .run();
 
@@ -339,7 +344,8 @@ export default {
               ipHash ? `fl:ip:${ipHash}` : null,
               secUserId ? `fl:user:${secUserId}` : null,
             ].filter((k): k is string => k !== null);
-            if (keys.length === 0) return json({ ok: true, counted: 0 }, 202, cors);
+            if (keys.length === 0)
+              return json({ ok: true, counted: 0 }, 202, cors);
             let peak = 0;
             for (const k of keys) {
               const c = await bumpCounter(
@@ -466,7 +472,13 @@ export default {
         !svixId ||
         !svixTs ||
         !svixSig ||
-        !(await verifySvix(env.CLERK_WEBHOOK_SECRET, svixId, svixTs, svixSig, raw))
+        !(await verifySvix(
+          env.CLERK_WEBHOOK_SECRET,
+          svixId,
+          svixTs,
+          svixSig,
+          raw,
+        ))
       )
         return json({ error: "unauthorized" }, 401, cors);
 
@@ -479,7 +491,8 @@ export default {
 
       // The one wired mapping: a role→admin grant that did NOT go through our admin action.
       const data = evt.data ?? {};
-      const role = (data.public_metadata as { role?: string } | undefined)?.role;
+      const role = (data.public_metadata as { role?: string } | undefined)
+        ?.role;
       if (evt.type === "user.updated" && role === "admin" && env.DB) {
         try {
           await env.DB.prepare(
@@ -532,11 +545,10 @@ export default {
               // Webhook payload is snake_case (unlike the @clerk/backend SDK).
               const emails =
                 (data.email_addresses as
-                  | Array<{ id?: string; email_address?: string }>
-                  | undefined) ?? [];
+                  Array<{ id?: string; email_address?: string }> | undefined) ??
+                [];
               const primaryId = data.primary_email_address_id as
-                | string
-                | undefined;
+                string | undefined;
               const email =
                 emails.find((e) => e.id === primaryId)?.email_address ??
                 emails[0]?.email_address ??

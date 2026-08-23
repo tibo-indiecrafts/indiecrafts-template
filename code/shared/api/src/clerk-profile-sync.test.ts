@@ -69,7 +69,9 @@ const created = (id: string, email: string, first = "", last = "") => ({
 
 describe("clerk webhook → user_profiles", () => {
   it("user.created upserts a fingerprinted profile", async () => {
-    const res = await postWebhook(created("user_c", "Jane@Example.com", "Jane", "Doe"));
+    const res = await postWebhook(
+      created("user_c", "Jane@Example.com", "Jane", "Doe"),
+    );
     expect(res.status).toBe(200);
     const row = await env.DB.prepare(
       "SELECT * FROM user_profiles WHERE user_id = ?",
@@ -116,7 +118,9 @@ describe("clerk webhook → user_profiles", () => {
       .bind("user_u")
       .first<Record<string, unknown>>();
     expect(after?.email).toBe("new@x.com");
-    expect(after?.email_fingerprint).toBe(await fingerprintEmail("new@x.com", SALT));
+    expect(after?.email_fingerprint).toBe(
+      await fingerprintEmail("new@x.com", SALT),
+    );
     expect(after?.created_at).toBe(before?.created_at);
   });
 
@@ -129,7 +133,10 @@ describe("clerk webhook → user_profiles", () => {
         .bind("user_d")
         .first<{ email_fingerprint: string }>()
     )?.email_fingerprint;
-    await postWebhook({ type: "user.deleted", data: { id: "user_d", deleted: true } });
+    await postWebhook({
+      type: "user.deleted",
+      data: { id: "user_d", deleted: true },
+    });
     const row = await env.DB.prepare(
       "SELECT * FROM user_profiles WHERE user_id = ?",
     )

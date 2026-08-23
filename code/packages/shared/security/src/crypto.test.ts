@@ -72,7 +72,9 @@ describe("fingerprintEmail", () => {
     // case-folded + trimmed → same as the normalised form
     expect(f).toBe(await fingerprintEmail("user@example.com", "salt"));
     // salt-sensitive
-    expect(f).not.toBe(await fingerprintEmail("user@example.com", "other-salt"));
+    expect(f).not.toBe(
+      await fingerprintEmail("user@example.com", "other-salt"),
+    );
     // hex shape, not recoverable
     expect(f).toMatch(/^[0-9a-f]{64}$/);
     expect(f).not.toContain("example");
