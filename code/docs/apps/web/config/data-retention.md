@@ -41,9 +41,9 @@ not code.
 ## Erasure (Art. 17)
 
 On a data-subject **erasure** request (the `dataRequest` flow → Studio), purge the
-subject's rows. This manual block aligns with the engine policy below — it does not
-blanket-delete `security_events`, since high/critical severity rows get pseudonymised
-there, not deleted:
+subject's rows. This manual block matches the engine policy below. It does not
+blanket-delete `security_events`; the engine pseudonymises high/critical rows and
+deletes the rest:
 
 ```sql
 DELETE FROM session_events  WHERE user_id = ?;
@@ -117,7 +117,7 @@ Before `POST /v1/erasure/request` goes live, the operator must also:
 - [ ] Arm `TURNSTILE_SECRET`, the bot gate. It fails **open** when unset.
 - [ ] Bind `AGENT_RATELIMIT`, the rate limit.
 
-Without both, the public form can be used to email-bomb a known subject.
+Without both, an attacker can email-bomb a known subject through the public form.
 
 This template ships the schema + mechanism; the **prose is per-client** and is authored
 in the Studio legal pages, not in code.
