@@ -268,6 +268,7 @@ export default defineConfig({
           { text: "email", link: "/packages/email" },
           { text: "format", link: "/packages/format" },
           { text: "security", link: "/packages/security" },
+          { text: "security-reports", link: "/packages/security-reports" },
           { text: "agent (AI)", link: "/packages/agent" },
           { text: "agent-client (AI)", link: "/packages/agent-client" },
           { text: "query (TanStack)", link: "/packages/query" },

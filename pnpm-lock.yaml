@@ -689,6 +689,12 @@ importers:
         specifier: '*'
         version: 5.31.1(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.3.0)(@oclif/core@4.13.5)(@sanity/cli-core@1.3.4(@noble/hashes@2.3.0)(@types/node@20.19.39)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(terser@5.50.0)(yaml@2.9.0))(@types/node@20.19.39)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(babel-plugin-react-compiler@1.0.0)(bufferutil@4.1.0)(immer@11.1.16)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.30.0)(react-dom@19.2.8(react@19.2.8))(react-native@0.76.5(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@19.2.14)(bufferutil@4.1.0)(encoding@0.1.13)(react@19.2.8)(utf-8-validate@6.0.6))(react@19.2.8)(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react-native@0.76.5(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@19.2.14)(bufferutil@4.1.0)(encoding@0.1.13)(react@19.2.8)(utf-8-validate@6.0.6))(react@19.2.8))(terser@5.50.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
 
+  code/packages/web/security-reports:
+    dependencies:
+      '@indiecrafts/packages-shared-security':
+        specifier: workspace:*
+        version: link:../../shared/security
+
   code/packages/web/ui:
     dependencies:
       '@base-ui/react':
@@ -1520,6 +1526,9 @@ importers:
       '@indiecrafts/packages-shared-announcement':
         specifier: workspace:*
         version: link:../../packages/shared/announcement
+      '@indiecrafts/packages-shared-compliance':
+        specifier: workspace:*
+        version: link:../../packages/shared/compliance
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../packages/shared/config

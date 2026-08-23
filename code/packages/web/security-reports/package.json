@@ -1,0 +1,16 @@
+{
+  "name": "@indiecrafts/packages-web-security-reports",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./handle": "./src/handle.ts",
+    "./forward": "./src/forward.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@indiecrafts/packages-shared-security": "workspace:*"
+  }
+}
