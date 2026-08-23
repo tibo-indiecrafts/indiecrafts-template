@@ -12,7 +12,7 @@ Auto-loads under `code/packages/web/security-reports/**`. Explicit per-file `exp
   keeps at most 50 reports per request, then normalizes + sanitizes + drops extension noise before
   forwarding survivors. Always answers 204 — never reflects input or leaks validation detail.
 - **`forwardCspReports(reports)`** (`./forward`) — `import "server-only"`; posts sanitized reports
-  to the api's `POST /v1/events` (`kind: "csp-report"`) in batches of 10, bearer-authed with
+  to the api's `POST /v1/events` (`kind: "csp-report"`) in batches of 5, bearer-authed with
   `APP_API_TOKEN`. Fire-and-forget: no-ops without `API_URL`/`APP_API_TOKEN`, swallows fetch errors.
 
 **Pure parsing lives in `@indiecrafts/packages-shared-security/csp-report`** —
