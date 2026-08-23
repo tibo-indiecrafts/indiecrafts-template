@@ -25,6 +25,7 @@ import {
   type RawBanner,
   type RawToast,
 } from "@indiecrafts/packages-shared-announcement";
+import { handleErasureRequest } from "./erasure/request";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -83,6 +84,9 @@ export interface Env {
   RESEND_API_KEY?: string;
   /** `wrangler secret put EMAIL_FROM` (or `[vars]`) — the erasure emails' From address. */
   EMAIL_FROM?: string;
+  /** `wrangler secret put TURNSTILE_SECRET` — the bot gate on the public erasure-request
+   *  form. Optional (unset → the check passes; set → verified, fails closed on error). */
+  TURNSTILE_SECRET?: string;
 }
 
 // Browser-context origins allowed to READ the response (dev + the electron renderer
@@ -111,7 +115,7 @@ function safeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
-const clientIp = (req: Request): string =>
+export const clientIp = (req: Request): string =>
   req.headers.get("cf-connecting-ip") ?? "unknown";
 
 /**
@@ -179,6 +183,14 @@ const PUBLIC_CORS = {
   "access-control-allow-headers": "content-type",
 };
 
+// Same as PUBLIC_CORS, but for the public routes that also accept a POST body
+// (the erasure-request form: GET renders it, POST submits it).
+export const PUBLIC_CORS_POST = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, OPTIONS",
+  "access-control-allow-headers": "content-type",
+};
+
 /** One GROQ round-trip → both singletons. `apicdn` (cached) for public reads; the
  *  authenticated `api` host + token when a read token is set (private dataset). */
 async function fetchAnnouncementDocs(
@@ -206,7 +218,7 @@ export default {
   async fetch(
     request: Request,
     env: Env,
-    _ctx: ExecutionContext,
+    ctx: ExecutionContext,
   ): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname === "/health") {
@@ -738,6 +750,12 @@ export default {
         return json({ error: "server" }, 502, PUBLIC_CORS);
       }
     }
+
+    // ── GDPR erasure request — GET/POST /v1/erasure/request (PUBLIC; Turnstile + rate-limit) ──
+    // GET renders the request form; POST files the request. Anti-enumeration + the
+    // request-form HTML live in erasure/request.ts — this stays a thin dispatch.
+    if (url.pathname === "/v1/erasure/request")
+      return handleErasureRequest(request, env, ctx);
 
     logger.info("api request", {
       method: request.method,
