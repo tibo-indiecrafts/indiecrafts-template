@@ -289,6 +289,15 @@ export default {
           )
             .bind(ts, surface, userId, sessionId, country, ipHash)
             .run();
+          // Create the profile row on first sign-in; refresh last_login_at on
+          // every sign-in. Email/name are NOT in the session payload (kept
+          // minimal) — the Clerk webhook + backfill fill them. Idempotent by PK.
+          await env.DB.prepare(
+            "INSERT INTO user_profiles (user_id, created_at, last_login_at) VALUES (?, ?, ?) " +
+              "ON CONFLICT(user_id) DO UPDATE SET last_login_at = excluded.last_login_at",
+          )
+            .bind(userId, ts, ts)
+            .run();
         } else if (body.kind === "security") {
           // App-level security incident (failed login, priv-esc, exfil, …) — the EU D1.
           // Low-volume by design; the edge firehose stays in Cloudflare's Security Events.
