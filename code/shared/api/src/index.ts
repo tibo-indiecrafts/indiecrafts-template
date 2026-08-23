@@ -372,6 +372,77 @@ export default {
             severity,
             str(body.description, 200) || null,
           );
+        } else if (body.kind === "consent") {
+          if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+          // Trust boundary: userId is resolved by the caller's route via Clerk
+          // auth(), never claimed by the browser. Anonymous rows key on consentId.
+          const userId = str(body.userId) || null;
+          const consentId = str(body.consentId, 64) || null;
+          const subjectId = userId ?? consentId;
+          const decisionId = str(body.decisionId, 64);
+          const policyVersion = str(body.policyVersion, 32);
+          const surface = str(body.surface, 16);
+          const events = Array.isArray(body.events) ? body.events : [];
+          if (
+            !subjectId ||
+            !decisionId ||
+            !policyVersion ||
+            !surface ||
+            events.length === 0
+          )
+            return json({ error: "invalid" }, 400, cors);
+          const source = str(body.source, 16) || null;
+          const subjectType = userId ? "user" : "visitor";
+          // Link a logged-in consent row to the erasure key (null until the
+          // profile is fingerprinted by the Clerk webhook / backfill).
+          let fingerprint: string | null = null;
+          if (userId) {
+            const prof = await env.DB.prepare(
+              "SELECT email_fingerprint FROM user_profiles WHERE user_id = ?",
+            )
+              .bind(userId)
+              .first<{ email_fingerprint: string | null }>();
+            fingerprint = prof?.email_fingerprint ?? null;
+          }
+          const ip = clientIp(request);
+          const ipHash =
+            env.IP_HASH_SALT && ip !== "unknown"
+              ? await hashIpAddress(ip, env.IP_HASH_SALT)
+              : null;
+          const ALLOWED_CONSENT_TYPES = new Set([
+            "cookie_analytics",
+            "cookie_marketing",
+            "marketing_email",
+            "terms",
+            "privacy",
+            "content_guidelines",
+          ]);
+          for (const raw of events as Array<{
+            type?: unknown;
+            granted?: unknown;
+          }>) {
+            const type = str(raw.type, 32);
+            if (!ALLOWED_CONSENT_TYPES.has(type)) continue;
+            await env.DB.prepare(
+              "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            )
+              .bind(
+                ts,
+                subjectType,
+                subjectId,
+                fingerprint,
+                type,
+                raw.granted ? 1 : 0,
+                policyVersion,
+                surface,
+                source,
+                country,
+                ipHash,
+                `${decisionId}:${type}`,
+              )
+              .run();
+          }
         } else {
           return json({ error: "invalid" }, 400, cors);
         }
