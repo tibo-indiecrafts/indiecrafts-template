@@ -133,6 +133,26 @@ export async function verifyIpHash(
   return timingSafeEqualHex(await hashIpAddress(ip, salt), hash);
 }
 
+/**
+ * Salted, deterministic, one-way fingerprint of an email — the pseudonymisation
+ * key. Same email + salt → same fingerprint, so a record can be matched for
+ * erasure/retention without storing plaintext, but the address is not
+ * recoverable. With the salt RETAINED this is pseudonymised data (still personal
+ * data under GDPR); true anonymisation is dropping the fingerprint at final purge.
+ */
+export async function fingerprintEmail(
+  email: string,
+  salt: string,
+): Promise<string> {
+  if (!email || !salt)
+    throw new Error("email and salt are required for fingerprinting");
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    utf8.encode(salt + email.toLowerCase().trim()),
+  );
+  return toHex(digest);
+}
+
 /** Type guard — does `data` have the `EncryptedData` shape? */
 export function isEncryptedData(data: unknown): data is EncryptedData {
   if (!data || typeof data !== "object") return false;

@@ -5,6 +5,7 @@ import {
   decryptObject,
   encrypt,
   encryptObject,
+  fingerprintEmail,
   hashIpAddress,
   isEncryptedData,
   verifyIpHash,
@@ -62,5 +63,24 @@ describe("isEncryptedData", () => {
     expect(isEncryptedData({ ciphertext: "x" })).toBe(false);
     expect(isEncryptedData(null)).toBe(false);
     expect(isEncryptedData("nope")).toBe(false);
+  });
+});
+
+describe("fingerprintEmail", () => {
+  it("is deterministic, salted, normalised, and one-way", async () => {
+    const f = await fingerprintEmail("User@Example.com ", "salt");
+    // case-folded + trimmed → same as the normalised form
+    expect(f).toBe(await fingerprintEmail("user@example.com", "salt"));
+    // salt-sensitive
+    expect(f).not.toBe(await fingerprintEmail("user@example.com", "other-salt"));
+    // hex shape, not recoverable
+    expect(f).toMatch(/^[0-9a-f]{64}$/);
+    expect(f).not.toContain("example");
+    // known-answer test — guards the algorithm and the Task 6 node:crypto twin
+    expect(await fingerprintEmail("a@b.com", "salt")).toBe(
+      "d3bdaa92b6373f6067a450fb11488f88965636df6452f34eff6ffaf7803b1db0",
+    );
+    await expect(fingerprintEmail("", "salt")).rejects.toThrow();
+    await expect(fingerprintEmail("a@b.com", "")).rejects.toThrow();
   });
 });
