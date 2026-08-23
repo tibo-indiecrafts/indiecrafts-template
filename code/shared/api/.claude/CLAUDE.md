@@ -9,7 +9,10 @@ routes TBD. (The AI agent moved to its own [`code/shared/agent`](../agent/.claud
 `POST /v1/clerk-webhook` also keeps `user_profiles` in sync with Clerk (source of truth for email):
 upsert + re-fingerprint on `user.created`/`user.updated`, pseudonymise on `user.deleted`. Secrets:
 `APP_API_TOKEN` · `IP_HASH_SALT` · `CLERK_WEBHOOK_SECRET` · `GDPR_FINGERPRINT_SALT` (email fingerprint
-salt, identical across envs — see `wrangler.toml`).
+salt, identical across envs — see `wrangler.toml`). `src/erasure/` holds the store-agnostic erasure
+adapters — D1 (real) + Clerk/Sanity/orders (dependency-injected) — implementing
+`@indiecrafts/packages-shared-compliance` `ErasureAdapter`, run by its `runErasure`/`runExport`
+orchestrator; no live `/v1/erasure` route yet (real Clerk/Sanity clients + the token-confirm flow land later).
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.
