@@ -14,6 +14,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- fix(compliance): D1 erasure adapter — `security_events` delete is now the exact severity complement of the pseudonymised set (no off-list severity value is silently retained); `resolve()` falls back to a plaintext email match when `email_fingerprint` is null.
 - feat(compliance): erasure engine wiring — orders seam + adapter barrel + full-engine integration test.
 - feat(compliance): D1 erasure adapter (pseudonymise profile/high-severity/consent; delete session + low/medium security).
 - feat(compliance): consent_events D1 table (migration 0003) — append-only consent log, 3-year retention.
