@@ -48,3 +48,15 @@ export {
   resolveRegulation,
   resolveConsentMode,
 } from "./regions";
+
+export {
+  runErasure,
+  runExport,
+  type ErasureAdapter,
+  type AdapterMatch,
+  type AdapterPreview,
+  type AdapterResult,
+  type ErasureMode,
+  type ErasureReceipt,
+  type ExportBundle,
+} from "./erasure";
