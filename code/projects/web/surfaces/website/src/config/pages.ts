@@ -69,6 +69,15 @@ export const pages = {
   // component; logic + record + email in `@indiecrafts/packages-web-compliance`. Owns no
   // Sanity doc → uses the layout default SEO. Gated by `features.legal.dataRequest`.
   dataRequest: { ...LEGAL_PAGES.dataRequest, enabled: features.legal.dataRequest },
+  // Self-service "Delete my account" — Clerk-authenticated, calls the shared api's
+  // `/v1/erasure/self`. Owns no Sanity doc → layout default SEO. Gated by
+  // `features.account.delete`; the route itself also 404s with no Clerk key.
+  account: {
+    key: "/account",
+    id: "account",
+    slug: "/account",
+    enabled: features.account.delete,
+  },
   blog: {
     key: "/blog",
     id: "blog",

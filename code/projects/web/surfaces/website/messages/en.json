@@ -65,6 +65,20 @@
       "error": "Something went wrong. Please try again."
     }
   },
+  "account": {
+    "delete": {
+      "heading": "Delete your account",
+      "body": "This permanently deletes your account and personal data. We keep a record of the deletion itself in our activity log, as required for legal accountability. Type your email to confirm — this can't be undone.",
+      "emailLabel": "Your email",
+      "emailPlaceholder": "you@example.com",
+      "confirmButton": "Delete my account",
+      "pending": "Deleting…",
+      "success": "Your account has been deleted. You're now signed out.",
+      "partial": "Your account was deleted, but some data needs manual follow-up. Our team has been notified.",
+      "error": "Something went wrong. Please try again.",
+      "mismatch": "That email doesn't match your account. Please check it and try again."
+    }
+  },
   "cta": {
     "learnMore": "Learn more"
   },

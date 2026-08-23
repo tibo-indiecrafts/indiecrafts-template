@@ -41,6 +41,11 @@ export const features = defineFeatures({
   compliance: {
     logAnonymousConsent: false,
   },
+  /** Self-service account actions. delete: the `/account` GDPR erasure page
+   *  (authenticated `POST /v1/erasure/self`). Requires Clerk to be configured. */
+  account: {
+    delete: true,
+  },
   /** Per-page FAQ — `<Faq>` + FAQPage JSON-LD + llms block. */
   faq: true,
   /** The public blog surface — all blog routes/feeds/discovery. Gated via `route-gate`. */
