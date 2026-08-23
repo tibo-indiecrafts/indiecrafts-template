@@ -17,6 +17,7 @@
     "tail:prod": "wrangler tail --env prod"
   },
   "dependencies": {
+    "@clerk/backend": "^3.16.7",
     "@indiecrafts/packages-shared-agent": "workspace:*",
     "@indiecrafts/packages-shared-announcement": "workspace:*",
     "@indiecrafts/packages-shared-compliance": "workspace:*",

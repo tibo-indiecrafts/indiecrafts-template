@@ -65,12 +65,19 @@ export interface Env {
   /** `wrangler secret put CLERK_WEBHOOK_SECRET` — Svix signing secret (`whsec_…`) for
    *  `POST /v1/clerk-webhook`. Optional (503 until set). */
   CLERK_WEBHOOK_SECRET?: string;
+  /** `wrangler secret put CLERK_SECRET_KEY` — Clerk backend secret key for the erasure
+   *  route's real Clerk client (find/export/delete a user by email). Optional until the
+   *  confirm route runs erasure. */
+  CLERK_SECRET_KEY?: string;
   /** Sanity read config for `GET /v1/announcements` (`[vars]`). Public read → 503 until set. */
   SANITY_PROJECT_ID?: string;
   SANITY_DATASET?: string;
   SANITY_API_VERSION?: string;
   /** `wrangler secret put SANITY_API_READ_TOKEN` — server-side read token (never shipped to clients). */
   SANITY_API_READ_TOKEN?: string;
+  /** `wrangler secret put SANITY_API_WRITE_TOKEN` — write token for pseudonymising Sanity
+   *  docs during erasure. Optional until the confirm route runs erasure. */
+  SANITY_API_WRITE_TOKEN?: string;
 }
 
 // Browser-context origins allowed to READ the response (dev + the electron renderer
