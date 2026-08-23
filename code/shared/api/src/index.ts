@@ -78,6 +78,11 @@ export interface Env {
   /** `wrangler secret put SANITY_API_WRITE_TOKEN` — write token for pseudonymising Sanity
    *  docs during erasure. Optional until the confirm route runs erasure. */
   SANITY_API_WRITE_TOKEN?: string;
+  /** `wrangler secret put RESEND_API_KEY` — the erasure flow's token + completion emails.
+   *  Optional: `erasure/email.ts` no-ops (never throws) until this AND `EMAIL_FROM` are set. */
+  RESEND_API_KEY?: string;
+  /** `wrangler secret put EMAIL_FROM` (or `[vars]`) — the erasure emails' From address. */
+  EMAIL_FROM?: string;
 }
 
 // Browser-context origins allowed to READ the response (dev + the electron renderer
