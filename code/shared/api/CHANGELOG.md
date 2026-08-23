@@ -14,6 +14,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- feat(compliance): D1 user_profiles table (migration 0002) + workers-pool D1 test harness.
 - **`GET /v1/announcements?locale=&surface=` — the announcement read for the client-gated surfaces.**
   One GROQ round-trip → `resolveBanner`/`resolveToast` (`@indiecrafts/packages-shared-announcement`) →
   `{ banner, toast }`. **Public** (`access-control-allow-origin: *`, no bearer — it is the same
