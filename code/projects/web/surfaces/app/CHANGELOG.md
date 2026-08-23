@@ -14,6 +14,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Security headers + CSP violation reporting — the first `securityHeaders()` call on app.**
+  `next.config.ts` gains an `async headers()` (app shipped none before): the shared
+  `securityHeaders({...})` brick from `@indiecrafts/packages-shared-security`, with a `reporting`
+  option pointing at a new same-origin `/api/csp-report` route. The enforced CSP gains a
+  `Reporting-Endpoints` header, and a `Content-Security-Policy-Report-Only` candidate ships
+  alongside it that drops the blanket `https:` from `img-src` (`reportOnly: { dropSources:
+["https:"] }`), so we learn the real image allowlist before enforcing it. App loads no
+  third-party media, so no extra CSP hosts are declared. The route is a one-line delegate to
+  `handleCspReport` from `@indiecrafts/packages-web-security-reports` (mirrors admin's route),
+  reachable without a session — the proxy matcher already excludes `/api/*`. New
+  `packages-shared-security` + `packages-web-security-reports` deps/transpile. **Why:** app had
+  no security headers at all; this closes that gap and gives us observability into what the CSP
+  would block before tightening it.
 - **Geo-targeted cookie consent.** `[locale]/layout` reads `cf-ipcountry` server-side → the
   `ConsentGate` in `ShellOverlays` shows the opt-in banner only for opt-in regions; opt-out/none
   auto-seed the consent record (honouring GPC) with no blocking banner. Per-country/regulation config

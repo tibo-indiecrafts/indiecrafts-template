@@ -1,10 +1,12 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
+import { securityHeaders } from "@indiecrafts/packages-shared-security";
 
 // A minimal web surface (Next → OpenNext → Worker) with next-intl i18n (locale
 // detection + redirection), compliance (consent + legal link-out), and the version
 // prompt. Copy further presets it needs from `code/projects/web/surfaces/website/next.config.ts`
-// (security headers, image loader) when it grows.
+// (image loader) when it grows.
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
@@ -21,7 +23,21 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-shared-compliance",
     "@indiecrafts/packages-shared-version",
     "@indiecrafts/packages-web-version",
+    "@indiecrafts/packages-shared-security",
+    "@indiecrafts/packages-web-security-reports",
   ],
+  async headers() {
+    // First security headers on app: hardened CSP + reporting. App loads no
+    // third-party media, so no extra hosts. The Report-Only candidate drops the
+    // blanket img-src `https:` to learn the real allowlist.
+    return securityHeaders({
+      env: getCurrentEnvironment(),
+      reporting: {
+        endpoint: "/api/csp-report",
+        reportOnly: { dropSources: ["https:"] },
+      },
+    });
+  },
 };
 
 export default withNextIntl(nextConfig);

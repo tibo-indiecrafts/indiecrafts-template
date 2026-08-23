@@ -1108,6 +1108,9 @@ importers:
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../../../packages/shared/config
+      '@indiecrafts/packages-shared-security':
+        specifier: workspace:*
+        version: link:../../../../packages/shared/security
       '@indiecrafts/packages-shared-ui-tokens':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-tokens
@@ -1126,6 +1129,9 @@ importers:
       '@indiecrafts/packages-web-i18n':
         specifier: workspace:*
         version: link:../../../../packages/web/i18n
+      '@indiecrafts/packages-web-security-reports':
+        specifier: workspace:*
+        version: link:../../../../packages/web/security-reports
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../../../../packages/web/ui
