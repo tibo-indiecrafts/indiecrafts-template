@@ -36,6 +36,11 @@ export const features = defineFeatures({
     /** GDPR data-subject request form (`/data-request` + `/api/data-request`). */
     dataRequest: true,
   },
+  /** Compliance behaviour toggles. logAnonymousConsent: also log consent for
+   *  signed-out visitors (keyed by a consent_id cookie). Off = account-scoped only. */
+  compliance: {
+    logAnonymousConsent: false,
+  },
   /** Per-page FAQ — `<Faq>` + FAQPage JSON-LD + llms block. */
   faq: true,
   /** The public blog surface — all blog routes/feeds/discovery. Gated via `route-gate`. */
