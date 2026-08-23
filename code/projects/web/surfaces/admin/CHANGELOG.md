@@ -14,6 +14,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Security headers + CSP violation reporting — the first `securityHeaders()` call on admin.**
+  `next.config.ts` gains an `async headers()` (admin shipped none before): the shared
+  `securityHeaders({...})` brick from `@indiecrafts/packages-shared-security`, with a `reporting`
+  option pointing at a new same-origin `/api/csp-report` route. The enforced CSP gains a
+  `Reporting-Endpoints` header, and a `Content-Security-Policy-Report-Only` candidate ships
+  alongside it that drops the blanket `https:` from `img-src` (`reportOnly: { dropSources:
+["https:"] }`), so we learn the real image allowlist before enforcing it. Admin loads no
+  third-party media, so no extra CSP hosts are declared. The route is a one-line delegate to
+  `handleCspReport` from `@indiecrafts/packages-web-security-reports` (mirrors the website's
+  route), reachable without a session — the proxy matcher already excludes `/api/*`. **Why:**
+  admin had no security headers at all; this closes that gap and gives us observability into
+  what the CSP would block before tightening it.
 - **Clerk auth + full i18n scaffold — the admin gate (opt-in).** The admin app moves from a single-page
   scaffold to a next-intl surface (parity with website/app: `[locale]` segment,
   `i18n/{routing,request}.ts`, `messages/{en,fr}.json`) behind a Clerk `admin`-role gate. `src/proxy.ts`

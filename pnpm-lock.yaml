@@ -1050,6 +1050,9 @@ importers:
       '@indiecrafts/packages-web-sanity':
         specifier: workspace:*
         version: link:../../../../packages/web/sanity
+      '@indiecrafts/packages-web-security-reports':
+        specifier: workspace:*
+        version: link:../../../../packages/web/security-reports
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../../../../packages/web/ui
