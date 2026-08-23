@@ -21,13 +21,14 @@
 
 ---
 
-### Task 1: `DeleteAccountSection` component (shared package)
+### Task 1: `DeleteAccountSection` component + submit helper (shared package)
 
 **Files:**
-- Create: `code/packages/shared/compliance/src/web/DeleteAccountSection.tsx`
-- Modify: `code/packages/shared/compliance/src/web/index.ts` (add one export line)
-- Create: `code/packages/shared/compliance/src/web/DeleteAccountSection.stories.tsx` + `DeleteAccountSection.md`
-- Modify: `code/projects/web/tools/storybook/.storybook/main.ts` (add `brickStories("@indiecrafts/packages-shared-compliance")` to the `stories` array)
+- Create: `code/packages/shared/compliance/src/web/DeleteAccountSection.tsx` (component + the exported pure `submitAccountErasure` helper)
+- Create: `code/packages/shared/compliance/src/web/DeleteAccountSection.test.ts` (colocated node-vitest test of the helper)
+- Modify: `code/packages/shared/compliance/src/web/index.ts` (add export lines)
+
+**Test approach ruling (RB-TESTHELPER):** the repo tests DOM components via a Storybook `play` fn, but that needs a `brickStories("@indiecrafts/packages-shared-compliance")` line in `code/projects/web/tools/storybook/.storybook/main.ts`, which is PRE-EXISTING DIRTY (37 lines of unrelated storybook WIP) — editing/staging it would sweep foreign hunks. And this package has no component-render test infra (no testing-library/happy-dom). So: extract the non-trivial submit logic into a pure exported helper `submitAccountErasure` and test THAT with a colocated `.test.ts` in the package's existing node vitest (stub `globalThis.fetch` + `getToken`). The JSX render is trivial (a form) — YAGNI on rendering it. The Storybook story + the `main.ts` glob are DEFERRED to a follow-up (add them when the storybook WIP is committed; do NOT touch `main.ts` in this slice).
 
 **Interfaces:**
 - Produces:
@@ -45,82 +46,104 @@ export interface DeleteAccountSectionProps {
   onDeleted: () => void | Promise<void>;
   beforeConfirm?: () => Promise<boolean>; // optional reverification seam (unused this slice)
 }
+export type ErasureSelfResult = "done" | "partial" | "mismatch" | "error";
+export function submitAccountErasure(input: {
+  apiUrl: string; getToken: () => Promise<string | null>; email: string;
+}): Promise<ErasureSelfResult>;
 export function DeleteAccountSection(props: DeleteAccountSectionProps): JSX.Element;
 ```
-- Consumes: the shadcn UI primitives from `@indiecrafts/packages-web-ui` exactly as `code/packages/shared/compliance/src/web/CookieBanner`/`ConsentBanner` import them (Button, Input, Label — read `ConsentBanner.tsx` in this package for the exact import paths + Tailwind/token classes; match them).
+- Consumes: the shadcn UI primitives from `@indiecrafts/packages-web-ui` exactly as `code/packages/shared/compliance/src/web/ConsentBanner.tsx` imports them (Button, Input/Label — read `ConsentBanner.tsx` in this package for the exact import paths + Tailwind/token classes; match them).
 
-- [ ] **Step 1: Write the failing story-test** (the codebase tests DOM components via a Storybook `play` fn, not `.test.tsx` — see `DataRequestForm.stories.tsx`). Create `DeleteAccountSection.stories.tsx`:
+- [ ] **Step 1: Write the failing helper test.** Create `DeleteAccountSection.test.ts`:
 
-```tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { expect, fn, userEvent, within } from "storybook/test";
-import { DeleteAccountSection, type DeleteAccountCopy } from "./DeleteAccountSection";
-import docs from "./DeleteAccountSection.md?raw";
+```ts
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { submitAccountErasure } from "./DeleteAccountSection";
 
-const copy: DeleteAccountCopy = {
-  heading: "Delete your account",
-  body: "This permanently deletes your account and personal data. Your activity log is kept for legal accountability.",
-  emailLabel: "Confirm your email",
-  emailPlaceholder: "you@example.com",
-  confirmButton: "Delete my account",
-  pending: "Deleting…",
-  success: "Your account has been deleted.",
-  partial: "Most data was removed; our team will finish the rest.",
-  error: "Something went wrong. Please try again.",
-  mismatch: "That email does not match your account.",
+const base = {
+  apiUrl: "https://api.example.test",
+  getToken: async () => "tkn",
+  email: "you@example.com",
 };
 
-const meta: Meta<typeof DeleteAccountSection> = {
-  title: "Shared Compliance/DeleteAccountSection",
-  component: DeleteAccountSection,
-  tags: ["autodocs"],
-  parameters: { docs: { description: { component: docs } } },
-  args: {
-    copy,
-    apiUrl: "https://api.example.test",
-    getToken: async () => "stub-token",
-    onDeleted: fn(),
-  },
-};
-export default meta;
-type Story = StoryObj<typeof DeleteAccountSection>;
+function stubFetch(status: number, body: unknown = { ok: true }) {
+  return vi
+    .spyOn(globalThis, "fetch")
+    .mockResolvedValue(new Response(JSON.stringify(body), { status }));
+}
 
-export const Default: Story = {};
+afterEach(() => vi.restoreAllMocks());
 
-// Typing an email + clicking delete calls the worker; a 200 triggers onDeleted.
-export const DeletesOnSuccess: Story = {
-  args: {
-    getToken: async () => "stub-token",
-    onDeleted: fn(),
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    // Stub fetch → 200.
-    const orig = globalThis.fetch;
-    globalThis.fetch = (async () =>
-      new Response(JSON.stringify({ ok: true }), { status: 200 })) as typeof fetch;
-    try {
-      await userEvent.type(canvas.getByLabelText(copy.emailLabel), "you@example.com");
-      await userEvent.click(canvas.getByRole("button", { name: copy.confirmButton }));
-      await expect(args.onDeleted).toHaveBeenCalled();
-    } finally {
-      globalThis.fetch = orig;
-    }
-  },
-};
+describe("submitAccountErasure", () => {
+  it("POSTs to /v1/erasure/self with a bearer token + typed email, 200 → done", async () => {
+    const spy = stubFetch(200);
+    const r = await submitAccountErasure(base);
+    expect(r).toBe("done");
+    const [url, init] = spy.mock.calls[0]!;
+    expect(url).toBe("https://api.example.test/v1/erasure/self");
+    expect((init as RequestInit).method).toBe("POST");
+    expect((init as RequestInit).headers).toMatchObject({
+      authorization: "Bearer tkn",
+    });
+    expect((init as RequestInit).body).toBe(JSON.stringify({ email: "you@example.com" }));
+  });
+  it("207 → partial (still erased)", async () => {
+    stubFetch(207, { ok: true, partial: true, errors: [] });
+    expect(await submitAccountErasure(base)).toBe("partial");
+  });
+  it("400 → mismatch", async () => {
+    stubFetch(400, { error: "invalid" });
+    expect(await submitAccountErasure(base)).toBe("mismatch");
+  });
+  it("401/500 → error", async () => {
+    stubFetch(401, { error: "unauthorized" });
+    expect(await submitAccountErasure(base)).toBe("error");
+  });
+  it("network throw → error", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+    expect(await submitAccountErasure(base)).toBe("error");
+  });
+});
 ```
 
-- [ ] **Step 2: Run it, verify it fails** — `pnpm --filter @indiecrafts/web-tools-storybook test:stories` (or note it fails because the component/story doesn't exist yet). Expected: FAIL (module `./DeleteAccountSection` not found).
+- [ ] **Step 2: Run it, verify it fails** — `pnpm --filter @indiecrafts/packages-shared-compliance test DeleteAccountSection`. Expected: FAIL (module has no `submitAccountErasure`).
 
-- [ ] **Step 3: Implement the component.** Mirror `ConsentBanner.tsx` for UI primitives + token classes. Logic:
+- [ ] **Step 3: Implement the component + helper.** Mirror `ConsentBanner.tsx` for UI primitives + token classes.
 
 ```tsx
 "use client";
 import { useState } from "react";
-// Import Button/Input/Label from @indiecrafts/packages-web-ui — copy the exact
-// import lines + class conventions from ./ConsentBanner in this package.
+// Import Button + the input/label primitives from @indiecrafts/packages-web-ui — copy
+// the exact import lines + class conventions from ./ConsentBanner in this package.
 
-type Status = "idle" | "pending" | "error" | "mismatch" | "done" | "partial";
+export type ErasureSelfResult = "done" | "partial" | "mismatch" | "error";
+
+// Pure, testable: the one authenticated POST to the Slice-A worker route.
+export async function submitAccountErasure(input: {
+  apiUrl: string;
+  getToken: () => Promise<string | null>;
+  email: string;
+}): Promise<ErasureSelfResult> {
+  try {
+    const token = await input.getToken();
+    const res = await fetch(`${input.apiUrl}/v1/erasure/self`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ email: input.email }),
+    });
+    if (res.status === 200) return "done";
+    if (res.status === 207) return "partial"; // still erased; some stores need manual finish
+    if (res.status === 400) return "mismatch"; // typed email did not match the account
+    return "error";
+  } catch {
+    return "error";
+  }
+}
+
+type Status = "idle" | "pending" | ErasureSelfResult;
 
 export function DeleteAccountSection({
   copy, apiUrl, getToken, onDeleted, beforeConfirm,
@@ -133,41 +156,33 @@ export function DeleteAccountSection({
     if (!email.trim() || status === "pending") return;
     if (beforeConfirm && !(await beforeConfirm())) return; // reverification seam
     setStatus("pending");
-    try {
-      const token = await getToken();
-      const res = await fetch(`${apiUrl}/v1/erasure/self`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          ...(token ? { authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ email: email.trim() }),
-      });
-      if (res.status === 200) { setStatus("done"); await onDeleted(); return; }
-      if (res.status === 207) { setStatus("partial"); await onDeleted(); return; }
-      if (res.status === 400) { setStatus("mismatch"); return; } // bad/mismatched email
-      setStatus("error");
-    } catch {
-      setStatus("error");
-    }
+    const result = await submitAccountErasure({ apiUrl, getToken, email: email.trim() });
+    setStatus(result);
+    if (result === "done" || result === "partial") await onDeleted();
   }
 
-  // Render: heading, body, a labelled email input (id wired to <label htmlFor>),
-  // a destructive submit button showing copy.pending while status==="pending",
-  // and a status message region (role="status") showing success/partial/error/mismatch
-  // copy. Match ConsentBanner's container/spacing/token classes. The button text is
-  // copy.confirmButton; disable it while pending.
+  // Render: heading, body, a labelled email input (<label htmlFor> ↔ input id), a
+  // destructive submit button (copy.confirmButton; shows copy.pending + disabled while
+  // status==="pending"), and a role="status" region mapping done→copy.success,
+  // partial→copy.partial, mismatch→copy.mismatch, error→copy.error. Match ConsentBanner's
+  // container/spacing/token classes.
 }
 ```
-Add to `src/web/index.ts`: `export { DeleteAccountSection } from "./DeleteAccountSection";` and `export type { DeleteAccountCopy, DeleteAccountSectionProps } from "./DeleteAccountSection";`. Create `DeleteAccountSection.md` (a short component doc, like `DataRequestForm.md`). Add `brickStories("@indiecrafts/packages-shared-compliance")` to `code/projects/web/tools/storybook/.storybook/main.ts` `stories` array.
+Add to `src/web/index.ts`:
+```ts
+export { DeleteAccountSection, submitAccountErasure } from "./DeleteAccountSection";
+export type { DeleteAccountCopy, DeleteAccountSectionProps, ErasureSelfResult } from "./DeleteAccountSection";
+```
 
-- [ ] **Step 4: Run the story-test + tsc.** `pnpm --filter @indiecrafts/web-tools-storybook test:stories` (the 2 stories pass, incl. `DeletesOnSuccess`) and `pnpm --filter @indiecrafts/packages-shared-compliance tsc` (exit 0). Also `pnpm --filter @indiecrafts/packages-shared-compliance test` stays green.
+- [ ] **Step 4: Run the test + tsc.** `pnpm --filter @indiecrafts/packages-shared-compliance test` (all green incl. the 5 new helper cases) and `pnpm --filter @indiecrafts/packages-shared-compliance tsc` (exit 0).
 
 - [ ] **Step 5: Prettier + commit.**
 ```bash
-git add code/packages/shared/compliance/src/web/DeleteAccountSection.tsx code/packages/shared/compliance/src/web/DeleteAccountSection.stories.tsx code/packages/shared/compliance/src/web/DeleteAccountSection.md code/packages/shared/compliance/src/web/index.ts code/projects/web/tools/storybook/.storybook/main.ts
-git commit --no-verify -m "feat(compliance): shared DeleteAccountSection component"
+git add code/packages/shared/compliance/src/web/DeleteAccountSection.tsx code/packages/shared/compliance/src/web/DeleteAccountSection.test.ts code/packages/shared/compliance/src/web/index.ts
+git commit --no-verify -m "feat(compliance): shared DeleteAccountSection component + submit helper"
 ```
+
+> **Deferred (follow-up, tied to the storybook WIP):** add `DeleteAccountSection.stories.tsx` + `.md` and the `brickStories("@indiecrafts/packages-shared-compliance")` glob to storybook `main.ts` once that file's pre-existing WIP is committed — so the story appears in the gallery + `test:stories`.
 
 ---
 
