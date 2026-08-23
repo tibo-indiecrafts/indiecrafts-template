@@ -28,6 +28,7 @@ import {
 import { handleErasureRequest } from "./erasure/request";
 import { handleErasureConfirm } from "./erasure/confirm";
 import { handleErasureStatus } from "./erasure/status";
+import { handleErasureSelf } from "./erasure/self";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -765,6 +766,12 @@ export default {
     // in erasure/confirm.ts — this stays a thin dispatch.
     if (url.pathname === "/v1/erasure/confirm")
       return handleErasureConfirm(request, env, ctx);
+
+    // ── GDPR self-service erasure — POST /v1/erasure/self (AUTHENTICATED; Clerk JWT +
+    // typed-email gate) ── A signed-in user erases their own data with no email
+    // round-trip. Verification + engine assembly live in erasure/self.ts.
+    if (url.pathname === "/v1/erasure/self")
+      return handleErasureSelf(request, env, ctx);
 
     // ── GDPR erasure status — GET /v1/erasure/status/:token (PUBLIC; no PII) ──
     // The subject polls their request state by the plaintext token from their email.

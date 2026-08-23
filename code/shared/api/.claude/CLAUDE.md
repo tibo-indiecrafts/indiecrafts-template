@@ -14,7 +14,9 @@ adapters — D1 (real) + Clerk/Sanity/orders (dependency-injected) — implement
 `@indiecrafts/packages-shared-compliance` `ErasureAdapter`, run by its `runErasure`/`runExport`
 orchestrator. The `/v1/erasure` routes are live: `GET/POST /v1/erasure/request` (Turnstile-gated,
 anti-enumeration), `GET/POST /v1/erasure/confirm` (token + typed-email fingerprint + TTL + attempt
-cap → runs the engine live), and `GET /v1/erasure/status/:token` (public, no-PII status).
+cap → runs the engine live), `GET /v1/erasure/status/:token` (public, no-PII status), and
+`POST /v1/erasure/self` (authenticated self-service; Clerk-JWT + typed-email gate → runs the
+engine directly, no email round-trip — the signed-in surfaces' account-delete control calls it).
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.

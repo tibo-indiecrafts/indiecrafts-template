@@ -14,6 +14,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- feat(compliance): authenticated self-service erasure — `POST /v1/erasure/self` verifies the Clerk session JWT, requires a matching typed email, then runs the erasure engine directly (no email round-trip). The signed-in surfaces' account-delete control calls it.
 - feat(compliance): live erasure routes — `GET/POST /v1/erasure/request` (Turnstile-gated, anti-enumeration), `GET/POST /v1/erasure/confirm` (token hash + typed-email fingerprint + TTL + attempt cap, runs the Phase-3 engine live), and `GET /v1/erasure/status/:token` (public, no-PII status poll).
 - feat(compliance): erasure_requests D1 table (migration 0004) — the erasure request lifecycle + single-use confirmation token, keyed by a SHA-256 token hash (`sha256Hex`).
 - fix(compliance): D1 erasure adapter — `security_events` delete is now the exact severity complement of the pseudonymised set (no off-list severity value is silently retained); `resolve()` falls back to a plaintext email match when `email_fingerprint` is null.

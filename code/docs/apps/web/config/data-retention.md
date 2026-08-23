@@ -90,7 +90,7 @@ confirming. `runExport` (Art. 15/20) reads every store the same way, keyed by em
 
 ## Live erasure flow
 
-Three routes on the `api` worker (`code/shared/api/src/erasure/`) drive the engine live:
+Four routes on the `api` worker (`code/shared/api/src/erasure/`) drive the engine live:
 
 - `GET/POST /v1/erasure/request` — the subject submits their email; a matched subject
   gets an emailed confirmation token (anti-enumeration: the response never reveals a
@@ -99,6 +99,9 @@ Three routes on the `api` worker (`code/shared/api/src/erasure/`) drive the engi
   email again; a valid token + matching email runs `runErasure` for real.
 - `GET /v1/erasure/status/:token` — a public, no-PII poll of the request's lifecycle
   state (`status`, `requested_at`, `due_at`, `completed_at`) by the same token.
+- `POST /v1/erasure/self` — the authenticated self-service path. A signed-in user
+  erases from their profile's auth section: the Clerk session JWT proves identity, a
+  typed email confirms the intent, and the engine runs directly (no email round-trip).
 
 ## Privacy-policy disclosure — operator checklist
 
