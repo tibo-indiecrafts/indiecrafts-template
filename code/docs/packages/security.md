@@ -13,9 +13,10 @@ Extracted from `next.config.ts` so a second app reuses the hardening and passes 
 
 | Import                                                                                                                        | What it is                                                                                                                                                                                                                                                                       |
 | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `buildCsp(env, csp?)` (`./csp`)                                                                                               | The CSP string. Hardened defaults + `connect-src` from `getCSPConnectSources(env)`. App extras via `CspHosts` (`frameSrc`, `mediaSrc`, `embedHosts`, `googleAnalytics`, …).                                                                                                      |
-| `securityHeaders(opts)` (`./headers`)                                                                                         | The full Next `headers()` array — the security set + CSP (+ HSTS/COOP in prod) + immutable `Cache-Control` on `immutablePaths`.                                                                                                                                                  |
+| `buildCsp(env, csp?, reporting?)` / `buildReportOnlyCsp(env, csp?, reporting)` (`./csp`)                                      | The CSP string. Hardened defaults + `connect-src` from `getCSPConnectSources(env)`. App extras via `CspHosts` (`frameSrc`, `mediaSrc`, `embedHosts`, `googleAnalytics`, …). `reporting` (`CspReporting`) appends `report-to`/`report-uri`; `buildReportOnlyCsp` builds the stricter `Content-Security-Policy-Report-Only` candidate, `null` if `reporting.reportOnly` is unset — see [CSP violation reporting](#csp-violation-reporting).                                                                                                    |
+| `securityHeaders(opts)` (`./headers`)                                                                                         | The full Next `headers()` array — the security set + CSP (+ HSTS/COOP in prod) + immutable `Cache-Control` on `immutablePaths`. `opts.reporting` adds the `Reporting-Endpoints` header + the Report-Only candidate.                                                             |
 | `imageDefaults` / `imageRemotePatterns` (`./images`)                                                                          | The Next image allowlist (`images.unsplash.com` + `cdn.sanity.io`) + formats + 1-year TTL. Spread into `images`.                                                                                                                                                                 |
+| `normalizeCspReports` / `sanitizeCspReport` / `collapseRoute` / `isExtensionNoise` (`./csp-report`)                           | Pure, framework-free CSP report parsing — collapses the two browser report shapes, drops browser-extension noise, collapses dynamic route segments (`/orders/:id`), redacts snippets. Consumed by the route glue in [`security-reports`](./security-reports); see there for the full pipeline. |
 | `isValidIpAddress` / `sanitizeIpAddress` / `extractIpFromHeadersList` (`./ip`)                                                | Validate + sanitize a client IP (thorough IPv4/IPv6) before it is trusted. `withGuard`'s `clientIp` now runs the trusted `cf-connecting-ip` / first `x-forwarded-for` hop through `sanitizeIpAddress`, so a spoofed header can't poison the rate-limit key. Zero-dep, Edge-safe. |
 | `encrypt` / `decrypt` / `encryptObject` / `decryptObject` / `hashIpAddress` / `verifyIpHash` / `isEncryptedData` (`./crypto`) | AES-256-GCM (with integrity tag) + salted SHA-256, on **Web Crypto** (`crypto.subtle`) — zero-dep, runs on Node 22 **and** Workers, all async. The secret/salt is injected by the caller (no keys in the brick). For at-rest PII + GDPR IP-hashing.                              |
 
@@ -54,6 +55,21 @@ const nextConfig = {
 strict-origin-when-cross-origin` · `Permissions-Policy: camera=(), microphone=(), geolocation=()` ·
 `Content-Security-Policy` · `Cross-Origin-Opener-Policy` · **`Strict-Transport-Security`
 (production only)**.
+
+## CSP violation reporting
+
+Pass `reporting: { endpoint, reportOnly? }` (`CspReporting`, `./csp`) to `securityHeaders` or
+`buildCsp` to turn on browser CSP reporting. It adds `Reporting-Endpoints` + `report-to`/`report-uri`
+to the enforced CSP. Add `reportOnly: { dropSources?, dropUnsafeEval? }` and `buildReportOnlyCsp`
+also emits a `Content-Security-Policy-Report-Only` header — the enforced policy minus
+`dropSources` (and `unsafe-eval`, dropped by default) — so a stricter candidate can be tried without
+blocking anything. See [Security headers](../apps/web/seo/security-headers) for the full
+`next.config.ts` example and the rollout story.
+
+The route side — parsing what the browser POSTs, sanitizing it, and forwarding it on — is the
+sibling [`security-reports`](./security-reports) brick; the pure parsing it calls
+(`normalizeCspReports`, `sanitizeCspReport`, `collapseRoute`, `isExtensionNoise`) lives here, in
+`./csp-report`.
 
 ## Hardening — and why it's Sanity-Studio-safe
 
