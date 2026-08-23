@@ -1,5 +1,5 @@
 import type { Environment } from "@indiecrafts/packages-shared-config";
-import { buildCsp, type CspHosts } from "./csp";
+import { buildCsp, buildReportOnlyCsp, type CspHosts, type CspReporting } from "./csp";
 
 /** A Next `headers()` rule (kept as a plain shape — the brick imports no Next types). */
 export type HeaderRule = {
@@ -30,6 +30,12 @@ export type SecurityHeadersOptions = {
    * **without** breaking OAuth/share popups (the Sanity Studio login). `false` → omit.
    */
   coop?: "same-origin" | "same-origin-allow-popups" | "unsafe-none" | false;
+  /**
+   * CSP violation reporting. Sets `Reporting-Endpoints` + `report-to`/`report-uri`
+   * on the enforced policy, and (when `reportOnly` is set) a stricter
+   * `Content-Security-Policy-Report-Only` candidate. Off by default.
+   */
+  reporting?: CspReporting;
 };
 
 const DEFAULT_PERMISSIONS = "camera=(), microphone=(), geolocation=()";
@@ -57,14 +63,27 @@ export function securityHeaders({
   permissionsPolicy = DEFAULT_PERMISSIONS,
   hsts = true,
   coop = "same-origin-allow-popups",
+  reporting,
 }: SecurityHeadersOptions): HeaderRule[] {
   const headers: { key: string; value: string }[] = [
     { key: "X-Content-Type-Options", value: "nosniff" },
     { key: "X-Frame-Options", value: "DENY" },
     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
     { key: "Permissions-Policy", value: permissionsPolicy },
-    { key: "Content-Security-Policy", value: buildCsp(env, csp) },
+    { key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) },
   ];
+  if (reporting) {
+    headers.push({
+      key: "Reporting-Endpoints",
+      value: `csp-endpoint="${reporting.endpoint}"`,
+    });
+    const reportOnly = buildReportOnlyCsp(env, csp, reporting);
+    if (reportOnly)
+      headers.push({
+        key: "Content-Security-Policy-Report-Only",
+        value: reportOnly,
+      });
+  }
   if (coop) headers.push({ key: "Cross-Origin-Opener-Policy", value: coop });
 
   const hstsVal = env === "production" ? hstsValue(hsts) : null;

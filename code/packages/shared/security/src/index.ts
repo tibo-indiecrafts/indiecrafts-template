@@ -1,4 +1,9 @@
-export { buildCsp, type CspHosts } from "./csp";
+export {
+  buildCsp,
+  buildReportOnlyCsp,
+  type CspHosts,
+  type CspReporting,
+} from "./csp";
 export {
   securityHeaders,
   type SecurityHeadersOptions,

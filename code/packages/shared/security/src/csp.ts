@@ -35,26 +35,83 @@ const GA_CONNECT = [
 const src = (base: string[], ...extra: (string[] | undefined)[]): string =>
   [...base, ...extra.flatMap((e) => e ?? [])].filter(Boolean).join(" ");
 
-export function buildCsp(env: Environment, csp: CspHosts = {}): string {
+export type CspReporting = {
+  /** Same-origin path the browser POSTs violations to (report-to + report-uri). */
+  endpoint: string;
+  /** Also emit a stricter Content-Security-Policy-Report-Only candidate. */
+  reportOnly?: {
+    /** Exact source tokens to remove from the candidate (test dropping them). */
+    dropSources?: string[];
+    /** Remove 'unsafe-eval' from the candidate. Default true. */
+    dropUnsafeEval?: boolean;
+  };
+};
+
+function cspDirectives(
+  env: Environment,
+  csp: CspHosts,
+  opts: { dropSources?: string[]; dropUnsafeEval?: boolean } = {},
+): string[] {
   const dev = env === "development" || env === "test";
   const embed = csp.embedHosts ?? [];
   const ga = csp.googleAnalytics ?? false;
+  const allowEval = dev && !opts.dropUnsafeEval;
+  const drop = new Set(opts.dropSources ?? []);
+  // Filter dropped tokens AFTER composing each source list.
+  const keep = (value: string): string =>
+    value
+      .split(" ")
+      .filter((token, i) => i === 0 || !drop.has(token))
+      .join(" ");
 
   const directives = [
     `default-src 'self'`,
-    `script-src ${src(["'self'", "'unsafe-inline'"], dev ? ["'unsafe-eval'"] : undefined, ga ? GA_SCRIPT : undefined, TURNSTILE, csp.scriptSrc, embed)}`,
+    keep(
+      `script-src ${src(["'self'", "'unsafe-inline'"], allowEval ? ["'unsafe-eval'"] : undefined, ga ? GA_SCRIPT : undefined, TURNSTILE, csp.scriptSrc, embed)}`,
+    ),
     `style-src 'self' 'unsafe-inline'`,
-    `img-src ${src(["'self'", "data:", "blob:", "https:"], csp.imgSrc)}`,
-    `media-src ${src(["'self'", "blob:"], csp.mediaSrc)}`,
-    `font-src ${src(["'self'", "data:"], csp.fontSrc)}`,
-    `connect-src ${src([...getCSPConnectSources(env)], ga ? GA_CONNECT : undefined, csp.connectSrc, embed)}`,
-    `frame-src ${src(["'self'"], TURNSTILE, csp.frameSrc, embed)}`,
+    keep(`img-src ${src(["'self'", "data:", "blob:", "https:"], csp.imgSrc)}`),
+    keep(`media-src ${src(["'self'", "blob:"], csp.mediaSrc)}`),
+    keep(`font-src ${src(["'self'", "data:"], csp.fontSrc)}`),
+    keep(
+      `connect-src ${src([...getCSPConnectSources(env)], ga ? GA_CONNECT : undefined, csp.connectSrc, embed)}`,
+    ),
+    keep(`frame-src ${src(["'self'"], TURNSTILE, csp.frameSrc, embed)}`),
     `object-src 'none'`,
     `frame-ancestors 'none'`,
     `base-uri 'self'`,
     `form-action ${src(["'self'"], embed)}`,
   ];
-  // Auto-upgrade any http: subresource in production (never on localhost/dev).
   if (env === "production") directives.push("upgrade-insecure-requests");
-  return directives.join("; ");
+  return directives;
+}
+
+function withReporting(directives: string[], reporting: CspReporting): string[] {
+  return [
+    ...directives,
+    `report-to csp-endpoint`,
+    `report-uri ${reporting.endpoint}`,
+  ];
+}
+
+export function buildCsp(
+  env: Environment,
+  csp: CspHosts = {},
+  reporting?: CspReporting,
+): string {
+  const directives = cspDirectives(env, csp);
+  return (reporting ? withReporting(directives, reporting) : directives).join("; ");
+}
+
+export function buildReportOnlyCsp(
+  env: Environment,
+  csp: CspHosts = {},
+  reporting: CspReporting,
+): string | null {
+  if (!reporting.reportOnly) return null;
+  const directives = cspDirectives(env, csp, {
+    dropSources: reporting.reportOnly.dropSources,
+    dropUnsafeEval: reporting.reportOnly.dropUnsafeEval ?? true,
+  });
+  return withReporting(directives, reporting).join("; ");
 }
