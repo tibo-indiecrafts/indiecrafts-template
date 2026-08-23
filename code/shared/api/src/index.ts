@@ -26,6 +26,7 @@ import {
   type RawToast,
 } from "@indiecrafts/packages-shared-announcement";
 import { handleErasureRequest } from "./erasure/request";
+import { handleErasureConfirm } from "./erasure/confirm";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -108,7 +109,7 @@ function corsHeaders(origin: string | null): Record<string, string> {
 }
 
 /** Constant-time compare — no early return, so timing doesn't leak the mismatch. */
-function safeEqual(a: string, b: string): boolean {
+export function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
   for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
@@ -756,6 +757,13 @@ export default {
     // request-form HTML live in erasure/request.ts — this stays a thin dispatch.
     if (url.pathname === "/v1/erasure/request")
       return handleErasureRequest(request, env, ctx);
+
+    // ── GDPR erasure confirm — GET/POST /v1/erasure/confirm (PUBLIC; token + typed
+    // email + TTL + attempt cap) ── GET renders the confirm form (no mutation); POST
+    // verifies and runs the live erasure engine. Verification + engine assembly live
+    // in erasure/confirm.ts — this stays a thin dispatch.
+    if (url.pathname === "/v1/erasure/confirm")
+      return handleErasureConfirm(request, env, ctx);
 
     logger.info("api request", {
       method: request.method,

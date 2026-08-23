@@ -1,0 +1,262 @@
+// GDPR erasure confirmation — GET renders the confirm form (read-only, no mutation);
+// POST verifies the token + typed email + TTL + attempt cap, then runs the Phase-3
+// erasure engine LIVE against real Clerk/Sanity/D1. Single-use: only a row in status
+// "email_sent" can be confirmed. The engine never throws — a per-adapter failure lands
+// in `receipt.errors`, which this route turns into a distinguishable partial-failure
+// response instead of a blind "ok".
+import { logger } from "@indiecrafts/packages-shared-logger";
+import {
+  fingerprintEmail,
+  sha256Hex,
+} from "@indiecrafts/packages-shared-security/crypto";
+import {
+  runErasure,
+  type ErasureAdapter,
+} from "@indiecrafts/packages-shared-compliance/shared";
+import { type Env, PUBLIC_CORS_POST, safeEqual } from "../index";
+import { createD1ErasureAdapter } from "./d1";
+import { createClerkErasureAdapter } from "./clerk";
+import { createSanityErasureAdapter } from "./sanity";
+import { createOrdersErasureAdapter } from "./orders";
+import { createRealClerkClient } from "./clerk-client";
+import { createRealSanityClient } from "./sanity-client";
+import { sendErasureCompleteEmail } from "./email";
+
+const BODY_MAX = 4000;
+const MAX_ATTEMPTS = 5;
+
+interface ErasureRequestRow {
+  id: number;
+  status: string;
+  token_expires_at: string;
+  attempts: number;
+  user_id: string | null;
+  email_fingerprint: string;
+}
+
+function json(
+  body: unknown,
+  status: number,
+  cors: Record<string, string>,
+): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json", ...cors },
+  });
+}
+
+/** Escape untrusted text before interpolating it into the confirm form's HTML. */
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+// Minimal, self-contained confirm form — a typed-email input + the hidden token,
+// POSTing back to this same route. GET never mutates (defeats link/prefetch scanners,
+// mirrors the blog moderation route).
+function confirmFormHtml(token: string): string {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Confirm data erasure</title>
+  </head>
+  <body>
+    <h1>Confirm data erasure</h1>
+    <p>Type your account email to confirm permanent erasure of your data.</p>
+    <form method="post" action="/v1/erasure/confirm">
+      <input type="hidden" name="token" value="${escapeHtml(token)}" />
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required />
+      <button type="submit">Confirm erasure</button>
+    </form>
+  </body>
+</html>`;
+}
+
+/** The real four adapters, assembled from `env` secrets. Injectable for tests. */
+function defaultAdapters(env: Env): ErasureAdapter[] {
+  return [
+    createD1ErasureAdapter(env.DB!, env.GDPR_FINGERPRINT_SALT!),
+    createClerkErasureAdapter(createRealClerkClient(env.CLERK_SECRET_KEY!)),
+    createSanityErasureAdapter(
+      createRealSanityClient({
+        projectId: env.SANITY_PROJECT_ID!,
+        dataset: env.SANITY_DATASET!,
+        apiVersion: env.SANITY_API_VERSION ?? "2025-01-01",
+        writeToken: env.SANITY_API_WRITE_TOKEN!,
+        readToken: env.SANITY_API_READ_TOKEN,
+      }),
+      env.GDPR_FINGERPRINT_SALT!,
+    ),
+    createOrdersErasureAdapter(),
+  ];
+}
+
+/** Reads `{ token, email }` from a JSON or form-encoded POST body. */
+async function parseBody(
+  request: Request,
+): Promise<{ token: string; email: string } | null> {
+  try {
+    if (
+      (request.headers.get("content-type") ?? "").includes("application/json")
+    ) {
+      const body = (await request.json()) as {
+        token?: unknown;
+        email?: unknown;
+      };
+      return {
+        token: String(body.token ?? ""),
+        email: String(body.email ?? "").trim(),
+      };
+    }
+    const form = await request.formData();
+    return {
+      token: String(form.get("token") ?? ""),
+      email: String(form.get("email") ?? "").trim(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** A short, factual summary of what stays and why — sent in the completion email. */
+function retainedSummary(hadErrors: boolean): string {
+  const base =
+    "Your account activity log is retained for legal accountability; everything else has been removed.";
+  if (!hadErrors) return base;
+  return `${base} Some records could not be removed automatically — our team has been notified and will finish this by hand.`;
+}
+
+export async function handleErasureConfirm(
+  request: Request,
+  env: Env,
+  ctx?: ExecutionContext,
+  // Injectable for tests (mocked Clerk/Sanity, real D1) — production never passes this.
+  buildAdapters: (env: Env) => ErasureAdapter[] = defaultAdapters,
+): Promise<Response> {
+  if (request.method === "OPTIONS")
+    return new Response(null, { status: 204, headers: PUBLIC_CORS_POST });
+
+  if (request.method === "GET") {
+    const token = new URL(request.url).searchParams.get("token") ?? "";
+    return new Response(confirmFormHtml(token), {
+      status: 200,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        ...PUBLIC_CORS_POST,
+      },
+    });
+  }
+
+  if (request.method !== "POST")
+    return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_POST);
+
+  if (!env.DB || !env.GDPR_FINGERPRINT_SALT)
+    return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
+
+  if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
+    return json({ error: "too_large" }, 413, PUBLIC_CORS_POST);
+
+  const parsed = await parseBody(request);
+  if (!parsed || !parsed.token || !parsed.email)
+    return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+  const { token, email } = parsed;
+
+  const row = await env.DB.prepare(
+    "SELECT * FROM erasure_requests WHERE token_hash = ?",
+  )
+    .bind(await sha256Hex(token))
+    .first<ErasureRequestRow>();
+  if (!row) return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+
+  // Single-use: a completed/cancelled/expired row can't be reused.
+  if (row.status !== "email_sent")
+    return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+
+  if (new Date().toISOString() > row.token_expires_at) {
+    await env.DB.prepare(
+      "UPDATE erasure_requests SET status = 'expired' WHERE id = ?",
+    )
+      .bind(row.id)
+      .run();
+    return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+  }
+
+  if (row.attempts >= MAX_ATTEMPTS)
+    return json({ error: "too_many_attempts" }, 429, PUBLIC_CORS_POST);
+
+  // Every attempt that reaches the email check is counted, win or lose — bounds
+  // brute-forcing the typed email against the stored fingerprint.
+  await env.DB.prepare(
+    "UPDATE erasure_requests SET attempts = attempts + 1 WHERE id = ?",
+  )
+    .bind(row.id)
+    .run();
+
+  const fp = await fingerprintEmail(email, env.GDPR_FINGERPRINT_SALT);
+  if (!safeEqual(fp, row.email_fingerprint))
+    return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+
+  const adapters = buildAdapters(env);
+  const ts = new Date().toISOString();
+  // A dry-run preview first (mutates nothing), then the live pass that actually erases.
+  await runErasure(adapters, email, {
+    mode: "erase",
+    dryRun: true,
+    ts,
+    fingerprint: row.email_fingerprint,
+  });
+  const receipt = await runErasure(adapters, email, {
+    mode: "erase",
+    dryRun: false,
+    ts,
+    fingerprint: row.email_fingerprint,
+  });
+
+  const hadErrors = receipt.errors.length > 0;
+  await env.DB.prepare(
+    "UPDATE erasure_requests SET status = ?, confirmed_at = ?, completed_at = ?, result = ? WHERE id = ?",
+  )
+    .bind(
+      hadErrors ? "confirmed" : "completed",
+      ts,
+      hadErrors ? null : ts,
+      JSON.stringify(receipt),
+      row.id,
+    )
+    .run();
+
+  const country = request.headers.get("cf-ipcountry") ?? null;
+  const subjectId = row.user_id ?? row.email_fingerprint;
+  await env.DB.prepare(
+    "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, NULL)",
+  )
+    .bind(ts, "erasure.completed", subjectId, subjectId, country)
+    .run();
+
+  // Best-effort: a failed completion email must never undo the erasure already committed.
+  try {
+    await sendErasureCompleteEmail(env, {
+      to: email,
+      retained: retainedSummary(hadErrors),
+    });
+  } catch (error) {
+    logger.error("erasure complete email failed", {
+      name: (error as Error)?.name,
+    });
+  }
+
+  if (hadErrors)
+    return json(
+      { ok: true, partial: true, errors: receipt.errors },
+      207,
+      PUBLIC_CORS_POST,
+    );
+  return json({ ok: true }, 200, PUBLIC_CORS_POST);
+}
