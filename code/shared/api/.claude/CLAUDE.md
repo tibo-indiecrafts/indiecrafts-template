@@ -16,7 +16,7 @@ orchestrator. The `/v1/erasure` routes are live: `GET/POST /v1/erasure/request` 
 anti-enumeration), `GET/POST /v1/erasure/confirm` (token + typed-email fingerprint + TTL + attempt
 cap → runs the engine live), `GET /v1/erasure/status/:token` (public, no-PII status), and
 `POST /v1/erasure/self` (authenticated self-service; Clerk-JWT + typed-email gate → runs the
-engine directly, no email round-trip — the signed-in surfaces' account-delete control calls it).
+engine directly, no email round-trip — the signed-in surfaces' account-delete control will call it).
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.
