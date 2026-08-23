@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./csp": "./src/csp.ts",
+    "./csp-report": "./src/csp-report.ts",
     "./headers": "./src/headers.ts",
     "./images": "./src/images.ts",
     "./guard": "./src/guard.ts",
