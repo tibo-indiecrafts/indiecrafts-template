@@ -36,6 +36,8 @@ const ROUTE_LABELS: Record<string, string> = {
   author: "Auteurs",
   category: "Catégories",
   tag: "Tags",
+  erasure: "Effacer mes données",
+  account: "Mon compte",
 };
 
 // Only **activated** routes are offered — a page whose feature flag is off
