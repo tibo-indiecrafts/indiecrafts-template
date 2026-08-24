@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { pages, isPageVisible, type Locale } from "@/config";
+import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import {
@@ -15,7 +16,12 @@ type Props = {
 
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params;
-  return buildMetadata({ page: pages.erasure, locale });
+  // Canonicalize to /erasure/confirm — not the parent /erasure the `pages` entry names.
+  return buildMetadata({
+    page: pages.erasure,
+    locale,
+    pathname: localizedPathname("/erasure/confirm", locale),
+  });
 }
 
 /**
