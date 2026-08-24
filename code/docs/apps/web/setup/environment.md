@@ -36,7 +36,7 @@ pnpm docs:install && pnpm docs  # VitePress docs → http://localhost:3002
 
 All live in `.env.example`. The template **boots** with none set (marketing pages render), but the
 three Sanity vars (`NEXT_PUBLIC_SANITY_PROJECT_ID` · `_DATASET` · `_API_VERSION`) are **required for
-any Sanity feature** — the blog, the Studio, `pnpm seed`, and the e2e journeys — and `pnpm doctor:env`
+any Sanity feature** — the blog, the Studio, `pnpm seed`, and the e2e journeys — and `pnpm doctor:web:website:env`
 fails fast if they're missing. Copy `.env.example` to `.env.local` and fill what your enabled features
 need. **Never commit `.env*`** (only `.env.example`); the pre-commit gate and `.gitignore` guard it. Never put a server-only token under a `NEXT_PUBLIC_` prefix — that ships it to the browser.
 

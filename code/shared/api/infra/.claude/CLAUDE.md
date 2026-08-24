@@ -19,9 +19,9 @@ the per-env variables, and the edge resources directly (no shared module).
 ## Run (from the repo root)
 
 ```bash
-pnpm infra:api:init            # once
-pnpm infra:api:plan:<env>      # review the diff
-pnpm infra:api:apply:<env>     # provision
+pnpm infra:shared:api:init            # once
+pnpm infra:shared:api:plan:<env>      # review the diff
+pnpm infra:shared:api:apply:<env>     # provision
 ```
 
 ## Rules

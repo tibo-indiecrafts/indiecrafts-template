@@ -30,7 +30,7 @@ The app deploys to Cloudflare Workers via OpenNext (dev / staging / prod). The *
 
 > **Reusing the template? Rename first.** Run `pnpm project:rename <slug>` before any staging/prod deploy — it sets `DEFAULT_SITE_PREFIX` + the `<prefix>-<env>-web-website*` Worker/R2 names, and the deploy is **blocked** until you do (so one client can't overwrite another under a shared Cloudflare account). Give this client its **own** Resend key + (if on a shared Sanity project) its **own** dataset, not `production`.
 
-**Turn on rate-limiting + CAPTCHA.** Run `pnpm setup:kv` once — it creates a `RATE_LIMIT_KV` namespace
+**Turn on rate-limiting + CAPTCHA.** Run `pnpm setup:web:website:kv` once — it creates a `RATE_LIMIT_KV` namespace
 **per env** and activates the in-app form rate limiter (it fails **open** until you do). To also enable
 Turnstile CAPTCHA on the public forms, set **both** `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET`
 (set only one and submissions are rejected) — see the Turnstile block in [`environment.md`](./environment.md).
@@ -53,7 +53,7 @@ Uncomment the `[[env.prod.routes]]` block in `code/projects/web/surfaces/website
 
 ### Preview deploys
 
-The `dev` + `staging` Workers publish to `*.workers.dev` (robots Disallow — non-prod). Trigger one from the **Deploy (Cloudflare)** GitHub Action ("Run workflow" → env) or `pnpm deploy:website:staging`.
+The `dev` + `staging` Workers publish to `*.workers.dev` (robots Disallow — non-prod). Trigger one from the **Deploy (Cloudflare)** GitHub Action ("Run workflow" → env) or `pnpm deploy:web:website:staging`.
 
 ---
 

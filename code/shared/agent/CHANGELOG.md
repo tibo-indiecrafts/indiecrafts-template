@@ -20,6 +20,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   guard** branches on `Origin`: browser callers (allowlisted `Origin` + a Turnstile token) vs native
   callers (bearer `APP_API_TOKEN`), both rate-limited (`AGENT_RATELIMIT`). `ANTHROPIC_API_KEY` +
   `APP_API_TOKEN` + `TURNSTILE_SECRET` live here as its single home. Registered in `scripts/lib/apps.mjs`
-  (slug `agent`); deploy `pnpm deploy:agent:<env>`. **Why:** the agent now deploys, scales, and rate-limits
+  (slug `agent`); deploy `pnpm deploy:shared:agent:<env>`. **Why:** the agent now deploys, scales, and rate-limits
   independently of the website + api, with one auth surface. Turnstile is re-implemented inline because the
   brick's `verifyTurnstile` (and `withGuard`) are `server-only` and break the bare-Worker esbuild build.

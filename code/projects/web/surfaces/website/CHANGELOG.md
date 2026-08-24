@@ -156,7 +156,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 - **Contact message CSV export — `pnpm contact:export`.** `scripts/contact-export.mjs` writes
   `backups/contact/contact-<timestamp>.csv` (read-only, `SANITY_API_READ_TOKEN`), matching
-  `waitlist:export` / `subscribers:export` / `comments:export`. _Why:_ every stored entity now has the
+  `waitlist:export` / `export:web:website:subscribers` / `comments:export`. _Why:_ every stored entity now has the
   same export escape hatch.
 
 ### Changed
@@ -196,7 +196,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   are server-only, redirects/tokens are HMAC-signed), two hardening changes landed. (1) The one-click
   email **`/api/comments/moderate`** POST — the sole mutating route with no app-layer throttle — now
   calls `rateLimit` (20/600s, defence-in-depth on its single-use token; `clientIp` was exported from
-  `@indiecrafts/security/guard` to share the trusted IP derivation). (2) A new **`pnpm verify:api-guards`**
+  `@indiecrafts/security/guard` to share the trusted IP derivation). (2) A new **`pnpm check:api-guards`**
   (`code/shared/scripts/checks/api-guards.mjs`, in `verify` + CI) fails if any public **mutating** route
   ships without `withGuard` or an allowlisted reason — so "all API safe" holds without a manual re-audit.
   _Why: the surface was safe but unenforced; a future POST could regress it silently._
@@ -469,7 +469,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   now wired end-to-end** — a shared `TurnstileWidget` (`@indiecrafts/ui-components/web/form`) renders on
   all three forms when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set and sends `cf-turnstile-response`, so setting
   the key pair now turns on real CAPTCHA instead of 403-ing every submit (the old configured-but-not-wired
-  trap). **(2) The in-app rate limiter is activatable per deploy** — `pnpm setup:kv` creates a
+  trap). **(2) The in-app rate limiter is activatable per deploy** — `pnpm setup:web:website:kv` creates a
   **per-env** `RATE_LIMIT_KV` namespace (dev/staging/prod, like the R2 buckets — a staging load-test can't
   burn prod's budget) and binds it in `wrangler.toml` (it fell open by default because the binding was
   commented out); the CF WAF rule stays the separate edge layer. **Bounds:** `language` is now allowlisted to `isLocale`, tag strings capped
@@ -479,7 +479,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   a body-size cap; `/api/i18n/translated-slug` gained a CDN cache header (read-amplification). A skew-safe
   submit-timing heuristic (`startedAt`) drops near-instant bot posts. Verified: `tsc` + `lint` + new
   validator tests. Doc: [`setup/deployment`](../../../../docs/apps/web/setup/deployment.md) § one-time setup
-  (the `pnpm setup:kv` step) + the Turnstile block in `.env.example`.
+  (the `pnpm setup:web:website:kv` step) + the Turnstile block in `.env.example`.
 
 ### Added
 
@@ -641,7 +641,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   - prints the R2 buckets to create; backups (`backup-common`) follow the slug. **A `staging`/`prod`
     deploy + `secrets:sync` are now blocked** while the names are still the template default
     (`assertRenamed` in `scripts/lib/project.mjs`; `ALLOW_DEFAULT_SLUG=true` lets the template's own
-    indiecrafts.dev deploy through). `doctor:env` prints a **site-identity** block + warns on prefix/deploy
+    indiecrafts.dev deploy through). `doctor:web:website:env` prints a **site-identity** block + warns on prefix/deploy
     drift or a shared-project `production` dataset. **Fail-loud:** an empty `siteName` in production now
     `logger.error`s (once/request, via `getSiteSettings`) instead of silently rendering the template brand.
     `.env.example` reworded (Resend = one shared account per key → per-client key for isolation). Docs:
@@ -699,14 +699,14 @@ config`. **Note:** HSTS is sticky — it only ships in prod over HTTPS. Doc:
   the `prune` logic is unit-tested). A nightly `.github/workflows/backup.yml` (cron + manual dispatch)
   dumps → R2; rotate the remote copies with an R2 bucket lifecycle rule. **Fixes** the previously
   **untracked `content-backups/`** — Sanity dumps + subscriber CSVs (with emails) were git-committable;
-  `**/backups/` + `content-backups/` are now gitignored. Restore: Sanity → `content:import`; D1 →
+  `**/backups/` + `content-backups/` are now gitignored. Restore: Sanity → `db:restore:content`; D1 →
   Time Travel / `wrangler d1 execute --file`. Docs: `setup/backups.md`.
 - **Newsletter double opt-in + external-embed CSP knob + subscriber export.** New app surfaces for
   the newsletter emails: a `GET /api/newsletter/confirm` route (validates the one-time token → flips
   the subscriber to `confirmed` → redirects home with `?newsletter=confirmed|invalid`), an
   `EMBED_HOSTS` array in `next.config.ts` (empty by default; concatenated into `form-action`,
   `frame-src`, `script-src`, `connect-src` so an editor-pasted external newsletter form in a
-  `custom-html` block can actually submit past the CSP), and a `pnpm subscribers:export` script →
+  `custom-html` block can actually submit past the CSP), and a `pnpm export:web:website:subscribers` script →
   `backups/subscribers/subscribers-<timestamp>.csv`. The engine + email config live in
   `@indiecrafts/newsletter` + `@indiecrafts/email`; this logs the app-side wiring.
 - **One-click comment moderation route + `comments:export`.** `GET|POST /api/comments/moderate` — a
@@ -750,7 +750,7 @@ config`. **Note:** HSTS is sticky — it only ships in prod over HTTPS. Doc:
   preview secrets), + `next.config.ts` `initOpenNextCloudflareForDev()`. **Deploy scripts are per app AND per env**
   — every name is `deploy:<app>:<env>` (`deploy:web:{dev,staging,prod}` at both the app and the root,
   which delegates); `build:cf` / `preview:cf` at the app, `preview:web:cf` at root. A second app reads
-  `deploy:admin:<env>` — nothing env-generic or ambiguous. Auto-deploy via `.github/workflows/deploy.yml` (push to `main` → prod;
+  `deploy:web:admin:<env>` — nothing env-generic or ambiguous. Auto-deploy via `.github/workflows/deploy.yml` (push to `main` → prod;
   manual dispatch for any env), using `CLOUDFLARE_API_TOKEN`/`ACCOUNT_ID` + per-environment Sanity
   vars/secrets. **Removed** `netlify.toml` + the dead `public/__forms.html` (Netlify Forms — the app's
   forms POST to `/api/*` now). Images need no image worker (the `next/image` Sanity CDN loader already
@@ -768,14 +768,14 @@ secret put` × N; one dataset → same secrets to every env. `deploy:web:<env>` 
 - **Base-setup CLI scripts (mined from a sister multi-repo, filtered to this stack).** Adds
   `sanity:typegen` (extract the composed schema → typed GROQ results in the shared
   `@indiecrafts/schema/generated`, so app **and** blog import them — see packages changelog),
-  `content:export` / `content:import` (Sanity `dataset export/import` wrappers — the CMS analog of a
+  `content:export` / `db:restore:content` (Sanity `dataset export/import` wrappers — the CMS analog of a
   DB backup/restore; export→`content-backups/` read-only, import destructive + confirmation-gated),
-  `doctor:env` (a `.env.local` preflight with clear "missing X" messages; now gates `seed` +
-  `content:*`), `scan:placeholders` (pre-handoff scan of `code/`+`docs/` for leftover template
+  `doctor:web:website:env` (a `.env.local` preflight with clear "missing X" messages; now gates `seed` +
+  `content:*`), `check:placeholders` (pre-handoff scan of `code/`+`docs/` for leftover template
   tokens/lorem/`your_…_here` — deliberately **not** in CI since the template ships its own fill-me
   tokens), `clean` (wipe build artifacts; `--all` also `node_modules`), and `lint:scripts`
   (shellcheck) + `test:scripts` (Node's built-in runner over `scripts/*.test.mjs`). `lint:scripts`,
-  `test:scripts`, and `tags:check` now run in `verify` + CI (`test.yml`). **Deliberately not ported**
+  `test:scripts`, and `check:tags` now run in `verify` + CI (`test.yml`). **Deliberately not ported**
   from the source repo: multi-env dev/deploy matrices, Cloudflare Workers/R2/Stripe/GDPR-salt tooling
   — wrong stack for a Sanity/Vercel marketing+blog template. Docs: `apps/web/setup/scripts.md`.
 - **Newsletter capture — `/api/newsletter` + `subscriber` doc + Abonnés desk + `features.newsletter`.**

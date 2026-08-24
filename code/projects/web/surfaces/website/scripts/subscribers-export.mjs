@@ -2,7 +2,7 @@
 /**
  * Export newsletter subscribers to CSV.
  *
- *   pnpm subscribers:export
+ *   pnpm export:web:website:subscribers
  *
  * Writes ./backups/subscribers/subscribers-<timestamp>.csv. Read-only on the dataset.
  * Needs SANITY_API_READ_TOKEN (Viewer) or SANITY_API_WRITE_TOKEN in .env.local

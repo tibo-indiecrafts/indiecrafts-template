@@ -23,7 +23,7 @@ if (!app || !ENVS.includes(env)) {
 // Apply the D1 migrations this worker OWNS before shipping the new code (expand →
 // migrate → contract). Passes the binding so wrangler resolves the right per-env DB.
 // Skips a DB whose `database_id` is still the template placeholder — a fresh
-// `deploy:api:dev` must not fail just because D1 is not configured yet. A real
+// `deploy:shared:api:dev` must not fail just because D1 is not configured yet. A real
 // migration error aborts the deploy (run() exits non-zero) — schema before code.
 function migrateOwnedD1() {
   const toml = readFileSync("wrangler.toml", "utf8");

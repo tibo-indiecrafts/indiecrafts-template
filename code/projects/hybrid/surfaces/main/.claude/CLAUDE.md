@@ -29,7 +29,7 @@ Next in Electron. Model → [`cross-platform-shell.md`](../../../../../docs/shar
 
 - **Deploy ≠ wrangler.** `electron-builder` packages installers (`.dmg` / `.exe` / `.AppImage`);
   distribution needs **code-signing + notarization**. **Platform class:** `electron` — deploy via
-  `pnpm deploy:hybrid:<dev|staging|prod>` → `shared/scripts/deploy/electron.mjs` (builds the host-OS installer via
+  `pnpm deploy:hybrid:main:<dev|staging|prod>` → `shared/scripts/deploy/electron.mjs` (builds the host-OS installer via
   `dist:<os>`). Outside the **default** `pnpm deploy:all` (Cloudflare-only), but reached by
   `pnpm deploy:all:<env> --only all`. Signing/notarizing + publishing are follow-ups. Registry +
   deploy model → [`scripts/lib/apps.mjs`](../../../../../shared/scripts/lib/apps.mjs) ·

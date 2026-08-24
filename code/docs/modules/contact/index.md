@@ -44,7 +44,7 @@ pnpm contact:export   # → backups/contact/contact-<timestamp>.csv
 
 Read-only; needs `SANITY_API_READ_TOKEN`. Columns: `email, name, subject, message, status, source,
 language, consent, consentPolicyVersion, createdAt`. Same escape hatch as `waitlist:export` /
-`subscribers:export` — every stored entity exports the same way.
+`export:web:website:subscribers` — every stored entity exports the same way.
 
 ## Activation + navigation
 

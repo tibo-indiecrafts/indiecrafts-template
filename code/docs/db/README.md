@@ -31,7 +31,7 @@ Don't duplicate Sanity content into D1 — one source of truth per kind of data.
 
 Backups are **registry-driven** (`code/shared/scripts/data/backup.mjs`, dispatching on each db's `kind`).
 D1 **Time Travel** gives point-in-time restore (30 days); for offsite dumps run
-`node code/shared/scripts/data/backup.mjs <name> <env> --remote` → the R2 backups bucket, and `pnpm backup:all:<env>`
+`node code/shared/scripts/data/backup.mjs <name> <env> --remote` → the R2 backups bucket, and `pnpm db:backup:all:<env>`
 covers every registered db (a nightly GitHub Action runs it). Databases live at three altitudes
 (global · platform · leaf) of any kind (`d1 · kv · postgres · supabase · sanity`) — see the
 scoping table in the repo's `code/projects/_registry.md`. Full story → [Backups](/apps/web/setup/backups).

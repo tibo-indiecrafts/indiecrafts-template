@@ -212,7 +212,7 @@ CSP_MODE = "report-only"   # roll back to observe-only; remove (or "enforce") to
 ```
 
 ```bash
-pnpm deploy:website:prod     # or :admin / :app · or let CI deploy from main
+pnpm deploy:web:website:prod     # or :admin / :app · or let CI deploy from main
 ```
 
 Do this even after a dashboard hotfix, so the repo matches what's live. **To re-enforce**, remove

@@ -1,8 +1,8 @@
 // The database registry — the single source of truth for "which databases exist,
 // at what altitude, of what kind, owned by whom, in what apply order." Mirrors
 // `scripts/lib/apps.mjs`. The migrate + backup runners read THIS and dispatch on
-// `kind` (like deploy dispatches on an app's `class`). `db:migrate` also takes a
-// pre-migration R2 snapshot before each REMOTE schema change (retention + layout →
+// `kind` (like deploy dispatches on an app's `class`). `db:migrate:<name>:<env>` also
+// takes a pre-migration R2 snapshot before each REMOTE schema change (retention + layout →
 // docs/apps/web/setup/backups.md).
 //
 // Adding a database = one row here + fill its slot (real migrations, or a README marker
@@ -35,7 +35,7 @@ export const ALTITUDES = ["global", "platform", "surface", "leaf"];
 
 /**
  * @typedef {Object} DbEntry
- * @property {string} name   short id + `backup:<name>:<env>` / `db:migrate:<name>:<env>` script name
+ * @property {string} name   short id + `db:backup:<name>:<env>` / `db:migrate:<name>:<env>` script name
  * @property {"d1"|"kv"|"postgres"|"supabase"|"sanity"} kind  engine → migrate/backup recipe
  * @property {string} owner  the app/service slug that binds + migrates it (ONE owner; consumers use its API)
  * @property {string} [binding]  the wrangler binding name (e.g. "DB") — d1/kv only; the migrate

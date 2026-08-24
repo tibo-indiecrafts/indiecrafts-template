@@ -23,7 +23,7 @@ version routes (`/v1`); CORS-allowlist the mobile/hybrid origins. Compose
 `@indiecrafts/packages-shared-config`/`logger`/`security`/`sanity`/`schema` (add `@types/node` — see the `workers` brief's
 isomorphic-types caveat).
 
-- **Deploy:** `pnpm deploy:api:<dev|staging|prod>` → the shared `shared/scripts/deploy/worker.mjs` (rename guard +
+- **Deploy:** `pnpm deploy:shared:api:<dev|staging|prod>` → the shared `shared/scripts/deploy/worker.mjs` (rename guard +
   `wrangler deploy`); or `pnpm deploy:all:<env>`. Bind KV/D1/queues via `shared/scripts/infra/bindings.mjs`.
 - **Registry:** a row in [`scripts/lib/apps.mjs`](../../../shared/scripts/lib/apps.mjs); full deploy model →
   [`code/docs/shared/architecture/platform-deploy.md`](../../../docs/shared/architecture/platform-deploy.md).

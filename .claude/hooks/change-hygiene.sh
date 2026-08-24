@@ -3,7 +3,7 @@
 # changed but its docs AND/OR its tests did not, so a change never lands without
 # the matching doc + test (or an explicit, stated waiver). It ALSO nudges when the
 # root package.json scripts and .vscode/tasks.json drift out of sync — reusing the
-# `pnpm tasks:check` guard, so every root script keeps its Run Task entry. Committed +
+# `pnpm check:tasks` guard, so every root script keeps its Run Task entry. Committed +
 # wired in .claude/settings.json, so it ships with the template.
 #
 # Escape valve: Claude Code sets stop_hook_active=true on the continuation that a
@@ -35,7 +35,7 @@ tasks_touched=$(printf '%s\n' "$changed" | grep -E '^package\.json$|^\.vscode/ta
 tasks_drift=""
 if [ -n "$tasks_touched" ] &&
   ! (cd "$root" && node code/shared/scripts/checks/tasks-sync.mjs --check) >/dev/null 2>&1; then
-  tasks_drift="the root package.json scripts and .vscode/tasks.json are out of sync — run pnpm tasks:check and add the missing Run Task entry"
+  tasks_drift="the root package.json scripts and .vscode/tasks.json are out of sync — run pnpm check:tasks and add the missing Run Task entry"
 fi
 
 # Nothing relevant changed → nothing to gate.

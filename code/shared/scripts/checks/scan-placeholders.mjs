@@ -1,8 +1,8 @@
 // Pre-handoff scan: catch leftover template scaffolding in the SHIPPED tree
 // (code/ + docs/) before a client site goes out.
 //
-//   pnpm scan:placeholders            # report (always exit 0)
-//   pnpm scan:placeholders -- --strict   # exit 1 if any HARD placeholder remains
+//   pnpm check:placeholders            # report (always exit 0)
+//   pnpm check:placeholders -- --strict   # exit 1 if any HARD placeholder remains
 //
 // HARD = must never ship (unfilled env, template tokens, lorem).
 // SOFT = worth a look, not blocking (TODO/FIXME/example.com).

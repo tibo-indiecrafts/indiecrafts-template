@@ -23,10 +23,10 @@ another app, **copy this whole dir** to `code/projects/<app>/infra` and retarget
 ## Run (from the repo root)
 
 ```bash
-pnpm infra:website:init            # once
-pnpm infra:website:plan:<env>      # review the diff
-pnpm infra:website:apply:<env>     # provision
-pnpm infra:website:output:prod     # read outputs (Turnstile keys)
+pnpm infra:web:website:init            # once
+pnpm infra:web:website:plan:<env>      # review the diff
+pnpm infra:web:website:apply:<env>     # provision
+pnpm infra:web:website:output:prod     # read outputs (Turnstile keys)
 ```
 
 Needs a **scoped** `CLOUDFLARE_API_TOKEN` (Zone: DNS/Cache/WAF edit · Account: Workers/Turnstile edit).
@@ -36,7 +36,7 @@ Needs a **scoped** `CLOUDFLARE_API_TOKEN` (Zone: DNS/Cache/WAF edit · Account: 
 
 - **NEVER commit state** — `terraform.tfstate*` holds the Turnstile secret + resource ids (gitignored here).
 - **Turnstile keys flow to the app env** — `output turnstile_site_key` → `NEXT_PUBLIC_TURNSTILE_SITE_KEY`;
-  `turnstile_secret` → `TURNSTILE_SECRET` (set via `pnpm secrets:sync:website:*`, never committed).
+  `turnstile_secret` → `TURNSTILE_SECRET` (set via `pnpm secrets:sync:web:website:*`, never committed).
 - **`pnpm project:rename <slug>`** rewrites `worker_name` in these tfvars (matches the wrangler names) —
   don't hand-edit the stem.
 - **Validate before first apply** — `terraform init && validate` against the pinned provider; CF provider

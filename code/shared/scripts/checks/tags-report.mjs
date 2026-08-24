@@ -6,7 +6,7 @@
 //   node scripts/tags-report.mjs --check    # CI: exit 1 on non-canonical tags
 //   node scripts/tags-report.mjs --debt     # filter to one family
 //
-// Wired as `pnpm tags:report` / `pnpm tags:check`.
+// Wired as `pnpm tags:report` / `pnpm check:tags`.
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, basename, extname } from "node:path";
@@ -170,7 +170,7 @@ if (nonCanon.size > 0) {
   for (const [t, n] of [...nonCanon].sort((a, b) => b[1] - a[1]))
     console.log(`  ${String(n).padStart(4)}  ${t}`);
   if (check) {
-    console.error("\ntags:check failed — non-canonical tags present.");
+    console.error("\ncheck:tags failed — non-canonical tags present.");
     process.exit(1);
   }
 } else {

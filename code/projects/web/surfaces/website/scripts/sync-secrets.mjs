@@ -4,7 +4,7 @@
 // instead of `wrangler secret put` × N. One Sanity dataset → the same secrets sync to
 // every env. `NEXT_PUBLIC_*` are build-time vars (wrangler.toml [vars]), never secrets.
 //
-//   pnpm secrets:sync:website:dev | :staging | :prod
+//   pnpm secrets:sync:web:website:dev | :staging | :prod
 
 import { readFileSync, writeFileSync, unlinkSync, existsSync } from "node:fs";
 import { spawnSync } from "node:child_process";

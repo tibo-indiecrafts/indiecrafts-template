@@ -53,9 +53,9 @@ Every app — Cloudflare or native — exposes the same script: **`deploy:<slug>
 (`env` ∈ `dev · staging · prod`). It delegates to the shared runner for its class:
 
 ```
-pnpm deploy:website:prod    → node ../../../../../code/shared/scripts/deploy/next.mjs website prod
-pnpm deploy:api:staging     → node ../../../../../code/shared/scripts/deploy/worker.mjs api staging
-pnpm deploy:mobile:prod     → node ../../../../../code/shared/scripts/deploy/expo.mjs prod
+pnpm deploy:web:website:prod    → node ../../../../../code/shared/scripts/deploy/next.mjs website prod
+pnpm deploy:shared:api:staging     → node ../../../../../code/shared/scripts/deploy/worker.mjs api staging
+pnpm deploy:mobile:main:prod     → node ../../../../../code/shared/scripts/deploy/expo.mjs prod
 ```
 
 The runners share `code/shared/scripts/lib/deploy-shared.mjs` (`run` + the prod confirm) and

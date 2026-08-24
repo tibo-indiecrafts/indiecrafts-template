@@ -6,7 +6,7 @@
   // grouping, background panels, and problem matchers that auto-detection can't.)
   // `prepare` (husky lifecycle) is intentionally omitted — it runs on install, not on demand.
   // Plus a few curated PER-APP tasks — label `<app>: <name>` (e.g. `website: verify:contrast`) — that
-  // have no root script. `pnpm tasks:check` guards the sync: every root script must have a task, and a
+  // have no root script. `pnpm check:tasks` guards the sync: every root script must have a task, and a
   // task with no matching script must use the `<app>: ` prefix (else it is flagged as a stale orphan).
   "tasks": [
     // ── Dev & build ──────────────────────────────────────────────────────
@@ -95,18 +95,18 @@
       "problemMatcher": ["$tsc"]
     },
     {
-      "label": "verify:api-guards",
+      "label": "check:api-guards",
       "detail": "assert every API route adopts the shared guard",
       "type": "shell",
-      "command": "pnpm verify:api-guards",
+      "command": "pnpm check:api-guards",
       "group": "build",
       "problemMatcher": []
     },
     {
-      "label": "tasks:check",
+      "label": "check:tasks",
       "detail": "assert .vscode/tasks.json mirrors every root package.json script",
       "type": "shell",
-      "command": "pnpm tasks:check",
+      "command": "pnpm check:tasks",
       "group": "build",
       "problemMatcher": []
     },
@@ -156,10 +156,10 @@
       "problemMatcher": []
     },
     {
-      "label": "tags:check",
+      "label": "check:tags",
       "detail": "issue-tag vocabulary guard (fails on off-list)",
       "type": "shell",
-      "command": "pnpm tags:check",
+      "command": "pnpm check:tags",
       "problemMatcher": []
     },
     {
@@ -177,10 +177,10 @@
       "problemMatcher": []
     },
     {
-      "label": "scan:placeholders",
+      "label": "check:placeholders",
       "detail": "scan for unfilled template placeholders",
       "type": "shell",
-      "command": "pnpm scan:placeholders",
+      "command": "pnpm check:placeholders",
       "problemMatcher": []
     },
     {
@@ -265,66 +265,80 @@
       "problemMatcher": []
     },
     {
-      "label": "content:import",
+      "label": "db:restore:content",
       "detail": "import content into Sanity",
       "type": "shell",
-      "command": "pnpm content:import",
+      "command": "pnpm db:restore:content",
       "problemMatcher": []
     },
     {
-      "label": "subscribers:export",
+      "label": "export:web:website:subscribers",
       "detail": "export newsletter subscribers → CSV",
       "type": "shell",
-      "command": "pnpm subscribers:export",
+      "command": "pnpm export:web:website:subscribers",
       "problemMatcher": []
     },
     {
-      "label": "doctor:env",
+      "label": "doctor:web:website:env",
       "detail": "validate .env.local + print site identity",
       "type": "shell",
-      "command": "pnpm doctor:env",
+      "command": "pnpm doctor:web:website:env",
       "problemMatcher": []
     },
     {
-      "label": "db:migrate",
-      "detail": "run D1 database migrations",
+      "label": "db:migrate:audit:dev",
+      "detail": "run D1 database migrations — audit dev (pre-migration R2 snapshot on staging/prod)",
       "type": "shell",
-      "command": "pnpm db:migrate",
+      "command": "pnpm db:migrate:audit:dev",
       "problemMatcher": []
     },
     {
-      "label": "backup:content:prod",
+      "label": "db:migrate:audit:staging",
+      "detail": "run D1 database migrations — audit staging (pre-migration R2 snapshot on staging/prod)",
+      "type": "shell",
+      "command": "pnpm db:migrate:audit:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:audit:prod",
+      "detail": "run D1 database migrations — audit prod (pre-migration R2 snapshot on staging/prod)",
+      "type": "shell",
+      "command": "pnpm db:migrate:audit:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:backup:content:prod",
       "detail": "back up the prod Sanity dataset (local)",
       "type": "shell",
-      "command": "pnpm backup:content:prod",
+      "command": "pnpm db:backup:content:prod",
       "problemMatcher": []
     },
     {
-      "label": "backup:content:prod:remote",
+      "label": "db:backup:content:prod:remote",
       "detail": "back up prod Sanity + upload to R2",
       "type": "shell",
-      "command": "pnpm backup:content:prod:remote",
+      "command": "pnpm db:backup:content:prod:remote",
       "problemMatcher": []
     },
     {
-      "label": "backup:all:dev",
+      "label": "db:backup:all:dev",
       "detail": "back up all data stores — dev",
       "type": "shell",
-      "command": "pnpm backup:all:dev",
+      "command": "pnpm db:backup:all:dev",
       "problemMatcher": []
     },
     {
-      "label": "backup:all:staging",
+      "label": "db:backup:all:staging",
       "detail": "back up all data stores — staging",
       "type": "shell",
-      "command": "pnpm backup:all:staging",
+      "command": "pnpm db:backup:all:staging",
       "problemMatcher": []
     },
     {
-      "label": "backup:all:prod",
+      "label": "db:backup:all:prod",
       "detail": "back up all data stores — prod",
       "type": "shell",
-      "command": "pnpm backup:all:prod",
+      "command": "pnpm db:backup:all:prod",
       "problemMatcher": []
     },
     {
@@ -400,10 +414,10 @@
 
     // ── Deploy · secrets · domains (Cloudflare) ──────────────────────────
     {
-      "label": "preview:website:cf",
+      "label": "preview:web:website:cf",
       "detail": "OpenNext local Cloudflare preview of the website",
       "type": "shell",
-      "command": "pnpm preview:website:cf",
+      "command": "pnpm preview:web:website:cf",
       "isBackground": true,
       "presentation": { "panel": "dedicated" },
       "problemMatcher": []
@@ -423,213 +437,213 @@
       "problemMatcher": []
     },
     {
-      "label": "deploy:website:dev",
+      "label": "deploy:web:website:dev",
       "detail": "deploy website — dev",
       "type": "shell",
-      "command": "pnpm deploy:website:dev",
+      "command": "pnpm deploy:web:website:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:website:staging",
+      "label": "deploy:web:website:staging",
       "detail": "deploy website — staging",
       "type": "shell",
-      "command": "pnpm deploy:website:staging",
+      "command": "pnpm deploy:web:website:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:website:prod",
+      "label": "deploy:web:website:prod",
       "detail": "deploy website — PROD",
       "type": "shell",
-      "command": "pnpm deploy:website:prod",
+      "command": "pnpm deploy:web:website:prod",
       "problemMatcher": []
     },
     {
-      "label": "deploy:admin:dev",
+      "label": "deploy:web:admin:dev",
       "detail": "deploy admin — dev",
       "type": "shell",
-      "command": "pnpm deploy:admin:dev",
+      "command": "pnpm deploy:web:admin:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:admin:staging",
+      "label": "deploy:web:admin:staging",
       "detail": "deploy admin — staging",
       "type": "shell",
-      "command": "pnpm deploy:admin:staging",
+      "command": "pnpm deploy:web:admin:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:admin:prod",
+      "label": "deploy:web:admin:prod",
       "detail": "deploy admin — PROD",
       "type": "shell",
-      "command": "pnpm deploy:admin:prod",
+      "command": "pnpm deploy:web:admin:prod",
       "problemMatcher": []
     },
     {
-      "label": "deploy:app:dev",
+      "label": "deploy:web:app:dev",
       "detail": "deploy app — dev",
       "type": "shell",
-      "command": "pnpm deploy:app:dev",
+      "command": "pnpm deploy:web:app:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:app:staging",
+      "label": "deploy:web:app:staging",
       "detail": "deploy app — staging",
       "type": "shell",
-      "command": "pnpm deploy:app:staging",
+      "command": "pnpm deploy:web:app:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:app:prod",
+      "label": "deploy:web:app:prod",
       "detail": "deploy app — PROD",
       "type": "shell",
-      "command": "pnpm deploy:app:prod",
+      "command": "pnpm deploy:web:app:prod",
       "problemMatcher": []
     },
     {
-      "label": "deploy:agent:dev",
+      "label": "deploy:shared:agent:dev",
       "detail": "deploy agent worker — dev",
       "type": "shell",
-      "command": "pnpm deploy:agent:dev",
+      "command": "pnpm deploy:shared:agent:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:agent:staging",
+      "label": "deploy:shared:agent:staging",
       "detail": "deploy agent worker — staging",
       "type": "shell",
-      "command": "pnpm deploy:agent:staging",
+      "command": "pnpm deploy:shared:agent:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:agent:prod",
+      "label": "deploy:shared:agent:prod",
       "detail": "deploy agent worker — PROD",
       "type": "shell",
-      "command": "pnpm deploy:agent:prod",
+      "command": "pnpm deploy:shared:agent:prod",
       "problemMatcher": []
     },
     {
-      "label": "deploy:api:dev",
+      "label": "deploy:shared:api:dev",
       "detail": "deploy api worker — dev",
       "type": "shell",
-      "command": "pnpm deploy:api:dev",
+      "command": "pnpm deploy:shared:api:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:api:staging",
+      "label": "deploy:shared:api:staging",
       "detail": "deploy api worker — staging",
       "type": "shell",
-      "command": "pnpm deploy:api:staging",
+      "command": "pnpm deploy:shared:api:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:api:prod",
+      "label": "deploy:shared:api:prod",
       "detail": "deploy api worker — PROD",
       "type": "shell",
-      "command": "pnpm deploy:api:prod",
+      "command": "pnpm deploy:shared:api:prod",
       "problemMatcher": []
     },
     {
-      "label": "deploy:cron:dev",
+      "label": "deploy:shared:cron:dev",
       "detail": "deploy cron worker — dev",
       "type": "shell",
-      "command": "pnpm deploy:cron:dev",
+      "command": "pnpm deploy:shared:cron:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:cron:staging",
+      "label": "deploy:shared:cron:staging",
       "detail": "deploy cron worker — staging",
       "type": "shell",
-      "command": "pnpm deploy:cron:staging",
+      "command": "pnpm deploy:shared:cron:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:cron:prod",
+      "label": "deploy:shared:cron:prod",
       "detail": "deploy cron worker — PROD",
       "type": "shell",
-      "command": "pnpm deploy:cron:prod",
+      "command": "pnpm deploy:shared:cron:prod",
       "problemMatcher": []
     },
     {
-      "label": "deploy:workers:dev",
+      "label": "deploy:shared:workers:dev",
       "detail": "deploy workers — dev",
       "type": "shell",
-      "command": "pnpm deploy:workers:dev",
+      "command": "pnpm deploy:shared:workers:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:workers:staging",
+      "label": "deploy:shared:workers:staging",
       "detail": "deploy workers — staging",
       "type": "shell",
-      "command": "pnpm deploy:workers:staging",
+      "command": "pnpm deploy:shared:workers:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:workers:prod",
+      "label": "deploy:shared:workers:prod",
       "detail": "deploy workers — PROD",
       "type": "shell",
-      "command": "pnpm deploy:workers:prod",
+      "command": "pnpm deploy:shared:workers:prod",
       "problemMatcher": []
     },
     {
-      "label": "deploy:agent:dev",
+      "label": "deploy:shared:agent:dev",
       "detail": "deploy agent worker — dev",
       "type": "shell",
-      "command": "pnpm deploy:agent:dev",
+      "command": "pnpm deploy:shared:agent:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:agent:staging",
+      "label": "deploy:shared:agent:staging",
       "detail": "deploy agent worker — staging",
       "type": "shell",
-      "command": "pnpm deploy:agent:staging",
+      "command": "pnpm deploy:shared:agent:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:agent:prod",
+      "label": "deploy:shared:agent:prod",
       "detail": "deploy agent worker — PROD",
       "type": "shell",
-      "command": "pnpm deploy:agent:prod",
+      "command": "pnpm deploy:shared:agent:prod",
       "problemMatcher": []
     },
     {
-      "label": "deploy:mobile:dev",
+      "label": "deploy:mobile:main:dev",
       "detail": "deploy mobile (expo) — dev",
       "type": "shell",
-      "command": "pnpm deploy:mobile:dev",
+      "command": "pnpm deploy:mobile:main:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:mobile:staging",
+      "label": "deploy:mobile:main:staging",
       "detail": "deploy mobile (expo) — staging",
       "type": "shell",
-      "command": "pnpm deploy:mobile:staging",
+      "command": "pnpm deploy:mobile:main:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:mobile:prod",
+      "label": "deploy:mobile:main:prod",
       "detail": "deploy mobile (expo) — PROD",
       "type": "shell",
-      "command": "pnpm deploy:mobile:prod",
+      "command": "pnpm deploy:mobile:main:prod",
       "problemMatcher": []
     },
     {
-      "label": "deploy:hybrid:dev",
+      "label": "deploy:hybrid:main:dev",
       "detail": "deploy hybrid (electron) — dev",
       "type": "shell",
-      "command": "pnpm deploy:hybrid:dev",
+      "command": "pnpm deploy:hybrid:main:dev",
       "problemMatcher": []
     },
     {
-      "label": "deploy:hybrid:staging",
+      "label": "deploy:hybrid:main:staging",
       "detail": "deploy hybrid (electron) — staging",
       "type": "shell",
-      "command": "pnpm deploy:hybrid:staging",
+      "command": "pnpm deploy:hybrid:main:staging",
       "problemMatcher": []
     },
     {
-      "label": "deploy:hybrid:prod",
+      "label": "deploy:hybrid:main:prod",
       "detail": "deploy hybrid (electron) — PROD",
       "type": "shell",
-      "command": "pnpm deploy:hybrid:prod",
+      "command": "pnpm deploy:hybrid:main:prod",
       "problemMatcher": []
     },
     {
@@ -654,145 +668,145 @@
       "problemMatcher": []
     },
     {
-      "label": "secrets:sync:website:dev",
+      "label": "secrets:sync:web:website:dev",
       "detail": "push website secrets → Cloudflare (dev)",
       "type": "shell",
-      "command": "pnpm secrets:sync:website:dev",
+      "command": "pnpm secrets:sync:web:website:dev",
       "problemMatcher": []
     },
     {
-      "label": "secrets:sync:website:staging",
+      "label": "secrets:sync:web:website:staging",
       "detail": "push website secrets → Cloudflare (staging)",
       "type": "shell",
-      "command": "pnpm secrets:sync:website:staging",
+      "command": "pnpm secrets:sync:web:website:staging",
       "problemMatcher": []
     },
     {
-      "label": "secrets:sync:website:prod",
+      "label": "secrets:sync:web:website:prod",
       "detail": "push website secrets → Cloudflare (PROD)",
       "type": "shell",
-      "command": "pnpm secrets:sync:website:prod",
+      "command": "pnpm secrets:sync:web:website:prod",
       "problemMatcher": []
     },
 
     // ── Infra (Terraform) ────────────────────────────────────────────────
     {
-      "label": "setup:kv",
+      "label": "setup:web:website:kv",
       "detail": "create the website's Workers KV namespaces",
       "type": "shell",
-      "command": "pnpm setup:kv",
+      "command": "pnpm setup:web:website:kv",
       "problemMatcher": []
     },
     {
-      "label": "infra:website:init",
+      "label": "infra:web:website:init",
       "detail": "terraform init (website, dev)",
       "type": "shell",
-      "command": "pnpm infra:website:init",
+      "command": "pnpm infra:web:website:init",
       "problemMatcher": []
     },
     {
-      "label": "infra:website:plan:dev",
+      "label": "infra:web:website:plan:dev",
       "detail": "terraform plan — website dev",
       "type": "shell",
-      "command": "pnpm infra:website:plan:dev",
+      "command": "pnpm infra:web:website:plan:dev",
       "problemMatcher": []
     },
     {
-      "label": "infra:website:plan:staging",
+      "label": "infra:web:website:plan:staging",
       "detail": "terraform plan — website staging",
       "type": "shell",
-      "command": "pnpm infra:website:plan:staging",
+      "command": "pnpm infra:web:website:plan:staging",
       "problemMatcher": []
     },
     {
-      "label": "infra:website:plan:prod",
+      "label": "infra:web:website:plan:prod",
       "detail": "terraform plan — website PROD",
       "type": "shell",
-      "command": "pnpm infra:website:plan:prod",
+      "command": "pnpm infra:web:website:plan:prod",
       "problemMatcher": []
     },
     {
-      "label": "infra:website:apply:dev",
+      "label": "infra:web:website:apply:dev",
       "detail": "terraform apply — website dev",
       "type": "shell",
-      "command": "pnpm infra:website:apply:dev",
+      "command": "pnpm infra:web:website:apply:dev",
       "problemMatcher": []
     },
     {
-      "label": "infra:website:apply:staging",
+      "label": "infra:web:website:apply:staging",
       "detail": "terraform apply — website staging",
       "type": "shell",
-      "command": "pnpm infra:website:apply:staging",
+      "command": "pnpm infra:web:website:apply:staging",
       "problemMatcher": []
     },
     {
-      "label": "infra:website:apply:prod",
+      "label": "infra:web:website:apply:prod",
       "detail": "terraform apply — website PROD",
       "type": "shell",
-      "command": "pnpm infra:website:apply:prod",
+      "command": "pnpm infra:web:website:apply:prod",
       "problemMatcher": []
     },
     {
-      "label": "infra:website:output:prod",
+      "label": "infra:web:website:output:prod",
       "detail": "terraform output — website PROD",
       "type": "shell",
-      "command": "pnpm infra:website:output:prod",
+      "command": "pnpm infra:web:website:output:prod",
       "problemMatcher": []
     },
     {
-      "label": "infra:api:init",
+      "label": "infra:shared:api:init",
       "detail": "terraform init — api (dev workspace)",
       "type": "shell",
-      "command": "pnpm infra:api:init",
+      "command": "pnpm infra:shared:api:init",
       "problemMatcher": []
     },
     {
-      "label": "infra:api:plan:dev",
+      "label": "infra:shared:api:plan:dev",
       "detail": "terraform plan — api dev",
       "type": "shell",
-      "command": "pnpm infra:api:plan:dev",
+      "command": "pnpm infra:shared:api:plan:dev",
       "problemMatcher": []
     },
     {
-      "label": "infra:api:plan:staging",
+      "label": "infra:shared:api:plan:staging",
       "detail": "terraform plan — api staging",
       "type": "shell",
-      "command": "pnpm infra:api:plan:staging",
+      "command": "pnpm infra:shared:api:plan:staging",
       "problemMatcher": []
     },
     {
-      "label": "infra:api:plan:prod",
+      "label": "infra:shared:api:plan:prod",
       "detail": "terraform plan — api PROD",
       "type": "shell",
-      "command": "pnpm infra:api:plan:prod",
+      "command": "pnpm infra:shared:api:plan:prod",
       "problemMatcher": []
     },
     {
-      "label": "infra:api:apply:dev",
+      "label": "infra:shared:api:apply:dev",
       "detail": "terraform apply — api dev",
       "type": "shell",
-      "command": "pnpm infra:api:apply:dev",
+      "command": "pnpm infra:shared:api:apply:dev",
       "problemMatcher": []
     },
     {
-      "label": "infra:api:apply:staging",
+      "label": "infra:shared:api:apply:staging",
       "detail": "terraform apply — api staging",
       "type": "shell",
-      "command": "pnpm infra:api:apply:staging",
+      "command": "pnpm infra:shared:api:apply:staging",
       "problemMatcher": []
     },
     {
-      "label": "infra:api:apply:prod",
+      "label": "infra:shared:api:apply:prod",
       "detail": "terraform apply — api PROD",
       "type": "shell",
-      "command": "pnpm infra:api:apply:prod",
+      "command": "pnpm infra:shared:api:apply:prod",
       "problemMatcher": []
     },
     {
-      "label": "infra:api:output:prod",
+      "label": "infra:shared:api:output:prod",
       "detail": "terraform output — api PROD",
       "type": "shell",
-      "command": "pnpm infra:api:output:prod",
+      "command": "pnpm infra:shared:api:output:prod",
       "problemMatcher": []
     },
 

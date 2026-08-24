@@ -31,7 +31,7 @@ pnpm docs          # http://localhost:3002  (this site)
 
 - **App** — Cloudflare Workers via OpenNext: per-app `code/projects/web/surfaces/website/wrangler.toml` +
   `open-next.config.ts`, deployed by GitHub Actions (`wrangler deploy --env <env>`) or
-  `pnpm deploy:website:<env>`. Install stays at the repo root. Runbook →
+  `pnpm deploy:web:website:<env>`. Install stays at the repo root. Runbook →
   [Deployment (Cloudflare)](/apps/web/setup/deployment).
 - **Docs** (optional) — its own npm package (npm-isolated); `pnpm docs:build` →
   `code/docs/.vitepress/dist`. Deploy it only if the client should read the product docs.

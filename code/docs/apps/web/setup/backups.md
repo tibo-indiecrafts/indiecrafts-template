@@ -10,7 +10,7 @@ data. Each has a backup script that writes a **local** dump by default and can a
 code/projects/web/surfaces/website/backups/
 ├── content/      <dataset>-<timestamp>.tar.gz    (one folder per registry `name` — the `content` sanity db)
 ├── audit/        <db>-<env>-<timestamp>.sql       (the `audit` d1 db)
-├── subscribers/  subscribers-<timestamp>.csv   (pnpm subscribers:export)
+├── subscribers/  subscribers-<timestamp>.csv   (pnpm export:web:website:subscribers)
 ├── comments/     comments-<timestamp>.csv      (pnpm comments:export)
 ├── waitlist/     waitlist-<timestamp>.csv      (pnpm waitlist:export)
 └── contact/      contact-<timestamp>.csv       (pnpm contact:export)
@@ -32,16 +32,16 @@ dispatches on each db's `kind`, running from the db's **owner** dir. The only ac
 `sanity` `content` dataset (owner `website`).
 
 ```bash
-pnpm backup:content:prod                         # the Sanity content dataset → website/backups/sanity/
-pnpm backup:content:prod:remote                  # + upload to <prefix>-prod-db-backup (keyed content/…)
+pnpm db:backup:content:prod                         # the Sanity content dataset → website/backups/sanity/
+pnpm db:backup:content:prod:remote                  # + upload to <prefix>-prod-db-backup (keyed content/…)
 node code/shared/scripts/data/backup.mjs content prod --remote # (same, direct)
-pnpm backup:all:prod                             # every registered db (dispatches per kind)
+pnpm db:backup:all:prod                             # every registered db (dispatches per kind)
 node code/shared/scripts/data/backup.mjs <name> <env> --dry-run  # show the plan, run nothing
 ```
 
 Sanity backup is read-only and needs `SANITY_API_READ_TOKEN`; a `d1` db needs the Wrangler login /
 `CLOUDFLARE_API_TOKEN`. Each keeps the **last 10** local dumps per source and prunes the rest. To add a
-db (e.g. a D1), add a row to `code/shared/scripts/lib/databases.mjs` — `backup:all` + `db:migrate` pick it up.
+db (e.g. a D1), add a row to `code/shared/scripts/lib/databases.mjs` — `db:backup:all` + `db:migrate` pick it up.
 
 ## Pre-migration snapshots
 
@@ -85,7 +85,7 @@ decision, not a storage-cost one — the dumps are tiny.
 
 The bucket is **provisioned by Terraform** — `cloudflare_r2_bucket.backups` in
 `code/projects/web/surfaces/website/infra/cloudflare/main.tf` creates `<prefix>-<env>-db-backup`
-(EU-resident, one per env) on `pnpm infra:website:apply:<env>`. Then set the retention lifecycle once
+(EU-resident, one per env) on `pnpm infra:web:website:apply:<env>`. Then set the retention lifecycle once
 per bucket (the provider's lifecycle resource is version-sensitive, so it's a wrangler step for now):
 
 ```bash
@@ -103,7 +103,7 @@ GitHub **Environment** secrets/vars — `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCO
 
 ## Restore
 
-- **Sanity** — `pnpm content:import -- backups/sanity/<file>.tar.gz` (destructive `--replace`;
+- **Sanity** — `pnpm db:restore:content -- backups/sanity/<file>.tar.gz` (destructive `--replace`;
   prefer a scratch dataset first). Pull a remote copy with `wrangler r2 object get …` if needed.
 - **D1** — prefer **Time Travel** (`wrangler d1 time-travel restore <db> --timestamp <ts> --env <env>`,
   up to 30 days). From a dump: `wrangler d1 execute <db> --file backups/d1/<file>.sql --env <env> --remote`.

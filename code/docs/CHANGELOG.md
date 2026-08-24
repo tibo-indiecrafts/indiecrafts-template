@@ -18,7 +18,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
   § Troubleshooting gains a "scripts blocked after a deploy (CSP)" row pointing to it. **Why:** enforce is
   the live default, so on-call needs a copy-pasteable way to fall back to observe-only when the nonce CSP
   blocks something (the switch already exists — this makes it fast to use, instead of a KV kill-switch).
-- **`tasks:check` documented in `scripts.md`** (both the Quality-gates and repo-root-scripts tables) —
+- **`check:tasks` documented in `scripts.md`** (both the Quality-gates and repo-root-scripts tables) —
   the new guard that keeps `.vscode/tasks.json` in sync with the root `package.json` scripts (per-app
   tasks use an `<app>: ` label). It runs in `verify` + CI and is nudged by the change-hygiene hook.
 - **Three agent hooks — CLAUDE.md hygiene · security scan · grill-plan** (`on-the-fly-checks.md` tiers
@@ -50,6 +50,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Root script names are now platform-inclusive, Cloudflare-style (breaking).** Every
+  entity-targeting root `package.json` script names its platform like a CF worker
+  (`<verb>:<platform>:<name>:<env>`): `deploy:web:website:<env>` · `deploy:shared:api:<env>` ·
+  `deploy:mobile:main:<env>` · `infra:web:website:*` · `secrets:sync:web:website:*` ·
+  `preview:web:website:cf`. DB-registry ops unified under `db:` (`db:backup:content`, `db:backup:all`,
+  `db:restore:content`, `db:migrate:audit:<env>`); website utils gained their app
+  (`setup:web:website:kv`, `doctor:web:website:env`, `export:web:website:subscribers`); the checks
+  unified under `check:*` (`check:api-guards`/`check:tasks`/`check:placeholders`/`check:tags`).
+  `.vscode/tasks.json`, CI (`deploy.yml` now builds `deploy:<platform>:<slug>`), the `verify` composite,
+  and ~40 docs updated in lockstep; `check:tasks` parity holds. App-level scripts stay as the delegation
+  targets. **Why:** script names now read off the workspace structure + registry entity names, matching
+  the CF resource naming.
 - **Dropped every `method/` + `work/` reference** (those folders were removed from the repo). The
   `page-builder.md` "Adding a block" section is now a self-contained checklist (was a pointer to the
   deleted method workflow); the workspace / getting-started / project-organization pages no longer
@@ -111,7 +123,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
   interaction-states), why the order matters, ready prompts, and ordered-vs-parallel guidance. Also added
   the **API security limits** config page (`apps/web/config/security-limits.md`) and refreshed
   `packages/ui-tokens.md` (DTCG source + colocated sidecars) and `packages/security.md` (request-side
-  guard + `verify:api-guards`).
+  guard + `check:api-guards`).
 
 ### Fixed
 
@@ -181,7 +193,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 - **Issue tags are now tracked in docs, not just code (wahio-style).** `scripts/tags-report.mjs` now
   scans `.md` (added `.md` to its extension set), and a doc may carry an `## Issue tags` footer listing
-  the tags for a real, owned gap it describes — so `pnpm tags:report` / `tags:check` count doc references
+  the tags for a real, owned gap it describes — so `pnpm tags:report` / `check:tags` count doc references
   too. The vocabulary/meta docs (`.claude/rules/issue-tags.md`, `apps/web/setup/scripts.md`) are excluded
   (and any `CHANGELOG.md`) so example/historical tokens don't pollute counts. Convention documented in `.claude/rules/issue-tags.md`;
   seeded on both wiring guides (`@debt COUPLING` on the manual brick/module activation); guarded by
@@ -233,7 +245,7 @@ build` compiles main/preload/renderer. **Mobile** needed no change — it correc
   `code/projects/web/.env.example`. Corrected the copy command (the single most-hit setup step). Also
   added a **supply-chain-gate note** (`pnpm install` can trip `minimumReleaseAge` / `no-downgrade`
   trust) and corrected the "all env vars are optional" overclaim — the three Sanity vars are
-  hard-required for any Sanity feature and `doctor:env` enforces them.
+  hard-required for any Sanity feature and `doctor:web:website:env` enforces them.
 
 ### Changed
 
@@ -295,7 +307,7 @@ build` compiles main/preload/renderer. **Mobile** needed no change — it correc
   `apps/web/setup/deployment.md` documents the per-PR **preview deploys** (`preview.yml`).
 - **`apps/web/setup/backups.md`** (+ sidebar) — the Sanity + D1 backup runbook: the gitignored
   `backups/` folder layout, manual local vs `--remote` (R2), the per-env backup buckets, the nightly
-  GitHub Action, R2 lifecycle rotation, and restore (Sanity `content:import` · D1 Time Travel).
+  GitHub Action, R2 lifecycle rotation, and restore (Sanity `db:restore:content` · D1 Time Travel).
   `scripts.md` swaps `content:export` for `backup:web:sanity` + `backup:web:d1:<env>`; the db docs
   point their backup bullets at the scripts.
 - **Moved `newsletter` + `cookie-consent` docs to their new homes.** `apps/web/config/newsletter.md`

@@ -1,9 +1,9 @@
 // Import a Sanity dataset backup (the CMS analog of a DB restore). DESTRUCTIVE:
 // `--replace` overwrites documents with the same _id in the target dataset.
 //
-//   pnpm content:import -- <file.tar.gz>              # into NEXT_PUBLIC_SANITY_DATASET
-//   pnpm content:import -- <file.tar.gz> --dataset X  # into a specific dataset
-//   pnpm content:import -- <file.tar.gz> --yes        # skip the typed confirmation
+//   pnpm db:restore:content -- <file.tar.gz>              # into NEXT_PUBLIC_SANITY_DATASET
+//   pnpm db:restore:content -- <file.tar.gz> --dataset X  # into a specific dataset
+//   pnpm db:restore:content -- <file.tar.gz> --yes        # skip the typed confirmation
 //
 // Needs SANITY_API_WRITE_TOKEN (Editor). Prefer importing into a scratch dataset first.
 
@@ -20,7 +20,7 @@ const token = process.env.SANITY_API_WRITE_TOKEN;
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 
 if (!file || !existsSync(file)) {
-  console.error("✗ Pass a backup file: pnpm content:import -- <file.tar.gz>");
+  console.error("✗ Pass a backup file: pnpm db:restore:content -- <file.tar.gz>");
   process.exit(1);
 }
 if (!projectId || !dataset) {

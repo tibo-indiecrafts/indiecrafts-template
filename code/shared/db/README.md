@@ -23,10 +23,10 @@ registry `scripts/lib/apps.mjs`. Runners read it and dispatch on `kind`.
 ## Commands (registry-driven)
 
 ```bash
-pnpm db:migrate <name> <dev|staging|prod>      # → scripts/db-migrate.mjs (dispatch on kind)
+pnpm db:migrate:<name>:<env>                     # per-entity, e.g. db:migrate:audit:prod (pre-migration R2 snapshot on staging/prod)
 node scripts/backup-db.mjs <name> <env> [--remote]   # one db
-pnpm backup:all:<env>                          # every registered db
-pnpm backup:content:prod                       # the Sanity content dataset (the one active db)
+pnpm db:backup:all:<env>                          # every registered db
+pnpm db:backup:content:prod                       # the Sanity content dataset (the one active db)
 ```
 
 ## One rule

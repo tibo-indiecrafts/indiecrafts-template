@@ -6,7 +6,7 @@
 //   node code/shared/scripts/checks/tasks-sync.mjs           # report (exit 0)
 //   node code/shared/scripts/checks/tasks-sync.mjs --check    # CI: exit 1 on drift
 //
-// Wired as `pnpm tasks:check` (in `pnpm verify`) + the change-hygiene Stop hook.
+// Wired as `pnpm check:tasks` (in `pnpm verify`) + the change-hygiene Stop hook.
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -66,7 +66,7 @@ function main() {
 
   if (process.argv.includes("--check") && (missing.length || orphans.length)) {
     console.error(
-      "\ntasks:check failed — sync .vscode/tasks.json with the root package.json scripts.",
+      "\ncheck:tasks failed — sync .vscode/tasks.json with the root package.json scripts.",
     );
     process.exit(1);
   }

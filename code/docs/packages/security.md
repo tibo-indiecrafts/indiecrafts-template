@@ -113,9 +113,9 @@ The per-route limits (`rateLimit`, `bodyMax`, `turnstile`) are **not** inline in
 in one app-owned config, [`src/config/security.ts`](../apps/web/config/security-limits), passed in as
 `withGuard(handler, security.<name>)`.
 
-### Enforcing adoption — `verify:api-guards`
+### Enforcing adoption — `check:api-guards`
 
-`pnpm verify:api-guards` (in `pnpm verify` + CI — see [Scripts](../apps/web/setup/scripts)) scans every
+`pnpm check:api-guards` (in `pnpm verify` + CI — see [Scripts](../apps/web/setup/scripts)) scans every
 `src/app/**/route.ts` and **fails** if a mutating handler (POST/PUT/PATCH/DELETE) neither wraps
 `withGuard` nor is allowlisted with its reason (a capability token, a Bearer session) in
 `code/shared/scripts/checks/api-guards.mjs`. So a new public POST can't ship unguarded by accident.

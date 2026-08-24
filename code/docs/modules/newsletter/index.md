@@ -74,7 +74,7 @@ Subscribers are never editor-created; the desk is read/manage only.
 Subscribers live in Sanity, so export them any time:
 
 ```bash
-pnpm subscribers:export   # → backups/subscribers/subscribers-<timestamp>.csv
+pnpm export:web:website:subscribers   # → backups/subscribers/subscribers-<timestamp>.csv
 ```
 
 Read-only; needs `SANITY_API_READ_TOKEN` (or the write token) in `.env.local`. Columns:

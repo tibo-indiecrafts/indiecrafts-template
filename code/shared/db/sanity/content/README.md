@@ -10,6 +10,6 @@ altitude: "global", backup: "sanity" }`.
 - **Back up:** `node scripts/backup-db.mjs content prod [--remote]` (was `backup:website:sanity`) →
   `sanity dataset export`; `--remote` also copies to the per-env R2 backups bucket. Needs
   `SANITY_API_READ_TOKEN` + `NEXT_PUBLIC_SANITY_*`.
-- **Restore:** `pnpm content:import`.
+- **Restore:** `pnpm db:restore:content`.
 
 Not a D1/SQL database — no `db-migrate`. See the scoping table in `code/projects/_registry.md`.

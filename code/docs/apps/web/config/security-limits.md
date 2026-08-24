@@ -40,7 +40,7 @@ const handle = withGuard(async (req, body) => { /* … */ }, security.newsletter
 
 To change a limit, edit `src/config/security.ts` — never the `route.ts`. Adding a **new** public
 mutating route? Wrap it in `withGuard` with its own `security.<name>` entry, or the
-[`verify:api-guards`](../setup/scripts) check fails CI (every public POST/PUT/PATCH/DELETE must adopt
+[`check:api-guards`](../setup/scripts) check fails CI (every public POST/PUT/PATCH/DELETE must adopt
 `withGuard` or be allowlisted with a reason).
 
 ## Fail-open by default
@@ -48,7 +48,7 @@ mutating route? Wrap it in `withGuard` with its own `security.<name>` entry, or 
 Both layers `withGuard` adds here **fail open until configured** — deliberate, so the template runs
 out of the box:
 
-- **Rate limit** no-ops until `RATE_LIMIT_KV` is bound (`pnpm setup:kv`). The Cloudflare WAF `/api/*`
+- **Rate limit** no-ops until `RATE_LIMIT_KV` is bound (`pnpm setup:web:website:kv`). The Cloudflare WAF `/api/*`
   rule is the **primary** limiter; this is defence-in-depth. See [Deployment](../setup/deployment) +
   [Cloudflare as code](../../../infra/cloudflare-iac).
 - **Turnstile** no-ops until `TURNSTILE_SECRET` is set (with `NEXT_PUBLIC_TURNSTILE_SITE_KEY`); the

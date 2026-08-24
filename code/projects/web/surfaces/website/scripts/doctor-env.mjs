@@ -1,8 +1,8 @@
 // Preflight: validate .env.local before dev / seed / content ops. Reads the file
 // itself (not --env-file) so a MISSING file is reported clearly, not a crash.
 //
-//   pnpm doctor:env            # check the base config
-//   pnpm doctor:env -- --for=seed   # also require the write token
+//   pnpm doctor:web:website:env            # check the base config
+//   pnpm doctor:web:website:env -- --for=seed   # also require the write token
 //
 // Exits 1 on a missing required key; warns (exit 0) on missing optional ones.
 

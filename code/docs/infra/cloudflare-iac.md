@@ -3,7 +3,7 @@
 Terraform provisions the Cloudflare **edge** — the parts `wrangler.toml` can't express (WAF and
 rate-limit rules, cache rules, bot mode). Clean split:
 
-- **`wrangler`** deploys the **Worker** (`deploy:website:<env>`).
+- **`wrangler`** deploys the **Worker** (`deploy:web:website:<env>`).
 - **Terraform** owns the **edge**: auto custom domain · WAF · rate-limit · Bot Fight Mode · cache
   rules · Tiered Cache · zone hardening · the Turnstile widget.
 
@@ -14,16 +14,16 @@ Written for the `cloudflare/cloudflare ~> 5` provider.
 ## Per app × per env
 
 State is isolated **per env** in a Terraform **workspace**; values come from `env/<env>.tfvars`.
-The delegators mirror the deploy scripts (`deploy:website:<env>` → `infra:website:<action>:<env>`):
+The delegators mirror the deploy scripts (`deploy:web:website:<env>` → `infra:web:website:<action>:<env>`):
 
 ```bash
 export CLOUDFLARE_API_TOKEN=…        # scoped — see Prerequisites
 
-pnpm infra:website:init                  # one-time: terraform init
-pnpm infra:website:plan:prod             # review the diff (does nothing)
-pnpm infra:website:apply:prod            # provision prod
-pnpm infra:website:apply:staging         # …and staging (separate state)
-pnpm infra:website:output:prod           # read the Turnstile keys (below)
+pnpm infra:web:website:init                  # one-time: terraform init
+pnpm infra:web:website:plan:prod             # review the diff (does nothing)
+pnpm infra:web:website:apply:prod            # provision prod
+pnpm infra:web:website:apply:staging         # …and staging (separate state)
+pnpm infra:web:website:output:prod           # read the Turnstile keys (below)
 ```
 
 `init | plan | apply | destroy | output` × `dev | staging | prod`. Under the hood:
@@ -74,12 +74,12 @@ limits · tail) live in `wrangler.toml`, not here — the **full commented refer
 The widget's keys are Terraform **outputs**. After `apply`:
 
 ```bash
-pnpm infra:website:output:prod
+pnpm infra:web:website:output:prod
 # turnstile_site_key = "0x4AAA…"   → NEXT_PUBLIC_TURNSTILE_SITE_KEY (public)
 # turnstile_secret   = <sensitive> → TURNSTILE_SECRET (server)
 ```
 
-Put the **site key** in the app env (public) and the **secret** via `secrets:sync:website:prod` (never
+Put the **site key** in the app env (public) and the **secret** via `secrets:sync:web:website:prod` (never
 commit it). Until they're set, the form guard runs on honeypot + origin + rate-limit + body-cap;
 Turnstile just no-ops. See [Security headers](/apps/web/seo/security-headers) + `@indiecrafts/packages-shared-security`.
 
@@ -93,7 +93,7 @@ Turnstile just no-ops. See [Security headers](/apps/web/seo/security-headers) + 
 ## Add app #2
 
 Copy `code/projects/web/surfaces/website/infra/` → `code/projects/<platform>/<kind>/<app>/infra/`, point the tfvars at that app's Worker
-names + domain, and add `infra:<app>:<action>:<env>` delegators (mirroring `infra:website:*`). `main.tf` is
+names + domain, and add `infra:<app>:<action>:<env>` delegators (mirroring `infra:web:website:*`). `main.tf` is
 self-contained (no shared module); `code/shared/scripts/infra/run.mjs` resolves `code/projects/<platform>/<kind>/<app>/infra`.
 
 > **One app = one Cloudflare zone.** The zone-level resources — SSL/TLS/HTTPS settings, Bot Fight
@@ -111,6 +111,6 @@ or Terraform Cloud) — uncomment the `backend` block in `code/projects/web/surf
 
 ## Verify
 
-`pnpm infra:website:init` then `plan` — Terraform validates the schema against the pinned provider (run
+`pnpm infra:web:website:init` then `plan` — Terraform validates the schema against the pinned provider (run
 `terraform -chdir=… validate` too; provider schemas evolve — adjust any renamed argument). A green
 `plan` shows exactly what will change before `apply`.

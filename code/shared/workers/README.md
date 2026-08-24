@@ -9,7 +9,7 @@ aren't a request in the Next app (`@indiecrafts/web-surfaces-website`). Deployed
 pnpm install                                       # links the workspace deps
 pnpm --filter @indiecrafts/shared-workers dev             # local: wrangler dev (http://localhost:8787)
 pnpm --filter @indiecrafts/shared-workers tsc             # typecheck
-pnpm --filter @indiecrafts/shared-workers deploy:workers:dev   # deploy to the dev Worker
+pnpm deploy:shared:workers:dev   # deploy to the dev Worker
 ```
 
 - `src/index.ts` — `fetch` (a `/health` probe) + `scheduled` (cron). Put the real job in `scheduled`.

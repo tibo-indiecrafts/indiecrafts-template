@@ -24,7 +24,7 @@ Instance config (`features` · `consent` — geo cookie-consent regulations · `
 surface — add `packages-web-sanity` (reads), `packages-shared-security` (headers), or any content brick
 only when a real page needs it.
 
-- **Deploy:** `pnpm deploy:app:<dev|staging|prod>` → the shared `scripts/deploy/next.mjs`; or
+- **Deploy:** `pnpm deploy:web:app:<dev|staging|prod>` → the shared `scripts/deploy/next.mjs`; or
   `pnpm deploy:all:<env>`.
 - **Registry:** a row in [`scripts/lib/apps.mjs`](../../../../../shared/scripts/lib/apps.mjs).
 

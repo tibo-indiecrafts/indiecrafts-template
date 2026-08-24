@@ -33,7 +33,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm format:check
       - run: pnpm --filter @indiecrafts/web-surfaces-website verify:contrast
-      - run: pnpm tags:check
+      - run: pnpm check:tags
       - run: pnpm lint:scripts
       - run: pnpm test:scripts
       - run: pnpm test

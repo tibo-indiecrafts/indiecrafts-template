@@ -66,10 +66,10 @@ own trimmed stack (`code/shared/api/infra/cloudflare/main.tf`) — custom domain
 registry rows in `scripts/lib/infra-registry.mjs`.
 
 ```bash
-pnpm infra:website:plan:prod    # review the website edge
-pnpm infra:website:apply:prod   # provision (needs a scoped CLOUDFLARE_API_TOKEN)
-pnpm infra:api:plan:prod        # the api edge (once api.<root> is on a real zone)
-pnpm infra:api:apply:prod
+pnpm infra:web:website:plan:prod    # review the website edge
+pnpm infra:web:website:apply:prod   # provision (needs a scoped CLOUDFLARE_API_TOKEN)
+pnpm infra:shared:api:plan:prod        # the api edge (once api.<root> is on a real zone)
+pnpm infra:shared:api:apply:prod
 ```
 
 Operator, once on a real domain: (1) enable **leaked-credentials detection** +

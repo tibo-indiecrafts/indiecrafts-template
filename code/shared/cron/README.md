@@ -14,8 +14,8 @@ curl "http://localhost:8787/__scheduled?cron=0+*+*+*+*"  # trigger a run locally
 ## Deploy
 
 ```bash
-pnpm deploy:cron:dev           # this worker → dev
-pnpm deploy:cron:prod          # → prod (asks to confirm)
+pnpm deploy:shared:cron:dev           # this worker → dev
+pnpm deploy:shared:cron:prod          # → prod (asks to confirm)
 pnpm deploy:all:prod           # every app (api · cron · web), ordered
 ```
 

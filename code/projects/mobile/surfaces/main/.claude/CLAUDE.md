@@ -56,7 +56,7 @@ default `deploy:all` (Cloudflare) set.
   Token _values_ (`ui-tokens`) + the `shared/` contracts are one home; only the components fork per
   platform. Reuse the agnostic bricks as-is (`@indiecrafts/packages-shared-config`/`format`; Sanity reads
   via the API).
-- **Deploy:** `pnpm deploy:mobile:<dev|staging|prod>` → `shared/scripts/deploy/expo.mjs` (env → EAS profile;
+- **Deploy:** `pnpm deploy:mobile:main:<dev|staging|prod>` → `shared/scripts/deploy/expo.mjs` (env → EAS profile;
   structure-first — full EAS setup is a follow-up). Reached by `pnpm deploy:all:<env> --only all`.
 - **Registry:** a row in [`scripts/lib/apps.mjs`](../../../../../shared/scripts/lib/apps.mjs); full deploy model →
   [`code/docs/shared/architecture/platform-deploy.md`](../../../../../docs/shared/architecture/platform-deploy.md).

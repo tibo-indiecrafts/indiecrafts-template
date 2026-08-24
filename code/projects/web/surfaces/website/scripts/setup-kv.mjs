@@ -5,7 +5,7 @@
 // + fills each block's id in wrangler.toml (base + dev share the dev namespace;
 // staging + prod get their own). Idempotent — re-running is a no-op once filled.
 //
-//   pnpm setup:kv
+//   pnpm setup:web:website:kv
 //
 // Until this runs, the limiter fails OPEN (allows). Docs: setup/deployment.md.
 
@@ -75,7 +75,7 @@ function main() {
     `✓ Bound RATE_LIMIT_KV per env (dev ${ids.dev}, staging ${ids.staging}, prod ${ids.prod}) — ` +
       "the in-app rate limiter is now live.",
   );
-  console.log("  Re-deploy each env (`pnpm deploy:website:<env>`) to apply.");
+  console.log("  Re-deploy each env (`pnpm deploy:web:website:<env>`) to apply.");
 }
 
 main();

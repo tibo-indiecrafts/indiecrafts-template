@@ -26,8 +26,8 @@ bricks are consumed as source (wrangler/esbuild bundles the TS).
 ## Rules
 
 - **Run from the repo root** — `pnpm --filter @indiecrafts/shared-workers <script>`; root delegators exist
-  (`deploy:workers:<env>`, `test:workers`), mirroring `deploy:website:*`.
-- **Deploy:** `deploy:workers:<env>` → the shared `shared/scripts/deploy/worker.mjs workers <env>` (rename
+  (`deploy:shared:workers:<env>`, `test:workers`), mirroring `deploy:web:website:*`.
+- **Deploy:** `deploy:shared:workers:<env>` → the shared `shared/scripts/deploy/worker.mjs workers <env>` (rename
   guard + prod-confirm + `wrangler deploy --env <env>`). **Tail:** `tail:<env>`. **Typegen:** `cf-typegen`.
 - **Connectivity:** `node shared/scripts/infra/bindings.mjs workers <env> <kv|d1|queue> <BINDING>` provisions +
   prints the `wrangler.toml` block. **Secrets:** `wrangler secret put <NAME> --env <env>` — never in

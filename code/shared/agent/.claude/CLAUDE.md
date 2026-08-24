@@ -20,7 +20,7 @@ Next/OpenNext). Same runtime as `api`/`cron`/`workers`.
   native binding (`wrangler.toml`).
 - **Callers** (all via `@indiecrafts/packages-shared-agent-client` `callAgent`): website
   `ContentResearchAgent` (browser, cross-origin + Turnstile) · mobile `lib/agent.ts` + hybrid main (bearer).
-- **Deploy:** `pnpm deploy:agent:<env>` → the shared `scripts/deploy/worker.mjs`. A row in
+- **Deploy:** `pnpm deploy:shared:agent:<env>` → the shared `scripts/deploy/worker.mjs`. A row in
   `scripts/lib/apps.mjs` (slug `agent`); CI + `deploy:all` fan out automatically.
 
 **Rules:** compose bricks; **no cross-app imports**; never expose a secret. `withGuard` is Next-only — keep

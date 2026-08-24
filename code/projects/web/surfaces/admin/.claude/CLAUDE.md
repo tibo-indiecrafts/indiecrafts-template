@@ -14,7 +14,7 @@ headers. Ships its own `src/config` (app-instance).
 
 - **Before shipping:** add auth (the reserved `auth` brick — extract on ≥2 consumers) + a Cloudflare Access
   gate on the subdomain; gate every route.
-- **Deploy:** `pnpm deploy:admin:<dev|staging|prod>` → the shared `shared/scripts/deploy/next.mjs`; or
+- **Deploy:** `pnpm deploy:web:admin:<dev|staging|prod>` → the shared `shared/scripts/deploy/next.mjs`; or
   `pnpm deploy:all:<env>`.
 - **Registry:** a row in [`scripts/lib/apps.mjs`](../../../../../shared/scripts/lib/apps.mjs); full deploy model →
   [`code/docs/shared/architecture/platform-deploy.md`](../../../../../docs/shared/architecture/platform-deploy.md).

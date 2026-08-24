@@ -117,7 +117,7 @@ Changed · Deprecated · Removed · Fixed**.
   `getProvider` + the block's `listId`): the engine now **always stores** the subscriber in Sanity.
   To use an external ESP, drop its own embed form in a `custom-html` block (posts to the provider
   directly, nothing stored our side; add the host to `EMBED_HOSTS` in `next.config.ts`). Export the
-  list with `pnpm subscribers:export` → CSV. Doc: [`docs/modules/newsletter/`](../docs/modules/newsletter).
+  list with `pnpm export:web:website:subscribers` → CSV. Doc: [`docs/modules/newsletter/`](../docs/modules/newsletter).
 - **Comment email notifications (Resend).** A best-effort email fires when a comment is submitted
   (`createComment` → `notifyNewComment`), so the owner is alerted to moderate instead of polling the
   desk. Configured on the shared **E-mails** entity (Studio → E-mails → `commentNotification`): an

@@ -56,7 +56,7 @@ Each uses a honeypot + a gated route + a server-only Sanity write. A submit that
 
 | Entity                | Ingest route      | Rate-limit + Turnstile    | Studio inbox    | Export                    | Delete | Live toggle                             |
 | --------------------- | ----------------- | ------------------------- | --------------- | ------------------------- | ------ | --------------------------------------- |
-| Newsletter subscriber | `/api/newsletter` | ✓ (`security.newsletter`) | Abonnés         | `pnpm subscribers:export` | Studio | code flag                               |
+| Newsletter subscriber | `/api/newsletter` | ✓ (`security.newsletter`) | Abonnés         | `pnpm export:web:website:subscribers` | Studio | code flag                               |
 | Blog comment          | `/api/comments`   | ✓ (`security.comments`)   | Commentaires    | `pnpm comments:export`    | Studio | code flag                               |
 | Waitlist entry        | `/api/waitlist`   | ✓ (`security.waitlist`)   | Liste d'attente | `pnpm waitlist:export`    | Studio | `waitlistSettings.enabled` (page + API) |
 | Contact message       | `/api/contact`    | ✓ (`security.contact`)    | Contact         | `pnpm contact:export`     | Studio | `contactSettings.enabled` (page + API)  |
@@ -142,9 +142,9 @@ Deeper Sanity-specific symptoms (schema migration, legacy fields) are in [`sanit
 - **Code** — the git repo. Pushes to the remote are the backup. Tag releases (`git tag -a v1.0.0 -m "Launch"`) at milestones.
 - **Sanity dataset** — the content:
   ```bash
-  pnpm backup:content:prod                  # → website/backups/sanity/  (backup:content:prod:remote for an R2 copy)
+  pnpm db:backup:content:prod                  # → website/backups/sanity/  (db:backup:content:prod:remote for an R2 copy)
   ```
-  Re-importable with `pnpm --filter @indiecrafts/web-surfaces-website content:import -- <file>` if the live dataset breaks.
+  Re-importable with `pnpm --filter @indiecrafts/web-surfaces-website db:restore:content -- <file>` if the live dataset breaks.
 - **Form submissions** — they're Sanity docs (Abonnés / Commentaires); the dataset export above already includes them.
 
 Brand assets in Sanity are covered by the dataset export; code-side assets (fonts) by the git backup.

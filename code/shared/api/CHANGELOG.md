@@ -96,5 +96,5 @@ last_seen DESC`, `limit` clamped to 200 (default 100). **Why:** back the admin C
   (no Next/OpenNext): `src/index.ts` (`fetch` + a `/health` route), per-env
   `wrangler.toml`, `scripts/deploy.mjs` (rename guard + prod-confirm + `wrangler
 deploy`). Logic is imported from packages/modules, not written here. Ships with
-  `deploy:api:<env>` + the shared `deploy:all:<env>` runner. _Why:_ workers are apps —
+  `deploy:shared:api:<env>` + the shared `deploy:all:<env>` runner. _Why:_ workers are apps —
   a deployable belongs in `code/projects/`, not a package.

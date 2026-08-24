@@ -12,9 +12,9 @@ the runtime pipeline.
 
 | Dir                  | Package                  | Class     | Deploy                  | Status                                                                                    |
 | -------------------- | ------------------------ | --------- | ----------------------- | ----------------------------------------------------------------------------------------- |
-| **surfaces/website** | `@indiecrafts/web-surfaces-website`   | `next-cf` | `deploy:website:<env>`  | ● live — the app **and** the hub Studio (edits all content)                               |
-| **surfaces/admin**   | `@indiecrafts/web-surfaces-admin`     | `next-cf` | `deploy:admin:<env>`    | ◐ real Next scaffold — add a Cloudflare Access gate before shipping                       |
-| **surfaces/app**     | `@indiecrafts/web-surfaces-app`       | `next-cf` | `deploy:app:<env>`      | ◐ Hello World scaffold — one page over the shared bricks                                  |
+| **surfaces/website** | `@indiecrafts/web-surfaces-website`   | `next-cf` | `deploy:web:website:<env>`  | ● live — the app **and** the hub Studio (edits all content)                               |
+| **surfaces/admin**   | `@indiecrafts/web-surfaces-admin`     | `next-cf` | `deploy:web:admin:<env>`    | ◐ real Next scaffold — add a Cloudflare Access gate before shipping                       |
+| **surfaces/app**     | `@indiecrafts/web-surfaces-app`       | `next-cf` | `deploy:web:app:<env>`      | ◐ Hello World scaffold — one page over the shared bricks                                  |
 | **tools/storybook**  | `@indiecrafts/web-tools-storybook` | `static`  | — (build → static host) | ◐ component gallery — `pnpm --filter @indiecrafts/web-tools-storybook storybook`; not in `apps.mjs` |
 
 ### `code/shared/` — cross-platform services (`worker-cf`), consumed by every platform
@@ -25,17 +25,17 @@ the runtime pipeline.
 
 | Dir         | Package                | Class       | Deploy                 | Status                                                      |
 | ----------- | ---------------------- | ----------- | ---------------------- | ----------------------------------------------------------- |
-| **api**     | `@indiecrafts/shared-api`     | `worker-cf` | `deploy:api:<env>`     | ◐ bare Worker — `/health` + audit/session sink `POST /v1/events` |
-| **cron**    | `@indiecrafts/shared-cron`    | `worker-cf` | `deploy:cron:<env>`    | ◐ bare Worker scaffold — scheduled handler                  |
-| **workers** | `@indiecrafts/shared-workers` | `worker-cf` | `deploy:workers:<env>` | ◐ bare Worker scaffold — background / queue jobs            |
-| **agent**   | `@indiecrafts/shared-agent`   | `worker-cf` | `deploy:agent:<env>`   | ● AI agent — `POST /v1/agent/:name`, dual-mode guard (all surfaces) |
+| **api**     | `@indiecrafts/shared-api`     | `worker-cf` | `deploy:shared:api:<env>`     | ◐ bare Worker — `/health` + audit/session sink `POST /v1/events` |
+| **cron**    | `@indiecrafts/shared-cron`    | `worker-cf` | `deploy:shared:cron:<env>`    | ◐ bare Worker scaffold — scheduled handler                  |
+| **workers** | `@indiecrafts/shared-workers` | `worker-cf` | `deploy:shared:workers:<env>` | ◐ bare Worker scaffold — background / queue jobs            |
+| **agent**   | `@indiecrafts/shared-agent`   | `worker-cf` | `deploy:shared:agent:<env>`   | ● AI agent — `POST /v1/agent/:name`, dual-mode guard (all surfaces) |
 
 ### `mobile/` — Expo · `hybrid/` — Electron
 
 | Dir                      | Package               | Class      | Deploy                          | Status                                                                 |
 | ------------------------ | --------------------- | ---------- | ------------------------------- | ---------------------------------------------------------------------- |
-| **mobile/surfaces/main** | `@indiecrafts/mobile-surfaces-main` | `expo`     | `deploy:mobile:<env>` (EAS)     | ◐ real Expo scaffold, one screen — ships via EAS, **not** Cloudflare   |
-| **hybrid/surfaces/main** | `@indiecrafts/hybrid-surfaces-main` | `electron` | `deploy:hybrid:<env>` (builder) | ◐ real Electron scaffold — **builds**; finalize signing / notarization |
+| **mobile/surfaces/main** | `@indiecrafts/mobile-surfaces-main` | `expo`     | `deploy:mobile:main:<env>` (EAS)     | ◐ real Expo scaffold, one screen — ships via EAS, **not** Cloudflare   |
+| **hybrid/surfaces/main** | `@indiecrafts/hybrid-surfaces-main` | `electron` | `deploy:hybrid:main:<env>` (builder) | ◐ real Electron scaffold — **builds**; finalize signing / notarization |
 
 ### Top-level (not under a platform)
 
