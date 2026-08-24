@@ -4,6 +4,10 @@ out/
 build/
 coverage/
 
+# Playwright e2e artifacts (generated, not a lint surface)
+test-results/
+playwright-report/
+
 # VitePress docs site — build output + cache (npm-managed, not our lint surface)
 docs/.vitepress/dist/
 docs/.vitepress/cache/
