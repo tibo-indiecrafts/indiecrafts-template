@@ -22,6 +22,9 @@ export const features = defineFeatures({
   rss: true,
   /** `/sitemap.xml` + robots advertising it. */
   sitemap: true,
+  /** Block AI *training* crawlers in `robots.txt` (GPTBot, Google-Extended, CCBot, …
+   *  see `AI_TRAINING_USER_AGENTS`) while search + AI-search bots keep indexing. */
+  blockAiTraining: true,
   /** All JSON-LD (Organization/WebSite/WebPage/FAQPage). */
   structuredData: true,
   /** Header locale switcher. */

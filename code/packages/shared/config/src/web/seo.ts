@@ -6,6 +6,27 @@
  * live under a page's `seo.*` in `./pages`.
  */
 
+/**
+ * AI **training** / dataset crawlers to block in `robots.txt` when
+ * `features.blockAiTraining` is on. Search and AI-*search* crawlers — Googlebot,
+ * Bingbot, DuckDuckBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Applebot — are
+ * deliberately NOT listed, so the site keeps indexing and AI search still cites it.
+ * `Google-Extended` / `Applebot-Extended` opt out of Gemini/Apple training WITHOUT
+ * affecting Search ranking. A client edits this list to taste.
+ */
+export const AI_TRAINING_USER_AGENTS = [
+  "GPTBot", // OpenAI model training
+  "Google-Extended", // Gemini/Vertex training — not Search / AI Overviews
+  "CCBot", // Common Crawl — feeds most LLM datasets
+  "ClaudeBot", // Anthropic
+  "anthropic-ai", // Anthropic (legacy token)
+  "Bytespider", // ByteDance
+  "Applebot-Extended", // Apple training — Applebot (search) stays allowed
+  "Meta-ExternalAgent", // Meta AI training
+  "Amazonbot", // Amazon
+  "PetalBot", // Huawei
+] as const;
+
 export const seoDefaults = {
   // Title template + default title are built in the layout from the Sanity
   // `siteName` + locale `tagline` (`%s · <siteName>`) — not here, so the name

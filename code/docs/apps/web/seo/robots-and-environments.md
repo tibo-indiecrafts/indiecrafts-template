@@ -15,6 +15,13 @@ const indexable = getCurrentEnvironment() === "production" && isSiteConfigured;
 **Indexable** — full crawl instructions:
 
 ```text
+# AI training crawlers blocked (features.blockAiTraining) — one group each, so `*` still allows search
+User-agent: GPTBot
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+# … CCBot · ClaudeBot · anthropic-ai · Bytespider · Applebot-Extended · Meta-ExternalAgent · Amazonbot · PetalBot
+
 User-agent: *
 Allow: /
 Disallow: /api/
@@ -73,6 +80,25 @@ export const isSiteConfigured = site.url !== PLACEHOLDER_SITE_URL;
 Set `NEXT_PUBLIC_SITE_URL` **only** on the production deployment. Leaving it unset everywhere else keeps previews and staging on the placeholder origin, so they can't accidentally become indexable.
 :::
 
+## Blocking AI training crawlers
+
+`features.blockAiTraining` (default **on**) blocks AI **training** / dataset crawlers while keeping
+search and AI-*search* crawlers indexing — so you fight the learning bots, not the search bots, even
+the AI ones. It only applies when the site is indexable; a non-indexable deploy already serves
+`Disallow: /` to everyone.
+
+Robots.txt matches the **most specific** user-agent group, so each training bot gets its own
+`Disallow: /` group and everything else falls through to `User-agent: *` (`Allow: /`). The blocked
+list is `AI_TRAINING_USER_AGENTS` in `@indiecrafts/packages-shared-config` — edit it to taste:
+
+- **Blocked** (training): `GPTBot` · `Google-Extended` · `CCBot` · `ClaudeBot` · `anthropic-ai` · `Bytespider` · `Applebot-Extended` · `Meta-ExternalAgent` · `Amazonbot` · `PetalBot`.
+- **Still allowed** (search + AI search — never named): `Googlebot`, `Bingbot`, `DuckDuckBot`, `OAI-SearchBot`, `ChatGPT-User`, `PerplexityBot`, `Applebot`.
+
+`Google-Extended` and `Applebot-Extended` opt out of Gemini/Apple **training** without touching Search
+ranking or AI Overviews. This is robots.txt-only — no `X-Robots-Tag: noai` header, which is broad
+(discourages AI *search* too) and barely honored. Set `features.blockAiTraining: false` to let AI
+training crawlers in.
+
 ## The sitemap
 
 Route: `src/app/sitemap.ts`. Emits every `(route × locale)` combination with `hreflang` alternates. Gated by **`features.sitemap`**:
@@ -101,6 +127,7 @@ The sitemap's inclusion rules mirror `robots.txt` and the LLM endpoints: a page 
 
 | Feature flag          | Effect                                                      |
 | --------------------- | ----------------------------------------------------------- |
-| `features.sitemap`    | Off ⇒ empty sitemap + robots.txt drops the `Sitemap:` line. |
-| `features.llms.index` | Off ⇒ robots.txt drops the `# llms.txt:` pointer.           |
-| `features.blog`       | Off ⇒ sitemap skips all Sanity-driven blog entries.         |
+| `features.sitemap`        | Off ⇒ empty sitemap + robots.txt drops the `Sitemap:` line. |
+| `features.llms.index`     | Off ⇒ robots.txt drops the `# llms.txt:` pointer.           |
+| `features.blockAiTraining` | On ⇒ robots.txt blocks the AI-training crawlers in `AI_TRAINING_USER_AGENTS`; search + AI-search bots keep indexing. |
+| `features.blog`           | Off ⇒ sitemap skips all Sanity-driven blog entries.         |

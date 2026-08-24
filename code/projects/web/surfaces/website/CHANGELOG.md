@@ -19,6 +19,14 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Block AI-training crawlers in `robots.txt` — `features.blockAiTraining` (default on).** When the
+  site is indexable, `src/app/robots.txt/route.ts` now emits a `Disallow: /` group per AI-_training_
+  crawler (`AI_TRAINING_USER_AGENTS` from `@indiecrafts/packages-shared-config` — GPTBot,
+  Google-Extended, CCBot, ClaudeBot, …) before the `User-agent: *` allow group. Robots.txt matches the
+  most specific user-agent, so search and AI-_search_ bots (Googlebot, Bingbot, PerplexityBot,
+  OAI-SearchBot, …) fall through and keep indexing. **Why:** fight the learning bots without losing
+  search — even AI search. robots.txt-only (no broad, barely-honored `X-Robots-Tag: noai`). The route
+  logic is extracted to a pure `robotsTxt()` builder with a colocated test.
 - **Proxy-set, per-request nonce CSP — `CSP_MODE`.** `src/proxy.ts` now generates one nonce per
   request (`generateNonce`) and stamps the response with `cspHeadersForMode(...)` from
   `@indiecrafts/packages-shared-security`: `CSP_MODE=enforce` ships the strict nonce `script-src`

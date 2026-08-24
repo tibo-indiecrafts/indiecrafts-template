@@ -14,7 +14,7 @@ export {
   localeCookieName,
   logging,
 } from "./site";
-export { seoDefaults } from "./seo";
+export { seoDefaults, AI_TRAINING_USER_AGENTS } from "./seo";
 export { isPageVisible } from "./pages";
 export {
   getCurrentEnvironment,
