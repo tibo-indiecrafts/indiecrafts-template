@@ -6,6 +6,7 @@ import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { DataRequestForm } from "@indiecrafts/packages-web-ui-components/web/form/DataRequestForm";
 import { DATA_REQUEST_TYPES } from "@indiecrafts/packages-web-compliance/requests/request-types";
+import { Link } from "@/i18n/routing";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -35,6 +36,14 @@ export default async function DataRequestPage({ params }: Props) {
   return (
     <DefaultLayout>
       <PageSchemas page={pages.dataRequest} locale={locale} />
+      <p className="text-muted-foreground mx-auto mt-8 max-w-xl text-center text-sm md:mt-12">
+        <Link
+          href="/erasure"
+          className="text-brand underline underline-offset-2 hover:opacity-80"
+        >
+          {t("erasureNote")}
+        </Link>
+      </p>
       <DataRequestForm
         heading={t("heading")}
         body={t("body")}

@@ -26,14 +26,14 @@ const ALLOWLIST = {
     "browser CSP-violation report sink (Reporting API), website + admin — no auth by design; handleCspReport is the trust boundary (CSP content-type allowlist + body cap + per-IP rateLimit + sanitize, always 204). withGuard's origin/Turnstile don't apply to Reporting-API beacons.",
   "src/app/api/csp-report/route.ts":
     "same CSP-report sink on the `app` surface (its folder name shifts the route key); handleCspReport is the trust boundary — see the website entry.",
-  "api/consent-log/route.ts":
-    "same-origin consent logger — resolves the subject server-side via Clerk auth() (the trust boundary), validates the body, gates anonymous logging behind a feature flag, and forwards server-side with APP_API_TOKEN (no secret reaches the browser).",
   "api/comments/moderate/route.ts":
     "single-use moderationToken + cross-site form POST from the email client (rate-limited via rateLimit()).",
   "api/emails/test/route.ts":
     "Sanity Bearer-token auth (isProjectUser) + manual body cap; authenticated editor only.",
   "api/session-log/route.ts":
     "Clerk auth() — a signed-in, same-origin caller only; forwards server-side to the audit api with APP_API_TOKEN (no secret reaches the browser).",
+  "api/consent-log/route.ts":
+    "Clerk auth() resolves the signed-in caller server-side (the trust boundary); anonymous logging is gated behind features.compliance.logAnonymousConsent (off by default) + a first-party consent_id cookie; forwards server-side to the consent api with APP_API_TOKEN (no secret reaches the browser). Same pattern as session-log; Turnstile is wrong for a background consent beacon.",
   "src/app/api/session-log/route.ts":
     "Same session-log route on the `app` surface (its folder name shifts the route key); Clerk auth(), signed-in same-origin caller only.",
 };

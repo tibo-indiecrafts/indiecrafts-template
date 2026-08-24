@@ -4,7 +4,10 @@ import { defineConfig } from "vitest/config";
 
 // Runs every Storybook story as a Vitest component test in a real browser
 // (Playwright chromium, headless) — interaction (`play`) + a11y (addon-a11y).
-// Zero new test authoring: the 127 colocated stories ARE the component suite.
+// Zero new test authoring: the colocated stories (web + native via react-native-web)
+// ARE the component suite. NOTE: the `stories` globs in main.ts must be configDir-
+// relative — an absolute glob makes this plugin discover 0 tests (the builder tolerates
+// it, this runner does not).
 export default defineConfig({
   plugins: [
     storybookTest({

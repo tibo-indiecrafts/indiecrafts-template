@@ -62,6 +62,55 @@
       "consent": "J'accepte que cette adresse e-mail serve uniquement à traiter ma demande.",
       "submit": "Envoyer la demande",
       "success": "Merci — nous avons reçu votre demande et répondrons sous un mois.",
+      "error": "Une erreur s'est produite. Merci de réessayer.",
+      "erasureNote": "Pour supprimer vos données plus rapidement, utilisez la page d'effacement."
+    },
+    "erasure": {
+      "request": {
+        "heading": "Supprimer vos données",
+        "body": "Saisissez votre e-mail et nous vous enverrons un lien pour confirmer l'effacement. Aucun compte n'est nécessaire.",
+        "emailLabel": "Votre e-mail",
+        "emailPlaceholder": "vous@exemple.com",
+        "submitButton": "Envoyer le lien d'effacement",
+        "pending": "Envoi…",
+        "sent": "Si cette adresse figure dans nos dossiers, nous vous avons envoyé un lien de confirmation.",
+        "turnstile": "La vérification de sécurité a échoué. Merci de réessayer.",
+        "error": "Une erreur s'est produite. Merci de réessayer."
+      },
+      "confirm": {
+        "heading": "Confirmer l'effacement des données",
+        "body": "Saisissez votre e-mail pour confirmer. Cette action supprime définitivement vos données et est irréversible.",
+        "emailLabel": "Votre e-mail",
+        "emailPlaceholder": "vous@exemple.com",
+        "submitButton": "Confirmer l'effacement",
+        "pending": "Confirmation…",
+        "success": "Vos données ont été effacées.",
+        "partial": "Vos données ont été effacées, mais certains enregistrements nécessitent un suivi manuel. Notre équipe a été notifiée.",
+        "mismatch": "Ce lien est invalide, expiré ou déjà utilisé, ou l'e-mail ne correspond pas.",
+        "expired": "Trop de tentatives. Merci de demander un nouveau lien d'effacement.",
+        "error": "Une erreur s'est produite. Merci de réessayer."
+      }
+    }
+  },
+  "account": {
+    "delete": {
+      "heading": "Supprimer votre compte",
+      "body": "Cette action supprime définitivement votre compte et vos données personnelles. Nous conservons une trace de la suppression elle-même dans notre journal d'activité, comme l'exige la responsabilité légale. Saisissez votre e-mail pour confirmer — cette action est irréversible.",
+      "emailLabel": "Votre e-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "confirmButton": "Supprimer mon compte",
+      "pending": "Suppression…",
+      "success": "Votre compte a été supprimé. Vous êtes maintenant déconnecté.",
+      "partial": "Votre compte a été supprimé, mais certaines données nécessitent un suivi manuel. Notre équipe a été notifiée.",
+      "error": "Une erreur s'est produite. Merci de réessayer.",
+      "mismatch": "Cet e-mail ne correspond pas à votre compte. Merci de le vérifier et de réessayer."
+    },
+    "export": {
+      "heading": "Télécharger vos données",
+      "body": "Exportez une copie de vos données personnelles sous forme de fichier. Le lien de téléchargement est à usage unique et expire au bout d'une heure.",
+      "button": "Télécharger mes données",
+      "pending": "Préparation de votre téléchargement…",
+      "success": "Vos données sont prêtes — le téléchargement s'est ouvert dans un nouvel onglet.",
       "error": "Une erreur s'est produite. Merci de réessayer."
     }
   },
@@ -96,6 +145,9 @@
     "preferencesBody": "Choisissez les cookies que vous autorisez. Les cookies nécessaires sont toujours actifs.",
     "manage": "Gérer les préférences de cookies",
     "declarationTitle": "Cookies que nous utilisons",
+    "doNotSell": {
+      "link": "Ne pas vendre ni partager mes informations personnelles"
+    },
     "party": {
       "first": "Première partie",
       "third": "Tierce partie"

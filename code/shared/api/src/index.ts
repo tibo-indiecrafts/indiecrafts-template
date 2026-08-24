@@ -13,6 +13,7 @@ import {
   classifyFailedLogins,
   FAILED_LOGIN,
   bumpCounter,
+  shouldAlert,
 } from "@indiecrafts/packages-shared-security-events";
 import { resolveRegulation } from "@indiecrafts/packages-shared-compliance/shared";
 import {
@@ -25,6 +26,16 @@ import {
   type RawBanner,
   type RawToast,
 } from "@indiecrafts/packages-shared-announcement";
+import { handleErasureRequest } from "./erasure/request";
+import { handleErasureConfirm } from "./erasure/confirm";
+import { handleErasureStatus } from "./erasure/status";
+import { handleErasureSelf } from "./erasure/self";
+import { handleExport, handleExportDownload } from "./export/route";
+import {
+  handleDataRequestWrite,
+  handleDataRequestList,
+} from "./data-request/route";
+import { sendSecurityAlertEmail } from "./security/alert";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -66,12 +77,41 @@ export interface Env {
   /** `wrangler secret put CLERK_WEBHOOK_SECRET` — Svix signing secret (`whsec_…`) for
    *  `POST /v1/clerk-webhook`. Optional (503 until set). */
   CLERK_WEBHOOK_SECRET?: string;
+  /** `wrangler secret put CLERK_SECRET_KEY` — Clerk backend secret key for the erasure
+   *  route's real Clerk client (find/export/delete a user by email). Optional until the
+   *  confirm route runs erasure. */
+  CLERK_SECRET_KEY?: string;
   /** Sanity read config for `GET /v1/announcements` (`[vars]`). Public read → 503 until set. */
   SANITY_PROJECT_ID?: string;
   SANITY_DATASET?: string;
   SANITY_API_VERSION?: string;
   /** `wrangler secret put SANITY_API_READ_TOKEN` — server-side read token (never shipped to clients). */
   SANITY_API_READ_TOKEN?: string;
+  /** `wrangler secret put SANITY_API_WRITE_TOKEN` — write token for pseudonymising Sanity
+   *  docs during erasure. Optional until the confirm route runs erasure. */
+  SANITY_API_WRITE_TOKEN?: string;
+  /** `wrangler secret put RESEND_API_KEY` — the erasure flow's token + completion emails.
+   *  Optional: `erasure/email.ts` no-ops (never throws) until this AND `EMAIL_FROM` are set. */
+  RESEND_API_KEY?: string;
+  /** `wrangler secret put EMAIL_FROM` (or `[vars]`) — the erasure emails' From address. */
+  EMAIL_FROM?: string;
+  /** `[vars]` (or secret; an address, not sensitive) — BCC'd on every outbound email
+   *  from this worker (the erasure emails). Operator-set. Optional — unset → no bcc.
+   *  Composes with the website send layer's own `EMAIL_ADMIN_BCC` read. */
+  EMAIL_ADMIN_BCC?: string;
+  /** `[vars]` (or secret; an address, not sensitive) — the high/critical security-alert
+   *  recipient. Optional — unset → falls back to `EMAIL_ADMIN_BCC`, and if that is also
+   *  unset, the alert send no-ops (the incident is still written to D1). */
+  SECURITY_ALERT_EMAIL?: string;
+  /** `wrangler secret put TURNSTILE_SECRET` — the bot gate on the public erasure-request
+   *  form. Optional (unset → the check passes; set → verified, fails closed on error). */
+  TURNSTILE_SECRET?: string;
+  /** The website's public origin (`[vars]`) — the erasure confirm-link target. Unset → falls
+   *  back to the worker's own origin + `/v1/erasure/confirm` (the current behaviour). */
+  WEBSITE_URL?: string;
+  /** R2 bucket for data-export bundles (`[[r2_buckets]] binding = "EXPORT_BUCKET"`),
+   *  operator-provisioned. Optional — `/v1/export` routes answer 503 until bound. */
+  EXPORT_BUCKET?: R2Bucket;
 }
 
 // Browser-context origins allowed to READ the response (dev + the electron renderer
@@ -82,7 +122,7 @@ const ALLOWED_ORIGINS = new Set([
 ]);
 const BODY_MAX = 4000;
 
-function corsHeaders(origin: string | null): Record<string, string> {
+export function corsHeaders(origin: string | null): Record<string, string> {
   if (origin && ALLOWED_ORIGINS.has(origin))
     return {
       "access-control-allow-origin": origin,
@@ -93,14 +133,14 @@ function corsHeaders(origin: string | null): Record<string, string> {
 }
 
 /** Constant-time compare — no early return, so timing doesn't leak the mismatch. */
-function safeEqual(a: string, b: string): boolean {
+export function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
   for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return diff === 0;
 }
 
-const clientIp = (req: Request): string =>
+export const clientIp = (req: Request): string =>
   req.headers.get("cf-connecting-ip") ?? "unknown";
 
 /**
@@ -169,9 +209,17 @@ function json(
 
 // The announcements read is PUBLIC content (same as on the public website), so it
 // answers any origin — unlike the bearer-gated /v1/* routes above.
-const PUBLIC_CORS = {
+export const PUBLIC_CORS = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, OPTIONS",
+  "access-control-allow-headers": "content-type",
+};
+
+// Same as PUBLIC_CORS, but for the public routes that also accept a POST body
+// (the erasure-request form: GET renders it, POST submits it).
+export const PUBLIC_CORS_POST = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, OPTIONS",
   "access-control-allow-headers": "content-type",
 };
 
@@ -202,7 +250,7 @@ export default {
   async fetch(
     request: Request,
     env: Env,
-    _ctx: ExecutionContext,
+    ctx: ExecutionContext,
   ): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname === "/health") {
@@ -329,17 +377,33 @@ export default {
             env.IP_HASH_SALT && ip !== "unknown"
               ? await hashIpAddress(ip, env.IP_HASH_SALT)
               : null;
-          const insertSecurity = (
+          const insertSecurity = async (
             et: string,
             sev: string,
             desc: string | null,
-          ) =>
-            env
+          ) => {
+            await env
               .DB!.prepare(
                 "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
               )
               .bind(ts, et, sev, secSurface, secUserId, country, ipHash, desc)
               .run();
+            // Alert the owner/DPO on high/critical incidents. Fired via waitUntil so
+            // it never delays the response — the incident is already persisted.
+            if (shouldAlert(sev)) {
+              ctx.waitUntil(
+                sendSecurityAlertEmail(env, {
+                  eventType: et,
+                  severity: sev,
+                  surface: secSurface,
+                  userId: secUserId,
+                  country,
+                  description: desc,
+                  ts,
+                }),
+              );
+            }
+          };
 
           // Failed logins are COUNTED in KV (cheap, ephemeral), NOT written per-request to
           // D1. Only when a count crosses the threshold do we store ONE credential_stuffing
@@ -610,6 +674,13 @@ export default {
         return json({ error: "server" }, 502, cors);
       }
     }
+    // ── DSAR intake — POST /v1/data-request (bearer-gated write; the website's
+    // /api/data-request route proxies here) + GET /v1/data-requests (bearer-gated read;
+    // the admin screen) ── Logic lives in data-request/route.ts — this stays a thin dispatch.
+    if (url.pathname === "/v1/data-request")
+      return handleDataRequestWrite(request, env);
+    if (url.pathname === "/v1/data-requests")
+      return handleDataRequestList(request, env);
 
     // ── Clerk webhook — POST /v1/clerk-webhook (Svix-signed; server-verified events) ──
     // Fail-closed: no secret set → 503; bad signature → 401. Records only genuinely
@@ -656,20 +727,37 @@ export default {
       const role = (data.public_metadata as { role?: string } | undefined)
         ?.role;
       if (evt.type === "user.updated" && role === "admin" && env.DB) {
+        const privEscTs = new Date().toISOString();
+        const privEscUserId = typeof data.id === "string" ? data.id : null;
+        const privEscCountry = request.headers.get("cf-ipcountry") ?? null;
+        const privEscDesc = "role→admin via Clerk (out-of-band)";
         try {
           await env.DB.prepare(
             "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)",
           )
             .bind(
-              new Date().toISOString(),
+              privEscTs,
               "privilege_escalation",
               "high",
               "api",
-              typeof data.id === "string" ? data.id : null,
-              request.headers.get("cf-ipcountry") ?? null,
-              "role→admin via Clerk (out-of-band)",
+              privEscUserId,
+              privEscCountry,
+              privEscDesc,
             )
             .run();
+          // Always alerts — privilege_escalation is always "high", and shouldAlert("high")
+          // is always true. Fired via waitUntil so it never delays the response.
+          ctx.waitUntil(
+            sendSecurityAlertEmail(env, {
+              eventType: "privilege_escalation",
+              severity: "high",
+              surface: "api",
+              userId: privEscUserId,
+              country: privEscCountry,
+              description: privEscDesc,
+              ts: privEscTs,
+            }),
+          );
         } catch (error) {
           logger.error("clerk webhook write failed", {
             name: (error as Error)?.name,
@@ -813,6 +901,42 @@ export default {
         });
         return json({ error: "server" }, 502, PUBLIC_CORS);
       }
+    }
+
+    // ── GDPR erasure request — GET/POST /v1/erasure/request (PUBLIC; Turnstile + rate-limit) ──
+    // GET renders the request form; POST files the request. Anti-enumeration + the
+    // request-form HTML live in erasure/request.ts — this stays a thin dispatch.
+    if (url.pathname === "/v1/erasure/request")
+      return handleErasureRequest(request, env, ctx);
+
+    // ── GDPR erasure confirm — GET/POST /v1/erasure/confirm (PUBLIC; token + typed
+    // email + TTL + attempt cap) ── GET renders the confirm form (no mutation); POST
+    // verifies and runs the live erasure engine. Verification + engine assembly live
+    // in erasure/confirm.ts — this stays a thin dispatch.
+    if (url.pathname === "/v1/erasure/confirm")
+      return handleErasureConfirm(request, env, ctx);
+
+    // ── GDPR self-service erasure — POST /v1/erasure/self (AUTHENTICATED; Clerk JWT +
+    // typed-email gate) ── A signed-in user erases their own data with no email
+    // round-trip. Verification + engine assembly live in erasure/self.ts.
+    if (url.pathname === "/v1/erasure/self")
+      return handleErasureSelf(request, env, ctx);
+
+    // ── GDPR erasure status — GET /v1/erasure/status/:token (PUBLIC; no PII) ──
+    // The subject polls their request state by the plaintext token from their email.
+    if (url.pathname.startsWith("/v1/erasure/status/")) {
+      const token = url.pathname.slice("/v1/erasure/status/".length);
+      return handleErasureStatus(request, env, token);
+    }
+
+    // ── GDPR data export — POST /v1/export (AUTHENTICATED; Clerk JWT) ── Runs
+    // runExport, stores the bundle in R2, and returns a single-use expiring download
+    // link. GET /v1/export/download?token=… (PUBLIC; the token itself is the auth)
+    // streams the bundle and deletes it on first download.
+    if (url.pathname === "/v1/export") return handleExport(request, env, ctx);
+    if (url.pathname.startsWith("/v1/export/download")) {
+      const token = new URL(request.url).searchParams.get("token") ?? "";
+      return handleExportDownload(request, env, token);
     }
 
     logger.info("api request", {

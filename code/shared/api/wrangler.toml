@@ -36,6 +36,9 @@ invocation_logs = true
 SANITY_API_VERSION = "2025-01-01"
 # SANITY_PROJECT_ID = "your_project_id"
 # SANITY_DATASET = "production"
+# WEBSITE_URL = "https://your-site.example"
+# EMAIL_ADMIN_BCC = "admin@your-site.example"  # BCC'd on every outbound email (erasure emails); an address, [vars]-safe
+# SECURITY_ALERT_EMAIL = "soc@your-site.example"  # high/critical security-alert recipient; unset falls back to EMAIL_ADMIN_BCC
 # Other secrets are NEVER here → `wrangler secret put <NAME> --env <env>` (or
 # `pnpm secrets:sync:*`). They surface on `env.<NAME>`.
 
@@ -48,6 +51,13 @@ SANITY_API_VERSION = "2025-01-01"
 # [[r2_buckets]]
 # binding = "BUCKET"                   # env.BUCKET
 # bucket_name = "indiecrafts-dev-shared-api-assets"
+
+# Data-export bundles (POST /v1/export → GET /v1/export/download). Operator-provisioned;
+# uncomment + repeat under [env.<env>] once created:
+#   wrangler r2 bucket create indiecrafts-dev-shared-api-exports
+# [[r2_buckets]]
+# binding = "EXPORT_BUCKET"            # env.EXPORT_BUCKET
+# bucket_name = "indiecrafts-dev-shared-api-exports"
 
 # ── D1 — serverless SQLite ───────────────────────────────────────────────
 # [[d1_databases]]
@@ -118,7 +128,9 @@ SANITY_API_VERSION = "2025-01-01"
 # at the edge, never written per-request to D1:
 #   wrangler kv namespace create indiecrafts-dev-shared-api-security-counters
 # Secrets (out-of-band): APP_API_TOKEN · IP_HASH_SALT · CLERK_WEBHOOK_SECRET (Svix) ·
-#   GDPR_FINGERPRINT_SALT (email pseudonymisation fingerprint; identical across envs) —
+#   GDPR_FINGERPRINT_SALT (email pseudonymisation fingerprint; identical across envs) ·
+#   CLERK_SECRET_KEY (erasure route's real Clerk client) ·
+#   SANITY_API_WRITE_TOKEN (erasure route's Sanity pseudonymisation writes) —
 #   wrangler secret put <NAME> --env <env>
 [env.dev]
 name = "indiecrafts-dev-shared-api"

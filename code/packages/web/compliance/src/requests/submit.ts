@@ -1,8 +1,7 @@
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";
-import { site, isLocale, localeCodes, defaultLocale } from "@indiecrafts/packages-shared-config";
-import { writeClient } from "@indiecrafts/packages-web-sanity/write";
+import { site, defaultLocale } from "@indiecrafts/packages-shared-config";
 import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
   getEmailStrings,
@@ -22,9 +21,9 @@ export { validateDataRequest } from "./validate";
 
 /**
  * Data-subject request — the single runtime write path for the public
- * `/data-request` form. Validates the input, then **always stores a `dataRequest`
- * doc** (the legal record the team actions in Studio; never deduped). Fields are
- * whitelisted and `_type` is hard-coded (mirrors `subscribe`/`createComment`).
+ * `/data-request` form. Validates the input, then POSTs a bearer-authed request
+ * to the api worker's `POST /v1/data-request` (D1) — the legal record the team
+ * actions; never deduped.
  *
  * On a stored request, one best-effort owner alert may fire (configured on the
  * shared `emailStrings` entity, Studio → E-mails → "RGPD — nouvelle demande").
@@ -48,31 +47,42 @@ export async function submitDataRequest(
   const email = input.email.trim().toLowerCase();
   const requestType = input.requestType as DataRequestType;
 
+  const url = process.env.API_URL;
+  const token = process.env.APP_API_TOKEN;
+  if (!url || !token) return { ok: false, error: "server" };
+
   try {
-    await writeClient.create({
-      _type: "dataRequest", // hard-coded — never from the request
-      requestType,
-      email,
-      status: "new",
-      submittedAt,
-      ...(input.message ? { message: input.message.slice(0, 4000) } : {}),
-      ...(input.source ? { source: input.source.slice(0, 300) } : {}),
-      ...(input.language && isLocale(input.language, localeCodes)
-        ? { locale: input.language }
-        : {}),
-      ...(policyVersion ? { policyVersion: policyVersion.slice(0, 120) } : {}),
+    const res = await fetch(`${url}/v1/data-request`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        requestType,
+        email,
+        message: input.message?.slice(0, 4000),
+        source: input.source?.slice(0, 300),
+        language: input.language,
+        policyVersion,
+        submittedAt,
+      }),
     });
+    if (!res.ok) {
+      logger.error("data request write failed", { status: res.status });
+      return { ok: false, error: "server" };
+    }
 
     // Best-effort — a mail failure must not turn a saved request into a 500.
     await notifyOwner(requestType, email, input.message, input.source);
 
     return { ok: true };
   } catch (error) {
-    // Don't log the raw error — a Sanity write error can embed the submitted
-    // mutation (subject email/message = PII). Log only the type + status.
-    logger.error("data request submit failed", {
+    // Don't log the raw error — it can embed the submitted body (subject
+    // email/message = PII). Log only the type + status.
+    logger.error("data request write failed", {
       name: error instanceof Error ? error.name : "unknown",
-      status: (error as { statusCode?: number } | null)?.statusCode,
+      status: (error as { status?: number } | null)?.status,
     });
     return { ok: false, error: "server" };
   }

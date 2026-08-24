@@ -38,6 +38,10 @@ invocation_logs = true
 # database_name = "indiecrafts-dev-shared-cron"
 # database_id = "<wrangler d1 create …>"
 #
+# [[r2_buckets]]           # env.EXPORT_BUCKET — same bucket the api's /v1/export writes
+# binding = "EXPORT_BUCKET"                                  # to; the cleanup pass sweeps
+# bucket_name = "indiecrafts-dev-shared-api-exports"         # bundles whose TTL expired unread.
+#
 # [[queues.consumers]]     # a cron worker can also DRAIN a queue (add a queue() handler)
 # queue = "indiecrafts-dev-jobs"
 # max_batch_size = 10

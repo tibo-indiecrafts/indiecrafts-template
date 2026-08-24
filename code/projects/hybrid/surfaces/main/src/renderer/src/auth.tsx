@@ -9,6 +9,13 @@ import {
   useAuth,
 } from "@clerk/clerk-react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import {
+  DeleteAccountSection,
+  type DeleteAccountCopy,
+  ExportSection,
+  type ExportCopy,
+} from "@indiecrafts/packages-shared-compliance/web";
+import { apiUrl, features } from "../../config";
 
 /** Publishable key (PUBLIC) from the renderer env — auth is opt-in on its presence. */
 export const CLERK_PUBLISHABLE_KEY =
@@ -59,15 +66,59 @@ export function AuthPanel() {
 
 function SignedInView() {
   const t = useIntl();
-  const { signOut } = useAuth();
+  const { signOut, getToken } = useAuth();
+  const deleteCopy: DeleteAccountCopy = {
+    heading: t.formatMessage({ id: "account.delete.heading" }),
+    body: t.formatMessage({ id: "account.delete.body" }),
+    emailLabel: t.formatMessage({ id: "account.delete.emailLabel" }),
+    emailPlaceholder: t.formatMessage({
+      id: "account.delete.emailPlaceholder",
+    }),
+    confirmButton: t.formatMessage({ id: "account.delete.confirmButton" }),
+    pending: t.formatMessage({ id: "account.delete.pending" }),
+    success: t.formatMessage({ id: "account.delete.success" }),
+    partial: t.formatMessage({ id: "account.delete.partial" }),
+    error: t.formatMessage({ id: "account.delete.error" }),
+    mismatch: t.formatMessage({ id: "account.delete.mismatch" }),
+  };
+  const exportCopy: ExportCopy = {
+    heading: t.formatMessage({ id: "account.export.heading" }),
+    body: t.formatMessage({ id: "account.export.body" }),
+    button: t.formatMessage({ id: "account.export.button" }),
+    pending: t.formatMessage({ id: "account.export.pending" }),
+    success: t.formatMessage({ id: "account.export.success" }),
+    error: t.formatMessage({ id: "account.export.error" }),
+  };
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-4">
       <p className="text-sm text-muted-foreground">
         {t.formatMessage({ id: "auth.signedIn" })}
       </p>
       <Button variant="outline" onClick={() => void signOut()}>
         {t.formatMessage({ id: "auth.signOut" })}
       </Button>
+      {features.exportAccount && apiUrl ? (
+        <ExportSection
+          copy={exportCopy}
+          apiUrl={apiUrl}
+          getToken={() => getToken()}
+        />
+      ) : null}
+      {features.deleteAccount && apiUrl ? (
+        // @debt SECURITY - No beforeConfirm here. Clerk's useReverification only triggers on
+        // a `session_reverification_required` error from the wrapped call. The erasure worker
+        // doesn't emit that error, so wrapping it would resolve immediately without real re-auth.
+        // Real step-up needs the worker to declare Clerk reverification, then wrap that fetch in
+        // useReverification. The server-side JWT + typed-email match is the current protection.
+        <DeleteAccountSection
+          copy={deleteCopy}
+          apiUrl={apiUrl ?? ""}
+          getToken={() => getToken()}
+          onDeleted={async () => {
+            await signOut();
+          }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -141,7 +192,8 @@ const loggedSessions = new Set<string>();
 export function HybridSessionLogger() {
   const { isSignedIn, sessionId, userId } = useAuth();
   useEffect(() => {
-    if (!isSignedIn || !sessionId || !userId || loggedSessions.has(sessionId)) return;
+    if (!isSignedIn || !sessionId || !userId || loggedSessions.has(sessionId))
+      return;
     loggedSessions.add(sessionId);
     void window.desktop.logSignIn(userId, sessionId);
   }, [isSignedIn, sessionId, userId]);

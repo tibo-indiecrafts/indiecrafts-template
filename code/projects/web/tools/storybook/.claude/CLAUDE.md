@@ -1,8 +1,11 @@
 # @indiecrafts/web-tools-storybook — the component gallery (Storybook)
 
 Auto-loads under `code/projects/web/tools/storybook/**`. The **design-system gallery** — a browse-only
-Storybook that documents the shared UI bricks (`ui` · `ui-components` · `ui-tokens`, + `announcement` /
-`locale-suggest` stories). A workspace member that **consumes** the bricks; it ships nothing to production.
+Storybook that documents the shared UI bricks across **all three renderers**: web (`ui` · `ui-components` ·
+`ui-tokens` + `announcement` / `locale-suggest`), the **native** design system (`ui-native` ·
+`system-pages/native` · `ui-icons/native`) rendered in the browser via the `react-native` →
+`react-native-web` alias, and the cross-platform `system-pages` / `ui-icons` web renderers. A workspace
+member that **consumes** the bricks; it ships nothing to production.
 
 **Stack:** Storybook (`@storybook/nextjs-vite`) · Vite · Tailwind v4 (`@tailwindcss/vite`) · addons
 `a11y` · `docs` · `themes` · `vitest`. **Platform:** a static build (`storybook build`), not deployed with
@@ -16,8 +19,10 @@ pnpm --filter @indiecrafts/web-tools-storybook storybook:build  # static → sto
 pnpm --filter @indiecrafts/web-tools-storybook test:stories     # every story as a component + a11y test (Vitest, headless Chromium)
 ```
 
-`test:stories` is the visual/interaction gate (the repo's "visual = colocated stories" rule); it runs in
-the advisory CI `browser` job, not in the default `verify` (it needs a browser).
+`test:stories` is the visual/interaction gate (the repo's "visual = colocated stories" rule); it **blocks**
+in the CI `browser-stories` job (web **and** native stories, the latter via the `react-native` →
+`react-native-web` alias in `.storybook/main.ts`). It is not in the default `verify` — it needs a browser,
+so it lives in its own Playwright-provisioned job, not the browserless `verify`.
 
 ## Rules
 

@@ -17,7 +17,7 @@ const MESSAGES: Record<string, Record<string, unknown>> = {
     close: "Close",
     playVideo: "Play video",
   },
-  common: { previous: "Previous", next: "Next" },
+  common: { previous: "Previous", next: "Next", skipToContent: "Skip to content" },
   // QuoteList reads t.raw("quoteStyle.primary") → [open, close] marks.
   typography: { "quoteStyle.primary": ["« ", " »"] },
 };

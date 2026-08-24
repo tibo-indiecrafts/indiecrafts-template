@@ -153,6 +153,17 @@ export async function fingerprintEmail(
   return toHex(digest);
 }
 
+/**
+ * SHA-256 hex of a value, unsalted and case-sensitive. For hashing a
+ * high-entropy secret (e.g. a single-use token) whose value must match exactly —
+ * unlike hashIpAddress/fingerprintEmail, which lowercase + salt for
+ * pseudonymisation. Never store the plaintext token; store this.
+ */
+export async function sha256Hex(input: string): Promise<string> {
+  if (!input) throw new Error("input is required for sha256Hex");
+  return toHex(await crypto.subtle.digest("SHA-256", utf8.encode(input)));
+}
+
 /** Type guard — does `data` have the `EncryptedData` shape? */
 export function isEncryptedData(data: unknown): data is EncryptedData {
   if (!data || typeof data !== "object") return false;

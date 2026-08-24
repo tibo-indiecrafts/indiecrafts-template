@@ -17,6 +17,8 @@ export default defineWorkersConfig(async () => {
             // wrangler.toml binds DB per-env only; the test pool reads the base
             // config, so create the local ephemeral D1 here.
             d1Databases: ["DB"],
+            // Same reasoning for R2 — EXPORT_BUCKET is a local simulated bucket.
+            r2Buckets: ["EXPORT_BUCKET"],
             bindings: {
               // The bearer the authenticated-route tests send. Safe: the
               // existing no-bearer 401 tests are unaffected.

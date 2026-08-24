@@ -88,12 +88,50 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   `@indiecrafts/packages-web-security-reports` brick, which sanitizes and forwards violations
   server-side. **Why:** turn the CSP from write-only into something we can observe and tighten —
   starting with the image-source allowlist — without risking a live block.
+- **Anonymous branded erasure flow (`/erasure` + `/erasure/confirm`).** A signed-out visitor
+  requests erasure by email at `/erasure` (Turnstile-gated, posts form-encoded to the shared api's
+  public `POST /v1/erasure/request`), then confirms via the emailed link at `/erasure/confirm`
+  (types their email, posts JSON to `POST /v1/erasure/confirm`). Both routes share the new
+  `features.legal.erasure` flag; `/erasure/confirm` reuses the same `pages.erasure` gate — no
+  separate `pages` entry. A short cross-link on `/data-request` (`legal.dataRequest.erasureNote`)
+  points visitors here for the erasure right specifically. Copy in `messages.legal.erasure.*` (en +
+  fr). **Why:** a faster, self-service erasure path that needs no account, alongside the existing
+  authenticated `/account` delete and the general GDPR data-request form.
+- **Self-service "Delete my account" (`/account`).** A new Clerk-authenticated page mounts the
+  shared `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`) via the
+  `AccountDeletePanel` client wrapper, which posts the authenticated `POST /v1/erasure/self` to
+  the shared api worker, then signs the visitor out and returns them home. New
+  `features.account.delete` flag + `pages.account` route entry; copy in
+  `messages.account.delete.*` (en + fr). Gated three ways — the flag, Clerk being configured
+  (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`), and the client api origin being set
+  (`NEXT_PUBLIC_API_URL`, new — added to `.env.example`) — any one missing 404s the route, so the
+  control never renders somewhere it can only fail on submit. **Why:** the GDPR data-request form
+  covers every right by email; this is the one-click erasure path for a signed-in account.
+- **Self-service "Download my data" (`/account`).** The same `/account` page now also mounts the
+  shared `ExportSection` (`@indiecrafts/packages-shared-compliance/web`) beside `DeleteAccountSection`,
+  via the `AccountDeletePanel` client wrapper, posting the authenticated `POST /v1/export` to the
+  shared api worker and opening the returned single-use, 1-hour-expiring download link in a new tab.
+  New `features.account.export` flag (gates just the control's render — the page's own visibility
+  still follows `features.account.delete`); copy in `messages.account.export.*` (en + fr). **Why:**
+  GDPR data portability alongside the existing erasure control, on the same authenticated page.
 - **Geo-targeted cookie consent.** The `[locale]/layout` reads the visitor's `cf-ipcountry`
   server-side and passes a geo-resolved `mode` to `CookieBanner`: EU/EEA/UK + territories show the
   opt-in banner, the US gets no blocking banner (opt-out + preferences + GPC), elsewhere shows
   nothing. Per-country/regulation config in `src/config/consent.ts` (`ConsentConfig` — named
   regulations + overrides, cascading to territories). **Why:** don't show an opt-in banner where it
   isn't required, while staying compliant everywhere. Design → `code/docs/apps/web/config/cookie-consent-geo.md`.
+- **CCPA "Do Not Sell or Share My Personal Information" footer link.** `Footer` now renders a
+  `DoNotSellLink` (`@indiecrafts/packages-web-compliance`) that opens the existing cookie-preferences
+  dialog via `openPreferences()` — no new consent UI. `DefaultLayout` resolves `consentMode` from
+  `cf-ipcountry` server-side (same as `[locale]/layout.tsx`) and gates the link to `opt-out`
+  (US/CCPA) visitors, so it never flashes for EU/other visitors. Copy in `messages.cookies.doNotSell.link`
+  (en + fr). **Why:** opt-out regions had no visible privacy-choices affordance outside the
+  cookie-policy page — CCPA/CPRA expects a footer-prominent link. The dialog the link opens (and its
+  `OPEN_PREFERENCES_EVENT` listener) previously lived only inside `CookieBanner`, which
+  `[locale]/layout.tsx` mounts only when `requireCookieConsent` is on (off by default) — so on a
+  default-configured site the link did nothing. `[locale]/layout.tsx` now also mounts the new
+  standalone `CookiePreferencesHost` (same dialog + listener, no banner) whenever `requireCookieConsent`
+  is off and `consentMode === "opt-out"`, so the control always works for a US visitor.
 - **Announcement toast + per-surface targeting.** `DefaultLayout` now also mounts the new
   `AnnouncementToast` (a self-contained corner card — title/body/optional image/link, editor-set
   dismiss) beside the existing bar, and passes `surface="website"` so an editor can target which

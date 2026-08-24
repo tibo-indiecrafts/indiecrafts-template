@@ -40,6 +40,28 @@ Changed · Deprecated · Removed · Fixed**.
   `forwardCspReports(reports)` (`./forward`) — `server-only`, bearer-authed batches of 5 to the
   api's `POST /v1/events` (`kind: "csp-report"`). **Why:** the pure parsing brick can't hold
   `server-only` or Next's `Request`/`Response` types, so the route glue needed its own home.
+- **Geo-targeted consent regulations in `shared-compliance`.** New `./shared` exports a
+  regulation-named model: `Regulation` (`{ name, mode }`) + the built-in `REGULATIONS` catalog
+  (GDPR / UK GDPR / CCPA / None), `CONSENT_REGIONS` (country/territory → regulation key),
+  `TERRITORIES` (parent country → its overseas territories), `ConsentConfig`
+  (`{ regulations?, overrides? }`), and `resolveRegulation()` / `resolveConsentMode()`. Defaults:
+  EU-27 · EEA · EU outermost regions · UK + Gibraltar + Crown Dependencies → GDPR/UK-GDPR (opt-in);
+  US + its territories → CCPA (opt-out); else none; unknown / Cloudflare `XX`/`T1` → opt-in fail-safe.
+  **Flexible + extensible:** a client adds named regulations (LGPD, …) and reassigns any
+  country/territory — an assignment on a PARENT cascades to its territories. New `./web`
+  `browserSignalsDeny()` (GPC / Do-Not-Track) so the shared web shells honour the signal the way the
+  website already does. **Why:** show each visitor the consent regime their country actually requires —
+  named, configurable per country + territory, on every surface. Design →
+  `code/docs/apps/web/config/cookie-consent-geo.md`.
+- **Storybook stories for the undocumented design-system bricks.** Colocated `*.stories.tsx` for the
+  native brick (`ui-native`: `Screen` · `ThemedText` · `Button` · `Card`), `system-pages` (web **and**
+  native: `NotFoundContent` · `ErrorContent` · `OfflineContent` · `Maintenance`), and `ui-icons/web`
+  (`Icon` · `BrandIcon` · `SvgIcon` · `ReiconIcon`). They render in the one gallery (native via
+  react-native-web) and run as component + a11y tests. **Why:** every renderable brick now has a story,
+  and the native design system was previously undocumented.
+- **`@indiecrafts/packages-mobile-ui-native` exports `./package.json`.** Needed so the Storybook
+  story-glob helper can `require.resolve` the brick by name (the other bricks already exposed it).
+
 - **`@indiecrafts/packages-shared-announcement` — the portable announcement core (new brick).** The
   React/Next-free resolve path (`resolveBanner`/`resolveToast`: live-window + per-surface targeting +
   localize + link + version hash + CDN image URL), the `SURFACES` list (**no admin**), the GROQ
@@ -165,6 +187,13 @@ reporting, nonce)` (`./csp`) now takes an optional `nonce`: when set, `script-sr
   flipping it on cold is a real regression risk — `cspMode` lets each surface roll it out behind
   `CSP_MODE=report-only` first (observe violations, ship nothing broken) and flip to `enforce` once
   the reports are clean, with `/studio` staying on the policy it always had.
+- **`@indiecrafts/packages-shared-security-events` — `shouldAlert`/`formatSecurityAlert`.**
+  `shouldAlert(severity)` decides which incidents page the operator (`high`/`critical` —
+  `credential_stuffing` and `privilege_escalation` are both `high`, so a `critical`-only gate would
+  rarely fire). `formatSecurityAlert(alert)` builds the internal alert email's subject + text: pure,
+  null-safe, non-PII (no raw IP, no email address). **Why:** the `api` worker's high/critical
+  `security_events` write sites now email the owner/DPO — see
+  `code/docs/apps/web/config/breach-response.md`.
 
 ### Changed
 

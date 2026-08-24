@@ -23,7 +23,9 @@ Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling a
 | `blockAiTraining` | `boolean` | `true`     | `robots.txt` blocks AI-*training* crawlers (`AI_TRAINING_USER_AGENTS`); search + AI-*search* bots keep indexing ([robots](/apps/web/seo/robots-and-environments))          |
 | `structuredData` | `boolean` | `true`     | All JSON-LD (Organization/WebSite site-wide, WebPage/FAQPage per page)                                                                                                     |
 | `localeSwitcher` | `boolean` | `true`     | The header locale picker                                                                                                                                                   |
-| `legal.*`        | `object`  | see below  | The five legal pages + the data-request form, each toggled independently                                                                                                   |
+| `legal.*`        | `object`  | see below  | The five legal pages + the data-request form + the erasure flow, each toggled independently                                                                                |
+| `account.delete` | `boolean` | `true`     | The self-service `/account` "Delete my account" page — requires Clerk configured                                                                                           |
+| `account.export` | `boolean` | `true`     | The "Download my data" control on the same `/account` page — requires Clerk configured                                                                                     |
 | `faq`            | `boolean` | `true`     | Per-page `<Faq>` accordion + FAQPage JSON-LD + llms FAQ block                                                                                                              |
 | `newsletter`     | `boolean` | `true`     | Newsletter capture block (`module.newsletter`) + the `/api/newsletter` route + the **Abonnés** desk — site-wide, **independent of `blog`** ([guide](/modules/newsletter/)) |
 | `blog`           | `boolean` | `true`     | The entire public blog surface (routes, feeds, discovery, `<SanityLive>`)                                                                                                  |
@@ -93,10 +95,10 @@ shrink `i18n.locales` to one row — see [i18n & routing](./i18n-and-routing.md)
 
 ## `legal`
 
-The site's five legal pages plus the data-request form, each toggled independently:
+The site's five legal pages plus the data-request and erasure forms, each toggled independently:
 
 ```ts
-legal: { notice: true, privacy: true, cookies: true, terms: true, sales: false, dataRequest: true },
+legal: { notice: true, privacy: true, cookies: true, terms: true, sales: false, dataRequest: true, erasure: true },
 ```
 
 - `notice` — Mentions légales (LCEN) · `privacy` — Politique de confidentialité (RGPD)
@@ -105,10 +107,33 @@ legal: { notice: true, privacy: true, cookies: true, terms: true, sales: false, 
 - `dataRequest` — the **GDPR data-subject request form** at `/data-request` + the
   `/api/data-request` route. A visitor exercises a right (access, erasure, portability…);
   the request is stored as a `dataRequest` record and the controller is alerted by email.
+- `erasure` — the **anonymous branded erasure flow**: `/erasure` (email → `POST
+/v1/erasure/request` on the shared api worker) and `/erasure/confirm` (the emailed link →
+  `POST /v1/erasure/confirm`), both signed-out. Both routes share this one flag — `/erasure/confirm`
+  has no separate `pages` entry. A short cross-link on `/data-request` points here for the erasure right.
 
 Each `pages` entry mirrors its flag (`enabled: features.legal.<key>`); turning one off 404s
 the route and drops it from the footer nav, the sitemap, and the llms endpoints. Legal-page
 content is edited in Sanity (`legalPage` docs) — see [Legal pages](./legal-pages.md).
+
+## `account`
+
+Self-service account actions:
+
+```ts
+account: { delete: true, export: true },
+```
+
+- `delete` — the **"Delete my account" page** at `/account`, gated by
+  `features.account.delete` **and** by Clerk being configured
+  (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`) **and** by the client api origin being set
+  (`NEXT_PUBLIC_API_URL`) — any one missing 404s the route. The page renders the shared
+  `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`), which posts the
+  authenticated `POST /v1/erasure/self` to the shared api worker, then signs the visitor out.
+- `export` — the **"Download my data" control**, rendered beside `DeleteAccountSection` on
+  the same `/account` page (the page's own visibility still follows `delete`). It renders
+  the shared `ExportSection`, which posts the authenticated `POST /v1/export` to the shared
+  api worker and opens the returned single-use, 1-hour-expiring download link in a new tab.
 
 ## `faq`
 

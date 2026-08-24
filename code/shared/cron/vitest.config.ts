@@ -9,23 +9,22 @@ import {
 // pool (0.8.x, `defineWorkersConfig`); the `cloudflareTest()` plugin form arrives
 // with the repo's next Vitest (4) bump. See code/docs/apps/workers/.
 export default defineWorkersConfig(async () => {
-  // Read every ../api/db/d1/migrations/*.sql so tests run against the real schema.
+  // The cron shares the api's D1 (see wrangler.toml) — read the api's own
+  // db/d1/migrations/*.sql so the test DB has the real schema (erasure_requests,
+  // export_requests, security_events, …), same pattern as the api's own vitest.config.ts.
   const migrations = await readD1Migrations("../api/db/d1/migrations");
   return {
     test: {
       include: ["src/**/*.test.ts"],
-      setupFiles: ["./src/test-setup.ts"],
       poolOptions: {
         workers: {
           wrangler: { configPath: "./wrangler.toml" },
           miniflare: {
-            // wrangler.toml binds DB per-env only; the test pool reads the base
-            // config, so create the local ephemeral D1 here.
+            // wrangler.toml binds DB/EXPORT_BUCKET per-env only (operator-provisioned);
+            // the test pool reads the base config, so create local simulated ones here.
             d1Databases: ["DB"],
-            bindings: {
-              // Passed to test-setup.ts to apply migrations.
-              TEST_MIGRATIONS: migrations,
-            },
+            r2Buckets: ["EXPORT_BUCKET"],
+            bindings: { TEST_MIGRATIONS: migrations },
           },
         },
       },

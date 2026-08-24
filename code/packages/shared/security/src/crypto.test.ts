@@ -8,6 +8,7 @@ import {
   fingerprintEmail,
   hashIpAddress,
   isEncryptedData,
+  sha256Hex,
   verifyIpHash,
 } from "./crypto";
 
@@ -84,5 +85,15 @@ describe("fingerprintEmail", () => {
     );
     await expect(fingerprintEmail("", "salt")).rejects.toThrow();
     await expect(fingerprintEmail("a@b.com", "")).rejects.toThrow();
+  });
+});
+
+describe("sha256Hex", () => {
+  it("is deterministic, hex, case-sensitive (no lowercasing)", async () => {
+    const h = await sha256Hex("Abc-123");
+    expect(h).toBe(await sha256Hex("Abc-123"));
+    expect(h).not.toBe(await sha256Hex("abc-123")); // case-sensitive, unlike fingerprintEmail
+    expect(h).toMatch(/^[0-9a-f]{64}$/);
+    await expect(sha256Hex("")).rejects.toThrow();
   });
 });

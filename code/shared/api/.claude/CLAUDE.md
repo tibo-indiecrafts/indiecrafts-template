@@ -12,7 +12,29 @@ upsert + re-fingerprint on `user.created`/`user.updated`, pseudonymise on `user.
 salt, identical across envs — see `wrangler.toml`). `POST /v1/events` also accepts `kind:csp-report` →
 the `csp_reports` D1 table (aggregated CSP violation reports, Report-Only pipeline; 30-day `cron` purge).
 `GET /v1/csp-reports` reads it back (bearer-gated, same shape as `GET /v1/security`) for the admin CSP
-dashboard.
+dashboard. `src/erasure/` holds the store-agnostic erasure
+adapters — D1 (real) + Clerk/Sanity/orders (dependency-injected) — implementing
+`@indiecrafts/packages-shared-compliance` `ErasureAdapter`, run by its `runErasure`/`runExport`
+orchestrator. The `/v1/erasure` routes are live: `GET/POST /v1/erasure/request` (Turnstile-gated,
+anti-enumeration), `GET/POST /v1/erasure/confirm` (token + typed-email fingerprint + TTL + attempt
+cap → runs the engine live), `GET /v1/erasure/status/:token` (public, no-PII status), and
+`POST /v1/erasure/self` (authenticated self-service; Clerk-JWT + typed-email gate → runs the
+engine directly, no email round-trip — the signed-in surfaces' account-delete control will call it).
+`WEBSITE_URL` (`[vars]`) sets the confirm-link origin the token email points at; unset falls back to
+the worker's own origin. The two erasure emails (`src/erasure/email.ts`) read their copy from the
+Studio-editable `emailStrings` singleton (`erasureToken`/`erasureComplete` groups) over raw GROQ-HTTP
+(mirrors `fetchAnnouncementDocs`, same Sanity `[vars]`/secret, no new deps), with a per-field fallback
+to hard-coded English — a missing/unreachable Sanity, or a group's `enabled: false`, never stops the
+send. `POST /v1/export` (authenticated; Clerk-JWT) runs `runExport`, stores the
+bundle in the `EXPORT_BUCKET` R2 bucket, and returns a single-use 1-hour download link; `GET
+/v1/export/download?token=` streams the bundle and deletes it from R2 on first download. Secret/
+binding: `EXPORT_BUCKET` (`[[r2_buckets]]`, operator-provisioned — routes answer 503 until bound).
+**DSAR intake** — `src/data-request/route.ts` holds the GDPR request-form write + read, migrated off
+Sanity: `POST /v1/data-request` (bearer-gated; the website's `/api/data-request` route proxies here)
+inserts into the new `data_requests` table (migration 0007), and `GET /v1/data-requests` (bearer-gated)
+lists rows newest-first for the admin screen. A deliberate departure from this D1's minimization
+convention: `data_requests` stores a plaintext `email` + free-text `message` (operational PII the
+operator needs to action the request).
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.

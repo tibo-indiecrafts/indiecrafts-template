@@ -13,6 +13,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Data export — "Download my data" on the signed-in view.** `SignedInView` (`app/sign-in.tsx`) now
+  renders the shared native `ExportSection` (`@indiecrafts/packages-shared-compliance/native`) beside the
+  delete control, gated behind the new `config.features.exportAccount` flag and a non-empty
+  `EXPO_PUBLIC_API_URL`. It calls the api's `POST /v1/export` via Clerk's `getToken` and opens the
+  returned download link with `Linking`. Copy lives in `messages/{en,fr}.json` (`account.export.*`).
+  **Why:** completes the self-service GDPR data-export control on the mobile surface.
+- **Account deletion — "Delete my account" on the signed-in view.** `SignedInView` (`app/sign-in.tsx`)
+  now renders the shared native `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/native`),
+  gated behind the new `config.features.deleteAccount` flag and a non-empty `EXPO_PUBLIC_API_URL` (never
+  render a control that posts to an empty origin). It confirms the signed-in email, calls the api's
+  `POST /v1/erasure/self` via Clerk's `getToken`, then signs out and returns home. Copy lives in
+  `messages/{en,fr}.json` (`account.delete.*`). **Why:** completes the self-service "Delete my account"
+  control on all four surfaces (website, admin, app, mobile).
 - **Geo-targeted cookie consent.** `lib/geo.ts` fetches the api `GET /v1/geo` on launch (the device's
   edge country — native has no `cf-ipcountry` of its own), caches it, and resolves the regulation with
   `src/config` overrides; the `ConsentGate` in `ShellOverlays` blocks only for opt-in regions

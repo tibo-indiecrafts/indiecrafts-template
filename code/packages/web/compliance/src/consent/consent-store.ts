@@ -94,6 +94,17 @@ export function browserSignalsDeny(): boolean {
 }
 
 /**
+ * Union of the server-detected `Sec-GPC: 1` request header (read in `[locale]/layout.tsx`
+ * via `headers()`) and `browserSignalsDeny()` — either source denies. Reading the header
+ * server-side means the initial consent seed already honours GPC before any client JS runs;
+ * the client check still runs too, since a proxy/CDN can strip the header even when the
+ * browser sets `navigator.globalPrivacyControl`, and vice versa.
+ */
+export function signalsDeny(gpcSignal: boolean): boolean {
+  return gpcSignal || browserSignalsDeny();
+}
+
+/**
  * Persist the visitor's choices and push the matching Consent-Mode `update` to
  * `dataLayer` (harmless when no gtag is present). Used by the banner buttons and
  * the preferences dialog alike, so consent is written one way only.

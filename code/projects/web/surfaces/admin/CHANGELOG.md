@@ -100,3 +100,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   since SP3 — the CSP violations dashboard (`(dashboard)/csp`) gives operators the enforce-readiness
   signal, so the strict policy graduates to actually blocking inline-script injection instead of just
   reporting it.
+- **Data requests screen (read-only).** New `(dashboard)/data-requests` page reads
+  `GET /v1/data-requests` server-side and lists GDPR data-subject requests (when · type · email ·
+  status · a truncated message excerpt · locale/source, last 100); linked from the dashboard. DSARs
+  moved off Sanity Studio into D1 (`api`'s `data_requests` table), so this restores operator
+  visibility. **Read-only** — status write-back (mark in-progress/done) is a deferred follow-up; until
+  it lands, flip a request's status by hand: `wrangler d1 execute indiecrafts-<env>-shared-api
+  --command "UPDATE data_requests SET status='done' WHERE id=?"`.

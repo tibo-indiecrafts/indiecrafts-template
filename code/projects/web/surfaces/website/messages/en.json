@@ -62,6 +62,55 @@
       "consent": "I agree that this email address is used only to handle my request.",
       "submit": "Send request",
       "success": "Thanks — we've received your request and will reply within one month.",
+      "error": "Something went wrong. Please try again.",
+      "erasureNote": "To delete your data faster, use the erasure page."
+    },
+    "erasure": {
+      "request": {
+        "heading": "Delete your data",
+        "body": "Enter your email and we'll send you a link to confirm erasure. No account needed.",
+        "emailLabel": "Your email",
+        "emailPlaceholder": "you@example.com",
+        "submitButton": "Send erasure link",
+        "pending": "Sending…",
+        "sent": "If that address is in our records, we've emailed a confirmation link.",
+        "turnstile": "The security check failed. Please try again.",
+        "error": "Something went wrong. Please try again."
+      },
+      "confirm": {
+        "heading": "Confirm data erasure",
+        "body": "Type your email to confirm. This permanently erases your data and can't be undone.",
+        "emailLabel": "Your email",
+        "emailPlaceholder": "you@example.com",
+        "submitButton": "Confirm erasure",
+        "pending": "Confirming…",
+        "success": "Your data has been erased.",
+        "partial": "Your data was erased, but some records need manual follow-up. Our team has been notified.",
+        "mismatch": "That link is invalid, expired, or already used, or the email doesn't match.",
+        "expired": "Too many attempts. Please request a new erasure link.",
+        "error": "Something went wrong. Please try again."
+      }
+    }
+  },
+  "account": {
+    "delete": {
+      "heading": "Delete your account",
+      "body": "This permanently deletes your account and personal data. We keep a record of the deletion itself in our activity log, as required for legal accountability. Type your email to confirm — this can't be undone.",
+      "emailLabel": "Your email",
+      "emailPlaceholder": "you@example.com",
+      "confirmButton": "Delete my account",
+      "pending": "Deleting…",
+      "success": "Your account has been deleted. You're now signed out.",
+      "partial": "Your account was deleted, but some data needs manual follow-up. Our team has been notified.",
+      "error": "Something went wrong. Please try again.",
+      "mismatch": "That email doesn't match your account. Please check it and try again."
+    },
+    "export": {
+      "heading": "Download your data",
+      "body": "Export a copy of your personal data as a file. The download link is single-use and expires after 1 hour.",
+      "button": "Download my data",
+      "pending": "Preparing your download…",
+      "success": "Your data is ready — the download opened in a new tab.",
       "error": "Something went wrong. Please try again."
     }
   },
@@ -96,6 +145,9 @@
     "preferencesBody": "Choose which cookies you allow. Necessary cookies are always on.",
     "manage": "Manage cookie preferences",
     "declarationTitle": "Cookies we use",
+    "doNotSell": {
+      "link": "Do Not Sell or Share My Personal Information"
+    },
     "party": {
       "first": "First-party",
       "third": "Third-party"

@@ -113,6 +113,11 @@ in the `@indiecrafts/packages-shared-security-events` brick.
 never a per-request DB query; write a row only when an incident crosses a threshold;
 D1 is for review, not the firehose.
 
+**Alerting.** A high or critical incident also emails the owner/DPO —
+`SECURITY_ALERT_EMAIL`, falling back to `EMAIL_ADMIN_BCC` — sent non-blocking via
+`ctx.waitUntil`. It never fails the write. See the
+[breach-response runbook](./breach-response) for what to do next.
+
 ## 5. Where it surfaces in admin
 
 - **System status** (`/admin/system`) — surfaces · workers · **DB status** (the EU D1 health

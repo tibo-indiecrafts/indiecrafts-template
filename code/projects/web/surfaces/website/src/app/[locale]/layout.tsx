@@ -18,6 +18,7 @@ import {
 } from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
 import { CookieBanner } from "@indiecrafts/packages-web-compliance/consent/CookieBanner";
+import { CookiePreferencesHost } from "@indiecrafts/packages-web-compliance/consent/CookiePreferencesHost";
 import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
 import { routing } from "@/i18n/routing";
 import { SessionLogger } from "@indiecrafts/packages-web-auth";
@@ -133,13 +134,17 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
     getLegalAcceptance(locale as Locale, features.legal),
   ]);
   const siteDescription = siteSeo.description;
+  const requestHeaders = await headers();
   // Geo-resolve the consent mode from the visitor's edge country (opt-in EU/UK · opt-out US ·
   // none elsewhere), overridable per country in config. Drives whether the banner blocks.
-  const requestHeaders = await headers();
   const consentMode = resolveConsentMode(requestHeaders.get("cf-ipcountry"), consent);
   // Per-request CSP nonce, set by the proxy — threaded to the GA <Script> tags so
   // their inline code passes the strict nonce CSP (see `src/proxy.ts`).
   const nonce = requestHeaders.get("x-nonce") ?? undefined;
+  // Global Privacy Control, read server-side from the `Sec-GPC: 1` request header — honoured
+  // even before/without client JS. Unioned with the client-side `navigator` check inside
+  // `CookieBanner` (either source denies); native surfaces have no equivalent (no browser).
+  const gpcSignal = requestHeaders.get("sec-gpc") === "1";
   // Server-read the legal-acceptance cookie so the "policies updated" banner is
   // decided server-side (no flash) — shown only when the deposited version is stale.
   const legalAck = (await cookies()).get(LEGAL_ACK_COOKIE)?.value;
@@ -218,6 +223,17 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                   title={cookieConsent.banner.title}
                   body={cookieConsent.banner.body}
                   mode={consentMode}
+                  gpcSignal={gpcSignal}
+                />
+              ) : consentMode === "opt-out" ? (
+                // `requireCookieConsent` is off, so `CookieBanner` (which also mounts
+                // the preferences dialog) isn't rendered. A CCPA/opt-out visitor still
+                // needs a *working* preferences dialog behind the footer "Do Not Sell"
+                // link (`DefaultLayout.tsx`'s `showDoNotSell`) — mount just the dialog
+                // + its `openPreferences()` listener, with no blocking banner.
+                <CookiePreferencesHost
+                  categories={cookieConsent.categories}
+                  version={cookieConsent.version}
                 />
               ) : null}
               {/* "Policies updated — please Accept" banner. Copy edited per language

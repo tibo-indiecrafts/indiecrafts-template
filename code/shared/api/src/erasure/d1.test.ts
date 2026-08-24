@@ -124,6 +124,51 @@ describe("D1 erasure adapter", () => {
     expect(high?.c).toBe(1); // retained (pseudonymised by anonymize, not deleted)
   });
 
+  it("delete removes a security event with an off-list severity (exhaustive complement)", async () => {
+    // Bypass the type: a raw SQL insert can carry any TEXT value, not just
+    // the known low/medium/high/critical set. NOT IN ('high','critical')
+    // must still catch it, or the raw user_id would silently survive erasure.
+    const now = new Date(0).toISOString();
+    await env.DB.prepare(
+      "INSERT INTO security_events (ts, event_type, severity, user_id) VALUES (?, 'suspicious_pattern', 'unknown', ?)",
+    )
+      .bind(now, USER)
+      .run();
+
+    const a = createD1ErasureAdapter(env.DB, SALT);
+    await a.delete(EMAIL);
+
+    const unknown = await env.DB.prepare(
+      "SELECT COUNT(*) c FROM security_events WHERE user_id = ? AND severity = 'unknown'",
+    )
+      .bind(USER)
+      .first<{ c: number }>();
+    expect(unknown?.c).toBe(0);
+  });
+
+  it("resolve falls back to plaintext email when email_fingerprint is null", async () => {
+    const nullFpEmail = "nullfp@x.com";
+    const nullFpUser = "user_null_fp";
+    const now = new Date(0).toISOString();
+    await env.DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at) VALUES (?, ?, ?, NULL, ?)",
+    )
+      .bind(nullFpUser, nullFpEmail, "No Fingerprint", now)
+      .run();
+
+    const a = createD1ErasureAdapter(env.DB, SALT);
+    await a.anonymize(nullFpEmail);
+
+    const prof = await env.DB.prepare(
+      "SELECT email, full_name, anonymized FROM user_profiles WHERE user_id=?",
+    )
+      .bind(nullFpUser)
+      .first<Record<string, unknown>>();
+    expect(prof?.email).toBe(`deleted_${nullFpUser}@anonymized.local`);
+    expect(prof?.full_name).toBe("Deleted User");
+    expect(prof?.anonymized).toBe(1);
+  });
+
   it("preview reports counts without mutating", async () => {
     const a = createD1ErasureAdapter(env.DB, SALT);
     const p = await a.preview(EMAIL);
@@ -131,7 +176,7 @@ describe("D1 erasure adapter", () => {
     expect(p.wouldAnonymize.security_events_high).toBe(1);
     expect(p.wouldAnonymize.consent_events).toBe(1);
     expect(p.wouldDelete.session_events).toBe(1);
-    expect(p.wouldDelete.security_events_low).toBe(1);
+    expect(p.wouldDelete.security_events_deleted).toBe(1);
     // nothing changed
     const prof = await env.DB.prepare(
       "SELECT email FROM user_profiles WHERE user_id=?",

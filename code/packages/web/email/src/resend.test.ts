@@ -8,6 +8,7 @@ const bodyOf = (m: ReturnType<typeof vi.fn>) =>
 afterEach(() => {
   vi.restoreAllMocks();
   delete process.env.RESEND_API_KEY;
+  delete process.env.EMAIL_ADMIN_BCC;
 });
 
 describe("sendEmail", () => {
@@ -66,6 +67,71 @@ describe("sendEmail", () => {
       reply_to: "r@x.com",
       html: "<b>t</b>",
     });
+  });
+
+  it("unions EMAIL_ADMIN_BCC with a distinct caller-supplied bcc", async () => {
+    process.env.RESEND_API_KEY = "k";
+    process.env.EMAIL_ADMIN_BCC = "admin@x.com";
+    const fetchMock = vi.fn(async () => OK);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await sendEmail({
+      from: "a@x.com",
+      to: ["b@x.com"],
+      bcc: ["d@x.com"], // distinct from the admin address → union adds it
+      subject: "s",
+      text: "t",
+    });
+
+    expect(bodyOf(fetchMock).bcc).toEqual(["d@x.com", "admin@x.com"]);
+  });
+
+  it("dedupes EMAIL_ADMIN_BCC when the caller already listed it", async () => {
+    process.env.RESEND_API_KEY = "k";
+    process.env.EMAIL_ADMIN_BCC = "admin@x.com";
+    const fetchMock = vi.fn(async () => OK);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await sendEmail({
+      from: "a@x.com",
+      to: ["b@x.com"],
+      bcc: ["admin@x.com"],
+      subject: "s",
+      text: "t",
+    });
+
+    expect(bodyOf(fetchMock).bcc).toEqual(["admin@x.com"]);
+  });
+
+  it("adds EMAIL_ADMIN_BCC as the sole bcc when the caller passed none", async () => {
+    process.env.RESEND_API_KEY = "k";
+    process.env.EMAIL_ADMIN_BCC = "admin@x.com";
+    const fetchMock = vi.fn(async () => OK);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await sendEmail({
+      from: "a@x.com",
+      to: ["b@x.com"],
+      subject: "s",
+      text: "t",
+    });
+
+    expect(bodyOf(fetchMock).bcc).toEqual(["admin@x.com"]);
+  });
+
+  it("omits bcc when EMAIL_ADMIN_BCC is unset and the caller passed none", async () => {
+    process.env.RESEND_API_KEY = "k";
+    const fetchMock = vi.fn(async () => OK);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await sendEmail({
+      from: "a@x.com",
+      to: ["b@x.com"],
+      subject: "s",
+      text: "t",
+    });
+
+    expect(bodyOf(fetchMock)).not.toHaveProperty("bcc");
   });
 
   it("throws with the status on a non-2xx response", async () => {

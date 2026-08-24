@@ -38,11 +38,21 @@ export const features = defineFeatures({
     sales: false,
     /** GDPR data-subject request form (`/data-request` + `/api/data-request`). */
     dataRequest: true,
+    /** Anonymous branded erasure request (`/erasure` → `POST /v1/erasure/request`). */
+    erasure: true,
   },
   /** Compliance behaviour toggles. logAnonymousConsent: also log consent for
    *  signed-out visitors (keyed by a consent_id cookie). Off = account-scoped only. */
   compliance: {
     logAnonymousConsent: false,
+  },
+  /** Self-service account actions. delete: the `/account` GDPR erasure page
+   *  (authenticated `POST /v1/erasure/self`). export: the "Download my data"
+   *  control on the same page (authenticated `POST /v1/export`). Both require
+   *  Clerk to be configured. */
+  account: {
+    delete: true,
+    export: true,
   },
   /** Per-page FAQ — `<Faq>` + FAQPage JSON-LD + llms block. */
   faq: true,

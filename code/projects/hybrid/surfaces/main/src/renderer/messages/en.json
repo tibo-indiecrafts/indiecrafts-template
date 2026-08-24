@@ -67,5 +67,27 @@
   },
   "announcement": {
     "dismiss": "Dismiss"
+  },
+  "account": {
+    "delete": {
+      "heading": "Delete your account",
+      "body": "This permanently deletes your account and personal data. We keep a minimal activity log, stripped of identifying details, for security and legal compliance.",
+      "emailLabel": "Confirm your email",
+      "emailPlaceholder": "you@example.com",
+      "confirmButton": "Delete my account",
+      "pending": "Deleting…",
+      "success": "Your account has been deleted. Signing you out…",
+      "partial": "Your account has been deleted; some data may take a little longer to clear.",
+      "error": "Something went wrong. Please try again.",
+      "mismatch": "That email doesn't match your account."
+    },
+    "export": {
+      "heading": "Download your data",
+      "body": "Export a copy of your account data as a file. The link is single-use and expires after 1 hour.",
+      "button": "Download my data",
+      "pending": "Preparing…",
+      "success": "Your download opened in a new tab.",
+      "error": "Something went wrong. Please try again."
+    }
   }
 }

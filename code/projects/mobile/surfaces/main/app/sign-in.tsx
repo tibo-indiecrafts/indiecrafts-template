@@ -19,8 +19,15 @@ import {
   Card,
   useColor,
 } from "@indiecrafts/packages-mobile-ui-native";
+import {
+  DeleteAccountSection,
+  type DeleteAccountCopy,
+  ExportSection,
+  type ExportCopy,
+} from "@indiecrafts/packages-shared-compliance/native";
 import { hasClerk } from "@/lib/auth";
 import { logFailedLogin } from "@/lib/session-log";
+import { features } from "@/config";
 
 // Finish any web-auth session the OS browser left open (the OAuth return).
 void WebBrowser.maybeCompleteAuthSession();
@@ -69,7 +76,30 @@ function ClerkAuth() {
 function SignedInView() {
   const t = useIntl();
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { signOut, getToken } = useAuth();
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? "";
+  const copy: DeleteAccountCopy = {
+    heading: t.formatMessage({ id: "account.delete.heading" }),
+    body: t.formatMessage({ id: "account.delete.body" }),
+    emailLabel: t.formatMessage({ id: "account.delete.emailLabel" }),
+    emailPlaceholder: t.formatMessage({
+      id: "account.delete.emailPlaceholder",
+    }),
+    confirmButton: t.formatMessage({ id: "account.delete.confirmButton" }),
+    pending: t.formatMessage({ id: "account.delete.pending" }),
+    success: t.formatMessage({ id: "account.delete.success" }),
+    partial: t.formatMessage({ id: "account.delete.partial" }),
+    error: t.formatMessage({ id: "account.delete.error" }),
+    mismatch: t.formatMessage({ id: "account.delete.mismatch" }),
+  };
+  const exportCopy: ExportCopy = {
+    heading: t.formatMessage({ id: "account.export.heading" }),
+    body: t.formatMessage({ id: "account.export.body" }),
+    button: t.formatMessage({ id: "account.export.button" }),
+    pending: t.formatMessage({ id: "account.export.pending" }),
+    success: t.formatMessage({ id: "account.export.success" }),
+    error: t.formatMessage({ id: "account.export.error" }),
+  };
   return (
     <>
       <ThemedText variant="muted">
@@ -84,6 +114,30 @@ function SignedInView() {
         label={t.formatMessage({ id: "auth.signOut" })}
         onPress={() => void signOut()}
       />
+      {features.exportAccount && apiUrl ? (
+        <ExportSection
+          copy={exportCopy}
+          apiUrl={apiUrl}
+          getToken={() => getToken()}
+        />
+      ) : null}
+      {features.deleteAccount && apiUrl ? (
+        // @debt SECURITY - No beforeConfirm here. @clerk/clerk-expo doesn't export
+        // useReverification (unlike clerk-react/nextjs), and even where it exists it only
+        // triggers on a `session_reverification_required` error from the wrapped call. The
+        // erasure worker doesn't emit that error, so wrapping it would resolve immediately
+        // without real re-auth. The server-side JWT + typed-email match is the current
+        // protection.
+        <DeleteAccountSection
+          copy={copy}
+          apiUrl={apiUrl}
+          getToken={() => getToken()}
+          onDeleted={async () => {
+            await signOut();
+            router.replace("/");
+          }}
+        />
+      ) : null}
     </>
   );
 }
@@ -221,7 +275,9 @@ function SignInForm() {
             autoCapitalize="none"
             keyboardType="email-address"
             inputMode="email"
-            accessibilityLabel={t.formatMessage({ id: "auth.emailPlaceholder" })}
+            accessibilityLabel={t.formatMessage({
+              id: "auth.emailPlaceholder",
+            })}
             style={inputStyle}
           />
           <Button
@@ -258,14 +314,18 @@ function SignInForm() {
         </>
       )}
 
-      <ThemedText variant="muted">{t.formatMessage({ id: "auth.or" })}</ThemedText>
+      <ThemedText variant="muted">
+        {t.formatMessage({ id: "auth.or" })}
+      </ThemedText>
       <Button
         variant="outline"
         label={t.formatMessage({ id: "auth.google" })}
         onPress={() => void google()}
         disabled={busy}
       />
-      {error ? <ThemedText style={{ color: danger }}>{error}</ThemedText> : null}
+      {error ? (
+        <ThemedText style={{ color: danger }}>{error}</ThemedText>
+      ) : null}
     </>
   );
 }

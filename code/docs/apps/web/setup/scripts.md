@@ -57,14 +57,14 @@ is an npm-isolated project (its own lockfile), not an app concern.
 | `verify`            | `tsc && lint && format:check && verify:contrast && doctor:changed` | The full local gate: types + lint + format + contrast + React Doctor (changed code). Run before opening a PR.                                                                                                                                                                            |
 
 ::: tip CI mirrors this
-`pnpm verify` is the local gate. `.github/workflows/test.yml` (CI) runs the same checks as blocking jobs — **verify** (tsc · lint · format · contrast · tests · tooling gates) + **build** (`build:cf`, the real OpenNext Worker build — catches prerender + CF-only breakage) — plus advisory **browser** (Storybook a11y + e2e/visual) and a **docs** build + **dependency-review**. React Doctor is the advisory `react-doctor.yml`. `pnpm verify` itself skips `build:cf`; push a PR (or run `pnpm --filter @indiecrafts/web-surfaces-website build:cf`) to exercise the build.
+`pnpm verify` is the local gate. `.github/workflows/test.yml` (CI) runs the same checks as blocking jobs — **verify** (tsc · lint · format · contrast · tests · tooling gates) + **build** (`build:cf`, the real OpenNext Worker build — catches prerender + CF-only breakage) + **browser-stories** (every Storybook story = a component + a11y test, web **and** native via react-native-web; `pnpm test:stories`) — plus advisory **browser-e2e** (Playwright visual-regression + app e2e, until linux baselines land) and a **docs** build + **dependency-review**. React Doctor is the advisory `react-doctor.yml`. `pnpm verify` itself skips `build:cf` and the browser jobs (they need a browser); push a PR (or run `pnpm --filter @indiecrafts/web-surfaces-website build:cf`) to exercise the build.
 :::
 
 ### CI workflows (`.github/workflows/`)
 
 | Workflow           | Trigger                      | Does                                                                     |
 | ------------------ | ---------------------------- | ------------------------------------------------------------------------ |
-| `test.yml` (CI)    | PR + push `main`             | `verify` + `build` (blocking) · `browser` + `docs` + `dependency-review` |
+| `test.yml` (CI)    | PR + push `main`             | `verify` + `build` + `browser-stories` (blocking) · `browser-e2e` + `docs` + `dependency-review` |
 | `react-doctor.yml` | PR                           | Advisory React Doctor sticky comment                                     |
 | `preview.yml`      | PR (same-repo)               | Build + a Cloudflare **version preview URL**, commented on the PR        |
 | `deploy.yml`       | push `main` → prod; dispatch | OpenNext build + `wrangler deploy`                                       |

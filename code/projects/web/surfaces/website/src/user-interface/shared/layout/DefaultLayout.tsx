@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cookies, headers } from "next/headers";
-import { features, localeCodes, localeMap, type Locale } from "@/config";
+import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
+import { consent, features, localeCodes, localeMap, type Locale } from "@/config";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { resolveThemeConfig, showThemeToggle, themeModes } from "@/lib/theme";
 import { getNavigation } from "@/lib/navigation";
@@ -67,6 +68,10 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
     getLocaleSuggest(locale),
   ]);
   const jar = await cookies();
+  // Geo-resolve the consent mode the same way `[locale]/layout.tsx` does, so the
+  // footer's CCPA "Do Not Sell" link is gated to opt-out (US/CCPA) visitors with no
+  // client-side flash — cheap to recompute here (pure function, `headers()` already read).
+  const consentMode = resolveConsentMode((await headers()).get("cf-ipcountry"), consent);
   const t = await getTranslations("common");
   const tOffline = await getTranslations("offline");
   const showAnnouncement =
@@ -137,6 +142,7 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
           social={social}
           columns={nav.footerColumns}
           madeBy={settings.madeBy}
+          showDoNotSell={consentMode === "opt-out"}
         />,
       )}
     </>

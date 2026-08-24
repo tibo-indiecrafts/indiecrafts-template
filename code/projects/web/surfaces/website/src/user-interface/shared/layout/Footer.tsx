@@ -3,6 +3,7 @@ import { Link } from "@/i18n/routing";
 import { Logo } from "@/user-interface/shared/layout/Logo";
 import { MadeByCredit } from "@/user-interface/shared/layout/MadeByCredit";
 import { SocialFollow } from "@/user-interface/shared/layout/SocialFollow";
+import { DoNotSellLink } from "@indiecrafts/packages-web-compliance/consent/DoNotSellLink";
 import type { SiteSettings } from "@/lib/seo/site-seo";
 import type { FooterColumn, NavLeaf } from "@/lib/navigation";
 
@@ -27,6 +28,9 @@ type FooterProps = {
   columns?: FooterColumn[];
   /** Footer maker credit — Sanity `siteSettings.madeBy`. Omitted → no credit. */
   madeBy?: SiteSettings["madeBy"];
+  /** CCPA "Do Not Sell or Share" link — shown only for opt-out (US/CCPA) visitors,
+   *  resolved server-side (`resolveConsentMode`) by the caller. */
+  showDoNotSell?: boolean;
 };
 
 const linkClass =
@@ -65,8 +69,10 @@ export function Footer({
   social,
   columns = [],
   madeBy,
+  showDoNotSell = false,
 }: FooterProps) {
   const tFooter = useTranslations("footer");
+  const tCookies = useTranslations("cookies");
   const year = new Date().getFullYear();
   return (
     <footer className="mt-auto border-t">
@@ -99,6 +105,11 @@ export function Footer({
         <p className="text-muted-foreground mt-12 text-xs">
           © {year} {company ?? name}. {tFooter("rights")}
         </p>
+        {showDoNotSell ? (
+          <div className="mt-2">
+            <DoNotSellLink show label={tCookies("doNotSell.link")} />
+          </div>
+        ) : null}
         {madeBy ? <MadeByCredit madeBy={madeBy} /> : null}
       </div>
     </footer>
