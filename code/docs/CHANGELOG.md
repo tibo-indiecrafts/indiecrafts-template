@@ -11,6 +11,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **ROPA + sub-processors pages + sidebar.** New `apps/web/config/ropa.md` — the Art. 30
+  record of processing activities, one table over every activity (auth, admin audit, security
+  events, consent, DSAR, erasure/export, newsletter, comments, waitlist, contact, Sanity
+  authorship, orders). New `apps/web/config/sub-processors.md` — the sub-processor table
+  (Cloudflare, Clerk, Resend, Sanity) and the cross-border-transfer section. Both linked under
+  "Web app · Configuration & architecture", after "Breach response (GDPR)".
 - **`tasks:check` documented in `scripts.md`** (both the Quality-gates and repo-root-scripts tables) —
   the new guard that keeps `.vscode/tasks.json` in sync with the root `package.json` scripts (per-app
   tasks use an `<app>: ` label). It runs in `verify` + CI and is nudged by the change-hygiene hook.

@@ -102,6 +102,8 @@ export default defineConfig({
           { text: "Data retention + audit (GDPR)", link: "/apps/web/config/data-retention" },
           { text: "Security hardening (Cloudflare)", link: "/apps/web/config/security-hardening" },
           { text: "Breach response (GDPR)", link: "/apps/web/config/breach-response" },
+          { text: "Records of processing (ROPA)", link: "/apps/web/config/ropa" },
+          { text: "Sub-processors & transfers", link: "/apps/web/config/sub-processors" },
           { text: "Navigation", link: "/apps/web/config/navigation" },
           { text: "Legal pages", link: "/apps/web/config/legal-pages" },
           { text: "i18n & routing", link: "/apps/web/config/i18n-and-routing" },
