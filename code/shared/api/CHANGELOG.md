@@ -7,6 +7,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Changed
 
+- feat(compliance): the erasure flow's two transactional emails (`sendErasureTokenEmail`/`sendErasureCompleteEmail`) now read their subject/heading/intro/buttonLabel/outro from the Studio-editable `emailStrings` singleton (`erasureToken`/`erasureComplete` groups), via a new `fetchErasureEmailStrings` helper that mirrors `fetchAnnouncementDocs`'s raw-GROQ-over-HTTP pattern — no new Env vars, no new dependency. Every field falls back to today's hard-coded English on a per-field basis, and the helper never throws: an unset/unreachable Sanity, or an operator setting a group's `enabled: false`, still sends the email with the hard-coded copy. The erasure flow never breaks on missing copy.
 - feat(compliance): the erasure token email's confirm link now targets the website (`WEBSITE_URL`) when set, falling back to the worker's own confirm form otherwise.
 - **The AI agent left this Worker — it now lives in its own [`code/shared/agent`](../agent) Worker.** This
   api no longer hosts `POST /v1/agent/:name` (nor `ANTHROPIC_API_KEY`); it serves the audit + session sink

@@ -83,6 +83,101 @@ describe("sendErasureTokenEmail", () => {
       }),
     ).rejects.toThrow("resend 500");
   });
+
+  it("falls back to the hard-coded English literals, byte-identical, when the Sanity fetch resolves null", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => null);
+    await sendErasureTokenEmail(
+      CONFIGURED,
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.subject).toBe("Confirm your data erasure request");
+    expect(body.html).toBe(
+      '<p>Hello user@x.com,</p><p>We received a request to erase your account data.</p><p><a href="https://x.com/confirm">Confirm erasure</a></p><p>This link expires in 24 hours. If you did not request this, ignore this email.</p>',
+    );
+    expect(body.text).toBe(
+      "Hello user@x.com,\n\nWe received a request to erase your account data. Confirm it here:\nhttps://x.com/confirm\n\nThis link expires in 24 hours. If you did not request this, ignore this email.",
+    );
+  });
+
+  it("falls back to the hard-coded English literals when the Sanity fetch throws", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => {
+      throw new Error("network down");
+    });
+    await sendErasureTokenEmail(
+      CONFIGURED,
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.subject).toBe("Confirm your data erasure request");
+  });
+
+  it("uses the Sanity copy when the fetch resolves a group", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      erasureToken: {
+        subject: { en: "Your erasure link", fr: "Votre lien" },
+        heading: "Custom heading copy.",
+        buttonLabel: "Click to confirm",
+        outro: "Custom outro.",
+      },
+    }));
+    await sendErasureTokenEmail(
+      CONFIGURED,
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.subject).toBe("Your erasure link");
+    expect(body.html).toContain("Custom heading copy.");
+    expect(body.html).toContain(">Click to confirm<");
+    expect(body.html).toContain("Custom outro.");
+  });
+
+  it("enabled: false still sends the email, using the hard-coded literals", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      erasureToken: { enabled: false, subject: "Should not be used" },
+    }));
+    await sendErasureTokenEmail(
+      CONFIGURED,
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
+      fetchStrings,
+    );
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.subject).toBe("Confirm your data erasure request");
+  });
+
+  it("escapes the Sanity copy and the confirmUrl together", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      erasureToken: { heading: 'A "quoted" & <tagged> heading.' },
+    }));
+    await sendErasureTokenEmail(
+      CONFIGURED,
+      {
+        to: "user@x.com",
+        confirmUrl: "https://x.com/confirm?a=1&b=2",
+      },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.html).not.toContain("<tagged>");
+    expect(body.html).toContain("&lt;tagged&gt;");
+    expect(body.html).toContain("&quot;quoted&quot;");
+    expect(body.html).not.toContain("confirm?a=1&b=2");
+    expect(body.html).toContain("confirm?a=1&amp;b=2");
+  });
 });
 
 describe("sendErasureCompleteEmail", () => {
@@ -109,5 +204,79 @@ describe("sendErasureCompleteEmail", () => {
       { to: "user@x.com", retained: "nothing" },
     );
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("falls back to the hard-coded English literals, byte-identical, when the Sanity fetch resolves null", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => null);
+    await sendErasureCompleteEmail(
+      CONFIGURED,
+      { to: "user@x.com", retained: "Kept nothing." },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.subject).toBe("Your data erasure is complete");
+    expect(body.html).toBe(
+      "<p>Hello user@x.com,</p><p>We erased your account data.</p><p>Kept nothing.</p>",
+    );
+    expect(body.text).toBe(
+      "Hello user@x.com,\n\nWe erased your account data.\n\nKept nothing.",
+    );
+  });
+
+  it("uses the Sanity copy when the fetch resolves a group", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      erasureComplete: {
+        subject: "All done",
+        heading: "Custom complete heading.",
+        outro: "Custom outro.",
+      },
+    }));
+    await sendErasureCompleteEmail(
+      CONFIGURED,
+      { to: "user@x.com", retained: "nothing" },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.subject).toBe("All done");
+    expect(body.html).toContain("Custom complete heading.");
+    expect(body.html).toContain("Custom outro.");
+  });
+
+  it("enabled: false still sends the email, using the hard-coded literals", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      erasureComplete: { enabled: false, subject: "Should not be used" },
+    }));
+    await sendErasureCompleteEmail(
+      CONFIGURED,
+      { to: "user@x.com", retained: "nothing" },
+      fetchStrings,
+    );
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.subject).toBe("Your data erasure is complete");
+  });
+
+  it("escapes the Sanity copy and the retained summary together", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      erasureComplete: { outro: 'Some "quoted" & <tagged> outro.' },
+    }));
+    await sendErasureCompleteEmail(
+      CONFIGURED,
+      { to: "user@x.com", retained: 'Kept the <admin_audit> log & "billing".' },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.html).not.toContain("<tagged>");
+    expect(body.html).toContain("&lt;tagged&gt;");
+    expect(body.html).not.toContain("<admin_audit>");
+    expect(body.html).toContain("&lt;admin_audit&gt;");
   });
 });
