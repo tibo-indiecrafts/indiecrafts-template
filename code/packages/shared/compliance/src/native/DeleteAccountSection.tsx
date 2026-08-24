@@ -99,13 +99,19 @@ export function DeleteAccountSection({
         }}
       />
       <Button
-        variant="outline"
+        variant="destructive"
         label={status === "pending" ? copy.pending : copy.confirmButton}
         onPress={() => void onConfirm()}
         disabled={status === "pending" || email.trim().length === 0}
       />
       {message ? (
-        <ThemedText style={{ color: danger }}>{message}</ThemedText>
+        // Only a real failure is shown in the danger colour; a successful (or
+        // partial) erasure reads as neutral, so success never looks like an error.
+        status === "error" || status === "mismatch" ? (
+          <ThemedText style={{ color: danger }}>{message}</ThemedText>
+        ) : (
+          <ThemedText variant="muted">{message}</ThemedText>
+        )
       ) : null}
     </View>
   );

@@ -60,3 +60,5 @@ export {
   type ErasureReceipt,
   type ExportBundle,
 } from "./erasure";
+
+export { submitAccountErasure, type ErasureSelfResult } from "./erasure-self";
