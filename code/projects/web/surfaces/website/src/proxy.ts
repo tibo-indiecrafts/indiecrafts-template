@@ -18,6 +18,7 @@ import {
   type CspMode,
 } from "@indiecrafts/packages-shared-security";
 import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
+import { websiteCspHosts } from "./lib/csp-hosts";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -43,7 +44,7 @@ function withNonceRequest(request: NextRequest, nonce: string): NextRequest {
 function setCsp(response: NextResponse, nonce: string): NextResponse {
   const { enforced, reportOnly } = cspHeadersForMode(
     getCurrentEnvironment(),
-    {},
+    websiteCspHosts,
     REPORTING,
     nonce,
     CSP_MODE,

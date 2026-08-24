@@ -198,13 +198,3 @@ non-`'strict-dynamic'` policy.
 unconditionally — the measurement id lives in Sanity (a runtime value the build-time CSP can't read),
 so no manual edit per GA change. Harmless when GA is off. See [Analytics](./analytics.md).
 :::
-
-## Issue tags
-
-- `@bug` — `src/proxy.ts` calls `cspHeadersForMode(env, {}, …)` with an empty `CspHosts`, so the
-  `csp` object declared in `next.config.ts` (`frameSrc`, `mediaSrc`, `googleAnalytics`,
-  `embedHosts`) never reaches the enforced/Report-Only policy the proxy sets — only `/studio`'s
-  static `studioCspRule` gets it. Under `CSP_MODE=enforce` this drops the video-embed hosts from
-  `frame-src`, Sanity file assets from `media-src`, and Google's beacon hosts from `connect-src`.
-  Thread the same `csp` const into the proxy's `cspHeadersForMode(...)` call before enforcing in
-  production.
