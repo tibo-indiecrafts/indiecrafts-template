@@ -7,6 +7,18 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- feat(compliance): cron SLA flag for erasure due dates + expired-export cleanup.
+
+- **Erasure SLA flag (GDPR Art. 12(3) one-month deadline).** The scheduled handler flags
+  an `erasure_requests` row once as a `security_events` row when its `due_at` is within 7
+  days (`erasure_sla_due`, medium) or already past (`erasure_sla_breach`, high), then sets
+  `due_flagged_at` so a later tick doesn't repeat it. Skips `completed`/`cancelled`/
+  `expired` requests. Idempotent; no-ops until the DB is bound.
+- **Expired-export cleanup.** Deletes `export_requests` rows (+ their R2 object in the
+  api's `EXPORT_BUCKET`) once their 1-hour `expires_at` TTL passes unread — a downloaded
+  bundle is already deleted on first download; this sweeps the rest. Idempotent; no-ops
+  until both the DB and `EXPORT_BUCKET` are bound.
+
 - feat(compliance): purge consent_events on a 3-year window.
 
 - **90-day retention purge (GDPR storage limitation).** The scheduled handler deletes `admin_audit` +

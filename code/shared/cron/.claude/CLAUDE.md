@@ -4,6 +4,13 @@ Auto-loads under `code/shared/cron/**`. A **bare Cloudflare Worker** (no Next/Op
 
 **Stack:** Cloudflare Workers (`workerd`) · TypeScript · wrangler 4. A thin deploy shell — the scheduled task is imported from packages/modules, not written here.
 
+`scheduled()` runs three passes on the api's shared EU D1 (binding `DB`): the 90-day/
+3-year retention purge, an erasure-SLA flag (flags an `erasure_requests` row nearing or
+past its GDPR one-month `due_at` as a `security_events` row, once, via `due_flagged_at`),
+and an expired-export cleanup (deletes an `export_requests` row + its object in the api's
+`EXPORT_BUCKET` R2 bucket once its 1-hour TTL passes unread). Each pass is inline, pure
+helpers + a try/catch that logs and rethrows — no separate job files.
+
 ## Structure
 
 ```

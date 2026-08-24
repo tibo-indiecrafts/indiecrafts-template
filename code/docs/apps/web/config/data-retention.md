@@ -30,6 +30,27 @@ Cloudflare D1 (`binding DB`), three tables. This page is the record-of-processin
   longer than the 90-day audit tables because consent is a proof record.
 - **Erasure:** keyed by `subject_id` (user id) and `email_fingerprint`.
 
+## Erasure SLA flag (GDPR Art. 12(3))
+
+An erasure request must be actioned within **one month** (`erasure_requests.due_at`). The
+cron's scheduled handler flags a request once, as it nears or misses that deadline:
+
+- **Due soon** (`due_at` within 7 days): a `security_events` row, `erasure_sla_due` /
+  `medium`.
+- **Breached** (`due_at` already past): a `security_events` row, `erasure_sla_breach` /
+  `high`.
+
+A flagged request gets `due_flagged_at` set, so a later tick does not repeat it.
+`completed`/`cancelled`/`expired` requests are skipped. No-ops until the cron's `DB`
+binding is bound. Owner-reminder email is deferred — the cron has no email sender.
+
+## Export-bundle cleanup
+
+`POST /v1/export` bundles expire after **1 hour** (`export_requests.expires_at`) and are
+deleted from R2 on first download. The cron's scheduled handler sweeps the rest: any
+`export_requests` row whose TTL passed unread has its R2 object (`EXPORT_BUCKET`) and its
+row deleted. Idempotent; no-ops until both `DB` and `EXPORT_BUCKET` are bound.
+
 ## Cookie audit (operator)
 
 Before go-live, enumerate every real cookie/tracker the site sets into Sanity
