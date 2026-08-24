@@ -20,7 +20,7 @@ Every stored, editor-collected entity has the **same** CSV export escape hatch (
 `SANITY_API_READ_TOKEN`) — see the script table in [scripts](./scripts.md).
 
 The whole `backups/` tree is gitignored (dumps + subscriber emails are data, not code). Remote copies
-go to **one project-wide bucket per env**, `<prefix>-<env>-backups` (the `<prefix>` is the project
+go to **one project-wide bucket per env**, `<prefix>-<env>-db-backup` (the `<prefix>` is the project
 slug — `indiecrafts` by default, swapped by `pnpm project:rename`), keyed **`<name>/…`** — one prefix
 per registry db (`content/…`, `audit/…`). No per-app worker name in it, so no `-<platform>-<surface>-`;
 the env is the bucket, so the key is just `<name>/<file>`.
@@ -33,7 +33,7 @@ dispatches on each db's `kind`, running from the db's **owner** dir. The only ac
 
 ```bash
 pnpm backup:content:prod                         # the Sanity content dataset → website/backups/sanity/
-pnpm backup:content:prod:remote                  # + upload to <prefix>-prod-backups (keyed content/…)
+pnpm backup:content:prod:remote                  # + upload to <prefix>-prod-db-backup (keyed content/…)
 node code/shared/scripts/data/backup.mjs content prod --remote # (same, direct)
 pnpm backup:all:prod                             # every registered db (dispatches per kind)
 node code/shared/scripts/data/backup.mjs <name> <env> --dry-run  # show the plan, run nothing
@@ -84,15 +84,15 @@ decision, not a storage-cost one — the dumps are tiny.
 ## One-time setup (for `--remote`)
 
 The bucket is **provisioned by Terraform** — `cloudflare_r2_bucket.backups` in
-`code/projects/web/surfaces/website/infra/cloudflare/main.tf` creates `<prefix>-<env>-backups`
+`code/projects/web/surfaces/website/infra/cloudflare/main.tf` creates `<prefix>-<env>-db-backup`
 (EU-resident, one per env) on `pnpm infra:website:apply:<env>`. Then set the retention lifecycle once
 per bucket (the provider's lifecycle resource is version-sensitive, so it's a wrangler step for now):
 
 ```bash
-wrangler r2 bucket lifecycle add indiecrafts-prod-backups --name expire --expire-days 30   # per env
+wrangler r2 bucket lifecycle add indiecrafts-prod-db-backup --name expire --expire-days 30   # per env
 ```
 
-To create a bucket by hand instead of Terraform: `wrangler r2 bucket create indiecrafts-<env>-backups`.
+To create a bucket by hand instead of Terraform: `wrangler r2 bucket create indiecrafts-<env>-db-backup`.
 
 ## Automated backups
 

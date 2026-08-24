@@ -23,7 +23,7 @@ export function uploadToR2(env, key, file) {
   // ONE project-wide bucket per env, named from the project PREFIX (not a per-app
   // worker name — so no `-<platform>-<surface>-` in it), keyed `<name>/…` per db.
   // Follows `pnpm project:rename` (the prefix is the renamed slug).
-  const bucket = `${readSitePrefix()}-${env}-backups`;
+  const bucket = `${readSitePrefix()}-${env}-db-backup`;
   console.log(`Uploading → r2://${bucket}/${key}`);
   const r = spawnSync(
     "wrangler",
