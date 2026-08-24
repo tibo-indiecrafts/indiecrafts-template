@@ -22,6 +22,20 @@
     "google": "Continuer avec Google",
     "error": "Une erreur est survenue. Veuillez réessayer."
   },
+  "account": {
+    "delete": {
+      "heading": "Supprimer votre compte",
+      "body": "Cette action supprime définitivement votre compte et vos données personnelles. Nous conservons un journal d'activité minimal, dépourvu de détails identifiants, à des fins de sécurité et de conformité légale.",
+      "emailLabel": "Confirmez votre e-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "confirmButton": "Supprimer mon compte",
+      "pending": "Suppression en cours…",
+      "success": "Votre compte a été supprimé. Déconnexion en cours…",
+      "partial": "Votre compte a été supprimé ; certaines données peuvent mettre un peu plus de temps à disparaître.",
+      "error": "Une erreur s'est produite. Veuillez réessayer.",
+      "mismatch": "Cet e-mail ne correspond pas à votre compte."
+    }
+  },
   "consent": {
     "title": "Cookies et confidentialité",
     "body": "Nous utilisons le stockage local pour faire fonctionner l'application. Choisissez ce que vous autorisez.",

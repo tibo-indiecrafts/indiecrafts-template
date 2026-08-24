@@ -19,8 +19,13 @@ import {
   Card,
   useColor,
 } from "@indiecrafts/packages-mobile-ui-native";
+import {
+  DeleteAccountSection,
+  type DeleteAccountCopy,
+} from "@indiecrafts/packages-shared-compliance/native";
 import { hasClerk } from "@/lib/auth";
 import { logFailedLogin } from "@/lib/session-log";
+import { features } from "@/config";
 
 // Finish any web-auth session the OS browser left open (the OAuth return).
 void WebBrowser.maybeCompleteAuthSession();
@@ -69,7 +74,22 @@ function ClerkAuth() {
 function SignedInView() {
   const t = useIntl();
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { signOut, getToken } = useAuth();
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? "";
+  const copy: DeleteAccountCopy = {
+    heading: t.formatMessage({ id: "account.delete.heading" }),
+    body: t.formatMessage({ id: "account.delete.body" }),
+    emailLabel: t.formatMessage({ id: "account.delete.emailLabel" }),
+    emailPlaceholder: t.formatMessage({
+      id: "account.delete.emailPlaceholder",
+    }),
+    confirmButton: t.formatMessage({ id: "account.delete.confirmButton" }),
+    pending: t.formatMessage({ id: "account.delete.pending" }),
+    success: t.formatMessage({ id: "account.delete.success" }),
+    partial: t.formatMessage({ id: "account.delete.partial" }),
+    error: t.formatMessage({ id: "account.delete.error" }),
+    mismatch: t.formatMessage({ id: "account.delete.mismatch" }),
+  };
   return (
     <>
       <ThemedText variant="muted">
@@ -84,6 +104,17 @@ function SignedInView() {
         label={t.formatMessage({ id: "auth.signOut" })}
         onPress={() => void signOut()}
       />
+      {features.deleteAccount && apiUrl ? (
+        <DeleteAccountSection
+          copy={copy}
+          apiUrl={apiUrl}
+          getToken={() => getToken()}
+          onDeleted={async () => {
+            await signOut();
+            router.replace("/");
+          }}
+        />
+      ) : null}
     </>
   );
 }
@@ -221,7 +252,9 @@ function SignInForm() {
             autoCapitalize="none"
             keyboardType="email-address"
             inputMode="email"
-            accessibilityLabel={t.formatMessage({ id: "auth.emailPlaceholder" })}
+            accessibilityLabel={t.formatMessage({
+              id: "auth.emailPlaceholder",
+            })}
             style={inputStyle}
           />
           <Button
@@ -258,14 +291,18 @@ function SignInForm() {
         </>
       )}
 
-      <ThemedText variant="muted">{t.formatMessage({ id: "auth.or" })}</ThemedText>
+      <ThemedText variant="muted">
+        {t.formatMessage({ id: "auth.or" })}
+      </ThemedText>
       <Button
         variant="outline"
         label={t.formatMessage({ id: "auth.google" })}
         onPress={() => void google()}
         disabled={busy}
       />
-      {error ? <ThemedText style={{ color: danger }}>{error}</ThemedText> : null}
+      {error ? (
+        <ThemedText style={{ color: danger }}>{error}</ThemedText>
+      ) : null}
     </>
   );
 }

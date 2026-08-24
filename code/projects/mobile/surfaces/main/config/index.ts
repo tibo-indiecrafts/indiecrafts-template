@@ -47,7 +47,7 @@ export const buildId = process.env.EXPO_PUBLIC_BUILD_ID ?? "dev";
  * the consent UI is compliant-ready, a client flips this on when the app ships an
  * analytics/ads SDK.
  */
-export const features = { requireConsent: false } as const;
+export const features = { requireConsent: false, deleteAccount: true } as const;
 
 /**
  * Consent geo config — flexible + regulation-named. `regulations` adds/overrides named
