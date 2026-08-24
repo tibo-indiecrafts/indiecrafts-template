@@ -2,7 +2,11 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import bundleAnalyzer from "@next/bundle-analyzer";
 import { getCurrentEnvironment, site } from "@indiecrafts/packages-shared-config";
-import { imageDefaults, securityHeaders } from "@indiecrafts/packages-shared-security";
+import {
+  imageDefaults,
+  securityHeaders,
+  studioCspRule,
+} from "@indiecrafts/packages-shared-security";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const withBundleAnalyzer = bundleAnalyzer({
@@ -73,34 +77,38 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "lucide"],
   },
   async headers() {
-    // Hardened CSP + security headers (+ HSTS/COOP in production) from the shared
-    // brick; the app declares only its own extra hosts. The brick's defaults keep
-    // the Sanity Studio working. See code/docs/apps/web/seo/security-headers.
-    return securityHeaders({
-      env: getCurrentEnvironment(),
-      csp: {
-        // Featured-video embeds — the only third-party frames we ever render
-        // (see `parseVideoEmbed` + `HeroVideo`).
-        frameSrc: [
-          "https://www.youtube-nocookie.com",
-          "https://player.vimeo.com",
-          "https://www.dailymotion.com",
-        ],
-        // Uploaded featured videos are served as Sanity file assets.
-        mediaSrc: ["https://cdn.sanity.io"],
-        googleAnalytics: true,
-        embedHosts: EMBED_HOSTS,
-      },
-      // Brand assets (favicons, PWA icons, OG cards) + logo are immutable.
-      immutablePaths: ["/brand/:path*", "/logo.svg"],
-      reporting: {
-        endpoint: "/api/csp-report",
-        // First Report-Only candidate: drop the blanket `https:` from img-src to
-        // learn the real image allowlist (Sanity, etc.) before enforcing it.
-        // Tighten further during rollout; nonces for script-src come in SP3.
-        reportOnly: { dropSources: ["https:"] },
-      },
-    });
+    // Hardened security headers (+ HSTS/COOP in production) from the shared brick;
+    // the app declares only its own extra hosts. `cspMode: "proxy"` drops the CSP
+    // from `/:path*` — `src/proxy.ts` sets the nonce-based CSP per request instead
+    // (SP3). The `/studio` route can't take a nonce, so it keeps this same `csp`
+    // object as a static, permissive rule (`studioCspRule`) — the brick's defaults
+    // keep the Sanity Studio working. See code/docs/apps/web/seo/security-headers.
+    const csp = {
+      // Featured-video embeds — the only third-party frames we ever render
+      // (see `parseVideoEmbed` + `HeroVideo`).
+      frameSrc: [
+        "https://www.youtube-nocookie.com",
+        "https://player.vimeo.com",
+        "https://www.dailymotion.com",
+      ],
+      // Uploaded featured videos are served as Sanity file assets.
+      mediaSrc: ["https://cdn.sanity.io"],
+      googleAnalytics: true,
+      embedHosts: EMBED_HOSTS,
+    };
+    return [
+      ...securityHeaders({
+        env: getCurrentEnvironment(),
+        csp,
+        cspMode: "proxy",
+        // Brand assets (favicons, PWA icons, OG cards) + logo are immutable.
+        immutablePaths: ["/brand/:path*", "/logo.svg"],
+      }),
+      // /studio can't run behind the proxy nonce (Sanity Studio needs 'unsafe-inline'
+      // and isn't matched by the proxy anyway — see the proxy matcher) — scope the
+      // permissive CSP to it alone, and still report its violations.
+      studioCspRule(getCurrentEnvironment(), csp, { endpoint: "/api/csp-report" }),
+    ];
   },
 };
 

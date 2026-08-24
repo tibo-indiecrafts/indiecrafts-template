@@ -135,10 +135,11 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   const siteDescription = siteSeo.description;
   // Geo-resolve the consent mode from the visitor's edge country (opt-in EU/UK · opt-out US ·
   // none elsewhere), overridable per country in config. Drives whether the banner blocks.
-  const consentMode = resolveConsentMode(
-    (await headers()).get("cf-ipcountry"),
-    consent,
-  );
+  const requestHeaders = await headers();
+  const consentMode = resolveConsentMode(requestHeaders.get("cf-ipcountry"), consent);
+  // Per-request CSP nonce, set by the proxy — threaded to the GA <Script> tags so
+  // their inline code passes the strict nonce CSP (see `src/proxy.ts`).
+  const nonce = requestHeaders.get("x-nonce") ?? undefined;
   // Server-read the legal-acceptance cookie so the "policies updated" banner is
   // decided server-side (no flash) — shown only when the deposited version is stale.
   const legalAck = (await cookies()).get(LEGAL_ACK_COOKIE)?.value;
@@ -184,8 +185,9 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${settings.analytics.googleAnalyticsId}`}
               strategy="afterInteractive"
+              nonce={nonce}
             />
-            <Script id="gtag-init" strategy="afterInteractive">
+            <Script id="gtag-init" strategy="afterInteractive" nonce={nonce}>
               {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 ${

@@ -7,11 +7,17 @@
 
 import createMiddleware from "next-intl/middleware";
 import { clerkMiddleware } from "@clerk/nextjs/server";
-import { type NextRequest } from "next/server";
+import { NextRequest, type NextResponse } from "next/server";
 import { features } from "@/config";
 import { maintenanceRewrite } from "@indiecrafts/packages-shared-system-pages/proxy";
 import { getMaintenanceMode } from "@/lib/maintenance";
 import { routing } from "@/i18n/routing";
+import {
+  generateNonce,
+  cspHeadersForMode,
+  type CspMode,
+} from "@indiecrafts/packages-shared-security";
+import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -20,18 +26,51 @@ const intlMiddleware = createMiddleware(routing);
 // `clerkMiddleware` would throw on every request and break "runs as-is".
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
+const CSP_MODE: CspMode = process.env.CSP_MODE === "enforce" ? "enforce" : "report-only";
+const REPORTING = {
+  endpoint: "/api/csp-report",
+  reportOnly: { dropSources: ["https:"] },
+};
+
+/** Clone the request with `x-nonce` set, so the RSC layout can read it via `headers()`. */
+function withNonceRequest(request: NextRequest, nonce: string): NextRequest {
+  const headers = new Headers(request.headers);
+  headers.set("x-nonce", nonce);
+  return new NextRequest(request, { headers });
+}
+
+/** Stamp the CSP (+ reporting) response headers for the configured `CSP_MODE`. */
+function setCsp(response: NextResponse, nonce: string): NextResponse {
+  const { enforced, reportOnly } = cspHeadersForMode(
+    getCurrentEnvironment(),
+    {},
+    REPORTING,
+    nonce,
+    CSP_MODE,
+  );
+  response.headers.set("Content-Security-Policy", enforced);
+  response.headers.set("Reporting-Endpoints", `csp-endpoint="${REPORTING.endpoint}"`);
+  if (reportOnly) response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
+  return response;
+}
+
 // The maintenance → locale pipeline. When Clerk is on it runs INSIDE
 // `clerkMiddleware` (so the session is attached first); otherwise it runs directly.
-async function pipeline(request: NextRequest) {
+// One nonce per request, stamped on EVERY return path (maintenance rewrite AND the
+// intl response) so both carry the matching strict CSP; the intl call runs against
+// the nonce-carrying request so the layout can read `x-nonce` via `headers()`.
+async function pipeline(request: NextRequest): Promise<NextResponse> {
+  const nonce = generateNonce();
+  const nonced = withNonceRequest(request, nonce);
   // Maintenance mode: rewrite every matched request to `/maintenance` (503) when
   // EITHER the build-time hard override (`features.maintenance`) OR the live Sanity
   // toggle (`siteSettings.maintenanceMode`, cached per-isolate, fail-open) is on.
   // The `||` short-circuits, so the hard override skips the Sanity read. The matcher
   // already excludes `/studio` + metadata routes, so editors + crawlers stay reachable.
   const isDown = features.maintenance || (await getMaintenanceMode());
-  const maintenance = maintenanceRewrite(request, isDown);
-  if (maintenance) return maintenance;
-  return intlMiddleware(request);
+  const maintenance = maintenanceRewrite(nonced, isDown);
+  if (maintenance) return setCsp(maintenance, nonce);
+  return setCsp(intlMiddleware(nonced), nonce);
 }
 
 const proxy = clerkConfigured
