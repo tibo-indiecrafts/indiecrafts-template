@@ -18,3 +18,5 @@ export type {
   DeleteAccountSectionProps,
   ErasureSelfResult,
 } from "./DeleteAccountSection";
+export { ExportSection } from "./ExportSection";
+export type { ExportCopy, ExportSectionProps } from "./ExportSection";

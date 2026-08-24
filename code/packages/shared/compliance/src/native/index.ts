@@ -13,3 +13,5 @@ export type {
   DeleteAccountCopy,
   DeleteAccountSectionProps,
 } from "./DeleteAccountSection";
+export { ExportSection } from "./ExportSection";
+export type { ExportCopy, ExportSectionProps } from "./ExportSection";
