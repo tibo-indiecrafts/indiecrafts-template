@@ -81,4 +81,45 @@ describe("securityHeaders", () => {
       keys(securityHeaders({ env: "production", hsts: false })),
     ).not.toContain("Strict-Transport-Security");
   });
+
+  it("emits EXACTLY the production header set + values (regression lock)", () => {
+    const rules = securityHeaders({ env: "production" });
+    expect(rules).toHaveLength(1); // no immutablePaths → just the global rule
+    expect(rules[0].source).toBe("/:path*");
+    const headers = rules[0].headers;
+    // Exact ordered key set — catches an accidental added/removed header.
+    expect(headers.map((h) => h.key)).toEqual([
+      "X-Content-Type-Options",
+      "X-Frame-Options",
+      "Referrer-Policy",
+      "Permissions-Policy",
+      "Content-Security-Policy",
+      "Cross-Origin-Opener-Policy",
+      "Strict-Transport-Security",
+    ]);
+    const value = (k: string) => headers.find((h) => h.key === k)?.value;
+    expect(value("X-Content-Type-Options")).toBe("nosniff");
+    expect(value("X-Frame-Options")).toBe("DENY");
+    expect(value("Referrer-Policy")).toBe("strict-origin-when-cross-origin");
+    expect(value("Permissions-Policy")).toBe(
+      "camera=(), microphone=(), geolocation=()",
+    );
+    expect(value("Cross-Origin-Opener-Policy")).toBe(
+      "same-origin-allow-popups",
+    );
+    expect(value("Strict-Transport-Security")).toBe(
+      "max-age=31536000; includeSubDomains",
+    );
+  });
+
+  it("dev drops HSTS but keeps the rest of the set", () => {
+    expect(keys(securityHeaders({ env: "development" }))).toEqual([
+      "X-Content-Type-Options",
+      "X-Frame-Options",
+      "Referrer-Policy",
+      "Permissions-Policy",
+      "Content-Security-Policy",
+      "Cross-Origin-Opener-Policy",
+    ]);
+  });
 });
