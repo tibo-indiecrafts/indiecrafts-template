@@ -21,6 +21,10 @@ A high or critical `security_events` row triggers an automatic email alert.
 - **Content:** internal, operator-facing, hard-coded English. It never carries a
   raw IP address or an email address. It may carry the pseudonymous Clerk user id —
   the same id the admin `/security` screen shows.
+- **Caller obligation:** a directly-posted incident's `description` is caller-supplied
+  and the alert forwards it to the email processor (Resend). Per the
+  `@indiecrafts/packages-shared-security-events` contract, `description` must be a
+  short non-PII label — never an email, username, or raw IP.
 - **Delivery:** sent through `ctx.waitUntil`. It never delays or fails the request.
 - **No review link:** the email has no admin-dashboard link. No `ADMIN_URL`
   variable exists. Read the incident at `/admin/security` instead.
