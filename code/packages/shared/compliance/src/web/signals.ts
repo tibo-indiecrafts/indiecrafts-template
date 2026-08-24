@@ -10,3 +10,14 @@ export function browserSignalsDeny(): boolean {
   const nav = navigator as Navigator & { globalPrivacyControl?: boolean };
   return nav.globalPrivacyControl === true || nav.doNotTrack === "1";
 }
+
+/**
+ * Union of the server-detected `Sec-GPC: 1` request header (read in the shell's
+ * `[locale]/layout.tsx` via `headers()`) and `browserSignalsDeny()` — either source denies.
+ * Reading the header server-side means the initial consent seed already honours GPC before
+ * any client JS runs; the client check still runs too, since a proxy/CDN can strip the header
+ * even when the browser sets `navigator.globalPrivacyControl`, and vice versa.
+ */
+export function signalsDeny(gpcSignal: boolean): boolean {
+  return gpcSignal || browserSignalsDeny();
+}

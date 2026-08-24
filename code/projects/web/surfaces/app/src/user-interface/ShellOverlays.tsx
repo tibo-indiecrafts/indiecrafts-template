@@ -7,7 +7,7 @@ import {
   ConsentBanner,
   LegalReacceptancePrompt,
   createWebStore,
-  browserSignalsDeny,
+  signalsDeny,
 } from "@indiecrafts/packages-shared-compliance/web";
 import {
   DEFAULT_CONSENT_CATEGORIES,
@@ -31,22 +31,28 @@ function useRecord<T>(store: Store<T>): T | null {
   return useSyncExternalStore(store.subscribe, store.get, store.get);
 }
 
-function ConsentGate({ mode }: { mode: ConsentMode }) {
+function ConsentGate({
+  mode,
+  gpcSignal,
+}: {
+  mode: ConsentMode;
+  gpcSignal: boolean;
+}) {
   const t = useTranslations("consent");
   const record = useRecord(consentStore);
 
   // opt-out / none: no blocking banner — seed the default ONCE (accept-all unless a browser
-  // opt-out signal denies), so the record exists for the legal gate + the analytics default.
+  // or server GPC signal denies), so the record exists for the legal gate + the analytics default.
   useEffect(() => {
     if (!features.requireConsent || record || mode === "opt-in") return;
     consentStore.save({
       v: policyVersion,
       t: Date.now(),
-      choices: browserSignalsDeny()
+      choices: signalsDeny(gpcSignal)
         ? rejectAllChoices(DEFAULT_CONSENT_CATEGORIES)
         : acceptAllChoices(DEFAULT_CONSENT_CATEGORIES),
     });
-  }, [mode, record]);
+  }, [mode, gpcSignal, record]);
 
   // Only opt-in regions get the blocking banner; opt-out/none rely on the seed + preferences.
   if (!features.requireConsent || record || mode !== "opt-in") return null;
@@ -107,19 +113,22 @@ function LegalGate({ locale }: { locale: Locale }) {
 }
 
 /** Compliance + version overlays for the app shell. Mounted in `[locale]/layout`.
- *  `mode` is the geo-resolved consent mode (from the layout's `cf-ipcountry`). */
+ *  `mode` is the geo-resolved consent mode (from the layout's `cf-ipcountry`); `gpcSignal` is
+ *  the server-detected `Sec-GPC: 1` request header. */
 export function ShellOverlays({
   commit,
   mode,
+  gpcSignal,
 }: {
   commit: string;
   mode: ConsentMode;
+  gpcSignal: boolean;
 }) {
   const tv = useTranslations("version");
   const locale = useLocale() as Locale;
   return (
     <>
-      <ConsentGate mode={mode} />
+      <ConsentGate mode={mode} gpcSignal={gpcSignal} />
       <LegalGate locale={locale} />
       <UpdatePrompt
         current={commit}

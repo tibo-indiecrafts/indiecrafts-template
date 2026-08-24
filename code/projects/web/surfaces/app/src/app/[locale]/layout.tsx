@@ -29,12 +29,17 @@ export default async function LocaleLayout({
   // Enables static rendering for this locale (server components using translations).
   setRequestLocale(locale);
 
+  const requestHeaders = await headers();
   // Geo-resolve the consent mode from the visitor's edge country (opt-in EU/UK · opt-out US ·
   // none elsewhere), overridable per country in config.
   const consentMode = resolveConsentMode(
-    (await headers()).get("cf-ipcountry"),
+    requestHeaders.get("cf-ipcountry"),
     consent,
   );
+  // Global Privacy Control, read server-side from the `Sec-GPC: 1` request header — honoured
+  // even before/without client JS. Unioned with the client-side `navigator` check inside
+  // `ConsentGate` (either source denies); native surfaces have no equivalent (no browser).
+  const gpcSignal = requestHeaders.get("sec-gpc") === "1";
 
   return (
     <html lang={locale} dir={localeDir(locale as Locale)}>
@@ -49,7 +54,11 @@ export default async function LocaleLayout({
           ) : null}
           {children}
           {/* Compliance + version overlays (consent, legal re-acceptance, update prompt). */}
-          <ShellOverlays commit={buildInfo.commit} mode={consentMode} />
+          <ShellOverlays
+            commit={buildInfo.commit}
+            mode={consentMode}
+            gpcSignal={gpcSignal}
+          />
         </NextIntlClientProvider>
       </body>
     </html>

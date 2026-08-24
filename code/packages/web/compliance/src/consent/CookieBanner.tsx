@@ -9,9 +9,9 @@ import type { ConsentCategory } from "./consent-signals";
 import { CookiePreferences } from "./CookiePreferences";
 import {
   applyConsent,
-  browserSignalsDeny,
   consentStore,
   OPEN_PREFERENCES_EVENT,
+  signalsDeny,
 } from "./consent-store";
 
 type Props = {
@@ -22,6 +22,10 @@ type Props = {
   body?: string;
   /** Honour a browser opt-out signal (GPC / Do-Not-Track) on first visit. Default on. */
   respectGpc?: boolean;
+  /** Server-detected `Sec-GPC: 1` request header, read in `[locale]/layout.tsx` via `headers()`.
+   *  Unioned with the client-side `navigator` check (`signalsDeny`) — either source denies.
+   *  Default false (no header seen). */
+  gpcSignal?: boolean;
   /** The geo-resolved consent mode (from the visitor's country). `opt-in` blocks with the
    *  banner (default); `opt-out`/`none` never block — they auto-seed a default and rely on the
    *  preferences dialog (open via `?cookies=manage` / a Manage-preferences button). */
@@ -48,6 +52,7 @@ export function CookieBanner({
   title,
   body,
   respectGpc = true,
+  gpcSignal = false,
   mode = "opt-in",
 }: Props) {
   const t = useTranslations("cookies");
@@ -73,7 +78,7 @@ export function CookieBanner({
   //    browser opt-out signal (GPC / DNT → reject). Changeable later via the preferences dialog.
   useEffect(() => {
     if (record !== null || categories.length === 0) return;
-    const deny = respectGpc && browserSignalsDeny();
+    const deny = respectGpc && signalsDeny(gpcSignal);
     if (mode === "opt-in") {
       if (deny)
         applyConsent(
@@ -90,7 +95,7 @@ export function CookieBanner({
       version,
       "auto",
     );
-  }, [mode, respectGpc, record, categories, version]);
+  }, [mode, respectGpc, gpcSignal, record, categories, version]);
 
   if (categories.length === 0) return null;
 

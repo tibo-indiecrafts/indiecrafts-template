@@ -8,7 +8,7 @@ export { ConsentBanner } from "./ConsentBanner";
 export { ConsentPreferences } from "./ConsentPreferences";
 export { LegalReacceptancePrompt } from "./LegalReacceptancePrompt";
 export { createWebStore } from "./store";
-export { browserSignalsDeny } from "./signals";
+export { browserSignalsDeny, signalsDeny } from "./signals";
 export {
   DeleteAccountSection,
   submitAccountErasure,
