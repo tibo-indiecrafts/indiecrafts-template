@@ -11,6 +11,17 @@ describe("resolveConsentMode", () => {
     expect(resolveConsentMode("US")).toBe("opt-out");
   });
 
+  it("built-in LGPD / PIPEDA / POPIA are opt-in; Australia's Privacy Act is opt-out", () => {
+    expect(resolveConsentMode("BR")).toBe("opt-in");
+    expect(resolveConsentMode("CA")).toBe("opt-in");
+    expect(resolveConsentMode("ZA")).toBe("opt-in");
+    expect(resolveConsentMode("AU")).toBe("opt-out");
+  });
+
+  it("Australia's inhabited external territories inherit its opt-out default", () => {
+    for (const c of ["NF", "CX", "CC"]) expect(resolveConsentMode(c)).toBe("opt-out");
+  });
+
   it("none for a country with no consent-banner law", () => {
     expect(resolveConsentMode("JP")).toBe("none");
     expect(resolveConsentMode("GL")).toBe("none"); // EU OCT — associated, not EU territory
@@ -70,6 +81,10 @@ describe("resolveRegulation", () => {
     expect(resolveRegulation("GI").name).toBe("UK GDPR");
     expect(resolveRegulation("US").name).toBe("CCPA/CPRA");
     expect(resolveRegulation("JP").name).toBe("None");
+    expect(resolveRegulation("BR").name).toBe("LGPD");
+    expect(resolveRegulation("CA").name).toBe("PIPEDA");
+    expect(resolveRegulation("ZA").name).toBe("POPIA");
+    expect(resolveRegulation("AU").name).toBe("Australia Privacy Act");
   });
 
   it("supports a client-defined regulation (flexible/extensible)", () => {
