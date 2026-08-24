@@ -25,7 +25,7 @@ Changed · Deprecated · Removed · Fixed**.
   `handleCspReport(request, opts)` (`./handle`) — the Next route trust boundary for browser CSP
   violation reports: accepts only the CSP content-types, caps the body, normalizes + sanitizes +
   drops extension noise via `@indiecrafts/packages-shared-security/csp-report`, always answers `204`.
-  `forwardCspReports(reports)` (`./forward`) — `server-only`, bearer-authed batches of 10 to the
+  `forwardCspReports(reports)` (`./forward`) — `server-only`, bearer-authed batches of 5 to the
   api's `POST /v1/events` (`kind: "csp-report"`). **Why:** the pure parsing brick can't hold
   `server-only` or Next's `Request`/`Response` types, so the route glue needed its own home.
 - **`@indiecrafts/packages-shared-announcement` — the portable announcement core (new brick).** The

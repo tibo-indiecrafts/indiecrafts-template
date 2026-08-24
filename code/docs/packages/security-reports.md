@@ -11,7 +11,7 @@ parsing (`normalizeCspReports`/`sanitizeCspReport`, `./csp-report` — see
 | Import                                    | What it is                                                                                                                                                                                                                        |
 | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `handleCspReport(request, opts)` (`./handle`) | The route handler. `opts = { surface: string }`. Accepts only the CSP content-types, caps the body at 64KB, keeps at most 50 reports, normalizes + sanitizes + drops extension noise, forwards the survivors. Always answers `204`. |
-| `forwardCspReports(reports)` (`./forward`)    | `import "server-only"`. Posts sanitized reports to the api's `POST /v1/events` (`kind: "csp-report"`) in batches of 10, bearer-authed with `APP_API_TOKEN`. Fire-and-forget: no-ops without `API_URL`/`APP_API_TOKEN`, swallows fetch errors. |
+| `forwardCspReports(reports)` (`./forward`)    | `import "server-only"`. Posts sanitized reports to the api's `POST /v1/events` (`kind: "csp-report"`) in batches of 5, bearer-authed with `APP_API_TOKEN`. Fire-and-forget: no-ops without `API_URL`/`APP_API_TOKEN`, swallows fetch errors. |
 
 Explicit per-file `exports` (`./handle`, `./forward`) — a consuming app needs no tsconfig `paths`
 entry.
@@ -27,7 +27,7 @@ entry.
    collapses dynamic route segments, redacts emails from the snippet). `handleCspReport` never
    reflects input back to the caller — it always answers `204`, even on a parse failure.
 3. **Brick → api.** Surviving `SanitizedCspReport`s go to `forwardCspReports`, which batches them
-   (10 per request, under the worker's 4000-byte body cap) and POSTs to the api's `/v1/events` with
+   (5 per request, under the worker's 4000-byte body cap) and POSTs to the api's `/v1/events` with
    `kind: "csp-report"`.
 
 ## Using it (a Next route)
