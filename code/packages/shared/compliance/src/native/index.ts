@@ -8,3 +8,8 @@ export { ConsentBanner } from "./ConsentBanner";
 export { ConsentPreferences } from "./ConsentPreferences";
 export { LegalReacceptancePrompt } from "./LegalReacceptancePrompt";
 export { createNativeStore } from "./store";
+export { DeleteAccountSection } from "./DeleteAccountSection";
+export type {
+  DeleteAccountCopy,
+  DeleteAccountSectionProps,
+} from "./DeleteAccountSection";
