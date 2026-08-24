@@ -231,6 +231,24 @@ permissive, non-`'strict-dynamic'` policy. That spec is a **blocking** CI gate (
 PR rather than silently shipping. It runs on its own (a real browser + built app), split from the
 advisory `browser` job so the untrusted visual baselines don't gate on it.
 
+## Trusted Types (opt-in Report-Only trial)
+
+DOM-based XSS lands through unsafe sink assignments (`element.innerHTML = …`, `eval`, …). A
+`require-trusted-types-for 'script'` CSP directive forces those sinks to receive a `TrustedScript`
+built by a registered policy — a strong, structural anti-DOM-XSS layer the nonce policy can't provide.
+
+It's **off by default** and offered as a **Report-Only trial**, because React/Next and third-party
+libs (Clerk, GA) don't all use Trusted Types yet — enforcing would break them today. Set
+`CSP_TRUSTED_TYPES=report` on a surface and, in **enforce** mode, the proxy fills the otherwise-unused
+Report-Only slot with `require-trusted-types-for 'script'` pointed at `/api/csp-report`. It **reports,
+never blocks** — so you learn which sinks/libraries would violate it before ever enforcing. Chrome/Edge
+only (Firefox/Safari ignore the directive). Reports arrive under a distinct directive, so they stay
+separable from the nonce-CSP violations in the `/csp` dashboard.
+
+Mechanically it's `buildTrustedTypesReportOnly(reporting)` in `@indiecrafts/packages-shared-security`,
+gated by `reporting.trustedTypesReportOnly` and wired into `cspHeadersForMode`'s enforce branch. The
+trial is enforce-mode only — in `report-only` mode that slot already carries the strict nonce policy.
+
 ## Hardening — and why it's Sanity-Studio-safe
 
 - **HSTS** ships **production only** (never localhost). No `preload` by default — preload is

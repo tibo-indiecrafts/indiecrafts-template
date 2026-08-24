@@ -31,7 +31,11 @@ const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 // CSP_MODE=report-only to roll a surface back to observation-only.
 const CSP_MODE: CspMode =
   process.env.CSP_MODE === "report-only" ? "report-only" : "enforce";
-const REPORTING = { endpoint: "/api/csp-report" };
+// Opt-in Trusted-Types Report-Only trial (enforce mode). Off unless CSP_TRUSTED_TYPES=report.
+const REPORTING = {
+  endpoint: "/api/csp-report",
+  trustedTypesReportOnly: process.env.CSP_TRUSTED_TYPES === "report",
+};
 
 /** Clone the request with `x-nonce` set, so the RSC layout can read it via `headers()`. */
 function withNonceRequest(request: NextRequest, nonce: string): NextRequest {

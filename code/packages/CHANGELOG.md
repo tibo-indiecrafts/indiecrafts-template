@@ -14,6 +14,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-shared-security` — opt-in Trusted-Types Report-Only trial.** New
+  `buildTrustedTypesReportOnly(reporting)` + a `reporting.trustedTypesReportOnly` flag; `cspHeadersForMode`
+  fills the (otherwise-null) enforce-mode Report-Only slot with `require-trusted-types-for 'script'` pointed
+  at `/api/csp-report`. **Reports, never blocks** — so a surface can learn which DOM script-sink assignments
+  (React/Next/Clerk/GA) a future Trusted-Types enforcement would break, before enforcing. Off by default; apps
+  wire it to `CSP_TRUSTED_TYPES=report`. Chrome/Edge only. **Why:** from the wahio review — a structural
+  anti-DOM-XSS layer the nonce policy can't provide, trialled safely on the report-only pipeline we already have.
 - **`@indiecrafts/packages-shared-security` — `permissiveCspRule(source, env, csp?, reporting?)`.**
   Generalizes `studioCspRule` (now a thin `/studio/:path*` shorthand over it) so any proxy-excluded
   route that can't take a per-request nonce gets the static, permissive CSP scoped to it. **Why:**

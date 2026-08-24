@@ -31,4 +31,20 @@ describe("cspHeadersForMode", () => {
     expect(reportOnly).toContain("'nonce-n0nce' 'strict-dynamic'"); // strict, observed
     expect(reportOnly).toContain("report-uri /api/csp-report");
   });
+
+  it("enforce + trustedTypesReportOnly → strict enforced + Trusted-Types report-only trial", () => {
+    const { enforced, reportOnly } = cspHeadersForMode(
+      "production",
+      {},
+      { endpoint: "/api/csp-report", trustedTypesReportOnly: true },
+      "n0nce",
+      "enforce",
+    );
+    expect(enforced).toContain("'strict-dynamic'"); // enforced policy unchanged
+    // The Report-Only slot now carries the Trusted-Types trial (reports, never blocks).
+    expect(reportOnly).toContain("require-trusted-types-for 'script'");
+    expect(reportOnly).toContain("report-uri /api/csp-report");
+    // It's a TT-only trial, not the full strict policy.
+    expect(reportOnly).not.toContain("strict-dynamic");
+  });
 });

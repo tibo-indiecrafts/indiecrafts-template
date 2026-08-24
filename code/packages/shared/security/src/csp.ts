@@ -49,6 +49,12 @@ export type CspReporting = {
     /** Remove 'unsafe-eval' from the candidate. Default true. */
     dropUnsafeEval?: boolean;
   };
+  /**
+   * Opt in to a Trusted-Types Report-Only trial (`require-trusted-types-for 'script'`).
+   * Off by default. See `buildTrustedTypesReportOnly` — used by `cspHeadersForMode` in
+   * enforce mode (where the Report-Only slot is otherwise unused).
+   */
+  trustedTypesReportOnly?: boolean;
 };
 
 function cspDirectives(
@@ -133,4 +139,24 @@ export function buildReportOnlyCsp(
     dropUnsafeEval: reporting.reportOnly.dropUnsafeEval ?? true,
   });
   return withReporting(directives, reporting).join("; ");
+}
+
+/**
+ * A minimal Trusted-Types Report-Only trial policy — or `null` unless opted in via
+ * `reporting.trustedTypesReportOnly`. `require-trusted-types-for 'script'` in Report-Only
+ * **reports, never blocks**, every DOM script-sink assignment (`innerHTML`, `eval`, …) not
+ * wrapped in a Trusted Type — so you learn what enforcing it would break (React/Next/
+ * third-party libs first) before ever turning it on. Chrome/Edge only (Firefox/Safari
+ * ignore it). Reports land at the same `/api/csp-report` endpoint under a distinct
+ * directive, so they stay separable from the nonce-CSP violations in the dashboard.
+ */
+export function buildTrustedTypesReportOnly(
+  reporting: CspReporting,
+): string | null {
+  if (!reporting.trustedTypesReportOnly) return null;
+  return [
+    "require-trusted-types-for 'script'",
+    "report-to csp-endpoint",
+    `report-uri ${reporting.endpoint}`,
+  ].join("; ");
 }
