@@ -123,6 +123,8 @@ export async function sendErasureTokenEmail(
   // worker isolate), same seam `request.ts` uses for `sendToken`.
   fetchStrings: typeof fetchErasureEmailStrings = fetchErasureEmailStrings,
 ): Promise<void> {
+  // No mailer configured → skip everything, including the Sanity copy fetch.
+  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return;
   const copy = await fetchStrings(env).catch(() => null);
   // `enabled: false` means "operator turned off custom copy" — fall back to the
   // literals below, same as an absent group. It never skips the send.
@@ -154,6 +156,8 @@ export async function sendErasureCompleteEmail(
   { to, retained }: { to: string; retained: string },
   fetchStrings: typeof fetchErasureEmailStrings = fetchErasureEmailStrings,
 ): Promise<void> {
+  // No mailer configured → skip everything, including the Sanity copy fetch.
+  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return;
   const copy = await fetchStrings(env).catch(() => null);
   const group =
     copy?.erasureComplete?.enabled === false ? null : copy?.erasureComplete;
