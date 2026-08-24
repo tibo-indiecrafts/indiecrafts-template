@@ -85,7 +85,9 @@ export async function handleDataRequestWrite(
       ? body.source.slice(0, 300)
       : null;
   const locale =
-    typeof body.language === "string" && body.language ? body.language : null;
+    typeof body.language === "string" && body.language
+      ? body.language.slice(0, 12)
+      : null;
   const policyVersion =
     typeof body.policyVersion === "string" && body.policyVersion
       ? body.policyVersion.slice(0, 120)

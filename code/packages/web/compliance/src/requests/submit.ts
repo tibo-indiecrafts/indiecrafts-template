@@ -69,10 +69,7 @@ export async function submitDataRequest(
       }),
     });
     if (!res.ok) {
-      logger.error("data request write failed", {
-        name: undefined,
-        status: res.status,
-      });
+      logger.error("data request write failed", { status: res.status });
       return { ok: false, error: "server" };
     }
 
