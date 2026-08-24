@@ -11,6 +11,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **CSP Report-Only rollback runbook** — `seo/security-headers.md` § "Rollback: flip a surface back to
+  Report-Only" now gives the concrete steps: `CSP_MODE=report-only` via the Cloudflare dashboard var
+  (fast, no redeploy — `keep_vars = true`) or the version-controlled `wrangler.toml` `[env.<env>.vars]`
+  + `pnpm deploy:<surface>:<env>`, per surface, with the verify + `/csp`-dashboard step. `operations.md`
+  § Troubleshooting gains a "scripts blocked after a deploy (CSP)" row pointing to it. **Why:** enforce is
+  the live default, so on-call needs a copy-pasteable way to fall back to observe-only when the nonce CSP
+  blocks something (the switch already exists — this makes it fast to use, instead of a KV kill-switch).
 - **`tasks:check` documented in `scripts.md`** (both the Quality-gates and repo-root-scripts tables) —
   the new guard that keeps `.vscode/tasks.json` in sync with the root `package.json` scripts (per-app
   tasks use an `<app>: ` label). It runs in `verify` + CI and is nudged by the change-hygiene hook.

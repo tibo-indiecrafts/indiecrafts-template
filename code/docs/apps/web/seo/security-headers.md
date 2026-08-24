@@ -179,10 +179,41 @@ CSP on the internal rewrite to `/maintenance`; the static rule only covers a dir
 `Content-Security-Policy` out of the box — no separate Report-Only rollout step needed for a new
 surface.
 
-**Rollback.** Set `CSP_MODE=report-only` in that surface's environment and redeploy — no code
-change. The permissive policy becomes the enforced header again, and the strict nonce policy drops
-back to Report-Only so its violations (a script missing the nonce, an inline handler, a third-party
-tag) land at `/api/csp-report` for investigation before flipping back to `enforce`.
+### Rollback: flip a surface back to Report-Only
+
+`CSP_MODE` is a **runtime** Worker var (read by `src/proxy.ts` at request time, not baked at build),
+set per environment under `[env.<env>.vars]` in each surface's `wrangler.toml`. It's unset by
+default, so the surface enforces. To roll a surface back to observe-only — the site keeps working on
+the permissive policy while the strict policy drops to `Content-Security-Policy-Report-Only`, so a
+script missing the nonce, an inline handler, or a third-party tag lands at `/api/csp-report` instead
+of being blocked — set `CSP_MODE=report-only` for that surface. Two ways:
+
+**Fast (during an incident) — Cloudflare dashboard, no redeploy.** Workers & Pages → the env's
+worker (e.g. `indiecrafts-prod-web-surfaces-website`) → **Settings → Variables and Secrets** → add
+`CSP_MODE` = `report-only` → **Save**. It applies to new requests within seconds. `keep_vars = true`
+in the toml means a later deploy won't wipe it. Repeat per affected surface (`…-web-surfaces-admin`,
+`…-web-surfaces-app`).
+
+**Durable (the version-controlled record) — commit + redeploy.** Add the var under the right env
+block in that surface's `wrangler.toml`, then deploy:
+
+```toml
+# code/projects/web/surfaces/website/wrangler.toml
+[env.prod.vars]
+NEXT_PUBLIC_ENVIRONMENT = "production"
+CSP_MODE = "report-only"   # roll back to observe-only; remove (or "enforce") to re-enforce
+```
+
+```bash
+pnpm deploy:website:prod     # or :admin / :app · or let CI deploy from main
+```
+
+Do this even after a dashboard hotfix, so the repo matches what's live. **To re-enforce**, remove
+`CSP_MODE` (or set `enforce`) the same way and redeploy.
+
+**Verify either way:** reload the surface with the DevTools console open — no CSP-block errors — and
+watch the admin **`/csp`** dashboard: `disposition: report` rows are the (now non-blocking)
+violations to fix before flipping back to `enforce`.
 
 Proven end-to-end by `e2e/journeys/csp-nonce.spec.ts` (website, the default `enforce` mode the
 server actually runs in CI/local): the enforced header carries `'strict-dynamic'` and a `nonce-…`
