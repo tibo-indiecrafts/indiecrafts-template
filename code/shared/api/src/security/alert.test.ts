@@ -71,4 +71,21 @@ describe("sendSecurityAlertEmail", () => {
     );
     expect(m).not.toHaveBeenCalled();
   });
+
+  it("swallows a non-ok Resend response and resolves (never breaks the write)", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({ ok: false, status: 500 }) as Response),
+    );
+    await expect(
+      sendSecurityAlertEmail(
+        {
+          RESEND_API_KEY: "k",
+          EMAIL_FROM: "no-reply@x.com",
+          SECURITY_ALERT_EMAIL: "soc@x.com",
+        },
+        ALERT,
+      ),
+    ).resolves.toBeUndefined();
+  });
 });
