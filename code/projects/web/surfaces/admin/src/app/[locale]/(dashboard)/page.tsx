@@ -30,6 +30,9 @@ export default async function AdminHome({
         >
           {t("security.link")}
         </Link>
+        <Link href="/csp" className="text-primary underline underline-offset-4">
+          {t("csp.link")}
+        </Link>
         <Link
           href="/system"
           className="text-primary underline underline-offset-4"

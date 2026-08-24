@@ -569,6 +569,41 @@ export default {
       }
     }
 
+    // ── CSP reports view — GET /v1/csp-reports (bearer-gated; enforce-readiness for admin) ──
+    if (url.pathname === "/v1/csp-reports") {
+      if (request.method !== "GET")
+        return json({ error: "method_not_allowed" }, 405, cors);
+      const bearer = (request.headers.get("authorization") ?? "").replace(
+        /^Bearer\s+/i,
+        "",
+      );
+      if (
+        !env.APP_API_TOKEN ||
+        !bearer ||
+        !safeEqual(bearer, env.APP_API_TOKEN)
+      )
+        return json({ error: "unauthorized" }, 401, cors);
+      if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+      // Clamp BOTH ends: a negative limit would become SQLite `LIMIT -1` (unbounded scan).
+      const limit = Math.max(
+        1,
+        Math.min(Number(url.searchParams.get("limit") ?? 100) || 100, 200),
+      );
+      try {
+        const { results } = await env.DB.prepare(
+          "SELECT group_key, count, disposition, directive, document_path, blocked_source, surface, first_seen, last_seen, sample_source_file, sample_line, sample_snippet FROM csp_reports ORDER BY count DESC, last_seen DESC LIMIT ?",
+        )
+          .bind(limit)
+          .all();
+        return json({ data: results }, 200, cors);
+      } catch (error) {
+        logger.error("csp-reports read failed", {
+          name: (error as Error)?.name,
+        });
+        return json({ error: "server" }, 502, cors);
+      }
+    }
+
     // ── Clerk webhook — POST /v1/clerk-webhook (Svix-signed; server-verified events) ──
     // Fail-closed: no secret set → 503; bad signature → 401. Records only genuinely
     // security-relevant, non-redundant signals — chiefly a role→admin grant made OUTSIDE

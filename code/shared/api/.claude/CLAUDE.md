@@ -11,6 +11,8 @@ upsert + re-fingerprint on `user.created`/`user.updated`, pseudonymise on `user.
 `APP_API_TOKEN` · `IP_HASH_SALT` · `CLERK_WEBHOOK_SECRET` · `GDPR_FINGERPRINT_SALT` (email fingerprint
 salt, identical across envs — see `wrangler.toml`). `POST /v1/events` also accepts `kind:csp-report` →
 the `csp_reports` D1 table (aggregated CSP violation reports, Report-Only pipeline; 30-day `cron` purge).
+`GET /v1/csp-reports` reads it back (bearer-gated, same shape as `GET /v1/security`) for the admin CSP
+dashboard.
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.

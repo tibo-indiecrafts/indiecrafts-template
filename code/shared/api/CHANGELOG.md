@@ -14,6 +14,10 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- feat(compliance): **`GET /v1/csp-reports`** — the admin read for aggregated CSP violation groups.
+  Bearer-gated (mirrors `GET /v1/security`); returns `csp_reports` rows ordered by `count DESC,
+  last_seen DESC`, `limit` clamped to 200 (default 100). **Why:** back the admin CSP dashboard so an
+  operator can see which violations a strict CSP would block before flipping a surface to `enforce`.
 - feat(compliance): `kind:csp-report` writes aggregated `csp_reports` (migration 0004). `POST
   /v1/events` gains a fourth `kind`: the surface forwards sanitized CSP violation reports
   (routes collapsed, samples redacted upstream), and the worker upserts one row per distinct

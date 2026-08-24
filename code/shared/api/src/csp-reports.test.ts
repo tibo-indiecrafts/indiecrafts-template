@@ -42,3 +42,46 @@ describe("kind:csp-report → csp_reports", () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe("GET /v1/csp-reports", () => {
+  it("returns seeded rows ordered by count DESC, last_seen DESC", async () => {
+    await postCspReports([
+      {
+        surface: "website",
+        disposition: "report",
+        directive: "img-src",
+        documentPath: "/a",
+        blockedSource: "https://low.example",
+        sampleSourceFile: "https://x.dev/p",
+        sampleLine: 1,
+        sampleSnippet: "a",
+      },
+    ]);
+    const high = {
+      surface: "website",
+      disposition: "enforce",
+      directive: "script-src-elem",
+      documentPath: "/b",
+      blockedSource: "https://high.example",
+      sampleSourceFile: "https://x.dev/p",
+      sampleLine: 2,
+      sampleSnippet: "b",
+    };
+    await postCspReports([high]);
+    await postCspReports([high]);
+
+    const res = await SELF.fetch("https://example.com/v1/csp-reports", {
+      headers: { authorization: "Bearer test-token" },
+    });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      data: { group_key: string; count: number }[];
+    };
+    const groups = body.data.map((row) => row.group_key);
+    expect(groups[0]).toBe("website|enforce|script-src-elem|/b|https://high.example");
+    expect(body.data[0].count).toBe(2);
+    expect(groups).toContain(
+      "website|report|img-src|/a|https://low.example",
+    );
+  });
+});

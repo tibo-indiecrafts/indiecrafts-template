@@ -38,6 +38,11 @@ describe("api worker (workerd)", () => {
     expect(res.status).toBe(401);
   });
 
+  it("401s GET /v1/csp-reports without a bearer token (gated)", async () => {
+    const res = await SELF.fetch("https://example.com/v1/csp-reports");
+    expect(res.status).toBe(401);
+  });
+
   it("fails closed on /v1/clerk-webhook when no secret is configured (503)", async () => {
     // The test env has no CLERK_WEBHOOK_SECRET → the webhook must refuse, not accept.
     const res = await SELF.fetch("https://example.com/v1/clerk-webhook", {

@@ -60,6 +60,20 @@
       "description": "Détail",
       "link": "Voir la sécurité"
     },
+    "csp": {
+      "title": "Violations CSP",
+      "subtitle": "Rapports de violation de la Content-Security-Policy, agrégés, les plus fréquents en premier. Les lignes « report » indiquent ce qu'une CSP stricte bloquerait une fois appliquée — utilisez-les pour décider quand une surface est prête à passer en « enforce ». Les lignes « enforce » sont bloquées dès maintenant.",
+      "count": "Occurrences",
+      "disposition": "Disposition",
+      "directive": "Directive",
+      "route": "Route",
+      "blockedSource": "Source bloquée",
+      "surface": "Surface",
+      "lastSeen": "Dernière occurrence",
+      "empty": "Aucune violation CSP enregistrée.",
+      "loadError": "Impossible de charger les rapports CSP — l'API est injoignable.",
+      "link": "Voir les violations CSP"
+    },
     "system": {
       "title": "État du système",
       "surfaces": "Surfaces",

@@ -14,6 +14,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **CSP violations dashboard — `(dashboard)/csp`.** Read-only page mirroring `(dashboard)/security`:
+  reads `GET /v1/csp-reports` server-side (bearer held server-side, `cache: "no-store"`) and lists
+  aggregated CSP violation groups — count · disposition · directive · route · blocked source · surface ·
+  last seen — most frequent first. `disposition: "report"` rows (what a strict CSP would block) are
+  emphasized over `"enforce"` rows (blocked now). Linked from the dashboard nav. **Why:** gives an
+  operator the enforce-readiness signal needed to decide when a surface is safe to flip from
+  report-only to enforced CSP.
 - **Proxy-set, per-request nonce CSP — `CSP_MODE`.** `src/proxy.ts` generates one nonce per request
   (`generateNonce`) and stamps the response with `cspHeadersForMode(...)`
   (`@indiecrafts/packages-shared-security`): `CSP_MODE=enforce` ships the strict nonce `script-src`

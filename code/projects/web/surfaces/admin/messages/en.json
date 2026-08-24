@@ -60,6 +60,20 @@
       "description": "Detail",
       "link": "View security"
     },
+    "csp": {
+      "title": "CSP violations",
+      "subtitle": "Aggregated Content-Security-Policy violation reports, most frequent first. \"report\" rows are what a strict CSP would block if enforced — use them to decide when a surface is ready to flip to \"enforce\". \"enforce\" rows are blocked now.",
+      "count": "Count",
+      "disposition": "Disposition",
+      "directive": "Directive",
+      "route": "Route",
+      "blockedSource": "Blocked source",
+      "surface": "Surface",
+      "lastSeen": "Last seen",
+      "empty": "No CSP violations recorded.",
+      "loadError": "Could not load CSP reports — the api is unreachable.",
+      "link": "View CSP violations"
+    },
     "system": {
       "title": "System status",
       "surfaces": "Surfaces",
