@@ -1,18 +1,21 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * SP3 CSP nonce enforcement — `src/proxy.ts` stamps a per-request nonce on the
- * strict `script-src` when `CSP_MODE=enforce` (default `report-only`, which
- * enforces the permissive policy instead — see
- * `code/docs/apps/web/seo/security-headers.md`). Run this spec with
- * `CSP_MODE=enforce` in the server env; `/studio` is excluded from the proxy
- * matcher and keeps the static, permissive `studioCspRule` (Sanity Studio
- * needs `'unsafe-inline'` and can't take a nonce).
+ * SP3 CSP nonce enforcement — `src/proxy.ts` stamps a per-request nonce on both
+ * CSP headers it sets. This spec runs under the default `CSP_MODE=report-only`
+ * (nothing in CI/playwright flips it to `enforce`, and this suite deliberately
+ * doesn't either — that would force every website e2e journey into enforce
+ * mode): the permissive policy stays the enforced `content-security-policy`,
+ * and the strict, nonce-gated policy ships as `content-security-policy-report-only`
+ * — so that's the header this spec validates the nonce against. See
+ * `code/docs/apps/web/seo/security-headers.md`. `/studio` is excluded from the
+ * proxy matcher and keeps the static, permissive `studioCspRule` (Sanity
+ * Studio needs `'unsafe-inline'` and can't take a nonce).
  */
 
 const NONCE_RE = /'nonce-([A-Za-z0-9+/=]+)'/;
 
-test("home page: strict nonce CSP, matching script nonce, no CSP violations", async ({
+test("home page: strict nonce CSP is Report-Only, matching script nonce, no CSP violations", async ({
   page,
 }) => {
   // Collect violations two ways: the DOM event (fires even where the console
@@ -33,9 +36,16 @@ test("home page: strict nonce CSP, matching script nonce, no CSP violations", as
   });
 
   const res = await page.goto("/en");
-  const csp = res?.headers()["content-security-policy"] ?? "";
-  expect(csp).toContain("'strict-dynamic'");
-  const match = csp.match(NONCE_RE);
+  const headers = res?.headers() ?? {};
+
+  // The enforced header is the permissive policy in report-only mode — no
+  // strict-dynamic, so the two-header split is real (nothing enforced changed).
+  expect(headers["content-security-policy"] ?? "").not.toContain("'strict-dynamic'");
+
+  // The strict nonce policy ships as Report-Only — this is what's being proven.
+  const reportOnlyCsp = headers["content-security-policy-report-only"] ?? "";
+  expect(reportOnlyCsp).toContain("'strict-dynamic'");
+  const match = reportOnlyCsp.match(NONCE_RE);
   expect(match).not.toBeNull();
   const nonce = match![1];
 
