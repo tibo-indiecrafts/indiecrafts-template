@@ -9,8 +9,11 @@ Auto-loads under `code/packages/web/security-reports/**`. Explicit per-file `exp
 - **`handleCspReport(request, opts: { surface })`** (`./handle`) — the same-origin route handler.
   The browser POSTs violations here with no auth, so this is the trust boundary: accepts only the
   CSP content-types (`application/reports+json`, `application/csp-report`), caps the body at 64KB,
-  keeps at most 50 reports per request, then normalizes + sanitizes + drops extension noise before
-  forwarding survivors. Always answers 204 — never reflects input or leaks validation detail.
+  **rate-limits per client IP** (`csp:<surface>:<ip>`, 30/min via `rateLimit` + `clientIp` from
+  `packages-shared-security` — defence-in-depth, no-ops without `RATE_LIMIT_KV`; the CF WAF rule is
+  primary), keeps at most 50 reports per request, then normalizes + sanitizes + drops extension noise
+  before forwarding survivors. Answers 204 (or 429 over the limit) — never reflects input or leaks
+  validation detail.
 - **`forwardCspReports(reports)`** (`./forward`) — `import "server-only"`; posts sanitized reports
   to the api's `POST /v1/events` (`kind: "csp-report"`) in batches of 5, bearer-authed with
   `APP_API_TOKEN`. Fire-and-forget: no-ops without `API_URL`/`APP_API_TOKEN`, swallows fetch errors.

@@ -14,6 +14,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-shared-security` — `permissiveCspRule(source, env, csp?, reporting?)`.**
+  Generalizes `studioCspRule` (now a thin `/studio/:path*` shorthand over it) so any proxy-excluded
+  route that can't take a per-request nonce gets the static, permissive CSP scoped to it. **Why:**
+  `/maintenance` was proxy-excluded like `/studio` but had no static rule, so `cspMode: "proxy"` left
+  it shipping **no** CSP at all — the website now scopes a rule to it too.
 - **`@indiecrafts/packages-shared-config` + `-shared-security` — the CSP now allows Clerk when it is configured.**
   New `getClerkCspHosts()` (config `./web`, env-gated) derives Clerk's Frontend-API host from
   `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`; `buildCsp` adds it to `script-src`/`connect-src`/`frame-src`, adds
@@ -156,6 +161,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`@indiecrafts/packages-web-security-reports` — `handleCspReport` now rate-limits the anonymous sink.**
+  Before parsing the body it applies a per-client-IP fixed window (`csp:<surface>:<ip>`, 30/min) via
+  `rateLimit` + `clientIp` from `packages-shared-security`, answering `429` over the limit. **Why:** the
+  report route takes unauthenticated POSTs and writes an aggregate D1 row per violation group — a flood
+  could inflate the table. No-ops without `RATE_LIMIT_KV` (the CF WAF rule on `/api/*` stays primary);
+  this is portable defence-in-depth, the same layer the form routes get from `withGuard`.
 - **`packages-web-compliance` split — the portable half moved to `packages-shared-compliance`.** `consent-signals`
   is now a 1-line re-export (every importer unchanged); `consent-store` imports `grantedKeys`/`consentUpdate`/
   `ConsentRecord` from the shared brick and re-exports them (public surface unchanged). **Why:** one source of

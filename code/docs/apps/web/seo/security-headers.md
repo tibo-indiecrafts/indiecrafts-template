@@ -6,8 +6,9 @@ brick. Most of the set — `X-Content-Type-Options`, `X-Frame-Options`, `Referre
 `next.config.ts`'s `headers()` hook, every route (`source: "/:path*"`), no per-page wiring. The
 **Content-Security-Policy is different**: `src/proxy.ts` sets it per request, with a nonce (see
 [Per-request nonce CSP](#per-request-nonce-csp) below) — `next.config.ts` passes
-`cspMode: "proxy"` so `securityHeaders` skips the CSP headers, and adds a separate, static
-`studioCspRule` scoped to `/studio` (the embedded Sanity Studio, which the proxy never sees).
+`cspMode: "proxy"` so `securityHeaders` skips the CSP headers, and adds separate, static
+`permissiveCspRule` entries for the two routes the proxy never sees — `/studio` (the embedded
+Sanity Studio) and `/maintenance` (the standalone outage page) — so neither is left with no CSP.
 
 `websiteCspHosts` (`src/lib/csp-hosts.ts`) is the **one** `CspHosts` const — `next.config.ts` and
 `src/proxy.ts` both import it, so the static `/studio` rule and the per-request proxy policy always
@@ -32,6 +33,7 @@ import {
   imageDefaults,
   securityHeaders,
   studioCspRule,
+  permissiveCspRule,
 } from "@indiecrafts/packages-shared-security";
 import { websiteCspHosts } from "./src/lib/csp-hosts";
 
@@ -45,6 +47,8 @@ async headers() {
     }),
     // /studio isn't matched by the proxy and can't take a nonce — its own static rule.
     studioCspRule(getCurrentEnvironment(), websiteCspHosts, { endpoint: "/api/csp-report" }),
+    // /maintenance is likewise proxy-excluded — without this it would ship NO CSP.
+    permissiveCspRule("/maintenance", getCurrentEnvironment(), websiteCspHosts, { endpoint: "/api/csp-report" }),
   ];
 }
 ```
@@ -140,9 +144,11 @@ violations to that same-origin route.
 
 The route (`src/app/api/csp-report/route.ts`) is thin — it delegates to
 **[`handleCspReport`](/packages/security-reports)** (`@indiecrafts/packages-web-security-reports/handle`),
-which accepts only the CSP content-types, caps the body, sanitizes each report, and forwards
-survivors to the api's `POST /v1/events` (`kind: "csp-report"`). No auth on the route itself — the
-handler is the trust boundary, and it always answers `204`.
+which accepts only the CSP content-types, caps the body, **rate-limits per client IP** (30/min,
+defence-in-depth on the anonymous sink — no-ops without `RATE_LIMIT_KV`, the CF WAF rule on `/api/*`
+is primary), sanitizes each report, and forwards survivors to the api's `POST /v1/events`
+(`kind: "csp-report"`). No auth on the route itself — the handler is the trust boundary, and it
+always answers `204` (or `429` when the IP is over the limit).
 
 ## Per-request nonce CSP
 
@@ -162,9 +168,12 @@ only) the `[locale]` layout passes it to the Google Analytics `<Script>` tags. N
 auto-nonces its own inline bootstrap scripts once it sees a nonce in the CSP header — no extra
 wiring needed for those.
 
-**`/studio` stays permissive.** The proxy matcher excludes `/studio`, and the embedded Sanity Studio
-can't take a per-request nonce (it needs `'unsafe-inline'`, always) — `studioCspRule` in
-`next.config.ts` reproduces the pre-nonce policy exactly, scoped to that one route.
+**`/studio` and `/maintenance` stay permissive.** The proxy matcher excludes both. The embedded
+Sanity Studio can't take a per-request nonce (it needs `'unsafe-inline'`, always); `/maintenance` is
+a standalone static page with no nonce. `next.config.ts` gives each its own `permissiveCspRule`
+(`studioCspRule` is the `/studio` shorthand), reproducing the pre-nonce policy exactly — so
+neither route ships without a CSP. (When maintenance mode is *on*, the proxy still stamps the nonce
+CSP on the internal rewrite to `/maintenance`; the static rule only covers a direct hit.)
 
 **Default: `CSP_MODE` unset → `enforce`.** The strict nonce policy is the enforced
 `Content-Security-Policy` out of the box — no separate Report-Only rollout step needed for a new
@@ -179,7 +188,10 @@ Proven end-to-end by `e2e/journeys/csp-nonce.spec.ts` (website, the default `enf
 server actually runs in CI/local): the enforced header carries `'strict-dynamic'` and a `nonce-…`
 token, that same nonce is on a `<script>` in the served HTML, no CSP violation fires on the home
 page, no `Content-Security-Policy-Report-Only` header is present, and `/studio` still carries the
-permissive, non-`'strict-dynamic'` policy.
+permissive, non-`'strict-dynamic'` policy. That spec is a **blocking** CI gate (the `csp` job in
+`.github/workflows/test.yml`) — since enforce is the live default, a broken nonce pipeline fails the
+PR rather than silently shipping. It runs on its own (a real browser + built app), split from the
+advisory `browser` job so the untrusted visual baselines don't gate on it.
 
 ## Hardening — and why it's Sanity-Studio-safe
 

@@ -7,6 +7,7 @@ export {
 export {
   securityHeaders,
   studioCspRule,
+  permissiveCspRule,
   type SecurityHeadersOptions,
   type HeaderRule,
   type HstsOptions,

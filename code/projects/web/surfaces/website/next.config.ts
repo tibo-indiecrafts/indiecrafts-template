@@ -6,6 +6,7 @@ import {
   imageDefaults,
   securityHeaders,
   studioCspRule,
+  permissiveCspRule,
 } from "@indiecrafts/packages-shared-security";
 import { websiteCspHosts } from "./src/lib/csp-hosts";
 
@@ -91,6 +92,13 @@ const nextConfig: NextConfig = {
       // and isn't matched by the proxy anyway — see the proxy matcher) — scope the
       // permissive CSP to it alone, and still report its violations.
       studioCspRule(getCurrentEnvironment(), websiteCspHosts, {
+        endpoint: "/api/csp-report",
+      }),
+      // /maintenance is likewise excluded from the proxy matcher, so `cspMode: "proxy"`
+      // would leave it with NO CSP. It's a standalone static page (no nonce), so give it
+      // the same permissive rule — a direct hit stays covered, and the proxy still stamps
+      // the nonce CSP on the maintenance REWRITE when maintenance mode is on.
+      permissiveCspRule("/maintenance", getCurrentEnvironment(), websiteCspHosts, {
         endpoint: "/api/csp-report",
       }),
     ];

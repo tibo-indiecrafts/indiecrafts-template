@@ -19,6 +19,16 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **`/maintenance` now carries a CSP; the CSP-enforcement e2e is a blocking CI gate.** Two
+  loose ends from the enforce rollout: (1) `/maintenance` is excluded from the proxy matcher like
+  `/studio`, so `cspMode: "proxy"` left it shipping **no** `Content-Security-Policy` on a direct hit —
+  `next.config.ts` now adds a static `permissiveCspRule("/maintenance", …)` (the proxy still stamps the
+  nonce CSP on the internal rewrite when maintenance mode is on). (2) `e2e/journeys/csp-nonce.spec.ts`
+  ran only inside the advisory `browser` job; a new **blocking** `csp` job in `.github/workflows/test.yml`
+  runs just that spec (real browser + built app), so a broken nonce pipeline fails the PR now that
+  enforce is the live default — split out so the untrusted visual baselines stay advisory. **Why:**
+  close the last no-CSP route and make enforce a gate, not a hope. See
+  `code/docs/apps/web/seo/security-headers.md`.
 - **Block AI-training crawlers in `robots.txt` — `features.blockAiTraining` (default on).** When the
   site is indexable, `src/app/robots.txt/route.ts` now emits a `Disallow: /` group per AI-_training_
   crawler (`AI_TRAINING_USER_AGENTS` from `@indiecrafts/packages-shared-config` — GPTBot,

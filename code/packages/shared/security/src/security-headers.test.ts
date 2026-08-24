@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildCsp } from "./csp";
-import { securityHeaders } from "./headers";
+import { securityHeaders, studioCspRule, permissiveCspRule } from "./headers";
 
 const cspOf = (rules: ReturnType<typeof securityHeaders>) =>
   rules[0].headers.find((h) => h.key === "Content-Security-Policy")?.value ??
@@ -121,5 +121,30 @@ describe("securityHeaders", () => {
       "Content-Security-Policy",
       "Cross-Origin-Opener-Policy",
     ]);
+  });
+});
+
+describe("permissiveCspRule", () => {
+  it("scopes the permissive CSP to the given source (studio + maintenance)", () => {
+    const studio = studioCspRule("production");
+    expect(studio.source).toBe("/studio/:path*");
+    const maintenance = permissiveCspRule("/maintenance", "production");
+    expect(maintenance.source).toBe("/maintenance");
+    // Both reproduce the permissive (non-nonce) policy exactly.
+    const csp = (r: typeof maintenance) =>
+      r.headers.find((h) => h.key === "Content-Security-Policy")?.value;
+    expect(csp(studio)).toBe(buildCsp("production"));
+    expect(csp(maintenance)).toBe(buildCsp("production"));
+  });
+
+  it("adds Reporting-Endpoints only when a reporting endpoint is given", () => {
+    const bare = permissiveCspRule("/maintenance", "production");
+    expect(bare.headers.some((h) => h.key === "Reporting-Endpoints")).toBe(false);
+    const reported = permissiveCspRule("/maintenance", "production", {}, {
+      endpoint: "/api/csp-report",
+    });
+    expect(
+      reported.headers.find((h) => h.key === "Reporting-Endpoints")?.value,
+    ).toBe('csp-endpoint="/api/csp-report"');
   });
 });

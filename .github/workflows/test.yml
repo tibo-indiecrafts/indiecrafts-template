@@ -1,9 +1,9 @@
 # CI — the PR gate. `verify` (types/lint/format/contrast/tests + tooling gates),
-# `build` (the real OpenNext Worker build), `infra` (terraform validate) and
-# `wrangler` (worker config dry-run) BLOCK; `browser` (Storybook a11y + e2e/visual)
-# is advisory until baselines are trusted; `docs` builds the VitePress site;
-# `dependency-review` + `secrets-scan` flag risky deps / leaked secrets on PRs.
-# React Doctor runs in react-doctor.yml.
+# `build` (the real OpenNext Worker build), `csp` (the CSP-enforcement e2e),
+# `infra` (terraform validate) and `wrangler` (worker config dry-run) BLOCK;
+# `browser` (Storybook a11y + e2e/visual) is advisory until baselines are trusted;
+# `docs` builds the VitePress site; `dependency-review` + `secrets-scan` flag risky
+# deps / leaked secrets on PRs. React Doctor runs in react-doctor.yml.
 
 name: CI
 
@@ -80,6 +80,27 @@ jobs:
       # webServer builds + serves the app against it. Needs the Sanity secrets.
       - run: pnpm --filter @indiecrafts/web-surfaces-website e2e
         env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
+          SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
+          E2E_SANITY_DATASET: e2e
+
+  # The CSP-enforcement gate. BLOCKING (unlike the advisory `browser` job): CSP now
+  # defaults to enforce, so a broken nonce pipeline would silently break the live site.
+  # Runs ONLY the csp-nonce spec (a real browser + built app), proving the strict nonce
+  # policy is the enforced header, the nonce reaches the served <script>, nothing is
+  # blocked, and /studio keeps its permissive static CSP. Split from `browser` so the
+  # untrusted visual baselines stay advisory while this stays a gate. Needs the Sanity
+  # secrets (the app build + global-setup seed the throwaway `e2e` dataset).
+  csp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @indiecrafts/web-surfaces-website exec playwright test journeys/csp-nonce.spec.ts
+        env:
+          E2E_TARGET: app
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}

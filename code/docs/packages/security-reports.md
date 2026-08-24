@@ -10,7 +10,7 @@ parsing (`normalizeCspReports`/`sanitizeCspReport`, `./csp-report` — see
 
 | Import                                    | What it is                                                                                                                                                                                                                        |
 | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `handleCspReport(request, opts)` (`./handle`) | The route handler. `opts = { surface: string }`. Accepts only the CSP content-types, caps the body at 64KB, keeps at most 50 reports, normalizes + sanitizes + drops extension noise, forwards the survivors. Always answers `204`. |
+| `handleCspReport(request, opts)` (`./handle`) | The route handler. `opts = { surface: string }`. Accepts only the CSP content-types, caps the body at 64KB, **rate-limits per client IP** (30/min — defence-in-depth on the anonymous sink; no-ops without `RATE_LIMIT_KV`), keeps at most 50 reports, normalizes + sanitizes + drops extension noise, forwards the survivors. Answers `204` (or `429` over the limit). |
 | `forwardCspReports(reports)` (`./forward`)    | `import "server-only"`. Posts sanitized reports to the api's `POST /v1/events` (`kind: "csp-report"`) in batches of 5, bearer-authed with `APP_API_TOKEN`. Fire-and-forget: no-ops without `API_URL`/`APP_API_TOKEN`, swallows fetch errors. |
 
 Explicit per-file `exports` (`./handle`, `./forward`) — a consuming app needs no tsconfig `paths`
@@ -20,7 +20,8 @@ entry.
 
 1. **Browser → route.** The browser POSTs a CSP violation report to the site's report endpoint with
    no auth, so the route is the trust boundary. `handleCspReport` rejects a non-CSP content-type
-   (`415`) and an oversized body (`413`) before parsing anything.
+   (`415`), an oversized body (`413`), and a per-IP flood (`429`, keyed on the trusted `clientIp` —
+   `RATE_LIMIT_KV` fallback, the CF WAF rule is primary) before parsing anything.
 2. **Route → brick.** The route calls `normalizeCspReports` (collapses the two browser report
    formats — Reporting API `application/reports+json` and legacy `application/csp-report` — into one
    shape) then `sanitizeCspReport` per report (drops browser-extension noise, reduces URLs to origin,

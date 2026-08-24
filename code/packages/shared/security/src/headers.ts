@@ -109,19 +109,30 @@ export function securityHeaders({
   ];
 }
 
-/** The permissive CSP rule for the Sanity Studio route — it needs 'unsafe-inline'
- *  (+ dev 'unsafe-eval') and cannot take a nonce. Scoped to /studio only. Reproduces
+/** A static, permissive CSP rule scoped to `source` — for a route a proxy doesn't cover
+ *  and that can't take a nonce (it needs 'unsafe-inline', + dev 'unsafe-eval'): the
+ *  embedded Sanity Studio (`/studio`) and the standalone `/maintenance` page. Reproduces
  *  today's policy exactly (the current buildCsp output). */
-export function studioCspRule(
+export function permissiveCspRule(
+  source: string,
   env: Environment,
   csp: CspHosts = {},
   reporting?: CspReporting,
 ): HeaderRule {
   const rule: HeaderRule = {
-    source: "/studio/:path*",
+    source,
     headers: [{ key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) }],
   };
   if (reporting)
     rule.headers.push({ key: "Reporting-Endpoints", value: `csp-endpoint="${reporting.endpoint}"` });
   return rule;
+}
+
+/** The permissive CSP rule for the Sanity Studio route (`/studio/:path*`). */
+export function studioCspRule(
+  env: Environment,
+  csp: CspHosts = {},
+  reporting?: CspReporting,
+): HeaderRule {
+  return permissiveCspRule("/studio/:path*", env, csp, reporting);
 }
