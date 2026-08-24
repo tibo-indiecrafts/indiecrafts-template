@@ -14,6 +14,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Proxy-set, per-request nonce CSP — `CSP_MODE`.** `src/proxy.ts` generates one nonce per request
+  (`generateNonce`) and stamps the response with `cspHeadersForMode(...)`
+  (`@indiecrafts/packages-shared-security`): `CSP_MODE=enforce` ships the strict nonce `script-src`
+  (`'nonce-…' 'strict-dynamic'`) as the enforced policy; the default `CSP_MODE=report-only` keeps the
+  existing permissive policy enforced and ships the strict policy as
+  `Content-Security-Policy-Report-Only` so violations surface first. The nonce reaches the root layout's
+  `AppClerkProvider` via the `x-nonce` request header. `next.config.ts` drops the static
+  `Content-Security-Policy` from `headers()` (`cspMode: "proxy"`) since the proxy now owns it. **Why:**
+  a static `'unsafe-inline'` CSP can't stop inline-script injection; a per-request nonce can, and
+  `CSP_MODE` lets us observe violations in report-only before enforcing, with a same-env kill switch
+  back to report-only if enforcement ever breaks sign-in. See
+  `code/docs/apps/web/seo/security-headers.md`.
 - **Security headers + CSP violation reporting — the first `securityHeaders()` call on admin.**
   `next.config.ts` gains an `async headers()` (admin shipped none before): the shared
   `securityHeaders({...})` brick from `@indiecrafts/packages-shared-security`, with a `reporting`

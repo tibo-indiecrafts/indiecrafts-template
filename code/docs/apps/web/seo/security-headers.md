@@ -1,33 +1,57 @@
 # Security headers & CSP
 
 Security headers are built by the shared **[`@indiecrafts/packages-shared-security`](/packages/security)**
-brick and applied in `next.config.ts` via one `securityHeaders({...})` call in the `headers()` hook —
-every route (`source: "/:path*"`), no per-page wiring. The brick owns the hardened defaults; the app
-passes only its own extra hosts.
+brick. Most of the set — `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
+`Permissions-Policy`, COOP, HSTS — still comes from one `securityHeaders({...})` call in
+`next.config.ts`'s `headers()` hook, every route (`source: "/:path*"`), no per-page wiring. The
+**Content-Security-Policy is different**: `src/proxy.ts` sets it per request, with a nonce (see
+[Per-request nonce CSP](#per-request-nonce-csp-csp-mode) below) — `next.config.ts` passes
+`cspMode: "proxy"` so `securityHeaders` skips the CSP headers, and adds a separate, static
+`studioCspRule` scoped to `/studio` (the embedded Sanity Studio, which the proxy never sees).
 
 ```ts
 // next.config.ts
 import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
-import { imageDefaults, securityHeaders } from "@indiecrafts/packages-shared-security";
+import {
+  imageDefaults,
+  securityHeaders,
+  studioCspRule,
+} from "@indiecrafts/packages-shared-security";
 
 const EMBED_HOSTS: string[] = []; // external embed origins (newsletter provider)
 
 async headers() {
-  return securityHeaders({
-    env: getCurrentEnvironment(),
-    csp: {
-      frameSrc: ["https://www.youtube-nocookie.com", "https://player.vimeo.com", "https://www.dailymotion.com"],
-      mediaSrc: ["https://cdn.sanity.io"],
-      googleAnalytics: true,
-      embedHosts: EMBED_HOSTS,
-    },
-    immutablePaths: ["/brand/:path*", "/logo.svg"],
-    reporting: {
-      endpoint: "/api/csp-report",
-      reportOnly: { dropSources: ["https:"] },
-    },
-  });
+  const csp = {
+    frameSrc: ["https://www.youtube-nocookie.com", "https://player.vimeo.com", "https://www.dailymotion.com"],
+    mediaSrc: ["https://cdn.sanity.io"],
+    googleAnalytics: true,
+    embedHosts: EMBED_HOSTS,
+  };
+  return [
+    ...securityHeaders({
+      env: getCurrentEnvironment(),
+      csp,
+      cspMode: "proxy", // the proxy sets Content-Security-Policy per request instead
+      immutablePaths: ["/brand/:path*", "/logo.svg"],
+    }),
+    // /studio isn't matched by the proxy and can't take a nonce — its own static rule.
+    studioCspRule(getCurrentEnvironment(), csp, { endpoint: "/api/csp-report" }),
+  ];
 }
+```
+
+```ts
+// src/proxy.ts
+import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
+import { generateNonce, cspHeadersForMode, type CspMode } from "@indiecrafts/packages-shared-security";
+
+const CSP_MODE: CspMode = process.env.CSP_MODE === "enforce" ? "enforce" : "report-only";
+
+// per request, inside the middleware pipeline:
+const nonce = generateNonce();
+const { enforced, reportOnly } = cspHeadersForMode(getCurrentEnvironment(), csp, reporting, nonce, CSP_MODE);
+response.headers.set("Content-Security-Policy", enforced);
+if (reportOnly) response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
 ```
 
 ## The headers
@@ -47,13 +71,15 @@ Plus: `poweredByHeader: false` strips `X-Powered-By`; immutable one-year `Cache-
 
 ## The Content-Security-Policy
 
-`buildCsp(env, csp)` composes the directives — hardened defaults baked in, the app's extras merged
-per directive:
+`buildCsp(env, csp, reporting, nonce)` composes the directives — hardened defaults baked in, the
+app's extras merged per directive. Passing a `nonce` swaps `script-src` to the strict, nonce-gated
+policy (see below); without one it's the permissive policy, unchanged from before SP3.
 
 | Directive                   | Value                                                             | Why                                                     |
 | --------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------- |
 | `default-src`               | `'self'`                                                          | Same-origin baseline.                                   |
-| `script-src`                | `'self' 'unsafe-inline'` (+ `'unsafe-eval'` dev only) (+ GA host) | Inline scripts (GA init, theme boot).                   |
+| `script-src` (no nonce)     | `'self' 'unsafe-inline'` (+ `'unsafe-eval'` dev only) (+ GA host) | The permissive policy — `/studio`'s only policy, and the whole site's while `CSP_MODE=report-only`. |
+| `script-src` (nonce)        | `'self' 'nonce-<value>' 'strict-dynamic' https: 'unsafe-inline'`  | The strict policy — only the nonced script (and anything it loads) runs. `https: 'unsafe-inline'` is a CSP-L2 fallback modern browsers ignore once `'strict-dynamic'` is present. |
 | `style-src`                 | `'self' 'unsafe-inline'`                                          | Tailwind / inline styles.                               |
 | `img-src`                   | `'self' data: blob: https:`                                       | `next/image`, data/blob URIs, remote HTTPS images.      |
 | `media-src`                 | `'self' blob:` (+ `cdn.sanity.io`)                                | Uploaded featured videos (Sanity file assets).          |
@@ -98,8 +124,9 @@ export function getCSPConnectSources(env: Environment): readonly string[] {
 ## CSP violation reporting
 
 Reporting is on: `reporting.endpoint: "/api/csp-report"` adds a `Reporting-Endpoints:
-csp-endpoint="/api/csp-report"` header and a `report-to`/`report-uri` clause on the enforced
-`Content-Security-Policy`. The browser POSTs violations to that same-origin route.
+csp-endpoint="/api/csp-report"` header and a `report-to`/`report-uri` clause on every
+`Content-Security-Policy` (proxy-set and the `/studio` static rule alike). The browser POSTs
+violations to that same-origin route.
 
 The route (`src/app/api/csp-report/route.ts`) is thin — it delegates to
 **[`handleCspReport`](/packages/security-reports)** (`@indiecrafts/packages-web-security-reports/handle`),
@@ -107,12 +134,43 @@ which accepts only the CSP content-types, caps the body, sanitizes each report, 
 survivors to the api's `POST /v1/events` (`kind: "csp-report"`). No auth on the route itself — the
 handler is the trust boundary, and it always answers `204`.
 
-**Report-Only candidate.** `reporting.reportOnly: { dropSources: ["https:"] }` also emits a
-`Content-Security-Policy-Report-Only` header — a stricter candidate policy that removes the blanket
-`https:` from `img-src` so violations reveal the real image allowlist (Sanity, Unsplash, …) before
-that source is dropped from the enforced policy. The browser reports violations for both policies
-but only blocks on the enforced one, so this is safe to ship: nothing breaks, we just learn from the
-reports. Tighten the candidate further during rollout; nonces for `script-src` land in a later pass.
+## Per-request nonce CSP (`CSP_MODE`)
+
+`src/proxy.ts` generates a fresh nonce **per request** (`generateNonce()`) and stamps the response
+with `cspHeadersForMode(env, csp, reporting, nonce, CSP_MODE)` — the enforced/Report-Only pair for
+the configured mode:
+
+| `CSP_MODE`              | Enforced `Content-Security-Policy`                        | `Content-Security-Policy-Report-Only` |
+| ------------------------ | ---------------------------------------------------------- | --------------------------------------- |
+| `report-only` (default) | the permissive policy (unchanged — the site keeps working) | the strict nonce policy — violations are observed, nothing is blocked |
+| `enforce`                | the strict nonce policy                                    | none                                    |
+
+The nonce reaches every inline script that needs it via the `x-nonce` request header, set on the
+request before it's handed to next-intl/the route so a server component can read it with
+`(await headers()).get("x-nonce")`: the root layout passes it to `AppClerkProvider`, and (website
+only) the `[locale]` layout passes it to the Google Analytics `<Script>` tags. Next.js also
+auto-nonces its own inline bootstrap scripts once it sees a nonce in the CSP header — no extra
+wiring needed for those.
+
+**`/studio` stays permissive.** The proxy matcher excludes `/studio`, and the embedded Sanity Studio
+can't take a per-request nonce (it needs `'unsafe-inline'`, always) — `studioCspRule` in
+`next.config.ts` reproduces the pre-nonce policy exactly, scoped to that one route.
+
+**Rollout sequence.**
+
+1. Ship with `CSP_MODE` unset (defaults to `report-only`) — the site runs on the same permissive CSP
+   as before; the strict nonce policy ships alongside as Report-Only and its violations land at
+   `/api/csp-report`.
+2. Watch the reports. A real violation (a script that needs the nonce and doesn't have it, an
+   inline handler, a third-party tag) means code to fix, not a CSP change.
+3. Once reports are clean, set `CSP_MODE=enforce` in that surface's environment and redeploy.
+4. **Fast rollback:** unset `CSP_MODE` (or set it back to `report-only`) and redeploy — no code
+   change, the permissive policy is enforced again immediately.
+
+Proven end-to-end by `e2e/journeys/csp-nonce.spec.ts` (website, `CSP_MODE=enforce`): the enforced
+header carries `'strict-dynamic'` + a `nonce-…` token, that same nonce is on a `<script>` in the
+served HTML, no CSP violation fires on the home page, and `/studio` still carries the permissive,
+non-`'strict-dynamic'` policy.
 
 ## Hardening — and why it's Sanity-Studio-safe
 
@@ -140,3 +198,13 @@ reports. Tighten the candidate further during rollout; nonces for `script-src` l
 unconditionally — the measurement id lives in Sanity (a runtime value the build-time CSP can't read),
 so no manual edit per GA change. Harmless when GA is off. See [Analytics](./analytics.md).
 :::
+
+## Issue tags
+
+- `@bug` — `src/proxy.ts` calls `cspHeadersForMode(env, {}, …)` with an empty `CspHosts`, so the
+  `csp` object declared in `next.config.ts` (`frameSrc`, `mediaSrc`, `googleAnalytics`,
+  `embedHosts`) never reaches the enforced/Report-Only policy the proxy sets — only `/studio`'s
+  static `studioCspRule` gets it. Under `CSP_MODE=enforce` this drops the video-embed hosts from
+  `frame-src`, Sanity file assets from `media-src`, and Google's beacon hosts from `connect-src`.
+  Thread the same `csp` const into the proxy's `cspHeadersForMode(...)` call before enforcing in
+  production.

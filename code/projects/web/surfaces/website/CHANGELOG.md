@@ -19,6 +19,22 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Proxy-set, per-request nonce CSP — `CSP_MODE`.** `src/proxy.ts` now generates one nonce per
+  request (`generateNonce`) and stamps the response with `cspHeadersForMode(...)` from
+  `@indiecrafts/packages-shared-security`: `CSP_MODE=enforce` ships the strict nonce `script-src`
+  (`'nonce-…' 'strict-dynamic'`) as the enforced policy; the default `CSP_MODE=report-only` keeps the
+  existing permissive policy enforced (nothing breaks) and ships the strict policy as
+  `Content-Security-Policy-Report-Only` so violations surface first. The nonce is threaded to the root
+  layout (`AppClerkProvider`) and the `[locale]` layout's Google Analytics `<Script>` tags via the
+  `x-nonce` request header; Next.js auto-nonces its own inline scripts once the header carries one — no
+  extra wiring needed there. `next.config.ts` drops the static `Content-Security-Policy` from
+  `headers()` (`cspMode: "proxy"`) since the proxy now owns it, and adds a `studioCspRule` scoped to
+  `/studio` that reproduces the old permissive CSP exactly (`'unsafe-inline'`, no nonce) — the embedded
+  Sanity Studio isn't behind the proxy and can't take a per-request nonce. **Why:** a static
+  `'unsafe-inline'` CSP can't stop inline-script injection; a per-request nonce can, and `CSP_MODE`
+  lets us observe violations in report-only before enforcing, with a same-env kill switch back to
+  report-only if enforcement ever breaks something. e2e proof: `e2e/journeys/csp-nonce.spec.ts`. See
+  `code/docs/apps/web/seo/security-headers.md`.
 - **CSP violation reporting + `/api/csp-report`.** `next.config.ts` now passes a `reporting` option
   to `securityHeaders({...})`: the enforced CSP gains a `Reporting-Endpoints` header pointing at the
   new same-origin `/api/csp-report` route, and a `Content-Security-Policy-Report-Only` candidate

@@ -135,6 +135,24 @@ Changed · Deprecated · Removed · Fixed**.
   (`NEXT_PUBLIC_WEBSITE_URL`, else `site.url`) = the marketing-site origin the shells link to for legal pages.
   `pickSuggestedLocale(rankedPrefs, active, supported)` (`./shared`) = the shared "suggest a language switch?"
   decision, lifted from `locale-suggest` so the native shells reuse it over `getLocales()`/`navigator.languages`.
+- **`packages-shared-security` — per-request nonce CSP + a rollout kill switch.** `buildCsp(env, csp,
+  reporting, nonce)` (`./csp`) now takes an optional `nonce`: when set, `script-src` becomes `'self'
+  'nonce-<value>' 'strict-dynamic' https: 'unsafe-inline'` (the strict, nonce-gated policy) instead of
+  the permissive `'unsafe-inline'` list. New `./csp-nonce` module: `generateNonce()` (16 random bytes,
+  base64 — Web Crypto, Edge/Node-safe) and `cspHeadersForMode(env, csp, reporting, nonce, mode)`, which
+  returns `{ enforced, reportOnly }` for a `CspMode` of `"enforce"` (the strict nonce policy is the
+  enforced header, no Report-Only) or `"report-only"` (the CURRENT permissive policy stays enforced —
+  the site keeps working — while the strict nonce policy ships as `Content-Security-Policy-Report-Only`,
+  so violations are observed without blocking). `securityHeaders({ ...opts, cspMode: "proxy" })`
+  (`./headers`) drops `Content-Security-Policy` / `Reporting-Endpoints` / the Report-Only header from the
+  static `headers()` array, so a proxy can set them per-request instead (`cspMode` defaults to
+  `"static"` — today's behavior, unchanged). New `studioCspRule(env, csp, reporting)` reproduces the
+  prior static, permissive CSP (`'unsafe-inline'`, no nonce) scoped to one route — for a static asset
+  like the embedded Sanity Studio that can't take a per-request nonce. **Why:** a static, allowlist-only
+  CSP can't stop inline-script injection; a per-request nonce (with `'strict-dynamic'`) can, but
+  flipping it on cold is a real regression risk — `cspMode` lets each surface roll it out behind
+  `CSP_MODE=report-only` first (observe violations, ship nothing broken) and flip to `enforce` once
+  the reports are clean, with `/studio` staying on the policy it always had.
 
 ### Changed
 
