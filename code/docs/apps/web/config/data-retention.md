@@ -102,6 +102,13 @@ Four routes on the `api` worker (`code/shared/api/src/erasure/`) drive the engin
 - `POST /v1/erasure/self` — the authenticated self-service path. A signed-in user
   erases from their profile's auth section: the Clerk session JWT proves identity, a
   typed email confirms the intent, and the engine runs directly (no email round-trip).
+- `POST /v1/export` — the authenticated data-export path (Art. 15/20). The Clerk
+  session JWT proves identity, `runExport` reads every store, and the bundle is
+  written to the `EXPORT_BUCKET` R2 bucket. The response is a single-use download
+  link that expires after **1 hour**. `GET /v1/export/download?token=` verifies the
+  token (hashed, single-use, same pattern as the erasure confirm token), streams the
+  bundle, and **deletes it from R2** on that first download — a second attempt with
+  the same token, or an expired one, is refused.
 
 ## Privacy-policy disclosure — operator checklist
 

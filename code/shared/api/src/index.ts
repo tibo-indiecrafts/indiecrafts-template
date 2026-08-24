@@ -29,6 +29,7 @@ import { handleErasureRequest } from "./erasure/request";
 import { handleErasureConfirm } from "./erasure/confirm";
 import { handleErasureStatus } from "./erasure/status";
 import { handleErasureSelf } from "./erasure/self";
+import { handleExport, handleExportDownload } from "./export/route";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -93,6 +94,9 @@ export interface Env {
   /** The website's public origin (`[vars]`) — the erasure confirm-link target. Unset → falls
    *  back to the worker's own origin + `/v1/erasure/confirm` (the current behaviour). */
   WEBSITE_URL?: string;
+  /** R2 bucket for data-export bundles (`[[r2_buckets]] binding = "EXPORT_BUCKET"`),
+   *  operator-provisioned. Optional — `/v1/export` routes answer 503 until bound. */
+  EXPORT_BUCKET?: R2Bucket;
 }
 
 // Browser-context origins allowed to READ the response (dev + the electron renderer
@@ -781,6 +785,16 @@ export default {
     if (url.pathname.startsWith("/v1/erasure/status/")) {
       const token = url.pathname.slice("/v1/erasure/status/".length);
       return handleErasureStatus(request, env, token);
+    }
+
+    // ── GDPR data export — POST /v1/export (AUTHENTICATED; Clerk JWT) ── Runs
+    // runExport, stores the bundle in R2, and returns a single-use expiring download
+    // link. GET /v1/export/download?token=… (PUBLIC; the token itself is the auth)
+    // streams the bundle and deletes it on first download.
+    if (url.pathname === "/v1/export") return handleExport(request, env, ctx);
+    if (url.pathname.startsWith("/v1/export/download")) {
+      const token = new URL(request.url).searchParams.get("token") ?? "";
+      return handleExportDownload(request, env, token);
     }
 
     logger.info("api request", {

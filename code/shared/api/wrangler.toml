@@ -50,6 +50,13 @@ SANITY_API_VERSION = "2025-01-01"
 # binding = "BUCKET"                   # env.BUCKET
 # bucket_name = "indiecrafts-dev-shared-api-assets"
 
+# Data-export bundles (POST /v1/export → GET /v1/export/download). Operator-provisioned;
+# uncomment + repeat under [env.<env>] once created:
+#   wrangler r2 bucket create indiecrafts-dev-shared-api-exports
+# [[r2_buckets]]
+# binding = "EXPORT_BUCKET"            # env.EXPORT_BUCKET
+# bucket_name = "indiecrafts-dev-shared-api-exports"
+
 # ── D1 — serverless SQLite ───────────────────────────────────────────────
 # [[d1_databases]]
 # binding = "DB"                       # env.DB

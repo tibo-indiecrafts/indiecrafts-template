@@ -18,7 +18,10 @@ cap → runs the engine live), `GET /v1/erasure/status/:token` (public, no-PII s
 `POST /v1/erasure/self` (authenticated self-service; Clerk-JWT + typed-email gate → runs the
 engine directly, no email round-trip — the signed-in surfaces' account-delete control will call it).
 `WEBSITE_URL` (`[vars]`) sets the confirm-link origin the token email points at; unset falls back to
-the worker's own origin.
+the worker's own origin. `POST /v1/export` (authenticated; Clerk-JWT) runs `runExport`, stores the
+bundle in the `EXPORT_BUCKET` R2 bucket, and returns a single-use 1-hour download link; `GET
+/v1/export/download?token=` streams the bundle and deletes it from R2 on first download. Secret/
+binding: `EXPORT_BUCKET` (`[[r2_buckets]]`, operator-provisioned — routes answer 503 until bound).
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.
