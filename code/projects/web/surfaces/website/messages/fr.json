@@ -63,6 +63,19 @@
       "submit": "Envoyer la demande",
       "success": "Merci — nous avons reçu votre demande et répondrons sous un mois.",
       "error": "Une erreur s'est produite. Merci de réessayer."
+    },
+    "erasure": {
+      "request": {
+        "heading": "Supprimer vos données",
+        "body": "Saisissez votre e-mail et nous vous enverrons un lien pour confirmer l'effacement. Aucun compte n'est nécessaire.",
+        "emailLabel": "Votre e-mail",
+        "emailPlaceholder": "vous@exemple.com",
+        "submitButton": "Envoyer le lien d'effacement",
+        "pending": "Envoi…",
+        "sent": "Si cette adresse figure dans nos dossiers, nous vous avons envoyé un lien de confirmation.",
+        "turnstile": "La vérification de sécurité a échoué. Merci de réessayer.",
+        "error": "Une erreur s'est produite. Merci de réessayer."
+      }
     }
   },
   "account": {
