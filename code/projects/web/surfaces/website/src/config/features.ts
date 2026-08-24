@@ -44,9 +44,12 @@ export const features = defineFeatures({
     logAnonymousConsent: false,
   },
   /** Self-service account actions. delete: the `/account` GDPR erasure page
-   *  (authenticated `POST /v1/erasure/self`). Requires Clerk to be configured. */
+   *  (authenticated `POST /v1/erasure/self`). export: the "Download my data"
+   *  control on the same page (authenticated `POST /v1/export`). Both require
+   *  Clerk to be configured. */
   account: {
     delete: true,
+    export: true,
   },
   /** Per-page FAQ — `<Faq>` + FAQPage JSON-LD + llms block. */
   faq: true,

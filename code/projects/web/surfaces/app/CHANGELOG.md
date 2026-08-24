@@ -39,3 +39,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   configured — any one missing 404s the route. New `messages.account.delete.*` copy. **Why:** lets
   a signed-in visitor exercise GDPR erasure without contacting support, posting the shared api's
   authenticated `POST /v1/erasure/self`.
+- **Self-service "Download my data" control.** `/[locale]/account` now also mounts the shared
+  `ExportSection` (`@indiecrafts/packages-shared-compliance/web`) beside `DeleteAccountSection` in
+  `AccountDeletePanel`, posting the authenticated `POST /v1/export` to the shared api worker and
+  opening the returned single-use, 1-hour-expiring download link in a new tab. New
+  `features.exportAccount` flag (gates just the control's render — the page's own visibility still
+  follows `features.deleteAccount`); new `messages.account.export.*` copy. **Why:** GDPR data
+  portability alongside the existing erasure control, on the same authenticated page.

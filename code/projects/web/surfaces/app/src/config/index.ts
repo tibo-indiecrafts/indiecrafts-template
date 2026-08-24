@@ -17,8 +17,13 @@ export * from "@indiecrafts/packages-shared-config";
  * `requireCookieConsent`) — the consent UI is compliant-ready, a client flips this on
  * when the surface ships an analytics/ads SDK. `deleteAccount` gates the self-service
  * "Delete my account" page at `/account` (also requires Clerk + `NEXT_PUBLIC_API_URL`).
+ * `exportAccount` gates the "Download my data" control on the same page.
  */
-export const features = { requireConsent: false, deleteAccount: true } as const;
+export const features = {
+  requireConsent: false,
+  deleteAccount: true,
+  exportAccount: true,
+} as const;
 
 /**
  * Consent geo config — flexible + regulation-named. `regulations` adds/overrides named

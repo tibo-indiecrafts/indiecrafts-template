@@ -104,6 +104,14 @@
       "partial": "Your account was deleted, but some data needs manual follow-up. Our team has been notified.",
       "error": "Something went wrong. Please try again.",
       "mismatch": "That email doesn't match your account. Please check it and try again."
+    },
+    "export": {
+      "heading": "Download your data",
+      "body": "Export a copy of your personal data as a file. The download link is single-use and expires after 1 hour.",
+      "button": "Download my data",
+      "pending": "Preparing your download…",
+      "success": "Your data is ready — the download opened in a new tab.",
+      "error": "Something went wrong. Please try again."
     }
   },
   "cta": {

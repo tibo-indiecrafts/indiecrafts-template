@@ -1,19 +1,23 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import type { DeleteAccountCopy } from "@indiecrafts/packages-shared-compliance/web";
+import type {
+  DeleteAccountCopy,
+  ExportCopy,
+} from "@indiecrafts/packages-shared-compliance/web";
 import { features, type Locale } from "@/config";
 import { AccountDeletePanel } from "@/user-interface/account/AccountDeletePanel";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
 /**
- * Self-service "Delete my account" route — thin shell. Renders the shared
- * `DeleteAccountSection` (from `@indiecrafts/packages-shared-compliance/web`) via the
- * `AccountDeletePanel` client wrapper, with copy resolved here from
- * `messages.account.delete.*`. Gated by `features.deleteAccount`, by Clerk being
- * configured, and by the client api origin being set — no account page without auth,
- * and no control that could only ever fail on submit. Posts to the shared api's
- * authenticated `POST /v1/erasure/self`.
+ * Self-service account-actions route — thin shell. Renders the shared
+ * `DeleteAccountSection` + `ExportSection` (from
+ * `@indiecrafts/packages-shared-compliance/web`) via the `AccountDeletePanel` client
+ * wrapper, with copy resolved here from `messages.account.{delete,export}.*`. Gated by
+ * `features.deleteAccount`, by Clerk being configured, and by the client api origin
+ * being set — no account page without auth, and no control that could only ever fail
+ * on submit. `ExportSection` renders only when `features.exportAccount` is also on.
+ * Posts to the shared api's authenticated `POST /v1/erasure/self` + `POST /v1/export`.
  */
 export default async function AccountPage({ params }: Props) {
   const { locale } = await params;
@@ -38,9 +42,23 @@ export default async function AccountPage({ params }: Props) {
     mismatch: t("mismatch"),
   };
 
+  const et = await getTranslations({ locale, namespace: "account.export" });
+  const exportCopy: ExportCopy = {
+    heading: et("heading"),
+    body: et("body"),
+    button: et("button"),
+    pending: et("pending"),
+    success: et("success"),
+    error: et("error"),
+  };
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center gap-6 p-8">
-      <AccountDeletePanel copy={copy} />
+      <AccountDeletePanel
+        copy={copy}
+        exportCopy={exportCopy}
+        showExport={features.exportAccount}
+      />
     </main>
   );
 }

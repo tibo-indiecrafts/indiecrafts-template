@@ -39,6 +39,14 @@
       "partial": "Votre compte a été supprimé ; certaines données peuvent mettre un peu plus de temps à disparaître.",
       "error": "Une erreur s'est produite. Veuillez réessayer.",
       "mismatch": "Cet e-mail ne correspond pas à votre compte."
+    },
+    "export": {
+      "heading": "Télécharger vos données",
+      "body": "Exportez une copie de vos données de compte sous forme de fichier. Le lien est à usage unique et expire au bout d'une heure.",
+      "button": "Télécharger mes données",
+      "pending": "Préparation…",
+      "success": "Votre téléchargement s'est ouvert dans un nouvel onglet.",
+      "error": "Une erreur s'est produite. Veuillez réessayer."
     }
   },
   "legal": {

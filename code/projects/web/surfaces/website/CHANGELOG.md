@@ -38,6 +38,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   (`NEXT_PUBLIC_API_URL`, new — added to `.env.example`) — any one missing 404s the route, so the
   control never renders somewhere it can only fail on submit. **Why:** the GDPR data-request form
   covers every right by email; this is the one-click erasure path for a signed-in account.
+- **Self-service "Download my data" (`/account`).** The same `/account` page now also mounts the
+  shared `ExportSection` (`@indiecrafts/packages-shared-compliance/web`) beside `DeleteAccountSection`,
+  via the `AccountDeletePanel` client wrapper, posting the authenticated `POST /v1/export` to the
+  shared api worker and opening the returned single-use, 1-hour-expiring download link in a new tab.
+  New `features.account.export` flag (gates just the control's render — the page's own visibility
+  still follows `features.account.delete`); copy in `messages.account.export.*` (en + fr). **Why:**
+  GDPR data portability alongside the existing erasure control, on the same authenticated page.
 - **Geo-targeted cookie consent.** The `[locale]/layout` reads the visitor's `cf-ipcountry`
   server-side and passes a geo-resolved `mode` to `CookieBanner`: EU/EEA/UK + territories show the
   opt-in banner, the US gets no blocking banner (opt-out + preferences + GPC), elsewhere shows

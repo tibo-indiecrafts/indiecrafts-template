@@ -24,6 +24,7 @@ Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling a
 | `localeSwitcher` | `boolean` | `true`     | The header locale picker                                                                                                                                                   |
 | `legal.*`        | `object`  | see below  | The five legal pages + the data-request form + the erasure flow, each toggled independently                                                                                |
 | `account.delete` | `boolean` | `true`     | The self-service `/account` "Delete my account" page — requires Clerk configured                                                                                           |
+| `account.export` | `boolean` | `true`     | The "Download my data" control on the same `/account` page — requires Clerk configured                                                                                     |
 | `faq`            | `boolean` | `true`     | Per-page `<Faq>` accordion + FAQPage JSON-LD + llms FAQ block                                                                                                              |
 | `newsletter`     | `boolean` | `true`     | Newsletter capture block (`module.newsletter`) + the `/api/newsletter` route + the **Abonnés** desk — site-wide, **independent of `blog`** ([guide](/modules/newsletter/)) |
 | `blog`           | `boolean` | `true`     | The entire public blog surface (routes, feeds, discovery, `<SanityLive>`)                                                                                                  |
@@ -116,10 +117,10 @@ content is edited in Sanity (`legalPage` docs) — see [Legal pages](./legal-pag
 
 ## `account`
 
-Self-service account actions, currently one:
+Self-service account actions:
 
 ```ts
-account: { delete: true },
+account: { delete: true, export: true },
 ```
 
 - `delete` — the **"Delete my account" page** at `/account`, gated by
@@ -128,6 +129,10 @@ account: { delete: true },
   (`NEXT_PUBLIC_API_URL`) — any one missing 404s the route. The page renders the shared
   `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`), which posts the
   authenticated `POST /v1/erasure/self` to the shared api worker, then signs the visitor out.
+- `export` — the **"Download my data" control**, rendered beside `DeleteAccountSection` on
+  the same `/account` page (the page's own visibility still follows `delete`). It renders
+  the shared `ExportSection`, which posts the authenticated `POST /v1/export` to the shared
+  api worker and opens the returned single-use, 1-hour-expiring download link in a new tab.
 
 ## `faq`
 
