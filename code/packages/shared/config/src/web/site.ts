@@ -93,5 +93,10 @@ export const logging: LoggingConfig = {
     "cookie",
     "secret",
     "sessionToken",
+    // PII — keep raw identifiers out of logs (GDPR log hygiene). The hashed
+    // `emailFingerprint` / `ip_hash` are NOT PII and are intentionally not listed.
+    "email",
+    "ip",
+    "ipAddress",
   ],
 };

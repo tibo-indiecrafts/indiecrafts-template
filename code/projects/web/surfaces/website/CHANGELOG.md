@@ -19,6 +19,14 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Documented the service-binding hardening for the internal `/v1/events` forwarders.** The
+  `wrangler.toml` `[[services]]` stub now spells out that the four server-only forwarders
+  (security-reports · consent-log · session-log · security-events) call `API_URL` over public HTTPS,
+  and how to route that internal telemetry worker-to-worker instead (bind `API`, switch each forwarder
+  to `getCloudflareContext().env.API.fetch(...)` with the current `fetch` as the off-CF fallback).
+  **Why:** from the wahio review — internal worker traffic can skip the public hop; documented (not
+  wired) because the endpoint is already bearer-gated + WAF-rate-limited, so it's defence-in-depth an
+  operator enables, not a fix.
 - **bfcache repair in `src/proxy.ts`.** On the responses it already stamps the CSP, the proxy now swaps
   Next's dynamic `Cache-Control: no-store` for `no-cache` on top-level HTML navigations
   (`Sec-Fetch-Dest: document`). `no-store` disables the browser back/forward cache entirely; `no-cache`

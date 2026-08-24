@@ -55,6 +55,14 @@ bucket_name = "indiecrafts-dev-web-surfaces-website-isr"
 # Reach the `api` app (or `workers`/`cron`) with no public hop. The target name is
 # per-env (`indiecrafts-<env>-shared-api`, rewritten by `project:rename`), so repeat under
 # each [env.*] like the R2 buckets. Then `env.API.fetch(request)` from a route.
+#
+# SECURITY (defence-in-depth): the four server-only forwarders that POST /v1/events —
+# security-reports `forward.ts`, compliance `consent-log.ts`, auth `session-log.ts`,
+# security-events `events.ts` — currently call `API_URL` over public HTTPS with the bearer.
+# Binding them here routes that internal telemetry worker-to-worker (no public edge hop,
+# lower latency). The endpoint is already bearer-gated + WAF-rate-limited, so this is a
+# hardening, not a fix: enable it, then switch each forwarder to `getCloudflareContext().env.API.fetch(...)`
+# with the current `fetch` as the off-CF fallback (mirrors the `rate-limit.ts` KV pattern).
 # [[services]]
 # binding = "API"
 # service = "indiecrafts-dev-shared-api"

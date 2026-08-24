@@ -154,9 +154,16 @@ function json(
   status: number,
   cors: Record<string, string>,
 ): Response {
+  // no-store: every route through this helper is a bearer-gated view or a signed
+  // webhook — admin data + mutations that must never be cached by an intermediary.
+  // (The PUBLIC reads — /v1/geo, /v1/announcements — build their own cacheable Response.)
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "content-type": "application/json", ...cors },
+    headers: {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      ...cors,
+    },
   });
 }
 

@@ -12,14 +12,14 @@ Pino/Datadog/Sentry per project"). pino/winston are Node-stream-based → **not 
 
 ## Exports
 
-| Import                                                | What it is                                                                                           |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `logger` (`.`)                                        | The root logger — `trace · debug · info · warn · error · fatal` + `child(scope)` · `time`/`timeEnd`. |
-| `createLogger(scope?, ctx?)` (`.`)                    | A scoped logger (dot-joined scope, merged base context).                                             |
-| `addTransport` · `configure` · `setEnvironment` (`.`) | Register a sink · override level/reporter/redaction at runtime · force env at edge module-load.      |
-| `sentryTransport(Sentry)` (`./sentry`)                | The opt-in Sentry sink — **no `@sentry/*` dependency** (structural `SentryLike` type).               |
+| Import                                                | What it is                                                                                                                 |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `logger` (`.`)                                        | The root logger — `trace · debug · info · warn · error · fatal` + `child(scope)` · `time`/`timeEnd`.                       |
+| `createLogger(scope?, ctx?)` (`.`)                    | A scoped logger (dot-joined scope, merged base context).                                                                   |
+| `addTransport` · `configure` · `setEnvironment` (`.`) | Register a sink · override level/reporter/redaction at runtime · force env at edge module-load.                            |
+| `sentryTransport(Sentry)` (`./sentry`)                | The opt-in Sentry sink — **no `@sentry/*` dependency** (structural `SentryLike` type).                                     |
 | `cloudflareTransport()` (`./cloudflare`)              | The opt-in **Cloudflare Workers Logs** sink — forwards error/fatal to `console.error` past the silent gate. No vendor SDK. |
-| `safeStringify` · `normalizeError` (`.`)              | The serialization helpers (circular/depth/array caps).                                               |
+| `safeStringify` · `normalizeError` (`.`)              | The serialization helpers (circular/depth/array caps).                                                                     |
 
 ## Usage
 
@@ -56,6 +56,10 @@ export const logging = {
     "cookie",
     "secret",
     "sessionToken",
+    // PII (GDPR log hygiene) — hashed `emailFingerprint`/`ip_hash` are NOT listed.
+    "email",
+    "ip",
+    "ipAddress",
   ],
 };
 ```
@@ -66,7 +70,10 @@ export const logging = {
 - **Override the level live** with **`NEXT_PUBLIC_LOG_LEVEL`** (e.g. set `debug` on a prod deploy to
   chase an incident), or `configure({ level: "debug" })` at runtime.
 - **Redaction runs at the source** — any context key matching `redactKeys` (case-insensitive) is
-  replaced with `"[REDACTED]"` before it reaches a reporter or transport.
+  replaced with `"[REDACTED]"` before it reaches a reporter or transport. The list covers auth
+  material **and** raw PII (`email`/`ip`/`ipAddress`) — the hashed `emailFingerprint`/`ip_hash` are
+  deliberately not listed, so audit rows stay queryable. Redaction is **key-based**, not value-based:
+  a PII string buried inside a free-text message is not scrubbed — pass identifiers as context keys.
 
 ## Reporters (auto-picked)
 
@@ -95,7 +102,8 @@ import { addTransport } from "@indiecrafts/packages-shared-logger";
 import { cloudflareTransport } from "@indiecrafts/packages-shared-logger/cloudflare";
 import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
 
-if (getCurrentEnvironment() === "production") addTransport(cloudflareTransport());
+if (getCurrentEnvironment() === "production")
+  addTransport(cloudflareTransport());
 ```
 
 Wired today at the `code/shared/api` + `code/shared/cron` Workers and the website's

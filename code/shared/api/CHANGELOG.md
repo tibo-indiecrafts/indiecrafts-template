@@ -7,6 +7,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Changed
 
+- **`Cache-Control: no-store` on every bearer-gated + webhook response.** The shared `json()` helper
+  (all `/v1/events`, `/v1/sessions`, `/v1/security`, `/v1/csp-reports`, `/v1/clerk-webhook` responses)
+  now sets `no-store`, so admin data + signed-webhook results are never cached by an intermediary. The
+  PUBLIC reads (`/v1/geo`, `/v1/announcements`) build their own cacheable `Response` and are unaffected.
+  **Why:** from the wahio webhook/integrity review — sensitive API responses must not be cacheable.
 - **The AI agent left this Worker — it now lives in its own [`code/shared/agent`](../agent) Worker.** This
   api no longer hosts `POST /v1/agent/:name` (nor `ANTHROPIC_API_KEY`); it serves the audit + session sink
   only. All surfaces now call the dedicated agent Worker. **Why:** the agent deploys, scales, and
@@ -16,10 +21,10 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 - feat(compliance): **`GET /v1/csp-reports`** — the admin read for aggregated CSP violation groups.
   Bearer-gated (mirrors `GET /v1/security`); returns `csp_reports` rows ordered by `count DESC,
-  last_seen DESC`, `limit` clamped to 200 (default 100). **Why:** back the admin CSP dashboard so an
+last_seen DESC`, `limit` clamped to 200 (default 100). **Why:** back the admin CSP dashboard so an
   operator can see which violations a strict CSP would block before flipping a surface to `enforce`.
 - feat(compliance): `kind:csp-report` writes aggregated `csp_reports` (migration 0004). `POST
-  /v1/events` gains a fourth `kind`: the surface forwards sanitized CSP violation reports
+/v1/events` gains a fourth `kind`: the surface forwards sanitized CSP violation reports
   (routes collapsed, samples redacted upstream), and the worker upserts one row per distinct
   `surface|disposition|directive|documentPath|blockedSource` group, incrementing `count` and
   `last_seen` on repeat. Capped at 10 reports per batch. No `country`, no `ip_hash` — a CSP

@@ -140,16 +140,16 @@ Changed · Deprecated · Removed · Fixed**.
   `consent-signals` (unchanged import path) and imports the math from here.
 - **`@indiecrafts/packages-shared-version` — the portable version-check core (`code/packages/shared/version`).**
   `isUpdateAvailable(current, latest)` (string-identity deploy-id compare, **not** semver) + `VersionResponse`
-  + `versionId` + `VERSION_ENDPOINT`. **Why:** all three shells now detect a new deploy the same way;
-  `packages-web-version` re-exports the compare instead of inlining it. The poll mechanism stays per-platform
-  (DOM `visibilitychange`/`online`; RN `AppState`).
+  - `versionId` + `VERSION_ENDPOINT`. **Why:** all three shells now detect a new deploy the same way;
+    `packages-web-version` re-exports the compare instead of inlining it. The poll mechanism stays per-platform
+    (DOM `visibilitychange`/`online`; RN `AppState`).
 - **`packages-shared-config` — `site.websiteUrl` + `pickSuggestedLocale`.** `site.websiteUrl`
   (`NEXT_PUBLIC_WEBSITE_URL`, else `site.url`) = the marketing-site origin the shells link to for legal pages.
   `pickSuggestedLocale(rankedPrefs, active, supported)` (`./shared`) = the shared "suggest a language switch?"
   decision, lifted from `locale-suggest` so the native shells reuse it over `getLocales()`/`navigator.languages`.
 - **`packages-shared-security` — per-request nonce CSP + a rollout kill switch.** `buildCsp(env, csp,
-  reporting, nonce)` (`./csp`) now takes an optional `nonce`: when set, `script-src` becomes `'self'
-  'nonce-<value>' 'strict-dynamic' https: 'unsafe-inline'` (the strict, nonce-gated policy) instead of
+reporting, nonce)` (`./csp`) now takes an optional `nonce`: when set, `script-src` becomes `'self'
+'nonce-<value>' 'strict-dynamic' https: 'unsafe-inline'` (the strict, nonce-gated policy) instead of
   the permissive `'unsafe-inline'` list. New `./csp-nonce` module: `generateNonce()` (16 random bytes,
   base64 — Web Crypto, Edge/Node-safe) and `cspHeadersForMode(env, csp, reporting, nonce, mode)`, which
   returns `{ enforced, reportOnly }` for a `CspMode` of `"enforce"` (the strict nonce policy is the
@@ -168,6 +168,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`@indiecrafts/packages-shared-config` — log redaction now scrubs raw PII.** `logging.redactKeys`
+  adds `email`, `ip`, `ipAddress` to the auth-material list, so identifiers passed as log context keys
+  are `[REDACTED]` before any reporter/transport. The hashed `emailFingerprint`/`ip_hash` stay
+  un-redacted (not PII, must remain queryable). **Why:** GDPR log hygiene, from the wahio review —
+  keep raw PII out of logs by default. (Redaction is key-based; free-text message values aren't scrubbed.)
 - **`@indiecrafts/packages-shared-security` — broader `Permissions-Policy` default.** `securityHeaders`
   now denies every sensor/hardware/payment/privacy feature a marketing+blog site never needs
   (`accelerometer`, `bluetooth`, `browsing-topics`, `camera`, `display-capture`, `geolocation`, `gyroscope`,
@@ -195,8 +200,8 @@ Changed · Deprecated · Removed · Fixed**.
   locale-aware, never throws) + a `SPECS` registry (demo `content-research`). Reason-only,
   human-in-the-loop; the caller injects `ANTHROPIC_API_KEY`. Consumed by **all surfaces**: the web app's
   Next route (behind `withGuard`), and the `code/shared/api` Worker (bearer-gated) that the native (Expo)
-  + hybrid (Electron) apps call. _Why: give a client one small, secure, translated agent that works the
-  same everywhere, with the key always server-side._
+  - hybrid (Electron) apps call. _Why: give a client one small, secure, translated agent that works the
+    same everywhere, with the key always server-side._
 
 - **New brick `@indiecrafts/packages-mobile-ui-native` — the native design system (shadcn-for-RN start).**
   The mobile counterpart of the web `ui` shadcn brick: `ThemeProvider`/`useTheme`/`useColor` over
