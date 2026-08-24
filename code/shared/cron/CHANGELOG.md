@@ -7,6 +7,7 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- feat(compliance): retention purge extended to `data_requests` (365 days, on `submitted_at`) and `erasure_requests` (1095 days proof-of-erasure, on `requested_at`). Both were documented for purge but not yet swept; idempotent, no-ops until the DB is bound.
 - feat(compliance): cron SLA flag for erasure due dates + expired-export cleanup.
 
 - **Erasure SLA flag (GDPR Art. 12(3) one-month deadline).** The scheduled handler flags
