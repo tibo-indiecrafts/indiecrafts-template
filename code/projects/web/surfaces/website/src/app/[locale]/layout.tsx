@@ -137,10 +137,7 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   const requestHeaders = await headers();
   // Geo-resolve the consent mode from the visitor's edge country (opt-in EU/UK · opt-out US ·
   // none elsewhere), overridable per country in config. Drives whether the banner blocks.
-  const consentMode = resolveConsentMode(
-    requestHeaders.get("cf-ipcountry"),
-    consent,
-  );
+  const consentMode = resolveConsentMode(requestHeaders.get("cf-ipcountry"), consent);
   // Global Privacy Control, read server-side from the `Sec-GPC: 1` request header — honoured
   // even before/without client JS. Unioned with the client-side `navigator` check inside
   // `CookieBanner` (either source denies); native surfaces have no equivalent (no browser).

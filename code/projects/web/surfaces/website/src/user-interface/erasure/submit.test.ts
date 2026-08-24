@@ -16,7 +16,7 @@ afterEach(() => {
 });
 
 describe("submitErasureRequest", () => {
-  it("posts a FormData body (email only) to /v1/erasure/request and returns \"sent\" on 200", async () => {
+  it('posts a FormData body (email only) to /v1/erasure/request and returns "sent" on 200', async () => {
     const fetchMock = stubFetch(200);
 
     const result = await submitErasureRequest({
@@ -50,7 +50,7 @@ describe("submitErasureRequest", () => {
     expect(body.get("cf-turnstile-response")).toBe("solved-token");
   });
 
-  it("returns \"turnstile\" on a 403", async () => {
+  it('returns "turnstile" on a 403', async () => {
     stubFetch(403);
 
     const result = await submitErasureRequest({
@@ -62,7 +62,7 @@ describe("submitErasureRequest", () => {
     expect(result).toBe("turnstile");
   });
 
-  it("returns \"error\" on a 500", async () => {
+  it('returns "error" on a 500', async () => {
     stubFetch(500);
 
     const result = await submitErasureRequest({
@@ -74,7 +74,7 @@ describe("submitErasureRequest", () => {
     expect(result).toBe("error");
   });
 
-  it("returns \"error\" when fetch throws (network failure)", async () => {
+  it('returns "error" when fetch throws (network failure)', async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => {
@@ -93,7 +93,7 @@ describe("submitErasureRequest", () => {
 });
 
 describe("submitErasureConfirm", () => {
-  it("posts a JSON body {token,email} to /v1/erasure/confirm and returns \"done\" on 200", async () => {
+  it('posts a JSON body {token,email} to /v1/erasure/confirm and returns "done" on 200', async () => {
     const fetchMock = stubFetch(200);
 
     const result = await submitErasureConfirm({
@@ -116,7 +116,7 @@ describe("submitErasureConfirm", () => {
     });
   });
 
-  it("returns \"partial\" on a 207", async () => {
+  it('returns "partial" on a 207', async () => {
     stubFetch(207);
 
     const result = await submitErasureConfirm({
@@ -128,7 +128,7 @@ describe("submitErasureConfirm", () => {
     expect(result).toBe("partial");
   });
 
-  it("returns \"mismatch\" on a 400", async () => {
+  it('returns "mismatch" on a 400', async () => {
     stubFetch(400);
 
     const result = await submitErasureConfirm({
@@ -140,7 +140,7 @@ describe("submitErasureConfirm", () => {
     expect(result).toBe("mismatch");
   });
 
-  it("returns \"expired\" on a 429", async () => {
+  it('returns "expired" on a 429', async () => {
     stubFetch(429);
 
     const result = await submitErasureConfirm({
@@ -152,7 +152,7 @@ describe("submitErasureConfirm", () => {
     expect(result).toBe("expired");
   });
 
-  it("returns \"error\" on a 500", async () => {
+  it('returns "error" on a 500', async () => {
     stubFetch(500);
 
     const result = await submitErasureConfirm({
@@ -164,7 +164,7 @@ describe("submitErasureConfirm", () => {
     expect(result).toBe("error");
   });
 
-  it("returns \"error\" when fetch throws (network failure)", async () => {
+  it('returns "error" when fetch throws (network failure)', async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => {

@@ -93,9 +93,7 @@ export function ErasureRequestForm({ copy }: { copy: ErasureRequestCopy }) {
           <Button
             type="submit"
             disabled={
-              status === "pending" ||
-              !email.trim() ||
-              (turnstileActive() && !tsToken)
+              status === "pending" || !email.trim() || (turnstileActive() && !tsToken)
             }
             className="w-full sm:w-auto"
           >
