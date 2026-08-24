@@ -19,7 +19,12 @@ const REQUEST_TYPE_OPTIONS = DATA_REQUEST_TYPES.map((value) => ({
 
 export default defineType({
   name: "dataRequest",
-  title: "Demande RGPD",
+  title: "[Déprécié] Demande RGPD",
+  description:
+    "Déprécié : les nouvelles demandes RGPD sont désormais enregistrées dans la " +
+    "base D1 de l'application et consultées depuis l'écran admin « Data requests ». " +
+    "Ce type Sanity reste en lecture pour l'historique des demandes en cours à la " +
+    "bascule ; il sera supprimé une fois qu'il n'en restera plus aucune.",
   type: "document",
   icon: EnvelopeIcon,
   fields: [

@@ -32,10 +32,12 @@ Cloudflare D1 (`binding DB`), three tables. This page is the record-of-processin
 
 ## DSAR intake (data_requests)
 
-The GDPR data-subject request form (Art. 15–21) writes to a `data_requests` D1 table
-(migration 0007) — migrated off the Sanity `dataRequest` doc. `POST /v1/data-request`
-(bearer-gated) inserts a row; `GET /v1/data-requests` (bearer-gated) lists them
-newest-first for the admin screen.
+The GDPR data-subject request form (Art. 15–21) now writes to a `data_requests` D1
+table (migration 0007) instead of Sanity. The public form, the `/api/data-request`
+route (Turnstile, rate limit, origin check, body cap), and the owner-alert email are
+**unchanged** — only the persistence moved. `POST /v1/data-request` (bearer-gated)
+inserts a row; operators view requests in the admin "Data requests" screen, backed by
+`GET /v1/data-requests` (bearer-gated), newest-first.
 
 - **Fields:** request type, a **plaintext, replyable email**, an optional **free-text
   message** (≤4000 chars), status (`new`/`in-progress`/`done`), submitted-at, source
@@ -45,9 +47,15 @@ newest-first for the admin screen.
   intentional — the operator needs the plaintext email and message to action the
   request, exactly as the Sanity `dataRequest` doc did before this migration.
 - **Retention:** this is short-lived operational PII, not a tracking signal — it must
-  not accumulate indefinitely once a request is `done`. Purge-after-done is a **future
-  cron follow-up**, not yet built; until then, action requests promptly and purge
-  manually via `wrangler d1 execute`.
+  not accumulate indefinitely once a request is `done`. Purge-after-done plus a window
+  is a **future cron follow-up**, not yet built; until then, action requests promptly
+  and purge manually via `wrangler d1 execute`.
+- **Status write-back:** the admin screen is read-only for now — flipping `status`
+  (new/in-progress/done) from the UI is a **deferred follow-up**. Meanwhile, flip it
+  via `wrangler d1 execute UPDATE data_requests SET status = ? WHERE id = ?`.
+- **Sanity `dataRequest`:** the schema is now **deprecated** — the Studio desk list
+  shows it as "[Déprécié] Demande RGPD" — kept read-only for one cycle so historical
+  and in-flight requests captured before the migration stay readable, then removed.
 
 ## Erasure SLA flag (GDPR Art. 12(3))
 
