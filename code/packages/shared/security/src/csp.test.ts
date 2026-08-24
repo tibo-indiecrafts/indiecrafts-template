@@ -66,3 +66,20 @@ describe("clerk csp hosts (derived from the publishable key)", () => {
     expect(csp).not.toContain("worker-src");
   });
 });
+
+describe("buildCsp nonce (strict script-src)", () => {
+  it("uses nonce + strict-dynamic + the level-2 fallback when a nonce is given", () => {
+    const csp = buildCsp("production", {}, undefined, "abc123");
+    expect(csp).toContain(
+      "script-src 'self' 'nonce-abc123' 'strict-dynamic' https: 'unsafe-inline'",
+    );
+    // style-src is untouched
+    expect(csp).toContain("style-src 'self' 'unsafe-inline'");
+  });
+
+  it("is the current policy when no nonce is given", () => {
+    const csp = buildCsp("production", {});
+    expect(csp).toContain("script-src 'self' 'unsafe-inline'");
+    expect(csp).not.toContain("strict-dynamic");
+  });
+});

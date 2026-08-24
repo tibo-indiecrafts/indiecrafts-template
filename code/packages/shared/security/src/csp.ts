@@ -55,6 +55,7 @@ function cspDirectives(
   env: Environment,
   csp: CspHosts,
   opts: { dropSources?: string[]; dropUnsafeEval?: boolean } = {},
+  nonce?: string,
 ): string[] {
   const dev = env === "development" || env === "test";
   const embed = csp.embedHosts ?? [];
@@ -72,11 +73,15 @@ function cspDirectives(
       .filter((token, i) => i === 0 || !drop.has(token))
       .join(" ");
 
+  const scriptSrc = nonce
+    ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`
+    : keep(
+        `script-src ${src(["'self'", "'unsafe-inline'"], allowEval ? ["'unsafe-eval'"] : undefined, ga ? GA_SCRIPT : undefined, TURNSTILE, clerk.script, csp.scriptSrc, embed)}`,
+      );
+
   const directives = [
     `default-src 'self'`,
-    keep(
-      `script-src ${src(["'self'", "'unsafe-inline'"], allowEval ? ["'unsafe-eval'"] : undefined, ga ? GA_SCRIPT : undefined, TURNSTILE, clerk.script, csp.scriptSrc, embed)}`,
-    ),
+    scriptSrc,
     `style-src 'self' 'unsafe-inline'`,
     keep(`img-src ${src(["'self'", "data:", "blob:", "https:"], clerk.img, csp.imgSrc)}`),
     keep(`media-src ${src(["'self'", "blob:"], csp.mediaSrc)}`),
@@ -111,8 +116,9 @@ export function buildCsp(
   env: Environment,
   csp: CspHosts = {},
   reporting?: CspReporting,
+  nonce?: string,
 ): string {
-  const directives = cspDirectives(env, csp);
+  const directives = cspDirectives(env, csp, {}, nonce);
   return (reporting ? withReporting(directives, reporting) : directives).join("; ");
 }
 

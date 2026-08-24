@@ -36,6 +36,13 @@ export type SecurityHeadersOptions = {
    * `Content-Security-Policy-Report-Only` candidate. Off by default.
    */
   reporting?: CspReporting;
+  /**
+   * `"static"` (default) — this function sets the CSP + reporting headers, as today.
+   * `"proxy"` — omits `Content-Security-Policy`, `Reporting-Endpoints`, and
+   * `Content-Security-Policy-Report-Only`; a proxy sets them per-request (with a nonce)
+   * instead. Every other header is unchanged.
+   */
+  cspMode?: "static" | "proxy";
 };
 
 const DEFAULT_PERMISSIONS = "camera=(), microphone=(), geolocation=()";
@@ -64,25 +71,28 @@ export function securityHeaders({
   hsts = true,
   coop = "same-origin-allow-popups",
   reporting,
+  cspMode = "static",
 }: SecurityHeadersOptions): HeaderRule[] {
   const headers: { key: string; value: string }[] = [
     { key: "X-Content-Type-Options", value: "nosniff" },
     { key: "X-Frame-Options", value: "DENY" },
     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
     { key: "Permissions-Policy", value: permissionsPolicy },
-    { key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) },
   ];
-  if (reporting) {
-    headers.push({
-      key: "Reporting-Endpoints",
-      value: `csp-endpoint="${reporting.endpoint}"`,
-    });
-    const reportOnly = buildReportOnlyCsp(env, csp, reporting);
-    if (reportOnly)
+  if (cspMode !== "proxy") {
+    headers.push({ key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) });
+    if (reporting) {
       headers.push({
-        key: "Content-Security-Policy-Report-Only",
-        value: reportOnly,
+        key: "Reporting-Endpoints",
+        value: `csp-endpoint="${reporting.endpoint}"`,
       });
+      const reportOnly = buildReportOnlyCsp(env, csp, reporting);
+      if (reportOnly)
+        headers.push({
+          key: "Content-Security-Policy-Report-Only",
+          value: reportOnly,
+        });
+    }
   }
   if (coop) headers.push({ key: "Cross-Origin-Opener-Policy", value: coop });
 
@@ -97,4 +107,21 @@ export function securityHeaders({
       headers: [{ key: "Cache-Control", value: IMMUTABLE }],
     })),
   ];
+}
+
+/** The permissive CSP rule for the Sanity Studio route — it needs 'unsafe-inline'
+ *  (+ dev 'unsafe-eval') and cannot take a nonce. Scoped to /studio only. Reproduces
+ *  today's policy exactly (the current buildCsp output). */
+export function studioCspRule(
+  env: Environment,
+  csp: CspHosts = {},
+  reporting?: CspReporting,
+): HeaderRule {
+  const rule: HeaderRule = {
+    source: "/studio/:path*",
+    headers: [{ key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) }],
+  };
+  if (reporting)
+    rule.headers.push({ key: "Reporting-Endpoints", value: `csp-endpoint="${reporting.endpoint}"` });
+  return rule;
 }
