@@ -327,6 +327,76 @@
       "command": "pnpm backup:all:prod",
       "problemMatcher": []
     },
+    {
+      "label": "db:backfill:profiles:dev",
+      "detail": "backfill user_profiles from Clerk — dev",
+      "type": "shell",
+      "command": "pnpm db:backfill:profiles:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:backfill:profiles:staging",
+      "detail": "backfill user_profiles from Clerk — staging",
+      "type": "shell",
+      "command": "pnpm db:backfill:profiles:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:backfill:profiles:prod",
+      "detail": "backfill user_profiles from Clerk — prod",
+      "type": "shell",
+      "command": "pnpm db:backfill:profiles:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "gdpr:salt:generate",
+      "detail": "generate a GDPR fingerprint salt",
+      "type": "shell",
+      "command": "pnpm gdpr:salt:generate",
+      "problemMatcher": []
+    },
+    {
+      "label": "gdpr:salt:set:dev",
+      "detail": "set the GDPR fingerprint salt secret — dev",
+      "type": "shell",
+      "command": "pnpm gdpr:salt:set:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "gdpr:salt:set:staging",
+      "detail": "set the GDPR fingerprint salt secret — staging",
+      "type": "shell",
+      "command": "pnpm gdpr:salt:set:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "gdpr:salt:set:prod",
+      "detail": "set the GDPR fingerprint salt secret — prod",
+      "type": "shell",
+      "command": "pnpm gdpr:salt:set:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "gdpr:salt:status:dev",
+      "detail": "check the GDPR fingerprint salt status — dev",
+      "type": "shell",
+      "command": "pnpm gdpr:salt:status:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "gdpr:salt:status:staging",
+      "detail": "check the GDPR fingerprint salt status — staging",
+      "type": "shell",
+      "command": "pnpm gdpr:salt:status:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "gdpr:salt:status:prod",
+      "detail": "check the GDPR fingerprint salt status — prod",
+      "type": "shell",
+      "command": "pnpm gdpr:salt:status:prod",
+      "problemMatcher": []
+    },
 
     // ── Deploy · secrets · domains (Cloudflare) ──────────────────────────
     {
