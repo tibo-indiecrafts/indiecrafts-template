@@ -75,7 +75,7 @@ if (reportOnly) response.headers.set("Content-Security-Policy-Report-Only", repo
 | `X-Content-Type-Options`     | `nosniff`                                  | Stops MIME-type sniffing.                                                                                     |
 | `X-Frame-Options`            | `DENY`                                     | Blocks framing (clickjacking) — belt-and-suspenders with CSP `frame-ancestors`.                               |
 | `Referrer-Policy`            | `strict-origin-when-cross-origin`          | Full referrer same-origin, origin-only cross-origin.                                                          |
-| `Permissions-Policy`         | `camera=(), microphone=(), geolocation=()` | Disables camera, mic, geolocation.                                                                            |
+| `Permissions-Policy`         | `accelerometer=(), bluetooth=(), browsing-topics=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), hid=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), serial=(), usb=(), xr-spatial-tracking=()` | Denies every sensor/hardware/payment/privacy feature a marketing+blog site never uses. **Not** locked: `autoplay`/`fullscreen`/`encrypted-media`/`picture-in-picture` — the video embeds (YouTube/Vimeo) need them. |
 | `Cross-Origin-Opener-Policy` | `same-origin-allow-popups`                 | Isolates the browsing context; **`allow-popups`** keeps OAuth/share popups (the Sanity Studio login) working. |
 | `Strict-Transport-Security`  | `max-age=31536000; includeSubDomains`      | **Production only.** Forces HTTPS. No `preload` by default (sticky — hard to undo).                           |
 | `Content-Security-Policy`    | see below                                  | The main defense.                                                                                             |
@@ -178,6 +178,13 @@ CSP on the internal rewrite to `/maintenance`; the static rule only covers a dir
 **Default: `CSP_MODE` unset → `enforce`.** The strict nonce policy is the enforced
 `Content-Security-Policy` out of the box — no separate Report-Only rollout step needed for a new
 surface.
+
+**Also in the proxy: bfcache repair.** On the same responses it stamps the CSP, `src/proxy.ts`
+swaps Next's dynamic `Cache-Control: no-store` for `no-cache` on **top-level HTML navigations**
+(`Sec-Fetch-Dest: document`) — `no-store` disables the browser back/forward cache entirely, while
+`no-cache` still revalidates every request but lets bfcache restore instantly. It's scoped by
+`Sec-Fetch-Dest`, so RSC prefetches and the feed/`llms.txt` route handlers (which stay CDN-cacheable)
+keep Next's own caching. Purely a navigation-perf win; no security effect.
 
 ### Rollback: flip a surface back to Report-Only
 

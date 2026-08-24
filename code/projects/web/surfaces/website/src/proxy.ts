@@ -55,6 +55,22 @@ function setCsp(response: NextResponse, nonce: string): NextResponse {
   return response;
 }
 
+/**
+ * Re-enable browser bfcache for HTML page navigations. Next sets `Cache-Control: no-store`
+ * on dynamic pages, which disables bfcache entirely; swap it for `no-cache` (still
+ * revalidates on every request) so back/forward restores instantly. Scoped to top-level
+ * document requests via `Sec-Fetch-Dest` — RSC prefetches, `fetch()`s, and the feed/llms
+ * route handlers (which must stay CDN-cacheable) send `empty`, so they keep Next's caching.
+ */
+function setBfcache(response: NextResponse, request: NextRequest): NextResponse {
+  if (request.headers.get("sec-fetch-dest") === "document")
+    response.headers.set(
+      "Cache-Control",
+      "private, no-cache, max-age=0, must-revalidate",
+    );
+  return response;
+}
+
 // The maintenance → locale pipeline. When Clerk is on it runs INSIDE
 // `clerkMiddleware` (so the session is attached first); otherwise it runs directly.
 // One nonce per request, stamped on EVERY return path (maintenance rewrite AND the
@@ -71,7 +87,7 @@ async function pipeline(request: NextRequest): Promise<NextResponse> {
   const isDown = features.maintenance || (await getMaintenanceMode());
   const maintenance = maintenanceRewrite(nonced, isDown);
   if (maintenance) return setCsp(maintenance, nonce);
-  return setCsp(intlMiddleware(nonced), nonce);
+  return setBfcache(setCsp(intlMiddleware(nonced), nonce), request);
 }
 
 const proxy = clerkConfigured

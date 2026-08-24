@@ -161,6 +161,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`@indiecrafts/packages-shared-security` — broader `Permissions-Policy` default.** `securityHeaders`
+  now denies every sensor/hardware/payment/privacy feature a marketing+blog site never needs
+  (`accelerometer`, `bluetooth`, `browsing-topics`, `camera`, `display-capture`, `geolocation`, `gyroscope`,
+  `hid`, `interest-cohort`, `magnetometer`, `microphone`, `midi`, `payment`, `serial`, `usb`,
+  `xr-spatial-tracking`) — up from just camera/mic/geolocation. **Not** locked: `autoplay`/`fullscreen`/
+  `encrypted-media`/`picture-in-picture`, which the featured-video embeds (YouTube/Vimeo) need. **Why:**
+  from the wahio security review — a hardened baseline shuts more attack/tracking surface at ~zero cost.
 - **`@indiecrafts/packages-web-security-reports` — `handleCspReport` now rate-limits the anonymous sink.**
   Before parsing the body it applies a per-client-IP fixed window (`csp:<surface>:<ip>`, 30/min) via
   `rateLimit` + `clientIp` from `packages-shared-security`, answering `429` over the limit. **Why:** the

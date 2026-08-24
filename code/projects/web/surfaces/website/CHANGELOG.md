@@ -19,6 +19,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **bfcache repair in `src/proxy.ts`.** On the responses it already stamps the CSP, the proxy now swaps
+  Next's dynamic `Cache-Control: no-store` for `no-cache` on top-level HTML navigations
+  (`Sec-Fetch-Dest: document`). `no-store` disables the browser back/forward cache entirely; `no-cache`
+  still revalidates every request but lets bfcache restore instantly. Scoped by `Sec-Fetch-Dest`, so RSC
+  prefetches and the feed/`llms.txt` route handlers keep Next's own (CDN-cacheable) caching. **Why:** from
+  the wahio middleware review — instant back/forward nav at no correctness cost. (Runtime-unverified in-sandbox;
+  confirm on deploy that the middleware `Cache-Control` wins over Next's `no-store` on page docs.)
 - **Cloudflare edge hardening (Terraform) — sensitive-path block, tiered rate-limit, opt-in bad-bot challenge.**
   Three additions to `infra/cloudflare/main.tf`, run at the edge _before_ the Worker (unbypassable, 0
   invocations): (1) the `http_request_firewall_custom` ruleset now **blocks probes for `.env`/`.git`/`.sql`/`wp-*`

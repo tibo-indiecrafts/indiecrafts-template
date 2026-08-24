@@ -61,7 +61,9 @@ scopes one to `/maintenance`). Full worked example + the `CSP_MODE` rollout stor
 ## What ships on every response
 
 `X-Content-Type-Options: nosniff` · `X-Frame-Options: DENY` · `Referrer-Policy:
-strict-origin-when-cross-origin` · `Permissions-Policy: camera=(), microphone=(), geolocation=()` ·
+strict-origin-when-cross-origin` · `Permissions-Policy` (denies sensor/hardware/payment/privacy
+features — `camera`, `microphone`, `geolocation`, `payment`, `usb`, `browsing-topics`, … — but leaves
+`autoplay`/`fullscreen`/`encrypted-media`/`picture-in-picture` open for video embeds) ·
 `Cross-Origin-Opener-Policy` · **`Strict-Transport-Security` (production only)** — always, from
 `securityHeaders`. **`Content-Security-Policy`** ships too when `cspMode: "static"` (the default);
 with `cspMode: "proxy"` `securityHeaders` omits it and a proxy sets it per request instead.

@@ -101,9 +101,14 @@ describe("securityHeaders", () => {
     expect(value("X-Content-Type-Options")).toBe("nosniff");
     expect(value("X-Frame-Options")).toBe("DENY");
     expect(value("Referrer-Policy")).toBe("strict-origin-when-cross-origin");
-    expect(value("Permissions-Policy")).toBe(
-      "camera=(), microphone=(), geolocation=()",
-    );
+    const permissions = value("Permissions-Policy") ?? "";
+    // Sensor/hardware/payment/privacy features locked; embed-needed ones left open.
+    expect(permissions).toContain("camera=()");
+    expect(permissions).toContain("payment=()");
+    expect(permissions).toContain("browsing-topics=()");
+    expect(permissions).toContain("usb=()");
+    expect(permissions).not.toContain("autoplay");
+    expect(permissions).not.toContain("fullscreen");
     expect(value("Cross-Origin-Opener-Policy")).toBe(
       "same-origin-allow-popups",
     );

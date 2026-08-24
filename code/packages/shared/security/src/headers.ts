@@ -45,7 +45,11 @@ export type SecurityHeadersOptions = {
   cspMode?: "static" | "proxy";
 };
 
-const DEFAULT_PERMISSIONS = "camera=(), microphone=(), geolocation=()";
+// Deny the sensor / hardware / payment / privacy features a marketing+blog site never
+// uses. Deliberately NOT locked: autoplay, fullscreen, encrypted-media, picture-in-picture
+// — the featured-video embeds (YouTube/Vimeo) need those, and they're low-risk.
+const DEFAULT_PERMISSIONS =
+  "accelerometer=(), bluetooth=(), browsing-topics=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), hid=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), serial=(), usb=(), xr-spatial-tracking=()";
 const IMMUTABLE = "public, max-age=31536000, immutable";
 
 function hstsValue(opt: boolean | HstsOptions): string | null {
