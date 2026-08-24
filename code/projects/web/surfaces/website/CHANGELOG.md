@@ -19,6 +19,17 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Cloudflare edge hardening (Terraform) — sensitive-path block, tiered rate-limit, opt-in bad-bot challenge.**
+  Three additions to `infra/cloudflare/main.tf`, run at the edge _before_ the Worker (unbypassable, 0
+  invocations): (1) the `http_request_firewall_custom` ruleset now **blocks probes for `.env`/`.git`/`.sql`/`wp-*`
+  paths** (regex-free `ends_with`/`contains`) — merged with the existing leaked-credentials challenge since a zone
+  allows one ruleset per phase; (2) the `http_ratelimit` ruleset is now **tiered** — a tighter cap
+  (`rate_limit_form_requests`, default 10) on the form/report endpoints (`/api/{data-request,contact,comments,newsletter,waitlist,csp-report}`)
+  ahead of the general `/api/*` cap; (3) an **opt-in** `block_bad_bots` var managed-challenges scraper UAs
+  (scrapy/python-requests/curl/headless…) on content routes — off by default (a public site wants search bots;
+  robots.txt already handles AI-training opt-out). **Why:** move edge-appropriate hardening to the edge (from
+  the wahio middleware review) instead of the Worker hot path. Authored only — the tfvars are placeholders; CI's
+  `infra` job validates, ops applies. See [`cloudflare-iac.md`](../../../../docs/infra/cloudflare-iac.md).
 - **`/maintenance` now carries a CSP; the CSP-enforcement e2e is a blocking CI gate.** Two
   loose ends from the enforce rollout: (1) `/maintenance` is excluded from the proxy matcher like
   `/studio`, so `cspMode: "proxy"` left it shipping **no** `Content-Security-Policy` on a direct hit —

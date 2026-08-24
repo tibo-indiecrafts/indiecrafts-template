@@ -10,11 +10,13 @@ another app, **copy this whole dir** to `code/projects/<app>/infra` and retarget
 
 ## Files
 
-- `main.tf` — provider + variables + the edge resources (custom domain · rate-limit · WAF · Bot Fight ·
+- `main.tf` — provider + variables + the edge resources (custom domain · tiered rate-limit · WAF · Bot Fight ·
+  custom firewall [sensitive-path block · opt-in bad-bot challenge · leaked-creds challenge] ·
   cache rules · Tiered Cache · zone hardening · Turnstile) + outputs (Turnstile keys + domain). The edge
-  tunables (`rate_limit_*`, `enable_managed_waf`/`bot_fight`/`cache_rules`/`tiered_cache`) are active
-  variables with sensible defaults — override a value in the tfvars. **Commented** optionals in the file: a
-  remote-state backend, a first-party asset-CDN domain (`cdn.<domain>`), and CF Image Transformations.
+  tunables (`rate_limit_*`, `enable_managed_waf`/`bot_fight`/`leaked_credentials`/`cache_rules`/`tiered_cache`,
+  `block_bad_bots`) are active variables with sensible defaults — override a value in the tfvars. **Commented**
+  optionals in the file: a remote-state backend, a first-party asset-CDN domain (`cdn.<domain>`), CF Image
+  Transformations, and a Zero Trust Access gate for the admin app.
 - `env/{dev,staging,prod}.tfvars` — the per-env **values** (`account_id`, `zone_id`, `domain`,
   `worker_name`, `turnstile_domains`). `dev` runs on `*.workers.dev` (`attach_domain = false`).
 

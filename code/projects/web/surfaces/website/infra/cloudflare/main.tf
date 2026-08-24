@@ -2,8 +2,9 @@
 # its whole deploy surface: `wrangler.toml` ships the Worker, this owns the edge).
 # One instance = one app, one environment. Provisions the EDGE config wrangler can't:
 #   · auto custom domain (CF makes the DNS record + cert)
-#   · rate-limit on /api/* (the @indiecrafts/packages-shared-security `withGuard` PRIMARY limiter)
-#   · Cloudflare Managed WAF · Bot Fight Mode
+#   · rate-limit on /api/* — tiered (tighter on the form/report endpoints), the `withGuard` PRIMARY limiter
+#   · Cloudflare Managed WAF · Bot Fight Mode · (opt-in) bad-bot UA challenge
+#   · custom firewall: block sensitive-file probes (.env/.git/.sql/wp-*) at the edge · leaked-credential challenge
 #   · cache rules (immutable /_next/static, bypass /api + /studio) + Tiered Cache
 #   · zone hardening (SSL strict, min TLS 1.2, Always-HTTPS)
 #   · a Turnstile widget → outputs the site + secret keys for the app env
@@ -58,9 +59,14 @@ variable "turnstile_domains" { type = list(string), default = [] }
 # Edge tunables — defaults are sensible; override in tfvars if needed.
 variable "rate_limit_requests" { type = number, default = 20 }
 variable "rate_limit_period" { type = number, default = 60 } # seconds
+variable "rate_limit_form_requests" { type = number, default = 10 } # tighter cap for the abuse-prone form endpoints
 variable "enable_managed_waf" { type = bool, default = true }
 variable "enable_bot_fight" { type = bool, default = true }
 variable "enable_leaked_credentials" { type = bool, default = true } # managed-challenge known-leaked creds (Free: one field)
+# Managed-challenge scraper/automation user-agents on content routes. OFF by default — a
+# public marketing site WANTS search bots (robots.txt handles AI-training opt-out), and a
+# broad UA rule risks false positives; turn on for a site under active scraping.
+variable "block_bad_bots" { type = bool, default = false }
 variable "enable_cache_rules" { type = bool, default = true }
 variable "enable_tiered_cache" { type = bool, default = true }
 
@@ -75,23 +81,40 @@ resource "cloudflare_workers_custom_domain" "app" {
 }
 
 # ── Rate limit on /api/* — the guard's PRIMARY limiter ───────────────────────
+# Rules evaluate top-down, first match wins: the abuse-prone form/report endpoints get a
+# tighter cap, everything else under /api/* falls through to the general limit. Both key on
+# client IP + colo (the same trusted derivation the in-app `withGuard`/CSP-sink limiter uses).
 resource "cloudflare_ruleset" "rate_limit" {
   zone_id = var.zone_id
   name    = "${var.worker_name}-ratelimit"
   kind    = "zone"
   phase   = "http_ratelimit"
-  rules = [{
-    ref         = "api_rate_limit"
-    description = "Rate-limit the public form endpoints (${var.env})"
-    expression  = "(starts_with(http.request.uri.path, \"/api/\"))"
-    action      = "block"
-    ratelimit = {
-      characteristics     = ["ip.src", "cf.colo.id"]
-      period              = var.rate_limit_period
-      requests_per_period = var.rate_limit_requests
-      mitigation_timeout  = var.rate_limit_period
+  rules = [
+    {
+      ref         = "form_rate_limit"
+      description = "Tighter cap on the abuse-prone form + report endpoints (${var.env})"
+      expression  = "(http.request.uri.path in {\"/api/data-request\" \"/api/contact\" \"/api/comments\" \"/api/newsletter\" \"/api/waitlist\" \"/api/csp-report\"})"
+      action      = "block"
+      ratelimit = {
+        characteristics     = ["ip.src", "cf.colo.id"]
+        period              = var.rate_limit_period
+        requests_per_period = var.rate_limit_form_requests
+        mitigation_timeout  = var.rate_limit_period
+      }
+    },
+    {
+      ref         = "api_rate_limit"
+      description = "General rate-limit for the rest of /api/* (${var.env})"
+      expression  = "(starts_with(http.request.uri.path, \"/api/\"))"
+      action      = "block"
+      ratelimit = {
+        characteristics     = ["ip.src", "cf.colo.id"]
+        period              = var.rate_limit_period
+        requests_per_period = var.rate_limit_requests
+        mitigation_timeout  = var.rate_limit_period
+      }
     }
-  }]
+  ]
 }
 
 # ── Cloudflare Managed WAF ruleset ───────────────────────────────────────────
@@ -120,23 +143,44 @@ resource "cloudflare_bot_management" "bots" {
   fight_mode = true
 }
 
-# ── Leaked-credentials detection (free: one field) ────────────────────────────
-# Managed-challenge any request Cloudflare flags as carrying a known-breached
-# username+password (credential stuffing). Requires leaked-credentials DETECTION to be
-# enabled on the zone first (Security → Settings). The `cf.waf.credential_check.*`
-# field is available on Free (one field); paid plans get more granular fields.
-resource "cloudflare_ruleset" "leaked_credentials" {
-  count   = var.enable_leaked_credentials ? 1 : 0
+# ── Custom firewall (one ruleset per phase) ───────────────────────────────────
+# A zone allows only ONE http_request_firewall_custom entrypoint, so every custom rule
+# lives here, evaluated top-down (a terminating `block` stops evaluation):
+#   1. block sensitive-file probes (.env/.git/.sql/wp-*) at the edge — never reach the Worker
+#   2. (opt-in) managed-challenge scraper user-agents on content routes
+#   3. (opt-in) managed-challenge requests carrying known-leaked credentials
+# Uses only ends_with/contains/lower (no regex) to keep the expressions robust.
+resource "cloudflare_ruleset" "firewall_custom" {
   zone_id = var.zone_id
-  name    = "${var.worker_name}-leaked-creds"
+  name    = "${var.worker_name}-firewall"
   kind    = "zone"
   phase   = "http_request_firewall_custom"
-  rules = [{
-    ref         = "leaked_creds_challenge"
-    description = "Managed-challenge requests with known-leaked credentials (${var.env})"
-    expression  = "(cf.waf.credential_check.username_and_password_leaked)"
-    action      = "managed_challenge"
-  }]
+  rules = concat(
+    [
+      {
+        ref         = "block_sensitive_paths"
+        description = "Block probes for dotfiles/backups/CMS paths before the Worker (${var.env})"
+        expression  = "(http.request.uri.path contains \"/.env\" or http.request.uri.path contains \"/.git\" or http.request.uri.path contains \"wp-config\" or http.request.uri.path contains \"/wp-admin\" or http.request.uri.path contains \"/wp-login\" or ends_with(http.request.uri.path, \".env\") or ends_with(http.request.uri.path, \".sql\") or ends_with(http.request.uri.path, \".bak\") or ends_with(http.request.uri.path, \".ini\") or ends_with(http.request.uri.path, \".conf\") or ends_with(http.request.uri.path, \".yaml\") or ends_with(http.request.uri.path, \".yml\") or ends_with(http.request.uri.path, \".sh\"))"
+        action      = "block"
+      }
+    ],
+    var.block_bad_bots ? [
+      {
+        ref         = "block_bad_bots"
+        description = "Managed-challenge scraper/automation user-agents on content routes (${var.env})"
+        expression  = "(not starts_with(http.request.uri.path, \"/api/\") and (lower(http.user_agent) contains \"scrapy\" or lower(http.user_agent) contains \"python-requests\" or lower(http.user_agent) contains \"curl/\" or lower(http.user_agent) contains \"wget/\" or lower(http.user_agent) contains \"headlesschrome\" or lower(http.user_agent) contains \"puppeteer\" or lower(http.user_agent) contains \"selenium\" or lower(http.user_agent) contains \"phantomjs\"))"
+        action      = "managed_challenge"
+      }
+    ] : [],
+    var.enable_leaked_credentials ? [
+      {
+        ref         = "leaked_creds_challenge"
+        description = "Managed-challenge requests with known-leaked credentials (${var.env})"
+        expression  = "(cf.waf.credential_check.username_and_password_leaked)"
+        action      = "managed_challenge"
+      }
+    ] : []
+  )
 }
 
 # ── Cache Rules: immutable static at the edge, never cache dynamic ───────────
