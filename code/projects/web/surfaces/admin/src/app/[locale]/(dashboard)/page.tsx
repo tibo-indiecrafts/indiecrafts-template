@@ -31,6 +31,12 @@ export default async function AdminHome({
           {t("security.link")}
         </Link>
         <Link
+          href="/data-requests"
+          className="text-primary underline underline-offset-4"
+        >
+          {t("dataRequests.link")}
+        </Link>
+        <Link
           href="/system"
           className="text-primary underline underline-offset-4"
         >

@@ -60,3 +60,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   Sanity marked external). Env: `WEBSITE_URL` · `APP_URL` · `API_URL` · `AGENT_URL`. Both admin-gated,
   read-only, linked from the dashboard. **Why:** operator visibility over accounts, deploys, workers, and
   DBs — reusing the Clerk secret + the public health/version endpoints (no new infra).
+- **Data requests screen (read-only).** New `(dashboard)/data-requests` page reads
+  `GET /v1/data-requests` server-side and lists GDPR data-subject requests (when · type · email ·
+  status · a truncated message excerpt · locale/source, last 100); linked from the dashboard. DSARs
+  moved off Sanity Studio into D1 (`api`'s `data_requests` table), so this restores operator
+  visibility. **Read-only** — status write-back (mark in-progress/done) is a deferred follow-up; until
+  it lands, flip a request's status by hand: `wrangler d1 execute indiecrafts-<env>-shared-api
+  --command "UPDATE data_requests SET status='done' WHERE id=?"`.

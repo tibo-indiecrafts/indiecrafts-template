@@ -60,6 +60,18 @@
       "description": "Detail",
       "link": "View security"
     },
+    "dataRequests": {
+      "title": "Data requests",
+      "subtitle": "GDPR data-subject requests submitted through the site (last 100).",
+      "empty": "No data requests recorded yet.",
+      "when": "When",
+      "type": "Type",
+      "email": "Email",
+      "status": "Status",
+      "message": "Message",
+      "localeSource": "Locale / source",
+      "link": "View data requests"
+    },
     "system": {
       "title": "System status",
       "surfaces": "Surfaces",

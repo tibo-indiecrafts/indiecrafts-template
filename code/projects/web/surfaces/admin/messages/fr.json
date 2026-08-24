@@ -60,6 +60,18 @@
       "description": "Détail",
       "link": "Voir la sécurité"
     },
+    "dataRequests": {
+      "title": "Demandes de données",
+      "subtitle": "Demandes RGPD des personnes concernées soumises sur le site (100 dernières).",
+      "empty": "Aucune demande de données enregistrée pour l'instant.",
+      "when": "Quand",
+      "type": "Type",
+      "email": "E-mail",
+      "status": "État",
+      "message": "Message",
+      "localeSource": "Langue / source",
+      "link": "Voir les demandes de données"
+    },
     "system": {
       "title": "État du système",
       "surfaces": "Surfaces",
