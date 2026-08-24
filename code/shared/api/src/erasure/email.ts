@@ -10,7 +10,7 @@
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 
 /** The Env slice this module needs — never the full worker `Env`. */
-type MailEnv = {
+export type MailEnv = {
   RESEND_API_KEY?: string;
   EMAIL_FROM?: string;
   /** BCC'd on every email this module sends. Optional — unset → no bcc. */
@@ -86,7 +86,7 @@ async function fetchErasureEmailStrings(
   }
 }
 
-async function resend(
+export async function resend(
   env: MailEnv,
   {
     to,

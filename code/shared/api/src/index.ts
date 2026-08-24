@@ -13,6 +13,7 @@ import {
   classifyFailedLogins,
   FAILED_LOGIN,
   bumpCounter,
+  shouldAlert,
 } from "@indiecrafts/packages-shared-security-events";
 import { resolveRegulation } from "@indiecrafts/packages-shared-compliance/shared";
 import {
@@ -34,6 +35,7 @@ import {
   handleDataRequestWrite,
   handleDataRequestList,
 } from "./data-request/route";
+import { sendSecurityAlertEmail } from "./security/alert";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -96,6 +98,10 @@ export interface Env {
    *  from this worker (the erasure emails). Operator-set. Optional — unset → no bcc.
    *  Composes with the website send layer's own `EMAIL_ADMIN_BCC` read. */
   EMAIL_ADMIN_BCC?: string;
+  /** `[vars]` (or secret; an address, not sensitive) — the high/critical security-alert
+   *  recipient. Optional — unset → falls back to `EMAIL_ADMIN_BCC`, and if that is also
+   *  unset, the alert send no-ops (the incident is still written to D1). */
+  SECURITY_ALERT_EMAIL?: string;
   /** `wrangler secret put TURNSTILE_SECRET` — the bot gate on the public erasure-request
    *  form. Optional (unset → the check passes; set → verified, fails closed on error). */
   TURNSTILE_SECRET?: string;
@@ -363,17 +369,33 @@ export default {
             env.IP_HASH_SALT && ip !== "unknown"
               ? await hashIpAddress(ip, env.IP_HASH_SALT)
               : null;
-          const insertSecurity = (
+          const insertSecurity = async (
             et: string,
             sev: string,
             desc: string | null,
-          ) =>
-            env
+          ) => {
+            await env
               .DB!.prepare(
                 "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
               )
               .bind(ts, et, sev, secSurface, secUserId, country, ipHash, desc)
               .run();
+            // Alert the owner/DPO on high/critical incidents. Fired via waitUntil so
+            // it never delays the response — the incident is already persisted.
+            if (shouldAlert(sev)) {
+              ctx.waitUntil(
+                sendSecurityAlertEmail(env, {
+                  eventType: et,
+                  severity: sev,
+                  surface: secSurface,
+                  userId: secUserId,
+                  country,
+                  description: desc,
+                  ts,
+                }),
+              );
+            }
+          };
 
           // Failed logins are COUNTED in KV (cheap, ephemeral), NOT written per-request to
           // D1. Only when a count crosses the threshold do we store ONE credential_stuffing
@@ -618,20 +640,37 @@ export default {
       const role = (data.public_metadata as { role?: string } | undefined)
         ?.role;
       if (evt.type === "user.updated" && role === "admin" && env.DB) {
+        const privEscTs = new Date().toISOString();
+        const privEscUserId = typeof data.id === "string" ? data.id : null;
+        const privEscCountry = request.headers.get("cf-ipcountry") ?? null;
+        const privEscDesc = "role→admin via Clerk (out-of-band)";
         try {
           await env.DB.prepare(
             "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)",
           )
             .bind(
-              new Date().toISOString(),
+              privEscTs,
               "privilege_escalation",
               "high",
               "api",
-              typeof data.id === "string" ? data.id : null,
-              request.headers.get("cf-ipcountry") ?? null,
-              "role→admin via Clerk (out-of-band)",
+              privEscUserId,
+              privEscCountry,
+              privEscDesc,
             )
             .run();
+          // Always alerts — privilege_escalation is always "high", and shouldAlert("high")
+          // is always true. Fired via waitUntil so it never delays the response.
+          ctx.waitUntil(
+            sendSecurityAlertEmail(env, {
+              eventType: "privilege_escalation",
+              severity: "high",
+              surface: "api",
+              userId: privEscUserId,
+              country: privEscCountry,
+              description: privEscDesc,
+              ts: privEscTs,
+            }),
+          );
         } catch (error) {
           logger.error("clerk webhook write failed", {
             name: (error as Error)?.name,
