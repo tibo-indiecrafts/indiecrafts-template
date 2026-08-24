@@ -19,9 +19,9 @@ if (getCurrentEnvironment() === "production")
  */
 export interface Env {
   /** The api's EU D1 (binding `DB`) — the same database the api writes (admin_audit,
-   *  session_events, security_events, consent_events, erasure_requests, export_requests).
-   *  The purge deletes rows past retention from the first four; the SLA + export-cleanup
-   *  passes read/write the latter two. */
+   *  session_events, security_events, consent_events, data_requests, erasure_requests,
+   *  export_requests). The purge deletes rows past retention from all but export_requests;
+   *  the SLA-flag + export-cleanup passes also read/write erasure_requests + export_requests. */
   DB?: D1Database;
   /** The api's export-bundle bucket (`[[r2_buckets]] binding = "EXPORT_BUCKET"`) — the
    *  same bucket `POST /v1/export` writes to. Shared, operator-provisioned; the
@@ -35,6 +35,14 @@ const RETENTION_DAYS = 90;
 /** consent_events is kept far longer than the audit tables — consent is a proof
  *  record with its own retention duty (spec §13). ~3 years. */
 const CONSENT_RETENTION_DAYS = 1095;
+
+/** data_requests (DSAR intake) is short-lived operational PII — a year gives the
+ *  operator room to action + prove the request, then it's purged. */
+const DATA_REQUEST_RETENTION_DAYS = 365;
+
+/** erasure_requests is kept as long as consent_events — it is the proof-of-erasure
+ *  record for a completed request, not an audit trail. ~3 years. */
+const ERASURE_REQUEST_RETENTION_DAYS = 1095;
 
 /** How far ahead of an erasure request's `due_at` counts as "due soon" for the SLA flag. */
 const SLA_WARNING_DAYS = 7;
@@ -66,15 +74,25 @@ export default {
       scheduledTime: controller.scheduledTime,
     });
 
-    // Retention purge (GDPR storage limitation): purge all four tables past their
-    // ceiling from the one EU D1. admin_audit + session_events + security_events use
-    // the 90-day ceiling; consent_events uses its own, much longer 3-year window,
-    // because it is a consent proof record, not an audit trail. Idempotent — safe on
-    // every tick. No-ops until the DB is bound.
+    // Retention purge (GDPR storage limitation): purge tables past their ceiling from
+    // the one EU D1. admin_audit + session_events + security_events use the 90-day
+    // ceiling; consent_events uses its own, much longer 3-year window, because it is a
+    // consent proof record, not an audit trail. data_requests (DSAR intake, short-lived
+    // operational PII) purges at 365 days; erasure_requests (proof-of-erasure record)
+    // purges at the same 3-year window as consent_events. Idempotent — safe on every
+    // tick. No-ops until the DB is bound.
     const cutoff = retentionCutoff(controller.scheduledTime, RETENTION_DAYS);
     const consentCutoff = retentionCutoff(
       controller.scheduledTime,
       CONSENT_RETENTION_DAYS,
+    );
+    const dataRequestCutoff = retentionCutoff(
+      controller.scheduledTime,
+      DATA_REQUEST_RETENTION_DAYS,
+    );
+    const erasureRequestCutoff = retentionCutoff(
+      controller.scheduledTime,
+      ERASURE_REQUEST_RETENTION_DAYS,
     );
     const nowIso = new Date(controller.scheduledTime).toISOString();
     const dueSoon = slaDueSoonCutoff(
@@ -103,13 +121,27 @@ export default {
         )
           .bind(consentCutoff)
           .run();
+        const dataRequest = await env.DB.prepare(
+          "DELETE FROM data_requests WHERE submitted_at < ?",
+        )
+          .bind(dataRequestCutoff)
+          .run();
+        const erasureRequest = await env.DB.prepare(
+          "DELETE FROM erasure_requests WHERE requested_at < ?",
+        )
+          .bind(erasureRequestCutoff)
+          .run();
         logger.info("retention purge", {
           cutoff,
           consentCutoff,
+          dataRequestCutoff,
+          erasureRequestCutoff,
           adminRows: admin.meta?.changes,
           sessionRows: session.meta?.changes,
           securityRows: security.meta?.changes,
           consentRows: consent.meta?.changes,
+          dataRequestRows: dataRequest.meta?.changes,
+          erasureRequestRows: erasureRequest.meta?.changes,
         });
       } catch (error) {
         logger.error("retention purge failed", {

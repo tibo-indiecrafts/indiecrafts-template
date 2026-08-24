@@ -46,10 +46,9 @@ inserts a row; operators view requests in the admin "Data requests" screen, back
   no free text), `data_requests` stores real, replyable operator-facing PII. This is
   intentional — the operator needs the plaintext email and message to action the
   request, exactly as the Sanity `dataRequest` doc did before this migration.
-- **Retention:** this is short-lived operational PII, not a tracking signal — it must
-  not accumulate indefinitely once a request is `done`. Purge-after-done plus a window
-  is a **future cron follow-up**, not yet built; until then, action requests promptly
-  and purge manually via `wrangler d1 execute`.
+- **Retention:** **365 days** (`DATA_REQUEST_RETENTION_DAYS = 365`), on `submitted_at`,
+  purged by the cron — this is short-lived operational PII, not a tracking signal. A
+  year gives the operator room to action and prove the request before it is purged.
 - **Status write-back:** the admin screen is read-only for now — flipping `status`
   (new/in-progress/done) from the UI is a **deferred follow-up**. Meanwhile, flip it
   via `wrangler d1 execute UPDATE data_requests SET status = ? WHERE id = ?`.
@@ -70,6 +69,10 @@ cron's scheduled handler flags a request once, as it nears or misses that deadli
 A flagged request gets `due_flagged_at` set, so a later tick does not repeat it.
 `completed`/`cancelled`/`expired` requests are skipped. No-ops until the cron's `DB`
 binding is bound. Owner-reminder email is deferred — the cron has no email sender.
+
+- **Retention:** **1095 days** (~3 years, `ERASURE_REQUEST_RETENTION_DAYS = 1095`), on
+  `requested_at`, purged by the cron — the same window as `consent_events`, because a
+  completed request is a proof-of-erasure record, not an audit trail.
 
 ## Export-bundle cleanup
 

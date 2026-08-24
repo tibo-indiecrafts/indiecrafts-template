@@ -36,6 +36,81 @@ describe("cron worker (workerd)", () => {
   });
 });
 
+describe("scheduled() — retention purge (data_requests + erasure_requests)", () => {
+  const NOW = Date.UTC(2026, 0, 15); // 2026-01-15T00:00:00Z
+  const oldDataRequestAt = new Date(NOW - 400 * 86_400_000).toISOString(); // > 365d
+  const recentDataRequestAt = new Date(NOW - 10 * 86_400_000).toISOString();
+  const oldErasureRequestAt = new Date(NOW - 1100 * 86_400_000).toISOString(); // > 1095d
+  const recentErasureRequestAt = new Date(NOW - 10 * 86_400_000).toISOString();
+
+  async function runTick(): Promise<void> {
+    const ctx = createExecutionContext();
+    const controller = {
+      cron: "0 * * * *",
+      scheduledTime: NOW,
+      noRetry() {},
+    } as unknown as ScheduledController;
+    await worker.scheduled(controller, env, ctx);
+    await waitOnExecutionContext(ctx);
+  }
+
+  it("purges a data_requests row past the 365-day retention; keeps a recent one", async () => {
+    await env.DB.prepare(
+      "INSERT INTO data_requests (request_type, email, status, submitted_at) VALUES ('access', 'old-dsar@example.com', 'new', ?)",
+    )
+      .bind(oldDataRequestAt)
+      .run();
+    await env.DB.prepare(
+      "INSERT INTO data_requests (request_type, email, status, submitted_at) VALUES ('access', 'recent-dsar@example.com', 'new', ?)",
+    )
+      .bind(recentDataRequestAt)
+      .run();
+
+    await runTick();
+
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM data_requests WHERE email = 'old-dsar@example.com'",
+      ).first(),
+    ).toBeNull();
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM data_requests WHERE email = 'recent-dsar@example.com'",
+      ).first(),
+    ).not.toBeNull();
+  });
+
+  it("purges an erasure_requests row past the 1095-day retention; keeps a recent one", async () => {
+    await env.DB.prepare(
+      "INSERT INTO erasure_requests (status, token_hash, token_expires_at, email_fingerprint, requested_at, due_at) VALUES ('completed', 'hash-old-purge', ?, 'fp-old-purge@example.com', ?, ?)",
+    )
+      .bind(oldErasureRequestAt, oldErasureRequestAt, oldErasureRequestAt)
+      .run();
+    await env.DB.prepare(
+      "INSERT INTO erasure_requests (status, token_hash, token_expires_at, email_fingerprint, requested_at, due_at) VALUES ('completed', 'hash-recent-purge', ?, 'fp-recent-purge@example.com', ?, ?)",
+    )
+      .bind(
+        recentErasureRequestAt,
+        recentErasureRequestAt,
+        recentErasureRequestAt,
+      )
+      .run();
+
+    await runTick();
+
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM erasure_requests WHERE email_fingerprint = 'fp-old-purge@example.com'",
+      ).first(),
+    ).toBeNull();
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM erasure_requests WHERE email_fingerprint = 'fp-recent-purge@example.com'",
+      ).first(),
+    ).not.toBeNull();
+  });
+});
+
 describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
   const NOW = Date.UTC(2026, 0, 15); // 2026-01-15T00:00:00Z
   const nowIso = new Date(NOW).toISOString();
