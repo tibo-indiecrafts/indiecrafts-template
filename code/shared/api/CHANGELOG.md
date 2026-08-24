@@ -5,6 +5,18 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **`db:migrate` takes a pre-migration R2 snapshot before every remote schema change.** The
+  registry-driven `migrate.mjs` now runs `backup.mjs … --remote` for the target db before applying
+  migrations to staging/prod — a bad migration is recoverable. Fail-closed (a failed snapshot aborts
+  the migration), `--no-backup` overrides, dev is skipped (local miniflare D1 is disposable). Reuses the
+  per-`kind` backup recipe, so a future postgres/supabase db is covered for free. Backups are laid out
+  per registry `name` (`<name>/<env>/…`) locally and in R2, so more dbs stay one-folder-each; retention
+  is 30-day R2 lifecycle + newest-10 local. See [backups](../../docs/apps/web/setup/backups.md).
+  (Follow-up: provision the R2 buckets + lifecycle in Terraform — deferred pending a bucket-name
+  reconciliation, see the doc's drift warning.)
+
 ### Changed
 
 - **`Cache-Control: no-store` on every bearer-gated + webhook response.** The shared `json()` helper

@@ -77,8 +77,8 @@ for (const db of targets) {
     /* no .env.local — env may be provided by the shell / CI instead */
   }
   try {
-    if (db.kind === "sanity") backupSanity(env, remote);
-    else if (db.kind === "d1") backupD1(env, remote);
+    if (db.kind === "sanity") backupSanity(env, remote, db.name);
+    else if (db.kind === "d1") backupD1(env, remote, db.name);
     else
       console.log(`  – "${db.kind}" backup not wired yet (reserved). Skipped.`);
   } catch (e) {
@@ -91,7 +91,9 @@ for (const db of targets) {
 process.exit(failed ? 1 : 0);
 
 // ── recipes (cwd = owner dir) ─────────────────────────────────────────────────
-function backupD1(env, remote) {
+// Local dumps + the R2 key are laid out per registry db `name` (`<name>/<env>/…`), so
+// backups stay one-folder-per-db as more databases are added.
+function backupD1(env, remote, name) {
   const active = readFileSync(path.resolve("wrangler.toml"), "utf8")
     .split("\n")
     .filter((l) => !l.trim().startsWith("#"))
@@ -105,7 +107,7 @@ function backupD1(env, remote) {
     );
     return;
   }
-  const dir = ensureDir(path.resolve("backups/d1"));
+  const dir = ensureDir(path.resolve(`backups/${name}`));
   const file = `${dbName}-${env}-${stamp()}.sql`;
   const out = path.resolve(dir, file);
   const r = spawnSync(
@@ -114,12 +116,12 @@ function backupD1(env, remote) {
     { stdio: "inherit", env: ownerEnv() },
   );
   if (r.status !== 0) throw new Error("wrangler d1 export failed");
-  if (remote) uploadToR2(env, `d1/${env}/${file}`, out);
+  if (remote) uploadToR2(env, `${name}/${env}/${file}`, out);
   prune(dir, 10, `${dbName}-${env}-`);
   console.log(`  ✓ D1 backup: ${file}`);
 }
 
-function backupSanity(env, remote) {
+function backupSanity(env, remote, name) {
   const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   const token =
@@ -129,7 +131,7 @@ function backupSanity(env, remote) {
       "missing NEXT_PUBLIC_SANITY_PROJECT_ID / dataset (see .env.example)",
     );
   if (!token) throw new Error("missing SANITY_API_READ_TOKEN in .env.local");
-  const dir = ensureDir(path.resolve("backups/sanity"));
+  const dir = ensureDir(path.resolve(`backups/${name}`));
   const file = `${dataset}-${stamp()}.tar.gz`;
   const out = path.resolve(dir, file);
   const r = spawnSync("sanity", ["dataset", "export", dataset, out], {
@@ -137,7 +139,7 @@ function backupSanity(env, remote) {
     env: { ...ownerEnv(), SANITY_AUTH_TOKEN: token },
   });
   if (r.status !== 0) throw new Error("sanity dataset export failed");
-  if (remote) uploadToR2(env, `sanity/${file}`, out);
+  if (remote) uploadToR2(env, `${name}/${env}/${file}`, out);
   prune(dir, 10, `${dataset}-`);
   console.log(`  ✓ Sanity backup: ${file}`);
 }

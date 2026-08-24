@@ -1,7 +1,9 @@
 // The database registry — the single source of truth for "which databases exist,
 // at what altitude, of what kind, owned by whom, in what apply order." Mirrors
 // `scripts/lib/apps.mjs`. The migrate + backup runners read THIS and dispatch on
-// `kind` (like deploy dispatches on an app's `class`).
+// `kind` (like deploy dispatches on an app's `class`). `db:migrate` also takes a
+// pre-migration R2 snapshot before each REMOTE schema change (retention + layout →
+// docs/apps/web/setup/backups.md).
 //
 // Adding a database = one row here + fill its slot (real migrations, or a README marker
 // under `<slot>/db/<kind>/`). Active today: the api's `audit` D1 + `security-counters` KV.

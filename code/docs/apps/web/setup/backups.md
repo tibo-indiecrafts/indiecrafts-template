@@ -8,8 +8,8 @@ data. Each has a backup script that writes a **local** dump by default and can a
 
 ```
 code/projects/web/surfaces/website/backups/
-├── sanity/       <dataset>-<timestamp>.tar.gz
-├── d1/           <db>-<env>-<timestamp>.sql
+├── content/      <dataset>-<timestamp>.tar.gz    (one folder per registry `name` — the `content` sanity db)
+├── audit/        <db>-<env>-<timestamp>.sql       (the `audit` d1 db)
 ├── subscribers/  subscribers-<timestamp>.csv   (pnpm subscribers:export)
 ├── comments/     comments-<timestamp>.csv      (pnpm comments:export)
 ├── waitlist/     waitlist-<timestamp>.csv      (pnpm waitlist:export)
@@ -20,9 +20,18 @@ Every stored, editor-collected entity has the **same** CSV export escape hatch (
 `SANITY_API_READ_TOKEN`) — see the script table in [scripts](./scripts.md).
 
 The whole `backups/` tree is gitignored (dumps + subscriber emails are data, not code). Remote copies
-live in the per-env R2 bucket `<slug>-<env>-web-surfaces-website-backups` (the bucket name follows your project slug from
-`pnpm project:rename` — the template default is `indiecrafts-<env>-web-surfaces-website-backups`), keyed `sanity/…` and
-`d1/<env>/…`.
+go to a per-env R2 bucket named `<owner-prod-name>-backups-<env>` (the db's **owner** worker's prod
+name + `-backups-<env>`, so it follows `pnpm project:rename`), keyed **`<name>/<env>/…`** — one
+prefix per registry db. Because the key is owner-scoped, the `audit` D1 (owner `api`) and the
+`content` dataset (owner `website`) land in **different** buckets
+(`indiecrafts-prod-shared-api-backups-<env>` vs `indiecrafts-prod-web-surfaces-website-backups-<env>`).
+
+::: warning Bucket-name drift — reconcile before wiring Terraform
+The bucket name the code builds (`uploadToR2` → `<owner-prod-name>-backups-<env>`) does **not** match
+the older `<slug>-<env>-…-backups` form some setup snippets still show. The code is authoritative.
+Provisioning these buckets in Terraform + a lifecycle rule is a deliberate follow-up (see Retention),
+not yet wired, precisely so the one canonical name is chosen first.
+:::
 
 ## Manual backup
 
@@ -42,14 +51,57 @@ Sanity backup is read-only and needs `SANITY_API_READ_TOKEN`; a `d1` db needs th
 `CLOUDFLARE_API_TOKEN`. Each keeps the **last 10** local dumps per source and prunes the rest. To add a
 db (e.g. a D1), add a row to `code/shared/scripts/lib/databases.mjs` — `backup:all` + `db:migrate` pick it up.
 
-## One-time setup (for `--remote`)
+## Pre-migration snapshots
 
-Create the per-env R2 backups buckets (`<slug>-prod-web-surfaces-website` = your `project:rename` slug):
+`db:migrate` takes a **pre-migration R2 snapshot before every remote schema change** — a bad
+migration is then recoverable. It's automatic and registry-driven (so a future postgres/supabase db
+gets its own snapshot for free):
 
 ```bash
-wrangler r2 bucket create <slug>-dev-web-surfaces-website-backups
-wrangler r2 bucket create <slug>-staging-web-surfaces-website-backups
-wrangler r2 bucket create <slug>-prod-web-surfaces-website-backups
+node code/shared/scripts/data/migrate.mjs audit prod          # snapshot audit → R2, THEN apply migrations
+node code/shared/scripts/data/migrate.mjs audit prod --no-backup  # skip the snapshot (override)
+node code/shared/scripts/data/migrate.mjs audit dev           # local miniflare D1 — no snapshot (disposable)
+node code/shared/scripts/data/migrate.mjs audit prod --dry-run    # show the plan, run nothing
+```
+
+The snapshot runs `backup.mjs … --remote`; if it **fails, the migration is aborted** (fail-closed) —
+so a missing R2 bucket (see One-time setup) blocks the migration until you fix it or pass `--no-backup`.
+Dev is skipped because the local D1 is disposable. (Migrations are hand-run today, not part of deploy/CI.)
+
+## Retention
+
+Backups hold PII (`user_profiles` emails, `consent_events`, audit rows), so retention is a **GDPR**
+decision, not a storage-cost one — the dumps are tiny.
+
+- **Local** — the newest **10** dumps per source; older ones are pruned on each run (a dev convenience).
+- **R2** — a **30-day** object-lifecycle expiry (default), so R2 never accumulates PII indefinitely.
+  A pre-migration snapshot is a rollback net (a bad migration surfaces within days), and the nightly
+  job (below) writes one dump/day — 30 days keeps ~a month of restore points, aligned with the live
+  data windows (`audit`/`security_events` purge at 90 days; `consent_events` proof lives in the live
+  3-year table, not a backup). Set it once per bucket:
+
+  ```bash
+  wrangler r2 bucket lifecycle add <bucket> --name expire-30d --expire-days 30
+  ```
+
+  Raise it for a client with a longer regulatory backup requirement. **GDPR posture:** backups are
+  excluded from live erasure (you can't edit a dump) — the compliant stance is *bounded retention + a
+  restore re-runs any pending erasures before the DB goes live again*. Keep this consistent with the
+  [erasure story](/packages/compliance).
+
+## One-time setup (for `--remote`)
+
+Create the per-env R2 backups bucket for each db **owner** (name = `<owner-prod-name>-backups-<env>`;
+`indiecrafts` is the template default, replaced by your `project:rename` slug), then set the 30-day
+lifecycle (see Retention). For the two active dbs today — `content` (owner `website`) + `audit`
+(owner `api`):
+
+```bash
+# per env: dev · staging · prod (shown for prod)
+wrangler r2 bucket create indiecrafts-prod-web-surfaces-website-backups-prod   # sanity `content`
+wrangler r2 bucket create indiecrafts-prod-shared-api-backups-prod             # d1 `audit`
+wrangler r2 bucket lifecycle add indiecrafts-prod-shared-api-backups-prod --name expire-30d --expire-days 30
+# …repeat the lifecycle for each bucket
 ```
 
 ## Automated backups
