@@ -20,18 +20,10 @@ Every stored, editor-collected entity has the **same** CSV export escape hatch (
 `SANITY_API_READ_TOKEN`) — see the script table in [scripts](./scripts.md).
 
 The whole `backups/` tree is gitignored (dumps + subscriber emails are data, not code). Remote copies
-go to a per-env R2 bucket named `<owner-prod-name>-backups-<env>` (the db's **owner** worker's prod
-name + `-backups-<env>`, so it follows `pnpm project:rename`), keyed **`<name>/<env>/…`** — one
-prefix per registry db. Because the key is owner-scoped, the `audit` D1 (owner `api`) and the
-`content` dataset (owner `website`) land in **different** buckets
-(`indiecrafts-prod-shared-api-backups-<env>` vs `indiecrafts-prod-web-surfaces-website-backups-<env>`).
-
-::: warning Bucket-name drift — reconcile before wiring Terraform
-The bucket name the code builds (`uploadToR2` → `<owner-prod-name>-backups-<env>`) does **not** match
-the older `<slug>-<env>-…-backups` form some setup snippets still show. The code is authoritative.
-Provisioning these buckets in Terraform + a lifecycle rule is a deliberate follow-up (see Retention),
-not yet wired, precisely so the one canonical name is chosen first.
-:::
+go to **one project-wide bucket per env**, `<prefix>-<env>-backups` (the `<prefix>` is the project
+slug — `indiecrafts` by default, swapped by `pnpm project:rename`), keyed **`<name>/…`** — one prefix
+per registry db (`content/…`, `audit/…`). No per-app worker name in it, so no `-<platform>-<surface>-`;
+the env is the bucket, so the key is just `<name>/<file>`.
 
 ## Manual backup
 
@@ -41,7 +33,7 @@ dispatches on each db's `kind`, running from the db's **owner** dir. The only ac
 
 ```bash
 pnpm backup:content:prod                         # the Sanity content dataset → website/backups/sanity/
-pnpm backup:content:prod:remote                  # + upload to <slug>-prod-web-surfaces-website-backups
+pnpm backup:content:prod:remote                  # + upload to <prefix>-prod-backups (keyed content/…)
 node code/shared/scripts/data/backup.mjs content prod --remote # (same, direct)
 pnpm backup:all:prod                             # every registered db (dispatches per kind)
 node code/shared/scripts/data/backup.mjs <name> <env> --dry-run  # show the plan, run nothing
@@ -91,18 +83,16 @@ decision, not a storage-cost one — the dumps are tiny.
 
 ## One-time setup (for `--remote`)
 
-Create the per-env R2 backups bucket for each db **owner** (name = `<owner-prod-name>-backups-<env>`;
-`indiecrafts` is the template default, replaced by your `project:rename` slug), then set the 30-day
-lifecycle (see Retention). For the two active dbs today — `content` (owner `website`) + `audit`
-(owner `api`):
+The bucket is **provisioned by Terraform** — `cloudflare_r2_bucket.backups` in
+`code/projects/web/surfaces/website/infra/cloudflare/main.tf` creates `<prefix>-<env>-backups`
+(EU-resident, one per env) on `pnpm infra:website:apply:<env>`. Then set the retention lifecycle once
+per bucket (the provider's lifecycle resource is version-sensitive, so it's a wrangler step for now):
 
 ```bash
-# per env: dev · staging · prod (shown for prod)
-wrangler r2 bucket create indiecrafts-prod-web-surfaces-website-backups-prod   # sanity `content`
-wrangler r2 bucket create indiecrafts-prod-shared-api-backups-prod             # d1 `audit`
-wrangler r2 bucket lifecycle add indiecrafts-prod-shared-api-backups-prod --name expire-30d --expire-days 30
-# …repeat the lifecycle for each bucket
+wrangler r2 bucket lifecycle add indiecrafts-prod-backups --name expire --expire-days 30   # per env
 ```
+
+To create a bucket by hand instead of Terraform: `wrangler r2 bucket create indiecrafts-<env>-backups`.
 
 ## Automated backups
 
@@ -110,17 +100,6 @@ wrangler r2 bucket lifecycle add indiecrafts-prod-shared-api-backups-prod --name
 env). It exports Sanity + D1 and uploads to that env's R2 bucket. It reuses the deploy workflow's
 GitHub **Environment** secrets/vars — `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`,
 `SANITY_API_READ_TOKEN`, `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`.
-
-## Rotation / retention
-
-- **Local** — the scripts keep the newest 10 per source. In CI the runner is ephemeral, so local
-  copies don't accumulate.
-- **R2** — set a **bucket lifecycle rule** so remote copies rotate (else they grow forever):
-  ```bash
-  wrangler r2 bucket lifecycle add <slug>-prod-web-surfaces-website-backups \
-    --name expire-backups --prefix "" --expire-days 30
-  ```
-  (or set it in the Cloudflare dashboard → R2 → the bucket → Settings → Object lifecycle rules).
 
 ## Restore
 

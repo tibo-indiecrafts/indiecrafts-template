@@ -116,7 +116,7 @@ function backupD1(env, remote, name) {
     { stdio: "inherit", env: ownerEnv() },
   );
   if (r.status !== 0) throw new Error("wrangler d1 export failed");
-  if (remote) uploadToR2(env, `${name}/${env}/${file}`, out);
+  if (remote) uploadToR2(env, `${name}/${file}`, out); // bucket is per-env → key is `<name>/…`
   prune(dir, 10, `${dbName}-${env}-`);
   console.log(`  ✓ D1 backup: ${file}`);
 }
@@ -139,7 +139,7 @@ function backupSanity(env, remote, name) {
     env: { ...ownerEnv(), SANITY_AUTH_TOKEN: token },
   });
   if (r.status !== 0) throw new Error("sanity dataset export failed");
-  if (remote) uploadToR2(env, `${name}/${env}/${file}`, out);
+  if (remote) uploadToR2(env, `${name}/${file}`, out); // bucket is per-env → key is `<name>/…`
   prune(dir, 10, `${dataset}-`);
   console.log(`  ✓ Sanity backup: ${file}`);
 }

@@ -12,10 +12,16 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   migrations to staging/prod — a bad migration is recoverable. Fail-closed (a failed snapshot aborts
   the migration), `--no-backup` overrides, dev is skipped (local miniflare D1 is disposable). Reuses the
   per-`kind` backup recipe, so a future postgres/supabase db is covered for free. Backups are laid out
-  per registry `name` (`<name>/<env>/…`) locally and in R2, so more dbs stay one-folder-each; retention
-  is 30-day R2 lifecycle + newest-10 local. See [backups](../../docs/apps/web/setup/backups.md).
-  (Follow-up: provision the R2 buckets + lifecycle in Terraform — deferred pending a bucket-name
-  reconciliation, see the doc's drift warning.)
+  per registry `name` (`<name>/…`) locally and in R2, so more dbs stay one-folder-each; retention is
+  30-day R2 lifecycle + newest-10 local. See [backups](../../docs/apps/web/setup/backups.md).
+- **One project-wide, EU-resident R2 backups bucket, provisioned in Terraform.** `uploadToR2` now
+  targets `<prefix>-<env>-backups` (the project slug, not a per-app worker name — so no
+  `-<platform>-<surface>-` in it; follows `pnpm project:rename`), one bucket per env keyed `<name>/…`.
+  `cloudflare_r2_bucket.backups` (website `infra/cloudflare`, `jurisdiction = "eu"`) provisions it;
+  retention is a `wrangler r2 bucket lifecycle` step (`backup_retention_days`, default 30 — the
+  provider's lifecycle resource is version-sensitive, so it stays a documented command for now).
+  Also allowlisted the `csp-report` + `consent-log` report/telemetry sinks in `api-guards.mjs` (they
+  authenticate via their handlers, not `withGuard`), so the `verify` guard-adoption check passes.
 
 ### Changed
 

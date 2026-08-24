@@ -69,6 +69,7 @@ variable "enable_leaked_credentials" { type = bool, default = true } # managed-c
 variable "block_bad_bots" { type = bool, default = false }
 variable "enable_cache_rules" { type = bool, default = true }
 variable "enable_tiered_cache" { type = bool, default = true }
+variable "backup_retention_days" { type = number, default = 30 } # R2 backup lifecycle expiry (GDPR-bounded)
 
 # ── Auto domain: attach the hostname to the Worker (CF makes DNS + cert) ──────
 resource "cloudflare_workers_custom_domain" "app" {
@@ -243,6 +244,23 @@ resource "cloudflare_turnstile_widget" "forms" {
   domains    = var.turnstile_domains
   mode       = "managed"
 }
+
+# ── Project-wide backups bucket (all dbs' dumps, keyed <name>/…) ──────────────
+# ONE R2 bucket per env for every db's backup — matches `uploadToR2` in
+# scripts/lib/backup-common.mjs (`<prefix>-<env>-backups`). The prefix is the project
+# slug (first `-`-segment of the worker name), so it follows `pnpm project:rename`. EU
+# jurisdiction keeps the PII dumps EU-resident, like the audit D1 (weur). `db:migrate`
+# writes a pre-migration snapshot here; the nightly workflow writes daily dumps.
+resource "cloudflare_r2_bucket" "backups" {
+  account_id   = var.account_id
+  name         = "${split("-", var.worker_name)[0]}-${var.env}-backups"
+  jurisdiction = "eu"
+}
+# Retention (GDPR-bounded — backups hold PII): a `${var.backup_retention_days}`-day expiry.
+# Applied via wrangler for now (the CF-provider lifecycle resource's schema is version-
+# sensitive; pin-verify before adopting it here):
+#   wrangler r2 bucket lifecycle add ${cloudflare_r2_bucket.backups.name} --name expire --expire-days ${var.backup_retention_days}
+# TODO(iac): move to `cloudflare_r2_bucket_lifecycle` once the schema is confirmed for the pinned provider.
 
 # ── Optional: a first-party asset CDN on your own domain (Sanity content keeps
 #    its own CDN — this is for /_next/static + /public served via `assetPrefix`).

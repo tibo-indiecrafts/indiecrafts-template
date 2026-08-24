@@ -3,7 +3,7 @@
 import { readdirSync, mkdirSync, unlinkSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { getWranglerSlug } from "./project.mjs";
+import { readSitePrefix } from "./project.mjs";
 
 /** Filesystem-safe UTC timestamp: `YYYY-MM-DDTHH-MM-SS`. Sorts chronologically. */
 export function stamp() {
@@ -20,9 +20,10 @@ export function ensureDir(dir) {
  * API — no binding needed). Exits non-zero with a create-the-bucket hint on failure.
  */
 export function uploadToR2(env, key, file) {
-  // Follows the project slug (from wrangler.toml), so backups land in this
-  // client's own bucket after `pnpm project:rename`.
-  const bucket = `${getWranglerSlug()}-backups-${env}`;
+  // ONE project-wide bucket per env, named from the project PREFIX (not a per-app
+  // worker name — so no `-<platform>-<surface>-` in it), keyed `<name>/…` per db.
+  // Follows `pnpm project:rename` (the prefix is the renamed slug).
+  const bucket = `${readSitePrefix()}-${env}-backups`;
   console.log(`Uploading → r2://${bucket}/${key}`);
   const r = spawnSync(
     "wrangler",

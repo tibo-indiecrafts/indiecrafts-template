@@ -22,6 +22,12 @@ const IS_FIXTURE = !!process.env.API_GUARDS_ROOT;
 // Deliberate non-`withGuard` mutating routes → the auth they use instead. Keyed by the
 // path from `app/` onward, so it is independent of the absolute scan root.
 const ALLOWLIST = {
+  "api/csp-report/route.ts":
+    "browser CSP-violation report sink (Reporting API), website + admin — no auth by design; handleCspReport is the trust boundary (CSP content-type allowlist + body cap + per-IP rateLimit + sanitize, always 204). withGuard's origin/Turnstile don't apply to Reporting-API beacons.",
+  "src/app/api/csp-report/route.ts":
+    "same CSP-report sink on the `app` surface (its folder name shifts the route key); handleCspReport is the trust boundary — see the website entry.",
+  "api/consent-log/route.ts":
+    "same-origin consent logger — resolves the subject server-side via Clerk auth() (the trust boundary), validates the body, gates anonymous logging behind a feature flag, and forwards server-side with APP_API_TOKEN (no secret reaches the browser).",
   "api/comments/moderate/route.ts":
     "single-use moderationToken + cross-site form POST from the email client (rate-limited via rateLimit()).",
   "api/emails/test/route.ts":
