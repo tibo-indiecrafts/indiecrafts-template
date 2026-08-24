@@ -104,6 +104,8 @@ export default defineConfig({
           { text: "Breach response (GDPR)", link: "/apps/web/config/breach-response" },
           { text: "Records of processing (ROPA)", link: "/apps/web/config/ropa" },
           { text: "Sub-processors & transfers", link: "/apps/web/config/sub-processors" },
+          { text: "DPIA template", link: "/apps/web/config/dpia-template" },
+          { text: "Privacy by regime & scope", link: "/apps/web/config/privacy-by-regime" },
           { text: "Navigation", link: "/apps/web/config/navigation" },
           { text: "Legal pages", link: "/apps/web/config/legal-pages" },
           { text: "i18n & routing", link: "/apps/web/config/i18n-and-routing" },

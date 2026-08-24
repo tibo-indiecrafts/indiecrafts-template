@@ -11,6 +11,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **DPIA template + per-regime notices + scope-boundary pages + sidebar.** New
+  `apps/web/config/dpia-template.md` — DPIA trigger criteria (large-scale processing,
+  special-category data, systematic monitoring, new high-risk tech) and a fill-in
+  template (description, necessity, risks, mitigations, residual risk, sign-off). New
+  `apps/web/config/privacy-by-regime.md` — per-regime notice guidance for what the
+  operator adds to the Sanity-authored policy (GDPR/UK GDPR, CCPA/CPRA, LGPD, PIPEDA,
+  POPIA, Australia Privacy Act; PIPL/China explicitly out of scope), the minors/age-gate
+  scope decision (the `features.compliance` extension point, no flag shipped), and the
+  special-category-data boundary (name/email/locale/country only). Also fixed a stale
+  cross-reference in `breach-response.md` ("planned, not yet written" → live links to
+  ROPA and sub-processors). Both new pages linked under "Web app · Configuration &
+  architecture", after "Sub-processors & transfers".
 - **ROPA + sub-processors pages + sidebar.** New `apps/web/config/ropa.md` — the Art. 30
   record of processing activities, one table over every activity (auth, admin audit, security
   events, consent, DSAR, erasure/export, newsletter, comments, waitlist, contact, Sanity

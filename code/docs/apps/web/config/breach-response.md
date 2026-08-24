@@ -10,7 +10,8 @@ awareness. GDPR Art. 34 requires notice to affected data subjects when the breac
 creates a high risk to them. US state laws, for example California, impose their
 own breach-notice duties — check those separately for US-based subjects.
 
-See also: the ROPA and cross-border-transfer docs (planned, not yet written).
+See also: [Records of processing (ROPA)](./ropa) and
+[Sub-processors & transfers](./sub-processors).
 
 ## 2. What the system does automatically
 
