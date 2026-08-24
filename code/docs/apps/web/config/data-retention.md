@@ -81,6 +81,21 @@ deleted from R2 on first download. The cron's scheduled handler sweeps the rest:
 `export_requests` row whose TTL passed unread has its R2 object (`EXPORT_BUCKET`) and its
 row deleted. Idempotent; no-ops until both `DB` and `EXPORT_BUCKET` are bound.
 
+## Global admin BCC (transactional email)
+
+Setting `EMAIL_ADMIN_BCC` (an env var, read by both send layers) copies **every**
+transactional email to one admin/DPO address:
+
+- **Website** (`@indiecrafts/packages-web-email`'s `sendEmail`) — merges it into the
+  outgoing `bcc` for every email sent through the brick: newsletter, contact, waitlist,
+  lead magnet, comment notifications, and the data-request owner alert. Deduped against
+  any per-group bcc the caller passed — a Studio-configured group bcc still composes,
+  it never gets overwritten.
+- **`api` worker** (`code/shared/api/src/erasure/email.ts`) — its own `EMAIL_ADMIN_BCC`
+  adds a `bcc` to the two erasure emails (token confirmation + completion).
+
+Unset on either layer → no admin bcc there, no behavior change.
+
 ## Cookie audit (operator)
 
 Before go-live, enumerate every real cookie/tracker the site sets into Sanity

@@ -71,6 +71,32 @@ describe("sendErasureTokenEmail", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("includes bcc in the Resend POST body when EMAIL_ADMIN_BCC is set", async () => {
+    const fetchMock = okFetch();
+    await sendErasureTokenEmail(
+      { ...CONFIGURED, EMAIL_ADMIN_BCC: "admin@x.com" },
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody & {
+      bcc?: string[];
+    };
+    expect(body.bcc).toEqual(["admin@x.com"]);
+  });
+
+  it("omits bcc when EMAIL_ADMIN_BCC is unset", async () => {
+    const fetchMock = okFetch();
+    await sendErasureTokenEmail(CONFIGURED, {
+      to: "user@x.com",
+      confirmUrl: "https://x.com/confirm",
+    });
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody & {
+      bcc?: string[];
+    };
+    expect(body.bcc).toBeUndefined();
+  });
+
   it("throws when Resend responds non-ok", async () => {
     vi.stubGlobal(
       "fetch",

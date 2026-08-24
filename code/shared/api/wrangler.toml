@@ -37,6 +37,7 @@ SANITY_API_VERSION = "2025-01-01"
 # SANITY_PROJECT_ID = "your_project_id"
 # SANITY_DATASET = "production"
 # WEBSITE_URL = "https://your-site.example"
+# EMAIL_ADMIN_BCC = "admin@your-site.example"  # BCC'd on every outbound email (erasure emails); an address, [vars]-safe
 # Other secrets are NEVER here → `wrangler secret put <NAME> --env <env>` (or
 # `pnpm secrets:sync:*`). They surface on `env.<NAME>`.
 

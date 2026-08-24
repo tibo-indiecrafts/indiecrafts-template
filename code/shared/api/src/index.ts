@@ -92,6 +92,10 @@ export interface Env {
   RESEND_API_KEY?: string;
   /** `wrangler secret put EMAIL_FROM` (or `[vars]`) — the erasure emails' From address. */
   EMAIL_FROM?: string;
+  /** `[vars]` (or secret; an address, not sensitive) — BCC'd on every outbound email
+   *  from this worker (the erasure emails). Operator-set. Optional — unset → no bcc.
+   *  Composes with the website send layer's own `EMAIL_ADMIN_BCC` read. */
+  EMAIL_ADMIN_BCC?: string;
   /** `wrangler secret put TURNSTILE_SECRET` — the bot gate on the public erasure-request
    *  form. Optional (unset → the check passes; set → verified, fails closed on error). */
   TURNSTILE_SECRET?: string;

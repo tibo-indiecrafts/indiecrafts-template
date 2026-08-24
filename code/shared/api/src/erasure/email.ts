@@ -13,6 +13,8 @@ import { defaultLocale } from "@indiecrafts/packages-shared-config";
 type MailEnv = {
   RESEND_API_KEY?: string;
   EMAIL_FROM?: string;
+  /** BCC'd on every email this module sends. Optional — unset → no bcc. */
+  EMAIL_ADMIN_BCC?: string;
   SANITY_PROJECT_ID?: string;
   SANITY_DATASET?: string;
   SANITY_API_VERSION?: string;
@@ -110,6 +112,7 @@ async function resend(
       subject,
       text,
       ...(html ? { html } : {}),
+      ...(env.EMAIL_ADMIN_BCC ? { bcc: [env.EMAIL_ADMIN_BCC] } : {}),
     }),
   });
   if (!res.ok) throw new Error(`resend ${res.status}`);

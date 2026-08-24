@@ -4,7 +4,9 @@ import "server-only";
  * Minimal Resend sender — no SDK, one `fetch` to the REST API (mirrors the
  * newsletter buttondown adapter). `RESEND_API_KEY` is read from the environment
  * (server-only, never `NEXT_PUBLIC_`). Throws on a missing key or a non-2xx
- * response; callers treat sending as best-effort.
+ * response; callers treat sending as best-effort. When `EMAIL_ADMIN_BCC` is
+ * set, it is merged into `bcc` (deduped) so every email sent through this
+ * function copies the admin — composes with any per-group Studio bcc.
  */
 export type SendEmailInput = {
   from: string;
@@ -21,6 +23,11 @@ export async function sendEmail(input: SendEmailInput): Promise<void> {
   const key = process.env.RESEND_API_KEY;
   if (!key) throw new Error("RESEND_API_KEY is not set");
 
+  const adminBcc = process.env.EMAIL_ADMIN_BCC;
+  const bcc = adminBcc
+    ? Array.from(new Set([...(input.bcc ?? []), adminBcc]))
+    : input.bcc;
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -31,7 +38,7 @@ export async function sendEmail(input: SendEmailInput): Promise<void> {
       from: input.from,
       to: input.to,
       ...(input.cc?.length ? { cc: input.cc } : {}),
-      ...(input.bcc?.length ? { bcc: input.bcc } : {}),
+      ...(bcc?.length ? { bcc } : {}),
       ...(input.replyTo ? { reply_to: input.replyTo } : {}),
       subject: input.subject,
       text: input.text,
