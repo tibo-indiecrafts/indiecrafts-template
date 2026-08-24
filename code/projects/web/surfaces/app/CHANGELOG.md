@@ -57,3 +57,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   no gate. **Why:** the app surface joins the shared, opt-in auth.
 - **Session logging.** `SessionLogger` + a `/api/session-log` route forward each sign-in to the audit api
   (EU D1), surface `"app"`. Needs `API_URL` + `APP_API_TOKEN` (server-only, see `.env.example`).
+
+### Changed
+
+- **CSP now ENFORCED by default (`CSP_MODE` default flipped from `report-only` to `enforce`); set
+  `CSP_MODE=report-only` to roll back.** `src/proxy.ts`'s `CSP_MODE` fallback flips: env unset now
+  resolves to `enforce` instead of `report-only`. **Why:** the strict nonce CSP shipped observe-only
+  since SP3; the strict policy now graduates to actually blocking inline-script injection instead of
+  just reporting it.

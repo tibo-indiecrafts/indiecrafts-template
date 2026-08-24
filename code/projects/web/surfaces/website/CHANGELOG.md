@@ -125,6 +125,12 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **CSP now ENFORCED by default (`CSP_MODE` default flipped from `report-only` to `enforce`); set
+  `CSP_MODE=report-only` to roll back.** `src/proxy.ts`'s `CSP_MODE` fallback flips: env unset now
+  resolves to `enforce` instead of `report-only`. **Why:** the strict nonce CSP shipped observe-only
+  since SP3; the strict policy now graduates to actually blocking inline-script injection instead of
+  just reporting it. `e2e/journeys/csp-nonce.spec.ts` rewritten to assert the enforced strict CSP
+  (was: Report-Only).
 - **Icons + fonts now come from shared bricks.** Icon usage moved onto
   `@indiecrafts/packages-shared-ui-icons`: the footer/social + homepage showcase render `BrandIcon`
   (from shared SVG data), `NavIcon` uses the brick's `ReiconIcon`, and `FeatureGrid`'s Studio picker is

@@ -55,7 +55,7 @@ import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
 import { generateNonce, cspHeadersForMode, type CspMode } from "@indiecrafts/packages-shared-security";
 import { websiteCspHosts } from "./lib/csp-hosts";
 
-const CSP_MODE: CspMode = process.env.CSP_MODE === "enforce" ? "enforce" : "report-only";
+const CSP_MODE: CspMode = process.env.CSP_MODE === "report-only" ? "report-only" : "enforce";
 
 // per request, inside the middleware pipeline:
 const nonce = generateNonce();
@@ -150,10 +150,10 @@ handler is the trust boundary, and it always answers `204`.
 with `cspHeadersForMode(env, csp, reporting, nonce, CSP_MODE)` — the enforced/Report-Only pair for
 the mode set by the `CSP_MODE` env var:
 
-| `CSP_MODE`              | Enforced `Content-Security-Policy`                        | `Content-Security-Policy-Report-Only` |
-| ------------------------ | ---------------------------------------------------------- | --------------------------------------- |
-| `report-only` (default) | the permissive policy (unchanged — the site keeps working) | the strict nonce policy — violations are observed, nothing is blocked |
-| `enforce`                | the strict nonce policy                                    | none                                    |
+| `CSP_MODE`          | Enforced `Content-Security-Policy`                        | `Content-Security-Policy-Report-Only` |
+| -------------------- | ---------------------------------------------------------- | --------------------------------------- |
+| `enforce` (default) | the strict nonce policy                                    | none                                    |
+| `report-only`        | the permissive policy (unchanged — the site keeps working) | the strict nonce policy — violations are observed, nothing is blocked |
 
 The nonce reaches every inline script that needs it via the `x-nonce` request header, set on the
 request before it's handed to next-intl/the route so a server component can read it with
@@ -166,22 +166,20 @@ wiring needed for those.
 can't take a per-request nonce (it needs `'unsafe-inline'`, always) — `studioCspRule` in
 `next.config.ts` reproduces the pre-nonce policy exactly, scoped to that one route.
 
-**Rollout sequence.**
+**Default: `CSP_MODE` unset → `enforce`.** The strict nonce policy is the enforced
+`Content-Security-Policy` out of the box — no separate Report-Only rollout step needed for a new
+surface.
 
-1. Ship with `CSP_MODE` unset (defaults to `report-only`) — the site runs on the same permissive CSP
-   as before; the strict nonce policy ships alongside as Report-Only and its violations land at
-   `/api/csp-report`.
-2. Watch the reports. A real violation (a script that needs the nonce and doesn't have it, an
-   inline handler, a third-party tag) means code to fix, not a CSP change.
-3. Once reports are clean, set `CSP_MODE=enforce` in that surface's environment and redeploy.
-4. **Fast rollback:** unset `CSP_MODE` (or set it back to `report-only`) and redeploy — no code
-   change, the permissive policy is enforced again immediately.
+**Rollback.** Set `CSP_MODE=report-only` in that surface's environment and redeploy — no code
+change. The permissive policy becomes the enforced header again, and the strict nonce policy drops
+back to Report-Only so its violations (a script missing the nonce, an inline handler, a third-party
+tag) land at `/api/csp-report` for investigation before flipping back to `enforce`.
 
-Proven end-to-end by `e2e/journeys/csp-nonce.spec.ts` (website, the default `report-only` mode
-the server actually runs in CI/local): the enforced header carries no `'strict-dynamic'`, the
-Report-Only header does + a `nonce-…` token, that same nonce is on a `<script>` in the served HTML,
-no CSP violation fires on the home page, and `/studio` still carries the permissive,
-non-`'strict-dynamic'` policy.
+Proven end-to-end by `e2e/journeys/csp-nonce.spec.ts` (website, the default `enforce` mode the
+server actually runs in CI/local): the enforced header carries `'strict-dynamic'` and a `nonce-…`
+token, that same nonce is on a `<script>` in the served HTML, no CSP violation fires on the home
+page, no `Content-Security-Policy-Report-Only` header is present, and `/studio` still carries the
+permissive, non-`'strict-dynamic'` policy.
 
 ## Hardening — and why it's Sanity-Studio-safe
 

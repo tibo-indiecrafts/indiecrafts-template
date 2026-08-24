@@ -18,8 +18,10 @@ import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
 const intlMiddleware = createMiddleware(routing);
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
+// Enforce by default (the strict nonce CSP is the enforced policy); set
+// CSP_MODE=report-only to roll a surface back to observation-only.
 const CSP_MODE: CspMode =
-  process.env.CSP_MODE === "enforce" ? "enforce" : "report-only";
+  process.env.CSP_MODE === "report-only" ? "report-only" : "enforce";
 const REPORTING = { endpoint: "/api/csp-report" };
 
 /** Clone the request with `x-nonce` set, so the RSC layout can read it via `headers()`. */

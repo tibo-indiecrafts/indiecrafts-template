@@ -91,3 +91,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   Sanity marked external). Env: `WEBSITE_URL` · `APP_URL` · `API_URL` · `AGENT_URL`. Both admin-gated,
   read-only, linked from the dashboard. **Why:** operator visibility over accounts, deploys, workers, and
   DBs — reusing the Clerk secret + the public health/version endpoints (no new infra).
+
+### Changed
+
+- **CSP now ENFORCED by default (`CSP_MODE` default flipped from `report-only` to `enforce`); set
+  `CSP_MODE=report-only` to roll back.** `src/proxy.ts`'s `CSP_MODE` fallback flips: env unset now
+  resolves to `enforce` instead of `report-only`. **Why:** the strict nonce CSP shipped observe-only
+  since SP3 — the CSP violations dashboard (`(dashboard)/csp`) gives operators the enforce-readiness
+  signal, so the strict policy graduates to actually blocking inline-script injection instead of just
+  reporting it.
