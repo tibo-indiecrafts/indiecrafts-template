@@ -176,6 +176,28 @@ Four routes on the `api` worker (`code/shared/api/src/erasure/`) drive the engin
   bundle, and **deletes it from R2** on that first download — a second attempt with
   the same token, or an expired one, is refused.
 
+## Erasure completeness & backups
+
+Erasure runs on the live EU D1 and R2 objects — never on a backup.
+
+Cloudflare D1 **Time Travel** keeps a rolling point-in-time history, up to 30 days.
+You cannot edit or delete one record inside that history.
+
+The compliant posture (ICO/EDPB guidance) is to treat backup PII as **beyond use**:
+never mine it, never restore a backup to delete one record, and let it age out on
+its own cycle.
+
+**After a restore:** re-run the erasure engine (`runErasure`) for every erasure
+request completed since the snapshot's timestamp. This stops a restore from
+resurrecting data that was already erased.
+
+**R2 export bucket:** keep object-versioning off on `EXPORT_BUCKET`. If versioning
+is on, the same beyond-use posture applies to old object versions — never mine
+them, let them age out on their own cycle.
+
+See [Breach response](./breach-response) for the containment procedure this
+supports.
+
 ## Privacy-policy disclosure — operator checklist
 
 The privacy policy (Sanity → Studio, per client) **must** now disclose:

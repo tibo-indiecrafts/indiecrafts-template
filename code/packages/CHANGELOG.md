@@ -121,6 +121,13 @@ Changed · Deprecated · Removed · Fixed**.
   (`NEXT_PUBLIC_WEBSITE_URL`, else `site.url`) = the marketing-site origin the shells link to for legal pages.
   `pickSuggestedLocale(rankedPrefs, active, supported)` (`./shared`) = the shared "suggest a language switch?"
   decision, lifted from `locale-suggest` so the native shells reuse it over `getLocales()`/`navigator.languages`.
+- **`@indiecrafts/packages-shared-security-events` — `shouldAlert`/`formatSecurityAlert`.**
+  `shouldAlert(severity)` decides which incidents page the operator (`high`/`critical` —
+  `credential_stuffing` and `privilege_escalation` are both `high`, so a `critical`-only gate would
+  rarely fire). `formatSecurityAlert(alert)` builds the internal alert email's subject + text: pure,
+  null-safe, non-PII (no raw IP, no email address). **Why:** the `api` worker's high/critical
+  `security_events` write sites now email the owner/DPO — see
+  `code/docs/apps/web/config/breach-response.md`.
 
 ### Changed
 

@@ -101,6 +101,7 @@ export default defineConfig({
           { text: "Authentication (Clerk)", link: "/apps/web/config/auth" },
           { text: "Data retention + audit (GDPR)", link: "/apps/web/config/data-retention" },
           { text: "Security hardening (Cloudflare)", link: "/apps/web/config/security-hardening" },
+          { text: "Breach response (GDPR)", link: "/apps/web/config/breach-response" },
           { text: "Navigation", link: "/apps/web/config/navigation" },
           { text: "Legal pages", link: "/apps/web/config/legal-pages" },
           { text: "i18n & routing", link: "/apps/web/config/i18n-and-routing" },
