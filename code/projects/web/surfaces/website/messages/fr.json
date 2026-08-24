@@ -145,6 +145,9 @@
     "preferencesBody": "Choisissez les cookies que vous autorisez. Les cookies nécessaires sont toujours actifs.",
     "manage": "Gérer les préférences de cookies",
     "declarationTitle": "Cookies que nous utilisons",
+    "doNotSell": {
+      "link": "Ne pas vendre ni partager mes informations personnelles"
+    },
     "party": {
       "first": "Première partie",
       "third": "Tierce partie"

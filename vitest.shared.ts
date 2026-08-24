@@ -6,6 +6,13 @@ import type { ViteUserConfig } from "vitest/config";
 // `turbo run test` fans out and caches per package — like `lint` / `tsc`.
 // (The Storybook package runs stories in browser mode with its own config.)
 const shared: ViteUserConfig = {
+  // Packages under `code/packages/**` ship no tsconfig.json (consumed as source via
+  // `transpilePackages`), so esbuild has nothing to read a `jsx` compilerOption from and
+  // falls back to the classic transform (needs `React` in scope). Every .tsx source file
+  // in this repo assumes the automatic runtime (matching Next's SWC config, which is where
+  // they actually run) — match that here so component tests don't need a `React` import
+  // no production file has.
+  esbuild: { jsx: "automatic" },
   test: {
     globals: true,
     // A package can carry a `test` script before it has tests (turbo fan-out) —

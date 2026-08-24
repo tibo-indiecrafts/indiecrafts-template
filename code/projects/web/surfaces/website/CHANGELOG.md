@@ -51,6 +51,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   nothing. Per-country/regulation config in `src/config/consent.ts` (`ConsentConfig` — named
   regulations + overrides, cascading to territories). **Why:** don't show an opt-in banner where it
   isn't required, while staying compliant everywhere. Design → `code/docs/apps/web/config/cookie-consent-geo.md`.
+- **CCPA "Do Not Sell or Share My Personal Information" footer link.** `Footer` now renders a
+  `DoNotSellLink` (`@indiecrafts/packages-web-compliance`) that opens the existing cookie-preferences
+  dialog via `openPreferences()` — no new consent UI. `DefaultLayout` resolves `consentMode` from
+  `cf-ipcountry` server-side (same as `[locale]/layout.tsx`) and gates the link to `opt-out`
+  (US/CCPA) visitors, so it never flashes for EU/other visitors. Copy in `messages.cookies.doNotSell.link`
+  (en + fr). **Why:** opt-out regions had no visible privacy-choices affordance outside the
+  cookie-policy page — CCPA/CPRA expects a footer-prominent link.
 - **Announcement toast + per-surface targeting.** `DefaultLayout` now also mounts the new
   `AnnouncementToast` (a self-contained corner card — title/body/optional image/link, editor-set
   dismiss) beside the existing bar, and passes `surface="website"` so an editor can target which

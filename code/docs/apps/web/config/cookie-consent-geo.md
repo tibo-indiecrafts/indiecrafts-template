@@ -13,16 +13,16 @@ The built-in catalog (`REGULATIONS` in
 [`packages/shared/compliance/src/shared/regions.ts`](../../../packages/compliance-shared.md)); a
 client adds/overrides entries via config.
 
-| Key | Name | Mode | Behaviour |
-| --- | --- | --- | --- |
-| `gdpr` | GDPR | `opt-in` | Blocking banner; non-essential denied until consent; honours GPC. |
-| `ukgdpr` | UK GDPR | `opt-in` | Same as GDPR (UK/ePrivacy). |
-| `ccpa` | CCPA/CPRA | `opt-out` | **No** blocking banner; default accept, but a "manage preferences" affordance + **GPC honoured**. |
-| `lgpd` | LGPD | `opt-in` | Brazil. Consent-based, like GDPR — blocking banner until consent. |
-| `pipeda` | PIPEDA | `opt-in` | Canada. Consent-based — blocking banner until consent. |
-| `popia` | POPIA | `opt-in` | South Africa. Consent-based — blocking banner until consent. |
+| Key          | Name                  | Mode      | Behaviour                                                                                                                                                          |
+| ------------ | --------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `gdpr`       | GDPR                  | `opt-in`  | Blocking banner; non-essential denied until consent; honours GPC.                                                                                                  |
+| `ukgdpr`     | UK GDPR               | `opt-in`  | Same as GDPR (UK/ePrivacy).                                                                                                                                        |
+| `ccpa`       | CCPA/CPRA             | `opt-out` | **No** blocking banner; default accept, but a "manage preferences" affordance + **GPC honoured**.                                                                  |
+| `lgpd`       | LGPD                  | `opt-in`  | Brazil. Consent-based, like GDPR — blocking banner until consent.                                                                                                  |
+| `pipeda`     | PIPEDA                | `opt-in`  | Canada. Consent-based — blocking banner until consent.                                                                                                             |
+| `popia`      | POPIA                 | `opt-in`  | South Africa. Consent-based — blocking banner until consent.                                                                                                       |
 | `privacyact` | Australia Privacy Act | `opt-out` | Australia. The APPs are notice-based with no cookie-consent-banner requirement — no blocking banner, but a "privacy choices" affordance + GPC honoured, like CCPA. |
-| `none` | None | `none` | No banner; default accept; still honours GPC. |
+| `none`       | None                  | `none`    | No banner; default accept; still honours GPC.                                                                                                                      |
 
 LGPD, PIPEDA, POPIA, and Australia's Privacy Act ship **built in** alongside GDPR/UK GDPR/CCPA —
 no config needed to enable them. They are safe defaults; a deployment can still override the mode
@@ -35,15 +35,15 @@ or reassign the country via `ConsentConfig`.
 - **`gdpr`** — EU-27 · EEA (`IS LI NO`) · the EU **outermost regions** with their own codes
   (`GF GP MQ YT RE MF`) + Åland (`AX`).
 - **`ukgdpr`** — `GB` + Gibraltar (`GI`) + the Crown Dependencies (`JE GG IM`).
-- **`ccpa`** — `US` + its territories (`PR GU VI AS MP UM`). *(Country-level only: `cf-ipcountry`
+- **`ccpa`** — `US` + its territories (`PR GU VI AS MP UM`). _(Country-level only: `cf-ipcountry`
   can't see US states, so the whole US is CCPA — a safe superset of California. State refinement
-  via `request.cf.region` is a follow-up.)*
+  via `request.cf.region` is a follow-up.)_
 - **`lgpd`** — `BR` (Brazil).
 - **`pipeda`** — `CA` (Canada).
 - **`popia`** — `ZA` (South Africa).
 - **`privacyact`** — `AU` (Australia) + its inhabited external territories (`NF CX CC`).
 - **`none`** — everything else, including the EU **OCTs** (Greenland `GL`, French Polynesia `PF`,
-  New Caledonia `NC`, Saint-Barthélemy `BL`, the Dutch Caribbean, …) which are *associated with*,
+  New Caledonia `NC`, Saint-Barthélemy `BL`, the Dutch Caribbean, …) which are _associated with_,
   not part of, the EU, plus states with their own regimes (`CH` …).
 - **Unknown geo** (missing, or Cloudflare's `XX`/`T1`/`T2` sentinels) → fails safe to **`gdpr`** (opt-in).
 
@@ -77,6 +77,23 @@ export const consent = {
 
 `features.requireConsent` (app/mobile/hybrid) / `siteSettings.analytics.requireCookieConsent`
 (website) stays the **master off-switch** — off ⇒ no consent UI anywhere, geo ignored.
+
+## "Do Not Sell or Share" (CCPA/CPRA) footer link — website
+
+In `opt-out` mode there is no blocking banner, so a US/CCPA visitor's only visible
+control is the footer link. The website renders a **"Do Not Sell or Share My
+Personal Information"** link in its footer, shown ONLY when the resolved consent
+mode is `opt-out` — resolved server-side (`resolveConsentMode(cf-ipcountry, consent)`
+in `DefaultLayout.tsx`, the same way `[locale]/layout.tsx` gates the banner) and
+passed down as a plain boolean prop, so there's no client-side flash for EU/other
+visitors.
+
+- `DoNotSellLink` (`code/packages/web/compliance/src/consent/DoNotSellLink.tsx`) —
+  a client component that calls the **same** `openPreferences()` used by
+  `ManagePreferencesButton`, opening the existing cookie-preferences dialog (no new
+  consent UI). It renders `null` unless its `show` prop is `true`.
+- Mounted from `Footer.tsx`, which receives `showDoNotSell` from `DefaultLayout.tsx`.
+- Copy: `cookies.doNotSell.link` in `messages/<locale>.json`.
 
 ## The country signal per surface
 

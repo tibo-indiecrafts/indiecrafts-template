@@ -145,6 +145,9 @@
     "preferencesBody": "Choose which cookies you allow. Necessary cookies are always on.",
     "manage": "Manage cookie preferences",
     "declarationTitle": "Cookies we use",
+    "doNotSell": {
+      "link": "Do Not Sell or Share My Personal Information"
+    },
     "party": {
       "first": "First-party",
       "third": "Third-party"
