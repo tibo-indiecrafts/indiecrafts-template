@@ -26,3 +26,31 @@ export async function submitErasureRequest(input: {
     return "error";
   }
 }
+
+export type ErasureConfirmResult = "done" | "partial" | "mismatch" | "expired" | "error";
+
+/**
+ * Pure, testable: the one anonymous POST to the public erasure worker route
+ * (`POST /v1/erasure/confirm`). JSON (not FormData) — the worker's confirm
+ * route reads `request.json()`.
+ */
+export async function submitErasureConfirm(input: {
+  apiUrl: string;
+  token: string;
+  email: string;
+}): Promise<ErasureConfirmResult> {
+  try {
+    const res = await fetch(`${input.apiUrl}/v1/erasure/confirm`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ token: input.token, email: input.email }),
+    });
+    if (res.status === 200) return "done";
+    if (res.status === 207) return "partial";
+    if (res.status === 429) return "expired"; // too many attempts → tell them to restart
+    if (res.status === 400) return "mismatch"; // bad/expired/used token OR email mismatch
+    return "error";
+  } catch {
+    return "error";
+  }
+}

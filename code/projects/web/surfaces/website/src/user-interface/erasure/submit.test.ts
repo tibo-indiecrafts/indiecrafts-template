@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { submitErasureRequest } from "./submit";
+import { submitErasureConfirm, submitErasureRequest } from "./submit";
 
 const API_URL = "https://api.example.com";
 
@@ -86,6 +86,96 @@ describe("submitErasureRequest", () => {
       apiUrl: API_URL,
       email: "person@example.com",
       turnstileToken: null,
+    });
+
+    expect(result).toBe("error");
+  });
+});
+
+describe("submitErasureConfirm", () => {
+  it("posts a JSON body {token,email} to /v1/erasure/confirm and returns \"done\" on 200", async () => {
+    const fetchMock = stubFetch(200);
+
+    const result = await submitErasureConfirm({
+      apiUrl: API_URL,
+      token: "the-token",
+      email: "person@example.com",
+    });
+
+    expect(result).toBe("done");
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe(`${API_URL}/v1/erasure/confirm`);
+    expect(init?.method).toBe("POST");
+    expect((init?.headers as Record<string, string>)?.["content-type"]).toBe(
+      "application/json",
+    );
+    expect(JSON.parse(init?.body as string)).toEqual({
+      token: "the-token",
+      email: "person@example.com",
+    });
+  });
+
+  it("returns \"partial\" on a 207", async () => {
+    stubFetch(207);
+
+    const result = await submitErasureConfirm({
+      apiUrl: API_URL,
+      token: "the-token",
+      email: "person@example.com",
+    });
+
+    expect(result).toBe("partial");
+  });
+
+  it("returns \"mismatch\" on a 400", async () => {
+    stubFetch(400);
+
+    const result = await submitErasureConfirm({
+      apiUrl: API_URL,
+      token: "the-token",
+      email: "person@example.com",
+    });
+
+    expect(result).toBe("mismatch");
+  });
+
+  it("returns \"expired\" on a 429", async () => {
+    stubFetch(429);
+
+    const result = await submitErasureConfirm({
+      apiUrl: API_URL,
+      token: "the-token",
+      email: "person@example.com",
+    });
+
+    expect(result).toBe("expired");
+  });
+
+  it("returns \"error\" on a 500", async () => {
+    stubFetch(500);
+
+    const result = await submitErasureConfirm({
+      apiUrl: API_URL,
+      token: "the-token",
+      email: "person@example.com",
+    });
+
+    expect(result).toBe("error");
+  });
+
+  it("returns \"error\" when fetch throws (network failure)", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("network down");
+      }),
+    );
+
+    const result = await submitErasureConfirm({
+      apiUrl: API_URL,
+      token: "the-token",
+      email: "person@example.com",
     });
 
     expect(result).toBe("error");

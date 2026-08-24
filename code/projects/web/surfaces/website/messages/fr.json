@@ -62,7 +62,8 @@
       "consent": "J'accepte que cette adresse e-mail serve uniquement à traiter ma demande.",
       "submit": "Envoyer la demande",
       "success": "Merci — nous avons reçu votre demande et répondrons sous un mois.",
-      "error": "Une erreur s'est produite. Merci de réessayer."
+      "error": "Une erreur s'est produite. Merci de réessayer.",
+      "erasureNote": "Pour supprimer vos données plus rapidement, utilisez la page d'effacement."
     },
     "erasure": {
       "request": {
@@ -74,6 +75,19 @@
         "pending": "Envoi…",
         "sent": "Si cette adresse figure dans nos dossiers, nous vous avons envoyé un lien de confirmation.",
         "turnstile": "La vérification de sécurité a échoué. Merci de réessayer.",
+        "error": "Une erreur s'est produite. Merci de réessayer."
+      },
+      "confirm": {
+        "heading": "Confirmer l'effacement des données",
+        "body": "Saisissez votre e-mail pour confirmer. Cette action supprime définitivement vos données et est irréversible.",
+        "emailLabel": "Votre e-mail",
+        "emailPlaceholder": "vous@exemple.com",
+        "submitButton": "Confirmer l'effacement",
+        "pending": "Confirmation…",
+        "success": "Vos données ont été effacées.",
+        "partial": "Vos données ont été effacées, mais certains enregistrements nécessitent un suivi manuel. Notre équipe a été notifiée.",
+        "mismatch": "Ce lien est invalide, expiré ou déjà utilisé, ou l'e-mail ne correspond pas.",
+        "expired": "Trop de tentatives. Merci de demander un nouveau lien d'effacement.",
         "error": "Une erreur s'est produite. Merci de réessayer."
       }
     }

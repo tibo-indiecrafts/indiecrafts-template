@@ -19,6 +19,15 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Anonymous branded erasure flow (`/erasure` + `/erasure/confirm`).** A signed-out visitor
+  requests erasure by email at `/erasure` (Turnstile-gated, posts form-encoded to the shared api's
+  public `POST /v1/erasure/request`), then confirms via the emailed link at `/erasure/confirm`
+  (types their email, posts JSON to `POST /v1/erasure/confirm`). Both routes share the new
+  `features.legal.erasure` flag; `/erasure/confirm` reuses the same `pages.erasure` gate — no
+  separate `pages` entry. A short cross-link on `/data-request` (`legal.dataRequest.erasureNote`)
+  points visitors here for the erasure right specifically. Copy in `messages.legal.erasure.*` (en +
+  fr). **Why:** a faster, self-service erasure path that needs no account, alongside the existing
+  authenticated `/account` delete and the general GDPR data-request form.
 - **Self-service "Delete my account" (`/account`).** A new Clerk-authenticated page mounts the
   shared `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`) via the
   `AccountDeletePanel` client wrapper, which posts the authenticated `POST /v1/erasure/self` to

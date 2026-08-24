@@ -62,7 +62,8 @@
       "consent": "I agree that this email address is used only to handle my request.",
       "submit": "Send request",
       "success": "Thanks — we've received your request and will reply within one month.",
-      "error": "Something went wrong. Please try again."
+      "error": "Something went wrong. Please try again.",
+      "erasureNote": "To delete your data faster, use the erasure page."
     },
     "erasure": {
       "request": {
@@ -74,6 +75,19 @@
         "pending": "Sending…",
         "sent": "If that address is in our records, we've emailed a confirmation link.",
         "turnstile": "The security check failed. Please try again.",
+        "error": "Something went wrong. Please try again."
+      },
+      "confirm": {
+        "heading": "Confirm data erasure",
+        "body": "Type your email to confirm. This permanently erases your data and can't be undone.",
+        "emailLabel": "Your email",
+        "emailPlaceholder": "you@example.com",
+        "submitButton": "Confirm erasure",
+        "pending": "Confirming…",
+        "success": "Your data has been erased.",
+        "partial": "Your data was erased, but some records need manual follow-up. Our team has been notified.",
+        "mismatch": "That link is invalid, expired, or already used, or the email doesn't match.",
+        "expired": "Too many attempts. Please request a new erasure link.",
         "error": "Something went wrong. Please try again."
       }
     }
