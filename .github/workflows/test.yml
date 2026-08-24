@@ -1,9 +1,10 @@
 # CI — the PR gate. `verify` (types/lint/format/contrast/tests + tooling gates),
-# `build` (the real OpenNext Worker build), `infra` (terraform validate) and
-# `wrangler` (worker config dry-run) BLOCK; `browser` (Storybook a11y + e2e/visual)
-# is advisory until baselines are trusted; `docs` builds the VitePress site;
-# `dependency-review` + `secrets-scan` flag risky deps / leaked secrets on PRs.
-# React Doctor runs in react-doctor.yml.
+# `build` (the real OpenNext Worker build), `browser-stories` (every Storybook story
+# as a component + a11y test), `infra` (terraform validate) and `wrangler` (worker
+# config dry-run) BLOCK; `browser-e2e` (Playwright visual/e2e) is advisory until
+# linux baselines are trusted; `docs` builds the VitePress site; `dependency-review`
+# + `secrets-scan` flag risky deps / leaked secrets on PRs. React Doctor runs in
+# react-doctor.yml.
 
 name: CI
 
@@ -62,17 +63,31 @@ jobs:
       # BUDGET_KB in scripts/check-bundle-size.mjs is calibrated — then add `--enforce`.
       - run: pnpm --filter @indiecrafts/web-surfaces-website size
 
-  # Browser suites: Storybook stories-as-tests (component + a11y), Playwright e2e +
-  # visual regression. ADVISORY (`continue-on-error`) until linux baselines are
-  # committed — then drop `continue-on-error` to graduate the gate.
-  browser:
+  # Storybook stories-as-tests: every colocated story (web + native via
+  # react-native-web) runs as a component + a11y test in headless chromium, and the
+  # gallery must build. BLOCKING — these are deterministic (no image baselines).
+  browser-stories:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:stories # bricks gallery: every story as a component + a11y test
+      - run: pnpm --filter @indiecrafts/web-tools-storybook storybook:build
+      # Composition refs — each surface's own Storybook (its own `@/` alias). Runs
+      # its stories as component + a11y tests too. Add a line per surface as it lands.
+      - run: pnpm --filter @indiecrafts/web-tools-storybook test:stories:website
+
+  # Playwright visual-regression + app e2e journeys. ADVISORY (`continue-on-error`)
+  # until linux visual baselines are committed — then drop `continue-on-error` to
+  # graduate the gate.
+  browser-e2e:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm test:stories # every story as a component + a11y test
       # Visual regression against the built Storybook.
       - run: pnpm --filter @indiecrafts/web-tools-storybook storybook:build
       - run: pnpm --filter @indiecrafts/web-surfaces-website e2e:visual

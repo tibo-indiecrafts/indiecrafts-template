@@ -100,6 +100,7 @@ export default defineConfig({
           { text: "API security limits", link: "/apps/web/config/security-limits" },
           { text: "Authentication (Clerk)", link: "/apps/web/config/auth" },
           { text: "Data retention + audit (GDPR)", link: "/apps/web/config/data-retention" },
+          { text: "Cookie consent (geo modes)", link: "/apps/web/config/cookie-consent-geo" },
           { text: "Security hardening (Cloudflare)", link: "/apps/web/config/security-hardening" },
           { text: "Breach response (GDPR)", link: "/apps/web/config/breach-response" },
           { text: "Records of processing (ROPA)", link: "/apps/web/config/ropa" },

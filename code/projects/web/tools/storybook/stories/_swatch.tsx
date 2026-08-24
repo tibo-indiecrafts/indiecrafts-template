@@ -24,6 +24,48 @@ export function Swatch({ token, name }: { token: string; name?: string }) {
   );
 }
 
+/**
+ * A literal-hex chip — for the native token page, where React Native ships resolved
+ * hex (no live CSS var). Shows the token name + its hex for the chosen theme.
+ */
+export function HexSwatch({ hex, name }: { hex: string; name: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
+      <div
+        style={{
+          background: hex,
+          width: 44,
+          height: 44,
+          borderRadius: 10,
+          flexShrink: 0,
+          boxShadow: "inset 0 0 0 1px var(--border)",
+        }}
+      />
+      <div style={{ minWidth: 0 }}>
+        <code style={{ fontSize: 13 }}>{name}</code>
+        <div style={{ fontSize: 12, opacity: 0.7 }}>{hex}</div>
+      </div>
+    </div>
+  );
+}
+
+/** Render a named subset of a native theme's hex color map as a swatch grid. */
+export function NativePalette({
+  colors,
+  names,
+}: {
+  colors: Record<string, string>;
+  names: readonly string[];
+}) {
+  return (
+    <SwatchGrid>
+      {names.map((n) => (
+        <HexSwatch key={n} hex={colors[n]} name={n} />
+      ))}
+    </SwatchGrid>
+  );
+}
+
 export function SwatchGrid({ children }: { children: React.ReactNode }) {
   return (
     <div

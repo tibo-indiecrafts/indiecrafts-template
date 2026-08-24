@@ -1,0 +1,74 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { NativePalette } from "./_swatch";
+import { tokens } from "@indiecrafts/packages-shared-ui-tokens/native";
+
+<Meta title="Design Tokens/Native (hex)" />
+
+export const BASE = [
+  "background",
+  "foreground",
+  "muted",
+  "muted-foreground",
+  "brand",
+  "brand-foreground",
+  "destructive",
+  "destructive-foreground",
+  "border",
+  "ring",
+  "illustration",
+];
+
+export const ALIASES = [
+  "primary",
+  "primary-foreground",
+  "secondary",
+  "secondary-foreground",
+  "accent",
+  "accent-foreground",
+  "card",
+  "card-foreground",
+  "popover",
+  "popover-foreground",
+  "input",
+];
+
+export const CHART = ["color-1", "color-2", "color-3", "color-4", "color-5"];
+
+# Native tokens (hex)
+
+The **same** design tokens as web, resolved to hex for React Native. Web CSS variables
+(`--background`, …) and these hex values are **both generated** from the one source —
+`code/packages/shared/ui-tokens/src/shared/tokens.json` (DTCG, OKLCH) — by
+`pnpm tokens:build`. The mobile app reads them from
+`@indiecrafts/packages-shared-ui-tokens/native`; the `ui-native` brick + `system-pages/native`
+paint from these. RN has no live theme variable, so both light and dark are shown side by side.
+
+## Base roles
+
+### Light
+
+<NativePalette colors={tokens.light.color} names={BASE} />
+
+### Dark
+
+<NativePalette colors={tokens.dark.color} names={BASE} />
+
+## shadcn aliases
+
+### Light
+
+<NativePalette colors={tokens.light.color} names={ALIASES} />
+
+### Dark
+
+<NativePalette colors={tokens.dark.color} names={ALIASES} />
+
+## Chart palette
+
+### Light
+
+<NativePalette colors={tokens.light.color} names={CHART} />
+
+### Dark
+
+<NativePalette colors={tokens.dark.color} names={CHART} />

@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./theme": "./src/theme.tsx"
+    "./theme": "./src/theme.tsx",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@indiecrafts/packages-shared-ui-tokens": "workspace:*"
