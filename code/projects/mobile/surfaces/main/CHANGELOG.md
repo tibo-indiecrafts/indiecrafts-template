@@ -13,6 +13,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Data export — "Download my data" on the signed-in view.** `SignedInView` (`app/sign-in.tsx`) now
+  renders the shared native `ExportSection` (`@indiecrafts/packages-shared-compliance/native`) beside the
+  delete control, gated behind the new `config.features.exportAccount` flag and a non-empty
+  `EXPO_PUBLIC_API_URL`. It calls the api's `POST /v1/export` via Clerk's `getToken` and opens the
+  returned download link with `Linking`. Copy lives in `messages/{en,fr}.json` (`account.export.*`).
+  **Why:** completes the self-service GDPR data-export control on the mobile surface.
 - **Account deletion — "Delete my account" on the signed-in view.** `SignedInView` (`app/sign-in.tsx`)
   now renders the shared native `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/native`),
   gated behind the new `config.features.deleteAccount` flag and a non-empty `EXPO_PUBLIC_API_URL` (never

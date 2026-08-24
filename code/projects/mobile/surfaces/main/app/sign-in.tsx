@@ -22,6 +22,8 @@ import {
 import {
   DeleteAccountSection,
   type DeleteAccountCopy,
+  ExportSection,
+  type ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/native";
 import { hasClerk } from "@/lib/auth";
 import { logFailedLogin } from "@/lib/session-log";
@@ -90,6 +92,14 @@ function SignedInView() {
     error: t.formatMessage({ id: "account.delete.error" }),
     mismatch: t.formatMessage({ id: "account.delete.mismatch" }),
   };
+  const exportCopy: ExportCopy = {
+    heading: t.formatMessage({ id: "account.export.heading" }),
+    body: t.formatMessage({ id: "account.export.body" }),
+    button: t.formatMessage({ id: "account.export.button" }),
+    pending: t.formatMessage({ id: "account.export.pending" }),
+    success: t.formatMessage({ id: "account.export.success" }),
+    error: t.formatMessage({ id: "account.export.error" }),
+  };
   return (
     <>
       <ThemedText variant="muted">
@@ -104,6 +114,13 @@ function SignedInView() {
         label={t.formatMessage({ id: "auth.signOut" })}
         onPress={() => void signOut()}
       />
+      {features.exportAccount && apiUrl ? (
+        <ExportSection
+          copy={exportCopy}
+          apiUrl={apiUrl}
+          getToken={() => getToken()}
+        />
+      ) : null}
       {features.deleteAccount && apiUrl ? (
         // @debt SECURITY - No beforeConfirm here. @clerk/clerk-expo doesn't export
         // useReverification (unlike clerk-react/nextjs), and even where it exists it only
