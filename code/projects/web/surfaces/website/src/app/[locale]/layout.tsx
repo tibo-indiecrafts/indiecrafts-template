@@ -18,6 +18,7 @@ import {
 } from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
 import { CookieBanner } from "@indiecrafts/packages-web-compliance/consent/CookieBanner";
+import { CookiePreferencesHost } from "@indiecrafts/packages-web-compliance/consent/CookiePreferencesHost";
 import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
 import { routing } from "@/i18n/routing";
 import { SessionLogger } from "@indiecrafts/packages-web-auth";
@@ -219,6 +220,16 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                   body={cookieConsent.banner.body}
                   mode={consentMode}
                   gpcSignal={gpcSignal}
+                />
+              ) : consentMode === "opt-out" ? (
+                // `requireCookieConsent` is off, so `CookieBanner` (which also mounts
+                // the preferences dialog) isn't rendered. A CCPA/opt-out visitor still
+                // needs a *working* preferences dialog behind the footer "Do Not Sell"
+                // link (`DefaultLayout.tsx`'s `showDoNotSell`) — mount just the dialog
+                // + its `openPreferences()` listener, with no blocking banner.
+                <CookiePreferencesHost
+                  categories={cookieConsent.categories}
+                  version={cookieConsent.version}
                 />
               ) : null}
               {/* "Policies updated — please Accept" banner. Copy edited per language

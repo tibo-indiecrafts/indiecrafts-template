@@ -57,7 +57,12 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   `cf-ipcountry` server-side (same as `[locale]/layout.tsx`) and gates the link to `opt-out`
   (US/CCPA) visitors, so it never flashes for EU/other visitors. Copy in `messages.cookies.doNotSell.link`
   (en + fr). **Why:** opt-out regions had no visible privacy-choices affordance outside the
-  cookie-policy page — CCPA/CPRA expects a footer-prominent link.
+  cookie-policy page — CCPA/CPRA expects a footer-prominent link. The dialog the link opens (and its
+  `OPEN_PREFERENCES_EVENT` listener) previously lived only inside `CookieBanner`, which
+  `[locale]/layout.tsx` mounts only when `requireCookieConsent` is on (off by default) — so on a
+  default-configured site the link did nothing. `[locale]/layout.tsx` now also mounts the new
+  standalone `CookiePreferencesHost` (same dialog + listener, no banner) whenever `requireCookieConsent`
+  is off and `consentMode === "opt-out"`, so the control always works for a US visitor.
 - **Announcement toast + per-surface targeting.** `DefaultLayout` now also mounts the new
   `AnnouncementToast` (a self-contained corner card — title/body/optional image/link, editor-set
   dismiss) beside the existing bar, and passes `surface="website"` so an editor can target which

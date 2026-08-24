@@ -1,18 +1,14 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import type { ConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import type { ConsentCategory } from "./consent-signals";
 import { CookiePreferences } from "./CookiePreferences";
-import {
-  applyConsent,
-  consentStore,
-  OPEN_PREFERENCES_EVENT,
-  signalsDeny,
-} from "./consent-store";
+import { applyConsent, consentStore, signalsDeny } from "./consent-store";
+import { usePreferencesDialog } from "./use-preferences-dialog";
 
 type Props = {
   categories: ConsentCategory[];
@@ -61,15 +57,7 @@ export function CookieBanner({
     consentStore.get,
     () => null,
   );
-  const [prefsOpen, setPrefsOpen] = useState(false);
-
-  useEffect(() => {
-    const open = () => setPrefsOpen(true);
-    if (new URLSearchParams(window.location.search).get("cookies") === "manage")
-      open();
-    window.addEventListener(OPEN_PREFERENCES_EVENT, open);
-    return () => window.removeEventListener(OPEN_PREFERENCES_EVENT, open);
-  }, []);
+  const [prefsOpen, setPrefsOpen] = usePreferencesDialog();
 
   // Auto-decide on first visit without nagging, where the region + browser allow it:
   //  - opt-in: only pre-seed a silent REJECT when a browser opt-out signal is present

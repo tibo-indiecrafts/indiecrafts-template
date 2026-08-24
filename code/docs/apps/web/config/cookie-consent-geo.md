@@ -76,7 +76,9 @@ export const consent = {
 ```
 
 `features.requireConsent` (app/mobile/hybrid) / `siteSettings.analytics.requireCookieConsent`
-(website) stays the **master off-switch** — off ⇒ no consent UI anywhere, geo ignored.
+(website) stays the **master off-switch** — off ⇒ no consent UI anywhere, geo ignored. **Exception
+(website only):** a CCPA/opt-out visitor still gets a working preferences dialog behind the footer
+"Do Not Sell" link even with the switch off — see the next section.
 
 ## "Do Not Sell or Share" (CCPA/CPRA) footer link — website
 
@@ -94,6 +96,13 @@ visitors.
   consent UI). It renders `null` unless its `show` prop is `true`.
 - Mounted from `Footer.tsx`, which receives `showDoNotSell` from `DefaultLayout.tsx`.
 - Copy: `cookies.doNotSell.link` in `messages/<locale>.json`.
+- **The dialog it opens must actually be mounted.** `<CookiePreferences>` (the dialog)
+  and its `OPEN_PREFERENCES_EVENT` listener normally live inside `CookieBanner`, which
+  `[locale]/layout.tsx` mounts only when `requireCookieConsent` is on. Since the
+  Do-Not-Sell link can show with that switch off (it only checks `consentMode`),
+  `[locale]/layout.tsx` also mounts a standalone `CookiePreferencesHost` — the same
+  dialog + listener, no banner — whenever `requireCookieConsent` is off **and**
+  `consentMode === "opt-out"`, so the link always opens a working dialog.
 
 ## The country signal per surface
 
