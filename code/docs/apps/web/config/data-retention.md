@@ -30,6 +30,25 @@ Cloudflare D1 (`binding DB`), three tables. This page is the record-of-processin
   longer than the 90-day audit tables because consent is a proof record.
 - **Erasure:** keyed by `subject_id` (user id) and `email_fingerprint`.
 
+## DSAR intake (data_requests)
+
+The GDPR data-subject request form (Art. 15–21) writes to a `data_requests` D1 table
+(migration 0007) — migrated off the Sanity `dataRequest` doc. `POST /v1/data-request`
+(bearer-gated) inserts a row; `GET /v1/data-requests` (bearer-gated) lists them
+newest-first for the admin screen.
+
+- **Fields:** request type, a **plaintext, replyable email**, an optional **free-text
+  message** (≤4000 chars), status (`new`/`in-progress`/`done`), submitted-at, source
+  page, locale, policy version.
+- **Deliberate PII departure:** unlike the minimized tables above (country + hashed IP,
+  no free text), `data_requests` stores real, replyable operator-facing PII. This is
+  intentional — the operator needs the plaintext email and message to action the
+  request, exactly as the Sanity `dataRequest` doc did before this migration.
+- **Retention:** this is short-lived operational PII, not a tracking signal — it must
+  not accumulate indefinitely once a request is `done`. Purge-after-done is a **future
+  cron follow-up**, not yet built; until then, action requests promptly and purge
+  manually via `wrangler d1 execute`.
+
 ## Erasure SLA flag (GDPR Art. 12(3))
 
 An erasure request must be actioned within **one month** (`erasure_requests.due_at`). The
@@ -61,8 +80,8 @@ not code.
 
 ## Erasure (Art. 17)
 
-On a data-subject **erasure** request (the `dataRequest` flow → Studio), purge the
-subject's rows. This manual block matches the engine policy below. It does not
+On a data-subject **erasure** request (the DSAR form → `data_requests`, above), purge
+the subject's rows. This manual block matches the engine policy below. It does not
 blanket-delete `security_events`; the engine pseudonymises high/critical rows and
 deletes the rest:
 

@@ -30,6 +30,10 @@ import { handleErasureConfirm } from "./erasure/confirm";
 import { handleErasureStatus } from "./erasure/status";
 import { handleErasureSelf } from "./erasure/self";
 import { handleExport, handleExportDownload } from "./export/route";
+import {
+  handleDataRequestWrite,
+  handleDataRequestList,
+} from "./data-request/route";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -107,7 +111,7 @@ const ALLOWED_ORIGINS = new Set([
 ]);
 const BODY_MAX = 4000;
 
-function corsHeaders(origin: string | null): Record<string, string> {
+export function corsHeaders(origin: string | null): Record<string, string> {
   if (origin && ALLOWED_ORIGINS.has(origin))
     return {
       "access-control-allow-origin": origin,
@@ -556,6 +560,14 @@ export default {
         return json({ error: "server" }, 502, cors);
       }
     }
+
+    // ── DSAR intake — POST /v1/data-request (bearer-gated write; the website's
+    // /api/data-request route proxies here) + GET /v1/data-requests (bearer-gated read;
+    // the admin screen) ── Logic lives in data-request/route.ts — this stays a thin dispatch.
+    if (url.pathname === "/v1/data-request")
+      return handleDataRequestWrite(request, env);
+    if (url.pathname === "/v1/data-requests")
+      return handleDataRequestList(request, env);
 
     // ── Clerk webhook — POST /v1/clerk-webhook (Svix-signed; server-verified events) ──
     // Fail-closed: no secret set → 503; bad signature → 401. Records only genuinely
