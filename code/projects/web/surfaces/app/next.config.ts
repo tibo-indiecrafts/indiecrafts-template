@@ -27,15 +27,11 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-web-security-reports",
   ],
   async headers() {
-    // First security headers on app: hardened CSP + reporting. App loads no
-    // third-party media, so no extra hosts. The Report-Only candidate drops the
-    // blanket img-src `https:` to learn the real allowlist.
+    // Non-CSP security headers only — the proxy (src/proxy.ts) emits the
+    // per-request nonce CSP + reporting headers for every route it matches.
     return securityHeaders({
       env: getCurrentEnvironment(),
-      reporting: {
-        endpoint: "/api/csp-report",
-        reportOnly: { dropSources: ["https:"] },
-      },
+      cspMode: "proxy",
     });
   },
 };
