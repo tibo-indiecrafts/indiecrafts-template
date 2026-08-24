@@ -234,12 +234,16 @@ export async function handleExportDownload(
   )
     return json({ error: "invalid" }, 400, PUBLIC_CORS);
 
-  // Single-use: mark downloaded BEFORE streaming, so a retry (or a race) 400s.
-  await env.DB.prepare(
-    "UPDATE export_requests SET downloaded_at = ? WHERE id = ?",
+  // Single-use CLAIM: the conditional `AND downloaded_at IS NULL` makes it atomic — only
+  // one of two near-simultaneous requests with the same token wins. `changes === 0` means
+  // another request already claimed it → 400, same as an already-used row.
+  const claim = await env.DB.prepare(
+    "UPDATE export_requests SET downloaded_at = ? WHERE id = ? AND downloaded_at IS NULL",
   )
     .bind(new Date().toISOString(), row.id)
     .run();
+  if (claim.meta.changes !== 1)
+    return json({ error: "invalid" }, 400, PUBLIC_CORS);
 
   const obj = await env.EXPORT_BUCKET.get(row.r2_key);
   if (!obj) return json({ error: "gone" }, 410, PUBLIC_CORS);
@@ -254,6 +258,8 @@ export async function handleExportDownload(
     headers: {
       "content-type": "application/json",
       "content-disposition": 'attachment; filename="my-data-export.json"',
+      // The response body is the caller's full personal-data export — never cache it.
+      "cache-control": "no-store",
       ...PUBLIC_CORS,
     },
   });
