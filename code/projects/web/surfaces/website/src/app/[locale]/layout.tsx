@@ -202,7 +202,10 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
         ) : null}
       </head>
       <body className="bg-background text-foreground flex min-h-screen flex-col">
-        <ThemeProvider {...themeProviderProps(resolveThemeConfig(settings.themeModes))}>
+        <ThemeProvider
+          nonce={nonce}
+          {...themeProviderProps(resolveThemeConfig(settings.themeModes))}
+        >
           <NextIntlClientProvider messages={messages} locale={locale}>
             <LocaleSwitchBoundary>
               {children}

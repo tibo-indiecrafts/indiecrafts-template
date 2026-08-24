@@ -20,7 +20,7 @@ const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 const CSP_MODE: CspMode =
   process.env.CSP_MODE === "enforce" ? "enforce" : "report-only";
-const REPORTING = { endpoint: "/api/csp-report", reportOnly: { dropSources: ["https:"] } };
+const REPORTING = { endpoint: "/api/csp-report" };
 
 /** Clone the request with `x-nonce` set, so the RSC layout can read it via `headers()`. */
 function withNonceRequest(request: NextRequest, nonce: string): NextRequest {
