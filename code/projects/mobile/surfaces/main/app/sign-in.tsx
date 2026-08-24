@@ -105,6 +105,12 @@ function SignedInView() {
         onPress={() => void signOut()}
       />
       {features.deleteAccount && apiUrl ? (
+        // @debt SECURITY - No beforeConfirm here. @clerk/clerk-expo doesn't export
+        // useReverification (unlike clerk-react/nextjs), and even where it exists it only
+        // triggers on a `session_reverification_required` error from the wrapped call. The
+        // erasure worker doesn't emit that error, so wrapping it would resolve immediately
+        // without real re-auth. The server-side JWT + typed-email match is the current
+        // protection.
         <DeleteAccountSection
           copy={copy}
           apiUrl={apiUrl}

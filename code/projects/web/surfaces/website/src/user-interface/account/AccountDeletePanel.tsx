@@ -25,6 +25,11 @@ export function AccountDeletePanel({ copy }: { copy: DeleteAccountCopy }) {
   }
 
   return (
+    // @debt SECURITY - No beforeConfirm here. Clerk's useReverification only triggers on
+    // a `session_reverification_required` error from the wrapped call. The erasure worker
+    // doesn't emit that error, so wrapping it would resolve immediately without real re-auth.
+    // Real step-up needs the worker to declare Clerk reverification, then wrap that fetch in
+    // useReverification. The server-side JWT + typed-email match is the current protection.
     <DeleteAccountSection
       copy={copy}
       apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
