@@ -12,6 +12,8 @@ import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
   DeleteAccountSection,
   type DeleteAccountCopy,
+  ExportSection,
+  type ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
 import { apiUrl, features } from "../../config";
 
@@ -79,6 +81,14 @@ function SignedInView() {
     error: t.formatMessage({ id: "account.delete.error" }),
     mismatch: t.formatMessage({ id: "account.delete.mismatch" }),
   };
+  const exportCopy: ExportCopy = {
+    heading: t.formatMessage({ id: "account.export.heading" }),
+    body: t.formatMessage({ id: "account.export.body" }),
+    button: t.formatMessage({ id: "account.export.button" }),
+    pending: t.formatMessage({ id: "account.export.pending" }),
+    success: t.formatMessage({ id: "account.export.success" }),
+    error: t.formatMessage({ id: "account.export.error" }),
+  };
   return (
     <div className="flex flex-col items-center gap-4">
       <p className="text-sm text-muted-foreground">
@@ -87,6 +97,13 @@ function SignedInView() {
       <Button variant="outline" onClick={() => void signOut()}>
         {t.formatMessage({ id: "auth.signOut" })}
       </Button>
+      {features.exportAccount && apiUrl ? (
+        <ExportSection
+          copy={exportCopy}
+          apiUrl={apiUrl}
+          getToken={() => getToken()}
+        />
+      ) : null}
       {features.deleteAccount && apiUrl ? (
         // @debt SECURITY - No beforeConfirm here. Clerk's useReverification only triggers on
         // a `session_reverification_required` error from the wrapped call. The erasure worker

@@ -13,6 +13,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Self-service "Download my data" control.** `SignedInView` (`src/renderer/src/auth.tsx`) mounts the
+  shared `ExportSection` (`@indiecrafts/packages-shared-compliance/web`) beside the delete control, wired
+  to `getToken` from the existing `@clerk/clerk-react` `useAuth()`. Gated by the new
+  `features.exportAccount` flag **and** `apiUrl` being configured. New `messages.account.export.*` copy
+  (react-intl). **Why:** lets a signed-in desktop user download a copy of their data, posting the shared
+  api's authenticated `POST /v1/export`.
 - **Self-service "Delete my account" control.** `SignedInView` (`src/renderer/src/auth.tsx`) mounts the
   shared `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`), wired to `getToken`/
   `signOut` from the existing `@clerk/clerk-react` `useAuth()`. Gated by the new `features.deleteAccount`
