@@ -7,6 +7,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Changed
 
+- feat(compliance): the erasure token email's confirm link now targets the website (`WEBSITE_URL`) when set, falling back to the worker's own confirm form otherwise.
 - **The AI agent left this Worker — it now lives in its own [`code/shared/agent`](../agent) Worker.** This
   api no longer hosts `POST /v1/agent/:name` (nor `ANTHROPIC_API_KEY`); it serves the audit + session sink
   only. All surfaces now call the dedicated agent Worker. **Why:** the agent deploys, scales, and

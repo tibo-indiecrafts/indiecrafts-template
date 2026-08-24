@@ -170,7 +170,9 @@ export async function handleErasureRequest(
           .run();
 
         // The plaintext token only ever travels in this email — never stored.
-        const confirmUrl = `${origin}/v1/erasure/confirm?token=${token}`;
+        const confirmUrl = env.WEBSITE_URL
+          ? `${env.WEBSITE_URL}/erasure/confirm?token=${token}`
+          : `${origin}/v1/erasure/confirm?token=${token}`;
         await sendToken(env, { to: email, confirmUrl });
       };
 

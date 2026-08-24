@@ -122,6 +122,59 @@ describe("POST /v1/erasure/request", () => {
     expect(results.length).toBe(0);
   });
 
+  it("targets the website when WEBSITE_URL is set", async () => {
+    const fp = await fingerprintEmail("known3@x.com", SALT);
+    await env.DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
+    )
+      .bind("user_req_3", "known3@x.com", fp, new Date(0).toISOString())
+      .run();
+
+    const sendSpy = vi.fn<typeof sendErasureTokenEmail>(async () => {});
+    const ctx = createExecutionContext();
+    const res = await handleErasureRequest(
+      postForm({ email: "known3@x.com" }),
+      testEnv({ WEBSITE_URL: "https://site.example" }),
+      ctx,
+      sendSpy,
+    );
+    expect(res.status).toBe(200);
+    await waitOnExecutionContext(ctx);
+
+    expect(sendSpy).toHaveBeenCalledOnce();
+    const [, { confirmUrl }] = sendSpy.mock.calls[0];
+    const token = new URL(confirmUrl).searchParams.get("token");
+    expect(confirmUrl).toBe(
+      `https://site.example/erasure/confirm?token=${token}`,
+    );
+  });
+
+  it("falls back to the worker's own confirm form when WEBSITE_URL is unset", async () => {
+    const fp = await fingerprintEmail("known4@x.com", SALT);
+    await env.DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
+    )
+      .bind("user_req_4", "known4@x.com", fp, new Date(0).toISOString())
+      .run();
+
+    const sendSpy = vi.fn<typeof sendErasureTokenEmail>(async () => {});
+    const ctx = createExecutionContext();
+    const res = await handleErasureRequest(
+      postForm({ email: "known4@x.com" }),
+      testEnv(),
+      ctx,
+      sendSpy,
+    );
+    expect(res.status).toBe(200);
+    await waitOnExecutionContext(ctx);
+
+    expect(sendSpy).toHaveBeenCalledOnce();
+    const [, { confirmUrl }] = sendSpy.mock.calls[0];
+    expect(
+      confirmUrl.startsWith("https://example.com/v1/erasure/confirm?token="),
+    ).toBe(true);
+  });
+
   it("rejects a bad Turnstile token when Turnstile is configured (no row, no email)", async () => {
     const fp = await fingerprintEmail("known2@x.com", SALT);
     await env.DB.prepare(

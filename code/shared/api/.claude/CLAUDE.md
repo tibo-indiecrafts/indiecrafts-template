@@ -17,6 +17,8 @@ anti-enumeration), `GET/POST /v1/erasure/confirm` (token + typed-email fingerpri
 cap → runs the engine live), `GET /v1/erasure/status/:token` (public, no-PII status), and
 `POST /v1/erasure/self` (authenticated self-service; Clerk-JWT + typed-email gate → runs the
 engine directly, no email round-trip — the signed-in surfaces' account-delete control will call it).
+`WEBSITE_URL` (`[vars]`) sets the confirm-link origin the token email points at; unset falls back to
+the worker's own origin.
 
 **Framework:** Cloudflare Workers · wrangler · TypeScript. **Platform class:** `worker-cf` (a bare Worker,
 no Next/OpenNext). Same runtime as the `workers`/`cron` slots.

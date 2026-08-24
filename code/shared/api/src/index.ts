@@ -90,6 +90,9 @@ export interface Env {
   /** `wrangler secret put TURNSTILE_SECRET` — the bot gate on the public erasure-request
    *  form. Optional (unset → the check passes; set → verified, fails closed on error). */
   TURNSTILE_SECRET?: string;
+  /** The website's public origin (`[vars]`) — the erasure confirm-link target. Unset → falls
+   *  back to the worker's own origin + `/v1/erasure/confirm` (the current behaviour). */
+  WEBSITE_URL?: string;
 }
 
 // Browser-context origins allowed to READ the response (dev + the electron renderer
