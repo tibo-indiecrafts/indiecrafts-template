@@ -39,6 +39,11 @@ SANITY_API_VERSION = "2025-01-01"
 # WEBSITE_URL = "https://your-site.example"
 # EMAIL_ADMIN_BCC = "admin@your-site.example"  # BCC'd on every outbound email (erasure emails); an address, [vars]-safe
 # SECURITY_ALERT_EMAIL = "soc@your-site.example"  # high/critical security-alert recipient; unset falls back to EMAIL_ADMIN_BCC
+# Informational only (GET /v1/backups/status) — the actual bucket is per-env
+# (`<prefix>-<env>-db-backup`, see scripts/lib/backup-common.mjs); repeat under
+# [env.<env>.vars] if it should differ from this base/dev value.
+BACKUP_BUCKET = "indiecrafts-dev-db-backup"
+BACKUP_RETENTION_DAYS = "30"
 # Other secrets are NEVER here → `wrangler secret put <NAME> --env <env>` (or
 # `pnpm secrets:sync:*`). They surface on `env.<NAME>`.
 

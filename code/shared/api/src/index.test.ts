@@ -108,3 +108,19 @@ describe("/v1/settings", () => {
     }
   });
 });
+
+describe("/v1/backups/status", () => {
+  const auth = { authorization: "Bearer test-token" };
+  it("401s without the bearer", async () => {
+    expect((await SELF.fetch("https://api.test/v1/backups/status")).status).toBe(401);
+  });
+  it("returns recent runs newest-first", async () => {
+    await env.DB.prepare(
+      "INSERT INTO backup_runs (db_name,env,kind,status,started_at,finished_at) VALUES ('audit','prod','manual','ok','2026-08-24T00:00:00Z','2026-08-24T00:00:03Z')",
+    ).run();
+    const res = await SELF.fetch("https://api.test/v1/backups/status", { headers: auth });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { runs: Array<{ dbName: string; status: string }> };
+    expect(body.runs[0]).toMatchObject({ dbName: "audit", status: "ok" });
+  });
+});

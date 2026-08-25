@@ -116,6 +116,12 @@ export interface Env {
   /** R2 bucket for data-export bundles (`[[r2_buckets]] binding = "EXPORT_BUCKET"`),
    *  operator-provisioned. Optional — `/v1/export` routes answer 503 until bound. */
   EXPORT_BUCKET?: R2Bucket;
+  /** `[vars]` — the R2 bucket name backups are uploaded to (informational; surfaced by
+   *  `GET /v1/backups/status`, not read by this worker). Optional — null until set. */
+  BACKUP_BUCKET?: string;
+  /** `[vars]` — backup retention window in days (informational, surfaced by
+   *  `GET /v1/backups/status`). Optional — defaults to 30. */
+  BACKUP_RETENTION_DAYS?: string;
 }
 
 // Browser-context origins allowed to READ the response (dev + the electron renderer
@@ -740,6 +746,55 @@ export default {
       }
 
       return json({ error: "method_not_allowed" }, 405, cors);
+    }
+
+    // ── Backups status — GET /v1/backups/status (bearer-gated; read-only history for
+    // the admin card) ── bucket/retention/pre-migration-flag come from env/config; recent
+    // rows come from `backup_runs` (migration 0009), written by the backup scripts.
+    if (url.pathname === "/v1/backups/status") {
+      if (request.method === "OPTIONS")
+        return new Response(null, { status: 204, headers: cors });
+      if (request.method !== "GET")
+        return json({ error: "method_not_allowed" }, 405, cors);
+      const bearer = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+      if (!env.APP_API_TOKEN || !bearer || !safeEqual(bearer, env.APP_API_TOKEN))
+        return json({ error: "unauthorized" }, 401, cors);
+
+      let runs: Array<Record<string, unknown>> = [];
+      if (env.DB) {
+        const { results } = await env.DB.prepare(
+          "SELECT db_name, env, kind, status, bytes, error, started_at, finished_at FROM backup_runs ORDER BY started_at DESC LIMIT 20",
+        ).all<{
+          db_name: string;
+          env: string;
+          kind: string;
+          status: string;
+          bytes: number | null;
+          error: string | null;
+          started_at: string;
+          finished_at: string | null;
+        }>();
+        runs = results.map((r) => ({
+          dbName: r.db_name,
+          env: r.env,
+          kind: r.kind,
+          status: r.status,
+          bytes: r.bytes,
+          error: r.error,
+          startedAt: r.started_at,
+          finishedAt: r.finished_at,
+        }));
+      }
+      return json(
+        {
+          bucket: env.BACKUP_BUCKET ?? null,
+          retentionDays: Number(env.BACKUP_RETENTION_DAYS ?? 30),
+          preMigrationSnapshots: true,
+          runs,
+        },
+        200,
+        cors,
+      );
     }
 
     // ── DSAR intake — POST /v1/data-request (bearer-gated write; the website's
