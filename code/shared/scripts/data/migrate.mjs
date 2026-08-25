@@ -97,6 +97,7 @@ function main() {
         db.name,
         env,
         "--remote",
+        "--kind=pre-migration",
       ],
       { stdio: "inherit" },
     );

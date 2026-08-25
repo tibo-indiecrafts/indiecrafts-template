@@ -13,12 +13,18 @@
 // kv/postgres/supabase → reserved (not wired — skipped with a note).
 
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DATABASES, ENVS } from "../lib/databases.mjs";
 import { APPS } from "../lib/apps.mjs";
-import { stamp, ensureDir, uploadToR2, prune } from "../lib/backup-common.mjs";
+import {
+  stamp,
+  ensureDir,
+  uploadToR2,
+  prune,
+  recordBackupRun,
+} from "../lib/backup-common.mjs";
 
 // Resolve everything from the repo root (this file is <root>/scripts/backup-db.mjs),
 // so the runner works from any cwd (CI, a subdir, …).
@@ -37,6 +43,10 @@ const args = process.argv.slice(2);
 const dry = args.includes("--dry-run");
 const remote = args.includes("--remote");
 const all = args.includes("--all");
+// `--kind=` lets a caller (the pre-migration snapshot in migrate.mjs) tag the
+// backup_runs row it logs; a direct/manual invocation defaults to "manual".
+const kindArg = args.find((a) => a.startsWith("--kind="));
+const kind = kindArg ? kindArg.slice("--kind=".length) : "manual";
 const positional = args.filter((a) => !a.startsWith("--"));
 const name = all ? null : positional[0];
 const env = all ? positional[0] : positional[1];
@@ -76,14 +86,38 @@ for (const db of targets) {
   } catch {
     /* no .env.local — env may be provided by the shell / CI instead */
   }
+  const startedAt = new Date().toISOString();
   try {
-    if (db.kind === "sanity") backupSanity(env, remote, db.name);
-    else if (db.kind === "d1") backupD1(env, remote, db.name);
-    else
+    let result;
+    if (db.kind === "sanity") result = backupSanity(env, remote, db.name);
+    else if (db.kind === "d1") result = backupD1(env, remote, db.name);
+    else {
       console.log(`  – "${db.kind}" backup not wired yet (reserved). Skipped.`);
+      continue;
+    }
+    recordBackupRun(env, {
+      dbName: db.name,
+      kind,
+      r2Key: result?.r2Key ?? null,
+      bytes: result?.bytes ?? null,
+      status: "ok",
+      error: null,
+      startedAt,
+      finishedAt: new Date().toISOString(),
+    });
   } catch (e) {
     console.error(`  ✗ ${db.name}: ${e.message}`);
     failed = true;
+    recordBackupRun(env, {
+      dbName: db.name,
+      kind,
+      r2Key: null,
+      bytes: null,
+      status: "failed",
+      error: String(e.message).slice(0, 200),
+      startedAt,
+      finishedAt: new Date().toISOString(),
+    });
   } finally {
     process.chdir(REPO_ROOT);
   }
@@ -105,7 +139,7 @@ function backupD1(env, remote, name) {
     console.log(
       "  D1 not configured (no active [[d1_databases]]). Nothing to back up.",
     );
-    return;
+    return { r2Key: null, bytes: null };
   }
   const dir = ensureDir(path.resolve(`backups/${name}`));
   const file = `${dbName}-${env}-${stamp()}.sql`;
@@ -116,9 +150,15 @@ function backupD1(env, remote, name) {
     { stdio: "inherit", env: ownerEnv() },
   );
   if (r.status !== 0) throw new Error("wrangler d1 export failed");
-  if (remote) uploadToR2(env, `${name}/${file}`, out); // bucket is per-env → key is `<name>/…`
+  const bytes = statSync(out).size;
+  let r2Key = null;
+  if (remote) {
+    r2Key = `${name}/${file}`; // bucket is per-env → key is `<name>/…`
+    uploadToR2(env, r2Key, out);
+  }
   prune(dir, 10, `${dbName}-${env}-`);
   console.log(`  ✓ D1 backup: ${file}`);
+  return { r2Key, bytes };
 }
 
 function backupSanity(env, remote, name) {
@@ -139,7 +179,13 @@ function backupSanity(env, remote, name) {
     env: { ...ownerEnv(), SANITY_AUTH_TOKEN: token },
   });
   if (r.status !== 0) throw new Error("sanity dataset export failed");
-  if (remote) uploadToR2(env, `${name}/${file}`, out); // bucket is per-env → key is `<name>/…`
+  const bytes = statSync(out).size;
+  let r2Key = null;
+  if (remote) {
+    r2Key = `${name}/${file}`; // bucket is per-env → key is `<name>/…`
+    uploadToR2(env, r2Key, out);
+  }
   prune(dir, 10, `${dataset}-`);
   console.log(`  ✓ Sanity backup: ${file}`);
+  return { r2Key, bytes };
 }

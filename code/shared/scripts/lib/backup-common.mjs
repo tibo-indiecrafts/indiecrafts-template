@@ -1,9 +1,27 @@
 // Shared helpers for the backup scripts (Sanity + D1).
 
-import { readdirSync, mkdirSync, unlinkSync, statSync } from "node:fs";
-import { join } from "node:path";
+import {
+  readdirSync,
+  mkdirSync,
+  unlinkSync,
+  statSync,
+  mkdtempSync,
+  writeFileSync,
+  readFileSync,
+  rmSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { readSitePrefix } from "./project.mjs";
+import { DATABASES } from "./databases.mjs";
+import { APPS } from "./apps.mjs";
+
+const REPO_ROOT = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../..",
+);
 
 /** Filesystem-safe UTC timestamp: `YYYY-MM-DDTHH-MM-SS`. Sorts chronologically. */
 export function stamp() {
@@ -56,4 +74,97 @@ export function prune(dir, keep = 10, prefix = "") {
   for (const f of stale) unlinkSync(join(dir, f));
   if (stale.length)
     console.log(`Pruned ${stale.length} old backup(s), kept ${keep}.`);
+}
+
+/**
+ * Pure builder: one `backup_runs` row → a parameterized INSERT. No I/O, so it's
+ * unit-testable without a live D1. `recordBackupRun` below renders `params` into
+ * literals itself (escaped) rather than passing them to `wrangler d1 execute`, which
+ * has no placeholder syntax of its own.
+ */
+export function buildBackupRunInsert({
+  dbName,
+  env,
+  kind,
+  r2Key,
+  bytes,
+  status,
+  error,
+  startedAt,
+  finishedAt,
+}) {
+  return {
+    sql:
+      "INSERT INTO backup_runs " +
+      "(db_name, env, kind, r2_key, bytes, status, error, started_at, finished_at) " +
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
+    params: [dbName, env, kind, r2Key, bytes, status, error, startedAt, finishedAt],
+  };
+}
+
+function sqlLiteral(v) {
+  if (v === null || v === undefined) return "NULL";
+  if (typeof v === "number") return String(v);
+  return `'${String(v).replace(/'/g, "''")}'`;
+}
+
+/**
+ * Write one row to `backup_runs` in the api's D1 (the `audit` database), from the
+ * api's owner dir — via a temp SQL file + `wrangler d1 execute --file` (avoids
+ * shell-escaping bugs with arbitrary `error` labels). FAIL-SOFT: a backup-logging
+ * failure must never abort or fail the backup itself, so every error path here just
+ * `console.warn`s and returns — never throws, never `process.exit`s.
+ */
+export function recordBackupRun(env, run) {
+  let tmpDir;
+  try {
+    const apiDir = APPS.find((a) => a.slug === "api")?.dir;
+    const auditDb = DATABASES.find((d) => d.name === "audit");
+    if (!apiDir || !auditDb) {
+      console.warn(
+        "recordBackupRun: api app or audit db not in the registry — not logged.",
+      );
+      return;
+    }
+
+    const { sql, params } = buildBackupRunInsert(run);
+    let i = 0;
+    const rendered = sql.replace(/\?/g, () => sqlLiteral(params[i++]));
+
+    tmpDir = mkdtempSync(join(tmpdir(), "backup-run-"));
+    const file = join(tmpDir, "backup-run.sql");
+    writeFileSync(file, rendered, { mode: 0o600 });
+
+    process.chdir(resolve(REPO_ROOT, apiDir));
+    try {
+      const active = readFileSync(resolve("wrangler.toml"), "utf8")
+        .split("\n")
+        .filter((l) => !l.trim().startsWith("#"))
+        .join("\n");
+      const dbName = /\[\[(?:env\.[a-z]+\.)?d1_databases\]\]/.test(active)
+        ? active.match(/database_name\s*=\s*["']([^"']+)["']/)?.[1]
+        : null;
+      if (!dbName) {
+        console.warn(
+          "recordBackupRun: no active D1 database_name in the api's wrangler.toml — not logged.",
+        );
+        return;
+      }
+      const r = spawnSync(
+        "wrangler",
+        ["d1", "execute", dbName, "--env", env, "--remote", "--file", file],
+        { stdio: "inherit" },
+      );
+      if (r.status !== 0 || r.error)
+        console.warn("recordBackupRun: wrangler d1 execute failed — not logged.");
+    } finally {
+      process.chdir(REPO_ROOT);
+    }
+  } catch (e) {
+    console.warn(
+      `recordBackupRun: failed to log backup run — ${String(e.message).slice(0, 200)}`,
+    );
+  } finally {
+    if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
+  }
 }

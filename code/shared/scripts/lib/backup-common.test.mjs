@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { prune } from "./backup-common.mjs";
+import { prune, buildBackupRunInsert, recordBackupRun } from "./backup-common.mjs";
 
 test("prune keeps the newest N and drops the oldest", () => {
   const dir = mkdtempSync(join(tmpdir(), "bk-"));
@@ -36,4 +36,38 @@ test("prune only touches its own prefix (per-source retention)", () => {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("buildBackupRunInsert builds a parameterized 9-arg INSERT", () => {
+  const { sql, params } = buildBackupRunInsert({
+    dbName: "audit",
+    env: "prod",
+    kind: "manual",
+    r2Key: "audit/x.sql",
+    bytes: 10,
+    status: "ok",
+    error: null,
+    startedAt: "2026-08-25T00:00:00Z",
+    finishedAt: "2026-08-25T00:00:05Z",
+  });
+  assert.match(sql, /INSERT INTO backup_runs/);
+  assert.equal(params.length, 9);
+  assert.equal(params[0], "audit");
+});
+
+test("recordBackupRun never throws, even when the spawn has nothing to run against", () => {
+  // No live wrangler/D1 in the test env — this exercises the fail-soft path
+  // (registry lookup + chdir + spawn all fail or no-op silently).
+  assert.doesNotThrow(() =>
+    recordBackupRun("prod", {
+      dbName: "audit",
+      kind: "manual",
+      r2Key: null,
+      bytes: null,
+      status: "failed",
+      error: "boom",
+      startedAt: "2026-08-25T00:00:00Z",
+      finishedAt: "2026-08-25T00:00:01Z",
+    }),
+  );
 });
