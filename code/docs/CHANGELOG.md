@@ -11,6 +11,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **Local development page + sidebar.** New `apps/web/setup/local-development.md` — the one-page
+  local flow: `pnpm db:migrate:all:local` → `pnpm dev` (D1 + KV in miniflare, no real IDs), the four
+  data stores' local behaviour (Sanity stays remote), the `API_URL=http://localhost:8787` website↔api
+  wiring, and the caveats (api/cron keep separate local D1s; real IDs only for deploy). Linked first
+  under "Web app · Setup & operations".
+
 - **Admin settings + backups page + sidebar.** New `apps/web/config/settings.md` — the
   admin **Settings** card (retention/ops/TTL knobs, bounded, audited via `admin_audit`), the
   **match-by-reader** table (worker-read → D1 `site_settings`; website/edge + editor-facing

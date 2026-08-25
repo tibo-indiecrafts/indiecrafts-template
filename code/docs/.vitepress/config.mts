@@ -55,6 +55,10 @@ export default defineConfig({
         collapsed: false,
         items: [
           {
+            text: "Local development",
+            link: "/apps/web/setup/local-development",
+          },
+          {
             text: "Workspace & deployment",
             link: "/shared/architecture/workspace",
           },
