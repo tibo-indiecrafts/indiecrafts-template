@@ -22,6 +22,7 @@ export {
   flattenMessages,
 } from "./i18n";
 export { formatDefaults, localeFormat } from "./format";
+export * from "./settings";
 
 // ── Public types ─────────────────────────────────────────────
 export type {
