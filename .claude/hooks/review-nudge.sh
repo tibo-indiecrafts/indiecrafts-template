@@ -47,6 +47,7 @@ if [ "$lines" -ge "$BIG" ]; then
   else
     add "• Sizable diff (${lines} lines) — review it before landing."
   fi
+  add "• Combine a parallel-agent pass before merge: \`/code-review\` (security · correctness · style, with confidence scores)."
 fi
 if [ -n "$sensitive" ]; then
   if [ -n "$gstack" ]; then
