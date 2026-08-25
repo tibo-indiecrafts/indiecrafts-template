@@ -50,10 +50,11 @@ type Status = "idle" | "saved" | "error";
  *  `saveSetting` per changed field; the `<main>` landmark lives in the page. */
 export function SettingsForm({ settings }: { settings: SettingRow[] }) {
   const t = useTranslations("admin.settings");
-  const original = useRef(
+  const initial = useRef(
     Object.fromEntries(settings.map((s) => [s.key, s.value])),
   ).current;
-  const [values, setValues] = useState<Record<string, number>>(original);
+  const [original, setOriginal] = useState<Record<string, number>>(initial);
+  const [values, setValues] = useState<Record<string, number>>(initial);
   const [overriddenAt, setOverriddenAt] = useState<Record<string, string | null>>(
     () => Object.fromEntries(settings.map((s) => [s.key, s.updatedAt])),
   );
@@ -81,6 +82,13 @@ export function SettingsForm({ settings }: { settings: SettingRow[] }) {
         const next = { ...prev };
         for (const { key, result } of results) {
           if (result.ok) next[key] = new Date().toISOString();
+        }
+        return next;
+      });
+      setOriginal((prev) => {
+        const next = { ...prev };
+        for (const { key, result } of results) {
+          if (result.ok) next[key] = values[key];
         }
         return next;
       });
