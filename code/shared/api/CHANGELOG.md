@@ -5,6 +5,25 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **Split the api's single EU D1 into `core` + `audit`, for identity/audit blast-domain
+  isolation.** `core` (new, binding `CORE_DB`) holds `user_profiles`, `consent_events`,
+  `data_requests`, `erasure_requests`, `export_requests`, `site_settings`; `audit`
+  (binding `DB`, unchanged) keeps `session_events`, `security_events`, `admin_audit`,
+  `csp_reports`, `backup_runs`. Both `--location weur`, both owned by this api; `cron`
+  holds both bindings too. Erasure now runs a `core` + `audit` adapter through the same
+  multi-store `runErasure` receipt (the `audit` adapter takes a read-only handle to `core`
+  to resolve `user_id` — a lookup, not a cross-DB transaction). The split also fixes a
+  pre-existing duplicate-`0004` migration-numbering collision (each D1 now renumbers its
+  own migrations from `0001`). **`PUT /v1/settings` is no longer atomic across the two
+  tables it writes** — `site_settings` on `CORE_DB` is primary and unguarded; `admin_audit`
+  on `DB` is secondary and best-effort (logged, non-fatal on throw). **Why:** a firehose
+  schema change or write-load spike could previously threaten identity/consent/settings
+  data sharing the same D1; splitting the blast domain removes that risk with no new
+  cross-DB transaction (erasure already ran with no shared transaction across D1+Clerk+
+  Sanity). See `docs/superpowers/specs/2026-08-25-audit-db-split-design.md`.
+
 ### Added
 
 - **`GET`/`PUT /v1/settings` — bounded, audited operator overrides for worker-read

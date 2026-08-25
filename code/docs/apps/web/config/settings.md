@@ -14,7 +14,7 @@ becoming a junk drawer for every future flag.
 | Reader                                  | Store                             | Edited how                                             | Examples                                                                  |
 | ---------------------------------------- | ---------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------- |
 | Website / edge (+ editor-facing)         | Sanity `siteSettings` singleton    | Studio (already live, ~30s edge cache, fail-open)       | maintenance mode, brand, SEO, social, cookies, website-read feature flags |
-| **Workers** (`cron` / `api`)             | **D1 `site_settings`** (new)       | Admin UI → `PUT /v1/settings`, audited                  | retention windows, SLA warning, link TTLs                                |
+| **Workers** (`cron` / `api`)             | **D1 `site_settings`** (`core` D1, binding `CORE_DB`) | Admin UI → `PUT /v1/settings`, audited                  | retention windows, SLA warning, link TTLs                                |
 | Infra / security                         | Terraform / `@/config`             | Version-controlled + deploy                             | CSP, WAF, edge rate limits, **backup retention**                         |
 
 Content-shaped or website-read config already has a home in Sanity. The D1 table is
@@ -47,7 +47,7 @@ unknown key or a non-integer); `effectiveSettings(rows)` merges D1 override rows
 code defaults, ignoring anything invalid. **An empty `site_settings` table is byte-identical
 to today's hard-coded behavior** — this ships default-safe.
 
-## Storage — D1 `site_settings` (migration `0008`)
+## Storage — D1 `site_settings` (`core` D1, binding `CORE_DB`, migration `0007`)
 
 ```sql
 CREATE TABLE site_settings (
@@ -69,9 +69,13 @@ Generic key/value, but only the eight keys above ship. The table stores **overri
   non-null **and equal** the submitted integer — an out-of-range value is **rejected with
   `422` + the allowed range**, not silently clamped, so the operator sees the bound instead
   of a surprise. On success: `INSERT … ON CONFLICT(key) DO UPDATE` (value/updated_at/
-  updated_by) **and** an `admin_audit` row (`event: "setting_changed"`, actor = the caller,
-  target = the key, `ts`/`country` from the request) in the same D1 batch — every write is
-  audited, no exceptions.
+  updated_by) writes `site_settings` on **`CORE_DB`** — primary, unguarded, so a failure
+  surfaces as an error response. Then an `admin_audit` row (`event: "setting_changed"`,
+  actor = the caller, target = the key, `ts`/`country` from the request) writes on
+  **`DB`** — best-effort: wrapped in try/catch, logged and non-fatal on throw. **Not one
+  atomic D1 batch** — `site_settings` and `admin_audit` now live on separate D1 instances,
+  so a `DB` failure can leave a setting change with no audit row. The setting change itself
+  always succeeds or fails cleanly; only the audit trail is best-effort.
 
 Admin-role enforcement is the **admin app's** job, matching every other admin write: the
 `saveSetting` server action re-checks `isAdmin(await auth())` (Clerk), then forwards to the
@@ -85,9 +89,9 @@ the code default on any read error.
 
 ## cron — reading the overrides
 
-At tick, the cron loads the overrides once and merges them over the defaults; a read
-failure (unbound DB, query error) falls back to pure defaults rather than blocking the
-purge or the SLA flag:
+At tick, the cron calls `loadSettings(env.CORE_DB)` once and merges the overrides over the
+defaults; a read failure (unbound `CORE_DB`, query error) falls back to pure defaults
+rather than blocking the purge or the SLA flag:
 
 ```ts
 async function loadSettings(db?: D1Database): Promise<Record<SettingKey, number>> {
@@ -124,14 +128,15 @@ worker reads, so a settings-card control would claim control it doesn't have. Ba
 DR/security control; widening who can edit them widens an admin-compromise blast radius.
 The admin **Backups** card is **visibility only**.
 
-Migration `0009` adds `backup_runs` — one row per backup run, written by the backup scripts
-(`code/shared/scripts/data/backup.mjs` + the pre-migration path in `migrate.mjs`) via a
-fail-soft helper (a logging failure never aborts the backup itself):
+Migration `0003` (`audit` D1, binding `DB`) adds `backup_runs` — one row per backup run,
+written by the backup scripts (`code/shared/scripts/data/backup.mjs` + the pre-migration
+path in `migrate.mjs`) via a fail-soft helper (a logging failure never aborts the backup
+itself):
 
 ```sql
 CREATE TABLE backup_runs (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  db_name     TEXT NOT NULL,        -- which database (content / audit / …)
+  db_name     TEXT NOT NULL,        -- which database (content / core / audit / …)
   env         TEXT NOT NULL,        -- dev / staging / prod
   kind        TEXT NOT NULL,        -- 'scheduled' | 'pre-migration' | 'manual'
   r2_key      TEXT,                 -- the object key in the db-backup bucket (null if local-only)

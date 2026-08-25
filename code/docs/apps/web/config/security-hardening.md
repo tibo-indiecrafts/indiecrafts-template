@@ -87,10 +87,13 @@ not worth it.)
 ## 4. The app layer — what Cloudflare can't see
 
 Post-auth application logic produces events the edge never sees. These are **low-volume**
-(real incidents, not every request) and live in the api's **EU D1** — the `security_events`
-table, one of three (`admin_audit` · `session_events` · `security_events`) in the single
-`DB`, one database not three to stay under the free-plan D1 cap. Written via
-**`POST /v1/events` `kind:"security"`**, purged at 90 days by the cron worker.
+(real incidents, not every request) and live in the api's **`audit` EU D1** (binding `DB`,
+`--location weur`) — the `security_events` table, one of five append-only tables
+(`admin_audit` · `session_events` · `security_events` · `csp_reports` · `backup_runs`) in
+that database. `audit` is split from the api's second D1, **`core`** (binding `CORE_DB`,
+identity/rights/settings), so a firehose write-spike can't threaten identity data — see
+[Data retention](./data-retention). Written via **`POST /v1/events` `kind:"security"`**,
+purged at 90 days by the cron worker.
 
 Taxonomy (`security_events.event_type`): `failed_login` · `credential_stuffing` ·
 `privilege_escalation` · `data_exfiltration` · `suspicious_pattern` ·

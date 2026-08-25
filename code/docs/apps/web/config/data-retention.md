@@ -1,9 +1,15 @@
 # Data retention + audit (GDPR)
 
-The auth work adds an **EU-resident audit + session-activity + security store** — one
-Cloudflare D1 (`binding DB`), three tables. This page is the record-of-processing and the
-**privacy-policy disclosure checklist** an operator must action. Design:
-`docs/superpowers/specs/2026-08-21-audit-sessions-d1-eu-design.md`.
+The auth work adds an **EU-resident audit + session-activity + security store**, now split
+across **two** Cloudflare D1 databases, both `--location weur`, both owned by the `api`
+worker: **`audit`** (binding `DB`) — the append-only firehose (`admin_audit`,
+`session_events`, `security_events`, `csp_reports`, `backup_runs`); **`core`** (binding
+`CORE_DB`) — identity/rights/settings (`user_profiles`, `consent_events`, `data_requests`,
+`erasure_requests`, `export_requests`, `site_settings`). The split isolates a firehose
+write-spike or schema change from identity data. This page is the record-of-processing and
+the **privacy-policy disclosure checklist** an operator must action. Design:
+`docs/superpowers/specs/2026-08-21-audit-sessions-d1-eu-design.md` (original) and
+`docs/superpowers/specs/2026-08-25-audit-db-split-design.md` (the core/audit split).
 
 ## What is processed
 
@@ -13,8 +19,12 @@ Cloudflare D1 (`binding DB`), three tables. This page is the record-of-processin
 | `session_events`  | a user signs in on a surface                                                     | timestamp, surface, userId, country, **hashed IP** (salted SHA-256, never raw)                                             |
 | `security_events` | an app-level security incident (failed-login threshold, privilege escalation, …) | timestamp, event type, severity, surface, userId (when known), country, **hashed IP**, a short label — never PII free-text |
 
-- **Where:** Cloudflare **D1 in the EU** (`--location weur`) — data stays in-region. One
-  database, not three, keeps the free-plan D1 count low; the tables stay isolated.
+All three tables above live in the **`audit`** D1 (binding `DB`).
+
+- **Where:** Cloudflare **D1 in the EU** (`--location weur`) — data stays in-region. Two
+  databases (`audit` + `core`), not one, isolate the high-volume firehose from
+  identity/rights data; each env (dev/staging/prod) provisions both, so the free-plan D1
+  count is envs × 2 = 6 — verify against current Cloudflare D1 plan limits.
 - **Minimization (Art. 5(1)(c)):** country code + a _hashed_ IP; no raw IP, no
   user-agent, no free text.
 - **Retention (Art. 5(1)(e)):** **90 days**, enforced by the `cron` worker's daily purge.
@@ -45,6 +55,7 @@ nudge, not enforcement.
 
 ## Consent log (consent_events)
 
+- **Where:** `core` D1 (binding `CORE_DB`).
 - **What:** every cookie-consent decision, one row per consent type, account-scoped
   (linked to the erasure fingerprint) or anonymous (consent_id cookie, only when
   `features.compliance.logAnonymousConsent` is on).
@@ -54,8 +65,9 @@ nudge, not enforcement.
 
 ## DSAR intake (data_requests)
 
-The GDPR data-subject request form (Art. 15–21) now writes to a `data_requests` D1
-table (migration 0007) instead of Sanity. The public form, the `/api/data-request`
+**Where:** `core` D1 (binding `CORE_DB`, migration 0006). The GDPR data-subject request
+form (Art. 15–21) now writes to a `data_requests` D1 table instead of Sanity. The public
+form, the `/api/data-request`
 route (Turnstile, rate limit, origin check, body cap), and the owner-alert email are
 **unchanged** — only the persistence moved. `POST /v1/data-request` (bearer-gated)
 inserts a row; operators view requests in the admin "Data requests" screen, backed by
@@ -80,17 +92,20 @@ inserts a row; operators view requests in the admin "Data requests" screen, back
 
 ## Erasure SLA flag (GDPR Art. 12(3))
 
-An erasure request must be actioned within **one month** (`erasure_requests.due_at`). The
-cron's scheduled handler flags a request once, as it nears or misses that deadline:
+An erasure request must be actioned within **one month** (`erasure_requests.due_at`,
+`core` D1, binding `CORE_DB`). The cron's scheduled handler flags a request once, as it
+nears or misses that deadline:
 
-- **Due soon** (`due_at` within 7 days): a `security_events` row, `erasure_sla_due` /
-  `medium`.
+- **Due soon** (`due_at` within 7 days): a `security_events` row (`audit` D1, binding
+  `DB`), `erasure_sla_due` / `medium`.
 - **Breached** (`due_at` already past): a `security_events` row, `erasure_sla_breach` /
   `high`.
 
 A flagged request gets `due_flagged_at` set, so a later tick does not repeat it.
-`completed`/`cancelled`/`expired` requests are skipped. No-ops until the cron's `DB`
-binding is bound. Owner-reminder email is deferred — the cron has no email sender.
+`completed`/`cancelled`/`expired` requests are skipped. The flag itself no-ops until the
+cron's `CORE_DB` binding is bound; the `security_events` audit row additionally needs `DB`
+bound — `due_flagged_at` still gets set on `CORE_DB` even if `DB` isn't. Owner-reminder
+email is deferred — the cron has no email sender.
 
 - **Retention:** **1095 days** (~3 years, `ERASURE_REQUEST_RETENTION_DAYS = 1095`), on
   `requested_at`, purged by the cron — the same window as `consent_events`, because a
@@ -98,10 +113,11 @@ binding is bound. Owner-reminder email is deferred — the cron has no email sen
 
 ## Export-bundle cleanup
 
-`POST /v1/export` bundles expire after **1 hour** (`export_requests.expires_at`) and are
-deleted from R2 on first download. The cron's scheduled handler sweeps the rest: any
-`export_requests` row whose TTL passed unread has its R2 object (`EXPORT_BUCKET`) and its
-row deleted. Idempotent; no-ops until both `DB` and `EXPORT_BUCKET` are bound.
+`POST /v1/export` bundles expire after **1 hour** (`export_requests.expires_at`, `core` D1,
+binding `CORE_DB`) and are deleted from R2 on first download. The cron's scheduled handler
+sweeps the rest: any `export_requests` row whose TTL passed unread has its R2 object
+(`EXPORT_BUCKET`) and its row deleted. Idempotent; no-ops until both `CORE_DB` and
+`EXPORT_BUCKET` are bound.
 
 ## Global admin BCC (transactional email)
 
@@ -131,12 +147,18 @@ not code.
 On a data-subject **erasure** request (the DSAR form → `data_requests`, above), purge
 the subject's rows. This manual block matches the engine policy below. It does not
 blanket-delete `security_events`; the engine pseudonymises high/critical rows and
-deletes the rest:
+deletes the rest. `session_events`/`security_events` live on the **`audit`** D1;
+`consent_events` lives on the **`core`** D1 — run each block against its own database:
 
 ```sql
+-- audit D1 (indiecrafts-<env>-shared-api)
 DELETE FROM session_events  WHERE user_id = ?;
 DELETE FROM security_events WHERE user_id = ? AND severity NOT IN ('high', 'critical');
 UPDATE security_events SET user_id = ? WHERE user_id = ? AND severity IN ('high', 'critical');
+```
+
+```sql
+-- core D1 (indiecrafts-<env>-shared-api-core)
 UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?;
 ```
 
@@ -147,7 +169,8 @@ The manual `consent_events` step above closes a gap noted in Phase 2: the row al
 carries `email_fingerprint`, so erasure pseudonymises `subject_id` to that fingerprint
 instead of deleting the row. The erasure engine below does this automatically.
 
-Run via `wrangler d1 execute indiecrafts-<env>-shared-api --command "…"`. Security
+Run via `wrangler d1 execute indiecrafts-<env>-shared-api --command "…"` (audit) or
+`wrangler d1 execute indiecrafts-<env>-shared-api-core --command "…"` (core). Security
 audit records _may_ be retained under legitimate interest where law allows — document
 the operator's decision per request.
 
@@ -159,22 +182,27 @@ erasure across every store. The orchestrator is store-agnostic: it takes an arra
 A store can never be silently skipped — the receipt enumerates every adapter, even one
 that errors.
 
-`code/shared/api/src/erasure/` implements the adapters:
+`code/shared/api/src/erasure/d1.ts` implements two adapters — `createCoreErasureAdapter`
+(`core` D1) and `createAuditErasureAdapter` (`audit` D1, which takes a **read-only handle
+to `core`** to resolve `user_id` before scrubbing `audit` rows — a lookup-then-use, not a
+cross-DB join or transaction):
 
 | Adapter  | Store                        | Policy                                                                                              |
 | -------- | ---------------------------- | --------------------------------------------------------------------------------------------------- |
-| `d1`     | `user_profiles`              | pseudonymise (scrub email/name, keep the fingerprint)                                               |
-| `d1`     | `session_events`             | delete (low-sensitivity sign-in activity)                                                           |
-| `d1`     | `security_events`            | delete low/medium severity; pseudonymise high/critical (`user_id`→fingerprint)                      |
-| `d1`     | `consent_events`             | pseudonymise (`subject_id`→fingerprint, `subject_type`→`visitor`)                                   |
-| `d1`     | `admin_audit`                | retain (the accountability trail)                                                                   |
+| `core`   | `user_profiles`              | pseudonymise (scrub email/name, keep the fingerprint)                                               |
+| `audit`  | `session_events`             | delete (low-sensitivity sign-in activity)                                                           |
+| `audit`  | `security_events`            | delete low/medium severity; pseudonymise high/critical (`user_id`→fingerprint)                      |
+| `core`   | `consent_events`             | pseudonymise (`subject_id`→fingerprint, `subject_type`→`visitor`)                                   |
+| `audit`  | `admin_audit`                | retain (the accountability trail)                                                                   |
 | `clerk`  | the Clerk user               | delete (Clerk holds identity + credentials — there is no pseudonymised form)                        |
 | `sanity` | `subscriber`/`waitlistEntry` | pseudonymise (email replaced by its fingerprint)                                                    |
 | `orders` | future commerce D1           | no-op seam — orders/invoices carry a 7–10y anonymised retention duty, deferred until checkout ships |
 
-Every adapter supports a **dry run**: `preview()` reports what an erasure would touch
-without mutating anything, so an operator can inspect the blast radius before
-confirming. `runExport` (Art. 15/20) reads every store the same way, keyed by email.
+`runErasure`/`runExport` run five adapters (`core`, `audit`, `clerk`, `sanity`, `orders`) —
+one more than before the D1 split, a no-op change for the orchestrator, which already
+reports per-store. Every adapter supports a **dry run**: `preview()` reports what an
+erasure would touch without mutating anything, so an operator can inspect the blast radius
+before confirming. `runExport` (Art. 15/20) reads every store the same way, keyed by email.
 
 ## Live erasure flow
 
@@ -200,7 +228,7 @@ Four routes on the `api` worker (`code/shared/api/src/erasure/`) drive the engin
 
 ## Erasure completeness & backups
 
-Erasure runs on the live EU D1 and R2 objects — never on a backup.
+Erasure runs on the live EU D1s and R2 objects — never on a backup.
 
 Cloudflare D1 **Time Travel** keeps a rolling point-in-time history, up to 30 days.
 You cannot edit or delete one record inside that history.
@@ -248,4 +276,4 @@ in the Studio legal pages, not in code.
 ## Issue tags
 
 - `@debt SECURITY` — retention is enforced by the cron purge; verify it runs once the
-  operator binds `DB` + the schedule.
+  operator binds `DB` + `CORE_DB` + the schedule.
