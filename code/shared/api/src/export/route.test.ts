@@ -5,7 +5,10 @@ import {
 } from "@indiecrafts/packages-shared-security/crypto";
 import { describe, expect, it, vi } from "vitest";
 import type { Env } from "../index";
-import { createD1ErasureAdapter } from "../erasure/d1";
+import {
+  createCoreErasureAdapter,
+  createAuditErasureAdapter,
+} from "../erasure/d1";
 import { createClerkErasureAdapter } from "../erasure/clerk";
 import { createSanityErasureAdapter } from "../erasure/sanity";
 import { createOrdersErasureAdapter } from "../erasure/orders";
@@ -69,7 +72,8 @@ function mocks(
     pseudonymise: vi.fn(async () => {}),
   };
   const build = (e: Env) => [
-    createD1ErasureAdapter(e.DB!, SALT),
+    createCoreErasureAdapter(e.CORE_DB!, SALT),
+    createAuditErasureAdapter(e.DB!, e.CORE_DB!, SALT),
     createClerkErasureAdapter(clerkClient),
     createSanityErasureAdapter(sanityClient, SALT),
     createOrdersErasureAdapter(),
@@ -120,7 +124,8 @@ describe("handleExport", () => {
       stores: Record<string, unknown>;
     };
     expect(stored.ts).toBeTruthy();
-    expect(stored.stores).toHaveProperty("d1");
+    expect(stored.stores).toHaveProperty("d1-core");
+    expect(stored.stores).toHaveProperty("d1-audit");
 
     const audit = await env.DB.prepare(
       "SELECT event FROM admin_audit WHERE target_user_id = ? ORDER BY id DESC LIMIT 1",
@@ -192,7 +197,8 @@ describe("handleExportDownload", () => {
       'attachment; filename="my-data-export.json"',
     );
     const body = (await res.json()) as { stores: Record<string, unknown> };
-    expect(body.stores).toHaveProperty("d1");
+    expect(body.stores).toHaveProperty("d1-core");
+    expect(body.stores).toHaveProperty("d1-audit");
 
     const row = await exportRowFor(fp);
     expect(row?.downloaded_at).not.toBeNull();

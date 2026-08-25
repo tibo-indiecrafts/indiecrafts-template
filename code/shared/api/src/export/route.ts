@@ -13,7 +13,10 @@ import {
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type Env, PUBLIC_CORS, PUBLIC_CORS_POST, clientIp } from "../index";
-import { createD1ErasureAdapter } from "../erasure/d1";
+import {
+  createCoreErasureAdapter,
+  createAuditErasureAdapter,
+} from "../erasure/d1";
 import { createClerkErasureAdapter } from "../erasure/clerk";
 import { createSanityErasureAdapter } from "../erasure/sanity";
 import { createOrdersErasureAdapter } from "../erasure/orders";
@@ -25,7 +28,9 @@ import { readSettings } from "../settings-cache";
 const BODY_MAX = 4000;
 // Default download window (1h); the effective value is operator-overridable via
 // site_settings (ttl.export_download_hours) — see settingsCache below.
-const settingsCache: { value: null | { at: number; data: Record<string, number> } } = {
+const settingsCache: {
+  value: null | { at: number; data: Record<string, number> };
+} = {
   value: null,
 };
 
@@ -47,10 +52,15 @@ function json(
   });
 }
 
-/** The real four adapters (identical to erasure/self.ts). Injectable for tests. */
+/** The real five adapters (identical to erasure/self.ts). Injectable for tests. */
 function defaultAdapters(env: Env): ErasureAdapter[] {
   return [
-    createD1ErasureAdapter(env.DB!, env.GDPR_FINGERPRINT_SALT!),
+    createCoreErasureAdapter(env.CORE_DB!, env.GDPR_FINGERPRINT_SALT!),
+    createAuditErasureAdapter(
+      env.DB!,
+      env.CORE_DB!,
+      env.GDPR_FINGERPRINT_SALT!,
+    ),
     createClerkErasureAdapter(createRealClerkClient(env.CLERK_SECRET_KEY!)),
     createSanityErasureAdapter(
       createRealSanityClient({
@@ -125,8 +135,13 @@ export async function handleExport(
     return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_POST);
 
   // EXPORT_BUCKET is used directly by this route (independent of which adapters
-  // build the data), so it belongs beside DB/salt as an unconditional requirement.
-  if (!env.DB || !env.GDPR_FINGERPRINT_SALT || !env.EXPORT_BUCKET)
+  // build the data), so it belongs beside DB/CORE_DB/salt as an unconditional requirement.
+  if (
+    !env.DB ||
+    !env.CORE_DB ||
+    !env.GDPR_FINGERPRINT_SALT ||
+    !env.EXPORT_BUCKET
+  )
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
   // JWT verification needs the Clerk secret; and when the real adapters are used,
   // the Sanity secrets must be armed too (see erasure/self.ts).
@@ -177,7 +192,7 @@ export async function handleExport(
 
   // Not wrapped in try/catch: unlike erasure's fire-and-forget audit trail, this row
   // is the only handle to the download token — a failed write must surface as an error.
-  await env.DB.prepare(
+  await env.CORE_DB.prepare(
     "INSERT INTO export_requests (token_hash, r2_key, user_id, email_fingerprint, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)",
   )
     .bind(
@@ -226,10 +241,10 @@ export async function handleExportDownload(
   // Guard BEFORE hashing — sha256Hex throws on an empty string.
   if (!token) return json({ error: "not_found" }, 404, PUBLIC_CORS);
 
-  if (!env.DB || !env.EXPORT_BUCKET)
+  if (!env.CORE_DB || !env.EXPORT_BUCKET)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS);
 
-  const row = await env.DB.prepare(
+  const row = await env.CORE_DB.prepare(
     "SELECT id, r2_key, expires_at, downloaded_at FROM export_requests WHERE token_hash = ?",
   )
     .bind(await sha256Hex(token))
@@ -245,7 +260,7 @@ export async function handleExportDownload(
   // Single-use CLAIM: the conditional `AND downloaded_at IS NULL` makes it atomic — only
   // one of two near-simultaneous requests with the same token wins. `changes === 0` means
   // another request already claimed it → 400, same as an already-used row.
-  const claim = await env.DB.prepare(
+  const claim = await env.CORE_DB.prepare(
     "UPDATE export_requests SET downloaded_at = ? WHERE id = ? AND downloaded_at IS NULL",
   )
     .bind(new Date().toISOString(), row.id)

@@ -4,8 +4,9 @@ import {
 } from "@cloudflare/vitest-pool-workers/config";
 
 export default defineWorkersConfig(async () => {
-  // Read every db/audit + db/core migrations/*.sql so tests run against the real schema —
-  // both still apply to the single local `DB` binding, since no code queries CORE_DB yet.
+  // Read every db/audit + db/core migrations/*.sql so tests run against the real schema.
+  // DB and CORE_DB share one underlying local D1 (same id below) — applying the migrations
+  // once via env.DB gives both bindings every table.
   const migrations = [
     ...(await readD1Migrations("./db/audit/migrations")),
     ...(await readD1Migrations("./db/core/migrations")),
@@ -18,9 +19,14 @@ export default defineWorkersConfig(async () => {
         workers: {
           wrangler: { configPath: "./wrangler.toml" },
           miniflare: {
-            // wrangler.toml binds DB per-env only; the test pool reads the base
-            // config, so create the local ephemeral D1 here.
-            d1Databases: ["DB"],
+            // wrangler.toml binds DB/CORE_DB per-env only; the test pool reads the base
+            // config, so create the local ephemeral D1 here. Both bindings share one id —
+            // production splits core tables onto their own D1, but a single local D1 with
+            // every table is enough to exercise the binding split in tests.
+            d1Databases: {
+              DB: "test-shared-api-d1",
+              CORE_DB: "test-shared-api-d1",
+            },
             // Same reasoning for R2 — EXPORT_BUCKET is a local simulated bucket.
             r2Buckets: ["EXPORT_BUCKET"],
             bindings: {

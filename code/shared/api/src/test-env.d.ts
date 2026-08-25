@@ -5,8 +5,9 @@ declare module "cloudflare:test" {
   interface ProvidedEnv extends Env {
     // Populated in vitest.config.ts via readD1Migrations().
     TEST_MIGRATIONS: D1Migration[];
-    // Env.DB is optional (503-until-bound in prod); the test pool always binds it
-    // (d1Databases: ["DB"] in vitest.config.ts), so narrow it here to non-optional.
+    // Env.DB/CORE_DB are optional (503-until-bound in prod); the test pool always binds
+    // both (d1Databases in vitest.config.ts), so narrow them here to non-optional.
     DB: D1Database;
+    CORE_DB: D1Database;
   }
 }

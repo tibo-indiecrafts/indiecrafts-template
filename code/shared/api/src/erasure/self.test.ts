@@ -2,7 +2,7 @@ import { env } from "cloudflare:test";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
 import { describe, expect, it, vi } from "vitest";
 import type { Env } from "../index";
-import { createD1ErasureAdapter } from "./d1";
+import { createCoreErasureAdapter, createAuditErasureAdapter } from "./d1";
 import { createClerkErasureAdapter } from "./clerk";
 import { createSanityErasureAdapter } from "./sanity";
 import { createOrdersErasureAdapter } from "./orders";
@@ -65,7 +65,8 @@ function mocks(
     pseudonymise: vi.fn(async () => {}),
   };
   const build = (e: Env) => [
-    createD1ErasureAdapter(e.DB!, SALT),
+    createCoreErasureAdapter(e.CORE_DB!, SALT),
+    createAuditErasureAdapter(e.DB!, e.CORE_DB!, SALT),
     createClerkErasureAdapter(clerkClient),
     createSanityErasureAdapter(sanityClient, SALT),
     createOrdersErasureAdapter(),
@@ -151,7 +152,8 @@ describe("handleErasureSelf", () => {
       }),
     };
     const build = (e: Env) => [
-      createD1ErasureAdapter(e.DB!, SALT),
+      createCoreErasureAdapter(e.CORE_DB!, SALT),
+      createAuditErasureAdapter(e.DB!, e.CORE_DB!, SALT),
       createClerkErasureAdapter(clerkClient),
       createSanityErasureAdapter(
         {

@@ -5,7 +5,7 @@ import {
   runExport,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { describe, expect, it, vi } from "vitest";
-import { createD1ErasureAdapter } from "./d1";
+import { createCoreErasureAdapter, createAuditErasureAdapter } from "./d1";
 import { createClerkErasureAdapter } from "./clerk";
 import { createSanityErasureAdapter } from "./sanity";
 import { createOrdersErasureAdapter } from "./orders";
@@ -35,7 +35,8 @@ function adapters() {
     SALT,
   );
   return [
-    createD1ErasureAdapter(env.DB, SALT),
+    createCoreErasureAdapter(env.CORE_DB, SALT),
+    createAuditErasureAdapter(env.DB, env.CORE_DB, SALT),
     clerk,
     sanity,
     createOrdersErasureAdapter(),
@@ -54,7 +55,8 @@ describe("erasure engine (full run)", () => {
     });
     expect(receipt.stores.map((s) => s.store).sort()).toEqual([
       "clerk",
-      "d1",
+      "d1-audit",
+      "d1-core",
       "orders",
       "sanity",
     ]);
@@ -70,7 +72,8 @@ describe("erasure engine (full run)", () => {
     const bundle = await runExport(a, EMAIL);
     expect(Object.keys(bundle.stores).sort()).toEqual([
       "clerk",
-      "d1",
+      "d1-audit",
+      "d1-core",
       "orders",
       "sanity",
     ]);

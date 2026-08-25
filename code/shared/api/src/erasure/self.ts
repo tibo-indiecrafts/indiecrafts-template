@@ -13,7 +13,7 @@ import {
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
-import { createD1ErasureAdapter } from "./d1";
+import { createCoreErasureAdapter, createAuditErasureAdapter } from "./d1";
 import { createClerkErasureAdapter } from "./clerk";
 import { createSanityErasureAdapter } from "./sanity";
 import { createOrdersErasureAdapter } from "./orders";
@@ -36,10 +36,15 @@ function json(
   });
 }
 
-/** The real four adapters (identical to confirm.ts). Injectable for tests. */
+/** The real five adapters (identical to confirm.ts). Injectable for tests. */
 function defaultAdapters(env: Env): ErasureAdapter[] {
   return [
-    createD1ErasureAdapter(env.DB!, env.GDPR_FINGERPRINT_SALT!),
+    createCoreErasureAdapter(env.CORE_DB!, env.GDPR_FINGERPRINT_SALT!),
+    createAuditErasureAdapter(
+      env.DB!,
+      env.CORE_DB!,
+      env.GDPR_FINGERPRINT_SALT!,
+    ),
     createClerkErasureAdapter(createRealClerkClient(env.CLERK_SECRET_KEY!)),
     createSanityErasureAdapter(
       createRealSanityClient({
@@ -128,7 +133,7 @@ export async function handleErasureSelf(
   if (request.method !== "POST")
     return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_POST);
 
-  if (!env.DB || !env.GDPR_FINGERPRINT_SALT)
+  if (!env.DB || !env.CORE_DB || !env.GDPR_FINGERPRINT_SALT)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
   // JWT verification needs the Clerk secret; and when the real adapters are used,
   // the Clerk/Sanity secrets must be armed or the engine half-erases (see confirm.ts).
@@ -197,7 +202,7 @@ export async function handleErasureSelf(
   // Proof-of-erasure row. No token here → a throwaway hash satisfies the NOT NULL
   // column; it is never emailed or used.
   try {
-    await env.DB.prepare(
+    await env.CORE_DB.prepare(
       "INSERT INTO erasure_requests (status, token_hash, token_expires_at, attempts, user_id, email_fingerprint, requested_at, confirmed_at, completed_at, due_at, result) " +
         "VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?)",
     )

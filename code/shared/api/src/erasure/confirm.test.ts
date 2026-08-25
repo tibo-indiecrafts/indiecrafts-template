@@ -6,7 +6,7 @@ import {
 import { describe, expect, it, vi } from "vitest";
 import type { Env } from "../index";
 import type { ClerkErasureClient } from "./clerk";
-import { createD1ErasureAdapter } from "./d1";
+import { createCoreErasureAdapter, createAuditErasureAdapter } from "./d1";
 import { createClerkErasureAdapter } from "./clerk";
 import { createSanityErasureAdapter } from "./sanity";
 import { createOrdersErasureAdapter } from "./orders";
@@ -81,7 +81,8 @@ function mockAdapters(clerkOverrides: Partial<ClerkErasureClient> = {}) {
     pseudonymise: vi.fn(async () => {}),
   };
   const build = (buildEnv: Env) => [
-    createD1ErasureAdapter(buildEnv.DB!, SALT),
+    createCoreErasureAdapter(buildEnv.CORE_DB!, SALT),
+    createAuditErasureAdapter(buildEnv.DB!, buildEnv.CORE_DB!, SALT),
     createClerkErasureAdapter(clerkClient),
     createSanityErasureAdapter(sanityClient, SALT),
     createOrdersErasureAdapter(),
@@ -169,8 +170,20 @@ describe("POST /v1/erasure/confirm", () => {
       .first<{ status: string; result: string; completed_at: string | null }>();
     expect(row?.status).toBe("completed");
     expect(row?.completed_at).toBeTruthy();
-    const receipt = JSON.parse(row!.result) as { errors: unknown[] };
+    const receipt = JSON.parse(row!.result) as {
+      errors: unknown[];
+      stores: Array<{ store: string }>;
+    };
     expect(receipt.errors).toEqual([]);
+    // Both D1 adapters ran back-to-back: core's anonymize (email_fingerprint kept)
+    // still lets audit's resolveSubject find the user afterward.
+    expect(receipt.stores.map((s) => s.store).sort()).toEqual([
+      "clerk",
+      "d1-audit",
+      "d1-core",
+      "orders",
+      "sanity",
+    ]);
 
     const audit = await env.DB.prepare(
       "SELECT actor_user_id, target_user_id FROM admin_audit WHERE event = 'erasure.completed'",
