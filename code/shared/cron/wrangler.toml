@@ -58,15 +58,24 @@ invocation_logs = true
 # upload_source_maps = true
 
 # ── per-env (mirror the deploy scripts) ──────────────────────
+# The api's two EU D1s, both bound here read/write so the scheduled passes can enforce
+# retention + settings/erasure/export bookkeeping. Same database_ids the api uses (paste
+# per env) — see code/shared/api/wrangler.toml for what lives in each:
+#   DB      — audit firehose: admin_audit · session_events · security_events · csp_reports.
+#   CORE_DB — identity/rights/settings: consent_events · data_requests · erasure_requests ·
+#             export_requests · site_settings.
 [env.dev]
 name = "indiecrafts-dev-shared-cron"
 
-# The api's EU D1 (binding `DB`) — bound here read/write so the scheduled purge can enforce
-# 90-day retention on all three tables. Same database_id the api uses (paste per env).
 [[env.dev.d1_databases]]
 binding = "DB"
 database_name = "indiecrafts-dev-shared-api"
 database_id = "PASTE_D1_ID_HERE"
+
+[[env.dev.d1_databases]]
+binding = "CORE_DB"
+database_name = "indiecrafts-dev-shared-api-core"
+database_id = "PASTE_CORE_D1_ID_HERE"
 
 [env.staging]
 name = "indiecrafts-staging-shared-cron"
@@ -76,6 +85,11 @@ binding = "DB"
 database_name = "indiecrafts-staging-shared-api"
 database_id = "PASTE_D1_ID_HERE"
 
+[[env.staging.d1_databases]]
+binding = "CORE_DB"
+database_name = "indiecrafts-staging-shared-api-core"
+database_id = "PASTE_CORE_D1_ID_HERE"
+
 [env.prod]
 name = "indiecrafts-prod-shared-cron"
 
@@ -83,3 +97,8 @@ name = "indiecrafts-prod-shared-cron"
 binding = "DB"
 database_name = "indiecrafts-prod-shared-api"
 database_id = "PASTE_D1_ID_HERE"
+
+[[env.prod.d1_databases]]
+binding = "CORE_DB"
+database_name = "indiecrafts-prod-shared-api-core"
+database_id = "PASTE_CORE_D1_ID_HERE"
