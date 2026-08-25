@@ -66,6 +66,12 @@
           },
           {
             "type": "command",
+            "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/platform-patterns.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/platform-patterns.mjs\"",
+            "timeout": 5,
+            "statusMessage": "Platform patterns (native/hybrid)"
+          },
+          {
+            "type": "command",
             "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/i18n-parity.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/i18n-parity.mjs\"",
             "timeout": 5,
             "statusMessage": "i18n key parity"
