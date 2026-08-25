@@ -78,6 +78,25 @@ describe("retention purges", () => {
     const groupKeys = result.results.map((r) => r.group_key);
     expect(groupKeys).toEqual(["website|report|img-src|/b|https://y"]);
   });
+
+  it("purges csp_reports on an operator override (7 days) instead of the 30-day default", async () => {
+    // Override the CSP window down to 7 days.
+    await env.DB!.prepare(
+      "INSERT INTO site_settings (key, value, updated_at, updated_by) VALUES ('retention.csp_days', '7', ?, 'user_test')",
+    )
+      .bind(new Date(NOW).toISOString())
+      .run();
+
+    const old = new Date(NOW - 10 * 86_400_000).toISOString(); // 10d — kept at 30d, purged at 7d
+    await seedCspReport("website|report|img-src|/c|https://z", old);
+
+    await runScheduled(NOW);
+
+    const row = await env.DB!.prepare(
+      "SELECT group_key FROM csp_reports WHERE group_key = 'website|report|img-src|/c|https://z'",
+    ).first();
+    expect(row).toBeNull();
+  });
 });
 
 describe("scheduled() — retention purge (data_requests + erasure_requests)", () => {

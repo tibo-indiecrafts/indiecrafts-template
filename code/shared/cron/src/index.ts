@@ -1,6 +1,10 @@
 import { addTransport, logger } from "@indiecrafts/packages-shared-logger";
 import { cloudflareTransport } from "@indiecrafts/packages-shared-logger/cloudflare";
-import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
+import {
+  effectiveSettings,
+  getCurrentEnvironment,
+  type SettingKey,
+} from "@indiecrafts/packages-shared-config";
 
 // A scheduled failure must not pass silently (see the NEVERs). Production console is
 // silent, so forward error/fatal to Workers Logs; non-prod already shows them.
@@ -30,26 +34,20 @@ export interface Env {
   EXPORT_BUCKET?: R2Bucket;
 }
 
-/** GDPR storage-limitation ceiling for the audit + session records (Art. 5(1)(e)). */
-const RETENTION_DAYS = 90;
-
-/** consent_events is kept far longer than the audit tables — consent is a proof
- *  record with its own retention duty (spec §13). ~3 years. */
-const CONSENT_RETENTION_DAYS = 1095;
-
-/** CSP violation reports are operational signal, not a proof record — 30 days. */
-const CSP_RETENTION_DAYS = 30;
-
-/** data_requests (DSAR intake) is short-lived operational PII — a year gives the
- *  operator room to action + prove the request, then it's purged. */
-const DATA_REQUEST_RETENTION_DAYS = 365;
-
-/** erasure_requests is kept as long as consent_events — it is the proof-of-erasure
- *  record for a completed request, not an audit trail. ~3 years. */
-const ERASURE_REQUEST_RETENTION_DAYS = 1095;
-
-/** How far ahead of an erasure request's `due_at` counts as "due soon" for the SLA flag. */
-const SLA_WARNING_DAYS = 7;
+/** Effective settings for this tick: defaults merged with clamped D1 overrides.
+ *  Never throws — any read failure falls back to code defaults. */
+async function loadSettings(db?: D1Database): Promise<Record<SettingKey, number>> {
+  if (!db) return effectiveSettings([]);
+  try {
+    const { results } = await db
+      .prepare("SELECT key, value FROM site_settings")
+      .all<{ key: string; value: string }>();
+    return effectiveSettings(results);
+  } catch (error) {
+    logger.error("settings read failed; using defaults", { name: (error as Error)?.name });
+    return effectiveSettings([]);
+  }
+}
 
 /** ISO cutoff `days` before `scheduledTime` (ms epoch). */
 export function retentionCutoff(scheduledTime: number, days: number): string {
@@ -78,6 +76,8 @@ export default {
       scheduledTime: controller.scheduledTime,
     });
 
+    const settings = await loadSettings(env.DB);
+
     // Retention purge (GDPR storage limitation): purge tables past their ceiling from
     // the one EU D1. admin_audit + session_events + security_events use the 90-day
     // ceiling; consent_events uses its own, much longer 3-year window, because it is a
@@ -85,28 +85,32 @@ export default {
     // violations are operational signal, not proof records); data_requests (DSAR intake,
     // short-lived operational PII) purges at 365 days; erasure_requests (proof-of-erasure
     // record) purges at the same 3-year window as consent_events. Idempotent — safe on
-    // every tick. No-ops until the DB is bound.
-    const cutoff = retentionCutoff(controller.scheduledTime, RETENTION_DAYS);
+    // every tick. No-ops until the DB is bound. Each window is the effective value —
+    // the D1 `site_settings` override if operator-set, else the code default.
+    const cutoff = retentionCutoff(
+      controller.scheduledTime,
+      settings["retention.audit_days"],
+    );
     const consentCutoff = retentionCutoff(
       controller.scheduledTime,
-      CONSENT_RETENTION_DAYS,
+      settings["retention.consent_days"],
     );
     const cspCutoff = retentionCutoff(
       controller.scheduledTime,
-      CSP_RETENTION_DAYS,
+      settings["retention.csp_days"],
     );
     const dataRequestCutoff = retentionCutoff(
       controller.scheduledTime,
-      DATA_REQUEST_RETENTION_DAYS,
+      settings["retention.data_request_days"],
     );
     const erasureRequestCutoff = retentionCutoff(
       controller.scheduledTime,
-      ERASURE_REQUEST_RETENTION_DAYS,
+      settings["retention.erasure_request_days"],
     );
     const nowIso = new Date(controller.scheduledTime).toISOString();
     const dueSoon = slaDueSoonCutoff(
       controller.scheduledTime,
-      SLA_WARNING_DAYS,
+      settings["ops.sla_warning_days"],
     );
     if (env.DB) {
       try {
