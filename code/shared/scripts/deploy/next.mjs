@@ -21,7 +21,7 @@ if (!app || !ENVS.includes(env)) {
 // Refuse a staging/prod deploy while the Worker/R2 names are still the template
 // default — a shared Cloudflare account would clobber another client.
 assertRenamed(app, env);
-await confirmProd(app, env, yes);
+await confirmProd("Deploy", app, env, { yes });
 
 // Runtime origin comes from the domain registry (single source of truth) — set it
 // for the build unless the env already provides one. No-op until a real host is set.

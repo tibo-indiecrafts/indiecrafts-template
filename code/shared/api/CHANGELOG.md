@@ -7,6 +7,17 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Changed
 
+- **DB management: explicit `local`/`dev`/`staging`/`prod` tiers + complete, R2-gated scripts.**
+  `dev`/`staging`/`prod` are now real remote D1s; `local` is the disposable miniflare tier — the
+  `api`/`cron` `dev` scripts became `wrangler dev --env dev`, so `env.DB` + `env.CORE_DB` resolve
+  locally. `migrate.mjs` gains the `local` tier + `--all`, and every REMOTE migration takes a
+  pre-migration R2 snapshot that ABORTS on failure (fail-closed; `--no-backup` opts out). A prod
+  `db:migrate` / `db:backup` now confirms first (reuses `confirmProd`, auto-skips under `CI`/`--yes`).
+  Added the missing `core` migrate scripts, `db:migrate:all:*`, and `db:backup:all:*:remote`, each
+  mirrored into `.vscode/tasks.json`. Local flow: `pnpm db:migrate:all:local` → `pnpm dev`. _Why:_
+  after the D1 split, `core` had no migrate scripts and local dev bound no database, and "dev" was
+  conflated with local — so the real dev DB was never migratable.
+
 - **Split the api's single EU D1 into `core` + `audit`, for identity/audit blast-domain
   isolation.** `core` (new, binding `CORE_DB`) holds `user_profiles`, `consent_events`,
   `data_requests`, `erasure_requests`, `export_requests`, `site_settings`; `audit`

@@ -307,6 +307,69 @@
       "problemMatcher": []
     },
     {
+      "label": "db:migrate:audit:local",
+      "detail": "run D1 migrations — audit (local miniflare, offline)",
+      "type": "shell",
+      "command": "pnpm db:migrate:audit:local",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:core:local",
+      "detail": "run D1 migrations — core (local miniflare, offline)",
+      "type": "shell",
+      "command": "pnpm db:migrate:core:local",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:core:dev",
+      "detail": "run D1 migrations — core dev (real remote D1, pre-migration R2 snapshot)",
+      "type": "shell",
+      "command": "pnpm db:migrate:core:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:core:staging",
+      "detail": "run D1 migrations — core staging (real remote D1, pre-migration R2 snapshot)",
+      "type": "shell",
+      "command": "pnpm db:migrate:core:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:core:prod",
+      "detail": "run D1 migrations — core prod (real remote D1, R2 snapshot + prod confirm)",
+      "type": "shell",
+      "command": "pnpm db:migrate:core:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:all:local",
+      "detail": "run D1 migrations — all D1s (local miniflare, offline)",
+      "type": "shell",
+      "command": "pnpm db:migrate:all:local",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:all:dev",
+      "detail": "run D1 migrations — all D1s dev (real remote, R2 snapshots)",
+      "type": "shell",
+      "command": "pnpm db:migrate:all:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:all:staging",
+      "detail": "run D1 migrations — all D1s staging (real remote, R2 snapshots)",
+      "type": "shell",
+      "command": "pnpm db:migrate:all:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:all:prod",
+      "detail": "run D1 migrations — all D1s prod (real remote, R2 snapshots + prod confirm)",
+      "type": "shell",
+      "command": "pnpm db:migrate:all:prod",
+      "problemMatcher": []
+    },
+    {
       "label": "db:backup:content:prod",
       "detail": "back up the prod Sanity dataset (local)",
       "type": "shell",
@@ -339,6 +402,27 @@
       "detail": "back up all data stores — prod",
       "type": "shell",
       "command": "pnpm db:backup:all:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:backup:all:dev:remote",
+      "detail": "back up all data stores + upload to R2 — dev",
+      "type": "shell",
+      "command": "pnpm db:backup:all:dev:remote",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:backup:all:staging:remote",
+      "detail": "back up all data stores + upload to R2 — staging",
+      "type": "shell",
+      "command": "pnpm db:backup:all:staging:remote",
+      "problemMatcher": []
+    },
+    {
+      "label": "db:backup:all:prod:remote",
+      "detail": "back up all data stores + upload to R2 — prod",
+      "type": "shell",
+      "command": "pnpm db:backup:all:prod:remote",
       "problemMatcher": []
     },
     {

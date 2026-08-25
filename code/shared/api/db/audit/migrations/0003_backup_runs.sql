@@ -1,4 +1,4 @@
--- 0009_backup_runs.sql — backup history for the admin read-only card. Written by the
+-- 0003_backup_runs.sql — backup history for the admin read-only card. Written by the
 -- backup scripts (wrangler d1 execute); read by GET /v1/backups/status.
 CREATE TABLE backup_runs (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,

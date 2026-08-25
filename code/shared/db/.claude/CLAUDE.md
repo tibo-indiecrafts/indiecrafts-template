@@ -29,3 +29,19 @@ conventions; the actual instances live at their altitude slots. **What it is** �
 - **Back up before destructive migrations** (`data/backup.mjs`; D1 Time Travel restores 30 days). Never commit
   real data; never log or URL-expose PII.
 - Log schema changes in this area's own `CHANGELOG.md` (create with the first migration); roll up to root.
+
+## Environments — local vs the real remote DBs
+
+Four tiers. **`local`** is the disposable miniflare D1 on your machine (what `pnpm dev` binds, via
+`wrangler dev --env dev`); **`dev` / `staging` / `prod`** are real remote Cloudflare D1s.
+
+| Tier | `db:migrate:<db>\|all:<tier>` runs | Backed up first? |
+| --- | --- | --- |
+| `local` | `--env dev --local` (offline, no real database_id) | no — disposable |
+| `dev` · `staging` · `prod` | `--env <env> --remote` | **yes** — a pre-migration R2 snapshot; a failed snapshot ABORTS (fail-closed; `--no-backup` opts out) |
+
+- **Local setup:** `pnpm db:migrate:all:local` → `pnpm dev`. No real ids needed.
+- **A prod `db:migrate` / `db:backup` confirms first** — `⚠ … in PRODUCTION? [y/N]` (auto-skips under `CI` or `--yes`).
+- **Backups → R2**: `db:backup:all:<env>:remote` (or the automatic pre-migration snapshot) lands in the
+  `<prefix>-<env>-db-backup` bucket + a `backup_runs` row (audit DB). A new DB gets one registry row →
+  `db:migrate:<name>:<tier>` + the registry-driven `--all` cover it.

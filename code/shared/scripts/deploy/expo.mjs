@@ -34,7 +34,7 @@ if (spawnSync("eas", ["--version"], { stdio: "ignore" }).status !== 0) {
   process.exit(1);
 }
 
-await confirmProd("mobile", env, yes);
+await confirmProd("Deploy", "mobile", env, { yes });
 run("eas", [
   "build",
   "--platform",

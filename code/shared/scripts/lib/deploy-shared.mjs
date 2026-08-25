@@ -9,12 +9,14 @@ export function run(cmd, args) {
   if (r.status !== 0) process.exit(r.status ?? 1);
 }
 
-/** Interactive prod guard — a hand-run prod deploy confirms; CI + `--yes` skip it. */
-export async function confirmProd(app, env, yes) {
+/** Interactive prod guard — a hand-run prod action confirms; CI + `--yes` skip it.
+ *  Reused by deploy AND db:migrate/db:backup:
+ *    confirmProd("Deploy", app, env, { yes }) · confirmProd("Migrate", db, env, { yes }). */
+export async function confirmProd(action, target, env, { yes } = {}) {
   if (env !== "prod" || yes || process.env.CI) return;
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   const ans = await new Promise((res) =>
-    rl.question(`Deploy ${app} to PRODUCTION? [y/N] `, res),
+    rl.question(`⚠  ${action} ${target} in PRODUCTION? [y/N] `, res),
   );
   rl.close();
   if (!/^y(es)?$/i.test(ans.trim())) {

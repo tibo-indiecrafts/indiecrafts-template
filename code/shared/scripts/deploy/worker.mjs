@@ -56,7 +56,7 @@ function migrateOwnedD1() {
 // is still the template default (`indiecrafts-<app>`). `pnpm project:rename <slug>`
 // rewrites it. dev is the shared sandbox, so it is allowed.
 assertRenamed(app, env);
-await confirmProd(app, env, yes);
+await confirmProd("Deploy", app, env, { yes });
 
 migrateOwnedD1();
 run("wrangler", ["deploy", "--env", env]);

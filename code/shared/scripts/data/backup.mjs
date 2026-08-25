@@ -18,6 +18,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DATABASES, ENVS } from "../lib/databases.mjs";
 import { APPS } from "../lib/apps.mjs";
+import { confirmProd } from "../lib/deploy-shared.mjs";
 import {
   stamp,
   ensureDir,
@@ -43,6 +44,7 @@ const args = process.argv.slice(2);
 const dry = args.includes("--dry-run");
 const remote = args.includes("--remote");
 const all = args.includes("--all");
+const yes = args.includes("--yes"); // skip the prod confirm (CI, or migrate's internal call)
 // `--kind=` lets a caller (the pre-migration snapshot in migrate.mjs) tag the
 // backup_runs row it logs; a direct/manual invocation defaults to "manual".
 const kindArg = args.find((a) => a.startsWith("--kind="));
@@ -68,6 +70,10 @@ if (!targets.length) {
   );
   process.exit(all ? 0 : 1);
 }
+
+// A hand-run prod backup confirms first (skipped under CI / --yes). Read-only export, but
+// a prod backup also writes a backup_runs row to the prod audit D1 — worth the guard.
+if (!dry) await confirmProd("Back up", all ? "all databases" : name, env, { yes });
 
 let failed = false;
 for (const db of targets) {

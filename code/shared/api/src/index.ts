@@ -767,7 +767,7 @@ export default {
 
     // ── Backups status — GET /v1/backups/status (bearer-gated; read-only history for
     // the admin card) ── bucket/retention/pre-migration-flag come from env/config; recent
-    // rows come from `backup_runs` (migration 0009), written by the backup scripts.
+    // rows come from `backup_runs` (migration 0003, audit DB), written by the backup scripts.
     if (url.pathname === "/v1/backups/status") {
       if (request.method === "OPTIONS")
         return new Response(null, { status: 204, headers: cors });

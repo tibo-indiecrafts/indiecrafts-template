@@ -26,6 +26,6 @@ const script =
     process.platform
   ] ?? "dist:linux";
 
-await confirmProd("hybrid", env, yes);
+await confirmProd("Deploy", "hybrid", env, { yes });
 run("pnpm", ["run", script]); // electron-vite build + electron-builder for this OS
 console.log(`✓ hybrid: built installer via ${script} (${env}).`);
