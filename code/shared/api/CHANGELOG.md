@@ -12,9 +12,9 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   `data_requests`, `erasure_requests`, `export_requests`, `site_settings`; `audit`
   (binding `DB`, unchanged) keeps `session_events`, `security_events`, `admin_audit`,
   `csp_reports`, `backup_runs`. Both `--location weur`, both owned by this api; `cron`
-  holds both bindings too. Erasure now runs a `core` + `audit` adapter through the same
-  multi-store `runErasure` receipt (the `audit` adapter takes a read-only handle to `core`
-  to resolve `user_id` — a lookup, not a cross-DB transaction). The split also fixes a
+  holds both bindings too. Erasure now runs a `d1-core` + `d1-audit` adapter through the
+  same multi-store `runErasure` receipt (the `d1-audit` adapter takes a read-only handle to
+  `core` to resolve `user_id` — a lookup, not a cross-DB transaction). The split also fixes a
   pre-existing duplicate-`0004` migration-numbering collision (each D1 now renumbers its
   own migrations from `0001`). **`PUT /v1/settings` is no longer atomic across the two
   tables it writes** — `site_settings` on `CORE_DB` is primary and unguarded; `admin_audit`
@@ -27,12 +27,14 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 ### Added
 
 - **`GET`/`PUT /v1/settings` — bounded, audited operator overrides for worker-read
-  operational knobs.** New D1 `site_settings` table (migration `0008`, overrides only —
-  an absent key falls back to its `@indiecrafts/packages-shared-config` default). `GET`
+  operational knobs.** New `core` D1 `site_settings` table (binding `CORE_DB`, migration
+  `0007`, overrides only — an absent key falls back to its
+  `@indiecrafts/packages-shared-config` default). `GET`
   returns each key's effective value + its default/bounds/unit/last-changed; `PUT` validates
   with `coerceSetting` and **rejects rather than silently clamps** an out-of-range value
   (`422` + the allowed range), then writes the override and an `admin_audit` row
-  (`event: "setting_changed"`) in the same D1 batch — every change is audited. Bearer-gated,
+  (`event: "setting_changed"`) — originally the same D1 batch, now split across `CORE_DB`/
+  `DB` by the `core`/`audit` D1 split above; every change is still audited. Bearer-gated,
   same trust boundary as the rest of this api; the admin app resolves the Clerk `admin` role
   and forwards `updated_by`. **Why:** retention windows, the SLA warning lead time, and two
   link TTLs were hard-coded constants — changing one meant a code change + redeploy.
@@ -43,8 +45,8 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   per request. Fails open to the code default on any read error. **Why:** an operator's TTL
   override takes effect without a redeploy, without adding latency to every export/erasure
   request.
-- **`GET /v1/backups/status` — read-only backup history for the admin Backups card.** New D1
-  `backup_runs` table (migration `0009`) the backup scripts write one row to per run (started
+- **`GET /v1/backups/status` — read-only backup history for the admin Backups card.** New
+  `audit` D1 `backup_runs` table (binding `DB`, migration `0003`) the backup scripts write one row to per run (started
   → updated to `ok`/`failed` + `finished_at`; a hard crash leaves `finished_at` null, itself a
   visible signal). The route (bearer-gated) returns the bucket/retention/pre-migration-flag
   from env/config plus the newest 20 `backup_runs` rows, newest first. **Why:** backup
@@ -89,7 +91,7 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   Bearer-gated (mirrors `GET /v1/security`); returns `csp_reports` rows ordered by `count DESC,
 last_seen DESC`, `limit` clamped to 200 (default 100). **Why:** back the admin CSP dashboard so an
   operator can see which violations a strict CSP would block before flipping a surface to `enforce`.
-- feat(compliance): `kind:csp-report` writes aggregated `csp_reports` (migration 0004). `POST
+- feat(compliance): `kind:csp-report` writes aggregated `csp_reports` (`audit` D1, migration 0002). `POST
 /v1/events` gains a fourth `kind`: the surface forwards sanitized CSP violation reports
   (routes collapsed, samples redacted upstream), and the worker upserts one row per distinct
   `surface|disposition|directive|documentPath|blockedSource` group, incrementing `count` and
@@ -97,16 +99,16 @@ last_seen DESC`, `limit` clamped to 200 (default 100). **Why:** back the admin C
   violation is about a resource, not a person. **Why:** report-only CSP collection needs a
   bounded, queryable sink without per-request row growth or subject data.
 - feat(security): high/critical `security_events` incidents now email the owner/DPO — recipient `SECURITY_ALERT_EMAIL` (`[vars]`), falling back to `EMAIL_ADMIN_BCC`; a no-op (incident still written to D1) when neither is set. Sent non-blocking via `ctx.waitUntil` at the three write sites: `credential_stuffing` (KV threshold), any high/critical incident posted to `POST /v1/events`, and the Clerk-webhook `privilege_escalation`. The email is internal-only, hard-coded English, non-PII (no raw IP, no email), and never fails the request. **Why:** starts the operator's 72-hour GDPR breach-notification clock — see `code/docs/apps/web/config/breach-response.md`.
-- feat(compliance): DSAR intake migrated off Sanity into D1 — `data_requests` table (migration 0007) + `POST /v1/data-request` (bearer-gated write; the website's `/api/data-request` route will proxy here) + `GET /v1/data-requests` (bearer-gated read, for the admin screen). A deliberate departure from this D1's minimization convention: the table stores a plaintext, replyable `email` + up to 4000 chars of free-text `message` — short-lived operational PII the operator needs to action a GDPR request, exactly as the Sanity `dataRequest` doc did.
-- feat(compliance): data export (Art. 15/20) — `POST /v1/export` verifies the Clerk session JWT, runs `runExport` across every adapter, stores the bundle in the new `EXPORT_BUCKET` R2 bucket, and returns a single-use 1-hour download link. `GET /v1/export/download?token=` streams the bundle and deletes it on first download (single-use, mirrors the erasure hashed-token pattern). `export_requests` D1 table (migration 0005) tracks the token hash + TTL + download state.
+- feat(compliance): DSAR intake migrated off Sanity into D1 — `data_requests` table (`core` D1, migration 0006) + `POST /v1/data-request` (bearer-gated write; the website's `/api/data-request` route will proxy here) + `GET /v1/data-requests` (bearer-gated read, for the admin screen). A deliberate departure from this D1's minimization convention: the table stores a plaintext, replyable `email` + up to 4000 chars of free-text `message` — short-lived operational PII the operator needs to action a GDPR request, exactly as the Sanity `dataRequest` doc did.
+- feat(compliance): data export (Art. 15/20) — `POST /v1/export` verifies the Clerk session JWT, runs `runExport` across every adapter, stores the bundle in the new `EXPORT_BUCKET` R2 bucket, and returns a single-use 1-hour download link. `GET /v1/export/download?token=` streams the bundle and deletes it on first download (single-use, mirrors the erasure hashed-token pattern). `export_requests` D1 table (`core` D1, migration 0004) tracks the token hash + TTL + download state.
 - feat(compliance): authenticated self-service erasure — `POST /v1/erasure/self` verifies the Clerk session JWT, requires a matching typed email, then runs the erasure engine directly (no email round-trip). The signed-in surfaces' account-delete control will call it.
 - feat(compliance): live erasure routes — `GET/POST /v1/erasure/request` (Turnstile-gated, anti-enumeration), `GET/POST /v1/erasure/confirm` (token hash + typed-email fingerprint + TTL + attempt cap, runs the Phase-3 engine live), and `GET /v1/erasure/status/:token` (public, no-PII status poll).
-- feat(compliance): erasure_requests D1 table (migration 0004) — the erasure request lifecycle + single-use confirmation token, keyed by a SHA-256 token hash (`sha256Hex`).
+- feat(compliance): erasure_requests D1 table (`core` D1, migration 0003) — the erasure request lifecycle + single-use confirmation token, keyed by a SHA-256 token hash (`sha256Hex`).
 - fix(compliance): D1 erasure adapter — `security_events` delete is now the exact severity complement of the pseudonymised set (no off-list severity value is silently retained); `resolve()` falls back to a plaintext email match when `email_fingerprint` is null.
 - feat(compliance): erasure engine wiring — orders seam + adapter barrel + full-engine integration test.
 - feat(compliance): D1 erasure adapter (pseudonymise profile/high-severity/consent; delete session + low/medium security).
-- feat(compliance): consent_events D1 table (migration 0003) — append-only consent log, 3-year retention.
-- feat(compliance): D1 user_profiles table (migration 0002) + workers-pool D1 test harness.
+- feat(compliance): consent_events D1 table (`core` D1, migration 0002) — append-only consent log, 3-year retention.
+- feat(compliance): D1 user_profiles table (`core` D1, migration 0001) + workers-pool D1 test harness.
 - feat(compliance): Clerk webhook syncs user_profiles (upsert/re-fingerprint/pseudonymise) + GDPR_FINGERPRINT_SALT.
 - **`GET /v1/geo` — the geo signal for the native surfaces.** Public (no bearer, no DB); echoes the
   caller's edge `cf-ipcountry` + the resolved consent mode (`resolveConsentMode` from
@@ -124,7 +126,8 @@ last_seen DESC`, `limit` clamped to 200 (default 100). **Why:** back the admin C
   (`APP_API_TOKEN`), writes `admin_audit` / `session_events` in the api's new **EU-resident** D1
   (Cloudflare D1, binding `DB`, `--location weur`). Data-minimized: country (`cf-ipcountry`) + a **salted
   hash of the IP** (`IP_HASH_SALT`, never raw), no user-agent. The D1 is registered in `databases.mjs`
-  (owner `api`, binding `DB`); migrations (`db/d1/migrations/0001_init.sql`) wired in `wrangler.toml` per
+  (owner `api`, binding `DB`); migrations (now `db/audit/migrations/0001_init.sql` — this dir was
+  `db/d1/` until the `core`/`audit` split above) wired in `wrangler.toml` per
   env. **Why:** move audit off the console/Logpush sink into a queryable, EU-resident store, with a
   per-surface session log. Retention is the `cron` worker's 90-day purge.
 - **`GET /v1/sessions` — recent sign-in activity for the admin sessions screen.** Bearer-gated; returns the
@@ -147,6 +150,9 @@ last_seen DESC`, `limit` clamped to 200 (default 100). **Why:** back the admin C
 - **One EU D1, not two.** `admin_audit` · `session_events` · `security_events` share a single database
   (binding `DB`) instead of separate `audit` + `security` D1s. **Why:** one database keeps the free-plan D1
   count low (3 per env instead of 6); the tables stay isolated (own indexes, own erasure purges).
+  **Superseded** — see "Split the api's single EU D1 into `core` + `audit`" above: identity/rights tables
+  moved to a second D1 for blast-domain isolation, at the cost of the lower free-plan count this entry
+  chose.
 
 - **Scaffold — a bare Cloudflare Worker (`@indiecrafts/api`).** HTTP API deploy shell
   (no Next/OpenNext): `src/index.ts` (`fetch` + a `/health` route), per-env

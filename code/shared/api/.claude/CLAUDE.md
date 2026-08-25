@@ -21,8 +21,9 @@ salt, identical across envs — see `wrangler.toml`). `POST /v1/events` also acc
 the `csp_reports` D1 table (aggregated CSP violation reports, Report-Only pipeline; 30-day `cron` purge).
 `GET /v1/csp-reports` reads it back (bearer-gated, same shape as `GET /v1/security`) for the admin CSP
 dashboard. `src/erasure/` holds the store-agnostic erasure
-adapters — `core` D1 + `audit` D1 (real, split by table; the audit adapter takes a read-only handle to
-`core` to resolve `user_id`) + Clerk/Sanity/orders (dependency-injected) — implementing
+adapters — `d1-core` + `d1-audit` (real, split by table across the `core`/`audit` D1s; the `d1-audit`
+adapter takes a read-only handle to `core` to resolve `user_id`) + `clerk`/`sanity`/`orders`
+(dependency-injected) — implementing
 `@indiecrafts/packages-shared-compliance` `ErasureAdapter`, run by its `runErasure`/`runExport`
 orchestrator. The `/v1/erasure` routes are live: `GET/POST /v1/erasure/request` (Turnstile-gated,
 anti-enumeration), `GET/POST /v1/erasure/confirm` (token + typed-email fingerprint + TTL + attempt
