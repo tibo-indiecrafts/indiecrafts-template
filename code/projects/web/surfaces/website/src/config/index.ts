@@ -16,6 +16,7 @@
 export * from "@indiecrafts/packages-shared-config";
 
 // App-owned instance config.
+export { surface } from "./surface";
 export { theme, themeConfig } from "./theme";
 export { fonts } from "./fonts";
 export { features } from "./features";

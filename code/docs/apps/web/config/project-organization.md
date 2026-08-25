@@ -78,8 +78,8 @@ src/
 ```
 
 App primitives come from the `@indiecrafts/packages-web-ui` **package**, not a local `ui/` dir.
-`src/config/` holds the app's **instance** config (`theme` · `fonts` · `features` · the `pages`
-map); its `index.ts` re-exports the shared `@indiecrafts/packages-shared-config` primitives, so `@/config` (the
+`src/config/` holds the app's **instance** config (`surface` · `theme` · `fonts` · `features` · the
+`pages` map); its `index.ts` re-exports the shared `@indiecrafts/packages-shared-config` primitives, so `@/config` (the
 `@/*` → `src/*` tsconfig path) is the app's one config import surface. Packages + modules still
 import the primitives from `@indiecrafts/packages-shared-config` directly. See [Multi-app](./multi-app).
 

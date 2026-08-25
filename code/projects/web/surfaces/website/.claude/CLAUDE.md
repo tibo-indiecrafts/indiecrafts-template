@@ -20,7 +20,7 @@ Full rationale in `code/docs/apps/web/config/project-organization.md`.
 
 **Workspace packages + module** (import via `@indiecrafts/*`):
 
-- `@indiecrafts/packages-shared-config` — shared config **primitives** (i18n · format · env/CSP · logging · `site` env) + the generic page-config contract. **App-instance** config (`theme` · `fonts` · `features` · `pages`) is app-owned in `src/config/`; import both via `@/config`.
+- `@indiecrafts/packages-shared-config` — shared config **primitives** (i18n · format · env/CSP · logging · `site` env) + the generic page-config contract. **App-instance** config (`surface` · `theme` · `fonts` · `features` · `pages`) is app-owned in `src/config/`; import both via `@/config`.
 - `@indiecrafts/packages-shared-utils` — `cn` · slugify · video-embed · format-date · error-message · filename (subpath-only)
 - `@indiecrafts/packages-web-sanity` — Sanity infra: `client · live · env · token · structure` builders
 - `@indiecrafts/packages-web-ui` — shadcn primitives + `use-mobile`
