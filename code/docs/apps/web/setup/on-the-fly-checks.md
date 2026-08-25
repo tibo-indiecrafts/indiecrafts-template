@@ -144,7 +144,7 @@ equivalent. At turn end it scans the working diff and **only advises** (never bl
 **guarded** (skipped if the tool is absent):
 
 1. **Sensitive-surface nudge** (no install) — if auth/crypto/route/env/guard files changed, suggests a
-   pass with the `security-auditor` / `code-reviewer` agent on the diff.
+   pass with `/cso` (security review) — or, for GDPR-touching diffs, the `compliance-reviewer` subagent.
 2. **semgrep** (SAST) — the repo ruleset `.semgrep.yml` (the config-first NEVERs: no secret under a
    public env prefix, no `eval`, no shell-string exec, `dangerouslySetInnerHTML`, `Math.random` tokens).
    `brew install semgrep` (or `pip install semgrep`) to activate; add `--config p/typescript --config
@@ -162,7 +162,7 @@ another entry in the `PostToolUse` `hooks[]` array in `.claude/settings.local.js
 the a11y hook). Expensive checks (full `tsc`, axe render, visual diff) belong in the **stop** tier
 or a **scan**, not per-edit.
 
-Deeper on-demand audits: the `accessibility-reviewer` / `accessibility-tester` subagents.
+Deeper on-demand audits: the `accessibility-reviewer`, `architecture-reviewer`, `compliance-reviewer`, and `performance-reviewer` subagents.
 
 ## Per app (multi-app)
 
