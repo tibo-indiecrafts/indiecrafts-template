@@ -20,9 +20,14 @@ import { createOrdersErasureAdapter } from "../erasure/orders";
 import { createRealClerkClient } from "../erasure/clerk-client";
 import { createRealSanityClient } from "../erasure/sanity-client";
 import type { SelfAuth } from "../erasure/self";
+import { readSettings } from "../settings-cache";
 
 const BODY_MAX = 4000;
-const DOWNLOAD_TTL_MS = 60 * 60 * 1000; // 1h single-use download window
+// Default download window (1h); the effective value is operator-overridable via
+// site_settings (ttl.export_download_hours) — see settingsCache below.
+const settingsCache: { value: null | { at: number; data: Record<string, number> } } = {
+  value: null,
+};
 
 interface ExportRequestRow {
   id: number;
@@ -161,7 +166,10 @@ export async function handleExport(
 
   const token = crypto.randomUUID();
   const createdAt = new Date().toISOString();
-  const expiresAt = new Date(Date.now() + DOWNLOAD_TTL_MS).toISOString();
+  const ttlH = (await readSettings(env.DB, settingsCache))[
+    "ttl.export_download_hours"
+  ];
+  const expiresAt = new Date(Date.now() + ttlH * 3_600_000).toISOString();
   const fingerprint = await fingerprintEmail(
     authed.email,
     env.GDPR_FINGERPRINT_SALT,

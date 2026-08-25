@@ -9,10 +9,15 @@ import {
 } from "@indiecrafts/packages-shared-security/crypto";
 import { type Env, PUBLIC_CORS_POST, clientIp } from "../index";
 import { sendErasureTokenEmail } from "./email";
+import { readSettings } from "../settings-cache";
 
 const BODY_MAX = 4000;
-const TOKEN_TTL_MS = 24 * 60 * 60 * 1000; // the confirm link's expiry
-const DUE_MS = 30 * 24 * 60 * 60 * 1000; // the GDPR one-month SLA target
+// Default confirm-link expiry (24h); the effective value is operator-overridable
+// via site_settings (ttl.erasure_confirm_hours) — see settingsCache below.
+const settingsCache: { value: null | { at: number; data: Record<string, number> } } = {
+  value: null,
+};
+const DUE_MS = 30 * 24 * 60 * 60 * 1000; // the GDPR one-month SLA target — NOT a knob
 
 const GENERIC_RESPONSE = {
   ok: true,
@@ -154,6 +159,9 @@ export async function handleErasureRequest(
       const writeAndSend = async (): Promise<void> => {
         const token = crypto.randomUUID();
         const now = Date.now();
+        const ttlH = (await readSettings(env.DB, settingsCache))[
+          "ttl.erasure_confirm_hours"
+        ];
         await env
           .DB!.prepare(
             "INSERT INTO erasure_requests (status, token_hash, token_expires_at, attempts, user_id, email_fingerprint, requested_at, due_at) VALUES (?, ?, ?, 0, ?, ?, ?, ?)",
@@ -161,7 +169,7 @@ export async function handleErasureRequest(
           .bind(
             "email_sent",
             await sha256Hex(token),
-            new Date(now + TOKEN_TTL_MS).toISOString(),
+            new Date(now + ttlH * 3_600_000).toISOString(),
             subject.user_id ?? null,
             fp,
             new Date(now).toISOString(),
