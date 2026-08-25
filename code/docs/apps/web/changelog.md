@@ -1,12 +1,12 @@
-# Changelog — app (`@indiecrafts/web-surfaces-website`)
+# Changelog — app (`@indiecrafts/website`)
 
 One shared record for **code and design** — every change that alters behavior,
 config, a route/convention, or a design token lands here in plain language,
 explaining the _why_, not just the _what_. Dev and design write to the same file
 so an agent (or a client) reads one history, not two.
 
-**Not here:** docs-site changes → [`docs/CHANGELOG.md`](../docs/CHANGELOG.md);
-the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
+**Not here:** docs-site changes → [`docs/CHANGELOG.md`](../../../../docs/CHANGELOG.md);
+the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 - **Design/token changes** are also governed by `DESIGN.md` (the token contract);
   **code/convention changes** by `CLAUDE.md`. This file is where both are logged.
@@ -19,12 +19,134 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Proxy-set, per-request nonce CSP — `CSP_MODE`.** `src/proxy.ts` now generates one nonce per
+  request (`generateNonce`) and stamps the response with `cspHeadersForMode(...)` from
+  `@indiecrafts/packages-shared-security`: `CSP_MODE=enforce` ships the strict nonce `script-src`
+  (`'nonce-…' 'strict-dynamic'`) as the enforced policy; the default `CSP_MODE=report-only` keeps the
+  existing permissive policy enforced (nothing breaks) and ships the strict policy as
+  `Content-Security-Policy-Report-Only` so violations surface first. The nonce is threaded to the root
+  layout (`AppClerkProvider`) and the `[locale]` layout's Google Analytics `<Script>` tags via the
+  `x-nonce` request header; Next.js auto-nonces its own inline scripts once the header carries one — no
+  extra wiring needed there. `next.config.ts` drops the static `Content-Security-Policy` from
+  `headers()` (`cspMode: "proxy"`) since the proxy now owns it, and adds a `studioCspRule` scoped to
+  `/studio` that reproduces the old permissive CSP exactly (`'unsafe-inline'`, no nonce) — the embedded
+  Sanity Studio isn't behind the proxy and can't take a per-request nonce. **Why:** a static
+  `'unsafe-inline'` CSP can't stop inline-script injection; a per-request nonce can, and `CSP_MODE`
+  lets us observe violations in report-only before enforcing, with a same-env kill switch back to
+  report-only if enforcement ever breaks something. e2e proof: `e2e/journeys/csp-nonce.spec.ts`. See
+  `code/docs/apps/web/seo/security-headers.md`.
+- **CSP violation reporting + `/api/csp-report`.** `next.config.ts` now passes a `reporting` option
+  to `securityHeaders({...})`: the enforced CSP gains a `Reporting-Endpoints` header pointing at the
+  new same-origin `/api/csp-report` route, and a `Content-Security-Policy-Report-Only` candidate
+  ships alongside it that drops the blanket `https:` from `img-src` (`reportOnly: { dropSources:
+["https:"] }`), so we learn the real image allowlist from reports before enforcing it. The route
+  itself is a one-line delegate to `handleCspReport` from the new
+  `@indiecrafts/packages-web-security-reports` brick, which sanitizes and forwards violations
+  server-side. **Why:** turn the CSP from write-only into something we can observe and tighten —
+  starting with the image-source allowlist — without risking a live block.
+- **Geo-targeted cookie consent.** The `[locale]/layout` reads the visitor's `cf-ipcountry`
+  server-side and passes a geo-resolved `mode` to `CookieBanner`: EU/EEA/UK + territories show the
+  opt-in banner, the US gets no blocking banner (opt-out + preferences + GPC), elsewhere shows
+  nothing. Per-country/regulation config in `src/config/consent.ts` (`ConsentConfig` — named
+  regulations + overrides, cascading to territories). **Why:** don't show an opt-in banner where it
+  isn't required, while staying compliant everywhere. Design → `code/docs/apps/web/config/cookie-consent-geo.md`.
+- **Announcement toast + per-surface targeting.** `DefaultLayout` now also mounts the new
+  `AnnouncementToast` (a self-contained corner card — title/body/optional image/link, editor-set
+  dismiss) beside the existing bar, and passes `surface="website"` so an editor can target which
+  surfaces each announcement reaches (the bar/toast now carry a `surfaces` field). Toast dismissal is
+  decided server-side (cookie) like the bar, so no flash. **Why:** richer, targeted announcements —
+  and the same content now also reaches the app/mobile/hybrid shells (logged-in only) via the api Worker.
+- **Website sign-in — shared `<SignInView>` route + header Sign-in / User button.** New
+  `/[locale]/sign-in/[[...sign-in]]` renders the shared Clerk sign-in (`@indiecrafts/packages-web-auth`,
+  email + social, themed from tokens); the header shows a "Sign in" button (Clerk modal) when signed out
+  and the account menu when signed in (`AuthMenu`, opt-in on the publishable key). Post-sign-in lands on
+  the homepage, honoring a **validated** `redirect_url` (same-origin only). Strings in `messages`
+  (`nav.signIn`). The route 404s when Clerk is unconfigured. **Why:** a real, polished sign-in affordance
+  (was provider-only) with correct, safe redirects.
+- **Session logging (opt-in).** `SessionLogger` in `[locale]/layout` pings the new `/api/session-log`
+  route on sign-in, which forwards to the audit api (`API_URL` + `APP_API_TOKEN`, server-only) → EU D1.
+  **Why:** per-surface sign-in tracking; the api secret never reaches the browser.
+- **Edge security — leaked-credentials rule (Terraform).** `infra/cloudflare/main.tf` gains a
+  `cloudflare_ruleset.leaked_credentials` (managed-challenge on `cf.waf.credential_check.*`, gated by
+  `enable_leaked_credentials`, Free-plan one field) + a note to turn on **Block AI Bots**. Full posture →
+  `code/docs/apps/web/config/security-hardening.md`. **Why:** credential-stuffing defence at the edge, free,
+  zero app load.
+- **Auth foundation — Clerk wired into the app shell (opt-in).** The root layout (`src/app/layout.tsx`)
+  mounts `AppClerkProvider` (`@indiecrafts/packages-web-auth`) and `src/proxy.ts` wraps the
+  maintenance→locale pipeline in `clerkMiddleware` — **both gated on
+  `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`**, so with no key bound the site runs exactly as before (fail-open,
+  like Turnstile/Resend). `src/global.d.ts` types Clerk's session claims from
+  `@indiecrafts/packages-shared-auth` (`CustomJwtSessionClaims`) via an empty single-extends interface
+  (declaration merging — a type alias can't merge), which the eslint config now allows
+  (`@typescript-eslint/no-empty-object-type: with-single-extends`) instead of a per-line disable.
+  `.env.example` documents the publishable (public) + secret (server-only) keys. Passwordless (email OTP + social); **no admin gate on
+  the website** — the admin role is enforced only on the admin app. **Why:** one auth system across every
+  app, off by default so the template still runs configuration-free. Design → `code/docs/apps/web/config/auth.md`.
+- **Hook — `guard.mjs` allows publishable keys under `NEXT_PUBLIC_`.** The `NEXT_PUBLIC_*SECRET/KEY`
+  leak-check now exempts a `*PUBLISHABLE*` match (Clerk / Stripe `pk_…` are public by design); every real
+  secret still blocks. **Why:** Clerk's SDK requires the exact public name `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
+
+- **Offline banner — a non-blocking connectivity strip in `DefaultLayout`.** A `useOnlineStatus` hook
+  (`src/hooks/`, `useSyncExternalStore` over `navigator.onLine` + the `online`/`offline` events —
+  hydration-safe, assumes online during SSR so it never flashes) drives a slim `OfflineBanner`
+  (`role="status"` `aria-live="polite"`, `bg-secondary` tokens) that shows while offline and auto-hides on
+  reconnect. Copy in `messages.offline.banner` (en + fr); the full-screen `OfflineContent` (for a route
+  that can't render offline) is the new `system-pages` component. **Why:** losing the network was a silent
+  failure — now the visitor is told, in their language, without blocking the page.
+- **AI agent on the web — cross-origin call to the shared agent Worker + a translated demo UI.** The
+  `ContentResearchAgent` client component posts a goal to the standalone `code/shared/agent` Worker
+  (`NEXT_PUBLIC_AGENT_URL` → `POST /v1/agent/:name`), guarded by Turnstile (the site ships only the public
+  `NEXT_PUBLIC_TURNSTILE_SITE_KEY`; the Worker holds `ANTHROPIC_API_KEY` + `TURNSTILE_SECRET`). The Worker
+  origin is in the CSP `connect-src`. Ideas render **for human review** — every string in
+  `messages/<locale>.json` (en + fr), the active locale sent so the agent answers in the visitor's
+  language. The **same Worker** backs the native/hybrid apps (by bearer). _Why: one small, secure,
+  translated agent that works the same on every surface — hosted once, deployed + rate-limited on its own._
+
+- **Contact form — a `/contact` page + `module.contact` block, wired end to end.** New `features.contact`
+  flag, `pages.contact` route entry, `security.contact` guard config (rate limit + Turnstile + 12 KB
+  body cap), the `/api/contact` route (`withGuard` → the module's `submit()`), the `[locale]/contact`
+  page shell, `@indiecrafts/contact` in `transpilePackages` + deps + the `ui-tokens` `@source` list,
+  `contactSanity(features.contact)` in the Studio, the `contact` block flag in `configureIslands`, and
+  contact samples in the **Send test** email route. _Why:_ visitors had no way to send a message and
+  get an acknowledgement. Feature lives in `@indiecrafts/contact`; this app only wires it.
+
+- **Contact message CSV export — `pnpm contact:export`.** `scripts/contact-export.mjs` writes
+  `backups/contact/contact-<timestamp>.csv` (read-only, `SANITY_API_READ_TOKEN`), matching
+  `waitlist:export` / `export:web:website:subscribers` / `comments:export`. _Why:_ every stored entity now has the
+  same export escape hatch.
+
+### Changed
+
+- **Icons + fonts now come from shared bricks.** Icon usage moved onto
+  `@indiecrafts/packages-shared-ui-icons`: the footer/social + homepage showcase render `BrandIcon`
+  (from shared SVG data), `NavIcon` uses the brick's `ReiconIcon`, and `FeatureGrid`'s Studio picker is
+  single-sourced. The website's own `BrandIcon.tsx`, its `reicon-brands` + `reicon-react` deps, and the
+  two stale `doctor.config` overrides are removed. Self-hosted **fonts** (Satoshi `.woff2`) moved to
+  `@indiecrafts/packages-shared-ui-fonts`; `src/lib/fonts.ts` points `next/font` `localFont` at the
+  brick. No visual change — same paths, same faces, one source.
+- **Nav route dropdown lists only activated pages.** `ROUTE_OPTIONS` in `nav-item.ts` now filters the
+  `pages` map to `enabled !== false`, and `ROUTE_LABELS` gained `contact` · `waitlist` · `data-request`
+  labels. So an editor can't link a disabled route, and an activated page (blog, contact, …) appears in
+  Studio → Navigation the moment its flag is on — the generic pattern for every page. Render-time
+  `getNavigation` already dropped disabled links; this closes the editor side.
+
+- **Waitlist + contact `enabled` toggle is now a live API kill switch.** `/api/waitlist` + `/api/contact`
+  read the Studio `*Settings.enabled` and `404` when off, in lockstep with the page. _Why:_ an editor can
+  deactivate the feature from Sanity with no deploy — not just hide the page. The block still gates on the
+  code flag (the inline render path can't be async).
+
+- **DESIGN.md gains an ordered design-critique principle _(design)_.** §Definition of done now says:
+  to refine a screen, run four critique passes in a fixed order — accessibility → visual hierarchy →
+  content → interaction-states — one lens at a time, fixing before the next (a11y first = the foundation
+  a later fix must not regress). Each pass cites its DESIGN.md section. Runnable via the `design-critique`
+  skill; shipped reference at `docs/apps/web/design/design-critique.md`. _Why: the template reviewed in
+  parallel batches but had no ordered critique-then-fix loop for polishing one screen._
 - **API safety: one reviewable security surface + a check that keeps it that way.** After auditing
   every route handler (all safe by design — writes are whitelisted with bound GROQ params, secrets
   are server-only, redirects/tokens are HMAC-signed), two hardening changes landed. (1) The one-click
   email **`/api/comments/moderate`** POST — the sole mutating route with no app-layer throttle — now
   calls `rateLimit` (20/600s, defence-in-depth on its single-use token; `clientIp` was exported from
-  `@indiecrafts/packages-shared-security/guard` to share the trusted IP derivation). (2) A new **`pnpm verify:api-guards`**
+  `@indiecrafts/security/guard` to share the trusted IP derivation). (2) A new **`pnpm check:api-guards`**
   (`code/shared/scripts/checks/api-guards.mjs`, in `verify` + CI) fails if any public **mutating** route
   ships without `withGuard` or an allowlisted reason — so "all API safe" holds without a manual re-audit.
   _Why: the surface was safe but unenforced; a future POST could regress it silently._
@@ -44,6 +166,15 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Changed
 
+- **Theme switcher drops "System"; OS auto-detect stays, automatic.** The toggle now offers only
+  **Light** and **Dark** — no "System"/Monitor option. First-load **auto-detect of the OS theme**
+  (`prefers-color-scheme`) is kept but **decoupled from the menu**: `themeProviderProps` sets
+  next-themes' `enableSystem` + `defaultTheme:"system"` whenever both themes are offered and none is
+  forced, so a dark-OS visitor still lands in dark without picking. The `system` flag was removed
+  everywhere — `themeConfig`, the `ThemeConfig`/`ThemeMode` types, the Sanity `siteSettings.themeModes`
+  field, and the `common.themeSystem` string (both locales). No CSS/token change (the generated
+  double dark-trigger already auto-detects); a legacy stored `"system"` preference still resolves.
+  _Why: "System" is the default behaviour, not a mode — one fewer confusing menu row._
 - **Per-route API guard limits moved to one app-owned config, `src/config/security.ts`.** The
   `rateLimit` / `bodyMax` / `turnstile` options that were inline literals in each public POST route
   (repeating `windowSec: 600` and the body-cap tiers across six files) now live in one reviewable
@@ -58,7 +189,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   clobber-guard was **dead for the flagship** (`web`≠`website` slug/stem mismatch) and **unreachable for
   `code/shared/*`** — it now compares every app against `resourceName(app,"prod",TEMPLATE_PREFIX)` and fires
   for all five; (2) `project:rename` is registry-driven, reaches `code/shared/*`, and a client rename is a
-  single `<prefix>` swap (was a broken loop over the wrong directory). `project.mjs` reads `@indiecrafts/packages-shared-config`
+  single `<prefix>` swap (was a broken loop over the wrong directory). `project.mjs` reads `@indiecrafts/config`
   by script-relative path (was CWD-relative → wrong at surface depth). _Why:_ names mirror `code/`, prod stops
   clobbering under a shared account, and adding an app gets a correct name for free. `resourceName` is unit-tested.
 
@@ -71,7 +202,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   orders the H2s) and **Dernière révision** (`reviewedAt`, printed as `Last reviewed:` in the header).
   Since every rendering doc is per-locale, the grouping is per-locale with no extra model. Why:
   `/llms.txt`'s only real edge over a sitemap is editorial judgement — this hands that judgement to the
-  editor in the Studio, not code or config. Touched: `seoMeta` (`@indiecrafts/packages-web-schema`), `siteMeta`,
+  editor in the Studio, not code or config. Touched: `seoMeta` (`@indiecrafts/schema`), `siteMeta`,
   `seo-queries.ts`, `site-seo.ts`, `llms.txt/route.ts`. Evidence that llms.txt drives AI citations is
   weak (Google declines it); shipped as the cheap option + an editorial forcing function, not a growth lever.
 
@@ -91,7 +222,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   Deployables nest as `code/projects/<platform>/<kind>/<name>`: `web/apps/{website,marketing,admin}`
   · `web/services/{api,cron,workers}` · `web/tooling/storybook` · `mobile/apps/mobile` ·
   `hybrid/apps/hybrid`; `docs/` stays top-level (npm-isolated). The flat `web` → **`website`**
-  (`@indiecrafts/web` → `@indiecrafts/web-surfaces-website`; `deploy:web:*`/`backup:web:*`/`infra:web:*` →
+  (`@indiecrafts/web` → `@indiecrafts/website`; `deploy:web:*`/`backup:web:*`/`infra:web:*` →
   `:website:`). The **registry** (`scripts/lib/apps.mjs`) now carries `platform · kind · dir` and is
   the single source of each app's path — every resolver (`deploy-all`, `infra`, `setup-bindings`,
   CI preview matrix, the `apps.test` guard) reads `app.dir`, never a hard-coded `code/projects/<slug>`.
@@ -122,7 +253,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 - **One SEO model on the doc — the central `pageSeo` array is gone.** Per-page SEO + LLMs no longer
   live in a central `siteMeta.<locale>.pageSeo[]` array. Every document a route renders now carries
-  its own `.seo` (the shared `seoMeta` object, `@indiecrafts/packages-web-schema`), so each page is self-contained
+  its own `.seo` (the shared `seoMeta` object, `@indiecrafts/schema`), so each page is self-contained
   and there is ONE field-set, ONE editor UI, ONE type. `getPageSeo(pageId, locale)`
   (`src/lib/seo/site-seo.ts`) resolves each static route to its owning doc's `.seo`: `home` → the home
   `page` doc · `blog` → the `blog` singleton · `author`/`category`/`tag` (list pages) → `blog.indexSeo.*`
@@ -173,7 +304,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 - **Per-env asset CDN (`NEXT_PUBLIC_CDN_URL` → `assetPrefix`).** The app's own build assets (`/_next/*` +
   first-party `/public`) can serve from a CDN **per environment** — set `NEXT_PUBLIC_CDN_URL` (empty =
-  origin). It feeds `@indiecrafts/packages-shared-config` `site.cdnUrl` → Next `assetPrefix`; since each env deploys its own
+  origin). It feeds `@indiecrafts/config` `site.cdnUrl` → Next `assetPrefix`; since each env deploys its own
   build (with that env's GitHub-Environment var, now passed into every CI build), the prefix is per-env with
   no extra machinery, and any app opts in the same way. **Sanity content is untouched** — it keeps
   `cdn.sanity.io`. _Why:_ a per-env, per-app CDN for first-party assets, config-only. Docs: `config/images.md`.
@@ -217,7 +348,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   `/api/data-request` route (`withGuard` → `submitDataRequest`), and the `/data-request` route
   shell rendering `DataRequestForm`. Copy lives in `messages.legal.dataRequest.*`; SEO, the footer
   **Legal** link, and the privacy-policy "Your rights" prose (now linking the form) are seeded by
-  `pnpm seed`. The flow + record + email live in `@indiecrafts/packages-web-compliance`. _Why:_ the template
+  `pnpm seed`. The flow + record + email live in `@indiecrafts/compliance`. _Why:_ the template
   shipped consent + legal pages but no way to exercise Art. 15–21 — the last gap in the GDPR minimum
   for an anonymous site (self-service export/delete is out of scope: no user database).
 - **One page model everywhere — the home is now a `page`.** Retired the `homePage` singleton
@@ -228,17 +359,17 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   `getHomePage` unchanged; `seed-demo` seeds the home as a `page`. _Why:_ one content model for every
   page (home, landing, marketing), not two.
 - **Generic editor-driven pages — `/[locale]/[...slug]`.** A catch-all route renders any `page`
-  document (`@indiecrafts/packages-web-page-builder`) composed from page-builder blocks — editors create landing
+  document (`@indiecrafts/page-builder`) composed from page-builder blocks — editors create landing
   pages in Studio → Pages, no code. `generateStaticParams` from published pages; a **required**
   catch-all (`[...slug]`, not `[[...slug]]`) so it never shadows the `(home)` index; the 11 static
   routes resolve first, unknown paths still 404. `homePage` + `home-queries` now source their blocks
-  from `@indiecrafts/packages-web-page-builder` instead of `@indiecrafts/modules-web-blog`. _Why:_ the site is editor-driven,
+  from `@indiecrafts/page-builder` instead of `@indiecrafts/blog`. _Why:_ the site is editor-driven,
   not blog-coupled. **SEO:** canonical + self-hreflang + OpenGraph + robots via `buildMetadata` (the
   page's `seo` overrides title/description/og-image/noindex), and published pages are added to the
   sitemap (drops unpublished / noindex / hidden), plus **JSON-LD `WebPage`** built from the page's own
   `seo` (gated on `features.structuredData` + noindex). `llms.txt` parity for pages remains a follow-up.
 - **`/api/download` — gated lead-magnet download.** Verifies the signed, expiring token from the
-  delivery e-mail (`@indiecrafts/packages-shared-gated-delivery`, via the newsletter module) and redirects to the file,
+  delivery e-mail (`@indiecrafts/gated-delivery`, via the newsletter module) and redirects to the file,
   or `403` on a bad/expired token or unknown magnet — so the CDN URL is never exposed to an unconfirmed
   request. Rides the `newsletter` feature flag. New `LEAD_MAGNET_SECRET` env (server-only, opt-in —
   unset disables delivery). _Why:_ the confirmed-only hand-off for the `module.lead-magnet` capture block.
@@ -260,10 +391,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   (all `npm --prefix docs …`) lived in **both** the root and `code/projects/web/package.json`, identical.
   `docs/` is a repo-root sibling, npm-isolated from the pnpm workspace — the app owning docs commands
   was the wrong altitude. Removed the app copies (unused — `pnpm docs` runs from root); the root scripts
-  are unchanged. Convention now documented in [scripts.md](../docs/apps/web/setup/scripts.md)
+  are unchanged. Convention now documented in [scripts.md](../../../../docs/apps/web/setup/scripts.md)
   ("Where a script lives — root vs app").
 
-- **Config split — the app owns its instance config (multi-app readiness).** `@indiecrafts/packages-shared-config`
+- **Config split — the app owns its instance config (multi-app readiness).** `@indiecrafts/config`
   is now **shared primitives + the generic page-config contract only** (i18n, Intl format, env/CSP,
   logging, `site` deploy env, `PageConfig`/`isPageVisible`). The app's own **instance** config —
   `theme`, `fonts`, `features`, and the `pages` map (+ the derived `StaticAppPathname`) — moved to
@@ -285,10 +416,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 - **Public-form security hardening (newsletter · waitlist · comments).** An audit found the forms
   well-built (whitelisted server-only Sanity writes, parameterized GROQ, escaped email + comment render,
   same-site origin, body-cap) but two enforcement gaps + a few unbounded fields. Fixed: **(1) Turnstile is
-  now wired end-to-end** — a shared `TurnstileWidget` (`@indiecrafts/packages-web-ui-components/web/form`) renders on
+  now wired end-to-end** — a shared `TurnstileWidget` (`@indiecrafts/ui-components/web/form`) renders on
   all three forms when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set and sends `cf-turnstile-response`, so setting
   the key pair now turns on real CAPTCHA instead of 403-ing every submit (the old configured-but-not-wired
-  trap). **(2) The in-app rate limiter is activatable per deploy** — `pnpm setup:kv` creates a
+  trap). **(2) The in-app rate limiter is activatable per deploy** — `pnpm setup:web:website:kv` creates a
   **per-env** `RATE_LIMIT_KV` namespace (dev/staging/prod, like the R2 buckets — a staging load-test can't
   burn prod's budget) and binds it in `wrangler.toml` (it fell open by default because the binding was
   commented out); the CF WAF rule stays the separate edge layer. **Bounds:** `language` is now allowlisted to `isLocale`, tag strings capped
@@ -297,8 +428,8 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   waitlist); the consent-policy lookup no longer swallows a Sanity error silently; `/api/emails/test` gained
   a body-size cap; `/api/i18n/translated-slug` gained a CDN cache header (read-amplification). A skew-safe
   submit-timing heuristic (`startedAt`) drops near-instant bot posts. Verified: `tsc` + `lint` + new
-  validator tests. Doc: [`setup/deployment`](../docs/apps/web/setup/deployment.md) § one-time setup
-  (the `pnpm setup:kv` step) + the Turnstile block in `.env.example`.
+  validator tests. Doc: [`setup/deployment`](../../../../docs/apps/web/setup/deployment.md) § one-time setup
+  (the `pnpm setup:web:website:kv` step) + the Turnstile block in `.env.example`.
 
 ### Added
 
@@ -317,15 +448,15 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   was exercised in a real browser.
 - **Announcement bar + language-suggestion strips (site chrome, edited in Sanity).** `DefaultLayout` now
   renders two strips at the top of `<main>`, both decided server-side so they never flash: the
-  `@indiecrafts/packages-web-announcement` discount bar (rotating items with a copyable code + internal/external link;
-  shown per the `announcement-ack` cookie vs the live version) and the `@indiecrafts/packages-web-locale-suggest`
+  `@indiecrafts/announcement` discount bar (rotating items with a copyable code + internal/external link;
+  shown per the `announcement-ack` cookie vs the live version) and the `@indiecrafts/locale-suggest`
   "available in {language}" banner (shown when `Accept-Language` prefers a different supported locale and
   the `locale-suggest` cookie is unset — suggest, never auto-redirect). Both edit in Studio (**Bandeau
   d'annonce** / **Suggestion de langue**). The header `LocaleSwitcher` now uses the shared
-  `useLocaleSwitch` (`@indiecrafts/packages-web-i18n`), so the switcher and the suggestion share one implementation.
+  `useLocaleSwitch` (`@indiecrafts/i18n`), so the switcher and the suggestion share one implementation.
   Added `common.dismiss` / `copy` / `copied`; seed ships both singletons. _Why:_ common marketing chrome a
-  client edits in the CMS, not the code. Docs: [`packages/announcement`](../docs/packages/announcement.md)
-  - [`packages/locale-suggest`](../docs/packages/locale-suggest.md).
+  client edits in the CMS, not the code. Docs: [`packages/announcement`](../../../../docs/packages/announcement.md)
+  - [`packages/locale-suggest`](../../../../docs/packages/locale-suggest.md).
 
 - **Visual-verification rule — look at the pixels before "done".** A new engineering rule
   (`.claude/rules/visual-verification.md`, auto-loaded on UI work) makes screenshot review a
@@ -335,7 +466,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   off-centre / dark-mode grey-on-grey, fix, and re-screenshot before calling the task done. Verify
   the mechanism (reflow vs context-swap), stub dynamic data, and record intentional asymmetry so it
   is not "fixed". A **"Looked at it"** line joins the `self-review` checklist, and the design guide
-  [`adaptive-responsive`](../docs/apps/web/design/adaptive-responsive.md) gains a matching
+  [`adaptive-responsive`](../../../../docs/apps/web/design/adaptive-responsive.md) gains a matching
   section. _Why:_ a screen that renders is not a screen a human has seen — a passing suite tests the
   app you wrote, not the app the user sees.
 - **"Policies updated — please Accept" banner (legal re-acceptance).** A non-blocking bottom banner
@@ -350,9 +481,9 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   appears on the cookie-policy page (ePrivacy). Cookie consent stays its own granular banner — not bundled
   with terms; the legal notice (imprint) is excluded. Seed ships `legalConsent` (en/fr) + the declaration
   row. _Why:_ when the terms change, a returning visitor should be told and their acknowledgment recorded.
-  Doc: [`docs/packages/consent.md`](../docs/packages/consent.md).
+  Doc: [`docs/packages/consent.md`](../../../../docs/packages/compliance.md).
 - **"New version available" banner, copy edited in Sanity.** The locale layout now mounts
-  `@indiecrafts/packages-web-version`'s `UpdatePrompt` and the app serves `GET /api/version` (`no-store`, returns the
+  `@indiecrafts/version`'s `UpdatePrompt` and the app serves `GET /api/version` (`no-store`, returns the
   live deploy's `buildInfo`). An open tab notices when a new version shipped and offers a reload — the
   button, plus a safe auto-reload on the **next** navigation (never forced). The banner **copy is edited
   per language in Sanity** — `siteMeta.<locale>.versionPrompt` (`message` · `reload` · `dismiss`), Studio
@@ -360,20 +491,20 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   (`src/lib/system-pages.ts`). **No fallback:** the banner mounts only when all three strings are set, so
   the `common.updateAvailable` / `reload` / `dismiss` keys were removed from `messages/`. _Why:_ frequent
   deploys shouldn't leave open tabs on stale code, and the copy is content — it belongs in Sanity with
-  everything else. Doc: [`docs/packages/version.md`](../docs/packages/version.md).
+  everything else. Doc: [`docs/packages/version.md`](../../../../docs/packages/version.md).
 
 ### Changed
 
 - **Studio desk is now grouped per app (`composeStudio`).** `sanity.config.ts` swaps the flat
-  `composeSanity` for `@indiecrafts/packages-web-sanity`'s new **`composeStudio([{ title, modules }])`** — one hub
+  `composeSanity` for `@indiecrafts/sanity`'s new **`composeStudio([{ title, modules }])`** — one hub
   Studio, one dataset, but the desk splits into **"Site web"** (this app's content — home, blog,
   newsletter, waitlist) and **"Contenu partagé"** (site-wide config every app/lens reads — SEO, nav, UI
   messages, legal, cookies/consent, E-mails). `coreSanity` keeps the shared surfaces; a tiny `homeSanity`
   carries the home desk entry into the app group (its `homePage` schema still registered by `coreSanity`).
   No `_id`/editing change — every singleton/collection resolves as before, just organized per app. _Why:_
-  multi-app readiness — [`config/multi-app`](../docs/apps/web/config/multi-app.md).
+  multi-app readiness — [`config/multi-app`](../../../../docs/shared/architecture/multi-app.md).
 - **Theme modes, footer maker-credit, rich-result image + 3 display toggles moved to Sanity
-  `siteSettings` (editor-controlled, no deploy).** Six things that lived in `@indiecrafts/packages-shared-config` now
+  `siteSettings` (editor-controlled, no deploy).** Six things that lived in `@indiecrafts/config` now
   read from Sanity: **theme modes** (`themeModes` — light/dark/system/forced, over the `themeConfig` code
   default; `src/lib/theme.ts`'s constants became functions and the layout prop-feeds the client
   ThemeProvider/toggle — next-themes' pre-paint script still prevents a flash); the **footer maker
@@ -384,8 +515,8 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   Sanity boolean can hide). All read via the already-cached `getSiteSettings()` in server contexts, so
   no new fetch and no SSG break. Sanity typegen regenerated. **Skipped:** `blogComments` (module
   boundary) + `formatDefaults` (no consumer). _Why:_ a client edits their brand/theme in the CMS.
-  Docs: [`config/theme-modes`](../docs/apps/web/config/theme-modes.md) +
-  [`config/navigation`](../docs/apps/web/config/navigation.md).
+  Docs: [`config/theme-modes`](../../../../docs/apps/web/config/theme-modes.md) +
+  [`config/navigation`](../../../../docs/apps/web/config/navigation.md).
 - **UI chrome strings moved to Sanity (`uiMessages.<locale>`), fed to next-intl.** The remaining
   `messages/` copy — nav, cookies, validation, blog UI labels, system pages — is now owned in a
   per-locale `uiMessages` singleton (Studio → **Textes de l'interface**). `src/i18n/request.ts`
@@ -395,18 +526,18 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   schema fields are **generated from the message shape** so they can't drift; `pnpm seed` populates
   the docs (`buildUiMessages`). **`typography`** (i18n/format rules) is deliberately excluded — it
   stays in the JSON file (technical, not editorial). Doc:
-  [`config/i18n-and-routing`](../docs/apps/web/config/i18n-and-routing.md) § Where UI text lives.
+  [`config/i18n-and-routing`](../../../../docs/apps/web/config/i18n-and-routing.md) § Where UI text lives.
 - **Maintenance mode is now a live Sanity toggle (was code-only).** `siteSettings.maintenanceMode` (Studio
   → Paramètres du site → Indexation) lets an operator take the site offline (503 behind the branded
   `/maintenance` page) **without a redeploy** — the proxy reads it from Sanity's CDN with a ~30s
   per-isolate cache, **fail-open** (`src/lib/maintenance.ts`; a Sanity error never 503s the site). The
   build-time `features.maintenance` flag stays as a **hard override** that short-circuits the Sanity read.
   `proxy.ts` is now async (`features.maintenance || getMaintenanceMode()`), and
-  `@indiecrafts/packages-shared-system-pages`' `maintenanceRewrite(request, isDown)` became **pure** (the app decides
+  `@indiecrafts/system-pages`' `maintenanceRewrite(request, isDown)` became **pure** (the app decides
   `isDown`). _Why:_ maintenance is the one flag with real ops value — flipping it shouldn't need a deploy.
-  Doc: [`setup/maintenance-mode`](../docs/apps/web/setup/maintenance-mode.md).
-- **`@indiecrafts/packages-shared-config` internal reshape (no app-visible change).** The config god-file was split into
-  per-concern modules behind the same `@indiecrafts/packages-shared-config` barrel, dead exports removed, and the unused
+  Doc: [`setup/maintenance-mode`](../../../../docs/apps/web/setup/maintenance-mode.md).
+- **`@indiecrafts/config` internal reshape (no app-visible change).** The config god-file was split into
+  per-concern modules behind the same `@indiecrafts/config` barrel, dead exports removed, and the unused
   `./types` subpath dropped — all 129 import sites unchanged (verified by `tsc`). See the packages
   changelog. The only new public config surface this cycle is on Sanity (maintenance), not code.
 - **Homepage is now an editor-composed Sanity page-builder (was code + `messages/`).** The editorial
@@ -425,7 +556,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 ### Added
 
 - **Form endpoints hardened + Cloudflare edge as code + Worker logs.** The three public POST routes
-  (`/api/{newsletter,waitlist,comments}`) now run through `@indiecrafts/packages-shared-security` **`withGuard`** —
+  (`/api/{newsletter,waitlist,comments}`) now run through `@indiecrafts/security` **`withGuard`** —
   same-site origin + body-cap + fixed-window rate-limit + optional Turnstile — on top of each engine's
   existing validation/honeypot/whitelisting. **Cloudflare as code:** a new Terraform layer
   (`code/infra/iac/cloudflare/`, provider `~> 5`) provisions the **edge** `wrangler` can't — **auto
@@ -437,22 +568,22 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   `infra:web:{plan,apply,output}:<env>` (mirroring `deploy:web:<env>`). **Worker Logs** enabled on
   every env (`wrangler.toml` observability — base + dev/staging/prod). Env: `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
   - `TURNSTILE_SECRET` + an optional `RATE_LIMIT_KV` binding. Docs:
-    [`setup/cloudflare-iac.md`](../docs/apps/web/setup/cloudflare-iac.md) +
-    [`packages/security`](../../packages/security/README). _wrangler owns the Worker; Terraform owns the edge._
-- **Logging moved to `@indiecrafts/packages-shared-logger` (structured · edge-safe · Sentry-ready).** The app + the
-  three modules now import `logger` from the new `@indiecrafts/packages-shared-logger` brick instead of the retired
-  `@indiecrafts/packages-shared-utils/logger` (12 import sites migrated, call sites untouched — the `error()` signature
+    [`setup/cloudflare-iac.md`](../../../../docs/infra/cloudflare-iac.md) +
+    [`packages/security`](../../../../docs/packages/security.md). _wrangler owns the Worker; Terraform owns the edge._
+- **Logging moved to `@indiecrafts/logger` (structured · edge-safe · Sentry-ready).** The app + the
+  three modules now import `logger` from the new `@indiecrafts/logger` brick instead of the retired
+  `@indiecrafts/utils/logger` (12 import sites migrated, call sites untouched — the `error()` signature
   is back-compatible). Wired via `transpilePackages` + a dep on app/blog/newsletter/waitlist. Behavior
-  change: **prod console is `"silent"` by default** (`logging.levels` in `@indiecrafts/packages-shared-config`), so live
+  change: **prod console is `"silent"` by default** (`logging.levels` in `@indiecrafts/config`), so live
   sites emit no console noise; raise it live with **`NEXT_PUBLIC_LOG_LEVEL`** (added to `.env.example`)
   and error/fatal still reach Sentry when the opt-in transport is wired. Dev gets pretty colored output;
   prod/Workers get one JSON line per log (captured by Cloudflare Workers Logs, already `enabled` in
-  `wrangler.toml`). Doc: [`packages/logger`](../../packages/logger/README).
+  `wrangler.toml`). Doc: [`packages/logger`](../../../../docs/packages/logger.md).
 - **Safe multi-instance reuse — one `DEFAULT_SITE_PREFIX` namespace + a deploy guard.** Reusing the
   template per client under **one shared Cloudflare account** could silently clobber: the Worker + R2
   names were hardcoded `indiecrafts-web*`, so a 2nd client who forgot to rename would `deploy:web:prod`
   **into the 1st client's Worker + ISR bucket**. Now one knob — `DEFAULT_SITE_PREFIX` in
-  `@indiecrafts/packages-shared-config` (env-overridable via `NEXT_PUBLIC_SITE_PREFIX` → `site.prefix`) — is the project
+  `@indiecrafts/config` (env-overridable via `NEXT_PUBLIC_SITE_PREFIX` → `site.prefix`) — is the project
   namespace: it **prefixes the browser keys** (consent record `${prefix}.cookie-consent`, next-themes
   `storageKey` `${prefix}-theme`, the next-intl locale cookie `${prefix}_NEXT_LOCALE` via
   `localeCookieName`) so instances never collide even on a shared origin. **`pnpm project:rename <slug>`**
@@ -460,18 +591,18 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   - prints the R2 buckets to create; backups (`backup-common`) follow the slug. **A `staging`/`prod`
     deploy + `secrets:sync` are now blocked** while the names are still the template default
     (`assertRenamed` in `scripts/lib/project.mjs`; `ALLOW_DEFAULT_SLUG=true` lets the template's own
-    indiecrafts.dev deploy through). `doctor:env` prints a **site-identity** block + warns on prefix/deploy
+    indiecrafts.dev deploy through). `doctor:web:website:env` prints a **site-identity** block + warns on prefix/deploy
     drift or a shared-project `production` dataset. **Fail-loud:** an empty `siteName` in production now
     `logger.error`s (once/request, via `getSiteSettings`) instead of silently rendering the template brand.
     `.env.example` reworded (Resend = one shared account per key → per-client key for isolation). Docs:
     every `setup/*` page (new-client, deployment, environment, backups, scripts, launch-checklist,
-    workspace) + [`packages/config`](../../packages/config/README) + [`packages/email`](../../packages/email/README).
+    workspace) + [`packages/config`](../../../../docs/packages/config.md) + [`packages/email`](../../../../docs/packages/email.md).
 - **Homepage section titles support brand highlights via `RichTitle`.** The `Features` section `<h2>`
-  now renders through `@indiecrafts/packages-web-ui-components/web/RichTitle`, so wrapping a word in `[[ ]]` inside
+  now renders through `@indiecrafts/ui-components/web/RichTitle`, so wrapping a word in `[[ ]]` inside
   the `messages/` title colours it in the brand accent — the home `features.title` is now
-  `"Built to [[cover]] your needs"` (FR `"…[[couvrir]]…"`). The app gains a direct `@indiecrafts/packages-web-ui-components`
+  `"Built to [[cover]] your needs"` (FR `"…[[couvrir]]…"`). The app gains a direct `@indiecrafts/ui-components`
   dependency. _Why:_ one reusable, config-first way to emphasise a title word, shared with the CMS
-  (Sanity titles use the same marker). Doc: [`design/typography`](../docs/apps/web/design/typography.md) § Title highlights.
+  (Sanity titles use the same marker). Doc: [`design/typography`](../../../../docs/apps/web/design/typography.md) § Title highlights.
 - **Studio "Send test" for emails → `/api/emails/test`.** A new server route (Node) lets an editor
   verify transactional email actually lands: it sends a sample of every **enabled** email to a typed
   address. Triggered from Studio → **E-mails → ⋯ → "Envoyer un test"** (the `sendTestEmailAction` wired
@@ -479,7 +610,7 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   caller's **Sanity session token** is verified against the project's `users/me` — not a public spam
   relay; test sends go only to the given address; `RESEND_API_KEY` stays server-side. `sanity.config.ts`
   now composes the E-mails singleton from every module's `emailGroups` (`emailSanity(modules)`) instead
-  of a static `emailSanity`. Doc: [`packages/email`](../../packages/email/README).
+  of a static `emailSanity`. Doc: [`packages/email`](../../../../docs/packages/email.md).
 - **Security headers moved to `@indiecrafts/security-headers` + hardened (behavior change).** The
   40-line inline CSP/headers/images block in `next.config.ts` collapses to one `securityHeaders({...})`
   call + `...imageDefaults` (the video/GA hosts + the `EMBED_HOSTS` knob stay declared app-side). The
@@ -488,9 +619,9 @@ includeSubDomains`, no `preload`), `Cross-Origin-Opener-Policy: same-origin-allo
   `upgrade-insecure-requests`. Chosen to keep `/studio` working (COOP allow-popups for the Sanity login
   popup; COEP/CORP not added). `getCurrentEnvironment`/`getCSPConnectSources` stay in `@indiecrafts/
 config`. **Note:** HSTS is sticky — it only ships in prod over HTTPS. Doc:
-  [`seo/security-headers.md`](./seo/security-headers) + [`packages/security-headers`](../../packages/security-headers/README).
+  [`seo/security-headers.md`](../../../../docs/apps/web/seo/security-headers.md) + [`packages/security-headers`](../../../../docs/packages/security.md).
 - **Waitlist wiring — full page + `/api/waitlist` + `waitlist:export`.** The app-side surfaces for the
-  new `@indiecrafts/modules-web-waitlist` module: a **full `/waitlist` landing page** (`[locale]/waitlist/page.tsx`,
+  new `@indiecrafts/waitlist` module: a **full `/waitlist` landing page** (`[locale]/waitlist/page.tsx`,
   a thin shell — gate + `DefaultLayout` + SEO — rendering the module's `WaitlistLanding` view;
   registered in the `pages` map), a gated `POST /api/waitlist` route (→ the module's `join()`),
   `waitlistSanity` added to `composeSanity([...])` (Studio → **Liste d'attente**), the module wired via
@@ -498,8 +629,8 @@ config`. **Note:** HSTS is sticky — it only ships in prod over HTTPS. Doc:
   `pnpm waitlist:export` script → `backups/waitlist/…csv`. **All waitlist copy is Sanity-only** — the
   form on `waitlistSettings`, the page SEO on `siteMeta.<locale>.pageSeo` (`pageId: "waitlist"`,
   auto-listed from the `pages` map) — nothing in `messages/`. Seed adds waitlist settings + 2 demo
-  entries + the `waitlist` pageSeo (EN/FR). Also added the missing `@indiecrafts/packages-shared-utils/*` tsconfig
-  `paths` entry (the utils package is subpath-only — `@indiecrafts/packages-shared-utils/cn`/`logger` — so the app
+  entries + the `waitlist` pageSeo (EN/FR). Also added the missing `@indiecrafts/utils/*` tsconfig
+  `paths` entry (the utils package is subpath-only — `@indiecrafts/utils/cn`/`logger` — so the app
   needs the path like every other brick).
 - **CI now enforces `verify` + a real Worker build; per-PR previews.** `.github/workflows/test.yml`
   became a full CI: blocking **verify** (tsc · lint · format:check · verify:contrast · tests +
@@ -518,19 +649,19 @@ config`. **Note:** HSTS is sticky — it only ships in prod over HTTPS. Doc:
   the `prune` logic is unit-tested). A nightly `.github/workflows/backup.yml` (cron + manual dispatch)
   dumps → R2; rotate the remote copies with an R2 bucket lifecycle rule. **Fixes** the previously
   **untracked `content-backups/`** — Sanity dumps + subscriber CSVs (with emails) were git-committable;
-  `**/backups/` + `content-backups/` are now gitignored. Restore: Sanity → `content:import`; D1 →
+  `**/backups/` + `content-backups/` are now gitignored. Restore: Sanity → `db:restore:content`; D1 →
   Time Travel / `wrangler d1 execute --file`. Docs: `setup/backups.md`.
 - **Newsletter double opt-in + external-embed CSP knob + subscriber export.** New app surfaces for
   the newsletter emails: a `GET /api/newsletter/confirm` route (validates the one-time token → flips
   the subscriber to `confirmed` → redirects home with `?newsletter=confirmed|invalid`), an
   `EMBED_HOSTS` array in `next.config.ts` (empty by default; concatenated into `form-action`,
   `frame-src`, `script-src`, `connect-src` so an editor-pasted external newsletter form in a
-  `custom-html` block can actually submit past the CSP), and a `pnpm subscribers:export` script →
+  `custom-html` block can actually submit past the CSP), and a `pnpm export:web:website:subscribers` script →
   `backups/subscribers/subscribers-<timestamp>.csv`. The engine + email config live in
-  `@indiecrafts/modules-web-newsletter` + `@indiecrafts/packages-web-email`; this logs the app-side wiring.
+  `@indiecrafts/newsletter` + `@indiecrafts/email`; this logs the app-side wiring.
 - **One-click comment moderation route + `comments:export`.** `GET|POST /api/comments/moderate` — a
   self-contained handler behind the email's Approve/Spam/Delete buttons: **GET** renders a branded
-  confirm page (read-only), **POST** performs the action (`@indiecrafts/modules-web-blog/lib/moderate`). The
+  confirm page (read-only), **POST** performs the action (`@indiecrafts/blog/lib/moderate`). The
   mutation is POST-only so an email-link scanner can't auto-moderate; a one-time token authorizes it.
   Plus `pnpm comments:export` → `backups/comments/…csv`. Gated by `features.blogComments`; needs
   `SANITY_API_WRITE_TOKEN`.
@@ -569,7 +700,7 @@ config`. **Note:** HSTS is sticky — it only ships in prod over HTTPS. Doc:
   preview secrets), + `next.config.ts` `initOpenNextCloudflareForDev()`. **Deploy scripts are per app AND per env**
   — every name is `deploy:<app>:<env>` (`deploy:web:{dev,staging,prod}` at both the app and the root,
   which delegates); `build:cf` / `preview:cf` at the app, `preview:web:cf` at root. A second app reads
-  `deploy:admin:<env>` — nothing env-generic or ambiguous. Auto-deploy via `.github/workflows/deploy.yml` (push to `main` → prod;
+  `deploy:web:admin:<env>` — nothing env-generic or ambiguous. Auto-deploy via `.github/workflows/deploy.yml` (push to `main` → prod;
   manual dispatch for any env), using `CLOUDFLARE_API_TOKEN`/`ACCOUNT_ID` + per-environment Sanity
   vars/secrets. **Removed** `netlify.toml` + the dead `public/__forms.html` (Netlify Forms — the app's
   forms POST to `/api/*` now). Images need no image worker (the `next/image` Sanity CDN loader already
@@ -586,15 +717,15 @@ secret put` × N; one dataset → same secrets to every env. `deploy:web:<env>` 
   adapted to Node + the single-dataset model. Docs: `setup/deployment.md`.
 - **Base-setup CLI scripts (mined from a sister multi-repo, filtered to this stack).** Adds
   `sanity:typegen` (extract the composed schema → typed GROQ results in the shared
-  `@indiecrafts/packages-web-schema/generated`, so app **and** blog import them — see packages changelog),
-  `content:export` / `content:import` (Sanity `dataset export/import` wrappers — the CMS analog of a
+  `@indiecrafts/schema/generated`, so app **and** blog import them — see packages changelog),
+  `content:export` / `db:restore:content` (Sanity `dataset export/import` wrappers — the CMS analog of a
   DB backup/restore; export→`content-backups/` read-only, import destructive + confirmation-gated),
-  `doctor:env` (a `.env.local` preflight with clear "missing X" messages; now gates `seed` +
-  `content:*`), `scan:placeholders` (pre-handoff scan of `code/`+`docs/` for leftover template
+  `doctor:web:website:env` (a `.env.local` preflight with clear "missing X" messages; now gates `seed` +
+  `content:*`), `check:placeholders` (pre-handoff scan of `code/`+`docs/` for leftover template
   tokens/lorem/`your_…_here` — deliberately **not** in CI since the template ships its own fill-me
   tokens), `clean` (wipe build artifacts; `--all` also `node_modules`), and `lint:scripts`
   (shellcheck) + `test:scripts` (Node's built-in runner over `scripts/*.test.mjs`). `lint:scripts`,
-  `test:scripts`, and `tags:check` now run in `verify` + CI (`test.yml`). **Deliberately not ported**
+  `test:scripts`, and `check:tags` now run in `verify` + CI (`test.yml`). **Deliberately not ported**
   from the source repo: multi-env dev/deploy matrices, Cloudflare Workers/R2/Stripe/GDPR-salt tooling
   — wrong stack for a Sanity/Vercel marketing+blog template. Docs: `apps/web/setup/scripts.md`.
 - **Newsletter capture — `/api/newsletter` + `subscriber` doc + Abonnés desk + `features.newsletter`.**
@@ -609,7 +740,7 @@ secret put` × N; one dataset → same secrets to every env. `deploy:web:<env>` 
   variant); `pnpm seed` adds a demo block + 3 `subscriber` docs. **Why:** every client site wants
   email capture; this ships it config-first with no third-party account required to start.
 - **`/api/comments` + `features.blogComments`.** A thin POST route mounts the blog comments
-  feature (validation/write live in `@indiecrafts/modules-web-blog`); the `<Comments>` section renders on
+  feature (validation/write live in `@indiecrafts/blog`); the `<Comments>` section renders on
   each post when the flag is on. **`SANITY_API_WRITE_TOKEN` is now a runtime dependency** when
   comments are on (was seed-only) — `.env.example` updated; prefer a dedicated rotatable token.
   Seed adds one approved + one pending demo comment.
@@ -633,12 +764,12 @@ secret put` × N; one dataset → same secrets to every env. `deploy:web:<env>` 
 
 - **Dailymotion allowed in the `frame-src` CSP.** `next.config.ts` `frame-src` now includes
   `https://www.dailymotion.com` alongside YouTube-nocookie + Vimeo, so featured-video posts
-  can embed Dailymotion (parser support lives in `@indiecrafts/packages-shared-utils`). The homepage
+  can embed Dailymotion (parser support lives in `@indiecrafts/utils`). The homepage
   `FeaturedArticles` cards pass the play-badge `label` explicitly now that `PlayBadge` moved
-  to `@indiecrafts/packages-web-ui-components` and takes it as a prop.
+  to `@indiecrafts/ui-components` and takes it as a prop.
 
 - **Sanity images sized at the CDN (`next/image` loader).** A `next/image` loader
-  (`@indiecrafts/packages-web-sanity/image`, wired via `images.loaderFile`) rewrites every image `src`
+  (`@indiecrafts/sanity/image`, wired via `images.loaderFile`) rewrites every image `src`
   to a CDN-sized source (`?w=&q=&auto=format&fit=max`) — Sanity + Unsplash resize/re-encode
   at the edge, so the full-resolution original is never downloaded and there's no
   double-fetch through Next's optimizer. Zero per-call changes (the 13 `next/image` sites
@@ -663,7 +794,7 @@ secret put` × N; one dataset → same secrets to every env. `deploy:web:<env>` 
   hex mirror synced in `DESIGN.md`.
 - **Homepage page-builder demo (`BlocksShowcase`).** A server section on the home page that
   renders `stat-list`, `step-list`, and `card-list` through the shared
-  `@indiecrafts/packages-web-ui-components` renderers — visible proof marketing pages and blog posts paint
+  `@indiecrafts/ui-components` renderers — visible proof marketing pages and blog posts paint
   the **same** blocks. Chrome (`eyebrow`/`title`/`body`) reads from
   `pages.home.blocks.blocks`; the block payloads are inline demo fixtures standing in for
   Sanity-authored content. _Known gap:_ the demo fixtures are English-only (they mimic CMS
@@ -672,11 +803,11 @@ secret put` × N; one dataset → same secrets to every env. `deploy:web:<env>` 
 ### Changed
 
 - **Extracted the app into workspace packages + a blog module** (deps point down: app → module → packages).
-  Packages: `@indiecrafts/packages-shared-config` (site config + types; cut the `MessageKey` coupling → `PageSeo` keys
-  are `string`), `@indiecrafts/packages-shared-utils` (`cn`/logger/slugify/video-embed/consent-signals/format-date),
-  `@indiecrafts/packages-web-sanity` (client/live/env/token + `structure` builders), `@indiecrafts/packages-web-ui` (61 shadcn
-  primitives + `use-mobile`), `@indiecrafts/packages-shared-ui-tokens` (the design system — `globals.css`/`typeset.css`/`DESIGN.md`),
-  `@indiecrafts/packages-web-i18n` (shared next-intl nav for modules). Module: `@indiecrafts/modules-web-blog` → `code/modules/blog`
+  Packages: `@indiecrafts/config` (site config + types; cut the `MessageKey` coupling → `PageSeo` keys
+  are `string`), `@indiecrafts/utils` (`cn`/logger/slugify/video-embed/consent-signals/format-date),
+  `@indiecrafts/sanity` (client/live/env/token + `structure` builders), `@indiecrafts/ui` (61 shadcn
+  primitives + `use-mobile`), `@indiecrafts/ui-tokens` (the design system — `globals.css`/`typeset.css`/`DESIGN.md`),
+  `@indiecrafts/i18n` (shared next-intl nav for modules). Module: `@indiecrafts/blog` → `code/modules/blog`
   (queries + Studio stay in the app; app registers its schema via `sanity.config`). Consumed as source via
   `transpilePackages`; Tailwind `@source` scans the ui + blog packages. Fixed a latent broken import
   (`carousel` → uninstalled `@tabler`, now lucide). tsc + build green, every route × locale prerenders.
