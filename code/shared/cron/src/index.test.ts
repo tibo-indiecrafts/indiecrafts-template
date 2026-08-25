@@ -9,7 +9,7 @@ import {
 import { beforeAll, describe, expect, it } from "vitest";
 import worker, { type Env, slaDueSoonCutoff, slaSeverity } from "./index";
 
-// Apply the api's db/d1/migrations/*.sql (see vitest.config.ts) before any test runs —
+// Apply the api's db/audit + db/core migrations/*.sql (see vitest.config.ts) before any test runs —
 // the cron shares the api's D1, so tests exercise the real schema.
 beforeAll(async () => {
   await applyD1Migrations(env.DB, env.TEST_MIGRATIONS);

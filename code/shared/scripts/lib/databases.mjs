@@ -6,7 +6,7 @@
 // docs/apps/web/setup/backups.md).
 //
 // Adding a database = one row here + fill its slot (real migrations, or a README marker
-// under `<slot>/db/<kind>/`). Active today: the api's `audit` D1 + `security-counters` KV.
+// under `<slot>/db/<kind>/`). Active today: the api's `core` + `audit` D1s + `security-counters` KV.
 // Every OTHER altitude × kind slot is a reserved README marker (see the examples below).
 //
 // Kinds (engine → migrate/backup recipe):
@@ -59,20 +59,29 @@ export const DATABASES = [
     backup: "sanity",
     order: 5,
   },
-  // The api's EU-resident D1 — ONE database, three tables: admin_audit + session_events
-  // (audit trail + per-surface sign-ins) + security_events (app-level incidents the edge
-  // WAF can't see). One DB (not three) keeps the free-plan D1 count low; tables stay
-  // isolated. Create with `--location weur` (EU, create-time + immutable); binding `DB` on
-  // the `api` worker; 90-day retention purged by the `cron` worker. The edge firehose
-  // (blocked/challenged requests) stays in Cloudflare's own Security Events dashboard — not
-  // stored here (see docs/apps/web/config/security-hardening.md).
+  // Two EU D1s, both owned by `api`, both `--location weur` (create-time + immutable):
+  //   core  (binding CORE_DB) — identity/rights/settings: user_profiles, consent_events,
+  //         data_requests, erasure_requests, export_requests, site_settings.
+  //   audit (binding DB) — append-only telemetry firehose: session_events, security_events,
+  //         admin_audit, csp_reports, backup_runs; retention-purged by the `cron` worker.
+  // Split so a firehose migration/write-spike can't threaten identity data (spec 2026-08-25).
+  {
+    name: "core",
+    kind: "d1",
+    owner: "api",
+    binding: "CORE_DB",
+    altitude: "global",
+    dir: "code/shared/api/db/core",
+    backup: "wrangler",
+    order: 8,
+  },
   {
     name: "audit",
     kind: "d1",
     owner: "api",
     binding: "DB",
     altitude: "global",
-    dir: "code/shared/api/db/d1",
+    dir: "code/shared/api/db/audit",
     backup: "wrangler",
     order: 10,
   },
@@ -93,8 +102,6 @@ export const DATABASES = [
   // Every other altitude × kind slot is a reserved README marker. Activate by adding
   // a row here + filling the matching `<slot>/db/<kind>/<name>/` folder:
   //
-  // { name: "core", kind: "d1", owner: "api", altitude: "global",
-  //   dir: "code/shared/db/d1/core", backup: "wrangler", order: 10 },
   // { name: "sessions", kind: "kv", owner: "api", altitude: "global",
   //   dir: "code/shared/db/kv/sessions", backup: "kv", order: 10 },
   // { name: "web-analytics", kind: "postgres", owner: "website", altitude: "leaf",

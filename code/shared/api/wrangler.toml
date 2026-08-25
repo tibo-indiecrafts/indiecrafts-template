@@ -124,11 +124,15 @@ BACKUP_RETENTION_DAYS = "30"
 # local_protocol = "http"
 
 # ── per-env (mirror the deploy scripts) ──────────────────────
-# ONE EU D1 per env (binding `DB`), three tables: admin_audit · session_events ·
-# security_events. One database (not three) keeps the free-plan D1 count low; the tables
-# stay isolated (own indexes, own purges). EU-resident (`--location weur` is create-time
-# + immutable). Create per env, then paste the returned `database_id`:
+# TWO EU D1s per env, both `--location weur` (create-time + immutable):
+#   DB      — append-only telemetry firehose: admin_audit · session_events ·
+#             security_events · csp_reports · backup_runs; retention-purged by `cron`.
+#   CORE_DB — identity/rights/settings: user_profiles · consent_events · data_requests ·
+#             erasure_requests · export_requests · site_settings.
+# Split so a firehose migration/write-spike can't threaten identity data. Create per env,
+# then paste the returned `database_id`:
 #   wrangler d1 create indiecrafts-dev-shared-api --location weur
+#   wrangler d1 create indiecrafts-dev-shared-api-core --location weur
 # `SECURITY_COUNTERS` (KV) holds ephemeral failed-login counters (TTL) so rates are counted
 # at the edge, never written per-request to D1:
 #   wrangler kv namespace create indiecrafts-dev-shared-api-security-counters
@@ -144,7 +148,13 @@ name = "indiecrafts-dev-shared-api"
 binding = "DB"
 database_name = "indiecrafts-dev-shared-api"
 database_id = "PASTE_D1_ID_HERE"
-migrations_dir = "db/d1/migrations"
+migrations_dir = "db/audit/migrations"
+
+[[env.dev.d1_databases]]
+binding = "CORE_DB"
+database_name = "indiecrafts-dev-shared-api-core"
+database_id = "PASTE_CORE_D1_ID_HERE"
+migrations_dir = "db/core/migrations"
 
 [[env.dev.kv_namespaces]]
 binding = "SECURITY_COUNTERS"
@@ -157,7 +167,13 @@ name = "indiecrafts-staging-shared-api"
 binding = "DB"
 database_name = "indiecrafts-staging-shared-api"
 database_id = "PASTE_D1_ID_HERE"
-migrations_dir = "db/d1/migrations"
+migrations_dir = "db/audit/migrations"
+
+[[env.staging.d1_databases]]
+binding = "CORE_DB"
+database_name = "indiecrafts-staging-shared-api-core"
+database_id = "PASTE_CORE_D1_ID_HERE"
+migrations_dir = "db/core/migrations"
 
 [[env.staging.kv_namespaces]]
 binding = "SECURITY_COUNTERS"
@@ -170,7 +186,13 @@ name = "indiecrafts-prod-shared-api"
 binding = "DB"
 database_name = "indiecrafts-prod-shared-api"
 database_id = "PASTE_D1_ID_HERE"
-migrations_dir = "db/d1/migrations"
+migrations_dir = "db/audit/migrations"
+
+[[env.prod.d1_databases]]
+binding = "CORE_DB"
+database_name = "indiecrafts-prod-shared-api-core"
+database_id = "PASTE_CORE_D1_ID_HERE"
+migrations_dir = "db/core/migrations"
 
 [[env.prod.kv_namespaces]]
 binding = "SECURITY_COUNTERS"

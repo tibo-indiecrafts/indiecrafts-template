@@ -10,9 +10,12 @@ import {
 // with the repo's next Vitest (4) bump. See code/docs/apps/workers/.
 export default defineWorkersConfig(async () => {
   // The cron shares the api's D1 (see wrangler.toml) — read the api's own
-  // db/d1/migrations/*.sql so the test DB has the real schema (erasure_requests,
+  // db/audit + db/core migrations/*.sql so the test DB has the real schema (erasure_requests,
   // export_requests, security_events, …), same pattern as the api's own vitest.config.ts.
-  const migrations = await readD1Migrations("../api/db/d1/migrations");
+  const migrations = [
+    ...(await readD1Migrations("../api/db/audit/migrations")),
+    ...(await readD1Migrations("../api/db/core/migrations")),
+  ];
   return {
     test: {
       include: ["src/**/*.test.ts"],

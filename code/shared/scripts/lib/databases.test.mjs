@@ -21,6 +21,19 @@ test("db names are unique", () => {
   assert.equal(new Set(names).size, names.length);
 });
 
+test("the core D1 is registered (identity/rights/settings, split from the audit firehose)", () => {
+  const core = DATABASES.find((d) => d.name === "core");
+  assert.ok(core, "no `core` row in the registry");
+  assert.equal(core.kind, "d1");
+  assert.equal(core.owner, "api");
+  assert.equal(core.binding, "CORE_DB");
+});
+
+test("audit's dir points at the reorganized migrations dir", () => {
+  const audit = DATABASES.find((d) => d.name === "audit");
+  assert.equal(audit.dir, "code/shared/api/db/audit");
+});
+
 test("each db row's `dir` exists (no drift / no orphans)", () => {
   for (const d of DATABASES) {
     assert.ok(

@@ -4,8 +4,12 @@ import {
 } from "@cloudflare/vitest-pool-workers/config";
 
 export default defineWorkersConfig(async () => {
-  // Read every db/d1/migrations/*.sql so tests run against the real schema.
-  const migrations = await readD1Migrations("./db/d1/migrations");
+  // Read every db/audit + db/core migrations/*.sql so tests run against the real schema —
+  // both still apply to the single local `DB` binding, since no code queries CORE_DB yet.
+  const migrations = [
+    ...(await readD1Migrations("./db/audit/migrations")),
+    ...(await readD1Migrations("./db/core/migrations")),
+  ];
   return {
     test: {
       include: ["src/**/*.test.ts"],

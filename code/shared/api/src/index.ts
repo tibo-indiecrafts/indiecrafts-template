@@ -65,10 +65,14 @@ export interface Env {
   AGENT_RATELIMIT?: {
     limit: (o: { key: string }) => Promise<{ success: boolean }>;
   };
-  /** The EU D1 (`[[d1_databases]] binding = "DB"`) — one database, five tables
-   *  (admin_audit · session_events · security_events · consent_events · csp_reports).
-   *  Optional (503 until bound). */
+  /** The EU D1 (`[[d1_databases]] binding = "DB"`) — append-only telemetry firehose:
+   *  admin_audit · session_events · security_events · csp_reports · backup_runs. Still
+   *  serves the identity/rights tables too (consent_events etc.) until a later task moves
+   *  them to CORE_DB (spec 2026-08-25). Optional (503 until bound). */
   DB?: D1Database;
+  /** EU D1 (binding CORE_DB) — identity/rights/settings: user_profiles, consent_events,
+   *  data_requests, erasure_requests, export_requests, site_settings. */
+  CORE_DB?: D1Database;
   /** KV (`binding = "SECURITY_COUNTERS"`) — ephemeral TTL counters for failed-login rates,
    *  so they're counted at the edge, not written per-request to D1. Optional. */
   SECURITY_COUNTERS?: KVNamespace;
