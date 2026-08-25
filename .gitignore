@@ -90,6 +90,8 @@ docs/modules/changelog.md
 # Remote copies live in the R2 backups bucket, not git.
 **/backups/
 **/content-backups/
+# ...except the admin app's read-only Backups screen route (source, not a dump).
+!code/projects/web/surfaces/admin/src/app/\[locale\]/(dashboard)/backups/
 
 # storybook static build
 **/storybook-static/

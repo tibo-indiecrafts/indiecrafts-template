@@ -139,6 +139,28 @@
       "error": "Échec de l'enregistrement de ce paramètre.",
       "driftReminder": "Cette modification peut nécessiter une mise à jour des durées de rétention indiquées dans la politique de confidentialité.",
       "link": "Paramètres"
+    },
+    "backups": {
+      "title": "Sauvegardes",
+      "subtitle": "État des sauvegardes de bases de données et de contenu, depuis l'api partagée (20 dernières exécutions).",
+      "empty": "Aucun historique de sauvegarde enregistré pour l'instant.",
+      "bucket": "Bucket",
+      "notConfigured": "Non configuré",
+      "retentionDays": "Rétention (jours)",
+      "preMigrationSnapshots": "Instantanés avant migration",
+      "on": "Activé",
+      "off": "Désactivé",
+      "started": "Démarré",
+      "finished": "Terminé",
+      "db": "Base de données",
+      "env": "Environnement",
+      "kind": "Type",
+      "status": "État",
+      "size": "Taille",
+      "error": "Erreur",
+      "failedFlag": "Échec",
+      "stuckFlag": "Bloqué",
+      "link": "Voir les sauvegardes"
     }
   }
 }

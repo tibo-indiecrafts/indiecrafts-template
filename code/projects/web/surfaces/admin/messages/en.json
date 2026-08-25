@@ -139,6 +139,28 @@
       "error": "Could not save this setting.",
       "driftReminder": "Changing this may require updating the retention windows disclosed in the privacy policy.",
       "link": "Settings"
+    },
+    "backups": {
+      "title": "Backups",
+      "subtitle": "Database and content backup status, from the shared api (last 20 runs).",
+      "empty": "No backup history recorded yet.",
+      "bucket": "Bucket",
+      "notConfigured": "Not configured",
+      "retentionDays": "Retention (days)",
+      "preMigrationSnapshots": "Pre-migration snapshots",
+      "on": "On",
+      "off": "Off",
+      "started": "Started",
+      "finished": "Finished",
+      "db": "Database",
+      "env": "Environment",
+      "kind": "Kind",
+      "status": "Status",
+      "size": "Size",
+      "error": "Error",
+      "failedFlag": "Failed",
+      "stuckFlag": "Stuck",
+      "link": "View backups"
     }
   }
 }

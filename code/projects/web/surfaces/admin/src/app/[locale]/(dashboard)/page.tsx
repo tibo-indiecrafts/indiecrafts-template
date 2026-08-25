@@ -51,6 +51,12 @@ export default async function AdminHome({
         >
           {t("settings.link")}
         </Link>
+        <Link
+          href="/backups"
+          className="text-primary underline underline-offset-4"
+        >
+          {t("backups.link")}
+        </Link>
       </nav>
       <AdminRoleForm />
     </main>
