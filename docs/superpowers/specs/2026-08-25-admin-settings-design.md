@@ -48,9 +48,10 @@ Corollary: content-shaped or website-read config already has a home (Sanity). Th
 3. **`ops.sla_warning_days`** (7) — cron's erasure-SLA lead time; same shape as retention.
 4. **Link TTLs**, editable but **tightly clamped**:
    `ttl.export_download_hours` (1), `ttl.erasure_confirm_hours` (24).
-5. **Backups: read-only visibility card** in admin (no control).
-6. **Feature-flag placement rule** applied to the flags that exist today
-   (`logAnonymousConsent` → Sanity, see §G). No speculative flag console.
+5. **Backups: read-only visibility card + history** in admin (no control) — backed by a
+   `backup_runs` D1 log the backup scripts write (see §F).
+6. **Feature-flag placement rule** — recorded for future flags. No existing flag becomes
+   admin-editable; `logAnonymousConsent` **stays a code flag** (see §G).
 7. Admin UI, api routes, cron read path, docs, tests.
 
 ### Out (deliberate)
@@ -86,10 +87,31 @@ CREATE TABLE site_settings (
 Generic key/value (matches the "site_settings" framing) but **only the keys in §B ship**. An
 empty table means every value falls back to its code default. The table stores *overrides only*.
 
+Migration `0009_backup_runs.sql` — the backup history the admin card reads (see §F):
+
+```sql
+CREATE TABLE backup_runs (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  db_name    TEXT NOT NULL,        -- which database (content / audit / …) — the databases.mjs id
+  env        TEXT NOT NULL,        -- dev / staging / prod
+  kind       TEXT NOT NULL,        -- 'scheduled' | 'pre-migration' | 'manual'
+  r2_key     TEXT,                 -- the object key in the db-backup bucket (null if local-only)
+  bytes      INTEGER,              -- backup size, when known
+  status     TEXT NOT NULL,        -- 'ok' | 'failed'
+  error      TEXT,                 -- short failure label (never PII), null on ok
+  started_at TEXT NOT NULL,        -- ISO 8601
+  finished_at TEXT                 -- ISO 8601, null while running / on hard crash
+);
+CREATE INDEX idx_backup_runs_recent ON backup_runs (db_name, env, started_at DESC);
+```
+
+The backup scripts write one row per run (§F); the api reads the newest rows for the card. This
+records **history**, not just "last backup" — a failed run is visible, not silent.
+
 > **Pre-req (separate bug):** the merge left a migration-number collision —
 > `0004_csp_reports.sql` **and** `0004_erasure_requests.sql`. `applyD1Migrations` /
 > `wrangler d1 migrations apply` need unique, ordered numbers. Renumber one (and the chain) so
-> the new migration lands cleanly at `0008`. Track/fix this before or alongside this work.
+> the new migrations land cleanly at `0008`/`0009`. Track/fix this before or alongside this work.
 
 ### B. Source of truth — one module in `@indiecrafts/packages-shared-config`
 
@@ -185,33 +207,50 @@ clamped, defaults-on-miss), so the operator's override takes effect without rede
 To avoid a D1 read on every hot-path request, the api caches the settings map per-isolate for a
 short TTL (~30s), mirroring `lib/maintenance.ts`. Fail-open to defaults.
 
-### F. Backups — read-only status (`GET /v1/backups/status`, bearer-gated)
+### F. Backups — read-only status + history (`GET /v1/backups/status`, bearer-gated)
 
-Returns what admin *displays*, no control:
+Backup **history** is recorded in `backup_runs` (§A) and surfaced read-only — no control. The
+backup scripts (`code/shared/scripts/data/backup.mjs` + the pre-migration path in `migrate.mjs`)
+write one `backup_runs` row per run: a `started_at` row up front, updated to `ok`/`failed` +
+`finished_at` at the end (a hard crash leaves it `finished_at = null`, itself a visible signal).
+Writing goes through a tiny helper so a logging failure never aborts the backup itself.
+
+`GET /v1/backups/status` returns:
 
 ```ts
 {
-  bucket: string,               // from config (per-env db-backup bucket name)
-  retentionDays: number,        // committed backup_retention_days (config constant surfaced)
-  preMigrationSnapshots: boolean,// from config (shouldBackupBeforeMigrate policy)
-  lastBackupAt: string | null,  // newest object time from an R2 listing, or null/"unknown"
+  bucket: string,                 // from config (per-env db-backup bucket name)
+  retentionDays: number,          // committed backup_retention_days (config constant surfaced)
+  preMigrationSnapshots: boolean, // from config (shouldBackupBeforeMigrate policy)
+  runs: Array<{                   // newest first, capped (e.g. last 20) from backup_runs
+    dbName: string; env: string; kind: string;
+    status: "ok" | "failed"; bytes: number | null; error: string | null;
+    startedAt: string; finishedAt: string | null;
+  }>;
 }
 ```
 
-`lastBackupAt` = the api lists the backup R2 bucket (bind read-only) and takes the newest
-object's upload time. If the bucket is unbound, return `null` → the card shows "unknown". No new
-D1 table; add a `backup_runs` log only if run *history* is later wanted (deferred).
+The card shows the recent-runs table (last-backup time = the newest `ok` row) and flags the most
+recent `failed`/stuck run. If the `DB` binding is absent, `runs` is empty → the card shows
+"no backup history". (The scripts run on CI/CLI with wrangler creds, so they write via
+`wrangler d1 execute` against the same api D1 — no new binding on the workers.)
 
 ### G. Feature flags — placement, not a console
 
 Classify each flag by reader (§ principle), place it, stop. Today:
 
-- `logAnonymousConsent` — read in `website/src/app/api/consent-log/route.ts` (**website**) →
-  moves to a Sanity `siteSettings` "Compliance / feature flags" group, editor-toggled in Studio
-  (the same live no-deploy path as maintenance mode). It does **not** enter the D1 table.
+- `logAnonymousConsent` — read in `website/src/app/api/consent-log/route.ts` (**website**).
+  **Decision: it stays a version-controlled code flag, not an admin/Studio toggle.** Flipping it
+  *on* starts processing personal data for signed-out visitors (consent events + country + a
+  persistent `consent_id` cookie) and requires a privacy-policy disclosure update — a
+  compliance-consequential change that deserves a reviewed commit, exactly like CSP. A casual web
+  toggle is the wrong shape for it. It does **not** enter the D1 table and does **not** move to
+  Studio.
 
-No generic flag system is built (one flag today = YAGNI). The spec records the rule so the next
-flag lands in the right store by default.
+No generic flag system is built (one flag today = YAGNI), and no flag is made admin-editable in
+this slice. The spec records the placement *rule* so a future **cosmetic** flag (one with no
+data-processing/legal consequence) lands in the right store — worker-read → D1, website-read →
+Sanity Studio — by default.
 
 ### H. Admin UI
 
@@ -250,9 +289,12 @@ enforcement — cheap, and it stops silent drift.
 - **cron:** `loadSettings` defaults-when-empty / clamped-override / fallback-on-unbound; extend
   the existing purge + SLA tests to seed an override and assert the effective value is used.
 - **api:** `PUT` validation matrix (200 + audit row; 422s) ; `GET /v1/settings` shape;
-  export/erasure TTL honors an override + falls back; `GET /v1/backups/status` shape (bound vs
-  unbound bucket).
-- **admin:** Settings card renders inputs + save action; Backups card renders read-only.
+  export/erasure TTL honors an override + falls back; `GET /v1/backups/status` shape (with rows /
+  empty `runs`), newest-first + capped.
+- **scripts:** the `backup_runs` writer records an `ok` row on success and a `failed` row (with a
+  non-PII error label) on failure, and a logging error never aborts the backup.
+- **admin:** Settings card renders inputs + save action; Backups card renders the runs table +
+  flags a failed/stuck run.
 
 ## Docs + changelog
 
@@ -263,13 +305,21 @@ enforcement — cheap, and it stops silent drift.
 
 ## Rollout
 
-Ships defaults-safe: the table starts empty, so behaviour is byte-identical to today until an
-operator sets a value. Migration `0008` + the cron/api reads can deploy before any UI. No data
-migration; no backfill.
+Ships defaults-safe: the tables start empty, so behaviour is byte-identical to today until an
+operator sets a value. Migrations `0008`/`0009` + the cron/api reads can deploy before any UI.
+`backup_runs` simply starts logging on the next backup; the card shows "no history" until then.
+No data migration; no backfill.
+
+## Resolved decisions
+
+1. **Backups: full history** (not just "last backup"). `backup_runs` D1 table, written by the
+   backup scripts, surfaced read-only in the admin card (§A, §F). ✅ decided 2026-08-25.
+2. **`logAnonymousConsent` stays a version-controlled code flag** — not admin-editable, not moved
+   to Studio (§G). ✅ decided 2026-08-25.
 
 ## Open questions
 
-1. `GET /v1/backups/status` `lastBackupAt` — R2 listing (no new table) vs a `backup_runs` log
-   (enables history). Spec picks listing; confirm history isn't wanted now.
-2. Sanity `siteSettings` "feature flags" group — confirm the admin/Studio is the intended editor
-   for `logAnonymousConsent` (vs leaving it a code flag). Spec assumes Studio.
+_None blocking. Minor, resolvable in the plan:_
+- Cap for the backups card runs list (spec suggests last 20) + whether to prune old `backup_runs`
+  rows on the same cron retention pass (likely yes — an `ops.backup_history_days` key, or fold
+  into the existing purge). Decide when speccing §F's task.
