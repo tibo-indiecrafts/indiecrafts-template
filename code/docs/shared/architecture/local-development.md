@@ -25,7 +25,7 @@ The registry declares four data stores; the D1s and KV run in miniflare, Sanity 
 | `content` | Sanity | **remote** — see [Sanity](#sanity-content) |
 
 `local` is a real tier, distinct from `dev`/`staging`/`prod` (which are real remote Cloudflare D1s).
-Full model → the `code/shared/db` brief and [Deployment](./deployment).
+Full model → the `code/shared/db` brief and [Deployment](../../apps/web/setup/deployment).
 
 - **First run, and after adding any migration:** `pnpm db:migrate:all:local`. Offline; no IDs.
 - The local D1 lives in `code/shared/api/.wrangler/state`, which `wrangler dev` reads too — so migrate, then `pnpm dev`.
@@ -59,10 +59,10 @@ Leave them unset and the `blog` / `studio` feature flags stay off — the market
 - **`api` and `cron` keep separate local D1s** — different workers, different miniflare state. `db:migrate:all:local`
   migrates the api's (the owner). You rarely run `cron` locally; just know they don't share local data.
 - **Local needs no real IDs; deploying does.** Creating the real `dev`/`staging`/`prod` D1s and pasting their
-  IDs into `wrangler.toml` is a separate step → [Deployment](./deployment).
+  IDs into `wrangler.toml` is a separate step → [Deployment](../../apps/web/setup/deployment).
 
 ## Migrating the real environments
 
 `db:migrate:<db>|all:<tier>` picks the tier: `local` (miniflare) · `dev` / `staging` / `prod` (real remote D1s,
 each taking a pre-migration R2 snapshot that **aborts on failure**; a prod run **confirms first**). Full script
-list → [Scripts](./scripts); the R2 snapshots → [Backups](./backups).
+list → [Scripts](../../apps/web/setup/scripts); the R2 snapshots → [Backups](../../apps/web/setup/backups).
