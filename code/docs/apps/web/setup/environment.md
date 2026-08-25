@@ -108,6 +108,34 @@ Then **`/reload-plugins`**. Reach for its skills when working under `code/projec
 shared RN bits, `code/packages/mobile/ui-native`). Source:
 [`docs.expo.dev/agents/claude`](https://docs.expo.dev/agents/claude/).
 
+### Security guidance
+
+Anthropic's official secure-coding reviewer for Claude-generated code — pattern-based warnings on
+edits, an LLM diff review on Stop, and an agentic commit reviewer catching injection, XSS, SSRF,
+hardcoded secrets, and 25+ other vulnerability classes. It reinforces this repo's config-first NEVERs
+(no leaked tokens, no secret under `NEXT_PUBLIC_`). From the same `claude-plugins-official` marketplace
+as the LSP:
+
+```bash
+claude plugin install security-guidance@claude-plugins-official
+```
+
+Then **`/reload-plugins`**. Source:
+[`claude-plugins-official/plugins/security-guidance`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance).
+
+### Persistent memory (claude-mem)
+
+Compresses context across sessions so Claude Code recalls earlier work instead of re-deriving it — a
+per-developer memory store (global, `~/.claude`, never committed). A community plugin, so add its
+marketplace first:
+
+```bash
+claude plugin marketplace add thedotmack/claude-mem
+claude plugin install claude-mem@thedotmack
+```
+
+Then **`/reload-plugins`**. Source: [`github.com/thedotmack/claude-mem`](https://github.com/thedotmack/claude-mem).
+
 ### Project MCP servers (`.mcp.json`)
 
 The repo commits its MCP servers in `.mcp.json` (approve them on first run): **shadcn** + **magicui**
