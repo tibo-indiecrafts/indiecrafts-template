@@ -40,4 +40,4 @@ jobs:
       # runner puts each owner's node_modules/.bin (sanity + wrangler CLIs) on PATH and
       # reads config from the job env above (no .env.local in CI).
       - name: Back up all databases → R2
-        run: node code/shared/scripts/data/backup.mjs --all "$ENV" --remote
+        run: node code/shared/scripts/data/backup.mjs --all "$ENV" --remote ${{ github.event_name == 'schedule' && '--kind=scheduled' || '' }}
