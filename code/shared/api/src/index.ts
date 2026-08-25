@@ -4,6 +4,10 @@ import {
   getCurrentEnvironment,
   defaultLocale,
   type Locale,
+  SETTINGS,
+  coerceSetting,
+  effectiveSettings,
+  type SettingKey,
 } from "@indiecrafts/packages-shared-config";
 import {
   hashIpAddress,
@@ -674,6 +678,70 @@ export default {
         return json({ error: "server" }, 502, cors);
       }
     }
+    // ── Settings — GET (view) / PUT (edit) /v1/settings (bearer-gated; workers read these) ──
+    if (url.pathname === "/v1/settings") {
+      if (request.method === "OPTIONS")
+        return new Response(null, { status: 204, headers: cors });
+      const bearer = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+      if (!env.APP_API_TOKEN || !bearer || !safeEqual(bearer, env.APP_API_TOKEN))
+        return json({ error: "unauthorized" }, 401, cors);
+      if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+
+      if (request.method === "GET") {
+        const { results } = await env.DB.prepare(
+          "SELECT key, value, updated_at, updated_by FROM site_settings",
+        ).all<{ key: string; value: string; updated_at: string; updated_by: string }>();
+        const overrides = new Map(results.map((r) => [r.key, r]));
+        const effective = effectiveSettings(results);
+        const settings = (Object.keys(SETTINGS) as SettingKey[]).map((key) => {
+          const o = overrides.get(key);
+          return {
+            key,
+            value: effective[key],
+            def: SETTINGS[key].def,
+            min: SETTINGS[key].min,
+            max: SETTINGS[key].max,
+            unit: SETTINGS[key].unit,
+            updatedAt: o?.updated_at ?? null,
+            updatedBy: o?.updated_by ?? null,
+          };
+        });
+        return json({ settings }, 200, cors);
+      }
+
+      if (request.method === "PUT") {
+        let body: { key?: unknown; value?: unknown; actor?: unknown };
+        try {
+          body = (await request.json()) as typeof body;
+        } catch {
+          return json({ error: "invalid" }, 400, cors);
+        }
+        const key = typeof body.key === "string" ? body.key : "";
+        const actor = typeof body.actor === "string" ? body.actor.slice(0, 128) : "";
+        const raw = typeof body.value === "number" ? String(body.value) : "";
+        if (!key || !actor || raw === "") return json({ error: "invalid" }, 400, cors);
+        const rule = (SETTINGS as Record<string, { min: number; max: number }>)[key];
+        const coerced = coerceSetting(key, raw);
+        // Reject rather than silently clamp — the operator sees the bound.
+        if (!rule || coerced === null || coerced !== Number(raw))
+          return json({ error: "out_of_range", min: rule?.min, max: rule?.max }, 422, cors);
+
+        const ts = new Date().toISOString();
+        await env.DB.batch([
+          env.DB.prepare(
+            "INSERT INTO site_settings (key, value, updated_at, updated_by) VALUES (?, ?, ?, ?) " +
+              "ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at, updated_by = excluded.updated_by",
+          ).bind(key, raw, ts, actor),
+          env.DB.prepare(
+            "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, 'setting_changed', ?, ?, ?, NULL)",
+          ).bind(ts, actor, key, request.headers.get("cf-ipcountry")),
+        ]);
+        return json({ ok: true }, 200, cors);
+      }
+
+      return json({ error: "method_not_allowed" }, 405, cors);
+    }
+
     // ── DSAR intake — POST /v1/data-request (bearer-gated write; the website's
     // /api/data-request route proxies here) + GET /v1/data-requests (bearer-gated read;
     // the admin screen) ── Logic lives in data-request/route.ts — this stays a thin dispatch.
