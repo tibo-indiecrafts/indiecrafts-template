@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { auth } from "@clerk/nextjs/server";
 import { logConsent } from "@indiecrafts/packages-web-compliance/consent-log";
-import { features } from "@/config";
+import { features, surface } from "@/config";
 
 type Body = {
   events?: Array<{ type: string; granted: boolean }>;
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     events: body.events,
     version: body.version,
     source: typeof body.source === "string" ? body.source : undefined,
-    surface: "website",
+    surface,
     country: (await headers()).get("cf-ipcountry"),
     decisionId: body.decisionId,
   });

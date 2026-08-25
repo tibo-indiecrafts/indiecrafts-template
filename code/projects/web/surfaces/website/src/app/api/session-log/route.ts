@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { logSession } from "@indiecrafts/packages-web-auth/session-log";
+import { surface as appSurface } from "@/config";
 
 /**
  * Same-origin sign-in logger — the browser (`SessionLogger`) POSTs here with no secret,
@@ -10,7 +11,7 @@ export async function POST(request: Request) {
   const { userId, sessionId } = await auth();
   if (!userId) return new Response(null, { status: 401 });
   const body = (await request.json().catch(() => ({}))) as { surface?: unknown };
-  const surface = typeof body.surface === "string" ? body.surface : "web";
+  const surface = typeof body.surface === "string" ? body.surface : appSurface;
   await logSession({
     surface,
     userId,

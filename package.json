@@ -31,7 +31,6 @@
     "docs": "npm --prefix code/docs run docs:dev",
     "docs:build": "npm --prefix code/docs run docs:build",
     "prepare": "husky",
-    "agents:sync": "bash code/shared/scripts/dev/sync-agents.sh",
     "test:stories": "pnpm --filter @indiecrafts/web-tools-storybook test:stories",
     "tags:report": "node code/shared/scripts/checks/tags-report.mjs",
     "check:tags": "node code/shared/scripts/checks/tags-report.mjs --check",

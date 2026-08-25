@@ -98,6 +98,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
   and ~40 docs updated in lockstep; `check:tasks` parity holds. App-level scripts stay as the delegation
   targets. **Why:** script names now read off the workspace structure + registry entity names, matching
   the CF resource naming.
+- **Pruned the vendored agent pack; docs updated in lockstep.** `.claude/agents/` dropped the
+  unused `contains-studio` suite (79 → 12 agents), keeping the 10 `project/` reviewers — now incl.
+  new `architecture-reviewer`, `compliance-reviewer`, `performance-reviewer` — plus `build/`
+  (`electron-pro`, `mobile-app-builder`). The `sync-agents.sh` script + `agents:sync` package script
+  were removed (they re-vendored the pack), so `scripts.md` drops that row and `on-the-fly-checks.md`
+  repoints the review-agent mentions (`security-auditor`/`code-reviewer` → `/cso` + `compliance-reviewer`;
+  `accessibility-tester` → the new reviewer set). _Why:_ the pack was unreferenced and redundant with
+  the plugin agents + gstack review skills; a lean, repo-aware roster beats vendored bloat.
+
 - **Dropped every `method/` + `work/` reference** (those folders were removed from the repo). The
   `page-builder.md` "Adding a block" section is now a self-contained checklist (was a pointer to the
   deleted method workflow); the workspace / getting-started / project-organization pages no longer

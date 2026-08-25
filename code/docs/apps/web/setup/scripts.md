@@ -16,7 +16,7 @@ Scripts sit at **two tiers**, split by blast radius — the same script is never
   app's** dataset, Cloudflare resources, env, or tokens (`seed`, `backup-*`, `deploy`, `setup:web:website:kv`,
   `sync-secrets`, `check-contrast`, `doctor-env`). Travels with the app; can't reach a sibling app.
 - **Root tier** (`/scripts` + root `package.json`) — anything **repo-wide**: governance
-  (`tags-report`, `scan-placeholders`), git/toolchain (`clean`, `worktree`, `sync-agents`), and the
+  (`tags-report`, `scan-placeholders`), git/toolchain (`clean`, `worktree`), and the
   **multi-app dispatcher** (`infra.mjs web …`). Governed — shellcheck + `node:test` (§4).
 
 The root **re-exposes** app scripts through `pnpm --filter @indiecrafts/web-surfaces-website …`, so you run everything
@@ -208,5 +208,4 @@ Workspace-wide tooling, run from the repo root. Shell scripts are shellcheck-cle
 | `checks/tasks-sync.mjs` | `pnpm check:tasks`                | Guard `.vscode/tasks.json` ⊇ the root `package.json` scripts (per-app tasks use an `<app>: ` label). Colocated test `tasks-sync.test.mjs`; also called by the change-hygiene hook. |
 | `scan-placeholders.mjs` | `pnpm check:placeholders`          | Pre-handoff scan for leftover template scaffolding in `code/` + `docs/`.                                                                                                           |
 | `clean.sh`              | `pnpm clean`                      | Wipe build artifacts (`--all` also `node_modules`).                                                                                                                                |
-| `sync-agents.sh`        | `pnpm agents:sync`                | Sync the Claude agent set (pre-existing).                                                                                                                                          |
 | `worktree.sh`           | —                                 | Git worktree helper (pre-existing).                                                                                                                                                |

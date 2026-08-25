@@ -13,6 +13,7 @@ import {
   localePrefix,
   seoDefaults,
   site,
+  surface,
   theme,
   type Locale,
 } from "@/config";
@@ -265,7 +266,7 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
               ) : null}
             </LocaleSwitchBoundary>
             {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
-              <SessionLogger surface="website" />
+              <SessionLogger surface={surface} />
             ) : null}
           </NextIntlClientProvider>
         </ThemeProvider>

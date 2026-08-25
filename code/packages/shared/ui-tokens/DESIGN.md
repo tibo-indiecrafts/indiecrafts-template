@@ -132,8 +132,11 @@ components:
 Machine-readable tokens live in the front matter above; the prose below is the
 "why". Deeper guides: `code/docs/apps/web/design/`, `code/docs/apps/web/config/theme-modes.md`.
 This is the **visual** third of the design-context triad — the non-visual product truth
-(users, purpose, positioning) lives in [`PRODUCT.md`](../../apps/web/PRODUCT.md), and the
-build rules in [`CLAUDE.md`](../../apps/web/CLAUDE.md).
+(users, purpose, positioning) lives in [`PRODUCT.md`](../../../projects/web/surfaces/website/PRODUCT.md), and the
+build rules in [`CLAUDE.md`](../../../projects/web/surfaces/website/.claude/CLAUDE.md). Framing a
+_new_ surface starts upstream of all three: run the discovery filter (`/office-hours`,
+`brainstorming`) before you design — this file is the visual contract, not the
+problem-framing step.
 
 ## How to read this system
 
@@ -151,6 +154,25 @@ build rules in [`CLAUDE.md`](../../apps/web/CLAUDE.md).
 6. **Unsure which rule applies? Ask — never "use your best judgment."**
 7. **Uncovered case? Match the nearest existing screen** before inventing a
    pattern — consistency beats local perfection.
+
+## Platform patterns
+
+This file is the **web** contract (shadcn/ui + Tailwind + DOM). The monorepo also ships
+native (`mobile/surfaces`, Expo/React Native) and hybrid (`hybrid/surfaces`, Electron)
+surfaces. **Share the decision, not the implementation:**
+
+- **Crosses platforms** — the _tokens_ (`ui-tokens` is `shared/`: colors, type scale,
+  spacing, radii) and the _decisions_ they encode: roles not preferences, restraint, one
+  signature moment, every state handled, AA contrast.
+- **Per-platform** — the _implementation pattern_. **Never port a shadcn/DOM/Tailwind
+  pattern to native.** Use each platform's idiom: RN primitives + `StyleSheet`/NativeWind
+  on mobile (`ui-native`, consuming `src/native/tokens.ts`); the platform's own controls
+  on hybrid. A web `focus-visible` ring maps to the native press/focus state — match the
+  _role_, not the CSS.
+
+Rule of thumb: a token or a decision crosses platforms; a class name or a component API
+does not. (An advisory `platform-patterns` hook flags web-only imports in native/hybrid
+files.)
 
 ## Brand & Style
 
@@ -285,7 +307,7 @@ status dots use `full`. Don't mix radii within one component.
 ## Component conventions
 
 Build on the shadcn primitives the shadcn way — full rules in
-[`.claude/rules/component-architecture.md`](../../apps/web/.claude/rules/component-architecture.md):
+[`.claude/rules/component-architecture.md`](../../../projects/web/surfaces/website/.claude/rules/component-architecture.md):
 `cn()` not string-concat, `cva` not forks, `asChild`/`data-slot`, semantic tokens
 over `dark:`, container queries, never hand-edit `@indiecrafts/packages-web-ui` primitives.
 
@@ -430,6 +452,9 @@ A screen that renders is not done. Before calling a UI task complete:
 5. **Verified at 375 / 768 / 1280** — nothing overflows, clips, or mis-reflows.
 6. `pnpm verify:quick` passes and the result matches the reference.
 7. **Listed** any intentional deviation, and any new component / variant / token.
+8. **Consequences checked** — does this increase user agency or quietly reduce it? Any
+   dark-pattern pull (manufactured urgency, forced dependence)? Design the
+   six-months-later behavior, not just the next click.
 
 **Refining a screen? Critique it in order, one lens at a time.** Don't ask "what's wrong" once — run
 four focused passes in this fixed order, fixing before the next: **1 Accessibility → 2 Visual hierarchy

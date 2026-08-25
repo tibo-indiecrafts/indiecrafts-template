@@ -1,51 +1,35 @@
-# Agents — vendored into the template
+# Agents — this repo's reviewers + build agents
 
-This template is **packaged**: the general agent suite is committed here so a clone works with
-no `~/.claude` setup. Claude Code discovers agents recursively, so the topic folders are just
-organization.
+Claude Code discovers agents recursively. This folder holds **only what this repo uses**. The
+general vendored suite (`contains-studio/agents`) was removed as unused — review and build work
+runs through the plugin agents (`pr-review-toolkit`, `feature-dev`, `caveman`), the gstack review
+skills (`/review` · `/codex` · `/cso`), and the agents below.
 
-## Layout
+## `project/` — this repo's custom reviewers
 
-- **Topic folders** (`architecture/ testing/ deployment/ …`) — the vendored general agents, **all kept
-  - categorised** (no bench). `agent-coordinator.md` sits at the agents root. Source:
-    [`contains-studio/agents`](https://github.com/contains-studio/agents)
-    (MIT upstream — add its `LICENSE` here if you redistribute the template publicly).
-- **`project/`** — the **template-specific** reviewers that encode _this_ repo's conventions
-  (not from upstream, don't overwrite): `design-system-reviewer`, `accessibility-reviewer`,
-  `ux-reviewer`, `copy-reviewer`, `page-builder-reviewer`, `config-consistency-reviewer`.
+Read-only, repo-aware critics encoding _this_ template's conventions. Reach for them after a
+change, before shipping; the `design-critique` skill sequences the design lenses.
 
-**Two lanes.** Most wired agents serve the **feature lane** (the 7-phase build sprint). The **growth /
-content agents moved to the studio content vault** (`~/Code/indie-brain/.claude/agents/`) — this code
-framework is dev-only. The project lane's **launch orchestration** stays here: `project-shipper` /
-`uat-coordinator` (`deployment/`, `project-management/`) at launch and `experiment-tracker` at grow.
+- **config-consistency-reviewer** — the config-first NEVERs (no hard-coded brand/URL/color/nav, strings in `messages/`, typed routing, no leaked token, one home per fact).
+- **design-system-reviewer** — the `DESIGN.md` token contract.
+- **accessibility-reviewer** — structural a11y + WCAG AA.
+- **ux-reviewer** — flow, clarity, friction, hierarchy.
+- **copy-reviewer** — product voice + tone.
+- **interaction-states-reviewer** — hover / focus / active / disabled / loading / empty / error / destructive.
+- **page-builder-reviewer** — a page-builder block touched every synced file.
+- **architecture-reviewer** — monorepo boundary + altitude: no cross-app imports, deps point down, ≥2-consumer extraction, single-owner shared resources, registry rows.
+- **compliance-reviewer** — GDPR: data minimization, consent, erasure/export coverage, audit trail, DPIA/ROPA.
+- **performance-reviewer** — Next.js/React perf: server-first, bundle, image sizing, fetch waterfalls, static/ISR.
 
-## Situational agents (kept, categorised — reach for them when the use-case fits)
+## `build/` — native-surface builders
 
-No bench: every agent lives in its topic folder and is invokable by name. Some aren't on the default hot
-path — reach for them when the project calls for it:
+Domain build agents for the non-web surfaces (reach for them when building those apps):
 
-- `electron-pro` — the **`hybrid` (electron)** app slot · `mobile-app-builder` — the **`mobile` (expo)** app slot.
-- `ai-engineer` — when a feature is genuinely AI-heavy · `wordpress-master` / `microservices-architect` /
-  `chaos-engineer` — off-stack unless the project adds that surface.
-- `architecture-consultant` · `performance-optimizer` · `tech-writer` · `git-workflow-manager` — each
-  overlaps a default agent (`system-architect` · `performance-benchmarker` · `documentation-engineer` ·
-  `git-manager`); reach for the default first.
-- `studio-producer` · `training-change-manager` — team/org orchestration (a solo flow rarely needs them).
-
-## Keeping them fresh (they can drift)
-
-Vendored copies don't auto-update. Re-pull the general suite from your source-of-truth:
-
-```bash
-pnpm agents:sync                       # re-vendor topic folders + agent-coordinator; NEVER touches project/
-bash scripts/sync-agents.sh --dry-run  # print what would re-vendor, copy nothing
-```
-
-`project/` is hand-maintained and never overwritten. There is **no wired/bench split** — every vendored
-agent lands in its topic folder, mirroring the source.
+- **electron-pro** — the `hybrid` (Electron) surface.
+- **mobile-app-builder** — the `mobile` (Expo / React Native) surface.
 
 ## Links
 
-- **Live:** `<production URL>` · **Repo:** `<git URL>` · **Deploy:** `<Netlify/Vercel dashboard>`
+- **Live:** `<production URL>` · **Repo:** `<git URL>` · **Deploy:** `<dashboard>`
 
 <!-- Template placeholders — fill per project; canonical URLs live in the root README. -->

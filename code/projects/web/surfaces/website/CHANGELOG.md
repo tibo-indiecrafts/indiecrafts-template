@@ -205,6 +205,15 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   since SP3; the strict policy now graduates to actually blocking inline-script injection instead of
   just reporting it. `e2e/journeys/csp-nonce.spec.ts` rewritten to assert the enforced strict CSP
   (was: Report-Only).
+- **Surface id is now one config value, not a scattered literal.** Added
+  `surface` to app-owned `@/config` (`src/config/surface.ts`, `"website"`). The
+  audit/telemetry origin — hardcoded as `"website"` in the consent-log route and
+  the `SessionLogger` mount, and defaulted to `"web"` in the session-log route —
+  now reads from that one home. _Why:_ as surfaces multiply (admin, app, mobile),
+  the consent + session audit trail must tag the right origin; a copied route
+  changes one config value instead of hunting magic strings, and a malformed
+  session body now falls back to the correct surface rather than a generic `"web"`.
+
 - **Icons + fonts now come from shared bricks.** Icon usage moved onto
   `@indiecrafts/packages-shared-ui-icons`: the footer/social + homepage showcase render `BrandIcon`
   (from shared SVG data), `NavIcon` uses the brick's `ReiconIcon`, and `FeatureGrid`'s Studio picker is

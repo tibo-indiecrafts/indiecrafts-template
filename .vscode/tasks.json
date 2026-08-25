@@ -887,13 +887,6 @@
       "type": "shell",
       "command": "pnpm clean",
       "problemMatcher": []
-    },
-    {
-      "label": "agents:sync",
-      "detail": "re-vendor the agent suite from the global bench",
-      "type": "shell",
-      "command": "pnpm agents:sync",
-      "problemMatcher": []
     }
   ]
 }
