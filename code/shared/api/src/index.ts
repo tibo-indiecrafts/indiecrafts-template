@@ -66,9 +66,8 @@ export interface Env {
     limit: (o: { key: string }) => Promise<{ success: boolean }>;
   };
   /** The EU D1 (`[[d1_databases]] binding = "DB"`) — append-only telemetry firehose:
-   *  admin_audit · session_events · security_events · csp_reports · backup_runs. Still
-   *  serves the identity/rights tables too (consent_events etc.) until a later task moves
-   *  them to CORE_DB (spec 2026-08-25). Optional (503 until bound). */
+   *  admin_audit · session_events · security_events · csp_reports · backup_runs.
+   *  Optional (503 until bound). */
   DB?: D1Database;
   /** EU D1 (binding CORE_DB) — identity/rights/settings: user_profiles, consent_events,
    *  data_requests, erasure_requests, export_requests, site_settings. */
@@ -350,7 +349,8 @@ export default {
             .bind(ts, event, actor, target, country)
             .run();
         } else if (body.kind === "session") {
-          if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+          if (!env.DB || !env.CORE_DB)
+            return json({ error: "unavailable" }, 503, cors);
           const surface = str(body.surface, 16);
           const userId = str(body.userId);
           if (!surface || !userId) return json({ error: "invalid" }, 400, cors);
@@ -370,7 +370,7 @@ export default {
           // Create the profile row on first sign-in; refresh last_login_at on
           // every sign-in. Email/name are NOT in the session payload (kept
           // minimal) — the Clerk webhook + backfill fill them. Idempotent by PK.
-          await env.DB.prepare(
+          await env.CORE_DB.prepare(
             "INSERT INTO user_profiles (user_id, created_at, last_login_at) VALUES (?, ?, ?) " +
               "ON CONFLICT(user_id) DO UPDATE SET last_login_at = excluded.last_login_at",
           )
@@ -459,7 +459,7 @@ export default {
             str(body.description, 200) || null,
           );
         } else if (body.kind === "consent") {
-          if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+          if (!env.CORE_DB) return json({ error: "unavailable" }, 503, cors);
           // Trust boundary: userId is resolved by the caller's route via Clerk
           // auth(), never claimed by the browser. Anonymous rows key on consentId.
           const userId = str(body.userId) || null;
@@ -483,7 +483,7 @@ export default {
           // profile is fingerprinted by the Clerk webhook / backfill).
           let fingerprint: string | null = null;
           if (userId) {
-            const prof = await env.DB.prepare(
+            const prof = await env.CORE_DB.prepare(
               "SELECT email_fingerprint FROM user_profiles WHERE user_id = ?",
             )
               .bind(userId)
@@ -504,7 +504,7 @@ export default {
           }>) {
             const type = str(raw.type, 32);
             if (!ALLOWED_CONSENT_TYPES.has(type)) continue;
-            await env.DB.prepare(
+            await env.CORE_DB.prepare(
               "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             )
@@ -695,10 +695,11 @@ export default {
       const bearer = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
       if (!env.APP_API_TOKEN || !bearer || !safeEqual(bearer, env.APP_API_TOKEN))
         return json({ error: "unauthorized" }, 401, cors);
-      if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+      if (!env.CORE_DB || !env.DB)
+        return json({ error: "unavailable" }, 503, cors);
 
       if (request.method === "GET") {
-        const { results } = await env.DB.prepare(
+        const { results } = await env.CORE_DB.prepare(
           "SELECT key, value, updated_at, updated_by FROM site_settings",
         ).all<{ key: string; value: string; updated_at: string; updated_by: string }>();
         const overrides = new Map(results.map((r) => [r.key, r]));
@@ -737,15 +738,27 @@ export default {
           return json({ error: "out_of_range", min: rule?.min, max: rule?.max }, 422, cors);
 
         const ts = new Date().toISOString();
-        await env.DB.batch([
-          env.DB.prepare(
-            "INSERT INTO site_settings (key, value, updated_at, updated_by) VALUES (?, ?, ?, ?) " +
-              "ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at, updated_by = excluded.updated_by",
-          ).bind(key, raw, ts, actor),
-          env.DB.prepare(
+        // site_settings (CORE_DB) and admin_audit (DB) are now separate D1 instances, so
+        // this can no longer be one atomic batch. The setting write is primary — it must
+        // surface a failure; the audit write is secondary and non-fatal if it throws
+        // (mirrors export/route.ts's admin_audit write after the primary CORE_DB write).
+        await env.CORE_DB.prepare(
+          "INSERT INTO site_settings (key, value, updated_at, updated_by) VALUES (?, ?, ?, ?) " +
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at, updated_by = excluded.updated_by",
+        )
+          .bind(key, raw, ts, actor)
+          .run();
+        try {
+          await env.DB.prepare(
             "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, 'setting_changed', ?, ?, ?, NULL)",
-          ).bind(ts, actor, key, request.headers.get("cf-ipcountry")),
-        ]);
+          )
+            .bind(ts, actor, key, request.headers.get("cf-ipcountry"))
+            .run();
+        } catch (error) {
+          logger.error("setting_changed audit write failed", {
+            name: (error as Error)?.name,
+          });
+        }
         return json({ ok: true }, 200, cors);
       }
 
@@ -898,7 +911,7 @@ export default {
       //    pseudonymise on delete. Idempotent by PK — Clerk retries are safe.
       //    No idempotency-key store: every op here is idempotent by primary key.
       if (
-        env.DB &&
+        env.CORE_DB &&
         (evt.type === "user.created" ||
           evt.type === "user.updated" ||
           evt.type === "user.deleted")
@@ -908,7 +921,7 @@ export default {
           const now = new Date().toISOString();
           try {
             if (evt.type === "user.deleted") {
-              await env.DB.prepare(
+              await env.CORE_DB.prepare(
                 "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
               )
                 .bind(
@@ -944,7 +957,7 @@ export default {
               // erasure key, so losing it breaks email-keyed erasure. A real incoming
               // email still overwrites, via excluded. full_name has no such guard —
               // a name clear/update should propagate; it is not the erasure key.
-              await env.DB.prepare(
+              await env.CORE_DB.prepare(
                 "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at, last_login_at) " +
                   "VALUES (?, ?, ?, ?, ?, NULL) " +
                   "ON CONFLICT(user_id) DO UPDATE SET email = COALESCE(excluded.email, email), full_name = excluded.full_name, email_fingerprint = COALESCE(excluded.email_fingerprint, email_fingerprint)",

@@ -90,8 +90,8 @@ describe("POST /v1/data-request", () => {
     expect(res.status).toBe(400);
   });
 
-  it("503s when DB is unbound", async () => {
-    const noDbEnv = { ...(env as unknown as Env), DB: undefined };
+  it("503s when CORE_DB is unbound", async () => {
+    const noDbEnv = { ...(env as unknown as Env), CORE_DB: undefined };
     const res = await handleDataRequestWrite(
       new Request("https://example.com/v1/data-request", {
         method: "POST",

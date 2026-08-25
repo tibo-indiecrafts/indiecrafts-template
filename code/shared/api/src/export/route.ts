@@ -181,7 +181,7 @@ export async function handleExport(
 
   const token = crypto.randomUUID();
   const createdAt = new Date().toISOString();
-  const ttlH = (await readSettings(env.DB, settingsCache))[
+  const ttlH = (await readSettings(env.CORE_DB, settingsCache))[
     "ttl.export_download_hours"
   ];
   const expiresAt = new Date(Date.now() + ttlH * 3_600_000).toISOString();

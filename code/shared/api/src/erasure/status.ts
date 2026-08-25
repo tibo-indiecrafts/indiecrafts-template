@@ -34,13 +34,13 @@ export async function handleErasureStatus(
   if (request.method !== "GET")
     return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS);
 
-  if (!env.DB) return json({ error: "unavailable" }, 503, PUBLIC_CORS);
+  if (!env.CORE_DB) return json({ error: "unavailable" }, 503, PUBLIC_CORS);
 
   // sha256Hex throws on an empty input — guard before hashing.
   if (!token) return json({ error: "not_found" }, 404, PUBLIC_CORS);
 
   try {
-    const row = await env.DB.prepare(
+    const row = await env.CORE_DB.prepare(
       "SELECT status, requested_at, due_at, completed_at FROM erasure_requests WHERE token_hash = ?",
     )
       .bind(await sha256Hex(token))
