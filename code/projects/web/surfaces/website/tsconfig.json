@@ -18,7 +18,13 @@
     "paths": {
       "@/*": ["./src/*"],
       "@indiecrafts/packages-shared-utils/*": ["../../../../packages/shared/utils/src/*"],
+      "@indiecrafts/packages-shared-security/*": [
+        "../../../../packages/shared/security/src/*"
+      ],
       "@indiecrafts/packages-web-email/*": ["../../../../packages/web/email/src/*"],
+      "@indiecrafts/packages-web-security-reports/*": [
+        "../../../../packages/web/security-reports/src/*"
+      ],
       "@indiecrafts/packages-shared-system-pages/*": [
         "../../../../packages/shared/system-pages/src/*"
       ],
