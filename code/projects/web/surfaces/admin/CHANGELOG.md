@@ -14,6 +14,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Settings card — edit retention/ops/TTL knobs.** New `(dashboard)/settings` page reads
+  `GET /v1/settings` server-side (the api token stays server-side) and renders grouped
+  number inputs (Retention / Ops / Link TTLs), each with its default, min/max hint, and an
+  "Overridden" badge; Save calls a `saveSetting` server action per changed key (re-checks
+  the Clerk `admin` role, then `PUT /v1/settings`). The three privacy-policy-disclosed keys
+  (`retention.audit_days`, `retention.consent_days`, `retention.erasure_request_days`) carry
+  an inline reminder to update the policy disclosure if changed. **Why:** an operator can
+  now change a retention window, the erasure-SLA lead time, or a link TTL without a code
+  change + redeploy — see `code/docs/apps/web/config/settings.md`.
+- **Read-only Backups history card.** New `(dashboard)/backups` page reads
+  `GET /v1/backups/status` server-side and lists the bucket/retention/pre-migration-snapshot
+  summary plus the last 20 backup runs, newest first, flagging a run **Failed** or **Stuck**
+  (icon + text, never color alone) when it errored or never finished. Visibility only — no
+  control; backup retention stays a version-controlled R2 lifecycle rule. **Why:** an
+  operator previously had no way to see whether scheduled/pre-migration backups were
+  actually succeeding.
 - **CSP violations dashboard — `(dashboard)/csp`.** Read-only page mirroring `(dashboard)/security`:
   reads `GET /v1/csp-reports` server-side (bearer held server-side, `cache: "no-store"`) and lists
   aggregated CSP violation groups — count · disposition · directive · route · blocked source · surface ·

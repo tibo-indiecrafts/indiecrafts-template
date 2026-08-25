@@ -21,6 +21,28 @@ Cloudflare D1 (`binding DB`), three tables. This page is the record-of-processin
 - **Lawful basis:** legitimate interest — securing accounts + an admin audit trail.
 - **Processors:** Cloudflare (D1 hosting, EU) and Clerk (authentication).
 
+## Retention windows are now admin-overridable
+
+Every retention window on this page — plus the erasure-SLA warning lead time — is now a
+runtime setting an operator can change from the admin **Settings** card, bounded and
+audited, instead of a code change + redeploy: `retention.audit_days` (90), `retention.
+consent_days` (1095, 3-year floor), `retention.erasure_request_days` (1095, 3-year floor),
+`retention.data_request_days` (365), `retention.csp_days` (30), and `ops.sla_warning_days`
+(7). The **values on this page are the version-controlled defaults and the disclosed
+baseline** — unchanged by this — and the 3-year proof floors on consent/erasure can only be
+raised, never lowered. An empty settings table behaves identically to today. Full detail
+(the settings registry, the guardrail model, the match-by-reader framing) →
+[Admin settings](./settings).
+
+::: warning Privacy-policy drift
+The 90-day audit window, the 3-year consent window, and the 3-year erasure-request window
+are **disclosed to data subjects** (see the checklist below). Raising or lowering
+`retention.audit_days`, `retention.consent_days`, or `retention.erasure_request_days` from
+the Settings card silently drifts that disclosure unless the privacy policy is updated in
+the same change — the Settings card shows an inline reminder next to each, but it's a
+nudge, not enforcement.
+:::
+
 ## Consent log (consent_events)
 
 - **What:** every cookie-consent decision, one row per consent type, account-scoped
@@ -204,11 +226,14 @@ The privacy policy (Sanity → Studio, per client) **must** now disclose:
 
 - [ ] That sign-ins and admin actions are **logged** for security.
 - [ ] The **data**: timestamp, surface, userId, country, a hashed IP (no raw IP).
-- [ ] The **retention**: 90 days.
+- [ ] The **retention**: 90 days (the default — [admin-overridable](./settings), reflect
+      the actual live value if changed).
 - [ ] The **lawful basis**: legitimate interest (account security + audit).
 - [ ] The **location**: Cloudflare D1 in the EU.
 - [ ] The **processors**: Cloudflare + Clerk (link their DPAs).
 - [ ] How to exercise **erasure/access** — the existing data-request form.
+- [ ] Re-check this checklist any time `retention.audit_days`, `retention.consent_days`, or
+      `retention.erasure_request_days` changes in the admin Settings card.
 
 Before `POST /v1/erasure/request` goes live, the operator must also:
 

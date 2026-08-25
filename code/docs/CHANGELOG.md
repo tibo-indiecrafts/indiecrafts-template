@@ -11,6 +11,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **Admin settings + backups page + sidebar.** New `apps/web/config/settings.md` — the
+  admin **Settings** card (retention/ops/TTL knobs, bounded, audited via `admin_audit`), the
+  **match-by-reader** table (worker-read → D1 `site_settings`; website/edge + editor-facing
+  → Sanity Studio; infra/security → version-controlled Terraform/config), the settings
+  registry + guardrail model (reject-not-clamp, default-safe), and the read-only **Backups**
+  card + `backup_runs` history. Linked under "Web app · Configuration & architecture", after
+  "Data retention + audit (GDPR)". `apps/web/config/data-retention.md` gains a "Retention
+  windows are now admin-overridable" section (the defaults/floors are unchanged; links to
+  the new page) and a privacy-policy-drift caution on the three disclosed retention keys.
+  **Why:** retention windows, the SLA warning lead time, and link TTLs moved from hard-coded
+  constants to an admin-editable, audited runtime setting — the docs needed to say where
+  each kind of setting lives and what changing a disclosed retention window requires.
+- **`security-guidance` + `claude-mem` plugins in `setup/environment.md`** — two new "AI coding
+  tooling" subsections: the official `security-guidance` plugin (secure-coding review of
+  Claude-generated diffs — install from `claude-plugins-official`) and the community `claude-mem`
+  persistent-memory plugin (`marketplace add thedotmack/claude-mem`). Both per-developer, global
+  (`~/.claude`), never committed — matching the existing Cloudflare/LSP/Expo plugin entries.
 - **CSP Report-Only rollback runbook** — `seo/security-headers.md` § "Rollback: flip a surface back to
   Report-Only" now gives the concrete steps: `CSP_MODE=report-only` via the Cloudflare dashboard var
   (fast, no redeploy — `keep_vars = true`) or the version-controlled `wrangler.toml` `[env.<env>.vars]`

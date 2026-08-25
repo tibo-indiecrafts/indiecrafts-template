@@ -7,6 +7,32 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **`GET`/`PUT /v1/settings` — bounded, audited operator overrides for worker-read
+  operational knobs.** New D1 `site_settings` table (migration `0008`, overrides only —
+  an absent key falls back to its `@indiecrafts/packages-shared-config` default). `GET`
+  returns each key's effective value + its default/bounds/unit/last-changed; `PUT` validates
+  with `coerceSetting` and **rejects rather than silently clamps** an out-of-range value
+  (`422` + the allowed range), then writes the override and an `admin_audit` row
+  (`event: "setting_changed"`) in the same D1 batch — every change is audited. Bearer-gated,
+  same trust boundary as the rest of this api; the admin app resolves the Clerk `admin` role
+  and forwards `updated_by`. **Why:** retention windows, the SLA warning lead time, and two
+  link TTLs were hard-coded constants — changing one meant a code change + redeploy.
+- **Export/erasure link TTLs now read from `site_settings` (cached, default-safe).**
+  `POST /v1/export`'s download-link TTL and `erasure/request.ts`'s confirm-token TTL read
+  their effective value from the new settings table instead of a fixed constant, cached
+  per-isolate for ~30s (mirrors `lib/maintenance.ts`) so the hot path doesn't take a D1 read
+  per request. Fails open to the code default on any read error. **Why:** an operator's TTL
+  override takes effect without a redeploy, without adding latency to every export/erasure
+  request.
+- **`GET /v1/backups/status` — read-only backup history for the admin Backups card.** New D1
+  `backup_runs` table (migration `0009`) the backup scripts write one row to per run (started
+  → updated to `ok`/`failed` + `finished_at`; a hard crash leaves `finished_at` null, itself a
+  visible signal). The route (bearer-gated) returns the bucket/retention/pre-migration-flag
+  from env/config plus the newest 20 `backup_runs` rows, newest first. **Why:** backup
+  retention stays a version-controlled R2 lifecycle rule (out of scope for this table — no
+  worker reads it, so a D1 value couldn't actually control R2 expiry), but an operator had no
+  visibility into whether backups were actually succeeding; this api owns the D1 schema, so
+  the backup-history feature lands here even though the writer lives in the scripts.
 - **`db:migrate` takes a pre-migration R2 snapshot before every remote schema change.** The
   registry-driven `migrate.mjs` now runs `backup.mjs … --remote` for the target db before applying
   migrations to staging/prod — a bad migration is recoverable. Fail-closed (a failed snapshot aborts

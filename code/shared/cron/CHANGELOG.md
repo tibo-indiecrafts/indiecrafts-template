@@ -7,6 +7,14 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- **Retention + SLA windows now read from `site_settings`, not hard-coded constants.** The
+  scheduled handler's 90-day/3-year retention purge and the erasure-SLA flag now call a new
+  `loadSettings()` (`@indiecrafts/packages-shared-config`'s `effectiveSettings`) to load
+  `retention.*`/`ops.sla_warning_days` from the api's shared D1 `site_settings` table,
+  falling back to the code defaults on an unbound DB or a read error — never blocking the
+  purge on a settings read. Idempotent; behavior is byte-identical to today until an
+  operator sets an override. **Why:** lets an operator change a retention window from the
+  admin Settings card without a cron redeploy.
 - **30-day CSP reports purge.** The scheduled handler deletes `csp_reports` rows older
   than 30 days (on `last_seen`) from the api's shared **EU** D1. CSP violations are
   operational signal for debugging, not proof records — no retention duty beyond

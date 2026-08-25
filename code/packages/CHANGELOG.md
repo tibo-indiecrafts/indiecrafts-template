@@ -14,6 +14,14 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-shared-config` — the settings registry (`src/shared/settings.ts`).**
+  New `SETTINGS` map: version-controlled defaults + a per-key `[min, max]` bound for 8
+  worker-read operational knobs (5 retention windows, `ops.sla_warning_days`, 2 link TTLs),
+  plus `coerceSetting` (parse + clamp a raw override, `null` on unknown/non-integer) and
+  `effectiveSettings` (merge D1 override rows over the defaults, ignoring anything invalid).
+  React-free — safe in a bare Worker; imported by both `cron` and `api`. **Why:** one source
+  of truth for what an operator can override from the new admin Settings card, and the
+  guaranteed fallback when they don't — see `code/docs/apps/web/config/settings.md`.
 - **`@indiecrafts/packages-shared-security` — opt-in Trusted-Types Report-Only trial.** New
   `buildTrustedTypesReportOnly(reporting)` + a `reporting.trustedTypesReportOnly` flag; `cspHeadersForMode`
   fills the (otherwise-null) enforce-mode Report-Only slot with `require-trusted-types-for 'script'` pointed
