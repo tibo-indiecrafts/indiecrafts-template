@@ -102,6 +102,43 @@
       "unknown": "Inconnu",
       "notConfigured": "Non configuré",
       "link": "État du système"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "subtitle": "Paramètres opérationnels de rétention, d'exploitation et de durée de vie des liens, lus par l'api partagée et les workers.",
+      "groups": {
+        "retention": "Rétention",
+        "ops": "Exploitation",
+        "ttl": "Durée de vie des liens"
+      },
+      "keys": {
+        "retention": {
+          "audit_days": "Rétention du journal d'audit admin",
+          "consent_days": "Rétention des enregistrements de consentement",
+          "erasure_request_days": "Rétention des demandes d'effacement",
+          "data_request_days": "Rétention des demandes de données",
+          "csp_days": "Rétention des rapports CSP"
+        },
+        "ops": {
+          "sla_warning_days": "Seuil d'alerte SLA"
+        },
+        "ttl": {
+          "export_download_hours": "Durée de vie du lien d'export",
+          "erasure_confirm_hours": "Durée de vie du lien de confirmation d'effacement"
+        }
+      },
+      "unit": {
+        "days": "jours",
+        "hours": "heures"
+      },
+      "default": "Par défaut : {value}",
+      "overridden": "Modifié",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré.",
+      "error": "Échec de l'enregistrement de ce paramètre.",
+      "driftReminder": "Cette modification peut nécessiter une mise à jour des durées de rétention indiquées dans la politique de confidentialité.",
+      "link": "Paramètres"
     }
   }
 }

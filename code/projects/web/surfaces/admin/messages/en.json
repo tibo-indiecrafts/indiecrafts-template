@@ -102,6 +102,43 @@
       "unknown": "Unknown",
       "notConfigured": "Not configured",
       "link": "System status"
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Operational retention, ops and link-TTL settings read by the shared api and workers.",
+      "groups": {
+        "retention": "Retention",
+        "ops": "Ops",
+        "ttl": "Link TTLs"
+      },
+      "keys": {
+        "retention": {
+          "audit_days": "Admin audit log retention",
+          "consent_days": "Consent record retention",
+          "erasure_request_days": "Erasure request retention",
+          "data_request_days": "Data request retention",
+          "csp_days": "CSP report retention"
+        },
+        "ops": {
+          "sla_warning_days": "SLA warning threshold"
+        },
+        "ttl": {
+          "export_download_hours": "Export download link TTL",
+          "erasure_confirm_hours": "Erasure confirmation link TTL"
+        }
+      },
+      "unit": {
+        "days": "days",
+        "hours": "hours"
+      },
+      "default": "Default: {value}",
+      "overridden": "Overridden",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Saved.",
+      "error": "Could not save this setting.",
+      "driftReminder": "Changing this may require updating the retention windows disclosed in the privacy policy.",
+      "link": "Settings"
     }
   }
 }

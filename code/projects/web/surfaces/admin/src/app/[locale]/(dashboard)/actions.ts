@@ -155,3 +155,28 @@ export async function revokeUserSessions(userId: string): Promise<Result> {
     return { ok: false, error: "failed" };
   }
 }
+
+/** Write one operational setting (`GET/PUT /v1/settings`). The api itself validates
+ *  the [min,max] bound and writes the `admin_audit` row — this action just forwards
+ *  the bearer + the resolved actor id. */
+export async function saveSetting(key: string, value: number): Promise<Result> {
+  let actor: string;
+  try {
+    actor = await requireAdmin();
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+  const url = process.env.API_URL,
+    token = process.env.APP_API_TOKEN;
+  if (!url || !token) return { ok: false, error: "failed" };
+  try {
+    const res = await fetch(`${url}/v1/settings`, {
+      method: "PUT",
+      headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+      body: JSON.stringify({ key, value, actor }),
+    });
+    return res.ok ? { ok: true } : { ok: false, error: "failed" };
+  } catch {
+    return { ok: false, error: "failed" };
+  }
+}

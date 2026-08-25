@@ -45,6 +45,12 @@ export default async function AdminHome({
         >
           {t("system.link")}
         </Link>
+        <Link
+          href="/settings"
+          className="text-primary underline underline-offset-4"
+        >
+          {t("settings.link")}
+        </Link>
       </nav>
       <AdminRoleForm />
     </main>
