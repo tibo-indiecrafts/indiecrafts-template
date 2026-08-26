@@ -1,5 +1,8 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { LocalePreferenceCopy } from "@indiecrafts/packages-web-ui-components/web/form/LocalePreferenceForm";
+import { locales } from "@/config";
 import { SettingsForm, type SettingRow } from "../settings-form";
+import { LocalePreferencePanel } from "../locale-preference-panel";
 
 /**
  * Read the operational retention/ops/TTL settings from the shared api (holds the
@@ -33,11 +36,29 @@ export default async function SettingsPage({
   const t = await getTranslations("admin.settings");
   const settings = await fetchSettings();
 
+  const lt = await getTranslations("admin.settings.locale");
+  const localeCopy: LocalePreferenceCopy = {
+    heading: lt("heading"),
+    description: lt("description"),
+    label: lt("label"),
+    save: lt("save"),
+    pending: lt("pending"),
+    success: lt("success"),
+    error: lt("error"),
+  };
+
   return (
     <main id="main" tabIndex={-1} className="mx-auto max-w-4xl p-8">
       <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
       <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
       <SettingsForm settings={settings} />
+      {process.env.NEXT_PUBLIC_API_URL ? (
+        <LocalePreferencePanel
+          copy={localeCopy}
+          currentLocale={locale}
+          locales={locales.map((l) => ({ code: l.code, label: l.label }))}
+        />
+      ) : null}
     </main>
   );
 }

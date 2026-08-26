@@ -4,8 +4,10 @@ import type {
   DeleteAccountCopy,
   ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
-import { features, type Locale } from "@/config";
+import type { LocalePreferenceCopy } from "@indiecrafts/packages-web-ui-components/web/form/LocalePreferenceForm";
+import { features, locales, type Locale } from "@/config";
 import { AccountDeletePanel } from "@/user-interface/account/AccountDeletePanel";
+import { LocalePreferencePanel } from "@/user-interface/account/LocalePreferencePanel";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -13,11 +15,13 @@ type Props = { params: Promise<{ locale: Locale }> };
  * Self-service account-actions route — thin shell. Renders the shared
  * `DeleteAccountSection` + `ExportSection` (from
  * `@indiecrafts/packages-shared-compliance/web`) via the `AccountDeletePanel` client
- * wrapper, with copy resolved here from `messages.account.{delete,export}.*`. Gated by
+ * wrapper, plus the shared `LocalePreferenceForm` via `LocalePreferencePanel`, with
+ * copy resolved here from `messages.account.{delete,export,locale}.*`. Gated by
  * `features.deleteAccount`, by Clerk being configured, and by the client api origin
  * being set — no account page without auth, and no control that could only ever fail
  * on submit. `ExportSection` renders only when `features.exportAccount` is also on.
- * Posts to the shared api's authenticated `POST /v1/erasure/self` + `POST /v1/export`.
+ * Posts to the shared api's authenticated `POST /v1/erasure/self` + `POST /v1/export`
+ * + `POST /v1/profile/locale`.
  */
 export default async function AccountPage({ params }: Props) {
   const { locale } = await params;
@@ -52,12 +56,28 @@ export default async function AccountPage({ params }: Props) {
     error: et("error"),
   };
 
+  const lt = await getTranslations({ locale, namespace: "account.locale" });
+  const localeCopy: LocalePreferenceCopy = {
+    heading: lt("heading"),
+    description: lt("description"),
+    label: lt("label"),
+    save: lt("save"),
+    pending: lt("pending"),
+    success: lt("success"),
+    error: lt("error"),
+  };
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center gap-6 p-8">
       <AccountDeletePanel
         copy={copy}
         exportCopy={exportCopy}
         showExport={features.exportAccount}
+      />
+      <LocalePreferencePanel
+        copy={localeCopy}
+        currentLocale={locale}
+        locales={locales.map((l) => ({ code: l.code, label: l.label }))}
       />
     </main>
   );

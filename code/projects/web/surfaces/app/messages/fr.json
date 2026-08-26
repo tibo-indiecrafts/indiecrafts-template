@@ -47,6 +47,15 @@
       "pending": "Préparation…",
       "success": "Votre téléchargement s'est ouvert dans un nouvel onglet.",
       "error": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "locale": {
+      "heading": "Langue",
+      "description": "Choisissez la langue de vos e-mails et de ce compte.",
+      "label": "Langue",
+      "save": "Enregistrer",
+      "pending": "Enregistrement…",
+      "success": "Enregistré",
+      "error": "Une erreur est survenue. Veuillez réessayer."
     }
   },
   "legal": {

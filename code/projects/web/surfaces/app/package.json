@@ -27,6 +27,7 @@
     "@indiecrafts/packages-shared-version": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-web-ui-components": "workspace:*",
     "@indiecrafts/packages-web-version": "workspace:*",
     "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
     "next": "16.3.1",

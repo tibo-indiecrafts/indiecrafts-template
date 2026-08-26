@@ -138,7 +138,16 @@
       "saved": "Saved.",
       "error": "Could not save this setting.",
       "driftReminder": "Changing this may require updating the retention windows disclosed in the privacy policy.",
-      "link": "Settings"
+      "link": "Settings",
+      "locale": {
+        "heading": "Language",
+        "description": "Choose the language we use for emails and this account.",
+        "label": "Language",
+        "save": "Save",
+        "pending": "Saving…",
+        "success": "Saved",
+        "error": "Something went wrong. Please try again."
+      }
     },
     "backups": {
       "title": "Backups",

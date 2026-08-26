@@ -24,6 +24,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@indiecrafts/packages-web-ui-components/*": [
+        "../../../../packages/web/ui-components/src/*"
       ]
     },
     "allowJs": true

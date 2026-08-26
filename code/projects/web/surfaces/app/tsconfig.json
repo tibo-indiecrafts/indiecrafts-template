@@ -27,6 +27,9 @@
       ],
       "@indiecrafts/packages-web-announcement/*": [
         "../../../../packages/web/announcement/src/*"
+      ],
+      "@indiecrafts/packages-web-ui-components/*": [
+        "../../../../packages/web/ui-components/src/*"
       ]
     },
     "allowJs": true

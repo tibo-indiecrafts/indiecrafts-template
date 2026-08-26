@@ -112,6 +112,15 @@
       "pending": "Preparing your download…",
       "success": "Your data is ready — the download opened in a new tab.",
       "error": "Something went wrong. Please try again."
+    },
+    "locale": {
+      "heading": "Language",
+      "description": "Choose the language we use for emails and this account.",
+      "label": "Language",
+      "save": "Save",
+      "pending": "Saving…",
+      "success": "Saved",
+      "error": "Something went wrong. Please try again."
     }
   },
   "cta": {

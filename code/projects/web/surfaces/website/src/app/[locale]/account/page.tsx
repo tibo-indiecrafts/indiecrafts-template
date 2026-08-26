@@ -4,11 +4,13 @@ import type {
   DeleteAccountCopy,
   ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
-import { features, pages, isPageVisible, type Locale } from "@/config";
+import type { LocalePreferenceCopy } from "@indiecrafts/packages-web-ui-components/web/form/LocalePreferenceForm";
+import { features, locales, pages, isPageVisible, type Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { AccountDeletePanel } from "@/user-interface/account/AccountDeletePanel";
+import { LocalePreferencePanel } from "@/user-interface/account/LocalePreferencePanel";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -21,11 +23,12 @@ export async function generateMetadata({ params }: Props) {
  * Self-service account-actions route — thin shell. Renders the shared
  * `DeleteAccountSection` + `ExportSection` (from
  * `@indiecrafts/packages-shared-compliance/web`) via the `AccountDeletePanel` client
- * wrapper, with copy resolved here from `messages.account.{delete,export}.*`. Gated by
+ * wrapper, plus the shared `LocalePreferenceForm` via `LocalePreferencePanel`, with
+ * copy resolved here from `messages.account.{delete,export,locale}.*`. Gated by
  * `features.account.delete` (`isPageVisible`) AND by Clerk being configured — no
  * account page without auth. `ExportSection` renders only when `features.account.export`
  * is also on. Posts to the shared api's authenticated `POST /v1/erasure/self` +
- * `POST /v1/export`.
+ * `POST /v1/export` + `POST /v1/profile/locale`.
  */
 export default async function AccountPage({ params }: Props) {
   const { locale } = await params;
@@ -60,6 +63,17 @@ export default async function AccountPage({ params }: Props) {
     error: et("error"),
   };
 
+  const lt = await getTranslations({ locale, namespace: "account.locale" });
+  const localeCopy: LocalePreferenceCopy = {
+    heading: lt("heading"),
+    description: lt("description"),
+    label: lt("label"),
+    save: lt("save"),
+    pending: lt("pending"),
+    success: lt("success"),
+    error: lt("error"),
+  };
+
   return (
     <DefaultLayout>
       <PageSchemas page={pages.account} locale={locale} />
@@ -67,6 +81,11 @@ export default async function AccountPage({ params }: Props) {
         copy={copy}
         exportCopy={exportCopy}
         showExport={features.account.export}
+      />
+      <LocalePreferencePanel
+        copy={localeCopy}
+        currentLocale={locale}
+        locales={locales.map((l) => ({ code: l.code, label: l.label }))}
       />
     </DefaultLayout>
   );

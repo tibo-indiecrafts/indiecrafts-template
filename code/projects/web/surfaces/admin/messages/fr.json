@@ -138,7 +138,16 @@
       "saved": "Enregistré.",
       "error": "Échec de l'enregistrement de ce paramètre.",
       "driftReminder": "Cette modification peut nécessiter une mise à jour des durées de rétention indiquées dans la politique de confidentialité.",
-      "link": "Paramètres"
+      "link": "Paramètres",
+      "locale": {
+        "heading": "Langue",
+        "description": "Choisissez la langue de vos e-mails et de ce compte.",
+        "label": "Langue",
+        "save": "Enregistrer",
+        "pending": "Enregistrement…",
+        "success": "Enregistré",
+        "error": "Une erreur est survenue. Veuillez réessayer."
+      }
     },
     "backups": {
       "title": "Sauvegardes",
