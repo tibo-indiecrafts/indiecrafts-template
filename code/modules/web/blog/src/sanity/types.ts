@@ -31,7 +31,7 @@ export type {
  *
  * Note: `bio` is typed as `string` here even though the Sanity schema
  * stores it as an array of PortableText blocks. The GROQ projections
- * (`POST_LIST_FRAGMENT`, `AUTHOR_FRAGMENT`) flatten it via `pt::text(bio)`
+ * (`POST_CARD_PROJECTION`, `AUTHOR_FRAGMENT`) flatten it via `pt::text(bio)`
  * so consumers can render it as a plain paragraph. If you ever need
  * rich-text bios on the public site, switch the projections back to
  * `bio` and update this type to `PortableTextBlock[]`.
@@ -224,9 +224,21 @@ export type BlogPostListModule = ModuleBase & {
   featuredOnly?: boolean;
 };
 
+/** The frontpage "Big Hero" — the latest post, or one the editor pins. */
+export type BlogHeroModule = ModuleBase & {
+  _type: "module.blog-hero";
+  source?: "latest" | "pinned";
+  pinned?: { _ref: string };
+  showMeta?: boolean;
+};
+
 /** Every module a blog page can hold — the shared blocks plus the blog's own. */
 export type AnyModule =
-  BlockModule | BlogIndexModule | BlogPostContentModule | BlogPostListModule;
+  | BlockModule
+  | BlogHeroModule
+  | BlogIndexModule
+  | BlogPostContentModule
+  | BlogPostListModule;
 
 export type BlogSingleton = {
   postModules?: AnyModule[];

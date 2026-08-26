@@ -22,7 +22,13 @@ import { MODULES_FRAGMENT as GENERIC_MODULES_FRAGMENT } from "@indiecrafts/packa
 
 // ─── Fragments ─────────────────────────────────────────────────
 
-const POST_LIST_FRAGMENT = `
+/**
+ * The post-card projection — every listing (all/featured/related/search,
+ * series/category/tag/author, `module.blog-post-list`, `module.blog-hero`)
+ * shares this one shape. Exported so new blog-hero-style modules reuse it
+ * instead of re-declaring the same fields.
+ */
+export const POST_CARD_PROJECTION = `
   _id,
   title,
   excerpt,
@@ -107,7 +113,7 @@ export const allPostsQuery = defineQuery(`
     && coalesce(publishedAt, _createdAt) <= now()
     && coalesce(language, "en") == $locale]
   | order(${ORDER_BY_PRIORITY}) {
-    ${POST_LIST_FRAGMENT}
+    ${POST_CARD_PROJECTION}
   }
 `);
 
@@ -119,7 +125,7 @@ export const featuredPostsQuery = defineQuery(`
     && coalesce(publishedAt, _createdAt) <= now()
     && coalesce(language, "en") == $locale]
   | order(${ORDER_BY_PRIORITY}) {
-    ${POST_LIST_FRAGMENT}
+    ${POST_CARD_PROJECTION}
   }
 `);
 
@@ -200,7 +206,7 @@ export const relatedPostsQuery = defineQuery(`
     && coalesce(publishedAt, _createdAt) <= now()
     && (count($categoryIds) == 0 || count(categories[@->_id in $categoryIds]) > 0)]
   | order(${ORDER_BY_PRIORITY})[0...3] {
-    ${POST_LIST_FRAGMENT}
+    ${POST_CARD_PROJECTION}
   }
 `);
 
@@ -267,7 +273,7 @@ export const postsBySeriesSlugQuery = defineQuery(`
     && coalesce(language, "en") == $locale
     && series->slug.current == $slug]
   | order(coalesce(seriesOrder, 9999) asc, coalesce(publishedAt, _createdAt) asc)[$start...$end] {
-    ${POST_LIST_FRAGMENT}
+    ${POST_CARD_PROJECTION}
   }
 `);
 
@@ -319,7 +325,7 @@ export const searchPostsQuery = defineQuery(`
       || pt::text(body) match $q
     )]
   | order(${ORDER_BY_PRIORITY})[0...$limit] {
-    ${POST_LIST_FRAGMENT}
+    ${POST_CARD_PROJECTION}
   }
 `);
 
@@ -456,7 +462,7 @@ export const postsByCategorySlugQuery = defineQuery(`
     && coalesce(publishedAt, _createdAt) <= now()
     && count(categories[@->slug.current == $slug]) > 0]
   | order(${ORDER_BY_PRIORITY})[$start...$end] {
-    ${POST_LIST_FRAGMENT}
+    ${POST_CARD_PROJECTION}
   }
 `);
 
@@ -533,7 +539,7 @@ export const postsByTagSlugQuery = defineQuery(`
     && coalesce(publishedAt, _createdAt) <= now()
     && count(tags[@->slug.current == $slug]) > 0]
   | order(${ORDER_BY_PRIORITY})[$start...$end] {
-    ${POST_LIST_FRAGMENT}
+    ${POST_CARD_PROJECTION}
   }
 `);
 
@@ -611,7 +617,7 @@ export const postsByAuthorSlugQuery = defineQuery(`
     && seo.unpublished != true
     && coalesce(language, "en") == $locale]
   | order(${ORDER_BY_PRIORITY})[$start...$end] {
-    ${POST_LIST_FRAGMENT}
+    ${POST_CARD_PROJECTION}
   }
 `);
 
@@ -671,6 +677,27 @@ export const moduleBlogPostListQuery = defineQuery(`
     && coalesce(publishedAt, _createdAt) <= now()
     && (!$featuredOnly || featured == true)]
   | order(${ORDER_BY_PRIORITY})[0...$limit] {
-    ${POST_LIST_FRAGMENT}
+    ${POST_CARD_PROJECTION}
+  }
+`);
+
+/**
+ * The post feeding a `module.blog-hero`. Pass `locale` + `pinnedId` — the
+ * editor's pinned post `_id` when `source == "pinned"`, else `undefined` for
+ * the latest published post. Same public filter as the other listings
+ * (excludes drafts/unpublished/scheduled); `select()` puts the pinned post
+ * first when set, otherwise falls through to the normal listing order.
+ */
+export const blogHeroQuery = defineQuery(`
+  *[_type == "post"
+    && defined(media.slug.current)
+    && seo.noIndex != true
+    && seo.hideFromDiscovery != true
+    && seo.unpublished != true
+    && coalesce(language, "en") == $locale
+    && coalesce(publishedAt, _createdAt) <= now()
+    && (!defined($pinnedId) || _id == $pinnedId)]
+  | order(select(defined($pinnedId) => 0, 1) asc, ${ORDER_BY_PRIORITY})[0]{
+    ${POST_CARD_PROJECTION}
   }
 `);

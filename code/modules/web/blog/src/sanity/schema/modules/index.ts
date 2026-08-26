@@ -1,4 +1,5 @@
 import type { SchemaTypeDefinition } from "sanity";
+import blogHero from "./blog-hero";
 import blogIndex from "./blog-index";
 import blogPostContent from "./blog-post-content";
 import blogPostList from "./blog-post-list";
@@ -9,12 +10,14 @@ import blogPostList from "./blog-post-list";
  * `@indiecrafts/packages-web-page-builder`.
  */
 export const blogModuleSchemas: SchemaTypeDefinition[] = [
+  blogHero,
   blogIndex,
   blogPostContent,
   blogPostList,
 ];
 
 export const BLOG_MODULE_TYPES = [
+  "module.blog-hero",
   "module.blog-index",
   "module.blog-post-content",
   "module.blog-post-list",

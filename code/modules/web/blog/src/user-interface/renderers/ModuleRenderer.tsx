@@ -3,6 +3,7 @@ import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
 import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
+import { BlogHeroModule } from "./BlogHeroModule";
 import { BlogIndex } from "./BlogIndex";
 import { BlogPostContent } from "./BlogPostContent";
 import { BlogPostList } from "./BlogPostList";
@@ -47,6 +48,9 @@ async function ModuleSwitch({
 }) {
   if (m._type === "module.blog-post-list") {
     return <BlogPostList module={m} locale={context.locale} />;
+  }
+  if (m._type === "module.blog-hero") {
+    return <BlogHeroModule module={m} locale={context.locale} />;
   }
   if (m._type === "module.blog-post-content") {
     return context.post ? (
