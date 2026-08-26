@@ -26,6 +26,12 @@ export default defineModule({
       },
     }),
     defineField({
+      name: "heading",
+      title: "Titre",
+      type: "string",
+      description: "Remplace le titre par défaut. Vide = titre de la catégorie.",
+    }),
+    defineField({
       name: "subheading",
       title: "Sous-titre",
       type: "text",

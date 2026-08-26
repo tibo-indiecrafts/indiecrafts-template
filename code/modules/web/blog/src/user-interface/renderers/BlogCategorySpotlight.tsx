@@ -65,7 +65,7 @@ export async function BlogCategorySpotlight({
 
   return (
     <SpotlightRow
-      heading={category.title ?? ""}
+      heading={m.heading ?? category.title ?? ""}
       subheading={m.subheading}
       items={items}
       viewAll={{

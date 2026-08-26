@@ -255,6 +255,7 @@ export type BlogExploreModule = ModuleBase & {
 export type BlogCategorySpotlightModule = ModuleBase & {
   _type: "module.blog-category-spotlight";
   category: { _ref: string };
+  heading?: string;
   subheading?: string;
   count?: number;
   pinned?: { _ref: string }[];
