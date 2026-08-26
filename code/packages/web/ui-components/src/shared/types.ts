@@ -38,6 +38,24 @@ export type ModuleBase = {
   hidden?: boolean;
 };
 
+/**
+ * Resolved post-card shape — every "featured posts" collection primitive
+ * (`FeaturedPosts`, and the `SpotlightRow`/`Carousel` blocks that follow it)
+ * shares this one shape. Every field is already resolved by the host
+ * (locale-aware `href`, formatted `date`), so these primitives stay pure —
+ * no i18n, no Sanity client.
+ */
+export type PostCardItem = {
+  _key: string;
+  href: string;
+  title: string;
+  image?: string;
+  lqip?: string;
+  category?: string;
+  author?: string;
+  date?: string;
+};
+
 export type AccordionListModule = ModuleBase & {
   _type: "module.accordion-list";
   title?: string;

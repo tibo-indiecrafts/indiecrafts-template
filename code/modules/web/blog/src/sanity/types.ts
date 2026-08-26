@@ -232,9 +232,20 @@ export type BlogHeroModule = ModuleBase & {
   showMeta?: boolean;
 };
 
+/** The frontpage "Featured" block — a big lead card + a grid of picks. */
+export type BlogFeaturedModule = ModuleBase & {
+  _type: "module.blog-featured";
+  title?: string;
+  source?: "flag" | "pinned";
+  pinned?: { _ref: string }[];
+  limit?: number;
+  leadCard?: boolean;
+};
+
 /** Every module a blog page can hold — the shared blocks plus the blog's own. */
 export type AnyModule =
   | BlockModule
+  | BlogFeaturedModule
   | BlogHeroModule
   | BlogIndexModule
   | BlogPostContentModule

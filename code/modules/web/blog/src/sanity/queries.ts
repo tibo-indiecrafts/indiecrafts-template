@@ -701,3 +701,26 @@ export const blogHeroQuery = defineQuery(`
     ${POST_CARD_PROJECTION}
   }
 `);
+
+/**
+ * Posts feeding a `module.blog-featured`. Pass `locale`, `pinnedIds` (the
+ * editor's picks — `_id`s, in order — when `source == "pinned"`, else `[]`),
+ * `limit`, and `useFlag` (`source == "flag"`). Same public filter as the
+ * other listings; `select()` puts pinned posts first, falling through to the
+ * normal listing order for the `featured == true` fill. GROQ can't preserve
+ * the editor's exact pin order (only pinned-vs-not), so the renderer
+ * re-sorts by `pinnedIds.indexOf(_id)` when `source == "pinned"`.
+ */
+export const blogFeaturedQuery = defineQuery(`
+  *[_type == "post"
+    && defined(media.slug.current)
+    && seo.noIndex != true
+    && seo.hideFromDiscovery != true
+    && seo.unpublished != true
+    && coalesce(language, "en") == $locale
+    && coalesce(publishedAt, _createdAt) <= now()
+    && (_id in $pinnedIds || ($useFlag && featured == true))]
+  | order(select(_id in $pinnedIds => 0, 1) asc, ${ORDER_BY_PRIORITY})[0...$limit]{
+    ${POST_CARD_PROJECTION}
+  }
+`);
