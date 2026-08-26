@@ -251,9 +251,19 @@ export type BlogExploreModule = ModuleBase & {
   viewAll?: string;
 };
 
+/** The frontpage "Category Spotlight" block — a curated selection from one category. */
+export type BlogCategorySpotlightModule = ModuleBase & {
+  _type: "module.blog-category-spotlight";
+  category: { _ref: string };
+  subheading?: string;
+  count?: number;
+  pinned?: { _ref: string }[];
+};
+
 /** Every module a blog page can hold — the shared blocks plus the blog's own. */
 export type AnyModule =
   | BlockModule
+  | BlogCategorySpotlightModule
   | BlogExploreModule
   | BlogFeaturedModule
   | BlogHeroModule

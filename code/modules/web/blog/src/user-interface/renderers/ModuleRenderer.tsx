@@ -6,6 +6,7 @@ import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
 import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
+import { BlogCategorySpotlight } from "./BlogCategorySpotlight";
 import { BlogExplore } from "./BlogExplore";
 import { BlogFeatured } from "./BlogFeatured";
 import { BlogHeroModule } from "./BlogHeroModule";
@@ -62,6 +63,9 @@ async function ModuleSwitch({
   }
   if (m._type === "module.blog-explore") {
     return <BlogExplore module={m} locale={context.locale} />;
+  }
+  if (m._type === "module.blog-category-spotlight") {
+    return <BlogCategorySpotlight module={m} locale={context.locale} />;
   }
   if (m._type === "module.blog-post-content") {
     return context.post ? (

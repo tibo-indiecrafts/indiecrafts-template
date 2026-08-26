@@ -2,6 +2,7 @@ import Image from "next/image";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import type { PostCardItem } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { ModuleSection } from "../layout/ModuleSection";
+import { PostCard } from "./PostCard";
 
 /**
  * Featured posts — an optional large "lead" card (the same image + gradient
@@ -93,49 +94,6 @@ function LeadCard({ post, className }: { post: PostCardItem; className?: string 
             {post.author ? (
               <span className="font-medium text-white">{post.author}</span>
             ) : null}
-            {post.author && post.date ? <span aria-hidden="true">·</span> : null}
-            {post.date ? <span>{post.date}</span> : null}
-          </div>
-        ) : null}
-      </div>
-    </article>
-  );
-}
-
-/** A compact card — mirrors `BlogCard`: image, category chip, title, author · date. */
-function PostCard({ post }: { post: PostCardItem }) {
-  return (
-    <article className="group bg-card ring-border/60 relative flex h-full flex-col overflow-hidden rounded-xl shadow-sm ring-1 transition hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0">
-      <div className="bg-muted relative aspect-[4/3] overflow-hidden">
-        {post.image ? (
-          <Image
-            src={post.image}
-            alt={post.title}
-            fill
-            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-            placeholder={post.lqip ? "blur" : undefined}
-            blurDataURL={post.lqip ?? undefined}
-            className="object-cover"
-          />
-        ) : null}
-      </div>
-      <div className="flex flex-1 flex-col gap-3 p-6">
-        {post.category ? (
-          <span className="bg-muted text-muted-foreground w-fit rounded-md px-2 py-1 text-xs font-medium capitalize">
-            {post.category}
-          </span>
-        ) : null}
-        <h3 className="text-lg font-semibold">
-          <a
-            href={post.href}
-            className="group-hover:text-brand focus-visible:ring-ring rounded transition-colors after:absolute after:inset-0 focus-visible:ring-2 focus-visible:outline-none"
-          >
-            <span className="line-clamp-2">{post.title}</span>
-          </a>
-        </h3>
-        {post.author || post.date ? (
-          <div className="text-muted-foreground mt-auto flex items-center gap-2 pt-2 text-xs">
-            {post.author ? <span className="truncate">{post.author}</span> : null}
             {post.author && post.date ? <span aria-hidden="true">·</span> : null}
             {post.date ? <span>{post.date}</span> : null}
           </div>

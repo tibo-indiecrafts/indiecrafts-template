@@ -724,3 +724,32 @@ export const blogFeaturedQuery = defineQuery(`
     ${POST_CARD_PROJECTION}
   }
 `);
+
+/**
+ * The category + its posts feeding a `module.blog-category-spotlight`. Pass
+ * `locale`, `categoryId`, `pinnedIds` (the editor's picks — `_id`s, in
+ * order), and `count`. Posts: the editor's pins plus the category's latest,
+ * same public filter as the other listings, deduped by the single `||`
+ * filter, `select()` puts pins first. GROQ can't preserve the editor's exact
+ * pin order (only pinned-vs-not), so the renderer re-sorts by
+ * `pinnedIds.indexOf(_id)`. `category` resolves the title/slug the renderer
+ * needs for the heading + the "view all" href.
+ */
+export const blogCategorySpotlightQuery = defineQuery(`
+  {
+    "category": *[_type == "category" && _id == $categoryId][0]{
+      _id, title, "slug": slug.current
+    },
+    "posts": *[_type == "post"
+      && defined(media.slug.current)
+      && seo.noIndex != true
+      && seo.hideFromDiscovery != true
+      && seo.unpublished != true
+      && coalesce(language, "en") == $locale
+      && coalesce(publishedAt, _createdAt) <= now()
+      && (_id in $pinnedIds || $categoryId in categories[]._ref)]
+    | order(select(_id in $pinnedIds => 0, 1) asc, ${ORDER_BY_PRIORITY})[0...$count]{
+      ${POST_CARD_PROJECTION}
+    }
+  }
+`);
