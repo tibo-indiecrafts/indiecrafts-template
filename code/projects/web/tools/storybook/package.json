@@ -15,7 +15,10 @@
     "test:stories:app": "vitest run -c vitest.app.config.ts",
     "storybook:mobile": "storybook dev -p 6009 -c .storybook-mobile",
     "storybook:mobile:build": "storybook build -c .storybook-mobile -o storybook-static-mobile",
-    "test:stories:mobile": "vitest run -c vitest.mobile.config.ts"
+    "test:stories:mobile": "vitest run -c vitest.mobile.config.ts",
+    "storybook:hybrid": "storybook dev -p 6010 -c .storybook-hybrid",
+    "storybook:hybrid:build": "storybook build -c .storybook-hybrid -o storybook-static-hybrid",
+    "test:stories:hybrid": "vitest run -c vitest.hybrid.config.ts"
   },
   "dependencies": {
     "@indiecrafts/packages-web-announcement": "workspace:*",
@@ -23,15 +26,18 @@
     "@indiecrafts/packages-shared-announcement": "workspace:*",
     "@indiecrafts/packages-shared-compliance": "workspace:*",
     "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-shared-system-pages": "workspace:*",
     "@indiecrafts/packages-shared-ui-icons": "workspace:*",
+    "@indiecrafts/packages-shared-version": "workspace:*",
     "@indiecrafts/packages-web-i18n": "workspace:*",
     "@indiecrafts/packages-web-locale-suggest": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
     "@indiecrafts/packages-web-ui-components": "workspace:*",
     "@indiecrafts/packages-web-version": "workspace:*",
     "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
-    "@indiecrafts/packages-shared-utils": "workspace:*"
+    "@indiecrafts/packages-shared-utils": "workspace:*",
+    "react-intl": "^7.1.6"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "9.1.20",

@@ -1449,6 +1449,9 @@ importers:
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../../../packages/shared/config
+      '@indiecrafts/packages-shared-logger':
+        specifier: workspace:*
+        version: link:../../../../packages/shared/logger
       '@indiecrafts/packages-shared-system-pages':
         specifier: workspace:*
         version: link:../../../../packages/shared/system-pages
@@ -1461,6 +1464,9 @@ importers:
       '@indiecrafts/packages-shared-utils':
         specifier: workspace:*
         version: link:../../../../packages/shared/utils
+      '@indiecrafts/packages-shared-version':
+        specifier: workspace:*
+        version: link:../../../../packages/shared/version
       '@indiecrafts/packages-web-announcement':
         specifier: workspace:*
         version: link:../../../../packages/web/announcement
@@ -1479,6 +1485,9 @@ importers:
       '@indiecrafts/packages-web-version':
         specifier: workspace:*
         version: link:../../../../packages/web/version
+      react-intl:
+        specifier: ^7.1.6
+        version: 7.1.14(react@19.2.8)(typescript@5.9.3)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 9.1.20
