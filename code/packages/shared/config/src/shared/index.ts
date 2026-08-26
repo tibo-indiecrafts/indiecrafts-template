@@ -18,6 +18,7 @@ export {
   localizedPathname,
   localeDir,
   isLocale,
+  resolveLocale,
   pickSuggestedLocale,
   flattenMessages,
 } from "./i18n";

@@ -6,6 +6,7 @@ import {
   defaultLocale,
   isLocale,
   localeCodes,
+  resolveLocale,
 } from "@indiecrafts/packages-shared-config";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { sendEmail } from "@indiecrafts/packages-web-email";
@@ -127,7 +128,7 @@ async function sendConfirmEmail(
   try {
     const from = cfg?.from?.trim();
     if (!cfg?.enabled || !from || !process.env.RESEND_API_KEY) return;
-    const locale = language || defaultLocale;
+    const locale = resolveLocale(language);
     const message = renderContactConfirmEmail({
       subject:
         pick(cfg?.subject, locale) || "Nous avons bien reçu votre message",

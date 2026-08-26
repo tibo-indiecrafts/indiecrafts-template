@@ -7,6 +7,7 @@ import {
   isLocale,
   localeCodes,
   localizedPathname,
+  resolveLocale,
 } from "@indiecrafts/packages-shared-config";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { sendEmail } from "@indiecrafts/packages-web-email";
@@ -160,8 +161,7 @@ async function sendConfirmEmail(
   try {
     const from = cfg?.from?.trim();
     if (!token || !from) return;
-    const locale =
-      language && isLocale(language, localeCodes) ? language : defaultLocale;
+    const locale = resolveLocale(language);
     const message = renderNewsletterConfirmEmail({
       subject: pick(cfg?.subject, locale) || "Confirmez votre inscription",
       heading: pick(cfg?.heading, locale) || "Plus qu'une étape",

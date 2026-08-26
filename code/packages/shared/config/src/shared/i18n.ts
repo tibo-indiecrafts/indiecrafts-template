@@ -127,6 +127,18 @@ export function isLocale<L extends string>(
 }
 
 /**
+ * Resolve one locale from an ordered list of candidates: the first that is supported
+ * wins, else the default. The email recipient-locale rule — profile, then captured,
+ * then default — is `resolveLocale(profileLocale, capturedLocale)`.
+ */
+export function resolveLocale(...candidates: (string | null | undefined)[]): Locale {
+  for (const c of candidates) {
+    if (c && isLocale(c, localeCodes)) return c;
+  }
+  return defaultLocale;
+}
+
+/**
  * The first RANKED preference that's supported and differs from the `active` locale —
  * the platform-agnostic "should we suggest a language switch?" decision. Returns `null`
  * when the top supported preference already matches `active` (or none is supported), so

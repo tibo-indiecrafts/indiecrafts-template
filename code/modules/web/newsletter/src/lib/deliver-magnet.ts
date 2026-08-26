@@ -1,7 +1,7 @@
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";
-import { site, defaultLocale } from "@indiecrafts/packages-shared-config";
+import { site, resolveLocale } from "@indiecrafts/packages-shared-config";
 import { writeClient } from "@indiecrafts/packages-web-sanity/write";
 import { sendEmail } from "@indiecrafts/packages-web-email";
 import {
@@ -124,7 +124,7 @@ async function sendMagnetEmail(
   // hardcoded COPY as the per-field fallback — an empty group keeps today's mail.
   const title = magnet.title ?? "";
   const fallback = language === "en" ? COPY.en : COPY.fr;
-  const locale = language || defaultLocale;
+  const locale = resolveLocale(language);
   const intro = pick(lead?.intro, locale);
   const token = await signDownloadToken(
     { assetId: magnet._id, exp: Date.now() + TTL_MS },
