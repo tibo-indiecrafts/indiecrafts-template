@@ -78,13 +78,13 @@ export function TurnstileWidget({
         `script[src="${SCRIPT_SRC}"]`,
       );
       if (existing) {
-        existing.addEventListener("load", render);
+        existing.addEventListener("load", render, { once: true });
       } else {
         const script = document.createElement("script");
         script.src = SCRIPT_SRC;
         script.async = true;
         script.defer = true;
-        script.addEventListener("load", render);
+        script.addEventListener("load", render, { once: true });
         document.head.appendChild(script);
       }
     }

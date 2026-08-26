@@ -42,7 +42,9 @@ export function UpdatePrompt({
 
   // Reload on the NEXT navigation once an update is pending — a safe break.
   const availRef = useRef(updateAvailable);
-  availRef.current = updateAvailable;
+  useEffect(() => {
+    availRef.current = updateAvailable;
+  });
   const first = useRef(true);
   useEffect(() => {
     if (first.current) {

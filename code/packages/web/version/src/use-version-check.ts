@@ -51,11 +51,13 @@ export function useVersionCheck({
     const onVisible = () => {
       if (document.visibilityState === "visible") void check();
     };
+    const onOnline = () => void check();
     document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("online", () => void check());
+    window.addEventListener("online", onOnline);
     return () => {
       clearInterval(iv);
       document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("online", onOnline);
     };
   }, [check, intervalMs, current]);
 

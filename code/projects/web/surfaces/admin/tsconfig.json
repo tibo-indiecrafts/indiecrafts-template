@@ -24,6 +24,15 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@indiecrafts/packages-shared-security": [
+        "../../../../packages/shared/security/src/index.ts"
+      ],
+      "@indiecrafts/packages-shared-security/*": [
+        "../../../../packages/shared/security/src/*"
+      ],
+      "@indiecrafts/packages-web-security-reports/*": [
+        "../../../../packages/web/security-reports/src/*"
       ]
     },
     "allowJs": true
