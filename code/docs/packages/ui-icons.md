@@ -28,6 +28,10 @@ the web `Icon`, the native `Icon`, **and** the Studio picker with no hand-sync. 
 
 Brand/social marks live in `./shared/brands.ts` as 24×24 single-path SVG data (`BRANDS`), so the web
 `<svg>` and native `react-native-svg` renderers draw one source — no more duplicate brand-icon files.
+**`brands.ts` is GENERATED** from `brands.json` (our name → a `simple-icons` slug, or an inline
+`{ title, hex, path }` for a mark simple-icons lacks — e.g. LinkedIn): edit `brands.json`, run
+`pnpm brands:build`; `pnpm brands:check` guards drift in CI (like `tokens:check`). `simple-icons` is a
+build-only devDependency, so the runtime file stays dependency-free. Never hand-edit `brands.ts`.
 
 ## Adopting on native
 

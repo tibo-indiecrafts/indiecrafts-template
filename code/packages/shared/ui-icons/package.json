@@ -22,14 +22,23 @@
     "react-native-svg": "*"
   },
   "peerDependenciesMeta": {
-    "lucide-react-native": { "optional": true },
-    "react-native-svg": { "optional": true },
-    "react-dom": { "optional": true }
+    "lucide-react-native": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@types/react": "^19"
+    "@types/react": "^19",
+    "simple-icons": "^16.28.0"
   },
   "scripts": {
+    "brands:build": "node scripts/build-brands.mjs",
+    "brands:check": "node scripts/build-brands.mjs --check",
     "test": "vitest run"
   }
 }
