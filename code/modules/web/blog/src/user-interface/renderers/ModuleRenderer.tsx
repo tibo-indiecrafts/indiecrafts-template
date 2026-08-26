@@ -18,11 +18,10 @@ import { BlogTopicCards } from "./BlogTopicCards";
 import { BlogTrending } from "./BlogTrending";
 
 /**
- * Drives the blog page-builder. The three blog-specific modules (index, post
- * list, post content — they fetch/render live posts) are handled here; every
- * other module is a generic **block** rendered by `@indiecrafts/packages-web-ui-components`
- * via `renderBlock`. Composing the shared registry + these three is the whole
- * dispatcher.
+ * Drives the blog page-builder. The blog-specific modules (post/frontpage
+ * blocks that fetch/render live posts) are special-cased here; every other
+ * module is a generic **block** rendered by `@indiecrafts/packages-web-ui-components`
+ * via `renderBlock`. All others pass through to the shared registry dispatcher.
  *
  * Returns `null` for the empty-array case — callers (the routes) fall back to
  * their hard-coded default layout when `modules.length === 0`.

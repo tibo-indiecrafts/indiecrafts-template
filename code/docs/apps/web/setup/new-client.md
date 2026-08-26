@@ -294,7 +294,7 @@ pnpm seed
 
 ### Blog layout + inline content
 
-The blog singleton (Studio → Blog) owns one array, `postModules`, that composes every `/blog/[slug]`: empty ⇒ posts fall back to the default article layout; populate it to give all articles the same custom shell. The `/blog` frontpage and per-post layouts are intentionally not editor-configurable — articles share one shell; rich content goes inside a post body via the inline modules picker. Full editor mechanics: [`../../../modules/blog/editor-guide.md`](../../../modules/blog/editor-guide.md) and [`../../../modules/blog/body-editor.md`](../../../modules/blog/body-editor.md).
+The blog singleton (Studio → Blog) owns two arrays: `frontpageModules` that composes the `/blog` frontpage, and `postModules` that composes every `/blog/[slug]`. Both are empty ⇒ fall back to default layouts (the homepage hero-mosaic and per-post article shell); populate them to give the frontpage and articles custom shells. Editable in the Studio without a deploy. Rich content inside a post body goes via the inline modules picker. Full editor mechanics: [`../../../modules/blog/editor-guide.md`](../../../modules/blog/editor-guide.md) and [`../../../modules/blog/body-editor.md`](../../../modules/blog/body-editor.md).
 
 ---
 
