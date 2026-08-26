@@ -27,6 +27,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **contact · newsletter · waitlist — confirm/notification emails resolve the recipient locale
+  through `resolveLocale`.** `sendConfirmEmail` (contact, newsletter, waitlist) and
+  `sendMagnetEmail` (newsletter) now call `resolveLocale(language)` from
+  `@indiecrafts/packages-shared-config` instead of a local `language || defaultLocale` fallback.
+  Behavior-preserving — same precedence, now shared. **Why:** one canonical locale-resolution rule,
+  ready to prefer the profile locale as a higher-priority candidate later.
+
 - **newsletter — the confirm email links to the localized confirm page.** `sendConfirmEmail` now
   builds `${site.url}${localizedPathname("/newsletter/confirm", locale)}?token=…` (was the
   un-localized `/api/newsletter/confirm` GET). _Why:_ the confirm mutation moved to a `POST` behind a

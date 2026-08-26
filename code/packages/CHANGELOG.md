@@ -14,6 +14,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-web-ui-components` (`LocalePreferenceForm`) + `@indiecrafts/packages-shared-config`
+  (`resolveLocale`) + `@indiecrafts/packages-web-auth` (`SessionLogger`/`logSession`) — profile-locale
+  plumbing.** `LocalePreferenceForm` is a Clerk-free language selector (design-system primitives,
+  `aria-live` status region) that posts to the api's `POST /v1/profile/locale`; the caller supplies
+  `getToken` and the api origin, so the brick keeps no auth dependency. `resolveLocale(...candidates)`
+  returns the first supported locale from an ordered list, else the default — the shared precedence
+  rule for resolving an email recipient's language. `SessionLogger` and `logSession` now thread an
+  optional `locale` through to the login session-sink. **Why:** three small, reusable pieces the
+  profile-locale feature composes across surfaces and email senders.
 - **`@indiecrafts/packages-shared-config` — the settings registry (`src/shared/settings.ts`).**
   New `SETTINGS` map: version-controlled defaults + a per-key `[min, max]` bound for 8
   worker-read operational knobs (5 retention windows, `ops.sla_warning_days`, 2 link TTLs),

@@ -14,6 +14,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Account page — profile language selector.** `/account` now renders the shared
+  `LocalePreferenceForm` via a new `LocalePreferencePanel` client wrapper, gated on Clerk +
+  `NEXT_PUBLIC_API_URL`. Copy comes from new `account.locale.*` messages (en/fr). Posts to the
+  api's `POST /v1/profile/locale`. Adds the `packages-web-ui-components` workspace dependency +
+  tsconfig path, and `next.config.ts` `transpilePackages` (it ships raw `.tsx`, no build step).
+  **Why:** parity with website's account settings.
 - **Proxy-set, per-request nonce CSP — `CSP_MODE`.** `src/proxy.ts` generates one nonce per request
   (`generateNonce`) and stamps the response with `cspHeadersForMode(...)`
   (`@indiecrafts/packages-shared-security`): `CSP_MODE=enforce` ships the strict nonce `script-src`

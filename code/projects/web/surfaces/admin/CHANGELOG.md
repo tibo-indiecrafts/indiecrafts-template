@@ -14,6 +14,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Settings page — profile language selector.** New `LocalePreferencePanel` renders the shared
+  `LocalePreferenceForm` on `(dashboard)/settings`, gated on Clerk + `NEXT_PUBLIC_API_URL` (the
+  panel's `useAuth()` throws outside a `ClerkProvider`, so both must be set). Copy comes from new
+  `admin.settings.locale.*` messages (en/fr). Adds the `packages-web-ui-components` workspace
+  dependency + tsconfig path, and `next.config.ts` `transpilePackages`. **Why:** lets an admin
+  operator set their own account's language preference.
 - **Settings card — edit retention/ops/TTL knobs.** New `(dashboard)/settings` page reads
   `GET /v1/settings` server-side (the api token stays server-side) and renders grouped
   number inputs (Retention / Ops / Link TTLs), each with its default, min/max hint, and an

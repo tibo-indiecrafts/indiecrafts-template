@@ -5,6 +5,18 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **`POST /v1/profile/locale` + `getProfileLocale` read hook.** A signed-in user sets the
+  language stored on their `user_profiles` row; the Clerk session JWT proves identity, then
+  the handler upserts `locale` (an explicit choice always wins). `getProfileLocale(env, userId)`
+  reads it back, so another worker-sent flow (e.g. an email send) can resolve the recipient's
+  language. The login session-sink (`kind: "session"`) now also stamps `user_profiles.locale`
+  from the client's captured locale via `COALESCE(user_profiles.locale, excluded.locale)` —
+  first login wins, so it never overwrites an explicit choice made through the new route.
+  **Why:** gives the profile a language preference, seeded cheaply at first login and
+  overridable any time from account settings.
+
 ### Changed
 
 - **DB management: explicit `local`/`dev`/`staging`/`prod` tiers + complete, R2-gated scripts.**

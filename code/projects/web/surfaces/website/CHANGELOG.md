@@ -19,6 +19,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Account page — profile language selector.** `/account` now renders the shared
+  `LocalePreferenceForm` via a new `LocalePreferencePanel` client wrapper, gated the same as the
+  delete/export panels (Clerk configured). Copy comes from new `account.locale.*` messages (en/fr).
+  Posts to the api's `POST /v1/profile/locale`. **Why:** lets a signed-in visitor set the language
+  used for their account without leaving the app.
 - **Documented the service-binding hardening for the internal `/v1/events` forwarders.** The
   `wrangler.toml` `[[services]]` stub now spells out that the four server-only forwarders
   (security-reports · consent-log · session-log · security-events) call `API_URL` over public HTTPS,
