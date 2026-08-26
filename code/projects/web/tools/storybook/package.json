@@ -9,11 +9,16 @@
     "test:stories": "vitest run",
     "storybook:website": "storybook dev -p 6007 -c .storybook-website",
     "storybook:website:build": "storybook build -c .storybook-website -o storybook-static-website",
-    "test:stories:website": "vitest run -c vitest.website.config.ts"
+    "test:stories:website": "vitest run -c vitest.website.config.ts",
+    "storybook:app": "storybook dev -p 6008 -c .storybook-app",
+    "storybook:app:build": "storybook build -c .storybook-app -o storybook-static-app",
+    "test:stories:app": "vitest run -c vitest.app.config.ts"
   },
   "dependencies": {
     "@indiecrafts/packages-web-announcement": "workspace:*",
     "@indiecrafts/packages-mobile-ui-native": "workspace:*",
+    "@indiecrafts/packages-shared-announcement": "workspace:*",
+    "@indiecrafts/packages-shared-compliance": "workspace:*",
     "@indiecrafts/packages-shared-config": "workspace:*",
     "@indiecrafts/packages-shared-system-pages": "workspace:*",
     "@indiecrafts/packages-shared-ui-icons": "workspace:*",
@@ -21,6 +26,7 @@
     "@indiecrafts/packages-web-locale-suggest": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
     "@indiecrafts/packages-web-ui-components": "workspace:*",
+    "@indiecrafts/packages-web-version": "workspace:*",
     "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*"
   },

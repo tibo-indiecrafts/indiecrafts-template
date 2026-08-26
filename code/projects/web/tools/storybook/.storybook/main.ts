@@ -37,9 +37,13 @@ const reactNativeWeb = dirname(require.resolve("react-native-web/package.json"))
 // Composition: each surface has its own Storybook (own `@/` alias), composed into
 // this one gallery via `refs`. Opt-in (env-gated) so the default single gallery stays
 // clean — set STORYBOOK_COMPOSE=1 and run the surface storybooks (e.g. `storybook:website`
-// on :6007). Add a ref per surface as it lands; point at the deployed URL in production.
+// on :6007, `storybook:app` on :6008). Add a ref per surface as it lands; point at the
+// deployed URL in production.
 const refs = process.env.STORYBOOK_COMPOSE
-  ? { "website-surface": { title: "Website (surface)", url: "http://localhost:6007" } }
+  ? {
+      "website-surface": { title: "Website (surface)", url: "http://localhost:6007" },
+      "app-surface": { title: "App (surface)", url: "http://localhost:6008" },
+    }
   : undefined;
 
 const config: StorybookConfig = {

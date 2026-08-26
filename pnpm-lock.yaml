@@ -1440,6 +1440,12 @@ importers:
       '@indiecrafts/packages-mobile-ui-native':
         specifier: workspace:*
         version: link:../../../../packages/mobile/ui-native
+      '@indiecrafts/packages-shared-announcement':
+        specifier: workspace:*
+        version: link:../../../../packages/shared/announcement
+      '@indiecrafts/packages-shared-compliance':
+        specifier: workspace:*
+        version: link:../../../../packages/shared/compliance
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../../../packages/shared/config
@@ -1470,6 +1476,9 @@ importers:
       '@indiecrafts/packages-web-ui-components':
         specifier: workspace:*
         version: link:../../../../packages/web/ui-components
+      '@indiecrafts/packages-web-version':
+        specifier: workspace:*
+        version: link:../../../../packages/web/version
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 9.1.20
