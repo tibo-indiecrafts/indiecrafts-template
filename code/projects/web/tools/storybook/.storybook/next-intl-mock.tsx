@@ -141,6 +141,11 @@ export function useLocale() {
   return "en";
 }
 
+/** Server API — `next-intl/server`'s async locale reader. */
+export async function getLocale() {
+  return "en";
+}
+
 export function NextIntlClientProvider({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
@@ -166,12 +171,18 @@ export function createNavigation() {
   function Link({
     children,
     className,
+    href,
   }: {
     children?: ReactNode;
     className?: string;
+    href?: string;
     [key: string]: unknown;
   }) {
-    return <a className={className}>{children}</a>;
+    return (
+      <a href={href} className={className}>
+        {children}
+      </a>
+    );
   }
   return { Link, redirect, usePathname, useRouter, getPathname };
 }
@@ -180,6 +191,7 @@ export default {
   useTranslations,
   getTranslations,
   useLocale,
+  getLocale,
   NextIntlClientProvider,
   createNavigation,
 };

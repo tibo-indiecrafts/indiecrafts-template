@@ -24,6 +24,18 @@ const nextIntlMock = fileURLToPath(
 const clerkMock = fileURLToPath(
   new URL("../.storybook/clerk-mock.tsx", import.meta.url),
 );
+// `@portabletext/react` v7 is built with the React Compiler and imports the
+// `react/compiler-runtime` subpath; `@storybook/nextjs-vite`'s own react-aliasing
+// (matching the app's real Next.js react build) doesn't resolve that subpath
+// cleanly here, and the failure is non-deterministic across runs (varies with
+// which other stories share the dependency scan), crashing the whole browser
+// session — not just the one story that reaches it (e.g. `DefaultLayout`/
+// `PageSchemas` pull it in transitively via the Sanity readers' rich-text
+// fields). No website story exercises real portable-text rendering, so a
+// no-op stub sidesteps the instability entirely. See `../.storybook/portabletext-mock.tsx`.
+const portabletextMock = fileURLToPath(
+  new URL("../.storybook/portabletext-mock.tsx", import.meta.url),
+);
 // The website story files import `storybook/test` for their `play` fns, but
 // `storybook` is a dep of the CENTRAL package only (pnpm strict), so it doesn't
 // resolve from the website surface. Anchor a resolve from this file so vite
@@ -50,6 +62,13 @@ const config: StorybookConfig = {
     cfg.define = {
       ...(cfg.define ?? {}),
       "process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": JSON.stringify("pk_test_storybook"),
+      // `@indiecrafts/packages-web-sanity/env` throws at MODULE IMPORT time (not
+      // call time) without these — merely importing `@/lib/seo/site-seo` (from
+      // `jsonld.tsx`/`DefaultLayout.tsx`) pulls in the Sanity client. Bind demo
+      // values so the import succeeds; no story here actually calls the Sanity
+      // fetchers (the ones that do, e.g. `PageSchemas`, are `!test`).
+      "process.env.NEXT_PUBLIC_SANITY_PROJECT_ID": JSON.stringify("storybook-demo"),
+      "process.env.NEXT_PUBLIC_SANITY_DATASET": JSON.stringify("production"),
     };
 
     cfg.resolve = cfg.resolve ?? {};
@@ -68,6 +87,7 @@ const config: StorybookConfig = {
       { find: /^next-intl\/navigation$/, replacement: nextIntlMock },
       { find: /^@clerk\/nextjs$/, replacement: clerkMock },
       { find: /^@clerk\/nextjs\/server$/, replacement: clerkMock },
+      { find: /^@portabletext\/react$/, replacement: portabletextMock },
       {
         find: /^storybook\/test$/,
         replacement: "storybook/test",
