@@ -31,7 +31,7 @@ export async function BlogCollection({
       query: blogCollectionQuery,
       params: { locale, ids },
     }),
-    getTranslations("pages.blog"),
+    getTranslations({ locale, namespace: "pages.blog" }),
     getBlogSettings(),
   ]);
 
