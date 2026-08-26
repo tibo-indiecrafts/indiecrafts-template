@@ -19,9 +19,11 @@ import { getPopularPostIds } from "@indiecrafts/modules-web-blog/lib/popularity"
 /**
  * Frontpage "Trending" block — the most popular posts (`getPopularPostIds`),
  * falling back to most-recent while Project 1 has no read-count source (see
- * `lib/popularity.ts`). The editor's `pinned` posts always show first, so the
- * block always renders content once any post exists — never blank. Maps onto
- * the generic `SpotlightRow` primitive; no "view all" link.
+ * `lib/popularity.ts`). `count` is a shared cap (like the sibling blocks):
+ * the editor's `pinned` posts take precedence, and trending/recent posts
+ * fill the rest up to `count`. The block always renders content once any
+ * post exists — never blank. Maps onto the generic `SpotlightRow` primitive;
+ * no "view all" link.
  */
 export async function BlogTrending({
   module: m,
@@ -74,11 +76,13 @@ export async function BlogTrending({
       )
     : fallbackPosts;
 
+  // Shared cap (mirrors blog-featured / blog-category-spotlight): pinned
+  // posts take precedence, trending/recent posts fill the rest up to `count`.
   const pinnedIdSet = new Set(orderedPinned.map((post) => post._id));
   const posts = [
     ...orderedPinned,
     ...orderedFallback.filter((post) => !pinnedIdSet.has(post._id)),
-  ];
+  ].slice(0, count);
 
   const items: PostCardItem[] = posts.map((post) => ({
     _key: post._id,

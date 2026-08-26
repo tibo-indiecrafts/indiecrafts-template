@@ -16,8 +16,7 @@ export default defineModule({
       type: "number",
       initialValue: 4,
       validation: (Rule) => Rule.min(1).max(12),
-      description:
-        "Nombre d'articles tendance (ou récents, à défaut) affichés en complément des articles épinglés ci-dessous.",
+      description: "Nombre maximum d'articles affichés.",
     }),
     defineField({
       name: "pinned",
@@ -39,7 +38,7 @@ export default defineModule({
         },
       ],
       description:
-        "Optionnel. Ces articles apparaissent en premier, dans l'ordre choisi ; les articles tendance complètent la sélection.",
+        "Optionnel. Ces articles apparaissent en premier, dans l'ordre choisi ; les articles tendance (ou les plus récents, à défaut) complètent la sélection jusqu'à la limite ci-dessus.",
     }),
   ],
 });
