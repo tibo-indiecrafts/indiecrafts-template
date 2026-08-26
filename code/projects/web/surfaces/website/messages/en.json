@@ -242,7 +242,8 @@
       "heroLabel": "Latest articles",
       "noPostsModule": "No posts yet.",
       "frontpage": {
-        "carousel": { "prev": "Previous", "next": "Next", "slide": "slide" }
+        "carousel": { "prev": "Previous", "next": "Next", "slide": "slide" },
+        "trending": { "heading": "Trending" }
       },
       "pagination": {
         "label": "Pagination",

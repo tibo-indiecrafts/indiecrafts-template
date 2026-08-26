@@ -15,6 +15,7 @@ import { BlogIndex } from "./BlogIndex";
 import { BlogPostContent } from "./BlogPostContent";
 import { BlogPostList } from "./BlogPostList";
 import { BlogTopicCards } from "./BlogTopicCards";
+import { BlogTrending } from "./BlogTrending";
 
 /**
  * Drives the blog page-builder. The three blog-specific modules (index, post
@@ -74,6 +75,9 @@ async function ModuleSwitch({
   }
   if (m._type === "module.blog-topic-cards") {
     return <BlogTopicCards module={m} locale={context.locale} />;
+  }
+  if (m._type === "module.blog-trending") {
+    return <BlogTrending module={m} locale={context.locale} />;
   }
   if (m._type === "module.blog-post-content") {
     return context.post ? (

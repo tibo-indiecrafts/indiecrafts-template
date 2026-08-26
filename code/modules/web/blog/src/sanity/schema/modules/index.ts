@@ -8,6 +8,7 @@ import blogIndex from "./blog-index";
 import blogPostContent from "./blog-post-content";
 import blogPostList from "./blog-post-list";
 import blogTopicCards from "./blog-topic-cards";
+import blogTrending from "./blog-trending";
 
 /**
  * Blog-specific page-builder modules — dispatched by the blog's `ModuleRenderer`,
@@ -24,6 +25,7 @@ export const blogModuleSchemas: SchemaTypeDefinition[] = [
   blogPostContent,
   blogPostList,
   blogTopicCards,
+  blogTrending,
 ];
 
 export const BLOG_MODULE_TYPES = [
@@ -36,6 +38,7 @@ export const BLOG_MODULE_TYPES = [
   "module.blog-post-content",
   "module.blog-post-list",
   "module.blog-topic-cards",
+  "module.blog-trending",
 ] as const;
 
 export type BlogModuleType = (typeof BLOG_MODULE_TYPES)[number];

@@ -242,7 +242,8 @@
       "heroLabel": "Derniers articles",
       "noPostsModule": "Aucun article pour le moment.",
       "frontpage": {
-        "carousel": { "prev": "Précédent", "next": "Suivant", "slide": "diapositive" }
+        "carousel": { "prev": "Précédent", "next": "Suivant", "slide": "diapositive" },
+        "trending": { "heading": "Tendances" }
       },
       "pagination": {
         "label": "Pagination",

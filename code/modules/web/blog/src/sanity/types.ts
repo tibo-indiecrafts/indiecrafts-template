@@ -270,6 +270,18 @@ export type BlogCollectionModule = ModuleBase & {
 };
 
 /**
+ * The frontpage "Trending" block — the most popular posts (`getPopularPostIds`,
+ * `lib/popularity.ts`), falling back to most-recent while Project 1 has no
+ * read-count source. `pinned` posts always show first.
+ */
+export type BlogTrendingModule = ModuleBase & {
+  _type: "module.blog-trending";
+  title?: string;
+  count?: number;
+  pinned?: { _ref: string }[];
+};
+
+/**
  * The frontpage "Topic Cards" block — one to three categories/tags shown as
  * large cards. Unlike every other block, it points at taxonomy, not posts:
  * `cards[].target` (a `category` or `tag` reference) and `cards[].image` are
@@ -298,7 +310,8 @@ export type AnyModule =
   | BlogIndexModule
   | BlogPostContentModule
   | BlogPostListModule
-  | BlogTopicCardsModule;
+  | BlogTopicCardsModule
+  | BlogTrendingModule;
 
 export type BlogSingleton = {
   postModules?: AnyModule[];
