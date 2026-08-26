@@ -47,7 +47,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
             <>
-              <SessionLogger surface="app" />
+              <SessionLogger surface="app" locale={locale} />
               {/* Logged-in-only announcement banner + toast (from the api Worker). */}
               <AnnouncementChrome />
             </>

@@ -9,7 +9,7 @@ import { useAuth } from "@clerk/nextjs";
  * server-side, so the `APP_API_TOKEN` never reaches the browser. Mount once, app-wide,
  * under `<ClerkProvider>`. Renders nothing.
  */
-export function SessionLogger({ surface }: { surface: string }) {
+export function SessionLogger({ surface, locale }: { surface: string; locale?: string }) {
   const { isSignedIn, sessionId } = useAuth();
   useEffect(() => {
     if (!isSignedIn || !sessionId) return;
@@ -23,8 +23,8 @@ export function SessionLogger({ surface }: { surface: string }) {
     void fetch("/api/session-log", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ surface }),
+      body: JSON.stringify({ surface, locale }),
     });
-  }, [isSignedIn, sessionId, surface]);
+  }, [isSignedIn, sessionId, surface, locale]);
   return null;
 }

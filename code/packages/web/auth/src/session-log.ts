@@ -11,6 +11,7 @@ export async function logSession(input: {
   userId: string;
   sessionId?: string | null;
   country?: string | null;
+  locale?: string | null;
 }): Promise<void> {
   const url = process.env.API_URL;
   const token = process.env.APP_API_TOKEN;
@@ -28,6 +29,7 @@ export async function logSession(input: {
         userId: input.userId,
         sessionId: input.sessionId ?? undefined,
         country: input.country ?? undefined,
+        locale: input.locale ?? undefined,
       }),
     });
   } catch {

@@ -8,6 +8,8 @@ import {
   coerceSetting,
   effectiveSettings,
   type SettingKey,
+  isLocale,
+  localeCodes,
 } from "@indiecrafts/packages-shared-config";
 import {
   hashIpAddress,
@@ -357,6 +359,8 @@ export default {
           if (!surface || !userId) return json({ error: "invalid" }, 400, cors);
           // The Clerk session id → the stored row is revocable from the admin screen.
           const sessionId = str(body.sessionId, 64) || null;
+          const localeRaw = str(body.locale, 16);
+          const locale = localeRaw && isLocale(localeRaw, localeCodes) ? localeRaw : null;
           // Session events arrive from the device direct → hash ITS IP (never raw).
           const ip = clientIp(request);
           const ipHash =
@@ -371,11 +375,14 @@ export default {
           // Create the profile row on first sign-in; refresh last_login_at on
           // every sign-in. Email/name are NOT in the session payload (kept
           // minimal) — the Clerk webhook + backfill fill them. Idempotent by PK.
+          // locale: COALESCE keeps the first-recorded value — a later login (or a
+          // stale/unsupported one) never overwrites an explicit choice.
           await env.CORE_DB.prepare(
-            "INSERT INTO user_profiles (user_id, created_at, last_login_at) VALUES (?, ?, ?) " +
-              "ON CONFLICT(user_id) DO UPDATE SET last_login_at = excluded.last_login_at",
+            "INSERT INTO user_profiles (user_id, created_at, last_login_at, locale) VALUES (?, ?, ?, ?) " +
+              "ON CONFLICT(user_id) DO UPDATE SET last_login_at = excluded.last_login_at, " +
+              "locale = COALESCE(user_profiles.locale, excluded.locale)",
           )
-            .bind(userId, ts, ts)
+            .bind(userId, ts, ts, locale)
             .run();
         } else if (body.kind === "security") {
           // App-level security incident (failed login, priv-esc, exfil, …) — the EU D1.

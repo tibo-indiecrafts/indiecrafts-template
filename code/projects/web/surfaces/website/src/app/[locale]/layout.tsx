@@ -266,7 +266,7 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
               ) : null}
             </LocaleSwitchBoundary>
             {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
-              <SessionLogger surface={surface} />
+              <SessionLogger surface={surface} locale={locale} />
             ) : null}
           </NextIntlClientProvider>
         </ThemeProvider>

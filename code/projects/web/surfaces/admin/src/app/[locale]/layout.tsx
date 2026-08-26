@@ -29,7 +29,7 @@ export default async function LocaleLayout({
       <body>
         <NextIntlClientProvider>
           {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
-            <SessionLogger surface="admin" />
+            <SessionLogger surface="admin" locale={locale} />
           ) : null}
           {children}
         </NextIntlClientProvider>
