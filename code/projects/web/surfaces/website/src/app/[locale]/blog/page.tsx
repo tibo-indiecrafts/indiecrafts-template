@@ -7,17 +7,13 @@ import {
   requireBlogRoute,
 } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
-import { BlogSearchForm } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogSearchForm";
 import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
-import { BlogHero } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/BlogHero";
-import { ExploreCategories } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/ExploreCategories";
-import { ExploreTags } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/ExploreTags";
-import { TopAuthors } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/TopAuthors";
-import { BlogListing } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/BlogListing";
+import { DefaultBlogFrontpage } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/DefaultBlogFrontpage";
+import { Modules } from "@indiecrafts/modules-web-blog/user-interface/renderers/ModuleRenderer";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import {
   allPostsQuery,
@@ -33,6 +29,7 @@ import type {
   PostListItem,
   Tag,
 } from "@indiecrafts/modules-web-blog/sanity/types";
+import { pickFrontpage } from "./frontpage-select";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -64,10 +61,10 @@ export async function generateMetadata({ params }: Props) {
 }
 
 /**
- * Blog frontpage — always the default layout: hero card grid →
- * ExploreCategories chips → ExploreTags pills → TopAuthors. There is no
- * editor-driven module override for this route (by design — chrome
- * stays uniform across deployments).
+ * Blog frontpage — renders the editor's `blog.frontpageModules` when any
+ * are composed in the Studio, else the code default (hero card grid →
+ * ExploreCategories chips → ExploreTags pills → TopAuthors). See
+ * `pickFrontpage`.
  */
 export default async function BlogPage({ params }: Props) {
   requireBlogRoute(pages.blog);
@@ -95,82 +92,27 @@ export default async function BlogPage({ params }: Props) {
 
   if (blog?.seo?.unpublished) notFound();
 
+  // The blog singleton's `frontpageModules` composes /blog when the editor
+  // has stacked any sections; empty falls back to the code default.
+  const frontpageModules = blog?.frontpageModules ?? [];
+
   return (
     <DefaultLayout subnav={await getCategoryNav(locale)}>
       <PageSchemas page={pages.blog} locale={locale} />
-      {posts.length === 0 ? (
-        <BlogListing
+      {pickFrontpage(frontpageModules) === "modules" ? (
+        <Modules modules={frontpageModules} context={{ locale }} />
+      ) : (
+        <DefaultBlogFrontpage
           posts={posts}
           locale={locale}
-          heading={t("heading")}
-          subheading={t("subheading")}
-          noPostsLabel={t("noPosts")}
-          cols={3}
+          display={display}
+          categories={categories}
+          tags={tags}
+          authors={authors}
+          t={t}
+          searchAction={localizedPathname("/blog/search", locale)}
+          searchEnabled={isSearchEnabled()}
         />
-      ) : (
-        <>
-          {/* Editor toggle: the "à la une" mosaic, else a simple titled grid.
-              The mosaic's cards are h2/h3, so it needs an sr-only page h1;
-              BlogListing already renders its own visible h1. */}
-          {display.frontpage.featuredHero ? (
-            <>
-              <h1 className="sr-only">{t("title")}</h1>
-              <BlogHero posts={posts} locale={locale} label={t("heroLabel")} />
-            </>
-          ) : (
-            <BlogListing
-              posts={posts}
-              locale={locale}
-              heading={t("heading")}
-              subheading={t("subheading")}
-              noPostsLabel={t("noPosts")}
-              cols={3}
-            />
-          )}
-
-          {isSearchEnabled() && (
-            <div className="mx-auto max-w-6xl px-(--gutter) py-10">
-              <BlogSearchForm
-                action={localizedPathname("/blog/search", locale)}
-                labels={{
-                  label: t("search.label"),
-                  placeholder: t("search.placeholder"),
-                  submit: t("search.submit"),
-                }}
-              />
-            </div>
-          )}
-
-          {display.taxonomy.categories && (
-            <ExploreCategories
-              categories={categories}
-              posts={posts}
-              locale={locale}
-              heading={t("categories.heading")}
-              subheading={t("categories.subheading")}
-              viewAllLabel={t("categories.viewAll")}
-              allHref="/blog/category"
-            />
-          )}
-
-          {display.taxonomy.tags && (
-            <ExploreTags
-              tags={tags}
-              heading={t("tags.heading")}
-              subheading={t("tags.subheading")}
-              viewAllLabel={t("tags.viewAll")}
-            />
-          )}
-
-          {display.taxonomy.authors && (
-            <TopAuthors
-              authors={authors}
-              heading={t("authors.heading")}
-              subheading={t("authors.subheading")}
-              viewAllLabel={t("authors.viewAll")}
-            />
-          )}
-        </>
       )}
     </DefaultLayout>
   );

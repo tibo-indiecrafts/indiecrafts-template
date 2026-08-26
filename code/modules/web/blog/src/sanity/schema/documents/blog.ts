@@ -25,12 +25,12 @@ const toggle = (name: string, title: string, description?: string) =>
   });
 
 /**
- * Blog singleton — owns the per-post layout shell only.
+ * Blog singleton — owns the per-post layout shell + the frontpage.
  *
- * The `/blog` frontpage is intentionally NOT editor-configurable; it
- * always renders the default layout (hero card grid + ExploreCategories
- * + ExploreTags + TopAuthors). Customize via code if you need a
- * different landing.
+ * `frontpageModules` composes the `/blog` frontpage — drop a hero, a post
+ * list, an explore block, etc. When the array is empty, the route falls
+ * back to the default layout (hero card grid + ExploreCategories +
+ * ExploreTags + TopAuthors).
  *
  * `postModules` composes the chrome around EVERY `/blog/[slug]` — drop
  * a `Fil d'ariane`, then `Contenu de l'article (article actif)`, then
@@ -56,6 +56,14 @@ export default defineType({
       title: "Modules par article",
       description:
         "Compose la mise en page de chaque /blog/[slug]. Vide = mise en page article par défaut. Incluez un module « Contenu de l'article (article actif) » pour afficher le corps de l'article.",
+      type: "array",
+      of: moduleFieldRefs,
+    }),
+    defineField({
+      name: "frontpageModules",
+      title: "Sections de l'accueil du blog",
+      description:
+        "Compose la page /blog en empilant des sections (grande une, à la une, articles, pleins feux, carrousel, sujets, explorer, newsletter…). Vide = mise en page par défaut.",
       type: "array",
       of: moduleFieldRefs,
     }),

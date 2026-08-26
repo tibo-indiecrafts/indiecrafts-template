@@ -230,6 +230,7 @@ export type AnyModule =
 
 export type BlogSingleton = {
   postModules?: AnyModule[];
+  frontpageModules?: AnyModule[];
   comments?: CommentsCopy;
   seo?: SeoMeta;
 };

@@ -333,6 +333,7 @@ export const searchPostsQuery = defineQuery(`
 export const blogSingletonQuery = defineQuery(`
   *[_type == "blog"][0]{
     postModules[]{ ${MODULES_FRAGMENT} },
+    frontpageModules[]{ ${MODULES_FRAGMENT} },
     comments,
     ${SEO_FRAGMENT}
   }
