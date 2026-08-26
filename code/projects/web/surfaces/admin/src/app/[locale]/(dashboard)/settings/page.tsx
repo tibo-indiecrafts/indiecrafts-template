@@ -52,7 +52,7 @@ export default async function SettingsPage({
       <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
       <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
       <SettingsForm settings={settings} />
-      {process.env.NEXT_PUBLIC_API_URL ? (
+      {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.NEXT_PUBLIC_API_URL ? (
         <LocalePreferencePanel
           copy={localeCopy}
           currentLocale={locale}
