@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { ErrorContent } from "@indiecrafts/packages-shared-system-pages/web";
-import { LegalLinks, ShellOverlays } from "./shell";
+import { LegalLinks, ShareRow, ShellOverlays } from "./shell";
 import { AuthPanel } from "./auth";
 import { useOnlineStatus } from "./useOnlineStatus";
 
@@ -79,6 +79,7 @@ function Home() {
         </Button>
       </div>
       <AuthPanel />
+      <ShareRow />
       <LegalLinks />
     </main>
   );

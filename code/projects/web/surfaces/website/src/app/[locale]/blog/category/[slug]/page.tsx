@@ -11,6 +11,7 @@ import { translationAlternates } from "@/lib/seo/translations";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { CategoryDetail } from "@indiecrafts/modules-web-blog/user-interface/category/sections/CategoryDetail";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
@@ -109,7 +110,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
   ];
 
   return (
-    <DefaultLayout>
+    <DefaultLayout subnav={await getCategoryNav(locale)}>
       <PageSchemas
         page={{
           ...pages.category,

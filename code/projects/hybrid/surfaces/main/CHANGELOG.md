@@ -11,8 +11,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **Conditional Hook in `LegalReacceptGate` (`src/renderer/src/shell.tsx`).**
+  `useRecord(consentStore)` sat inside a `features.requireConsent && …` short-circuit, so it
+  ran only when the flag was on — a Rules-of-Hooks violation that would break Hook order if the
+  flag ever became dynamic. The Hook now runs unconditionally; the flag gates only its result.
+
 ### Added
 
+- **Share row on Home.** `src/renderer/src/shell.tsx` gains a `ShareRow` (mounted in `App.tsx` Home)
+  rendering the shared `ShareButtons` over the marketing `websiteUrl` — hidden when no origin is set.
+  Adds the `ui-components`/`ui-icons` deps + tsconfig `paths` (the wildcard export needs it) and new
+  `share.*` react-intl copy. **Why:** a "share the site" affordance in the desktop shell, reusing the
+  web share row instead of a bespoke one.
 - **Self-service "Download my data" control.** `SignedInView` (`src/renderer/src/auth.tsx`) mounts the
   shared `ExportSection` (`@indiecrafts/packages-shared-compliance/web`) beside the delete control, wired
   to `getToken` from the existing `@clerk/clerk-react` `useAuth()`. Gated by the new

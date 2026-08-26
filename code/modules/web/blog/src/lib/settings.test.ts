@@ -21,7 +21,12 @@ const run = (raw: unknown) =>
 describe("resolveBlogDisplay", () => {
   it("null raw + all flags on → everything visible (unset defaults ON)", () => {
     const d = run(null);
-    expect(d.taxonomy).toEqual({ categories: true, tags: true, authors: true });
+    expect(d.taxonomy).toEqual({
+      categories: true,
+      tags: true,
+      authors: true,
+      categoryNav: true,
+    });
     expect(d.post.date).toBe(true);
     expect(d.frontpage.featuredHero).toBe(true);
     expect(d.cards.excerpt).toBe(true);
@@ -40,6 +45,23 @@ describe("resolveBlogDisplay", () => {
     const d = run({ taxonomy: { tags: false } });
     expect(d.taxonomy.tags).toBe(false);
     expect(d.taxonomy.categories).toBe(true); // untouched → on
+  });
+
+  it("categoryNav: on by default, but needs both categories and its own toggle", () => {
+    expect(run(null).taxonomy.categoryNav).toBe(true); // unset → on
+    expect(
+      run({ taxonomy: { categoryNav: false } }).taxonomy.categoryNav,
+    ).toBe(false); // its own toggle off
+    expect(
+      run({ taxonomy: { categories: false } }).taxonomy.categoryNav,
+    ).toBe(false); // categories off → no category bar
+  });
+
+  it("categoryNav is off when the categories code flag is off", () => {
+    blogFlags.mockReturnValueOnce({
+      taxonomy: { categories: false, tags: true, authors: true },
+    });
+    expect(run(null).taxonomy.categoryNav).toBe(false);
   });
 
   it("post toggles: explicit false hides, unset defaults on", () => {

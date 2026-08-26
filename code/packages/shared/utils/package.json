@@ -9,6 +9,7 @@
     "./filename": "./src/filename.ts",
     "./form": "./src/form.ts",
     "./format-date": "./src/format-date.ts",
+    "./share": "./src/share.ts",
     "./slugify": "./src/slugify.ts",
     "./video-embed": "./src/video-embed.ts"
   },

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Logo } from "@/user-interface/shared/layout/Logo";
@@ -31,6 +32,8 @@ type FooterProps = {
   /** CCPA "Do Not Sell or Share" link — shown only for opt-out (US/CCPA) visitors,
    *  resolved server-side (`resolveConsentMode`) by the caller. */
   showDoNotSell?: boolean;
+  /** Site-wide "share this page" control (the caller resolves the URL + gate). */
+  share?: ReactNode;
 };
 
 const linkClass =
@@ -70,6 +73,7 @@ export function Footer({
   columns = [],
   madeBy,
   showDoNotSell = false,
+  share,
 }: FooterProps) {
   const tFooter = useTranslations("footer");
   const tCookies = useTranslations("cookies");
@@ -102,6 +106,9 @@ export function Footer({
             </nav>
           ))}
         </div>
+        {share ? (
+          <div className="border-border/60 mt-10 border-t pt-6">{share}</div>
+        ) : null}
         <p className="text-muted-foreground mt-12 text-xs">
           © {year} {company ?? name}. {tFooter("rights")}
         </p>

@@ -1,5 +1,7 @@
+import { Share } from "react-native";
 import { useIntl } from "react-intl";
 import { useRouter } from "expo-router";
+import { websiteUrl } from "@/config";
 import {
   Screen,
   ThemedText,
@@ -14,6 +16,15 @@ import {
 export default function Index() {
   const t = useIntl();
   const router = useRouter();
+  // Native share: the OS share sheet (`Share.share`) — the idiomatic mobile pattern, not
+  // the web intent-URL row. Shares the marketing site; disabled when no origin is set.
+  const onShare = () => {
+    if (!websiteUrl) return;
+    void Share.share({
+      message: `${t.formatMessage({ id: "home.title" })} ${websiteUrl}`,
+      url: websiteUrl,
+    });
+  };
   return (
     <Screen>
       <Card style={{ margin: 24, marginTop: 96 }}>
@@ -33,6 +44,12 @@ export default function Index() {
           variant="outline"
           label={t.formatMessage({ id: "home.signIn" })}
           onPress={() => router.push("/sign-in")}
+        />
+        <Button
+          variant="outline"
+          label={t.formatMessage({ id: "home.share" })}
+          onPress={onShare}
+          disabled={!websiteUrl}
         />
       </Card>
     </Screen>

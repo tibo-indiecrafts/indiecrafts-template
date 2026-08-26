@@ -54,7 +54,7 @@ export function Toc({
   return (
     <nav
       aria-label={title}
-      className="sticky top-24 hidden max-h-[calc(100vh-8rem)] overflow-y-auto text-sm md:block"
+      className="hidden text-sm md:block"
     >
       <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wider uppercase">
         {title}

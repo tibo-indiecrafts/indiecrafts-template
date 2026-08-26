@@ -133,7 +133,15 @@
     "next": "Next",
     "dismiss": "Dismiss",
     "copy": "Copy",
-    "copied": "Copied"
+    "copied": "Copied",
+    "share": {
+      "label": "Share this page",
+      "x": "Share on X",
+      "linkedin": "Share on LinkedIn",
+      "facebook": "Share on Facebook",
+      "copy": "Copy link",
+      "copied": "Link copied"
+    }
   },
   "cookies": {
     "learnMore": "Learn more",
@@ -224,6 +232,11 @@
       "backToList": "← All posts",
       "noPosts": "No posts yet. Check back soon.",
       "onThisPage": "On this page",
+      "writtenBy": "Written by",
+      "moreOnTopic": "More on {topic}",
+      "moreReading": "More reading",
+      "allInCategory": "All {category}",
+      "categoryNav": { "label": "Blog categories", "all": "All" },
       "related": "Keep reading",
       "relatedSubheading": "More articles you might enjoy.",
       "heroLabel": "Latest articles",
@@ -243,14 +256,6 @@
         "prompt": "Type a word or two to search every article.",
         "noResults": "No articles match “{query}”. Try a different word.",
         "resultsFor": "{count, plural, one {# result} other {# results}} for “{query}”"
-      },
-      "share": {
-        "label": "Share",
-        "x": "Share on X",
-        "linkedin": "Share on LinkedIn",
-        "facebook": "Share on Facebook",
-        "copy": "Copy link",
-        "copied": "Link copied"
       },
       "series": {
         "navLabel": "In this series",

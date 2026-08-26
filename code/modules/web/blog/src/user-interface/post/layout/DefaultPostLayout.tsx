@@ -8,10 +8,12 @@ import type { Post, PostListItem } from "@indiecrafts/modules-web-blog/sanity/ty
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { isSeriesEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
-import { ShareButtons } from "@indiecrafts/modules-web-blog/user-interface/post/components/ShareButtons";
+import { ShareButtons } from "@indiecrafts/packages-web-ui-components/web/layout/ShareButtons";
 import { ReadingProgress } from "@indiecrafts/modules-web-blog/user-interface/post/components/ReadingProgress";
 import { SeriesNav } from "@indiecrafts/modules-web-blog/user-interface/post/components/SeriesNav";
+import { AuthorBio } from "@indiecrafts/packages-web-ui-components/web/collection/AuthorBio";
 import { FeaturedMedia } from "@indiecrafts/packages-web-ui-components/web/media/FeaturedMedia";
+import { MoreOnTopic } from "@indiecrafts/packages-web-ui-components/web/collection/MoreOnTopic";
 import {
   Breadcrumbs,
   type Crumb,
@@ -41,6 +43,7 @@ export async function DefaultPostLayout({
   title,
   description,
   related,
+  share,
 }: {
   post: Post;
   locale: Locale;
@@ -48,9 +51,16 @@ export async function DefaultPostLayout({
   title: string;
   description?: string;
   related: PostListItem[];
+  /** Site-wide share config (the app's `siteSettings.share`) — share is a shared
+   *  setting, not blog-owned. Absent ⇒ share hidden. Copy comes from `common.share`. */
+  share?: {
+    enabled: boolean;
+    networks: { x: boolean; linkedin: boolean; facebook: boolean; copyLink: boolean };
+  };
 }) {
-  const [t, nav, display] = await Promise.all([
+  const [t, tCommon, nav, display] = await Promise.all([
     getTranslations("pages.blog"),
+    getTranslations("common"),
     getTranslations("nav"),
     getBlogSettings(),
   ]);
@@ -88,6 +98,39 @@ export async function DefaultPostLayout({
   const hasToc =
     display.post.tableOfContents && (post.headings?.length ?? 0) > 0;
   const shareUrl = `${site.url}${localizedPathname(`/blog/${post.slug ?? ""}`, locale)}`;
+
+  // Sidebar "More on {topic}" — reuse the related posts (same categories) as a
+  // compact list under the TOC. Generic heading when the post has no category.
+  const moreOnTopic = display.post.relatedPosts
+    ? related.slice(0, 4).map((p) => ({
+        _key: p._id,
+        title: p.title ?? "",
+        href: localizedPathname(`/blog/${p.slug ?? ""}`, locale),
+      }))
+    : [];
+  const moreTitle =
+    categoryRef?.title && showCategories
+      ? t("moreOnTopic", { topic: categoryRef.title })
+      : t("moreReading");
+  const moreFooter =
+    categoryRef?.slug && showCategories
+      ? {
+          label: t("allInCategory", { category: categoryRef.title ?? "" }),
+          href: localizedPathname(`/blog/category/${categoryRef.slug}`, locale),
+        }
+      : undefined;
+  const showSidebar = hasToc || moreOnTopic.length > 0;
+
+  // Map the post's authors to the generic AuthorBio item shape (resolved
+  // href + image url); the component drops entries without a name.
+  const authorBioItems = authors.map((a) => ({
+    _key: a._id ?? a.slug ?? a.name,
+    name: a.name ?? "",
+    role: a.position,
+    bio: a.bio,
+    imageUrl: a.image?.asset?.url,
+    href: a.slug ? localizedPathname(`/author/${a.slug}`, locale) : undefined,
+  }));
 
   // One hero structure for image and video alike: the cover — or an
   // inline-playable video — sits in a media block, and the title + meta read
@@ -232,7 +275,9 @@ export async function DefaultPostLayout({
                 currentId={post._id}
                 labels={{
                   label: t("series.navLabel"),
-                  partOf: t("series.partOf"),
+                  // `t.raw` — SeriesNav interpolates {n}/{total} itself, so it
+                  // needs the raw template, not a formatted (param-less) string.
+                  partOf: t.raw("series.partOf") as string,
                 }}
               />
             </div>
@@ -243,10 +288,19 @@ export async function DefaultPostLayout({
           ) : null}
 
           <div className="flex gap-8 lg:gap-12">
-            {hasToc ? (
+            {showSidebar ? (
               <aside className="order-last hidden w-64 shrink-0 lg:block">
-                <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
-                  <Toc headings={post.headings!} title={t("onThisPage")} />
+                <div className="sticky top-24 flex max-h-[calc(100vh-7rem)] flex-col gap-8 overflow-y-auto">
+                  {hasToc ? (
+                    <Toc headings={post.headings!} title={t("onThisPage")} />
+                  ) : null}
+                  {moreOnTopic.length > 0 ? (
+                    <MoreOnTopic
+                      title={moreTitle}
+                      items={moreOnTopic}
+                      footer={moreFooter}
+                    />
+                  ) : null}
                 </div>
               </aside>
             ) : null}
@@ -266,6 +320,10 @@ export async function DefaultPostLayout({
             </div>
           </div>
 
+          {showAuthors && authors.length > 0 ? (
+            <AuthorBio authors={authorBioItems} label={t("writtenBy")} />
+          ) : null}
+
           <footer className="border-border/60 mt-12 flex flex-col items-start gap-4 border-t py-8 sm:flex-row sm:items-center sm:justify-between">
             <Link
               href="/blog"
@@ -273,17 +331,18 @@ export async function DefaultPostLayout({
             >
               {t("backToList")}
             </Link>
-            {display.post.share ? (
+            {share?.enabled ? (
               <ShareButtons
                 url={shareUrl}
                 title={title}
+                networks={share.networks}
                 labels={{
-                  label: t("share.label"),
-                  x: t("share.x"),
-                  linkedin: t("share.linkedin"),
-                  facebook: t("share.facebook"),
-                  copy: t("share.copy"),
-                  copied: t("share.copied"),
+                  label: tCommon("share.label"),
+                  x: tCommon("share.x"),
+                  linkedin: tCommon("share.linkedin"),
+                  facebook: tCommon("share.facebook"),
+                  copy: tCommon("share.copy"),
+                  copied: tCommon("share.copied"),
                 }}
               />
             ) : null}

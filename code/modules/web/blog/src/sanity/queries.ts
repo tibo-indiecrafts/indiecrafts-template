@@ -395,6 +395,37 @@ export const categoriesForLocaleQuery = defineQuery(`
   }
 `);
 
+/**
+ * Top-level categories (no `parent`) with their sub-categories, for the blog
+ * category nav bar. Locale-filtered; hidden/unpublished categories are dropped
+ * at both levels. A category with children renders as a dropdown; without, a
+ * plain link.
+ */
+export const categoryNavQuery = defineQuery(`
+  *[_type == "category"
+    && coalesce(language, "en") == $locale
+    && defined(slug.current)
+    && !defined(parent)
+    && seo.hideFromDiscovery != true
+    && seo.unpublished != true
+  ] | order(title asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    "children": *[_type == "category"
+      && parent._ref == ^._id
+      && coalesce(language, "en") == $locale
+      && defined(slug.current)
+      && seo.hideFromDiscovery != true
+      && seo.unpublished != true
+    ] | order(title asc) {
+      _id,
+      title,
+      "slug": slug.current
+    }
+  }
+`);
+
 export const categoryBySlugQuery = defineQuery(`
   *[_type == "category"
     && slug.current == $slug

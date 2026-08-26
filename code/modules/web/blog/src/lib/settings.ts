@@ -27,13 +27,15 @@ export function resolveBlogDisplay(
       categories: taxonomy.categories && on(t.categories),
       tags: taxonomy.tags && on(t.tags),
       authors: taxonomy.authors && on(t.authors),
+      // The category nav needs categories on (capability + editor) AND its own
+      // toggle — no point showing a category bar when categories are hidden.
+      categoryNav: taxonomy.categories && on(t.categories) && on(t.categoryNav),
     },
     post: {
       date: on(p.date),
       readingTime: on(p.readingTime),
       tableOfContents: on(p.tableOfContents),
       relatedPosts: on(p.relatedPosts),
-      share: on(p.share),
       readingProgress: on(p.readingProgress),
     },
     frontpage: { featuredHero: on(raw?.frontpage?.featuredHero) },

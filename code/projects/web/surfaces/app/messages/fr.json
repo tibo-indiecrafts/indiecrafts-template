@@ -4,6 +4,14 @@
     "subtitle": "Coquille applicative — i18n, consentement et mises à jour câblés.",
     "legalLink": "Mentions légales"
   },
+  "share": {
+    "label": "Partager cette page",
+    "x": "Partager sur X",
+    "linkedin": "Partager sur LinkedIn",
+    "facebook": "Partager sur Facebook",
+    "copy": "Copier le lien",
+    "copied": "Lien copié"
+  },
   "consent": {
     "title": "Cookies et confidentialité",
     "body": "Nous utilisons le stockage local pour faire fonctionner l'application. Choisissez ce que vous autorisez.",

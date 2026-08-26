@@ -108,6 +108,11 @@ export default defineType({
               "Auteur·rice·s",
               "Signature d'auteur·rice + page /author.",
             ),
+            toggle(
+              "categoryNav",
+              "Barre de navigation par catégorie",
+              "Barre horizontale des catégories en haut des pages du blog, avec un menu déroulant des sous-catégories.",
+            ),
           ],
         }),
         defineField({
@@ -120,11 +125,6 @@ export default defineType({
             toggle("readingTime", "Temps de lecture"),
             toggle("tableOfContents", "Sommaire (table des matières)"),
             toggle("relatedPosts", "« À lire ensuite » (articles liés)"),
-            toggle(
-              "share",
-              "Boutons de partage",
-              "Partage vers X, LinkedIn, Facebook + copier le lien.",
-            ),
             toggle(
               "readingProgress",
               "Barre de progression de lecture",

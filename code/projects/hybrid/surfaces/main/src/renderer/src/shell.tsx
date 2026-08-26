@@ -1,6 +1,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useIntl } from "react-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { ShareButtons } from "@indiecrafts/packages-web-ui-components/web/layout/ShareButtons";
 import { useVersionCheck } from "@indiecrafts/packages-web-version/use-version-check";
 import { VERSION_ENDPOINT } from "@indiecrafts/packages-shared-version";
 import {
@@ -78,6 +79,27 @@ export function LegalLinks() {
   );
 }
 
+/** Share the marketing site (the shareable public URL) — a Home section. Hidden when no
+ *  website origin is configured, since there is nothing public to share. */
+export function ShareRow() {
+  const t = useIntl();
+  if (!websiteUrl) return null;
+  return (
+    <ShareButtons
+      url={websiteUrl}
+      title={t.formatMessage({ id: "app.title" })}
+      labels={{
+        label: t.formatMessage({ id: "share.label" }),
+        x: t.formatMessage({ id: "share.x" }),
+        linkedin: t.formatMessage({ id: "share.linkedin" }),
+        facebook: t.formatMessage({ id: "share.facebook" }),
+        copy: t.formatMessage({ id: "share.copy" }),
+        copied: t.formatMessage({ id: "share.copied" }),
+      }}
+    />
+  );
+}
+
 function ConsentBannerGate({ mode }: { mode: ConsentMode | null }) {
   const t = useIntl();
   const record = useRecord(consentStore);
@@ -134,8 +156,9 @@ function ConsentBannerGate({ mode }: { mode: ConsentMode | null }) {
 function LegalReacceptGate({ locale }: { locale: Locale }) {
   const t = useIntl();
   const record = useRecord(legalStore);
+  const consentRecord = useRecord(consentStore);
   // Suppressed while the consent banner is up, so only one bottom popup shows.
-  const consentPending = features.requireConsent && !useRecord(consentStore);
+  const consentPending = features.requireConsent && !consentRecord;
   if (consentPending || !needsReacceptance(record, policyVersion)) return null;
 
   return (

@@ -9,7 +9,14 @@ Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers +
 - **Nested platform → domain (`src/<platform>/<domain>/`).** Web renderers live in `src/web/<domain>/` —
   `content/` (callout, prose, custom-html, code-block) · `media/` (gallery, gallery-carousel,
   featured-media) · `collection/` (card-list, stat-list, step-list, accordion-list, person-list,
-  quote-list, feature-grid, pricing) · `layout/` (module-section, cta, hero) · `form/` (shared form
+  quote-list, feature-grid, pricing, more-on-topic — a "more on this topic" sidebar list of
+  `{title, href}` links · author-bio — an end-of-article "Written by" card) · `layout/`
+  (module-section, cta, hero, category-nav — a top-level category bar with sub-category dropdowns
+  over resolved `{title, href}` items · share-buttons — X/LinkedIn/Facebook + copy-link row over
+  an optional `url` (omitted → resolves the current page URL client-side, for client-only surfaces
+  like the app/Electron renderer) + `title` + an optional `networks` filter (editor-driven, from the
+  site's `siteSettings.share`); intent URLs from `@indiecrafts/packages-shared-utils/share` so native
+  can reuse them) · `form/` (shared form
   controls — PhoneInput, TurnstileWidget, Newsletter, Waitlist, LeadMagnet, DataRequestForm). Web infra (`registry.tsx`,
   `portable-text-components.tsx`, story helpers) sits at `src/web/`. `src/shared/types.ts` is the
   **platform-agnostic contract** (block types). `src/native/` is **reserved** for a future

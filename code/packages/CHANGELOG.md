@@ -12,8 +12,49 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Changed
+
+- **`@indiecrafts/packages-web-ui-components` — `ShareButtons` gains a `networks` prop.** An optional
+  `{ x, linkedin, facebook, copyLink }` filter (unset = shown) hides individual controls, driven by
+  the editor's Sanity `siteSettings.share` choices. Backward-compatible — omit it to show all.
+- **`@indiecrafts/packages-web-ui-components` — `ShareButtons` `url` is now optional.** When omitted
+  it resolves the current page URL on the client (`window.location.href`, deferred to an effect so SSR
+  and the first client render match); the website/blog still pass an explicit server-resolved `url`
+  (no flash). **Why:** lets client-only surfaces (the app, the Electron renderer) reuse the same share
+  row without threading a server pathname through.
+
+### Fixed
+
+- **`@indiecrafts/packages-web-version` — leaked `online` listener.** `useVersionCheck`
+  added a `window` `online` listener, but its effect cleanup removed only the interval and
+  the `visibilitychange` listener — so every mount leaked one `online` listener. Cleanup now
+  removes all three. Also moved `UpdatePrompt`'s latest-value ref write out of render into an
+  effect, so render stays pure under React 19 concurrency.
+- **`@indiecrafts/packages-web-ui-components` — `TurnstileWidget` load listener.** The
+  Turnstile-script `load` listener is now registered `{ once: true }`, so it self-removes after
+  firing instead of lingering when the effect unmounts before the script loads.
+
 ### Added
 
+- **`@indiecrafts/packages-web-ui-components` — three new blocks for the blog: `CategoryNav`,
+  `AuthorBio`, `MoreOnTopic`.** `CategoryNav` (`web/layout/`) — a top-level category bar with
+  sub-category dropdowns (shadcn `NavigationMenu`). `AuthorBio` (`web/collection/`) — an
+  end-of-article "Written by" card. `MoreOnTopic` (`web/collection/`) — a compact "more on this
+  topic" sidebar list + optional "see all" footer. All data-driven over resolved `{ title, href }`
+  items (plain `<a>`, like the other renderers), each Storybook-documented (`.stories.tsx` + `.md`);
+  the blog composes them.
+- **`@indiecrafts/packages-shared-ui-icons` — brand marks are now GENERATED.** `src/shared/brands.ts`
+  is built from `brands.json` (our name → a `simple-icons` slug, or an inline `{title,hex,path}` for a
+  mark simple-icons lacks — e.g. LinkedIn) via `pnpm brands:build`; `brands:check` guards drift in CI
+  (mirrors `tokens:build`/`tokens:check`). No hand-copied SVG paths; adding a brand is one config line.
+  Regenerating picked up the official (updated) X and Facebook marks. Runtime stays dependency-free —
+  `simple-icons` is a build-only devDependency and the shape/exports are unchanged (`BrandIcon`,
+  `ShareButtons`, `SocialFollow`, native all keep working).
+- **`ShareButtons` moved to `@indiecrafts/packages-web-ui-components` (`web/layout/`) + intent logic to
+  `@indiecrafts/packages-shared-utils/share`.** The X/LinkedIn/Facebook + copy-link row is now a
+  shared, Storybook-documented block over a `url`+`title` — the blog post mounts it inline, and the
+  website footer mounts it site-wide. The platform-agnostic `shareTargets(url, title)` (no DOM) is a
+  new shared-utils export, so a native surface can feed the same targets to the OS share sheet.
 - **`@indiecrafts/packages-shared-config` — the settings registry (`src/shared/settings.ts`).**
   New `SETTINGS` map: version-controlled defaults + a per-key `[min, max]` bound for 8
   worker-read operational knobs (5 retention windows, `ops.sla_warning_days`, 2 link TTLs),

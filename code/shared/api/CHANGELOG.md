@@ -5,6 +5,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **`pnpm dev` local fleet no longer collides (covers `api`/`agent`/`cron`/`workers`).** All four
+  bare workers ran `wrangler dev` on the default inspector port 9229, so only one could start and
+  the rest crashed with `Address already in use`, aborting the whole `turbo run dev`. Each worker's
+  `dev` script now pins a distinct `--port` (8787-8790) and `--inspector-port` (9229-9232), and the
+  root `pnpm dev` is scoped to `website + api + agent + cron + workers` (the `admin`/`app`/`hybrid`
+  surfaces are run individually). Logged once here for the whole worker fleet.
+
 ### Changed
 
 - **DB management: explicit `local`/`dev`/`staging`/`prod` tiers + complete, R2-gated scripts.**

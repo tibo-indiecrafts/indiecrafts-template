@@ -37,6 +37,7 @@ export function SocialFollow({
               href={l.url}
               target="_blank"
               rel="me noopener noreferrer"
+              aria-label={l.label}
               style={{ "--brand": BRANDS[l.brand].hex } as CSSProperties}
               className="text-muted-foreground hover:bg-muted focus-visible:ring-ring inline-flex size-10 items-center justify-center rounded-md transition-colors hover:[color:var(--brand)] focus-visible:[color:var(--brand)] focus-visible:ring-2 focus-visible:outline-none motion-reduce:transition-none"
             >

@@ -8,6 +8,7 @@ import { translationAlternates } from "@/lib/seo/translations";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { SeriesDetail } from "@indiecrafts/modules-web-blog/user-interface/series/sections/SeriesDetail";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
@@ -91,7 +92,7 @@ export default async function SeriesDetailPage({ params, searchParams }: Props) 
   ];
 
   return (
-    <DefaultLayout>
+    <DefaultLayout subnav={await getCategoryNav(locale)}>
       <PageSchemas
         page={{
           ...pages.blog,

@@ -35,6 +35,25 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({ name: "description", title: "Description", type: "text" }),
+    defineField({
+      name: "parent",
+      title: "Catégorie parente",
+      type: "reference",
+      to: [{ type: "category" }],
+      description:
+        "Vide = catégorie principale (apparaît directement dans la barre du blog). Choisissez une parente pour en faire une sous-catégorie, listée dans le menu déroulant de la parente.",
+      options: {
+        // Même langue uniquement, et jamais elle-même (pas d'auto-référence).
+        filter: ({ document }) => ({
+          filter: "language == $lang && !(_id in [$self, $draftSelf])",
+          params: {
+            lang: document?.language ?? "en",
+            self: (document?._id ?? "").replace(/^drafts\./, ""),
+            draftSelf: `drafts.${(document?._id ?? "").replace(/^drafts\./, "")}`,
+          },
+        }),
+      },
+    }),
     defineField({ name: "seo", title: "SEO & visibilité", type: "seoMeta" }),
   ],
   preview: {

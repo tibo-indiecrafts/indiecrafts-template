@@ -27,7 +27,7 @@ projects under `code/projects/`) is the whole tree. Conventions live **in-repo**
 - **`code/docs/`** — CANON (product docs): a VitePress site at the top of `code/` (sibling of `projects/ packages/ modules/`), **foldered like the code**: `shared/`, `apps/web/` (`setup/ config/ design/ seo/ features/blog/`), and `modules/ packages/ db/ infra/` stubs. **npm-isolated** — matches no pnpm-workspace glob, so it stays out (own lockfile). Run via `pnpm docs` / `pnpm docs:build`.
 - **`code/projects/web/tools/storybook/`** — the component gallery (Storybook), documenting the design-system bricks (`ui` · `ui-components` · `ui-tokens` + `announcement`/`locale-suggest` stories). A workspace member; static build. Run via `pnpm --filter @indiecrafts/web-tools-storybook storybook`.
 
-Run scripts from the repo root (`pnpm dev/build/…` → turbo → `@indiecrafts/web-surfaces-website`).
+Run scripts from the repo root. `pnpm build/tsc/lint/…` fan out via turbo; `pnpm dev` runs the local stack — the `website` (Next, :3000) + the four backend workers `api`/`agent`/`cron`/`workers` (`wrangler dev` on distinct `--port`/`--inspector-port`s so they don't collide). The other surfaces (`admin`/`app`/`hybrid`) are run individually (`pnpm --filter <pkg> dev`).
 
 > **Config split.** `.claude/` holds Claude Code **runtime** only — `agents/`, `skills/`, `settings.json` (must sit at the repo root; Claude Code magic-loads them). **App conventions are app-scoped:** [`code/projects/web/surfaces/website/.claude/CLAUDE.md`](code/projects/web/surfaces/website/.claude/CLAUDE.md) + [`code/packages/shared/ui-tokens/DESIGN.md`](code/packages/shared/ui-tokens/DESIGN.md) auto-load when you work under `code/projects/web/surfaces/website/**`. A new app lands under its platform + kind (`code/projects/<platform>/<kind>/<name>/`) with its own brief; this root stays the thin platform router.
 
@@ -46,7 +46,8 @@ Guardrails against common LLM coding mistakes — bias to caution over speed (us
 ## Commands
 
 ```bash
-pnpm dev / build / tsc / lint / format    # standard (turbo → @indiecrafts/web-surfaces-website)
+pnpm dev                                  # local stack: website (:3000) + api/agent/cron/workers (wrangler dev, ports 8787-8790 / inspectors 9229-9232)
+pnpm build / tsc / lint / format          # standard (turbo → @indiecrafts/web-surfaces-website)
 pnpm verify                               # CI gate — `turbo run verify` fans out to EVERY app (website: tsc+lint+format+contrast+react-doctor+test · workers: tsc+test · admin/mobile/hybrid: tsc) + issue-tag/scripts/canary checks
 pnpm verify:quick                         # tsc + lint — the commit hook + CI run this; rarely needed by hand
 pnpm --filter @indiecrafts/web-surfaces-website shadscan   # shadcn/ui fundamentals audit — scores UX 0–100 (62 rules); --prompt for an AI fix-plan (a website script, not a root one)

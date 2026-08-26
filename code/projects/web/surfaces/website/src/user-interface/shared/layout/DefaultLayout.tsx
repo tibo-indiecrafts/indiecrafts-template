@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cookies, headers } from "next/headers";
 import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
-import { consent, features, localeCodes, localeMap, type Locale } from "@/config";
+import { consent, features, localeCodes, localeMap, site, type Locale } from "@/config";
+import { ShareButtons } from "@indiecrafts/packages-web-ui-components/web/layout/ShareButtons";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";
 import { resolveThemeConfig, showThemeToggle, themeModes } from "@/lib/theme";
 import { getNavigation } from "@/lib/navigation";
@@ -39,9 +40,17 @@ type Props = {
   children: ReactNode;
   header?: boolean | ReactNode;
   footer?: boolean | ReactNode;
+  /** Optional bar rendered directly under the header chrome (e.g. the blog
+   *  category nav) and above the page content. */
+  subnav?: ReactNode;
 };
 
-export async function DefaultLayout({ children, header = true, footer = true }: Props) {
+export async function DefaultLayout({
+  children,
+  header = true,
+  footer = true,
+  subnav,
+}: Props) {
   // Brand logo comes from Sanity (`siteSettings`). Fetched once here (React
   // `cache()` dedupes with the layout's own `getSiteSettings` call) and passed
   // into the default Header/Footer so `Logo` stays a presentational component
@@ -88,6 +97,26 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
           localeCodes,
         );
 
+  // Site-wide "share this page" in the footer — enabled + the visible networks are
+  // editor-controlled (`siteSettings.share`, Sanity). The URL comes from the request
+  // path (`x-pathname`, set in proxy.ts), so no page threads it through.
+  const sharePathname = (await headers()).get("x-pathname") ?? "/";
+  const shareNode = settings.share.enabled ? (
+    <ShareButtons
+      url={`${site.url}${sharePathname}`}
+      title={name}
+      networks={settings.share.networks}
+      labels={{
+        label: t("share.label"),
+        x: t("share.x"),
+        linkedin: t("share.linkedin"),
+        facebook: t("share.facebook"),
+        copy: t("share.copy"),
+        copied: t("share.copied"),
+      }}
+    />
+  ) : undefined;
+
   return (
     <>
       <SkipLink />
@@ -129,6 +158,7 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
             dismissLabel={suggestCopy.dismissLabel}
           />
         ) : null}
+        {subnav}
         {children}
       </main>
       {resolveSlot(
@@ -143,6 +173,7 @@ export async function DefaultLayout({ children, header = true, footer = true }: 
           columns={nav.footerColumns}
           madeBy={settings.madeBy}
           showDoNotSell={consentMode === "opt-out"}
+          share={shareNode}
         />,
       )}
     </>

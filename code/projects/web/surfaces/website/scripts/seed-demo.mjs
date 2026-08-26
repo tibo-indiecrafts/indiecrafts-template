@@ -613,6 +613,9 @@ const buildSiteSettings = () => ({
   showLocaleSwitcher: true,
   showStructuredData: true,
   showFaq: true,
+  // Site-wide share row (footer + posts) — on, all networks shown. Editors toggle
+  // it (or hide individual networks) from Studio → Paramètres du site → Partage.
+  share: { enabled: true, x: true, linkedin: true, facebook: true, copyLink: true },
   // Footer maker credit — the indiecrafts.dev values (`image` is a live external
   // OG asset). A client can rebrand or clear it in the Studio.
   madeBy: {
@@ -754,6 +757,80 @@ const categories = [
     title: "Histoires",
     slug: slug("histoires"),
     description: "Récits de fondateurs, leçons apprises.",
+  },
+  // Sub-categories (each `parent` → a top-level category, same language) — these
+  // populate the category-nav dropdowns. Seeded in both locales.
+  {
+    _id: "cat.en.frontend",
+    _type: "category",
+    language: "en",
+    title: "Frontend",
+    slug: slug("frontend"),
+    description: "UI, accessibility, and the browser.",
+    parent: { _type: "reference", _ref: "cat.en.engineering" },
+  },
+  {
+    _id: "cat.en.backend",
+    _type: "category",
+    language: "en",
+    title: "Backend",
+    slug: slug("backend"),
+    description: "APIs, data, and infrastructure.",
+    parent: { _type: "reference", _ref: "cat.en.engineering" },
+  },
+  {
+    _id: "cat.en.design",
+    _type: "category",
+    language: "en",
+    title: "Design",
+    slug: slug("design"),
+    description: "Craft, systems, and interaction.",
+    parent: { _type: "reference", _ref: "cat.en.product" },
+  },
+  {
+    _id: "cat.en.growth",
+    _type: "category",
+    language: "en",
+    title: "Growth",
+    slug: slug("growth"),
+    description: "Acquisition, retention, and metrics.",
+    parent: { _type: "reference", _ref: "cat.en.product" },
+  },
+  {
+    _id: "cat.fr.frontend",
+    _type: "category",
+    language: "fr",
+    title: "Frontend",
+    slug: slug("frontend"),
+    description: "Interface, accessibilité et navigateur.",
+    parent: { _type: "reference", _ref: "cat.fr.engineering" },
+  },
+  {
+    _id: "cat.fr.backend",
+    _type: "category",
+    language: "fr",
+    title: "Backend",
+    slug: slug("backend"),
+    description: "API, données et infrastructure.",
+    parent: { _type: "reference", _ref: "cat.fr.engineering" },
+  },
+  {
+    _id: "cat.fr.design",
+    _type: "category",
+    language: "fr",
+    title: "Design",
+    slug: slug("design"),
+    description: "Artisanat, systèmes et interaction.",
+    parent: { _type: "reference", _ref: "cat.fr.product" },
+  },
+  {
+    _id: "cat.fr.growth",
+    _type: "category",
+    language: "fr",
+    title: "Croissance",
+    slug: slug("croissance"),
+    description: "Acquisition, rétention et métriques.",
+    parent: { _type: "reference", _ref: "cat.fr.product" },
   },
 ];
 
@@ -2256,7 +2333,6 @@ const blog = {
       readingTime: true,
       tableOfContents: true,
       relatedPosts: true,
-      share: true,
       readingProgress: true,
     },
     frontpage: { featuredHero: true },

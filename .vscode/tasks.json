@@ -126,6 +126,21 @@
       "problemMatcher": []
     },
     {
+      "label": "brands:build",
+      "detail": "regenerate brand/social marks (brands.ts) from simple-icons",
+      "type": "shell",
+      "command": "pnpm brands:build",
+      "problemMatcher": []
+    },
+    {
+      "label": "brands:check",
+      "detail": "fail if generated brand marks are stale",
+      "type": "shell",
+      "command": "pnpm brands:check",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
       "label": "lint",
       "detail": "turbo run lint (eslint)",
       "type": "shell",

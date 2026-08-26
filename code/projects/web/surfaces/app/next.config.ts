@@ -25,6 +25,8 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-web-version",
     "@indiecrafts/packages-shared-security",
     "@indiecrafts/packages-web-security-reports",
+    "@indiecrafts/packages-web-ui-components",
+    "@indiecrafts/packages-shared-ui-icons",
   ],
   async headers() {
     // Non-CSP security headers only — the proxy (src/proxy.ts) emits the

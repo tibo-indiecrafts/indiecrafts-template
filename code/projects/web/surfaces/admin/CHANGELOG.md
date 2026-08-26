@@ -12,6 +12,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **`tsc` could not resolve the security packages (broke `pnpm verify`).** `src/proxy.ts` and the
+  `csp-report` route import `@indiecrafts/packages-shared-security` and
+  `@indiecrafts/packages-web-security-reports/handle`, but `tsconfig.json` had no `paths` entries
+  for them. Added them — the brief already described these bricks as wired, and now they are.
+
 ### Added
 
 - **Settings card — edit retention/ops/TTL knobs.** New `(dashboard)/settings` page reads

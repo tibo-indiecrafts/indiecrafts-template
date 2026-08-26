@@ -240,13 +240,17 @@ export type BlogSingleton = {
  * may lack the field entirely). Resolve via `getBlogSettings`.
  */
 export type BlogDisplayRaw = {
-  taxonomy?: { categories?: boolean; tags?: boolean; authors?: boolean };
+  taxonomy?: {
+    categories?: boolean;
+    tags?: boolean;
+    authors?: boolean;
+    categoryNav?: boolean;
+  };
   post?: {
     date?: boolean;
     readingTime?: boolean;
     tableOfContents?: boolean;
     relatedPosts?: boolean;
-    share?: boolean;
     readingProgress?: boolean;
   };
   frontpage?: { featuredHero?: boolean };
@@ -259,13 +263,17 @@ export type BlogDisplayRaw = {
  * are editor-only. Produced by `getBlogSettings` / `resolveBlogDisplay`.
  */
 export type BlogDisplay = {
-  taxonomy: { categories: boolean; tags: boolean; authors: boolean };
+  taxonomy: {
+    categories: boolean;
+    tags: boolean;
+    authors: boolean;
+    categoryNav: boolean;
+  };
   post: {
     date: boolean;
     readingTime: boolean;
     tableOfContents: boolean;
     relatedPosts: boolean;
-    share: boolean;
     readingProgress: boolean;
   };
   frontpage: { featuredHero: boolean };

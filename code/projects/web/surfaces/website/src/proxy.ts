@@ -41,6 +41,9 @@ const REPORTING = {
 function withNonceRequest(request: NextRequest, nonce: string): NextRequest {
   const headers = new Headers(request.headers);
   headers.set("x-nonce", nonce);
+  // The current path, so the RSC layout can build an absolute share URL for the
+  // footer "share this page" without threading it through every page.
+  headers.set("x-pathname", request.nextUrl.pathname);
   return new NextRequest(request, { headers });
 }
 

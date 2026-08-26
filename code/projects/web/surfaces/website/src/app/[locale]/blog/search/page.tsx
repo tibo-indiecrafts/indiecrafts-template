@@ -5,6 +5,7 @@ import { isSearchEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { notFound } from "next/navigation";
 import { buildMetadata } from "@/lib/metadata";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
 import { BlogSearchForm } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogSearchForm";
 import { Breadcrumbs } from "@indiecrafts/modules-web-blog/user-interface/shared/components/Breadcrumbs";
@@ -57,7 +58,7 @@ export default async function BlogSearchPage({ params, searchParams }: Props) {
     : [];
 
   return (
-    <DefaultLayout>
+    <DefaultLayout subnav={await getCategoryNav(locale)}>
       <section
         aria-labelledby="blog-search-title"
         className="pt-6 pb-12 md:pt-8 md:pb-16"

@@ -397,6 +397,9 @@ importers:
       '@types/react':
         specifier: ^19
         version: 19.2.14
+      simple-icons:
+        specifier: ^16.28.0
+        version: 16.28.0
 
   code/packages/shared/ui-tokens:
     dependencies:
@@ -859,6 +862,9 @@ importers:
       '@indiecrafts/packages-shared-ui-fonts':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-fonts
+      '@indiecrafts/packages-shared-ui-icons':
+        specifier: workspace:*
+        version: link:../../../../packages/shared/ui-icons
       '@indiecrafts/packages-shared-ui-tokens':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-tokens
@@ -871,6 +877,9 @@ importers:
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../../../../packages/web/ui
+      '@indiecrafts/packages-web-ui-components':
+        specifier: workspace:*
+        version: link:../../../../packages/web/ui-components
       '@indiecrafts/packages-web-version':
         specifier: workspace:*
         version: link:../../../../packages/web/version
@@ -1111,6 +1120,9 @@ importers:
       '@indiecrafts/packages-shared-security':
         specifier: workspace:*
         version: link:../../../../packages/shared/security
+      '@indiecrafts/packages-shared-ui-icons':
+        specifier: workspace:*
+        version: link:../../../../packages/shared/ui-icons
       '@indiecrafts/packages-shared-ui-tokens':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-tokens
@@ -1135,6 +1147,9 @@ importers:
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../../../../packages/web/ui
+      '@indiecrafts/packages-web-ui-components':
+        specifier: workspace:*
+        version: link:../../../../packages/web/ui-components
       '@indiecrafts/packages-web-version':
         specifier: workspace:*
         version: link:../../../../packages/web/version
@@ -14612,6 +14627,10 @@ packages:
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
+
+  simple-icons@16.28.0:
+    resolution: {integrity: sha512-sQPR5AtK/ijRjou7zw7mlLp08oB6FH7i0lOy5XJ2zp9mJs/yejgiOn7KvQoe2q4YJIx6VmgUSW5AOefebPt5kg==}
+    engines: {node: '>=0.12.18'}
 
   simple-plist@1.3.1:
     resolution: {integrity: sha512-iMSw5i0XseMnrhtIzRb7XpQEXepa9xhWxGUojHBL43SIpQuDQkh3Wpy67ZbDzZVr6EKxvwVChnVpdl8hEVLDiw==}
@@ -32033,6 +32052,8 @@ snapshots:
   signal-exit@3.0.7: {}
 
   signal-exit@4.1.0: {}
+
+  simple-icons@16.28.0: {}
 
   simple-plist@1.3.1:
     dependencies:

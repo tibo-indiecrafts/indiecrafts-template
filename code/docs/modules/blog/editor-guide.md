@@ -152,16 +152,29 @@ The same **Blog → Mise en page** document holds an **Affichage du blog** group
 | **Catégories, tags, auteur·rice·s** | Catégories                      | Hides category chips **and** the `/blog/category` pages (dropped from the sitemap + AI files). |
 |                                     | Tags                            | Hides tag chips **and** the `/blog/tag` pages.                                                 |
 |                                     | Auteur·rice·s                   | Hides author bylines **and** the `/author` pages.                                              |
+|                                     | Barre de navigation par catégorie | Hides the category nav bar (top-level categories + sub-category dropdowns) under the header on blog pages. |
 | **Page article**                    | Date de publication             | Hides the published date on a post.                                                            |
 |                                     | Temps de lecture                | Hides the "N min" reading estimate.                                                            |
 |                                     | Sommaire                        | Hides the table of contents.                                                                   |
 |                                     | À lire ensuite                  | Hides the related-posts grid.                                                                  |
-|                                     | Boutons de partage              | Hides the X / LinkedIn / Facebook / copy-link row in the post footer.                          |
 |                                     | Barre de progression de lecture | Hides the thin scroll-progress bar at the top of a post.                                       |
 | **Accueil du blog**                 | Grille « à la une »             | Swaps the featured mosaic for a simple grid.                                                   |
 | **Cartes d'article**                | Extrait                         | Hides the teaser under each card title.                                                        |
 
 **Taxonomy toggles remove routes, not just chips.** Turning **Catégories** off returns 404 on every `/blog/category/...` URL and drops them from the sitemap and `/llms.txt`. It stays off until you turn it back on — no deploy either way. A toggle only appears when its capability is compiled in (`features.blogTaxonomy.*`); see [`blog-architecture.md`](./blog-architecture.md).
+
+**Share buttons live in Site settings now.** The X / LinkedIn / Facebook / copy-link row (post footer **and** the site footer) is controlled site-wide in **Paramètres du site → Partage** — one master toggle plus a checkbox per network — not per the blog. Share is a shared setting, not blog chrome. See [editing-seo-in-sanity](../../apps/web/seo/editing-seo-in-sanity).
+
+### 6.2 Category navigation & sub-categories
+
+The **Barre de navigation par catégorie** toggle (above) shows a horizontal bar of your **top-level** categories under the header on every blog page. To nest categories, open a category document and set its **Catégorie parente**:
+
+- **Empty parent** → a top-level category (a link, or a dropdown if it has children).
+- **A parent set** → a sub-category: it leaves the top bar and appears inside its parent's dropdown. The dropdown also gets an "All {parent}" link to the parent's own listing.
+
+Rules: the parent must be in the **same language**; a category can't be its own parent; nesting is one level (a sub-category's children are not shown). The bar needs **Catégories** on, and each category page stays the existing `/blog/category/<slug>`.
+
+The **post page sidebar** also carries a "More on {category}" block (the post's related articles) beneath the table of contents, and a "Written by" author card follows the article body — both follow the **Catégories** / **Auteur·rice·s** / **À lire ensuite** toggles.
 
 ---
 

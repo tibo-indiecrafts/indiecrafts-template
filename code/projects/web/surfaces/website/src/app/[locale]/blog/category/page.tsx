@@ -4,6 +4,7 @@ import { requireTaxonomyRoute } from "@indiecrafts/modules-web-blog/lib/route-ga
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { CategoryListing } from "@indiecrafts/modules-web-blog/user-interface/category/sections/CategoryListing";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import { getTaxonomyPages } from "@/lib/system-pages";
@@ -35,7 +36,7 @@ export default async function CategoryIndexPage({ params }: Props) {
   const c = copy.category;
 
   return (
-    <DefaultLayout>
+    <DefaultLayout subnav={await getCategoryNav(locale)}>
       <PageSchemas page={pages.category} locale={locale} />
       <CategoryListing
         categories={categories}

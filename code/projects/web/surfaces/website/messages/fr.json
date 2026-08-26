@@ -133,7 +133,15 @@
     "next": "Suivant",
     "dismiss": "Fermer",
     "copy": "Copier",
-    "copied": "Copié"
+    "copied": "Copié",
+    "share": {
+      "label": "Partager cette page",
+      "x": "Partager sur X",
+      "linkedin": "Partager sur LinkedIn",
+      "facebook": "Partager sur Facebook",
+      "copy": "Copier le lien",
+      "copied": "Lien copié"
+    }
   },
   "cookies": {
     "learnMore": "En savoir plus",
@@ -224,6 +232,11 @@
       "backToList": "← Tous les articles",
       "noPosts": "Aucun article pour le moment. Revenez bientôt.",
       "onThisPage": "Sur cette page",
+      "writtenBy": "Écrit par",
+      "moreOnTopic": "Plus sur {topic}",
+      "moreReading": "À lire aussi",
+      "allInCategory": "Tout {category}",
+      "categoryNav": { "label": "Catégories du blog", "all": "Tout" },
       "related": "À lire ensuite",
       "relatedSubheading": "D'autres articles qui pourraient vous plaire.",
       "heroLabel": "Derniers articles",
@@ -243,14 +256,6 @@
         "prompt": "Saisissez un mot ou deux pour rechercher dans tous les articles.",
         "noResults": "Aucun article ne correspond à « {query} ». Essayez un autre mot.",
         "resultsFor": "{count, plural, one {# résultat} other {# résultats}} pour « {query} »"
-      },
-      "share": {
-        "label": "Partager",
-        "x": "Partager sur X",
-        "linkedin": "Partager sur LinkedIn",
-        "facebook": "Partager sur Facebook",
-        "copy": "Copier le lien",
-        "copied": "Lien copié"
       },
       "series": {
         "navLabel": "Dans cette série",

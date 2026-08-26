@@ -121,6 +121,11 @@ export type SiteSettings = {
   robots: { noindex?: boolean; nofollow?: boolean };
   verification: { google?: string; bing?: string };
   analytics: { googleAnalyticsId?: string; requireCookieConsent?: boolean };
+  /** Site-wide share row (footer + blog posts) — master enable + which networks show. */
+  share: {
+    enabled: boolean;
+    networks: { x: boolean; linkedin: boolean; facebook: boolean; copyLink: boolean };
+  };
   globalSchemas: GlobalSchemaEntry[];
   /** Which color-theme modes the site offers (overrides the `themeConfig` code default). */
   themeModes?: { light?: boolean; dark?: boolean; forced?: string };
@@ -156,6 +161,10 @@ const EMPTY_SETTINGS: SiteSettings = {
   robots: {},
   verification: {},
   analytics: {},
+  share: {
+    enabled: true,
+    networks: { x: true, linkedin: true, facebook: true, copyLink: true },
+  },
   globalSchemas: [],
 };
 
@@ -323,6 +332,16 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
       analytics: {
         googleAnalyticsId: data.analytics?.googleAnalyticsId ?? undefined,
         requireCookieConsent: data.analytics?.requireCookieConsent ?? undefined,
+      },
+      // Unset toggle = shown (matches the schema `initialValue: true`).
+      share: {
+        enabled: data.share?.enabled ?? true,
+        networks: {
+          x: data.share?.x ?? true,
+          linkedin: data.share?.linkedin ?? true,
+          facebook: data.share?.facebook ?? true,
+          copyLink: data.share?.copyLink ?? true,
+        },
       },
       globalSchemas: normalizeSchemas(data.globalSchemas),
       themeModes: data.themeModes

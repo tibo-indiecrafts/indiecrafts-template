@@ -53,6 +53,7 @@ Doc title in the desk: **Paramètres du site (SEO)**. Read by `getSiteSettings()
 | **Indexation du site** (`robots`)                    | `noindex` / `nofollow` applied to **every page** — one switch to keep a staging/holding site out of search |
 | **Vérification Google / Bing** (`verification`)      | Search Console `<meta>` tags (`google` + `msvalidate.01`)                                                  |
 | **Analytics & cookies** (`analytics`)                | GA id + the cookie-consent banner toggle — see [Analytics](./analytics.md)                                 |
+| **Partage** (`share`)                                | the site-wide share row (site footer **and** blog posts) — a master on/off plus a checkbox per network (X / LinkedIn / Facebook / copy-link). One shared setting, not blog-owned |
 
 ## How it reaches the page
 

@@ -19,6 +19,31 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **`DefaultLayout` gains a `subnav` slot; blog pages mount the category bar.** A new optional
+  `subnav` renders directly under the header chrome, above the page. Every blog + author page passes
+  `subnav={await getCategoryNav(locale)}`, so the category nav (top-level categories + sub-category
+  dropdowns) appears across the blog surface. New `pages.blog` message keys (`writtenBy`,
+  `moreOnTopic`, `moreReading`, `allInCategory`, `categoryNav.*`). The demo seed adds 8 sub-categories
+  (both locales) so the dropdowns have content.
+- **Site-wide "share this page" — an editor-controlled Sanity setting.** `proxy.ts` sets an
+  `x-pathname` header so `DefaultLayout` builds the absolute page URL server-side and renders the
+  shared `ShareButtons` (X / LinkedIn / Facebook / copy-link) in the footer on every page — no
+  per-page wiring, works without JS. **Enabled + the visible networks are editor-controlled in
+  Sanity** — `siteSettings.share` (Studio → Paramètres du site → Partage): a master toggle plus a
+  per-network checkbox each. The same setting also gates the share row under blog posts (the app
+  route injects it), so **share is one shared setting, not blog-owned** — the old `features.share`
+  code flag and the blog's `display.post.share` toggle are both gone. Copy is the single shared
+  `common.share.*` (both locales; the duplicate `pages.blog.share` was removed).
+  The blog post keeps its own richer inline share too.
+
+### Fixed
+
+- **Social follow links had no accessible name (a11y).** Each icon-only `<a>` in `SocialFollow`
+  now carries `aria-label={l.label}` (the brand name), so a screen reader announces "X",
+  "LinkedIn", … instead of an unlabeled link.
+
+### Added
+
 - **Documented the service-binding hardening for the internal `/v1/events` forwarders.** The
   `wrangler.toml` `[[services]]` stub now spells out that the four server-only forwarders
   (security-reports · consent-log · session-log · security-events) call `API_URL` over public HTTPS,

@@ -40,6 +40,7 @@ export default defineType({
     { name: "display", title: "Affichage & thème" },
     { name: "verification", title: "Vérification Google / Bing" },
     { name: "analytics", title: "Analytics & cookies" },
+    { name: "share", title: "Partage" },
   ],
   fields: [
     // ── Identity ───────────────────────────────────────────────
@@ -403,6 +404,55 @@ export default defineType({
       description:
         "Émet le balisage FAQ que Google peut afficher. Décoche pour le retirer sans masquer la FAQ visible sur la page.",
       initialValue: true,
+    }),
+
+    // ── Share buttons (site-wide: footer + posts) ──────────────
+    defineField({
+      name: "share",
+      title: "Boutons de partage",
+      type: "object",
+      group: "share",
+      description:
+        "La rangée de partage affichée dans le pied de page et sous chaque article (X, LinkedIn, Facebook, copier le lien).",
+      options: { columns: 2 },
+      fields: [
+        defineField({
+          name: "enabled",
+          title: "Afficher les boutons de partage",
+          type: "boolean",
+          description:
+            "Décoche pour masquer le partage partout (pied de page et articles). Vide = affiché.",
+          initialValue: true,
+        }),
+        defineField({
+          name: "x",
+          title: "X (Twitter)",
+          type: "boolean",
+          description: "Vide = affiché.",
+          initialValue: true,
+        }),
+        defineField({
+          name: "linkedin",
+          title: "LinkedIn",
+          type: "boolean",
+          description: "Vide = affiché.",
+          initialValue: true,
+        }),
+        defineField({
+          name: "facebook",
+          title: "Facebook",
+          type: "boolean",
+          description: "Vide = affiché.",
+          initialValue: true,
+        }),
+        defineField({
+          name: "copyLink",
+          title: "Copier le lien",
+          type: "boolean",
+          description: "Le bouton « copier le lien ». Vide = affiché.",
+          initialValue: true,
+        }),
+      ],
     }),
 
     // ── Footer maker credit ────────────────────────────────────

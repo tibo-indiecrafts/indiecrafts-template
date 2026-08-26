@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev --env dev",
+    "dev": "wrangler dev --env dev --port 8789 --inspector-port 9231",
     "cf-typegen": "wrangler types",
     "tsc": "tsc --noEmit",
     "test": "vitest run",

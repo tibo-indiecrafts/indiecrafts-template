@@ -5,6 +5,14 @@
     "toggleTheme": "Toggle theme",
     "primary": "Primary action"
   },
+  "share": {
+    "label": "Share",
+    "x": "Share on X",
+    "linkedin": "Share on LinkedIn",
+    "facebook": "Share on Facebook",
+    "copy": "Copy link",
+    "copied": "Link copied"
+  },
   "auth": {
     "signedIn": "You are signed in.",
     "signOut": "Sign out",

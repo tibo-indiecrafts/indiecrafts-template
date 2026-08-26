@@ -12,6 +12,7 @@ import { localizedPathname } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { BlogHero } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/BlogHero";
 import { ExploreCategories } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/ExploreCategories";
 import { ExploreTags } from "@indiecrafts/modules-web-blog/user-interface/blog/sections/ExploreTags";
@@ -95,7 +96,7 @@ export default async function BlogPage({ params }: Props) {
   if (blog?.seo?.unpublished) notFound();
 
   return (
-    <DefaultLayout>
+    <DefaultLayout subnav={await getCategoryNav(locale)}>
       <PageSchemas page={pages.blog} locale={locale} />
       {posts.length === 0 ? (
         <BlogListing

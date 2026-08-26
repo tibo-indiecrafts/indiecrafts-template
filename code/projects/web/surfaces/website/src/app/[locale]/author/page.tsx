@@ -5,6 +5,7 @@ import { requireTaxonomyRoute } from "@indiecrafts/modules-web-blog/lib/route-ga
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { AuthorListing } from "@indiecrafts/modules-web-blog/user-interface/author/sections/AuthorListing";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import { getTaxonomyPages } from "@/lib/system-pages";
@@ -32,7 +33,7 @@ export default async function AuthorIndexPage({ params }: Props) {
   const c = copy.author;
 
   return (
-    <DefaultLayout>
+    <DefaultLayout subnav={await getCategoryNav(locale)}>
       <PageSchemas page={pages.author} locale={locale} />
       <AuthorListing
         authors={authors}

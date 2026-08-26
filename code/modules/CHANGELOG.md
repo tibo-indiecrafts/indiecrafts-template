@@ -15,6 +15,20 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **blog — share is no longer blog-owned (removed `display.post.share`).** The per-post share row is
+  gated by the app's shared `siteSettings.share` setting, injected into `DefaultPostLayout` as a
+  `share` prop; the blog no longer carries a share display toggle. Share copy now reads the shared
+  `common.share.*` namespace (was `pages.blog.share`), so a host app must provide `common.share.*`.
+  **Why:** share is a cross-cutting site setting, not blog chrome.
+- **blog — top category navigation with sub-category dropdowns.** A category `parent`
+  reference (self-referential) turns any category into a sub-category. A `getCategoryNav(locale)`
+  server helper (`lib/category-nav.ts`, gated by the new `blog.display.categoryNav` toggle) fetches
+  them via `categoryNavQuery` and returns the ui-components `CategoryNav` under the header on every
+  blog page — top-level categories, each with children opening a dropdown — via `DefaultLayout`'s
+  new `subnav` slot.
+- **blog — end-of-article author bio + sidebar "More on {topic}".** The post layout now composes
+  the ui-components `AuthorBio` ("Written by" card, after the body) and `MoreOnTopic` (a compact
+  "More on {category}" related-links block under the TOC in the sidebar).
 - **contact — a new `@indiecrafts/contact` module (contact form).** Submit engine (`submit()`) that
   validates and writes a `contactMessage` doc, then fires two best-effort emails: a "we got your
   message" acknowledgement to the sender and an owner alert that carries the message body with
@@ -24,6 +38,13 @@ Changed · Deprecated · Removed · Fixed**.
   configured on the shared `emailStrings` singleton (`contactConfirm` + `contactOwner`). _Why:_ the
   template had newsletter/waitlist capture blocks but no way for a visitor to send a message and get
   an acknowledgement. Modeled on `@indiecrafts/waitlist`.
+
+### Fixed
+
+- **blog — series "Part N of M" rendered a raw translation key.** `DefaultPostLayout` passed
+  `t("series.partOf")` — next-intl formats the message and errors on the missing `{n}`/`{total}`
+  params, printing the key. `SeriesNav` interpolates those itself, so it now receives the raw
+  template via `t.raw("series.partOf")`.
 
 ### Changed
 

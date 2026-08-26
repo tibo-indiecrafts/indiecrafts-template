@@ -11,6 +11,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **Share is a shared Sanity setting (`editing-seo-in-sanity.md` + blog `editor-guide.md`).** Documents
+  the new **Paramètres du site → Partage** group (master toggle + per-network checkboxes) that drives the
+  share row in the site footer and under blog posts; removes the stale blog `Boutons de partage` display
+  toggle row (share is now shared, not blog-owned).
+- **ui-icons — brand marks are generated (`ui-icons.md`).** Notes that `brands.ts` is built from
+  `brands.json` + `simple-icons` via `pnpm brands:build` (`brands:check` in CI), not hand-edited.
+- **Blog editor guide — category navigation & sub-categories (§6.2).** Documents the new
+  `Barre de navigation par catégorie` display toggle and the category `Catégorie parente` field
+  that turns a category into a sub-category (nav dropdown), plus the post-page author-bio card and
+  "More on {topic}" sidebar block (`modules/blog/editor-guide.md`).
 - **Local development page + sidebar.** New `shared/architecture/local-development.md` — the one-page
   local flow: `pnpm db:migrate:all:local` → `pnpm dev` (D1 + KV in miniflare, no real IDs), the four
   data stores' local behaviour (Sanity stays remote), the `API_URL=http://localhost:8787` website↔api

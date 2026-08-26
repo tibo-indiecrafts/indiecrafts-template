@@ -3,7 +3,8 @@
     "title": "indiecrafts",
     "subtitle": "Mobile shell — theme, i18n and status pages wired.",
     "cta": "Primary action",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "share": "Share"
   },
   "auth": {
     "title": "Sign in",

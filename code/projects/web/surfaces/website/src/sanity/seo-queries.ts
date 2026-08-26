@@ -151,6 +151,7 @@ export const siteSettingsQuery = defineQuery(`
     robots,
     verification,
     analytics{ googleAnalyticsId, requireCookieConsent },
+    share{ enabled, x, linkedin, facebook, copyLink },
     themeModes,
     showLocaleSwitcher,
     showStructuredData,

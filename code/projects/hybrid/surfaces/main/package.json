@@ -31,6 +31,8 @@
     "@indiecrafts/packages-shared-query": "workspace:*",
     "@indiecrafts/packages-shared-version": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-web-ui-components": "workspace:*",
+    "@indiecrafts/packages-shared-ui-icons": "workspace:*",
     "@indiecrafts/packages-web-version": "workspace:*",
     "@tanstack/react-query": "^5.66.0",
     "react": "19.2.8",

@@ -5,6 +5,14 @@
     "toggleTheme": "Changer de thème",
     "primary": "Action principale"
   },
+  "share": {
+    "label": "Partager",
+    "x": "Partager sur X",
+    "linkedin": "Partager sur LinkedIn",
+    "facebook": "Partager sur Facebook",
+    "copy": "Copier le lien",
+    "copied": "Lien copié"
+  },
   "auth": {
     "signedIn": "Vous êtes connecté.",
     "signOut": "Se déconnecter",

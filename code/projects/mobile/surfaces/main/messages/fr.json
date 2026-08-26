@@ -3,7 +3,8 @@
     "title": "indiecrafts",
     "subtitle": "Coquille mobile — thème, i18n et pages d'état câblés.",
     "cta": "Action principale",
-    "signIn": "Se connecter"
+    "signIn": "Se connecter",
+    "share": "Partager"
   },
   "auth": {
     "title": "Se connecter",

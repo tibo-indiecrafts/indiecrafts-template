@@ -4,6 +4,14 @@
     "subtitle": "App shell — i18n, consent and version prompts wired.",
     "legalLink": "Legal"
   },
+  "share": {
+    "label": "Share this page",
+    "x": "Share on X",
+    "linkedin": "Share on LinkedIn",
+    "facebook": "Share on Facebook",
+    "copy": "Copy link",
+    "copied": "Link copied"
+  },
   "consent": {
     "title": "Cookies & privacy",
     "body": "We use on-device storage to run the app. Choose what to allow.",

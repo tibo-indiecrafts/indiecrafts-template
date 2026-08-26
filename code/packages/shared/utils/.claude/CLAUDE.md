@@ -1,7 +1,8 @@
 # @indiecrafts/packages-shared-utils — pure helpers
 
 Auto-loads under `code/packages/shared/utils/**`. The leaf brick: `cn` · slugify · video-embed ·
-format-date · error-message · filename. Area rules → `../../../.claude/CLAUDE.md`.
+format-date · error-message · filename · share (`shareTargets(url,title)` → X/LinkedIn/Facebook
+intent URLs — surface-agnostic, so native can reuse them). Area rules → `../../../.claude/CLAUDE.md`.
 
 **Stack:** TypeScript. Framework-agnostic helpers (cn, slugify, parsers).
 

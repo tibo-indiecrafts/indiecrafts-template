@@ -12,8 +12,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **`tsc` could not resolve the security packages (broke `pnpm verify`).** `src/proxy.ts` and the
+  `csp-report` route import `@indiecrafts/packages-shared-security` and
+  `@indiecrafts/packages-web-security-reports/handle`, but `tsconfig.json` lacked the matching
+  `paths` entries (added on the website during the CSP-report work, never here). Added them, so
+  the app type-checks again.
+
 ### Added
 
+- **Share this page — a share row on the home screen.** `src/app/[locale]/page.tsx` mounts the shared
+  `ShareButtons` (`@indiecrafts/packages-web-ui-components/web/layout/ShareButtons`) with no `url`, so
+  it resolves the current page URL client-side. Adds the `ui-components`/`ui-icons` deps + `transpilePackages`
+  + tsconfig `paths`, and new `share.*` copy (`messages/{en,fr}.json`). **Why:** parity with the website's
+  site-wide share (share on all surfaces except admin).
 - **Proxy-set, per-request nonce CSP — `CSP_MODE`.** `src/proxy.ts` generates one nonce per request
   (`generateNonce`) and stamps the response with `cspHeadersForMode(...)`
   (`@indiecrafts/packages-shared-security`): `CSP_MODE=enforce` ships the strict nonce `script-src`

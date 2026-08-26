@@ -13,6 +13,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Native share on Home.** `app/index.tsx` gains a Share button that opens the OS share sheet
+  (React Native `Share.share`, not the web intent-URL row) with the marketing `websiteUrl`; disabled
+  when no origin is set. New `home.share` copy (`messages/{en,fr}.json`). **Why:** the idiomatic mobile
+  share, completing "share on all surfaces except admin."
 - **Data export — "Download my data" on the signed-in view.** `SignedInView` (`app/sign-in.tsx`) now
   renders the shared native `ExportSection` (`@indiecrafts/packages-shared-compliance/native`) beside the
   delete control, gated behind the new `config.features.exportAccount` flag and a non-empty

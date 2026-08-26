@@ -11,7 +11,9 @@ import { buildMetadata } from "@/lib/metadata";
 import { translationAlternates } from "@/lib/seo/translations";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
+import { getSiteSettings } from "@/lib/seo/site-seo";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
+import { getCategoryNav } from "@indiecrafts/modules-web-blog/lib/category-nav";
 import { DefaultPostLayout } from "@indiecrafts/modules-web-blog/user-interface/post/layout/DefaultPostLayout";
 import { Modules } from "@indiecrafts/modules-web-blog/user-interface/renderers/ModuleRenderer";
 import { Comments } from "@indiecrafts/modules-web-blog/user-interface/post/sections/Comments";
@@ -101,7 +103,7 @@ export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const [post, blog, display, nav] = await Promise.all([
+  const [post, blog, display, nav, settings] = await Promise.all([
     sanityFetchLive<Post | null>({ query: postBySlugQuery, params: { slug, locale } }),
     sanityFetchLive<BlogSingleton | null>({
       query: blogSingletonQuery,
@@ -109,6 +111,7 @@ export default async function BlogPostPage({ params }: Props) {
     }),
     getBlogSettings(),
     getTranslations("nav"),
+    getSiteSettings(),
   ]);
   if (!post) notFound();
 
@@ -160,7 +163,7 @@ export default async function BlogPostPage({ params }: Props) {
   ];
 
   return (
-    <DefaultLayout>
+    <DefaultLayout subnav={await getCategoryNav(locale)}>
       <PageSchemas
         page={{
           ...pages.blog,
@@ -192,6 +195,7 @@ export default async function BlogPostPage({ params }: Props) {
           title={title}
           description={description}
           related={related}
+          share={settings.share}
         />
       )}
       {isCommentsEnabled() ? (
