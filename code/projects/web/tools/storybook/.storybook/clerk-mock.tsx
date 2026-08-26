@@ -1,6 +1,6 @@
 /**
- * Storybook mock for `@clerk/nextjs` (+ `/server`). Aliased in main.ts so the
- * auth components render without a live Clerk SDK or publishable key. Covers the
+ * Storybook mock for `@clerk/nextjs` (+ `/server`). Aliased in `.storybook-website/main.ts`
+ * so the auth components render without a live Clerk SDK or publishable key. Covers the
  * `@indiecrafts/packages-web-auth` barrel too (it re-exports from `@clerk/nextjs`).
  *
  * The mock is "signed in" by default: `SignedIn` renders its children,
@@ -48,6 +48,11 @@ export function SignInButton({ children }: { children?: ReactNode; mode?: string
   return <>{children}</>;
 }
 
+/** Placeholder trigger — wraps its children (a Button) so the DOM matches. */
+export function SignUpButton({ children }: { children?: ReactNode; mode?: string }) {
+  return <>{children}</>;
+}
+
 /** Placeholder account button. */
 export function UserButton() {
   return (
@@ -78,6 +83,7 @@ const clerkMock = {
   SignedIn,
   SignedOut,
   SignInButton,
+  SignUpButton,
   UserButton,
   ClerkProvider,
   SignIn,

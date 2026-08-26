@@ -17,7 +17,13 @@ const MESSAGES: Record<string, Record<string, unknown>> = {
     close: "Close",
     playVideo: "Play video",
   },
-  common: { previous: "Previous", next: "Next", skipToContent: "Skip to content" },
+  common: {
+    previous: "Previous",
+    next: "Next",
+    skipToContent: "Skip to content",
+    // Website LocaleSwitcher reads `common.changeLanguage`.
+    changeLanguage: "Change language",
+  },
   // QuoteList reads t.raw("quoteStyle.primary") → [open, close] marks.
   typography: { "quoteStyle.primary": ["« ", " »"] },
 };
