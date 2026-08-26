@@ -17,6 +17,16 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **`/blog` is now module-driven.** `blog/page.tsx` renders the `blog` singleton's
+  `frontpageModules[]` (via `pickFrontpage`, `blog/frontpage-select.ts`) when the editor has
+  composed any; an empty array keeps today's behavior unchanged — the code-default
+  `DefaultBlogFrontpage` (hero mosaic → explore → newsletter). The demo seed now composes a
+  non-empty `frontpageModules` (hero → featured → category spotlight → collection → latest →
+  explore) so `/blog` showcases the feature out of the box. **Why:** the frontpage was the one
+  page-builder surface still hard-coded; it now composes from the same block catalog as a post.
+
 ### Added
 
 - **`DefaultLayout` gains a `subnav` slot; blog pages mount the category bar.** A new optional

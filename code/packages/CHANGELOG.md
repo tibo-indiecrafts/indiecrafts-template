@@ -36,6 +36,19 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-web-ui-components` — six new presentational primitives for the blog's
+  composable frontpage.** `PostHero` (`web/layout/`) — a full-width lead-post hero (image/video,
+  category chip, author/date). `FeaturedPosts` (`web/collection/`) — a lead card + grid of
+  featured/pinned posts. `SpotlightRow` (`web/collection/`) — a curated post-picks row + "view all"
+  link. `Carousel` (`web/collection/`, client) — an embla-driven scroller of pinned posts.
+  `TopicCards` (`web/layout/`) — one to three large clickable category/tag cards. `PostCard`
+  (`web/collection/`) — the shared single-post card, extracted out of `FeaturedPosts` so
+  `SpotlightRow`/`Carousel` reuse it instead of reimplementing it. All six take a resolved
+  `PostCardItem[]` — the new shared shape in `shared/types.ts` — so they stay pure (no Sanity client,
+  no i18n). Each ships a colocated `.stories.tsx` + `.md`. Also: `POST_CARD_PROJECTION`, the blog's
+  GROQ post-card fragment, is now reused by every frontpage query instead of being redeclared per
+  block. **Why:** the blog's new frontpage blocks (`code/modules/CHANGELOG.md`) needed one set of
+  reusable card/row/carousel primitives instead of six near-duplicate layouts.
 - **`@indiecrafts/packages-web-ui-components` — three new blocks for the blog: `CategoryNav`,
   `AuthorBio`, `MoreOnTopic`.** `CategoryNav` (`web/layout/`) — a top-level category bar with
   sub-category dropdowns (shadcn `NavigationMenu`). `AuthorBio` (`web/collection/`) — an

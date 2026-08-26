@@ -18,6 +18,11 @@ _The Storybook gallery for the design-system bricks (`ui` · `ui-components` · 
 
 ### Added
 
+- **Stories for the blog's five new frontpage primitives.** `PostHero`, `FeaturedPosts`,
+  `SpotlightRow`, `Carousel`, and `TopicCards` (`@indiecrafts/packages-web-ui-components/web/{layout,collection}`)
+  each ship a colocated `.stories.tsx`, auto-discovered by the gallery. **Why:** every rendered
+  `ui-components` component needs a story (this package's own rule) — the blog's new composable
+  `/blog` frontpage blocks (`code/modules/CHANGELOG.md`) added five.
 - **React Native in the gallery.** `.storybook/main.ts` aliases `react-native` →
   `react-native-web` (resolved from this package) and globs the native/cross-platform bricks, so
   `ui-native`, `system-pages/native`, and `ui-icons/native` render in the browser gallery beside the

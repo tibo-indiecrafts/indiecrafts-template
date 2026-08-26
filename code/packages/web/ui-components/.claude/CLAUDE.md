@@ -10,16 +10,24 @@ Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers +
   `content/` (callout, prose, custom-html, code-block) · `media/` (gallery, gallery-carousel,
   featured-media) · `collection/` (card-list, stat-list, step-list, accordion-list, person-list,
   quote-list, feature-grid, pricing, more-on-topic — a "more on this topic" sidebar list of
-  `{title, href}` links · author-bio — an end-of-article "Written by" card) · `layout/`
+  `{title, href}` links · author-bio — an end-of-article "Written by" card · **PostCard** — the shared
+  post-card primitive (renders one `PostCardItem`), extracted for `FeaturedPosts`/`SpotlightRow`/`Carousel`
+  to share · **FeaturedPosts** — lead card + grid of featured/pinned posts (the blog's `blog-featured`) ·
+  **SpotlightRow** — a curated post picks row + "view all" link (`blog-category-spotlight`,
+  `blog-trending`) · **Carousel** — client, an embla-driven scroller of pinned posts (`blog-collection`))
+  · `layout/`
   (module-section, cta, hero, category-nav — a top-level category bar with sub-category dropdowns
   over resolved `{title, href}` items · share-buttons — X/LinkedIn/Facebook + copy-link row over
   an optional `url` (omitted → resolves the current page URL client-side, for client-only surfaces
   like the app/Electron renderer) + `title` + an optional `networks` filter (editor-driven, from the
   site's `siteSettings.share`); intent URLs from `@indiecrafts/packages-shared-utils/share` so native
-  can reuse them) · `form/` (shared form
+  can reuse them · **PostHero** — a full-width lead-post hero (image/video, category chip, author/date)
+  for the blog frontpage (`blog-hero`) · **TopicCards** — one to three large clickable category/tag
+  cards (`blog-topic-cards`)) · `form/` (shared form
   controls — PhoneInput, TurnstileWidget, Newsletter, Waitlist, LeadMagnet, DataRequestForm). Web infra (`registry.tsx`,
   `portable-text-components.tsx`, story helpers) sits at `src/web/`. `src/shared/types.ts` is the
-  **platform-agnostic contract** (block types). `src/native/` is **reserved** for a future
+  **platform-agnostic contract** (block types) — also home to **`PostCardItem`**, the resolved
+  post-card shape every collection primitive above shares. `src/native/` is **reserved** for a future
   React-Native renderer set that mirrors the same domain folders + shares `shared/types` + tokens —
   empty until an RN app exists (see `src/native/README.md`). Consumers import
   `@indiecrafts/packages-web-ui-components/web/<domain>/<Name>` (or `web/{registry,portable-text-components}`, `shared/types`).

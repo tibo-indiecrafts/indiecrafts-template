@@ -6,17 +6,17 @@ End-to-end reference for the Sanity-backed blog module (`@indiecrafts/modules-we
 
 ## 1. What's wired
 
-| Surface                    | Where                                      | Notes                                                                                                                                                                                                   |
-| -------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Embedded Studio            | `/studio`                                  | Catch-all at `src/app/studio/[[...tool]]/page.tsx` (own root layout `studio/layout.tsx`, outside `[locale]/`). Gated by **`features.studio`** — independent of `features.blog`.                         |
-| Public blog                | `/<locale>/blog` + `/<locale>/blog/<slug>` | The frontpage is never module-driven (chrome stays uniform). Each `/blog/<slug>` renders via `DefaultPostLayout` when the `blog` singleton's `postModules` is empty; otherwise `postModules` drives it. |
-| Markdown export            | `/<locale>/blog/<slug>/md`                 | YAML frontmatter + PortableText serialized to Markdown. Honors `metadata.noIndex` (hidden posts 404).                                                                                                   |
-| RSS feed                   | `/<locale>/blog/rss.xml`                   | RSS 2.0, locale-filtered. Requires `features.blog` **and** `features.rss` (`isRssEnabled()`).                                                                                                           |
-| Atom feed                  | `/<locale>/blog/atom.xml`                  | Atom 1.0 sibling of RSS — same data, same `isRssEnabled()` gate, ISO-8601 dates.                                                                                                                        |
-| Draft preview              | `/api/draft-mode/enable` + `/disable`      | Gated by **`features.studio`** (404 when off). `/enable` also 503s with an actionable message when `SANITY_API_READ_TOKEN` is missing.                                                                  |
-| Live content subscriptions | `<SanityLive />` in `[locale]/layout.tsx`  | Only mounted when `features.blog === true`.                                                                                                                                                             |
-| Header nav link            | `/blog` link                               | Only shown when `features.blog === true`.                                                                                                                                                               |
-| Sitemap + llms.txt entries | `/sitemap.xml` + `/<locale>/llms.txt`      | Auto-included via `pages.blog.enabled = features.blog`.                                                                                                                                                 |
+| Surface                    | Where                                      | Notes                                                                                                                                                                                                                                       |
+| -------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Embedded Studio            | `/studio`                                  | Catch-all at `src/app/studio/[[...tool]]/page.tsx` (own root layout `studio/layout.tsx`, outside `[locale]/`). Gated by **`features.studio`** — independent of `features.blog`.                                                             |
+| Public blog                | `/<locale>/blog` + `/<locale>/blog/<slug>` | `/blog` renders the `blog` singleton's `frontpageModules` when non-empty, else the code default `DefaultBlogFrontpage`. Each `/blog/<slug>` renders via `DefaultPostLayout` when `postModules` is empty; otherwise `postModules` drives it. |
+| Markdown export            | `/<locale>/blog/<slug>/md`                 | YAML frontmatter + PortableText serialized to Markdown. Honors `metadata.noIndex` (hidden posts 404).                                                                                                                                       |
+| RSS feed                   | `/<locale>/blog/rss.xml`                   | RSS 2.0, locale-filtered. Requires `features.blog` **and** `features.rss` (`isRssEnabled()`).                                                                                                                                               |
+| Atom feed                  | `/<locale>/blog/atom.xml`                  | Atom 1.0 sibling of RSS — same data, same `isRssEnabled()` gate, ISO-8601 dates.                                                                                                                                                            |
+| Draft preview              | `/api/draft-mode/enable` + `/disable`      | Gated by **`features.studio`** (404 when off). `/enable` also 503s with an actionable message when `SANITY_API_READ_TOKEN` is missing.                                                                                                      |
+| Live content subscriptions | `<SanityLive />` in `[locale]/layout.tsx`  | Only mounted when `features.blog === true`.                                                                                                                                                                                                 |
+| Header nav link            | `/blog` link                               | Only shown when `features.blog === true`.                                                                                                                                                                                                   |
+| Sitemap + llms.txt entries | `/sitemap.xml` + `/<locale>/llms.txt`      | Auto-included via `pages.blog.enabled = features.blog`.                                                                                                                                                                                     |
 
 ---
 
@@ -104,13 +104,13 @@ code/modules/web/blog/src/sanity/types.ts                   # TypeScript shapes 
 
 ## 3. Schemas
 
-Blog schemas register via `code/modules/web/blog/src/sanity/schema/index.ts` (exported as `schemaTypes`), merged in `sanity.config.ts` as `schema.types: [...coreSchemaTypes, ...schemaTypes]`. The **16 generic** `module.*` blocks register via **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/index.ts` → `MODULE_TYPES` + `moduleSchemas`); the blog's own `code/modules/web/blog/src/sanity/schema/modules/index.ts` exports `BLOG_MODULE_TYPES` + `blogModuleSchemas` — the **3** blog-specific blocks. Paths below are relative to `code/modules/web/blog/src/sanity/schema/`.
+Blog schemas register via `code/modules/web/blog/src/sanity/schema/index.ts` (exported as `schemaTypes`), merged in `sanity.config.ts` as `schema.types: [...coreSchemaTypes, ...schemaTypes]`. The **17 generic** `module.*` blocks register via **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/index.ts` → `MODULE_TYPES` + `moduleSchemas`); the blog's own `code/modules/web/blog/src/sanity/schema/modules/index.ts` exports `BLOG_MODULE_TYPES` + `blogModuleSchemas` — the **10** blog-specific blocks. Paths below are relative to `code/modules/web/blog/src/sanity/schema/`.
 
 ### Documents
 
 | Schema             | File                | Localized?           | Purpose                                                                                                     |
 | ------------------ | ------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `blog` (singleton) | `documents/blog.ts` | shared               | Owns `postModules[]` (per-post chrome). One per dataset; sidebar enforces.                                  |
+| `blog` (singleton) | `documents/blog.ts` | shared               | Owns `postModules[]` (per-post chrome) + `frontpageModules[]` (`/blog`). One per dataset; sidebar enforces. |
 | `post`             | `post.ts`           | **yes** (`language`) | Title, body (PortableText), **authors** (one or several refs), categories, featured flag, `metadata` object |
 | `author`           | `author.ts`         | **yes** (`language`) | Name, position, slug, image, bio                                                                            |
 | `category`         | `category.ts`       | **yes** (`language`) | Title, description                                                                                          |
@@ -120,33 +120,40 @@ The blog's translated content types (`post`, `author`, `category`, `tag`) are re
 
 ### Objects
 
-| Object         | File                        | Used by                                                      |
-| -------------- | --------------------------- | ------------------------------------------------------------ |
-| `metadata`     | `objects/metadata.ts`       | post (title/description/image/slug/noIndex)                  |
+| Object         | File                                     | Used by                                                      |
+| -------------- | ---------------------------------------- | ------------------------------------------------------------ |
+| `metadata`     | `objects/metadata.ts`                    | post (title/description/image/slug/noIndex)                  |
 | `seoMeta`      | `@indiecrafts/packages-web-schema`       | shared SEO override shape (moved out of the blog)            |
 | `blockContent` | `@indiecrafts/packages-web-page-builder` | post body, accordion items, callout content, cards           |
 | `link`         | `@indiecrafts/packages-web-page-builder` | inside `cta`. Internal refs target a `page` **or** a `post`. |
 | `cta`          | `@indiecrafts/packages-web-page-builder` | callout, card-list, etc.                                     |
 
-### Modules — 19 `module.*` types (16 generic + 3 blog-specific)
+### Modules — 27 `module.*` types (17 generic + 10 blog-specific)
 
-Embedded inside `blog.postModules` and (for the inline set) directly in a post body. The **16 generic** blocks live in **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/` → `moduleSchemas` + `MODULE_TYPES`); their renderers are in `@indiecrafts/packages-web-ui-components`. The blog's `schema/modules/` holds only the **3 blog-specific** blocks. `defineModule` (`@indiecrafts/packages-web-page-builder`) auto-injects an `anchor` + `hidden` field on every one.
+Embedded inside `blog.postModules` **and** `blog.frontpageModules` (same `of` list feeds both), and — for the inline set — directly in a post body. The **17 generic** blocks live in **`@indiecrafts/packages-web-page-builder`** (`sanity/schema/modules/` → `moduleSchemas` + `MODULE_TYPES`); their renderers are in `@indiecrafts/packages-web-ui-components`. The blog's `schema/modules/` holds only the **10 blog-specific** blocks. `defineModule` (`@indiecrafts/packages-web-page-builder`) auto-injects an `anchor` + `hidden` field on every one.
 
-**Generic (`@indiecrafts/packages-web-page-builder`)** — `hero`, `feature-grid`, `pricing`, `accordion-list`, `callout`, `card-list`, `gallery`, `person-list`, `prose`, `stat-list`, `step-list`, `quote-list`, `custom-html`, `newsletter`, `waitlist`, `lead-magnet`.
+**Generic (`@indiecrafts/packages-web-page-builder`)** — `hero`, `feature-grid`, `pricing`, `accordion-list`, `callout`, `card-list`, `gallery`, `person-list`, `prose`, `stat-list`, `step-list`, `quote-list`, `custom-html`, `newsletter`, `waitlist`, `lead-magnet`, `contact`.
 
 **Blog-specific (`code/modules/web/blog/src/sanity/schema/modules/`):**
 
-| Module                     | File                           | Notes                                                |
-| -------------------------- | ------------------------------ | ---------------------------------------------------- |
-| `module.blog-index`        | `modules/blog-index.ts`        | frontpage hero                                       |
-| `module.blog-post-content` | `modules/blog-post-content.ts` | renders the active post (slot)                       |
-| `module.blog-post-list`    | `modules/blog-post-list.ts`    | filtered post grid (limit, categories, featuredOnly) |
+| Module                           | File                                 | Notes                                                                                |
+| -------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------ |
+| `module.blog-index`              | `modules/blog-index.ts`              | title + intro band                                                                   |
+| `module.blog-post-content`       | `modules/blog-post-content.ts`       | renders the active post (slot)                                                       |
+| `module.blog-post-list`          | `modules/blog-post-list.ts`          | filtered post grid (limit, categories, featuredOnly) — also `/blog`'s "Latest" block |
+| `module.blog-hero`               | `modules/blog-hero.ts`               | `/blog` — one lead post, latest or pinned                                            |
+| `module.blog-featured`           | `modules/blog-featured.ts`           | `/blog` — lead + grid, flagged or pinned                                             |
+| `module.blog-explore`            | `modules/blog-explore.ts`            | `/blog` — categories/tags/authors variant                                            |
+| `module.blog-category-spotlight` | `modules/blog-category-spotlight.ts` | `/blog` — one category's picks + "view all"                                          |
+| `module.blog-collection`         | `modules/blog-collection.ts`         | `/blog` — a pinned-only carousel                                                     |
+| `module.blog-topic-cards`        | `modules/blog-topic-cards.ts`        | `/blog` — 1-3 clickable category/tag cards                                           |
+| `module.blog-trending`           | `modules/blog-trending.ts`           | `/blog` — popularity (seam) or most-recent fallback                                  |
 
-**12 generic blocks are inline-embeddable** in a post body (`INLINE_MODULES` in `@indiecrafts/packages-web-page-builder`'s `blockContent.ts`): accordion-list, callout, card-list, custom-html, gallery, lead-magnet, newsletter, person-list, quote-list, stat-list, step-list, waitlist. Everything else — `prose`, the page-level generics (`hero`, `feature-grid`, `pricing`), and the 3 blog-specific blocks — is `postModules`-only.
+**12 generic blocks are inline-embeddable** in a post body (`INLINE_MODULES` in `@indiecrafts/packages-web-page-builder`'s `blockContent.ts`): accordion-list, callout, card-list, custom-html, gallery, lead-magnet, newsletter, person-list, quote-list, stat-list, step-list, waitlist. Everything else — `prose`, the page-level generics (`hero`, `feature-grid`, `pricing`, `contact`), and the 10 blog-specific blocks — is `postModules`/`frontpageModules`-only.
 
 ### Renderer
 
-`@indiecrafts/packages-web-ui-components/web/registry.tsx` holds the `BLOCK_RENDERERS` map (`_type` → component) for the 16 generic blocks, constrained with `satisfies` so a missing entry is a **compile error** — that's where TS exhaustiveness lives. The blog's `user-interface/renderers/ModuleRenderer.tsx` (`<Modules>` + `ModuleSwitch`) composes `BLOCK_RENDERERS` with its 3 blog-specific dispatchers, special-casing the context-aware blog modules.
+`@indiecrafts/packages-web-ui-components/web/registry.tsx` holds the `BLOCK_RENDERERS` map (`_type` → component) for the 17 generic blocks, constrained with `satisfies` so a missing entry is a **compile error** — that's where TS exhaustiveness lives. The blog's `user-interface/renderers/ModuleRenderer.tsx` (`<Modules>` + `ModuleSwitch`) composes `BLOCK_RENDERERS` with its 10 blog-specific dispatchers, special-casing the context-aware blog modules; it drives both `postModules` and `frontpageModules`.
 
 ### Studio sidebar (`code/modules/web/blog/src/sanity/structure.ts`)
 
@@ -228,7 +235,7 @@ pnpm dev
 - **5 posts / locale**, each with a `metadata.image`, including a long-form "fast prototyping with Next.js" showcase per locale (see below)
 - **2 quotes / locale** (testimonials, real Unsplash portraits)
 - **3 people / locale** for the Person List module
-- **1 `blog` singleton** — `postModules` empty, so posts fall back to `DefaultPostLayout`
+- **1 `blog` singleton** — `postModules` empty (posts fall back to `DefaultPostLayout`); `frontpageModules` composed with `blog-hero` → `blog-featured` → `blog-category-spotlight` → `blog-collection` → `blog-post-list` → `blog-explore`, so `/blog` showcases the composable frontpage out of the box
 - Plus the site singletons the app needs: `siteMeta.<locale>` (per-language SEO), `siteSettings`, `legalPage`s, `navigation`, `cookieConsent`
 
 The script prints the exact document total (`allDocs.length`) at commit time — it grows if you add content, so trust the console, not a fixed number.
@@ -261,7 +268,8 @@ Committing <total> documents…
 ✓ Committed transaction <uuid>
 
 What you should see:
-  /blog                                 → minimal card grid
+  /blog                                  → composed frontpage (hero → featured → spotlight → collection → latest → explore)
+  /fr/blog                               → same frontpage, EN-only pins hidden
   /blog/fast-prototyping-with-nextjs    → all 12 inline modules
   /blog/prototypage-rapide-avec-nextjs  → all 12 inline modules (FR)
   any other post                         → default article layout
@@ -330,8 +338,8 @@ Open <http://localhost:3000/studio> and log in with an account that owns the pro
 
 - **Sidebar**: Blog (Mise en page + Articles/Auteurs/Catégories/Tags, each EN/FR) · Références (Citations/Personnes, EN/FR) · the core SEO & métadonnées / Navigation / Cookies / Pages légales sections.
 - **Content** (after seeding): Articles list = 10 docs (5 EN, 5 FR); each preview shows `EN · <date>` or `FR · <date>`.
-- Open Mise en page (singleton): one `Modules par article` array, empty by default → posts fall back to `DefaultPostLayout`.
-- Add a module from the picker — all 19 catalog types are selectable (16 generic + 3 blog-specific).
+- Open Mise en page (singleton): a `Modules par article` array (empty by default → posts fall back to `DefaultPostLayout`) and a `Sections de l'accueil du blog` array (`frontpageModules`, composed by the seed → `/blog` renders it; empty → `DefaultBlogFrontpage`).
+- Add a module from the picker — all 27 catalog types are selectable (17 generic + 10 blog-specific), in either array.
 
 ### 7.4 Draft preview
 
@@ -417,7 +425,7 @@ Sanity keeps every previously-set field on a document forever — removing the s
 node --env-file=.env.local code/projects/web/surfaces/website/scripts/unset-legacy-fields.mjs
 ```
 
-Edit the `TARGETS` array at the top (`[GROQ returning _ids, field-path to unset]`), run once, done. Idempotent — no matches reports `nothing to unset`. It currently ships pointing at `post.modules` + `blog.frontpageModules` (fields removed in earlier releases); adapt or comment out before running against a fresh dataset.
+Edit the `TARGETS` array at the top (`[GROQ returning _ids, field-path to unset]`), run once, done. Idempotent — no matches reports `nothing to unset`. It currently ships pointing at `post.modules` (a field removed in an earlier release); adapt before running against a fresh dataset. **Never re-add `blog.frontpageModules`** — that name is live again (the composable blog frontpage, §6), and this script would delete it.
 
 ### CSP blocks Studio API calls
 
@@ -425,7 +433,7 @@ Already allowed via `getCSPConnectSources()` in `code/packages/shared/config/src
 
 ### `/blog` 200s but is blank
 
-The frontpage is driven entirely by published posts (never module-driven), so a blank `/blog` means no posts in the requested locale. Run `pnpm seed`, or publish a post whose `language` matches the route.
+With `frontpageModules` empty, the code-default `DefaultBlogFrontpage` is driven entirely by published posts, so a blank `/blog` means no posts in the requested locale — run `pnpm seed`, or publish a post whose `language` matches the route. With `frontpageModules` composed, a blank page instead means every block resolved empty (e.g. `blog-collection`'s pins, or `blog-hero`/`blog-featured`'s source, don't match any post in that locale) — check the singleton's Sections de l'accueil du blog in the Studio.
 
 ### `/studio` shows "Configuration error"
 
@@ -481,15 +489,15 @@ code/modules/web/blog/src/                             THE BLOG MODULE (gated by
 │   ├── types.ts                 TypeScript shapes for query results
 │   ├── structure.ts             Studio sidebar layout
 │   ├── portable-to-markdown.ts  PortableText → Markdown serializer
-│   └── schema/                  (the 16 generic module schemas + blockContent/link/cta/define-module + quote/person live in @indiecrafts/packages-web-page-builder)
+│   └── schema/                  (the 17 generic module schemas + blockContent/link/cta/define-module + quote/person live in @indiecrafts/packages-web-page-builder)
 │       ├── index.ts             schemaTypes registry
 │       ├── post.ts, author.ts, category.ts, tag.ts, series.ts
 │       ├── documents/           blog (singleton), comment
 │       ├── objects/             metadata
-│       └── modules/             3 blog-specific schemas + index.ts (blogModuleSchemas, BLOG_MODULE_TYPES)
+│       └── modules/             10 blog-specific schemas + index.ts (blogModuleSchemas, BLOG_MODULE_TYPES)
 └── user-interface/
     ├── blog/  post/  author/  category/  tag/  shared/   route-grouped UI
-    └── renderers/               ModuleRenderer.tsx (composes BLOCK_RENDERERS) + 3 blog dispatchers
+    └── renderers/               ModuleRenderer.tsx (composes BLOCK_RENDERERS) + 10 blog dispatchers
                                  (generic registry.tsx + renderers → @indiecrafts/packages-web-ui-components)
 
 code/projects/web/surfaces/website/src/app/
@@ -497,7 +505,8 @@ code/projects/web/surfaces/website/src/app/
 ├── studio/[[...tool]]/page.tsx                    embedded Studio (features.studio)
 ├── api/draft-mode/{enable,disable}/route.ts       draft preview toggles (features.studio)
 └── [locale]/blog/
-    ├── page.tsx                                   frontpage (post grid; never module-driven)
+    ├── page.tsx                                   frontpage (frontpageModules → DefaultBlogFrontpage fallback)
+    ├── frontpage-select.ts                        pickFrontpage(modules) → "modules" | "default"
     ├── [slug]/page.tsx                            detail (postModules → DefaultPostLayout fallback)
     ├── [slug]/md/route.ts                         Markdown export
     ├── rss.xml/route.ts  atom.xml/route.ts        feeds (features.blog + features.rss)

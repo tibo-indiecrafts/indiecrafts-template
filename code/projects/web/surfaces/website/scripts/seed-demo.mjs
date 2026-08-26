@@ -30,10 +30,10 @@
  *     and per-page title/description overrides (home / blog / legal)
  *   - 1 `siteSettings` singleton — logo + favicon/app icon (from `scripts/seed-media/`),
  *     social profiles, business entity, one demo global schema (Service)
- *   - 1 blog singleton with EMPTY postModules
- *     → /blog falls back to the minimal card-grid layout
- *     → individual posts use their own modules (see below) or the default
- *       article layout
+ *   - 1 blog singleton with EMPTY postModules (posts use the default article
+ *     layout) and a composed `frontpageModules` — hero, featured, category
+ *     spotlight, collection, a latest-articles list, and explore — so /blog
+ *     showcases the composable frontpage out of the box
  *   - The "fast prototyping with Next.js" post (both EN and FR) gets a
  *     `modules: [...]` override that showcases the inline module types
  *     (gallery excluded — it needs uploaded images). Every other post uses
@@ -2310,7 +2310,7 @@ const buildPosts = () => [
   }),
 ];
 
-// ─── Blog singleton — MINIMAL ──────────────────────────────────
+// ─── Blog singleton ─────────────────────────────────────────────
 
 const blog = {
   _id: "blog",
@@ -2319,6 +2319,42 @@ const blog = {
   // related-posts section. Populate from Studio to swap in a
   // module-driven shell that applies to every article.
   postModules: [],
+  // Composes /blog — see `pickFrontpage` in the app. The singleton is
+  // shared across locales (like `postModules` above), so every text field
+  // is left empty: a hardcoded string here would leak one language's copy
+  // to the other route. Blocks fall back to their translated defaults.
+  // `blog-category-spotlight` and `blog-collection` pin EN-only documents;
+  // each block's GROQ query filters posts by the requested locale, so on
+  // /fr/blog they simply render nothing (see `blogCollectionQuery` /
+  // `blogCategorySpotlightQuery`) while `blog-hero` / `blog-featured` /
+  // `blog-post-list` / `blog-explore` stay locale-safe and render on both.
+  frontpageModules: [
+    { _type: "module.blog-hero", _key: key("m"), source: "latest", showMeta: true },
+    {
+      _type: "module.blog-featured",
+      _key: key("m"),
+      source: "flag",
+      limit: 4,
+      leadCard: true,
+    },
+    {
+      _type: "module.blog-category-spotlight",
+      _key: key("m"),
+      category: { _type: "reference", _ref: "cat.en.engineering" },
+      count: 4,
+    },
+    {
+      _type: "module.blog-collection",
+      _key: key("m"),
+      posts: [
+        { _type: "reference", _ref: "post.en.fast-proto-nextjs", _key: key("p") },
+        { _type: "reference", _ref: "post.en.ship-weekend", _key: key("p") },
+        { _type: "reference", _ref: "post.en.config-first", _key: key("p") },
+      ],
+    },
+    { _type: "module.blog-post-list", _key: key("m"), limit: 6, featuredOnly: false },
+    { _type: "module.blog-explore", _key: key("m"), variant: "categories" },
+  ],
   // The blog singleton is locale-independent, so its /blog SEO + the taxonomy
   // list-page SEO (author / category / tag) are single-value.
   seo: BLOG_SEO,
@@ -3253,7 +3289,12 @@ async function run() {
   console.log(`✓ Committed transaction ${res.transactionId}`);
   console.log("");
   console.log("What you should see:");
-  console.log("  /blog                                 → minimal card grid");
+  console.log(
+    "  /blog                                 → composed frontpage (hero → featured → spotlight → collection → latest → explore)",
+  );
+  console.log(
+    "  /fr/blog                              → same frontpage, EN-only pins hidden",
+  );
   console.log("  /blog/fast-prototyping-with-nextjs    → ALL 17 modules");
   console.log("  /blog/prototypage-rapide-avec-nextjs  → ALL 17 modules (FR)");
   console.log("  any other post                         → default article layout");

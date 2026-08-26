@@ -6,9 +6,16 @@
  *   pnpm dlx tsx scripts/unset-legacy-fields.mjs   # or:
  *   node --env-file=.env.local scripts/unset-legacy-fields.mjs
  *
- * Currently targets two fields removed in this release:
- *   - `post.modules`         (per-post layout override — removed)
- *   - `blog.frontpageModules` (blog frontpage layout array — removed)
+ * Currently targets one field removed in an earlier release:
+ *   - `post.modules` (per-post layout override — removed; replaced by
+ *     `blog.postModules`)
+ *
+ * `blog.frontpageModules` used to be a second target here (a field removed
+ * in the same earlier release) — it's gone from TARGETS because the name
+ * was reused: the composable blog frontpage now owns a live
+ * `blog.frontpageModules` array. Running this script against a dataset
+ * that has that feature's data would delete it. Don't re-add the name
+ * without renaming the new field first.
  *
  * Sanity's CLI has no `documents patch` subcommand, so this uses the
  * @sanity/client directly. Needs a write-capable token in
@@ -39,10 +46,7 @@ const client = createClient({
 });
 
 /** [GROQ query returning _ids, field-path to unset] */
-const TARGETS = [
-  ['*[_type == "post" && defined(modules)]._id', "modules"],
-  ['*[_type == "blog" && defined(frontpageModules)]._id', "frontpageModules"],
-];
+const TARGETS = [['*[_type == "post" && defined(modules)]._id', "modules"]];
 
 let total = 0;
 

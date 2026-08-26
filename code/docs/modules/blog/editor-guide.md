@@ -141,31 +141,50 @@ Preview a saved draft **on the live site** before publishing.
 
 **Blog → Mise en page** opens the single `blog` document. Its **Modules par article** (`postModules`) composes the chrome wrapped around **every** `/blog/[slug]`: a Contenu d'article module renders the body, with Hero du blog / Articles around it. Leave the array empty and posts fall back to the built-in `DefaultPostLayout`.
 
-The `/blog` frontpage layout is **not** module-composable, but its major elements toggle on and off — see §6.1.
+The `/blog` frontpage composes the same way, from **Sections de l'accueil du blog** (`frontpageModules`) — see §6.2. Its major elements also toggle on and off — see §6.1.
 
 ### 6.1 Display settings (Affichage du blog)
 
 The same **Blog → Mise en page** document holds an **Affichage du blog** group. Each toggle shows or hides a blog element without a code deploy. Every toggle is ON by default; an empty toggle also reads as shown (the legend says "Vide = affiché").
 
-| Group                               | Toggle                          | Turning it off                                                                                 |
-| ----------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------- |
-| **Catégories, tags, auteur·rice·s** | Catégories                      | Hides category chips **and** the `/blog/category` pages (dropped from the sitemap + AI files). |
-|                                     | Tags                            | Hides tag chips **and** the `/blog/tag` pages.                                                 |
-|                                     | Auteur·rice·s                   | Hides author bylines **and** the `/author` pages.                                              |
+| Group                               | Toggle                            | Turning it off                                                                                             |
+| ----------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Catégories, tags, auteur·rice·s** | Catégories                        | Hides category chips **and** the `/blog/category` pages (dropped from the sitemap + AI files).             |
+|                                     | Tags                              | Hides tag chips **and** the `/blog/tag` pages.                                                             |
+|                                     | Auteur·rice·s                     | Hides author bylines **and** the `/author` pages.                                                          |
 |                                     | Barre de navigation par catégorie | Hides the category nav bar (top-level categories + sub-category dropdowns) under the header on blog pages. |
-| **Page article**                    | Date de publication             | Hides the published date on a post.                                                            |
-|                                     | Temps de lecture                | Hides the "N min" reading estimate.                                                            |
-|                                     | Sommaire                        | Hides the table of contents.                                                                   |
-|                                     | À lire ensuite                  | Hides the related-posts grid.                                                                  |
-|                                     | Barre de progression de lecture | Hides the thin scroll-progress bar at the top of a post.                                       |
-| **Accueil du blog**                 | Grille « à la une »             | Swaps the featured mosaic for a simple grid.                                                   |
-| **Cartes d'article**                | Extrait                         | Hides the teaser under each card title.                                                        |
+| **Page article**                    | Date de publication               | Hides the published date on a post.                                                                        |
+|                                     | Temps de lecture                  | Hides the "N min" reading estimate.                                                                        |
+|                                     | Sommaire                          | Hides the table of contents.                                                                               |
+|                                     | À lire ensuite                    | Hides the related-posts grid.                                                                              |
+|                                     | Barre de progression de lecture   | Hides the thin scroll-progress bar at the top of a post.                                                   |
+| **Accueil du blog**                 | Grille « à la une »               | Swaps the featured mosaic for a simple grid.                                                               |
+| **Cartes d'article**                | Extrait                           | Hides the teaser under each card title.                                                                    |
 
 **Taxonomy toggles remove routes, not just chips.** Turning **Catégories** off returns 404 on every `/blog/category/...` URL and drops them from the sitemap and `/llms.txt`. It stays off until you turn it back on — no deploy either way. A toggle only appears when its capability is compiled in (`features.blogTaxonomy.*`); see [`blog-architecture.md`](./blog-architecture.md).
 
 **Share buttons live in Site settings now.** The X / LinkedIn / Facebook / copy-link row (post footer **and** the site footer) is controlled site-wide in **Paramètres du site → Partage** — one master toggle plus a checkbox per network — not per the blog. Share is a shared setting, not blog chrome. See [editing-seo-in-sanity](../../apps/web/seo/editing-seo-in-sanity).
 
-### 6.2 Category navigation & sub-categories
+### 6.2 Blog homepage sections (Sections de l'accueil du blog)
+
+The same **Blog → Mise en page** document also holds **Sections de l'accueil du blog** (`frontpageModules`) — an array just like **Modules par article**, but it composes **`/blog`** itself instead of a post. Stack any of the blocks below, in any order. **Leave it empty and `/blog` falls back to the built-in default layout** (hero mosaic → explore → newsletter signup).
+
+| Block (Studio name)                                            | What it shows                                                                         | Auto or picks                                                                          |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Grande une** (`blog-hero`)                                   | One large lead post, full width.                                                      | Auto = the latest published post, or pin one specific article.                         |
+| **Articles à la une** (`blog-featured`)                        | A lead card plus a grid of more posts.                                                | Auto = posts marked **Mis en avant**, or pin an ordered list.                          |
+| **Articles** (`blog-post-list`) — this is the **Latest** block | A plain grid of posts, optionally filtered to one category.                           | Always auto.                                                                           |
+| **Coup de projecteur catégorie** (`blog-category-spotlight`)   | A curated row from one category, with a "Tout voir" link.                             | Pick the category; optionally pin posts to lead — the category's latest fill the rest. |
+| **Carrousel d'articles** (`blog-collection`)                   | A hand-picked, ordered carousel.                                                      | Always a pick — no auto source; choose one or more posts.                              |
+| **Cartes de sujets** (`blog-topic-cards`)                      | One to three large clickable cards, each linking to a category or tag.                | Always a pick — choose the category/tag (plus an optional image) per card.             |
+| **Articles tendance** (`blog-trending`)                        | The most-read posts, falling back to the most recent while no popularity data exists. | Auto = popularity (or recency) — or pin posts to lead.                                 |
+| **Explorer** (`blog-explore`)                                  | Category chips, tag pills, or top authors — pick which with **Contenu affiché**.      | Always auto.                                                                           |
+
+**Auto + pin.** Every block above except **Cartes de sujets** and **Explorer** shares one pattern: a **Nombre d'articles** (or **Limite**) field caps how many posts show, and an optional **Articles à mettre en avant en premier** (pinned) list lets you hand-pick posts that always appear first, in the order you set. The block's automatic rule (latest / featured / category / trending) fills any remaining slots up to that cap. **Carrousel d'articles** is the one exception — it has no automatic rule, so every post in it is a manual pick.
+
+Every generic block (Infolettre, and the rest of the page-builder catalog) is also selectable here, alongside the blog-specific ones above — so a newsletter signup or a stat list can sit right in the middle of the frontpage.
+
+### 6.3 Category navigation & sub-categories
 
 The **Barre de navigation par catégorie** toggle (above) shows a horizontal bar of your **top-level** categories under the header on every blog page. To nest categories, open a category document and set its **Catégorie parente**:
 

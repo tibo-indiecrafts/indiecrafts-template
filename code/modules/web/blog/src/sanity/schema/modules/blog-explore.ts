@@ -7,7 +7,7 @@ export default defineModule({
   title: "Explorer",
   icon: SearchIcon,
   description:
-    "Catégories, tags ou auteurs·rices à explorer, avec un lien vers chaque page.",
+    "Catégories, tags ou auteur·rice·s à explorer, avec un lien vers chaque page.",
   fields: [
     defineField({
       name: "variant",
@@ -17,7 +17,7 @@ export default defineModule({
         list: [
           { title: "Catégories", value: "categories" },
           { title: "Tags", value: "tags" },
-          { title: "Auteurs·rices", value: "authors" },
+          { title: "Auteur·rice·s", value: "authors" },
         ],
         layout: "radio",
       },

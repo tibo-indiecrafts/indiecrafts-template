@@ -15,6 +15,21 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **blog — composable `/blog` frontpage.** A new `frontpageModules[]` array on the `blog` singleton
+  composes the frontpage the same way `postModules[]` composes a post; empty falls back to the code
+  default (`DefaultBlogFrontpage` — the former fixed hero-mosaic → explore → newsletter chain),
+  selected via `pickFrontpage`. Seven new blog-specific blocks are frontpage-capable — `blog-hero`
+  (one lead post, latest or pinned), `blog-featured` (lead + grid, flagged or pinned),
+  `blog-category-spotlight` (a curated category row), `blog-collection` (a pinned-only carousel),
+  `blog-topic-cards` (1-3 clickable category/tag cards), `blog-trending` (popularity, falling back
+  to most-recent), and `blog-explore` (the existing categories/tags/authors sections behind a
+  variant picker) — plus the existing `blog-post-list` doubling as the frontpage's "Latest" block.
+  Every dynamic block shares one **auto + pin** shape: pinned posts take precedence in editor order,
+  the block's rule (latest / flag / category / popularity) fills the rest up to a shared
+  `count`/`limit` cap. `lib/popularity.ts` (`getPopularPostIds`) is the Trending popularity seam —
+  returns `[]` today (no read-count source), so it falls back to most-recent (`@debt MIGRATION` for
+  the future read-count pipeline). **Why:** the frontpage was a fixed layout; editors can now compose
+  it from the same block catalog as a post, without a deploy.
 - **blog — share is no longer blog-owned (removed `display.post.share`).** The per-post share row is
   gated by the app's shared `siteSettings.share` setting, injected into `DefaultPostLayout` as a
   `share` prop; the blog no longer carries a share display toggle. Share copy now reads the shared

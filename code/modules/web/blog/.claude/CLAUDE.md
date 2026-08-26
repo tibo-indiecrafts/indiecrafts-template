@@ -8,7 +8,7 @@ Auto-loads under `code/modules/web/blog/**`. Self-contained Sanity-backed blog +
 
 ## Layout
 
-- `user-interface/` — the blog's UI, organized by route like `src/user-interface/`: `blog/` (frontpage), `post/` (single post), `author/`, `category/`, `tag/` — each split into `sections/` (big views + blocks), `components/` (small: cards, TOC, badges), `layout/` (page shells, e.g. `post/layout/DefaultPostLayout`) as needed. Multi-page pieces live in `shared/` (`sections/PageHero`, `components/{BlogCard,Breadcrumbs}`); `lib/category-nav.ts` `getCategoryNav(locale)` is the server helper that fetches the categories and returns the ui-components `CategoryNav` (top-level categories + sub-category dropdowns) for the app layout's `subnav` slot on every blog page; the shared **`FeaturedMedia`** in `@indiecrafts/packages-web-ui-components` (`renderers/`) renders a cover **image or inline-playable video** in one structure (no dialog — plays in place), used by the post hero, blog frontpage, and every card — `parseVideoEmbed` (from `@indiecrafts/packages-shared-utils`) resolves `metadata.videoUrl` inside it. `renderers/` holds the 7 blog-specific module renderers (`blog-category-spotlight · blog-explore · blog-featured · blog-hero · blog-index · blog-post-list · blog-post-content`) + `ModuleRenderer` (composes `BLOCK_RENDERERS` from `@indiecrafts/packages-web-ui-components` with the 7 blog dispatchers); the 17 generic renderers live in `@indiecrafts/packages-web-ui-components`.
+- `user-interface/` — the blog's UI, organized by route like `src/user-interface/`: `blog/` (frontpage), `post/` (single post), `author/`, `category/`, `tag/` — each split into `sections/` (big views + blocks), `components/` (small: cards, TOC, badges), `layout/` (page shells, e.g. `post/layout/DefaultPostLayout`) as needed. Multi-page pieces live in `shared/` (`sections/PageHero`, `components/{BlogCard,Breadcrumbs}`); `lib/category-nav.ts` `getCategoryNav(locale)` is the server helper that fetches the categories and returns the ui-components `CategoryNav` (top-level categories + sub-category dropdowns) for the app layout's `subnav` slot on every blog page; the shared **`FeaturedMedia`** in `@indiecrafts/packages-web-ui-components` (`renderers/`) renders a cover **image or inline-playable video** in one structure (no dialog — plays in place), used by the post hero, blog frontpage, and every card — `parseVideoEmbed` (from `@indiecrafts/packages-shared-utils`) resolves `metadata.videoUrl` inside it. `renderers/` holds the 10 blog-specific module renderers (`blog-category-spotlight · blog-collection · blog-explore · blog-featured · blog-hero · blog-index · blog-post-content · blog-post-list · blog-topic-cards · blog-trending`) + `ModuleRenderer` (composes `BLOCK_RENDERERS` from `@indiecrafts/packages-web-ui-components` with the 10 blog dispatchers); the 17 generic renderers live in `@indiecrafts/packages-web-ui-components`.
 - `sanity/` — `schema/` + `queries.ts` + `types.ts` + `structure.ts` (Studio desk) + `portable-to-markdown.ts`
 - `lib/route-gate.ts` — `requireBlogRoute(page)` (page components) / `isBlogRouteEnabled(page)` (route handlers) / `isRssEnabled()`. Each folds in the flag **and** `page.enabled`, so a new route can't drift by checking only one.
 - `emails/` — the blog's transactional templates (`comment-notification`), rendering via `@indiecrafts/packages-web-email`'s `renderEmailLayout`. The blog owns its email end-to-end (group in `sanity/`, template here, send in `lib/notify-comment.ts`).
@@ -16,12 +16,12 @@ Auto-loads under `code/modules/web/blog/**`. Self-contained Sanity-backed blog +
 ## Schemas (`sanity/schema/`)
 
 The generic page-builder (17 blocks + `blockContent`/`link`/`cta` + `quote`/`person`) now lives in
-**`@indiecrafts/packages-web-page-builder`**. The blog owns only its own docs + its 7 blog-specific blocks.
+**`@indiecrafts/packages-web-page-builder`**. The blog owns only its own docs + its 10 blog-specific blocks.
 
 | Surface      | Documents                                                         | Objects     |
 | ------------ | ----------------------------------------------------------------- | ----------- |
 | Blog         | `blog` (singleton), `post`, `author`, `category`, `tag`, `series` | `postMedia` |
-| Page-builder | 7 blog-specific `module.*` (see `schema/modules/`)                | —           |
+| Page-builder | 10 blog-specific `module.*` (see `schema/modules/`)               | —           |
 
 ## Page-builder modules
 
@@ -29,22 +29,45 @@ The generic page-builder (17 blocks + `blockContent`/`link`/`cta` + `quote`/`per
   person-list · prose · stat-list · step-list · quote-list · accordion-list · custom-html ·
   newsletter · waitlist · lead-magnet · contact) — schemas in `@indiecrafts/packages-web-page-builder`, renderers in
   `@indiecrafts/packages-web-ui-components`. Adding one → `code/docs/packages/page-builder.md` §"Adding a block".
-- **7 blog-specific**: `blog-category-spotlight`, `blog-explore`, `blog-featured`, `blog-hero`, `blog-index`, `blog-post-content`, `blog-post-list` —
+- **10 blog-specific**: `blog-category-spotlight`, `blog-collection`, `blog-explore`, `blog-featured`,
+  `blog-hero`, `blog-index`, `blog-post-content`, `blog-post-list`, `blog-topic-cards`, `blog-trending` —
   schema + renderer here, composed by `user-interface/renderers/ModuleRenderer.tsx` on top of the
-  generic `BLOCK_RENDERERS`. `blog-hero` (frontpage lead post, `PostHero` primitive), `blog-featured`
-  (lead + grid, `FeaturedPosts` primitive), and `blog-category-spotlight` (a curated pick from one
-  category, `SpotlightRow` primitive) live in `@indiecrafts/packages-web-ui-components`; `blog-explore`
-  is a thin variant wrapper around the existing `ExploreCategories`/`ExploreTags`/`TopAuthors` sections
-  (no new primitive); the other three predate the frontpage/post split.
+  generic `BLOCK_RENDERERS`. Seven compose the `/blog` frontpage (see next section); `blog-index`,
+  `blog-post-content`, and `blog-post-list` predate the frontpage/post split and stay `postModules`-only
+  (the per-post layout shell). Each frontpage block is a thin renderer mapping resolved post/category
+  data onto a shared `@indiecrafts/packages-web-ui-components` primitive — `blog-hero` → `PostHero`,
+  `blog-featured` → `FeaturedPosts`, `blog-category-spotlight` → `SpotlightRow`, `blog-collection` →
+  `Carousel` (client), `blog-topic-cards` → `TopicCards`, `blog-trending` → `SpotlightRow` (reused, via
+  `lib/popularity.ts` — see below); `blog-explore` is a thin variant wrapper around the existing
+  `ExploreCategories`/`ExploreTags`/`TopAuthors` sections (no new primitive). The renderers are glue —
+  they fetch, shape a `PostCardItem[]` (`ui-components/shared/types.ts`), and hand it to the primitive.
 
 The blog composes the generic `MODULES_FRAGMENT` (`@indiecrafts/packages-web-page-builder`) + its own
-post-card projection (`POST_CARD_PROJECTION`, shared by `blog-post-list`, `blog-hero`, `blog-featured`, and `blog-category-spotlight`) in `sanity/queries.ts`.
+post-card projection (`POST_CARD_PROJECTION`, shared by `blog-post-list`, `blog-hero`, `blog-featured`,
+`blog-category-spotlight`, `blog-collection`, and `blog-trending`) in `sanity/queries.ts`.
 
 Field **legends** (every `title` + `description` an editor sees) are written for non-technical editors — plain words, no jargon. Follow [`.claude/rules/sanity-legends.md`](../../../../projects/web/surfaces/website/.claude/rules/sanity-legends.md).
 
+## Frontpage (`/blog`)
+
+The `blog` singleton's `frontpageModules[]` composes the `/blog` route — the app's `pickFrontpage`
+(`code/projects/web/surfaces/website/src/app/[locale]/blog/frontpage-select.ts`) renders the editor's
+stack when non-empty, else the code default `DefaultBlogFrontpage` (hero mosaic → explore → newsletter).
+The seven frontpage-capable blocks are `blog-hero`, `blog-featured`, `blog-explore`,
+`blog-category-spotlight`, `blog-collection`, `blog-topic-cards`, and `blog-trending`; `blog-post-list`
+also drops in here as the "Latest/Articles" block. Every generic block (newsletter, hero, etc.) is
+pickable too — the array shares the same `of` list as `postModules`.
+
+**Auto + pin.** Every dynamic block (all but `blog-topic-cards`, which is pure taxonomy) has a rule
+default (`source: "latest"` / `"flag"`, or the category/popularity fill) plus an optional `pinned`
+array; pins take precedence in editor order, the rule fills the rest **up to a shared `count`/`limit`
+cap**. `blog-collection` is pinned-only (no rule — `posts[]` is required). `blog-trending`'s rule is
+`getPopularPostIds` (`lib/popularity.ts`) — returns `[]` today (no read-count source), so it falls back
+to most-recent; a future read-count pipeline replaces the body only (`@debt MIGRATION`).
+
 ## Per-post layout + extras
 
-- The `blog` singleton owns per-post chrome via `postModules[]`; empty ⇒ `DefaultPostLayout` (full-width hero, sticky TOC sidebar, "Keep reading" grid). The frontpage `/blog` is **never** module-driven — chrome stays uniform by design.
+- The `blog` singleton owns per-post chrome via `postModules[]`; empty ⇒ `DefaultPostLayout` (full-width hero, sticky TOC sidebar, "Keep reading" grid). See "Frontpage" above for `frontpageModules[]`, the `/blog` equivalent.
 - A post splits into `media` (`postMedia` — `slug` + cover image/video) + `seo` (the shared `seoMeta` — `title`/`description`/`noIndex`/… override the page `<head>`). GROQ re-projects both into the old `metadata`-shaped output + `slug`, so consumers are unchanged. `body` PortableText drives the TOC (`<Toc>`, h2/h3/h4 via GROQ `pt::text()`); `readTime` derived in GROQ; Article JSON-LD via `buildArticleSchema(...)`.
 - `.md` export at `/<locale>/blog/<slug>/md`; RSS at `/blog/rss.xml` — both advertised via `<link rel="alternate">`.
 - Queries use `defineQuery` (typegen-ready); `MODULES_FRAGMENT` expands every reference per module type.
