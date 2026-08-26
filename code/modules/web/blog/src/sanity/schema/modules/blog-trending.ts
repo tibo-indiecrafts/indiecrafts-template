@@ -16,7 +16,8 @@ export default defineModule({
       type: "number",
       initialValue: 4,
       validation: (Rule) => Rule.min(1).max(12),
-      description: "Nombre maximum d'articles affichés.",
+      description:
+        "Nombre d'articles tendance (ou récents, à défaut) affichés en complément des articles épinglés ci-dessous.",
     }),
     defineField({
       name: "pinned",
