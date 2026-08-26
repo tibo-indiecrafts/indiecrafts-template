@@ -1,0 +1,7 @@
+/* Storybook Tailwind entry for the website surface. `globals.css` pulls in
+ * `@import "tailwindcss"`, the full token system + `typeset.css`. Add this
+ * surface's own dirs as a `@source` so the utility classes its components use
+ * aren't purged. Tailwind v4 skips node_modules + gitignored paths. */
+@import "@indiecrafts/packages-shared-ui-tokens/globals.css";
+
+@source "../src";
