@@ -88,6 +88,16 @@ export const MODULES_FRAGMENT = `
   ${GENERIC_MODULES_FRAGMENT},
   _type == "module.blog-post-list" => {
     categories[]->{ _id }
+  },
+  _type == "module.blog-topic-cards" => {
+    cards[]{
+      _key,
+      title,
+      blurb,
+      "image": image.asset->url,
+      "imageAlt": image.alt,
+      target->{ _type, title, "slug": slug.current }
+    }
   }
 `;
 

@@ -14,6 +14,7 @@ import { BlogHeroModule } from "./BlogHeroModule";
 import { BlogIndex } from "./BlogIndex";
 import { BlogPostContent } from "./BlogPostContent";
 import { BlogPostList } from "./BlogPostList";
+import { BlogTopicCards } from "./BlogTopicCards";
 
 /**
  * Drives the blog page-builder. The three blog-specific modules (index, post
@@ -70,6 +71,9 @@ async function ModuleSwitch({
   }
   if (m._type === "module.blog-collection") {
     return <BlogCollection module={m} locale={context.locale} />;
+  }
+  if (m._type === "module.blog-topic-cards") {
+    return <BlogTopicCards module={m} locale={context.locale} />;
   }
   if (m._type === "module.blog-post-content") {
     return context.post ? (

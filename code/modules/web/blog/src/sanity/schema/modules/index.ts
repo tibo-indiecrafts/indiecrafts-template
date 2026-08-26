@@ -7,6 +7,7 @@ import blogHero from "./blog-hero";
 import blogIndex from "./blog-index";
 import blogPostContent from "./blog-post-content";
 import blogPostList from "./blog-post-list";
+import blogTopicCards from "./blog-topic-cards";
 
 /**
  * Blog-specific page-builder modules — dispatched by the blog's `ModuleRenderer`,
@@ -22,6 +23,7 @@ export const blogModuleSchemas: SchemaTypeDefinition[] = [
   blogIndex,
   blogPostContent,
   blogPostList,
+  blogTopicCards,
 ];
 
 export const BLOG_MODULE_TYPES = [
@@ -33,6 +35,7 @@ export const BLOG_MODULE_TYPES = [
   "module.blog-index",
   "module.blog-post-content",
   "module.blog-post-list",
+  "module.blog-topic-cards",
 ] as const;
 
 export type BlogModuleType = (typeof BLOG_MODULE_TYPES)[number];

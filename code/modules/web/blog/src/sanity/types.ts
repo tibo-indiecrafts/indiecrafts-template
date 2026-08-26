@@ -269,6 +269,24 @@ export type BlogCollectionModule = ModuleBase & {
   posts?: { _ref: string }[];
 };
 
+/**
+ * The frontpage "Topic Cards" block — one to three categories/tags shown as
+ * large cards. Unlike every other block, it points at taxonomy, not posts:
+ * `cards[].target` (a `category` or `tag` reference) and `cards[].image` are
+ * resolved by the blog's `MODULES_FRAGMENT` (see `sanity/queries.ts`).
+ */
+export type BlogTopicCardsModule = ModuleBase & {
+  _type: "module.blog-topic-cards";
+  cards?: {
+    _key: string;
+    target?: { _type: "category" | "tag"; title?: string; slug?: string };
+    image?: string;
+    imageAlt?: string;
+    title?: string;
+    blurb?: string;
+  }[];
+};
+
 /** Every module a blog page can hold — the shared blocks plus the blog's own. */
 export type AnyModule =
   | BlockModule
@@ -279,7 +297,8 @@ export type AnyModule =
   | BlogHeroModule
   | BlogIndexModule
   | BlogPostContentModule
-  | BlogPostListModule;
+  | BlogPostListModule
+  | BlogTopicCardsModule;
 
 export type BlogSingleton = {
   postModules?: AnyModule[];
