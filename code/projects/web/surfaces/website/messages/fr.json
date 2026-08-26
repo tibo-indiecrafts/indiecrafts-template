@@ -241,6 +241,9 @@
       "relatedSubheading": "D'autres articles qui pourraient vous plaire.",
       "heroLabel": "Derniers articles",
       "noPostsModule": "Aucun article pour le moment.",
+      "frontpage": {
+        "carousel": { "prev": "Précédent", "next": "Suivant", "slide": "diapositive" }
+      },
       "pagination": {
         "label": "Pagination",
         "previous": "Précédent",

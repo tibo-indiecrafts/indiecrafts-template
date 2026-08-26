@@ -753,3 +753,23 @@ export const blogCategorySpotlightQuery = defineQuery(`
     }
   }
 `);
+
+/**
+ * Posts feeding a `module.blog-collection`. Pass `locale` and `ids` (the
+ * editor's picks — `_id`s, in order). Pinned-only (no auto/flag source, so
+ * no `select()` ordering priority to worry about); same public filter as
+ * the other listings. GROQ can't preserve the editor's exact order (only
+ * set membership), so the renderer re-sorts by `ids.indexOf(_id)`.
+ */
+export const blogCollectionQuery = defineQuery(`
+  *[_type == "post"
+    && defined(media.slug.current)
+    && seo.noIndex != true
+    && seo.hideFromDiscovery != true
+    && seo.unpublished != true
+    && coalesce(language, "en") == $locale
+    && coalesce(publishedAt, _createdAt) <= now()
+    && _id in $ids]{
+    ${POST_CARD_PROJECTION}
+  }
+`);

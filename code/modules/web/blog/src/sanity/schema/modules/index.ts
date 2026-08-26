@@ -1,5 +1,6 @@
 import type { SchemaTypeDefinition } from "sanity";
 import blogCategorySpotlight from "./blog-category-spotlight";
+import blogCollection from "./blog-collection";
 import blogExplore from "./blog-explore";
 import blogFeatured from "./blog-featured";
 import blogHero from "./blog-hero";
@@ -14,6 +15,7 @@ import blogPostList from "./blog-post-list";
  */
 export const blogModuleSchemas: SchemaTypeDefinition[] = [
   blogCategorySpotlight,
+  blogCollection,
   blogExplore,
   blogFeatured,
   blogHero,
@@ -24,6 +26,7 @@ export const blogModuleSchemas: SchemaTypeDefinition[] = [
 
 export const BLOG_MODULE_TYPES = [
   "module.blog-category-spotlight",
+  "module.blog-collection",
   "module.blog-explore",
   "module.blog-featured",
   "module.blog-hero",

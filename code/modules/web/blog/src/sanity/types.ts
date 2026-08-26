@@ -261,10 +261,19 @@ export type BlogCategorySpotlightModule = ModuleBase & {
   pinned?: { _ref: string }[];
 };
 
+/** The frontpage "Collection" block — a pinned, ordered selection shown in a carousel. */
+export type BlogCollectionModule = ModuleBase & {
+  _type: "module.blog-collection";
+  title?: string;
+  intro?: string;
+  posts?: { _ref: string }[];
+};
+
 /** Every module a blog page can hold — the shared blocks plus the blog's own. */
 export type AnyModule =
   | BlockModule
   | BlogCategorySpotlightModule
+  | BlogCollectionModule
   | BlogExploreModule
   | BlogFeaturedModule
   | BlogHeroModule

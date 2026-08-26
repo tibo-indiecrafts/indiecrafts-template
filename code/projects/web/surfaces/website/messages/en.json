@@ -241,6 +241,9 @@
       "relatedSubheading": "More articles you might enjoy.",
       "heroLabel": "Latest articles",
       "noPostsModule": "No posts yet.",
+      "frontpage": {
+        "carousel": { "prev": "Previous", "next": "Next", "slide": "slide" }
+      },
       "pagination": {
         "label": "Pagination",
         "previous": "Previous",
