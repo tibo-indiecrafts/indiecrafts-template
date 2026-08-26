@@ -31,6 +31,7 @@ export function BlogTopicCards({
         title: card.title ?? card.target.title,
         blurb: card.blurb,
         image: card.image,
+        alt: card.imageAlt ?? undefined,
         href,
       },
     ];

@@ -10,12 +10,12 @@
 | ------- | ----------------- | ---------------------------------- |
 | `items` | `TopicCardItem[]` | 1–3 cards, in display order.       |
 
-`TopicCardItem`: `_key`, `href`, `title`, `blurb?`, `image?` — every field already resolved by the host (the renderer dereferences the category/tag and builds the URL; the image is already a CDN url).
+`TopicCardItem`: `_key`, `href`, `title`, `blurb?`, `image?`, `alt?` — every field already resolved by the host (the renderer dereferences the category/tag and builds the URL; the image is already a CDN url).
 
 ## Notes
 
 - Columns follow the item count — 1 card fills the row, 2 or 3 split it evenly (`@container`-driven, not viewport-driven).
 - Plain `<a href>` (resolved hrefs), matching the other renderers — the host localizes them.
 - No `image` falls back to a solid muted backdrop so the overlaid text keeps contrast.
-- `alt` falls back to `title`, matching `PostCard`/`FeaturedPosts`' lead card.
+- `alt` is the editor's image alt text (`cards[].image.alt` in the Studio); falls back to `title` when unset, matching `PostCard`/`FeaturedPosts`' lead card.
 - Renders nothing when `items` is empty.

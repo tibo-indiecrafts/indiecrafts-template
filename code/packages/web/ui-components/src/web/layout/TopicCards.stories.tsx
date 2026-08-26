@@ -9,6 +9,7 @@ const items = [
     title: "Engineering",
     blurb: "Architecture, tooling, and the craft of shipping reliable software.",
     image: "https://picsum.photos/seed/topic1/1200/900",
+    alt: "A row of server racks lit in blue",
   },
   {
     _key: "t2",

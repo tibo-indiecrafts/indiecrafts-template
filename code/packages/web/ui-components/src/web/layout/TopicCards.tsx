@@ -7,6 +7,8 @@ export type TopicCardItem = {
   title: string;
   blurb?: string;
   image?: string;
+  /** Alt text for `image`; falls back to `title`. */
+  alt?: string;
   href: string;
 };
 
@@ -48,7 +50,7 @@ function TopicCard({ item }: { item: TopicCardItem }) {
         {item.image ? (
           <Image
             src={item.image}
-            alt={item.title}
+            alt={item.alt ?? item.title}
             fill
             sizes="(min-width: 1024px) 33vw, 100vw"
             className="object-cover transition duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
