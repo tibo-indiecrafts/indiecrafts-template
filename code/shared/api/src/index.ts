@@ -34,6 +34,7 @@ import { handleErasureRequest } from "./erasure/request";
 import { handleErasureConfirm } from "./erasure/confirm";
 import { handleErasureStatus } from "./erasure/status";
 import { handleErasureSelf } from "./erasure/self";
+import { handleProfileLocale } from "./profile/locale";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -1055,6 +1056,11 @@ export default {
     // in erasure/confirm.ts — this stays a thin dispatch.
     if (url.pathname === "/v1/erasure/confirm")
       return handleErasureConfirm(request, env, ctx);
+
+    // ── Profile locale — POST /v1/profile/locale (AUTHENTICATED; Clerk JWT) ──
+    // A signed-in user sets the language stored on their user_profiles row.
+    if (url.pathname === "/v1/profile/locale")
+      return handleProfileLocale(request, env, ctx);
 
     // ── GDPR self-service erasure — POST /v1/erasure/self (AUTHENTICATED; Clerk JWT +
     // typed-email gate) ── A signed-in user erases their own data with no email
