@@ -1,6 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { Label } from "@indiecrafts/packages-web-ui/web/label";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@indiecrafts/packages-web-ui/web/native-select";
 
 export type LocalePreferenceCopy = {
   heading: string;
@@ -34,6 +40,7 @@ export function LocalePreferenceForm({
 }) {
   const [locale, setLocale] = useState(currentLocale);
   const [status, setStatus] = useState<Status>("idle");
+  const uid = useId();
 
   async function save() {
     setStatus("pending");
@@ -59,35 +66,41 @@ export function LocalePreferenceForm({
         <h2 className="text-lg font-medium">{copy.heading}</h2>
         <p className="text-muted-foreground text-sm">{copy.description}</p>
       </div>
-      <label className="block text-sm font-medium" htmlFor="locale-preference">
-        {copy.label}
-      </label>
-      <select
-        id="locale-preference"
-        className="border-input bg-background rounded-md border px-3 py-2 text-sm"
-        value={locale}
-        onChange={(e) => {
-          setLocale(e.target.value);
-          setStatus("idle");
-        }}
-      >
-        {locales.map((l) => (
-          <option key={l.code} value={l.code}>
-            {l.label}
-          </option>
-        ))}
-      </select>
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={save}
-          disabled={status === "pending"}
-          className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm font-medium disabled:opacity-50"
+      <div className="space-y-1.5">
+        <Label htmlFor={`${uid}-locale`}>{copy.label}</Label>
+        <NativeSelect
+          id={`${uid}-locale`}
+          value={locale}
+          onChange={(e) => {
+            setLocale(e.target.value);
+            setStatus("idle");
+          }}
         >
+          {locales.map((l) => (
+            <NativeSelectOption key={l.code} value={l.code}>
+              {l.label}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+      </div>
+      <div className="flex items-center gap-3">
+        <Button type="button" onClick={save} disabled={status === "pending"}>
           {status === "pending" ? copy.pending : copy.save}
-        </button>
-        {status === "success" ? <span className="text-sm text-green-600">{copy.success}</span> : null}
-        {status === "error" ? <span className="text-destructive text-sm">{copy.error}</span> : null}
+        </Button>
+        {status === "success" ? (
+          <p
+            role="status"
+            aria-live="polite"
+            className="bg-muted text-muted-foreground rounded-lg px-4 py-3 text-sm"
+          >
+            {copy.success}
+          </p>
+        ) : null}
+        {status === "error" ? (
+          <p role="alert" aria-live="assertive" className="text-destructive text-sm">
+            {copy.error}
+          </p>
+        ) : null}
       </div>
     </section>
   );
