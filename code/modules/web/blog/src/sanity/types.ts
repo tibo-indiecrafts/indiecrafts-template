@@ -242,9 +242,19 @@ export type BlogFeaturedModule = ModuleBase & {
   leadCard?: boolean;
 };
 
+/** The frontpage "Explore" block — wraps the existing categories/tags/authors sections. */
+export type BlogExploreModule = ModuleBase & {
+  _type: "module.blog-explore";
+  variant: "categories" | "tags" | "authors";
+  heading?: string;
+  subheading?: string;
+  viewAll?: string;
+};
+
 /** Every module a blog page can hold — the shared blocks plus the blog's own. */
 export type AnyModule =
   | BlockModule
+  | BlogExploreModule
   | BlogFeaturedModule
   | BlogHeroModule
   | BlogIndexModule

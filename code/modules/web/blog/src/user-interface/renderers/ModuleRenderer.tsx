@@ -1,8 +1,12 @@
-import type { AnyModule, Post } from "@indiecrafts/modules-web-blog/sanity/types";
+import type {
+  AnyModule,
+  Post,
+} from "@indiecrafts/modules-web-blog/sanity/types";
 import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
 import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";
+import { BlogExplore } from "./BlogExplore";
 import { BlogFeatured } from "./BlogFeatured";
 import { BlogHeroModule } from "./BlogHeroModule";
 import { BlogIndex } from "./BlogIndex";
@@ -55,6 +59,9 @@ async function ModuleSwitch({
   }
   if (m._type === "module.blog-featured") {
     return <BlogFeatured module={m} locale={context.locale} />;
+  }
+  if (m._type === "module.blog-explore") {
+    return <BlogExplore module={m} locale={context.locale} />;
   }
   if (m._type === "module.blog-post-content") {
     return context.post ? (
