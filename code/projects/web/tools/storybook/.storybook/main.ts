@@ -43,6 +43,7 @@ const refs = process.env.STORYBOOK_COMPOSE
   ? {
       "website-surface": { title: "Website (surface)", url: "http://localhost:6007" },
       "app-surface": { title: "App (surface)", url: "http://localhost:6008" },
+      "mobile-surface": { title: "Mobile (surface)", url: "http://localhost:6009" },
     }
   : undefined;
 

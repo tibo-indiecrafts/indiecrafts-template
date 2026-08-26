@@ -12,7 +12,10 @@
     "test:stories:website": "vitest run -c vitest.website.config.ts",
     "storybook:app": "storybook dev -p 6008 -c .storybook-app",
     "storybook:app:build": "storybook build -c .storybook-app -o storybook-static-app",
-    "test:stories:app": "vitest run -c vitest.app.config.ts"
+    "test:stories:app": "vitest run -c vitest.app.config.ts",
+    "storybook:mobile": "storybook dev -p 6009 -c .storybook-mobile",
+    "storybook:mobile:build": "storybook build -c .storybook-mobile -o storybook-static-mobile",
+    "test:stories:mobile": "vitest run -c vitest.mobile.config.ts"
   },
   "dependencies": {
     "@indiecrafts/packages-web-announcement": "workspace:*",
