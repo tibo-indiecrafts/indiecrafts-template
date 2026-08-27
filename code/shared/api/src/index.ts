@@ -19,7 +19,10 @@ import {
   bumpCounter,
   shouldAlert,
 } from "@indiecrafts/packages-shared-security-events";
-import { resolveRegulation } from "@indiecrafts/packages-shared-compliance/shared";
+import {
+  resolveRegulation,
+  runErasure,
+} from "@indiecrafts/packages-shared-compliance/shared";
 import {
   SURFACES,
   resolveBanner,
@@ -34,6 +37,7 @@ import { handleErasureRequest } from "./erasure/request";
 import { handleErasureConfirm } from "./erasure/confirm";
 import { handleErasureStatus } from "./erasure/status";
 import { handleErasureSelf } from "./erasure/self";
+import { buildErasureAdapters } from "./erasure/adapters";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -921,6 +925,17 @@ export default {
           const now = new Date().toISOString();
           try {
             if (evt.type === "user.deleted") {
+              // Read the subject BEFORE pseudonymising — the row still holds the real
+              // email the email-keyed engine needs. resolveSubject then matches the
+              // retained fingerprint even after the scrub below.
+              const subject = await env.CORE_DB.prepare(
+                "SELECT email, email_fingerprint FROM user_profiles WHERE user_id = ?",
+              )
+                .bind(userId)
+                .first<{
+                  email: string | null;
+                  email_fingerprint: string | null;
+                }>();
               await env.CORE_DB.prepare(
                 "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
               )
@@ -931,6 +946,28 @@ export default {
                   userId,
                 )
                 .run();
+              // A dashboard-initiated Clerk delete must erase EVERY store, not just the
+              // profile row. Run the full engine in the background (Clerk excluded — the
+              // user is already gone). Fire-and-forget: it logs on failure and never
+              // blocks the 200 the webhook must return promptly.
+              if (subject?.email) {
+                ctx.waitUntil(
+                  runErasure(
+                    buildErasureAdapters(env, { includeClerk: false }),
+                    subject.email,
+                    {
+                      mode: "erase",
+                      dryRun: false,
+                      ts: now,
+                      fingerprint: subject.email_fingerprint,
+                    },
+                  ).catch((error) =>
+                    logger.error("clerk-delete erasure failed", {
+                      name: (error as Error)?.name,
+                    }),
+                  ),
+                );
+              }
             } else {
               // Webhook payload is snake_case (unlike the @clerk/backend SDK).
               const emails =

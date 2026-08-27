@@ -49,7 +49,15 @@ async function postWebhook(payload: unknown) {
   // Override env per-test so the global 503-no-secret test stays valid.
   const res = await worker.fetch(
     req,
-    { ...env, CLERK_WEBHOOK_SECRET: SECRET, GDPR_FINGERPRINT_SALT: SALT },
+    {
+      ...env,
+      CLERK_WEBHOOK_SECRET: SECRET,
+      GDPR_FINGERPRINT_SALT: SALT,
+      // Present so the user.deleted full-engine erasure can build its adapters.
+      SANITY_PROJECT_ID: "pid",
+      SANITY_DATASET: "production",
+      SANITY_API_WRITE_TOKEN: "sk_sanity",
+    },
     ctx,
   );
   await waitOnExecutionContext(ctx);
@@ -168,5 +176,41 @@ describe("clerk webhook → user_profiles", () => {
     expect(row?.anonymized).toBe(1);
     expect(row?.deleted_at).toBeTruthy();
     expect(row?.email_fingerprint).toBe(fpBefore); // retained for retention matching
+  });
+
+  it("user.deleted runs the full engine across the other stores (audit erased)", async () => {
+    await postWebhook(created("user_erase", "erase@x.com", "Er", "Ase"));
+    // Seed an audit store the engine must erase (session_events, deleted by user_id).
+    await env.DB.prepare(
+      "INSERT INTO session_events (ts, surface, user_id, session_id) VALUES (?, ?, ?, ?)",
+    )
+      .bind(new Date(0).toISOString(), "website", "user_erase", "sess_1")
+      .run();
+    const before = await env.DB.prepare(
+      "SELECT COUNT(*) c FROM session_events WHERE user_id = ?",
+    )
+      .bind("user_erase")
+      .first<{ c: number }>();
+    expect(before?.c).toBe(1);
+
+    await postWebhook({
+      type: "user.deleted",
+      data: { id: "user_erase", deleted: true },
+    });
+
+    // Profile pseudonymised immediately (the sync UPDATE — unchanged behavior).
+    const prof = await env.DB.prepare(
+      "SELECT anonymized FROM user_profiles WHERE user_id = ?",
+    )
+      .bind("user_erase")
+      .first<{ anonymized: number }>();
+    expect(prof?.anonymized).toBe(1);
+    // The full engine also erased the audit store (async, flushed by waitOnExecutionContext).
+    const after = await env.DB.prepare(
+      "SELECT COUNT(*) c FROM session_events WHERE user_id = ?",
+    )
+      .bind("user_erase")
+      .first<{ c: number }>();
+    expect(after?.c).toBe(0);
   });
 });
