@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Input } from "@indiecrafts/packages-web-ui/web/input";
@@ -44,10 +45,8 @@ export function groupSettings(
   return groups;
 }
 
-type Status = "idle" | "saved" | "error";
-
 /** Grouped number-input editor for the operational settings. One Save calls
- *  `saveSetting` per changed field; the `<main>` landmark lives in the page. */
+ *  `saveSetting` per changed field. */
 export function SettingsForm({ settings }: { settings: SettingRow[] }) {
   const t = useTranslations("admin.settings");
   const initial = useRef(
@@ -58,7 +57,6 @@ export function SettingsForm({ settings }: { settings: SettingRow[] }) {
   const [overriddenAt, setOverriddenAt] = useState<Record<string, string | null>>(
     () => Object.fromEntries(settings.map((s) => [s.key, s.updatedAt])),
   );
-  const [status, setStatus] = useState<Record<string, Status>>({});
   const [pending, startTransition] = useTransition();
 
   const changedKeys = settings
@@ -73,11 +71,8 @@ export function SettingsForm({ settings }: { settings: SettingRow[] }) {
           result: await saveSetting(key, values[key]),
         })),
       );
-      setStatus((prev) => {
-        const next = { ...prev };
-        for (const { key, result } of results) next[key] = result.ok ? "saved" : "error";
-        return next;
-      });
+      if (results.every(({ result }) => result.ok)) toast.success(t("saved"));
+      else toast.error(t("error"));
       setOverriddenAt((prev) => {
         const next = { ...prev };
         for (const { key, result } of results) {
@@ -108,7 +103,6 @@ export function SettingsForm({ settings }: { settings: SettingRow[] }) {
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
             {rows.map((row) => {
               const id = `setting-${row.key}`;
-              const rowStatus = status[row.key] ?? "idle";
               return (
                 <div key={row.key} className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-2">
@@ -142,16 +136,6 @@ export function SettingsForm({ settings }: { settings: SettingRow[] }) {
                   {DRIFT_KEYS.has(row.key) ? (
                     <p className="text-xs text-muted-foreground">{t("driftReminder")}</p>
                   ) : null}
-                  {rowStatus === "saved" && (
-                    <p role="status" className="text-xs text-foreground">
-                      {t("saved")}
-                    </p>
-                  )}
-                  {rowStatus === "error" && (
-                    <p role="alert" className="text-xs text-destructive">
-                      {t("error")}
-                    </p>
-                  )}
                 </div>
               );
             })}

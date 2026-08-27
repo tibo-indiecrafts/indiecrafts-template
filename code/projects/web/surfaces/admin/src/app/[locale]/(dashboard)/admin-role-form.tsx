@@ -2,7 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { Input } from "@indiecrafts/packages-web-ui/web/input";
+import { Label } from "@indiecrafts/packages-web-ui/web/label";
 import { grantAdmin, revokeAdmin } from "./actions";
 
 /** The one UI for the crown-jewel action — grant/revoke the `admin` role by Clerk user
@@ -10,7 +13,6 @@ import { grantAdmin, revokeAdmin } from "./actions";
 export function AdminRoleForm() {
   const t = useTranslations("admin.roles");
   const [userId, setUserId] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
   const run = (
@@ -18,27 +20,24 @@ export function AdminRoleForm() {
     okKey: "granted" | "revoked",
   ) =>
     start(async () => {
-      setMessage(null);
       const result = await action(userId.trim());
-      setMessage(result.ok ? t(okKey) : t("error"));
+      if (result.ok) toast.success(t(okKey));
+      else toast.error(t("error"));
     });
 
   const disabled = pending || userId.trim().length === 0;
 
   return (
-    <section aria-labelledby="roles-heading" className="mt-8 flex flex-col gap-3">
+    <section aria-labelledby="roles-heading" className="flex flex-col gap-3">
       <h2 id="roles-heading" className="text-lg font-medium text-foreground">
         {t("title")}
       </h2>
-      <label htmlFor="uid" className="text-sm text-muted-foreground">
-        {t("label")}
-      </label>
-      <input
+      <Label htmlFor="uid">{t("label")}</Label>
+      <Input
         id="uid"
         value={userId}
         onChange={(e) => setUserId(e.target.value)}
         placeholder="user_..."
-        className="h-10 rounded-md border border-input bg-background px-3 text-foreground"
       />
       <div className="flex gap-2">
         <Button disabled={disabled} onClick={() => run(grantAdmin, "granted")}>
@@ -52,11 +51,6 @@ export function AdminRoleForm() {
           {t("revoke")}
         </Button>
       </div>
-      {message ? (
-        <p role="status" className="text-sm text-muted-foreground">
-          {message}
-        </p>
-      ) : null}
     </section>
   );
 }
