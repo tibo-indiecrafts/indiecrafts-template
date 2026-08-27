@@ -9,6 +9,8 @@ import {
   TableBody,
   TableCell,
 } from "@indiecrafts/packages-web-ui/web/table";
+import { Input } from "@indiecrafts/packages-web-ui/web/input";
+import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 type UserRow = {
@@ -63,17 +65,15 @@ export default async function UsersPage({
       <Card>
         <CardContent>
           <form className="flex gap-2" role="search">
-            <input
+            <Input
               type="search"
               name="q"
               defaultValue={query}
               placeholder={t("search")}
               aria-label={t("search")}
-              className="h-10 flex-1 rounded-md border border-input bg-background px-3 text-foreground"
+              className="flex-1"
             />
-            <button className="h-10 rounded-md bg-primary px-4 text-primary-foreground">
-              {t("go")}
-            </button>
+            <Button type="submit">{t("go")}</Button>
           </form>
           {users.length === 0 ? (
             <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
