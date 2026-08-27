@@ -1,10 +1,14 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Card, CardContent, CardHeader } from "@indiecrafts/packages-web-ui/web/card";
+import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@indiecrafts/packages-web-ui/web/card";
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@indiecrafts/packages-web-ui/web/table";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 // Surfaces expose /api/version; HTTP workers expose /health. URLs from server-only
@@ -68,12 +72,22 @@ export default async function SystemPage({
   );
   const apiHealth = workerHealth.find((w) => w.name === "api")?.body;
   const dbs = [
-    { name: "data (D1, EU)", status: String(apiHealth?.db ?? t("unknown")) },
-    { name: "content (Sanity)", status: t("external") },
+    {
+      name: "data (D1, EU)",
+      status: String(apiHealth?.db ?? t("unknown")),
+      variant: apiHealth?.db ? ("outline" as const) : ("secondary" as const),
+    },
+    { name: "content (Sanity)", status: t("external"), variant: "secondary" as const },
   ];
 
   const badge = (row: { configured: boolean; ok: boolean }) =>
     !row.configured ? t("notConfigured") : row.ok ? t("live") : t("down");
+  const badgeVariant = (row: { configured: boolean; ok: boolean }) =>
+    !row.configured
+      ? ("secondary" as const)
+      : row.ok
+        ? ("outline" as const)
+        : ("destructive" as const);
 
   return (
     <div className="p-4 md:p-6">
@@ -82,87 +96,95 @@ export default async function SystemPage({
       <div className="flex flex-col gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>{t("surfaces")}</CardTitle>
+            <h2 className="leading-none font-semibold">{t("surfaces")}</h2>
           </CardHeader>
           <CardContent>
-            <table className="w-full text-left text-sm">
-              <thead className="text-muted-foreground">
-                <tr>
-                  <th className="py-2 pr-4 font-medium">{t("name")}</th>
-                  <th className="py-2 pr-4 font-medium">{t("version")}</th>
-                  <th className="py-2 pr-4 font-medium">{t("commit")}</th>
-                  <th className="py-2 font-medium">{t("status")}</th>
-                </tr>
-              </thead>
-              <tbody className="text-foreground">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("name")}</TableHead>
+                  <TableHead>{t("version")}</TableHead>
+                  <TableHead>{t("commit")}</TableHead>
+                  <TableHead>{t("status")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {surfaces.map((s) => (
-                  <tr key={s.name} className="border-t border-border">
-                    <td className="py-2 pr-4">{s.name}</td>
-                    <td className="py-2 pr-4 tabular-nums">
+                  <TableRow key={s.name}>
+                    <TableCell>{s.name}</TableCell>
+                    <TableCell className="tabular-nums">
                       {"version" in s ? (s.version ?? "—") : "—"}
-                    </td>
-                    <td className="py-2 pr-4 font-mono text-xs">
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
                       {"commit" in s ? (s.commit ?? "—") : "—"}
-                    </td>
-                    <td className="py-2">{badge(s)}</td>
-                  </tr>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={badgeVariant(s)}>{badge(s)}</Badge>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("workers")}</CardTitle>
+            <h2 className="leading-none font-semibold">{t("workers")}</h2>
           </CardHeader>
           <CardContent>
-            <table className="w-full text-left text-sm">
-              <thead className="text-muted-foreground">
-                <tr>
-                  <th className="py-2 pr-4 font-medium">{t("name")}</th>
-                  <th className="py-2 font-medium">{t("status")}</th>
-                </tr>
-              </thead>
-              <tbody className="text-foreground">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("name")}</TableHead>
+                  <TableHead>{t("status")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {workerHealth.map((w) => (
-                  <tr key={w.name} className="border-t border-border">
-                    <td className="py-2 pr-4">{w.name}</td>
-                    <td className="py-2">{badge(w)}</td>
-                  </tr>
+                  <TableRow key={w.name}>
+                    <TableCell>{w.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={badgeVariant(w)}>{badge(w)}</Badge>
+                    </TableCell>
+                  </TableRow>
                 ))}
                 {NON_HTTP_WORKERS.map((name) => (
-                  <tr key={name} className="border-t border-border">
-                    <td className="py-2 pr-4">{name}</td>
-                    <td className="py-2 text-muted-foreground">{t("noEndpoint")}</td>
-                  </tr>
+                  <TableRow key={name}>
+                    <TableCell>{name}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{t("noEndpoint")}</Badge>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("databases")}</CardTitle>
+            <h2 className="leading-none font-semibold">{t("databases")}</h2>
           </CardHeader>
           <CardContent>
-            <table className="w-full text-left text-sm">
-              <thead className="text-muted-foreground">
-                <tr>
-                  <th className="py-2 pr-4 font-medium">{t("name")}</th>
-                  <th className="py-2 font-medium">{t("status")}</th>
-                </tr>
-              </thead>
-              <tbody className="text-foreground">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("name")}</TableHead>
+                  <TableHead>{t("status")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {dbs.map((d) => (
-                  <tr key={d.name} className="border-t border-border">
-                    <td className="py-2 pr-4">{d.name}</td>
-                    <td className="py-2">{d.status}</td>
-                  </tr>
+                  <TableRow key={d.name}>
+                    <TableCell>{d.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={d.variant}>{d.status}</Badge>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>

@@ -1,6 +1,14 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@indiecrafts/packages-web-ui/web/table";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 type UserRow = {
@@ -70,35 +78,35 @@ export default async function UsersPage({
           {users.length === 0 ? (
             <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
           ) : (
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="text-muted-foreground">
-                  <tr>
-                    <th className="py-2 pr-4 font-medium">{t("email")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("role")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("created")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("lastSignIn")}</th>
-                    <th className="py-2 font-medium">{t("id")}</th>
-                  </tr>
-                </thead>
-                <tbody className="text-foreground">
+            <div className="mt-6">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("email")}</TableHead>
+                    <TableHead>{t("role")}</TableHead>
+                    <TableHead>{t("created")}</TableHead>
+                    <TableHead>{t("lastSignIn")}</TableHead>
+                    <TableHead>{t("id")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {users.map((u) => (
-                    <tr key={u.id} className="border-t border-border">
-                      <td className="py-2 pr-4">{u.email}</td>
-                      <td className="py-2 pr-4">{u.role}</td>
-                      <td className="py-2 pr-4 tabular-nums">
+                    <TableRow key={u.id}>
+                      <TableCell>{u.email}</TableCell>
+                      <TableCell>{u.role}</TableCell>
+                      <TableCell className="tabular-nums">
                         {new Date(u.created).toLocaleDateString()}
-                      </td>
-                      <td className="py-2 pr-4 tabular-nums">
+                      </TableCell>
+                      <TableCell className="tabular-nums">
                         {u.lastSignIn
                           ? new Date(u.lastSignIn).toLocaleDateString()
                           : "—"}
-                      </td>
-                      <td className="py-2 font-mono text-xs">{u.id}</td>
-                    </tr>
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">{u.id}</TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </CardContent>

@@ -1,5 +1,14 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
+import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@indiecrafts/packages-web-ui/web/table";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 type CspRow = {
@@ -58,47 +67,40 @@ export default async function CspPage({
           ) : rows.length === 0 ? (
             <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="text-muted-foreground">
-                  <tr>
-                    <th className="py-2 pr-4 font-medium">{t("count")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("disposition")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("directive")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("route")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("blockedSource")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("surface")}</th>
-                    <th className="py-2 font-medium">{t("lastSeen")}</th>
-                  </tr>
-                </thead>
-                <tbody className="text-foreground">
-                  {rows.map((row) => (
-                    <tr key={row.group_key} className="border-t border-border">
-                      <td className="py-2 pr-4 tabular-nums">{row.count}</td>
-                      <td
-                        className={
-                          "py-2 pr-4 " +
-                          (row.disposition === "report"
-                            ? "font-medium text-foreground"
-                            : "text-muted-foreground")
-                        }
-                      >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("count")}</TableHead>
+                  <TableHead>{t("disposition")}</TableHead>
+                  <TableHead>{t("directive")}</TableHead>
+                  <TableHead>{t("route")}</TableHead>
+                  <TableHead>{t("blockedSource")}</TableHead>
+                  <TableHead>{t("surface")}</TableHead>
+                  <TableHead>{t("lastSeen")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow key={row.group_key}>
+                    <TableCell className="tabular-nums">{row.count}</TableCell>
+                    <TableCell>
+                      <Badge variant={row.disposition === "report" ? "outline" : "secondary"}>
                         {row.disposition}
-                      </td>
-                      <td className="py-2 pr-4">{row.directive}</td>
-                      <td className="py-2 pr-4 font-mono text-xs">
-                        {row.document_path}
-                      </td>
-                      <td className="py-2 pr-4 font-mono text-xs">
-                        {row.blocked_source}
-                      </td>
-                      <td className="py-2 pr-4">{row.surface}</td>
-                      <td className="py-2 tabular-nums">{row.last_seen}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{row.directive}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {row.document_path}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {row.blocked_source}
+                    </TableCell>
+                    <TableCell>{row.surface}</TableCell>
+                    <TableCell className="tabular-nums">{row.last_seen}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>

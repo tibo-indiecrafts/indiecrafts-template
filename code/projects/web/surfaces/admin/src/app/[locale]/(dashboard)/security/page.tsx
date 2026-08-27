@@ -1,5 +1,14 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
+import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@indiecrafts/packages-web-ui/web/table";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 type SecurityRow = {
@@ -75,47 +84,46 @@ export default async function SecurityPage({
           ) : rows.length === 0 ? (
             <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="text-muted-foreground">
-                  <tr>
-                    <th className="py-2 pr-4 font-medium">{t("when")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("event")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("severity")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("surface")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("user")}</th>
-                    <th className="py-2 pr-4 font-medium">{t("country")}</th>
-                    <th className="py-2 font-medium">{t("description")}</th>
-                  </tr>
-                </thead>
-                <tbody className="text-foreground">
-                  {rows.map((row, i) => (
-                    <tr key={i} className="border-t border-border">
-                      <td className="py-2 pr-4 tabular-nums">{row.ts}</td>
-                      <td className="py-2 pr-4">{row.event_type}</td>
-                      <td
-                        className={
-                          "py-2 pr-4 " +
-                          (row.severity === "critical" || row.severity === "high"
-                            ? "font-medium text-destructive"
-                            : "text-muted-foreground")
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("when")}</TableHead>
+                  <TableHead>{t("event")}</TableHead>
+                  <TableHead>{t("severity")}</TableHead>
+                  <TableHead>{t("surface")}</TableHead>
+                  <TableHead>{t("user")}</TableHead>
+                  <TableHead>{t("country")}</TableHead>
+                  <TableHead>{t("description")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((row, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="tabular-nums">{row.ts}</TableCell>
+                    <TableCell>{row.event_type}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          row.severity === "critical" || row.severity === "high"
+                            ? "destructive"
+                            : "outline"
                         }
                       >
                         {row.severity}
-                      </td>
-                      <td className="py-2 pr-4">{row.surface ?? "—"}</td>
-                      <td className="py-2 pr-4 font-mono text-xs">
-                        {row.user_id ?? "—"}
-                      </td>
-                      <td className="py-2 pr-4">{row.country ?? "—"}</td>
-                      <td className="py-2 text-muted-foreground">
-                        {row.description ?? "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{row.surface ?? "—"}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {row.user_id ?? "—"}
+                    </TableCell>
+                    <TableCell>{row.country ?? "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {row.description ?? "—"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>
