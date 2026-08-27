@@ -47,7 +47,6 @@
       "surface": "Surface",
       "user": "User",
       "country": "Country",
-      "link": "View sessions",
       "actions": "Actions",
       "manage": "Manage",
       "hide": "Hide",
@@ -67,8 +66,7 @@
       "role": "Role",
       "created": "Created",
       "lastSignIn": "Last sign-in",
-      "id": "ID",
-      "link": "Browse users"
+      "id": "ID"
     },
     "security": {
       "title": "Security",
@@ -84,8 +82,7 @@
       "surface": "Surface",
       "user": "User",
       "country": "Country",
-      "description": "Detail",
-      "link": "View security"
+      "description": "Detail"
     },
     "csp": {
       "title": "CSP violations",
@@ -98,8 +95,7 @@
       "surface": "Surface",
       "lastSeen": "Last seen",
       "empty": "No CSP violations recorded.",
-      "loadError": "Could not load CSP reports — the api is unreachable.",
-      "link": "View CSP violations"
+      "loadError": "Could not load CSP reports — the api is unreachable."
     },
     "dataRequests": {
       "title": "Data requests",
@@ -110,8 +106,7 @@
       "email": "Email",
       "status": "Status",
       "message": "Message",
-      "localeSource": "Locale / source",
-      "link": "View data requests"
+      "localeSource": "Locale / source"
     },
     "system": {
       "title": "System status",
@@ -127,8 +122,7 @@
       "noEndpoint": "Scheduled / queue (no endpoint)",
       "external": "External (Sanity)",
       "unknown": "Unknown",
-      "notConfigured": "Not configured",
-      "link": "System status"
+      "notConfigured": "Not configured"
     },
     "settings": {
       "title": "Settings",
@@ -164,8 +158,7 @@
       "saving": "Saving…",
       "saved": "Saved.",
       "error": "Could not save this setting.",
-      "driftReminder": "Changing this may require updating the retention windows disclosed in the privacy policy.",
-      "link": "Settings"
+      "driftReminder": "Changing this may require updating the retention windows disclosed in the privacy policy."
     },
     "backups": {
       "title": "Backups",
@@ -186,8 +179,7 @@
       "size": "Size",
       "error": "Error",
       "failedFlag": "Failed",
-      "stuckFlag": "Stuck",
-      "link": "View backups"
+      "stuckFlag": "Stuck"
     }
   }
 }
