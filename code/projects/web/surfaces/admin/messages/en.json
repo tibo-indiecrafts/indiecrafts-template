@@ -3,6 +3,32 @@
     "title": "Admin",
     "welcome": "Welcome to the admin dashboard.",
     "authNotConfigured": "Authentication is not configured. Set the Clerk keys to enable sign-in.",
+    "nav": {
+      "groups": {
+        "access": "Access",
+        "compliance": "Compliance",
+        "operations": "Operations",
+        "security": "Security"
+      },
+      "overview": "Overview",
+      "users": "Users",
+      "sessions": "Sessions",
+      "dataRequests": "Data requests",
+      "csp": "CSP reports",
+      "backups": "Backups",
+      "system": "System",
+      "settings": "Settings",
+      "security": "Security"
+    },
+    "theme": {
+      "toggle": "Toggle theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "user": {
+      "account": "Admin",
+      "signOut": "Sign out"
+    },
     "roles": {
       "title": "Manage admins",
       "label": "Clerk user ID",

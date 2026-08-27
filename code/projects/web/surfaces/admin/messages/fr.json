@@ -3,6 +3,32 @@
     "title": "Admin",
     "welcome": "Bienvenue sur le tableau de bord d'administration.",
     "authNotConfigured": "L'authentification n'est pas configurée. Renseignez les clés Clerk pour activer la connexion.",
+    "nav": {
+      "groups": {
+        "access": "Accès",
+        "compliance": "Conformité",
+        "operations": "Opérations",
+        "security": "Sécurité"
+      },
+      "overview": "Vue d'ensemble",
+      "users": "Utilisateurs",
+      "sessions": "Sessions",
+      "dataRequests": "Demandes de données",
+      "csp": "Rapports CSP",
+      "backups": "Sauvegardes",
+      "system": "Système",
+      "settings": "Paramètres",
+      "security": "Sécurité"
+    },
+    "theme": {
+      "toggle": "Changer de thème",
+      "light": "Clair",
+      "dark": "Sombre"
+    },
+    "user": {
+      "account": "Admin",
+      "signOut": "Se déconnecter"
+    },
     "roles": {
       "title": "Gérer les administrateurs",
       "label": "Identifiant utilisateur Clerk",
