@@ -2,8 +2,12 @@
 
 Auto-loads under `code/projects/web/surfaces/admin/**`. A **separate, auth-gated Next.js app** for operators: moderation,
 subscriber/waitlist ops, content review, dashboards over the shared Sanity dataset (+ Cloudflare D1 if
-relational data lands). Not public — behind auth, `noindex`, its own subdomain. **Activated scaffold — a real
-Next app with placeholder pages; the real UI + the auth gate are still TBD.**
+relational data lands). Not public — behind auth, `noindex`, its own subdomain. **Has a shadcn dashboard
+shell**: `src/user-interface/layout/` (`AppShell` → `AppSidebar` + `SidebarInset`/`AppHeader`, a grouped
+nav driven by `src/user-interface/lib/nav.ts`, a no-flash light/dark `ThemeToggle`) and a consistent
+shadcn page treatment (`PageHeader` + `Card`, shadcn `Table`/`Badge`, `Input`/`Label` + `sonner` toasts)
+across every page. These are **app-owned components — no Storybook**; Storybook's globs only cover the
+design-system packages, not app UI.
 
 **Framework:** Next.js 16 (App Router) · React 19 · Tailwind v4 · shadcn/ui — same stack as `web`.
 **Platform class:** `next-cf` (Next → OpenNext → Cloudflare Workers).

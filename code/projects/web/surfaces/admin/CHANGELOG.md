@@ -21,6 +21,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **shadcn dashboard shell — sidebar, header, theme toggle, Overview landing.** New
+  `src/user-interface/layout/` shell (`AppShell` → `AppSidebar` + `SidebarInset`/`AppHeader`) replaces
+  the single-page scaffold: a grouped nav (Overview · Access[Users, Sessions] ·
+  Compliance[Data requests, CSP] · Operations[Backups, System, Settings] · Security) driven by
+  `src/user-interface/lib/nav.ts`, a sticky header with breadcrumbs, and a no-flash light/dark
+  `ThemeToggle` (persists to `localStorage` as `admin-theme`). Collapses to a Sheet on mobile. A new
+  `(dashboard)/page.tsx` Overview landing shows a grid of stat Cards (best-effort counts, a muted "—"
+  where no cheap endpoint exists) alongside the admin-role form. **Why:** the admin had placeholder
+  pages with no shared chrome or navigation; this gives operators one consistent shell to work in.
+- **shadcn visual pass across every admin page.** Every page now has a `PageHeader` + shadcn `Card`
+  chrome; every table (sessions, backups, data requests, CSP, security, system, users) is a shadcn
+  `Table` with status `Badge` cells instead of raw color text; forms use shadcn `Input`/`Label` and
+  `sonner` toasts; section headings are real `<h2>`s. Components are app-owned — **no Storybook**
+  (Storybook's globs cover only the design-system packages, not app UI). New deps: `lucide-react`,
+  `sonner`. **Why:** brings the admin surface to the same visual bar as `website`, without adding new
+  backend endpoints.
 - **Settings card — edit retention/ops/TTL knobs.** New `(dashboard)/settings` page reads
   `GET /v1/settings` server-side (the api token stays server-side) and renders grouped
   number inputs (Retention / Ops / Link TTLs), each with its default, min/max hint, and an
