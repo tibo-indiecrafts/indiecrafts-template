@@ -214,6 +214,15 @@ reporting, nonce)` (`./csp`) now takes an optional `nonce`: when set, `script-sr
 
 ### Changed
 
+- **`@indiecrafts/packages-web-announcement` — dismiss/copy controls now use the shadcn `Button`.**
+  `AnnouncementBar` (dismiss + click-to-copy code chip) and `AnnouncementToast` (dismiss) replaced their
+  raw `<button>` elements with the design-system `Button` (`variant="ghost"`, `size="icon-xs"`/`"xs"`),
+  dropping the hand-rolled focus-ring classes the primitive already provides. **Why:** consistency — every
+  interactive element in the web bricks routes through shadcn.
+- **`@indiecrafts/packages-web-auth` — removed the unused `resolveSignInRedirect` / `isSafeRelativePath`
+  redirect guard** (`src/redirect.ts` + its test + the `./redirect` export). Both were exported and tested
+  but never called — each surface builds its Clerk redirect its own way, and Clerk validates `redirect_url`
+  against the instance's allowed origins. **Why:** dead code.
 - **`@indiecrafts/packages-shared-config` — log redaction now scrubs raw PII.** `logging.redactKeys`
   adds `email`, `ip`, `ipAddress` to the auth-material list, so identifiers passed as log context keys
   are `[REDACTED]` before any reporter/transport. The hashed `emailFingerprint`/`ip_hash` stay

@@ -27,7 +27,11 @@ The root layout mounts the themed provider:
 // src/app/layout.tsx
 import { AppClerkProvider } from "@indiecrafts/packages-web-auth";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <AppClerkProvider>{children}</AppClerkProvider>;
 }
 ```
@@ -79,10 +83,9 @@ also shows a **Sign in** button (Clerk modal) / **UserButton** via `AuthMenu`
 
 **Redirects (precedence):** `forceRedirectUrl` → a validated `redirect_url` → the
 app's home (`fallbackRedirectUrl`, default `/`). A user bounced from a protected page
-returns there; otherwise they land on that surface's own homepage. Every redirect we
-build ourselves passes through **`resolveSignInRedirect` / `isSafeRelativePath`** — a
-`redirect_url` is honored only when it's a same-origin **relative path**; anything
-absolute / protocol-relative / cross-origin falls back to home (open-redirect guard).
+returns there; otherwise they land on that surface's own homepage. Clerk validates
+`redirect_url` against the instance's allowed origins, so a cross-origin target is
+rejected and falls back to home (open-redirect guard).
 
 ## Session sharing across surfaces
 
