@@ -38,6 +38,10 @@ jobs:
       - run: pnpm lint:scripts
       - run: pnpm test:scripts
       - run: pnpm test
+      - run: pnpm check:api-guards
+      - run: pnpm tokens:check
+      - run: pnpm brands:check
+      - run: pnpm check:tasks
 
   # The real Cloudflare Worker build (OpenNext) for every AFFECTED Next app
   # (website · admin) — turbo fans out via the `build:cf` task and skips
