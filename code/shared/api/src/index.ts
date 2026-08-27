@@ -92,6 +92,9 @@ export interface Env {
    *  route's real Clerk client (find/export/delete a user by email). Optional until the
    *  confirm route runs erasure. */
   CLERK_SECRET_KEY?: string;
+  /** `[vars]` — max factor-verification-age (minutes) accepted for account self-delete
+   *  before step-up reverification is required. Optional; defaults to 10. */
+  REVERIFY_MAX_MINUTES?: string;
   /** Sanity read config for `GET /v1/announcements` (`[vars]`). Public read → 503 until set. */
   SANITY_PROJECT_ID?: string;
   SANITY_DATASET?: string;

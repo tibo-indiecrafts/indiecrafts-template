@@ -97,9 +97,10 @@ async function defaultAuthenticate(
       secretKey: env.CLERK_SECRET_KEY,
     });
     if (errors || !claims) return null;
-    const payload = claims as { sub?: unknown };
+    const payload = claims as { sub?: unknown; fva?: [number, number] };
     const userId = typeof payload.sub === "string" ? payload.sub : null;
     if (!userId) return null;
+    const fva = Array.isArray(payload.fva) ? payload.fva : null;
     const user = await createRealClerkClient(env.CLERK_SECRET_KEY).exportUser(
       userId,
     );
@@ -113,7 +114,8 @@ async function defaultAuthenticate(
       u.emailAddresses?.[0]?.emailAddress ??
       null;
     if (!email) return null;
-    return { userId, email };
+    // fva carried for type parity with SelfAuth; export is not reverification-gated.
+    return { userId, email, fva };
   } catch {
     return null; // any verify/resolve failure → unauthenticated (fail closed)
   }

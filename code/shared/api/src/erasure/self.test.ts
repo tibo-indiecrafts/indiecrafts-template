@@ -6,7 +6,7 @@ import { createCoreErasureAdapter, createAuditErasureAdapter } from "./d1";
 import { createClerkErasureAdapter } from "./clerk";
 import { createSanityErasureAdapter } from "./sanity";
 import { createOrdersErasureAdapter } from "./orders";
-import { handleErasureSelf } from "./self";
+import { handleErasureSelf, type SelfAuth } from "./self";
 
 const SALT = "test-fingerprint-salt";
 const EMAIL = "self-subject@x.com";
@@ -49,9 +49,10 @@ async function seedProfile(): Promise<string> {
 
 /** Injected auth (no real Clerk) + injected adapters (real D1 + mocked Clerk/Sanity). */
 function mocks(
-  authResult: { userId: string; email: string } | null = {
+  authResult: SelfAuth | null = {
     userId: USER,
     email: EMAIL,
+    fva: [0, -1], // first factor freshly verified → passes the reverification gate
   },
 ) {
   const authenticate = vi.fn(async () => authResult);
@@ -187,5 +188,46 @@ describe("handleErasureSelf", () => {
       .bind(USER)
       .first<{ event: string }>();
     expect(audit?.event).toBe("erasure.self");
+  });
+
+  it("requires step-up reverification when the fva is stale (403 + clerk_error)", async () => {
+    await seedProfile();
+    const { authenticate, build, clerkClient } = mocks({
+      userId: USER,
+      email: EMAIL,
+      fva: [45, -1], // first factor verified 45 min ago > default 10
+    });
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(403);
+    const body = (await res.json()) as {
+      clerk_error?: { type?: string; reason?: string };
+    };
+    expect(body.clerk_error?.type).toBe("forbidden");
+    expect(body.clerk_error?.reason).toBe("reverification-error");
+    // The destructive path never ran.
+    expect(clerkClient.deleteUser).not.toHaveBeenCalled();
+  });
+
+  it("requires step-up reverification when the fva claim is absent", async () => {
+    await seedProfile();
+    const { authenticate, build } = mocks({
+      userId: USER,
+      email: EMAIL,
+      fva: null,
+    });
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(403);
   });
 });

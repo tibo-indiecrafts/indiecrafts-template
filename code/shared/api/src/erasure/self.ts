@@ -19,7 +19,13 @@ import { sendErasureCompleteEmail } from "./email";
 
 const BODY_MAX = 4000;
 
-export type SelfAuth = { userId: string; email: string };
+export type SelfAuth = {
+  userId: string;
+  email: string;
+  // Clerk factor-verification-age claim [firstFactorMinutes, secondFactorMinutes];
+  // each -1 when not applicable. null when the token omits it. Drives step-up.
+  fva: [number, number] | null;
+};
 
 function json(
   body: unknown,
@@ -59,9 +65,10 @@ async function defaultAuthenticate(
     if (errors || !claims) return null;
     // The installed @clerk/backend@3.16.7 types resolve `data`/`errors` to `unknown`
     // (not a typed JwtPayload) — cast to read the `sub` claim.
-    const payload = claims as { sub?: unknown };
+    const payload = claims as { sub?: unknown; fva?: [number, number] };
     const userId = typeof payload.sub === "string" ? payload.sub : null;
     if (!userId) return null;
+    const fva = Array.isArray(payload.fva) ? payload.fva : null;
     // Resolve the primary email from Clerk (the JWT omits it by default).
     const user = await createRealClerkClient(env.CLERK_SECRET_KEY).exportUser(
       userId,
@@ -76,7 +83,7 @@ async function defaultAuthenticate(
       u.emailAddresses?.[0]?.emailAddress ??
       null;
     if (!email) return null;
-    return { userId, email };
+    return { userId, email, fva };
   } catch {
     return null; // any verify/resolve failure → unauthenticated (fail closed)
   }
@@ -153,6 +160,29 @@ export async function handleErasureSelf(
   );
   if (!safeEqual(typedFp, authFp))
     return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+
+  // Step-up reverification: account-delete is destructive, so require a FRESH factor
+  // verification (fva = factor-verification-age, minutes). A stale/absent fva returns
+  // Clerk's reverification-error shape (403), which the client `useReverification` hook
+  // detects → prompts step-up → retries. Web + hybrid re-prompt; mobile (no
+  // useReverification in @clerk/clerk-expo) is rejected until the user re-authenticates.
+  const maxMinutes = Number(env.REVERIFY_MAX_MINUTES ?? 10);
+  const firstFactorAge = authed.fva ? authed.fva[0] : -1;
+  if (firstFactorAge < 0 || firstFactorAge > maxMinutes) {
+    return json(
+      {
+        clerk_error: {
+          type: "forbidden",
+          reason: "reverification-error",
+          metadata: {
+            reverification: { level: "first_factor", afterMinutes: maxMinutes },
+          },
+        },
+      },
+      403,
+      PUBLIC_CORS_POST,
+    );
+  }
 
   const adapters = buildAdapters(env);
   const ts = new Date().toISOString();

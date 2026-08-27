@@ -56,9 +56,14 @@ async function seedProfile(): Promise<string> {
 
 /** Injected auth (no real Clerk) + injected adapters (real D1 + mocked Clerk/Sanity). */
 function mocks(
-  authResult: { userId: string; email: string } | null = {
+  authResult: {
+    userId: string;
+    email: string;
+    fva: [number, number] | null;
+  } | null = {
     userId: USER,
     email: EMAIL,
+    fva: null,
   },
 ) {
   const authenticate = vi.fn(async () => authResult);
