@@ -26,11 +26,17 @@ export interface AdapterPreview {
   readonly store: string;
   readonly wouldAnonymize: Record<string, number>;
   readonly wouldDelete: Record<string, number>;
+  // Set by a registered no-op adapter (e.g. no commerce store yet). A receipt
+  // must not read an empty result as a completed erasure.
+  readonly notApplicable?: true;
 }
 export interface AdapterResult {
   readonly store: string;
   readonly anonymized: Record<string, number>;
   readonly deleted: Record<string, number>;
+  // Set by a registered no-op adapter (e.g. no commerce store yet). A receipt
+  // must not read an empty result as a completed erasure.
+  readonly notApplicable?: true;
 }
 
 export type ErasureMode = "erase" | "anonymize";
@@ -76,6 +82,9 @@ export async function runErasure(
         store: adapter.name,
         anonymized: anonymized.anonymized,
         deleted: deleted.deleted,
+        // Carry a no-op adapter's not-applicable marker into the receipt (the
+        // dry-run path pushes the preview verbatim, so it is already carried there).
+        ...(anonymized.notApplicable ? { notApplicable: anonymized.notApplicable } : {}),
       });
     } catch (error) {
       errors.push({

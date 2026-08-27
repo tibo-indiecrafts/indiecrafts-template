@@ -81,6 +81,44 @@ describe("runErasure", () => {
     expect(ok.anonymize).toHaveBeenCalledOnce(); // sibling still ran
     expect(r.errors).toEqual([{ store: "sanity", error: "Error" }]);
   });
+
+  it("carries a no-op adapter's notApplicable into the receipt (live + dryRun)", async () => {
+    const noop: ErasureAdapter = {
+      name: "orders",
+      findByEmail: vi.fn(async () => ({ found: false })),
+      export: vi.fn(async () => null),
+      preview: vi.fn(async () => ({
+        store: "orders",
+        wouldAnonymize: {},
+        wouldDelete: {},
+        notApplicable: true as const,
+      })),
+      anonymize: vi.fn(async () => ({
+        store: "orders",
+        anonymized: {},
+        deleted: {},
+        notApplicable: true as const,
+      })),
+      delete: vi.fn(async () => ({
+        store: "orders",
+        anonymized: {},
+        deleted: {},
+        notApplicable: true as const,
+      })),
+    };
+    const live = await runErasure([noop], "x@y.com", {
+      mode: "erase",
+      dryRun: false,
+      ...OPTS,
+    });
+    expect(live.stores[0].notApplicable).toBe(true);
+    const dry = await runErasure([noop], "x@y.com", {
+      mode: "erase",
+      dryRun: true,
+      ...OPTS,
+    });
+    expect(dry.stores[0].notApplicable).toBe(true);
+  });
 });
 
 describe("runExport", () => {
