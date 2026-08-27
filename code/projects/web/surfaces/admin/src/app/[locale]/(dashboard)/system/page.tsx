@@ -1,4 +1,11 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@indiecrafts/packages-web-ui/web/card";
+import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 // Surfaces expose /api/version; HTTP workers expose /health. URLs from server-only
 // env (operator sets them per deployment); unset → "not configured".
@@ -69,88 +76,96 @@ export default async function SystemPage({
     !row.configured ? t("notConfigured") : row.ok ? t("live") : t("down");
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 p-8">
-      <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
+    <div className="p-4 md:p-6">
+      <PageHeader title={t("title")} description={t("description")} />
 
-      <section aria-labelledby="surfaces-h">
-        <h2 id="surfaces-h" className="text-lg font-medium text-foreground">
-          {t("surfaces")}
-        </h2>
-        <table className="mt-3 w-full text-left text-sm">
-          <thead className="text-muted-foreground">
-            <tr>
-              <th className="py-2 pr-4 font-medium">{t("name")}</th>
-              <th className="py-2 pr-4 font-medium">{t("version")}</th>
-              <th className="py-2 pr-4 font-medium">{t("commit")}</th>
-              <th className="py-2 font-medium">{t("status")}</th>
-            </tr>
-          </thead>
-          <tbody className="text-foreground">
-            {surfaces.map((s) => (
-              <tr key={s.name} className="border-t border-border">
-                <td className="py-2 pr-4">{s.name}</td>
-                <td className="py-2 pr-4 tabular-nums">
-                  {"version" in s ? (s.version ?? "—") : "—"}
-                </td>
-                <td className="py-2 pr-4 font-mono text-xs">
-                  {"commit" in s ? (s.commit ?? "—") : "—"}
-                </td>
-                <td className="py-2">{badge(s)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+      <div className="flex flex-col gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("surfaces")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <table className="w-full text-left text-sm">
+              <thead className="text-muted-foreground">
+                <tr>
+                  <th className="py-2 pr-4 font-medium">{t("name")}</th>
+                  <th className="py-2 pr-4 font-medium">{t("version")}</th>
+                  <th className="py-2 pr-4 font-medium">{t("commit")}</th>
+                  <th className="py-2 font-medium">{t("status")}</th>
+                </tr>
+              </thead>
+              <tbody className="text-foreground">
+                {surfaces.map((s) => (
+                  <tr key={s.name} className="border-t border-border">
+                    <td className="py-2 pr-4">{s.name}</td>
+                    <td className="py-2 pr-4 tabular-nums">
+                      {"version" in s ? (s.version ?? "—") : "—"}
+                    </td>
+                    <td className="py-2 pr-4 font-mono text-xs">
+                      {"commit" in s ? (s.commit ?? "—") : "—"}
+                    </td>
+                    <td className="py-2">{badge(s)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
 
-      <section aria-labelledby="workers-h">
-        <h2 id="workers-h" className="text-lg font-medium text-foreground">
-          {t("workers")}
-        </h2>
-        <table className="mt-3 w-full text-left text-sm">
-          <thead className="text-muted-foreground">
-            <tr>
-              <th className="py-2 pr-4 font-medium">{t("name")}</th>
-              <th className="py-2 font-medium">{t("status")}</th>
-            </tr>
-          </thead>
-          <tbody className="text-foreground">
-            {workerHealth.map((w) => (
-              <tr key={w.name} className="border-t border-border">
-                <td className="py-2 pr-4">{w.name}</td>
-                <td className="py-2">{badge(w)}</td>
-              </tr>
-            ))}
-            {NON_HTTP_WORKERS.map((name) => (
-              <tr key={name} className="border-t border-border">
-                <td className="py-2 pr-4">{name}</td>
-                <td className="py-2 text-muted-foreground">{t("noEndpoint")}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("workers")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <table className="w-full text-left text-sm">
+              <thead className="text-muted-foreground">
+                <tr>
+                  <th className="py-2 pr-4 font-medium">{t("name")}</th>
+                  <th className="py-2 font-medium">{t("status")}</th>
+                </tr>
+              </thead>
+              <tbody className="text-foreground">
+                {workerHealth.map((w) => (
+                  <tr key={w.name} className="border-t border-border">
+                    <td className="py-2 pr-4">{w.name}</td>
+                    <td className="py-2">{badge(w)}</td>
+                  </tr>
+                ))}
+                {NON_HTTP_WORKERS.map((name) => (
+                  <tr key={name} className="border-t border-border">
+                    <td className="py-2 pr-4">{name}</td>
+                    <td className="py-2 text-muted-foreground">{t("noEndpoint")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
 
-      <section aria-labelledby="dbs-h">
-        <h2 id="dbs-h" className="text-lg font-medium text-foreground">
-          {t("databases")}
-        </h2>
-        <table className="mt-3 w-full text-left text-sm">
-          <thead className="text-muted-foreground">
-            <tr>
-              <th className="py-2 pr-4 font-medium">{t("name")}</th>
-              <th className="py-2 font-medium">{t("status")}</th>
-            </tr>
-          </thead>
-          <tbody className="text-foreground">
-            {dbs.map((d) => (
-              <tr key={d.name} className="border-t border-border">
-                <td className="py-2 pr-4">{d.name}</td>
-                <td className="py-2">{d.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("databases")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <table className="w-full text-left text-sm">
+              <thead className="text-muted-foreground">
+                <tr>
+                  <th className="py-2 pr-4 font-medium">{t("name")}</th>
+                  <th className="py-2 font-medium">{t("status")}</th>
+                </tr>
+              </thead>
+              <tbody className="text-foreground">
+                {dbs.map((d) => (
+                  <tr key={d.name} className="border-t border-border">
+                    <td className="py-2 pr-4">{d.name}</td>
+                    <td className="py-2">{d.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
+import { PageHeader } from "@/user-interface/layout/PageHeader";
 import { SettingsForm, type SettingRow } from "../settings-form";
 
 /**
@@ -34,10 +36,13 @@ export default async function SettingsPage({
   const settings = await fetchSettings();
 
   return (
-    <div className="mx-auto max-w-4xl p-8">
-      <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
-      <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
-      <SettingsForm settings={settings} />
+    <div className="p-4 md:p-6">
+      <PageHeader title={t("title")} description={t("subtitle")} />
+      <Card>
+        <CardContent>
+          <SettingsForm settings={settings} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -59,6 +59,7 @@
     },
     "users": {
       "title": "Users",
+      "description": "Browse and search users authenticated through Clerk.",
       "search": "Search by email or name…",
       "go": "Search",
       "empty": "No users found.",
@@ -110,6 +111,7 @@
     },
     "system": {
       "title": "System status",
+      "description": "Live version and health status for every surface, worker and database.",
       "surfaces": "Surfaces",
       "workers": "Workers",
       "databases": "Databases",

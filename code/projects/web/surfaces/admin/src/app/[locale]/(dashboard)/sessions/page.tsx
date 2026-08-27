@@ -1,4 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
+import { PageHeader } from "@/user-interface/layout/PageHeader";
 import { SessionsTable, type SessionRow } from "../sessions-table";
 
 /** Read recent sign-ins from the shared api (holds the token server-side). No IP. */
@@ -30,14 +32,17 @@ export default async function SessionsPage({
   const rows = await fetchSessions();
 
   return (
-    <div className="mx-auto max-w-4xl p-8">
-      <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
-      <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
-      {rows.length === 0 ? (
-        <p className="mt-6 text-muted-foreground">{t("empty")}</p>
-      ) : (
-        <SessionsTable rows={rows} />
-      )}
+    <div className="p-4 md:p-6">
+      <PageHeader title={t("title")} description={t("subtitle")} />
+      <Card>
+        <CardContent>
+          {rows.length === 0 ? (
+            <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
+          ) : (
+            <SessionsTable rows={rows} />
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
