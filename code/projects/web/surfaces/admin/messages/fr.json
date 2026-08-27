@@ -4,6 +4,7 @@
     "welcome": "Bienvenue sur le tableau de bord d'administration.",
     "authNotConfigured": "L'authentification n'est pas configurée. Renseignez les clés Clerk pour activer la connexion.",
     "nav": {
+      "label": "Navigation admin",
       "groups": {
         "access": "Accès",
         "compliance": "Conformité",

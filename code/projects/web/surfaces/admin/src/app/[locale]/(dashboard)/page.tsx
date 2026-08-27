@@ -11,7 +11,7 @@ export default async function AdminHome({
   setRequestLocale(locale);
   const t = await getTranslations("admin");
   return (
-    <main id="main" tabIndex={-1} className="mx-auto max-w-3xl p-8">
+    <div className="mx-auto max-w-3xl p-8">
       <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
       <p className="mt-2 text-muted-foreground">{t("welcome")}</p>
       <nav className="mt-4 flex flex-wrap gap-4 text-sm">
@@ -59,6 +59,6 @@ export default async function AdminHome({
         </Link>
       </nav>
       <AdminRoleForm />
-    </main>
+    </div>
   );
 }

@@ -69,7 +69,7 @@ export default async function SystemPage({
     !row.configured ? t("notConfigured") : row.ok ? t("live") : t("down");
 
   return (
-    <main id="main" tabIndex={-1} className="mx-auto max-w-3xl space-y-8 p-8">
+    <div className="mx-auto max-w-3xl space-y-8 p-8">
       <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
 
       <section aria-labelledby="surfaces-h">
@@ -151,6 +151,6 @@ export default async function SystemPage({
           </tbody>
         </table>
       </section>
-    </main>
+    </div>
   );
 }

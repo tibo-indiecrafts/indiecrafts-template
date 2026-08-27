@@ -45,7 +45,7 @@ export default async function CspPage({
   const rows = await fetchCspReports();
 
   return (
-    <main id="main" tabIndex={-1} className="mx-auto max-w-4xl p-8">
+    <div className="mx-auto max-w-4xl p-8">
       <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
       <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
       {rows === null ? (
@@ -97,6 +97,6 @@ export default async function CspPage({
           </table>
         </div>
       )}
-    </main>
+    </div>
   );
 }

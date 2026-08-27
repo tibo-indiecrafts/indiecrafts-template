@@ -4,6 +4,7 @@
     "welcome": "Welcome to the admin dashboard.",
     "authNotConfigured": "Authentication is not configured. Set the Clerk keys to enable sign-in.",
     "nav": {
+      "label": "Admin navigation",
       "groups": {
         "access": "Access",
         "compliance": "Compliance",

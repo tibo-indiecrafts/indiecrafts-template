@@ -48,7 +48,7 @@ export default async function UsersPage({
   const users = await fetchUsers(query);
 
   return (
-    <main id="main" tabIndex={-1} className="mx-auto max-w-4xl p-8">
+    <div className="mx-auto max-w-4xl p-8">
       <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
       <form className="mt-4 flex gap-2" role="search">
         <input
@@ -95,6 +95,6 @@ export default async function UsersPage({
           </table>
         </div>
       )}
-    </main>
+    </div>
   );
 }

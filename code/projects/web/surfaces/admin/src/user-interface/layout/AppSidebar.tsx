@@ -36,27 +36,29 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {NAV.map((group) => (
-          <SidebarGroup key={group.labelKey ?? "top"}>
-            {group.labelKey ? (
-              <SidebarGroupLabel>{t(`nav.groups.${group.labelKey}`)}</SidebarGroupLabel>
-            ) : null}
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarMenuItem key={item.key}>
-                    <SidebarMenuButton asChild isActive={current === item.key}>
-                      <Link href={item.href}>
-                        <item.icon aria-hidden="true" />
-                        <span>{t(`nav.${item.key}`)}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        <nav aria-label={t("nav.label")}>
+          {NAV.map((group) => (
+            <SidebarGroup key={group.labelKey ?? "top"}>
+              {group.labelKey ? (
+                <SidebarGroupLabel>{t(`nav.groups.${group.labelKey}`)}</SidebarGroupLabel>
+              ) : null}
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.items.map((item) => (
+                    <SidebarMenuItem key={item.key}>
+                      <SidebarMenuButton asChild isActive={current === item.key}>
+                        <Link href={item.href}>
+                          <item.icon aria-hidden="true" />
+                          <span>{t(`nav.${item.key}`)}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </nav>
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

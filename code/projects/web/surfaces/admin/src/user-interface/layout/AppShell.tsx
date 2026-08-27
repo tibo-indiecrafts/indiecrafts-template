@@ -9,7 +9,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset id="main" tabIndex={-1}>
         <AppHeader />
         {children}
       </SidebarInset>
