@@ -14,6 +14,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`@indiecrafts/packages-shared-compliance` — honest erasure receipts + step-up-ready delete UI.**
+  `AdapterResult`/`AdapterPreview` gain an optional `notApplicable` flag (a registered no-op adapter
+  marks itself so a receipt never reads it as a completed erasure), propagated through `runErasure`.
+  `DeleteAccountSection` gains an injectable `submit` prop, and a new `makeErasureFetcher` surfaces the
+  worker's 403 reverification hint so Clerk's `useReverification` (wired on the website/app/hybrid
+  panels) can trigger step-up before an account delete. All backward-compatible.
 - **`@indiecrafts/packages-web-ui-components` — `ShareButtons` gains a `networks` prop.** An optional
   `{ x, linkedin, facebook, copyLink }` filter (unset = shown) hides individual controls, driven by
   the editor's Sanity `siteSettings.share` choices. Backward-compatible — omit it to show all.

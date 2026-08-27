@@ -7,6 +7,13 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **GDPR erasure receipts are honest, and out-of-band deletes are complete.** The no-op `orders`
+  adapter now reports `notApplicable` instead of an empty success, so a receipt never claims an
+  erasure ran on a store that does not exist. A dashboard-initiated Clerk delete (the `user.deleted`
+  webhook) now runs the **full erasure engine** across every store — not just the `user_profiles`
+  row — in the background via `ctx.waitUntil` (Clerk excluded; the user is already gone). The
+  5-adapter list is now one shared `buildErasureAdapters(env, {includeClerk})` (was duplicated in
+  `confirm.ts` + `self.ts`).
 - **`pnpm dev` local fleet no longer collides (covers `api`/`agent`/`cron`/`workers`).** All four
   bare workers ran `wrangler dev` on the default inspector port 9229, so only one could start and
   the rest crashed with `Address already in use`, aborting the whole `turbo run dev`. Each worker's
@@ -16,6 +23,13 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Changed
 
+- **Account self-delete requires fresh reverification.** `POST /v1/erasure/self` now reads the Clerk
+  `fva` (factor-verification-age) claim and returns Clerk's reverification-error shape (403) when the
+  first factor is stale (> `REVERIFY_MAX_MINUTES`, default 10) or absent — the client
+  `useReverification` hook detects it and prompts step-up. A new auth-contract test proves every
+  mutating `/v1` route rejects an anonymous caller (the bare worker's routes were guard-by-convention;
+  `check:api-guards` scans Next routes only). _Why:_ a hijacked live session could self-erase without
+  re-auth (`@debt SECURITY`).
 - **DB management: explicit `local`/`dev`/`staging`/`prod` tiers + complete, R2-gated scripts.**
   `dev`/`staging`/`prod` are now real remote D1s; `local` is the disposable miniflare tier — the
   `api`/`cron` `dev` scripts became `wrangler dev --env dev`, so `env.DB` + `env.CORE_DB` resolve

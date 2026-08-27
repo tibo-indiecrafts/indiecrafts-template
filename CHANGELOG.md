@@ -22,6 +22,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
   the `CI` workflow), the CI `verify` job runs the `api-guards` / `tokens` / `brands` / `tasks`
   checks, and gitleaks + dependency-review run on push, not only on PRs. Closes the top pipeline
   gaps from the verification audit (`docs/superpowers/specs/2026-08-27-close-verification-gaps-design.md`).
+- **Security hardening (verification audit, P1)** — GDPR erasure is honest and complete (the no-op
+  `orders` adapter marks itself `notApplicable`; an out-of-band Clerk delete now runs the full engine),
+  and account self-delete requires a fresh Clerk reverification (worker `fva` gate + client step-up on
+  web/hybrid; mobile server-gated). Detail → [api log](./code/shared/api/CHANGELOG.md) ·
+  [packages log](./code/packages/CHANGELOG.md).
 - **Removed the `method/` and `work/` folders** — the internal dev-framework site (rules, workflows,
   process, sprint templates, tooling, the page-builder roadmap) and the private sprint lab are deleted.
   Conventions now live in-repo (`.claude/` + app rules + `code/docs/`); reviewer agents/skills repoint
