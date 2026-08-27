@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { isAdmin } from "@indiecrafts/packages-shared-auth";
 import { redirect } from "@/i18n/routing";
+import { AppShell } from "@/user-interface/layout/AppShell";
 
 /**
  * Data-layer admin gate — defense-in-depth beyond the middleware (which is coarse
@@ -21,5 +22,5 @@ export default async function DashboardLayout({
     const { sessionClaims } = await auth();
     if (!isAdmin(sessionClaims)) redirect({ href: "/sign-in", locale });
   }
-  return <>{children}</>;
+  return <AppShell>{children}</AppShell>;
 }
