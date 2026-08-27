@@ -14,18 +14,18 @@ only the handful of **app-level** events Cloudflare can't see. Design record:
 Everything here is **zone-scoped**: it only applies once the site is on a **real
 Cloudflare domain**. On `*.workers.dev` (the template default) the edge layer is inert.
 
-| Protection | How | Where | Free? |
-| --- | --- | --- | --- |
-| DDoS (L3/4 + L7) | always on, no config | — | ✅ |
-| Bad-bot challenge | **Bot Fight Mode** | Terraform `cloudflare_bot_management.fight_mode` | ✅ |
-| AI-crawler block (GPTBot, ClaudeBot…) | **Block AI Bots** | dashboard: Security → Settings → Bot traffic | ✅ |
-| SQLi / XSS / vuln | **Free Managed Ruleset** | Terraform `cloudflare_ruleset.waf_managed` | ✅ (full OWASP = Pro) |
-| Geo / IP / UA blocking | **WAF custom rule** (`ip.geoip.country`, IP lists, `http.user_agent`) | Terraform custom-phase ruleset | ✅ |
-| Credential stuffing | **Leaked-credentials detection** → managed-challenge | Terraform `cloudflare_ruleset.leaked_credentials` (enable detection in Security → Settings first) | ✅ (one field) |
-| Rate limiting | **Rate-limiting rule** on `/api/*` | Terraform `cloudflare_ruleset.rate_limit` | ✅ (**one** free rule; more = Pro) |
-| Form bot protection | **Turnstile** | Terraform `cloudflare_turnstile_widget` → `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET` | ✅ |
-| TLS / HTTPS hardening | strict SSL · min TLS 1.2 · always-HTTPS | Terraform zone settings | ✅ |
-| **Edge security event log** | **Security Events** + **Security Analytics** (GraphQL, dashboard) | Cloudflare dashboard | ✅ (24h / 7d retention) |
+| Protection                            | How                                                                   | Where                                                                                             | Free?                              |
+| ------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| DDoS (L3/4 + L7)                      | always on, no config                                                  | —                                                                                                 | ✅                                 |
+| Bad-bot challenge                     | **Bot Fight Mode**                                                    | Terraform `cloudflare_bot_management.fight_mode`                                                  | ✅                                 |
+| AI-crawler block (GPTBot, ClaudeBot…) | **Block AI Bots**                                                     | dashboard: Security → Settings → Bot traffic                                                      | ✅                                 |
+| SQLi / XSS / vuln                     | **Free Managed Ruleset**                                              | Terraform `cloudflare_ruleset.waf_managed`                                                        | ✅ (full OWASP = Pro)              |
+| Geo / IP / UA blocking                | **WAF custom rule** (`ip.geoip.country`, IP lists, `http.user_agent`) | Terraform custom-phase ruleset                                                                    | ✅                                 |
+| Credential stuffing                   | **Leaked-credentials detection** → managed-challenge                  | Terraform `cloudflare_ruleset.leaked_credentials` (enable detection in Security → Settings first) | ✅ (one field)                     |
+| Rate limiting                         | **Rate-limiting rule** on `/api/*`                                    | Terraform `cloudflare_ruleset.rate_limit`                                                         | ✅ (**one** free rule; more = Pro) |
+| Form bot protection                   | **Turnstile**                                                         | Terraform `cloudflare_turnstile_widget` → `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET`   | ✅                                 |
+| TLS / HTTPS hardening                 | strict SSL · min TLS 1.2 · always-HTTPS                               | Terraform zone settings                                                                           | ✅                                 |
+| **Edge security event log**           | **Security Events** + **Security Analytics** (GraphQL, dashboard)     | Cloudflare dashboard                                                                              | ✅ (24h / 7d retention)            |
 
 Pro adds Super Bot Fight Mode + the full Managed + OWASP rulesets + >1 rate-limit rule;
 Enterprise adds Bot Management (`cf.bot_management.score`), account-scoped config, and
@@ -42,14 +42,14 @@ Each deployable is a separate root, so "protected" means different things per su
 independent layers stack: the **edge** (zone-scoped Cloudflare, inert on `*.workers.dev`)
 and the **app** (the Worker's inline guard / Clerk auth, which works everywhere).
 
-| Surface | Edge (zone) | App-level | Notes |
-| --- | --- | --- | --- |
-| **website** (next-cf) | ✅ zone TF (`website/infra/cloudflare`) | `withGuard` on `/api/*` | full edge posture |
-| **admin** (next-cf) | its subdomain zone + a Cloudflare Access gate (reserved) | fail-closed Clerk admin gate + data-layer authz | not public |
-| **api** (worker-cf) | ✅ zone TF (`shared/api/infra/cloudflare`) — rate-limit `/v1/*` + WAF + bots + leaked-creds | **inline** bearer + native rate-limit guard (primary) | edge = defence in depth; the inline guard works on `*.workers.dev` too |
-| **agent** (worker-cf) | no zone TF yet (reserved — copy the api's) | inline bearer guard | add a zone stack when it gets a domain |
-| **cron · workers** (worker-cf) | n/a (no HTTP surface) | n/a | scheduled / queue only |
-| **mobile · hybrid** (native) | n/a (app stores / device) | Clerk auth + secure token store | failed-OTP → `kind:"security"`; edge N/A |
+| Surface                        | Edge (zone)                                                                                 | App-level                                             | Notes                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------- |
+| **website** (next-cf)          | ✅ zone TF (`website/infra/cloudflare`)                                                     | `withGuard` on `/api/*`                               | full edge posture                                                      |
+| **admin** (next-cf)            | its subdomain zone + a Cloudflare Access gate (reserved)                                    | fail-closed Clerk admin gate + data-layer authz       | not public                                                             |
+| **api** (worker-cf)            | ✅ zone TF (`shared/api/infra/cloudflare`) — rate-limit `/v1/*` + WAF + bots + leaked-creds | **inline** bearer + native rate-limit guard (primary) | edge = defence in depth; the inline guard works on `*.workers.dev` too |
+| **agent** (worker-cf)          | no zone TF yet (reserved — copy the api's)                                                  | inline bearer guard                                   | add a zone stack when it gets a domain                                 |
+| **cron · workers** (worker-cf) | n/a (no HTTP surface)                                                                       | n/a                                                   | scheduled / queue only                                                 |
+| **mobile · hybrid** (native)   | n/a (app stores / device)                                                                   | Clerk auth + secure token store                       | failed-OTP → `kind:"security"`; edge N/A                               |
 
 The **inline guard** (`code/shared/api/src/index.ts`: bearer + constant-time compare +
 native rate-limit binding + body cap + CORS) is the primary gate for the bare Workers and
@@ -103,6 +103,7 @@ description; never a raw IP or PII free-text. The taxonomy + the pure detection 
 in the `@indiecrafts/packages-shared-security-events` brick.
 
 **Feeds** (what writes them):
+
 - **Failed logins** → the surfaces we drive by hand (mobile OTP verify) post a
   `kind:"security" failed_login`. The api **counts** these against a **KV TTL counter** and
   writes ONE `credential_stuffing` row only when the rate crosses the threshold — never a
@@ -127,6 +128,22 @@ D1 is for review, not the firehose.
   via the api `/health`).
 - **Security** (`/admin/security`) — the app-incident feed (D1 `security_events` via
   `GET /v1/security`) + a deep-link to Cloudflare's edge Security Events.
+
+## Pre-launch security checklist
+
+The template runs out of the box with several defenses **off** (fail-open) so it works
+before configuration. Arm all of these before a production launch. Until then, public POST
+routes rely only on the body cap + per-engine honeypot, and the admin gate renders **open**.
+
+- [ ] **Rate-limit KV** — `pnpm setup:web:website:kv`, then confirm `RATE_LIMIT_KV` is bound in `wrangler.toml`. Until bound, the in-app limiter fails open.
+- [ ] **Turnstile** — set `TURNSTILE_SECRET` (server) + `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (public). Until set, the honeypot is the only bot defense.
+- [ ] **Cloudflare zone** — put the site on a real domain and apply the edge stack: `pnpm infra:web:website:apply:prod`. On `*.workers.dev` the WAF / bot / rate-limit / leaked-credential rules are inert.
+- [ ] **Clerk** — set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY`. Until set, `AppClerkProvider` and the admin gate no-op, so the admin UI renders open.
+- [ ] **GDPR fingerprint salt** — `pnpm gdpr:salt:generate`, then `pnpm gdpr:salt:set:prod`. The same salt must hold across envs — it is the erasure key. Check with `pnpm gdpr:salt:status:prod`.
+- [ ] **Worker secrets** — push `APP_API_TOKEN`, `CLERK_WEBHOOK_SECRET`, `SANITY_API_WRITE_TOKEN`, and the rest via `pnpm secrets:sync:web:website:prod`.
+
+Verify the arming: a public POST without a valid Turnstile token is rejected, `/admin` redirects
+an unauthenticated user, and an erasure request resolves a subject.
 
 ## Issue tags
 
