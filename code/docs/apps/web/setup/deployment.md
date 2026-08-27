@@ -13,11 +13,11 @@ Config files (all in `code/projects/web/surfaces/website/`): `wrangler.toml` (en
 
 ## Environments
 
-| Env     | Worker               | URL                | Robots                                                      |
-| ------- | -------------------- | ------------------ | ----------------------------------------------------------- |
+| Env     | Worker                                | URL                | Robots                                                      |
+| ------- | ------------------------------------- | ------------------ | ----------------------------------------------------------- |
 | dev     | `<slug>-dev-web-surfaces-website`     | `*.workers.dev`    | Disallow (`NEXT_PUBLIC_ENVIRONMENT=development`)            |
 | staging | `<slug>-staging-web-surfaces-website` | `*.workers.dev`    | Disallow (`…=staging`)                                      |
-| prod    | `<slug>-prod-web-surfaces-website`         | your custom domain | Indexed once `NEXT_PUBLIC_SITE_URL` is set (`…=production`) |
+| prod    | `<slug>-prod-web-surfaces-website`    | your custom domain | Indexed once `NEXT_PUBLIC_SITE_URL` is set (`…=production`) |
 
 > **Rename first — `pnpm project:rename <slug>`.** The template ships with the stem
 > `indiecrafts-prod-web-surfaces-website`. `project:rename` rewrites every `wrangler.toml` resource name **and**
@@ -74,10 +74,18 @@ Full model → the [`code/shared/db` brief](../../../../shared/db/.claude/CLAUDE
 
 ## GitHub Actions (auto-deploy)
 
-`.github/workflows/deploy.yml`: **push to `main` → prod**; **Run workflow** → pick dev/staging/prod.
+`.github/workflows/deploy.yml`: **push to `main` (after CI passes) → prod**; **Run workflow** → pick dev/staging/prod.
 It fans out from the registry, builds with OpenNext (next-cf) / bundles (worker-cf), runs
 `wrangler deploy --env <target>`, then a **best-effort smoke test** — it curls the app's custom-domain
 origin (from the domain registry via `domains:url`); no custom domain yet ⇒ skipped.
+
+> **Deploy is gated on CI.** `deploy.yml` triggers on `workflow_run` after the
+> `CI` workflow succeeds on `main` — a red CI blocks the prod deploy. As a second
+> layer, make CI a **required status check**: repo **Settings → Branches → add a
+> branch protection rule** for `main` → enable **Require status checks to pass
+> before merging** → select the `CI` checks (`verify`, `build`, `browser-stories`,
+> `csp`, `docs`, `infra`, `wrangler`). This blocks a merge, while `workflow_run`
+> blocks the deploy — together nothing ships on a red CI.
 
 Add these in the repo, scoped to GitHub **Environments** `dev` / `staging` / `prod`:
 
@@ -101,16 +109,16 @@ Sanity vars/read-token, so a build/prerender break is caught before merge.
 
 Every PR runs these (all **blocking** except `browser`):
 
-| Job | What |
-| --- | --- |
-| `verify` | tsc · lint · format · WCAG contrast · unit tests · script tests · tooling gates |
-| `build` | the real OpenNext `build:cf` for every affected next-cf app |
-| `infra` | `terraform fmt -check` + `init -backend=false` + `validate` on the Cloudflare edge (creds-free; `plan`/`apply` stay manual) |
-| `wrangler` | `wrangler deploy --dry-run` for each bare worker (api · cron · workers) — validates the toml + bundle, no auth |
-| `docs` | the VitePress build (Vue-parser + structural errors) |
-| `dependency-review` | GitHub-native — flags vulnerable / disallowed deps |
-| `secrets-scan` | gitleaks — fails on a committed credential |
-| `browser` | advisory — Storybook a11y + Playwright e2e/visual |
+| Job                 | What                                                                                                                        |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `verify`            | tsc · lint · format · WCAG contrast · unit tests · script tests · tooling gates                                             |
+| `build`             | the real OpenNext `build:cf` for every affected next-cf app                                                                 |
+| `infra`             | `terraform fmt -check` + `init -backend=false` + `validate` on the Cloudflare edge (creds-free; `plan`/`apply` stay manual) |
+| `wrangler`          | `wrangler deploy --dry-run` for each bare worker (api · cron · workers) — validates the toml + bundle, no auth              |
+| `docs`              | the VitePress build (Vue-parser + structural errors)                                                                        |
+| `dependency-review` | GitHub-native — flags vulnerable / disallowed deps                                                                          |
+| `secrets-scan`      | gitleaks — fails on a committed credential                                                                                  |
+| `browser`           | advisory — Storybook a11y + Playwright e2e/visual                                                                           |
 
 ## Local preview + manual deploy
 

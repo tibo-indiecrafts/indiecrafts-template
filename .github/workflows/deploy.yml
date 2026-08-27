@@ -3,7 +3,11 @@ name: Deploy (Cloudflare)
 # Push to main → deploy prod. Use "Run workflow" to target dev/staging/prod.
 # One-time setup + required secrets/vars: docs/apps/web/setup/deployment.md
 on:
-  push:
+  # Prod deploy fires only after CI succeeds on main (see the success gate on
+  # the discover job). Manual dispatch stays available for dev/staging/prod.
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
     inputs:
@@ -22,6 +26,8 @@ jobs:
   # Adding an app = a row there, no workflow edit. (Native apps — expo/electron —
   # ship from their own workflow; they need store/signing credentials.)
   discover:
+    # workflow_dispatch runs unconditionally; a workflow_run only deploys when CI passed.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     outputs:
       apps: ${{ steps.registry.outputs.apps }}
