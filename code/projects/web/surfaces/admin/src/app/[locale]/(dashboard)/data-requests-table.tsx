@@ -1,4 +1,13 @@
 import { getTranslations } from "next-intl/server";
+import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@indiecrafts/packages-web-ui/web/table";
 
 export type DataRequestRow = {
   id: number;
@@ -22,41 +31,52 @@ function excerpt(message: string | null): string {
     : message;
 }
 
+// `status` is one of `new | in-progress | done` (see the api's `data_requests`
+// schema) — done is settled (outline), in-progress is active (secondary), new
+// defaults to the attention-grabbing variant.
+function statusVariant(status: string): "default" | "secondary" | "outline" {
+  if (status === "done") return "outline";
+  if (status === "in-progress") return "secondary";
+  return "default";
+}
+
 /** Read-only GDPR data-subject-request feed (from the EU D1, via the shared api). */
 export async function DataRequestsTable({ rows }: { rows: DataRequestRow[] }) {
   const t = await getTranslations("admin.dataRequests");
   return (
-    <div className="mt-6 overflow-x-auto">
-      <table className="w-full text-left text-sm">
-        <thead className="text-muted-foreground">
-          <tr>
-            <th className="py-2 pr-4 font-medium">{t("when")}</th>
-            <th className="py-2 pr-4 font-medium">{t("type")}</th>
-            <th className="py-2 pr-4 font-medium">{t("email")}</th>
-            <th className="py-2 pr-4 font-medium">{t("status")}</th>
-            <th className="py-2 pr-4 font-medium">{t("message")}</th>
-            <th className="py-2 font-medium">{t("localeSource")}</th>
-          </tr>
-        </thead>
-        <tbody className="text-foreground">
+    <div className="mt-6">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t("when")}</TableHead>
+            <TableHead>{t("type")}</TableHead>
+            <TableHead>{t("email")}</TableHead>
+            <TableHead>{t("status")}</TableHead>
+            <TableHead>{t("message")}</TableHead>
+            <TableHead>{t("localeSource")}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {rows.map((row) => (
-            <tr key={row.id} className="border-t border-border">
-              <td className="py-2 pr-4 tabular-nums">
+            <TableRow key={row.id}>
+              <TableCell className="tabular-nums">
                 {new Date(row.submitted_at).toLocaleString()}
-              </td>
-              <td className="py-2 pr-4">{row.request_type}</td>
-              <td className="py-2 pr-4">{row.email}</td>
-              <td className="py-2 pr-4">{row.status}</td>
-              <td className="py-2 pr-4 text-muted-foreground">
+              </TableCell>
+              <TableCell>{row.request_type}</TableCell>
+              <TableCell>{row.email}</TableCell>
+              <TableCell>
+                <Badge variant={statusVariant(row.status)}>{row.status}</Badge>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
                 {excerpt(row.message)}
-              </td>
-              <td className="py-2">
+              </TableCell>
+              <TableCell>
                 {[row.locale, row.source].filter(Boolean).join(" · ") || "—"}
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

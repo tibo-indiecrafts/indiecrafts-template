@@ -4,6 +4,14 @@ import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@indiecrafts/packages-web-ui/web/table";
+import {
   listUserSessions,
   revokeSession,
   revokeUserSessions,
@@ -18,28 +26,31 @@ export type SessionRow = {
   country: string | null;
 };
 
+// Column count of the table below — the expanded detail row spans all of them.
+const COLUMN_COUNT = 5;
+
 /** The sign-in activity feed (from the EU D1) with per-user LIVE session management:
  *  expand a row to load the user's active Clerk sessions and revoke one — or all. */
 export function SessionsTable({ rows }: { rows: SessionRow[] }) {
   const t = useTranslations("admin.sessions");
   return (
-    <div className="mt-6 overflow-x-auto">
-      <table className="w-full text-left text-sm">
-        <thead className="text-muted-foreground">
-          <tr>
-            <th className="py-2 pr-4 font-medium">{t("when")}</th>
-            <th className="py-2 pr-4 font-medium">{t("surface")}</th>
-            <th className="py-2 pr-4 font-medium">{t("user")}</th>
-            <th className="py-2 pr-4 font-medium">{t("country")}</th>
-            <th className="py-2 font-medium">{t("actions")}</th>
-          </tr>
-        </thead>
-        <tbody className="text-foreground">
+    <div className="mt-6">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t("when")}</TableHead>
+            <TableHead>{t("surface")}</TableHead>
+            <TableHead>{t("user")}</TableHead>
+            <TableHead>{t("country")}</TableHead>
+            <TableHead>{t("actions")}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {rows.map((row, i) => (
             <Row key={i} row={row} />
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }
@@ -74,12 +85,12 @@ function Row({ row }: { row: SessionRow }) {
 
   return (
     <>
-      <tr className="border-t border-border">
-        <td className="py-2 pr-4 tabular-nums">{row.ts}</td>
-        <td className="py-2 pr-4">{row.surface}</td>
-        <td className="py-2 pr-4 font-mono text-xs">{row.user_id}</td>
-        <td className="py-2 pr-4">{row.country ?? "—"}</td>
-        <td className="flex gap-2 py-2">
+      <TableRow>
+        <TableCell className="tabular-nums">{row.ts}</TableCell>
+        <TableCell>{row.surface}</TableCell>
+        <TableCell className="font-mono text-xs">{row.user_id}</TableCell>
+        <TableCell>{row.country ?? "—"}</TableCell>
+        <TableCell className="flex gap-2">
           <Button variant="outline" size="sm" disabled={pending} onClick={toggle}>
             {open ? t("hide") : t("manage")}
           </Button>
@@ -91,11 +102,11 @@ function Row({ row }: { row: SessionRow }) {
           >
             {t("signOutUser")}
           </Button>
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
       {open ? (
-        <tr className="border-t border-border/50 bg-muted/30">
-          <td colSpan={5} className="px-4 py-3">
+        <TableRow className="bg-muted/30 hover:bg-muted/30">
+          <TableCell colSpan={COLUMN_COUNT} className="whitespace-normal px-4 py-3">
             {live === null ? (
               <p className="text-muted-foreground">{t("loading")}</p>
             ) : live.length === 0 ? (
@@ -129,8 +140,8 @@ function Row({ row }: { row: SessionRow }) {
                 {message}
               </p>
             ) : null}
-          </td>
-        </tr>
+          </TableCell>
+        </TableRow>
       ) : null}
     </>
   );

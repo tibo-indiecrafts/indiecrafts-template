@@ -1,6 +1,15 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@indiecrafts/packages-web-ui/web/table";
 
 /** One row of `GET /v1/backups/status` `runs` — mirrors the api's response shape
  *  (see `code/shared/api/src/index.ts` `/v1/backups/status`). */
@@ -82,54 +91,56 @@ export function BackupsTable({ status }: { status: BackupsStatus }) {
       {runs.length === 0 ? (
         <p className="text-muted-foreground">{t("empty")}</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="text-muted-foreground">
-              <tr>
-                <th className="py-2 pr-4 font-medium">{t("started")}</th>
-                <th className="py-2 pr-4 font-medium">{t("finished")}</th>
-                <th className="py-2 pr-4 font-medium">{t("db")}</th>
-                <th className="py-2 pr-4 font-medium">{t("env")}</th>
-                <th className="py-2 pr-4 font-medium">{t("kind")}</th>
-                <th className="py-2 pr-4 font-medium">{t("status")}</th>
-                <th className="py-2 pr-4 font-medium">{t("size")}</th>
-                <th className="py-2 font-medium">{t("error")}</th>
-              </tr>
-            </thead>
-            <tbody className="text-foreground">
-              {runs.map((run, i) => {
-                const flagged = run.status === "failed" || run.finishedAt == null;
-                return (
-                  <tr key={i} className="border-t border-border">
-                    <td className="py-2 pr-4 tabular-nums">
-                      {new Date(run.startedAt).toLocaleString()}
-                    </td>
-                    <td className="py-2 pr-4 tabular-nums">
-                      {run.finishedAt
-                        ? new Date(run.finishedAt).toLocaleString()
-                        : "—"}
-                    </td>
-                    <td className="py-2 pr-4">{run.dbName}</td>
-                    <td className="py-2 pr-4">{run.env}</td>
-                    <td className="py-2 pr-4">{run.kind}</td>
-                    <td className="py-2 pr-4">
-                      {flagged ? (
-                        <span className="inline-flex items-center gap-1 text-destructive">
-                          <FlagIcon />
-                          {run.status === "failed" ? t("failedFlag") : t("stuckFlag")}
-                        </span>
-                      ) : (
-                        run.status
-                      )}
-                    </td>
-                    <td className="py-2 pr-4 tabular-nums">{formatBytes(run.bytes)}</td>
-                    <td className="py-2 text-muted-foreground">{run.error ?? "—"}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t("started")}</TableHead>
+              <TableHead>{t("finished")}</TableHead>
+              <TableHead>{t("db")}</TableHead>
+              <TableHead>{t("env")}</TableHead>
+              <TableHead>{t("kind")}</TableHead>
+              <TableHead>{t("status")}</TableHead>
+              <TableHead>{t("size")}</TableHead>
+              <TableHead>{t("error")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {runs.map((run, i) => {
+              const flagged = run.status === "failed" || run.finishedAt == null;
+              return (
+                <TableRow key={i}>
+                  <TableCell className="tabular-nums">
+                    {new Date(run.startedAt).toLocaleString()}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {run.finishedAt
+                      ? new Date(run.finishedAt).toLocaleString()
+                      : "—"}
+                  </TableCell>
+                  <TableCell>{run.dbName}</TableCell>
+                  <TableCell>{run.env}</TableCell>
+                  <TableCell>{run.kind}</TableCell>
+                  <TableCell>
+                    {flagged ? (
+                      <Badge variant="destructive" className="gap-1">
+                        <FlagIcon />
+                        {run.status === "failed" ? t("failedFlag") : t("stuckFlag")}
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline">{run.status}</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {formatBytes(run.bytes)}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {run.error ?? "—"}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       )}
     </div>
   );
