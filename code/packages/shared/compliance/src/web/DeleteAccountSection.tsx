@@ -10,7 +10,10 @@ import {
   type ErasureSelfResult,
 } from "../shared/erasure-self";
 
-export { submitAccountErasure } from "../shared/erasure-self";
+export {
+  submitAccountErasure,
+  makeErasureFetcher,
+} from "../shared/erasure-self";
 export type { ErasureSelfResult } from "../shared/erasure-self";
 
 export interface DeleteAccountCopy {
@@ -31,8 +34,11 @@ export interface DeleteAccountSectionProps {
   apiUrl: string;
   getToken: () => Promise<string | null>;
   onDeleted: () => void | Promise<void>;
-  /** Optional reverification seam (unused this slice) — return false to abort. */
+  /** Optional guard — return false to abort before submitting. */
   beforeConfirm?: () => Promise<boolean>;
+  /** Optional injected submit — e.g. wrapped in Clerk `useReverification` so a stale
+   *  session triggers step-up before the erasure lands. Defaults to a direct POST. */
+  submit?: (email: string) => Promise<ErasureSelfResult>;
 }
 
 type Status = "idle" | "pending" | ErasureSelfResult;
@@ -48,6 +54,7 @@ export function DeleteAccountSection({
   getToken,
   onDeleted,
   beforeConfirm,
+  submit,
 }: DeleteAccountSectionProps) {
   const uid = useId();
   const [email, setEmail] = useState("");
@@ -58,11 +65,9 @@ export function DeleteAccountSection({
     if (!email.trim() || status === "pending") return;
     if (beforeConfirm && !(await beforeConfirm())) return;
     setStatus("pending");
-    const result = await submitAccountErasure({
-      apiUrl,
-      getToken,
-      email: email.trim(),
-    });
+    const result = submit
+      ? await submit(email.trim())
+      : await submitAccountErasure({ apiUrl, getToken, email: email.trim() });
     setStatus(result);
     if (result === "done" || result === "partial") await onDeleted();
   }

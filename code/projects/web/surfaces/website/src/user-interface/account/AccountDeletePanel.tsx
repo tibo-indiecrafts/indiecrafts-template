@@ -1,10 +1,12 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useReverification } from "@clerk/nextjs";
 import {
   DeleteAccountSection,
   ExportSection,
+  makeErasureFetcher,
   type DeleteAccountCopy,
+  type ErasureSelfResult,
   type ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
 import { useRouter } from "@/i18n/routing";
@@ -28,6 +30,17 @@ export function AccountDeletePanel({
 }) {
   const { getToken, signOut } = useAuth();
   const router = useRouter();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+  // Step-up reverification: wrap the erasure POST so a stale session triggers Clerk's
+  // step-up modal (the worker returns the reverification-error shape) before it lands.
+  const erase = useReverification(
+    makeErasureFetcher({ apiUrl, getToken: () => getToken() }),
+  );
+  const submit = async (email: string): Promise<ErasureSelfResult> => {
+    const result = await erase(email);
+    return typeof result === "string" ? (result as ErasureSelfResult) : "error";
+  };
 
   async function handleDeleted() {
     await signOut();
@@ -37,24 +50,14 @@ export function AccountDeletePanel({
   return (
     <div className="space-y-4">
       {showExport ? (
-        <ExportSection
-          copy={exportCopy}
-          apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
-          getToken={() => getToken()}
-        />
+        <ExportSection copy={exportCopy} apiUrl={apiUrl} getToken={() => getToken()} />
       ) : null}
-      {
-        // @debt SECURITY - No beforeConfirm here. Clerk's useReverification only triggers on
-        // a `session_reverification_required` error from the wrapped call. The erasure worker
-        // doesn't emit that error, so wrapping it would resolve immediately without real re-auth.
-        // Real step-up needs the worker to declare Clerk reverification, then wrap that fetch in
-        // useReverification. The server-side JWT + typed-email match is the current protection.
-      }
       <DeleteAccountSection
         copy={copy}
-        apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
+        apiUrl={apiUrl}
         getToken={() => getToken()}
         onDeleted={handleDeleted}
+        submit={submit}
       />
     </div>
   );

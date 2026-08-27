@@ -7,11 +7,14 @@ import {
   SignIn,
   useSignIn,
   useAuth,
+  useReverification,
 } from "@clerk/clerk-react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
   DeleteAccountSection,
+  makeErasureFetcher,
   type DeleteAccountCopy,
+  type ErasureSelfResult,
   ExportSection,
   type ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
@@ -67,6 +70,15 @@ export function AuthPanel() {
 function SignedInView() {
   const t = useIntl();
   const { signOut, getToken } = useAuth();
+  // Step-up reverification: wrap the erasure POST so a stale session triggers Clerk's
+  // step-up modal (the worker returns the reverification-error shape) before it lands.
+  const erase = useReverification(
+    makeErasureFetcher({ apiUrl: apiUrl ?? "", getToken: () => getToken() }),
+  );
+  const submitDelete = async (email: string): Promise<ErasureSelfResult> => {
+    const result = await erase(email);
+    return typeof result === "string" ? (result as ErasureSelfResult) : "error";
+  };
   const deleteCopy: DeleteAccountCopy = {
     heading: t.formatMessage({ id: "account.delete.heading" }),
     body: t.formatMessage({ id: "account.delete.body" }),
@@ -105,11 +117,6 @@ function SignedInView() {
         />
       ) : null}
       {features.deleteAccount && apiUrl ? (
-        // @debt SECURITY - No beforeConfirm here. Clerk's useReverification only triggers on
-        // a `session_reverification_required` error from the wrapped call. The erasure worker
-        // doesn't emit that error, so wrapping it would resolve immediately without real re-auth.
-        // Real step-up needs the worker to declare Clerk reverification, then wrap that fetch in
-        // useReverification. The server-side JWT + typed-email match is the current protection.
         <DeleteAccountSection
           copy={deleteCopy}
           apiUrl={apiUrl ?? ""}
@@ -117,6 +124,7 @@ function SignedInView() {
           onDeleted={async () => {
             await signOut();
           }}
+          submit={submitDelete}
         />
       ) : null}
     </div>

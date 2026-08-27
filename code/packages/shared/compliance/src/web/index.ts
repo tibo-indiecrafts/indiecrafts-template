@@ -12,6 +12,7 @@ export { browserSignalsDeny, signalsDeny } from "./signals";
 export {
   DeleteAccountSection,
   submitAccountErasure,
+  makeErasureFetcher,
 } from "./DeleteAccountSection";
 export type {
   DeleteAccountCopy,

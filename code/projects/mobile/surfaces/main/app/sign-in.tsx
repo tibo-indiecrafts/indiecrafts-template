@@ -122,12 +122,11 @@ function SignedInView() {
         />
       ) : null}
       {features.deleteAccount && apiUrl ? (
-        // @debt SECURITY - No beforeConfirm here. @clerk/clerk-expo doesn't export
-        // useReverification (unlike clerk-react/nextjs), and even where it exists it only
-        // triggers on a `session_reverification_required` error from the wrapped call. The
-        // erasure worker doesn't emit that error, so wrapping it would resolve immediately
-        // without real re-auth. The server-side JWT + typed-email match is the current
-        // protection.
+        // @debt SECURITY - The worker now enforces a fresh fva (factor-verification-age)
+        // on self-delete, so a stale mobile session IS rejected server-side. But
+        // @clerk/clerk-expo has no useReverification (unlike clerk-react/nextjs), so there
+        // is no in-app step-up modal: a stale-session user gets an error and must
+        // re-authenticate manually. Wire Expo step-up here once clerk-expo exposes it.
         <DeleteAccountSection
           copy={copy}
           apiUrl={apiUrl}

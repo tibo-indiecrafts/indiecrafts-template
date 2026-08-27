@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { submitAccountErasure } from "./DeleteAccountSection";
+import {
+  submitAccountErasure,
+  makeErasureFetcher,
+} from "./DeleteAccountSection";
 
 const base = {
   apiUrl: "https://api.example.test",
@@ -45,5 +48,30 @@ describe("submitAccountErasure", () => {
   it("network throw → error", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
     expect(await submitAccountErasure(base)).toBe("error");
+  });
+});
+
+describe("makeErasureFetcher (Clerk useReverification wrapping)", () => {
+  const input = { apiUrl: base.apiUrl, getToken: base.getToken };
+
+  it("maps a normal response to the status string (200 → done)", async () => {
+    stubFetch(200);
+    expect(await makeErasureFetcher(input)("you@example.com")).toBe("done");
+  });
+
+  it("returns the RAW reverification hint on 403 (not 'error'), so step-up fires", async () => {
+    const hint = {
+      clerk_error: {
+        type: "forbidden",
+        reason: "reverification-error",
+        metadata: { reverification: { level: "first_factor", afterMinutes: 10 } },
+      },
+    };
+    stubFetch(403, hint);
+    const result = await makeErasureFetcher(input)("you@example.com");
+    // The parsed body, not a status string — useReverification's isReverificationHint
+    // detects this shape, prompts step-up, and retries.
+    expect(result).toMatchObject(hint);
+    expect(typeof result).toBe("object");
   });
 });
