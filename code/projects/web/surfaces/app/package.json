@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "tsc": "tsc --noEmit",
+    "test": "vitest run",
     "verify": "pnpm tsc",
     "build:cf": "node scripts/version.mjs && opennextjs-cloudflare build",
     "preview:cf": "opennextjs-cloudflare preview",
