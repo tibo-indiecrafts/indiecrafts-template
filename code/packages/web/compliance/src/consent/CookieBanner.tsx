@@ -4,10 +4,16 @@ import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
 import type { ConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import type { ConsentCategory } from "./consent-signals";
 import { CookiePreferences } from "./CookiePreferences";
-import { applyConsent, consentStore, signalsDeny } from "./consent-store";
+import {
+  applyConsent,
+  consentStore,
+  openPreferences,
+  signalsDeny,
+} from "./consent-store";
 import { usePreferencesDialog } from "./use-preferences-dialog";
 
 type Props = {
@@ -58,6 +64,18 @@ export function CookieBanner({
     () => null,
   );
   const [prefsOpen, setPrefsOpen] = usePreferencesDialog();
+
+  // Explicit accept/reject only — the silent auto-seed in the effect below calls
+  // `applyConsent(..., "auto")` directly and never goes through this helper.
+  const decide = (choices: Record<string, boolean>) => {
+    applyConsent(categories, choices, version, "banner");
+    showConsentSavedToast({
+      saved: t("saved"),
+      description: t("savedBody"),
+      manage: t("manage"),
+      onManage: openPreferences,
+    });
+  };
 
   // Auto-decide on first visit without nagging, where the region + browser allow it:
   //  - opt-in: only pre-seed a silent REJECT when a browser opt-out signal is present
@@ -118,14 +136,7 @@ export function CookieBanner({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() =>
-                  applyConsent(
-                    categories,
-                    optionalChoices(categories, false),
-                    version,
-                    "banner",
-                  )
-                }
+                onClick={() => decide(optionalChoices(categories, false))}
               >
                 {t("rejectAll")}
               </Button>
@@ -138,14 +149,7 @@ export function CookieBanner({
               </Button>
               <Button
                 size="sm"
-                onClick={() =>
-                  applyConsent(
-                    categories,
-                    optionalChoices(categories, true),
-                    version,
-                    "banner",
-                  )
-                }
+                onClick={() => decide(optionalChoices(categories, true))}
               >
                 {t("acceptAll")}
               </Button>

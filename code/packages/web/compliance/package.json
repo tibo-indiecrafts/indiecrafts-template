@@ -17,6 +17,7 @@
     "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-web-sanity": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-web-ui-components": "workspace:*",
     "@portabletext/react": "^6.2.0",
     "@sanity/icons": "^3.7.4",
     "next-intl": "^4.13.6",

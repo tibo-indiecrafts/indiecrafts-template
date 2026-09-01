@@ -42,6 +42,7 @@
   "legal": {
     "lastUpdated": "Last updated: {date}",
     "empty": "This page hasn't been published yet.",
+    "saved": "Policies accepted",
     "dataRequest": {
       "heading": "Exercise your data rights",
       "body": "You can ask us to act on your personal data at any time. Choose a right below and we'll respond within one month.",
@@ -149,6 +150,8 @@
     "rejectAll": "Reject all",
     "customize": "Customize",
     "save": "Save choices",
+    "saved": "Preferences saved",
+    "savedBody": "You can change these anytime in your profile settings.",
     "preferencesTitle": "Cookie preferences",
     "preferencesBody": "Choose which cookies you allow. Necessary cookies are always on.",
     "manage": "Manage cookie preferences",

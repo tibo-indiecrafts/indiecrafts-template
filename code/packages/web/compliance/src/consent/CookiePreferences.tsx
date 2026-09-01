@@ -12,8 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@indiecrafts/packages-web-ui/web/dialog";
+import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
 import type { ConsentCategory } from "./consent-signals";
-import { applyConsent } from "./consent-store";
+import { applyConsent, openPreferences } from "./consent-store";
 
 type Props = {
   categories: ConsentCategory[];
@@ -46,6 +47,12 @@ export function CookiePreferences({
 
   const commit = (choices: Record<string, boolean>) => {
     applyConsent(categories, choices, version, "preferences");
+    showConsentSavedToast({
+      saved: t("saved"),
+      description: t("savedBody"),
+      manage: t("manage"),
+      onManage: openPreferences,
+    });
     onOpenChange(false);
   };
   const allOptional = (value: boolean) =>

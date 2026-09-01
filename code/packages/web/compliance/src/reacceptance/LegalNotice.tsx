@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
+import { openPreferences } from "../consent/consent-store";
 import { useConsent } from "../consent/useConsent";
 import { acceptLegal } from "./legal-store";
 
@@ -34,6 +37,8 @@ export function LegalNotice({
 }: Props) {
   const [accepted, setAccepted] = useState(false);
   const { decided } = useConsent();
+  const t = useTranslations("legal");
+  const tc = useTranslations("cookies");
   if (accepted) return null;
   return (
     <div
@@ -51,6 +56,12 @@ export function LegalNotice({
           onClick={() => {
             acceptLegal(version);
             setAccepted(true);
+            showConsentSavedToast({
+              saved: t("saved"),
+              description: tc("savedBody"),
+              manage: tc("manage"),
+              onManage: openPreferences,
+            });
           }}
         >
           {acceptLabel}

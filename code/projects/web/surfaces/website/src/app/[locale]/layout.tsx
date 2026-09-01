@@ -18,6 +18,7 @@ import {
   type Locale,
 } from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
+import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { CookieBanner } from "@indiecrafts/packages-web-compliance/consent/CookieBanner";
 import { CookiePreferencesHost } from "@indiecrafts/packages-web-compliance/consent/CookiePreferencesHost";
 import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
@@ -268,6 +269,7 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
             {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
               <SessionLogger surface={surface} />
             ) : null}
+            <Toaster />
           </NextIntlClientProvider>
         </ThemeProvider>
         {features.structuredData && settings.showStructuredData !== false ? (
