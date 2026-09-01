@@ -30,6 +30,10 @@
       "account": "Admin",
       "signOut": "Se déconnecter"
     },
+    "overview": {
+      "recent": "100 derniers",
+      "unavailable": "Indisponible"
+    },
     "roles": {
       "title": "Gérer les administrateurs",
       "label": "Identifiant utilisateur Clerk",
@@ -129,6 +133,7 @@
     "settings": {
       "title": "Paramètres",
       "subtitle": "Paramètres opérationnels de rétention, d'exploitation et de durée de vie des liens, lus par l'api partagée et les workers.",
+      "empty": "Aucun paramètre enregistré pour l'instant.",
       "groups": {
         "retention": "Rétention",
         "ops": "Exploitation",

@@ -90,13 +90,19 @@ export function SettingsForm({ settings }: { settings: SettingRow[] }) {
     });
   };
 
+  if (settings.length === 0) {
+    return (
+      <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
+    );
+  }
+
   return (
-    <div className="mt-8 flex flex-col gap-8">
+    <div className="mt-6 flex flex-col gap-8">
       {groupSettings(settings).map(({ group, rows }) => (
         <section key={group} aria-labelledby={`settings-group-${group}`}>
           <h2
             id={`settings-group-${group}`}
-            className="text-lg font-medium text-foreground"
+            className="leading-none font-semibold"
           >
             {t(`groups.${group}`)}
           </h2>

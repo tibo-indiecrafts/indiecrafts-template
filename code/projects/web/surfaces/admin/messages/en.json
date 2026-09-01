@@ -30,6 +30,10 @@
       "account": "Admin",
       "signOut": "Sign out"
     },
+    "overview": {
+      "recent": "Last 100",
+      "unavailable": "Unavailable"
+    },
     "roles": {
       "title": "Manage admins",
       "label": "Clerk user ID",
@@ -129,6 +133,7 @@
     "settings": {
       "title": "Settings",
       "subtitle": "Operational retention, ops and link-TTL settings read by the shared api and workers.",
+      "empty": "No settings recorded yet.",
       "groups": {
         "retention": "Retention",
         "ops": "Ops",

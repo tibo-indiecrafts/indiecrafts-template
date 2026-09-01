@@ -68,7 +68,7 @@ export function BackupsTable({ status }: { status: BackupsStatus }) {
   );
 
   return (
-    <div className="mt-8 flex flex-col gap-6">
+    <div className="mt-6 flex flex-col gap-6">
       <dl className="grid gap-4 sm:grid-cols-3">
         <div>
           <dt className="text-sm text-muted-foreground">{t("bucket")}</dt>

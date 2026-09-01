@@ -29,7 +29,7 @@ export function AdminRoleForm() {
 
   return (
     <section aria-labelledby="roles-heading" className="flex flex-col gap-3">
-      <h2 id="roles-heading" className="text-lg font-medium text-foreground">
+      <h2 id="roles-heading" className="leading-none font-semibold">
         {t("title")}
       </h2>
       <Label htmlFor="uid">{t("label")}</Label>
