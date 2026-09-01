@@ -4,8 +4,10 @@ import type {
   DeleteAccountCopy,
   ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
+import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { features, type Locale } from "@/config";
 import { AccountDeletePanel } from "@/user-interface/account/AccountDeletePanel";
+import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -52,13 +54,16 @@ export default async function AccountPage({ params }: Props) {
     error: et("error"),
   };
 
+  const th = await getTranslations({ locale, namespace: "account" });
+
   return (
-    <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center gap-6 p-8">
-      <AccountDeletePanel
-        copy={copy}
-        exportCopy={exportCopy}
-        showExport={features.exportAccount}
-      />
-    </main>
+    <div className="p-4 md:p-6">
+      <PageHeader title={th("title")} description={th("description")} />
+      <Card>
+        <CardContent>
+          <AccountDeletePanel copy={copy} exportCopy={exportCopy} showExport={features.exportAccount} />
+        </CardContent>
+      </Card>
+    </div>
   );
 }
