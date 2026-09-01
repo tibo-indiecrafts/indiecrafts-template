@@ -26,6 +26,16 @@ surface AND the Electron renderer). `./native` = the React Native components + a
 | `createWebStore<T>(key)` (`./web`)              | `localStorage`-backed `Store<T>` — synchronous, stable-ref `get()` for `useSyncExternalStore`. Serves the consent record + the legal-acceptance record (each under its own `${site.prefix}.*` key).                                                                                                                                                                                                                                                                                                                                |
 | `createNativeStore<T>(key)` (`./native`)        | `AsyncStorage`-backed `Store<T>` — an in-memory mirror hydrated once at creation (the `get()` contract is synchronous, AsyncStorage is not).                                                                                                                                                                                                                                                                                                                                                                                       |
 
+## Confirmation toast + a settings control (surface-owned)
+
+`ConsentBanner`/`ConsentPreferences` stay copy-in, no-toast — each shell fires the confirmation
+itself after persisting an **explicit** choice (accept/reject/save) or a legal re-acceptance, via
+`showConsentSavedToast` (`@indiecrafts/packages-web-ui-components/web/consent-toast`). The silent
+geo auto-seed effect never calls it. Each shell's toast `onManage` opens its own
+cookie-preferences control, built from this brick's `ConsentPreferences` over the same
+`Store` key the banner reads: the `app` web surface at `/account`, the hybrid Electron renderer on
+Home (it has no settings screen).
+
 ## The split (this brick vs the web brick vs the app)
 
 - **`packages-shared-compliance`** owns the portable math + the copy-injected forked UI + the store adapters.

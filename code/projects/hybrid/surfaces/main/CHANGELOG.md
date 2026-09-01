@@ -11,6 +11,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Consent/legal confirmation toast.** The renderer fires `showConsentSavedToast` on an explicit
+  cookie-consent choice (accept/reject/save) and legal re-acceptance, mounting one `<Toaster>` in
+  `ShellOverlays`; the auto-seed effect stays silent.
+- **Cookie preferences on Home.** New `CookiePreferencesSection` (`consent-preferences.tsx`) — the
+  renderer has no settings screen — reuses the shell's consent-store key; the toast's Manage
+  action now opens it instead of scrolling to the legal-links placeholder.
+
 ### Fixed
 
 - **Conditional Hook in `LegalReacceptGate` (`src/renderer/src/shell.tsx`).**

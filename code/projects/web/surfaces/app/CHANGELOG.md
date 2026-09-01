@@ -12,6 +12,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Consent/legal confirmation toast.** `<Toaster>` moved from `AppShell` to `[locale]/layout.tsx`
+  so it covers every page, including `sign-in` outside the `(app)` group. `ConsentGate` and
+  `LegalGate` (`ShellOverlays.tsx`) fire `showConsentSavedToast` on an explicit consent choice
+  (accept/reject/save) and legal re-acceptance — Manage routes to `/account`. The geo auto-seed
+  effect stays silent.
+- **Cookie preferences on `/account`.** New `CookiePreferencesSection` wraps the shared
+  `ConsentPreferences` toggle list, reading/writing the same `consentStore` key `ShellOverlays`
+  uses, so the toast's Manage action points to a real control.
+
 ### Fixed
 
 - **`tsc` could not resolve the security packages (broke `pnpm verify`).** `src/proxy.ts` and the

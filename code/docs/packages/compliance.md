@@ -237,7 +237,16 @@ Consent-Mode signal update, **not** by `ConsentGate`.
 
 Any "Cookie settings" control opens the preferences dialog — `openPreferences()` from
 `useConsent()` (it fires the `cookie-preferences-open` window event) or the
-`?cookies=manage` URL. The cookie-policy page includes a **Manage preferences** button.
+`?cookies=manage` URL. The cookie-policy page includes a **Manage preferences** button, and
+`/account` carries a **Cookie preferences** card that opens the same dialog.
+
+## Confirmation toast
+
+Every **explicit** consent or legal choice — `CookieBanner`'s accept/reject, `CookiePreferences`'
+save, and `LegalNotice`'s accept — fires a "choice saved" toast
+(`showConsentSavedToast`, `@indiecrafts/packages-web-ui-components/web/consent-toast`) with a
+**Manage** action that reopens the preferences dialog. The silent geo auto-seed
+(`applyConsent(..., "auto")`) never toasts — only a choice the visitor actually made does.
 
 ## Data-subject requests
 

@@ -12,7 +12,22 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **`@indiecrafts/packages-web-ui-components` — `showConsentSavedToast` (new `web/consent-toast`
+  export, sonner).** One shared "choice saved" toast every web surface fires on an explicit
+  cookie-consent or legal-reacceptance choice: `showConsentSavedToast({ saved, description, manage,
+  onManage })`. Copy is injected by the caller (no i18n inside the package); `onManage` opens that
+  surface's cookie-preferences control. **Why:** website, app, and hybrid confirm a consent choice
+  the same way instead of three bespoke toasts.
+
 ### Changed
+
+- **`@indiecrafts/packages-web-compliance` — fires the confirmation toast on explicit consent
+  choices.** `CookieBanner` (accept/reject), `CookiePreferences` (save), and `LegalNotice`
+  (accept) each call `showConsentSavedToast` after persisting the choice. The silent
+  `applyConsent(..., "auto")` geo auto-seed path is untouched — it never toasts. **Why:** the
+  website's consent UI confirms an explicit choice the same way the app/hybrid surfaces do.
 
 - **`@indiecrafts/packages-web-ui-components` — `ShareButtons` gains a `networks` prop.** An optional
   `{ x, linkedin, facebook, copyLink }` filter (unset = shown) hides individual controls, driven by

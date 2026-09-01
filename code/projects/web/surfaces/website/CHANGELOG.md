@@ -17,6 +17,25 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Consent/legal confirmation toast.** `[locale]/layout.tsx` mounts a single `<Toaster>`;
+  `CookieBanner`'s accept/reject, `CookiePreferences`' save, and `LegalNotice`'s accept each fire
+  `showConsentSavedToast` (`@indiecrafts/packages-web-ui-components`) — "choice saved," with a
+  Manage action that reopens the preferences dialog. The silent geo auto-seed never toasts.
+  **Why:** confirm an explicit consent/legal choice, not the auto-seeded default.
+- **Cookie preferences on `/account`.** The account page gains a "Cookie preferences" card with a
+  `ManagePreferencesButton` that opens the site-wide `CookiePreferences` dialog — the destination
+  the toast's Manage action points to.
+
+### Fixed
+
+- **`CookiePreferencesHost` now mounts for every consent mode.** It previously mounted only for
+  `consentMode === "opt-out"` when `requireCookieConsent` was off, so the default `opt-in`/`none`
+  mode left `openPreferences()` with no listener and the new `/account` Manage button silently did
+  nothing. It now mounts whenever `CookieBanner` itself isn't rendering the dialog, regardless of
+  mode.
+
 ### Changed
 
 - **`/blog` is now module-driven.** `blog/page.tsx` renders the `blog` singleton's
