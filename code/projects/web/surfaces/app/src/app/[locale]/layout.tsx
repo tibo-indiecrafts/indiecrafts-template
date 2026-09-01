@@ -11,6 +11,7 @@ import { routing } from "@/i18n/routing";
 import { ShellOverlays } from "@/user-interface/ShellOverlays";
 import { AnnouncementChrome } from "@/user-interface/AnnouncementChrome";
 import { buildInfo } from "@/lib/build-info";
+import { THEME_SCRIPT } from "@/user-interface/layout/theme-script";
 
 /** Prerender one tree per locale (`as-needed` → `/`, `/fr`). */
 export function generateStaticParams() {
@@ -40,10 +41,14 @@ export default async function LocaleLayout({
   // even before/without client JS. Unioned with the client-side `navigator` check inside
   // `ConsentGate` (either source denies); native surfaces have no equivalent (no browser).
   const gpcSignal = requestHeaders.get("sec-gpc") === "1";
+  // Carries the per-request CSP nonce (set by src/proxy.ts) so the inline theme script runs
+  // under the strict nonce CSP.
+  const nonce = requestHeaders.get("x-nonce") ?? undefined;
 
   return (
     <html lang={locale} dir={localeDir(locale as Locale)}>
       <body>
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <NextIntlClientProvider>
           {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
             <>
