@@ -1,7 +1,9 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useIntl } from "react-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { ShareButtons } from "@indiecrafts/packages-web-ui-components/web/layout/ShareButtons";
+import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
 import { useVersionCheck } from "@indiecrafts/packages-web-version/use-version-check";
 import { VERSION_ENDPOINT } from "@indiecrafts/packages-shared-version";
 import {
@@ -51,6 +53,13 @@ function useRecord<T>(store: Store<T>): T | null {
 /** Open a website legal page in the user's real browser (via the preload bridge). */
 function openLegal(key: LegalPageKey, locale: Locale) {
   if (websiteUrl) void window.desktop.openExternal(legalUrl(websiteUrl, key, locale));
+}
+
+// ponytail: no cookie-preferences reopen exists in the renderer yet, so the confirmation
+// toast's "Manage" action scrolls to the nearest related section (Home's legal links) —
+// Task 6 points this at the real cookie-preferences control once it exists.
+function onManageConsent() {
+  document.getElementById("legal-heading")?.scrollIntoView({ behavior: "smooth" });
 }
 
 /** The legal link-out list (a Home section) — each opens the website page externally. */
@@ -131,8 +140,17 @@ function ConsentBannerGate({ mode }: { mode: ConsentMode | null }) {
     analytics: cat("analytics"),
     marketing: cat("marketing"),
   });
-  const persist = (choices: Record<string, boolean>) =>
+  // Explicit accept/reject/save only — the geo auto-seed effect above calls
+  // `consentStore.save` directly and stays silent.
+  const persist = (choices: Record<string, boolean>) => {
     consentStore.save({ v: policyVersion, t: Date.now(), choices });
+    showConsentSavedToast({
+      saved: t.formatMessage({ id: "consent.saved" }),
+      description: t.formatMessage({ id: "consent.savedBody" }),
+      manage: t.formatMessage({ id: "consent.manage" }),
+      onManage: onManageConsent,
+    });
+  };
 
   return (
     <ConsentBanner
@@ -170,7 +188,15 @@ function LegalReacceptGate({ locale }: { locale: Locale }) {
         acceptLabel: t.formatMessage({ id: "legal.reaccept.accept" }),
       }}
       onReview={() => openLegal("terms", locale)}
-      onAccept={() => legalStore.save({ version: policyVersion, t: Date.now() })}
+      onAccept={() => {
+        legalStore.save({ version: policyVersion, t: Date.now() });
+        showConsentSavedToast({
+          saved: t.formatMessage({ id: "legal.reaccept.saved" }),
+          description: t.formatMessage({ id: "consent.savedBody" }),
+          manage: t.formatMessage({ id: "consent.manage" }),
+          onManage: onManageConsent,
+        });
+      }}
     />
   );
 }
@@ -264,6 +290,7 @@ export function ShellOverlays() {
       <LegalReacceptGate locale={locale} />
       {websiteUrl ? <VersionPrompt endpoint={`${websiteUrl}${VERSION_ENDPOINT}`} /> : null}
       <LocaleSuggest active={locale} />
+      <Toaster />
     </>
   );
 }
