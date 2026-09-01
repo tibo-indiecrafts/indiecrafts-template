@@ -1,8 +1,14 @@
 # @indiecrafts/web-surfaces-app — lean web surface (next-cf)
 
-Auto-loads under `code/projects/web/surfaces/app/**`. A minimal Next.js surface with the shared
-shell wired — i18n, compliance, and the version prompt over the shared bricks. Build real pages
-on top.
+Auto-loads under `code/projects/web/surfaces/app/**`. A lean Next.js surface with a shadcn sidebar
+shell wrapping three pages — Home, Account, Legal — over the shared i18n/compliance/version
+baseline. **Has a shadcn shell**: `src/user-interface/layout/` (`AppShell` → `AppSidebar` +
+`SidebarInset`/`AppHeader`), a flat nav from `src/user-interface/lib/nav.ts` (Home + Account), a
+no-flash light/dark `ThemeToggle`, a `LocaleSwitcher`, and `NavUser` (the sidebar footer menu:
+Legal + Sign out). Every route in the `(app)` group renders inside `AppShell`; `sign-in` stays
+outside the group, unshelled. Pages use the `PageHeader` + shadcn `Card` treatment. These are
+**app-owned components — no Storybook**; Storybook's globs cover only the design-system packages,
+not app UI.
 
 **Framework:** Next.js 16 (App Router) · React 19 · Tailwind v4 · shadcn/ui · next-intl — same stack as `web`.
 **Platform class:** `next-cf` (Next → OpenNext → Cloudflare Workers).

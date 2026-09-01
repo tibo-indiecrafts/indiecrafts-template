@@ -22,6 +22,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **shadcn sidebar shell — Home, Account, Legal restyled; vitest wired.** New
+  `src/user-interface/layout/` shell (`AppShell` → `AppSidebar` + `SidebarInset`/`AppHeader`) wraps
+  every `(app)` route: a flat nav (Home, Account) from `src/user-interface/lib/nav.ts`, a no-flash
+  light/dark `ThemeToggle` (persists to `localStorage` as `app-theme`), a `LocaleSwitcher`, and
+  `NavUser` (the sidebar footer menu: Legal + Sign out). `sign-in` stays outside the `(app)` group,
+  unshelled. Home, Account, and Legal now use the shared `PageHeader` + shadcn `Card` treatment.
+  New `lucide-react` dep. Also wires `vitest` (the app had no test runner before), with
+  `nav.test.ts` covering `activeKey` and `messages.test.ts` checking en/fr key parity. Components
+  are app-owned — **no Storybook**. **Why:** brings the app surface to the same visual bar as
+  `website`/`admin`, with its nav logic under test.
 - **Share this page — a share row on the home screen.** `src/app/[locale]/page.tsx` mounts the shared
   `ShareButtons` (`@indiecrafts/packages-web-ui-components/web/layout/ShareButtons`) with no `url`, so
   it resolves the current page URL client-side. Adds the `ui-components`/`ui-icons` deps + `transpilePackages`

@@ -21,6 +21,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Visual-polish pass — rhythm, hierarchy, states.** Overview stat cards gain a muted "Last 100"/
+  "Unavailable" caption so counts read as a dashboard, not raw numbers. `backups-table` and
+  `settings-form` normalize `mt-8` to the `mt-6` spacing scale used everywhere else.
+  `admin-role-form` and `settings-form` section headings now match the real-`h2` `CardTitle` style
+  already used on `system/page.tsx`. `settings-form` gains a real empty state (the one settings
+  list that can be empty). New copy: `overview.recent`, `overview.unavailable`, `settings.empty`
+  (en + fr). **Why:** tightens the dashboard shell's spacing and heading consistency, and closes
+  the one missing empty state.
 - **shadcn dashboard shell — sidebar, header, theme toggle, Overview landing.** New
   `src/user-interface/layout/` shell (`AppShell` → `AppSidebar` + `SidebarInset`/`AppHeader`) replaces
   the single-page scaffold: a grouped nav (Overview · Access[Users, Sessions] ·
