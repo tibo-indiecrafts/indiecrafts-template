@@ -79,7 +79,9 @@ export default async function AdminHome({
                 <p className="text-muted-foreground mt-1 text-xs">
                   {typeof counts[item.key] === "number"
                     ? t("overview.recent")
-                    : t("overview.unavailable")}
+                    : counts[item.key] === undefined
+                      ? t("overview.untracked")
+                      : t("overview.unavailable")}
                 </p>
               </CardContent>
             </Card>

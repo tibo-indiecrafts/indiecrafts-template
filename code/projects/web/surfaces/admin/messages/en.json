@@ -32,7 +32,8 @@
     },
     "overview": {
       "recent": "Last 100",
-      "unavailable": "Unavailable"
+      "unavailable": "Unavailable",
+      "untracked": "Not tracked"
     },
     "roles": {
       "title": "Manage admins",

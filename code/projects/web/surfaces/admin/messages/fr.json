@@ -32,7 +32,8 @@
     },
     "overview": {
       "recent": "100 derniers",
-      "unavailable": "Indisponible"
+      "unavailable": "Indisponible",
+      "untracked": "Non suivi"
     },
     "roles": {
       "title": "Gérer les administrateurs",
