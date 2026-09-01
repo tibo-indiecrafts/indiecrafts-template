@@ -28,6 +28,9 @@
     "customize": "Customize",
     "save": "Save",
     "back": "Back",
+    "saved": "Preferences saved",
+    "savedBody": "You can change these anytime in your profile settings.",
+    "manage": "Manage",
     "categories": {
       "necessary": {
         "title": "Necessary",
@@ -78,7 +81,8 @@
       "title": "Our policies changed",
       "body": "We updated our legal documents. Please review and accept to continue.",
       "review": "Review",
-      "accept": "Accept"
+      "accept": "Accept",
+      "saved": "Thanks — your acceptance is saved."
     }
   },
   "version": {

@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { SidebarInset, SidebarProvider } from "@indiecrafts/packages-web-ui/web/sidebar";
-import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { AppSidebar } from "./AppSidebar";
 import { AppHeader } from "./AppHeader";
 
-/** The app shell every `(app)` page renders inside: sidebar + sticky header. */
+/** The app shell every `(app)` page renders inside: sidebar + sticky header.
+ *  `<Toaster>` lives at `[locale]/layout.tsx` (covers sign-in too), not here. */
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
@@ -13,7 +13,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         <AppHeader />
         {children}
       </SidebarInset>
-      <Toaster />
     </SidebarProvider>
   );
 }

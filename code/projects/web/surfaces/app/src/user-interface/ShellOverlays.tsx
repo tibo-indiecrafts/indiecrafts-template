@@ -21,6 +21,8 @@ import {
   type ConsentMode,
   type LegalAcceptanceRecord,
 } from "@indiecrafts/packages-shared-compliance/shared";
+import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
+import { useRouter } from "@/i18n/routing";
 import { site, features, policyVersion, type Locale } from "@/config";
 
 // The two persisted records, namespaced per deployment (`site.prefix`).
@@ -39,6 +41,7 @@ function ConsentGate({
   gpcSignal: boolean;
 }) {
   const t = useTranslations("consent");
+  const router = useRouter();
   const record = useRecord(consentStore);
 
   // opt-out / none: no blocking banner — seed the default ONCE (accept-all unless a browser
@@ -66,8 +69,17 @@ function ConsentGate({
     analytics: cat("analytics"),
     marketing: cat("marketing"),
   });
-  const persist = (choices: Record<string, boolean>) =>
+  // Explicit accept/reject/save only — the geo auto-seed in the effect above calls
+  // `consentStore.save` directly and stays silent.
+  const persist = (choices: Record<string, boolean>) => {
     consentStore.save({ v: policyVersion, t: Date.now(), choices });
+    showConsentSavedToast({
+      saved: t("saved"),
+      description: t("savedBody"),
+      manage: t("manage"),
+      onManage: () => router.push("/account"),
+    });
+  };
 
   return (
     <ConsentBanner
@@ -90,6 +102,8 @@ function ConsentGate({
 
 function LegalGate({ locale }: { locale: Locale }) {
   const t = useTranslations("legal.reaccept");
+  const tc = useTranslations("consent");
+  const router = useRouter();
   const record = useRecord(legalStore);
   const consentRecord = useRecord(consentStore);
   // Suppressed while the consent banner is up, so only one bottom popup shows.
@@ -107,7 +121,15 @@ function LegalGate({ locale }: { locale: Locale }) {
       onReview={() => {
         window.location.href = legalUrl(site.websiteUrl, "terms", locale);
       }}
-      onAccept={() => legalStore.save({ version: policyVersion, t: Date.now() })}
+      onAccept={() => {
+        legalStore.save({ version: policyVersion, t: Date.now() });
+        showConsentSavedToast({
+          saved: t("saved"),
+          description: tc("savedBody"),
+          manage: tc("manage"),
+          onManage: () => router.push("/account"),
+        });
+      }}
     />
   );
 }

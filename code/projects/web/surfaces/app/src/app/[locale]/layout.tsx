@@ -5,6 +5,7 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
+import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { consent, localeDir, type Locale } from "@/config";
 import { SessionLogger } from "@indiecrafts/packages-web-auth";
 import { routing } from "@/i18n/routing";
@@ -64,6 +65,7 @@ export default async function LocaleLayout({
             mode={consentMode}
             gpcSignal={gpcSignal}
           />
+          <Toaster />
         </NextIntlClientProvider>
       </body>
     </html>
