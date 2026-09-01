@@ -227,17 +227,18 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                   mode={consentMode}
                   gpcSignal={gpcSignal}
                 />
-              ) : consentMode === "opt-out" ? (
+              ) : (
                 // `requireCookieConsent` is off, so `CookieBanner` (which also mounts
-                // the preferences dialog) isn't rendered. A CCPA/opt-out visitor still
-                // needs a *working* preferences dialog behind the footer "Do Not Sell"
-                // link (`DefaultLayout.tsx`'s `showDoNotSell`) — mount just the dialog
-                // + its `openPreferences()` listener, with no blocking banner.
+                // the preferences dialog) isn't rendered. A visitor still needs a
+                // *working* manage-preferences entry point regardless of consent mode
+                // (the footer "Do Not Sell" link for opt-out, or `ManagePreferencesButton`
+                // on `/account` for any mode) — mount just the dialog + its
+                // `openPreferences()` listener, with no blocking banner.
                 <CookiePreferencesHost
                   categories={cookieConsent.categories}
                   version={cookieConsent.version}
                 />
-              ) : null}
+              )}
               {/* "Policies updated — please Accept" banner. Copy edited per language
                 in Sanity (`legalConsent`); version = the tracked legal pages'
                 lastUpdated. Server-gated on the deposited cookie; no fallback. */}
