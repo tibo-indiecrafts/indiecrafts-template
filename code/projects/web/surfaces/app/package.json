@@ -32,6 +32,7 @@
     "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
     "@indiecrafts/packages-web-ui-components": "workspace:*",
     "@indiecrafts/packages-shared-ui-icons": "workspace:*",
+    "lucide-react": "^1.31.0",
     "next": "16.3.1",
     "next-intl": "^4.13.6",
     "react": "19.2.8",
