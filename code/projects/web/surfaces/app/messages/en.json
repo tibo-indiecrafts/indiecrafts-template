@@ -2,7 +2,15 @@
   "app": {
     "title": "indiecrafts",
     "subtitle": "App shell — i18n, consent and version prompts wired.",
-    "legalLink": "Legal"
+    "legalLink": "Legal",
+    "nav": { "label": "App navigation", "home": "Home", "account": "Account" },
+    "user": { "account": "Account", "signOut": "Sign out", "legal": "Legal" },
+    "theme": { "toggle": "Toggle theme", "light": "Light", "dark": "Dark" },
+    "locale": { "label": "Change language" },
+    "home": {
+      "accountDesc": "Manage your account and data.",
+      "legalDesc": "Review our legal documents."
+    }
   },
   "share": {
     "label": "Share this page",
@@ -36,6 +44,8 @@
     }
   },
   "account": {
+    "title": "Account",
+    "description": "Manage your account.",
     "delete": {
       "heading": "Delete your account",
       "body": "This permanently deletes your account and personal data. We keep a minimal activity log, stripped of identifying details, for security and legal compliance.",

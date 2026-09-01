@@ -2,7 +2,15 @@
   "app": {
     "title": "indiecrafts",
     "subtitle": "Coquille applicative — i18n, consentement et mises à jour câblés.",
-    "legalLink": "Mentions légales"
+    "legalLink": "Mentions légales",
+    "nav": { "label": "Navigation", "home": "Accueil", "account": "Compte" },
+    "user": { "account": "Compte", "signOut": "Se déconnecter", "legal": "Mentions légales" },
+    "theme": { "toggle": "Changer de thème", "light": "Clair", "dark": "Sombre" },
+    "locale": { "label": "Changer de langue" },
+    "home": {
+      "accountDesc": "Gérez votre compte et vos données.",
+      "legalDesc": "Consultez nos documents légaux."
+    }
   },
   "share": {
     "label": "Partager cette page",
@@ -36,6 +44,8 @@
     }
   },
   "account": {
+    "title": "Compte",
+    "description": "Gérez votre compte.",
     "delete": {
       "heading": "Supprimer votre compte",
       "body": "Cette action supprime définitivement votre compte et vos données personnelles. Nous conservons un journal d'activité minimal, dépourvu de détails identifiants, à des fins de sécurité et de conformité légale.",
