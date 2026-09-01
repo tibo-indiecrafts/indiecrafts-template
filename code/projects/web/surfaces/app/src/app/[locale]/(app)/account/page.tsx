@@ -7,6 +7,7 @@ import type {
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { features, type Locale } from "@/config";
 import { AccountDeletePanel } from "@/user-interface/account/AccountDeletePanel";
+import { CookiePreferencesSection } from "@/user-interface/account/CookiePreferencesSection";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 type Props = { params: Promise<{ locale: Locale }> };
@@ -64,6 +65,9 @@ export default async function AccountPage({ params }: Props) {
           <AccountDeletePanel copy={copy} exportCopy={exportCopy} showExport={features.exportAccount} />
         </CardContent>
       </Card>
+      <div className="mt-6">
+        <CookiePreferencesSection />
+      </div>
     </div>
   );
 }
