@@ -4,6 +4,8 @@ import type {
   DeleteAccountCopy,
   ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
+import { ManagePreferencesButton } from "@indiecrafts/packages-web-compliance/consent/ManagePreferencesButton";
+import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { features, pages, isPageVisible, type Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";
@@ -60,14 +62,25 @@ export default async function AccountPage({ params }: Props) {
     error: et("error"),
   };
 
+  const ct = await getTranslations({ locale, namespace: "cookies" });
+
   return (
     <DefaultLayout>
       <PageSchemas page={pages.account} locale={locale} />
-      <AccountDeletePanel
-        copy={copy}
-        exportCopy={exportCopy}
-        showExport={features.account.export}
-      />
+      <div className="space-y-4">
+        <Card>
+          <CardContent className="space-y-3">
+            <h2 className="text-sm font-semibold">{ct("preferencesTitle")}</h2>
+            <p className="text-muted-foreground text-sm">{ct("preferencesBody")}</p>
+            <ManagePreferencesButton label={ct("manage")} />
+          </CardContent>
+        </Card>
+        <AccountDeletePanel
+          copy={copy}
+          exportCopy={exportCopy}
+          showExport={features.account.export}
+        />
+      </div>
     </DefaultLayout>
   );
 }

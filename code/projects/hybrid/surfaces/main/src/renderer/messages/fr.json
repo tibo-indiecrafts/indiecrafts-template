@@ -37,6 +37,7 @@
     "saved": "Préférences enregistrées",
     "savedBody": "Vous pouvez les modifier à tout moment dans les paramètres de votre profil.",
     "manage": "Gérer",
+    "preferencesTitle": "Préférences de cookies",
     "categories": {
       "necessary": {
         "title": "Nécessaires",

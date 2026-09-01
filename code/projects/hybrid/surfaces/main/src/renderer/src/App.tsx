@@ -5,6 +5,7 @@ import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { ErrorContent } from "@indiecrafts/packages-shared-system-pages/web";
 import { LegalLinks, ShareRow, ShellOverlays } from "./shell";
 import { AuthPanel } from "./auth";
+import { CookiePreferencesSection } from "./consent-preferences";
 import { useOnlineStatus } from "./useOnlineStatus";
 
 /** A non-blocking strip shown while offline (auto-hides on reconnect); copy from the
@@ -80,6 +81,7 @@ function Home() {
       </div>
       <AuthPanel />
       <ShareRow />
+      <CookiePreferencesSection />
       <LegalLinks />
     </main>
   );

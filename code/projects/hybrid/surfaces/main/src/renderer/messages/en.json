@@ -37,6 +37,7 @@
     "saved": "Preferences saved",
     "savedBody": "You can change these anytime in your profile settings.",
     "manage": "Manage",
+    "preferencesTitle": "Cookie preferences",
     "categories": {
       "necessary": {
         "title": "Necessary",

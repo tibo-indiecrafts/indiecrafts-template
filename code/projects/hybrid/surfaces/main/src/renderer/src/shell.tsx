@@ -55,11 +55,12 @@ function openLegal(key: LegalPageKey, locale: Locale) {
   if (websiteUrl) void window.desktop.openExternal(legalUrl(websiteUrl, key, locale));
 }
 
-// ponytail: no cookie-preferences reopen exists in the renderer yet, so the confirmation
-// toast's "Manage" action scrolls to the nearest related section (Home's legal links) —
-// Task 6 points this at the real cookie-preferences control once it exists.
+// The confirmation toast's "Manage" action scrolls to the real cookie-preferences
+// control on Home (`consent-preferences.tsx`'s `CookiePreferencesSection`).
 function onManageConsent() {
-  document.getElementById("legal-heading")?.scrollIntoView({ behavior: "smooth" });
+  document
+    .getElementById("cookie-preferences")
+    ?.scrollIntoView({ behavior: "smooth" });
 }
 
 /** The legal link-out list (a Home section) — each opens the website page externally. */
