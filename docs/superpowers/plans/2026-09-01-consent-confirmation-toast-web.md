@@ -17,7 +17,8 @@
 - **NEVER add toast to the shared `ConsentBanner`/`LegalReacceptancePrompt`** (`@indiecrafts/packages-shared-compliance`) — its `/native` fork has no sonner. Toast fires in surface callbacks + the web-ui helper only.
 - **Explicit choices only.** Fire on banner Accept/Reject/Save + legal Accept. NEVER on the geo auto-seed (`source === "auto"` on website; the `useEffect` seed on app/hybrid).
 - Config-first; typed `@/i18n/routing` for the Manage navigation (never `next/link`); user-facing strings in `messages/<locale>.json`, en/fr parity (parity tests guard it).
-- No cross-app imports; compose the web-ui helper + compliance components. No edits to a surface's `src/user-interface/ui/**` (shadcn CLI). Token-only styling.
+- No cross-app imports; compose the helper + compliance components. No edits to a surface's `src/user-interface/ui/**` (shadcn CLI). Token-only styling.
+- **NEVER write under `code/packages/web/ui/src/web/`** — `guard.mjs` blocks it (shadcn-CLI-managed dir). The shared toast helper lives in `@indiecrafts/packages-web-ui-components` instead; `@indiecrafts/packages-web-ui/web/sonner` (the `<Toaster>`) is consumed unchanged.
 - One `<Toaster>` per surface tree (a second renders every toast twice).
 - Package names: web-ui = `@indiecrafts/packages-web-ui`, shared-compliance = `@indiecrafts/packages-shared-compliance`, web-compliance = `@indiecrafts/packages-web-compliance`.
 
@@ -25,22 +26,21 @@
 
 ## Phase 1 — The toast (plumbing + fire points)
 
-### Task 1: Export `toast` + the shared helper
+### Task 1: The shared consent-toast helper (in ui-components — the guarded `ui` brick is off-limits)
+
+`code/packages/web/ui/src/web/` is blocked by `guard.mjs` (shadcn CLI dir). So the helper lives in `@indiecrafts/packages-web-ui-components` (the composite web-UI package, already a dep of all three surfaces — it's where `ShareButtons` comes from), importing `toast` directly from the `sonner` package. `sonner` is `^2.0.8` (match web-ui). ui-components already has a `test: vitest run` script and a `src/web/` dir.
 
 **Files:**
-- Modify: `code/packages/web/ui/src/web/sonner.tsx`
-- Create: `code/packages/web/ui/src/web/consent-toast.ts`
-- Test: `code/packages/web/ui/src/web/consent-toast.test.ts`
+- Modify: `code/packages/web/ui-components/package.json` (add `sonner@^2.0.8` dep)
+- Create: `code/packages/web/ui-components/src/web/consent-toast.ts`
+- Test: `code/packages/web/ui-components/src/web/consent-toast.test.ts`
 
 **Interfaces:**
-- Produces: `toast` (re-export) and `showConsentSavedToast({ saved, description, manage, onManage })` from `@indiecrafts/packages-web-ui/web/consent-toast`.
+- Produces: `showConsentSavedToast({ saved, description, manage, onManage })` from `@indiecrafts/packages-web-ui-components/web/consent-toast`. (`<Toaster>` still comes from `@indiecrafts/packages-web-ui/web/sonner`, unchanged.)
 
-- [ ] **Step 1: Export `toast`** — append to `code/packages/web/ui/src/web/sonner.tsx` (after the existing `export { Toaster };`):
-```ts
-export { toast } from "sonner";
-```
+- [ ] **Step 1: Add the `sonner` dep** — `pnpm --filter @indiecrafts/packages-web-ui-components add sonner@^2.0.8` (matches web-ui).
 
-- [ ] **Step 2: Write the failing test** `consent-toast.test.ts`:
+- [ ] **Step 2: Write the failing test** `code/packages/web/ui-components/src/web/consent-toast.test.ts`:
 ```ts
 import { describe, it, expect, vi } from "vitest";
 
@@ -64,7 +64,7 @@ describe("showConsentSavedToast", () => {
 });
 ```
 
-- [ ] **Step 3: Run — verify it fails** (`pnpm --filter @indiecrafts/packages-web-ui test -- consent-toast`) → FAIL (module missing).
+- [ ] **Step 3: Run — verify it fails** (`pnpm --filter @indiecrafts/packages-web-ui-components test -- consent-toast`) → FAIL (module missing).
 
 - [ ] **Step 4: Implement** `consent-toast.ts`:
 ```ts
@@ -88,9 +88,9 @@ export function showConsentSavedToast({
 }
 ```
 
-- [ ] **Step 5: Run — verify pass.** Then `pnpm --filter @indiecrafts/packages-web-ui tsc`.
+- [ ] **Step 5: Run — verify pass** (`pnpm --filter @indiecrafts/packages-web-ui-components test -- consent-toast`). Then `pnpm --filter @indiecrafts/packages-web-ui-components tsc`.
 
-- [ ] **Step 6: Commit** — `feat(web-ui): export toast + showConsentSavedToast helper`.
+- [ ] **Step 6: Commit** — `feat(ui-components): showConsentSavedToast helper (sonner)`.
 
 ---
 
