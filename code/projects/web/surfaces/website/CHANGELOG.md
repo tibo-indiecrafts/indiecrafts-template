@@ -17,6 +17,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **`secrets:sync` no longer crashes on staging/prod (`scripts/sync-secrets.mjs`).** The clobber guard
+  called `assertRenamed("web", env)`, but `web` is not an `apps.mjs` slug — `resourceName("web")` throws
+  `unknown app slug`, so `secrets:sync:web:website:staging|prod` aborted before uploading (dev was masked
+  by the guard's early return). Now passes the real slug `website`.
+
 ### Changed
 
 - **`project:rename` now covers the native surfaces too (`scripts/project-rename.mjs`).** Besides the

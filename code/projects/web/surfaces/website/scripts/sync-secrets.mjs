@@ -18,8 +18,9 @@ if (!["dev", "staging", "prod"].includes(env)) {
   process.exit(1);
 }
 
-// Same clobber guard as deploy — secrets target the named Worker too.
-assertRenamed("web", env);
+// Same clobber guard as deploy — secrets target the named Worker too. The slug is
+// "website" (an apps.mjs row); "web" would throw `unknown app slug` on staging/prod.
+assertRenamed("website", env);
 
 const src = existsSync(".dev.vars") ? ".dev.vars" : ".env.local";
 if (!existsSync(src)) {
