@@ -1,0 +1,35 @@
+# Storybook — the design-system gallery served by a Cloudflare Worker via STATIC ASSETS
+# (Workers Static Assets), NOT Cloudflare Pages. Assets-only: there is no `main` (no Worker
+# script) — the Worker just serves the `storybook-static/` build. Deploy with
+# `pnpm deploy:web:storybook:<env>` (builds the gallery, then `wrangler deploy --env <env>`).
+# Per-client rename swaps `<prefix>` (project:rename → resource-name convention
+# `<prefix>-<env>-web-tools-storybook`). The prod custom domain (storybook.<root>) is a route
+# pasted from `node code/shared/scripts/lib/domains.mjs print storybook prod` once the real
+# host is set — like every other Worker's custom domain.
+name = "indiecrafts-dev-web-tools-storybook"
+compatibility_date = "2025-03-01"
+
+[observability.logs]
+enabled = true
+
+# Per-env resource names (bindings/assets don't inherit, so assets are declared per env).
+[env.dev]
+name = "indiecrafts-dev-web-tools-storybook"
+workers_dev = true
+[env.dev.assets]
+directory = "./storybook-static"
+
+[env.staging]
+name = "indiecrafts-staging-web-tools-storybook"
+workers_dev = true
+[env.staging.assets]
+directory = "./storybook-static"
+
+[env.prod]
+name = "indiecrafts-prod-web-tools-storybook"
+workers_dev = false
+[env.prod.assets]
+directory = "./storybook-static"
+# Custom domain — paste the routes block from
+#   node code/shared/scripts/lib/domains.mjs print storybook prod
+# once storybook.<root> is set in domains.mjs (a Worker route, like admin/app/api).

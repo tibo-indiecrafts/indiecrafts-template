@@ -9,11 +9,11 @@ member that **consumes** the bricks; it ships no product code — the static gal
 Pages as a design-system reference (see Run / Platform below).
 
 **Stack:** Storybook (`@storybook/nextjs-vite`) · Vite · Tailwind v4 (`@tailwindcss/vite`) · addons
-`a11y` · `docs` · `themes` · `vitest`. **Platform:** a static build (`storybook build`) shipped to
-**Cloudflare Pages** (not a Worker) via `pnpm deploy:web:storybook:<env>` →
-`shared/scripts/deploy/pages.mjs` → the project `<prefix>-<env>-web-tools-storybook`
-(`*.pages.dev`, or the `storybook.<root>` subdomain in `domains.mjs` once set). The gallery is still
-browse-only; the app never imports it.
+`a11y` · `docs` · `themes` · `vitest`. **Platform:** a static build (`storybook build`) served by a **Cloudflare Worker** (Workers Static
+Assets — no `main`, just `[assets]`; a registry `worker-cf` peer of api/cron/…) via
+`pnpm deploy:web:storybook:<env>` → `storybook:build` then the shared `deploy/worker.mjs`
+(`wrangler deploy`) → `<prefix>-<env>-web-tools-storybook` (`*.workers.dev`, or the `storybook.<root>`
+route from `domains.mjs` once set). The gallery is still browse-only; the app never imports it.
 
 ## Run
 

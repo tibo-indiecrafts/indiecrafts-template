@@ -25,7 +25,7 @@ export const ENVS = ["dev", "staging", "prod"];
  * @property {string} pkg    the workspace package name (`pnpm --filter` target)
  * @property {"next-cf"|"worker-cf"|"expo"|"electron"} class  platform class → deploy recipe
  * @property {"web"|"mobile"|"hybrid"|"shared"} platform  which platform folder it lives under
- * @property {"surface"|"service"} kind  surface (a user-facing site/screen/app) vs service (a worker backend)
+ * @property {"surface"|"service"|"tool"} kind  surface (a user-facing site/screen/app) · service (a worker backend) · tool (dev tooling, e.g. storybook)
  * @property {string} dir    the project's directory — `code/projects/<platform>/<kind>s/<leaf>`.
  *   The leaf can differ from `slug` (e.g. slug `mobile` lives at `mobile/surfaces/main`), so every
  *   path resolver reads THIS, never `code/projects/<slug>` (dirs nest by platform → kind).
@@ -96,6 +96,20 @@ export const APPS = [
     kind: "surface",
     dir: "code/projects/web/surfaces/app",
     order: 45,
+  },
+  {
+    // Storybook is a Cloudflare Worker serving STATIC ASSETS (Workers Static Assets, no
+    // `main`), not a bare-logic worker: its `deploy:storybook:<env>` script builds the
+    // gallery first, then runs the shared worker runner (`wrangler deploy`). class
+    // `worker-cf` keeps it in the Cloudflare deploy set; `kind: tool` marks it a tool, not
+    // a user surface. Deploys last (order 60) — nothing depends on it.
+    slug: "storybook",
+    pkg: "@indiecrafts/web-tools-storybook",
+    class: "worker-cf",
+    platform: "web",
+    kind: "tool",
+    dir: "code/projects/web/tools/storybook",
+    order: 60,
   },
   {
     slug: "mobile",

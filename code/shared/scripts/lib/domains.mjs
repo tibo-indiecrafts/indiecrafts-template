@@ -81,10 +81,9 @@ export const DOMAINS = [
       prod: { host: "api.example.com", zone: "example.com" },
     },
   },
-  // Storybook (design-system gallery) on Cloudflare Pages — a subdomain of the website
-  // root, like admin/app/api. dev/staging serve on `*.pages.dev`; prod on the custom
-  // host once set. NOTE: a Pages project (not a Worker), so its custom domain attaches
-  // to the Pages project (dashboard / DNS `CNAME`), not a wrangler route.
+  // Storybook (design-system gallery) — a static-assets Worker, a subdomain of the website
+  // root like admin/app/api. dev/staging serve on `*.workers.dev`; prod on this custom host
+  // via a normal Worker route (`[[env.prod.routes]]` in its wrangler.toml) once set.
   {
     app: "storybook",
     envs: {
@@ -93,20 +92,13 @@ export const DOMAINS = [
       prod: { host: "storybook.example.com", zone: "example.com" },
     },
   },
-  // The hybrid (Electron) installer host + auto-update feed — a Cloudflare R2 bucket
-  // (`<prefix>-<env>-hybrid-surfaces-main-releases`) exposed at this subdomain. NOT an
-  // app/Worker: it is an R2 custom domain (dashboard / DNS CNAME). electron-builder's
-  // `publish` url + electron-updater both point at `https://<host>/hybrid`.
-  {
-    app: "downloads",
-    envs: {
-      dev: null,
-      staging: null,
-      prod: { host: "downloads.example.com", zone: "example.com" },
-    },
-  },
   // Add a row per app that gets a custom domain (another subdomain, …). Apps with no
   // row serve only `*.workers.dev`.
+  //
+  // NOT here: the hybrid installer host `downloads.<root>` — that is an R2 bucket custom
+  // domain (`<prefix>-<env>-hybrid-surfaces-main-releases`), not an app/Worker route. It
+  // lives in `electron-builder.yml` (`publish.url`) + the deploy runbook, not this app→host
+  // registry (the domains test asserts every row is a real app slug).
 ];
 
 const PLACEHOLDER_HOSTS = new Set(["example.com", "your-domain.com", ""]);

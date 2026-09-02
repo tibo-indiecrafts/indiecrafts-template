@@ -35,7 +35,7 @@ Every Cloudflare resource name comes from one function —
 | **cron** | worker-cf | `indiecrafts-<env>-shared-cron.<sub>.workers.dev` | _(no route — scheduled)_ |
 | **workers** | worker-cf | `indiecrafts-<env>-shared-workers.<sub>.workers.dev` | _(no route — queue/event)_ |
 | **agent** | worker-cf | `indiecrafts-<env>-shared-agent.<sub>.workers.dev` | _(internal)_ |
-| **storybook** | pages | `https://indiecrafts-<env>-web-tools-storybook.pages.dev` | `https://storybook.example.com` |
+| **storybook** | Worker (assets) | `indiecrafts-<env>-web-tools-storybook.<sub>.workers.dev` | `https://storybook.example.com` |
 | **mobile** | expo | EAS build channel `<env>` (App/Play Store) | store listing |
 | **hybrid** | electron | installer artifact per `<env>` | signed `.dmg` / `.exe` |
 
@@ -88,20 +88,20 @@ Repeat Phase 1 with `staging`: `infra:*:apply:staging` → secrets `--env stagin
 6. **Verify** — health on `api.<domain>`, every surface on its subdomain, one auth round-trip, the
    erasure form + Turnstile, the CSP report-only pipeline.
 
-## Storybook (Cloudflare Pages)
+## Storybook (Cloudflare Worker — static assets)
 
-Storybook is a static gallery on **Cloudflare Pages** (not a Worker, and not an `apps.mjs` registry row).
-It has its own scripted deploy following the same naming convention:
+Storybook is a **Cloudflare Worker** serving static assets (Workers Static Assets — no `main`, just
+`[assets]`), a full `apps.mjs` registry peer (`worker-cf`, so `deploy:all` includes it). Deploy like any
+worker:
 
 ```bash
-pnpm deploy:web:storybook:<env>   # → shared/scripts/deploy/pages.mjs
+pnpm deploy:web:storybook:<env>   # storybook:build → shared/scripts/deploy/worker.mjs (wrangler deploy)
 ```
 
-The runner builds `storybook-static` and `wrangler pages deploy`s it to the project
-`indiecrafts-<env>-web-tools-storybook` → `https://indiecrafts-<env>-web-tools-storybook.pages.dev`.
-Its **prod subdomain** (`storybook.<root>`) lives in `domains.mjs` alongside `admin`/`app`/`api`; because
-Pages custom domains attach to the project (not a wrangler route), point a DNS `CNAME` at the project (or
-add it in the dashboard → Custom domains) once — the runner prints the domain to attach.
+→ the Worker `indiecrafts-<env>-web-tools-storybook` (`*.workers.dev` in dev/staging). Its **prod
+subdomain** (`storybook.<root>`) is a normal **Worker route** in `domains.mjs` alongside
+`admin`/`app`/`api` — paste the `[[env.prod.routes]]` block from
+`node code/shared/scripts/lib/domains.mjs print storybook prod` into its `wrangler.toml` once the host is set.
 
 ## Native surfaces (separate track — not Cloudflare)
 

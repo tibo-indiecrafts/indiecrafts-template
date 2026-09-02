@@ -15,9 +15,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
   sections from "follow-ups" to the shipped config — EAS profiles, Electron signing/notarize/R2-publish,
   electron-updater, and the `deploy-native.yml` CI matrix — with the exact secrets to supply. Added the
   `downloads.<root>` subdomain + the D1/KV/R2 backing-resource names to the URL/resource lists.
-- **Runbook: Storybook is a scripted Pages deploy on a subdomain (`first-deployment.md`).** Updated the
-  Storybook section + URL table — `pnpm deploy:web:storybook:<env>` → `pages.mjs`, prod at
-  `storybook.<root>` (registered in `domains.mjs`), dropping the "manual deploy / no script" note.
+- **Runbook: Storybook is a scripted Worker deploy on a subdomain (`first-deployment.md`).** Updated the
+  Storybook section + URL table — `pnpm deploy:web:storybook:<env>` builds then `wrangler deploy`s a
+  static-assets **Worker** (registry peer), prod at `storybook.<root>` (a Worker route in `domains.mjs`).
 - **First-deployment runbook + sidebar (`shared/architecture/first-deployment.md`).** The step-by-step
   plan to take one instance live across `dev`/`staging`/`prod`: the per-env URL table (derived from
   `resourceName` — `<prefix>-<env>-<tail>`), the template-vs-instance model, Phase 0 → dev → staging →

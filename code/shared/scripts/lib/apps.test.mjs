@@ -42,7 +42,7 @@ test("deployable() defaults to Cloudflare apps, in deploy order", () => {
   assert.ok(cf.every(isCloudflare), "default set must be Cloudflare-only");
   assert.deepEqual(
     cf.map((a) => a.slug),
-    ["agent", "api", "cron", "workers", "website", "admin", "app"],
+    ["agent", "api", "cron", "workers", "website", "admin", "app", "storybook"],
   );
 });
 

@@ -18,13 +18,15 @@ _The Storybook gallery for the design-system bricks (`ui` · `ui-components` · 
 
 ### Added
 
-- **Scripted deploy to Cloudflare Pages (`deploy:web:storybook:<env>`).** The gallery now ships to a
-  Pages project named on the shared convention — `<prefix>-<env>-web-tools-storybook` — via the new
-  `shared/scripts/deploy/pages.mjs` runner (`storybook:build` → `wrangler pages deploy`, prod-confirmed).
-  Adds a `storybook` row to `domains.mjs` for the prod **subdomain** `storybook.<root>` (attached to the
-  Pages project by DNS `CNAME` / dashboard, since Pages custom domains aren't wrangler routes), plus a
-  `wrangler` devDep and the `.vscode/tasks.json` entries. **Why:** the design-system gallery is a public
-  reference for the template, named + served consistently with the other surfaces.
+- **Scripted deploy as a Cloudflare Worker (`deploy:web:storybook:<env>`).** The gallery ships as a
+  **Worker serving static assets** (Workers Static Assets — a `wrangler.toml` with `[assets]` and no
+  `main`), now a full `apps.mjs` registry peer (`worker-cf`, `kind: tool`, order 60 — so `deploy:all` +
+  CI include it). `deploy:storybook:<env>` runs `storybook:build` then the shared `deploy/worker.mjs`
+  (`wrangler deploy`), naming the Worker on the shared convention `<prefix>-<env>-web-tools-storybook`.
+  Adds a `storybook` row to `domains.mjs` for the prod **subdomain** `storybook.<root>` (a normal Worker
+  route, like admin/app/api), a `wrangler` devDep, and the `.vscode/tasks.json` entries. **Why:** the
+  design-system gallery is a public reference, named + served + deployed consistently with the other
+  workers (Worker, not Pages).
 
 - **Stories for the blog's five new frontpage primitives.** `PostHero`, `FeaturedPosts`,
   `SpotlightRow`, `Carousel`, and `TopicCards` (`@indiecrafts/packages-web-ui-components/web/{layout,collection}`)
