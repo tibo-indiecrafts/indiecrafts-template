@@ -71,12 +71,13 @@ ipcMain.handle(
 // The live window, so the deep-link handlers can forward the OAuth callback to it.
 let mainWindow: BrowserWindow | null = null;
 
-// Electron main process. The "hybrid": a native window around web UI. Point it at
-// a web app — the `website` dev server in dev, a bundled build or the live
-// URL in prod. The renderer IS Chromium, so it can reuse the web bricks
-// (`@indiecrafts/packages-web-ui`, `ui-components`, React 19); the main process (here) uses only
-// the React-free bricks. Finalize the loaded URL/build strategy for your product.
-const DEV_URL = process.env.RENDERER_URL ?? "http://localhost:3000";
+// Electron main process. The "hybrid": a native window around the shared web UI. In
+// dev, load the `app` product surface (the `/app` dashboard, `:3001`) — the desktop
+// app wraps the product, not the marketing website. `RENDERER_URL` stays an explicit
+// override (e.g. the `website` at `:3000`, or the bundled renderer dev server). When
+// packaged, load the bundled `out/renderer` (see below). The renderer IS Chromium, so
+// it reuses the web bricks; the main process (here) uses only the React-free bricks.
+const DEV_URL = process.env.RENDERER_URL ?? "http://localhost:3001";
 
 function createWindow() {
   const win = new BrowserWindow({

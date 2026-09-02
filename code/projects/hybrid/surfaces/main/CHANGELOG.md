@@ -11,6 +11,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Changed
+
+- **The desktop window loads the `app` product surface in dev, not the marketing website
+  (`src/main/index.ts`).** `DEV_URL` now defaults to `http://localhost:3001` (the `/app` dashboard)
+  instead of `:3000` (the `website`). `RENDERER_URL` stays an explicit override. **Why:** the hybrid is
+  the product in a desktop shell; it should open the app, not the marketing site. The bundled renderer
+  (`src/renderer`) is still built by electron-vite and loads when packaged, but it is a scaffold not yet
+  run as the loaded dev content (it assumes a Next/Node env — e.g. `process.env` — so it needs a Vite
+  `define` pass before it can be the dev target).
+
 ### Added
 
 - **Consent/legal confirmation toast.** The renderer fires `showConsentSavedToast` on an explicit

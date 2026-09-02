@@ -14,6 +14,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-shared-ui-fonts` — exports its font files (`./fonts/*`).** The package's
+  `exports` map now exposes `./fonts/*` alongside `.` (the `FONT_FILES` metadata). **Why:** a bundler
+  that resolves via the `exports` field (Vite — the hybrid Electron renderer's `@font-face`
+  `url("@indiecrafts/packages-shared-ui-fonts/fonts/Satoshi-Variable.woff2")`) could not reach the
+  self-hosted `.woff2` files, so the renderer CSS failed to compile. `next/font` (website) and
+  `expo-font` (mobile) reference the files by relative path and are unaffected.
+
 - **`@indiecrafts/packages-web-ui-components` — `showConsentSavedToast` (new `web/consent-toast`
   export, sonner).** One shared "choice saved" toast every web surface fires on an explicit
   cookie-consent or legal-reacceptance choice: `showConsentSavedToast({ saved, description, manage,

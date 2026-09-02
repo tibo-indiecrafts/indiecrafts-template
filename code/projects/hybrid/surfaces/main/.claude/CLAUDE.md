@@ -7,7 +7,8 @@ around the shared web UI.
 **Stack:** Electron 33 · **electron-vite 5** (bundler, vite 7) · electron-builder (packaging) ·
 TypeScript. The bundler is **wired + building**: `pnpm --filter @indiecrafts/hybrid-surfaces-main build` compiles the
 three processes to `out/{main,preload,renderer}` (gitignored). `src/main/index.ts` loads the web app URL
-in dev (`RENDERER_URL`, default `:3000`) and the bundled `out/renderer/index.html` when packaged.
+in dev (`RENDERER_URL`, default `:3001` — the `app` product surface, not the marketing website) and the
+bundled `out/renderer/index.html` when packaged.
 **The renderer bundles its own UI.** `src/renderer/src/main.tsx` mounts a real **React 19** app (Vite +
 `@vitejs/plugin-react` + `@tailwindcss/vite`) that reuses the web shadcn brick (`@indiecrafts/packages-web-ui`)
 and the Next-agnostic `system-pages/web` (404/500 via an injected `<a>`), themed by `ui-tokens` (`data-theme`
