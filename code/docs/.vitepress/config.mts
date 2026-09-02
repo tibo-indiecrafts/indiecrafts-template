@@ -218,6 +218,10 @@ export default defineConfig({
             link: "/shared/architecture/platform-deploy",
           },
           {
+            text: "First deployment (runbook · URLs)",
+            link: "/shared/architecture/first-deployment",
+          },
+          {
             text: "Cross-platform shell",
             link: "/shared/architecture/cross-platform-shell",
           },

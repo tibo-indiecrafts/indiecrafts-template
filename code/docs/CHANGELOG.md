@@ -11,6 +11,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **First-deployment runbook + sidebar (`shared/architecture/first-deployment.md`).** The step-by-step
+  plan to take one instance live across `dev`/`staging`/`prod`: the per-env URL table (derived from
+  `resourceName` — `<prefix>-<env>-<tail>`), the template-vs-instance model, Phase 0 → dev → staging →
+  prod (infra → secrets → migrate → deploy → verify), the manual Storybook Pages deploy, and the native
+  (Expo/Electron) track. Companion to `platform-deploy.md` (the model).
 - **Share is a shared Sanity setting (`editing-seo-in-sanity.md` + blog `editor-guide.md`).** Documents
   the new **Paramètres du site → Partage** group (master toggle + per-network checkboxes) that drives the
   share row in the site footer and under blog posts; removes the stale blog `Boutons de partage` display
