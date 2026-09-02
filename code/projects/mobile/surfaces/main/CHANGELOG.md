@@ -11,6 +11,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **EAS distribution scaffolding (`eas.json`, `app.config.ts`).** New `eas.json` build/submit profiles —
+  `development` (dev), `preview` (staging), `production` (prod) — each baking its `EXPO_PUBLIC_API_URL`
+  (the env's shared-api origin), plus a `production` submit block for the App/Play stores. `app.config.ts`
+  gains `owner`, `runtimeVersion` (`appVersion` policy), `updates.url` (EAS Update feed), and
+  `extra.eas.projectId` — the identity `eas init` fills. **Why:** `deploy:mobile:main:<env>` maps env →
+  profile and now has real profiles to build/submit + OTA channels; all placeholders until you
+  `eas login` + `eas init`. Store credentials + certs stay yours.
+
 ### Fixed
 
 - **`expo start` now bundles and renders in the pnpm monorepo (`babel.config.js`, `metro.config.js`,

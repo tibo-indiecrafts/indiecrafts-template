@@ -1,0 +1,47 @@
+{
+  "//": "EAS Build/Submit profiles. `deploy:mobile:main:<env>` (shared/scripts/deploy/expo.mjs) maps env → profile: dev→development, staging→preview, prod→production. Each profile bakes its EXPO_PUBLIC_API_URL (the shared api origin for that env). Fill the placeholder api hosts + the submit credentials, then `eas build`/`eas submit`. Requires `eas login` (or EXPO_TOKEN) + `eas init` (writes extra.eas.projectId in app.config.ts).",
+  "cli": {
+    "version": ">= 12.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://indiecrafts-dev-shared-api.example.workers.dev"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://indiecrafts-staging-shared-api.example.workers.dev"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.example.com"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "//": "Fill from your Apple Developer account (App Store Connect app id + team).",
+        "appleId": "APPLE_ID_EMAIL",
+        "ascAppId": "APP_STORE_CONNECT_APP_ID",
+        "appleTeamId": "APPLE_TEAM_ID"
+      },
+      "android": {
+        "//": "Path to a Google Play service-account JSON key (keep it out of git).",
+        "serviceAccountKeyPath": "PATH_TO_PLAY_SERVICE_ACCOUNT_JSON",
+        "track": "internal"
+      }
+    }
+  }
+}

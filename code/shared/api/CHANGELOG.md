@@ -5,6 +5,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **KV namespaces are named on the shared convention (`shared/scripts/infra/bindings.mjs`).** The
+  provisioner now creates a KV namespace as `<prefix>-<env>-<owner-tail>-<binding>` (e.g.
+  `indiecrafts-<env>-shared-api-security-counters`) instead of the off-convention `<BINDING>_<env>`,
+  coherent with Workers / Pages / D1. **Why:** one naming law across every Cloudflare resource, so a
+  client rename swaps only the prefix. (D1/queue keep their short create-name; the `database_name` in
+  `wrangler.toml` is authoritative there.)
+
 ### Fixed
 
 - **`pnpm dev` local fleet no longer collides (covers `api`/`agent`/`cron`/`workers`).** All four

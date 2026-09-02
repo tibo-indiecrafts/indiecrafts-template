@@ -1,15 +1,17 @@
 // Provision a Cloudflare binding (KV / D1 / queue) for a worker app + PRINT the
 // ready-to-paste `wrangler.toml` block, per env. It does NOT auto-edit wrangler.toml
 // — per-env TOML editing is bespoke and fragile, so paste the printed block under the
-// app's `[env.<env>]`. Per-env resource names (`<binding>-<env>`) so a staging test
-// can't touch prod data (mirrors the web app's `RATE_LIMIT_KV_<env>`). Secrets are
-// NOT bindings — use `wrangler secret put <NAME> --env <env>`.
+// app's `[env.<env>]`. Per-env resource names so a staging test can't touch prod data:
+// KV follows the shared convention (`<prefix>-<env>-<tail>-<binding>`); D1/queue keep the
+// short `<binding>-<env>` (their `database_name` in wrangler.toml is authoritative). Secrets
+// are NOT bindings — use `wrangler secret put <NAME> --env <env>`.
 //
 //   node scripts/setup-bindings.mjs <app> <dev|staging|prod> <kv|d1|queue> <BINDING_NAME>
 //   e.g. node scripts/setup-bindings.mjs workers prod kv JOBS_KV
 
 import { spawnSync } from "node:child_process";
-import { APPS } from "../lib/apps.mjs";
+import { APPS, resourceName } from "../lib/apps.mjs";
+import { readSitePrefix } from "../lib/project.mjs";
 
 const [app, env, kind, binding] = process.argv.slice(2);
 const KINDS = ["kv", "d1", "queue"];
@@ -29,13 +31,20 @@ const appRow = APPS.find((a) => a.slug === app);
 const pkg = appRow?.pkg ?? `@indiecrafts/${app}`;
 const projectDir = appRow?.dir ?? `code/projects/${app}`;
 const resource = `${binding.toLowerCase()}-${env}`;
+// KV namespaces follow the shared resource-name convention (`<prefix>-<env>-<tail>-<binding>`),
+// coherent with Workers / Pages / D1 — not a bespoke `<BINDING>_<env>`. Falls back to the old
+// shape only when the app isn't a registry row (resourceName needs one).
+const kvName = appRow
+  ? `${resourceName(app, env, readSitePrefix())}-${binding.toLowerCase().replaceAll("_", "-")}`
+  : `${binding}_${env}`;
 const create = {
-  kv: ["kv", "namespace", "create", `${binding}_${env}`],
+  kv: ["kv", "namespace", "create", kvName],
   d1: ["d1", "create", resource],
   queue: ["queues", "create", resource],
 }[kind];
+const displayName = kind === "kv" ? kvName : resource;
 
-console.log(`Creating ${kind} "${resource}" for ${app} (${env})…`);
+console.log(`Creating ${kind} "${displayName}" for ${app} (${env})…`);
 // Run wrangler from the app's dir (its .bin + wrangler.toml) via pnpm --filter.
 const r = spawnSync("pnpm", ["--filter", pkg, "exec", "wrangler", ...create], {
   encoding: "utf8",
