@@ -93,6 +93,18 @@ export const DOMAINS = [
       prod: { host: "storybook.example.com", zone: "example.com" },
     },
   },
+  // The hybrid (Electron) installer host + auto-update feed — a Cloudflare R2 bucket
+  // (`<prefix>-<env>-hybrid-surfaces-main-releases`) exposed at this subdomain. NOT an
+  // app/Worker: it is an R2 custom domain (dashboard / DNS CNAME). electron-builder's
+  // `publish` url + electron-updater both point at `https://<host>/hybrid`.
+  {
+    app: "downloads",
+    envs: {
+      dev: null,
+      staging: null,
+      prod: { host: "downloads.example.com", zone: "example.com" },
+    },
+  },
   // Add a row per app that gets a custom domain (another subdomain, …). Apps with no
   // row serve only `*.workers.dev`.
 ];

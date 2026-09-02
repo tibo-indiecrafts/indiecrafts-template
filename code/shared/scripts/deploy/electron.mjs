@@ -6,9 +6,11 @@
 //
 //   node ../../../scripts/deploy-electron.mjs <dev|staging|prod> [--yes]
 //
-// Structure-first: dev/staging/prod all build the installer here. Signing +
-// notarizing + publishing to a release provider (prod) are credential-gated
-// follow-ups — see code/projects/hybrid/surfaces/main/README.md.
+// Signing + notarization are wired in electron-builder.yml (they read Apple/cert creds
+// from the ENV — a local build with none is UNSIGNED, dev-only). This runner BUILDS the
+// installer for the host OS; publishing to the Cloudflare R2 feed
+// (`downloads.<root>/hybrid`) is a CI step (generic-provider feeds are upload-by-CI, not
+// by electron-builder) — see .github/workflows/deploy-native.yml + the app README.
 
 import { ENVS } from "../lib/apps.mjs";
 import { run, confirmProd } from "../lib/deploy-shared.mjs";

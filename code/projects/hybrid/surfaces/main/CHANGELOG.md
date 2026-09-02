@@ -11,6 +11,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Real distribution — signing, notarization, R2 publish, auto-update (`electron-builder.yml`,
+  `build/entitlements.mac.plist`, `src/main/index.ts`, `deploy/electron.mjs`).** electron-builder now
+  carries hardened-runtime mac signing + `notarize` (reads Apple/cert creds from env; unsigned when
+  none — dev only), a mac entitlements plist, and a `publish` block (generic provider → the Cloudflare
+  R2 feed `downloads.<root>/hybrid`). The main process wires **electron-updater** (`checkForUpdates` on
+  launch, packaged-only, guarded). The R2 bucket is `<prefix>-<env>-hybrid-surfaces-main-releases`; a new
+  `.github/workflows/deploy-native.yml` builds per-OS (mac/win/linux) and uploads to R2. Adds the
+  `electron-updater` dep. **Why:** the desktop app can ship signed, notarized, auto-updating installers
+  once the operator supplies certs + R2 creds; the local unsigned build is unchanged.
+
 ### Changed
 
 - **The desktop window loads the `app` product surface in dev, not the marketing website

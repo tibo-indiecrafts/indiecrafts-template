@@ -1,8 +1,20 @@
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { join } from "node:path";
+import { autoUpdater } from "electron-updater";
 import { callAgent } from "@indiecrafts/packages-shared-agent-client";
 import { isSafeExternalUrl, parseOAuthCallback } from "./url-guard";
 import { defaultLocale } from "../config";
+
+// Auto-update (packaged builds only). electron-updater checks the `publish` feed from
+// electron-builder.yml — the generic Cloudflare R2 URL (`downloads.<root>/hybrid`) — and
+// notifies when a newer signed build is available. Guarded so an unreachable/unconfigured
+// feed never crashes; dev (unpackaged) never checks (there is no feed to hit).
+function checkForUpdates(): void {
+  if (!app.isPackaged) return;
+  autoUpdater.checkForUpdatesAndNotify().catch((err) => {
+    console.error("update check failed:", err);
+  });
+}
 
 // Open a URL in the user's real browser (the legal link-out — the renderer builds
 // the website legal URL via `legalUrl`, this opens it). Restricted to http(s) so the
@@ -173,6 +185,7 @@ if (!gotLock) {
 
   app.whenReady().then(() => {
     createWindow();
+    checkForUpdates();
     // Windows/Linux cold start via the protocol: the URL rides the launch argv.
     forwardOAuth(process.argv.find((a) => a.startsWith("indiecrafts://")));
     app.on("activate", () => {
