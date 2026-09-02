@@ -18,11 +18,8 @@ invocation_logs = true
 
 # ── Rate limit (Cloudflare native binding) — per client IP; caps LLM spend/abuse ──
 # namespace_id is a per-Worker logical id (any int ≥ 1000); no allocation needed.
-[[unsafe.bindings]]
-name = "AGENT_RATELIMIT"
-type = "ratelimit"
-namespace_id = "1001"
-simple = { limit = 20, period = 60 }
+# unsafe.bindings are NOT inherited by named environments → declared per env below
+# (top-level here would be silently dropped on every `--env` deploy).
 
 # ── Browser allowlist (the deployed website origin) — the browser auth path requires
 # an allowlisted Origin + a Turnstile token. Comma-separate for multiple. localhost dev
@@ -36,13 +33,28 @@ simple = { limit = 20, period = 60 }
 # ── per-env (mirror the deploy scripts) ──────────────────────
 [env.dev]
 name = "indiecrafts-dev-shared-agent"
+[[env.dev.unsafe.bindings]]
+name = "AGENT_RATELIMIT"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 20, period = 60 }
 
 [env.staging]
 name = "indiecrafts-staging-shared-agent"
 # [env.staging.vars]
 # WEB_ORIGIN = "https://staging.example.com"
+[[env.staging.unsafe.bindings]]
+name = "AGENT_RATELIMIT"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 20, period = 60 }
 
 [env.prod]
 name = "indiecrafts-prod-shared-agent"
 # [env.prod.vars]
 # WEB_ORIGIN = "https://www.example.com"
+[[env.prod.unsafe.bindings]]
+name = "AGENT_RATELIMIT"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 20, period = 60 }

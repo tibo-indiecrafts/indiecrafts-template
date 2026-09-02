@@ -32,20 +32,17 @@ invocation_logs = true
 # deployment (repeat under [env.<env>.vars] if the dataset differs per env). Until set, the
 # route answers 503. SANITY_API_READ_TOKEN is a SECRET → `wrangler secret put
 # SANITY_API_READ_TOKEN --env <env>` (needed only if the dataset is not public-read).
-[vars]
-SANITY_API_VERSION = "2025-01-01"
-# SANITY_PROJECT_ID = "your_project_id"
-# SANITY_DATASET = "production"
-# WEBSITE_URL = "https://your-site.example"
-# EMAIL_ADMIN_BCC = "admin@your-site.example"  # BCC'd on every outbound email (erasure emails); an address, [vars]-safe
-# SECURITY_ALERT_EMAIL = "soc@your-site.example"  # high/critical security-alert recipient; unset falls back to EMAIL_ADMIN_BCC
-# Informational only (GET /v1/backups/status) — the actual bucket is per-env
-# (`<prefix>-<env>-db-backup`, see scripts/lib/backup-common.mjs); repeat under
-# [env.<env>.vars] if it should differ from this base/dev value.
-BACKUP_BUCKET = "indiecrafts-dev-db-backup"
-BACKUP_RETENTION_DAYS = "30"
-# Other secrets are NEVER here → `wrangler secret put <NAME> --env <env>` (or
-# `pnpm secrets:sync:*`). They surface on `env.<NAME>`.
+# Public vars go PER ENV under `[env.<env>.vars]` below — wrangler does NOT inherit a
+# top-level `[vars]` into named environments (it warns + drops them), so there is no
+# top-level `[vars]` block. The active base vars declared per env:
+#   SANITY_API_VERSION = "2025-01-01"
+#   BACKUP_BUCKET = "<prefix>-<env>-db-backup"   # informational (GET /v1/backups/status); env-specific
+#   BACKUP_RETENTION_DAYS = "30"
+# Optional vars to add per env as needed:
+#   SANITY_PROJECT_ID / SANITY_DATASET / WEBSITE_URL
+#   EMAIL_ADMIN_BCC = "admin@your-site.example"    # BCC'd on outbound (erasure) emails
+#   SECURITY_ALERT_EMAIL = "soc@your-site.example" # high/critical alert; falls back to EMAIL_ADMIN_BCC
+# Secrets are NEVER vars → `wrangler secret put <NAME> --env <env>` (or `pnpm secrets:sync:*`).
 
 # ── KV — edge key-value (cache · sessions · flags) ───────────────────────
 # [[kv_namespaces]]
@@ -144,6 +141,12 @@ BACKUP_RETENTION_DAYS = "30"
 [env.dev]
 name = "indiecrafts-dev-shared-api"
 
+# vars are NOT inherited from the top level — declare them per env (wrangler warns otherwise).
+[env.dev.vars]
+SANITY_API_VERSION = "2025-01-01"
+BACKUP_BUCKET = "indiecrafts-dev-db-backup"
+BACKUP_RETENTION_DAYS = "30"
+
 [[env.dev.d1_databases]]
 binding = "DB"
 database_name = "indiecrafts-dev-shared-api"
@@ -163,6 +166,11 @@ id = "PASTE_KV_ID_HERE"
 [env.staging]
 name = "indiecrafts-staging-shared-api"
 
+[env.staging.vars]
+SANITY_API_VERSION = "2025-01-01"
+BACKUP_BUCKET = "indiecrafts-staging-db-backup"
+BACKUP_RETENTION_DAYS = "30"
+
 [[env.staging.d1_databases]]
 binding = "DB"
 database_name = "indiecrafts-staging-shared-api"
@@ -181,6 +189,11 @@ id = "PASTE_KV_ID_HERE"
 
 [env.prod]
 name = "indiecrafts-prod-shared-api"
+
+[env.prod.vars]
+SANITY_API_VERSION = "2025-01-01"
+BACKUP_BUCKET = "indiecrafts-prod-db-backup"
+BACKUP_RETENTION_DAYS = "30"
 
 [[env.prod.d1_databases]]
 binding = "DB"

@@ -16,6 +16,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Public `vars` are declared per env, not top-level (`wrangler.toml`).** `SANITY_API_VERSION`,
+  `BACKUP_BUCKET`, and `BACKUP_RETENTION_DAYS` sat under a top-level `[vars]` — which wrangler does **not**
+  inherit into named environments (it warns and drops them), so every `--env dev|staging|prod` deploy
+  shipped **without** them. Moved into `[env.<env>.vars]` (with an env-specific
+  `BACKUP_BUCKET = <prefix>-<env>-db-backup`); the top-level block is gone. **Why:** the api was deploying
+  without its runtime vars — the backup bucket, Sanity API version, and retention were all unset in prod.
 - **`pnpm dev` local fleet no longer collides (covers `api`/`agent`/`cron`/`workers`).** All four
   bare workers ran `wrangler dev` on the default inspector port 9229, so only one could start and
   the rest crashed with `Address already in use`, aborting the whole `turbo run dev`. Each worker's

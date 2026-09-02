@@ -12,6 +12,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **The `AGENT_RATELIMIT` rate limiter is declared per env, not top-level (`wrangler.toml`).** The
+  `[[unsafe.bindings]]` sat at the top level, which wrangler does **not** inherit into named
+  environments — so every `--env dev|staging|prod` deploy shipped the agent **without** its rate
+  limiter, leaving the LLM endpoint uncapped. Moved into `[[env.<env>.unsafe.bindings]]` (verified: the
+  `env.AGENT_RATELIMIT` binding now shows in a `--env prod` dry-run). **Why:** the per-IP LLM
+  spend/abuse cap was silently absent in every deployed environment.
+
 ### Added
 
 - **The dedicated AI agent Worker — one endpoint for every surface.** A new bare Cloudflare Worker
