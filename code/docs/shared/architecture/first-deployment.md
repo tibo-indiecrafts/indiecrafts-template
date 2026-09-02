@@ -100,10 +100,54 @@ pnpm --filter @indiecrafts/shared-api exec wrangler pages deploy \
 
 ## Native surfaces (separate track — not Cloudflare)
 
-- **Mobile (Expo/EAS)** — install `eas-cli`, `eas login` (or `EXPO_TOKEN`), configure the EAS project,
-  then `pnpm deploy:mobile:main:<env>`.
-- **Hybrid (Electron)** — set up code-signing + notarization (Apple / Windows certs), then
-  `pnpm deploy:hybrid:main:<env>` for a shippable installer.
+Native apps don't deploy to Cloudflare. Here the `env` selects the **backend URLs baked into the
+artifact** (not separate infra), each needs its own credentials, and — because signed artifacts don't
+cross-build — a real release runs **one CI runner per target OS**.
+
+### Mobile (Expo / EAS)
+
+1. Install `eas-cli`; authenticate with `eas login` or an `EXPO_TOKEN` CI secret.
+2. Define build profiles per env in `eas.json` (`dev` / `staging` / `prod` → the matching `EXPO_PUBLIC_API_URL`).
+3. `pnpm deploy:mobile:main:<env>` → `deploy/expo.mjs` (env → EAS profile) → **EAS Build** → store submit.
+4. Ship JS-only changes over the air with **EAS Update** (no store round-trip).
+
+Prerequisites: an Expo account, an Apple Developer account (iOS) + Google Play account (Android).
+
+### Hybrid (Electron) — desktop distribution
+
+**What `env` means here.** A desktop app has no per-env infrastructure. The env picks the **backend URLs
+compiled into the installer** — the packaged app reads `RENDERER_URL` / `API_URL` / `AGENT_URL`
+(`src/main/index.ts`) + `src/config`. A `prod` installer talks to the prod api/website; `dev`/`staging`
+to theirs. So `deploy:hybrid:main:<env>` means "build an installer wired to `<env>`'s backends."
+
+**What works today.** `pnpm deploy:hybrid:main:<env>` → `deploy/electron.mjs` runs `dist:<os>`
+(`electron-vite build && electron-builder --<os>`) → an **unsigned** installer in `release/`
+(`.dmg` / `.exe` nsis / `.AppImage`). Runnable for internal testing; not distributable to the public.
+
+**What a complete distribution adds** (each an owned follow-up):
+
+1. **Per-OS CI matrix.** electron-builder can't cross-build signed artifacts, so release from
+   `macos-latest` (→ `.dmg`), `windows-latest` (→ `.exe`), `ubuntu-latest` (→ `.AppImage`). The runner
+   already selects `dist:mac|win|linux` by `process.platform`.
+2. **Code signing.** macOS: an Apple **Developer ID Application** cert (electron-builder reads
+   `CSC_LINK` + `CSC_KEY_PASSWORD`). Windows: an OV/EV cert or Azure Trusted Signing (`CSC_LINK` +
+   `CSC_KEY_PASSWORD`). Linux AppImage needs no signing.
+3. **Notarization (macOS).** Gatekeeper blocks an un-notarized app. Add `mac.notarize` to
+   `electron-builder.yml` with an Apple API key (or `APPLE_ID` + `APPLE_APP_SPECIFIC_PASSWORD` +
+   `APPLE_TEAM_ID`).
+4. **Distribution / hosting.** Add a **`publish`** block to `electron-builder.yml` — GitHub Releases,
+   S3, or a **generic** host (e.g. Cloudflare **R2** + a download link on the website). There is **no
+   `publish` block today**.
+5. **Auto-update.** Wire **electron-updater** against the same `publish` feed so installed apps
+   self-update, and check the feed on launch.
+
+**Config gaps in `electron-builder.yml`.** Present: `appId dev.indiecrafts.hybrid`, `productName
+indiecrafts`, targets dmg/nsis/AppImage, output `release/`, files `out/**`. Missing: a `publish` block,
+`mac.notarize`, and per-OS signing identities. Also **rename `appId` + `productName` per client** — the
+yml flags this as a `project:rename` extension.
+
+**Prerequisites (per publisher).** Apple Developer account (mac signing + notarization); a Windows
+code-signing cert; a release host (R2 / GitHub); all certs as CI secrets.
 
 ## Pre-flight checklist
 
