@@ -17,6 +17,15 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **`project:rename` now covers the native surfaces too (`scripts/project-rename.mjs`).** Besides the
+  config prefix + every Cloudflare app's `wrangler.toml`/tfvars, a rename now swaps the prefix in the
+  Expo `app.config.ts` (`name`/`slug`/`scheme` + the `dev.<prefix>.app` bundle id), `eas.json` (the
+  `EXPO_PUBLIC_API_URL` host prefix), and the Electron `electron-builder.yml` (`appId` + `productName`).
+  **Why:** a client rename is complete in one command — no native config left on the template prefix
+  (the prod domains in `domains.mjs` stay a separate, client-set axis).
+
 ### Added
 
 - **Consent/legal confirmation toast.** `[locale]/layout.tsx` mounts a single `<Toaster>`;

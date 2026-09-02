@@ -83,11 +83,59 @@ for (const app of deployable()) {
   }
 }
 
+// 4. Native surfaces (expo/electron) carry the prefix in their OWN config, not a
+// wrangler.toml — so the registry loop above never reaches them. Swap it here so a
+// rename is COMPLETE: the Expo app slug/scheme + reverse-DNS bundle id, the EAS build
+// env's api-URL prefix, and the Electron appId/productName. Keyed off TEMPLATE_PREFIX
+// (alphanumeric, safe to interpolate into a RegExp).
+const P = TEMPLATE_PREFIX;
+const nativeFiles = [
+  {
+    path: "code/projects/mobile/surfaces/main/app.config.ts",
+    subs: [
+      // name/slug/scheme: "indiecrafts" → "<slug>"
+      [new RegExp(`(\\b(?:name|slug|scheme):\\s*)"${P}"`, "g"), `$1"${slug}"`],
+      // reverse-DNS bundle id "dev.indiecrafts.app" → "dev.<slug>.app"
+      [new RegExp(`"dev\\.${P}\\.`, "g"), `"dev.${slug}.`],
+    ],
+  },
+  {
+    path: "code/projects/mobile/surfaces/main/eas.json",
+    subs: [
+      // EXPO_PUBLIC_API_URL host prefix https://indiecrafts-<env>-… → https://<slug>-<env>-…
+      [new RegExp(`//${P}-`, "g"), `//${slug}-`],
+    ],
+  },
+  {
+    path: "code/projects/hybrid/surfaces/main/electron-builder.yml",
+    subs: [
+      // appId: dev.indiecrafts.hybrid → dev.<slug>.hybrid
+      [new RegExp(`^(appId:\\s*dev\\.)${P}(\\.)`, "m"), `$1${slug}$2`],
+      // productName: indiecrafts → productName: <slug>
+      [new RegExp(`^(productName:\\s*)${P}\\s*$`, "m"), `$1${slug}`],
+    ],
+  },
+];
+const nativeRenamed = [];
+for (const { path, subs } of nativeFiles) {
+  const file = resolve(REPO_ROOT, path);
+  if (!existsSync(file)) continue;
+  const src = readFileSync(file, "utf8");
+  let out = src;
+  for (const [re, rep] of subs) out = out.replace(re, rep);
+  if (out !== src) {
+    writeFileSync(file, out);
+    nativeRenamed.push(path.split("/").pop());
+  }
+}
+
 console.log(`✓ Renamed project namespace → "${slug}"`);
 console.log(`  · @indiecrafts/packages-shared-config  DEFAULT_SITE_PREFIX = "${slug}"`);
 console.log(
   `  · wrangler.toml + tfvars  ${renamed.length} app(s): ${renamed.join(", ")}`,
 );
+if (nativeRenamed.length)
+  console.log(`  · native config           ${nativeRenamed.join(", ")}`);
 console.log("\nNext:");
 console.log("  1. Create the R2 buckets for the web app (one per env):");
 for (const env of ENVS) {

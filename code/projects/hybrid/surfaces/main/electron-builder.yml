@@ -1,6 +1,6 @@
 # electron-builder — packages the app into installers (.dmg / .exe / .AppImage) and
 # publishes them (+ the auto-update feed) to Cloudflare R2. Deploy = ship these artifacts.
-# Per client, rename appId + productName (extend `project:rename` to cover them).
+# Per client, `pnpm project:rename <slug>` swaps the prefix in appId + productName.
 appId: dev.indiecrafts.hybrid
 productName: indiecrafts
 directories:

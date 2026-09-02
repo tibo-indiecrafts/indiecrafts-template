@@ -1,7 +1,7 @@
 import type { ExpoConfig } from "expo/config";
 
-// Expo app config. `name`/`slug`/`scheme`/bundle ids are per client — run
-// `pnpm project:rename <slug>` (extend it to rewrite these) or set them by hand.
+// Expo app config. `name`/`slug`/`scheme`/bundle ids are per client — `pnpm
+// project:rename <slug>` rewrites them (and eas.json's api-URL prefix) automatically.
 // `owner`, `extra.eas.projectId`, and the `updates.url` are written by `eas init`
 // (they tie the app to your Expo account + EAS Update feed). The placeholders below
 // keep the config typed until you run it; a `deploy:mobile:main:<env>` build resolves
