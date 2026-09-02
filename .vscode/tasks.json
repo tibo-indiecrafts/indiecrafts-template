@@ -669,6 +669,27 @@
       "problemMatcher": []
     },
     {
+      "label": "deploy:web:storybook:dev",
+      "detail": "deploy storybook (Pages) — dev",
+      "type": "shell",
+      "command": "pnpm deploy:web:storybook:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:web:storybook:staging",
+      "detail": "deploy storybook (Pages) — staging",
+      "type": "shell",
+      "command": "pnpm deploy:web:storybook:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "deploy:web:storybook:prod",
+      "detail": "deploy storybook (Pages) — PROD",
+      "type": "shell",
+      "command": "pnpm deploy:web:storybook:prod",
+      "problemMatcher": []
+    },
+    {
       "label": "deploy:shared:agent:dev",
       "detail": "deploy agent worker — dev",
       "type": "shell",

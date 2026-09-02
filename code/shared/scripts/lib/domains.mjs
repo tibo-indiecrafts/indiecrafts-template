@@ -81,6 +81,18 @@ export const DOMAINS = [
       prod: { host: "api.example.com", zone: "example.com" },
     },
   },
+  // Storybook (design-system gallery) on Cloudflare Pages — a subdomain of the website
+  // root, like admin/app/api. dev/staging serve on `*.pages.dev`; prod on the custom
+  // host once set. NOTE: a Pages project (not a Worker), so its custom domain attaches
+  // to the Pages project (dashboard / DNS `CNAME`), not a wrangler route.
+  {
+    app: "storybook",
+    envs: {
+      dev: null,
+      staging: null,
+      prod: { host: "storybook.example.com", zone: "example.com" },
+    },
+  },
   // Add a row per app that gets a custom domain (another subdomain, …). Apps with no
   // row serve only `*.workers.dev`.
 ];

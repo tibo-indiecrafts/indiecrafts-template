@@ -35,12 +35,13 @@ Every Cloudflare resource name comes from one function —
 | **cron** | worker-cf | `indiecrafts-<env>-shared-cron.<sub>.workers.dev` | _(no route — scheduled)_ |
 | **workers** | worker-cf | `indiecrafts-<env>-shared-workers.<sub>.workers.dev` | _(no route — queue/event)_ |
 | **agent** | worker-cf | `indiecrafts-<env>-shared-agent.<sub>.workers.dev` | _(internal)_ |
-| **storybook** | pages | `https://indiecrafts-<env>-web-tools-storybook.pages.dev` | same (Pages, `*.pages.dev`) |
+| **storybook** | pages | `https://indiecrafts-<env>-web-tools-storybook.pages.dev` | `https://storybook.example.com` |
 | **mobile** | expo | EAS build channel `<env>` (App/Play Store) | store listing |
 | **hybrid** | electron | installer artifact per `<env>` | signed `.dmg` / `.exe` |
 
 `admin` + `app` are **subdomains of the website root** so Clerk drops the session cookie on the parent
-domain and all three share one login. `api` gets its own subdomain so clients call `https://api.<root>`.
+domain and all three share one login. `api` and `storybook` get their own subdomains (`api.<root>`,
+`storybook.<root>`).
 
 ## Phase 0 — one-time setup (before any env)
 
@@ -85,18 +86,18 @@ Repeat Phase 1 with `staging`: `infra:*:apply:staging` → secrets `--env stagin
 
 ## Storybook (Cloudflare Pages)
 
-Storybook is a static gallery, not in the app registry, so it deploys to **Pages** by hand (no
-`deploy:storybook` script yet — worth adding). The project name follows the same convention
-(`indiecrafts-<env>-web-tools-storybook`):
+Storybook is a static gallery on **Cloudflare Pages** (not a Worker, and not an `apps.mjs` registry row).
+It has its own scripted deploy following the same naming convention:
 
 ```bash
-pnpm --filter @indiecrafts/web-tools-storybook storybook:build
-pnpm --filter @indiecrafts/shared-api exec wrangler pages deploy \
-  code/projects/web/tools/storybook/storybook-static \
-  --project-name=indiecrafts-<env>-web-tools-storybook --branch=main
+pnpm deploy:web:storybook:<env>   # → shared/scripts/deploy/pages.mjs
 ```
 
-→ `https://indiecrafts-<env>-web-tools-storybook.pages.dev`.
+The runner builds `storybook-static` and `wrangler pages deploy`s it to the project
+`indiecrafts-<env>-web-tools-storybook` → `https://indiecrafts-<env>-web-tools-storybook.pages.dev`.
+Its **prod subdomain** (`storybook.<root>`) lives in `domains.mjs` alongside `admin`/`app`/`api`; because
+Pages custom domains attach to the project (not a wrangler route), point a DNS `CNAME` at the project (or
+add it in the dashboard → Custom domains) once — the runner prints the domain to attach.
 
 ## Native surfaces (separate track — not Cloudflare)
 
@@ -159,4 +160,3 @@ code-signing cert; a release host (R2 / GitHub); all certs as CI secrets.
 ## Issue tags
 
 - `@debt TESTING` — no cross-surface `doctor:env`; only `website` pre-flights its config.
-- `@debt DEPRECATED` — Storybook has no `deploy:<slug>:<env>` script; its Pages deploy is manual.

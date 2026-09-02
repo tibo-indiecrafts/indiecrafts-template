@@ -18,6 +18,14 @@ _The Storybook gallery for the design-system bricks (`ui` · `ui-components` · 
 
 ### Added
 
+- **Scripted deploy to Cloudflare Pages (`deploy:web:storybook:<env>`).** The gallery now ships to a
+  Pages project named on the shared convention — `<prefix>-<env>-web-tools-storybook` — via the new
+  `shared/scripts/deploy/pages.mjs` runner (`storybook:build` → `wrangler pages deploy`, prod-confirmed).
+  Adds a `storybook` row to `domains.mjs` for the prod **subdomain** `storybook.<root>` (attached to the
+  Pages project by DNS `CNAME` / dashboard, since Pages custom domains aren't wrangler routes), plus a
+  `wrangler` devDep and the `.vscode/tasks.json` entries. **Why:** the design-system gallery is a public
+  reference for the template, named + served consistently with the other surfaces.
+
 - **Stories for the blog's five new frontpage primitives.** `PostHero`, `FeaturedPosts`,
   `SpotlightRow`, `Carousel`, and `TopicCards` (`@indiecrafts/packages-web-ui-components/web/{layout,collection}`)
   each ship a colocated `.stories.tsx`, auto-discovered by the gallery. **Why:** every rendered

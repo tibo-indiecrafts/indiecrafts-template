@@ -11,6 +11,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **Runbook: Storybook is a scripted Pages deploy on a subdomain (`first-deployment.md`).** Updated the
+  Storybook section + URL table — `pnpm deploy:web:storybook:<env>` → `pages.mjs`, prod at
+  `storybook.<root>` (registered in `domains.mjs`), dropping the "manual deploy / no script" note.
 - **First-deployment runbook + sidebar (`shared/architecture/first-deployment.md`).** The step-by-step
   plan to take one instance live across `dev`/`staging`/`prod`: the per-env URL table (derived from
   `resourceName` — `<prefix>-<env>-<tail>`), the template-vs-instance model, Phase 0 → dev → staging →

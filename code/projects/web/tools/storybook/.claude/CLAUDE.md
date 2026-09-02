@@ -5,11 +5,15 @@ Storybook that documents the shared UI bricks across **all three renderers**: we
 `ui-tokens` + `announcement` / `locale-suggest`), the **native** design system (`ui-native` ·
 `system-pages/native` · `ui-icons/native`) rendered in the browser via the `react-native` →
 `react-native-web` alias, and the cross-platform `system-pages` / `ui-icons` web renderers. A workspace
-member that **consumes** the bricks; it ships nothing to production.
+member that **consumes** the bricks; it ships no product code — the static gallery deploys to Cloudflare
+Pages as a design-system reference (see Run / Platform below).
 
 **Stack:** Storybook (`@storybook/nextjs-vite`) · Vite · Tailwind v4 (`@tailwindcss/vite`) · addons
-`a11y` · `docs` · `themes` · `vitest`. **Platform:** a static build (`storybook build`), not deployed with
-the Cloudflare apps.
+`a11y` · `docs` · `themes` · `vitest`. **Platform:** a static build (`storybook build`) shipped to
+**Cloudflare Pages** (not a Worker) via `pnpm deploy:web:storybook:<env>` →
+`shared/scripts/deploy/pages.mjs` → the project `<prefix>-<env>-web-tools-storybook`
+(`*.pages.dev`, or the `storybook.<root>` subdomain in `domains.mjs` once set). The gallery is still
+browse-only; the app never imports it.
 
 ## Run
 
