@@ -40,8 +40,12 @@ Every Cloudflare resource name comes from one function —
 | **hybrid** | electron | installer artifact per `<env>` | signed `.dmg` / `.exe` |
 
 `admin` + `app` are **subdomains of the website root** so Clerk drops the session cookie on the parent
-domain and all three share one login. `api` and `storybook` get their own subdomains (`api.<root>`,
-`storybook.<root>`).
+domain and all three share one login. `api`, `storybook`, and `downloads` (the hybrid installer host +
+update feed, an R2 bucket) get their own subdomains (`api.<root>`, `storybook.<root>`, `downloads.<root>`).
+
+Backing data/storage (no public URL): D1 `indiecrafts-<env>-shared-api` (audit) + `…-shared-api-core`
+(core) · KV `indiecrafts-<env>-shared-api-security-counters` · R2 `…-shared-api-export` (GDPR exports)
+and `…-hybrid-surfaces-main-releases` (desktop installers).
 
 ## Phase 0 — one-time setup (before any env)
 
@@ -105,50 +109,50 @@ Native apps don't deploy to Cloudflare. Here the `env` selects the **backend URL
 artifact** (not separate infra), each needs its own credentials, and — because signed artifacts don't
 cross-build — a real release runs **one CI runner per target OS**.
 
-### Mobile (Expo / EAS)
+### Mobile (Expo / EAS) — wired
 
-1. Install `eas-cli`; authenticate with `eas login` or an `EXPO_TOKEN` CI secret.
-2. Define build profiles per env in `eas.json` (`dev` / `staging` / `prod` → the matching `EXPO_PUBLIC_API_URL`).
-3. `pnpm deploy:mobile:main:<env>` → `deploy/expo.mjs` (env → EAS profile) → **EAS Build** → store submit.
-4. Ship JS-only changes over the air with **EAS Update** (no store round-trip).
+`eas.json` ships the build/submit profiles and `app.config.ts` carries the EAS identity — you supply the
+account + credentials:
 
-Prerequisites: an Expo account, an Apple Developer account (iOS) + Google Play account (Android).
+1. Install `eas-cli`; `eas login` (or an `EXPO_TOKEN` CI secret); `eas init` (fills `owner` +
+   `extra.eas.projectId` + the `updates.url`).
+2. Profiles in `eas.json`: `development` (dev) · `preview` (staging) · `production` (prod), each baking
+   its `EXPO_PUBLIC_API_URL`; the `production` submit block takes your Apple/Play store credentials.
+3. `pnpm deploy:mobile:main:<env>` → `deploy/expo.mjs` (env → profile) → **EAS Build** (+ submit on prod).
+4. **EAS Update** OTA is wired (`runtimeVersion` + `updates.url`, keyed by the profile `channel`).
 
-### Hybrid (Electron) — desktop distribution
+Prerequisites (yours): an Expo account, an Apple Developer account (iOS) + Google Play account (Android).
+
+### Hybrid (Electron) — desktop distribution, wired
 
 **What `env` means here.** A desktop app has no per-env infrastructure. The env picks the **backend URLs
 compiled into the installer** — the packaged app reads `RENDERER_URL` / `API_URL` / `AGENT_URL`
-(`src/main/index.ts`) + `src/config`. A `prod` installer talks to the prod api/website; `dev`/`staging`
-to theirs. So `deploy:hybrid:main:<env>` means "build an installer wired to `<env>`'s backends."
+(`src/main/index.ts`) + `src/config`. So `deploy:hybrid:main:<env>` means "build an installer wired to
+`<env>`'s backends."
 
-**What works today.** `pnpm deploy:hybrid:main:<env>` → `deploy/electron.mjs` runs `dist:<os>`
-(`electron-vite build && electron-builder --<os>`) → an **unsigned** installer in `release/`
-(`.dmg` / `.exe` nsis / `.AppImage`). Runnable for internal testing; not distributable to the public.
+**What's wired:**
 
-**What a complete distribution adds** (each an owned follow-up):
+- **Signing + notarization** (`electron-builder.yml`): hardened-runtime mac signing with
+  `build-resources/entitlements.mac.plist` + `notarize: true`. Reads creds from the env; with none set a
+  local build is **unsigned** (dev testing) and notarization is skipped — the daily `electron-vite dev`
+  is untouched either way.
+- **Publish + auto-update** (Cloudflare R2): a generic `publish` feed at `downloads.<root>/hybrid`;
+  `src/main/index.ts` runs **electron-updater** on launch (packaged only, guarded).
+- **CI** (`.github/workflows/deploy-native.yml`): a per-OS matrix (`macos`/`windows`/`ubuntu`) builds the
+  signed installer, then uploads `release/*` to the R2 bucket
+  `<prefix>-<env>-hybrid-surfaces-main-releases`.
 
-1. **Per-OS CI matrix.** electron-builder can't cross-build signed artifacts, so release from
-   `macos-latest` (→ `.dmg`), `windows-latest` (→ `.exe`), `ubuntu-latest` (→ `.AppImage`). The runner
-   already selects `dist:mac|win|linux` by `process.platform`.
-2. **Code signing.** macOS: an Apple **Developer ID Application** cert (electron-builder reads
-   `CSC_LINK` + `CSC_KEY_PASSWORD`). Windows: an OV/EV cert or Azure Trusted Signing (`CSC_LINK` +
-   `CSC_KEY_PASSWORD`). Linux AppImage needs no signing.
-3. **Notarization (macOS).** Gatekeeper blocks an un-notarized app. Add `mac.notarize` to
-   `electron-builder.yml` with an Apple API key (or `APPLE_ID` + `APPLE_APP_SPECIFIC_PASSWORD` +
-   `APPLE_TEAM_ID`).
-4. **Distribution / hosting.** Add a **`publish`** block to `electron-builder.yml` — GitHub Releases,
-   S3, or a **generic** host (e.g. Cloudflare **R2** + a download link on the website). There is **no
-   `publish` block today**.
-5. **Auto-update.** Wire **electron-updater** against the same `publish` feed so installed apps
-   self-update, and check the feed on launch.
+**What you supply** (per-env GitHub Environment secrets/vars):
 
-**Config gaps in `electron-builder.yml`.** Present: `appId dev.indiecrafts.hybrid`, `productName
-indiecrafts`, targets dmg/nsis/AppImage, output `release/`, files `out/**`. Missing: a `publish` block,
-`mac.notarize`, and per-OS signing identities. Also **rename `appId` + `productName` per client** — the
-yml flags this as a `project:rename` extension.
+- **Signing** — `CSC_LINK` + `CSC_KEY_PASSWORD` (mac Developer ID / Windows cert); `APPLE_ID` +
+  `APPLE_APP_SPECIFIC_PASSWORD` + `APPLE_TEAM_ID` (notarization).
+- **R2** — `R2_ACCESS_KEY_ID` + `R2_SECRET_ACCESS_KEY` (an R2 S3 API token) + `CLOUDFLARE_ACCOUNT_ID`;
+  the R2 bucket + its public `downloads.<root>` custom domain (provision once).
+- `var SITE_PREFIX` (default `indiecrafts`).
 
-**Prerequisites (per publisher).** Apple Developer account (mac signing + notarization); a Windows
-code-signing cert; a release host (R2 / GitHub); all certs as CI secrets.
+Prerequisites (yours): an Apple Developer account; a Windows code-signing cert; the R2 bucket + domain.
+The git remote is **GitLab** but the workflow is **GitHub Actions** — run it on a GitHub mirror, or port
+the two jobs to `.gitlab-ci.yml`.
 
 ## Pre-flight checklist
 

@@ -11,6 +11,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **Runbook: native distribution is now wired (`first-deployment.md`).** Rewrote the Mobile/Hybrid
+  sections from "follow-ups" to the shipped config — EAS profiles, Electron signing/notarize/R2-publish,
+  electron-updater, and the `deploy-native.yml` CI matrix — with the exact secrets to supply. Added the
+  `downloads.<root>` subdomain + the D1/KV/R2 backing-resource names to the URL/resource lists.
 - **Runbook: Storybook is a scripted Pages deploy on a subdomain (`first-deployment.md`).** Updated the
   Storybook section + URL table — `pnpm deploy:web:storybook:<env>` → `pages.mjs`, prod at
   `storybook.<root>` (registered in `domains.mjs`), dropping the "manual deploy / no script" note.
