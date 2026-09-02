@@ -11,6 +11,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **`expo start` now bundles and renders in the pnpm monorepo (`babel.config.js`, `metro.config.js`,
+  `package.json`).** Four config gaps blocked the app from running. (1) No `babel.config.js` existed, so
+  `babel-preset-expo` never ran and expo-router mounted an empty route tree — added the standard preset
+  config. (2) `metro.config.js` now sets `watchFolders` + `unstable_enablePackageExports` so Metro reaches
+  the workspace bricks' real source under `code/packages/**`, and blocks `@types/*` from resolution (it
+  mis-resolved bare `react` to `@types/react`). (3) `@babel/runtime` was pinned to `^8.0.0`; Expo SDK 52
+  runs on the Babel 7 toolchain, so its Babel-8 interop helpers broke module `default` exports — repinned
+  to `^7.25.0` (dedupes to the monorepo's `7.29.7`). (4) The bundle pulled two React copies — `expo-router`
+  resolved the web workspace's React 19 while `react-dom`/`react-native-web` used React 18.3.1, so the
+  React-18 renderer received React-19 elements and silently committed an empty tree (blank screen, no
+  error). `metro.config.js` now pins every `react`/`react-dom` request to the app's single 18.3.1 copy.
+  Added `react-dom`, `react-native-web`, `@expo/metro-runtime`, `@babel/runtime` as the web/Metro runtime
+  deps. **Why:** the shell (theme · i18n · status pages · consent/legal overlays) now bundles and renders
+  again. `expo-env.d.ts` is now git-ignored per Expo's own convention.
+
 ### Added
 
 - **Native share on Home.** `app/index.tsx` gains a Share button that opens the OS share sheet
