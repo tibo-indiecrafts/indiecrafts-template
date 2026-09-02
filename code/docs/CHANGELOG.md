@@ -11,6 +11,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **Runbook: real dev-run findings + the next-cf blocker (`first-deployment.md`).** Added a "Real-run
+  findings" callout to Phase 1 — D1 `--location weur` (immutable), the first-migration `--no-backup`
+  chicken-and-egg, the per-app ISR R2 buckets, OpenNext build memory — and a **⚠ Blocker** note: Next 16's
+  Node-only `proxy.ts` vs OpenNext's edge-only middleware means website/admin/app can't deploy to
+  Cloudflare yet (workers + storybook do). Tagged `@bug`.
 - **Runbook: native distribution is now wired (`first-deployment.md`).** Rewrote the Mobile/Hybrid
   sections from "follow-ups" to the shipped config — EAS profiles, Electron signing/notarize/R2-publish,
   electron-updater, and the `deploy-native.yml` CI matrix — with the exact secrets to supply. Added the

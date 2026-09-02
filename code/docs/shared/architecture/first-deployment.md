@@ -73,6 +73,29 @@ and `…-hybrid-surfaces-main-releases` (desktop installers).
 5. **Verify** — `curl https://indiecrafts-dev-shared-api.<sub>.workers.dev/health` → `{ok:true}`; open
    website/app/admin; sign in once; check the admin System screen. Optional: `pnpm db:backfill:profiles:dev`.
 
+### Real-run findings (verified 2026-09-02, prefix `indiecrafts`, sub `thibault-montaufray`)
+
+A first dev run surfaced these — fold them into the steps above:
+
+- **D1 region is immutable — create with `--location weur`.** `wrangler d1 create indiecrafts-dev-shared-api
+  --location weur` (and `…-core`). audit + core MUST share the region (the split assumes one EU region);
+  a bare `d1 create` picks a nearby region (EEUR here) and can't be changed after.
+- **The FIRST migration needs `--no-backup`.** `pnpm db:migrate:all:dev --no-backup`. The pre-migration R2
+  snapshot has nothing to back up (empty DBs) and its `recordBackupRun` writes to `backup_runs` — a table
+  the migration itself creates (chicken-and-egg). Later migrations back up normally.
+- **Each next-cf app needs its ISR R2 bucket first.** `wrangler r2 bucket create
+  indiecrafts-dev-web-surfaces-<app>-isr` (bound as `NEXT_INC_CACHE_R2_BUCKET`) for website/admin/app, or
+  the deploy fails after the build.
+- **OpenNext builds are memory-heavy.** Run with `NODE_OPTIONS=--max-old-space-size=6144` and NOT
+  alongside other dev servers — concurrent servers + the build OOM'd (SIGTERM / exit 143).
+
+> **⚠ Blocker — the next-cf surfaces (website/admin/app) do not currently deploy to Cloudflare.** Next 16's
+> `src/proxy.ts` runs **Node-only** ("Proxy does not support Edge runtime"), but `@opennextjs/cloudflare`
+> 1.20.x rejects Node middleware ("Node.js middleware is not currently supported"). The two are
+> incompatible at these versions — no config flag bridges it. The **workers** (api·cron·workers·agent) and
+> **storybook** deploy fine; the three OpenNext apps are blocked until OpenNext ships Node-middleware
+> support (track `@opennextjs/cloudflare`), or the proxy is reworked. They run normally in local `pnpm dev`.
+
 ## Phase 2 — staging (`*.workers.dev`)
 
 Repeat Phase 1 with `staging`: `infra:*:apply:staging` → secrets `--env staging` /
@@ -164,3 +187,5 @@ the two jobs to `.gitlab-ci.yml`.
 ## Issue tags
 
 - `@debt TESTING` — no cross-surface `doctor:env`; only `website` pre-flights its config.
+- `@bug` — next-cf surfaces (website/admin/app) can't deploy to Cloudflare: Next 16 Node-only `proxy.ts`
+  vs OpenNext-Cloudflare's edge-only middleware. Workers + storybook deploy fine.
