@@ -26,6 +26,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   `useRecord(consentStore)` sat inside a `features.requireConsent && …` short-circuit, so it
   ran only when the flag was on — a Rules-of-Hooks violation that would break Hook order if the
   flag ever became dynamic. The Hook now runs unconditionally; the flag gates only its result.
+- **Electron main process crashed on launch (`electron.vite.config.ts`).** electron-vite externalized
+  the `@indiecrafts/*` workspace bricks, so Electron `require()`d raw TypeScript
+  (`agent-client/src/index.ts`) and threw `SyntaxError: Unexpected token 'export'`. The main/preload
+  builds now BUNDLE those bricks (`externalizeDepsPlugin({ exclude })`) — they ship TS source, no built
+  output — so `pnpm dev` launches the desktop window again.
 
 ### Added
 
@@ -66,16 +71,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   works inside the existing window security model) + **Google** via a system-browser deep link. The
   Google flow is state-bound: the renderer generates a `state`, opens Clerk's authorize URL through the
   new main-process `oauth:start` (https-only via `isSafeExternalUrl`), and MAIN registers `indiecrafts://`
-  + a single-instance lock and **strictly parses** the inbound `indiecrafts://oauth-callback`
-  (`url-guard.ts` `parseOAuthCallback` — exact scheme/host/path, allowlisted params, size caps; 6 new
-  tests) before forwarding **only** the parsed `{ state, rotatingTokenNonce }` over a narrow preload
-  channel — never a navigable URL. The renderer re-validates `state`. The CSP (`src/renderer/index.html`)
-  is relaxed **scoped to Clerk's domains** (script/connect/img), keeping every other origin blocked. The
-  session token lives in the renderer (inherent to clerk-react-in-Electron) — mitigated by the tight CSP +
-  the existing `contextIsolation`/`sandbox`/no-cross-origin-nav posture. **Why:** one passwordless auth
-  across every app, without weakening the desktop security model. `@debt SECURITY` — the Google
-  **completion handshake** (transfer-nonce) has no official Clerk-Electron path; it is marked in
-  `auth.tsx` as needing device verification. Email OTP is the guaranteed desktop sign-in.
+  - a single-instance lock and **strictly parses** the inbound `indiecrafts://oauth-callback`
+    (`url-guard.ts` `parseOAuthCallback` — exact scheme/host/path, allowlisted params, size caps; 6 new
+    tests) before forwarding **only** the parsed `{ state, rotatingTokenNonce }` over a narrow preload
+    channel — never a navigable URL. The renderer re-validates `state`. The CSP (`src/renderer/index.html`)
+    is relaxed **scoped to Clerk's domains** (script/connect/img), keeping every other origin blocked. The
+    session token lives in the renderer (inherent to clerk-react-in-Electron) — mitigated by the tight CSP +
+    the existing `contextIsolation`/`sandbox`/no-cross-origin-nav posture. **Why:** one passwordless auth
+    across every app, without weakening the desktop security model. `@debt SECURITY` — the Google
+    **completion handshake** (transfer-nonce) has no official Clerk-Electron path; it is marked in
+    `auth.tsx` as needing device verification. Email OTP is the guaranteed desktop sign-in.
 - **Renderer sign-in standardized on Clerk `<SignIn>`.** The hand-rolled email-OTP form is replaced by
   `@clerk/clerk-react` `<SignIn routing="virtual">` (email UI, **social hidden** — its social buttons do a
   full-page redirect Electron blocks); Google stays the state-bound deep-link button. Less custom code,
@@ -98,7 +103,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   `nodeIntegration: false` alongside `contextIsolation: true`). A `will-navigate` guard blocks any
   cross-origin in-page navigation, and `setWindowOpenHandler` denies every new window — both route an
   `http(s)` target to the OS browser via `shell.openExternal`. The renderer CSP gains `object-src 'none';
-  base-uri 'self'; frame-src 'none'`. The `http(s)`-only URL check is now one pure, tested helper
+base-uri 'self'; frame-src 'none'`. The `http(s)`-only URL check is now one pure, tested helper
   (`src/main/url-guard.ts` → `isSafeExternalUrl`), shared by the `open-external` IPC handler, `will-navigate`,
   and `setWindowOpenHandler`. **Why:** a compromised renderer must not be able to navigate to an attacker
   page, spawn windows, or hand the OS a `file:`/`javascript:` URL. `sandbox` is safe here — the preload uses
