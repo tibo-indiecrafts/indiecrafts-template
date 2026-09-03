@@ -11,6 +11,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **`cloudflare-iac.md`: all-surface Terraform coverage + the zone-collision constraint.** Replaced the
+  "Add app #2" section with a table of the seven stacks (account · api · agent · website · app · admin ·
+  storybook) now shipped, and rewrote the zone warning to be accurate: the rate-limit + firewall rulesets
+  are single-per-zone and always created, so shared-apex-zone surfaces collide until a `manage_zone_resources`
+  gate exists (a documented TODO) — one zone per surface is the supported model.
 - **Runbook + scripts: the website hosts its Sanity Studio separately (`first-deployment.md`,
   `scripts.md`).** Documented that `build:cf` drops the embedded `/studio` (it would blow the 10 MiB
   Worker limit), the `studio:deploy` (`sanity deploy`) script, `NEXT_PUBLIC_SANITY_STUDIO_URL`, and the

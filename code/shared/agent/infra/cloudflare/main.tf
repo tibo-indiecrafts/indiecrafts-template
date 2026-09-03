@@ -1,21 +1,22 @@
-# Cloudflare edge config for the shared `api` Worker — CO-LOCATED + SELF-CONTAINED (the
+# Cloudflare edge config for the shared `agent` Worker — CO-LOCATED + SELF-CONTAINED (the
 # service owns its whole deploy surface: `wrangler.toml` ships the Worker, this owns the
-# edge). A trimmed sibling of the website's stack: the api is a BARE JSON Worker, so there
-# is no Turnstile (no forms) and no Next static-cache rules. It provisions:
-#   · a custom domain (api.<root>) → the api Worker (CF makes the DNS record + cert)
+# edge). A trimmed sibling of the website's stack: the agent is a BARE Worker, so there is
+# no Turnstile widget here (the browser Turnstile it verifies is minted by the website's
+# widget) and no Next static-cache rules. It provisions:
+#   · a custom domain (agent.<root>) → the agent Worker (CF makes the DNS record + cert)
 #   · a zone rate-limit on /v1/* (DEFENCE IN DEPTH on top of the inline bearer/rate-limit
 #     guard in src/index.ts — the worker guard stays the primary, this is the blunt backstop)
 #   · Cloudflare Managed WAF · Bot Fight Mode · leaked-credentials challenge
 #   · zone hardening (SSL strict, min TLS 1.2, Always-HTTPS)
 #
-# INERT until the api has a real zone: `attach_domain = false` (dev/staging → *.workers.dev)
+# INERT until the agent has a real zone: `attach_domain = false` (dev/staging → *.workers.dev)
 # and the WAF/rate-limit resources are zone-scoped, so they apply only once `zone_id` is set.
 # The inline guard protects the Worker regardless (works on *.workers.dev too).
 #
-# PER ENV (one Terraform workspace + tfvars per env). Apply with the `infra:api:*:<env>`
+# PER ENV (one Terraform workspace + tfvars per env). Apply with the `infra:shared:agent:*:<env>`
 # delegators (root package.json):
-#   pnpm infra:api:plan:prod     # review the diff
-#   pnpm infra:api:apply:prod    # provision
+#   pnpm infra:shared:agent:plan:prod     # review the diff
+#   pnpm infra:shared:agent:apply:prod    # provision
 #
 # Written for the cloudflare provider ~> 5 — run `terraform init && validate` against the
 # pinned version before the first apply. Full runbook → code/docs/infra/cloudflare-iac.md.
@@ -37,9 +38,9 @@ provider "cloudflare" {}
 # ── Inputs (per env — set in env/<env>.tfvars) ───────────────────────────────
 variable "account_id" { type = string }
 variable "zone_id" { type = string, default = "" }
-variable "worker_name" { type = string } # matches wrangler `name` for this env (indiecrafts-<env>-shared-api)
+variable "worker_name" { type = string } # matches wrangler `name` for this env (indiecrafts-<env>-shared-agent)
 variable "env" { type = string }         # dev | staging | prod
-variable "domain" { type = string, default = "" } # e.g. api.example.com
+variable "domain" { type = string, default = "" } # e.g. agent.example.com
 variable "attach_domain" { type = bool, default = true } # false for dev/workers.dev
 # Edge tunables — sensible defaults; override in tfvars. The inline guard is the primary
 # limiter, so the zone limit is generous (a DDoS backstop, not the per-endpoint gate).
@@ -49,7 +50,7 @@ variable "enable_managed_waf" { type = bool, default = true }
 variable "enable_bot_fight" { type = bool, default = true }
 variable "enable_leaked_credentials" { type = bool, default = true }
 
-# ── Auto domain: attach api.<root> to the Worker (CF makes DNS + cert) ────────
+# ── Auto domain: attach agent.<root> to the Worker (CF makes DNS + cert) ──────
 resource "cloudflare_workers_custom_domain" "api" {
   count       = var.attach_domain ? 1 : 0
   account_id  = var.account_id

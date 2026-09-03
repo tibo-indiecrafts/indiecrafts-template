@@ -62,9 +62,54 @@ export const INFRA = [
     dir: "code/shared/api/infra/cloudflare",
     order: 20,
   },
-  // Reserved examples — activate by adding a row + filling `<slot>/infra/<provider>/`:
-  // { name: "account", provider: "cloudflare", owner: "shared", altitude: "global",
-  //   dir: "code/shared/infra/cloudflare/account", order: 10 },
+  // Account-altitude stack — account-wide Cloudflare config (zone creation, account
+  // settings) that isn't tied to one zone/app. Applied first (lowest order).
+  {
+    name: "account",
+    provider: "cloudflare",
+    owner: "shared",
+    altitude: "global",
+    dir: "code/shared/infra/cloudflare/account",
+    order: 10,
+  },
+  // The AI agent Worker's edge — a sibling of the api stack (rate-limit + WAF + bot +
+  // leaked-creds + zone hardening; no Turnstile). INERT until it has a real zone.
+  {
+    name: "agent",
+    provider: "cloudflare",
+    owner: "agent",
+    altitude: "global",
+    dir: "code/shared/agent/infra/cloudflare",
+    order: 21,
+  },
+  // The `app` surface's edge — a next-cf sibling of the website stack.
+  {
+    name: "app",
+    provider: "cloudflare",
+    owner: "app",
+    altitude: "leaf",
+    dir: "code/projects/web/surfaces/app/infra/cloudflare",
+    order: 31,
+  },
+  // The `admin` surface's edge — the website stack PLUS a Cloudflare Zero Trust Access
+  // gate (admin is SSO-gated: only the allowed email domain reaches the Worker).
+  {
+    name: "admin",
+    provider: "cloudflare",
+    owner: "admin",
+    altitude: "leaf",
+    dir: "code/projects/web/surfaces/admin/infra/cloudflare",
+    order: 32,
+  },
+  // The `storybook` static-assets Worker's edge — minimal (custom domain + zone hardening).
+  {
+    name: "storybook",
+    provider: "cloudflare",
+    owner: "storybook",
+    altitude: "leaf",
+    dir: "code/projects/web/tools/storybook/infra/cloudflare",
+    order: 33,
+  },
 ];
 
 export const byProvider = (provider) =>

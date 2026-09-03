@@ -1,5 +1,7 @@
-# Cloudflare edge config for the `web` app — CO-LOCATED + SELF-CONTAINED (the app owns
-# its whole deploy surface: `wrangler.toml` ships the Worker, this owns the edge).
+# Cloudflare edge config for the `app` surface — CO-LOCATED + SELF-CONTAINED (the app owns
+# its whole deploy surface: `wrangler.toml` ships the Worker, this owns the edge). A next-cf
+# sibling of the website stack (same edge shape; `app` is a lean surface — the /studio +
+# Turnstile bits are inert if it ships no Studio/forms).
 # One instance = one app, one environment. Provisions the EDGE config wrangler can't:
 #   · auto custom domain (CF makes the DNS record + cert)
 #   · rate-limit on /api/* — tiered (tighter on the form/report endpoints), the `withGuard` PRIMARY limiter

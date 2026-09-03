@@ -7,6 +7,21 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Cloudflare Terraform for every eligible surface (`code/**/infra/cloudflare`, `scripts/lib/infra-registry.mjs`).**
+  Previously only `website` + `api` had edge stacks. Added self-contained stacks for **agent** (api-style
+  edge for the AI Worker), **app** (website-style edge), **admin** (website edge **+ a Cloudflare Zero Trust
+  Access SSO gate** — `access_email_domain` var), **storybook** (minimal: custom domain + zone hardening),
+  and the **account**-altitude stack (`code/shared/infra/cloudflare/account` — account-wide config, mostly
+  commented). All seven are registered in `infra-registry.mjs` (with apply order) and wired with
+  `infra:<scope>:<name>:{init,plan,apply,output}:<env>` delegators + `.vscode/tasks.json` tasks. New
+  `infra-registry.test.mjs` asserts every registered stack has a real dir + `main.tf` (guards the
+  registered-but-empty case that left `account` a stub). **Ceiling:** several surfaces on ONE apex zone
+  would fight over the single-per-zone rulesets — a `manage_zone_resources` gate is a documented TODO
+  (`@debt MIGRATION`); until then, one zone per surface. See docs/infra/cloudflare-iac.md.
+- **`agent` is in the CI wrangler dry-run (`.github/workflows/test.yml`).** The per-worker
+  `wrangler deploy --dry-run` loop covered `api·cron·workers` but not `agent` (split out of api later);
+  added it so the agent Worker config is validated in CI too.
+
 - **`resources:teardown:<env>` — delete every Cloudflare resource an instance owns
   (`shared/scripts/infra/teardown.mjs` + `lib/resources.mjs`).** A dry-run-by-default cleanup for
   shipping the template clean (no leftover Workers / D1 / KV / R2 on the seller's account). "Anonymised":

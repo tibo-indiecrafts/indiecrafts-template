@@ -26,6 +26,14 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Corrected the Cloudflare bot guidance in `infra/cloudflare/main.tf` — don't blanket-block AI bots.**
+  The Bot-Fight comment advised turning on Cloudflare's "Block AI Bots", which is too broad: it blocks the
+  search + user-fetch agents you WANT (Googlebot/AI Overviews, OAI-SearchBot, ChatGPT-User, Claude-User,
+  PerplexityBot). The AI-**training** opt-out is already handled precisely by robots.txt
+  (`AI_TRAINING_USER_AGENTS` → each training bot gets `Disallow: /`; search + user-fetch fall through to
+  `*`), verified against the 2026 crawler landscape — so the site stays accessible + citable but is not
+  used for model training. Added a commented, precise edge rule (blocks only the training UAs) as opt-in
+  defence-in-depth. Bot Fight Mode stays on for genuinely malicious automation.
 - **The hosted Sanity Studio now builds + deploys (`sanity.cli.ts`, `src/sanity/schema/ui-messages.ts`).**
   `pnpm studio:deploy` → `https://indiecrafts.sanity.studio/` is live. Three things blocked
   `sanity build` (its standalone Vite/Rollup build, unlike Next, doesn't replicate the app's

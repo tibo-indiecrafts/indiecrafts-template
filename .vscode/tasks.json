@@ -1042,6 +1042,56 @@
       "problemMatcher": []
     },
 
+    // ── Infra: account (Cloudflare, account-altitude) ─────────────────────
+    { "label": "infra:shared:account:init", "detail": "terraform init — account", "type": "shell", "command": "pnpm infra:shared:account:init", "problemMatcher": [] },
+    { "label": "infra:shared:account:plan:dev", "detail": "terraform plan — account DEV", "type": "shell", "command": "pnpm infra:shared:account:plan:dev", "problemMatcher": [] },
+    { "label": "infra:shared:account:plan:staging", "detail": "terraform plan — account STAGING", "type": "shell", "command": "pnpm infra:shared:account:plan:staging", "problemMatcher": [] },
+    { "label": "infra:shared:account:plan:prod", "detail": "terraform plan — account PROD", "type": "shell", "command": "pnpm infra:shared:account:plan:prod", "problemMatcher": [] },
+    { "label": "infra:shared:account:apply:dev", "detail": "terraform apply — account DEV", "type": "shell", "command": "pnpm infra:shared:account:apply:dev", "problemMatcher": [] },
+    { "label": "infra:shared:account:apply:staging", "detail": "terraform apply — account STAGING", "type": "shell", "command": "pnpm infra:shared:account:apply:staging", "problemMatcher": [] },
+    { "label": "infra:shared:account:apply:prod", "detail": "terraform apply — account PROD", "type": "shell", "command": "pnpm infra:shared:account:apply:prod", "problemMatcher": [] },
+    { "label": "infra:shared:account:output:prod", "detail": "terraform output — account PROD", "type": "shell", "command": "pnpm infra:shared:account:output:prod", "problemMatcher": [] },
+
+    // ── Infra: agent (Cloudflare edge) ────────────────────────────────────
+    { "label": "infra:shared:agent:init", "detail": "terraform init — agent", "type": "shell", "command": "pnpm infra:shared:agent:init", "problemMatcher": [] },
+    { "label": "infra:shared:agent:plan:dev", "detail": "terraform plan — agent DEV", "type": "shell", "command": "pnpm infra:shared:agent:plan:dev", "problemMatcher": [] },
+    { "label": "infra:shared:agent:plan:staging", "detail": "terraform plan — agent STAGING", "type": "shell", "command": "pnpm infra:shared:agent:plan:staging", "problemMatcher": [] },
+    { "label": "infra:shared:agent:plan:prod", "detail": "terraform plan — agent PROD", "type": "shell", "command": "pnpm infra:shared:agent:plan:prod", "problemMatcher": [] },
+    { "label": "infra:shared:agent:apply:dev", "detail": "terraform apply — agent DEV", "type": "shell", "command": "pnpm infra:shared:agent:apply:dev", "problemMatcher": [] },
+    { "label": "infra:shared:agent:apply:staging", "detail": "terraform apply — agent STAGING", "type": "shell", "command": "pnpm infra:shared:agent:apply:staging", "problemMatcher": [] },
+    { "label": "infra:shared:agent:apply:prod", "detail": "terraform apply — agent PROD", "type": "shell", "command": "pnpm infra:shared:agent:apply:prod", "problemMatcher": [] },
+    { "label": "infra:shared:agent:output:prod", "detail": "terraform output — agent PROD", "type": "shell", "command": "pnpm infra:shared:agent:output:prod", "problemMatcher": [] },
+
+    // ── Infra: app (Cloudflare edge) ──────────────────────────────────────
+    { "label": "infra:web:app:init", "detail": "terraform init — app", "type": "shell", "command": "pnpm infra:web:app:init", "problemMatcher": [] },
+    { "label": "infra:web:app:plan:dev", "detail": "terraform plan — app DEV", "type": "shell", "command": "pnpm infra:web:app:plan:dev", "problemMatcher": [] },
+    { "label": "infra:web:app:plan:staging", "detail": "terraform plan — app STAGING", "type": "shell", "command": "pnpm infra:web:app:plan:staging", "problemMatcher": [] },
+    { "label": "infra:web:app:plan:prod", "detail": "terraform plan — app PROD", "type": "shell", "command": "pnpm infra:web:app:plan:prod", "problemMatcher": [] },
+    { "label": "infra:web:app:apply:dev", "detail": "terraform apply — app DEV", "type": "shell", "command": "pnpm infra:web:app:apply:dev", "problemMatcher": [] },
+    { "label": "infra:web:app:apply:staging", "detail": "terraform apply — app STAGING", "type": "shell", "command": "pnpm infra:web:app:apply:staging", "problemMatcher": [] },
+    { "label": "infra:web:app:apply:prod", "detail": "terraform apply — app PROD", "type": "shell", "command": "pnpm infra:web:app:apply:prod", "problemMatcher": [] },
+    { "label": "infra:web:app:output:prod", "detail": "terraform output — app PROD", "type": "shell", "command": "pnpm infra:web:app:output:prod", "problemMatcher": [] },
+
+    // ── Infra: admin (Cloudflare edge + Zero Trust SSO gate) ──────────────
+    { "label": "infra:web:admin:init", "detail": "terraform init — admin", "type": "shell", "command": "pnpm infra:web:admin:init", "problemMatcher": [] },
+    { "label": "infra:web:admin:plan:dev", "detail": "terraform plan — admin DEV", "type": "shell", "command": "pnpm infra:web:admin:plan:dev", "problemMatcher": [] },
+    { "label": "infra:web:admin:plan:staging", "detail": "terraform plan — admin STAGING", "type": "shell", "command": "pnpm infra:web:admin:plan:staging", "problemMatcher": [] },
+    { "label": "infra:web:admin:plan:prod", "detail": "terraform plan — admin PROD", "type": "shell", "command": "pnpm infra:web:admin:plan:prod", "problemMatcher": [] },
+    { "label": "infra:web:admin:apply:dev", "detail": "terraform apply — admin DEV", "type": "shell", "command": "pnpm infra:web:admin:apply:dev", "problemMatcher": [] },
+    { "label": "infra:web:admin:apply:staging", "detail": "terraform apply — admin STAGING", "type": "shell", "command": "pnpm infra:web:admin:apply:staging", "problemMatcher": [] },
+    { "label": "infra:web:admin:apply:prod", "detail": "terraform apply — admin PROD", "type": "shell", "command": "pnpm infra:web:admin:apply:prod", "problemMatcher": [] },
+    { "label": "infra:web:admin:output:prod", "detail": "terraform output — admin PROD", "type": "shell", "command": "pnpm infra:web:admin:output:prod", "problemMatcher": [] },
+
+    // ── Infra: storybook (Cloudflare edge, minimal) ───────────────────────
+    { "label": "infra:web:storybook:init", "detail": "terraform init — storybook", "type": "shell", "command": "pnpm infra:web:storybook:init", "problemMatcher": [] },
+    { "label": "infra:web:storybook:plan:dev", "detail": "terraform plan — storybook DEV", "type": "shell", "command": "pnpm infra:web:storybook:plan:dev", "problemMatcher": [] },
+    { "label": "infra:web:storybook:plan:staging", "detail": "terraform plan — storybook STAGING", "type": "shell", "command": "pnpm infra:web:storybook:plan:staging", "problemMatcher": [] },
+    { "label": "infra:web:storybook:plan:prod", "detail": "terraform plan — storybook PROD", "type": "shell", "command": "pnpm infra:web:storybook:plan:prod", "problemMatcher": [] },
+    { "label": "infra:web:storybook:apply:dev", "detail": "terraform apply — storybook DEV", "type": "shell", "command": "pnpm infra:web:storybook:apply:dev", "problemMatcher": [] },
+    { "label": "infra:web:storybook:apply:staging", "detail": "terraform apply — storybook STAGING", "type": "shell", "command": "pnpm infra:web:storybook:apply:staging", "problemMatcher": [] },
+    { "label": "infra:web:storybook:apply:prod", "detail": "terraform apply — storybook PROD", "type": "shell", "command": "pnpm infra:web:storybook:apply:prod", "problemMatcher": [] },
+    { "label": "infra:web:storybook:output:prod", "detail": "terraform output — storybook PROD", "type": "shell", "command": "pnpm infra:web:storybook:output:prod", "problemMatcher": [] },
+
     // ── Resources (manifest + teardown) ──────────────────────────────────
     {
       "label": "resources:dev",

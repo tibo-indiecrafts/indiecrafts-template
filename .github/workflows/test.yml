@@ -171,9 +171,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup
-      - name: wrangler deploy --dry-run (api · cron · workers)
+      - name: wrangler deploy --dry-run (api · cron · workers · agent)
         run: |
-          for svc in api cron workers; do
+          for svc in api cron workers agent; do
             echo "── $svc ──"
             pnpm --filter "@indiecrafts/shared-$svc" exec wrangler deploy --dry-run --outdir "/tmp/$svc-dryrun"
           done

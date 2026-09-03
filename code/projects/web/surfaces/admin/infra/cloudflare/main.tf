@@ -1,5 +1,7 @@
-# Cloudflare edge config for the `web` app — CO-LOCATED + SELF-CONTAINED (the app owns
+# Cloudflare edge config for the `admin` app — CO-LOCATED + SELF-CONTAINED (the app owns
 # its whole deploy surface: `wrangler.toml` ships the Worker, this owns the edge).
+# admin is SSO-GATED: a Cloudflare Zero Trust Access gate fronts the host, so only the
+# allowed email domain (var.access_email_domain) reaches the Worker.
 # One instance = one app, one environment. Provisions the EDGE config wrangler can't:
 #   · auto custom domain (CF makes the DNS record + cert)
 #   · rate-limit on /api/* — tiered (tighter on the form/report endpoints), the `withGuard` PRIMARY limiter
@@ -8,11 +10,12 @@
 #   · cache rules (immutable /_next/static, bypass /api + /studio) + Tiered Cache
 #   · zone hardening (SSL strict, min TLS 1.2, Always-HTTPS)
 #   · a Turnstile widget → outputs the site + secret keys for the app env
+#   · Zero Trust Access — SSO gate on the admin host (only var.access_email_domain reaches the Worker)
 #
 # PER APP (this dir) × PER ENV (one Terraform workspace + tfvars per env). Apply with
-# the `infra:web:*:<env>` delegators (root package.json):
-#   pnpm infra:web:plan:prod     # review the diff
-#   pnpm infra:web:apply:prod    # provision
+# the `infra:web:admin:*:<env>` delegators (root package.json):
+#   pnpm infra:web:admin:plan:prod     # review the diff
+#   pnpm infra:web:admin:apply:prod    # provision
 #
 # To reuse for another app: copy this whole dir to code/projects/<app>/infra and
 # retarget the tfvars. Written for the cloudflare provider ~> 5 — run
@@ -56,6 +59,7 @@ variable "env" { type = string }         # dev | staging | prod
 variable "domain" { type = string, default = "" }
 variable "attach_domain" { type = bool, default = true } # false for dev/workers.dev
 variable "turnstile_domains" { type = list(string), default = [] }
+variable "access_email_domain" { type = string, default = "" } # SSO-allowed email domain for the Zero Trust Access gate (set in tfvars)
 # Edge tunables — defaults are sensible; override in tfvars if needed.
 variable "rate_limit_requests" { type = number, default = 20 }
 variable "rate_limit_period" { type = number, default = 60 } # seconds
@@ -306,27 +310,26 @@ resource "cloudflare_r2_bucket" "db_backup" {
 #   value      = "on"
 # }
 #
-# ── Zero Trust Access — gate the ADMIN app behind SSO (the registry says: add a
-#    Cloudflare Access gate before shipping admin). This block belongs in the ADMIN
-#    app's OWN infra/cloudflare (copy this dir there); shown here as the reference.
-#    Protects `admin.<domain>` — only the listed emails/domain reach the Worker.
-# resource "cloudflare_zero_trust_access_application" "admin" {
-#   account_id       = var.account_id
-#   zone_id          = var.zone_id
-#   name             = "${var.worker_name}-admin"
-#   domain           = "admin.${var.domain}"
-#   type             = "self_hosted"
-#   session_duration = "24h"
-# }
-# resource "cloudflare_zero_trust_access_policy" "admin_allow" {
-#   account_id     = var.account_id
-#   application_id = cloudflare_zero_trust_access_application.admin.id
-#   name           = "team-only"
-#   decision       = "allow"
-#   precedence     = 1
-#   include        = [{ email_domain = { domain = "your-company.com" } }]
-#   # or: include = [{ email = { email = "you@your-company.com" } }]
-# }
+# ── Zero Trust Access — SSO gate for the ADMIN app (ACTIVE: this IS the admin app's own
+#    infra). Fronts `var.domain` (admin's own host) — only var.access_email_domain reaches
+#    the Worker. Needs Cloudflare Zero Trust configured on the account (an IdP set up).
+resource "cloudflare_zero_trust_access_application" "admin" {
+  account_id       = var.account_id
+  zone_id          = var.zone_id
+  name             = "${var.worker_name}-admin"
+  domain           = var.domain
+  type             = "self_hosted"
+  session_duration = "24h"
+}
+resource "cloudflare_zero_trust_access_policy" "admin_allow" {
+  account_id     = var.account_id
+  application_id = cloudflare_zero_trust_access_application.admin.id
+  name           = "team-only"
+  decision       = "allow"
+  precedence     = 1
+  include        = [{ email_domain = { domain = var.access_email_domain } }]
+  # or pin individual emails: include = [{ email = { email = "you@your-company.com" } }]
+}
 #
 # ── Redirect rule — www → apex (or apex → www). Single-redirect, at the edge.
 # resource "cloudflare_ruleset" "redirect" {

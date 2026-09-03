@@ -90,17 +90,38 @@ Turnstile just no-ops. See [Security headers](/apps/web/seo/security-headers) + 
 - **Edge (here):** immutable `/_next/static` cached a year; `/api` + `/studio` + draft mode never
   cached; Tiered Cache reduces origin hits. Cache Reserve (persistent) is a one-line add if needed.
 
-## Add app #2
+## Stacks (all eligible surfaces)
 
-Copy `code/projects/web/surfaces/website/infra/` → `code/projects/<platform>/<kind>/<app>/infra/`, point the tfvars at that app's Worker
-names + domain, and add `infra:<app>:<action>:<env>` delegators (mirroring `infra:web:website:*`). `main.tf` is
-self-contained (no shared module); `code/shared/scripts/infra/run.mjs` resolves `code/projects/<platform>/<kind>/<app>/infra`.
+Every Cloudflare-deployable surface that can take edge config now ships its own self-contained stack,
+registered in `code/shared/scripts/lib/infra-registry.mjs` and driven by the `infra:*` delegators
+(`code/shared/scripts/infra/run.mjs` resolves each `dir`):
 
-> **One app = one Cloudflare zone.** The zone-level resources — SSL/TLS/HTTPS settings, Bot Fight
-> Mode, Tiered Cache, and the ruleset entrypoints (a zone has exactly one ruleset per phase) — are
-> keyed by `zone_id`, not by `worker_name`. If two apps' states manage the **same** zone they will
-> fight over those objects. Give each app its **own zone/domain** (a subdomain on the _same_ zone is
-> the collision case). A future `enable_zone_settings` toggle could let a subdomain app skip them.
+| Stack | Altitude | Dir | Notes |
+| --- | --- | --- | --- |
+| `account` | global | `code/shared/infra/cloudflare/account` | account-wide config (zone creation, account settings — mostly commented) |
+| `api` | global | `code/shared/api/infra/cloudflare` | rate-limit `/v1/*` · WAF · bot · leaked-creds · zone hardening |
+| `agent` | global | `code/shared/agent/infra/cloudflare` | api-style edge for the AI Worker |
+| `website` | leaf | `…/surfaces/website/infra/cloudflare` | full next-cf edge + Turnstile |
+| `app` | leaf | `…/surfaces/app/infra/cloudflare` | website-style edge |
+| `admin` | leaf | `…/surfaces/admin/infra/cloudflare` | website edge **+ Cloudflare Zero Trust Access** (SSO-gated) |
+| `storybook` | leaf | `…/tools/storybook/infra/cloudflare` | minimal (custom domain + zone hardening) |
+
+To add another app, copy the closest stack dir, point the tfvars at that app's Worker name + domain, and
+add `infra:<scope>:<app>:<action>:<env>` delegators (mirroring the existing ones). `main.tf` is
+self-contained (no shared module).
+
+> **⚠ One app = one Cloudflare zone (the supported model).** The zone-scoped resources — SSL/TLS/HTTPS
+> settings, Bot Fight, Tiered Cache, **and the ruleset entrypoints** (a zone has exactly one ruleset per
+> phase: rate-limit, WAF, firewall, cache) — are keyed by `zone_id`, not `worker_name`. Each stack owns
+> a full set, so **give every surface its own zone/domain** and each stack manages its zone cleanly.
+>
+> If instead several surfaces are **subdomains of one apex zone** (`app.`/`admin.`/`storybook.`/
+> `api.example.com` all on `example.com`), their states would **fight** over those single-per-zone objects.
+> The `enable_managed_waf`/`enable_bot_fight`/`enable_cache_rules`/`enable_tiered_cache` toggles (default
+> on) turn off four of them, but the **rate-limit + custom-firewall rulesets are always created** and would
+> still collide. Full shared-zone support needs a `manage_zone_resources` gate on those rulesets — a known
+> **TODO** (`@debt MIGRATION`); until then, use one zone per surface, or point the subdomain stacks at a
+> zone the `website` stack does not manage.
 
 ## State
 
