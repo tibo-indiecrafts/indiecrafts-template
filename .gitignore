@@ -95,3 +95,7 @@ docs/modules/changelog.md
 
 # storybook static build
 **/storybook-static/
+
+# Sanity Studio build output (`sanity build` / `pnpm studio:deploy` → hosted Studio)
+**/.sanity/
+**/dist/
