@@ -5,6 +5,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **`secrets:sync:api:<env>` — bulk-push secrets from `.dev.vars` (`shared/scripts/data/secrets.mjs`).**
+  A shared, registry-driven runner (the worker twin of the website's `sync-secrets`): reads the Worker's
+  `.dev.vars`, drops comments / blanks / `NEXT_PUBLIC_*` / placeholders, and `wrangler secret bulk`s the
+  rest in one call (clobber-guarded, prod-confirmed). Root alias `secrets:sync:shared:api:<env>`. **Why:**
+  the api has several secrets (`APP_API_TOKEN`, `IP_HASH_SALT`, `SANITY_API_READ_TOKEN`, …) — one command
+  instead of N × `wrangler secret put`.
+
 ### Changed
 
 - **KV namespaces are named on the shared convention (`shared/scripts/infra/bindings.mjs`).** The

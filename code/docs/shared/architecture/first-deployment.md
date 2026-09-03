@@ -65,9 +65,10 @@ and `…-hybrid-surfaces-main-releases` (desktop installers).
    - `pnpm infra:shared:api:init` then `pnpm infra:shared:api:apply:dev`
    - `pnpm infra:web:website:apply:dev` · `pnpm setup:web:website:kv`
    - Wire the bindings into `wrangler.toml`: `node code/shared/scripts/infra/bindings.mjs` (paste the emitted blocks).
-2. **Set secrets** (`wrangler secret put <NAME> --env dev` for api/cron): `APP_API_TOKEN`,
-   `IP_HASH_SALT`, `CLERK_WEBHOOK_SECRET`, `GDPR_FINGERPRINT_SALT`, `SANITY_API_READ_TOKEN`.
-   Website secrets: `pnpm secrets:sync:web:website:dev`.
+2. **Set secrets** — fill each Worker's `.dev.vars` (from its `.dev.vars.example`) then bulk-push:
+   `pnpm secrets:sync:shared:api:dev` (`APP_API_TOKEN`, `IP_HASH_SALT`, `SANITY_API_READ_TOKEN`, …) and
+   `pnpm secrets:sync:shared:agent:dev` (`ANTHROPIC_API_KEY`, `APP_API_TOKEN`, `TURNSTILE_SECRET`).
+   Website: `pnpm secrets:sync:web:website:dev`. (Or one-off: `wrangler secret put <NAME> --env dev`.)
 3. **Migrate databases** — `pnpm db:migrate:all:dev` (dev is a real remote D1).
 4. **Deploy** — `pnpm deploy:all:dev` (the 7 Cloudflare apps), or `--only all` to include native.
 5. **Verify** — `curl https://indiecrafts-dev-shared-api.<sub>.workers.dev/health` → `{ok:true}`; open

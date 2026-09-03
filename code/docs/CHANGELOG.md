@@ -11,6 +11,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **Runbook: worker `secrets:sync` in the secrets step (`first-deployment.md`).** Phase 1 step 2 now
+  points at `pnpm secrets:sync:shared:api:dev` / `…:agent:dev` (fill `.dev.vars` → bulk push) instead of
+  N × `wrangler secret put`.
 - **Runbook: real dev-run findings + the next-cf blocker (`first-deployment.md`).** Added a "Real-run
   findings" callout to Phase 1 — D1 `--location weur` (immutable), the first-migration `--no-backup`
   chicken-and-egg, the per-app ISR R2 buckets, OpenNext build memory — and a **⚠ Blocker** note: Next 16's

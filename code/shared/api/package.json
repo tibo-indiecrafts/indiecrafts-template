@@ -12,6 +12,9 @@
     "deploy:api:dev": "node ../scripts/deploy/worker.mjs api dev",
     "deploy:api:staging": "node ../scripts/deploy/worker.mjs api staging",
     "deploy:api:prod": "node ../scripts/deploy/worker.mjs api prod",
+    "secrets:sync:api:dev": "node ../scripts/data/secrets.mjs api dev",
+    "secrets:sync:api:staging": "node ../scripts/data/secrets.mjs api staging",
+    "secrets:sync:api:prod": "node ../scripts/data/secrets.mjs api prod",
     "tail:dev": "wrangler tail --env dev",
     "tail:staging": "wrangler tail --env staging",
     "tail:prod": "wrangler tail --env prod"

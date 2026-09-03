@@ -12,6 +12,9 @@
     "deploy:agent:dev": "node ../scripts/deploy/worker.mjs agent dev",
     "deploy:agent:staging": "node ../scripts/deploy/worker.mjs agent staging",
     "deploy:agent:prod": "node ../scripts/deploy/worker.mjs agent prod",
+    "secrets:sync:agent:dev": "node ../scripts/data/secrets.mjs agent dev",
+    "secrets:sync:agent:staging": "node ../scripts/data/secrets.mjs agent staging",
+    "secrets:sync:agent:prod": "node ../scripts/data/secrets.mjs agent prod",
     "tail:dev": "wrangler tail --env dev",
     "tail:staging": "wrangler tail --env staging",
     "tail:prod": "wrangler tail --env prod"

@@ -878,6 +878,48 @@
       "command": "pnpm secrets:sync:web:website:prod",
       "problemMatcher": []
     },
+    {
+      "label": "secrets:sync:shared:api:dev",
+      "detail": "push api secrets → Cloudflare (dev)",
+      "type": "shell",
+      "command": "pnpm secrets:sync:shared:api:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "secrets:sync:shared:api:staging",
+      "detail": "push api secrets → Cloudflare (staging)",
+      "type": "shell",
+      "command": "pnpm secrets:sync:shared:api:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "secrets:sync:shared:api:prod",
+      "detail": "push api secrets → Cloudflare (PROD)",
+      "type": "shell",
+      "command": "pnpm secrets:sync:shared:api:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "secrets:sync:shared:agent:dev",
+      "detail": "push agent secrets → Cloudflare (dev)",
+      "type": "shell",
+      "command": "pnpm secrets:sync:shared:agent:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "secrets:sync:shared:agent:staging",
+      "detail": "push agent secrets → Cloudflare (staging)",
+      "type": "shell",
+      "command": "pnpm secrets:sync:shared:agent:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "secrets:sync:shared:agent:prod",
+      "detail": "push agent secrets → Cloudflare (PROD)",
+      "type": "shell",
+      "command": "pnpm secrets:sync:shared:agent:prod",
+      "problemMatcher": []
+    },
 
     // ── Infra (Terraform) ────────────────────────────────────────────────
     {

@@ -12,6 +12,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **`secrets:sync:agent:<env>` — bulk-push secrets from `.dev.vars`.** Uses the shared
+  `shared/scripts/data/secrets.mjs` runner to `wrangler secret bulk` the agent's `.dev.vars`
+  (`ANTHROPIC_API_KEY`, `APP_API_TOKEN`, `TURNSTILE_SECRET`) in one clobber-guarded, prod-confirmed call.
+  Root alias `secrets:sync:shared:agent:<env>`.
+
 ### Fixed
 
 - **The `AGENT_RATELIMIT` rate limiter is declared per env, not top-level (`wrangler.toml`).** The
