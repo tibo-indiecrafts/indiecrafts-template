@@ -8,7 +8,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+# The workspace root (git top-level) — move-proof, unlike a fixed number of
+# `dirname`s (this script lives 4 levels deep at code/shared/scripts/dev/).
+ROOT_DIR="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel)"
 cd "$ROOT_DIR"
 
 ARTIFACTS=(.next .turbo .open-next dist out storybook-static .vitepress/dist .vitepress/cache tsconfig.tsbuildinfo)

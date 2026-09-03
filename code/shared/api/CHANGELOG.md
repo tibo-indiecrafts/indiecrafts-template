@@ -39,7 +39,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
-- **Public `vars` are declared per env, not top-level (`wrangler.toml`).** `SANITY_API_VERSION`,
+- **`pnpm clean` actually cleans again (`shared/scripts/dev/clean.sh`).** After the script moved to
+  `code/shared/scripts/dev/`, its `ROOT_DIR="$(dirname "$SCRIPT_DIR")"` resolved to
+  `code/shared/scripts` (one level up), so `find .` ran there and matched **no** app artifacts —
+  `clean` printed "Clean complete" while deleting nothing. Now resolves the git top-level
+  (`git rev-parse --show-toplevel`), move-proof. **Why:** a stale `.next/dev/types` survived every
+  `clean` and broke `tsc`/`build:cf` after a route rename. Logged here for the shared toolchain. `SANITY_API_VERSION`,
   `BACKUP_BUCKET`, and `BACKUP_RETENTION_DAYS` sat under a top-level `[vars]` — which wrangler does **not**
   inherit into named environments (it warns and drops them), so every `--env dev|staging|prod` deploy
   shipped **without** them. Moved into `[env.<env>.vars]` (with an env-specific
