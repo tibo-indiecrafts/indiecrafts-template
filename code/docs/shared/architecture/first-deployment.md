@@ -92,10 +92,18 @@ A first dev run surfaced these — fold them into the steps above:
 
 > **⚠ Blocker — the next-cf surfaces (website/admin/app) do not currently deploy to Cloudflare.** Next 16's
 > `src/proxy.ts` runs **Node-only** ("Proxy does not support Edge runtime"), but `@opennextjs/cloudflare`
-> 1.20.x rejects Node middleware ("Node.js middleware is not currently supported"). The two are
-> incompatible at these versions — no config flag bridges it. The **workers** (api·cron·workers·agent) and
-> **storybook** deploy fine; the three OpenNext apps are blocked until OpenNext ships Node-middleware
-> support (track `@opennextjs/cloudflare`), or the proxy is reworked. They run normally in local `pnpm dev`.
+> rejects Node middleware ("Node.js middleware is not currently supported"). Adding `runtime: "edge"` to
+> the proxy is rejected by Next. This is a **known, unresolved upstream "version trap"** — Next 16's Proxy
+> architecture vs OpenNext's Cloudflare adapter — tracked at
+> [cloudflare/workers-sdk#13755](https://github.com/cloudflare/workers-sdk/issues/13755) (the documented
+> workarounds — deprecated middleware, dropping Sanity — all cascade). The **workers** (api·cron·workers·agent)
+> and **storybook** deploy fine; the three OpenNext apps run normally in local `pnpm dev`.
+>
+> **Paths (a decision, not a quick fix):** (a) **wait** for the upstream fix — track #13755 and bump
+> `@opennextjs/cloudflare` + Next together when it lands; (b) **pin Next 15.x** (edge middleware works with
+> OpenNext there) — a framework downgrade touching all three surfaces; (c) **rework the proxy** off
+> `proxy.ts` — hard, since next-intl + Clerk essentially require middleware. Next is currently pinned to
+> `16.3.1` on purpose (`@debt MIGRATION`).
 
 ## Phase 2 — staging (`*.workers.dev`)
 
@@ -189,4 +197,5 @@ the two jobs to `.gitlab-ci.yml`.
 
 - `@debt TESTING` — no cross-surface `doctor:env`; only `website` pre-flights its config.
 - `@bug` — next-cf surfaces (website/admin/app) can't deploy to Cloudflare: Next 16 Node-only `proxy.ts`
-  vs OpenNext-Cloudflare's edge-only middleware. Workers + storybook deploy fine.
+  vs OpenNext-Cloudflare's edge-only middleware (upstream `cloudflare/workers-sdk#13755`, unresolved).
+  Workers + storybook deploy fine.

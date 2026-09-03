@@ -14,6 +14,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 - **Runbook: worker `secrets:sync` in the secrets step (`first-deployment.md`).** Phase 1 step 2 now
   points at `pnpm secrets:sync:shared:api:dev` / `…:agent:dev` (fill `.dev.vars` → bulk push) instead of
   N × `wrangler secret put`.
+- **Runbook: the next-cf blocker is upstream + the paths (`first-deployment.md`).** Tied the
+  Next-16-proxy / OpenNext incompatibility to the tracking issue `cloudflare/workers-sdk#13755`
+  (known, unresolved) and listed the three real paths (wait / pin Next 15 / rework the proxy).
 - **Runbook: real dev-run findings + the next-cf blocker (`first-deployment.md`).** Added a "Real-run
   findings" callout to Phase 1 — D1 `--location weur` (immutable), the first-migration `--no-backup`
   chicken-and-egg, the per-app ISR R2 buckets, OpenNext build memory — and a **⚠ Blocker** note: Next 16's
