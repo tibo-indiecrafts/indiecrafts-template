@@ -24,6 +24,21 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   `unknown app slug`, so `secrets:sync:web:website:staging|prod` aborted before uploading (dev was masked
   by the guard's early return). Now passes the real slug `website`.
 
+### Fixed
+
+- **The hosted Sanity Studio now builds + deploys (`sanity.cli.ts`, `src/sanity/schema/ui-messages.ts`).**
+  `pnpm studio:deploy` → `https://indiecrafts.sanity.studio/` is live. Three things blocked
+  `sanity build` (its standalone Vite/Rollup build, unlike Next, doesn't replicate the app's
+  resolution): (1) workspace source packages export `"./*": "./src/*"`, so a subpath like
+  `@indiecrafts/x/sanity` hits a directory and Rollup won't index-fallback; (2) the `@/*` tsconfig path
+  alias is unknown to Rollup. Both are handled by a small `vite` resolver plugin in `sanity.cli.ts`
+  (try the direct path, else `…/index`; map `@/…` → `src/…`). (3) `uiMessages` auto-generates schema
+  fields from `messages/en.json` keys, but `legal.dataRequest.types.withdraw-consent` (a kebab GDPR
+  type-id reused as a key) is an invalid Sanity field name — `fieldsFrom` now skips keys that fail
+  `/^[A-Za-z][0-9A-Za-z_]*$/`; they stay bundled-only (the i18n overlay falls back for any key Sanity
+  doesn't carry, so the label still renders — it's just not CMS-editable). `deployment.appId` pins the
+  target so later deploys don't prompt.
+
 ### Changed
 
 - **The embedded Sanity Studio is excluded from the Cloudflare build (host it separately).** The

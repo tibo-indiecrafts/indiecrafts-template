@@ -19,6 +19,14 @@ import fallback from "../../../messages/en.json";
 // Top-level namespaces that are NOT editorial UI copy → never in the CMS.
 const SKIP_TOP = new Set(["typography"]);
 
+// Sanity field names must match this (letters/digits/underscore, letter-first). A few
+// message keys are kebab-case ids reused as keys — e.g. the GDPR request type
+// `legal.dataRequest.types.withdraw-consent` (the `-` is invalid, and the key can't be
+// renamed: the app looks the label up by the type id). Such keys are dropped from the
+// CMS schema and stay bundled-only — the i18n overlay falls back to messages/<locale>.json
+// for any key Sanity doesn't carry, so the label still renders.
+const VALID_FIELD_NAME = /^[A-Za-z][0-9A-Za-z_]*$/;
+
 /** Humanise a camelCase key for a Studio field title. */
 function humanise(key: string): string {
   const spaced = key.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/[-_]/g, " ");
@@ -29,6 +37,7 @@ function humanise(key: string): string {
 function fieldsFrom(obj: Record<string, unknown>, top = false): FieldDefinition[] {
   return Object.entries(obj)
     .filter(([k]) => !(top && SKIP_TOP.has(k)))
+    .filter(([k]) => VALID_FIELD_NAME.test(k)) // kebab ids (e.g. withdraw-consent) stay bundled-only
     .map(([k, v]) => {
       if (v !== null && typeof v === "object" && !Array.isArray(v)) {
         return defineField({
