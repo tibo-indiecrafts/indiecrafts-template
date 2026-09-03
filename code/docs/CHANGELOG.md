@@ -19,6 +19,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+- **`scripts.md`: `resources:<env>` + `resources:teardown:<env>` rows, and the post-deploy secrets
+  sync.** Documented the resource manifest (list every Cloudflare resource an instance owns) and the
+  dry-run-by-default teardown (delete them before shipping the template clean), next to the pre-handoff
+  placeholder scan. The website deploy row now notes it syncs secrets after `wrangler deploy`
+  (`--skip-secrets` opts out).
 - **Runbook: worker `secrets:sync` in the secrets step (`first-deployment.md`).** Phase 1 step 2 now
   points at `pnpm secrets:sync:shared:api:dev` / `…:agent:dev` (fill `.dev.vars` → bulk push) instead of
   N × `wrangler secret put`.
