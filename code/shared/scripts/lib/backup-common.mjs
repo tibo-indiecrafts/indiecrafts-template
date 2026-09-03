@@ -11,7 +11,7 @@ import {
   rmSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve, dirname } from "node:path";
+import { join, resolve, dirname, delimiter } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { readSitePrefix } from "./project.mjs";
@@ -153,7 +153,17 @@ export function recordBackupRun(env, run) {
       const r = spawnSync(
         "wrangler",
         ["d1", "execute", dbName, "--env", env, "--remote", "--file", file],
-        { stdio: "inherit" },
+        {
+          stdio: "inherit",
+          // cwd is the api dir (chdir above), so `wrangler` lives in its
+          // node_modules/.bin — put it on PATH like backup.mjs's `ownerEnv()` does
+          // for the exports. Without this, bare `wrangler` is ENOENT and the row is
+          // silently not logged (the backup itself still succeeds).
+          env: {
+            ...process.env,
+            PATH: `${resolve("node_modules/.bin")}${delimiter}${process.env.PATH ?? ""}`,
+          },
+        },
       );
       if (r.status !== 0 || r.error)
         console.warn("recordBackupRun: wrangler d1 execute failed — not logged.");

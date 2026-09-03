@@ -44,7 +44,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   `code/shared/scripts` (one level up), so `find .` ran there and matched **no** app artifacts —
   `clean` printed "Clean complete" while deleting nothing. Now resolves the git top-level
   (`git rev-parse --show-toplevel`), move-proof. **Why:** a stale `.next/dev/types` survived every
-  `clean` and broke `tsc`/`build:cf` after a route rename. Logged here for the shared toolchain. `SANITY_API_VERSION`,
+  `clean` and broke `tsc`/`build:cf` after a route rename. Logged here for the shared toolchain.
+- **`recordBackupRun` logs backup runs again (`shared/scripts/lib/backup-common.mjs`).** The
+  `wrangler d1 execute` that writes the `backup_runs` row ran bare `wrangler` on the default PATH — but
+  `backup.mjs` puts the owner's `node_modules/.bin` on PATH only per-spawn (`ownerEnv()`), which
+  `recordBackupRun` never inherited, so `wrangler` was ENOENT and every run warned "failed — not logged"
+  (the backup export itself still succeeded). It now augments PATH the same way (it already `chdir`s to the
+  api dir). **Why:** `/v1/backups/status` + the admin Backups screen read `backup_runs`; without the row
+  they show no runs even though data was safely backed up.
+- **Public `vars` are declared per env, not top-level (`wrangler.toml`).** `SANITY_API_VERSION`,
   `BACKUP_BUCKET`, and `BACKUP_RETENTION_DAYS` sat under a top-level `[vars]` — which wrangler does **not**
   inherit into named environments (it warns and drops them), so every `--env dev|staging|prod` deploy
   shipped **without** them. Moved into `[env.<env>.vars]` (with an env-specific
