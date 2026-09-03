@@ -26,6 +26,15 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **Pinned Next `16.3.4` + `@opennextjs/cloudflare` `1.20.6` (exact) — the next-cf surfaces now deploy
+  to Cloudflare.** The blocker was Next 16's Node-only `src/proxy.ts` vs older OpenNext rejecting Node
+  middleware. OpenNext `1.20.6` adds **experimental** Node-middleware support, so the exact pin builds
+  and ships `website`/`admin`/`app` (both verified via `build:cf` → `Worker saved 🚀`). The pin is
+  **repo-wide**: all 16 workspace `next` entries moved to `16.3.4`, because a second Next in
+  `node_modules` re-introduces a duplicate-types conflict that fails the OpenNext build. **Why:** unblocks
+  the three OpenNext apps that could not reach Cloudflare before; the exact pin holds until
+  `cloudflare/workers-sdk#13755` makes Node middleware stable. **Ceiling:** relies on an experimental
+  OpenNext flag (`@debt MIGRATION`).
 - **`project:rename` now covers the native surfaces too (`scripts/project-rename.mjs`).** Besides the
   config prefix + every Cloudflare app's `wrangler.toml`/tfvars, a rename now swaps the prefix in the
   Expo `app.config.ts` (`name`/`slug`/`scheme` + the `dev.<prefix>.app` bundle id), `eas.json` (the

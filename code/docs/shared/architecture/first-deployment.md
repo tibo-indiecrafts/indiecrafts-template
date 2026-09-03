@@ -90,20 +90,18 @@ A first dev run surfaced these — fold them into the steps above:
 - **OpenNext builds are memory-heavy.** Run with `NODE_OPTIONS=--max-old-space-size=6144` and NOT
   alongside other dev servers — concurrent servers + the build OOM'd (SIGTERM / exit 143).
 
-> **⚠ Blocker — the next-cf surfaces (website/admin/app) do not currently deploy to Cloudflare.** Next 16's
-> `src/proxy.ts` runs **Node-only** ("Proxy does not support Edge runtime"), but `@opennextjs/cloudflare`
-> rejects Node middleware ("Node.js middleware is not currently supported"). Adding `runtime: "edge"` to
-> the proxy is rejected by Next. This is a **known, unresolved upstream "version trap"** — Next 16's Proxy
-> architecture vs OpenNext's Cloudflare adapter — tracked at
-> [cloudflare/workers-sdk#13755](https://github.com/cloudflare/workers-sdk/issues/13755) (the documented
-> workarounds — deprecated middleware, dropping Sanity — all cascade). The **workers** (api·cron·workers·agent)
-> and **storybook** deploy fine; the three OpenNext apps run normally in local `pnpm dev`.
+> **✓ Resolved — the next-cf surfaces (website/admin/app) build + deploy to Cloudflare on a version pin.**
+> The trap was Next 16's `src/proxy.ts` running **Node-only** ("Proxy does not support Edge runtime") while
+> older `@opennextjs/cloudflare` rejected Node middleware ("Node.js middleware is not currently supported").
+> `@opennextjs/cloudflare` **1.20.6** adds **experimental** Node-middleware support, so the pin — Next
+> `16.3.4` + `@opennextjs/cloudflare` `1.20.6` (both **exact**, no `^`) — builds and ships all three apps.
+> `pnpm build:cf` prints `WARN Node.js middleware support is experimental in cloudflare … Use at your own
+> risk`; that is expected. Tracking [cloudflare/workers-sdk#13755](https://github.com/cloudflare/workers-sdk/issues/13755)
+> for the stable landing.
 >
-> **Paths (a decision, not a quick fix):** (a) **wait** for the upstream fix — track #13755 and bump
-> `@opennextjs/cloudflare` + Next together when it lands; (b) **pin Next 15.x** (edge middleware works with
-> OpenNext there) — a framework downgrade touching all three surfaces; (c) **rework the proxy** off
-> `proxy.ts` — hard, since next-intl + Clerk essentially require middleware. Next is currently pinned to
-> `16.3.1` on purpose (`@debt MIGRATION`).
+> **The pin is repo-wide.** ALL workspace `next` pins are `16.3.4` — a second Next version in
+> `node_modules` re-introduces a duplicate-types conflict that fails the OpenNext build. Bump Next
+> everywhere in one step (`@debt MIGRATION` — the exact pin holds until #13755 stabilises Node middleware).
 
 ## Phase 2 — staging (`*.workers.dev`)
 
@@ -196,6 +194,6 @@ the two jobs to `.gitlab-ci.yml`.
 ## Issue tags
 
 - `@debt TESTING` — no cross-surface `doctor:env`; only `website` pre-flights its config.
-- `@bug` — next-cf surfaces (website/admin/app) can't deploy to Cloudflare: Next 16 Node-only `proxy.ts`
-  vs OpenNext-Cloudflare's edge-only middleware (upstream `cloudflare/workers-sdk#13755`, unresolved).
-  Workers + storybook deploy fine.
+- `@debt MIGRATION` — next-cf deploy relies on `@opennextjs/cloudflare` 1.20.6's **experimental** Node
+  middleware (both Next + OpenNext pinned exact). Ceiling: revisit the exact pin when
+  `cloudflare/workers-sdk#13755` makes it stable.

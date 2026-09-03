@@ -9,6 +9,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Changed
+
+- **Runbook: the next-cf blocker is RESOLVED via a version pin (`first-deployment.md`).** The
+  "⚠ Blocker" callout became "✓ Resolved" — Next `16.3.4` + `@opennextjs/cloudflare` `1.20.6` (exact)
+  ship website/admin/app, since OpenNext 1.20.6 adds experimental Node-middleware support. Noted the
+  repo-wide `next` pin (a duplicate Next fails the build) and the expected "experimental … use at your
+  own risk" build warning; the issue-tag footer went from `@bug` to `@debt MIGRATION` (an owned ceiling).
+
 ### Added
 
 - **Runbook: worker `secrets:sync` in the secrets step (`first-deployment.md`).** Phase 1 step 2 now
