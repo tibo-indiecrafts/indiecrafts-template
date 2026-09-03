@@ -7,6 +7,20 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **`resources:teardown:<env>` — delete every Cloudflare resource an instance owns
+  (`shared/scripts/infra/teardown.mjs` + `lib/resources.mjs`).** A dry-run-by-default cleanup for
+  shipping the template clean (no leftover Workers / D1 / KV / R2 on the seller's account). "Anonymised":
+  every name is DERIVED from the registries + the site prefix (`lib/resources.mjs` — the single source of
+  truth for what a deploy creates), never a hard-coded id. `--yes` executes; prod re-confirms by typing
+  the prefix; a missing resource is skipped, not fatal. Sibling `resources:<env>` prints the manifest
+  (non-destructive). **Why:** a seller must wipe the demo instance before handing over the repo; deriving
+  the list keeps it correct after any client rename. **Logged once here for the whole instance.**
+- **Deploy now syncs secrets from `.dev.vars` after `wrangler deploy` (`shared/scripts/deploy/worker.mjs`
+  + `next.mjs`).** Like wahio's `deploy-full`, every `deploy:<app>:<env>` runs the secrets step
+  (`data/secrets.mjs --soft`) once the Worker exists — `--soft` no-ops when there is nothing to sync, so
+  an app with no `.dev.vars` (admin/app today) never fails the deploy. `--skip-secrets` opts out.
+  **Why:** one command deploys code AND pushes secrets; no separate `secrets:sync` step to forget.
+  **Logged once here for every worker + next-cf surface.**
 - **`secrets:sync:api:<env>` — bulk-push secrets from `.dev.vars` (`shared/scripts/data/secrets.mjs`).**
   A shared, registry-driven runner (the worker twin of the website's `sync-secrets`): reads the Worker's
   `.dev.vars`, drops comments / blanks / `NEXT_PUBLIC_*` / placeholders, and `wrangler secret bulk`s the

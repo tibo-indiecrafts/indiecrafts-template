@@ -19,8 +19,12 @@ import { confirmProd } from "../lib/deploy-shared.mjs";
 
 const [app, env] = process.argv.slice(2);
 const yes = process.argv.includes("--yes");
+// `--soft`: no-op (exit 0) when there is nothing to sync — used by the deploy runners so
+// a deploy never fails just because a Worker has no `.dev.vars` yet. A direct
+// `secrets:sync:<app>:<env>` call omits it and errors loudly instead.
+const soft = process.argv.includes("--soft");
 if (!app || !bySlug(app) || !ENVS.includes(env)) {
-  console.error("Usage: secrets.mjs <app> <dev|staging|prod> [--yes]");
+  console.error("Usage: secrets.mjs <app> <dev|staging|prod> [--yes] [--soft]");
   process.exit(1);
 }
 
@@ -30,9 +34,12 @@ await confirmProd("Sync secrets to", app, env, { yes });
 
 const src = existsSync(".dev.vars") ? ".dev.vars" : ".env.local";
 if (!existsSync(src)) {
-  console.error(
-    `✗ No ${src} in this Worker — copy .dev.vars.example → .dev.vars and fill the tokens.`,
-  );
+  const msg = `No .dev.vars in ${app} — copy .dev.vars.example → .dev.vars and fill the tokens.`;
+  if (soft) {
+    console.log(`• ${msg} Skipping secrets.`);
+    process.exit(0);
+  }
+  console.error(`✗ ${msg}`);
   process.exit(1);
 }
 
@@ -49,7 +56,12 @@ for (const line of readFileSync(src, "utf8").split("\n")) {
 
 const keys = Object.keys(secrets);
 if (keys.length === 0) {
-  console.error(`✗ No secrets found in ${src} (all commented, empty, or NEXT_PUBLIC_).`);
+  const msg = `No secrets in ${src} (all commented, empty, or NEXT_PUBLIC_).`;
+  if (soft) {
+    console.log(`• ${msg} Skipping.`);
+    process.exit(0);
+  }
+  console.error(`✗ ${msg}`);
   process.exit(1);
 }
 

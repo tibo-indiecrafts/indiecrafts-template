@@ -134,7 +134,13 @@
     "infra:shared:api:apply:dev": "node code/shared/scripts/infra/run.mjs api apply dev",
     "infra:shared:api:apply:staging": "node code/shared/scripts/infra/run.mjs api apply staging",
     "infra:shared:api:apply:prod": "node code/shared/scripts/infra/run.mjs api apply prod",
-    "infra:shared:api:output:prod": "node code/shared/scripts/infra/run.mjs api output prod"
+    "infra:shared:api:output:prod": "node code/shared/scripts/infra/run.mjs api output prod",
+    "resources:dev": "node code/shared/scripts/lib/resources.mjs dev",
+    "resources:staging": "node code/shared/scripts/lib/resources.mjs staging",
+    "resources:prod": "node code/shared/scripts/lib/resources.mjs prod",
+    "resources:teardown:dev": "node code/shared/scripts/infra/teardown.mjs dev",
+    "resources:teardown:staging": "node code/shared/scripts/infra/teardown.mjs staging",
+    "resources:teardown:prod": "node code/shared/scripts/infra/teardown.mjs prod"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

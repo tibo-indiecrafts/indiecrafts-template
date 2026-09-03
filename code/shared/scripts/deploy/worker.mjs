@@ -8,6 +8,7 @@
 //   node ../../../scripts/deploy-worker.mjs <app> <dev|staging|prod> [--yes]
 
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { assertRenamed } from "../lib/project.mjs";
 import { run, confirmProd } from "../lib/deploy-shared.mjs";
 import { ENVS } from "../lib/apps.mjs";
@@ -15,8 +16,11 @@ import { byKind } from "../lib/databases.mjs";
 
 const [app, env] = process.argv.slice(2);
 const yes = process.argv.includes("--yes");
+// After deploy, sync secrets from `.dev.vars` (soft: a no-op if there are none) — like
+// the website deploy and wahio's deploy-full. `--skip-secrets` opts out.
+const skipSecrets = process.argv.includes("--skip-secrets");
 if (!app || !ENVS.includes(env)) {
-  console.error("Usage: deploy-worker.mjs <app> <dev|staging|prod> [--yes]");
+  console.error("Usage: deploy-worker.mjs <app> <dev|staging|prod> [--yes] [--skip-secrets]");
   process.exit(1);
 }
 
@@ -60,4 +64,12 @@ await confirmProd("Deploy", app, env, { yes });
 
 migrateOwnedD1();
 run("wrangler", ["deploy", "--env", env]);
+
+// Secrets AFTER deploy — `wrangler secret bulk` needs the Worker to exist. `--soft` so a
+// Worker with no `.dev.vars` (or none to sync) never fails the deploy. Runs from the app
+// dir (CWD), so it reads THIS Worker's `.dev.vars`.
+if (!skipSecrets) {
+  const secrets = fileURLToPath(new URL("../data/secrets.mjs", import.meta.url));
+  run("node", [secrets, app, env, "--soft", ...(yes ? ["--yes"] : [])]);
+}
 console.log(`✓ Deployed ${app} to ${env}.`);

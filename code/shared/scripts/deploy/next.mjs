@@ -6,6 +6,7 @@
 //
 //   node ../../../scripts/deploy-next.mjs <app> <dev|staging|prod> [--yes]
 
+import { fileURLToPath } from "node:url";
 import { assertRenamed } from "../lib/project.mjs";
 import { run, confirmProd } from "../lib/deploy-shared.mjs";
 import { ENVS } from "../lib/apps.mjs";
@@ -13,8 +14,10 @@ import { originFor } from "../lib/domains.mjs";
 
 const [app, env] = process.argv.slice(2);
 const yes = process.argv.includes("--yes");
+// After deploy, sync secrets from `.dev.vars` (soft) — `--skip-secrets` opts out.
+const skipSecrets = process.argv.includes("--skip-secrets");
 if (!app || !ENVS.includes(env)) {
-  console.error("Usage: deploy-next.mjs <app> <dev|staging|prod> [--yes]");
+  console.error("Usage: deploy-next.mjs <app> <dev|staging|prod> [--yes] [--skip-secrets]");
   process.exit(1);
 }
 
@@ -33,4 +36,11 @@ if (origin && !process.env.NEXT_PUBLIC_SITE_URL) {
 
 run("pnpm", ["run", "build:cf"]); // per-app build recipe (web: version stamp + OpenNext)
 run("wrangler", ["deploy", "--env", env]);
+
+// Secrets AFTER deploy (the Worker must exist for `wrangler secret bulk`). `--soft` so an
+// app with no `.dev.vars` (admin/app today) never fails the deploy.
+if (!skipSecrets) {
+  const secrets = fileURLToPath(new URL("../data/secrets.mjs", import.meta.url));
+  run("node", [secrets, app, env, "--soft", ...(yes ? ["--yes"] : [])]);
+}
 console.log(`✓ Deployed ${app} to ${env}.`);

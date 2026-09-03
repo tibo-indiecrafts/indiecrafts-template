@@ -1042,6 +1042,50 @@
       "problemMatcher": []
     },
 
+    // ── Resources (manifest + teardown) ──────────────────────────────────
+    {
+      "label": "resources:dev",
+      "detail": "list every Cloudflare resource this instance owns — DEV",
+      "type": "shell",
+      "command": "pnpm resources:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "resources:staging",
+      "detail": "list every Cloudflare resource this instance owns — STAGING",
+      "type": "shell",
+      "command": "pnpm resources:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "resources:prod",
+      "detail": "list every Cloudflare resource this instance owns — PROD",
+      "type": "shell",
+      "command": "pnpm resources:prod",
+      "problemMatcher": []
+    },
+    {
+      "label": "resources:teardown:dev",
+      "detail": "DELETE all Cloudflare resources — DEV (dry-run; add --yes)",
+      "type": "shell",
+      "command": "pnpm resources:teardown:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "resources:teardown:staging",
+      "detail": "DELETE all Cloudflare resources — STAGING (dry-run; add --yes)",
+      "type": "shell",
+      "command": "pnpm resources:teardown:staging",
+      "problemMatcher": []
+    },
+    {
+      "label": "resources:teardown:prod",
+      "detail": "DELETE all Cloudflare resources — PROD (dry-run; add --yes)",
+      "type": "shell",
+      "command": "pnpm resources:teardown:prod",
+      "problemMatcher": []
+    },
+
     // ── Maintenance ──────────────────────────────────────────────────────
     {
       "label": "clean",
