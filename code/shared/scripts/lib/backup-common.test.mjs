@@ -53,6 +53,10 @@ test("buildBackupRunInsert builds a parameterized 9-arg INSERT", () => {
   assert.match(sql, /INSERT INTO backup_runs/);
   assert.equal(params.length, 9);
   assert.equal(params[0], "audit");
+  // `env` is the 2nd column and NOT NULL in the schema — guard the binding, since
+  // recordBackupRun takes env as a SEPARATE param and must merge it (a prior bug
+  // left it out → `backup_runs.env` NULL → SQLITE_CONSTRAINT on every logged run).
+  assert.equal(params[1], "prod");
 });
 
 test("recordBackupRun never throws, even when the spawn has nothing to run against", () => {

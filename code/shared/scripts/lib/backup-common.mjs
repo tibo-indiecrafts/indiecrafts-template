@@ -46,9 +46,18 @@ export function uploadToR2(env, key, file) {
   const r = spawnSync(
     "wrangler",
     ["r2", "object", "put", `${bucket}/${key}`, "--file", file, "--remote"],
-    { stdio: "inherit" },
+    {
+      stdio: "inherit",
+      // cwd is the owner dir — put its node_modules/.bin on PATH so bare `wrangler`
+      // resolves (like backup.mjs's per-spawn `ownerEnv()`); else ENOENT looks like a
+      // missing bucket. CI works without this because wrangler is on the global PATH.
+      env: {
+        ...process.env,
+        PATH: `${resolve("node_modules/.bin")}${delimiter}${process.env.PATH ?? ""}`,
+      },
+    },
   );
-  if (r.status !== 0) {
+  if (r.status !== 0 || r.error) {
     console.error(
       `✗ R2 upload failed. Create the bucket first: wrangler r2 bucket create ${bucket}`,
     );
@@ -127,7 +136,9 @@ export function recordBackupRun(env, run) {
       return;
     }
 
-    const { sql, params } = buildBackupRunInsert(run);
+    // `env` is a separate param (not in `run`) — merge it, else `backup_runs.env` is
+    // NULL and the INSERT fails its NOT NULL constraint.
+    const { sql, params } = buildBackupRunInsert({ ...run, env });
     let i = 0;
     const rendered = sql.replace(/\?/g, () => sqlLiteral(params[i++]));
 

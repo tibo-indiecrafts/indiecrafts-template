@@ -50,7 +50,10 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   `backup.mjs` puts the owner's `node_modules/.bin` on PATH only per-spawn (`ownerEnv()`), which
   `recordBackupRun` never inherited, so `wrangler` was ENOENT and every run warned "failed — not logged"
   (the backup export itself still succeeded). It now augments PATH the same way (it already `chdir`s to the
-  api dir). **Why:** `/v1/backups/status` + the admin Backups screen read `backup_runs`; without the row
+  api dir). That uncovered a **second** bug: `env` is a separate `recordBackupRun` param, not part of the
+  `run` object, and wasn't merged into the INSERT — so `backup_runs.env` was NULL and hit its NOT NULL
+  constraint. Now merged (`buildBackupRunInsert({ ...run, env })`). Verified against remote dev D1.
+  **Why:** `/v1/backups/status` + the admin Backups screen read `backup_runs`; without the row
   they show no runs even though data was safely backed up.
 - **Public `vars` are declared per env, not top-level (`wrangler.toml`).** `SANITY_API_VERSION`,
   `BACKUP_BUCKET`, and `BACKUP_RETENTION_DAYS` sat under a top-level `[vars]` — which wrangler does **not**
