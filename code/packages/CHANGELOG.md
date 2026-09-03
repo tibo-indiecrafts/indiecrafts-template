@@ -12,6 +12,16 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Agnostic bricks import config from `/shared`, not the root barrel (`format` · `announcement` ·
+  `utils`).** `plural/relative/money/grammar/number/list.ts` (format), `resolve.ts` (announcement), and
+  `format-date.ts` (utils) imported `defaultLocale` / `localeFormat` / `Locale` from
+  `@indiecrafts/packages-shared-config` — whose root barrel re-exports `./web` (with `process.env`). That
+  dragged the web config into the **mobile** type graph, so `mobile tsc` failed on `process` (no
+  `@types/node`). Switched them to `@indiecrafts/packages-shared-config/shared` (the agnostic entry — same
+  symbols). **Why:** React-free bricks must not pull web-only code; unblocks `mobile tsc` / `pnpm verify`.
+
 ### Added
 
 - **`@indiecrafts/packages-shared-ui-fonts` — exports its font files (`./fonts/*`).** The package's

@@ -9,7 +9,7 @@
 import {
   defaultLocale,
   type Locale,
-} from "@indiecrafts/packages-shared-config";
+} from "@indiecrafts/packages-shared-config/shared";
 import type {
   AnnouncementLink,
   Banner,

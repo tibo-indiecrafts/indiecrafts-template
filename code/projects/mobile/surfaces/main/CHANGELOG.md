@@ -11,6 +11,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **`tsc` green — `@types/node` for `process.env` typing (`package.json`).** The app reads
+  `process.env.EXPO_PUBLIC_*` (`config/index.ts`, `lib/agent.ts`, `sign-in.tsx`) but had no `@types/node`,
+  so `process` was untyped once workspace hoisting shifted (23 → 13 `TS2580` errors, the rest cleared by
+  the shared-config `/shared` import fix). Added `@types/node@^20` as a devDep. **Why:** `mobile tsc` (and
+  `pnpm verify`) pass independent of hoisting.
+
 ### Added
 
 - **EAS distribution scaffolding (`eas.json`, `app.config.ts`).** New `eas.json` build/submit profiles —

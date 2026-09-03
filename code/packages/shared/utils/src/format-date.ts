@@ -1,4 +1,4 @@
-import type { Locale } from "@indiecrafts/packages-shared-config";
+import type { Locale } from "@indiecrafts/packages-shared-config/shared";
 
 /**
  * `new Intl.DateTimeFormat()` loads and allocates locale-data tables on every
