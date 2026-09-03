@@ -11,6 +11,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Runbook + scripts: the website hosts its Sanity Studio separately (`first-deployment.md`,
+  `scripts.md`).** Documented that `build:cf` drops the embedded `/studio` (it would blow the 10 MiB
+  Worker limit), the `studio:deploy` (`sanity deploy`) script, `NEXT_PUBLIC_SANITY_STUDIO_URL`, and the
+  real dev-run result (all 8 deployables live; website at ~9.8/10 MiB even without the Studio).
 - **Runbook: the next-cf blocker is RESOLVED via a version pin (`first-deployment.md`).** The
   "⚠ Blocker" callout became "✓ Resolved" — Next `16.3.4` + `@opennextjs/cloudflare` `1.20.6` (exact)
   ship website/admin/app, since OpenNext 1.20.6 adds experimental Node-middleware support. Noted the

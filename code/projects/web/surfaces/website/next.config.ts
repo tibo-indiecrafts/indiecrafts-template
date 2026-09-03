@@ -10,6 +10,15 @@ import {
 } from "@indiecrafts/packages-shared-security";
 import { websiteCspHosts } from "./src/lib/csp-hosts";
 
+// Embed the Sanity Studio at `/studio` (default: yes, for local dev). `build:cf`
+// sets `NEXT_PUBLIC_EMBED_STUDIO=false` so the OpenNext/Cloudflare build DROPS the
+// Studio route — the whole `sanity` Studio package (~50 MB) would otherwise land in
+// the single server Worker and blow Cloudflare's 10 MiB limit. In production the
+// Studio is hosted separately (`pnpm sanity:deploy` → `<host>.sanity.studio`). The
+// route files are named `*.studio.tsx` and only count as pages when their extension
+// is in `pageExtensions` below — a deterministic, build-time exclusion.
+const EMBED_STUDIO = process.env.NEXT_PUBLIC_EMBED_STUDIO !== "false";
+
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "1",
@@ -17,6 +26,12 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
+  // Route files ending `.studio.tsx` (the embedded Studio's `page`/`layout`) are only
+  // treated as pages when Studio is embedded. Off ⇒ they compile to nothing and the
+  // `sanity` package never enters the Worker bundle (see `EMBED_STUDIO`).
+  pageExtensions: EMBED_STUDIO
+    ? ["ts", "tsx", "js", "jsx", "studio.ts", "studio.tsx"]
+    : ["ts", "tsx", "js", "jsx"],
   // Workspace packages consumed as source (no build step) — Next transpiles them.
   transpilePackages: [
     "@indiecrafts/packages-shared-config",
@@ -71,6 +86,17 @@ const nextConfig: NextConfig = {
   experimental: {
     // Tighter bundle: only import icons you actually reference.
     optimizePackageImports: ["lucide-react", "lucide"],
+  },
+  async redirects() {
+    // When the Studio is NOT embedded (production/CF), send `/studio` to the hosted
+    // Studio (`NEXT_PUBLIC_SANITY_STUDIO_URL`, e.g. `https://<host>.sanity.studio`)
+    // so a bookmarked editor link still works. No env set ⇒ `/studio` just 404s.
+    const hosted = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL;
+    if (EMBED_STUDIO || !hosted) return [];
+    return [
+      { source: "/studio", destination: hosted, permanent: false },
+      { source: "/studio/:path*", destination: hosted, permanent: false },
+    ];
   },
   async headers() {
     // Hardened security headers (+ HSTS/COOP in production) from the shared brick;

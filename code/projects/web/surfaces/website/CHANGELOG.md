@@ -26,6 +26,17 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **The embedded Sanity Studio is excluded from the Cloudflare build (host it separately).** The
+  `/studio` route pulled the whole `sanity` package (schemas + Vision) into OpenNext's single server
+  Worker (~50 MB) — over Cloudflare's 10 MiB limit, so the website could not deploy. The route files are
+  now `page.studio.tsx` / `layout.studio.tsx`, counted as pages only when `studio.tsx` is in
+  `pageExtensions` (`next.config.ts`), which is gated by `NEXT_PUBLIC_EMBED_STUDIO`. `build:cf` sets it
+  `false` ⇒ the Studio never enters the Worker (website now ships at ~9.8 MiB gzip). Local `pnpm dev`
+  keeps the embedded Studio (default on). Host the production Studio with `pnpm studio:deploy`
+  (`sanity deploy` → `<host>.sanity.studio`); set `NEXT_PUBLIC_SANITY_STUDIO_URL` and `/studio` redirects
+  there (`next.config.ts` `redirects()`), else it 404s in prod. Draft-mode preview is unaffected (it uses
+  the `@sanity/client`, not the Studio bundle). **Ceiling:** even without the Studio the Worker sits at
+  ~9.8/10 MiB — watch the budget (`pnpm size`) when adding heavy deps. `@debt PERFORMANCE`.
 - **Pinned Next `16.3.4` + `@opennextjs/cloudflare` `1.20.6` (exact) — the next-cf surfaces now deploy
   to Cloudflare.** The blocker was Next 16's Node-only `src/proxy.ts` vs older OpenNext rejecting Node
   middleware. OpenNext `1.20.6` adds **experimental** Node-middleware support, so the exact pin builds

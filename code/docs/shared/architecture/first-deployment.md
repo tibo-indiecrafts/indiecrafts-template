@@ -103,6 +103,19 @@ A first dev run surfaced these — fold them into the steps above:
 > `node_modules` re-introduces a duplicate-types conflict that fails the OpenNext build. Bump Next
 > everywhere in one step (`@debt MIGRATION` — the exact pin holds until #13755 stabilises Node middleware).
 
+> **✓ The website ships with the Sanity Studio hosted separately (10 MiB Worker limit).** The embedded
+> `/studio` route pulls the whole `sanity` package into OpenNext's single server Worker (~50 MB) — over
+> Cloudflare's 10 MiB cap. `build:cf` sets `NEXT_PUBLIC_EMBED_STUDIO=false`, which drops the `*.studio.tsx`
+> route files from the build (via `pageExtensions` in `next.config.ts`) — website then ships at ~9.8 MiB
+> gzip. **Host the Studio** with `pnpm --filter @indiecrafts/web-surfaces-website studio:deploy`
+> (`sanity deploy` → `<host>.sanity.studio`) and set `NEXT_PUBLIC_SANITY_STUDIO_URL` so `/studio` redirects
+> there. Local `pnpm dev` keeps the embedded Studio. `admin`/`app` have no Studio and ship small.
+>
+> **Real dev run (2026-09-03):** all 8 deployables live on `*.thibault-montaufray.workers.dev` — website
+> (gzip 9.8 MiB, Studio hosted), admin (2.9), app (4.8), storybook + the 4 workers. **Heads-up:** the
+> website sits at ~9.8/10 MiB even without the Studio — watch the budget (`pnpm --filter …website size`)
+> before adding heavy deps.
+
 ## Phase 2 — staging (`*.workers.dev`)
 
 Repeat Phase 1 with `staging`: `infra:*:apply:staging` → secrets `--env staging` /
