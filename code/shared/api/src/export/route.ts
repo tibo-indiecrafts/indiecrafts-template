@@ -13,15 +13,8 @@ import {
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type Env, PUBLIC_CORS, PUBLIC_CORS_POST, clientIp } from "../index";
-import {
-  createCoreErasureAdapter,
-  createAuditErasureAdapter,
-} from "../erasure/d1";
-import { createClerkErasureAdapter } from "../erasure/clerk";
-import { createSanityErasureAdapter } from "../erasure/sanity";
-import { createOrdersErasureAdapter } from "../erasure/orders";
+import { buildErasureAdapters } from "../erasure/adapters";
 import { createRealClerkClient } from "../erasure/clerk-client";
-import { createRealSanityClient } from "../erasure/sanity-client";
 import type { SelfAuth } from "../erasure/self";
 import { readSettings } from "../settings-cache";
 
@@ -50,30 +43,6 @@ function json(
     status,
     headers: { "content-type": "application/json", ...cors },
   });
-}
-
-/** The real five adapters (identical to erasure/self.ts). Injectable for tests. */
-function defaultAdapters(env: Env): ErasureAdapter[] {
-  return [
-    createCoreErasureAdapter(env.CORE_DB!, env.GDPR_FINGERPRINT_SALT!),
-    createAuditErasureAdapter(
-      env.DB!,
-      env.CORE_DB!,
-      env.GDPR_FINGERPRINT_SALT!,
-    ),
-    createClerkErasureAdapter(createRealClerkClient(env.CLERK_SECRET_KEY!)),
-    createSanityErasureAdapter(
-      createRealSanityClient({
-        projectId: env.SANITY_PROJECT_ID!,
-        dataset: env.SANITY_DATASET!,
-        apiVersion: env.SANITY_API_VERSION ?? "2025-01-01",
-        writeToken: env.SANITY_API_WRITE_TOKEN!,
-        readToken: env.SANITY_API_READ_TOKEN,
-      }),
-      env.GDPR_FINGERPRINT_SALT!,
-    ),
-    createOrdersErasureAdapter(),
-  ];
 }
 
 /**
@@ -125,7 +94,7 @@ export async function handleExport(
   request: Request,
   env: Env,
   ctx?: ExecutionContext,
-  buildAdapters: (env: Env) => ErasureAdapter[] = defaultAdapters,
+  buildAdapters: (env: Env) => ErasureAdapter[] = buildErasureAdapters,
   authenticate: (
     request: Request,
     env: Env,
@@ -150,7 +119,7 @@ export async function handleExport(
   if (!env.CLERK_SECRET_KEY)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
   if (
-    buildAdapters === defaultAdapters &&
+    buildAdapters === buildErasureAdapters &&
     (!env.SANITY_API_WRITE_TOKEN ||
       !env.SANITY_PROJECT_ID ||
       !env.SANITY_DATASET)

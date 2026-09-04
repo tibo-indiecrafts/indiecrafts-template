@@ -154,7 +154,7 @@ describe("handleExport", () => {
 
   it("returns 503 when CLERK_SECRET_KEY is unset", async () => {
     const { authenticate } = mocks();
-    // No 4th arg → defaultAdapters; env missing CLERK_SECRET_KEY.
+    // No 4th arg → buildErasureAdapters; env missing CLERK_SECRET_KEY.
     const res = await handleExport(
       postExport(),
       testEnv({ CLERK_SECRET_KEY: undefined }),
