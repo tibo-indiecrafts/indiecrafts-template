@@ -2,28 +2,13 @@ import { Component, useState, type ErrorInfo, type ReactNode } from "react";
 import { useIntl } from "react-intl";
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
-import { ErrorContent } from "@indiecrafts/packages-shared-system-pages/web";
+import {
+  ErrorContent,
+  OfflineBanner,
+} from "@indiecrafts/packages-shared-system-pages/web";
 import { LegalLinks, ShareRow, ShellOverlays } from "./shell";
 import { AuthPanel } from "./auth";
 import { CookiePreferencesSection } from "./consent-preferences";
-import { useOnlineStatus } from "./useOnlineStatus";
-
-/** A non-blocking strip shown while offline (auto-hides on reconnect); copy from the
- *  merged `SHELL_COPY.offline` (`offline.banner`). Same look as the website banner. */
-function OfflineBanner() {
-  const t = useIntl();
-  const online = useOnlineStatus();
-  if (online) return null;
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="bg-secondary px-4 py-2 text-center text-sm text-secondary-foreground"
-    >
-      {t.formatMessage({ id: "offline.banner" })}
-    </div>
-  );
-}
 
 /** data-theme toggle. No value = OS `prefers-color-scheme` (tokens.css handles it). */
 function useThemeToggle() {
@@ -91,7 +76,7 @@ export function App() {
   const t = useIntl();
   return (
     <>
-      <OfflineBanner />
+      <OfflineBanner message={t.formatMessage({ id: "offline.banner" })} />
       <ErrorBoundary
         fallback={(reset) => (
           <ErrorContent

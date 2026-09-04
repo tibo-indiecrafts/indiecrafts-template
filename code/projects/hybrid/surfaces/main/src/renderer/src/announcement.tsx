@@ -11,8 +11,8 @@ import {
   type Banner,
   type Toast,
 } from "@indiecrafts/packages-shared-announcement";
+import { useOnlineStatus } from "@indiecrafts/packages-shared-system-pages/web";
 import { apiUrl, STORAGE_KEYS, websiteUrl, type Locale } from "../../config";
-import { useOnlineStatus } from "./useOnlineStatus";
 
 /**
  * Logged-in-only announcement chrome for the Electron renderer — a top banner strip +
