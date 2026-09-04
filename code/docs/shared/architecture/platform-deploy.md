@@ -29,12 +29,12 @@ every row has a matching `code/projects/<slug>` dir, so the registry can't drift
 
 ## Platform classes
 
-| Class       | Apps                 | Ships via                            | Runner                                    |
-| ----------- | -------------------- | ------------------------------------ | ----------------------------------------- |
+| Class       | Apps                  | Ships via                            | Runner                                    |
+| ----------- | --------------------- | ------------------------------------ | ----------------------------------------- |
 | `next-cf`   | website · admin · app | OpenNext build → Cloudflare Worker   | `code/shared/scripts/deploy/next.mjs`     |
-| `worker-cf` | api · cron · workers | `wrangler deploy` (bare Worker)      | `code/shared/scripts/deploy/worker.mjs`   |
-| `expo`      | mobile               | EAS build (+ submit)                 | `code/shared/scripts/deploy/expo.mjs`     |
-| `electron`  | hybrid               | electron-builder (host-OS installer) | `code/shared/scripts/deploy/electron.mjs` |
+| `worker-cf` | api · cron · workers  | `wrangler deploy` (bare Worker)      | `code/shared/scripts/deploy/worker.mjs`   |
+| `expo`      | mobile                | EAS build (+ submit)                 | `code/shared/scripts/deploy/expo.mjs`     |
+| `electron`  | hybrid                | electron-builder (host-OS installer) | `code/shared/scripts/deploy/electron.mjs` |
 
 `next-cf` + `worker-cf` are the **Cloudflare** classes. `expo` + `electron` are native — they need
 their own credentials (EAS / Apple / signing) and are **structure-first stubs** today: the command +
@@ -90,6 +90,21 @@ CI reads the same registry — no app is hard-coded:
   app and comments the URL.
 - **Backup** (`backup.yml`) — **hub-scoped by design**, NOT a fan-out: one Sanity dataset per tenant,
   and the hub Studio (on `web`) holds the write token + all content.
+
+## Database tiers
+
+Databases add a fourth tier **below** the deploy envs: **`local`** — the disposable miniflare D1 that
+`pnpm dev` binds (via `--env dev --local`), no real `database_id`. The three deploy envs use the real
+remote D1s. Full model + per-DB scripts → [`code/shared/db`](../../../shared/db/.claude/CLAUDE.md).
+
+| Tier                       | `db:migrate:<db>\|all:<tier>` runs                   | Backed up first?                                                                                      |
+| -------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `local`                    | `--env dev --local` (offline, no real `database_id`) | no — disposable                                                                                       |
+| `dev` · `staging` · `prod` | `--env <env> --remote`                               | **yes** — a pre-migration R2 snapshot; a failed snapshot ABORTS (fail-closed; `--no-backup` opts out) |
+
+Local flow: `pnpm db:migrate:all:local` → `pnpm dev` (no real ids needed). A prod `db:migrate` / `db:backup`
+confirms first (`⚠ … in PRODUCTION? [y/N]`, auto-skips under `CI` / `--yes`). Back up or migrate one DB by
+name (`db:migrate:core:<tier>`, `db:backup:audit:<tier>`, …) or the whole registry with `--all`.
 
 ## IaC (Terraform)
 

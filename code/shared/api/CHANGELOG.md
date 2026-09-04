@@ -5,6 +5,16 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Per-DB backup scripts for `core` + `audit`.** `db:backup:{core,audit}:{dev,staging,prod}`
+  (+ `:remote` R2-upload variants) mirror the existing `db:backup:content:*` / `db:backup:all:*`
+  pattern, so an operator can snapshot one D1 by name instead of only the whole registry via
+  `--all`. Matching `.vscode/tasks.json` entries added (`check:tasks` stays green). Closes the
+  last asymmetry the db-management plan left open. The local/dev/staging/prod tier-model table
+  now also lives in [`platform-deploy.md`](../../docs/shared/architecture/platform-deploy.md),
+  not only the `code/shared/db` brief.
+
 ### Fixed
 
 - **Clerk `user.deleted` now runs the full erasure engine, not a partial pseudonymize.**
