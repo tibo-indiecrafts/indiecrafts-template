@@ -5,6 +5,7 @@ import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Input } from "@indiecrafts/packages-web-ui/web/input";
 import { Label } from "@indiecrafts/packages-web-ui/web/label";
+import type { DeleteAccountCopy } from "../shared/account-copy";
 import {
   submitAccountErasure,
   type ErasureSelfResult,
@@ -12,19 +13,6 @@ import {
 
 export { submitAccountErasure } from "../shared/erasure-self";
 export type { ErasureSelfResult } from "../shared/erasure-self";
-
-export interface DeleteAccountCopy {
-  heading: string;
-  body: string;
-  emailLabel: string;
-  emailPlaceholder: string;
-  confirmButton: string;
-  pending: string;
-  success: string;
-  partial: string;
-  error: string;
-  mismatch: string;
-}
 
 export interface DeleteAccountSectionProps {
   copy: DeleteAccountCopy;

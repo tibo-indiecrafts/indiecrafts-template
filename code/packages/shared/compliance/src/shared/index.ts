@@ -64,3 +64,10 @@ export {
 export { submitAccountErasure, type ErasureSelfResult } from "./erasure-self";
 
 export { requestExport, type ExportResult } from "./export-self";
+
+export {
+  buildDeleteAccountCopy,
+  buildExportCopy,
+  type DeleteAccountCopy,
+  type ExportCopy,
+} from "./account-copy";

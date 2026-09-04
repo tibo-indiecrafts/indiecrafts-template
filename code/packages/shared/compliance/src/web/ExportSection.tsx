@@ -3,16 +3,8 @@
 import { useState } from "react";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import type { ExportCopy } from "../shared/account-copy";
 import { requestExport } from "../shared/export-self";
-
-export interface ExportCopy {
-  heading: string;
-  body: string;
-  button: string;
-  pending: string;
-  success: string;
-  error: string;
-}
 
 export interface ExportSectionProps {
   copy: ExportCopy;

@@ -14,9 +14,14 @@ export {
   submitAccountErasure,
 } from "./DeleteAccountSection";
 export type {
-  DeleteAccountCopy,
   DeleteAccountSectionProps,
   ErasureSelfResult,
 } from "./DeleteAccountSection";
 export { ExportSection } from "./ExportSection";
-export type { ExportCopy, ExportSectionProps } from "./ExportSection";
+export type { ExportSectionProps } from "./ExportSection";
+export {
+  buildDeleteAccountCopy,
+  buildExportCopy,
+  type DeleteAccountCopy,
+  type ExportCopy,
+} from "../shared/account-copy";

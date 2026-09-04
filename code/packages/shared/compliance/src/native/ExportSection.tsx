@@ -5,16 +5,8 @@ import {
   ThemedText,
   useColor,
 } from "@indiecrafts/packages-mobile-ui-native";
+import type { ExportCopy } from "../shared/account-copy";
 import { requestExport } from "../shared/export-self";
-
-export interface ExportCopy {
-  heading: string;
-  body: string;
-  button: string;
-  pending: string;
-  success: string;
-  error: string;
-}
 
 export interface ExportSectionProps {
   copy: ExportCopy;

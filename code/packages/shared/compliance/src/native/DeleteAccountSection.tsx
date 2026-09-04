@@ -5,23 +5,11 @@ import {
   ThemedText,
   useColor,
 } from "@indiecrafts/packages-mobile-ui-native";
+import type { DeleteAccountCopy } from "../shared/account-copy";
 import {
   submitAccountErasure,
   type ErasureSelfResult,
 } from "../shared/erasure-self";
-
-export interface DeleteAccountCopy {
-  heading: string;
-  body: string;
-  emailLabel: string;
-  emailPlaceholder: string;
-  confirmButton: string;
-  pending: string;
-  success: string;
-  partial: string;
-  error: string;
-  mismatch: string;
-}
 
 export interface DeleteAccountSectionProps {
   copy: DeleteAccountCopy;

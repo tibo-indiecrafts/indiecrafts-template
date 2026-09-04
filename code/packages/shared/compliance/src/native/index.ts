@@ -9,9 +9,12 @@ export { ConsentPreferences } from "./ConsentPreferences";
 export { LegalReacceptancePrompt } from "./LegalReacceptancePrompt";
 export { createNativeStore } from "./store";
 export { DeleteAccountSection } from "./DeleteAccountSection";
-export type {
-  DeleteAccountCopy,
-  DeleteAccountSectionProps,
-} from "./DeleteAccountSection";
+export type { DeleteAccountSectionProps } from "./DeleteAccountSection";
 export { ExportSection } from "./ExportSection";
-export type { ExportCopy, ExportSectionProps } from "./ExportSection";
+export type { ExportSectionProps } from "./ExportSection";
+export {
+  buildDeleteAccountCopy,
+  buildExportCopy,
+  type DeleteAccountCopy,
+  type ExportCopy,
+} from "../shared/account-copy";
