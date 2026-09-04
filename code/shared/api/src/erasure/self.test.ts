@@ -16,7 +16,7 @@ function testEnv(overrides: Partial<Env> = {}): Env {
   return {
     ...(env as unknown as Env),
     GDPR_FINGERPRINT_SALT: SALT,
-    // Present so the defaultAdapters secret preflight passes when the real
+    // Present so the buildErasureAdapters secret preflight passes when the real
     // build is used; the injected build ignores them (no real client made).
     CLERK_SECRET_KEY: "sk_test",
     SANITY_API_WRITE_TOKEN: "sk_sanity",
@@ -135,7 +135,7 @@ describe("handleErasureSelf", () => {
 
   it("returns 503 when CLERK_SECRET_KEY is unset (real adapters would need it)", async () => {
     const { authenticate } = mocks();
-    // No 4th arg → defaultAdapters; env missing CLERK_SECRET_KEY.
+    // No 4th arg → buildErasureAdapters; env missing CLERK_SECRET_KEY.
     const res = await handleErasureSelf(
       postJson({ email: EMAIL }),
       testEnv({ CLERK_SECRET_KEY: undefined }),

@@ -92,4 +92,39 @@ describe("handleClerkUserDeleted", () => {
     ).first();
     expect(request).toBeNull();
   });
+
+  it("scrubs email + name even when the salt is unset (no silent no-op)", async () => {
+    const prevSalt = (env as unknown as { GDPR_FINGERPRINT_SALT?: string })
+      .GDPR_FINGERPRINT_SALT;
+    (
+      env as unknown as { GDPR_FINGERPRINT_SALT?: string }
+    ).GDPR_FINGERPRINT_SALT = undefined;
+    try {
+      const USER = "user_nosalt";
+      await env.CORE_DB.prepare(
+        "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at) VALUES (?, ?, ?, NULL, ?)",
+      )
+        .bind(USER, "keep@x.com", "Real Name", new Date(0).toISOString())
+        .run();
+
+      await handleClerkUserDeleted(
+        env as never,
+        USER,
+        "2026-01-01T00:00:00.000Z",
+      );
+
+      const prof = await env.CORE_DB.prepare(
+        "SELECT email, full_name, anonymized FROM user_profiles WHERE user_id = ?",
+      )
+        .bind(USER)
+        .first<{ email: string; full_name: string; anonymized: number }>();
+      expect(prof?.anonymized).toBe(1); // scrubbed, NOT a silent no-op
+      expect(prof?.email).not.toBe("keep@x.com"); // email pseudonymized
+      expect(prof?.full_name).toBe("Deleted User");
+    } finally {
+      (
+        env as unknown as { GDPR_FINGERPRINT_SALT?: string }
+      ).GDPR_FINGERPRINT_SALT = prevSalt;
+    }
+  });
 });

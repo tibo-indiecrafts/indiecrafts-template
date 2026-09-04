@@ -21,7 +21,7 @@ export async function handleClerkUserDeleted(
   buildAdapters: (env: Env) => ErasureAdapter[] = (e) =>
     buildErasureAdapters(e, { includeClerk: false }),
 ): Promise<void> {
-  if (!env.CORE_DB || !env.DB || !env.GDPR_FINGERPRINT_SALT) return;
+  if (!env.CORE_DB) return;
 
   const profile = await env.CORE_DB.prepare(
     "SELECT email, email_fingerprint FROM user_profiles WHERE user_id = ?",
@@ -29,9 +29,10 @@ export async function handleClerkUserDeleted(
     .bind(userId)
     .first<{ email: string | null; email_fingerprint: string | null }>();
 
-  // No profile / no fingerprint → nothing to key the engine on. Fall back to the partial
-  // pseudonymize (the prior behavior) so a delete for an unsynced user still marks the row.
-  if (!profile?.email_fingerprint) {
+  // No profile, no fingerprint, or the engine's stores (DB/salt) are unavailable → fall
+  // back to the partial pseudonymize (the prior behavior, needs only CORE_DB) so a delete
+  // still scrubs email + name and returns 200.
+  if (!profile?.email_fingerprint || !env.DB || !env.GDPR_FINGERPRINT_SALT) {
     await env.CORE_DB.prepare(
       "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
     )

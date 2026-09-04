@@ -129,7 +129,7 @@ describe("POST /v1/erasure/confirm", () => {
     const fp = await seedProfile();
     const token = await seedRequest({ fp });
 
-    // No 4th `build` arg — this exercises the real `defaultAdapters` path, against
+    // No 4th `build` arg — this exercises the real `buildErasureAdapters` path, against
     // a testEnv() that has DB + salt but no Clerk/Sanity secrets.
     const res = await handleErasureConfirm(
       postForm({ token, email: EMAIL }),
