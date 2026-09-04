@@ -13,13 +13,13 @@ no next-intl or Clerk import inside. Mirrors the `./native` (RN) sibling.
 
 All copy is **passed in** — the component imports no app messages.
 
-| Prop            | Type                                | Notes                                                                                                                                                        |
-| --------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `copy`          | `DeleteAccountCopy`                 | Heading, body, field labels, button + all four result states.                                                                                                |
-| `apiUrl`        | `string`                            | Base URL of the erasure worker route.                                                                                                                        |
-| `getToken`      | `() => Promise<string \| null>`     | Resolves the bearer token for the request (Clerk session token in real surfaces).                                                                            |
-| `onDeleted`     | `() => void \| Promise<void>`       | Called after a `done` or `partial` result.                                                                                                                   |
-| `beforeConfirm` | `() => Promise<boolean>` (optional) | A seam that runs before the destructive call; returning `false` aborts. Surfaces wire Clerk step-up reverification here where the installed SDK supports it. |
+| Prop            | Type                                                       | Notes                                                                                                                                                                                                                                                                      |
+| --------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `copy`          | `DeleteAccountCopy`                                        | Heading, body, field labels, button + all four result states.                                                                                                                                                                                                              |
+| `apiUrl`        | `string`                                                   | Base URL of the erasure worker route.                                                                                                                                                                                                                                      |
+| `getToken`      | `() => Promise<string \| null>`                            | Resolves the bearer token for the request (Clerk session token in real surfaces).                                                                                                                                                                                          |
+| `onDeleted`     | `() => void \| Promise<void>`                              | Called after a `done` or `partial` result.                                                                                                                                                                                                                                 |
+| `submitErasure` | `(email: string) => Promise<ErasureSelfResult>` (optional) | Injected Clerk-aware submit. A surface wraps `rawErasureFetch` in `useReverification` (client step-up modal + auto-retry) and maps the outcome with `mapErasureResponse`; the brick stays `@clerk/*`-free. Omitted → the default `submitAccountErasure` path (no step-up). |
 
 ## Where it's used
 

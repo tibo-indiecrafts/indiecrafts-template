@@ -17,6 +17,11 @@ export type {
   DeleteAccountSectionProps,
   ErasureSelfResult,
 } from "./DeleteAccountSection";
+export {
+  rawErasureFetch,
+  mapErasureResponse,
+  type ErasureFetchOutcome,
+} from "../shared/erasure-self";
 export { ExportSection } from "./ExportSection";
 export type { ExportSectionProps } from "./ExportSection";
 export {

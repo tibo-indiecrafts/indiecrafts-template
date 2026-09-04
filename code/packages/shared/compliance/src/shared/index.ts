@@ -61,7 +61,13 @@ export {
   type ExportBundle,
 } from "./erasure";
 
-export { submitAccountErasure, type ErasureSelfResult } from "./erasure-self";
+export {
+  submitAccountErasure,
+  rawErasureFetch,
+  mapErasureResponse,
+  type ErasureSelfResult,
+  type ErasureFetchOutcome,
+} from "./erasure-self";
 
 export { requestExport, type ExportResult } from "./export-self";
 

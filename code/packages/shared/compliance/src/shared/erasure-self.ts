@@ -1,7 +1,68 @@
 export type ErasureSelfResult = "done" | "partial" | "mismatch" | "error";
 
 /**
- * Pure, testable: the one authenticated POST to the Slice-A erasure worker route.
+ * What one erasure POST resolves to for the mapper: a status carrier on any
+ * normal outcome, or Clerk's reverification hint body (`{ clerk_error: … }`)
+ * verbatim on a 403 so a `useReverification` wrapper in the surface can detect
+ * it and open the step-up modal. The brick never imports `@clerk/*` — it only
+ * passes the body through; the Clerk dependency lives in each surface panel.
+ */
+export type ErasureFetchOutcome = { status: number } | { clerk_error: unknown };
+
+/**
+ * The one authenticated POST to the Slice-A erasure worker route, wrappable by a
+ * surface's `useReverification`. It resolves the response into a plain value —
+ * NOT a `Response` — because Clerk's `useReverification` auto-`.json()`s a
+ * returned `Response` and drops its status; so this carries the status in
+ * `{ status }` on the normal path and returns the parsed body on a 403 so the
+ * hook can see the reverification hint and retry.
+ */
+export async function rawErasureFetch(input: {
+  apiUrl: string;
+  getToken: () => Promise<string | null>;
+  email: string;
+}): Promise<ErasureFetchOutcome> {
+  const token = await input.getToken();
+  const res = await fetch(`${input.apiUrl}/v1/erasure/self`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ email: input.email }),
+  });
+  // A 403 may carry Clerk's reverification hint. Hand the parsed body back so a
+  // `useReverification` wrapper opens the modal + auto-retries; a non-hint 403
+  // body has no `status`, so `mapErasureResponse` maps it to "error" as before.
+  if (res.status === 403) {
+    const body: unknown = await res.json().catch(() => null);
+    if (body !== null && typeof body === "object" && "clerk_error" in body) {
+      return body;
+    }
+    return { status: 403 };
+  }
+  return { status: res.status };
+}
+
+/**
+ * The status → `ErasureSelfResult` mapping, shared by the default
+ * `submitAccountErasure` path AND a surface panel that wraps `rawErasureFetch`
+ * in `useReverification`. One source of the mapping — do not duplicate it.
+ */
+export function mapErasureResponse(
+  outcome: ErasureFetchOutcome,
+): ErasureSelfResult {
+  if (!("status" in outcome)) return "error";
+  if (outcome.status === 200) return "done";
+  if (outcome.status === 207) return "partial"; // still erased; some stores need manual finish
+  if (outcome.status === 400) return "mismatch"; // typed email did not match the account
+  return "error";
+}
+
+/**
+ * Pure, testable: the default (no step-up) erasure submit. A surface that wants
+ * Clerk reverification injects its own submit built from `rawErasureFetch` +
+ * `mapErasureResponse` instead of calling this.
  */
 export async function submitAccountErasure(input: {
   apiUrl: string;
@@ -9,19 +70,7 @@ export async function submitAccountErasure(input: {
   email: string;
 }): Promise<ErasureSelfResult> {
   try {
-    const token = await input.getToken();
-    const res = await fetch(`${input.apiUrl}/v1/erasure/self`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        ...(token ? { authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({ email: input.email }),
-    });
-    if (res.status === 200) return "done";
-    if (res.status === 207) return "partial"; // still erased; some stores need manual finish
-    if (res.status === 400) return "mismatch"; // typed email did not match the account
-    return "error";
+    return mapErasureResponse(await rawErasureFetch(input));
   } catch {
     return "error";
   }

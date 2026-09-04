@@ -19,8 +19,13 @@ export interface DeleteAccountSectionProps {
   apiUrl: string;
   getToken: () => Promise<string | null>;
   onDeleted: () => void | Promise<void>;
-  /** Optional reverification seam (unused this slice) — return false to abort. */
-  beforeConfirm?: () => Promise<boolean>;
+  /**
+   * Optional Clerk-aware submit. A surface injects a fn that wraps the raw
+   * erasure fetch in `useReverification` (client step-up modal + auto-retry)
+   * and maps the outcome; the brick stays `@clerk/*`-free. Omitted → the
+   * default `submitAccountErasure` path (no step-up).
+   */
+  submitErasure?: (email: string) => Promise<ErasureSelfResult>;
 }
 
 type Status = "idle" | "pending" | ErasureSelfResult;
@@ -35,7 +40,7 @@ export function DeleteAccountSection({
   apiUrl,
   getToken,
   onDeleted,
-  beforeConfirm,
+  submitErasure,
 }: DeleteAccountSectionProps) {
   const uid = useId();
   const [email, setEmail] = useState("");
@@ -44,13 +49,18 @@ export function DeleteAccountSection({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim() || status === "pending") return;
-    if (beforeConfirm && !(await beforeConfirm())) return;
     setStatus("pending");
-    const result = await submitAccountErasure({
-      apiUrl,
-      getToken,
-      email: email.trim(),
-    });
+    // The section owns the safety net: a throwing injected submit (e.g. Clerk
+    // reverification cancelled) resolves to "error" instead of hanging on
+    // "pending". The default `submitAccountErasure` never throws.
+    let result: ErasureSelfResult;
+    try {
+      result = submitErasure
+        ? await submitErasure(email.trim())
+        : await submitAccountErasure({ apiUrl, getToken, email: email.trim() });
+    } catch {
+      result = "error";
+    }
     setStatus(result);
     if (result === "done" || result === "partial") await onDeleted();
   }

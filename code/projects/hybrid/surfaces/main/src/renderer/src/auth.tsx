@@ -7,6 +7,7 @@ import {
   SignIn,
   useSignIn,
   useAuth,
+  useReverification,
 } from "@clerk/clerk-react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
@@ -14,6 +15,8 @@ import {
   ExportSection,
   buildDeleteAccountCopy,
   buildExportCopy,
+  mapErasureResponse,
+  rawErasureFetch,
 } from "@indiecrafts/packages-shared-compliance/web";
 import { apiUrl, features } from "../../config";
 
@@ -67,6 +70,15 @@ export function AuthPanel() {
 function SignedInView() {
   const t = useIntl();
   const { signOut, getToken } = useAuth();
+  // Step-up wired: wrap the raw erasure fetch so the worker's Clerk
+  // reverification 403 (stale `fva`, Task 4) opens the modal and auto-retries.
+  const eraseWithReverification = useReverification((email: string) =>
+    rawErasureFetch({
+      apiUrl: apiUrl ?? "",
+      getToken: () => getToken(),
+      email,
+    }),
+  );
   const deleteCopy = buildDeleteAccountCopy((k) =>
     t.formatMessage({ id: `account.delete.${k}` }),
   );
@@ -89,11 +101,7 @@ function SignedInView() {
         />
       ) : null}
       {features.deleteAccount && apiUrl ? (
-        // @debt SECURITY - No beforeConfirm here. Clerk's useReverification only triggers on
-        // a `session_reverification_required` error from the wrapped call. The erasure worker
-        // doesn't emit that error, so wrapping it would resolve immediately without real re-auth.
-        // Real step-up needs the worker to declare Clerk reverification, then wrap that fetch in
-        // useReverification. The server-side JWT + typed-email match is the current protection.
+        // Step-up wired: client reverification modal (below) + server `fva` (Task 4).
         <DeleteAccountSection
           copy={deleteCopy}
           apiUrl={apiUrl ?? ""}
@@ -101,6 +109,9 @@ function SignedInView() {
           onDeleted={async () => {
             await signOut();
           }}
+          submitErasure={async (email) =>
+            mapErasureResponse(await eraseWithReverification(email))
+          }
         />
       ) : null}
     </div>
