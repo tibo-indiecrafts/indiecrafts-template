@@ -22,6 +22,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **Documented the Clerk step-up limitation on `app/account.tsx`'s delete control.** The
+  erasure worker (`self.ts`) now enforces a server-side Clerk `fva` step-up for every
+  surface, rejecting a stale first factor with a 403. `@clerk/clerk-expo` exports no
+  `useReverification` hook (unlike `clerk-react`/`clerk-nextjs`), so this screen cannot
+  show an inline reauth modal on that rejection — the remedy is signing out and back in,
+  which refreshes `fva`. Comment-only; no behavior change.
 - **`sign-in.tsx`'s signed-in view no longer hosts delete/export.** `DeleteAccountSection` and
   `ExportSection` moved to the new `/account` screen; `sign-in.tsx` now links there instead.
 

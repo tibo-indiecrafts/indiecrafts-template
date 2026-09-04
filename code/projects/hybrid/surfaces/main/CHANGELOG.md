@@ -11,6 +11,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Self-service account delete now triggers Clerk step-up reverification.**
+  `auth.tsx`'s `SignedInView` wraps the erasure fetch (`rawErasureFetch`) in
+  Clerk's `useReverification`, so a stale first factor (the worker's `fva`
+  gate, >10 minutes) opens the reverification modal and auto-retries on
+  success. The post-reverification retry mints its token with
+  `{ skipCache: true }`: a cached (~60s) token still carries the stale `fva`
+  and would re-trip the server gate, silently defeating the step-up.
+
 ### Fixed
 
 - **Config-first cleanup — storage keys + window titles now read from config (audit 2026-09-04)

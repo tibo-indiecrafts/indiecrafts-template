@@ -24,6 +24,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-shared-compliance` — `DeleteAccountSection` gains an injected
+  `submitErasure` seam.** `erasure-self.ts` splits into `rawErasureFetch` (resolves to a
+  plain status carrier, never a collapsed `Response`, so a caller's `useReverification`
+  wrap can still detect Clerk's 403 hint) and `mapErasureResponse` (the one
+  status→result mapping, reused by the default path). The web section takes an optional
+  `submitErasure` prop so a surface can wrap the raw fetch with Clerk `useReverification`
+  for step-up, while the brick itself stays `@clerk/*`-free — the Clerk dependency lives
+  in each surface's panel, not the shared brick. A try/catch guards a throwing injected
+  submit from hanging the UI on `pending`.
 - **`@indiecrafts/packages-shared-ui-fonts` — exports its font files (`./fonts/*`).** The package's
   `exports` map now exposes `./fonts/*` alongside `.` (the `FONT_FILES` metadata). **Why:** a bundler
   that resolves via the `exports` field (Vite — the hybrid Electron renderer's `@font-face`

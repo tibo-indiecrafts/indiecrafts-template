@@ -14,6 +14,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Self-service account delete now triggers Clerk step-up reverification.**
+  `AccountDeletePanel` wraps the erasure fetch (`rawErasureFetch`) in Clerk's
+  `useReverification`, so a stale first factor (the worker's `fva` gate, >10
+  minutes) opens the reverification modal and auto-retries on success. The
+  post-reverification retry mints its token with `{ skipCache: true }`: a
+  cached (~60s) token still carries the stale `fva` and would re-trip the
+  server gate, silently defeating the step-up.
 - **Consent/legal confirmation toast.** `<Toaster>` moved from `AppShell` to `[locale]/layout.tsx`
   so it covers every page, including `sign-in` outside the `(app)` group. `ConsentGate` and
   `LegalGate` (`ShellOverlays.tsx`) fire `showConsentSavedToast` on an explicit consent choice

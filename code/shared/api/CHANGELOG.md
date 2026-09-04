@@ -5,6 +5,42 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Clerk `user.deleted` now runs the full erasure engine, not a partial pseudonymize.**
+  `handleClerkUserDeleted` (`src/erasure/clerk-deleted.ts`) reads the stored email +
+  fingerprint before the profile is pseudonymized, then runs `runErasure` with
+  `buildErasureAdapters(env, { includeClerk: false })` (the user is already gone in
+  Clerk) — so `session_events`, `security_events`, and Sanity docs are erased too, not
+  just `user_profiles`. Writes an `erasure_requests` proof row + an `admin_audit`
+  `erasure.clerk_deleted` row, mirroring `self.ts`. Falls back to the prior partial
+  update when there is no profile/fingerprint to key the engine on.
+
+### Changed
+
+- **One `buildErasureAdapters(env, { includeClerk? })` factory replaces three duplicated
+  adapter-assembly copies (`confirm.ts`, `self.ts`, `export/route.ts`).** `clerk` is
+  included only when `includeClerk !== false` and the secret is set (the webhook path
+  passes `includeClerk: false`); `sanity` is included only when all three of its secrets
+  are present. Each caller's preflight still 503s before construction when a required
+  secret is missing, so the assembled set is unchanged for every existing route.
+- **Distinct-per-env `GDPR_FINGERPRINT_SALT` guidance.** The salt feeds
+  `fingerprintEmail(email, salt)` — an identical salt across `dev`/`staging`/`prod` would
+  make a lower-trust dev environment a correlation vector to de-pseudonymize prod
+  identities. Guidance now calls for an independently-generated salt per env, stable
+  within that env (rotating a live salt orphans every existing fingerprint lookup).
+
+### Added
+
+- **`POST /v1/erasure/self` enforces Clerk `fva` step-up (10-minute window).** A signed-in
+  caller's session JWT alone let a raw API call erase an account with no recent factor
+  reverification. The route now reads the Clerk `fva` claim and, when the first factor
+  was verified more than 10 minutes ago (or `fva` is absent/not-applicable), returns
+  Clerk's reverification-error response before the erasure engine runs.
+- **`/v1` auth-contract test** — a table-driven test asserts every bearer/JWT-gated
+  mutating `/v1` route rejects an anonymous request, closing the gap where `POST
+/v1/events` had an auth gate but no anon-rejection test.
+
 ### Added
 
 - **Cloudflare Terraform for every eligible surface (`code/**/infra/cloudflare`, `scripts/lib/infra-registry.mjs`).**
@@ -31,11 +67,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   (non-destructive). **Why:** a seller must wipe the demo instance before handing over the repo; deriving
   the list keeps it correct after any client rename. **Logged once here for the whole instance.**
 - **Deploy now syncs secrets from `.dev.vars` after `wrangler deploy` (`shared/scripts/deploy/worker.mjs`
-  + `next.mjs`).** Like wahio's `deploy-full`, every `deploy:<app>:<env>` runs the secrets step
-  (`data/secrets.mjs --soft`) once the Worker exists — `--soft` no-ops when there is nothing to sync, so
-  an app with no `.dev.vars` (admin/app today) never fails the deploy. `--skip-secrets` opts out.
-  **Why:** one command deploys code AND pushes secrets; no separate `secrets:sync` step to forget.
-  **Logged once here for every worker + next-cf surface.**
+  - `next.mjs`).** Like wahio's `deploy-full`, every `deploy:<app>:<env>` runs the secrets step
+    (`data/secrets.mjs --soft`) once the Worker exists — `--soft` no-ops when there is nothing to sync, so
+    an app with no `.dev.vars` (admin/app today) never fails the deploy. `--skip-secrets` opts out.
+    **Why:** one command deploys code AND pushes secrets; no separate `secrets:sync` step to forget.
+    **Logged once here for every worker + next-cf surface.**
 - **`secrets:sync:api:<env>` — bulk-push secrets from `.dev.vars` (`shared/scripts/data/secrets.mjs`).**
   A shared, registry-driven runner (the worker twin of the website's `sync-secrets`): reads the Worker's
   `.dev.vars`, drops comments / blanks / `NEXT_PUBLIC_*` / placeholders, and `wrangler secret bulk`s the

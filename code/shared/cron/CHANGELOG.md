@@ -7,6 +7,12 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- **Retention purge integration tests for `admin_audit`, `session_events`,
+  `security_events`, and `consent_events`.** Seeded-row tests confirm the 90-day purge
+  (on `ts`, `DB`) and the 3-year `consent_events` purge (on `ts`, `CORE_DB`) delete rows
+  past their cutoff and keep fresh ones, mirroring the existing `csp_reports`/
+  `data_requests` test pattern. These four tables were documented as purged but had no
+  test coverage.
 - **Retention + SLA windows now read from `site_settings`, not hard-coded constants.** The
   scheduled handler's 90-day/3-year retention purge and the erasure-SLA flag now call a new
   `loadSettings()` (`@indiecrafts/packages-shared-config`'s `effectiveSettings`) to load

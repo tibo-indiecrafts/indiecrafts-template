@@ -19,6 +19,14 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Self-service account delete now triggers Clerk step-up reverification.**
+  `AccountDeletePanel` wraps the erasure fetch (`rawErasureFetch`) in Clerk's
+  `useReverification`, so a stale first factor (the worker's `fva` gate, >10
+  minutes) opens the reverification modal and auto-retries on success — a raw
+  API call can no longer erase an account without a fresh factor. The
+  post-reverification retry mints its token with `{ skipCache: true }`: a
+  cached (~60s) token still carries the stale `fva` and would re-trip the
+  server gate, silently defeating the step-up.
 - **`pnpm check:typed-routing` — CI-enforces the typed-routing NEVER across every Next surface
   (`code/shared/scripts/checks/typed-routing.mjs`, in `verify` + CI).** The `website` bans direct
   `next/link` / `next-intl/navigation` imports via ESLint (`no-restricted-imports`), but the `admin` /
