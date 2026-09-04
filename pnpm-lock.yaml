@@ -348,9 +348,6 @@ importers:
 
   code/packages/shared/system-pages:
     dependencies:
-      '@indiecrafts/packages-mobile-ui-native':
-        specifier: workspace:*
-        version: link:../../mobile/ui-native
       '@indiecrafts/packages-shared-ui-tokens':
         specifier: workspace:*
         version: link:../ui-tokens

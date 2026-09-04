@@ -14,8 +14,7 @@
   },
   "dependencies": {
     "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
-    "@indiecrafts/packages-web-ui": "workspace:*",
-    "@indiecrafts/packages-mobile-ui-native": "workspace:*"
+    "@indiecrafts/packages-web-ui": "workspace:*"
   },
   "peerDependencies": {
     "next": "16.3.4",

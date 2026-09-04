@@ -1,5 +1,5 @@
-import { View, StyleSheet, Platform, StatusBar } from "react-native";
-import { ThemedText, useTheme } from "@indiecrafts/packages-mobile-ui-native";
+import { View, Text, StyleSheet, Platform, StatusBar } from "react-native";
+import { useColors } from "./theme";
 
 // Rough status-bar inset (Android exposes it; iOS ~47 on notched devices).
 const TOP_INSET =
@@ -8,8 +8,9 @@ const TOP_INSET =
 /**
  * A non-blocking top strip shown while `online` is false; renders nothing otherwise.
  * Copy (`message`) and connectivity (`online`) are injected — the app owns detection
- * (netinfo) so the brick stays free of a single-consumer native dep.
- * `accessibilityLiveRegion` announces the change to TalkBack without stealing focus.
+ * (netinfo) so the brick stays free of a single-consumer native dep. Themed via the
+ * brick's shared tokens (`useColors`), matching OfflineContent. `accessibilityLiveRegion`
+ * announces the change to TalkBack without stealing focus.
  */
 export function OfflineBanner({
   message,
@@ -18,26 +19,25 @@ export function OfflineBanner({
   message: string;
   online: boolean;
 }) {
-  const { theme } = useTheme();
+  const c = useColors();
   if (online) return null;
   return (
     <View
       accessibilityLiveRegion="polite"
       style={[
         styles.strip,
-        { paddingTop: TOP_INSET + 8, backgroundColor: theme.color.secondary },
+        { paddingTop: TOP_INSET + 8, backgroundColor: c.secondary },
       ]}
     >
-      <ThemedText
-        variant="muted"
+      <Text
         style={{
-          color: theme.color["secondary-foreground"],
+          color: c["secondary-foreground"],
           textAlign: "center",
           fontSize: 13,
         }}
       >
         {message}
-      </ThemedText>
+      </Text>
     </View>
   );
 }
