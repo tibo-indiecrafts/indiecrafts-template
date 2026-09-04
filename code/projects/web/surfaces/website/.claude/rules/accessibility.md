@@ -14,7 +14,7 @@ Load when building or reviewing any UI. `jsx-a11y` rules are eslint errors.
 
 **Interaction**
 
-- Every interactive element has a visible `focus-visible:ring-2 ring-ring`.
+- Every interactive element has a visible focus ring. **App-authored** controls use `focus-visible:ring-2 ring-ring` (the design intent). The shadcn **primitives** (`@indiecrafts/packages-web-ui` — CLI-managed, never hand-edit) ship the current shadcn CLI default `focus-visible:ring-[3px] ring-ring/50` instead. Both are AA-visible; to unify on `ring-2`, override the ring in the shadcn theme / `components.json` and re-run the CLI — do NOT hand-edit the primitives.
 - Never signal state by color alone — pair with text/icon/shape.
 - Use the Radix primitive for dialogs/menus/tabs/tooltips (focus trap, Escape, return-focus) — don't hand-roll.
 - Touch targets ≥ 40px; hover-only affordances are `sm:`-gated.

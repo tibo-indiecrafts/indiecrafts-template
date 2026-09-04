@@ -23,7 +23,7 @@ export default async function CategoryIndexPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [categories, t, nav, copy] = await Promise.all([
+  const [categories, t, nav, copy, subnav] = await Promise.all([
     sanityFetchLive<Category[]>({
       query: categoriesForLocaleQuery,
       params: { locale },
@@ -31,12 +31,13 @@ export default async function CategoryIndexPage({ params }: Props) {
     getTranslations("pages.category"),
     getTranslations("nav"),
     getTaxonomyPages(locale),
+    getCategoryNav(locale),
   ]);
   // Editable in Sanity (`siteMeta.<locale>.taxonomyPages.category`), else messages.
   const c = copy.category;
 
   return (
-    <DefaultLayout subnav={await getCategoryNav(locale)}>
+    <DefaultLayout subnav={subnav}>
       <PageSchemas page={pages.category} locale={locale} />
       <CategoryListing
         categories={categories}

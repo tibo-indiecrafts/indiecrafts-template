@@ -56,10 +56,16 @@ export async function DefaultLayout({
   // into the default Header/Footer so `Logo` stays a presentational component
   // renderable inside the client Header.
   const locale = (await getLocale()) as Locale;
-  const [settings, nav, siteSeo] = await Promise.all([
+  // Layout data + top-of-main chrome (announcement bar + language suggestion) in one
+  // batch — all keyed on `locale`, none feeds another. The chrome bits are decided
+  // server-side (cookie + Accept-Language) so they never flash.
+  const [settings, nav, siteSeo, announcement, toast, suggestCopy] = await Promise.all([
     getSiteSettings(),
     getNavigation(locale),
     getSiteSeo(locale),
+    getAnnouncement(locale, "website"),
+    getAnnouncementToast(locale, "website"),
+    getLocaleSuggest(locale),
   ]);
   const { brand, social, business } = settings;
   const name = settings.siteName || DEFAULT_SITE_NAME;
@@ -69,13 +75,6 @@ export async function DefaultLayout({
   const showLocaleSwitcher =
     features.localeSwitcher && settings.showLocaleSwitcher !== false;
 
-  // Top-of-main chrome (announcement bar + language suggestion) — both decided
-  // server-side (cookie + Accept-Language) so they never flash.
-  const [announcement, toast, suggestCopy] = await Promise.all([
-    getAnnouncement(locale, "website"),
-    getAnnouncementToast(locale, "website"),
-    getLocaleSuggest(locale),
-  ]);
   const jar = await cookies();
   // Geo-resolve the consent mode the same way `[locale]/layout.tsx` does, so the
   // footer's CCPA "Do Not Sell" link is gated to opt-out (US/CCPA) visitors with no

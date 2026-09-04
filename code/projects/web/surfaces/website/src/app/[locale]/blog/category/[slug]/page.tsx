@@ -77,7 +77,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
   const { start, end } = pageRange(page);
   setRequestLocale(locale);
 
-  const [category, posts, total, t, catT, nav, pagerT] = await Promise.all([
+  const [category, posts, total, t, catT, nav, pagerT, subnav] = await Promise.all([
     sanityFetchLive<Category | null>({
       query: categoryBySlugQuery,
       params: { slug, locale },
@@ -94,6 +94,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
     getTranslations("pages.category"),
     getTranslations("nav"),
     getTranslations("pages.blog.pagination"),
+    getCategoryNav(locale),
   ]);
   if (!category) notFound();
 
@@ -110,7 +111,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
   ];
 
   return (
-    <DefaultLayout subnav={await getCategoryNav(locale)}>
+    <DefaultLayout subnav={subnav}>
       <PageSchemas
         page={{
           ...pages.category,

@@ -44,9 +44,10 @@ export default async function BlogSearchPage({ params, searchParams }: Props) {
   const rawQ = (await searchParams).q;
   const q = (Array.isArray(rawQ) ? (rawQ[0] ?? "") : (rawQ ?? "")).trim();
 
-  const [t, nav] = await Promise.all([
+  const [t, nav, subnav] = await Promise.all([
     getTranslations("pages.blog.search"),
     getTranslations("nav"),
+    getCategoryNav(locale),
   ]);
 
   const results = q
@@ -58,7 +59,7 @@ export default async function BlogSearchPage({ params, searchParams }: Props) {
     : [];
 
   return (
-    <DefaultLayout subnav={await getCategoryNav(locale)}>
+    <DefaultLayout subnav={subnav}>
       <section
         aria-labelledby="blog-search-title"
         className="pt-6 pb-12 md:pt-8 md:pb-16"

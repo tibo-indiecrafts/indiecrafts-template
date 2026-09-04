@@ -26,6 +26,8 @@
   },
   "nav": {
     "home": "Accueil",
+    "openMenu": "Ouvrir le menu",
+    "menu": "Menu",
     "signIn": "Se connecter",
     "about": "À propos",
     "blog": "Blog",

@@ -23,16 +23,17 @@ export default async function TagIndexPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [tags, t, nav, copy] = await Promise.all([
+  const [tags, t, nav, copy, subnav] = await Promise.all([
     sanityFetchLive<Tag[]>({ query: tagsForLocaleQuery, params: { locale } }),
     getTranslations("pages.tag"),
     getTranslations("nav"),
     getTaxonomyPages(locale),
+    getCategoryNav(locale),
   ]);
   const c = copy.tag;
 
   return (
-    <DefaultLayout subnav={await getCategoryNav(locale)}>
+    <DefaultLayout subnav={subnav}>
       <PageSchemas page={pages.tag} locale={locale} />
       <TagListing
         tags={tags}

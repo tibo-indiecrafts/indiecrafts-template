@@ -71,7 +71,7 @@ export default async function BlogPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [blog, posts, authors, categories, tags, t, display] = await Promise.all([
+  const [blog, posts, authors, categories, tags, t, display, subnav] = await Promise.all([
     sanityFetchLive<BlogSingleton | null>({ query: blogSingletonQuery, params: {} }),
     sanityFetchLive<PostListItem[]>({ query: allPostsQuery, params: { locale } }),
     features.blogTaxonomy.authors
@@ -88,6 +88,7 @@ export default async function BlogPage({ params }: Props) {
       : Promise.resolve<Tag[]>([]),
     getTranslations("pages.blog"),
     getBlogSettings(),
+    getCategoryNav(locale),
   ]);
 
   if (blog?.seo?.unpublished) notFound();
@@ -97,7 +98,7 @@ export default async function BlogPage({ params }: Props) {
   const frontpageModules = blog?.frontpageModules ?? [];
 
   return (
-    <DefaultLayout subnav={await getCategoryNav(locale)}>
+    <DefaultLayout subnav={subnav}>
       <PageSchemas page={pages.blog} locale={locale} />
       {pickFrontpage(frontpageModules) === "modules" ? (
         <Modules modules={frontpageModules} context={{ locale }} />

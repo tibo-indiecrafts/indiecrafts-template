@@ -2,7 +2,12 @@ import Image from "next/image";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { sanityImageLoader } from "@indiecrafts/packages-web-sanity/image";
 
-type LogoImgProps = { src: string; alt: string; className?: string };
+type LogoImgProps = {
+  src: string;
+  alt: string;
+  className?: string;
+  priority?: boolean;
+};
 
 /**
  * A single logo image. `unoptimized` because editor-uploaded logos are often
@@ -12,7 +17,7 @@ type LogoImgProps = { src: string; alt: string; className?: string };
  * Raster logos still get CDN-sized here (2× the ~96px slot for retina); the
  * loader leaves SVG untouched, so the `unoptimized` SVG path is preserved.
  */
-function LogoImg({ src, alt, className }: LogoImgProps) {
+function LogoImg({ src, alt, className, priority = true }: LogoImgProps) {
   return (
     <Image
       src={sanityImageLoader({ src, width: 192, quality: 90 })}
@@ -20,7 +25,7 @@ function LogoImg({ src, alt, className }: LogoImgProps) {
       width={96}
       height={24}
       unoptimized
-      priority
+      priority={priority}
       className={cn("h-6 w-auto object-contain", className)}
     />
   );
@@ -58,9 +63,11 @@ export function Logo({ name, logo, logoDark, className, iconClassName }: LogoPro
               alt={name}
               className={cn("block dark:hidden", iconClassName)}
             />
+            {/* Not `priority`: the dark logo preloads only when dark mode is active. */}
             <LogoImg
               src={logoDark}
               alt={name}
+              priority={false}
               className={cn("hidden dark:block", iconClassName)}
             />
           </>

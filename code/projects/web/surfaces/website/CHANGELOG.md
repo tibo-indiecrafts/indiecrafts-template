@@ -26,10 +26,18 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
-- **en/fr message key parity is now unit-guarded (`src/i18n/messages-parity.test.ts`).** Parity was only
-  enforced by the build (prerender × locale + next-intl strict resolution). A fast test now asserts
-  `messages/en.json` + `fr.json` expose identical key paths, so drift fails in `pnpm test` before a build.
-  Adding a locale = add its file to the test.
+- **§09 quality pass — a11y + perf fixes (audit 2026-09-04).** **a11y:** the two erasure `<section>`s
+  (`ErasureConfirmForm`/`ErasureRequestForm`) got `aria-labelledby` wired to their `<h2>` (the template's
+  own structural rule); `/maintenance` layout now sets `dir={localeDir(locale)}` (was `lang` only — latent
+  RTL gap); the header's `ThemeToggle`/`LocaleSwitcher` icon buttons use `size="icon-lg"` (40px, was 36px,
+  below the touch floor); the header gained a `<lg` **mobile nav drawer** (Radix `Sheet`) — the Sanity-driven,
+  uncapped nav previously overflowed 375px with no way to reach the rest (1.4.10 reflow risk). Documented the
+  focus-ring reality in `accessibility.md` + `DESIGN.md`: app-authored controls use `ring-2 ring-ring`, the
+  CLI-managed shadcn primitives ship the CLI default `ring-[3px] ring-ring/50` — reconcile via
+  `components.json`, never hand-edit primitives. **perf:** `DefaultLayout` now runs one `Promise.all` of 6
+  (was two back-to-back — an extra round trip on every page); the `getCategoryNav` subnav is folded into each
+  blog-family page's own `Promise.all` (10 routes — was `await`ed as a JSX prop, serializing a round trip);
+  `Logo` only marks the light variant `priority` so the dark logo no longer double-preloads.
 - **Corrected the Cloudflare bot guidance in `infra/cloudflare/main.tf` — don't blanket-block AI bots.**
   The Bot-Fight comment advised turning on Cloudflare's "Block AI Bots", which is too broad: it blocks the
   search + user-fetch agents you WANT (Googlebot/AI Overviews, OAI-SearchBot, ChatGPT-User, Claude-User,

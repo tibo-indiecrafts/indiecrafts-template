@@ -24,16 +24,17 @@ export default async function AuthorIndexPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [authors, t, nav, copy] = await Promise.all([
+  const [authors, t, nav, copy, subnav] = await Promise.all([
     sanityFetchLive<Author[]>({ query: authorsForLocaleQuery, params: { locale } }),
     getTranslations("pages.author"),
     getTranslations("nav"),
     getTaxonomyPages(locale),
+    getCategoryNav(locale),
   ]);
   const c = copy.author;
 
   return (
-    <DefaultLayout subnav={await getCategoryNav(locale)}>
+    <DefaultLayout subnav={subnav}>
       <PageSchemas page={pages.author} locale={locale} />
       <AuthorListing
         authors={authors}

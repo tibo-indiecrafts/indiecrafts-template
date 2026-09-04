@@ -1,4 +1,5 @@
 import "@indiecrafts/packages-shared-ui-tokens/globals.css";
+import { localeDir } from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
 import { maintenanceLocale } from "./locale";
 
@@ -16,6 +17,7 @@ export default async function MaintenanceLayout({
   return (
     <html
       lang={locale}
+      dir={localeDir(locale)}
       className={`${fontClassName} antialiased`}
       style={{ colorScheme: "light dark", ...fontStyle }}
       suppressHydrationWarning

@@ -66,9 +66,15 @@ export function ErasureRequestForm({ copy }: { copy: ErasureRequestCopy }) {
           : null;
 
   return (
-    <section className="not-prose my-8 md:my-12">
+    <section
+      aria-labelledby="erasure-request-heading"
+      className="not-prose my-8 md:my-12"
+    >
       <div className="bg-card mx-auto max-w-xl rounded-2xl border p-8 md:p-10">
-        <h2 className="text-foreground font-sans text-xl font-semibold text-balance md:text-2xl">
+        <h2
+          id="erasure-request-heading"
+          className="text-foreground font-sans text-xl font-semibold text-balance md:text-2xl"
+        >
           {copy.heading}
         </h2>
         <p className="text-muted-foreground mt-2 text-pretty">{copy.body}</p>

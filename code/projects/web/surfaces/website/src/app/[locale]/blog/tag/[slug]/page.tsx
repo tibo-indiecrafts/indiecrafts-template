@@ -75,7 +75,7 @@ export default async function TagDetailPage({ params, searchParams }: Props) {
   const { start, end } = pageRange(page);
   setRequestLocale(locale);
 
-  const [tag, posts, total, t, nav, pagerT] = await Promise.all([
+  const [tag, posts, total, t, nav, pagerT, subnav] = await Promise.all([
     sanityFetchLive<Tag | null>({
       query: tagBySlugQuery,
       params: { slug, locale },
@@ -88,6 +88,7 @@ export default async function TagDetailPage({ params, searchParams }: Props) {
     getTranslations("pages.tag"),
     getTranslations("nav"),
     getTranslations("pages.blog.pagination"),
+    getCategoryNav(locale),
   ]);
   if (!tag) notFound();
 
@@ -101,7 +102,7 @@ export default async function TagDetailPage({ params, searchParams }: Props) {
   ];
 
   return (
-    <DefaultLayout subnav={await getCategoryNav(locale)}>
+    <DefaultLayout subnav={subnav}>
       <PageSchemas
         page={{
           ...pages.tag,

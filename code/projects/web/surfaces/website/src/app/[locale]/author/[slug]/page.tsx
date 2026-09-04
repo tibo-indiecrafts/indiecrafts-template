@@ -85,7 +85,7 @@ export default async function AuthorDetailPage({ params, searchParams }: Props) 
   const { start, end } = pageRange(page);
   setRequestLocale(locale);
 
-  const [author, posts, total, t, nav, pagerT] = await Promise.all([
+  const [author, posts, total, t, nav, pagerT, subnav] = await Promise.all([
     sanityFetchLive<Author | null>({
       query: authorBySlugQuery,
       params: { slug, locale },
@@ -98,6 +98,7 @@ export default async function AuthorDetailPage({ params, searchParams }: Props) 
     getTranslations("pages.author"),
     getTranslations("nav"),
     getTranslations("pages.blog.pagination"),
+    getCategoryNav(locale),
   ]);
   if (!author) notFound();
 
@@ -109,7 +110,7 @@ export default async function AuthorDetailPage({ params, searchParams }: Props) 
   ];
 
   return (
-    <DefaultLayout subnav={await getCategoryNav(locale)}>
+    <DefaultLayout subnav={subnav}>
       <PageSchemas
         page={{
           ...pages.author,

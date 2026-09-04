@@ -103,7 +103,7 @@ export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const [post, blog, display, nav, settings] = await Promise.all([
+  const [post, blog, display, nav, settings, subnav] = await Promise.all([
     sanityFetchLive<Post | null>({ query: postBySlugQuery, params: { slug, locale } }),
     sanityFetchLive<BlogSingleton | null>({
       query: blogSingletonQuery,
@@ -112,6 +112,7 @@ export default async function BlogPostPage({ params }: Props) {
     getBlogSettings(),
     getTranslations("nav"),
     getSiteSettings(),
+    getCategoryNav(locale),
   ]);
   if (!post) notFound();
 
@@ -163,7 +164,7 @@ export default async function BlogPostPage({ params }: Props) {
   ];
 
   return (
-    <DefaultLayout subnav={await getCategoryNav(locale)}>
+    <DefaultLayout subnav={subnav}>
       <PageSchemas
         page={{
           ...pages.blog,

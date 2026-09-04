@@ -124,7 +124,7 @@ components:
     rounded: "{rounded.md}"
   focus-ring:
     textColor: "{colors.ring}"
-    width: 2px # focus-visible:ring-2 ring-ring
+    width: 2px # app-authored controls: focus-visible:ring-2 ring-ring. The shadcn primitives (CLI-managed) ship the CLI default focus-visible:ring-[3px] ring-ring/50 — reconcile via components.json, never hand-edit the primitives.
 ---
 
 # Indiecrafts — Design System
