@@ -113,7 +113,9 @@ async function defaultAuthenticate(
       u.emailAddresses?.[0]?.emailAddress ??
       null;
     if (!email) return null;
-    return { userId, email };
+    // Export has no step-up requirement (unlike erasure/self.ts) — fvaMinutes is
+    // carried only to satisfy the shared SelfAuth type.
+    return { userId, email, fvaMinutes: null };
   } catch {
     return null; // any verify/resolve failure → unauthenticated (fail closed)
   }

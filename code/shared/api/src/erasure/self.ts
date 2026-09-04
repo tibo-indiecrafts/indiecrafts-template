@@ -12,14 +12,23 @@ import {
   runErasure,
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
+import { reverificationError } from "@clerk/backend/internal";
 import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
 import { buildErasureAdapters } from "./adapters";
 import { createRealClerkClient } from "./clerk-client";
 import { sendErasureCompleteEmail } from "./email";
 
 const BODY_MAX = 4000;
+// Clerk's own step-up window (see `factor1FreshEnough` in
+// @clerk/shared/authorization.js): a first factor verified longer ago than this
+// (or not applicable, fva === -1) requires reverification.
+const REVERIFY_WINDOW_MIN = 10;
 
-export type SelfAuth = { userId: string; email: string };
+export type SelfAuth = {
+  userId: string;
+  email: string;
+  fvaMinutes: number | null;
+};
 
 function json(
   body: unknown,
@@ -58,10 +67,18 @@ async function defaultAuthenticate(
     });
     if (errors || !claims) return null;
     // The installed @clerk/backend@3.16.7 types resolve `data`/`errors` to `unknown`
-    // (not a typed JwtPayload) — cast to read the `sub` claim.
-    const payload = claims as { sub?: unknown };
+    // (not a typed JwtPayload) — cast to read the `sub`/`fva` claims.
+    const payload = claims as { sub?: unknown; fva?: unknown };
     const userId = typeof payload.sub === "string" ? payload.sub : null;
     if (!userId) return null;
+    // fva = [firstFactorAgeMinutes, secondFactorAgeMinutes] | undefined; -1 = not
+    // applicable. Runtime-validate before trusting it (never trust an uncast claim).
+    const isValidFactorAge = (x: unknown): x is number =>
+      typeof x === "number" && Number.isFinite(x) && (x === -1 || x >= 0);
+    const fvaMinutes =
+      Array.isArray(payload.fva) && isValidFactorAge(payload.fva[0])
+        ? payload.fva[0]
+        : null;
     // Resolve the primary email from Clerk (the JWT omits it by default).
     const user = await createRealClerkClient(env.CLERK_SECRET_KEY).exportUser(
       userId,
@@ -76,7 +93,7 @@ async function defaultAuthenticate(
       u.emailAddresses?.[0]?.emailAddress ??
       null;
     if (!email) return null;
-    return { userId, email };
+    return { userId, email, fvaMinutes };
   } catch {
     return null; // any verify/resolve failure → unauthenticated (fail closed)
   }
@@ -134,6 +151,24 @@ export async function handleErasureSelf(
 
   const authed = await authenticate(request, env);
   if (!authed) return json({ error: "unauthorized" }, 401, PUBLIC_CORS_POST);
+
+  // Step-up gate: a session whose first factor was verified too long ago (or
+  // fva is absent/not-applicable) must reverify before the engine runs — a raw
+  // API call cannot bypass step-up. useReverification on the client (Task 5)
+  // reacts to this exact response shape.
+  if (
+    authed.fvaMinutes === null ||
+    authed.fvaMinutes < 0 ||
+    authed.fvaMinutes > REVERIFY_WINDOW_MIN
+  )
+    return json(
+      reverificationError({
+        level: "first_factor",
+        afterMinutes: REVERIFY_WINDOW_MIN,
+      }),
+      403,
+      PUBLIC_CORS_POST,
+    );
 
   let typedEmail = "";
   try {

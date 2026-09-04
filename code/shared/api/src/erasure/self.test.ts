@@ -49,9 +49,14 @@ async function seedProfile(): Promise<string> {
 
 /** Injected auth (no real Clerk) + injected adapters (real D1 + mocked Clerk/Sanity). */
 function mocks(
-  authResult: { userId: string; email: string } | null = {
+  authResult: {
+    userId: string;
+    email: string;
+    fvaMinutes: number | null;
+  } | null = {
     userId: USER,
     email: EMAIL,
+    fvaMinutes: 0,
   },
 ) {
   const authenticate = vi.fn(async () => authResult);
@@ -187,5 +192,93 @@ describe("handleErasureSelf", () => {
       .bind(USER)
       .first<{ event: string }>();
     expect(audit?.event).toBe("erasure.self");
+  });
+
+  it("returns reverification-required when the first-factor age is stale (> 10 min)", async () => {
+    await seedProfile();
+    const { build, clerkClient } = mocks();
+    const authenticate = vi.fn(async () => ({
+      userId: USER,
+      email: EMAIL,
+      fvaMinutes: 45,
+    }));
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(403);
+    const body = (await res.json()) as {
+      clerk_error: { reason: string; metadata: { reverification: unknown } };
+    };
+    expect(body.clerk_error.reason).toBe("reverification-error");
+    expect(body.clerk_error.metadata.reverification).toEqual({
+      level: "first_factor",
+      afterMinutes: 10,
+    });
+    expect(clerkClient.deleteUser).not.toHaveBeenCalled();
+  });
+
+  it("returns reverification-required when fvaMinutes is null", async () => {
+    await seedProfile();
+    const { build, clerkClient } = mocks();
+    const authenticate = vi.fn(async () => ({
+      userId: USER,
+      email: EMAIL,
+      fvaMinutes: null,
+    }));
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(403);
+    const body = (await res.json()) as { clerk_error: { reason: string } };
+    expect(body.clerk_error.reason).toBe("reverification-error");
+    expect(clerkClient.deleteUser).not.toHaveBeenCalled();
+  });
+
+  it("returns reverification-required when fvaMinutes is -1 (not applicable)", async () => {
+    await seedProfile();
+    const { build, clerkClient } = mocks();
+    const authenticate = vi.fn(async () => ({
+      userId: USER,
+      email: EMAIL,
+      fvaMinutes: -1,
+    }));
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(403);
+    const body = (await res.json()) as { clerk_error: { reason: string } };
+    expect(body.clerk_error.reason).toBe("reverification-error");
+    expect(clerkClient.deleteUser).not.toHaveBeenCalled();
+  });
+
+  it("proceeds when the first-factor age is fresh (<= 10 min)", async () => {
+    await seedProfile();
+    const { build, clerkClient } = mocks();
+    const authenticate = vi.fn(async () => ({
+      userId: USER,
+      email: EMAIL,
+      fvaMinutes: 2,
+    }));
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(200);
+    expect(clerkClient.deleteUser).toHaveBeenCalledWith(USER);
   });
 });
