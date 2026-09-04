@@ -1,1 +1,8 @@
+# Repo-wide formatting on EVERY staged file, all surfaces. Root .prettierignore
+# excludes code/projects/web/ (the website step below formats that itself), so this
+# covers the rest — shared workers/scripts, packages, mobile, hybrid, docs, root config.
+# Catches a format slip locally instead of at CI's format:check.
+pnpm lint-staged
+
+# Website: eslint --fix + prettier on its staged files, then a full tsc typecheck.
 cd code/projects/web/surfaces/website && pnpm lint-staged && pnpm tsc

@@ -19,9 +19,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 ## [Unreleased]
 
 - **The pipeline now gates what ships** — the prod deploy waits for CI to pass (`workflow_run` on
-  the `CI` workflow), the CI `verify` job runs the `api-guards` / `tokens` / `brands` / `tasks`
-  checks, and gitleaks + dependency-review run on push, not only on PRs. Closes the top pipeline
-  gaps from the verification audit (`docs/superpowers/specs/2026-08-27-close-verification-gaps-design.md`).
+  the `CI` workflow), the CI `verify` job runs the `api-guards` / `typed-routing` / `tokens` /
+  `brands` / `tasks` checks, and gitleaks + dependency-review run on push, not only on PRs. Closes
+  the top pipeline gaps from the verification audit (`docs/superpowers/specs/2026-08-27-close-verification-gaps-design.md`).
+- **The commit hook now formats every surface, not just the website** — a root `lint-staged`
+  (`.lintstagedrc.json`) runs `prettier --write` on all staged files (honouring the root
+  `.prettierignore`, which excludes the web app it formats itself), then the website step keeps its
+  own `eslint --fix` + `tsc`. A format slip in a worker, package, script, mobile, or hybrid file is
+  now caught pre-commit instead of at CI's `format:check`. (eslint + tsc for non-web stay CI-only.)
 - **Removed the `method/` and `work/` folders** — the internal dev-framework site (rules, workflows,
   process, sprint templates, tooling, the page-builder roadmap) and the private sprint lab are deleted.
   Conventions now live in-repo (`.claude/` + app rules + `code/docs/`); reviewer agents/skills repoint
