@@ -24,6 +24,7 @@
     "error": "Something went wrong. Please try again."
   },
   "account": {
+    "title": "Account",
     "delete": {
       "heading": "Delete your account",
       "body": "This permanently deletes your account and personal data. We keep a minimal activity log, stripped of identifying details, for security and legal compliance.",
@@ -47,6 +48,7 @@
   },
   "consent": {
     "title": "Cookies & privacy",
+    "preferencesTitle": "Cookie preferences",
     "body": "We use on-device storage to run the app. Choose what to allow.",
     "accept": "Accept all",
     "reject": "Reject",

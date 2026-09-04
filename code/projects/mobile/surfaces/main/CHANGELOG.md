@@ -11,6 +11,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Dedicated account screen (`app/account.tsx`).** Mounts the native `ConsentPreferences` toggle list
+  (previously built but unmounted) plus `DeleteAccountSection` and `ExportSection`, using
+  `buildDeleteAccountCopy`/`buildExportCopy` for copy instead of hand-assembled objects. Linked from
+  `sign-in.tsx` and, when signed in, from the home screen. **Why:** the delete/export controls lived on
+  the sign-in screen with duplicated copy-assembly; the cookie-preferences control had no screen to live
+  on. One screen now owns account-level compliance actions, matching the web `app` surface's `/account`.
+
 ### Fixed
 
 - **`tsc` green — `@types/node` for `process.env` typing (`package.json`).** The app reads

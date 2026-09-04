@@ -24,6 +24,7 @@
     "error": "Une erreur est survenue. Veuillez réessayer."
   },
   "account": {
+    "title": "Compte",
     "delete": {
       "heading": "Supprimer votre compte",
       "body": "Cette action supprime définitivement votre compte et vos données personnelles. Nous conservons un journal d'activité minimal, dépourvu de détails identifiants, à des fins de sécurité et de conformité légale.",
@@ -47,6 +48,7 @@
   },
   "consent": {
     "title": "Cookies et confidentialité",
+    "preferencesTitle": "Préférences de cookies",
     "body": "Nous utilisons le stockage local pour faire fonctionner l'application. Choisissez ce que vous autorisez.",
     "accept": "Tout accepter",
     "reject": "Refuser",

@@ -1,7 +1,9 @@
 import { Share } from "react-native";
 import { useIntl } from "react-intl";
 import { useRouter } from "expo-router";
+import { SignedIn } from "@clerk/clerk-expo";
 import { websiteUrl } from "@/config";
+import { hasClerk } from "@/lib/auth";
 import {
   Screen,
   ThemedText,
@@ -45,6 +47,15 @@ export default function Index() {
           label={t.formatMessage({ id: "home.signIn" })}
           onPress={() => router.push("/sign-in")}
         />
+        {hasClerk ? (
+          <SignedIn>
+            <Button
+              variant="outline"
+              label={t.formatMessage({ id: "account.title" })}
+              onPress={() => router.push("/account")}
+            />
+          </SignedIn>
+        ) : null}
         <Button
           variant="outline"
           label={t.formatMessage({ id: "home.share" })}
