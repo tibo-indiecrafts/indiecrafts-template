@@ -20,6 +20,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   the sign-in screen with duplicated copy-assembly; the cookie-preferences control had no screen to live
   on. One screen now owns account-level compliance actions, matching the web `app` surface's `/account`.
 
+### Changed
+
+- **`sign-in.tsx`'s signed-in view no longer hosts delete/export.** `DeleteAccountSection` and
+  `ExportSection` moved to the new `/account` screen; `sign-in.tsx` now links there instead.
+
 ### Fixed
 
 - **`tsc` green — `@types/node` for `process.env` typing (`package.json`).** The app reads

@@ -20,10 +20,10 @@ import {
   needsReacceptance,
   legalUrl,
   type Store,
-  type ConsentRecord,
   type ConsentMode,
   type LegalAcceptanceRecord,
 } from "@indiecrafts/packages-shared-compliance/shared";
+import { consentStore } from "@/lib/consent-store";
 import { loadConsentMode } from "@/lib/geo";
 import {
   versionId,
@@ -46,10 +46,9 @@ import {
   type Locale,
 } from "@/config";
 
-// The two persisted records, keyed from the one registry. Created once at module scope.
-const consentStore = createNativeStore<ConsentRecord>(
-  STORAGE_KEYS.cookieConsent,
-);
+// `consentStore` is the shared instance (`@/lib/consent-store` — `app/account.tsx` uses
+// the same one, native `createNativeStore` has no cross-instance sync). `legalStore` is
+// single-consumer (this file only), so it stays here, created once at module scope.
 const legalStore = createNativeStore<LegalAcceptanceRecord>(
   STORAGE_KEYS.legalAck,
 );

@@ -1,5 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { useIntl } from "react-intl";
 import { useAuth } from "@clerk/clerk-expo";
 import {
@@ -12,7 +12,6 @@ import {
   DeleteAccountSection,
   ExportSection,
   ConsentPreferences,
-  createNativeStore,
   buildDeleteAccountCopy,
   buildExportCopy,
 } from "@indiecrafts/packages-shared-compliance/native";
@@ -20,19 +19,15 @@ import {
   DEFAULT_CONSENT_CATEGORIES,
   resolveCategories,
   rejectAllChoices,
-  type ConsentRecord,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { STORAGE_KEYS, policyVersion, features } from "@/config";
+import { policyVersion, features } from "@/config";
 import { hasClerk } from "@/lib/auth";
-
-const consentStore = createNativeStore<ConsentRecord>(
-  STORAGE_KEYS.cookieConsent,
-);
+import { consentStore } from "@/lib/consent-store";
 
 export default function AccountScreen() {
   // Auth is opt-in; without Clerk mounted `useAuth()` throws (see sign-in.tsx) — branch
-  // before it so a direct deep link to /account can't crash.
-  if (!hasClerk) return null;
+  // before it so a direct deep link to /account redirects home instead of crashing.
+  if (!hasClerk) return <Redirect href="/" />;
   return <AccountView />;
 }
 
