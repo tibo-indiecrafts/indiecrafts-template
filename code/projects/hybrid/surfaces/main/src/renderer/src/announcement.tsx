@@ -11,7 +11,7 @@ import {
   type Banner,
   type Toast,
 } from "@indiecrafts/packages-shared-announcement";
-import { apiUrl, sitePrefix, websiteUrl, type Locale } from "../../config";
+import { apiUrl, STORAGE_KEYS, websiteUrl, type Locale } from "../../config";
 import { useOnlineStatus } from "./useOnlineStatus";
 
 /**
@@ -25,10 +25,10 @@ import { useOnlineStatus } from "./useOnlineStatus";
 
 // One dismiss record each (localStorage, namespaced) — created once at module scope.
 const bannerAck = createWebStore<{ version: string }>(
-  `${sitePrefix}.announcement-ack`,
+  STORAGE_KEYS.announcementAck,
 );
 const toastAck = createWebStore<{ version: string }>(
-  `${sitePrefix}.announcement-toast-ack`,
+  STORAGE_KEYS.announcementToastAck,
 );
 
 function useAck(store: Store<{ version: string }>): { version: string } | null {

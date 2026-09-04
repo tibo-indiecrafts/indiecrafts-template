@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { autoUpdater } from "electron-updater";
 import { callAgent } from "@indiecrafts/packages-shared-agent-client";
 import { isSafeExternalUrl, parseOAuthCallback } from "./url-guard";
-import { defaultLocale } from "../config";
+import { defaultLocale, sitePrefix } from "../config";
 
 // Auto-update (packaged builds only). electron-updater checks the `publish` feed from
 // electron-builder.yml — the generic Cloudflare R2 URL (`downloads.<root>/hybrid`) — and
@@ -40,7 +40,11 @@ ipcMain.handle(
   "agent:run",
   async (
     _e,
-    { name, context, locale }: { name: string; context: string; locale: string },
+    {
+      name,
+      context,
+      locale,
+    }: { name: string; context: string; locale: string },
   ) => {
     if (!AGENT_TOKEN) return { ok: false, error: "missing AGENT_TOKEN" };
     return callAgent(
@@ -72,7 +76,12 @@ ipcMain.handle(
           authorization: `Bearer ${AGENT_TOKEN}`,
           "content-type": "application/json",
         },
-        body: JSON.stringify({ kind: "session", surface: "hybrid", userId, sessionId }),
+        body: JSON.stringify({
+          kind: "session",
+          surface: "hybrid",
+          userId,
+          sessionId,
+        }),
       });
     } catch {
       // fire-and-forget
@@ -95,7 +104,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
-    title: `indiecrafts (${defaultLocale})`,
+    title: `${sitePrefix} (${defaultLocale})`,
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       // Hardening: isolate the bridge world, run the renderer in the OS sandbox, and
@@ -146,7 +155,7 @@ function createWindow() {
     void win.loadURL(
       "data:text/html," +
         encodeURIComponent(
-          `<!doctype html><meta charset="utf-8"><title>indiecrafts</title>` +
+          `<!doctype html><meta charset="utf-8"><title>${sitePrefix}</title>` +
             `<body style="font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0;text-align:center">` +
             `<div><h1>Something went wrong</h1><p>The app failed to load (${errorDescription}).</p></div></body>`,
         ),

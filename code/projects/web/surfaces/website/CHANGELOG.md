@@ -17,6 +17,19 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **`pnpm check:typed-routing` — CI-enforces the typed-routing NEVER across every Next surface
+  (`code/shared/scripts/checks/typed-routing.mjs`, in `verify` + CI).** The `website` bans direct
+  `next/link` / `next-intl/navigation` imports via ESLint (`no-restricted-imports`), but the `admin` /
+  `app` scaffolds ship tsc-only (no ESLint config), so that NEVER was convention-clean but not gated.
+  A new registry-driven scan (reads the `next-cf` surfaces from `apps.mjs`, so a future Next surface
+  auto-joins) fails if any surface imports the banned modules outside `src/i18n/routing.ts` — the one
+  file that creates the typed wrappers. Colocated `typed-routing.test.mjs`; wired into root `verify`,
+  CI `test.yml`, and `.vscode/tasks.json`. **Why:** admin/app were clean by convention only; this makes
+  the config-first typed-routing rule a real gate on all three surfaces, not just the website. Mirrors
+  the `check:api-guards` pattern.
+
 ### Fixed
 
 - **`secrets:sync` no longer crashes on staging/prod (`scripts/sync-secrets.mjs`).** The clobber guard

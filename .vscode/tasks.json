@@ -103,6 +103,14 @@
       "problemMatcher": []
     },
     {
+      "label": "check:typed-routing",
+      "detail": "assert every Next surface routes through @/i18n/routing",
+      "type": "shell",
+      "command": "pnpm check:typed-routing",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
       "label": "check:tasks",
       "detail": "assert .vscode/tasks.json mirrors every root package.json script",
       "type": "shell",

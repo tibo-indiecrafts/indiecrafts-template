@@ -31,7 +31,7 @@ import {
   localeCodes,
   localeMap,
   pickSuggestedLocale,
-  sitePrefix,
+  STORAGE_KEYS,
   websiteUrl,
   buildId,
   features,
@@ -43,8 +43,8 @@ import { AnnouncementChrome } from "./announcement";
 import { hasClerk } from "./auth";
 
 // The two persisted records, namespaced per deployment. Created once at module scope.
-const consentStore = createWebStore<ConsentRecord>(`${sitePrefix}.cookie-consent`);
-const legalStore = createWebStore<LegalAcceptanceRecord>(`${sitePrefix}.legal-ack`);
+const consentStore = createWebStore<ConsentRecord>(STORAGE_KEYS.cookieConsent);
+const legalStore = createWebStore<LegalAcceptanceRecord>(STORAGE_KEYS.legalAck);
 
 function useRecord<T>(store: Store<T>): T | null {
   return useSyncExternalStore(store.subscribe, store.get, store.get);
@@ -52,7 +52,8 @@ function useRecord<T>(store: Store<T>): T | null {
 
 /** Open a website legal page in the user's real browser (via the preload bridge). */
 function openLegal(key: LegalPageKey, locale: Locale) {
-  if (websiteUrl) void window.desktop.openExternal(legalUrl(websiteUrl, key, locale));
+  if (websiteUrl)
+    void window.desktop.openExternal(legalUrl(websiteUrl, key, locale));
 }
 
 // The confirmation toast's "Manage" action scrolls to the real cookie-preferences
@@ -68,8 +69,14 @@ export function LegalLinks() {
   const t = useIntl();
   const locale = t.locale as Locale;
   return (
-    <section aria-labelledby="legal-heading" className="flex flex-col items-center gap-2">
-      <h2 id="legal-heading" className="text-muted-foreground text-sm font-medium">
+    <section
+      aria-labelledby="legal-heading"
+      className="flex flex-col items-center gap-2"
+    >
+      <h2
+        id="legal-heading"
+        className="text-muted-foreground text-sm font-medium"
+      >
         {t.formatMessage({ id: "legal.heading" })}
       </h2>
       <div className="flex flex-wrap justify-center gap-2">
@@ -118,7 +125,12 @@ function ConsentBannerGate({ mode }: { mode: ConsentMode | null }) {
   // opt-out signal denies; the Electron renderer is Chromium, so GPC/DNT apply). `null` =
   // geo still resolving, so seed nothing yet.
   useEffect(() => {
-    if (!features.requireConsent || record || mode === null || mode === "opt-in")
+    if (
+      !features.requireConsent ||
+      record ||
+      mode === null ||
+      mode === "opt-in"
+    )
       return;
     consentStore.save({
       v: policyVersion,
@@ -134,7 +146,9 @@ function ConsentBannerGate({ mode }: { mode: ConsentMode | null }) {
 
   const cat = (key: string) => ({
     title: t.formatMessage({ id: `consent.categories.${key}.title` }),
-    description: t.formatMessage({ id: `consent.categories.${key}.description` }),
+    description: t.formatMessage({
+      id: `consent.categories.${key}.description`,
+    }),
   });
   const categories = resolveCategories(DEFAULT_CONSENT_CATEGORIES, {
     necessary: cat("necessary"),
@@ -240,7 +254,10 @@ function LocaleSuggest({ active }: { active: Locale }) {
       className="bg-card text-foreground ring-border/60 fixed inset-x-4 top-4 z-40 mx-auto flex w-auto max-w-md items-center justify-between gap-3 rounded-xl border-0 p-3 shadow-lg ring-1 backdrop-blur"
     >
       <p className="text-sm">
-        {t.formatMessage({ id: "locale.suggest" }, { language: localeMap[suggested].label })}
+        {t.formatMessage(
+          { id: "locale.suggest" },
+          { language: localeMap[suggested].label },
+        )}
       </p>
       <div className="flex shrink-0 gap-2">
         <Button
@@ -289,7 +306,9 @@ export function ShellOverlays() {
       {hasClerk ? <AnnouncementChrome /> : null}
       <ConsentBannerGate mode={consentMode} />
       <LegalReacceptGate locale={locale} />
-      {websiteUrl ? <VersionPrompt endpoint={`${websiteUrl}${VERSION_ENDPOINT}`} /> : null}
+      {websiteUrl ? (
+        <VersionPrompt endpoint={`${websiteUrl}${VERSION_ENDPOINT}`} />
+      ) : null}
       <LocaleSuggest active={locale} />
       <Toaster />
     </>

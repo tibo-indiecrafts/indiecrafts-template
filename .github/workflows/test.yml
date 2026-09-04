@@ -39,6 +39,7 @@ jobs:
       - run: pnpm test:scripts
       - run: pnpm test
       - run: pnpm check:api-guards
+      - run: pnpm check:typed-routing
       - run: pnpm tokens:check
       - run: pnpm brands:check
       - run: pnpm check:tasks

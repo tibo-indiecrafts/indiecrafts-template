@@ -12,6 +12,7 @@ import {
   HybridSessionLogger,
 } from "./auth";
 import { detectLocale, messagesFor } from "./i18n";
+import { sitePrefix } from "../../config";
 import "./globals.css";
 
 // Renderer entry — a real React mount (plain React 19 + Vite, NOT Next). Reuses the
@@ -19,6 +20,7 @@ import "./globals.css";
 // `system-pages/web`. Detect the locale (navigator.language) → react-intl.
 const locale = detectLocale();
 document.documentElement.lang = locale; // index.html ships lang="en"; correct it at runtime.
+document.title = sitePrefix; // authoritative window title from config; index.html ships a neutral placeholder.
 // One QueryClient for the renderer's lifetime (shared defaults from the query brick).
 // The renderer's `queryFn` is the preload bridge (`window.desktop.runAgent`) — the
 // api-client call itself runs in the main process, so the token stays out of the DOM.

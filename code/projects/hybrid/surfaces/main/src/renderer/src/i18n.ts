@@ -10,7 +10,7 @@ import {
   flattenMessages,
   isLocale,
   localeCodes,
-  sitePrefix,
+  STORAGE_KEYS,
   type Locale,
 } from "../../config";
 import { SHELL_COPY } from "@indiecrafts/packages-shared-system-pages/shared";
@@ -20,7 +20,7 @@ import fr from "../messages/fr.json";
 const LOCAL: Record<string, Record<string, unknown>> = { en, fr };
 
 /** `localStorage` key for the visitor's explicit locale choice, namespaced per deployment. */
-const LOCALE_KEY = `${sitePrefix}.locale`;
+const LOCALE_KEY = STORAGE_KEYS.locale;
 
 /** The visitor's stored locale choice, narrowed to a supported `Locale` (else `null`). */
 export function storedLocale(): Locale | null {

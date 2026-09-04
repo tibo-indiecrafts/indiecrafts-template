@@ -11,6 +11,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **Config-first cleanup — storage keys + window titles now read from config (audit 2026-09-04)
+  (`src/config/index.ts`, `src/renderer/src/{i18n,shell,consent-preferences,announcement,geo}.tsx?`,
+  `src/main/index.ts`, `src/renderer/{index.html,src/main.tsx}`).** Two config-first drifts the §08
+  audit found: (1) five renderer files each built `` `${sitePrefix}.<name>` `` inline (consent, legal,
+  announcement, toast, geo, locale) — the exact "duplicated fact = drift" pattern the mobile app already
+  solved. Added a single `STORAGE_KEYS` map to `src/config` (mirroring mobile) and pointed every store at
+  it. (2) The brand name `indiecrafts` was retyped in three window/doc titles instead of read from config;
+  the main-process titles (`BrowserWindow` + the error page) now use `sitePrefix`, and the renderer sets
+  `document.title` from `sitePrefix` on mount so the static `index.html` keeps only a neutral placeholder.
+  **Why:** a per-client `project:rename` risked missing hand-typed keys/titles; now the prefix has one
+  home, so a rename can't leave a stale brand or a mismatched storage key behind. (The `indiecrafts://`
+  OAuth protocol scheme is a native-identity string — a rename target like the mobile bundleId — left as-is.)
+
 ### Added
 
 - **Real distribution — signing, notarization, R2 publish, auto-update (`electron-builder.yml`,

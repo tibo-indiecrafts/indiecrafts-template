@@ -2,9 +2,9 @@ import {
   resolveConsentMode,
   type ConsentMode,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { apiUrl, sitePrefix, consent } from "../../config";
+import { apiUrl, STORAGE_KEYS, consent } from "../../config";
 
-const CACHE_KEY = `${sitePrefix}.geo-country`;
+const CACHE_KEY = STORAGE_KEYS.geoCountry;
 
 /**
  * Resolve the consent mode for this desktop app. The Electron renderer has no `cf-ipcountry`

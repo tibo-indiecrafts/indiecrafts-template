@@ -12,12 +12,12 @@ import {
   rejectAllChoices,
   type ConsentRecord,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { sitePrefix, policyVersion } from "../../config";
+import { STORAGE_KEYS, policyVersion } from "../../config";
 
 // SAME key as `ShellOverlays`'s `consentStore` (shell.tsx) — this handle reads/writes the
 // identical `localStorage` record (and shares its same-tab change event, keyed off the
 // storage key), so a save here is picked up by the banner/gate and vice versa.
-const consentStore = createWebStore<ConsentRecord>(`${sitePrefix}.cookie-consent`);
+const consentStore = createWebStore<ConsentRecord>(STORAGE_KEYS.cookieConsent);
 
 /**
  * The desktop "cookie preferences" control — lets a user re-open and change their cookie
@@ -44,7 +44,9 @@ export function CookiePreferencesSection() {
 
   const cat = (key: string) => ({
     title: t.formatMessage({ id: `consent.categories.${key}.title` }),
-    description: t.formatMessage({ id: `consent.categories.${key}.description` }),
+    description: t.formatMessage({
+      id: `consent.categories.${key}.description`,
+    }),
   });
   const categories = resolveCategories(DEFAULT_CONSENT_CATEGORIES, {
     necessary: cat("necessary"),

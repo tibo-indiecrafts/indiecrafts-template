@@ -16,6 +16,23 @@ export * from "@indiecrafts/packages-shared-config/hybrid";
  */
 export const sitePrefix = import.meta.env.VITE_SITE_PREFIX ?? "indiecrafts";
 
+/**
+ * Every persisted key, namespaced once under `sitePrefix` — the ONE home for
+ * storage-key strings (mirrors the mobile app's `STORAGE_KEYS`). The renderer's
+ * stores read a name here; they never build `${sitePrefix}.foo` inline (that drift
+ * is how two files disagree on a key). Consumed by `i18n` (locale) + the
+ * compliance/announcement/geo stores.
+ */
+export const STORAGE_KEYS = {
+  locale: `${sitePrefix}.locale`,
+  cookieConsent: `${sitePrefix}.cookie-consent`,
+  legalAck: `${sitePrefix}.legal-ack`,
+  announcementAck: `${sitePrefix}.announcement-ack`,
+  announcementToastAck: `${sitePrefix}.announcement-toast-ack`,
+  // Cached visitor country (from the api `/v1/geo`) for the consent geo decision.
+  geoCountry: `${sitePrefix}.geo-country`,
+} as const;
+
 /** The marketing-site origin — the legal link-out + version poll target (`VITE_WEBSITE_URL`). */
 export const websiteUrl = import.meta.env.VITE_WEBSITE_URL;
 
