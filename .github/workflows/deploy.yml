@@ -70,14 +70,31 @@ jobs:
       # from the registry (`domains:url`); if the app/env has no custom domain (still
       # on *.workers.dev, whose URL isn't in the registry), it's skipped. Once a real
       # host is set, a failed fetch fails the deploy so a broken ship is caught here.
+      # An app that declares a `smoke` route in the registry (apps.mjs) also gets a
+      # FUNCTIONAL probe: the health/version endpoint must return the expected marker,
+      # proving the runtime + the freshly deployed build are live (not just a 200 edge).
       - name: Smoke test
+        env:
+          SMOKE_PATH: ${{ matrix.app.smoke.path }}
+          SMOKE_CONTAINS: ${{ matrix.app.smoke.contains }}
         run: |
           env="${{ github.event.inputs.environment || 'prod' }}"
           url="$(pnpm -s domains:url ${{ matrix.app.slug }} "$env" || true)"
-          if [ -n "$url" ]; then
-            echo "Smoke: GET $url"
-            curl -fsS --retry 3 --retry-delay 5 -o /dev/null "$url"
-            echo "✓ ${{ matrix.app.slug }} ($env) reachable at $url"
-          else
+          if [ -z "$url" ]; then
             echo "No custom-domain origin for ${{ matrix.app.slug }} ($env) — skipping (workers.dev URL not in the registry)."
+            exit 0
+          fi
+          echo "Smoke: GET $url"
+          curl -fsS --retry 3 --retry-delay 5 -o /dev/null "$url"
+          echo "✓ ${{ matrix.app.slug }} ($env) reachable at $url"
+          # Functional probe for apps that declare a health/version route in the registry.
+          if [ -n "$SMOKE_PATH" ]; then
+            echo "Smoke: GET $url$SMOKE_PATH (expect \"$SMOKE_CONTAINS\")"
+            body="$(curl -fsS --retry 3 --retry-delay 5 "$url$SMOKE_PATH")"
+            if printf '%s' "$body" | grep -qF "$SMOKE_CONTAINS"; then
+              echo "✓ ${{ matrix.app.slug }} ($env) functional — $SMOKE_PATH returned \"$SMOKE_CONTAINS\""
+            else
+              echo "✗ ${{ matrix.app.slug }} ($env): $SMOKE_PATH did not contain \"$SMOKE_CONTAINS\". Body: $body" >&2
+              exit 1
+            fi
           fi

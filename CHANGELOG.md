@@ -27,6 +27,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
   `.prettierignore`, which excludes the web app it formats itself), then the website step keeps its
   own `eslint --fix` + `tsc`. A format slip in a worker, package, script, mobile, or hybrid file is
   now caught pre-commit instead of at CI's `format:check`. (eslint + tsc for non-web stay CI-only.)
+- **Post-deploy smoke is now functional, not just reachability** — an app can declare a `smoke`
+  probe in the registry (`apps.mjs`): after the root 200 check, the deploy GETs its health/version
+  route (`/api/version` for the Next apps, `/health` for the workers) and fails the deploy unless the
+  body carries the expected marker — so a 200 from a broken runtime or a stale build is caught, not
+  shipped. Apps with no such route keep the root-reachability check.
 - **Removed the `method/` and `work/` folders** — the internal dev-framework site (rules, workflows,
   process, sprint templates, tooling, the page-builder roadmap) and the private sprint lab are deleted.
   Conventions now live in-repo (`.claude/` + app rules + `code/docs/`); reviewer agents/skills repoint

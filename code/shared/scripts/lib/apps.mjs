@@ -30,6 +30,11 @@ export const ENVS = ["dev", "staging", "prod"];
  *   The leaf can differ from `slug` (e.g. slug `mobile` lives at `mobile/surfaces/main`), so every
  *   path resolver reads THIS, never `code/projects/<slug>` (dirs nest by platform → kind).
  * @property {number} order  deploy order (low first: services before their consumers)
+ * @property {{ path: string, contains: string }} [smoke]  optional post-deploy functional
+ *   probe: after the root reachability check, the deploy GETs `<custom-domain><path>` and
+ *   fails if the body does not contain `contains` — proving the runtime + the freshly
+ *   deployed build actually serve the expected payload, not just that the edge returns 200.
+ *   Omit for an app with no health/version route (root reachability only).
  */
 
 /** @type {AppEntry[]} */
@@ -42,6 +47,7 @@ export const APPS = [
     kind: "service",
     dir: "code/shared/api",
     order: 10,
+    smoke: { path: "/health", contains: "ok" },
   },
   {
     slug: "cron",
@@ -60,6 +66,7 @@ export const APPS = [
     kind: "service",
     dir: "code/shared/workers",
     order: 10,
+    smoke: { path: "/health", contains: "ok" },
   },
   {
     slug: "agent",
@@ -69,6 +76,7 @@ export const APPS = [
     kind: "service",
     dir: "code/shared/agent",
     order: 10,
+    smoke: { path: "/health", contains: "ok" },
   },
   {
     slug: "website",
@@ -78,6 +86,7 @@ export const APPS = [
     kind: "surface",
     dir: "code/projects/web/surfaces/website",
     order: 30,
+    smoke: { path: "/api/version", contains: "version" },
   },
   {
     slug: "admin",
@@ -96,6 +105,7 @@ export const APPS = [
     kind: "surface",
     dir: "code/projects/web/surfaces/app",
     order: 45,
+    smoke: { path: "/api/version", contains: "version" },
   },
   {
     // Storybook is a Cloudflare Worker serving STATIC ASSETS (Workers Static Assets, no

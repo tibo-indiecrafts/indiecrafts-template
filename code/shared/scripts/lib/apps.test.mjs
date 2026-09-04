@@ -5,7 +5,10 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { APPS, ENVS, deployable, isCloudflare, resourceName } from "./apps.mjs";
 
-const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../..");
+const REPO_ROOT = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../..",
+);
 
 const CLASSES = new Set(["next-cf", "worker-cf", "expo", "electron"]);
 
@@ -22,6 +25,15 @@ test("every app row is well-formed with a known platform class", () => {
 test("slugs are unique", () => {
   const slugs = APPS.map((a) => a.slug);
   assert.equal(new Set(slugs).size, slugs.length);
+});
+
+test("every `smoke` entry is a well-formed probe (absolute path + marker)", () => {
+  for (const a of APPS.filter((x) => x.smoke)) {
+    assert.ok(
+      a.smoke.path?.startsWith("/") && a.smoke.contains,
+      `bad smoke config for ${a.slug}: ${JSON.stringify(a.smoke)}`,
+    );
+  }
 });
 
 test("each app row's `dir` exists (no drift / no orphans)", () => {
