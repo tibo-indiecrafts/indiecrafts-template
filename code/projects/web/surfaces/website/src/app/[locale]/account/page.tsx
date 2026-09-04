@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import type {
-  DeleteAccountCopy,
-  ExportCopy,
+import {
+  buildDeleteAccountCopy,
+  buildExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
 import { ManagePreferencesButton } from "@indiecrafts/packages-web-compliance/consent/ManagePreferencesButton";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
@@ -39,28 +39,10 @@ export default async function AccountPage({ params }: Props) {
   if (!process.env.NEXT_PUBLIC_API_URL) notFound();
 
   const t = await getTranslations({ locale, namespace: "account.delete" });
-  const copy: DeleteAccountCopy = {
-    heading: t("heading"),
-    body: t("body"),
-    emailLabel: t("emailLabel"),
-    emailPlaceholder: t("emailPlaceholder"),
-    confirmButton: t("confirmButton"),
-    pending: t("pending"),
-    success: t("success"),
-    partial: t("partial"),
-    error: t("error"),
-    mismatch: t("mismatch"),
-  };
+  const copy = buildDeleteAccountCopy(t);
 
   const et = await getTranslations({ locale, namespace: "account.export" });
-  const exportCopy: ExportCopy = {
-    heading: et("heading"),
-    body: et("body"),
-    button: et("button"),
-    pending: et("pending"),
-    success: et("success"),
-    error: et("error"),
-  };
+  const exportCopy = buildExportCopy(et);
 
   const ct = await getTranslations({ locale, namespace: "cookies" });
 

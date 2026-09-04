@@ -11,9 +11,9 @@ import {
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
   DeleteAccountSection,
-  type DeleteAccountCopy,
   ExportSection,
-  type ExportCopy,
+  buildDeleteAccountCopy,
+  buildExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
 import { apiUrl, features } from "../../config";
 
@@ -67,28 +67,12 @@ export function AuthPanel() {
 function SignedInView() {
   const t = useIntl();
   const { signOut, getToken } = useAuth();
-  const deleteCopy: DeleteAccountCopy = {
-    heading: t.formatMessage({ id: "account.delete.heading" }),
-    body: t.formatMessage({ id: "account.delete.body" }),
-    emailLabel: t.formatMessage({ id: "account.delete.emailLabel" }),
-    emailPlaceholder: t.formatMessage({
-      id: "account.delete.emailPlaceholder",
-    }),
-    confirmButton: t.formatMessage({ id: "account.delete.confirmButton" }),
-    pending: t.formatMessage({ id: "account.delete.pending" }),
-    success: t.formatMessage({ id: "account.delete.success" }),
-    partial: t.formatMessage({ id: "account.delete.partial" }),
-    error: t.formatMessage({ id: "account.delete.error" }),
-    mismatch: t.formatMessage({ id: "account.delete.mismatch" }),
-  };
-  const exportCopy: ExportCopy = {
-    heading: t.formatMessage({ id: "account.export.heading" }),
-    body: t.formatMessage({ id: "account.export.body" }),
-    button: t.formatMessage({ id: "account.export.button" }),
-    pending: t.formatMessage({ id: "account.export.pending" }),
-    success: t.formatMessage({ id: "account.export.success" }),
-    error: t.formatMessage({ id: "account.export.error" }),
-  };
+  const deleteCopy = buildDeleteAccountCopy((k) =>
+    t.formatMessage({ id: `account.delete.${k}` }),
+  );
+  const exportCopy = buildExportCopy((k) =>
+    t.formatMessage({ id: `account.export.${k}` }),
+  );
   return (
     <div className="flex flex-col items-center gap-4">
       <p className="text-sm text-muted-foreground">
