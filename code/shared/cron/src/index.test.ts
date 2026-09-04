@@ -47,7 +47,16 @@ describe("retention purges", () => {
     await env.DB?.prepare(
       "INSERT INTO csp_reports (group_key, first_seen, last_seen, surface, disposition, directive, document_path, blocked_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     )
-      .bind(groupKey, firstSeen, lastSeen, "website", "report", "img-src", "/", "https://example.com")
+      .bind(
+        groupKey,
+        firstSeen,
+        lastSeen,
+        "website",
+        "report",
+        "img-src",
+        "/",
+        "https://example.com",
+      )
       .run();
   }
 
@@ -71,9 +80,9 @@ describe("retention purges", () => {
 
     await runScheduled(NOW);
 
-    const result = await env.DB!.prepare(
-      "SELECT group_key FROM csp_reports ORDER BY group_key",
-    ).all<{ group_key: string }>();
+    const result = await env
+      .DB!.prepare("SELECT group_key FROM csp_reports ORDER BY group_key")
+      .all<{ group_key: string }>();
 
     const groupKeys = result.results.map((r) => r.group_key);
     expect(groupKeys).toEqual(["website|report|img-src|/b|https://y"]);
@@ -81,9 +90,10 @@ describe("retention purges", () => {
 
   it("purges csp_reports on an operator override (7 days) instead of the 30-day default", async () => {
     // Override the CSP window down to 7 days. site_settings lives on CORE_DB.
-    await env.CORE_DB!.prepare(
-      "INSERT INTO site_settings (key, value, updated_at, updated_by) VALUES ('retention.csp_days', '7', ?, 'user_test')",
-    )
+    await env
+      .CORE_DB!.prepare(
+        "INSERT INTO site_settings (key, value, updated_at, updated_by) VALUES ('retention.csp_days', '7', ?, 'user_test')",
+      )
       .bind(new Date(NOW).toISOString())
       .run();
 
@@ -92,9 +102,11 @@ describe("retention purges", () => {
 
     await runScheduled(NOW);
 
-    const row = await env.DB!.prepare(
-      "SELECT group_key FROM csp_reports WHERE group_key = 'website|report|img-src|/c|https://z'",
-    ).first();
+    const row = await env
+      .DB!.prepare(
+        "SELECT group_key FROM csp_reports WHERE group_key = 'website|report|img-src|/c|https://z'",
+      )
+      .first();
     expect(row).toBeNull();
   });
 });
@@ -171,6 +183,133 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
     expect(
       await env.CORE_DB.prepare(
         "SELECT id FROM erasure_requests WHERE email_fingerprint = 'fp-recent-purge@example.com'",
+      ).first(),
+    ).not.toBeNull();
+  });
+});
+
+describe("scheduled() — retention purge (admin_audit + session_events + security_events + consent_events)", () => {
+  const NOW = Date.UTC(2026, 0, 15); // 2026-01-15T00:00:00Z
+  const oldAuditAt = new Date(NOW - 100 * 86_400_000).toISOString(); // > 90d
+  const freshAuditAt = new Date(NOW - 1 * 86_400_000).toISOString();
+  const oldConsentAt = new Date(NOW - 1200 * 86_400_000).toISOString(); // > 1095d
+  const freshConsentAt = new Date(NOW - 1 * 86_400_000).toISOString();
+
+  async function runTick(): Promise<void> {
+    const ctx = createExecutionContext();
+    const controller = {
+      cron: "0 * * * *",
+      scheduledTime: NOW,
+      noRetry() {},
+    } as unknown as ScheduledController;
+    await worker.scheduled(controller, env, ctx);
+    await waitOnExecutionContext(ctx);
+  }
+
+  it("purges an admin_audit row past the 90-day retention; keeps a recent one", async () => {
+    // admin_audit lives on DB.
+    await env.DB.prepare(
+      "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id) VALUES (?, 'admin.grant', ?, 'target-user')",
+    )
+      .bind(oldAuditAt, "actor-old-purge")
+      .run();
+    await env.DB.prepare(
+      "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id) VALUES (?, 'admin.grant', ?, 'target-user')",
+    )
+      .bind(freshAuditAt, "actor-recent-purge")
+      .run();
+
+    await runTick();
+
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM admin_audit WHERE actor_user_id = 'actor-old-purge'",
+      ).first(),
+    ).toBeNull();
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM admin_audit WHERE actor_user_id = 'actor-recent-purge'",
+      ).first(),
+    ).not.toBeNull();
+  });
+
+  it("purges a session_events row past the 90-day retention; keeps a recent one", async () => {
+    // session_events lives on DB.
+    await env.DB.prepare(
+      "INSERT INTO session_events (ts, surface, user_id) VALUES (?, 'website', ?)",
+    )
+      .bind(oldAuditAt, "user-session-old-purge")
+      .run();
+    await env.DB.prepare(
+      "INSERT INTO session_events (ts, surface, user_id) VALUES (?, 'website', ?)",
+    )
+      .bind(freshAuditAt, "user-session-recent-purge")
+      .run();
+
+    await runTick();
+
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM session_events WHERE user_id = 'user-session-old-purge'",
+      ).first(),
+    ).toBeNull();
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM session_events WHERE user_id = 'user-session-recent-purge'",
+      ).first(),
+    ).not.toBeNull();
+  });
+
+  it("purges a security_events row past the 90-day retention; keeps a recent one", async () => {
+    // security_events lives on DB.
+    await env.DB.prepare(
+      "INSERT INTO security_events (ts, event_type, severity, description) VALUES (?, 'suspicious_pattern', 'low', ?)",
+    )
+      .bind(oldAuditAt, "sec-event-old-purge")
+      .run();
+    await env.DB.prepare(
+      "INSERT INTO security_events (ts, event_type, severity, description) VALUES (?, 'suspicious_pattern', 'low', ?)",
+    )
+      .bind(freshAuditAt, "sec-event-recent-purge")
+      .run();
+
+    await runTick();
+
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM security_events WHERE description = 'sec-event-old-purge'",
+      ).first(),
+    ).toBeNull();
+    expect(
+      await env.DB.prepare(
+        "SELECT id FROM security_events WHERE description = 'sec-event-recent-purge'",
+      ).first(),
+    ).not.toBeNull();
+  });
+
+  it("purges a consent_events row past the 1095-day retention; keeps a recent one", async () => {
+    // consent_events lives on CORE_DB.
+    await env.CORE_DB.prepare(
+      "INSERT INTO consent_events (ts, subject_type, subject_id, consent_type, granted, policy_version, surface, idempotency_key) VALUES (?, 'user', 'user-consent-purge', 'cookie_analytics', 1, 'v1', 'website', ?)",
+    )
+      .bind(oldConsentAt, "consent-old-purge")
+      .run();
+    await env.CORE_DB.prepare(
+      "INSERT INTO consent_events (ts, subject_type, subject_id, consent_type, granted, policy_version, surface, idempotency_key) VALUES (?, 'user', 'user-consent-purge', 'cookie_analytics', 1, 'v1', 'website', ?)",
+    )
+      .bind(freshConsentAt, "consent-recent-purge")
+      .run();
+
+    await runTick();
+
+    expect(
+      await env.CORE_DB.prepare(
+        "SELECT id FROM consent_events WHERE idempotency_key = 'consent-old-purge'",
+      ).first(),
+    ).toBeNull();
+    expect(
+      await env.CORE_DB.prepare(
+        "SELECT id FROM consent_events WHERE idempotency_key = 'consent-recent-purge'",
       ).first(),
     ).not.toBeNull();
   });
