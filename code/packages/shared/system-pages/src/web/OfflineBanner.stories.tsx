@@ -21,7 +21,7 @@ export const Default: Story = {
     <div
       role="status"
       aria-live="polite"
-      className="bg-secondary text-secondary-foreground px-(--gutter) py-2 text-center text-sm"
+      className="bg-secondary text-secondary-foreground px-[var(--gutter,1rem)] py-2 text-center text-sm"
     >
       {args.message}
     </div>

@@ -219,11 +219,11 @@ onManage })`. Copy is injected by the caller (no i18n inside the package); `onMa
   `"use client"` + `packages-web-ui` Button) + `./native` (RN) exactly like the Maintenance/404/500 trio;
   `OfflineContentProps` (`title, description, retryLabel, onRetry?`) in `./shared`, plus a `SHELL_COPY.offline`
   default (adds a short `banner` string) so the non-CMS shells render consistent wording. **Why:** offline
-  was a silent failure — now every surface reuses one branded state. **Wired on all three surfaces:** web
-  (`useOnlineStatus` + banner in `DefaultLayout`), mobile (`@react-native-community/netinfo` hook + a
-  `ShellOverlays` banner — see the mobile changelog), and the hybrid renderer (a `navigator.onLine`
-  `useOnlineStatus` twin + a banner in `App.tsx`). The full-screen `OfflineContent` (for a route that can't
-  render offline) is available on both `./web` and `./native`.
+  was a silent failure — now every surface reuses one branded state. The banner strip (not this full-screen
+  page) is wired via the shared `useOnlineStatus`/`OfflineBanner` brick (see above): website, `app`, and
+  hybrid render it through the brick; mobile pairs its local `useNetworkStatus` (netinfo) with the brick's
+  native `OfflineBanner`. The full-screen `OfflineContent` (for a route that can't render offline) is
+  available on both `./web` and `./native`.
 - **`@indiecrafts/packages-mobile-ui-native` — accessibility baseline on the primitives.** `Button` now
   ships `accessibilityLabel` (its `label`) + `accessibilityState` (disabled announced to AT, not by opacity
   alone) + an optional `accessibilityHint` (`accessibilityRole="button"` and the 44 pt touch target were
