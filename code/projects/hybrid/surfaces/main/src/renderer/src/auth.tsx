@@ -73,9 +73,12 @@ function SignedInView() {
   // Step-up wired: wrap the raw erasure fetch so the worker's Clerk
   // reverification 403 (stale `fva`, Task 4) opens the modal and auto-retries.
   const eraseWithReverification = useReverification((email: string) =>
+    // skipCache: the post-reverification retry must mint a FRESH token so it
+    // carries the updated `fva`; a cached (~60s) token still has the stale `fva`
+    // and would re-trip the server gate, silently defeating the step-up.
     rawErasureFetch({
       apiUrl: apiUrl ?? "",
-      getToken: () => getToken(),
+      getToken: () => getToken({ skipCache: true }),
       email,
     }),
   );
