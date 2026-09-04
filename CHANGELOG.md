@@ -31,7 +31,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
   probe in the registry (`apps.mjs`): after the root 200 check, the deploy GETs its health/version
   route (`/api/version` for the Next apps, `/health` for the workers) and fails the deploy unless the
   body carries the expected marker — so a 200 from a broken runtime or a stale build is caught, not
-  shipped. Apps with no such route keep the root-reachability check.
+  shipped. Apps with no such route keep the root-reachability check. On a smoke failure the deploy
+  now **auto-rolls-back** (`wrangler rollback --message`, scoped to deploy-succeeded-but-smoke-failed
+  so a broken deploy is left for a human), reverting the app to its previous version.
 - **Removed the `method/` and `work/` folders** — the internal dev-framework site (rules, workflows,
   process, sprint templates, tooling, the page-builder roadmap) and the private sprint lab are deleted.
   Conventions now live in-repo (`.claude/` + app rules + `code/docs/`); reviewer agents/skills repoint

@@ -74,6 +74,7 @@ jobs:
       # FUNCTIONAL probe: the health/version endpoint must return the expected marker,
       # proving the runtime + the freshly deployed build are live (not just a 200 edge).
       - name: Smoke test
+        id: smoke
         env:
           SMOKE_PATH: ${{ matrix.app.smoke.path }}
           SMOKE_CONTAINS: ${{ matrix.app.smoke.contains }}
@@ -98,3 +99,22 @@ jobs:
               exit 1
             fi
           fi
+
+      # Auto-rollback — ONLY when the deploy SUCCEEDED but its post-deploy smoke FAILED
+      # (a broken runtime or stale build shipped). `steps.smoke.outcome == 'failure'` is
+      # false when the deploy step itself failed (smoke is skipped then — nothing new is
+      # live to revert), so a broken deploy is left as-is for a human. `wrangler rollback`
+      # with no version-id reverts to the version before the latest; `--message` makes it
+      # non-interactive (skips the confirmation prompt). Works for every Cloudflare app —
+      # the next-cf apps deploy a Worker too, so the same rollback applies.
+      - name: Rollback on smoke failure
+        if: steps.smoke.outcome == 'failure'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          env="${{ github.event.inputs.environment || 'prod' }}"
+          echo "Post-deploy smoke failed — rolling ${{ matrix.app.slug }} ($env) back to the previous version."
+          pnpm --filter "${{ matrix.app.pkg }}" exec wrangler rollback \
+            --env "$env" \
+            --message "auto-rollback: post-deploy smoke failed (run ${{ github.run_id }})"
