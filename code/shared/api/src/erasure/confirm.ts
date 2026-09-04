@@ -14,12 +14,7 @@ import {
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type Env, PUBLIC_CORS_POST, safeEqual } from "../index";
-import { createCoreErasureAdapter, createAuditErasureAdapter } from "./d1";
-import { createClerkErasureAdapter } from "./clerk";
-import { createSanityErasureAdapter } from "./sanity";
-import { createOrdersErasureAdapter } from "./orders";
-import { createRealClerkClient } from "./clerk-client";
-import { createRealSanityClient } from "./sanity-client";
+import { buildErasureAdapters } from "./adapters";
 import { sendErasureCompleteEmail } from "./email";
 
 const BODY_MAX = 4000;
@@ -79,30 +74,6 @@ function confirmFormHtml(token: string): string {
 </html>`;
 }
 
-/** The real five adapters, assembled from `env` secrets. Injectable for tests. */
-function defaultAdapters(env: Env): ErasureAdapter[] {
-  return [
-    createCoreErasureAdapter(env.CORE_DB!, env.GDPR_FINGERPRINT_SALT!),
-    createAuditErasureAdapter(
-      env.DB!,
-      env.CORE_DB!,
-      env.GDPR_FINGERPRINT_SALT!,
-    ),
-    createClerkErasureAdapter(createRealClerkClient(env.CLERK_SECRET_KEY!)),
-    createSanityErasureAdapter(
-      createRealSanityClient({
-        projectId: env.SANITY_PROJECT_ID!,
-        dataset: env.SANITY_DATASET!,
-        apiVersion: env.SANITY_API_VERSION ?? "2025-01-01",
-        writeToken: env.SANITY_API_WRITE_TOKEN!,
-        readToken: env.SANITY_API_READ_TOKEN,
-      }),
-      env.GDPR_FINGERPRINT_SALT!,
-    ),
-    createOrdersErasureAdapter(),
-  ];
-}
-
 /** Reads `{ token, email }` from a JSON or form-encoded POST body. */
 async function parseBody(
   request: Request,
@@ -143,7 +114,7 @@ export async function handleErasureConfirm(
   env: Env,
   ctx?: ExecutionContext,
   // Injectable for tests (mocked Clerk/Sanity, real D1) — production never passes this.
-  buildAdapters: (env: Env) => ErasureAdapter[] = defaultAdapters,
+  buildAdapters: (env: Env) => ErasureAdapter[] = buildErasureAdapters,
 ): Promise<Response> {
   if (request.method === "OPTIONS")
     return new Response(null, { status: 204, headers: PUBLIC_CORS_POST });
@@ -169,7 +140,7 @@ export async function handleErasureConfirm(
   // deploy armed DB + salt but not these, refuse with 503 so the request row stays
   // `email_sent` (retryable) instead of half-erasing D1 while Clerk/Sanity fail.
   if (
-    buildAdapters === defaultAdapters &&
+    buildAdapters === buildErasureAdapters &&
     (!env.CLERK_SECRET_KEY ||
       !env.SANITY_API_WRITE_TOKEN ||
       !env.SANITY_PROJECT_ID ||
