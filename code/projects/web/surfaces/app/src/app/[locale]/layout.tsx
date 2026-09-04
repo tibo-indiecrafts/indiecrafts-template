@@ -1,11 +1,12 @@
 import "@indiecrafts/packages-shared-ui-tokens/globals.css";
 import type { ReactNode } from "react";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
+import { OfflineBanner } from "@indiecrafts/packages-shared-system-pages/web";
 import { consent, localeDir, type Locale } from "@/config";
 import { SessionLogger } from "@indiecrafts/packages-web-auth";
 import { routing } from "@/i18n/routing";
@@ -45,12 +46,14 @@ export default async function LocaleLayout({
   // Carries the per-request CSP nonce (set by src/proxy.ts) so the inline theme script runs
   // under the strict nonce CSP.
   const nonce = requestHeaders.get("x-nonce") ?? undefined;
+  const tOffline = await getTranslations("offline");
 
   return (
     <html lang={locale} dir={localeDir(locale as Locale)}>
       <body>
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <NextIntlClientProvider>
+          <OfflineBanner message={tOffline("banner")} />
           {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
             <>
               <SessionLogger surface="app" />
