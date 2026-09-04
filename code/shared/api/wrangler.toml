@@ -151,18 +151,18 @@ BACKUP_RETENTION_DAYS = "30"
 [[env.dev.d1_databases]]
 binding = "DB"
 database_name = "indiecrafts-dev-shared-api"
-database_id = "PASTE_D1_ID_HERE"
+database_id = "e75ede12-ba85-4a6c-99ac-2988bd3a389f"
 migrations_dir = "db/audit/migrations"
 
 [[env.dev.d1_databases]]
 binding = "CORE_DB"
 database_name = "indiecrafts-dev-shared-api-core"
-database_id = "PASTE_CORE_D1_ID_HERE"
+database_id = "d9d3f463-db3c-4a99-8725-fb670b7ace0f"
 migrations_dir = "db/core/migrations"
 
 [[env.dev.kv_namespaces]]
 binding = "SECURITY_COUNTERS"
-id = "PASTE_KV_ID_HERE"
+id = "03930e85db0243bc9c6f01553285f4ba"
 
 [env.staging]
 name = "indiecrafts-staging-shared-api"

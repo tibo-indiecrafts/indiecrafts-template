@@ -70,12 +70,12 @@ name = "indiecrafts-dev-shared-cron"
 [[env.dev.d1_databases]]
 binding = "DB"
 database_name = "indiecrafts-dev-shared-api"
-database_id = "PASTE_D1_ID_HERE"
+database_id = "e75ede12-ba85-4a6c-99ac-2988bd3a389f"
 
 [[env.dev.d1_databases]]
 binding = "CORE_DB"
 database_name = "indiecrafts-dev-shared-api-core"
-database_id = "PASTE_CORE_D1_ID_HERE"
+database_id = "d9d3f463-db3c-4a99-8725-fb670b7ace0f"
 
 [env.staging]
 name = "indiecrafts-staging-shared-cron"
