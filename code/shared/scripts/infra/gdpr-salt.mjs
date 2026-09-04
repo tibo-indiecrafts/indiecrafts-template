@@ -5,10 +5,13 @@
 //
 // Usage:
 //   pnpm gdpr:salt:generate            → prints a fresh salt to stdout
-//   pnpm gdpr:salt:set:<env>           → wrangler prompts; paste the salt
+//   pnpm gdpr:salt:set:<env>           → wrangler prompts; paste a value generated FOR that env
+//                                         (do not paste the same value across envs)
 //   pnpm gdpr:salt:status:<env>        → lists the worker's secrets
 //
-// Rule: ONE salt per purpose, IDENTICAL across all envs, never committed.
+// Rule: a DISTINCT, independently-generated salt per environment; STABLE within an env
+// (rotating it breaks every email-keyed erasure/consent lookup — never rotate a live one);
+// never committed. Generate + set a separate value for dev, staging, and prod.
 import { spawnSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { APPS } from "../lib/apps.mjs";

@@ -17,7 +17,7 @@ row on `DB` (best-effort, no longer one atomic batch) — see
 `POST /v1/clerk-webhook` also keeps `user_profiles` in sync with Clerk (source of truth for email):
 upsert + re-fingerprint on `user.created`/`user.updated`, pseudonymise on `user.deleted`. Secrets:
 `APP_API_TOKEN` · `IP_HASH_SALT` · `CLERK_WEBHOOK_SECRET` · `GDPR_FINGERPRINT_SALT` (email fingerprint
-salt, identical across envs — see `wrangler.toml`). `POST /v1/events` also accepts `kind:csp-report` →
+salt, DISTINCT per env (stable within an env) — see `wrangler.toml`). `POST /v1/events` also accepts `kind:csp-report` →
 the `csp_reports` D1 table (aggregated CSP violation reports, Report-Only pipeline; 30-day `cron` purge).
 `GET /v1/csp-reports` reads it back (bearer-gated, same shape as `GET /v1/security`) for the admin CSP
 dashboard. `src/erasure/` holds the store-agnostic erasure

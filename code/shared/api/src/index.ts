@@ -79,8 +79,9 @@ export interface Env {
   /** `wrangler secret put IP_HASH_SALT` — salt for hashing IPs before storage (never raw). */
   IP_HASH_SALT?: string;
   /** `wrangler secret put GDPR_FINGERPRINT_SALT` — salt for the email pseudonymisation
-   *  fingerprint on user_profiles/consent/erasure. MUST be identical across envs.
-   *  Optional (fingerprints are left null until set). */
+   *  fingerprint on user_profiles/consent/erasure. DISTINCT per env, generated
+   *  independently; STABLE within an env — never rotate a live one (it orphans every
+   *  email-keyed lookup). Optional (fingerprints are left null until set). */
   GDPR_FINGERPRINT_SALT?: string;
   /** `wrangler secret put CLERK_WEBHOOK_SECRET` — Svix signing secret (`whsec_…`) for
    *  `POST /v1/clerk-webhook`. Optional (503 until set). */

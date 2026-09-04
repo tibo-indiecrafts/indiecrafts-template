@@ -134,7 +134,8 @@ invocation_logs = true
 # at the edge, never written per-request to D1:
 #   wrangler kv namespace create indiecrafts-dev-shared-api-security-counters
 # Secrets (out-of-band): APP_API_TOKEN · IP_HASH_SALT · CLERK_WEBHOOK_SECRET (Svix) ·
-#   GDPR_FINGERPRINT_SALT (email pseudonymisation fingerprint; identical across envs) ·
+#   GDPR_FINGERPRINT_SALT (email pseudonymisation fingerprint; DISTINCT per env, generated
+#   independently — STABLE within an env, never rotate a live one) ·
 #   CLERK_SECRET_KEY (erasure route's real Clerk client) ·
 #   SANITY_API_WRITE_TOKEN (erasure route's Sanity pseudonymisation writes) —
 #   wrangler secret put <NAME> --env <env>
