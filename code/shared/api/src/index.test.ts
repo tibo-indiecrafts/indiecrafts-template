@@ -53,6 +53,29 @@ describe("api worker (workerd)", () => {
   });
 });
 
+describe("/v1 auth contract — bearer-gated mutating routes reject anon", () => {
+  it.each([
+    ["POST", "/v1/events"],
+    ["PUT", "/v1/settings"],
+    ["POST", "/v1/data-request"],
+    ["POST", "/v1/export"],
+    ["GET", "/v1/sessions"],
+    ["GET", "/v1/security"],
+    ["GET", "/v1/csp-reports"],
+  ])("%s %s → 401 without a bearer", async (method, path) => {
+    const res = await SELF.fetch(`https://api.test${path}`, {
+      method,
+      ...(method === "POST" || method === "PUT"
+        ? { headers: { "content-type": "application/json" }, body: "{}" }
+        : {}),
+    });
+    // Bearer-gated routes 401 anon. A route that binding-preflights (e.g. 503) is
+    // acceptable ONLY if documented; /v1/events must 401 (it has no such preflight).
+    expect([401, 503]).toContain(res.status);
+    if (path === "/v1/events") expect(res.status).toBe(401);
+  });
+});
+
 describe("/v1/settings", () => {
   const auth = { authorization: "Bearer test-token" };
 
@@ -62,9 +85,13 @@ describe("/v1/settings", () => {
   });
 
   it("GET returns every key with its bounds + effective value", async () => {
-    const res = await SELF.fetch("https://api.test/v1/settings", { headers: auth });
+    const res = await SELF.fetch("https://api.test/v1/settings", {
+      headers: auth,
+    });
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { settings: Array<{ key: string; value: number; min: number }> };
+    const body = (await res.json()) as {
+      settings: Array<{ key: string; value: number; min: number }>;
+    };
     const audit = body.settings.find((s) => s.key === "retention.audit_days");
     expect(audit?.value).toBe(90); // default, no override yet
   });
@@ -73,7 +100,11 @@ describe("/v1/settings", () => {
     const res = await SELF.fetch("https://api.test/v1/settings", {
       method: "PUT",
       headers: { ...auth, "content-type": "application/json" },
-      body: JSON.stringify({ key: "retention.audit_days", value: 120, actor: "user_admin" }),
+      body: JSON.stringify({
+        key: "retention.audit_days",
+        value: 120,
+        actor: "user_admin",
+      }),
     });
     expect(res.status).toBe(200);
     const row = await env.DB.prepare(
@@ -83,14 +114,21 @@ describe("/v1/settings", () => {
     const audit = await env.DB.prepare(
       "SELECT event, target_user_id FROM admin_audit WHERE event = 'setting_changed'",
     ).first<{ event: string; target_user_id: string }>();
-    expect(audit).toEqual({ event: "setting_changed", target_user_id: "retention.audit_days" });
+    expect(audit).toEqual({
+      event: "setting_changed",
+      target_user_id: "retention.audit_days",
+    });
   });
 
   it("PUT 422s an out-of-range value (below the consent floor) and stores nothing", async () => {
     const res = await SELF.fetch("https://api.test/v1/settings", {
       method: "PUT",
       headers: { ...auth, "content-type": "application/json" },
-      body: JSON.stringify({ key: "retention.consent_days", value: 10, actor: "user_admin" }),
+      body: JSON.stringify({
+        key: "retention.consent_days",
+        value: 10,
+        actor: "user_admin",
+      }),
     });
     expect(res.status).toBe(422);
     const body = (await res.json()) as { min: number; max: number };
@@ -98,7 +136,10 @@ describe("/v1/settings", () => {
   });
 
   it("PUT 422s an unknown key and a non-integer", async () => {
-    for (const value of [{ key: "nope", value: 1 }, { key: "retention.audit_days", value: 1.5 }]) {
+    for (const value of [
+      { key: "nope", value: 1 },
+      { key: "retention.audit_days", value: 1.5 },
+    ]) {
       const res = await SELF.fetch("https://api.test/v1/settings", {
         method: "PUT",
         headers: { ...auth, "content-type": "application/json" },
@@ -112,15 +153,21 @@ describe("/v1/settings", () => {
 describe("/v1/backups/status", () => {
   const auth = { authorization: "Bearer test-token" };
   it("401s without the bearer", async () => {
-    expect((await SELF.fetch("https://api.test/v1/backups/status")).status).toBe(401);
+    expect(
+      (await SELF.fetch("https://api.test/v1/backups/status")).status,
+    ).toBe(401);
   });
   it("returns recent runs newest-first", async () => {
     await env.DB.prepare(
       "INSERT INTO backup_runs (db_name,env,kind,status,started_at,finished_at) VALUES ('audit','prod','manual','ok','2026-08-24T00:00:00Z','2026-08-24T00:00:03Z')",
     ).run();
-    const res = await SELF.fetch("https://api.test/v1/backups/status", { headers: auth });
+    const res = await SELF.fetch("https://api.test/v1/backups/status", {
+      headers: auth,
+    });
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { runs: Array<{ dbName: string; status: string }> };
+    const body = (await res.json()) as {
+      runs: Array<{ dbName: string; status: string }>;
+    };
     expect(body.runs[0]).toMatchObject({ dbName: "audit", status: "ok" });
   });
 });
