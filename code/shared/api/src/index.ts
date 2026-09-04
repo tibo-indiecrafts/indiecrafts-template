@@ -34,6 +34,7 @@ import { handleErasureRequest } from "./erasure/request";
 import { handleErasureConfirm } from "./erasure/confirm";
 import { handleErasureStatus } from "./erasure/status";
 import { handleErasureSelf } from "./erasure/self";
+import { handleClerkUserDeleted } from "./erasure/clerk-deleted";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -692,8 +693,15 @@ export default {
     if (url.pathname === "/v1/settings") {
       if (request.method === "OPTIONS")
         return new Response(null, { status: 204, headers: cors });
-      const bearer = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
-      if (!env.APP_API_TOKEN || !bearer || !safeEqual(bearer, env.APP_API_TOKEN))
+      const bearer = (request.headers.get("authorization") ?? "").replace(
+        /^Bearer\s+/i,
+        "",
+      );
+      if (
+        !env.APP_API_TOKEN ||
+        !bearer ||
+        !safeEqual(bearer, env.APP_API_TOKEN)
+      )
         return json({ error: "unauthorized" }, 401, cors);
       if (!env.CORE_DB || !env.DB)
         return json({ error: "unavailable" }, 503, cors);
@@ -701,7 +709,12 @@ export default {
       if (request.method === "GET") {
         const { results } = await env.CORE_DB.prepare(
           "SELECT key, value, updated_at, updated_by FROM site_settings",
-        ).all<{ key: string; value: string; updated_at: string; updated_by: string }>();
+        ).all<{
+          key: string;
+          value: string;
+          updated_at: string;
+          updated_by: string;
+        }>();
         const overrides = new Map(results.map((r) => [r.key, r]));
         const effective = effectiveSettings(results);
         const settings = (Object.keys(SETTINGS) as SettingKey[]).map((key) => {
@@ -728,14 +741,22 @@ export default {
           return json({ error: "invalid" }, 400, cors);
         }
         const key = typeof body.key === "string" ? body.key : "";
-        const actor = typeof body.actor === "string" ? body.actor.slice(0, 128) : "";
+        const actor =
+          typeof body.actor === "string" ? body.actor.slice(0, 128) : "";
         const raw = typeof body.value === "number" ? String(body.value) : "";
-        if (!key || !actor || raw === "") return json({ error: "invalid" }, 400, cors);
-        const rule = (SETTINGS as Record<string, { min: number; max: number }>)[key];
+        if (!key || !actor || raw === "")
+          return json({ error: "invalid" }, 400, cors);
+        const rule = (SETTINGS as Record<string, { min: number; max: number }>)[
+          key
+        ];
         const coerced = coerceSetting(key, raw);
         // Reject rather than silently clamp — the operator sees the bound.
         if (!rule || coerced === null || coerced !== Number(raw))
-          return json({ error: "out_of_range", min: rule?.min, max: rule?.max }, 422, cors);
+          return json(
+            { error: "out_of_range", min: rule?.min, max: rule?.max },
+            422,
+            cors,
+          );
 
         const ts = new Date().toISOString();
         // site_settings (CORE_DB) and admin_audit (DB) are now separate D1 instances, so
@@ -773,8 +794,15 @@ export default {
         return new Response(null, { status: 204, headers: cors });
       if (request.method !== "GET")
         return json({ error: "method_not_allowed" }, 405, cors);
-      const bearer = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
-      if (!env.APP_API_TOKEN || !bearer || !safeEqual(bearer, env.APP_API_TOKEN))
+      const bearer = (request.headers.get("authorization") ?? "").replace(
+        /^Bearer\s+/i,
+        "",
+      );
+      if (
+        !env.APP_API_TOKEN ||
+        !bearer ||
+        !safeEqual(bearer, env.APP_API_TOKEN)
+      )
         return json({ error: "unauthorized" }, 401, cors);
 
       let runs: Array<Record<string, unknown>> = [];
@@ -921,16 +949,7 @@ export default {
           const now = new Date().toISOString();
           try {
             if (evt.type === "user.deleted") {
-              await env.CORE_DB.prepare(
-                "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
-              )
-                .bind(
-                  `deleted_${userId}@anonymized.local`,
-                  "Deleted User",
-                  now,
-                  userId,
-                )
-                .run();
+              await handleClerkUserDeleted(env, userId, now);
             } else {
               // Webhook payload is snake_case (unlike the @clerk/backend SDK).
               const emails =
