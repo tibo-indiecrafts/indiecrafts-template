@@ -26,6 +26,10 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **en/fr message key parity is now unit-guarded (`src/i18n/messages-parity.test.ts`).** Parity was only
+  enforced by the build (prerender × locale + next-intl strict resolution). A fast test now asserts
+  `messages/en.json` + `fr.json` expose identical key paths, so drift fails in `pnpm test` before a build.
+  Adding a locale = add its file to the test.
 - **Corrected the Cloudflare bot guidance in `infra/cloudflare/main.tf` — don't blanket-block AI bots.**
   The Bot-Fight comment advised turning on Cloudflare's "Block AI Bots", which is too broad: it blocks the
   search + user-fetch agents you WANT (Googlebot/AI Overviews, OAI-SearchBot, ChatGPT-User, Claude-User,

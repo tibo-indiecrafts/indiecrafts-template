@@ -5,7 +5,7 @@
 **To activate:**
 
 1. Add a row to `scripts/lib/infra-registry.mjs`:
-   `{ name, provider: "vercel", owner: "website", altitude: "leaf", dir: "code/projects/web/surfaces/website/infra/vercel/<name>", order }`.
+   `{ name, provider: "vercel", owner: "website", altitude: "leaf", dir: "code/projects/web/surfaces/admin/infra/vercel/<name>", order }`.
 2. Add `<name>/main.tf` + `<name>/env/<env>.tfvars` here.
 3. Run: `node scripts/infra.mjs <name> <init|plan|apply|destroy|output> <env>`.
 

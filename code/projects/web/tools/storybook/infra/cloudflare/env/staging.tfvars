@@ -1,7 +1,9 @@
-# storybook · staging. Fill account_id + zone_id + domain (the zone must be on this CF account).
+# storybook · staging. Runs on *.workers.dev (matches wrangler.toml `[env.staging]
+# workers_dev = true`) — no custom domain. Set attach_domain = true + a domain here AND
+# switch wrangler's staging off workers.dev if you want a real staging host.
 env           = "staging"
 worker_name   = "indiecrafts-staging-web-tools-storybook"
-attach_domain = true
-account_id    = ""                              # REQUIRED
-zone_id       = ""                              # REQUIRED (the domain's zone)
-domain        = "storybook-staging.example.com" # REQUIRED — your staging host
+attach_domain = false
+account_id    = "" # REQUIRED
+zone_id       = "" # only needed when attach_domain = true
+domain        = ""

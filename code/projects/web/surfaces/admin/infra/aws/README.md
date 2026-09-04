@@ -5,7 +5,7 @@
 **To activate:**
 
 1. Add a row to `scripts/lib/infra-registry.mjs`:
-   `{ name, provider: "aws", owner: "website", altitude: "leaf", dir: "code/projects/web/surfaces/website/infra/aws/<name>", order }`.
+   `{ name, provider: "aws", owner: "website", altitude: "leaf", dir: "code/projects/web/surfaces/admin/infra/aws/<name>", order }`.
 2. Add `<name>/main.tf` + `<name>/env/<env>.tfvars` here.
 3. Run: `node scripts/infra.mjs <name> <init|plan|apply|destroy|output> <env>`.
 

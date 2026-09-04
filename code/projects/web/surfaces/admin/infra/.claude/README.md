@@ -1,4 +1,4 @@
-# `.claude/` — `code/projects/web/surfaces/website/infra` scope
+# `.claude/` — `code/projects/web/surfaces/admin/infra` scope
 
 Claude Code config for this folder. **Auto-loads:** `CLAUDE.md` (this scope's brief; it cascades under the
 parent briefs). **Extend per-folder** with `rules/<topic>.md` (focused, auto-loading rules). Slash

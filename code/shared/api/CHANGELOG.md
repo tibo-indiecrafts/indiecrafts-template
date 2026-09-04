@@ -54,6 +54,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Infra stack polish (admin/storybook markers + tfvars).** admin's Zero Trust Access resources are now
+  `count`-gated on `attach_domain` (inert on `*.workers.dev`, so `dev` is apply-clean like the other
+  zone-scoped resources); storybook `staging.tfvars` set `attach_domain = false` to match its
+  `wrangler.toml` (`[env.staging] workers_dev = true`); the copied `.claude`/`aws`/`vercel` scope-path
+  markers in the app/admin infra dirs were retargeted off `website`.
 - **`pnpm clean` actually cleans again (`shared/scripts/dev/clean.sh`).** After the script moved to
   `code/shared/scripts/dev/`, its `ROOT_DIR="$(dirname "$SCRIPT_DIR")"` resolved to
   `code/shared/scripts` (one level up), so `find .` ran there and matched **no** app artifacts —

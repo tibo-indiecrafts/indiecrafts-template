@@ -314,6 +314,7 @@ resource "cloudflare_r2_bucket" "db_backup" {
 #    infra). Fronts `var.domain` (admin's own host) — only var.access_email_domain reaches
 #    the Worker. Needs Cloudflare Zero Trust configured on the account (an IdP set up).
 resource "cloudflare_zero_trust_access_application" "admin" {
+  count            = var.attach_domain ? 1 : 0 # inert on *.workers.dev (dev) — needs a real host + zone
   account_id       = var.account_id
   zone_id          = var.zone_id
   name             = "${var.worker_name}-admin"
@@ -322,8 +323,9 @@ resource "cloudflare_zero_trust_access_application" "admin" {
   session_duration = "24h"
 }
 resource "cloudflare_zero_trust_access_policy" "admin_allow" {
+  count          = var.attach_domain ? 1 : 0
   account_id     = var.account_id
-  application_id = cloudflare_zero_trust_access_application.admin.id
+  application_id = cloudflare_zero_trust_access_application.admin[0].id
   name           = "team-only"
   decision       = "allow"
   precedence     = 1
