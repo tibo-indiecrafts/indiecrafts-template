@@ -2,7 +2,11 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { AppState, Linking, View, StyleSheet } from "react-native";
 import { useIntl } from "react-intl";
 import { getLocales } from "expo-localization";
-import { Button, ThemedText, useTheme } from "@indiecrafts/packages-mobile-ui-native";
+import {
+  Button,
+  ThemedText,
+  useTheme,
+} from "@indiecrafts/packages-mobile-ui-native";
 import {
   ConsentBanner,
   LegalReacceptancePrompt,
@@ -26,8 +30,9 @@ import {
   isUpdateAvailable,
   VERSION_ENDPOINT,
 } from "@indiecrafts/packages-shared-version";
-import { OfflineBanner } from "@/components/OfflineBanner";
+import { OfflineBanner } from "@indiecrafts/packages-shared-system-pages/native";
 import { AnnouncementOverlay } from "@/components/AnnouncementOverlay";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { hasClerk } from "@/lib/auth";
 import {
   localeCodes,
@@ -42,8 +47,12 @@ import {
 } from "@/config";
 
 // The two persisted records, keyed from the one registry. Created once at module scope.
-const consentStore = createNativeStore<ConsentRecord>(STORAGE_KEYS.cookieConsent);
-const legalStore = createNativeStore<LegalAcceptanceRecord>(STORAGE_KEYS.legalAck);
+const consentStore = createNativeStore<ConsentRecord>(
+  STORAGE_KEYS.cookieConsent,
+);
+const legalStore = createNativeStore<LegalAcceptanceRecord>(
+  STORAGE_KEYS.legalAck,
+);
 
 function useRecord<T>(store: Store<T>): T | null {
   return useSyncExternalStore(store.subscribe, store.get, store.get);
@@ -61,7 +70,12 @@ function ConsentGate({ mode }: { mode: ConsentMode | null }) {
   // opt-out / none: no blocking banner — seed the default ONCE (accept-all; RN has no GPC
   // signal to honour). `null` = geo still resolving, so seed nothing yet.
   useEffect(() => {
-    if (!features.requireConsent || record || mode === null || mode === "opt-in")
+    if (
+      !features.requireConsent ||
+      record ||
+      mode === null ||
+      mode === "opt-in"
+    )
       return;
     consentStore.save({
       v: policyVersion,
@@ -75,7 +89,9 @@ function ConsentGate({ mode }: { mode: ConsentMode | null }) {
 
   const cat = (key: string) => ({
     title: t.formatMessage({ id: `consent.categories.${key}.title` }),
-    description: t.formatMessage({ id: `consent.categories.${key}.description` }),
+    description: t.formatMessage({
+      id: `consent.categories.${key}.description`,
+    }),
   });
   const categories = resolveCategories(DEFAULT_CONSENT_CATEGORIES, {
     necessary: cat("necessary"),
@@ -120,7 +136,9 @@ function LegalReacceptGate({ locale }: { locale: Locale }) {
         acceptLabel: t.formatMessage({ id: "legal.reaccept.accept" }),
       }}
       onReview={() => openLegal("terms", locale)}
-      onAccept={() => legalStore.save({ version: policyVersion, t: Date.now() })}
+      onAccept={() =>
+        legalStore.save({ version: policyVersion, t: Date.now() })
+      }
     />
   );
 }
@@ -227,6 +245,8 @@ export function ShellOverlays({
   chooseLocale: (locale: Locale) => void;
   hasChoice: boolean;
 }) {
+  const t = useIntl();
+  const online = useNetworkStatus();
   // Geo-resolve the consent mode once on launch (via the api `/v1/geo` — native has no
   // cf-ipcountry of its own). `null` until resolved, so the banner never flashes.
   const [consentMode, setConsentMode] = useState<ConsentMode | null>(null);
@@ -241,14 +261,23 @@ export function ShellOverlays({
   }, []);
   return (
     <>
-      <OfflineBanner />
+      <OfflineBanner
+        message={t.formatMessage({ id: "offline.banner" })}
+        online={online}
+      />
       {/* Logged-in-only announcements (banner + toast) from the api Worker. Gated on
           `hasClerk` so `useAuth` inside always has its provider. */}
       {hasClerk ? <AnnouncementOverlay locale={locale} /> : null}
       <ConsentGate mode={consentMode} />
       <LegalReacceptGate locale={locale} />
-      {websiteUrl ? <VersionBanner endpoint={`${websiteUrl}${VERSION_ENDPOINT}`} /> : null}
-      <LocaleSuggest active={locale} chooseLocale={chooseLocale} hasChoice={hasChoice} />
+      {websiteUrl ? (
+        <VersionBanner endpoint={`${websiteUrl}${VERSION_ENDPOINT}`} />
+      ) : null}
+      <LocaleSuggest
+        active={locale}
+        chooseLocale={chooseLocale}
+        hasChoice={hasChoice}
+      />
     </>
   );
 }
@@ -282,5 +311,10 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   bannerText: { flex: 1, fontSize: 13 },
-  actions: { flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-end", gap: 8 },
+  actions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+    gap: 8,
+  },
 });
