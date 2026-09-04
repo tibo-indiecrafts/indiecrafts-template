@@ -1,8 +1,9 @@
 # @indiecrafts/mobile-surfaces-main — mobile app (expo)
 
 Auto-loads under `code/projects/mobile/**`. The **React Native (Expo)** mobile client. Talks to the `api`
-slot (or the web `/api` routes) for data; renders content from the same Sanity dataset. **Shell wired —
-theme · i18n · status pages · native UI foundation; product screens are TBD.**
+slot (or the web `/api` routes) for data; renders content from the same Sanity dataset. **Shell wired +
+the first product screen (`account`) — theme · i18n · status pages · native UI foundation · a signed-in
+`account` screen (cookie preferences + self-service delete/export); further product screens are TBD.**
 
 > **AI tooling — install the official Expo plugin** (`claude plugin install expo@claude-plugins-official`,
 > then `/reload-plugins`): the Expo **Skills** (`expo-router` · `expo-native-ui` · `expo-design-system` ·
@@ -37,6 +38,10 @@ theme · i18n · status pages · native UI foundation; product screens are TBD.*
   links out to the website's legal pages (`Linking.openURL(legalUrl(websiteUrl, …))`). Locale switches
   at runtime + persists (`lib/i18n.ts` `getStoredLocale`/`setStoredLocale`). Instance config
   (`sitePrefix` · `websiteUrl` · `features` · `policyVersion`) in `config/index.ts`.
+- **Account** — `app/account.tsx` (signed-in): the shared `compliance/native` cookie-preferences panel
+  (`ConsentPreferences`, one shared `consentStore` from `lib/consent-store.ts`) + self-service
+  `DeleteAccountSection`/`ExportSection` (copy via the `compliance` builders), gated on
+  `features.deleteAccount`/`exportAccount`. Linked from home + the sign-in signed-in view.
 - **Persistence** — every storage key lives in `STORAGE_KEYS` (`@/config`); read a name, never inline
   `${sitePrefix}.…`. `lib/storage` wraps `AsyncStorage` never-throw for app **prefs** (non-secret). A
   runtime **session token** belongs in `expo-secure-store` (OS keychain) once the `auth` brick lands — not
