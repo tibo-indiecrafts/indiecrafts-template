@@ -6,7 +6,7 @@
 
 **Architecture:** Two shared bricks gain exports (`system-pages` offline; `compliance/shared` copy-builder + moved types), then the four surfaces (website, app, mobile, hybrid) are repointed and their dead duplicates deleted. Web offline detection is shared (3 DOM consumers); mobile's netinfo detection stays local (single consumer) and feeds a presentational native banner.
 
-**Tech Stack:** TypeScript, React 19 (web), React Native/Expo (mobile), Electron+Vite (hybrid renderer), pnpm + Turborepo, node:test for brick unit tests.
+**Tech Stack:** TypeScript, React 19 (web), React Native/Expo (mobile), Electron+Vite (hybrid renderer), pnpm + Turborepo, vitest for brick unit tests.
 
 **Spec:** `docs/superpowers/specs/2026-09-04-cross-platform-parity-dedup-design.md`
 
