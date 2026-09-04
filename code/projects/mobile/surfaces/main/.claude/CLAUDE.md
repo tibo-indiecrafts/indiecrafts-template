@@ -33,8 +33,8 @@ the first product screen (`account`) — theme · i18n · status pages · native
   gated by `config.features.requireConsent`, off by default; **geo-targeted** per country via the api
   `GET /v1/geo` + `config.consent` — `lib/geo.ts`), an `AppState` version poll of the
   website's `/api/version`, a first-run locale suggestion (`pickSuggestedLocale`), and an offline banner
-  (`hooks/useNetworkStatus` via `@react-native-community/netinfo` → `components/OfflineBanner`, copy from
-  `SHELL_COPY.offline`). `app/legal.tsx`
+  (`hooks/useNetworkStatus` via `@react-native-community/netinfo` feeds the shared `system-pages/native`
+  `OfflineBanner`, copy from `SHELL_COPY.offline`). `app/legal.tsx`
   links out to the website's legal pages (`Linking.openURL(legalUrl(websiteUrl, …))`). Locale switches
   at runtime + persists (`lib/i18n.ts` `getStoredLocale`/`setStoredLocale`). Instance config
   (`sitePrefix` · `websiteUrl` · `features` · `policyVersion`) in `config/index.ts`.
