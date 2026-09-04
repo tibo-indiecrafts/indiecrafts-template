@@ -107,14 +107,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   the shared api's `/v1/events` (surface `"mobile"`) via `lib/session-log.ts`, using the bundled
   `EXPO_PUBLIC_API_URL` + `EXPO_PUBLIC_AGENT_TOKEN`. Unset → off. **Why:** sign-ins show in the admin
   sessions screen alongside the other surfaces.
-- **Offline banner — `useNetworkStatus` + `OfflineBanner` in the shell.** `hooks/useNetworkStatus.ts`
+- **Offline banner — `useNetworkStatus` feeding the shared `OfflineBanner`.** `hooks/useNetworkStatus.ts`
   wraps `@react-native-community/netinfo` (idiomatic RN `useState` + `useEffect`; starts online to avoid a
-  launch flash, only an explicit `isConnected`/`isInternetReachable === false` marks offline).
-  `components/OfflineBanner.tsx` — a non-blocking top strip (mounted in `ShellOverlays`), `secondary`
-  tokens, `accessibilityLiveRegion="polite"`, copy from the shared `SHELL_COPY.offline` (`offline.banner`,
-  already merged into react-intl by `messagesFor`). **Why:** losing the network was silent; the full-screen
-  `OfflineContent` for a screen that can't render offline is ready in `system-pages/native`. Safe-area inset
-  is a rough constant — `react-native-safe-area-context` refinement is a follow-up.
+  launch flash, only an explicit `isConnected`/`isInternetReachable === false` marks offline) and passes
+  `online` + copy into `OfflineBanner` from `@indiecrafts/packages-shared-system-pages/native` (mounted in
+  `ShellOverlays`), copy from the shared `SHELL_COPY.offline` (`offline.banner`, already merged into
+  react-intl by `messagesFor`). **Why:** losing the network was silent; the banner now shares one
+  implementation with the website/`app`/hybrid instead of a mobile-only component, and the full-screen
+  `OfflineContent` for a screen that can't render offline is ready in `system-pages/native`. Safe-area
+  inset is a rough constant — `react-native-safe-area-context` refinement is a follow-up.
 - **Test harness — `jest` + `jest-expo` (`verify` now means `tsc && test`).** `jest.config.js`
   (`preset: "jest-expo"`, a **pnpm-aware** `transformIgnorePatterns` that transpiles RN/Expo packages
   under `node_modules/.pnpm/…`) + `jest.setup.js` (mocks native `AsyncStorage`). Colocated tests:

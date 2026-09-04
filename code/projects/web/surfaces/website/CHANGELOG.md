@@ -306,13 +306,19 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   leak-check now exempts a `*PUBLISHABLE*` match (Clerk / Stripe `pk_…` are public by design); every real
   secret still blocks. **Why:** Clerk's SDK requires the exact public name `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
 
-- **Offline banner — a non-blocking connectivity strip in `DefaultLayout`.** A `useOnlineStatus` hook
-  (`src/hooks/`, `useSyncExternalStore` over `navigator.onLine` + the `online`/`offline` events —
-  hydration-safe, assumes online during SSR so it never flashes) drives a slim `OfflineBanner`
-  (`role="status"` `aria-live="polite"`, `bg-secondary` tokens) that shows while offline and auto-hides on
+- **Offline banner — a non-blocking connectivity strip in `DefaultLayout`.** A slim `OfflineBanner`
+  (`role="status"` `aria-live="polite"`, `bg-secondary` tokens) shows while offline and auto-hides on
   reconnect. Copy in `messages.offline.banner` (en + fr); the full-screen `OfflineContent` (for a route
-  that can't render offline) is the new `system-pages` component. **Why:** losing the network was a silent
+  that can't render offline) is the `system-pages` component. **Why:** losing the network was a silent
   failure — now the visitor is told, in their language, without blocking the page.
+- **Offline banner + detection moved to `system-pages`.** The local `useOnlineStatus` hook and
+  `OfflineBanner` component are dropped; `DefaultLayout` now imports both from
+  `@indiecrafts/packages-shared-system-pages/web`. **Why:** the `app` surface and the Electron renderer
+  needed the same detection + banner — one implementation instead of three.
+- **Account copy assembled via the shared `compliance` builders.** `account/page.tsx` now calls
+  `buildDeleteAccountCopy`/`buildExportCopy` (`@indiecrafts/packages-shared-compliance/web`) instead of
+  hand-assembling the `DeleteAccountCopy`/`ExportCopy` objects field-by-field. **Why:** the field list now
+  lives in one place, shared with `app`, mobile, and hybrid.
 - **AI agent on the web — cross-origin call to the shared agent Worker + a translated demo UI.** The
   `ContentResearchAgent` client component posts a goal to the standalone `code/shared/agent` Worker
   (`NEXT_PUBLIC_AGENT_URL` → `POST /v1/agent/:name`), guarded by Turnstile (the site ships only the public

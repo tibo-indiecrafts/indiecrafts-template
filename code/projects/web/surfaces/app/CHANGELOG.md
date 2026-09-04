@@ -22,6 +22,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 - **Cookie preferences on `/account`.** New `CookiePreferencesSection` wraps the shared
   `ConsentPreferences` toggle list, reading/writing the same `consentStore` key `ShellOverlays`
   uses, so the toast's Manage action points to a real control.
+- **Offline banner.** Mounts the shared `OfflineBanner` (self-detecting, `useOnlineStatus`) from
+  `@indiecrafts/packages-shared-system-pages/web` at the top of `[locale]/layout.tsx`, above the fold.
+  New `offline.banner` message key (en + fr), mirroring the website's wording. **Why:** losing the
+  network was a silent failure on this surface; now the visitor is told, without blocking the page.
+
+### Changed
+
+- **Account copy assembled via the shared `compliance` builders.** `account/page.tsx` now calls
+  `buildDeleteAccountCopy`/`buildExportCopy` (`@indiecrafts/packages-shared-compliance/web`) instead of
+  hand-assembling the `DeleteAccountCopy`/`ExportCopy` objects field-by-field. **Why:** the field list now
+  lives in one place, shared with website, mobile, and hybrid.
 
 ### Fixed
 

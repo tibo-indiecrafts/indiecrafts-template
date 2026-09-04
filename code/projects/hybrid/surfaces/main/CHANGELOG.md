@@ -130,9 +130,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 - **Test harness — Vitest (`verify` now means `tsc && test`).** `vitest.config.ts` extends the shared
   happy-dom base; colocated `src/main/*.test.ts` cover the pure, Electron-free main-process logic. First
   suite: `src/main/url-guard.test.ts`.
-- **Offline banner in the renderer.** `src/renderer/src/useOnlineStatus.ts` (a `navigator.onLine`
-  `useSyncExternalStore` twin of the website's hook) drives a banner in `App.tsx`; copy from the shared
-  `SHELL_COPY.offline`. Reuses the `system-pages` `OfflineContent` page. See the packages changelog.
+- **Offline banner in the renderer.** A banner in `App.tsx`, copy from the shared `SHELL_COPY.offline`.
+  Reuses the `system-pages` `OfflineContent` page. See the packages changelog.
+- **Offline banner + detection moved to `system-pages`.** The local `useOnlineStatus.ts` twin and its
+  banner are dropped; `App.tsx` and `announcement.tsx` now import `OfflineBanner`/`useOnlineStatus` from
+  `@indiecrafts/packages-shared-system-pages/web`. **Why:** the website and the `app` surface needed the
+  same detection + banner — one implementation instead of three.
+- **Account copy assembled via the shared `compliance` builders.** `auth.tsx`'s `SignedInView` now calls
+  `buildDeleteAccountCopy`/`buildExportCopy` (`@indiecrafts/packages-shared-compliance/web`) instead of
+  hand-assembling the `DeleteAccountCopy`/`ExportCopy` objects field-by-field. **Why:** the field list now
+  lives in one place, shared with website, `app`, and mobile.
 
 ### Changed
 

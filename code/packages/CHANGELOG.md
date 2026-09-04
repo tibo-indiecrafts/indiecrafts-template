@@ -34,9 +34,28 @@ Changed · Deprecated · Removed · Fixed**.
 - **`@indiecrafts/packages-web-ui-components` — `showConsentSavedToast` (new `web/consent-toast`
   export, sonner).** One shared "choice saved" toast every web surface fires on an explicit
   cookie-consent or legal-reacceptance choice: `showConsentSavedToast({ saved, description, manage,
-  onManage })`. Copy is injected by the caller (no i18n inside the package); `onManage` opens that
+onManage })`. Copy is injected by the caller (no i18n inside the package); `onManage` opens that
   surface's cookie-preferences control. **Why:** website, app, and hybrid confirm a consent choice
   the same way instead of three bespoke toasts.
+
+- **`@indiecrafts/packages-shared-system-pages` — offline hook + banner (`useOnlineStatus`,
+  `OfflineBanner`, on `./web` and `./native`).** `useOnlineStatus` (`./web`) tracks the `online`/`offline`
+  events via `useSyncExternalStore` (hydration-safe — the server snapshot assumes online, so it never
+  flashes offline during SSR). `OfflineBanner` renders a slim, auto-hiding strip: the web fork
+  self-detects via `useOnlineStatus` (props: `{ message }`); the native fork takes connectivity as a prop
+  (props: `{ message, online }`) so the brick stays free of a single-consumer native dep (netinfo) — the
+  app owns detection. **Why:** the website, `app`, and the Electron renderer each carried their own copy
+  of the same hook + banner; now they import one. Repointed: website, `app`, and hybrid drop their local
+  hook/banner for the brick's; mobile keeps its local `useNetworkStatus` (netinfo) and passes its result
+  into the brick's native `OfflineBanner`.
+- **`@indiecrafts/packages-shared-compliance` — account copy moved to `./shared` + copy-builders
+  (`buildDeleteAccountCopy`, `buildExportCopy`).** `DeleteAccountCopy`/`ExportCopy` (previously defined
+  twice, once in the `./web` and once in the `./native` section files) now live in
+  `src/shared/account-copy.ts`, re-exported from `./shared`, `./web`, and `./native` unchanged. The two
+  builders assemble each shape from a namespace-scoped translator (`t` already scoped to `account.delete`
+  / `account.export`), so one field list serves both next-intl and react-intl callers. **Why:** every
+  surface's account page hand-assembled the same two objects field-by-field; now website, `app`, hybrid,
+  and mobile call one builder each.
 
 ### Changed
 
