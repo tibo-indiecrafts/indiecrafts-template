@@ -1,4 +1,7 @@
 {
+  "offline": {
+    "banner": "You're offline — some features may be unavailable."
+  },
   "app": {
     "title": "indiecrafts",
     "subtitle": "App shell — i18n, consent and version prompts wired.",

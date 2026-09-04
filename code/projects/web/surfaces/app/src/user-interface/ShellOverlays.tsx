@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { UpdatePrompt } from "@indiecrafts/packages-web-version/update-prompt";
+import { OfflineBanner } from "@indiecrafts/packages-shared-system-pages/web";
 import {
   ConsentBanner,
   LegalReacceptancePrompt,
@@ -134,7 +135,7 @@ function LegalGate({ locale }: { locale: Locale }) {
   );
 }
 
-/** Compliance + version overlays for the app shell. Mounted in `[locale]/layout`.
+/** Offline + compliance + version overlays for the app shell. Mounted in `[locale]/layout`.
  *  `mode` is the geo-resolved consent mode (from the layout's `cf-ipcountry`); `gpcSignal` is
  *  the server-detected `Sec-GPC: 1` request header. */
 export function ShellOverlays({
@@ -147,9 +148,11 @@ export function ShellOverlays({
   gpcSignal: boolean;
 }) {
   const tv = useTranslations("version");
+  const tOffline = useTranslations("offline");
   const locale = useLocale() as Locale;
   return (
     <>
+      <OfflineBanner message={tOffline("banner")} />
       <ConsentGate mode={mode} gpcSignal={gpcSignal} />
       <LegalGate locale={locale} />
       <UpdatePrompt

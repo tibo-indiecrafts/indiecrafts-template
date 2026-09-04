@@ -1,4 +1,7 @@
 {
+  "offline": {
+    "banner": "Vous êtes hors ligne — certaines fonctions peuvent être indisponibles."
+  },
   "app": {
     "title": "indiecrafts",
     "subtitle": "Coquille applicative — i18n, consentement et mises à jour câblés.",
