@@ -24,7 +24,7 @@ import { LOCALE_SUGGEST_COOKIE } from "@indiecrafts/packages-web-locale-suggest/
 import { SkipLink } from "./SkipLink";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { OfflineBanner } from "./OfflineBanner";
+import { OfflineBanner } from "@indiecrafts/packages-shared-system-pages/web";
 
 /**
  * Production default layout, colocated in `@/user-interface/layout` so the app owns
