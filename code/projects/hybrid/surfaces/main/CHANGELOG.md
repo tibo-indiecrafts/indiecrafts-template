@@ -13,6 +13,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **IPC handler test coverage (`src/main/index.test.ts`).** New suite mocks `electron`
+  (`ipcMain.handle` captures each handler; `app.whenReady()` never resolves so
+  `createWindow()` stays out of scope) to unit-test the handler logic directly:
+  `open-external`/`oauth:start` refuse a non-http(s) URL (through the real
+  `isSafeExternalUrl` guard) and open a safe one; `agent:run` forwards
+  `name`/`context`/`locale` to `callAgent` and returns its result, and fails closed
+  without `AGENT_TOKEN`; `session:log` posts to `/v1/events` with bearer auth and skips
+  the request without a `userId` or a token. Window lifecycle, `createWindow`, and the
+  deep-link (`open-url`/`second-instance`) forwarding still need a real Electron
+  harness — out of scope here.
+
 - **Self-service account delete now triggers Clerk step-up reverification.**
   `auth.tsx`'s `SignedInView` wraps the erasure fetch (`rawErasureFetch`) in
   Clerk's `useReverification`, so a stale first factor (the worker's `fva`
