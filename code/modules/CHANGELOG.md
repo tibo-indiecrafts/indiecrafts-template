@@ -15,6 +15,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`lib/pin-order.ts` in the blog module** — `reorderByIds` + `mergePinnedWithFallback` extract the
+  pin/reorder/merge/dedupe/cap logic that was inlined and copy-pasted across four frontpage renderers
+  (`BlogTrending`, `BlogFeatured`, `BlogCollection`, `BlogCategorySpotlight`). Behaviour-preserving; now
+  unit-tested (11 cases) — the logic was previously untested because it lived inside async Server Components.
+
 - **blog — composable `/blog` frontpage.** A new `frontpageModules[]` array on the `blog` singleton
   composes the frontpage the same way `postModules[]` composes a post; empty falls back to the code
   default (`DefaultBlogFrontpage` — the former fixed hero-mosaic → explore → newsletter chain),

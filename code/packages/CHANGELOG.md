@@ -12,6 +12,14 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **Unit tests for previously-untested brick logic.** `web/sanity` — `sanityImageLoader` (the CDN
+  image-URL builder, 6 cases) + `composeSanity`/`composeStudio` (schema/template/i18n flatten + desk-item
+  divider placement, 5 cases); the brick also gained its missing `vitest.config.ts` + `test` script.
+  `web/page-builder` — a `moduleSchemas ↔ MODULE_TYPES` same-file drift guard + `defineModule` preview
+  fallback (3 cases). No public-surface change; coverage only.
+
 ### Fixed
 
 - **Agnostic bricks import config from `/shared`, not the root barrel (`format` · `announcement` ·

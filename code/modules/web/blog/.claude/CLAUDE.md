@@ -61,7 +61,7 @@ pickable too — the array shares the same `of` list as `postModules`.
 **Auto + pin.** Every dynamic block (all but `blog-topic-cards`, which is pure taxonomy) has a rule
 default (`source: "latest"` / `"flag"`, or the category/popularity fill) plus an optional `pinned`
 array; pins take precedence in editor order, the rule fills the rest **up to a shared `count`/`limit`
-cap**. `blog-collection` is pinned-only (no rule — `posts[]` is required). `blog-trending`'s rule is
+cap** — the shared reorder + merge/dedupe/cap helpers (`reorderByIds`, `mergePinnedWithFallback`) live in `lib/pin-order.ts`, used by the four frontpage renderers. `blog-collection` is pinned-only (no rule — `posts[]` is required). `blog-trending`'s rule is
 `getPopularPostIds` (`lib/popularity.ts`) — returns `[]` today (no read-count source), so it falls back
 to most-recent; a future read-count pipeline replaces the body only (`@debt MIGRATION`).
 
