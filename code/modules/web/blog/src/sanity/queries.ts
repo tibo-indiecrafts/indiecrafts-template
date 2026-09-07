@@ -131,6 +131,8 @@ export const featuredPostsQuery = defineQuery(`
   *[_type == "post"
     && defined(media.slug.current)
     && seo.noIndex != true
+    && seo.hideFromDiscovery != true
+    && seo.unpublished != true
     && featured == true
     && coalesce(publishedAt, _createdAt) <= now()
     && coalesce(language, "en") == $locale]

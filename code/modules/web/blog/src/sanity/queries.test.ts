@@ -118,6 +118,32 @@ describe("allPostsQuery — the main listing's public filter", () => {
   });
 });
 
+describe("featuredPostsQuery — regression: leaked unpublished/hidden posts (was noIndex-only)", () => {
+  const featuredPosts = posts.map((p) => ({ ...p, featured: true }));
+
+  it("returns only the public and createdAt-only featured posts", async () => {
+    const result = await run<{ slug: string }[]>(
+      featuredPostsQuery,
+      featuredPosts,
+      { locale: "en" },
+    );
+    expect(result.map((p) => p.slug)).toEqual(["public", "createdonly"]);
+  });
+
+  it("excludes a featured post that is unpublished, hidden, noIndex, or scheduled", async () => {
+    const result = await run<{ slug: string }[]>(
+      featuredPostsQuery,
+      featuredPosts,
+      { locale: "en" },
+    );
+    const slugs = result.map((p) => p.slug);
+    expect(slugs).not.toContain("noindex");
+    expect(slugs).not.toContain("hidden");
+    expect(slugs).not.toContain("unpublished");
+    expect(slugs).not.toContain("scheduled");
+  });
+});
+
 describe("postBySlugQuery — the direct-URL detail read", () => {
   it("returns the public post by slug", async () => {
     const result = await run<{ slug: string } | null>(postBySlugQuery, posts, {
@@ -145,16 +171,24 @@ describe("postBySlugQuery — the direct-URL detail read", () => {
 });
 
 /**
- * Structural drift-guard: every public post listing/detail query must keep
- * filtering `seo.noIndex`. This catches a regression that drops the clause
- * even in a case the fixture-based tests above don't happen to cover.
+ * Structural drift-guard: catches a future regression that drops a public-
+ * filter clause even in a case the fixture-based tests above don't happen
+ * to cover. Two tiers, matching the two real contracts in `queries.ts`:
+ *
+ * - **Listing queries** must exclude all three visibility flags — a listing
+ *   is exactly where `hideFromDiscovery` is supposed to bite.
+ * - **Direct-access queries** (`allPostSlugsQuery` feeds static params,
+ *   `taxonomyForLlmsQuery` feeds a taxonomy detail line) are gated by
+ *   `noIndex` + `unpublished` only, same as `postBySlugQuery` below —
+ *   `hideFromDiscovery` intentionally does NOT gate them: a hidden-from-
+ *   discovery doc still resolves by its own URL, it's just dropped from
+ *   listings.
  */
-describe("public post queries — noIndex drift guard", () => {
-  const NOINDEX_GATED: [string, string][] = [
+describe("public post/taxonomy queries — public-filter clause drift guard", () => {
+  const LISTING_QUERIES: [string, string][] = [
     ["allPostsQuery", allPostsQuery],
     ["featuredPostsQuery", featuredPostsQuery],
     ["relatedPostsQuery", relatedPostsQuery],
-    ["allPostSlugsQuery", allPostSlugsQuery],
     ["rssPostsQuery", rssPostsQuery],
     ["postsBySeriesSlugQuery", postsBySeriesSlugQuery],
     ["postsBySeriesCountQuery", postsBySeriesCountQuery],
@@ -170,17 +204,36 @@ describe("public post queries — noIndex drift guard", () => {
     ["blogFeaturedQuery", blogFeaturedQuery],
     ["blogCategorySpotlightQuery", blogCategorySpotlightQuery],
     ["blogCollectionQuery", blogCollectionQuery],
+  ];
+  const LISTING_CLAUSES = [
+    "noIndex",
+    "hideFromDiscovery",
+    "unpublished",
+  ] as const;
+
+  it.each(
+    LISTING_QUERIES.flatMap(([name, query]) =>
+      LISTING_CLAUSES.map((clause) => [name, query, clause] as const),
+    ),
+  )("%s contains the seo.%s filter", (_name, query, clause) => {
+    expect(query).toContain(clause);
+  });
+
+  const DIRECT_ACCESS_QUERIES: [string, string][] = [
+    ["allPostSlugsQuery", allPostSlugsQuery],
     ["taxonomyForLlmsQuery", taxonomyForLlmsQuery],
   ];
+  const DIRECT_ACCESS_CLAUSES = ["noIndex", "unpublished"] as const;
 
-  it.each(NOINDEX_GATED)(
-    "%s contains the seo.noIndex filter",
-    (_name, query) => {
-      expect(query).toContain("noIndex");
-    },
-  );
+  it.each(
+    DIRECT_ACCESS_QUERIES.flatMap(([name, query]) =>
+      DIRECT_ACCESS_CLAUSES.map((clause) => [name, query, clause] as const),
+    ),
+  )("%s contains the seo.%s filter", (_name, query, clause) => {
+    expect(query).toContain(clause);
+  });
 
-  it("postBySlugQuery is gated by unpublished, not noIndex (intentional — see query docstring)", () => {
+  it("postBySlugQuery is gated by unpublished only (intentional — direct-URL access, see query docstring)", () => {
     expect(postBySlugQuery).toContain("unpublished");
   });
 });

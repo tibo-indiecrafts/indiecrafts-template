@@ -18,13 +18,14 @@ Changed · Deprecated · Removed · Fixed**.
 - **blog — GROQ public-filter test coverage, via `groq-js`.** `sanity/queries.test.ts` evaluates the
   real exported query strings (not a mock) against an in-memory fixture dataset, so a regression that
   loosens the `noIndex` / `hideFromDiscovery` / `unpublished` / scheduled-`publishedAt` filter fails a
-  test instead of leaking content. Covers `allPostsQuery` (excludes every non-public case) and
-  `postBySlugQuery` (unpublished 404s; a direct-URL noIndex slug still resolves, per its docstring),
-  plus a structural drift-guard asserting every public post query still contains the `noIndex` clause.
-  Added `groq-js` as a blog devDependency for this. Also added `lib/pagination.test.ts` (page parsing /
-  slicing / count math) and `lib/llms.test.ts` (`getBlogLlmsLines` / `getTaxonomyLlmsLines` branch
-  coverage — route-gate short-circuit, the `llmsSummary ?? description` fallback, per-taxonomy flag
-  gating, `full` mode).
+  test instead of leaking content. Covers `allPostsQuery` and `featuredPostsQuery` (excludes every
+  non-public case) and `postBySlugQuery` (unpublished 404s; a direct-URL noIndex slug still resolves,
+  per its docstring), plus a structural drift-guard asserting every listing query still contains all
+  three visibility clauses (direct-access queries — `allPostSlugsQuery`, `taxonomyForLlmsQuery` — are
+  checked against their narrower, intentional two-clause contract). Added `groq-js` as a blog
+  devDependency for this. Also added `lib/pagination.test.ts` (page parsing / slicing / count math)
+  and `lib/llms.test.ts` (`getBlogLlmsLines` / `getTaxonomyLlmsLines` branch coverage — route-gate
+  short-circuit, the `llmsSummary ?? description` fallback, per-taxonomy flag gating, `full` mode).
 
 - **`lib/pin-order.ts` in the blog module** — `reorderByIds` + `mergePinnedWithFallback` extract the
   pin/reorder/merge/dedupe/cap logic that was inlined and copy-pasted across four frontpage renderers
@@ -71,6 +72,12 @@ Changed · Deprecated · Removed · Fixed**.
   an acknowledgement. Modeled on `@indiecrafts/waitlist`.
 
 ### Fixed
+
+- **blog — `featuredPostsQuery` leaked `unpublished`/`hideFromDiscovery` posts.** It filtered only
+  `seo.noIndex`, unlike every sibling listing query (`allPostsQuery`, `relatedPostsQuery`, …), so a
+  post marked `featured: true` and `unpublished: true` (or `hideFromDiscovery: true`) still surfaced
+  in the "Featured" listing. Added the two missing clauses; regression-tested via `groq-js` in
+  `sanity/queries.test.ts`.
 
 - **blog — series "Part N of M" rendered a raw translation key.** `DefaultPostLayout` passed
   `t("series.partOf")` — next-intl formats the message and errors on the missing `{n}`/`{total}`
