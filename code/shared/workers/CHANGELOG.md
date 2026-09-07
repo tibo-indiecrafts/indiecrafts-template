@@ -14,3 +14,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 _Activated bare-Worker scaffold for queue/event consumers + background jobs (the task logic lives in a
 `code/packages` / `code/modules` brick). Log the first real job here._
+
+### Fixed
+
+- **`pnpm dev` now selects the `dev` environment (`wrangler dev --env dev`).** The dev script omitted
+  `--env dev` (unlike `api`/`cron`), so local dev loaded the top-level config instead of `[env.dev]`.
+  Its `NEXT_PUBLIC_ENVIRONMENT` var was therefore unbound, and `GET /health` reported
+  `env: "unknown"`. With `--env dev` it binds `[env.dev]` (vars + observability) and `/health` reports
+  `env: "development"`. **Why:** parity with the other workers, a correct local env label, and any
+  future `[env.dev]` bindings resolve locally.
