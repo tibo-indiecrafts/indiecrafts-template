@@ -12,5 +12,8 @@
     "@indiecrafts/packages-web-sanity": "workspace:*",
     "@sanity/icons": "^3.7.4",
     "sanity": "^5.31.1"
+  },
+  "scripts": {
+    "test": "vitest run"
   }
 }
