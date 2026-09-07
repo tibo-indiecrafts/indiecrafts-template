@@ -15,6 +15,7 @@ import {
 } from "@indiecrafts/modules-web-blog/sanity/queries";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { getPopularPostIds } from "@indiecrafts/modules-web-blog/lib/popularity";
+import { mergePinnedWithFallback } from "@indiecrafts/modules-web-blog/lib/pin-order";
 
 /**
  * Frontpage "Trending" block — the most popular posts (`getPopularPostIds`),
@@ -64,25 +65,17 @@ export async function BlogTrending({
         }),
   ]);
 
-  // GROQ only filters by `_id in $ids` — respect the editor's/popularity's order here.
-  const orderedPinned = pinnedIds.length
-    ? [...pinnedPosts].sort(
-        (a, b) => pinnedIds.indexOf(a._id) - pinnedIds.indexOf(b._id),
-      )
-    : [];
-  const orderedFallback = popularIds.length
-    ? [...fallbackPosts].sort(
-        (a, b) => popularIds.indexOf(a._id) - popularIds.indexOf(b._id),
-      )
-    : fallbackPosts;
-
-  // Shared cap (mirrors blog-featured / blog-category-spotlight): pinned
-  // posts take precedence, trending/recent posts fill the rest up to `count`.
-  const pinnedIdSet = new Set(orderedPinned.map((post) => post._id));
-  const posts = [
-    ...orderedPinned,
-    ...orderedFallback.filter((post) => !pinnedIdSet.has(post._id)),
-  ].slice(0, count);
+  // GROQ only filters by `_id in $ids` — respect the editor's/popularity's
+  // order here. Shared cap (mirrors blog-featured / blog-category-spotlight):
+  // pinned posts take precedence, trending/recent posts fill the rest up to
+  // `count`.
+  const posts = mergePinnedWithFallback(
+    pinnedPosts,
+    pinnedIds,
+    fallbackPosts,
+    popularIds,
+    count,
+  );
 
   const items: PostCardItem[] = posts.map((post) => ({
     _key: post._id,

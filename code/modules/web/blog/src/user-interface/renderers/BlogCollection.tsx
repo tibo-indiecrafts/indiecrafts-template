@@ -11,6 +11,7 @@ import type {
 } from "@indiecrafts/modules-web-blog/sanity/types";
 import { blogCollectionQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
+import { reorderByIds } from "@indiecrafts/modules-web-blog/lib/pin-order";
 
 /**
  * Frontpage "Collection" block — a pinned, ordered selection of posts shown
@@ -36,7 +37,7 @@ export async function BlogCollection({
   ]);
 
   // GROQ only filters by `_id in $ids` — respect the editor's manual order here.
-  const ordered = [...posts].sort((a, b) => ids.indexOf(a._id) - ids.indexOf(b._id));
+  const ordered = reorderByIds(posts, ids);
 
   const items: PostCardItem[] = ordered.map((post) => ({
     _key: post._id,
@@ -44,7 +45,9 @@ export async function BlogCollection({
     title: post.metadata?.title ?? post.title ?? "",
     image: post.metadata?.image?.asset?.url,
     lqip: post.metadata?.image?.asset?.metadata?.lqip,
-    category: display.taxonomy.categories ? post.categories?.[0]?.title : undefined,
+    category: display.taxonomy.categories
+      ? post.categories?.[0]?.title
+      : undefined,
     author: display.taxonomy.authors ? post.authors?.[0]?.name : undefined,
     date: formatDate(locale, post.publishedAt) ?? undefined,
   }));

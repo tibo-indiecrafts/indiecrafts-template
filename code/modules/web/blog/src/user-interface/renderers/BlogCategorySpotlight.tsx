@@ -12,6 +12,7 @@ import type {
 } from "@indiecrafts/modules-web-blog/sanity/types";
 import { blogCategorySpotlightQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
+import { reorderByIds } from "@indiecrafts/modules-web-blog/lib/pin-order";
 
 /**
  * Frontpage "Category Spotlight" block — the editor's pins plus the latest
@@ -46,9 +47,7 @@ export async function BlogCategorySpotlight({
 
   // GROQ only sorts pinned-vs-not (see blogCategorySpotlightQuery) — respect
   // the editor's manual pin order here.
-  const ordered = pinnedIds.length
-    ? [...posts].sort((a, b) => pinnedIds.indexOf(a._id) - pinnedIds.indexOf(b._id))
-    : posts;
+  const ordered = reorderByIds(posts, pinnedIds);
 
   const items: PostCardItem[] = ordered.map((post) => ({
     _key: post._id,
@@ -56,7 +55,9 @@ export async function BlogCategorySpotlight({
     title: post.metadata?.title ?? post.title ?? "",
     image: post.metadata?.image?.asset?.url,
     lqip: post.metadata?.image?.asset?.metadata?.lqip,
-    category: display.taxonomy.categories ? post.categories?.[0]?.title : undefined,
+    category: display.taxonomy.categories
+      ? post.categories?.[0]?.title
+      : undefined,
     author: display.taxonomy.authors ? post.authors?.[0]?.name : undefined,
     date: formatDate(locale, post.publishedAt) ?? undefined,
   }));
@@ -70,7 +71,10 @@ export async function BlogCategorySpotlight({
       items={items}
       viewAll={{
         label: t("allInCategory", { category: category.title ?? "" }),
-        href: localizedPathname(`/blog/category/${category.slug ?? ""}`, locale),
+        href: localizedPathname(
+          `/blog/category/${category.slug ?? ""}`,
+          locale,
+        ),
       }}
     />
   );
