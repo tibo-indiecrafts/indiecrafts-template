@@ -26,7 +26,11 @@ describe("runAgent", () => {
   it("forces the output tool and returns the parsed structured data", async () => {
     const data = { ideas: [{ topic: "x" }] };
     const calls = mockFetch(toolResponse(data));
-    const result = await runAgent(spec, { context: "designers / AI" }, "sk-test");
+    const result = await runAgent(
+      spec,
+      { context: "designers / AI" },
+      "sk-test",
+    );
 
     expect(result).toEqual({ ok: true, data });
     const body = calls[0].body;
@@ -66,8 +70,49 @@ describe("runAgent", () => {
   });
 
   it("never throws — a fetch rejection becomes a result", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("network down"); }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("network down");
+      }),
+    );
     const r = await runAgent(spec, { context: "x" }, "sk-test");
     expect(r).toEqual({ ok: false, error: "network down" });
+  });
+
+  it("caps cost — the request carries max_tokens", async () => {
+    const calls = mockFetch(toolResponse({ ideas: [] }));
+    await runAgent(spec, { context: "x" }, "sk-test");
+    expect(calls[0].body.max_tokens).toBe(2048);
+  });
+
+  it("rejects output missing a required key", async () => {
+    // content-research requires `ideas`; a model that returns something else is malformed.
+    mockFetch(toolResponse({ notIdeas: [] }));
+    const r = await runAgent(spec, { context: "x" }, "sk-test");
+    expect(r).toEqual({ ok: false, error: "output did not match schema" });
+  });
+
+  it("rejects output whose required key has the wrong type", async () => {
+    // `ideas` must be an array; a string is the wrong shape.
+    mockFetch(toolResponse({ ideas: "nope" }));
+    const r = await runAgent(spec, { context: "x" }, "sk-test");
+    expect(r).toEqual({ ok: false, error: "output did not match schema" });
+  });
+
+  it("rejects a non-object output (null / array)", async () => {
+    mockFetch(toolResponse(null));
+    expect((await runAgent(spec, { context: "x" }, "sk-test")).ok).toBe(false);
+  });
+
+  it("passes any shape through when the schema has no required keys", async () => {
+    // Back-compat: a spec that declares nothing required must not be rejected.
+    const looseSpec: AgentSpec = { ...spec, outputSchema: { type: "object" } };
+    const data = { whatever: 1 };
+    mockFetch(toolResponse(data));
+    expect(await runAgent(looseSpec, { context: "x" }, "sk-test")).toEqual({
+      ok: true,
+      data,
+    });
   });
 });

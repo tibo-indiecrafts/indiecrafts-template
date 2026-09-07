@@ -12,6 +12,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Changed
+
+- **A malformed Anthropic reply now returns 502, not a 200 with unchecked data.** `runAgent` (the
+  agent core brick) began validating output against the spec's `outputSchema`, so a reply missing a
+  required field returns `{ ok: false }` and the Worker maps that to a 502 — instead of passing an
+  unchecked object through as `200 { data }`. The Worker code is unchanged; its test mocks now
+  register a schema-valid envelope (`{ ideas: [] }`) to match the enforced contract.
+
 ### Fixed
 
 - **Rate-limit the browser path BEFORE the Turnstile siteverify call, not after.** The

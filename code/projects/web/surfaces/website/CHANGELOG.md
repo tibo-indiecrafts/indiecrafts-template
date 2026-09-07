@@ -19,6 +19,16 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **`pnpm check:secret-leak` — CI-enforces that no server secret ships under a public build prefix.**
+  A new guard (`code/shared/scripts/checks/secret-leak.mjs`, in `verify` + CI) reads every
+  `.dev.vars.example` / `.env.example` as the secret registry, then scans app/brick/worker source
+  for a documented secret carrying a `NEXT_PUBLIC_` / `EXPO_PUBLIC_` / `VITE_` prefix — the config
+  NEVER "never expose a non-public token under a public prefix". A documented public value (e.g.
+  `EXPO_PUBLIC_AGENT_TOKEN`, the bundle abuse-gate) is allowlisted by its own example entry.
+  Colocated `secret-leak.test.mjs`; wired into root `verify` + `.vscode/tasks.json`; mirrors
+  `check:api-guards` / `check:typed-routing`. **Why:** the existing `guard.mjs` write-hook only
+  fires inside Claude Code — this is the CI backstop a human commit or pipeline also hits.
+
 - **Self-service account delete now triggers Clerk step-up reverification.**
   `AccountDeletePanel` wraps the erasure fetch (`rawErasureFetch`) in Clerk's
   `useReverification`, so a stale first factor (the worker's `fva` gate, >10

@@ -16,8 +16,9 @@ const post = (init: RequestInit) =>
 const ANTHROPIC_ORIGIN = "https://api.anthropic.com";
 const TURNSTILE_ORIGIN = "https://challenges.cloudflare.com";
 
-/** Register one successful Anthropic `tool_use` reply — consumed by the next outbound call. */
-function mockAnthropic(input: unknown = {}) {
+/** Register one successful Anthropic `tool_use` reply — consumed by the next outbound call.
+ * Default is a schema-valid envelope (`runAgent` now rejects output missing the required keys). */
+function mockAnthropic(input: unknown = { ideas: [] }) {
   fetchMock
     .get(ANTHROPIC_ORIGIN)
     .intercept({ method: "POST", path: "/v1/messages" })
@@ -252,7 +253,9 @@ describe("agent worker — locale clamp (prompt-injection guard)", () => {
         return {
           statusCode: 200,
           data: JSON.stringify({
-            content: [{ type: "tool_use", name: "output", input: {} }],
+            content: [
+              { type: "tool_use", name: "output", input: { ideas: [] } },
+            ],
           }),
         };
       });

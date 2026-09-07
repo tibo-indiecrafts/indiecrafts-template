@@ -8,7 +8,8 @@
  * `AgentSpec`. `runAgent` calls the Anthropic Messages API with **raw fetch**
  * (zero deps, runs on Node 22 AND the Workers runtime — like `@indiecrafts/
  * packages-shared-security` `turnstile`), and **forces structured output** via a
- * single `output` tool so the result always matches the spec's `outputSchema`.
+ * single `output` tool, then validates the required shape server-side so a
+ * malformed result becomes `{ ok: false }` instead of reaching the caller.
  *
  * The secret is ALWAYS caller-injected (`apiKey`) — this brick holds no keys and
  * reads no env; the calling server passes its `ANTHROPIC_API_KEY`. `runAgent`
@@ -115,11 +116,56 @@ export async function runAgent(
       (b) => b.type === "tool_use" && b.name === "output",
     );
     if (!tool) return { ok: false, error: "no structured output returned" };
+    // The forced tool guarantees a call, but the model can still drop a field —
+    // reject a malformed shape here so callers never mask it with `?? []`.
+    if (!matchesSchema(spec.outputSchema, tool.input))
+      return { ok: false, error: "output did not match schema" };
     return { ok: true, data: tool.input };
   } catch (e) {
     return {
       ok: false,
       error: e instanceof Error ? e.message : "request failed",
     };
+  }
+}
+
+/**
+ * Shallow output guard: every key the schema marks `required` must be present on
+ * the returned object with a matching JSON-Schema primitive type. Top-level and
+ * required-only by design — the forced `tool_choice` already guarantees the tool
+ * is called; this catches the field the model occasionally drops. No recursion,
+ * no deps. A key with no declared `type` (or an unknown one) is not type-checked.
+ */
+function matchesSchema(schema: OutputSchema, value: unknown): boolean {
+  if (typeof value !== "object" || value === null || Array.isArray(value))
+    return false;
+  const obj = value as Record<string, unknown>;
+  const required = (schema.required as string[] | undefined) ?? [];
+  const properties =
+    (schema.properties as Record<string, { type?: string }> | undefined) ?? {};
+  for (const key of required) {
+    if (!(key in obj)) return false;
+    const type = properties[key]?.type;
+    if (type && !typeMatches(type, obj[key])) return false;
+  }
+  return true;
+}
+
+/** JSON-Schema primitive → JS runtime check. Unknown types pass (not our job to reject). */
+function typeMatches(type: string, v: unknown): boolean {
+  switch (type) {
+    case "string":
+      return typeof v === "string";
+    case "number":
+    case "integer":
+      return typeof v === "number";
+    case "boolean":
+      return typeof v === "boolean";
+    case "array":
+      return Array.isArray(v);
+    case "object":
+      return typeof v === "object" && v !== null && !Array.isArray(v);
+    default:
+      return true;
   }
 }

@@ -12,6 +12,16 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **`@indiecrafts/packages-shared-agent` — `runAgent` now validates the output shape.** The forced
+  `output` tool guarantees a tool call, but the model can still drop a required field, and callers
+  masked that with `?? []`. `runAgent` now checks the returned object against the spec's
+  `outputSchema` — every top-level `required` key must be present with a matching primitive type —
+  and returns `{ ok: false, error: "output did not match schema" }` otherwise. The check is shallow
+  and zero-dep (top-level required keys only); the never-throw contract is unchanged. **Why:** stop
+  a malformed reply from reaching a caller as if it were valid.
+
 ### Fixed
 
 - **`@indiecrafts/packages-shared-agent` — the Anthropic fetch has a 20s timeout.** `runAgent`'s

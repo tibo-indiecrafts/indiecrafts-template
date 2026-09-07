@@ -111,6 +111,14 @@
       "problemMatcher": []
     },
     {
+      "label": "check:secret-leak",
+      "detail": "assert no documented secret is exposed under a public build prefix",
+      "type": "shell",
+      "command": "pnpm check:secret-leak",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
       "label": "check:tasks",
       "detail": "assert .vscode/tasks.json mirrors every root package.json script",
       "type": "shell",
