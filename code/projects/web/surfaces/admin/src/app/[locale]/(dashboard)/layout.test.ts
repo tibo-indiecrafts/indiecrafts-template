@@ -44,10 +44,13 @@ describe("DashboardLayout", () => {
     expect(redirectMock).not.toHaveBeenCalled();
   });
 
-  it("skips the gate (no redirect) when Clerk is not configured", async () => {
+  it("fails closed — redirects when Clerk is not configured", async () => {
     vi.stubEnv("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", "");
+    authMock.mockResolvedValueOnce({ sessionClaims: null });
     await render();
-    expect(authMock).not.toHaveBeenCalled();
-    expect(redirectMock).not.toHaveBeenCalled();
+    // No publishable key → redirect to sign-in, never render admin open.
+    // (Real Next `redirect` throws to halt before `auth`; the test mock doesn't,
+    // so it continues — but the redirect firing is the fail-closed guarantee.)
+    expect(redirectMock).toHaveBeenCalledWith({ href: "/sign-in", locale: "en" });
   });
 });

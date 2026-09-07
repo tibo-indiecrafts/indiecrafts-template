@@ -14,6 +14,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The `DashboardLayout` admin gate now fails closed when Clerk is unconfigured.** It previously ran
+  the auth check only `if (NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)` and rendered the admin **open** when the
+  key was unset — so a deploy that forgot to configure Clerk exposed the dashboard shell. It now
+  redirects to sign-in when the key is absent (the crown-jewel server actions already failed closed
+  regardless). Configure Clerk before shipping admin, as before — but a misconfiguration is now locked,
+  not exposed.
+
 - **`tsc` could not resolve the security packages (broke `pnpm verify`).** `src/proxy.ts` and the
   `csp-report` route import `@indiecrafts/packages-shared-security` and
   `@indiecrafts/packages-web-security-reports/handle`, but `tsconfig.json` had no `paths` entries
