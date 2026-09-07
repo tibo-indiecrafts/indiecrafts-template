@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import { TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { useIntl } from "react-intl";
@@ -21,6 +21,7 @@ import {
 } from "@indiecrafts/packages-mobile-ui-native";
 import { hasClerk } from "@/lib/auth";
 import { logFailedLogin } from "@/lib/session-log";
+import { signInReducer, initialState } from "@/lib/sign-in-machine";
 
 // Finish any web-auth session the OS browser left open (the OAuth return).
 void WebBrowser.maybeCompleteAuthSession();
@@ -106,17 +107,14 @@ function SignInForm() {
 
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [step, setStep] = useState<"email" | "code">("email");
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fail = () => setError(t.formatMessage({ id: "auth.error" }));
+  const [{ step, mode, busy, error }, dispatch] = useReducer(
+    signInReducer,
+    initialState,
+  );
 
   const sendCode = async () => {
     if (!si.isLoaded || !su.isLoaded || busy) return;
-    setBusy(true);
-    setError(null);
+    dispatch({ type: "submit" });
     try {
       // Existing user → email-code sign-in.
       const attempt = await si.signIn.create({ identifier: email });
@@ -128,8 +126,7 @@ function SignInForm() {
           strategy: "email_code",
           emailAddressId: factor.emailAddressId,
         });
-        setMode("signin");
-        setStep("code");
+        dispatch({ type: "codeSent", mode: "signin" });
         return;
       }
       throw new Error("no_email_code");
@@ -140,20 +137,16 @@ function SignInForm() {
         await su.signUp.prepareEmailAddressVerification({
           strategy: "email_code",
         });
-        setMode("signup");
-        setStep("code");
+        dispatch({ type: "codeSent", mode: "signup" });
       } catch {
-        fail();
+        dispatch({ type: "failed" });
       }
-    } finally {
-      setBusy(false);
     }
   };
 
   const verifyCode = async () => {
     if (!si.isLoaded || !su.isLoaded || busy) return;
-    setBusy(true);
-    setError(null);
+    dispatch({ type: "submit" });
     try {
       if (mode === "signin") {
         const res = await si.signIn.attemptFirstFactor({
@@ -162,31 +155,30 @@ function SignInForm() {
         });
         if (res.status === "complete" && res.createdSessionId) {
           await si.setActive({ session: res.createdSessionId });
+          dispatch({ type: "settled" });
         } else {
           void logFailedLogin(); // wrong OTP → counted at the edge (see session-log)
-          fail();
+          dispatch({ type: "failed" });
         }
       } else {
         const res = await su.signUp.attemptEmailAddressVerification({ code });
         if (res.status === "complete" && res.createdSessionId) {
           await su.setActive({ session: res.createdSessionId });
+          dispatch({ type: "settled" });
         } else {
-          fail();
+          dispatch({ type: "failed" });
         }
       }
     } catch {
       // Clerk throws on an invalid code — the common wrong-OTP path (sign-in only).
       if (mode === "signin") void logFailedLogin();
-      fail();
-    } finally {
-      setBusy(false);
+      dispatch({ type: "failed" });
     }
   };
 
   const google = async () => {
     if (busy) return;
-    setBusy(true);
-    setError(null);
+    dispatch({ type: "submit" });
     try {
       const { createdSessionId, setActive } = await startSSOFlow({
         strategy: "oauth_google",
@@ -195,10 +187,9 @@ function SignInForm() {
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
       }
+      dispatch({ type: "settled" });
     } catch {
-      fail();
-    } finally {
-      setBusy(false);
+      dispatch({ type: "failed" });
     }
   };
 
@@ -259,7 +250,7 @@ function SignInForm() {
           <Button
             variant="outline"
             label={t.formatMessage({ id: "auth.changeEmail" })}
-            onPress={() => setStep("email")}
+            onPress={() => dispatch({ type: "changeEmail" })}
             disabled={busy}
           />
         </>
@@ -275,7 +266,9 @@ function SignInForm() {
         disabled={busy}
       />
       {error ? (
-        <ThemedText style={{ color: danger }}>{error}</ThemedText>
+        <ThemedText style={{ color: danger }}>
+          {t.formatMessage({ id: error })}
+        </ThemedText>
       ) : null}
     </>
   );

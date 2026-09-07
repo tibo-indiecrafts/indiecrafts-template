@@ -11,7 +11,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Changed
+
+- **`app/sign-in.tsx`'s OTP state machine extracted into `lib/sign-in-machine.ts`.** The
+  `step`/`mode`/`busy`/`error` state (previously four inline `useState`s) is now a pure
+  `signInReducer(state, action)` (+ `State`/`Action` types, `initialState`), driven by
+  `useReducer` in `SignInForm`. The reducer has no Clerk or react-intl imports — `error` holds
+  an i18n message id (`"auth.error"`), translated by the component at render time. All Clerk
+  calls (`useSignIn`/`useSignUp`/`useSSO`) and the `logFailedLogin` wrong-OTP report stay in the
+  component; only `setState` calls became `dispatch` calls. **Why:** the state machine is now
+  unit-testable without mounting Clerk or a native host.
+
 ### Added
+
+- **Sign-in state machine + session-log tests.** `lib/sign-in-machine.test.ts` covers the
+  reducer's transitions (initial state, submit/codeSent/settled/failed/changeEmail, mode
+  switching, error set on failure and cleared on retry). `lib/session-log.test.ts` covers
+  `logSignIn`/`logFailedLogin`'s never-throw contract (env unset, fetch failure), mirroring
+  `lib/agent.test.ts`.
 
 - **Dedicated account screen (`app/account.tsx`).** Mounts the native `ConsentPreferences` toggle list
   (previously built but unmounted) plus `DeleteAccountSection` and `ExportSection`, using
