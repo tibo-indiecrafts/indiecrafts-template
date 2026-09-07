@@ -1,8 +1,8 @@
 /**
  * @indiecrafts/packages-shared-agent — the shared, edge-safe core for a simple
- * goal-driven AI agent. ONE definition, consumed by every surface's backend:
- * the web app's Next route (behind `withGuard`), and the `code/shared/api`
- * Worker (behind a bearer token) that the native + hybrid apps call.
+ * goal-driven AI agent. ONE definition, run by the standalone `code/shared/agent`
+ * Worker (behind its inline dual-mode guard — browser Turnstile / native bearer)
+ * that every surface (web / mobile / hybrid) calls cross-origin.
  *
  * The 5-part formula (Goal · Instructions · Context · Tools · Output) is an
  * `AgentSpec`. `runAgent` calls the Anthropic Messages API with **raw fetch**

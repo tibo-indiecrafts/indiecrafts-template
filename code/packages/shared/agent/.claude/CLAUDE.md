@@ -2,8 +2,8 @@
 
 Auto-loads under `code/packages/shared/agent/**`. The shared core for a simple, goal-driven AI
 agent: one typed `AgentSpec` (Goal · Instructions · Context · Tools · Output), run against the
-Anthropic Messages API. Consumed by every surface's **backend** (the website Next route, the
-`code/shared/api` Worker). Area rules → `../../../.claude/CLAUDE.md`.
+Anthropic Messages API. Run by the standalone `code/shared/agent` Worker (every surface — web/mobile/hybrid —
+calls it cross-origin through `agent-client`). Area rules → `../../../.claude/CLAUDE.md`.
 
 **Stack:** TypeScript, zero-dep — raw `fetch` to the Anthropic Messages API; edge-safe (Next route + Cloudflare Worker).
 
