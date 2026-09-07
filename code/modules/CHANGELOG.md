@@ -15,6 +15,17 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **blog — GROQ public-filter test coverage, via `groq-js`.** `sanity/queries.test.ts` evaluates the
+  real exported query strings (not a mock) against an in-memory fixture dataset, so a regression that
+  loosens the `noIndex` / `hideFromDiscovery` / `unpublished` / scheduled-`publishedAt` filter fails a
+  test instead of leaking content. Covers `allPostsQuery` (excludes every non-public case) and
+  `postBySlugQuery` (unpublished 404s; a direct-URL noIndex slug still resolves, per its docstring),
+  plus a structural drift-guard asserting every public post query still contains the `noIndex` clause.
+  Added `groq-js` as a blog devDependency for this. Also added `lib/pagination.test.ts` (page parsing /
+  slicing / count math) and `lib/llms.test.ts` (`getBlogLlmsLines` / `getTaxonomyLlmsLines` branch
+  coverage — route-gate short-circuit, the `llmsSummary ?? description` fallback, per-taxonomy flag
+  gating, `full` mode).
+
 - **`lib/pin-order.ts` in the blog module** — `reorderByIds` + `mergePinnedWithFallback` extract the
   pin/reorder/merge/dedupe/cap logic that was inlined and copy-pasted across four frontpage renderers
   (`BlogTrending`, `BlogFeatured`, `BlogCollection`, `BlogCategorySpotlight`). Behaviour-preserving; now

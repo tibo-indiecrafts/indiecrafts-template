@@ -120,6 +120,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.14)
+      groq-js:
+        specifier: ^1.30.3
+        version: 1.30.3
 
   code/modules/web/contact:
     dependencies:

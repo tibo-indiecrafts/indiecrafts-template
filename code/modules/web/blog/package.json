@@ -33,7 +33,8 @@
   },
   "devDependencies": {
     "@types/react": "^19",
-    "@types/react-dom": "^19"
+    "@types/react-dom": "^19",
+    "groq-js": "^1.30.3"
   },
   "scripts": {
     "test": "vitest run"
