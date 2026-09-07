@@ -47,9 +47,9 @@ bucket_name = "indiecrafts-dev-web-surfaces-website-isr"
 # and uncomments + fills each `RATE_LIMIT_KV` block — base shares the dev namespace,
 # staging + prod get their own, so a staging load-test can't burn prod's budget. Until
 # then the limiter fails OPEN (allows). The Cloudflare WAF rule on /api/* is a separate edge layer.
-# [[kv_namespaces]]
-# binding = "RATE_LIMIT_KV"
-# id = "PASTE_KV_ID_HERE"
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "771e328683cc47e7a1d0f467073a2f86"
 
 # ── Optional: call a sibling Worker in-process (a service binding) ───
 # Reach the `api` app (or `workers`/`cron`) with no public hop. The target name is
@@ -111,9 +111,9 @@ binding = "NEXT_INC_CACHE_R2_BUCKET"
 bucket_name = "indiecrafts-dev-web-surfaces-website-isr"
 
 # RATE_LIMIT_KV (dev) — uncommented + filled by `pnpm setup:kv`.
-# [[env.dev.kv_namespaces]]
-# binding = "RATE_LIMIT_KV"
-# id = "PASTE_KV_ID_HERE"
+[[env.dev.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "771e328683cc47e7a1d0f467073a2f86"
 
 [env.dev.observability.logs]
 enabled = true
@@ -134,9 +134,9 @@ binding = "NEXT_INC_CACHE_R2_BUCKET"
 bucket_name = "indiecrafts-staging-web-surfaces-website-isr"
 
 # RATE_LIMIT_KV (staging) — uncommented + filled by `pnpm setup:kv`.
-# [[env.staging.kv_namespaces]]
-# binding = "RATE_LIMIT_KV"
-# id = "PASTE_KV_ID_HERE"
+[[env.staging.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "749b44857daf4d9eb26ff20226488004"
 
 [env.staging.observability.logs]
 enabled = true
@@ -161,9 +161,9 @@ binding = "NEXT_INC_CACHE_R2_BUCKET"
 bucket_name = "indiecrafts-prod-web-surfaces-website-isr"
 
 # RATE_LIMIT_KV (prod) — uncommented + filled by `pnpm setup:kv`.
-# [[env.prod.kv_namespaces]]
-# binding = "RATE_LIMIT_KV"
-# id = "PASTE_KV_ID_HERE"
+[[env.prod.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "ce56d251342540aaa1ba091a022eb07c"
 
 [env.prod.observability.logs]
 enabled = true

@@ -164,6 +164,10 @@ migrations_dir = "db/core/migrations"
 binding = "SECURITY_COUNTERS"
 id = "03930e85db0243bc9c6f01553285f4ba"
 
+[[env.dev.r2_buckets]]
+binding = "EXPORT_BUCKET"
+bucket_name = "indiecrafts-dev-shared-api-exports"
+
 [env.staging]
 name = "indiecrafts-staging-shared-api"
 
