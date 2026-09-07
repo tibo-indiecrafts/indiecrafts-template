@@ -1622,9 +1622,6 @@ importers:
       '@clerk/backend':
         specifier: ^3.16.7
         version: 3.16.7(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@indiecrafts/packages-shared-agent':
-        specifier: workspace:*
-        version: link:../../packages/shared/agent
       '@indiecrafts/packages-shared-announcement':
         specifier: workspace:*
         version: link:../../packages/shared/announcement

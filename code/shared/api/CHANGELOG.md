@@ -5,6 +5,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Removed
+
+- **Pruned the unused `@indiecrafts/packages-shared-agent` dependency** (agent logic now lives in
+  the standalone `agent` worker).
+
 ### Added
 
 - **Per-DB backup scripts for `core` + `audit`.** `db:backup:{core,audit}:{dev,staging,prod}`

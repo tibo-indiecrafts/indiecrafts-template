@@ -6,11 +6,12 @@ an agent endpoint. Pure, edge-safe TS (zero deps, raw `fetch`). Lives in `code/p
 
 ## Why it exists
 
-Three callers hand-rolled the same `fetch` + parse + never-throw contract:
+Three callers hand-rolled the same `fetch` + parse + never-throw contract, all posting to the
+**same agent Worker** (`code/shared/agent`, `POST /v1/agent/:name`):
 
-- the web client `ContentResearchAgent` → its own Next route `POST /api/agent/:name`,
-- the mobile `lib/agent.ts` → the `code/shared/api` Worker `POST /v1/agent/:name`,
-- the hybrid main process → the same Worker.
+- the web client `ContentResearchAgent` → cross-origin `fetch` to the agent Worker (`NEXT_PUBLIC_AGENT_URL`),
+- the mobile `lib/agent.ts` → the same Worker (`EXPO_PUBLIC_AGENT_URL`),
+- the hybrid main process → the same Worker (`AGENT_URL`).
 
 They drifted (different Result shapes, no timeout). This brick is the single copy — one place for the
 fetch, the timeout, and the `{ ok } | { error }` contract.
@@ -22,11 +23,11 @@ export async function callAgent<T = unknown>(
   name: string,
   request: { context: string; locale?: string },
   opts: {
-    urlPrefix: string;                       // `${base}/v1/agent` (Worker) | `/api/agent` (web route)
-    token?: string;                          // bearer — the Worker's APP_API_TOKEN gate; omit for the web route
-    extraBody?: Record<string, unknown>;     // merged into the POST — e.g. { "cf-turnstile-response": t }
-    fetch?: typeof fetch;                    // injected (default: global fetch)
-    timeoutMs?: number;                      // default 30000
+    urlPrefix: string; // `${base}/v1/agent` — the agent Worker, every surface
+    token?: string; // bearer — the Worker's APP_API_TOKEN gate; omit for the web route
+    extraBody?: Record<string, unknown>; // merged into the POST — e.g. { "cf-turnstile-response": t }
+    fetch?: typeof fetch; // injected (default: global fetch)
+    timeoutMs?: number; // default 30000
   },
 ): Promise<{ ok: true; data: T } | { ok: false; error: string }>;
 ```
@@ -40,11 +41,11 @@ export async function callAgent<T = unknown>(
 
 ## Who calls it — per-surface injection
 
-| Surface | urlPrefix | Auth |
-| --- | --- | --- |
-| **Web** (`ContentResearchAgent`) | `/api/agent` (same-origin) | none — a Turnstile token in `extraBody`; the Next route's `withGuard` verifies it |
-| **Mobile** (Expo, `lib/agent.ts`) | `${EXPO_PUBLIC_API_URL}/v1/agent` | bearer `EXPO_PUBLIC_AGENT_TOKEN` |
-| **Hybrid** (Electron main process) | `${API_URL}/v1/agent` | bearer `AGENT_TOKEN` (stays out of the renderer) |
+| Surface                            | urlPrefix                                          | Auth                                                                                           |
+| ---------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Web** (`ContentResearchAgent`)   | `${NEXT_PUBLIC_AGENT_URL}/v1/agent` (cross-origin) | none — a Turnstile token in `extraBody`; the agent Worker's inline dual-mode guard verifies it |
+| **Mobile** (Expo, `lib/agent.ts`)  | `${EXPO_PUBLIC_AGENT_URL}/v1/agent`                | bearer `EXPO_PUBLIC_AGENT_TOKEN`                                                               |
+| **Hybrid** (Electron main process) | `${AGENT_URL}/v1/agent`                            | bearer `AGENT_TOKEN` (stays out of the renderer)                                               |
 
 ## Wiring
 

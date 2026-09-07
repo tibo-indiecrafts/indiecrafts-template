@@ -71,10 +71,11 @@ import { addTransport } from "@indiecrafts/packages-shared-logger";
 import { cloudflareTransport } from "@indiecrafts/packages-shared-logger/cloudflare";
 import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
 
-if (getCurrentEnvironment() === "production") addTransport(cloudflareTransport());
+if (getCurrentEnvironment() === "production")
+  addTransport(cloudflareTransport());
 ```
 
-Live in `api` + `cron` today. Full contract → [logger](../../packages/logger).
+Live in `api`, `cron` + `agent` today (`workers` doesn't wire it yet). Full contract → [logger](../../packages/logger).
 
 ## Testing
 
@@ -93,7 +94,7 @@ moves to Vitest 4, switch these configs to the newer `cloudflareTest()` **plugin
 
 ## Where things live
 
-- Worker app + colocated test + `wrangler.toml` + `package.json` → `code/projects/<app>/`.
+- Worker app + colocated test + `wrangler.toml` + `package.json` → `code/shared/<app>/`.
 - The **job logic** → a `code/packages/` / `code/modules/` brick (thin-shell rule).
 - Shared deploy/connectivity scripts (`<app> <env>`) → **root `scripts/`** (one copy).
 - The per-app × per-env **delegators** → root `package.json`.
