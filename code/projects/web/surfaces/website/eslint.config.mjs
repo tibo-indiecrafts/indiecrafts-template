@@ -18,6 +18,11 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    // Scope these overrides to the same glob where eslint-config-next's core-web-vitals
+    // block registers the `jsx-a11y` + `@typescript-eslint` plugins these rules use. Without
+    // a `files` key the object is global, so for a file outside those plugin globs ESLint sees
+    // the rules but not the plugin → "could not find plugin jsx-a11y".
+    files: ["**/*.{js,jsx,mjs,ts,tsx,mts,cts}"],
     rules: {
       // Structural a11y
       "jsx-a11y/alt-text": "error",
@@ -104,6 +109,12 @@ const eslintConfig = defineConfig([
   },
   globalIgnores([
     ".next/**",
+    // Cloudflare / OpenNext + turbo build outputs — huge minified bundles; linting
+    // them (they aren't dot-ignored by default) exhausts memory. Never hand-linted.
+    ".open-next/**",
+    ".wrangler/**",
+    ".turbo/**",
+    "dist/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
