@@ -14,6 +14,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **The `DashboardLayout` admin gate now fails closed when Clerk is unconfigured.** It previously ran
+  the auth check only `if (NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)` and rendered the admin **open** when the
+  key was unset — so a deploy that forgot to configure Clerk exposed the dashboard shell. It now
+  redirects to sign-in when the key is absent (the crown-jewel server actions already failed closed
+  regardless). Configure Clerk before shipping admin, as before — but a misconfiguration is now locked,
+  not exposed.
+
 - **`tsc` could not resolve the security packages (broke `pnpm verify`).** `src/proxy.ts` and the
   `csp-report` route import `@indiecrafts/packages-shared-security` and
   `@indiecrafts/packages-web-security-reports/handle`, but `tsconfig.json` had no `paths` entries
@@ -21,6 +28,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Test coverage for the privilege-escalation surface (was 0 tests on the real logic).**
+  `(dashboard)/actions.test.ts` covers `grantAdmin`/`revokeAdmin`/`revokeSession`/
+  `revokeUserSessions`/`saveSetting`: a non-admin or no-session caller is rejected with no
+  Clerk write, no `fetch`, and no `audit` row; a malformed `user_…`/`sess_…` id is rejected
+  the same way; an admin caller's happy path forwards the right args and audits. New
+  `(dashboard)/layout.test.ts` asserts `DashboardLayout`'s server-side re-check redirects a
+  signed-out or non-admin caller and does not redirect an admin, matching its actual
+  Clerk-configured-only gate (unconfigured Clerk runs open, by design — see the file's
+  docstring). **Why:** the app's only barrier between open sign-up and admin access had no
+  tests exercising the fail-closed path.
 - **Visual-polish pass — rhythm, hierarchy, states.** Overview stat cards gain a muted "Last 100"/
   "Unavailable" caption so counts read as a dashboard, not raw numbers. `backups-table` and
   `settings-form` normalize `mt-8` to the `mt-6` spacing scale used everywhere else.

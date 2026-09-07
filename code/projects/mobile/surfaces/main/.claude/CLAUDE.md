@@ -42,6 +42,9 @@ the first product screen (`account`) — theme · i18n · status pages · native
   (`ConsentPreferences`, one shared `consentStore` from `lib/consent-store.ts`) + self-service
   `DeleteAccountSection`/`ExportSection` (copy via the `compliance` builders), gated on
   `features.deleteAccount`/`exportAccount`. Linked from home + the sign-in signed-in view.
+  `app/sign-in.tsx`'s OTP step/mode/busy/error state is `lib/sign-in-machine.ts`'s pure
+  `signInReducer` (+ `State`/`Action`/`initialState`) via `useReducer` — no Clerk or react-intl
+  imports there; the component still owns every Clerk call and dispatches on each result.
 - **Persistence** — every storage key lives in `STORAGE_KEYS` (`@/config`); read a name, never inline
   `${sitePrefix}.…`. `lib/storage` wraps `AsyncStorage` never-throw for app **prefs** (non-secret). A
   runtime **session token** belongs in `expo-secure-store` (OS keychain) once the `auth` brick lands — not
