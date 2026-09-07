@@ -49,8 +49,7 @@ export type AgentRequest = {
 
 /** What `runAgent` returns — a discriminated result, never a thrown error. */
 export type AgentResult =
-  | { ok: true; data: unknown }
-  | { ok: false; error: string };
+  { ok: true; data: unknown } | { ok: false; error: string };
 
 /** The registry of available agents, keyed by `name`. Add a spec + a row here. */
 export const SPECS: Record<string, AgentSpec> = {
@@ -104,6 +103,8 @@ export async function runAgent(
         ],
         tool_choice: { type: "tool", name: "output" },
       }),
+      // Never hang on a stalled/slow Anthropic response — the caller waits on this.
+      signal: AbortSignal.timeout(20_000),
     });
     if (!res.ok) return { ok: false, error: `anthropic ${res.status}` };
 
@@ -116,6 +117,9 @@ export async function runAgent(
     if (!tool) return { ok: false, error: "no structured output returned" };
     return { ok: true, data: tool.input };
   } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "request failed" };
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "request failed",
+    };
   }
 }

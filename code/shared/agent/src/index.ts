@@ -5,7 +5,8 @@ import { runAgent, SPECS } from "@indiecrafts/packages-shared-agent";
 
 // Production console is silent (no request-log noise); forward error/fatal to Workers
 // Logs anyway. Non-prod skips it — its console already shows errors.
-if (getCurrentEnvironment() === "production") addTransport(cloudflareTransport());
+if (getCurrentEnvironment() === "production")
+  addTransport(cloudflareTransport());
 
 /**
  * Agent worker — the ONE dedicated bare Cloudflare Worker hosting the AI agent for EVERY
@@ -31,7 +32,9 @@ export interface Env {
   /** Comma-separated browser origins allowed to call (the deployed site); localhost dev is built in. */
   WEB_ORIGIN?: string;
   /** Cloudflare native rate-limit binding (`[[unsafe.bindings]]` in wrangler.toml). */
-  AGENT_RATELIMIT?: { limit: (o: { key: string }) => Promise<{ success: boolean }> };
+  AGENT_RATELIMIT?: {
+    limit: (o: { key: string }) => Promise<{ success: boolean }>;
+  };
 }
 
 const BODY_MAX = 4000;
@@ -39,7 +42,8 @@ const BODY_MAX = 4000;
 /** The browser origins allowed the agent (Turnstile-gated): dev servers + `WEB_ORIGIN`. */
 function allowedOrigins(env: Env): Set<string> {
   const set = new Set(["http://localhost:3000", "http://localhost:5173"]);
-  for (const o of (env.WEB_ORIGIN ?? "").split(",")) if (o.trim()) set.add(o.trim());
+  for (const o of (env.WEB_ORIGIN ?? "").split(","))
+    if (o.trim()) set.add(o.trim());
   return set;
 }
 
@@ -67,7 +71,23 @@ function safeEqual(a: string, b: string): boolean {
 const clientIp = (req: Request): string =>
   req.headers.get("cf-connecting-ip") ?? "unknown";
 
-function json(body: unknown, status: number, cors: Record<string, string>): Response {
+/** BCP-47-ish shape (`"fr"`, `"en-US"`) — a garbage/injection string clamps to `"en"`. */
+const LOCALE_RE = /^[a-z]{2,3}(-[A-Z]{2})?$/;
+
+/** Rate-limit check (Cloudflare native binding; no-op if unbound) — `true` means blocked. */
+async function rateLimited(env: Env, request: Request): Promise<boolean> {
+  if (!env.AGENT_RATELIMIT) return false;
+  const { success } = await env.AGENT_RATELIMIT.limit({
+    key: clientIp(request),
+  });
+  return !success;
+}
+
+function json(
+  body: unknown,
+  status: number,
+  cors: Record<string, string>,
+): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "content-type": "application/json", ...cors },
@@ -141,42 +161,66 @@ export default {
         return json({ error: "invalid" }, 400, cors);
       }
 
-      // Dual-mode auth on `Origin`. Browser → Turnstile; native (no Origin) → bearer.
+      // Dual-mode auth on `Origin`. Browser → rate-limit, THEN Turnstile (the rate limit
+      // must gate the outbound siteverify call itself — else a spoofed allowlisted Origin
+      // + a garbage token gets an unthrottled siteverify fetch on every attempt, since a
+      // failing Turnstile check never reaches a rate-limit placed after it).
+      // Native (no Origin) → bearer, unchanged order (no outbound call during its auth).
       if (origin) {
-        if (!allowed.has(origin)) return json({ error: "forbidden" }, 403, cors);
+        if (!allowed.has(origin))
+          return json({ error: "forbidden" }, 403, cors);
+        if (await rateLimited(env, request))
+          return json({ error: "rate_limited" }, 429, cors);
         const token =
           typeof body["cf-turnstile-response"] === "string"
             ? body["cf-turnstile-response"]
             : "";
-        if (!(await verifyTurnstile(token, env.TURNSTILE_SECRET, clientIp(request))))
+        if (
+          !(await verifyTurnstile(
+            token,
+            env.TURNSTILE_SECRET,
+            clientIp(request),
+          ))
+        )
           return json({ error: "unauthorized" }, 401, cors);
       } else {
         const bearer = (request.headers.get("authorization") ?? "").replace(
           /^Bearer\s+/i,
           "",
         );
-        if (!env.APP_API_TOKEN || !bearer || !safeEqual(bearer, env.APP_API_TOKEN))
+        if (
+          !env.APP_API_TOKEN ||
+          !bearer ||
+          !safeEqual(bearer, env.APP_API_TOKEN)
+        )
           return json({ error: "unauthorized" }, 401, cors);
-      }
-
-      // Rate limit (both paths; Cloudflare native binding; no-op if unbound).
-      if (env.AGENT_RATELIMIT) {
-        const { success } = await env.AGENT_RATELIMIT.limit({ key: clientIp(request) });
-        if (!success) return json({ error: "rate_limited" }, 429, cors);
+        if (await rateLimited(env, request))
+          return json({ error: "rate_limited" }, 429, cors);
       }
 
       const spec = SPECS[match[1]];
       if (!spec) return json({ error: "not_found" }, 404, cors);
-      if (!env.ANTHROPIC_API_KEY) return json({ error: "unavailable" }, 503, cors);
+      if (!env.ANTHROPIC_API_KEY)
+        return json({ error: "unavailable" }, 503, cors);
 
       const context = typeof body.context === "string" ? body.context : "";
-      const locale = typeof body.locale === "string" ? body.locale : undefined;
-      const result = await runAgent(spec, { context, locale }, env.ANTHROPIC_API_KEY);
+      // Untrusted input reaches Anthropic's system prompt (`runAgent` interpolates it
+      // raw) — clamp rather than reject, so a garbage/injection locale can't ride along.
+      const rawLocale = typeof body.locale === "string" ? body.locale : "";
+      const locale = LOCALE_RE.test(rawLocale) ? rawLocale : "en";
+      const result = await runAgent(
+        spec,
+        { context, locale },
+        env.ANTHROPIC_API_KEY,
+      );
       if (!result.ok) return json({ error: "server" }, 502, cors);
       return json({ data: result.data }, 200, cors);
     }
 
-    logger.info("agent request", { method: request.method, pathname: url.pathname });
+    logger.info("agent request", {
+      method: request.method,
+      pathname: url.pathname,
+    });
     return new Response("Not found", { status: 404 });
   },
 } satisfies ExportedHandler<Env>;

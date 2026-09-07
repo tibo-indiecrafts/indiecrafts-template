@@ -12,8 +12,35 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **Rate-limit the browser path BEFORE the Turnstile siteverify call, not after.** The
+  `AGENT_RATELIMIT` check ran after Turnstile verification, so a spoofed allowlisted `Origin` + a
+  garbage token triggered an unthrottled outbound `siteverify` fetch on every attempt — a failing
+  Turnstile check never reached a rate limit placed after it. The browser path now rate-limits
+  first, before calling `siteverify`; the native bearer path's check order is unchanged (its auth
+  makes no outbound call, so there was nothing to throttle-first there). **Why:** close the
+  unauthenticated-amplification vector on the outbound siteverify call.
+- **Validate/clamp `locale` at the worker boundary.** `body.locale` was only type-checked
+  (`typeof === "string"`), then flowed unchanged into `runAgent`, which raw-interpolates it into
+  the Anthropic system prompt. The worker now clamps anything not shaped like a BCP-47 locale
+  (`/^[a-z]{2,3}(-[A-Z]{2})?$/`) to `"en"` before calling `runAgent`, instead of rejecting the
+  whole request. **Why:** close a prompt-injection vector at the trust boundary.
+
 ### Added
 
+- **Test coverage for the guard's non-auth paths.** 10 new cases alongside the existing 6
+  guard-only ones: the Anthropic success path (mocked `tool_use` reply → 200), the 429 rate limit
+  (21 requests against the real `AGENT_RATELIMIT` binding), both 413 body-cap checks (the fast
+  content-length header check and the post-read actual-length check), Turnstile fail-closed
+  (missing token, `{success:false}`, and a network-failing siteverify), an unknown agent name
+  (404), a missing `ANTHROPIC_API_KEY` (503), and the locale clamp above (a garbage locale still
+  succeeds, clamped to `"en"` before reaching Anthropic). Uses `cloudflare:test`'s `fetchMock` to
+  intercept the outbound Anthropic + Turnstile calls — `SELF.fetch` runs the worker in a separate
+  workerd isolate, so a plain `vi.stubGlobal("fetch", …)` wouldn't reach it. `vitest.config.ts` now
+  runs against `env.dev` (for the real `AGENT_RATELIMIT` binding) with
+  `ANTHROPIC_API_KEY`/`APP_API_TOKEN`/`TURNSTILE_SECRET` test values injected via
+  `miniflare.bindings`.
 - **`secrets:sync:agent:<env>` — bulk-push secrets from `.dev.vars`.** Uses the shared
   `shared/scripts/data/secrets.mjs` runner to `wrangler secret bulk` the agent's `.dev.vars`
   (`ANTHROPIC_API_KEY`, `APP_API_TOKEN`, `TURNSTILE_SECRET`) in one clobber-guarded, prod-confirmed call.

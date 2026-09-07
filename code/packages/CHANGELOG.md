@@ -12,6 +12,14 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`@indiecrafts/packages-shared-agent` — the Anthropic fetch has a 20s timeout.** `runAgent`'s
+  `fetch(ANTHROPIC_URL, …)` had no `signal`, so a stalled/slow Anthropic response could hang the
+  caller indefinitely. Added `signal: AbortSignal.timeout(20_000)`; the existing
+  `catch (e) { return { ok: false, error } }` already turns the resulting `AbortError` into a
+  normal `AgentResult`, so nothing else changed.
+
 ### Added
 
 - **Unit tests for previously-untested brick logic.** `web/sanity` — `sanityImageLoader` (the CDN
