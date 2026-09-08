@@ -1,8 +1,16 @@
-# Build output
+# Build output — the app's `format` / `format:check` run `prettier … .` from this
+# dir, so these must be listed here (the root .prettierignore is not applied from
+# this cwd). `.open-next/`, `.wrangler/`, `.turbo/`, `dist/`, `.sanity/` are the
+# Cloudflare/OpenNext build outputs — huge minified bundles, never a format surface.
 .next/
+.open-next/
+.wrangler/
+.turbo/
+dist/
 out/
 build/
 coverage/
+.sanity/
 
 # Playwright e2e artifacts (generated, not a lint surface)
 test-results/

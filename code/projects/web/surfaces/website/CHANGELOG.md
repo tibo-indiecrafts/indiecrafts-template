@@ -17,6 +17,20 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **`pnpm lint` and `pnpm format:check` work again — both were scanning build output.** Two gaps
+  fixed together. (1) The `eslint.config.mjs` override set `jsx-a11y/*` + `@typescript-eslint/*` rules
+  in a global object (no `files` key), but `eslint-config-next` registers those plugins only for
+  specific file globs, so ESLint 9 threw "could not find plugin jsx-a11y" at config load; the override
+  is now scoped to that same glob so the plugins resolve. (2) Neither the eslint `globalIgnores` nor the
+  app's Prettier config ignored the Cloudflare / OpenNext build output (`.open-next/`, `dist/`,
+  `.wrangler/`, `.turbo/`, `.sanity/`), so once a build existed both tools scanned 100+ huge minified
+  bundles — ESLint exhausted memory (node OOM) and Prettier reported 118 false "style" hits. Added those
+  build/generated dirs to the eslint `globalIgnores` and a new website `.prettierignore`. **Why:** the
+  full `pnpm verify` (tsc + lint + format + tests + guards) now passes end-to-end; before, `pnpm lint`
+  and `format:check` could not complete once the app had been built.
+
 ### Added
 
 - **`pnpm check:secret-leak` — CI-enforces that no server secret ships under a public build prefix.**
