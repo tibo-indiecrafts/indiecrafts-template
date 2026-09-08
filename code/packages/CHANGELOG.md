@@ -14,6 +14,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-mobile-ui-native` `Button` — an optional `selected` prop.** Maps to
+  `accessibilityState.selected`, so a button used in a segmented / toggle group (e.g. the mobile theme
+  switcher) announces its chosen state to VoiceOver / TalkBack — selection is never signalled by colour
+  alone. Backward-compatible: unset leaves behaviour unchanged.
+
 - **`@indiecrafts/packages-shared-agent` — `runAgent` now validates the output shape.** The forced
   `output` tool guarantees a tool call, but the model can still drop a required field, and callers
   masked that with `?? []`. `runAgent` now checks the returned object against the spec's

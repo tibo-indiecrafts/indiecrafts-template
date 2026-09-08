@@ -6,6 +6,12 @@
     "signIn": "Se connecter",
     "share": "Partager"
   },
+  "theme": {
+    "title": "Apparence",
+    "system": "Système",
+    "light": "Clair",
+    "dark": "Sombre"
+  },
   "auth": {
     "title": "Se connecter",
     "notConfigured": "La connexion n'est pas encore configurée.",

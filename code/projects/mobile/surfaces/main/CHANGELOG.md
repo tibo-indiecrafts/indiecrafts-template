@@ -11,6 +11,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Theme switcher — a persisted light / dark / system preference.** A new
+  `ThemePreferenceProvider` (`lib/theme-preference.tsx`) wraps the `ui-native` `ThemeProvider` with a
+  `"light" | "dark" | "system"` choice, persisted via `@/lib/storage` (`STORAGE_KEYS.themePreference`),
+  default `"system"` (follows the OS scheme, unchanged when unset). A 3-way control on the home screen
+  (`useThemePreference`) lets the user pick; the active option is announced to screen readers via the
+  `ui-native` `Button`'s new `selected` prop, not by colour alone. Labels in `messages/{en,fr}.json`
+  (`theme.*`). **Why:** parity with web / admin / app / hybrid, which all let the user override the OS
+  theme; mobile previously followed the OS with no in-app control.
+
 ### Changed
 
 - **`app/sign-in.tsx`'s OTP state machine extracted into `lib/sign-in-machine.ts`.** The

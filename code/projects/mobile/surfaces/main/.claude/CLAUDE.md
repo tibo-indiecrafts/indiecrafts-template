@@ -18,7 +18,9 @@ the first product screen (`account`) — theme · i18n · status pages · native
 
 - **Providers** — `app/_layout.tsx`: `QueryClientProvider` (TanStack Query — shared `queryDefaults` from
   [`packages-shared-query`](../../../../../packages/shared/query); server-state cache for the client SPAs) →
-  `ThemeProvider` (from `ui-native`, follows OS dark/light over the shared tokens) → `IntlProvider`
+  `ThemePreferenceProvider` (`lib/theme-preference` — a persisted `light`/`dark`/`system` choice over the
+  shared tokens; `system` follows the OS, switched by a 3-way home-screen control; wraps `ui-native`'s
+  `ThemeProvider`) → `IntlProvider`
   (`react-intl`) → the router `Stack`. Data screens fetch with `useQuery`/`useMutation`, the `queryFn`
   calling the api-client (`lib/agent`).
 - **i18n** — `lib/i18n.ts`: `expo-localization` detects the device locale → `react-intl` formats the

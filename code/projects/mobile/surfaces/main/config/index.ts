@@ -16,8 +16,7 @@ export * from "@indiecrafts/packages-shared-config/mobile";
  * locale choice) — mirrors the web `site.prefix`. `site` is web-only, so the mobile app
  * owns its prefix here (`EXPO_PUBLIC_SITE_PREFIX`, else the template default).
  */
-export const sitePrefix =
-  process.env.EXPO_PUBLIC_SITE_PREFIX ?? "indiecrafts";
+export const sitePrefix = process.env.EXPO_PUBLIC_SITE_PREFIX ?? "indiecrafts";
 
 /**
  * Every persisted key, namespaced once under `sitePrefix` — the ONE home for
@@ -28,6 +27,7 @@ export const sitePrefix =
  */
 export const STORAGE_KEYS = {
   locale: `${sitePrefix}.locale`,
+  themePreference: `${sitePrefix}.theme-preference`,
   cookieConsent: `${sitePrefix}.cookie-consent`,
   legalAck: `${sitePrefix}.legal-ack`,
   announcementAck: `${sitePrefix}.announcement-ack`,

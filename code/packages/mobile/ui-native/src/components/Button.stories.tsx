@@ -12,6 +12,7 @@ const meta = {
   argTypes: {
     variant: { control: "select", options: VARIANTS },
     disabled: { control: "boolean" },
+    selected: { control: "boolean" },
     onPress: { table: { disable: true } },
   },
 } satisfies Meta<typeof Button>;
@@ -32,3 +33,16 @@ export const Variants: Story = {
 };
 
 export const Disabled: Story = { args: { disabled: true } };
+
+/** A segmented / toggle group — the chosen option carries `selected`, which maps to
+ *  `accessibilityState.selected` so VoiceOver / TalkBack announce it (never colour
+ *  alone). Pair the visual with the `variant` (here `primary` vs `outline`). */
+export const Selected: Story = {
+  render: (args) => (
+    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+      <Button {...args} variant="primary" selected label="System" />
+      <Button {...args} variant="outline" label="Light" />
+      <Button {...args} variant="outline" label="Dark" />
+    </View>
+  ),
+};

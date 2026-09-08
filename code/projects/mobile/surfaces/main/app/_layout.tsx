@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { IntlProvider, useIntl } from "react-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { queryDefaults } from "@indiecrafts/packages-shared-query";
-import { ThemeProvider } from "@indiecrafts/packages-mobile-ui-native";
+import { ThemePreferenceProvider } from "@/lib/theme-preference";
 import { ErrorContent } from "@indiecrafts/packages-shared-system-pages/native";
 import {
   detectLocale,
@@ -18,7 +18,7 @@ import { CLERK_PUBLISHABLE_KEY, hasClerk, tokenCache } from "@/lib/auth";
 import { logSignIn } from "@/lib/session-log";
 import type { Locale } from "@/config";
 
-// The provider tree — theme (system light/dark over the shared tokens) → i18n
+// The provider tree — theme (persisted light/dark/system preference over the shared tokens) → i18n
 // (a stored choice, else the device locale, hydrated async) → the router Stack, with
 // the compliance/version overlays mounted on top. Locale switches at runtime (RN has no
 // page reload) via `chooseLocale`, which re-renders `IntlProvider` with new messages.
@@ -28,7 +28,8 @@ const loggedSessions = new Set<string>();
 function SignInLogger() {
   const { isSignedIn, sessionId, userId } = useAuth();
   useEffect(() => {
-    if (!isSignedIn || !sessionId || !userId || loggedSessions.has(sessionId)) return;
+    if (!isSignedIn || !sessionId || !userId || loggedSessions.has(sessionId))
+      return;
     loggedSessions.add(sessionId);
     void logSignIn(userId, sessionId);
   }, [isSignedIn, sessionId, userId]);
@@ -55,7 +56,7 @@ function Providers({
   };
 
   const tree = (
-    <ThemeProvider>
+    <ThemePreferenceProvider>
       <IntlProvider
         locale={locale}
         messages={messagesFor(locale)}
@@ -70,7 +71,7 @@ function Providers({
           />
         ) : null}
       </IntlProvider>
-    </ThemeProvider>
+    </ThemePreferenceProvider>
   );
 
   // Auth is opt-in: mount Clerk only when the publishable key is set (else the app
