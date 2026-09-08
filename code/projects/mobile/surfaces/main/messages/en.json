@@ -6,6 +6,12 @@
     "signIn": "Sign in",
     "share": "Share"
   },
+  "theme": {
+    "title": "Appearance",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
   "auth": {
     "title": "Sign in",
     "notConfigured": "Sign-in is not configured yet.",

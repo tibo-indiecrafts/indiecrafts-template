@@ -9,12 +9,17 @@ export function Button({
   variant = "primary",
   onPress,
   disabled,
+  selected,
   accessibilityHint,
 }: {
   label: string;
   variant?: Variant;
   onPress?: () => void;
   disabled?: boolean;
+  /** Marks the button as the chosen option in a group (e.g. a segmented control).
+   *  Announced to screen readers via `accessibilityState.selected` — so selection is
+   *  never signalled by colour alone. Pair the visual with the `variant`. */
+  selected?: boolean;
   /** Optional extra context a screen reader reads after the label (e.g. "Opens settings"). */
   accessibilityHint?: string;
 }) {
@@ -37,7 +42,7 @@ export function Button({
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
-      accessibilityState={{ disabled: !!disabled }}
+      accessibilityState={{ disabled: !!disabled, selected }}
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [

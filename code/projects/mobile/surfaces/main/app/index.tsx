@@ -1,9 +1,10 @@
-import { Share } from "react-native";
+import { Share, View } from "react-native";
 import { useIntl } from "react-intl";
 import { useRouter } from "expo-router";
 import { SignedIn } from "@clerk/clerk-expo";
 import { websiteUrl } from "@/config";
 import { hasClerk } from "@/lib/auth";
+import { useThemePreference, THEME_PREFERENCES } from "@/lib/theme-preference";
 import {
   Screen,
   ThemedText,
@@ -18,6 +19,7 @@ import {
 export default function Index() {
   const t = useIntl();
   const router = useRouter();
+  const { preference, setPreference } = useThemePreference();
   // Native share: the OS share sheet (`Share.share`) — the idiomatic mobile pattern, not
   // the web intent-URL row. Shares the marketing site; disabled when no origin is set.
   const onShare = () => {
@@ -62,6 +64,21 @@ export default function Index() {
           onPress={onShare}
           disabled={!websiteUrl}
         />
+
+        <ThemedText variant="muted">
+          {t.formatMessage({ id: "theme.title" })}
+        </ThemedText>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+          {THEME_PREFERENCES.map((p) => (
+            <Button
+              key={p}
+              variant={preference === p ? "primary" : "outline"}
+              selected={preference === p}
+              label={t.formatMessage({ id: `theme.${p}` })}
+              onPress={() => setPreference(p)}
+            />
+          ))}
+        </View>
       </Card>
     </Screen>
   );

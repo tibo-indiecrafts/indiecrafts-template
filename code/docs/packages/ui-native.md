@@ -5,12 +5,12 @@ The **shadcn-for-React-Native** brick — the mobile (Expo) counterpart of the w
 ([`ui-tokens`](./ui-tokens)), so native and web share one palette. **Scope `mobile/`** —
 React-Native-only (it can't run on web/server).
 
-|               |                                                                                                                                          |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **Exports**   | `.` → the theme runtime + the shell component set. `./theme` → the theme runtime alone.                                                   |
-| **Theme**     | `ThemeProvider` (follows the OS light/dark via `useColorScheme`, or a forced `name`) · `useTheme()` · `useColor(token)` — over `ui-tokens/native` (hex). |
+|                |                                                                                                                                                          |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Exports**    | `.` → the theme runtime + the shell component set. `./theme` → the theme runtime alone.                                                                  |
+| **Theme**      | `ThemeProvider` (follows the OS light/dark via `useColorScheme`, or a forced `name`) · `useTheme()` · `useColor(token)` — over `ui-tokens/native` (hex). |
 | **Components** | `Screen` (themed full-bleed root) · `ThemedText` (`body`/`title`/`eyebrow`/`muted`) · `Button` (`primary`/`secondary`/`outline`/`destructive`) · `Card`. |
-| **Consumers** | `mobile` (the app shell + [`system-pages/native`](./system-pages)).                                                                       |
+| **Consumers**  | `mobile` (the app shell + [`system-pages/native`](./system-pages)).                                                                                      |
 
 ## Why a separate brick (not a fork of `ui`)
 
@@ -47,7 +47,8 @@ The tokens come from `ui-tokens` (`pnpm tokens:build` regenerates them); never h
 The primitives ship the a11y baseline so screens inherit it:
 
 - **`Button`** — `accessibilityRole="button"` + `accessibilityLabel` (its `label`) + `accessibilityState`
-  (disabled announced, not by opacity alone) + an optional `accessibilityHint`; a **44 pt** touch target.
+  (disabled announced, not by opacity alone; an optional `selected` for a segmented / toggle choice, so the
+  pick is announced, never by colour alone) + an optional `accessibilityHint`; a **44 pt** touch target.
 - **`ThemedText variant="title"`** — `accessibilityRole="header"` (screen-reader heading navigation);
   override via the `accessibilityRole` prop.
 - **`Card` / `Screen`** — transparent containers, so their children stay individually focusable.
