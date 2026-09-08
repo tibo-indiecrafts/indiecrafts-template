@@ -31,6 +31,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   full `pnpm verify` (tsc + lint + format + tests + guards) now passes end-to-end; before, `pnpm lint`
   and `format:check` could not complete once the app had been built.
 
+### Removed
+
+- **Dead `BUTTONDOWN_API_KEY` from the website `.dev.vars.example`.** The Buttondown ESP integration
+  was removed — the newsletter engine is provider-agnostic (it stores subscribers in Sanity, and an
+  external ESP is wired via its own embed form, not an API key). No code read the var; the example line
+  was stale and misleadingly implied a live integration.
+
 ### Added
 
 - **`pnpm check:secret-leak` — CI-enforces that no server secret ships under a public build prefix.**
