@@ -17,6 +17,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Removed
+
+- **Dead `BUTTONDOWN_API_KEY` from the website `.dev.vars.example`.** The Buttondown ESP integration
+  was removed — the newsletter engine is provider-agnostic (it stores subscribers in Sanity, and an
+  external ESP is wired via its own embed form, not an API key). No code read the var; the example line
+  was stale and misleadingly implied a live integration.
+
 ### Added
 
 - **`pnpm check:secret-leak` — CI-enforces that no server secret ships under a public build prefix.**
