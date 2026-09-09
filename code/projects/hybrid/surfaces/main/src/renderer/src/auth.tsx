@@ -7,18 +7,9 @@ import {
   SignIn,
   useSignIn,
   useAuth,
-  useReverification,
 } from "@clerk/clerk-react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
-import {
-  DeleteAccountSection,
-  ExportSection,
-  buildDeleteAccountCopy,
-  buildExportCopy,
-  mapErasureResponse,
-  rawErasureFetch,
-} from "@indiecrafts/packages-shared-compliance/web";
-import { apiUrl, features } from "../../config";
+import { AccountButton } from "./account-button";
 
 /** Publishable key (PUBLIC) from the renderer env — auth is opt-in on its presence. */
 export const CLERK_PUBLISHABLE_KEY =
@@ -69,54 +60,15 @@ export function AuthPanel() {
 
 function SignedInView() {
   const t = useIntl();
-  const { signOut, getToken } = useAuth();
-  // Step-up wired: wrap the raw erasure fetch so the worker's Clerk
-  // reverification 403 (stale `fva`, Task 4) opens the modal and auto-retries.
-  const eraseWithReverification = useReverification((email: string) =>
-    // skipCache: the post-reverification retry must mint a FRESH token so it
-    // carries the updated `fva`; a cached (~60s) token still has the stale `fva`
-    // and would re-trip the server gate, silently defeating the step-up.
-    rawErasureFetch({
-      apiUrl: apiUrl ?? "",
-      getToken: () => getToken({ skipCache: true }),
-      email,
-    }),
-  );
-  const deleteCopy = buildDeleteAccountCopy((k) =>
-    t.formatMessage({ id: `account.delete.${k}` }),
-  );
-  const exportCopy = buildExportCopy((k) =>
-    t.formatMessage({ id: `account.export.${k}` }),
-  );
+  // The unified account modal (Clerk avatar → Manage account + Sign out) owns sign-out,
+  // consent, data export and account deletion — the "Privacy & consent" and "Your data"
+  // custom tabs, shared with the website + app.
   return (
     <div className="flex flex-col items-center gap-4">
       <p className="text-sm text-muted-foreground">
         {t.formatMessage({ id: "auth.signedIn" })}
       </p>
-      <Button variant="outline" onClick={() => void signOut()}>
-        {t.formatMessage({ id: "auth.signOut" })}
-      </Button>
-      {features.exportAccount && apiUrl ? (
-        <ExportSection
-          copy={exportCopy}
-          apiUrl={apiUrl}
-          getToken={() => getToken()}
-        />
-      ) : null}
-      {features.deleteAccount && apiUrl ? (
-        // Step-up wired: client reverification modal (below) + server `fva` (Task 4).
-        <DeleteAccountSection
-          copy={deleteCopy}
-          apiUrl={apiUrl ?? ""}
-          getToken={() => getToken()}
-          onDeleted={async () => {
-            await signOut();
-          }}
-          submitErasure={async (email) =>
-            mapErasureResponse(await eraseWithReverification(email))
-          }
-        />
-      ) : null}
+      <AccountButton />
     </div>
   );
 }

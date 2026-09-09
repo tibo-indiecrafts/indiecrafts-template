@@ -15,7 +15,6 @@
   },
   "auth": {
     "signedIn": "Vous êtes connecté.",
-    "signOut": "Se déconnecter",
     "emailPrompt": "Saisissez votre e-mail et nous vous enverrons un code.",
     "emailPlaceholder": "vous@exemple.com",
     "sendCode": "Envoyer le code",
@@ -82,6 +81,12 @@
     "dismiss": "Fermer"
   },
   "account": {
+    "tabs": {
+      "consent": "Confidentialité et consentement",
+      "data": "Vos données",
+      "consentTitle": "Préférences de cookies",
+      "consentSave": "Enregistrer"
+    },
     "delete": {
       "heading": "Supprimer votre compte",
       "body": "Cette action supprime définitivement votre compte et vos données personnelles. Nous conservons un journal d'activité minimal, dépourvu de détails identifiants, à des fins de sécurité et de conformité légale.",
