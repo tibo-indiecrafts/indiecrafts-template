@@ -44,6 +44,9 @@
       "partial": "Votre compte a été supprimé ; certaines données peuvent mettre un peu plus de temps à disparaître.",
       "error": "Une erreur s'est produite. Veuillez réessayer.",
       "mismatch": "Cet e-mail ne correspond pas à votre compte."
+    },
+    "marketing": {
+      "label": "E-mails commerciaux"
     }
   },
   "consent": {

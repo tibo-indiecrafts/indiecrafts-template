@@ -35,4 +35,8 @@ export {
   AccountConsentTab,
   type AccountConsentTabProps,
 } from "./AccountConsentTab";
+export {
+  MarketingEmailToggle,
+  type MarketingEmailToggleProps,
+} from "./MarketingEmailToggle";
 export type { AccountAuth } from "../shared/account-port";

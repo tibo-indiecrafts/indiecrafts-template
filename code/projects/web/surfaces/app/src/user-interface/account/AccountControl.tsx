@@ -22,6 +22,7 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
   const tTabs = useTranslations("account.tabs");
   const tDelete = useTranslations("account.delete");
   const tExport = useTranslations("account.export");
+  const tMkt = useTranslations("account.marketing");
   const tCat = useTranslations("consent.categories");
   const cat = (key: string) => ({
     title: tCat(`${key}.title`),
@@ -39,11 +40,13 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
     categories,
     policyVersion,
     consentStorageKey: `${site.prefix}.cookie-consent`,
+    surface: "app",
     copy: {
       consentTabLabel: tTabs("consent"),
       dataTabLabel: tTabs("data"),
       consentTitle: tTabs("consentTitle"),
       consentSaveLabel: tTabs("consentSave"),
+      marketingLabel: tMkt("label"),
       delete: buildDeleteAccountCopy(tDelete),
       export: buildExportCopy(tExport),
     },

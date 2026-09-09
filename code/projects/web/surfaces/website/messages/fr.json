@@ -121,6 +121,9 @@
       "data": "Vos données",
       "consentTitle": "Préférences de cookies",
       "consentSave": "Enregistrer"
+    },
+    "marketing": {
+      "label": "E-mails commerciaux"
     }
   },
   "cta": {

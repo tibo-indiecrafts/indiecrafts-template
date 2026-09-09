@@ -12,6 +12,7 @@ import {
 import {
   DeleteAccountSection,
   ConsentPreferences,
+  MarketingEmailToggle,
   buildDeleteAccountCopy,
 } from "@indiecrafts/packages-shared-compliance/native";
 import {
@@ -85,6 +86,15 @@ function AccountView() {
             consentStore.save({ v: policyVersion, t: Date.now(), choices })
           }
         />
+
+        {apiUrl ? (
+          <MarketingEmailToggle
+            apiUrl={apiUrl}
+            getToken={() => getToken()}
+            label={t.formatMessage({ id: "account.marketing.label" })}
+            surface="mobile"
+          />
+        ) : null}
 
         {accountUrl ? (
           // Profile, security and data export live on the canonical web account —

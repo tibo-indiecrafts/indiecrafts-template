@@ -44,6 +44,9 @@
       "partial": "Your account has been deleted; some data may take a little longer to clear.",
       "error": "Something went wrong. Please try again.",
       "mismatch": "That email doesn't match your account."
+    },
+    "marketing": {
+      "label": "Commercial emails"
     }
   },
   "consent": {

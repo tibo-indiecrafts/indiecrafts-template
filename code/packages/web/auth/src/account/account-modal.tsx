@@ -4,6 +4,7 @@ import { UserButton, UserProfile } from "@clerk/nextjs";
 import {
   AccountConsentTab,
   AccountDataTab,
+  MarketingEmailToggle,
   type DeleteAccountCopy,
   type ExportCopy,
 } from "@indiecrafts/packages-shared-compliance/web";
@@ -16,6 +17,8 @@ export interface AccountCopy {
   dataTabLabel: string;
   consentTitle: string;
   consentSaveLabel: string;
+  /** The commercial-email toggle row label. */
+  marketingLabel: string;
   delete: DeleteAccountCopy;
   export: ExportCopy;
 }
@@ -27,6 +30,8 @@ export interface AccountModalProps {
   categories: readonly ConsentCategory[];
   policyVersion: string;
   consentStorageKey: string;
+  /** This surface's name — recorded on the marketing consent proof row. */
+  surface: string;
   copy: AccountCopy;
 }
 
@@ -64,14 +69,23 @@ function DataIcon() {
 // (standalone /account). Rendered inside Clerk's <UserProfile>, so their hooks
 // (useClerkAuthPort → useAuth/useReverification) have a provider.
 function ConsentContent(p: AccountModalProps) {
+  const auth = useClerkAuthPort(p.apiUrl);
   return (
-    <AccountConsentTab
-      storageKey={p.consentStorageKey}
-      version={p.policyVersion}
-      categories={p.categories}
-      title={p.copy.consentTitle}
-      saveLabel={p.copy.consentSaveLabel}
-    />
+    <div className="space-y-6">
+      <AccountConsentTab
+        storageKey={p.consentStorageKey}
+        version={p.policyVersion}
+        categories={p.categories}
+        title={p.copy.consentTitle}
+        saveLabel={p.copy.consentSaveLabel}
+      />
+      <MarketingEmailToggle
+        apiUrl={p.apiUrl}
+        getToken={auth.getToken}
+        label={p.copy.marketingLabel}
+        surface={p.surface}
+      />
+    </div>
   );
 }
 

@@ -13,6 +13,10 @@ export type { DeleteAccountSectionProps } from "./DeleteAccountSection";
 export { ExportSection } from "./ExportSection";
 export type { ExportSectionProps } from "./ExportSection";
 export {
+  MarketingEmailToggle,
+  type MarketingEmailToggleProps,
+} from "./MarketingEmailToggle";
+export {
   buildDeleteAccountCopy,
   buildExportCopy,
   type DeleteAccountCopy,

@@ -21,6 +21,7 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
   const tTabs = useTranslations("account.tabs");
   const tDelete = useTranslations("account.delete");
   const tExport = useTranslations("account.export");
+  const tMkt = useTranslations("account.marketing");
   const tCat = useTranslations("consent.categories");
   const cat = (key: string) => ({
     title: tCat(`${key}.title`),
@@ -40,11 +41,13 @@ export function AccountControl({ variant }: { variant: "button" | "page" }) {
     // so this is only a fallback for a signed-in user with no consent record yet.
     policyVersion: "1",
     consentStorageKey: `${site.prefix}.cookie-consent`,
+    surface: "website",
     copy: {
       consentTabLabel: tTabs("consent"),
       dataTabLabel: tTabs("data"),
       consentTitle: tTabs("consentTitle"),
       consentSaveLabel: tTabs("consentSave"),
+      marketingLabel: tMkt("label"),
       delete: buildDeleteAccountCopy(tDelete),
       export: buildExportCopy(tExport),
     },
