@@ -38,6 +38,7 @@ import { handleErasureStatus } from "./erasure/status";
 import { handleErasureSelf } from "./erasure/self";
 import { handleClerkUserDeleted } from "./erasure/clerk-deleted";
 import { handleClerkEmail } from "./clerk-email/handle";
+import { upsertResendContact } from "./resend-audience";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -107,6 +108,10 @@ export interface Env {
   RESEND_API_KEY?: string;
   /** `wrangler secret put EMAIL_FROM` (or `[vars]`) — the erasure emails' From address. */
   EMAIL_FROM?: string;
+  /** `[vars]` (an id, not sensitive) — the Resend audience the marketing-email opt-in
+   *  mirrors to. Optional: `resend-audience.ts` no-ops until this AND `RESEND_API_KEY` are
+   *  set, so the consent capture degrades to store-only. */
+  RESEND_AUDIENCE_ID?: string;
   /** `[vars]` (or secret; an address, not sensitive) — BCC'd on every outbound email
    *  from this worker (the erasure emails). Operator-set. Optional — unset → no bcc.
    *  Composes with the website send layer's own `EMAIL_ADMIN_BCC` read. */
@@ -978,26 +983,88 @@ export default {
               // The visitor's sign-up locale, from Clerk UNSAFE (client-set) metadata —
               // validate strictly against the known locales before storing; it drives the
               // localized auth emails, so an arbitrary value must never reach the DB.
-              const rawLocale = (
-                data.unsafe_metadata as { locale?: unknown } | undefined
-              )?.locale;
+              const unsafe = data.unsafe_metadata as
+                | {
+                    locale?: unknown;
+                    marketing_email?: unknown;
+                    consent_surface?: unknown;
+                  }
+                | undefined;
+              const rawLocale = unsafe?.locale;
               const locale =
                 typeof rawLocale === "string" &&
                 isLocale(rawLocale, localeCodes)
                   ? rawLocale
                   : null;
+              // Marketing-email opt-in from Clerk UNSAFE (client-set) metadata. Only a real
+              // boolean counts; anything else is "no decision" (null). Set on the INSERT and
+              // deliberately OMITTED from the ON CONFLICT set clause — the sign-up value is
+              // stale after a settings change, so a later user.updated must never re-apply it
+              // (locale has no other writer, so it keeps its COALESCE).
+              const rawMkt = unsafe?.marketing_email;
+              const marketingEmail =
+                typeof rawMkt === "boolean" ? (rawMkt ? 1 : 0) : null;
+              const consentSurface =
+                typeof unsafe?.consent_surface === "string" &&
+                unsafe.consent_surface
+                  ? unsafe.consent_surface.slice(0, 16)
+                  : "signup";
               // COALESCE guards email + email_fingerprint: a degenerate payload with no
               // resolvable email must not clear the stored ones. The fingerprint is the
               // erasure key, so losing it breaks email-keyed erasure. A real incoming
               // email still overwrites, via excluded. full_name has no such guard —
               // a name clear/update should propagate; it is not the erasure key.
               await env.MAIN_DB.prepare(
-                "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, locale, created_at, last_login_at) " +
-                  "VALUES (?, ?, ?, ?, ?, ?, NULL) " +
+                "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, locale, marketing_email, created_at, last_login_at) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, NULL) " +
                   "ON CONFLICT(user_id) DO UPDATE SET email = COALESCE(excluded.email, email), full_name = excluded.full_name, email_fingerprint = COALESCE(excluded.email_fingerprint, email_fingerprint), locale = COALESCE(excluded.locale, locale)",
               )
-                .bind(userId, email, fullName, fingerprint, locale, now)
+                .bind(
+                  userId,
+                  email,
+                  fullName,
+                  fingerprint,
+                  locale,
+                  marketingEmail,
+                  now,
+                )
                 .run();
+              // Sign-up marketing decision → append the consent proof (append-only; keyed by
+              // fingerprint, never raw email) and mirror to the Resend audience (best-effort,
+              // via waitUntil so a Resend hiccup never fails the webhook). Only on create —
+              // the settings toggle owns every later change.
+              if (evt.type === "user.created" && marketingEmail !== null) {
+                await env.MAIN_DB.prepare(
+                  "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
+                    "VALUES (?, 'user', ?, ?, 'marketing_email', ?, '1', ?, 'signup', NULL, NULL, ?)",
+                )
+                  .bind(
+                    now,
+                    userId,
+                    fingerprint,
+                    marketingEmail,
+                    consentSurface,
+                    `signup:${userId}:marketing_email`,
+                  )
+                  .run();
+                if (email) {
+                  const contactEmail = email;
+                  ctx.waitUntil(
+                    (async () => {
+                      try {
+                        await upsertResendContact(env, {
+                          email: contactEmail,
+                          granted: marketingEmail === 1,
+                        });
+                      } catch (error) {
+                        logger.error("resend signup sync failed", {
+                          name: (error as Error)?.name,
+                        });
+                      }
+                    })(),
+                  );
+                }
+              }
             }
           } catch (error) {
             logger.error("clerk profile sync failed", {

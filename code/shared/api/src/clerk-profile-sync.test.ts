@@ -204,4 +204,58 @@ describe("clerk webhook → user_profiles", () => {
       .first<{ locale: string | null }>();
     expect(bad?.locale).toBeNull();
   });
+
+  it("stores a sign-up marketing_email opt-in + writes a consent proof row", async () => {
+    await postWebhook({
+      type: "user.created",
+      data: {
+        id: "user_mkt",
+        primary_email_address_id: "e1",
+        email_addresses: [{ id: "e1", email_address: "mkt@x.com" }],
+        unsafe_metadata: { marketing_email: true },
+      },
+    });
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT marketing_email FROM user_profiles WHERE user_id = ?",
+    )
+      .bind("user_mkt")
+      .first<{ marketing_email: number | null }>();
+    expect(row?.marketing_email).toBe(1);
+    const proof = await env.AUDIT_DB.prepare(
+      "SELECT granted, source FROM consent_events WHERE subject_id = ? AND consent_type = 'marketing_email'",
+    )
+      .bind("user_mkt")
+      .first<{ granted: number; source: string }>();
+    expect(proof?.granted).toBe(1);
+    expect(proof?.source).toBe("signup");
+  });
+
+  it("never clobbers marketing_email from stale metadata on user.updated", async () => {
+    await postWebhook({
+      type: "user.created",
+      data: {
+        id: "user_mkt2",
+        primary_email_address_id: "e1",
+        email_addresses: [{ id: "e1", email_address: "mkt2@x.com" }],
+        unsafe_metadata: { marketing_email: true },
+      },
+    });
+    // A later profile update carries the STALE sign-up value; the column must not move
+    // (the settings toggle owns changes, not the webhook).
+    await postWebhook({
+      type: "user.updated",
+      data: {
+        id: "user_mkt2",
+        primary_email_address_id: "e1",
+        email_addresses: [{ id: "e1", email_address: "mkt2@x.com" }],
+        unsafe_metadata: { marketing_email: false },
+      },
+    });
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT marketing_email FROM user_profiles WHERE user_id = ?",
+    )
+      .bind("user_mkt2")
+      .first<{ marketing_email: number | null }>();
+    expect(row?.marketing_email).toBe(1);
+  });
 });
