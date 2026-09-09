@@ -1,5 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Redirect, useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import { useIntl } from "react-intl";
 import { useAuth } from "@clerk/clerk-expo";
 import {
@@ -10,17 +11,15 @@ import {
 } from "@indiecrafts/packages-mobile-ui-native";
 import {
   DeleteAccountSection,
-  ExportSection,
   ConsentPreferences,
   buildDeleteAccountCopy,
-  buildExportCopy,
 } from "@indiecrafts/packages-shared-compliance/native";
 import {
   DEFAULT_CONSENT_CATEGORIES,
   resolveCategories,
   rejectAllChoices,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { policyVersion, features } from "@/config";
+import { policyVersion, features, accountUrl } from "@/config";
 import { hasClerk } from "@/lib/auth";
 import { consentStore } from "@/lib/consent-store";
 
@@ -64,9 +63,6 @@ function AccountView() {
   const deleteCopy = buildDeleteAccountCopy((k) =>
     t.formatMessage({ id: `account.delete.${k}` }),
   );
-  const exportCopy = buildExportCopy((k) =>
-    t.formatMessage({ id: `account.export.${k}` }),
-  );
 
   return (
     <Screen>
@@ -90,11 +86,15 @@ function AccountView() {
           }
         />
 
-        {features.exportAccount && apiUrl ? (
-          <ExportSection
-            copy={exportCopy}
-            apiUrl={apiUrl}
-            getToken={() => getToken()}
+        {accountUrl ? (
+          // Profile, security and data export live on the canonical web account —
+          // an in-app browser tab (SFSafariViewController / Custom Tabs) shares the
+          // system cookie jar, so an existing web session usually carries over.
+          <Button
+            label={t.formatMessage({ id: "account.manage" })}
+            onPress={() =>
+              accountUrl && void WebBrowser.openBrowserAsync(accountUrl)
+            }
           />
         ) : null}
         {features.deleteAccount && apiUrl ? (

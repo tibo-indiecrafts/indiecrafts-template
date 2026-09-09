@@ -31,6 +31,7 @@
   },
   "account": {
     "title": "Compte",
+    "manage": "Gérer le compte",
     "delete": {
       "heading": "Supprimer votre compte",
       "body": "Cette action supprime définitivement votre compte et vos données personnelles. Nous conservons un journal d'activité minimal, dépourvu de détails identifiants, à des fins de sécurité et de conformité légale.",
@@ -42,14 +43,6 @@
       "partial": "Votre compte a été supprimé ; certaines données peuvent mettre un peu plus de temps à disparaître.",
       "error": "Une erreur s'est produite. Veuillez réessayer.",
       "mismatch": "Cet e-mail ne correspond pas à votre compte."
-    },
-    "export": {
-      "heading": "Télécharger vos données",
-      "body": "Exportez une copie de vos données de compte sous forme de fichier. Le lien est à usage unique et expire au bout d'une heure.",
-      "button": "Télécharger mes données",
-      "pending": "Préparation…",
-      "success": "Votre téléchargement s'est ouvert dans votre navigateur.",
-      "error": "Une erreur s'est produite. Veuillez réessayer."
     }
   },
   "consent": {
