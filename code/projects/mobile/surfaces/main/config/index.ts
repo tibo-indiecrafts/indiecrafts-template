@@ -39,6 +39,15 @@ export const STORAGE_KEYS = {
 /** The marketing-site origin — the legal link-out + version poll target. */
 export const websiteUrl = process.env.EXPO_PUBLIC_WEBSITE_URL;
 
+/**
+ * Canonical web account entry point the app hands off to (Manage account / delete).
+ * Default: the website's `/account`; override with `EXPO_PUBLIC_ACCOUNT_URL` (e.g. the
+ * `app.<domain>/account` product surface).
+ */
+export const accountUrl =
+  process.env.EXPO_PUBLIC_ACCOUNT_URL ??
+  (websiteUrl ? `${websiteUrl}/account` : undefined);
+
 /** The build id baked in at build (`EXPO_PUBLIC_BUILD_ID`, else `"dev"`). */
 export const buildId = process.env.EXPO_PUBLIC_BUILD_ID ?? "dev";
 

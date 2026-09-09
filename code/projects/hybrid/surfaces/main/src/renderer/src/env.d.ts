@@ -7,6 +7,8 @@ declare global {
   interface ImportMetaEnv {
     /** The marketing-site origin the legal link-out + version poll target. */
     readonly VITE_WEBSITE_URL?: string;
+    /** Canonical web account URL the "Manage account" link opens (default `${VITE_WEBSITE_URL}/account`). */
+    readonly VITE_ACCOUNT_URL?: string;
     /** The shared api Worker origin — the announcements read target. */
     readonly VITE_API_URL?: string;
     /** The build id baked in at build time — the version-check compares against this. */

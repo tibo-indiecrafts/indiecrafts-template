@@ -36,6 +36,15 @@ export const STORAGE_KEYS = {
 /** The marketing-site origin — the legal link-out + version poll target (`VITE_WEBSITE_URL`). */
 export const websiteUrl = import.meta.env.VITE_WEBSITE_URL;
 
+/**
+ * Canonical web account entry point the desktop shell hands off to (Manage account).
+ * Default: the website's `/account`. A project that ships the `app` surface sets
+ * `VITE_ACCOUNT_URL` to `https://app.<domain>/account` (the authenticated product surface).
+ */
+export const accountUrl =
+  import.meta.env.VITE_ACCOUNT_URL ??
+  (websiteUrl ? `${websiteUrl}/account` : undefined);
+
 /** The shared api Worker origin — the announcements read target (`VITE_API_URL`). */
 export const apiUrl = import.meta.env.VITE_API_URL;
 
