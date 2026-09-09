@@ -1,7 +1,7 @@
 # Unified account-management modal (web) — design
 
 - **Date:** 2026-09-09
-- **Status:** Revised (2026-09-09) — approved. The shared web core (website + app) is built. **Revision 2 re-scopes the presentation per surface and drops native account UI on hybrid + mobile in favour of a browser hand-off to the app's web account.** See §3.5.
+- **Status:** Implemented (Revision 2, 2026-09-09). Website (modal + `/account` page), app (embedded `/account`), and hybrid + mobile (browser hand-off to `accountUrl`) are all wired; admin stays sign-out-only. See §3.5 for the authoritative per-surface model.
 - **Author:** platform
 - **Scope:** the account experience across all five surfaces. **website** — a modal (avatar) plus a standalone `/account` page. **app** — embedded in the `/account` page (the canonical web account). **hybrid + mobile** — a direct link that opens the canonical web account in a browser (no native account UI). **admin** — out of scope (sign-out only).
 

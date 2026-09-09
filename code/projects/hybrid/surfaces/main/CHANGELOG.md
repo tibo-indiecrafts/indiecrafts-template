@@ -13,14 +13,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
-- **Unified account modal (`account-button.tsx`).** `SignedInView` now shows one Clerk
-  `<UserButton>` — its `@clerk/clerk-react` sibling of the website/app wrapper — whose profile
-  opens as a modal (virtual routing) with two custom tabs, "Privacy & consent" and "Your data",
-  reusing the SAME shared `AccountConsentTab` / `AccountDataTab` from
-  `@indiecrafts/packages-shared-compliance`. Replaced the standalone sign-out button + the
-  `ExportSection` / `DeleteAccountSection` blocks; Clerk's menu now owns sign-out. The Home-view
-  `CookiePreferencesSection` stays — it is the only consent control for signed-out desktop users.
-  **Why:** one account surface, identical on every surface, less per-surface UI to maintain.
+- **Account management hands off to the web account.** `SignedInView` shows a "Manage account"
+  button that opens the canonical web account (`accountUrl`, default `${websiteUrl}/account`) in
+  the OS browser (the existing `open-external` IPC, disabled when unset), plus a plain Sign out.
+  The Home-view native `CookiePreferencesSection` stays (the only consent control for signed-out
+  desktop users). **Why:** native clients hand account management off to the authenticated web
+  surface (common practice) rather than maintaining a third clerk-react account UI — one
+  canonical implementation.
 
 ### Added
 

@@ -11,6 +11,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Changed
+
+- **Account management hands off to the web account.** The `/account` screen keeps the native
+  cookie-consent panel and the native "Delete account" (the App Store 5.1.1(v) in-app delete),
+  and adds a "Manage account" button that opens the canonical web account (`accountUrl`, default
+  `${websiteUrl}/account`, override `EXPO_PUBLIC_ACCOUNT_URL`) in an in-app browser tab
+  (`expo-web-browser` = SFSafariViewController / Custom Tabs, which shares the system cookie
+  jar). Dropped the native data-export control — it lives on the web account. **Why:**
+  profile/security have no native Clerk UI (`clerk-expo` is headless), so they and export move
+  to the web account; consent + delete stay native.
+
 ### Added
 
 - **Theme switcher — a persisted light / dark / system preference.** A new

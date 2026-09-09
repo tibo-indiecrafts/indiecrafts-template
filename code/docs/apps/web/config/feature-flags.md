@@ -124,10 +124,13 @@ Self-service account actions:
 account: { delete: true, export: true },
 ```
 
-Both controls live in the **unified account modal** — Clerk's `<UserProfile>`, opened from
-the header/sidebar avatar, with two custom tabs: **"Privacy & consent"** (cookie choices) and
-**"Your data"** (export + deletion). The same modal renders full-page at `/account`. The
-website, app, and hybrid (Electron) surfaces mount the same shared tabs.
+Both controls live in the account UI built on Clerk's `<UserProfile>` — with two custom tabs,
+**"Privacy & consent"** (cookie choices) and **"Your data"** (export + deletion). Its
+presentation is per surface: the **website** opens it as a **modal** from the header avatar
+(and serves `/account` as a page); the **app** renders it **embedded** in its `/account` page
+(reached from the sidebar nav). The native clients don't render it — **hybrid + mobile** open
+the canonical web account (`accountUrl`, default `${websiteUrl}/account`) in a browser and keep
+their own native consent control. See the account-modal spec for the full per-surface matrix.
 
 - `delete` — enables account **deletion** in the "Your data" tab, and gates the full-page
   `/account` fallback route. The route is gated by `features.account.delete` **and** by Clerk

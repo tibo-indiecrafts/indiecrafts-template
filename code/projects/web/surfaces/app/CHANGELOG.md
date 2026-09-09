@@ -14,13 +14,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
-- **Unified account modal replaces the separate account controls.** `/account` and the
-  sidebar avatar now open one Clerk `<UserProfile>` with two custom tabs — "Privacy & consent"
-  (cookie choices) and "Your data" (export + deletion) — shared with the website and hybrid via
-  `@indiecrafts/packages-web-auth/account`. Removed `AccountDeletePanel` +
-  `CookiePreferencesSection` (and their tests); Clerk's modal now owns sign-out, so `NavUser`
-  drops its hand-rolled sign-out item and keeps only the Legal link. **Why:** one account
-  surface, identical everywhere, less per-surface UI to maintain.
+- **Unified account, embedded in the `/account` page.** `/account` renders Clerk's
+  `<UserProfile>` inline with two custom tabs — "Privacy & consent" (cookie choices) and "Your
+  data" (export + deletion) — via `@indiecrafts/packages-web-auth/account`, shared with the
+  website. It is reached from the main sidebar nav; the footer `NavUser` is Legal + Sign out
+  (Clerk's embedded profile has no everyday sign-out). Removed the old `AccountDeletePanel` +
+  `CookiePreferencesSection` (and their tests). **Why:** one shared account UI, presented per
+  surface — embedded here, a modal on the website — with less bespoke UI to maintain.
 
 ### Added
 
