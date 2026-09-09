@@ -30,3 +30,9 @@ export {
   type DeleteAccountCopy,
   type ExportCopy,
 } from "../shared/account-copy";
+export { AccountDataTab, type AccountDataTabProps } from "./AccountDataTab";
+export {
+  AccountConsentTab,
+  type AccountConsentTabProps,
+} from "./AccountConsentTab";
+export type { AccountAuth } from "../shared/account-port";
