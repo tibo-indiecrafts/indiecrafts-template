@@ -15,7 +15,7 @@ more workable for this template than an offline store that never sees real users
 pnpm install
 wrangler login             # once — local dev binds the real dev resources
 pnpm db:migrate:all:dev    # apply the D1 schema to the dev database (once + after new migrations)
-pnpm dev                   # website + api (localhost:8787) + cron, bound to the remote dev D1/KV/R2
+pnpm dev                   # website + all four workers (api :8787, agent, cron, workers), each `--env dev --remote`
 ```
 
 Then set two values in the website's `.env.local` (copy `.env.example`) — see [Databases](#the-four-data-stores) and [Sanity](#sanity-content).

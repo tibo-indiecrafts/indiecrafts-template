@@ -14,6 +14,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **Local dev now runs `--remote`, like `api`/`cron`.** The `dev` script is `wrangler dev --env dev
+--remote` — the agent runs on the Cloudflare `dev` edge (its `AGENT_RATELIMIT` binding uses the real
+  dev rate limiter) instead of local miniflare — so all four workers share one uniform local-dev model.
+  **Why:** consistency; "no miniflare tier" now holds for every worker. (The agent still needs its
+  `.dev.vars` secrets — `ANTHROPIC_API_KEY` / `APP_API_TOKEN` / `TURNSTILE_SECRET` — to actually run.)
 - **A malformed Anthropic reply now returns 502, not a 200 with unchecked data.** `runAgent` (the
   agent core brick) began validating output against the spec's `outputSchema`, so a reply missing a
   required field returns `{ ok: false }` and the Worker maps that to a 502 — instead of passing an

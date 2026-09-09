@@ -15,6 +15,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 _Activated bare-Worker scaffold for queue/event consumers + background jobs (the task logic lives in a
 `code/packages` / `code/modules` brick). Log the first real job here._
 
+### Changed
+
+- **Local dev now runs `--remote`, like `api`/`cron`.** The `dev` script is `wrangler dev --env dev
+--remote` — the worker runs on the Cloudflare `dev` edge, not local miniflare — so all four workers
+  share one uniform local-dev model. It has no `dev` bindings yet, so this binds nothing today; it keeps
+  the worker consistent and ready for when a real binding lands. **Why:** "no miniflare tier" now holds
+  for every worker, not just the two with D1.
+
 ### Fixed
 
 - **`pnpm dev` now selects the `dev` environment (`wrangler dev --env dev`).** The dev script omitted
