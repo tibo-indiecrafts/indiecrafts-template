@@ -12,8 +12,6 @@
       "account": "Account"
     },
     "user": {
-      "account": "Account",
-      "signOut": "Sign out",
       "legal": "Legal"
     },
     "theme": {
