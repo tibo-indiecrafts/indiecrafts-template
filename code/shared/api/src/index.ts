@@ -39,6 +39,7 @@ import { handleErasureSelf } from "./erasure/self";
 import { handleClerkUserDeleted } from "./erasure/clerk-deleted";
 import { handleClerkEmail } from "./clerk-email/handle";
 import { upsertResendContact } from "./resend-audience";
+import { handleMarketingConsent } from "./consent/marketing";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -630,6 +631,55 @@ export default {
       }
     }
 
+    // ── Marketing-consent batch — POST /v1/profiles/consent (bearer; the admin users list) ──
+    // Body { userIds: string[] } → { [userId]: 0 | 1 | null }. Unknown ids resolve to null.
+    if (url.pathname === "/v1/profiles/consent") {
+      if (request.method !== "POST")
+        return json({ error: "method_not_allowed" }, 405, cors);
+      const bearer = (request.headers.get("authorization") ?? "").replace(
+        /^Bearer\s+/i,
+        "",
+      );
+      if (
+        !env.APP_API_TOKEN ||
+        !bearer ||
+        !safeEqual(bearer, env.APP_API_TOKEN)
+      )
+        return json({ error: "unauthorized" }, 401, cors);
+      if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
+      if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
+        return json({ error: "too_large" }, 413, cors);
+      let body: { userIds?: unknown };
+      try {
+        body = (await request.json()) as typeof body;
+      } catch {
+        return json({ error: "invalid" }, 400, cors);
+      }
+      const ids = Array.isArray(body.userIds)
+        ? body.userIds
+            .filter((x): x is string => typeof x === "string")
+            .slice(0, 100)
+        : [];
+      if (ids.length === 0) return json({ error: "invalid" }, 400, cors);
+      try {
+        const placeholders = ids.map(() => "?").join(", ");
+        const { results } = await env.MAIN_DB.prepare(
+          `SELECT user_id, marketing_email FROM user_profiles WHERE user_id IN (${placeholders})`,
+        )
+          .bind(...ids)
+          .all<{ user_id: string; marketing_email: number | null }>();
+        const map: Record<string, number | null> = {};
+        for (const id of ids) map[id] = null;
+        for (const r of results) map[r.user_id] = r.marketing_email ?? null;
+        return json(map, 200, cors);
+      } catch (error) {
+        logger.error("profiles consent read failed", {
+          name: (error as Error)?.name,
+        });
+        return json({ error: "server" }, 502, cors);
+      }
+    }
+
     // ── Security view — GET /v1/security (bearer-gated; recent incidents for admin) ──
     if (url.pathname === "/v1/security") {
       if (request.method !== "GET")
@@ -1183,6 +1233,11 @@ export default {
       const token = url.pathname.slice("/v1/erasure/status/".length);
       return handleErasureStatus(request, env, token);
     }
+
+    // ── Marketing-email consent — GET/POST /v1/consent/marketing-email (AUTHENTICATED;
+    // Clerk JWT). The account toggle + the sign-in nudge read/write the caller's own opt-in.
+    if (url.pathname === "/v1/consent/marketing-email")
+      return handleMarketingConsent(request, env, ctx);
 
     // ── GDPR data export — POST /v1/export (AUTHENTICATED; Clerk JWT) ── Runs
     // runExport, stores the bundle in R2, and returns a single-use expiring download
