@@ -7,8 +7,9 @@ import { headers } from "next/headers";
 import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { OfflineBanner } from "@indiecrafts/packages-shared-system-pages/web";
-import { consent, localeDir, type Locale } from "@/config";
+import { consent, localeDir, site, type Locale } from "@/config";
 import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
+import { MarketingNudgeMount } from "@indiecrafts/packages-web-auth/marketing-nudge";
 import { routing } from "@/i18n/routing";
 import { ShellOverlays } from "@/user-interface/ShellOverlays";
 import { AnnouncementChrome } from "@/user-interface/AnnouncementChrome";
@@ -47,6 +48,7 @@ export default async function LocaleLayout({
   // under the strict nonce CSP.
   const nonce = requestHeaders.get("x-nonce") ?? undefined;
   const tOffline = await getTranslations("offline");
+  const nudge = await getTranslations("auth.nudge");
 
   return (
     // suppressHydrationWarning: the inline THEME_SCRIPT sets `data-theme` on <html> before
@@ -65,6 +67,17 @@ export default async function LocaleLayout({
               <SessionLogger surface="app" />
               {/* Logged-in-only announcement banner + toast (from the api Worker). */}
               <AnnouncementChrome />
+              <MarketingNudgeMount
+                apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
+                surface="app"
+                snoozeKey={`${site.prefix}.mkt-nudge-snooze`}
+                copy={{
+                  title: nudge("title"),
+                  yes: nudge("yes"),
+                  no: nudge("no"),
+                  dismiss: nudge("dismiss"),
+                }}
+              />
             </>
           ) : null}
           {children}

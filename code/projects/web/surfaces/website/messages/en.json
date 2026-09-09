@@ -423,6 +423,12 @@
     }
   },
   "auth": {
-    "marketingOptIn": "Send me occasional product news and offers. You can unsubscribe anytime."
+    "marketingOptIn": "Send me occasional product news and offers. You can unsubscribe anytime.",
+    "nudge": {
+      "title": "Want occasional product news and offers by email?",
+      "yes": "Yes, please",
+      "no": "No thanks",
+      "dismiss": "Dismiss"
+    }
   }
 }

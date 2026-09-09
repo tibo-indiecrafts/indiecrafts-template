@@ -1,7 +1,7 @@
 import "@indiecrafts/packages-shared-ui-tokens/globals.css";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { cookies, headers } from "next/headers";
 import Script from "next/script";
@@ -24,6 +24,7 @@ import { CookiePreferencesHost } from "@indiecrafts/packages-web-compliance/cons
 import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
 import { routing } from "@/i18n/routing";
 import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
+import { MarketingNudgeMount } from "@indiecrafts/packages-web-auth/marketing-nudge";
 import { ThemeProvider } from "@/user-interface/shared/layout/ThemeProvider";
 import { LocaleSwitchBoundary } from "@/user-interface/shared/layout/LocaleSwitchBoundary";
 import { resolveThemeConfig, themeProviderProps } from "@/lib/theme";
@@ -128,6 +129,7 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   setRequestLocale(locale);
 
   const messages = await getMessages();
+  const nudge = await getTranslations("auth.nudge");
   const [siteSeo, settings, cookieConsent, versionPrompt, legal] = await Promise.all([
     getSiteSeo(locale as Locale),
     getSiteSettings(),
@@ -271,7 +273,20 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                 ) : null}
               </LocaleSwitchBoundary>
               {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
-                <SessionLogger surface={surface} />
+                <>
+                  <SessionLogger surface={surface} />
+                  <MarketingNudgeMount
+                    apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
+                    surface="website"
+                    snoozeKey={`${site.prefix}.mkt-nudge-snooze`}
+                    copy={{
+                      title: nudge("title"),
+                      yes: nudge("yes"),
+                      no: nudge("no"),
+                      dismiss: nudge("dismiss"),
+                    }}
+                  />
+                </>
               ) : null}
               <Toaster />
             </NextIntlClientProvider>

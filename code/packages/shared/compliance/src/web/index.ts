@@ -39,4 +39,9 @@ export {
   MarketingEmailToggle,
   type MarketingEmailToggleProps,
 } from "./MarketingEmailToggle";
+export {
+  MarketingNudge,
+  type MarketingNudgeProps,
+  type MarketingNudgeCopy,
+} from "./MarketingNudge";
 export type { AccountAuth } from "../shared/account-port";

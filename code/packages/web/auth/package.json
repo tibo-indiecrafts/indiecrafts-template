@@ -9,6 +9,7 @@
     "./appearance": "./src/appearance.ts",
     "./sign-in-view": "./src/sign-in-view.tsx",
     "./sign-up-view": "./src/sign-up-view.tsx",
+    "./marketing-nudge": "./src/marketing-nudge.tsx",
     "./session-logger": "./src/session-logger.tsx",
     "./session-log": "./src/session-log.ts",
     "./redirect": "./src/redirect.ts",
