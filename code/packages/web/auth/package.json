@@ -10,11 +10,13 @@
     "./sign-in-view": "./src/sign-in-view.tsx",
     "./session-logger": "./src/session-logger.tsx",
     "./session-log": "./src/session-log.ts",
-    "./redirect": "./src/redirect.ts"
+    "./redirect": "./src/redirect.ts",
+    "./account": "./src/account/account-modal.tsx"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.7.7",
-    "@indiecrafts/packages-shared-auth": "workspace:*"
+    "@indiecrafts/packages-shared-auth": "workspace:*",
+    "@indiecrafts/packages-shared-compliance": "workspace:*"
   },
   "peerDependencies": {
     "react": "19.2.8",
