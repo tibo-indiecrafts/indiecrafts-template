@@ -13,28 +13,28 @@ Theme availability (`light` / `dark` / `system` / `forced`) lives in a sibling a
 
 ## The flags at a glance
 
-| Flag             | Type      | Default    | Gates                                                                                                                                                                      |
-| ---------------- | --------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `llms.index`     | `boolean` | `true`     | `/<locale>/llms.txt` + its `<link rel="alternate">` discovery tag                                                                                                          |
-| `llms.full`      | `boolean` | `true`     | `/<locale>/llms-full.txt`                                                                                                                                                  |
-| `llms.pages`     | `boolean` | `true`     | `/<locale>/llms/<id>` per-page markdown                                                                                                                                    |
-| `rss`            | `boolean` | `true`     | `/blog/rss.xml` + `/blog/atom.xml` + their alternate links — **requires `blog`**                                                                                           |
-| `sitemap`        | `boolean` | `true`     | `/sitemap.xml`; also whether `robots.txt` advertises it                                                                                                                    |
-| `blockAiTraining` | `boolean` | `true`     | `robots.txt` blocks AI-*training* crawlers (`AI_TRAINING_USER_AGENTS`); search + AI-*search* bots keep indexing ([robots](/apps/web/seo/robots-and-environments))          |
-| `structuredData` | `boolean` | `true`     | All JSON-LD (Organization/WebSite site-wide, WebPage/FAQPage per page)                                                                                                     |
-| `localeSwitcher` | `boolean` | `true`     | The header locale picker                                                                                                                                                   |
-| `legal.*`        | `object`  | see below  | The five legal pages + the data-request form + the erasure flow, each toggled independently                                                                                |
-| `account.delete` | `boolean` | `true`     | The self-service `/account` "Delete my account" page — requires Clerk configured                                                                                           |
-| `account.export` | `boolean` | `true`     | The "Download my data" control on the same `/account` page — requires Clerk configured                                                                                     |
-| `faq`            | `boolean` | `true`     | Per-page `<Faq>` accordion + FAQPage JSON-LD + llms FAQ block                                                                                                              |
-| `newsletter`     | `boolean` | `true`     | Newsletter capture block (`module.newsletter`) + the `/api/newsletter` route + the **Abonnés** desk — site-wide, **independent of `blog`** ([guide](/modules/newsletter/)) |
-| `blog`           | `boolean` | `true`     | The entire public blog surface (routes, feeds, discovery, `<SanityLive>`)                                                                                                  |
-| `blogTaxonomy.*` | `object`  | all `true` | Author/category/tag routes, each `&& blog`                                                                                                                                 |
-| `blogComments`   | `boolean` | `true`     | Moderated comments on each post (`/api/comments` + the `<Comments>` section) — **requires `blog`** ([guide](/modules/blog/comments))                                       |
-| `blogSearch`     | `boolean` | `true`     | The `/blog/search` route + the frontpage search box (`isSearchEnabled`) — **requires `blog`**                                                                              |
-| `blogSeries`     | `boolean` | `true`     | The `/blog/series/<slug>` landing + on-post "Part N of M" nav (`isSeriesEnabled`) — **requires `blog`**                                                                    |
-| `studio`         | `boolean` | `true`     | `/studio` + the draft-mode preview API                                                                                                                                     |
-| `maintenance`    | `boolean` | `false`    | Site-wide 503 rewrite to `/maintenance` (via `proxy.ts`)                                                                                                                   |
+| Flag              | Type      | Default    | Gates                                                                                                                                                                      |
+| ----------------- | --------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `llms.index`      | `boolean` | `true`     | `/<locale>/llms.txt` + its `<link rel="alternate">` discovery tag                                                                                                          |
+| `llms.full`       | `boolean` | `true`     | `/<locale>/llms-full.txt`                                                                                                                                                  |
+| `llms.pages`      | `boolean` | `true`     | `/<locale>/llms/<id>` per-page markdown                                                                                                                                    |
+| `rss`             | `boolean` | `true`     | `/blog/rss.xml` + `/blog/atom.xml` + their alternate links — **requires `blog`**                                                                                           |
+| `sitemap`         | `boolean` | `true`     | `/sitemap.xml`; also whether `robots.txt` advertises it                                                                                                                    |
+| `blockAiTraining` | `boolean` | `true`     | `robots.txt` blocks AI-_training_ crawlers (`AI_TRAINING_USER_AGENTS`); search + AI-_search_ bots keep indexing ([robots](/apps/web/seo/robots-and-environments))          |
+| `structuredData`  | `boolean` | `true`     | All JSON-LD (Organization/WebSite site-wide, WebPage/FAQPage per page)                                                                                                     |
+| `localeSwitcher`  | `boolean` | `true`     | The header locale picker                                                                                                                                                   |
+| `legal.*`         | `object`  | see below  | The five legal pages + the data-request form + the erasure flow, each toggled independently                                                                                |
+| `account.delete`  | `boolean` | `true`     | The self-service `/account` "Delete my account" page — requires Clerk configured                                                                                           |
+| `account.export`  | `boolean` | `true`     | The "Download my data" control on the same `/account` page — requires Clerk configured                                                                                     |
+| `faq`             | `boolean` | `true`     | Per-page `<Faq>` accordion + FAQPage JSON-LD + llms FAQ block                                                                                                              |
+| `newsletter`      | `boolean` | `true`     | Newsletter capture block (`module.newsletter`) + the `/api/newsletter` route + the **Abonnés** desk — site-wide, **independent of `blog`** ([guide](/modules/newsletter/)) |
+| `blog`            | `boolean` | `true`     | The entire public blog surface (routes, feeds, discovery, `<SanityLive>`)                                                                                                  |
+| `blogTaxonomy.*`  | `object`  | all `true` | Author/category/tag routes, each `&& blog`                                                                                                                                 |
+| `blogComments`    | `boolean` | `true`     | Moderated comments on each post (`/api/comments` + the `<Comments>` section) — **requires `blog`** ([guide](/modules/blog/comments))                                       |
+| `blogSearch`      | `boolean` | `true`     | The `/blog/search` route + the frontpage search box (`isSearchEnabled`) — **requires `blog`**                                                                              |
+| `blogSeries`      | `boolean` | `true`     | The `/blog/series/<slug>` landing + on-post "Part N of M" nav (`isSeriesEnabled`) — **requires `blog`**                                                                    |
+| `studio`          | `boolean` | `true`     | `/studio` + the draft-mode preview API                                                                                                                                     |
+| `maintenance`     | `boolean` | `false`    | Site-wide 503 rewrite to `/maintenance` (via `proxy.ts`)                                                                                                                   |
 
 Everything reads these from `@/config` — the app-owned `src/config/features.ts` (flags,
 theme, fonts, and the `pages` map are app-instance config so a second app ships its own;
@@ -124,16 +124,21 @@ Self-service account actions:
 account: { delete: true, export: true },
 ```
 
-- `delete` — the **"Delete my account" page** at `/account`, gated by
-  `features.account.delete` **and** by Clerk being configured
-  (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`) **and** by the client api origin being set
-  (`NEXT_PUBLIC_API_URL`) — any one missing 404s the route. The page renders the shared
+Both controls live in the **unified account modal** — Clerk's `<UserProfile>`, opened from
+the header/sidebar avatar, with two custom tabs: **"Privacy & consent"** (cookie choices) and
+**"Your data"** (export + deletion). The same modal renders full-page at `/account`. The
+website, app, and hybrid (Electron) surfaces mount the same shared tabs.
+
+- `delete` — enables account **deletion** in the "Your data" tab, and gates the full-page
+  `/account` fallback route. The route is gated by `features.account.delete` **and** by Clerk
+  being configured (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`) **and** by the client api origin being
+  set (`NEXT_PUBLIC_API_URL`) — any one missing 404s the route. The tab renders the shared
   `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`), which posts the
   authenticated `POST /v1/erasure/self` to the shared api worker, then signs the visitor out.
-- `export` — the **"Download my data" control**, rendered beside `DeleteAccountSection` on
-  the same `/account` page (the page's own visibility still follows `delete`). It renders
-  the shared `ExportSection`, which posts the authenticated `POST /v1/export` to the shared
-  api worker and opens the returned single-use, 1-hour-expiring download link in a new tab.
+- `export` — adds the **"Download my data"** control beside deletion in the same "Your data"
+  tab. It renders the shared `ExportSection`, which posts the authenticated `POST /v1/export`
+  to the shared api worker and opens the returned single-use, 1-hour-expiring download link in
+  a new tab.
 
 ## `faq`
 

@@ -11,6 +11,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Changed
+
+- **Unified account modal (`account-button.tsx`).** `SignedInView` now shows one Clerk
+  `<UserButton>` — its `@clerk/clerk-react` sibling of the website/app wrapper — whose profile
+  opens as a modal (virtual routing) with two custom tabs, "Privacy & consent" and "Your data",
+  reusing the SAME shared `AccountConsentTab` / `AccountDataTab` from
+  `@indiecrafts/packages-shared-compliance`. Replaced the standalone sign-out button + the
+  `ExportSection` / `DeleteAccountSection` blocks; Clerk's menu now owns sign-out. The Home-view
+  `CookiePreferencesSection` stays — it is the only consent control for signed-out desktop users.
+  **Why:** one account surface, identical on every surface, less per-surface UI to maintain.
+
 ### Added
 
 - **IPC handler test coverage (`src/main/index.test.ts`).** New suite mocks `electron`

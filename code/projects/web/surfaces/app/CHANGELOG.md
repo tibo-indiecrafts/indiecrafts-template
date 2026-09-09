@@ -12,18 +12,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Changed
+
+- **Unified account modal replaces the separate account controls.** `/account` and the
+  sidebar avatar now open one Clerk `<UserProfile>` with two custom tabs — "Privacy & consent"
+  (cookie choices) and "Your data" (export + deletion) — shared with the website and hybrid via
+  `@indiecrafts/packages-web-auth/account`. Removed `AccountDeletePanel` +
+  `CookiePreferencesSection` (and their tests); Clerk's modal now owns sign-out, so `NavUser`
+  drops its hand-rolled sign-out item and keeps only the Legal link. **Why:** one account
+  surface, identical everywhere, less per-surface UI to maintain.
+
 ### Added
 
-- **Route-handler + account-panel test coverage.** `route.test.ts` beside each API handler
+- **Route-handler test coverage.** `route.test.ts` beside each API handler
   (`version`, `session-log`, `csp-report`) asserts real behavior — the version payload +
   cache header, the session-log 401/default-surface/forwarded-surface paths (Clerk `auth` +
   `logSession` mocked), and the csp-report route's forwarding shape (mocked
-  `handleCspReport`, called with `{ surface: "app" }`). `AccountDeletePanel.test.tsx` and
-  `CookiePreferencesSection.test.tsx` add React Testing Library render/interaction tests
-  (Clerk hooks mocked) covering the erasure submit → sign-out → redirect flow, the mismatch
-  path, and the cookie-preferences save-to-`localStorage` + toast flow. **Why:** the app
-  surface had no test coverage for its API routes or account UI; this closes that gap using
-  the RTL setup already established in `code/packages/web/compliance`.
+  `handleCspReport`, called with `{ surface: "app" }`). **Why:** the app surface had no test
+  coverage for its API routes; this closes that gap using the RTL setup already established in
+  `code/packages/web/compliance`.
 - **Self-service account delete now triggers Clerk step-up reverification.**
   `AccountDeletePanel` wraps the erasure fetch (`rawErasureFetch`) in Clerk's
   `useReverification`, so a stale first factor (the worker's `fva` gate, >10

@@ -17,6 +17,17 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **Unified account modal.** The header avatar and `/account` now open one Clerk `<UserProfile>`
+  with two custom tabs — "Privacy & consent" (cookie choices) and "Your data" (export +
+  deletion) — via the new `@indiecrafts/packages-web-auth/account` (`AccountButton` / `AccountPage`)
+  over the shared, Clerk-free tab bodies in `@indiecrafts/packages-shared-compliance`. A single
+  `AccountControl` wrapper resolves copy + consent categories from `messages` and `@/config`.
+  Removed the old `AccountDeletePanel` (its delete/export now live in the "Your data" tab).
+  **Why:** one account surface, identical on the website, app, and hybrid, with less per-surface
+  UI to maintain.
+
 ### Fixed
 
 - **`pnpm lint` and `pnpm format:check` work again — both were scanning build output.** Two gaps

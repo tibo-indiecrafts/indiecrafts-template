@@ -1,7 +1,7 @@
 # Unified account-management modal (web) — design
 
 - **Date:** 2026-09-09
-- **Status:** Draft — approved in brainstorming, pending spec review
+- **Status:** Implemented (web) — website, app, and hybrid (Electron) surfaces wired to the unified modal; mobile is phase 2.
 - **Author:** platform
 - **Scope:** one account-management modal for the three web surfaces — `website`, `app` (Next/Cloudflare), and `hybrid` (Electron renderer). `mobile` (Expo) is phase 2.
 
