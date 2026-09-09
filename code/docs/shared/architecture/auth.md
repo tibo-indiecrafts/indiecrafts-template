@@ -126,3 +126,14 @@ takes over delivery via the `emails.created` webhook. **Operator runbook:**
 
 Auth-email copy is hardcoded en/fr today; a Studio `emailStrings` overlay (like the erasure emails)
 is a follow-up.
+
+**New-device sign-in email.** Clerk's "Sign in from new device" security email (device / OS /
+location + a "sign out this device" revoke button) is a **first-party** feature — enable it in the
+Dashboard (no code). It flows through the same take-over: toggle it "Delivered by Clerk" off and it
+is localized like the rest (the `newDevice` template in `clerk-email/templates.ts`). **Caveat:** the
+revoke button survives the take-over **only if** Clerk includes the revoke link in the
+`emails.created` payload (undocumented) — the localized template renders the button when the link is
+present and degrades to a "change your password" warning otherwise. If the link turns out to be
+absent, **leave that one template on Clerk's delivery** (English, but keeps the one-click revoke).
+The handler logs any un-localized `slug` (no PII), so the real "new device" slug is discoverable in
+the api logs once the feature is on — then lock it in `AUTH_TEMPLATES`.

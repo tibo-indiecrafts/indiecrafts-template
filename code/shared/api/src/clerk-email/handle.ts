@@ -1,3 +1,4 @@
+import { logger } from "@indiecrafts/packages-shared-logger";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
 import { resend, type MailEnv } from "../erasure/email";
@@ -83,7 +84,12 @@ export async function handleClerkEmail(
     await send(env, { to, subject, html, text });
     return;
   }
-  // Unknown slug → forward Clerk's own rendered (English) email; never drop it.
+  // Unknown slug → forward Clerk's own rendered (English) email; never drop it. Log the
+  // slug (no PII) so an operator can discover a template worth localizing — e.g. the real
+  // "sign in from new device" slug, which Clerk does not document.
+  logger.info("clerk email passthrough (unlocalized slug)", {
+    slug: str(d.slug),
+  });
   const subject = str(d.subject) || "Notification";
   const body = str(d.body);
   await send(env, {

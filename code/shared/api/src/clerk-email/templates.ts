@@ -77,6 +77,11 @@ export const AUTH_TEMPLATES: Record<
   }),
   magic_link_sign_in: magicLink,
   magic_link_sign_up: magicLink,
+  // "Sign in from new device" — the exact slug is undocumented; register the two most
+  // likely names. A wrong guess is safe: the handler forwards an unmatched slug as
+  // Clerk's own (English) email and logs the slug so we can lock the real one.
+  sign_in_from_new_device: newDevice,
+  new_device_sign_in: newDevice,
 };
 
 function magicLink(vars: EmailVars, locale: string): Rendered {
@@ -98,5 +103,66 @@ function magicLink(vars: EmailVars, locale: string): Rendered {
     ),
     html: `<p>${escapeHtml(line)}</p><p><a href="${u}">${escapeHtml(label)}</a></p>`,
     text: `${line}\n${url}`,
+  };
+}
+
+/**
+ * The "sign in from a new device" security notification. Reads the device/location
+ * details defensively (Clerk's field names for this template are undocumented but
+ * stable per template; unknowns are omitted) and renders the "sign out this device"
+ * revoke button ONLY when the payload carries the link — otherwise it degrades to a
+ * "change your password" warning (never a broken/empty button).
+ */
+function newDevice(vars: EmailVars, locale: string): Rendered {
+  const what = [
+    str(vars.device_type) || str(vars.device),
+    str(vars.os) || str(vars.operating_system),
+    str(vars.browser),
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const where = [str(vars.city), str(vars.country)].filter(Boolean).join(", ");
+  const ip = str(vars.ip_address) || str(vars.ip);
+  const revoke =
+    str(vars.revoke_session_url) || str(vars.sign_out_url) || str(vars.link);
+
+  const details = [what, where, ip ? `IP ${ip}` : ""].filter(Boolean);
+  const intro = pickLocale(
+    {
+      en: "We noticed a new sign-in to your account:",
+      fr: "Nous avons détecté une nouvelle connexion à votre compte :",
+    },
+    locale,
+  );
+  const revokeLabel = pickLocale(
+    {
+      en: "This wasn't you? Sign out this device",
+      fr: "Ce n'était pas vous ? Déconnecter cet appareil",
+    },
+    locale,
+  );
+  const noRevoke = pickLocale(
+    {
+      en: "If this wasn't you, change your password immediately.",
+      fr: "Si ce n'était pas vous, changez votre mot de passe immédiatement.",
+    },
+    locale,
+  );
+  const listHtml = details.length
+    ? `<ul>${details.map((d) => `<li>${escapeHtml(d)}</li>`).join("")}</ul>`
+    : "";
+  const cta = revoke
+    ? `<p><a href="${escapeHtml(revoke)}">${escapeHtml(revokeLabel)}</a></p>`
+    : `<p>${escapeHtml(noRevoke)}</p>`;
+  return {
+    subject: pickLocale(
+      {
+        en: "New sign-in to your account",
+        fr: "Nouvelle connexion à votre compte",
+      },
+      locale,
+    ),
+    html: `<p>${escapeHtml(intro)}</p>${listHtml}${cta}`,
+    text: `${intro}\n${details.join("\n")}\n\n${revoke ? `${revokeLabel}: ${revoke}` : noRevoke}`,
   };
 }

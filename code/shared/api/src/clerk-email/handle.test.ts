@@ -91,4 +91,43 @@ describe("handleClerkEmail (Clerk emails.created take-over)", () => {
     );
     expect(sent).toHaveLength(0);
   });
+
+  it("localizes the new-device email with the revoke link when present", async () => {
+    const sent: Sent[] = [];
+    await handleClerkEmail(
+      { ...baseEnv, MAIN_DB: db("fr") },
+      {
+        to_email_address: "u@x.com",
+        slug: "sign_in_from_new_device",
+        user_id: "u",
+        data: {
+          device_type: "iPhone",
+          city: "Paris",
+          country: "FR",
+          revoke_session_url: "https://x/revoke",
+        },
+      },
+      record(sent),
+    );
+    expect(sent[0].subject).toBe("Nouvelle connexion à votre compte");
+    expect(sent[0].html).toContain("https://x/revoke");
+    expect(sent[0].text).toContain("iPhone");
+  });
+
+  it("new-device email without a revoke link degrades to a password warning", async () => {
+    const sent: Sent[] = [];
+    await handleClerkEmail(
+      { ...baseEnv, MAIN_DB: db(null) },
+      {
+        to_email_address: "u@x.com",
+        slug: "new_device_sign_in",
+        user_id: "u",
+        data: { device_type: "Mac" },
+      },
+      record(sent),
+    );
+    expect(sent[0].subject).toBe("New sign-in to your account");
+    expect(sent[0].html).not.toContain("<a href");
+    expect(sent[0].html.toLowerCase()).toContain("change your password");
+  });
 });
