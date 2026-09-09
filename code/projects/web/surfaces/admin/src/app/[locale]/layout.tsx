@@ -5,7 +5,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { localeDir, type Locale } from "@/config";
-import { SessionLogger } from "@indiecrafts/packages-web-auth";
+import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
 import { routing } from "@/i18n/routing";
 import { THEME_SCRIPT } from "@/user-interface/layout/theme-script";
 
@@ -32,7 +32,8 @@ export default async function LocaleLayout({
   return (
     // suppressHydrationWarning: the inline THEME_SCRIPT sets `data-theme` on <html> before
     // hydration, so the server/client attributes differ by design (one level deep only).
-    <html lang={locale} dir={localeDir(locale as Locale)} suppressHydrationWarning>
+    <AppClerkProvider locale={locale} nonce={nonce}>
+      <html lang={locale} dir={localeDir(locale as Locale)} suppressHydrationWarning>
       {/* suppressHydrationWarning: browser extensions inject attributes on <body>
           (e.g. data-atm-installed) before React hydrates — a one-level-deep,
           client-only diff, not an app mismatch. */}
@@ -45,6 +46,7 @@ export default async function LocaleLayout({
           {children}
         </NextIntlClientProvider>
       </body>
-    </html>
+      </html>
+    </AppClerkProvider>
   );
 }

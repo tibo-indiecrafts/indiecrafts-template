@@ -8,7 +8,7 @@ import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shar
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { OfflineBanner } from "@indiecrafts/packages-shared-system-pages/web";
 import { consent, localeDir, type Locale } from "@/config";
-import { SessionLogger } from "@indiecrafts/packages-web-auth";
+import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
 import { routing } from "@/i18n/routing";
 import { ShellOverlays } from "@/user-interface/ShellOverlays";
 import { AnnouncementChrome } from "@/user-interface/AnnouncementChrome";
@@ -51,7 +51,8 @@ export default async function LocaleLayout({
   return (
     // suppressHydrationWarning: the inline THEME_SCRIPT sets `data-theme` on <html> before
     // hydration, so the server/client attributes differ by design (one level deep only).
-    <html lang={locale} dir={localeDir(locale as Locale)} suppressHydrationWarning>
+    <AppClerkProvider locale={locale} nonce={nonce}>
+      <html lang={locale} dir={localeDir(locale as Locale)} suppressHydrationWarning>
       {/* suppressHydrationWarning: browser extensions inject attributes on <body>
           (e.g. data-atm-installed) before React hydrates — a one-level-deep,
           client-only diff, not an app mismatch. */}
@@ -76,6 +77,7 @@ export default async function LocaleLayout({
           <Toaster />
         </NextIntlClientProvider>
       </body>
-    </html>
+      </html>
+    </AppClerkProvider>
   );
 }

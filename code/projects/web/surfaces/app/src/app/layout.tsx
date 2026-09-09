@@ -1,14 +1,8 @@
-import { headers } from "next/headers";
-import { AppClerkProvider } from "@indiecrafts/packages-web-auth";
-
 /**
- * Root passthrough layout. The real <html> and <body> live in [locale]/layout.tsx so
- * `lang`/`dir` follow the resolved locale (next-intl parity with the website). The
- * Clerk provider wraps everything (opt-in — inert with no publishable key), nonced
- * from the proxy's per-request `x-nonce` header so its inline scripts pass the
- * strict CSP.
+ * Root passthrough layout. The real <html>/<body> — and the Clerk provider — live in
+ * [locale]/layout.tsx so the provider reads the active locale (from params) and
+ * localizes Clerk's UI. This root just forwards children.
  */
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
-  return <AppClerkProvider nonce={nonce}>{children}</AppClerkProvider>;
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return children;
 }
