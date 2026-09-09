@@ -23,7 +23,7 @@ import { CookieBanner } from "@indiecrafts/packages-web-compliance/consent/Cooki
 import { CookiePreferencesHost } from "@indiecrafts/packages-web-compliance/consent/CookiePreferencesHost";
 import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
 import { routing } from "@/i18n/routing";
-import { SessionLogger } from "@indiecrafts/packages-web-auth";
+import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
 import { ThemeProvider } from "@/user-interface/shared/layout/ThemeProvider";
 import { LocaleSwitchBoundary } from "@/user-interface/shared/layout/LocaleSwitchBoundary";
 import { resolveThemeConfig, themeProviderProps } from "@/lib/theme";
@@ -158,44 +158,45 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
       : "/terms-of-sale";
 
   return (
-    <html
-      lang={locale}
-      dir={localeDir(locale)}
-      className={`${fontClassName} antialiased`}
-      style={{ colorScheme: "light dark", ...fontStyle }}
-      suppressHydrationWarning
-    >
-      <head>
-        {/* The logo preload is emitted by next/image itself — <LogoIcon> uses
+    <AppClerkProvider locale={locale} nonce={nonce}>
+      <html
+        lang={locale}
+        dir={localeDir(locale)}
+        className={`${fontClassName} antialiased`}
+        style={{ colorScheme: "light dark", ...fontStyle }}
+        suppressHydrationWarning
+      >
+        <head>
+          {/* The logo preload is emitted by next/image itself — <LogoIcon> uses
             `priority`, which already produces a correctly-typed
             `<link rel="preload" as="image" type="image/svg+xml">`. Adding a
             second manual one here duplicates the hint: the browser consumes one
             for the <img> fetch and warns the other was "preloaded but not used". */}
 
-        {/* Discoverability hint for the LLM index — gated on `features.llms.index`
+          {/* Discoverability hint for the LLM index — gated on `features.llms.index`
             (the `/llms.txt` route it points at 404s when that flag is off).
             Locale-aware: default locale → `/llms.txt`, others → `/<locale>/llms.txt`. */}
-        {features.llms.index ? (
-          <link
-            rel="alternate"
-            type="text/plain"
-            title="llms.txt"
-            href={`${localePrefix(locale as Locale)}/llms.txt`}
-          />
-        ) : null}
+          {features.llms.index ? (
+            <link
+              rel="alternate"
+              type="text/plain"
+              title="llms.txt"
+              href={`${localePrefix(locale as Locale)}/llms.txt`}
+            />
+          ) : null}
 
-        {/* Google Analytics — ID + consent are edited in Sanity
+          {/* Google Analytics — ID + consent are edited in Sanity
             (`siteSettings.analytics`). Injected only when an ID is set; the
             Consent-Mode `default: denied` preamble only when consent is required. */}
-        {settings.analytics.googleAnalyticsId ? (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${settings.analytics.googleAnalyticsId}`}
-              strategy="afterInteractive"
-              nonce={nonce}
-            />
-            <Script id="gtag-init" strategy="afterInteractive" nonce={nonce}>
-              {`window.dataLayer = window.dataLayer || [];
+          {settings.analytics.googleAnalyticsId ? (
+            <>
+              <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${settings.analytics.googleAnalyticsId}`}
+                strategy="afterInteractive"
+                nonce={nonce}
+              />
+              <Script id="gtag-init" strategy="afterInteractive" nonce={nonce}>
+                {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 ${
   settings.analytics.requireCookieConsent
@@ -204,87 +205,90 @@ ${
     : ""
 }gtag('js', new Date());
 gtag('config', '${settings.analytics.googleAnalyticsId}');`}
-            </Script>
-          </>
-        ) : null}
-      </head>
-      <body className="bg-background text-foreground flex min-h-screen flex-col">
-        <ThemeProvider
-          nonce={nonce}
-          {...themeProviderProps(resolveThemeConfig(settings.themeModes))}
-        >
-          <NextIntlClientProvider messages={messages} locale={locale}>
-            <LocaleSwitchBoundary>
-              {children}
-              {/* Inside the intl provider — CookieBanner is a client component that
+              </Script>
+            </>
+          ) : null}
+        </head>
+        <body className="bg-background text-foreground flex min-h-screen flex-col">
+          <ThemeProvider
+            nonce={nonce}
+            {...themeProviderProps(resolveThemeConfig(settings.themeModes))}
+          >
+            <NextIntlClientProvider messages={messages} locale={locale}>
+              <LocaleSwitchBoundary>
+                {children}
+                {/* Inside the intl provider — CookieBanner is a client component that
                 calls `useTranslations`, so it needs the context here. */}
-              {settings.analytics.requireCookieConsent ? (
-                <CookieBanner
-                  categories={cookieConsent.categories}
-                  version={cookieConsent.version}
-                  title={cookieConsent.banner.title}
-                  body={cookieConsent.banner.body}
-                  mode={consentMode}
-                  gpcSignal={gpcSignal}
-                />
-              ) : (
-                // `requireCookieConsent` is off, so `CookieBanner` (which also mounts
-                // the preferences dialog) isn't rendered. A visitor still needs a
-                // *working* manage-preferences entry point regardless of consent mode
-                // (the footer "Do Not Sell" link for opt-out, or `ManagePreferencesButton`
-                // on `/account` for any mode) — mount just the dialog + its
-                // `openPreferences()` listener, with no blocking banner.
-                <CookiePreferencesHost
-                  categories={cookieConsent.categories}
-                  version={cookieConsent.version}
-                />
-              )}
-              {/* "Policies updated — please Accept" banner. Copy edited per language
+                {settings.analytics.requireCookieConsent ? (
+                  <CookieBanner
+                    categories={cookieConsent.categories}
+                    version={cookieConsent.version}
+                    title={cookieConsent.banner.title}
+                    body={cookieConsent.banner.body}
+                    mode={consentMode}
+                    gpcSignal={gpcSignal}
+                  />
+                ) : (
+                  // `requireCookieConsent` is off, so `CookieBanner` (which also mounts
+                  // the preferences dialog) isn't rendered. A visitor still needs a
+                  // *working* manage-preferences entry point regardless of consent mode
+                  // (the footer "Do Not Sell" link for opt-out, or `ManagePreferencesButton`
+                  // on `/account` for any mode) — mount just the dialog + its
+                  // `openPreferences()` listener, with no blocking banner.
+                  <CookiePreferencesHost
+                    categories={cookieConsent.categories}
+                    version={cookieConsent.version}
+                  />
+                )}
+                {/* "Policies updated — please Accept" banner. Copy edited per language
                 in Sanity (`legalConsent`); version = the tracked legal pages'
                 lastUpdated. Server-gated on the deposited cookie; no fallback. */}
-              {legal.version &&
-              legal.message &&
-              legal.reviewLabel &&
-              legal.acceptLabel &&
-              legalAck !== legal.version ? (
-                <LegalNotice
-                  version={legal.version}
-                  message={legal.message}
-                  reviewLabel={legal.reviewLabel}
-                  reviewHref={legalReviewHref}
-                  acceptLabel={legal.acceptLabel}
-                />
-              ) : null}
-              {/* "New version available" banner — copy is edited per language in
+                {legal.version &&
+                legal.message &&
+                legal.reviewLabel &&
+                legal.acceptLabel &&
+                legalAck !== legal.version ? (
+                  <LegalNotice
+                    version={legal.version}
+                    message={legal.message}
+                    reviewLabel={legal.reviewLabel}
+                    reviewHref={legalReviewHref}
+                    acceptLabel={legal.acceptLabel}
+                  />
+                ) : null}
+                {/* "New version available" banner — copy is edited per language in
                 Sanity (`siteMeta.<locale>.versionPrompt`), no fallback. Mounted
                 only when fully configured; an unset banner is simply off. */}
-              {versionPrompt.message && versionPrompt.reload && versionPrompt.dismiss ? (
-                <UpdatePrompt
-                  current={buildInfo.commit}
-                  message={versionPrompt.message}
-                  reloadLabel={versionPrompt.reload}
-                  dismissLabel={versionPrompt.dismiss}
-                />
+                {versionPrompt.message &&
+                versionPrompt.reload &&
+                versionPrompt.dismiss ? (
+                  <UpdatePrompt
+                    current={buildInfo.commit}
+                    message={versionPrompt.message}
+                    reloadLabel={versionPrompt.reload}
+                    dismissLabel={versionPrompt.dismiss}
+                  />
+                ) : null}
+              </LocaleSwitchBoundary>
+              {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+                <SessionLogger surface={surface} />
               ) : null}
-            </LocaleSwitchBoundary>
-            {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
-              <SessionLogger surface={surface} />
-            ) : null}
-            <Toaster />
-          </NextIntlClientProvider>
-        </ThemeProvider>
-        {features.structuredData && settings.showStructuredData !== false ? (
-          <JsonLdScript
-            data={buildSiteSchemas(
-              settings,
-              { description: siteDescription },
-              buildGlobalSchemas(settings.globalSchemas),
-            )}
-          />
-        ) : null}
-        {features.blog ? <SanityLive /> : null}
-        <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>
-      </body>
-    </html>
+              <Toaster />
+            </NextIntlClientProvider>
+          </ThemeProvider>
+          {features.structuredData && settings.showStructuredData !== false ? (
+            <JsonLdScript
+              data={buildSiteSchemas(
+                settings,
+                { description: siteDescription },
+                buildGlobalSchemas(settings.globalSchemas),
+              )}
+            />
+          ) : null}
+          {features.blog ? <SanityLive /> : null}
+          <style>{`:root{--max-container:${theme.container.maxWidth};--gutter:${theme.container.gutter};}`}</style>
+        </body>
+      </html>
+    </AppClerkProvider>
   );
 }

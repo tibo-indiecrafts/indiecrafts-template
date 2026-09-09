@@ -1,5 +1,6 @@
 export { AppClerkProvider } from "./provider";
 export { authAppearance } from "./appearance";
+export { clerkLocalization } from "./localization";
 export { SignInView } from "./sign-in-view";
 export { SessionLogger } from "./session-logger";
 export { isSafeRelativePath, resolveSignInRedirect } from "./redirect";
