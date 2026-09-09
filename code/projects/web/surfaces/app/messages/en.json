@@ -6,10 +6,24 @@
     "title": "indiecrafts",
     "subtitle": "App shell — i18n, consent and version prompts wired.",
     "legalLink": "Legal",
-    "nav": { "label": "App navigation", "home": "Home", "account": "Account" },
-    "user": { "account": "Account", "signOut": "Sign out", "legal": "Legal" },
-    "theme": { "toggle": "Toggle theme", "light": "Light", "dark": "Dark" },
-    "locale": { "label": "Change language" },
+    "nav": {
+      "label": "App navigation",
+      "home": "Home",
+      "account": "Account"
+    },
+    "user": {
+      "account": "Account",
+      "signOut": "Sign out",
+      "legal": "Legal"
+    },
+    "theme": {
+      "toggle": "Toggle theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "locale": {
+      "label": "Change language"
+    },
     "home": {
       "accountDesc": "Manage your account and data.",
       "legalDesc": "Review our legal documents."
@@ -73,6 +87,12 @@
       "pending": "Preparing…",
       "success": "Your download opened in a new tab.",
       "error": "Something went wrong. Please try again."
+    },
+    "tabs": {
+      "consent": "Privacy & consent",
+      "data": "Your data",
+      "consentTitle": "Cookie preferences",
+      "consentSave": "Save"
     }
   },
   "legal": {

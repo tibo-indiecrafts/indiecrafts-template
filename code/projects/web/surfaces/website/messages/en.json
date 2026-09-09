@@ -115,6 +115,12 @@
       "pending": "Preparing your download…",
       "success": "Your data is ready — the download opened in a new tab.",
       "error": "Something went wrong. Please try again."
+    },
+    "tabs": {
+      "consent": "Privacy & consent",
+      "data": "Your data",
+      "consentTitle": "Cookie preferences",
+      "consentSave": "Save"
     }
   },
   "cta": {
@@ -241,14 +247,23 @@
       "moreOnTopic": "More on {topic}",
       "moreReading": "More reading",
       "allInCategory": "All {category}",
-      "categoryNav": { "label": "Blog categories", "all": "All" },
+      "categoryNav": {
+        "label": "Blog categories",
+        "all": "All"
+      },
       "related": "Keep reading",
       "relatedSubheading": "More articles you might enjoy.",
       "heroLabel": "Latest articles",
       "noPostsModule": "No posts yet.",
       "frontpage": {
-        "carousel": { "prev": "Previous", "next": "Next", "slide": "slide" },
-        "trending": { "heading": "Trending" }
+        "carousel": {
+          "prev": "Previous",
+          "next": "Next",
+          "slide": "slide"
+        },
+        "trending": {
+          "heading": "Trending"
+        }
       },
       "pagination": {
         "label": "Pagination",
@@ -385,6 +400,22 @@
           "title": "The same blocks, everywhere",
           "body": "Marketing pages and blog posts render one shared set of components — author in Sanity, and it looks identical wherever it lands."
         }
+      }
+    }
+  },
+  "consent": {
+    "categories": {
+      "necessary": {
+        "title": "Necessary",
+        "description": "Required for the app to work. Always on."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Helps us understand how the app is used."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "description": "Personalized content and offers."
       }
     }
   }

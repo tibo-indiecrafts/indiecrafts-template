@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Show, SignInButton, UserButton } from "@indiecrafts/packages-web-auth";
+import { Show, SignInButton } from "@indiecrafts/packages-web-auth";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { AccountControl } from "@/user-interface/account/AccountControl";
 
 /**
  * Header auth affordance — a "Sign in" button (opens Clerk's modal) when signed out,
@@ -23,7 +24,7 @@ export function AuthMenu() {
         </SignInButton>
       </Show>
       <Show when="signed-in">
-        <UserButton />
+        <AccountControl variant="button" />
       </Show>
     </>
   );

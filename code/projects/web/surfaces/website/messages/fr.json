@@ -115,6 +115,12 @@
       "pending": "Préparation de votre téléchargement…",
       "success": "Vos données sont prêtes — le téléchargement s'est ouvert dans un nouvel onglet.",
       "error": "Une erreur s'est produite. Merci de réessayer."
+    },
+    "tabs": {
+      "consent": "Confidentialité et consentement",
+      "data": "Vos données",
+      "consentTitle": "Préférences de cookies",
+      "consentSave": "Enregistrer"
     }
   },
   "cta": {
@@ -241,14 +247,23 @@
       "moreOnTopic": "Plus sur {topic}",
       "moreReading": "À lire aussi",
       "allInCategory": "Tout {category}",
-      "categoryNav": { "label": "Catégories du blog", "all": "Tout" },
+      "categoryNav": {
+        "label": "Catégories du blog",
+        "all": "Tout"
+      },
       "related": "À lire ensuite",
       "relatedSubheading": "D'autres articles qui pourraient vous plaire.",
       "heroLabel": "Derniers articles",
       "noPostsModule": "Aucun article pour le moment.",
       "frontpage": {
-        "carousel": { "prev": "Précédent", "next": "Suivant", "slide": "diapositive" },
-        "trending": { "heading": "Tendances" }
+        "carousel": {
+          "prev": "Précédent",
+          "next": "Suivant",
+          "slide": "diapositive"
+        },
+        "trending": {
+          "heading": "Tendances"
+        }
       },
       "pagination": {
         "label": "Pagination",
@@ -385,6 +400,22 @@
           "title": "Les mêmes blocs, partout",
           "body": "Les pages marketing et les articles de blog utilisent un seul jeu de composants partagés — rédigez dans Sanity, le rendu est identique partout."
         }
+      }
+    }
+  },
+  "consent": {
+    "categories": {
+      "necessary": {
+        "title": "Nécessaires",
+        "description": "Indispensables au fonctionnement. Toujours actives."
+      },
+      "analytics": {
+        "title": "Mesure d'audience",
+        "description": "Nous aide à comprendre l'utilisation de l'application."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "description": "Contenus et offres personnalisés."
       }
     }
   }

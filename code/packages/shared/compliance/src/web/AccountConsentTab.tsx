@@ -48,7 +48,9 @@ export function AccountConsentTab({
   }, [record]);
 
   function handleSave() {
-    store.save({ v: version, t: Date.now(), choices });
+    // Preserve the record's version (the banner owns re-versioning); the `version`
+    // prop is only the fallback for a signed-in user with no consent record yet.
+    store.save({ v: record?.v ?? version, t: Date.now(), choices });
     onSaved?.();
   }
 

@@ -6,10 +6,24 @@
     "title": "indiecrafts",
     "subtitle": "Coquille applicative — i18n, consentement et mises à jour câblés.",
     "legalLink": "Mentions légales",
-    "nav": { "label": "Navigation", "home": "Accueil", "account": "Compte" },
-    "user": { "account": "Compte", "signOut": "Se déconnecter", "legal": "Mentions légales" },
-    "theme": { "toggle": "Changer de thème", "light": "Clair", "dark": "Sombre" },
-    "locale": { "label": "Changer de langue" },
+    "nav": {
+      "label": "Navigation",
+      "home": "Accueil",
+      "account": "Compte"
+    },
+    "user": {
+      "account": "Compte",
+      "signOut": "Se déconnecter",
+      "legal": "Mentions légales"
+    },
+    "theme": {
+      "toggle": "Changer de thème",
+      "light": "Clair",
+      "dark": "Sombre"
+    },
+    "locale": {
+      "label": "Changer de langue"
+    },
     "home": {
       "accountDesc": "Gérez votre compte et vos données.",
       "legalDesc": "Consultez nos documents légaux."
@@ -73,6 +87,12 @@
       "pending": "Préparation…",
       "success": "Votre téléchargement s'est ouvert dans un nouvel onglet.",
       "error": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "tabs": {
+      "consent": "Confidentialité et consentement",
+      "data": "Vos données",
+      "consentTitle": "Préférences de cookies",
+      "consentSave": "Enregistrer"
     }
   },
   "legal": {
