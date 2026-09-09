@@ -15,3 +15,12 @@ CLERK_WEBHOOK_SECRET=""
 
 # GDPR email-fingerprint salt — DISTINCT per env, STABLE within an env, never rotated on a live env.
 GDPR_FINGERPRINT_SALT=""
+
+# Transactional email (erasure token/completion + Clerk email take-over). RESEND_API_KEY is
+# a secret; EMAIL_FROM is the sender. Both unset → the email sends no-op (never throw).
+# RESEND_API_KEY=""
+# EMAIL_FROM=""
+
+# Marketing-email consent → Resend audience mirror. The audience id the opt-in syncs to;
+# unset (or RESEND_API_KEY unset) → the mirror no-ops and the feature is store-only.
+# RESEND_AUDIENCE_ID=""
