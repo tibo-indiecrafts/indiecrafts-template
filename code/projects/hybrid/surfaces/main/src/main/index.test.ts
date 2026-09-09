@@ -162,6 +162,88 @@ describe("with AGENT_TOKEN set", () => {
       expect(fetchMock).not.toHaveBeenCalled();
     });
   });
+
+  describe("marketing consent (Clerk-JWT, via MAIN)", () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it("marketing:get reads the flag with the caller's own token", async () => {
+      const fetchMock = vi.fn(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ marketing_email: true }), {
+            status: 200,
+          }),
+        ),
+      );
+      vi.stubGlobal("fetch", fetchMock);
+
+      const res = await call("marketing:get", { token: "jwt-1" });
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining("/v1/consent/marketing-email"),
+        expect.objectContaining({
+          headers: { authorization: "Bearer jwt-1" },
+        }),
+      );
+      expect(res).toBe(true);
+    });
+
+    it("marketing:get rejects without a token — never calls fetch", async () => {
+      const fetchMock = vi.fn();
+      vi.stubGlobal("fetch", fetchMock);
+
+      await expect(call("marketing:get", { token: "" })).rejects.toThrow();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it("marketing:get rejects on a non-ok response (never resolves to null)", async () => {
+      const fetchMock = vi.fn(() =>
+        Promise.resolve(new Response("nope", { status: 401 })),
+      );
+      vi.stubGlobal("fetch", fetchMock);
+
+      // Must REJECT, not resolve to null — null is "no decision" and would falsely nudge.
+      await expect(call("marketing:get", { token: "jwt" })).rejects.toThrow();
+    });
+
+    it("marketing:set posts the decision with the caller's token", async () => {
+      const fetchMock = vi.fn(() =>
+        Promise.resolve(new Response(null, { status: 200 })),
+      );
+      vi.stubGlobal("fetch", fetchMock);
+
+      const res = await call("marketing:set", {
+        token: "jwt-2",
+        granted: true,
+        surface: "hybrid",
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining("/v1/consent/marketing-email"),
+        expect.objectContaining({
+          method: "POST",
+          headers: expect.objectContaining({ authorization: "Bearer jwt-2" }),
+          body: JSON.stringify({ granted: true, surface: "hybrid" }),
+        }),
+      );
+      expect(res).toEqual({ ok: true });
+    });
+
+    it("marketing:set fails closed on a non-boolean granted — never calls fetch", async () => {
+      const fetchMock = vi.fn();
+      vi.stubGlobal("fetch", fetchMock);
+
+      const res = await call("marketing:set", {
+        token: "jwt",
+        granted: "yes",
+        surface: "hybrid",
+      });
+
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(res).toEqual({ ok: false });
+    });
+  });
 });
 
 describe("without AGENT_TOKEN", () => {

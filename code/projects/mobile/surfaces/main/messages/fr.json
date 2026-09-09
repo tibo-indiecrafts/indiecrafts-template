@@ -28,7 +28,13 @@
     "or": "ou",
     "google": "Continuer avec Google",
     "error": "Une erreur est survenue. Veuillez réessayer.",
-    "marketingOptIn": "Envoyez-moi occasionnellement des nouveautés et des offres. Désabonnement à tout moment."
+    "marketingOptIn": "Envoyez-moi occasionnellement des nouveautés et des offres. Désabonnement à tout moment.",
+    "nudge": {
+      "title": "Souhaitez-vous recevoir nos nouveautés et offres par e-mail ?",
+      "yes": "Oui, avec plaisir",
+      "no": "Non merci",
+      "dismiss": "Fermer"
+    }
   },
   "account": {
     "title": "Compte",

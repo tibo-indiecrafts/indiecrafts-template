@@ -15,6 +15,17 @@ contextBridge.exposeInMainWorld("desktop", {
   // Log a sign-in to the audit api (main-process fetch; the token stays out of the DOM).
   logSignIn: (userId: string, sessionId?: string) =>
     ipcRenderer.invoke("session:log", { userId, sessionId }),
+  // Read / write the caller's marketing-email opt-in via the api. The renderer's strict
+  // CSP blocks a direct api fetch, so MAIN makes it — the endpoint is Clerk-JWT auth'd, so
+  // the renderer passes its own session token (not the app bearer). get → boolean|null.
+  marketingConsentGet: (token: string): Promise<boolean | null> =>
+    ipcRenderer.invoke("marketing:get", { token }),
+  marketingConsentSet: (
+    token: string,
+    granted: boolean,
+    surface: string,
+  ): Promise<{ ok: boolean }> =>
+    ipcRenderer.invoke("marketing:set", { token, granted, surface }),
   // Subscribe to the VALIDATED OAuth callback params forwarded from main; returns an
   // unsubscribe. Only the parsed `{ state, rotatingTokenNonce }` crosses — never a URL.
   onOAuthCallback: (

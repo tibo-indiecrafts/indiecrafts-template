@@ -12,6 +12,7 @@ import {
   authAppearance,
   HybridSessionLogger,
 } from "./auth";
+import { MarketingNudgeMount } from "./marketing-nudge";
 import { detectLocale, messagesFor } from "./i18n";
 import { sitePrefix } from "../../config";
 import "./globals.css";
@@ -44,6 +45,7 @@ if (root) {
               localization={locale === "fr" ? frFR : enUS}
             >
               <HybridSessionLogger />
+              <MarketingNudgeMount />
               <App />
             </ClerkProvider>
           ) : (

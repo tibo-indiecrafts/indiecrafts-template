@@ -36,6 +36,15 @@ declare global {
       startOAuth: (url: string) => Promise<void>;
       /** Log a sign-in to the audit api (main-process fetch; token stays out of the DOM). */
       logSignIn: (userId: string, sessionId?: string) => Promise<void>;
+      /** Read the caller's marketing-email opt-in via the api (main-process fetch under the
+       *  renderer's CSP). Pass the Clerk session token; returns true/false/null. */
+      marketingConsentGet: (token: string) => Promise<boolean | null>;
+      /** Write the caller's marketing-email opt-in. Returns `{ ok }`. */
+      marketingConsentSet: (
+        token: string,
+        granted: boolean,
+        surface: string,
+      ) => Promise<{ ok: boolean }>;
       /** Subscribe to the validated OAuth callback; returns an unsubscribe. */
       onOAuthCallback: (
         handler: (data: { state: string; rotatingTokenNonce?: string }) => void,

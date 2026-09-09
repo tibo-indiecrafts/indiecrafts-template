@@ -27,7 +27,13 @@
     "needAccount": "Need an account? Sign up",
     "haveAccount": "Have an account? Sign in",
     "error": "Something went wrong. Please try again.",
-    "marketingOptIn": "Send me occasional product news and offers. Unsubscribe anytime."
+    "marketingOptIn": "Send me occasional product news and offers. Unsubscribe anytime.",
+    "nudge": {
+      "title": "Want occasional product news and offers by email?",
+      "yes": "Yes, please",
+      "no": "No thanks",
+      "dismiss": "Dismiss"
+    }
   },
   "consent": {
     "title": "Cookies & privacy",

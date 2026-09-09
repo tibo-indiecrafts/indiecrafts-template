@@ -89,6 +89,57 @@ ipcMain.handle(
   },
 );
 
+// Marketing-email opt-in read/write via the api's Clerk-JWT endpoint. Done in MAIN because
+// the renderer's strict CSP blocks a direct api fetch; the renderer passes its own Clerk
+// session token (the endpoint is per-user JWT auth, NOT the app bearer). Fail closed.
+ipcMain.handle(
+  "marketing:get",
+  async (_e, { token }: { token: string }): Promise<boolean | null> => {
+    // THROW (reject the invoke) on every failure — a failed read must NOT resolve to
+    // `null`, which is the same value the api returns for a genuine "no decision" and
+    // would falsely surface the nudge to a user who has already decided. The renderer's
+    // read() has no catch, so the rejection propagates to the nudge's own try/catch,
+    // which correctly treats it as "don't show". Only a real 200 returns true/false/null.
+    if (typeof token !== "string" || !token) throw new Error("no token");
+    const res = await fetch(`${API_URL}/v1/consent/marketing-email`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error(`marketing:get ${res.status}`);
+    const data = (await res.json()) as { marketing_email: boolean | null };
+    return data.marketing_email ?? null;
+  },
+);
+ipcMain.handle(
+  "marketing:set",
+  async (
+    _e,
+    {
+      token,
+      granted,
+      surface,
+    }: { token: string; granted: boolean; surface: string },
+  ): Promise<{ ok: boolean }> => {
+    if (typeof token !== "string" || !token || typeof granted !== "boolean")
+      return { ok: false };
+    try {
+      const res = await fetch(`${API_URL}/v1/consent/marketing-email`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          granted,
+          surface: typeof surface === "string" ? surface : "hybrid",
+        }),
+      });
+      return { ok: res.ok };
+    } catch {
+      return { ok: false };
+    }
+  },
+);
+
 // The live window, so the deep-link handlers can forward the OAuth callback to it.
 let mainWindow: BrowserWindow | null = null;
 

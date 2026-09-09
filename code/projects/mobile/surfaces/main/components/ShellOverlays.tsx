@@ -32,6 +32,7 @@ import {
 } from "@indiecrafts/packages-shared-version";
 import { OfflineBanner } from "@indiecrafts/packages-shared-system-pages/native";
 import { AnnouncementOverlay } from "@/components/AnnouncementOverlay";
+import { MarketingNudgeGate } from "@/components/MarketingNudgeGate";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { hasClerk } from "@/lib/auth";
 import {
@@ -267,6 +268,8 @@ export function ShellOverlays({
       {/* Logged-in-only announcements (banner + toast) from the api Worker. Gated on
           `hasClerk` so `useAuth` inside always has its provider. */}
       {hasClerk ? <AnnouncementOverlay locale={locale} /> : null}
+      {/* One-time marketing-email nudge for a signed-in user with no decision yet. */}
+      {hasClerk ? <MarketingNudgeGate /> : null}
       <ConsentGate mode={consentMode} />
       <LegalReacceptGate locale={locale} />
       {websiteUrl ? (

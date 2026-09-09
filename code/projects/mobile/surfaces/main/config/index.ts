@@ -34,6 +34,8 @@ export const STORAGE_KEYS = {
   announcementToastAck: `${sitePrefix}.announcement-toast-ack`,
   // Cached visitor country (from the api `/v1/geo`) for the consent geo decision.
   geoCountry: `${sitePrefix}.geo-country`,
+  // Per-device snooze for the one-time marketing-email sign-in nudge (× dismiss).
+  marketingNudgeSnooze: `${sitePrefix}.mkt-nudge-snooze`,
 } as const;
 
 /** The marketing-site origin — the legal link-out + version poll target. */

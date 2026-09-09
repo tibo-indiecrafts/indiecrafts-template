@@ -11,9 +11,10 @@ export interface MarketingNudgeCopy {
 }
 
 export interface MarketingNudgeProps {
-  apiUrl: string;
-  getToken: () => Promise<string | null>;
-  surface: string;
+  /** Read the caller's current opt-in (`true`/`false`/`null` = no decision). */
+  read: () => Promise<boolean | null>;
+  /** Persist a decision. */
+  write: (granted: boolean) => Promise<void>;
   /** localStorage key for the per-device snooze (× dismiss). */
   snoozeKey: string;
   copy: MarketingNudgeCopy;
@@ -21,15 +22,16 @@ export interface MarketingNudgeProps {
 
 /**
  * A one-time post-sign-in prompt for the commercial-email opt-in, shown only when the
- * user has NO decision on record (`GET /v1/consent/marketing-email` → null) — i.e. a
- * pre-existing account, or a social sign-up that bypassed the sign-up checkbox. `[Yes]`/
- * `[No]` record a decision (the flag flips non-null → never shown again); `[×]` snoozes
- * per-device via localStorage. The surface mounts this only for a signed-in user.
+ * user has NO decision on record (`read()` → null) — i.e. a pre-existing account, or a
+ * social sign-up that bypassed the sign-up checkbox. `[Yes]`/`[No]` record a decision
+ * (the flag flips non-null → never shown again); `[×]` snoozes per-device via
+ * localStorage. Transport-agnostic: `read`/`write` are injected, so the same UI serves
+ * the web surfaces (direct api fetch) and the Electron renderer (preload bridge). The
+ * mount decides whether the user is signed in before rendering this.
  */
 export function MarketingNudge({
-  apiUrl,
-  getToken,
-  surface,
+  read,
+  write,
   snoozeKey,
   copy,
 }: MarketingNudgeProps) {
@@ -37,7 +39,6 @@ export function MarketingNudge({
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!apiUrl) return;
     try {
       if (localStorage.getItem(snoozeKey)) return;
     } catch {
@@ -46,17 +47,8 @@ export function MarketingNudge({
     let alive = true;
     void (async () => {
       try {
-        const token = await getToken();
-        if (!token) return;
-        const res = await fetch(`${apiUrl}/v1/consent/marketing-email`, {
-          headers: { authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = (await res.json()) as {
-            marketing_email: boolean | null;
-          };
-          if (alive && data.marketing_email === null) setShow(true);
-        }
+        const value = await read();
+        if (alive && value === null) setShow(true);
       } catch {
         // A failed read never shows the nudge.
       }
@@ -64,22 +56,14 @@ export function MarketingNudge({
     return () => {
       alive = false;
     };
-  }, [apiUrl, getToken, snoozeKey]);
+  }, [read, snoozeKey]);
 
   const decide = useCallback(
     async (granted: boolean) => {
       if (busy) return;
       setBusy(true);
       try {
-        const token = await getToken();
-        await fetch(`${apiUrl}/v1/consent/marketing-email`, {
-          method: "POST",
-          headers: {
-            authorization: `Bearer ${token ?? ""}`,
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({ granted, surface }),
-        });
+        await write(granted);
       } catch (error) {
         console.error("marketing nudge save failed", error);
       } finally {
@@ -87,7 +71,7 @@ export function MarketingNudge({
         setBusy(false);
       }
     },
-    [apiUrl, busy, getToken, surface],
+    [busy, write],
   );
 
   const snooze = useCallback(() => {

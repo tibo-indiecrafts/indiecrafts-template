@@ -159,10 +159,13 @@ Planet49):
   `signUp.create`.
 - **Account settings** — an editable toggle (`MarketingEmailToggle`, web + native) reads
   `GET /v1/consent/marketing-email` and writes each change with `POST` (proof + column + Resend).
-- **Sign-in nudge** — a one-time post-sign-in banner (`MarketingNudge`, **website + app**) shown only
-  when the flag is `NULL` (a social sign-up or pre-existing account that missed the checkbox). Yes/No
-  record a decision; × snoozes per-device. **Not** on mobile/hybrid (the account toggle covers control
-  there; hybrid routes api calls through the MAIN-process bridge).
+- **Sign-in nudge** — a one-time post-sign-in banner (`MarketingNudge`) shown only when the flag is
+  `NULL` (a social sign-up or pre-existing account that missed the checkbox). Yes/No record a decision;
+  × snoozes per-device. On **every** surface: website/app (`MarketingNudgeMount`, direct fetch), mobile
+  (`MarketingNudgeGate`, native banner + direct fetch), and hybrid (the renderer's strict CSP blocks a
+  direct api call, so read/write go through a preload bridge → the MAIN process fetches with the caller's
+  Clerk JWT). The shared web `MarketingNudge` is transport-agnostic (`read`/`write` injected) so web and
+  the Electron renderer share one UI.
 
 **Endpoints** (`@indiecrafts/shared-api`): `GET`/`POST /v1/consent/marketing-email` (Clerk JWT — the
 caller's own opt-in) · `POST /v1/profiles/consent` (bearer batch → the admin users-list "Emails"

@@ -17,6 +17,11 @@ export {
   type MarketingEmailToggleProps,
 } from "./MarketingEmailToggle";
 export {
+  MarketingNudge,
+  type MarketingNudgeProps,
+  type MarketingNudgeCopy,
+} from "./MarketingNudge";
+export {
   buildDeleteAccountCopy,
   buildExportCopy,
   type DeleteAccountCopy,

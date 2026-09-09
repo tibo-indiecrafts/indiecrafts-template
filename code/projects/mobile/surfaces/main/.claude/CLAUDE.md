@@ -41,9 +41,13 @@ the first product screen (`account`) — theme · i18n · status pages · native
   at runtime + persists (`lib/i18n.ts` `getStoredLocale`/`setStoredLocale`). Instance config
   (`sitePrefix` · `websiteUrl` · `features` · `policyVersion`) in `config/index.ts`.
 - **Account** — `app/account.tsx` (signed-in): the shared `compliance/native` cookie-preferences panel
-  (`ConsentPreferences`, one shared `consentStore` from `lib/consent-store.ts`) + self-service
+  (`ConsentPreferences`, one shared `consentStore` from `lib/consent-store.ts`) + a `MarketingEmailToggle`
+  (commercial-email opt-in → `/v1/consent/marketing-email`) + self-service
   `DeleteAccountSection`/`ExportSection` (copy via the `compliance` builders), gated on
-  `features.deleteAccount`/`exportAccount`. Linked from home + the sign-in signed-in view.
+  `features.deleteAccount`/`exportAccount`. Linked from home + the sign-in signed-in view. `app/sign-in.tsx`
+  carries the sign-up marketing opt-in (+ locale) in `signUp.create` `unsafeMetadata`; a one-time
+  post-sign-in `MarketingNudgeGate` (in `ShellOverlays`, gated on `hasClerk`) prompts a signed-in user who
+  has no decision yet.
   `app/sign-in.tsx`'s OTP step/mode/busy/error state is `lib/sign-in-machine.ts`'s pure
   `signInReducer` (+ `State`/`Action`/`initialState`) via `useReducer` — no Clerk or react-intl
   imports there; the component still owns every Clerk call and dispatches on each result.

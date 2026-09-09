@@ -18,13 +18,14 @@ preload bridge, so the api-client call stays in the main process). The main proc
 page on renderer `did-fail-load`. **Shell overlays** (`src/renderer/src/shell.tsx`): the shared
 `compliance/web` consent banner + legal re-acceptance popup (`localStorage` store, gated by
 `config.features.requireConsent`, off by default; **geo-targeted** per country via the api `GET /v1/geo`
-+ `config.consent` — renderer `geo.ts`), a version prompt polling the website's `/api/version`
-(forked to drop `usePathname`; renderer reload applies), a legal link-out (`shell.openExternal` via the
-`open-external` ipc), and a first-run locale suggestion. Instance config (`sitePrefix` · `websiteUrl` ·
-`buildId` · `features` · `policyVersion`) in `src/config/index.ts`. **Still to finalize per product:**
-code-signing + notarization (to ship `.dmg`/`.exe`); native desktop auto-update (`electron-updater`) is a
-follow-up; full offline website parity (blog/page-builder) is out of scope — that would mean embedding
-Next in Electron. Model → [`cross-platform-shell.md`](../../../../../docs/shared/architecture/cross-platform-shell.md).
+
+- `config.consent` — renderer `geo.ts`), a version prompt polling the website's `/api/version`
+  (forked to drop `usePathname`; renderer reload applies), a legal link-out (`shell.openExternal` via the
+  `open-external` ipc), and a first-run locale suggestion. Instance config (`sitePrefix` · `websiteUrl` ·
+  `buildId` · `features` · `policyVersion`) in `src/config/index.ts`. **Still to finalize per product:**
+  code-signing + notarization (to ship `.dmg`/`.exe`); native desktop auto-update (`electron-updater`) is a
+  follow-up; full offline website parity (blog/page-builder) is out of scope — that would mean embedding
+  Next in Electron. Model → [`cross-platform-shell.md`](../../../../../docs/shared/architecture/cross-platform-shell.md).
 
 ## How it differs from the web apps (read this first)
 
@@ -38,7 +39,12 @@ Next in Electron. Model → [`cross-platform-shell.md`](../../../../../docs/shar
 - **Two runtimes.** `src/main/` is **Node** (window lifecycle, native APIs) — reuse React-free bricks
   only. `src/renderer/` is **Chromium/DOM** — it CAN reuse the web bricks (`@indiecrafts/packages-web-ui`,
   `ui-components`, `ui-tokens`, React 19), same as a web app. `src/preload/` is the **only** bridge; keep
-  `contextIsolation` on and expose a minimal explicit API.
+  `contextIsolation` on and expose a minimal explicit API — today `runAgent` · `logSignIn` · `startOAuth` ·
+  `openExternal` · `onOAuthCallback` · `marketingConsentGet`/`marketingConsentSet` (the last two read/write
+  `/v1/consent/marketing-email` in MAIN with the caller's Clerk JWT, since the renderer CSP blocks a direct
+  api fetch). The renderer mounts a one-time marketing sign-in nudge (`src/renderer/src/marketing-nudge.tsx`,
+  reusing the shared `compliance/web` `MarketingNudge` over the bridge) + the sign-up marketing opt-in in
+  `auth.tsx`.
 - **The renderer** bundles its own React 19 shell (reuses the web bricks) when packaged; in dev it can
   still point at the `website` dev server (`RENDERER_URL`). So "hybrid" = the shared web UI in a desktop shell.
 
