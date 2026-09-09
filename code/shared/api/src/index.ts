@@ -37,6 +37,7 @@ import { handleErasureConfirm } from "./erasure/confirm";
 import { handleErasureStatus } from "./erasure/status";
 import { handleErasureSelf } from "./erasure/self";
 import { handleClerkUserDeleted } from "./erasure/clerk-deleted";
+import { handleClerkEmail } from "./clerk-email/handle";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -1004,6 +1005,20 @@ export default {
             });
             return json({ error: "server" }, 502, cors);
           }
+        }
+      }
+      // ── emails.created — Clerk email take-over (localized auth emails via Resend) ──
+      // Fires only when the operator toggled "Delivered by Clerk" off for a template.
+      // Localize + send; a failure throws → 502 so Clerk retries (a verification code
+      // must not be silently lost). No-op (200) only when the event has no recipient.
+      if (evt.type === "emails.created") {
+        try {
+          await handleClerkEmail(env, data);
+        } catch (error) {
+          logger.error("clerk email delivery failed", {
+            name: (error as Error)?.name,
+          });
+          return json({ error: "email" }, 502, cors);
         }
       }
       return json({ ok: true }, 200, cors);
