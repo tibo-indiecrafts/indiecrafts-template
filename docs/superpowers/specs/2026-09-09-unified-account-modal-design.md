@@ -1,9 +1,9 @@
 # Unified account-management modal (web) — design
 
 - **Date:** 2026-09-09
-- **Status:** Implemented (web) — website, app, and hybrid (Electron) surfaces wired to the unified modal; mobile is phase 2.
+- **Status:** Revised (2026-09-09) — approved. The shared web core (website + app) is built. **Revision 2 re-scopes the presentation per surface and drops native account UI on hybrid + mobile in favour of a browser hand-off to the app's web account.** See §3.5.
 - **Author:** platform
-- **Scope:** one account-management modal for the three web surfaces — `website`, `app` (Next/Cloudflare), and `hybrid` (Electron renderer). `mobile` (Expo) is phase 2.
+- **Scope:** the account experience across all five surfaces. **website** — a modal (avatar) plus a standalone `/account` page. **app** — embedded in the `/account` page (the canonical web account). **hybrid + mobile** — a direct link that opens the canonical web account in a browser (no native account UI). **admin** — out of scope (sign-out only).
 
 ## 1. Goal
 
@@ -21,15 +21,16 @@ the shared `compliance` section bricks.
 
 ## 2. Non-goals
 
-- **No mobile in this phase.** `@clerk/clerk-expo` is headless (no prebuilt
-  `<UserProfile>`), so mobile is phase 2 — a native bottom-sheet mirroring the
-  same tabs, using the RN sections that already exist.
+- **No native account UI on hybrid or mobile.** They do not host profile /
+  security / data tabs of their own. They open the **canonical web account** (the
+  app's `/account`, else the website's) in a browser (§3.5). This supersedes the
+  earlier "hybrid clerk-react modal" and "phase-2 native bottom-sheet" plans.
+- **No account modal on admin.** Admin keeps its sign-out-only sidebar menu.
 - **No new profile/security UI.** Clerk owns profile, password, MFA, devices,
   and sign-out-everywhere. We never re-implement them.
-- **No admin/session views.** The admin dashboard's sessions/security tables are
-  operator tooling, out of scope here.
 - **No change to the erasure/export server contracts** (`/v1/erasure/self`,
-  `/v1/export`) or the consent store.
+  `/v1/export`) or the consent store. Each surface keeps its **own** consent
+  control (a browser can't set a native app's tracking prefs).
 
 ## 3. Decisions (resolved in brainstorming)
 
@@ -38,8 +39,60 @@ the shared `compliance` section bricks.
    Electron) so the two easier surfaces follow for free. Mobile is phase 2.
 3. **Keep a thin `/account` route** as a full-page fallback for direct links and
    emails, rendering the same custom pages (not modal-only).
-4. **Fold in the optimization** (`useAccountActions` + `AuthPort`) as part of
-   this work — delete the per-surface `AccountDeletePanel` wrappers.
+4. **Fold in the optimization** (a headless data-tab + a per-surface `AuthPort`
+   adapter) as part of this work — delete the per-surface `AccountDeletePanel`
+   wrappers. (During implementation the standalone `useAccountActions` hook was
+   dropped as YAGNI; the shared sections own their own state and take an injected
+   `AccountAuth` port instead — see §5, updated.)
+
+## 3.5 Revised per-surface model (Revision 2 — authoritative)
+
+The unified web core (§5) stands for **website + app**. Hybrid + mobile do **not**
+render it; they open the canonical web account in a browser. Admin is untouched.
+
+| Surface     | SDK                  | Account experience                       | Trigger                                                          |
+| ----------- | -------------------- | ---------------------------------------- | ---------------------------------------------------------------- |
+| **website** | `@clerk/nextjs`      | **Modal** + a standalone `/account` page | header avatar opens the modal; `/account` = the page             |
+| **app**     | `@clerk/nextjs`      | **Embedded** in the `/account` page      | sidebar avatar **navigates** to `/account` (no modal)            |
+| **hybrid**  | `@clerk/clerk-react` | **Link-out** to the web account          | a "Manage account" link → `shell.openExternal(accountUrl)`       |
+| **mobile**  | `@clerk/clerk-expo`  | **Link-out** to the web account          | a "Manage account" link → in-app browser tab (Expo `WebBrowser`) |
+| **admin**   | `@clerk/nextjs`      | none (sign-out only)                     | unchanged                                                        |
+
+**The canonical web account = `accountUrl`.** Big products put account management on
+the authenticated product surface (or a dedicated `accounts.` subdomain), never the
+marketing homepage. So:
+
+- **`accountUrl` is one config value** on the mobile + hybrid configs. **Default:**
+  `${websiteUrl}/account` — the website is the one surface present in every project
+  and its URL is already configured. **Override:** a project that ships the `app`
+  surface points it at `app.<domain>/account` (the authenticated product surface —
+  the conceptually-correct, common-practice home).
+- **Both candidate surfaces already serve a standalone `/account` page**, so either
+  is a valid hand-off target. The website additionally opens the modal from its
+  avatar; the app is embedded-only.
+
+**Hand-off mechanism (avoids re-auth where the platform allows):**
+
+- **mobile** — an **in-app browser tab** (`expo-web-browser` `openBrowserAsync`,
+  which is `SFSafariViewController` / Chrome Custom Tabs). It shares the system
+  browser's cookie jar, so an existing web session usually carries over (no second
+  sign-in). A bare external URL would not — do not use `Linking.openURL` for this.
+- **hybrid** — `shell.openExternal(accountUrl)` (the same OS-browser path legal
+  links already use). The renderer's security posture (will-navigate allowlist,
+  no cross-origin nav, no spawned windows) forbids opening it in-renderer, so the
+  system browser is the path; a fresh browser may prompt a sign-in. Accepted
+  trade-off (the desktop billing/account-in-browser norm).
+
+**App Store constraint (mobile).** Apple Guideline 5.1.1(v): an app that supports
+account creation must let the user **initiate account deletion from within the app**.
+So mobile keeps a **native "Delete account" entry** that opens the delete flow in the
+in-app browser tab — the button stays in the app; a pure "visit our website" link is
+non-compliant.
+
+**Consent stays per-surface.** The cookie-consent control is **not** part of the
+hand-off. Website + app manage consent in the modal/page; hybrid + mobile keep their
+existing **native** consent controls (banner + preferences), because a web page can't
+write a native client's tracking store.
 
 ## 4. Current state (the gap)
 
@@ -79,8 +132,12 @@ declares our two custom pages as its children:
 </UserButton>
 ```
 
-Mounted identically in the website header (`AuthMenu`), the app sidebar
-(`NavUser`), and the hybrid renderer. One trigger, same modal, everywhere.
+Mounted in the **website** header (`AuthMenu`) — the one surface whose account is a
+modal. The **app** sidebar (`NavUser`) instead **navigates** to `/account` (the
+embedded `<AccountPage>`); **hybrid + mobile** hand off to the browser (§8). So
+`<AccountButton>` is a website-only trigger; `<AccountPage>` (§5.2) is the shared
+render used by the website's `/account`, the app's `/account`, and — reached via the
+hand-off — by whichever surface `accountUrl` points at.
 
 ### 5.2 `<AccountPage>` — the `/account` full-page fallback (new, `packages-web-auth`)
 
@@ -136,15 +193,26 @@ port in ~5 lines; nothing else per surface.
   (`compliance/web`) — now consumed by the custom tabs, not per-surface wrappers.
 - **Keep** the `/account` route on website + app (thin fallback).
 
-## 8. Hybrid (the hard case we design for)
+## 8. Hybrid + mobile (the browser hand-off, revised)
 
-`@clerk/clerk-react` ships `<UserProfile>`, so hybrid is first-class. The Electron
-renderer already runs `<SignIn routing="virtual">`, so `<UserProfile routing="virtual">`
+Neither renders the account UI. `SignedInView` (hybrid) and the mobile account
+screen keep **sign-out** and their **native consent** control, and replace the
+profile/data blocks with a **"Manage account"** action that opens `accountUrl`:
 
-- custom pages slot into the same pattern. **Verify during build:** flows that
-  open the system browser (OAuth account-linking / device management) still round-trip
-  through the `indiecrafts://` deep link, and the custom tabs render inside the
-  virtual-routed profile.
+- **hybrid** — `window.desktop.openExternal(accountUrl)` (the existing `open-external`
+  IPC + `isSafeExternalUrl` guard, same path as legal links). Remove the built
+  `account-button.tsx` (clerk-react `<UserProfile>`), and drop `@clerk/clerk-react`'s
+  `useReverification` erasure plumbing from `SignedInView`.
+- **mobile** — `WebBrowser.openBrowserAsync(accountUrl)` (in-app browser tab). Keep a
+  **native "Delete account"** entry (App Store 5.1.1(v), §3.5) that opens the delete
+  path of `accountUrl` in the same in-app tab. The native `ConsentPreferences` +
+  consent save stay; the native `ExportSection` / `DeleteAccountSection` full render
+  is replaced by the link-out + the compliant delete entry.
+
+**Why not the clerk-react modal we built:** the hand-off keeps one canonical account
+implementation (the app's web account) instead of a third fork, matches common
+practice (native clients hand off account management to the authenticated web
+surface), and removes the clerk-react `<UserProfile>` maintenance surface.
 
 ## 9. Universality (website-only vs website + app)
 
@@ -155,35 +223,50 @@ fork. Adding `app` later needs no account-UI change.
 
 ## 10. Testing
 
-- **Unit:** `useAccountActions` — export success/failure, delete happy path,
-  reverification retry (mock the port). Colocated in `compliance`.
-- **Component:** the two tab-content components render their sections; consent
-  toggles write the store; the data tab wires export/delete to the hook.
-- **Integration (per web surface):** the `<UserButton>` opens the modal; the two
-  custom tabs appear; a signed-out user sees no button (the auth-gate work already
-  landed). Keep the existing erasure/export worker tests unchanged.
-- **Manual (hybrid):** open the modal in the Electron renderer; confirm the custom
-  tabs render and export/delete work through the deep link.
+- **Unit / component (compliance):** the two tab-content components
+  (`AccountConsentTab` / `AccountDataTab`) render their sections; consent toggles
+  write the store; the data tab wires export/delete through the injected
+  `AccountAuth` port. Keep the existing erasure/export worker tests unchanged.
+- **Integration (website):** the avatar opens the modal with both custom tabs;
+  `/account` renders them full-page; a signed-out user sees no trigger. **(app):**
+  the sidebar avatar navigates to `/account`; the embedded page renders the tabs.
+- **Manual (hybrid):** the "Manage account" link opens `accountUrl` in the system
+  browser; sign-out + native consent still work in the renderer.
+- **Manual (mobile):** the "Manage account" link opens `accountUrl` in an in-app
+  browser tab; the native "Delete account" entry opens the delete path; native
+  consent still saves.
 
 ## 11. Phasing
 
-- **Phase 1 (web, this spec):** `<AccountButton>` + `<AccountPage>` + the two tab
-  contents + `useAccountActions` + `AuthPort`; wire into website, app, hybrid;
-  delete the old wrappers.
-- **Phase 2 (mobile, later spec):** a native bottom-sheet reusing the RN sections
-  (`compliance/native`) + `useAccountActions`-equivalent, with password/MFA/devices
-  linking out to "manage on the web" (clerk-expo has no prebuilt UI for them).
+- **Phase 1 (built):** the shared Clerk-free core (`AccountConsentTab` /
+  `AccountDataTab` + `AccountAuth`), the `@clerk/nextjs` `<AccountButton>` /
+  `<AccountPage>`, and the website + app wiring (both modal + `/account` page).
+  Old `AccountDeletePanel` / `CookiePreferencesSection` wrappers deleted.
+- **Phase 2 (this revision — the plan update):**
+  1. `accountUrl` config on the mobile + hybrid configs (default `${websiteUrl}/account`).
+  2. **app** — sidebar avatar navigates to `/account`; drop the app's modal trigger.
+  3. **hybrid** — remove `account-button.tsx`; `SignedInView` gets a "Manage
+     account" link (`openExternal(accountUrl)`); keep sign-out + native consent.
+  4. **mobile** — replace the native profile/data render with a "Manage account"
+     link (in-app browser tab) + a compliant native "Delete account" entry; keep
+     native consent.
+  5. Docs + changelogs; website unchanged (already modal + page).
 
 ## 12. Risks / open items
 
-- **Clerk custom-page API** differs slightly between `<UserButton.UserProfilePage>`
-  (modal) and `<UserProfile.Page>` (standalone). Confirm both accept the same
-  content components in the installed Clerk version (Core 3).
-- **Virtual routing in Electron** for `<UserProfile>` — the sign-in path works;
-  the profile path needs a smoke test.
-- **Consent semantics** — the tab manages the **client** cookie-consent record
-  (localStorage `consentStore`), matching app/mobile today. It does not write
-  server `consent_events`; that stays the banner/gate's job.
+- **Clerk custom-page API** (`<UserButton.UserProfilePage>` + `<UserProfile.Page>`,
+  Core 3) — **resolved.** Verified rendering on the app: both custom tabs ("Privacy
+  & consent", "Your data") appear in the embedded `<UserProfile>` at `/account`.
+- **`accountUrl` target** — a project that ships the `app` surface must set
+  `accountUrl` to it; the website default only works if the website has Clerk +
+  `features.account` (true whenever native clients exist, since they need auth).
+- **Re-auth on hand-off** — the mobile in-app browser tab shares cookies (usually no
+  second sign-in); the hybrid system-browser path may prompt one. Accepted.
+- **App Store deletion (5.1.1(v))** — mobile MUST keep a native delete entry; a
+  pure link-out risks rejection. Tracked as a build requirement, not optional.
+- **Consent semantics** — each surface manages the **client** cookie-consent record
+  (localStorage / AsyncStorage `consentStore`); no server `consent_events`. Hybrid +
+  mobile keep their native consent controls; the hand-off does not carry consent.
 
 ## Issue tags
 
