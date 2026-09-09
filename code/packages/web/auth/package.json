@@ -8,6 +8,7 @@
     "./provider": "./src/provider.tsx",
     "./appearance": "./src/appearance.ts",
     "./sign-in-view": "./src/sign-in-view.tsx",
+    "./sign-up-view": "./src/sign-up-view.tsx",
     "./session-logger": "./src/session-logger.tsx",
     "./session-log": "./src/session-log.ts",
     "./redirect": "./src/redirect.ts",
