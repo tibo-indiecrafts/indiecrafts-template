@@ -133,7 +133,12 @@ function SignInForm() {
     } catch {
       // New user → email-code sign-up.
       try {
-        await su.signUp.create({ emailAddress: email });
+        // Carry the app locale so the api webhook mirrors it to user_profiles.locale
+        // and the user's auth emails (incl. this verification code) are localized.
+        await su.signUp.create({
+          emailAddress: email,
+          unsafeMetadata: { locale: t.locale },
+        });
         await su.signUp.prepareEmailAddressVerification({
           strategy: "email_code",
         });
