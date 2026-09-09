@@ -188,6 +188,8 @@
       "error": "Error",
       "failedFlag": "Failed",
       "stuckFlag": "Stuck"
-    }
+    },
+    "notAdmin": "You are signed in, but this account is not an admin. Sign out to use a different account.",
+    "signOut": "Sign out"
   }
 }

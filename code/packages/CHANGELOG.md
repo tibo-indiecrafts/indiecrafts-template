@@ -12,6 +12,18 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`@indiecrafts/packages-web-auth` — Clerk Core 3 migration (sign-in contrast + control components).**
+  `authAppearance()` mapped the Core 2 variable names (`colorText`/`colorTextSecondary`), which Core 3
+  ignores → the hosted `<SignIn>`/`<SignUp>` rendered **dark-on-dark text on every surface**. It now maps
+  the Core 3 roles (`colorForeground`/`colorMutedForeground`/`colorNeutral` + input/primary foregrounds)
+  alongside the Core 2 aliases, so sign-in text is legible in light + dark. Also replaced the removed
+  `<SignedIn>`/`<SignedOut>` control components with Core 3's `<Show when=…>` (re-exported from the brick;
+  the website's `AuthMenu` migrated) — that was 500-ing the website home once Clerk keys were set. **Why:**
+  `@clerk/nextjs` resolved to Core 3 but the brick still used the Core 2 API; the bug was dormant until
+  Clerk was configured.
+
 ### Added
 
 - **`@indiecrafts/packages-mobile-ui-native` `Button` — an optional `selected` prop.** Maps to

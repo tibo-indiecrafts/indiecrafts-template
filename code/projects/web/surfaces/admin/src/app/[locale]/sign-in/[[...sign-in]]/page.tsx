@@ -1,5 +1,8 @@
+import { auth } from "@clerk/nextjs/server";
 import { SignInView } from "@indiecrafts/packages-web-auth/sign-in-view";
+import { isAdmin } from "@indiecrafts/packages-shared-auth";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { NotAdminNotice } from "@/user-interface/NotAdminNotice";
 
 /**
  * Admin sign-in — Clerk's hosted <SignIn> (localized by Clerk, themed from the
@@ -25,6 +28,22 @@ export default async function SignInPage({
         className="grid min-h-dvh place-items-center p-6"
       >
         <p className="text-muted-foreground">{t("authNotConfigured")}</p>
+      </main>
+    );
+  }
+
+  // Signed in but NOT an admin → Clerk's <SignIn> renders blank for a signed-in
+  // user, leaving a non-admin stuck. Show a way out (sign out → back to the form).
+  const { userId, sessionClaims } = await auth();
+  if (userId && !isAdmin(sessionClaims)) {
+    const t = await getTranslations("admin");
+    return (
+      <main
+        id="main"
+        tabIndex={-1}
+        className="grid min-h-dvh place-items-center p-6"
+      >
+        <NotAdminNotice message={t("notAdmin")} signOutLabel={t("signOut")} />
       </main>
     );
   }

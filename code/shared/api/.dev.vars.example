@@ -8,3 +8,10 @@
 # Announcements (GET /v1/announcements → Sanity). PROJECT_ID/DATASET go in wrangler.toml
 # [vars] (public); the read token is a secret, needed only if the dataset is not public-read:
 # SANITY_API_READ_TOKEN=""   # server-side Sanity read token (never shipped to clients)
+
+# Clerk webhook (Svix) — verifies POST /v1/clerk-webhook (user.created/updated/deleted → user_profiles sync).
+# From Clerk Dashboard → Webhooks → your endpoint → Signing Secret.
+CLERK_WEBHOOK_SECRET=""
+
+# GDPR email-fingerprint salt — DISTINCT per env, STABLE within an env, never rotated on a live env.
+GDPR_FINGERPRINT_SALT=""

@@ -188,6 +188,8 @@
       "error": "Erreur",
       "failedFlag": "Échec",
       "stuckFlag": "Bloqué"
-    }
+    },
+    "notAdmin": "Vous êtes connecté, mais ce compte n’est pas administrateur. Déconnectez-vous pour utiliser un autre compte.",
+    "signOut": "Se déconnecter"
   }
 }

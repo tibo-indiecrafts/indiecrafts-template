@@ -11,18 +11,18 @@ Full design + review record: `docs/superpowers/specs/2026-08-21-clerk-auth-multi
 
 Auth is split by scope, because the three Clerk SDKs cannot be shared but the contract can.
 
-| Brick | Scope | Holds |
-| --- | --- | --- |
-| `@indiecrafts/packages-shared-auth` | shared (DOM-free) | `Roles`, `AppSessionClaims`, `isAdmin(claims)` — the portable contract. No Clerk/React/Next. |
-| `@indiecrafts/packages-web-auth` | web | `AppClerkProvider` + `authAppearance()` — the themed provider for the Next surfaces + the Electron renderer. |
+| Brick                               | Scope             | Holds                                                                                                        |
+| ----------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------ |
+| `@indiecrafts/packages-shared-auth` | shared (DOM-free) | `Roles`, `AppSessionClaims`, `isAdmin(claims)` — the portable contract. No Clerk/React/Next.                 |
+| `@indiecrafts/packages-web-auth`    | web               | `AppClerkProvider` + `authAppearance()` — the themed provider for the Next surfaces + the Electron renderer. |
 
 ## Per-platform SDK
 
-| App | Stack | Clerk SDK |
-| --- | --- | --- |
-| website, admin, app | Next 16 / Cloudflare | `@clerk/nextjs` |
-| mobile | Expo | `@clerk/clerk-expo` (token cache on `expo-secure-store`) |
-| hybrid | Electron | `@clerk/clerk-react` in the renderer (social via system-browser + `indiecrafts://` deep link) |
+| App                 | Stack                | Clerk SDK                                                                                     |
+| ------------------- | -------------------- | --------------------------------------------------------------------------------------------- |
+| website, admin, app | Next 16 / Cloudflare | `@clerk/nextjs`                                                                               |
+| mobile              | Expo                 | `@clerk/clerk-expo` (token cache on `expo-secure-store`)                                      |
+| hybrid              | Electron             | `@clerk/clerk-react` in the renderer (social via system-browser + `indiecrafts://` deep link) |
 
 ## The role model
 
@@ -48,6 +48,27 @@ declare global {
 }
 ```
 
+### Bootstrapping the first admin
+
+`grantAdmin` in the admin dashboard needs an existing admin, so the first admin cannot be
+made from the UI — a chicken-and-egg. Grant it out-of-band, one of two ways:
+
+- **Clerk Dashboard** — Users → the user → Public metadata → `{ "role": "admin" }`.
+- **Script** — `node code/shared/scripts/data/set-admin.mjs <email> [more emails...]` sets
+  `public_metadata.role = "admin"` via the Clerk Backend API. It reads `CLERK_SECRET_KEY`
+  from the env or the app surface's `.env.local`, targets whichever instance that secret
+  belongs to (`sk_test_` = dev, `sk_live_` = prod), is idempotent, and accepts several
+  emails at once. The user must have signed up once first, or it reports `not-found`.
+  Colocated test: `set-admin.test.mjs`.
+
+Either way, the session claim `{ "metadata": "{{user.public_metadata}}" }` must be set
+(Dashboard → Sessions) so the role reaches the JWT. Sign out and back in after a change —
+the role refreshes on the next session.
+
+A signed-in **non-admin** who lands on the admin `/sign-in` sees a "not an admin — sign out"
+panel (`NotAdminNotice`) — Clerk's `<SignIn>` renders blank for an already-signed-in user, so
+without it a non-admin would be stuck on a blank page.
+
 ## Email verification for social
 
 Trust the email a verified OAuth provider returns (Google, Apple, Microsoft mark it
@@ -67,3 +88,9 @@ account UI. Bot protection and user-enumeration protection stay on by default; t
 ## Web wiring
 
 Next-specific provider + middleware details: [Authentication (Clerk)](/apps/web/config/auth).
+
+**Clerk version — Core 3.** Sign-in theming uses the Core 3 appearance variables
+(`colorForeground`/`colorMutedForeground`/`colorNeutral`/…) in `authAppearance()` — the Core 2
+names (`colorText`/`colorTextSecondary`) are ignored, which read as dark-on-dark text. Conditional
+auth UI uses `<Show when="signed-in"/"signed-out">`; the Core 2 `<SignedIn>`/`<SignedOut>` control
+components were removed.
