@@ -24,6 +24,8 @@
     "verify": "Verify",
     "or": "or",
     "google": "Continue with Google",
+    "needAccount": "Need an account? Sign up",
+    "haveAccount": "Have an account? Sign in",
     "error": "Something went wrong. Please try again."
   },
   "consent": {

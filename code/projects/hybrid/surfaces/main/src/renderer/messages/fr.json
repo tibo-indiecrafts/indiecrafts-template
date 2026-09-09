@@ -24,6 +24,8 @@
     "verify": "Vérifier",
     "or": "ou",
     "google": "Continuer avec Google",
+    "needAccount": "Pas de compte ? Inscrivez-vous",
+    "haveAccount": "Déjà un compte ? Connectez-vous",
     "error": "Une erreur est survenue. Veuillez réessayer."
   },
   "consent": {

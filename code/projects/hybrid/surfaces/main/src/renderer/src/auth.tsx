@@ -5,6 +5,7 @@ import {
   SignedIn,
   SignedOut,
   SignIn,
+  SignUp,
   useSignIn,
   useAuth,
 } from "@clerk/clerk-react";
@@ -92,6 +93,7 @@ function SignInPanel() {
   const pendingState = useRef<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const fail = () => setError(t.formatMessage({ id: "auth.error" }));
 
   // Complete a Google deep-link when MAIN forwards the validated callback.
@@ -138,9 +140,27 @@ function SignInPanel() {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-4">
-      <SignIn routing="virtual" appearance={emailOnlyAppearance} />
+      {mode === "signin" ? (
+        <SignIn routing="virtual" appearance={emailOnlyAppearance} />
+      ) : (
+        // Carry the app locale so the api webhook mirrors it to user_profiles.locale
+        // and the user's auth emails (incl. this verification code) are localized.
+        <SignUp
+          routing="virtual"
+          appearance={emailOnlyAppearance}
+          unsafeMetadata={{ locale: t.locale }}
+        />
+      )}
       <Button variant="outline" disabled={busy} onClick={() => void google()}>
         {t.formatMessage({ id: "auth.google" })}
+      </Button>
+      <Button
+        variant="ghost"
+        onClick={() => setMode((m) => (m === "signin" ? "signup" : "signin"))}
+      >
+        {t.formatMessage({
+          id: mode === "signin" ? "auth.needAccount" : "auth.haveAccount",
+        })}
       </Button>
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
