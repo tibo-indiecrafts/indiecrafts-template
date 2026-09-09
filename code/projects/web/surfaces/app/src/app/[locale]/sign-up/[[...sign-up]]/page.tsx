@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { SignUpView } from "@indiecrafts/packages-web-auth/sign-up-view";
 
 /**
@@ -16,9 +16,10 @@ export default async function SignUpPage({
   const { locale } = await params;
   setRequestLocale(locale);
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) notFound();
+  const t = await getTranslations("auth");
   return (
     <main className="grid min-h-[70vh] place-items-center p-6">
-      <SignUpView home="/" locale={locale} />
+      <SignUpView home="/" locale={locale} marketingLabel={t("marketingOptIn")} />
     </main>
   );
 }

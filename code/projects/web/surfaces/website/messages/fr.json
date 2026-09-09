@@ -418,5 +418,8 @@
         "description": "Contenus et offres personnalisés."
       }
     }
+  },
+  "auth": {
+    "marketingOptIn": "Envoyez-moi occasionnellement des nouveautés et des offres. Vous pouvez vous désabonner à tout moment."
   }
 }

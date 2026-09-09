@@ -118,5 +118,8 @@
     "dismiss": "Dismiss",
     "copy": "Copy",
     "copied": "Copied"
+  },
+  "auth": {
+    "marketingOptIn": "Send me occasional product news and offers. You can unsubscribe anytime."
   }
 }
