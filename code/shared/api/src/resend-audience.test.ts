@@ -52,7 +52,10 @@ describe("resend-audience", () => {
   });
 
   it("deletes a contact by email (404 is success)", async () => {
-    const f = vi.fn(async () => new Response("{}", { status: 200 }));
+    const f = vi.fn(
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
+    );
     await deleteResendContact(
       env,
       { email: "u@x.com" },
@@ -60,6 +63,6 @@ describe("resend-audience", () => {
     );
     const [url, init] = f.mock.calls[0];
     expect(String(url)).toContain("/audiences/aud_1/contacts/u@x.com");
-    expect((init as RequestInit).method).toBe("DELETE");
+    expect(init?.method).toBe("DELETE");
   });
 });

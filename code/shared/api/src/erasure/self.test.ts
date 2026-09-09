@@ -107,6 +107,22 @@ describe("handleErasureSelf", () => {
     expect(audit?.event).toBe("erasure.self");
   });
 
+  it("pure-deletes the Resend contact on a successful erasure", async () => {
+    await seedProfile();
+    const { authenticate, build } = mocks();
+    const del = vi.fn(async () => {});
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+      del,
+    );
+    expect(res.status).toBe(200);
+    expect(del).toHaveBeenCalledWith(expect.anything(), { email: EMAIL });
+  });
+
   it("rejects a typed email that does not match the authenticated email", async () => {
     await seedProfile();
     const { authenticate, build, clerkClient } = mocks();

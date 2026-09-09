@@ -17,6 +17,7 @@ import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
 import { buildErasureAdapters } from "./adapters";
 import { createRealClerkClient } from "./clerk-client";
 import { sendErasureCompleteEmail } from "./email";
+import { deleteResendContact } from "../resend-audience";
 
 const BODY_MAX = 4000;
 // Clerk's own step-up window (see `factor1FreshEnough` in
@@ -116,6 +117,7 @@ export async function handleErasureSelf(
     request: Request,
     env: Env,
   ) => Promise<SelfAuth | null> = defaultAuthenticate,
+  del: typeof deleteResendContact = deleteResendContact,
 ): Promise<Response> {
   if (request.method === "OPTIONS")
     return new Response(null, { status: 204, headers: PUBLIC_CORS_POST });
@@ -235,6 +237,17 @@ export async function handleErasureSelf(
   } catch (error) {
     // The erasure is already committed; a bookkeeping failure must not 500 it.
     logger.error("erasure.self audit write failed", {
+      name: (error as Error)?.name,
+    });
+  }
+
+  // Right-to-be-forgotten: pure-delete the marketing contact from the Resend audience.
+  // ponytail: pure delete, no win-back / "former members" audience — a deliberate
+  // compliance decision, not a gap to fill. Best-effort — the erasure is already committed.
+  try {
+    await del(env, { email: authed.email });
+  } catch (error) {
+    logger.error("erasure.self resend delete failed", {
       name: (error as Error)?.name,
     });
   }

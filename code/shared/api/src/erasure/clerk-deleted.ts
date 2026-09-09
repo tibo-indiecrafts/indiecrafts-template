@@ -6,6 +6,7 @@ import {
 } from "@indiecrafts/packages-shared-compliance/shared";
 import type { Env } from "../index";
 import { buildErasureAdapters } from "./adapters";
+import { deleteResendContact } from "../resend-audience";
 
 /**
  * Out-of-band Clerk deletion → the full erasure engine (clerk adapter excluded — the user
@@ -20,6 +21,7 @@ export async function handleClerkUserDeleted(
   ts: string,
   buildAdapters: (env: Env) => ErasureAdapter[] = (e) =>
     buildErasureAdapters(e, { includeClerk: false }),
+  del: typeof deleteResendContact = deleteResendContact,
 ): Promise<void> {
   if (!env.MAIN_DB) return;
 
@@ -28,6 +30,19 @@ export async function handleClerkUserDeleted(
   )
     .bind(userId)
     .first<{ email: string | null; email_fingerprint: string | null }>();
+
+  // Right-to-be-forgotten: pure-delete the marketing contact from the Resend audience
+  // (using the stored email, before pseudonymization). ponytail: pure delete, no win-back
+  // audience — deliberate. Best-effort — a Resend failure never blocks the erasure.
+  if (profile?.email) {
+    try {
+      await del(env, { email: profile.email });
+    } catch (error) {
+      logger.error("clerk-deleted resend delete failed", {
+        name: (error as Error)?.name,
+      });
+    }
+  }
 
   // No profile, no fingerprint, or the engine's stores (DB/salt) are unavailable → fall
   // back to the partial pseudonymize (the prior behavior, needs only MAIN_DB) so a delete

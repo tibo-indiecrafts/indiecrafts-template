@@ -25,6 +25,29 @@ function webhookAdapters() {
 }
 
 describe("handleClerkUserDeleted", () => {
+  it("pure-deletes the Resend contact using the stored email", async () => {
+    (
+      env as unknown as { GDPR_FINGERPRINT_SALT: string }
+    ).GDPR_FINGERPRINT_SALT = SALT;
+    const fp = await fingerprintEmail("del@x.com", SALT);
+    await env.MAIN_DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
+    )
+      .bind("user_del", "del@x.com", fp, new Date(0).toISOString())
+      .run();
+    const del = vi.fn(async () => {});
+    await handleClerkUserDeleted(
+      env as never,
+      "user_del",
+      "2026-01-01T00:00:00.000Z",
+      () => webhookAdapters(),
+      del,
+    );
+    expect(del).toHaveBeenCalledWith(expect.anything(), {
+      email: "del@x.com",
+    });
+  });
+
   it("runs the full engine minus clerk and pseudonymizes the profile + audits it", async () => {
     (
       env as unknown as { GDPR_FINGERPRINT_SALT: string }
