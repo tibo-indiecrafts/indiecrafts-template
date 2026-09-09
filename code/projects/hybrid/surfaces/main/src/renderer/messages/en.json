@@ -15,6 +15,7 @@
   },
   "auth": {
     "signedIn": "You are signed in.",
+    "signOut": "Sign out",
     "emailPrompt": "Enter your email and we'll send you a code.",
     "emailPlaceholder": "you@example.com",
     "sendCode": "Send code",
@@ -81,12 +82,7 @@
     "dismiss": "Dismiss"
   },
   "account": {
-    "tabs": {
-      "consent": "Privacy & consent",
-      "data": "Your data",
-      "consentTitle": "Cookie preferences",
-      "consentSave": "Save"
-    },
+    "manage": "Manage account",
     "delete": {
       "heading": "Delete your account",
       "body": "This permanently deletes your account and personal data. We keep a minimal activity log, stripped of identifying details, for security and legal compliance.",

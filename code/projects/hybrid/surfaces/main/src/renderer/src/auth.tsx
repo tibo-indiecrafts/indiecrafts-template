@@ -9,7 +9,7 @@ import {
   useAuth,
 } from "@clerk/clerk-react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
-import { AccountButton } from "./account-button";
+import { accountUrl } from "../../config";
 
 /** Publishable key (PUBLIC) from the renderer env — auth is opt-in on its presence. */
 export const CLERK_PUBLISHABLE_KEY =
@@ -60,15 +60,27 @@ export function AuthPanel() {
 
 function SignedInView() {
   const t = useIntl();
-  // The unified account modal (Clerk avatar → Manage account + Sign out) owns sign-out,
-  // consent, data export and account deletion — the "Privacy & consent" and "Your data"
-  // custom tabs, shared with the website + app.
+  const { signOut } = useAuth();
+  // Account management (profile, security, export, delete) is the canonical WEB account —
+  // "Manage account" opens `accountUrl` in the OS browser (the same link-out path as legal).
+  // Sign-out + native cookie consent stay in the app. Disabled when no `accountUrl` is set.
   return (
     <div className="flex flex-col items-center gap-4">
       <p className="text-sm text-muted-foreground">
         {t.formatMessage({ id: "auth.signedIn" })}
       </p>
-      <AccountButton />
+      <Button
+        variant="outline"
+        disabled={!accountUrl}
+        onClick={() =>
+          accountUrl && void window.desktop.openExternal(accountUrl)
+        }
+      >
+        {t.formatMessage({ id: "account.manage" })}
+      </Button>
+      <Button variant="ghost" onClick={() => void signOut()}>
+        {t.formatMessage({ id: "auth.signOut" })}
+      </Button>
     </div>
   );
 }
