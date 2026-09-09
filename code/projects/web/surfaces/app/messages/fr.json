@@ -12,6 +12,7 @@
       "account": "Compte"
     },
     "user": {
+      "signOut": "Se déconnecter",
       "legal": "Mentions légales"
     },
     "theme": {
