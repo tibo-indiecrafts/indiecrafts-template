@@ -94,3 +94,35 @@ Next-specific provider + middleware details: [Authentication (Clerk)](/apps/web/
 names (`colorText`/`colorTextSecondary`) are ignored, which read as dark-on-dark text. Conditional
 auth UI uses `<Show when="signed-in"/"signed-out">`; the Core 2 `<SignedIn>`/`<SignedOut>` control
 components were removed.
+
+## Localization (UI + emails)
+
+Clerk speaks the visitor's language on every surface.
+
+**UI** — `@clerk/localizations` bundles (`enUS`/`frFR`) passed to each surface's
+`<ClerkProvider localization>`. Web: `AppClerkProvider` takes a `locale` prop and mounts inside
+`[locale]/layout.tsx` (so it reads the route locale). Mobile/hybrid pass the bundle from their
+detected locale. **Caveat:** only `en-US` is Clerk-maintained — other locales (incl. `frFR`) are
+**community** bundles, so a few strings may stay English. Clerk's hosted **Account Portal** is
+always English, so sign-up is **self-hosted** (`/sign-up` routes) instead — which also lets it
+carry the locale (below).
+
+**Locale capture** — each sign-up writes the active locale to Clerk `unsafeMetadata.locale`
+(web `<SignUp unsafeMetadata>`, mobile/hybrid `signUp.create`). The api `user.created`/`updated`
+webhook validates it (`isLocale`) and mirrors it to `user_profiles.locale`.
+
+**Emails** — the `localization` prop does **not** touch Clerk's emails. To localize them, the api
+takes over delivery via the `emails.created` webhook. **Operator runbook:**
+
+1. Set `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up` on the web surfaces so sign-up uses the app's own
+   `<SignUp>` (not the English Account Portal).
+2. Set the api's `RESEND_API_KEY` + `EMAIL_FROM` — **required before step 3**, or the taken-over
+   emails have no sender and fail (the webhook returns 502 so failures are visible, never silent).
+3. In the **Clerk Dashboard → Customization → Emails**, toggle **"Delivered by Clerk" off** for the
+   templates you want localized (verification code, reset-password code, magic link). Clerk then
+   fires `emails.created`; the api renders our localized copy from `user_profiles.locale` and sends
+   via Resend. A template left on stays with Clerk (English); a slug we don't localize is forwarded
+   as Clerk's own rendered English body — never dropped.
+
+Auth-email copy is hardcoded en/fr today; a Studio `emailStrings` overlay (like the erasure emails)
+is a follow-up.

@@ -26,6 +26,10 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`@indiecrafts/packages-web-auth` — Clerk UI localization + self-hosted sign-up.** `AppClerkProvider`
+  takes a `locale` prop and passes `@clerk/localizations` (`enUS`/`frFR`) to `<ClerkProvider localization>`;
+  a new `SignUpView` renders a themed `<SignUp>` carrying the sign-up locale in `unsafeMetadata`. **Why:**
+  Clerk UI now follows the site language, and the captured locale drives localized auth emails.
 - **`@indiecrafts/packages-mobile-ui-native` `Button` — an optional `selected` prop.** Maps to
   `accessibilityState.selected`, so a button used in a segmented / toggle group (e.g. the mobile theme
   switcher) announces its chosen state to VoiceOver / TalkBack — selection is never signalled by colour

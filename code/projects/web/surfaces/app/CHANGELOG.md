@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **Clerk UI localized + self-hosted `/sign-up`.** `<ClerkProvider>` gets the active locale (the provider
+  moved into `[locale]/layout.tsx`) so Clerk's UI renders in the visitor's language; a new `/sign-up`
+  route renders `<SignUp>` carrying `unsafeMetadata.locale` (set `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`).
+  **Why:** localized auth UI + emails.
 - **Unified account, embedded in the `/account` page.** `/account` renders Clerk's
   `<UserProfile>` inline with two custom tabs — "Privacy & consent" (cookie choices) and "Your
   data" (export + deletion) — via `@indiecrafts/packages-web-auth/account`, shared with the

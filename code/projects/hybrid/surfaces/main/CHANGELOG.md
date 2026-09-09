@@ -13,6 +13,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **Clerk UI localized + sign-up locale capture.** `<ClerkProvider localization>` from the renderer
+  locale (`@clerk/localizations`); a `<SignUp>` (behind a sign-in/up toggle) carries
+  `unsafeMetadata.locale`, so the api localizes the user's auth emails. **Why:** Clerk UI + emails in the
+  app language.
 - **Account management hands off to the web account.** `SignedInView` shows a "Manage account"
   button that opens the canonical web account (`accountUrl`, default `${websiteUrl}/account`) in
   the OS browser (the existing `open-external` IPC, disabled when unset), plus a plain Sign out.

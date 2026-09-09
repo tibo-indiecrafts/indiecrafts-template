@@ -13,6 +13,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **Clerk UI localized + sign-up locale capture.** `<ClerkProvider localization>` from the detected
+  locale (`@clerk/localizations`); the OTP sign-up carries `unsafeMetadata.locale`, so the api localizes
+  the user's auth emails (incl. the first verification code). **Why:** Clerk UI + emails in the app language.
 - **Account management hands off to the web account.** The `/account` screen keeps the native
   cookie-consent panel and the native "Delete account" (the App Store 5.1.1(v) in-app delete),
   and adds a "Manage account" button that opens the canonical web account (`accountUrl`, default

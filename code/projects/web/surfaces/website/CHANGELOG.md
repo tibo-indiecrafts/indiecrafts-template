@@ -19,6 +19,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **Clerk UI localized + self-hosted `/sign-up`.** `<ClerkProvider>` now receives the active locale (the
+  provider moved into `[locale]/layout.tsx`) so Clerk's sign-in/up + the account modal render in the
+  visitor's language (`@clerk/localizations` `enUS`/`frFR`); a new `/sign-up` route renders `<SignUp>`
+  carrying `unsafeMetadata.locale` (set `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`). **Why:** localized auth
+  UI, and the captured locale drives the api's localized auth emails.
 - **Unified account modal.** The header avatar and `/account` now open one Clerk `<UserProfile>`
   with two custom tabs — "Privacy & consent" (cookie choices) and "Your data" (export +
   deletion) — via the new `@indiecrafts/packages-web-auth/account` (`AccountButton` / `AccountPage`)

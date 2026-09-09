@@ -7,6 +7,13 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Changed
 
+- **Localized Clerk auth emails + `user_profiles.locale`.** The clerk-webhook mirrors the sign-up locale
+  (Clerk `unsafe_metadata`, validated with `isLocale`) to `user_profiles.locale`, and a new
+  `emails.created` branch takes over Clerk email delivery — rendering localized verification / reset /
+  magic-link mail via Resend (reusing the worker-safe `erasure/email.ts` sender), and forwarding an
+  unknown slug as Clerk's own English body (never dropped). Gated on the operator toggling "Delivered by
+  Clerk" off + `RESEND_API_KEY`/`EMAIL_FROM` (a failure returns 502 so it is visible, never a silent
+  drop). **Why:** Clerk's UI `localization` prop does not localize its emails.
 - **Local dev now runs against the real remote Cloudflare `dev` D1/KV/R2 — the miniflare local
   tier is gone.** The `api` + `cron` `dev` scripts gained `--remote` (`wrangler dev --env dev
 --remote`), so `pnpm dev` and `db:migrate:*:dev` share the one `dev` database. Removed the `local`

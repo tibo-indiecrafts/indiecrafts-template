@@ -1,7 +1,7 @@
 # Clerk localization — UI + emails — design
 
 - **Date:** 2026-09-09
-- **Status:** Draft — approved in brainstorming, pending spec review.
+- **Status:** Implemented — UI localization on all 5 surfaces, self-hosted sign-up (locale capture), `user_profiles.locale` mirror, and the `emails.created` take-over are built. The email take-over is inert until the operator toggles "Delivered by Clerk" off (see the runbook in `code/docs/shared/architecture/auth.md`).
 - **Author:** platform
 - **Scope:** Make Clerk speak the visitor's language on every surface — both the **UI components** (sign-in / sign-up / user-button / the account modal's Clerk tabs) and the **transactional auth emails** (verification code, magic link, reset password). Covers all five surfaces (website, app, admin, mobile, hybrid) for the UI, and the `api` worker for the emails.
 

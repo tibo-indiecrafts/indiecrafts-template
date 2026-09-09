@@ -12,6 +12,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Changed
+
+- **Clerk sign-in UI localized.** `<ClerkProvider>` now receives the active locale (the provider moved
+  into `[locale]/layout.tsx`, passing `@clerk/localizations`), so admin's sign-in renders in the
+  visitor's language.
+
 ### Fixed
 
 - **The `DashboardLayout` admin gate now fails closed when Clerk is unconfigured.** It previously ran
