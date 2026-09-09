@@ -30,6 +30,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **`POST /api/consent-log` (and `/api/session-log`) 500 → work again.** The `proxy.ts` matcher
+  excluded `/api`, so `clerkMiddleware()` never ran for those routes and their `auth()` call threw
+  _"can't detect clerkMiddleware()"_. Both authenticated API routes are now in the matcher, and the
+  intl/CSP/maintenance pipeline passes any `/api` request straight through (`NextResponse.next()`)
+  so next-intl can't locale-rewrite the endpoint and break the POST. **Why:** server-side consent +
+  sign-in logging was failing on every request; the account modal's consent tab was unaffected
+  (it writes `localStorage`), but the cookie banner's audit log was not.
 - **`pnpm lint` and `pnpm format:check` work again — both were scanning build output.** Two gaps
   fixed together. (1) The `eslint.config.mjs` override set `jsx-a11y/*` + `@typescript-eslint/*` rules
   in a global object (no `files` key), but `eslint-config-next` registers those plugins only for

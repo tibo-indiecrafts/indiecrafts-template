@@ -7,7 +7,7 @@
 
 import createMiddleware from "next-intl/middleware";
 import { clerkMiddleware } from "@clerk/nextjs/server";
-import { NextRequest, type NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { features } from "@/config";
 import { maintenanceRewrite } from "@indiecrafts/packages-shared-system-pages/proxy";
 import { getMaintenanceMode } from "@/lib/maintenance";
@@ -84,6 +84,10 @@ function setBfcache(response: NextResponse, request: NextRequest): NextResponse 
 // intl response) so both carry the matching strict CSP; the intl call runs against
 // the nonce-carrying request so the layout can read `x-nonce` via `headers()`.
 async function pipeline(request: NextRequest): Promise<NextResponse> {
+  // API routes are matched ONLY so `clerkMiddleware` attaches the auth session (so
+  // `auth()` works in the handler). They must skip intl/maintenance/CSP — next-intl
+  // would locale-rewrite the endpoint and break the POST. Pass them straight through.
+  if (request.nextUrl.pathname.startsWith("/api")) return NextResponse.next();
   const nonce = generateNonce();
   const nonced = withNonceRequest(request, nonce);
   // Maintenance mode: rewrite every matched request to `/maintenance` (503) when
@@ -118,5 +122,10 @@ export const config = {
     "/llms/:path*",
     "/blog/rss.xml",
     "/blog/:slug/md",
+    // Clerk-authenticated API routes: matched ONLY so `clerkMiddleware` attaches the
+    // session for `auth()` (the pipeline passes them straight through — no intl/CSP).
+    // Add any new website API route that calls `auth()` here.
+    "/api/consent-log",
+    "/api/session-log",
   ],
 };
