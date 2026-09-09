@@ -169,4 +169,39 @@ describe("clerk webhook → user_profiles", () => {
     expect(row?.deleted_at).toBeTruthy();
     expect(row?.email_fingerprint).toBe(fpBefore); // retained for retention matching
   });
+
+  it("stores a valid unsafe_metadata.locale, rejects an invalid one", async () => {
+    await postWebhook({
+      type: "user.created",
+      data: {
+        id: "user_loc",
+        primary_email_address_id: "e1",
+        email_addresses: [{ id: "e1", email_address: "loc@x.com" }],
+        unsafe_metadata: { locale: "fr" },
+      },
+    });
+    const ok = await env.AUDIT_DB.prepare(
+      "SELECT locale FROM user_profiles WHERE user_id = ?",
+    )
+      .bind("user_loc")
+      .first<{ locale: string | null }>();
+    expect(ok?.locale).toBe("fr");
+
+    // UNSAFE (client-set) metadata: a garbage/unknown locale must never reach the DB.
+    await postWebhook({
+      type: "user.created",
+      data: {
+        id: "user_badloc",
+        primary_email_address_id: "e1",
+        email_addresses: [{ id: "e1", email_address: "bad@x.com" }],
+        unsafe_metadata: { locale: "zz-DROP" },
+      },
+    });
+    const bad = await env.AUDIT_DB.prepare(
+      "SELECT locale FROM user_profiles WHERE user_id = ?",
+    )
+      .bind("user_badloc")
+      .first<{ locale: string | null }>();
+    expect(bad?.locale).toBeNull();
+  });
 });
