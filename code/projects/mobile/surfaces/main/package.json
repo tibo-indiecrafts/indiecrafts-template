@@ -22,6 +22,7 @@
   "dependencies": {
     "@babel/runtime": "^7.25.0",
     "@clerk/clerk-expo": "^2",
+    "@clerk/localizations": "^4.16.0",
     "@expo/metro-runtime": "~4.0.1",
     "@indiecrafts/packages-mobile-ui-native": "workspace:*",
     "@indiecrafts/packages-shared-agent-client": "workspace:*",

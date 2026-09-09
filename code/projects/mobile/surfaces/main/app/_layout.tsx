@@ -14,6 +14,7 @@ import {
 } from "@/lib/i18n";
 import { ShellOverlays } from "@/components/ShellOverlays";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
+import { enUS, frFR } from "@clerk/localizations";
 import { CLERK_PUBLISHABLE_KEY, hasClerk, tokenCache } from "@/lib/auth";
 import { logSignIn } from "@/lib/session-log";
 import type { Locale } from "@/config";
@@ -80,6 +81,7 @@ function Providers({
     <ClerkProvider
       publishableKey={CLERK_PUBLISHABLE_KEY}
       tokenCache={tokenCache}
+      localization={locale === "fr" ? frFR : enUS}
     >
       <SignInLogger />
       {tree}

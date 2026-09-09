@@ -4,6 +4,7 @@ import { IntlProvider } from "react-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { queryDefaults } from "@indiecrafts/packages-shared-query";
 import { ClerkProvider } from "@clerk/clerk-react";
+import { enUS, frFR } from "@clerk/localizations";
 import { App } from "./App";
 import {
   CLERK_PUBLISHABLE_KEY,
@@ -40,6 +41,7 @@ if (root) {
             <ClerkProvider
               publishableKey={CLERK_PUBLISHABLE_KEY}
               appearance={authAppearance}
+              localization={locale === "fr" ? frFR : enUS}
             >
               <HybridSessionLogger />
               <App />
