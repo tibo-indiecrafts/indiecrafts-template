@@ -7,7 +7,7 @@
 // Name conventions (all `<prefix>-<env>-…`, from `resourceName`):
 //   Workers  — every Cloudflare app: api·cron·workers·agent (worker-cf) +
 //              website·admin·app (next-cf / OpenNext) + storybook (static-assets worker).
-//   D1       — the api's two EU D1s: `<api>` (audit) + `<api>-core` (core).
+//   D1       — the api's two EU D1s: `<prefix>-<env>-db-audit` (audit) + `-db-main` (main).
 //   KV       — `<api>-security-counters` (short-TTL failed-login counters).
 //   R2       — `<prefix>-<env>-db-backup` (D1 snapshots) · `<api>-export` (GDPR export bundles) ·
 //              `<web-app>-isr` per next-cf app (OpenNext incremental cache) ·
@@ -27,7 +27,7 @@ export function instanceResources(env, prefix) {
   const webApps = ["website", "admin", "app"];
   return {
     workers, // includes the next-cf apps + storybook (all deploy as Workers)
-    d1: [api, `${api}-core`],
+    d1: [`${prefix}-${env}-db-audit`, `${prefix}-${env}-db-main`],
     kv: [`${api}-security-counters`],
     r2: [
       `${prefix}-${env}-db-backup`,

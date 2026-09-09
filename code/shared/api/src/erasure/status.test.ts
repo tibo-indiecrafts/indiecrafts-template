@@ -13,7 +13,7 @@ async function seedRequest(overrides: {
 }): Promise<string> {
   const token = crypto.randomUUID();
   const now = Date.now();
-  await env.DB.prepare(
+  await env.AUDIT_DB.prepare(
     "INSERT INTO erasure_requests (status, token_hash, token_expires_at, attempts, user_id, email_fingerprint, requested_at, completed_at, due_at) VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?)",
   )
     .bind(

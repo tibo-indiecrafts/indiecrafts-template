@@ -14,7 +14,7 @@ async function postConsent(body: Record<string, unknown>) {
 
 describe("migration 0003 — consent_events", () => {
   it("creates the table with the expected columns", async () => {
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "PRAGMA table_info(consent_events)",
     ).all<{ name: string }>();
     const cols = results.map((r) => r.name);
@@ -39,14 +39,14 @@ describe("migration 0003 — consent_events", () => {
 
   it("enforces UNIQUE(idempotency_key)", async () => {
     const row = (k: string) =>
-      env.DB.prepare(
+      env.AUDIT_DB.prepare(
         "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, consent_type, granted, policy_version, surface, idempotency_key) VALUES (?, 'visitor', 's', 'cookie_analytics', 1, 'v1', 'website', ?)",
       )
         .bind(new Date(0).toISOString(), k)
         .run();
     await row("dup:cookie_analytics");
     await row("dup:cookie_analytics");
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "SELECT id FROM consent_events WHERE idempotency_key = ?",
     )
       .bind("dup:cookie_analytics")
@@ -58,7 +58,7 @@ describe("migration 0003 — consent_events", () => {
 describe("kind:consent → consent_events", () => {
   it("writes one row per event, linking a user row to the erasure key", async () => {
     // Seed a fingerprinted profile so the user row can copy the erasure key.
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
     )
       .bind("user_c1", "c1@x.com", "fp_c1", new Date(0).toISOString())
@@ -77,7 +77,7 @@ describe("kind:consent → consent_events", () => {
     });
     expect(res.status).toBe(201);
 
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "SELECT consent_type, granted, subject_type, subject_id, email_fingerprint, ip_hash FROM consent_events WHERE subject_id = ? ORDER BY consent_type",
     )
       .bind("user_c1")
@@ -108,7 +108,7 @@ describe("kind:consent → consent_events", () => {
     };
     await postConsent(body);
     await postConsent(body);
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "SELECT id FROM consent_events WHERE idempotency_key = ?",
     )
       .bind("d2:cookie_analytics")
@@ -128,7 +128,7 @@ describe("kind:consent → consent_events", () => {
       ],
     });
     expect(res.status).toBe(201);
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "SELECT consent_type, subject_type, email_fingerprint FROM consent_events WHERE subject_id = ?",
     )
       .bind("anon_2")

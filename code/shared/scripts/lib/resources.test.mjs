@@ -13,9 +13,9 @@ test("instanceResources covers every deployable + the api's owned resources", ()
   const wanted = deployable().map((a) => resourceName(a.slug, "dev", "acme"));
   assert.deepEqual(r.workers, wanted);
 
-  // The api owns both D1s — the audit DB and the split-out core DB (the one most
+  // The api owns both D1s — the audit DB and the split-out main DB (the one most
   // likely to be forgotten and left behind).
-  assert.deepEqual(r.d1, ["acme-dev-shared-api", "acme-dev-shared-api-core"]);
+  assert.deepEqual(r.d1, ["acme-dev-db-audit", "acme-dev-db-main"]);
   assert.deepEqual(r.kv, ["acme-dev-shared-api-security-counters"]);
 
   // R2: the shared backup bucket + api export + one ISR bucket per next-cf app + hybrid releases.

@@ -16,7 +16,7 @@ const USER = "user_full";
 
 async function seedProfile() {
   const fp = await fingerprintEmail(EMAIL, SALT);
-  await env.DB.prepare(
+  await env.AUDIT_DB.prepare(
     "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
   )
     .bind(USER, EMAIL, fp, new Date(0).toISOString())
@@ -35,8 +35,8 @@ function adapters() {
     SALT,
   );
   return [
-    createCoreErasureAdapter(env.CORE_DB, SALT),
-    createAuditErasureAdapter(env.DB, env.CORE_DB, SALT),
+    createCoreErasureAdapter(env.MAIN_DB, SALT),
+    createAuditErasureAdapter(env.AUDIT_DB, env.MAIN_DB, SALT),
     clerk,
     sanity,
     createOrdersErasureAdapter(),
@@ -62,7 +62,7 @@ describe("erasure engine (full run)", () => {
     ]);
     expect(receipt.errors).toEqual([]);
     // D1 actually pseudonymised the profile
-    const prof = await env.DB.prepare(
+    const prof = await env.AUDIT_DB.prepare(
       "SELECT anonymized FROM user_profiles WHERE user_id=?",
     )
       .bind(USER)
@@ -88,7 +88,7 @@ describe("erasure engine (full run)", () => {
       fingerprint: null,
     });
     expect(receipt.dryRun).toBe(true);
-    const prof = await env.DB.prepare(
+    const prof = await env.AUDIT_DB.prepare(
       "SELECT email FROM user_profiles WHERE user_id=?",
     )
       .bind(USER)

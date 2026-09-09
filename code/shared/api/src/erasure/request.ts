@@ -14,7 +14,9 @@ import { readSettings } from "../settings-cache";
 const BODY_MAX = 4000;
 // Default confirm-link expiry (24h); the effective value is operator-overridable
 // via site_settings (ttl.erasure_confirm_hours) — see settingsCache below.
-const settingsCache: { value: null | { at: number; data: Record<string, number> } } = {
+const settingsCache: {
+  value: null | { at: number; data: Record<string, number> };
+} = {
   value: null,
 };
 const DUE_MS = 30 * 24 * 60 * 60 * 1000; // the GDPR one-month SLA target — NOT a knob
@@ -140,12 +142,12 @@ export async function handleErasureRequest(
 
   // No email, or the flow isn't configured yet — still the generic response,
   // never a distinguishable error, so this never becomes an enumeration oracle.
-  if (!email || !env.CORE_DB || !env.GDPR_FINGERPRINT_SALT)
+  if (!email || !env.MAIN_DB || !env.GDPR_FINGERPRINT_SALT)
     return json(GENERIC_RESPONSE, 200, PUBLIC_CORS_POST);
 
   try {
     const fp = await fingerprintEmail(email, env.GDPR_FINGERPRINT_SALT);
-    const subject = await env.CORE_DB.prepare(
+    const subject = await env.MAIN_DB.prepare(
       "SELECT user_id FROM user_profiles WHERE email_fingerprint = ? OR LOWER(email) = ?",
     )
       .bind(fp, email.toLowerCase().trim())
@@ -159,11 +161,11 @@ export async function handleErasureRequest(
       const writeAndSend = async (): Promise<void> => {
         const token = crypto.randomUUID();
         const now = Date.now();
-        const ttlH = (await readSettings(env.CORE_DB, settingsCache))[
+        const ttlH = (await readSettings(env.MAIN_DB, settingsCache))[
           "ttl.erasure_confirm_hours"
         ];
         await env
-          .CORE_DB!.prepare(
+          .MAIN_DB!.prepare(
             "INSERT INTO erasure_requests (status, token_hash, token_expires_at, attempts, user_id, email_fingerprint, requested_at, due_at) VALUES (?, ?, ?, 0, ?, ?, ?, ?)",
           )
           .bind(

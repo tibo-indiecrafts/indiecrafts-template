@@ -122,7 +122,7 @@ export async function handleErasureSelf(
   if (request.method !== "POST")
     return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_POST);
 
-  if (!env.DB || !env.CORE_DB || !env.GDPR_FINGERPRINT_SALT)
+  if (!env.AUDIT_DB || !env.MAIN_DB || !env.GDPR_FINGERPRINT_SALT)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
   // JWT verification needs the Clerk secret; and when the real adapters are used,
   // the Clerk/Sanity secrets must be armed or the engine half-erases (see confirm.ts).
@@ -209,7 +209,7 @@ export async function handleErasureSelf(
   // Proof-of-erasure row. No token here → a throwaway hash satisfies the NOT NULL
   // column; it is never emailed or used.
   try {
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO erasure_requests (status, token_hash, token_expires_at, attempts, user_id, email_fingerprint, requested_at, confirmed_at, completed_at, due_at, result) " +
         "VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?)",
     )
@@ -227,7 +227,7 @@ export async function handleErasureSelf(
       )
       .run();
     const country = request.headers.get("cf-ipcountry") ?? null;
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, NULL)",
     )
       .bind(ts, "erasure.self", authed.userId, authed.userId, country)

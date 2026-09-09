@@ -46,7 +46,7 @@ function getDownload(token: string): Request {
 
 async function seedProfile(): Promise<string> {
   const fp = await fingerprintEmail(EMAIL, SALT);
-  await env.DB.prepare(
+  await env.AUDIT_DB.prepare(
     "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
   )
     .bind(USER, EMAIL, fp, new Date(0).toISOString())
@@ -77,8 +77,8 @@ function mocks(
     pseudonymise: vi.fn(async () => {}),
   };
   const build = (e: Env) => [
-    createCoreErasureAdapter(e.CORE_DB!, SALT),
-    createAuditErasureAdapter(e.DB!, e.CORE_DB!, SALT),
+    createCoreErasureAdapter(e.MAIN_DB!, SALT),
+    createAuditErasureAdapter(e.AUDIT_DB!, e.MAIN_DB!, SALT),
     createClerkErasureAdapter(clerkClient),
     createSanityErasureAdapter(sanityClient, SALT),
     createOrdersErasureAdapter(),
@@ -94,7 +94,7 @@ interface ExportRow {
 }
 
 async function exportRowFor(fp: string): Promise<ExportRow | null> {
-  return env.DB.prepare(
+  return env.AUDIT_DB.prepare(
     "SELECT r2_key, token_hash, expires_at, downloaded_at FROM export_requests WHERE email_fingerprint = ? ORDER BY id DESC LIMIT 1",
   )
     .bind(fp)
@@ -132,7 +132,7 @@ describe("handleExport", () => {
     expect(stored.stores).toHaveProperty("d1-core");
     expect(stored.stores).toHaveProperty("d1-audit");
 
-    const audit = await env.DB.prepare(
+    const audit = await env.AUDIT_DB.prepare(
       "SELECT event FROM admin_audit WHERE target_user_id = ? ORDER BY id DESC LIMIT 1",
     )
       .bind(USER)
@@ -224,7 +224,7 @@ describe("handleExportDownload", () => {
       r2Key,
       JSON.stringify({ ts: new Date().toISOString(), stores: {} }),
     );
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO export_requests (token_hash, r2_key, user_id, email_fingerprint, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)",
     )
       .bind(

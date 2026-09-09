@@ -8,7 +8,7 @@ rate-limit counters.
 ## The stores
 
 - **Sanity** — editable content (pages, blog, settings). GROQ via `@indiecrafts/packages-web-sanity`.
-- **D1** — relational app data. A Worker **binding** (`env.DB`), not a connection string.
+- **D1** — relational app data. A Worker **binding** (`env.AUDIT_DB`), not a connection string.
 - **KV** — ephemeral / cache (sessions, rate-limit, feature flags). Binding `env.KV`.
 - **R2** — objects (already the ISR cache).
 
@@ -20,7 +20,7 @@ Don't duplicate Sanity content into D1 — one source of truth per kind of data.
   ordered under `code/shared/db/migrations/`. Never a manual dashboard edit. Renames/drops are
   two-step across releases (expand → migrate → contract).
 - **D1 is a binding.** No secret URL — bound per env in `code/projects/web/surfaces/website/wrangler.toml`
-  (`[[d1_databases]]`, like the R2 ISR bucket); reached via `getCloudflareContext().env.DB`.
+  (`[[d1_databases]]`, like the R2 ISR bucket); reached via `getCloudflareContext().env.AUDIT_DB`.
   Local dev (`preview:cf`) uses a local SQLite.
 - **The app never scatters raw SQL** — access goes through a `code/packages/` data brick
   (Drizzle `drizzle-orm/d1`, or prepared statements). One owner, one gateway.

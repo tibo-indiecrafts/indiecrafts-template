@@ -73,7 +73,7 @@ describe("clerk webhook → user_profiles", () => {
       created("user_c", "Jane@Example.com", "Jane", "Doe"),
     );
     expect(res.status).toBe(200);
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT * FROM user_profiles WHERE user_id = ?",
     )
       .bind("user_c")
@@ -89,7 +89,7 @@ describe("clerk webhook → user_profiles", () => {
   it("is idempotent — replaying user.created keeps one row", async () => {
     await postWebhook(created("user_dup", "dup@x.com"));
     await postWebhook(created("user_dup", "dup@x.com"));
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "SELECT user_id FROM user_profiles WHERE user_id = ?",
     )
       .bind("user_dup")
@@ -99,7 +99,7 @@ describe("clerk webhook → user_profiles", () => {
 
   it("user.updated re-fingerprints on email change, keeps created_at", async () => {
     await postWebhook(created("user_u", "old@x.com"));
-    const before = await env.DB.prepare(
+    const before = await env.AUDIT_DB.prepare(
       "SELECT created_at FROM user_profiles WHERE user_id = ?",
     )
       .bind("user_u")
@@ -112,7 +112,7 @@ describe("clerk webhook → user_profiles", () => {
         email_addresses: [{ id: "e2", email_address: "new@x.com" }],
       },
     });
-    const after = await env.DB.prepare(
+    const after = await env.AUDIT_DB.prepare(
       "SELECT email, email_fingerprint, created_at FROM user_profiles WHERE user_id = ?",
     )
       .bind("user_u")
@@ -126,7 +126,7 @@ describe("clerk webhook → user_profiles", () => {
 
   it("user.updated with no resolvable email keeps the stored email + fingerprint", async () => {
     await postWebhook(created("user_ne", "keep@x.com", "Keep"));
-    const before = await env.DB.prepare(
+    const before = await env.AUDIT_DB.prepare(
       "SELECT email, email_fingerprint FROM user_profiles WHERE user_id = ?",
     )
       .bind("user_ne")
@@ -135,7 +135,7 @@ describe("clerk webhook → user_profiles", () => {
       type: "user.updated",
       data: { id: "user_ne", first_name: "Keep", last_name: "Updated" },
     });
-    const after = await env.DB.prepare(
+    const after = await env.AUDIT_DB.prepare(
       "SELECT email, email_fingerprint, full_name FROM user_profiles WHERE user_id = ?",
     )
       .bind("user_ne")
@@ -148,7 +148,7 @@ describe("clerk webhook → user_profiles", () => {
   it("user.deleted pseudonymises but keeps the row + fingerprint", async () => {
     await postWebhook(created("user_d", "d@x.com", "Dee"));
     const fpBefore = (
-      await env.DB.prepare(
+      await env.AUDIT_DB.prepare(
         "SELECT email_fingerprint FROM user_profiles WHERE user_id = ?",
       )
         .bind("user_d")
@@ -158,7 +158,7 @@ describe("clerk webhook → user_profiles", () => {
       type: "user.deleted",
       data: { id: "user_d", deleted: true },
     });
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT * FROM user_profiles WHERE user_id = ?",
     )
       .bind("user_d")

@@ -66,13 +66,13 @@ export interface Env {
   AGENT_RATELIMIT?: {
     limit: (o: { key: string }) => Promise<{ success: boolean }>;
   };
-  /** The EU D1 (`[[d1_databases]] binding = "DB"`) — append-only telemetry firehose:
+  /** The EU D1 (`[[d1_databases]] binding = "AUDIT_DB"`) — append-only telemetry firehose:
    *  admin_audit · session_events · security_events · csp_reports · backup_runs.
    *  Optional (503 until bound). */
-  DB?: D1Database;
-  /** EU D1 (binding CORE_DB) — identity/rights/settings: user_profiles, consent_events,
+  AUDIT_DB?: D1Database;
+  /** EU D1 (binding MAIN_DB) — identity/rights/settings: user_profiles, consent_events,
    *  data_requests, erasure_requests, export_requests, site_settings. */
-  CORE_DB?: D1Database;
+  MAIN_DB?: D1Database;
   /** KV (`binding = "SECURITY_COUNTERS"`) — ephemeral TTL counters for failed-login rates,
    *  so they're counted at the edge, not written per-request to D1. Optional. */
   SECURITY_COUNTERS?: KVNamespace;
@@ -287,7 +287,7 @@ export default {
           return "error";
         }
       };
-      return Response.json({ ok: true, db: await dbStatus(env.DB) });
+      return Response.json({ ok: true, db: await dbStatus(env.AUDIT_DB) });
     }
 
     const cors = corsHeaders(request.headers.get("origin"));
@@ -338,20 +338,20 @@ export default {
 
       try {
         if (body.kind === "admin") {
-          if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+          if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
           const event = str(body.event, 32);
           const actor = str(body.actorUserId);
           const target = str(body.targetUserId);
           if (!event || !actor || !target)
             return json({ error: "invalid" }, 400, cors);
           // No IP for admin actions — the userId is the identity (minimization).
-          await env.DB.prepare(
+          await env.AUDIT_DB.prepare(
             "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, NULL)",
           )
             .bind(ts, event, actor, target, country)
             .run();
         } else if (body.kind === "session") {
-          if (!env.DB || !env.CORE_DB)
+          if (!env.AUDIT_DB || !env.MAIN_DB)
             return json({ error: "unavailable" }, 503, cors);
           const surface = str(body.surface, 16);
           const userId = str(body.userId);
@@ -364,7 +364,7 @@ export default {
             env.IP_HASH_SALT && ip !== "unknown"
               ? await hashIpAddress(ip, env.IP_HASH_SALT)
               : null;
-          await env.DB.prepare(
+          await env.AUDIT_DB.prepare(
             "INSERT INTO session_events (ts, surface, user_id, session_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, ?)",
           )
             .bind(ts, surface, userId, sessionId, country, ipHash)
@@ -372,7 +372,7 @@ export default {
           // Create the profile row on first sign-in; refresh last_login_at on
           // every sign-in. Email/name are NOT in the session payload (kept
           // minimal) — the Clerk webhook + backfill fill them. Idempotent by PK.
-          await env.CORE_DB.prepare(
+          await env.MAIN_DB.prepare(
             "INSERT INTO user_profiles (user_id, created_at, last_login_at) VALUES (?, ?, ?) " +
               "ON CONFLICT(user_id) DO UPDATE SET last_login_at = excluded.last_login_at",
           )
@@ -381,7 +381,7 @@ export default {
         } else if (body.kind === "security") {
           // App-level security incident (failed login, priv-esc, exfil, …) — the EU D1.
           // Low-volume by design; the edge firehose stays in Cloudflare's Security Events.
-          if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+          if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
           const eventType = str(body.eventType, 32);
           const severity = str(body.severity, 10);
           if (!eventType || !severity)
@@ -399,7 +399,7 @@ export default {
             desc: string | null,
           ) => {
             await env
-              .DB!.prepare(
+              .AUDIT_DB!.prepare(
                 "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
               )
               .bind(ts, et, sev, secSurface, secUserId, country, ipHash, desc)
@@ -461,7 +461,7 @@ export default {
             str(body.description, 200) || null,
           );
         } else if (body.kind === "consent") {
-          if (!env.CORE_DB) return json({ error: "unavailable" }, 503, cors);
+          if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
           // Trust boundary: userId is resolved by the caller's route via Clerk
           // auth(), never claimed by the browser. Anonymous rows key on consentId.
           const userId = str(body.userId) || null;
@@ -485,7 +485,7 @@ export default {
           // profile is fingerprinted by the Clerk webhook / backfill).
           let fingerprint: string | null = null;
           if (userId) {
-            const prof = await env.CORE_DB.prepare(
+            const prof = await env.MAIN_DB.prepare(
               "SELECT email_fingerprint FROM user_profiles WHERE user_id = ?",
             )
               .bind(userId)
@@ -506,7 +506,7 @@ export default {
           }>) {
             const type = str(raw.type, 32);
             if (!ALLOWED_CONSENT_TYPES.has(type)) continue;
-            await env.CORE_DB.prepare(
+            await env.MAIN_DB.prepare(
               "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             )
@@ -538,7 +538,7 @@ export default {
           // collapsed, tokens stripped, samples redacted). Aggregate on write:
           // one row per distinct group, count incremented. No IP/country — a CSP
           // violation is about a resource, not a subject.
-          if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+          if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
           const reports = Array.isArray(body.reports)
             ? body.reports.slice(0, 10)
             : [];
@@ -558,7 +558,7 @@ export default {
             const sampleLine =
               typeof raw.sampleLine === "number" ? raw.sampleLine : null;
             const sampleSnippet = str(raw.sampleSnippet, 60) || null;
-            await env.DB.prepare(
+            await env.AUDIT_DB.prepare(
               "INSERT INTO csp_reports (group_key, first_seen, last_seen, count, surface, disposition, directive, document_path, blocked_source, sample_source_file, sample_line, sample_snippet) " +
                 "VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?) " +
                 "ON CONFLICT(group_key) DO UPDATE SET count = count + 1, last_seen = excluded.last_seen, sample_source_file = excluded.sample_source_file, sample_line = excluded.sample_line, sample_snippet = excluded.sample_snippet",
@@ -602,7 +602,7 @@ export default {
         !safeEqual(bearer, env.APP_API_TOKEN)
       )
         return json({ error: "unauthorized" }, 401, cors);
-      if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+      if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
       // Clamp BOTH ends: a negative limit would become SQLite `LIMIT -1` (unbounded scan).
       const limit = Math.max(
         1,
@@ -610,7 +610,7 @@ export default {
       );
       try {
         // No ip_hash in the projection — the admin view needs surface/user/session/country.
-        const { results } = await env.DB.prepare(
+        const { results } = await env.AUDIT_DB.prepare(
           "SELECT ts, surface, user_id, session_id, country FROM session_events ORDER BY ts DESC LIMIT ?",
         )
           .bind(limit)
@@ -636,7 +636,7 @@ export default {
         !safeEqual(bearer, env.APP_API_TOKEN)
       )
         return json({ error: "unauthorized" }, 401, cors);
-      if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+      if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
       // Clamp BOTH ends: a negative limit would become SQLite `LIMIT -1` (unbounded scan).
       const limit = Math.max(
         1,
@@ -644,7 +644,7 @@ export default {
       );
       try {
         // No ip_hash in the projection — the admin view is data-minimized.
-        const { results } = await env.DB.prepare(
+        const { results } = await env.AUDIT_DB.prepare(
           "SELECT ts, event_type, severity, surface, user_id, country, description FROM security_events ORDER BY ts DESC LIMIT ?",
         )
           .bind(limit)
@@ -670,14 +670,14 @@ export default {
         !safeEqual(bearer, env.APP_API_TOKEN)
       )
         return json({ error: "unauthorized" }, 401, cors);
-      if (!env.DB) return json({ error: "unavailable" }, 503, cors);
+      if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
       // Clamp BOTH ends: a negative limit would become SQLite `LIMIT -1` (unbounded scan).
       const limit = Math.max(
         1,
         Math.min(Number(url.searchParams.get("limit") ?? 100) || 100, 200),
       );
       try {
-        const { results } = await env.DB.prepare(
+        const { results } = await env.AUDIT_DB.prepare(
           "SELECT group_key, count, disposition, directive, document_path, blocked_source, surface, first_seen, last_seen, sample_source_file, sample_line, sample_snippet FROM csp_reports ORDER BY count DESC, last_seen DESC LIMIT ?",
         )
           .bind(limit)
@@ -704,11 +704,11 @@ export default {
         !safeEqual(bearer, env.APP_API_TOKEN)
       )
         return json({ error: "unauthorized" }, 401, cors);
-      if (!env.CORE_DB || !env.DB)
+      if (!env.MAIN_DB || !env.AUDIT_DB)
         return json({ error: "unavailable" }, 503, cors);
 
       if (request.method === "GET") {
-        const { results } = await env.CORE_DB.prepare(
+        const { results } = await env.MAIN_DB.prepare(
           "SELECT key, value, updated_at, updated_by FROM site_settings",
         ).all<{
           key: string;
@@ -760,18 +760,18 @@ export default {
           );
 
         const ts = new Date().toISOString();
-        // site_settings (CORE_DB) and admin_audit (DB) are now separate D1 instances, so
+        // site_settings (MAIN_DB) and admin_audit (DB) are now separate D1 instances, so
         // this can no longer be one atomic batch. The setting write is primary — it must
         // surface a failure; the audit write is secondary and non-fatal if it throws
-        // (mirrors export/route.ts's admin_audit write after the primary CORE_DB write).
-        await env.CORE_DB.prepare(
+        // (mirrors export/route.ts's admin_audit write after the primary MAIN_DB write).
+        await env.MAIN_DB.prepare(
           "INSERT INTO site_settings (key, value, updated_at, updated_by) VALUES (?, ?, ?, ?) " +
             "ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at, updated_by = excluded.updated_by",
         )
           .bind(key, raw, ts, actor)
           .run();
         try {
-          await env.DB.prepare(
+          await env.AUDIT_DB.prepare(
             "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, 'setting_changed', ?, ?, ?, NULL)",
           )
             .bind(ts, actor, key, request.headers.get("cf-ipcountry"))
@@ -807,8 +807,8 @@ export default {
         return json({ error: "unauthorized" }, 401, cors);
 
       let runs: Array<Record<string, unknown>> = [];
-      if (env.DB) {
-        const { results } = await env.DB.prepare(
+      if (env.AUDIT_DB) {
+        const { results } = await env.AUDIT_DB.prepare(
           "SELECT db_name, env, kind, status, bytes, error, started_at, finished_at FROM backup_runs ORDER BY started_at DESC LIMIT 20",
         ).all<{
           db_name: string;
@@ -895,13 +895,13 @@ export default {
       const data = evt.data ?? {};
       const role = (data.public_metadata as { role?: string } | undefined)
         ?.role;
-      if (evt.type === "user.updated" && role === "admin" && env.DB) {
+      if (evt.type === "user.updated" && role === "admin" && env.AUDIT_DB) {
         const privEscTs = new Date().toISOString();
         const privEscUserId = typeof data.id === "string" ? data.id : null;
         const privEscCountry = request.headers.get("cf-ipcountry") ?? null;
         const privEscDesc = "role→admin via Clerk (out-of-band)";
         try {
-          await env.DB.prepare(
+          await env.AUDIT_DB.prepare(
             "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)",
           )
             .bind(
@@ -940,7 +940,7 @@ export default {
       //    pseudonymise on delete. Idempotent by PK — Clerk retries are safe.
       //    No idempotency-key store: every op here is idempotent by primary key.
       if (
-        env.CORE_DB &&
+        env.MAIN_DB &&
         (evt.type === "user.created" ||
           evt.type === "user.updated" ||
           evt.type === "user.deleted")
@@ -977,7 +977,7 @@ export default {
               // erasure key, so losing it breaks email-keyed erasure. A real incoming
               // email still overwrites, via excluded. full_name has no such guard —
               // a name clear/update should propagate; it is not the erasure key.
-              await env.CORE_DB.prepare(
+              await env.MAIN_DB.prepare(
                 "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at, last_login_at) " +
                   "VALUES (?, ?, ?, ?, ?, NULL) " +
                   "ON CONFLICT(user_id) DO UPDATE SET email = COALESCE(excluded.email, email), full_name = excluded.full_name, email_fingerprint = COALESCE(excluded.email_fingerprint, email_fingerprint)",

@@ -11,6 +11,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Local dev docs now describe the all-remote model — no miniflare tier.** Rewrote
+  `local-development.md` and updated the DB-tier tables in `platform-deploy.md`, `deployment.md`, and
+  `backups.md`: `pnpm dev` binds the real remote `dev` D1/KV/R2 (`wrangler dev --env dev --remote`),
+  local setup is `pnpm db:migrate:all:dev` (not `:local`), and every env — dev included — takes a
+  pre-migration R2 snapshot. Notes the trade-off: local dev needs wrangler auth + network, and the
+  `dev` D1 is shared across developers.
 - **`cloudflare-iac.md`: all-surface Terraform coverage + the zone-collision constraint.** Replaced the
   "Add app #2" section with a table of the seven stacks (account · api · agent · website · app · admin ·
   storybook) now shipped, and rewrote the zone warning to be accurate: the rate-limit + firewall rulesets
@@ -95,10 +101,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 - **CSP Report-Only rollback runbook** — `seo/security-headers.md` § "Rollback: flip a surface back to
   Report-Only" now gives the concrete steps: `CSP_MODE=report-only` via the Cloudflare dashboard var
   (fast, no redeploy — `keep_vars = true`) or the version-controlled `wrangler.toml` `[env.<env>.vars]`
-  + `pnpm deploy:<surface>:<env>`, per surface, with the verify + `/csp`-dashboard step. `operations.md`
-  § Troubleshooting gains a "scripts blocked after a deploy (CSP)" row pointing to it. **Why:** enforce is
-  the live default, so on-call needs a copy-pasteable way to fall back to observe-only when the nonce CSP
-  blocks something (the switch already exists — this makes it fast to use, instead of a KV kill-switch).
+  - `pnpm deploy:<surface>:<env>`, per surface, with the verify + `/csp`-dashboard step. `operations.md`
+    § Troubleshooting gains a "scripts blocked after a deploy (CSP)" row pointing to it. **Why:** enforce is
+    the live default, so on-call needs a copy-pasteable way to fall back to observe-only when the nonce CSP
+    blocks something (the switch already exists — this makes it fast to use, instead of a KV kill-switch).
 - **`check:tasks` documented in `scripts.md`** (both the Quality-gates and repo-root-scripts tables) —
 - **DPIA template + per-regime notices + scope-boundary pages + sidebar.** New
   `apps/web/config/dpia-template.md` — DPIA trigger criteria (large-scale processing,

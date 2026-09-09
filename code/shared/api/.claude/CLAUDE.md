@@ -7,11 +7,11 @@ audit + session sink (`POST /v1/events` → EU D1, `GET /v1/sessions`)**, bearer
 CORS allowlist + the native rate-limit binding; `withGuard` is Next-only, so the guard is inline. More
 routes TBD. (The AI agent moved to its own [`code/shared/agent`](../agent/.claude/CLAUDE.md) Worker.)
 Owns **two EU D1s** (both `--location weur`): **`DB`** (`audit` — the append-only firehose:
-`session_events`, `security_events`, `admin_audit`, `csp_reports`, `backup_runs`) and **`CORE_DB`**
-(`core` — identity/rights/settings: `user_profiles`, `consent_events`, `data_requests`,
+`session_events`, `security_events`, `admin_audit`, `csp_reports`, `backup_runs`) and **`MAIN_DB`**
+(`main` — identity/rights/settings: `user_profiles`, `consent_events`, `data_requests`,
 `erasure_requests`, `export_requests`, `site_settings`). Split so a firehose write-spike or migration
 can't threaten identity data; `cron` holds both bindings too (retention + settings/SLA/export
-bookkeeping). `PUT /v1/settings` writes `site_settings` on `CORE_DB` (primary) then an `admin_audit`
+bookkeeping). `PUT /v1/settings` writes `site_settings` on `MAIN_DB` (primary) then an `admin_audit`
 row on `DB` (best-effort, no longer one atomic batch) — see
 [Admin settings](../../../docs/apps/web/config/settings.md).
 `POST /v1/clerk-webhook` also keeps `user_profiles` in sync with Clerk (source of truth for email):
@@ -21,8 +21,8 @@ salt, DISTINCT per env (stable within an env) — see `wrangler.toml`). `POST /v
 the `csp_reports` D1 table (aggregated CSP violation reports, Report-Only pipeline; 30-day `cron` purge).
 `GET /v1/csp-reports` reads it back (bearer-gated, same shape as `GET /v1/security`) for the admin CSP
 dashboard. `src/erasure/` holds the store-agnostic erasure
-adapters — `d1-core` + `d1-audit` (real, split by table across the `core`/`audit` D1s; the `d1-audit`
-adapter takes a read-only handle to `core` to resolve `user_id`) + `clerk`/`sanity`/`orders`
+adapters — `d1-core` + `d1-audit` (real, split by table across the `main`/`audit` D1s; the `d1-audit`
+adapter takes a read-only handle to `main` to resolve `user_id`) + `clerk`/`sanity`/`orders`
 (dependency-injected) — implementing
 `@indiecrafts/packages-shared-compliance` `ErasureAdapter`, run by its `runErasure`/`runExport`
 orchestrator. The `/v1/erasure` routes are live: `GET/POST /v1/erasure/request` (Turnstile-gated,
@@ -41,7 +41,7 @@ bundle in the `EXPORT_BUCKET` R2 bucket, and returns a single-use 1-hour downloa
 binding: `EXPORT_BUCKET` (`[[r2_buckets]]`, operator-provisioned — routes answer 503 until bound).
 **DSAR intake** — `src/data-request/route.ts` holds the GDPR request-form write + read, migrated off
 Sanity: `POST /v1/data-request` (bearer-gated; the website's `/api/data-request` route proxies here)
-inserts into the `data_requests` table (`core` D1, migration 0006), and `GET /v1/data-requests` (bearer-gated)
+inserts into the `data_requests` table (`main` D1, migration 0006), and `GET /v1/data-requests` (bearer-gated)
 lists rows newest-first for the admin screen. A deliberate departure from this D1's minimization
 convention: `data_requests` stores a plaintext `email` + free-text `message` (operational PII the
 operator needs to action the request).

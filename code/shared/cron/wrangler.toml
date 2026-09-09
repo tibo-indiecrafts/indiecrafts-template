@@ -34,8 +34,8 @@ invocation_logs = true
 # id = "<wrangler kv namespace create KV>"
 #
 # [[d1_databases]]         # env.DB — read/write app data on a schedule
-# binding = "DB"
-# database_name = "indiecrafts-dev-shared-cron"
+# binding = "AUDIT_DB"
+# database_name = "indiecrafts-dev-shared-cron-audit"
 # database_id = "<wrangler d1 create …>"
 #
 # [[r2_buckets]]           # env.EXPORT_BUCKET — same bucket the api's /v1/export writes
@@ -62,43 +62,43 @@ invocation_logs = true
 # retention + settings/erasure/export bookkeeping. Same database_ids the api uses (paste
 # per env) — see code/shared/api/wrangler.toml for what lives in each:
 #   DB      — audit firehose: admin_audit · session_events · security_events · csp_reports.
-#   CORE_DB — identity/rights/settings: consent_events · data_requests · erasure_requests ·
+#   MAIN_DB — identity/rights/settings: consent_events · data_requests · erasure_requests ·
 #             export_requests · site_settings.
 [env.dev]
 name = "indiecrafts-dev-shared-cron"
 
 [[env.dev.d1_databases]]
-binding = "DB"
-database_name = "indiecrafts-dev-shared-api"
-database_id = "e75ede12-ba85-4a6c-99ac-2988bd3a389f"
+binding = "AUDIT_DB"
+database_name = "indiecrafts-dev-db-audit"
+database_id = "13e4a91d-ede8-4102-8e9e-010034f6134c"
 
 [[env.dev.d1_databases]]
-binding = "CORE_DB"
-database_name = "indiecrafts-dev-shared-api-core"
-database_id = "d9d3f463-db3c-4a99-8725-fb670b7ace0f"
+binding = "MAIN_DB"
+database_name = "indiecrafts-dev-db-main"
+database_id = "280052ef-726d-43fb-9adb-4821da803627"
 
 [env.staging]
 name = "indiecrafts-staging-shared-cron"
 
 [[env.staging.d1_databases]]
-binding = "DB"
-database_name = "indiecrafts-staging-shared-api"
+binding = "AUDIT_DB"
+database_name = "indiecrafts-staging-db-audit"
 database_id = "PASTE_D1_ID_HERE"
 
 [[env.staging.d1_databases]]
-binding = "CORE_DB"
-database_name = "indiecrafts-staging-shared-api-core"
+binding = "MAIN_DB"
+database_name = "indiecrafts-staging-db-main"
 database_id = "PASTE_CORE_D1_ID_HERE"
 
 [env.prod]
 name = "indiecrafts-prod-shared-cron"
 
 [[env.prod.d1_databases]]
-binding = "DB"
-database_name = "indiecrafts-prod-shared-api"
+binding = "AUDIT_DB"
+database_name = "indiecrafts-prod-db-audit"
 database_id = "PASTE_D1_ID_HERE"
 
 [[env.prod.d1_databases]]
-binding = "CORE_DB"
-database_name = "indiecrafts-prod-shared-api-core"
+binding = "MAIN_DB"
+database_name = "indiecrafts-prod-db-main"
 database_id = "PASTE_CORE_D1_ID_HERE"

@@ -9,10 +9,10 @@ import {
 import { beforeAll, describe, expect, it } from "vitest";
 import worker, { type Env, slaDueSoonCutoff, slaSeverity } from "./index";
 
-// Apply the api's db/audit + db/core migrations/*.sql (see vitest.config.ts) before any test runs —
+// Apply the api's db/audit + db/main migrations/*.sql (see vitest.config.ts) before any test runs —
 // the cron shares the api's D1, so tests exercise the real schema.
 beforeAll(async () => {
-  await applyD1Migrations(env.DB, env.TEST_MIGRATIONS);
+  await applyD1Migrations(env.AUDIT_DB, env.TEST_MIGRATIONS);
 });
 
 // `SELF` runs the actual worker in workerd; `scheduled` is invoked directly with the
@@ -44,7 +44,7 @@ describe("retention purges", () => {
     lastSeen: string,
   ): Promise<void> {
     const firstSeen = new Date(NOW - 60 * 86_400_000).toISOString();
-    await env.DB?.prepare(
+    await env.AUDIT_DB?.prepare(
       "INSERT INTO csp_reports (group_key, first_seen, last_seen, surface, disposition, directive, document_path, blocked_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     )
       .bind(
@@ -81,7 +81,7 @@ describe("retention purges", () => {
     await runScheduled(NOW);
 
     const result = await env
-      .DB!.prepare("SELECT group_key FROM csp_reports ORDER BY group_key")
+      .AUDIT_DB!.prepare("SELECT group_key FROM csp_reports ORDER BY group_key")
       .all<{ group_key: string }>();
 
     const groupKeys = result.results.map((r) => r.group_key);
@@ -89,9 +89,9 @@ describe("retention purges", () => {
   });
 
   it("purges csp_reports on an operator override (7 days) instead of the 30-day default", async () => {
-    // Override the CSP window down to 7 days. site_settings lives on CORE_DB.
+    // Override the CSP window down to 7 days. site_settings lives on MAIN_DB.
     await env
-      .CORE_DB!.prepare(
+      .MAIN_DB!.prepare(
         "INSERT INTO site_settings (key, value, updated_at, updated_by) VALUES ('retention.csp_days', '7', ?, 'user_test')",
       )
       .bind(new Date(NOW).toISOString())
@@ -103,7 +103,7 @@ describe("retention purges", () => {
     await runScheduled(NOW);
 
     const row = await env
-      .DB!.prepare(
+      .AUDIT_DB!.prepare(
         "SELECT group_key FROM csp_reports WHERE group_key = 'website|report|img-src|/c|https://z'",
       )
       .first();
@@ -130,13 +130,13 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
   }
 
   it("purges a data_requests row past the 365-day retention; keeps a recent one", async () => {
-    // data_requests lives on CORE_DB.
-    await env.CORE_DB.prepare(
+    // data_requests lives on MAIN_DB.
+    await env.MAIN_DB.prepare(
       "INSERT INTO data_requests (request_type, email, status, submitted_at) VALUES ('access', 'old-dsar@example.com', 'new', ?)",
     )
       .bind(oldDataRequestAt)
       .run();
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO data_requests (request_type, email, status, submitted_at) VALUES ('access', 'recent-dsar@example.com', 'new', ?)",
     )
       .bind(recentDataRequestAt)
@@ -145,25 +145,25 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
     await runTick();
 
     expect(
-      await env.CORE_DB.prepare(
+      await env.MAIN_DB.prepare(
         "SELECT id FROM data_requests WHERE email = 'old-dsar@example.com'",
       ).first(),
     ).toBeNull();
     expect(
-      await env.CORE_DB.prepare(
+      await env.MAIN_DB.prepare(
         "SELECT id FROM data_requests WHERE email = 'recent-dsar@example.com'",
       ).first(),
     ).not.toBeNull();
   });
 
   it("purges an erasure_requests row past the 1095-day retention; keeps a recent one", async () => {
-    // erasure_requests lives on CORE_DB.
-    await env.CORE_DB.prepare(
+    // erasure_requests lives on MAIN_DB.
+    await env.MAIN_DB.prepare(
       "INSERT INTO erasure_requests (status, token_hash, token_expires_at, email_fingerprint, requested_at, due_at) VALUES ('completed', 'hash-old-purge', ?, 'fp-old-purge@example.com', ?, ?)",
     )
       .bind(oldErasureRequestAt, oldErasureRequestAt, oldErasureRequestAt)
       .run();
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO erasure_requests (status, token_hash, token_expires_at, email_fingerprint, requested_at, due_at) VALUES ('completed', 'hash-recent-purge', ?, 'fp-recent-purge@example.com', ?, ?)",
     )
       .bind(
@@ -176,12 +176,12 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
     await runTick();
 
     expect(
-      await env.CORE_DB.prepare(
+      await env.MAIN_DB.prepare(
         "SELECT id FROM erasure_requests WHERE email_fingerprint = 'fp-old-purge@example.com'",
       ).first(),
     ).toBeNull();
     expect(
-      await env.CORE_DB.prepare(
+      await env.MAIN_DB.prepare(
         "SELECT id FROM erasure_requests WHERE email_fingerprint = 'fp-recent-purge@example.com'",
       ).first(),
     ).not.toBeNull();
@@ -208,12 +208,12 @@ describe("scheduled() — retention purge (admin_audit + session_events + securi
 
   it("purges an admin_audit row past the 90-day retention; keeps a recent one", async () => {
     // admin_audit lives on DB.
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id) VALUES (?, 'admin.grant', ?, 'target-user')",
     )
       .bind(oldAuditAt, "actor-old-purge")
       .run();
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id) VALUES (?, 'admin.grant', ?, 'target-user')",
     )
       .bind(freshAuditAt, "actor-recent-purge")
@@ -222,12 +222,12 @@ describe("scheduled() — retention purge (admin_audit + session_events + securi
     await runTick();
 
     expect(
-      await env.DB.prepare(
+      await env.AUDIT_DB.prepare(
         "SELECT id FROM admin_audit WHERE actor_user_id = 'actor-old-purge'",
       ).first(),
     ).toBeNull();
     expect(
-      await env.DB.prepare(
+      await env.AUDIT_DB.prepare(
         "SELECT id FROM admin_audit WHERE actor_user_id = 'actor-recent-purge'",
       ).first(),
     ).not.toBeNull();
@@ -235,12 +235,12 @@ describe("scheduled() — retention purge (admin_audit + session_events + securi
 
   it("purges a session_events row past the 90-day retention; keeps a recent one", async () => {
     // session_events lives on DB.
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO session_events (ts, surface, user_id) VALUES (?, 'website', ?)",
     )
       .bind(oldAuditAt, "user-session-old-purge")
       .run();
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO session_events (ts, surface, user_id) VALUES (?, 'website', ?)",
     )
       .bind(freshAuditAt, "user-session-recent-purge")
@@ -249,12 +249,12 @@ describe("scheduled() — retention purge (admin_audit + session_events + securi
     await runTick();
 
     expect(
-      await env.DB.prepare(
+      await env.AUDIT_DB.prepare(
         "SELECT id FROM session_events WHERE user_id = 'user-session-old-purge'",
       ).first(),
     ).toBeNull();
     expect(
-      await env.DB.prepare(
+      await env.AUDIT_DB.prepare(
         "SELECT id FROM session_events WHERE user_id = 'user-session-recent-purge'",
       ).first(),
     ).not.toBeNull();
@@ -262,12 +262,12 @@ describe("scheduled() — retention purge (admin_audit + session_events + securi
 
   it("purges a security_events row past the 90-day retention; keeps a recent one", async () => {
     // security_events lives on DB.
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO security_events (ts, event_type, severity, description) VALUES (?, 'suspicious_pattern', 'low', ?)",
     )
       .bind(oldAuditAt, "sec-event-old-purge")
       .run();
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO security_events (ts, event_type, severity, description) VALUES (?, 'suspicious_pattern', 'low', ?)",
     )
       .bind(freshAuditAt, "sec-event-recent-purge")
@@ -276,25 +276,25 @@ describe("scheduled() — retention purge (admin_audit + session_events + securi
     await runTick();
 
     expect(
-      await env.DB.prepare(
+      await env.AUDIT_DB.prepare(
         "SELECT id FROM security_events WHERE description = 'sec-event-old-purge'",
       ).first(),
     ).toBeNull();
     expect(
-      await env.DB.prepare(
+      await env.AUDIT_DB.prepare(
         "SELECT id FROM security_events WHERE description = 'sec-event-recent-purge'",
       ).first(),
     ).not.toBeNull();
   });
 
   it("purges a consent_events row past the 1095-day retention; keeps a recent one", async () => {
-    // consent_events lives on CORE_DB.
-    await env.CORE_DB.prepare(
+    // consent_events lives on MAIN_DB.
+    await env.MAIN_DB.prepare(
       "INSERT INTO consent_events (ts, subject_type, subject_id, consent_type, granted, policy_version, surface, idempotency_key) VALUES (?, 'user', 'user-consent-purge', 'cookie_analytics', 1, 'v1', 'website', ?)",
     )
       .bind(oldConsentAt, "consent-old-purge")
       .run();
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO consent_events (ts, subject_type, subject_id, consent_type, granted, policy_version, surface, idempotency_key) VALUES (?, 'user', 'user-consent-purge', 'cookie_analytics', 1, 'v1', 'website', ?)",
     )
       .bind(freshConsentAt, "consent-recent-purge")
@@ -303,12 +303,12 @@ describe("scheduled() — retention purge (admin_audit + session_events + securi
     await runTick();
 
     expect(
-      await env.CORE_DB.prepare(
+      await env.MAIN_DB.prepare(
         "SELECT id FROM consent_events WHERE idempotency_key = 'consent-old-purge'",
       ).first(),
     ).toBeNull();
     expect(
-      await env.CORE_DB.prepare(
+      await env.MAIN_DB.prepare(
         "SELECT id FROM consent_events WHERE idempotency_key = 'consent-recent-purge'",
       ).first(),
     ).not.toBeNull();
@@ -322,14 +322,14 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
   const breachedAt = new Date(NOW - 86_400_000).toISOString(); // 1 day ago — already past due
   const alreadyFlaggedAt = new Date(NOW - 2 * 86_400_000).toISOString();
 
-  // erasure_requests lives on CORE_DB.
+  // erasure_requests lives on MAIN_DB.
   async function seedErasureRequest(
     userId: string,
     status: string,
     dueAt: string,
     dueFlaggedAt: string | null = null,
   ): Promise<void> {
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO erasure_requests (status, token_hash, token_expires_at, user_id, email_fingerprint, requested_at, due_at, due_flagged_at) VALUES (?, 'hash', ?, ?, 'fp@example.com', ?, ?, ?)",
     )
       .bind(status, dueAt, userId, dueAt, dueAt, dueFlaggedAt)
@@ -338,7 +338,7 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
 
   // security_events lives on DB (the audit firehose).
   async function securityEventsFor(userId: string) {
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "SELECT event_type, severity FROM security_events WHERE user_id = ?",
     )
       .bind(userId)
@@ -347,7 +347,7 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
   }
 
   async function dueFlaggedAtFor(userId: string): Promise<string | null> {
-    const row = await env.CORE_DB.prepare(
+    const row = await env.MAIN_DB.prepare(
       "SELECT due_flagged_at FROM erasure_requests WHERE user_id = ?",
     )
       .bind(userId)
@@ -410,15 +410,15 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
   });
 
   it("deletes an expired export bundle from R2 + its row; keeps a not-yet-expired one", async () => {
-    // export_requests lives on CORE_DB.
+    // export_requests lives on MAIN_DB.
     await env.EXPORT_BUCKET.put("export/expired-key", "bundle");
     await env.EXPORT_BUCKET.put("export/future-key", "bundle");
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO export_requests (token_hash, r2_key, email_fingerprint, created_at, expires_at) VALUES ('hash-expired', 'export/expired-key', 'fp@example.com', ?, ?)",
     )
       .bind(nowIso, breachedAt)
       .run();
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO export_requests (token_hash, r2_key, email_fingerprint, created_at, expires_at) VALUES ('hash-future', 'export/future-key', 'fp@example.com', ?, ?)",
     )
       .bind(nowIso, dueSoonAt)
@@ -431,12 +431,12 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
     expect(kept).not.toBeNull();
     await kept?.text(); // consume the body — an unread R2 stream breaks storage isolation
     expect(
-      await env.CORE_DB.prepare(
+      await env.MAIN_DB.prepare(
         "SELECT id FROM export_requests WHERE r2_key = 'export/expired-key'",
       ).first(),
     ).toBeNull();
     expect(
-      await env.CORE_DB.prepare(
+      await env.MAIN_DB.prepare(
         "SELECT id FROM export_requests WHERE r2_key = 'export/future-key'",
       ).first(),
     ).not.toBeNull();
@@ -475,11 +475,11 @@ declare module "cloudflare:test" {
   interface ProvidedEnv extends Env {
     // Populated in vitest.config.ts via readD1Migrations().
     TEST_MIGRATIONS: D1Migration[];
-    // Env.DB/CORE_DB/EXPORT_BUCKET are optional (no-ops until bound in prod); the test
+    // Env.AUDIT_DB/MAIN_DB/EXPORT_BUCKET are optional (no-ops until bound in prod); the test
     // pool always binds all three (d1Databases/r2Buckets in vitest.config.ts), so narrow
     // them here to non-optional.
-    DB: D1Database;
-    CORE_DB: D1Database;
+    AUDIT_DB: D1Database;
+    MAIN_DB: D1Database;
     EXPORT_BUCKET: R2Bucket;
   }
 }

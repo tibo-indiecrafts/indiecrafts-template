@@ -17,8 +17,8 @@ function webhookAdapters() {
     SALT,
   );
   return [
-    createCoreErasureAdapter(env.CORE_DB, SALT),
-    createAuditErasureAdapter(env.DB, env.CORE_DB, SALT),
+    createCoreErasureAdapter(env.MAIN_DB, SALT),
+    createAuditErasureAdapter(env.AUDIT_DB, env.MAIN_DB, SALT),
     sanity,
     createOrdersErasureAdapter(),
   ];
@@ -30,7 +30,7 @@ describe("handleClerkUserDeleted", () => {
       env as unknown as { GDPR_FINGERPRINT_SALT: string }
     ).GDPR_FINGERPRINT_SALT = SALT;
     const fp = await fingerprintEmail(EMAIL, SALT);
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
     )
       .bind(USER, EMAIL, fp, new Date(0).toISOString())
@@ -43,14 +43,14 @@ describe("handleClerkUserDeleted", () => {
       () => webhookAdapters(),
     );
 
-    const prof = await env.CORE_DB.prepare(
+    const prof = await env.MAIN_DB.prepare(
       "SELECT anonymized FROM user_profiles WHERE user_id = ?",
     )
       .bind(USER)
       .first<{ anonymized: number }>();
     expect(prof?.anonymized).toBe(1); // engine's d1-core pseudonymized it
 
-    const audit = await env.DB.prepare(
+    const audit = await env.AUDIT_DB.prepare(
       "SELECT event FROM admin_audit WHERE event = 'erasure.clerk_deleted' AND target_user_id = ?",
     )
       .bind(USER)
@@ -58,7 +58,7 @@ describe("handleClerkUserDeleted", () => {
     expect(audit?.event).toBe("erasure.clerk_deleted");
 
     // Proof-of-erasure row — mirrors self.ts's erasure_requests bookkeeping.
-    const request = await env.CORE_DB.prepare(
+    const request = await env.MAIN_DB.prepare(
       "SELECT status, user_id, email_fingerprint, completed_at FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
     )
       .bind(USER)
@@ -82,12 +82,12 @@ describe("handleClerkUserDeleted", () => {
       () => webhookAdapters(),
     );
     // No throw; nothing to key the engine on. (Assert it did not create an audit row.)
-    const audit = await env.DB.prepare(
+    const audit = await env.AUDIT_DB.prepare(
       "SELECT event FROM admin_audit WHERE target_user_id = 'user_no_profile'",
     ).first();
     expect(audit).toBeNull();
     // Nor a proof-of-erasure row — the engine never ran.
-    const request = await env.CORE_DB.prepare(
+    const request = await env.MAIN_DB.prepare(
       "SELECT id FROM erasure_requests WHERE user_id = 'user_no_profile'",
     ).first();
     expect(request).toBeNull();
@@ -101,7 +101,7 @@ describe("handleClerkUserDeleted", () => {
     ).GDPR_FINGERPRINT_SALT = undefined;
     try {
       const USER = "user_nosalt";
-      await env.CORE_DB.prepare(
+      await env.MAIN_DB.prepare(
         "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at) VALUES (?, ?, ?, NULL, ?)",
       )
         .bind(USER, "keep@x.com", "Real Name", new Date(0).toISOString())
@@ -113,7 +113,7 @@ describe("handleClerkUserDeleted", () => {
         "2026-01-01T00:00:00.000Z",
       );
 
-      const prof = await env.CORE_DB.prepare(
+      const prof = await env.MAIN_DB.prepare(
         "SELECT email, full_name, anonymized FROM user_profiles WHERE user_id = ?",
       )
         .bind(USER)

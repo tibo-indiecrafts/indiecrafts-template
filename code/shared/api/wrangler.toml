@@ -63,8 +63,8 @@ invocation_logs = true
 
 # ── D1 — serverless SQLite ───────────────────────────────────────────────
 # [[d1_databases]]
-# binding = "DB"                       # env.DB
-# database_name = "indiecrafts-dev-shared-api"
+# binding = "AUDIT_DB"                       # env.DB
+# database_name = "indiecrafts-dev-db-audit"
 # database_id = "<wrangler d1 create …>"
 # migrations_dir = "db/d1/<name>/migrations"
 
@@ -124,12 +124,12 @@ invocation_logs = true
 # TWO EU D1s per env, both `--location weur` (create-time + immutable):
 #   DB      — append-only telemetry firehose: admin_audit · session_events ·
 #             security_events · csp_reports · backup_runs; retention-purged by `cron`.
-#   CORE_DB — identity/rights/settings: user_profiles · consent_events · data_requests ·
+#   MAIN_DB — identity/rights/settings: user_profiles · consent_events · data_requests ·
 #             erasure_requests · export_requests · site_settings.
 # Split so a firehose migration/write-spike can't threaten identity data. Create per env,
 # then paste the returned `database_id`:
 #   wrangler d1 create indiecrafts-dev-shared-api --location weur
-#   wrangler d1 create indiecrafts-dev-shared-api-core --location weur
+#   wrangler d1 create indiecrafts-dev-db-main --location weur
 # `SECURITY_COUNTERS` (KV) holds ephemeral failed-login counters (TTL) so rates are counted
 # at the edge, never written per-request to D1:
 #   wrangler kv namespace create indiecrafts-dev-shared-api-security-counters
@@ -149,16 +149,16 @@ BACKUP_BUCKET = "indiecrafts-dev-db-backup"
 BACKUP_RETENTION_DAYS = "30"
 
 [[env.dev.d1_databases]]
-binding = "DB"
-database_name = "indiecrafts-dev-shared-api"
-database_id = "e75ede12-ba85-4a6c-99ac-2988bd3a389f"
+binding = "AUDIT_DB"
+database_name = "indiecrafts-dev-db-audit"
+database_id = "13e4a91d-ede8-4102-8e9e-010034f6134c"
 migrations_dir = "db/audit/migrations"
 
 [[env.dev.d1_databases]]
-binding = "CORE_DB"
-database_name = "indiecrafts-dev-shared-api-core"
-database_id = "d9d3f463-db3c-4a99-8725-fb670b7ace0f"
-migrations_dir = "db/core/migrations"
+binding = "MAIN_DB"
+database_name = "indiecrafts-dev-db-main"
+database_id = "280052ef-726d-43fb-9adb-4821da803627"
+migrations_dir = "db/main/migrations"
 
 [[env.dev.kv_namespaces]]
 binding = "SECURITY_COUNTERS"
@@ -177,16 +177,16 @@ BACKUP_BUCKET = "indiecrafts-staging-db-backup"
 BACKUP_RETENTION_DAYS = "30"
 
 [[env.staging.d1_databases]]
-binding = "DB"
-database_name = "indiecrafts-staging-shared-api"
+binding = "AUDIT_DB"
+database_name = "indiecrafts-staging-db-audit"
 database_id = "PASTE_D1_ID_HERE"
 migrations_dir = "db/audit/migrations"
 
 [[env.staging.d1_databases]]
-binding = "CORE_DB"
-database_name = "indiecrafts-staging-shared-api-core"
+binding = "MAIN_DB"
+database_name = "indiecrafts-staging-db-main"
 database_id = "PASTE_CORE_D1_ID_HERE"
-migrations_dir = "db/core/migrations"
+migrations_dir = "db/main/migrations"
 
 [[env.staging.kv_namespaces]]
 binding = "SECURITY_COUNTERS"
@@ -201,16 +201,16 @@ BACKUP_BUCKET = "indiecrafts-prod-db-backup"
 BACKUP_RETENTION_DAYS = "30"
 
 [[env.prod.d1_databases]]
-binding = "DB"
-database_name = "indiecrafts-prod-shared-api"
+binding = "AUDIT_DB"
+database_name = "indiecrafts-prod-db-audit"
 database_id = "PASTE_D1_ID_HERE"
 migrations_dir = "db/audit/migrations"
 
 [[env.prod.d1_databases]]
-binding = "CORE_DB"
-database_name = "indiecrafts-prod-shared-api-core"
+binding = "MAIN_DB"
+database_name = "indiecrafts-prod-db-main"
 database_id = "PASTE_CORE_D1_ID_HERE"
-migrations_dir = "db/core/migrations"
+migrations_dir = "db/main/migrations"
 
 [[env.prod.kv_namespaces]]
 binding = "SECURITY_COUNTERS"

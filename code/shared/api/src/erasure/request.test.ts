@@ -48,7 +48,7 @@ describe("GET /v1/erasure/request", () => {
 describe("POST /v1/erasure/request", () => {
   it("creates an erasure_requests row + emails a hashed token for a known email", async () => {
     const fp = await fingerprintEmail("known1@x.com", SALT);
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
     )
       .bind("user_req_1", "known1@x.com", fp, new Date(0).toISOString())
@@ -79,7 +79,7 @@ describe("POST /v1/erasure/request", () => {
       `https://example.com/v1/erasure/confirm?token=${token}`,
     );
 
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT status, token_hash, token_expires_at, due_at, attempts, user_id, email_fingerprint FROM erasure_requests WHERE email_fingerprint = ?",
     )
       .bind(fp)
@@ -114,7 +114,7 @@ describe("POST /v1/erasure/request", () => {
     expect(await res.json()).toMatchObject({ ok: true });
     expect(sendSpy).not.toHaveBeenCalled();
 
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "SELECT id FROM erasure_requests WHERE email_fingerprint = ?",
     )
       .bind(fp)
@@ -124,7 +124,7 @@ describe("POST /v1/erasure/request", () => {
 
   it("targets the website when WEBSITE_URL is set", async () => {
     const fp = await fingerprintEmail("known3@x.com", SALT);
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
     )
       .bind("user_req_3", "known3@x.com", fp, new Date(0).toISOString())
@@ -151,7 +151,7 @@ describe("POST /v1/erasure/request", () => {
 
   it("falls back to the worker's own confirm form when WEBSITE_URL is unset", async () => {
     const fp = await fingerprintEmail("known4@x.com", SALT);
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
     )
       .bind("user_req_4", "known4@x.com", fp, new Date(0).toISOString())
@@ -177,7 +177,7 @@ describe("POST /v1/erasure/request", () => {
 
   it("rejects a bad Turnstile token when Turnstile is configured (no row, no email)", async () => {
     const fp = await fingerprintEmail("known2@x.com", SALT);
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
     )
       .bind("user_req_2", "known2@x.com", fp, new Date(0).toISOString())
@@ -201,7 +201,7 @@ describe("POST /v1/erasure/request", () => {
     expect(res.status).toBe(403);
     expect(sendSpy).not.toHaveBeenCalled();
 
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "SELECT id FROM erasure_requests WHERE email_fingerprint = ?",
     )
       .bind(fp)

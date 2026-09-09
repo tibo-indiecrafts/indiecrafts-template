@@ -6,7 +6,7 @@
 // docs/apps/web/setup/backups.md).
 //
 // Adding a database = one row here + fill its slot (real migrations, or a README marker
-// under `<slot>/db/<kind>/`). Active today: the api's `core` + `audit` D1s + `security-counters` KV.
+// under `<slot>/db/<kind>/`). Active today: the api's `main` + `audit` D1s + `security-counters` KV.
 // Every OTHER altitude × kind slot is a reserved README marker (see the examples below).
 //
 // Kinds (engine → migrate/backup recipe):
@@ -38,7 +38,7 @@ export const ALTITUDES = ["global", "platform", "surface", "leaf"];
  * @property {string} name   short id + `db:backup:<name>:<env>` / `db:migrate:<name>:<env>` script name
  * @property {"d1"|"kv"|"postgres"|"supabase"|"sanity"} kind  engine → migrate/backup recipe
  * @property {string} owner  the app/service slug that binds + migrates it (ONE owner; consumers use its API)
- * @property {string} [binding]  the wrangler binding name (e.g. "DB") — d1/kv only; the migrate
+ * @property {string} [binding]  the wrangler binding name (e.g. "AUDIT_DB") — d1/kv only; the migrate
  *                               runner passes it to wrangler so it resolves the right per-env database
  * @property {"global"|"platform"|"surface"|"leaf"} altitude  who shares it
  * @property {string} dir    the db's directory (migrations/seed) — reserved until activated
@@ -60,18 +60,18 @@ export const DATABASES = [
     order: 5,
   },
   // Two EU D1s, both owned by `api`, both `--location weur` (create-time + immutable):
-  //   core  (binding CORE_DB) — identity/rights/settings: user_profiles, consent_events,
+  //   main  (binding MAIN_DB) — identity/rights/settings: user_profiles, consent_events,
   //         data_requests, erasure_requests, export_requests, site_settings.
-  //   audit (binding DB) — append-only telemetry firehose: session_events, security_events,
+  //   audit (binding AUDIT_DB) — append-only telemetry firehose: session_events, security_events,
   //         admin_audit, csp_reports, backup_runs; retention-purged by the `cron` worker.
   // Split so a firehose migration/write-spike can't threaten identity data (spec 2026-08-25).
   {
-    name: "core",
+    name: "main",
     kind: "d1",
     owner: "api",
-    binding: "CORE_DB",
+    binding: "MAIN_DB",
     altitude: "global",
-    dir: "code/shared/api/db/core",
+    dir: "code/shared/api/db/main",
     backup: "wrangler",
     order: 8,
   },
@@ -79,7 +79,7 @@ export const DATABASES = [
     name: "audit",
     kind: "d1",
     owner: "api",
-    binding: "DB",
+    binding: "AUDIT_DB",
     altitude: "global",
     dir: "code/shared/api/db/audit",
     backup: "wrangler",

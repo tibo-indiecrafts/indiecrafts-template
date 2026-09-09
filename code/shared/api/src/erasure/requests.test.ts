@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 describe("migration 0004 — erasure_requests", () => {
   it("creates the table with the expected columns", async () => {
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "PRAGMA table_info(erasure_requests)",
     ).all<{ name: string }>();
     const cols = results.map((r) => r.name);

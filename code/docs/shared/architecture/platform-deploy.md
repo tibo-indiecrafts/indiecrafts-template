@@ -93,18 +93,19 @@ CI reads the same registry — no app is hard-coded:
 
 ## Database tiers
 
-Databases add a fourth tier **below** the deploy envs: **`local`** — the disposable miniflare D1 that
-`pnpm dev` binds (via `--env dev --local`), no real `database_id`. The three deploy envs use the real
-remote D1s. Full model + per-DB scripts → [`code/shared/db`](../../../shared/db/.claude/CLAUDE.md).
+The DB tiers are the same three as the deploy envs — **`dev` · `staging` · `prod`**, all real remote
+Cloudflare D1s. There is no separate local tier: local dev binds the real `dev` D1 (`pnpm dev` →
+`wrangler dev --env dev --remote`), so `pnpm dev` and `db:migrate:*:dev` share the one dev database.
+Full model + per-DB scripts → [`code/shared/db`](../../../shared/db/.claude/CLAUDE.md).
 
-| Tier                       | `db:migrate:<db>\|all:<tier>` runs                   | Backed up first?                                                                                      |
-| -------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `local`                    | `--env dev --local` (offline, no real `database_id`) | no — disposable                                                                                       |
-| `dev` · `staging` · `prod` | `--env <env> --remote`                               | **yes** — a pre-migration R2 snapshot; a failed snapshot ABORTS (fail-closed; `--no-backup` opts out) |
+| Tier                       | `db:migrate:<db>\|all:<tier>` runs | Backed up first?                                                                                      |
+| -------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `dev` · `staging` · `prod` | `--env <env> --remote`             | **yes** — a pre-migration R2 snapshot; a failed snapshot ABORTS (fail-closed; `--no-backup` opts out) |
 
-Local flow: `pnpm db:migrate:all:local` → `pnpm dev` (no real ids needed). A prod `db:migrate` / `db:backup`
-confirms first (`⚠ … in PRODUCTION? [y/N]`, auto-skips under `CI` / `--yes`). Back up or migrate one DB by
-name (`db:migrate:core:<tier>`, `db:backup:audit:<tier>`, …) or the whole registry with `--all`.
+Local flow: `pnpm db:migrate:all:dev` → `pnpm dev` (needs wrangler auth + network; the dev D1 is
+shared across developers). A prod `db:migrate` / `db:backup` confirms first (`⚠ … in PRODUCTION?
+[y/N]`, auto-skips under `CI` / `--yes`). Back up or migrate one DB by name (`db:migrate:main:<tier>`,
+`db:backup:audit:<tier>`, …) or the whole registry with `--all`.
 
 ## IaC (Terraform)
 

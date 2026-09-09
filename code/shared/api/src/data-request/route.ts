@@ -55,7 +55,7 @@ export async function handleDataRequestWrite(
   const bearer = bearerOf(request);
   if (!env.APP_API_TOKEN || !bearer || !safeEqual(bearer, env.APP_API_TOKEN))
     return json({ error: "unauthorized" }, 401, cors);
-  if (!env.CORE_DB) return json({ error: "unavailable" }, 503, cors);
+  if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
 
   if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
     return json({ error: "too_large" }, 413, cors);
@@ -98,7 +98,7 @@ export async function handleDataRequestWrite(
       : new Date().toISOString();
 
   try {
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO data_requests (request_type, email, message, status, submitted_at, source, locale, policy_version) VALUES (?, ?, ?, 'new', ?, ?, ?, ?)",
     )
       .bind(
@@ -132,7 +132,7 @@ export async function handleDataRequestList(
   const bearer = bearerOf(request);
   if (!env.APP_API_TOKEN || !bearer || !safeEqual(bearer, env.APP_API_TOKEN))
     return json({ error: "unauthorized" }, 401, cors);
-  if (!env.CORE_DB) return json({ error: "unavailable" }, 503, cors);
+  if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
 
   const url = new URL(request.url);
   // Clamp BOTH ends: a negative limit would become SQLite `LIMIT -1` (unbounded scan).
@@ -142,7 +142,7 @@ export async function handleDataRequestList(
   );
 
   try {
-    const { results } = await env.CORE_DB.prepare(
+    const { results } = await env.MAIN_DB.prepare(
       "SELECT id, request_type, email, message, status, submitted_at, source, locale FROM data_requests ORDER BY submitted_at DESC LIMIT ?",
     )
       .bind(limit)

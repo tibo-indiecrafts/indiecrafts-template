@@ -39,7 +39,7 @@ function postJson(body: Record<string, unknown>): Request {
 
 async function seedProfile(): Promise<string> {
   const fp = await fingerprintEmail(EMAIL, SALT);
-  await env.DB.prepare(
+  await env.AUDIT_DB.prepare(
     "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
   )
     .bind(USER, EMAIL, fp, new Date(0).toISOString())
@@ -70,8 +70,8 @@ function mocks(
     pseudonymise: vi.fn(async () => {}),
   };
   const build = (e: Env) => [
-    createCoreErasureAdapter(e.CORE_DB!, SALT),
-    createAuditErasureAdapter(e.DB!, e.CORE_DB!, SALT),
+    createCoreErasureAdapter(e.MAIN_DB!, SALT),
+    createAuditErasureAdapter(e.AUDIT_DB!, e.MAIN_DB!, SALT),
     createClerkErasureAdapter(clerkClient),
     createSanityErasureAdapter(sanityClient, SALT),
     createOrdersErasureAdapter(),
@@ -92,14 +92,14 @@ describe("handleErasureSelf", () => {
     );
     expect(res.status).toBe(200);
     expect(clerkClient.deleteUser).toHaveBeenCalledWith(USER);
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT status FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
     )
       .bind(USER)
       .first<{ status: string }>();
     expect(row?.status).toBe("completed");
     // A completion audit row was written.
-    const audit = await env.DB.prepare(
+    const audit = await env.AUDIT_DB.prepare(
       "SELECT event FROM admin_audit WHERE target_user_id = ? ORDER BY id DESC LIMIT 1",
     )
       .bind(USER)
@@ -157,8 +157,8 @@ describe("handleErasureSelf", () => {
       }),
     };
     const build = (e: Env) => [
-      createCoreErasureAdapter(e.CORE_DB!, SALT),
-      createAuditErasureAdapter(e.DB!, e.CORE_DB!, SALT),
+      createCoreErasureAdapter(e.MAIN_DB!, SALT),
+      createAuditErasureAdapter(e.AUDIT_DB!, e.MAIN_DB!, SALT),
       createClerkErasureAdapter(clerkClient),
       createSanityErasureAdapter(
         {
@@ -177,7 +177,7 @@ describe("handleErasureSelf", () => {
       authenticate,
     );
     expect(res.status).toBe(207);
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT status, completed_at FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
     )
       .bind(USER)
@@ -186,7 +186,7 @@ describe("handleErasureSelf", () => {
     // A partial run is not "completed" — the completion timestamp stays null.
     expect(row?.completed_at).toBeNull();
     // The accountability trail is still written on the partial path.
-    const audit = await env.DB.prepare(
+    const audit = await env.AUDIT_DB.prepare(
       "SELECT event FROM admin_audit WHERE target_user_id = ? ORDER BY id DESC LIMIT 1",
     )
       .bind(USER)

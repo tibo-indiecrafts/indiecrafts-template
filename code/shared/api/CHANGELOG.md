@@ -5,6 +5,19 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **Local dev now runs against the real remote Cloudflare `dev` D1/KV/R2 — the miniflare local
+  tier is gone.** The `api` + `cron` `dev` scripts gained `--remote` (`wrangler dev --env dev
+--remote`), so `pnpm dev` and `db:migrate:*:dev` share the one `dev` database. Removed the `local`
+  migrate tier: `migrate.mjs` drops the `--local` branch (dev/staging/prod only, each still
+  R2-snapshotted first), and the `db:migrate:{audit,core,all}:local` scripts + their
+  `.vscode/tasks.json` entries are deleted. The local `.wrangler/state` is no longer used. _Why:_ one
+  shared `dev` database is far more workable — a signed-up user shows up locally at once, no webhook
+  detour or backfill guesswork. Trade-off: local dev now needs wrangler auth + a network, and the
+  `dev` D1 is shared across developers (not isolated). See
+  [local-development.md](../../docs/shared/architecture/local-development.md).
+
 ### Removed
 
 - **Pruned the unused `@indiecrafts/packages-shared-agent` dependency** (agent logic now lives in
@@ -22,6 +35,9 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Fixed
 
+- **`backfill-profiles.mjs` wrote to the wrong D1.** It executed the `user_profiles` upsert against
+  binding `DB` (the `audit` firehose) instead of `CORE_DB` (where `user_profiles` lives), so
+  `db:backfill:profiles:*` never worked. It now targets `CORE_DB` and runs `--remote` for every env.
 - **Clerk `user.deleted` now runs the full erasure engine, not a partial pseudonymize.**
   `handleClerkUserDeleted` (`src/erasure/clerk-deleted.ts`) reads the stored email +
   fingerprint before the profile is pseudonymized, then runs `runErasure` with

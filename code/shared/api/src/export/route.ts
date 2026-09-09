@@ -106,10 +106,10 @@ export async function handleExport(
     return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_POST);
 
   // EXPORT_BUCKET is used directly by this route (independent of which adapters
-  // build the data), so it belongs beside DB/CORE_DB/salt as an unconditional requirement.
+  // build the data), so it belongs beside DB/MAIN_DB/salt as an unconditional requirement.
   if (
-    !env.DB ||
-    !env.CORE_DB ||
+    !env.AUDIT_DB ||
+    !env.MAIN_DB ||
     !env.GDPR_FINGERPRINT_SALT ||
     !env.EXPORT_BUCKET
   )
@@ -152,7 +152,7 @@ export async function handleExport(
 
   const token = crypto.randomUUID();
   const createdAt = new Date().toISOString();
-  const ttlH = (await readSettings(env.CORE_DB, settingsCache))[
+  const ttlH = (await readSettings(env.MAIN_DB, settingsCache))[
     "ttl.export_download_hours"
   ];
   const expiresAt = new Date(Date.now() + ttlH * 3_600_000).toISOString();
@@ -163,7 +163,7 @@ export async function handleExport(
 
   // Not wrapped in try/catch: unlike erasure's fire-and-forget audit trail, this row
   // is the only handle to the download token — a failed write must surface as an error.
-  await env.CORE_DB.prepare(
+  await env.MAIN_DB.prepare(
     "INSERT INTO export_requests (token_hash, r2_key, user_id, email_fingerprint, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)",
   )
     .bind(
@@ -178,7 +178,7 @@ export async function handleExport(
 
   try {
     const country = request.headers.get("cf-ipcountry") ?? null;
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, NULL)",
     )
       .bind(createdAt, "export.self", authed.userId, authed.userId, country)
@@ -212,10 +212,10 @@ export async function handleExportDownload(
   // Guard BEFORE hashing — sha256Hex throws on an empty string.
   if (!token) return json({ error: "not_found" }, 404, PUBLIC_CORS);
 
-  if (!env.CORE_DB || !env.EXPORT_BUCKET)
+  if (!env.MAIN_DB || !env.EXPORT_BUCKET)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS);
 
-  const row = await env.CORE_DB.prepare(
+  const row = await env.MAIN_DB.prepare(
     "SELECT id, r2_key, expires_at, downloaded_at FROM export_requests WHERE token_hash = ?",
   )
     .bind(await sha256Hex(token))
@@ -231,7 +231,7 @@ export async function handleExportDownload(
   // Single-use CLAIM: the conditional `AND downloaded_at IS NULL` makes it atomic — only
   // one of two near-simultaneous requests with the same token wins. `changes === 0` means
   // another request already claimed it → 400, same as an already-used row.
-  const claim = await env.CORE_DB.prepare(
+  const claim = await env.MAIN_DB.prepare(
     "UPDATE export_requests SET downloaded_at = ? WHERE id = ? AND downloaded_at IS NULL",
   )
     .bind(new Date().toISOString(), row.id)

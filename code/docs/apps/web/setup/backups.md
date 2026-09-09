@@ -52,13 +52,14 @@ gets its own snapshot for free):
 ```bash
 node code/shared/scripts/data/migrate.mjs audit prod          # snapshot audit → R2, THEN apply migrations
 node code/shared/scripts/data/migrate.mjs audit prod --no-backup  # skip the snapshot (override)
-node code/shared/scripts/data/migrate.mjs audit dev           # local miniflare D1 — no snapshot (disposable)
+node code/shared/scripts/data/migrate.mjs audit dev           # dev is a real remote D1 too — snapshot, THEN apply
 node code/shared/scripts/data/migrate.mjs audit prod --dry-run    # show the plan, run nothing
 ```
 
 The snapshot runs `backup.mjs … --remote`; if it **fails, the migration is aborted** (fail-closed) —
 so a missing R2 bucket (see One-time setup) blocks the migration until you fix it or pass `--no-backup`.
-Dev is skipped because the local D1 is disposable. (Migrations are hand-run today, not part of deploy/CI.)
+Every env (dev included) is a real remote D1, so every migration takes a snapshot first. (Migrations
+are hand-run today, not part of deploy/CI.)
 
 ## Retention
 
@@ -77,8 +78,8 @@ decision, not a storage-cost one — the dumps are tiny.
   ```
 
   Raise it for a client with a longer regulatory backup requirement. **GDPR posture:** backups are
-  excluded from live erasure (you can't edit a dump) — the compliant stance is *bounded retention + a
-  restore re-runs any pending erasures before the DB goes live again*. Keep this consistent with the
+  excluded from live erasure (you can't edit a dump) — the compliant stance is _bounded retention + a
+  restore re-runs any pending erasures before the DB goes live again_. Keep this consistent with the
   [erasure story](/packages/compliance).
 
 ## One-time setup (for `--remote`)

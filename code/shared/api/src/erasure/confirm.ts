@@ -133,7 +133,7 @@ export async function handleErasureConfirm(
   if (request.method !== "POST")
     return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_POST);
 
-  if (!env.DB || !env.CORE_DB || !env.GDPR_FINGERPRINT_SALT)
+  if (!env.AUDIT_DB || !env.MAIN_DB || !env.GDPR_FINGERPRINT_SALT)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
 
   // Production uses the real adapters, which need the Clerk + Sanity secrets. If a
@@ -156,7 +156,7 @@ export async function handleErasureConfirm(
     return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
   const { token, email } = parsed;
 
-  const row = await env.CORE_DB.prepare(
+  const row = await env.MAIN_DB.prepare(
     "SELECT * FROM erasure_requests WHERE token_hash = ?",
   )
     .bind(await sha256Hex(token))
@@ -168,7 +168,7 @@ export async function handleErasureConfirm(
     return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
 
   if (new Date().toISOString() > row.token_expires_at) {
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "UPDATE erasure_requests SET status = 'expired' WHERE id = ?",
     )
       .bind(row.id)
@@ -181,7 +181,7 @@ export async function handleErasureConfirm(
 
   // Every attempt that reaches the email check is counted, win or lose — bounds
   // brute-forcing the typed email against the stored fingerprint.
-  await env.CORE_DB.prepare(
+  await env.MAIN_DB.prepare(
     "UPDATE erasure_requests SET attempts = attempts + 1 WHERE id = ?",
   )
     .bind(row.id)
@@ -208,7 +208,7 @@ export async function handleErasureConfirm(
   });
 
   const hadErrors = receipt.errors.length > 0;
-  await env.CORE_DB.prepare(
+  await env.MAIN_DB.prepare(
     "UPDATE erasure_requests SET status = ?, confirmed_at = ?, completed_at = ?, result = ? WHERE id = ?",
   )
     .bind(
@@ -225,7 +225,7 @@ export async function handleErasureConfirm(
   try {
     const country = request.headers.get("cf-ipcountry") ?? null;
     const subjectId = row.user_id ?? row.email_fingerprint;
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, NULL)",
     )
       .bind(ts, "erasure.completed", subjectId, subjectId, country)

@@ -3,8 +3,8 @@ import { buildErasureAdapters } from "./adapters";
 import type { Env } from "../index";
 
 const full = {
-  CORE_DB: {},
-  DB: {},
+  MAIN_DB: {},
+  AUDIT_DB: {},
   GDPR_FINGERPRINT_SALT: "s",
   CLERK_SECRET_KEY: "sk",
   SANITY_API_WRITE_TOKEN: "w",

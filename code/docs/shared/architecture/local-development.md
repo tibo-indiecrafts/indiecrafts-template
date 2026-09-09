@@ -1,34 +1,42 @@
 # Local development
 
-Run the whole stack on your machine with **no Cloudflare account and no real database IDs** —
-D1 and KV are simulated by miniflare (`wrangler dev`); Sanity is the one store that stays remote.
+Run the whole stack on your machine, wired to the **real remote Cloudflare `dev`
+resources**. D1, KV and R2 bind to the live `dev` databases (`wrangler dev --env dev
+--remote`); Sanity is remote too. There is no miniflare tier — local dev and the deployed
+`dev` worker share the one `dev` database, so your test data is real and visible everywhere.
+
+This needs **wrangler auth + a network connection**, and the `dev` D1 is **shared across
+developers** (no per-machine isolation). That trade is deliberate: one `dev` database is far
+more workable for this template than an offline store that never sees real users.
 
 ## TL;DR
 
 ```bash
 pnpm install
-pnpm db:migrate:all:local   # create the D1 schema in the local miniflare store (once + after new migrations)
-pnpm dev                    # website + api (localhost:8787) + cron, all local
+wrangler login             # once — local dev binds the real dev resources
+pnpm db:migrate:all:dev    # apply the D1 schema to the dev database (once + after new migrations)
+pnpm dev                   # website + api (localhost:8787) + cron, bound to the remote dev D1/KV/R2
 ```
 
-Then set two values in the website's `.env.local` (copy `.env.example`) — see [Databases](#the-four-databases-locally) and [Sanity](#sanity-content).
+Then set two values in the website's `.env.local` (copy `.env.example`) — see [Databases](#the-four-data-stores) and [Sanity](#sanity-content).
 
-## The four databases, locally
+## The four data stores
 
-The registry declares four data stores; the D1s and KV run in miniflare, Sanity does not.
+The registry declares four data stores. The D1s, KV and R2 bind to the real `dev` resources; Sanity is remote too.
 
-| Store | Kind | Local behaviour |
-| --- | --- | --- |
-| `core` (`CORE_DB`) | D1 | miniflare — `db:migrate:all:local` creates its schema |
-| `audit` (`DB`) | D1 | miniflare — same |
-| `security-counters` | KV | miniflare — no schema; works empty, automatically |
-| `content` | Sanity | **remote** — see [Sanity](#sanity-content) |
+| Store                | Kind   | Local behaviour                                          |
+| -------------------- | ------ | -------------------------------------------------------- |
+| `main` (`MAIN_DB`)   | D1     | **remote dev** — `db:migrate:all:dev` creates its schema |
+| `audit` (`AUDIT_DB`) | D1     | **remote dev** — same                                    |
+| `security-counters`  | KV     | **remote dev** — no schema; works empty, automatically   |
+| `content`            | Sanity | **remote** — see [Sanity](#sanity-content)               |
 
-`local` is a real tier, distinct from `dev`/`staging`/`prod` (which are real remote Cloudflare D1s).
+`dev` is a real remote tier, the same one `staging`/`prod` are (all real remote Cloudflare D1s).
 Full model → the `code/shared/db` brief and [Deployment](../../apps/web/setup/deployment).
 
-- **First run, and after adding any migration:** `pnpm db:migrate:all:local`. Offline; no IDs.
-- The local D1 lives in `code/shared/api/.wrangler/state`, which `wrangler dev` reads too — so migrate, then `pnpm dev`.
+- **First run, and after adding any migration:** `pnpm db:migrate:all:dev`. This is a real remote
+  D1 — the migrate runner takes a pre-migration R2 snapshot first (aborts on failure).
+- `pnpm dev` binds the same remote `dev` D1, so migrate, then `pnpm dev`; the two always agree.
 
 ## Point the website at the local api
 
@@ -44,7 +52,7 @@ Without these the site still runs; those features just can't reach the api.
 
 ## Sanity (`content`)
 
-Content is a remote store, not a local D1 — `db:migrate:all:local` never touches it. For the blog and
+Content is Sanity, not a D1 — `db:migrate:all:dev` never touches it. For the blog and
 Studio locally, set a real Sanity project in `.env.local`:
 
 ```bash
@@ -56,13 +64,15 @@ Leave them unset and the `blog` / `studio` feature flags stay off — the market
 
 ## Caveats
 
-- **`api` and `cron` keep separate local D1s** — different workers, different miniflare state. `db:migrate:all:local`
-  migrates the api's (the owner). You rarely run `cron` locally; just know they don't share local data.
-- **Local needs no real IDs; deploying does.** Creating the real `dev`/`staging`/`prod` D1s and pasting their
-  IDs into `wrangler.toml` is a separate step → [Deployment](../../apps/web/setup/deployment).
+- **The `dev` D1 is shared.** Every developer's `pnpm dev` reads and writes the same remote `dev`
+  database. Your local rows are everyone's; don't put anything there you would not put in a shared env.
+- **`api` and `cron` bind the same remote `dev` D1s** — so a row the api writes, the cron job sees
+  (no separate local state to keep in sync).
+- **Deploying still needs the real IDs.** `dev`/`staging`/`prod` D1 IDs live in `wrangler.toml`;
+  local dev reuses the `dev` ones → [Deployment](../../apps/web/setup/deployment).
 
 ## Migrating the real environments
 
-`db:migrate:<db>|all:<tier>` picks the tier: `local` (miniflare) · `dev` / `staging` / `prod` (real remote D1s,
-each taking a pre-migration R2 snapshot that **aborts on failure**; a prod run **confirms first**). Full script
-list → [Scripts](../../apps/web/setup/scripts); the R2 snapshots → [Backups](../../apps/web/setup/backups).
+`db:migrate:<db>|all:<tier>` picks the tier: `dev` / `staging` / `prod` — all real remote D1s, each
+taking a pre-migration R2 snapshot that **aborts on failure**; a prod run **confirms first**. Full
+script list → [Scripts](../../apps/web/setup/scripts); the R2 snapshots → [Backups](../../apps/web/setup/backups).

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 describe("migration 0002 — user_profiles", () => {
   it("creates the table with the expected columns", async () => {
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "PRAGMA table_info(user_profiles)",
     ).all<{ name: string }>();
     const cols = results.map((r) => r.name);
@@ -39,7 +39,7 @@ describe("login upsert", () => {
     const first = await postSession("user_login_1");
     expect(first.status).toBe(201);
 
-    const a = await env.DB.prepare(
+    const a = await env.AUDIT_DB.prepare(
       "SELECT created_at, last_login_at FROM user_profiles WHERE user_id = ?",
     )
       .bind("user_login_1")
@@ -50,7 +50,7 @@ describe("login upsert", () => {
     const second = await postSession("user_login_1");
     expect(second.status).toBe(201);
 
-    const { results } = await env.DB.prepare(
+    const { results } = await env.AUDIT_DB.prepare(
       "SELECT created_at, last_login_at FROM user_profiles WHERE user_id = ?",
     )
       .bind("user_login_1")

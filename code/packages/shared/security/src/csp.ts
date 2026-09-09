@@ -79,8 +79,11 @@ function cspDirectives(
       .filter((token, i) => i === 0 || !drop.has(token))
       .join(" ");
 
+  // Dev needs 'unsafe-eval' even under the strict nonce policy: React's dev build uses
+  // eval() for debugging (harmless — React never uses eval() in production, and `allowEval`
+  // is false outside dev/test, so prod stays strict).
   const scriptSrc = nonce
-    ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`
+    ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'${allowEval ? " 'unsafe-eval'" : ""}`
     : keep(
         `script-src ${src(["'self'", "'unsafe-inline'"], allowEval ? ["'unsafe-eval'"] : undefined, ga ? GA_SCRIPT : undefined, TURNSTILE, clerk.script, csp.scriptSrc, embed)}`,
       );
@@ -89,13 +92,17 @@ function cspDirectives(
     `default-src 'self'`,
     scriptSrc,
     `style-src 'self' 'unsafe-inline'`,
-    keep(`img-src ${src(["'self'", "data:", "blob:", "https:"], clerk.img, csp.imgSrc)}`),
+    keep(
+      `img-src ${src(["'self'", "data:", "blob:", "https:"], clerk.img, csp.imgSrc)}`,
+    ),
     keep(`media-src ${src(["'self'", "blob:"], csp.mediaSrc)}`),
     keep(`font-src ${src(["'self'", "data:"], csp.fontSrc)}`),
     keep(
       `connect-src ${src([...getCSPConnectSources(env)], ga ? GA_CONNECT : undefined, clerk.connect, csp.connectSrc, embed)}`,
     ),
-    keep(`frame-src ${src(["'self'"], TURNSTILE, clerk.frame, csp.frameSrc, embed)}`),
+    keep(
+      `frame-src ${src(["'self'"], TURNSTILE, clerk.frame, csp.frameSrc, embed)}`,
+    ),
     `object-src 'none'`,
     `frame-ancestors 'none'`,
     `base-uri 'self'`,
@@ -110,7 +117,10 @@ function cspDirectives(
   return directives;
 }
 
-function withReporting(directives: string[], reporting: CspReporting): string[] {
+function withReporting(
+  directives: string[],
+  reporting: CspReporting,
+): string[] {
   return [
     ...directives,
     `report-to csp-endpoint`,
@@ -125,7 +135,9 @@ export function buildCsp(
   nonce?: string,
 ): string {
   const directives = cspDirectives(env, csp, {}, nonce);
-  return (reporting ? withReporting(directives, reporting) : directives).join("; ");
+  return (reporting ? withReporting(directives, reporting) : directives).join(
+    "; ",
+  );
 }
 
 export function buildReportOnlyCsp(

@@ -26,25 +26,25 @@ Every Cloudflare resource name comes from one function —
 `domains.mjs` (placeholders `example.com` until set — until then prod also serves on `*.workers.dev`).
 `<sub>` is your account's workers.dev subdomain (one per account, fixed after the first worker deploy).
 
-| Surface | Class | dev / staging URL | prod URL (once `domains.mjs` is set) |
-| --- | --- | --- | --- |
-| **website** | next-cf | `indiecrafts-<env>-web-surfaces-website.<sub>.workers.dev` | `https://example.com` (+ `www`) |
-| **admin** | next-cf | `indiecrafts-<env>-web-surfaces-admin.<sub>.workers.dev` | `https://admin.example.com` |
-| **app** | next-cf | `indiecrafts-<env>-web-surfaces-app.<sub>.workers.dev` | `https://app.example.com` |
-| **api** | worker-cf | `indiecrafts-<env>-shared-api.<sub>.workers.dev` | `https://api.example.com` |
-| **cron** | worker-cf | `indiecrafts-<env>-shared-cron.<sub>.workers.dev` | _(no route — scheduled)_ |
-| **workers** | worker-cf | `indiecrafts-<env>-shared-workers.<sub>.workers.dev` | _(no route — queue/event)_ |
-| **agent** | worker-cf | `indiecrafts-<env>-shared-agent.<sub>.workers.dev` | _(internal)_ |
-| **storybook** | Worker (assets) | `indiecrafts-<env>-web-tools-storybook.<sub>.workers.dev` | `https://storybook.example.com` |
-| **mobile** | expo | EAS build channel `<env>` (App/Play Store) | store listing |
-| **hybrid** | electron | installer artifact per `<env>` | signed `.dmg` / `.exe` |
+| Surface       | Class           | dev / staging URL                                          | prod URL (once `domains.mjs` is set) |
+| ------------- | --------------- | ---------------------------------------------------------- | ------------------------------------ |
+| **website**   | next-cf         | `indiecrafts-<env>-web-surfaces-website.<sub>.workers.dev` | `https://example.com` (+ `www`)      |
+| **admin**     | next-cf         | `indiecrafts-<env>-web-surfaces-admin.<sub>.workers.dev`   | `https://admin.example.com`          |
+| **app**       | next-cf         | `indiecrafts-<env>-web-surfaces-app.<sub>.workers.dev`     | `https://app.example.com`            |
+| **api**       | worker-cf       | `indiecrafts-<env>-shared-api.<sub>.workers.dev`           | `https://api.example.com`            |
+| **cron**      | worker-cf       | `indiecrafts-<env>-shared-cron.<sub>.workers.dev`          | _(no route — scheduled)_             |
+| **workers**   | worker-cf       | `indiecrafts-<env>-shared-workers.<sub>.workers.dev`       | _(no route — queue/event)_           |
+| **agent**     | worker-cf       | `indiecrafts-<env>-shared-agent.<sub>.workers.dev`         | _(internal)_                         |
+| **storybook** | Worker (assets) | `indiecrafts-<env>-web-tools-storybook.<sub>.workers.dev`  | `https://storybook.example.com`      |
+| **mobile**    | expo            | EAS build channel `<env>` (App/Play Store)                 | store listing                        |
+| **hybrid**    | electron        | installer artifact per `<env>`                             | signed `.dmg` / `.exe`               |
 
 `admin` + `app` are **subdomains of the website root** so Clerk drops the session cookie on the parent
 domain and all three share one login. `api`, `storybook`, and `downloads` (the hybrid installer host +
 update feed, an R2 bucket) get their own subdomains (`api.<root>`, `storybook.<root>`, `downloads.<root>`).
 
-Backing data/storage (no public URL): D1 `indiecrafts-<env>-shared-api` (audit) + `…-shared-api-core`
-(core) · KV `indiecrafts-<env>-shared-api-security-counters` · R2 `…-shared-api-export` (GDPR exports)
+Backing data/storage (no public URL): D1 `indiecrafts-<env>-db-audit` (audit) + `…-db-main`
+(main) · KV `indiecrafts-<env>-shared-api-security-counters` · R2 `…-shared-api-export` (GDPR exports)
 and `…-hybrid-surfaces-main-releases` (desktop installers).
 
 ## Phase 0 — one-time setup (before any env)
@@ -61,7 +61,7 @@ and `…-hybrid-surfaces-main-releases` (desktop installers).
 
 ## Phase 1 — dev (do this first — `*.workers.dev`, lowest risk)
 
-1. **Provision infra** (D1 `DB` + `CORE_DB`, KV, R2 `EXPORT_BUCKET`, queues):
+1. **Provision infra** (D1 `DB` + `MAIN_DB`, KV, R2 `EXPORT_BUCKET`, queues):
    - `pnpm infra:shared:api:init` then `pnpm infra:shared:api:apply:dev`
    - `pnpm infra:web:website:apply:dev` · `pnpm setup:web:website:kv`
    - Wire the bindings into `wrangler.toml`: `node code/shared/scripts/infra/bindings.mjs` (paste the emitted blocks).
@@ -78,14 +78,14 @@ and `…-hybrid-surfaces-main-releases` (desktop installers).
 
 A first dev run surfaced these — fold them into the steps above:
 
-- **D1 region is immutable — create with `--location weur`.** `wrangler d1 create indiecrafts-dev-shared-api
-  --location weur` (and `…-core`). audit + core MUST share the region (the split assumes one EU region);
+- **D1 region is immutable — create with `--location weur`.** `wrangler d1 create indiecrafts-dev-db-audit
+--location weur` (and `…-db-main`). audit + main MUST share the region (the split assumes one EU region);
   a bare `d1 create` picks a nearby region (EEUR here) and can't be changed after.
 - **The FIRST migration needs `--no-backup`.** `pnpm db:migrate:all:dev --no-backup`. The pre-migration R2
   snapshot has nothing to back up (empty DBs) and its `recordBackupRun` writes to `backup_runs` — a table
   the migration itself creates (chicken-and-egg). Later migrations back up normally.
 - **Each next-cf app needs its ISR R2 bucket first.** `wrangler r2 bucket create
-  indiecrafts-dev-web-surfaces-<app>-isr` (bound as `NEXT_INC_CACHE_R2_BUCKET`) for website/admin/app, or
+indiecrafts-dev-web-surfaces-<app>-isr` (bound as `NEXT_INC_CACHE_R2_BUCKET`) for website/admin/app, or
   the deploy fails after the build.
 - **OpenNext builds are memory-heavy.** Run with `NODE_OPTIONS=--max-old-space-size=6144` and NOT
   alongside other dev servers — concurrent servers + the build OOM'd (SIGTERM / exit 143).
@@ -96,7 +96,7 @@ A first dev run surfaced these — fold them into the steps above:
 > `@opennextjs/cloudflare` **1.20.6** adds **experimental** Node-middleware support, so the pin — Next
 > `16.3.4` + `@opennextjs/cloudflare` `1.20.6` (both **exact**, no `^`) — builds and ships all three apps.
 > `pnpm build:cf` prints `WARN Node.js middleware support is experimental in cloudflare … Use at your own
-> risk`; that is expected. Tracking [cloudflare/workers-sdk#13755](https://github.com/cloudflare/workers-sdk/issues/13755)
+risk`; that is expected. Tracking [cloudflare/workers-sdk#13755](https://github.com/cloudflare/workers-sdk/issues/13755)
 > for the stable landing.
 >
 > **The pin is repo-wide.** ALL workspace `next` pins are `16.3.4` — a second Next version in

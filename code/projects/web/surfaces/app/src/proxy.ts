@@ -6,7 +6,7 @@
 
 import createMiddleware from "next-intl/middleware";
 import { clerkMiddleware } from "@clerk/nextjs/server";
-import { NextRequest, type NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
 import {
   generateNonce,
@@ -17,6 +17,10 @@ import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
 
 const intlMiddleware = createMiddleware(routing);
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
+// The sign-in page is the one public route (with or without a locale prefix).
+const isSignIn = (request: NextRequest) =>
+  /(^|\/)sign-in(\/|$)/.test(request.nextUrl.pathname);
 
 // Enforce by default (the strict nonce CSP is the enforced policy); set
 // CSP_MODE=report-only to roll a surface back to observation-only.
@@ -57,8 +61,25 @@ function runIntl(request: NextRequest): NextResponse {
   return setCsp(response, nonce);
 }
 
+// When Clerk is configured, every route except sign-in requires a signed-in user; anything
+// else redirects to sign-in. Coarse routing only — the real enforcement is the server-side
+// (app) layout gate (middleware is bypassable, Next.js CVE-2025-29927). Unconfigured → the
+// app runs as a public scaffold (next-intl only), auth opt-in on the key.
+const gated = clerkMiddleware(async (auth, request) => {
+  if (isSignIn(request)) return runIntl(request);
+  const { userId } = await auth();
+  if (!userId) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/sign-in";
+    url.search = "";
+    // No nonce'd scripts on a redirect — still stamp the enforced CSP for consistency.
+    return setCsp(NextResponse.redirect(url), generateNonce());
+  }
+  return runIntl(request);
+});
+
 const proxy = clerkConfigured
-  ? clerkMiddleware((_auth, request) => runIntl(request))
+  ? gated
   : (request: NextRequest) => runIntl(request);
 
 export default proxy;

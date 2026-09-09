@@ -28,7 +28,7 @@ describe("kind:csp-report → csp_reports", () => {
     expect((await postCspReports([one])).status).toBe(201);
     expect((await postCspReports([one])).status).toBe(201);
 
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT count, document_path FROM csp_reports WHERE group_key = ?",
     )
       .bind("website|report|img-src|/orders/:id|https://evil.example")
@@ -78,10 +78,10 @@ describe("GET /v1/csp-reports", () => {
       data: { group_key: string; count: number }[];
     };
     const groups = body.data.map((row) => row.group_key);
-    expect(groups[0]).toBe("website|enforce|script-src-elem|/b|https://high.example");
-    expect(body.data[0].count).toBe(2);
-    expect(groups).toContain(
-      "website|report|img-src|/a|https://low.example",
+    expect(groups[0]).toBe(
+      "website|enforce|script-src-elem|/b|https://high.example",
     );
+    expect(body.data[0].count).toBe(2);
+    expect(groups).toContain("website|report|img-src|/a|https://low.example");
   });
 });

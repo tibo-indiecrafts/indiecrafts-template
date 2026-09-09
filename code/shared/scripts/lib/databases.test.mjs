@@ -6,7 +6,10 @@ import { fileURLToPath } from "node:url";
 import { DATABASES, KINDS, ALTITUDES, byKind } from "./databases.mjs";
 import { APPS } from "./apps.mjs";
 
-const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../..");
+const REPO_ROOT = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../..",
+);
 
 test("every db row is well-formed with a known kind + altitude", () => {
   for (const d of DATABASES) {
@@ -21,12 +24,12 @@ test("db names are unique", () => {
   assert.equal(new Set(names).size, names.length);
 });
 
-test("the core D1 is registered (identity/rights/settings, split from the audit firehose)", () => {
-  const core = DATABASES.find((d) => d.name === "core");
-  assert.ok(core, "no `core` row in the registry");
-  assert.equal(core.kind, "d1");
-  assert.equal(core.owner, "api");
-  assert.equal(core.binding, "CORE_DB");
+test("the main D1 is registered (identity/rights/settings, split from the audit firehose)", () => {
+  const main = DATABASES.find((d) => d.name === "main");
+  assert.ok(main, "no `main` row in the registry");
+  assert.equal(main.kind, "d1");
+  assert.equal(main.owner, "api");
+  assert.equal(main.binding, "MAIN_DB");
 });
 
 test("audit's dir points at the reorganized migrations dir", () => {
@@ -51,7 +54,10 @@ test("every d1 db has a binding that its owner's wrangler.toml declares", () => 
   for (const d of byKind("d1")) {
     assert.ok(d.binding, `d1 db "${d.name}" needs a "binding" (e.g. "DB")`);
     const owner = APPS.find((a) => a.slug === d.owner);
-    assert.ok(owner, `d1 db "${d.name}" owner "${d.owner}" not in the app registry`);
+    assert.ok(
+      owner,
+      `d1 db "${d.name}" owner "${d.owner}" not in the app registry`,
+    );
     const toml = resolve(REPO_ROOT, owner.dir, "wrangler.toml");
     assert.ok(existsSync(toml), `${d.owner}: wrangler.toml missing`);
     assert.match(

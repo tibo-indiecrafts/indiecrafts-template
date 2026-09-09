@@ -2,7 +2,10 @@ import { describe, expect, it, afterEach } from "vitest";
 import { buildCsp, buildReportOnlyCsp } from "./csp";
 import { securityHeaders } from "./headers";
 
-const REPORTING = { endpoint: "/api/csp-report", reportOnly: { dropSources: ["https:"] } };
+const REPORTING = {
+  endpoint: "/api/csp-report",
+  reportOnly: { dropSources: ["https:"] },
+};
 
 describe("csp reporting", () => {
   it("appends report-to and report-uri to the enforced policy", () => {
@@ -27,7 +30,9 @@ describe("csp reporting", () => {
   });
 
   it("candidate is null without reportOnly", () => {
-    expect(buildReportOnlyCsp("production", {}, { endpoint: "/api/csp-report" })).toBeNull();
+    expect(
+      buildReportOnlyCsp("production", {}, { endpoint: "/api/csp-report" }),
+    ).toBeNull();
   });
 
   it("securityHeaders emits Reporting-Endpoints and the Report-Only header", () => {
@@ -81,5 +86,14 @@ describe("buildCsp nonce (strict script-src)", () => {
     const csp = buildCsp("production", {});
     expect(csp).toContain("script-src 'self' 'unsafe-inline'");
     expect(csp).not.toContain("strict-dynamic");
+  });
+
+  it("adds 'unsafe-eval' to the nonce policy in development (React dev eval), never in production", () => {
+    const dev = buildCsp("development", {}, undefined, "abc123");
+    expect(dev).toContain(
+      "script-src 'self' 'nonce-abc123' 'strict-dynamic' https: 'unsafe-inline' 'unsafe-eval'",
+    );
+    const prod = buildCsp("production", {}, undefined, "abc123");
+    expect(prod).not.toContain("'unsafe-eval'");
   });
 });

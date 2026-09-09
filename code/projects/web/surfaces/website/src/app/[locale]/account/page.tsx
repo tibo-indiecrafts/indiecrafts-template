@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { redirect } from "@/i18n/routing";
 import {
   buildDeleteAccountCopy,
   buildExportCopy,
@@ -37,6 +39,10 @@ export default async function AccountPage({ params }: Props) {
   // Fail-safe: with no client api origin the control could only ever fail on
   // submit (a relative `/v1/erasure/self` 404s) — 404 the whole page instead.
   if (!process.env.NEXT_PUBLIC_API_URL) notFound();
+  // Account actions require a signed-in user — the panel calls the authenticated
+  // `/v1/erasure/self` + `/v1/export`. Signed out → home (sign in via the header menu).
+  const { userId } = await auth();
+  if (!userId) redirect({ href: "/", locale });
 
   const t = await getTranslations({ locale, namespace: "account.delete" });
   const copy = buildDeleteAccountCopy(t);

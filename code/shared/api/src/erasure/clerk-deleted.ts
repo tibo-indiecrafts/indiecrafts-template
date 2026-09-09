@@ -21,19 +21,23 @@ export async function handleClerkUserDeleted(
   buildAdapters: (env: Env) => ErasureAdapter[] = (e) =>
     buildErasureAdapters(e, { includeClerk: false }),
 ): Promise<void> {
-  if (!env.CORE_DB) return;
+  if (!env.MAIN_DB) return;
 
-  const profile = await env.CORE_DB.prepare(
+  const profile = await env.MAIN_DB.prepare(
     "SELECT email, email_fingerprint FROM user_profiles WHERE user_id = ?",
   )
     .bind(userId)
     .first<{ email: string | null; email_fingerprint: string | null }>();
 
   // No profile, no fingerprint, or the engine's stores (DB/salt) are unavailable → fall
-  // back to the partial pseudonymize (the prior behavior, needs only CORE_DB) so a delete
+  // back to the partial pseudonymize (the prior behavior, needs only MAIN_DB) so a delete
   // still scrubs email + name and returns 200.
-  if (!profile?.email_fingerprint || !env.DB || !env.GDPR_FINGERPRINT_SALT) {
-    await env.CORE_DB.prepare(
+  if (
+    !profile?.email_fingerprint ||
+    !env.AUDIT_DB ||
+    !env.GDPR_FINGERPRINT_SALT
+  ) {
+    await env.MAIN_DB.prepare(
       "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
     )
       .bind(`deleted_${userId}@anonymized.local`, "Deleted User", ts, userId)
@@ -66,7 +70,7 @@ export async function handleClerkUserDeleted(
   // row (no real single-use token here, so a throwaway hash satisfies the NOT NULL column,
   // same as self.ts) AND the admin_audit row. No email — the subject is gone.
   try {
-    await env.CORE_DB.prepare(
+    await env.MAIN_DB.prepare(
       "INSERT INTO erasure_requests (status, token_hash, token_expires_at, attempts, user_id, email_fingerprint, requested_at, confirmed_at, completed_at, due_at, result) " +
         "VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?)",
     )
@@ -83,7 +87,7 @@ export async function handleClerkUserDeleted(
         JSON.stringify(receipt),
       )
       .run();
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, NULL, NULL)",
     )
       .bind(ts, "erasure.clerk_deleted", userId, userId)

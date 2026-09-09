@@ -318,65 +318,44 @@
     },
     {
       "label": "db:migrate:audit:dev",
-      "detail": "run D1 database migrations — audit dev (pre-migration R2 snapshot on staging/prod)",
+      "detail": "run D1 migrations — audit dev (real remote D1, pre-migration R2 snapshot)",
       "type": "shell",
       "command": "pnpm db:migrate:audit:dev",
       "problemMatcher": []
     },
     {
       "label": "db:migrate:audit:staging",
-      "detail": "run D1 database migrations — audit staging (pre-migration R2 snapshot on staging/prod)",
+      "detail": "run D1 migrations — audit staging (real remote D1, pre-migration R2 snapshot)",
       "type": "shell",
       "command": "pnpm db:migrate:audit:staging",
       "problemMatcher": []
     },
     {
       "label": "db:migrate:audit:prod",
-      "detail": "run D1 database migrations — audit prod (pre-migration R2 snapshot on staging/prod)",
+      "detail": "run D1 migrations — audit prod (real remote D1, R2 snapshot + prod confirm)",
       "type": "shell",
       "command": "pnpm db:migrate:audit:prod",
       "problemMatcher": []
     },
     {
-      "label": "db:migrate:audit:local",
-      "detail": "run D1 migrations — audit (local miniflare, offline)",
-      "type": "shell",
-      "command": "pnpm db:migrate:audit:local",
-      "problemMatcher": []
-    },
-    {
-      "label": "db:migrate:core:local",
-      "detail": "run D1 migrations — core (local miniflare, offline)",
-      "type": "shell",
-      "command": "pnpm db:migrate:core:local",
-      "problemMatcher": []
-    },
-    {
-      "label": "db:migrate:core:dev",
+      "label": "db:migrate:main:dev",
       "detail": "run D1 migrations — core dev (real remote D1, pre-migration R2 snapshot)",
       "type": "shell",
-      "command": "pnpm db:migrate:core:dev",
+      "command": "pnpm db:migrate:main:dev",
       "problemMatcher": []
     },
     {
-      "label": "db:migrate:core:staging",
+      "label": "db:migrate:main:staging",
       "detail": "run D1 migrations — core staging (real remote D1, pre-migration R2 snapshot)",
       "type": "shell",
-      "command": "pnpm db:migrate:core:staging",
+      "command": "pnpm db:migrate:main:staging",
       "problemMatcher": []
     },
     {
-      "label": "db:migrate:core:prod",
+      "label": "db:migrate:main:prod",
       "detail": "run D1 migrations — core prod (real remote D1, R2 snapshot + prod confirm)",
       "type": "shell",
-      "command": "pnpm db:migrate:core:prod",
-      "problemMatcher": []
-    },
-    {
-      "label": "db:migrate:all:local",
-      "detail": "run D1 migrations — all D1s (local miniflare, offline)",
-      "type": "shell",
-      "command": "pnpm db:migrate:all:local",
+      "command": "pnpm db:migrate:main:prod",
       "problemMatcher": []
     },
     {
@@ -457,45 +436,45 @@
       "problemMatcher": []
     },
     {
-      "label": "db:backup:core:dev",
-      "detail": "back up the core D1 (local dump) — dev",
+      "label": "db:backup:main:dev",
+      "detail": "back up the main D1 (local dump) — dev",
       "type": "shell",
-      "command": "pnpm db:backup:core:dev",
+      "command": "pnpm db:backup:main:dev",
       "problemMatcher": []
     },
     {
-      "label": "db:backup:core:staging",
-      "detail": "back up the core D1 (local dump) — staging",
+      "label": "db:backup:main:staging",
+      "detail": "back up the main D1 (local dump) — staging",
       "type": "shell",
-      "command": "pnpm db:backup:core:staging",
+      "command": "pnpm db:backup:main:staging",
       "problemMatcher": []
     },
     {
-      "label": "db:backup:core:prod",
-      "detail": "back up the core D1 (local dump) — prod",
+      "label": "db:backup:main:prod",
+      "detail": "back up the main D1 (local dump) — prod",
       "type": "shell",
-      "command": "pnpm db:backup:core:prod",
+      "command": "pnpm db:backup:main:prod",
       "problemMatcher": []
     },
     {
-      "label": "db:backup:core:dev:remote",
-      "detail": "back up the core D1 + upload to R2 — dev",
+      "label": "db:backup:main:dev:remote",
+      "detail": "back up the main D1 + upload to R2 — dev",
       "type": "shell",
-      "command": "pnpm db:backup:core:dev:remote",
+      "command": "pnpm db:backup:main:dev:remote",
       "problemMatcher": []
     },
     {
-      "label": "db:backup:core:staging:remote",
-      "detail": "back up the core D1 + upload to R2 — staging",
+      "label": "db:backup:main:staging:remote",
+      "detail": "back up the main D1 + upload to R2 — staging",
       "type": "shell",
-      "command": "pnpm db:backup:core:staging:remote",
+      "command": "pnpm db:backup:main:staging:remote",
       "problemMatcher": []
     },
     {
-      "label": "db:backup:core:prod:remote",
-      "detail": "back up the core D1 + upload to R2 — prod",
+      "label": "db:backup:main:prod:remote",
+      "detail": "back up the main D1 + upload to R2 — prod",
       "type": "shell",
-      "command": "pnpm db:backup:core:prod:remote",
+      "command": "pnpm db:backup:main:prod:remote",
       "problemMatcher": []
     },
     {

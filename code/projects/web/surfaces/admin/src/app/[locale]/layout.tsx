@@ -30,8 +30,13 @@ export default async function LocaleLayout({
   const nonce = (await headers()).get("x-nonce") ?? undefined;
 
   return (
-    <html lang={locale} dir={localeDir(locale as Locale)}>
-      <body>
+    // suppressHydrationWarning: the inline THEME_SCRIPT sets `data-theme` on <html> before
+    // hydration, so the server/client attributes differ by design (one level deep only).
+    <html lang={locale} dir={localeDir(locale as Locale)} suppressHydrationWarning>
+      {/* suppressHydrationWarning: browser extensions inject attributes on <body>
+          (e.g. data-atm-installed) before React hydrates — a one-level-deep,
+          client-only diff, not an app mismatch. */}
+      <body suppressHydrationWarning>
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <NextIntlClientProvider>
           {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (

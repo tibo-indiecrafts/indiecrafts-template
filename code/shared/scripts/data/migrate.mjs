@@ -2,16 +2,14 @@
 // Registry-driven migration runner — reads `scripts/lib/databases.mjs` and dispatches
 // on `kind`. Runs from the db owner's dir.
 //
-//   node scripts/data/migrate.mjs <name>|--all <local|dev|staging|prod> [--dry-run] [--no-backup] [--yes]
+//   node scripts/data/migrate.mjs <name>|--all <dev|staging|prod> [--dry-run] [--no-backup] [--yes]
 //
-// TIERS:
-//   local              → the disposable miniflare D1 (`--env dev --local`). Offline, no
-//                        real database_id needed, no snapshot. This is what `pnpm dev` uses.
-//   dev/staging/prod   → the REAL remote D1 (`--env <env> --remote`). A pre-migration R2
-//                        snapshot runs FIRST (via `backup.mjs --remote`) so a bad migration
-//                        is recoverable; a FAILED snapshot ABORTS the migration (fail-closed).
-//                        `--no-backup` opts out. A prod migration asks to confirm first
-//                        (skipped under CI or `--yes`).
+// TIERS: dev/staging/prod are all REAL remote Cloudflare D1s (`--env <env> --remote`).
+// There is no miniflare tier — local dev runs against the dev D1 too (`wrangler dev
+// --remote`), so `pnpm dev` and `db:migrate:*:dev` share the one dev database. A
+// pre-migration R2 snapshot runs FIRST (via `backup.mjs --remote`) so a bad migration is
+// recoverable; a FAILED snapshot ABORTS the migration (fail-closed). `--no-backup` opts
+// out. A prod migration asks to confirm first (skipped under CI or `--yes`).
 //
 // Recipes: d1 → `wrangler d1 migrations apply` · postgres/supabase → drizzle-kit / supabase
 // CLI (reserved) · kv/sanity → no schema migrations.
@@ -29,15 +27,14 @@ const REPO_ROOT = path.resolve(
   "../../../..",
 );
 
-// `local` is the miniflare tier (migrate-only — you never deploy or back up miniflare);
-// dev/staging/prod are the real remote environments.
-const MIGRATE_ENVS = ["local", ...ENVS];
+// dev/staging/prod are the real remote environments — there is no local miniflare tier.
+const MIGRATE_ENVS = [...ENVS];
 
 /** Whether a pre-migration R2 snapshot should run before applying `db` in `env`.
- *  Only REMOTE schema changes (dev/staging/prod) need a rollback net — `local` is the
- *  disposable miniflare D1 — and `--no-backup` opts out. Extracted so it's unit-testable. */
+ *  Every remote D1 schema change (dev/staging/prod) needs a rollback net; `--no-backup`
+ *  opts out. Extracted so it's unit-testable. */
 export function shouldBackupBeforeMigrate(db, env, { noBackup } = {}) {
-  return db.kind === "d1" && env !== "local" && !noBackup;
+  return db.kind === "d1" && !noBackup;
 }
 
 /** Apply migrations for ONE registered database. Returns the exit status (0 = ok). */
@@ -51,25 +48,25 @@ function migrateOne(db, env, { dry, noBackup }) {
     return 0;
   }
   if (db.kind !== "d1") {
-    console.error(`migrate recipe for "${db.kind}" is reserved — not wired yet.`);
+    console.error(
+      `migrate recipe for "${db.kind}" is reserved — not wired yet.`,
+    );
     return 1;
   }
   if (!db.binding) {
     console.error(
-      `D1 "${db.name}" has no "binding" in the registry — add it (e.g. binding: "DB").`,
+      `D1 "${db.name}" has no "binding" in the registry — add it (e.g. binding: "AUDIT_DB").`,
     );
     return 1;
   }
 
   const willBackup = shouldBackupBeforeMigrate(db, env, { noBackup });
   // Pass the BINDING (not a grepped database_name): with `--env`, wrangler resolves the
-  // binding to the RIGHT per-env database. `local` applies to the miniflare D1; the real
-  // envs hit the remote.
-  const scope =
-    env === "local" ? ["--env", "dev", "--local"] : ["--env", env, "--remote"];
+  // binding to the RIGHT per-env remote database.
+  const scope = ["--env", env, "--remote"];
 
   if (dry) {
-    const where = env === "local" ? "local miniflare" : `${env} remote`;
+    const where = `${env} remote`;
     if (willBackup)
       console.log(
         `[dry-run] would take a pre-migration R2 backup of ${db.name} (${env}) first`,
@@ -131,7 +128,7 @@ async function main() {
 
   if (!MIGRATE_ENVS.includes(env) || (!all && !name)) {
     console.error(
-      "Usage: migrate.mjs <name>|--all <local|dev|staging|prod> [--dry-run] [--no-backup] [--yes]",
+      "Usage: migrate.mjs <name>|--all <dev|staging|prod> [--dry-run] [--no-backup] [--yes]",
     );
     process.exit(1);
   }

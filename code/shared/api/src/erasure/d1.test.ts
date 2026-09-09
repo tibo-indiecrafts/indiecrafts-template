@@ -11,8 +11,8 @@ const USER = "user_erase_1";
 // coreDb and auditDb are the SAME handle here. The adapters take separate handles for
 // runtime binding separation; these tests exercise the SQL behavior, not the physical
 // DB split, so one handle for both is correct.
-const coreDb = env.DB;
-const auditDb = env.DB;
+const coreDb = env.AUDIT_DB;
+const auditDb = env.AUDIT_DB;
 
 async function seed() {
   const fp = await fingerprintEmail(EMAIL, SALT);
@@ -103,7 +103,9 @@ describe("D1 erasure adapters (core + audit split)", () => {
       expect(res.anonymized.user_profiles).toBe(1);
       expect(res.anonymized.consent_events).toBeGreaterThanOrEqual(1);
       const prof = await coreDb
-        .prepare("SELECT email, anonymized FROM user_profiles WHERE user_id = ?")
+        .prepare(
+          "SELECT email, anonymized FROM user_profiles WHERE user_id = ?",
+        )
         .bind(USER)
         .first<{ email: string; anonymized: number }>();
       expect(prof?.email).toMatch(/@anonymized\.local$/);

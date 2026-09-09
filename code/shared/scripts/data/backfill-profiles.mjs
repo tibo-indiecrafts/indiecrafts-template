@@ -106,8 +106,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   writeFileSync(file, sql, { mode: 0o600 });
   const pkg =
     APPS.find((a) => a.slug === "api")?.pkg ?? "@indiecrafts/shared-api";
-  const scope =
-    env === "dev" ? ["--env", "dev", "--local"] : ["--env", env, "--remote"];
+  // Every env is a real remote Cloudflare D1 now (dev included — there is no miniflare tier).
+  const scope = ["--env", env, "--remote"];
   // process.exit() cuts a pending `finally`, so capture the status and exit
   // AFTER the try/finally — otherwise the temp file (plaintext PII) never gets
   // cleaned up. `?? 1` so a signal-killed spawn (status null) reports failure.
@@ -125,7 +125,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         "wrangler",
         "d1",
         "execute",
-        "DB",
+        "MAIN_DB",
         ...scope,
         "--file",
         file,

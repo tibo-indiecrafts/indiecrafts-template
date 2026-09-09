@@ -25,13 +25,13 @@ export interface Env {
   /** The api's EU audit-firehose D1 (binding `DB`) — admin_audit, session_events,
    *  security_events, csp_reports. The purge deletes rows past retention from each; the
    *  erasure-SLA flag pass also inserts a security_events row per due/breached request. */
-  DB?: D1Database;
-  /** The api's EU core D1 (binding `CORE_DB`) — identity/rights/settings: consent_events,
+  AUDIT_DB?: D1Database;
+  /** The api's EU main D1 (binding `MAIN_DB`) — identity/rights/settings: consent_events,
    *  data_requests, erasure_requests, export_requests, site_settings. The purge deletes
    *  rows past retention from consent_events, data_requests, erasure_requests; the
    *  SLA-flag pass reads/updates erasure_requests; the export-cleanup pass reads/deletes
    *  export_requests; loadSettings reads site_settings. */
-  CORE_DB?: D1Database;
+  MAIN_DB?: D1Database;
   /** The api's export-bundle bucket (`[[r2_buckets]] binding = "EXPORT_BUCKET"`) — the
    *  same bucket `POST /v1/export` writes to. Shared, operator-provisioned; the
    *  expired-export cleanup pass no-ops until it's bound. */
@@ -40,7 +40,9 @@ export interface Env {
 
 /** Effective settings for this tick: defaults merged with clamped D1 overrides.
  *  Never throws — any read failure falls back to code defaults. */
-async function loadSettings(db?: D1Database): Promise<Record<SettingKey, number>> {
+async function loadSettings(
+  db?: D1Database,
+): Promise<Record<SettingKey, number>> {
   if (!db) return effectiveSettings([]);
   try {
     const { results } = await db
@@ -48,7 +50,9 @@ async function loadSettings(db?: D1Database): Promise<Record<SettingKey, number>
       .all<{ key: string; value: string }>();
     return effectiveSettings(results);
   } catch (error) {
-    logger.error("settings read failed; using defaults", { name: (error as Error)?.name });
+    logger.error("settings read failed; using defaults", {
+      name: (error as Error)?.name,
+    });
     return effectiveSettings([]);
   }
 }
@@ -80,13 +84,13 @@ export default {
       scheduledTime: controller.scheduledTime,
     });
 
-    const settings = await loadSettings(env.CORE_DB);
+    const settings = await loadSettings(env.MAIN_DB);
 
     // Retention purge (GDPR storage limitation): purge tables past their ceiling, split
     // across the two EU D1s. admin_audit + session_events + security_events (audit `DB`)
     // use the 90-day ceiling; csp_reports (audit `DB`) uses a 30-day ceiling (CSP
     // violations are operational signal, not proof records). consent_events (core
-    // `CORE_DB`) uses its own, much longer 3-year window, because it is a consent proof
+    // `MAIN_DB`) uses its own, much longer 3-year window, because it is a consent proof
     // record, not an audit trail; data_requests (core, DSAR intake, short-lived
     // operational PII) purges at 365 days; erasure_requests (core, proof-of-erasure
     // record) purges at the same 3-year window as consent_events. Idempotent — safe on
@@ -117,24 +121,24 @@ export default {
       controller.scheduledTime,
       settings["ops.sla_warning_days"],
     );
-    if (env.DB) {
+    if (env.AUDIT_DB) {
       try {
-        const admin = await env.DB.prepare(
+        const admin = await env.AUDIT_DB.prepare(
           "DELETE FROM admin_audit WHERE ts < ?",
         )
           .bind(cutoff)
           .run();
-        const session = await env.DB.prepare(
+        const session = await env.AUDIT_DB.prepare(
           "DELETE FROM session_events WHERE ts < ?",
         )
           .bind(cutoff)
           .run();
-        const security = await env.DB.prepare(
+        const security = await env.AUDIT_DB.prepare(
           "DELETE FROM security_events WHERE ts < ?",
         )
           .bind(cutoff)
           .run();
-        const csp = await env.DB.prepare(
+        const csp = await env.AUDIT_DB.prepare(
           "DELETE FROM csp_reports WHERE last_seen < ?",
         )
           .bind(cspCutoff)
@@ -155,19 +159,19 @@ export default {
       }
     }
 
-    if (env.CORE_DB) {
+    if (env.MAIN_DB) {
       try {
-        const consent = await env.CORE_DB.prepare(
+        const consent = await env.MAIN_DB.prepare(
           "DELETE FROM consent_events WHERE ts < ?",
         )
           .bind(consentCutoff)
           .run();
-        const dataRequest = await env.CORE_DB.prepare(
+        const dataRequest = await env.MAIN_DB.prepare(
           "DELETE FROM data_requests WHERE submitted_at < ?",
         )
           .bind(dataRequestCutoff)
           .run();
-        const erasureRequest = await env.CORE_DB.prepare(
+        const erasureRequest = await env.MAIN_DB.prepare(
           "DELETE FROM erasure_requests WHERE requested_at < ?",
         )
           .bind(erasureRequestCutoff)
@@ -188,12 +192,12 @@ export default {
       }
 
       // Erasure SLA flag (GDPR Art. 12(3) one-month deadline): once per request, flag a
-      // CORE_DB erasure_requests row whose due date is within the warning window (or
+      // MAIN_DB erasure_requests row whose due date is within the warning window (or
       // already breached) as a `DB` security_events row, then mark it flagged so a later
       // tick doesn't repeat it. Idempotent; the security_events insert no-ops until the
       // audit DB is bound (the flag itself still gets set).
       try {
-        const { results: dueRows } = await env.CORE_DB.prepare(
+        const { results: dueRows } = await env.MAIN_DB.prepare(
           "SELECT id, user_id, email_fingerprint, due_at FROM erasure_requests WHERE due_flagged_at IS NULL AND status NOT IN ('completed','cancelled','expired') AND due_at < ?",
         )
           .bind(dueSoon)
@@ -207,8 +211,8 @@ export default {
           const severity = slaSeverity(row.due_at, nowIso);
           const eventType =
             severity === "high" ? "erasure_sla_breach" : "erasure_sla_due";
-          if (env.DB) {
-            await env.DB.prepare(
+          if (env.AUDIT_DB) {
+            await env.AUDIT_DB.prepare(
               "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, 'api', ?, NULL, NULL, ?)",
             )
               .bind(
@@ -220,7 +224,7 @@ export default {
               )
               .run();
           }
-          await env.CORE_DB.prepare(
+          await env.MAIN_DB.prepare(
             "UPDATE erasure_requests SET due_flagged_at = ? WHERE id = ?",
           )
             .bind(nowIso, row.id)
@@ -240,14 +244,14 @@ export default {
       // is a no-op if the object is already gone); no-ops until EXPORT_BUCKET is bound.
       if (env.EXPORT_BUCKET) {
         try {
-          const { results: expiredExports } = await env.CORE_DB.prepare(
+          const { results: expiredExports } = await env.MAIN_DB.prepare(
             "SELECT id, r2_key FROM export_requests WHERE expires_at < ?",
           )
             .bind(nowIso)
             .all<{ id: number; r2_key: string }>();
           for (const row of expiredExports) {
             await env.EXPORT_BUCKET.delete(row.r2_key);
-            await env.CORE_DB.prepare(
+            await env.MAIN_DB.prepare(
               "DELETE FROM export_requests WHERE id = ?",
             )
               .bind(row.id)

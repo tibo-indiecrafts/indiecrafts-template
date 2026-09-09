@@ -107,11 +107,11 @@ describe("/v1/settings", () => {
       }),
     });
     expect(res.status).toBe(200);
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT value FROM site_settings WHERE key = 'retention.audit_days'",
     ).first<{ value: string }>();
     expect(row?.value).toBe("120");
-    const audit = await env.DB.prepare(
+    const audit = await env.AUDIT_DB.prepare(
       "SELECT event, target_user_id FROM admin_audit WHERE event = 'setting_changed'",
     ).first<{ event: string; target_user_id: string }>();
     expect(audit).toEqual({
@@ -158,7 +158,7 @@ describe("/v1/backups/status", () => {
     ).toBe(401);
   });
   it("returns recent runs newest-first", async () => {
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO backup_runs (db_name,env,kind,status,started_at,finished_at) VALUES ('audit','prod','manual','ok','2026-08-24T00:00:00Z','2026-08-24T00:00:03Z')",
     ).run();
     const res = await SELF.fetch("https://api.test/v1/backups/status", {

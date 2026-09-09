@@ -36,7 +36,7 @@ describe("POST /v1/data-request", () => {
     expect(res.status).toBe(201);
     expect(await res.json()).toEqual({ ok: true });
 
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT request_type, email, message, status, source, locale, policy_version FROM data_requests WHERE email = ?",
     )
       .bind("subject@example.com")
@@ -90,8 +90,8 @@ describe("POST /v1/data-request", () => {
     expect(res.status).toBe(400);
   });
 
-  it("503s when CORE_DB is unbound", async () => {
-    const noDbEnv = { ...(env as unknown as Env), CORE_DB: undefined };
+  it("503s when MAIN_DB is unbound", async () => {
+    const noDbEnv = { ...(env as unknown as Env), MAIN_DB: undefined };
     const res = await handleDataRequestWrite(
       new Request("https://example.com/v1/data-request", {
         method: "POST",
@@ -117,7 +117,7 @@ describe("GET /v1/data-requests", () => {
   });
 
   it("returns rows newest-first with a valid bearer, clamping limit", async () => {
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO data_requests (request_type, email, message, status, submitted_at) VALUES (?, ?, ?, 'new', ?)",
     )
       .bind(
@@ -127,7 +127,7 @@ describe("GET /v1/data-requests", () => {
         "2020-01-01T00:00:00.000Z",
       )
       .run();
-    await env.DB.prepare(
+    await env.AUDIT_DB.prepare(
       "INSERT INTO data_requests (request_type, email, message, status, submitted_at) VALUES (?, ?, ?, 'new', ?)",
     )
       .bind(

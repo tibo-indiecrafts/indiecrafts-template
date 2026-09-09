@@ -33,7 +33,7 @@ function postForm(body: Record<string, string>): Request {
 
 async function seedProfile(): Promise<string> {
   const fp = await fingerprintEmail(EMAIL, SALT);
-  await env.DB.prepare(
+  await env.AUDIT_DB.prepare(
     "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
   )
     .bind(USER, EMAIL, fp, new Date(0).toISOString())
@@ -49,7 +49,7 @@ async function seedRequest(overrides: {
 }): Promise<string> {
   const token = crypto.randomUUID();
   const now = Date.now();
-  await env.DB.prepare(
+  await env.AUDIT_DB.prepare(
     "INSERT INTO erasure_requests (status, token_hash, token_expires_at, attempts, user_id, email_fingerprint, requested_at, due_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
   )
     .bind(
@@ -81,8 +81,8 @@ function mockAdapters(clerkOverrides: Partial<ClerkErasureClient> = {}) {
     pseudonymise: vi.fn(async () => {}),
   };
   const build = (buildEnv: Env) => [
-    createCoreErasureAdapter(buildEnv.CORE_DB!, SALT),
-    createAuditErasureAdapter(buildEnv.DB!, buildEnv.CORE_DB!, SALT),
+    createCoreErasureAdapter(buildEnv.MAIN_DB!, SALT),
+    createAuditErasureAdapter(buildEnv.AUDIT_DB!, buildEnv.MAIN_DB!, SALT),
     createClerkErasureAdapter(clerkClient),
     createSanityErasureAdapter(sanityClient, SALT),
     createOrdersErasureAdapter(),
@@ -91,7 +91,7 @@ function mockAdapters(clerkOverrides: Partial<ClerkErasureClient> = {}) {
 }
 
 async function profileAnonymized(): Promise<number | undefined> {
-  const row = await env.DB.prepare(
+  const row = await env.AUDIT_DB.prepare(
     "SELECT anonymized FROM user_profiles WHERE user_id = ?",
   )
     .bind(USER)
@@ -113,7 +113,7 @@ describe("GET /v1/erasure/confirm", () => {
     expect(html).toContain('action="/v1/erasure/confirm"');
     expect(html).toContain(token);
 
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT status, attempts FROM erasure_requests WHERE email_fingerprint = ?",
     )
       .bind(fp)
@@ -137,7 +137,7 @@ describe("POST /v1/erasure/confirm", () => {
     );
     expect(res.status).toBe(503);
 
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT status, attempts FROM erasure_requests WHERE email_fingerprint = ?",
     )
       .bind(fp)
@@ -163,7 +163,7 @@ describe("POST /v1/erasure/confirm", () => {
 
     expect(await profileAnonymized()).toBe(1);
 
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT status, result, completed_at FROM erasure_requests WHERE email_fingerprint = ?",
     )
       .bind(fp)
@@ -185,7 +185,7 @@ describe("POST /v1/erasure/confirm", () => {
       "sanity",
     ]);
 
-    const audit = await env.DB.prepare(
+    const audit = await env.AUDIT_DB.prepare(
       "SELECT actor_user_id, target_user_id FROM admin_audit WHERE event = 'erasure.completed'",
     ).first<{ actor_user_id: string; target_user_id: string }>();
     expect(audit?.actor_user_id).toBe(USER);
@@ -208,7 +208,7 @@ describe("POST /v1/erasure/confirm", () => {
     );
     expect(res.status).toBe(400);
 
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT attempts, status FROM erasure_requests WHERE email_fingerprint = ?",
     )
       .bind(fp)
@@ -234,7 +234,7 @@ describe("POST /v1/erasure/confirm", () => {
     );
     expect(res.status).toBe(400);
 
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT status FROM erasure_requests WHERE email_fingerprint = ?",
     )
       .bind(fp)
@@ -299,7 +299,7 @@ describe("POST /v1/erasure/confirm", () => {
       expect.arrayContaining([expect.objectContaining({ store: "clerk" })]),
     );
 
-    const row = await env.DB.prepare(
+    const row = await env.AUDIT_DB.prepare(
       "SELECT status, result FROM erasure_requests WHERE email_fingerprint = ?",
     )
       .bind(fp)

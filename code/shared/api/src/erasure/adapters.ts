@@ -20,10 +20,10 @@ export function buildErasureAdapters(
   opts: { includeClerk?: boolean } = {},
 ): ErasureAdapter[] {
   const list: ErasureAdapter[] = [
-    createCoreErasureAdapter(env.CORE_DB!, env.GDPR_FINGERPRINT_SALT!),
+    createCoreErasureAdapter(env.MAIN_DB!, env.GDPR_FINGERPRINT_SALT!),
     createAuditErasureAdapter(
-      env.DB!,
-      env.CORE_DB!,
+      env.AUDIT_DB!,
+      env.MAIN_DB!,
       env.GDPR_FINGERPRINT_SALT!,
     ),
   ];

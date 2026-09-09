@@ -27,11 +27,11 @@ Config files (all in `code/projects/web/surfaces/website/`): `wrangler.toml` (en
 > guard that stops one client overwriting another). The template's own deploy passes it with
 > `ALLOW_DEFAULT_SLUG=true`.
 
-**Databases add a fourth tier, `local`.** The three envs above are worker/deploy targets backed by
-**real remote D1s**. For DB work there is also **`local`** — the disposable miniflare D1 that `pnpm dev`
-binds (`wrangler dev --env dev`). Migrate with `db:migrate:<db>|all:<tier>`: `local` → miniflare (offline,
-no real ids); `dev` / `staging` / `prod` → the real remote D1 (a pre-migration R2 snapshot runs first and
-**aborts on failure**; a prod run **confirms first**). Local dev: `pnpm db:migrate:all:local` → `pnpm dev`.
+**Databases use the same three envs, all real remote D1s.** There is no separate local tier: local
+dev binds the real `dev` D1 (`pnpm dev` → `wrangler dev --env dev --remote`), so `pnpm dev` and
+`db:migrate:*:dev` share the one dev database. Migrate with `db:migrate:<db>|all:<tier>` for `dev` /
+`staging` / `prod` — each takes a pre-migration R2 snapshot that **aborts on failure**; a prod run
+**confirms first**. Local dev: `pnpm db:migrate:all:dev` → `pnpm dev` (needs wrangler auth + network).
 Full model → the [`code/shared/db` brief](../../../../shared/db/.claude/CLAUDE.md).
 
 ## One-time setup
