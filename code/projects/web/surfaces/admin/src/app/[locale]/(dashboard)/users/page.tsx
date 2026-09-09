@@ -45,6 +45,31 @@ async function fetchUsers(query: string): Promise<UserRow[]> {
   }
 }
 
+/** The marketing-email opt-in per user id, from the api (bearer-gated). Fail-open: on any
+ *  error every id resolves to null ("not asked"), so the list never breaks. */
+async function fetchMarketingConsent(
+  userIds: string[],
+): Promise<Record<string, number | null>> {
+  const url = process.env.API_URL;
+  const token = process.env.APP_API_TOKEN;
+  if (!url || !token || userIds.length === 0) return {};
+  try {
+    const res = await fetch(`${url}/v1/profiles/consent`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ userIds }),
+      cache: "no-store",
+    });
+    if (!res.ok) return {};
+    return (await res.json()) as Record<string, number | null>;
+  } catch {
+    return {};
+  }
+}
+
 export default async function UsersPage({
   params,
   searchParams,
@@ -58,6 +83,9 @@ export default async function UsersPage({
   const query = typeof q === "string" ? q : "";
   const t = await getTranslations("admin.users");
   const users = await fetchUsers(query);
+  const consent = await fetchMarketingConsent(users.map((u) => u.id));
+  const emailsLabel = (v: number | null | undefined) =>
+    v === 1 ? t("emailsYes") : v === 0 ? t("emailsNo") : t("emailsUnknown");
 
   return (
     <div className="p-4 md:p-6">
@@ -84,6 +112,7 @@ export default async function UsersPage({
                   <TableRow>
                     <TableHead>{t("email")}</TableHead>
                     <TableHead>{t("role")}</TableHead>
+                    <TableHead>{t("emails")}</TableHead>
                     <TableHead>{t("created")}</TableHead>
                     <TableHead>{t("lastSignIn")}</TableHead>
                     <TableHead>{t("id")}</TableHead>
@@ -94,6 +123,7 @@ export default async function UsersPage({
                     <TableRow key={u.id}>
                       <TableCell>{u.email}</TableCell>
                       <TableCell>{u.role}</TableCell>
+                      <TableCell>{emailsLabel(consent[u.id])}</TableCell>
                       <TableCell className="tabular-nums">
                         {new Date(u.created).toLocaleDateString()}
                       </TableCell>

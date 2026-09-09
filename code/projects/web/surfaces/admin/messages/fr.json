@@ -72,7 +72,11 @@
       "role": "Rôle",
       "created": "Créé",
       "lastSignIn": "Dernière connexion",
-      "id": "ID"
+      "id": "ID",
+      "emails": "E-mails",
+      "emailsYes": "Oui",
+      "emailsNo": "Non",
+      "emailsUnknown": "—"
     },
     "security": {
       "title": "Sécurité",
