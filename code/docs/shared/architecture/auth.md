@@ -137,3 +137,40 @@ present and degrades to a "change your password" warning otherwise. If the link 
 absent, **leave that one template on Clerk's delivery** (English, but keeps the one-click revoke).
 The handler logs any un-localized `slug` (no PII), so the real "new device" slug is discoverable in
 the api logs once the feature is on — then lock it in `AUTH_TEMPLATES`.
+
+## Commercial-email consent (marketing opt-in)
+
+A user opts in to commercial (marketing) emails. **Capture-only** — no campaign sends here; the
+opt-in is stored and mirrored to a Resend audience for a later sender.
+
+**Two stores** (both on `MAIN_DB` / `main` D1):
+
+- **Proof** — `consent_events` (append-only, `consent_type = "marketing_email"`). The legal record.
+- **Current state** — `user_profiles.marketing_email` (`NULL` = never decided · `0` = out · `1` = in),
+  a fast cache for the settings toggle + the admin list.
+
+**Capture is unchecked by default** on every surface (a pre-ticked box is invalid consent — CJEU
+Planet49):
+
+- **Sign-up** — the checkbox value rides Clerk `unsafeMetadata.marketing_email`. The `user.created`
+  webhook validates it, sets the column **on the INSERT only** (never re-applied on `user.updated`,
+  so a settings change is not clobbered), writes a `consent_events` proof row (`source:"signup"`), and
+  syncs Resend. Web renders the box beside Clerk's prebuilt `<SignUp>`; mobile/hybrid pass it to
+  `signUp.create`.
+- **Account settings** — an editable toggle (`MarketingEmailToggle`, web + native) reads
+  `GET /v1/consent/marketing-email` and writes each change with `POST` (proof + column + Resend).
+- **Sign-in nudge** — a one-time post-sign-in banner (`MarketingNudge`, **website + app**) shown only
+  when the flag is `NULL` (a social sign-up or pre-existing account that missed the checkbox). Yes/No
+  record a decision; × snoozes per-device. **Not** on mobile/hybrid (the account toggle covers control
+  there; hybrid routes api calls through the MAIN-process bridge).
+
+**Endpoints** (`@indiecrafts/shared-api`): `GET`/`POST /v1/consent/marketing-email` (Clerk JWT — the
+caller's own opt-in) · `POST /v1/profiles/consent` (bearer batch → the admin users-list "Emails"
+column).
+
+**Resend audience** — env `RESEND_AUDIENCE_ID` (unset → the mirror no-ops, store-only). An opt-in
+upserts the contact `unsubscribed:false`; an opt-out flips it `unsubscribed:true`. **Erasure is a pure
+delete** — the self-service erasure and the Clerk `user.deleted` webhook both remove the contact
+entirely. **No win-back / "former members" audience** — a deliberate compliance decision (right to be
+forgotten overrides retained marketing consent). Every sync is best-effort: a Resend failure is logged
+and never blocks the D1 write.

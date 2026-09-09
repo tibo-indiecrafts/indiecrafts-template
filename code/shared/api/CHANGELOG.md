@@ -5,6 +5,18 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Commercial-email consent (`marketing_email`).** A new `user_profiles.marketing_email` column
+  (migration 0008; `NULL`/`0`/`1`) holds the current opt-in state; `consent_events` keeps the append-only
+  proof. The `user.created` webhook mirrors the sign-up opt-in (Clerk `unsafe_metadata.marketing_email`) to
+  the column **on insert only** (never clobbered on update) + writes a proof row. New Clerk-JWT
+  `GET`/`POST /v1/consent/marketing-email` (the account toggle + the sign-in nudge) and bearer
+  `POST /v1/profiles/consent` (the admin users-list column). Each decision mirrors to a Resend audience
+  (`resend-audience.ts`, env `RESEND_AUDIENCE_ID`; unset → no-op); erasure **pure-deletes** the contact
+  (no win-back list). All Resend syncs are best-effort (logged, never block the write). **Why:** capture a
+  lawful, editable marketing opt-in and keep a marketing list in sync without building a sender.
+
 ### Changed
 
 - **Localized Clerk auth emails + `user_profiles.locale`.** The clerk-webhook mirrors the sign-up locale
