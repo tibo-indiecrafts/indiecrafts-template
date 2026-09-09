@@ -27,7 +27,8 @@
     "changeEmail": "Changer d'e-mail",
     "or": "ou",
     "google": "Continuer avec Google",
-    "error": "Une erreur est survenue. Veuillez réessayer."
+    "error": "Une erreur est survenue. Veuillez réessayer.",
+    "marketingOptIn": "Envoyez-moi occasionnellement des nouveautés et des offres. Désabonnement à tout moment."
   },
   "account": {
     "title": "Compte",

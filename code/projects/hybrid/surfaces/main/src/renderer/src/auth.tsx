@@ -10,6 +10,7 @@ import {
   useAuth,
 } from "@clerk/clerk-react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { Checkbox } from "@indiecrafts/packages-web-ui/web/checkbox";
 import { accountUrl } from "../../config";
 
 /** Publishable key (PUBLIC) from the renderer env — auth is opt-in on its presence. */
@@ -94,6 +95,7 @@ function SignInPanel() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [marketing, setMarketing] = useState(false);
   const fail = () => setError(t.formatMessage({ id: "auth.error" }));
 
   // Complete a Google deep-link when MAIN forwards the validated callback.
@@ -143,13 +145,25 @@ function SignInPanel() {
       {mode === "signin" ? (
         <SignIn routing="virtual" appearance={emailOnlyAppearance} />
       ) : (
-        // Carry the app locale so the api webhook mirrors it to user_profiles.locale
-        // and the user's auth emails (incl. this verification code) are localized.
-        <SignUp
-          routing="virtual"
-          appearance={emailOnlyAppearance}
-          unsafeMetadata={{ locale: t.locale }}
-        />
+        // Carry the app locale + the marketing-email opt-in so the api webhook mirrors both
+        // to user_profiles (locale localizes the auth emails; marketing_email records the
+        // commercial-email consent). Clerk's prebuilt card can't host the checkbox, so it
+        // sits beside it (unchecked by default).
+        <div className="flex flex-col items-center gap-3">
+          <SignUp
+            routing="virtual"
+            appearance={emailOnlyAppearance}
+            unsafeMetadata={{ locale: t.locale, marketing_email: marketing }}
+          />
+          <label className="text-muted-foreground flex max-w-sm cursor-pointer items-start gap-2 text-sm">
+            <Checkbox
+              checked={marketing}
+              onCheckedChange={(v) => setMarketing(v === true)}
+              className="mt-0.5"
+            />
+            <span>{t.formatMessage({ id: "auth.marketingOptIn" })}</span>
+          </label>
+        </div>
       )}
       <Button variant="outline" disabled={busy} onClick={() => void google()}>
         {t.formatMessage({ id: "auth.google" })}

@@ -27,7 +27,8 @@
     "changeEmail": "Change email",
     "or": "or",
     "google": "Continue with Google",
-    "error": "Something went wrong. Please try again."
+    "error": "Something went wrong. Please try again.",
+    "marketingOptIn": "Send me occasional product news and offers. Unsubscribe anytime."
   },
   "account": {
     "title": "Account",

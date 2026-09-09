@@ -1,5 +1,5 @@
 import { useReducer, useState } from "react";
-import { TextInput } from "react-native";
+import { Switch, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useIntl } from "react-intl";
 import * as WebBrowser from "expo-web-browser";
@@ -107,6 +107,9 @@ function SignInForm() {
 
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
+  // The marketing-email opt-in (unchecked). Carried only when this email turns out to be a
+  // new sign-up; an existing user's choice is managed in account settings, so it's ignored.
+  const [marketing, setMarketing] = useState(false);
   const [{ step, mode, busy, error }, dispatch] = useReducer(
     signInReducer,
     initialState,
@@ -137,7 +140,7 @@ function SignInForm() {
         // and the user's auth emails (incl. this verification code) are localized.
         await su.signUp.create({
           emailAddress: email,
-          unsafeMetadata: { locale: t.locale },
+          unsafeMetadata: { locale: t.locale, marketing_email: marketing },
         });
         await su.signUp.prepareEmailAddressVerification({
           strategy: "email_code",
@@ -232,6 +235,18 @@ function SignInForm() {
             onPress={() => void sendCode()}
             disabled={busy || email.length === 0}
           />
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Switch
+              value={marketing}
+              onValueChange={setMarketing}
+              accessibilityLabel={t.formatMessage({
+                id: "auth.marketingOptIn",
+              })}
+            />
+            <ThemedText variant="muted" style={{ flex: 1 }}>
+              {t.formatMessage({ id: "auth.marketingOptIn" })}
+            </ThemedText>
+          </View>
         </>
       ) : (
         <>
