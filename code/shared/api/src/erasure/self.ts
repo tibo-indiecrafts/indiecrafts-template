@@ -184,7 +184,12 @@ export async function handleErasureSelf(
   let survey: { reason?: unknown; feedback?: unknown; competitor?: unknown } =
     {};
   try {
-    const body = (await request.json()) as {
+    // content-length above is a fast-path only — a missing or lying header
+    // must not skip this bound, so the actual read body is checked too.
+    const bodyText = await request.text();
+    if (bodyText.length > BODY_MAX)
+      return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+    const body = JSON.parse(bodyText) as {
       email?: unknown;
       reason?: unknown;
       feedback?: unknown;

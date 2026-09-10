@@ -37,6 +37,25 @@ function postJson(body: Record<string, unknown>): Request {
   });
 }
 
+/** A request whose actual body exceeds BODY_MAX, with an optional content-length lie. */
+function oversizedRequest(lieContentLength?: string): Request {
+  const body = JSON.stringify({
+    email: EMAIL,
+    feedback: "x".repeat(4100),
+  });
+  const headers: Record<string, string> = {
+    authorization: "Bearer tkn",
+    "content-type": "application/json",
+  };
+  if (lieContentLength !== undefined)
+    headers["content-length"] = lieContentLength;
+  return new Request("https://example.com/v1/erasure/self", {
+    method: "POST",
+    headers,
+    body,
+  });
+}
+
 async function seedProfile(): Promise<string> {
   const fp = await fingerprintEmail(EMAIL, SALT);
   await env.AUDIT_DB.prepare(
@@ -164,6 +183,34 @@ describe("handleErasureSelf", () => {
       .bind(USER)
       .first<{ reason: string | null }>();
     expect(row?.reason).toBeNull();
+  });
+
+  it("rejects an oversized body with no content-length header", async () => {
+    await seedProfile();
+    const { authenticate, build, clerkClient } = mocks();
+    const res = await handleErasureSelf(
+      oversizedRequest(),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(400);
+    expect(clerkClient.deleteUser).not.toHaveBeenCalled();
+  });
+
+  it("rejects an oversized body even with a lying (small) content-length header", async () => {
+    await seedProfile();
+    const { authenticate, build, clerkClient } = mocks();
+    const res = await handleErasureSelf(
+      oversizedRequest("10"),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(400);
+    expect(clerkClient.deleteUser).not.toHaveBeenCalled();
   });
 
   it("rejects a typed email that does not match the authenticated email", async () => {
