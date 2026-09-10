@@ -107,20 +107,63 @@ describe("handleErasureSelf", () => {
     expect(audit?.event).toBe("erasure.self");
   });
 
-  it("pure-deletes the Resend contact on a successful erasure", async () => {
+  it("writes a churn row and suppresses (not deletes) the Resend contact", async () => {
     await seedProfile();
     const { authenticate, build } = mocks();
-    const del = vi.fn(async () => {});
+    const suppress = vi.fn(async () => {});
+    const fetchPrefs = vi.fn(async () => ({
+      categories: [],
+      notices: [],
+      churnedTopicId: "top_churn",
+      optOutTopicIds: ["top_news"],
+    }));
     const res = await handleErasureSelf(
-      postJson({ email: EMAIL }),
+      postJson({
+        email: EMAIL,
+        reason: "too_expensive",
+        feedback: "pricey",
+        competitor: "Acme",
+      }),
       testEnv(),
       undefined,
       build,
       authenticate,
-      del,
+      suppress,
+      fetchPrefs,
     );
     expect(res.status).toBe(200);
-    expect(del).toHaveBeenCalledWith(expect.anything(), { email: EMAIL });
+    expect(suppress).toHaveBeenCalledWith(expect.anything(), {
+      email: EMAIL,
+      reason: "too_expensive",
+      churnedTopicId: "top_churn",
+      optOutTopicIds: ["top_news"],
+    });
+    const row = await env.MAIN_DB.prepare(
+      "SELECT reason, feedback FROM churn_events WHERE user_id = ?",
+    )
+      .bind(USER)
+      .first<{ reason: string | null; feedback: string | null }>();
+    expect(row?.reason).toBe("too_expensive");
+    expect(row?.feedback).toBe("pricey");
+  });
+
+  it("nulls an unknown churn reason but still completes with 200", async () => {
+    await seedProfile();
+    const { authenticate, build } = mocks();
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL, reason: "garbage" }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(200);
+    const row = await env.MAIN_DB.prepare(
+      "SELECT reason FROM churn_events WHERE user_id = ?",
+    )
+      .bind(USER)
+      .first<{ reason: string | null }>();
+    expect(row?.reason).toBeNull();
   });
 
   it("rejects a typed email that does not match the authenticated email", async () => {

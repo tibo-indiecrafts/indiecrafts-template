@@ -4,6 +4,7 @@
 // Mirrors confirm.ts (same engine + receipt handling); the difference is the
 // identity comes from the JWT, not a mailed token.
 import { logger } from "@indiecrafts/packages-shared-logger";
+import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import {
   fingerprintEmail,
   sha256Hex,
@@ -17,7 +18,13 @@ import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
 import { buildErasureAdapters } from "./adapters";
 import { createRealClerkClient } from "./clerk-client";
 import { readProfileLocale, sendErasureCompleteEmail } from "./email";
-import { deleteResendContact } from "../resend-audience";
+import { suppressResendContact } from "../resend-audience";
+import {
+  writeChurnEvent,
+  normalizeReason,
+  type ChurnSurvey,
+} from "../consent/churn-store";
+import { fetchEmailPreferences } from "../consent/email-preferences-sanity";
 
 const BODY_MAX = 4000;
 // Clerk's own step-up window (see `factor1FreshEnough` in
@@ -117,7 +124,8 @@ export async function handleErasureSelf(
     request: Request,
     env: Env,
   ) => Promise<SelfAuth | null> = defaultAuthenticate,
-  del: typeof deleteResendContact = deleteResendContact,
+  suppress: typeof suppressResendContact = suppressResendContact,
+  fetchPrefs: typeof fetchEmailPreferences = fetchEmailPreferences,
 ): Promise<Response> {
   if (request.method === "OPTIONS")
     return new Response(null, { status: 204, headers: PUBLIC_CORS_POST });
@@ -173,9 +181,21 @@ export async function handleErasureSelf(
     );
 
   let typedEmail = "";
+  let survey: { reason?: unknown; feedback?: unknown; competitor?: unknown } =
+    {};
   try {
-    const body = (await request.json()) as { email?: unknown };
+    const body = (await request.json()) as {
+      email?: unknown;
+      reason?: unknown;
+      feedback?: unknown;
+      competitor?: unknown;
+    };
     typedEmail = String(body.email ?? "").trim();
+    survey = {
+      reason: body.reason,
+      feedback: body.feedback,
+      competitor: body.competitor,
+    };
   } catch {
     return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
   }
@@ -199,6 +219,36 @@ export async function handleErasureSelf(
     userId: authed.userId,
     fingerprint,
   });
+
+  // churn capture (self-service is the only writer of churn_events)
+  if (env.MAIN_DB) {
+    try {
+      await writeChurnEvent(
+        env.MAIN_DB,
+        authed.userId,
+        survey as ChurnSurvey,
+        ts,
+      );
+    } catch (error) {
+      logger.error("churn write failed", { name: (error as Error)?.name });
+    }
+  }
+  // suppress the departing Resend contact (retain in churned topic, off all marketing)
+  try {
+    const { churnedTopicId, optOutTopicIds } = await fetchPrefs(
+      env,
+      defaultLocale,
+    );
+    await suppress(env, {
+      email: authed.email,
+      reason: normalizeReason(survey.reason),
+      churnedTopicId,
+      optOutTopicIds,
+    });
+  } catch (error) {
+    logger.error("churn suppress failed", { name: (error as Error)?.name });
+  }
+
   await runErasure(adapters, authed.email, {
     mode: "erase",
     dryRun: true,
@@ -242,17 +292,6 @@ export async function handleErasureSelf(
   } catch (error) {
     // The erasure is already committed; a bookkeeping failure must not 500 it.
     logger.error("erasure.self audit write failed", {
-      name: (error as Error)?.name,
-    });
-  }
-
-  // Right-to-be-forgotten: pure-delete the marketing contact from the Resend audience.
-  // ponytail: pure delete, no win-back / "former members" audience — a deliberate
-  // compliance decision, not a gap to fill. Best-effort — the erasure is already committed.
-  try {
-    await del(env, { email: authed.email });
-  } catch (error) {
-    logger.error("erasure.self resend delete failed", {
       name: (error as Error)?.name,
     });
   }
