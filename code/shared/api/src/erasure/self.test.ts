@@ -252,7 +252,51 @@ describe("handleErasureSelf", () => {
     expect(res.status).toBe(503);
   });
 
-  it("returns 207 partial when a store fails", async () => {
+  it("returns 207 partial when a non-clerk store fails (clerk delete OK)", async () => {
+    await seedProfile();
+    const { authenticate, clerkClient } = mocks();
+    const build = (e: Env) => [
+      createCoreErasureAdapter(e.MAIN_DB!, SALT),
+      createAuditErasureAdapter(e.AUDIT_DB!, e.MAIN_DB!, SALT),
+      createClerkErasureAdapter(clerkClient),
+      createSanityErasureAdapter(
+        {
+          findByEmail: vi.fn(async () => {
+            throw new Error("sanity down");
+          }),
+          pseudonymise: vi.fn(async () => {}),
+        },
+        SALT,
+      ),
+      createOrdersErasureAdapter(),
+    ];
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(207);
+    expect(clerkClient.deleteUser).toHaveBeenCalledWith(USER);
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT status, completed_at FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
+    )
+      .bind(USER)
+      .first<{ status: string; completed_at: string | null }>();
+    expect(row?.status).toBe("confirmed");
+    // A partial run is not "completed" — the completion timestamp stays null.
+    expect(row?.completed_at).toBeNull();
+    // The accountability trail is still written on the partial path.
+    const audit = await env.AUDIT_DB.prepare(
+      "SELECT event FROM admin_audit WHERE target_user_id = ? ORDER BY id DESC LIMIT 1",
+    )
+      .bind(USER)
+      .first<{ event: string }>();
+    expect(audit?.event).toBe("erasure.self");
+  });
+
+  it("signals failure (not partial/done) when the clerk delete fails and the retry also fails — the session must not appear killed", async () => {
     await seedProfile();
     const { authenticate } = mocks();
     const clerkClient = {
@@ -276,28 +320,80 @@ describe("handleErasureSelf", () => {
       createOrdersErasureAdapter(),
     ];
     const res = await handleErasureSelf(
-      postJson({ email: EMAIL }),
+      postJson({ email: EMAIL, reason: "too_expensive" }),
       testEnv(),
       undefined,
       build,
       authenticate,
     );
-    expect(res.status).toBe(207);
+    // Retried once, still failed.
+    expect(clerkClient.deleteUser).toHaveBeenCalledTimes(2);
+    // NOT 200 and NOT 207 — the client's mapErasureResponse treats any status
+    // outside {200, 207, 400} as "error", so it never fires onDeleted (local
+    // sign-out) on this response.
+    expect(res.status).not.toBe(200);
+    expect(res.status).not.toBe(207);
+    const body = (await res.json()) as { ok: boolean };
+    expect(body.ok).toBe(false);
+    // The mitigation stays: the row is `confirmed` (not `completed`), so the
+    // manual-backfill email path still applies.
     const row = await env.AUDIT_DB.prepare(
       "SELECT status, completed_at FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
     )
       .bind(USER)
       .first<{ status: string; completed_at: string | null }>();
     expect(row?.status).toBe("confirmed");
-    // A partial run is not "completed" — the completion timestamp stays null.
     expect(row?.completed_at).toBeNull();
-    // The accountability trail is still written on the partial path.
-    const audit = await env.AUDIT_DB.prepare(
-      "SELECT event FROM admin_audit WHERE target_user_id = ? ORDER BY id DESC LIMIT 1",
+    // Task 3's churn write still ran.
+    const churn = await env.MAIN_DB.prepare(
+      "SELECT reason FROM churn_events WHERE user_id = ?",
     )
       .bind(USER)
-      .first<{ event: string }>();
-    expect(audit?.event).toBe("erasure.self");
+      .first<{ reason: string | null }>();
+    expect(churn?.reason).toBe("too_expensive");
+  });
+
+  it("succeeds when the clerk delete fails once but the inline retry succeeds", async () => {
+    await seedProfile();
+    const { authenticate } = mocks();
+    let calls = 0;
+    const clerkClient = {
+      findUserIdByEmail: vi.fn(async () => USER),
+      exportUser: vi.fn(async () => ({ id: USER })),
+      deleteUser: vi.fn(async () => {
+        calls += 1;
+        if (calls === 1) throw new Error("transient clerk failure");
+      }),
+    };
+    const build = (e: Env) => [
+      createCoreErasureAdapter(e.MAIN_DB!, SALT),
+      createAuditErasureAdapter(e.AUDIT_DB!, e.MAIN_DB!, SALT),
+      createClerkErasureAdapter(clerkClient),
+      createSanityErasureAdapter(
+        {
+          findByEmail: vi.fn(async () => []),
+          pseudonymise: vi.fn(async () => {}),
+        },
+        SALT,
+      ),
+      createOrdersErasureAdapter(),
+    ];
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(clerkClient.deleteUser).toHaveBeenCalledTimes(2);
+    expect(res.status).toBe(200);
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT status, completed_at FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
+    )
+      .bind(USER)
+      .first<{ status: string; completed_at: string | null }>();
+    expect(row?.status).toBe("completed");
+    expect(row?.completed_at).not.toBeNull();
   });
 
   it("returns reverification-required when the first-factor age is stale (> 10 min)", async () => {

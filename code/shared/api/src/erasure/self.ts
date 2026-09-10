@@ -31,6 +31,8 @@ const BODY_MAX = 4000;
 // @clerk/shared/authorization.js): a first factor verified longer ago than this
 // (or not applicable, fva === -1) requires reverification.
 const REVERIFY_WINDOW_MIN = 10;
+// Must match the `name` the clerk adapter registers itself under (erasure/clerk.ts).
+const CLERK_STORE = "clerk";
 
 export type SelfAuth = {
   userId: string;
@@ -260,12 +262,35 @@ export async function handleErasureSelf(
     ts,
     fingerprint,
   });
-  const receipt = await runErasure(adapters, authed.email, {
+  let receipt = await runErasure(adapters, authed.email, {
     mode: "erase",
     dryRun: false,
     ts,
     fingerprint,
   });
+
+  // Clerk is the one global session kill-switch (every surface's auth is Clerk).
+  // A failed Clerk delete must never let the caller believe it is safe to sign
+  // out locally — retry it once inline (reusing the same adapter, not a second
+  // Clerk client) before deciding this is a real failure.
+  let clerkStillFailing = false;
+  if (receipt.errors.some((e) => e.store === CLERK_STORE)) {
+    const clerkAdapter = adapters.find((a) => a.name === CLERK_STORE);
+    try {
+      if (!clerkAdapter) throw new Error("clerk adapter not configured");
+      const retried = await clerkAdapter.delete(authed.email);
+      receipt = {
+        ...receipt,
+        errors: receipt.errors.filter((e) => e.store !== CLERK_STORE),
+        stores: [...receipt.stores, retried],
+      };
+    } catch (error) {
+      clerkStillFailing = true;
+      logger.error("erasure.self clerk retry failed", {
+        name: (error as Error)?.name,
+      });
+    }
+  }
   const hadErrors = receipt.errors.length > 0;
 
   // Proof-of-erasure row. No token here → a throwaway hash satisfies the NOT NULL
@@ -313,6 +338,17 @@ export async function handleErasureSelf(
     });
   }
 
+  // Distinct from `partial`: the Clerk user still exists, so the session is NOT
+  // dead everywhere. The client must not treat this as done/partial and must not
+  // sign out locally — a non-200/207 status already falls through to "error" in
+  // `mapErasureResponse` (shared by the default and step-up submit paths), so no
+  // client change is required to honour this.
+  if (clerkStillFailing)
+    return json(
+      { ok: false, clerk_failed: true, errors: receipt.errors },
+      502,
+      PUBLIC_CORS_POST,
+    );
   if (hadErrors)
     return json(
       { ok: true, partial: true, errors: receipt.errors },
