@@ -124,6 +124,14 @@
     },
     "marketing": {
       "label": "E-mails commerciaux"
+    },
+    "emailPreferences": {
+      "heading": "Préférences d'e-mails",
+      "intro": "Choisissez les e-mails que vous souhaitez recevoir, et consultez ceux que nous envoyons toujours.",
+      "noticesHeading": "Compte et sécurité",
+      "loading": "Chargement de vos préférences d'e-mails…",
+      "error": "Une erreur s'est produite. Merci de réessayer.",
+      "retry": "Réessayer"
     }
   },
   "cta": {
@@ -234,6 +242,17 @@
       "invalidHeading": "Ce lien a expiré",
       "invalidBody": "Ce lien de confirmation n'est plus valide — il a peut-être déjà été utilisé, ou il a expiré. Réessayez de vous inscrire.",
       "homeCta": "Retour à l'accueil"
+    },
+    "emailPreferences": {
+      "title": "Préférences d'e-mails",
+      "description": "Gérez les e-mails que vous recevez de notre part.",
+      "heading": "Préférences d'e-mails",
+      "intro": "Choisissez les e-mails que vous souhaitez recevoir, et consultez ceux que nous envoyons toujours.",
+      "invalidToken": "Ce lien est invalide ou a expiré. Demandez-en un nouveau depuis les paramètres de votre compte.",
+      "noticesHeading": "Compte et sécurité",
+      "loading": "Chargement de vos préférences d'e-mails…",
+      "error": "Une erreur s'est produite. Merci de réessayer.",
+      "retry": "Réessayer"
     },
     "blog": {
       "title": "Blog",

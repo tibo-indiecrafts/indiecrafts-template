@@ -124,6 +124,14 @@
     },
     "marketing": {
       "label": "Commercial emails"
+    },
+    "emailPreferences": {
+      "heading": "Email preferences",
+      "intro": "Choose which emails you'd like to receive, and see the emails we always send.",
+      "noticesHeading": "Account & security",
+      "loading": "Loading your email preferences…",
+      "error": "Something went wrong. Please try again.",
+      "retry": "Try again"
     }
   },
   "cta": {
@@ -234,6 +242,17 @@
       "invalidHeading": "This link has expired",
       "invalidBody": "This confirmation link is no longer valid — it may have already been used, or it timed out. Try subscribing again.",
       "homeCta": "Back home"
+    },
+    "emailPreferences": {
+      "title": "Email preferences",
+      "description": "Manage the emails you receive from us.",
+      "heading": "Email preferences",
+      "intro": "Choose which emails you'd like to receive, and see the emails we always send.",
+      "invalidToken": "This link is invalid or has expired. Request a new one from your account settings.",
+      "noticesHeading": "Account & security",
+      "loading": "Loading your email preferences…",
+      "error": "Something went wrong. Please try again.",
+      "retry": "Try again"
     },
     "blog": {
       "title": "Blog",

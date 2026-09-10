@@ -17,6 +17,20 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Email preference centre.** A new `EmailPreferences` component
+  (`src/user-interface/account/EmailPreferences.tsx`) renders a switch per email category (optimistic,
+  rolls back on a failed save) plus a read-only "Account & security" notices list; category/notice copy
+  comes from the api already locale-resolved. Mounted two places: the `/account` page (JWT, via the new
+  `EmailPreferencesMount`, alongside `AccountControl`) and a new public, unauthenticated
+  `/email-preferences?token=…` page (`EmailPreferencesPublic`) for recipients who aren't signed in — not
+  in the `pages` map, so it stays out of nav/sitemap/llms, mirroring `/newsletter/confirm`. **Why:** the
+  account modal's single "Commercial emails" toggle (`packages-web-auth`'s `account-modal.tsx`) only
+  covers one category; granular per-category control needed a website-owned UI. The modal's toggle stays
+  as-is — it lives in a shared package, and mounting a website-only component there would be a
+  wrong-direction package→app dependency.
+
 ### Changed
 
 - **The language switcher now persists a signed-in user's choice.** Switching language calls
