@@ -59,12 +59,10 @@ export const buildId = process.env.EXPO_PUBLIC_BUILD_ID ?? "dev";
 /**
  * Instance feature flags. `requireConsent` is OFF by default (mirroring the website) —
  * the consent UI is compliant-ready, a client flips this on when the app ships an
- * analytics/ads SDK. `exportAccount` gates the self-service data-export control in the
- * signed-in view (account deletion is an unconditional web hand-off, no flag).
+ * analytics/ads SDK. Account export/deletion are an unconditional web hand-off, no flag.
  */
 export const features = {
   requireConsent: false,
-  exportAccount: true,
 } as const;
 
 /**
