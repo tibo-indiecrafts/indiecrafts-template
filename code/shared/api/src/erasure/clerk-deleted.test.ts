@@ -164,6 +164,37 @@ describe("handleClerkUserDeleted", () => {
     expect(suppress).not.toHaveBeenCalled();
   });
 
+  it("skips the Resend op when the profile email is already the anonymized placeholder (self-service/RTBF already handled it)", async () => {
+    (
+      env as unknown as { GDPR_FINGERPRINT_SALT: string }
+    ).GDPR_FINGERPRINT_SALT = SALT;
+    const USER = "user_already_anon";
+    const placeholder = `deleted_${USER}@anonymized.local`;
+    const fp = await fingerprintEmail(placeholder, SALT);
+    await env.MAIN_DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
+    )
+      .bind(USER, placeholder, fp, new Date(0).toISOString())
+      .run();
+    await env.MAIN_DB.prepare(
+      "INSERT OR REPLACE INTO churn_events (user_id, deleted_at, reason) VALUES (?, ?, 'privacy')",
+    )
+      .bind(USER, "2026-01-01T00:00:00.000Z")
+      .run();
+    const del = vi.fn(async () => {});
+    const suppress = vi.fn(async () => {});
+    await handleClerkUserDeleted(
+      env as never,
+      USER,
+      "2026-01-01T00:00:00.000Z",
+      () => webhookAdapters(),
+      del,
+      suppress,
+    );
+    expect(suppress).not.toHaveBeenCalled();
+    expect(del).not.toHaveBeenCalled();
+  });
+
   it("falls back to a partial pseudonymize when there is no profile row", async () => {
     await handleClerkUserDeleted(
       env as never,

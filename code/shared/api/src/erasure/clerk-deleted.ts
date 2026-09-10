@@ -36,11 +36,20 @@ export async function handleClerkUserDeleted(
     .bind(userId)
     .first<{ email: string | null; email_fingerprint: string | null }>();
 
+  // Self-service and RTBF erasure already anonymize user_profiles.email to this placeholder
+  // (see d1.ts createCoreErasureAdapter.anonymize) BEFORE this webhook fires — self.ts / the
+  // confirm route already suppressed/deleted the REAL email synchronously. Skip the Resend op
+  // for the placeholder, or an already-suppressed contact gets re-suppressed under the junk
+  // anonymized address. A real email here means an admin-direct Clerk deletion, where this
+  // webhook is the first (and only) place processing it — that carve-out still applies below.
+  const isAnonymizedPlaceholder =
+    profile?.email === `deleted_${userId}@anonymized.local`;
+
   // Erasure carve-out: a churn_events row (Task 3, self-service only) means this is a
   // self-service churn → suppress the contact (win-back cohort, using the stored email
   // before pseudonymization). No row → explicit RTBF/admin deletion → pure-delete, same as
   // before. Best-effort — a Resend failure never blocks the erasure.
-  if (profile?.email) {
+  if (profile?.email && !isAnonymizedPlaceholder) {
     const churn = await readChurnEvent(env.MAIN_DB, userId).catch(() => null);
     try {
       if (churn) {
