@@ -16,6 +16,7 @@
       "sessions": "Sessions",
       "dataRequests": "Demandes de données",
       "csp": "Rapports CSP",
+      "churn": "Résiliations",
       "backups": "Sauvegardes",
       "system": "Système",
       "settings": "Paramètres",
@@ -106,6 +107,26 @@
       "lastSeen": "Dernière occurrence",
       "empty": "Aucune violation CSP enregistrée.",
       "loadError": "Impossible de charger les rapports CSP — l'API est injoignable."
+    },
+    "churn": {
+      "title": "Résiliations",
+      "total": "Total des résiliations",
+      "reason": "Motif",
+      "count": "Occurrences",
+      "date": "Date",
+      "feedback": "Commentaire",
+      "competitor": "Concurrent",
+      "unavailable": "Impossible de charger les données de résiliation — l'API est injoignable.",
+      "reasons": {
+        "too_expensive": "Trop cher",
+        "not_using": "Ne l'utilise plus",
+        "missing_feature": "Fonctionnalité manquante",
+        "found_alternative": "A trouvé une alternative",
+        "too_hard": "Trop difficile à utiliser",
+        "privacy": "Préoccupations de confidentialité",
+        "other": "Autre",
+        "unknown": "Inconnu"
+      }
     },
     "dataRequests": {
       "title": "Demandes de données",

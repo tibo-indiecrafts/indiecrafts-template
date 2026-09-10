@@ -4,6 +4,7 @@ import {
   MonitorSmartphone,
   FileText,
   ShieldAlert,
+  UserMinus,
   DatabaseBackup,
   Server,
   Settings,
@@ -29,6 +30,7 @@ export const NAV: NavGroup[] = [
     items: [
       { key: "dataRequests", href: "/data-requests", icon: FileText },
       { key: "csp", href: "/csp", icon: ShieldAlert },
+      { key: "churn", href: "/churn", icon: UserMinus },
     ],
   },
   {

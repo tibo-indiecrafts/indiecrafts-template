@@ -16,6 +16,7 @@
       "sessions": "Sessions",
       "dataRequests": "Data requests",
       "csp": "CSP reports",
+      "churn": "Churn",
       "backups": "Backups",
       "system": "System",
       "settings": "Settings",
@@ -106,6 +107,26 @@
       "lastSeen": "Last seen",
       "empty": "No CSP violations recorded.",
       "loadError": "Could not load CSP reports — the api is unreachable."
+    },
+    "churn": {
+      "title": "Churn",
+      "total": "Total churned",
+      "reason": "Reason",
+      "count": "Count",
+      "date": "Date",
+      "feedback": "Feedback",
+      "competitor": "Competitor",
+      "unavailable": "Could not load churn data — the api is unreachable.",
+      "reasons": {
+        "too_expensive": "Too expensive",
+        "not_using": "Not using it",
+        "missing_feature": "Missing a feature",
+        "found_alternative": "Found an alternative",
+        "too_hard": "Too hard to use",
+        "privacy": "Privacy concerns",
+        "other": "Other",
+        "unknown": "Unknown"
+      }
     },
     "dataRequests": {
       "title": "Data requests",
