@@ -389,6 +389,40 @@ describe("POST /v1/email-preferences/unsubscribe", () => {
       { category_key: "offers", granted: 0 },
     ]);
   });
+
+  it("a stale/renamed category token still 200s (RFC 8058) but writes nothing", async () => {
+    await seed("user_unsub_stale");
+    // "retired" is not in `fetchCategories`'s current category set (CATEGORIES only has
+    // news/offers) — simulates a Studio category renamed/removed after the email went out.
+    const token = await signPrefToken(
+      PREF_SECRET,
+      "user_unsub_stale",
+      "retired",
+    );
+
+    const res = await handleOneClickUnsubscribe(
+      unsubPost(token),
+      prefEnv(),
+      undefined,
+      { fetchCategories },
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true });
+
+    const prefRows = await ENV.MAIN_DB!.prepare(
+      "SELECT category_key FROM email_preferences WHERE user_id = ?",
+    )
+      .bind("user_unsub_stale")
+      .all<{ category_key: string }>();
+    expect(prefRows.results).toEqual([]);
+
+    const proofRows = await ENV.MAIN_DB!.prepare(
+      "SELECT consent_type FROM consent_events WHERE subject_id = ?",
+    )
+      .bind("user_unsub_stale")
+      .all<{ consent_type: string }>();
+    expect(proofRows.results).toEqual([]);
+  });
 });
 
 describe("emailPreferenceLinks", () => {
