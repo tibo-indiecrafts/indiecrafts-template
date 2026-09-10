@@ -1,4 +1,4 @@
-import type { ErasureSelfResult } from "./erasure-self";
+import type { ChurnSurveyInput, ErasureSelfResult } from "./erasure-self";
 
 /**
  * The per-surface Clerk seam for the account "Your data" tab. Each surface builds
@@ -7,12 +7,15 @@ import type { ErasureSelfResult } from "./erasure-self";
  * `@clerk/*`-free:
  *
  * - `getToken` — a fresh Clerk session token for the authenticated export/erasure calls.
- * - `submitErasure` — the erasure POST wrapped in the SDK's `useReverification`
- *   (client step-up + auto-retry) and mapped to an `ErasureSelfResult`.
+ * - `submitErasure` — the erasure POST (+ optional churn survey) wrapped in the SDK's
+ *   `useReverification` (client step-up + auto-retry) and mapped to an `ErasureSelfResult`.
  * - `onDeleted` — after a done/partial erasure: sign out + route home.
  */
 export interface AccountAuth {
   getToken: () => Promise<string | null>;
-  submitErasure: (email: string) => Promise<ErasureSelfResult>;
+  submitErasure: (
+    email: string,
+    survey?: ChurnSurveyInput,
+  ) => Promise<ErasureSelfResult>;
   onDeleted: () => void | Promise<void>;
 }

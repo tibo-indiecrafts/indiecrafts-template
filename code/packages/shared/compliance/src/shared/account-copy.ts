@@ -6,6 +6,28 @@
  * resolves the right string regardless of its i18n runtime (next-intl / react-intl).
  */
 
+/** Preset reason codes — MUST mirror `CHURN_REASONS` in the api's `consent/churn-store`. */
+export const CHURN_REASON_CODES = [
+  "too_expensive",
+  "not_using",
+  "missing_feature",
+  "found_alternative",
+  "too_hard",
+  "privacy",
+  "other",
+] as const;
+export type ChurnReasonCode = (typeof CHURN_REASON_CODES)[number];
+
+export interface DeleteAccountSurveyCopy {
+  legend: string;
+  reasonLabel: string;
+  reasons: Record<ChurnReasonCode, string>;
+  feedbackLabel: string;
+  feedbackPlaceholder: string;
+  competitorLabel: string;
+  competitorPlaceholder: string;
+}
+
 export interface DeleteAccountCopy {
   heading: string;
   body: string;
@@ -17,6 +39,8 @@ export interface DeleteAccountCopy {
   partial: string;
   error: string;
   mismatch: string;
+  /** The optional churn exit-survey, rendered above the confirm control. */
+  survey: DeleteAccountSurveyCopy;
 }
 
 export interface ExportCopy {
@@ -42,6 +66,17 @@ export function buildDeleteAccountCopy(
     partial: t("partial"),
     error: t("error"),
     mismatch: t("mismatch"),
+    survey: {
+      legend: t("survey.legend"),
+      reasonLabel: t("survey.reasonLabel"),
+      reasons: Object.fromEntries(
+        CHURN_REASON_CODES.map((code) => [code, t(`survey.reasons.${code}`)]),
+      ) as Record<ChurnReasonCode, string>,
+      feedbackLabel: t("survey.feedbackLabel"),
+      feedbackPlaceholder: t("survey.feedbackPlaceholder"),
+      competitorLabel: t("survey.competitorLabel"),
+      competitorPlaceholder: t("survey.competitorPlaceholder"),
+    },
   };
 }
 

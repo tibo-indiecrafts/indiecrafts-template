@@ -15,9 +15,30 @@ describe("account-copy builders", () => {
       "partial",
       "pending",
       "success",
+      "survey",
     ]);
     expect(copy.heading).toBe("X:heading");
     expect(copy.mismatch).toBe("X:mismatch");
+    expect(Object.keys(copy.survey).sort()).toEqual([
+      "competitorLabel",
+      "competitorPlaceholder",
+      "feedbackLabel",
+      "feedbackPlaceholder",
+      "legend",
+      "reasonLabel",
+      "reasons",
+    ]);
+    expect(copy.survey.legend).toBe("X:survey.legend");
+    expect(Object.keys(copy.survey.reasons).sort()).toEqual([
+      "found_alternative",
+      "missing_feature",
+      "not_using",
+      "other",
+      "privacy",
+      "too_expensive",
+      "too_hard",
+    ]);
+    expect(copy.survey.reasons.too_hard).toBe("X:survey.reasons.too_hard");
   });
 
   it("buildExportCopy maps every ExportCopy field", () => {

@@ -77,7 +77,24 @@
       "success": "Votre compte a été supprimé. Déconnexion en cours…",
       "partial": "Votre compte a été supprimé ; certaines données peuvent mettre un peu plus de temps à disparaître.",
       "error": "Une erreur s'est produite. Veuillez réessayer.",
-      "mismatch": "Cet e-mail ne correspond pas à votre compte."
+      "mismatch": "Cet e-mail ne correspond pas à votre compte.",
+      "survey": {
+        "legend": "Avant de partir — aidez-nous à nous améliorer (facultatif)",
+        "reasonLabel": "Quelle est la principale raison de votre départ ?",
+        "reasons": {
+          "too_expensive": "Trop cher",
+          "not_using": "Je ne l'utilise pas assez",
+          "missing_feature": "Il manque une fonctionnalité dont j'ai besoin",
+          "found_alternative": "J'ai trouvé une meilleure alternative",
+          "too_hard": "Trop difficile à utiliser",
+          "privacy": "Préoccupations liées à la confidentialité",
+          "other": "Autre"
+        },
+        "feedbackLabel": "Souhaitez-vous nous dire autre chose ?",
+        "feedbackPlaceholder": "Vos commentaires nous aident à progresser (facultatif)",
+        "competitorLabel": "Vers quel service passez-vous ?",
+        "competitorPlaceholder": "ex. Acme (facultatif)"
+      }
     },
     "export": {
       "heading": "Télécharger vos données",

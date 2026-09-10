@@ -45,6 +45,33 @@ describe("rawErasureFetch", () => {
     stubFetch(403, { error: "nope" });
     expect(await rawErasureFetch(base)).toEqual({ status: 403 });
   });
+
+  it("includes survey fields in the erasure-self body", async () => {
+    const f = vi.fn().mockResolvedValue({ status: 200, ok: true });
+    await rawErasureFetch(
+      {
+        apiUrl: "https://api",
+        getToken: async () => "t",
+        email: "u@x.com",
+        reason: "too_hard",
+        feedback: "confusing",
+      },
+      f as unknown as typeof fetch,
+    );
+    const body = JSON.parse((f.mock.calls[0][1] as RequestInit).body as string);
+    expect(body).toMatchObject({
+      email: "u@x.com",
+      reason: "too_hard",
+      feedback: "confusing",
+    });
+  });
+
+  it("omits empty survey fields from the body", async () => {
+    const f = vi.fn().mockResolvedValue({ status: 200, ok: true });
+    await rawErasureFetch(base, f as unknown as typeof fetch);
+    const body = JSON.parse((f.mock.calls[0][1] as RequestInit).body as string);
+    expect(body).toEqual({ email: "you@example.com" });
+  });
 });
 
 describe("mapErasureResponse", () => {

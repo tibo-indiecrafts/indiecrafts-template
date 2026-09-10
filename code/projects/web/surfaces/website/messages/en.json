@@ -106,7 +106,24 @@
       "success": "Your account has been deleted. You're now signed out.",
       "partial": "Your account was deleted, but some data needs manual follow-up. Our team has been notified.",
       "error": "Something went wrong. Please try again.",
-      "mismatch": "That email doesn't match your account. Please check it and try again."
+      "mismatch": "That email doesn't match your account. Please check it and try again.",
+      "survey": {
+        "legend": "Before you go — help us do better (optional)",
+        "reasonLabel": "What's the main reason you're leaving?",
+        "reasons": {
+          "too_expensive": "Too expensive",
+          "not_using": "I'm not using it enough",
+          "missing_feature": "It's missing a feature I need",
+          "found_alternative": "I found a better alternative",
+          "too_hard": "Too hard to use",
+          "privacy": "Privacy concerns",
+          "other": "Other"
+        },
+        "feedbackLabel": "Anything else you'd like to tell us?",
+        "feedbackPlaceholder": "Your feedback helps us improve (optional)",
+        "competitorLabel": "Who are you switching to?",
+        "competitorPlaceholder": "e.g. Acme (optional)"
+      }
     },
     "export": {
       "heading": "Download your data",

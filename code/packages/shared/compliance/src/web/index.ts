@@ -21,13 +21,17 @@ export {
   rawErasureFetch,
   mapErasureResponse,
   type ErasureFetchOutcome,
+  type ChurnSurveyInput,
 } from "../shared/erasure-self";
 export { ExportSection } from "./ExportSection";
 export type { ExportSectionProps } from "./ExportSection";
 export {
   buildDeleteAccountCopy,
   buildExportCopy,
+  CHURN_REASON_CODES,
+  type ChurnReasonCode,
   type DeleteAccountCopy,
+  type DeleteAccountSurveyCopy,
   type ExportCopy,
 } from "../shared/account-copy";
 export { AccountDataTab, type AccountDataTabProps } from "./AccountDataTab";
