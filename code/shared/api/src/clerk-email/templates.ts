@@ -1,10 +1,4 @@
-import { defaultLocale } from "@indiecrafts/packages-shared-config";
-
-/** One string per locale; resolved to the active locale (else the default, else any). */
-type L = Record<string, string>;
-export function pickLocale(v: L, locale: string): string {
-  return v[locale] ?? v[defaultLocale] ?? Object.values(v)[0] ?? "";
-}
+import { pickLocale } from "@indiecrafts/packages-shared-config";
 
 /**
  * Studio-editable copy for one auth email, ALREADY resolved to the recipient's locale by

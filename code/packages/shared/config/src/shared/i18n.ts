@@ -147,6 +147,24 @@ export function pickSuggestedLocale<L extends string>(
 }
 
 /**
+ * Resolve a per-locale field — a `{ [code]: string }` object (a `localeString`/`localeText`
+ * as stored in Sanity) or a plain string — to ONE string for the active `locale`: the
+ * requested locale, else the {@link defaultLocale}, else `fallback` (default `""`). The
+ * single home for the read that was re-implemented across the web bricks, the blog module,
+ * and the api worker. `null`/`undefined` per-locale entries fall through (nullish), so a
+ * cleared field resolves to the default or the fallback; a blank string is kept, so a caller
+ * that wants "blank → fallback" reads the result with `|| …` (or `|| undefined`).
+ */
+export function pickLocale(
+  value: Record<string, string | null | undefined> | string | null | undefined,
+  locale: string,
+  fallback = "",
+): string {
+  if (typeof value === "string") return value;
+  return value?.[locale] ?? value?.[defaultLocale] ?? fallback;
+}
+
+/**
  * Nested ICU message object → flat `{ "a.b.c": "msg" }` map. Shared by the mobile
  * (Expo) shells, which format with `react-intl` and need a
  * FLAT id map (react-intl has no nested-message support, unlike next-intl on web).

@@ -1,7 +1,7 @@
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
-import { resend, type MailEnv } from "../erasure/email";
+import { readProfileLocale, resend, type MailEnv } from "../erasure/email";
 import { AUTH_TEMPLATES, type EmailVars } from "./templates";
 import {
   canonicalAuthSlug,
@@ -30,7 +30,8 @@ type ClerkEmailData = {
 };
 
 /** The user's stored locale — by Clerk user id, else by email fingerprint, else the
- *  default. Never throws: a lookup failure must not stop a mandatory auth email. */
+ *  default. Delegates the DB read to the shared `readProfileLocale`; never throws (a
+ *  lookup failure must not stop a mandatory auth email). */
 async function resolveLocale(
   env: ClerkEmailEnv,
   d: ClerkEmailData,
@@ -41,22 +42,15 @@ async function resolveLocale(
       str(d.user_id) ||
       str((d.data as { user_id?: unknown } | undefined)?.user_id);
     const to = str(d.to_email_address);
-    let row: { locale?: string | null } | null = null;
-    if (userId) {
-      row = await env.MAIN_DB.prepare(
-        "SELECT locale FROM user_profiles WHERE user_id = ?",
-      )
-        .bind(userId)
-        .first();
-    } else if (to && env.GDPR_FINGERPRINT_SALT) {
-      const fp = await fingerprintEmail(to, env.GDPR_FINGERPRINT_SALT);
-      row = await env.MAIN_DB.prepare(
-        "SELECT locale FROM user_profiles WHERE email_fingerprint = ?",
-      )
-        .bind(fp)
-        .first();
-    }
-    return str(row?.locale) || defaultLocale;
+    // Only fingerprint when there's no user id (the fingerprint path is the fallback).
+    const fingerprint =
+      !userId && to && env.GDPR_FINGERPRINT_SALT
+        ? await fingerprintEmail(to, env.GDPR_FINGERPRINT_SALT)
+        : undefined;
+    return await readProfileLocale(env.MAIN_DB, {
+      userId: userId || undefined,
+      fingerprint,
+    });
   } catch {
     return defaultLocale;
   }

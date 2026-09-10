@@ -6,6 +6,7 @@ import {
   localeDir,
   localePrefix,
   localizedPathname,
+  pickLocale,
   pickSuggestedLocale,
 } from "./index";
 
@@ -46,5 +47,20 @@ describe("@indiecrafts/packages-shared-config i18n", () => {
     );
     // None supported → null.
     expect(pickSuggestedLocale(["de", "es"], "en", localeCodes)).toBe(null);
+  });
+
+  it("pickLocale resolves locale → default → fallback, and passes strings through", () => {
+    const v = { en: "Hello", fr: "Bonjour" };
+    expect(pickLocale(v, "fr")).toBe("Bonjour");
+    // Missing requested locale → default locale ("en").
+    expect(pickLocale({ en: "Hello" }, "fr")).toBe("Hello");
+    // Neither present → the fallback (default "").
+    expect(pickLocale({ de: "Hallo" }, "fr")).toBe("");
+    expect(pickLocale({ de: "Hallo" }, "fr", "n/a")).toBe("n/a");
+    // null / undefined value → fallback; a plain string passes through.
+    expect(pickLocale(null, "fr", "x")).toBe("x");
+    expect(pickLocale("plain", "fr")).toBe("plain");
+    // A null entry falls through (nullish), not treated as present.
+    expect(pickLocale({ fr: null, en: "Hi" }, "fr")).toBe("Hi");
   });
 });

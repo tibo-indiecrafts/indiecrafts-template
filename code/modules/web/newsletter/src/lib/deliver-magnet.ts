@@ -123,8 +123,13 @@ async function sendMagnetEmail(
   // Editor copy (translated, resolved to the subscriber's language) with the
   // hardcoded COPY as the per-field fallback — an empty group keeps today's mail.
   const title = magnet.title ?? "";
-  const fallback = language === "en" ? COPY.en : COPY.fr;
   const locale = language || defaultLocale;
+  // Resolve the hardcoded fallback copy by locale, else the default locale — a new locale
+  // with no COPY entry falls back to the default, not silently to French.
+  const fallback =
+    COPY[locale as keyof typeof COPY] ??
+    COPY[defaultLocale as keyof typeof COPY] ??
+    COPY.en;
   const intro = pick(lead?.intro, locale);
   const token = await signDownloadToken(
     { assetId: magnet._id, exp: Date.now() + TTL_MS },

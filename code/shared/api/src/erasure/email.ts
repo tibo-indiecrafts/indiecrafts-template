@@ -7,7 +7,7 @@
 // English — these emails are mandatory, so a missing/unreachable Sanity, or an
 // operator setting `enabled: false`, must never stop the send.
 
-import { defaultLocale } from "@indiecrafts/packages-shared-config";
+import { defaultLocale, pickLocale } from "@indiecrafts/packages-shared-config";
 
 /** The Env slice this module needs — never the full worker `Env`. */
 export type MailEnv = {
@@ -49,16 +49,10 @@ function escapeHtml(value: string): string {
     .replaceAll("'", "&#39;");
 }
 
-/** Resolve a locale field to the recipient's locale, else the default, else any value. */
+/** Resolve a locale field to the recipient's locale, else the default; blank → undefined
+ *  (so the caller's `|| "hardcoded"` fallback fires). Thin adapter over shared `pickLocale`. */
 function pick(value: LocaleValue, locale: string): string | undefined {
-  if (typeof value === "string") return value;
-  if (!value) return undefined;
-  return (
-    value[locale] ??
-    value[defaultLocale] ??
-    Object.values(value)[0] ??
-    undefined
-  );
+  return pickLocale(value, locale) || undefined;
 }
 
 /** The recipient's stored locale (`user_profiles.locale`) — by Clerk user id, else by

@@ -12,6 +12,13 @@ import { MODULES_FRAGMENT as GENERIC_MODULES_FRAGMENT } from "@indiecrafts/packa
  * to "en" too, so existing content still appears on /en after the
  * schema change.
  *
+ * **No cross-locale fallback — deliberate.** A document that exists only in
+ * one language is NOT shown for another locale; the read returns nothing and
+ * the route 404s. This is intentional: rendering default-language content
+ * under a `/<locale>/…` URL would be an hreflang / duplicate-content problem.
+ * (Field-level `localeString` copy DOES fall back to the default — a different,
+ * per-field concern. See `pickLocale` in `@indiecrafts/packages-shared-config`.)
+ *
  * **Scheduling** — every public *listing/discovery* read adds
  * `coalesce(publishedAt, _createdAt) <= now()`, so a future `publishedAt`
  * keeps a post out of listings, feeds, related, sitemap, and llms until

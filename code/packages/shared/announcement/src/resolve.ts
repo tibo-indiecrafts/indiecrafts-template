@@ -7,7 +7,7 @@
  */
 
 import {
-  defaultLocale,
+  pickLocale,
   type Locale,
 } from "@indiecrafts/packages-shared-config/shared";
 import type {
@@ -31,7 +31,7 @@ const EMPTY_BANNER: Banner = {
 };
 
 function localized(value: RawLocaleString, locale: Locale): string {
-  return value?.[locale] ?? value?.[defaultLocale] ?? "";
+  return pickLocale(value, locale);
 }
 
 /** now ∈ [start, end] — a missing bound is open. */

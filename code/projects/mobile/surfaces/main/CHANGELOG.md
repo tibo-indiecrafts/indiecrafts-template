@@ -13,6 +13,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **An explicit locale choice now syncs to a signed-in user's account.** A `LocaleSync` mount mirrors the
+  chosen locale to Clerk `unsafeMetadata.locale` → (via the api webhook) `user_profiles.locale`, so the
+  user's transactional/auth emails follow their current language, not just the sign-up one. Syncs only a
+  deliberate/stored choice, never the auto-detected device locale, so it can't clobber a real preference.
+  Also: `<IntlProvider>` + the Clerk `localization` now read the config `defaultLocale` / a locale→pack map
+  instead of the hardcoded `"en"` / `locale === "fr" ? …` binary (a third locale degrades to English, not
+  silently French). **Why:** the stored locale was captured only at sign-up.
+
 - **Clerk UI localized + sign-up locale capture.** `<ClerkProvider localization>` from the detected
   locale (`@clerk/localizations`); the OTP sign-up carries `unsafeMetadata.locale`, so the api localizes
   the user's auth emails (incl. the first verification code). **Why:** Clerk UI + emails in the app language.

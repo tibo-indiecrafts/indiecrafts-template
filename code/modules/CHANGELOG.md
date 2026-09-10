@@ -13,6 +13,22 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **newsletter — lead-magnet email fallback copy resolves by locale, not an en/fr binary.**
+  `deliver-magnet.ts` picked its hardcoded fallback with `language === "en" ? COPY.en : COPY.fr`, so a
+  third locale silently got the French copy. It now resolves `COPY[locale] ?? COPY[defaultLocale]`, so a
+  locale with no entry falls back to the default locale. **Why:** correctness once a third locale is added.
+
+### Changed
+
+- **blog — locale reads go through the shared `pickLocale`; a drift tripwire pins the GROQ default.**
+  `lib/localize.ts` is now a thin adapter over `@indiecrafts/packages-shared-config` `pickLocale` (no
+  behavior change), and a `queries.test.ts` test asserts the `coalesce(language, "en")` legacy-untagged-doc
+  default matches `defaultLocale`, so changing the default trips CI at these ~43 GROQ spots. A header note
+  documents that a missing per-locale document intentionally 404s (no cross-locale fallback). **Why:**
+  single locale-resolution home + guard the one hardcoded default.
+
 ### Added
 
 - **blog — GROQ public-filter test coverage, via `groq-js`.** `sanity/queries.test.ts` evaluates the

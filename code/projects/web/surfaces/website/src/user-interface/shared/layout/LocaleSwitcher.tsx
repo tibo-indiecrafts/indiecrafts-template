@@ -3,6 +3,7 @@
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useLocaleSwitch } from "@indiecrafts/packages-web-i18n";
+import { usePersistLocale } from "@indiecrafts/packages-web-auth/persist-locale";
 import { localeMap, locales, type Locale } from "@/config";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import {
@@ -33,6 +34,10 @@ export function LocaleSwitcher({
   // `@indiecrafts/packages-web-i18n`; the app's content-route resolver is injected via
   // `LocaleSwitchProvider` (in `LocaleSwitchBoundary`), read from context here.
   const switchTo = useLocaleSwitch();
+  // Persist the choice to a signed-in user's Clerk metadata → `user_profiles.locale` (via
+  // the webhook), so their transactional/auth emails follow their current language. No-op
+  // when signed out.
+  const persistLocale = usePersistLocale();
 
   const isCode = shape === "code";
 
@@ -62,7 +67,10 @@ export function LocaleSwitcher({
       <DropdownMenuContent align="end" className="min-w-32">
         <DropdownMenuRadioGroup
           value={current}
-          onValueChange={(value: string) => void switchTo(value)}
+          onValueChange={(value: string) => {
+            void switchTo(value);
+            persistLocale(value);
+          }}
         >
           {locales.map((l) => (
             <DropdownMenuRadioItem key={l.code} value={l.code}>

@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { defineQuery } from "next-sanity";
-import { defaultLocale } from "@indiecrafts/packages-shared-config";
+import { pickLocale } from "@indiecrafts/packages-shared-config";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 
 /** A `localeString`/`localeText` value — one string per locale. */
@@ -71,5 +71,5 @@ export const getEmailStrings = cache(async (): Promise<EmailStrings> =>
 
 /** Resolve a `localeString`/`localeText` to one string: the locale, else default, else empty. */
 export function pick(value: LocaleValue, locale: string): string {
-  return (value?.[locale] ?? value?.[defaultLocale] ?? "").trim();
+  return pickLocale(value, locale).trim();
 }

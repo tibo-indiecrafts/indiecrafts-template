@@ -11,6 +11,7 @@
     "./sign-up-view": "./src/sign-up-view.tsx",
     "./marketing-nudge": "./src/marketing-nudge.tsx",
     "./session-logger": "./src/session-logger.tsx",
+    "./persist-locale": "./src/persist-locale.tsx",
     "./session-log": "./src/session-log.ts",
     "./redirect": "./src/redirect.ts",
     "./account": "./src/account/account-modal.tsx"
@@ -20,6 +21,7 @@
     "@clerk/nextjs": "^7.7.7",
     "@indiecrafts/packages-shared-auth": "workspace:*",
     "@indiecrafts/packages-shared-compliance": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*"
   },
   "peerDependencies": {

@@ -17,7 +17,7 @@ import { cache } from "react";
 import {
   pages,
   isPageVisible,
-  defaultLocale,
+  pickLocale,
   type Locale,
   type StaticAppPathname,
   type AppRoute,
@@ -71,7 +71,7 @@ type RawNavItem = {
 };
 
 function localized(value: RawLocaleString, locale: Locale): string {
-  return value?.[locale] ?? value?.[defaultLocale] ?? "";
+  return pickLocale(value, locale);
 }
 
 /** Resolve one raw item to a terminal link, or `null` when it has no usable target/label. */

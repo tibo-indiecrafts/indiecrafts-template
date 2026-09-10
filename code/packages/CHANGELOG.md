@@ -12,6 +12,27 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **`pickLocale(value, locale, fallback?)` on `@indiecrafts/packages-shared-config`.** One shared
+  home for resolving a `localeString`/`localeText` (`{ en, fr }` or a plain string) to the active
+  locale, else the default, else a fallback. Replaces **nine** near-identical re-implementations
+  across the web bricks (email · announcement · compliance · locale-suggest · navigation · blog) and
+  the api worker (erasure · clerk-email × 2) — each now a thin typed adapter over it. **Why:** one
+  fallback policy in one place instead of nine copies drifting apart.
+- **`usePersistLocale()` on `@indiecrafts/packages-web-auth`** (`./persist-locale`). A hook the
+  surfaces' locale switchers call to mirror an explicit language change to the signed-in user's Clerk
+  `unsafeMetadata.locale` → (via the api webhook) `user_profiles.locale`. **Why:** the stored locale
+  was captured only at sign-up, so a later language switch never reached the user's emails.
+
+### Changed
+
+- **`@indiecrafts/packages-web-i18n` routing now sets the namespaced locale cookie.** The shared
+  next-intl shim omitted `localeCookie`, so a module navigating through it read/wrote next-intl's
+  un-namespaced `NEXT_LOCALE` instead of the app's `${site.prefix}_NEXT_LOCALE`. It now uses
+  `localeCookieName`, matching the app's typed routing. **Why:** one locale cookie per deployment, not
+  two that can disagree.
+
 ### Fixed
 
 - **`@indiecrafts/packages-web-auth` — Clerk Core 3 migration (sign-in contrast + control components).**

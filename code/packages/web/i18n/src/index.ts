@@ -6,13 +6,21 @@
  */
 import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
-import { i18n, localeCodes } from "@indiecrafts/packages-shared-config";
+import {
+  i18n,
+  localeCodes,
+  localeCookieName,
+} from "@indiecrafts/packages-shared-config";
 
 export const routing = defineRouting({
   locales: [...localeCodes],
   defaultLocale: i18n.defaultLocale,
   localePrefix: i18n.localePrefix,
   localeDetection: i18n.localeDetection,
+  // Same namespaced cookie the app's typed routing uses (`${site.prefix}_NEXT_LOCALE`), so a
+  // module navigating through this shim reads/writes the SAME locale cookie as the app — not
+  // next-intl's un-namespaced `NEXT_LOCALE` default.
+  localeCookie: { name: localeCookieName },
 });
 
 export const { Link, redirect, usePathname, useRouter, getPathname } =

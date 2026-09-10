@@ -19,6 +19,13 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **The language switcher now persists a signed-in user's choice.** Switching language calls
+  `usePersistLocale` (`@indiecrafts/packages-web-auth`) → the user's Clerk `unsafeMetadata.locale` →
+  (via the api webhook) `user_profiles.locale`. **Why:** the stored locale was captured only at
+  sign-up, so a user who later switched language still got transactional/auth emails in the old one.
+  No-op when signed out (the `NEXT_LOCALE` cookie still drives the UI). The `blog`/`nav` locale reads
+  now go through the shared `pickLocale` helper (no behavior change).
+
 - **Clerk UI localized + self-hosted `/sign-up`.** `<ClerkProvider>` now receives the active locale (the
   provider moved into `[locale]/layout.tsx`) so Clerk's sign-in/up + the account modal render in the
   visitor's language (`@clerk/localizations` `enUS`/`frFR`); a new `/sign-up` route renders `<SignUp>`

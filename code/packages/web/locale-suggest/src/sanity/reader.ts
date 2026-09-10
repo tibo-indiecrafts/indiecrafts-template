@@ -5,10 +5,7 @@
  */
 
 import { cache } from "react";
-import {
-  defaultLocale,
-  type Locale,
-} from "@indiecrafts/packages-shared-config";
+import { pickLocale, type Locale } from "@indiecrafts/packages-shared-config";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 import { localeSuggestQuery } from "./queries";
 
@@ -23,7 +20,7 @@ type RawLocaleString = Record<string, string | null> | null;
 const EMPTY: LocaleSuggestCopy = {};
 
 function localized(value: RawLocaleString, locale: Locale): string {
-  return value?.[locale] ?? value?.[defaultLocale] ?? "";
+  return pickLocale(value, locale);
 }
 
 export const getLocaleSuggest = cache(

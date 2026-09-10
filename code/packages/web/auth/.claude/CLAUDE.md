@@ -14,6 +14,11 @@ Consumed by the three Next surfaces (`website`, `admin`, `app`) — 3 consumers.
   `@indiecrafts/packages-shared-ui-tokens` CSS custom properties (`var(--primary)`, …),
   so sign-in UI is token-themed with **no hard-coded brand color**. A colocated test
   fails if a raw hex/oklch sneaks in.
+- **`usePersistLocale()`** (`./persist-locale`) — a `(locale) => void` a surface's locale
+  switcher calls to mirror an explicit language change to the signed-in user's Clerk
+  `unsafeMetadata.locale`. The api's `user.updated` webhook then updates `user_profiles.locale`,
+  so transactional/auth emails follow the user's CURRENT language, not just the sign-up one.
+  Merges existing metadata, no-ops when signed out / unchanged, best-effort (logs on failure).
 
 **Not here:** the role contract (`Roles`, `isAdmin`, claims type) lives in the DOM-free
 `@indiecrafts/packages-shared-auth`. Middleware `clerkMiddleware` wrapping + the admin gate

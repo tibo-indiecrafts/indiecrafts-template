@@ -13,11 +13,18 @@ import {
   messagesFor,
 } from "@/lib/i18n";
 import { ShellOverlays } from "@/components/ShellOverlays";
-import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
+import { ClerkProvider, useAuth, useUser } from "@clerk/clerk-expo";
 import { enUS, frFR } from "@clerk/localizations";
 import { CLERK_PUBLISHABLE_KEY, hasClerk, tokenCache } from "@/lib/auth";
 import { logSignIn } from "@/lib/session-log";
-import type { Locale } from "@/config";
+import { defaultLocale, type Locale } from "@/config";
+
+// Clerk's own UI localization per app locale. A locale with no Clerk pack degrades to
+// English rather than silently mismatching — add a row when Clerk ships that language.
+const CLERK_LOCALIZATION: Record<string, typeof enUS> = {
+  en: enUS,
+  fr: frFR,
+};
 
 // The provider tree — theme (persisted light/dark/system preference over the shared tokens) → i18n
 // (a stored choice, else the device locale, hydrated async) → the router Stack, with
@@ -34,6 +41,28 @@ function SignInLogger() {
     loggedSessions.add(sessionId);
     void logSignIn(userId, sessionId);
   }, [isSignedIn, sessionId, userId]);
+  return null;
+}
+
+// Mirror an EXPLICIT locale choice to the signed-in user's Clerk `unsafeMetadata.locale`, so
+// the api webhook updates `user_profiles.locale` and their emails follow their current
+// language (not just the sign-up one). Syncs `choice` (a deliberate selection or the restored
+// stored one), never the auto-detected device locale, so it can't clobber a real preference.
+function LocaleSync({ choice }: { choice: Locale | null }) {
+  const { isSignedIn, user } = useUser();
+  useEffect(() => {
+    if (!choice || !isSignedIn || !user) return;
+    const current = (user.unsafeMetadata as { locale?: unknown } | undefined)
+      ?.locale;
+    if (current === choice) return;
+    user
+      .update({ unsafeMetadata: { ...user.unsafeMetadata, locale: choice } })
+      .catch((error: unknown) => {
+        // Best-effort: the UI already switched; emails keep the prior stored locale
+        // until the next successful sync.
+        console.warn("locale sync to Clerk failed", (error as Error)?.name);
+      });
+  }, [choice, isSignedIn, user]);
   return null;
 }
 
@@ -61,7 +90,7 @@ function Providers({
       <IntlProvider
         locale={locale}
         messages={messagesFor(locale)}
-        defaultLocale="en"
+        defaultLocale={defaultLocale}
       >
         {children}
         {overlays ? (
@@ -81,9 +110,10 @@ function Providers({
     <ClerkProvider
       publishableKey={CLERK_PUBLISHABLE_KEY}
       tokenCache={tokenCache}
-      localization={locale === "fr" ? frFR : enUS}
+      localization={CLERK_LOCALIZATION[locale] ?? enUS}
     >
       <SignInLogger />
+      <LocaleSync choice={choice} />
       {tree}
     </ClerkProvider>
   ) : (

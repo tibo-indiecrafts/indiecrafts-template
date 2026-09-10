@@ -8,10 +8,7 @@
  */
 
 import { cache } from "react";
-import {
-  defaultLocale,
-  type Locale,
-} from "@indiecrafts/packages-shared-config";
+import { pickLocale, type Locale } from "@indiecrafts/packages-shared-config";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 import { cookieConsentQuery, cookiePolicyVersionQuery } from "./queries";
 import {
@@ -49,7 +46,7 @@ type RawCookie = {
 };
 
 function localized(value: RawLocaleString, locale: Locale): string {
-  return value?.[locale] ?? value?.[defaultLocale] ?? "";
+  return pickLocale(value, locale);
 }
 function isSignal(s: string): s is ConsentSignal {
   return (CONSENT_SIGNALS as readonly string[]).includes(s);

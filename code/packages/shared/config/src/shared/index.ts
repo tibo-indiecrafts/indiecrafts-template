@@ -19,6 +19,7 @@ export {
   localeDir,
   isLocale,
   pickSuggestedLocale,
+  pickLocale,
   flattenMessages,
 } from "./i18n";
 export { formatDefaults, localeFormat } from "./format";

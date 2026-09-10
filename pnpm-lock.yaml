@@ -493,6 +493,9 @@ importers:
       '@indiecrafts/packages-shared-compliance':
         specifier: workspace:*
         version: link:../../shared/compliance
+      '@indiecrafts/packages-shared-logger':
+        specifier: workspace:*
+        version: link:../../shared/logger
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../ui

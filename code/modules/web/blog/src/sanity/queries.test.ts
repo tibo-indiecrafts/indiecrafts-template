@@ -1,5 +1,6 @@
 import { evaluate, parse } from "groq-js";
 import { describe, expect, it } from "vitest";
+import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import {
   allPostSlugsQuery,
   allPostsQuery,
@@ -23,6 +24,19 @@ import {
   searchPostsQuery,
   taxonomyForLlmsQuery,
 } from "./queries";
+
+// Drift tripwire: the blog queries hardcode `coalesce(language, "en")` to default legacy
+// un-tagged docs to the default locale. If `defaultLocale` ever changes, that literal (in
+// ~43 spots here + a few in the app's seo/compliance queries) must change in lockstep. This
+// fails first, pointing at the fix, instead of the queries silently mis-defaulting.
+describe("GROQ legacy-untagged-doc default", () => {
+  it("matches the current defaultLocale", () => {
+    const legacy = `coalesce(language, "${defaultLocale}")`;
+    for (const q of [postBySlugQuery, allPostsQuery, blogCollectionQuery]) {
+      expect(q).toContain(legacy);
+    }
+  });
+});
 
 /**
  * These queries bake the "public" filter (noIndex / hideFromDiscovery /

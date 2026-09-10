@@ -1,4 +1,4 @@
-import { defaultLocale } from "@indiecrafts/packages-shared-config";
+import { pickLocale } from "@indiecrafts/packages-shared-config";
 import type { MailEnv } from "../erasure/email";
 import type { AuthCopy } from "./templates";
 
@@ -62,11 +62,11 @@ export function canonicalAuthSlug(slug: string): string | undefined {
   return k ? SLUG_FOR_KIND[k] : undefined;
 }
 
-/** Resolve a locale field to the recipient's locale, else the default; empty → undefined. */
+/** Resolve a locale field to the recipient's locale, else the default; empty → undefined
+ *  (so a blank Studio field falls through to the template's hardcoded copy). Thin adapter
+ *  over shared `pickLocale`. */
 function pick(v: LocaleValue, locale: string): string | undefined {
-  if (typeof v === "string") return v || undefined;
-  if (!v) return undefined;
-  return v[locale] || v[defaultLocale] || undefined;
+  return pickLocale(v, locale) || undefined;
 }
 
 /**
