@@ -4,11 +4,13 @@ import {
   waitOnExecutionContext,
 } from "cloudflare:test";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
-import { describe, expect, it } from "vitest";
-import worker from "./index";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import worker, { type Env } from "./index";
 
 const SECRET = "whsec_dGVzdHNlY3JldA=="; // base64("testsecret")
 const SALT = "test-fingerprint-salt";
+
+afterEach(() => vi.unstubAllGlobals());
 
 // Sign a body the same way verifySvix() verifies it (Web Crypto, workerd).
 async function svixHeaders(id: string, ts: string, body: string) {
@@ -37,7 +39,7 @@ async function svixHeaders(id: string, ts: string, body: string) {
   };
 }
 
-async function postWebhook(payload: unknown) {
+async function postWebhook(payload: unknown, envOverrides: Partial<Env> = {}) {
   const body = JSON.stringify(payload);
   const ts = String(Math.floor(Date.now() / 1000));
   const req = new Request("https://example.com/v1/clerk-webhook", {
@@ -49,7 +51,12 @@ async function postWebhook(payload: unknown) {
   // Override env per-test so the global 503-no-secret test stays valid.
   const res = await worker.fetch(
     req,
-    { ...env, CLERK_WEBHOOK_SECRET: SECRET, GDPR_FINGERPRINT_SALT: SALT },
+    {
+      ...env,
+      CLERK_WEBHOOK_SECRET: SECRET,
+      GDPR_FINGERPRINT_SALT: SALT,
+      ...envOverrides,
+    },
     ctx,
   );
   await waitOnExecutionContext(ctx);
@@ -257,5 +264,99 @@ describe("clerk webhook → user_profiles", () => {
       .bind("user_mkt2")
       .first<{ marketing_email: number | null }>();
     expect(row?.marketing_email).toBe(1);
+  });
+
+  // Stubs the Studio `emailPreferences` read fetchEmailPreferences() makes — same
+  // vi.stubGlobal("fetch", …) idiom as erasure/email.test.ts and security/alert.test.ts.
+  function stubSanityCategories(
+    categories: { key: string; includeAtSignup: boolean }[],
+  ) {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              result: {
+                categories: categories.map((c) => ({
+                  key: c.key,
+                  name: { en: c.key },
+                  description: { en: c.key },
+                  includeAtSignup: c.includeAtSignup,
+                })),
+                notices: [],
+              },
+            }),
+            { status: 200 },
+          ),
+      ),
+    );
+  }
+
+  it("user.created with marketing opt-in grants the includeAtSignup categories", async () => {
+    stubSanityCategories([
+      { key: "news", includeAtSignup: true },
+      { key: "offers", includeAtSignup: false },
+    ]);
+    await postWebhook(
+      {
+        type: "user.created",
+        data: {
+          id: "user_signup_grant",
+          primary_email_address_id: "e1",
+          email_addresses: [{ id: "e1", email_address: "grant@x.com" }],
+          unsafe_metadata: { marketing_email: true },
+        },
+      },
+      { SANITY_PROJECT_ID: "proj", SANITY_DATASET: "production" },
+    );
+
+    const news = await env.AUDIT_DB.prepare(
+      "SELECT granted FROM email_preferences WHERE user_id = ? AND category_key = ?",
+    )
+      .bind("user_signup_grant", "news")
+      .first<{ granted: number }>();
+    expect(news?.granted).toBe(1);
+
+    // Not includeAtSignup → no row written for it.
+    const offers = await env.AUDIT_DB.prepare(
+      "SELECT * FROM email_preferences WHERE user_id = ? AND category_key = ?",
+    )
+      .bind("user_signup_grant", "offers")
+      .first();
+    expect(offers).toBeNull();
+
+    const proof = await env.AUDIT_DB.prepare(
+      "SELECT granted, surface FROM consent_events WHERE subject_id = ? AND consent_type = 'email_pref:news'",
+    )
+      .bind("user_signup_grant")
+      .first<{ granted: number; surface: string }>();
+    expect(proof?.granted).toBe(1);
+    expect(proof?.surface).toBe("signup");
+
+    const profile = await env.AUDIT_DB.prepare(
+      "SELECT marketing_email FROM user_profiles WHERE user_id = ?",
+    )
+      .bind("user_signup_grant")
+      .first<{ marketing_email: number | null }>();
+    expect(profile?.marketing_email).toBe(1);
+  });
+
+  it("no marketing opt-in at sign-up → no granted email_preferences rows", async () => {
+    await postWebhook({
+      type: "user.created",
+      data: {
+        id: "user_no_grant",
+        primary_email_address_id: "e1",
+        email_addresses: [{ id: "e1", email_address: "nogrant@x.com" }],
+        unsafe_metadata: { marketing_email: false },
+      },
+    });
+    const { results } = await env.AUDIT_DB.prepare(
+      "SELECT * FROM email_preferences WHERE user_id = ?",
+    )
+      .bind("user_no_grant")
+      .all();
+    expect(results.length).toBe(0);
   });
 });

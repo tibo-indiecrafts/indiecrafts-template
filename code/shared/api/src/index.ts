@@ -45,6 +45,8 @@ import {
   handleTokenPreferences,
   handleOneClickUnsubscribe,
 } from "./consent/email-preferences";
+import { writePreferences } from "./consent/email-preferences-store";
+import { fetchEmailPreferences } from "./consent/email-preferences-sanity";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -1119,6 +1121,48 @@ export default {
                       }
                     })(),
                   );
+                }
+
+                // Sign-up opt-in → grant the Studio's `includeAtSignup` categories
+                // (per-category email_preferences + proof), so a new opted-in user starts
+                // subscribed. Best-effort: never fails the webhook — the marketing_email
+                // column write above is the primary path. Only on create, matching the
+                // "mirror on insert only" semantics above.
+                if (marketingEmail === 1) {
+                  try {
+                    const { categories } = await fetchEmailPreferences(
+                      env,
+                      locale ?? defaultLocale,
+                    );
+                    const includeAtSignupKeys = categories
+                      .filter((c) => c.includeAtSignup)
+                      .map((c) => c.key);
+                    const grantKeys =
+                      includeAtSignupKeys.length > 0
+                        ? includeAtSignupKeys
+                        : ["news"];
+                    // Superset of the Studio categories + whatever we actually grant, so a
+                    // "news" fallback (not itself a Studio category) still recomputes
+                    // marketing_email consistently.
+                    const marketingKeys = Array.from(
+                      new Set([...categories.map((c) => c.key), ...grantKeys]),
+                    );
+                    await writePreferences(env.MAIN_DB, {
+                      userId,
+                      fingerprint,
+                      updates: grantKeys.map((key) => ({
+                        key,
+                        granted: true,
+                      })),
+                      surface: "signup",
+                      country: request.headers.get("cf-ipcountry") ?? null,
+                      marketingKeys,
+                    });
+                  } catch (error) {
+                    logger.error("email preferences signup grant failed", {
+                      name: (error as Error)?.name,
+                    });
+                  }
                 }
               }
             }
