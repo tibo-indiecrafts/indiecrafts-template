@@ -55,6 +55,7 @@ describe("rawErasureFetch", () => {
         email: "u@x.com",
         reason: "too_hard",
         feedback: "confusing",
+        competitor: "Acme",
       },
       f as unknown as typeof fetch,
     );
@@ -63,6 +64,7 @@ describe("rawErasureFetch", () => {
       email: "u@x.com",
       reason: "too_hard",
       feedback: "confusing",
+      competitor: "Acme",
     });
   });
 
