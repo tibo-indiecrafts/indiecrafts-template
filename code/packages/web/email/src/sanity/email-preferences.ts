@@ -6,7 +6,7 @@ import { defaultLocale } from "@indiecrafts/packages-shared-config";
 /**
  * One marketing preference category shown in the subscriber preference centre
  * (e.g. "News", "Offers"). `key` is the stable identifier code reads (matched
- * against `resendAudienceId` and the unsubscribe/preferences link) — once a
+ * against `resendTopicId` and the unsubscribe/preferences link) — once a
  * category is saved, `key` locks (`readOnly`) so it can never drift under a
  * live subscriber list.
  */
@@ -48,11 +48,11 @@ const emailPreferenceCategory = defineArrayMember({
         "Activé = la case est déjà cochée dans le formulaire d'inscription. Désactivé = l'abonné doit l'activer lui-même.",
     }),
     defineField({
-      name: "resendAudienceId",
-      title: "Identifiant d'audience Resend",
+      name: "resendTopicId",
+      title: "Identifiant de topic Resend",
       type: "string",
       description:
-        "L'identifiant de l'audience Resend liée à cette catégorie. Vide = aucune synchronisation.",
+        "L'identifiant du topic Resend lié à cette catégorie. Vide = aucune synchronisation.",
     }),
   ],
   preview: {
@@ -67,7 +67,7 @@ const emailPreferenceCategory = defineArrayMember({
 /**
  * A display-only notice in the preference centre (e.g. "You'll always receive
  * order confirmations") — informational, not a toggle: no `key`,
- * `includeAtSignup`, or `resendAudienceId`.
+ * `includeAtSignup`, or `resendTopicId`.
  */
 const emailPreferenceNotice = defineArrayMember({
   type: "object",
@@ -99,7 +99,7 @@ const seededCategory = (
   name: { en: string; fr: string },
   description: { en: string; fr: string },
   includeAtSignup = false,
-) => ({ key, name, description, includeAtSignup, resendAudienceId: "" });
+) => ({ key, name, description, includeAtSignup, resendTopicId: "" });
 
 /**
  * Préférences e-mail (singleton) — the subscriber-facing preference centre:
