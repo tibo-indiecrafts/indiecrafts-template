@@ -10,6 +10,24 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-10-email-preferences-design.md` — read it alongside this plan.
 
+> **DESIGN UPDATE (2026-09-10, supersedes every "Resend audience" reference below).** Verified
+> against Resend's API: `unsubscribed` is **global per contact** (not per-audience), and **Topics**
+> are Resend's per-category primitive. So the model is **ONE audience + a Resend Topic per
+> category**, NOT one audience per category, and NOT segments. Concretely:
+>
+> - The Sanity category field is **`resendTopicId`** (rename from `resendAudienceId`).
+> - The mirror (Task 8) upserts a contact via `POST/PATCH /audiences/{id}/contacts` with
+>   `topics: [{ id: <resendTopicId>, subscription: granted ? "opt_in" : "opt_out" }]` against the
+>   one configured audience — NOT `upsertResendContact` per audience.
+> - Erasure (Task 11) deletes the D1 rows and deletes/globally-unsubscribes the ONE contact — not
+>   per-audience.
+> - Live Resend is **credential-gated**: the local `RESEND_API_KEY` is invalid and dev Clerk has 0
+>   users, so the per-contact Resend sync + Topic creation are a user-run step (valid key + a sync
+>   script). Build the code so it no-ops safely when the key/topic ids are unset (capture-only),
+>   exactly like the existing `resend-audience.ts` guard.
+>   Where a task below says "audience"/`resendAudienceId`/`upsertResendContact per audience", read it
+>   as the Topics shape above.
+
 ## Global Constraints
 
 - Never commit `.env*` (only `.env.example`); never expose a non-public token under `NEXT_PUBLIC_`/`EXPO_PUBLIC_`/`VITE_`; never paste secret values into chat.

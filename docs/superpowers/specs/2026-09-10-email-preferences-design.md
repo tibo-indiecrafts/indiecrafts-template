@@ -33,7 +33,12 @@ read-only "Account & security" transparency section, reachable both signed-in an
   the editor's `includeAtSignup` category set. Granular control lives in the preference centre.
 - **Token:** HMAC-signed, user-scoped preference token (reusing `@indiecrafts/packages-shared-gated-delivery`),
   reveals no PII, authorises only preference reads/writes.
-- **Resend — one audience per category.** A Resend "audience" is a list and a contact carries
+- **Resend — SUPERSEDED 2026-09-10 → use Topics.** Verified against Resend's API: `unsubscribed` is
+  global per contact (not per-audience) and **Topics** are the per-category primitive, so the model is
+  **one audience + a Resend Topic per category** (field `resendTopicId`), mirrored via a contact upsert
+  with `topics:[{id,subscription:opt_in|opt_out}]`. Live wiring is credential-gated (invalid local key).
+  The original per-category-audience text below is retained for history only.
+- **Resend — one audience per category (superseded, see above).** A Resend "audience" is a list and a contact carries
   only one `unsubscribed` flag, so topics can't be split inside one audience. Each Sanity
   category therefore carries an optional **`resendAudienceId`**: the editor creates the audience
   in Resend, pastes its id, and the api mirrors that category's opt-in/out to that audience
