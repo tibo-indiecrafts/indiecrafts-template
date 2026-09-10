@@ -62,6 +62,41 @@ function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
   return diff === 0;
 }
 
+/** Sign an arbitrary JSON-serializable payload: `<base64url(payload)>.<base64url(sig)>`. */
+export async function signHmac(
+  payload: object,
+  secret: string,
+): Promise<string> {
+  const payloadB64 = toBase64url(encoder.encode(JSON.stringify(payload)));
+  return `${payloadB64}.${toBase64url(await hmac(payloadB64, secret))}`;
+}
+
+/** Verify + decode a `signHmac` token. Never throws — malformed input is `null`. */
+export async function verifyHmac(
+  token: string,
+  secret: string,
+): Promise<Record<string, unknown> | null> {
+  try {
+    const dot = token.indexOf(".");
+    if (dot < 0) return null;
+    const payloadB64 = token.slice(0, dot);
+    const sigB64 = token.slice(dot + 1);
+    if (!payloadB64 || !sigB64) return null;
+
+    if (!timingSafeEqual(fromBase64url(sigB64), await hmac(payloadB64, secret)))
+      return null;
+
+    const payload: unknown = JSON.parse(
+      decoder.decode(fromBase64url(payloadB64)),
+    );
+    return payload && typeof payload === "object"
+      ? (payload as Record<string, unknown>)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 // ponytail: signed + expiring, NOT single-use — the same token opens the link
 // until `exp`. Add a consumed-token store (KV/DB) keyed by a token id for
 // single-use only if abuse appears.
@@ -69,9 +104,7 @@ export async function signDownloadToken(
   payload: { assetId: string; exp: number },
   secret: string,
 ): Promise<string> {
-  const payloadB64 = toBase64url(encoder.encode(JSON.stringify(payload)));
-  const sigB64 = toBase64url(await hmac(payloadB64, secret));
-  return `${payloadB64}.${sigB64}`;
+  return signHmac(payload, secret);
 }
 
 // ponytail: gates link *discovery*, not the asset object — a public CDN URL is
@@ -81,26 +114,10 @@ export async function verifyDownloadToken(
   secret: string,
   now?: number,
 ): Promise<{ assetId: string } | null> {
-  try {
-    const dot = token.indexOf(".");
-    if (dot < 0) return null;
-    const payloadB64 = token.slice(0, dot);
-    const sigB64 = token.slice(dot + 1);
-    if (!payloadB64 || !sigB64) return null;
-
-    const expected = await hmac(payloadB64, secret);
-    if (!timingSafeEqual(fromBase64url(sigB64), expected)) return null;
-
-    const payload: unknown = JSON.parse(
-      decoder.decode(fromBase64url(payloadB64)),
-    );
-    if (!payload || typeof payload !== "object") return null;
-    const { assetId, exp } = payload as Record<string, unknown>;
-    if (typeof assetId !== "string" || typeof exp !== "number") return null;
-    if (exp <= (now ?? Date.now())) return null;
-
-    return { assetId };
-  } catch {
-    return null;
-  }
+  const payload = await verifyHmac(token, secret);
+  if (!payload) return null;
+  const { assetId, exp } = payload;
+  if (typeof assetId !== "string" || typeof exp !== "number") return null;
+  if (exp <= (now ?? Date.now())) return null;
+  return { assetId };
 }

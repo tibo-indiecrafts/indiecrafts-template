@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { resolveGatedDownload } from "./index";
-import { signDownloadToken, verifyDownloadToken } from "./token";
+import {
+  signDownloadToken,
+  signHmac,
+  verifyDownloadToken,
+  verifyHmac,
+} from "./token";
 
 const SECRET = "test-download-secret-do-not-use-in-prod";
 const NOW = 1_700_000_000_000;
@@ -49,6 +54,19 @@ describe("signDownloadToken / verifyDownloadToken", () => {
     for (const bad of ["", "nodot", "a.b", "!!!.@@@"]) {
       expect(await verifyDownloadToken(bad, SECRET, NOW)).toBeNull();
     }
+  });
+});
+
+describe("signHmac / verifyHmac", () => {
+  it("signHmac/verifyHmac round-trips an arbitrary payload", async () => {
+    const t = await signHmac({ uid: "u1", cat: "news" }, "s3cret");
+    expect(await verifyHmac(t, "s3cret")).toEqual({ uid: "u1", cat: "news" });
+  });
+
+  it("verifyHmac returns null on a wrong secret or tamper", async () => {
+    const t = await signHmac({ uid: "u1" }, "s3cret");
+    expect(await verifyHmac(t, "other")).toBeNull();
+    expect(await verifyHmac("garbage", "s3cret")).toBeNull();
   });
 });
 
