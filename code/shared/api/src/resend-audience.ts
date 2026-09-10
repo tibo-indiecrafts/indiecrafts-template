@@ -49,6 +49,50 @@ export async function upsertResendContact(
   throw new Error(`resend ${res.status}`);
 }
 
+/** Create-or-update the audience contact's per-topic subscriptions. Topics are Resend's
+ *  per-category primitive (`unsubscribed` above is a global flag, not per-category); each
+ *  entry maps `granted` to Resend's `opt_in`/`opt_out`. Same POST-then-PATCH-on-409/422
+ *  idiom as `upsertResendContact`. Entries with an empty/missing `topicId` are dropped. */
+export async function syncContactTopics(
+  env: ResendAudienceEnv,
+  {
+    email,
+    topics,
+  }: { email: string; topics: { topicId: string; granted: boolean }[] },
+  doFetch: typeof fetch = fetch,
+): Promise<void> {
+  const filtered = topics.filter((t) => t.topicId);
+  if (!env.RESEND_API_KEY || !env.RESEND_AUDIENCE_ID || !email) return;
+  if (!filtered.length) return;
+  const base = `${RESEND_API}/audiences/${env.RESEND_AUDIENCE_ID}/contacts`;
+  const headers = {
+    Authorization: `Bearer ${env.RESEND_API_KEY}`,
+    "content-type": "application/json",
+  };
+  const resendTopics = filtered.map((t) => ({
+    id: t.topicId,
+    subscription: t.granted ? "opt_in" : "opt_out",
+  }));
+
+  const res = await doFetch(base, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ email, topics: resendTopics }),
+  });
+  if (res.ok) return;
+  // Already exists → update by email. (Resend returns 409/422 for a duplicate contact.)
+  if (res.status === 409 || res.status === 422) {
+    const patch = await doFetch(`${base}/${email}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ topics: resendTopics }),
+    });
+    if (!patch.ok) throw new Error(`resend ${patch.status}`);
+    return;
+  }
+  throw new Error(`resend ${res.status}`);
+}
+
 /** Remove the contact from the audience — the erasure "pure delete" (no win-back list).
  *  A 404 (already gone) is success. */
 export async function deleteResendContact(
