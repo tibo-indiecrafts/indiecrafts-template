@@ -58,31 +58,34 @@ export async function writePreferences(
   const { userId, fingerprint, updates, surface, country, marketingKeys } =
     opts;
   const now = new Date().toISOString();
-  for (const { key, granted } of updates) {
-    await db
-      .prepare(
-        "INSERT OR REPLACE INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, ?, ?, ?)",
-      )
-      .bind(userId, key, granted ? 1 : 0, now)
-      .run();
-    // Append-only proof (keyed by fingerprint, never raw email) — mirrors the
-    // consent_events INSERT shape in consent/marketing.ts.
-    await db
-      .prepare(
-        "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
-          "VALUES (?, 'user', ?, ?, ?, ?, '1', ?, 'account', ?, NULL, ?)",
-      )
-      .bind(
-        now,
-        userId,
-        fingerprint,
-        `email_pref:${key}`,
-        granted ? 1 : 0,
-        surface,
-        country,
-        `account:${userId}:${now}:${key}`,
-      )
-      .run();
+  if (updates.length > 0) {
+    // Batched: each pref row and its proof row must commit together, and one failed
+    // update must not partially land while a sibling key's pair does.
+    const statements = updates.flatMap(({ key, granted }) => [
+      db
+        .prepare(
+          "INSERT OR REPLACE INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, ?, ?, ?)",
+        )
+        .bind(userId, key, granted ? 1 : 0, now),
+      // Append-only proof (keyed by fingerprint, never raw email) — mirrors the
+      // consent_events INSERT shape in consent/marketing.ts.
+      db
+        .prepare(
+          "INSERT OR IGNORE INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, source, country, ip_hash, idempotency_key) " +
+            "VALUES (?, 'user', ?, ?, ?, ?, '1', ?, 'account', ?, NULL, ?)",
+        )
+        .bind(
+          now,
+          userId,
+          fingerprint,
+          `email_pref:${key}`,
+          granted ? 1 : 0,
+          surface,
+          country,
+          `account:${userId}:${now}:${key}`,
+        ),
+    ]);
+    await db.batch(statements);
   }
   await recomputeMarketingEmail(db, userId, marketingKeys);
 }

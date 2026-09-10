@@ -19,6 +19,9 @@ export function buildErasureAdapters(
   env: Env,
   opts: { includeClerk?: boolean } = {},
 ): ErasureAdapter[] {
+  // The d1-core pseudonymisation (retained user_id/fingerprint) is non-linkable only
+  // because the Clerk user is actually deleted — the `clerk` adapter below, gated by
+  // the CLERK_SECRET_KEY 503-guard, is what makes that true.
   const list: ErasureAdapter[] = [
     createCoreErasureAdapter(env.MAIN_DB!, env.GDPR_FINGERPRINT_SALT!),
     createAuditErasureAdapter(

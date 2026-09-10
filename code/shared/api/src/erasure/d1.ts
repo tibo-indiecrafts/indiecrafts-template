@@ -105,23 +105,25 @@ export function createCoreErasureAdapter(
     async anonymize(email): Promise<AdapterResult> {
       const { userId, fp } = await resolveSubject(coreDb, email, salt);
       if (!userId) return { store: "d1-core", anonymized: {}, deleted: {} };
-      const p = await coreDb
-        .prepare(
-          "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
-        )
-        .bind(
-          `deleted_${userId}@anonymized.local`,
-          "Deleted User",
-          new Date().toISOString(),
-          userId,
-        )
-        .run();
-      const con = await coreDb
-        .prepare(
-          "UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?",
-        )
-        .bind(fp, userId)
-        .run();
+      // Batched: the identity scrub and the consent pseudonymisation must commit together,
+      // or a mid-way failure leaves consent_events pointing at a still-real user_id.
+      const [p, con] = await coreDb.batch([
+        coreDb
+          .prepare(
+            "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
+          )
+          .bind(
+            `deleted_${userId}@anonymized.local`,
+            "Deleted User",
+            new Date().toISOString(),
+            userId,
+          ),
+        coreDb
+          .prepare(
+            "UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?",
+          )
+          .bind(fp, userId),
+      ]);
       return {
         store: "d1-core",
         anonymized: {
@@ -234,16 +236,18 @@ export function createAuditErasureAdapter(
     async delete(email): Promise<AdapterResult> {
       const { userId } = await resolveSubject(coreDb, email, salt);
       if (!userId) return { store: "d1-audit", anonymized: {}, deleted: {} };
-      const ses = await auditDb
-        .prepare("DELETE FROM session_events WHERE user_id = ?")
-        .bind(userId)
-        .run();
-      const sec = await auditDb
-        .prepare(
-          "DELETE FROM security_events WHERE user_id = ? AND severity NOT IN ('high','critical')",
-        )
-        .bind(userId)
-        .run();
+      // Batched: both deletes are one "erase the audit trail" unit — a mid-way failure
+      // must not leave session_events gone while security_events survives, or vice versa.
+      const [ses, sec] = await auditDb.batch([
+        auditDb
+          .prepare("DELETE FROM session_events WHERE user_id = ?")
+          .bind(userId),
+        auditDb
+          .prepare(
+            "DELETE FROM security_events WHERE user_id = ? AND severity NOT IN ('high','critical')",
+          )
+          .bind(userId),
+      ]);
       return {
         store: "d1-audit",
         anonymized: {},
