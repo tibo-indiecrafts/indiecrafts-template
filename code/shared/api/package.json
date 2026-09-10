@@ -24,6 +24,7 @@
     "@indiecrafts/packages-shared-announcement": "workspace:*",
     "@indiecrafts/packages-shared-compliance": "workspace:*",
     "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-gated-delivery": "workspace:*",
     "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-shared-security": "workspace:*",
     "@indiecrafts/packages-shared-security-events": "workspace:*"
