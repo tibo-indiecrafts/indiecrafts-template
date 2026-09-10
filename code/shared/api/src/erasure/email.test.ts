@@ -167,6 +167,26 @@ describe("sendErasureTokenEmail", () => {
     expect(body.html).toContain("Custom outro.");
   });
 
+  it("resolves the Sanity copy in the recipient's locale, else the default", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      erasureToken: {
+        subject: { en: "Erase your data", fr: "Effacer vos données" },
+        // fr-only heading — no en/default; must fall through per field.
+        heading: { fr: "Titre FR" },
+      },
+    }));
+    await sendErasureTokenEmail(
+      CONFIGURED,
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm", locale: "fr" },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.subject).toBe("Effacer vos données");
+    expect(body.html).toContain("Titre FR");
+  });
+
   it("enabled: false still sends the email, using the hard-coded literals", async () => {
     const fetchMock = okFetch();
     const fetchStrings = vi.fn(async () => ({

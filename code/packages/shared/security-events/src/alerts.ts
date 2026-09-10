@@ -22,16 +22,25 @@ export type SecurityAlert = {
   adminUrl?: string;
 };
 
+/** Studio-editable overlay for the alert copy — the only two prose parts (the rest is
+ *  structured incident data). No `enabled` flag: a security alert is never silenceable. */
+export type SecurityAlertCopy = { subjectPrefix?: string; intro?: string };
+
 /** Build the INTERNAL alert email copy. Pure + null-safe + non-PII (no raw IP, no email;
- *  the pseudonymous Clerk user id is the same field `/admin/security` shows). */
-export function formatSecurityAlert(a: SecurityAlert): {
+ *  the pseudonymous Clerk user id is the same field `/admin/security` shows). `copy`
+ *  overrides the subject prefix + intro line per field; blank/absent → the literals here. */
+export function formatSecurityAlert(
+  a: SecurityAlert,
+  copy?: SecurityAlertCopy,
+): {
   subject: string;
   text: string;
 } {
   const surface = a.surface ?? "unknown";
-  const subject = `[Security] ${a.severity} — ${a.eventType} (${surface})`;
+  const prefix = copy?.subjectPrefix?.trim() || "[Security]";
+  const subject = `${prefix} ${a.severity} — ${a.eventType} (${surface})`;
   const lines = [
-    "An app-level security incident was recorded.",
+    copy?.intro?.trim() || "An app-level security incident was recorded.",
     "",
     `Severity: ${a.severity}`,
     `Type: ${a.eventType}`,

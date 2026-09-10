@@ -22,16 +22,45 @@ export type AuthEmailStrings = {
   authNewDevice?: AuthGroup;
 };
 
-/** Clerk email `slug` → the `emailStrings` group that overrides it. Two slugs each map to
- *  the magic-link and new-device groups (the undocumented Clerk slug is registered twice). */
-const SLUG_TO_GROUP: Record<string, keyof AuthEmailStrings> = {
-  verification_code: "authVerification",
-  reset_password_code: "authResetPassword",
-  magic_link_sign_in: "authMagicLink",
-  magic_link_sign_up: "authMagicLink",
-  sign_in_from_new_device: "authNewDevice",
-  new_device_sign_in: "authNewDevice",
+/** Our four auth-email kinds — the canonical id behind Clerk's (varying) slugs. */
+export type AuthKind = "verification" | "reset" | "magic" | "newDevice";
+
+const GROUP_FOR_KIND: Record<AuthKind, keyof AuthEmailStrings> = {
+  verification: "authVerification",
+  reset: "authResetPassword",
+  magic: "authMagicLink",
+  newDevice: "authNewDevice",
 };
+
+/** The template slug our renderer + Studio group are keyed by, per kind. */
+const SLUG_FOR_KIND: Record<AuthKind, string> = {
+  verification: "verification_code",
+  reset: "reset_password_code",
+  magic: "magic_link_sign_in",
+  newDevice: "sign_in_from_new_device",
+};
+
+/**
+ * Map a Clerk email `slug` → our auth kind, FORGIVINGLY. Clerk's exact slugs vary and the
+ * new-device one is undocumented, so we match by substring rather than an exact allow-list:
+ * any slug containing "verification" → verification, "reset"/"password" → reset, "magic" →
+ * magic link, "device" → new device. Returns `null` for a non-auth slug (the handler then
+ * forwards Clerk's own rendered body untouched).
+ */
+export function authKind(slug: string): AuthKind | null {
+  const s = slug.toLowerCase();
+  if (s.includes("verification")) return "verification";
+  if (s.includes("reset") || s.includes("password")) return "reset";
+  if (s.includes("magic")) return "magic";
+  if (s.includes("device")) return "newDevice";
+  return null;
+}
+
+/** The canonical template slug for a Clerk slug (via {@link authKind}), or undefined. */
+export function canonicalAuthSlug(slug: string): string | undefined {
+  const k = authKind(slug);
+  return k ? SLUG_FOR_KIND[k] : undefined;
+}
 
 /** Resolve a locale field to the recipient's locale, else the default; empty → undefined. */
 function pick(v: LocaleValue, locale: string): string | undefined {
@@ -52,10 +81,9 @@ export function resolveAuthCopy(
   slug: string,
   locale: string,
 ): AuthCopy | undefined {
-  if (!strings) return undefined;
-  const key = SLUG_TO_GROUP[slug];
-  if (!key) return undefined;
-  const g = strings[key];
+  const kind = authKind(slug);
+  if (!strings || !kind) return undefined;
+  const g = strings[GROUP_FOR_KIND[kind]];
   if (!g || g.enabled === false) return undefined;
   return {
     subject: pick(g.subject, locale),
@@ -66,17 +94,30 @@ export function resolveAuthCopy(
 }
 
 /**
+ * A 5-minute in-worker cache of the auth read. Auth emails fire on every sign-in, so the
+ * same singleton would otherwise be re-fetched constantly; a worker isolate lives long
+ * enough for this to pay off. Only the real `fetch` path is cached — an injected `doFetch`
+ * (tests) always hits the network stub, so caching never leaks between test cases.
+ */
+let authCache: { at: number; value: AuthEmailStrings | null } | undefined;
+const AUTH_CACHE_MS = 5 * 60_000;
+
+/**
  * Fetch the auth-email copy from the Studio `emailStrings` singleton (raw GROQ-over-HTTP,
  * mirroring `erasure/email.ts` — the same already-declared Sanity env vars, no new deps).
  * MUST NOT throw: an unset/unreachable Sanity resolves to `null` and the templates fall
  * back to their hardcoded copy, so a missing Studio never blocks a mandatory auth email.
- * `doFetch` is injectable for tests.
+ * `doFetch` is injectable for tests (and bypasses the cache).
  */
 export async function fetchAuthEmailStrings(
   env: MailEnv,
   doFetch: typeof fetch = fetch,
 ): Promise<AuthEmailStrings | null> {
   if (!env.SANITY_PROJECT_ID || !env.SANITY_DATASET) return null;
+  const cacheable = doFetch === fetch;
+  if (cacheable && authCache && Date.now() - authCache.at < AUTH_CACHE_MS) {
+    return authCache.value;
+  }
   try {
     const version = env.SANITY_API_VERSION || "2025-01-01";
     const token = env.SANITY_API_READ_TOKEN;
@@ -92,7 +133,9 @@ export async function fetchAuthEmailStrings(
     );
     if (!res.ok) return null;
     const body = (await res.json()) as { result?: AuthEmailStrings };
-    return body.result ?? null;
+    const value = body.result ?? null;
+    if (cacheable) authCache = { at: Date.now(), value };
+    return value;
   } catch {
     return null;
   }

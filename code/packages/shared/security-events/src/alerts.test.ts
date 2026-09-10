@@ -48,4 +48,21 @@ describe("formatSecurityAlert", () => {
     });
     expect(out.text).toContain("https://admin.example.com/security");
   });
+  it("overrides the subject prefix + intro from copy, per field", () => {
+    const out = formatSecurityAlert(base, {
+      subjectPrefix: "[ALERTE]",
+      intro: "Un incident de sécurité a été détecté.",
+    });
+    expect(out.subject).toBe("[ALERTE] critical — data_exfiltration (app)");
+    expect(out.text.startsWith("Un incident de sécurité a été détecté.")).toBe(
+      true,
+    );
+  });
+  it("falls back to the literals for blank/absent copy fields", () => {
+    const out = formatSecurityAlert(base, { subjectPrefix: "  ", intro: "" });
+    expect(out.subject).toBe("[Security] critical — data_exfiltration (app)");
+    expect(
+      out.text.startsWith("An app-level security incident was recorded."),
+    ).toBe(true);
+  });
 });

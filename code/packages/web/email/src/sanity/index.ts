@@ -4,6 +4,7 @@ import { emailStructure } from "./structure";
 
 export { confirmationGroup, ownerAlertGroup } from "./groups";
 export { authEmailGroups } from "./auth-email-groups";
+export { securityAlertGroups } from "./security-alert-group";
 export { sendTestEmailAction } from "./send-test-action";
 
 /**

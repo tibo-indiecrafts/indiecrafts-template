@@ -39,11 +39,16 @@ engine directly, no email round-trip — the signed-in surfaces' account-delete 
 `WEBSITE_URL` (`[vars]`) sets the confirm-link origin the token email points at; unset falls back to
 the worker's own origin. The two erasure emails (`src/erasure/email.ts`) read their copy from the
 Studio-editable `emailStrings` singleton (`erasureToken`/`erasureComplete` groups) over raw GROQ-HTTP
-(mirrors `fetchAnnouncementDocs`, same Sanity `[vars]`/secret, no new deps), with a per-field fallback
-to hard-coded English — a missing/unreachable Sanity, or a group's `enabled: false`, never stops the
-send. The **Clerk auth emails** read the same way (`src/clerk-email/sanity.ts`) — the
+(mirrors `fetchAnnouncementDocs`, same Sanity `[vars]`/secret, no new deps), resolved to the subject's
+stored locale (`user_profiles.locale`, read before the erasure clears the row), with a per-field
+fallback to hard-coded English — a missing/unreachable Sanity, or a group's `enabled: false`, never
+stops the send. The **Clerk auth emails** read the same way (`src/clerk-email/sanity.ts`) — the
 `authVerification`/`authResetPassword`/`authMagicLink`/`authNewDevice` `emailStrings` groups, resolved
-to the recipient's locale, with per-field fallback to the templates' hard-coded en/fr.
+to the recipient's locale, with per-field fallback to the templates' hard-coded en/fr; the Clerk slug
+is matched forgivingly (`authKind`), and the read is cached in-worker for 5 min. The **internal
+security-alert email** (`src/security/alert.ts`) is Studio-editable too — the `securityAlert` group's
+`subjectPrefix`/`intro` (English, un-localized), with the same never-throws GROQ read and English
+fallback, but **no `enabled` toggle**: a security alert can never be silenced from Studio.
 `POST /v1/export` (authenticated; Clerk-JWT) runs `runExport`, stores the
 bundle in the `EXPORT_BUCKET` R2 bucket, and returns a single-use 1-hour download link; `GET
 /v1/export/download?token=` streams the bundle and deletes it from R2 on first download. Secret/

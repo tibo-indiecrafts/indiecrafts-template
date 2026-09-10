@@ -15,7 +15,7 @@ import {
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type Env, PUBLIC_CORS_POST, safeEqual } from "../index";
 import { buildErasureAdapters } from "./adapters";
-import { sendErasureCompleteEmail } from "./email";
+import { readProfileLocale, sendErasureCompleteEmail } from "./email";
 
 const BODY_MAX = 4000;
 const MAX_ATTEMPTS = 5;
@@ -193,6 +193,12 @@ export async function handleErasureConfirm(
 
   const adapters = buildAdapters(env);
   const ts = new Date().toISOString();
+  // Read the recipient's locale for the completion email BEFORE the erasure runs — the
+  // profile row is gone once it does.
+  const locale = await readProfileLocale(env.MAIN_DB, {
+    userId: row.user_id,
+    fingerprint: row.email_fingerprint,
+  });
   // A dry-run preview first (mutates nothing), then the live pass that actually erases.
   await runErasure(adapters, email, {
     mode: "erase",
@@ -241,6 +247,7 @@ export async function handleErasureConfirm(
     await sendErasureCompleteEmail(env, {
       to: email,
       retained: retainedSummary(hadErrors),
+      locale,
     });
   } catch (error) {
     logger.error("erasure complete email failed", {

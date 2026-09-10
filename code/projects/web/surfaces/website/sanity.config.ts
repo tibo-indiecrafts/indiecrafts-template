@@ -26,6 +26,7 @@ import {
   emailSanity,
   sendTestEmailAction,
   authEmailGroups,
+  securityAlertGroups,
 } from "@indiecrafts/packages-web-email/sanity";
 import { pageBuilderSanity } from "@indiecrafts/packages-web-page-builder/sanity";
 import { blogSanity } from "@indiecrafts/modules-web-blog/sanity";
@@ -61,11 +62,15 @@ const sanity = composeStudio([
   { title: "Site web", modules: appModules },
   {
     title: "Contenu partagé",
-    // The auth emails have no feature module of their own; they contribute their groups to
-    // the same E-mails singleton via a bare `{ emailGroups }` entry.
+    // The auth emails and the internal security alert have no feature module of their own;
+    // they contribute their groups to the same E-mails singleton via bare `{ emailGroups }`
+    // entries.
     modules: [
       ...sharedModules,
-      emailSanity([...allModules, { emailGroups: authEmailGroups }]),
+      emailSanity([
+        ...allModules,
+        { emailGroups: [...authEmailGroups, ...securityAlertGroups] },
+      ]),
     ],
   },
 ]);

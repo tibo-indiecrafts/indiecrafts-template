@@ -29,6 +29,13 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   group all fall back — a mandatory auth email never breaks. **Why:** operators can now edit auth-email
   copy per locale in the Studio (the flagged follow-up to the email take-over).
 
+- **The internal security-alert email is Studio-editable.** A new `securityAlert` group on the
+  `emailStrings` singleton (`subjectPrefix` + `intro`, English, un-localized) is read over the same
+  never-throws GROQ path (`security/alert.ts`), with an English fallback. It has **no `enabled`
+  toggle** — a security alert can never be silenced from the Studio; the incident details stay
+  structured and non-editable. **Why:** operators can reword the alert without a code change, but must
+  never be able to turn it off.
+
 - **Commercial-email consent (`marketing_email`).** A new `user_profiles.marketing_email` column
   (migration 0008; `NULL`/`0`/`1`) holds the current opt-in state; `consent_events` keeps the append-only
   proof. The `user.created` webhook mirrors the sign-up opt-in (Clerk `unsafe_metadata.marketing_email`) to
@@ -40,6 +47,21 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   lawful, editable marketing opt-in and keep a marketing list in sync without building a sender.
 
 ### Changed
+
+- **Erasure emails now render in the subject's locale.** `sendErasureTokenEmail` /
+  `sendErasureCompleteEmail` take a `locale` and resolve the Studio copy per-locale (was default-locale
+  only). Each caller reads `user_profiles.locale` for the recipient — folded into the request-form
+  SELECT, or read (via `readProfileLocale`) **before** the erasure clears the profile row. Hard-coded
+  English stays the last-resort fallback. **Why:** a French subject was getting the English erasure mail
+  even when French Studio copy existed.
+
+- **Clerk auth-email slug matching is forgiving + cached.** `clerk-email/sanity.ts` maps Clerk's
+  (varying, partly undocumented) email slugs to our four kinds by substring (`authKind`) instead of an
+  exact allow-list, so the real new-device slug resolves without guessing its exact string; the
+  `emailStrings` read is cached in-worker for 5 min (auth emails fire on every sign-in). Both fall back
+  safely — an unknown slug still forwards Clerk's own body; the cache is bypassed under an injected
+  fetch (tests). **Why:** stop guessing the new-device slug, and stop re-fetching the singleton on every
+  auth email.
 
 - **Localized Clerk auth emails + `user_profiles.locale`.** The clerk-webhook mirrors the sign-up locale
   (Clerk `unsafe_metadata`, validated with `isLocale`) to `user_profiles.locale`, and a new

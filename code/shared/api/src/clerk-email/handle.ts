@@ -3,7 +3,11 @@ import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
 import { resend, type MailEnv } from "../erasure/email";
 import { AUTH_TEMPLATES, type EmailVars } from "./templates";
-import { fetchAuthEmailStrings, resolveAuthCopy } from "./sanity";
+import {
+  canonicalAuthSlug,
+  fetchAuthEmailStrings,
+  resolveAuthCopy,
+} from "./sanity";
 
 /** The Env slice this handler needs — the mailer (`MailEnv`) plus a read handle to
  *  MAIN_DB for the user's stored locale + the fingerprint salt. */
@@ -83,7 +87,10 @@ export async function handleClerkEmail(
 
   const locale = await resolveLocale(env, d);
   const slug = str(d.slug);
-  const tpl = slug ? AUTH_TEMPLATES[slug] : undefined;
+  // Clerk's exact slugs vary (the new-device one is undocumented), so match forgivingly
+  // to our canonical template slug rather than an exact key.
+  const canonical = canonicalAuthSlug(slug);
+  const tpl = canonical ? AUTH_TEMPLATES[canonical] : undefined;
   if (tpl) {
     // Studio override (Sanity `emailStrings`), resolved to the recipient's locale; null/
     // unset → the template's hardcoded copy. Never throws (a missing Studio must not stop

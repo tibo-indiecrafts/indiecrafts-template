@@ -148,10 +148,10 @@ export async function handleErasureRequest(
   try {
     const fp = await fingerprintEmail(email, env.GDPR_FINGERPRINT_SALT);
     const subject = await env.MAIN_DB.prepare(
-      "SELECT user_id FROM user_profiles WHERE email_fingerprint = ? OR LOWER(email) = ?",
+      "SELECT user_id, locale FROM user_profiles WHERE email_fingerprint = ? OR LOWER(email) = ?",
     )
       .bind(fp, email.toLowerCase().trim())
-      .first<{ user_id: string | null }>();
+      .first<{ user_id: string | null; locale: string | null }>();
 
     if (subject) {
       // The INSERT + email are backgrounded as one unit: both the found and
@@ -183,7 +183,11 @@ export async function handleErasureRequest(
         const confirmUrl = env.WEBSITE_URL
           ? `${env.WEBSITE_URL}/erasure/confirm?token=${token}`
           : `${origin}/v1/erasure/confirm?token=${token}`;
-        await sendToken(env, { to: email, confirmUrl });
+        await sendToken(env, {
+          to: email,
+          confirmUrl,
+          locale: subject.locale ?? undefined,
+        });
       };
 
       if (ctx) {

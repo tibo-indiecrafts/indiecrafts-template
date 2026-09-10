@@ -10,4 +10,5 @@ export {
   shouldAlert,
   formatSecurityAlert,
   type SecurityAlert,
+  type SecurityAlertCopy,
 } from "./alerts";

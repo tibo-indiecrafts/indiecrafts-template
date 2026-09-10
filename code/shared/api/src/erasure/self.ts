@@ -16,7 +16,7 @@ import { reverificationError } from "@clerk/backend/internal";
 import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
 import { buildErasureAdapters } from "./adapters";
 import { createRealClerkClient } from "./clerk-client";
-import { sendErasureCompleteEmail } from "./email";
+import { readProfileLocale, sendErasureCompleteEmail } from "./email";
 import { deleteResendContact } from "../resend-audience";
 
 const BODY_MAX = 4000;
@@ -194,6 +194,11 @@ export async function handleErasureSelf(
   const adapters = buildAdapters(env);
   const ts = new Date().toISOString();
   const fingerprint = authFp;
+  // Recipient locale for the completion email — read BEFORE the erasure clears the profile.
+  const locale = await readProfileLocale(env.MAIN_DB, {
+    userId: authed.userId,
+    fingerprint,
+  });
   await runErasure(adapters, authed.email, {
     mode: "erase",
     dryRun: true,
@@ -256,6 +261,7 @@ export async function handleErasureSelf(
     await sendErasureCompleteEmail(env, {
       to: authed.email,
       retained: retainedSummary(hadErrors),
+      locale,
     });
   } catch (error) {
     logger.error("erasure.self complete email failed", {

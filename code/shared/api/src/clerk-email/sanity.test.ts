@@ -1,6 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import {
+  authKind,
+  canonicalAuthSlug,
   fetchAuthEmailStrings,
   resolveAuthCopy,
   type AuthEmailStrings,
@@ -16,6 +18,30 @@ const strings: AuthEmailStrings = {
   authMagicLink: { enabled: false, subject: { en: "ignored" } },
 };
 
+describe("authKind / canonicalAuthSlug (forgiving slug match)", () => {
+  it("maps Clerk's exact slugs to a kind", () => {
+    expect(authKind("verification_code")).toBe("verification");
+    expect(authKind("reset_password_code")).toBe("reset");
+    expect(authKind("magic_link_sign_in")).toBe("magic");
+    expect(authKind("sign_in_from_new_device")).toBe("newDevice");
+  });
+  it("matches slug variants forgivingly (the undocumented new-device slug)", () => {
+    expect(authKind("new_device_sign_in")).toBe("newDevice");
+    expect(authKind("magic_link_sign_up")).toBe("magic");
+    expect(authKind("password_reset")).toBe("reset");
+    expect(authKind("VERIFICATION")).toBe("verification");
+  });
+  it("returns null for a non-auth slug", () => {
+    expect(authKind("invitation")).toBeNull();
+  });
+  it("canonicalizes a varying slug to our template key", () => {
+    expect(canonicalAuthSlug("new_device_sign_in")).toBe(
+      "sign_in_from_new_device",
+    );
+    expect(canonicalAuthSlug("invitation")).toBeUndefined();
+  });
+});
+
 describe("resolveAuthCopy", () => {
   it("resolves a slug's group in the recipient locale", () => {
     const c = resolveAuthCopy(strings, "verification_code", "fr");
@@ -28,6 +54,11 @@ describe("resolveAuthCopy", () => {
     const subj = strings.authVerification!.subject as Record<string, string>;
     expect(c?.subject).toBe(subj[defaultLocale]);
     expect(c?.intro).toBeUndefined(); // fr-only, no default/zz → undefined
+  });
+
+  it("resolves via a variant slug (forgiving match), not just the exact key", () => {
+    const c = resolveAuthCopy(strings, "VERIFICATION-code", "fr");
+    expect(c?.subject).toBe("Code FR");
   });
 
   it("returns undefined when the group's enabled is false", () => {
@@ -78,4 +109,29 @@ describe("fetchAuthEmailStrings", () => {
       await fetchAuthEmailStrings(env, threw as unknown as typeof fetch),
     ).toBeNull();
   });
+
+  it("caches the real-fetch read within the window (second call = no network)", async () => {
+    let calls = 0;
+    // Default `doFetch` === the stubbed global `fetch`, so the cacheable path runs
+    // (an injected doFetch, as above, always bypasses the cache).
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        calls++;
+        return new Response(
+          JSON.stringify({
+            result: { authVerification: { subject: { en: "Cached" } } },
+          }),
+          { status: 200 },
+        );
+      }),
+    );
+    const a = await fetchAuthEmailStrings(env);
+    const b = await fetchAuthEmailStrings(env);
+    expect(a?.authVerification?.subject).toEqual({ en: "Cached" });
+    expect(b).toEqual(a);
+    expect(calls).toBe(1); // second read served from the in-worker cache
+  });
 });
+
+afterEach(() => vi.unstubAllGlobals());

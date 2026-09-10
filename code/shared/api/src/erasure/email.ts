@@ -49,11 +49,44 @@ function escapeHtml(value: string): string {
     .replaceAll("'", "&#39;");
 }
 
-/** The erasure flow has no locale signal — always resolve the default-locale copy. */
-function pick(value: LocaleValue): string | undefined {
+/** Resolve a locale field to the recipient's locale, else the default, else any value. */
+function pick(value: LocaleValue, locale: string): string | undefined {
   if (typeof value === "string") return value;
   if (!value) return undefined;
-  return value[defaultLocale] ?? Object.values(value)[0] ?? undefined;
+  return (
+    value[locale] ??
+    value[defaultLocale] ??
+    Object.values(value)[0] ??
+    undefined
+  );
+}
+
+/** The recipient's stored locale (`user_profiles.locale`) — by Clerk user id, else by
+ *  email fingerprint, else the default. Never throws: a lookup miss must not stop a
+ *  mandatory erasure email. Read it BEFORE the erasure runs, or the profile is gone. */
+export async function readProfileLocale(
+  db: D1Database,
+  {
+    userId,
+    fingerprint,
+  }: { userId?: string | null; fingerprint?: string | null },
+): Promise<string> {
+  try {
+    let row: { locale?: string | null } | null = null;
+    if (userId)
+      row = await db
+        .prepare("SELECT locale FROM user_profiles WHERE user_id = ?")
+        .bind(userId)
+        .first();
+    if (!row?.locale && fingerprint)
+      row = await db
+        .prepare("SELECT locale FROM user_profiles WHERE email_fingerprint = ?")
+        .bind(fingerprint)
+        .first();
+    return (typeof row?.locale === "string" && row.locale) || defaultLocale;
+  } catch {
+    return defaultLocale;
+  }
 }
 
 /** Mirrors `fetchAnnouncementDocs` (`index.ts`) — raw GROQ-over-HTTP, same
@@ -121,7 +154,11 @@ export async function resend(
 /** The erasure request's token-confirmation email — sent when a request is filed. */
 export async function sendErasureTokenEmail(
   env: MailEnv,
-  { to, confirmUrl }: { to: string; confirmUrl: string },
+  {
+    to,
+    confirmUrl,
+    locale = defaultLocale,
+  }: { to: string; confirmUrl: string; locale?: string },
   // Injectable for tests (the vitest-pool-workers runtime can't `vi.mock` into the
   // worker isolate), same seam `request.ts` uses for `sendToken`.
   fetchStrings: typeof fetchErasureEmailStrings = fetchErasureEmailStrings,
@@ -134,13 +171,15 @@ export async function sendErasureTokenEmail(
   const group =
     copy?.erasureToken?.enabled === false ? null : copy?.erasureToken;
 
-  const subject = pick(group?.subject) || "Confirm your data erasure request";
+  const subject =
+    pick(group?.subject, locale) || "Confirm your data erasure request";
   const heading =
-    pick(group?.heading) || "We received a request to erase your account data.";
-  const intro = pick(group?.intro) || "";
-  const buttonLabel = pick(group?.buttonLabel) || "Confirm erasure";
+    pick(group?.heading, locale) ||
+    "We received a request to erase your account data.";
+  const intro = pick(group?.intro, locale) || "";
+  const buttonLabel = pick(group?.buttonLabel, locale) || "Confirm erasure";
   const outro =
-    pick(group?.outro) ||
+    pick(group?.outro, locale) ||
     "This link expires in 24 hours. If you did not request this, ignore this email.";
 
   const url = escapeHtml(confirmUrl);
@@ -156,7 +195,11 @@ export async function sendErasureTokenEmail(
 /** The erasure completion email — sent once the erasure run finishes. */
 export async function sendErasureCompleteEmail(
   env: MailEnv,
-  { to, retained }: { to: string; retained: string },
+  {
+    to,
+    retained,
+    locale = defaultLocale,
+  }: { to: string; retained: string; locale?: string },
   fetchStrings: typeof fetchErasureEmailStrings = fetchErasureEmailStrings,
 ): Promise<void> {
   // No mailer configured → skip everything, including the Sanity copy fetch.
@@ -165,10 +208,12 @@ export async function sendErasureCompleteEmail(
   const group =
     copy?.erasureComplete?.enabled === false ? null : copy?.erasureComplete;
 
-  const subject = pick(group?.subject) || "Your data erasure is complete";
-  const heading = pick(group?.heading) || "We erased your account data.";
-  const intro = pick(group?.intro) || "";
-  const outro = pick(group?.outro) || "";
+  const subject =
+    pick(group?.subject, locale) || "Your data erasure is complete";
+  const heading =
+    pick(group?.heading, locale) || "We erased your account data.";
+  const intro = pick(group?.intro, locale) || "";
+  const outro = pick(group?.outro, locale) || "";
 
   const line = intro
     ? `${escapeHtml(heading)} ${escapeHtml(intro)}`

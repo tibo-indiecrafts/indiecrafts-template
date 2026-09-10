@@ -72,6 +72,41 @@ describe("sendSecurityAlertEmail", () => {
     expect(m).not.toHaveBeenCalled();
   });
 
+  it("applies the Studio copy override to the subject when set", async () => {
+    const m = okFetch();
+    await sendSecurityAlertEmail(
+      {
+        RESEND_API_KEY: "k",
+        EMAIL_FROM: "no-reply@x.com",
+        SECURITY_ALERT_EMAIL: "soc@x.com",
+      },
+      ALERT,
+      async () => ({ subjectPrefix: "[ALERTE]" }),
+    );
+    const [, init] = m.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as AlertBody;
+    expect(body.subject).toBe("[ALERTE] critical — data_exfiltration (app)");
+  });
+
+  it("still sends with the hard-coded copy when the copy fetch throws", async () => {
+    const m = okFetch();
+    await sendSecurityAlertEmail(
+      {
+        RESEND_API_KEY: "k",
+        EMAIL_FROM: "no-reply@x.com",
+        SECURITY_ALERT_EMAIL: "soc@x.com",
+      },
+      ALERT,
+      async () => {
+        throw new Error("sanity down");
+      },
+    );
+    expect(m).toHaveBeenCalledOnce();
+    const [, init] = m.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as AlertBody;
+    expect(body.subject).toBe("[Security] critical — data_exfiltration (app)");
+  });
+
   it("swallows a non-ok Resend response and resolves (never breaks the write)", async () => {
     vi.stubGlobal(
       "fetch",
