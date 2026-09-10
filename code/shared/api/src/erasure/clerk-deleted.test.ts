@@ -97,6 +97,73 @@ describe("handleClerkUserDeleted", () => {
     expect(request?.completed_at).toBe("2026-01-01T00:00:00.000Z");
   });
 
+  it("suppresses the Resend contact when a churn row exists (self-service path)", async () => {
+    (
+      env as unknown as { GDPR_FINGERPRINT_SALT: string }
+    ).GDPR_FINGERPRINT_SALT = SALT;
+    const fp = await fingerprintEmail("churned@x.com", SALT);
+    await env.MAIN_DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
+    )
+      .bind("user_churned", "churned@x.com", fp, new Date(0).toISOString())
+      .run();
+    await env.MAIN_DB.prepare(
+      "INSERT OR REPLACE INTO churn_events (user_id, deleted_at, reason) VALUES (?, ?, 'privacy')",
+    )
+      .bind("user_churned", "2026-01-01T00:00:00.000Z")
+      .run();
+    const del = vi.fn(async () => {});
+    const suppress = vi.fn(async () => {});
+    const fetchPrefs = vi.fn(async () => ({
+      categories: [],
+      notices: [],
+      churnedTopicId: "top_churn",
+      optOutTopicIds: ["top_news"],
+    }));
+    await handleClerkUserDeleted(
+      env as never,
+      "user_churned",
+      "2026-01-01T00:00:00.000Z",
+      () => webhookAdapters(),
+      del,
+      suppress,
+      fetchPrefs,
+    );
+    expect(suppress).toHaveBeenCalledWith(expect.anything(), {
+      email: "churned@x.com",
+      reason: "privacy",
+      churnedTopicId: "top_churn",
+      optOutTopicIds: ["top_news"],
+    });
+    expect(del).not.toHaveBeenCalled();
+  });
+
+  it("pure-deletes the Resend contact when there is no churn row (RTBF/admin carve-out)", async () => {
+    (
+      env as unknown as { GDPR_FINGERPRINT_SALT: string }
+    ).GDPR_FINGERPRINT_SALT = SALT;
+    const fp = await fingerprintEmail("rtbf@x.com", SALT);
+    await env.MAIN_DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
+    )
+      .bind("user_rtbf", "rtbf@x.com", fp, new Date(0).toISOString())
+      .run();
+    const del = vi.fn(async () => {});
+    const suppress = vi.fn(async () => {});
+    await handleClerkUserDeleted(
+      env as never,
+      "user_rtbf",
+      "2026-01-01T00:00:00.000Z",
+      () => webhookAdapters(),
+      del,
+      suppress,
+    );
+    expect(del).toHaveBeenCalledWith(expect.anything(), {
+      email: "rtbf@x.com",
+    });
+    expect(suppress).not.toHaveBeenCalled();
+  });
+
   it("falls back to a partial pseudonymize when there is no profile row", async () => {
     await handleClerkUserDeleted(
       env as never,

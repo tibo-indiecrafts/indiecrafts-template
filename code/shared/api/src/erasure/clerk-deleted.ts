@@ -1,12 +1,15 @@
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { sha256Hex } from "@indiecrafts/packages-shared-security/crypto";
+import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import {
   runErasure,
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import type { Env } from "../index";
 import { buildErasureAdapters } from "./adapters";
-import { deleteResendContact } from "../resend-audience";
+import { deleteResendContact, suppressResendContact } from "../resend-audience";
+import { readChurnEvent } from "../consent/churn-store";
+import { fetchEmailPreferences } from "../consent/email-preferences-sanity";
 
 /**
  * Out-of-band Clerk deletion → the full erasure engine (clerk adapter excluded — the user
@@ -22,6 +25,8 @@ export async function handleClerkUserDeleted(
   buildAdapters: (env: Env) => ErasureAdapter[] = (e) =>
     buildErasureAdapters(e, { includeClerk: false }),
   del: typeof deleteResendContact = deleteResendContact,
+  suppress: typeof suppressResendContact = suppressResendContact,
+  fetchPrefs: typeof fetchEmailPreferences = fetchEmailPreferences,
 ): Promise<void> {
   if (!env.MAIN_DB) return;
 
@@ -31,14 +36,29 @@ export async function handleClerkUserDeleted(
     .bind(userId)
     .first<{ email: string | null; email_fingerprint: string | null }>();
 
-  // Right-to-be-forgotten: pure-delete the marketing contact from the Resend audience
-  // (using the stored email, before pseudonymization). ponytail: pure delete, no win-back
-  // audience — deliberate. Best-effort — a Resend failure never blocks the erasure.
+  // Erasure carve-out: a churn_events row (Task 3, self-service only) means this is a
+  // self-service churn → suppress the contact (win-back cohort, using the stored email
+  // before pseudonymization). No row → explicit RTBF/admin deletion → pure-delete, same as
+  // before. Best-effort — a Resend failure never blocks the erasure.
   if (profile?.email) {
+    const churn = await readChurnEvent(env.MAIN_DB, userId).catch(() => null);
     try {
-      await del(env, { email: profile.email });
+      if (churn) {
+        const { churnedTopicId, optOutTopicIds } = await fetchPrefs(
+          env,
+          defaultLocale,
+        );
+        await suppress(env, {
+          email: profile.email,
+          reason: churn.reason,
+          churnedTopicId,
+          optOutTopicIds,
+        });
+      } else {
+        await del(env, { email: profile.email });
+      }
     } catch (error) {
-      logger.error("clerk-deleted resend delete failed", {
+      logger.error("clerk-deleted resend op failed", {
         name: (error as Error)?.name,
       });
     }
