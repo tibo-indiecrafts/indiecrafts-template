@@ -19,8 +19,8 @@ import { hasClerk } from "@/lib/auth";
 import { consentStore } from "@/lib/consent-store";
 
 export default function AccountScreen() {
-  // Auth is opt-in; without Clerk mounted `useAuth()` throws (see sign-in.tsx) — branch
-  // before it so a direct deep link to /account redirects home instead of crashing.
+  // Auth is opt-in; the account screen is signed-in only, so a direct deep link to
+  // /account with no Clerk configured redirects home instead of rendering broken.
   if (!hasClerk) return <Redirect href="/" />;
   return <AccountView />;
 }
