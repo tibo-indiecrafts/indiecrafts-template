@@ -16,7 +16,7 @@ describe("emailPreferencesSchema", () => {
     ]);
   });
 
-  it("category key validation rejects an edit of an existing key", () => {
+  it("key field is read-only once set (Studio guard)", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cat = (emailPreferencesSchema as any).fields.find(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,7 +24,7 @@ describe("emailPreferencesSchema", () => {
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const keyField = cat.of[0].fields.find((f: any) => f.name === "key");
-    // The validation returns a message when the value changes vs the document snapshot.
-    expect(typeof keyField.validation).toBe("function");
+    expect(keyField.readOnly({ value: "news" })).toBeTruthy();
+    expect(keyField.readOnly({ value: undefined })).toBeFalsy();
   });
 });
