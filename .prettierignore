@@ -9,3 +9,9 @@ code/projects/web/
 pnpm-lock.yaml
 package-lock.json
 
+# Generated design-token artifacts (scripts/build-tokens.mjs, "DO NOT EDIT").
+# Prettier must not reformat them, or `tokens:check` (byte-compares the raw
+# build output) fails on every commit.
+code/packages/shared/ui-tokens/src/generated/
+code/packages/shared/ui-tokens/src/native/tokens.ts
+
