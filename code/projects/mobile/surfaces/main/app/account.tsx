@@ -12,7 +12,6 @@ import {
 import {
   DeleteAccountSection,
   ConsentPreferences,
-  MarketingEmailToggle,
   buildDeleteAccountCopy,
 } from "@indiecrafts/packages-shared-compliance/native";
 import {
@@ -23,6 +22,7 @@ import {
 import { policyVersion, features, accountUrl } from "@/config";
 import { hasClerk } from "@/lib/auth";
 import { consentStore } from "@/lib/consent-store";
+import { EmailPreferences } from "@/components/EmailPreferences";
 
 export default function AccountScreen() {
   // Auth is opt-in; without Clerk mounted `useAuth()` throws (see sign-in.tsx) — branch
@@ -88,11 +88,24 @@ function AccountView() {
         />
 
         {apiUrl ? (
-          <MarketingEmailToggle
+          <EmailPreferences
             apiUrl={apiUrl}
             getToken={() => getToken()}
-            label={t.formatMessage({ id: "account.marketing.label" })}
             surface="mobile"
+            copy={{
+              heading: t.formatMessage({
+                id: "account.emailPreferences.heading",
+              }),
+              intro: t.formatMessage({ id: "account.emailPreferences.intro" }),
+              noticesHeading: t.formatMessage({
+                id: "account.emailPreferences.noticesHeading",
+              }),
+              loading: t.formatMessage({
+                id: "account.emailPreferences.loading",
+              }),
+              error: t.formatMessage({ id: "account.emailPreferences.error" }),
+              retry: t.formatMessage({ id: "account.emailPreferences.retry" }),
+            }}
           />
         ) : null}
 

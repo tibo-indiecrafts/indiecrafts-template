@@ -16,7 +16,8 @@
     "submit:android": "eas submit --platform android",
     "deploy:mobile:dev": "node ../../../../shared/scripts/deploy/expo.mjs dev",
     "deploy:mobile:staging": "node ../../../../shared/scripts/deploy/expo.mjs staging",
-    "deploy:mobile:prod": "node ../../../../shared/scripts/deploy/expo.mjs prod"
+    "deploy:mobile:prod": "node ../../../../shared/scripts/deploy/expo.mjs prod",
+    "lint": "eslint ."
   },
   "//": "SEPARATE PLATFORM: React Native / Expo. Deploys via EAS to the App/Play Store — NOT wrangler, NOT in deploy:all. Finalize versions on install (RN pins its own React major, older than the web apps' React 19; only React-FREE bricks are shared).",
   "dependencies": {
