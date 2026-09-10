@@ -24,3 +24,7 @@ GDPR_FINGERPRINT_SALT=""
 # Marketing-email consent → Resend audience mirror. The audience id the opt-in syncs to;
 # unset (or RESEND_API_KEY unset) → the mirror no-ops and the feature is store-only.
 # RESEND_AUDIENCE_ID=""
+
+# No-login email-preferences token (GET/POST /v1/email-preferences + the RFC 8058 one-click
+# unsubscribe route). Unset → those routes answer 503.
+# EMAIL_PREF_SECRET=""

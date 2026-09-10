@@ -40,7 +40,11 @@ import { handleClerkUserDeleted } from "./erasure/clerk-deleted";
 import { handleClerkEmail } from "./clerk-email/handle";
 import { upsertResendContact } from "./resend-audience";
 import { handleMarketingConsent } from "./consent/marketing";
-import { handleEmailPreferences } from "./consent/email-preferences";
+import {
+  handleEmailPreferences,
+  handleTokenPreferences,
+  handleOneClickUnsubscribe,
+} from "./consent/email-preferences";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -128,6 +132,10 @@ export interface Env {
   /** The website's public origin (`[vars]`) — the erasure confirm-link target. Unset → falls
    *  back to the worker's own origin + `/v1/erasure/confirm` (the current behaviour). */
   WEBSITE_URL?: string;
+  /** `wrangler secret put EMAIL_PREF_SECRET` — HMAC secret signing the no-login preference
+   *  token (`consent/pref-token.ts`): the email-preferences GET/POST and one-click-unsubscribe
+   *  routes below. Optional — those routes 503 until set. */
+  EMAIL_PREF_SECRET?: string;
   /** R2 bucket for data-export bundles (`[[r2_buckets]] binding = "EXPORT_BUCKET"`),
    *  operator-provisioned. Optional — `/v1/export` routes answer 503 until bound. */
   EXPORT_BUCKET?: R2Bucket;
@@ -1242,6 +1250,14 @@ export default {
     // caller's own per-category choices (Studio-defined categories, Task 6's reader).
     if (url.pathname === "/v1/consent/email-preferences")
       return handleEmailPreferences(request, env, ctx);
+
+    // ── No-login email preferences — GET/POST /v1/email-preferences (PUBLIC; a signed
+    // pref-token from an email link stands in for the Clerk JWT above) + POST
+    // /v1/email-preferences/unsubscribe (PUBLIC; RFC 8058 one-click unsubscribe target). ──
+    if (url.pathname === "/v1/email-preferences")
+      return handleTokenPreferences(request, env, ctx);
+    if (url.pathname === "/v1/email-preferences/unsubscribe")
+      return handleOneClickUnsubscribe(request, env, ctx);
 
     // ── GDPR data export — POST /v1/export (AUTHENTICATED; Clerk JWT) ── Runs
     // runExport, stores the bundle in R2, and returns a single-use expiring download

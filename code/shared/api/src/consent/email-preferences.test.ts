@@ -1,11 +1,21 @@
 import { env } from "cloudflare:test";
 import { describe, expect, it, vi } from "vitest";
-import { handleEmailPreferences } from "./email-preferences";
+import type { Env } from "../index";
+import {
+  handleEmailPreferences,
+  handleTokenPreferences,
+  handleOneClickUnsubscribe,
+  emailPreferenceLinks,
+} from "./email-preferences";
 import type { PrefCategory, PrefNotice } from "./email-preferences-sanity";
+import { signPrefToken, verifyPrefToken } from "./pref-token";
 
 const ENV = { ...env, CLERK_SECRET_KEY: "sk_test" } as typeof env;
 const authOK = async () => "user_ep_http";
 const authFail = async () => null;
+const PREF_SECRET = "test-pref-secret";
+const prefEnv = (overrides: Partial<Env> = {}): Env =>
+  ({ ...ENV, EMAIL_PREF_SECRET: PREF_SECRET, ...overrides }) as Env;
 
 const CATEGORIES: PrefCategory[] = [
   {
@@ -45,6 +55,26 @@ const post = (updates: { key: string; granted: boolean }[]) =>
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ updates, surface: "app" }),
   });
+
+const tokenGet = (token: string) =>
+  new Request(
+    `https://x/v1/email-preferences?token=${encodeURIComponent(token)}`,
+    { method: "GET" },
+  );
+const tokenPost = (
+  token: string,
+  updates: { key: string; granted: boolean }[],
+) =>
+  new Request("https://x/v1/email-preferences", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ token, updates }),
+  });
+const unsubPost = (token: string) =>
+  new Request(
+    `https://x/v1/email-preferences/unsubscribe?token=${encodeURIComponent(token)}`,
+    { method: "POST" },
+  );
 
 describe("GET/POST /v1/consent/email-preferences", () => {
   it("401s when the JWT does not verify", async () => {
@@ -148,5 +178,249 @@ describe("GET/POST /v1/consent/email-preferences", () => {
         { topicId: "topic_offers", granted: false },
       ],
     });
+  });
+});
+
+describe("GET/POST /v1/email-preferences (no-login token)", () => {
+  it("503s when EMAIL_PREF_SECRET is unset", async () => {
+    const res = await handleTokenPreferences(
+      tokenGet("whatever"),
+      ENV,
+      undefined,
+      {
+        fetchCategories,
+      },
+    );
+    expect(res.status).toBe(503);
+  });
+
+  it("401s on a bad token", async () => {
+    const res = await handleTokenPreferences(
+      tokenGet("garbage"),
+      prefEnv(),
+      undefined,
+      {
+        fetchCategories,
+      },
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it("401s on an absent token", async () => {
+    const res = await handleTokenPreferences(
+      new Request("https://x/v1/email-preferences", { method: "GET" }),
+      prefEnv(),
+      undefined,
+      { fetchCategories },
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it("valid token GET returns the user's state", async () => {
+    await seed("user_ep_token");
+    await ENV.MAIN_DB!.prepare(
+      "INSERT OR REPLACE INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, 'news', 1, ?)",
+    )
+      .bind("user_ep_token", new Date().toISOString())
+      .run();
+    const token = await signPrefToken(PREF_SECRET, "user_ep_token");
+
+    const res = await handleTokenPreferences(
+      tokenGet(token),
+      prefEnv(),
+      undefined,
+      {
+        fetchCategories,
+      },
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      categories: [
+        {
+          key: "news",
+          name: "News",
+          description: "Product updates.",
+          includeAtSignup: true,
+          granted: true,
+        },
+        {
+          key: "offers",
+          name: "Offers",
+          description: "Discounts.",
+          includeAtSignup: false,
+          granted: false,
+        },
+      ],
+      notices: NOTICES,
+      marketing_email: null,
+    });
+  });
+
+  it("valid token POST writes the store", async () => {
+    await seed("user_ep_token2");
+    const token = await signPrefToken(PREF_SECRET, "user_ep_token2");
+    const sync = vi.fn(async () => {});
+    const res = await handleTokenPreferences(
+      tokenPost(token, [{ key: "news", granted: true }]),
+      prefEnv(),
+      undefined,
+      { fetchCategories, sync },
+    );
+    expect(await res.json()).toEqual({ ok: true });
+
+    const row = await ENV.MAIN_DB!.prepare(
+      "SELECT granted FROM email_preferences WHERE user_id = ? AND category_key = 'news'",
+    )
+      .bind("user_ep_token2")
+      .first<{ granted: number }>();
+    expect(row?.granted).toBe(1);
+    expect(sync).toHaveBeenCalledOnce();
+  });
+});
+
+describe("POST /v1/email-preferences/unsubscribe", () => {
+  it("503s when EMAIL_PREF_SECRET is unset", async () => {
+    const res = await handleOneClickUnsubscribe(
+      unsubPost("whatever"),
+      ENV,
+      undefined,
+      {
+        fetchCategories,
+      },
+    );
+    expect(res.status).toBe(503);
+  });
+
+  it("401s on a bad token", async () => {
+    const res = await handleOneClickUnsubscribe(
+      unsubPost("garbage"),
+      prefEnv(),
+      undefined,
+      {
+        fetchCategories,
+      },
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it("401s on an absent token", async () => {
+    const res = await handleOneClickUnsubscribe(
+      new Request("https://x/v1/email-preferences/unsubscribe", {
+        method: "POST",
+      }),
+      prefEnv(),
+      undefined,
+      { fetchCategories },
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it("a category-scoped token unsubscribes just that category, idempotently", async () => {
+    await seed("user_unsub_1");
+    const now = new Date().toISOString();
+    await ENV.MAIN_DB!.prepare(
+      "INSERT OR REPLACE INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, 'news', 1, ?), (?, 'offers', 1, ?)",
+    )
+      .bind("user_unsub_1", now, "user_unsub_1", now)
+      .run();
+    const token = await signPrefToken(PREF_SECRET, "user_unsub_1", "news");
+
+    const res1 = await handleOneClickUnsubscribe(
+      unsubPost(token),
+      prefEnv(),
+      undefined,
+      {
+        fetchCategories,
+      },
+    );
+    expect(res1.status).toBe(200);
+    expect(await res1.json()).toEqual({ ok: true });
+
+    const rows = await ENV.MAIN_DB!.prepare(
+      "SELECT category_key, granted FROM email_preferences WHERE user_id = ? ORDER BY category_key",
+    )
+      .bind("user_unsub_1")
+      .all<{ category_key: string; granted: number }>();
+    expect(rows.results).toEqual([
+      { category_key: "news", granted: 0 },
+      { category_key: "offers", granted: 1 },
+    ]);
+
+    // idempotent — clicking the same link twice stays a clean 200.
+    const res2 = await handleOneClickUnsubscribe(
+      unsubPost(token),
+      prefEnv(),
+      undefined,
+      {
+        fetchCategories,
+      },
+    );
+    expect(res2.status).toBe(200);
+    expect(await res2.json()).toEqual({ ok: true });
+  });
+
+  it("an unscoped token unsubscribes every marketing category", async () => {
+    await seed("user_unsub_2");
+    const now = new Date().toISOString();
+    await ENV.MAIN_DB!.prepare(
+      "INSERT OR REPLACE INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, 'news', 1, ?), (?, 'offers', 1, ?)",
+    )
+      .bind("user_unsub_2", now, "user_unsub_2", now)
+      .run();
+    const token = await signPrefToken(PREF_SECRET, "user_unsub_2");
+
+    const res = await handleOneClickUnsubscribe(
+      unsubPost(token),
+      prefEnv(),
+      undefined,
+      {
+        fetchCategories,
+      },
+    );
+    expect(res.status).toBe(200);
+
+    const rows = await ENV.MAIN_DB!.prepare(
+      "SELECT category_key, granted FROM email_preferences WHERE user_id = ? ORDER BY category_key",
+    )
+      .bind("user_unsub_2")
+      .all<{ category_key: string; granted: number }>();
+    expect(rows.results).toEqual([
+      { category_key: "news", granted: 0 },
+      { category_key: "offers", granted: 0 },
+    ]);
+  });
+});
+
+describe("emailPreferenceLinks", () => {
+  it("builds the manage + unsubscribe urls and RFC 8058 headers", async () => {
+    const links = await emailPreferenceLinks(
+      prefEnv({ WEBSITE_URL: "https://site.example" }),
+      "user_links",
+      "news",
+    );
+    expect(
+      links.manageUrl.startsWith(
+        "https://site.example/email-preferences?token=",
+      ),
+    ).toBe(true);
+    expect(
+      links.unsubscribeUrl.startsWith(
+        "https://site.example/v1/email-preferences/unsubscribe?token=",
+      ),
+    ).toBe(true);
+    expect(links.headers["List-Unsubscribe"]).toBe(`<${links.unsubscribeUrl}>`);
+    expect(links.headers["List-Unsubscribe-Post"]).toBe(
+      "List-Unsubscribe=One-Click",
+    );
+
+    const token = new URL(links.unsubscribeUrl).searchParams.get("token")!;
+    expect(await verifyPrefToken(PREF_SECRET, token)).toEqual({
+      uid: "user_links",
+      cat: "news",
+    });
+  });
+
+  it("throws when EMAIL_PREF_SECRET is unset", async () => {
+    await expect(emailPreferenceLinks(ENV, "user_links")).rejects.toThrow();
   });
 });
