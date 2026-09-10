@@ -19,6 +19,271 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **Email preference centre.** A new `EmailPreferences` component
+  (`src/user-interface/account/EmailPreferences.tsx`) renders a switch per email category (optimistic,
+  rolls back on a failed save) plus a read-only "Account & security" notices list; category/notice copy
+  comes from the api already locale-resolved. Mounted two places: the `/account` page (JWT, via the new
+  `EmailPreferencesMount`, alongside `AccountControl`) and a new public, unauthenticated
+  `/email-preferences?token=…` page (`EmailPreferencesPublic`) for recipients who aren't signed in — not
+  in the `pages` map, so it stays out of nav/sitemap/llms, mirroring `/newsletter/confirm`. **Why:** the
+  account modal's single "Commercial emails" toggle (`packages-web-auth`'s `account-modal.tsx`) only
+  covers one category; granular per-category control needed a website-owned UI. The modal's toggle stays
+  as-is — it lives in a shared package, and mounting a website-only component there would be a
+  wrong-direction package→app dependency.
+
+### Changed
+
+- **The language switcher now persists a signed-in user's choice.** Switching language calls
+  `usePersistLocale` (`@indiecrafts/packages-web-auth`) → the user's Clerk `unsafeMetadata.locale` →
+  (via the api webhook) `user_profiles.locale`. **Why:** the stored locale was captured only at
+  sign-up, so a user who later switched language still got transactional/auth emails in the old one.
+  No-op when signed out (the `NEXT_LOCALE` cookie still drives the UI). The `blog`/`nav` locale reads
+  now go through the shared `pickLocale` helper (no behavior change).
+
+- **Clerk UI localized + self-hosted `/sign-up`.** `<ClerkProvider>` now receives the active locale (the
+  provider moved into `[locale]/layout.tsx`) so Clerk's sign-in/up + the account modal render in the
+  visitor's language (`@clerk/localizations` `enUS`/`frFR`); a new `/sign-up` route renders `<SignUp>`
+  carrying `unsafeMetadata.locale` (set `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`). **Why:** localized auth
+  UI, and the captured locale drives the api's localized auth emails.
+- **Unified account modal.** The header avatar and `/account` now open one Clerk `<UserProfile>`
+  with two custom tabs — "Privacy & consent" (cookie choices) and "Your data" (export +
+  deletion) — via the new `@indiecrafts/packages-web-auth/account` (`AccountButton` / `AccountPage`)
+  over the shared, Clerk-free tab bodies in `@indiecrafts/packages-shared-compliance`. A single
+  `AccountControl` wrapper resolves copy + consent categories from `messages` and `@/config`.
+  Removed the old `AccountDeletePanel` (its delete/export now live in the "Your data" tab).
+  **Why:** one account surface, identical on the website, app, and hybrid, with less per-surface
+  UI to maintain.
+
+### Fixed
+
+- **`POST /api/consent-log` (and `/api/session-log`) 500 → work again.** The `proxy.ts` matcher
+  excluded `/api`, so `clerkMiddleware()` never ran for those routes and their `auth()` call threw
+  _"can't detect clerkMiddleware()"_. Both authenticated API routes are now in the matcher, and the
+  intl/CSP/maintenance pipeline passes any `/api` request straight through (`NextResponse.next()`)
+  so next-intl can't locale-rewrite the endpoint and break the POST. **Why:** server-side consent +
+  sign-in logging was failing on every request; the account modal's consent tab was unaffected
+  (it writes `localStorage`), but the cookie banner's audit log was not.
+- **`pnpm lint` and `pnpm format:check` work again — both were scanning build output.** Two gaps
+  fixed together. (1) The `eslint.config.mjs` override set `jsx-a11y/*` + `@typescript-eslint/*` rules
+  in a global object (no `files` key), but `eslint-config-next` registers those plugins only for
+  specific file globs, so ESLint 9 threw "could not find plugin jsx-a11y" at config load; the override
+  is now scoped to that same glob so the plugins resolve. (2) Neither the eslint `globalIgnores` nor the
+  app's Prettier config ignored the Cloudflare / OpenNext build output (`.open-next/`, `dist/`,
+  `.wrangler/`, `.turbo/`, `.sanity/`), so once a build existed both tools scanned 100+ huge minified
+  bundles — ESLint exhausted memory (node OOM) and Prettier reported 118 false "style" hits. Added those
+  build/generated dirs to the eslint `globalIgnores` and a new website `.prettierignore`. **Why:** the
+  full `pnpm verify` (tsc + lint + format + tests + guards) now passes end-to-end; before, `pnpm lint`
+  and `format:check` could not complete once the app had been built.
+
+### Removed
+
+- **Dead `BUTTONDOWN_API_KEY` from the website `.dev.vars.example`.** The Buttondown ESP integration
+  was removed — the newsletter engine is provider-agnostic (it stores subscribers in Sanity, and an
+  external ESP is wired via its own embed form, not an API key). No code read the var; the example line
+  was stale and misleadingly implied a live integration.
+
+### Added
+
+- **`pnpm check:secret-leak` — CI-enforces that no server secret ships under a public build prefix.**
+  A new guard (`code/shared/scripts/checks/secret-leak.mjs`, in `verify` + CI) reads every
+  `.dev.vars.example` / `.env.example` as the secret registry, then scans app/brick/worker source
+  for a documented secret carrying a `NEXT_PUBLIC_` / `EXPO_PUBLIC_` / `VITE_` prefix — the config
+  NEVER "never expose a non-public token under a public prefix". A documented public value (e.g.
+  `EXPO_PUBLIC_AGENT_TOKEN`, the bundle abuse-gate) is allowlisted by its own example entry.
+  Colocated `secret-leak.test.mjs`; wired into root `verify` + `.vscode/tasks.json`; mirrors
+  `check:api-guards` / `check:typed-routing`. **Why:** the existing `guard.mjs` write-hook only
+  fires inside Claude Code — this is the CI backstop a human commit or pipeline also hits.
+
+- **Self-service account delete now triggers Clerk step-up reverification.**
+  `AccountDeletePanel` wraps the erasure fetch (`rawErasureFetch`) in Clerk's
+  `useReverification`, so a stale first factor (the worker's `fva` gate, >10
+  minutes) opens the reverification modal and auto-retries on success — a raw
+  API call can no longer erase an account without a fresh factor. The
+  post-reverification retry mints its token with `{ skipCache: true }`: a
+  cached (~60s) token still carries the stale `fva` and would re-trip the
+  server gate, silently defeating the step-up.
+- **`pnpm check:typed-routing` — CI-enforces the typed-routing NEVER across every Next surface
+  (`code/shared/scripts/checks/typed-routing.mjs`, in `verify` + CI).** The `website` bans direct
+  `next/link` / `next-intl/navigation` imports via ESLint (`no-restricted-imports`), but the `admin` /
+  `app` scaffolds ship tsc-only (no ESLint config), so that NEVER was convention-clean but not gated.
+  A new registry-driven scan (reads the `next-cf` surfaces from `apps.mjs`, so a future Next surface
+  auto-joins) fails if any surface imports the banned modules outside `src/i18n/routing.ts` — the one
+  file that creates the typed wrappers. Colocated `typed-routing.test.mjs`; wired into root `verify`,
+  CI `test.yml`, and `.vscode/tasks.json`. **Why:** admin/app were clean by convention only; this makes
+  the config-first typed-routing rule a real gate on all three surfaces, not just the website. Mirrors
+  the `check:api-guards` pattern.
+
+### Fixed
+
+- **`secrets:sync` no longer crashes on staging/prod (`scripts/sync-secrets.mjs`).** The clobber guard
+  called `assertRenamed("web", env)`, but `web` is not an `apps.mjs` slug — `resourceName("web")` throws
+  `unknown app slug`, so `secrets:sync:web:website:staging|prod` aborted before uploading (dev was masked
+  by the guard's early return). Now passes the real slug `website`.
+
+### Fixed
+
+- **§09 quality pass — a11y + perf fixes (audit 2026-09-04).** **a11y:** the two erasure `<section>`s
+  (`ErasureConfirmForm`/`ErasureRequestForm`) got `aria-labelledby` wired to their `<h2>` (the template's
+  own structural rule); `/maintenance` layout now sets `dir={localeDir(locale)}` (was `lang` only — latent
+  RTL gap); the header's `ThemeToggle`/`LocaleSwitcher` icon buttons use `size="icon-lg"` (40px, was 36px,
+  below the touch floor); the header gained a `<lg` **mobile nav drawer** (Radix `Sheet`) — the Sanity-driven,
+  uncapped nav previously overflowed 375px with no way to reach the rest (1.4.10 reflow risk). Documented the
+  focus-ring reality in `accessibility.md` + `DESIGN.md`: app-authored controls use `ring-2 ring-ring`, the
+  CLI-managed shadcn primitives ship the CLI default `ring-[3px] ring-ring/50` — reconcile via
+  `components.json`, never hand-edit primitives. **perf:** `DefaultLayout` now runs one `Promise.all` of 6
+  (was two back-to-back — an extra round trip on every page); the `getCategoryNav` subnav is folded into each
+  blog-family page's own `Promise.all` (10 routes — was `await`ed as a JSX prop, serializing a round trip);
+  `Logo` only marks the light variant `priority` so the dark logo no longer double-preloads.
+- **Corrected the Cloudflare bot guidance in `infra/cloudflare/main.tf` — don't blanket-block AI bots.**
+  The Bot-Fight comment advised turning on Cloudflare's "Block AI Bots", which is too broad: it blocks the
+  search + user-fetch agents you WANT (Googlebot/AI Overviews, OAI-SearchBot, ChatGPT-User, Claude-User,
+  PerplexityBot). The AI-**training** opt-out is already handled precisely by robots.txt
+  (`AI_TRAINING_USER_AGENTS` → each training bot gets `Disallow: /`; search + user-fetch fall through to
+  `*`), verified against the 2026 crawler landscape — so the site stays accessible + citable but is not
+  used for model training. Added a commented, precise edge rule (blocks only the training UAs) as opt-in
+  defence-in-depth. Bot Fight Mode stays on for genuinely malicious automation.
+- **The hosted Sanity Studio now builds + deploys (`sanity.cli.ts`, `src/sanity/schema/ui-messages.ts`).**
+  `pnpm studio:deploy` → `https://indiecrafts.sanity.studio/` is live. Three things blocked
+  `sanity build` (its standalone Vite/Rollup build, unlike Next, doesn't replicate the app's
+  resolution): (1) workspace source packages export `"./*": "./src/*"`, so a subpath like
+  `@indiecrafts/x/sanity` hits a directory and Rollup won't index-fallback; (2) the `@/*` tsconfig path
+  alias is unknown to Rollup. Both are handled by a small `vite` resolver plugin in `sanity.cli.ts`
+  (try the direct path, else `…/index`; map `@/…` → `src/…`). (3) `uiMessages` auto-generates schema
+  fields from `messages/en.json` keys, but `legal.dataRequest.types.withdraw-consent` (a kebab GDPR
+  type-id reused as a key) is an invalid Sanity field name — `fieldsFrom` now skips keys that fail
+  `/^[A-Za-z][0-9A-Za-z_]*$/`; they stay bundled-only (the i18n overlay falls back for any key Sanity
+  doesn't carry, so the label still renders — it's just not CMS-editable). `deployment.appId` pins the
+  target so later deploys don't prompt.
+
+### Changed
+
+- **The embedded Sanity Studio is excluded from the Cloudflare build (host it separately).** The
+  `/studio` route pulled the whole `sanity` package (schemas + Vision) into OpenNext's single server
+  Worker (~50 MB) — over Cloudflare's 10 MiB limit, so the website could not deploy. The route files are
+  now `page.studio.tsx` / `layout.studio.tsx`, counted as pages only when `studio.tsx` is in
+  `pageExtensions` (`next.config.ts`), which is gated by `NEXT_PUBLIC_EMBED_STUDIO`. `build:cf` sets it
+  `false` ⇒ the Studio never enters the Worker (website now ships at ~9.8 MiB gzip). Local `pnpm dev`
+  keeps the embedded Studio (default on). Host the production Studio with `pnpm studio:deploy`
+  (`sanity deploy` → `<host>.sanity.studio`); set `NEXT_PUBLIC_SANITY_STUDIO_URL` and `/studio` redirects
+  there (`next.config.ts` `redirects()`), else it 404s in prod. Draft-mode preview is unaffected (it uses
+  the `@sanity/client`, not the Studio bundle). **Ceiling:** even without the Studio the Worker sits at
+  ~9.8/10 MiB — watch the budget (`pnpm size`) when adding heavy deps. `@debt PERFORMANCE`.
+- **Pinned Next `16.3.4` + `@opennextjs/cloudflare` `1.20.6` (exact) — the next-cf surfaces now deploy
+  to Cloudflare.** The blocker was Next 16's Node-only `src/proxy.ts` vs older OpenNext rejecting Node
+  middleware. OpenNext `1.20.6` adds **experimental** Node-middleware support, so the exact pin builds
+  and ships `website`/`admin`/`app` (both verified via `build:cf` → `Worker saved 🚀`). The pin is
+  **repo-wide**: all 16 workspace `next` entries moved to `16.3.4`, because a second Next in
+  `node_modules` re-introduces a duplicate-types conflict that fails the OpenNext build. **Why:** unblocks
+  the three OpenNext apps that could not reach Cloudflare before; the exact pin holds until
+  `cloudflare/workers-sdk#13755` makes Node middleware stable. **Ceiling:** relies on an experimental
+  OpenNext flag (`@debt MIGRATION`).
+- **`project:rename` now covers the native surfaces too (`scripts/project-rename.mjs`).** Besides the
+  config prefix + every Cloudflare app's `wrangler.toml`/tfvars, a rename now swaps the prefix in the
+  Expo `app.config.ts` (`name`/`slug`/`scheme` + the `dev.<prefix>.app` bundle id), `eas.json` (the
+  `EXPO_PUBLIC_API_URL` host prefix), and the Electron `electron-builder.yml` (`appId` + `productName`).
+  **Why:** a client rename is complete in one command — no native config left on the template prefix
+  (the prod domains in `domains.mjs` stay a separate, client-set axis).
+
+### Added
+
+- **Consent/legal confirmation toast.** `[locale]/layout.tsx` mounts a single `<Toaster>`;
+  `CookieBanner`'s accept/reject, `CookiePreferences`' save, and `LegalNotice`'s accept each fire
+  `showConsentSavedToast` (`@indiecrafts/packages-web-ui-components`) — "choice saved," with a
+  Manage action that reopens the preferences dialog. The silent geo auto-seed never toasts.
+  **Why:** confirm an explicit consent/legal choice, not the auto-seeded default.
+- **Cookie preferences on `/account`.** The account page gains a "Cookie preferences" card with a
+  `ManagePreferencesButton` that opens the site-wide `CookiePreferences` dialog — the destination
+  the toast's Manage action points to.
+
+### Fixed
+
+- **`CookiePreferencesHost` now mounts for every consent mode.** It previously mounted only for
+  `consentMode === "opt-out"` when `requireCookieConsent` was off, so the default `opt-in`/`none`
+  mode left `openPreferences()` with no listener and the new `/account` Manage button silently did
+  nothing. It now mounts whenever `CookieBanner` itself isn't rendering the dialog, regardless of
+  mode.
+
+### Changed
+
+- **`/blog` is now module-driven.** `blog/page.tsx` renders the `blog` singleton's
+  `frontpageModules[]` (via `pickFrontpage`, `blog/frontpage-select.ts`) when the editor has
+  composed any; an empty array keeps today's behavior unchanged — the code-default
+  `DefaultBlogFrontpage` (hero mosaic → explore → newsletter). The demo seed now composes a
+  non-empty `frontpageModules` (hero → featured → category spotlight → collection → latest →
+  explore) so `/blog` showcases the feature out of the box. **Why:** the frontpage was the one
+  page-builder surface still hard-coded; it now composes from the same block catalog as a post.
+
+### Added
+
+- **`DefaultLayout` gains a `subnav` slot; blog pages mount the category bar.** A new optional
+  `subnav` renders directly under the header chrome, above the page. Every blog + author page passes
+  `subnav={await getCategoryNav(locale)}`, so the category nav (top-level categories + sub-category
+  dropdowns) appears across the blog surface. New `pages.blog` message keys (`writtenBy`,
+  `moreOnTopic`, `moreReading`, `allInCategory`, `categoryNav.*`). The demo seed adds 8 sub-categories
+  (both locales) so the dropdowns have content.
+- **Site-wide "share this page" — an editor-controlled Sanity setting.** `proxy.ts` sets an
+  `x-pathname` header so `DefaultLayout` builds the absolute page URL server-side and renders the
+  shared `ShareButtons` (X / LinkedIn / Facebook / copy-link) in the footer on every page — no
+  per-page wiring, works without JS. **Enabled + the visible networks are editor-controlled in
+  Sanity** — `siteSettings.share` (Studio → Paramètres du site → Partage): a master toggle plus a
+  per-network checkbox each. The same setting also gates the share row under blog posts (the app
+  route injects it), so **share is one shared setting, not blog-owned** — the old `features.share`
+  code flag and the blog's `display.post.share` toggle are both gone. Copy is the single shared
+  `common.share.*` (both locales; the duplicate `pages.blog.share` was removed).
+  The blog post keeps its own richer inline share too.
+
+### Fixed
+
+- **Social follow links had no accessible name (a11y).** Each icon-only `<a>` in `SocialFollow`
+  now carries `aria-label={l.label}` (the brand name), so a screen reader announces "X",
+  "LinkedIn", … instead of an unlabeled link.
+
+### Added
+
+- **Documented the service-binding hardening for the internal `/v1/events` forwarders.** The
+  `wrangler.toml` `[[services]]` stub now spells out that the four server-only forwarders
+  (security-reports · consent-log · session-log · security-events) call `API_URL` over public HTTPS,
+  and how to route that internal telemetry worker-to-worker instead (bind `API`, switch each forwarder
+  to `getCloudflareContext().env.API.fetch(...)` with the current `fetch` as the off-CF fallback).
+  **Why:** from the wahio review — internal worker traffic can skip the public hop; documented (not
+  wired) because the endpoint is already bearer-gated + WAF-rate-limited, so it's defence-in-depth an
+  operator enables, not a fix.
+- **bfcache repair in `src/proxy.ts`.** On the responses it already stamps the CSP, the proxy now swaps
+  Next's dynamic `Cache-Control: no-store` for `no-cache` on top-level HTML navigations
+  (`Sec-Fetch-Dest: document`). `no-store` disables the browser back/forward cache entirely; `no-cache`
+  still revalidates every request but lets bfcache restore instantly. Scoped by `Sec-Fetch-Dest`, so RSC
+  prefetches and the feed/`llms.txt` route handlers keep Next's own (CDN-cacheable) caching. **Why:** from
+  the wahio middleware review — instant back/forward nav at no correctness cost. (Runtime-unverified in-sandbox;
+  confirm on deploy that the middleware `Cache-Control` wins over Next's `no-store` on page docs.)
+- **Cloudflare edge hardening (Terraform) — sensitive-path block, tiered rate-limit, opt-in bad-bot challenge.**
+  Three additions to `infra/cloudflare/main.tf`, run at the edge _before_ the Worker (unbypassable, 0
+  invocations): (1) the `http_request_firewall_custom` ruleset now **blocks probes for `.env`/`.git`/`.sql`/`wp-*`
+  paths** (regex-free `ends_with`/`contains`) — merged with the existing leaked-credentials challenge since a zone
+  allows one ruleset per phase; (2) the `http_ratelimit` ruleset is now **tiered** — a tighter cap
+  (`rate_limit_form_requests`, default 10) on the form/report endpoints (`/api/{data-request,contact,comments,newsletter,waitlist,csp-report}`)
+  ahead of the general `/api/*` cap; (3) an **opt-in** `block_bad_bots` var managed-challenges scraper UAs
+  (scrapy/python-requests/curl/headless…) on content routes — off by default (a public site wants search bots;
+  robots.txt already handles AI-training opt-out). **Why:** move edge-appropriate hardening to the edge (from
+  the wahio middleware review) instead of the Worker hot path. Authored only — the tfvars are placeholders; CI's
+  `infra` job validates, ops applies. See [`cloudflare-iac.md`](../../../../docs/infra/cloudflare-iac.md).
+- **`/maintenance` now carries a CSP; the CSP-enforcement e2e is a blocking CI gate.** Two
+  loose ends from the enforce rollout: (1) `/maintenance` is excluded from the proxy matcher like
+  `/studio`, so `cspMode: "proxy"` left it shipping **no** `Content-Security-Policy` on a direct hit —
+  `next.config.ts` now adds a static `permissiveCspRule("/maintenance", …)` (the proxy still stamps the
+  nonce CSP on the internal rewrite when maintenance mode is on). (2) `e2e/journeys/csp-nonce.spec.ts`
+  ran only inside the advisory `browser` job; a new **blocking** `csp` job in `.github/workflows/test.yml`
+  runs just that spec (real browser + built app), so a broken nonce pipeline fails the PR now that
+  enforce is the live default — split out so the untrusted visual baselines stay advisory. **Why:**
+  close the last no-CSP route and make enforce a gate, not a hope. See
+  `code/docs/apps/web/seo/security-headers.md`.
+- **Block AI-training crawlers in `robots.txt` — `features.blockAiTraining` (default on).** When the
+  site is indexable, `src/app/robots.txt/route.ts` now emits a `Disallow: /` group per AI-_training_
+  crawler (`AI_TRAINING_USER_AGENTS` from `@indiecrafts/packages-shared-config` — GPTBot,
+  Google-Extended, CCBot, ClaudeBot, …) before the `User-agent: *` allow group. Robots.txt matches the
+  most specific user-agent, so search and AI-_search_ bots (Googlebot, Bingbot, PerplexityBot,
+  OAI-SearchBot, …) fall through and keep indexing. **Why:** fight the learning bots without losing
+  search — even AI search. robots.txt-only (no broad, barely-honored `X-Robots-Tag: noai`). The route
+  logic is extracted to a pure `robotsTxt()` builder with a colocated test.
 - **Proxy-set, per-request nonce CSP — `CSP_MODE`.** `src/proxy.ts` now generates one nonce per
   request (`generateNonce`) and stamps the response with `cspHeadersForMode(...)` from
   `@indiecrafts/packages-shared-security`: `CSP_MODE=enforce` ships the strict nonce `script-src`
@@ -44,12 +309,50 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   `@indiecrafts/packages-web-security-reports` brick, which sanitizes and forwards violations
   server-side. **Why:** turn the CSP from write-only into something we can observe and tighten —
   starting with the image-source allowlist — without risking a live block.
+- **Anonymous branded erasure flow (`/erasure` + `/erasure/confirm`).** A signed-out visitor
+  requests erasure by email at `/erasure` (Turnstile-gated, posts form-encoded to the shared api's
+  public `POST /v1/erasure/request`), then confirms via the emailed link at `/erasure/confirm`
+  (types their email, posts JSON to `POST /v1/erasure/confirm`). Both routes share the new
+  `features.legal.erasure` flag; `/erasure/confirm` reuses the same `pages.erasure` gate — no
+  separate `pages` entry. A short cross-link on `/data-request` (`legal.dataRequest.erasureNote`)
+  points visitors here for the erasure right specifically. Copy in `messages.legal.erasure.*` (en +
+  fr). **Why:** a faster, self-service erasure path that needs no account, alongside the existing
+  authenticated `/account` delete and the general GDPR data-request form.
+- **Self-service "Delete my account" (`/account`).** A new Clerk-authenticated page mounts the
+  shared `DeleteAccountSection` (`@indiecrafts/packages-shared-compliance/web`) via the
+  `AccountDeletePanel` client wrapper, which posts the authenticated `POST /v1/erasure/self` to
+  the shared api worker, then signs the visitor out and returns them home. New
+  `features.account.delete` flag + `pages.account` route entry; copy in
+  `messages.account.delete.*` (en + fr). Gated three ways — the flag, Clerk being configured
+  (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`), and the client api origin being set
+  (`NEXT_PUBLIC_API_URL`, new — added to `.env.example`) — any one missing 404s the route, so the
+  control never renders somewhere it can only fail on submit. **Why:** the GDPR data-request form
+  covers every right by email; this is the one-click erasure path for a signed-in account.
+- **Self-service "Download my data" (`/account`).** The same `/account` page now also mounts the
+  shared `ExportSection` (`@indiecrafts/packages-shared-compliance/web`) beside `DeleteAccountSection`,
+  via the `AccountDeletePanel` client wrapper, posting the authenticated `POST /v1/export` to the
+  shared api worker and opening the returned single-use, 1-hour-expiring download link in a new tab.
+  New `features.account.export` flag (gates just the control's render — the page's own visibility
+  still follows `features.account.delete`); copy in `messages.account.export.*` (en + fr). **Why:**
+  GDPR data portability alongside the existing erasure control, on the same authenticated page.
 - **Geo-targeted cookie consent.** The `[locale]/layout` reads the visitor's `cf-ipcountry`
   server-side and passes a geo-resolved `mode` to `CookieBanner`: EU/EEA/UK + territories show the
   opt-in banner, the US gets no blocking banner (opt-out + preferences + GPC), elsewhere shows
   nothing. Per-country/regulation config in `src/config/consent.ts` (`ConsentConfig` — named
   regulations + overrides, cascading to territories). **Why:** don't show an opt-in banner where it
   isn't required, while staying compliant everywhere. Design → `code/docs/apps/web/config/cookie-consent-geo.md`.
+- **CCPA "Do Not Sell or Share My Personal Information" footer link.** `Footer` now renders a
+  `DoNotSellLink` (`@indiecrafts/packages-web-compliance`) that opens the existing cookie-preferences
+  dialog via `openPreferences()` — no new consent UI. `DefaultLayout` resolves `consentMode` from
+  `cf-ipcountry` server-side (same as `[locale]/layout.tsx`) and gates the link to `opt-out`
+  (US/CCPA) visitors, so it never flashes for EU/other visitors. Copy in `messages.cookies.doNotSell.link`
+  (en + fr). **Why:** opt-out regions had no visible privacy-choices affordance outside the
+  cookie-policy page — CCPA/CPRA expects a footer-prominent link. The dialog the link opens (and its
+  `OPEN_PREFERENCES_EVENT` listener) previously lived only inside `CookieBanner`, which
+  `[locale]/layout.tsx` mounts only when `requireCookieConsent` is on (off by default) — so on a
+  default-configured site the link did nothing. `[locale]/layout.tsx` now also mounts the new
+  standalone `CookiePreferencesHost` (same dialog + listener, no banner) whenever `requireCookieConsent`
+  is off and `consentMode === "opt-out"`, so the control always works for a US visitor.
 - **Announcement toast + per-surface targeting.** `DefaultLayout` now also mounts the new
   `AnnouncementToast` (a self-contained corner card — title/body/optional image/link, editor-set
   dismiss) beside the existing bar, and passes `surface="website"` so an editor can target which
@@ -86,13 +389,19 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   leak-check now exempts a `*PUBLISHABLE*` match (Clerk / Stripe `pk_…` are public by design); every real
   secret still blocks. **Why:** Clerk's SDK requires the exact public name `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
 
-- **Offline banner — a non-blocking connectivity strip in `DefaultLayout`.** A `useOnlineStatus` hook
-  (`src/hooks/`, `useSyncExternalStore` over `navigator.onLine` + the `online`/`offline` events —
-  hydration-safe, assumes online during SSR so it never flashes) drives a slim `OfflineBanner`
-  (`role="status"` `aria-live="polite"`, `bg-secondary` tokens) that shows while offline and auto-hides on
+- **Offline banner — a non-blocking connectivity strip in `DefaultLayout`.** A slim `OfflineBanner`
+  (`role="status"` `aria-live="polite"`, `bg-secondary` tokens) shows while offline and auto-hides on
   reconnect. Copy in `messages.offline.banner` (en + fr); the full-screen `OfflineContent` (for a route
-  that can't render offline) is the new `system-pages` component. **Why:** losing the network was a silent
+  that can't render offline) is the `system-pages` component. **Why:** losing the network was a silent
   failure — now the visitor is told, in their language, without blocking the page.
+- **Offline banner + detection moved to `system-pages`.** The local `useOnlineStatus` hook and
+  `OfflineBanner` component are dropped; `DefaultLayout` now imports both from
+  `@indiecrafts/packages-shared-system-pages/web`. **Why:** the `app` surface and the Electron renderer
+  needed the same detection + banner — one implementation instead of three.
+- **Account copy assembled via the shared `compliance` builders.** `account/page.tsx` now calls
+  `buildDeleteAccountCopy`/`buildExportCopy` (`@indiecrafts/packages-shared-compliance/web`) instead of
+  hand-assembling the `DeleteAccountCopy`/`ExportCopy` objects field-by-field. **Why:** the field list now
+  lives in one place, shared with `app`, mobile, and hybrid.
 - **AI agent on the web — cross-origin call to the shared agent Worker + a translated demo UI.** The
   `ContentResearchAgent` client component posts a goal to the standalone `code/shared/agent` Worker
   (`NEXT_PUBLIC_AGENT_URL` → `POST /v1/agent/:name`), guarded by Turnstile (the site ships only the public
@@ -116,6 +425,21 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
   same export escape hatch.
 
 ### Changed
+
+- **CSP now ENFORCED by default (`CSP_MODE` default flipped from `report-only` to `enforce`); set
+  `CSP_MODE=report-only` to roll back.** `src/proxy.ts`'s `CSP_MODE` fallback flips: env unset now
+  resolves to `enforce` instead of `report-only`. **Why:** the strict nonce CSP shipped observe-only
+  since SP3; the strict policy now graduates to actually blocking inline-script injection instead of
+  just reporting it. `e2e/journeys/csp-nonce.spec.ts` rewritten to assert the enforced strict CSP
+  (was: Report-Only).
+- **Surface id is now one config value, not a scattered literal.** Added
+  `surface` to app-owned `@/config` (`src/config/surface.ts`, `"website"`). The
+  audit/telemetry origin — hardcoded as `"website"` in the consent-log route and
+  the `SessionLogger` mount, and defaulted to `"web"` in the session-log route —
+  now reads from that one home. _Why:_ as surfaces multiply (admin, app, mobile),
+  the consent + session audit trail must tag the right origin; a copied route
+  changes one config value instead of hunting magic strings, and a malformed
+  session body now falls back to the correct surface rather than a generic `"web"`.
 
 - **Icons + fonts now come from shared bricks.** Icon usage moved onto
   `@indiecrafts/packages-shared-ui-icons`: the footer/social + homepage showcase render `BrandIcon`

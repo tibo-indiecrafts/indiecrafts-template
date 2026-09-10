@@ -13,8 +13,70 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **newsletter — lead-magnet email fallback copy resolves by locale, not an en/fr binary.**
+  `deliver-magnet.ts` picked its hardcoded fallback with `language === "en" ? COPY.en : COPY.fr`, so a
+  third locale silently got the French copy. It now resolves `COPY[locale] ?? COPY[defaultLocale]`, so a
+  locale with no entry falls back to the default locale. **Why:** correctness once a third locale is added.
+
+### Changed
+
+- **blog — locale reads go through the shared `pickLocale`; a drift tripwire pins the GROQ default.**
+  `lib/localize.ts` is now a thin adapter over `@indiecrafts/packages-shared-config` `pickLocale` (no
+  behavior change), and a `queries.test.ts` test asserts the `coalesce(language, "en")` legacy-untagged-doc
+  default matches `defaultLocale`, so changing the default trips CI at these ~43 GROQ spots. A header note
+  documents that a missing per-locale document intentionally 404s (no cross-locale fallback). **Why:**
+  single locale-resolution home + guard the one hardcoded default.
+
 ### Added
 
+- **blog — GROQ public-filter test coverage, via `groq-js`.** `sanity/queries.test.ts` evaluates the
+  real exported query strings (not a mock) against an in-memory fixture dataset, so a regression that
+  loosens the `noIndex` / `hideFromDiscovery` / `unpublished` / scheduled-`publishedAt` filter fails a
+  test instead of leaking content. Covers `allPostsQuery` and `featuredPostsQuery` (excludes every
+  non-public case) and `postBySlugQuery` (unpublished 404s; a direct-URL noIndex slug still resolves,
+  per its docstring), plus a structural drift-guard asserting every listing query still contains all
+  three visibility clauses (direct-access queries — `allPostSlugsQuery`, `taxonomyForLlmsQuery` — are
+  checked against their narrower, intentional two-clause contract). Added `groq-js` as a blog
+  devDependency for this. Also added `lib/pagination.test.ts` (page parsing / slicing / count math)
+  and `lib/llms.test.ts` (`getBlogLlmsLines` / `getTaxonomyLlmsLines` branch coverage — route-gate
+  short-circuit, the `llmsSummary ?? description` fallback, per-taxonomy flag gating, `full` mode).
+
+- **`lib/pin-order.ts` in the blog module** — `reorderByIds` + `mergePinnedWithFallback` extract the
+  pin/reorder/merge/dedupe/cap logic that was inlined and copy-pasted across four frontpage renderers
+  (`BlogTrending`, `BlogFeatured`, `BlogCollection`, `BlogCategorySpotlight`). Behaviour-preserving; now
+  unit-tested (11 cases) — the logic was previously untested because it lived inside async Server Components.
+
+- **blog — composable `/blog` frontpage.** A new `frontpageModules[]` array on the `blog` singleton
+  composes the frontpage the same way `postModules[]` composes a post; empty falls back to the code
+  default (`DefaultBlogFrontpage` — the former fixed hero-mosaic → explore → newsletter chain),
+  selected via `pickFrontpage`. Seven new blog-specific blocks are frontpage-capable — `blog-hero`
+  (one lead post, latest or pinned), `blog-featured` (lead + grid, flagged or pinned),
+  `blog-category-spotlight` (a curated category row), `blog-collection` (a pinned-only carousel),
+  `blog-topic-cards` (1-3 clickable category/tag cards), `blog-trending` (popularity, falling back
+  to most-recent), and `blog-explore` (the existing categories/tags/authors sections behind a
+  variant picker) — plus the existing `blog-post-list` doubling as the frontpage's "Latest" block.
+  Every dynamic block shares one **auto + pin** shape: pinned posts take precedence in editor order,
+  the block's rule (latest / flag / category / popularity) fills the rest up to a shared
+  `count`/`limit` cap. `lib/popularity.ts` (`getPopularPostIds`) is the Trending popularity seam —
+  returns `[]` today (no read-count source), so it falls back to most-recent (`@debt MIGRATION` for
+  the future read-count pipeline). **Why:** the frontpage was a fixed layout; editors can now compose
+  it from the same block catalog as a post, without a deploy.
+- **blog — share is no longer blog-owned (removed `display.post.share`).** The per-post share row is
+  gated by the app's shared `siteSettings.share` setting, injected into `DefaultPostLayout` as a
+  `share` prop; the blog no longer carries a share display toggle. Share copy now reads the shared
+  `common.share.*` namespace (was `pages.blog.share`), so a host app must provide `common.share.*`.
+  **Why:** share is a cross-cutting site setting, not blog chrome.
+- **blog — top category navigation with sub-category dropdowns.** A category `parent`
+  reference (self-referential) turns any category into a sub-category. A `getCategoryNav(locale)`
+  server helper (`lib/category-nav.ts`, gated by the new `blog.display.categoryNav` toggle) fetches
+  them via `categoryNavQuery` and returns the ui-components `CategoryNav` under the header on every
+  blog page — top-level categories, each with children opening a dropdown — via `DefaultLayout`'s
+  new `subnav` slot.
+- **blog — end-of-article author bio + sidebar "More on {topic}".** The post layout now composes
+  the ui-components `AuthorBio` ("Written by" card, after the body) and `MoreOnTopic` (a compact
+  "More on {category}" related-links block under the TOC in the sidebar).
 - **contact — a new `@indiecrafts/contact` module (contact form).** Submit engine (`submit()`) that
   validates and writes a `contactMessage` doc, then fires two best-effort emails: a "we got your
   message" acknowledgement to the sender and an owner alert that carries the message body with
@@ -24,6 +86,19 @@ Changed · Deprecated · Removed · Fixed**.
   configured on the shared `emailStrings` singleton (`contactConfirm` + `contactOwner`). _Why:_ the
   template had newsletter/waitlist capture blocks but no way for a visitor to send a message and get
   an acknowledgement. Modeled on `@indiecrafts/waitlist`.
+
+### Fixed
+
+- **blog — `featuredPostsQuery` leaked `unpublished`/`hideFromDiscovery` posts.** It filtered only
+  `seo.noIndex`, unlike every sibling listing query (`allPostsQuery`, `relatedPostsQuery`, …), so a
+  post marked `featured: true` and `unpublished: true` (or `hideFromDiscovery: true`) still surfaced
+  in the "Featured" listing. Added the two missing clauses; regression-tested via `groq-js` in
+  `sanity/queries.test.ts`.
+
+- **blog — series "Part N of M" rendered a raw translation key.** `DefaultPostLayout` passed
+  `t("series.partOf")` — next-intl formats the message and errors on the missing `{n}`/`{total}`
+  params, printing the key. `SeriesNav` interpolates those itself, so it now receives the raw
+  template via `t.raw("series.partOf")`.
 
 ### Changed
 

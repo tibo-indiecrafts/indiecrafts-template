@@ -14,6 +14,219 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`pickLocale(value, locale, fallback?)` on `@indiecrafts/packages-shared-config`.** One shared
+  home for resolving a `localeString`/`localeText` (`{ en, fr }` or a plain string) to the active
+  locale, else the default, else a fallback. Replaces **nine** near-identical re-implementations
+  across the web bricks (email · announcement · compliance · locale-suggest · navigation · blog) and
+  the api worker (erasure · clerk-email × 2) — each now a thin typed adapter over it. **Why:** one
+  fallback policy in one place instead of nine copies drifting apart.
+- **`usePersistLocale()` on `@indiecrafts/packages-web-auth`** (`./persist-locale`). A hook the
+  surfaces' locale switchers call to mirror an explicit language change to the signed-in user's Clerk
+  `unsafeMetadata.locale` → (via the api webhook) `user_profiles.locale`. **Why:** the stored locale
+  was captured only at sign-up, so a later language switch never reached the user's emails.
+- **`@indiecrafts/packages-shared-gated-delivery` — generic `signHmac`/`verifyHmac`.** The
+  download-token signing was pulled out into two payload-agnostic primitives; `signDownloadToken`/
+  `verifyDownloadToken` are now thin wrappers over them. **Why:** the api's no-login email-preference
+  token needed the same signed-JSON-payload mechanism for a different shape (`{uid, cat?}`, no
+  expiry), and it belongs in the one brick that already owns HMAC signing, not a second
+  implementation.
+- **`emailPreferencesSchema`/`emailPreferencesStructureItem` on `@indiecrafts/packages-web-email/sanity`.**
+  The `emailPreferences` singleton: editor-defined marketing categories (`key`/name/description/
+  `includeAtSignup`/`resendTopicId`, seeded `news`/`offers`/`partners`/`tips`) plus display-only
+  notices, for the subscriber preference centre. **Why:** an editor-owned home for the categories a
+  subscriber can toggle, alongside the existing `emailStrings` transactional-email entity.
+
+### Changed
+
+- **`@indiecrafts/packages-web-i18n` routing now sets the namespaced locale cookie.** The shared
+  next-intl shim omitted `localeCookie`, so a module navigating through it read/wrote next-intl's
+  un-namespaced `NEXT_LOCALE` instead of the app's `${site.prefix}_NEXT_LOCALE`. It now uses
+  `localeCookieName`, matching the app's typed routing. **Why:** one locale cookie per deployment, not
+  two that can disagree.
+
+### Fixed
+
+- **`@indiecrafts/packages-web-auth` — Clerk Core 3 migration (sign-in contrast + control components).**
+  `authAppearance()` mapped the Core 2 variable names (`colorText`/`colorTextSecondary`), which Core 3
+  ignores → the hosted `<SignIn>`/`<SignUp>` rendered **dark-on-dark text on every surface**. It now maps
+  the Core 3 roles (`colorForeground`/`colorMutedForeground`/`colorNeutral` + input/primary foregrounds)
+  alongside the Core 2 aliases, so sign-in text is legible in light + dark. Also replaced the removed
+  `<SignedIn>`/`<SignedOut>` control components with Core 3's `<Show when=…>` (re-exported from the brick;
+  the website's `AuthMenu` migrated) — that was 500-ing the website home once Clerk keys were set. **Why:**
+  `@clerk/nextjs` resolved to Core 3 but the brick still used the Core 2 API; the bug was dormant until
+  Clerk was configured.
+
+### Added
+
+- **`@indiecrafts/packages-web-auth` — Clerk UI localization + self-hosted sign-up.** `AppClerkProvider`
+  takes a `locale` prop and passes `@clerk/localizations` (`enUS`/`frFR`) to `<ClerkProvider localization>`;
+  a new `SignUpView` renders a themed `<SignUp>` carrying the sign-up locale in `unsafeMetadata`. **Why:**
+  Clerk UI now follows the site language, and the captured locale drives localized auth emails.
+- **`@indiecrafts/packages-mobile-ui-native` `Button` — an optional `selected` prop.** Maps to
+  `accessibilityState.selected`, so a button used in a segmented / toggle group (e.g. the mobile theme
+  switcher) announces its chosen state to VoiceOver / TalkBack — selection is never signalled by colour
+  alone. Backward-compatible: unset leaves behaviour unchanged.
+
+- **`@indiecrafts/packages-shared-agent` — `runAgent` now validates the output shape.** The forced
+  `output` tool guarantees a tool call, but the model can still drop a required field, and callers
+  masked that with `?? []`. `runAgent` now checks the returned object against the spec's
+  `outputSchema` — every top-level `required` key must be present with a matching primitive type —
+  and returns `{ ok: false, error: "output did not match schema" }` otherwise. The check is shallow
+  and zero-dep (top-level required keys only); the never-throw contract is unchanged. **Why:** stop
+  a malformed reply from reaching a caller as if it were valid.
+
+### Fixed
+
+- **`@indiecrafts/packages-shared-agent` — the Anthropic fetch has a 20s timeout.** `runAgent`'s
+  `fetch(ANTHROPIC_URL, …)` had no `signal`, so a stalled/slow Anthropic response could hang the
+  caller indefinitely. Added `signal: AbortSignal.timeout(20_000)`; the existing
+  `catch (e) { return { ok: false, error } }` already turns the resulting `AbortError` into a
+  normal `AgentResult`, so nothing else changed.
+
+### Added
+
+- **Unit tests for previously-untested brick logic.** `web/sanity` — `sanityImageLoader` (the CDN
+  image-URL builder, 6 cases) + `composeSanity`/`composeStudio` (schema/template/i18n flatten + desk-item
+  divider placement, 5 cases); the brick also gained its missing `vitest.config.ts` + `test` script.
+  `web/page-builder` — a `moduleSchemas ↔ MODULE_TYPES` same-file drift guard + `defineModule` preview
+  fallback (3 cases). No public-surface change; coverage only.
+
+### Fixed
+
+- **Agnostic bricks import config from `/shared`, not the root barrel (`format` · `announcement` ·
+  `utils`).** `plural/relative/money/grammar/number/list.ts` (format), `resolve.ts` (announcement), and
+  `format-date.ts` (utils) imported `defaultLocale` / `localeFormat` / `Locale` from
+  `@indiecrafts/packages-shared-config` — whose root barrel re-exports `./web` (with `process.env`). That
+  dragged the web config into the **mobile** type graph, so `mobile tsc` failed on `process` (no
+  `@types/node`). Switched them to `@indiecrafts/packages-shared-config/shared` (the agnostic entry — same
+  symbols). **Why:** React-free bricks must not pull web-only code; unblocks `mobile tsc` / `pnpm verify`.
+
+### Added
+
+- **`@indiecrafts/packages-shared-compliance` — `DeleteAccountSection` gains an injected
+  `submitErasure` seam.** `erasure-self.ts` splits into `rawErasureFetch` (resolves to a
+  plain status carrier, never a collapsed `Response`, so a caller's `useReverification`
+  wrap can still detect Clerk's 403 hint) and `mapErasureResponse` (the one
+  status→result mapping, reused by the default path). The web section takes an optional
+  `submitErasure` prop so a surface can wrap the raw fetch with Clerk `useReverification`
+  for step-up, while the brick itself stays `@clerk/*`-free — the Clerk dependency lives
+  in each surface's panel, not the shared brick. A try/catch guards a throwing injected
+  submit from hanging the UI on `pending`.
+- **`@indiecrafts/packages-shared-ui-fonts` — exports its font files (`./fonts/*`).** The package's
+  `exports` map now exposes `./fonts/*` alongside `.` (the `FONT_FILES` metadata). **Why:** a bundler
+  that resolves via the `exports` field (Vite — the hybrid Electron renderer's `@font-face`
+  `url("@indiecrafts/packages-shared-ui-fonts/fonts/Satoshi-Variable.woff2")`) could not reach the
+  self-hosted `.woff2` files, so the renderer CSS failed to compile. `next/font` (website) and
+  `expo-font` (mobile) reference the files by relative path and are unaffected.
+
+- **`@indiecrafts/packages-web-ui-components` — `showConsentSavedToast` (new `web/consent-toast`
+  export, sonner).** One shared "choice saved" toast every web surface fires on an explicit
+  cookie-consent or legal-reacceptance choice: `showConsentSavedToast({ saved, description, manage,
+onManage })`. Copy is injected by the caller (no i18n inside the package); `onManage` opens that
+  surface's cookie-preferences control. **Why:** website, app, and hybrid confirm a consent choice
+  the same way instead of three bespoke toasts.
+
+- **`@indiecrafts/packages-shared-system-pages` — offline hook + banner (`useOnlineStatus`,
+  `OfflineBanner`, on `./web` and `./native`).** `useOnlineStatus` (`./web`) tracks the `online`/`offline`
+  events via `useSyncExternalStore` (hydration-safe — the server snapshot assumes online, so it never
+  flashes offline during SSR). `OfflineBanner` renders a slim, auto-hiding strip: the web fork
+  self-detects via `useOnlineStatus` (props: `{ message }`); the native fork takes connectivity as a prop
+  (props: `{ message, online }`) so the brick stays free of a single-consumer native dep (netinfo) — the
+  app owns detection. **Why:** the website, `app`, and the Electron renderer each carried their own copy
+  of the same hook + banner; now they import one. Repointed: website, `app`, and hybrid drop their local
+  hook/banner for the brick's; mobile keeps its local `useNetworkStatus` (netinfo) and passes its result
+  into the brick's native `OfflineBanner`.
+- **`@indiecrafts/packages-shared-compliance` — account copy moved to `./shared` + copy-builders
+  (`buildDeleteAccountCopy`, `buildExportCopy`).** `DeleteAccountCopy`/`ExportCopy` (previously defined
+  twice, once in the `./web` and once in the `./native` section files) now live in
+  `src/shared/account-copy.ts`, re-exported from `./shared`, `./web`, and `./native` unchanged. The two
+  builders assemble each shape from a namespace-scoped translator (`t` already scoped to `account.delete`
+  / `account.export`), so one field list serves both next-intl and react-intl callers. **Why:** every
+  surface's account page hand-assembled the same two objects field-by-field; now website, `app`, hybrid,
+  and mobile call one builder each.
+
+### Changed
+
+- **`@indiecrafts/packages-web-compliance` — fires the confirmation toast on explicit consent
+  choices.** `CookieBanner` (accept/reject), `CookiePreferences` (save), and `LegalNotice`
+  (accept) each call `showConsentSavedToast` after persisting the choice. The silent
+  `applyConsent(..., "auto")` geo auto-seed path is untouched — it never toasts. **Why:** the
+  website's consent UI confirms an explicit choice the same way the app/hybrid surfaces do.
+
+- **`@indiecrafts/packages-web-ui-components` — `ShareButtons` gains a `networks` prop.** An optional
+  `{ x, linkedin, facebook, copyLink }` filter (unset = shown) hides individual controls, driven by
+  the editor's Sanity `siteSettings.share` choices. Backward-compatible — omit it to show all.
+- **`@indiecrafts/packages-web-ui-components` — `ShareButtons` `url` is now optional.** When omitted
+  it resolves the current page URL on the client (`window.location.href`, deferred to an effect so SSR
+  and the first client render match); the website/blog still pass an explicit server-resolved `url`
+  (no flash). **Why:** lets client-only surfaces (the app, the Electron renderer) reuse the same share
+  row without threading a server pathname through.
+
+### Fixed
+
+- **`@indiecrafts/packages-web-version` — leaked `online` listener.** `useVersionCheck`
+  added a `window` `online` listener, but its effect cleanup removed only the interval and
+  the `visibilitychange` listener — so every mount leaked one `online` listener. Cleanup now
+  removes all three. Also moved `UpdatePrompt`'s latest-value ref write out of render into an
+  effect, so render stays pure under React 19 concurrency.
+- **`@indiecrafts/packages-web-ui-components` — `TurnstileWidget` load listener.** The
+  Turnstile-script `load` listener is now registered `{ once: true }`, so it self-removes after
+  firing instead of lingering when the effect unmounts before the script loads.
+
+### Added
+
+- **`@indiecrafts/packages-web-ui-components` — six new presentational primitives for the blog's
+  composable frontpage.** `PostHero` (`web/layout/`) — a full-width lead-post hero (image/video,
+  category chip, author/date). `FeaturedPosts` (`web/collection/`) — a lead card + grid of
+  featured/pinned posts. `SpotlightRow` (`web/collection/`) — a curated post-picks row + "view all"
+  link. `Carousel` (`web/collection/`, client) — an embla-driven scroller of pinned posts.
+  `TopicCards` (`web/layout/`) — one to three large clickable category/tag cards. `PostCard`
+  (`web/collection/`) — the shared single-post card, extracted out of `FeaturedPosts` so
+  `SpotlightRow`/`Carousel` reuse it instead of reimplementing it. All six take a resolved
+  `PostCardItem[]` — the new shared shape in `shared/types.ts` — so they stay pure (no Sanity client,
+  no i18n). Each ships a colocated `.stories.tsx` + `.md`. Also: `POST_CARD_PROJECTION`, the blog's
+  GROQ post-card fragment, is now reused by every frontpage query instead of being redeclared per
+  block. **Why:** the blog's new frontpage blocks (`code/modules/CHANGELOG.md`) needed one set of
+  reusable card/row/carousel primitives instead of six near-duplicate layouts.
+- **`@indiecrafts/packages-web-ui-components` — three new blocks for the blog: `CategoryNav`,
+  `AuthorBio`, `MoreOnTopic`.** `CategoryNav` (`web/layout/`) — a top-level category bar with
+  sub-category dropdowns (shadcn `NavigationMenu`). `AuthorBio` (`web/collection/`) — an
+  end-of-article "Written by" card. `MoreOnTopic` (`web/collection/`) — a compact "more on this
+  topic" sidebar list + optional "see all" footer. All data-driven over resolved `{ title, href }`
+  items (plain `<a>`, like the other renderers), each Storybook-documented (`.stories.tsx` + `.md`);
+  the blog composes them.
+- **`@indiecrafts/packages-shared-ui-icons` — brand marks are now GENERATED.** `src/shared/brands.ts`
+  is built from `brands.json` (our name → a `simple-icons` slug, or an inline `{title,hex,path}` for a
+  mark simple-icons lacks — e.g. LinkedIn) via `pnpm brands:build`; `brands:check` guards drift in CI
+  (mirrors `tokens:build`/`tokens:check`). No hand-copied SVG paths; adding a brand is one config line.
+  Regenerating picked up the official (updated) X and Facebook marks. Runtime stays dependency-free —
+  `simple-icons` is a build-only devDependency and the shape/exports are unchanged (`BrandIcon`,
+  `ShareButtons`, `SocialFollow`, native all keep working).
+- **`ShareButtons` moved to `@indiecrafts/packages-web-ui-components` (`web/layout/`) + intent logic to
+  `@indiecrafts/packages-shared-utils/share`.** The X/LinkedIn/Facebook + copy-link row is now a
+  shared, Storybook-documented block over a `url`+`title` — the blog post mounts it inline, and the
+  website footer mounts it site-wide. The platform-agnostic `shareTargets(url, title)` (no DOM) is a
+  new shared-utils export, so a native surface can feed the same targets to the OS share sheet.
+- **`@indiecrafts/packages-shared-config` — the settings registry (`src/shared/settings.ts`).**
+  New `SETTINGS` map: version-controlled defaults + a per-key `[min, max]` bound for 8
+  worker-read operational knobs (5 retention windows, `ops.sla_warning_days`, 2 link TTLs),
+  plus `coerceSetting` (parse + clamp a raw override, `null` on unknown/non-integer) and
+  `effectiveSettings` (merge D1 override rows over the defaults, ignoring anything invalid).
+  React-free — safe in a bare Worker; imported by both `cron` and `api`. **Why:** one source
+  of truth for what an operator can override from the new admin Settings card, and the
+  guaranteed fallback when they don't — see `code/docs/apps/web/config/settings.md`.
+- **`@indiecrafts/packages-shared-security` — opt-in Trusted-Types Report-Only trial.** New
+  `buildTrustedTypesReportOnly(reporting)` + a `reporting.trustedTypesReportOnly` flag; `cspHeadersForMode`
+  fills the (otherwise-null) enforce-mode Report-Only slot with `require-trusted-types-for 'script'` pointed
+  at `/api/csp-report`. **Reports, never blocks** — so a surface can learn which DOM script-sink assignments
+  (React/Next/Clerk/GA) a future Trusted-Types enforcement would break, before enforcing. Off by default; apps
+  wire it to `CSP_TRUSTED_TYPES=report`. Chrome/Edge only. **Why:** from the wahio review — a structural
+  anti-DOM-XSS layer the nonce policy can't provide, trialled safely on the report-only pipeline we already have.
+- **`@indiecrafts/packages-shared-security` — `permissiveCspRule(source, env, csp?, reporting?)`.**
+  Generalizes `studioCspRule` (now a thin `/studio/:path*` shorthand over it) so any proxy-excluded
+  route that can't take a per-request nonce gets the static, permissive CSP scoped to it. **Why:**
+  `/maintenance` was proxy-excluded like `/studio` but had no static rule, so `cspMode: "proxy"` left
+  it shipping **no** CSP at all — the website now scopes a rule to it too.
 - **`@indiecrafts/packages-shared-config` + `-shared-security` — the CSP now allows Clerk when it is configured.**
   New `getClerkCspHosts()` (config `./web`, env-gated) derives Clerk's Frontend-API host from
   `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`; `buildCsp` adds it to `script-src`/`connect-src`/`frame-src`, adds
@@ -25,9 +238,31 @@ Changed · Deprecated · Removed · Fixed**.
   `handleCspReport(request, opts)` (`./handle`) — the Next route trust boundary for browser CSP
   violation reports: accepts only the CSP content-types, caps the body, normalizes + sanitizes +
   drops extension noise via `@indiecrafts/packages-shared-security/csp-report`, always answers `204`.
-  `forwardCspReports(reports)` (`./forward`) — `server-only`, bearer-authed batches of 10 to the
+  `forwardCspReports(reports)` (`./forward`) — `server-only`, bearer-authed batches of 5 to the
   api's `POST /v1/events` (`kind: "csp-report"`). **Why:** the pure parsing brick can't hold
   `server-only` or Next's `Request`/`Response` types, so the route glue needed its own home.
+- **Geo-targeted consent regulations in `shared-compliance`.** New `./shared` exports a
+  regulation-named model: `Regulation` (`{ name, mode }`) + the built-in `REGULATIONS` catalog
+  (GDPR / UK GDPR / CCPA / None), `CONSENT_REGIONS` (country/territory → regulation key),
+  `TERRITORIES` (parent country → its overseas territories), `ConsentConfig`
+  (`{ regulations?, overrides? }`), and `resolveRegulation()` / `resolveConsentMode()`. Defaults:
+  EU-27 · EEA · EU outermost regions · UK + Gibraltar + Crown Dependencies → GDPR/UK-GDPR (opt-in);
+  US + its territories → CCPA (opt-out); else none; unknown / Cloudflare `XX`/`T1` → opt-in fail-safe.
+  **Flexible + extensible:** a client adds named regulations (LGPD, …) and reassigns any
+  country/territory — an assignment on a PARENT cascades to its territories. New `./web`
+  `browserSignalsDeny()` (GPC / Do-Not-Track) so the shared web shells honour the signal the way the
+  website already does. **Why:** show each visitor the consent regime their country actually requires —
+  named, configurable per country + territory, on every surface. Design →
+  `code/docs/apps/web/config/cookie-consent-geo.md`.
+- **Storybook stories for the undocumented design-system bricks.** Colocated `*.stories.tsx` for the
+  native brick (`ui-native`: `Screen` · `ThemedText` · `Button` · `Card`), `system-pages` (web **and**
+  native: `NotFoundContent` · `ErrorContent` · `OfflineContent` · `Maintenance`), and `ui-icons/web`
+  (`Icon` · `BrandIcon` · `SvgIcon` · `ReiconIcon`). They render in the one gallery (native via
+  react-native-web) and run as component + a11y tests. **Why:** every renderable brick now has a story,
+  and the native design system was previously undocumented.
+- **`@indiecrafts/packages-mobile-ui-native` exports `./package.json`.** Needed so the Storybook
+  story-glob helper can `require.resolve` the brick by name (the other bricks already exposed it).
+
 - **`@indiecrafts/packages-shared-announcement` — the portable announcement core (new brick).** The
   React/Next-free resolve path (`resolveBanner`/`resolveToast`: live-window + per-surface targeting +
   localize + link + version hash + CDN image URL), the `SURFACES` list (**no admin**), the GROQ
@@ -72,11 +307,11 @@ Changed · Deprecated · Removed · Fixed**.
   `"use client"` + `packages-web-ui` Button) + `./native` (RN) exactly like the Maintenance/404/500 trio;
   `OfflineContentProps` (`title, description, retryLabel, onRetry?`) in `./shared`, plus a `SHELL_COPY.offline`
   default (adds a short `banner` string) so the non-CMS shells render consistent wording. **Why:** offline
-  was a silent failure — now every surface reuses one branded state. **Wired on all three surfaces:** web
-  (`useOnlineStatus` + banner in `DefaultLayout`), mobile (`@react-native-community/netinfo` hook + a
-  `ShellOverlays` banner — see the mobile changelog), and the hybrid renderer (a `navigator.onLine`
-  `useOnlineStatus` twin + a banner in `App.tsx`). The full-screen `OfflineContent` (for a route that can't
-  render offline) is available on both `./web` and `./native`.
+  was a silent failure — now every surface reuses one branded state. The banner strip (not this full-screen
+  page) is wired via the shared `useOnlineStatus`/`OfflineBanner` brick (see above): website, `app`, and
+  hybrid render it through the brick; mobile pairs its local `useNetworkStatus` (netinfo) with the brick's
+  native `OfflineBanner`. The full-screen `OfflineContent` (for a route that can't render offline) is
+  available on both `./web` and `./native`.
 - **`@indiecrafts/packages-mobile-ui-native` — accessibility baseline on the primitives.** `Button` now
   ships `accessibilityLabel` (its `label`) + `accessibilityState` (disabled announced to AT, not by opacity
   alone) + an optional `accessibilityHint` (`accessibilityRole="button"` and the 44 pt touch target were
@@ -153,9 +388,34 @@ reporting, nonce)` (`./csp`) now takes an optional `nonce`: when set, `script-sr
   flipping it on cold is a real regression risk — `cspMode` lets each surface roll it out behind
   `CSP_MODE=report-only` first (observe violations, ship nothing broken) and flip to `enforce` once
   the reports are clean, with `/studio` staying on the policy it always had.
+- **`@indiecrafts/packages-shared-security-events` — `shouldAlert`/`formatSecurityAlert`.**
+  `shouldAlert(severity)` decides which incidents page the operator (`high`/`critical` —
+  `credential_stuffing` and `privilege_escalation` are both `high`, so a `critical`-only gate would
+  rarely fire). `formatSecurityAlert(alert)` builds the internal alert email's subject + text: pure,
+  null-safe, non-PII (no raw IP, no email address). **Why:** the `api` worker's high/critical
+  `security_events` write sites now email the owner/DPO — see
+  `code/docs/apps/web/config/breach-response.md`.
 
 ### Changed
 
+- **`@indiecrafts/packages-shared-config` — log redaction now scrubs raw PII.** `logging.redactKeys`
+  adds `email`, `ip`, `ipAddress` to the auth-material list, so identifiers passed as log context keys
+  are `[REDACTED]` before any reporter/transport. The hashed `emailFingerprint`/`ip_hash` stay
+  un-redacted (not PII, must remain queryable). **Why:** GDPR log hygiene, from the wahio review —
+  keep raw PII out of logs by default. (Redaction is key-based; free-text message values aren't scrubbed.)
+- **`@indiecrafts/packages-shared-security` — broader `Permissions-Policy` default.** `securityHeaders`
+  now denies every sensor/hardware/payment/privacy feature a marketing+blog site never needs
+  (`accelerometer`, `bluetooth`, `browsing-topics`, `camera`, `display-capture`, `geolocation`, `gyroscope`,
+  `hid`, `interest-cohort`, `magnetometer`, `microphone`, `midi`, `payment`, `serial`, `usb`,
+  `xr-spatial-tracking`) — up from just camera/mic/geolocation. **Not** locked: `autoplay`/`fullscreen`/
+  `encrypted-media`/`picture-in-picture`, which the featured-video embeds (YouTube/Vimeo) need. **Why:**
+  from the wahio security review — a hardened baseline shuts more attack/tracking surface at ~zero cost.
+- **`@indiecrafts/packages-web-security-reports` — `handleCspReport` now rate-limits the anonymous sink.**
+  Before parsing the body it applies a per-client-IP fixed window (`csp:<surface>:<ip>`, 30/min) via
+  `rateLimit` + `clientIp` from `packages-shared-security`, answering `429` over the limit. **Why:** the
+  report route takes unauthenticated POSTs and writes an aggregate D1 row per violation group — a flood
+  could inflate the table. No-ops without `RATE_LIMIT_KV` (the CF WAF rule on `/api/*` stays primary);
+  this is portable defence-in-depth, the same layer the form routes get from `withGuard`.
 - **`packages-web-compliance` split — the portable half moved to `packages-shared-compliance`.** `consent-signals`
   is now a 1-line re-export (every importer unchanged); `consent-store` imports `grantedKeys`/`consentUpdate`/
   `ConsentRecord` from the shared brick and re-exports them (public surface unchanged). **Why:** one source of
