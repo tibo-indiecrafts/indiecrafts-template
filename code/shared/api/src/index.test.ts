@@ -43,6 +43,11 @@ describe("api worker (workerd)", () => {
     expect(res.status).toBe(401);
   });
 
+  it("401s GET /v1/churn without a bearer token (gated)", async () => {
+    const res = await SELF.fetch("https://example.com/v1/churn");
+    expect(res.status).toBe(401);
+  });
+
   it("fails closed on /v1/clerk-webhook when no secret is configured (503)", async () => {
     // The test env has no CLERK_WEBHOOK_SECRET → the webhook must refuse, not accept.
     const res = await SELF.fetch("https://example.com/v1/clerk-webhook", {
@@ -62,6 +67,7 @@ describe("/v1 auth contract — bearer-gated mutating routes reject anon", () =>
     ["GET", "/v1/sessions"],
     ["GET", "/v1/security"],
     ["GET", "/v1/csp-reports"],
+    ["GET", "/v1/churn"],
   ])("%s %s → 401 without a bearer", async (method, path) => {
     const res = await SELF.fetch(`https://api.test${path}`, {
       method,
@@ -169,5 +175,39 @@ describe("/v1/backups/status", () => {
       runs: Array<{ dbName: string; status: string }>;
     };
     expect(body.runs[0]).toMatchObject({ dbName: "audit", status: "ok" });
+  });
+});
+
+describe("/v1/churn", () => {
+  const auth = { authorization: "Bearer test-token" };
+
+  it("401s without the bearer", async () => {
+    const res = await SELF.fetch("https://api.test/v1/churn");
+    expect(res.status).toBe(401);
+  });
+
+  it("GET returns the aggregate shape", async () => {
+    const res = await SELF.fetch("https://api.test/v1/churn", {
+      headers: auth,
+    });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      total: number;
+      byDay: Array<{ date: string; count: number }>;
+      byReason: Array<{ reason: string; count: number }>;
+      recentFeedback: Array<{
+        deleted_at: string;
+        reason: string | null;
+        feedback: string | null;
+        competitor: string | null;
+      }>;
+    };
+    expect(body).toHaveProperty("total");
+    expect(body).toHaveProperty("byDay");
+    expect(body).toHaveProperty("byReason");
+    expect(body).toHaveProperty("recentFeedback");
+    expect(Array.isArray(body.byDay)).toBe(true);
+    expect(Array.isArray(body.byReason)).toBe(true);
+    expect(Array.isArray(body.recentFeedback)).toBe(true);
   });
 });

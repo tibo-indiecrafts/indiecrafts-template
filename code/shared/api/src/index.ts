@@ -53,6 +53,7 @@ import {
   handleDataRequestList,
 } from "./data-request/route";
 import { sendSecurityAlertEmail } from "./security/alert";
+import { readChurnAggregate } from "./consent/churn-store";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -756,6 +757,25 @@ export default {
         return json({ error: "server" }, 502, cors);
       }
     }
+
+    // ── Churn aggregate — GET /v1/churn (bearer-gated; churn reporting for admin) ──
+    if (url.pathname === "/v1/churn") {
+      if (request.method !== "GET")
+        return json({ error: "method_not_allowed" }, 405, cors);
+      const bearer = (request.headers.get("authorization") ?? "").replace(
+        /^Bearer\s+/i,
+        "",
+      );
+      if (
+        !env.APP_API_TOKEN ||
+        !bearer ||
+        !safeEqual(bearer, env.APP_API_TOKEN)
+      )
+        return json({ error: "unauthorized" }, 401, cors);
+      if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
+      return json(await readChurnAggregate(env.MAIN_DB), 200, cors);
+    }
+
     // ── Settings — GET (view) / PUT (edit) /v1/settings (bearer-gated; workers read these) ──
     if (url.pathname === "/v1/settings") {
       if (request.method === "OPTIONS")
