@@ -27,6 +27,8 @@ import {
   sendTestEmailAction,
   authEmailGroups,
   securityAlertGroups,
+  emailPreferencesSchema,
+  emailPreferencesStructureItem,
 } from "@indiecrafts/packages-web-email/sanity";
 import { pageBuilderSanity } from "@indiecrafts/packages-web-page-builder/sanity";
 import { blogSanity } from "@indiecrafts/modules-web-blog/sanity";
@@ -64,9 +66,15 @@ const sanity = composeStudio([
     title: "Contenu partagé",
     // The auth emails and the internal security alert have no feature module of their own;
     // they contribute their groups to the same E-mails singleton via bare `{ emailGroups }`
-    // entries.
+    // entries. `emailPreferences` is likewise a bare singleton with no feature module of
+    // its own — its schema + desk item are added directly here.
     modules: [
       ...sharedModules,
+      {
+        name: "email-preferences",
+        schemaTypes: [emailPreferencesSchema],
+        structure: (S) => [emailPreferencesStructureItem(S)],
+      },
       emailSanity([
         ...allModules,
         { emailGroups: [...authEmailGroups, ...securityAlertGroups] },
