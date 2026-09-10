@@ -27,10 +27,10 @@ export interface Env {
    *  erasure-SLA flag pass also inserts a security_events row per due/breached request. */
   AUDIT_DB?: D1Database;
   /** The api's EU main D1 (binding `MAIN_DB`) — identity/rights/settings: consent_events,
-   *  data_requests, erasure_requests, export_requests, site_settings. The purge deletes
-   *  rows past retention from consent_events, data_requests, erasure_requests; the
-   *  SLA-flag pass reads/updates erasure_requests; the export-cleanup pass reads/deletes
-   *  export_requests; loadSettings reads site_settings. */
+   *  data_requests, erasure_requests, export_requests, site_settings, churn_events. The
+   *  purge deletes rows past retention from consent_events, data_requests,
+   *  erasure_requests, churn_events; the SLA-flag pass reads/updates erasure_requests; the
+   *  export-cleanup pass reads/deletes export_requests; loadSettings reads site_settings. */
   MAIN_DB?: D1Database;
   /** The api's export-bundle bucket (`[[r2_buckets]] binding = "EXPORT_BUCKET"`) — the
    *  same bucket `POST /v1/export` writes to. Shared, operator-provisioned; the
@@ -93,9 +93,11 @@ export default {
     // `MAIN_DB`) uses its own, much longer 3-year window, because it is a consent proof
     // record, not an audit trail; data_requests (core, DSAR intake, short-lived
     // operational PII) purges at 365 days; erasure_requests (core, proof-of-erasure
-    // record) purges at the same 3-year window as consent_events. Idempotent — safe on
-    // every tick. No-ops until the relevant DB is bound. Each window is the effective
-    // value — the D1 `site_settings` override if operator-set, else the code default.
+    // record) purges at the same 3-year window as consent_events; churn_events (core,
+    // legitimate-interest churn-survey data — excluded from erasure, so it needs its own
+    // ceiling) purges at a 730-day (24-month) window. Idempotent — safe on every tick.
+    // No-ops until the relevant DB is bound. Each window is the effective value — the D1
+    // `site_settings` override if operator-set, else the code default.
     const cutoff = retentionCutoff(
       controller.scheduledTime,
       settings["retention.audit_days"],
@@ -115,6 +117,10 @@ export default {
     const erasureRequestCutoff = retentionCutoff(
       controller.scheduledTime,
       settings["retention.erasure_request_days"],
+    );
+    const churnCutoff = retentionCutoff(
+      controller.scheduledTime,
+      settings["retention.churn_days"],
     );
     const nowIso = new Date(controller.scheduledTime).toISOString();
     const dueSoon = slaDueSoonCutoff(
@@ -176,13 +182,20 @@ export default {
         )
           .bind(erasureRequestCutoff)
           .run();
+        const churn = await env.MAIN_DB.prepare(
+          "DELETE FROM churn_events WHERE deleted_at < ?",
+        )
+          .bind(churnCutoff)
+          .run();
         logger.info("retention purge (core)", {
           consentCutoff,
           dataRequestCutoff,
           erasureRequestCutoff,
+          churnCutoff,
           consentRows: consent.meta?.changes,
           dataRequestRows: dataRequest.meta?.changes,
           erasureRequestRows: erasureRequest.meta?.changes,
+          churnRows: churn.meta?.changes,
         });
       } catch (error) {
         logger.error("retention purge failed", {

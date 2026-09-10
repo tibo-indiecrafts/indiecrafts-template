@@ -186,6 +186,36 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
       ).first(),
     ).not.toBeNull();
   });
+
+  it("purges a churn_events row past the 730-day retention; keeps a recent one", async () => {
+    // churn_events lives on MAIN_DB.
+    const oldChurnAt = new Date(NOW - 800 * 86_400_000).toISOString(); // > 730d
+    const recentChurnAt = new Date(NOW - 10 * 86_400_000).toISOString();
+
+    await env.MAIN_DB.prepare(
+      "INSERT INTO churn_events (user_id, deleted_at) VALUES ('user-old-purge', ?)",
+    )
+      .bind(oldChurnAt)
+      .run();
+    await env.MAIN_DB.prepare(
+      "INSERT INTO churn_events (user_id, deleted_at) VALUES ('user-recent-purge', ?)",
+    )
+      .bind(recentChurnAt)
+      .run();
+
+    await runTick();
+
+    expect(
+      await env.MAIN_DB.prepare(
+        "SELECT user_id FROM churn_events WHERE user_id = 'user-old-purge'",
+      ).first(),
+    ).toBeNull();
+    expect(
+      await env.MAIN_DB.prepare(
+        "SELECT user_id FROM churn_events WHERE user_id = 'user-recent-purge'",
+      ).first(),
+    ).not.toBeNull();
+  });
 });
 
 describe("scheduled() — retention purge (admin_audit + session_events + security_events + consent_events)", () => {

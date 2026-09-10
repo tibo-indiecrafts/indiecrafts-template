@@ -15,6 +15,7 @@ export const SETTINGS = {
     unit: "days",
   },
   "retention.data_request_days": { def: 365, min: 30, max: 3650, unit: "days" },
+  "retention.churn_days": { def: 730, min: 30, max: 3650, unit: "days" },
   "retention.csp_days": { def: 30, min: 7, max: 365, unit: "days" },
   "ops.sla_warning_days": { def: 7, min: 1, max: 30, unit: "days" },
   "ttl.export_download_hours": { def: 1, min: 1, max: 24, unit: "hours" },
