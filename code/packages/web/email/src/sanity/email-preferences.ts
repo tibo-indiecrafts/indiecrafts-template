@@ -105,8 +105,10 @@ const seededCategory = (
  * Préférences e-mail (singleton) — the subscriber-facing preference centre:
  * the marketing categories an abonné can toggle (`categories[]`, seeded with
  * the 4 reserved keys below) plus display-only transactional notices
- * (`notices[]`, e.g. "you'll always get order confirmations"). Read by the
- * preference-centre page + the unsubscribe flow (later task).
+ * (`notices[]`, e.g. "you'll always get order confirmations"), plus the
+ * `churned` win-back topic a departing contact is switched to in place of
+ * every other category. Read by the preference-centre page + the
+ * unsubscribe flow (later task) + the account-deletion path.
  */
 export const emailPreferencesSchema = defineType({
   name: "emailPreferences",
@@ -151,8 +153,42 @@ export const emailPreferencesSchema = defineType({
       description:
         "Les e-mails transactionnels (ex. confirmations de commande) que l'abonné reçoit toujours, listés à titre informatif.",
     }),
+    defineField({
+      name: "churned",
+      title: "Topic de reconquête (comptes résiliés)",
+      type: "object",
+      description:
+        "Le topic Resend auquel un contact est basculé quand son compte est supprimé, à la place de toutes les autres catégories.",
+      fields: [
+        defineField({
+          name: "name",
+          title: "Nom",
+          type: "localeString",
+          description: "Le nom du topic. Une ligne par langue.",
+        }),
+        defineField({
+          name: "description",
+          title: "Description",
+          type: "localeText",
+          description: "Description interne du topic. Une ligne par langue.",
+        }),
+        defineField({
+          name: "resendTopicId",
+          title: "Identifiant de topic Resend",
+          type: "string",
+          description:
+            "L'identifiant du topic Resend lié à la reconquête. Vide = aucune synchronisation.",
+        }),
+      ],
+    }),
   ],
   initialValue: {
+    churned: {
+      name: {
+        en: "Win-back (former members)",
+        fr: "Reconquête (anciens membres)",
+      },
+    },
     categories: [
       seededCategory(
         "news",

@@ -67,6 +67,84 @@ describe("fetchEmailPreferences", () => {
     expect(String(f.mock.calls[0][0])).toContain("emailPreferences");
   });
 
+  it("returns the churned topic id and every category's topic id as optOutTopicIds", async () => {
+    const f = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            result: {
+              categories: [
+                {
+                  key: "news",
+                  name: "News",
+                  description: "",
+                  includeAtSignup: true,
+                  resendTopicId: "topic_news",
+                },
+                {
+                  key: "offers",
+                  name: "Offers",
+                  description: "",
+                  includeAtSignup: false,
+                  resendTopicId: "",
+                },
+                {
+                  key: "partners",
+                  name: "Partners",
+                  description: "",
+                  includeAtSignup: false,
+                },
+              ],
+              notices: [],
+              churned: {
+                name: "Win-back",
+                description: "",
+                resendTopicId: "topic_churn",
+              },
+            },
+          }),
+          { status: 200 },
+        ),
+    );
+    const r = await fetchEmailPreferences(
+      env,
+      "en",
+      f as unknown as typeof fetch,
+    );
+    expect(r.churnedTopicId).toBe("topic_churn");
+    expect(r.optOutTopicIds).toEqual(["topic_news"]);
+  });
+
+  it("never throws — an absent churned group resolves to undefined + an empty optOutTopicIds", async () => {
+    const f = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            result: {
+              categories: [
+                {
+                  key: "news",
+                  name: "News",
+                  description: "",
+                  includeAtSignup: true,
+                  resendTopicId: "topic_news",
+                },
+              ],
+              notices: [],
+            },
+          }),
+          { status: 200 },
+        ),
+    );
+    const r = await fetchEmailPreferences(
+      env,
+      "en",
+      f as unknown as typeof fetch,
+    );
+    expect(r.churnedTopicId).toBeUndefined();
+    expect(r.optOutTopicIds).toEqual(["topic_news"]);
+  });
+
   it("never throws — unset Sanity returns the news-only default", async () => {
     const f = vi.fn();
     const r = await fetchEmailPreferences(
@@ -84,14 +162,20 @@ describe("fetchEmailPreferences", () => {
         includeAtSignup: true,
       },
     ]);
+    expect(r.churnedTopicId).toBeUndefined();
+    expect(r.optOutTopicIds).toEqual([]);
   });
 
   it("never throws — unreachable Sanity (non-ok or thrown fetch) returns the news default", async () => {
     const bad = vi.fn(async () => new Response("", { status: 500 }));
-    expect(
-      (await fetchEmailPreferences(env, "en", bad as unknown as typeof fetch))
-        .categories[0].key,
-    ).toBe("news");
+    const badResult = await fetchEmailPreferences(
+      env,
+      "en",
+      bad as unknown as typeof fetch,
+    );
+    expect(badResult.categories[0].key).toBe("news");
+    expect(badResult.churnedTopicId).toBeUndefined();
+    expect(badResult.optOutTopicIds).toEqual([]);
     const threw = vi.fn(async () => {
       throw new Error("net");
     });

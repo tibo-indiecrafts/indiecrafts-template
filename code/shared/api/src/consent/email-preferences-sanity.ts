@@ -22,9 +22,16 @@ type RawCategory = {
 
 type RawNotice = { name: LocaleValue; description: LocaleValue };
 
+type RawChurned = {
+  name: LocaleValue;
+  description: LocaleValue;
+  resendTopicId?: string;
+};
+
 type RawEmailPreferences = {
   categories?: RawCategory[];
   notices?: RawNotice[];
+  churned?: RawChurned | null;
 };
 
 /** One toggleable marketing preference category, resolved to a locale. */
@@ -64,12 +71,15 @@ const NEWS_DEFAULT_FR: PrefCategory = {
 function newsDefault(locale: string): {
   categories: PrefCategory[];
   notices: PrefNotice[];
+  churnedTopicId?: string;
+  optOutTopicIds: string[];
 } {
   return {
     categories: [
       locale === "fr" ? NEWS_DEFAULT_FR : NEWS_DEFAULT.categories[0],
     ],
     notices: [],
+    optOutTopicIds: [],
   };
 }
 
@@ -82,7 +92,12 @@ export async function fetchEmailPreferences(
   env: MailEnv,
   locale: string,
   doFetch: typeof fetch = fetch,
-): Promise<{ categories: PrefCategory[]; notices: PrefNotice[] }> {
+): Promise<{
+  categories: PrefCategory[];
+  notices: PrefNotice[];
+  churnedTopicId?: string;
+  optOutTopicIds: string[];
+}> {
   if (!env.SANITY_PROJECT_ID || !env.SANITY_DATASET) return newsDefault(locale);
   try {
     const version = env.SANITY_API_VERSION || "2025-01-01";
@@ -91,7 +106,7 @@ export async function fetchEmailPreferences(
       ? `${env.SANITY_PROJECT_ID}.api.sanity.io`
       : `${env.SANITY_PROJECT_ID}.apicdn.sanity.io`;
     const query =
-      '*[_type=="emailPreferences"][0]{ categories[]{ key, name, description, includeAtSignup, resendTopicId }, notices[]{ name, description } }';
+      '*[_type=="emailPreferences"][0]{ categories[]{ key, name, description, includeAtSignup, resendTopicId }, notices[]{ name, description }, churned{ name, description, resendTopicId } }';
     const endpoint = `https://${host}/v${version}/data/query/${env.SANITY_DATASET}?query=${encodeURIComponent(query)}`;
     const res = await doFetch(
       endpoint,
@@ -113,6 +128,12 @@ export async function fetchEmailPreferences(
         name: pickLocale(n.name, locale),
         description: pickLocale(n.description, locale),
       })),
+      ...(result.churned?.resendTopicId
+        ? { churnedTopicId: result.churned.resendTopicId }
+        : {}),
+      optOutTopicIds: result.categories
+        .map((c) => c.resendTopicId)
+        .filter((id): id is string => Boolean(id)),
     };
   } catch {
     return newsDefault(locale);
