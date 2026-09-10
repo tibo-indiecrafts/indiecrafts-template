@@ -1,25 +1,20 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { Redirect, useRouter } from "expo-router";
+import { Redirect } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useIntl } from "react-intl";
-import { useAuth } from "@clerk/clerk-expo";
 import {
   Screen,
   ThemedText,
   Button,
   Card,
 } from "@indiecrafts/packages-mobile-ui-native";
-import {
-  DeleteAccountSection,
-  ConsentPreferences,
-  buildDeleteAccountCopy,
-} from "@indiecrafts/packages-shared-compliance/native";
+import { ConsentPreferences } from "@indiecrafts/packages-shared-compliance/native";
 import {
   DEFAULT_CONSENT_CATEGORIES,
   resolveCategories,
   rejectAllChoices,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { policyVersion, features, accountUrl } from "@/config";
+import { policyVersion, accountUrl } from "@/config";
 import { hasClerk } from "@/lib/auth";
 import { consentStore } from "@/lib/consent-store";
 
@@ -32,9 +27,6 @@ export default function AccountScreen() {
 
 function AccountView() {
   const t = useIntl();
-  const router = useRouter();
-  const { signOut, getToken } = useAuth();
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? "";
 
   const record = useSyncExternalStore(
     consentStore.subscribe,
@@ -59,10 +51,6 @@ function AccountView() {
     analytics: cat("analytics"),
     marketing: cat("marketing"),
   });
-
-  const deleteCopy = buildDeleteAccountCopy((k) =>
-    t.formatMessage({ id: `account.delete.${k}` }),
-  );
 
   return (
     <Screen>
@@ -100,32 +88,15 @@ function AccountView() {
         ) : null}
 
         {accountUrl ? (
-          // Profile, security and data export live on the canonical web account —
-          // an in-app browser tab (SFSafariViewController / Custom Tabs) shares the
-          // system cookie jar, so an existing web session usually carries over.
+          // Profile, security, data export and account deletion all live on the
+          // canonical web account — an in-app browser tab (SFSafariViewController /
+          // Custom Tabs) shares the system cookie jar, so an existing web session
+          // usually carries over. Deletion is web-only: it's where the churn survey lives.
           <Button
             label={t.formatMessage({ id: "account.manage" })}
             onPress={() =>
               accountUrl && void WebBrowser.openBrowserAsync(accountUrl)
             }
-          />
-        ) : null}
-        {features.deleteAccount && apiUrl ? (
-          // No beforeConfirm here. The erasure worker (self.ts) enforces step-up server-side:
-          // it requires a fresh Clerk `fva` and rejects a stale one with a 403, for every
-          // surface including mobile. @clerk/clerk-expo exports no useReverification hook
-          // (unlike clerk-react/nextjs), so this screen cannot show an inline re-auth modal on
-          // a stale-fva rejection. The user's remedy is to sign out and sign back in, which
-          // refreshes `fva`, then delete. This is a documented SDK limitation, not an
-          // unguarded path.
-          <DeleteAccountSection
-            copy={deleteCopy}
-            apiUrl={apiUrl}
-            getToken={() => getToken()}
-            onDeleted={async () => {
-              await signOut();
-              router.replace("/");
-            }}
           />
         ) : null}
       </Card>
