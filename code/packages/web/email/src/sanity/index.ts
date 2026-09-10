@@ -6,6 +6,10 @@ export { confirmationGroup, ownerAlertGroup } from "./groups";
 export { authEmailGroups } from "./auth-email-groups";
 export { securityAlertGroups } from "./security-alert-group";
 export { sendTestEmailAction } from "./send-test-action";
+export {
+  emailPreferencesSchema,
+  emailPreferencesStructureItem,
+} from "./email-preferences";
 
 /**
  * The email brick's Sanity contribution — the `emailStrings` singleton + its
