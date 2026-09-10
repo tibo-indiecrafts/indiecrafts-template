@@ -939,6 +939,35 @@ test("defaults the churned topic name", () => {
 
 ---
 
+## HARDENING ADDENDUM (from the user's DB-layer trace — atomicity + retention)
+
+A full read-only trace of both D1s, the stores, the erasure adapters, and the cron purge confirmed: zero SQL-injection surface, allowlisted+bounded input, sound erasure model, layered auth. The gaps are atomicity + retention consistency. These become Tasks 12–14, executed AFTER Task 9 and BEFORE Task 10 (so the docs capture them). New execution order: 1, 11, 2, 3, 4, 5, 6, 7, 8, 9, **12, 13, 14**, 10.
+
+### Task 12 — churn_events retention purge (MED — pre-ship-critical)
+
+`churn_events` is currently retained forever: excluded from erasure (`erasure/d1.ts` never touches it — correct, it's legitimate-interest data) AND from the cron purge (`code/shared/cron/src/index.ts` purges consent/data_requests/erasure_requests, not churn). It holds `user_id` + free-text `feedback`/`competitor`; the cited precedent (`data_requests`) is purged at 365d, so leaving churn unbounded is an omission, not a decision (GDPR storage-limitation).
+
+- **Fix:** add `churn_events` to the cron retention purge at a defined ceiling, using the SAME config-driven mechanism as the sibling tables (read the cron's existing retention keys). Default ceiling: **730 days** (24-month churn-analysis window) unless the config has a general default to reuse. Delete rows older than the ceiling.
+- Test: extend the cron test — a churn row older than the ceiling is purged, a fresh one is kept.
+- Files: `code/shared/cron/src/index.ts` (+ its retention config + test). Also add the retention statement to `churn.md`/ROPA (handled in Task 10).
+
+### Task 13 — D1 write atomicity via db.batch (LOW-MED)
+
+Two multi-write paths commit as separate `.run()`s, so a mid-way failure leaves a partial state:
+
+- **Erasure core adapter** (`erasure/d1.ts` `anonymize()`): the `user_profiles` UPDATE + `consent_events` UPDATE are separate → a partial-pseudonymize window. Wrap the pair in `db.batch([...])` (D1 atomic multi-statement). Do the same for the audit adapter's multi-write `anonymize()`/`delete()` where it issues >1 statement.
+- **writePreferences** (`consent/email-preferences-store.ts:61-87`): pref + proof + recompute as separate `.run()`s per update; the `updates[]` type permits a batch where a mid-loop failure leaves a stale `marketing_email` cache. Wrap the pref+proof writes in `db.batch()`; recompute ONCE after the batch.
+- Also add a one-line comment in `erasure/adapters.ts` confirming pseudonymization relies on the Clerk user actually being deleted (the `clerk` adapter runs, gated by the `CLERK_SECRET_KEY` 503-guard) — that is what makes a retained `user_id`/fingerprint non-linkable.
+- Tests: `d1.test.ts` + `email-preferences-store.test.ts` — assert the batched writes still produce the same end state (behaviour-preserving); keep existing assertions green.
+- Same-shape work (both are "wrap multi-write in db.batch") → ONE task, one reviewer.
+
+### Task 14 — self.ts body-size cap hardening (LOW)
+
+`self.ts` body handling trusts `content-length` for its cap; a client omitting the header has the full body parsed before `clip()` bounds it. Enforce a defensive byte cap that does NOT trust `content-length` (e.g. reject an oversized body before `JSON.parse`, or read a bounded slice). Stored values are already clipped downstream (`clip` 4000/200 in churn-store), so this is defense-in-depth against parsing an oversized body, not a data-integrity fix.
+
+- Test: `self.test.ts` — an oversized body is rejected (or safely bounded) without trusting `content-length`.
+- File: `code/shared/api/src/erasure/self.ts` (+ test).
+
 ## Self-Review
 
 - **Spec coverage:** survey form on website + app via the shared component (Task 7) ✓ · mobile redirect, native delete dropped (Task 8) ✓ · admin unaffected, app inherits survey (Task 7-8 notes) ✓ · suppression + churned topic (Task 2, 3, 4) ✓ · churn_events store (Task 1) ✓ · admin page (Task 5, 6) ✓ · erasure carve-out (Task 4) ✓ · topic script (Task 9) ✓ · tests (each task) ✓ · QA ledger card (post-impl) ✓ · docs (Task 10) ✓. All-surfaces requirement: website + app render the survey, mobile redirects to it, admin only reads churn. The spec's two-writer §3 is intentionally superseded (see DESIGN REFINEMENT).
