@@ -5,6 +5,16 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **Email preferences — groundwork (feature in progress on `feat/email-preferences`).** New `main`
+  D1 table `email_preferences (user_id, category_key, granted, updated_at)` via migration `0009`,
+  which also back-fills each existing user's legacy `marketing_email` into a `news` category row.
+  Per-category opt-in state + `consent_events` proof (`consent_type = 'email_pref:<key>'`); the
+  single `marketing_email` column becomes a derived "any marketing on" cache. The routes, the
+  no-login token path, the per-category Resend/Topics mirror, and the surface UIs land in later
+  commits on this branch; this entry is finalized when the feature completes.
+
 ### Removed
 
 - **The AI agent worker + the hybrid (Electron) surface — deleted entirely.** Removed

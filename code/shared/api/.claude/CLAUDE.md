@@ -8,8 +8,8 @@ CORS allowlist + the native rate-limit binding; `withGuard` is Next-only, so the
 routes TBD.
 Owns **two EU D1s** (both `--location weur`): **`DB`** (`audit` — the append-only firehose:
 `session_events`, `security_events`, `admin_audit`, `csp_reports`, `backup_runs`) and **`MAIN_DB`**
-(`main` — identity/rights/settings: `user_profiles`, `consent_events`, `data_requests`,
-`erasure_requests`, `export_requests`, `site_settings`). Split so a firehose write-spike or migration
+(`main` — identity/rights/settings: `user_profiles`, `consent_events`, `email_preferences`,
+`data_requests`, `erasure_requests`, `export_requests`, `site_settings`). Split so a firehose write-spike or migration
 can't threaten identity data; `cron` holds both bindings too (retention + settings/SLA/export
 bookkeeping). `PUT /v1/settings` writes `site_settings` on `MAIN_DB` (primary) then an `admin_audit`
 row on `DB` (best-effort, no longer one atomic batch) — see
