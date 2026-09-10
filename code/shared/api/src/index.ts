@@ -40,6 +40,7 @@ import { handleClerkUserDeleted } from "./erasure/clerk-deleted";
 import { handleClerkEmail } from "./clerk-email/handle";
 import { upsertResendContact } from "./resend-audience";
 import { handleMarketingConsent } from "./consent/marketing";
+import { handleEmailPreferences } from "./consent/email-preferences";
 import { handleExport, handleExportDownload } from "./export/route";
 import {
   handleDataRequestWrite,
@@ -1235,6 +1236,12 @@ export default {
     // Clerk JWT). The account toggle + the sign-in nudge read/write the caller's own opt-in.
     if (url.pathname === "/v1/consent/marketing-email")
       return handleMarketingConsent(request, env, ctx);
+
+    // ── Per-category email preferences — GET/POST /v1/consent/email-preferences
+    // (AUTHENTICATED; Clerk JWT). The account preference centre + mobile read/write the
+    // caller's own per-category choices (Studio-defined categories, Task 6's reader).
+    if (url.pathname === "/v1/consent/email-preferences")
+      return handleEmailPreferences(request, env, ctx);
 
     // ── GDPR data export — POST /v1/export (AUTHENTICATED; Clerk JWT) ── Runs
     // runExport, stores the bundle in R2, and returns a single-use expiring download
