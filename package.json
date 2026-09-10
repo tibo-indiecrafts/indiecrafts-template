@@ -77,6 +77,7 @@
     "db:backfill:profiles:dev": "node code/shared/scripts/data/backfill-profiles.mjs dev",
     "db:backfill:profiles:staging": "node code/shared/scripts/data/backfill-profiles.mjs staging",
     "db:backfill:profiles:prod": "node code/shared/scripts/data/backfill-profiles.mjs prod",
+    "resend:topics:sync": "node code/shared/scripts/data/resend-topics-sync.mjs",
     "domains:print": "node code/shared/scripts/deploy/domains.mjs print",
     "domains:url": "node code/shared/scripts/deploy/domains.mjs url",
     "preview:web:website:cf": "pnpm --filter @indiecrafts/web-surfaces-website preview:cf",

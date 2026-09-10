@@ -611,6 +611,13 @@
       "problemMatcher": []
     },
     {
+      "label": "resend:topics:sync",
+      "detail": "create/verify Resend topics (private) for email prefs + churn",
+      "type": "shell",
+      "command": "pnpm resend:topics:sync",
+      "problemMatcher": []
+    },
+    {
       "label": "gdpr:salt:generate",
       "detail": "generate a GDPR fingerprint salt",
       "type": "shell",
