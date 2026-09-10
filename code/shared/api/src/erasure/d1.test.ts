@@ -196,6 +196,34 @@ describe("D1 erasure adapters (core + audit split)", () => {
       expect(other?.c).toBe(1);
     });
 
+    it("preview (dry-run) reports the email_preferences count without deleting", async () => {
+      const now = new Date(0).toISOString();
+      await coreDb
+        .prepare(
+          "INSERT INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, 'news', 1, ?)",
+        )
+        .bind(USER, now)
+        .run();
+      await coreDb
+        .prepare(
+          "INSERT INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, 'product', 0, ?)",
+        )
+        .bind(USER, now)
+        .run();
+
+      const core = createCoreErasureAdapter(coreDb, SALT);
+      const p = await core.preview(EMAIL);
+      expect(p.store).toBe("d1-core");
+      expect(p.wouldDelete.email_preferences).toBe(2);
+
+      // dry run — the rows are still there
+      const remaining = await coreDb
+        .prepare("SELECT COUNT(*) c FROM email_preferences WHERE user_id=?")
+        .bind(USER)
+        .first<{ c: number }>();
+      expect(remaining?.c).toBe(2);
+    });
+
     it("resolveSubject falls back to plaintext email when email_fingerprint is null", async () => {
       const nullFpEmail = "nullfp@x.com";
       const nullFpUser = "user_null_fp";
@@ -227,7 +255,7 @@ describe("D1 erasure adapters (core + audit split)", () => {
       expect(p.store).toBe("d1-core");
       expect(p.wouldAnonymize.user_profiles).toBe(1);
       expect(p.wouldAnonymize.consent_events).toBe(1);
-      expect(p.wouldDelete).toEqual({});
+      expect(p.wouldDelete).toEqual({ email_preferences: 0 }); // none seeded here
       const prof = await coreDb
         .prepare("SELECT email FROM user_profiles WHERE user_id=?")
         .bind(USER)

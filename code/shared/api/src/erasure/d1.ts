@@ -94,7 +94,12 @@ export function createCoreErasureAdapter(
             userId,
           ),
         },
-        wouldDelete: {},
+        wouldDelete: {
+          email_preferences: await countFor(
+            "SELECT COUNT(*) c FROM email_preferences WHERE user_id = ?",
+            userId,
+          ),
+        },
       };
     },
     async anonymize(email): Promise<AdapterResult> {
