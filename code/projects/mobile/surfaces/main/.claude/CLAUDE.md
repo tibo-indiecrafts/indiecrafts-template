@@ -3,7 +3,8 @@
 Auto-loads under `code/projects/mobile/**`. The **React Native (Expo)** mobile client. Talks to the `api`
 slot (or the web `/api` routes) for data; renders content from the same Sanity dataset. **Shell wired +
 the first product screen (`account`) — theme · i18n · status pages · native UI foundation · a signed-in
-`account` screen (cookie preferences + self-service delete/export); further product screens are TBD.**
+`account` screen (native cookie preferences + a web hand-off for account management/deletion); further
+product screens are TBD.**
 
 > **AI tooling — install the official Expo plugin** (`claude plugin install expo@claude-plugins-official`,
 > then `/reload-plugins`): the Expo **Skills** (`expo-router` · `expo-native-ui` · `expo-design-system` ·
@@ -42,9 +43,10 @@ the first product screen (`account`) — theme · i18n · status pages · native
   (`sitePrefix` · `websiteUrl` · `features` · `policyVersion`) in `config/index.ts`.
 - **Account** — `app/account.tsx` (signed-in): the shared `compliance/native` cookie-preferences panel
   (`ConsentPreferences`, one shared `consentStore` from `lib/consent-store.ts`) + a `MarketingEmailToggle`
-  (commercial-email opt-in → `/v1/consent/marketing-email`) + self-service
-  `DeleteAccountSection`/`ExportSection` (copy via the `compliance` builders), gated on
-  `features.deleteAccount`/`exportAccount`. Linked from home + the sign-in signed-in view. `app/sign-in.tsx`
+  (commercial-email opt-in → `/v1/consent/marketing-email`) + an `accountUrl` web hand-off (in-app
+  browser tab, sharing the system cookie jar) for profile/security/export/deletion and general account
+  management — no native delete or export control; the web account's `DeleteAccountSection` is where the
+  churn exit-survey lives. Linked from home + the sign-in signed-in view. `app/sign-in.tsx`
   carries the sign-up marketing opt-in (+ locale) in `signUp.create` `unsafeMetadata`; a one-time
   post-sign-in `MarketingNudgeGate` (in `ShellOverlays`, gated on `hasClerk`) prompts a signed-in user who
   has no decision yet.
