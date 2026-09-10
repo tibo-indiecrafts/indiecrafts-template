@@ -20,6 +20,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Clerk auth emails are now Studio-editable.** The four taken-over auth emails (verification code,
+  password reset, magic link, new-device) contribute groups to the `emailStrings` singleton
+  (`authVerification`/`authResetPassword`/`authMagicLink`/`authNewDevice`). `clerk-email/sanity.ts`
+  reads them over GROQ (mirroring `erasure/email.ts`) and `clerk-email/templates.ts` renders the
+  editable subject / intro / button label / outro in the **recipient's** locale, with per-field
+  fallback to the hardcoded en/fr. An unset/unreachable Sanity, a blank field, or an `enabled: false`
+  group all fall back — a mandatory auth email never breaks. **Why:** operators can now edit auth-email
+  copy per locale in the Studio (the flagged follow-up to the email take-over).
+
 - **Commercial-email consent (`marketing_email`).** A new `user_profiles.marketing_email` column
   (migration 0008; `NULL`/`0`/`1`) holds the current opt-in state; `consent_events` keeps the append-only
   proof. The `user.created` webhook mirrors the sign-up opt-in (Clerk `unsafe_metadata.marketing_email`) to

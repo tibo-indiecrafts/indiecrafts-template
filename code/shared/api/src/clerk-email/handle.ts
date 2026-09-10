@@ -3,6 +3,7 @@ import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
 import { resend, type MailEnv } from "../erasure/email";
 import { AUTH_TEMPLATES, type EmailVars } from "./templates";
+import { fetchAuthEmailStrings, resolveAuthCopy } from "./sanity";
 
 /** The Env slice this handler needs — the mailer (`MailEnv`) plus a read handle to
  *  MAIN_DB for the user's stored locale + the fingerprint salt. */
@@ -64,12 +65,15 @@ async function resolveLocale(
  * A known template `slug` is localized; an unknown slug forwards Clerk's own rendered
  * (English) body so nothing is dropped. THROWS when the mailer is unset or the send
  * fails, so the caller returns 502 and Clerk retries — a verification code must not be
- * silently lost. `send` is injectable for tests.
+ * silently lost. The rendered copy uses the Studio-editable `emailStrings` overlay when
+ * set (per field, in the recipient's locale), else the template's hardcoded en/fr.
+ * `send` + `fetchStrings` are injectable for tests.
  */
 export async function handleClerkEmail(
   env: ClerkEmailEnv,
   data: unknown,
   send: typeof resend = resend,
+  fetchStrings: typeof fetchAuthEmailStrings = fetchAuthEmailStrings,
 ): Promise<void> {
   const d = (data ?? {}) as ClerkEmailData;
   const to = str(d.to_email_address);
@@ -78,9 +82,14 @@ export async function handleClerkEmail(
     throw new Error("mailer unconfigured");
 
   const locale = await resolveLocale(env, d);
-  const tpl = typeof d.slug === "string" ? AUTH_TEMPLATES[d.slug] : undefined;
+  const slug = str(d.slug);
+  const tpl = slug ? AUTH_TEMPLATES[slug] : undefined;
   if (tpl) {
-    const { subject, html, text } = tpl(d.data ?? {}, locale);
+    // Studio override (Sanity `emailStrings`), resolved to the recipient's locale; null/
+    // unset → the template's hardcoded copy. Never throws (a missing Studio must not stop
+    // a mandatory auth email).
+    const copy = resolveAuthCopy(await fetchStrings(env), slug, locale);
+    const { subject, html, text } = tpl(d.data ?? {}, locale, copy);
     await send(env, { to, subject, html, text });
     return;
   }

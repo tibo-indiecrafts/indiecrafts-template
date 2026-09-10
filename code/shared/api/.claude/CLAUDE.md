@@ -41,7 +41,10 @@ the worker's own origin. The two erasure emails (`src/erasure/email.ts`) read th
 Studio-editable `emailStrings` singleton (`erasureToken`/`erasureComplete` groups) over raw GROQ-HTTP
 (mirrors `fetchAnnouncementDocs`, same Sanity `[vars]`/secret, no new deps), with a per-field fallback
 to hard-coded English — a missing/unreachable Sanity, or a group's `enabled: false`, never stops the
-send. `POST /v1/export` (authenticated; Clerk-JWT) runs `runExport`, stores the
+send. The **Clerk auth emails** read the same way (`src/clerk-email/sanity.ts`) — the
+`authVerification`/`authResetPassword`/`authMagicLink`/`authNewDevice` `emailStrings` groups, resolved
+to the recipient's locale, with per-field fallback to the templates' hard-coded en/fr.
+`POST /v1/export` (authenticated; Clerk-JWT) runs `runExport`, stores the
 bundle in the `EXPORT_BUCKET` R2 bucket, and returns a single-use 1-hour download link; `GET
 /v1/export/download?token=` streams the bundle and deletes it from R2 on first download. Secret/
 binding: `EXPORT_BUCKET` (`[[r2_buckets]]`, operator-provisioned — routes answer 503 until bound).

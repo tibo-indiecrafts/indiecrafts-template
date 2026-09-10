@@ -80,6 +80,13 @@ export const sendTestEmailAction: DocumentActionComponent = () => {
             Envoie un exemple de chaque e-mail activé à l&apos;adresse
             ci-dessous — pour vérifier qu&apos;ils arrivent bien.
           </Text>
+          <Text size={1} muted>
+            Note : ne couvre que les e-mails du site (newsletter, liste
+            d&apos;attente, contact, commentaires). Les e-mails envoyés par le
+            worker API — effacement RGPD et authentification (code, lien, nouvel
+            appareil) — ne sont pas inclus ; vérifiez-les en déclenchant
+            l&apos;action réelle.
+          </Text>
           <TextInput
             type="email"
             placeholder="vous@exemple.com"

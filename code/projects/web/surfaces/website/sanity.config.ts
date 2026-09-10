@@ -22,7 +22,11 @@ import { composeStudio } from "@indiecrafts/packages-web-sanity/module";
 import { locales } from "@indiecrafts/packages-shared-config";
 import { features } from "./src/config";
 import { sharedSanity } from "@indiecrafts/packages-web-schema";
-import { emailSanity, sendTestEmailAction } from "@indiecrafts/packages-web-email/sanity";
+import {
+  emailSanity,
+  sendTestEmailAction,
+  authEmailGroups,
+} from "@indiecrafts/packages-web-email/sanity";
 import { pageBuilderSanity } from "@indiecrafts/packages-web-page-builder/sanity";
 import { blogSanity } from "@indiecrafts/modules-web-blog/sanity";
 import { newsletterSanity } from "@indiecrafts/modules-web-newsletter/sanity";
@@ -55,7 +59,15 @@ const sharedModules = [
 const allModules = [...appModules, ...sharedModules];
 const sanity = composeStudio([
   { title: "Site web", modules: appModules },
-  { title: "Contenu partagé", modules: [...sharedModules, emailSanity(allModules)] },
+  {
+    title: "Contenu partagé",
+    // The auth emails have no feature module of their own; they contribute their groups to
+    // the same E-mails singleton via a bare `{ emailGroups }` entry.
+    modules: [
+      ...sharedModules,
+      emailSanity([...allModules, { emailGroups: authEmailGroups }]),
+    ],
+  },
 ]);
 
 export default defineConfig({

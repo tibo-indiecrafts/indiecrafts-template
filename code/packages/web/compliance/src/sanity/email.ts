@@ -32,6 +32,7 @@ export const emailGroups = [
   }),
   confirmationGroup({
     name: "erasureToken",
+    addressFields: false,
     title: "RGPD — lien de confirmation d'effacement",
     description:
       "E-mail envoyé par le worker API pour confirmer une demande d'effacement de compte. Seule la version dans la langue par défaut est utilisée aujourd'hui (le parcours n'a pas de signal de langue). Champs vides = texte anglais intégré au worker.",
@@ -46,6 +47,7 @@ export const emailGroups = [
   }),
   confirmationGroup({
     name: "erasureComplete",
+    addressFields: false,
     title: "RGPD — effacement terminé",
     description:
       "E-mail envoyé par le worker API une fois l'effacement terminé. Seule la version dans la langue par défaut est utilisée aujourd'hui (le parcours n'a pas de signal de langue). Champs vides = texte anglais intégré au worker.",

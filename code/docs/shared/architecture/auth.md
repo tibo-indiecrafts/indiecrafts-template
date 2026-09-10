@@ -123,8 +123,14 @@ takes over delivery via the `emails.created` webhook. **Operator runbook:**
    via Resend. A template left on stays with Clerk (English); a slug we don't localize is forwarded
    as Clerk's own rendered English body — never dropped.
 
-Auth-email copy is hardcoded en/fr today; a Studio `emailStrings` overlay (like the erasure emails)
-is a follow-up.
+**Auth-email copy is Studio-editable.** The four auth emails contribute groups to the shared
+`emailStrings` singleton — `authVerification`, `authResetPassword`, `authMagicLink`,
+`authNewDevice` (Studio → E-mails). The api reads them over GROQ (`clerk-email/sanity.ts`,
+mirroring `erasure/email.ts`) and renders the editable subject / intro / button label / outro,
+resolved to the **recipient's** locale (`user_profiles.locale`). Every field falls back, per field,
+to the worker's hardcoded en/fr — so a blank field, an `enabled: false` group, or an
+unset/unreachable Sanity never breaks the email. The OTP code, magic-link URL, and device details
+are injected by the worker; only the surrounding copy is editable.
 
 **New-device sign-in email.** Clerk's "Sign in from new device" security email (device / OS /
 location + a "sign out this device" revoke button) is a **first-party** feature — enable it in the

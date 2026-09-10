@@ -70,6 +70,13 @@ export function confirmationGroup(opts: {
   outroHint: string;
   /** Add a translated action-button label (a confirm/CTA email, e.g. double opt-in). */
   button?: boolean;
+  /** Include the sender fields (`from`/`replyTo`/`bcc`). Default `true`. Set **false** for
+   *  emails sent by the CF `api` worker, which sends from the `EMAIL_FROM` /
+   *  `EMAIL_ADMIN_BCC` env and never reads these — so the Studio must not offer them. */
+  addressFields?: boolean;
+  /** Include the `heading` field. Default `true`. Set **false** when the template renders
+   *  no heading (the worker code/link emails), so the Studio doesn't show a dead field. */
+  heading?: boolean;
 }): FieldDefinition {
   return defineField({
     name: opts.name,
@@ -79,24 +86,32 @@ export function confirmationGroup(opts: {
     options: { collapsible: true, collapsed: true },
     fields: [
       enabled(opts.enabledHint),
-      fromField,
-      replyToField("Vide = les réponses vont à l'expéditeur ci-dessus."),
-      emailArray(
-        "bcc",
-        "Copie cachée (BCC)",
-        "Reçoit une copie invisible de chaque envoi — ex. pour vous vérifier vous-même.",
-      ),
+      ...(opts.addressFields === false
+        ? []
+        : [
+            fromField,
+            replyToField("Vide = les réponses vont à l'expéditeur ci-dessus."),
+            emailArray(
+              "bcc",
+              "Copie cachée (BCC)",
+              "Reçoit une copie invisible de chaque envoi — ex. pour vous vérifier vous-même.",
+            ),
+          ]),
       defineField({
         name: "subject",
         title: "Objet",
         description: opts.subjectHint,
         type: "localeString",
       }),
-      defineField({
-        name: "heading",
-        title: "Titre de l'e-mail",
-        type: "localeString",
-      }),
+      ...(opts.heading === false
+        ? []
+        : [
+            defineField({
+              name: "heading",
+              title: "Titre de l'e-mail",
+              type: "localeString",
+            }),
+          ]),
       defineField({
         name: "intro",
         title: "Texte d'introduction",

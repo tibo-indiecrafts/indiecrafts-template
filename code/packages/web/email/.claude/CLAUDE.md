@@ -11,6 +11,7 @@ Auto-loads under `code/packages/web/email/**`. Consumed as source via `transpile
 - **`@indiecrafts/packages-web-email/sanity`** — Studio-side (`sanity`/`@sanity/ui`/`@sanity/icons`):
   - `emailSanity(modules)` — builds the `emailStrings` singleton (+ its "E-mails" desk) from every module's `emailGroups`. **Field-less on its own** — the brick names no module. App wires `emailSanity(allModules)` into a `composeStudio([...])` group in `sanity.config.ts`.
   - `confirmationGroup(…)` / `ownerAlertGroup(…)` — the two group factories a module uses in its `src/sanity/email.ts` (subscriber-facing translated vs internal alert). Both carry a `bcc` field.
+  - `authEmailGroups` — the four **Clerk auth emails** (`authVerification`/`authResetPassword`/`authMagicLink`/`authNewDevice`). These have no feature module of their own, so the app wires them via a bare `emailSanity([...allModules, { emailGroups: authEmailGroups }])`. The `code/shared/api` worker reads them (`clerk-email/sanity.ts`).
   - `sendTestEmailAction` — the "Envoyer un test" document action on `emailStrings` (wired via `document.actions` in `sanity.config.ts`); POSTs `/api/emails/test`.
 - **`@indiecrafts/packages-web-email/strings`** — `getEmailStrings()` (React-`cache`d read of the singleton) + `pick(localeValue, locale)`. `import "server-only"`; used by the senders.
 
