@@ -54,10 +54,17 @@ Everything else in the spec stands.
 - `code/shared/api/src/erasure/clerk-deleted.test.ts` — carve-out + suppress branch (extend existing).
 - `code/shared/api/src/index.ts` — `RESEND_CHURNED_TOPIC_ID` on `Env`; `GET /v1/churn` route.
 - `code/packages/shared/compliance/src/shared/erasure-self.ts` — `rawErasureFetch`/`submitAccountErasure` carry survey fields.
-- `code/packages/shared/compliance/src/web/DeleteAccountSection.tsx` — the survey UI.
-- `code/projects/web/surfaces/website/src/user-interface/account/AccountControl.tsx` — pass survey copy through.
+- `code/packages/shared/compliance/src/web/DeleteAccountSection.tsx` — the survey UI (shared by website + app).
+- `buildDeleteAccountCopy` in `@indiecrafts/packages-shared-compliance/web` — add the `survey` copy group.
 - `code/projects/web/surfaces/website/messages/{en,fr}.json` — `account.delete.survey.*`.
+- `code/projects/web/surfaces/app/messages/{en,fr}.json` — `account.delete.survey.*` (app embeds the same component).
+- `code/projects/mobile/surfaces/main/app/account.tsx` — remove native delete; deletion via web-account redirect.
+- `code/projects/mobile/surfaces/main/messages/{en,fr}.json` — drop native delete copy; retitle the account redirect.
 - `code/projects/web/surfaces/admin/messages/{en,fr}.json` — `admin.churn.*` (path confirmed in Task 6).
+
+**Deleted files (iff no other consumer — Task 8)**
+
+- `code/packages/shared/compliance/src/native/DeleteAccountSection.tsx` (+ its test) — mobile stops embedding it; deletion moves to the web redirect.
 - `package.json` (root) — `"resend:topics:sync"` script.
 - `.vscode/tasks.json` — mirror the new root script (`pnpm tasks:check`).
 - `code/shared/api/.claude/CLAUDE.md` + `code/shared/api/CHANGELOG.md` — brief + changelog.
@@ -749,14 +756,17 @@ export default async function ChurnPage() {
 
 ---
 
-## Task 7: Web delete-flow churn survey
+## Task 7: Churn survey in the shared web delete component (covers website + app)
+
+**Cross-surface note:** the delete UI is ONE shared component — `DeleteAccountSection.tsx` in `@indiecrafts/packages-shared-compliance/web`, rendered (via `AccountControl` → `AccountDataTab`) by BOTH the website AND the `app` web surface. Adding the survey here puts it on both surfaces at once; no per-surface UI duplication. Each surface only needs its own copy keys (its own `messages/`). Mobile is handled separately in Task 8 (redirect, no native form). Admin has no end-user delete — untouched.
 
 **Files:**
 
-- Modify: `code/packages/shared/compliance/src/shared/erasure-self.ts`
-- Modify: `code/packages/shared/compliance/src/web/DeleteAccountSection.tsx`
-- Modify: `code/projects/web/surfaces/website/src/user-interface/account/AccountControl.tsx`
-- Modify: `code/projects/web/surfaces/website/messages/{en,fr}.json`
+- Modify: `code/packages/shared/compliance/src/shared/erasure-self.ts` — payload carries survey fields
+- Modify: `code/packages/shared/compliance/src/web/DeleteAccountSection.tsx` — the survey UI (shared by website + app)
+- Modify: the copy builder `buildDeleteAccountCopy` in `@indiecrafts/packages-shared-compliance/web` (locate its file) — add a `survey` copy group
+- Modify: `code/projects/web/surfaces/website/messages/{en,fr}.json` — `account.delete.survey.*`
+- Modify: `code/projects/web/surfaces/app/messages/{en,fr}.json` — `account.delete.survey.*` (same keys; the app renders the same component)
 - Test: `code/packages/shared/compliance/src/shared/erasure-self.test.ts` (or add one) for the payload shape
 
 **Interfaces:**
@@ -805,25 +815,38 @@ body: JSON.stringify({
 
 - [ ] **Step 4: Add the survey UI to `DeleteAccountSection.tsx`.** Before the existing confirm control, add a RadioGroup (reasons), a Textarea (feedback), and an Input (competitor), all optional, driven by copy props (mirror `DataRequestForm`'s RadioGroup + Textarea usage). Pass the three values into `submitAccountErasure(...)`. Reason option `value`s must equal the `CHURN_REASONS` codes.
 
-- [ ] **Step 5: Thread copy through `AccountControl.tsx`.** Extend `buildDeleteAccountCopy(tDelete)` (or the copy object it builds) to include a `survey` group read from `account.delete.survey.*`, and pass it into the section.
+- [ ] **Step 5: Thread copy through `buildDeleteAccountCopy`.** Extend the shared copy builder (in `@indiecrafts/packages-shared-compliance/web`, consumed by BOTH the website's and the app's `AccountControl`) to include a `survey` group read from `account.delete.survey.*`, and pass it into `DeleteAccountSection`. Because both surfaces call this one builder, threading it here reaches both.
 
-- [ ] **Step 6: Add website copy** — `account.delete.survey` in `en.json` + `fr.json`: `legend`, `reasonLabel`, a label per reason code, `feedbackLabel`, `feedbackPlaceholder`, `competitorLabel`, `competitorPlaceholder`. Warm editorial tone (product copy, not agent voice).
+- [ ] **Step 6: Add the copy to BOTH surfaces** — `account.delete.survey` in the website's `messages/{en,fr}.json` AND the app's `messages/{en,fr}.json` (identical keys): `legend`, `reasonLabel`, a label per reason code, `feedbackLabel`, `feedbackPlaceholder`, `competitorLabel`, `competitorPlaceholder`. Warm editorial tone (product copy, not agent voice). A missing key in either surface breaks that surface's render, so do both.
 
-- [ ] **Step 7: Verify** — `pnpm --filter @indiecrafts/web-surfaces-website tsc` + the compliance brick test. Manual: the delete flow shows the survey; submitting still deletes.
-- [ ] **Step 8: Commit** — `feat(web): churn exit-survey on account deletion`.
+- [ ] **Step 7: Verify both surfaces** — `pnpm --filter @indiecrafts/web-surfaces-website tsc` AND `pnpm --filter @indiecrafts/web-surfaces-app tsc` + the compliance brick test. Manual: the survey appears in the delete flow on the website account page AND the app account page; submitting still deletes and posts the survey to `/v1/erasure/self`.
+- [ ] **Step 8: Commit** — `feat(web): churn exit-survey on account deletion (website + app)`.
 
 ---
 
-## Task 8: Mobile — confirm the delete → web-account handoff
+## Task 8: Mobile — redirect account deletion to the web account (drop native delete)
+
+**Why:** mobile currently renders a NATIVE `DeleteAccountSection` (`account.tsx:113-130`, from `@indiecrafts/packages-shared-compliance/native`) while redirecting everything else (profile, security, export, email preferences) to the web account via `WebBrowser.openBrowserAsync(accountUrl)`. That native delete is the lone inconsistency and it bypasses the churn survey. Align it: delete happens through the web account like the rest — the same handoff already shipped for email preferences. Then every surface's deletion funnels through the one web survey.
 
 **Files:**
 
-- Read/verify: `code/projects/mobile/surfaces/main/app/account.tsx`
+- Modify: `code/projects/mobile/surfaces/main/app/account.tsx` — remove the native `DeleteAccountSection` block; deletion is reached via the existing web-account redirect
+- Modify: `code/projects/mobile/surfaces/main/messages/{en,fr}.json` — drop now-unused native delete copy; ensure the "Manage account" redirect copy makes deletion discoverable (e.g. "Manage or delete your account")
+- Delete (iff no other consumer): `code/packages/shared/compliance/src/native/DeleteAccountSection.tsx` + its colocated test — mirroring the email-prefs native-component removal
 
-**Interfaces:** none (verification task; spec non-goal = no native churn form).
+**Interfaces:** none new. Mobile deletion now uses the same `accountUrl` (`EXPO_PUBLIC_ACCOUNT_URL` ?? `${EXPO_PUBLIC_WEBSITE_URL}/account`) redirect already in `config/index.ts`.
 
-- [ ] **Step 1: Verify** the mobile account screen routes account deletion to the web account (same `WebBrowser.openBrowserAsync(accountUrl)` handoff shipped for email preferences), so the churn survey is reached via the web flow. If deletion is currently handled natively, change it to the web-account redirect. If it already redirects, no code change — record the finding in the ledger.
-- [ ] **Step 2: Commit only if changed** — `chore(mobile): route account deletion to web account for churn survey`.
+- [ ] **Step 1: Remove the native delete block** from `account.tsx` (the `{features.deleteAccount && apiUrl ? (<DeleteAccountSection .../>) : null}` block, ~lines 113-130), plus the now-unused `DeleteAccountSection` / `buildDeleteAccountCopy` imports and the `deleteCopy` local. Deletion is now reached through the existing "Manage account" redirect button (already → `accountUrl`, the web account where the survey + delete live).
+
+- [ ] **Step 2: Update the redirect copy** so deletion is discoverable — retitle the "Manage account" hand-off (account.tsx:102-112) copy to make clear it covers account deletion too (e.g. `account.manage.label` = "Manage or delete your account"). Remove the orphaned native-delete copy keys from mobile `en.json` + `fr.json`.
+
+- [ ] **Step 3: Check for other consumers** of the native `DeleteAccountSection` — `grep -rn "compliance-.*native.*DeleteAccountSection\|from \"@indiecrafts/packages-shared-compliance/native\"" code`. If mobile was the only consumer, delete the native component + test and drop its `native` export line; if anything else uses it, leave it.
+
+- [ ] **Step 4: Verify** — `pnpm --filter @indiecrafts/mobile-surfaces-main tsc` (adjust filter to the mobile package name). Manual: the mobile account screen shows a single "Manage or delete your account" button that opens the web account; no native delete control remains.
+
+- [ ] **Step 5: Commit** — `feat(mobile): route account deletion to the web account (churn survey)`.
+
+**Note (no change needed):** the `app` web surface already inherits the survey from Task 7 (it embeds the same shared `DeleteAccountSection`), and `admin` has no end-user delete flow. So after Tasks 7-8, all four surfaces are consistent: website + app render the survey; mobile redirects to it; admin only reads churn.
 
 ---
 
@@ -893,6 +916,6 @@ test("defaults the churned topic name", () => {
 
 ## Self-Review
 
-- **Spec coverage:** survey form (Task 7) ✓ · suppression + churned topic (Task 2, 3, 4) ✓ · churn_events store (Task 1) ✓ · admin page (Task 5, 6) ✓ · erasure carve-out (Task 4) ✓ · mobile redirect (Task 8) ✓ · topic script (Task 9) ✓ · tests (each task) ✓ · QA ledger card (post-impl) ✓ · docs (Task 10) ✓. The spec's two-writer §3 is intentionally superseded (see DESIGN REFINEMENT).
+- **Spec coverage:** survey form on website + app via the shared component (Task 7) ✓ · mobile redirect, native delete dropped (Task 8) ✓ · admin unaffected, app inherits survey (Task 7-8 notes) ✓ · suppression + churned topic (Task 2, 3, 4) ✓ · churn_events store (Task 1) ✓ · admin page (Task 5, 6) ✓ · erasure carve-out (Task 4) ✓ · topic script (Task 9) ✓ · tests (each task) ✓ · QA ledger card (post-impl) ✓ · docs (Task 10) ✓. All-surfaces requirement: website + app render the survey, mobile redirects to it, admin only reads churn. The spec's two-writer §3 is intentionally superseded (see DESIGN REFINEMENT).
 - **Placeholder scan:** no TBD/TODO; every code step has real code. The two render-body fill-ins (admin page Task 6 Step 2, DeleteAccountSection UI Task 7 Step 4) name the exact primitives + data fields to use — bounded, not open.
 - **Type consistency:** `ChurnSurvey`/`ChurnAggregate`/`normalizeReason`/`readChurnEvent`/`writeChurnEvent`/`readChurnAggregate`/`suppressResendContact` names and signatures match across Tasks 1–7. `RESEND_CHURNED_TOPIC_ID` is on both `ResendAudienceEnv` (Task 2) and `Env` (Task 5). Reason codes are one list (`CHURN_REASONS`) reused by the form.
