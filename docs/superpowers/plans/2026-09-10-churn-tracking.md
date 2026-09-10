@@ -32,6 +32,31 @@ Everything else in the spec stands.
 
 ---
 
+## ADDENDUM — localisation, Sanity, and ledger i18n (added post-approval)
+
+**Resend topics are single-value** (verified against Resend's Create Topic API: `name` ≤50, `description` ≤200, `default_subscription`, `visibility` — no per-locale field). So localisation cannot live in Resend. Resolution, applied across this plan:
+
+- **The localised surface is our own Sanity-driven preference centre** (category `name`/`description` are `localeString`/`localeText`). Resend topics get **`visibility: private`** so Resend's own English-only hosted page is never the surface a user sees; Resend stores a canonical default-locale `name` for internal use only.
+- **The churned topic + its localised name live in Sanity too** (alongside the category `resendTopicId`s) — the "Sanity updated" deliverable. The churned topic id therefore comes from Sanity, **not** an env var.
+
+This modifies the tasks above:
+
+- **Task 2 (`suppressResendContact`)** — signature becomes `suppressResendContact(env, { email, reason, churnedTopicId?, optOutTopicIds? }, doFetch?)`. Payload `topics` = `optOutTopicIds.map(opt_out)` + (`churnedTopicId` → one `opt_in`); still `unsubscribed: true` + `properties`. It no longer reads `env.RESEND_CHURNED_TOPIC_ID`. "Off all marketing topics" is now explicit (opt_out list) AND belt-and-suspenders global unsubscribe. Update the Task 2 tests to pass `churnedTopicId`/`optOutTopicIds` and assert the opt_out entries.
+- **Task 3 (`self.ts`) + Task 4 (`clerk-deleted.ts`)** — before calling `suppress`, resolve the ids from Sanity via `fetchEmailPreferences(env)` (never-throws, cached): `churnedTopicId` + `optOutTopicIds` (the categories' `resendTopicId`s). Pass both to `suppress`. A Sanity miss → suppress still runs (unsubscribed only). Best-effort, never blocks the D1 write.
+- **Task 5 (`Env`)** — do **not** add `RESEND_CHURNED_TOPIC_ID`; the id is sourced from Sanity. (`RESEND_API_KEY`/`RESEND_AUDIENCE_ID` unchanged.)
+- **Task 9 (`resend-topics-sync`)** — manage **ALL** topics, not just churned: read the `emailPreferences` Sanity config (same never-throws GROQ-over-HTTP the api uses), then create-or-update a Resend topic for **each category (news/offers/partners/tips) + the churned topic** with the default-locale `name` (≤50)/`description` (≤200), `visibility: private`, and `default_subscription: "opt_out"` (GDPR-safe; the app sets real per-user state via `syncContactTopics`). Print `<key> → <topicId>` for each so the operator pastes them into Sanity. Include the existing topics so a first run localises/normalises them all.
+
+**New Task 11 — Sanity `emailPreferences` update (the "Sanity updated" deliverable):**
+
+- Modify `code/packages/web/email/src/sanity/email-preferences.ts` — add a `churned` object group: `name` (`localeString`), `description` (`localeText`), `resendTopicId` (`string`), seeded "Win-back (former members)". Confirm every category's `name`/`description` is `localeString`/`localeText` (localisation completeness — no plain-string leaks).
+- Modify `code/shared/api/src/consent/email-preferences-sanity.ts` — extend `fetchEmailPreferences` to also return `churnedTopicId` and the list of category `resendTopicId`s (as `optOutTopicIds`); update `PrefConfig`/return types. Never-throws unchanged. This is the source Task 3/4 read.
+- Test: extend `email-preferences-sanity` tests for the new fields; assert never-throws still holds when the churned group is absent.
+- Commit — `feat: Sanity churned topic config + topic localisation`.
+
+**Ledger (controller task, in progress now, not an implementer subagent):** an empty **Internationalisation** checkbox is added to **every** runbook card, plus a "Churn on account deletion" card carrying the Resend topic creation + localisation setup steps and the churn tests. Republished via the Artifact tool.
+
+---
+
 ## File Structure
 
 **New files**
