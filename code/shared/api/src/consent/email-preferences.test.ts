@@ -126,6 +126,21 @@ describe("GET/POST /v1/consent/email-preferences", () => {
       { category_key: "offers", granted: 0 },
     ]);
 
+    const proof = await ENV.MAIN_DB!.prepare(
+      "SELECT subject_id, email_fingerprint, granted FROM consent_events WHERE consent_type = 'email_pref:news'",
+    )
+      .bind()
+      .first<{
+        subject_id: string;
+        email_fingerprint: string;
+        granted: number;
+      }>();
+    expect(proof).toEqual({
+      subject_id: "user_ep_http",
+      email_fingerprint: "fp_user_ep_http",
+      granted: 1,
+    });
+
     expect(sync).toHaveBeenCalledWith(ENV, {
       email: "user_ep_http@x.com",
       topics: [
