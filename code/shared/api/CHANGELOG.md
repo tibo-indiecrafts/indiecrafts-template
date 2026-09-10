@@ -7,6 +7,39 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Churn tracking.** `POST /v1/erasure/self` (the authenticated self-service delete) now captures an
+  optional exit survey (`reason`/`feedback`/`competitor`) into a new `churn_events` table (`main` D1,
+  migration `0010`; `user_id` primary key, `deleted_at`, `reason`, `feedback`, `competitor` — no email,
+  no name). It's the only writer; the GDPR erasure-request flow (`/v1/erasure/request` → confirm) never
+  writes it and never suppresses — that flow stays a pure delete. After writing the row, the route
+  suppresses the departing Resend contact (`suppressResendContact`: globally unsubscribed, opted out of
+  every marketing topic, opted into a new **churned** Topic) instead of deleting it, so the business
+  keeps a win-back cohort. The `clerk-deleted` webhook (`handleClerkUserDeleted`) now branches on
+  `churn_events`: a row present suppresses the contact; no row falls back to the existing pure-delete
+  (`deleteResendContact`) for the RTBF/admin carve-out. The churned Topic's id comes from Sanity —
+  `fetchEmailPreferences` now also returns `churnedTopicId` + `optOutTopicIds`, read from a new
+  `churned` field on the `emailPreferences` singleton. New bearer-gated `GET /v1/churn` returns
+  `{ total, byDay, byReason, recentFeedback }` for the admin churn dashboard. **Why:** understand why
+  self-service users leave (legitimate interest) without retaining PII beyond an opaque id and optional
+  free text, and without touching the pure-delete GDPR path. Full model →
+  [Churn tracking](../../../docs/apps/web/config/churn.md).
+- **The Clerk delete is now a required step in self-erasure.** `POST /v1/erasure/self` retries a failed
+  Clerk delete once inline before giving up; if it's still failing, the route returns `502` with
+  `clerk_failed: true` instead of a success/partial status. The `erasure_requests` row stays
+  `confirmed` (not `completed`) for manual backfill. **Why:** Clerk is the one global session
+  kill-switch — a client must never treat a failed Clerk delete as safe to sign out from, since the
+  session would still be live everywhere else.
+- **`db.batch` atomicity for erasure + preference writes.** Three multi-write D1 paths now commit
+  through `db.batch` instead of separate sequential `.run()` calls: the `d1-core` erasure adapter's
+  `anonymize()` (`user_profiles` + `consent_events`), the `d1-audit` erasure adapter's `delete()`
+  (`session_events` + `security_events`), and `writePreferences()`'s per-key pref + `consent_events`
+  proof pair. **Why:** a mid-write failure could otherwise leave one row of a pair applied and its
+  sibling missing.
+- **`POST /v1/erasure/self` now bounds its body without trusting `content-length`.** The `4000`-byte cap
+  was checked against the request's `content-length` header alone; a missing or lying header could skip
+  it. The actual read body is now checked too. **Why:** a header a caller controls must never be the
+  only bound on an authenticated write.
+
 - **Per-category email preferences.** Editor-defined marketing categories (the `emailPreferences`
   Sanity singleton, read never-throwing via `consent/email-preferences-sanity.ts`, seeded `news`/
   `offers`/`partners`/`tips`) replace the single `marketing_email` flag. New `main` D1 table

@@ -13,6 +13,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **Account deletion now redirects to the web account.** `app/account.tsx` dropped its native
+  "Delete account" control; deletion rides the existing "Manage account" web hand-off alongside
+  profile, security, and export. **Why:** the web account's `DeleteAccountSection` now carries a
+  churn exit-survey — mobile's native control bypassed it, so mobile churn is now captured through
+  the same web survey.
 - **Web hand-off origins are now HTTPS-only.** `websiteUrl` / `accountUrl` (from
   `EXPO_PUBLIC_WEBSITE_URL` / `EXPO_PUBLIC_ACCOUNT_URL`) pass through a `safeWebOrigin` guard in
   `config/index.ts`: a non-TLS origin resolves to `undefined`, so the "Manage account" and legal

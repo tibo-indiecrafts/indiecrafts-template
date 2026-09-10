@@ -12,6 +12,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Churn dashboard.** A new `/churn` page reads the api's `GET /v1/churn` (bearer-gated) and renders
+  a total count, a by-reason table, a by-day table, and the 50 most recent feedback rows. Added to
+  the sidebar nav. **Why:** an operator view onto why self-service users are leaving.
+
 ### Changed
 
 - **Clerk sign-in UI localized.** `<ClerkProvider>` now receives the active locale (the provider moved

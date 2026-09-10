@@ -9,7 +9,7 @@ routes TBD.
 Owns **two EU D1s** (both `--location weur`): **`DB`** (`audit` — the append-only firehose:
 `session_events`, `security_events`, `admin_audit`, `csp_reports`, `backup_runs`) and **`MAIN_DB`**
 (`main` — identity/rights/settings: `user_profiles`, `consent_events`, `email_preferences`,
-`data_requests`, `erasure_requests`, `export_requests`, `site_settings`). Split so a firehose write-spike or migration
+`data_requests`, `erasure_requests`, `export_requests`, `site_settings`, `churn_events`). Split so a firehose write-spike or migration
 can't threaten identity data; `cron` holds both bindings too (retention + settings/SLA/export
 bookkeeping). `PUT /v1/settings` writes `site_settings` on `MAIN_DB` (primary) then an `admin_audit`
 row on `DB` (best-effort, no longer one atomic batch) — see
@@ -36,7 +36,19 @@ preference token) · `GDPR_FINGERPRINT_SALT` (email fingerprint
 salt, DISTINCT per env (stable within an env) — see `wrangler.toml`). `POST /v1/events` also accepts `kind:csp-report` →
 the `csp_reports` D1 table (aggregated CSP violation reports, Report-Only pipeline; 30-day `cron` purge).
 `GET /v1/csp-reports` reads it back (bearer-gated, same shape as `GET /v1/security`) for the admin CSP
-dashboard. `src/erasure/` holds the store-agnostic erasure
+dashboard.
+**Churn tracking:** `POST /v1/erasure/self` (the authenticated self-service delete) is the only writer
+of `churn_events` (`main` D1, migration `0010`; `user_id`/`deleted_at`/`reason`/`feedback`/
+`competitor`, no email/name) — it captures the exit survey, then suppresses the Resend contact
+(`suppressResendContact`: globally unsubscribed, off every marketing topic, opted into the churned
+topic) instead of deleting it. The `clerk-deleted` webhook branches on `churn_events`: a row present
+suppresses (win-back cohort); no row pure-deletes the contact (`deleteResendContact`), same as the RTBF/
+admin carve-out. `POST /v1/erasure/request` → confirm (the GDPR flow) never writes `churn_events` and
+never suppresses. `GET /v1/churn` (bearer-gated) reads the `churn_events` aggregate for the admin
+dashboard. The churned topic id comes from Sanity — `fetchEmailPreferences` returns `churnedTopicId` +
+`optOutTopicIds` alongside the email-preference categories. Full model →
+[Churn tracking](../../../docs/apps/web/config/churn.md).
+`src/erasure/` holds the store-agnostic erasure
 adapters — `d1-core` + `d1-audit` (real, split by table across the `main`/`audit` D1s; the `d1-audit`
 adapter takes a read-only handle to `main` to resolve `user_id`) + `clerk`/`sanity`/`orders`
 (dependency-injected) — implementing

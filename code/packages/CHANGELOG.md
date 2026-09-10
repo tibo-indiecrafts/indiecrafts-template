@@ -12,8 +12,28 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **Churn exit-survey on account deletion.** `DeleteAccountSection`
+  (`@indiecrafts/packages-shared-compliance/web`) now renders an optional reason/feedback/competitor
+  survey above the delete confirmation — rendered on both the website and the app web surface, no
+  per-surface survey code. `submitAccountErasure`/`rawErasureFetch` and the Clerk step-up path
+  (`@indiecrafts/packages-web-auth` `useClerkAuthPort`) now carry `reason`/`feedback`/`competitor`
+  through to `POST /v1/erasure/self` on both the default and reverification submit paths. Preset
+  reason codes (`CHURN_REASON_CODES` in `shared/account-copy.ts`) mirror the api's `CHURN_REASONS`.
+  **Why:** understand why a self-service user is leaving, without adding a second delete flow.
+- **`emailPreferencesSchema` — a `churned` win-back topic.** The `emailPreferences` Sanity singleton
+  (`@indiecrafts/packages-web-email/sanity`) gained a `churned` object field (localised `name`/
+  `description` + `resendTopicId`) alongside its marketing `categories[]` — the topic a departing
+  self-service contact is switched into instead of every other category. **Why:** one Studio-editable
+  home for the win-back topic's id and localised name, matching the existing per-category pattern.
+
 ### Removed
 
+- **`compliance/native`'s `DeleteAccountSection` — dropped.** Mobile was the only surface with a
+  native delete control, bypassing the new churn survey (web-only). Deletion now rides mobile's
+  existing "Manage account" web hand-off instead. **Why:** one delete flow with the survey, not a
+  native duplicate that skips it.
 - **Dropped `*.vercel.app` from the dev/test CSP `connect-src`** (`@indiecrafts/packages-shared-config`
   `getCSPConnectSources`). This repo deploys to Cloudflare via OpenNext, never Vercel previews, so the
   allowance was dead. **Why:** tighten the dev/test CSP to hosts we actually use. Doc synced

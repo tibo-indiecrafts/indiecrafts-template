@@ -7,6 +7,11 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- **`churn_events` retention purge.** The scheduled handler deletes `churn_events` rows (on
+  `deleted_at`, `main` D1) past `retention.churn_days`, default 730 days (24 months), operator-
+  overridable in `site_settings` like the other retention windows. Idempotent; no-ops until
+  `MAIN_DB` is bound. **Why:** the churn survey is legitimate-interest data excluded from erasure,
+  so it needs its own retention ceiling rather than living forever.
 - **Retention purge integration tests for `admin_audit`, `session_events`,
   `security_events`, and `consent_events`.** Seeded-row tests confirm the 90-day purge
   (on `ts`, `DB`) and the 3-year `consent_events` purge (on `ts`, `CORE_DB`) delete rows

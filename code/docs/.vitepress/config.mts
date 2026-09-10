@@ -139,6 +139,7 @@ export default defineConfig({
             text: "Email preferences",
             link: "/apps/web/config/email-preferences",
           },
+          { text: "Churn tracking", link: "/apps/web/config/churn" },
           { text: "Navigation", link: "/apps/web/config/navigation" },
           { text: "Legal pages", link: "/apps/web/config/legal-pages" },
           { text: "i18n & routing", link: "/apps/web/config/i18n-and-routing" },
