@@ -52,12 +52,7 @@
       "mismatch": "That email doesn't match your account."
     },
     "emailPreferences": {
-      "heading": "Email preferences",
-      "intro": "Choose which emails you'd like to receive, and see the emails we always send.",
-      "noticesHeading": "Account & security",
-      "loading": "Loading your email preferences…",
-      "error": "Something went wrong. Please try again.",
-      "retry": "Try again"
+      "manage": "Email preferences"
     }
   },
   "consent": {

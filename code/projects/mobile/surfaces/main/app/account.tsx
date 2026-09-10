@@ -22,7 +22,6 @@ import {
 import { policyVersion, features, accountUrl } from "@/config";
 import { hasClerk } from "@/lib/auth";
 import { consentStore } from "@/lib/consent-store";
-import { EmailPreferences } from "@/components/EmailPreferences";
 
 export default function AccountScreen() {
   // Auth is opt-in; without Clerk mounted `useAuth()` throws (see sign-in.tsx) — branch
@@ -87,25 +86,16 @@ function AccountView() {
           }
         />
 
-        {apiUrl ? (
-          <EmailPreferences
-            apiUrl={apiUrl}
-            getToken={() => getToken()}
-            surface="mobile"
-            copy={{
-              heading: t.formatMessage({
-                id: "account.emailPreferences.heading",
-              }),
-              intro: t.formatMessage({ id: "account.emailPreferences.intro" }),
-              noticesHeading: t.formatMessage({
-                id: "account.emailPreferences.noticesHeading",
-              }),
-              loading: t.formatMessage({
-                id: "account.emailPreferences.loading",
-              }),
-              error: t.formatMessage({ id: "account.emailPreferences.error" }),
-              retry: t.formatMessage({ id: "account.emailPreferences.retry" }),
-            }}
+        {accountUrl ? (
+          // The granular email preference centre lives on the web account page
+          // (Sanity-resolved categories; no native duplicate) — hand off the same
+          // way "Manage account" does, an in-app browser tab sharing the system
+          // cookie jar.
+          <Button
+            label={t.formatMessage({ id: "account.emailPreferences.manage" })}
+            onPress={() =>
+              accountUrl && void WebBrowser.openBrowserAsync(accountUrl)
+            }
           />
         ) : null}
 

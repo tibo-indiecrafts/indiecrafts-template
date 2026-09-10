@@ -52,12 +52,7 @@
       "mismatch": "Cet e-mail ne correspond pas à votre compte."
     },
     "emailPreferences": {
-      "heading": "Préférences d'e-mails",
-      "intro": "Choisissez les e-mails que vous souhaitez recevoir, et consultez ceux que nous envoyons toujours.",
-      "noticesHeading": "Compte et sécurité",
-      "loading": "Chargement de vos préférences d'e-mails…",
-      "error": "Une erreur s'est produite. Veuillez réessayer.",
-      "retry": "Réessayer"
+      "manage": "Préférences e-mail"
     }
   },
   "consent": {
