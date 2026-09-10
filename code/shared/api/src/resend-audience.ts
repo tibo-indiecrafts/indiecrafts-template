@@ -93,6 +93,68 @@ export async function syncContactTopics(
   throw new Error(`resend ${res.status}`);
 }
 
+/** Suppress a departed contact instead of deleting: global unsubscribe, opt OUT of every
+ *  marketing topic, opt INTO the churned topic (cohort tag), and stamp the churn reason as a
+ *  contact property. Same POST-then-PATCH-on-409/422 idiom. Best-effort. */
+export async function suppressResendContact(
+  env: ResendAudienceEnv,
+  {
+    email,
+    reason,
+    churnedTopicId,
+    optOutTopicIds,
+  }: {
+    email: string;
+    reason?: string | null;
+    churnedTopicId?: string;
+    optOutTopicIds?: string[];
+  },
+  doFetch: typeof fetch = fetch,
+): Promise<void> {
+  if (!env.RESEND_API_KEY || !env.RESEND_AUDIENCE_ID || !email) return;
+  const base = `${RESEND_API}/audiences/${env.RESEND_AUDIENCE_ID}/contacts`;
+  const headers = {
+    Authorization: `Bearer ${env.RESEND_API_KEY}`,
+    "content-type": "application/json",
+  };
+
+  const topics = [
+    ...(optOutTopicIds ?? []).map((id) => ({
+      id,
+      subscription: "opt_out" as const,
+    })),
+    ...(churnedTopicId
+      ? [{ id: churnedTopicId, subscription: "opt_in" as const }]
+      : []),
+  ];
+  const payload: Record<string, unknown> = {
+    unsubscribed: true,
+    properties: {
+      churned_at: new Date().toISOString(),
+      churn_reason: reason ?? "",
+    },
+  };
+  if (topics.length) payload.topics = topics;
+
+  const res = await doFetch(base, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ email, ...payload }),
+  });
+  if (res.ok) return;
+  // Already exists → update by email. (Resend returns 409/422 for a duplicate contact.)
+  if (res.status === 409 || res.status === 422) {
+    const patch = await doFetch(`${base}/${email}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(payload),
+    });
+    if (!patch.ok) throw new Error(`resend ${patch.status}`);
+    return;
+  }
+  throw new Error(`resend ${res.status}`);
+}
+
 /** Remove the contact from the audience — the erasure "pure delete" (no win-back list).
  *  A 404 (already gone) is success. */
 export async function deleteResendContact(

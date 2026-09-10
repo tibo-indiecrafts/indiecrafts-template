@@ -3,6 +3,7 @@ import {
   upsertResendContact,
   deleteResendContact,
   syncContactTopics,
+  suppressResendContact,
 } from "./resend-audience";
 
 const env = { RESEND_API_KEY: "k", RESEND_AUDIENCE_ID: "aud_1" };
@@ -176,5 +177,73 @@ describe("syncContactTopics", () => {
         f as unknown as typeof fetch,
       ),
     ).rejects.toThrow("resend 500");
+  });
+});
+
+describe("suppressResendContact", () => {
+  it("no-ops without key/audience", async () => {
+    const f = vi.fn();
+    await suppressResendContact(
+      {},
+      { email: "u@x.com" },
+      f as unknown as typeof fetch,
+    );
+    expect(f).not.toHaveBeenCalled();
+  });
+
+  it("sets unsubscribed + opt_out marketing + churned opt_in + property on create", async () => {
+    const f = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    await suppressResendContact(
+      { RESEND_API_KEY: "k", RESEND_AUDIENCE_ID: "aud_1" },
+      {
+        email: "u@x.com",
+        reason: "too_expensive",
+        churnedTopicId: "top_churn",
+        optOutTopicIds: ["top_news", "top_offers"],
+      },
+      f as unknown as typeof fetch,
+    );
+    const body = JSON.parse(
+      (f.mock.calls[0][1] as RequestInit).body as string,
+    ) as Record<string, unknown>;
+    expect(body.unsubscribed).toBe(true);
+    expect((body.properties as Record<string, unknown>).churn_reason).toBe(
+      "too_expensive",
+    );
+    expect(body.topics).toEqual([
+      { id: "top_news", subscription: "opt_out" },
+      { id: "top_offers", subscription: "opt_out" },
+      { id: "top_churn", subscription: "opt_in" },
+    ]);
+    expect(body.email).toBe("u@x.com");
+  });
+
+  it("omits topics when no churnedTopicId and no optOutTopicIds", async () => {
+    const f = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    await suppressResendContact(
+      { RESEND_API_KEY: "k", RESEND_AUDIENCE_ID: "aud_1" },
+      { email: "u@x.com" },
+      f as unknown as typeof fetch,
+    );
+    const body = JSON.parse(
+      (f.mock.calls[0][1] as RequestInit).body as string,
+    ) as Record<string, unknown>;
+    expect(body.unsubscribed).toBe(true);
+    expect(body.topics).toBeUndefined();
+  });
+
+  it("falls back to PATCH by email on 409/422", async () => {
+    const f = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: false, status: 409 })
+      .mockResolvedValueOnce({ ok: true, status: 200 });
+    await suppressResendContact(
+      { RESEND_API_KEY: "k", RESEND_AUDIENCE_ID: "aud_1" },
+      { email: "u@x.com", reason: "privacy", churnedTopicId: "top_churn" },
+      f as unknown as typeof fetch,
+    );
+    expect(f).toHaveBeenCalledTimes(2);
+    expect(f.mock.calls[1][0] as string).toContain("/contacts/u@x.com");
+    expect((f.mock.calls[1][1] as RequestInit).method).toBe("PATCH");
   });
 });
