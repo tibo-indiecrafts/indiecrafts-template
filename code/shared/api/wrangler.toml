@@ -137,8 +137,12 @@ invocation_logs = true
 #   GDPR_FINGERPRINT_SALT (email pseudonymisation fingerprint; DISTINCT per env, generated
 #   independently — STABLE within an env, never rotate a live one) ·
 #   CLERK_SECRET_KEY (erasure route's real Clerk client) ·
-#   SANITY_API_WRITE_TOKEN (erasure route's Sanity pseudonymisation writes) —
+#   SANITY_API_WRITE_TOKEN (erasure route's Sanity pseudonymisation writes) ·
+#   EMAIL_PREF_SECRET (signs the no-login email-preferences token) —
 #   wrangler secret put <NAME> --env <env>
+# Per-category Resend Topic wiring (audience RESEND_AUDIENCE_ID + each category's
+# resendTopicId) is Sanity-configured, not a wrangler var — see the emailPreferences
+# singleton in Studio.
 [env.dev]
 name = "indiecrafts-dev-shared-api"
 
