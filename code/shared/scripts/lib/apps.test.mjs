@@ -10,7 +10,7 @@ const REPO_ROOT = resolve(
   "../../../..",
 );
 
-const CLASSES = new Set(["next-cf", "worker-cf", "expo", "electron"]);
+const CLASSES = new Set(["next-cf", "worker-cf", "expo"]);
 
 test("every app row is well-formed with a known platform class", () => {
   for (const a of APPS) {
@@ -54,19 +54,15 @@ test("deployable() defaults to Cloudflare apps, in deploy order", () => {
   assert.ok(cf.every(isCloudflare), "default set must be Cloudflare-only");
   assert.deepEqual(
     cf.map((a) => a.slug),
-    ["agent", "api", "cron", "workers", "website", "admin", "app", "storybook"],
+    ["api", "cron", "workers", "website", "admin", "app", "storybook"],
   );
 });
 
-test("deployable({ only: 'all' }) includes the native classes", () => {
+test("deployable({ only: 'all' }) includes the native (expo) class", () => {
   const all = deployable({ only: "all" });
   assert.ok(
     all.some((a) => a.class === "expo"),
     "expo missing",
-  );
-  assert.ok(
-    all.some((a) => a.class === "electron"),
-    "electron missing",
   );
 });
 

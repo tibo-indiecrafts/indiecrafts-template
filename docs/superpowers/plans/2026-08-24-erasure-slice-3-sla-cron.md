@@ -9,6 +9,7 @@
 **Tech Stack:** Cloudflare Workers (scheduled) + D1 + R2 · `@cloudflare/vitest-pool-workers`. **Mirror:** the existing purge in `cron/src/index.ts`; the `security_events` insert shape in `code/shared/api/src/index.ts`; the erasure_requests columns in migration `0004`.
 
 ## Global Constraints
+
 - Idempotent on every tick (the SLA flag is once-per-request via `due_flagged_at`; the export cleanup is delete-by-expiry). No-op until `DB`/`EXPORT_BUCKET` bound.
 - A scheduled failure must `logger.error` + rethrow (the cron NEVER). Keep task logic as pure helpers in this file (matching the existing `retentionCutoff` + inline purge precedent — this worker keeps its purge inline).
 - Commit `--no-verify`; stage only named files; prettier; writing-style.
@@ -19,6 +20,7 @@
 ### Task 1: SLA flag + export cleanup in the cron worker
 
 **Files:**
+
 - Create: `code/shared/api/db/d1/migrations/0006_erasure_due_flagged.sql`
 - Modify: `code/shared/cron/src/index.ts` (+ `src/index.test.ts`) + `code/shared/cron/wrangler.toml` (EXPORT_BUCKET binding) + `code/shared/cron/CHANGELOG.md` + `code/shared/cron/.claude/CLAUDE.md` + `code/docs/apps/web/config/data-retention.md`
 
@@ -26,7 +28,7 @@
 - [ ] **Step 2: Pure helpers + failing tests.** In `cron/src/index.ts` add (exported, testable like `retentionCutoff`):
   - `slaDueSoonCutoff(scheduledTime: number, days = 7): string` → ISO of `scheduledTime + days*86_400_000` (requests due within the next `days` count as "due soon").
   - `slaSeverity(dueAt: string, nowIso: string): "high" | "medium"` → `dueAt < nowIso ? "high"(breached) : "medium"(approaching)`.
-  In `src/index.test.ts` (the cron already has a vitest-pool-workers test with `env.DB`; add `env.EXPORT_BUCKET` via the pool config `r2Buckets`): seed erasure_requests + export_requests rows, run `scheduled`, assert: (a) a request with `due_at` in 3 days, status `email_sent`, `due_flagged_at` null → a `security_events` row (event_type `erasure_sla_due`, severity `medium`) is written AND `due_flagged_at` set; (b) a breached request (`due_at` in the past) → severity `high`; (c) a completed/cancelled/expired request → NOT flagged; (d) an already-flagged request (`due_flagged_at` set) → NOT re-flagged (no duplicate row); (e) an expired export_requests row (`expires_at` past) → its R2 object deleted + the row deleted; a not-yet-expired export row → kept.
+    In `src/index.test.ts` (the cron already has a vitest-pool-workers test with `env.DB`; add `env.EXPORT_BUCKET` via the pool config `r2Buckets`): seed erasure_requests + export_requests rows, run `scheduled`, assert: (a) a request with `due_at` in 3 days, status `email_sent`, `due_flagged_at` null → a `security_events` row (event_type `erasure_sla_due`, severity `medium`) is written AND `due_flagged_at` set; (b) a breached request (`due_at` in the past) → severity `high`; (c) a completed/cancelled/expired request → NOT flagged; (d) an already-flagged request (`due_flagged_at` set) → NOT re-flagged (no duplicate row); (e) an expired export_requests row (`expires_at` past) → its R2 object deleted + the row deleted; a not-yet-expired export row → kept.
 - [ ] **Step 3: Implement in `scheduled()`** (after the existing purge, same `if (env.DB)` block or a sibling; wrap in try/catch + rethrow like the purge):
   - SLA pass (needs `DB`): `const dueSoon = slaDueSoonCutoff(controller.scheduledTime); const nowIso = new Date(controller.scheduledTime).toISOString();` `SELECT id, user_id, email_fingerprint, due_at FROM erasure_requests WHERE due_flagged_at IS NULL AND status NOT IN ('completed','cancelled','expired') AND due_at < ?` bound to `dueSoon`. For each row: `INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, 'api', ?, NULL, NULL, ?)` with event_type `slaSeverity===high ? 'erasure_sla_breach' : 'erasure_sla_due'`, severity `slaSeverity(due_at, nowIso)`, user_id `row.user_id ?? row.email_fingerprint`, description `"erasure request ${id} due ${due_at}"`; then `UPDATE erasure_requests SET due_flagged_at = ? WHERE id = ?` bound `nowIso`. Log the count.
   - Export cleanup (needs `DB` + `EXPORT_BUCKET`): `SELECT id, r2_key FROM export_requests WHERE expires_at < ?` bound `nowIso`. For each: `await env.EXPORT_BUCKET.delete(r2_key)` (idempotent — no-op if already deleted on download); then `DELETE FROM export_requests WHERE id = ?`. Log the count. Guard on `env.EXPORT_BUCKET` (skip cleanup if unbound).
@@ -36,6 +38,7 @@
 ---
 
 ## Self-review
+
 - Coverage: SLA approaching + breached flag (once-per-request via `due_flagged_at`), export orphan cleanup (Slice-2 deferral), both idempotent, both tested. Owner-reminder email deferred (S3-FLAG-HOME ruling — no Resend in cron).
 - Consistency: `security_events` insert matches the api's column shape; `erasure_requests`/`export_requests` columns match migrations 0004/0005; the migration lives in the api's D1 dir (api owns the DB, cron shares it).
 - **Ruling S3-EXPORTBUCKET:** the cron binds the SAME R2 bucket as the api (`EXPORT_BUCKET`) to delete orphaned objects; operator-provisioned, no-op until bound. Cost if wrong: an R2 lifecycle rule can do the cleanup instead.

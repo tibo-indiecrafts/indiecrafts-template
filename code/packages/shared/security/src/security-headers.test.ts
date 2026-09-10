@@ -144,10 +144,17 @@ describe("permissiveCspRule", () => {
 
   it("adds Reporting-Endpoints only when a reporting endpoint is given", () => {
     const bare = permissiveCspRule("/maintenance", "production");
-    expect(bare.headers.some((h) => h.key === "Reporting-Endpoints")).toBe(false);
-    const reported = permissiveCspRule("/maintenance", "production", {}, {
-      endpoint: "/api/csp-report",
-    });
+    expect(bare.headers.some((h) => h.key === "Reporting-Endpoints")).toBe(
+      false,
+    );
+    const reported = permissiveCspRule(
+      "/maintenance",
+      "production",
+      {},
+      {
+        endpoint: "/api/csp-report",
+      },
+    );
     expect(
       reported.headers.find((h) => h.key === "Reporting-Endpoints")?.value,
     ).toBe('csp-endpoint="/api/csp-report"');

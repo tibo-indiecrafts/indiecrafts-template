@@ -3,19 +3,19 @@
 One centralized icon brick. A shared **contract** (glyph names, custom-SVG registry, brand SVG data)
 with platform-forked **renderers** — the same data→renderer split as [`ui-tokens`](./ui-tokens).
 Replaces the previous scattered, DOM-locked icon usage (lucide + reicon + inline SVGs across the app
-and blog). **Four icon families:** lucide (cross-platform base), reicon (web/hybrid), custom SVGs
+and blog). **Four icon families:** lucide (cross-platform base), reicon (web), custom SVGs
 (cross-platform), and brand/social marks (cross-platform).
 
-|               |                                                                                                                                                                                                                            |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|               |                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Exports**   | `./shared` (contract — `GLYPHS` + `GlyphName` · `glyphOptions()` for Sanity pickers · `SVGS` custom-SVG registry + `SvgName` · `BRANDS` SVG-path data + `BrandName`) · `./web` (`Icon` lucide-react · `ReiconIcon` reicon-react · `SvgIcon` custom · `BrandIcon`) · `./native` (`Icon` lucide-react-native · `SvgIcon`/`BrandIcon` react-native-svg — **no `ReiconIcon`**) |
-| **Deps**      | `lucide-react`, `reicon-react`. **Peer (optional):** `lucide-react-native`, `react-native-svg` (native only), `react`/`react-dom`                                                                                          |
-| **Consumers** | `ui-components` `FeatureGrid` (`Icon`) · `page-builder` picker (`glyphOptions()`) · website nav (`ReiconIcon`), footer + blog share/author (`BrandIcon`), homepage showcase; a mobile app imports `./native`               |
+| **Deps**      | `lucide-react`, `reicon-react`. **Peer (optional):** `lucide-react-native`, `react-native-svg` (native only), `react`/`react-dom`                                                                                                                                                                                                                                          |
+| **Consumers** | `ui-components` `FeatureGrid` (`Icon`) · `page-builder` picker (`glyphOptions()`) · website nav (`ReiconIcon`), footer + blog share/author (`BrandIcon`), homepage showcase; a mobile app imports `./native`                                                                                                                                                               |
 
 ## Platform coverage (by rendering surface)
 
 - **`/web` (DOM: React 19)** — `Icon` (lucide) · `ReiconIcon` (reicon) · `SvgIcon` (custom) · `BrandIcon`.
-  Serves the web surfaces **and the hybrid/Electron renderer** (Chromium/DOM), so reicon works there too.
+  Serves the web surfaces (DOM), so reicon works there.
 - **`/native` (React Native)** — `Icon` (lucide-react-native) · `SvgIcon`/`BrandIcon` (react-native-svg).
   **No `ReiconIcon`** — reicon has no RN build; use lucide + custom SVGs on native.
 

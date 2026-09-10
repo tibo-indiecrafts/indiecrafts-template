@@ -17,7 +17,7 @@ type Status = "idle" | "pending" | "success" | "error";
 
 /**
  * The shared "Download my data" section (web, shadcn) — Clerk/Next-free, so the
- * `app` web surface AND the Electron renderer both use it. Takes `getToken` + `apiUrl`
+ * `app` web surface both use it. Takes `getToken` + `apiUrl`
  * as props and drives `requestExport`; copy is injected — no next-intl inside.
  */
 export function ExportSection({

@@ -168,10 +168,7 @@ export function createAuditErasureAdapter(
           ? await all("SELECT * FROM session_events WHERE user_id = ?", userId)
           : [],
         security_events: userId
-          ? await all(
-              "SELECT * FROM security_events WHERE user_id = ?",
-              userId,
-            )
+          ? await all("SELECT * FROM security_events WHERE user_id = ?", userId)
           : [],
       };
     },

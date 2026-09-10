@@ -4,23 +4,22 @@ The tiny, platform-agnostic core every shell's "new version available" prompt sh
 Lives in **`code/packages/shared/version`**, consumed as source. **Zero `react`/`next`**
 — the poll mechanism is per-platform; this brick is just the compare + the response shape.
 
-Extracted so the `app` web surface, the Electron renderer, and the Expo shell all detect a
+Extracted so the `app` web surface and the Expo shell both detect a
 new deploy the same way, and [`@indiecrafts/packages-web-version`](./version) (the web hook +
 `UpdatePrompt`) re-exports the compare instead of inlining it.
 
 ## Exports
 
-| Export                                | What it is                                                                                                                                                          |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `isUpdateAvailable(current, latest)`  | `true` when the live id is known and differs from this bundle's `current`. **String identity** — a deploy stamps a new id (commit sha / version), NOT semver.        |
-| `VersionResponse`                     | The `/api/version` response shape — `{ version?: string; commit?: string }`.                                                                                        |
-| `versionId(res)`                      | The live deploy's id from a response — `commit` (sha) preferred, else `version`, else `null`.                                                                       |
-| `VERSION_ENDPOINT`                    | The conventional endpoint path a shell polls (`/api/version`).                                                                                                      |
+| Export                               | What it is                                                                                                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isUpdateAvailable(current, latest)` | `true` when the live id is known and differs from this bundle's `current`. **String identity** — a deploy stamps a new id (commit sha / version), NOT semver. |
+| `VersionResponse`                    | The `/api/version` response shape — `{ version?: string; commit?: string }`.                                                                                  |
+| `versionId(res)`                     | The live deploy's id from a response — `commit` (sha) preferred, else `version`, else `null`.                                                                 |
+| `VERSION_ENDPOINT`                   | The conventional endpoint path a shell polls (`/api/version`).                                                                                                |
 
 ## How each surface uses it
 
 - **`app`** (Next) — adopts the web hook `useVersionCheck` + `UpdatePrompt` verbatim, backed by its own `/api/version` route + a `build-info.ts` stamp (`scripts/version.mjs` in `build:cf`). The DOM poll (`visibilitychange`/`online`) lives in the hook.
-- **hybrid** (Electron renderer) — reuses `useVersionCheck` (Chromium), forks the prompt to drop `usePathname`, and polls the **website's** `/api/version` (`VITE_WEBSITE_URL`). A renderer reload applies the update. **Ceiling:** native desktop auto-update (`electron-updater`) is a separate infra task.
 - **mobile** (Expo/RN) — an `AppState`-`"active"`-driven fetch-poll of a hosted `/api/version`, reusing `isUpdateAvailable`/`versionId`, rendering a native banner. **Ceiling:** `expo-updates`/EAS OTA is unwired, so the banner nudges to restart/update rather than reloading.
 
 ## Gotcha — string identity, not semver

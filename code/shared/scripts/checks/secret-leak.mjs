@@ -10,7 +10,7 @@
 //
 // Rule: for each key declared in an example file,
 //   - a public-prefixed key (NEXT_PUBLIC_/EXPO_PUBLIC_/VITE_) is a DOCUMENTED PUBLIC var
-//     (a legit bundle value — e.g. EXPO_PUBLIC_AGENT_TOKEN, the documented bundle abuse-gate);
+//     (a legit bundle value — e.g. EXPO_PUBLIC_API_TOKEN, the documented bundle abuse-gate);
 //   - a non-public key that is not plain config (a URL, CSP mode) is a SECRET.
 // Then scan app/brick/worker source: a `<PREFIX><SECRET>` occurrence fails UNLESS the exact
 // var is a documented public key. A secret must be *documented* to be guarded — which is the

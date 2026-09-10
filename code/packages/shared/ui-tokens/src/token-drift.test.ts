@@ -10,7 +10,9 @@ import { afterEach, describe, expect, it } from "vitest";
 // keeps 89 colocated sidecars honest. These run the real script with TOKENS_CODE_DIR
 // pointed at a throwaway fixture dir, so each machine-verifiable rule is proven to
 // fire — the "contract rejects malformed" property, not just "reads happy input".
-const SCRIPT = fileURLToPath(new URL("../scripts/build-tokens.mjs", import.meta.url));
+const SCRIPT = fileURLToPath(
+  new URL("../scripts/build-tokens.mjs", import.meta.url),
+);
 
 const dirs: string[] = [];
 afterEach(() => {
@@ -18,12 +20,20 @@ afterEach(() => {
 });
 
 /** Write `files` into a fresh dir, run `build-tokens.mjs --check` against it, return the result. */
-function run(files: Record<string, string>): { status: number; stderr: string } {
+function run(files: Record<string, string>): {
+  status: number;
+  stderr: string;
+} {
   const dir = mkdtempSync(join(tmpdir(), "tokfix-"));
   dirs.push(dir);
-  for (const [name, content] of Object.entries(files)) writeFileSync(join(dir, name), content);
+  for (const [name, content] of Object.entries(files))
+    writeFileSync(join(dir, name), content);
   try {
-    execFileSync("node", [SCRIPT], { env: { ...process.env, TOKENS_CODE_DIR: dir, TOKENS_VALIDATE_ONLY: "1" }, encoding: "utf8", stdio: "pipe" });
+    execFileSync("node", [SCRIPT], {
+      env: { ...process.env, TOKENS_CODE_DIR: dir, TOKENS_VALIDATE_ONLY: "1" },
+      encoding: "utf8",
+      stdio: "pipe",
+    });
     return { status: 0, stderr: "" };
   } catch (e) {
     const err = e as { status?: number; stderr?: string };
@@ -32,36 +42,63 @@ function run(files: Record<string, string>): { status: number; stderr: string } 
 }
 
 const frag = (component: Record<string, string>) => ({
-  component: Object.fromEntries(Object.entries(component).map(([k, v]) => [k, { $type: "color", $value: v }])),
+  component: Object.fromEntries(
+    Object.entries(component).map(([k, v]) => [
+      k,
+      { $type: "color", $value: v },
+    ]),
+  ),
 });
 
 describe("token sidecar contract (build-tokens.mjs)", () => {
   it("accepts a valid namespaced sidecar", () => {
-    expect(run({ "widget.tokens.json": JSON.stringify(frag({ "widget-bg": "{semantic.background}" })) }).status).toBe(0);
+    expect(
+      run({
+        "widget.tokens.json": JSON.stringify(
+          frag({ "widget-bg": "{semantic.background}" }),
+        ),
+      }).status,
+    ).toBe(0);
   });
 
   it("rejects a duplicate token name", () => {
     // `primary` already exists in the central component tier.
-    const r = run({ "widget.tokens.json": JSON.stringify(frag({ primary: "{semantic.background}" })) });
+    const r = run({
+      "widget.tokens.json": JSON.stringify(
+        frag({ primary: "{semantic.background}" }),
+      ),
+    });
     expect(r.status).not.toBe(0);
     expect(r.stderr).toMatch(/duplicate component token "primary"/);
   });
 
   it("rejects a reference to a primitive (tier violation)", () => {
-    const r = run({ "widget.tokens.json": JSON.stringify(frag({ "widget-bg": "{primitive.neutral.0}" })) });
+    const r = run({
+      "widget.tokens.json": JSON.stringify(
+        frag({ "widget-bg": "{primitive.neutral.0}" }),
+      ),
+    });
     expect(r.status).not.toBe(0);
-    expect(r.stderr).toMatch(/may reference only \{semantic\.\*\} or \{component\.\*\}/);
+    expect(r.stderr).toMatch(
+      /may reference only \{semantic\.\*\} or \{component\.\*\}/,
+    );
   });
 
   it("rejects a non-component top-level key", () => {
-    const r = run({ "widget.tokens.json": JSON.stringify({ semantic: { foo: { $type: "color", $value: "x" } } }) });
+    const r = run({
+      "widget.tokens.json": JSON.stringify({
+        semantic: { foo: { $type: "color", $value: "x" } },
+      }),
+    });
     expect(r.status).not.toBe(0);
     expect(r.stderr).toMatch(/may only add to "component"/);
   });
 
   it("flags drift when the .tsx uses a token the sidecar omits", () => {
     const r = run({
-      "Widget.tokens.json": JSON.stringify(frag({ "widget-bg": "{semantic.background}" })),
+      "Widget.tokens.json": JSON.stringify(
+        frag({ "widget-bg": "{semantic.background}" }),
+      ),
       "Widget.tsx": `export const W = () => <div className="bg-background text-destructive" />;`,
     });
     expect(r.status).not.toBe(0);
@@ -70,7 +107,9 @@ describe("token sidecar contract (build-tokens.mjs)", () => {
 
   it("does NOT flag an opacity-modified usage (authoring judgement call)", () => {
     const r = run({
-      "Widget.tokens.json": JSON.stringify(frag({ "widget-bg": "{semantic.background}" })),
+      "Widget.tokens.json": JSON.stringify(
+        frag({ "widget-bg": "{semantic.background}" }),
+      ),
       "Widget.tsx": `export const W = () => <div className="bg-background text-destructive/40" />;`,
     });
     expect(r.status).toBe(0);

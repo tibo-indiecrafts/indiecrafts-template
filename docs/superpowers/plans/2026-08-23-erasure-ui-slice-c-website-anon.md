@@ -26,12 +26,14 @@
 ### Task 1: Worker confirm-URL → website (WEBSITE_URL)
 
 **Files:**
+
 - Modify: `code/shared/api/src/index.ts` (add `Env.WEBSITE_URL?`)
 - Modify: `code/shared/api/src/erasure/request.ts` (build the confirm URL from `WEBSITE_URL`)
 - Modify: `code/shared/api/src/erasure/request.test.ts` (cover both branches)
 - Modify: `code/shared/api/wrangler.toml` (`[vars]` entry) + `code/shared/api/CHANGELOG.md` + `code/shared/api/.claude/CLAUDE.md`
 
 - [ ] **Step 1: Add the Env field.** In `code/shared/api/src/index.ts` `Env` interface, add (mirroring the `SANITY_PROJECT_ID` `[vars]` JSDoc style):
+
 ```ts
 /** The website's public origin (`[vars]`) — the erasure confirm-link target. Unset → falls
  *  back to the worker's own origin + `/v1/erasure/confirm` (the current behaviour). */
@@ -41,11 +43,13 @@ WEBSITE_URL?: string;
 - [ ] **Step 2: Write the failing test.** In `request.test.ts`, add a case: when `env.WEBSITE_URL` is set, the token email's confirm link is `${WEBSITE_URL}/erasure/confirm?token=…`; when unset, it stays `${workerOrigin}/v1/erasure/confirm?token=…`. (The suite already injects `sendToken` — assert the `confirmUrl` it receives. Read the existing request.test.ts to reuse its harness + the injected-email seam.)
 
 - [ ] **Step 3: Change the confirm URL** in `code/shared/api/src/erasure/request.ts` (~line 173), inside `writeAndSend()`:
+
 ```ts
 const confirmUrl = env.WEBSITE_URL
   ? `${env.WEBSITE_URL}/erasure/confirm?token=${token}`
   : `${origin}/v1/erasure/confirm?token=${token}`;
 ```
+
 (Website path is `/erasure/confirm`; the worker fallback keeps `/v1/erasure/confirm`.)
 
 - [ ] **Step 4: Verify.** `pnpm --filter @indiecrafts/shared-api test` (all green incl. the new branch) + `pnpm --filter @indiecrafts/shared-api tsc` (exit 0).
@@ -57,33 +61,43 @@ const confirmUrl = env.WEBSITE_URL
 ### Task 2: Website `/erasure` request page + form
 
 **Files:**
+
 - Create: `code/projects/web/surfaces/website/src/app/[locale]/erasure/page.tsx`
 - Create: `code/projects/web/surfaces/website/src/user-interface/erasure/ErasureRequestForm.tsx` + `code/projects/web/surfaces/website/src/user-interface/erasure/submit.ts` (pure helpers) + `code/projects/web/surfaces/website/src/user-interface/erasure/submit.test.ts`
 - Modify: `messages/en.json` + `fr.json` (`legal.erasure.request.*`) + `src/config/features.ts` (flag) + `src/config/pages.ts` (entry)
 
 **Interfaces:**
+
 - Produces: `submitErasureRequest(input: { apiUrl: string; email: string; turnstileToken: string | null }): Promise<"sent" | "turnstile" | "error">` and (Task 3) `submitErasureConfirm(...)` in `submit.ts`. `ErasureRequestForm({ copy }: { copy: ErasureRequestCopy })` — a client component.
 
 - [ ] **Step 1: Feature flag + page config.** `features.ts`: add `erasure: true` under the existing `legal` group (sibling of `dataRequest`). `pages.ts`: add a plain `PageConfig` (mirror the Slice-B `account` entry): `erasure: { key: "/erasure", id: "erasure", slug: "/erasure", enabled: features.legal.erasure }`.
 
 - [ ] **Step 2: The pure request helper + failing test.** Create `submit.ts`:
+
 ```ts
 export async function submitErasureRequest(input: {
-  apiUrl: string; email: string; turnstileToken: string | null;
+  apiUrl: string;
+  email: string;
+  turnstileToken: string | null;
 }): Promise<"sent" | "turnstile" | "error"> {
   try {
     const form = new FormData();
     form.set("email", input.email);
-    if (input.turnstileToken) form.set("cf-turnstile-response", input.turnstileToken);
-    const res = await fetch(`${input.apiUrl}/v1/erasure/request`, { method: "POST", body: form });
-    if (res.status === 200) return "sent";       // generic anti-enumeration success
-    if (res.status === 403) return "turnstile";  // turnstile_failed
+    if (input.turnstileToken)
+      form.set("cf-turnstile-response", input.turnstileToken);
+    const res = await fetch(`${input.apiUrl}/v1/erasure/request`, {
+      method: "POST",
+      body: form,
+    });
+    if (res.status === 200) return "sent"; // generic anti-enumeration success
+    if (res.status === 403) return "turnstile"; // turnstile_failed
     return "error";
   } catch {
     return "error";
   }
 }
 ```
+
 `submit.test.ts` (vitest — the website already runs vitest for `messages.test.ts`): stub `globalThis.fetch`; assert 200→"sent" and the POST is FormData to `${apiUrl}/v1/erasure/request` with `email` + `cf-turnstile-response` fields; 403→"turnstile"; 500/throw→"error". Run it, see it fail, implement, see it pass.
 
 - [ ] **Step 3: The request form** `ErasureRequestForm.tsx` (`"use client"`) — mirror `DataRequestForm`'s TurnstileWidget usage (map §2): hold `email` + `tsToken` state; render an email input + `<TurnstileWidget key={tsKey} onToken={setTsToken} />` + a submit button `disabled={busy || !email || (turnstileActive() && !tsToken)}`; on submit call `submitErasureRequest({ apiUrl: process.env.NEXT_PUBLIC_API_URL ?? "", email, turnstileToken: tsToken })`; render the generic "sent" message on "sent" (anti-enumeration — same message regardless), a Turnstile-retry message on "turnstile" (bump `tsKey` to remount), an error on "error". Copy from the `copy` prop; use shadcn primitives as `DataRequestForm` does. `role="status"` for the result.
@@ -99,6 +113,7 @@ export async function submitErasureRequest(input: {
 ### Task 3: Website `/erasure/confirm` page + DSAR cross-link + docs
 
 **Files:**
+
 - Create: `code/projects/web/surfaces/website/src/app/[locale]/erasure/confirm/page.tsx`
 - Create: `code/projects/web/surfaces/website/src/user-interface/erasure/ErasureConfirmForm.tsx`
 - Modify: `code/projects/web/surfaces/website/src/user-interface/erasure/submit.ts` (+ `.test.ts`) — add `submitErasureConfirm`
@@ -107,9 +122,12 @@ export async function submitErasureRequest(input: {
 **Interfaces:** Consumes `submitErasureRequest` (Task 2). Produces `submitErasureConfirm(input: { apiUrl; token; email }): Promise<"done"|"partial"|"mismatch"|"expired"|"error">`.
 
 - [ ] **Step 1: The confirm helper + failing test.** Add to `submit.ts`:
+
 ```ts
 export async function submitErasureConfirm(input: {
-  apiUrl: string; token: string; email: string;
+  apiUrl: string;
+  token: string;
+  email: string;
 }): Promise<"done" | "partial" | "mismatch" | "expired" | "error"> {
   try {
     const res = await fetch(`${input.apiUrl}/v1/erasure/confirm`, {
@@ -119,7 +137,7 @@ export async function submitErasureConfirm(input: {
     });
     if (res.status === 200) return "done";
     if (res.status === 207) return "partial";
-    if (res.status === 429) return "expired";  // too many attempts → tell them to restart
+    if (res.status === 429) return "expired"; // too many attempts → tell them to restart
     if (res.status === 400) return "mismatch"; // bad/expired/used token OR email mismatch
     return "error";
   } catch {
@@ -127,6 +145,7 @@ export async function submitErasureConfirm(input: {
   }
 }
 ```
+
 Add `submit.test.ts` cases: 200→done, 207→partial, 400→mismatch, 429→expired, 500→error; assert JSON body `{token,email}` to `${apiUrl}/v1/erasure/confirm`.
 
 - [ ] **Step 2: The confirm form** `ErasureConfirmForm.tsx` (`"use client"`) — takes `{ copy, token }`; a typed-email input; on submit call `submitErasureConfirm({ apiUrl: process.env.NEXT_PUBLIC_API_URL ?? "", token, email })`; map done→success, partial→partial, mismatch→mismatch, expired→expired, error→error copy in a `role="status"` region. No token rendered as HTML beyond a controlled hidden value (React auto-escapes — map §6).

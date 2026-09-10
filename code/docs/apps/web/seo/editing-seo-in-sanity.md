@@ -10,31 +10,31 @@ The site's SEO surface is **edited in the Studio** — not in code, not in `mess
 
 Doc title in the desk: **SEO par langue**. Fixed-id singletons (`siteMeta.en`, `siteMeta.fr`), one per registered locale — edited from the desk, **not** the translation menu. Holds only site-wide **defaults**, not per-page SEO. Read by `getSiteSeo(locale)`.
 
-| Field (Studio label)                       | Drives                                                                                                                     |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| **Slogan** (`tagline`)                     | site title suffix (`{siteName} — {tagline}`), `/llms.txt`                                                                  |
-| **Description du site** (`description`)    | site-wide default `<meta description>`, `/llms.txt`                                                                        |
-| **Mots-clés du site** (`keywords`)         | site-level keywords                                                                                                        |
-| **Image de partage** (`ogImage`)           | the default share card for this language (`og:image` + alt)                                                                |
-| **Pages de listing** (`taxonomyPages`)     | category / tag / author **index** page copy (heading, subheading, empty message). Falls back to `messages` per field       |
-| **Pages système** (`systemPages`)          | maintenance + 404 page copy. Falls back to `messages` per field — see below                                                |
+| Field (Studio label)                       | Drives                                                                                                                                                                                                                                              |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Slogan** (`tagline`)                     | site title suffix (`{siteName} — {tagline}`), `/llms.txt`                                                                                                                                                                                           |
+| **Description du site** (`description`)    | site-wide default `<meta description>`, `/llms.txt`                                                                                                                                                                                                 |
+| **Mots-clés du site** (`keywords`)         | site-level keywords                                                                                                                                                                                                                                 |
+| **Image de partage** (`ogImage`)           | the default share card for this language (`og:image` + alt)                                                                                                                                                                                         |
+| **Pages de listing** (`taxonomyPages`)     | category / tag / author **index** page copy (heading, subheading, empty message). Falls back to `messages` per field                                                                                                                                |
+| **Pages système** (`systemPages`)          | maintenance + 404 page copy. Falls back to `messages` per field — see below                                                                                                                                                                         |
 | **Résumé pour les assistants IA** (`llms`) | `/llms.txt` one-line summary + paragraph + external resources + a **last-reviewed date** (`reviewedAt`) shown in the header + the **section order** (`sectionOrder`) for the page list, and a site-level `full` intro prepended to `/llms-full.txt` |
 
 **Per-page SEO — on the document, not here.** Each document a route renders carries its own SEO under a collapsible **SEO & visibilité** section (the shared `seoMeta` object): the home `page`, each `legalPage`, each post, and the `waitlistSettings` singleton. The taxonomy list pages (author / category / tag) are edited on the **Blog** singleton under **SEO des pages de listing** (`indexSeo`). Every SEO section exposes the same fields:
 
-| Field                                                | Drives                                                                                      |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **Titre SEO** (`title`)                              | the page `<title>` (~60 char warning)                                                       |
-| **Description** (`description`)                      | the page `<meta description>` (~160 char warning)                                           |
-| **Mots-clés** (`keywords`)                           | comma-separated page keywords                                                               |
-| **Image de partage** (`image`)                       | page-specific OG card (+ alt); empty = the language default                                 |
-| **Image pour Google** (`schemaImage`)                | the image Google may show beside the result (WebPage JSON-LD `image`); empty = the OG image |
-| **Adresse officielle** (`canonical`)                 | canonical URL override — only for a page that duplicates another                            |
-| **Masquer des moteurs de recherche** (`noIndex`)     | drops the page from search **and** the sitemap **and** the LLM endpoints at once            |
-| **Informations Google en plus** (`structuredData[]`) | per-page JSON-LD (Service / Product / Person / Event)                                       |
+| Field                                                | Drives                                                                                                                                                           |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Titre SEO** (`title`)                              | the page `<title>` (~60 char warning)                                                                                                                            |
+| **Description** (`description`)                      | the page `<meta description>` (~160 char warning)                                                                                                                |
+| **Mots-clés** (`keywords`)                           | comma-separated page keywords                                                                                                                                    |
+| **Image de partage** (`image`)                       | page-specific OG card (+ alt); empty = the language default                                                                                                      |
+| **Image pour Google** (`schemaImage`)                | the image Google may show beside the result (WebPage JSON-LD `image`); empty = the OG image                                                                      |
+| **Adresse officielle** (`canonical`)                 | canonical URL override — only for a page that duplicates another                                                                                                 |
+| **Masquer des moteurs de recherche** (`noIndex`)     | drops the page from search **and** the sitemap **and** the LLM endpoints at once                                                                                 |
+| **Informations Google en plus** (`structuredData[]`) | per-page JSON-LD (Service / Product / Person / Event)                                                                                                            |
 | **Section pour les IA** (`llmsSection`)              | the `## H2` this page groups under in `/llms.txt` (e.g. « Guides »); empty = the default « Pages ». Ordered per language by `sectionOrder` on the site singleton |
-| **Résumé pour les IA** (`llmsSummary`)               | the page's `/llms.txt` line (newlines flattened)                                            |
-| **Contenu complet pour les IA** (`llmsFull`)         | the Markdown body for `/llms-full.txt` + `/llms/<page>`                                     |
+| **Résumé pour les IA** (`llmsSummary`)               | the page's `/llms.txt` line (newlines flattened)                                                                                                                 |
+| **Contenu complet pour les IA** (`llmsFull`)         | the Markdown body for `/llms-full.txt` + `/llms/<page>`                                                                                                          |
 
 > **Single-value SEO on shared singletons.** The `blog` and `waitlistSettings` singletons are locale-independent, so `/blog`, `/author`, `/blog/category`, `/blog/tag`, and `/waitlist` have **one** SEO value, not one per locale — a deliberate "as few models as possible" trade. The `home` page and legal pages keep **per-locale** SEO (their documents are translated).
 
@@ -42,17 +42,17 @@ Doc title in the desk: **SEO par langue**. Fixed-id singletons (`siteMeta.en`, `
 
 Doc title in the desk: **Paramètres du site (SEO)**. Read by `getSiteSettings()`.
 
-| Field (Studio group)                                 | Drives                                                                                                     |
-| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **Logo & icônes** (`logo` / `logoDark` / `icon`)     | header + footer logo (with a dark-theme variant), favicon + apple-touch + PWA icons                        |
-| **Réseaux sociaux** (`social`)                       | footer follow block + `twitter:site`/`creator` + Organization `sameAs` (one source, `src/lib/social.ts`)   |
-| **Votre activité** (`businessType`)                  | schema.org `@type` — `Organization` or a LocalBusiness subtype (adds address / hours / geo / area served)  |
-| **Raison sociale / dénomination légale / autre nom** | Organization `name` / `legalName` / `alternateName`                                                        |
-| **Adresse / contact / GPS / horaires / zones**       | the LocalBusiness JSON-LD fields                                                                           |
-| **Infos Google en plus** (`globalSchemas[]`)         | extra entities in the site `@graph` — Service / Product / Person / Event                                   |
-| **Indexation du site** (`robots`)                    | `noindex` / `nofollow` applied to **every page** — one switch to keep a staging/holding site out of search |
-| **Vérification Google / Bing** (`verification`)      | Search Console `<meta>` tags (`google` + `msvalidate.01`)                                                  |
-| **Analytics & cookies** (`analytics`)                | GA id + the cookie-consent banner toggle — see [Analytics](./analytics.md)                                 |
+| Field (Studio group)                                 | Drives                                                                                                                                                                           |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Logo & icônes** (`logo` / `logoDark` / `icon`)     | header + footer logo (with a dark-theme variant), favicon + apple-touch + PWA icons                                                                                              |
+| **Réseaux sociaux** (`social`)                       | footer follow block + `twitter:site`/`creator` + Organization `sameAs` (one source, `src/lib/social.ts`)                                                                         |
+| **Votre activité** (`businessType`)                  | schema.org `@type` — `Organization` or a LocalBusiness subtype (adds address / hours / geo / area served)                                                                        |
+| **Raison sociale / dénomination légale / autre nom** | Organization `name` / `legalName` / `alternateName`                                                                                                                              |
+| **Adresse / contact / GPS / horaires / zones**       | the LocalBusiness JSON-LD fields                                                                                                                                                 |
+| **Infos Google en plus** (`globalSchemas[]`)         | extra entities in the site `@graph` — Service / Product / Person / Event                                                                                                         |
+| **Indexation du site** (`robots`)                    | `noindex` / `nofollow` applied to **every page** — one switch to keep a staging/holding site out of search                                                                       |
+| **Vérification Google / Bing** (`verification`)      | Search Console `<meta>` tags (`google` + `msvalidate.01`)                                                                                                                        |
+| **Analytics & cookies** (`analytics`)                | GA id + the cookie-consent banner toggle — see [Analytics](./analytics.md)                                                                                                       |
 | **Partage** (`share`)                                | the site-wide share row (site footer **and** blog posts) — a master on/off plus a checkbox per network (X / LinkedIn / Facebook / copy-link). One shared setting, not blog-owned |
 
 ## How it reaches the page

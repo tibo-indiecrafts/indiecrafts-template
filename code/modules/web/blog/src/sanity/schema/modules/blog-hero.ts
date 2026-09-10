@@ -29,7 +29,8 @@ export default defineModule({
       type: "reference",
       to: [{ type: "post" }],
       hidden: ({ parent }) => parent?.source !== "pinned",
-      description: "L'article affiché quand « Article choisi » est sélectionné.",
+      description:
+        "L'article affiché quand « Article choisi » est sélectionné.",
       options: {
         filter: ({ document }) =>
           document.language

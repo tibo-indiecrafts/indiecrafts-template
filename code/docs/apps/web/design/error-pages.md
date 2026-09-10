@@ -9,10 +9,10 @@ state, and that difference is the whole design.
 ## The split
 
 | State                | Component (`@indiecrafts/packages-shared-system-pages`) | Route (app)                         | Copy source                                                    |
-| -------------------- | --------------------------------------- | ----------------------------------- | -------------------------------------------------------------- |
-| Uncaught error (500) | `ErrorContent`                          | `app/[locale]/error.tsx`            | `messages` only (`pages.error`)                                |
-| 404 not found        | `NotFoundContent`                       | `app/[locale]/not-found.tsx`        | Sanity `systemPages.notFound` ?? `messages` (`pages.notFound`) |
-| Maintenance (503)    | `Maintenance`                           | `app/maintenance/` (via `proxy.ts`) | i18n + Sanity brand                                            |
+| -------------------- | ------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------- |
+| Uncaught error (500) | `ErrorContent`                                          | `app/[locale]/error.tsx`            | `messages` only (`pages.error`)                                |
+| 404 not found        | `NotFoundContent`                                       | `app/[locale]/not-found.tsx`        | Sanity `systemPages.notFound` ?? `messages` (`pages.notFound`) |
+| Maintenance (503)    | `Maintenance`                                           | `app/maintenance/` (via `proxy.ts`) | i18n + Sanity brand                                            |
 
 The brick components are **presentational and token-based** (so a second app inherits
 the same pages in its own theme); the app route files own the Next.js contract,

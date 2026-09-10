@@ -30,13 +30,13 @@ carries `PASTE_D1_ID_HERE`); an appendix (§13) covers already-deployed instance
 
 ## 3. The two databases + table assignment
 
-**Dividing principle:** *must-not-lose / sensitive / low-write* vs *high-volume / append-only
-/ auto-expiring*.
+**Dividing principle:** _must-not-lose / sensitive / low-write_ vs _high-volume / append-only
+/ auto-expiring_.
 
-| DB | binding | Tables | Character |
-|----|---------|--------|-----------|
-| **`core`** (new) | `CORE_DB` | `user_profiles`, `consent_events`, `data_requests`, `erasure_requests`, `export_requests`, `site_settings` | Identity, data-subject rights, admin config. Kept, sensitive, low-write. |
-| **`audit`** (existing, renamed-in-role) | `DB` | `session_events`, `security_events`, `admin_audit`, `csp_reports`, `backup_runs` | Append-only telemetry firehose. High-write, retention-purged. |
+| DB                                      | binding   | Tables                                                                                                     | Character                                                                |
+| --------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **`core`** (new)                        | `CORE_DB` | `user_profiles`, `consent_events`, `data_requests`, `erasure_requests`, `export_requests`, `site_settings` | Identity, data-subject rights, admin config. Kept, sensitive, low-write. |
+| **`audit`** (existing, renamed-in-role) | `DB`      | `session_events`, `security_events`, `admin_audit`, `csp_reports`, `backup_runs`                           | Append-only telemetry firehose. High-write, retention-purged.            |
 
 Naming: the existing DB is already called `audit` and its name fits the firehose
 (`session_events`, `security_events`, `admin_audit`, `csp_reports`). The **new** DB reuses
@@ -125,8 +125,8 @@ Cross-table statements (none found) would need care; there are none.
 ## 8. Registry + wrangler + runners
 
 - **`scripts/lib/databases.mjs`** — add the `core` row (`{ name: "core", kind: "d1",
-  owner: "api", binding: "CORE_DB", altitude: "global", dir: "code/shared/api/db/core",
-  backup: "wrangler", order: 8 }`), and point the `audit` row's `dir` at
+owner: "api", binding: "CORE_DB", altitude: "global", dir: "code/shared/api/db/core",
+backup: "wrangler", order: 8 }`), and point the `audit` row's `dir` at
   `code/shared/api/db/audit`. Fix the stale "three tables" comment.
 - **`api/wrangler.toml`** — add a second `[[env.<env>.d1_databases]]` block per env with
   `binding = "CORE_DB"`, `database_name = "indiecrafts-<env>-shared-api-core"`,

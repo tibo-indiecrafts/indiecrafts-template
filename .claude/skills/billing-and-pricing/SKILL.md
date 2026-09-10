@@ -74,18 +74,26 @@ Warn before users hit a wall, not after:
 ```tsx
 <div className="space-y-1">
   <div className="flex justify-between text-sm">
-    <span>Seats</span><span className="tabular-nums">{used} / {limit}</span>
+    <span>Seats</span>
+    <span className="tabular-nums">
+      {used} / {limit}
+    </span>
   </div>
   <Progress value={(used / limit) * 100} />
   {used / limit > 0.8 && (
-    <p className="text-xs text-amber-600">You're approaching your seat limit. <a className="underline" href="/billing">Upgrade</a></p>
+    <p className="text-xs text-amber-600">
+      You're approaching your seat limit.{" "}
+      <a className="underline" href="/billing">
+        Upgrade
+      </a>
+    </p>
   )}
 </div>
 ```
 
 ## Paywalls & upgrade prompts
 
-- Gate the *action*, not the whole UI — show the feature, then an upgrade CTA on use.
+- Gate the _action_, not the whole UI — show the feature, then an upgrade CTA on use.
 - Contextual prompt: name the benefit ("Upgrade to Pro for unlimited projects"), not just "Upgrade."
 - Current plan shows "Current plan" disabled; others show upgrade/downgrade.
 
@@ -102,6 +110,6 @@ Warn before users hit a wall, not after:
 
 Conversion surfaces that link from `dashboard-layout` usage meters and `settings-pages` billing; gate flows pair with `modals-and-dialogs` and `notifications-and-toasts`.
 
-
 ---
+
 <sub>Vendored from saas-ui-skills — re-run `npx saas-ui-skills` to update.</sub>

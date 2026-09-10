@@ -1,6 +1,0 @@
-# Local secrets for `wrangler dev` — copy to `.dev.vars` (gitignored) and fill.
-# In staging/prod these are set with `wrangler secret put <NAME> --env <env>`.
-
-# ANTHROPIC_API_KEY=""   # server-only Claude key (this Worker is its single home)
-# APP_API_TOKEN=""       # native bearer (mobile/hybrid send Authorization: Bearer …)
-# TURNSTILE_SECRET=""    # browser bot gate — unset = opt-out (passes); set = fail-closed

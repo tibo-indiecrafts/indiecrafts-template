@@ -30,6 +30,7 @@
 ### Task 1: ROPA (Art. 30) + sub-processors & cross-border transfers
 
 **Files:**
+
 - Create: `code/docs/apps/web/config/ropa.md`
 - Create: `code/docs/apps/web/config/sub-processors.md`
 - Modify: `code/docs/.vitepress/config.mts` (2 sidebar lines in the config group, after "Breach response")
@@ -52,6 +53,7 @@
 ### Task 2: DPIA template + per-regime notices & scope boundaries
 
 **Files:**
+
 - Create: `code/docs/apps/web/config/dpia-template.md`
 - Create: `code/docs/apps/web/config/privacy-by-regime.md`
 - Modify: `code/docs/.vitepress/config.mts` (2 sidebar lines, after Task 1's)
@@ -73,7 +75,8 @@
 ---
 
 ## Self-review
+
 - **Coverage:** #13 ROPA (ropa.md) · #15 sub-processors/DPA + #21/#22 transfers (sub-processors.md) · #16 DPIA (dpia-template.md) · #14 per-regime notices + #23 minors + #24 special-category (privacy-by-regime.md). All excluding PIPL/China.
 - **Consistency:** references data-retention.md / operations.md / security-hardening.md rather than duplicating; every operator-specific value is a `[placeholder]`; foldered in the config-docs group with sidebar + changelog per the docs rules.
-- **Deferred/noted:** no notice *generator* (guidance for the Sanity-authored policy instead — YAGNI for a template); no dead minors config flag (documented extension point per ruling W4-MINORS-HOOK); rectification/restriction/objection stay manual (ruling W4-RECTIFICATION).
+- **Deferred/noted:** no notice _generator_ (guidance for the Sanity-authored policy instead — YAGNI for a template); no dead minors config flag (documented extension point per ruling W4-MINORS-HOOK); rectification/restriction/objection stay manual (ruling W4-RECTIFICATION).
 - Tasks run SEQUENTIALLY (both edit `config.mts` + `CHANGELOG.md`) — no parallel dispatch.

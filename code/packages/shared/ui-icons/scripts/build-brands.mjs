@@ -34,7 +34,9 @@ const marks = names.map((name) => {
   // Otherwise a simple-icons slug — pull the official mark.
   const icon = bySlug[src];
   if (!icon) {
-    console.error(`✗ brands.json: "${name}" → unknown simple-icons slug "${src}".`);
+    console.error(
+      `✗ brands.json: "${name}" → unknown simple-icons slug "${src}".`,
+    );
     process.exit(1);
   }
   return { name, title: icon.title, hex: `#${icon.hex}`, path: icon.path };

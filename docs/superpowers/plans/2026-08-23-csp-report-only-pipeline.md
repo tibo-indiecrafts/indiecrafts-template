@@ -34,12 +34,14 @@
 Add the ability to emit reporting directives on the enforced policy and a stricter `Content-Security-Policy-Report-Only` candidate. Additive: existing callers are unchanged.
 
 **Files:**
+
 - Modify: `code/packages/shared/security/src/csp.ts`
 - Modify: `code/packages/shared/security/src/headers.ts`
 - Modify: `code/packages/shared/security/src/index.ts`
 - Test: `code/packages/shared/security/src/csp.test.ts` (create if absent; else append)
 
 **Interfaces:**
+
 - Produces: `type CspReporting = { endpoint: string; reportOnly?: { dropSources?: string[]; dropUnsafeEval?: boolean } }`
 - Produces: `buildCsp(env, csp?, reporting?: CspReporting): string` — enforced policy; appends `report-to csp-endpoint; report-uri <endpoint>` when `reporting` is set.
 - Produces: `buildReportOnlyCsp(env, csp, reporting: CspReporting): string | null` — the candidate; `null` when `reporting.reportOnly` is absent.
@@ -54,7 +56,10 @@ import { describe, expect, it } from "vitest";
 import { buildCsp, buildReportOnlyCsp } from "./csp";
 import { securityHeaders } from "./headers";
 
-const REPORTING = { endpoint: "/api/csp-report", reportOnly: { dropSources: ["https:"] } };
+const REPORTING = {
+  endpoint: "/api/csp-report",
+  reportOnly: { dropSources: ["https:"] },
+};
 
 describe("csp reporting", () => {
   it("appends report-to and report-uri to the enforced policy", () => {
@@ -79,7 +84,9 @@ describe("csp reporting", () => {
   });
 
   it("candidate is null without reportOnly", () => {
-    expect(buildReportOnlyCsp("production", {}, { endpoint: "/api/csp-report" })).toBeNull();
+    expect(
+      buildReportOnlyCsp("production", {}, { endpoint: "/api/csp-report" }),
+    ).toBeNull();
   });
 
   it("securityHeaders emits Reporting-Endpoints and the Report-Only header", () => {
@@ -156,7 +163,10 @@ function cspDirectives(
   return directives;
 }
 
-function withReporting(directives: string[], reporting: CspReporting): string[] {
+function withReporting(
+  directives: string[],
+  reporting: CspReporting,
+): string[] {
   return [
     ...directives,
     `report-to csp-endpoint`,
@@ -170,7 +180,9 @@ export function buildCsp(
   reporting?: CspReporting,
 ): string {
   const directives = cspDirectives(env, csp);
-  return (reporting ? withReporting(directives, reporting) : directives).join("; ");
+  return (reporting ? withReporting(directives, reporting) : directives).join(
+    "; ",
+  );
 }
 
 export function buildReportOnlyCsp(
@@ -196,7 +208,12 @@ In `code/packages/shared/security/src/headers.ts`, import the new pieces and wir
 Change the import line:
 
 ```ts
-import { buildCsp, buildReportOnlyCsp, type CspHosts, type CspReporting } from "./csp";
+import {
+  buildCsp,
+  buildReportOnlyCsp,
+  type CspHosts,
+  type CspReporting,
+} from "./csp";
 ```
 
 Add to `SecurityHeadersOptions`:
@@ -213,25 +230,25 @@ Add to `SecurityHeadersOptions`:
 In the destructured params add `reporting`, and replace the CSP header line and add the reporting headers:
 
 ```ts
-  const headers: { key: string; value: string }[] = [
-    { key: "X-Content-Type-Options", value: "nosniff" },
-    { key: "X-Frame-Options", value: "DENY" },
-    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-    { key: "Permissions-Policy", value: permissionsPolicy },
-    { key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) },
-  ];
-  if (reporting) {
+const headers: { key: string; value: string }[] = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: permissionsPolicy },
+  { key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) },
+];
+if (reporting) {
+  headers.push({
+    key: "Reporting-Endpoints",
+    value: `csp-endpoint="${reporting.endpoint}"`,
+  });
+  const reportOnly = buildReportOnlyCsp(env, csp, reporting);
+  if (reportOnly)
     headers.push({
-      key: "Reporting-Endpoints",
-      value: `csp-endpoint="${reporting.endpoint}"`,
+      key: "Content-Security-Policy-Report-Only",
+      value: reportOnly,
     });
-    const reportOnly = buildReportOnlyCsp(env, csp, reporting);
-    if (reportOnly)
-      headers.push({
-        key: "Content-Security-Policy-Report-Only",
-        value: reportOnly,
-      });
-  }
+}
 ```
 
 - [ ] **Step 5: Export the new symbols**
@@ -268,11 +285,13 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 Pure, framework-free functions that turn either report format into one sanitized shape. This is the security-critical core; test it hard.
 
 **Files:**
+
 - Create: `code/packages/shared/security/src/csp-report.ts`
 - Create: `code/packages/shared/security/src/csp-report.test.ts`
 - Modify: `code/packages/shared/security/package.json` (add the `./csp-report` subpath export)
 
 **Interfaces:**
+
 - Produces: `type NormalizedCspReport = { directive: string; documentUrl: string; blockedUrl: string; sourceFile: string; line: number | null; snippet: string; disposition: string }`
 - Produces: `type SanitizedCspReport = { surface: string; disposition: "report" | "enforce"; directive: string; documentPath: string; blockedSource: string; sampleSourceFile: string | null; sampleLine: number | null; sampleSnippet: string | null }`
 - Produces: `normalizeCspReports(raw: unknown, contentType: string): NormalizedCspReport[]`
@@ -296,7 +315,9 @@ import {
 describe("collapseRoute", () => {
   it("collapses numeric, uuid, and long hex segments to :id", () => {
     expect(collapseRoute("/orders/93847")).toBe("/orders/:id");
-    expect(collapseRoute("/u/2f1c8e9a-1b2c-4d5e-8f90-a1b2c3d4e5f6")).toBe("/u/:id");
+    expect(collapseRoute("/u/2f1c8e9a-1b2c-4d5e-8f90-a1b2c3d4e5f6")).toBe(
+      "/u/:id",
+    );
     expect(collapseRoute("/a/deadbeefdeadbeef99")).toBe("/a/:id");
     expect(collapseRoute("/blog/hello-world")).toBe("/blog/hello-world");
   });
@@ -374,7 +395,15 @@ describe("sanitizeCspReport", () => {
 
   it("keeps literal blocked values like inline", () => {
     const s = sanitizeCspReport(
-      { directive: "script-src-elem", documentUrl: "https://x.dev/", blockedUrl: "inline", sourceFile: "", line: null, snippet: "", disposition: "report" },
+      {
+        directive: "script-src-elem",
+        documentUrl: "https://x.dev/",
+        blockedUrl: "inline",
+        sourceFile: "",
+        line: null,
+        snippet: "",
+        disposition: "report",
+      },
       "admin",
     );
     expect(s!.blockedSource).toBe("inline");
@@ -382,7 +411,15 @@ describe("sanitizeCspReport", () => {
 
   it("drops extension noise", () => {
     const s = sanitizeCspReport(
-      { directive: "script-src-elem", documentUrl: "https://x.dev/", blockedUrl: "chrome-extension://a/b.js", sourceFile: "", line: null, snippet: "", disposition: "report" },
+      {
+        directive: "script-src-elem",
+        documentUrl: "https://x.dev/",
+        blockedUrl: "chrome-extension://a/b.js",
+        sourceFile: "",
+        line: null,
+        snippet: "",
+        disposition: "report",
+      },
       "website",
     );
     expect(s).toBeNull();
@@ -474,7 +511,10 @@ function fromReportingApi(body: Record<string, unknown>): NormalizedCspReport {
 
 function fromLegacy(report: Record<string, unknown>): NormalizedCspReport {
   return {
-    directive: str(report["effective-directive"] ?? report["violated-directive"], 48),
+    directive: str(
+      report["effective-directive"] ?? report["violated-directive"],
+      48,
+    ),
     documentUrl: str(report["document-uri"]),
     blockedUrl: str(report["blocked-uri"]),
     sourceFile: str(report["source-file"]),
@@ -489,13 +529,17 @@ export function normalizeCspReports(
   contentType: string,
 ): NormalizedCspReport[] {
   if (contentType.includes("application/csp-report")) {
-    const obj = (raw as { "csp-report"?: Record<string, unknown> })?.["csp-report"];
+    const obj = (raw as { "csp-report"?: Record<string, unknown> })?.[
+      "csp-report"
+    ];
     return obj ? [fromLegacy(obj)] : [];
   }
   if (Array.isArray(raw)) {
     return raw
       .filter((r) => (r as { type?: string }).type === "csp-violation")
-      .map((r) => fromReportingApi(((r as { body?: Record<string, unknown> }).body) ?? {}));
+      .map((r) =>
+        fromReportingApi((r as { body?: Record<string, unknown> }).body ?? {}),
+      );
   }
   return [];
 }
@@ -581,6 +625,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 The Next route glue and the server-only forwarder. Depends on the security brick for the pure parsing.
 
 **Files:**
+
 - Create: `code/packages/web/security-reports/package.json`
 - Create: `code/packages/web/security-reports/src/handle.ts`
 - Create: `code/packages/web/security-reports/src/forward.ts`
@@ -592,6 +637,7 @@ The Next route glue and the server-only forwarder. Depends on the security brick
 - Modify: `code/packages/CHANGELOG.md`
 
 **Interfaces:**
+
 - Consumes (Task 2): `normalizeCspReports`, `sanitizeCspReport`, `type SanitizedCspReport` from `@indiecrafts/packages-shared-security/csp-report`.
 - Produces: `handleCspReport(request: Request, opts: { surface: string }): Promise<Response>` (import: `@indiecrafts/packages-web-security-reports/handle`)
 - Produces: `forwardCspReports(reports: SanitizedCspReport[]): Promise<void>` (import: `@indiecrafts/packages-web-security-reports/forward`)
@@ -728,7 +774,11 @@ describe("handleCspReport", () => {
 
   it("rejects a non-CSP content-type with 415", async () => {
     const res = await handleCspReport(
-      new Request("https://x.dev/api/csp-report", { method: "POST", body: "{}", headers: { "content-type": "text/plain" } }),
+      new Request("https://x.dev/api/csp-report", {
+        method: "POST",
+        body: "{}",
+        headers: { "content-type": "text/plain" },
+      }),
       { surface: "website" },
     );
     expect(res.status).toBe(415);
@@ -737,10 +787,20 @@ describe("handleCspReport", () => {
 
   it("normalizes, sanitizes, and forwards a valid report as 204", async () => {
     const body = JSON.stringify(
-      report({ effectiveDirective: "img-src", documentURL: "https://x.dev/p/7", blockedURL: "https://evil.example/a.png", sourceFile: "", disposition: "report" }),
+      report({
+        effectiveDirective: "img-src",
+        documentURL: "https://x.dev/p/7",
+        blockedURL: "https://evil.example/a.png",
+        sourceFile: "",
+        disposition: "report",
+      }),
     );
     const res = await handleCspReport(
-      new Request("https://x.dev/api/csp-report", { method: "POST", body, headers: { "content-type": "application/reports+json" } }),
+      new Request("https://x.dev/api/csp-report", {
+        method: "POST",
+        body,
+        headers: { "content-type": "application/reports+json" },
+      }),
       { surface: "website" },
     );
     expect(res.status).toBe(204);
@@ -752,10 +812,19 @@ describe("handleCspReport", () => {
 
   it("drops extension noise and does not forward", async () => {
     const body = JSON.stringify(
-      report({ effectiveDirective: "script-src-elem", documentURL: "https://x.dev/", blockedURL: "chrome-extension://a/b.js", disposition: "report" }),
+      report({
+        effectiveDirective: "script-src-elem",
+        documentURL: "https://x.dev/",
+        blockedURL: "chrome-extension://a/b.js",
+        disposition: "report",
+      }),
     );
     const res = await handleCspReport(
-      new Request("https://x.dev/api/csp-report", { method: "POST", body, headers: { "content-type": "application/reports+json" } }),
+      new Request("https://x.dev/api/csp-report", {
+        method: "POST",
+        body,
+        headers: { "content-type": "application/reports+json" },
+      }),
       { surface: "website" },
     );
     expect(res.status).toBe(204);
@@ -798,12 +867,14 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 The migration and the worker branch are tested together (the branch test needs the table), so they are one task.
 
 **Files:**
+
 - Create: `code/shared/api/db/d1/migrations/0004_csp_reports.sql`
 - Modify: `code/shared/api/src/index.ts` (add the branch after the `consent` branch, before the final `else`)
 - Modify: `code/shared/api/src/index.test.ts` (or the colocated worker test file; create a `csp-report` test)
 - Modify: `code/shared/api/CHANGELOG.md`
 
 **Interfaces:**
+
 - Consumes: forwarded body `{ kind: "csp-report", reports: SanitizedCspReport[] }` from Task 3's `forwardCspReports`.
 - Produces: rows in `csp_reports`, keyed by `group_key = surface|disposition|directive|document_path|blocked_source`.
 
@@ -847,7 +918,10 @@ it("kind:csp-report upserts an aggregated row and increments count", async () =>
     worker.fetch(
       new Request("https://api.test/v1/events", {
         method: "POST",
-        headers: { authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+        headers: {
+          authorization: `Bearer ${TOKEN}`,
+          "content-type": "application/json",
+        },
         body: JSON.stringify({ kind: "csp-report", reports }),
       }),
       env,
@@ -881,7 +955,10 @@ it("kind:csp-report with an empty array is 400", async () => {
   const res = await worker.fetch(
     new Request("https://api.test/v1/events", {
       method: "POST",
-      headers: { authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+      headers: {
+        authorization: `Bearer ${TOKEN}`,
+        "content-type": "application/json",
+      },
       body: JSON.stringify({ kind: "csp-report", reports: [] }),
     }),
     env,
@@ -977,11 +1054,13 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ### Task 5: Cron — 30-day `csp_reports` purge
 
 **Files:**
+
 - Modify: `code/shared/cron/src/index.ts`
 - Modify: `code/shared/cron/src/retention.test.ts` (or the colocated retention test)
 - Modify: `code/shared/cron/CHANGELOG.md`
 
 **Interfaces:**
+
 - Consumes: the `csp_reports` table (Task 4), purged on `last_seen`.
 
 - [ ] **Step 1: Write the failing test**
@@ -997,8 +1076,12 @@ it("purges csp_reports older than 30 days on last_seen", async () => {
 
   await runScheduled(NOW);
 
-  const { results } = await env.DB.prepare("SELECT group_key FROM csp_reports").all();
-  expect(results.map((r) => r.group_key)).toEqual(["website|report|img-src|/b|https://y"]);
+  const { results } = await env.DB.prepare(
+    "SELECT group_key FROM csp_reports",
+  ).all();
+  expect(results.map((r) => r.group_key)).toEqual([
+    "website|report|img-src|/b|https://y",
+  ]);
 });
 ```
 
@@ -1023,20 +1106,15 @@ const CSP_RETENTION_DAYS = 30;
 In the `scheduled` handler, add the cutoff beside the others (after line ~59):
 
 ```ts
-    const cspCutoff = retentionCutoff(
-      controller.scheduledTime,
-      CSP_RETENTION_DAYS,
-    );
+const cspCutoff = retentionCutoff(controller.scheduledTime, CSP_RETENTION_DAYS);
 ```
 
 Inside the `if (env.DB)` try block, after the `consent` delete (line ~81), add:
 
 ```ts
-        const csp = await env.DB.prepare(
-          "DELETE FROM csp_reports WHERE last_seen < ?",
-        )
-          .bind(cspCutoff)
-          .run();
+const csp = await env.DB.prepare("DELETE FROM csp_reports WHERE last_seen < ?")
+  .bind(cspCutoff)
+  .run();
 ```
 
 Add `cspCutoff` and `cspRows: csp.meta?.changes` to the `logger.info("retention purge", {...})` payload.
@@ -1066,11 +1144,13 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ### Task 6: Website — enable CSP reporting + the report route
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/website/next.config.ts`
 - Modify: `code/projects/web/surfaces/website/package.json` (add the brick dep)
 - Create: `code/projects/web/surfaces/website/src/app/api/csp-report/route.ts`
 
 **Interfaces:**
+
 - Consumes: `handleCspReport` (Task 3); `securityHeaders` `reporting` option (Task 1).
 
 - [ ] **Step 1: Add the brick to transpile + deps**
@@ -1142,12 +1222,14 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 Admin ships no security headers today. This adds the first `securityHeaders()` call there plus the report route. The route MUST be reachable without a session.
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/admin/next.config.ts`
 - Modify: `code/projects/web/surfaces/admin/package.json`
 - Create: `code/projects/web/surfaces/admin/src/app/api/csp-report/route.ts`
 - Modify (if needed): `code/projects/web/surfaces/admin/src/proxy.ts`
 
 **Interfaces:**
+
 - Consumes: `securityHeaders` + `reporting` (Task 1); `handleCspReport` (Task 3).
 
 - [ ] **Step 1: Confirm the admin package name and gate**
@@ -1230,12 +1312,14 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 The `app` surface transpiles neither brick and has no `headers()`. This wires both.
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/app/next.config.ts`
 - Modify: `code/projects/web/surfaces/app/package.json`
 - Create: `code/projects/web/surfaces/app/src/app/api/csp-report/route.ts`
 - Modify (if needed): `code/projects/web/surfaces/app/src/proxy.ts`
 
 **Interfaces:**
+
 - Consumes: `securityHeaders` + `reporting` (Task 1); `handleCspReport` (Task 3).
 
 - [ ] **Step 1: Confirm the app package name, gate, and route dir**
@@ -1291,6 +1375,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 Finish the docs the earlier tasks touched only in their own areas: the `security` package page (new reporting API) and a final read of the two narrative pages.
 
 **Files:**
+
 - Modify: `code/docs/packages/security.md`
 - Verify: `code/docs/apps/web/seo/security-headers.md` (edited in Task 6 — confirm it reads whole)
 - Verify: `code/docs/.vitepress/config.mts` (the `security-reports` sidebar line from Task 3)

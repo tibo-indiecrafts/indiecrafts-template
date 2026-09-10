@@ -6,8 +6,8 @@ i18n-agnostic (copy comes in as props, like `system-pages`), so any app reuses i
 
 > **Portable compare split out.** The version comparison — `isUpdateAvailable(current, latest)`
 > (string identity, not semver) + the `VersionResponse` shape + `versionId` + `VERSION_ENDPOINT` —
-> now lives in **[`@indiecrafts/packages-shared-version`](./version-shared)**, so the Electron
-> renderer and the Expo shell reuse it. This web brick re-exports `isUpdateAvailable` and its
+> now lives in **[`@indiecrafts/packages-shared-version`](./version-shared)**, so the Expo shell
+> reuses it. This web brick re-exports `isUpdateAvailable` and its
 > hook/component build the DOM poll on top.
 
 The app is OpenNext/Cloudflare — **no service worker** — so detection is a small `no-store` poll of a
@@ -16,11 +16,11 @@ worker sees the mismatch.
 
 ## Exports
 
-| Import                                    | What it is                                                                                                                                                                                                                 |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useVersionCheck` (`./use-version-check`) | `"use client"` hook. `{ current, endpoint = "/api/version", intervalMs = 15min }` → `{ updateAvailable, latest }`. Polls on mount, on the interval, and on tab-focus / network-back (people leave tabs open for days).     |
-| `UpdatePrompt` (`./update-prompt`)        | `"use client"` self-contained banner (no `<Toaster>` needed) — fixed bottom, token-styled, `role="status"` + `aria-live`. Props: `current, message, reloadLabel, dismissLabel, endpoint?, intervalMs?, reloadOnNavigate?`. |
-| `isUpdateAvailable` (`./use-version-check`) | Re-exported from [`packages-shared-version`](./version-shared) — the string-identity compare the hook uses (`latest !== null && latest !== current`). One import surface for web consumers.                                 |
+| Import                                      | What it is                                                                                                                                                                                                                 |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useVersionCheck` (`./use-version-check`)   | `"use client"` hook. `{ current, endpoint = "/api/version", intervalMs = 15min }` → `{ updateAvailable, latest }`. Polls on mount, on the interval, and on tab-focus / network-back (people leave tabs open for days).     |
+| `UpdatePrompt` (`./update-prompt`)          | `"use client"` self-contained banner (no `<Toaster>` needed) — fixed bottom, token-styled, `role="status"` + `aria-live`. Props: `current, message, reloadLabel, dismissLabel, endpoint?, intervalMs?, reloadOnNavigate?`. |
+| `isUpdateAvailable` (`./use-version-check`) | Re-exported from [`packages-shared-version`](./version-shared) — the string-identity compare the hook uses (`latest !== null && latest !== current`). One import surface for web consumers.                                |
 
 ## How detection works
 

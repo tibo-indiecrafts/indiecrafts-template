@@ -8,7 +8,10 @@ const meta = {
   title: "Native/ThemedText",
   component: ThemedText,
   tags: ["autodocs"],
-  args: { variant: "body", children: "The quick brown fox jumps over the lazy dog." },
+  args: {
+    variant: "body",
+    children: "The quick brown fox jumps over the lazy dog.",
+  },
   argTypes: {
     variant: { control: "select", options: VARIANTS },
   },

@@ -18,14 +18,14 @@ the whole API's abuse policy. It's app-owned (a second app ships its own limits)
 
 `src/config/security.ts` — a flat `as const` object, one key per guarded route:
 
-| Route | limit / window | bodyMax | Turnstile |
-| --- | --- | --- | --- |
-| `newsletter` — `/api/newsletter` | 5 / 600s | 8000 | yes |
-| `waitlist` — `/api/waitlist` | 5 / 600s | 8000 | yes |
-| `comments` — `/api/comments` | 8 / 600s | 12000 | yes |
-| `dataRequest` — `/api/data-request` | 5 / 600s | 8000 | yes |
-| `confirm` — `/api/newsletter/confirm` | 10 / 600s | 2000 | no (token is the auth) |
-| `moderate` — `/api/comments/moderate` | 20 / 600s | — | no (single-use token; cross-site form POST) |
+| Route                                 | limit / window | bodyMax | Turnstile                                   |
+| ------------------------------------- | -------------- | ------- | ------------------------------------------- |
+| `newsletter` — `/api/newsletter`      | 5 / 600s       | 8000    | yes                                         |
+| `waitlist` — `/api/waitlist`          | 5 / 600s       | 8000    | yes                                         |
+| `comments` — `/api/comments`          | 8 / 600s       | 12000   | yes                                         |
+| `dataRequest` — `/api/data-request`   | 5 / 600s       | 8000    | yes                                         |
+| `confirm` — `/api/newsletter/confirm` | 10 / 600s      | 2000    | no (token is the auth)                      |
+| `moderate` — `/api/comments/moderate` | 20 / 600s      | —       | no (single-use token; cross-site form POST) |
 
 A route reads its entry and passes it straight in:
 
@@ -33,7 +33,9 @@ A route reads its entry and passes it straight in:
 import { security } from "@/config";
 import { withGuard } from "@indiecrafts/packages-shared-security/guard";
 
-const handle = withGuard(async (req, body) => { /* … */ }, security.newsletter);
+const handle = withGuard(async (req, body) => {
+  /* … */
+}, security.newsletter);
 ```
 
 ## Edit here, not the route

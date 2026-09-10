@@ -72,7 +72,10 @@ function fromReportingApi(body: Record<string, unknown>): NormalizedCspReport {
 
 function fromLegacy(report: Record<string, unknown>): NormalizedCspReport {
   return {
-    directive: str(report["effective-directive"] ?? report["violated-directive"], 48),
+    directive: str(
+      report["effective-directive"] ?? report["violated-directive"],
+      48,
+    ),
     documentUrl: str(report["document-uri"]),
     blockedUrl: str(report["blocked-uri"]),
     sourceFile: str(report["source-file"]),
@@ -87,13 +90,17 @@ export function normalizeCspReports(
   contentType: string,
 ): NormalizedCspReport[] {
   if (contentType.includes("application/csp-report")) {
-    const obj = (raw as { "csp-report"?: Record<string, unknown> })?.["csp-report"];
+    const obj = (raw as { "csp-report"?: Record<string, unknown> })?.[
+      "csp-report"
+    ];
     return obj ? [fromLegacy(obj)] : [];
   }
   if (Array.isArray(raw)) {
     return raw
       .filter((r) => (r as { type?: string }).type === "csp-violation")
-      .map((r) => fromReportingApi(((r as { body?: Record<string, unknown> }).body) ?? {}));
+      .map((r) =>
+        fromReportingApi((r as { body?: Record<string, unknown> }).body ?? {}),
+      );
   }
   return [];
 }

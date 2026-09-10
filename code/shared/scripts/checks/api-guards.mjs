@@ -15,7 +15,9 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-const DEFAULT_ROOT = fileURLToPath(new URL("../../../projects", import.meta.url)); // code/projects
+const DEFAULT_ROOT = fileURLToPath(
+  new URL("../../../projects", import.meta.url),
+); // code/projects
 const ROOT = process.env.API_GUARDS_ROOT || DEFAULT_ROOT;
 const IS_FIXTURE = !!process.env.API_GUARDS_ROOT;
 
@@ -54,7 +56,10 @@ function findRoutes(dir, acc = []) {
     if (name === "node_modules" || name.startsWith(".")) continue;
     const full = `${dir}/${name}`;
     if (statSync(full).isDirectory()) findRoutes(full, acc);
-    else if (/(^|\/)route\.tsx?$/.test(full) && full.replace(/\\/g, "/").includes("/app/"))
+    else if (
+      /(^|\/)route\.tsx?$/.test(full) &&
+      full.replace(/\\/g, "/").includes("/app/")
+    )
       acc.push(full);
   }
   return acc;
@@ -86,7 +91,9 @@ for (const file of routes) {
 
 // Keep the allowlist honest — an entry whose file is gone is dead config. Only when
 // scanning the real tree (a fixture run scans its own routes, not these).
-const stale = IS_FIXTURE ? [] : Object.keys(ALLOWLIST).filter((k) => !seenKeys.has(k));
+const stale = IS_FIXTURE
+  ? []
+  : Object.keys(ALLOWLIST).filter((k) => !seenKeys.has(k));
 
 if (violations.length || stale.length) {
   for (const key of violations)
@@ -94,7 +101,9 @@ if (violations.length || stale.length) {
       `✗ api-guards: ${key} exports a mutating handler (POST/PUT/PATCH/DELETE) but does not use withGuard and is not allowlisted.`,
     );
   for (const key of stale)
-    console.error(`✗ api-guards: allowlisted route "${key}" no longer exists — remove it from ALLOWLIST.`);
+    console.error(
+      `✗ api-guards: allowlisted route "${key}" no longer exists — remove it from ALLOWLIST.`,
+    );
   console.error(
     "\nEvery public mutating route must wrap its handler in `withGuard`\n" +
       "(@indiecrafts/packages-shared-security/guard). If it authenticates another way, add it to\n" +

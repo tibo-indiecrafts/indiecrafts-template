@@ -6,11 +6,11 @@
 
 ## Fields
 
-| Field    | Type                     | Notes                                                                              |
-| -------- | ------------------------ | ---------------------------------------------------------------------------------- |
-| `html`   | `string`                 | Raw markup. Renders `null` when empty.                                             |
-| `width`  | `"contained" \| "full"`  | `contained` (default) = `max-w-6xl` + gutter, sits with the other blocks; `full` = spans the viewport, still with a gutter. |
-| `anchor` | `string`                 | Sets the section `id` for in-page links.                                           |
+| Field    | Type                    | Notes                                                                                                                       |
+| -------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `html`   | `string`                | Raw markup. Renders `null` when empty.                                                                                      |
+| `width`  | `"contained" \| "full"` | `contained` (default) = `max-w-6xl` + gutter, sits with the other blocks; `full` = spans the viewport, still with a gutter. |
+| `anchor` | `string`                | Sets the section `id` for in-page links.                                                                                    |
 
 ## Notes
 

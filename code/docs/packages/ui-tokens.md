@@ -5,11 +5,11 @@
 The runtime style source + the design contract, shipped together. **One JSON source of truth
 generates every platform output** — web CSS, React-Native hex, and the PWA-manifest hex mirror.
 
-|               |                                                                                                                                                                               |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Exports**   | `./globals.css` (web — Tailwind scaffolding + `@import "./generated/tokens.css"`) · `./typeset.css` (long-form prose rhythm) · `./nativewind.css` (NativeWind hex vars) · `./native` (React-Native `{ light, dark }` hex object) · `./hex` (manifest hex mirror) · `./tokens.json` (the DTCG source)                                            |
-| **Deps**      | `tailwindcss ^4`, `@tailwindcss/typography ^0.5.19`, `culori ^4` (build-time oklch→hex). **Peer:** none                                                                       |
-| **Consumers** | app imports `@indiecrafts/packages-shared-ui-tokens/globals.css` in the root layout; a native app imports `./native`; the manifest reads `./hex`. Design-system source for `ui` + blog too, coupled via CSS scanning, not a JS import |
+|               |                                                                                                                                                                                                                                                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Exports**   | `./globals.css` (web — Tailwind scaffolding + `@import "./generated/tokens.css"`) · `./typeset.css` (long-form prose rhythm) · `./nativewind.css` (NativeWind hex vars) · `./native` (React-Native `{ light, dark }` hex object) · `./hex` (manifest hex mirror) · `./tokens.json` (the DTCG source) |
+| **Deps**      | `tailwindcss ^4`, `@tailwindcss/typography ^0.5.19`, `culori ^4` (build-time oklch→hex). **Peer:** none                                                                                                                                                                                              |
+| **Consumers** | app imports `@indiecrafts/packages-shared-ui-tokens/globals.css` in the root layout; a native app imports `./native`; the manifest reads `./hex`. Design-system source for `ui` + blog too, coupled via CSS scanning, not a JS import                                                                |
 
 Also ships [`DESIGN.md`](../../code/packages/shared/ui-tokens/DESIGN.md) — the authoritative token
 contract (colors, typography scale, spacing, a11y), colocated so contract and

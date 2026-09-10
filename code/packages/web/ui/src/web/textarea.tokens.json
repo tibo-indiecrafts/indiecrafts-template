@@ -2,8 +2,14 @@
   "$description": "Component token surface for textarea — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "textarea-input": { "$type": "color", "$value": "{component.input}" },
-    "textarea-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "textarea-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
     "textarea-ring": { "$type": "color", "$value": "{semantic.ring}" },
-    "textarea-destructive": { "$type": "color", "$value": "{semantic.destructive}" }
+    "textarea-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    }
   }
 }

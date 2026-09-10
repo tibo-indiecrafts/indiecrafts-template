@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, ThemedText, useTheme } from "@indiecrafts/packages-mobile-ui-native";
+import {
+  Button,
+  ThemedText,
+  useTheme,
+} from "@indiecrafts/packages-mobile-ui-native";
 import type { ConsentCategory } from "../shared/consent-signals";
 import type { ConsentBannerCopy } from "../shared/consent";
 import { ConsentPreferences } from "./ConsentPreferences";
@@ -28,37 +32,60 @@ export function ConsentBanner({
 }) {
   const { theme } = useTheme();
   const [expanded, setExpanded] = useState(false);
-  const [choices, setChoices] = useState<Record<string, boolean>>(initialChoices);
+  const [choices, setChoices] =
+    useState<Record<string, boolean>>(initialChoices);
 
   return (
     <View
       accessibilityRole="alert"
       style={[
         styles.root,
-        { backgroundColor: theme.color.card, borderColor: theme.color.border, borderRadius: theme.radius },
+        {
+          backgroundColor: theme.color.card,
+          borderColor: theme.color.border,
+          borderRadius: theme.radius,
+        },
       ]}
     >
-      {copy.title ? <ThemedText style={styles.title}>{copy.title}</ThemedText> : null}
+      {copy.title ? (
+        <ThemedText style={styles.title}>{copy.title}</ThemedText>
+      ) : null}
       <ThemedText variant="muted" style={styles.body}>
         {copy.body}
       </ThemedText>
 
       {expanded ? (
-        <ConsentPreferences categories={categories} choices={choices} onChange={(key, value) =>
-          setChoices((prev) => ({ ...prev, [key]: value }))
-        } />
+        <ConsentPreferences
+          categories={categories}
+          choices={choices}
+          onChange={(key, value) =>
+            setChoices((prev) => ({ ...prev, [key]: value }))
+          }
+        />
       ) : null}
 
       <View style={styles.actions}>
         {expanded ? (
           <>
-            <Button label={copy.backLabel} variant="outline" onPress={() => setExpanded(false)} />
+            <Button
+              label={copy.backLabel}
+              variant="outline"
+              onPress={() => setExpanded(false)}
+            />
             <Button label={copy.saveLabel} onPress={() => onSave(choices)} />
           </>
         ) : (
           <>
-            <Button label={copy.customizeLabel} variant="outline" onPress={() => setExpanded(true)} />
-            <Button label={copy.rejectLabel} variant="secondary" onPress={onReject} />
+            <Button
+              label={copy.customizeLabel}
+              variant="outline"
+              onPress={() => setExpanded(true)}
+            />
+            <Button
+              label={copy.rejectLabel}
+              variant="secondary"
+              onPress={onReject}
+            />
             <Button label={copy.acceptLabel} onPress={onAccept} />
           </>
         )}
@@ -79,5 +106,10 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 15, fontWeight: "600" },
   body: { fontSize: 13 },
-  actions: { flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-end", gap: 8 },
+  actions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+    gap: 8,
+  },
 });

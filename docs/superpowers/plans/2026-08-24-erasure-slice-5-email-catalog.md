@@ -9,6 +9,7 @@
 **Tech Stack:** Sanity v5 (schema on the website Studio) · Cloudflare Worker raw GROQ + inline Resend · `@cloudflare/vitest-pool-workers`. **Map (exact paths/lines):** `.superpowers/sdd/slice-5-email-catalog-map.md`. **Mirror:** `fetchAnnouncementDocs` (`code/shared/api/src/index.ts:210-229`); the `confirmationGroup` factory (`code/packages/web/email/src/sanity/groups.ts`) + how `code/packages/web/compliance/src/sanity/email.ts` contributes `dataRequestOwner`; the `pick(...) || default` fallback in `code/modules/web/newsletter/src/lib/newsletter.ts:165-174`.
 
 ## Global Constraints
+
 - **Never break the erasure flow:** the worker catches ALL fetch failures + falls through to the current hard-coded subject/HTML/text literals, per field. The no-op-when-Resend-unset guard stays. The senders keep their exact signatures (`sendErasureTokenEmail(env, {to, confirmUrl})`, `sendErasureCompleteEmail(env, {to, retained})`) — only their internals change.
 - **Single effective locale (ruling S5-SCHEMA):** reuse `confirmationGroup` (per-locale-capable), but the worker reads the `defaultLocale` value only (the erasure flow has no locale signal anywhere — request/confirm/self expose no locale). Per-locale editing is available in Studio; only default-locale copy is sent until a later slice adds locale detection. Document this in the group description.
 - **Escape everything** interpolated (Sanity copy + the worker-built `confirmUrl`/`retained`) via the module's existing `escapeHtml` — one uniform path.
@@ -24,7 +25,7 @@
 - [ ] **Step 1:** Read `code/packages/web/compliance/src/sanity/email.ts` (it exports an `emailGroups` array contributing `dataRequestOwner` via `ownerAlertGroup`) + `code/packages/web/email/src/sanity/groups.ts` (`confirmationGroup(opts)` — the factory: `enabled`, `from`, `replyTo`, `bcc`, `subject`, `heading`, `intro`, optional `buttonLabel` when `opts.button`, `outro`). Add two `confirmationGroup` entries to the exported `emailGroups`:
   - `confirmationGroup({ name: "erasureToken", title: "…erasure confirmation link…", button: true })` — the token email (needs a CTA link).
   - `confirmationGroup({ name: "erasureComplete", title: "…erasure complete…" })` — the completion email (no button).
-  Give each a `description` noting: sent by the api worker; only the default-locale copy is used today (the erasure flow has no locale signal); empty fields fall back to built-in English.
+    Give each a `description` noting: sent by the api worker; only the default-locale copy is used today (the erasure flow has no locale signal); empty fields fall back to built-in English.
 - [ ] **Step 2:** Confirm the compliance `SanityModule`'s `emailGroups` is composed into the website Studio (it already is — `dataRequestOwner` shows up). No new registration needed; the two groups appear on the "E-mails" singleton automatically.
 - [ ] **Step 3: Verify + commit.** `pnpm --filter @indiecrafts/web-surfaces-website tsc` (exit 0 — the schema is TS, type-checked via the Studio config). Prettier. Commit `--no-verify` (`feat(compliance): Studio-editable erasure email copy (emailStrings groups)`).
 
@@ -35,6 +36,7 @@
 **Files:** modify `code/shared/api/src/erasure/email.ts` (+ `email.test.ts`) + api `CHANGELOG.md` + `.claude/CLAUDE.md`.
 
 **Interfaces:**
+
 - Consumes the worker `Env`'s `SANITY_PROJECT_ID`/`SANITY_DATASET`/`SANITY_API_VERSION`/`SANITY_API_READ_TOKEN`; `defaultLocale` from `@indiecrafts/packages-shared-config` (already imported in index.ts — importable here).
 - Produces: an internal `fetchErasureEmailStrings(env): Promise<ErasureEmailCopy | null>` (returns the two groups' resolved default-locale fields, or null on any failure), injected as a default param into each sender for testability (like `request.ts` injects `sendToken`).
 
@@ -46,6 +48,7 @@
 ---
 
 ## Self-review
+
 - Coverage: editable schema (T1) + worker fetch/compose/fallback (T2), single-locale (worker reads defaultLocale), never-break fallback, no new Env/deps. Matches the locked forks.
 - Consistency: reuses `confirmationGroup` (the codebase's email-copy factory) + `fetchAnnouncementDocs`'s GROQ-over-HTTP idiom + the `pick(...) || default` fallback shape; the worker still avoids `server-only`/`next-sanity`/Portable Text.
 - Deferred (documented): per-locale erasure emails (needs a locale signal the flow lacks — schema is upgrade-ready); moving the OTHER worker-less emails is n/a (they're already Sanity-editable on the website).

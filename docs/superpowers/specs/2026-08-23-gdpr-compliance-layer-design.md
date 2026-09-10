@@ -41,26 +41,27 @@ Sanity-editable email system (`packages/web/email` + `emailStrings` + `renderEma
 (edge config) + per-route `security.ts` rate limits; `data-retention.md` disclosure checklist.
 
 **Gaps this plan fills:**
+
 - **Salt:** `IP_HASH_SALT` is wired but operator-set — **assume not configured**; `GDPR_FINGERPRINT_SALT`
   does not exist yet.
-- **Anonymisation:** none — only a *manual* Art. 17 SQL is documented; no engine.
+- **Anonymisation:** none — only a _manual_ Art. 17 SQL is documented; no engine.
 - No server-side consent log, no user profile store, no automated erasure/export, no take-down module,
   and no accountability records (ROPA, sub-processors, breach, transfers).
 
 ## 3. What is required worldwide (comply where your users are)
 
-| Mechanism | Required in | Applies if |
-|---|---|---|
-| Cookie/tracker consent (opt-in) | EU/EEA/UK/CH (ePrivacy) | non-essential cookies (GA) — **yes** |
-| DSAR (access/erasure/rectify/portability/object/restrict) | EU/UK (GDPR), US-CA (CCPA), BR (LGPD), CA (PIPEDA) | process personal data — **yes** |
-| "Do Not Sell/Share" opt-out + GPC honouring | US-CA/CO/VA (CPRA+) | sell/share PII for ads — **future** |
-| Notice-and-action + statement of reasons + appeal | EU (DSA) | host user content (blog comments, app UGC) — **yes** |
-| Copyright takedown + counter-notice + repeat-infringer + agent | US (DMCA safe harbor) | US-facing UGC — if US |
-| Illegal-content timelines | DE (NetzDG), UK (OSA) | large platforms — likely no |
-| Legal imprint (Impressum) | DE/AT/CH | sell to German markets — if |
-| Age assurance / parental consent | EU (Art. 8), US (COPPA <13), UK Children's Code | knowingly process minors — if |
-| Terms / Privacy / Cookie policies | ~everywhere | **yes** |
-| Breach notification (72h) · ROPA · SCCs for transfers | EU (GDPR) | always — **yes** (§15) |
+| Mechanism                                                      | Required in                                        | Applies if                                           |
+| -------------------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------- |
+| Cookie/tracker consent (opt-in)                                | EU/EEA/UK/CH (ePrivacy)                            | non-essential cookies (GA) — **yes**                 |
+| DSAR (access/erasure/rectify/portability/object/restrict)      | EU/UK (GDPR), US-CA (CCPA), BR (LGPD), CA (PIPEDA) | process personal data — **yes**                      |
+| "Do Not Sell/Share" opt-out + GPC honouring                    | US-CA/CO/VA (CPRA+)                                | sell/share PII for ads — **future**                  |
+| Notice-and-action + statement of reasons + appeal              | EU (DSA)                                           | host user content (blog comments, app UGC) — **yes** |
+| Copyright takedown + counter-notice + repeat-infringer + agent | US (DMCA safe harbor)                              | US-facing UGC — if US                                |
+| Illegal-content timelines                                      | DE (NetzDG), UK (OSA)                              | large platforms — likely no                          |
+| Legal imprint (Impressum)                                      | DE/AT/CH                                           | sell to German markets — if                          |
+| Age assurance / parental consent                               | EU (Art. 8), US (COPPA <13), UK Children's Code    | knowingly process minors — if                        |
+| Terms / Privacy / Cookie policies                              | ~everywhere                                        | **yes**                                              |
+| Breach notification (72h) · ROPA · SCCs for transfers          | EU (GDPR)                                          | always — **yes** (§15)                               |
 
 **Baseline:** GDPR + ePrivacy + FR/CNIL (+ DE Impressum if selling there) covers EU/EEA/UK. Add DSA
 for UGC; DMCA only for US-facing UGC; CCPA/OSS on selling. LGPD/PIPEDA/etc.: add on launch.
@@ -75,7 +76,7 @@ windows now; build the order pipeline only when there is a `product` D1 and a ch
 
 ## 5. Pseudonymisation, salts & fingerprints (read this — it is a correctness point)
 
-Hashing an email with a **retained salt** is *reversible with that salt* → under GDPR the result is
+Hashing an email with a **retained salt** is _reversible with that salt_ → under GDPR the result is
 **pseudonymised data, still personal data**, not anonymised. Therefore:
 
 - "Erasure by anonymisation" is really **pseudonymisation**: on erasure we scrub direct identifiers
@@ -92,6 +93,7 @@ Hashing an email with a **retained salt** is *reversible with that salt* → und
 ## 6. Architecture & data stores
 
 ### 6.1 Store map
+
 - **Clerk** — canonical identity + credentials (all surfaces). Source of truth for email.
 - **Cloudflare D1 (EU, `weur`)** — relational compliance/product data (§6.2).
 - **Sanity** — editorial content + marketing lists (legal pages, cookie copy/table, subscribers, waitlist).
@@ -99,6 +101,7 @@ Hashing an email with a **retained salt** is *reversible with that salt* → und
   telemetry firehose (NOT D1).
 
 ### 6.2 D1 tables — migration `0002_*.sql`
+
 - **`user_profiles`** — the small user DB, **created/updated on login**. `user_id` (Clerk PK), `email`,
   `full_name?`, `locale?`, `email_fingerprint`, `created_at`, `last_login_at`, `deleted_at`, `anonymized`.
   Written by (a) the session-log path on each sign-in (upsert; creates if missing; stamps `last_login_at`)
@@ -121,6 +124,7 @@ D1 has no triggers/RLS/pg_cron — pseudonymisation, retention, access control, 
 explicit worker code (testable; wahio flags its trigger-ordering as fragile).
 
 ### 6.3 Topology at scale — all-D1, several databases
+
 Each D1 is one SQLite instance with a ~10 GB cap and a single-writer throughput ceiling. At scale,
 split by concern to isolate write hotspots, stay under the cap, and contain the PII blast radius:
 
@@ -135,6 +139,7 @@ throughput demand. High-rate telemetry → Analytics Engine/R2, never D1.
 ## 7. Consent
 
 ### 7.1 Capture (all surfaces, keep GA)
+
 The existing web banner/Consent Mode v2/GPC stays. Add: every consent decision POSTs `kind:"consent"`
 to the api (anonymous `consent_id` cookie as subject, `user_id` when logged in). Native/hybrid
 `shared/compliance` stores do the same via the shared client. Account-linked by default; anonymous
@@ -142,13 +147,15 @@ cookie logging only when `logAnonymousConsent` is on. A **cookie audit** enumera
 trackers into `cookieEntry`; third-party embeds (YouTube/maps/fonts) are consent-gated via `ConsentGate`.
 
 ### 7.2 Login / signup consent
+
 Clerk hosted UI + a post-signup `ConsentGate` (OAuth-safe via a metadata check on first authenticated
 load). **Mandatory** legal acceptance (Terms + Privacy, + CGV/Content-Guidelines per surface) via
 Clerk's native legal-consent requirement backed by the gate. Marketing opt-in separate + **unticked**
-(pre-ticked consent is invalid — CJEU *Planet49*). Each decision → `consent_events` + Clerk
+(pre-ticked consent is invalid — CJEU _Planet49_). Each decision → `consent_events` + Clerk
 `publicMetadata` + the `user_profiles` row.
 
 ### 7.3 Email change (self-service, confirmed)
+
 Clerk's built-in email management: add new address → Clerk verification (code/link) → set primary.
 The `user.updated` webhook syncs the new email into `user_profiles` and re-computes `email_fingerprint`.
 Never switch before Clerk confirms. Log an `admin_audit` line; send a Sanity-editable confirmation to
@@ -157,6 +164,7 @@ Never switch before Clerk confirms. Log an `admin_audit` line; send a Sanity-edi
 ## 8. Data-subject rights
 
 ### 8.1 Forms catalog (config-gated per surface; ≈9 UI surfaces)
+
 One DSAR form serves access/rectify/restrict/object/withdraw (reuses `DataRequestForm`). Erasure is its
 own request + email-token confirm. Report/DMCA is one form with a category; appeal/counter-notice is one
 form. Full set: DSAR · erasure request · erasure confirm · self-serve export/withdraw (settings) ·
@@ -166,14 +174,17 @@ DPO contact (exists) · admin console forms. All forms: **i18n in `messages/<loc
 **WCAG-accessible**, **Turnstile + honeypot** protected.
 
 ### 8.2 Identity verification (prevents data leaks)
+
 Access, portability, and rectification **disclose or change data** → verify the requester is the subject
 before acting (GDPR Art. 12(6)): a logged-in session, or a verified-email token plus step-up where doubt
 exists. The controller may refuse or request more proof. Erasure uses the token + typed-email + attempt
 limit. No disclosure on an unverified request.
 
 ### 8.3 Erasure + pseudonymisation engine (store-agnostic)
+
 Pure orchestrator in `shared/compliance`; `ErasureAdapter { name; findByEmail; export; anonymize; delete; preview }`.
 Adapters (server-side):
+
 - **Clerk** — delete user; email→user_id resolver.
 - **D1** — pseudonymise `user_profiles` (email→`deleted_<id>@anonymized.local`, `full_name`→"Deleted User",
   set `email_fingerprint`/`deleted_at`/`anonymized`; wahio's `soft_delete_user_profile`); delete low/medium
@@ -189,46 +200,52 @@ attempt-limited) → **dry-run preview** (what will be touched) → engine runs 
 the cron hard-deletes (drops the fingerprint) at the retention limit (§13).
 
 ### 8.4 Export completeness
+
 Export gathers the subject's data across **every** store — Clerk profile, all D1 tables, Sanity
 subscriber/waitlist, consent history, future orders — into machine-readable JSON, delivered by a
 secure, expiring link. A test asserts the export enumerates every registered store (no silent miss).
 
 ### 8.5 SLA clock
+
 Every `data_requests`/`erasure_requests`/`content_reports` row stamps `due_at` (GDPR 1 month, DSA
 timelines). The cron flags approaching/breached deadlines → owner reminder emails + an admin badge.
 
 ## 9. Content take-down (DSA / DMCA)
+
 Config-gated (`features.compliance.takedown`; on for blog comments). Public report/DMCA forms →
 `POST /v1/reports` → `content_reports`. Admin workflow: acknowledge → decide → **statement of reasons**
 (emailed) → **appeal**. DSA transparency-metrics view feeds the annual report. Reviewer actions reuse
 the token-email one-click pattern.
 
 ## 10. API (existing api worker, bearer-gated)
+
 `POST /v1/events` (+`kind:"consent"`) · `/v1/erasure/request` · `/v1/erasure/confirm` ·
 `GET /v1/erasure/status/:token` · `POST /v1/export` · `POST /v1/reports` (+`/appeal`) · extend
 `/v1/clerk-webhook` (idempotent `user_profiles` upsert). Web `/api/*` routes proxy where the form is on
 the website/app surface. All mutating routes: bearer + rate-limit + Turnstile where public.
 
 ## 11. Emails — Sanity-editable, owner alert + user confirmation
+
 All via `packages/web/email` (`renderEmailLayout` + `emailStrings` singleton), Sanity-editable, gated on
 `RESEND_API_KEY`, localised by the subject's `locale`:
 
-| Event | Owner/DPO | User |
-|---|---|---|
-| DSAR filed | new-request alert | acknowledgement (≤1 month) |
-| Erasure requested | alert | **token link** (the button click) |
-| Erasure completed | receipt | deletion-complete + what was retained & why |
-| Export ready | — | secure download link |
-| Consent changed | — | opt-in/opt-out confirmation |
-| Newsletter/waitlist | alert (exists) | double-opt-in (exists) |
-| Report filed | reviewer alert | reporter acknowledgement |
-| Report decided | — | statement of reasons + appeal steps |
-| Appeal resolved | alert | outcome notice |
-| Email change | — | Clerk verification + confirmation to **old + new** |
-| SLA breach imminent | reminder | — |
-| Breach notification (§15) | DPA + internal | affected-user notice |
+| Event                     | Owner/DPO         | User                                               |
+| ------------------------- | ----------------- | -------------------------------------------------- |
+| DSAR filed                | new-request alert | acknowledgement (≤1 month)                         |
+| Erasure requested         | alert             | **token link** (the button click)                  |
+| Erasure completed         | receipt           | deletion-complete + what was retained & why        |
+| Export ready              | —                 | secure download link                               |
+| Consent changed           | —                 | opt-in/opt-out confirmation                        |
+| Newsletter/waitlist       | alert (exists)    | double-opt-in (exists)                             |
+| Report filed              | reviewer alert    | reporter acknowledgement                           |
+| Report decided            | —                 | statement of reasons + appeal steps                |
+| Appeal resolved           | alert             | outcome notice                                     |
+| Email change              | —                 | Clerk verification + confirmation to **old + new** |
+| SLA breach imminent       | reminder          | —                                                  |
+| Breach notification (§15) | DPA + internal    | affected-user notice                               |
 
 ## 12. Admin compliance console (existing Clerk-gated admin app)
+
 Subscriber/waitlist CRUD stays in Sanity Studio. Add under `/admin/compliance/`: `requests` (DSAR +
 erasure queue; anonymise/erase-now; dry-run) · `reports` (take-down + appeals + statement of reasons) ·
 `subject` (search by email across Clerk+D1+Sanity → export/anonymise/erase) · `consent` (history lookup) ·
@@ -236,6 +253,7 @@ erasure queue; anonymise/erase-now; dry-run) · `reports` (take-down + appeals +
 **Least privilege:** a `compliance-officer` role gates erase/export beyond plain `admin`.
 
 ## 13. Retention (existing cron worker)
+
 audit/session/security 90d (exists) · `consent_events` ~3y · request receipts 1–3y (tokens dropped on
 completion) · `content_reports` per policy · Sanity `pending` subscribers >30d · **anonymised
 `user_profiles` hard-deleted after 90d** · **orders/invoices 7–10y** anonymised (reserved) · **final
@@ -246,6 +264,7 @@ Document that erasure propagates to backups on the **backup-cycle expiry**, and 
 short enough to bound that lag. State it in the privacy policy.
 
 ## 14. Accountability & governance (Art. 5(2), 30, 33/34, Ch. V)
+
 - **ROPA (Art. 30):** a maintained records-of-processing register (doc + a generated summary from the
   config's processing map).
 - **Sub-processors + DPAs:** a maintained sub-processor list (Cloudflare, Clerk, Resend, Sanity, Google)
@@ -260,6 +279,7 @@ short enough to bound that lag. State it in the privacy policy.
   (Art. 35) for profiling/large-scale processing if triggered.
 
 ## 15. Security & operations
+
 - **Webhook idempotency + reconciliation:** Clerk retries webhooks → idempotency keys; a periodic
   Clerk↔D1 reconcile job catches missed events.
 - **Backfill:** a one-time Clerk→D1 seed so existing users get a `user_profiles` row (else they are
@@ -271,6 +291,7 @@ short enough to bound that lag. State it in the privacy policy.
   no-down-migration note.
 
 ## 16. Legal content port + page updates
+
 Sources: wahio `front/src/app/[locale]/(public)/{privacy,terms}/content-{fr,en,de}.tsx` + `report/illegal`;
 ProtonDrive `wahio_legal/` docx (privacy, CGV, Directives de Contenu, FR). Convert docx (`textutil`/
 `pandoc` → PortableText import) + lift TSX into Sanity `legalPage` per (pageKey, locale) FR/EN/DE. Add a
@@ -280,22 +301,26 @@ disclosures (D1 logging, consent, erasure, retention, processors + SCCs, cookie 
 **Prose is ported, not invented — legal-review gate before publish.**
 
 ## 17. i18n & accessibility
+
 Every new form + email string lives in `messages/<locale>.json` (repo NEVER: no inline strings), FR/EN
 (+DE where wahio content exists). Every form meets the repo's a11y gates (labels, focus, error states,
 keyboard).
 
 ## 18. Config & feature flags
+
 One config declares: active regulations, retention windows, salt names, the processing/ROPA map, the
 erasure-adapter registry (which stores hold PII), sub-processors, and `features.compliance.*` /
 `features.legal.*` per surface (incl. `logAnonymousConsent`, `takedown`, `ageGate`, `selling`).
 
 ## 19. Sanity → D1 extraction
+
 Move `dataRequest` records to D1 (`data_requests` + `erasure_requests`); deprecate the Sanity
 `dataRequest` schema, keep the form. Keep in Sanity: legal content, cookie copy + `cookieCategory`/
 `cookieEntry` table, re-acceptance copy, subscriber/waitlist. Rule: **content & copy → Sanity;
 workflow, proof logs & legal records → D1.**
 
 ## 20. Packaging
+
 Extend `shared/compliance` (erasure core, consent contract, fingerprint, ROPA/processing map) +
 `web/compliance` (Sanity adapter, consent POST, confirm/export/report pages, DSAR→D1, email templates +
 Sanity email groups) + `web/email` (reuse) + `shared/security` (`fingerprintEmail`) + api worker (routes,
@@ -304,6 +329,7 @@ idempotent webhook, migration `0002`, backfill) + cron (retention, SLA, reconcil
 registry rows. New bricks follow the "adding a brick" 5-wire rule.
 
 ## 21. Verification
+
 Unit: erasure orchestrator with mocked adapters (every store visited, receipt complete, **export
 enumerates every store**), pseudonymisation reversibility bounds, fingerprint determinism, token verify/
 expiry/attempt-limit, SLA `due_at` math, retention selectors (incl. final fingerprint drop), webhook
@@ -311,6 +337,7 @@ idempotency, consent-event shape, DSA aggregation. Integration: `/v1/erasure/con
 engine against seeded D1 + mocked Sanity/Clerk. Follows the repo's one-runnable-check rule.
 
 ## 22. Phased roadmap
+
 1. D1 `0002` (incl. `user_profiles`) + salt tooling + `fingerprintEmail` + profile upsert on login +
    idempotent Clerk-webhook sync + **backfill** existing users.
 2. Consent logging (account-scoped) + banner/settings wiring + cookie audit.
@@ -323,16 +350,18 @@ engine against seeded D1 + mocked Sanity/Clerk. Follows the repo's one-runnable-
 8. Accountability records — ROPA, sub-processor page + DPAs, lawful-basis map/LIA, SCC disclosure, breach runbook.
 9. Legal content port + `contentGuidelines` page + all-page disclosure updates (legal-review gate).
 10. Retention cron (all classes + final fingerprint drop + backups note) + reconcile job + observability
-    + docs/config/changelog. *(Transactional reserves — CGV, order-anonymisation seam, 7–10y retention,
-    CCPA/OSS — land idle here.)*
+    - docs/config/changelog. _(Transactional reserves — CGV, order-anonymisation seam, 7–10y retention,
+      CCPA/OSS — land idle here.)_
 
 ## 23. Operator setup checklist (per client)
+
 Set `IP_HASH_SALT` + `GDPR_FINGERPRINT_SALT`; sign processor DPAs + publish the sub-processor list; run
 the cookie audit; author per-client legal prose in Studio (legal review); confirm SCCs for US processors;
 appoint a DPO if required; verify the retention cron runs once `DB` + schedule are bound; enable Turnstile
 on a real domain.
 
 ## 24. Open questions / out-of-code
+
 - Which surfaces (beyond blog comments) host UGC → `features.compliance.takedown`.
 - Age-gate only if minors are in scope (COPPA/Art. 8).
 - DMCA designated-agent registration (manual/legal), DPO appointment, DPIA trigger, and all ported legal
@@ -342,5 +371,6 @@ on a real domain.
   bearer-gated api-only writes, pseudonymised on erasure, hard-deleted at 90d, minimal fields.
 
 ## Issue tags
+
 - `@debt SECURITY` — retention purges + reconcile must be verified running once `DB` + schedule are bound.
 - `@debt TESTING` — erasure engine + export completeness need full adapter-mock coverage before first real erasure.

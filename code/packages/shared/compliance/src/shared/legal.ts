@@ -1,6 +1,6 @@
 /**
  * The legal-route contract — one source of truth for the canonical legal pages, so
- * a shell (Expo · Electron · the `app` web surface) can link OUT to the website's
+ * a shell (Expo · the `app` web surface) can link OUT to the website's
  * legal pages, and the website's own `pages.ts` reads the same slugs. Plus the legal
  * re-acceptance shape (`LegalAcceptanceRecord` + `needsReacceptance`), used by every
  * shell over its own store adapter.

@@ -6,11 +6,11 @@
 
 ## Props
 
-| Prop      | Type              | Notes                                                             |
-| --------- | ----------------- | ------------------------------------------------------------------ |
-| `heading` | `string`          | Optional section title.                                            |
-| `lead`    | `PostCardItem`    | Optional — renders large, spanning 2 columns/rows in the grid.     |
-| `items`   | `PostCardItem[]`  | The rest of the posts, as compact cards.                           |
+| Prop      | Type             | Notes                                                          |
+| --------- | ---------------- | -------------------------------------------------------------- |
+| `heading` | `string`         | Optional section title.                                        |
+| `lead`    | `PostCardItem`   | Optional — renders large, spanning 2 columns/rows in the grid. |
+| `items`   | `PostCardItem[]` | The rest of the posts, as compact cards.                       |
 
 `PostCardItem` (`@indiecrafts/packages-web-ui-components/shared/types`): `_key`, `href`, `title`, `image?`, `lqip?`, `category?`, `author?`, `date?` — every field already resolved by the host.
 

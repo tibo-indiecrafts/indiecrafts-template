@@ -26,10 +26,12 @@
 ### Task 1: `handleErasureSelf` route
 
 **Files:**
+
 - Create: `code/shared/api/src/erasure/self.ts`
 - Test: `code/shared/api/src/erasure/self.test.ts`
 
 **Interfaces:**
+
 - Consumes: `runErasure` + `type ErasureAdapter` from `@indiecrafts/packages-shared-compliance/shared`; `fingerprintEmail`, `sha256Hex` from `@indiecrafts/packages-shared-security/crypto`; `type Env`, `PUBLIC_CORS_POST`, `safeEqual` from `../index`; `createD1ErasureAdapter`/`createClerkErasureAdapter`/`createSanityErasureAdapter`/`createOrdersErasureAdapter` from the adapter modules; `createRealClerkClient` from `./clerk-client`; `createRealSanityClient` from `./sanity-client`; `sendErasureCompleteEmail` from `./email`.
 - Produces: `handleErasureSelf(request: Request, env: Env, ctx?: ExecutionContext, buildAdapters?: (env: Env) => ErasureAdapter[], authenticate?: (request: Request, env: Env) => Promise<{ userId: string; email: string } | null>): Promise<Response>` — Slice B/C/D and `index.ts` consume this. Also exports `type SelfAuth = { userId: string; email: string }`.
 
@@ -68,7 +70,10 @@ function testEnv(overrides: Partial<Env> = {}): Env {
 function postJson(body: Record<string, unknown>): Request {
   return new Request("https://example.com/v1/erasure/self", {
     method: "POST",
-    headers: { authorization: "Bearer tkn", "content-type": "application/json" },
+    headers: {
+      authorization: "Bearer tkn",
+      "content-type": "application/json",
+    },
     body: JSON.stringify(body),
   });
 }
@@ -84,7 +89,12 @@ async function seedProfile(): Promise<string> {
 }
 
 /** Injected auth (no real Clerk) + injected adapters (real D1 + mocked Clerk/Sanity). */
-function mocks(authResult: { userId: string; email: string } | null = { userId: USER, email: EMAIL }) {
+function mocks(
+  authResult: { userId: string; email: string } | null = {
+    userId: USER,
+    email: EMAIL,
+  },
+) {
   const authenticate = vi.fn(async () => authResult);
   const clerkClient = {
     findUserIdByEmail: vi.fn(async () => USER),
@@ -108,31 +118,53 @@ describe("handleErasureSelf", () => {
   it("erases when the JWT is valid and the typed email matches", async () => {
     await seedProfile();
     const { authenticate, build, clerkClient } = mocks();
-    const res = await handleErasureSelf(postJson({ email: EMAIL }), testEnv(), undefined, build, authenticate);
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
     expect(res.status).toBe(200);
     expect(clerkClient.deleteUser).toHaveBeenCalledWith(USER);
     const row = await env.DB.prepare(
       "SELECT status FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
-    ).bind(USER).first<{ status: string }>();
+    )
+      .bind(USER)
+      .first<{ status: string }>();
     expect(row?.status).toBe("completed");
     // A completion audit row was written.
     const audit = await env.DB.prepare(
       "SELECT event FROM admin_audit WHERE target_user_id = ? ORDER BY id DESC LIMIT 1",
-    ).bind(USER).first<{ event: string }>();
+    )
+      .bind(USER)
+      .first<{ event: string }>();
     expect(audit?.event).toBe("erasure.self");
   });
 
   it("rejects a typed email that does not match the authenticated email", async () => {
     await seedProfile();
     const { authenticate, build, clerkClient } = mocks();
-    const res = await handleErasureSelf(postJson({ email: "wrong@x.com" }), testEnv(), undefined, build, authenticate);
+    const res = await handleErasureSelf(
+      postJson({ email: "wrong@x.com" }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
     expect(res.status).toBe(400);
     expect(clerkClient.deleteUser).not.toHaveBeenCalled();
   });
 
   it("returns 401 when the JWT is missing or invalid", async () => {
     const { build } = mocks();
-    const res = await handleErasureSelf(postJson({ email: EMAIL }), testEnv(), undefined, build, vi.fn(async () => null));
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      vi.fn(async () => null),
+    );
     expect(res.status).toBe(401);
   });
 
@@ -155,19 +187,35 @@ describe("handleErasureSelf", () => {
     const clerkClient = {
       findUserIdByEmail: vi.fn(async () => USER),
       exportUser: vi.fn(async () => ({ id: USER })),
-      deleteUser: vi.fn(async () => { throw new Error("clerk down"); }),
+      deleteUser: vi.fn(async () => {
+        throw new Error("clerk down");
+      }),
     };
     const build = (e: Env) => [
       createD1ErasureAdapter(e.DB!, SALT),
       createClerkErasureAdapter(clerkClient),
-      createSanityErasureAdapter({ findByEmail: vi.fn(async () => []), pseudonymise: vi.fn(async () => {}) }, SALT),
+      createSanityErasureAdapter(
+        {
+          findByEmail: vi.fn(async () => []),
+          pseudonymise: vi.fn(async () => {}),
+        },
+        SALT,
+      ),
       createOrdersErasureAdapter(),
     ];
-    const res = await handleErasureSelf(postJson({ email: EMAIL }), testEnv(), undefined, build, authenticate);
+    const res = await handleErasureSelf(
+      postJson({ email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
     expect(res.status).toBe(207);
     const row = await env.DB.prepare(
       "SELECT status FROM erasure_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1",
-    ).bind(USER).first<{ status: string }>();
+    )
+      .bind(USER)
+      .first<{ status: string }>();
     expect(row?.status).toBe("confirmed");
   });
 });
@@ -209,7 +257,11 @@ const BODY_MAX = 4000;
 
 export type SelfAuth = { userId: string; email: string };
 
-function json(body: unknown, status: number, cors: Record<string, string>): Response {
+function json(
+  body: unknown,
+  status: number,
+  cors: Record<string, string>,
+): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "content-type": "application/json", ...cors },
@@ -244,21 +296,29 @@ async function defaultAuthenticate(
   request: Request,
   env: Env,
 ): Promise<SelfAuth | null> {
-  const token = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+  const token = (request.headers.get("authorization") ?? "").replace(
+    /^Bearer\s+/i,
+    "",
+  );
   if (!token || !env.CLERK_SECRET_KEY) return null;
   try {
     const { verifyToken } = await import("@clerk/backend");
-    const claims = await verifyToken(token, { secretKey: env.CLERK_SECRET_KEY });
+    const claims = await verifyToken(token, {
+      secretKey: env.CLERK_SECRET_KEY,
+    });
     const userId = typeof claims.sub === "string" ? claims.sub : null;
     if (!userId) return null;
     // Resolve the primary email from Clerk (the JWT omits it by default).
-    const user = await createRealClerkClient(env.CLERK_SECRET_KEY).exportUser(userId);
+    const user = await createRealClerkClient(env.CLERK_SECRET_KEY).exportUser(
+      userId,
+    );
     const u = user as {
       primaryEmailAddressId?: string;
       emailAddresses?: Array<{ id: string; emailAddress: string }>;
     };
     const email =
-      u.emailAddresses?.find((e) => e.id === u.primaryEmailAddressId)?.emailAddress ??
+      u.emailAddresses?.find((e) => e.id === u.primaryEmailAddressId)
+        ?.emailAddress ??
       u.emailAddresses?.[0]?.emailAddress ??
       null;
     if (!email) return null;
@@ -281,7 +341,10 @@ export async function handleErasureSelf(
   env: Env,
   ctx?: ExecutionContext,
   buildAdapters: (env: Env) => ErasureAdapter[] = defaultAdapters,
-  authenticate: (request: Request, env: Env) => Promise<SelfAuth | null> = defaultAuthenticate,
+  authenticate: (
+    request: Request,
+    env: Env,
+  ) => Promise<SelfAuth | null> = defaultAuthenticate,
 ): Promise<Response> {
   if (request.method === "OPTIONS")
     return new Response(null, { status: 204, headers: PUBLIC_CORS_POST });
@@ -296,7 +359,9 @@ export async function handleErasureSelf(
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
   if (
     buildAdapters === defaultAdapters &&
-    (!env.SANITY_API_WRITE_TOKEN || !env.SANITY_PROJECT_ID || !env.SANITY_DATASET)
+    (!env.SANITY_API_WRITE_TOKEN ||
+      !env.SANITY_PROJECT_ID ||
+      !env.SANITY_DATASET)
   )
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
 
@@ -305,7 +370,9 @@ export async function handleErasureSelf(
 
   if (env.AGENT_RATELIMIT) {
     const auth0 = request.headers.get("authorization") ?? "";
-    const { success } = await env.AGENT_RATELIMIT.limit({ key: auth0.slice(0, 128) });
+    const { success } = await env.AGENT_RATELIMIT.limit({
+      key: auth0.slice(0, 128),
+    });
     if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);
   }
 
@@ -324,14 +391,22 @@ export async function handleErasureSelf(
   // Deliberate-action gate: the typed email must match the authenticated identity,
   // even with a valid session (constant-time, via the salted fingerprint).
   const typedFp = await fingerprintEmail(typedEmail, env.GDPR_FINGERPRINT_SALT);
-  const authFp = await fingerprintEmail(authed.email, env.GDPR_FINGERPRINT_SALT);
+  const authFp = await fingerprintEmail(
+    authed.email,
+    env.GDPR_FINGERPRINT_SALT,
+  );
   if (!safeEqual(typedFp, authFp))
     return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
 
   const adapters = buildAdapters(env);
   const ts = new Date().toISOString();
   const fingerprint = authFp;
-  await runErasure(adapters, authed.email, { mode: "erase", dryRun: true, ts, fingerprint });
+  await runErasure(adapters, authed.email, {
+    mode: "erase",
+    dryRun: true,
+    ts,
+    fingerprint,
+  });
   const receipt = await runErasure(adapters, authed.email, {
     mode: "erase",
     dryRun: false,
@@ -368,17 +443,28 @@ export async function handleErasureSelf(
       .run();
   } catch (error) {
     // The erasure is already committed; a bookkeeping failure must not 500 it.
-    logger.error("erasure.self audit write failed", { name: (error as Error)?.name });
+    logger.error("erasure.self audit write failed", {
+      name: (error as Error)?.name,
+    });
   }
 
   try {
-    await sendErasureCompleteEmail(env, { to: authed.email, retained: retainedSummary(hadErrors) });
+    await sendErasureCompleteEmail(env, {
+      to: authed.email,
+      retained: retainedSummary(hadErrors),
+    });
   } catch (error) {
-    logger.error("erasure.self complete email failed", { name: (error as Error)?.name });
+    logger.error("erasure.self complete email failed", {
+      name: (error as Error)?.name,
+    });
   }
 
   if (hadErrors)
-    return json({ ok: true, partial: true, errors: receipt.errors }, 207, PUBLIC_CORS_POST);
+    return json(
+      { ok: true, partial: true, errors: receipt.errors },
+      207,
+      PUBLIC_CORS_POST,
+    );
   return json({ ok: true }, 200, PUBLIC_CORS_POST);
 }
 ```
@@ -401,19 +487,24 @@ git commit --no-verify -m "feat(compliance): authenticated /v1/erasure/self rout
 ### Task 2: Dispatch + docs
 
 **Files:**
+
 - Modify: `code/shared/api/src/index.ts` (import + dispatch `/v1/erasure/self`)
 - Modify: `code/shared/api/CHANGELOG.md`, `code/shared/api/.claude/CLAUDE.md`, `code/docs/apps/web/config/data-retention.md`
 
 **Interfaces:**
+
 - Consumes: `handleErasureSelf` from `./erasure/self` (Task 1).
 
 - [ ] **Step 1: Add the dispatch to `index.ts`**
 
 Import beside the other erasure imports (~line 30):
+
 ```ts
 import { handleErasureSelf } from "./erasure/self";
 ```
+
 Dispatch AFTER the `confirm` block and BEFORE the `status` `startsWith` block (~line 767):
+
 ```ts
 // ── GDPR self-service erasure — POST /v1/erasure/self (authenticated; Clerk JWT +
 // typed-email gate) ── A signed-in user erases their own data with no email round-trip.

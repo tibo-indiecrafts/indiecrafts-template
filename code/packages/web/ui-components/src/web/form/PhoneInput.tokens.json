@@ -2,7 +2,10 @@
   "$description": "Component token surface for PhoneInput — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "phone-input-input": { "$type": "color", "$value": "{component.input}" },
-    "phone-input-background": { "$type": "color", "$value": "{semantic.background}" },
+    "phone-input-background": {
+      "$type": "color",
+      "$value": "{semantic.background}"
+    },
     "phone-input-ring": { "$type": "color", "$value": "{semantic.ring}" }
   }
 }

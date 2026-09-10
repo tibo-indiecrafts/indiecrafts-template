@@ -2,7 +2,7 @@
  * Mobile i18n — the DETECT + FORMAT split. `expo-localization` reads the device
  * locale; `react-intl` formats. Locale vocabulary + the `flattenMessages` helper
  * come from `@/config` (shared); the 404/500 shell copy from `system-pages`
- * (`SHELL_COPY`, shared with the hybrid shell). This file owns only the DETECT
+ * (`SHELL_COPY`, shared with the native shell). This file owns only the DETECT
  * source + the app's own screen copy (`messages/*.json` → `home.*`).
  */
 import { getLocales } from "expo-localization";

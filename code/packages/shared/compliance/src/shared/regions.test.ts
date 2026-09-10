@@ -3,7 +3,18 @@ import { resolveConsentMode, resolveRegulation } from "./regions";
 
 describe("resolveConsentMode", () => {
   it("opt-in across EU / EEA / UK and their in-scope territories", () => {
-    for (const c of ["FR", "DE", "NO", "IS", "LI", "GB", "GI", "JE", "GF", "RE"])
+    for (const c of [
+      "FR",
+      "DE",
+      "NO",
+      "IS",
+      "LI",
+      "GB",
+      "GI",
+      "JE",
+      "GF",
+      "RE",
+    ])
       expect(resolveConsentMode(c)).toBe("opt-in");
   });
 
@@ -19,7 +30,8 @@ describe("resolveConsentMode", () => {
   });
 
   it("Australia's inhabited external territories inherit its opt-out default", () => {
-    for (const c of ["NF", "CX", "CC"]) expect(resolveConsentMode(c)).toBe("opt-out");
+    for (const c of ["NF", "CX", "CC"])
+      expect(resolveConsentMode(c)).toBe("opt-out");
   });
 
   it("none for a country with no consent-banner law", () => {
@@ -49,7 +61,8 @@ describe("resolveConsentMode", () => {
   });
 
   it("Cloudflare unknown/Tor sentinels (XX/T1/T2) fail safe to opt-in", () => {
-    for (const c of ["XX", "T1", "T2"]) expect(resolveConsentMode(c)).toBe("opt-in");
+    for (const c of ["XX", "T1", "T2"])
+      expect(resolveConsentMode(c)).toBe("opt-in");
   });
 
   it("is case-insensitive on the country code", () => {
@@ -57,14 +70,24 @@ describe("resolveConsentMode", () => {
   });
 
   it("an override assigns a different regulation to a country", () => {
-    expect(resolveConsentMode("US", { overrides: { US: "gdpr" } })).toBe("opt-in");
-    expect(resolveConsentMode("CH", { overrides: { CH: "gdpr" } })).toBe("opt-in");
-    expect(resolveConsentMode("FR", { overrides: { FR: "none" } })).toBe("none");
+    expect(resolveConsentMode("US", { overrides: { US: "gdpr" } })).toBe(
+      "opt-in",
+    );
+    expect(resolveConsentMode("CH", { overrides: { CH: "gdpr" } })).toBe(
+      "opt-in",
+    );
+    expect(resolveConsentMode("FR", { overrides: { FR: "none" } })).toBe(
+      "none",
+    );
   });
 
   it("a parent-country override cascades to its territories", () => {
-    expect(resolveConsentMode("PF", { overrides: { FR: "gdpr" } })).toBe("opt-in");
-    expect(resolveConsentMode("GI", { overrides: { GB: "none" } })).toBe("none");
+    expect(resolveConsentMode("PF", { overrides: { FR: "gdpr" } })).toBe(
+      "opt-in",
+    );
+    expect(resolveConsentMode("GI", { overrides: { GB: "none" } })).toBe(
+      "none",
+    );
   });
 
   it("a per-territory override beats the parent override", () => {

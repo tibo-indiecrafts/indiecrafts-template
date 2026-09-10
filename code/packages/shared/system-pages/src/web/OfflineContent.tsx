@@ -10,7 +10,7 @@ export type { OfflineContentProps };
  * render without the network (the app decides when to show it; a non-blocking banner
  * covers the common case). The app resolves the copy (bundled messages, never Sanity —
  * this must render while offline) and wraps this in its own chrome. Next-agnostic (no
- * `next-intl`) — serves the Next website AND the Electron renderer.
+ * `next-intl`) — serves the Next website.
  */
 export function OfflineContent({
   title,

@@ -6,7 +6,7 @@ to the Slice-A erasure worker route (`${apiUrl}/v1/erasure/self`), sending a bea
 from `getToken` and the typed email. `200` → done, `207` → partial (erased; some stores need
 manual follow-up), `400` → the typed email did not match the account, anything else → error.
 
-Clerk-free and Next-free, so the `app` web surface and the Electron renderer both use it —
+Clerk-free and Next-free, so the `app` web surface uses it —
 no next-intl or Clerk import inside. Mirrors the `./native` (RN) sibling.
 
 ## Props
@@ -23,6 +23,6 @@ All copy is **passed in** — the component imports no app messages.
 
 ## Where it's used
 
-Mounted by each surface's account-delete panel (website, app `AccountDeletePanel`; hybrid
-`SignedInView`; mobile `SignedInView`), which supplies `apiUrl`, `getToken` from Clerk, and
+Mounted by each surface's account-delete panel (website, app `AccountDeletePanel`;
+mobile `SignedInView`), which supplies `apiUrl`, `getToken` from Clerk, and
 `onDeleted` (sign the user out / navigate away).

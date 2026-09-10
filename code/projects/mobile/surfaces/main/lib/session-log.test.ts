@@ -1,6 +1,6 @@
 import { logSignIn, logFailedLogin } from "./session-log";
 
-// jest runs with no EXPO_PUBLIC_API_URL / EXPO_PUBLIC_AGENT_TOKEN set, so both loggers
+// jest runs with no EXPO_PUBLIC_API_URL / EXPO_PUBLIC_API_TOKEN set, so both loggers
 // return early WITHOUT a network call (mirrors agent.test.ts's env guard).
 describe("session-log (mobile env guard + never-throw)", () => {
   const ORIGINAL_ENV = process.env;
@@ -22,7 +22,7 @@ describe("session-log (mobile env guard + never-throw)", () => {
     process.env = {
       ...ORIGINAL_ENV,
       EXPO_PUBLIC_API_URL: "https://api.example.test",
-      EXPO_PUBLIC_AGENT_TOKEN: "token",
+      EXPO_PUBLIC_API_TOKEN: "token",
     };
     jest
       .spyOn(global, "fetch")
@@ -34,7 +34,7 @@ describe("session-log (mobile env guard + never-throw)", () => {
     process.env = {
       ...ORIGINAL_ENV,
       EXPO_PUBLIC_API_URL: "https://api.example.test",
-      EXPO_PUBLIC_AGENT_TOKEN: "token",
+      EXPO_PUBLIC_API_TOKEN: "token",
     };
     jest
       .spyOn(global, "fetch")

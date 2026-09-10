@@ -21,14 +21,14 @@ sign-in activity, minimized and time-limited under GDPR.
 
 ## 2. Decisions (resolved with the requester)
 
-| Question | Decision |
-| --- | --- |
+| Question    | Decision                                                                      |
+| ----------- | ----------------------------------------------------------------------------- |
 | Audit store | **Cloudflare D1, EU** (`--location weur`) — replaces the console/Logpush sink |
-| Session log | **Same D1 EU** — KV was asked, but KV has **no EU residency**, so D1 |
-| Owner | the shared **`api`** worker (the one write path all surfaces can reach) |
-| Retention | **90 days**, purged by the **cron** worker (D1 has no TTL) |
-| Extra field | **country** (`cf-ipcountry`) + **hashed IP** (`crypto.hashIpAddress`) |
-| Domains | add **admin + app** as subdomain placeholders |
+| Session log | **Same D1 EU** — KV was asked, but KV has **no EU residency**, so D1          |
+| Owner       | the shared **`api`** worker (the one write path all surfaces can reach)       |
+| Retention   | **90 days**, purged by the **cron** worker (D1 has no TTL)                    |
+| Extra field | **country** (`cf-ipcountry`) + **hashed IP** (`crypto.hashIpAddress`)         |
+| Domains     | add **admin + app** as subdomain placeholders                                 |
 
 ## 3. Verification (the requester's two asks)
 
@@ -49,7 +49,7 @@ Trade-off accepted: KV auto-expires; D1 needs the cron purge (§7).
 ## 5. The D1 database — `audit` (EU), owner `api`
 
 - Registry row in `databases.mjs`: `{ name: "audit", kind: "d1", owner: "api",
-  altitude: "global", dir: "code/shared/api/db/d1/audit", backup: "wrangler", order: 10 }`.
+altitude: "global", dir: "code/shared/api/db/d1/audit", backup: "wrangler", order: 10 }`.
 - Created EU: `wrangler d1 create indiecrafts-<env>-shared-api-audit --location weur`
   (operator step; paste `database_id`). Binding **`AUDIT_DB`** in `code/shared/api/wrangler.toml`, per `[env.*]`.
 - **Two tables** (migrations under `db/d1/audit/migrations/`):
@@ -95,8 +95,8 @@ timestamp. No raw IP, no user-agent.
 - **session_events:** each surface logs its own sign-in with its `surface` tag.
   - Web (website/admin/app): a **Clerk `session.created` webhook** → `api`
     `/v1/clerk-webhook` (Svix-verified) → insert. Central, server-side, reliable;
-    surface = the app that owns the session. *(Alternative: a client fire-and-forget
-    ping; the webhook is preferred — decide at build.)*
+    surface = the app that owns the session. _(Alternative: a client fire-and-forget
+    ping; the webhook is preferred — decide at build.)_
   - Mobile / hybrid: a fire-and-forget `POST /v1/events` after `setActive`, passing
     their surface (they already call the api for the agent).
 

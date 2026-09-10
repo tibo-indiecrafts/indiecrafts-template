@@ -8,7 +8,7 @@ resources as commented, opt-in blocks.
 
 **Not the place for per-app edge.** WAF, rate-limit, cache rules, Turnstile, and Zero Trust Access gates are
 ZONE-scoped and owned by each app's own co-located stack (`code/projects/**/infra/cloudflare`,
-`code/shared/{api,agent}/infra/cloudflare`). This stack is only for things that span the whole account.
+`code/shared/api/infra/cloudflare`). This stack is only for things that span the whole account.
 
 **Stack:** Terraform (`cloudflare/cloudflare ~> 5`). **Self-contained** — one `main.tf` holds the provider,
 the single `account_id` variable, and the account-wide resources (all commented until needed).

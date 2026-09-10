@@ -132,7 +132,7 @@ export function isLocale<L extends string>(
  * when the top supported preference already matches `active` (or none is supported), so
  * no suggestion is shown. Each platform supplies its own ranked, region-stripped list:
  * the web `Accept-Language` parser (`detectPreferredLocale`), Expo `getLocales()`, or
- * `navigator.languages` on Electron.
+ * `navigator.languages` in a plain-React host.
  */
 export function pickSuggestedLocale<L extends string>(
   rankedPrefs: readonly string[],
@@ -148,7 +148,7 @@ export function pickSuggestedLocale<L extends string>(
 
 /**
  * Nested ICU message object → flat `{ "a.b.c": "msg" }` map. Shared by the mobile
- * (Expo) and hybrid (Electron) shells, which format with `react-intl` and need a
+ * (Expo) shells, which format with `react-intl` and need a
  * FLAT id map (react-intl has no nested-message support, unlike next-intl on web).
  */
 export function flattenMessages(

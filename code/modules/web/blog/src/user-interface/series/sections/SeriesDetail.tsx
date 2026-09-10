@@ -1,5 +1,8 @@
 import type { Locale } from "@indiecrafts/packages-shared-config";
-import type { PostListItem, Series } from "@indiecrafts/modules-web-blog/sanity/types";
+import type {
+  PostListItem,
+  Series,
+} from "@indiecrafts/modules-web-blog/sanity/types";
 import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
 import { Pager } from "@indiecrafts/modules-web-blog/user-interface/shared/components/Pager";
 import {

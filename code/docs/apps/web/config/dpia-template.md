@@ -42,8 +42,8 @@ Fill in every [placeholder] before sign-off.
 
 ### Risks to individuals
 
-| Risk | Likelihood | Severity |
-| --- | --- | --- |
+| Risk   | Likelihood            | Severity              |
+| ------ | --------------------- | --------------------- |
 | [risk] | [low / medium / high] | [low / medium / high] |
 
 ### Mitigations

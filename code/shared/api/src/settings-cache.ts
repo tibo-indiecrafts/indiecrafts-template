@@ -1,6 +1,11 @@
-import { effectiveSettings, type SettingKey } from "@indiecrafts/packages-shared-config";
+import {
+  effectiveSettings,
+  type SettingKey,
+} from "@indiecrafts/packages-shared-config";
 
-type CacheRef = { value: null | { at: number; data: Record<SettingKey, number> } };
+type CacheRef = {
+  value: null | { at: number; data: Record<SettingKey, number> };
+};
 
 /** Per-isolate cached effective settings (default ~30s). Fail-open to defaults. */
 export async function readSettings(
@@ -13,7 +18,9 @@ export async function readSettings(
   let data: Record<SettingKey, number>;
   try {
     const { results } = db
-      ? await db.prepare("SELECT key, value FROM site_settings").all<{ key: string; value: string }>()
+      ? await db
+          .prepare("SELECT key, value FROM site_settings")
+          .all<{ key: string; value: string }>()
       : { results: [] as { key: string; value: string }[] };
     data = effectiveSettings(results);
   } catch {

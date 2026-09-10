@@ -20,7 +20,11 @@ describe("handleCspReport", () => {
 
   it("rejects a non-CSP content-type with 415", async () => {
     const res = await handleCspReport(
-      new Request("https://x.dev/api/csp-report", { method: "POST", body: "{}", headers: { "content-type": "text/plain" } }),
+      new Request("https://x.dev/api/csp-report", {
+        method: "POST",
+        body: "{}",
+        headers: { "content-type": "text/plain" },
+      }),
       { surface: "website" },
     );
     expect(res.status).toBe(415);
@@ -29,10 +33,20 @@ describe("handleCspReport", () => {
 
   it("normalizes, sanitizes, and forwards a valid report as 204", async () => {
     const body = JSON.stringify(
-      report({ effectiveDirective: "img-src", documentURL: "https://x.dev/p/7", blockedURL: "https://evil.example/a.png", sourceFile: "", disposition: "report" }),
+      report({
+        effectiveDirective: "img-src",
+        documentURL: "https://x.dev/p/7",
+        blockedURL: "https://evil.example/a.png",
+        sourceFile: "",
+        disposition: "report",
+      }),
     );
     const res = await handleCspReport(
-      new Request("https://x.dev/api/csp-report", { method: "POST", body, headers: { "content-type": "application/reports+json" } }),
+      new Request("https://x.dev/api/csp-report", {
+        method: "POST",
+        body,
+        headers: { "content-type": "application/reports+json" },
+      }),
       { surface: "website" },
     );
     expect(res.status).toBe(204);
@@ -47,8 +61,18 @@ describe("handleCspReport", () => {
     const res = await handleCspReport(
       new Request("https://x.dev/api/csp-report", {
         method: "POST",
-        body: JSON.stringify(report({ effectiveDirective: "img-src", documentURL: "https://x.dev/", blockedURL: "https://evil.example/a.png", disposition: "report" })),
-        headers: { "content-type": "application/reports+json", "cf-connecting-ip": "203.0.113.7" },
+        body: JSON.stringify(
+          report({
+            effectiveDirective: "img-src",
+            documentURL: "https://x.dev/",
+            blockedURL: "https://evil.example/a.png",
+            disposition: "report",
+          }),
+        ),
+        headers: {
+          "content-type": "application/reports+json",
+          "cf-connecting-ip": "203.0.113.7",
+        },
       }),
       { surface: "website" },
     );
@@ -59,10 +83,19 @@ describe("handleCspReport", () => {
 
   it("drops extension noise and does not forward", async () => {
     const body = JSON.stringify(
-      report({ effectiveDirective: "script-src-elem", documentURL: "https://x.dev/", blockedURL: "chrome-extension://a/b.js", disposition: "report" }),
+      report({
+        effectiveDirective: "script-src-elem",
+        documentURL: "https://x.dev/",
+        blockedURL: "chrome-extension://a/b.js",
+        disposition: "report",
+      }),
     );
     const res = await handleCspReport(
-      new Request("https://x.dev/api/csp-report", { method: "POST", body, headers: { "content-type": "application/reports+json" } }),
+      new Request("https://x.dev/api/csp-report", {
+        method: "POST",
+        body,
+        headers: { "content-type": "application/reports+json" },
+      }),
       { surface: "website" },
     );
     expect(res.status).toBe(204);

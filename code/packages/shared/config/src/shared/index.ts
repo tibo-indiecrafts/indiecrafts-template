@@ -4,7 +4,7 @@
  * Pure TypeScript, zero web-runtime coupling (no `next`, no DOM, no
  * `NEXT_PUBLIC_` env): locales + routing helpers, `Intl` format defaults, and
  * the shared types. Safe to import from ANY platform — web, mobile (Expo/RN),
- * or hybrid (Electron). The web-only primitives live in `../web`.
+ * . The web-only primitives live in `../web`.
  */
 
 // ── Values + functions ───────────────────────────────────────

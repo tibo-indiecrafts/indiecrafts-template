@@ -28,12 +28,14 @@
 ### Task 1: Migration `0004_erasure_requests` + `sha256Hex`
 
 **Files:**
+
 - Create: `code/shared/api/db/d1/migrations/0004_erasure_requests.sql`
 - Modify: `code/packages/shared/security/src/crypto.ts` (add `sha256Hex`)
 - Test: `code/shared/api/src/erasure/requests.test.ts` (schema) + `code/packages/shared/security/src/crypto.test.ts` (sha256Hex)
 - Modify: `code/shared/api/CHANGELOG.md`
 
 **Interfaces:**
+
 - Produces: table `erasure_requests`; `export async function sha256Hex(input: string): Promise<string>` (unsalted SHA-256 hex — for hashing the high-entropy token; do NOT reuse `fingerprintEmail`, whose `.toLowerCase()` would let a case-variant token match). Consumed by Tasks 5–6.
 
 - [ ] **Step 1: Write the migration**
@@ -104,6 +106,7 @@ Migration: `pnpm db:migrate audit dev`. Tests: `pnpm --filter @indiecrafts/packa
 - [ ] **Step 4: Prettier + commit**
 
 Add a `code/shared/api/CHANGELOG.md` line for the migration.
+
 ```bash
 git add code/shared/api/db/d1/migrations/0004_erasure_requests.sql code/shared/api/src/erasure/requests.test.ts code/packages/shared/security/src/crypto.ts code/packages/shared/security/src/crypto.test.ts code/shared/api/CHANGELOG.md
 git commit --no-verify -m "feat(compliance): erasure_requests table (migration 0004) + sha256Hex"
@@ -114,12 +117,14 @@ git commit --no-verify -m "feat(compliance): erasure_requests table (migration 0
 ### Task 2: Real adapter clients (Clerk + Sanity)
 
 **Files:**
+
 - Create: `code/shared/api/src/erasure/clerk-client.ts` + `code/shared/api/src/erasure/sanity-client.ts`
 - Test: `code/shared/api/src/erasure/clerk-client.test.ts` + `code/shared/api/src/erasure/sanity-client.test.ts`
 - Modify: `code/shared/api/src/index.ts` (Env: add `CLERK_SECRET_KEY?`, `SANITY_API_WRITE_TOKEN?`)
 - Modify: `code/shared/api/package.json` (add `@clerk/backend` dep) + `code/shared/api/wrangler.toml` (secret docs)
 
 **Interfaces:**
+
 - Produces: `createRealClerkClient(secretKey: string): ClerkErasureClient` and `createRealSanityClient(cfg: { projectId: string; dataset: string; apiVersion: string; writeToken: string; readToken?: string }): SanityErasureClient` — the real impls of the Phase 3 DI interfaces. Consumed by Task 6 (confirm route assembly).
 
 - [ ] **Step 1: Real Clerk client — failing test**
@@ -218,11 +223,13 @@ Add `CLERK_SECRET_KEY?: string;` and `SANITY_API_WRITE_TOKEN?: string;` to `Env`
 ### Task 3: Worker email helper (Resend HTTP)
 
 **Files:**
+
 - Create: `code/shared/api/src/erasure/email.ts`
 - Test: `code/shared/api/src/erasure/email.test.ts`
 - Modify: `code/shared/api/src/index.ts` (Env: `RESEND_API_KEY?`, `EMAIL_FROM?`)
 
 **Interfaces:**
+
 - Produces: `sendErasureTokenEmail(env, { to, confirmUrl }): Promise<void>` and `sendErasureCompleteEmail(env, { to, retained: string }): Promise<void>` — inline Resend POST; no-op when `RESEND_API_KEY`/`EMAIL_FROM` unset (fire-and-forget, never throws into the route's success path). HTML hand-built + `escapeHtml`-guarded on any interpolated value.
 
 - [ ] **Step 1: Failing test** — `vi.stubGlobal("fetch")`; set `RESEND_API_KEY`/`EMAIL_FROM`; assert the token email POSTs `https://api.resend.com/emails` with `Authorization: Bearer <key>`, `from: EMAIL_FROM`, `to`, a subject, and an HTML body containing the confirmUrl (escaped). Assert no-op when the key is unset.
@@ -236,11 +243,13 @@ Add `CLERK_SECRET_KEY?: string;` and `SANITY_API_WRITE_TOKEN?: string;` to `Env`
 ### Task 4: `POST /v1/erasure/request` (+ request form + Turnstile)
 
 **Files:**
+
 - Modify: `code/shared/api/src/index.ts` (the route + the Env `TURNSTILE_SECRET?`, a `verifyTurnstile` inline helper, and a `PUBLIC_CORS_POST`)
 - Create: `code/shared/api/src/erasure/request.ts` (the handler + the request-form HTML) — keep index.ts a thin dispatcher that calls it
 - Test: `code/shared/api/src/erasure/request.test.ts`
 
 **Interfaces:**
+
 - Consumes: `sha256Hex`, `fingerprintEmail`, `env.DB`, `env.GDPR_FINGERPRINT_SALT`, the D1 subject lookup (user_profiles by fingerprint/email; optionally Sanity), `sendErasureTokenEmail`, an inline Turnstile verify.
 - Produces: `handleErasureRequest(request, env): Promise<Response>`. `GET` → the request form HTML; `POST` (Turnstile + rate-limit) → look up the email; if found: insert an `erasure_requests` row (`status:"email_sent"`, `token_hash`, `token_expires_at` = +24h, `due_at` = +30d, `email_fingerprint`, `user_id?`, `requested_at`), email the token link `${new URL(request.url).origin}/v1/erasure/confirm?token=<plaintext>`; ALWAYS respond 200 with the generic "check your email" message (anti-enumeration).
 
@@ -255,11 +264,13 @@ Add `CLERK_SECRET_KEY?: string;` and `SANITY_API_WRITE_TOKEN?: string;` to `Env`
 ### Task 5: `GET|POST /v1/erasure/confirm` (the engine run)
 
 **Files:**
+
 - Create: `code/shared/api/src/erasure/confirm.ts` (handler + confirm-form HTML + engine assembly)
 - Modify: `code/shared/api/src/index.ts` (dispatch `/v1/erasure/confirm`)
 - Test: `code/shared/api/src/erasure/confirm.test.ts`
 
 **Interfaces:**
+
 - Consumes: `sha256Hex`, `fingerprintEmail`, `runErasure`, `createD1ErasureAdapter`, `createRealClerkClient`+`createClerkErasureAdapter`, `createRealSanityClient`+`createSanityErasureAdapter`, `createOrdersErasureAdapter`, `sendErasureCompleteEmail`, `env.DB` + all the new secrets.
 - Produces: `handleErasureConfirm(request, env): Promise<Response>`. `GET ?token=…` → the typed-email confirm form (read-only, prefetch-safe). `POST {token, email}` → find the row by `sha256Hex(token)`; reject if missing / `status !== "email_sent"` / expired (`token_expires_at`) / `attempts >= 5` (increment attempts on each try) / `fingerprintEmail(email) !== row.email_fingerprint`; on success: `runErasure(adapters, email, {mode:"erase", dryRun:true, ts, fingerprint})` (preview) then `dryRun:false` (live); inspect `receipt.errors`; store the receipt JSON in `result`, set `status:"completed"` (or keep `email_sent` + record the error if `receipt.errors` non-empty), `confirmed_at`/`completed_at`; write an `admin_audit` row (`event:"erasure.completed"`, actor/target = the subject `user_id`); fire `sendErasureCompleteEmail`. Single-use: a second POST finds `status:"completed"` → rejected.
 
@@ -274,11 +285,13 @@ Add `CLERK_SECRET_KEY?: string;` and `SANITY_API_WRITE_TOKEN?: string;` to `Env`
 ### Task 6: `GET /v1/erasure/status/:token` + CHANGELOG + docs
 
 **Files:**
+
 - Modify: `code/shared/api/src/index.ts` (dispatch `url.pathname.startsWith("/v1/erasure/status/")`)
 - Create: `code/shared/api/src/erasure/status.ts` + `code/shared/api/src/erasure/status.test.ts`
 - Modify: `code/shared/api/CHANGELOG.md` + `code/shared/api/.claude/CLAUDE.md` (the erasure routes) + `code/docs/apps/web/config/data-retention.md` (the live erasure flow)
 
 **Interfaces:**
+
 - Produces: `handleErasureStatus(request, env, token): Promise<Response>` — `GET`; looks up `erasure_requests` by `sha256Hex(token)`; returns `{ status, requested_at, due_at, completed_at }` (NO PII, no receipt body) or 404. Public, `PUBLIC_CORS`.
 
 - [ ] **Step 1: Failing test** — seed a row; `GET /v1/erasure/status/<token>` returns its status (no email/fingerprint/result leaked); unknown token → 404.
@@ -288,12 +301,14 @@ Add `CLERK_SECRET_KEY?: string;` and `SANITY_API_WRITE_TOKEN?: string;` to `Env`
 ---
 
 ## Phase 4a exit check
+
 - [ ] api `test` green (migration, sha256Hex, both real clients, email, request anti-enumeration + token-hash, confirm engine-run + typed-email/TTL/attempt/replay guards + `receipt.errors` handling, status no-PII) + `tsc` exit 0
 - [ ] `pnpm --filter @indiecrafts/packages-shared-security test` green (sha256Hex)
 - [ ] `prettier --check` clean on all Phase-4a files
 - [ ] No real Clerk/Sanity/Resend call fired in tests (mocked/injected); no secret values committed
 
 ## Deferred to later Phase 4 slices (documented)
+
 - Export API (`POST /v1/export` + identity-verified `runExport` + secure expiring download link).
 - Branded/i18n website request + confirm forms (this slice ships minimal worker-served HTML); wire `features.compliance` gating.
 - Sanity→D1 DSAR migration (`data_requests` table; move `submitDataRequest` off Sanity) + deprecate the Sanity `dataRequest` schema.
@@ -301,6 +316,7 @@ Add `CLERK_SECRET_KEY?: string;` and `SANITY_API_WRITE_TOKEN?: string;` to `Env`
 - The full Sanity-editable email catalog (this slice hand-builds the two erasure emails in the worker).
 
 ## Self-review notes
+
 - **Spec §22.4 (this slice):** erasure request+confirm+status API → Tasks 4–6; real adapter wiring → Task 2; token/TTL/attempt/typed-email + engine run + receipt → Tasks 1,5; token & completion emails → Tasks 3,5. Export/confirm-page/Sanity→D1/SLA → later slices (listed).
 - **Deliberate cuts (ponytail):** worker-served minimal HTML forms (no web-surface task); inline Resend/Sanity-mutate/Turnstile (the bricks are server-only); dynamic `import("@clerk/backend")`; anti-enumeration + hashed token + typed-email + TTL + attempt-limit are the security spine (spec §8.2/§8.3), not optional.
 - **Security:** the api worker gains Clerk-delete + Sanity-write + email power via new secrets (operator-armed; unset in build/tests). The confirm route is the only path to live deletion and is quadruple-gated (token_hash + typed-email fingerprint + TTL + attempts) and single-use.

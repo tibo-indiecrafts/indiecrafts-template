@@ -1,4 +1,7 @@
-import { confirmationGroup, ownerAlertGroup } from "@indiecrafts/packages-web-email/sanity";
+import {
+  confirmationGroup,
+  ownerAlertGroup,
+} from "@indiecrafts/packages-web-email/sanity";
 
 /**
  * The newsletter's transactional-email groups on the shared `emailStrings`

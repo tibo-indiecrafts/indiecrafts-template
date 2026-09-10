@@ -1,16 +1,13 @@
-name: Deploy (native — mobile + hybrid)
+name: Deploy (native — mobile)
 
-# The native surfaces ship OUTSIDE the Cloudflare deploy.yml: they need store / signing
-# credentials and per-OS runners (signed installers can't cross-build). Manual dispatch
-# only — pick the env + which surface(s). CI sets CI=true, so the prod confirm auto-skips.
+# The native surface ships OUTSIDE the Cloudflare deploy.yml: it needs store credentials
+# and a remote build (EAS). Manual dispatch only — pick the env. CI sets CI=true, so the
+# prod confirm auto-skips.
 #
 # NOTE: the git remote is GitLab; these GitHub Actions run only if the repo is also on
-# GitHub (mirror or move). On GitLab CI, port these two jobs to `.gitlab-ci.yml`.
+# GitHub (mirror or move). On GitLab CI, port this job to `.gitlab-ci.yml`.
 #
 # Required GitHub Environment secrets/vars (per env):
-#   Hybrid signing — CSC_LINK + CSC_KEY_PASSWORD (cert), APPLE_ID +
-#     APPLE_APP_SPECIFIC_PASSWORD + APPLE_TEAM_ID (macOS notarization).
-#   R2 upload — R2_ACCESS_KEY_ID + R2_SECRET_ACCESS_KEY (R2 S3 token) + CLOUDFLARE_ACCOUNT_ID.
 #   Mobile — EXPO_TOKEN (EAS). Store submit creds live in eas.json.
 #   var SITE_PREFIX — the resource-name prefix (default `indiecrafts`).
 on:
@@ -21,57 +18,14 @@ on:
         type: choice
         options: [dev, staging, prod]
         default: prod
-      surface:
-        description: Which native surface(s)
-        type: choice
-        options: [both, hybrid, mobile]
-        default: both
 
 concurrency:
   group: deploy-native-${{ github.event.inputs.environment }}
   cancel-in-progress: false
 
 jobs:
-  # Hybrid (Electron) — one runner per OS; signed artifacts can't cross-build.
-  hybrid:
-    if: ${{ github.event.inputs.surface != 'mobile' }}
-    environment: ${{ github.event.inputs.environment }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v5
-      - uses: ./.github/actions/setup
-      # Build the installer for THIS OS (dist:mac|win|linux via electron-builder). With the
-      # signing secrets present it is signed + notarized; without them, unsigned (dev only).
-      - run: pnpm deploy:hybrid:main:"$ENVIRONMENT" --yes
-        env:
-          ENVIRONMENT: ${{ github.event.inputs.environment }}
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-      # Publish the installers + the electron-updater feed (latest*.yml) to R2 (S3 API).
-      # electron-updater reads them at downloads.<root>/hybrid (the electron-builder.yml url).
-      - name: Publish to R2
-        shell: bash
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_ENDPOINT: https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
-          BUCKET: ${{ vars.SITE_PREFIX || 'indiecrafts' }}-${{ github.event.inputs.environment }}-hybrid-surfaces-main-releases
-        run: |
-          aws s3 cp code/projects/hybrid/surfaces/main/release/ "s3://$BUCKET/hybrid/" \
-            --recursive --endpoint-url "$R2_ENDPOINT" \
-            --exclude "*" --include "*.dmg" --include "*.exe" --include "*.AppImage" \
-            --include "*.yml" --include "*.blockmap"
-
   # Mobile (Expo) — EAS Build (+ submit on prod). One Linux runner; EAS builds remotely.
   mobile:
-    if: ${{ github.event.inputs.surface != 'hybrid' }}
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     steps:

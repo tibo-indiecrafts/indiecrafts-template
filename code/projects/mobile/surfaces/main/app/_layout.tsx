@@ -117,7 +117,7 @@ function ErrorScreen({ onRetry }: { onRetry: () => void }) {
 
 // One QueryClient for the app's lifetime (server-state cache; shared defaults from the
 // query brick). A screen fetches with `useQuery`/`useMutation`, its `queryFn` calling
-// the api-client (`lib/agent`). Created at module scope so it survives re-renders.
+// the api-client. Created at module scope so it survives re-renders.
 const queryClient = new QueryClient({ defaultOptions: queryDefaults });
 
 export default function RootLayout() {

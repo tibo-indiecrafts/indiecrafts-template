@@ -23,8 +23,8 @@ concurrency:
 
 jobs:
   # Read the app registry → the Cloudflare apps to deploy (code/shared/scripts/lib/apps.mjs).
-  # Adding an app = a row there, no workflow edit. (Native apps — expo/electron —
-  # ship from their own workflow; they need store/signing credentials.)
+  # Adding an app = a row there, no workflow edit. (The native app — expo —
+  # ships from its own workflow; it needs store credentials.)
   discover:
     # workflow_dispatch runs unconditionally; a workflow_run only deploys when CI passed.
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}

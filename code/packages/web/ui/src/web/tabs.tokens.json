@@ -1,7 +1,10 @@
 {
   "$description": "Component token surface for tabs — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
-    "tabs-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "tabs-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
     "tabs-muted": { "$type": "color", "$value": "{semantic.muted}" },
     "tabs-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
     "tabs-ring": { "$type": "color", "$value": "{semantic.ring}" },

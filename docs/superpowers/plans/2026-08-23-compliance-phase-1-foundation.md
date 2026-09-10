@@ -28,10 +28,12 @@
 Add the salted email-fingerprint function beside `hashIpAddress`. Pure, Web-Crypto only, consumed via the `/crypto` subpath (no barrel edit needed).
 
 **Files:**
+
 - Modify: `code/packages/shared/security/src/crypto.ts` (add after `verifyIpHash`, ~line 130)
 - Test: `code/packages/shared/security/src/crypto.test.ts` (add a `describe` block)
 
 **Interfaces:**
+
 - Consumes: the module-private `utf8` (TextEncoder) and `toHex(buf)` already in `crypto.ts` — reuse, do not re-declare.
 - Produces: `export async function fingerprintEmail(email: string, salt: string): Promise<string>` — 64-char lowercase hex. Consumed by Task 4 (webhook) and Task 6 (backfill).
 
@@ -48,7 +50,9 @@ describe("fingerprintEmail", () => {
     // case-folded + trimmed → same as the normalised form
     expect(f).toBe(await fingerprintEmail("user@example.com", "salt"));
     // salt-sensitive
-    expect(f).not.toBe(await fingerprintEmail("user@example.com", "other-salt"));
+    expect(f).not.toBe(
+      await fingerprintEmail("user@example.com", "other-salt"),
+    );
     // hex shape, not recoverable
     expect(f).toMatch(/^[0-9a-f]{64}$/);
     expect(f).not.toContain("example");
@@ -117,6 +121,7 @@ git commit -m "feat(security): fingerprintEmail — salted pseudonymisation key"
 Create the `user_profiles` table and wire the api worker's test pool to a local D1 with migrations applied, so Tasks 3–4 can assert real writes. (Only `user_profiles` ships now; the other identity tables in spec §6.2 land with the phases that use them — creating them now would be speculative.)
 
 **Files:**
+
 - Create: `code/shared/api/db/d1/migrations/0002_user_profiles.sql`
 - Modify: `code/shared/api/vitest.config.ts`
 - Create: `code/shared/api/src/test-setup.ts`
@@ -125,6 +130,7 @@ Create the `user_profiles` table and wire the api worker's test pool to a local 
 - Modify: `code/shared/api/CHANGELOG.md`
 
 **Interfaces:**
+
 - Produces: table `user_profiles(user_id TEXT PK, email, full_name, locale, email_fingerprint, created_at NOT NULL, last_login_at, deleted_at, anonymized INTEGER DEFAULT 0)` + index `idx_user_profiles_fingerprint`. Test-pool env gains a local D1 bound as `DB` (migrations applied via `test-setup.ts`) and `APP_API_TOKEN: "test-token"`. Consumed by Tasks 3, 4.
 
 - [ ] **Step 1: Write the migration**
@@ -275,10 +281,12 @@ git commit -m "feat(compliance): user_profiles D1 table + test harness (migratio
 Extend the `/v1/events` `kind:"session"` branch to upsert a bare `user_profiles` row on every sign-in. Email/name are NOT in the session payload (kept minimal) — this creates the row if missing and stamps `last_login_at`; the webhook and backfill fill email/name.
 
 **Files:**
+
 - Modify: `code/shared/api/src/index.ts:288-292` (the `session_events` insert block)
 - Test: `code/shared/api/src/user-profiles.test.ts` (add cases)
 
 **Interfaces:**
+
 - Consumes: `env.DB` (bound), the existing `userId`/`ts` locals in the session branch.
 - Produces: after any `kind:"session"` POST, a `user_profiles` row exists for `userId` with `created_at` set once and `last_login_at` refreshed. Idempotent by PK.
 
@@ -340,15 +348,15 @@ Expected: FAIL — no `user_profiles` row is written (query returns 0 rows).
 In `code/shared/api/src/index.ts`, inside the `else if (body.kind === "session")` branch, immediately after the `INSERT INTO session_events …` `.run();` (line ~292), add:
 
 ```ts
-          // Create the profile row on first sign-in; refresh last_login_at on
-          // every sign-in. Email/name are NOT in the session payload (kept
-          // minimal) — the Clerk webhook + backfill fill them. Idempotent by PK.
-          await env.DB.prepare(
-            "INSERT INTO user_profiles (user_id, created_at, last_login_at) VALUES (?, ?, ?) " +
-              "ON CONFLICT(user_id) DO UPDATE SET last_login_at = excluded.last_login_at",
-          )
-            .bind(userId, ts, ts)
-            .run();
+// Create the profile row on first sign-in; refresh last_login_at on
+// every sign-in. Email/name are NOT in the session payload (kept
+// minimal) — the Clerk webhook + backfill fill them. Idempotent by PK.
+await env.DB.prepare(
+  "INSERT INTO user_profiles (user_id, created_at, last_login_at) VALUES (?, ?, ?) " +
+    "ON CONFLICT(user_id) DO UPDATE SET last_login_at = excluded.last_login_at",
+)
+  .bind(userId, ts, ts)
+  .run();
 ```
 
 - [ ] **Step 4: Run tests to verify they pass**
@@ -370,6 +378,7 @@ git commit -m "feat(compliance): upsert user_profiles on sign-in"
 Extend `/v1/clerk-webhook` to keep `user_profiles` in sync with Clerk — the source of truth for email. Upsert on `user.created`/`user.updated` (re-fingerprint on email change); pseudonymise on `user.deleted`. Idempotent by PK, so Clerk retries are safe.
 
 **Files:**
+
 - Modify: `code/shared/api/src/index.ts` — Env interface (line ~56), the crypto import (line 8), the `/v1/clerk-webhook` route (after the role→admin block, ~line 489)
 - Modify: `code/shared/api/wrangler.toml` (document the new secret near line 86)
 - Modify: `code/shared/api/.claude/CLAUDE.md` (secret list)
@@ -377,6 +386,7 @@ Extend `/v1/clerk-webhook` to keep `user_profiles` in sync with Clerk — the so
 - Modify: `code/shared/api/CHANGELOG.md`
 
 **Interfaces:**
+
 - Consumes: `fingerprintEmail` (Task 1), `env.DB`, `env.GDPR_FINGERPRINT_SALT` (new, optional), the existing `verifySvix` + `json` helpers.
 - Produces: `user.created`/`user.updated` → upserted/re-fingerprinted `user_profiles` row (`created_at` preserved on update); `user.deleted` → `email='deleted_<id>@anonymized.local'`, `full_name='Deleted User'`, `deleted_at` set, `anonymized=1`, fingerprint retained.
 
@@ -456,7 +466,9 @@ const created = (id: string, email: string, first = "", last = "") => ({
 
 describe("clerk webhook → user_profiles", () => {
   it("user.created upserts a fingerprinted profile", async () => {
-    const res = await postWebhook(created("user_c", "Jane@Example.com", "Jane", "Doe"));
+    const res = await postWebhook(
+      created("user_c", "Jane@Example.com", "Jane", "Doe"),
+    );
     expect(res.status).toBe(200);
     const row = await env.DB.prepare(
       "SELECT * FROM user_profiles WHERE user_id = ?",
@@ -503,7 +515,9 @@ describe("clerk webhook → user_profiles", () => {
       .bind("user_u")
       .first<Record<string, unknown>>();
     expect(after?.email).toBe("new@x.com");
-    expect(after?.email_fingerprint).toBe(await fingerprintEmail("new@x.com", SALT));
+    expect(after?.email_fingerprint).toBe(
+      await fingerprintEmail("new@x.com", SALT),
+    );
     expect(after?.created_at).toBe(before?.created_at);
   });
 
@@ -516,7 +530,10 @@ describe("clerk webhook → user_profiles", () => {
         .bind("user_d")
         .first<{ email_fingerprint: string }>()
     )?.email_fingerprint;
-    await postWebhook({ type: "user.deleted", data: { id: "user_d", deleted: true } });
+    await postWebhook({
+      type: "user.deleted",
+      data: { id: "user_d", deleted: true },
+    });
     const row = await env.DB.prepare(
       "SELECT * FROM user_profiles WHERE user_id = ?",
     )
@@ -561,69 +578,65 @@ Add to the `Env` interface after `IP_HASH_SALT` (line ~57):
 In the `/v1/clerk-webhook` route, after the existing role→admin `if` block and before `return json({ ok: true }, 200, cors);` (line ~489), add:
 
 ```ts
-      // ── Compliance: keep user_profiles in sync with Clerk (source of truth for
-      //    email). Upsert on create/update (re-fingerprints on email change);
-      //    pseudonymise on delete. Idempotent by PK — Clerk retries are safe.
-      //    No idempotency-key store: every op here is idempotent by primary key.
-      if (
-        env.DB &&
-        (evt.type === "user.created" ||
-          evt.type === "user.updated" ||
-          evt.type === "user.deleted")
-      ) {
-        const userId = typeof data.id === "string" ? data.id : null;
-        if (userId) {
-          const now = new Date().toISOString();
-          try {
-            if (evt.type === "user.deleted") {
-              await env.DB.prepare(
-                "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
-              )
-                .bind(
-                  `deleted_${userId}@anonymized.local`,
-                  "Deleted User",
-                  now,
-                  userId,
-                )
-                .run();
-            } else {
-              // Webhook payload is snake_case (unlike the @clerk/backend SDK).
-              const emails =
-                (data.email_addresses as
-                  | Array<{ id?: string; email_address?: string }>
-                  | undefined) ?? [];
-              const primaryId = data.primary_email_address_id as
-                | string
-                | undefined;
-              const email =
-                emails.find((e) => e.id === primaryId)?.email_address ??
-                emails[0]?.email_address ??
-                null;
-              const first =
-                typeof data.first_name === "string" ? data.first_name : "";
-              const last =
-                typeof data.last_name === "string" ? data.last_name : "";
-              const fullName = [first, last].filter(Boolean).join(" ") || null;
-              const fingerprint =
-                email && env.GDPR_FINGERPRINT_SALT
-                  ? await fingerprintEmail(email, env.GDPR_FINGERPRINT_SALT)
-                  : null;
-              await env.DB.prepare(
-                "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at, last_login_at) " +
-                  "VALUES (?, ?, ?, ?, ?, NULL) " +
-                  "ON CONFLICT(user_id) DO UPDATE SET email = excluded.email, full_name = excluded.full_name, email_fingerprint = excluded.email_fingerprint",
-              )
-                .bind(userId, email, fullName, fingerprint, now)
-                .run();
-            }
-          } catch (error) {
-            logger.error("clerk profile sync failed", {
-              name: (error as Error)?.name,
-            });
-            return json({ error: "server" }, 502, cors);
-          }
-        }
+// ── Compliance: keep user_profiles in sync with Clerk (source of truth for
+//    email). Upsert on create/update (re-fingerprints on email change);
+//    pseudonymise on delete. Idempotent by PK — Clerk retries are safe.
+//    No idempotency-key store: every op here is idempotent by primary key.
+if (
+  env.DB &&
+  (evt.type === "user.created" ||
+    evt.type === "user.updated" ||
+    evt.type === "user.deleted")
+) {
+  const userId = typeof data.id === "string" ? data.id : null;
+  if (userId) {
+    const now = new Date().toISOString();
+    try {
+      if (evt.type === "user.deleted") {
+        await env.DB.prepare(
+          "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
+        )
+          .bind(
+            `deleted_${userId}@anonymized.local`,
+            "Deleted User",
+            now,
+            userId,
+          )
+          .run();
+      } else {
+        // Webhook payload is snake_case (unlike the @clerk/backend SDK).
+        const emails =
+          (data.email_addresses as
+            Array<{ id?: string; email_address?: string }> | undefined) ?? [];
+        const primaryId = data.primary_email_address_id as string | undefined;
+        const email =
+          emails.find((e) => e.id === primaryId)?.email_address ??
+          emails[0]?.email_address ??
+          null;
+        const first =
+          typeof data.first_name === "string" ? data.first_name : "";
+        const last = typeof data.last_name === "string" ? data.last_name : "";
+        const fullName = [first, last].filter(Boolean).join(" ") || null;
+        const fingerprint =
+          email && env.GDPR_FINGERPRINT_SALT
+            ? await fingerprintEmail(email, env.GDPR_FINGERPRINT_SALT)
+            : null;
+        await env.DB.prepare(
+          "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at, last_login_at) " +
+            "VALUES (?, ?, ?, ?, ?, NULL) " +
+            "ON CONFLICT(user_id) DO UPDATE SET email = excluded.email, full_name = excluded.full_name, email_fingerprint = excluded.email_fingerprint",
+        )
+          .bind(userId, email, fullName, fingerprint, now)
+          .run();
       }
+    } catch (error) {
+      logger.error("clerk profile sync failed", {
+        name: (error as Error)?.name,
+      });
+      return json({ error: "server" }, 502, cors);
+    }
+  }
+}
 ```
 
 - [ ] **Step 5: Run tests to verify they pass**
@@ -651,11 +664,13 @@ git commit -m "feat(compliance): Clerk webhook syncs user_profiles"
 Add a runner to generate, set, and inspect `GDPR_FINGERPRINT_SALT` on the api worker, mirroring the repo's per-app wrangler-secret pattern. Cloudflare never returns secret values, so "verify/status" confirm presence only.
 
 **Files:**
+
 - Create: `code/shared/scripts/infra/gdpr-salt.mjs`
 - Create: `code/shared/scripts/infra/gdpr-salt.test.mjs`
 - Modify: `package.json` (root `scripts`)
 
 **Interfaces:**
+
 - Produces: root scripts `gdpr:salt:generate`, `gdpr:salt:set:{dev,staging,prod}`, `gdpr:salt:status:{dev,staging,prod}`; exported `generateSalt(): string` (64-char hex). (`verify` is folded into `status` — both list secrets; deviation from spec §5's 4-verb list noted, since CF returns no values to "verify" against.)
 - Consumes: `APPS` from `../lib/apps.mjs`, `assertRenamed` from `../lib/project.mjs`.
 
@@ -721,10 +736,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(0);
   }
 
-  if (!["set", "status"].includes(action) || !["dev", "staging", "prod"].includes(env)) {
-    console.error(
-      "Usage: gdpr-salt.mjs <generate | set <env> | status <env>>",
-    );
+  if (
+    !["set", "status"].includes(action) ||
+    !["dev", "staging", "prod"].includes(env)
+  ) {
+    console.error("Usage: gdpr-salt.mjs <generate | set <env> | status <env>>");
     process.exit(1);
   }
 
@@ -776,11 +792,13 @@ git commit -m "feat(compliance): gdpr:salt tooling for GDPR_FINGERPRINT_SALT"
 A one-time script that lists every Clerk user and seeds a `user_profiles` row (email + name + fingerprint) via `wrangler d1 execute`, so existing users are visible to erasure without waiting for their next login. The testable core is the pure `buildUpsertSql`.
 
 **Files:**
+
 - Create: `code/shared/scripts/data/backfill-profiles.mjs`
 - Create: `code/shared/scripts/data/backfill-profiles.test.mjs`
 - Modify: `package.json` (root `scripts` + add `@clerk/backend` devDep)
 
 **Interfaces:**
+
 - Consumes: `@clerk/backend` `createClerkClient` (reads `CLERK_SECRET_KEY`), `GDPR_FINGERPRINT_SALT` from env, `APPS`/`assertRenamed`.
 - Produces: root script `db:backfill:profiles:{dev,staging,prod}`; exported `buildUpsertSql(users, salt, now): string` where `users` are `{ id, email, fullName }`. The node:crypto fingerprint MUST equal `fingerprintEmail` (Task 1).
 
@@ -858,7 +876,13 @@ export function buildUpsertSql(users, salt, now) {
       const fp = email ? fingerprint(email, salt) : null;
       return (
         "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at) VALUES (" +
-        [sqlStr(u.id), sqlStr(email), sqlStr(u.fullName), sqlStr(fp), sqlStr(now)].join(", ") +
+        [
+          sqlStr(u.id),
+          sqlStr(email),
+          sqlStr(u.fullName),
+          sqlStr(fp),
+          sqlStr(now),
+        ].join(", ") +
         ") ON CONFLICT(user_id) DO UPDATE SET email = excluded.email, full_name = excluded.full_name, email_fingerprint = excluded.email_fingerprint;"
       );
     })
@@ -881,7 +905,8 @@ async function listAllUsers(clerk) {
           ?.emailAddress ??
         u.emailAddresses[0]?.emailAddress ??
         null;
-      const fullName = [u.firstName, u.lastName].filter(Boolean).join(" ") || null;
+      const fullName =
+        [u.firstName, u.lastName].filter(Boolean).join(" ") || null;
       users.push({ id: u.id, email, fullName });
     }
     if (offset + limit >= totalCount || data.length === 0) break;
@@ -915,13 +940,28 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const dir = mkdtempSync(join(tmpdir(), "backfill-"));
   const file = join(dir, "backfill.sql");
   writeFileSync(file, sql, { mode: 0o600 });
-  const pkg = APPS.find((a) => a.slug === "api")?.pkg ?? "@indiecrafts/shared-api";
-  const scope = env === "dev" ? ["--env", "dev", "--local"] : ["--env", env, "--remote"];
+  const pkg =
+    APPS.find((a) => a.slug === "api")?.pkg ?? "@indiecrafts/shared-api";
+  const scope =
+    env === "dev" ? ["--env", "dev", "--local"] : ["--env", env, "--remote"];
   try {
-    console.log(`Backfilling ${users.length} users into user_profiles (${env})…`);
+    console.log(
+      `Backfilling ${users.length} users into user_profiles (${env})…`,
+    );
     const r = spawnSync(
       "pnpm",
-      ["--filter", pkg, "exec", "wrangler", "d1", "execute", "DB", ...scope, "--file", file],
+      [
+        "--filter",
+        pkg,
+        "exec",
+        "wrangler",
+        "d1",
+        "execute",
+        "DB",
+        ...scope,
+        "--file",
+        file,
+      ],
       { stdio: "inherit" },
     );
     process.exit(r.status ?? 0);

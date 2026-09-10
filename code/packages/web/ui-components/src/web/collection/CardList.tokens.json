@@ -3,6 +3,9 @@
   "component": {
     "card-list-border": { "$type": "color", "$value": "{semantic.border}" },
     "card-list-card": { "$type": "color", "$value": "{component.card}" },
-    "card-list-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+    "card-list-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
   }
 }

@@ -41,7 +41,9 @@ describe("@indiecrafts/packages-shared-config i18n", () => {
     // First supported pref already matches active → no suggestion.
     expect(pickSuggestedLocale(["en", "fr"], "en", localeCodes)).toBe(null);
     // Unsupported prefs are skipped before the decision.
-    expect(pickSuggestedLocale(["de", "es", "fr"], "en", localeCodes)).toBe("fr");
+    expect(pickSuggestedLocale(["de", "es", "fr"], "en", localeCodes)).toBe(
+      "fr",
+    );
     // None supported → null.
     expect(pickSuggestedLocale(["de", "es"], "en", localeCodes)).toBe(null);
   });

@@ -2,7 +2,10 @@ import type { Locale } from "@indiecrafts/packages-shared-config";
 import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";
 import { approvedCommentsQuery } from "@indiecrafts/modules-web-blog/sanity/queries";
-import type { Comment, CommentsCopy } from "@indiecrafts/modules-web-blog/sanity/types";
+import type {
+  Comment,
+  CommentsCopy,
+} from "@indiecrafts/modules-web-blog/sanity/types";
 import { localized } from "@indiecrafts/modules-web-blog/lib/localize";
 import { CommentForm } from "@indiecrafts/modules-web-blog/user-interface/post/components/CommentForm";
 import { CommentReply } from "@indiecrafts/modules-web-blog/user-interface/post/components/CommentReply";

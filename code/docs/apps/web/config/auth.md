@@ -27,7 +27,11 @@ The root layout mounts the themed provider:
 // src/app/layout.tsx
 import { AppClerkProvider } from "@indiecrafts/packages-web-auth";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <AppClerkProvider>{children}</AppClerkProvider>;
 }
 ```

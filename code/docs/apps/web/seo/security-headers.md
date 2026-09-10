@@ -19,7 +19,11 @@ carry the same extra hosts (video embeds, Sanity media, GA):
 import type { CspHosts } from "@indiecrafts/packages-shared-security";
 
 export const websiteCspHosts: CspHosts = {
-  frameSrc: ["https://www.youtube-nocookie.com", "https://player.vimeo.com", "https://www.dailymotion.com"],
+  frameSrc: [
+    "https://www.youtube-nocookie.com",
+    "https://player.vimeo.com",
+    "https://www.dailymotion.com",
+  ],
   mediaSrc: ["https://cdn.sanity.io"],
   googleAnalytics: true,
   embedHosts: [], // external embed origins (newsletter provider)
@@ -56,29 +60,41 @@ async headers() {
 ```ts
 // src/proxy.ts
 import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
-import { generateNonce, cspHeadersForMode, type CspMode } from "@indiecrafts/packages-shared-security";
+import {
+  generateNonce,
+  cspHeadersForMode,
+  type CspMode,
+} from "@indiecrafts/packages-shared-security";
 import { websiteCspHosts } from "./lib/csp-hosts";
 
-const CSP_MODE: CspMode = process.env.CSP_MODE === "report-only" ? "report-only" : "enforce";
+const CSP_MODE: CspMode =
+  process.env.CSP_MODE === "report-only" ? "report-only" : "enforce";
 
 // per request, inside the middleware pipeline:
 const nonce = generateNonce();
-const { enforced, reportOnly } = cspHeadersForMode(getCurrentEnvironment(), websiteCspHosts, reporting, nonce, CSP_MODE);
+const { enforced, reportOnly } = cspHeadersForMode(
+  getCurrentEnvironment(),
+  websiteCspHosts,
+  reporting,
+  nonce,
+  CSP_MODE,
+);
 response.headers.set("Content-Security-Policy", enforced);
-if (reportOnly) response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
+if (reportOnly)
+  response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
 ```
 
 ## The headers
 
-| Header                       | Value                                      | Purpose                                                                                                       |
-| ---------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `X-Content-Type-Options`     | `nosniff`                                  | Stops MIME-type sniffing.                                                                                     |
-| `X-Frame-Options`            | `DENY`                                     | Blocks framing (clickjacking) — belt-and-suspenders with CSP `frame-ancestors`.                               |
-| `Referrer-Policy`            | `strict-origin-when-cross-origin`          | Full referrer same-origin, origin-only cross-origin.                                                          |
+| Header                       | Value                                                                                                                                                                                                                                         | Purpose                                                                                                                                                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Content-Type-Options`     | `nosniff`                                                                                                                                                                                                                                     | Stops MIME-type sniffing.                                                                                                                                                                                           |
+| `X-Frame-Options`            | `DENY`                                                                                                                                                                                                                                        | Blocks framing (clickjacking) — belt-and-suspenders with CSP `frame-ancestors`.                                                                                                                                     |
+| `Referrer-Policy`            | `strict-origin-when-cross-origin`                                                                                                                                                                                                             | Full referrer same-origin, origin-only cross-origin.                                                                                                                                                                |
 | `Permissions-Policy`         | `accelerometer=(), bluetooth=(), browsing-topics=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), hid=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), serial=(), usb=(), xr-spatial-tracking=()` | Denies every sensor/hardware/payment/privacy feature a marketing+blog site never uses. **Not** locked: `autoplay`/`fullscreen`/`encrypted-media`/`picture-in-picture` — the video embeds (YouTube/Vimeo) need them. |
-| `Cross-Origin-Opener-Policy` | `same-origin-allow-popups`                 | Isolates the browsing context; **`allow-popups`** keeps OAuth/share popups (the Sanity Studio login) working. |
-| `Strict-Transport-Security`  | `max-age=31536000; includeSubDomains`      | **Production only.** Forces HTTPS. No `preload` by default (sticky — hard to undo).                           |
-| `Content-Security-Policy`    | see below                                  | The main defense.                                                                                             |
+| `Cross-Origin-Opener-Policy` | `same-origin-allow-popups`                                                                                                                                                                                                                    | Isolates the browsing context; **`allow-popups`** keeps OAuth/share popups (the Sanity Studio login) working.                                                                                                       |
+| `Strict-Transport-Security`  | `max-age=31536000; includeSubDomains`                                                                                                                                                                                                         | **Production only.** Forces HTTPS. No `preload` by default (sticky — hard to undo).                                                                                                                                 |
+| `Content-Security-Policy`    | see below                                                                                                                                                                                                                                     | The main defense.                                                                                                                                                                                                   |
 
 Plus: `poweredByHeader: false` strips `X-Powered-By`; immutable one-year `Cache-Control` on
 `/brand/:path*` + `/logo.svg` (via `immutablePaths`).
@@ -89,21 +105,21 @@ Plus: `poweredByHeader: false` strips `X-Powered-By`; immutable one-year `Cache-
 app's extras merged per directive. Passing a `nonce` swaps `script-src` to the strict, nonce-gated
 policy (see below); without one it's the permissive policy, unchanged from before SP3.
 
-| Directive                   | Value                                                             | Why                                                     |
-| --------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------- |
-| `default-src`               | `'self'`                                                          | Same-origin baseline.                                   |
-| `script-src` (no nonce)     | `'self' 'unsafe-inline'` (+ `'unsafe-eval'` dev only) (+ GA host) | The permissive policy — `/studio`'s only policy, and the whole site's while `CSP_MODE=report-only`. |
+| Directive                   | Value                                                             | Why                                                                                                                                                                               |
+| --------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default-src`               | `'self'`                                                          | Same-origin baseline.                                                                                                                                                             |
+| `script-src` (no nonce)     | `'self' 'unsafe-inline'` (+ `'unsafe-eval'` dev only) (+ GA host) | The permissive policy — `/studio`'s only policy, and the whole site's while `CSP_MODE=report-only`.                                                                               |
 | `script-src` (nonce)        | `'self' 'nonce-<value>' 'strict-dynamic' https: 'unsafe-inline'`  | The strict policy — only the nonced script (and anything it loads) runs. `https: 'unsafe-inline'` is a CSP-L2 fallback modern browsers ignore once `'strict-dynamic'` is present. |
-| `style-src`                 | `'self' 'unsafe-inline'`                                          | Tailwind / inline styles.                               |
-| `img-src`                   | `'self' data: blob: https:`                                       | `next/image`, data/blob URIs, remote HTTPS images.      |
-| `media-src`                 | `'self' blob:` (+ `cdn.sanity.io`)                                | Uploaded featured videos (Sanity file assets).          |
-| `font-src`                  | `'self' data:`                                                    | Self-hosted `next/font` + data-URI fonts.               |
-| `connect-src`               | `getCSPConnectSources(env)` (+ GA beacons + embeds)               | XHR/fetch/WebSocket targets.                            |
-| `frame-src`                 | `'self'` (+ the video hosts + embeds)                             | Validated video embeds only.                            |
-| `frame-ancestors`           | `'none'`                                                          | Nobody may frame this site.                             |
-| `base-uri`                  | `'self'`                                                          | Blocks `<base>` hijacking.                              |
-| `form-action`               | `'self'` (+ embeds)                                               | Forms submit same-origin (or a whitelisted embed host). |
-| `upgrade-insecure-requests` | (production)                                                      | Auto-upgrades any `http:` subresource.                  |
+| `style-src`                 | `'self' 'unsafe-inline'`                                          | Tailwind / inline styles.                                                                                                                                                         |
+| `img-src`                   | `'self' data: blob: https:`                                       | `next/image`, data/blob URIs, remote HTTPS images.                                                                                                                                |
+| `media-src`                 | `'self' blob:` (+ `cdn.sanity.io`)                                | Uploaded featured videos (Sanity file assets).                                                                                                                                    |
+| `font-src`                  | `'self' data:`                                                    | Self-hosted `next/font` + data-URI fonts.                                                                                                                                         |
+| `connect-src`               | `getCSPConnectSources(env)` (+ GA beacons + embeds)               | XHR/fetch/WebSocket targets.                                                                                                                                                      |
+| `frame-src`                 | `'self'` (+ the video hosts + embeds)                             | Validated video embeds only.                                                                                                                                                      |
+| `frame-ancestors`           | `'none'`                                                          | Nobody may frame this site.                                                                                                                                                       |
+| `base-uri`                  | `'self'`                                                          | Blocks `<base>` hijacking.                                                                                                                                                        |
+| `form-action`               | `'self'` (+ embeds)                                               | Forms submit same-origin (or a whitelisted embed host).                                                                                                                           |
+| `upgrade-insecure-requests` | (production)                                                      | Auto-upgrades any `http:` subresource.                                                                                                                                            |
 
 ### `connect-src` is environment-aware (still in `@indiecrafts/packages-shared-config`)
 
@@ -156,10 +172,10 @@ always answers `204` (or `429` when the IP is over the limit).
 with `cspHeadersForMode(env, csp, reporting, nonce, CSP_MODE)` — the enforced/Report-Only pair for
 the mode set by the `CSP_MODE` env var:
 
-| `CSP_MODE`          | Enforced `Content-Security-Policy`                        | `Content-Security-Policy-Report-Only` |
-| -------------------- | ---------------------------------------------------------- | --------------------------------------- |
-| `enforce` (default) | the strict nonce policy                                    | none                                    |
-| `report-only`        | the permissive policy (unchanged — the site keeps working) | the strict nonce policy — violations are observed, nothing is blocked |
+| `CSP_MODE`          | Enforced `Content-Security-Policy`                         | `Content-Security-Policy-Report-Only`                                 |
+| ------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
+| `enforce` (default) | the strict nonce policy                                    | none                                                                  |
+| `report-only`       | the permissive policy (unchanged — the site keeps working) | the strict nonce policy — violations are observed, nothing is blocked |
 
 The nonce reaches every inline script that needs it via the `x-nonce` request header, set on the
 request before it's handed to next-intl/the route so a server component can read it with
@@ -172,7 +188,7 @@ wiring needed for those.
 Sanity Studio can't take a per-request nonce (it needs `'unsafe-inline'`, always); `/maintenance` is
 a standalone static page with no nonce. `next.config.ts` gives each its own `permissiveCspRule`
 (`studioCspRule` is the `/studio` shorthand), reproducing the pre-nonce policy exactly — so
-neither route ships without a CSP. (When maintenance mode is *on*, the proxy still stamps the nonce
+neither route ships without a CSP. (When maintenance mode is _on_, the proxy still stamps the nonce
 CSP on the internal rewrite to `/maintenance`; the static rule only covers a direct hit.)
 
 **Default: `CSP_MODE` unset → `enforce`.** The strict nonce policy is the enforced

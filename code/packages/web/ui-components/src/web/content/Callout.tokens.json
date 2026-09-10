@@ -2,9 +2,18 @@
   "$description": "Component token surface for Callout — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "callout-muted": { "$type": "color", "$value": "{semantic.muted}" },
-    "callout-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "callout-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    },
     "callout-border": { "$type": "color", "$value": "{semantic.border}" },
-    "callout-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
-    "callout-destructive-foreground": { "$type": "color", "$value": "{semantic.destructive-foreground}" }
+    "callout-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    },
+    "callout-destructive-foreground": {
+      "$type": "color",
+      "$value": "{semantic.destructive-foreground}"
+    }
   }
 }

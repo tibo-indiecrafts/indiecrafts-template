@@ -73,7 +73,7 @@ Intl format, env/CSP, logging, `PageConfig`/`isPageVisible`); the app owns its i
 ## Brick & module tiers — what a surface pulls in
 
 Not every surface is a marketing site. What a surface depends on falls in tiers, so a lean surface
-(`admin` · `app` · `mobile` · `hybrid`) never carries the content stack:
+(`admin` · `app` · `mobile`) never carries the content stack:
 
 - **baseline** — every surface: `packages-shared-config` (via `@/config`), `packages-shared-ui-tokens`
   (`globals.css`), and, on web, `packages-web-ui` (shadcn primitives). The Hello-World `app` surface
@@ -82,12 +82,11 @@ Not every surface is a marketing site. What a surface depends on falls in tiers,
 format · logger · security · gated-delivery · system-pages · compliance · version` (`system-pages` +
   `compliance` fork `web`/`native` inside). No Next/React/DOM/Sanity coupling in the shared surface.
   `compliance`/`version` each pair a portable core here with a richer `web/` brick (below): the
-  shared core is what the `app`/Electron/Expo shells consume, the web brick is the website's Sanity
+  shared core is what the `app`/Expo shells consume, the web brick is the website's Sanity
   surface over the same math.
 - **web-coupled** (`packages/web/*`) — needs Next/React/DOM/Sanity: `ui · ui-components · sanity ·
 email · page-builder · schema · i18n · announcement · compliance · locale-suggest · version`. Shared
-  across web _surfaces_; can't run on Expo/Electron as-is. The **Electron renderer is the exception** —
-  it is Chromium/React 19, so it reuses the Next-free ones (`ui`, `system-pages/web`) directly.
+  across web _surfaces_; can't run on Expo as-is.
 - **native** (`packages/mobile/*`) — Expo/RN-only: `ui-native` (the native design system). The web `ui`
   (shadcn/DOM) can't run here; native forks the components but shares the **tokens**.
 - **content / marketing** (`modules/web/*`) — website-only feature verticals: `blog · newsletter ·
@@ -100,8 +99,8 @@ it in.** Add `sanity`/`email`/page-builder/a module to another surface only when
 (Sanity reads, block types, i18n), split its portable core into `shared/` then — `config`'s `./shared`
 vs `./web` split is the proven pattern.
 
-How the three UI platforms assemble the **same shell** (theme · i18n · fonts · status pages · UI) from
-these tiers — and the Next-agnostic rule that lets Electron reuse the web UI — is its own page:
+How the two UI platforms assemble the **same shell** (theme · i18n · fonts · status pages · UI) from
+these tiers — and the Next-agnostic rule that keeps web bricks portable — is its own page:
 [**Cross-platform shell**](./cross-platform-shell.md).
 
 ## Infra & deploy per app
@@ -120,8 +119,8 @@ prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
 
 ## Where it stands
 
-- **Now:** eight activated app slots across four platform classes; `web` is the full app + the hub
-  Studio + the only content lens; one tenant dataset. The non-website shells (`app` · `mobile` · `hybrid`)
+- **Now:** eight activated app slots across three platform classes; `web` is the full app + the hub
+  Studio + the only content lens; one tenant dataset. The non-website shells (`app` · `mobile`)
   now share a compliance + version + locale layer over the portable bricks
   ([`compliance-shared`](/packages/compliance-shared) · [`version-shared`](/packages/version-shared)) —
   legal link-out, a compliant-ready consent + re-acceptance UI, an update prompt, and a persisted locale

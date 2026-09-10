@@ -1,6 +1,6 @@
 /**
  * Web `Store` adapter — `localStorage`-backed, synchronous, for the plain-React shells
- * (the `app` web surface + the Electron renderer, both Chromium/React 19). Serves both
+ * (the `app` web surface). Serves both
  * the consent record and the legal-acceptance record (each under its own `storageKey`,
  * namespaced by `${site.prefix}`). The website keeps its own richer store
  * (`@indiecrafts/packages-web-compliance`); this is the minimal one the shared UI needs.

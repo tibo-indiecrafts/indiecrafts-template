@@ -1,11 +1,11 @@
 # @indiecrafts/shared-api — standalone API (worker-cf)
 
 Auto-loads under `code/shared/api/**`. A **dedicated JSON/GraphQL API** for the non-web clients (`mobile`,
-`hybrid`, partners). The web app keeps its own co-located `/api` routes; this is the shared, versioned API
+partners). The web app keeps its own co-located `/api` routes; this is the shared, versioned API
 those clients call — its own domain, its own deploy. **Activated bare-Worker scaffold — `/health` + the
 audit + session sink (`POST /v1/events` → EU D1, `GET /v1/sessions`)**, bearer-gated by `APP_API_TOKEN` +
 CORS allowlist + the native rate-limit binding; `withGuard` is Next-only, so the guard is inline. More
-routes TBD. (The AI agent moved to its own [`code/shared/agent`](../agent/.claude/CLAUDE.md) Worker.)
+routes TBD.
 Owns **two EU D1s** (both `--location weur`): **`DB`** (`audit` — the append-only firehose:
 `session_events`, `security_events`, `admin_audit`, `csp_reports`, `backup_runs`) and **`MAIN_DB`**
 (`main` — identity/rights/settings: `user_profiles`, `consent_events`, `data_requests`,
@@ -57,7 +57,7 @@ no Next/OpenNext). Same runtime as the `workers`/`cron` slots.
 
 **Next steps** (not built yet): add **Hono** — `src/index.ts` becomes a Hono app (`app.get("/v1/...")`
 reading Sanity via `@indiecrafts/packages-web-sanity`, guarded by `@indiecrafts/packages-shared-security` `withGuard` + a bearer/JWT check);
-version routes (`/v1`); CORS-allowlist the mobile/hybrid origins. Compose
+version routes (`/v1`); CORS-allowlist the mobile origins. Compose
 `@indiecrafts/packages-shared-config`/`logger`/`security`/`sanity`/`schema` (add `@types/node` — see the `workers` brief's
 isomorphic-types caveat).
 

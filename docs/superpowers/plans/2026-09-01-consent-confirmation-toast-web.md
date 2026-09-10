@@ -31,16 +31,19 @@
 `code/packages/web/ui/src/web/` is blocked by `guard.mjs` (shadcn CLI dir). So the helper lives in `@indiecrafts/packages-web-ui-components` (the composite web-UI package, already a dep of all three surfaces — it's where `ShareButtons` comes from), importing `toast` directly from the `sonner` package. `sonner` is `^2.0.8` (match web-ui). ui-components already has a `test: vitest run` script and a `src/web/` dir.
 
 **Files:**
+
 - Modify: `code/packages/web/ui-components/package.json` (add `sonner@^2.0.8` dep)
 - Create: `code/packages/web/ui-components/src/web/consent-toast.ts`
 - Test: `code/packages/web/ui-components/src/web/consent-toast.test.ts`
 
 **Interfaces:**
+
 - Produces: `showConsentSavedToast({ saved, description, manage, onManage })` from `@indiecrafts/packages-web-ui-components/web/consent-toast`. (`<Toaster>` still comes from `@indiecrafts/packages-web-ui/web/sonner`, unchanged.)
 
 - [ ] **Step 1: Add the `sonner` dep** — `pnpm --filter @indiecrafts/packages-web-ui-components add sonner@^2.0.8` (matches web-ui).
 
 - [ ] **Step 2: Write the failing test** `code/packages/web/ui-components/src/web/consent-toast.test.ts`:
+
 ```ts
 import { describe, it, expect, vi } from "vitest";
 
@@ -52,7 +55,12 @@ import { showConsentSavedToast } from "./consent-toast";
 describe("showConsentSavedToast", () => {
   it("fires a success toast with a Manage action that calls onManage", () => {
     const onManage = vi.fn();
-    showConsentSavedToast({ saved: "Saved", description: "Change in settings", manage: "Manage", onManage });
+    showConsentSavedToast({
+      saved: "Saved",
+      description: "Change in settings",
+      manage: "Manage",
+      onManage,
+    });
     expect(success).toHaveBeenCalledTimes(1);
     const [msg, opts] = success.mock.calls[0];
     expect(msg).toBe("Saved");
@@ -67,6 +75,7 @@ describe("showConsentSavedToast", () => {
 - [ ] **Step 3: Run — verify it fails** (`pnpm --filter @indiecrafts/packages-web-ui-components test -- consent-toast`) → FAIL (module missing).
 
 - [ ] **Step 4: Implement** `consent-toast.ts`:
+
 ```ts
 import { toast } from "sonner";
 
@@ -84,7 +93,10 @@ export function showConsentSavedToast({
   manage: string;
   onManage: () => void;
 }): void {
-  toast.success(saved, { description, action: { label: manage, onClick: onManage } });
+  toast.success(saved, {
+    description,
+    action: { label: manage, onClick: onManage },
+  });
 }
 ```
 
@@ -97,32 +109,40 @@ export function showConsentSavedToast({
 ### Task 2: app — Toaster at layout level + fire the toast
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/app/src/app/[locale]/layout.tsx` (mount `<Toaster>`)
 - Modify: `code/projects/web/surfaces/app/src/user-interface/layout/AppShell.tsx` (remove its `<Toaster>` — moved up, avoids double)
 - Modify: `code/projects/web/surfaces/app/src/user-interface/ShellOverlays.tsx` (fire the toast)
 - Modify: `code/projects/web/surfaces/app/messages/{en,fr}.json`
 
 **Interfaces:**
+
 - Consumes: `showConsentSavedToast` (Task 1), `Toaster` + `useRouter` from `@/i18n/routing`, `toast` copy from `consent.*`/`legal.reaccept.*`.
 
 - [ ] **Step 1: Relocate the Toaster.** Remove `<Toaster />` + its import from `AppShell.tsx`. Add to `[locale]/layout.tsx`: `import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";` and render `<Toaster />` as the last child inside `<NextIntlClientProvider>` (sibling of `ShellOverlays`). This covers every app page (shelled + sign-in) with exactly one Toaster.
 
 - [ ] **Step 2: Add i18n keys** to `app/messages/en.json` under `consent`:
+
 ```json
     "saved": "Preferences saved",
     "savedBody": "You can change these anytime in your profile settings.",
     "manage": "Manage"
 ```
+
 and under `legal.reaccept` add `"saved": "Thanks — your acceptance is saved."`. Mirror in `fr.json`:
 `consent.saved`="Préférences enregistrées", `consent.savedBody`="Vous pouvez les modifier à tout moment dans les paramètres de votre profil.", `consent.manage`="Gérer", `legal.reaccept.saved`="Merci — votre acceptation est enregistrée." (Parity test guards the set.)
 
 - [ ] **Step 3: Fire the toast in `ShellOverlays.tsx`.** In `ConsentGate`, wrap the `persist` helper so every explicit path toasts; in `LegalGate`, toast after `legalStore.save`. Concretely: add `const router = useRouter();` (from `@/i18n/routing`), `const tc = useTranslations("consent");`, and after each `consentStore.save(...)` inside `persist` (the accept/reject/save button handlers — NOT the `useEffect` auto-seed), call:
+
 ```ts
 showConsentSavedToast({
-  saved: tc("saved"), description: tc("savedBody"), manage: tc("manage"),
+  saved: tc("saved"),
+  description: tc("savedBody"),
+  manage: tc("manage"),
   onManage: () => router.push("/account"),
 });
 ```
+
 In `LegalGate`'s `onAccept` (after `legalStore.save`), call the same with `t("reaccept.saved")` for `saved` (namespace `legal`). **Do NOT** add the toast to the `useEffect` seed in `ConsentGate` (opt-out/none silent path).
 
 - [ ] **Step 4: Verify** — `pnpm --filter @indiecrafts/web-surfaces-app tsc && pnpm --filter @indiecrafts/web-surfaces-app test` (parity + nav). Eyeball via `CSP_MODE=report-only … next dev`: accept cookies → toast appears with Manage; Manage → `/account`; reload with no banner shown → no toast (record persisted, seed silent).
@@ -134,12 +154,14 @@ In `LegalGate`'s `onAccept` (after `legalStore.save`), call the same with `t("re
 ### Task 3: website — Toaster + fire the toast via `applyConsent`
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/website/src/app/[locale]/layout.tsx` (mount `<Toaster>`)
 - Modify: `code/packages/web/compliance/src/consent/consent-store.ts` (`applyConsent` fires the toast, gated `source !== "auto"`)
 - Modify: the website legal-reacceptance accept path (`packages/web/compliance/src/reacceptance/*` or its website mount)
 - Modify: `code/projects/web/surfaces/website/messages/{en,fr}.json`
 
 **Interfaces:**
+
 - Consumes: `showConsentSavedToast` (Task 1). Note the website namespace is `cookies.*` (not `consent.*`).
 
 - [ ] **Step 1: Mount `<Toaster>`** in website `[locale]/layout.tsx` (co-located with `<CookieBanner>`), one instance, last child of the provider tree.
@@ -159,6 +181,7 @@ In `LegalGate`'s `onAccept` (after `legalStore.save`), call the same with `t("re
 ### Task 4: hybrid — Toaster + fire the toast
 
 **Files:**
+
 - Modify: `code/projects/hybrid/surfaces/main/src/renderer/src/shell.tsx` (mount `<Toaster>`, fire toast in the `ConsentBannerGate` + legal callbacks)
 - Modify: `code/projects/hybrid/surfaces/main/src/renderer/messages/{en,fr}.json`
 
@@ -183,6 +206,7 @@ In `LegalGate`'s `onAccept` (after `legalStore.save`), call the same with `t("re
 ### Task 5: app — "Cookie preferences" section on `/account`
 
 **Files:**
+
 - Create: `code/projects/web/surfaces/app/src/user-interface/account/CookiePreferencesSection.tsx`
 - Modify: `code/projects/web/surfaces/app/src/app/[locale]/(app)/account/page.tsx`
 - Modify: `app/messages/{en,fr}.json`
@@ -204,6 +228,7 @@ In `LegalGate`'s `onAccept` (after `legalStore.save`), call the same with `t("re
 ### Task 6: website — mount `ManagePreferencesButton` on `/account`; hybrid settings control
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/website/src/app/[locale]/(…)/account/page.tsx`
 - Modify: `website/messages/{en,fr}.json` (if a section heading is new)
 - Modify: hybrid renderer settings location + its `ConsentPreferences` wrapper (mirror Task 5 for hybrid)

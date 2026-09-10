@@ -32,7 +32,12 @@ export function ShareButtons({
     copied: string;
   };
   /** Which controls to show (editor-driven, from Sanity). Unset/`true` = shown. */
-  networks?: { x?: boolean; linkedin?: boolean; facebook?: boolean; copyLink?: boolean };
+  networks?: {
+    x?: boolean;
+    linkedin?: boolean;
+    facebook?: boolean;
+    copyLink?: boolean;
+  };
 }) {
   const [copied, setCopied] = useState(false);
 

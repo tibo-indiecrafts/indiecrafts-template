@@ -30,7 +30,7 @@ export interface MarketingNudgeProps {
  * The native mirror of the web `MarketingNudge` — a one-time post-sign-in prompt shown
  * only when the user has no marketing decision on record (`GET` → null). `[Yes]`/`[No]`
  * record a decision (never shown again); `[dismiss]` snoozes per-device via AsyncStorage.
- * The RN app does direct authenticated api fetches (unlike the Electron renderer), so this
+ * The RN app does direct authenticated api fetches, so this
  * is self-contained. The screen mounts it only for a signed-in user.
  */
 export function MarketingNudge({

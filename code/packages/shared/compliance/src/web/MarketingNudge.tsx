@@ -26,7 +26,7 @@ export interface MarketingNudgeProps {
  * social sign-up that bypassed the sign-up checkbox. `[Yes]`/`[No]` record a decision
  * (the flag flips non-null → never shown again); `[×]` snoozes per-device via
  * localStorage. Transport-agnostic: `read`/`write` are injected, so the same UI serves
- * the web surfaces (direct api fetch) and the Electron renderer (preload bridge). The
+ * the web surfaces (direct api fetch); read/write are injected. The
  * mount decides whether the user is signed in before rendering this.
  */
 export function MarketingNudge({

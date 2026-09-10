@@ -10,8 +10,7 @@
 //   D1       — the api's two EU D1s: `<prefix>-<env>-db-audit` (audit) + `-db-main` (main).
 //   KV       — `<api>-security-counters` (short-TTL failed-login counters).
 //   R2       — `<prefix>-<env>-db-backup` (D1 snapshots) · `<api>-export` (GDPR export bundles) ·
-//              `<web-app>-isr` per next-cf app (OpenNext incremental cache) ·
-//              `<hybrid>-releases` (desktop installers).
+//              `<web-app>-isr` per next-cf app (OpenNext incremental cache).
 //
 // NOTE: a fresh instance may not have created every resource yet (R2 export/backup and the
 // ISR buckets are provisioned on demand) — teardown treats a missing resource as already-gone.
@@ -33,7 +32,6 @@ export function instanceResources(env, prefix) {
       `${prefix}-${env}-db-backup`,
       `${api}-export`,
       ...webApps.map((s) => `${resourceName(s, env, prefix)}-isr`),
-      `${resourceName("hybrid", env, prefix)}-releases`,
     ],
   };
 }

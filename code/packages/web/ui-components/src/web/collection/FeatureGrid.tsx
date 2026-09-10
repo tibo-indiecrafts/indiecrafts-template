@@ -1,6 +1,10 @@
 import type { FeatureGridModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { Icon } from "@indiecrafts/packages-shared-ui-icons/web";
-import { Card, CardContent, CardHeader } from "@indiecrafts/packages-web-ui/web/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from "@indiecrafts/packages-web-ui/web/card";
 import { RichTitle } from "../RichTitle";
 import { ModuleSection } from "../layout/ModuleSection";
 

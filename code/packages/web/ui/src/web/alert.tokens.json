@@ -2,8 +2,17 @@
   "$description": "Component token surface for alert — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "alert-card": { "$type": "color", "$value": "{component.card}" },
-    "alert-card-foreground": { "$type": "color", "$value": "{component.card-foreground}" },
-    "alert-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
-    "alert-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+    "alert-card-foreground": {
+      "$type": "color",
+      "$value": "{component.card-foreground}"
+    },
+    "alert-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    },
+    "alert-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
   }
 }

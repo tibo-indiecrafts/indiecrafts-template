@@ -2,12 +2,33 @@
   "$description": "Component token surface for LeadMagnetForm — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "lead-magnet-form-card": { "$type": "color", "$value": "{component.card}" },
-    "lead-magnet-form-primary": { "$type": "color", "$value": "{component.primary}" },
-    "lead-magnet-form-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" },
-    "lead-magnet-form-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
-    "lead-magnet-form-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
-    "lead-magnet-form-muted": { "$type": "color", "$value": "{semantic.muted}" },
-    "lead-magnet-form-background": { "$type": "color", "$value": "{semantic.background}" },
-    "lead-magnet-form-destructive": { "$type": "color", "$value": "{semantic.destructive}" }
+    "lead-magnet-form-primary": {
+      "$type": "color",
+      "$value": "{component.primary}"
+    },
+    "lead-magnet-form-primary-foreground": {
+      "$type": "color",
+      "$value": "{component.primary-foreground}"
+    },
+    "lead-magnet-form-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    },
+    "lead-magnet-form-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
+    "lead-magnet-form-muted": {
+      "$type": "color",
+      "$value": "{semantic.muted}"
+    },
+    "lead-magnet-form-background": {
+      "$type": "color",
+      "$value": "{semantic.background}"
+    },
+    "lead-magnet-form-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    }
   }
 }

@@ -57,9 +57,7 @@ not Vitest — colocated `*.test.ts(x)` beside the source, same as the web rule.
 is **pnpm-aware** — it transpiles RN/Expo packages under `node_modules/.pnpm/…`; `jest.setup.js` mocks
 the native `AsyncStorage`). Run with `pnpm --filter @indiecrafts/mobile-surfaces-main test`; it is folded
 into that app's `verify` (`tsc && test`), so `pnpm verify` covers it via the turbo fan-out. Component
-tests add React Native Testing Library + `testID`s when the first screen lands (not before). The
-Electron (hybrid) main/preload logic will test under Vitest when it holds logic beyond delegating to
-already-tested bricks.
+tests add React Native Testing Library + `testID`s when the first screen lands (not before).
 
 ### Visual baselines are platform-specific
 

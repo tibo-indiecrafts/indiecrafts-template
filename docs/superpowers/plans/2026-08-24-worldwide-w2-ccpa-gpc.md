@@ -7,6 +7,7 @@
 **Map (exact paths):** `.superpowers/sdd/slice-w2-ccpa-gpc-map.md`. **Today:** `browserSignalsDeny()` reads `navigator.globalPrivacyControl` CLIENT-side (`packages/web/compliance/src/consent/consent-store.ts:89` website; `packages/shared/compliance/src/web/signals.ts:8` app/hybrid); `Sec-GPC` is read nowhere server-side; the only preferences affordance is `ManagePreferencesButton`, buried on `/cookie-policy`.
 
 ## Global Constraints
+
 - Config-first; geo-gate via `resolveConsentMode(country) === "opt-out"`; no China. Commit `--no-verify`; stage only named files; prettier; writing-style. Machine may be slow — allow time / background.
 - Rulings: W2-CONTROL (a footer-mounted link → `openPreferences()`, geo-gated, CCPA copy — not a new `/do-not-sell` page); W2-SERVER-GPC (read `Sec-GPC` in `[locale]/layout.tsx` alongside `cf-ipcountry`, feed as a deny signal — no middleware/cookie hop); W2-NATIVE (GPC is a browser signal, N/A on RN — document as intentional; native still has the full preferences UI).
 
@@ -36,6 +37,7 @@
 ---
 
 ## Self-review
+
 - Coverage: the Do-Not-Sell control (opt-out geo-gated, opens preferences) + server-side GPC honoring + native-GPC documented. Matches the CCPA/CPRA gaps.
 - Consistency: reuses `openPreferences`/the consent store + `resolveConsentMode` + the layout's existing `headers()` read; no new consent architecture, no middleware.
 - Deferred/noted: a dedicated `/do-not-sell` page (the footer link → preferences is the CCPA-compliant minimum; a page is optional polish). Native GPC (N/A by design).

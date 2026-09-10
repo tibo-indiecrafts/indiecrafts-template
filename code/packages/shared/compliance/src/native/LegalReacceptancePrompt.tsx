@@ -1,5 +1,9 @@
 import { View, StyleSheet } from "react-native";
-import { Button, ThemedText, useTheme } from "@indiecrafts/packages-mobile-ui-native";
+import {
+  Button,
+  ThemedText,
+  useTheme,
+} from "@indiecrafts/packages-mobile-ui-native";
 import type { LegalReacceptanceCopy } from "../shared/legal";
 
 /**
@@ -23,7 +27,11 @@ export function LegalReacceptancePrompt({
       accessibilityRole="alert"
       style={[
         styles.root,
-        { backgroundColor: theme.color.card, borderColor: theme.color.border, borderRadius: theme.radius },
+        {
+          backgroundColor: theme.color.card,
+          borderColor: theme.color.border,
+          borderRadius: theme.radius,
+        },
       ]}
     >
       <ThemedText style={styles.title}>{copy.title}</ThemedText>
@@ -50,5 +58,10 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 15, fontWeight: "600" },
   body: { fontSize: 13 },
-  actions: { flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-end", gap: 8 },
+  actions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+    gap: 8,
+  },
 });

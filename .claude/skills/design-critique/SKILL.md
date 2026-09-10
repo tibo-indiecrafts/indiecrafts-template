@@ -29,7 +29,7 @@ the pixels exist (`rules/visual-verification.md` — screenshot at
    / **`design-system-reviewer`** for token + type-scale mapping). Authority: DESIGN.md §Typography +
    §Layout & Spacing. Fix hierarchy **without touching the a11y wins** from pass 1.
 3. **Content / copy**. Lens: ambiguous, overly technical, too-long labels; does each label describe the
-   *consequence* of its action? Brand voice, one-term consistency, locale parity, strings in
+   _consequence_ of its action? Brand voice, one-term consistency, locale parity, strings in
    `messages/<locale>.json`. Delegate to the **`copy-reviewer`** agent. Authority: DESIGN.md §Product
    Content.
 4. **Interaction-states** (last — the screen is now accessible, well-ordered, well-worded). Lens: hover,
@@ -43,7 +43,7 @@ re-screenshot the affected widths, then start the next pass. Never batch all fou
 
 ## Gate
 
-Re-screenshot at **375 / 768 / 1280** after each pass's fixes and review the *images* (per
+Re-screenshot at **375 / 768 / 1280** after each pass's fixes and review the _images_ (per
 `rules/visual-verification.md`). At the end: `pnpm verify:quick`, and `pnpm verify:contrast` if any
 colour moved. Reuse the existing reviewer agents — this skill sequences them, it does not re-implement
 their checks.

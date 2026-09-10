@@ -7,7 +7,12 @@ export type SvgIconProps = SVGProps<SVGSVGElement> & { name: SvgName };
 export function SvgIcon({ name, ...props }: SvgIconProps) {
   const mark = SVGS[name];
   return (
-    <svg viewBox={mark.viewBox} fill="currentColor" aria-hidden="true" {...props}>
+    <svg
+      viewBox={mark.viewBox}
+      fill="currentColor"
+      aria-hidden="true"
+      {...props}
+    >
       <path d={mark.path} />
     </svg>
   );

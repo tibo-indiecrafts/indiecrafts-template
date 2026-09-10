@@ -19,9 +19,6 @@
 **/.next/
 **/out/
 
-# electron-builder installer output (.dmg / .exe / .AppImage) — never commit binaries
-**/release/
-
 # production
 **/build
 

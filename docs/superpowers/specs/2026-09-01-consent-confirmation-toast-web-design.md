@@ -43,6 +43,7 @@ Findings from the code map that shape this design:
 ### 1. Toast UX
 
 On an explicit choice (consent Accept/Reject/Save, or legal re-accept):
+
 > ✓ **Preferences saved.** You can change these anytime in your profile settings. **[Manage]**
 
 - `toast.success(saved, { description, action: { label: manage, onClick: onManage } })` — sonner default auto-dismiss.
@@ -59,11 +60,13 @@ On an explicit choice (consent Accept/Reject/Save, or legal re-accept):
 A thin helper so all three surfaces render the SAME toast:
 
 `code/packages/web/ui/src/web/consent-toast.ts`:
+
 ```
 showConsentSavedToast({ saved, description, manage, onManage }: {
   saved: string; description: string; manage: string; onManage: () => void;
 }): void
 ```
+
 It calls the local `toast.success(...)` with the Manage action. Copy is passed in (each surface resolves its own i18n). Web-ui is the right home — every web surface already depends on it, and it keeps the compliance packages toast-free (RN-safe).
 
 ### 4. Fire points (per surface, small)
@@ -74,6 +77,7 @@ It calls the local `toast.success(...)` with the Manage action. Copy is passed i
 ### 5. Settings control — "Cookie preferences" on `/account`
 
 A new **Cookie preferences** section on the account page of `app` and `website`:
+
 - **app:** mount the exported `ConsentPreferences` (`@indiecrafts/packages-shared-compliance/web`) wired to the app's `consentStore` — lets the user re-open and change categories; a link to re-review legal (the website legal pages via `legalUrl`).
 - **website:** wire the existing-but-unmounted `ManagePreferencesButton` + `CookiePreferences` dialog into `/account` (it already funnels through `applyConsent(source: "preferences")`).
 - **hybrid:** mount `ConsentPreferences` in the renderer's settings/account location per its shell conventions (hybrid has no `/account` route like the web apps — follow its existing renderer routing).
@@ -96,21 +100,25 @@ A new **Cookie preferences** section on the account page of `app` and `website`:
 ## File-level change map
 
 **Shared packages:**
+
 - `code/packages/web/ui/src/web/sonner.tsx` — add `export { toast } from "sonner"`.
 - `code/packages/web/ui/src/web/consent-toast.ts` — new `showConsentSavedToast` helper.
 
 **website:**
+
 - `DefaultLayout` — mount `<Toaster>`.
 - `packages/web/compliance/.../consent-store.ts` `applyConsent` + the website legal callback — fire the toast (gated `source !== "auto"`).
 - `/account` page — mount `ManagePreferencesButton` + `CookiePreferences`.
 - `messages/{en,fr}.json` — `cookies.saved`/`savedBody`.
 
 **app:**
+
 - `src/user-interface/ShellOverlays.tsx` — fire the toast in `persist` + legal `onAccept`.
 - `/account` page — add the Cookie-preferences section (`ConsentPreferences`).
 - `messages/{en,fr}.json` — `consent.saved`/`savedBody`/`manage`/`preferencesTitle`.
 
 **hybrid:**
+
 - renderer `shell.tsx` — mount `<Toaster>`; fire the toast in the consent/legal callbacks.
 - renderer settings/account location — mount `ConsentPreferences`.
 - renderer `messages/{en,fr}.json` — same keys as app.

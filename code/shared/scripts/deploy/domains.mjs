@@ -44,9 +44,13 @@ console.log(
   `⚠ Attach the domain with ONE of the two options below — never both (they would\n` +
     `  each claim the hostname on the Worker and fight each other).\n`,
 );
-console.log(`# ── Option A — Terraform owns the domain (recommended; it also owns`);
+console.log(
+  `# ── Option A — Terraform owns the domain (recommended; it also owns`,
+);
 console.log(`#    the WAF / rate-limit / cache / SSL / Turnstile). Set in`);
-console.log(`#    infra/cloudflare/env/${env}.tfvars, then \`pnpm infra:${app}:apply:${env}\`:`);
+console.log(
+  `#    infra/cloudflare/env/${env}.tfvars, then \`pnpm infra:${app}:apply:${env}\`:`,
+);
 console.log(`attach_domain     = true`);
 console.log(`domain            = "${d.host}"`);
 console.log(`zone_id           = ""   # the zone id for ${d.zone ?? d.host}`);
@@ -54,10 +58,14 @@ console.log(`turnstile_domains = [${hosts.map((h) => `"${h}"`).join(", ")}]`);
 console.log(
   `\n# ── Option B — wrangler owns the domain (ONLY if you deploy WITHOUT the infra/`,
 );
-console.log(`#    layer). Then set \`attach_domain = false\` in the tfvars above.`);
+console.log(
+  `#    layer). Then set \`attach_domain = false\` in the tfvars above.`,
+);
 console.log(`#    Paste under [env.${env}] in wrangler.toml:`);
 for (const h of hosts)
-  console.log(`# [[env.${env}.routes]]\n# pattern = "${h}"\n# custom_domain = true`);
+  console.log(
+    `# [[env.${env}.routes]]\n# pattern = "${h}"\n# custom_domain = true`,
+  );
 console.log(
   `\n# runtime (deploy exports this automatically): NEXT_PUBLIC_SITE_URL=${originFor(app, env)}`,
 );

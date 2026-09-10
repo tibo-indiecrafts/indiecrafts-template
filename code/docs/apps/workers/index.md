@@ -1,9 +1,8 @@
-# Background Workers — `api` · `cron` · `workers` · `agent`
+# Background Workers — `api` · `cron` · `workers`
 
-Four **bare Cloudflare Workers** live in the shared tier: `code/shared/api` (HTTP for non-web clients),
-`code/shared/cron` (scheduled), `code/shared/workers` (queues / background), and `code/shared/agent` (the
-AI agent — `POST /v1/agent/:name`, called cross-origin by the web and by bearer from mobile/hybrid; see
-[agent](../../packages/agent)). They deploy **separately** from the web app — each its own Worker +
+Three **bare Cloudflare Workers** live in the shared tier: `code/shared/api` (HTTP for non-web clients),
+`code/shared/cron` (scheduled), and `code/shared/workers` (queues / background). They deploy
+**separately** from the web app — each its own Worker +
 `wrangler.toml`. (The web app is another Cloudflare surface: an OpenNext Worker that also runs its
 co-located `/api` route handlers — unrelated to these bare slots.)
 
@@ -46,7 +45,7 @@ Run everything from the **repo root**. Each op is one script that takes `<env>` 
 | `pnpm --filter @indiecrafts/<app> cf-typegen`                                       | Regenerate `worker-configuration.d.ts` (typed `Env`).                                                   |
 | `node code/shared/scripts/infra/bindings.mjs <app> <env> <kv\|d1\|queue> <BINDING>` | Provision a binding + print the `wrangler.toml` block.                                                  |
 
-`<app>` ∈ `api` · `cron` · `workers` · `agent`; `<env>` ∈ `dev` · `staging` · `prod`. `deploy-worker.mjs` refuses a
+`<app>` ∈ `api` · `cron` · `workers`; `<env>` ∈ `dev` · `staging` · `prod`. `deploy-worker.mjs` refuses a
 staging/prod deploy while the Worker name is still the template default (`indiecrafts-<app>-…`) — run
 `pnpm project:rename <slug>` first — and asks to confirm prod (CI / `--yes` skip it).
 
@@ -75,7 +74,7 @@ if (getCurrentEnvironment() === "production")
   addTransport(cloudflareTransport());
 ```
 
-Live in `api`, `cron` + `agent` today (`workers` doesn't wire it yet). Full contract → [logger](../../packages/logger).
+Live in `api` + `cron` today (`workers` doesn't wire it yet). Full contract → [logger](../../packages/logger).
 
 ## Testing
 
@@ -102,7 +101,6 @@ moves to Vitest 4, switch these configs to the newer `cloudflareTest()` **plugin
 ## Slot roles
 
 `api` = HTTP for non-web clients (audit + session sink `POST /v1/events`) · `cron` = time-triggered
-(`[triggers].crons`) · `workers` = queue/event consumers + background · `agent` = the AI agent
-(`POST /v1/agent/:name`, dual-mode guard: browser Origin+Turnstile / native bearer). `cron` and `workers`
+(`[triggers].crons`) · `workers` = queue/event consumers + background. `cron` and `workers`
 both expose `scheduled`; keep the roles crisp (or merge `cron` into `workers` if you never need separate
 cron observability).

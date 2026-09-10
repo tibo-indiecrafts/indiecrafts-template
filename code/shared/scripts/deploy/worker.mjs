@@ -20,7 +20,9 @@ const yes = process.argv.includes("--yes");
 // the website deploy and wahio's deploy-full. `--skip-secrets` opts out.
 const skipSecrets = process.argv.includes("--skip-secrets");
 if (!app || !ENVS.includes(env)) {
-  console.error("Usage: deploy-worker.mjs <app> <dev|staging|prod> [--yes] [--skip-secrets]");
+  console.error(
+    "Usage: deploy-worker.mjs <app> <dev|staging|prod> [--yes] [--skip-secrets]",
+  );
   process.exit(1);
 }
 
@@ -69,7 +71,9 @@ run("wrangler", ["deploy", "--env", env]);
 // Worker with no `.dev.vars` (or none to sync) never fails the deploy. Runs from the app
 // dir (CWD), so it reads THIS Worker's `.dev.vars`.
 if (!skipSecrets) {
-  const secrets = fileURLToPath(new URL("../data/secrets.mjs", import.meta.url));
+  const secrets = fileURLToPath(
+    new URL("../data/secrets.mjs", import.meta.url),
+  );
   run("node", [secrets, app, env, "--soft", ...(yes ? ["--yes"] : [])]);
 }
 console.log(`✓ Deployed ${app} to ${env}.`);

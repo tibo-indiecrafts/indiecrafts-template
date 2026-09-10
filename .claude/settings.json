@@ -68,7 +68,7 @@
             "type": "command",
             "command": "[ ! -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/platform-patterns.mjs\" ] || node \"$CLAUDE_PROJECT_DIR/.claude/hooks/platform-patterns.mjs\"",
             "timeout": 5,
-            "statusMessage": "Platform patterns (native/hybrid)"
+            "statusMessage": "Platform patterns (native)"
           },
           {
             "type": "command",

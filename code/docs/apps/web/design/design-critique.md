@@ -23,21 +23,21 @@ overflows a button. One lens at a time, re-screenshot between passes, keeps ever
 Each pass has a reviewer and a `DESIGN.md` section as its authority. The `design-critique` skill runs
 the loop and sequences these — you can also invoke a single pass directly.
 
-| # | Lens | Reviewer | Authority (`DESIGN.md`) | Ready prompt |
-| --- | --- | --- | --- | --- |
-| 1 | Accessibility | `accessibility-reviewer` (`accessibility-pass` skill) | §Accessibility | "Review this screen for accessibility — contrast, touch targets, focus order, semantic hierarchy, reliance on colour." |
-| 2 | Visual hierarchy | `ux-reviewer` + `design-system-reviewer` (`visual-polish` / `design-system-check`) | §Typography, §Layout & Spacing | "Ignore whether it looks attractive. Evaluate whether visual hierarchy reflects the importance of information and actions." |
-| 3 | Content | `copy-reviewer` | §Product Content | "Review the interface copy — labels that are ambiguous, overly technical, too long, or don't describe the consequence of an action." |
-| 4 | Interaction-states | `interaction-states-reviewer` | §Interaction & States, §Required States | "Evaluate only interactions and states — missing/wrong hover, focus, loading, empty, error, success, disabled." |
+| #   | Lens               | Reviewer                                                                           | Authority (`DESIGN.md`)                 | Ready prompt                                                                                                                         |
+| --- | ------------------ | ---------------------------------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Accessibility      | `accessibility-reviewer` (`accessibility-pass` skill)                              | §Accessibility                          | "Review this screen for accessibility — contrast, touch targets, focus order, semantic hierarchy, reliance on colour."               |
+| 2   | Visual hierarchy   | `ux-reviewer` + `design-system-reviewer` (`visual-polish` / `design-system-check`) | §Typography, §Layout & Spacing          | "Ignore whether it looks attractive. Evaluate whether visual hierarchy reflects the importance of information and actions."          |
+| 3   | Content            | `copy-reviewer`                                                                    | §Product Content                        | "Review the interface copy — labels that are ambiguous, overly technical, too long, or don't describe the consequence of an action." |
+| 4   | Interaction-states | `interaction-states-reviewer`                                                      | §Interaction & States, §Required States | "Evaluate only interactions and states — missing/wrong hover, focus, loading, empty, error, success, disabled."                      |
 
 After each pass: apply fixes **one at a time** (each stays reviewable), re-screenshot the affected
 widths, then start the next pass.
 
 ## Ordered vs parallel — pick by the job
 
-- **Ordered critique (this page)** = *refining one screen*. Fixes are sequenced so they don't regress
+- **Ordered critique (this page)** = _refining one screen_. Fixes are sequenced so they don't regress
   earlier lenses. Run it via the `design-critique` skill when polishing a screen from correct to crafted.
-- **Parallel review batch** = *a fast read of a PR*. The design + a11y reviewer agents run as parallel
+- **Parallel review batch** = _a fast read of a PR_. The design + a11y reviewer agents run as parallel
   groups (the sprint's phase-05 review). Faster, but read-only — it finds, it doesn't sequence fixes.
 
 Both use the same reviewer agents; they differ only in ordering. Use ordered when you're going to fix;

@@ -30,6 +30,7 @@
 ## File Structure
 
 **New — `ui-components` primitives (each + `.stories.tsx` + `.md`):**
+
 - `code/packages/web/ui-components/src/web/layout/PostHero.tsx` — one large post.
 - `code/packages/web/ui-components/src/web/collection/FeaturedPosts.tsx` — lead card + grid.
 - `code/packages/web/ui-components/src/web/collection/SpotlightRow.tsx` — heading + card row + "view all".
@@ -49,6 +50,7 @@
 ### Task 1: Composition mechanism (`frontpageModules` + route + default extraction)
 
 **Files:**
+
 - Modify: `code/modules/web/blog/src/sanity/schema/documents/blog.ts` (add the field)
 - Modify: `code/modules/web/blog/src/sanity/types.ts` (`BlogSingleton.frontpageModules`)
 - Modify: `code/modules/web/blog/src/sanity/queries.ts` (project `frontpageModules` in `blogSingletonQuery`)
@@ -58,10 +60,12 @@
 - Test: `code/projects/web/surfaces/website/src/app/[locale]/blog/frontpage-select.test.ts`
 
 **Interfaces:**
+
 - Produces: `frontpageModules?: AnyModule[]` on `BlogSingleton`; `<DefaultBlogFrontpage posts locale t display categories tags authors searchAction searchLabels />` (the exact props the current default chain uses — copy them from the route).
 - Consumes: existing `Modules` dispatcher (`{ modules, context: { locale } }`), `blogSingletonQuery`.
 
 - [ ] **Step 1: Add the schema field.** In `blog.ts`, reuse `moduleFieldRefs` (already defined for `postModules`) and add, right after the `postModules` field:
+
 ```ts
 defineField({
   name: "frontpageModules",
@@ -72,15 +76,19 @@ defineField({
   of: moduleFieldRefs,
 }),
 ```
+
 - [ ] **Step 2: Type it.** In `types.ts`, add to `BlogSingleton`: `frontpageModules?: AnyModule[];` (beside `postModules`).
 - [ ] **Step 3: Project it.** In `queries.ts`, add `frontpageModules[]{ <the same MODULES_FRAGMENT expansion postModules uses> }` to `blogSingletonQuery` (mirror the `postModules` projection line exactly).
 - [ ] **Step 4: Write the failing test** for the route's selection rule (pure helper). Create `frontpage-select.test.ts`:
+
 ```ts
 import { describe, it, expect } from "vitest";
 import { pickFrontpage } from "./frontpage-select";
 describe("pickFrontpage", () => {
   it("uses modules when present", () => {
-    expect(pickFrontpage([{ _type: "module.blog-hero", _key: "a" }] as never)).toBe("modules");
+    expect(
+      pickFrontpage([{ _type: "module.blog-hero", _key: "a" }] as never),
+    ).toBe("modules");
   });
   it("falls back to default when empty/undefined", () => {
     expect(pickFrontpage([])).toBe("default");
@@ -88,27 +96,45 @@ describe("pickFrontpage", () => {
   });
 });
 ```
+
 - [ ] **Step 5: Run it — expect FAIL** (`pickFrontpage` not defined). `pnpm --filter @indiecrafts/web-surfaces-website test -- frontpage-select`.
 - [ ] **Step 6: Implement.** Create `frontpage-select.ts` next to the route:
+
 ```ts
 import type { AnyModule } from "@indiecrafts/modules-web-blog/sanity/types";
 /** The frontpage renders editor modules when any exist, else the code default. */
-export function pickFrontpage(modules: AnyModule[] | undefined): "modules" | "default" {
+export function pickFrontpage(
+  modules: AnyModule[] | undefined,
+): "modules" | "default" {
   return modules && modules.length > 0 ? "modules" : "default";
 }
 ```
+
 - [ ] **Step 7: Extract `DefaultBlogFrontpage`.** Move the current default chain (the `posts.length===0 ? BlogListing : <>…hero…search…explore…</>` block, lines ~101–174 of `page.tsx`) verbatim into `DefaultBlogFrontpage.tsx` as a server component taking the props the route already computed (`posts, locale, display, categories, tags, authors, t`, plus the search action/labels). Keep behavior identical.
 - [ ] **Step 8: Rewire the route.** In `page.tsx`, after fetching `blog`, branch:
+
 ```tsx
-{pickFrontpage(blog?.frontpageModules) === "modules" ? (
-  <Modules modules={blog!.frontpageModules!} context={{ locale }} />
-) : (
-  <DefaultBlogFrontpage posts={posts} locale={locale} display={display}
-    categories={categories} tags={tags} authors={authors} t={t}
-    searchAction={localizedPathname("/blog/search", locale)} searchEnabled={isSearchEnabled()} />
-)}
+{
+  pickFrontpage(blog?.frontpageModules) === "modules" ? (
+    <Modules modules={blog!.frontpageModules!} context={{ locale }} />
+  ) : (
+    <DefaultBlogFrontpage
+      posts={posts}
+      locale={locale}
+      display={display}
+      categories={categories}
+      tags={tags}
+      authors={authors}
+      t={t}
+      searchAction={localizedPathname("/blog/search", locale)}
+      searchEnabled={isSearchEnabled()}
+    />
+  );
+}
 ```
+
 Import `Modules` from `@indiecrafts/modules-web-blog/user-interface/renderers/ModuleRenderer`.
+
 - [ ] **Step 9: Run tests + tsc.** `pnpm --filter @indiecrafts/web-surfaces-website test -- frontpage-select` (PASS) and `pnpm --filter @indiecrafts/web-surfaces-website tsc`.
 - [ ] **Step 10: Commit.** `git add -A && git commit -m "feat(blog): composable /blog frontpage via frontpageModules[] with default fallback"`
 
@@ -117,12 +143,14 @@ Import `Modules` from `@indiecrafts/modules-web-blog/user-interface/renderers/Mo
 ### Task 2: Big Hero (`PostHero` primitive + `module.blog-hero`)
 
 **Files:**
+
 - Create: `.../ui-components/src/web/layout/PostHero.tsx` + `PostHero.stories.tsx` + `PostHero.md`
 - Create: `.../blog/src/sanity/schema/modules/blog-hero.ts`
 - Create: `.../blog/src/user-interface/renderers/BlogHeroModule.tsx`
 - Modify: `.../blog/src/sanity/queries.ts` (`blogHeroQuery`), `.../schema/modules/index.ts`, `.../sanity/types.ts`, `.../renderers/ModuleRenderer.tsx`
 
 **Interfaces:**
+
 - Produces: `PostHero` props `{ href: string; title: string; image?: string; lqip?: string; alt?: string; video?: string; category?: { title: string; href?: string }; author?: string; date?: string; playLabel: string }`.
 - Produces schema `module.blog-hero` fields: `source` (`"latest" | "pinned"`), `pinned` (single post ref), `showMeta` (bool). Type `BlogHeroModule = ModuleBase & { _type: "module.blog-hero"; source?: "latest" | "pinned"; pinned?: { _ref: string }; showMeta?: boolean }`.
 
@@ -132,12 +160,14 @@ Import `Modules` from `@indiecrafts/modules-web-blog/user-interface/renderers/Mo
 - [ ] **Step 4: Run the story test — expect it to render + pass axe.** `pnpm --filter @indiecrafts/web-tools-storybook test:stories -- PostHero`.
 - [ ] **Step 5: Schema.** `blog-hero.ts` via `defineModule` (mirror `blog-post-list.ts`): fields `source` (string, list `latest`/`pinned`, initial `latest`), `pinned` (reference to `post`, hidden unless `source==="pinned"`), `showMeta` (boolean, initial true, legend "Afficher l'auteur·rice et la date. Vide = affiché.").
 - [ ] **Step 6: Query.** In `queries.ts`, add `blogHeroQuery` (params `{ locale, pinnedId }`): resolve the pinned post when `$pinnedId` is set, else the latest published post, projecting the existing post-card fragment (reuse the projection used by `moduleBlogPostListQuery` — factor it to a shared `POST_CARD_PROJECTION` const if not already, and reuse it in every block query below):
+
 ```groq
 *[_type == "post" && language == $locale && !(_id in path("drafts.**"))
   && (!defined(seo.unpublished) || seo.unpublished == false)
   && (!defined($pinnedId) || _id == $pinnedId)]
   | order(select(defined($pinnedId) => 0, 1) asc, publishedAt desc)[0]{ POST_CARD_PROJECTION }
 ```
+
 - [ ] **Step 7: Renderer.** `BlogHeroModule.tsx` (mirror `BlogPostList.tsx`): fetch via `blogHeroQuery` with `pinnedId: m.source === "pinned" ? m.pinned?._ref : undefined`; map the post → `PostHero` props (resolve `href` with `localizedPathname('/blog/'+slug, locale)`, category href likewise, `playLabel` from `getTranslations("pages.blog")` `t("playVideo")`); gate meta on `m.showMeta ?? true` AND `getBlogSettings().taxonomy.authors`; render nothing if no post.
 - [ ] **Step 8: Register + dispatch + type.** Add `blogHero` to `blogModuleSchemas` + `"module.blog-hero"` to `BLOG_MODULE_TYPES`; add `BlogHeroModule` type + to the `AnyModule` union in `types.ts`; add `if (m._type === "module.blog-hero") return <BlogHeroModule module={m} locale={context.locale} />;` to `ModuleSwitch`.
 - [ ] **Step 9: Verify.** `pnpm --filter @indiecrafts/web-surfaces-website tsc` + `test:stories -- PostHero`.
@@ -155,12 +185,15 @@ Import `Modules` from `@indiecrafts/modules-web-blog/user-interface/renderers/Mo
 - [ ] **Step 2–4:** `.md` + `.stories.tsx` (`UI Components/FeaturedPosts`, `Default`, `NoLead`, `TwoItems`); run `test:stories -- FeaturedPosts`.
 - [ ] **Step 5:** `blog-featured.ts` schema (mirror Task 2 Step 5; `pinned` is an array of post refs with the same locale-filter as `blog-post-list`'s `categories`).
 - [ ] **Step 6:** `blogFeaturedQuery` (params `{ locale, pinnedIds, limit, useFlag }`): pinned posts first (in array order), then `featured == true` (when `useFlag`) filling to `limit`, deduped:
+
 ```groq
 *[_type=="post" && language==$locale && !(_id in path("drafts.**")) && (!defined(seo.unpublished)||seo.unpublished==false)
   && (_id in $pinnedIds || ($useFlag && featured == true))]
   | order(select(_id in $pinnedIds => 0, 1) asc, publishedAt desc)[0...$limit]{ POST_CARD_PROJECTION }
 ```
+
 (Pinned-order refinement — if array order must be exact, sort in the renderer by `pinnedIds.indexOf(_id)`.)
+
 - [ ] **Step 7:** `BlogFeatured.tsx` — fetch, split `lead = m.leadCard ? posts[0] : undefined` + `items = m.leadCard ? posts.slice(1) : posts`, map → `FeaturedPosts`.
 - [ ] **Step 8–10:** register/dispatch/type; verify; commit `feat(blog): Featured frontpage block`.
 
@@ -242,14 +275,17 @@ Import `Modules` from `@indiecrafts/modules-web-blog/user-interface/renderers/Mo
 **Interfaces:** `popularity.ts` exports `getPopularPostIds(locale: Locale, count: number): Promise<string[]>` — **Project-1 stub returns `[]`** (no data source yet) so the renderer falls back to most-recent. Schema fields `title`, `count` (initial 4), `pinned` (optional). Type `BlogTrendingModule`.
 
 - [ ] **Step 1: Write the failing test** `popularity.test.ts`: `getPopularPostIds` returns `[]` in Project 1 (documents the seam), so callers must handle empty → fallback.
+
 ```ts
 import { getPopularPostIds } from "./popularity";
 it("returns empty until the read-count pipeline lands (Project 2)", async () => {
   expect(await getPopularPostIds("en", 4)).toEqual([]);
 });
 ```
+
 - [ ] **Step 2:** Run — FAIL (not defined).
 - [ ] **Step 3:** Implement `popularity.ts`:
+
 ```ts
 import type { Locale } from "@indiecrafts/packages-shared-config";
 /**
@@ -258,10 +294,14 @@ import type { Locale } from "@indiecrafts/packages-shared-config";
  * (read-count pipeline) replaces the body; the Trending block is unchanged.
  * @debt MIGRATION — wire to the read-count store (Analytics Engine / D1) in Project 2.
  */
-export async function getPopularPostIds(_locale: Locale, _count: number): Promise<string[]> {
+export async function getPopularPostIds(
+  _locale: Locale,
+  _count: number,
+): Promise<string[]> {
   return [];
 }
 ```
+
 - [ ] **Step 4:** Run — PASS.
 - [ ] **Step 5:** `blog-trending.ts` schema (`title`, `count`, `pinned`).
 - [ ] **Step 6:** `BlogTrending.tsx` — `const ids = await getPopularPostIds(locale, count);` then: if `ids.length` fetch those posts (ordered) else fetch most-recent `[0...count]` (reuse the latest query); prepend pinned; render via `SpotlightRow` with heading `m.title ?? t("frontpage.trending.heading")`. The block always renders content (never blank).

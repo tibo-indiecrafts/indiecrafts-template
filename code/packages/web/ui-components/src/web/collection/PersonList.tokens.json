@@ -2,7 +2,13 @@
   "$description": "Component token surface for PersonList — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "person-list-muted": { "$type": "color", "$value": "{semantic.muted}" },
-    "person-list-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
-    "person-list-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+    "person-list-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    },
+    "person-list-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
   }
 }

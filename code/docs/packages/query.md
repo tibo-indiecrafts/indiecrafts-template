@@ -1,13 +1,13 @@
 # Query (`@indiecrafts/packages-shared-query`)
 
-The shared **TanStack Query** setup for the **client SPAs** — mobile (Expo) + the hybrid (Electron)
-renderer. Holds the shared *config* and the *key convention*; each app owns its `QueryClient` +
+The shared **TanStack Query** setup for the **client SPAs** — mobile (Expo). Holds the shared _config_
+and the _key convention_; each app owns its `QueryClient` +
 `<QueryClientProvider>`. Lives in `code/packages/shared/query`.
 
 ## Not the web
 
 The **website does NOT use this.** It is Next App Router + **RSC**: server data is fetched in Server
-Components (`cache()` / `sanityFetchLive`), server-rendered, mostly static. TanStack Query is a *client*
+Components (`cache()` / `sanityFetchLive`), server-rendered, mostly static. TanStack Query is a _client_
 state manager — using it there forces `"use client"` + client fetching and throws RSC away. The client
 apps have no server render, so they own their server-state cache with TanStack; the web keeps RSC.
 
@@ -17,7 +17,7 @@ apps have no server render, so they own their server-state cache with TanStack; 
 export const queryDefaults; // { queries: { staleTime, gcTime, retry, refetchOnWindowFocus:false } }
 export const queryKeys = {
   all: ["indiecrafts"],
-  list: (domain) => ["indiecrafts", domain],        // a collection
+  list: (domain) => ["indiecrafts", domain], // a collection
   detail: (domain, id) => ["indiecrafts", domain, id], // one entity
 };
 ```
@@ -28,28 +28,25 @@ export const queryKeys = {
   namespaced under one root, so `invalidateQueries({ queryKey: queryKeys.all })` clears everything. Add
   domain helpers as screens land.
 
-The brick is **React-free on purpose**: mobile (React 18) and hybrid (React 19) never share a React or a
-client instance. Each app does `new QueryClient({ defaultOptions: queryDefaults })` from its own
+The brick is **React-free on purpose**: it ships no React, so mobile (React 18) does
+`new QueryClient({ defaultOptions: queryDefaults })` from its own
 `@tanstack/react-query` and renders its own provider.
 
 ## Wiring (per client app)
 
 Two wires: a `workspace:*` dep on the brick + `@tanstack/react-query` in the app; then a provider at the
-root. Mobile — `app/_layout.tsx` wraps the tree in `<QueryClientProvider>`. Hybrid — `main.tsx` wraps
-`<App>`.
+root. Mobile — `app/_layout.tsx` wraps the tree in `<QueryClientProvider>`.
 
 ```tsx
 const queryClient = new QueryClient({ defaultOptions: queryDefaults });
-<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 ```
 
 ## The `queryFn` is the api-client
 
-- **Mobile** — `useQuery({ queryKey: queryKeys.list("posts"), queryFn: () => callAgent(...) })`, the
-  `queryFn` calling the P0.1 api-client (`lib/agent`).
-- **Hybrid renderer** — the `queryFn` is the preload bridge (`window.desktop.runAgent`); the api-client
-  call runs in the **main** process, so the token stays out of the DOM.
-- The **agent** is an action, not cached server-state → `useMutation`, not `useQuery`.
+- **Mobile** — `useQuery({ queryKey: queryKeys.list("posts"), queryFn: () => fetchPosts() })`, the
+  `queryFn` calling the mobile api-client (a typed `fetch` of the `code/shared/api` Worker, bearer-authed).
+- A **write** is an action, not cached server-state → `useMutation`, not `useQuery`.
 
 ## Not yet (deferred — no consumer)
 

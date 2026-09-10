@@ -21,9 +21,24 @@ export const Default: Story = {};
 
 export const AllSvgs: Story = {
   render: (args) => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 24, alignItems: "center" }}>
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 24,
+        alignItems: "center",
+      }}
+    >
       {NAMES.map((name) => (
-        <div key={name} style={{ display: "grid", placeItems: "center", gap: 6, fontSize: 11 }}>
+        <div
+          key={name}
+          style={{
+            display: "grid",
+            placeItems: "center",
+            gap: 6,
+            fontSize: 11,
+          }}
+        >
           <SvgIcon {...args} name={name} />
           <span>{name}</span>
         </div>

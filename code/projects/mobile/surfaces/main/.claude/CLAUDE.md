@@ -22,7 +22,7 @@ the first product screen (`account`) — theme · i18n · status pages · native
   shared tokens; `system` follows the OS, switched by a 3-way home-screen control; wraps `ui-native`'s
   `ThemeProvider`) → `IntlProvider`
   (`react-intl`) → the router `Stack`. Data screens fetch with `useQuery`/`useMutation`, the `queryFn`
-  calling the api-client (`lib/agent`).
+  calling the shared api.
 - **i18n** — `lib/i18n.ts`: `expo-localization` detects the device locale → `react-intl` formats the
   app's own `messages/{en,fr}.json` (same ICU format as web; flattened for react-intl). Vocabulary
   (`isLocale`/`localeCodes`) from `@/config`.
@@ -54,7 +54,7 @@ the first product screen (`account`) — theme · i18n · status pages · native
 - **Persistence** — every storage key lives in `STORAGE_KEYS` (`@/config`); read a name, never inline
   `${sitePrefix}.…`. `lib/storage` wraps `AsyncStorage` never-throw for app **prefs** (non-secret). A
   runtime **session token** belongs in `expo-secure-store` (OS keychain) once the `auth` brick lands — not
-  here; today's agent bearer is a build-time bundle gate, so it stays in env.
+  here; today's `EXPO_PUBLIC_API_TOKEN` (session-log bearer) is a build-time bundle gate, so it stays in env.
 - **Fonts** — deferred: Satoshi ships as web `.woff2`; RN needs `.ttf`/`.otf`, so the shell renders with
   the system font until an `.otf` lands in `ui-fonts`. Wire `expo-font` `useFonts` then.
 

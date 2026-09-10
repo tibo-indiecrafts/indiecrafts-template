@@ -5,7 +5,11 @@ import { ReiconIcon } from "./ReiconIcon";
 // reicon-react ships its glyphs as named exports; enumerate a sample so the story
 // self-populates with real icon names rather than a guessed string.
 const NAMES = Object.keys(ReiconReact)
-  .filter((k) => /^[A-Z]/.test(k) && typeof (ReiconReact as Record<string, unknown>)[k] === "function")
+  .filter(
+    (k) =>
+      /^[A-Z]/.test(k) &&
+      typeof (ReiconReact as Record<string, unknown>)[k] === "function",
+  )
   .slice(0, 18);
 
 const meta = {
@@ -27,9 +31,24 @@ export const Default: Story = {};
 
 export const Sample: Story = {
   render: (args) => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 24, alignItems: "center" }}>
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 24,
+        alignItems: "center",
+      }}
+    >
       {NAMES.map((name) => (
-        <div key={name} style={{ display: "grid", placeItems: "center", gap: 6, fontSize: 11 }}>
+        <div
+          key={name}
+          style={{
+            display: "grid",
+            placeItems: "center",
+            gap: 6,
+            fontSize: 11,
+          }}
+        >
           <ReiconIcon {...args} name={name} />
           <span>{name}</span>
         </div>

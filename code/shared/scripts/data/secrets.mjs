@@ -66,9 +66,14 @@ if (keys.length === 0) {
 }
 
 // Temp JSON, 0600, always deleted.
-const tmp = join(tmpdir(), `indiecrafts-secrets-${app}-${env}-${process.pid}.json`);
+const tmp = join(
+  tmpdir(),
+  `indiecrafts-secrets-${app}-${env}-${process.pid}.json`,
+);
 writeFileSync(tmp, JSON.stringify(secrets, null, 2), { mode: 0o600 });
-console.log(`Syncing ${keys.length} secret(s) to ${app} (${env}): ${keys.join(", ")}`);
+console.log(
+  `Syncing ${keys.length} secret(s) to ${app} (${env}): ${keys.join(", ")}`,
+);
 try {
   const r = spawnSync("wrangler", ["secret", "bulk", tmp, "--env", env], {
     stdio: "inherit",

@@ -5,7 +5,10 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { INFRA } from "./infra-registry.mjs";
 
-const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../..");
+const REPO_ROOT = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../..",
+);
 
 // `run.mjs` resolves each row's `dir` and runs `terraform -chdir=<dir>`; a registered stack
 // whose dir has no `main.tf` errors ("No IaC directory") or silently does nothing. This guards

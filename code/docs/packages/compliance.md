@@ -3,7 +3,7 @@
 > **Portable core split out.** The reusable half — the consent decision math, the store
 > contract, the legal-route contract, and a copy-injected consent + re-acceptance UI (web +
 > native) — now lives in **[`@indiecrafts/packages-shared-compliance`](./compliance-shared)**,
-> so the `app` / Electron / Expo shells reach the website's legal pages and ship a
+> so the `app` / Expo shells reach the website's legal pages and ship a
 > compliant-ready consent UI. This brick (website only) keeps the Sanity cookie inventory,
 > the next-intl banner, the legal-page **content**, and the GDPR flow — it re-exports the
 > moved `consent-signals` (unchanged import path) and imports `grantedKeys`/`consentUpdate`/

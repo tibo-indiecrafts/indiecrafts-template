@@ -32,7 +32,7 @@ type Status = "idle" | "pending" | ErasureSelfResult;
 
 /**
  * The shared "Delete my account" section (web, shadcn) — Clerk/Next-free, so the
- * `app` web surface AND the Electron renderer both use it. Takes `getToken` + `apiUrl`
+ * `app` web surface both use it. Takes `getToken` + `apiUrl`
  * as props and drives `submitAccountErasure`; copy is injected — no next-intl inside.
  */
 export function DeleteAccountSection({

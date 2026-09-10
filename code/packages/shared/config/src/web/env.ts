@@ -94,12 +94,7 @@ export function getCSPConnectSources(env: Environment): readonly string[] {
   // `TypeError: Failed to fetch` from CSP blocking the request.
   const sanity = ["https://*.sanity.io", "wss://*.api.sanity.io"];
   const npm = ["https://registry.npmjs.org"];
-  // The AI agent Worker — the browser fetches it cross-origin (ContentResearchAgent), so
-  // its origin must be allowed in prod too (dev is covered by `http://localhost:*` below).
-  const agent = process.env.NEXT_PUBLIC_AGENT_URL
-    ? [process.env.NEXT_PUBLIC_AGENT_URL]
-    : [];
-  const common = ["'self'", ...sanity, ...npm, ...agent];
+  const common = ["'self'", ...sanity, ...npm];
   if (env === "development" || env === "test") {
     return [
       ...common,

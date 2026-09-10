@@ -15,17 +15,17 @@ URLs and without an open-redirect hole.
 
 ## 2. Decisions (resolved with the requester)
 
-| Question | Decision |
-| --- | --- |
-| Sign-in screen location | **Per-app** — each surface owns its `/sign-in` |
+| Question                            | Decision                                                      |
+| ----------------------------------- | ------------------------------------------------------------- |
+| Sign-in screen location             | **Per-app** — each surface owns its `/sign-in`                |
 | Default landing (no `redirect_url`) | **Each surface's own homepage** (`fallbackRedirectUrl = "/"`) |
-| Redirect config home | **Code / `@/config`** only — not Sanity |
-| Surfaces | website · app · hybrid · mobile (admin already done) |
-| Session sharing | **Subdomains** (cookie on `.root`, automatic, free) |
+| Redirect config home                | **Code / `@/config`** only — not Sanity                       |
+| Surfaces                            | website · app · hybrid · mobile (admin already done)          |
+| Session sharing                     | **Subdomains** (cookie on `.root`, automatic, free)           |
 
-**Session vs sign-in page are separate.** One shared *session* (sign in once,
+**Session vs sign-in page are separate.** One shared _session_ (sign in once,
 recognized on every subdomain) comes free from the subdomain cookie. The sign-in
-*page* is per-app. Satellite domains (paid) are the only-if-different-roots
+_page_ is per-app. Satellite domains (paid) are the only-if-different-roots
 alternative — noted, not built.
 
 ## 3. Design

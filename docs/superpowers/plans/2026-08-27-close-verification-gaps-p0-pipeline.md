@@ -27,49 +27,60 @@
 Add `check:api-guards`, `tokens:check`, `brands:check`, `check:tasks` to the CI `verify` job. These already pass locally; CI just was not running them, so a new violation could merge. Confirm they pass on the current tree first, so this task adds green checks, never a new red.
 
 **Files:**
+
 - Modify: `.github/workflows/test.yml` (the `verify` job, after the `pnpm test` step at line 40)
 
 **Interfaces:**
+
 - Consumes: existing root scripts `check:api-guards`, `tokens:check`, `brands:check`, `check:tasks` (all defined in root `package.json`).
 - Produces: nothing downstream; a self-contained CI change.
 
 - [ ] **Step 1: Confirm each gate passes on the current tree**
 
 Run from the worktree root:
+
 ```bash
 pnpm check:api-guards && pnpm tokens:check && pnpm brands:check && pnpm check:tasks
 ```
+
 Expected: every command exits 0. If any fails, STOP — that is a pre-existing violation to fix or report before wiring it into CI (do not mask it).
 
 - [ ] **Step 2: Add the four steps to the `verify` job**
 
 In `.github/workflows/test.yml`, the `verify` job currently ends:
+
 ```yaml
-      - run: pnpm test:scripts
-      - run: pnpm test
+- run: pnpm test:scripts
+- run: pnpm test
 ```
+
 Append after the `pnpm test` line (same indentation, still inside `verify.steps`):
+
 ```yaml
-      - run: pnpm check:api-guards
-      - run: pnpm tokens:check
-      - run: pnpm brands:check
-      - run: pnpm check:tasks
+- run: pnpm check:api-guards
+- run: pnpm tokens:check
+- run: pnpm brands:check
+- run: pnpm check:tasks
 ```
 
 - [ ] **Step 3: Verify the workflow YAML still parses**
 
 Run:
+
 ```bash
 python3 -c "import yaml; yaml.safe_load(open('.github/workflows/test.yml')); print('ok')"
 ```
+
 Expected: prints `ok`. If it raises, fix the indentation (the new steps must sit under `jobs.verify.steps` at the same depth as the sibling `- run:` lines).
 
 - [ ] **Step 4: Confirm the added steps are inside the `verify` job**
 
 Run:
+
 ```bash
 python3 -c "import yaml; d=yaml.safe_load(open('.github/workflows/test.yml')); runs=[s.get('run') for s in d['jobs']['verify']['steps']]; assert 'pnpm check:api-guards' in runs and 'pnpm check:tasks' in runs, runs; print('verify job runs:', [r for r in runs if r])"
 ```
+
 Expected: the printed list includes all four new commands.
 
 - [ ] **Step 5: Commit**
@@ -92,57 +103,68 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 `secrets-scan` (gitleaks) and `dependency-review` are PR-only. A direct push to `main` skips both — and that same push triggers the deploy. Make gitleaks run on push. Attempt `dependency-review` on push with explicit refs; fall back to PR-only if the action rejects the push event.
 
 **Files:**
+
 - Modify: `.github/workflows/test.yml` (the `dependency-review` job, line 134-139; the `secrets-scan` job, line 175-184)
 
 **Interfaces:**
+
 - Consumes: `actions/dependency-review-action@v4`, `gitleaks/gitleaks-action@v2` (already referenced).
 - Produces: nothing downstream.
 
 - [ ] **Step 1: Make `secrets-scan` run on push and PR**
 
 Change the `secrets-scan` job's guard from:
+
 ```yaml
-  secrets-scan:
-    if: github.event_name == 'pull_request'
+secrets-scan:
+  if: github.event_name == 'pull_request'
 ```
+
 to:
+
 ```yaml
-  secrets-scan:
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
+secrets-scan:
+  if: github.event_name == 'pull_request' || github.event_name == 'push'
 ```
+
 The existing `fetch-depth: 0` checkout already gives gitleaks the full history it needs on push.
 
 - [ ] **Step 2: Make `dependency-review` run on push, with push refs**
 
 Change the `dependency-review` job from:
+
 ```yaml
-  dependency-review:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/dependency-review-action@v4
+dependency-review:
+  if: github.event_name == 'pull_request'
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v5
+    - uses: actions/dependency-review-action@v4
 ```
+
 to:
+
 ```yaml
-  dependency-review:
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/dependency-review-action@v4
-        with:
-          # On PRs the action derives base/head itself; on push it needs them.
-          base-ref: ${{ github.event.pull_request.base.sha || github.event.before }}
-          head-ref: ${{ github.event.pull_request.head.sha || github.sha }}
+dependency-review:
+  if: github.event_name == 'pull_request' || github.event_name == 'push'
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v5
+    - uses: actions/dependency-review-action@v4
+      with:
+        # On PRs the action derives base/head itself; on push it needs them.
+        base-ref: ${{ github.event.pull_request.base.sha || github.event.before }}
+        head-ref: ${{ github.event.pull_request.head.sha || github.sha }}
 ```
 
 - [ ] **Step 3: Verify the YAML parses and the guards changed**
 
 Run:
+
 ```bash
 python3 -c "import yaml; d=yaml.safe_load(open('.github/workflows/test.yml')); print('secrets-scan if:', d['jobs']['secrets-scan']['if']); print('dependency-review if:', d['jobs']['dependency-review']['if'])"
 ```
+
 Expected: both `if:` values include `|| github.event_name == 'push'`.
 
 - [ ] **Step 4: Record the fallback**
@@ -169,16 +191,19 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 Make the prod deploy wait for the `CI` workflow to succeed on `main`. Replace the `push` trigger with a `workflow_run` trigger; keep `workflow_dispatch` as the manual escape hatch. Add the branch-protection steps to the deployment doc as the second, belt-and-suspenders layer.
 
 **Files:**
+
 - Modify: `.github/workflows/deploy.yml` (the `on:` block, lines 5-14; the `discover` job, lines 24-31)
 - Modify: `code/docs/apps/web/setup/deployment.md` (the "GitHub Actions (auto-deploy)" section)
 
 **Interfaces:**
+
 - Consumes: the `CI` workflow name from `.github/workflows/test.yml`.
 - Produces: nothing downstream.
 
 - [ ] **Step 1: Replace the `push` trigger with `workflow_run`**
 
 In `.github/workflows/deploy.yml`, change the `on:` block from:
+
 ```yaml
 on:
   push:
@@ -191,7 +216,9 @@ on:
         options: [dev, staging, prod]
         default: prod
 ```
+
 to:
+
 ```yaml
 on:
   # Prod deploy fires only after CI succeeds on main (see the success gate on
@@ -212,18 +239,20 @@ on:
 - [ ] **Step 2: Gate the `discover` job on CI success**
 
 The `deploy` job already `needs: discover`, so gating `discover` cascades. Add an `if:` to the `discover` job:
+
 ```yaml
-  discover:
-    # workflow_dispatch runs unconditionally; a workflow_run only deploys when CI passed.
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
-    outputs:
-      apps: ${{ steps.registry.outputs.apps }}
+discover:
+  # workflow_dispatch runs unconditionally; a workflow_run only deploys when CI passed.
+  if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+  runs-on: ubuntu-latest
+  outputs:
+    apps: ${{ steps.registry.outputs.apps }}
 ```
 
 - [ ] **Step 3: Reason through the trigger logic**
 
 Confirm by inspection, and write nothing yet:
+
 - A push to `main` → CI runs → on success, `workflow_run` fires deploy → `discover.if` is true → deploys `prod`.
 - CI fails on `main` → `workflow_run` still fires (`types: [completed]`) → `discover.if` is false (`conclusion != 'success'`) → deploy is skipped.
 - Manual `workflow_dispatch` → `discover.if` true via the first clause → deploys the chosen env.
@@ -232,14 +261,17 @@ Confirm by inspection, and write nothing yet:
 - [ ] **Step 4: Verify the deploy YAML parses and the gate is present**
 
 Run:
+
 ```bash
 python3 -c "import yaml; d=yaml.safe_load(open('.github/workflows/deploy.yml')); print('triggers:', list(d[True].keys())); print('discover.if:', d['jobs']['discover'].get('if'))"
 ```
+
 (Note: PyYAML parses the `on:` key as boolean `True`.) Expected: triggers list contains `workflow_run` and `workflow_dispatch`; `discover.if` shows the success gate.
 
 - [ ] **Step 5: Add the branch-protection layer to the deploy doc**
 
 In `code/docs/apps/web/setup/deployment.md`, under "GitHub Actions (auto-deploy)", add:
+
 ```markdown
 > **Deploy is gated on CI.** `deploy.yml` triggers on `workflow_run` after the
 > `CI` workflow succeeds on `main` — a red CI blocks the prod deploy. As a second
@@ -271,12 +303,14 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 Reflect P0 completion in the tracking surfaces. Orchestrator-run (not a code change).
 
 **Files:**
+
 - Modify: the review artifact (via the Artifact tool — orchestrator only)
 - Modify: root `CHANGELOG.md` (a `### Changed` entry for the pipeline gates)
 
 - [ ] **Step 1: Log the change**
 
 Add a `### Changed` bullet group to root `CHANGELOG.md`:
+
 ```markdown
 ### Changed
 
@@ -303,6 +337,7 @@ Orchestrator updates the "Green to Ship" artifact (same URL) — mark pipeline g
 ## Self-Review
 
 **Spec coverage (Phase 0):**
+
 - Spec 0.1 (gate deploy on CI + branch-protection doc) → Task 3. ✓
 - Spec 0.2 (secret gates on push) → Task 2. ✓
 - Spec 0.3 (fold checks into CI verify) → Task 1. ✓

@@ -15,4 +15,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const French: Story = { args: { ...SHELL_COPY.fr.notFound, homeHref: "/" } };
+export const French: Story = {
+  args: { ...SHELL_COPY.fr.notFound, homeHref: "/" },
+};

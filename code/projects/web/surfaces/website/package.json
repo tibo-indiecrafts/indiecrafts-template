@@ -53,7 +53,6 @@
     "@indiecrafts/modules-web-contact": "workspace:*",
     "@indiecrafts/modules-web-newsletter": "workspace:*",
     "@indiecrafts/modules-web-waitlist": "workspace:*",
-    "@indiecrafts/packages-shared-agent-client": "workspace:*",
     "@indiecrafts/packages-shared-auth": "workspace:*",
     "@indiecrafts/packages-web-auth": "workspace:*",
     "@indiecrafts/packages-shared-compliance": "workspace:*",

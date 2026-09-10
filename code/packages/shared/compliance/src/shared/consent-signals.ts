@@ -1,6 +1,6 @@
 /**
  * Pure, platform-agnostic cookie-consent constants + types — no server/Sanity/DOM
- * imports, so every platform (web store + banner, the Electron renderer, the Expo
+ * imports, so every platform (web store + banner, the Expo
  * shell) and the web read path (`getCookieConsent`) can import them without pulling
  * a heavier graph. The web brick re-exports this file so its importers are unchanged.
  */

@@ -34,7 +34,8 @@ export function renameResourcePrefix(text, from, to) {
   return text
     .split("\n")
     .map((line) => {
-      if (RESOURCE_LINE.test(line)) return line.replaceAll(`"${from}-`, `"${to}-`);
+      if (RESOURCE_LINE.test(line))
+        return line.replaceAll(`"${from}-`, `"${to}-`);
       if (/^\s*#/.test(line) && /\bcreate\b/.test(line))
         return line.replaceAll(`${from}-`, `${to}-`);
       return line;

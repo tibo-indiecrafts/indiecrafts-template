@@ -9,7 +9,7 @@ import type { LegalReacceptanceCopy } from "../shared/legal";
  * at the shell root ONLY when re-acceptance is due (`needsReacceptance(store.get(),
  * currentVersion)`). `onReview` opens the legal pages on the website (the Phase-2
  * link-out); `onAccept` persists a `LegalAcceptanceRecord` via the shell's store. Copy
- * is injected. Next-free — serves the `app` surface AND the Electron renderer.
+ * is injected. Next-free — serves the `app` surface.
  */
 export function LegalReacceptancePrompt({
   copy,

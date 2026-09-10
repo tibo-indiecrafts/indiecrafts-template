@@ -11,21 +11,21 @@ One dependency (`@indiecrafts/packages-shared-config`, for the locale set); no
 
 ## Exports
 
-| Export                                    | What it is                                                                                                                                                     |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SURFACES` / `Surface`                    | The targetable surfaces — `["website","app","mobile","hybrid"]`. **Admin is not a surface** (product decision).                                               |
-| `resolveBanner(raw, {locale, surface})`   | The banner transform: enable + date-window "live now", surface targeting (empty list = all), localize, resolve links, hash a `version`. Returns an empty banner when nothing is live. |
-| `resolveToast(raw, {locale, surface})`    | The toast transform: same gates + title/body/optional CDN-sized image URL/link + editor `autoDismissSeconds`→`autoDismissMs`. Returns `null` when nothing is live. |
-| `bannerQuery` / `toastQuery`              | The two GROQ strings (plain strings — no `defineQuery`, so the Worker can build one combined query).                                                          |
-| `fetchAnnouncements(baseUrl, {locale, surface})` | The client read of the Worker's `GET /v1/announcements` — isomorphic, never throws, `null` when the URL is unset or unreachable.                       |
-| `Banner` · `Toast` · `AnnouncementPayload` · `AnnouncementLink` | The resolved shapes (`AnnouncementPayload = { banner, toast }`).                                                                          |
+| Export                                                          | What it is                                                                                                                                                                            |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SURFACES` / `Surface`                                          | The targetable surfaces — `["website","app","mobile"]`. **Admin is not a surface** (product decision).                                                                                |
+| `resolveBanner(raw, {locale, surface})`                         | The banner transform: enable + date-window "live now", surface targeting (empty list = all), localize, resolve links, hash a `version`. Returns an empty banner when nothing is live. |
+| `resolveToast(raw, {locale, surface})`                          | The toast transform: same gates + title/body/optional CDN-sized image URL/link + editor `autoDismissSeconds`→`autoDismissMs`. Returns `null` when nothing is live.                    |
+| `bannerQuery` / `toastQuery`                                    | The two GROQ strings (plain strings — no `defineQuery`, so the Worker can build one combined query).                                                                                  |
+| `fetchAnnouncements(baseUrl, {locale, surface})`                | The client read of the Worker's `GET /v1/announcements` — isomorphic, never throws, `null` when the URL is unset or unreachable.                                                      |
+| `Banner` · `Toast` · `AnnouncementPayload` · `AnnouncementLink` | The resolved shapes (`AnnouncementPayload = { banner, toast }`).                                                                                                                      |
 
 ## Two entry points, one resolve
 
 ```
 Sanity (announcementBar + announcementToast)
   ├── website (Next, public)   → web client.fetch → resolveBanner/resolveToast (server, no flash)
-  └── app · mobile · hybrid     → api Worker GET /v1/announcements → resolveBanner/resolveToast → JSON
+  └── app · mobile             → api Worker GET /v1/announcements → resolveBanner/resolveToast → JSON
         (client-gated by <SignedIn>, so they fetch the Worker; no server-render benefit)
 ```
 
@@ -37,4 +37,4 @@ Sanity (announcementBar + announcementToast)
 ## Consumers
 
 `website` + `app` (via `web-announcement` readers/components) · `code/shared/api` Worker · the
-`mobile`/`hybrid` shells (types + `fetchAnnouncements`). Tests: `src/resolve.test.ts`.
+`mobile` shell (types + `fetchAnnouncements`). Tests: `src/resolve.test.ts`.

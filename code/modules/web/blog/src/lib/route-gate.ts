@@ -1,7 +1,10 @@
 import "server-only";
 
 import { notFound } from "next/navigation";
-import { isPageVisible, type PageConfig } from "@indiecrafts/packages-shared-config";
+import {
+  isPageVisible,
+  type PageConfig,
+} from "@indiecrafts/packages-shared-config";
 import { blogFlags, blogPage } from "./config";
 import { getBlogSettings } from "./settings";
 

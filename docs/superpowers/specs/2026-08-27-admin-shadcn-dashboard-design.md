@@ -47,7 +47,7 @@ and transpiles both. `web-ui` ships the **full shadcn dashboard kit**: `sidebar`
 
 All new files under `code/projects/web/surfaces/admin/src/user-interface/`:
 
-- **`layout/AppShell.tsx`** — the shell, rendered by `(dashboard)/layout.tsx` *after* the existing
+- **`layout/AppShell.tsx`** — the shell, rendered by `(dashboard)/layout.tsx` _after_ the existing
   auth-gate check. Composes `SidebarProvider` → `<AppSidebar/>` + `<SidebarInset>` ( `<AppHeader/>` +
   `{children}` ). `SidebarProvider` persists the collapsed state (its built-in cookie).
 - **`layout/AppSidebar.tsx`** — `Sidebar` (`collapsible="icon"`): `SidebarHeader` (brand wordmark/logo,
@@ -63,20 +63,20 @@ All new files under `code/projects/web/surfaces/admin/src/user-interface/`:
   slot. Replaces every page's ad-hoc `<h1>`/`<p>`.
 - **`layout/ThemeToggle.tsx`** — see § Theme.
 - **`lib/nav.ts`** — the typed nav config: `NavGroup[] = { label: string; items: { titleKey: string;
-  href: StaticAdminPathname; icon: LucideIcon }[] }[]`. One source of truth for the sidebar AND the
+href: StaticAdminPathname; icon: LucideIcon }[] }[]`. One source of truth for the sidebar AND the
   breadcrumb label lookup.
 
 `(dashboard)/layout.tsx` keeps its auth gate and wraps `children` in `<AppShell>`.
 
 ## Nav structure (confirmed)
 
-| Group | Items |
-|---|---|
-| *(no header)* | **Overview** (`/`) |
-| **Access** | Users (`/users`) · Sessions (`/sessions`) |
-| **Compliance** | Data requests (`/data-requests`) · CSP reports (`/csp`) |
+| Group          | Items                                                              |
+| -------------- | ------------------------------------------------------------------ |
+| _(no header)_  | **Overview** (`/`)                                                 |
+| **Access**     | Users (`/users`) · Sessions (`/sessions`)                          |
+| **Compliance** | Data requests (`/data-requests`) · CSP reports (`/csp`)            |
 | **Operations** | Backups (`/backups`) · System (`/system`) · Settings (`/settings`) |
-| **Security** | Security (`/security`) |
+| **Security**   | Security (`/security`)                                             |
 
 Icons from `lucide-react` (e.g. `LayoutDashboard, Users, MonitorSmartphone, FileText, ShieldAlert,
 DatabaseBackup, Server, Settings, ShieldCheck`). Group labels + item labels are `messages` keys
@@ -86,6 +86,7 @@ DatabaseBackup, Server, Settings, ShieldCheck`). Group labels + item labels are 
 ## Overview landing (`(dashboard)/page.tsx`)
 
 Replace the flat link list with a dashboard landing:
+
 - A responsive grid of **stat `Card`s** — Users · Active sessions · Pending data-requests · Recent
   backups · CSP reports (recent) · System status — each showing a count/label + a lucide icon, the whole
   card linking to its section. Counts are fetched best-effort from the same API the pages use
@@ -95,6 +96,7 @@ Replace the flat link list with a dashboard landing:
 ## Full page pass (every page + its table/form)
 
 Apply one consistent treatment (a repeatable pattern, one task per page/area in the plan):
+
 - Each page: `<PageHeader title description />` then content in shadcn `Card`(s); keep the existing
   server-side data fetch untouched.
 - **Tables** (`sessions-table`, `backups-table`, `data-requests-table`): restyle to shadcn `Table`
@@ -150,7 +152,7 @@ Extend `messages/{en,fr}.json` `admin` namespace: `nav.groups.{access,compliance
 ## Non-goals / YAGNI
 
 - No command-palette / global search in v1 (documented future add).
-- No new admin *features* (no new data or endpoints) — this is chrome + a visual pass over existing pages.
+- No new admin _features_ (no new data or endpoints) — this is chrome + a visual pass over existing pages.
 - No charts/analytics widgets on Overview beyond simple stat cards.
 - No per-user theme persistence server-side (localStorage only).
 

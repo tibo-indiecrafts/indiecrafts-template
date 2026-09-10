@@ -1,4 +1,7 @@
-import { defaultLocale, type Locale } from "@indiecrafts/packages-shared-config";
+import {
+  defaultLocale,
+  type Locale,
+} from "@indiecrafts/packages-shared-config";
 import { ContactForm } from "@indiecrafts/packages-web-ui-components/web/form/ContactForm";
 import { getContactSettings } from "../lib/settings";
 

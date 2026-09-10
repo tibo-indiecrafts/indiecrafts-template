@@ -16,7 +16,7 @@ import type { Locale } from "../shared/types";
  * Robots meta directives — a local, structural mirror of Next's `Robots` type
  * (the OBJECT form; the raw-string variant lives on Next's `Metadata["robots"]`,
  * not here). Keeps this shared package at ZERO `next` coupling so services +
- * mobile/hybrid consume `@indiecrafts/packages-shared-config` freely. Assignable to Next's
+ * mobile consumes `@indiecrafts/packages-shared-config` freely. Assignable to Next's
  * `Metadata["robots"]` at the app boundary. Sync the field set with next if it expands.
  */
 export interface Robots {

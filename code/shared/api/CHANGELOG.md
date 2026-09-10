@@ -5,6 +5,19 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Removed
+
+- **The AI agent worker + the hybrid (Electron) surface — deleted entirely.** Removed
+  `code/shared/agent` (the worker), `code/packages/shared/agent`/`agent-client` (the core +
+  client bricks), the whole `code/projects/hybrid` surface + its reserved package/module
+  markers, and every reference: registry rows, root scripts (17), VS Code tasks, env vars, the
+  CSP agent origin, the api CORS electron-renderer origin, the admin worker-health entry, the
+  announcement `hybrid` surface, and the native CI's hybrid job. The mobile/hybrid bearer
+  `AGENT_TOKEN`/`EXPO_PUBLIC_AGENT_TOKEN` (which also carries the api session-log auth) was
+  **renamed** to `API_TOKEN`/`EXPO_PUBLIC_API_TOKEN`, not deleted. `AGENT_RATELIMIT` (the api's
+  Cloudflare rate-limit binding, misnamed) is kept. **Why:** neither the agent nor the desktop
+  app is part of the product going forward.
+
 ### Added
 
 - **Commercial-email consent (`marketing_email`).** A new `user_profiles.marketing_email` column

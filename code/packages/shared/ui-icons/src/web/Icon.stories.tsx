@@ -20,9 +20,24 @@ export const Default: Story = {};
 
 export const AllGlyphs: Story = {
   render: (args) => (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 20, placeItems: "center" }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(6, 1fr)",
+        gap: 20,
+        placeItems: "center",
+      }}
+    >
       {GLYPHS.map((name) => (
-        <div key={name} style={{ display: "grid", placeItems: "center", gap: 6, fontSize: 11 }}>
+        <div
+          key={name}
+          style={{
+            display: "grid",
+            placeItems: "center",
+            gap: 6,
+            fontSize: 11,
+          }}
+        >
           <Icon {...args} name={name} />
           <span>{name}</span>
         </div>

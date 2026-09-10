@@ -35,7 +35,8 @@ export function ThemedText({
     variant === "muted"
       ? theme.color["muted-foreground"]
       : theme.color.foreground;
-  const role = accessibilityRole ?? (variant === "title" ? "header" : undefined);
+  const role =
+    accessibilityRole ?? (variant === "title" ? "header" : undefined);
   return (
     <Text accessibilityRole={role} style={[VARIANT[variant], { color }, style]}>
       {children}

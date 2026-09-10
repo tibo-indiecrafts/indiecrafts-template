@@ -3,7 +3,10 @@
   "component": {
     "empty-muted": { "$type": "color", "$value": "{semantic.muted}" },
     "empty-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
-    "empty-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "empty-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
     "empty-primary": { "$type": "color", "$value": "{component.primary}" }
   }
 }

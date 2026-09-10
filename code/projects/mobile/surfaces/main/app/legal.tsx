@@ -1,6 +1,10 @@
 import { Linking, View, StyleSheet } from "react-native";
 import { useIntl } from "react-intl";
-import { Screen, ThemedText, Button } from "@indiecrafts/packages-mobile-ui-native";
+import {
+  Screen,
+  ThemedText,
+  Button,
+} from "@indiecrafts/packages-mobile-ui-native";
 import {
   LEGAL_PAGE_KEYS,
   legalUrl,
@@ -26,7 +30,8 @@ export default function Legal() {
             disabled={!websiteUrl}
             label={t.formatMessage({ id: `legal.${key}` })}
             onPress={() =>
-              websiteUrl && void Linking.openURL(legalUrl(websiteUrl, key, locale))
+              websiteUrl &&
+              void Linking.openURL(legalUrl(websiteUrl, key, locale))
             }
           />
         ))}

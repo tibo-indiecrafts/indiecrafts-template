@@ -12,11 +12,7 @@ export {
   type HeaderRule,
   type HstsOptions,
 } from "./headers";
-export {
-  generateNonce,
-  cspHeadersForMode,
-  type CspMode,
-} from "./csp-nonce";
+export { generateNonce, cspHeadersForMode, type CspMode } from "./csp-nonce";
 export {
   imageDefaults,
   imageRemotePatterns,

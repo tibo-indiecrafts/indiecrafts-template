@@ -3,8 +3,14 @@
   "component": {
     "checkbox-input": { "$type": "color", "$value": "{component.input}" },
     "checkbox-ring": { "$type": "color", "$value": "{semantic.ring}" },
-    "checkbox-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "checkbox-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    },
     "checkbox-primary": { "$type": "color", "$value": "{component.primary}" },
-    "checkbox-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" }
+    "checkbox-primary-foreground": {
+      "$type": "color",
+      "$value": "{component.primary-foreground}"
+    }
   }
 }

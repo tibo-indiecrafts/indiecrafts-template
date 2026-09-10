@@ -1,6 +1,6 @@
 /**
  * Default shell copy for the status pages, per locale — the ONE source the
- * non-CMS shells (mobile · hybrid) render, so their 404/500 wording never drifts
+ * non-CMS shells (mobile) render, so their 404/500 wording never drifts
  * apart. The web `website` owns its copy in Sanity (editor-editable) + its own
  * `messages`, so it does NOT read this — this is the static default for the shells.
  *
@@ -52,7 +52,8 @@ export const SHELL_COPY: Record<string, ShellCopy> = {
       retryLabel: "Réessayer",
     },
     offline: {
-      banner: "Vous êtes hors ligne — certaines fonctions peuvent être indisponibles.",
+      banner:
+        "Vous êtes hors ligne — certaines fonctions peuvent être indisponibles.",
       title: "Vous êtes hors ligne",
       description: "Vérifiez votre connexion, puis réessayez.",
       retryLabel: "Réessayer",

@@ -14,7 +14,7 @@ the **portable resolve + types + fetch** live in
 ## Content (Sanity)
 
 Two singletons, both with **per-surface targeting** (`surfaces` — empty = all;
-`website · app · mobile · hybrid`, **no admin**):
+`website · app · mobile`, **no admin**):
 
 **`announcementBar`** (Studio → **Bandeau d'annonce**) — `enabled` · `dismissible` · `variant`
 (`brand`/`neutral`/`contrast`) · `surfaces` · `start`/`end` · `items[]` (each `message` +
@@ -29,17 +29,16 @@ adapters over the shared `resolveBanner`/`resolveToast`).
 
 ## Delivery per surface
 
-| Surface           | Reads from                         | Gate                          |
-| ----------------- | ---------------------------------- | ----------------------------- |
-| **website**       | Sanity server-side (no flash)      | public (ungated)              |
-| **app** (Next)    | api Worker (client fetch)          | logged-in (`<SignedIn>`), online |
-| **mobile** (RN)   | api Worker (client fetch)          | logged-in, online             |
-| **hybrid** (Electron) | api Worker (client fetch)      | logged-in, online             |
+| Surface         | Reads from                    | Gate                             |
+| --------------- | ----------------------------- | -------------------------------- |
+| **website**     | Sanity server-side (no flash) | public (ungated)                 |
+| **app** (Next)  | api Worker (client fetch)     | logged-in (`<SignedIn>`), online |
+| **mobile** (RN) | api Worker (client fetch)     | logged-in, online                |
 
-The three product surfaces gate on **client-side** `<SignedIn>`, so they fetch the Worker (no
+The two product surfaces gate on **client-side** `<SignedIn>`, so they fetch the Worker (no
 server-render benefit); only the public website reads Sanity directly. app reuses the web
-`AnnouncementBar`/`AnnouncementToast`; mobile + hybrid render bespoke shells (next-intl can't run
-outside Next) — same tokens, `Linking`/`openExternal` for links.
+`AnnouncementBar`/`AnnouncementToast`; mobile renders a bespoke shell (next-intl can't run
+outside Next) — same tokens, `Linking` for links.
 
 ## Behaviour
 

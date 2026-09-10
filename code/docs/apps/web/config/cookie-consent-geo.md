@@ -4,8 +4,7 @@ The consent banner is **geo-targeted**: the visitor's country maps to a **named 
 regulation** (GDPR, UK GDPR, CCPA…), and each regulation carries the consent-UI **mode** it
 implies. So an EU-style opt-in banner never shows to visitors who don't legally need it — while
 the US opt-out obligation is still met. Everything is **configurable + extensible** (add your own
-regulations, reassign any country/territory), on **all four surfaces** (website · app · mobile ·
-hybrid).
+regulations, reassign any country/territory), on **all three surfaces** (website · app · mobile).
 
 ## Regulations → modes
 
@@ -75,7 +74,7 @@ export const consent = {
 };
 ```
 
-`features.requireConsent` (app/mobile/hybrid) / `siteSettings.analytics.requireCookieConsent`
+`features.requireConsent` (app/mobile) / `siteSettings.analytics.requireCookieConsent`
 (website) stays the **master off-switch** — off ⇒ no consent UI anywhere, geo ignored. **Exception
 (website only):** a CCPA/opt-out visitor still gets a working preferences dialog behind the footer
 "Do Not Sell" link even with the switch off — see the next section.
@@ -108,9 +107,9 @@ visitors.
 
 - **website · app** (next-cf) — read `cf-ipcountry` **server-side** in the `[locale]/layout`,
   resolve, and pass the `mode` to the banner. (These layouts are already dynamic.)
-- **mobile · hybrid** (native) — no CF headers, so they fetch the api **`GET /v1/geo`** once on
-  launch (`lib/geo.ts` / renderer `geo.ts`), which echoes the device's edge `cf-ipcountry` (+ the
-  default `regulation` + `mode`). The country is cached (AsyncStorage / localStorage) and the mode
+- **mobile** (native) — no CF headers, so it fetches the api **`GET /v1/geo`** once on
+  launch (`lib/geo.ts`), which echoes the device's edge `cf-ipcountry` (+ the
+  default `regulation` + `mode`). The country is cached (AsyncStorage) and the mode
   re-resolved locally with the app's config; unreachable + nothing cached → fails safe to opt-in.
   The banner stays hidden until geo resolves, so it never flashes.
 

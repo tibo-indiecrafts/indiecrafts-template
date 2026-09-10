@@ -14,5 +14,8 @@ export function showConsentSavedToast({
   manage: string;
   onManage: () => void;
 }): void {
-  toast.success(saved, { description, action: { label: manage, onClick: onManage } });
+  toast.success(saved, {
+    description,
+    action: { label: manage, onClick: onManage },
+  });
 }

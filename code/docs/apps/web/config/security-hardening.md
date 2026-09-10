@@ -47,9 +47,8 @@ and the **app** (the Worker's inline guard / Clerk auth, which works everywhere)
 | **website** (next-cf)          | ✅ zone TF (`website/infra/cloudflare`)                                                     | `withGuard` on `/api/*`                               | full edge posture                                                      |
 | **admin** (next-cf)            | its subdomain zone + a Cloudflare Access gate (reserved)                                    | fail-closed Clerk admin gate + data-layer authz       | not public                                                             |
 | **api** (worker-cf)            | ✅ zone TF (`shared/api/infra/cloudflare`) — rate-limit `/v1/*` + WAF + bots + leaked-creds | **inline** bearer + native rate-limit guard (primary) | edge = defence in depth; the inline guard works on `*.workers.dev` too |
-| **agent** (worker-cf)          | no zone TF yet (reserved — copy the api's)                                                  | inline bearer guard                                   | add a zone stack when it gets a domain                                 |
 | **cron · workers** (worker-cf) | n/a (no HTTP surface)                                                                       | n/a                                                   | scheduled / queue only                                                 |
-| **mobile · hybrid** (native)   | n/a (app stores / device)                                                                   | Clerk auth + secure token store                       | failed-OTP → `kind:"security"`; edge N/A                               |
+| **mobile** (native)            | n/a (app stores / device)                                                                   | Clerk auth + secure token store                       | failed-OTP → `kind:"security"`; edge N/A                               |
 
 The **inline guard** (`code/shared/api/src/index.ts`: bearer + constant-time compare +
 native rate-limit binding + body cap + CORS) is the primary gate for the bare Workers and
@@ -107,7 +106,7 @@ in the `@indiecrafts/packages-shared-security-events` brick.
 - **Failed logins** → the surfaces we drive by hand (mobile OTP verify) post a
   `kind:"security" failed_login`. The api **counts** these against a **KV TTL counter** and
   writes ONE `credential_stuffing` row only when the rate crosses the threshold — never a
-  per-request D1 write. Web/admin/hybrid use Clerk's own UI, so their failed logins are
+  per-request D1 write. Web/admin use Clerk's own UI, so their failed logins are
   caught by the edge (leaked-creds + rate-limit), not an app hook.
 - **Privilege escalation** → the **Clerk webhook** (`/v1/clerk-webhook`, Svix-verified)
   records any `user.updated` that grants `role: admin` — including a grant made OUTSIDE our

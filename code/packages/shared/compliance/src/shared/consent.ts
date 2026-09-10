@@ -1,6 +1,6 @@
 /**
  * The portable consent core — the pure decision math + the store contract + the
- * default category set, shared by every shell (web app · Electron renderer · Expo).
+ * default category set, shared by every shell (web app · Expo).
  * No DOM, no `localStorage`, no `dataLayer`: the web brick's `consent-store.ts` keeps
  * the persistence + Consent-Mode push and imports the math from here; each shell
  * supplies its own `ConsentStore` adapter (`localStorage` / `AsyncStorage`).
@@ -76,12 +76,21 @@ export type ConsentCategoryDef = {
 };
 
 export const DEFAULT_CONSENT_CATEGORIES: readonly ConsentCategoryDef[] = [
-  { key: "necessary", required: true, signals: ["security_storage", "functionality_storage"] },
+  {
+    key: "necessary",
+    required: true,
+    signals: ["security_storage", "functionality_storage"],
+  },
   { key: "analytics", required: false, signals: ["analytics_storage"] },
   {
     key: "marketing",
     required: false,
-    signals: ["ad_storage", "ad_user_data", "ad_personalization", "personalization_storage"],
+    signals: [
+      "ad_storage",
+      "ad_user_data",
+      "ad_personalization",
+      "personalization_storage",
+    ],
   },
 ];
 
@@ -112,12 +121,16 @@ export type ConsentBannerCopy = {
 export function acceptAllChoices(
   categories: readonly ConsentCategoryDef[],
 ): Record<string, boolean> {
-  return Object.fromEntries(categories.filter((c) => !c.required).map((c) => [c.key, true]));
+  return Object.fromEntries(
+    categories.filter((c) => !c.required).map((c) => [c.key, true]),
+  );
 }
 
 /** Every non-required category denied — the "Reject" choice. */
 export function rejectAllChoices(
   categories: readonly ConsentCategoryDef[],
 ): Record<string, boolean> {
-  return Object.fromEntries(categories.filter((c) => !c.required).map((c) => [c.key, false]));
+  return Object.fromEntries(
+    categories.filter((c) => !c.required).map((c) => [c.key, false]),
+  );
 }

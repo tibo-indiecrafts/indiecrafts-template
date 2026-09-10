@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import type { PortableTextBlock } from "@portabletext/react";
 
 const { warn } = vi.hoisted(() => ({ warn: vi.fn() }));
-vi.mock("@indiecrafts/packages-shared-logger", () => ({ logger: { warn, error: vi.fn() } }));
+vi.mock("@indiecrafts/packages-shared-logger", () => ({
+  logger: { warn, error: vi.fn() },
+}));
 
 const { portableTextToMarkdown } = await import("./portable-to-markdown");
 

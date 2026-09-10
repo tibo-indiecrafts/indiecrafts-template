@@ -24,6 +24,7 @@
 ### Task 1: `DeleteAccountSection` component + submit helper (shared package)
 
 **Files:**
+
 - Create: `code/packages/shared/compliance/src/web/DeleteAccountSection.tsx` (component + the exported pure `submitAccountErasure` helper)
 - Create: `code/packages/shared/compliance/src/web/DeleteAccountSection.test.ts` (colocated node-vitest test of the helper)
 - Modify: `code/packages/shared/compliance/src/web/index.ts` (add export lines)
@@ -31,13 +32,21 @@
 **Test approach ruling (RB-TESTHELPER):** the repo tests DOM components via a Storybook `play` fn, but that needs a `brickStories("@indiecrafts/packages-shared-compliance")` line in `code/projects/web/tools/storybook/.storybook/main.ts`, which is PRE-EXISTING DIRTY (37 lines of unrelated storybook WIP) — editing/staging it would sweep foreign hunks. And this package has no component-render test infra (no testing-library/happy-dom). So: extract the non-trivial submit logic into a pure exported helper `submitAccountErasure` and test THAT with a colocated `.test.ts` in the package's existing node vitest (stub `globalThis.fetch` + `getToken`). The JSX render is trivial (a form) — YAGNI on rendering it. The Storybook story + the `main.ts` glob are DEFERRED to a follow-up (add them when the storybook WIP is committed; do NOT touch `main.ts` in this slice).
 
 **Interfaces:**
+
 - Produces:
+
 ```ts
 export interface DeleteAccountCopy {
-  heading: string; body: string;
-  emailLabel: string; emailPlaceholder: string;
-  confirmButton: string; pending: string;
-  success: string; partial: string; error: string; mismatch: string;
+  heading: string;
+  body: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  confirmButton: string;
+  pending: string;
+  success: string;
+  partial: string;
+  error: string;
+  mismatch: string;
 }
 export interface DeleteAccountSectionProps {
   copy: DeleteAccountCopy;
@@ -48,10 +57,15 @@ export interface DeleteAccountSectionProps {
 }
 export type ErasureSelfResult = "done" | "partial" | "mismatch" | "error";
 export function submitAccountErasure(input: {
-  apiUrl: string; getToken: () => Promise<string | null>; email: string;
+  apiUrl: string;
+  getToken: () => Promise<string | null>;
+  email: string;
 }): Promise<ErasureSelfResult>;
-export function DeleteAccountSection(props: DeleteAccountSectionProps): JSX.Element;
+export function DeleteAccountSection(
+  props: DeleteAccountSectionProps,
+): JSX.Element;
 ```
+
 - Consumes: the shadcn UI primitives from `@indiecrafts/packages-web-ui` exactly as `code/packages/shared/compliance/src/web/ConsentBanner.tsx` imports them (Button, Input/Label — read `ConsentBanner.tsx` in this package for the exact import paths + Tailwind/token classes; match them).
 
 - [ ] **Step 1: Write the failing helper test.** Create `DeleteAccountSection.test.ts`:
@@ -85,7 +99,9 @@ describe("submitAccountErasure", () => {
     expect((init as RequestInit).headers).toMatchObject({
       authorization: "Bearer tkn",
     });
-    expect((init as RequestInit).body).toBe(JSON.stringify({ email: "you@example.com" }));
+    expect((init as RequestInit).body).toBe(
+      JSON.stringify({ email: "you@example.com" }),
+    );
   });
   it("207 → partial (still erased)", async () => {
     stubFetch(207, { ok: true, partial: true, errors: [] });
@@ -146,7 +162,11 @@ export async function submitAccountErasure(input: {
 type Status = "idle" | "pending" | ErasureSelfResult;
 
 export function DeleteAccountSection({
-  copy, apiUrl, getToken, onDeleted, beforeConfirm,
+  copy,
+  apiUrl,
+  getToken,
+  onDeleted,
+  beforeConfirm,
 }: DeleteAccountSectionProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -156,7 +176,11 @@ export function DeleteAccountSection({
     if (!email.trim() || status === "pending") return;
     if (beforeConfirm && !(await beforeConfirm())) return; // reverification seam
     setStatus("pending");
-    const result = await submitAccountErasure({ apiUrl, getToken, email: email.trim() });
+    const result = await submitAccountErasure({
+      apiUrl,
+      getToken,
+      email: email.trim(),
+    });
     setStatus(result);
     if (result === "done" || result === "partial") await onDeleted();
   }
@@ -168,15 +192,25 @@ export function DeleteAccountSection({
   // container/spacing/token classes.
 }
 ```
+
 Add to `src/web/index.ts`:
+
 ```ts
-export { DeleteAccountSection, submitAccountErasure } from "./DeleteAccountSection";
-export type { DeleteAccountCopy, DeleteAccountSectionProps, ErasureSelfResult } from "./DeleteAccountSection";
+export {
+  DeleteAccountSection,
+  submitAccountErasure,
+} from "./DeleteAccountSection";
+export type {
+  DeleteAccountCopy,
+  DeleteAccountSectionProps,
+  ErasureSelfResult,
+} from "./DeleteAccountSection";
 ```
 
 - [ ] **Step 4: Run the test + tsc.** `pnpm --filter @indiecrafts/packages-shared-compliance test` (all green incl. the 5 new helper cases) and `pnpm --filter @indiecrafts/packages-shared-compliance tsc` (exit 0).
 
 - [ ] **Step 5: Prettier + commit.**
+
 ```bash
 git add code/packages/shared/compliance/src/web/DeleteAccountSection.tsx code/packages/shared/compliance/src/web/DeleteAccountSection.test.ts code/packages/shared/compliance/src/web/index.ts
 git commit --no-verify -m "feat(compliance): shared DeleteAccountSection component + submit helper"
@@ -189,12 +223,14 @@ git commit --no-verify -m "feat(compliance): shared DeleteAccountSection compone
 ### Task 2: Website `/account` page + wiring
 
 **Files:**
+
 - Create: `code/projects/web/surfaces/website/src/app/[locale]/account/page.tsx`
 - Create: `code/projects/web/surfaces/website/src/user-interface/account/AccountDeletePanel.tsx` (client wrapper)
 - Modify: `code/projects/web/surfaces/website/messages/en.json` + `messages/fr.json` (add `account.delete.*`)
 - Modify: `code/projects/web/surfaces/website/src/config/features.ts` (add the flag) + `src/config/pages.ts` (gate the page)
 
 **Interfaces:**
+
 - Consumes: `DeleteAccountSection`, `DeleteAccountCopy` from `@indiecrafts/packages-shared-compliance/web` (Task 1).
 
 - [ ] **Step 1: Add the feature flag + page config.** In `features.ts`, add to the returned object a new key `account: { delete: true }` (top-level, sibling of `legal`). In `pages.ts`, add an `account` page entry gated by `features.account.delete` (mirror the `dataRequest` entry at pages.ts:70-71). Read the map §4 for the exact shapes.
@@ -212,6 +248,7 @@ git commit --no-verify -m "feat(compliance): shared DeleteAccountSection compone
 ### Task 3: App `/account` page + wiring
 
 **Files:**
+
 - Create: `code/projects/web/surfaces/app/src/app/[locale]/account/page.tsx`
 - Create: `code/projects/web/surfaces/app/src/user-interface/account/AccountDeletePanel.tsx`
 - Modify: `code/projects/web/surfaces/app/messages/en.json` + `fr.json`
@@ -230,6 +267,7 @@ git commit --no-verify -m "feat(compliance): shared DeleteAccountSection compone
 ### Task 4: Hybrid `SignedInView` delete control
 
 **Files:**
+
 - Modify: `code/projects/hybrid/surfaces/main/src/renderer/src/auth.tsx` (mount the control in/next to `SignedInView`)
 - Modify: `code/projects/hybrid/surfaces/main/src/renderer/messages/en.json` + `fr.json` (react-intl flat keys `account.delete.*`)
 - Modify: `code/projects/hybrid/surfaces/main/src/config/index.ts` (flat `features` literal — add `deleteAccount: true`)

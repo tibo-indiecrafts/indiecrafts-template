@@ -23,12 +23,14 @@
 ### Task 1: Extract the shared helper + native `DeleteAccountSection`
 
 **Files:**
+
 - Create: `code/packages/shared/compliance/src/shared/erasure-self.ts` (the pure `submitAccountErasure` + `ErasureSelfResult`, moved here)
 - Modify: `code/packages/shared/compliance/src/web/DeleteAccountSection.tsx` (import + re-export the helper from `../shared/erasure-self` instead of defining it inline)
 - Create: `code/packages/shared/compliance/src/native/DeleteAccountSection.tsx` (RN component + the `DeleteAccountCopy`/`DeleteAccountSectionProps` types, imports the shared helper)
 - Modify: `code/packages/shared/compliance/src/native/index.ts` (export the native component + types)
 
 **Interfaces:**
+
 - Consumes: `submitAccountErasure` from `../shared/erasure-self`; `Button`, `ThemedText`, `useColor` from `@indiecrafts/packages-mobile-ui-native`; `TextInput`, `View` from `react-native`.
 - Produces: `code/packages/shared/compliance/src/shared/erasure-self.ts` exporting `submitAccountErasure(input: { apiUrl; getToken; email }): Promise<ErasureSelfResult>` + `type ErasureSelfResult = "done"|"partial"|"mismatch"|"error"`. The native barrel exports `DeleteAccountSection` (RN) + `type DeleteAccountCopy` + `type DeleteAccountSectionProps` (identical shape to the web ones).
 
@@ -41,14 +43,27 @@
 ```tsx
 import { useState } from "react";
 import { TextInput, View } from "react-native";
-import { Button, ThemedText, useColor } from "@indiecrafts/packages-mobile-ui-native";
-import { submitAccountErasure, type ErasureSelfResult } from "../shared/erasure-self";
+import {
+  Button,
+  ThemedText,
+  useColor,
+} from "@indiecrafts/packages-mobile-ui-native";
+import {
+  submitAccountErasure,
+  type ErasureSelfResult,
+} from "../shared/erasure-self";
 
 export interface DeleteAccountCopy {
-  heading: string; body: string;
-  emailLabel: string; emailPlaceholder: string;
-  confirmButton: string; pending: string;
-  success: string; partial: string; error: string; mismatch: string;
+  heading: string;
+  body: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  confirmButton: string;
+  pending: string;
+  success: string;
+  partial: string;
+  error: string;
+  mismatch: string;
 }
 export interface DeleteAccountSectionProps {
   copy: DeleteAccountCopy;
@@ -61,7 +76,11 @@ export interface DeleteAccountSectionProps {
 type Status = "idle" | "pending" | ErasureSelfResult;
 
 export function DeleteAccountSection({
-  copy, apiUrl, getToken, onDeleted, beforeConfirm,
+  copy,
+  apiUrl,
+  getToken,
+  onDeleted,
+  beforeConfirm,
 }: DeleteAccountSectionProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -73,17 +92,25 @@ export function DeleteAccountSection({
     if (!email.trim() || status === "pending") return;
     if (beforeConfirm && !(await beforeConfirm())) return;
     setStatus("pending");
-    const result = await submitAccountErasure({ apiUrl, getToken, email: email.trim() });
+    const result = await submitAccountErasure({
+      apiUrl,
+      getToken,
+      email: email.trim(),
+    });
     setStatus(result);
     if (result === "done" || result === "partial") await onDeleted();
   }
 
   const message =
-    status === "done" ? copy.success
-    : status === "partial" ? copy.partial
-    : status === "mismatch" ? copy.mismatch
-    : status === "error" ? copy.error
-    : null;
+    status === "done"
+      ? copy.success
+      : status === "partial"
+        ? copy.partial
+        : status === "mismatch"
+          ? copy.mismatch
+          : status === "error"
+            ? copy.error
+            : null;
 
   return (
     <View style={{ gap: 8 }}>
@@ -98,7 +125,14 @@ export function DeleteAccountSection({
         keyboardType="email-address"
         inputMode="email"
         accessibilityLabel={copy.emailLabel}
-        style={{ height: 44, borderWidth: 1, borderColor: border, borderRadius: 8, paddingHorizontal: 12, color: fg }}
+        style={{
+          height: 44,
+          borderWidth: 1,
+          borderColor: border,
+          borderRadius: 8,
+          paddingHorizontal: 12,
+          color: fg,
+        }}
       />
       <Button
         variant="outline"
@@ -106,16 +140,20 @@ export function DeleteAccountSection({
         onPress={() => void onConfirm()}
         disabled={status === "pending" || email.trim().length === 0}
       />
-      {message ? <ThemedText style={{ color: danger }}>{message}</ThemedText> : null}
+      {message ? (
+        <ThemedText style={{ color: danger }}>{message}</ThemedText>
+      ) : null}
     </View>
   );
 }
 ```
+
 Verify against the real `ui-native` exports: confirm `Button`'s prop names (`label`/`onPress`/`variant`/`disabled`), `ThemedText`'s `variant` values, and the exact `useColor` token names (`"border"`, `"foreground"`, and the danger token — read `code/packages/mobile/ui-native/src/components/*.tsx` + the `SignInForm` usage). Adjust to match; keep the a11y label + 44pt height.
 
 - [ ] **Step 4: Export from the native barrel.** Add to `code/packages/shared/compliance/src/native/index.ts`: `export { DeleteAccountSection } from "./DeleteAccountSection"; export type { DeleteAccountCopy, DeleteAccountSectionProps } from "./DeleteAccountSection";`.
 
 - [ ] **Step 5: Prettier + commit.**
+
 ```bash
 git add code/packages/shared/compliance/src/shared/erasure-self.ts code/packages/shared/compliance/src/web/DeleteAccountSection.tsx code/packages/shared/compliance/src/native/DeleteAccountSection.tsx code/packages/shared/compliance/src/native/index.ts
 git commit --no-verify -m "feat(compliance): native DeleteAccountSection + shared submit helper"
@@ -126,6 +164,7 @@ git commit --no-verify -m "feat(compliance): native DeleteAccountSection + share
 ### Task 2: Mount in the mobile `SignedInView` + i18n + flag
 
 **Files:**
+
 - Modify: `code/projects/mobile/surfaces/main/app/sign-in.tsx` (`SignedInView` — mount the control)
 - Modify: `code/projects/mobile/surfaces/main/messages/en.json` + `fr.json` (add `account.delete.*`)
 - Modify: `code/projects/mobile/surfaces/main/config/index.ts` (flat `features` literal — add `deleteAccount: true`)
@@ -136,21 +175,30 @@ git commit --no-verify -m "feat(compliance): native DeleteAccountSection + share
 - [ ] **Step 1: Flag.** `config/index.ts:50` → `export const features = { requireConsent: false, deleteAccount: true } as const;`.
 - [ ] **Step 2: i18n.** Add a nested `account.delete` object (the 10 `DeleteAccountCopy` keys) to `messages/en.json` and `messages/fr.json`, matching the existing `auth`/`consent` nesting. English warm/editorial (heading "Delete your account"; body: permanent deletion + the activity log is retained for legal accountability); French a real translation. Identical key shape both files.
 - [ ] **Step 3: Mount in `SignedInView`** (`app/sign-in.tsx`). Add `getToken` to the existing `const { signOut } = useAuth();` → `const { signOut, getToken } = useAuth();`. Import `DeleteAccountSection`, `type DeleteAccountCopy` from `@indiecrafts/packages-shared-compliance/native`, `features` from `@/config`. Build `copy` from `t.formatMessage({ id: "account.delete.heading" })` etc. Render, gated + fail-safe on the API URL:
+
 ```tsx
 const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? "";
 // … inside the returned fragment, after the existing buttons:
-{features.deleteAccount && apiUrl ? (
-  <DeleteAccountSection
-    copy={copy}
-    apiUrl={apiUrl}
-    getToken={() => getToken()}
-    onDeleted={async () => { await signOut(); router.replace("/"); }}
-  />
-) : null}
+{
+  features.deleteAccount && apiUrl ? (
+    <DeleteAccountSection
+      copy={copy}
+      apiUrl={apiUrl}
+      getToken={() => getToken()}
+      onDeleted={async () => {
+        await signOut();
+        router.replace("/");
+      }}
+    />
+  ) : null;
+}
 ```
+
 (`router` is already in `SignedInView`. The `&& apiUrl` gate mirrors the web/app fail-safe: never render a control that would POST to an empty origin.)
+
 - [ ] **Step 4: Verify.** `pnpm --filter @indiecrafts/mobile-surfaces-main tsc` (exit 0 — validates the native component's types transitively) and `pnpm --filter @indiecrafts/mobile-surfaces-main test` (jest — existing tests still green). Prettier `--write` changed files (skip .json if the repo doesn't prettier messages — check).
 - [ ] **Step 5: Changelog + commit.** Add an `## [Unreleased]` → `### Added` entry to `code/projects/mobile/surfaces/main/CHANGELOG.md` (bolded lead + `**Why:**`, matching the existing Clerk-auth entry format). Commit `--no-verify`:
+
 ```bash
 git add code/projects/mobile/surfaces/main/app/sign-in.tsx code/projects/mobile/surfaces/main/messages/en.json code/projects/mobile/surfaces/main/messages/fr.json code/projects/mobile/surfaces/main/config/index.ts code/projects/mobile/surfaces/main/CHANGELOG.md
 git commit --no-verify -m "feat(compliance): mobile account-delete control"

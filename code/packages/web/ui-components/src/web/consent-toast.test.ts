@@ -14,7 +14,12 @@ import { toast } from "sonner";
 describe("showConsentSavedToast", () => {
   it("fires a success toast with a Manage action that calls onManage", () => {
     const onManage = vi.fn();
-    showConsentSavedToast({ saved: "Saved", description: "Change in settings", manage: "Manage", onManage });
+    showConsentSavedToast({
+      saved: "Saved",
+      description: "Change in settings",
+      manage: "Manage",
+      onManage,
+    });
     expect(toast.success).toHaveBeenCalledTimes(1);
     const [msg, opts] = (toast.success as any).mock.calls[0];
     expect(msg).toBe("Saved");

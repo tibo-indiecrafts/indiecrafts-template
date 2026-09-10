@@ -6,12 +6,12 @@
 
 ## Props
 
-| Prop      | Type                                    | Notes                                          |
-| --------- | ---------------------------------------- | ----------------------------------------------- |
-| `heading` | `string`                                 | Optional section title.                         |
-| `intro`   | `string`                                 | Optional intro text under the heading.          |
-| `items`   | `PostCardItem[]`                         | The posts, in display order.                    |
-| `labels`  | `{ prev, next, slide }`                  | i18n strings for the buttons + the slide role.  |
+| Prop      | Type                    | Notes                                          |
+| --------- | ----------------------- | ---------------------------------------------- |
+| `heading` | `string`                | Optional section title.                        |
+| `intro`   | `string`                | Optional intro text under the heading.         |
+| `items`   | `PostCardItem[]`        | The posts, in display order.                   |
+| `labels`  | `{ prev, next, slide }` | i18n strings for the buttons + the slide role. |
 
 `PostCardItem` (`@indiecrafts/packages-web-ui-components/shared/types`): `_key`, `href`, `title`, `image?`, `lqip?`, `category?`, `author?`, `date?` — every field already resolved by the host.
 

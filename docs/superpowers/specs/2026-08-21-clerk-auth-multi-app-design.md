@@ -23,13 +23,13 @@ Clerk session token; audit events go to a durable Cloudflare sink.
 
 ## 3. Decisions (resolved with the requester)
 
-| Question | Decision |
-| --- | --- |
-| Sign-in methods | Passwordless: email OTP + main socials (Google, Apple, GitHub) |
-| Electron social | Full social via system-browser OAuth + `indiecrafts://` deep link, PKCE-bound |
-| Admin gate location | `admin` app only (replaces the planned Cloudflare Access gate) |
-| Sharing | DOM-free contract in `shared/auth`; web provider + appearance in `web/auth` |
-| Email confirm for social | Trust verified OAuth emails; do not double-verify |
+| Question                 | Decision                                                                      |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| Sign-in methods          | Passwordless: email OTP + main socials (Google, Apple, GitHub)                |
+| Electron social          | Full social via system-browser OAuth + `indiecrafts://` deep link, PKCE-bound |
+| Admin gate location      | `admin` app only (replaces the planned Cloudflare Access gate)                |
+| Sharing                  | DOM-free contract in `shared/auth`; web provider + appearance in `web/auth`   |
+| Email confirm for social | Trust verified OAuth emails; do not double-verify                             |
 
 Apple is mandatory on the iOS build once any social provider is offered — an
 App Store rule. The exact provider set is a Clerk dashboard toggle, cheap to
@@ -49,7 +49,7 @@ It holds only the portable contract:
   exported check. `hasRole(claims, role)` is deferred until a second role exists
   (YAGNI). A `moderator`, if ever added, must **not** pass `isAdmin`.
 - The session-claims **type** is canonical here: `type AppSessionClaims = {
-  metadata?: { role?: Roles } }`. This is the single home (see §8).
+metadata?: { role?: Roles } }`. This is the single home (see §8).
 
 Tests: `isAdmin` returns true for admin, false for missing / malformed /
 non-admin claims.
@@ -124,7 +124,8 @@ the **full i18n scaffold** (`[locale]` + `src/i18n/{routing,request}.ts` +
 `messages/`) matching `website`/`app`, as a **Phase 2 prerequisite before** the
 Clerk sign-in UI lands. Sign-in uses Clerk's prebuilt `<SignIn>`
 (Clerk-localized); any custom admin chrome copy routes through `@/i18n/routing`
-+ `messages/<locale>.json` like every other app — no exception.
+
+- `messages/<locale>.json` like every other app — no exception.
 
 Keys: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (public — allowed) and
 `CLERK_SECRET_KEY` (server-only, never `NEXT_PUBLIC`). Public API routes on
@@ -187,7 +188,7 @@ The renderer is Chromium running React DOM, so it reuses the web bricks.
 - OAuth providers that verify email (Google, Apple, Microsoft) return
   `email_verified`. Trust it. Do not force a second OTP on a verified social
   email — friction, no gain. The email-OTP path verifies by nature.
-- **GitHub caveat** (review [Medium]): GitHub OAuth can return an *unverified*
+- **GitHub caveat** (review [Medium]): GitHub OAuth can return an _unverified_
   primary email. Confirm Clerk trusts only **verified** GitHub emails for
   sign-in and linking.
 - Account-linking hijack is the real risk. Clerk setting **"require a verified
@@ -223,7 +224,7 @@ Open passwordless sign-up means anyone can create an account. The only thing
 between a stranger and admin is the role grant, so treat it as the crown jewel.
 
 - **Role-grant path** — `clerkClient().users.updateUserMetadata(userId, {
-  publicMetadata: { role: 'admin' } })` runs **only** from an admin-gated server
+publicMetadata: { role: 'admin' } })` runs **only** from an admin-gated server
   action **in the admin app**, validates the target `userId`, and is
   audit-logged. It is the highest-value endpoint in the system.
 - **First admin** — set from the Clerk dashboard (Public metadata). No
@@ -261,8 +262,8 @@ between a stranger and admin is the role grant, so treat it as the crown jewel.
   canonical (the contract is cross-platform); `code/docs/apps/web/config/auth.md`
   covers only Next middleware/gate wiring and links up (config review [Medium]).
 - **Clerk dashboard is a named content home** for the unauthorized-sign-in email
-  + page (like Sanity's carve-out). State locale parity: **English-only for
-  phase 1**, revisit if multi-locale transactional email is needed.
+  - page (like Sanity's carve-out). State locale parity: **English-only for
+    phase 1**, revisit if multi-locale transactional email is needed.
 - **Changelogs:** each app logs at its home altitude; the shared/auth + web/auth
   **bricks log once in `code/packages/CHANGELOG.md`** (config review [Low]).
 - No hard-coded brand / URL / color — appearance from tokens; routes via

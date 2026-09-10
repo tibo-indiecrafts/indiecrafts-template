@@ -10,7 +10,6 @@
 //   next-cf   — Next.js → OpenNext → Cloudflare Workers (website · admin)
 //   worker-cf — a bare Cloudflare Worker (api · cron · workers)
 //   expo      — React Native / Expo, ships via EAS (mobile) — NOT Cloudflare
-//   electron  — desktop, ships via electron-builder (hybrid) — NOT Cloudflare
 //
 // CLI (for the CI matrix): `node scripts/lib/apps.mjs --json [--cloudflare]`
 
@@ -23,8 +22,8 @@ export const ENVS = ["dev", "staging", "prod"];
  * @typedef {Object} AppEntry
  * @property {string} slug   short id + `deploy:<slug>:<env>` script name
  * @property {string} pkg    the workspace package name (`pnpm --filter` target)
- * @property {"next-cf"|"worker-cf"|"expo"|"electron"} class  platform class → deploy recipe
- * @property {"web"|"mobile"|"hybrid"|"shared"} platform  which platform folder it lives under
+ * @property {"next-cf"|"worker-cf"|"expo"} class  platform class → deploy recipe
+ * @property {"web"|"mobile"|"shared"} platform  which platform folder it lives under
  * @property {"surface"|"service"|"tool"} kind  surface (a user-facing site/screen/app) · service (a worker backend) · tool (dev tooling, e.g. storybook)
  * @property {string} dir    the project's directory — `code/projects/<platform>/<kind>s/<leaf>`.
  *   The leaf can differ from `slug` (e.g. slug `mobile` lives at `mobile/surfaces/main`), so every
@@ -65,16 +64,6 @@ export const APPS = [
     platform: "shared",
     kind: "service",
     dir: "code/shared/workers",
-    order: 10,
-    smoke: { path: "/health", contains: "ok" },
-  },
-  {
-    slug: "agent",
-    pkg: "@indiecrafts/shared-agent",
-    class: "worker-cf",
-    platform: "shared",
-    kind: "service",
-    dir: "code/shared/agent",
     order: 10,
     smoke: { path: "/health", contains: "ok" },
   },
@@ -130,15 +119,6 @@ export const APPS = [
     dir: "code/projects/mobile/surfaces/main",
     order: 50,
   },
-  {
-    slug: "hybrid",
-    pkg: "@indiecrafts/hybrid-surfaces-main",
-    class: "electron",
-    platform: "hybrid",
-    kind: "surface",
-    dir: "code/projects/hybrid/surfaces/main",
-    order: 50,
-  },
 ];
 
 /** The classes that deploy to Cloudflare (wrangler). */
@@ -150,7 +130,7 @@ export const isCloudflare = (app) => CLOUDFLARE.has(app.class);
 /**
  * Deployable apps in deploy order.
  * @param {{ only?: "cloudflare"|"all" }} [opts] default `cloudflare` — the common
- *   "ship several apps to CF" case; `all` includes expo/electron (which need their
+ *   "ship several apps to CF" case; `all` also includes expo (which needs its
  *   own credentials + runners).
  */
 export function deployable({ only = "cloudflare" } = {}) {
@@ -194,7 +174,7 @@ export function resourceName(slug, env, prefix) {
 }
 
 // ── CLI: emit the app list for the CI matrix ──────────────────────────────────
-//   node scripts/lib/apps.mjs [--json] [--cloudflare] [--class <next-cf|worker-cf|expo|electron>]
+//   node scripts/lib/apps.mjs [--json] [--cloudflare] [--class <next-cf|worker-cf|expo>]
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2);
   const clsIdx = argv.indexOf("--class");

@@ -78,7 +78,8 @@ export function themeProviderProps(cfg: ThemeConfig) {
     attribute: "data-theme",
     themes: concrete.length ? [...concrete] : ["light"],
     enableSystem,
-    defaultTheme: cfg.forced ?? (enableSystem ? "system" : (concrete[0] ?? "light")),
+    defaultTheme:
+      cfg.forced ?? (enableSystem ? "system" : (concrete[0] ?? "light")),
     forcedTheme: cfg.forced ?? undefined,
     disableTransitionOnChange: true,
   } as const;
@@ -93,8 +94,8 @@ export function showThemeToggle(cfg: ThemeConfig): boolean {
 - **`themeModes(cfg)`** — the user-selectable options (Light/Dark). The toggle renders one radio item
   per mode; **"system" is never in this list**.
 - **`themeProviderProps(cfg)`** — spread straight onto next-themes' `<ThemeProvider>`. `enableSystem`
-  + `defaultTheme:"system"` keep OS auto-detect **decoupled from the menu**: on first load (no stored
-  choice) next-themes resolves the OS theme; once the visitor picks Light or Dark, that's stored.
+  - `defaultTheme:"system"` keep OS auto-detect **decoupled from the menu**: on first load (no stored
+    choice) next-themes resolves the OS theme; once the visitor picks Light or Dark, that's stored.
 - **`showThemeToggle(cfg)`** — whether the toggle appears at all.
 
 ## Where they're consumed

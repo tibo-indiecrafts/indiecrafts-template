@@ -14,7 +14,8 @@ export default defineModule({
       title: "Cartes",
       type: "array",
       validation: (Rule) => Rule.min(1).max(3),
-      description: "Une à trois cartes. Chacune renvoie vers sa page de catégorie ou de tag.",
+      description:
+        "Une à trois cartes. Chacune renvoie vers sa page de catégorie ou de tag.",
       of: [
         defineArrayMember({
           type: "object",
@@ -43,7 +44,8 @@ export default defineModule({
               title: "Image",
               type: "image",
               options: { hotspot: true },
-              description: "Grande image affichée en fond de la carte. Vide = fond uni.",
+              description:
+                "Grande image affichée en fond de la carte. Vide = fond uni.",
               fields: [
                 defineField({
                   name: "alt",
@@ -66,11 +68,16 @@ export default defineModule({
               title: "Description courte",
               type: "text",
               rows: 2,
-              description: "Court texte affiché sous le titre. Vide = pas de texte.",
+              description:
+                "Court texte affiché sous le titre. Vide = pas de texte.",
             }),
           ],
           preview: {
-            select: { title: "title", targetTitle: "target.title", media: "image" },
+            select: {
+              title: "title",
+              targetTitle: "target.title",
+              media: "image",
+            },
             prepare: ({ title, targetTitle, media }) => ({
               title: title || targetTitle || "Sans titre",
               media,

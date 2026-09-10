@@ -3,11 +3,11 @@
 The client/config plumbing shared by the app's Studio and the blog module. Infra only —
 schemas and GROQ stay in their owning feature.
 
-|                                         |                                                                                                      |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Exports (subpath-only, no `.` root)** | `./client` · `./live` · `./env` · `./token` · `./structure` · `./image` · `./write` · `./module`     |
+|                                         |                                                                                                                      |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Exports (subpath-only, no `.` root)** | `./client` · `./live` · `./env` · `./token` · `./structure` · `./image` · `./write` · `./module`                     |
 | **Deps**                                | `next-sanity ^13.0.3`, `@indiecrafts/packages-shared-config`. **Peer:** `next 16.3.1`, `react 19.2.8`, `sanity: "*"` |
-| **Consumers**                           | app + blog                                                                                           |
+| **Consumers**                           | app + blog                                                                                                           |
 
 - **`env.ts`** derives `projectId`/`dataset` (from `NEXT_PUBLIC_SANITY_PROJECT_ID` /
   `_DATASET`, asserted present), `apiVersion` (`NEXT_PUBLIC_SANITY_API_VERSION` ??

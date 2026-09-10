@@ -41,7 +41,9 @@ export function Carousel({
     const track = trackRef.current;
     if (!track) return;
     const card = track.firstElementChild as HTMLElement | null;
-    track.scrollBy({ left: (card?.offsetWidth ?? track.clientWidth) * direction });
+    track.scrollBy({
+      left: (card?.offsetWidth ?? track.clientWidth) * direction,
+    });
   };
 
   return (
@@ -49,12 +51,20 @@ export function Carousel({
       {heading || intro ? (
         <div className="mb-8 md:mb-10">
           {heading ? (
-            <h2 className="text-3xl font-semibold text-balance md:text-4xl">{heading}</h2>
+            <h2 className="text-3xl font-semibold text-balance md:text-4xl">
+              {heading}
+            </h2>
           ) : null}
-          {intro ? <p className="text-muted-foreground mt-2 max-w-2xl">{intro}</p> : null}
+          {intro ? (
+            <p className="text-muted-foreground mt-2 max-w-2xl">{intro}</p>
+          ) : null}
         </div>
       ) : null}
-      <div role="region" aria-roledescription="carousel" aria-label={heading ?? labels.slide}>
+      <div
+        role="region"
+        aria-roledescription="carousel"
+        aria-label={heading ?? labels.slide}
+      >
         <div
           ref={trackRef}
           className="flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth p-1 [scrollbar-width:none] motion-reduce:scroll-auto [&::-webkit-scrollbar]:hidden"

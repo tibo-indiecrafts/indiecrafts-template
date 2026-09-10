@@ -1,8 +1,8 @@
 # Reserved — `modules/shared`
 
 **Not built — a reserved scope.** This marks where a **cross-platform feature**
-lives — a module whose UI + engine run on more than one platform (web + mobile +
-hybrid), not just one.
+lives — a module whose UI + engine run on more than one platform (web + mobile),
+not just one.
 
 Empty on purpose. A module lives at the **scope where it renders**: web-delivered
 → `modules/web`, here **only** when the same feature ships on ≥2 platforms.

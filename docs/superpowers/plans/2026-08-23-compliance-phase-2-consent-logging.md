@@ -29,11 +29,13 @@
 ### Task 1: D1 migration `0003_consent_events`
 
 **Files:**
+
 - Create: `code/shared/api/db/d1/migrations/0003_consent_events.sql`
 - Test: `code/shared/api/src/consent-events.test.ts`
 - Modify: `code/shared/api/CHANGELOG.md`
 
 **Interfaces:**
+
 - Produces: table `consent_events(id PK, ts, subject_type, subject_id, email_fingerprint?, consent_type, granted INTEGER, policy_version, surface, source?, country?, ip_hash?, idempotency_key UNIQUE)` + indexes on `ts`, `subject_id`, `email_fingerprint`. Consumed by Tasks 2 (writes) and 5 (purge).
 
 - [ ] **Step 1: Write the migration**
@@ -143,10 +145,12 @@ git commit --no-verify -m "feat(compliance): consent_events D1 table (migration 
 ### Task 2: api `/v1/events` `kind:"consent"` branch
 
 **Files:**
+
 - Modify: `code/shared/api/src/index.ts` (add a branch in the `body.kind` switch, after `session`/`security`, before the final `else`)
 - Test: `code/shared/api/src/consent-events.test.ts` (add a `describe` block)
 
 **Interfaces:**
+
 - Consumes: `env.DB`, `str()`, `country`, `ts`, `clientIp`, `hashIpAddress`, `env.IP_HASH_SALT`, the `consent_events` table (Task 1), `user_profiles` (Phase 1).
 - POST body shape: `{ kind:"consent", userId?: string, consentId?: string, decisionId: string, policyVersion: string, surface: string, source?: string, country?: string, events: Array<{ type: string, granted: boolean }> }`.
 - Produces: for each valid `events[]` entry, one `consent_events` row; `subject_type="user"` + fingerprint lookup when `userId` present, else `subject_type="visitor"` keyed by `consentId`. Idempotent by `${decisionId}:${type}`.
@@ -203,7 +207,10 @@ describe("kind:consent → consent_events", () => {
       subject_type: "user",
       email_fingerprint: "fp_c1",
     });
-    expect(results[1]).toMatchObject({ consent_type: "cookie_marketing", granted: 0 });
+    expect(results[1]).toMatchObject({
+      consent_type: "cookie_marketing",
+      granted: 0,
+    });
   });
 
   it("is idempotent — replaying the same decisionId keeps one row per type", async () => {
@@ -352,11 +359,13 @@ git commit --no-verify -m "feat(compliance): /v1/events kind:consent writes cons
 ### Task 3: consent-type mapper + `reportConsent` hook
 
 **Files:**
+
 - Create: `code/packages/web/compliance/src/consent/consent-report.ts`
 - Modify: `code/packages/web/compliance/src/consent/consent-store.ts` (call `reportConsent` at the end of `applyConsent`)
 - Test: `code/packages/web/compliance/src/consent/consent-report.test.ts`
 
 **Interfaces:**
+
 - Produces: `consentEvents(choices: Record<string, boolean>): Array<{ type: string; granted: boolean }>` — maps `analytics`→`cookie_analytics`, `marketing`→`cookie_marketing` (skips `necessary`/unknown). `reportConsent(choices: Record<string, boolean>, version: string, source?: string): void` — browser-only fire-and-forget POST to `/api/consent-log` with `{ events, version, source, decisionId }`.
 - Consumed by: `applyConsent` (this task); the `/api/consent-log` route (Task 4) receives the POST body.
 
@@ -371,7 +380,12 @@ import { consentEvents, reportConsent } from "./consent-report";
 describe("consentEvents", () => {
   it("maps optional categories to consent types, skipping necessary/unknown", () => {
     expect(
-      consentEvents({ necessary: true, analytics: true, marketing: false, bogus: true }),
+      consentEvents({
+        necessary: true,
+        analytics: true,
+        marketing: false,
+        bogus: true,
+      }),
     ).toEqual([
       { type: "cookie_analytics", granted: true },
       { type: "cookie_marketing", granted: false },
@@ -389,7 +403,9 @@ describe("reportConsent", () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it("POSTs the mapped events with a decisionId to /api/consent-log", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 204 }));
     vi.stubGlobal("fetch", fetchMock);
     vi.stubGlobal("crypto", { randomUUID: () => "uuid-1" });
 
@@ -475,9 +491,9 @@ import { reportConsent } from "./consent-report";
 At the end of `applyConsent` (after the `if (typeof window !== "undefined") { ... dataLayer.push(...) }` block):
 
 ```ts
-  // Log the decision server-side (account-scoped) — one funnel covers accept /
-  // reject / customize / auto-seed. Fire-and-forget; the route gates anonymous.
-  reportConsent(choices, version);
+// Log the decision server-side (account-scoped) — one funnel covers accept /
+// reject / customize / auto-seed. Fire-and-forget; the route gates anonymous.
+reportConsent(choices, version);
 ```
 
 - [ ] **Step 5: Run tests**
@@ -499,6 +515,7 @@ git commit --no-verify -m "feat(compliance): report consent decisions from the a
 ### Task 4: server chain — forwarder + routes + `logAnonymousConsent` flag
 
 **Files:**
+
 - Create: `code/packages/web/compliance/src/consent-log.ts` (server-only forwarder)
 - Create: `code/projects/web/surfaces/website/src/app/api/consent-log/route.ts`
 - Create: `code/projects/web/surfaces/app/src/app/api/consent-log/route.ts`
@@ -507,6 +524,7 @@ git commit --no-verify -m "feat(compliance): report consent decisions from the a
 - Test: `code/packages/web/compliance/src/consent-log.test.ts`
 
 **Interfaces:**
+
 - Consumes: `process.env.API_URL` + `process.env.APP_API_TOKEN`; Clerk `auth()`; the api `kind:"consent"` branch (Task 2); the POST body from `reportConsent` (Task 3).
 - Produces: `logConsent(input: { userId: string | null; consentId: string | null; events: Array<{ type: string; granted: boolean }>; version: string; source?: string; surface: string; country?: string | null; decisionId: string }): Promise<void>` — server-only fetch to the api. The routes turn a browser POST into a `logConsent` call. `features.compliance.logAnonymousConsent: boolean` gates anonymous logging.
 
@@ -528,7 +546,9 @@ describe("logConsent forwarder", () => {
   it("forwards a consent decision to the api with the bearer + kind:consent", async () => {
     process.env.API_URL = "https://api.test";
     process.env.APP_API_TOKEN = "tok";
-    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 201 }));
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 201 }));
     vi.stubGlobal("fetch", fetchMock);
     const { logConsent } = await import("./consent-log");
 
@@ -546,7 +566,9 @@ describe("logConsent forwarder", () => {
     expect(fetchMock).toHaveBeenCalledOnce();
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe("https://api.test/v1/events");
-    expect((init.headers as Record<string, string>).authorization).toBe("Bearer tok");
+    expect((init.headers as Record<string, string>).authorization).toBe(
+      "Bearer tok",
+    );
     expect(JSON.parse(init.body as string)).toMatchObject({
       kind: "consent",
       userId: "user_x",
@@ -728,12 +750,14 @@ git commit --no-verify -m "feat(compliance): consent-log route + forwarder + log
 ### Task 5: cron 3-year purge + cookie-audit/ConsentGate verification + docs
 
 **Files:**
+
 - Modify: `code/shared/cron/src/index.ts` (add the `consent_events` purge with a 3-year cutoff; extract a `retentionCutoff` helper)
 - Test: `code/shared/cron/src/retention.test.ts`
 - Modify: `code/docs/apps/web/config/data-retention.md` (document the consent-log class + the cookie-audit process)
 - Modify: `code/shared/cron/CHANGELOG.md`
 
 **Interfaces:**
+
 - Consumes: `consent_events` (Task 1).
 - Produces: `retentionCutoff(scheduledTime: number, days: number): string` (ISO cutoff) exported from `code/shared/cron/src/index.ts`; a `DELETE FROM consent_events WHERE ts < ?` at the 3-year cutoff in the scheduled handler.
 
@@ -749,7 +773,9 @@ describe("retentionCutoff", () => {
   it("computes the ISO cutoff for a given window", () => {
     const now = Date.UTC(2026, 0, 31); // 2026-01-31T00:00:00Z
     // 90 days before
-    expect(retentionCutoff(now, 90)).toBe(new Date(now - 90 * 86_400_000).toISOString());
+    expect(retentionCutoff(now, 90)).toBe(
+      new Date(now - 90 * 86_400_000).toISOString(),
+    );
     // 3 years (1095 days) before is much earlier than 90 days
     expect(retentionCutoff(now, 1095) < retentionCutoff(now, 90)).toBe(true);
   });
@@ -781,21 +807,19 @@ export function retentionCutoff(scheduledTime: number, days: number): string {
 Replace the existing `const cutoff = new Date(controller.scheduledTime - RETENTION_DAYS * 86_400_000).toISOString();` with:
 
 ```ts
-    const cutoff = retentionCutoff(controller.scheduledTime, RETENTION_DAYS);
-    const consentCutoff = retentionCutoff(
-      controller.scheduledTime,
-      CONSENT_RETENTION_DAYS,
-    );
+const cutoff = retentionCutoff(controller.scheduledTime, RETENTION_DAYS);
+const consentCutoff = retentionCutoff(
+  controller.scheduledTime,
+  CONSENT_RETENTION_DAYS,
+);
 ```
 
 Inside the `if (env.DB)` try block, after the `security_events` delete, add:
 
 ```ts
-        const consent = await env.DB.prepare(
-          "DELETE FROM consent_events WHERE ts < ?",
-        )
-          .bind(consentCutoff)
-          .run();
+const consent = await env.DB.prepare("DELETE FROM consent_events WHERE ts < ?")
+  .bind(consentCutoff)
+  .run();
 ```
 
 and add `consentRows: consent.meta?.changes` to the `logger.info("retention purge", { ... })` object. Update the handler comment to say "all four tables" and note the differing consent window.

@@ -50,7 +50,13 @@ export function FeaturedPosts({
 }
 
 /** The large lead card — `PostHero`'s full-bleed image + scrim, at card size. */
-function LeadCard({ post, className }: { post: PostCardItem; className?: string }) {
+function LeadCard({
+  post,
+  className,
+}: {
+  post: PostCardItem;
+  className?: string;
+}) {
   return (
     <article
       className={cn(
@@ -94,7 +100,9 @@ function LeadCard({ post, className }: { post: PostCardItem; className?: string 
             {post.author ? (
               <span className="font-medium text-white">{post.author}</span>
             ) : null}
-            {post.author && post.date ? <span aria-hidden="true">·</span> : null}
+            {post.author && post.date ? (
+              <span aria-hidden="true">·</span>
+            ) : null}
             {post.date ? <span>{post.date}</span> : null}
           </div>
         ) : null}

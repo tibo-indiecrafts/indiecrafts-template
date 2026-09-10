@@ -72,16 +72,6 @@ export const INFRA = [
     dir: "code/shared/infra/cloudflare/account",
     order: 10,
   },
-  // The AI agent Worker's edge — a sibling of the api stack (rate-limit + WAF + bot +
-  // leaked-creds + zone hardening; no Turnstile). INERT until it has a real zone.
-  {
-    name: "agent",
-    provider: "cloudflare",
-    owner: "agent",
-    altitude: "global",
-    dir: "code/shared/agent/infra/cloudflare",
-    order: 21,
-  },
   // The `app` surface's edge — a next-cf sibling of the website stack.
   {
     name: "app",

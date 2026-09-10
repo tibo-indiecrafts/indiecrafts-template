@@ -19,7 +19,7 @@ const SET = ReiconReact as unknown as Record<
   ComponentType<ReiconGlyphProps>
 >;
 
-/** Render a reicon glyph by name (web / hybrid renderer). Returns null on an unknown name. */
+/** Render a reicon glyph by name (web). Returns null on an unknown name. */
 export function ReiconIcon({ name, fallback, ...props }: ReiconIconProps) {
   const Glyph = SET[name] ?? (fallback ? SET[fallback] : undefined);
   return typeof Glyph === "function" ? <Glyph {...props} /> : null;

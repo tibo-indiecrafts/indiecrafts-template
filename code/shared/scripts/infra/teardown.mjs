@@ -22,7 +22,9 @@ const pi = args.indexOf("--prefix");
 const prefix = pi >= 0 ? args[pi + 1] : readSitePrefix();
 
 if (!ENVS.includes(env)) {
-  console.error("Usage: teardown.mjs <dev|staging|prod> [--yes] [--prefix <p>]");
+  console.error(
+    "Usage: teardown.mjs <dev|staging|prod> [--yes] [--prefix <p>]",
+  );
   process.exit(1);
 }
 
@@ -38,7 +40,9 @@ console.log(`Teardown "${prefix}" (${env}) — ${flat.length} resource(s):`);
 for (const [kind, name] of flat) console.log(`  ${kind}\t${name}`);
 
 if (!execute) {
-  console.log("\n[dry run] nothing deleted. Re-run with --yes to DELETE all of the above.");
+  console.log(
+    "\n[dry run] nothing deleted. Re-run with --yes to DELETE all of the above.",
+  );
   process.exit(0);
 }
 
@@ -60,9 +64,13 @@ if (env === "prod" && !process.env.CI) {
 
 // Run wrangler via the api workspace (its .bin), account-level.
 const wrangler = (cmd) =>
-  spawnSync("pnpm", ["--filter", "@indiecrafts/shared-api", "exec", "wrangler", ...cmd], {
-    encoding: "utf8",
-  });
+  spawnSync(
+    "pnpm",
+    ["--filter", "@indiecrafts/shared-api", "exec", "wrangler", ...cmd],
+    {
+      encoding: "utf8",
+    },
+  );
 
 // KV deletes by id, not name — resolve once.
 function kvId(name) {
@@ -97,4 +105,6 @@ for (const [kind, name] of flat) {
     console.log(r._skipped ? "not found (skip)" : "absent / failed (skip)");
   }
 }
-console.log(`\nDone — ${removed}/${flat.length} removed (missing resources are skipped).`);
+console.log(
+  `\nDone — ${removed}/${flat.length} removed (missing resources are skipped).`,
+);

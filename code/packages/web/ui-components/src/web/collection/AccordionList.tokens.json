@@ -1,7 +1,10 @@
 {
   "$description": "Component token surface for AccordionList — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
-    "accordion-list-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "accordion-list-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
     "accordion-list-border": { "$type": "color", "$value": "{semantic.border}" }
   }
 }

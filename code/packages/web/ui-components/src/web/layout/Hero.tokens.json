@@ -2,6 +2,9 @@
   "$description": "Component token surface for Hero — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "hero-brand": { "$type": "color", "$value": "{semantic.brand}" },
-    "hero-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+    "hero-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
   }
 }

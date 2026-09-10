@@ -41,30 +41,30 @@ select <env>`, `-var-file=env/<env>.tfvars`.
 
 ## What it provisions (`code/projects/web/surfaces/website/infra/main.tf`)
 
-| Resource                                 | Effect                                                                                                                          |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `cloudflare_workers_custom_domain`       | **auto domain** — attaches `<domain>` to the env's Worker; CF makes the DNS record + cert. **Authoritative** — do NOT also uncomment the `[[env.*.routes]]` block in `wrangler.toml` (both claim the hostname and fight); gate with `attach_domain` |
-| `cloudflare_ruleset` (http_ratelimit)    | **tiered rate-limit on `/api/*`** — a tighter cap on the form/report endpoints (`rate_limit_form_requests`, default 10) then a general `/api/*` cap (`rate_limit_requests`, default 20); the `@indiecrafts/packages-shared-security` `withGuard`/CSP-sink **primary** limiter |
-| `cloudflare_ruleset` (firewall_managed)  | Cloudflare **Managed WAF** ruleset                                                                                              |
+| Resource                                 | Effect                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `cloudflare_workers_custom_domain`       | **auto domain** — attaches `<domain>` to the env's Worker; CF makes the DNS record + cert. **Authoritative** — do NOT also uncomment the `[[env.*.routes]]` block in `wrangler.toml` (both claim the hostname and fight); gate with `attach_domain`                                                                      |
+| `cloudflare_ruleset` (http_ratelimit)    | **tiered rate-limit on `/api/*`** — a tighter cap on the form/report endpoints (`rate_limit_form_requests`, default 10) then a general `/api/*` cap (`rate_limit_requests`, default 20); the `@indiecrafts/packages-shared-security` `withGuard`/CSP-sink **primary** limiter                                            |
+| `cloudflare_ruleset` (firewall_managed)  | Cloudflare **Managed WAF** ruleset                                                                                                                                                                                                                                                                                       |
 | `cloudflare_ruleset` (firewall_custom)   | **custom firewall** (one per phase): **block** sensitive-file probes (`.env`/`.git`/`.sql`/`wp-*`) before the Worker · **(opt-in `block_bad_bots`)** managed-challenge scraper UAs on content routes · **(opt-in `enable_leaked_credentials`)** leaked-credential challenge. Regex-free (`ends_with`/`contains`/`lower`) |
-| `cloudflare_bot_management` `fight_mode` | **Bot Fight Mode** (free). Also flip on **Block AI Bots** (Security → Settings → Bot traffic) to block GPTBot/ClaudeBot/… as a managed rule. Upgrade to Super Bot Fight Mode on Pro for skip rules |
-| `cloudflare_ruleset` (cache_settings)    | **Cache Rules** — immutable `/_next/static`, **bypass** `/api` + `/studio`                                                      |
-| `cloudflare_tiered_cache`                | **Tiered Cache** — funnel misses through one upper-tier PoP                                                                     |
-| `cloudflare_zone_setting` ×3             | SSL **strict** · min TLS **1.2** · Always-Use-HTTPS                                                                             |
-| `cloudflare_turnstile_widget`            | provisions the widget → outputs the keys (below)                                                                                |
+| `cloudflare_bot_management` `fight_mode` | **Bot Fight Mode** (free). Also flip on **Block AI Bots** (Security → Settings → Bot traffic) to block GPTBot/ClaudeBot/… as a managed rule. Upgrade to Super Bot Fight Mode on Pro for skip rules                                                                                                                       |
+| `cloudflare_ruleset` (cache_settings)    | **Cache Rules** — immutable `/_next/static`, **bypass** `/api` + `/studio`                                                                                                                                                                                                                                               |
+| `cloudflare_tiered_cache`                | **Tiered Cache** — funnel misses through one upper-tier PoP                                                                                                                                                                                                                                                              |
+| `cloudflare_zone_setting` ×3             | SSL **strict** · min TLS **1.2** · Always-Use-HTTPS                                                                                                                                                                                                                                                                      |
+| `cloudflare_turnstile_widget`            | provisions the widget → outputs the keys (below)                                                                                                                                                                                                                                                                         |
 
 Toggle any off per env via the `enable_*` variables in the tfvars.
 
 **Commented optionals in `main.tf`** (uncomment + fill to activate — configure a maximum at the edge):
 
-| Resource                                    | For                                                                                              |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `cloudflare_workers_custom_domain` (cdn)    | a first-party asset CDN on `cdn.<domain>` (`assetPrefix`)                                         |
-| `cloudflare_zone_setting` (image_resizing)  | CF Image Transformations for first-party images                                                  |
+| Resource                                               | For                                                                                        |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `cloudflare_workers_custom_domain` (cdn)               | a first-party asset CDN on `cdn.<domain>` (`assetPrefix`)                                  |
+| `cloudflare_zone_setting` (image_resizing)             | CF Image Transformations for first-party images                                            |
 | `cloudflare_zero_trust_access_application` + `_policy` | **gate the admin app behind SSO** — copy into admin's own `infra/cloudflare` when it ships |
-| `cloudflare_ruleset` (dynamic_redirect)     | www → apex (single redirect at the edge)                                                          |
-| `cloudflare_dns_record`                     | extra records (SPF/TXT/verification) when CF isn't already fronting the apex                      |
-| `cloudflare_logpush_job`                    | ship HTTP/Worker logs to R2/SIEM (retention / compliance)                                         |
+| `cloudflare_ruleset` (dynamic_redirect)                | www → apex (single redirect at the edge)                                                   |
+| `cloudflare_dns_record`                                | extra records (SPF/TXT/verification) when CF isn't already fronting the apex               |
+| `cloudflare_logpush_job`                               | ship HTTP/Worker logs to R2/SIEM (retention / compliance)                                  |
 
 The Worker's own bindings (KV · R2 · D1 · queues · services · Durable Objects · AI · Hyperdrive · placement ·
 limits · tail) live in `wrangler.toml`, not here — the **full commented reference is `code/shared/api/wrangler.toml`**.
@@ -96,15 +96,14 @@ Every Cloudflare-deployable surface that can take edge config now ships its own 
 registered in `code/shared/scripts/lib/infra-registry.mjs` and driven by the `infra:*` delegators
 (`code/shared/scripts/infra/run.mjs` resolves each `dir`):
 
-| Stack | Altitude | Dir | Notes |
-| --- | --- | --- | --- |
-| `account` | global | `code/shared/infra/cloudflare/account` | account-wide config (zone creation, account settings — mostly commented) |
-| `api` | global | `code/shared/api/infra/cloudflare` | rate-limit `/v1/*` · WAF · bot · leaked-creds · zone hardening |
-| `agent` | global | `code/shared/agent/infra/cloudflare` | api-style edge for the AI Worker |
-| `website` | leaf | `…/surfaces/website/infra/cloudflare` | full next-cf edge + Turnstile |
-| `app` | leaf | `…/surfaces/app/infra/cloudflare` | website-style edge |
-| `admin` | leaf | `…/surfaces/admin/infra/cloudflare` | website edge **+ Cloudflare Zero Trust Access** (SSO-gated) |
-| `storybook` | leaf | `…/tools/storybook/infra/cloudflare` | minimal (custom domain + zone hardening) |
+| Stack       | Altitude | Dir                                    | Notes                                                                    |
+| ----------- | -------- | -------------------------------------- | ------------------------------------------------------------------------ |
+| `account`   | global   | `code/shared/infra/cloudflare/account` | account-wide config (zone creation, account settings — mostly commented) |
+| `api`       | global   | `code/shared/api/infra/cloudflare`     | rate-limit `/v1/*` · WAF · bot · leaked-creds · zone hardening           |
+| `website`   | leaf     | `…/surfaces/website/infra/cloudflare`  | full next-cf edge + Turnstile                                            |
+| `app`       | leaf     | `…/surfaces/app/infra/cloudflare`      | website-style edge                                                       |
+| `admin`     | leaf     | `…/surfaces/admin/infra/cloudflare`    | website edge **+ Cloudflare Zero Trust Access** (SSO-gated)              |
+| `storybook` | leaf     | `…/tools/storybook/infra/cloudflare`   | minimal (custom domain + zone hardening)                                 |
 
 To add another app, copy the closest stack dir, point the tfvars at that app's Worker name + domain, and
 add `infra:<scope>:<app>:<action>:<env>` delegators (mirroring the existing ones). `main.tf` is

@@ -9,7 +9,9 @@ const { blogFlags } = vi.hoisted(() => ({
   })),
 }));
 vi.mock("./config", () => ({ blogFlags }));
-vi.mock("@indiecrafts/packages-web-sanity/client", () => ({ client: { fetch: vi.fn() } }));
+vi.mock("@indiecrafts/packages-web-sanity/client", () => ({
+  client: { fetch: vi.fn() },
+}));
 vi.mock("../sanity/queries", () => ({ blogDisplayQuery: "" }));
 
 const { resolveBlogDisplay } = await import("./settings");
@@ -49,12 +51,12 @@ describe("resolveBlogDisplay", () => {
 
   it("categoryNav: on by default, but needs both categories and its own toggle", () => {
     expect(run(null).taxonomy.categoryNav).toBe(true); // unset → on
-    expect(
-      run({ taxonomy: { categoryNav: false } }).taxonomy.categoryNav,
-    ).toBe(false); // its own toggle off
-    expect(
-      run({ taxonomy: { categories: false } }).taxonomy.categoryNav,
-    ).toBe(false); // categories off → no category bar
+    expect(run({ taxonomy: { categoryNav: false } }).taxonomy.categoryNav).toBe(
+      false,
+    ); // its own toggle off
+    expect(run({ taxonomy: { categories: false } }).taxonomy.categoryNav).toBe(
+      false,
+    ); // categories off → no category bar
   });
 
   it("categoryNav is off when the categories code flag is off", () => {

@@ -83,11 +83,11 @@ for (const app of deployable()) {
   }
 }
 
-// 4. Native surfaces (expo/electron) carry the prefix in their OWN config, not a
-// wrangler.toml — so the registry loop above never reaches them. Swap it here so a
-// rename is COMPLETE: the Expo app slug/scheme + reverse-DNS bundle id, the EAS build
-// env's api-URL prefix, and the Electron appId/productName. Keyed off TEMPLATE_PREFIX
-// (alphanumeric, safe to interpolate into a RegExp).
+// 4. The native surface (expo) carries the prefix in its OWN config, not a
+// wrangler.toml — so the registry loop above never reaches it. Swap it here so a
+// rename is COMPLETE: the Expo app slug/scheme + reverse-DNS bundle id and the EAS build
+// env's api-URL prefix. Keyed off TEMPLATE_PREFIX (alphanumeric, safe to interpolate
+// into a RegExp).
 const P = TEMPLATE_PREFIX;
 const nativeFiles = [
   {
@@ -104,15 +104,6 @@ const nativeFiles = [
     subs: [
       // EXPO_PUBLIC_API_URL host prefix https://indiecrafts-<env>-… → https://<slug>-<env>-…
       [new RegExp(`//${P}-`, "g"), `//${slug}-`],
-    ],
-  },
-  {
-    path: "code/projects/hybrid/surfaces/main/electron-builder.yml",
-    subs: [
-      // appId: dev.indiecrafts.hybrid → dev.<slug>.hybrid
-      [new RegExp(`^(appId:\\s*dev\\.)${P}(\\.)`, "m"), `$1${slug}$2`],
-      // productName: indiecrafts → productName: <slug>
-      [new RegExp(`^(productName:\\s*)${P}\\s*$`, "m"), `$1${slug}`],
     ],
   },
 ];

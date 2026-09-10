@@ -6,20 +6,20 @@
 
 ## Props
 
-| Prop          | Type                          | Notes                                                    |
-| ------------- | ----------------------------- | --------------------------------------------------------- |
-| `href`        | `string`                      | Resolved post URL. Whole-card click (stretched over the title). |
-| `title`       | `string`                      | The post title.                                            |
-| `excerpt`     | `string`                      | Optional teaser under the title.                            |
-| `image`       | `string`                      | Cover image URL.                                            |
-| `lqip`        | `string`                      | Optional blur placeholder for the image.                    |
-| `alt`         | `string`                      | Image alt text; falls back to `title`.                      |
-| `video`       | `string`                      | Optional video URL/embed — plays in place via `FeaturedMedia`, no dialog. |
-| `category`    | `{ title, href? }`            | Optional category chip. No `href` renders plain text.       |
-| `author`      | `string`                      | Optional author name.                                       |
-| `date`        | `string`                      | Optional formatted publish date.                             |
-| `playLabel`   | `string`                      | Accessible label for the video play button (i18n, host-provided). |
-| `headingLevel`| `"h1" \| "h2"`                | The title's heading tag. Default `"h2"`.                    |
+| Prop           | Type               | Notes                                                                     |
+| -------------- | ------------------ | ------------------------------------------------------------------------- |
+| `href`         | `string`           | Resolved post URL. Whole-card click (stretched over the title).           |
+| `title`        | `string`           | The post title.                                                           |
+| `excerpt`      | `string`           | Optional teaser under the title.                                          |
+| `image`        | `string`           | Cover image URL.                                                          |
+| `lqip`         | `string`           | Optional blur placeholder for the image.                                  |
+| `alt`          | `string`           | Image alt text; falls back to `title`.                                    |
+| `video`        | `string`           | Optional video URL/embed — plays in place via `FeaturedMedia`, no dialog. |
+| `category`     | `{ title, href? }` | Optional category chip. No `href` renders plain text.                     |
+| `author`       | `string`           | Optional author name.                                                     |
+| `date`         | `string`           | Optional formatted publish date.                                          |
+| `playLabel`    | `string`           | Accessible label for the video play button (i18n, host-provided).         |
+| `headingLevel` | `"h1" \| "h2"`     | The title's heading tag. Default `"h2"`.                                  |
 
 ## Notes
 

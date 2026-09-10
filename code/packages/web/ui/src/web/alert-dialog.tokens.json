@@ -1,8 +1,14 @@
 {
   "$description": "Component token surface for alert-dialog — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
-    "alert-dialog-background": { "$type": "color", "$value": "{semantic.background}" },
-    "alert-dialog-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "alert-dialog-background": {
+      "$type": "color",
+      "$value": "{semantic.background}"
+    },
+    "alert-dialog-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
     "alert-dialog-muted": { "$type": "color", "$value": "{semantic.muted}" }
   }
 }

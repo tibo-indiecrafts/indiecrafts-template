@@ -6,12 +6,12 @@ create. Pair it with [Records of processing](./ropa) (Art. 30) and
 
 ## Sub-processors
 
-| Processor | Role | Data handled | Location | Transfer mechanism | DPA |
-| --- | --- | --- | --- | --- | --- |
-| Cloudflare | Edge, plus EU-pinned D1/R2/KV | Audit, session, security, consent, DSAR, and erasure records | EU (D1 `--location weur`); edge is global | EU-resident storage — no transfer for the pinned data | `[link]` |
-| Clerk | Authentication | Account identity, credentials, session data | US | SCCs / EU-US Data Privacy Framework `[confirm]` | `[link]` |
-| Resend | Transactional email | Recipient email, message content | US | SCCs / EU-US Data Privacy Framework `[confirm]` | `[link]` |
-| Sanity | Content CMS | Newsletter, comments, waitlist, contact, and content-authorship records | US, plus a global CDN | SCCs / EU-US Data Privacy Framework `[confirm]` | `[link]` |
+| Processor  | Role                          | Data handled                                                            | Location                                  | Transfer mechanism                                    | DPA      |
+| ---------- | ----------------------------- | ----------------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------------------- | -------- |
+| Cloudflare | Edge, plus EU-pinned D1/R2/KV | Audit, session, security, consent, DSAR, and erasure records            | EU (D1 `--location weur`); edge is global | EU-resident storage — no transfer for the pinned data | `[link]` |
+| Clerk      | Authentication                | Account identity, credentials, session data                             | US                                        | SCCs / EU-US Data Privacy Framework `[confirm]`       | `[link]` |
+| Resend     | Transactional email           | Recipient email, message content                                        | US                                        | SCCs / EU-US Data Privacy Framework `[confirm]`       | `[link]` |
+| Sanity     | Content CMS                   | Newsletter, comments, waitlist, contact, and content-authorship records | US, plus a global CDN                     | SCCs / EU-US Data Privacy Framework `[confirm]`       | `[link]` |
 
 ## Cross-border transfers
 

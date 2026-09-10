@@ -52,10 +52,7 @@ export function Toc({
   if (items.length === 0) return null;
 
   return (
-    <nav
-      aria-label={title}
-      className="hidden text-sm md:block"
-    >
+    <nav aria-label={title} className="hidden text-sm md:block">
       <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wider uppercase">
         {title}
       </p>

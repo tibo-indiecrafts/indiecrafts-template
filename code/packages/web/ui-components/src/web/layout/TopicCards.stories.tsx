@@ -7,7 +7,8 @@ const items = [
     _key: "t1",
     href: "/blog/category/engineering",
     title: "Engineering",
-    blurb: "Architecture, tooling, and the craft of shipping reliable software.",
+    blurb:
+      "Architecture, tooling, and the craft of shipping reliable software.",
     image: "https://picsum.photos/seed/topic1/1200/900",
     alt: "A row of server racks lit in blue",
   },
@@ -15,7 +16,8 @@ const items = [
     _key: "t2",
     href: "/blog/category/design",
     title: "Design",
-    blurb: "Design systems, tokens, and the details that make an interface feel right.",
+    blurb:
+      "Design systems, tokens, and the details that make an interface feel right.",
     image: "https://picsum.photos/seed/topic2/1200/900",
   },
   {

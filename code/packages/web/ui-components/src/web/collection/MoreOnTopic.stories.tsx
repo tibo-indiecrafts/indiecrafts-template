@@ -29,7 +29,10 @@ const meta = {
         meta: "5 min read",
       },
     ],
-    footer: { label: "All Engineering posts", href: "/blog/category/engineering" },
+    footer: {
+      label: "All Engineering posts",
+      href: "/blog/category/engineering",
+    },
   },
   argTypes: {
     items: { table: { disable: true } },

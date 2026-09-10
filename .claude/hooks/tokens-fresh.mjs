@@ -25,7 +25,11 @@ try {
     cwd: process.env.CLAUDE_PROJECT_DIR,
     stdio: "pipe",
   });
-  console.log("🎨 tokens.json changed → regenerated globals.css / native / hex (pnpm tokens:build).");
+  console.log(
+    "🎨 tokens.json changed → regenerated globals.css / native / hex (pnpm tokens:build).",
+  );
 } catch {
-  console.log("🎨 tokens.json changed — run `pnpm tokens:build` (auto-run failed).");
+  console.log(
+    "🎨 tokens.json changed — run `pnpm tokens:build` (auto-run failed).",
+  );
 }

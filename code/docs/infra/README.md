@@ -8,7 +8,7 @@ concern, close to what it configures:
   rate-limit · cache · Turnstile, per app × per env. Run: `pnpm infra:<app>:{init,plan,apply,output}:<env>`.
   Full runbook → [Cloudflare as code](/infra/cloudflare-iac).
 - **Deploy machinery** — `scripts/`: the app registry (`code/shared/scripts/lib/apps.mjs`) + the class-dispatched
-  runners (`deploy-next` · `deploy-worker` · `deploy-expo` · `deploy-electron`). Model →
+  runners (`deploy-next` · `deploy-worker` · `deploy-expo`). Model →
   [Platform deploy](/shared/architecture/platform-deploy).
 - **CI** — `.github/workflows/`: build · deploy · preview fan out from the registry; backup is hub-scoped.
 

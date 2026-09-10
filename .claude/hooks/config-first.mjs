@@ -24,7 +24,9 @@ const file = input?.tool_input?.file_path ?? "";
 // primitives (CLI-managed), generated output, tests/stories, and non-component files.
 const isComponent =
   /\.tsx$/.test(file) &&
-  /[/\\]code[/\\](?:projects|packages|modules)[/\\].*[/\\]src[/\\]/.test(file) &&
+  /[/\\]code[/\\](?:projects|packages|modules)[/\\].*[/\\]src[/\\]/.test(
+    file,
+  ) &&
   !/\.(stories|test|spec)\.tsx$/.test(file) &&
   !/(generated|[/\\]config[/\\]|[/\\]seo[/\\]|jsonld|[/\\]sanity[/\\]|ui-tokens|packages[/\\]web[/\\]ui[/\\]src[/\\]web[/\\])/.test(
     file,
@@ -50,16 +52,28 @@ const cards = [];
 src.split("\n").forEach((line, i) => {
   const t = line.trim();
   if (t.startsWith("//") || t.startsWith("*") || t.startsWith("/*")) return; // skip comment lines
-  if (COLOR.test(line)) cards.push({ line: i + 1, rule: "raw-color", msg: "raw color — use a semantic token (bg-brand · text-muted-foreground), never a hex/rgb/hsl/oklch." });
+  if (COLOR.test(line))
+    cards.push({
+      line: i + 1,
+      rule: "raw-color",
+      msg: "raw color — use a semantic token (bg-brand · text-muted-foreground), never a hex/rgb/hsl/oklch.",
+    });
   const u = line.match(URL);
-  if (u && !URL_OK.test(u[0])) cards.push({ line: i + 1, rule: "hardcoded-url", msg: `hardcoded URL (${u[0].slice(0, 48)}) — read it from @/config.` });
+  if (u && !URL_OK.test(u[0]))
+    cards.push({
+      line: i + 1,
+      rule: "hardcoded-url",
+      msg: `hardcoded URL (${u[0].slice(0, 48)}) — read it from @/config.`,
+    });
 });
 if (!cards.length) process.exit(0);
 
 const rel = path.relative(process.env.CLAUDE_PROJECT_DIR || ".", file);
 let out = `[config-first] ${cards.length} finding(s) in ${rel}:\n`;
-for (const c of cards.slice(0, 15)) out += `  · ${rel}:${c.line} — ${c.rule}: ${c.msg}\n`;
+for (const c of cards.slice(0, 15))
+  out += `  · ${rel}:${c.line} — ${c.rule}: ${c.msg}\n`;
 if (cards.length > 15) out += `  · …+${cards.length - 15} more\n`;
-out += "Advisory — config-first NEVERs (tokens · @/config). Full pass: the config-consistency-reviewer agent.";
+out +=
+  "Advisory — config-first NEVERs (tokens · @/config). Full pass: the config-consistency-reviewer agent.";
 process.stdout.write(out);
 process.exit(0);

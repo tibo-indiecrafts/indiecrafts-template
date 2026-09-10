@@ -32,6 +32,9 @@ export function cspHeadersForMode(
 ): { enforced: string; reportOnly: string | null } {
   const strict = buildCsp(env, csp, reporting, nonce);
   if (mode === "enforce")
-    return { enforced: strict, reportOnly: buildTrustedTypesReportOnly(reporting) };
+    return {
+      enforced: strict,
+      reportOnly: buildTrustedTypesReportOnly(reporting),
+    };
   return { enforced: buildCsp(env, csp, reporting), reportOnly: strict };
 }

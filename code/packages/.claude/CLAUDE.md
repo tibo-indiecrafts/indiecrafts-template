@@ -2,8 +2,8 @@
 
 Auto-loads when you work under `code/packages/**`. Internal TypeScript packages shared
 by apps + modules, **foldered by platform-scope** — `code/packages/<scope>/<brick>/`
-(scope = `shared · web · mobile · hybrid`). 27 live: 15 in `shared/`, 11 in `web/`, 1 in `mobile/`
-(`ui-native`); `hybrid/` is a reserved README marker. `_registry.md` lists the roster + the
+(scope = `shared · web · mobile`). 25 live: 13 in `shared/`, 11 in `web/`, 1 in `mobile/`
+(`ui-native`). `_registry.md` lists the roster + the
 reserved bricks (auth · billing · data · …).
 **How we build packages** → the internal dev framework. **What they are** →
 `code/docs/packages/`.
@@ -25,12 +25,12 @@ reserved bricks (auth · billing · data · …).
 Two axes govern where a brick lives. **Scope is the folder; category is a tag.**
 
 **Scope** — which platforms a brick runs on — **is the top-level folder**, the same
-`shared · web · mobile · hybrid` set as `code/shared` ↔ `code/projects/<platform>`:
+`shared · web · mobile` set as `code/shared` ↔ `code/projects/<platform>`:
 
 - **`shared/`** — cross-platform: `agnostic` (pure TS/data), `server-side` (used by every backend),
   or a cross-platform contract. A brick that runs on ≥2 platforms lives here.
 - **`web/`** — web-client-only (DOM + Tailwind + Next).
-- **`mobile/`** — the native design system `ui-native` (Expo). **`hybrid/`** — a reserved README marker (Electron bricks).
+- **`mobile/`** — the native design system `ui-native` (Expo).
 
 **A brick lives at the highest scope it runs on** — `shared/` if it works on ≥2 platforms, else its
 single client platform. `sanity`/`email`/`security` are server-side but serve every platform's
@@ -63,7 +63,7 @@ line in `shared/ui-tokens/globals.css`, and doc links. Verify with `pnpm tsc` (a
 
 A new brick lands in known places — do all five in the same change:
 
-1. **Code** — `code/packages/<scope>/<name>/` (scope = the highest platform it runs on: `shared` if ≥2 platforms, else `web`/`mobile`/`hybrid`) — `package.json` `@indiecrafts/packages-<scope>-<name>` (folder tail) + `exports`; declare its own deps. **To consume it in an app, five wires** (only the applicable ones): (a) add it to `transpilePackages` in the app `next.config.ts` — **always** (consumed as TS source); (b) a `workspace:*` dep in the app `package.json` — **always**; (c) a `tsconfig` `paths` entry **iff it has a wildcard subpath export** (`"./*"` / `"./web/*"`, which tsc + the Sanity schema-extract can't map to a 1:1 extension) — packages with explicit per-file exports (e.g. `version`) skip it; (d) a `@source` line in `ui-tokens/globals.css` **iff it renders Tailwind classes**; (e) its `SanityModule` barrel into a `composeStudio` group in `sanity.config.ts` **iff it ships Sanity content**. A pure-logic brick needs only (a)+(b); a UI+Sanity brick needs all five.
+1. **Code** — `code/packages/<scope>/<name>/` (scope = the highest platform it runs on: `shared` if ≥2 platforms, else `web`/`mobile`) — `package.json` `@indiecrafts/packages-<scope>-<name>` (folder tail) + `exports`; declare its own deps. **To consume it in an app, five wires** (only the applicable ones): (a) add it to `transpilePackages` in the app `next.config.ts` — **always** (consumed as TS source); (b) a `workspace:*` dep in the app `package.json` — **always**; (c) a `tsconfig` `paths` entry **iff it has a wildcard subpath export** (`"./*"` / `"./web/*"`, which tsc + the Sanity schema-extract can't map to a 1:1 extension) — packages with explicit per-file exports (e.g. `version`) skip it; (d) a `@source` line in `ui-tokens/globals.css` **iff it renders Tailwind classes**; (e) its `SanityModule` barrel into a `composeStudio` group in `sanity.config.ts` **iff it ships Sanity content**. A pure-logic brick needs only (a)+(b); a UI+Sanity brick needs all five.
 2. **Registry** — a row in [`_registry.md`](../_registry.md).
 3. **Doc** — one page `code/docs/packages/<name>.md` (exports · deps · consumers · gotchas), split from the shape of the others.
 4. **Sidebar** — one line under the Packages group in `code/docs/.vitepress/config.mts`.

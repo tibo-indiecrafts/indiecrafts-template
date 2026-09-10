@@ -31,6 +31,7 @@
 Everything the proxies need, framework-free and unit-tested. No app changes yet.
 
 **Files:**
+
 - Modify: `code/packages/shared/security/src/csp.ts`
 - Create: `code/packages/shared/security/src/csp-nonce.ts`
 - Modify: `code/packages/shared/security/src/headers.ts`
@@ -38,6 +39,7 @@ Everything the proxies need, framework-free and unit-tested. No app changes yet.
 - Test: `code/packages/shared/security/src/csp.test.ts` (append) + `code/packages/shared/security/src/csp-nonce.test.ts` (create)
 
 **Interfaces:**
+
 - Produces: `buildCsp(env, csp?, reporting?, nonce?): string` — with `nonce`, `script-src` is the strict form.
 - Produces: `type CspMode = "report-only" | "enforce"`
 - Produces: `generateNonce(): string` (`./csp-nonce`)
@@ -88,7 +90,11 @@ describe("cspHeadersForMode", () => {
   const reporting = { endpoint: "/api/csp-report" };
   it("enforce → strict enforced, no report-only", () => {
     const { enforced, reportOnly } = cspHeadersForMode(
-      "production", {}, reporting, "n0nce", "enforce",
+      "production",
+      {},
+      reporting,
+      "n0nce",
+      "enforce",
     );
     expect(enforced).toContain("'nonce-n0nce' 'strict-dynamic'");
     expect(enforced).toContain("report-uri /api/csp-report");
@@ -97,7 +103,11 @@ describe("cspHeadersForMode", () => {
 
   it("report-only → permissive enforced + strict report-only", () => {
     const { enforced, reportOnly } = cspHeadersForMode(
-      "production", {}, reporting, "n0nce", "report-only",
+      "production",
+      {},
+      reporting,
+      "n0nce",
+      "report-only",
     );
     expect(enforced).toContain("script-src 'self' 'unsafe-inline'"); // permissive, site works
     expect(enforced).not.toContain("strict-dynamic");
@@ -152,7 +162,9 @@ export function buildCsp(
   nonce?: string,
 ): string {
   const directives = cspDirectives(env, csp, {}, nonce);
-  return (reporting ? withReporting(directives, reporting) : directives).join("; ");
+  return (reporting ? withReporting(directives, reporting) : directives).join(
+    "; ",
+  );
 }
 ```
 
@@ -199,20 +211,30 @@ In `code/packages/shared/security/src/headers.ts`:
 Add `cspMode?: "static" | "proxy";` to `SecurityHeadersOptions` (default `"static"`). When `"proxy"`, build the `headers` array WITHOUT the `Content-Security-Policy` entry and WITHOUT the `Reporting-Endpoints`/Report-Only entries (the proxy owns them). Keep every other header. Concretely, guard the CSP push:
 
 ```ts
-  const headers: { key: string; value: string }[] = [
-    { key: "X-Content-Type-Options", value: "nosniff" },
-    { key: "X-Frame-Options", value: "DENY" },
-    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-    { key: "Permissions-Policy", value: permissionsPolicy },
-  ];
-  if (cspMode !== "proxy") {
-    headers.push({ key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) });
-    if (reporting) {
-      headers.push({ key: "Reporting-Endpoints", value: `csp-endpoint="${reporting.endpoint}"` });
-      const reportOnly = buildReportOnlyCsp(env, csp, reporting);
-      if (reportOnly) headers.push({ key: "Content-Security-Policy-Report-Only", value: reportOnly });
-    }
+const headers: { key: string; value: string }[] = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: permissionsPolicy },
+];
+if (cspMode !== "proxy") {
+  headers.push({
+    key: "Content-Security-Policy",
+    value: buildCsp(env, csp, reporting),
+  });
+  if (reporting) {
+    headers.push({
+      key: "Reporting-Endpoints",
+      value: `csp-endpoint="${reporting.endpoint}"`,
+    });
+    const reportOnly = buildReportOnlyCsp(env, csp, reporting);
+    if (reportOnly)
+      headers.push({
+        key: "Content-Security-Policy-Report-Only",
+        value: reportOnly,
+      });
   }
+}
 ```
 
 Add the exported `studioCspRule`:
@@ -228,10 +250,15 @@ export function studioCspRule(
 ): HeaderRule {
   const rule: HeaderRule = {
     source: "/studio/:path*",
-    headers: [{ key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) }],
+    headers: [
+      { key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) },
+    ],
   };
   if (reporting)
-    rule.headers.push({ key: "Reporting-Endpoints", value: `csp-endpoint="${reporting.endpoint}"` });
+    rule.headers.push({
+      key: "Reporting-Endpoints",
+      value: `csp-endpoint="${reporting.endpoint}"`,
+    });
   return rule;
 }
 ```
@@ -263,6 +290,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 The `app` surface is the simplest proxy (next-intl only, optional Clerk, no maintenance/gate/GA/Studio). Prove the whole nonce mechanism here, then Tasks 3-4 copy the validated glue.
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/app/src/proxy.ts`
 - Modify: `code/projects/web/surfaces/app/next.config.ts`
 - Modify: `code/projects/web/surfaces/app/src/app/[locale]/layout.tsx` (thread `x-nonce` → `ClerkProvider`)
@@ -270,6 +298,7 @@ The `app` surface is the simplest proxy (next-intl only, optional Clerk, no main
 - Modify: `code/projects/web/surfaces/app/.env.example` (document `CSP_MODE`)
 
 **Interfaces:**
+
 - Consumes (Task 1): `generateNonce`, `cspHeadersForMode`, `type CspMode` from `@indiecrafts/packages-shared-security`.
 - Produces: the confirmed proxy glue pattern (nonce gen → `x-nonce` request header → CSP response header) that Tasks 3-4 reuse.
 
@@ -278,7 +307,13 @@ The `app` surface is the simplest proxy (next-intl only, optional Clerk, no main
 In `code/packages/web/auth/src/provider.tsx`, accept an optional `nonce` and pass it to `ClerkProvider`:
 
 ```tsx
-export function AppClerkProvider({ children, nonce }: { children: ReactNode; nonce?: string }) {
+export function AppClerkProvider({
+  children,
+  nonce,
+}: {
+  children: ReactNode;
+  nonce?: string;
+}) {
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) return <>{children}</>;
   return (
     <ClerkProvider appearance={authAppearance()} nonce={nonce}>
@@ -297,7 +332,7 @@ In `code/projects/web/surfaces/app/src/app/[locale]/layout.tsx`, read the nonce 
 ```tsx
 const nonce = (await headers()).get("x-nonce") ?? undefined;
 // ...
-<AppClerkProvider nonce={nonce}>{children}</AppClerkProvider>
+<AppClerkProvider nonce={nonce}>{children}</AppClerkProvider>;
 ```
 
 - [ ] **Step 3: Write the app proxy glue (the pattern to validate)**
@@ -305,12 +340,19 @@ const nonce = (await headers()).get("x-nonce") ?? undefined;
 In `code/projects/web/surfaces/app/src/proxy.ts`, generate a nonce, inject it as the `x-nonce` REQUEST header (so the layout reads it), run the existing intl pipeline against that request, and set the CSP response header per `CSP_MODE`. Starting pattern:
 
 ```ts
-import { generateNonce, cspHeadersForMode, type CspMode } from "@indiecrafts/packages-shared-security";
+import {
+  generateNonce,
+  cspHeadersForMode,
+  type CspMode,
+} from "@indiecrafts/packages-shared-security";
 import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
 
 const CSP_MODE: CspMode =
   process.env.CSP_MODE === "enforce" ? "enforce" : "report-only";
-const REPORTING = { endpoint: "/api/csp-report", reportOnly: { dropSources: ["https:"] } };
+const REPORTING = {
+  endpoint: "/api/csp-report",
+  reportOnly: { dropSources: ["https:"] },
+};
 
 function withNonceRequest(request: NextRequest, nonce: string): NextRequest {
   const headers = new Headers(request.headers);
@@ -320,11 +362,16 @@ function withNonceRequest(request: NextRequest, nonce: string): NextRequest {
 
 function setCsp(response: Response, nonce: string): Response {
   const { enforced, reportOnly } = cspHeadersForMode(
-    getCurrentEnvironment(), {}, REPORTING, nonce, CSP_MODE,
+    getCurrentEnvironment(),
+    {},
+    REPORTING,
+    nonce,
+    CSP_MODE,
   );
   response.headers.set("Content-Security-Policy", enforced);
   response.headers.set("Reporting-Endpoints", `csp-endpoint="/api/csp-report"`);
-  if (reportOnly) response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
+  if (reportOnly)
+    response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
   return response;
 }
 ```
@@ -343,6 +390,7 @@ Then wrap the existing return: generate `const nonce = generateNonce()`, call `i
 Run: `pnpm --filter @indiecrafts/web-surfaces-app tsc` — must pass.
 
 Manual (the spike proof): start app (`pnpm --filter @indiecrafts/web-surfaces-app dev`) with `CSP_MODE=enforce`, then:
+
 - `curl -sI http://localhost:3000/en | grep -i content-security-policy` → shows `script-src 'self' 'nonce-…' 'strict-dynamic' …`.
 - Load a page in a browser, confirm ZERO CSP console errors, and (if Clerk configured) the Clerk components render. Confirm the nonce in the header matches a `nonce="…"` attribute in the page's script tags (view source).
 - If `x-nonce` didn't reach the layout (scripts have no nonce / console shows blocked inline), iterate on the Step-3 pattern until it works, and document it.
@@ -363,12 +411,14 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 Copy Task 2's confirmed pattern into the admin proxy, which additionally has a fail-closed `/sign-in` redirect.
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/admin/src/proxy.ts`
 - Modify: `code/projects/web/surfaces/admin/next.config.ts`
 - Modify: `code/projects/web/surfaces/admin/src/app/[locale]/layout.tsx` (thread `x-nonce` → `AppClerkProvider`)
 - Modify: `code/projects/web/surfaces/admin/.env.example`
 
 **Interfaces:**
+
 - Consumes: the confirmed glue from Task 2 (same `withNonceRequest`/`setCsp` shape); `AppClerkProvider` `nonce` prop (already added in Task 2).
 
 - [ ] **Step 1: Copy the proxy glue**
@@ -404,12 +454,14 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 website has three proxy return points (maintenance rewrite, intl, Clerk-wrapped), the inline `gtag-init` `<Script>`, and the `/studio` route that must stay permissive.
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/website/src/proxy.ts`
 - Modify: `code/projects/web/surfaces/website/next.config.ts` (`cspMode: "proxy"` + the `/studio` rule)
 - Modify: `code/projects/web/surfaces/website/src/app/[locale]/layout.tsx` (nonce → the two GA `<Script>` + `AppClerkProvider`)
 - Modify: `code/projects/web/surfaces/website/.env.example`
 
 **Interfaces:**
+
 - Consumes: the confirmed glue (Task 2), `studioCspRule` (Task 1), `AppClerkProvider` `nonce` (Task 2).
 
 - [ ] **Step 1: Proxy glue on all three return points**
@@ -419,6 +471,7 @@ In `code/projects/web/surfaces/website/src/proxy.ts`, generate one nonce at the 
 - [ ] **Step 2: Thread the nonce to the GA scripts + Clerk in the layout**
 
 In `code/projects/web/surfaces/website/src/app/[locale]/layout.tsx`:
+
 - Read `const nonce = (await headers()).get("x-nonce") ?? undefined;` beside the existing `cf-ipcountry` read (~line 139).
 - Pass `nonce={nonce}` to BOTH GA `<Script>` tags (the loader at ~line 184 and the inline `gtag-init` at ~line 188).
 - Pass `nonce={nonce}` to `AppClerkProvider`.
@@ -427,6 +480,7 @@ In `code/projects/web/surfaces/website/src/app/[locale]/layout.tsx`:
 - [ ] **Step 3: `next.config.ts` — cspMode proxy + the /studio rule**
 
 In `code/projects/web/surfaces/website/next.config.ts`, in the `async headers()`:
+
 - Add `cspMode: "proxy"` to the `securityHeaders({...})` call (drops CSP from `/:path*`; keeps the video `frameSrc`/`mediaSrc`/`googleAnalytics`/`embedHosts` — those still feed the `/studio` rule + are otherwise moot on proxy routes).
 - Import `studioCspRule` and spread it into the returned rules array so `/studio/:path*` gets the permissive CSP:
 
@@ -454,6 +508,7 @@ Reuse the same `csp` object (the current values from the existing config — cop
 
 Run: `pnpm --filter @indiecrafts/web-surfaces-website tsc` — pass. Try `build`; if it fails only on the pre-existing missing `NEXT_PUBLIC_SANITY_PROJECT_ID`, note it and rely on tsc.
 Manual (with a GA id + `CSP_MODE=enforce` locally if possible):
+
 - `/en` response carries the strict nonce CSP; the two `gtag` `<Script>` tags in the HTML carry the matching `nonce`.
 - `/studio` response carries the PERMISSIVE CSP (`'unsafe-inline'`) and the Studio loads.
 - Zero CSP console errors on home, a form page (Turnstile), and a GA page.
@@ -474,6 +529,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 Lock the behavior with an e2e test and update the docs the branch touched.
 
 **Files:**
+
 - Create: `code/projects/web/surfaces/website/e2e/journeys/csp-nonce.spec.ts` (mirror the existing e2e setup)
 - Modify: `code/docs/apps/web/seo/security-headers.md`
 - Modify: `code/docs/packages/security.md`
@@ -482,6 +538,7 @@ Lock the behavior with an e2e test and update the docs the branch touched.
 - [ ] **Step 1: E2e test (the real proof)**
 
 Create a Playwright spec under the website's `e2e/journeys/` (read an existing spec first to match the harness/config). Run the site with `CSP_MODE=enforce`. Assert:
+
 - The `/en` response has a `content-security-policy` header containing `'strict-dynamic'` and a `nonce-` value.
 - The same nonce string appears as a `nonce` attribute on a `<script>` in the served HTML.
 - No CSP violation is reported to the console on the home page (listen for `console` events / `securitypolicyviolation`).

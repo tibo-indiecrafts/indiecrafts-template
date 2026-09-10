@@ -33,7 +33,9 @@ const norm = file.replace(/\\/g, "/");
 const added = [
   input.content,
   input.new_string,
-  ...(Array.isArray(input.edits) ? input.edits.map((e) => e && e.new_string) : []),
+  ...(Array.isArray(input.edits)
+    ? input.edits.map((e) => e && e.new_string)
+    : []),
 ]
   .filter(Boolean)
   .join("\n");
@@ -54,7 +56,10 @@ if (/\/ui-tokens\/src\/(generated\/|native\/tokens\.ts$)/.test(norm)) {
 // 2. shadcn CLI-managed primitives — never hand-edit. A colocated `*.tokens.json`
 //    sidecar is the exception: `shadcn add` never emits one, it never touches the
 //    .tsx, and `pnpm tokens:build` globs it by design — so it is not a primitive edit.
-if (/\/packages\/web\/ui\/src\/web\//.test(norm) && !/\.tokens\.json$/.test(norm)) {
+if (
+  /\/packages\/web\/ui\/src\/web\//.test(norm) &&
+  !/\.tokens\.json$/.test(norm)
+) {
   block(
     `${file} is a shadcn CLI-managed primitive (@indiecrafts/packages-web-ui) — don't hand-edit.\n` +
       `  Re-add via the shadcn CLI, or compose/wrap it in src/user-interface/ instead.`,
@@ -73,7 +78,9 @@ if (/(^|\/)\.env(\.[^/]*)?$/.test(norm) && !/\.env\.example$/.test(norm)) {
 //    (docs legitimately quote the anti-pattern, so skip .md/.mdx).
 if (!/\.mdx?$/.test(norm)) {
   const matches =
-    added.match(/NEXT_PUBLIC_[A-Z0-9_]*(TOKEN|SECRET|KEY|PASSWORD|PRIVATE)\b/g) || [];
+    added.match(
+      /NEXT_PUBLIC_[A-Z0-9_]*(TOKEN|SECRET|KEY|PASSWORD|PRIVATE)\b/g,
+    ) || [];
   // A *publishable* key is public by design (Clerk / Stripe `pk_…` — the SDK reads
   // it in the browser). It is not a secret, so it is allowed under NEXT_PUBLIC_.
   // Every real secret (SECRET / TOKEN / PRIVATE / PASSWORD / other KEY) still blocks.

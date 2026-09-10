@@ -43,7 +43,12 @@ export function ConsentPreferences({
 
 const styles = StyleSheet.create({
   list: { gap: 12, paddingVertical: 4 },
-  row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 16 },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 16,
+  },
   text: { flex: 1 },
   title: { fontSize: 14, fontWeight: "500" },
   desc: { fontSize: 12 },

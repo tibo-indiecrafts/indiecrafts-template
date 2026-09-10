@@ -9,7 +9,9 @@ import {
 describe("collapseRoute", () => {
   it("collapses numeric, uuid, and long hex segments to :id", () => {
     expect(collapseRoute("/orders/93847")).toBe("/orders/:id");
-    expect(collapseRoute("/u/2f1c8e9a-1b2c-4d5e-8f90-a1b2c3d4e5f6")).toBe("/u/:id");
+    expect(collapseRoute("/u/2f1c8e9a-1b2c-4d5e-8f90-a1b2c3d4e5f6")).toBe(
+      "/u/:id",
+    );
     expect(collapseRoute("/a/deadbeefdeadbeef99")).toBe("/a/:id");
     expect(collapseRoute("/blog/hello-world")).toBe("/blog/hello-world");
   });
@@ -87,7 +89,15 @@ describe("sanitizeCspReport", () => {
 
   it("keeps literal blocked values like inline", () => {
     const s = sanitizeCspReport(
-      { directive: "script-src-elem", documentUrl: "https://x.dev/", blockedUrl: "inline", sourceFile: "", line: null, snippet: "", disposition: "report" },
+      {
+        directive: "script-src-elem",
+        documentUrl: "https://x.dev/",
+        blockedUrl: "inline",
+        sourceFile: "",
+        line: null,
+        snippet: "",
+        disposition: "report",
+      },
       "admin",
     );
     expect(s!.blockedSource).toBe("inline");
@@ -95,7 +105,15 @@ describe("sanitizeCspReport", () => {
 
   it("drops extension noise", () => {
     const s = sanitizeCspReport(
-      { directive: "script-src-elem", documentUrl: "https://x.dev/", blockedUrl: "chrome-extension://a/b.js", sourceFile: "", line: null, snippet: "", disposition: "report" },
+      {
+        directive: "script-src-elem",
+        documentUrl: "https://x.dev/",
+        blockedUrl: "chrome-extension://a/b.js",
+        sourceFile: "",
+        line: null,
+        snippet: "",
+        disposition: "report",
+      },
       "website",
     );
     expect(s).toBeNull();

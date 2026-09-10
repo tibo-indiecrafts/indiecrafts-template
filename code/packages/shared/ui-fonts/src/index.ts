@@ -27,7 +27,11 @@ export type FontFile = {
  */
 export const FONT_FILES = {
   satoshi: [
-    { path: "fonts/Satoshi-Variable.woff2", weight: "300 900", style: "normal" },
+    {
+      path: "fonts/Satoshi-Variable.woff2",
+      weight: "300 900",
+      style: "normal",
+    },
     {
       path: "fonts/Satoshi-VariableItalic.woff2",
       weight: "300 900",

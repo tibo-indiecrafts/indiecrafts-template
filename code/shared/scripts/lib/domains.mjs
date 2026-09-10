@@ -94,11 +94,6 @@ export const DOMAINS = [
   },
   // Add a row per app that gets a custom domain (another subdomain, …). Apps with no
   // row serve only `*.workers.dev`.
-  //
-  // NOT here: the hybrid installer host `downloads.<root>` — that is an R2 bucket custom
-  // domain (`<prefix>-<env>-hybrid-surfaces-main-releases`), not an app/Worker route. It
-  // lives in `electron-builder.yml` (`publish.url`) + the deploy runbook, not this app→host
-  // registry (the domains test asserts every row is a real app slug).
 ];
 
 const PLACEHOLDER_HOSTS = new Set(["example.com", "your-domain.com", ""]);

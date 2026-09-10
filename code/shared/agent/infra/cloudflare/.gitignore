@@ -1,9 +1,0 @@
-# Terraform (this service's co-located edge config). Commit .tf + .tfvars (placeholders)
-# + .terraform.lock.hcl. NEVER commit state — it holds resource ids.
-.terraform/
-terraform.tfstate
-terraform.tfstate.*
-terraform.tfstate.d/
-.terraform.tfstate.lock.info
-*.tfplan
-crash.log

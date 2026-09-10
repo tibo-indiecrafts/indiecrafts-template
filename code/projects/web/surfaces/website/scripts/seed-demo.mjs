@@ -3213,7 +3213,7 @@ const buildAnnouncementToast = () => ({
   _id: "announcementToast",
   _type: "announcementToast",
   enabled: true,
-  surfaces: ["website", "app", "mobile", "hybrid"],
+  surfaces: ["website", "app", "mobile"],
   title: navLabel("Meet the new dashboard", "Découvrez le nouveau tableau de bord"),
   body: {
     _type: "localeText",

@@ -132,6 +132,7 @@ and feed `csp_reports` — `disposition: "report"` in report-only mode, `"enforc
 SP1 emitted the reporting directives + a Report-Only candidate (`dropSources: ["https:"]`) from
 `securityHeaders({ reporting })` in the STATIC `headers()`. SP3 moves CSP emission (including the
 reporting directives and the Report-Only header) into the proxy for app routes. So:
+
 - `securityHeaders({ cspMode: 'proxy' })` stops emitting the CSP + `Reporting-Endpoints` +
   Report-Only headers on `/:path*` (the proxy owns them now).
 - The proxy emits `Reporting-Endpoints: csp-endpoint="/api/csp-report"` + the CSP/Report-Only per mode.

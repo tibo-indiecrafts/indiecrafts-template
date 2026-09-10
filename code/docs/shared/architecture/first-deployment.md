@@ -34,18 +34,15 @@ Every Cloudflare resource name comes from one function —
 | **api**       | worker-cf       | `indiecrafts-<env>-shared-api.<sub>.workers.dev`           | `https://api.example.com`            |
 | **cron**      | worker-cf       | `indiecrafts-<env>-shared-cron.<sub>.workers.dev`          | _(no route — scheduled)_             |
 | **workers**   | worker-cf       | `indiecrafts-<env>-shared-workers.<sub>.workers.dev`       | _(no route — queue/event)_           |
-| **agent**     | worker-cf       | `indiecrafts-<env>-shared-agent.<sub>.workers.dev`         | _(internal)_                         |
 | **storybook** | Worker (assets) | `indiecrafts-<env>-web-tools-storybook.<sub>.workers.dev`  | `https://storybook.example.com`      |
 | **mobile**    | expo            | EAS build channel `<env>` (App/Play Store)                 | store listing                        |
-| **hybrid**    | electron        | installer artifact per `<env>`                             | signed `.dmg` / `.exe`               |
 
 `admin` + `app` are **subdomains of the website root** so Clerk drops the session cookie on the parent
-domain and all three share one login. `api`, `storybook`, and `downloads` (the hybrid installer host +
-update feed, an R2 bucket) get their own subdomains (`api.<root>`, `storybook.<root>`, `downloads.<root>`).
+domain and all three share one login. `api` and `storybook` get their own subdomains (`api.<root>`,
+`storybook.<root>`).
 
 Backing data/storage (no public URL): D1 `indiecrafts-<env>-db-audit` (audit) + `…-db-main`
-(main) · KV `indiecrafts-<env>-shared-api-security-counters` · R2 `…-shared-api-export` (GDPR exports)
-and `…-hybrid-surfaces-main-releases` (desktop installers).
+(main) · KV `indiecrafts-<env>-shared-api-security-counters` · R2 `…-shared-api-export` (GDPR exports).
 
 ## Phase 0 — one-time setup (before any env)
 
@@ -66,8 +63,7 @@ and `…-hybrid-surfaces-main-releases` (desktop installers).
    - `pnpm infra:web:website:apply:dev` · `pnpm setup:web:website:kv`
    - Wire the bindings into `wrangler.toml`: `node code/shared/scripts/infra/bindings.mjs` (paste the emitted blocks).
 2. **Set secrets** — fill each Worker's `.dev.vars` (from its `.dev.vars.example`) then bulk-push:
-   `pnpm secrets:sync:shared:api:dev` (`APP_API_TOKEN`, `IP_HASH_SALT`, `SANITY_API_READ_TOKEN`, …) and
-   `pnpm secrets:sync:shared:agent:dev` (`ANTHROPIC_API_KEY`, `APP_API_TOKEN`, `TURNSTILE_SECRET`).
+   `pnpm secrets:sync:shared:api:dev` (`APP_API_TOKEN`, `IP_HASH_SALT`, `SANITY_API_READ_TOKEN`, …).
    Website: `pnpm secrets:sync:web:website:dev`. (Or one-off: `wrangler secret put <NAME> --env dev`.)
 3. **Migrate databases** — `pnpm db:migrate:all:dev` (dev is a real remote D1).
 4. **Deploy** — `pnpm deploy:all:dev` (the 7 Cloudflare apps), or `--only all` to include native.
@@ -149,8 +145,7 @@ subdomain** (`storybook.<root>`) is a normal **Worker route** in `domains.mjs` a
 ## Native surfaces (separate track — not Cloudflare)
 
 Native apps don't deploy to Cloudflare. Here the `env` selects the **backend URLs baked into the
-artifact** (not separate infra), each needs its own credentials, and — because signed artifacts don't
-cross-build — a real release runs **one CI runner per target OS**.
+artifact** (not separate infra), and the app needs its own credentials.
 
 ### Mobile (Expo / EAS) — wired
 
@@ -165,37 +160,6 @@ account + credentials:
 4. **EAS Update** OTA is wired (`runtimeVersion` + `updates.url`, keyed by the profile `channel`).
 
 Prerequisites (yours): an Expo account, an Apple Developer account (iOS) + Google Play account (Android).
-
-### Hybrid (Electron) — desktop distribution, wired
-
-**What `env` means here.** A desktop app has no per-env infrastructure. The env picks the **backend URLs
-compiled into the installer** — the packaged app reads `RENDERER_URL` / `API_URL` / `AGENT_URL`
-(`src/main/index.ts`) + `src/config`. So `deploy:hybrid:main:<env>` means "build an installer wired to
-`<env>`'s backends."
-
-**What's wired:**
-
-- **Signing + notarization** (`electron-builder.yml`): hardened-runtime mac signing with
-  `build-resources/entitlements.mac.plist` + `notarize: true`. Reads creds from the env; with none set a
-  local build is **unsigned** (dev testing) and notarization is skipped — the daily `electron-vite dev`
-  is untouched either way.
-- **Publish + auto-update** (Cloudflare R2): a generic `publish` feed at `downloads.<root>/hybrid`;
-  `src/main/index.ts` runs **electron-updater** on launch (packaged only, guarded).
-- **CI** (`.github/workflows/deploy-native.yml`): a per-OS matrix (`macos`/`windows`/`ubuntu`) builds the
-  signed installer, then uploads `release/*` to the R2 bucket
-  `<prefix>-<env>-hybrid-surfaces-main-releases`.
-
-**What you supply** (per-env GitHub Environment secrets/vars):
-
-- **Signing** — `CSC_LINK` + `CSC_KEY_PASSWORD` (mac Developer ID / Windows cert); `APPLE_ID` +
-  `APPLE_APP_SPECIFIC_PASSWORD` + `APPLE_TEAM_ID` (notarization).
-- **R2** — `R2_ACCESS_KEY_ID` + `R2_SECRET_ACCESS_KEY` (an R2 S3 API token) + `CLOUDFLARE_ACCOUNT_ID`;
-  the R2 bucket + its public `downloads.<root>` custom domain (provision once).
-- `var SITE_PREFIX` (default `indiecrafts`).
-
-Prerequisites (yours): an Apple Developer account; a Windows code-signing cert; the R2 bucket + domain.
-The git remote is **GitLab** but the workflow is **GitHub Actions** — run it on a GitHub mirror, or port
-the two jobs to `.gitlab-ci.yml`.
 
 ## Pre-flight checklist
 

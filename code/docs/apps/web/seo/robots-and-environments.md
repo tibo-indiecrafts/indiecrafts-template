@@ -83,7 +83,7 @@ Set `NEXT_PUBLIC_SITE_URL` **only** on the production deployment. Leaving it uns
 ## Blocking AI training crawlers
 
 `features.blockAiTraining` (default **on**) blocks AI **training** / dataset crawlers while keeping
-search and AI-*search* crawlers indexing — so you fight the learning bots, not the search bots, even
+search and AI-_search_ crawlers indexing — so you fight the learning bots, not the search bots, even
 the AI ones. It only applies when the site is indexable; a non-indexable deploy already serves
 `Disallow: /` to everyone.
 
@@ -96,7 +96,7 @@ list is `AI_TRAINING_USER_AGENTS` in `@indiecrafts/packages-shared-config` — e
 
 `Google-Extended` and `Applebot-Extended` opt out of Gemini/Apple **training** without touching Search
 ranking or AI Overviews. This is robots.txt-only — no `X-Robots-Tag: noai` header, which is broad
-(discourages AI *search* too) and barely honored. Set `features.blockAiTraining: false` to let AI
+(discourages AI _search_ too) and barely honored. Set `features.blockAiTraining: false` to let AI
 training crawlers in.
 
 ## The sitemap
@@ -125,9 +125,9 @@ The sitemap's inclusion rules mirror `robots.txt` and the LLM endpoints: a page 
 | `NEXT_PUBLIC_SITE_URL`    | Sets `site.url`; must be real for `isSiteConfigured` → indexable. |
 | `NEXT_PUBLIC_ENVIRONMENT` | Overrides detected env; only `production` is indexable.           |
 
-| Feature flag          | Effect                                                      |
-| --------------------- | ----------------------------------------------------------- |
-| `features.sitemap`        | Off ⇒ empty sitemap + robots.txt drops the `Sitemap:` line. |
-| `features.llms.index`     | Off ⇒ robots.txt drops the `# llms.txt:` pointer.           |
+| Feature flag               | Effect                                                                                                               |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `features.sitemap`         | Off ⇒ empty sitemap + robots.txt drops the `Sitemap:` line.                                                          |
+| `features.llms.index`      | Off ⇒ robots.txt drops the `# llms.txt:` pointer.                                                                    |
 | `features.blockAiTraining` | On ⇒ robots.txt blocks the AI-training crawlers in `AI_TRAINING_USER_AGENTS`; search + AI-search bots keep indexing. |
-| `features.blog`           | Off ⇒ sitemap skips all Sanity-driven blog entries.         |
+| `features.blog`            | Off ⇒ sitemap skips all Sanity-driven blog entries.                                                                  |

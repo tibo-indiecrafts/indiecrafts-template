@@ -6,9 +6,9 @@
 
 ## Props
 
-| Prop    | Type              | Notes                             |
-| ------- | ----------------- | ---------------------------------- |
-| `items` | `TopicCardItem[]` | 1–3 cards, in display order.       |
+| Prop    | Type              | Notes                        |
+| ------- | ----------------- | ---------------------------- |
+| `items` | `TopicCardItem[]` | 1–3 cards, in display order. |
 
 `TopicCardItem`: `_key`, `href`, `title`, `blurb?`, `image?`, `alt?` — every field already resolved by the host (the renderer dereferences the category/tag and builds the URL; the image is already a CDN url).
 

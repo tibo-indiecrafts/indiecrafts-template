@@ -17,7 +17,8 @@ export const Default: Story = {
     <Card style={{ maxWidth: 320 }}>
       <ThemedText variant="title">Card title</ThemedText>
       <ThemedText variant="muted">
-        A themed surface over the `card` token, with a `border` and the themed radius.
+        A themed surface over the `card` token, with a `border` and the themed
+        radius.
       </ThemedText>
       <Button label="Action" variant="primary" />
     </Card>

@@ -6,7 +6,8 @@ export default defineModule({
   name: "module.blog-category-spotlight",
   title: "Coup de projecteur catégorie",
   icon: FolderIcon,
-  description: "Une sélection d'articles d'une catégorie, avec un lien « Tout voir ».",
+  description:
+    "Une sélection d'articles d'une catégorie, avec un lien « Tout voir ».",
   fields: [
     defineField({
       name: "category",
@@ -14,7 +15,8 @@ export default defineModule({
       type: "reference",
       to: [{ type: "category" }],
       validation: (Rule) => Rule.required(),
-      description: "La catégorie mise en avant. Son titre sert de titre à la section.",
+      description:
+        "La catégorie mise en avant. Son titre sert de titre à la section.",
       options: {
         filter: ({ document }) =>
           document.language
@@ -29,7 +31,8 @@ export default defineModule({
       name: "heading",
       title: "Titre",
       type: "string",
-      description: "Remplace le titre par défaut. Vide = titre de la catégorie.",
+      description:
+        "Remplace le titre par défaut. Vide = titre de la catégorie.",
     }),
     defineField({
       name: "subheading",

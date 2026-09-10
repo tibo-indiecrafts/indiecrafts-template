@@ -106,9 +106,7 @@ function DataContent(p: AccountModalProps) {
  * The account trigger + modal. Renders Clerk's `<UserButton>` (avatar → "Manage
  * account" opens `<UserProfile>`) with Clerk's built-in Profile/Security/Devices tabs
  * plus our two custom pages: "Privacy & consent" and "Your data". One component,
- * mounted identically on the website header and the app sidebar. `@clerk/nextjs`-based
- * (website + app); the hybrid renderer has its own `@clerk/clerk-react` sibling reusing
- * the same tab bodies.
+ * mounted identically on the website header and the app sidebar. `@clerk/nextjs`-based (website + app).
  */
 export function AccountButton(props: AccountModalProps) {
   return (

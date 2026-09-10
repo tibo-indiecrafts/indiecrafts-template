@@ -15,7 +15,11 @@ describe("cspHeadersForMode", () => {
   const reporting = { endpoint: "/api/csp-report" };
   it("enforce → strict enforced, no report-only", () => {
     const { enforced, reportOnly } = cspHeadersForMode(
-      "production", {}, reporting, "n0nce", "enforce",
+      "production",
+      {},
+      reporting,
+      "n0nce",
+      "enforce",
     );
     expect(enforced).toContain("'nonce-n0nce' 'strict-dynamic'");
     expect(enforced).toContain("report-uri /api/csp-report");
@@ -24,7 +28,11 @@ describe("cspHeadersForMode", () => {
 
   it("report-only → permissive enforced + strict report-only", () => {
     const { enforced, reportOnly } = cspHeadersForMode(
-      "production", {}, reporting, "n0nce", "report-only",
+      "production",
+      {},
+      reporting,
+      "n0nce",
+      "report-only",
     );
     expect(enforced).toContain("script-src 'self' 'unsafe-inline'"); // permissive, site works
     expect(enforced).not.toContain("strict-dynamic");

@@ -6,7 +6,8 @@ export default defineModule({
   name: "module.blog-featured",
   title: "Articles à la une",
   icon: StarIcon,
-  description: "Un article mis en avant en grand, suivi d'une sélection d'articles.",
+  description:
+    "Un article mis en avant en grand, suivi d'une sélection d'articles.",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({

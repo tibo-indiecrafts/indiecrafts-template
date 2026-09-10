@@ -1,9 +1,15 @@
 {
   "$description": "Component token surface for field — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
-    "field-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "field-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    },
     "field-primary": { "$type": "color", "$value": "{component.primary}" },
-    "field-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "field-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
     "field-background": { "$type": "color", "$value": "{semantic.background}" }
   }
 }

@@ -31,6 +31,4 @@ export const security = {
   confirm: { rateLimit: rateLimits.confirm, bodyMax: 2000 },
   /** One-click email moderation — `/api/comments/moderate`. Cross-site form POST, token-gated; rate-limit is defence-in-depth on the token. */
   moderate: { rateLimit: rateLimits.lenient },
-  // The AI agent moved to its own `code/shared/agent` Worker (its guard lives there); the
-  // browser calls it cross-origin with a Turnstile token — no `security.agent` entry here.
 } as const;

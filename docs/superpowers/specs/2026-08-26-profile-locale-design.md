@@ -22,23 +22,23 @@ The read established these facts. They shape the whole design.
   `code/shared/api/db/core/migrations/0001_user_profiles.sql:16`. Nothing writes it:
   the login upsert sets only `user_id/created_at/last_login_at`
   (`code/shared/api/src/index.ts:373`); the Clerk webhook sets `email/full_name/
-  email_fingerprint` (`code/shared/api/src/index.ts:961`). Nothing reads it. **No
+email_fingerprint` (`code/shared/api/src/index.ts:961`). Nothing reads it. **No
   migration is needed** — only wiring.
 - **`user_profiles` is the D1 mirror of Clerk users** (auth = Clerk), keyed by the
   Clerk `user_id`, written on sign-in (session event) and by the Clerk webhook. It
   lives in the EU core D1 (`CORE_DB`) and is the primary target of GDPR erasure.
 - **Two email populations, no overlap:**
-  - *Anonymous visitors* — newsletter / waitlist / contact / blog-comment. Stored
+  - _Anonymous visitors_ — newsletter / waitlist / contact / blog-comment. Stored
     as Sanity docs. Locale is captured at the form via `useLocale()` and saved to
     `subscriber.language`. These emails already localize. They have no profile row.
-  - *Authenticated Clerk users* — have a `user_profiles` row. **No transactional
+  - _Authenticated Clerk users_ — have a `user_profiles` row. **No transactional
     email targets them by `user_id` today** (Clerk sends its own auth mail,
     localized by Clerk). So the profile-locale read path is a forward-looking
     primitive, not a retrofit of the anonymous senders.
 - **Email copy is already locale-resolved.** The `emailStrings` singleton stores
   per-locale `localeString`/`localeText` copy. `pick(value, locale)` in
   `code/packages/web/email/src/strings.ts:73` already implements "localized if it
-  exists, else default locale, else empty". The gap is upstream: *which* locale we
+  exists, else default locale, else empty". The gap is upstream: _which_ locale we
   hand to `pick`.
 - **Existing patterns to mirror** (reuse, do not invent):
   - Authenticated worker write: `code/shared/api/src/erasure/self.ts` — Clerk
@@ -203,7 +203,7 @@ Each surface then:
 
 **Detect vs. explicit conflict → `COALESCE` (first-login / explicit wins).**
 
-- Auto-detect stamps the locale only on the *first* login; later logins never
+- Auto-detect stamps the locale only on the _first_ login; later logins never
   overwrite it. The settings page is the only thing that changes it afterwards.
 - Simplest, no new column, preserves an explicit choice.
 - **Trade-off:** if the user's first sign-in happens from the "wrong" locale, they

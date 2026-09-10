@@ -2,11 +2,23 @@
   "$description": "Component token surface for attachment — the tokens it consumes, as colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "attachment-card": { "$type": "color", "$value": "{component.card}" },
-    "attachment-card-foreground": { "$type": "color", "$value": "{component.card-foreground}" },
+    "attachment-card-foreground": {
+      "$type": "color",
+      "$value": "{component.card-foreground}"
+    },
     "attachment-ring": { "$type": "color", "$value": "{semantic.ring}" },
     "attachment-muted": { "$type": "color", "$value": "{semantic.muted}" },
-    "attachment-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
-    "attachment-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
-    "attachment-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+    "attachment-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    },
+    "attachment-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    },
+    "attachment-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
   }
 }

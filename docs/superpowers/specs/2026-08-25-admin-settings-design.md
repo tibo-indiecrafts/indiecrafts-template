@@ -24,14 +24,14 @@ time with a code-default fallback.
 ## Guiding principle — match each setting to its reader
 
 The template already has **two** live, no-deploy settings surfaces. The store is chosen by
-*who reads the value*, never by convenience. This is the rule that keeps the new D1 table from
+_who reads the value_, never by convenience. This is the rule that keeps the new D1 table from
 becoming a junk drawer.
 
-| Reader | Store | Edited how | Examples |
-| --- | --- | --- | --- |
+| Reader                           | Store                               | Edited how                                        | Examples                                                                               |
+| -------------------------------- | ----------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | Website / edge (+ editor-facing) | **Sanity `siteSettings`** singleton | Studio (already live, ~30s edge cache, fail-open) | maintenance mode (exists), brand, SEO, social, cookies, **website-read feature flags** |
-| **Workers** (`cron` / `api`) | **D1 `site_settings`** (new) | admin UI → `PUT /v1/settings`, audited | retention windows, SLA warning, link TTLs |
-| Infra / security | **Terraform / `@/config`** | version-controlled + deploy | CSP, WAF, edge rate limits, **backup retention** |
+| **Workers** (`cron` / `api`)     | **D1 `site_settings`** (new)        | admin UI → `PUT /v1/settings`, audited            | retention windows, SLA warning, link TTLs                                              |
+| Infra / security                 | **Terraform / `@/config`**          | version-controlled + deploy                       | CSP, WAF, edge rate limits, **backup retention**                                       |
 
 Corollary: content-shaped or website-read config already has a home (Sanity). The D1 table is
 **only** for knobs the workers read that are too low-level for Sanity.
@@ -85,7 +85,7 @@ CREATE TABLE site_settings (
 ```
 
 Generic key/value (matches the "site_settings" framing) but **only the keys in §B ship**. An
-empty table means every value falls back to its code default. The table stores *overrides only*.
+empty table means every value falls back to its code default. The table stores _overrides only_.
 
 Migration `0009_backup_runs.sql` — the backup history the admin card reads (see §F):
 
@@ -122,14 +122,19 @@ the inline constants in `cron/src/index.ts` and the TTL constants in the `api`.
 ```ts
 // packages-shared-config — settings registry (React-free, pure data)
 export const SETTINGS = {
-  "retention.audit_days":           { def: 90,   min: 30,   max: 3650, unit: "days"  },
-  "retention.consent_days":         { def: 1095, min: 1095, max: 3650, unit: "days"  }, // 3yr proof floor
-  "retention.erasure_request_days": { def: 1095, min: 1095, max: 3650, unit: "days"  }, // 3yr proof floor
-  "retention.data_request_days":    { def: 365,  min: 30,   max: 3650, unit: "days"  },
-  "retention.csp_days":             { def: 30,   min: 7,    max: 365,  unit: "days"  },
-  "ops.sla_warning_days":           { def: 7,    min: 1,    max: 30,   unit: "days"  },
-  "ttl.export_download_hours":      { def: 1,    min: 1,    max: 24,   unit: "hours" },
-  "ttl.erasure_confirm_hours":     { def: 24,   min: 1,    max: 168,  unit: "hours" },
+  "retention.audit_days": { def: 90, min: 30, max: 3650, unit: "days" },
+  "retention.consent_days": { def: 1095, min: 1095, max: 3650, unit: "days" }, // 3yr proof floor
+  "retention.erasure_request_days": {
+    def: 1095,
+    min: 1095,
+    max: 3650,
+    unit: "days",
+  }, // 3yr proof floor
+  "retention.data_request_days": { def: 365, min: 30, max: 3650, unit: "days" },
+  "retention.csp_days": { def: 30, min: 7, max: 365, unit: "days" },
+  "ops.sla_warning_days": { def: 7, min: 1, max: 30, unit: "days" },
+  "ttl.export_download_hours": { def: 1, min: 1, max: 24, unit: "hours" },
+  "ttl.erasure_confirm_hours": { def: 24, min: 1, max: 168, unit: "hours" },
 } as const;
 
 export type SettingKey = keyof typeof SETTINGS;
@@ -144,7 +149,9 @@ export function coerceSetting(key: string, raw: string): number | null {
 }
 
 /** Merge DB overrides over defaults; unknown/invalid rows ignored. */
-export function effectiveSettings(rows: { key: string; value: string }[]): Record<SettingKey, number> {
+export function effectiveSettings(
+  rows: { key: string; value: string }[],
+): Record<SettingKey, number> {
   const out = Object.fromEntries(
     Object.entries(SETTINGS).map(([k, r]) => [k, r.def]),
   ) as Record<SettingKey, number>;
@@ -163,16 +170,20 @@ The `def` values are the disclosed baseline (privacy policy) and the guaranteed 
 At tick, the cron reads overrides once and merges:
 
 ```ts
-async function loadSettings(db?: D1Database): Promise<Record<SettingKey, number>> {
-  if (!db) return effectiveSettings([]);                 // fallback: pure defaults
+async function loadSettings(
+  db?: D1Database,
+): Promise<Record<SettingKey, number>> {
+  if (!db) return effectiveSettings([]); // fallback: pure defaults
   try {
     const { results } = await db
       .prepare("SELECT key, value FROM site_settings")
       .all<{ key: string; value: string }>();
     return effectiveSettings(results);
   } catch (error) {
-    logger.error("settings read failed; using defaults", { name: (error as Error)?.name });
-    return effectiveSettings([]);                         // never block the purge on a read
+    logger.error("settings read failed; using defaults", {
+      name: (error as Error)?.name,
+    });
+    return effectiveSettings([]); // never block the purge on a read
   }
 }
 ```
@@ -241,14 +252,14 @@ Classify each flag by reader (§ principle), place it, stop. Today:
 
 - `logAnonymousConsent` — read in `website/src/app/api/consent-log/route.ts` (**website**).
   **Decision: it stays a version-controlled code flag, not an admin/Studio toggle.** Flipping it
-  *on* starts processing personal data for signed-out visitors (consent events + country + a
+  _on_ starts processing personal data for signed-out visitors (consent events + country + a
   persistent `consent_id` cookie) and requires a privacy-policy disclosure update — a
   compliance-consequential change that deserves a reviewed commit, exactly like CSP. A casual web
   toggle is the wrong shape for it. It does **not** enter the D1 table and does **not** move to
   Studio.
 
 No generic flag system is built (one flag today = YAGNI), and no flag is made admin-editable in
-this slice. The spec records the placement *rule* so a future **cosmetic** flag (one with no
+this slice. The spec records the placement _rule_ so a future **cosmetic** flag (one with no
 data-processing/legal consequence) lands in the right store — worker-read → D1, website-read →
 Sanity Studio — by default.
 
@@ -263,7 +274,7 @@ Two cards in the dashboard, strings in `messages/{en,fr}.json` (never inline):
 
 ### I. Compliance coupling (the one non-obvious bit)
 
-The 90-day audit window is *disclosed to data subjects* (`data-retention.md` checklist).
+The 90-day audit window is _disclosed to data subjects_ (`data-retention.md` checklist).
 Changing a disclosed/proof key silently drifts the disclosure. The Settings card shows an inline
 reminder next to `retention.audit_days`, `retention.consent_days`, `retention.erasure_request_days`:
 **"Changing this means updating your privacy-policy disclosure."** A visible nudge, not
@@ -320,6 +331,7 @@ No data migration; no backfill.
 ## Open questions
 
 _None blocking. Minor, resolvable in the plan:_
+
 - Cap for the backups card runs list (spec suggests last 20) + whether to prune old `backup_runs`
   rows on the same cron retention pass (likely yes — an `ops.backup_history_days` key, or fold
   into the existing purge). Decide when speccing §F's task.

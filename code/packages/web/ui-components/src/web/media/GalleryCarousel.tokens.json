@@ -2,6 +2,9 @@
   "$description": "Component token surface for GalleryCarousel — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "gallery-carousel-ring": { "$type": "color", "$value": "{semantic.ring}" },
-    "gallery-carousel-foreground": { "$type": "color", "$value": "{semantic.foreground}" }
+    "gallery-carousel-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    }
   }
 }

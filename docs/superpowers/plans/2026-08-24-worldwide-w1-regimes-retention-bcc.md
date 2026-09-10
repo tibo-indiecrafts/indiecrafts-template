@@ -7,6 +7,7 @@
 **Tech Stack:** TypeScript (pure resolver + Cloudflare Worker cron + the web/worker email layers). **Gap source:** `.superpowers/sdd/worldwide-compliance-inventory.md`. **Env note:** machine was overloaded (load ~120→recovering); allow extra time for tsc/tests, run in background if a command stalls.
 
 ## Global Constraints
+
 - Config-first; pure/framework-agnostic where the code already is; commit `--no-verify`; stage only named files; prettier; writing-style. No China/PIPL.
 
 ---
@@ -46,6 +47,7 @@
 ---
 
 ## Self-review
+
 - Coverage: 4 regimes (not China) + 2 retention purges + global admin-BCC. Matches the W1 scope.
 - Consistency: regimes reuse the existing extensible resolver; purges reuse `retentionCutoff` + the cron pattern; admin-BCC reuses both existing Resend send paths (no new email infra).
 - Ruling W1-AU-MODE: Australia → `opt-out` (notice-based APPs, no cookie-consent-banner law) vs LGPD/PIPEDA/POPIA → `opt-in` (consent-based). Overridable per deployment. Cost if wrong: a config override flips it.

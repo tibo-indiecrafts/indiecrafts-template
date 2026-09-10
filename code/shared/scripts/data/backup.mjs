@@ -73,7 +73,8 @@ if (!targets.length) {
 
 // A hand-run prod backup confirms first (skipped under CI / --yes). Read-only export, but
 // a prod backup also writes a backup_runs row to the prod audit D1 — worth the guard.
-if (!dry) await confirmProd("Back up", all ? "all databases" : name, env, { yes });
+if (!dry)
+  await confirmProd("Back up", all ? "all databases" : name, env, { yes });
 
 let failed = false;
 for (const db of targets) {

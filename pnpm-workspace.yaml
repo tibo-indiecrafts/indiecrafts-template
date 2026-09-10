@@ -7,7 +7,7 @@ packages:
   # `code/docs` (VitePress) is top-level + npm-isolated (its own lockfile) —
   # it matches none of the globs above, so it stays out of the pnpm workspace.
   # Bricks + modules nest by platform-scope: code/<packages|modules>/<scope>/<name>
-  # (scope = shared · web · mobile · hybrid). Reserved scope dirs hold only a
+  # (scope = shared · web · mobile). Reserved scope dirs hold only a
   # README marker (no package.json) and are skipped.
   - code/packages/*/*
   - code/modules/*/*
@@ -15,11 +15,10 @@ packages:
 # pnpm 10 blocks ALL dependency install scripts by default. Allowlist the ones
 # that genuinely need to build/download a native binary — without these the tools
 # are silently broken after install (esbuild/swc power the bundlers + vitest;
-# workerd is the Cloudflare Workers runtime; electron is the desktop app's runtime).
+# workerd is the Cloudflare Workers runtime).
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - "@swc/core"
-  - electron
   - esbuild
   - workerd
 # Deliberately NOT built (silences the warning): sharp degrades to a JS path here,
@@ -38,7 +37,7 @@ ignoredBuiltDependencies:
 # regardless of age.) Value is in MINUTES: 4320 = 3 days.
 minimumReleaseAge: 4320
 # Fast-moving, trusted vendor toolchains (Cloudflare workerd releases ~daily,
-# electron/expo/react-native ship constantly) can't clear a 7-day age gate — and
+# expo/react-native ship constantly) can't clear a 7-day age gate — and
 # blocking them blocks the whole multi-app install. Exempt those scopes; the gate
 # still guards the app's OWN dependencies (where malware actually hides).
 minimumReleaseAgeExclude:
@@ -47,10 +46,7 @@ minimumReleaseAgeExclude:
   - "wrangler"
   - "workerd"
   - "@opennextjs/*"
-  # Desktop (electron) + mobile (expo / react-native) toolchains
-  - "electron"
-  - "electron-*"
-  - "@electron/*"
+  # Mobile (expo / react-native) toolchains
   - "expo"
   - "expo-*"
   - "react-native"
@@ -99,7 +95,7 @@ trustPolicyExclude:
   - "ua-parser-js"
   # Whole ecosystems with inconsistent npm provenance — the age gate + no-downgrade
   # policy stay ON for the security-critical web RUNTIME tree (next/react/sanity),
-  # but these dev/build/mobile/desktop/legacy toolchains are exempt so the large
+  # but these dev/build/mobile/legacy toolchains are exempt so the large
   # multi-app install isn't blocked one transitive at a time.
   - "@smithy/*" # AWS SDK core (via @opennextjs/cloudflare)
   - "@aws-sdk/*"
@@ -110,5 +106,3 @@ trustPolicyExclude:
   - "@react-native-community/*"
   - "fbjs" # legacy expo/RN transitives
   - "fbemitter"
-  - "electron-*" # desktop (electron)
-  - "@electron/*"

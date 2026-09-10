@@ -4,7 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { site, type Locale } from "@indiecrafts/packages-shared-config";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Link, localizedPathname } from "@indiecrafts/packages-web-i18n";
-import type { Post, PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
+import type {
+  Post,
+  PostListItem,
+} from "@indiecrafts/modules-web-blog/sanity/types";
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { isSeriesEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
@@ -55,7 +58,12 @@ export async function DefaultPostLayout({
    *  setting, not blog-owned. Absent ⇒ share hidden. Copy comes from `common.share`. */
   share?: {
     enabled: boolean;
-    networks: { x: boolean; linkedin: boolean; facebook: boolean; copyLink: boolean };
+    networks: {
+      x: boolean;
+      linkedin: boolean;
+      facebook: boolean;
+      copyLink: boolean;
+    };
   };
 }) {
   const [t, tCommon, nav, display] = await Promise.all([

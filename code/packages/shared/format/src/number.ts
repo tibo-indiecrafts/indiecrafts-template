@@ -1,4 +1,8 @@
-import { defaultLocale, localeFormat, type Locale } from "@indiecrafts/packages-shared-config/shared";
+import {
+  defaultLocale,
+  localeFormat,
+  type Locale,
+} from "@indiecrafts/packages-shared-config/shared";
 
 /** Number/percent/compact/unit/ordinal/bytes — all locale-aware, memoized `Intl.NumberFormat`. */
 

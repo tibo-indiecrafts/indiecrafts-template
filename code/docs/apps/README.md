@@ -22,11 +22,11 @@ _how to build_ lives in its `CLAUDE.md`.
 
 ## The apps
 
-| App  | Package                | Is                                                                                 | Deploy                      |
-| ---- | ---------------------- | ---------------------------------------------------------------------------------- | --------------------------- |
+| App  | Package                             | Is                                                                                 | Deploy                      |
+| ---- | ----------------------------------- | ---------------------------------------------------------------------------------- | --------------------------- |
 | Web  | `@indiecrafts/web-surfaces-website` | the marketing site + Sanity-backed blog/page-builder (the hub Studio at `/studio`) | Next + OpenNext → CF Worker |
-| API  | `@indiecrafts/shared-api`     | a bare Cloudflare Worker — HTTP API (deploy shell; logic from bricks)              | `wrangler deploy`           |
-| Cron | `@indiecrafts/shared-cron`    | a bare Cloudflare Worker — scheduled tasks (`[triggers] crons`)                    | `wrangler deploy`           |
+| API  | `@indiecrafts/shared-api`           | a bare Cloudflare Worker — HTTP API (deploy shell; logic from bricks)              | `wrangler deploy`           |
+| Cron | `@indiecrafts/shared-cron`          | a bare Cloudflare Worker — scheduled tasks (`[triggers] crons`)                    | `wrangler deploy`           |
 
 All ship with `pnpm deploy:<app>:<env>`; `pnpm deploy:all:<env>` deploys the fleet in order. Workers are apps — a deployable belongs in `code/projects/`, not a package (see below).
 

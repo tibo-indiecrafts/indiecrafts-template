@@ -40,7 +40,6 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-web-email",
     "@indiecrafts/packages-shared-gated-delivery",
     "@indiecrafts/packages-shared-security",
-    "@indiecrafts/packages-shared-agent-client",
     "@indiecrafts/packages-shared-auth",
     "@indiecrafts/packages-web-auth",
     "@indiecrafts/packages-web-sanity",

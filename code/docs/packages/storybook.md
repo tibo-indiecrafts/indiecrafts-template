@@ -10,7 +10,7 @@ from the toolbar to see everything invert together.
 
 |               |                                                                                                                                                                                                                           |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Run**       | `pnpm --filter @indiecrafts/web-tools-storybook storybook` (dev, <http://localhost:6006>) · `… storybook:build` (static → `storybook-static/`)                                                                                      |
+| **Run**       | `pnpm --filter @indiecrafts/web-tools-storybook storybook` (dev, <http://localhost:6006>) · `… storybook:build` (static → `storybook-static/`)                                                                            |
 | **Framework** | `@storybook/nextjs-vite` — renders `next/image`, `next/font`, and async React Server Components (`experimentalRSC`)                                                                                                       |
 | **Deps**      | `storybook`, `@storybook/nextjs-vite`, `@storybook/addon-docs`, `@storybook/addon-themes`, `@storybook/addon-a11y`, `@storybook/addon-vitest`, `@tailwindcss/vite` + the workspace `@indiecrafts/*` packages it documents |
 | **Consumers** | none — it's a leaf docs app                                                                                                                                                                                               |

@@ -20,7 +20,15 @@ A dashboard answers "how are things?" at a glance. Lead with a row of **KPI card
 A metric is more useful with a trend. Show the value big, the change small and colored, and never rely on color alone — pair it with an arrow/sign:
 
 ```tsx
-function StatCard({ label, value, delta }: { label: string; value: string; delta: number }) {
+function StatCard({
+  label,
+  value,
+  delta,
+}: {
+  label: string;
+  value: string;
+  delta: number;
+}) {
   const up = delta >= 0;
   return (
     <Card>
@@ -29,9 +37,19 @@ function StatCard({ label, value, delta }: { label: string; value: string; delta
         <CardTitle className="text-3xl tabular-nums">{value}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className={cn("flex items-center gap-1 text-xs", up ? "text-emerald-600" : "text-destructive")}>
-          {up ? <ArrowUp className="h-3 w-3" aria-hidden /> : <ArrowDown className="h-3 w-3" aria-hidden />}
-          {Math.abs(delta)}% <span className="text-muted-foreground">vs last month</span>
+        <p
+          className={cn(
+            "flex items-center gap-1 text-xs",
+            up ? "text-emerald-600" : "text-destructive",
+          )}
+        >
+          {up ? (
+            <ArrowUp className="h-3 w-3" aria-hidden />
+          ) : (
+            <ArrowDown className="h-3 w-3" aria-hidden />
+          )}
+          {Math.abs(delta)}%{" "}
+          <span className="text-muted-foreground">vs last month</span>
         </p>
       </CardContent>
     </Card>
@@ -53,11 +71,21 @@ function StatCard({ label, value, delta }: { label: string; value: string; delta
 
   {/* Main chart + side panel */}
   <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-    <Card className="lg:col-span-2"><CardHeader><CardTitle>Revenue</CardTitle></CardHeader>
-      <CardContent className="h-72"><RevenueChart /></CardContent>
+    <Card className="lg:col-span-2">
+      <CardHeader>
+        <CardTitle>Revenue</CardTitle>
+      </CardHeader>
+      <CardContent className="h-72">
+        <RevenueChart />
+      </CardContent>
     </Card>
-    <Card><CardHeader><CardTitle>Recent activity</CardTitle></CardHeader>
-      <CardContent><ActivityFeed /></CardContent>
+    <Card>
+      <CardHeader>
+        <CardTitle>Recent activity</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ActivityFeed />
+      </CardContent>
     </Card>
   </div>
 </div>
@@ -90,6 +118,6 @@ function StatCard({ label, value, delta }: { label: string; value: string; delta
 
 The overview that sits in `responsive-layout`, reuses `empty-and-loading-states` for data, links to `data-tables` for detail and `billing-and-pricing` for usage/upgrade.
 
-
 ---
+
 <sub>Vendored from saas-ui-skills — re-run `npx saas-ui-skills` to update.</sub>

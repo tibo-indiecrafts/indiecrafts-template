@@ -1,4 +1,7 @@
-import { defaultLocale, type Locale } from "@indiecrafts/packages-shared-config";
+import {
+  defaultLocale,
+  type Locale,
+} from "@indiecrafts/packages-shared-config";
 import type { LocaleString } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /**

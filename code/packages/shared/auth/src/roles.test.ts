@@ -18,7 +18,9 @@ describe("isAdmin", () => {
 
   it("is false for a non-admin (e.g. a future moderator) role", () => {
     // A `moderator` — or any non-admin value — must never pass the admin gate.
-    const moderator = { metadata: { role: "moderator" } } as unknown as AppSessionClaims;
+    const moderator = {
+      metadata: { role: "moderator" },
+    } as unknown as AppSessionClaims;
     expect(isAdmin(moderator)).toBe(false);
     const empty = { metadata: { role: "" } } as unknown as AppSessionClaims;
     expect(isAdmin(empty)).toBe(false);

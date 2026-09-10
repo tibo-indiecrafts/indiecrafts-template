@@ -1,10 +1,10 @@
 // Deploy every deployable app to one env, in registry order, fail-fast. Default:
 // the CLOUDFLARE apps (the common "ship several apps to CF" case). `--only all`
-// (or `--all`) also includes native apps (expo/electron), which need their own
+// (or `--all`) also includes native apps (expo), which need their own
 // credentials + runners. Each app self-deploys via its own `deploy:<slug>:<env>`
 // script (read from the registry, `scripts/lib/apps.mjs`), so this runner never
 // hardcodes per-app steps — a next-cf app runs OpenNext, a worker just `wrangler
-// deploy`s, a native app runs its EAS / electron-builder recipe.
+// deploy`s, a native app runs its EAS recipe.
 //
 //   node scripts/deploy-all.mjs <dev|staging|prod> [--only cloudflare|all] [--all] [--yes] [--dry-run]
 

@@ -149,7 +149,7 @@ describe("resolveToast", () => {
   it("resolves the link and localized fields", () => {
     const t = resolveToast(baseToast, {
       locale: "fr",
-      surface: "hybrid",
+      surface: "mobile",
       now: NOW,
     });
     expect(t?.title).toBe("Nouveauté");

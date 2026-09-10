@@ -8,13 +8,21 @@
 export const SETTINGS = {
   "retention.audit_days": { def: 90, min: 30, max: 3650, unit: "days" },
   "retention.consent_days": { def: 1095, min: 1095, max: 3650, unit: "days" },
-  "retention.erasure_request_days": { def: 1095, min: 1095, max: 3650, unit: "days" },
+  "retention.erasure_request_days": {
+    def: 1095,
+    min: 1095,
+    max: 3650,
+    unit: "days",
+  },
   "retention.data_request_days": { def: 365, min: 30, max: 3650, unit: "days" },
   "retention.csp_days": { def: 30, min: 7, max: 365, unit: "days" },
   "ops.sla_warning_days": { def: 7, min: 1, max: 30, unit: "days" },
   "ttl.export_download_hours": { def: 1, min: 1, max: 24, unit: "hours" },
   "ttl.erasure_confirm_hours": { def: 24, min: 1, max: 168, unit: "hours" },
-} as const satisfies Record<string, { def: number; min: number; max: number; unit: "days" | "hours" }>;
+} as const satisfies Record<
+  string,
+  { def: number; min: number; max: number; unit: "days" | "hours" }
+>;
 
 export type SettingKey = keyof typeof SETTINGS;
 

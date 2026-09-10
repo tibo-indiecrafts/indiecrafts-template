@@ -48,7 +48,8 @@ const meta = {
   parameters: { docs: { description: { component: docs } } },
   args: {
     heading: "Engineering",
-    subheading: "How we build indiecrafts.dev — architecture, tooling, and the decisions behind them.",
+    subheading:
+      "How we build indiecrafts.dev — architecture, tooling, and the decisions behind them.",
     items,
     viewAll: { label: "All Engineering", href: "/blog/category/engineering" },
   },

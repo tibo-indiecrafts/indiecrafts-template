@@ -10,8 +10,8 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
 
 ## Subpaths
 
-| Import                       | Side   | What it is                                                                                                                                               |
-| ---------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Import                                    | Side   | What it is                                                                                                                                               |
+| ----------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `@indiecrafts/packages-web-email`         | pure   | `sendEmail` · `renderEmailLayout` · `escapeHtml` · the `RenderedEmail` render contract (templates live with their feature)                               |
 | `@indiecrafts/packages-web-email/strings` | server | `getEmailStrings()` (React-`cache`d generic read) + `pick(value, locale)` + the `OwnerAlertConfig`/`ConfirmationConfig` read shapes                      |
 | `@indiecrafts/packages-web-email/sanity`  | Studio | `emailSanity(modules)` (builds the singleton) · `confirmationGroup`/`ownerAlertGroup` (group factories) · `sendTestEmailAction` (the "Send test" action) |

@@ -3,6 +3,9 @@
   "component": {
     "table-muted": { "$type": "color", "$value": "{semantic.muted}" },
     "table-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
-    "table-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+    "table-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
   }
 }

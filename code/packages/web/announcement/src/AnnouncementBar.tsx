@@ -21,7 +21,7 @@ import { dismissAnnouncement, readAnnouncementAck } from "./announcement-store";
  * static. On the website the layout renders it only when the deposited
  * `announcement-ack` cookie ≠ the current `version` (decided server-side, no flash);
  * the same cookie is ALSO read here (`useSyncExternalStore`) so the client-gated
- * surfaces (app, hybrid) — which have no server pre-check — stay dismissed across a
+ * surfaces (app) — which have no server pre-check — stay dismissed across a
  * reload. i18n-agnostic — copy comes in as props.
  */
 

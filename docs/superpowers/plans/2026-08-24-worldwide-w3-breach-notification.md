@@ -25,11 +25,13 @@
 ### Task 1: Alert decision + formatter (pure brick logic)
 
 **Files:**
+
 - Create: `code/packages/shared/security-events/src/alerts.ts`
 - Modify: `code/packages/shared/security-events/src/index.ts` (add the barrel export)
 - Test: `code/packages/shared/security-events/src/alerts.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Severity`, `SecurityEventType` from `./events`.
 - Produces:
   - `ALERT_SEVERITIES: readonly Severity[]` = `["high", "critical"]`.
@@ -84,7 +86,10 @@ describe("formatSecurityAlert", () => {
     expect(out.text).toContain("User: —");
   });
   it("adds a review link when adminUrl is given", () => {
-    const out = formatSecurityAlert({ ...base, adminUrl: "https://admin.example.com" });
+    const out = formatSecurityAlert({
+      ...base,
+      adminUrl: "https://admin.example.com",
+    });
     expect(out.text).toContain("https://admin.example.com/security");
   });
 });
@@ -121,7 +126,10 @@ export type SecurityAlert = {
 
 /** Build the INTERNAL alert email copy. Pure + null-safe + non-PII (no raw IP, no email;
  *  the pseudonymous Clerk user id is the same field `/admin/security` shows). */
-export function formatSecurityAlert(a: SecurityAlert): { subject: string; text: string } {
+export function formatSecurityAlert(a: SecurityAlert): {
+  subject: string;
+  text: string;
+} {
   const surface = a.surface ?? "unknown";
   const subject = `[Security] ${a.severity} — ${a.eventType} (${surface})`;
   const lines = [
@@ -152,12 +160,14 @@ export function formatSecurityAlert(a: SecurityAlert): { subject: string; text: 
 ### Task 2: Worker send + wire the hook at the three write sites
 
 **Files:**
+
 - Modify: `code/shared/api/src/erasure/email.ts` — export `resend` and `MailEnv` (they are currently module-private) so a sibling can reuse the inlined Resend POST. Do not change their behaviour.
 - Create: `code/shared/api/src/security/alert.ts` — `sendSecurityAlertEmail(env, alert)`.
 - Modify: `code/shared/api/src/index.ts` — add `SECURITY_ALERT_EMAIL?` to the `Env` type; call the alert (via `ctx.waitUntil`) after each high/critical `security_events` insert (the `insertSecurity` helper covers sites #1 credential_stuffing + #2 direct incident; add a call after site #3 the webhook priv-esc insert).
 - Test: `code/shared/api/src/security/alert.test.ts` (mirror `erasure/email.test.ts` — stub global `fetch`).
 
 **Interfaces:**
+
 - Consumes: `resend`, `MailEnv` (from `../erasure/email`); `shouldAlert`, `formatSecurityAlert`, `SecurityAlert` (from `@indiecrafts/packages-shared-security-events`).
 - Produces: `sendSecurityAlertEmail(env: AlertEnv, alert: SecurityAlert): Promise<void>` where `AlertEnv = MailEnv & { SECURITY_ALERT_EMAIL?: string }`. No-op (returns without sending) when `RESEND_API_KEY` is unset OR no recipient resolves. Recipient = `env.SECURITY_ALERT_EMAIL ?? env.EMAIL_ADMIN_BCC`. Never throws (wrap the send; the caller uses `ctx.waitUntil`).
 
@@ -191,11 +201,17 @@ describe("sendSecurityAlertEmail", () => {
   it("POSTs Resend to SECURITY_ALERT_EMAIL when set", async () => {
     const m = okFetch();
     await sendSecurityAlertEmail(
-      { RESEND_API_KEY: "k", EMAIL_FROM: "no-reply@x.com", SECURITY_ALERT_EMAIL: "soc@x.com" },
+      {
+        RESEND_API_KEY: "k",
+        EMAIL_FROM: "no-reply@x.com",
+        SECURITY_ALERT_EMAIL: "soc@x.com",
+      },
       ALERT,
     );
     expect(m).toHaveBeenCalledOnce();
-    const body = JSON.parse((m.mock.calls[0]![1] as RequestInit).body as string);
+    const body = JSON.parse(
+      (m.mock.calls[0]![1] as RequestInit).body as string,
+    );
     expect(body.to).toContain("soc@x.com");
     expect(body.subject).toContain("data_exfiltration");
   });
@@ -203,10 +219,16 @@ describe("sendSecurityAlertEmail", () => {
   it("falls back to EMAIL_ADMIN_BCC when SECURITY_ALERT_EMAIL is unset", async () => {
     const m = okFetch();
     await sendSecurityAlertEmail(
-      { RESEND_API_KEY: "k", EMAIL_FROM: "no-reply@x.com", EMAIL_ADMIN_BCC: "admin@x.com" },
+      {
+        RESEND_API_KEY: "k",
+        EMAIL_FROM: "no-reply@x.com",
+        EMAIL_ADMIN_BCC: "admin@x.com",
+      },
       ALERT,
     );
-    const body = JSON.parse((m.mock.calls[0]![1] as RequestInit).body as string);
+    const body = JSON.parse(
+      (m.mock.calls[0]![1] as RequestInit).body as string,
+    );
     expect(body.to).toContain("admin@x.com");
   });
 
@@ -218,7 +240,10 @@ describe("sendSecurityAlertEmail", () => {
 
   it("no-ops when no recipient resolves", async () => {
     const m = okFetch();
-    await sendSecurityAlertEmail({ RESEND_API_KEY: "k", EMAIL_FROM: "f@x.com" }, ALERT);
+    await sendSecurityAlertEmail(
+      { RESEND_API_KEY: "k", EMAIL_FROM: "f@x.com" },
+      ALERT,
+    );
     expect(m).not.toHaveBeenCalled();
   });
 });
@@ -302,6 +327,7 @@ Check whether an `ADMIN_URL`/admin-origin var already exists in `Env`; if not, o
 ### Task 3: Breach-response runbook + backups posture + cross-refs + changelogs
 
 **Files:**
+
 - Create: `code/docs/apps/web/config/breach-response.md`
 - Modify: `code/docs/apps/web/config/security-hardening.md` (cross-ref the alert hook + link the runbook)
 - Modify: `code/docs/apps/web/config/data-retention.md` (add the "Erasure completeness & backups" section — the beyond-use posture)
@@ -331,6 +357,7 @@ Check whether an `ADMIN_URL`/admin-origin var already exists in `Env`; if not, o
 ---
 
 ## Self-review
+
 - **Coverage:** #18 breach notification → alert hook (code) + runbook + templates (docs). The backups question → beyond-use posture + restore-time re-apply (docs). Transfers/ROPA/DPIA/notices stay in W4.
 - **Consistency:** reuses the inlined `resend()` + the `EMAIL_ADMIN_BCC` address + the existing three write sites; pure logic in the brick per "services are shells"; `ctx.waitUntil` (available at `index.ts:239`) keeps the write non-blocking.
 - **Deferred/noted:** external credential-leak scanning (HaveIBeenPwned) is NOT in scope — out of scope for this template; note it in the runbook as a possible future add. No alert-debounce layer (the write path is already debounced) — ponytail-commented.

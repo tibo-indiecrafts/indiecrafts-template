@@ -1,4 +1,7 @@
-import { defaultLocale, type Locale } from "@indiecrafts/packages-shared-config";
+import {
+  defaultLocale,
+  type Locale,
+} from "@indiecrafts/packages-shared-config";
 import { WaitlistForm } from "@indiecrafts/packages-web-ui-components/web/form/WaitlistForm";
 import { getWaitlistSettings } from "../lib/settings";
 

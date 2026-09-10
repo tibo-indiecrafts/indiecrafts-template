@@ -14,11 +14,11 @@ ships its own; this package never holds it. Area rules → `../../../.claude/CLA
     Any platform imports it via `@indiecrafts/packages-shared-config/shared`.
   - `src/web/` — WEB-only: `site` (URL/prefix, reads env) · `env` (CSP) · `seo` · `pages` (the generic
     `PageConfig`/`PageSeo`/`isPageVisible` contract). `pages.ts` carries a LOCAL `Robots` type — **never
-    import `next`** here (services + mobile/hybrid consume this package).
-  - `src/mobile/` · `src/hybrid/` — reserved: re-export `../shared` today (`@indiecrafts/packages-shared-config/mobile`
-    · `/hybrid`); add platform-specific primitives as those apps grow.
+    import `next`** here (services + mobile consume this package).
+  - `src/mobile/` — reserved: re-exports `../shared` today (`@indiecrafts/packages-shared-config/mobile`);
+    add platform-specific primitives as that app grows.
   - `src/index.ts` — the root `.` barrel = `shared` + `web` (the web surface), so web apps keep one
-    import. Subpath exports: `.` · `./shared` · `./web` · `./mobile` · `./hybrid`.
+    import. Subpath exports: `.` · `./shared` · `./web` · `./mobile`.
     Add a primitive → edit the matching concern file in its scope + re-export from that scope's `index.ts`.
     `env.ts` is the only file that reads `process.env` (besides `site.url`/`site.prefix`).
 - **Brand/SEO copy is Sanity, not here** — only `site.url` + `site.prefix` stay in code; per-page SEO lives in Sanity.

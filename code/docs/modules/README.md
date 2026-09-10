@@ -13,8 +13,8 @@ composed from `code/packages/` bricks, and mounted by an app. This page is _what
 
 ## Extracted
 
-| Module | Package             | Holds                                                            | Flag            | Consumed by |
-| ------ | ------------------- | ---------------------------------------------------------------- | --------------- | ----------- |
+| Module | Package                         | Holds                                                            | Flag            | Consumed by |
+| ------ | ------------------------------- | ---------------------------------------------------------------- | --------------- | ----------- |
 | Blog   | `@indiecrafts/modules-web-blog` | the blog slice — `user-interface/ · sanity/ · lib/` + route-gate | `features.blog` | app         |
 
 `code/modules/web/blog/` is the **live reference** — self-contained, depending on all five

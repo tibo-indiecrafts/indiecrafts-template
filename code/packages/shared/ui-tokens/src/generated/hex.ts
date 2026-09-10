@@ -2,13 +2,13 @@
 // Hex mirror for the PWA manifest (`app/manifest.ts` can't take oklch). @/config re-exports this.
 export const hexColors = {
   light: {
-    "background": "#ffffff",
-    "foreground": "#0a0a0a",
-    "brand": "#296cd8",
+    background: "#ffffff",
+    foreground: "#0a0a0a",
+    brand: "#296cd8",
   },
   dark: {
-    "background": "#0a0a0a",
-    "foreground": "#fafafa",
-    "brand": "#67a3ff",
+    background: "#0a0a0a",
+    foreground: "#fafafa",
+    brand: "#67a3ff",
   },
 } as const;

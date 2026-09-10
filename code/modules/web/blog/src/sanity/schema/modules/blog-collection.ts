@@ -6,7 +6,8 @@ export default defineModule({
   name: "module.blog-collection",
   title: "Carrousel d'articles",
   icon: PresentationIcon,
-  description: "Une sélection d'articles choisis à la main, affichés en carrousel.",
+  description:
+    "Une sélection d'articles choisis à la main, affichés en carrousel.",
   fields: [
     defineField({ name: "title", title: "Titre", type: "string" }),
     defineField({
@@ -36,7 +37,8 @@ export default defineModule({
         },
       ],
       validation: (Rule) => Rule.required().min(1),
-      description: "Les articles affichés dans le carrousel, dans l'ordre choisi.",
+      description:
+        "Les articles affichés dans le carrousel, dans l'ordre choisi.",
     }),
   ],
 });

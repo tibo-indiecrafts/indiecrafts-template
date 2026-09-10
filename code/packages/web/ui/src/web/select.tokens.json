@@ -3,12 +3,24 @@
   "component": {
     "select-input": { "$type": "color", "$value": "{component.input}" },
     "select-ring": { "$type": "color", "$value": "{semantic.ring}" },
-    "select-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
-    "select-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "select-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    },
+    "select-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
     "select-popover": { "$type": "color", "$value": "{component.popover}" },
-    "select-popover-foreground": { "$type": "color", "$value": "{component.popover-foreground}" },
+    "select-popover-foreground": {
+      "$type": "color",
+      "$value": "{component.popover-foreground}"
+    },
     "select-accent": { "$type": "color", "$value": "{component.accent}" },
-    "select-accent-foreground": { "$type": "color", "$value": "{component.accent-foreground}" },
+    "select-accent-foreground": {
+      "$type": "color",
+      "$value": "{component.accent-foreground}"
+    },
     "select-border": { "$type": "color", "$value": "{semantic.border}" }
   }
 }

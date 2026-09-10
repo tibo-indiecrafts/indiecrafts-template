@@ -11,7 +11,7 @@ type LinkLike = ComponentType<{
 export type NotFoundContentProps = BaseProps & {
   /**
    * Locale-aware link for the "go home" action — the website passes its
-   * `@/i18n/routing` `Link`; a plain-React host (Electron renderer) gets the
+   * `@/i18n/routing` `Link`; a plain-React host gets the
    * default `<a>`. Injecting it keeps this brick **Next-agnostic** (no `next-intl`
    * dep), so the same `web` component serves Next + plain React.
    */

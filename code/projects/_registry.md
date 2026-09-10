@@ -10,12 +10,12 @@ the runtime pipeline.
 
 ### `web/` — Next.js → Cloudflare (`next-cf`)
 
-| Dir                  | Package                  | Class     | Deploy                  | Status                                                                                    |
-| -------------------- | ------------------------ | --------- | ----------------------- | ----------------------------------------------------------------------------------------- |
-| **surfaces/website** | `@indiecrafts/web-surfaces-website`   | `next-cf` | `deploy:web:website:<env>`  | ● live — the app **and** the hub Studio (edits all content)                               |
-| **surfaces/admin**   | `@indiecrafts/web-surfaces-admin`     | `next-cf` | `deploy:web:admin:<env>`    | ◐ real Next scaffold — add a Cloudflare Access gate before shipping                       |
-| **surfaces/app**     | `@indiecrafts/web-surfaces-app`       | `next-cf` | `deploy:web:app:<env>`      | ◐ Hello World scaffold — one page over the shared bricks                                  |
-| **tools/storybook**  | `@indiecrafts/web-tools-storybook` | `static`  | — (build → static host) | ◐ component gallery — `pnpm --filter @indiecrafts/web-tools-storybook storybook`; not in `apps.mjs` |
+| Dir                  | Package                             | Class     | Deploy                     | Status                                                                                              |
+| -------------------- | ----------------------------------- | --------- | -------------------------- | --------------------------------------------------------------------------------------------------- |
+| **surfaces/website** | `@indiecrafts/web-surfaces-website` | `next-cf` | `deploy:web:website:<env>` | ● live — the app **and** the hub Studio (edits all content)                                         |
+| **surfaces/admin**   | `@indiecrafts/web-surfaces-admin`   | `next-cf` | `deploy:web:admin:<env>`   | ◐ real Next scaffold — add a Cloudflare Access gate before shipping                                 |
+| **surfaces/app**     | `@indiecrafts/web-surfaces-app`     | `next-cf` | `deploy:web:app:<env>`     | ◐ Hello World scaffold — one page over the shared bricks                                            |
+| **tools/storybook**  | `@indiecrafts/web-tools-storybook`  | `static`  | — (build → static host)    | ◐ component gallery — `pnpm --filter @indiecrafts/web-tools-storybook storybook`; not in `apps.mjs` |
 
 ### `code/shared/` — cross-platform services (`worker-cf`), consumed by every platform
 
@@ -23,19 +23,17 @@ the runtime pipeline.
 > cross-cutting (these services + `db · infra · domains · scripts`). Listed here in the roster because the
 > services still deploy; the dirs below are under `code/shared/`, not `code/projects/`.
 
-| Dir         | Package                | Class       | Deploy                 | Status                                                      |
-| ----------- | ---------------------- | ----------- | ---------------------- | ----------------------------------------------------------- |
+| Dir         | Package                       | Class       | Deploy                        | Status                                                           |
+| ----------- | ----------------------------- | ----------- | ----------------------------- | ---------------------------------------------------------------- |
 | **api**     | `@indiecrafts/shared-api`     | `worker-cf` | `deploy:shared:api:<env>`     | ◐ bare Worker — `/health` + audit/session sink `POST /v1/events` |
-| **cron**    | `@indiecrafts/shared-cron`    | `worker-cf` | `deploy:shared:cron:<env>`    | ◐ bare Worker scaffold — scheduled handler                  |
-| **workers** | `@indiecrafts/shared-workers` | `worker-cf` | `deploy:shared:workers:<env>` | ◐ bare Worker scaffold — background / queue jobs            |
-| **agent**   | `@indiecrafts/shared-agent`   | `worker-cf` | `deploy:shared:agent:<env>`   | ● AI agent — `POST /v1/agent/:name`, dual-mode guard (all surfaces) |
+| **cron**    | `@indiecrafts/shared-cron`    | `worker-cf` | `deploy:shared:cron:<env>`    | ◐ bare Worker scaffold — scheduled handler                       |
+| **workers** | `@indiecrafts/shared-workers` | `worker-cf` | `deploy:shared:workers:<env>` | ◐ bare Worker scaffold — background / queue jobs                 |
 
-### `mobile/` — Expo · `hybrid/` — Electron
+### `mobile/` — Expo
 
-| Dir                      | Package               | Class      | Deploy                          | Status                                                                 |
-| ------------------------ | --------------------- | ---------- | ------------------------------- | ---------------------------------------------------------------------- |
-| **mobile/surfaces/main** | `@indiecrafts/mobile-surfaces-main` | `expo`     | `deploy:mobile:main:<env>` (EAS)     | ◐ real Expo scaffold, one screen — ships via EAS, **not** Cloudflare   |
-| **hybrid/surfaces/main** | `@indiecrafts/hybrid-surfaces-main` | `electron` | `deploy:hybrid:main:<env>` (builder) | ◐ real Electron scaffold — **builds**; finalize signing / notarization |
+| Dir                      | Package                             | Class  | Deploy                           | Status                                                               |
+| ------------------------ | ----------------------------------- | ------ | -------------------------------- | -------------------------------------------------------------------- |
+| **mobile/surfaces/main** | `@indiecrafts/mobile-surfaces-main` | `expo` | `deploy:mobile:main:<env>` (EAS) | ◐ real Expo scaffold, one screen — ships via EAS, **not** Cloudflare |
 
 ### Top-level (not under a platform)
 
@@ -80,7 +78,7 @@ The **toolchain** (registries + concern-grouped runners) lives at `code/shared/s
 (`lib/` = registries · `deploy/ data/ infra/ checks/ dev/` = runners). Five machine registries drive
 everything — same shape (`--json` CLI + a colocated `*.test.mjs` guard):
 
-- **apps** — `lib/apps.mjs` (`class` → deploy recipe); runners `deploy/{all,next,worker,expo,electron}.mjs`.
+- **apps** — `lib/apps.mjs` (`class` → deploy recipe); runners `deploy/{all,next,worker,expo}.mjs`.
 - **db** — `lib/databases.mjs`; kinds `d1 · kv · postgres · supabase · sanity`; runners `data/migrate.mjs`
   - `data/backup.mjs` (dispatch on kind). **One db active:** the `sanity` `content` dataset. One owner per db.
 - **infra** — `lib/infra-registry.mjs`; providers `cloudflare` (real) · `aws` · `vercel` (reserved); runner
@@ -95,7 +93,7 @@ carries the same coupling caution as per-leaf services.
 
 **Platform classes** — each has one deploy recipe, dispatched from the registry:
 `next-cf` (Next → OpenNext → Cloudflare) · `worker-cf` (bare Cloudflare Worker) ·
-`expo` (React Native / EAS) · `electron` (electron-builder). Cloudflare apps ship together via
+`expo` (React Native / EAS). Cloudflare apps ship together via
 `pnpm deploy:all:<env>` (`--only cloudflare`, the default); native apps via `deploy:all:<env> --only all`
 or their own `deploy:<slug>:<env>`.
 

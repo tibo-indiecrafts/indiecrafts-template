@@ -18,7 +18,7 @@ export interface AccountDataTabProps {
  * The "Your data" account page — GDPR data export + account erasure, composed from
  * the shared sections (which own their own input + status). Clerk-free: the surface
  * passes an `AccountAuth` built from its SDK. Used as a custom `<UserProfile>` page on
- * every web surface (website/app via `@clerk/nextjs`, hybrid via `@clerk/clerk-react`).
+ * every web surface (website/app via `@clerk/nextjs`).
  */
 export function AccountDataTab({
   auth,

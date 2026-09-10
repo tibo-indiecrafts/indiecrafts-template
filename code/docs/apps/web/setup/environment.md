@@ -17,12 +17,12 @@ Run every command from the **repo root** — turbo delegates to `@indiecrafts/we
 > **`pnpm install` blocked?** The workspace pins a supply-chain policy in `pnpm-workspace.yaml`:
 > a **3-day** `minimumReleaseAge` (a fresh version waits 3 days — malware is usually caught +
 > unpublished within 24–72h) plus `trustPolicy: no-downgrade` (rejects a version that lost its npm
-> provenance). Fast-moving trusted toolchains (Cloudflare/Workers, electron, expo/react-native,
+> provenance). Fast-moving trusted toolchains (Cloudflare/Workers, expo/react-native,
 > next/sanity/vitest/playwright…) are in `minimumReleaseAgeExclude`, and a handful of
 > provenance-gap false positives (undici-types, `@aws-sdk/*`, `@smithy/*`, flow-*, …) in
 > `trustPolicyExclude`. If a **new** legitimate package trips either gate, add its name to the
 > matching exclude list — don't disable the gate. (Build scripts: pnpm 10 blocks them by default;
-> the ones that must run — esbuild · workerd · @swc/core · electron · @parcel/watcher — are in
+> the ones that must run — esbuild · workerd · @swc/core · @parcel/watcher — are in
 > `onlyBuiltDependencies`.)
 
 Optional app extras:

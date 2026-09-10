@@ -158,20 +158,18 @@ problem-framing step.
 ## Platform patterns
 
 This file is the **web** contract (shadcn/ui + Tailwind + DOM). The monorepo also ships
-native (`mobile/surfaces`, Expo/React Native) and hybrid (`hybrid/surfaces`, Electron)
-surfaces. **Share the decision, not the implementation:**
+native (`mobile/surfaces`, Expo/React Native) surfaces. **Share the decision, not the implementation:**
 
 - **Crosses platforms** — the _tokens_ (`ui-tokens` is `shared/`: colors, type scale,
   spacing, radii) and the _decisions_ they encode: roles not preferences, restraint, one
   signature moment, every state handled, AA contrast.
 - **Per-platform** — the _implementation pattern_. **Never port a shadcn/DOM/Tailwind
   pattern to native.** Use each platform's idiom: RN primitives + `StyleSheet`/NativeWind
-  on mobile (`ui-native`, consuming `src/native/tokens.ts`); the platform's own controls
-  on hybrid. A web `focus-visible` ring maps to the native press/focus state — match the
+  on mobile (`ui-native`, consuming `src/native/tokens.ts`). A web `focus-visible` ring maps to the native press/focus state — match the
   _role_, not the CSS.
 
 Rule of thumb: a token or a decision crosses platforms; a class name or a component API
-does not. (An advisory `platform-patterns` hook flags web-only imports in native/hybrid
+does not. (An advisory `platform-patterns` hook flags web-only imports in native
 files.)
 
 ## Brand & Style

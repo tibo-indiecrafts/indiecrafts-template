@@ -29,23 +29,16 @@ every row has a matching `code/projects/<slug>` dir, so the registry can't drift
 
 ## Platform classes
 
-| Class       | Apps                  | Ships via                            | Runner                                    |
-| ----------- | --------------------- | ------------------------------------ | ----------------------------------------- |
-| `next-cf`   | website · admin · app | OpenNext build → Cloudflare Worker   | `code/shared/scripts/deploy/next.mjs`     |
-| `worker-cf` | api · cron · workers  | `wrangler deploy` (bare Worker)      | `code/shared/scripts/deploy/worker.mjs`   |
-| `expo`      | mobile                | EAS build (+ submit)                 | `code/shared/scripts/deploy/expo.mjs`     |
-| `electron`  | hybrid                | electron-builder (host-OS installer) | `code/shared/scripts/deploy/electron.mjs` |
+| Class       | Apps                  | Ships via                          | Runner                                  |
+| ----------- | --------------------- | ---------------------------------- | --------------------------------------- |
+| `next-cf`   | website · admin · app | OpenNext build → Cloudflare Worker | `code/shared/scripts/deploy/next.mjs`   |
+| `worker-cf` | api · cron · workers  | `wrangler deploy` (bare Worker)    | `code/shared/scripts/deploy/worker.mjs` |
+| `expo`      | mobile                | EAS build (+ submit)               | `code/shared/scripts/deploy/expo.mjs`   |
 
-`next-cf` + `worker-cf` are the **Cloudflare** classes. `expo` + `electron` are native — they need
-their own credentials (EAS / Apple / signing) and are **structure-first stubs** today: the command +
-guards are wired so they follow the same contract, but full store/signing pipelines are a follow-up
-(see each app's README).
-
-The `electron` renderer ships **hardened defaults** (see the hybrid app's `CLAUDE.md` + `CHANGELOG.md`):
-`contextIsolation` + `sandbox` on, `nodeIntegration` off, a `will-navigate` / `setWindowOpenHandler`
-allowlist (no cross-origin navigation or new windows; external `http(s)` links open in the OS browser via
-`isSafeExternalUrl`), and a strict renderer CSP. Code-signing + notarization (to actually distribute the
-installer) are the remaining follow-up.
+`next-cf` + `worker-cf` are the **Cloudflare** classes. `expo` is native — it needs
+its own credentials (EAS / Apple) and is a **structure-first stub** today: the command +
+guards are wired so it follows the same contract, but the full store pipeline is a follow-up
+(see the app's README).
 
 ## The deploy contract
 
@@ -70,7 +63,7 @@ swaps only the `<prefix>` (reaching `code/shared/*`), and the guard compares eac
 
 ```bash
 pnpm deploy:all:prod                 # every Cloudflare app, in registry order (default)
-node code/shared/scripts/deploy/all.mjs prod --only all   # + native apps (expo/electron)
+node code/shared/scripts/deploy/all.mjs prod --only all   # + native apps (expo)
 node code/shared/scripts/deploy/all.mjs dev --dry-run     # list what would deploy, run nothing
 ```
 

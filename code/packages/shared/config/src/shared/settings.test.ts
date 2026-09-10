@@ -34,6 +34,8 @@ describe("effectiveSettings", () => {
     ]);
     expect(got["retention.audit_days"]).toBe(120);
     expect(got["retention.consent_days"]).toBe(1095);
-    expect(got["ops.sla_warning_days"]).toBe(SETTINGS["ops.sla_warning_days"].def);
+    expect(got["ops.sla_warning_days"]).toBe(
+      SETTINGS["ops.sla_warning_days"].def,
+    );
   });
 });

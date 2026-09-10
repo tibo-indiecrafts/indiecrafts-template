@@ -2,12 +2,30 @@
   "$description": "Component token surface for WaitlistForm — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "waitlist-form-card": { "$type": "color", "$value": "{component.card}" },
-    "waitlist-form-primary": { "$type": "color", "$value": "{component.primary}" },
-    "waitlist-form-primary-foreground": { "$type": "color", "$value": "{component.primary-foreground}" },
-    "waitlist-form-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
-    "waitlist-form-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "waitlist-form-primary": {
+      "$type": "color",
+      "$value": "{component.primary}"
+    },
+    "waitlist-form-primary-foreground": {
+      "$type": "color",
+      "$value": "{component.primary-foreground}"
+    },
+    "waitlist-form-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    },
+    "waitlist-form-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
     "waitlist-form-muted": { "$type": "color", "$value": "{semantic.muted}" },
-    "waitlist-form-background": { "$type": "color", "$value": "{semantic.background}" },
-    "waitlist-form-destructive": { "$type": "color", "$value": "{semantic.destructive}" }
+    "waitlist-form-background": {
+      "$type": "color",
+      "$value": "{semantic.background}"
+    },
+    "waitlist-form-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    }
   }
 }

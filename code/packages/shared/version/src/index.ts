@@ -1,6 +1,6 @@
 /**
  * `@indiecrafts/packages-shared-version` — the portable version-check core, shared by
- * every shell's update prompt (web `app` · Electron renderer · Expo). The compare is
+ * every shell's update prompt (web `app` · Expo). The compare is
  * STRING IDENTITY: a deploy stamps a new id (commit sha, else version), and any bundle
  * whose baked-in id differs from the live one is stale — NOT semver, deploys are opaque
  * ids. The poll mechanism is per-platform (DOM `visibilitychange`/`online` on web,

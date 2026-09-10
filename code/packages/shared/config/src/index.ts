@@ -4,12 +4,12 @@
  *
  * Two scopes, split by portability:
  * - `./shared` — PLATFORM-AGNOSTIC core (i18n · format · types). Pure TS, no
- *   web coupling — import from web, mobile (Expo/RN), or hybrid (Electron).
+ *   web coupling — import from web or mobile (Expo/RN).
  * - `./web` — WEB-only primitives (site origin/prefix · env/CSP · seo · the
  *   generic page-config contract `pages`). Next-flavored.
  *
  * This root barrel = `shared` + `web` (the web surface), so the web apps keep
- * one import (`@indiecrafts/packages-shared-config`). Mobile/hybrid import `@indiecrafts/packages-shared-config/mobile`
+ * one import (`@indiecrafts/packages-shared-config`). Mobile imports `@indiecrafts/packages-shared-config/mobile`
  * (or `/shared`) to avoid pulling the web slice.
  *
  * NOT here — **app-owned instance config** lives in each surface at

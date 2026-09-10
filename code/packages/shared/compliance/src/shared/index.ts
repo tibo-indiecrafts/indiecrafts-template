@@ -2,7 +2,7 @@
  * `@indiecrafts/packages-shared-compliance/shared` — the PLATFORM-AGNOSTIC compliance
  * core: the consent decision math + store contract + default taxonomy, the consent
  * signal constants/types, and the legal-route contract. Pure TS, zero DOM/Sanity/next
- * coupling — safe to import from web, Expo, or Electron. The forked UI lives in
+ * coupling — safe to import from web or Expo. The forked UI lives in
  * `../web` (shadcn DOM) and `../native` (React Native).
  */
 

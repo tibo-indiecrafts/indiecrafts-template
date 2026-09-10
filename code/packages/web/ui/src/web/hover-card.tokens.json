@@ -2,6 +2,9 @@
   "$description": "Component token surface for hover-card — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
     "hover-card-popover": { "$type": "color", "$value": "{component.popover}" },
-    "hover-card-popover-foreground": { "$type": "color", "$value": "{component.popover-foreground}" }
+    "hover-card-popover-foreground": {
+      "$type": "color",
+      "$value": "{component.popover-foreground}"
+    }
   }
 }

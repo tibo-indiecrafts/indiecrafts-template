@@ -12,4 +12,5 @@ export type FeatureValue = boolean;
 export type FeatureMap = { readonly [key: string]: FeatureValue | FeatureMap };
 
 /** Identity helper that pins a surface's flags to {@link FeatureMap} while keeping the literal type. */
-export const defineFeatures = <T extends FeatureMap>(features: T): T => features;
+export const defineFeatures = <T extends FeatureMap>(features: T): T =>
+  features;

@@ -8,10 +8,10 @@ parsing (`normalizeCspReports`/`sanitizeCspReport`, `./csp-report` — see
 
 ## Exports
 
-| Import                                    | What it is                                                                                                                                                                                                                        |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Import                                        | What it is                                                                                                                                                                                                                                                                                                                                                              |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `handleCspReport(request, opts)` (`./handle`) | The route handler. `opts = { surface: string }`. Accepts only the CSP content-types, caps the body at 64KB, **rate-limits per client IP** (30/min — defence-in-depth on the anonymous sink; no-ops without `RATE_LIMIT_KV`), keeps at most 50 reports, normalizes + sanitizes + drops extension noise, forwards the survivors. Answers `204` (or `429` over the limit). |
-| `forwardCspReports(reports)` (`./forward`)    | `import "server-only"`. Posts sanitized reports to the api's `POST /v1/events` (`kind: "csp-report"`) in batches of 5, bearer-authed with `APP_API_TOKEN`. Fire-and-forget: no-ops without `API_URL`/`APP_API_TOKEN`, swallows fetch errors. |
+| `forwardCspReports(reports)` (`./forward`)    | `import "server-only"`. Posts sanitized reports to the api's `POST /v1/events` (`kind: "csp-report"`) in batches of 5, bearer-authed with `APP_API_TOKEN`. Fire-and-forget: no-ops without `API_URL`/`APP_API_TOKEN`, swallows fetch errors.                                                                                                                            |
 
 Explicit per-file `exports` (`./handle`, `./forward`) — a consuming app needs no tsconfig `paths`
 entry.

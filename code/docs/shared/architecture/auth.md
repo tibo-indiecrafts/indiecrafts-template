@@ -9,20 +9,19 @@ Full design + review record: `docs/superpowers/specs/2026-08-21-clerk-auth-multi
 
 ## The two bricks
 
-Auth is split by scope, because the three Clerk SDKs cannot be shared but the contract can.
+Auth is split by scope, because the two Clerk SDKs cannot be shared but the contract can.
 
-| Brick                               | Scope             | Holds                                                                                                        |
-| ----------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------ |
-| `@indiecrafts/packages-shared-auth` | shared (DOM-free) | `Roles`, `AppSessionClaims`, `isAdmin(claims)` — the portable contract. No Clerk/React/Next.                 |
-| `@indiecrafts/packages-web-auth`    | web               | `AppClerkProvider` + `authAppearance()` — the themed provider for the Next surfaces + the Electron renderer. |
+| Brick                               | Scope             | Holds                                                                                        |
+| ----------------------------------- | ----------------- | -------------------------------------------------------------------------------------------- |
+| `@indiecrafts/packages-shared-auth` | shared (DOM-free) | `Roles`, `AppSessionClaims`, `isAdmin(claims)` — the portable contract. No Clerk/React/Next. |
+| `@indiecrafts/packages-web-auth`    | web               | `AppClerkProvider` + `authAppearance()` — the themed provider for the Next surfaces.         |
 
 ## Per-platform SDK
 
-| App                 | Stack                | Clerk SDK                                                                                     |
-| ------------------- | -------------------- | --------------------------------------------------------------------------------------------- |
-| website, admin, app | Next 16 / Cloudflare | `@clerk/nextjs`                                                                               |
-| mobile              | Expo                 | `@clerk/clerk-expo` (token cache on `expo-secure-store`)                                      |
-| hybrid              | Electron             | `@clerk/clerk-react` in the renderer (social via system-browser + `indiecrafts://` deep link) |
+| App                 | Stack                | Clerk SDK                                                |
+| ------------------- | -------------------- | -------------------------------------------------------- |
+| website, admin, app | Next 16 / Cloudflare | `@clerk/nextjs`                                          |
+| mobile              | Expo                 | `@clerk/clerk-expo` (token cache on `expo-secure-store`) |
 
 ## The role model
 
@@ -101,14 +100,14 @@ Clerk speaks the visitor's language on every surface.
 
 **UI** — `@clerk/localizations` bundles (`enUS`/`frFR`) passed to each surface's
 `<ClerkProvider localization>`. Web: `AppClerkProvider` takes a `locale` prop and mounts inside
-`[locale]/layout.tsx` (so it reads the route locale). Mobile/hybrid pass the bundle from their
+`[locale]/layout.tsx` (so it reads the route locale). Mobile passes the bundle from its
 detected locale. **Caveat:** only `en-US` is Clerk-maintained — other locales (incl. `frFR`) are
 **community** bundles, so a few strings may stay English. Clerk's hosted **Account Portal** is
 always English, so sign-up is **self-hosted** (`/sign-up` routes) instead — which also lets it
 carry the locale (below).
 
 **Locale capture** — each sign-up writes the active locale to Clerk `unsafeMetadata.locale`
-(web `<SignUp unsafeMetadata>`, mobile/hybrid `signUp.create`). The api `user.created`/`updated`
+(web `<SignUp unsafeMetadata>`, mobile `signUp.create`). The api `user.created`/`updated`
 webhook validates it (`isLocale`) and mirrors it to `user_profiles.locale`.
 
 **Emails** — the `localization` prop does **not** touch Clerk's emails. To localize them, the api
@@ -155,17 +154,15 @@ Planet49):
 - **Sign-up** — the checkbox value rides Clerk `unsafeMetadata.marketing_email`. The `user.created`
   webhook validates it, sets the column **on the INSERT only** (never re-applied on `user.updated`,
   so a settings change is not clobbered), writes a `consent_events` proof row (`source:"signup"`), and
-  syncs Resend. Web renders the box beside Clerk's prebuilt `<SignUp>`; mobile/hybrid pass it to
+  syncs Resend. Web renders the box beside Clerk's prebuilt `<SignUp>`; mobile passes it to
   `signUp.create`.
 - **Account settings** — an editable toggle (`MarketingEmailToggle`, web + native) reads
   `GET /v1/consent/marketing-email` and writes each change with `POST` (proof + column + Resend).
 - **Sign-in nudge** — a one-time post-sign-in banner (`MarketingNudge`) shown only when the flag is
   `NULL` (a social sign-up or pre-existing account that missed the checkbox). Yes/No record a decision;
-  × snoozes per-device. On **every** surface: website/app (`MarketingNudgeMount`, direct fetch), mobile
-  (`MarketingNudgeGate`, native banner + direct fetch), and hybrid (the renderer's strict CSP blocks a
-  direct api call, so read/write go through a preload bridge → the MAIN process fetches with the caller's
-  Clerk JWT). The shared web `MarketingNudge` is transport-agnostic (`read`/`write` injected) so web and
-  the Electron renderer share one UI.
+  × snoozes per-device. On **every** surface: website/app (`MarketingNudgeMount`, direct fetch) and mobile
+  (`MarketingNudgeGate`, native banner + direct fetch). The shared web `MarketingNudge` is
+  transport-agnostic (`read`/`write` injected).
 
 **Endpoints** (`@indiecrafts/shared-api`): `GET`/`POST /v1/consent/marketing-email` (Clerk JWT — the
 caller's own opt-in) · `POST /v1/profiles/consent` (bearer batch → the admin users-list "Emails"

@@ -17,10 +17,7 @@ const SURFACES = [
   { name: "website", url: process.env.WEBSITE_URL },
   { name: "app", url: process.env.APP_URL },
 ];
-const HTTP_WORKERS = [
-  { name: "api", url: process.env.API_URL },
-  { name: "agent", url: process.env.AGENT_URL },
-];
+const HTTP_WORKERS = [{ name: "api", url: process.env.API_URL }];
 // cron + workers-jobs have no public HTTP surface (scheduled / queue).
 const NON_HTTP_WORKERS = ["cron", "workers"];
 

@@ -2,7 +2,7 @@
 
 Auto-loads under `code/packages/shared/compliance/**`. The portable half of the compliance surface:
 the consent decision math, the store + legal-route contracts, and a copy-injected consent +
-legal-reacceptance UI forked per platform. Serves the `app` web surface, the Electron renderer, and
+legal-reacceptance UI forked per platform. Serves the `app` web surface and
 the Expo shell — **no `next`/Sanity**. Area rules → `../../../.claude/CLAUDE.md`.
 
 **Stack:** TypeScript + React 19 — forked UI (`./web` shadcn / `./native` RN); no next/Sanity.

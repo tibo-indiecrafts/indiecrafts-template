@@ -10,7 +10,10 @@
  */
 
 import { cache } from "react";
-import { defaultLocale, type Locale } from "@indiecrafts/packages-shared-config";
+import {
+  defaultLocale,
+  type Locale,
+} from "@indiecrafts/packages-shared-config";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 import { legalAcceptanceQuery } from "./queries";
 

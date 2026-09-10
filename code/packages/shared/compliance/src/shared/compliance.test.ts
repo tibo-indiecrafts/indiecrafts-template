@@ -16,8 +16,18 @@ import {
 import type { ConsentCategory } from "./consent-signals";
 
 const CATEGORIES: ConsentCategory[] = [
-  { key: "necessary", title: "N", required: true, signals: ["security_storage"] },
-  { key: "analytics", title: "A", required: false, signals: ["analytics_storage"] },
+  {
+    key: "necessary",
+    title: "N",
+    required: true,
+    signals: ["security_storage"],
+  },
+  {
+    key: "analytics",
+    title: "A",
+    required: false,
+    signals: ["analytics_storage"],
+  },
   { key: "marketing", title: "M", required: false, signals: ["ad_storage"] },
 ];
 
@@ -58,8 +68,12 @@ describe("resolveCategories", () => {
     const resolved = resolveCategories(DEFAULT_CONSENT_CATEGORIES, {
       analytics: { title: "Analytics" },
     });
-    expect(resolved.find((c) => c.key === "analytics")?.title).toBe("Analytics");
-    expect(resolved.find((c) => c.key === "necessary")?.title).toBe("necessary");
+    expect(resolved.find((c) => c.key === "analytics")?.title).toBe(
+      "Analytics",
+    );
+    expect(resolved.find((c) => c.key === "necessary")?.title).toBe(
+      "necessary",
+    );
     expect(resolved.find((c) => c.key === "necessary")?.required).toBe(true);
   });
 });
@@ -91,9 +105,13 @@ describe("needsReacceptance", () => {
     expect(needsReacceptance(null, "2026-01")).toBe(true);
   });
   it("is true when the acked version is stale", () => {
-    expect(needsReacceptance({ version: "2025-06", t: 0 }, "2026-01")).toBe(true);
+    expect(needsReacceptance({ version: "2025-06", t: 0 }, "2026-01")).toBe(
+      true,
+    );
   });
   it("is false when the acked version matches current", () => {
-    expect(needsReacceptance({ version: "2026-01", t: 0 }, "2026-01")).toBe(false);
+    expect(needsReacceptance({ version: "2026-01", t: 0 }, "2026-01")).toBe(
+      false,
+    );
   });
 });

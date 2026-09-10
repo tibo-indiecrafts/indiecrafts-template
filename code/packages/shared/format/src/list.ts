@@ -1,4 +1,8 @@
-import { defaultLocale, localeFormat, type Locale } from "@indiecrafts/packages-shared-config/shared";
+import {
+  defaultLocale,
+  localeFormat,
+  type Locale,
+} from "@indiecrafts/packages-shared-config/shared";
 
 /** Locale-aware list joining ("A, B and C" / "A, B et C") via `Intl.ListFormat`. */
 

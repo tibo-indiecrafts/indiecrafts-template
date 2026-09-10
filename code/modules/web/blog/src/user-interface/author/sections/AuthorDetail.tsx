@@ -8,10 +8,7 @@ import type {
 } from "@indiecrafts/modules-web-blog/sanity/types";
 import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";
 import { Pager } from "@indiecrafts/modules-web-blog/user-interface/shared/components/Pager";
-import {
-  BrandIcon,
-  isBrand,
-} from "@indiecrafts/packages-shared-ui-icons/web";
+import { BrandIcon, isBrand } from "@indiecrafts/packages-shared-ui-icons/web";
 import {
   Breadcrumbs,
   type Crumb,

@@ -1,16 +1,31 @@
 {
   "$description": "Component token surface for combobox — colocated DTCG component-tier aliases. Sidecar (never edits the component); merged by `pnpm tokens:build`.",
   "component": {
-    "combobox-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" },
+    "combobox-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    },
     "combobox-popover": { "$type": "color", "$value": "{component.popover}" },
-    "combobox-popover-foreground": { "$type": "color", "$value": "{component.popover-foreground}" },
-    "combobox-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
+    "combobox-popover-foreground": {
+      "$type": "color",
+      "$value": "{component.popover-foreground}"
+    },
+    "combobox-foreground": {
+      "$type": "color",
+      "$value": "{semantic.foreground}"
+    },
     "combobox-input": { "$type": "color", "$value": "{component.input}" },
     "combobox-accent": { "$type": "color", "$value": "{component.accent}" },
-    "combobox-accent-foreground": { "$type": "color", "$value": "{component.accent-foreground}" },
+    "combobox-accent-foreground": {
+      "$type": "color",
+      "$value": "{component.accent-foreground}"
+    },
     "combobox-border": { "$type": "color", "$value": "{semantic.border}" },
     "combobox-ring": { "$type": "color", "$value": "{semantic.ring}" },
-    "combobox-destructive": { "$type": "color", "$value": "{semantic.destructive}" },
+    "combobox-destructive": {
+      "$type": "color",
+      "$value": "{semantic.destructive}"
+    },
     "combobox-muted": { "$type": "color", "$value": "{semantic.muted}" }
   }
 }

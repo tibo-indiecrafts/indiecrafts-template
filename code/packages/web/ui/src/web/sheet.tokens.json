@@ -5,6 +5,9 @@
     "sheet-ring": { "$type": "color", "$value": "{semantic.ring}" },
     "sheet-secondary": { "$type": "color", "$value": "{component.secondary}" },
     "sheet-foreground": { "$type": "color", "$value": "{semantic.foreground}" },
-    "sheet-muted-foreground": { "$type": "color", "$value": "{semantic.muted-foreground}" }
+    "sheet-muted-foreground": {
+      "$type": "color",
+      "$value": "{semantic.muted-foreground}"
+    }
   }
 }

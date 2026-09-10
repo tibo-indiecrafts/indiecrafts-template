@@ -93,7 +93,9 @@ export function PostHero({
 
         {author || date ? (
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/80 @lg:text-sm">
-            {author ? <span className="font-medium text-white">{author}</span> : null}
+            {author ? (
+              <span className="font-medium text-white">{author}</span>
+            ) : null}
             {author && date ? <span aria-hidden="true">·</span> : null}
             {date ? <span>{date}</span> : null}
           </div>

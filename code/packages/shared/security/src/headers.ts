@@ -1,5 +1,10 @@
 import type { Environment } from "@indiecrafts/packages-shared-config";
-import { buildCsp, buildReportOnlyCsp, type CspHosts, type CspReporting } from "./csp";
+import {
+  buildCsp,
+  buildReportOnlyCsp,
+  type CspHosts,
+  type CspReporting,
+} from "./csp";
 
 /** A Next `headers()` rule (kept as a plain shape — the brick imports no Next types). */
 export type HeaderRule = {
@@ -84,7 +89,10 @@ export function securityHeaders({
     { key: "Permissions-Policy", value: permissionsPolicy },
   ];
   if (cspMode !== "proxy") {
-    headers.push({ key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) });
+    headers.push({
+      key: "Content-Security-Policy",
+      value: buildCsp(env, csp, reporting),
+    });
     if (reporting) {
       headers.push({
         key: "Reporting-Endpoints",
@@ -125,10 +133,15 @@ export function permissiveCspRule(
 ): HeaderRule {
   const rule: HeaderRule = {
     source,
-    headers: [{ key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) }],
+    headers: [
+      { key: "Content-Security-Policy", value: buildCsp(env, csp, reporting) },
+    ],
   };
   if (reporting)
-    rule.headers.push({ key: "Reporting-Endpoints", value: `csp-endpoint="${reporting.endpoint}"` });
+    rule.headers.push({
+      key: "Reporting-Endpoints",
+      value: `csp-endpoint="${reporting.endpoint}"`,
+    });
   return rule;
 }
 

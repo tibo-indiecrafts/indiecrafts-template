@@ -4,8 +4,7 @@
 themes DOM sign-in components, so it can't sit in `shared/`). Dep: `@indiecrafts/packages-shared-auth`
 (the DOM-free role contract). Auto-loads under `code/packages/web/auth/**`. Subpath-only `exports`.
 
-Consumed by the three Next surfaces (`website`, `admin`, `app`) **and** the Electron
-renderer (Chromium/React 19, reuses web bricks) — 4 consumers.
+Consumed by the three Next surfaces (`website`, `admin`, `app`) — 3 consumers.
 
 - **`AppClerkProvider`** (`./provider`) — wraps `<ClerkProvider>` with `authAppearance()`.
   Wrap the **root** layout with it so `auth()` + the hosted `<SignIn>`/`<SignUp>` work

@@ -116,8 +116,8 @@ return the enforced string and a candidate string from the same per-surface
 
 ```ts
 type ReportOnlyOptions = {
-  dropUnsafeEval?: boolean;   // default true
-  dropSources?: string[];     // extra origins to remove from the candidate
+  dropUnsafeEval?: boolean; // default true
+  dropSources?: string[]; // extra origins to remove from the candidate
 };
 ```
 
@@ -136,7 +136,7 @@ The two report formats carry the same facts under different names. Collapse both
 into one internal shape.
 
 | Internal field | `report-to` (`application/reports+json`) | legacy (`application/csp-report`) |
-|----------------|------------------------------------------|-----------------------------------|
+| -------------- | ---------------------------------------- | --------------------------------- |
 | `directive`    | `body.effectiveDirective`                | `csp-report.effective-directive`  |
 | `documentUrl`  | `body.documentURL`                       | `csp-report.document-uri`         |
 | `blockedUrl`   | `body.blockedURL`                        | `csp-report.blocked-uri`          |

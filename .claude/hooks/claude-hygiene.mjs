@@ -24,7 +24,10 @@ let changed;
 try {
   // `-uall` lists untracked FILES individually (not a collapsed `dir/`), so a
   // freshly-created brief is matched instead of read as "brief not updated".
-  changed = execSync("git status --porcelain -uall", { cwd: root, encoding: "utf8" })
+  changed = execSync("git status --porcelain -uall", {
+    cwd: root,
+    encoding: "utf8",
+  })
     .split("\n")
     .filter(Boolean)
     .map((l) => {
@@ -68,8 +71,15 @@ for (const { status, path } of changed) {
   const surfaceEvent = isCode(path) && isNew;
   if (!hasBrief) {
     proposals.set(unit, "has no `.claude/CLAUDE.md` — add a short brief");
-  } else if (surfaceEvent && !changedSet.has(briefRel) && !proposals.has(unit)) {
-    proposals.set(unit, "changed its public surface but its `.claude/CLAUDE.md` wasn't updated");
+  } else if (
+    surfaceEvent &&
+    !changedSet.has(briefRel) &&
+    !proposals.has(unit)
+  ) {
+    proposals.set(
+      unit,
+      "changed its public surface but its `.claude/CLAUDE.md` wasn't updated",
+    );
   }
 }
 

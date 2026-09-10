@@ -769,27 +769,6 @@
       "problemMatcher": []
     },
     {
-      "label": "deploy:shared:agent:dev",
-      "detail": "deploy agent worker — dev",
-      "type": "shell",
-      "command": "pnpm deploy:shared:agent:dev",
-      "problemMatcher": []
-    },
-    {
-      "label": "deploy:shared:agent:staging",
-      "detail": "deploy agent worker — staging",
-      "type": "shell",
-      "command": "pnpm deploy:shared:agent:staging",
-      "problemMatcher": []
-    },
-    {
-      "label": "deploy:shared:agent:prod",
-      "detail": "deploy agent worker — PROD",
-      "type": "shell",
-      "command": "pnpm deploy:shared:agent:prod",
-      "problemMatcher": []
-    },
-    {
       "label": "deploy:shared:api:dev",
       "detail": "deploy api worker — dev",
       "type": "shell",
@@ -853,27 +832,6 @@
       "problemMatcher": []
     },
     {
-      "label": "deploy:shared:agent:dev",
-      "detail": "deploy agent worker — dev",
-      "type": "shell",
-      "command": "pnpm deploy:shared:agent:dev",
-      "problemMatcher": []
-    },
-    {
-      "label": "deploy:shared:agent:staging",
-      "detail": "deploy agent worker — staging",
-      "type": "shell",
-      "command": "pnpm deploy:shared:agent:staging",
-      "problemMatcher": []
-    },
-    {
-      "label": "deploy:shared:agent:prod",
-      "detail": "deploy agent worker — PROD",
-      "type": "shell",
-      "command": "pnpm deploy:shared:agent:prod",
-      "problemMatcher": []
-    },
-    {
       "label": "deploy:mobile:main:dev",
       "detail": "deploy mobile (expo) — dev",
       "type": "shell",
@@ -892,27 +850,6 @@
       "detail": "deploy mobile (expo) — PROD",
       "type": "shell",
       "command": "pnpm deploy:mobile:main:prod",
-      "problemMatcher": []
-    },
-    {
-      "label": "deploy:hybrid:main:dev",
-      "detail": "deploy hybrid (electron) — dev",
-      "type": "shell",
-      "command": "pnpm deploy:hybrid:main:dev",
-      "problemMatcher": []
-    },
-    {
-      "label": "deploy:hybrid:main:staging",
-      "detail": "deploy hybrid (electron) — staging",
-      "type": "shell",
-      "command": "pnpm deploy:hybrid:main:staging",
-      "problemMatcher": []
-    },
-    {
-      "label": "deploy:hybrid:main:prod",
-      "detail": "deploy hybrid (electron) — PROD",
-      "type": "shell",
-      "command": "pnpm deploy:hybrid:main:prod",
       "problemMatcher": []
     },
     {
@@ -976,27 +913,6 @@
       "detail": "push api secrets → Cloudflare (PROD)",
       "type": "shell",
       "command": "pnpm secrets:sync:shared:api:prod",
-      "problemMatcher": []
-    },
-    {
-      "label": "secrets:sync:shared:agent:dev",
-      "detail": "push agent secrets → Cloudflare (dev)",
-      "type": "shell",
-      "command": "pnpm secrets:sync:shared:agent:dev",
-      "problemMatcher": []
-    },
-    {
-      "label": "secrets:sync:shared:agent:staging",
-      "detail": "push agent secrets → Cloudflare (staging)",
-      "type": "shell",
-      "command": "pnpm secrets:sync:shared:agent:staging",
-      "problemMatcher": []
-    },
-    {
-      "label": "secrets:sync:shared:agent:prod",
-      "detail": "push agent secrets → Cloudflare (PROD)",
-      "type": "shell",
-      "command": "pnpm secrets:sync:shared:agent:prod",
       "problemMatcher": []
     },
 
@@ -1180,62 +1096,6 @@
     },
 
     // ── Infra: agent (Cloudflare edge) ────────────────────────────────────
-    {
-      "label": "infra:shared:agent:init",
-      "detail": "terraform init — agent",
-      "type": "shell",
-      "command": "pnpm infra:shared:agent:init",
-      "problemMatcher": []
-    },
-    {
-      "label": "infra:shared:agent:plan:dev",
-      "detail": "terraform plan — agent DEV",
-      "type": "shell",
-      "command": "pnpm infra:shared:agent:plan:dev",
-      "problemMatcher": []
-    },
-    {
-      "label": "infra:shared:agent:plan:staging",
-      "detail": "terraform plan — agent STAGING",
-      "type": "shell",
-      "command": "pnpm infra:shared:agent:plan:staging",
-      "problemMatcher": []
-    },
-    {
-      "label": "infra:shared:agent:plan:prod",
-      "detail": "terraform plan — agent PROD",
-      "type": "shell",
-      "command": "pnpm infra:shared:agent:plan:prod",
-      "problemMatcher": []
-    },
-    {
-      "label": "infra:shared:agent:apply:dev",
-      "detail": "terraform apply — agent DEV",
-      "type": "shell",
-      "command": "pnpm infra:shared:agent:apply:dev",
-      "problemMatcher": []
-    },
-    {
-      "label": "infra:shared:agent:apply:staging",
-      "detail": "terraform apply — agent STAGING",
-      "type": "shell",
-      "command": "pnpm infra:shared:agent:apply:staging",
-      "problemMatcher": []
-    },
-    {
-      "label": "infra:shared:agent:apply:prod",
-      "detail": "terraform apply — agent PROD",
-      "type": "shell",
-      "command": "pnpm infra:shared:agent:apply:prod",
-      "problemMatcher": []
-    },
-    {
-      "label": "infra:shared:agent:output:prod",
-      "detail": "terraform output — agent PROD",
-      "type": "shell",
-      "command": "pnpm infra:shared:agent:output:prod",
-      "problemMatcher": []
-    },
 
     // ── Infra: app (Cloudflare edge) ──────────────────────────────────────
     {

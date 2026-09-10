@@ -17,7 +17,10 @@ function runWith(files) {
       mkdirSync(join(full, ".."), { recursive: true });
       writeFileSync(full, src);
     }
-    execFileSync("node", [SCRIPT], { env: { ...process.env, API_GUARDS_ROOT: root }, stdio: "pipe" });
+    execFileSync("node", [SCRIPT], {
+      env: { ...process.env, API_GUARDS_ROOT: root },
+      stdio: "pipe",
+    });
     return { ok: true, stderr: "" };
   } catch (e) {
     return { ok: false, stderr: String(e.stderr ?? "") };

@@ -6,11 +6,11 @@
 
 ## Props
 
-| Prop         | Type                            | Notes                                                        |
-| ------------ | -------------------------------- | ------------------------------------------------------------- |
-| `heading`    | `string`                         | The section title.                                            |
-| `subheading` | `string`                         | Optional supporting line under the heading.                   |
-| `items`      | `PostCardItem[]`                 | The posts, as compact cards.                                  |
+| Prop         | Type                              | Notes                                                              |
+| ------------ | --------------------------------- | ------------------------------------------------------------------ |
+| `heading`    | `string`                          | The section title.                                                 |
+| `subheading` | `string`                          | Optional supporting line under the heading.                        |
+| `items`      | `PostCardItem[]`                  | The posts, as compact cards.                                       |
 | `viewAll`    | `{ label: string; href: string }` | Optional — renders a link aligned to the heading row's right edge. |
 
 `PostCardItem` (`@indiecrafts/packages-web-ui-components/shared/types`): `_key`, `href`, `title`, `image?`, `lqip?`, `category?`, `author?`, `date?` — every field already resolved by the host.

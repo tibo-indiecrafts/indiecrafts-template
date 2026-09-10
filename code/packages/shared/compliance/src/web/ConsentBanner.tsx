@@ -9,7 +9,7 @@ import { ConsentPreferences } from "./ConsentPreferences";
 
 /**
  * The shared cookie-consent banner (web, shadcn) — Next-free, so the plain-React
- * `app` surface AND the Electron renderer both use it. Mount it at the shell root
+ * `app` surface both use it. Mount it at the shell root
  * ONLY when consent is needed (the shell reads its `ConsentStore` + the `requireConsent`
  * flag). Copy + `categories` are injected — no next-intl, no Sanity inside. Three one-tap
  * choices (Accept all · Reject · Customize); Customize expands the per-category toggles.
@@ -30,7 +30,8 @@ export function ConsentBanner({
   onSave: (choices: Record<string, boolean>) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const [choices, setChoices] = useState<Record<string, boolean>>(initialChoices);
+  const [choices, setChoices] =
+    useState<Record<string, boolean>>(initialChoices);
 
   return (
     <div
@@ -62,7 +63,11 @@ export function ConsentBanner({
       <div className="flex flex-wrap justify-end gap-2">
         {expanded ? (
           <>
-            <Button variant="ghost" size="sm" onClick={() => setExpanded(false)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setExpanded(false)}
+            >
               {copy.backLabel}
             </Button>
             <Button size="sm" onClick={() => onSave(choices)}>

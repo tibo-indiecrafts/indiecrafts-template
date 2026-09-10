@@ -17,7 +17,9 @@ const yes = process.argv.includes("--yes");
 // After deploy, sync secrets from `.dev.vars` (soft) — `--skip-secrets` opts out.
 const skipSecrets = process.argv.includes("--skip-secrets");
 if (!app || !ENVS.includes(env)) {
-  console.error("Usage: deploy-next.mjs <app> <dev|staging|prod> [--yes] [--skip-secrets]");
+  console.error(
+    "Usage: deploy-next.mjs <app> <dev|staging|prod> [--yes] [--skip-secrets]",
+  );
   process.exit(1);
 }
 
@@ -40,7 +42,9 @@ run("wrangler", ["deploy", "--env", env]);
 // Secrets AFTER deploy (the Worker must exist for `wrangler secret bulk`). `--soft` so an
 // app with no `.dev.vars` (admin/app today) never fails the deploy.
 if (!skipSecrets) {
-  const secrets = fileURLToPath(new URL("../data/secrets.mjs", import.meta.url));
+  const secrets = fileURLToPath(
+    new URL("../data/secrets.mjs", import.meta.url),
+  );
   run("node", [secrets, app, env, "--soft", ...(yes ? ["--yes"] : [])]);
 }
 console.log(`✓ Deployed ${app} to ${env}.`);

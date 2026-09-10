@@ -10,7 +10,7 @@ After any change, run `pnpm verify` to confirm types, lint, format, and contrast
 
 | Surface                                    | Home                                                                                                 | Edited by |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- | --------- |
-| Colours (light + dark)                     | `@indiecrafts/packages-shared-ui-tokens` → `code/packages/shared/ui-tokens/src/globals.css` (OKLCH)                         | developer |
+| Colours (light + dark)                     | `@indiecrafts/packages-shared-ui-tokens` → `code/packages/shared/ui-tokens/src/globals.css` (OKLCH)  | developer |
 | PWA install/splash colour                  | `theme.hexColors.background` in `code/projects/web/surfaces/website/src/config/theme.ts` (app-owned) | developer |
 | Container width + gutter                   | `theme.container` in `code/projects/web/surfaces/website/src/config/theme.ts`                        | developer |
 | Font pairing                               | `fonts` in `code/projects/web/surfaces/website/src/config/fonts.ts` + registry in `src/lib/fonts.ts` | developer |

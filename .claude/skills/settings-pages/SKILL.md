@@ -21,18 +21,33 @@ Settings sprawl fast. Tame them with a consistent structure: a section navigatio
 <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-[200px_1fr]">
   <nav aria-label="Settings" className="flex gap-1 md:flex-col">
     {sections.map((s) => (
-      <a key={s.href} href={s.href} aria-current={s.active ? "page" : undefined}
-        className={cn("rounded-md px-3 py-2 text-sm", s.active ? "bg-muted font-medium" : "text-muted-foreground hover:bg-muted/50")}>
+      <a
+        key={s.href}
+        href={s.href}
+        aria-current={s.active ? "page" : undefined}
+        className={cn(
+          "rounded-md px-3 py-2 text-sm",
+          s.active
+            ? "bg-muted font-medium"
+            : "text-muted-foreground hover:bg-muted/50",
+        )}
+      >
         {s.label}
       </a>
     ))}
   </nav>
 
   <div className="space-y-6">
-    <SettingsSection title="Profile" description="How you appear across the workspace.">
+    <SettingsSection
+      title="Profile"
+      description="How you appear across the workspace."
+    >
       <ProfileForm />
     </SettingsSection>
-    <SettingsSection title="Notifications" description="Choose what we email you about.">
+    <SettingsSection
+      title="Notifications"
+      description="Choose what we email you about."
+    >
       <NotificationPrefs />
     </SettingsSection>
   </div>
@@ -42,10 +57,17 @@ Settings sprawl fast. Tame them with a consistent structure: a section navigatio
 A reusable section card keeps spacing/typography consistent:
 
 ```tsx
-function SettingsSection({ title, description, children }: SettingsSectionProps) {
+function SettingsSection({
+  title,
+  description,
+  children,
+}: SettingsSectionProps) {
   return (
     <Card>
-      <CardHeader><CardTitle>{title}</CardTitle><CardDescription>{description}</CardDescription></CardHeader>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
       <CardContent>{children}</CardContent>
     </Card>
   );
@@ -72,7 +94,9 @@ List members with role selects and a remove action (use `data-tables` patterns).
   <CardContent className="flex items-center justify-between">
     <div>
       <p className="font-medium">Delete workspace</p>
-      <p className="text-sm text-muted-foreground">Permanently removes all data.</p>
+      <p className="text-sm text-muted-foreground">
+        Permanently removes all data.
+      </p>
     </div>
     <DeleteWorkspaceDialog /> {/* AlertDialog + type-to-confirm */}
   </CardContent>
@@ -94,6 +118,6 @@ Require typing the workspace name to enable the delete button (see `modals-and-d
 
 Configuration screens built from `forms-and-validation`, `data-tables` (members), and `modals-and-dialogs` (destructive confirms); link to `billing-and-pricing` for plan management.
 
-
 ---
+
 <sub>Vendored from saas-ui-skills — re-run `npx saas-ui-skills` to update.</sub>

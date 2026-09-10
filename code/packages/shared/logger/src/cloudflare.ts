@@ -32,7 +32,8 @@ import { jsonReporter } from "./reporters";
 export function cloudflareTransport(): Transport {
   return {
     log(record) {
-      if (record.level === "error" || record.level === "fatal") jsonReporter(record);
+      if (record.level === "error" || record.level === "fatal")
+        jsonReporter(record);
     },
   };
 }

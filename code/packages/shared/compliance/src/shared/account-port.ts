@@ -3,7 +3,7 @@ import type { ErasureSelfResult } from "./erasure-self";
 /**
  * The per-surface Clerk seam for the account "Your data" tab. Each surface builds
  * this from its own Clerk SDK (`@clerk/nextjs` for website/app, `@clerk/clerk-react`
- * for the Electron renderer) so this brick — and the tab components below — stay
+ * for a plain-React host) so this brick — and the tab components below — stay
  * `@clerk/*`-free:
  *
  * - `getToken` — a fresh Clerk session token for the authenticated export/erasure calls.

@@ -7,7 +7,7 @@ description: Use when building data tables — sorting, filtering, pagination, r
 
 ## Overview
 
-Tables are where SaaS apps live (users, invoices, logs). Build them with **TanStack Table** (headless logic: sorting, filtering, pagination, selection) rendered through **shadcn/ui `Table`** primitives. Separate column *definitions* from the table *shell* so every table in the app behaves consistently.
+Tables are where SaaS apps live (users, invoices, logs). Build them with **TanStack Table** (headless logic: sorting, filtering, pagination, selection) rendered through **shadcn/ui `Table`** primitives. Separate column _definitions_ from the table _shell_ so every table in the app behaves consistently.
 
 ## When to use
 
@@ -22,7 +22,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 
-export type Invoice = { id: string; customer: string; status: "paid" | "open" | "void"; amount: number };
+export type Invoice = {
+  id: string;
+  customer: string;
+  status: "paid" | "open" | "void";
+  amount: number;
+};
 
 export const columns: ColumnDef<Invoice>[] = [
   {
@@ -47,12 +52,20 @@ export const columns: ColumnDef<Invoice>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <Badge variant={row.original.status === "paid" ? "success" : "secondary"}>{row.original.status}</Badge>,
+    cell: ({ row }) => (
+      <Badge variant={row.original.status === "paid" ? "success" : "secondary"}>
+        {row.original.status}
+      </Badge>
+    ),
   },
   {
     accessorKey: "amount",
     header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => <div className="text-right tabular-nums">${(row.original.amount / 100).toFixed(2)}</div>,
+    cell: ({ row }) => (
+      <div className="text-right tabular-nums">
+        ${(row.original.amount / 100).toFixed(2)}
+      </div>
+    ),
   },
 ];
 ```
@@ -61,7 +74,8 @@ export const columns: ColumnDef<Invoice>[] = [
 
 ```tsx
 const table = useReactTable({
-  data, columns,
+  data,
+  columns,
   getCoreRowModel: getCoreRowModel(),
   getSortedRowModel: getSortedRowModel(),
   getPaginationRowModel: getPaginationRowModel(),
@@ -89,12 +103,16 @@ Render header/body from `table.getHeaderGroups()` / `table.getRowModel().rows`. 
 When `table.getSelectedRowModel().rows.length > 0`, show an action bar:
 
 ```tsx
-{selectedCount > 0 && (
-  <div className="flex items-center gap-2 rounded-md border bg-muted/50 px-3 py-2 text-sm">
-    <span>{selectedCount} selected</span>
-    <Button size="sm" variant="destructive" onClick={deleteSelected}>Delete</Button>
-  </div>
-)}
+{
+  selectedCount > 0 && (
+    <div className="flex items-center gap-2 rounded-md border bg-muted/50 px-3 py-2 text-sm">
+      <span>{selectedCount} selected</span>
+      <Button size="sm" variant="destructive" onClick={deleteSelected}>
+        Delete
+      </Button>
+    </div>
+  );
+}
 ```
 
 ## Server-side at scale
@@ -114,6 +132,6 @@ For large datasets, set `manualPagination`/`manualSorting`/`manualFiltering: tru
 
 A consistent table that pairs with `empty-and-loading-states` (skeletons), `modals-and-dialogs` (row edit/confirm), and `notifications-and-toasts` (bulk-action feedback).
 
-
 ---
+
 <sub>Vendored from saas-ui-skills — re-run `npx saas-ui-skills` to update.</sub>

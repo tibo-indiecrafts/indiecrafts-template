@@ -34,7 +34,12 @@ export function TopicCards({ items }: { items: TopicCardItem[] }) {
 
   return (
     <ModuleSection className="@container">
-      <div className={cn("grid grid-cols-1 gap-6", GRID_COLS[items.length] ?? GRID_COLS[3])}>
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-6",
+          GRID_COLS[items.length] ?? GRID_COLS[3],
+        )}
+      >
         {items.map((item) => (
           <TopicCard key={item._key} item={item} />
         ))}
@@ -71,7 +76,9 @@ function TopicCard({ item }: { item: TopicCardItem }) {
           </a>
         </h3>
         {item.blurb ? (
-          <p className="line-clamp-2 text-sm text-white/85 @lg:text-base">{item.blurb}</p>
+          <p className="line-clamp-2 text-sm text-white/85 @lg:text-base">
+            {item.blurb}
+          </p>
         ) : null}
       </div>
     </article>

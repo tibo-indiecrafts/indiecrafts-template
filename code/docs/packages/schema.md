@@ -3,11 +3,11 @@
 The reusable, document-agnostic Sanity **object types** that more than one owner
 needs, so a module never reaches into the app (or a sibling module) for a field type.
 
-|               |                                                                                                                            |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **Exports**   | `.` → `sharedSanity` (the contribution) + `localeString` · `localeText` · `seoMeta`; `./*` → the raw schema files          |
+|               |                                                                                                                                                         |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Exports**   | `.` → `sharedSanity` (the contribution) + `localeString` · `localeText` · `seoMeta`; `./*` → the raw schema files                                       |
 | **Deps**      | `@indiecrafts/packages-shared-config` (locale set for `localeString`), `@indiecrafts/packages-web-sanity` (the `SanityModule` type). **Peer:** `sanity` |
-| **Consumers** | app + blog (every future module that needs SEO or per-locale copy)                                                         |
+| **Consumers** | app + blog (every future module that needs SEO or per-locale copy)                                                                                      |
 
 - **`localeString`** — one `string` per registered locale (generated from `@indiecrafts/packages-shared-config`
   `locales`), for short editor-managed copy: nav labels, blog comment copy. Read path:

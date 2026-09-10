@@ -55,7 +55,7 @@ typed `@/i18n/routing`, strings in `messages/`, a gated/typed nav, and consisten
 
 ## Approach A — per-surface shell
 
-The shared thing (shadcn primitives) is already shared. The shell *composition* legitimately
+The shared thing (shadcn primitives) is already shared. The shell _composition_ legitimately
 differs per surface (admin = grouped operator nav + operator header; app = flat user nav + user
 header), so app copies admin's composition into its own `src/user-interface/layout/` — the same
 "each surface owns its chrome" convention website and admin already follow. Copying ~4 small
@@ -73,7 +73,7 @@ New files under `code/projects/web/surfaces/app/src/user-interface/`:
 - `layout/AppSidebar.tsx` — shadcn `Sidebar`; app logo/title in the header slot; a single
   `<nav aria-label={t("nav.label")}>` wrapping the nav items; `NavUser` in the footer slot.
 - `layout/AppHeader.tsx` — sticky bar: `SidebarTrigger` + `Breadcrumbs` (left) · `LocaleSwitcher`
-  + `ThemeToggle` (right).
+  - `ThemeToggle` (right).
 - `layout/PageHeader.tsx` — `{ title, description?, actions? }`, same signature as admin's.
 - `layout/NavUser.tsx` — avatar + dropdown-menu with **Legal** (link-out to website) and
   **Sign out**.
@@ -147,7 +147,7 @@ Run through the `visual-polish` / `design-critique` lens. No nav, route, or data
   Storybook needs no new stories.
 - Verification: grep confirms zero admin/app story files; the Storybook static build stays green;
   the gallery still documents only the design-system bricks (`ui` · `ui-components` · `ui-tokens`
-  + `announcement`/`locale-suggest`).
+  - `announcement`/`locale-suggest`).
 
 **Docs** (`code/docs/` product docs, foldered like the code):
 
@@ -188,24 +188,29 @@ and every new/edited component must be **token-only**:
 ## File-level change map
 
 **app (new):**
+
 - `src/user-interface/layout/{AppShell,AppSidebar,AppHeader,PageHeader,NavUser,Breadcrumbs,ThemeToggle}.tsx`
 - `src/user-interface/lib/nav.ts`
 - `src/app/[locale]/(app)/layout.tsx`
 
 **app (moved + restyled):**
+
 - `src/app/[locale]/page.tsx` → `(app)/page.tsx`
 - `src/app/[locale]/account/page.tsx` → `(app)/account/page.tsx`
 - `src/app/[locale]/legal/page.tsx` → `(app)/legal/page.tsx`
 
 **app (edited):**
+
 - `messages/{en,fr}.json` — `app.nav.*` (+ page-copy keys as needed)
 - `.claude/CLAUDE.md`, `README.md`, `CHANGELOG.md`
 
 **admin (edited):**
+
 - The 9 `(dashboard)/**/page.tsx` (+ their table/form components) — polish only
 - `CHANGELOG.md`
 
 **docs (edited):**
+
 - `code/docs/apps/web/**` app-surface page(s), as drift requires
 
 ## Verification

@@ -62,12 +62,12 @@ test("the same secret read server-side (no prefix) passes", () => {
 });
 
 test("a documented public bundle-gate token is allowlisted", () => {
-  // AGENT_TOKEN is a server secret, but EXPO_PUBLIC_AGENT_TOKEN is a documented public
+  // API_TOKEN is a server secret, but EXPO_PUBLIC_API_TOKEN is a documented public
   // bundle value — using it must NOT trip the guard.
   const r = runWith({
-    "worker/.dev.vars.example": `AGENT_TOKEN=`,
-    "mobile/.env.example": `${EXPO}AGENT_TOKEN=`,
-    "mobile/src/agent.ts": `const t = process.env.${EXPO}AGENT_TOKEN;`,
+    "worker/.dev.vars.example": `API_TOKEN=`,
+    "mobile/.env.example": `${EXPO}API_TOKEN=`,
+    "mobile/src/session-log.ts": `const t = process.env.${EXPO}API_TOKEN;`,
   });
   assert.equal(r.ok, true);
 });

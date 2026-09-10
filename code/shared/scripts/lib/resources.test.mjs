@@ -18,11 +18,10 @@ test("instanceResources covers every deployable + the api's owned resources", ()
   assert.deepEqual(r.d1, ["acme-dev-db-audit", "acme-dev-db-main"]);
   assert.deepEqual(r.kv, ["acme-dev-shared-api-security-counters"]);
 
-  // R2: the shared backup bucket + api export + one ISR bucket per next-cf app + hybrid releases.
+  // R2: the shared backup bucket + api export + one ISR bucket per next-cf app.
   assert.ok(r.r2.includes("acme-dev-db-backup"));
   assert.ok(r.r2.includes("acme-dev-shared-api-export"));
   assert.ok(r.r2.includes("acme-dev-web-surfaces-website-isr"));
-  assert.ok(r.r2.includes("acme-dev-hybrid-surfaces-main-releases"));
 
   // Prefix swaps cleanly (the "anonymised" property — a client rename only changes <prefix>).
   for (const name of [...r.workers, ...r.d1, ...r.kv, ...r.r2])

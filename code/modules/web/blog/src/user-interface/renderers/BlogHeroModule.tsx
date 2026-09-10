@@ -54,13 +54,20 @@ export async function BlogHeroModule({
           ? {
               title: categoryRef.title,
               href: categoryRef.slug
-                ? localizedPathname(`/blog/category/${categoryRef.slug}`, locale)
+                ? localizedPathname(
+                    `/blog/category/${categoryRef.slug}`,
+                    locale,
+                  )
                 : undefined,
             }
           : undefined
       }
       author={showMeta ? post.authors?.[0]?.name : undefined}
-      date={showMeta ? (formatDate(locale, post.publishedAt) ?? undefined) : undefined}
+      date={
+        showMeta
+          ? (formatDate(locale, post.publishedAt) ?? undefined)
+          : undefined
+      }
       playLabel={t("playVideo")}
     />
   );

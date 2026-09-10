@@ -2,7 +2,7 @@
 # In staging/prod these are set with `wrangler secret put <NAME> --env <env>`.
 
 # Audit + session sink (POST /v1/events → EU D1):
-# APP_API_TOKEN=""   # the bearer token the mobile/hybrid apps send (Authorization: Bearer …)
+# APP_API_TOKEN=""   # the bearer token the mobile app sends (Authorization: Bearer …)
 # IP_HASH_SALT=""    # salt for hashing IPs before storage (never a raw IP is stored)
 
 # Announcements (GET /v1/announcements → Sanity). PROJECT_ID/DATASET go in wrangler.toml

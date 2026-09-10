@@ -61,7 +61,7 @@ if (single) {
 
 // Keep only UI component sources (skip stories/tests/non-tsx and non-src paths).
 // Match the real layouts: code/{packages,modules}/<scope>/<name>/src/ (scope =
-// shared|web|mobile|hybrid) AND the nested projects tree
+// shared|web|mobile) AND the nested projects tree
 // code/projects/<platform>/<kind>/<name>/src/ (surfaces|services|tools).
 // React Native files use eslint-config-expo (`npx expo lint`), NOT the website's Next +
 // jsx-a11y flat config — so exclude the RN component forks: the `ui-native` brick and the

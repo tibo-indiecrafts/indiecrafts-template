@@ -1,6 +1,9 @@
 import Image from "next/image";
 import { Link } from "@indiecrafts/packages-web-i18n";
-import type { Author, AuthorRef } from "@indiecrafts/modules-web-blog/sanity/types";
+import type {
+  Author,
+  AuthorRef,
+} from "@indiecrafts/modules-web-blog/sanity/types";
 
 /**
  * Author profile card — used by /author and the home Top Authors section.

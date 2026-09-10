@@ -23,6 +23,7 @@
 ## File Structure
 
 **New — `code/projects/web/surfaces/admin/src/user-interface/`:**
+
 - `lib/nav.ts` — the typed nav config (groups → items: `{ key, href, icon }`), one source of truth for sidebar + breadcrumb labels.
 - `layout/ThemeToggle.tsx` — client light/dark toggle (data-theme + localStorage).
 - `layout/theme-script.ts` — the no-flash inline-script string.
@@ -40,6 +41,7 @@
 ### Task 1: Shell foundation — nav config, theme toggle (nonce-safe), deps, messages
 
 **Files:**
+
 - Create: `.../user-interface/lib/nav.ts`, `.../layout/ThemeToggle.tsx`, `.../layout/theme-script.ts`
 - Modify: `admin/package.json` (deps), `.../[locale]/layout.tsx` (script), `messages/{en,fr}.json`
 - Test: `.../user-interface/lib/nav.test.ts`
@@ -48,6 +50,7 @@
 
 - [ ] **Step 1: Deps.** In `admin/package.json` add `"lucide-react": "^0.400.0"` and `"sonner": "^1.5.0"` to `dependencies` (versions: match whatever `code/packages/web/ui/package.json` pins for each — read it and copy the exact ranges so there's one version). Run `pnpm install`.
 - [ ] **Step 2: Nav config + failing test.** Create `nav.test.ts`:
+
 ```ts
 import { describe, it, expect } from "vitest";
 import { NAV, activeKey } from "./nav";
@@ -65,37 +68,82 @@ describe("admin nav", () => {
   });
 });
 ```
+
 - [ ] **Step 3: Run — expect FAIL** (`./nav` not found). `pnpm --filter @indiecrafts/web-surfaces-admin test -- nav`
 - [ ] **Step 4: Implement `nav.ts`:**
+
 ```ts
-import { LayoutDashboard, Users, MonitorSmartphone, FileText, ShieldAlert, DatabaseBackup, Server, Settings, ShieldCheck, type LucideIcon } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  MonitorSmartphone,
+  FileText,
+  ShieldAlert,
+  DatabaseBackup,
+  Server,
+  Settings,
+  ShieldCheck,
+  type LucideIcon,
+} from "lucide-react";
 export type NavItem = { key: string; href: string; icon: LucideIcon };
 export type NavGroup = { labelKey: string | null; items: NavItem[] };
 export const NAV: NavGroup[] = [
-  { labelKey: null, items: [{ key: "overview", href: "/", icon: LayoutDashboard }] },
-  { labelKey: "access", items: [{ key: "users", href: "/users", icon: Users }, { key: "sessions", href: "/sessions", icon: MonitorSmartphone }] },
-  { labelKey: "compliance", items: [{ key: "dataRequests", href: "/data-requests", icon: FileText }, { key: "csp", href: "/csp", icon: ShieldAlert }] },
-  { labelKey: "operations", items: [{ key: "backups", href: "/backups", icon: DatabaseBackup }, { key: "system", href: "/system", icon: Server }, { key: "settings", href: "/settings", icon: Settings }] },
-  { labelKey: "security", items: [{ key: "security", href: "/security", icon: ShieldCheck }] },
+  {
+    labelKey: null,
+    items: [{ key: "overview", href: "/", icon: LayoutDashboard }],
+  },
+  {
+    labelKey: "access",
+    items: [
+      { key: "users", href: "/users", icon: Users },
+      { key: "sessions", href: "/sessions", icon: MonitorSmartphone },
+    ],
+  },
+  {
+    labelKey: "compliance",
+    items: [
+      { key: "dataRequests", href: "/data-requests", icon: FileText },
+      { key: "csp", href: "/csp", icon: ShieldAlert },
+    ],
+  },
+  {
+    labelKey: "operations",
+    items: [
+      { key: "backups", href: "/backups", icon: DatabaseBackup },
+      { key: "system", href: "/system", icon: Server },
+      { key: "settings", href: "/settings", icon: Settings },
+    ],
+  },
+  {
+    labelKey: "security",
+    items: [{ key: "security", href: "/security", icon: ShieldCheck }],
+  },
 ];
 /** Strip the optional locale prefix, then pick the item whose href is the longest matching prefix. `/` → overview. */
 export function activeKey(pathname: string): string | undefined {
   const p = pathname.replace(/^\/(en|fr)(?=\/|$)/, "") || "/";
   const items = NAV.flatMap((g) => g.items);
   const match = items
-    .filter((i) => i.href === "/" ? p === "/" : p === i.href || p.startsWith(i.href + "/"))
+    .filter((i) =>
+      i.href === "/" ? p === "/" : p === i.href || p.startsWith(i.href + "/"),
+    )
     .sort((a, b) => b.href.length - a.href.length)[0];
   return match?.key;
 }
 ```
+
 (If the repo's locale codes differ from `en|fr`, derive the regex from `localeCodes` in `@/config` instead of hardcoding.)
+
 - [ ] **Step 5: Run — expect PASS.**
 - [ ] **Step 6: Theme.** Create `theme-script.ts`:
+
 ```ts
 /** Runs before paint to set data-theme from localStorage, else prefers-color-scheme. Kept tiny + string-literal so it can be injected as a nonce'd inline script. */
 export const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("admin-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;}catch(e){}})();`;
 ```
+
 Create `ThemeToggle.tsx` (client): read the current theme via `useSyncExternalStore` (subscribe to a `storage` event; getter reads `document.documentElement.dataset.theme`), render a `web-ui` `Button` (variant `ghost`, size `icon`) with lucide `Sun`/`Moon`, `aria-label={label.toggle}`; on click flip `document.documentElement.dataset.theme` + `localStorage.setItem("admin-theme", next)` and dispatch a `storage`-like update so the icon re-renders. Never set state in an effect (repo NEVER).
+
 - [ ] **Step 7: Inject the script (nonce-safe).** In `[locale]/layout.tsx`, import `{ headers } from "next/headers"` + `THEME_SCRIPT`; inside the component `const nonce = (await headers()).get("x-nonce") ?? undefined;` and render, as the FIRST child of `<body>`, `<script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />`. (Confirm `proxy.ts` `matcher` covers the layout route so `x-nonce` is present.)
 - [ ] **Step 8: Messages.** Add to `admin` in BOTH `messages/en.json` + `messages/fr.json`: `nav.groups.{access,compliance,operations,security}`, `nav.{overview,users,sessions,dataRequests,csp,backups,system,settings,security}` (short item labels — reuse the existing `<page>.link` wording where it exists), `theme.{toggle,light,dark}`, `user.{account,signOut}`. en example: `"nav": { "groups": { "access": "Access", "compliance": "Compliance", "operations": "Operations", "security": "Security" }, "overview": "Overview", "users": "Users", "sessions": "Sessions", "dataRequests": "Data requests", "csp": "CSP reports", "backups": "Backups", "system": "System", "settings": "Settings", "security": "Security" }, "theme": { "toggle": "Toggle theme", "light": "Light", "dark": "Dark" }, "user": { "account": "Admin", "signOut": "Sign out" }`. Provide the French equivalents.
 - [ ] **Step 9: Verify + commit.** `pnpm --filter @indiecrafts/web-surfaces-admin tsc` + `test -- nav`. `git commit -m "feat(admin): dashboard shell foundation — nav config, nonce-safe theme toggle, deps"`

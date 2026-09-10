@@ -46,9 +46,9 @@ spotlight ("Insights on software"), a curated carousel ("Catch up on Config 2026
 - **Design system:** tokens only (no raw hex/px), follow `DESIGN.md`; container queries for any block that
   renders in both the full-width slot and the ~768px column.
 - **Stories are mandatory:** every rendered `ui-components` component ships a colocated `<Name>.stories.tsx`
-  + `<Name>.md` (Storybook auto-discovers `ui-components/src/**/*.stories.tsx`; the `test:stories` CI job +
-  the change-hygiene Stop hook enforce it). The blog **module is not** in the Storybook globs — this is
-  why the reusable pieces live in `ui-components`.
+  - `<Name>.md` (Storybook auto-discovers `ui-components/src/**/*.stories.tsx`; the `test:stories` CI job +
+    the change-hygiene Stop hook enforce it). The blog **module is not** in the Storybook globs — this is
+    why the reusable pieces live in `ui-components`.
 - **Page-builder sync:** adding a `module.*` block touches schema + registry/types + renderer + inline
   lists + query + copy + doc counts in lockstep (the `page-builder-reviewer` checklist).
 
@@ -71,13 +71,14 @@ spotlight ("Insights on software"), a curated carousel ("Catch up on Config 2026
 
 ### Component placement (drives the stories requirement)
 
-| Layer | Lives in | Storied? |
-|---|---|---|
-| Presentational primitives (visual layout over resolved data) | `ui-components/src/web/{layout,collection,media}/` | ✅ colocated `.stories.tsx` + `.md` |
-| Blog-frontpage block **schemas** | blog module `sanity/schema/modules/` | n/a |
-| Blog-frontpage **renderers** (fetch/select posts → map to primitives) | blog module `user-interface/renderers/` | n/a (glue) |
+| Layer                                                                 | Lives in                                           | Storied?                            |
+| --------------------------------------------------------------------- | -------------------------------------------------- | ----------------------------------- |
+| Presentational primitives (visual layout over resolved data)          | `ui-components/src/web/{layout,collection,media}/` | ✅ colocated `.stories.tsx` + `.md` |
+| Blog-frontpage block **schemas**                                      | blog module `sanity/schema/modules/`               | n/a                                 |
+| Blog-frontpage **renderers** (fetch/select posts → map to primitives) | blog module `user-interface/renderers/`            | n/a (glue)                          |
 
 **New `ui-components` primitives (each gets a story + md):**
+
 - `PostHero` (`layout/`) — one large post: cover/video, category, title, excerpt, author, date, tags.
   Reuses `FeaturedMedia` for the image/video.
 - `FeaturedPosts` (`collection/`) — a lead card + a grid of N over resolved post-card items.
@@ -94,17 +95,17 @@ Where a piece is irreducibly post-shaped and already exists, reuse it from the m
 Every block schema shares the **auto + pin** shape: a `source`/options group + an optional `pinned`
 reference array. Legends written for non-technical editors (`sanity-legends`).
 
-| `module.*` | Default rule | Options | Optional pin | Renders |
-|---|---|---|---|---|
-| `blog-hero` | latest post | show author/date/tags | pin one post | `PostHero` |
-| `blog-featured` | posts with `featured` flag | count, lead-card on/off | pin ordered posts | `FeaturedPosts` |
-| `blog-latest` | most-recent feed | count, pagination on/off | — | `BlogListing` (reused) |
-| `blog-category-spotlight` | latest N in a chosen category | category ref, count | pin posts | `SpotlightRow` + `BlogCard` |
-| `blog-collection` | — | title, intro | ordered pinned posts | `Carousel` + `BlogCard` |
-| `blog-topic-cards` | — | 1–3 cards: category/tag ref + image + blurb | — | `TopicCards` |
-| `blog-explore` | variant: categories \| tags \| authors | heading/subheading/viewAll | — | existing `Explore*`/`TopAuthors` |
-| `blog-trending` | popularity signal → **fallback: most-recent** | count, window | pin posts | `SpotlightRow`/`FeaturedPosts` |
-| generic blocks | — | (newsletter, cta, prose, stat-list, …) | — | existing `BLOCK_RENDERERS` |
+| `module.*`                | Default rule                                  | Options                                     | Optional pin         | Renders                          |
+| ------------------------- | --------------------------------------------- | ------------------------------------------- | -------------------- | -------------------------------- |
+| `blog-hero`               | latest post                                   | show author/date/tags                       | pin one post         | `PostHero`                       |
+| `blog-featured`           | posts with `featured` flag                    | count, lead-card on/off                     | pin ordered posts    | `FeaturedPosts`                  |
+| `blog-latest`             | most-recent feed                              | count, pagination on/off                    | —                    | `BlogListing` (reused)           |
+| `blog-category-spotlight` | latest N in a chosen category                 | category ref, count                         | pin posts            | `SpotlightRow` + `BlogCard`      |
+| `blog-collection`         | —                                             | title, intro                                | ordered pinned posts | `Carousel` + `BlogCard`          |
+| `blog-topic-cards`        | —                                             | 1–3 cards: category/tag ref + image + blurb | —                    | `TopicCards`                     |
+| `blog-explore`            | variant: categories \| tags \| authors        | heading/subheading/viewAll                  | —                    | existing `Explore*`/`TopAuthors` |
+| `blog-trending`           | popularity signal → **fallback: most-recent** | count, window                               | pin posts            | `SpotlightRow`/`FeaturedPosts`   |
+| generic blocks            | —                                             | (newsletter, cta, prose, stat-list, …)      | —                    | existing `BLOCK_RENDERERS`       |
 
 Newsletter uses the existing generic `module.newsletter`; no new block.
 
@@ -140,7 +141,7 @@ Newsletter uses the existing generic `module.newsletter`; no new block.
 - **Unit:** the source-rule + pin resolution (pin precedence, rule fills the rest, empty-pool fallbacks);
   GROQ shape for the new fragments; the empty-`frontpageModules` → default path.
 - **Stories (the gate):** every new `ui-components` primitive gets a `.stories.tsx` (autodocs, a11y green)
-  + `.md`; `test:stories` runs them as component + axe tests.
+  - `.md`; `test:stories` runs them as component + axe tests.
 - **i18n:** key parity for the new `pages.blog.frontpage.*` keys (en/fr).
 - **Verify:** `pnpm verify` (tsc + lint + format + contrast + react-doctor + test) green; visual check at
   375 / 768 / 1280 per `visual-verification`.

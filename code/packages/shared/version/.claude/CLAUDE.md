@@ -2,8 +2,8 @@
 
 Auto-loads under `code/packages/shared/version/**`. The tiny, platform-agnostic core every shell's
 "new version available" prompt shares — the compare plus the `/api/version` response shape. The poll
-mechanism stays per-platform; this brick is just the logic. Serves the `app` web surface, the Electron
-renderer, and the Expo shell. Area rules → `../../../.claude/CLAUDE.md`.
+mechanism stays per-platform; this brick is just the logic. Serves the `app` web surface and the
+Expo shell. Area rules → `../../../.claude/CLAUDE.md`.
 
 **Stack:** TypeScript, zero-dep — no `react`/`next`; pure compare + shape.
 

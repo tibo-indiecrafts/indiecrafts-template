@@ -18,7 +18,9 @@ export const Default: Story = {
     <Screen style={{ height: 320, padding: 24, gap: 8 }}>
       <ThemedText variant="eyebrow">Screen</ThemedText>
       <ThemedText variant="title">Full-bleed page root</ThemedText>
-      <ThemedText variant="muted">Painted with the `background` token.</ThemedText>
+      <ThemedText variant="muted">
+        Painted with the `background` token.
+      </ThemedText>
     </Screen>
   ),
 };

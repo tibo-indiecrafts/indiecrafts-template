@@ -40,6 +40,7 @@
 ## Task 1: Scaffold the `core` DB (structural, no behaviour change)
 
 **Files:**
+
 - Modify: `code/shared/scripts/lib/databases.mjs`
 - Rename: `code/shared/api/db/d1/` → `code/shared/api/db/audit/`, then move 7 files into `code/shared/api/db/core/migrations/`
 - Modify: `code/shared/api/wrangler.toml`
@@ -47,6 +48,7 @@
 - Test: `code/shared/scripts/lib/databases.test.mjs`
 
 **Interfaces:**
+
 - Produces: registry rows `audit` (binding `DB`, dir `code/shared/api/db/audit`) + `core` (binding `CORE_DB`, dir `code/shared/api/db/core`); `Env.CORE_DB?: D1Database`.
 
 - [ ] **Step 1: Registry — add the `core` row and repoint `audit`.** In `databases.mjs`, replace the stale `audit` comment + row with:
@@ -138,10 +140,12 @@ git commit -m "refactor(db): scaffold the core D1 (registry, migrations split, C
 ## Task 2: Split the D1 erasure adapter (test-first — the correctness centerpiece)
 
 **Files:**
+
 - Modify: `code/shared/api/src/erasure/d1.ts` (split into two adapters)
 - Test: `code/shared/api/src/erasure/d1.test.ts` (split into core + audit fixtures)
 
 **Interfaces:**
+
 - Consumes: `ErasureAdapter` from `@indiecrafts/packages-shared-compliance/shared`; `fingerprintEmail` from `@indiecrafts/packages-shared-security/crypto`.
 - Produces:
   - `createCoreErasureAdapter(coreDb: D1Database, salt: string): ErasureAdapter` — name `"d1-core"`; owns `user_profiles`, `consent_events`.
@@ -158,7 +162,10 @@ it("core adapter pseudonymises user_profiles + consent_events", async () => {
   expect(res.store).toBe("d1-core");
   expect(res.anonymized.user_profiles).toBe(1);
   expect(res.anonymized.consent_events).toBeGreaterThanOrEqual(1);
-  const prof = await coreDb.prepare("SELECT email, anonymized FROM user_profiles WHERE user_id = ?").bind(USER).first();
+  const prof = await coreDb
+    .prepare("SELECT email, anonymized FROM user_profiles WHERE user_id = ?")
+    .bind(USER)
+    .first();
   expect(prof.email).toMatch(/@anonymized\.local$/);
   expect(prof.anonymized).toBe(1);
 });
@@ -166,11 +173,14 @@ it("core adapter pseudonymises user_profiles + consent_events", async () => {
 // Audit adapter resolves user_id FROM core, then scrubs audit.
 it("audit adapter resolves via core and scrubs session/security", async () => {
   const audit = createAuditErasureAdapter(auditDb, coreDb, SALT);
-  await audit.anonymize(EMAIL);       // security_events high/critical → fingerprint
+  await audit.anonymize(EMAIL); // security_events high/critical → fingerprint
   const del = await audit.delete(EMAIL); // session_events + low/med security deleted
   expect(del.store).toBe("d1-audit");
   expect(del.deleted.session_events).toBeGreaterThanOrEqual(1);
-  const sess = await auditDb.prepare("SELECT COUNT(*) c FROM session_events WHERE user_id = ?").bind(USER).first();
+  const sess = await auditDb
+    .prepare("SELECT COUNT(*) c FROM session_events WHERE user_id = ?")
+    .bind(USER)
+    .first();
   expect(sess.c).toBe(0);
 });
 ```
@@ -181,46 +191,87 @@ it("audit adapter resolves via core and scrubs session/security", async () => {
 
 ```ts
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
-import type { ErasureAdapter, AdapterPreview, AdapterResult } from "@indiecrafts/packages-shared-compliance/shared";
+import type {
+  ErasureAdapter,
+  AdapterPreview,
+  AdapterResult,
+} from "@indiecrafts/packages-shared-compliance/shared";
 
 // Resolve the Clerk user_id + fingerprint for an email from core.user_profiles.
 // Falls back to a plaintext email match (a profile row can predate the fingerprint).
-export async function resolveSubject(coreDb: D1Database, email: string, salt: string) {
+export async function resolveSubject(
+  coreDb: D1Database,
+  email: string,
+  salt: string,
+) {
   const fp = await fingerprintEmail(email, salt);
   const row = await coreDb
-    .prepare("SELECT user_id FROM user_profiles WHERE email_fingerprint = ? OR LOWER(email) = ?")
+    .prepare(
+      "SELECT user_id FROM user_profiles WHERE email_fingerprint = ? OR LOWER(email) = ?",
+    )
     .bind(fp, email.toLowerCase().trim())
     .first<{ user_id: string }>();
   return { userId: row?.user_id ?? null, fp };
 }
 
 // CORE adapter — identity + consent (pseudonymise).
-export function createCoreErasureAdapter(coreDb: D1Database, salt: string): ErasureAdapter {
+export function createCoreErasureAdapter(
+  coreDb: D1Database,
+  salt: string,
+): ErasureAdapter {
   const countFor = async (sql: string, ...b: unknown[]) =>
-    (await coreDb.prepare(sql).bind(...b).first<{ c: number }>())?.c ?? 0;
+    (
+      await coreDb
+        .prepare(sql)
+        .bind(...b)
+        .first<{ c: number }>()
+    )?.c ?? 0;
   return {
     name: "d1-core",
     async findByEmail(email) {
       const { fp } = await resolveSubject(coreDb, email, salt);
-      const n = await countFor("SELECT COUNT(*) c FROM user_profiles WHERE email_fingerprint = ?", fp);
+      const n = await countFor(
+        "SELECT COUNT(*) c FROM user_profiles WHERE email_fingerprint = ?",
+        fp,
+      );
       return { found: n > 0, detail: { user_profiles: n } };
     },
     async export(email) {
       const { userId, fp } = await resolveSubject(coreDb, email, salt);
-      const all = async (sql: string, ...b: unknown[]) => (await coreDb.prepare(sql).bind(...b).all()).results;
+      const all = async (sql: string, ...b: unknown[]) =>
+        (
+          await coreDb
+            .prepare(sql)
+            .bind(...b)
+            .all()
+        ).results;
       return {
-        user_profiles: await all("SELECT * FROM user_profiles WHERE email_fingerprint = ?", fp),
-        consent_events: await all("SELECT * FROM consent_events WHERE subject_id = ? OR email_fingerprint = ?", userId ?? "", fp),
+        user_profiles: await all(
+          "SELECT * FROM user_profiles WHERE email_fingerprint = ?",
+          fp,
+        ),
+        consent_events: await all(
+          "SELECT * FROM consent_events WHERE subject_id = ? OR email_fingerprint = ?",
+          userId ?? "",
+          fp,
+        ),
       };
     },
     async preview(email): Promise<AdapterPreview> {
       const { userId, fp } = await resolveSubject(coreDb, email, salt);
-      if (!userId) return { store: "d1-core", wouldAnonymize: {}, wouldDelete: {} };
+      if (!userId)
+        return { store: "d1-core", wouldAnonymize: {}, wouldDelete: {} };
       return {
         store: "d1-core",
         wouldAnonymize: {
-          user_profiles: await countFor("SELECT COUNT(*) c FROM user_profiles WHERE email_fingerprint = ?", fp),
-          consent_events: await countFor("SELECT COUNT(*) c FROM consent_events WHERE subject_id = ?", userId),
+          user_profiles: await countFor(
+            "SELECT COUNT(*) c FROM user_profiles WHERE email_fingerprint = ?",
+            fp,
+          ),
+          consent_events: await countFor(
+            "SELECT COUNT(*) c FROM consent_events WHERE subject_id = ?",
+            userId,
+          ),
         },
         wouldDelete: {},
       };
@@ -229,12 +280,30 @@ export function createCoreErasureAdapter(coreDb: D1Database, salt: string): Eras
       const { userId, fp } = await resolveSubject(coreDb, email, salt);
       if (!userId) return { store: "d1-core", anonymized: {}, deleted: {} };
       const p = await coreDb
-        .prepare("UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?")
-        .bind(`deleted_${userId}@anonymized.local`, "Deleted User", new Date().toISOString(), userId).run();
+        .prepare(
+          "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE user_id = ?",
+        )
+        .bind(
+          `deleted_${userId}@anonymized.local`,
+          "Deleted User",
+          new Date().toISOString(),
+          userId,
+        )
+        .run();
       const con = await coreDb
-        .prepare("UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?")
-        .bind(fp, userId).run();
-      return { store: "d1-core", anonymized: { user_profiles: p.meta?.changes ?? 0, consent_events: con.meta?.changes ?? 0 }, deleted: {} };
+        .prepare(
+          "UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?",
+        )
+        .bind(fp, userId)
+        .run();
+      return {
+        store: "d1-core",
+        anonymized: {
+          user_profiles: p.meta?.changes ?? 0,
+          consent_events: con.meta?.changes ?? 0,
+        },
+        deleted: {},
+      };
     },
     async delete() {
       return { store: "d1-core", anonymized: {}, deleted: {} }; // core pseudonymises; nothing hard-deleted
@@ -243,36 +312,68 @@ export function createCoreErasureAdapter(coreDb: D1Database, salt: string): Eras
 }
 
 // AUDIT adapter — session/security firehose. Reads core to resolve user_id, writes audit.
-export function createAuditErasureAdapter(auditDb: D1Database, coreDb: D1Database, salt: string): ErasureAdapter {
+export function createAuditErasureAdapter(
+  auditDb: D1Database,
+  coreDb: D1Database,
+  salt: string,
+): ErasureAdapter {
   const countFor = async (sql: string, ...b: unknown[]) =>
-    (await auditDb.prepare(sql).bind(...b).first<{ c: number }>())?.c ?? 0;
+    (
+      await auditDb
+        .prepare(sql)
+        .bind(...b)
+        .first<{ c: number }>()
+    )?.c ?? 0;
   return {
     name: "d1-audit",
     async findByEmail(email) {
       const { userId } = await resolveSubject(coreDb, email, salt);
       if (!userId) return { found: false };
-      const n = await countFor("SELECT COUNT(*) c FROM session_events WHERE user_id = ?", userId);
+      const n = await countFor(
+        "SELECT COUNT(*) c FROM session_events WHERE user_id = ?",
+        userId,
+      );
       return { found: n > 0, detail: { session_events: n } };
     },
     async export(email) {
       const { userId } = await resolveSubject(coreDb, email, salt);
-      const all = async (sql: string, ...b: unknown[]) => (await auditDb.prepare(sql).bind(...b).all()).results;
+      const all = async (sql: string, ...b: unknown[]) =>
+        (
+          await auditDb
+            .prepare(sql)
+            .bind(...b)
+            .all()
+        ).results;
       return {
-        session_events: userId ? await all("SELECT * FROM session_events WHERE user_id = ?", userId) : [],
-        security_events: userId ? await all("SELECT * FROM security_events WHERE user_id = ?", userId) : [],
+        session_events: userId
+          ? await all("SELECT * FROM session_events WHERE user_id = ?", userId)
+          : [],
+        security_events: userId
+          ? await all("SELECT * FROM security_events WHERE user_id = ?", userId)
+          : [],
       };
     },
     async preview(email): Promise<AdapterPreview> {
       const { userId } = await resolveSubject(coreDb, email, salt);
-      if (!userId) return { store: "d1-audit", wouldAnonymize: {}, wouldDelete: {} };
+      if (!userId)
+        return { store: "d1-audit", wouldAnonymize: {}, wouldDelete: {} };
       return {
         store: "d1-audit",
         wouldAnonymize: {
-          security_events_high: await countFor("SELECT COUNT(*) c FROM security_events WHERE user_id = ? AND severity IN ('high','critical')", userId),
+          security_events_high: await countFor(
+            "SELECT COUNT(*) c FROM security_events WHERE user_id = ? AND severity IN ('high','critical')",
+            userId,
+          ),
         },
         wouldDelete: {
-          session_events: await countFor("SELECT COUNT(*) c FROM session_events WHERE user_id = ?", userId),
-          security_events_deleted: await countFor("SELECT COUNT(*) c FROM security_events WHERE user_id = ? AND severity NOT IN ('high','critical')", userId),
+          session_events: await countFor(
+            "SELECT COUNT(*) c FROM session_events WHERE user_id = ?",
+            userId,
+          ),
+          security_events_deleted: await countFor(
+            "SELECT COUNT(*) c FROM security_events WHERE user_id = ? AND severity NOT IN ('high','critical')",
+            userId,
+          ),
         },
       };
     },
@@ -280,18 +381,38 @@ export function createAuditErasureAdapter(auditDb: D1Database, coreDb: D1Databas
       const { userId, fp } = await resolveSubject(coreDb, email, salt);
       if (!userId) return { store: "d1-audit", anonymized: {}, deleted: {} };
       const sec = await auditDb
-        .prepare("UPDATE security_events SET user_id = ? WHERE user_id = ? AND severity IN ('high','critical')")
-        .bind(fp, userId).run();
-      return { store: "d1-audit", anonymized: { security_events: sec.meta?.changes ?? 0 }, deleted: {} };
+        .prepare(
+          "UPDATE security_events SET user_id = ? WHERE user_id = ? AND severity IN ('high','critical')",
+        )
+        .bind(fp, userId)
+        .run();
+      return {
+        store: "d1-audit",
+        anonymized: { security_events: sec.meta?.changes ?? 0 },
+        deleted: {},
+      };
     },
     async delete(email): Promise<AdapterResult> {
       const { userId } = await resolveSubject(coreDb, email, salt);
       if (!userId) return { store: "d1-audit", anonymized: {}, deleted: {} };
-      const ses = await auditDb.prepare("DELETE FROM session_events WHERE user_id = ?").bind(userId).run();
+      const ses = await auditDb
+        .prepare("DELETE FROM session_events WHERE user_id = ?")
+        .bind(userId)
+        .run();
       const sec = await auditDb
-        .prepare("DELETE FROM security_events WHERE user_id = ? AND severity NOT IN ('high','critical')")
-        .bind(userId).run();
-      return { store: "d1-audit", anonymized: {}, deleted: { session_events: ses.meta?.changes ?? 0, security_events: sec.meta?.changes ?? 0 } };
+        .prepare(
+          "DELETE FROM security_events WHERE user_id = ? AND severity NOT IN ('high','critical')",
+        )
+        .bind(userId)
+        .run();
+      return {
+        store: "d1-audit",
+        anonymized: {},
+        deleted: {
+          session_events: ses.meta?.changes ?? 0,
+          security_events: sec.meta?.changes ?? 0,
+        },
+      };
     },
   };
 }
@@ -313,11 +434,13 @@ git commit -m "refactor(erasure): split the D1 adapter into core + audit (audit 
 ## Task 3: Wire the two adapters into the erasure/export composition
 
 **Files:**
+
 - Modify: `code/shared/api/src/erasure/confirm.ts` (`defaultAdapters`, ~line 83)
 - Modify: `code/shared/api/src/erasure/self.ts` (its adapter array)
 - Test: `code/shared/api/src/erasure/confirm.test.ts` (completeness receipt)
 
 **Interfaces:**
+
 - Consumes: `createCoreErasureAdapter`, `createAuditErasureAdapter` from `./d1` (Task 2).
 
 - [ ] **Step 1: Update the imports + arrays.** In `confirm.ts` replace `import { createD1ErasureAdapter } from "./d1";` with `import { createCoreErasureAdapter, createAuditErasureAdapter } from "./d1";`, and in `defaultAdapters` replace the single `createD1ErasureAdapter(env.DB!, env.GDPR_FINGERPRINT_SALT!)` line with:
@@ -345,6 +468,7 @@ git commit -m "refactor(erasure): compose core + audit D1 adapters in the erasur
 ## Task 4: Binding sweep — route core-table queries to `CORE_DB`
 
 **Files (each is a sub-commit; verify tsc + tests after each):**
+
 - `code/shared/api/src/settings-cache.ts` — `site_settings` → `CORE_DB`
 - `code/shared/api/src/data-request/route.ts` — `data_requests` → `CORE_DB`
 - `code/shared/api/src/erasure/request.ts` — `erasure_requests` → `CORE_DB`
@@ -363,6 +487,7 @@ cd code/shared/api/src
 # No core table may still be read/written through env.DB anywhere:
 grep -rnE "user_profiles|consent_events|data_requests|erasure_requests|export_requests|site_settings" . --include='*.ts' | grep -v "\.test\." | grep -iE "\bDB\b" | grep -v CORE_DB
 ```
+
 Expected: **no output** (every core-table query now uses `CORE_DB`). Any line printed is a missed site — fix it.
 
 - [ ] **Step 3: Verify + commit** (once per file, or grouped after Step 2 passes).
@@ -379,10 +504,12 @@ git commit -m "refactor(api): route core-table queries to CORE_DB (binding sweep
 ## Task 5: Cron — route retention/settings passes per binding
 
 **Files:**
+
 - Modify: `code/shared/cron/src/index.ts`
 - Test: the cron tests beside it
 
 **Interfaces:**
+
 - Consumes: `Env.CORE_DB`, `Env.DB`.
 
 - [ ] **Step 1: Add the binding + route the passes.** Add `CORE_DB?: D1Database;` to the cron `Env`. Then route: `loadSettings` (reads `site_settings`), the erasure-SLA flag (`erasure_requests`), the export-cleanup (`export_requests`), and the `consent_events` retention purge → `env.CORE_DB`; the `session_events`/`security_events`/`admin_audit`/`csp_reports` retention purges → `env.DB`. Update the `Env` doc-comment (currently says "the same database... admin_audit, session_events...") to name the two DBs.
@@ -403,6 +530,7 @@ git commit -m "refactor(cron): route retention + settings passes to CORE_DB / DB
 ## Task 6: Docs, briefs, changelog
 
 **Files:**
+
 - Modify: `code/shared/api/.claude/CLAUDE.md`, `code/shared/cron/.claude/CLAUDE.md`, `code/shared/db/.claude/CLAUDE.md`
 - Modify: `code/docs/apps/web/config/{data-retention,security-hardening,settings}.md`, `code/docs/apps/web/setup/*` (the "create the D1" step → "create two D1s")
 - Modify: `code/docs/CHANGELOG.md` (or the app CHANGELOG, per the change's home)

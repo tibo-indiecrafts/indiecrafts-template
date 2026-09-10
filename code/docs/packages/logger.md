@@ -109,7 +109,7 @@ if (getCurrentEnvironment() === "production")
 Wired today at the `code/shared/api` + `code/shared/cron` Workers and the website's
 `instrumentation.ts` (server boot). The gate is self-correcting: if prod is mis-detected the transport is
 skipped, but then the console is not silent, so the normal reporter logs the error anyway — Workers Logs
-gets it either way, once. Client-side errors (browser `error.tsx`, the Electron renderer) stay
+gets it either way, once. Client-side errors (browser `error.tsx`) stay
 client-side; forwarding those to Cloudflare (a POST to an ingestion Worker) is a later step.
 
 ## Sentry — opt-in transport

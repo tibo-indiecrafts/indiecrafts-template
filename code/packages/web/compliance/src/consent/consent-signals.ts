@@ -1,6 +1,6 @@
 /**
  * Re-export shim — the pure consent constants + types moved to the portable brick
- * `@indiecrafts/packages-shared-compliance/shared` (so the Expo + Electron shells share
+ * `@indiecrafts/packages-shared-compliance/shared` (so the Expo shells share
  * them). This file keeps the historical import path
  * (`@indiecrafts/packages-web-compliance/consent/consent-signals`) working for every
  * existing importer (`CookieBanner`, `CookiePreferences`, `CookieDeclaration`, the

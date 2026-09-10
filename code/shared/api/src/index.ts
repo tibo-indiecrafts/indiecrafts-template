@@ -54,8 +54,8 @@ if (getCurrentEnvironment() === "production")
 
 /**
  * HTTP API worker — a **bare** Cloudflare Worker (no Next/OpenNext). The deploy
- * shell for the non-web clients (mobile, hybrid). Serves `POST /v1/events` (the audit +
- * session-event sink → the EU D1). The AI agent moved to its own `shared/agent` Worker.
+ * shell for the non-web clients (mobile). Serves `POST /v1/events` (the audit +
+ * session-event sink → the EU D1).
  * Real logic lives in bricks imported `workspace:*`. Run `pnpm cf-typegen` after editing
  * bindings in wrangler.toml.
  *
@@ -138,12 +138,9 @@ export interface Env {
   BACKUP_RETENTION_DAYS?: string;
 }
 
-// Browser-context origins allowed to READ the response (dev + the electron renderer
-// dev server). Native (RN) and the electron MAIN process send no Origin and need no CORS.
-const ALLOWED_ORIGINS = new Set([
-  "http://localhost:3000",
-  "http://localhost:5173",
-]);
+// Browser-context origins allowed to READ the response (dev). Native (RN) sends no
+// Origin and needs no CORS.
+const ALLOWED_ORIGINS = new Set(["http://localhost:3000"]);
 const BODY_MAX = 4000;
 
 export function corsHeaders(origin: string | null): Record<string, string> {
@@ -1142,7 +1139,7 @@ export default {
     }
 
     // ── Geo → consent mode — GET /v1/geo (PUBLIC; the native surfaces' geo signal) ──
-    // Echoes the caller's edge country + the resolved consent mode so mobile/hybrid (which
+    // Echoes the caller's edge country + the resolved consent mode so the native surfaces (which
     // have no CF headers of their own) can geo-gate their consent banner. The web surfaces
     // read `cf-ipcountry` server-side directly; this is only for the native clients. No
     // bearer (no PII — just the country), no DB. Unknown geo → the resolver returns opt-in.
@@ -1168,7 +1165,7 @@ export default {
 
     // ── Announcements — GET /v1/announcements (PUBLIC; banner + toast per surface) ──
     // Serves the same Sanity content the website reads server-side, to the client-gated
-    // surfaces (app, hybrid, mobile). No bearer: it is public marketing content.
+    // surfaces (app, mobile). No bearer: it is public marketing content.
     if (url.pathname === "/v1/announcements") {
       if (request.method === "OPTIONS")
         return new Response(null, { status: 204, headers: PUBLIC_CORS });

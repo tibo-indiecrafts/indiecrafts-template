@@ -29,6 +29,7 @@
 ### Task 1: The orchestrator + `ErasureAdapter` interface + dry-run
 
 **Files:**
+
 - Create: `code/packages/shared/compliance/src/shared/erasure.ts`
 - Modify: `code/packages/shared/compliance/src/shared/index.ts` (barrel export)
 - Create: `code/packages/shared/compliance/vitest.config.ts` (currently missing — needed for the happy-dom pool + server-only stub)
@@ -36,7 +37,9 @@
 - Modify: `code/packages/CHANGELOG.md` — **SKIP** (pre-existing-dirty; deferred, see Global Constraints). Note the changelog entry in the report instead.
 
 **Interfaces:**
+
 - Produces (consumed by Tasks 2–5 + Phase 4):
+
 ```ts
 export interface ErasureAdapter {
   readonly name: string;
@@ -46,15 +49,49 @@ export interface ErasureAdapter {
   anonymize(email: string): Promise<AdapterResult>;
   delete(email: string): Promise<AdapterResult>;
 }
-export interface AdapterMatch { readonly found: boolean; readonly detail?: Record<string, number>; }
-export interface AdapterPreview { readonly store: string; readonly wouldAnonymize: Record<string, number>; readonly wouldDelete: Record<string, number>; }
-export interface AdapterResult { readonly store: string; readonly anonymized: Record<string, number>; readonly deleted: Record<string, number>; }
+export interface AdapterMatch {
+  readonly found: boolean;
+  readonly detail?: Record<string, number>;
+}
+export interface AdapterPreview {
+  readonly store: string;
+  readonly wouldAnonymize: Record<string, number>;
+  readonly wouldDelete: Record<string, number>;
+}
+export interface AdapterResult {
+  readonly store: string;
+  readonly anonymized: Record<string, number>;
+  readonly deleted: Record<string, number>;
+}
 export type ErasureMode = "erase" | "anonymize";
-export interface ErasureReceipt { readonly email_fingerprint: string | null; readonly mode: ErasureMode; readonly dryRun: boolean; readonly ts: string; readonly stores: Array<AdapterResult | AdapterPreview>; readonly errors: Array<{ store: string; error: string }>; }
-export interface ExportBundle { readonly ts: string; readonly stores: Record<string, unknown>; }
-export function runErasure(adapters: ErasureAdapter[], email: string, opts: { mode: ErasureMode; dryRun: boolean; ts: string; fingerprint?: string | null }): Promise<ErasureReceipt>;
-export function runExport(adapters: ErasureAdapter[], email: string): Promise<ExportBundle>;
+export interface ErasureReceipt {
+  readonly email_fingerprint: string | null;
+  readonly mode: ErasureMode;
+  readonly dryRun: boolean;
+  readonly ts: string;
+  readonly stores: Array<AdapterResult | AdapterPreview>;
+  readonly errors: Array<{ store: string; error: string }>;
+}
+export interface ExportBundle {
+  readonly ts: string;
+  readonly stores: Record<string, unknown>;
+}
+export function runErasure(
+  adapters: ErasureAdapter[],
+  email: string,
+  opts: {
+    mode: ErasureMode;
+    dryRun: boolean;
+    ts: string;
+    fingerprint?: string | null;
+  },
+): Promise<ErasureReceipt>;
+export function runExport(
+  adapters: ErasureAdapter[],
+  email: string,
+): Promise<ExportBundle>;
 ```
+
 - `ts` and `fingerprint` are injected (callers pass them) — the orchestrator never calls `Date.now()` or hashes (keeps it pure + deterministic in tests).
 
 - [ ] **Step 1: Add the vitest config**
@@ -81,9 +118,21 @@ function fakeAdapter(name: string): ErasureAdapter {
     name,
     findByEmail: vi.fn(async () => ({ found: true, detail: { rows: 1 } })),
     export: vi.fn(async () => ({ [name]: "data" })),
-    preview: vi.fn(async () => ({ store: name, wouldAnonymize: { profile: 1 }, wouldDelete: { events: 2 } })),
-    anonymize: vi.fn(async () => ({ store: name, anonymized: { profile: 1 }, deleted: {} })),
-    delete: vi.fn(async () => ({ store: name, anonymized: {}, deleted: { events: 2 } })),
+    preview: vi.fn(async () => ({
+      store: name,
+      wouldAnonymize: { profile: 1 },
+      wouldDelete: { events: 2 },
+    })),
+    anonymize: vi.fn(async () => ({
+      store: name,
+      anonymized: { profile: 1 },
+      deleted: {},
+    })),
+    delete: vi.fn(async () => ({
+      store: name,
+      anonymized: {},
+      deleted: { events: 2 },
+    })),
   };
 }
 
@@ -93,7 +142,11 @@ describe("runErasure", () => {
   it("erase mode calls anonymize AND delete on every adapter; receipt enumerates all", async () => {
     const a = fakeAdapter("clerk");
     const b = fakeAdapter("d1");
-    const r = await runErasure([a, b], "x@y.com", { mode: "erase", dryRun: false, ...OPTS });
+    const r = await runErasure([a, b], "x@y.com", {
+      mode: "erase",
+      dryRun: false,
+      ...OPTS,
+    });
     expect(a.anonymize).toHaveBeenCalledOnce();
     expect(a.delete).toHaveBeenCalledOnce();
     expect(r.stores.map((s) => s.store).sort()).toEqual(["clerk", "d1"]);
@@ -104,14 +157,22 @@ describe("runErasure", () => {
 
   it("anonymize mode calls anonymize but NOT delete", async () => {
     const a = fakeAdapter("d1");
-    await runErasure([a], "x@y.com", { mode: "anonymize", dryRun: false, ...OPTS });
+    await runErasure([a], "x@y.com", {
+      mode: "anonymize",
+      dryRun: false,
+      ...OPTS,
+    });
     expect(a.anonymize).toHaveBeenCalledOnce();
     expect(a.delete).not.toHaveBeenCalled();
   });
 
   it("dryRun calls preview only — never anonymize/delete", async () => {
     const a = fakeAdapter("d1");
-    const r = await runErasure([a], "x@y.com", { mode: "erase", dryRun: true, ...OPTS });
+    const r = await runErasure([a], "x@y.com", {
+      mode: "erase",
+      dryRun: true,
+      ...OPTS,
+    });
     expect(a.preview).toHaveBeenCalledOnce();
     expect(a.anonymize).not.toHaveBeenCalled();
     expect(a.delete).not.toHaveBeenCalled();
@@ -121,8 +182,14 @@ describe("runErasure", () => {
   it("captures a failing adapter without aborting the others", async () => {
     const ok = fakeAdapter("d1");
     const bad = fakeAdapter("sanity");
-    (bad.anonymize as ReturnType<typeof vi.fn>).mockRejectedValue(new Error("boom"));
-    const r = await runErasure([ok, bad], "x@y.com", { mode: "erase", dryRun: false, ...OPTS });
+    (bad.anonymize as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error("boom"),
+    );
+    const r = await runErasure([ok, bad], "x@y.com", {
+      mode: "erase",
+      dryRun: false,
+      ...OPTS,
+    });
     expect(ok.anonymize).toHaveBeenCalledOnce(); // sibling still ran
     expect(r.errors).toEqual([{ store: "sanity", error: "Error" }]);
   });
@@ -292,11 +359,13 @@ git commit --no-verify -m "feat(compliance): store-agnostic erasure orchestrator
 ### Task 2: D1 erasure adapter (real)
 
 **Files:**
+
 - Create: `code/shared/api/src/erasure/d1.ts`
 - Test: `code/shared/api/src/erasure/d1.test.ts`
 - Modify: `code/shared/api/CHANGELOG.md`
 
 **Interfaces:**
+
 - Consumes: `ErasureAdapter` (Task 1), `fingerprintEmail`, a `D1Database`, the salt.
 - Produces: `createD1ErasureAdapter(db: D1Database, salt: string): ErasureAdapter` (name `"d1"`). Consumed by Task 5 (integration) + Phase 4.
 
@@ -319,19 +388,29 @@ async function seed() {
   const now = new Date(0).toISOString();
   await env.DB.prepare(
     "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at) VALUES (?, ?, ?, ?, ?)",
-  ).bind(USER, EMAIL, "Real Name", fp, now).run();
+  )
+    .bind(USER, EMAIL, "Real Name", fp, now)
+    .run();
   await env.DB.prepare(
     "INSERT INTO session_events (ts, surface, user_id) VALUES (?, 'website', ?)",
-  ).bind(now, USER).run();
+  )
+    .bind(now, USER)
+    .run();
   await env.DB.prepare(
     "INSERT INTO security_events (ts, event_type, severity, user_id) VALUES (?, 'failed_login', 'low', ?)",
-  ).bind(now, USER).run();
+  )
+    .bind(now, USER)
+    .run();
   await env.DB.prepare(
     "INSERT INTO security_events (ts, event_type, severity, user_id) VALUES (?, 'credential_stuffing', 'high', ?)",
-  ).bind(now, USER).run();
+  )
+    .bind(now, USER)
+    .run();
   await env.DB.prepare(
     "INSERT INTO consent_events (ts, subject_type, subject_id, email_fingerprint, consent_type, granted, policy_version, surface, idempotency_key) VALUES (?, 'user', ?, ?, 'cookie_analytics', 1, 'v1', 'website', ?)",
-  ).bind(now, USER, fp, `${USER}:k`).run();
+  )
+    .bind(now, USER, fp, `${USER}:k`)
+    .run();
   return fp;
 }
 
@@ -352,16 +431,24 @@ describe("D1 erasure adapter", () => {
     const a = createD1ErasureAdapter(env.DB, SALT);
     await a.anonymize(EMAIL);
 
-    const prof = await env.DB.prepare("SELECT * FROM user_profiles WHERE user_id=?").bind(USER).first<Record<string, unknown>>();
+    const prof = await env.DB.prepare(
+      "SELECT * FROM user_profiles WHERE user_id=?",
+    )
+      .bind(USER)
+      .first<Record<string, unknown>>();
     expect(prof?.email).toBe(`deleted_${USER}@anonymized.local`);
     expect(prof?.full_name).toBe("Deleted User");
     expect(prof?.anonymized).toBe(1);
     expect(prof?.email_fingerprint).toBe(fp); // retained
 
-    const high = await env.DB.prepare("SELECT user_id FROM security_events WHERE severity='high'").first<{ user_id: string }>();
+    const high = await env.DB.prepare(
+      "SELECT user_id FROM security_events WHERE severity='high'",
+    ).first<{ user_id: string }>();
     expect(high?.user_id).toBe(fp); // pseudonymised to the fingerprint
 
-    const consent = await env.DB.prepare("SELECT subject_id, subject_type FROM consent_events").first<Record<string, unknown>>();
+    const consent = await env.DB.prepare(
+      "SELECT subject_id, subject_type FROM consent_events",
+    ).first<Record<string, unknown>>();
     expect(consent?.subject_id).toBe(fp);
     expect(consent?.subject_type).toBe("visitor");
   });
@@ -369,11 +456,19 @@ describe("D1 erasure adapter", () => {
   it("delete removes all session events + low/medium security events; retains high/critical", async () => {
     const a = createD1ErasureAdapter(env.DB, SALT);
     await a.delete(EMAIL);
-    const sessions = await env.DB.prepare("SELECT COUNT(*) c FROM session_events WHERE user_id=?").bind(USER).first<{ c: number }>();
+    const sessions = await env.DB.prepare(
+      "SELECT COUNT(*) c FROM session_events WHERE user_id=?",
+    )
+      .bind(USER)
+      .first<{ c: number }>();
     expect(sessions?.c).toBe(0);
-    const low = await env.DB.prepare("SELECT COUNT(*) c FROM security_events WHERE severity='low'").first<{ c: number }>();
+    const low = await env.DB.prepare(
+      "SELECT COUNT(*) c FROM security_events WHERE severity='low'",
+    ).first<{ c: number }>();
     expect(low?.c).toBe(0);
-    const high = await env.DB.prepare("SELECT COUNT(*) c FROM security_events WHERE severity='high'").first<{ c: number }>();
+    const high = await env.DB.prepare(
+      "SELECT COUNT(*) c FROM security_events WHERE severity='high'",
+    ).first<{ c: number }>();
     expect(high?.c).toBe(1); // retained (pseudonymised by anonymize, not deleted)
   });
 
@@ -383,7 +478,11 @@ describe("D1 erasure adapter", () => {
     expect(p.store).toBe("d1");
     expect(p.wouldDelete.session_events).toBe(1);
     // nothing changed
-    const prof = await env.DB.prepare("SELECT email FROM user_profiles WHERE user_id=?").bind(USER).first<{ email: string }>();
+    const prof = await env.DB.prepare(
+      "SELECT email FROM user_profiles WHERE user_id=?",
+    )
+      .bind(USER)
+      .first<{ email: string }>();
     expect(prof?.email).toBe(EMAIL);
   });
 
@@ -423,7 +522,9 @@ export function createD1ErasureAdapter(
   salt: string,
 ): ErasureAdapter {
   // Resolve the Clerk user_id (if any) + the fingerprint for this email.
-  async function resolve(email: string): Promise<{ userId: string | null; fp: string }> {
+  async function resolve(
+    email: string,
+  ): Promise<{ userId: string | null; fp: string }> {
     const fp = await fingerprintEmail(email, salt);
     const row = await db
       .prepare("SELECT user_id FROM user_profiles WHERE email_fingerprint = ?")
@@ -432,8 +533,14 @@ export function createD1ErasureAdapter(
     return { userId: row?.user_id ?? null, fp };
   }
 
-  const countFor = async (sql: string, ...binds: unknown[]): Promise<number> => {
-    const r = await db.prepare(sql).bind(...binds).first<{ c: number }>();
+  const countFor = async (
+    sql: string,
+    ...binds: unknown[]
+  ): Promise<number> => {
+    const r = await db
+      .prepare(sql)
+      .bind(...binds)
+      .first<{ c: number }>();
     return r?.c ?? 0;
   };
 
@@ -452,50 +559,92 @@ export function createD1ErasureAdapter(
     async export(email) {
       const { userId, fp } = await resolve(email);
       const all = async (sql: string, ...b: unknown[]) =>
-        (await db.prepare(sql).bind(...b).all()).results;
+        (
+          await db
+            .prepare(sql)
+            .bind(...b)
+            .all()
+        ).results;
       return {
-        user_profiles: await all("SELECT * FROM user_profiles WHERE email_fingerprint = ?", fp),
-        session_events: userId ? await all("SELECT * FROM session_events WHERE user_id = ?", userId) : [],
-        security_events: userId ? await all("SELECT * FROM security_events WHERE user_id = ?", userId) : [],
-        consent_events: await all("SELECT * FROM consent_events WHERE subject_id = ? OR email_fingerprint = ?", userId ?? "", fp),
+        user_profiles: await all(
+          "SELECT * FROM user_profiles WHERE email_fingerprint = ?",
+          fp,
+        ),
+        session_events: userId
+          ? await all("SELECT * FROM session_events WHERE user_id = ?", userId)
+          : [],
+        security_events: userId
+          ? await all("SELECT * FROM security_events WHERE user_id = ?", userId)
+          : [],
+        consent_events: await all(
+          "SELECT * FROM consent_events WHERE subject_id = ? OR email_fingerprint = ?",
+          userId ?? "",
+          fp,
+        ),
       };
     },
 
     async preview(email) {
       const { userId, fp } = await resolve(email);
-      const uid = userId ?? " "; // never matches when null
+      const uid = userId ?? "�"; // never matches when null
       return {
         store: "d1",
         wouldAnonymize: {
-          user_profiles: await countFor("SELECT COUNT(*) c FROM user_profiles WHERE email_fingerprint = ?", fp),
-          security_events_high: await countFor("SELECT COUNT(*) c FROM security_events WHERE user_id = ? AND severity IN ('high','critical')", uid),
-          consent_events: await countFor("SELECT COUNT(*) c FROM consent_events WHERE subject_id = ?", uid),
+          user_profiles: await countFor(
+            "SELECT COUNT(*) c FROM user_profiles WHERE email_fingerprint = ?",
+            fp,
+          ),
+          security_events_high: await countFor(
+            "SELECT COUNT(*) c FROM security_events WHERE user_id = ? AND severity IN ('high','critical')",
+            uid,
+          ),
+          consent_events: await countFor(
+            "SELECT COUNT(*) c FROM consent_events WHERE subject_id = ?",
+            uid,
+          ),
         },
         wouldDelete: {
-          session_events: await countFor("SELECT COUNT(*) c FROM session_events WHERE user_id = ?", uid),
-          security_events_low: await countFor("SELECT COUNT(*) c FROM security_events WHERE user_id = ? AND severity IN ('low','medium')", uid),
+          session_events: await countFor(
+            "SELECT COUNT(*) c FROM session_events WHERE user_id = ?",
+            uid,
+          ),
+          security_events_low: await countFor(
+            "SELECT COUNT(*) c FROM security_events WHERE user_id = ? AND severity IN ('low','medium')",
+            uid,
+          ),
         },
       };
     },
 
     async anonymize(email) {
       const { userId, fp } = await resolve(email);
-      const uid = userId ?? " ";
+      const uid = userId ?? "�";
       const p = await db
         .prepare(
           "UPDATE user_profiles SET email = ?, full_name = ?, deleted_at = ?, anonymized = 1 WHERE email_fingerprint = ?",
         )
-        .bind(`deleted_${userId ?? fp}@anonymized.local`, "Deleted User", new Date(0).toISOString() === "" ? "" : new Date(Date.parse("1970-01-01")).toISOString(), fp)
+        .bind(
+          `deleted_${userId ?? fp}@anonymized.local`,
+          "Deleted User",
+          new Date(0).toISOString() === ""
+            ? ""
+            : new Date(Date.parse("1970-01-01")).toISOString(),
+          fp,
+        )
         .run();
       // NOTE: pass a real timestamp — replace the placeholder above with an
       // injected `now` param if the caller needs it; for the adapter a fresh
       // ISO string is fine. Use `new Date().toISOString()` here.
       const sec = await db
-        .prepare("UPDATE security_events SET user_id = ? WHERE user_id = ? AND severity IN ('high','critical')")
+        .prepare(
+          "UPDATE security_events SET user_id = ? WHERE user_id = ? AND severity IN ('high','critical')",
+        )
         .bind(fp, uid)
         .run();
       const con = await db
-        .prepare("UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?")
+        .prepare(
+          "UPDATE consent_events SET subject_id = ?, subject_type = 'visitor' WHERE subject_id = ?",
+        )
         .bind(fp, uid)
         .run();
       return {
@@ -511,9 +660,17 @@ export function createD1ErasureAdapter(
 
     async delete(email) {
       const { userId } = await resolve(email);
-      const uid = userId ?? " ";
-      const ses = await db.prepare("DELETE FROM session_events WHERE user_id = ?").bind(uid).run();
-      const sec = await db.prepare("DELETE FROM security_events WHERE user_id = ? AND severity IN ('low','medium')").bind(uid).run();
+      const uid = userId ?? "�";
+      const ses = await db
+        .prepare("DELETE FROM session_events WHERE user_id = ?")
+        .bind(uid)
+        .run();
+      const sec = await db
+        .prepare(
+          "DELETE FROM security_events WHERE user_id = ? AND severity IN ('low','medium')",
+        )
+        .bind(uid)
+        .run();
       return {
         store: "d1",
         anonymized: {},
@@ -547,10 +704,12 @@ git commit --no-verify -m "feat(compliance): D1 erasure adapter"
 ### Task 3: Clerk erasure adapter (dependency-injected)
 
 **Files:**
+
 - Create: `code/shared/api/src/erasure/clerk.ts`
 - Test: `code/shared/api/src/erasure/clerk.test.ts`
 
 **Interfaces:**
+
 - Produces: `interface ClerkErasureClient { findUserIdByEmail(email): Promise<string | null>; exportUser(userId): Promise<unknown>; deleteUser(userId): Promise<void>; }` and `createClerkErasureAdapter(client: ClerkErasureClient): ErasureAdapter` (name `"clerk"`). The real `ClerkErasureClient` (dynamic `import("@clerk/backend")` + `CLERK_SECRET_KEY`) is Phase 4 — this task only defines the interface + adapter + mock tests.
 
 - [ ] **Step 1: Write the failing test**
@@ -650,7 +809,11 @@ export function createClerkErasureAdapter(
     },
     async preview(email) {
       const id = await client.findUserIdByEmail(email);
-      return { store: "clerk", wouldAnonymize: {}, wouldDelete: { clerk_user: id ? 1 : 0 } };
+      return {
+        store: "clerk",
+        wouldAnonymize: {},
+        wouldDelete: { clerk_user: id ? 1 : 0 },
+      };
     },
     async anonymize() {
       return { store: "clerk", anonymized: {}, deleted: {} };
@@ -658,7 +821,11 @@ export function createClerkErasureAdapter(
     async delete(email) {
       const id = await client.findUserIdByEmail(email);
       if (id) await client.deleteUser(id);
-      return { store: "clerk", anonymized: {}, deleted: { clerk_user: id ? 1 : 0 } };
+      return {
+        store: "clerk",
+        anonymized: {},
+        deleted: { clerk_user: id ? 1 : 0 },
+      };
     },
   };
 }
@@ -678,10 +845,12 @@ git commit --no-verify -m "feat(compliance): Clerk erasure adapter (DI, delete-i
 ### Task 4: Sanity erasure adapter (dependency-injected)
 
 **Files:**
+
 - Create: `code/shared/api/src/erasure/sanity.ts`
 - Test: `code/shared/api/src/erasure/sanity.test.ts`
 
 **Interfaces:**
+
 - Produces: `interface SanityErasureClient { findByEmail(type: string, email: string): Promise<Array<{ _id: string }>>; pseudonymise(id: string, patch: Record<string, unknown>): Promise<void>; }` and `createSanityErasureAdapter(client: SanityErasureClient, salt: string): ErasureAdapter` (name `"sanity"`), covering `subscriber` + `waitlistEntry`. Real client (raw-HTTP mutate or `writeClient`) is Phase 4.
 
 - [ ] **Step 1: Write the failing test**
@@ -694,7 +863,9 @@ import { describe, expect, it, vi } from "vitest";
 import { createSanityErasureAdapter, type SanityErasureClient } from "./sanity";
 
 const SALT = "s";
-function mockClient(docsByType: Record<string, Array<{ _id: string }>>): SanityErasureClient {
+function mockClient(
+  docsByType: Record<string, Array<{ _id: string }>>,
+): SanityErasureClient {
   return {
     findByEmail: vi.fn(async (type: string) => docsByType[type] ?? []),
     pseudonymise: vi.fn(async () => {}),
@@ -703,12 +874,21 @@ function mockClient(docsByType: Record<string, Array<{ _id: string }>>): SanityE
 
 describe("Sanity erasure adapter", () => {
   it("anonymize pseudonymises subscriber + waitlistEntry docs to the fingerprint", async () => {
-    const c = mockClient({ subscriber: [{ _id: "sub1" }], waitlistEntry: [{ _id: "w1" }] });
+    const c = mockClient({
+      subscriber: [{ _id: "sub1" }],
+      waitlistEntry: [{ _id: "w1" }],
+    });
     const a = createSanityErasureAdapter(c, SALT);
     const r = await a.anonymize("x@y.com");
     const fp = await fingerprintEmail("x@y.com", SALT);
-    expect(c.pseudonymise).toHaveBeenCalledWith("sub1", expect.objectContaining({ email: fp, erased: true }));
-    expect(c.pseudonymise).toHaveBeenCalledWith("w1", expect.objectContaining({ email: fp, erased: true }));
+    expect(c.pseudonymise).toHaveBeenCalledWith(
+      "sub1",
+      expect.objectContaining({ email: fp, erased: true }),
+    );
+    expect(c.pseudonymise).toHaveBeenCalledWith(
+      "w1",
+      expect.objectContaining({ email: fp, erased: true }),
+    );
     expect(r.anonymized.subscriber).toBe(1);
     expect(r.anonymized.waitlistEntry).toBe(1);
   });
@@ -779,7 +959,9 @@ export function createSanityErasureAdapter(
     async preview(e) {
       const wouldAnonymize: Record<string, number> = {};
       for (const type of SANITY_ERASURE_TYPES)
-        wouldAnonymize[type] = (await client.findByEmail(type, email(e))).length;
+        wouldAnonymize[type] = (
+          await client.findByEmail(type, email(e))
+        ).length;
       return { store: "sanity", wouldAnonymize, wouldDelete: {} };
     },
     async anonymize(e) {
@@ -814,6 +996,7 @@ git commit --no-verify -m "feat(compliance): Sanity erasure adapter (DI, pseudon
 ### Task 5: orders seam + engine integration + docs
 
 **Files:**
+
 - Create: `code/shared/api/src/erasure/orders.ts` (no-op seam)
 - Create: `code/shared/api/src/erasure/index.ts` (barrel of the api-side adapters)
 - Test: `code/shared/api/src/erasure/engine.test.ts` (integration: real orchestrator + real D1 adapter + mocked Clerk/Sanity/orders)
@@ -821,6 +1004,7 @@ git commit --no-verify -m "feat(compliance): Sanity erasure adapter (DI, pseudon
 - Modify: `code/docs/apps/web/config/data-retention.md` (document the erasure engine + the Art. 17 flow, including the `consent_events` gap noted in Phase 2)
 
 **Interfaces:**
+
 - Produces: `createOrdersErasureAdapter(): ErasureAdapter` (name `"orders"`, all no-ops — the future commerce seam); `code/shared/api/src/erasure/index.ts` re-exporting `createD1ErasureAdapter`, `createClerkErasureAdapter`, `createSanityErasureAdapter`, `createOrdersErasureAdapter` + the DI interfaces. Consumed by Phase 4's `/v1/erasure` route.
 
 - [ ] **Step 1: Write the orders seam**
@@ -836,11 +1020,21 @@ import type { ErasureAdapter } from "@indiecrafts/packages-shared-compliance/sha
 export function createOrdersErasureAdapter(): ErasureAdapter {
   return {
     name: "orders",
-    async findByEmail() { return { found: false }; },
-    async export() { return null; },
-    async preview() { return { store: "orders", wouldAnonymize: {}, wouldDelete: {} }; },
-    async anonymize() { return { store: "orders", anonymized: {}, deleted: {} }; },
-    async delete() { return { store: "orders", anonymized: {}, deleted: {} }; },
+    async findByEmail() {
+      return { found: false };
+    },
+    async export() {
+      return null;
+    },
+    async preview() {
+      return { store: "orders", wouldAnonymize: {}, wouldDelete: {} };
+    },
+    async anonymize() {
+      return { store: "orders", anonymized: {}, deleted: {} };
+    },
+    async delete() {
+      return { store: "orders", anonymized: {}, deleted: {} };
+    },
   };
 }
 ```
@@ -863,7 +1057,10 @@ Create `code/shared/api/src/erasure/engine.test.ts` (real orchestrator + real D1
 ```ts
 import { env } from "cloudflare:test";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
-import { runErasure, runExport } from "@indiecrafts/packages-shared-compliance/shared";
+import {
+  runErasure,
+  runExport,
+} from "@indiecrafts/packages-shared-compliance/shared";
 import { describe, expect, it, vi } from "vitest";
 import { createD1ErasureAdapter } from "./d1";
 import { createClerkErasureAdapter } from "./clerk";
@@ -878,7 +1075,9 @@ async function seedProfile() {
   const fp = await fingerprintEmail(EMAIL, SALT);
   await env.DB.prepare(
     "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at) VALUES (?, ?, ?, ?)",
-  ).bind(USER, EMAIL, fp, new Date(0).toISOString()).run();
+  )
+    .bind(USER, EMAIL, fp, new Date(0).toISOString())
+    .run();
   return fp;
 }
 
@@ -910,23 +1109,44 @@ describe("erasure engine (full run)", () => {
       ts: "2026-01-01T00:00:00.000Z",
       fingerprint: fp,
     });
-    expect(receipt.stores.map((s) => s.store).sort()).toEqual(["clerk", "d1", "orders", "sanity"]);
+    expect(receipt.stores.map((s) => s.store).sort()).toEqual([
+      "clerk",
+      "d1",
+      "orders",
+      "sanity",
+    ]);
     expect(receipt.errors).toEqual([]);
     // D1 actually pseudonymised the profile
-    const prof = await env.DB.prepare("SELECT anonymized FROM user_profiles WHERE user_id=?").bind(USER).first<{ anonymized: number }>();
+    const prof = await env.DB.prepare(
+      "SELECT anonymized FROM user_profiles WHERE user_id=?",
+    )
+      .bind(USER)
+      .first<{ anonymized: number }>();
     expect(prof?.anonymized).toBe(1);
 
     const bundle = await runExport(a, EMAIL);
-    expect(Object.keys(bundle.stores).sort()).toEqual(["clerk", "d1", "orders", "sanity"]);
+    expect(Object.keys(bundle.stores).sort()).toEqual([
+      "clerk",
+      "d1",
+      "orders",
+      "sanity",
+    ]);
   });
 
   it("dryRun previews every store and mutates nothing", async () => {
     await seedProfile();
     const receipt = await runErasure(adapters(), EMAIL, {
-      mode: "erase", dryRun: true, ts: "t", fingerprint: null,
+      mode: "erase",
+      dryRun: true,
+      ts: "t",
+      fingerprint: null,
     });
     expect(receipt.dryRun).toBe(true);
-    const prof = await env.DB.prepare("SELECT email FROM user_profiles WHERE user_id=?").bind(USER).first<{ email: string }>();
+    const prof = await env.DB.prepare(
+      "SELECT email FROM user_profiles WHERE user_id=?",
+    )
+      .bind(USER)
+      .first<{ email: string }>();
     expect(prof?.email).toBe(EMAIL); // untouched
   });
 });
@@ -960,11 +1180,13 @@ git commit --no-verify -m "feat(compliance): erasure engine wiring + integration
 - [ ] No live trigger, no new secret, no real Clerk/Sanity/D1 mutation shipped — confirmed by inspection
 
 ## Deferred to Phase 4 (documented)
+
 - The real `ClerkErasureClient` (dynamic `import("@clerk/backend")` + `CLERK_SECRET_KEY` on the api worker, or run in the admin app) and the real `SanityErasureClient` (raw-HTTP `/data/mutate` + `SANITY_API_WRITE_TOKEN`, or `writeClient`).
 - The `/v1/erasure/{request,confirm,status}` routes, the `erasure_requests` table + single-use token, identity verification, the receipt persisted + emailed, SLA.
 - Wiring `runExport` to a delivered download; wiring the standalone `anonymize()` mode into the admin console + the retention cron.
 
 ## Self-review notes
+
 - **Spec §22.3 coverage:** orchestrator + `ErasureAdapter` → Task 1; adapters (D1 real, Clerk/Sanity DI, orders seam) → Tasks 2–5; dry-run → Task 1 (`preview`) + exercised in every adapter; tests (mocked adapters + real D1 + export-enumerates-all) → Tasks 1–5.
 - **Deliberate cuts (ponytail):** DI adapters (Clerk/Sanity take injected clients) so no secrets/live calls ship now; orders is a no-op seam; the real clients + route + token are Phase 4. `runExport`/orchestrator are clock-free (ts injected) for deterministic tests.
 - **Type consistency:** every adapter returns the same `AdapterResult`/`AdapterPreview` shape from Task 1; `createXErasureAdapter` naming is uniform; the barrel (Task 5) re-exports all four.

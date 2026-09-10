@@ -45,6 +45,7 @@ Both patterns terminate in the same Phase-4a engine and the same `erasure_reques
 **Contract:** `handleErasureSelf(request, env, ctx?, buildAdapters = defaultAdapters, verifyClerk?)`.
 
 **Flow (fail-closed at each step):**
+
 1. `OPTIONS` → 204 `PUBLIC_CORS_POST`. Non-`POST` → 405. Body cap `BODY_MAX`.
 2. **Availability preflight** (mirror `confirm.ts`): `!env.DB || !env.GDPR_FINGERPRINT_SALT` → 503; and when `buildAdapters === defaultAdapters`, the same secret preflight as confirm (`CLERK_SECRET_KEY` + Sanity secrets) → 503. `!env.CLERK_SECRET_KEY` → 503 regardless (JWT verification needs it).
 3. **Verify the Clerk session JWT.** Read `Authorization: Bearer <token>`; verify with `@clerk/backend` `verifyToken(token, { secretKey: env.CLERK_SECRET_KEY })` (fetches Clerk JWKS; cache per isolate). Invalid/expired/missing → 401. Extract `userId` from the `sub` claim. `verifyClerk` is an injectable seam for tests (the vitest-pool-workers isolate can't reach a real Clerk verify).
@@ -71,6 +72,7 @@ Both patterns terminate in the same Phase-4a engine and the same `erasure_reques
 - `apiBase` is passed in (each surface already has its env base URL: `NEXT_PUBLIC_API_URL`, etc.).
 
 **Placement per DOM surface (the "auth section"):**
+
 - **website:** the Clerk `<UserProfile>` custom page (mounted where `AuthMenu`/`UserButton` lives) — or a gated `/[locale]/account` page rendering `<UserProfile>` with the custom "Delete account" page. Signed-in only.
 - **app:** the app's Clerk signed-in area (add the `<UserProfile>` custom page / account route).
 - **hybrid:** the `SignedInView` in `src/renderer/src/auth.tsx`.

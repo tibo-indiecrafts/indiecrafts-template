@@ -34,16 +34,19 @@ Package names: app = `@indiecrafts/web-surfaces-app`, admin = `@indiecrafts/web-
 App has no test runner today (no `test` script, no `vitest.config.ts`, no parity test). Add the infra so Tasks 2–3 can test. Mirror admin's setup exactly (same directory depth → identical relative path to the shared base).
 
 **Files:**
+
 - Create: `code/projects/web/surfaces/app/vitest.config.ts`
 - Modify: `code/projects/web/surfaces/app/package.json` (add `test` script)
 - Create: `code/projects/web/surfaces/app/messages/messages.test.ts`
 
 **Interfaces:**
+
 - Produces: a runnable `pnpm --filter @indiecrafts/web-surfaces-app test` (Vitest, happy-dom base, `@`→`src` alias).
 
 - [ ] **Step 1: Create the vitest config** (verbatim copy of admin's — same depth)
 
 `code/projects/web/surfaces/app/vitest.config.ts`:
+
 ```ts
 import { fileURLToPath } from "node:url";
 import { mergeConfig } from "vitest/config";
@@ -64,6 +67,7 @@ export default mergeConfig(shared, {
 - [ ] **Step 2: Add the `test` script** to `code/projects/web/surfaces/app/package.json`
 
 Add to `"scripts"` (place it right after `"tsc"`, mirroring admin):
+
 ```json
 "test": "vitest run",
 ```
@@ -71,6 +75,7 @@ Add to `"scripts"` (place it right after `"tsc"`, mirroring admin):
 - [ ] **Step 3: Add the messages parity test**
 
 `code/projects/web/surfaces/app/messages/messages.test.ts`:
+
 ```ts
 import { describe, expect, it } from "vitest";
 import en from "./en.json";
@@ -92,7 +97,10 @@ describe("app i18n message parity", () => {
     const frKeys = new Set(keyPaths(fr));
     const missingInFr = [...enKeys].filter((k) => !frKeys.has(k));
     const missingInEn = [...frKeys].filter((k) => !enKeys.has(k));
-    expect({ missingInFr, missingInEn }).toEqual({ missingInFr: [], missingInEn: [] });
+    expect({ missingInFr, missingInEn }).toEqual({
+      missingInFr: [],
+      missingInEn: [],
+    });
   });
 });
 ```
@@ -116,15 +124,18 @@ git commit -m "test(app): wire vitest + messages parity test"
 Add the nav/user/theme/locale/home keys the shell and restyled pages consume, plus `account.title`/`description` for the account PageHeader. Parity is guarded by Task 1's test.
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/app/messages/en.json`
 - Modify: `code/projects/web/surfaces/app/messages/fr.json`
 
 **Interfaces:**
+
 - Produces (consumed by Tasks 3–6): `app.nav.{label,home,account}`, `app.user.{account,signOut,legal}`, `app.theme.{toggle,light,dark}`, `app.locale.label`, `app.home.{accountDesc,legalDesc}`, `account.title`, `account.description`.
 
 - [ ] **Step 1: Extend the `app` namespace in `en.json`**
 
 In `code/projects/web/surfaces/app/messages/en.json`, replace the `"app": { … }` block with:
+
 ```json
   "app": {
     "title": "indiecrafts",
@@ -144,6 +155,7 @@ In `code/projects/web/surfaces/app/messages/en.json`, replace the `"app": { … 
 - [ ] **Step 2: Add `title`/`description` to the `account` namespace in `en.json`**
 
 In the same file, add these two keys at the top of the `"account": {` object (before `"delete"`):
+
 ```json
     "title": "Account",
     "description": "Manage your account.",
@@ -152,6 +164,7 @@ In the same file, add these two keys at the top of the `"account": {` object (be
 - [ ] **Step 3: Mirror both in `fr.json`**
 
 `app` block in `code/projects/web/surfaces/app/messages/fr.json` — keep the existing `title`/`subtitle`/`legalLink` French values already present, and add:
+
 ```json
     "nav": { "label": "Navigation", "home": "Accueil", "account": "Compte" },
     "user": { "account": "Compte", "signOut": "Se déconnecter", "legal": "Mentions légales" },
@@ -162,7 +175,9 @@ In the same file, add these two keys at the top of the `"account": {` object (be
       "legalDesc": "Consultez nos documents légaux."
     }
 ```
+
 And at the top of the `account` block in `fr.json`:
+
 ```json
     "title": "Compte",
     "description": "Gérez votre compte.",
@@ -187,15 +202,18 @@ git commit -m "i18n(app): nav/user/theme/locale/home + account header keys"
 A flat nav (no groups — app has two rail items) plus the locale-stripping `activeKey`, mirroring admin's logic.
 
 **Files:**
+
 - Create: `code/projects/web/surfaces/app/src/user-interface/lib/nav.ts`
 - Create: `code/projects/web/surfaces/app/src/user-interface/lib/nav.test.ts`
 
 **Interfaces:**
+
 - Produces (consumed by Task 5): `NAV: NavItem[]` where `NavItem = { key: string; href: string; icon: LucideIcon }`, and `activeKey(pathname: string): string | undefined`.
 
 - [ ] **Step 1: Write the failing test**
 
 `code/projects/web/surfaces/app/src/user-interface/lib/nav.test.ts`:
+
 ```ts
 import { describe, it, expect } from "vitest";
 import { NAV, activeKey } from "./nav";
@@ -223,6 +241,7 @@ Expected: FAIL — cannot resolve `./nav`.
 - [ ] **Step 3: Implement `nav.ts`**
 
 `code/projects/web/surfaces/app/src/user-interface/lib/nav.ts`:
+
 ```ts
 import { Home, UserRound, type LucideIcon } from "lucide-react";
 import { localeCodes } from "@/config";
@@ -242,8 +261,9 @@ const LOCALE_PREFIX = new RegExp(`^/(${localeCodes.join("|")})(?=/|$)`);
 /** Strip the optional locale prefix, then pick the item whose href is the longest matching prefix. `/` → home. */
 export function activeKey(pathname: string): string | undefined {
   const p = pathname.replace(LOCALE_PREFIX, "") || "/";
-  return NAV.filter((i) => (i.href === "/" ? p === "/" : p === i.href || p.startsWith(i.href + "/")))
-    .sort((a, b) => b.href.length - a.href.length)[0]?.key;
+  return NAV.filter((i) =>
+    i.href === "/" ? p === "/" : p === i.href || p.startsWith(i.href + "/"),
+  ).sort((a, b) => b.href.length - a.href.length)[0]?.key;
 }
 ```
 
@@ -266,11 +286,13 @@ git commit -m "feat(app): flat sidebar nav config + activeKey"
 Copy admin's nonce-safe theme pattern, namespaced to `app-theme`. App's `proxy.ts` already stamps `x-nonce` and the layout already reads `headers()`, so this is a 3-line layout edit plus two small files.
 
 **Files:**
+
 - Create: `code/projects/web/surfaces/app/src/user-interface/layout/theme-script.ts`
 - Create: `code/projects/web/surfaces/app/src/user-interface/layout/ThemeToggle.tsx`
 - Modify: `code/projects/web/surfaces/app/src/app/[locale]/layout.tsx`
 
 **Interfaces:**
+
 - Produces (consumed by Task 5): `THEME_SCRIPT: string`; `ThemeToggle({ label: { toggle; light; dark } })`.
 
 - [ ] **Step 1: Create `theme-script.ts`** (admin's, key `app-theme`)
@@ -313,13 +335,21 @@ export function ThemeToggle({ label }: { label: ThemeToggleLabel }) {
     const next: Theme = theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     localStorage.setItem("app-theme", next);
-    window.dispatchEvent(new StorageEvent("storage", { key: "app-theme", newValue: next }));
+    window.dispatchEvent(
+      new StorageEvent("storage", { key: "app-theme", newValue: next }),
+    );
   };
 
   const Icon = theme === "dark" ? Moon : Sun;
 
   return (
-    <Button variant="ghost" size="icon" aria-label={label.toggle} title={label[theme]} onClick={toggle}>
+    <Button
+      variant="ghost"
+      size="icon"
+      aria-label={label.toggle}
+      title={label[theme]}
+      onClick={toggle}
+    >
       <Icon className="size-4" aria-hidden="true" />
     </Button>
   );
@@ -331,18 +361,23 @@ export function ThemeToggle({ label }: { label: ThemeToggleLabel }) {
 In `code/projects/web/surfaces/app/src/app/[locale]/layout.tsx`:
 
 1. Add the import (next to the other `@/user-interface` imports):
+
 ```tsx
 import { THEME_SCRIPT } from "@/user-interface/layout/theme-script";
 ```
+
 2. `requestHeaders` already exists in this file. Just below the `gpcSignal` line, add:
+
 ```tsx
-  // Carries the per-request CSP nonce (set by src/proxy.ts) so the inline theme script runs
-  // under the strict nonce CSP.
-  const nonce = requestHeaders.get("x-nonce") ?? undefined;
+// Carries the per-request CSP nonce (set by src/proxy.ts) so the inline theme script runs
+// under the strict nonce CSP.
+const nonce = requestHeaders.get("x-nonce") ?? undefined;
 ```
+
 3. As the **first child of `<body>`** (before `<NextIntlClientProvider>`), add:
+
 ```tsx
-        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+<script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
 ```
 
 - [ ] **Step 4: Typecheck**
@@ -364,6 +399,7 @@ git commit -m "feat(app): no-flash light/dark theme (nonce-safe)"
 The sidebar shell mirroring admin, with app's flat nav, a user menu (Legal + Sign out), a locale switcher, and no breadcrumbs (a two-page rail doesn't warrant them; the `PageHeader` `<h1>` names the page).
 
 **Files:**
+
 - Create: `…/app/src/user-interface/layout/AppShell.tsx`
 - Create: `…/app/src/user-interface/layout/AppSidebar.tsx`
 - Create: `…/app/src/user-interface/layout/AppHeader.tsx`
@@ -373,6 +409,7 @@ The sidebar shell mirroring admin, with app's flat nav, a user menu (Legal + Sig
 - Create: `…/app/src/app/[locale]/(app)/layout.tsx`
 
 **Interfaces:**
+
 - Consumes: `NAV`/`activeKey` (Task 3), `ThemeToggle` (Task 4), `app.*` messages (Task 2).
 - Produces (consumed by Task 6): `AppShell({ children })` rendering the single `<main id="main">`.
 
@@ -395,7 +432,9 @@ export function PageHeader({
     <div className="mb-6 flex items-start justify-between gap-4">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-        {description ? <p className="text-muted-foreground mt-1 text-sm">{description}</p> : null}
+        {description ? (
+          <p className="text-muted-foreground mt-1 text-sm">{description}</p>
+        ) : null}
       </div>
       {actions ? <div className="flex gap-2">{actions}</div> : null}
     </div>
@@ -430,7 +469,12 @@ export function LocaleSwitcher({ label }: { label: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={label} disabled={pending}>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={label}
+          disabled={pending}
+        >
           <Languages className="size-4" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
@@ -439,7 +483,9 @@ export function LocaleSwitcher({ label }: { label: string }) {
           <DropdownMenuItem
             key={loc}
             disabled={loc === active}
-            onClick={() => startTransition(() => router.replace(pathname, { locale: loc }))}
+            onClick={() =>
+              startTransition(() => router.replace(pathname, { locale: loc }))
+            }
           >
             {loc.toUpperCase()}
           </DropdownMenuItem>
@@ -449,6 +495,7 @@ export function LocaleSwitcher({ label }: { label: string }) {
   );
 }
 ```
+
 (Note: `routing` is exported from `@/i18n/routing` alongside `Link`/`useRouter`/`usePathname`.)
 
 - [ ] **Step 3: `NavUser.tsx`** (admin's, plus a Legal link; namespace `app`)
@@ -466,7 +513,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@indiecrafts/packages-web-ui/web/dropdown-menu";
-import { Avatar, AvatarFallback } from "@indiecrafts/packages-web-ui/web/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+} from "@indiecrafts/packages-web-ui/web/avatar";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -479,7 +529,9 @@ const CLERK_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 /** Rendered only when Clerk is configured — safe to call `useAuth()` (a `ClerkProvider` wraps the tree). */
 function SignOutItem({ label }: { label: string }) {
   const { signOut } = useAuth();
-  return <DropdownMenuItem onClick={() => void signOut()}>{label}</DropdownMenuItem>;
+  return (
+    <DropdownMenuItem onClick={() => void signOut()}>{label}</DropdownMenuItem>
+  );
 }
 
 /** Sidebar footer user menu: Legal (always) + Sign out (only when Clerk is configured). */
@@ -505,7 +557,9 @@ export function NavUser() {
             <DropdownMenuItem asChild>
               <Link href="/legal">{t("user.legal")}</Link>
             </DropdownMenuItem>
-            {CLERK_CONFIGURED ? <SignOutItem label={t("user.signOut")} /> : null}
+            {CLERK_CONFIGURED ? (
+              <SignOutItem label={t("user.signOut")} />
+            ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
@@ -601,7 +655,11 @@ export async function AppHeader() {
       <div className="ml-auto flex items-center gap-1">
         <LocaleSwitcher label={t("locale.label")} />
         <ThemeToggle
-          label={{ toggle: t("theme.toggle"), light: t("theme.light"), dark: t("theme.dark") }}
+          label={{
+            toggle: t("theme.toggle"),
+            light: t("theme.light"),
+            dark: t("theme.dark"),
+          }}
         />
       </div>
     </header>
@@ -613,7 +671,10 @@ export async function AppHeader() {
 
 ```tsx
 import type { ReactNode } from "react";
-import { SidebarInset, SidebarProvider } from "@indiecrafts/packages-web-ui/web/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@indiecrafts/packages-web-ui/web/sidebar";
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { AppSidebar } from "./AppSidebar";
 import { AppHeader } from "./AppHeader";
@@ -636,6 +697,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 - [ ] **Step 7: `(app)/layout.tsx`** (renders the shell; no auth gate — the home is public, the account page self-gates)
 
 `code/projects/web/surfaces/app/src/app/[locale]/(app)/layout.tsx`:
+
 ```tsx
 import type { ReactNode } from "react";
 import { AppShell } from "@/user-interface/layout/AppShell";
@@ -665,11 +727,13 @@ git commit -m "feat(app): shadcn sidebar shell + (app) route group"
 Move `home`, `account`, `legal` into `(app)/` and restyle with `PageHeader` + `Card`. Each drops its own `<main>` (the shell's `SidebarInset` owns the landmark) and becomes a `<div className="p-4 md:p-6">`. **Logic unchanged** — same gating, same data, same links.
 
 **Files:**
+
 - Move + modify: `src/app/[locale]/page.tsx` → `src/app/[locale]/(app)/page.tsx`
 - Move + modify: `src/app/[locale]/account/page.tsx` → `src/app/[locale]/(app)/account/page.tsx`
 - Move + modify: `src/app/[locale]/legal/page.tsx` → `src/app/[locale]/(app)/legal/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `PageHeader` (Task 5), `app.*` + `account.title/description` messages (Task 2).
 
 - [ ] **Step 1: Move the files with `git mv`**
@@ -680,6 +744,7 @@ git mv page.tsx "(app)/page.tsx"
 git mv account "(app)/account"
 git mv legal "(app)/legal"
 ```
+
 (Run from repo root by prefixing full paths if preferred; the group dir `(app)` already exists from Task 5.)
 
 - [ ] **Step 2: Restyle `(app)/page.tsx`** (home — PageHeader + quick-link cards + share)
@@ -699,7 +764,11 @@ import { Link } from "@/i18n/routing";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 // App home. Server component; `setRequestLocale` keeps it statically rendered.
-export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("app");
@@ -758,26 +827,35 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 Keep the entire existing file **unchanged above the `return`** (the `notFound()` gates, the `copy`/`exportCopy` resolution). Add a `getTranslations("account")` for the header, add the imports, and replace only the `return (…)`:
 
 Add imports at the top:
+
 ```tsx
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 ```
+
 Add after the existing `et`/`exportCopy` block, before `return`:
+
 ```tsx
-  const th = await getTranslations({ locale, namespace: "account" });
+const th = await getTranslations({ locale, namespace: "account" });
 ```
+
 Replace the `return (…)` with:
+
 ```tsx
-  return (
-    <div className="p-4 md:p-6">
-      <PageHeader title={th("title")} description={th("description")} />
-      <Card>
-        <CardContent>
-          <AccountDeletePanel copy={copy} exportCopy={exportCopy} showExport={features.exportAccount} />
-        </CardContent>
-      </Card>
-    </div>
-  );
+return (
+  <div className="p-4 md:p-6">
+    <PageHeader title={th("title")} description={th("description")} />
+    <Card>
+      <CardContent>
+        <AccountDeletePanel
+          copy={copy}
+          exportCopy={exportCopy}
+          showExport={features.exportAccount}
+        />
+      </CardContent>
+    </Card>
+  </div>
+);
 ```
 
 - [ ] **Step 4: Restyle `(app)/legal/page.tsx`** (keep the cross-origin `<a>` list; wrap it)
@@ -786,13 +864,20 @@ Replace the `return (…)` with:
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { site, type Locale } from "@/config";
-import { LEGAL_PAGE_KEYS, legalUrl } from "@indiecrafts/packages-shared-compliance/shared";
+import {
+  LEGAL_PAGE_KEYS,
+  legalUrl,
+} from "@indiecrafts/packages-shared-compliance/shared";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 
 // Legal link-out — the canonical legal pages live on the marketing website; this lists
 // them and opens each there (`legalUrl(site.websiteUrl, …)`, cross-origin). No content
 // re-hosting: a plain `<a>` (not the typed `Link`) because the target is another origin.
-export default async function LegalPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function LegalPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("legal");
@@ -831,9 +916,11 @@ Expected: all clean/green.
 - [ ] **Step 6: Eyeball the shell** (dev CSP blocks hydration — use report-only or a prod build)
 
 Quick path (report-only lets React dev hydrate):
+
 ```bash
 CSP_MODE=report-only pnpm --filter @indiecrafts/web-surfaces-app exec next dev --turbopack -p 3001
 ```
+
 Open `http://localhost:3001/` — confirm: sidebar renders + collapses, nav highlights the active item, theme toggle flips light/dark with no flash on reload, user menu shows Legal (+ Sign out if Clerk configured), locale switcher swaps `/` ↔ `/fr`. Home shows the two quick-link cards + share; account + legal render inside the shell.
 
 - [ ] **Step 7: Commit**
@@ -850,11 +937,13 @@ git commit -m "feat(app): move pages into (app) shell + shadcn restyle"
 An in-place polish pass across admin's already-shadcn pages. **Polish, not restructure** — no nav/route/data changes. Invoke the `visual-polish` skill (and `design-critique` if a page needs a fuller lens) and apply the checklist below with surgical diffs.
 
 **Files (polish only):**
+
 - `code/projects/web/surfaces/admin/src/app/[locale]/(dashboard)/page.tsx` (Overview)
 - `…/(dashboard)/{users,sessions,data-requests,csp,backups,system,settings,security}/page.tsx`
 - Shared components: `…/(dashboard)/{admin-role-form,settings-form,sessions-table,backups-table,data-requests-table}.tsx`
 
 **Checklist (apply per file, token-only):**
+
 - **Spacing rhythm:** consistent `Card` padding; normalize the parked in-card margin drift (`mt-6`/`mt-8` → a single scale); consistent gap between `PageHeader` and content.
 - **Hierarchy:** heading sizes/weights consistent; secondary text `text-muted-foreground`; clear section separation (`Separator`/spacing, not ad-hoc borders).
 - **States:** every data list has a real empty state (a short line, not only "—"); fetched data shows a loading affordance where practical; error fallbacks stay honest (no fake success).
@@ -878,9 +967,11 @@ Token check: `grep -rEn "#[0-9a-fA-F]{3,8}\b|rgb\(|hsl\(" code/projects/web/surf
 - [ ] **Step 4: Eyeball on the admin prod build** (dev CSP won't hydrate)
 
 The admin prod server is already running on `http://localhost:3002` from earlier; if not, rebuild:
+
 ```bash
 pnpm --filter @indiecrafts/web-surfaces-admin build && pnpm --filter @indiecrafts/web-surfaces-admin exec next start -p 3002
 ```
+
 Walk every page: spacing/hierarchy consistent, empty/loading states present, Overview reads as a dashboard, light + dark both clean.
 
 - [ ] **Step 5: Commit**
@@ -897,6 +988,7 @@ git commit -m "style(admin): visual-polish pass — rhythm, hierarchy, states"
 Update the app brief/README (scaffold → shelled), log both changelogs, refresh any product-doc drift, and prove Storybook + tags stay clean.
 
 **Files:**
+
 - Modify: `code/projects/web/surfaces/app/.claude/CLAUDE.md` (bare-scaffold → shadcn sidebar shell wired)
 - Modify: `code/projects/web/surfaces/app/README.md`
 - Modify: `code/projects/web/surfaces/app/CHANGELOG.md`
@@ -910,9 +1002,11 @@ Update the app brief/README (scaffold → shelled), log both changelogs, refresh
 - [ ] **Step 3: Changelogs** — add an entry to `app/CHANGELOG.md` (shadcn sidebar shell + page restyle + vitest wired) and `admin/CHANGELOG.md` (visual-polish pass). One entry each, at its home altitude.
 
 - [ ] **Step 4: Product-doc drift** — grep and fix any doc that calls app a chrome-less scaffold:
+
 ```bash
 grep -rln "scaffold\|no header\|no nav" code/docs/apps/web 2>/dev/null
 ```
+
 Update matches that describe the app surface; leave unrelated ones.
 
 - [ ] **Step 5: Storybook clean — prove no admin/app stories**
@@ -920,6 +1014,7 @@ Update matches that describe the app surface; leave unrelated ones.
 ```bash
 find code/projects/web/surfaces/app code/projects/web/surfaces/admin -name "*.stories.*"
 ```
+
 Expected: no output. (If any appear, they violate the constraint — remove them.)
 Optional build smoke: `pnpm --filter @indiecrafts/web-tools-storybook build` → succeeds.
 
@@ -929,6 +1024,7 @@ Optional build smoke: `pnpm --filter @indiecrafts/web-tools-storybook build` →
 pnpm tags:check
 pnpm verify
 ```
+
 Expected: `tags:check` green (no off-list/new parked tags); `pnpm verify` green (fans out to every app — app + admin `tsc`, website full, workers, etc.).
 
 - [ ] **Step 7: Commit**

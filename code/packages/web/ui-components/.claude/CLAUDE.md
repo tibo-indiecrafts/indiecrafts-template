@@ -19,7 +19,7 @@ Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers +
   (module-section, cta, hero, category-nav — a top-level category bar with sub-category dropdowns
   over resolved `{title, href}` items · share-buttons — X/LinkedIn/Facebook + copy-link row over
   an optional `url` (omitted → resolves the current page URL client-side, for client-only surfaces
-  like the app/Electron renderer) + `title` + an optional `networks` filter (editor-driven, from the
+  like the app) + `title` + an optional `networks` filter (editor-driven, from the
   site's `siteSettings.share`); intent URLs from `@indiecrafts/packages-shared-utils/share` so native
   can reuse them · **PostHero** — a full-width lead-post hero (image/video, category chip, author/date)
   for the blog frontpage (`blog-hero`) · **TopicCards** — one to three large clickable category/tag

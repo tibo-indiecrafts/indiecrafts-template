@@ -107,7 +107,17 @@ export function buildBackupRunInsert({
       "INSERT INTO backup_runs " +
       "(db_name, env, kind, r2_key, bytes, status, error, started_at, finished_at) " +
       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
-    params: [dbName, env, kind, r2Key, bytes, status, error, startedAt, finishedAt],
+    params: [
+      dbName,
+      env,
+      kind,
+      r2Key,
+      bytes,
+      status,
+      error,
+      startedAt,
+      finishedAt,
+    ],
   };
 }
 
@@ -177,7 +187,9 @@ export function recordBackupRun(env, run) {
         },
       );
       if (r.status !== 0 || r.error)
-        console.warn("recordBackupRun: wrangler d1 execute failed — not logged.");
+        console.warn(
+          "recordBackupRun: wrangler d1 execute failed — not logged.",
+        );
     } finally {
       process.chdir(REPO_ROOT);
     }
