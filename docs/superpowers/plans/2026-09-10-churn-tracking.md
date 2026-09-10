@@ -941,7 +941,7 @@ test("defaults the churned topic name", () => {
 
 ## HARDENING ADDENDUM (from the user's DB-layer trace — atomicity + retention)
 
-A full read-only trace of both D1s, the stores, the erasure adapters, and the cron purge confirmed: zero SQL-injection surface, allowlisted+bounded input, sound erasure model, layered auth. The gaps are atomicity + retention consistency. These become Tasks 12–14, executed AFTER Task 9 and BEFORE Task 10 (so the docs capture them). New execution order: 1, 11, 2, 3, 4, 5, 6, 7, 8, 9, **12, 13, 14**, 10.
+A full read-only trace of both D1s, the stores, the erasure adapters, and the cron purge confirmed: zero SQL-injection surface, allowlisted+bounded input, sound erasure model, layered auth. The gaps are atomicity + retention consistency. These become Tasks 12–15, executed AFTER Task 9 and BEFORE Task 10 (so the docs capture them). New execution order: 1, 11, 2, 3, 4, 5, 6, 7, 8, 9, **12, 13, 14, 15**, 10.
 
 ### Task 12 — churn_events retention purge (MED — pre-ship-critical)
 
@@ -967,6 +967,21 @@ Two multi-write paths commit as separate `.run()`s, so a mid-way failure leaves 
 
 - Test: `self.test.ts` — an oversized body is rejected (or safely bounded) without trusting `content-length`.
 - File: `code/shared/api/src/erasure/self.ts` (+ test).
+
+### Task 15 — Clerk delete is a required step (MED — session-integrity)
+
+Deleting the Clerk user is the ONE global kill-switch: it revokes every surface's session server-side (all per-user auth is Clerk; `APP_API_TOKEN` is a shared app bearer, not per-user). The gap: `runErasure` treats the `clerk` adapter like any other, returning "partial" (207) if it errors; `submitAccountErasure` fires `onDeleted` (local sign-out) on BOTH "done" AND "partial". So if the Clerk `deleteUser` fails while D1/Sanity succeed → the initiating surface signs out locally, but the Clerk user still exists → other surfaces stay connected and the user can sign back in, while being told "deleted".
+
+- **Existing mitigation (keep):** on partial, the `erasure_requests` row is written `confirmed` (not `completed`) and the completion email says a human will finish it — so it is flagged for manual backfill. Don't remove this.
+- **Fix (invariant):** the initiating surface must NOT report success / locally sign out unless the Clerk user is actually gone. In `handleErasureSelf` (`erasure/self.ts`), after `runErasure`, detect a `clerk`-adapter error in the receipt; **retry the Clerk delete once inline**; if it still fails, return a distinct non-success status (the data is already erased, so keep the `confirmed` bookkeeping + backfill email, but the HTTP response must signal "session not killed"). On the client, `submitAccountErasure` (`packages/shared/compliance/src/shared/erasure-self.ts`) fires `onDeleted` ONLY on that true-success signal — a Clerk-delete failure shows the user an error, not a false "signed out everywhere".
+- The implementer reads `erasure/clerk.ts` (the adapter, `client.deleteUser`), `erasure/self.ts`, the `runErasure` receipt shape, and `submitAccountErasure` to pick the cleanest seam. Preserve all existing auth/reverify/fingerprint gates and the churn write/suppress from Task 3.
+- Test: `self.test.ts` — inject a `buildAdapters` whose clerk adapter fails; assert the response signals failure (not a success that would fire local sign-out) and the `erasure_requests` row is `confirmed`; a fully-successful run still returns success.
+- Files: `code/shared/api/src/erasure/self.ts`, `code/packages/shared/compliance/src/shared/erasure-self.ts` (+ their tests). Touch the engine only if the receipt doesn't already expose per-adapter errors.
+
+**Two LOW caveats from the same trace — resolved without new tasks:**
+
+- **Mobile `onDeleted` not wrapped in try/catch** — obviated by Task 8, which removes the native mobile delete entirely (deletion moves to the web-account redirect). No mobile `onDeleted` remains. If Task 8's redirect somehow keeps any native delete, add the guard there.
+- **API honours a cached JWT for ≤ its TTL (~60s) after deletion** — `defaultAuthenticate` uses networkless `verifyToken` (signature+expiry, not revocation). The self-erasure route already fails closed (`exportUser` 404s for a deleted user); data is already erased, so the blast radius is a stale token, not data. No code fix — DOCUMENT it as a known limitation in `churn.md`/the erasure security note (Task 10).
 
 ## Self-Review
 
