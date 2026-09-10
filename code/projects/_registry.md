@@ -81,14 +81,14 @@ everything — same shape (`--json` CLI + a colocated `*.test.mjs` guard):
 - **apps** — `lib/apps.mjs` (`class` → deploy recipe); runners `deploy/{all,next,worker,expo}.mjs`.
 - **db** — `lib/databases.mjs`; kinds `d1 · kv · postgres · supabase · sanity`; runners `data/migrate.mjs`
   - `data/backup.mjs` (dispatch on kind). **One db active:** the `sanity` `content` dataset. One owner per db.
-- **infra** — `lib/infra-registry.mjs`; providers `cloudflare` (real) · `aws` · `vercel` (reserved); runner
+- **infra** — `lib/infra-registry.mjs`; provider `cloudflare` (the only wired provider); runner
   `infra/run.mjs`. Real stack: the website's Cloudflare edge (`web/surfaces/website/infra/cloudflare`).
 - **domains** — `lib/domains.mjs` (hostname per app × env — the SINGLE source of truth for the host);
   runner `deploy/domains.mjs print` emits the wrangler route + tfvars block + `NEXT_PUBLIC_SITE_URL`
   (which `deploy/next.mjs` exports automatically). Separate axis from `DEFAULT_SITE_PREFIX` (resource names).
 - **scope-local scripts** live per altitude (`<altitude>/scripts/`), below the toolchain.
 
-`sanity` is global/content-only; `aws`/`vercel` + `postgres`/`supabase` are reserved; per-leaf db/infra
+`sanity` is global/content-only; `postgres`/`supabase` are reserved; per-leaf db/infra
 carries the same coupling caution as per-leaf services.
 
 **Platform classes** — each has one deploy recipe, dispatched from the registry:

@@ -1,6 +1,6 @@
 # Robots & environments
 
-`robots.txt` and the sitemap are **environment-aware**: only a real production deployment with a configured origin is indexable. Every other deployment — local dev, Vercel preview, staging, test, or a production build still on the placeholder URL — stays "quiet when online" and never leaks into search results.
+`robots.txt` and the sitemap are **environment-aware**: only a real production deployment with a configured origin is indexable. Every other deployment — local dev, a preview deploy, staging, test, or a production build still on the placeholder URL — stays "quiet when online" and never leaks into search results.
 
 ## robots.txt
 

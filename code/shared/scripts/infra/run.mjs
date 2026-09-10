@@ -40,10 +40,10 @@ const appDir =
   APPS.find((a) => a.slug === name)?.dir ?? path.join("code/projects", name);
 const dir = path.resolve(row?.dir ?? path.join(appDir, "infra", "cloudflare"));
 
-// Only cloudflare is wired today; aws/vercel are reserved markers.
+// Cloudflare is the only wired provider; guard any other value from a stray registry row.
 if (provider !== "cloudflare") {
   console.error(
-    `infra provider "${provider}" is reserved — not wired yet (stack "${name}").`,
+    `infra provider "${provider}" is not supported — only "cloudflare" is wired (stack "${name}").`,
   );
   process.exit(1);
 }

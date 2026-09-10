@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress";
 // Documentation site for the indiecrafts.dev template.
 //   npm install          (from docs/, once)
 //   npm run docs:dev     → http://localhost:3002
-//   npm run docs:build   → static output in .vitepress/dist (deploy to Vercel)
+//   npm run docs:build   → static output in .vitepress/dist (deploy to any static host)
 //
 // docs/ is a repo-root sibling of code/ (and the private internal folders), and mirrors the same
 // spine: shared/ (cross-cutting) + apps/web · modules · packages · db · infra.

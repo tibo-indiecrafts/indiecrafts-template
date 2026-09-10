@@ -12,6 +12,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Removed
+
+- **Dropped `*.vercel.app` from the dev/test CSP `connect-src`** (`@indiecrafts/packages-shared-config`
+  `getCSPConnectSources`). This repo deploys to Cloudflare via OpenNext, never Vercel previews, so the
+  allowance was dead. **Why:** tighten the dev/test CSP to hosts we actually use. Doc synced
+  (`docs/apps/web/seo/security-headers.md`).
+
 ### Added
 
 - **`pickLocale(value, locale, fallback?)` on `@indiecrafts/packages-shared-config`.** One shared

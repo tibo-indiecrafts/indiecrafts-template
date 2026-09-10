@@ -8,9 +8,7 @@
 // from `apps.mjs`; this registry generalises it to any altitude + provider.
 //
 // Providers (→ IaC recipe):
-//   cloudflare — Terraform on the Cloudflare provider (DNS · WAF · cache · Turnstile). REAL today.
-//   aws        — Terraform on AWS.       reserved
-//   vercel     — Terraform on Vercel.    reserved
+//   cloudflare — Terraform on the Cloudflare provider (DNS · WAF · cache · Turnstile). The only wired provider.
 //
 // Altitudes (mirrors the projects tree):
 //   global    — code/shared/infra          (account-level: DNS zone, account settings)
@@ -24,13 +22,13 @@ import { ENVS } from "./apps.mjs";
 
 export { ENVS };
 
-export const PROVIDERS = ["cloudflare", "aws", "vercel"];
+export const PROVIDERS = ["cloudflare"];
 export const ALTITUDES = ["global", "platform", "surface", "leaf"];
 
 /**
  * @typedef {Object} InfraEntry
  * @property {string} name   short id + `infra:<name>:<action>:<env>` script name
- * @property {"cloudflare"|"aws"|"vercel"} provider  IaC provider → recipe
+ * @property {"cloudflare"} provider  IaC provider → recipe
  * @property {string} owner  the app/service/tier slug this stack belongs to
  * @property {"global"|"platform"|"surface"|"leaf"} altitude  scope
  * @property {string} dir    the stack's directory (main.tf + env/<env>.tfvars) — reserved until activated

@@ -96,12 +96,7 @@ export function getCSPConnectSources(env: Environment): readonly string[] {
   const npm = ["https://registry.npmjs.org"];
   const common = ["'self'", ...sanity, ...npm];
   if (env === "development" || env === "test") {
-    return [
-      ...common,
-      "ws://localhost:*",
-      "http://localhost:*",
-      "https://*.vercel.app",
-    ];
+    return [...common, "ws://localhost:*", "http://localhost:*"];
   }
   return common;
 }

@@ -8,6 +8,7 @@
  * (`@indiecrafts/packages-shared-config` root barrel). See `code/docs/shared/architecture/multi-app.md`.
  */
 import type { ConsentConfig } from "@indiecrafts/packages-shared-compliance/shared";
+import { safeWebOrigin } from "./safe-web-origin";
 
 export * from "@indiecrafts/packages-shared-config/mobile";
 
@@ -38,17 +39,19 @@ export const STORAGE_KEYS = {
   marketingNudgeSnooze: `${sitePrefix}.mkt-nudge-snooze`,
 } as const;
 
-/** The marketing-site origin — the legal link-out + version poll target. */
-export const websiteUrl = process.env.EXPO_PUBLIC_WEBSITE_URL;
+/** The marketing-site origin — the legal link-out + version poll target (HTTPS-only; see `safeWebOrigin`). */
+export const websiteUrl = safeWebOrigin(process.env.EXPO_PUBLIC_WEBSITE_URL);
 
 /**
  * Canonical web account entry point the app hands off to (Manage account / delete).
  * Default: the website's `/account`; override with `EXPO_PUBLIC_ACCOUNT_URL` (e.g. the
- * `app.<domain>/account` product surface).
+ * `app.<domain>/account` product surface). HTTPS-only (see `safeWebOrigin`): a non-TLS
+ * origin resolves to `undefined`, so the hand-off button does not render.
  */
-export const accountUrl =
+export const accountUrl = safeWebOrigin(
   process.env.EXPO_PUBLIC_ACCOUNT_URL ??
-  (websiteUrl ? `${websiteUrl}/account` : undefined);
+    (websiteUrl ? `${websiteUrl}/account` : undefined),
+);
 
 /** The build id baked in at build (`EXPO_PUBLIC_BUILD_ID`, else `"dev"`). */
 export const buildId = process.env.EXPO_PUBLIC_BUILD_ID ?? "dev";

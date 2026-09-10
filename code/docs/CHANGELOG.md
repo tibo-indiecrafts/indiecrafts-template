@@ -11,6 +11,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Dropped stray "Vercel" references** — synced `apps/web/seo/security-headers.md` to the CSP change
+  (no more `*.vercel.app` in the dev/test `connect-src`), made the VitePress build comment host-agnostic
+  (`.vitepress/config.mts`: "deploy to any static host"), and reworded the robots "Vercel preview" example
+  to "a preview deploy" (`apps/web/seo/robots-and-environments.md`). This repo deploys to Cloudflare, never
+  Vercel.
+
 - **Local dev docs now describe the all-remote model — no miniflare tier.** Rewrote
   `local-development.md` and updated the DB-tier tables in `platform-deploy.md`, `deployment.md`, and
   `backups.md`: `pnpm dev` binds the real remote `dev` D1/KV/R2 (`wrangler dev --env dev --remote`),

@@ -132,12 +132,7 @@ export function getCSPConnectSources(env: Environment): readonly string[] {
   const npm = ["https://registry.npmjs.org"];
   const common = ["'self'", ...sanity, ...npm];
   if (env === "development" || env === "test") {
-    return [
-      ...common,
-      "ws://localhost:*",
-      "http://localhost:*",
-      "https://*.vercel.app",
-    ];
+    return [...common, "ws://localhost:*", "http://localhost:*"];
   }
   return common;
 }
@@ -146,7 +141,7 @@ export function getCSPConnectSources(env: Environment): readonly string[] {
 - **`*.sanity.io` + `wss://*.api.sanity.io`** — the embedded Studio + live preview reach the project
   API + CDN (the WebSocket carries realtime). Locked to `*.sanity.io` → safe in prod.
 - **`registry.npmjs.org`** — the Studio's own version check.
-- **Dev/test extras** — localhost (HMR) + `*.vercel.app` (previews), outside production only.
+- **Dev/test extras** — localhost (HMR), outside production only.
 
 `env` comes from `getCurrentEnvironment()` (the same helper that gates `robots.txt`). See
 [Robots & environments](./robots-and-environments.md).

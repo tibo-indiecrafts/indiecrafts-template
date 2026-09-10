@@ -13,6 +13,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **Web hand-off origins are now HTTPS-only.** `websiteUrl` / `accountUrl` (from
+  `EXPO_PUBLIC_WEBSITE_URL` / `EXPO_PUBLIC_ACCOUNT_URL`) pass through a `safeWebOrigin` guard in
+  `config/index.ts`: a non-TLS origin resolves to `undefined`, so the "Manage account" and legal
+  link-out buttons fail closed instead of opening an insecure page (`http://localhost` stays allowed
+  for the local dev web stack). **Why:** the env origins are build constants — this stops a misbuilt
+  release from silently shipping an `http://` hand-off. No token was ever passed in the URL; this
+  hardens the origin itself.
+
 - **An explicit locale choice now syncs to a signed-in user's account.** A `LocaleSync` mount mirrors the
   chosen locale to Clerk `unsafeMetadata.locale` → (via the api webhook) `user_profiles.locale`, so the
   user's transactional/auth emails follow their current language, not just the sign-up one. Syncs only a

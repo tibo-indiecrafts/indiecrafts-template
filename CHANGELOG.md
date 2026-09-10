@@ -18,6 +18,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ## [Unreleased]
 
+- **Removed the reserved `aws` + `vercel` infra-provider scaffold** — `cloudflare` is now the only IaC
+  provider in the infra registry (`PROVIDERS` → `["cloudflare"]` in `code/shared/scripts/lib/infra-registry.mjs`,
+  JSDoc + provider comment trimmed), the runner's unsupported-provider message is reworded
+  (`code/shared/scripts/infra/run.mjs`, guard unchanged), `code/projects/_registry.md` drops the
+  reserved-provider mentions, and the 12 placeholder `infra/{aws,vercel}/README.md` markers are deleted
+  (each held only a "reserved slot" README). Reasserts the Cloudflare-only deploy model; a future
+  provider re-adds its own registry row + stack dir. Also dropped the dead `*.vercel.app` dev/test CSP
+  entry (detail in the [packages log](./code/packages/CHANGELOG.md)).
 - **The pipeline now gates what ships** — the prod deploy waits for CI to pass (`workflow_run` on
   the `CI` workflow), the CI `verify` job runs the `api-guards` / `typed-routing` / `tokens` /
   `brands` / `tasks` checks, and gitleaks + dependency-review run on push, not only on PRs. Closes
