@@ -8,6 +8,8 @@ import type {
 // The D1 erasure adapters, split across the two EU D1s (spec §8.3):
 //   CORE  — user_profiles → pseudonymise (scrub email/name, keep the fingerprint)
 //           consent_events → pseudonymise (subject_id → fingerprint, subject_type → visitor)
+//           email_preferences → hard-delete (per-user marketing state, no standalone PII,
+//                                keyed by user_id — removed, not pseudonymised)
 //   AUDIT — session_events → delete (low-sensitivity sign-in activity; no severity)
 //           security_events → pseudonymise high/critical (user_id → fingerprint); delete
 //                              every other severity (the exact complement, so no severity
@@ -124,8 +126,21 @@ export function createCoreErasureAdapter(
         deleted: {},
       };
     },
-    async delete() {
-      return { store: "d1-core", anonymized: {}, deleted: {} }; // core pseudonymises; nothing hard-deleted
+    async delete(email): Promise<AdapterResult> {
+      // core pseudonymises identity (user_profiles/consent_events, in anonymize()); the
+      // one hard-delete here is email_preferences — per-user marketing state with no
+      // standalone PII, but the subject's data, so it's removed rather than pseudonymised.
+      const { userId } = await resolveSubject(coreDb, email, salt);
+      if (!userId) return { store: "d1-core", anonymized: {}, deleted: {} };
+      const prefs = await coreDb
+        .prepare("DELETE FROM email_preferences WHERE user_id = ?")
+        .bind(userId)
+        .run();
+      return {
+        store: "d1-core",
+        anonymized: {},
+        deleted: { email_preferences: prefs.meta?.changes ?? 0 },
+      };
     },
   };
 }

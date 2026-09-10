@@ -131,16 +131,69 @@ describe("D1 erasure adapters (core + audit split)", () => {
       expect(consent?.subject_type).toBe("visitor");
     });
 
-    it("delete is a no-op — core pseudonymises, nothing is hard-deleted", async () => {
+    it("delete does not touch user_profiles — core pseudonymises identity, nothing hard-deleted there", async () => {
       const core = createCoreErasureAdapter(coreDb, SALT);
       const res = await core.delete(EMAIL);
       expect(res.store).toBe("d1-core");
-      expect(res.deleted).toEqual({});
       const prof = await coreDb
         .prepare("SELECT email FROM user_profiles WHERE user_id=?")
         .bind(USER)
         .first<{ email: string }>();
       expect(prof?.email).toBe(EMAIL); // untouched by delete()
+    });
+
+    it("delete purges the subject's email_preferences rows", async () => {
+      const now = new Date(0).toISOString();
+      await coreDb
+        .prepare(
+          "INSERT INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, 'news', 1, ?)",
+        )
+        .bind(USER, now)
+        .run();
+
+      const core = createCoreErasureAdapter(coreDb, SALT);
+      const res = await core.delete(EMAIL);
+      expect(res.store).toBe("d1-core");
+      expect(res.deleted.email_preferences).toBe(1);
+
+      const remaining = await coreDb
+        .prepare("SELECT COUNT(*) c FROM email_preferences WHERE user_id=?")
+        .bind(USER)
+        .first<{ c: number }>();
+      expect(remaining?.c).toBe(0);
+    });
+
+    it("erase (anonymize then delete) leaves an unrelated subject's email_preferences untouched", async () => {
+      await seedOther();
+      const now = new Date(0).toISOString();
+      await coreDb
+        .prepare(
+          "INSERT INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, 'news', 1, ?)",
+        )
+        .bind(USER, now)
+        .run();
+      await coreDb
+        .prepare(
+          "INSERT INTO email_preferences (user_id, category_key, granted, updated_at) VALUES (?, 'news', 1, ?)",
+        )
+        .bind(OTHER_USER, now)
+        .run();
+
+      const core = createCoreErasureAdapter(coreDb, SALT);
+      await core.anonymize(EMAIL);
+      await core.delete(EMAIL);
+
+      const mine = await coreDb
+        .prepare("SELECT COUNT(*) c FROM email_preferences WHERE user_id=?")
+        .bind(USER)
+        .first<{ c: number }>();
+      expect(mine?.c).toBe(0);
+
+      const other = await coreDb
+        .prepare("SELECT COUNT(*) c FROM email_preferences WHERE user_id=?")
+        .bind(OTHER_USER)
+        .first<{ c: number }>();
+      expect(other?.c).toBe(1);
     });
 
     it("resolveSubject falls back to plaintext email when email_fingerprint is null", async () => {
