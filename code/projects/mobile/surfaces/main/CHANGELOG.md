@@ -32,6 +32,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
   jar). Dropped the native data-export control — it lives on the web account. **Why:**
   profile/security have no native Clerk UI (`clerk-expo` is headless), so they and export move
   to the web account; consent + delete stay native.
+- **Email preferences hand off to the web account too.** The `/account` screen's "Manage email
+  preferences" button opens `accountUrl` in the same in-app browser tab as "Manage account" — no
+  native preference screen. **Why:** the web `/account` page already renders the full,
+  Sanity-driven per-category preference centre; a native duplicate would drift from the editor's
+  categories. An earlier pass had built a native per-category list
+  (`components/EmailPreferences.tsx`, `GET`/`POST /v1/consent/email-preferences`); it's removed in
+  favor of this handoff.
 
 ### Added
 

@@ -7,13 +7,22 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
-- **Email preferences — groundwork (feature in progress on `feat/email-preferences`).** New `main`
-  D1 table `email_preferences (user_id, category_key, granted, updated_at)` via migration `0009`,
-  which also back-fills each existing user's legacy `marketing_email` into a `news` category row.
-  Per-category opt-in state + `consent_events` proof (`consent_type = 'email_pref:<key>'`); the
-  single `marketing_email` column becomes a derived "any marketing on" cache. The routes, the
-  no-login token path, the per-category Resend/Topics mirror, and the surface UIs land in later
-  commits on this branch; this entry is finalized when the feature completes.
+- **Per-category email preferences.** Editor-defined marketing categories (the `emailPreferences`
+  Sanity singleton, read never-throwing via `consent/email-preferences-sanity.ts`, seeded `news`/
+  `offers`/`partners`/`tips`) replace the single `marketing_email` flag. New `main` D1 table
+  `email_preferences (user_id, category_key, granted, updated_at)` via migration `0009`, which also
+  back-fills each existing user's legacy `marketing_email` into a `news` row; every write appends a
+  `consent_events` proof (`consent_type = 'email_pref:<key>'`) and recomputes `marketing_email` as a
+  derived "any category granted" cache. Three route pairs: Clerk-JWT `GET`/`POST
+/v1/consent/email-preferences`; a no-login `GET`/`POST /v1/email-preferences?token=` for an email
+  link, signed with the new `EMAIL_PREF_SECRET`; and `POST /v1/email-preferences/unsubscribe?token=`,
+  an RFC 8058 one-click target that always 200s. Each write best-effort mirrors the changed
+  categories to Resend **Topics** (`syncContactTopics`, per-category `opt_in`/`opt_out`, matched by
+  the category's `resendTopicId`) — never blocking the D1 write. Sign-up grants every category
+  flagged `includeAtSignup` (falling back to `news`) when the sign-up opted into marketing. Erasure
+  hard-deletes the user's `email_preferences` rows and deletes the Resend contact outright (no
+  win-back list). **Why:** an editor-configurable, per-category opt-in with proof, instead of one
+  all-or-nothing flag.
 
 ### Removed
 

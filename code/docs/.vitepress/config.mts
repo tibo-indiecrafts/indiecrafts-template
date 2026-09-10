@@ -135,6 +135,10 @@ export default defineConfig({
             text: "Privacy by regime & scope",
             link: "/apps/web/config/privacy-by-regime",
           },
+          {
+            text: "Email preferences",
+            link: "/apps/web/config/email-preferences",
+          },
           { text: "Navigation", link: "/apps/web/config/navigation" },
           { text: "Legal pages", link: "/apps/web/config/legal-pages" },
           { text: "i18n & routing", link: "/apps/web/config/i18n-and-routing" },

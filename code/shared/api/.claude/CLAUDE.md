@@ -21,8 +21,18 @@ upsert + re-fingerprint on `user.created`/`user.updated`, pseudonymise on `user.
 **Commercial-email consent:** `GET`/`POST /v1/consent/marketing-email` (Clerk-JWT; the account toggle +
 sign-in nudge read/write the caller's own opt-in) and `POST /v1/profiles/consent` (bearer batch → the
 admin users list). Each decision mirrors to a Resend audience (`resend-audience.ts`, `RESEND_AUDIENCE_ID`;
-unset → no-op); erasure pure-deletes the contact. Secrets:
-`APP_API_TOKEN` · `IP_HASH_SALT` · `CLERK_WEBHOOK_SECRET` · `GDPR_FINGERPRINT_SALT` (email fingerprint
+unset → no-op); erasure pure-deletes the contact.
+**Per-category email preferences** (the editor-defined categories, alongside the single flag above):
+`GET`/`POST /v1/consent/email-preferences` (Clerk-JWT) and the no-login
+`GET`/`POST /v1/email-preferences?token=` + `POST /v1/email-preferences/unsubscribe?token=` (RFC 8058
+one-click) read the `emailPreferences` Sanity singleton (`consent/email-preferences-sanity.ts`,
+never-throws — falls back to a seeded `news` category) and write `email_preferences` + a
+`consent_events` proof row (`consent_type = 'email_pref:<key>'`). Each write mirrors the changed
+categories to Resend **Topics** (`syncContactTopics` in `resend-audience.ts`, per-category
+`opt_in`/`opt_out`, `resendTopicId` from Sanity) — the per-category counterpart to the audience mirror
+above. Full model → [Email preferences](../../../docs/apps/web/config/email-preferences.md). Secrets:
+`APP_API_TOKEN` · `IP_HASH_SALT` · `CLERK_WEBHOOK_SECRET` · `EMAIL_PREF_SECRET` (signs the no-login
+preference token) · `GDPR_FINGERPRINT_SALT` (email fingerprint
 salt, DISTINCT per env (stable within an env) — see `wrangler.toml`). `POST /v1/events` also accepts `kind:csp-report` →
 the `csp_reports` D1 table (aggregated CSP violation reports, Report-Only pipeline; 30-day `cron` purge).
 `GET /v1/csp-reports` reads it back (bearer-gated, same shape as `GET /v1/security`) for the admin CSP

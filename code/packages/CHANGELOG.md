@@ -24,6 +24,17 @@ Changed · Deprecated · Removed · Fixed**.
   surfaces' locale switchers call to mirror an explicit language change to the signed-in user's Clerk
   `unsafeMetadata.locale` → (via the api webhook) `user_profiles.locale`. **Why:** the stored locale
   was captured only at sign-up, so a later language switch never reached the user's emails.
+- **`@indiecrafts/packages-shared-gated-delivery` — generic `signHmac`/`verifyHmac`.** The
+  download-token signing was pulled out into two payload-agnostic primitives; `signDownloadToken`/
+  `verifyDownloadToken` are now thin wrappers over them. **Why:** the api's no-login email-preference
+  token needed the same signed-JSON-payload mechanism for a different shape (`{uid, cat?}`, no
+  expiry), and it belongs in the one brick that already owns HMAC signing, not a second
+  implementation.
+- **`emailPreferencesSchema`/`emailPreferencesStructureItem` on `@indiecrafts/packages-web-email/sanity`.**
+  The `emailPreferences` singleton: editor-defined marketing categories (`key`/name/description/
+  `includeAtSignup`/`resendTopicId`, seeded `news`/`offers`/`partners`/`tips`) plus display-only
+  notices, for the subscriber preference centre. **Why:** an editor-owned home for the categories a
+  subscriber can toggle, alongside the existing `emailStrings` transactional-email entity.
 
 ### Changed
 
