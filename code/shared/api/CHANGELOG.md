@@ -13,9 +13,9 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   `email_preferences (user_id, category_key, granted, updated_at)` via migration `0009`, which also
   back-fills each existing user's legacy `marketing_email` into a `news` row; every write appends a
   `consent_events` proof (`consent_type = 'email_pref:<key>'`) and recomputes `marketing_email` as a
-  derived "any category granted" cache. Three route pairs: Clerk-JWT `GET`/`POST
-/v1/consent/email-preferences`; a no-login `GET`/`POST /v1/email-preferences?token=` for an email
-  link, signed with the new `EMAIL_PREF_SECRET`; and `POST /v1/email-preferences/unsubscribe?token=`,
+  derived "any category granted" cache. Three route pairs: Clerk-JWT
+  `GET`/`POST /v1/consent/email-preferences`; a no-login `GET`/`POST /v1/email-preferences?token=`
+  for an email link, signed with the new `EMAIL_PREF_SECRET`; and `POST /v1/email-preferences/unsubscribe?token=`,
   an RFC 8058 one-click target that always 200s. Each write best-effort mirrors the changed
   categories to Resend **Topics** (`syncContactTopics`, per-category `opt_in`/`opt_out`, matched by
   the category's `resendTopicId`) — never blocking the D1 write. Sign-up grants every category
