@@ -6,14 +6,11 @@ import {
   findTopicId,
 } from "./resend-contacts-backfill.mjs";
 
-const ENV = { RESEND_API_KEY: "k", RESEND_AUDIENCE_ID: "aud_1" };
+const ENV = { RESEND_API_KEY: "k" };
 
-test("resolveConfig requires key + audience", () => {
+test("resolveConfig requires a key", () => {
   assert.throws(() => resolveConfig({}, []), /RESEND_API_KEY/);
-  assert.throws(
-    () => resolveConfig({ RESEND_API_KEY: "k" }, []),
-    /RESEND_AUDIENCE_ID/,
-  );
+  assert.equal(resolveConfig({ RESEND_API_KEY: "k" }, []).key, "k");
 });
 
 test("resolveConfig defaults: general topic, opt_in, dry-run", () => {
