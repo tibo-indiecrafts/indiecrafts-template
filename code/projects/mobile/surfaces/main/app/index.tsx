@@ -1,9 +1,11 @@
 import { Share, View } from "react-native";
 import { useIntl } from "react-intl";
 import { useRouter } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
 import { SignedIn } from "@clerk/clerk-expo";
 import { websiteUrl } from "@/config";
 import { hasClerk } from "@/lib/auth";
+import { getWelcome } from "@/lib/welcome";
 import { useThemePreference, THEME_PREFERENCES } from "@/lib/theme-preference";
 import {
   Screen,
@@ -20,6 +22,11 @@ export default function Index() {
   const t = useIntl();
   const router = useRouter();
   const { preference, setPreference } = useThemePreference();
+  // Editor-owned welcome from Sanity (live; fail-open) — falls back to the message file.
+  const { data: welcome } = useQuery({
+    queryKey: ["appWelcome", t.locale],
+    queryFn: () => getWelcome(t.locale),
+  });
   // Native share: the OS share sheet (`Share.share`) — the idiomatic mobile pattern, not
   // the web intent-URL row. Shares the marketing site; disabled when no origin is set.
   const onShare = () => {
@@ -36,7 +43,7 @@ export default function Index() {
           {t.formatMessage({ id: "home.title" })}
         </ThemedText>
         <ThemedText variant="muted">
-          {t.formatMessage({ id: "home.subtitle" })}
+          {welcome ?? t.formatMessage({ id: "home.subtitle" })}
         </ThemedText>
         <Button label={t.formatMessage({ id: "home.cta" })} />
         <Button

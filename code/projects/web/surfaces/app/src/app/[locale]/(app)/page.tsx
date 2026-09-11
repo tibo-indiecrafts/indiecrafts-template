@@ -10,6 +10,7 @@ import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { ShareButtons } from "@indiecrafts/packages-web-ui-components/web/layout/ShareButtons";
 import { Link } from "@/i18n/routing";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
+import { getAppWelcome } from "@/lib/welcome";
 
 // App home. Server component; `setRequestLocale` keeps it statically rendered.
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
@@ -17,10 +18,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   setRequestLocale(locale);
   const t = await getTranslations("app");
   const tShare = await getTranslations("share");
+  // Editor-owned welcome from Sanity (live, cached); falls back to the message file.
+  const welcome = await getAppWelcome(locale);
 
   return (
     <div className="p-4 md:p-6">
-      <PageHeader title={t("title")} description={t("subtitle")} />
+      <PageHeader title={t("title")} description={welcome ?? t("subtitle")} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <CardHeader>

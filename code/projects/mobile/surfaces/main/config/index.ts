@@ -57,6 +57,15 @@ export const accountUrl = safeWebOrigin(
 export const buildId = process.env.EXPO_PUBLIC_BUILD_ID ?? "dev";
 
 /**
+ * Sanity home welcome (the `appContent` singleton) — PUBLIC project id + dataset,
+ * the SAME Sanity project as the website. Unset project id → the home welcome read
+ * no-ops and the screen shows its own message-file subtitle instead.
+ */
+export const sanityProjectId = process.env.EXPO_PUBLIC_SANITY_PROJECT_ID;
+export const sanityDataset =
+  process.env.EXPO_PUBLIC_SANITY_DATASET ?? "production";
+
+/**
  * Instance feature flags. `requireConsent` is OFF by default (mirroring the website) —
  * the consent UI is compliant-ready, a client flips this on when the app ships an
  * analytics/ads SDK. Account export/deletion are an unconditional web hand-off, no flag.

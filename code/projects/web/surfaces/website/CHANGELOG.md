@@ -19,6 +19,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Added
 
+- **`appContent` welcome singleton in the hub Studio.** A new `Contenu de l'app` singleton
+  (`src/sanity/app-content.ts`, wired into the "Contenu partagé" desk group) holds an editor-owned
+  home welcome message with `shared` / `web` / `mobile` sections, each internationalized (`localeText`).
+  Read live by the web `app` surface + the mobile app (not the website itself). **Why:** give the app +
+  mobile home screens an editor-changeable welcome without a redeploy, from the one shared Sanity project.
 - **Email preference centre.** A new `EmailPreferences` component
   (`src/user-interface/account/EmailPreferences.tsx`) renders a switch per email category (optimistic,
   rolls back on a failed save) plus a read-only "Account & security" notices list; category/notice copy

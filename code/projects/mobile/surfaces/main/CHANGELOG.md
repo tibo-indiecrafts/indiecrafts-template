@@ -11,6 +11,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Home welcome from Sanity.** The home screen reads an editor-owned welcome from the `appContent`
+  singleton (the `mobile` section, falling back to `shared`) via `lib/welcome.ts` — a TanStack Query
+  runtime read of Sanity's public CDN, **never-throws** (unset project id or any error → the home shows
+  its own `home.subtitle` instead). New public env `EXPO_PUBLIC_SANITY_PROJECT_ID` +
+  `EXPO_PUBLIC_SANITY_DATASET` (same Sanity project as the website). **Why:** change the mobile welcome
+  without an app-store release — the surface's first Sanity read.
+
 ### Changed
 
 - **Account deletion now redirects to the web account.** `app/account.tsx` dropped its native

@@ -39,6 +39,7 @@ import { complianceSanity } from "@indiecrafts/packages-web-compliance/sanity";
 import { announcementSanity } from "@indiecrafts/packages-web-announcement/sanity";
 import { localeSuggestSanity } from "@indiecrafts/packages-web-locale-suggest/sanity";
 import { coreSanity } from "./src/sanity";
+import { appContentSchema, appContentStructureItem } from "./src/sanity/app-content";
 
 // Per-app desk groups. "Site web" = this app's own content (home + the feature
 // modules); "Contenu partagé" = site-wide config read by every app (SEO/nav/legal/
@@ -74,6 +75,12 @@ const sanity = composeStudio([
         name: "email-preferences",
         schemaTypes: [emailPreferencesSchema],
         structure: (S) => [emailPreferencesStructureItem(S)],
+      },
+      // The `appContent` welcome singleton — read live by the app + mobile surfaces.
+      {
+        name: "app-content",
+        schemaTypes: [appContentSchema],
+        structure: (S) => [appContentStructureItem(S)],
       },
       emailSanity([
         ...allModules,

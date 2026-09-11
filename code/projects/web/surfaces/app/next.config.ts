@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-shared-announcement",
     "@indiecrafts/packages-shared-auth",
     "@indiecrafts/packages-shared-config",
+    "@indiecrafts/packages-shared-logger",
     "@indiecrafts/packages-web-announcement",
     "@indiecrafts/packages-web-auth",
     "@indiecrafts/packages-web-i18n",

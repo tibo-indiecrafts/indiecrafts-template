@@ -20,6 +20,7 @@
     "@indiecrafts/packages-shared-auth": "workspace:*",
     "@indiecrafts/packages-shared-compliance": "workspace:*",
     "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-shared-security": "workspace:*",
     "@indiecrafts/packages-shared-system-pages": "workspace:*",
     "@indiecrafts/packages-shared-ui-icons": "workspace:*",

@@ -12,6 +12,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Home welcome from Sanity.** The home now reads an editor-owned welcome message live from the
+  `appContent` Sanity singleton (the `web` section, falling back to `shared`), resolved to the request
+  locale, via `src/lib/welcome.ts` — a short-cached (60s), **fail-open** edge read (unset project id or
+  any error → the home shows its own `app.subtitle` message instead, never a broken page). New public env
+  `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (same Sanity project as the website).
+  **Why:** let an editor change the home welcome without a redeploy — the surface's first Sanity read.
+
 ### Changed
 
 - **Clerk UI localized + self-hosted `/sign-up`.** `<ClerkProvider>` gets the active locale (the provider
