@@ -98,6 +98,7 @@ export async function subscribe(
       newsletterConfirm?: ConfirmationConfig;
       newsletterOwner?: OwnerAlertConfig;
       supportEmail?: string;
+      bccAll?: string;
     } | null;
     const confirmCfg = strings?.newsletterConfirm;
     // A confirm token is stored only when the confirmation email can actually be
@@ -128,6 +129,7 @@ export async function subscribe(
         input.language,
         confirmCfg,
         strings?.supportEmail,
+        strings?.bccAll,
       );
       return { ok: true, already: false };
     }
@@ -153,12 +155,14 @@ export async function subscribe(
       input.language,
       confirmCfg,
       strings?.supportEmail,
+      strings?.bccAll,
     );
     await notifyOwner(
       email,
       input.source,
       strings?.newsletterOwner,
       strings?.supportEmail,
+      strings?.bccAll,
     );
 
     return { ok: true, already: false };
@@ -175,6 +179,7 @@ async function sendConfirmEmail(
   language: string | undefined,
   cfg: ConfirmationConfig | undefined,
   supportEmail: string | undefined,
+  bccAll: string | undefined,
 ): Promise<void> {
   try {
     const from = cfg?.from?.trim();
@@ -196,7 +201,7 @@ async function sendConfirmEmail(
     await sendEmail({
       from,
       to: [email],
-      bcc: cleanList(cfg?.bcc),
+      bcc: cleanList([...(cfg?.bcc ?? []), bccAll ?? ""]),
       replyTo: cfg?.replyTo?.trim(),
       ...message,
     });
@@ -211,6 +216,7 @@ async function notifyOwner(
   source: string | undefined,
   cfg: OwnerAlertConfig | undefined,
   supportEmail: string | undefined,
+  bccAll: string | undefined,
 ): Promise<void> {
   try {
     const to = cleanList(cfg?.to);
@@ -234,7 +240,7 @@ async function notifyOwner(
       from,
       to,
       cc: cleanList(cfg.cc),
-      bcc: cleanList(cfg.bcc),
+      bcc: cleanList([...(cfg.bcc ?? []), bccAll ?? ""]),
       ...message,
     });
   } catch (error) {

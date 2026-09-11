@@ -34,6 +34,8 @@ export type AuthKind =
  *  address (read from the `emailStrings` singleton, shown in every footer). */
 export type AuthEmailStrings = Partial<Record<AuthKind, AuthGroup>> & {
   supportEmail?: string;
+  /** The global editor-owned blind-copy address (`emailStrings.bccAll`). */
+  bccAll?: string;
 };
 
 /** The canonical Clerk template slug per kind — matches `AUTH_TEMPLATES` keys + the real
@@ -123,7 +125,7 @@ const AUTH_CACHE_MS = 5 * 60_000;
 /** GROQ: the 12 `clerkEmails` groups + the global `emailStrings.supportEmail`, in one call. */
 const CLERK_GROUPS =
   "verification,resetPassword,magicLink,newDevice,passwordChanged,passwordRemoved,passkeyAdded,passkeyRemoved,mfaEnabled,primaryEmailChanged,accountLocked,invitation";
-const QUERY = `{"clerk":*[_type=="clerkEmails"][0]{${CLERK_GROUPS}},"supportEmail":*[_type=="emailStrings"][0].supportEmail}`;
+const QUERY = `{"clerk":*[_type=="clerkEmails"][0]{${CLERK_GROUPS}},"supportEmail":*[_type=="emailStrings"][0].supportEmail,"bccAll":*[_type=="emailStrings"][0].bccAll}`;
 
 /**
  * Fetch the Clerk-email copy (`clerkEmails` singleton) + the global support address
@@ -157,11 +159,16 @@ export async function fetchAuthEmailStrings(
       result?: {
         clerk?: Partial<Record<AuthKind, AuthGroup>> | null;
         supportEmail?: string | null;
+        bccAll?: string | null;
       };
     };
     const r = body.result;
     const value: AuthEmailStrings | null = r
-      ? { ...(r.clerk ?? {}), supportEmail: r.supportEmail ?? undefined }
+      ? {
+          ...(r.clerk ?? {}),
+          supportEmail: r.supportEmail ?? undefined,
+          bccAll: r.bccAll ?? undefined,
+        }
       : null;
     if (cacheable) authCache = { at: Date.now(), value };
     return value;

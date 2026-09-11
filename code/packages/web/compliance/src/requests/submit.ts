@@ -102,6 +102,7 @@ async function notifyOwner(
     const strings = (await getEmailStrings()) as {
       dataRequestOwner?: OwnerAlertConfig;
       supportEmail?: string;
+      bccAll?: string;
     } | null;
     const cfg = strings?.dataRequestOwner;
     const to = clean(cfg?.to);
@@ -127,7 +128,7 @@ async function notifyOwner(
       from,
       to,
       cc: clean(cfg.cc),
-      bcc: clean(cfg.bcc),
+      bcc: clean([...(cfg.bcc ?? []), strings?.bccAll ?? ""]),
       ...rendered,
     });
   } catch (error) {

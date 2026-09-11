@@ -104,6 +104,7 @@ export async function handleClerkEmail(
       subject,
       html: html + foot.html,
       text: text + foot.text,
+      bcc: strings?.bccAll,
     });
     return;
   }
@@ -120,5 +121,6 @@ export async function handleClerkEmail(
     subject,
     html: body || `<p>${subject.replaceAll("<", "&lt;")}</p>`,
     text: subject,
+    bcc: strings?.bccAll,
   });
 }

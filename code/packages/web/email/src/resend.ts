@@ -6,7 +6,8 @@ import "server-only";
  * (server-only, never `NEXT_PUBLIC_`). Throws on a missing key or a non-2xx
  * response; callers treat sending as best-effort. When `EMAIL_ADMIN_BCC` is
  * set, it is merged into `bcc` (deduped) so every email sent through this
- * function copies the admin — composes with any per-group Studio bcc.
+ * function copies the admin — composes with any per-group Studio bcc and the
+ * Studio-editable global `bccAll` a sender passes in `bcc`.
  */
 export type SendEmailInput = {
   from: string;

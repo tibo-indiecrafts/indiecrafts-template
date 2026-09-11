@@ -39,6 +39,8 @@ type ErasureEmailStrings = {
   erasureComplete?: ErasureEmailGroup;
   /** The global editor-owned support address (`emailStrings.supportEmail`). */
   supportEmail?: string;
+  /** The global editor-owned blind-copy address (`emailStrings.bccAll`). */
+  bccAll?: string;
 };
 
 /** Escape untrusted text before interpolating it into an HTML body. */
@@ -118,7 +120,7 @@ async function fetchErasureEmailStrings(
       ? `${env.SANITY_PROJECT_ID}.api.sanity.io`
       : `${env.SANITY_PROJECT_ID}.apicdn.sanity.io`;
     const query =
-      '*[_type=="emailStrings"][0]{ erasureToken{enabled,subject,heading,intro,buttonLabel,outro}, erasureComplete{enabled,subject,heading,intro,outro}, supportEmail }';
+      '*[_type=="emailStrings"][0]{ erasureToken{enabled,subject,heading,intro,buttonLabel,outro}, erasureComplete{enabled,subject,heading,intro,outro}, supportEmail, bccAll }';
     const endpoint = `https://${host}/v${version}/data/query/${env.SANITY_DATASET}?query=${encodeURIComponent(query)}`;
     const res = await fetch(
       endpoint,
@@ -139,12 +141,23 @@ export async function resend(
     subject,
     html,
     text,
-  }: { to: string; subject: string; html: string; text: string },
+    bcc,
+  }: {
+    to: string;
+    subject: string;
+    html: string;
+    text: string;
+    /** Extra blind copy (the Studio-editable global `bccAll`), merged with `EMAIL_ADMIN_BCC`. */
+    bcc?: string;
+  },
 ): Promise<void> {
   const key = env.RESEND_API_KEY;
   const from = env.EMAIL_FROM;
   // Silent no-op: an unconfigured mailer must never break the erasure flow.
   if (!key || !from) return;
+
+  // Merge the env admin bcc with the Studio-editable global bcc; dedupe, drop empties.
+  const bccList = [...new Set([env.EMAIL_ADMIN_BCC, bcc].filter(Boolean))];
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -158,7 +171,7 @@ export async function resend(
       subject,
       text,
       ...(html ? { html } : {}),
-      ...(env.EMAIL_ADMIN_BCC ? { bcc: [env.EMAIL_ADMIN_BCC] } : {}),
+      ...(bccList.length ? { bcc: bccList } : {}),
     }),
   });
   if (!res.ok) throw new Error(`resend ${res.status}`);
@@ -203,7 +216,7 @@ export async function sendErasureTokenEmail(
   const html = `<p>Hello ${escapeHtml(to)},</p><p>${line}</p><p><a href="${url}">${escapeHtml(buttonLabel)}</a></p><p>${escapeHtml(outro)}</p>${foot.html}`;
   const textLine = intro ? `${heading} ${intro}` : heading;
   const text = `Hello ${to},\n\n${textLine} Confirm it here:\n${confirmUrl}\n\n${outro}${foot.text}`;
-  await resend(env, { to, subject, html, text });
+  await resend(env, { to, subject, html, text, bcc: copy?.bccAll });
 }
 
 /** The erasure completion email — sent once the erasure run finishes. */
@@ -236,5 +249,5 @@ export async function sendErasureCompleteEmail(
   const html = `<p>Hello ${escapeHtml(to)},</p><p>${line}</p><p>${escapeHtml(retained)}</p>${outro ? `<p>${escapeHtml(outro)}</p>` : ""}${foot.html}`;
   const textLine = intro ? `${heading} ${intro}` : heading;
   const text = `Hello ${to},\n\n${textLine}\n\n${retained}${outro ? `\n\n${outro}` : ""}${foot.text}`;
-  await resend(env, { to, subject, html, text });
+  await resend(env, { to, subject, html, text, bcc: copy?.bccAll });
 }

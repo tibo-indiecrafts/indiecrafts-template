@@ -183,6 +183,21 @@ describe("sendErasureTokenEmail", () => {
     expect(body.text).toContain("support@x.com");
   });
 
+  it("blind-copies the editable global bccAll address", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({ bccAll: "copy@x.com" }));
+    await sendErasureTokenEmail(
+      CONFIGURED,
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody & {
+      bcc?: string[];
+    };
+    expect(body.bcc).toEqual(["copy@x.com"]);
+  });
+
   it("resolves the Sanity copy in the recipient's locale, else the default", async () => {
     const fetchMock = okFetch();
     const fetchStrings = vi.fn(async () => ({

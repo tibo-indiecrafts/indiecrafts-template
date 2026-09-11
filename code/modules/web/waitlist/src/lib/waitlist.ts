@@ -103,6 +103,7 @@ export async function join(
       waitlistConfirm?: ConfirmationConfig;
       waitlistOwner?: OwnerAlertConfig;
       supportEmail?: string;
+      bccAll?: string;
     } | null;
     // Best-effort — a mail failure must not turn a saved entry into a 500.
     await sendConfirmEmail(
@@ -111,6 +112,7 @@ export async function join(
       input.language,
       strings?.waitlistConfirm,
       strings?.supportEmail,
+      strings?.bccAll,
     );
     await notifyOwner(
       email,
@@ -118,6 +120,7 @@ export async function join(
       input.source,
       strings?.waitlistOwner,
       strings?.supportEmail,
+      strings?.bccAll,
     );
 
     return { ok: true, already: false };
@@ -134,6 +137,7 @@ async function sendConfirmEmail(
   language: string | undefined,
   cfg: ConfirmationConfig | undefined,
   supportEmail: string | undefined,
+  bccAll: string | undefined,
 ): Promise<void> {
   try {
     const from = cfg?.from?.trim();
@@ -151,7 +155,7 @@ async function sendConfirmEmail(
     await sendEmail({
       from,
       to: [email],
-      bcc: cleanList(cfg?.bcc),
+      bcc: cleanList([...(cfg?.bcc ?? []), bccAll ?? ""]),
       replyTo: cfg?.replyTo?.trim(),
       ...message,
     });
@@ -167,6 +171,7 @@ async function notifyOwner(
   source: string | undefined,
   cfg: OwnerAlertConfig | undefined,
   supportEmail: string | undefined,
+  bccAll: string | undefined,
 ): Promise<void> {
   try {
     const to = cleanList(cfg?.to);
@@ -191,7 +196,7 @@ async function notifyOwner(
       from,
       to,
       cc: cleanList(cfg.cc),
-      bcc: cleanList(cfg.bcc),
+      bcc: cleanList([...(cfg.bcc ?? []), bccAll ?? ""]),
       ...message,
     });
   } catch (error) {

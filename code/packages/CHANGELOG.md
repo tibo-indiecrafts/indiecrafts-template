@@ -20,6 +20,12 @@ Changed · Deprecated · Removed · Fixed**.
   It's the one place to set the "contact support" address shown in every transactional email's footer
   across all surfaces + the Clerk auth emails. **Why:** the email-control work — a single, non-dev,
   live-editable support contact. (The footer rendering that consumes it wires in a follow-up.)
+- **Global blind copy of every email (`bccAll`).** The `emailStrings` singleton gains a second global,
+  email-validated field — `bccAll` — that receives a copy of **every** transactional email. Each website
+  sender threads `strings.bccAll` into `sendEmail`'s `bcc` (merged with the `EMAIL_ADMIN_BCC` env value +
+  any per-group bcc, deduped); the worker side (`code/shared/api`) reads it the same way for the Clerk
+  take-over + erasure emails. **Why:** a live-editable QA copy of outgoing mail without a deploy. It also
+  copies auth codes and magic links, so the field legend warns to leave it **empty in production**.
 - **Churn exit-survey on account deletion.** `DeleteAccountSection`
   (`@indiecrafts/packages-shared-compliance/web`) now renders an optional reason/feedback/competitor
   survey above the delete confirmation — rendered on both the website and the app web surface, no

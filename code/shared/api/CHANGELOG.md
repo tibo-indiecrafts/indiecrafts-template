@@ -21,6 +21,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   dormant) until toggled off per the runbook. **Why:** own the auth-email experience — one brand, the
   recipient's language, and a support contact — without hard-coding copy or breaking mandatory sends.
   Setup + toggle + Google-screen steps → [Clerk emails](../../../docs/apps/web/config/clerk-emails.md).
+- **Global blind copy on worker emails (`bccAll`).** The worker mailer (`erasure/email.ts` `resend`) now
+  merges an editor-owned `emailStrings.bccAll` (read alongside the copy in the same GROQ query) with the
+  `EMAIL_ADMIN_BCC` env value, deduped — applied to both the Clerk take-over emails and the two erasure
+  emails. **Why:** a live-editable QA copy of outgoing mail. It copies auth codes too, so keep it empty
+  in production (the Studio field legend says so).
 - **Churn tracking.** `POST /v1/erasure/self` (the authenticated self-service delete) now captures an
   optional exit survey (`reason`/`feedback`/`competitor`) into a new `churn_events` table (`main` D1,
   migration `0010`; `user_id` primary key, `deleted_at`, `reason`, `feedback`, `competitor` — no email,

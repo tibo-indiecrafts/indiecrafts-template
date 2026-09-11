@@ -34,6 +34,7 @@ export async function notifyNewComment(
     const strings = (await getEmailStrings()) as {
       commentNotification?: OwnerAlertConfig;
       supportEmail?: string;
+      bccAll?: string;
     } | null;
     const cfg = strings?.commentNotification;
     const to = clean(cfg?.to);
@@ -85,7 +86,7 @@ export async function notifyNewComment(
       from,
       to,
       cc: clean(cfg.cc),
-      bcc: clean(cfg.bcc),
+      bcc: clean([...(cfg.bcc ?? []), strings?.bccAll ?? ""]),
       replyTo: cfg.replyTo?.trim() || authorEmail,
       ...message,
     });

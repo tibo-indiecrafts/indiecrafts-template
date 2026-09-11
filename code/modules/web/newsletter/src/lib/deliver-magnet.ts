@@ -115,6 +115,7 @@ async function sendMagnetEmail(
     newsletterConfirm?: ConfirmationConfig;
     leadMagnet?: ConfirmationConfig;
     supportEmail?: string;
+    bccAll?: string;
   } | null;
   const lead = strings?.leadMagnet;
   // Own sender if set, else reuse the newsletter's verified sender identity.
@@ -145,5 +146,11 @@ async function sendMagnetEmail(
     downloadUrl: `${site.url}/api/download?token=${encodeURIComponent(token)}`,
     supportEmail: strings?.supportEmail,
   });
-  await sendEmail({ from, to: [email], ...message });
+  const bccAll = strings?.bccAll?.trim();
+  await sendEmail({
+    from,
+    to: [email],
+    ...(bccAll ? { bcc: [bccAll] } : {}),
+    ...message,
+  });
 }

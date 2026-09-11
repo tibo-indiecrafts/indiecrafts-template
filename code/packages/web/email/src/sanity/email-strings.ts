@@ -12,6 +12,18 @@ const supportEmailField = defineField({
   validation: (Rule) => Rule.email(),
 });
 
+/** A global copy (BCC) address that receives a blind copy of EVERY transactional email.
+ *  For QA — read once per send, added to the Resend `bcc`. It also copies auth codes,
+ *  magic links, and reset links, so leave it EMPTY in production. */
+const bccAllField = defineField({
+  name: "bccAll",
+  title: "Copie de tous les e-mails (CCi)",
+  type: "string",
+  description:
+    "Adresse qui reçoit une copie cachée (CCi) de CHAQUE e-mail — ex. pour vérifier les envois. Attention : elle reçoit aussi les codes de connexion et les liens magiques, donc laissez ce champ VIDE en production. Vide = aucune copie.",
+  validation: (Rule) => Rule.email(),
+});
+
 /**
  * E-mails (singleton) — the one place every transactional e-mail is configured:
  * who receives it, the sender, and the copy. **Subscriber-facing** copy (the
@@ -31,7 +43,7 @@ export function buildEmailStrings(groups: FieldDefinition[]) {
     type: "document",
     icon: EnvelopeIcon,
     __experimental_omnisearch_visibility: false,
-    fields: [supportEmailField, ...groups],
+    fields: [supportEmailField, bccAllField, ...groups],
     preview: {
       prepare: () => ({
         title: "E-mails",

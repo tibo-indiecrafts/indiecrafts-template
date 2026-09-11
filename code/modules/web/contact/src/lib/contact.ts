@@ -104,6 +104,7 @@ export async function submit(
       contactConfirm?: ConfirmationConfig;
       contactOwner?: OwnerAlertConfig;
       supportEmail?: string;
+      bccAll?: string;
     } | null;
     // Best-effort — a mail failure must not turn a saved message into a 500.
     await sendConfirmEmail(
@@ -111,11 +112,13 @@ export async function submit(
       input.language,
       strings?.contactConfirm,
       strings?.supportEmail,
+      strings?.bccAll,
     );
     await notifyOwner(
       { email, name, subject, message, source: input.source },
       strings?.contactOwner,
       strings?.supportEmail,
+      strings?.bccAll,
     );
 
     return { ok: true };
@@ -131,6 +134,7 @@ async function sendConfirmEmail(
   language: string | undefined,
   cfg: ConfirmationConfig | undefined,
   supportEmail: string | undefined,
+  bccAll: string | undefined,
 ): Promise<void> {
   try {
     const from = cfg?.from?.trim();
@@ -149,7 +153,7 @@ async function sendConfirmEmail(
     await sendEmail({
       from,
       to: [email],
-      bcc: cleanList(cfg?.bcc),
+      bcc: cleanList([...(cfg?.bcc ?? []), bccAll ?? ""]),
       replyTo: cfg?.replyTo?.trim(),
       ...message,
     });
@@ -169,6 +173,7 @@ async function notifyOwner(
   },
   cfg: OwnerAlertConfig | undefined,
   supportEmail: string | undefined,
+  bccAll: string | undefined,
 ): Promise<void> {
   try {
     const to = cleanList(cfg?.to);
@@ -195,7 +200,7 @@ async function notifyOwner(
       from,
       to,
       cc: cleanList(cfg.cc),
-      bcc: cleanList(cfg.bcc),
+      bcc: cleanList([...(cfg.bcc ?? []), bccAll ?? ""]),
       replyTo: data.email, // hitting Reply answers the person who wrote in
       ...rendered,
     });

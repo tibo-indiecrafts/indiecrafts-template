@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { handleClerkEmail } from "./handle";
 
-type Sent = { to: string; subject: string; html: string; text: string };
+type Sent = {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+  bcc?: string;
+};
 
 // Minimal MAIN_DB stub: prepare().bind().first() → the given locale row (or null).
 function db(locale: string | null) {
@@ -45,6 +51,7 @@ describe("handleClerkEmail (Clerk emails.created take-over)", () => {
         intro: { fr: "Votre code :" },
       },
       supportEmail: "support@x.com",
+      bccAll: "copy@x.com",
     });
     await handleClerkEmail(
       { ...baseEnv, MAIN_DB: db("fr") },
@@ -62,6 +69,7 @@ describe("handleClerkEmail (Clerk emails.created take-over)", () => {
     expect(sent[0].text).toContain("123456"); // the code is still injected
     expect(sent[0].html).toContain("mailto:support@x.com"); // support footer
     expect(sent[0].text).toContain("support@x.com");
+    expect(sent[0].bcc).toBe("copy@x.com"); // global blind copy passed to the mailer
   });
 
   it("falls back to English when no locale is stored", async () => {
