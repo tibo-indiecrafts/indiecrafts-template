@@ -67,7 +67,13 @@ async function seedRequest(overrides: {
 }
 
 /** Mock Clerk + Sanity clients (real D1 + real orders no-op) — no SDK/HTTP. */
-function mockAdapters(clerkOverrides: Partial<ClerkErasureClient> = {}) {
+function mockAdapters(
+  clerkOverrides: Partial<ClerkErasureClient> = {},
+  sanityOverrides: Partial<{
+    findByEmail: (type: string) => Promise<Array<{ _id: string }>>;
+    pseudonymise: () => Promise<void>;
+  }> = {},
+) {
   const clerkClient: ClerkErasureClient = {
     findUserIdByEmail: vi.fn(async () => USER),
     exportUser: vi.fn(async () => ({ id: USER })),
@@ -79,6 +85,7 @@ function mockAdapters(clerkOverrides: Partial<ClerkErasureClient> = {}) {
       type === "subscriber" ? [{ _id: "sub1" }] : [],
     ),
     pseudonymise: vi.fn(async () => {}),
+    ...sanityOverrides,
   };
   const build = (buildEnv: Env) => [
     createCoreErasureAdapter(buildEnv.MAIN_DB!, SALT),
@@ -273,14 +280,57 @@ describe("POST /v1/erasure/confirm", () => {
     expect(await profileAnonymized()).toBe(0);
   });
 
-  it("reflects a partial failure when an adapter throws, and still runs the D1 half", async () => {
+  it("fails closed (502) when the Clerk delete persistently fails: no completion email, row stays confirmed", async () => {
     const fp = await seedProfile();
     const token = await seedRequest({ fp });
-    const { build } = mockAdapters({
-      deleteUser: vi.fn(async () => {
-        throw new Error("clerk down");
-      }),
+    const deleteUser = vi.fn(async () => {
+      throw new Error("clerk down");
     });
+    const { build } = mockAdapters({ deleteUser });
+    const send = vi.fn(async () => {}); // the completion-email seam
+
+    const res = await handleErasureConfirm(
+      postForm({ token, email: EMAIL }),
+      testEnv(),
+      undefined,
+      build,
+      send,
+    );
+
+    // Clerk is the session kill-switch — a persistent failure is NOT a benign partial.
+    expect(res.status).toBe(502);
+    expect(await res.json()).toMatchObject({ ok: false, clerk_failed: true });
+    // Retried once inline before giving up.
+    expect(deleteUser).toHaveBeenCalledTimes(2);
+    // No "erasure complete" email while the account is still live.
+    expect(send).not.toHaveBeenCalled();
+
+    // The row is retained for manual backfill: confirmed, not completed.
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT status, result, completed_at FROM erasure_requests WHERE email_fingerprint = ?",
+    )
+      .bind(fp)
+      .first<{ status: string; result: string; completed_at: string | null }>();
+    expect(row?.status).toBe("confirmed");
+    expect(row?.completed_at).toBeNull();
+    const receipt = JSON.parse(row!.result) as { errors: unknown[] };
+    expect(receipt.errors.length).toBeGreaterThan(0);
+
+    // The D1 half still ran despite Clerk failing — not a blind success either way.
+    expect(await profileAnonymized()).toBe(1);
+  });
+
+  it("reports a 207 partial when a NON-Clerk store fails (Clerk delete succeeded)", async () => {
+    const fp = await seedProfile();
+    const token = await seedRequest({ fp });
+    const { build, clerkClient } = mockAdapters(
+      {},
+      {
+        pseudonymise: vi.fn(async () => {
+          throw new Error("sanity down");
+        }),
+      },
+    );
 
     const res = await handleErasureConfirm(
       postForm({ token, email: EMAIL }),
@@ -288,27 +338,19 @@ describe("POST /v1/erasure/confirm", () => {
       undefined,
       build,
     );
+
+    // Clerk (the kill-switch) succeeded → still a partial, not a fail-closed 502.
     expect(res.status).toBe(207);
     const body = (await res.json()) as {
       ok: boolean;
       partial: boolean;
-      errors: Array<{ store: string; error: string }>;
+      errors: Array<{ store: string }>;
     };
     expect(body.partial).toBe(true);
     expect(body.errors).toEqual(
-      expect.arrayContaining([expect.objectContaining({ store: "clerk" })]),
+      expect.arrayContaining([expect.objectContaining({ store: "sanity" })]),
     );
-
-    const row = await env.AUDIT_DB.prepare(
-      "SELECT status, result FROM erasure_requests WHERE email_fingerprint = ?",
-    )
-      .bind(fp)
-      .first<{ status: string; result: string }>();
-    expect(row?.status).not.toBe("completed");
-    const receipt = JSON.parse(row!.result) as { errors: unknown[] };
-    expect(receipt.errors.length).toBeGreaterThan(0);
-
-    // The D1 half still ran despite Clerk failing — not a blind success either way.
+    expect(clerkClient.deleteUser).toHaveBeenCalledTimes(1);
     expect(await profileAnonymized()).toBe(1);
   });
 });

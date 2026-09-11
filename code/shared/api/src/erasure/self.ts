@@ -32,7 +32,7 @@ const BODY_MAX = 4000;
 // (or not applicable, fva === -1) requires reverification.
 const REVERIFY_WINDOW_MIN = 10;
 // Must match the `name` the clerk adapter registers itself under (erasure/clerk.ts).
-const CLERK_STORE = "clerk";
+export const CLERK_STORE = "clerk";
 
 export type SelfAuth = {
   userId: string;
