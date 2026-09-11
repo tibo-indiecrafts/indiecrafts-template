@@ -7,6 +7,20 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Clerk email take-over — every auth template, branded, localized, with a support address.** The
+  `emails.created` take-over (`POST /v1/clerk-webhook` → `clerk-email/handle.ts`) now covers all 12
+  auth/security email kinds (`verification`, `resetPassword`, `magicLink`, `newDevice`,
+  `passwordChanged`, `passwordRemoved`, `passkeyAdded`, `passkeyRemoved`, `mfaEnabled`,
+  `primaryEmailChanged`, `accountLocked`, `invitation`), up from 4. Copy is editor-owned in a new,
+  separate `clerkEmails` Sanity singleton (moved out of `emailStrings`), translatable per kind, with a
+  per-field fallback to the templates' hardcoded en/fr — a missing/unreachable Sanity never blocks a
+  mandatory auth email. Every taken-over email — and both erasure emails — now shows the global
+  editor-owned support address (`emailStrings.supportEmail`) in the footer, appended worker-safe
+  (`renderEmailLayout` is `server-only`/Next-coupled, unusable in the bare Worker). An unknown slug
+  still forwards Clerk's own body unchanged. The templates ship `delivered_by_clerk: true` (take-over
+  dormant) until toggled off per the runbook. **Why:** own the auth-email experience — one brand, the
+  recipient's language, and a support contact — without hard-coding copy or breaking mandatory sends.
+  Setup + toggle + Google-screen steps → [Clerk emails](../../../docs/apps/web/config/clerk-emails.md).
 - **Churn tracking.** `POST /v1/erasure/self` (the authenticated self-service delete) now captures an
   optional exit survey (`reason`/`feedback`/`competitor`) into a new `churn_events` table (`main` D1,
   migration `0010`; `user_id` primary key, `deleted_at`, `reason`, `feedback`, `competitor` — no email,
