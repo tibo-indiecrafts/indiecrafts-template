@@ -45,6 +45,8 @@ export type EmailLayoutInput = {
   contentHtml: string;
   /** `<html lang>` — defaults to the site's default locale. */
   lang?: string;
+  /** Editor-owned support address (from Sanity). Empty/omitted → no support line. */
+  supportEmail?: string;
 };
 
 /**
@@ -60,6 +62,7 @@ export function renderEmailLayout({
   preheader,
   contentHtml,
   lang = defaultLocale,
+  supportEmail,
 }: EmailLayoutInput): string {
   const brand = escapeHtml(brandLabel());
   const url = escapeHtml(site.url);
@@ -84,7 +87,7 @@ ${preheader ? `<span style="display:none;max-height:0;overflow:hidden;opacity:0"
 ${contentHtml}
 </td></tr>
 <tr><td style="padding:20px 4px 0;color:${C.muted};font-size:12px;line-height:1.5">
-Envoyé par <a href="${url}" style="color:${C.muted}">${brand}</a>
+Envoyé par <a href="${url}" style="color:${C.muted}">${brand}</a>${supportEmail ? `<br>Besoin d'aide&nbsp;? <a href="mailto:${escapeHtml(supportEmail)}" style="color:${C.muted}">${escapeHtml(supportEmail)}</a>` : ""}
 </td></tr>
 </table>
 </td></tr>

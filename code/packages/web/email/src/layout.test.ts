@@ -19,4 +19,19 @@ describe("renderEmailLayout", () => {
     expect(html).toContain("Peek");
     expect(html).toContain("<p>Body</p>");
   });
+
+  it("renders the support address in the footer when given", () => {
+    const html = renderEmailLayout({
+      title: "T",
+      contentHtml: "<p>x</p>",
+      supportEmail: "support@indiecrafts.dev",
+    });
+    expect(html).toContain("mailto:support@indiecrafts.dev");
+    expect(html).toContain("support@indiecrafts.dev");
+  });
+
+  it("omits the support line when no address is given", () => {
+    const html = renderEmailLayout({ title: "T", contentHtml: "<p>x</p>" });
+    expect(html).not.toContain("mailto:");
+  });
 });
