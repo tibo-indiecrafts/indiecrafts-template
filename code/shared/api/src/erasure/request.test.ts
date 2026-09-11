@@ -21,8 +21,11 @@ function testEnv(overrides: Partial<Env> = {}): Env {
   return {
     ...(env as unknown as Env),
     GDPR_FINGERPRINT_SALT: SALT,
+    // A real deploy has an abuse control on this public path; the default env provides a
+    // pass-through rate limiter so the happy-path tests satisfy the fail-closed guard.
+    AGENT_RATELIMIT: { limit: async () => ({ success: true }) },
     ...overrides,
-  };
+  } as Env;
 }
 
 function postForm(body: Record<string, string>): Request {
@@ -173,6 +176,19 @@ describe("POST /v1/erasure/request", () => {
     expect(
       confirmUrl.startsWith("https://example.com/v1/erasure/confirm?token="),
     ).toBe(true);
+  });
+
+  it("refuses (503) with no abuse control — no Turnstile and no rate limiter", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const res = await handleErasureRequest(
+      postForm({ email: "known@example.com" }),
+      testEnv({ AGENT_RATELIMIT: undefined, TURNSTILE_SECRET: undefined }),
+      undefined,
+    );
+    expect(res.status).toBe(503);
+    // No email attempt on the refused path.
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("rejects a bad Turnstile token when Turnstile is configured (no row, no email)", async () => {
