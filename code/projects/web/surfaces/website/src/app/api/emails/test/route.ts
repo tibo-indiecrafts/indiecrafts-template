@@ -59,7 +59,11 @@ export async function POST(request: Request) {
   }
   let body: { to?: unknown };
   try {
-    body = (await request.json()) as { to?: unknown };
+    // Re-check actual bytes — the content-length header alone can be missing or lying.
+    const text = await request.text();
+    if (new TextEncoder().encode(text).length > 2000)
+      return NextResponse.json({ error: "too_large" }, { status: 413 });
+    body = JSON.parse(text) as { to?: unknown };
   } catch {
     return NextResponse.json({ error: "invalid" }, { status: 400 });
   }

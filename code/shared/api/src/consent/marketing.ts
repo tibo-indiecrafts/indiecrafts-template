@@ -96,7 +96,10 @@ export async function handleMarketingConsent(
     return json({ error: "too_large" }, 413);
   let body: { granted?: unknown; surface?: unknown };
   try {
-    body = (await request.json()) as typeof body;
+    const text = await request.text();
+    if (new TextEncoder().encode(text).length > BODY_MAX)
+      return json({ error: "too_large" }, 413);
+    body = JSON.parse(text) as typeof body;
   } catch {
     return json({ error: "invalid" }, 400);
   }

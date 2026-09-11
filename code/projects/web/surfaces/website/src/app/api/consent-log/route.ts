@@ -19,7 +19,17 @@ type Body = {
  */
 export async function POST(request: Request) {
   const { userId } = await auth();
-  const body = (await request.json().catch(() => ({}))) as Body;
+  // Cap the body — the anonymous branch (when enabled) is an unauthenticated writer, so
+  // bound the payload before parsing rather than trust the content-length header.
+  const raw = await request.text();
+  if (new TextEncoder().encode(raw).length > 4000)
+    return new Response(null, { status: 413 });
+  let body: Body;
+  try {
+    body = JSON.parse(raw) as Body;
+  } catch {
+    body = {} as Body;
+  }
   if (!Array.isArray(body.events) || !body.version || !body.decisionId)
     return new Response(null, { status: 400 });
 

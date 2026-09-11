@@ -658,7 +658,12 @@ export default {
         return json({ error: "too_large" }, 413, cors);
       let body: { userIds?: unknown };
       try {
-        body = (await request.json()) as typeof body;
+        // The content-length check above is a fast-path only — re-check the actual bytes
+        // so a missing/lying header can't skip the cap.
+        const text = await request.text();
+        if (new TextEncoder().encode(text).length > BODY_MAX)
+          return json({ error: "too_large" }, 413, cors);
+        body = JSON.parse(text) as typeof body;
       } catch {
         return json({ error: "invalid" }, 400, cors);
       }
@@ -821,7 +826,10 @@ export default {
       if (request.method === "PUT") {
         let body: { key?: unknown; value?: unknown; actor?: unknown };
         try {
-          body = (await request.json()) as typeof body;
+          const text = await request.text();
+          if (new TextEncoder().encode(text).length > BODY_MAX)
+            return json({ error: "too_large" }, 413, cors);
+          body = JSON.parse(text) as typeof body;
         } catch {
           return json({ error: "invalid" }, 400, cors);
         }
