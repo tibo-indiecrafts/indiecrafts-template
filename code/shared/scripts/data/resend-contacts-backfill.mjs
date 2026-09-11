@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Operator-run ONE-OFF: subscribe every existing contact in the Resend audience
-// to a topic (default: the "General" topic, opt_in). Creating a topic does NOT
+// to a topic (default: the "general" topic, opt_in). Creating a topic does NOT
 // retroactively subscribe already-imported contacts — this backfills them.
 //
 // ⚠️  CONSENT (GDPR / ePrivacy): `opt_in` means these contacts WILL receive
@@ -9,7 +9,7 @@
 //     with `--subscription opt_out` (present on the topic, not subscribed).
 //
 //   node code/shared/scripts/data/resend-contacts-backfill.mjs \
-//        [--topic General] [--subscription opt_in|opt_out] [--confirm]
+//        [--topic general] [--subscription opt_in|opt_out] [--confirm]
 //
 // DRY-RUN by default: it prints how many contacts it WOULD change and stops.
 // Pass --confirm to actually PATCH each contact.
