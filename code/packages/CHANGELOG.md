@@ -14,6 +14,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **Support address in every email (`supportEmail`).** The `emailStrings` singleton
+  (`@indiecrafts/packages-web-email/sanity`) gains a global, email-validated `supportEmail` field — the
+  editor-owned support address (seeded `support@indiecrafts.dev`), editable in Studio without a deploy.
+  It's the one place to set the "contact support" address shown in every transactional email's footer
+  across all surfaces + the Clerk auth emails. **Why:** the email-control work — a single, non-dev,
+  live-editable support contact. (The footer rendering that consumes it wires in a follow-up.)
 - **Churn exit-survey on account deletion.** `DeleteAccountSection`
   (`@indiecrafts/packages-shared-compliance/web`) now renders an optional reason/feedback/competitor
   survey above the delete confirmation — rendered on both the website and the app web surface, no

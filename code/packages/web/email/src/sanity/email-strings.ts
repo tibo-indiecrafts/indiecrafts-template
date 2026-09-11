@@ -1,5 +1,16 @@
-import { defineType, type FieldDefinition } from "sanity";
+import { defineField, defineType, type FieldDefinition } from "sanity";
 import { EnvelopeIcon } from "@sanity/icons";
+
+/** A global support address shown in every email footer (all surfaces + the Clerk
+ *  auth emails). Editable here so it changes without a deploy. */
+const supportEmailField = defineField({
+  name: "supportEmail",
+  title: "Adresse de support (pied de tous les e-mails)",
+  type: "string",
+  description:
+    "L'adresse d'assistance affichée en pied de chaque e-mail — ex. support@indiecrafts.dev. Vide = aucune adresse affichée.",
+  validation: (Rule) => Rule.email(),
+});
 
 /**
  * E-mails (singleton) — the one place every transactional e-mail is configured:
@@ -20,7 +31,7 @@ export function buildEmailStrings(groups: FieldDefinition[]) {
     type: "document",
     icon: EnvelopeIcon,
     __experimental_omnisearch_visibility: false,
-    fields: groups,
+    fields: [supportEmailField, ...groups],
     preview: {
       prepare: () => ({
         title: "E-mails",

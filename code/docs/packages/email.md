@@ -36,8 +36,9 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
 ## The E-mails entity (Sanity) — composed per module
 
 `emailSanity(modules)` contributes one **`emailStrings` singleton** (Studio → **E-mails**) — the one
-place that configures every transactional email: who receives it, the sender, and the copy. The
-document is **field-less on its own**; each module contributes its group(s) via
+place that configures every transactional email: who receives it, the sender, and the copy. Its only
+built-in field is a global **`supportEmail`** (the editor-owned support address shown in every email
+footer); the rest is **composed from modules** — each contributes its group(s) via
 `SanityModule.emailGroups`, and `emailSanity` composes them into the one document. **The brick never
 names a module** — remove a module from the `composeStudio` groups and its email group disappears.
 
