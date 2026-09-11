@@ -149,6 +149,10 @@ name = "indiecrafts-dev-shared-api"
 # vars are NOT inherited from the top level — declare them per env (wrangler warns otherwise).
 [env.dev.vars]
 SANITY_API_VERSION = "2025-01-01"
+# Sanity is one project + one dataset for the whole platform — identical in every env
+# (the website reads the same NEXT_PUBLIC_SANITY_* values). Public, so [vars] not secrets.
+SANITY_PROJECT_ID = "qy2pp5sn"
+SANITY_DATASET = "production"
 BACKUP_BUCKET = "indiecrafts-dev-db-backup"
 BACKUP_RETENTION_DAYS = "30"
 
@@ -177,6 +181,8 @@ name = "indiecrafts-staging-shared-api"
 
 [env.staging.vars]
 SANITY_API_VERSION = "2025-01-01"
+SANITY_PROJECT_ID = "qy2pp5sn"
+SANITY_DATASET = "production"
 BACKUP_BUCKET = "indiecrafts-staging-db-backup"
 BACKUP_RETENTION_DAYS = "30"
 
@@ -201,6 +207,8 @@ name = "indiecrafts-prod-shared-api"
 
 [env.prod.vars]
 SANITY_API_VERSION = "2025-01-01"
+SANITY_PROJECT_ID = "qy2pp5sn"
+SANITY_DATASET = "production"
 BACKUP_BUCKET = "indiecrafts-prod-db-backup"
 BACKUP_RETENTION_DAYS = "30"
 
