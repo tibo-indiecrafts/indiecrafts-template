@@ -206,6 +206,13 @@ export async function handleEmailPreferences(
   if (!env.MAIN_DB || !env.CLERK_SECRET_KEY)
     return json({ error: "unavailable" }, 503);
 
+  if (env.AGENT_RATELIMIT) {
+    const { success } = await env.AGENT_RATELIMIT.limit({
+      key: clientIp(request),
+    });
+    if (!success) return json({ error: "rate_limited" }, 429);
+  }
+
   const userId = await authenticate(request, env);
   if (!userId) return json({ error: "unauthorized" }, 401);
 

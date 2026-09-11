@@ -202,6 +202,22 @@ describe("POST /v1/erasure/confirm", () => {
     expect(sanityClient.pseudonymise).toHaveBeenCalled();
   });
 
+  it("rate-limits the confirm POST (429) when the limiter denies", async () => {
+    const token = await seedRequest({ fp: await seedProfile() });
+    const { build } = mockAdapters();
+    const res = await handleErasureConfirm(
+      postForm({ token, email: EMAIL }),
+      {
+        ...testEnv(),
+        AGENT_RATELIMIT: { limit: async () => ({ success: false }) },
+      },
+      undefined,
+      build,
+    );
+    expect(res.status).toBe(429);
+    expect(await res.json()).toMatchObject({ error: "rate_limited" });
+  });
+
   it("rejects a wrong typed email, increments attempts, and erases nothing", async () => {
     const fp = await seedProfile();
     const token = await seedRequest({ fp });

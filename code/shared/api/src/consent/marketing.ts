@@ -10,7 +10,7 @@
 // A POST writes the append-only proof (consent_events), updates the current-state column,
 // and best-effort mirrors the Resend audience.
 import { logger } from "@indiecrafts/packages-shared-logger";
-import { type Env } from "../index";
+import { type Env, clientIp } from "../index";
 import { upsertResendContact } from "../resend-audience";
 
 const BODY_MAX = 4000;
@@ -70,6 +70,13 @@ export async function handleMarketingConsent(
     return json({ error: "method_not_allowed" }, 405);
   if (!env.MAIN_DB || !env.CLERK_SECRET_KEY)
     return json({ error: "unavailable" }, 503);
+
+  if (env.AGENT_RATELIMIT) {
+    const { success } = await env.AGENT_RATELIMIT.limit({
+      key: clientIp(request),
+    });
+    if (!success) return json({ error: "rate_limited" }, 429);
+  }
 
   const userId = await authenticate(request, env);
   if (!userId) return json({ error: "unauthorized" }, 401);

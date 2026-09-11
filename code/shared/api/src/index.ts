@@ -1254,6 +1254,15 @@ export default {
       if (!env.SANITY_PROJECT_ID || !env.SANITY_DATASET)
         return json({ error: "unavailable" }, 503, PUBLIC_CORS);
 
+      // Rate-limit the public read before the outbound Sanity fetch (cache-bypassing
+      // query strings could otherwise amplify into Sanity). Defence-in-depth behind the WAF.
+      if (env.AGENT_RATELIMIT) {
+        const { success } = await env.AGENT_RATELIMIT.limit({
+          key: clientIp(request),
+        });
+        if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS);
+      }
+
       try {
         const raw = await fetchAnnouncementDocs(env);
         const payload = {

@@ -13,7 +13,7 @@ import {
   runErasure,
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { type Env, PUBLIC_CORS_POST, safeEqual } from "../index";
+import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
 import { buildErasureAdapters } from "./adapters";
 import { readProfileLocale, sendErasureCompleteEmail } from "./email";
 import { CLERK_STORE } from "./self";
@@ -154,6 +154,15 @@ export async function handleErasureConfirm(
 
   if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
     return json({ error: "too_large" }, 413, PUBLIC_CORS_POST);
+
+  // Rate-limit by caller IP (consistent with erasure/self + request). Bounds brute force
+  // on the confirm token beyond the per-token attempt cap.
+  if (env.AGENT_RATELIMIT) {
+    const { success } = await env.AGENT_RATELIMIT.limit({
+      key: clientIp(request),
+    });
+    if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);
+  }
 
   const parsed = await parseBody(request);
   if (!parsed || !parsed.token || !parsed.email)
