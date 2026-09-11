@@ -18,6 +18,26 @@ export type ClerkEmailEnv = MailEnv & {
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
 
+/** The editor-owned support-address footer, appended to every taken-over email. Worker-safe
+ *  (the shared `renderEmailLayout` is `server-only`/Next-coupled, unusable here). Empty when
+ *  no support address is set. The value is escaped though it is email-validated in Studio. */
+function supportFooter(supportEmail: string | undefined): {
+  html: string;
+  text: string;
+} {
+  if (!supportEmail) return { html: "", text: "" };
+  const e = supportEmail
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+  return {
+    html: `<p style="margin-top:24px;color:#8a8f98;font-size:12px">Besoin d'aide&nbsp;? <a href="mailto:${e}" style="color:#8a8f98">${e}</a></p>`,
+    text: `\n\nBesoin d'aide ? ${supportEmail}`,
+  };
+}
+
 /** The `emails.created` payload we read. Defensive: Clerk field names are stable per
  *  template but vary a little, and unread fields are ignored. */
 type ClerkEmailData = {
@@ -81,17 +101,25 @@ export async function handleClerkEmail(
 
   const locale = await resolveLocale(env, d);
   const slug = str(d.slug);
+  // One read: the clerkEmails copy + the global support address. Never throws (a missing
+  // Studio must not stop a mandatory auth email); an unset support address → no footer.
+  const strings = await fetchStrings(env);
+  const foot = supportFooter(strings?.supportEmail);
   // Clerk's exact slugs vary (the new-device one is undocumented), so match forgivingly
   // to our canonical template slug rather than an exact key.
   const canonical = canonicalAuthSlug(slug);
   const tpl = canonical ? AUTH_TEMPLATES[canonical] : undefined;
   if (tpl) {
-    // Studio override (Sanity `emailStrings`), resolved to the recipient's locale; null/
-    // unset → the template's hardcoded copy. Never throws (a missing Studio must not stop
-    // a mandatory auth email).
-    const copy = resolveAuthCopy(await fetchStrings(env), slug, locale);
+    // Studio override (Sanity `clerkEmails`), resolved to the recipient's locale; null/
+    // unset → the template's hardcoded copy.
+    const copy = resolveAuthCopy(strings, slug, locale);
     const { subject, html, text } = tpl(d.data ?? {}, locale, copy);
-    await send(env, { to, subject, html, text });
+    await send(env, {
+      to,
+      subject,
+      html: html + foot.html,
+      text: text + foot.text,
+    });
     return;
   }
   // Unknown slug → forward Clerk's own rendered (English) email; never drop it. Log the

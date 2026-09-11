@@ -40,10 +40,11 @@ describe("handleClerkEmail (Clerk emails.created take-over)", () => {
   it("applies the Studio override copy (emailStrings) in the recipient locale", async () => {
     const sent: Sent[] = [];
     const fetchStrings = async () => ({
-      authVerification: {
+      verification: {
         subject: { fr: "Sujet personnalisé" },
         intro: { fr: "Votre code :" },
       },
+      supportEmail: "support@x.com",
     });
     await handleClerkEmail(
       { ...baseEnv, MAIN_DB: db("fr") },
@@ -59,6 +60,8 @@ describe("handleClerkEmail (Clerk emails.created take-over)", () => {
     expect(sent[0].subject).toBe("Sujet personnalisé"); // override wins
     expect(sent[0].text).toContain("Votre code :"); // overridden intro
     expect(sent[0].text).toContain("123456"); // the code is still injected
+    expect(sent[0].html).toContain("mailto:support@x.com"); // support footer
+    expect(sent[0].text).toContain("support@x.com");
   });
 
   it("falls back to English when no locale is stored", async () => {

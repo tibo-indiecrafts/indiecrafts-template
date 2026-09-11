@@ -33,6 +33,11 @@ export default defineWorkersConfig(async () => {
               // The bearer the authenticated-route tests send. Safe: the
               // existing no-bearer 401 tests are unaffected.
               APP_API_TOKEN: "test-token",
+              // Keep the test env hermetic: pin the Clerk webhook secret empty so the
+              // "fails closed with no secret → 503" test holds regardless of a
+              // developer's real `.dev.vars` (which the pool loads and would otherwise
+              // flip 503 → 401). An explicit binding overrides `.dev.vars`.
+              CLERK_WEBHOOK_SECRET: "",
               // Passed to test-setup.ts to apply migrations.
               TEST_MIGRATIONS: migrations,
             },

@@ -102,7 +102,117 @@ export const AUTH_TEMPLATES: Record<
   // Clerk's own (English) email and logs the slug so we can lock the real one.
   sign_in_from_new_device: newDevice,
   new_device_sign_in: newDevice,
+  // Security notifications (no code/link) — editable copy, hardcoded en/fr fallback.
+  password_changed: (_v, l, c) =>
+    notice(
+      {
+        en: "Your password was changed",
+        fr: "Votre mot de passe a été modifié",
+      },
+      {
+        en: "Your account password was just changed.",
+        fr: "Le mot de passe de votre compte vient d'être modifié.",
+      },
+      l,
+      c,
+    ),
+  password_removed: (_v, l, c) =>
+    notice(
+      {
+        en: "Your password was removed",
+        fr: "Votre mot de passe a été supprimé",
+      },
+      {
+        en: "Your account password was removed.",
+        fr: "Le mot de passe de votre compte a été supprimé.",
+      },
+      l,
+      c,
+    ),
+  passkey_added: (_v, l, c) =>
+    notice(
+      { en: "A passkey was added", fr: "Une clé d'accès a été ajoutée" },
+      {
+        en: "A new passkey was added to your account.",
+        fr: "Une nouvelle clé d'accès a été ajoutée à votre compte.",
+      },
+      l,
+      c,
+    ),
+  passkey_removed: (_v, l, c) =>
+    notice(
+      { en: "A passkey was removed", fr: "Une clé d'accès a été supprimée" },
+      {
+        en: "A passkey was removed from your account.",
+        fr: "Une clé d'accès a été supprimée de votre compte.",
+      },
+      l,
+      c,
+    ),
+  mfa_enabled: (_v, l, c) =>
+    notice(
+      {
+        en: "Two-step verification enabled",
+        fr: "Double authentification activée",
+      },
+      {
+        en: "Two-step verification was enabled on your account.",
+        fr: "La double authentification a été activée sur votre compte.",
+      },
+      l,
+      c,
+    ),
+  primary_email_address_changed: (_v, l, c) =>
+    notice(
+      {
+        en: "Your primary email changed",
+        fr: "Votre adresse principale a changé",
+      },
+      {
+        en: "Your account's primary email address was changed.",
+        fr: "L'adresse e-mail principale de votre compte a été modifiée.",
+      },
+      l,
+      c,
+    ),
+  account_locked: (_v, l, c) =>
+    notice(
+      { en: "Your account is locked", fr: "Votre compte est verrouillé" },
+      {
+        en: "Your account was locked after too many attempts.",
+        fr: "Votre compte a été verrouillé après trop de tentatives.",
+      },
+      l,
+      c,
+    ),
+  invitation: (_v, l, c) =>
+    notice(
+      { en: "You've been invited", fr: "Vous avez été invité(e)" },
+      {
+        en: "You've been invited to join.",
+        fr: "Vous avez été invité(e) à nous rejoindre.",
+      },
+      l,
+      c,
+    ),
 };
+
+/** A security-notification email (no code, no button): editable `subject`/`intro`/`outro`
+ *  over a hardcoded en/fr fallback. */
+function notice(
+  subjectDefault: { en: string; fr: string },
+  introDefault: { en: string; fr: string },
+  locale: string,
+  copy?: AuthCopy,
+): Rendered {
+  const intro = copy?.intro || pickLocale(introDefault, locale);
+  const outro = copy?.outro;
+  return {
+    subject: copy?.subject || pickLocale(subjectDefault, locale),
+    html: `<p>${escapeHtml(intro)}</p>${outro ? `<p>${escapeHtml(outro)}</p>` : ""}`,
+    text: `${intro}${outro ? `\n\n${outro}` : ""}`,
+  };
+}
 
 function magicLink(vars: EmailVars, locale: string, copy?: AuthCopy): Rendered {
   const url =
