@@ -29,7 +29,7 @@ export const TOPICS = [
   { key: "churned", name: "Win-back (former members)" },
   {
     key: "general",
-    name: "General",
+    name: "general",
     default_subscription: "opt_in",
     visibility: "public",
   },

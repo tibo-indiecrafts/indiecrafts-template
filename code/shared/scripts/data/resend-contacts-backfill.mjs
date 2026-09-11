@@ -32,7 +32,7 @@ export function resolveConfig(env, argv) {
   return {
     key: env.RESEND_API_KEY,
     audienceId: env.RESEND_AUDIENCE_ID,
-    topicName: flag("--topic", "General"),
+    topicName: flag("--topic", "general"),
     subscription,
     confirm: argv.includes("--confirm"),
   };
@@ -63,14 +63,22 @@ async function main() {
       `topic "${cfg.topicName}" not found — run resend-topics-sync first`,
     );
 
-  // ponytail: single page. Resend's list-contacts may cap the result; if the
-  // printed count is short of your audience total, add cursor pagination.
-  const listRes = await fetch(
-    `${RESEND_API}/audiences/${cfg.audienceId}/contacts`,
-    { headers },
-  );
-  if (!listRes.ok) throw new Error(`resend GET contacts ${listRes.status}`);
-  const contacts = (await listRes.json())?.data ?? [];
+  // Paginate: Resend returns <=100 contacts per page (limit) with cursor via
+  // `after` (the last id seen) + `has_more`. Loop until has_more is false.
+  const contacts = [];
+  let after;
+  do {
+    const url = new URL(`${RESEND_API}/audiences/${cfg.audienceId}/contacts`);
+    url.searchParams.set("limit", "100");
+    if (after) url.searchParams.set("after", after);
+    const listRes = await fetch(url, { headers });
+    if (!listRes.ok) throw new Error(`resend GET contacts ${listRes.status}`);
+    const page = await listRes.json();
+    const rows = page?.data ?? [];
+    contacts.push(...rows);
+    after =
+      page?.has_more && rows.length ? rows[rows.length - 1].id : undefined;
+  } while (after);
 
   console.log(
     `${contacts.length} contacts · topic "${cfg.topicName}" (${topicId}) · ${cfg.subscription} · ${cfg.confirm ? "LIVE" : "DRY-RUN"}`,

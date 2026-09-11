@@ -16,9 +16,9 @@ test("resolveConfig requires key + audience", () => {
   );
 });
 
-test("resolveConfig defaults: General topic, opt_in, dry-run", () => {
+test("resolveConfig defaults: general topic, opt_in, dry-run", () => {
   const c = resolveConfig(ENV, []);
-  assert.equal(c.topicName, "General");
+  assert.equal(c.topicName, "general");
   assert.equal(c.subscription, "opt_in");
   assert.equal(c.confirm, false);
 });
