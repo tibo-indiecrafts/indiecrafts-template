@@ -122,6 +122,10 @@ export default {
       controller.scheduledTime,
       settings["retention.churn_days"],
     );
+    const churnFreeTextCutoff = retentionCutoff(
+      controller.scheduledTime,
+      settings["retention.churn_freetext_days"],
+    );
     const nowIso = new Date(controller.scheduledTime).toISOString();
     const dueSoon = slaDueSoonCutoff(
       controller.scheduledTime,
@@ -182,6 +186,14 @@ export default {
         )
           .bind(erasureRequestCutoff)
           .run();
+        // Data-minimisation: scrub the user-typed free text (where a departing user can
+        // self-enter PII) on churn rows past the shorter free-text window, keeping the
+        // aggregate (reason/deleted_at) until the full-row purge below.
+        const churnFreeText = await env.MAIN_DB.prepare(
+          "UPDATE churn_events SET feedback = NULL, competitor = NULL WHERE deleted_at < ? AND (feedback IS NOT NULL OR competitor IS NOT NULL)",
+        )
+          .bind(churnFreeTextCutoff)
+          .run();
         const churn = await env.MAIN_DB.prepare(
           "DELETE FROM churn_events WHERE deleted_at < ?",
         )
@@ -191,10 +203,12 @@ export default {
           consentCutoff,
           dataRequestCutoff,
           erasureRequestCutoff,
+          churnFreeTextCutoff,
           churnCutoff,
           consentRows: consent.meta?.changes,
           dataRequestRows: dataRequest.meta?.changes,
           erasureRequestRows: erasureRequest.meta?.changes,
+          churnFreeTextRows: churnFreeText.meta?.changes,
           churnRows: churn.meta?.changes,
         });
       } catch (error) {

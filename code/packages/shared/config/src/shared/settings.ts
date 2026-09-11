@@ -16,6 +16,14 @@ export const SETTINGS = {
   },
   "retention.data_request_days": { def: 365, min: 30, max: 3650, unit: "days" },
   "retention.churn_days": { def: 730, min: 30, max: 3650, unit: "days" },
+  // Data minimisation: churn free-text (feedback/competitor) is scrubbed at this shorter
+  // window, keeping only the aggregate (reason/deleted_at) until `retention.churn_days`.
+  "retention.churn_freetext_days": {
+    def: 365,
+    min: 30,
+    max: 3650,
+    unit: "days",
+  },
   "retention.csp_days": { def: 30, min: 7, max: 365, unit: "days" },
   "ops.sla_warning_days": { def: 7, min: 1, max: 30, unit: "days" },
   "ttl.export_download_hours": { def: 1, min: 1, max: 24, unit: "hours" },

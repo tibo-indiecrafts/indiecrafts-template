@@ -14,6 +14,11 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`retention.churn_freetext_days` setting** (`@indiecrafts/packages-shared-config` `SETTINGS`, default
+  365, range 30–3650). A shorter retention window for churn free-text (`feedback`/`competitor`) than the
+  730-day full-row `retention.churn_days`; the cron scrubs the free text past this window while keeping
+  the aggregate. **Why:** data minimisation for user-typed exit-survey text (API audit follow-up).
+
 - **Support address in every email (`supportEmail`).** The `emailStrings` singleton
   (`@indiecrafts/packages-web-email/sanity`) gains a global, email-validated `supportEmail` field — the
   editor-owned support address (seeded `support@indiecrafts.dev`), editable in Studio without a deploy.

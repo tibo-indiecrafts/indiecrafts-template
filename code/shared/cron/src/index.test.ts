@@ -216,6 +216,41 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
       ).first(),
     ).not.toBeNull();
   });
+
+  it("scrubs churn free-text past 365 days (keeps the aggregate); leaves recent rows intact", async () => {
+    const oldAt = new Date(NOW - 400 * 86_400_000).toISOString(); // > 365d, < 730d
+    const recentAt = new Date(NOW - 10 * 86_400_000).toISOString();
+    await env.MAIN_DB.prepare(
+      "INSERT INTO churn_events (user_id, deleted_at, reason, feedback, competitor) VALUES ('user-old-ft', ?, 'too_expensive', 'my email is a@b.com', 'RivalCo')",
+    )
+      .bind(oldAt)
+      .run();
+    await env.MAIN_DB.prepare(
+      "INSERT INTO churn_events (user_id, deleted_at, reason, feedback, competitor) VALUES ('user-recent-ft', ?, 'missing_feature', 'keep this', 'RivalCo')",
+    )
+      .bind(recentAt)
+      .run();
+
+    await runTick();
+
+    // Old row: free text scrubbed, aggregate kept, row still present.
+    const old = await env.MAIN_DB.prepare(
+      "SELECT reason, feedback, competitor FROM churn_events WHERE user_id = 'user-old-ft'",
+    ).first<{
+      reason: string;
+      feedback: string | null;
+      competitor: string | null;
+    }>();
+    expect(old?.reason).toBe("too_expensive");
+    expect(old?.feedback).toBeNull();
+    expect(old?.competitor).toBeNull();
+
+    // Recent row: free text untouched.
+    const recent = await env.MAIN_DB.prepare(
+      "SELECT feedback FROM churn_events WHERE user_id = 'user-recent-ft'",
+    ).first<{ feedback: string | null }>();
+    expect(recent?.feedback).toBe("keep this");
+  });
 });
 
 describe("scheduled() — retention purge (admin_audit + session_events + security_events + consent_events)", () => {

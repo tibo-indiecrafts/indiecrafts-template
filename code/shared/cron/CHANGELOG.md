@@ -7,6 +7,12 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- **Churn free-text minimisation.** The retention pass now scrubs churn `feedback`/`competitor`
+  (user-typed free text, where a departing user can self-enter PII) on rows older than
+  `retention.churn_freetext_days` (default 365, operator-overridable), setting them NULL while keeping
+  the aggregate (`reason`/`deleted_at`) until the full-row purge at `retention.churn_days` (730).
+  Idempotent. **Why:** a shorter ceiling for the identifiable free text than for the win-back aggregate
+  — closes the API audit's churn data-minimisation note.
 - **`churn_events` retention purge.** The scheduled handler deletes `churn_events` rows (on
   `deleted_at`, `main` D1) past `retention.churn_days`, default 730 days (24 months), operator-
   overridable in `site_settings` like the other retention windows. Idempotent; no-ops until

@@ -33,15 +33,14 @@ API security-hardening pass (audit 2026-09-11). One HIGH + four MED + a LOW batc
 - **LOW — body-size re-check after read** on the remaining POSTs (`/v1/profiles/consent`,
   `/v1/settings` PUT, the consent routes, website `emails/test` + `consent-log`), and a **1-year
   expiry** on the no-login preference token (legacy no-`exp` tokens stay valid so old email links work).
+- **LOW — churn free-text data minimisation.** `churn_events` free text (`feedback`/`competitor`, where
+  a departing user can self-enter PII) is now scrubbed at a shorter window (new
+  `retention.churn_freetext_days` setting, default 365) while the aggregate (`reason`/`deleted_at`) is
+  kept to the 730-day `retention.churn_days` full-row purge — both in the cron retention pass. (The
+  on-erasure scrub the plan first sketched was contradictory: self-erasure _writes_ the survey.)
 
-**Accepted / deferred (documented risk, not changed):**
+**Accepted (documented risk, not changed):**
 
-- **Churn free-text retention** — `churn_events` keeps user-typed `feedback`/`competitor` (the exit
-  survey, legitimate-interest win-back data) until the 730-day full-row purge. A departing user could
-  self-enter PII there. The on-erasure scrub the plan sketched is contradictory (self-erasure _writes_
-  the survey), so the real fix is a **shorter free-text retention window** — a product/legal decision
-  on the window (recommended ~365 days, scrubbing `feedback`/`competitor` while keeping the aggregate),
-  wired as a second cutoff in the cron retention pass. Deferred pending that decision.
 - **Audit `actor` is self-asserted by the bearer** (`/v1/settings` PUT, `/v1/events` admin) — by
   design (only the trusted website backend holds `APP_API_TOKEN` and does its own Clerk admin check),
   an audit-integrity note, not independently verified.
