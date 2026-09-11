@@ -167,6 +167,22 @@ describe("sendErasureTokenEmail", () => {
     expect(body.html).toContain("Custom outro.");
   });
 
+  it("appends the editable support-address footer when one is set", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      supportEmail: "support@x.com",
+    }));
+    await sendErasureTokenEmail(
+      CONFIGURED,
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.html).toContain("mailto:support@x.com");
+    expect(body.text).toContain("support@x.com");
+  });
+
   it("resolves the Sanity copy in the recipient's locale, else the default", async () => {
     const fetchMock = okFetch();
     const fetchStrings = vi.fn(async () => ({
@@ -290,6 +306,22 @@ describe("sendErasureCompleteEmail", () => {
     expect(body.subject).toBe("All done");
     expect(body.html).toContain("Custom complete heading.");
     expect(body.html).toContain("Custom outro.");
+  });
+
+  it("appends the editable support-address footer when one is set", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({
+      supportEmail: "support@x.com",
+    }));
+    await sendErasureCompleteEmail(
+      CONFIGURED,
+      { to: "user@x.com", retained: "nothing" },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody;
+    expect(body.html).toContain("mailto:support@x.com");
+    expect(body.text).toContain("support@x.com");
   });
 
   it("enabled: false still sends the email, using the hard-coded literals", async () => {

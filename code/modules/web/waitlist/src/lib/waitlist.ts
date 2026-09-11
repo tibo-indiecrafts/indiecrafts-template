@@ -102,6 +102,7 @@ export async function join(
     const strings = (await getEmailStrings()) as {
       waitlistConfirm?: ConfirmationConfig;
       waitlistOwner?: OwnerAlertConfig;
+      supportEmail?: string;
     } | null;
     // Best-effort — a mail failure must not turn a saved entry into a 500.
     await sendConfirmEmail(
@@ -109,8 +110,15 @@ export async function join(
       name,
       input.language,
       strings?.waitlistConfirm,
+      strings?.supportEmail,
     );
-    await notifyOwner(email, name, input.source, strings?.waitlistOwner);
+    await notifyOwner(
+      email,
+      name,
+      input.source,
+      strings?.waitlistOwner,
+      strings?.supportEmail,
+    );
 
     return { ok: true, already: false };
   } catch (error) {
@@ -125,6 +133,7 @@ async function sendConfirmEmail(
   name: string | undefined,
   language: string | undefined,
   cfg: ConfirmationConfig | undefined,
+  supportEmail: string | undefined,
 ): Promise<void> {
   try {
     const from = cfg?.from?.trim();
@@ -137,6 +146,7 @@ async function sendConfirmEmail(
         pick(cfg?.intro, locale) ||
         `Merci${name ? ` ${name}` : ""} ! Votre place sur la liste d'attente est réservée. Nous vous contacterons dès que l'accès sera disponible.`,
       outro: pick(cfg?.outro, locale) || undefined,
+      supportEmail,
     });
     await sendEmail({
       from,
@@ -156,6 +166,7 @@ async function notifyOwner(
   name: string | undefined,
   source: string | undefined,
   cfg: OwnerAlertConfig | undefined,
+  supportEmail: string | undefined,
 ): Promise<void> {
   try {
     const to = cleanList(cfg?.to);
@@ -174,6 +185,7 @@ async function notifyOwner(
       heading: pick(cfg.heading, defaultLocale) || undefined,
       intro: pick(cfg.intro, defaultLocale) || undefined,
       outro: pick(cfg.outro, defaultLocale) || undefined,
+      supportEmail,
     });
     await sendEmail({
       from,

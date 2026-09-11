@@ -31,11 +31,11 @@ export async function notifyNewComment(
   moderationToken?: string,
 ): Promise<void> {
   try {
-    const cfg = (
-      (await getEmailStrings()) as {
-        commentNotification?: OwnerAlertConfig;
-      } | null
-    )?.commentNotification;
+    const strings = (await getEmailStrings()) as {
+      commentNotification?: OwnerAlertConfig;
+      supportEmail?: string;
+    } | null;
+    const cfg = strings?.commentNotification;
     const to = clean(cfg?.to);
     if (!cfg?.enabled || to.length === 0 || !process.env.RESEND_API_KEY) return;
 
@@ -78,6 +78,7 @@ export async function notifyNewComment(
       intro: pick(cfg.intro, defaultLocale) || undefined,
       outro: pick(cfg.outro, defaultLocale) || undefined,
       actions,
+      supportEmail: strings?.supportEmail,
     });
 
     await sendEmail({

@@ -28,6 +28,7 @@ export type DataRequestNotificationInput = {
   heading?: string;
   intro?: string;
   outro?: string;
+  supportEmail?: string;
 };
 
 const C = EMAIL_COLORS;
@@ -87,6 +88,7 @@ export function renderDataRequestNotificationEmail(
     preheader: `${input.requestTypeLabel} — ${input.email}`,
     contentHtml,
     lang: "fr",
+    supportEmail: input.supportEmail,
   });
 
   return { subject, text, html };

@@ -1,7 +1,12 @@
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
-import { readProfileLocale, resend, type MailEnv } from "../erasure/email";
+import {
+  readProfileLocale,
+  resend,
+  supportFooter,
+  type MailEnv,
+} from "../erasure/email";
 import { AUTH_TEMPLATES, type EmailVars } from "./templates";
 import {
   canonicalAuthSlug,
@@ -17,26 +22,6 @@ export type ClerkEmailEnv = MailEnv & {
 };
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
-
-/** The editor-owned support-address footer, appended to every taken-over email. Worker-safe
- *  (the shared `renderEmailLayout` is `server-only`/Next-coupled, unusable here). Empty when
- *  no support address is set. The value is escaped though it is email-validated in Studio. */
-function supportFooter(supportEmail: string | undefined): {
-  html: string;
-  text: string;
-} {
-  if (!supportEmail) return { html: "", text: "" };
-  const e = supportEmail
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-  return {
-    html: `<p style="margin-top:24px;color:#8a8f98;font-size:12px">Besoin d'aide&nbsp;? <a href="mailto:${e}" style="color:#8a8f98">${e}</a></p>`,
-    text: `\n\nBesoin d'aide ? ${supportEmail}`,
-  };
-}
 
 /** The `emails.created` payload we read. Defensive: Clerk field names are stable per
  *  template but vary a little, and unread fields are ignored. */

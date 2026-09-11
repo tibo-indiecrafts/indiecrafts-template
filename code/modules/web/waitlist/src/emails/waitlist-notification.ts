@@ -17,6 +17,7 @@ export type WaitlistNotificationInput = {
   heading?: string;
   intro?: string;
   outro?: string;
+  supportEmail?: string;
 };
 
 const C = EMAIL_COLORS;
@@ -67,6 +68,7 @@ export function renderWaitlistNotificationEmail(
     preheader: input.name || input.email,
     contentHtml,
     lang: "fr",
+    supportEmail: input.supportEmail,
   });
 
   return { subject, text, html };

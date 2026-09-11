@@ -101,6 +101,7 @@ async function notifyOwner(
   try {
     const strings = (await getEmailStrings()) as {
       dataRequestOwner?: OwnerAlertConfig;
+      supportEmail?: string;
     } | null;
     const cfg = strings?.dataRequestOwner;
     const to = clean(cfg?.to);
@@ -120,6 +121,7 @@ async function notifyOwner(
       heading: pick(cfg.heading, defaultLocale) || undefined,
       intro: pick(cfg.intro, defaultLocale) || undefined,
       outro: pick(cfg.outro, defaultLocale) || undefined,
+      supportEmail: strings?.supportEmail,
     });
     await sendEmail({
       from,

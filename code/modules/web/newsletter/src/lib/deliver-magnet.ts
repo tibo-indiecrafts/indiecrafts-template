@@ -114,6 +114,7 @@ async function sendMagnetEmail(
   const strings = (await getEmailStrings()) as {
     newsletterConfirm?: ConfirmationConfig;
     leadMagnet?: ConfirmationConfig;
+    supportEmail?: string;
   } | null;
   const lead = strings?.leadMagnet;
   // Own sender if set, else reuse the newsletter's verified sender identity.
@@ -142,6 +143,7 @@ async function sendMagnetEmail(
     buttonLabel: pick(lead?.buttonLabel, locale) || fallback.buttonLabel,
     outro: pick(lead?.outro, locale) || undefined,
     downloadUrl: `${site.url}/api/download?token=${encodeURIComponent(token)}`,
+    supportEmail: strings?.supportEmail,
   });
   await sendEmail({ from, to: [email], ...message });
 }

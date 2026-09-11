@@ -17,6 +17,7 @@ export type NewsletterConfirmInput = {
   buttonLabel: string;
   confirmUrl: string;
   outro?: string;
+  supportEmail?: string;
 };
 
 const C = EMAIL_COLORS;
@@ -56,6 +57,7 @@ export function renderNewsletterConfirmEmail(
     title: input.heading,
     preheader: input.intro.slice(0, 100),
     contentHtml,
+    supportEmail: input.supportEmail,
   });
 
   return { subject: input.subject, text, html };

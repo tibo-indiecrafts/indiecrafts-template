@@ -16,6 +16,7 @@ export type NewsletterNotificationInput = {
   heading?: string;
   intro?: string;
   outro?: string;
+  supportEmail?: string;
 };
 
 const C = EMAIL_COLORS;
@@ -61,6 +62,7 @@ export function renderNewsletterNotificationEmail(
     preheader: input.subscriberEmail,
     contentHtml,
     lang: "fr",
+    supportEmail: input.supportEmail,
   });
 
   return { subject, text, html };

@@ -37,6 +37,8 @@ type ErasureEmailGroup = {
 type ErasureEmailStrings = {
   erasureToken?: ErasureEmailGroup;
   erasureComplete?: ErasureEmailGroup;
+  /** The global editor-owned support address (`emailStrings.supportEmail`). */
+  supportEmail?: string;
 };
 
 /** Escape untrusted text before interpolating it into an HTML body. */
@@ -53,6 +55,23 @@ function escapeHtml(value: string): string {
  *  (so the caller's `|| "hardcoded"` fallback fires). Thin adapter over shared `pickLocale`. */
 function pick(value: LocaleValue, locale: string): string | undefined {
   return pickLocale(value, locale) || undefined;
+}
+
+/** The editor-owned support-address footer, appended to every worker-sent email (erasure +
+ *  the Clerk take-over). Worker-safe — the shared `renderEmailLayout` is `server-only`/
+ *  Next-coupled, unusable here. Empty when no address is set; the value is escaped though
+ *  it is email-validated in Studio. */
+export function supportFooter(supportEmail: string | undefined): {
+  html: string;
+  text: string;
+} {
+  const e = supportEmail?.trim();
+  if (!e) return { html: "", text: "" };
+  const esc = escapeHtml(e);
+  return {
+    html: `<p style="margin-top:24px;color:#8a8f98;font-size:12px">Besoin d'aide&nbsp;? <a href="mailto:${esc}" style="color:#8a8f98">${esc}</a></p>`,
+    text: `\n\nBesoin d'aide ? ${e}`,
+  };
 }
 
 /** The recipient's stored locale (`user_profiles.locale`) — by Clerk user id, else by
@@ -99,7 +118,7 @@ async function fetchErasureEmailStrings(
       ? `${env.SANITY_PROJECT_ID}.api.sanity.io`
       : `${env.SANITY_PROJECT_ID}.apicdn.sanity.io`;
     const query =
-      '*[_type=="emailStrings"][0]{ erasureToken{enabled,subject,heading,intro,buttonLabel,outro}, erasureComplete{enabled,subject,heading,intro,outro} }';
+      '*[_type=="emailStrings"][0]{ erasureToken{enabled,subject,heading,intro,buttonLabel,outro}, erasureComplete{enabled,subject,heading,intro,outro}, supportEmail }';
     const endpoint = `https://${host}/v${version}/data/query/${env.SANITY_DATASET}?query=${encodeURIComponent(query)}`;
     const res = await fetch(
       endpoint,
@@ -180,9 +199,10 @@ export async function sendErasureTokenEmail(
   const line = intro
     ? `${escapeHtml(heading)} ${escapeHtml(intro)}`
     : escapeHtml(heading);
-  const html = `<p>Hello ${escapeHtml(to)},</p><p>${line}</p><p><a href="${url}">${escapeHtml(buttonLabel)}</a></p><p>${escapeHtml(outro)}</p>`;
+  const foot = supportFooter(copy?.supportEmail);
+  const html = `<p>Hello ${escapeHtml(to)},</p><p>${line}</p><p><a href="${url}">${escapeHtml(buttonLabel)}</a></p><p>${escapeHtml(outro)}</p>${foot.html}`;
   const textLine = intro ? `${heading} ${intro}` : heading;
-  const text = `Hello ${to},\n\n${textLine} Confirm it here:\n${confirmUrl}\n\n${outro}`;
+  const text = `Hello ${to},\n\n${textLine} Confirm it here:\n${confirmUrl}\n\n${outro}${foot.text}`;
   await resend(env, { to, subject, html, text });
 }
 
@@ -212,8 +232,9 @@ export async function sendErasureCompleteEmail(
   const line = intro
     ? `${escapeHtml(heading)} ${escapeHtml(intro)}`
     : escapeHtml(heading);
-  const html = `<p>Hello ${escapeHtml(to)},</p><p>${line}</p><p>${escapeHtml(retained)}</p>${outro ? `<p>${escapeHtml(outro)}</p>` : ""}`;
+  const foot = supportFooter(copy?.supportEmail);
+  const html = `<p>Hello ${escapeHtml(to)},</p><p>${line}</p><p>${escapeHtml(retained)}</p>${outro ? `<p>${escapeHtml(outro)}</p>` : ""}${foot.html}`;
   const textLine = intro ? `${heading} ${intro}` : heading;
-  const text = `Hello ${to},\n\n${textLine}\n\n${retained}${outro ? `\n\n${outro}` : ""}`;
+  const text = `Hello ${to},\n\n${textLine}\n\n${retained}${outro ? `\n\n${outro}` : ""}${foot.text}`;
   await resend(env, { to, subject, html, text });
 }

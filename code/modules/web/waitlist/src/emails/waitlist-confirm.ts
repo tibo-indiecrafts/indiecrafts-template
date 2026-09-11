@@ -16,6 +16,7 @@ export type WaitlistConfirmInput = {
   heading: string;
   intro: string;
   outro?: string;
+  supportEmail?: string;
 };
 
 const C = EMAIL_COLORS;
@@ -50,6 +51,7 @@ export function renderWaitlistConfirmEmail(
     title: input.heading,
     preheader: input.intro.slice(0, 100),
     contentHtml,
+    supportEmail: input.supportEmail,
   });
 
   return { subject: input.subject, text, html };

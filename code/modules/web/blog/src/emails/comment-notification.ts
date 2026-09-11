@@ -21,6 +21,7 @@ export type CommentNotificationInput = {
   outro?: string;
   /** When set, render the one-click moderation buttons (each opens a confirm page). */
   actions?: { approveUrl: string; spamUrl: string; deleteUrl: string };
+  supportEmail?: string;
 };
 
 const C = EMAIL_COLORS;
@@ -111,6 +112,7 @@ export function renderCommentNotificationEmail(
     preheader: `${input.author} — ${input.excerpt.slice(0, 90)}`,
     contentHtml,
     lang: "fr",
+    supportEmail: input.supportEmail,
   });
 
   return { subject, text, html };

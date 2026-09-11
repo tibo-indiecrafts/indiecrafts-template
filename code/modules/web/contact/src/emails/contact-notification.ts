@@ -19,6 +19,7 @@ export type ContactNotificationInput = {
   heading?: string;
   intro?: string;
   outro?: string;
+  supportEmail?: string;
 };
 
 const C = EMAIL_COLORS;
@@ -78,6 +79,7 @@ export function renderContactNotificationEmail(
     preheader: input.subject || input.name || input.email,
     contentHtml,
     lang: "fr",
+    supportEmail: input.supportEmail,
   });
 
   return { subject, text, html };

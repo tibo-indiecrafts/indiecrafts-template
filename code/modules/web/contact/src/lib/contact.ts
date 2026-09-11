@@ -103,12 +103,19 @@ export async function submit(
     const strings = (await getEmailStrings()) as {
       contactConfirm?: ConfirmationConfig;
       contactOwner?: OwnerAlertConfig;
+      supportEmail?: string;
     } | null;
     // Best-effort — a mail failure must not turn a saved message into a 500.
-    await sendConfirmEmail(email, input.language, strings?.contactConfirm);
+    await sendConfirmEmail(
+      email,
+      input.language,
+      strings?.contactConfirm,
+      strings?.supportEmail,
+    );
     await notifyOwner(
       { email, name, subject, message, source: input.source },
       strings?.contactOwner,
+      strings?.supportEmail,
     );
 
     return { ok: true };
@@ -123,6 +130,7 @@ async function sendConfirmEmail(
   email: string,
   language: string | undefined,
   cfg: ConfirmationConfig | undefined,
+  supportEmail: string | undefined,
 ): Promise<void> {
   try {
     const from = cfg?.from?.trim();
@@ -136,6 +144,7 @@ async function sendConfirmEmail(
         pick(cfg?.intro, locale) ||
         "Nous avons bien reçu votre message et nous vous répondrons dès que possible.",
       outro: pick(cfg?.outro, locale) || undefined,
+      supportEmail,
     });
     await sendEmail({
       from,
@@ -159,6 +168,7 @@ async function notifyOwner(
     source?: string;
   },
   cfg: OwnerAlertConfig | undefined,
+  supportEmail: string | undefined,
 ): Promise<void> {
   try {
     const to = cleanList(cfg?.to);
@@ -179,6 +189,7 @@ async function notifyOwner(
       heading: pick(cfg.heading, defaultLocale) || undefined,
       intro: pick(cfg.intro, defaultLocale) || undefined,
       outro: pick(cfg.outro, defaultLocale) || undefined,
+      supportEmail,
     });
     await sendEmail({
       from,

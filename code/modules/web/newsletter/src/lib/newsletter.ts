@@ -97,6 +97,7 @@ export async function subscribe(
     const strings = (await getEmailStrings()) as {
       newsletterConfirm?: ConfirmationConfig;
       newsletterOwner?: OwnerAlertConfig;
+      supportEmail?: string;
     } | null;
     const confirmCfg = strings?.newsletterConfirm;
     // A confirm token is stored only when the confirmation email can actually be
@@ -121,7 +122,13 @@ export async function subscribe(
       // `pending` (lost the confirm email) or `unsubscribed` (wants back in) → re-arm
       // to pending + (re)send the confirmation. Never dead-end on the existence check.
       await writeClient.patch(existing._id).set(optIn).commit();
-      await sendConfirmEmail(email, token, input.language, confirmCfg);
+      await sendConfirmEmail(
+        email,
+        token,
+        input.language,
+        confirmCfg,
+        strings?.supportEmail,
+      );
       return { ok: true, already: false };
     }
 
@@ -140,8 +147,19 @@ export async function subscribe(
     });
 
     // Best-effort — a mail failure must not turn a saved subscriber into a 500.
-    await sendConfirmEmail(email, token, input.language, confirmCfg);
-    await notifyOwner(email, input.source, strings?.newsletterOwner);
+    await sendConfirmEmail(
+      email,
+      token,
+      input.language,
+      confirmCfg,
+      strings?.supportEmail,
+    );
+    await notifyOwner(
+      email,
+      input.source,
+      strings?.newsletterOwner,
+      strings?.supportEmail,
+    );
 
     return { ok: true, already: false };
   } catch (error) {
@@ -156,6 +174,7 @@ async function sendConfirmEmail(
   token: string | undefined,
   language: string | undefined,
   cfg: ConfirmationConfig | undefined,
+  supportEmail: string | undefined,
 ): Promise<void> {
   try {
     const from = cfg?.from?.trim();
@@ -172,6 +191,7 @@ async function sendConfirmEmail(
         pick(cfg?.buttonLabel, locale) || "Confirmer mon inscription",
       confirmUrl: `${site.url}${localizedPathname("/newsletter/confirm", locale)}?token=${token}`,
       outro: pick(cfg?.outro, locale) || undefined,
+      supportEmail,
     });
     await sendEmail({
       from,
@@ -190,6 +210,7 @@ async function notifyOwner(
   email: string,
   source: string | undefined,
   cfg: OwnerAlertConfig | undefined,
+  supportEmail: string | undefined,
 ): Promise<void> {
   try {
     const to = cleanList(cfg?.to);
@@ -207,6 +228,7 @@ async function notifyOwner(
       heading: pick(cfg.heading, defaultLocale) || undefined,
       intro: pick(cfg.intro, defaultLocale) || undefined,
       outro: pick(cfg.outro, defaultLocale) || undefined,
+      supportEmail,
     });
     await sendEmail({
       from,
