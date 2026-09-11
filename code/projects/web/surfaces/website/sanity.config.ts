@@ -25,7 +25,8 @@ import { sharedSanity } from "@indiecrafts/packages-web-schema";
 import {
   emailSanity,
   sendTestEmailAction,
-  authEmailGroups,
+  buildClerkEmails,
+  clerkEmailsStructureItem,
   securityAlertGroups,
   emailPreferencesSchema,
   emailPreferencesStructureItem,
@@ -82,10 +83,14 @@ const sanity = composeStudio([
         schemaTypes: [appContentSchema],
         structure: (S) => [appContentStructureItem(S)],
       },
-      emailSanity([
-        ...allModules,
-        { emailGroups: [...authEmailGroups, ...securityAlertGroups] },
-      ]),
+      // The `clerkEmails` singleton — the editable copy for every Clerk auth/security
+      // email the api worker takes over (separate from the "E-mails" singleton).
+      {
+        name: "clerk-emails",
+        schemaTypes: [buildClerkEmails()],
+        structure: (S) => [clerkEmailsStructureItem(S)],
+      },
+      emailSanity([...allModules, { emailGroups: [...securityAlertGroups] }]),
     ],
   },
 ]);

@@ -3,7 +3,7 @@ import { buildEmailStrings } from "./email-strings";
 import { emailStructure } from "./structure";
 
 export { confirmationGroup, ownerAlertGroup } from "./groups";
-export { authEmailGroups } from "./auth-email-groups";
+export { buildClerkEmails, clerkEmailsStructureItem } from "./clerk-emails";
 export { securityAlertGroups } from "./security-alert-group";
 export { sendTestEmailAction } from "./send-test-action";
 export {
