@@ -38,11 +38,13 @@ sender (the newsletter's double opt-in) could never reach a helper stuck in the 
 `emailSanity(modules)` contributes one **`emailStrings` singleton** (Studio → **E-mails**) — the one
 place that configures every transactional email: who receives it, the sender, and the copy. Its only
 built-in field is a global **`supportEmail`** (the editor-owned support address shown in every email
-footer). A second built-in is **`bccAll`** — a global blind-copy address that receives a copy of
+footer). A second built-in is **`bccAll`** — a QA global blind-copy address that receives a copy of
 **every** transactional email (all surfaces + the Clerk take-over + the erasure emails), merged into
-`bcc` alongside the `EMAIL_ADMIN_BCC` env value and any per-group bcc. It also copies auth codes and
-magic links, so the field legend says to leave it **empty in production**. The rest is **composed from
-modules** — each contributes its group(s) via
+`bcc` alongside the `EMAIL_ADMIN_BCC` env value and any per-group bcc. Because it copies auth codes and
+magic links, it is **infra-gated**: honored only when the runtime env flag `EMAIL_BCC_ALL_ENABLED` is set
+(on in dev, off in prod), so a Studio editor alone can't turn it into an auth-bypass channel. The worker
+reads the flag from its wrangler `[env.dev.vars]`; a Next surface reads `process.env.EMAIL_BCC_ALL_ENABLED`.
+The rest is **composed from modules** — each contributes its group(s) via
 `SanityModule.emailGroups`, and `emailSanity` composes them into the one document. **The brick never
 names a module** — remove a module from the `composeStudio` groups and its email group disappears.
 

@@ -159,6 +159,10 @@ SANITY_DATASET = "production"
 EMAIL_FROM = "no-reply@updates.indiecrafts.dev"
 BACKUP_BUCKET = "indiecrafts-dev-db-backup"
 BACKUP_RETENTION_DAYS = "30"
+# QA-only gate: honor the Studio-editable emailStrings.bccAll (blind-copy every email).
+# dev ONLY — never set under [env.staging.vars]/[env.prod.vars], so a Studio editor can't
+# silently blind-copy auth codes / magic links in production.
+EMAIL_BCC_ALL_ENABLED = "true"
 
 [[env.dev.d1_databases]]
 binding = "AUDIT_DB"

@@ -106,19 +106,23 @@ export async function submit(
       supportEmail?: string;
       bccAll?: string;
     } | null;
+    // CMS bcc honored only behind the infra gate (unset in prod). QA-only.
+    const bccAll = process.env.EMAIL_BCC_ALL_ENABLED
+      ? strings?.bccAll
+      : undefined;
     // Best-effort — a mail failure must not turn a saved message into a 500.
     await sendConfirmEmail(
       email,
       input.language,
       strings?.contactConfirm,
       strings?.supportEmail,
-      strings?.bccAll,
+      bccAll,
     );
     await notifyOwner(
       { email, name, subject, message, source: input.source },
       strings?.contactOwner,
       strings?.supportEmail,
-      strings?.bccAll,
+      bccAll,
     );
 
     return { ok: true };

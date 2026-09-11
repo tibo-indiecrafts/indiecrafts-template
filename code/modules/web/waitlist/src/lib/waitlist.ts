@@ -105,6 +105,11 @@ export async function join(
       supportEmail?: string;
       bccAll?: string;
     } | null;
+    // The CMS-editable global bcc is honored ONLY behind the infra gate (unset in prod),
+    // so a Studio editor can't silently blind-copy transactional mail. QA-only.
+    const bccAll = process.env.EMAIL_BCC_ALL_ENABLED
+      ? strings?.bccAll
+      : undefined;
     // Best-effort — a mail failure must not turn a saved entry into a 500.
     await sendConfirmEmail(
       email,
@@ -112,7 +117,7 @@ export async function join(
       input.language,
       strings?.waitlistConfirm,
       strings?.supportEmail,
-      strings?.bccAll,
+      bccAll,
     );
     await notifyOwner(
       email,
@@ -120,7 +125,7 @@ export async function join(
       input.source,
       strings?.waitlistOwner,
       strings?.supportEmail,
-      strings?.bccAll,
+      bccAll,
     );
 
     return { ok: true, already: false };

@@ -12,15 +12,16 @@ const supportEmailField = defineField({
   validation: (Rule) => Rule.email(),
 });
 
-/** A global copy (BCC) address that receives a blind copy of EVERY transactional email.
- *  For QA — read once per send, added to the Resend `bcc`. It also copies auth codes,
- *  magic links, and reset links, so leave it EMPTY in production. */
+/** A global copy (BCC) address for QA. It is honored ONLY when the infra flag
+ *  `EMAIL_BCC_ALL_ENABLED` is set on the runtime (on in dev, off in prod) — a safety gate so a
+ *  Studio editor alone cannot silently blind-copy auth codes / magic links. When enabled, it is
+ *  added to the Resend `bcc` of every email (merged with the infra `EMAIL_ADMIN_BCC`). */
 const bccAllField = defineField({
   name: "bccAll",
-  title: "Copie de tous les e-mails (CCi)",
+  title: "Copie de tous les e-mails (CCi) — QA",
   type: "string",
   description:
-    "Adresse qui reçoit une copie cachée (CCi) de CHAQUE e-mail — ex. pour vérifier les envois. Attention : elle reçoit aussi les codes de connexion et les liens magiques, donc laissez ce champ VIDE en production. Vide = aucune copie.",
+    "Adresse qui reçoit une copie cachée (CCi) de chaque e-mail, pour vérifier les envois. Active uniquement si l'environnement l'autorise (activé en dev, désactivé en production) — car elle recevrait aussi les codes de connexion et les liens magiques. Vide = aucune copie.",
   validation: (Rule) => Rule.email(),
 });
 

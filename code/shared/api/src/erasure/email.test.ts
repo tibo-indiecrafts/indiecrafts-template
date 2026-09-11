@@ -183,11 +183,11 @@ describe("sendErasureTokenEmail", () => {
     expect(body.text).toContain("support@x.com");
   });
 
-  it("blind-copies the editable global bccAll address", async () => {
+  it("blind-copies the editable global bccAll ONLY when the infra gate is set", async () => {
     const fetchMock = okFetch();
     const fetchStrings = vi.fn(async () => ({ bccAll: "copy@x.com" }));
     await sendErasureTokenEmail(
-      CONFIGURED,
+      { ...CONFIGURED, EMAIL_BCC_ALL_ENABLED: "true" },
       { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
       fetchStrings,
     );
@@ -196,6 +196,21 @@ describe("sendErasureTokenEmail", () => {
       bcc?: string[];
     };
     expect(body.bcc).toEqual(["copy@x.com"]);
+  });
+
+  it("IGNORES the CMS bccAll when the infra gate is unset (no auth-code leak)", async () => {
+    const fetchMock = okFetch();
+    const fetchStrings = vi.fn(async () => ({ bccAll: "attacker@x.com" }));
+    await sendErasureTokenEmail(
+      CONFIGURED, // no EMAIL_BCC_ALL_ENABLED
+      { to: "user@x.com", confirmUrl: "https://x.com/confirm" },
+      fetchStrings,
+    );
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as ResendBody & {
+      bcc?: string[];
+    };
+    expect(body).not.toHaveProperty("bcc");
   });
 
   it("resolves the Sanity copy in the recipient's locale, else the default", async () => {

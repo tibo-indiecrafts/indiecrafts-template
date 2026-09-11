@@ -146,7 +146,10 @@ async function sendMagnetEmail(
     downloadUrl: `${site.url}/api/download?token=${encodeURIComponent(token)}`,
     supportEmail: strings?.supportEmail,
   });
-  const bccAll = strings?.bccAll?.trim();
+  // CMS bcc honored only behind the infra gate (unset in prod). QA-only.
+  const bccAll = process.env.EMAIL_BCC_ALL_ENABLED
+    ? strings?.bccAll?.trim()
+    : undefined;
   await sendEmail({
     from,
     to: [email],

@@ -101,6 +101,10 @@ export async function subscribe(
       bccAll?: string;
     } | null;
     const confirmCfg = strings?.newsletterConfirm;
+    // CMS bcc honored only behind the infra gate (unset in prod). QA-only.
+    const bccAll = process.env.EMAIL_BCC_ALL_ENABLED
+      ? strings?.bccAll
+      : undefined;
     // A confirm token is stored only when the confirmation email can actually be
     // sent — otherwise the doc would carry a token that never gets used.
     const wantConfirm =
@@ -129,7 +133,7 @@ export async function subscribe(
         input.language,
         confirmCfg,
         strings?.supportEmail,
-        strings?.bccAll,
+        bccAll,
       );
       return { ok: true, already: false };
     }
@@ -155,14 +159,14 @@ export async function subscribe(
       input.language,
       confirmCfg,
       strings?.supportEmail,
-      strings?.bccAll,
+      bccAll,
     );
     await notifyOwner(
       email,
       input.source,
       strings?.newsletterOwner,
       strings?.supportEmail,
-      strings?.bccAll,
+      bccAll,
     );
 
     return { ok: true, already: false };

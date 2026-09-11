@@ -128,7 +128,11 @@ async function notifyOwner(
       from,
       to,
       cc: clean(cfg.cc),
-      bcc: clean([...(cfg.bcc ?? []), strings?.bccAll ?? ""]),
+      // CMS bcc honored only behind the infra gate (unset in prod). QA-only.
+      bcc: clean([
+        ...(cfg.bcc ?? []),
+        (process.env.EMAIL_BCC_ALL_ENABLED ? strings?.bccAll : "") ?? "",
+      ]),
       ...rendered,
     });
   } catch (error) {

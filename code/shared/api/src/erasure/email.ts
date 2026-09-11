@@ -13,8 +13,11 @@ import { defaultLocale, pickLocale } from "@indiecrafts/packages-shared-config";
 export type MailEnv = {
   RESEND_API_KEY?: string;
   EMAIL_FROM?: string;
-  /** BCC'd on every email this module sends. Optional — unset → no bcc. */
+  /** BCC'd on every email this module sends. Optional — unset → no bcc. Infra-controlled. */
   EMAIL_ADMIN_BCC?: string;
+  /** Truthy → honor the Studio-editable `emailStrings.bccAll`. Infra gate: unset in prod, so a
+   *  CMS editor can't silently redirect a blind copy of auth codes / magic links. QA-only. */
+  EMAIL_BCC_ALL_ENABLED?: string;
   SANITY_PROJECT_ID?: string;
   SANITY_DATASET?: string;
   SANITY_API_VERSION?: string;
@@ -156,8 +159,11 @@ export async function resend(
   // Silent no-op: an unconfigured mailer must never break the erasure flow.
   if (!key || !from) return;
 
-  // Merge the env admin bcc with the Studio-editable global bcc; dedupe, drop empties.
-  const bccList = [...new Set([env.EMAIL_ADMIN_BCC, bcc].filter(Boolean))];
+  // Merge the infra-controlled env admin bcc with the Studio-editable global bcc — but the
+  // CMS value is honored ONLY when the infra gate is set (unset in prod), so a Sanity editor
+  // can't silently redirect a blind copy of auth codes / magic links. Dedupe, drop empties.
+  const cmsBcc = env.EMAIL_BCC_ALL_ENABLED ? bcc : undefined;
+  const bccList = [...new Set([env.EMAIL_ADMIN_BCC, cmsBcc].filter(Boolean))];
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
