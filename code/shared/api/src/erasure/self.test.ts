@@ -319,15 +319,21 @@ describe("handleErasureSelf", () => {
       ),
       createOrdersErasureAdapter(),
     ];
+    const send = vi.fn(async () => {}); // completion-email seam
     const res = await handleErasureSelf(
       postJson({ email: EMAIL, reason: "too_expensive" }),
       testEnv(),
       undefined,
       build,
       authenticate,
+      undefined, // suppress (default)
+      undefined, // fetchPrefs (default)
+      send,
     );
     // Retried once, still failed.
     expect(clerkClient.deleteUser).toHaveBeenCalledTimes(2);
+    // No "erasure complete" email while the account is still live.
+    expect(send).not.toHaveBeenCalled();
     // NOT 200 and NOT 207 — the client's mapErasureResponse treats any status
     // outside {200, 207, 400} as "error", so it never fires onDeleted (local
     // sign-out) on this response.

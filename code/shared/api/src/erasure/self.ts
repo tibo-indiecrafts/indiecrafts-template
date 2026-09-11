@@ -128,6 +128,7 @@ export async function handleErasureSelf(
   ) => Promise<SelfAuth | null> = defaultAuthenticate,
   suppress: typeof suppressResendContact = suppressResendContact,
   fetchPrefs: typeof fetchEmailPreferences = fetchEmailPreferences,
+  send: typeof sendErasureCompleteEmail = sendErasureCompleteEmail,
 ): Promise<Response> {
   if (request.method === "OPTIONS")
     return new Response(null, { status: 204, headers: PUBLIC_CORS_POST });
@@ -326,16 +327,20 @@ export async function handleErasureSelf(
     });
   }
 
-  try {
-    await sendErasureCompleteEmail(env, {
-      to: authed.email,
-      retained: retainedSummary(hadErrors),
-      locale,
-    });
-  } catch (error) {
-    logger.error("erasure.self complete email failed", {
-      name: (error as Error)?.name,
-    });
+  // Only when the account was actually deleted — never tell the subject "erasure
+  // complete" while the Clerk user (and their live sessions) still exist.
+  if (!clerkStillFailing) {
+    try {
+      await send(env, {
+        to: authed.email,
+        retained: retainedSummary(hadErrors),
+        locale,
+      });
+    } catch (error) {
+      logger.error("erasure.self complete email failed", {
+        name: (error as Error)?.name,
+      });
+    }
   }
 
   // Distinct from `partial`: the Clerk user still exists, so the session is NOT
