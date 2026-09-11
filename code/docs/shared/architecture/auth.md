@@ -174,7 +174,8 @@ Planet49):
 caller's own opt-in) · `POST /v1/profiles/consent` (bearer batch → the admin users-list "Emails"
 column).
 
-**Resend audience** — env `RESEND_AUDIENCE_ID` (unset → the mirror no-ops, store-only). An opt-in
+**Resend Contacts** — global, addressed by email (Resend renamed Audiences to Segments, so there
+is no audience id); `RESEND_API_KEY` unset → the mirror no-ops, store-only. An opt-in
 upserts the contact `unsubscribed:false`; an opt-out flips it `unsubscribed:true`. **Erasure is a pure
 delete** — the self-service erasure and the Clerk `user.deleted` webhook both remove the contact
 entirely. **No win-back / "former members" audience** — a deliberate compliance decision (right to be

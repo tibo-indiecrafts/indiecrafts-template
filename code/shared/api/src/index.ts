@@ -117,10 +117,6 @@ export interface Env {
   RESEND_API_KEY?: string;
   /** `wrangler secret put EMAIL_FROM` (or `[vars]`) — the erasure emails' From address. */
   EMAIL_FROM?: string;
-  /** `[vars]` (an id, not sensitive) — the Resend audience the marketing-email opt-in
-   *  mirrors to. Optional: `resend-audience.ts` no-ops until this AND `RESEND_API_KEY` are
-   *  set, so the consent capture degrades to store-only. */
-  RESEND_AUDIENCE_ID?: string;
   /** `[vars]` (or secret; an address, not sensitive) — BCC'd on every outbound email
    *  from this worker (the erasure emails). Operator-set. Optional — unset → no bcc.
    *  Composes with the website send layer's own `EMAIL_ADMIN_BCC` read. */

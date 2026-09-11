@@ -57,6 +57,18 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   win-back list). **Why:** an editor-configurable, per-category opt-in with proof, instead of one
   all-or-nothing flag.
 
+### Changed
+
+- **Resend mirror moved to the global Contacts API.** Resend renamed Audiences to Segments and made
+  Contacts global, so the four `resend-audience.ts` functions (`upsertResendContact`,
+  `syncContactTopics`, `suppressResendContact`, `deleteResendContact`) no longer use the
+  `/audiences/{id}/contacts` endpoints. They now POST `/contacts` (create, with inline fields +
+  topics), and on an existing email PATCH `/contacts/{email}` for fields and the dedicated
+  `PATCH /contacts/{email}/topics` (a bare `[{ id, subscription }]` array) for topics; delete is
+  `DELETE /contacts/{email}`. The `RESEND_AUDIENCE_ID` var is gone — there is no audience id — and the
+  mirror now degrades to no-op on `RESEND_API_KEY` alone. **Why:** the old audience-scoped endpoints
+  return nothing on a migrated (Segments) account, so the consent/churn mirror silently no-op'd.
+
 ### Removed
 
 - **The AI agent worker + the hybrid (Electron) surface — deleted entirely.** Removed

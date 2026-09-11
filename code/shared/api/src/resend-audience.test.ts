@@ -6,20 +6,20 @@ import {
   suppressResendContact,
 } from "./resend-audience";
 
-const env = { RESEND_API_KEY: "k", RESEND_AUDIENCE_ID: "aud_1" };
+const env = { RESEND_API_KEY: "k" };
 
 describe("resend-audience", () => {
-  it("no-ops when RESEND_AUDIENCE_ID is unset", async () => {
+  it("no-ops when RESEND_API_KEY is unset", async () => {
     const f = vi.fn();
     await upsertResendContact(
-      { RESEND_API_KEY: "k" },
+      {},
       { email: "u@x.com", granted: true },
       f as unknown as typeof fetch,
     );
     expect(f).not.toHaveBeenCalled();
   });
 
-  it("creates/updates a contact with unsubscribed = !granted", async () => {
+  it("creates a global contact with unsubscribed = !granted", async () => {
     const calls: Array<{ url: string; body: unknown }> = [];
     const f = vi.fn(async (url: string, init: RequestInit) => {
       calls.push({ url, body: JSON.parse(String(init.body)) });
@@ -30,14 +30,14 @@ describe("resend-audience", () => {
       { email: "u@x.com", granted: false },
       f as unknown as typeof fetch,
     );
-    expect(calls[0].url).toContain("/audiences/aud_1/contacts");
+    expect(calls[0].url).toBe("https://api.resend.com/contacts");
     expect(calls[0].body).toMatchObject({
       email: "u@x.com",
       unsubscribed: true,
     });
   });
 
-  it("falls back to PATCH when the contact already exists", async () => {
+  it("falls back to PATCH by email when the contact already exists", async () => {
     const seen: string[] = [];
     const f = vi.fn(async (url: string, init: RequestInit) => {
       seen.push(`${init.method} ${url}`);
@@ -50,10 +50,8 @@ describe("resend-audience", () => {
       { email: "u@x.com", granted: true },
       f as unknown as typeof fetch,
     );
-    expect(seen[0]).toContain("POST");
-    expect(seen[1]).toBe(
-      "PATCH https://api.resend.com/audiences/aud_1/contacts/u@x.com",
-    );
+    expect(seen[0]).toBe("POST https://api.resend.com/contacts");
+    expect(seen[1]).toBe("PATCH https://api.resend.com/contacts/u@x.com");
   });
 
   it("deletes a contact by email (404 is success)", async () => {
@@ -67,26 +65,16 @@ describe("resend-audience", () => {
       f as unknown as typeof fetch,
     );
     const [url, init] = f.mock.calls[0];
-    expect(String(url)).toContain("/audiences/aud_1/contacts/u@x.com");
+    expect(String(url)).toBe("https://api.resend.com/contacts/u@x.com");
     expect(init?.method).toBe("DELETE");
   });
 });
 
 describe("syncContactTopics", () => {
-  it("no-ops when RESEND_AUDIENCE_ID is unset", async () => {
-    const f = vi.fn();
-    await syncContactTopics(
-      { RESEND_API_KEY: "k" },
-      { email: "u@x.com", topics: [{ topicId: "t1", granted: true }] },
-      f as unknown as typeof fetch,
-    );
-    expect(f).not.toHaveBeenCalled();
-  });
-
   it("no-ops when RESEND_API_KEY is unset", async () => {
     const f = vi.fn();
     await syncContactTopics(
-      { RESEND_AUDIENCE_ID: "aud_1" },
+      {},
       { email: "u@x.com", topics: [{ topicId: "t1", granted: true }] },
       f as unknown as typeof fetch,
     );
@@ -137,9 +125,7 @@ describe("syncContactTopics", () => {
     );
     expect(calls).toHaveLength(1);
     expect(calls[0].method).toBe("POST");
-    expect(calls[0].url).toBe(
-      "https://api.resend.com/audiences/aud_1/contacts",
-    );
+    expect(calls[0].url).toBe("https://api.resend.com/contacts");
     expect(calls[0].body).toMatchObject({
       email: "u@x.com",
       topics: [
@@ -149,10 +135,14 @@ describe("syncContactTopics", () => {
     });
   });
 
-  it("falls back to PATCH by email on 409/422", async () => {
-    const seen: string[] = [];
+  it("falls back to the dedicated /topics endpoint (bare array) on 409/422", async () => {
+    const calls: Array<{ url: string; method: string; body: unknown }> = [];
     const f = vi.fn(async (url: string, init: RequestInit) => {
-      seen.push(`${init.method} ${url}`);
+      calls.push({
+        url,
+        method: String(init.method),
+        body: JSON.parse(String(init.body)),
+      });
       return new Response("{}", {
         status: init.method === "POST" ? 409 : 200,
       });
@@ -162,10 +152,11 @@ describe("syncContactTopics", () => {
       { email: "u@x.com", topics: [{ topicId: "t1", granted: true }] },
       f as unknown as typeof fetch,
     );
-    expect(seen[0]).toContain("POST");
-    expect(seen[1]).toBe(
-      "PATCH https://api.resend.com/audiences/aud_1/contacts/u@x.com",
-    );
+    expect(calls[0].method).toBe("POST");
+    expect(calls[1].method).toBe("PATCH");
+    expect(calls[1].url).toBe("https://api.resend.com/contacts/u@x.com/topics");
+    // Topics body is a bare array, not wrapped in a `topics` property.
+    expect(calls[1].body).toEqual([{ id: "t1", subscription: "opt_in" }]);
   });
 
   it("throws on a non-ok, non-409/422 response", async () => {
@@ -181,7 +172,7 @@ describe("syncContactTopics", () => {
 });
 
 describe("suppressResendContact", () => {
-  it("no-ops without key/audience", async () => {
+  it("no-ops without a key", async () => {
     const f = vi.fn();
     await suppressResendContact(
       {},
@@ -194,7 +185,7 @@ describe("suppressResendContact", () => {
   it("sets unsubscribed + opt_out marketing + churned opt_in + property on create", async () => {
     const f = vi.fn().mockResolvedValue({ ok: true, status: 200 });
     await suppressResendContact(
-      { RESEND_API_KEY: "k", RESEND_AUDIENCE_ID: "aud_1" },
+      env,
       {
         email: "u@x.com",
         reason: "too_expensive",
@@ -203,6 +194,7 @@ describe("suppressResendContact", () => {
       },
       f as unknown as typeof fetch,
     );
+    expect(f.mock.calls[0][0]).toBe("https://api.resend.com/contacts");
     const body = JSON.parse(
       (f.mock.calls[0][1] as RequestInit).body as string,
     ) as Record<string, unknown>;
@@ -221,7 +213,7 @@ describe("suppressResendContact", () => {
   it("omits topics when no churnedTopicId and no optOutTopicIds", async () => {
     const f = vi.fn().mockResolvedValue({ ok: true, status: 200 });
     await suppressResendContact(
-      { RESEND_API_KEY: "k", RESEND_AUDIENCE_ID: "aud_1" },
+      env,
       { email: "u@x.com" },
       f as unknown as typeof fetch,
     );
@@ -232,18 +224,24 @@ describe("suppressResendContact", () => {
     expect(body.topics).toBeUndefined();
   });
 
-  it("falls back to PATCH by email on 409/422", async () => {
-    const f = vi
-      .fn()
-      .mockResolvedValueOnce({ ok: false, status: 409 })
-      .mockResolvedValueOnce({ ok: true, status: 200 });
+  it("on 409/422 PATCHes fields by email then topics on the dedicated endpoint", async () => {
+    const seen: string[] = [];
+    const f = vi.fn(async (url: string, init: RequestInit) => {
+      seen.push(`${String(init.method)} ${url}`);
+      return new Response("{}", {
+        status: init.method === "POST" ? 409 : 200,
+      });
+    });
     await suppressResendContact(
-      { RESEND_API_KEY: "k", RESEND_AUDIENCE_ID: "aud_1" },
+      env,
       { email: "u@x.com", reason: "privacy", churnedTopicId: "top_churn" },
       f as unknown as typeof fetch,
     );
-    expect(f).toHaveBeenCalledTimes(2);
-    expect(f.mock.calls[1][0] as string).toContain("/contacts/u@x.com");
-    expect((f.mock.calls[1][1] as RequestInit).method).toBe("PATCH");
+    expect(f).toHaveBeenCalledTimes(3);
+    expect(seen[0]).toBe("POST https://api.resend.com/contacts");
+    expect(seen[1]).toBe("PATCH https://api.resend.com/contacts/u@x.com");
+    expect(seen[2]).toBe(
+      "PATCH https://api.resend.com/contacts/u@x.com/topics",
+    );
   });
 });

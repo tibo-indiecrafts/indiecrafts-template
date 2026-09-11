@@ -140,9 +140,9 @@ invocation_logs = true
 #   SANITY_API_WRITE_TOKEN (erasure route's Sanity pseudonymisation writes) ·
 #   EMAIL_PREF_SECRET (signs the no-login email-preferences token) —
 #   wrangler secret put <NAME> --env <env>
-# Per-category Resend Topic wiring (audience RESEND_AUDIENCE_ID + each category's
-# resendTopicId) is Sanity-configured, not a wrangler var — see the emailPreferences
-# singleton in Studio.
+# Per-category Resend Topic wiring (each category's resendTopicId) is Sanity-configured, not
+# a wrangler var — see the emailPreferences singleton in Studio. Contacts are global (Resend
+# renamed Audiences to Segments), so there is no audience id to wire.
 [env.dev]
 name = "indiecrafts-dev-shared-api"
 

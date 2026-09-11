@@ -63,17 +63,18 @@ Sanity — RFC 8058 requires success semantics, not partial-failure reporting.
 Resend Topics are the per-category primitive — Resend's `unsubscribed` flag is global, not
 per-category, so per-category state needs Topics. Setup, per environment:
 
-1. Create **one Resend audience** and set `RESEND_AUDIENCE_ID`.
-2. Create **one Resend Topic per Sanity category**, with `default_subscription: opt_out`.
-3. Paste each Topic's id into the matching category's `resendTopicId` field in Sanity.
-4. Set `RESEND_API_KEY` (also used for `email_preferences`'s sibling, the legacy
-   `marketing_email` audience mirror) and verify the sending domain in Resend.
+1. Create **one Resend Topic per Sanity category**, with `default_subscription: opt_out`
+   (run `pnpm resend:topics:sync`, which is idempotent).
+2. Paste each Topic's id into the matching category's `resendTopicId` field in Sanity.
+3. Set `RESEND_API_KEY` (also used for `email_preferences`'s sibling, the `marketing_email`
+   contact mirror) and verify the sending domain in Resend. Contacts are global — Resend
+   renamed Audiences to Segments — so there is no audience id to configure.
 
 `syncContactTopics` (`code/shared/api/src/resend-audience.ts`) upserts the contact's topic
 subscriptions (`opt_in`/`opt_out` per `granted`). A category with no `resendTopicId` is
 skipped — Sanity and Resend stay independently valid; a category can exist before its Topic
-does. An unset `RESEND_API_KEY` or `RESEND_AUDIENCE_ID` makes every sync a no-op — the
-feature degrades to capture-only (D1 keeps the real state; nothing reaches Resend).
+does. An unset `RESEND_API_KEY` makes every sync a no-op — the feature degrades to
+capture-only (D1 keeps the real state; nothing reaches Resend).
 
 ## Consent behavior
 

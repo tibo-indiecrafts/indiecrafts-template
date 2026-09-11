@@ -20,7 +20,7 @@ const RESEND_API = "https://api.resend.com";
 // localised preference centre) and default `opt_out`. `general` is the exception:
 // a standalone marketing topic for existing/imported contacts (NOT a Sanity
 // category), `public` so recipients can self-unsubscribe on Resend's hosted page,
-// and `opt_in` per the operator's choice. Its id feeds resend-contacts-backfill.
+// and `opt_in` per the operator's choice.
 export const TOPICS = [
   { key: "news", name: "News" },
   { key: "offers", name: "Offers" },
@@ -91,7 +91,7 @@ async function main() {
   }
   if (ids.general)
     console.log(
-      `\nGENERAL=${ids.general}  (standalone marketing topic — not a Sanity category; feeds resend-contacts-backfill)`,
+      `\nGENERAL=${ids.general}  (standalone marketing topic for imported contacts — not a Sanity category)`,
     );
 
   process.exit(failed ? 1 : 0);

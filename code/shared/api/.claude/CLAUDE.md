@@ -17,11 +17,12 @@ row on `DB` (best-effort, no longer one atomic batch) — see
 `POST /v1/clerk-webhook` also keeps `user_profiles` in sync with Clerk (source of truth for email):
 upsert + re-fingerprint on `user.created`/`user.updated`, pseudonymise on `user.deleted`; on
 `user.created` it also mirrors the sign-up marketing opt-in (`unsafe_metadata.marketing_email`) to
-`user_profiles.marketing_email` + a `consent_events` proof row + the Resend audience.
+`user_profiles.marketing_email` + a `consent_events` proof row + the Resend contact.
 **Commercial-email consent:** `GET`/`POST /v1/consent/marketing-email` (Clerk-JWT; the account toggle +
 sign-in nudge read/write the caller's own opt-in) and `POST /v1/profiles/consent` (bearer batch → the
-admin users list). Each decision mirrors to a Resend audience (`resend-audience.ts`, `RESEND_AUDIENCE_ID`;
-unset → no-op); erasure pure-deletes the contact.
+admin users list). Each decision mirrors to Resend's global Contacts (`resend-audience.ts`, keyed by
+email — no audience id since Resend renamed Audiences to Segments; `RESEND_API_KEY` unset → no-op);
+erasure pure-deletes the contact.
 **Per-category email preferences** (the editor-defined categories, alongside the single flag above):
 `GET`/`POST /v1/consent/email-preferences` (Clerk-JWT) and the no-login
 `GET`/`POST /v1/email-preferences?token=` + `POST /v1/email-preferences/unsubscribe?token=` (RFC 8058
