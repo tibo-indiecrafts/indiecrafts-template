@@ -17,9 +17,10 @@ CLERK_WEBHOOK_SECRET=""
 GDPR_FINGERPRINT_SALT=""
 
 # Transactional email (erasure token/completion + Clerk email take-over). RESEND_API_KEY is
-# a secret; EMAIL_FROM is the sender. Both unset → the email sends no-op (never throw).
+# a secret → set it here; unset → email sends no-op (never throw). The sender EMAIL_FROM now
+# lives in wrangler.toml [env.*.vars] (no-reply@updates.indiecrafts.dev, one domain per env) —
+# do NOT also set it here, or wrangler warns about a var/secret name clash.
 # RESEND_API_KEY=""
-# EMAIL_FROM=""
 
 # Marketing-email consent mirrors to Resend's global Contacts (no audience id — Resend
 # renamed Audiences to Segments). RESEND_API_KEY unset → the mirror no-ops (store-only).

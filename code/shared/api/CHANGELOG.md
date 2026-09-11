@@ -74,6 +74,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   env tfvars. **dev + staging are unchanged** — both serve on `*.workers.dev` (`attach_domain = false`),
   so only prod gets a custom domain. **Why:** make the prod domain a filled-in, documented setup step
   instead of a bare placeholder.
+- **`EMAIL_FROM` wired as `[vars]` on every env** — `no-reply@updates.indiecrafts.dev`, one
+  Resend-verified sending domain for dev/staging/prod. The sender is independent of each env's worker
+  host, so dev/staging (on `*.workers.dev`) send from the same address. Moved out of `.dev.vars` (was
+  an unset secret) so it is not double-defined as both a var and a secret. **Why:** one domain to
+  verify + one sender everywhere; requires `updates.indiecrafts.dev` verified in Resend before sends
+  work.
 
 ### Removed
 

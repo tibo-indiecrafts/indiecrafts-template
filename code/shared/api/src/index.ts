@@ -115,7 +115,9 @@ export interface Env {
   /** `wrangler secret put RESEND_API_KEY` — the erasure flow's token + completion emails.
    *  Optional: `erasure/email.ts` no-ops (never throws) until this AND `EMAIL_FROM` are set. */
   RESEND_API_KEY?: string;
-  /** `wrangler secret put EMAIL_FROM` (or `[vars]`) — the erasure emails' From address. */
+  /** `[vars]` in wrangler.toml — the outbound From address (`no-reply@updates.indiecrafts.dev`,
+   *  one Resend-verified domain across every env). Sends no-op until this AND `RESEND_API_KEY`
+   *  are set. */
   EMAIL_FROM?: string;
   /** `[vars]` (or secret; an address, not sensitive) — BCC'd on every outbound email
    *  from this worker (the erasure emails). Operator-set. Optional — unset → no bcc.

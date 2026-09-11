@@ -153,6 +153,10 @@ SANITY_API_VERSION = "2025-01-01"
 # (the website reads the same NEXT_PUBLIC_SANITY_* values). Public, so [vars] not secrets.
 SANITY_PROJECT_ID = "qy2pp5sn"
 SANITY_DATASET = "production"
+# Outbound email sender — one Resend-verified domain for every env. dev/staging serve on
+# *.workers.dev but still send from this address (the sender is independent of the worker
+# host). Requires updates.indiecrafts.dev verified in Resend before any email sends.
+EMAIL_FROM = "no-reply@updates.indiecrafts.dev"
 BACKUP_BUCKET = "indiecrafts-dev-db-backup"
 BACKUP_RETENTION_DAYS = "30"
 
@@ -183,6 +187,7 @@ name = "indiecrafts-staging-shared-api"
 SANITY_API_VERSION = "2025-01-01"
 SANITY_PROJECT_ID = "qy2pp5sn"
 SANITY_DATASET = "production"
+EMAIL_FROM = "no-reply@updates.indiecrafts.dev"
 BACKUP_BUCKET = "indiecrafts-staging-db-backup"
 BACKUP_RETENTION_DAYS = "30"
 
@@ -209,6 +214,7 @@ name = "indiecrafts-prod-shared-api"
 SANITY_API_VERSION = "2025-01-01"
 SANITY_PROJECT_ID = "qy2pp5sn"
 SANITY_DATASET = "production"
+EMAIL_FROM = "no-reply@updates.indiecrafts.dev"
 BACKUP_BUCKET = "indiecrafts-prod-db-backup"
 BACKUP_RETENTION_DAYS = "30"
 
