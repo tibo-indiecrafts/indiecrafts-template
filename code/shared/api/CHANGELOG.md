@@ -68,6 +68,12 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   `DELETE /contacts/{email}`. The `RESEND_AUDIENCE_ID` var is gone — there is no audience id — and the
   mirror now degrades to no-op on `RESEND_API_KEY` alone. **Why:** the old audience-scoped endpoints
   return nothing on a migrated (Segments) account, so the consent/churn mirror silently no-op'd.
+- **Prod domain set to `updates.indiecrafts.dev`.** `domains.mjs` + `infra/cloudflare/env/prod.tfvars`
+  now name the real prod api host (was the `api.example.com` placeholder); `prod.tfvars` carries the
+  step-by-step domain-setup runbook inline, and the Cloudflare `account_id` is filled on all three
+  env tfvars. **dev + staging are unchanged** — both serve on `*.workers.dev` (`attach_domain = false`),
+  so only prod gets a custom domain. **Why:** make the prod domain a filled-in, documented setup step
+  instead of a bare placeholder.
 
 ### Removed
 

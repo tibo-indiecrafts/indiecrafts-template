@@ -76,9 +76,12 @@ export const DOMAINS = [
   {
     app: "api",
     envs: {
+      // dev + staging serve on *.workers.dev (no custom domain).
       dev: null,
       staging: null,
-      prod: { host: "api.example.com", zone: "example.com" },
+      // prod: the api host. Provisioned by the Terraform stack in
+      // code/shared/api/infra/cloudflare (see env/prod.tfvars for the setup steps).
+      prod: { host: "updates.indiecrafts.dev", zone: "indiecrafts.dev" },
     },
   },
   // Storybook (design-system gallery) — a static-assets Worker, a subdomain of the website

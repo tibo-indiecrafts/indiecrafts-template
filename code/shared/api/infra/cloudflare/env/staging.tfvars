@@ -1,11 +1,11 @@
-# api · staging. Placeholder host → *.workers.dev until the operator sets a real
-# api-staging host + zone. Set attach_domain = true once the domain is on this CF account.
+# api · staging — same as dev: serves on *.workers.dev, no custom domain
+# (attach_domain = false). Only prod gets a custom domain (updates.indiecrafts.dev).
 env           = "staging"
 worker_name   = "indiecrafts-staging-shared-api"
 attach_domain = false
-account_id    = ""    # REQUIRED
-zone_id       = ""    # REQUIRED when attach_domain = true
-domain        = ""    # e.g. api-staging.example.com
+account_id    = "98ca87410b95e03a60f646d95e154266" # this Cloudflare account
+zone_id       = ""    # unused while attach_domain = false
+domain        = ""    # unused — staging stays on *.workers.dev
 
 # Optional edge tunables — main.tf defaults (uncomment here to override):
 # rate_limit_requests       = 60
