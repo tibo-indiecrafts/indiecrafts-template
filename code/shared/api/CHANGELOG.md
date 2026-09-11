@@ -5,6 +5,54 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Security
+
+API security-hardening pass (audit 2026-09-11). One HIGH + four MED + a LOW batch; plan →
+[`docs/superpowers/plans/2026-09-11-api-security-hardening.md`](../../../docs/superpowers/plans/2026-09-11-api-security-hardening.md).
+
+- **HIGH — the Clerk delete is now a required step on `/v1/erasure/confirm`.** The mailed-token
+  RTBF path treated a failed Clerk delete (the one global session/credential kill-switch) as a benign
+  `207` partial — sending the "erasure complete" email and spending the single-use token while the
+  account was still live and the pseudonymised D1 fingerprint stayed re-linkable. It now retries the
+  Clerk delete once and, on persistent failure, returns `502 {clerk_failed:true}`, keeps the row
+  `confirmed` (not `completed`), and skips the completion email + `erasure.completed` audit — flagged
+  for manual backfill, same contract as `/v1/erasure/self`. That self path also no longer emails
+  "complete" on its own `clerk_failed` return.
+- **MED — the in-worker rate limiter is bound and applied.** `AGENT_RATELIMIT` was commented out, so
+  no in-worker limit fired anywhere — every public/token write leaned solely on the CF WAF `/api/*`
+  rule. Bound per env (dev/staging/prod, distinct namespace_id) and applied to the routes that lacked
+  it: `/v1/announcements`, `/v1/erasure/confirm`, and the two Clerk-JWT consent routes.
+- **MED — `/v1/export` requires step-up reverification.** A full personal-data export ran on the JWT
+  `sub` alone (`verifyToken` is networkless), so a revoked-but-unexpired token could exfiltrate the
+  bundle within the access-token TTL. Export now enforces the same step-up as `/v1/erasure/self`, via
+  one shared `authenticateClerkJwt` + `requireStepUp` gate (removing a verbatim `defaultAuthenticate`
+  duplication).
+- **MED — the public erasure-request fails closed with no abuse control.** `/v1/erasure/request`
+  refuses (`503`) when neither Turnstile nor a rate limiter is configured, instead of running an
+  unthrottled, unchallenged public POST (an email-bomb vector).
+- **LOW — body-size re-check after read** on the remaining POSTs (`/v1/profiles/consent`,
+  `/v1/settings` PUT, the consent routes, website `emails/test` + `consent-log`), and a **1-year
+  expiry** on the no-login preference token (legacy no-`exp` tokens stay valid so old email links work).
+
+**Accepted / deferred (documented risk, not changed):**
+
+- **Churn free-text retention** — `churn_events` keeps user-typed `feedback`/`competitor` (the exit
+  survey, legitimate-interest win-back data) until the 730-day full-row purge. A departing user could
+  self-enter PII there. The on-erasure scrub the plan sketched is contradictory (self-erasure _writes_
+  the survey), so the real fix is a **shorter free-text retention window** — a product/legal decision
+  on the window (recommended ~365 days, scrubbing `feedback`/`competitor` while keeping the aggregate),
+  wired as a second cutoff in the cron retention pass. Deferred pending that decision.
+- **Audit `actor` is self-asserted by the bearer** (`/v1/settings` PUT, `/v1/events` admin) — by
+  design (only the trusted website backend holds `APP_API_TOKEN` and does its own Clerk admin check),
+  an audit-integrity note, not independently verified.
+- **Lead-magnet download link** is signed + expiring but not single-use (a documented `ponytail:`
+  ceiling).
+
+**Runbook:** provision the `AGENT_RATELIMIT` namespaces and redeploy each env (`pnpm
+deploy:shared:api:<env>`); the CF WAF `/api/*` rule stays the primary limiter. `/v1/export` now
+returns a `403` reverification challenge to a stale session; `/v1/erasure/confirm` can return `502
+clerk_failed`.
+
 ### Added
 
 - **Clerk email take-over — every auth template, branded, localized, with a support address.** The

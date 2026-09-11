@@ -57,8 +57,11 @@ adapter takes a read-only handle to `main` to resolve `user_id`) + `clerk`/`sani
 orchestrator. The `/v1/erasure` routes are live: `GET/POST /v1/erasure/request` (Turnstile-gated,
 anti-enumeration), `GET/POST /v1/erasure/confirm` (token + typed-email fingerprint + TTL + attempt
 cap → runs the engine live), `GET /v1/erasure/status/:token` (public, no-PII status), and
-`POST /v1/erasure/self` (authenticated self-service; Clerk-JWT + typed-email gate → runs the
-engine directly, no email round-trip — the signed-in surfaces' account-delete control will call it).
+`POST /v1/erasure/self` (authenticated self-service; Clerk-JWT + **step-up** + typed-email gate → runs
+the engine directly, no email round-trip — the signed-in surfaces' account-delete control will call it).
+**The Clerk delete is a REQUIRED step on both erasure paths** (`self` + `confirm`): it is the one global
+session kill-switch, so a persistent Clerk-delete failure returns `502 {clerk_failed:true}`, keeps the
+row `confirmed` (not `completed`), and sends NO completion email — never a false "erasure complete".
 `WEBSITE_URL` (`[vars]`) sets the confirm-link origin the token email points at; unset falls back to
 the worker's own origin. The two erasure emails (`src/erasure/email.ts`) read their copy from the
 Studio-editable `emailStrings` singleton (`erasureToken`/`erasureComplete` groups) over raw GROQ-HTTP
@@ -72,8 +75,10 @@ is matched forgivingly (`authKind`), and the read is cached in-worker for 5 min.
 security-alert email** (`src/security/alert.ts`) is Studio-editable too — the `securityAlert` group's
 `subjectPrefix`/`intro` (English, un-localized), with the same never-throws GROQ read and English
 fallback, but **no `enabled` toggle**: a security alert can never be silenced from Studio.
-`POST /v1/export` (authenticated; Clerk-JWT) runs `runExport`, stores the
-bundle in the `EXPORT_BUCKET` R2 bucket, and returns a single-use 1-hour download link; `GET
+`POST /v1/export` (authenticated; Clerk-JWT + **step-up reverification**, same shared
+`auth/sensitive-action` gate as `erasure/self` — a stale session gets a `403` challenge) runs
+`runExport`, stores the bundle in the `EXPORT_BUCKET` R2 bucket, and returns a single-use 1-hour
+download link; `GET
 /v1/export/download?token=` streams the bundle and deletes it from R2 on first download. Secret/
 binding: `EXPORT_BUCKET` (`[[r2_buckets]]`, operator-provisioned — routes answer 503 until bound).
 **DSAR intake** — `src/data-request/route.ts` holds the GDPR request-form write + read, migrated off
