@@ -63,7 +63,9 @@ function mocks(
   } | null = {
     userId: USER,
     email: EMAIL,
-    fvaMinutes: null,
+    // Fresh first factor (<= the 10-min step-up window) so export runs; the step-up gate
+    // is exercised by its own test below.
+    fvaMinutes: 5,
   },
 ) {
   const authenticate = vi.fn(async () => authResult);
@@ -138,6 +140,25 @@ describe("handleExport", () => {
       .bind(USER)
       .first<{ event: string }>();
     expect(audit?.event).toBe("export.self");
+  });
+
+  it("requires step-up reverification (403) when the first factor is stale, exporting nothing", async () => {
+    const fp = await seedProfile();
+    const { authenticate, build } = mocks({
+      userId: USER,
+      email: EMAIL,
+      fvaMinutes: null, // no fresh factor → must reverify
+    });
+    const res = await handleExport(
+      postExport(),
+      testEnv(),
+      undefined,
+      build,
+      authenticate,
+    );
+    expect(res.status).toBe(403);
+    // No bundle was produced.
+    expect(await exportRowFor(fp)).toBeFalsy();
   });
 
   it("returns 401 when the JWT is missing or invalid", async () => {

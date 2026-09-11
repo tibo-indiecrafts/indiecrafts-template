@@ -14,8 +14,11 @@ import {
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { type Env, PUBLIC_CORS, PUBLIC_CORS_POST, clientIp } from "../index";
 import { buildErasureAdapters } from "../erasure/adapters";
-import { createRealClerkClient } from "../erasure/clerk-client";
-import type { SelfAuth } from "../erasure/self";
+import {
+  authenticateClerkJwt,
+  requireStepUp,
+  type SelfAuth,
+} from "../auth/sensitive-action";
 import { readSettings } from "../settings-cache";
 
 const BODY_MAX = 4000;
@@ -45,51 +48,6 @@ function json(
   });
 }
 
-/**
- * Verify the Clerk session JWT and resolve the caller's primary email (identical to
- * erasure/self.ts's defaultAuthenticate — not exported there, so replicated here).
- * Dynamic import keeps @clerk/backend out of the worker startup graph. Injectable so
- * tests never load the SDK or hit the network.
- */
-async function defaultAuthenticate(
-  request: Request,
-  env: Env,
-): Promise<SelfAuth | null> {
-  const token = (request.headers.get("authorization") ?? "").replace(
-    /^Bearer\s+/i,
-    "",
-  );
-  if (!token || !env.CLERK_SECRET_KEY) return null;
-  try {
-    const { verifyToken } = await import("@clerk/backend");
-    const { data: claims, errors } = await verifyToken(token, {
-      secretKey: env.CLERK_SECRET_KEY,
-    });
-    if (errors || !claims) return null;
-    const payload = claims as { sub?: unknown };
-    const userId = typeof payload.sub === "string" ? payload.sub : null;
-    if (!userId) return null;
-    const user = await createRealClerkClient(env.CLERK_SECRET_KEY).exportUser(
-      userId,
-    );
-    const u = user as {
-      primaryEmailAddressId?: string | null;
-      emailAddresses?: Array<{ id: string; emailAddress: string }>;
-    };
-    const email =
-      u.emailAddresses?.find((e) => e.id === u.primaryEmailAddressId)
-        ?.emailAddress ??
-      u.emailAddresses?.[0]?.emailAddress ??
-      null;
-    if (!email) return null;
-    // Export has no step-up requirement (unlike erasure/self.ts) — fvaMinutes is
-    // carried only to satisfy the shared SelfAuth type.
-    return { userId, email, fvaMinutes: null };
-  } catch {
-    return null; // any verify/resolve failure → unauthenticated (fail closed)
-  }
-}
-
 export async function handleExport(
   request: Request,
   env: Env,
@@ -98,7 +56,7 @@ export async function handleExport(
   authenticate: (
     request: Request,
     env: Env,
-  ) => Promise<SelfAuth | null> = defaultAuthenticate,
+  ) => Promise<SelfAuth | null> = authenticateClerkJwt,
 ): Promise<Response> {
   if (request.method === "OPTIONS")
     return new Response(null, { status: 204, headers: PUBLIC_CORS_POST });
@@ -139,6 +97,12 @@ export async function handleExport(
 
   const authed = await authenticate(request, env);
   if (!authed) return json({ error: "unauthorized" }, 401, PUBLIC_CORS_POST);
+
+  // A full personal-data export is sensitive — require the same step-up reverification as
+  // erasure/self, so a revoked-but-unexpired token (verifyToken is networkless) can't be
+  // replayed to exfiltrate the bundle within the access-token TTL.
+  const stepUp = requireStepUp(authed, PUBLIC_CORS_POST);
+  if (stepUp) return stepUp;
 
   const adapters = buildAdapters(env);
   const bundle = await runExport(adapters, authed.email);

@@ -13,10 +13,13 @@ import {
   runErasure,
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { reverificationError } from "@clerk/backend/internal";
 import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
 import { buildErasureAdapters } from "./adapters";
-import { createRealClerkClient } from "./clerk-client";
+import {
+  authenticateClerkJwt,
+  requireStepUp,
+  type SelfAuth,
+} from "../auth/sensitive-action";
 import { readProfileLocale, sendErasureCompleteEmail } from "./email";
 import { suppressResendContact } from "../resend-audience";
 import {
@@ -27,18 +30,11 @@ import {
 import { fetchEmailPreferences } from "../consent/email-preferences-sanity";
 
 const BODY_MAX = 4000;
-// Clerk's own step-up window (see `factor1FreshEnough` in
-// @clerk/shared/authorization.js): a first factor verified longer ago than this
-// (or not applicable, fva === -1) requires reverification.
-const REVERIFY_WINDOW_MIN = 10;
 // Must match the `name` the clerk adapter registers itself under (erasure/clerk.ts).
 export const CLERK_STORE = "clerk";
 
-export type SelfAuth = {
-  userId: string;
-  email: string;
-  fvaMinutes: number | null;
-};
+// Re-exported so existing importers (export/route.ts) keep resolving `SelfAuth` here.
+export type { SelfAuth };
 
 function json(
   body: unknown,
@@ -49,64 +45,6 @@ function json(
     status,
     headers: { "content-type": "application/json", ...cors },
   });
-}
-
-/**
- * Verify the Clerk session JWT and resolve the caller's primary email. Dynamic
- * import keeps @clerk/backend out of the worker startup graph. Injectable so tests
- * never load the SDK or hit the network.
- *
- * `verifyToken` returns a `{ data, errors }` result rather than throwing on an
- * invalid token — confirmed against the installed @clerk/backend@3.16.7 types
- * (`data`/`errors` resolve to `unknown` there, so the `sub` claim is read via a cast
- * below, same as the Clerk `User` shape further down).
- */
-async function defaultAuthenticate(
-  request: Request,
-  env: Env,
-): Promise<SelfAuth | null> {
-  const token = (request.headers.get("authorization") ?? "").replace(
-    /^Bearer\s+/i,
-    "",
-  );
-  if (!token || !env.CLERK_SECRET_KEY) return null;
-  try {
-    const { verifyToken } = await import("@clerk/backend");
-    const { data: claims, errors } = await verifyToken(token, {
-      secretKey: env.CLERK_SECRET_KEY,
-    });
-    if (errors || !claims) return null;
-    // The installed @clerk/backend@3.16.7 types resolve `data`/`errors` to `unknown`
-    // (not a typed JwtPayload) — cast to read the `sub`/`fva` claims.
-    const payload = claims as { sub?: unknown; fva?: unknown };
-    const userId = typeof payload.sub === "string" ? payload.sub : null;
-    if (!userId) return null;
-    // fva = [firstFactorAgeMinutes, secondFactorAgeMinutes] | undefined; -1 = not
-    // applicable. Runtime-validate before trusting it (never trust an uncast claim).
-    const isValidFactorAge = (x: unknown): x is number =>
-      typeof x === "number" && Number.isFinite(x) && (x === -1 || x >= 0);
-    const fvaMinutes =
-      Array.isArray(payload.fva) && isValidFactorAge(payload.fva[0])
-        ? payload.fva[0]
-        : null;
-    // Resolve the primary email from Clerk (the JWT omits it by default).
-    const user = await createRealClerkClient(env.CLERK_SECRET_KEY).exportUser(
-      userId,
-    );
-    const u = user as {
-      primaryEmailAddressId?: string | null;
-      emailAddresses?: Array<{ id: string; emailAddress: string }>;
-    };
-    const email =
-      u.emailAddresses?.find((e) => e.id === u.primaryEmailAddressId)
-        ?.emailAddress ??
-      u.emailAddresses?.[0]?.emailAddress ??
-      null;
-    if (!email) return null;
-    return { userId, email, fvaMinutes };
-  } catch {
-    return null; // any verify/resolve failure → unauthenticated (fail closed)
-  }
 }
 
 /** Short factual summary of what stays and why (mirrors confirm.ts). */
@@ -125,7 +63,7 @@ export async function handleErasureSelf(
   authenticate: (
     request: Request,
     env: Env,
-  ) => Promise<SelfAuth | null> = defaultAuthenticate,
+  ) => Promise<SelfAuth | null> = authenticateClerkJwt,
   suppress: typeof suppressResendContact = suppressResendContact,
   fetchPrefs: typeof fetchEmailPreferences = fetchEmailPreferences,
   send: typeof sendErasureCompleteEmail = sendErasureCompleteEmail,
@@ -165,23 +103,11 @@ export async function handleErasureSelf(
   const authed = await authenticate(request, env);
   if (!authed) return json({ error: "unauthorized" }, 401, PUBLIC_CORS_POST);
 
-  // Step-up gate: a session whose first factor was verified too long ago (or
-  // fva is absent/not-applicable) must reverify before the engine runs — a raw
-  // API call cannot bypass step-up. useReverification on the client (Task 5)
-  // reacts to this exact response shape.
-  if (
-    authed.fvaMinutes === null ||
-    authed.fvaMinutes < 0 ||
-    authed.fvaMinutes > REVERIFY_WINDOW_MIN
-  )
-    return json(
-      reverificationError({
-        level: "first_factor",
-        afterMinutes: REVERIFY_WINDOW_MIN,
-      }),
-      403,
-      PUBLIC_CORS_POST,
-    );
+  // Step-up gate: a session whose first factor was verified too long ago (or fva is
+  // absent/not-applicable) must reverify before the engine runs — a raw API call cannot
+  // bypass step-up. useReverification on the client reacts to this exact response shape.
+  const stepUp = requireStepUp(authed, PUBLIC_CORS_POST);
+  if (stepUp) return stepUp;
 
   let typedEmail = "";
   let survey: { reason?: unknown; feedback?: unknown; competitor?: unknown } =
