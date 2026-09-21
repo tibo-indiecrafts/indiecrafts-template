@@ -14,6 +14,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **`clerkEmails.welcome` Studio group** (`@indiecrafts/packages-web-email/sanity`) — editable copy for
+  the post-signup welcome email (translatable subject/intro/outro over a hardcoded en/fr fallback).
+  Rendered + sent by `code/shared/api` on the `user.created` webhook, not the Clerk take-over.
 - **`retention.churn_freetext_days` setting** (`@indiecrafts/packages-shared-config` `SETTINGS`, default
   365, range 30–3650). A shorter retention window for churn free-text (`feedback`/`competitor`) than the
   730-day full-row `retention.churn_days`; the cron scrubs the free text past this window while keeping

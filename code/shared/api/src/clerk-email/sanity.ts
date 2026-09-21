@@ -36,6 +36,9 @@ export type AuthEmailStrings = Partial<Record<AuthKind, AuthGroup>> & {
   supportEmail?: string;
   /** The global editor-owned blind-copy address (`emailStrings.bccAll`). */
   bccAll?: string;
+  /** The post-signup welcome copy — a `clerkEmails` group, but NOT a Clerk auth kind (it
+   *  fires on `user.created`, not an `email.created` slug), so it lives outside the record. */
+  welcome?: AuthGroup;
 };
 
 /** The canonical Clerk template slug per kind — matches `AUTH_TEMPLATES` keys + the real
@@ -115,6 +118,22 @@ export function resolveAuthCopy(
   };
 }
 
+/** The Studio override for the post-signup welcome email (`clerkEmails.welcome`), resolved
+ *  to the recipient's locale — `undefined` when unset/blank/`enabled:false`, so the template
+ *  falls back to its hardcoded en/fr. Keyed by group, not a slug (welcome has no Clerk slug). */
+export function resolveWelcomeCopy(
+  strings: AuthEmailStrings | null,
+  locale: string,
+): AuthCopy | undefined {
+  const g = strings?.welcome;
+  if (!g || g.enabled === false) return undefined;
+  return {
+    subject: pick(g.subject, locale),
+    intro: pick(g.intro, locale),
+    outro: pick(g.outro, locale),
+  };
+}
+
 /** A 5-minute in-worker cache of the read. Auth emails fire on every sign-in, so the same
  *  singletons would otherwise be re-fetched constantly; a worker isolate lives long enough
  *  to pay off. Only the real `fetch` path is cached — an injected `doFetch` (tests) always
@@ -124,7 +143,7 @@ const AUTH_CACHE_MS = 5 * 60_000;
 
 /** GROQ: the 12 `clerkEmails` groups + the global `emailStrings.supportEmail`, in one call. */
 const CLERK_GROUPS =
-  "verification,resetPassword,magicLink,newDevice,passwordChanged,passwordRemoved,passkeyAdded,passkeyRemoved,mfaEnabled,primaryEmailChanged,accountLocked,invitation";
+  "verification,resetPassword,magicLink,newDevice,passwordChanged,passwordRemoved,passkeyAdded,passkeyRemoved,mfaEnabled,primaryEmailChanged,accountLocked,invitation,welcome";
 const QUERY = `{"clerk":*[_type=="clerkEmails"][0]{${CLERK_GROUPS}},"supportEmail":*[_type=="emailStrings"][0].supportEmail,"bccAll":*[_type=="emailStrings"][0].bccAll}`;
 
 /**
@@ -157,7 +176,9 @@ export async function fetchAuthEmailStrings(
     if (!res.ok) return null;
     const body = (await res.json()) as {
       result?: {
-        clerk?: Partial<Record<AuthKind, AuthGroup>> | null;
+        clerk?:
+          | (Partial<Record<AuthKind, AuthGroup>> & { welcome?: AuthGroup })
+          | null;
         supportEmail?: string | null;
         bccAll?: string | null;
       };

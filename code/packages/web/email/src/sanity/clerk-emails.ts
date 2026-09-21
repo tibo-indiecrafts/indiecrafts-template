@@ -58,7 +58,7 @@ const noticeGroup = (
     outroHint: "Texte de fin optionnel. Vide = aucun.",
   });
 
-/** The 12 Clerk templates the worker localizes — order = Studio order. */
+/** The 12 Clerk templates the worker localizes + the post-signup welcome — Studio order. */
 const clerkGroups = [
   codeGroup(
     "verification",
@@ -172,6 +172,13 @@ const clerkGroups = [
       "La phrase au-dessus du bouton. Vide = « You've been invited to join. » / « Vous avez été invité(e) à nous rejoindre. ».",
     outroHint: "Texte de fin optionnel sous le bouton. Vide = aucun.",
   }),
+  noticeGroup(
+    "welcome",
+    "Bienvenue (après inscription)",
+    "E-mail de bienvenue envoyé après la création d'un compte (déclenché par l'inscription, pas par un modèle Clerk). Champs vides = texte intégré.",
+    "Vide = « Welcome — your account is ready » / « Bienvenue — votre compte est prêt ».",
+    "Le message d'accueil. Vide = « Your account is all set. Thanks for joining… » / « Votre compte est prêt. Merci de nous avoir rejoints… ».",
+  ),
 ];
 
 export function buildClerkEmails() {

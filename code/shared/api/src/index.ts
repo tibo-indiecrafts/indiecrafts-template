@@ -38,6 +38,7 @@ import { handleErasureStatus } from "./erasure/status";
 import { handleErasureSelf } from "./erasure/self";
 import { handleClerkUserDeleted } from "./erasure/clerk-deleted";
 import { handleClerkEmail } from "./clerk-email/handle";
+import { sendWelcomeEmail } from "./clerk-email/welcome";
 import { upsertResendContact } from "./resend-audience";
 import { handleMarketingConsent } from "./consent/marketing";
 import {
@@ -1113,6 +1114,18 @@ export default {
                   now,
                 )
                 .run();
+              // Post-signup welcome email — best-effort, only on create, in the sign-up
+              // locale. `waitUntil` + the sender's own never-throw contract keep it from
+              // ever blocking or failing the webhook's profile sync.
+              if (evt.type === "user.created" && email) {
+                ctx.waitUntil(
+                  sendWelcomeEmail(env, {
+                    to: email,
+                    locale: locale ?? defaultLocale,
+                  }),
+                );
+              }
+
               // Sign-up marketing decision → append the consent proof (append-only; keyed by
               // fingerprint, never raw email) and mirror to the Resend audience (best-effort,
               // via waitUntil so a Resend hiccup never fails the webhook). Only on create —

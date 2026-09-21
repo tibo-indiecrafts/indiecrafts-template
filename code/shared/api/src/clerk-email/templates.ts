@@ -214,6 +214,27 @@ function notice(
   };
 }
 
+/**
+ * The post-signup welcome email (no code, no button). Unlike the take-over emails it is
+ * NOT triggered by a Clerk email template — it fires on the `user.created` webhook — so it
+ * is rendered directly rather than via a slug in `AUTH_TEMPLATES`. Editable subject/intro/
+ * outro (Studio `clerkEmails.welcome`) over the hardcoded en/fr fallback below.
+ */
+export function renderWelcome(locale: string, copy?: AuthCopy): Rendered {
+  return notice(
+    {
+      en: "Welcome — your account is ready",
+      fr: "Bienvenue — votre compte est prêt",
+    },
+    {
+      en: "Your account is all set. Thanks for joining — we're glad you're here.",
+      fr: "Votre compte est prêt. Merci de nous avoir rejoints — ravis de vous compter parmi nous.",
+    },
+    locale,
+    copy,
+  );
+}
+
 function magicLink(vars: EmailVars, locale: string, copy?: AuthCopy): Rendered {
   const url =
     str(vars.magic_link) || str(vars.magic_link_url) || str(vars.link);

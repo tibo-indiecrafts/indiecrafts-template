@@ -54,6 +54,11 @@ per kind: `subject` / `intro` / `outro` (+ `buttonLabel` on `magicLink`, `newDev
 `invitation`). Every field is translatable. An empty field falls back to the hardcoded
 en/fr. The schema lives in `code/packages/web/email/src/sanity/clerk-emails.ts`.
 
+The same singleton also holds a **`welcome`** group — the post-signup welcome email. Unlike
+the kinds above it is **not** a Clerk template (Clerk has none): it fires on the `user.created`
+webhook (best-effort, in the sign-up locale) and is sent by `clerk-email/welcome.ts`, separate
+from the `email.created` take-over. Editable copy, same fallback + support footer as the rest.
+
 The support address is one global value — `emailStrings.supportEmail` (Studio → E-mails),
 seeded `support@indiecrafts.dev`. It shows in the footer of **every** transactional email
 (the Clerk take-over, the erasure emails, and the website emails).

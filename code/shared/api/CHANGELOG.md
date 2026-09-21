@@ -54,6 +54,14 @@ clerk_failed`.
 
 ### Added
 
+- **Welcome email on account creation.** The `user.created` Clerk webhook (`index.ts`, already
+  handled for profile sync) now also sends a branded, localized welcome email — best-effort via
+  `ctx.waitUntil`, only on `user.created`, in the sign-up locale (`unsafe.locale`), and it never
+  throws so it can't affect profile sync. It is NOT a Clerk email template (Clerk has none), so it
+  rides `user.created` rather than the `email.created` take-over; copy is editor-owned in the new
+  `clerkEmails.welcome` Sanity group (translatable subject/intro/outro over a hardcoded en/fr
+  fallback), with the same support footer + `bccAll` gating as the take-over emails
+  (`clerk-email/welcome.ts`). **Why:** greet a new user distinctly from the sign-up verification code.
 - **Clerk email take-over — every auth template, branded, localized, with a support address.** The
   `emails.created` take-over (`POST /v1/clerk-webhook` → `clerk-email/handle.ts`) now covers all 12
   auth/security email kinds (`verification`, `resetPassword`, `magicLink`, `newDevice`,
