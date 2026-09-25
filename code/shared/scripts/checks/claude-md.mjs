@@ -73,7 +73,6 @@ const rootScripts = new Set(
     JSON.parse(readFileSync(join(REPO, "package.json"), "utf8")).scripts || {},
   ),
 );
-const rootList = [...rootScripts];
 const pkgScriptsByName = new Map();
 const scriptsByDir = new Map();
 walk(join(REPO, "code"), (p) => {
@@ -147,7 +146,6 @@ for (const b of briefs) {
 
 // misplaced toolkit dirs under code/**/.claude/
 for (const kind of ["commands", "skills", "agents"]) {
-  walk(join(REPO, "code"), () => {});
   const scan = (dir) => {
     for (const e of readdirSync(dir)) {
       if (SKIP.has(e)) continue;
