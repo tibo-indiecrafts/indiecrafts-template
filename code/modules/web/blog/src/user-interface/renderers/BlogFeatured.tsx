@@ -1,3 +1,8 @@
+/**
+ * Render the frontpage featured block from pinned or flagged posts.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogFeatured.md
+ */
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { localizedPathname } from "@indiecrafts/packages-web-i18n";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";

@@ -1,6 +1,7 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "incremental": true,
     "strict": true,
     "noEmit": true,
     // Expo's base uses classic "node" resolution, which ignores package `exports`

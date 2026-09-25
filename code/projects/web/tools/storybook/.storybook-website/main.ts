@@ -1,3 +1,8 @@
+/**
+ * Configure the website surface's composed Storybook.
+ *
+ * @see docs/reference/projects/web/tools/storybook/.storybook-website/main.md
+ */
 import { relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { StorybookConfig } from "@storybook/nextjs-vite";

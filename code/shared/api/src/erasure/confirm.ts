@@ -1,3 +1,8 @@
+/**
+ * Confirm and run a GDPR erasure request from a mailed token.
+ *
+ * @see docs/reference/shared/api/src/erasure/confirm.md
+ */
 // GDPR erasure confirmation — GET renders the confirm form (read-only, no mutation);
 // POST verifies the token + typed email + TTL + attempt cap, then runs the Phase-3
 // erasure engine LIVE against real Clerk/Sanity/D1. Single-use: only a row in status

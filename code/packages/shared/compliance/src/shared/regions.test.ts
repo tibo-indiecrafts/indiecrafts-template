@@ -1,5 +1,23 @@
 import { describe, it, expect } from "vitest";
 import { resolveConsentMode, resolveRegulation } from "./regions";
+import {
+  REGULATIONS,
+  CONSENT_REGIONS,
+  TERRITORIES,
+  PARENT_OF,
+} from "./regions.data";
+
+describe("regions.data integrity", () => {
+  it("every CONSENT_REGIONS assignment points to a known regulation", () => {
+    for (const [code, key] of Object.entries(CONSENT_REGIONS))
+      expect(REGULATIONS, `${code} → "${key}"`).toHaveProperty(key);
+  });
+
+  it("every territory resolves back to the parent that lists it (cascade integrity)", () => {
+    for (const [parent, territories] of Object.entries(TERRITORIES))
+      for (const code of territories) expect(PARENT_OF[code]).toBe(parent);
+  });
+});
 
 describe("resolveConsentMode", () => {
   it("opt-in across EU / EEA / UK and their in-scope territories", () => {

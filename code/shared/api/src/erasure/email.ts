@@ -1,3 +1,8 @@
+/**
+ * Send the erasure token and completion emails via Resend.
+ *
+ * @see docs/reference/shared/api/src/erasure/email.md
+ */
 // Worker-side Resend sender for the erasure flow's two transactional emails.
 // `@indiecrafts/packages-web-email` (`sendEmail`/`renderEmailLayout`) is
 // `import "server-only"` + Next-coupled — unusable in this bare Worker, so this

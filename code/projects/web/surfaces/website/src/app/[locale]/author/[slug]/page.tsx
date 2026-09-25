@@ -1,3 +1,8 @@
+/**
+ * Render a blog author's profile and paginated posts.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/author/slug/page.md
+ */
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, site } from "@/config";

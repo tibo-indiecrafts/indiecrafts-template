@@ -1,3 +1,8 @@
+/**
+ * Route the standalone API worker's HTTP requests.
+ *
+ * @see docs/reference/shared/api/src/index.md
+ */
 import { addTransport, logger } from "@indiecrafts/packages-shared-logger";
 import { cloudflareTransport } from "@indiecrafts/packages-shared-logger/cloudflare";
 import {
@@ -74,8 +79,15 @@ if (getCurrentEnvironment() === "production")
  * them zero auth), the Cloudflare native rate-limit binding, a body cap, and CORS.
  */
 export interface Env {
-  /** `wrangler secret put APP_API_TOKEN` — the app bearer gate. */
+  /** `wrangler secret put APP_API_TOKEN` — the TRUSTED admin/backend bearer. Gates every
+   *  admin read/write route AND the privileged `/v1/events` kinds (`admin` · `consent` ·
+   *  `csp-report`). Server-side only — NEVER ship it in a client bundle. */
   APP_API_TOKEN?: string;
+  /** `wrangler secret put EVENTS_TOKEN` — the LEAST-PRIVILEGE ingest bearer. Accepted ONLY
+   *  on `POST /v1/events`, and ONLY for device telemetry (kinds `session` · `security`); it
+   *  can read no route and cannot write `admin`/`consent`/`csp-report` rows. Safe to ship
+   *  in a client bundle (the mobile app uses it). A distinct secret from APP_API_TOKEN. */
+  EVENTS_TOKEN?: string;
   /** Cloudflare native rate-limit binding (`[[ratelimit]]` in wrangler.toml). Optional. */
   AGENT_RATELIMIT?: {
     limit: (o: { key: string }) => Promise<{ success: boolean }>;
@@ -97,6 +109,11 @@ export interface Env {
    *  independently; STABLE within an env — never rotate a live one (it orphans every
    *  email-keyed lookup). Optional (fingerprints are left null until set). */
   GDPR_FINGERPRINT_SALT?: string;
+  /** `wrangler secret put PII_ENCRYPTION_KEY` — AES-256-GCM key for reversible at-rest
+   *  encryption of the operational plaintext PII in `data_requests` (the replyable email +
+   *  free-text message). Unset → those fields store plaintext (backward compatible); the
+   *  read path decrypts either. Server-side only; distinct from the fingerprint salts. */
+  PII_ENCRYPTION_KEY?: string;
   /** `wrangler secret put CLERK_WEBHOOK_SECRET` — Svix signing secret (`whsec_…`) for
    *  `POST /v1/clerk-webhook`. Optional (503 until set). */
   CLERK_WEBHOOK_SECRET?: string;
@@ -174,6 +191,42 @@ export function safeEqual(a: string, b: string): boolean {
 
 export const clientIp = (req: Request): string =>
   req.headers.get("cf-connecting-ip") ?? "unknown";
+
+/** The Bearer token from the Authorization header ("" when absent). */
+function bearerToken(request: Request): string {
+  return (request.headers.get("authorization") ?? "").replace(
+    /^Bearer\s+/i,
+    "",
+  );
+}
+
+/** 401 unless the caller holds the TRUSTED admin/backend token (`APP_API_TOKEN`); null when
+ *  authorized. For admin read/write routes — NOT `/v1/events`, which also accepts the
+ *  least-privilege `EVENTS_TOKEN`. */
+function requireAdminBearer(
+  request: Request,
+  env: Env,
+  cors: Record<string, string>,
+): Response | null {
+  const bearer = bearerToken(request);
+  if (!env.APP_API_TOKEN || !bearer || !safeEqual(bearer, env.APP_API_TOKEN))
+    return json({ error: "unauthorized" }, 401, cors);
+  return null;
+}
+
+/** 429 when the native rate-limit binding rejects this client; null when allowed or the
+ *  binding is unbound. Applied on every bearer route so an extracted token can't hammer. */
+async function rateLimit(
+  request: Request,
+  env: Env,
+  cors: Record<string, string>,
+): Promise<Response | null> {
+  if (!env.AGENT_RATELIMIT) return null;
+  const { success } = await env.AGENT_RATELIMIT.limit({
+    key: clientIp(request),
+  });
+  return success ? null : json({ error: "rate_limited" }, 429, cors);
+}
 
 /**
  * Verify a Svix (Clerk) webhook signature with Web Crypto — no `svix` dependency. The
@@ -316,23 +369,23 @@ export default {
       if (request.method !== "POST")
         return json({ error: "method_not_allowed" }, 405, cors);
 
-      const bearer = (request.headers.get("authorization") ?? "").replace(
-        /^Bearer\s+/i,
-        "",
+      // Two tokens gate ingest: the TRUSTED admin/backend key (all kinds) and the
+      // least-privilege EVENTS_TOKEN (device telemetry only). The ingest key ships in the
+      // mobile bundle, so it must never unlock admin/consent writes or any read route.
+      const bearer = bearerToken(request);
+      const adminTok = env.APP_API_TOKEN;
+      const ingestTok = env.EVENTS_TOKEN;
+      const trusted = Boolean(
+        adminTok && bearer && safeEqual(bearer, adminTok),
       );
-      if (
-        !env.APP_API_TOKEN ||
-        !bearer ||
-        !safeEqual(bearer, env.APP_API_TOKEN)
-      )
+      const ingest = Boolean(
+        ingestTok && bearer && safeEqual(bearer, ingestTok),
+      );
+      if (!trusted && !ingest)
         return json({ error: "unauthorized" }, 401, cors);
 
-      if (env.AGENT_RATELIMIT) {
-        const { success } = await env.AGENT_RATELIMIT.limit({
-          key: clientIp(request),
-        });
-        if (!success) return json({ error: "rate_limited" }, 429, cors);
-      }
+      const limited = await rateLimit(request, env, cors);
+      if (limited) return limited;
       if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
         return json({ error: "too_large" }, 413, cors);
 
@@ -345,6 +398,11 @@ export default {
       } catch {
         return json({ error: "invalid" }, 400, cors);
       }
+      // Least-privilege: the ingest token (shipped in the mobile bundle) may write ONLY
+      // device telemetry. admin/consent/csp-report rows are trusted first-party-server
+      // writes — a leaked ingest token must not be able to forge them.
+      if (!trusted && body.kind !== "session" && body.kind !== "security")
+        return json({ error: "forbidden" }, 403, cors);
       const str = (v: unknown, max = 128): string =>
         typeof v === "string" ? v.slice(0, max) : "";
       // Country: a trusted first-party server may pass the real user's; devices call
@@ -609,16 +667,10 @@ export default {
     if (url.pathname === "/v1/sessions") {
       if (request.method !== "GET")
         return json({ error: "method_not_allowed" }, 405, cors);
-      const bearer = (request.headers.get("authorization") ?? "").replace(
-        /^Bearer\s+/i,
-        "",
-      );
-      if (
-        !env.APP_API_TOKEN ||
-        !bearer ||
-        !safeEqual(bearer, env.APP_API_TOKEN)
-      )
-        return json({ error: "unauthorized" }, 401, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
       if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
       // Clamp BOTH ends: a negative limit would become SQLite `LIMIT -1` (unbounded scan).
       const limit = Math.max(
@@ -644,16 +696,10 @@ export default {
     if (url.pathname === "/v1/profiles/consent") {
       if (request.method !== "POST")
         return json({ error: "method_not_allowed" }, 405, cors);
-      const bearer = (request.headers.get("authorization") ?? "").replace(
-        /^Bearer\s+/i,
-        "",
-      );
-      if (
-        !env.APP_API_TOKEN ||
-        !bearer ||
-        !safeEqual(bearer, env.APP_API_TOKEN)
-      )
-        return json({ error: "unauthorized" }, 401, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
       if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
       if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
         return json({ error: "too_large" }, 413, cors);
@@ -697,16 +743,10 @@ export default {
     if (url.pathname === "/v1/security") {
       if (request.method !== "GET")
         return json({ error: "method_not_allowed" }, 405, cors);
-      const bearer = (request.headers.get("authorization") ?? "").replace(
-        /^Bearer\s+/i,
-        "",
-      );
-      if (
-        !env.APP_API_TOKEN ||
-        !bearer ||
-        !safeEqual(bearer, env.APP_API_TOKEN)
-      )
-        return json({ error: "unauthorized" }, 401, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
       if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
       // Clamp BOTH ends: a negative limit would become SQLite `LIMIT -1` (unbounded scan).
       const limit = Math.max(
@@ -731,16 +771,10 @@ export default {
     if (url.pathname === "/v1/csp-reports") {
       if (request.method !== "GET")
         return json({ error: "method_not_allowed" }, 405, cors);
-      const bearer = (request.headers.get("authorization") ?? "").replace(
-        /^Bearer\s+/i,
-        "",
-      );
-      if (
-        !env.APP_API_TOKEN ||
-        !bearer ||
-        !safeEqual(bearer, env.APP_API_TOKEN)
-      )
-        return json({ error: "unauthorized" }, 401, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
       if (!env.AUDIT_DB) return json({ error: "unavailable" }, 503, cors);
       // Clamp BOTH ends: a negative limit would become SQLite `LIMIT -1` (unbounded scan).
       const limit = Math.max(
@@ -766,16 +800,10 @@ export default {
     if (url.pathname === "/v1/churn") {
       if (request.method !== "GET")
         return json({ error: "method_not_allowed" }, 405, cors);
-      const bearer = (request.headers.get("authorization") ?? "").replace(
-        /^Bearer\s+/i,
-        "",
-      );
-      if (
-        !env.APP_API_TOKEN ||
-        !bearer ||
-        !safeEqual(bearer, env.APP_API_TOKEN)
-      )
-        return json({ error: "unauthorized" }, 401, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
       if (!env.MAIN_DB) return json({ error: "unavailable" }, 503, cors);
       return json(await readChurnAggregate(env.MAIN_DB), 200, cors);
     }
@@ -784,16 +812,10 @@ export default {
     if (url.pathname === "/v1/settings") {
       if (request.method === "OPTIONS")
         return new Response(null, { status: 204, headers: cors });
-      const bearer = (request.headers.get("authorization") ?? "").replace(
-        /^Bearer\s+/i,
-        "",
-      );
-      if (
-        !env.APP_API_TOKEN ||
-        !bearer ||
-        !safeEqual(bearer, env.APP_API_TOKEN)
-      )
-        return json({ error: "unauthorized" }, 401, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
       if (!env.MAIN_DB || !env.AUDIT_DB)
         return json({ error: "unavailable" }, 503, cors);
 
@@ -888,16 +910,10 @@ export default {
         return new Response(null, { status: 204, headers: cors });
       if (request.method !== "GET")
         return json({ error: "method_not_allowed" }, 405, cors);
-      const bearer = (request.headers.get("authorization") ?? "").replace(
-        /^Bearer\s+/i,
-        "",
-      );
-      if (
-        !env.APP_API_TOKEN ||
-        !bearer ||
-        !safeEqual(bearer, env.APP_API_TOKEN)
-      )
-        return json({ error: "unauthorized" }, 401, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
 
       let runs: Array<Record<string, unknown>> = [];
       if (env.AUDIT_DB) {

@@ -1,3 +1,8 @@
+/**
+ * Render a brand or social mark by name for React Native.
+ *
+ * @see docs/reference/packages/shared/ui-icons/src/native/BrandIcon.md
+ */
 import Svg, { Path, type SvgProps } from "react-native-svg";
 import { BRANDS, type BrandName } from "../shared/brands";
 

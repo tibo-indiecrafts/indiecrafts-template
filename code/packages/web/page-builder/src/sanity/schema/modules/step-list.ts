@@ -1,3 +1,8 @@
+/**
+ * Defines the step-list page-builder module — an ordered list of titled steps with rich content.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/step-list.md
+ */
 import { defineArrayMember, defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

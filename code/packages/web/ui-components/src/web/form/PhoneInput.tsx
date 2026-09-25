@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders a country dial-code select plus a national-number field and emits an E.164 string.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/form/PhoneInput.md
+ */
+
 import { useId, useState } from "react";
 import { Input } from "@indiecrafts/packages-web-ui/web/input";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";

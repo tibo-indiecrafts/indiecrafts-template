@@ -1,3 +1,8 @@
+/**
+ * Return the live deploy's build id.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/version/route.md
+ */
 import { NextResponse } from "next/server";
 import { buildInfo } from "@/lib/build-info";
 

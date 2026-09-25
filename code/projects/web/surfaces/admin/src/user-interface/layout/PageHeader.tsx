@@ -1,3 +1,8 @@
+/**
+ * Render a page title, description, and optional actions.
+ *
+ * @see docs/reference/projects/web/admin/src/user-interface/layout/PageHeader.md
+ */
 import type { ReactNode } from "react";
 
 /** Page-level heading: title + optional description, with optional right-aligned actions. */

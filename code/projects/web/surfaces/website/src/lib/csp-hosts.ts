@@ -1,3 +1,8 @@
+/**
+ * Declare the website's CSP host allowlist shared by next.config and the proxy.
+ *
+ * @see docs/reference/projects/web/website/src/lib/csp-hosts.md
+ */
 import type { CspHosts } from "@indiecrafts/packages-shared-security";
 
 // Extra origins allowed for editor-pasted embeds — e.g. an external newsletter

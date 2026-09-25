@@ -1,5 +1,10 @@
+/**
+ * Define the Sanity blog singleton document schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/documents/blog.md
+ */
 import { defineField, defineType } from "sanity";
-import { BlockContentIcon } from "@sanity/icons";
+import { BlockContentIcon } from "@sanity/icons/BlockContent";
 import { MODULE_TYPES } from "@indiecrafts/packages-web-page-builder/sanity/schema/modules";
 import { BLOG_MODULE_TYPES } from "../modules";
 

@@ -1,3 +1,8 @@
+/**
+ * Render a top strip while the device is offline.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/native/OfflineBanner.md
+ */
 import { View, Text, StyleSheet, Platform, StatusBar } from "react-native";
 import { useColors } from "./theme";
 

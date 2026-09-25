@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Toggle between the Sanity-configured theme modes without a hydration flash.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/ThemeToggle.md
+ */
+
 import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 import { Moon, Sun } from "lucide-react";

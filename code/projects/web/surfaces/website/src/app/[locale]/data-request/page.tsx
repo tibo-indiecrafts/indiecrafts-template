@@ -1,3 +1,8 @@
+/**
+ * Renders the GDPR data-request form page with localized copy.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/data-request/page.md
+ */
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { pages, isPageVisible, type Locale } from "@/config";

@@ -1,3 +1,8 @@
+/**
+ * Reads the Sanity draft-mode read and preview tokens from the environment.
+ *
+ * @see docs/reference/packages/web/sanity/src/token.md
+ */
 import "server-only";
 
 /**

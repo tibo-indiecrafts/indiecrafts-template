@@ -1,3 +1,9 @@
+---
+title: "Authentication (cross-app)"
+description: "One authentication system across every deployable, built on Clerk."
+status: stable
+---
+
 # Authentication (cross-app)
 
 One authentication system across every deployable, built on [Clerk](https://clerk.com).
@@ -60,9 +66,12 @@ made from the UI — a chicken-and-egg. Grant it out-of-band, one of two ways:
   emails at once. The user must have signed up once first, or it reports `not-found`.
   Colocated test: `set-admin.test.mjs`.
 
-Either way, the session claim `{ "metadata": "{{user.public_metadata}}" }` must be set
-(Dashboard → Sessions) so the role reaches the JWT. Sign out and back in after a change —
-the role refreshes on the next session.
+Either way, the session claim below must be set (Dashboard → Sessions) so the role reaches
+the JWT. Sign out and back in after a change — the role refreshes on the next session.
+
+```json
+{ "metadata": "{{user.public_metadata}}" }
+```
 
 A signed-in **non-admin** who lands on the admin `/sign-in` sees a "not an admin — sign out"
 panel (`NotAdminNotice`) — Clerk's `<SignIn>` renders blank for an already-signed-in user, so
@@ -86,7 +95,7 @@ account UI. Bot protection and user-enumeration protection stay on by default; t
 
 ## Web wiring
 
-Next-specific provider + middleware details: [Authentication (Clerk)](/apps/web/config/auth).
+Next-specific provider + middleware details: [Authentication (Clerk)](/projects/web/website/config/auth).
 
 **Clerk version — Core 3.** Sign-in theming uses the Core 3 appearance variables
 (`colorForeground`/`colorMutedForeground`/`colorNeutral`/…) in `authAppearance()` — the Core 2

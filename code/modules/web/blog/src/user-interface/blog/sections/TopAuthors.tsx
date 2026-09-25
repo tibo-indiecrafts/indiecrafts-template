@@ -1,3 +1,8 @@
+/**
+ * Renders the frontpage top-authors block — up to six author portrait tiles.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/blog/sections/TopAuthors.md
+ */
 import Image from "next/image";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import type { Author } from "@indiecrafts/modules-web-blog/sanity/types";

@@ -1,5 +1,10 @@
+/**
+ * Define the contactSettings singleton holding the enabled toggle and per-locale form copy.
+ *
+ * @see docs/reference/modules/web/contact/src/sanity/schema/contact-settings.md
+ */
 import { defineField, defineType } from "sanity";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 
 /**
  * Contact settings (singleton). The code flag `features.contact` is the hard

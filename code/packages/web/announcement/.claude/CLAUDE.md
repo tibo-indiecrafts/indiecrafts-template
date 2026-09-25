@@ -6,7 +6,7 @@ editor-managed announcements — the `announcementBar` (rotating strip) + `annou
 admin). Site chrome; consumed by the website `DefaultLayout` + the `app` shell. Area rules →
 `../../../.claude/CLAUDE.md`.
 
-**Stack:** React 19 · Sanity v5 · next-sanity. Deps: shared-announcement (resolve/types/fetch) ·
+**Stack:** React 19 · Sanity v6 · next-sanity. Deps: shared-announcement (resolve/types/fetch) ·
 web-ui · web-i18n · web-sanity · shared-utils · shared-config.
 
 - **The resolve + types + GROQ live in [`@indiecrafts/packages-shared-announcement`](../../shared/announcement)**

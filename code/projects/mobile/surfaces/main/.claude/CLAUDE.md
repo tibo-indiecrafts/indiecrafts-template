@@ -56,7 +56,7 @@ product screens are TBD.**
 - **Persistence** — every storage key lives in `STORAGE_KEYS` (`@/config`); read a name, never inline
   `${sitePrefix}.…`. `lib/storage` wraps `AsyncStorage` never-throw for app **prefs** (non-secret). A
   runtime **session token** belongs in `expo-secure-store` (OS keychain) once the `auth` brick lands — not
-  here; today's `EXPO_PUBLIC_API_TOKEN` (session-log bearer) is a build-time bundle gate, so it stays in env.
+  here; today's `EXPO_PUBLIC_EVENTS_TOKEN` (session-log ingest bearer — least-privilege, not the admin `APP_API_TOKEN`) is a build-time bundle gate, so it stays in env.
 - **Fonts** — deferred: Satoshi ships as web `.woff2`; RN needs `.ttf`/`.otf`, so the shell renders with
   the system font until an `.otf` lands in `ui-fonts`. Wire `expo-font` `useFonts` then.
 

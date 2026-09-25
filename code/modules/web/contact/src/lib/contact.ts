@@ -1,3 +1,8 @@
+/**
+ * Validate and store a contact submission, then fire best-effort confirm and owner emails.
+ *
+ * @see docs/reference/modules/web/contact/src/lib/contact.md
+ */
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";

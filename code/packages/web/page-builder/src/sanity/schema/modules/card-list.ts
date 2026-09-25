@@ -1,3 +1,8 @@
+/**
+ * Define the card-list module — a grid of image cards with a CTA.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/card-list.md
+ */
 import { defineArrayMember, defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

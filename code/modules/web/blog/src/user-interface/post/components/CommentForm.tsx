@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Renders the client comment form that posts to /api/comments with anti-bot guards.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/post/components/CommentForm.md
+ */
 import { useState } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Input } from "@indiecrafts/packages-web-ui/web/input";

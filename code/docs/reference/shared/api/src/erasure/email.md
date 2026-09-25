@@ -1,0 +1,38 @@
+---
+title: "Erasure emails"
+description: "Worker-side Resend sender for the two erasure transactional emails, with Studio-editable copy and an English fallback."
+status: stable
+---
+
+# Erasure emails
+
+> Sends the erasure token and completion emails from the bare Worker via Resend.
+
+## Purpose
+
+Sends the erasure flow's two transactional emails. The shared `@indiecrafts/packages-web-email` layer is `server-only` and Next-coupled, so this inlines a small Resend POST and a local `escapeHtml`. Copy is read from the Studio-editable `emailStrings` singleton over raw GROQ-over-HTTP, with a per-field fallback to hard-coded English — these emails are mandatory, so a missing or unreachable Sanity, or an operator setting `enabled: false`, never stops the send.
+
+## Exports
+
+- `MailEnv` — the env slice this module needs (Resend key, From address, BCC controls, Sanity read config).
+- `supportFooter(supportEmail?)` — the editor-owned support-address footer, returned as `{ html, text }`.
+- `readProfileLocale(db, { userId, fingerprint })` — the recipient's stored `user_profiles.locale`, defaulting on any miss; never throws.
+- `resend(env, { to, subject, html, text, bcc? })` — the low-level Resend send; silent no-op when unconfigured.
+- `sendErasureTokenEmail(env, { to, confirmUrl, locale? }, fetchStrings?)` — the request's token-confirmation email.
+- `sendErasureCompleteEmail(env, { to, retained, locale? }, fetchStrings?)` — the completion email sent after the erasure run.
+
+## Usage
+
+```ts
+import { sendErasureTokenEmail } from "@indiecrafts/api/erasure/email";
+
+await sendErasureTokenEmail(env, {
+  to: email,
+  confirmUrl,
+  locale: subject.locale,
+});
+```
+
+## Source
+
+`code/shared/api/src/erasure/email.ts`

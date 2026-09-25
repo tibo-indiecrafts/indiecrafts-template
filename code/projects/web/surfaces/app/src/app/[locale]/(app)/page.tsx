@@ -1,3 +1,8 @@
+/**
+ * Render the app surface home page.
+ *
+ * @see docs/reference/projects/web/app/src/app/locale/(app)/page.md
+ */
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import {
   Card,

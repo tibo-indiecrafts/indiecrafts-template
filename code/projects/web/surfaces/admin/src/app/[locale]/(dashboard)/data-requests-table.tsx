@@ -1,3 +1,8 @@
+/**
+ * Render the GDPR data-request rows as an admin table.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/data-requests-table.md
+ */
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {

@@ -1,3 +1,8 @@
+/**
+ * Forward a session event to the shared api, server-side.
+ *
+ * @see docs/reference/packages/web/auth/src/session-log.md
+ */
 import "server-only";
 
 /**

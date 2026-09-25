@@ -1,3 +1,8 @@
+/**
+ * Build a per-locale `string` field object from the configured locales.
+ *
+ * @see docs/reference/packages/web/schema/src/locale-string.md
+ */
 import { defineField, defineType } from "sanity";
 import { locales } from "@indiecrafts/packages-shared-config";
 

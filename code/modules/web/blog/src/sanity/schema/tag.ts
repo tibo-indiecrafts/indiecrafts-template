@@ -1,4 +1,9 @@
-import { TagIcon } from "@sanity/icons";
+/**
+ * Defines the `tag` Sanity document type — a localized, multi-per-post blog tag.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/tag.md
+ */
+import { TagIcon } from "@sanity/icons/Tag";
 import { defineField, defineType } from "sanity";
 
 /**

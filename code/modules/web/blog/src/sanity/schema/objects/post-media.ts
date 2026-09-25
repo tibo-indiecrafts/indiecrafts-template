@@ -1,3 +1,8 @@
+/**
+ * Define the postMedia object — a post's slug and cover media.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/objects/post-media.md
+ */
 import { defineField, defineType } from "sanity";
 
 /**

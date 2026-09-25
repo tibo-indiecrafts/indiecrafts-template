@@ -1,3 +1,8 @@
+/**
+ * Render the mobile shell overlays — consent, legal, version, and locale.
+ *
+ * @see docs/reference/projects/mobile/main/components/ShellOverlays.md
+ */
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { AppState, Linking, View, StyleSheet } from "react-native";
 import { useIntl } from "react-intl";

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Reads the visitor's cookie consent choices reactively.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/useConsent.md
+ */
+
 import { useSyncExternalStore } from "react";
 import { consentStore, openPreferences } from "./consent-store";
 

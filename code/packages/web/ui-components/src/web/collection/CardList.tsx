@@ -1,3 +1,8 @@
+/**
+ * Render a bordered grid of content cards.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/CardList.md
+ */
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { CardListModule } from "@indiecrafts/packages-web-ui-components/shared/types";

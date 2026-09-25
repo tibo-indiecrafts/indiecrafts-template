@@ -1,5 +1,11 @@
+/**
+ * Defines the Sanity announcement-toast singleton schema.
+ *
+ * @see docs/reference/packages/web/announcement/src/sanity/announcement-toast.md
+ */
+
 import { defineField, defineType } from "sanity";
-import { CommentIcon } from "@sanity/icons";
+import { CommentIcon } from "@sanity/icons/Comment";
 import { surfacesField } from "./surfaces";
 
 /**

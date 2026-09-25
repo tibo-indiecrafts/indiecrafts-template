@@ -1,3 +1,8 @@
+/**
+ * Map each page-builder block `_type` to its React renderer.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/registry.md
+ */
 import type { PortableTextComponents } from "@portabletext/react";
 import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { AccordionList } from "./collection/AccordionList";

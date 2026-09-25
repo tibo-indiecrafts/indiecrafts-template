@@ -1,3 +1,8 @@
+/**
+ * Stamps src/lib/build-info.ts with the app version, git branch, commit, and build time.
+ *
+ * @see docs/reference/projects/web/website/scripts/version.md
+ */
 // Stamp src/lib/build-info.ts with version + git sha + build time. Runs inside
 // `build:cf`, so every deployed Worker carries its provenance (show it in a footer,
 // use it for cache-busting or support). The committed file holds dev placeholders.

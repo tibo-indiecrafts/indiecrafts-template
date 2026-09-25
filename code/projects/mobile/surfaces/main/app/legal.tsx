@@ -1,3 +1,8 @@
+/**
+ * Link out to the website's legal pages from mobile.
+ *
+ * @see docs/reference/projects/mobile/main/app/legal.md
+ */
 import { Linking, View, StyleSheet } from "react-native";
 import { useIntl } from "react-intl";
 import {

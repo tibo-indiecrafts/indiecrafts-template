@@ -1,3 +1,8 @@
+/**
+ * Renders the contact landing page from the contactSettings singleton.
+ *
+ * @see docs/reference/modules/web/contact/src/user-interface/ContactLanding.md
+ */
 import {
   defaultLocale,
   type Locale,

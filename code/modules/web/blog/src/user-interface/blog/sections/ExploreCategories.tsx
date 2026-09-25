@@ -1,3 +1,8 @@
+/**
+ * Renders the frontpage category explorer — chips over a six-post preview.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/blog/sections/ExploreCategories.md
+ */
 import { Link } from "@indiecrafts/packages-web-i18n";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import type {

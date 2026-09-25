@@ -1,3 +1,8 @@
+/**
+ * Runs the retention purge, erasure-SLA flag, and expired-export cleanup on each scheduled tick.
+ *
+ * @see docs/reference/shared/cron/src/index.md
+ */
 import { addTransport, logger } from "@indiecrafts/packages-shared-logger";
 import { cloudflareTransport } from "@indiecrafts/packages-shared-logger/cloudflare";
 import {
@@ -118,6 +123,10 @@ export default {
       controller.scheduledTime,
       settings["retention.erasure_request_days"],
     );
+    const profileCutoff = retentionCutoff(
+      controller.scheduledTime,
+      settings["retention.profile_anonymized_days"],
+    );
     const churnCutoff = retentionCutoff(
       controller.scheduledTime,
       settings["retention.churn_days"],
@@ -199,17 +208,28 @@ export default {
         )
           .bind(churnCutoff)
           .run();
+        // Final anonymisation: hard-delete user_profiles rows pseudonymised on erasure
+        // (email/name already scrubbed, anonymized=1) once they pass the window — this
+        // drops the retained email_fingerprint, completing storage limitation. Fulfils the
+        // 0001_user_profiles.sql "hard-deleted after 90 days" promise (was never implemented).
+        const profiles = await env.MAIN_DB.prepare(
+          "DELETE FROM user_profiles WHERE anonymized = 1 AND deleted_at IS NOT NULL AND deleted_at < ?",
+        )
+          .bind(profileCutoff)
+          .run();
         logger.info("retention purge (core)", {
           consentCutoff,
           dataRequestCutoff,
           erasureRequestCutoff,
           churnFreeTextCutoff,
           churnCutoff,
+          profileCutoff,
           consentRows: consent.meta?.changes,
           dataRequestRows: dataRequest.meta?.changes,
           erasureRequestRows: erasureRequest.meta?.changes,
           churnFreeTextRows: churnFreeText.meta?.changes,
           churnRows: churn.meta?.changes,
+          profileRows: profiles.meta?.changes,
         });
       } catch (error) {
         logger.error("retention purge failed", {

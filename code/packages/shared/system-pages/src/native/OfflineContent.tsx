@@ -1,3 +1,8 @@
+/**
+ * Render the native offline screen.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/native/OfflineContent.md
+ */
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import type { OfflineContentProps } from "../shared/types";
 import { useColors } from "./theme";

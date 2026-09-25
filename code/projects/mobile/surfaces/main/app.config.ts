@@ -1,3 +1,8 @@
+/**
+ * Define the Expo app config for the mobile surface.
+ *
+ * @see docs/reference/projects/mobile/main/app.config.md
+ */
 import type { ExpoConfig } from "expo/config";
 
 // Expo app config. `name`/`slug`/`scheme`/bundle ids are per client — `pnpm

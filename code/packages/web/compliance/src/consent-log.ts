@@ -1,3 +1,8 @@
+/**
+ * Forward a consent decision to the shared api, server-side.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent-log.md
+ */
 import "server-only";
 
 /** Forward one consent decision to the api's POST /v1/events (kind:consent).

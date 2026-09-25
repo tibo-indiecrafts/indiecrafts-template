@@ -1,19 +1,18 @@
 "use client";
 
+/**
+ * Renders the account-deletion form and drives the erasure submit.
+ *
+ * @see docs/reference/packages/shared/compliance/src/web/DeleteAccountSection.md
+ */
+
 import { useId, useState } from "react";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Input } from "@indiecrafts/packages-web-ui/web/input";
 import { Label } from "@indiecrafts/packages-web-ui/web/label";
-import { Textarea } from "@indiecrafts/packages-web-ui/web/textarea";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@indiecrafts/packages-web-ui/web/radio-group";
-import {
-  CHURN_REASON_CODES,
-  type DeleteAccountCopy,
-} from "../shared/account-copy";
+import { type DeleteAccountCopy } from "../shared/account-copy";
+import { ChurnSurvey } from "./ChurnSurvey";
 import {
   submitAccountErasure,
   type ChurnSurveyInput,
@@ -111,52 +110,16 @@ export function DeleteAccountSection({
       <p className="text-muted-foreground mt-1 text-sm">{copy.body}</p>
 
       <form onSubmit={onSubmit} className="mt-3 space-y-4">
-        <fieldset className="space-y-3">
-          <legend className="text-foreground text-sm font-medium">
-            {copy.survey.legend}
-          </legend>
-
-          <div className="space-y-1.5">
-            <Label>{copy.survey.reasonLabel}</Label>
-            <RadioGroup value={reason} onValueChange={setReason}>
-              {CHURN_REASON_CODES.map((code) => (
-                <div key={code} className="flex items-center gap-2.5">
-                  <RadioGroupItem id={`${uid}-reason-${code}`} value={code} />
-                  <Label
-                    htmlFor={`${uid}-reason-${code}`}
-                    className="font-normal"
-                  >
-                    {copy.survey.reasons[code]}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor={`${uid}-feedback`}>
-              {copy.survey.feedbackLabel}
-            </Label>
-            <Textarea
-              id={`${uid}-feedback`}
-              placeholder={copy.survey.feedbackPlaceholder}
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor={`${uid}-competitor`}>
-              {copy.survey.competitorLabel}
-            </Label>
-            <Input
-              id={`${uid}-competitor`}
-              placeholder={copy.survey.competitorPlaceholder}
-              value={competitor}
-              onChange={(e) => setCompetitor(e.target.value)}
-            />
-          </div>
-        </fieldset>
+        <ChurnSurvey
+          copy={copy.survey}
+          idPrefix={uid}
+          reason={reason}
+          feedback={feedback}
+          competitor={competitor}
+          onReason={setReason}
+          onFeedback={setFeedback}
+          onCompetitor={setCompetitor}
+        />
 
         <div className="space-y-1.5">
           <Label htmlFor={`${uid}-email`}>{copy.emailLabel}</Label>

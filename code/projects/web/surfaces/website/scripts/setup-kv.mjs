@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/**
+ * Provision one RATE_LIMIT_KV namespace per environment and wire it into wrangler.toml.
+ *
+ * @see docs/reference/projects/web/website/scripts/setup-kv.md
+ */
 // One-time setup for the in-app rate limiter (@indiecrafts/packages-shared-security `withGuard`).
 // Creates ONE `RATE_LIMIT_KV` namespace PER ENV (like the R2 ISR buckets) so a
 // staging load-test can't burn a real prod user's rate-limit budget, then uncomments

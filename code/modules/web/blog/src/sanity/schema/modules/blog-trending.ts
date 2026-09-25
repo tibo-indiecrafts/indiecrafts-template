@@ -1,4 +1,9 @@
-import { TrendUpwardIcon } from "@sanity/icons";
+/**
+ * Define the trending-posts page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-trending.md
+ */
+import { TrendUpwardIcon } from "@sanity/icons/TrendUpward";
 import { defineField } from "sanity";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 

@@ -1,3 +1,8 @@
+/**
+ * Assemble the contact module's Sanity contribution as a feature-gated SanityModule.
+ *
+ * @see docs/reference/modules/web/contact/src/sanity/index.md
+ */
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import { schemaTypes } from "./schema";
 import { contactStructure } from "./structure";

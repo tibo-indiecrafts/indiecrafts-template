@@ -65,6 +65,20 @@ jobs:
           NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
           NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          # Worker runtime secrets → auto-synced to Cloudflare AFTER deploy by
+          # scripts/data/secrets.mjs (each app syncs only the keys its OWN
+          # `.dev.vars.example` declares, so injecting the union here is safe — an
+          # unused var is ignored). Add each to the matching GitHub Environment
+          # (dev/staging/prod) Secrets — per-env, so GDPR_FINGERPRINT_SALT stays
+          # DISTINCT per env. Empty/unset → secrets.mjs skips it (nothing synced).
+          APP_API_TOKEN: ${{ secrets.APP_API_TOKEN }}
+          EVENTS_TOKEN: ${{ secrets.EVENTS_TOKEN }}
+          PII_ENCRYPTION_KEY: ${{ secrets.PII_ENCRYPTION_KEY }}
+          IP_HASH_SALT: ${{ secrets.IP_HASH_SALT }}
+          GDPR_FINGERPRINT_SALT: ${{ secrets.GDPR_FINGERPRINT_SALT }}
+          CLERK_WEBHOOK_SECRET: ${{ secrets.CLERK_WEBHOOK_SECRET }}
+          EMAIL_PREF_SECRET: ${{ secrets.EMAIL_PREF_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
 
       # Post-deploy smoke test — best-effort. Curls the app's custom-domain origin
       # from the registry (`domains:url`); if the app/env has no custom domain (still

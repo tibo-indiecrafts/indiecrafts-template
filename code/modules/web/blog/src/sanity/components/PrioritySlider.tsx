@@ -1,3 +1,8 @@
+/**
+ * Render the Studio priority range input for a post.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/components/PrioritySlider.md
+ */
 import type { ChangeEvent } from "react";
 import { set, unset, type NumberInputProps } from "sanity";
 

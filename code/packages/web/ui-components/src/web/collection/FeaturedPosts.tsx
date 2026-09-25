@@ -1,3 +1,8 @@
+/**
+ * Render a lead post card above a grid of featured posts.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/FeaturedPosts.md
+ */
 import Image from "next/image";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import type { PostCardItem } from "@indiecrafts/packages-web-ui-components/shared/types";

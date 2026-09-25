@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Captures a waitlist sign-up and posts it to /api/waitlist.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/form/WaitlistForm.md
+ */
+
 import { useId, useState } from "react";
 import { useLocale } from "next-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

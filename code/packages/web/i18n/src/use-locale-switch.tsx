@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Switches the URL locale, resolving a content route's counterpart when injected.
+ *
+ * @see docs/reference/packages/web/i18n/src/use-locale-switch.md
+ */
 import { createContext, useContext, type ReactNode } from "react";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { useLocale } from "next-intl";

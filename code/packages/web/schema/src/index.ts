@@ -1,3 +1,8 @@
+/**
+ * Registers the shared Sanity object primitives (localeString, localeText, seoMeta).
+ *
+ * @see docs/reference/packages/web/schema/src/index.md
+ */
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import localeString from "./locale-string";
 import localeText from "./locale-text";

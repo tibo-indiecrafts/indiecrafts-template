@@ -1,3 +1,8 @@
+/**
+ * Re-export the logger public API.
+ *
+ * @see docs/reference/packages/shared/logger/src/index.md
+ */
 export { logger, createLogger } from "./logger";
 export type { Logger, LogContext } from "./logger";
 

@@ -1,3 +1,8 @@
+/**
+ * Wrap every app-group page in the sidebar and sticky-header shell.
+ *
+ * @see docs/reference/projects/web/app/src/user-interface/layout/AppShell.md
+ */
 import type { ReactNode } from "react";
 import { SidebarInset, SidebarProvider } from "@indiecrafts/packages-web-ui/web/sidebar";
 import { AppSidebar } from "./AppSidebar";

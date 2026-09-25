@@ -1,3 +1,8 @@
+/**
+ * Define the accordion-list module — a titled list of expandable items.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/accordion-list.md
+ */
 import { defineArrayMember, defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

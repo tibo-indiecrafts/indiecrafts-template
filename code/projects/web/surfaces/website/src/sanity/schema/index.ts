@@ -1,3 +1,9 @@
+/**
+ * Collect the core, feature-independent Sanity schema types for the Studio.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/schema/index.md
+ */
+
 import type { SchemaTypeDefinition } from "sanity";
 
 // Core, feature-independent SEO documents + objects. These live outside

@@ -1,5 +1,10 @@
+/**
+ * Build the contact module's Studio desk section with settings and the message inbox.
+ *
+ * @see docs/reference/modules/web/contact/src/sanity/structure.md
+ */
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
 
 /**

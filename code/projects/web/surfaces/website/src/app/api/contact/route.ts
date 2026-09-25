@@ -1,3 +1,8 @@
+/**
+ * Accept a public contact form submission.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/contact/route.md
+ */
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
 import { withGuard } from "@indiecrafts/packages-shared-security/guard";

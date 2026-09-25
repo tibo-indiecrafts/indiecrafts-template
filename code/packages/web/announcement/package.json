@@ -10,21 +10,22 @@
   "dependencies": {
     "@indiecrafts/packages-shared-announcement": "workspace:*",
     "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-utils": "workspace:*",
     "@indiecrafts/packages-web-i18n": "workspace:*",
     "@indiecrafts/packages-web-sanity": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
-    "@indiecrafts/packages-shared-utils": "workspace:*",
-    "@sanity/icons": "^3.7.4",
-    "next-sanity": "^13.3.3",
-    "sanity": "^5.31.1"
+    "@sanity/icons": "^5.2.2",
+    "next-sanity": "^13.3.4"
   },
   "peerDependencies": {
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sanity": "*"
   },
   "devDependencies": {
     "@types/react": "^19",
-    "@types/react-dom": "^19"
+    "@types/react-dom": "^19",
+    "sanity": "^6.16.0"
   }
 }

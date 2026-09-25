@@ -1,3 +1,9 @@
+/**
+ * Runs the authenticated account-erasure POST and maps its status.
+ *
+ * @see docs/reference/packages/shared/compliance/src/shared/erasure-self.md
+ */
+
 export type ErasureSelfResult = "done" | "partial" | "mismatch" | "error";
 
 /**

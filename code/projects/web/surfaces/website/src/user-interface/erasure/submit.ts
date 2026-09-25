@@ -1,3 +1,9 @@
+/**
+ * Posts to the public erasure request and confirm worker routes.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/erasure/submit.md
+ */
+
 export type ErasureRequestResult = "sent" | "turnstile" | "error";
 
 /**

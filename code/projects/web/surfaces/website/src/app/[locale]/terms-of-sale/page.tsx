@@ -1,3 +1,8 @@
+/**
+ * Renders the localized terms-of-sale (CGV) page from Sanity content.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/terms-of-sale/page.md
+ */
 import { pages, isPageVisible, type Locale } from "@/config";
 import { buildMetadata } from "@/lib/metadata";
 import { PageSchemas } from "@/lib/seo/jsonld";

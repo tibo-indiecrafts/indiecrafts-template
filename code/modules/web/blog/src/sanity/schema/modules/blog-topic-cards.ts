@@ -1,4 +1,9 @@
-import { ThLargeIcon } from "@sanity/icons";
+/**
+ * Define the topic-cards page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-topic-cards.md
+ */
+import { ThLargeIcon } from "@sanity/icons/ThLarge";
 import { defineArrayMember, defineField } from "sanity";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 

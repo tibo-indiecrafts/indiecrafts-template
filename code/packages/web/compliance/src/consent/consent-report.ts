@@ -1,3 +1,9 @@
+/**
+ * Reports the visitor's cookie consent choices to the server as consent events.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/consent-report.md
+ */
+
 // Map a stored consent choice-set to consent_events rows and report it to the
 // server. The category→consent_type map is the single source of truth for which
 // cookie categories are logged. reportConsent is browser-only and

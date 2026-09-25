@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Resolve a free-text Reicon name to its navigation glyph.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/components/NavIcon.md
+ */
+
 import { ReiconIcon } from "@indiecrafts/packages-shared-ui-icons/web";
 
 /**

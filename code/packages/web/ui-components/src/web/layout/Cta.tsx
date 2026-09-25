@@ -1,3 +1,8 @@
+/**
+ * Renders a page-builder CTA button from a resolved link, or nothing when link data is missing.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/layout/Cta.md
+ */
 import type { Cta as CtaProps } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 

@@ -1,3 +1,8 @@
+/**
+ * Gate the public blog routes behind the blog feature flags.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/route-gate.md
+ */
 import "server-only";
 
 import { notFound } from "next/navigation";

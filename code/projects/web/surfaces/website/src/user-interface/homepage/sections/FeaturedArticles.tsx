@@ -1,3 +1,8 @@
+/**
+ * Renders the homepage featured-articles editor's-desk section.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/homepage/sections/FeaturedArticles.md
+ */
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import type { Locale } from "@/config";

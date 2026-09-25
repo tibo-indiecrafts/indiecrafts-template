@@ -1,3 +1,8 @@
+/**
+ * Search blog posts for a query and render the results.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/blog/search/page.md
+ */
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, type Locale } from "@/config";
 import { localizedPathname } from "@/i18n/routing";

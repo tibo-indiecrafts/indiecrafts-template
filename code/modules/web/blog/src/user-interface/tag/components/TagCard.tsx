@@ -1,3 +1,8 @@
+/**
+ * Render a single tag card linking to the tag's post archive.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/tag/components/TagCard.md
+ */
 import { Link } from "@indiecrafts/packages-web-i18n";
 import type { Tag } from "@indiecrafts/modules-web-blog/sanity/types";
 

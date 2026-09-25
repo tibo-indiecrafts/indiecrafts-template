@@ -1,3 +1,8 @@
+/**
+ * Reserve the orders erasure store with a registered no-op adapter.
+ *
+ * @see docs/reference/shared/api/src/erasure/orders.md
+ */
 import type { ErasureAdapter } from "@indiecrafts/packages-shared-compliance/shared";
 
 // Future commerce seam. Orders/invoices carry a 7–10y anonymised retention duty

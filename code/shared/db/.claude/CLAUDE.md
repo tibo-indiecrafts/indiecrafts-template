@@ -5,7 +5,8 @@ declared in a registry and live at the altitude + kind that fits. This folder is
 conventions; the actual instances live at their altitude slots. **What it is** → `code/docs/db/`.
 
 **Stack:** multi-kind — `d1` · `kv` (Cloudflare) · `postgres` · `supabase` · `sanity` (content). Registry:
-`scripts/lib/databases.mjs`. Runners: `shared/scripts/data/migrate.mjs` + `shared/scripts/data/backup.mjs` (dispatch on `kind`).
+`scripts/lib/databases.mjs`. Runners: `shared/scripts/data/migrate.mjs` (backs up first, fail-closed) +
+`shared/scripts/data/backup.mjs` + `shared/scripts/data/restore.mjs` (D1 revert via Time Travel) — all dispatch on `kind`.
 
 ## Conventions
 

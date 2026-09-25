@@ -251,6 +251,48 @@ describe("scheduled() — retention purge (data_requests + erasure_requests)", (
     ).first<{ feedback: string | null }>();
     expect(recent?.feedback).toBe("keep this");
   });
+
+  it("hard-deletes user_profiles anonymised past 90 days; keeps recent-anonymised + active rows", async () => {
+    const oldAnonAt = new Date(NOW - 100 * 86_400_000).toISOString(); // > 90d ago
+    const recentAnonAt = new Date(NOW - 10 * 86_400_000).toISOString();
+    const created = new Date(NOW - 500 * 86_400_000).toISOString();
+    // Anonymised on erasure long ago → final purge (drops the retained fingerprint row).
+    await env.MAIN_DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, full_name, email_fingerprint, created_at, deleted_at, anonymized) VALUES ('up-old-anon', 'deleted_up-old-anon@anonymized.local', 'Deleted User', 'fp-old', ?, ?, 1)",
+    )
+      .bind(created, oldAnonAt)
+      .run();
+    // Anonymised recently → kept (the window has not elapsed; late erasure can still resolve).
+    await env.MAIN_DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at, deleted_at, anonymized) VALUES ('up-recent-anon', 'deleted_up-recent-anon@anonymized.local', 'fp-recent', ?, ?, 1)",
+    )
+      .bind(created, recentAnonAt)
+      .run();
+    // Active account (never anonymised), old created_at → NEVER purged (anonymized = 0).
+    await env.MAIN_DB.prepare(
+      "INSERT INTO user_profiles (user_id, email, email_fingerprint, created_at, anonymized) VALUES ('up-active', 'active@example.com', 'fp-active', ?, 0)",
+    )
+      .bind(created)
+      .run();
+
+    await runTick();
+
+    expect(
+      await env.MAIN_DB.prepare(
+        "SELECT user_id FROM user_profiles WHERE user_id = 'up-old-anon'",
+      ).first(),
+    ).toBeNull();
+    expect(
+      await env.MAIN_DB.prepare(
+        "SELECT user_id FROM user_profiles WHERE user_id = 'up-recent-anon'",
+      ).first(),
+    ).not.toBeNull();
+    expect(
+      await env.MAIN_DB.prepare(
+        "SELECT user_id FROM user_profiles WHERE user_id = 'up-active'",
+      ).first(),
+    ).not.toBeNull();
+  });
 });
 
 describe("scheduled() — retention purge (admin_audit + session_events + security_events + consent_events)", () => {

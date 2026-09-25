@@ -1,3 +1,8 @@
+/**
+ * Map an app locale to its Clerk UI localization bundle.
+ *
+ * @see docs/reference/packages/web/auth/src/localization.md
+ */
 import { enUS, frFR } from "@clerk/localizations";
 
 /**

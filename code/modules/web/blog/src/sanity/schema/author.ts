@@ -1,3 +1,8 @@
+/**
+ * Define the Sanity document schema for a blog author.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/author.md
+ */
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export default defineType({

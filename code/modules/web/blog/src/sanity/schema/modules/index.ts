@@ -1,3 +1,8 @@
+/**
+ * Collect the blog-specific module schemas and their type names.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/index.md
+ */
 import type { SchemaTypeDefinition } from "sanity";
 import blogCategorySpotlight from "./blog-category-spotlight";
 import blogCollection from "./blog-collection";

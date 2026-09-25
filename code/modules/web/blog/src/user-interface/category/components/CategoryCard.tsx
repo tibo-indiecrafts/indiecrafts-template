@@ -1,3 +1,8 @@
+/**
+ * Renders a single category card linking to its /blog/category/<slug> page.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/category/components/CategoryCard.md
+ */
 import { Link } from "@indiecrafts/packages-web-i18n";
 import type { Category } from "@indiecrafts/modules-web-blog/sanity/types";
 

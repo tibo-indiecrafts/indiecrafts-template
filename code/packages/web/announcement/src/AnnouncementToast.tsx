@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the fixed corner announcement toast card.
+ *
+ * @see docs/reference/packages/web/announcement/src/AnnouncementToast.md
+ */
+
 import {
   useEffect,
   useState,

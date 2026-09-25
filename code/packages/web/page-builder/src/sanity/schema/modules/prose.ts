@@ -1,3 +1,8 @@
+/**
+ * Define the prose module — a rich-text block with a width option.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/prose.md
+ */
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

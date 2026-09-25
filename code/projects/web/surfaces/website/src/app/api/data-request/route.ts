@@ -1,3 +1,8 @@
+/**
+ * Accept a public GDPR data-subject request.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/data-request/route.md
+ */
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
 import { withGuard } from "@indiecrafts/packages-shared-security/guard";

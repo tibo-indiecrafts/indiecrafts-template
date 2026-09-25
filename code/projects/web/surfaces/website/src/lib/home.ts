@@ -1,3 +1,8 @@
+/**
+ * Fetch the homepage page-builder blocks for a locale from Sanity.
+ *
+ * @see docs/reference/projects/web/website/src/lib/home.md
+ */
 import { cache } from "react";
 import type { Locale } from "@/config";
 import type { BlockModule } from "@indiecrafts/packages-web-ui-components/shared/types";

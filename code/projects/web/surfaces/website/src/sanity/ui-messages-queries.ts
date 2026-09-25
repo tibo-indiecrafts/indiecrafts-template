@@ -1,3 +1,8 @@
+/**
+ * Queries the whole per-locale UI dictionary document.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/ui-messages-queries.md
+ */
 import { defineQuery } from "next-sanity";
 
 /**

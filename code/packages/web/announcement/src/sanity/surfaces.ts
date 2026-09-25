@@ -1,3 +1,9 @@
+/**
+ * Defines the shared per-surface targeting field.
+ *
+ * @see docs/reference/packages/web/announcement/src/sanity/surfaces.md
+ */
+
 import { defineField } from "sanity";
 import {
   SURFACES,

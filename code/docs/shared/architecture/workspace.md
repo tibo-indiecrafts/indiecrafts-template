@@ -1,3 +1,9 @@
+---
+title: "Workspace & deployment"
+description: "How the monorepo is laid out and what you deploy."
+status: stable
+---
+
 # Workspace & deployment
 
 How the monorepo is laid out and what you deploy.
@@ -32,7 +38,7 @@ pnpm docs          # http://localhost:3002  (this site)
 - **App** — Cloudflare Workers via OpenNext: per-app `code/projects/web/surfaces/website/wrangler.toml` +
   `open-next.config.ts`, deployed by GitHub Actions (`wrangler deploy --env <env>`) or
   `pnpm deploy:web:website:<env>`. Install stays at the repo root. Runbook →
-  [Deployment (Cloudflare)](/apps/web/setup/deployment).
+  [Deployment (Cloudflare)](/projects/web/website/setup/deployment).
 - **Docs** (optional) — its own npm package (npm-isolated); `pnpm docs:build` →
   `code/docs/.vitepress/dist`. Deploy it only if the client should read the product docs.
 
@@ -45,4 +51,4 @@ Every reuse of the template gets a unique **namespace** via `pnpm project:rename
 `DEFAULT_SITE_PREFIX` (`@indiecrafts/packages-shared-config`) + the `<prefix>-<env>-web-website*` Worker/R2 names together. The prefix
 namespaces the browser keys (consent · theme · locale) and the Cloudflare resources, so **many clients
 under one Cloudflare account never collide** — and a `staging`/`prod` deploy is blocked until you
-rename (a shared-account clobber guard). New-client runbook → [New client](/apps/web/setup/new-client).
+rename (a shared-account clobber guard). New-client runbook → [New client](/projects/web/website/setup/new-client).

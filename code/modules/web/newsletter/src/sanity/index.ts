@@ -1,3 +1,8 @@
+/**
+ * Assembles the newsletter module's Sanity contribution.
+ *
+ * @see docs/reference/modules/web/newsletter/src/sanity/index.md
+ */
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import { schemaTypes } from "./schema";
 import { newsletterStructure } from "./structure";

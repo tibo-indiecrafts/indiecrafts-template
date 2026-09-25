@@ -1,3 +1,8 @@
+/**
+ * Define the per-page SEO, LLMs, and visibility Sanity object.
+ *
+ * @see docs/reference/packages/web/schema/src/seo-meta.md
+ */
 import { defineField, defineType } from "sanity";
 
 /**

@@ -1,3 +1,8 @@
+/**
+ * Renders an author profile card linking to the author's detail page.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/author/components/AuthorCard.md
+ */
 import Image from "next/image";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import type {

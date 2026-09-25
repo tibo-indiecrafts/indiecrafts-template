@@ -2,7 +2,7 @@
 
 Auto-loads under `code/projects/web/tools/storybook/**`. The **design-system gallery** — a browse-only
 Storybook that documents the shared UI bricks across **all three renderers**: web (`ui` · `ui-components` ·
-`ui-tokens` + `announcement` / `locale-suggest`), the **native** design system (`ui-native` ·
+`ui-tokens` + `announcement` / `locale-suggest` / `compliance` web UI), the **native** design system (`ui-native` ·
 `system-pages/native` · `ui-icons/native`) rendered in the browser via the `react-native` →
 `react-native-web` alias, and the cross-platform `system-pages` / `ui-icons` web renderers. A workspace
 member that **consumes** the bricks; it ships no product code — the static gallery deploys to Cloudflare

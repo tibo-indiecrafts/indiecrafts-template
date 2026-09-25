@@ -1,3 +1,8 @@
+/**
+ * Renders an accordion-list module as native details disclosure items.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/AccordionList.md
+ */
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { AccordionListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { RichTitle } from "../RichTitle";

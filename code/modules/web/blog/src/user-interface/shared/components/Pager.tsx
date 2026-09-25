@@ -1,3 +1,8 @@
+/**
+ * Render previous and next links for a paginated blog listing.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/shared/components/Pager.md
+ */
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "@indiecrafts/packages-web-i18n";
 

@@ -1,3 +1,9 @@
+/**
+ * Provide the email-group field factories.
+ *
+ * @see docs/reference/packages/web/email/src/sanity/groups.md
+ */
+
 import { defineField, type FieldDefinition } from "sanity";
 
 /**

@@ -1,4 +1,9 @@
 "use client";
+/**
+ * Render a scroll-snap carousel of post cards.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/Carousel.md
+ */
 
 import { useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";

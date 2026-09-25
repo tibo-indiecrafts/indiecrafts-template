@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Builds the Clerk-free AccountAuth seam for the account tabs.
+ *
+ * @see docs/reference/packages/web/auth/src/account/use-clerk-auth-port.md
+ */
+
 import { useAuth, useReverification } from "@clerk/nextjs";
 import {
   mapErasureResponse,

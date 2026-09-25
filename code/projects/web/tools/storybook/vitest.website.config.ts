@@ -1,3 +1,8 @@
+/**
+ * Run the website-surface stories as component and a11y tests in a headless browser.
+ *
+ * @see docs/reference/projects/web/tools/storybook/vitest.website.config.md
+ */
 import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { defineConfig } from "vitest/config";

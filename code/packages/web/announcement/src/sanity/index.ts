@@ -1,3 +1,9 @@
+/**
+ * Bundles the announcement schema types and desk sections as a SanityModule.
+ *
+ * @see docs/reference/packages/web/announcement/src/sanity/index.md
+ */
+
 import type { SchemaTypeDefinition } from "sanity";
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import announcementBar, {

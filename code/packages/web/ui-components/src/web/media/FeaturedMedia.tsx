@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render a post or page cover as an image or an in-place video player.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/media/FeaturedMedia.md
+ */
+
 import { useState } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";

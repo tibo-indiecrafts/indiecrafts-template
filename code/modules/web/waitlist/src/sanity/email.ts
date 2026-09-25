@@ -1,3 +1,8 @@
+/**
+ * Define the waitlist's confirmation and owner-alert email groups on the shared emailStrings singleton.
+ *
+ * @see docs/reference/modules/web/waitlist/src/sanity/email.md
+ */
 import {
   confirmationGroup,
   ownerAlertGroup,

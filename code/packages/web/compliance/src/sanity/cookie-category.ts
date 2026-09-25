@@ -1,3 +1,9 @@
+/**
+ * Defines the Sanity object schema for a cookie consent category.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/cookie-category.md
+ */
+
 import { defineField, defineType } from "sanity";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 

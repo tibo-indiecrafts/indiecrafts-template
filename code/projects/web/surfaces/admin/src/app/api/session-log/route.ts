@@ -1,3 +1,8 @@
+/**
+ * Log a signed-in caller's sign-in to the audit api.
+ *
+ * @see docs/reference/projects/web/admin/src/app/api/session-log/route.md
+ */
 import { auth } from "@clerk/nextjs/server";
 import { logSession } from "@indiecrafts/packages-web-auth/session-log";
 

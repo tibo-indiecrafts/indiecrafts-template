@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the sign-in feed with per-user live Clerk session management.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/sessions-table.md
+ */
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

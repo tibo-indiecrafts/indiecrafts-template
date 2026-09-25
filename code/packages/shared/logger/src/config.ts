@@ -1,3 +1,8 @@
+/**
+ * Resolve the logger level, reporter, and redaction keys.
+ *
+ * @see docs/reference/packages/shared/logger/src/config.md
+ */
 import {
   getCurrentEnvironment,
   logging,

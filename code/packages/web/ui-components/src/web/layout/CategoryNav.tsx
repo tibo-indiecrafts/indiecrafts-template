@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders a horizontal category bar with dropdowns for categories that have children.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/layout/CategoryNav.md
+ */
+
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import {
   NavigationMenu,

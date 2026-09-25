@@ -1,3 +1,8 @@
+/**
+ * Provide the app-themed, opt-in Clerk provider.
+ *
+ * @see docs/reference/packages/web/auth/src/provider.md
+ */
 import { ClerkProvider } from "@clerk/nextjs";
 import { authAppearance } from "./appearance";
 import { clerkLocalization } from "./localization";

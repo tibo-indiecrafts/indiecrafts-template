@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the account switch for the commercial-email opt-in.
+ *
+ * @see docs/reference/packages/shared/compliance/src/web/MarketingEmailToggle.md
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import { Switch } from "@indiecrafts/packages-web-ui/web/switch";
 

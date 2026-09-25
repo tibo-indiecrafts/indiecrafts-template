@@ -1,3 +1,8 @@
+/**
+ * Render the web site-wide maintenance page.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/web/Maintenance.md
+ */
 import type { MaintenanceProps } from "../shared/types";
 
 /**

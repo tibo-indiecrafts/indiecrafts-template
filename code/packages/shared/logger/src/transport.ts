@@ -1,3 +1,8 @@
+/**
+ * Register and read the log transport sinks.
+ *
+ * @see docs/reference/packages/shared/logger/src/transport.md
+ */
 import type { LogRecord } from "./core";
 
 /**

@@ -1,3 +1,8 @@
+/**
+ * Validate, dedupe, and store a waitlist join, then fire best-effort confirmation and owner-alert emails.
+ *
+ * @see docs/reference/modules/web/waitlist/src/lib/waitlist.md
+ */
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";

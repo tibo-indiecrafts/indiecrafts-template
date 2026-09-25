@@ -1,3 +1,9 @@
+---
+title: "SEO content — fill-in form"
+description: "This tells search engines (Google, Bing) and social networks what each page is about — the text people see in search results and when your links are shared."
+status: stable
+---
+
 # SEO content — fill-in form
 
 This tells search engines (Google, Bing) and social networks what each page is
@@ -9,7 +15,7 @@ guidance so nothing gets cut off.
 
 > ✏️ **After launch**, every field below is editable yourself, per language, in
 > the Studio under **SEO & métadonnées** — no developer needed. See
-> [Editing SEO in Sanity](../../apps/web/seo/editing-seo-in-sanity.md).
+> [Editing SEO in Sanity](/projects/web/website/seo/editing-seo-in-sanity).
 
 > 🌐 **Your site runs in more than one language** (English + French by default).
 > Every text field below is per-language — please give us each answer in **all**

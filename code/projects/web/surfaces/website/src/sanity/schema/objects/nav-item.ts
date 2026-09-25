@@ -1,5 +1,11 @@
+/**
+ * Define the reusable menu-link object for the header and footer.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/schema/objects/nav-item.md
+ */
+
 import { defineField, defineType } from "sanity";
-import { LinkIcon } from "@sanity/icons";
+import { LinkIcon } from "@sanity/icons/Link";
 import { pages, defaultLocale } from "@/config";
 
 /**

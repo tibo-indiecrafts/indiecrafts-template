@@ -1,3 +1,8 @@
+/**
+ * Renders the owner alert email for a new waitlist entry.
+ *
+ * @see docs/reference/modules/web/waitlist/src/emails/waitlist-notification.md
+ */
 import {
   EMAIL_COLORS,
   escapeHtml,

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Confirm a newsletter subscription by POSTing the one-time token on a human tap.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/components/NewsletterConfirm.md
+ */
+
 import { useState } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Link } from "@/i18n/routing";

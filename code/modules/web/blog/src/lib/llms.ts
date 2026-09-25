@@ -1,3 +1,8 @@
+/**
+ * Build the blog's post and taxonomy lines for the LLM endpoints.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/llms.md
+ */
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { site } from "@indiecrafts/packages-shared-config";
 import { localizedPathname } from "@indiecrafts/packages-web-i18n";

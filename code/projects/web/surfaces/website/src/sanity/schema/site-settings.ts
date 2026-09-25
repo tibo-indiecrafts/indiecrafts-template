@@ -1,5 +1,10 @@
+/**
+ * Defines the language-independent site settings singleton schema.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/schema/site-settings.md
+ */
 import { defineField, defineType } from "sanity";
-import { CogIcon } from "@sanity/icons";
+import { CogIcon } from "@sanity/icons/Cog";
 
 /**
  * Site settings — a single, language-independent singleton (`_id: siteSettings`)

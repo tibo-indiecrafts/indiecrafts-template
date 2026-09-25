@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the localized route-level error boundary (the 500 page).
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/error.md
+ */
+
 // Copy stays in `messages/<locale>.json` (NOT Sanity, unlike maintenance + 404):
 // this is a Next client error boundary — it can't await a server fetch, and it
 // must render even when Sanity is the failure. Keeping it on bundled messages

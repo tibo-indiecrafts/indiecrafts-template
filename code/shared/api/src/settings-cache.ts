@@ -1,3 +1,8 @@
+/**
+ * Reads and per-isolate caches the effective site settings, fail-open to defaults.
+ *
+ * @see docs/reference/shared/api/src/settings-cache.md
+ */
 import {
   effectiveSettings,
   type SettingKey,

@@ -1,3 +1,8 @@
+/**
+ * Define the person-list module — a titled list of referenced people.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/person-list.md
+ */
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

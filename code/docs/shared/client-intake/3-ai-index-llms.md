@@ -1,3 +1,9 @@
+---
+title: "AI assistant index (llms.txt) — fill-in form"
+description: "Modern AI assistants (ChatGPT, Claude, Perplexity…) look for a small file that summarises your site and points to key resources, so they can answer questions…"
+status: stable
+---
+
 # AI assistant index (llms.txt) — fill-in form
 
 Modern AI assistants (ChatGPT, Claude, Perplexity…) look for a small file that
@@ -11,7 +17,7 @@ you only need to confirm the summary and add any external links.
 
 > ✏️ **After launch**, the summary, paragraph, and resource links are editable
 > per language in the Studio under **SEO & métadonnées → Résumé pour les IA** —
-> see [Editing SEO in Sanity](../../apps/web/seo/editing-seo-in-sanity.md).
+> see [Editing SEO in Sanity](/projects/web/website/seo/editing-seo-in-sanity).
 
 ## Site summary
 

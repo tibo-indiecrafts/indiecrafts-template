@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Shows the legal re-acceptance banner and records acceptance.
+ *
+ * @see docs/reference/packages/web/compliance/src/reacceptance/LegalNotice.md
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/packages-web-i18n";

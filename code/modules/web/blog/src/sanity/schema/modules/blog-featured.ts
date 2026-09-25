@@ -1,4 +1,9 @@
-import { StarIcon } from "@sanity/icons";
+/**
+ * Define the featured-posts page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-featured.md
+ */
+import { StarIcon } from "@sanity/icons/Star";
 import { defineField } from "sanity";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 

@@ -1,5 +1,11 @@
+/**
+ * Define the editable legal-page Sanity document.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/legal-page.md
+ */
+
 import { defineField, defineType } from "sanity";
-import { DocumentTextIcon } from "@sanity/icons";
+import { DocumentTextIcon } from "@sanity/icons/DocumentText";
 
 /**
  * Legal page — client-editable body for one of the site's legal pages

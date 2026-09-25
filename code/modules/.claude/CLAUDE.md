@@ -7,7 +7,7 @@ platform-scope** — `code/modules/<scope>/<module>/` (scope = `shared · web ·
 are reserved README markers. `_registry.md` lists the roster + the rest. **How we build
 modules** → the internal dev framework. **What they are** → `code/docs/modules/`.
 
-**Stack:** TypeScript · React 19 · Sanity v5, consumed by an app via transpilePackages. Feature-flagged product slices.
+**Stack:** TypeScript · React 19 · Sanity v6, consumed by an app via transpilePackages. Feature-flagged product slices.
 
 ## The pattern
 

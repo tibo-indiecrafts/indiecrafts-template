@@ -1,3 +1,8 @@
+/**
+ * Render a custom SVG mark by name for the web.
+ *
+ * @see docs/reference/packages/shared/ui-icons/src/web/SvgIcon.md
+ */
 import type { SVGProps } from "react";
 import { SVGS, type SvgName } from "../shared/svgs";
 

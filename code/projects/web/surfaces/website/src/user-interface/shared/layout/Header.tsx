@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the production site header with navigation, locale, theme, and auth controls.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/Header.md
+ */
+
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Menu } from "lucide-react";

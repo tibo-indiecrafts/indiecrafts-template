@@ -1,3 +1,9 @@
+/**
+ * Validates data-subject request input, including spam heuristics.
+ *
+ * @see docs/reference/packages/web/compliance/src/requests/validate.md
+ */
+
 import { isDataRequestType } from "./request-types";
 
 /**

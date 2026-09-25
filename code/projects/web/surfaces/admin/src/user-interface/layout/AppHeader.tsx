@@ -1,3 +1,8 @@
+/**
+ * Render the dashboard's sticky header.
+ *
+ * @see docs/reference/projects/web/admin/src/user-interface/layout/AppHeader.md
+ */
 import { getTranslations } from "next-intl/server";
 import { SidebarTrigger } from "@indiecrafts/packages-web-ui/web/sidebar";
 import { Separator } from "@indiecrafts/packages-web-ui/web/separator";

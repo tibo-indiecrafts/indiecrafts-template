@@ -1,3 +1,8 @@
+/**
+ * Resolve the consent mode for this device from its edge country.
+ *
+ * @see docs/reference/projects/mobile/main/lib/geo.md
+ */
 import {
   resolveConsentMode,
   type ConsentMode,

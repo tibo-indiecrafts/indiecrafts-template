@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Renders an async server-component renderer inside Storybook's client runtime.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/_async-story.md
+ */
 import { use, useMemo, type ReactNode, type DependencyList } from "react";
 
 /**

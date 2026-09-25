@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the account panel that re-opens cookie-consent choices.
+ *
+ * @see docs/reference/packages/shared/compliance/src/web/AccountConsentTab.md
+ */
+
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { rejectAllChoices, type ConsentRecord } from "../shared/consent";

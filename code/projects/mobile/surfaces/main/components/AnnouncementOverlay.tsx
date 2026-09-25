@@ -1,3 +1,8 @@
+/**
+ * Render the signed-in mobile announcement banner and toast.
+ *
+ * @see docs/reference/projects/mobile/main/components/AnnouncementOverlay.md
+ */
 import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   View,

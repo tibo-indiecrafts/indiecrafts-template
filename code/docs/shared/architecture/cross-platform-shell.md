@@ -1,3 +1,9 @@
+---
+title: "Cross-platform shell"
+description: "How the two UI platforms — web (Next) and mobile (Expo/React Native) — assemble the same app shell (theme · i18n · fonts · status pages · UI foundation) from…"
+status: stable
+---
+
 # Cross-platform shell
 
 How the two UI platforms — **web** (Next) and **mobile** (Expo/React Native) — assemble the same
@@ -25,7 +31,7 @@ native bricks. `next-intl`, `next/image`, and `next/font` stay in the web app.
 ## The Next-agnostic rule (portable web bricks)
 
 A shared web brick stays framework-neutral so it can serve any React host, not only Next: **a shared
-web component must not import a Next API.** [`system-pages`](../../packages/system-pages) proves the
+web component must not import a Next API.** [`system-pages`](/packages/shared/system-pages) proves the
 pattern — its 404 injects the home link (`LinkComponent`, default a plain `<a>`), so the website passes
 its typed `next-intl` `Link` while a plain-React host takes the default. One `web` fork serves both.
 
@@ -58,7 +64,7 @@ Detection picks a first locale; two more pieces are shared across the shells:
 - **The suggestion decision is shared** — `pickSuggestedLocale(rankedPrefs, active, supported)`
   (`packages-shared-config`) returns the first supported, ranked preference that differs from the
   active locale, else `null`. Each platform feeds it its own ranked, region-stripped list: the web
-  `Accept-Language` parser ([`locale-suggest`](../../packages/locale-suggest)) or Expo `getLocales()`.
+  `Accept-Language` parser ([`locale-suggest`](/packages/web/locale-suggest)) or Expo `getLocales()`.
   Only the parser is web-specific.
 - **The choice persists** — the `app` surface gets **full next-intl** (detection + redirection: `/`→
   `/en`/`/fr` on first visit, the locale cookie wins after). Mobile has no URLs to redirect,
@@ -71,7 +77,7 @@ Detection picks a first locale; two more pieces are shared across the shells:
 ## Compliance + version — shared capabilities
 
 Beyond the shell chrome, the shells share two capabilities over portable cores
-([`compliance-shared`](../../packages/compliance-shared) · [`version-shared`](../../packages/version-shared)):
+([`compliance-shared`](/packages/shared/compliance) · [`version-shared`](/packages/shared/version)):
 
 - **Legal link-out** — no content re-hosting. Each shell lists the enabled legal pages and opens each
   on the **website** via `legalUrl(websiteUrl, key, locale)`: a plain `<a>` (app) or `Linking.openURL`
@@ -84,7 +90,7 @@ Beyond the shell chrome, the shells share two capabilities over portable cores
 - **Update prompt** — a `/api/version` poll comparing the live deploy id to this bundle's baked id
   (`isUpdateAvailable`, string identity). The **apply** half is platform-limited: web reloads;
   mobile nudges to restart (`expo-updates`/EAS OTA is a follow-up).
-- **Offline state** — one branded `OfflineContent` page ([`system-pages`](../../packages/system-pages),
+- **Offline state** — one branded `OfflineContent` page ([`system-pages`](/packages/shared/system-pages),
   forked `web`/`native`) + a per-surface detection hook feeding a non-blocking banner: web uses
   `navigator.onLine` + the `online`/`offline` events (`useSyncExternalStore`); mobile uses
   `@react-native-community/netinfo`. Copy is `SHELL_COPY.offline` (the mobile shell) / `messages.offline` (web). The
@@ -114,4 +120,4 @@ Web-side changes are fully build-verified (`pnpm tsc`, `pnpm test`, the website 
 runtime has no host here** — native code is built-to-spec and `tsc`-checked
 only; on-device validation is the developer's: `npx expo start` (mobile). Font loading on native is **deferred** —
 Satoshi ships as web `.woff2`; RN needs `.ttf`/`.otf`, so the mobile shell renders with the system
-font until an `.otf` variant lands in [`ui-fonts`](../../packages/ui-fonts).
+font until an `.otf` variant lands in [`ui-fonts`](/packages/shared/ui-fonts).

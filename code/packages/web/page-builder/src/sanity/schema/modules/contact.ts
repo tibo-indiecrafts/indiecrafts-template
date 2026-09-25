@@ -1,3 +1,8 @@
+/**
+ * Define the contact module — a localized contact form block.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/contact.md
+ */
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

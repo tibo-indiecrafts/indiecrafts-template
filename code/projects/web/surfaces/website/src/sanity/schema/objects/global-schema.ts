@@ -1,3 +1,9 @@
+/**
+ * Define the global-schema object for one extra site-wide JSON-LD entity.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/schema/objects/global-schema.md
+ */
+
 import { defineField, defineType } from "sanity";
 
 /**

@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Renders a per-comment Reply toggle that reveals a compact CommentForm.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/post/components/CommentReply.md
+ */
 import { useState } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { CommentForm } from "@indiecrafts/modules-web-blog/user-interface/post/components/CommentForm";

@@ -1,3 +1,8 @@
+/**
+ * Measure the landing route's gzipped First-Load JS against a size budget.
+ *
+ * @see docs/reference/projects/web/website/scripts/check-bundle-size.md
+ */
 // Marketing bundle-size budget — the First-Load JS a real visitor downloads on the
 // landing route, EXCLUDING the embedded Sanity Studio (whose client bundle dwarfs the
 // marketing pages and would make an all-chunks budget meaningless). Runs after a

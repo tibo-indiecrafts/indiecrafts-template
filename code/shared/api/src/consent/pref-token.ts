@@ -1,3 +1,8 @@
+/**
+ * Sign and verify the no-login email-preference token.
+ *
+ * @see docs/reference/shared/api/src/consent/pref-token.md
+ */
 // Signed no-login preference token — lets an email link open the preference centre
 // without a session. Built on signHmac/verifyHmac (gated-delivery). Low-sensitivity,
 // marketing-prefs scope only: the payload carries no PII beyond the user id.

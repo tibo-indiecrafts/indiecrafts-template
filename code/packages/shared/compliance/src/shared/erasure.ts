@@ -1,3 +1,9 @@
+/**
+ * Runs each store's erasure adapter and returns an enumerated receipt.
+ *
+ * @see docs/reference/packages/shared/compliance/src/shared/erasure.md
+ */
+
 // Store-agnostic erasure + pseudonymisation orchestrator. Pure TS: it takes an
 // array of ErasureAdapter (one per store) and runs them, so no single runtime
 // needs every store's secret. The concrete adapters (D1, Clerk, Sanity, orders)

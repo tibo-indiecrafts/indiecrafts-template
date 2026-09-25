@@ -1,3 +1,8 @@
+/**
+ * Harden a public POST route with origin, body-cap, rate-limit, and Turnstile checks.
+ *
+ * @see docs/reference/packages/shared/security/src/guard.md
+ */
 import "server-only";
 import { sanitizeIpAddress } from "./ip";
 import { isSameSiteRequest } from "./origin";

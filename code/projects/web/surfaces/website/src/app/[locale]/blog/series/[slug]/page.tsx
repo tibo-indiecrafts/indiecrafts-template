@@ -1,3 +1,8 @@
+/**
+ * List a blog series' paginated posts.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/blog/series/slug/page.md
+ */
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, site, type Locale } from "@/config";

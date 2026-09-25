@@ -1,3 +1,8 @@
+/**
+ * Wire the mobile provider tree and router stack.
+ *
+ * @see docs/reference/projects/mobile/main/app/_layout.md
+ */
 import type { ErrorBoundaryProps } from "expo-router";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";

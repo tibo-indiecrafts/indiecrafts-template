@@ -1,3 +1,8 @@
+/**
+ * Re-export the erasure adapter factories and client interfaces.
+ *
+ * @see docs/reference/shared/api/src/erasure/index.md
+ */
 export {
   createCoreErasureAdapter,
   createAuditErasureAdapter,

@@ -1,3 +1,8 @@
+/**
+ * Serialize PortableText blocks to Markdown for the .md export.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/portable-to-markdown.md
+ */
 import type { PortableTextBlock } from "@portabletext/react";
 import { logger } from "@indiecrafts/packages-shared-logger";
 

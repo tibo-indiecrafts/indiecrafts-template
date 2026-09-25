@@ -1,3 +1,8 @@
+/**
+ * Read and write churn_events — the departed-user exit survey and its aggregates.
+ *
+ * @see docs/reference/shared/api/src/consent/churn-store.md
+ */
 export const CHURN_REASONS = [
   "too_expensive",
   "not_using",

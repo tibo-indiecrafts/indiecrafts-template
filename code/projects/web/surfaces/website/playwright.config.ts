@@ -70,6 +70,12 @@ export default defineConfig({
             env: {
               NEXT_PUBLIC_SANITY_DATASET: E2E_DATASET,
               NEXT_PUBLIC_ENVIRONMENT: "development",
+              // Auth journey (self-skips when unset): the publishable key is baked into the
+              // build so `/sign-in` renders; the secret gates server-side `auth()`. Empty →
+              // the app runs anonymous exactly as today and `sign-in.spec.ts` skips.
+              NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+                process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "",
+              CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY ?? "",
             },
           },
         ]

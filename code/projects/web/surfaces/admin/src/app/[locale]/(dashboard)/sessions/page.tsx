@@ -1,3 +1,8 @@
+/**
+ * Render the admin sign-in activity page.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/sessions/page.md
+ */
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { PageHeader } from "@/user-interface/layout/PageHeader";

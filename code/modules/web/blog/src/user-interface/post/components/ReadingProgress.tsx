@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the top-of-viewport scroll-progress bar for a post.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/post/components/ReadingProgress.md
+ */
 import { useEffect, useRef } from "react";
 
 /**

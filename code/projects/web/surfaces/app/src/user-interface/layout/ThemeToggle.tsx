@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Toggle light and dark theme without a flash.
+ *
+ * @see docs/reference/projects/web/app/src/user-interface/layout/ThemeToggle.md
+ */
 import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

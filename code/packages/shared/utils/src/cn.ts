@@ -1,3 +1,8 @@
+/**
+ * Merge Tailwind class names, resolving conflicts.
+ *
+ * @see docs/reference/packages/shared/utils/src/cn.md
+ */
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

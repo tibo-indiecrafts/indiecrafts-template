@@ -4,7 +4,7 @@ Auto-loads under `code/modules/web/blog/**`. Self-contained Sanity-backed blog +
 
 **Host message contract** — the module renders chrome copy from the **app's** `messages/<locale>.json`, so a host app MUST provide the `pages.blog.*` namespace (~24 keys incl. `series.*`, `minRead`, `onThisPage`, `related`, `by`, …), the shared `common.share.*` (the post's share row — share is a shared setting, not blog-owned), and `nav.blog` (the breadcrumb root). The post share row is **gated + configured by a `share` prop** the host injects from its shared `siteSettings.share` (Sanity), not a blog display toggle. A missing key throws at render — declare these when mounting the blog island in a second app.
 
-**Stack:** Sanity v5 (GROQ · PortableText) · Next.js 16 · React 19 · TypeScript · Tailwind v4. Self-contained blog + page-builder.
+**Stack:** Sanity v6 (GROQ · PortableText) · Next.js 16 · React 19 · TypeScript · Tailwind v4. Self-contained blog + page-builder.
 
 ## Layout
 

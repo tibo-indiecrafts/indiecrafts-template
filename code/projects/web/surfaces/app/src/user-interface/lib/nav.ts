@@ -1,3 +1,8 @@
+/**
+ * Define the app's flat sidebar nav and resolve the active item.
+ *
+ * @see docs/reference/projects/web/app/src/user-interface/lib/nav.md
+ */
 import { Home, UserRound, type LucideIcon } from "lucide-react";
 import { localeCodes } from "@/config";
 

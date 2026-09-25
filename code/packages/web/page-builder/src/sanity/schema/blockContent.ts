@@ -1,3 +1,8 @@
+/**
+ * Defines the reusable blockContent rich-text field with inline-embeddable modules.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/blockContent.md
+ */
 import { defineArrayMember, defineType } from "sanity";
 
 /**

@@ -1,4 +1,9 @@
-import { EditIcon } from "@sanity/icons";
+/**
+ * Define the Sanity document schema for a blog post.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/post.md
+ */
+import { EditIcon } from "@sanity/icons/Edit";
 import { defineField, defineType } from "sanity";
 
 import PrioritySlider from "../components/PrioritySlider";

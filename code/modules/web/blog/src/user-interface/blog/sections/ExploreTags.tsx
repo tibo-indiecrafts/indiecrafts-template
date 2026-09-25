@@ -1,3 +1,8 @@
+/**
+ * Renders the frontpage tag explorer — hash-prefixed tag chips.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/blog/sections/ExploreTags.md
+ */
 import { Link } from "@indiecrafts/packages-web-i18n";
 import type { Tag } from "@indiecrafts/modules-web-blog/sanity/types";
 

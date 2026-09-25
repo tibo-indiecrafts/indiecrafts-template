@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Load a next/script only after a consent category is granted.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/ConsentScript.md
+ */
+
 import type { ComponentProps } from "react";
 import Script from "next/script";
 import { ConsentGate } from "./ConsentGate";

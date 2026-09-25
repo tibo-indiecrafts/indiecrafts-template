@@ -1,3 +1,8 @@
+/**
+ * Render the admin dashboard home with per-section row counts.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/page.md
+ */
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import {

@@ -1,5 +1,10 @@
+/**
+ * Define the waitlistSettings singleton — the editor toggle and per-locale form copy.
+ *
+ * @see docs/reference/modules/web/waitlist/src/sanity/schema/waitlist-settings.md
+ */
 import { defineField, defineType } from "sanity";
-import { UsersIcon } from "@sanity/icons";
+import { UsersIcon } from "@sanity/icons/Users";
 
 /**
  * Waitlist settings (singleton). The code flag `features.waitlist` is the hard

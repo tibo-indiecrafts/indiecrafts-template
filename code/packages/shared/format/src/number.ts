@@ -1,3 +1,8 @@
+/**
+ * Format numbers, percents, units, ordinals, and byte sizes per locale.
+ *
+ * @see docs/reference/packages/shared/format/src/number.md
+ */
 import {
   defaultLocale,
   localeFormat,

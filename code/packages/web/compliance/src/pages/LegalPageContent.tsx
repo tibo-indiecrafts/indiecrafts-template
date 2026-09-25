@@ -1,3 +1,9 @@
+/**
+ * Renders one legal page's body from its Sanity document.
+ *
+ * @see docs/reference/packages/web/compliance/src/pages/LegalPageContent.md
+ */
+
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";

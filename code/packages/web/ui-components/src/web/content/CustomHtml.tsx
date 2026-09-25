@@ -1,3 +1,8 @@
+/**
+ * Render editor-authored raw HTML.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/content/CustomHtml.md
+ */
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import type { CustomHtmlModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 

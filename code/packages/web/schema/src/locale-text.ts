@@ -1,3 +1,8 @@
+/**
+ * Define the per-locale multi-line text Sanity object.
+ *
+ * @see docs/reference/packages/web/schema/src/locale-text.md
+ */
 import { defineField, defineType } from "sanity";
 import { locales } from "@indiecrafts/packages-shared-config";
 

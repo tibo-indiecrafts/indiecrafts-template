@@ -1,3 +1,8 @@
+/**
+ * Render the per-locale HTML shell, providers, and compliance overlays for the app surface.
+ *
+ * @see docs/reference/projects/web/app/src/app/locale/layout.md
+ */
 import "@indiecrafts/packages-shared-ui-tokens/globals.css";
 import type { ReactNode } from "react";
 import { NextIntlClientProvider, hasLocale } from "next-intl";

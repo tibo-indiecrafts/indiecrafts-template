@@ -1,3 +1,8 @@
+/**
+ * Forward error and fatal log records to Sentry.
+ *
+ * @see docs/reference/packages/shared/logger/src/sentry.md
+ */
 import type { NormalizedError, LogRecord } from "./core";
 import type { Transport } from "./transport";
 

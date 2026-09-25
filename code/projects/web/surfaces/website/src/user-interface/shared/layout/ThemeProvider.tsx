@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Wrap next-themes with server-resolved props and the per-request CSP nonce.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/ThemeProvider.md
+ */
+
 import {
   ThemeProvider as NextThemesProvider,
   type ThemeProviderProps,

@@ -1,3 +1,8 @@
+/**
+ * Renders the page hero band with eyebrow, rich title, subtitle, and an optional CTA.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/layout/Hero.md
+ */
 import type { HeroModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { RichTitle } from "../RichTitle";
 import { ModuleCta } from "./Cta";

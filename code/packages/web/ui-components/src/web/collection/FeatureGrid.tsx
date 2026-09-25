@@ -1,3 +1,8 @@
+/**
+ * Render a grid of icon feature cards.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/FeatureGrid.md
+ */
 import type { FeatureGridModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { Icon } from "@indiecrafts/packages-shared-ui-icons/web";
 import {

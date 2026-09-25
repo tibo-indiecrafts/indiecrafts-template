@@ -1,3 +1,8 @@
+/**
+ * Return the live deploy's build id for the update-prompt poll.
+ *
+ * @see docs/reference/projects/web/app/src/app/api/version/route.md
+ */
 import { NextResponse } from "next/server";
 import { buildInfo } from "@/lib/build-info";
 

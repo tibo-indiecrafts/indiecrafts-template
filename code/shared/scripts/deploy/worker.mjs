@@ -27,11 +27,18 @@ if (!app || !ENVS.includes(env)) {
 }
 
 // Apply the D1 migrations this worker OWNS before shipping the new code (expand →
-// migrate → contract). Passes the binding so wrangler resolves the right per-env DB.
-// Skips a DB whose `database_id` is still the template placeholder — a fresh
-// `deploy:shared:api:dev` must not fail just because D1 is not configured yet. A real
-// migration error aborts the deploy (run() exits non-zero) — schema before code.
+// migrate → contract). Delegates each owned DB to `migrate.mjs` — the single migration
+// path — which takes a FAIL-CLOSED pre-migration R2 snapshot (schema + data) BEFORE
+// applying, so a deploy-time migration never touches a remote DB without a fresh backup.
+// A failed snapshot OR a migration error aborts the deploy (run() exits non-zero) —
+// schema before code, and never a schema change we can't roll back. `--yes` so the
+// delegate never re-prompts (the deploy already confirmed prod once, above). Skips a DB
+// whose `database_id` is still the template placeholder — a fresh `deploy:shared:api:dev`
+// must not fail just because D1 is not configured yet.
 function migrateOwnedD1() {
+  const migrate = fileURLToPath(
+    new URL("../data/migrate.mjs", import.meta.url),
+  );
   const toml = readFileSync("wrangler.toml", "utf8");
   for (const db of byKind("d1").filter((d) => d.owner === app && d.binding)) {
     const id = toml.match(
@@ -45,16 +52,10 @@ function migrateOwnedD1() {
       );
       continue;
     }
-    console.log(`• Migrating D1 "${db.name}" (${db.binding}) on ${env}…`);
-    run("wrangler", [
-      "d1",
-      "migrations",
-      "apply",
-      db.binding,
-      "--env",
-      env,
-      "--remote",
-    ]);
+    console.log(
+      `• D1 "${db.name}" (${db.binding}) on ${env}: pre-migration backup → migrate…`,
+    );
+    run("node", [migrate, db.name, env, "--yes"]);
   }
 }
 

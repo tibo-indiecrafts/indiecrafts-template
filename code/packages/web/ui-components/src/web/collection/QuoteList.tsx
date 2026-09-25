@@ -1,3 +1,8 @@
+/**
+ * Render a stacked list of testimonial quotes.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/QuoteList.md
+ */
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import type { QuoteListModule } from "@indiecrafts/packages-web-ui-components/shared/types";

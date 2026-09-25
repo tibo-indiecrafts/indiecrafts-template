@@ -1,3 +1,8 @@
+/**
+ * Re-export the web auth brick's public API.
+ *
+ * @see docs/reference/packages/web/auth/src/index.md
+ */
 export { AppClerkProvider } from "./provider";
 export { authAppearance } from "./appearance";
 export { clerkLocalization } from "./localization";

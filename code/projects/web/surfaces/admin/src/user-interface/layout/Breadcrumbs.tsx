@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the dashboard breadcrumb trail from the active route.
+ *
+ * @see docs/reference/projects/web/admin/src/user-interface/layout/Breadcrumbs.md
+ */
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
 import {

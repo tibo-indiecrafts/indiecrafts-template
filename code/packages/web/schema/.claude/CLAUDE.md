@@ -4,7 +4,7 @@ Auto-loads under `code/packages/web/schema/**`. The reusable, doc-agnostic field
 owner needs: `localeString · localeText · seoMeta` + the `sharedSanity` barrel. Area rules →
 `../../../.claude/CLAUDE.md`.
 
-**Stack:** Sanity v5 · TypeScript. Shared Sanity object primitives, registered once, referenced by type name.
+**Stack:** Sanity v6 · TypeScript. Shared Sanity object primitives, registered once, referenced by type name.
 
 - **`localeString` / `localeText`** — per-locale field objects (`string` / multiline `text`),
   **generated from `@indiecrafts/packages-shared-config` `locales`** so the language set can never drift. Add a

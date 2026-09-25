@@ -1,3 +1,8 @@
+/**
+ * Renders the newsletter double opt-in confirm page for a one-time token link.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/newsletter/confirm/page.md
+ */
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, type Locale } from "@/config";

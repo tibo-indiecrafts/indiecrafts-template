@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the sidebar table of contents with scroll-spy for a post.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/post/components/Toc.md
+ */
 import { useEffect, useState } from "react";
 import type { Heading } from "@indiecrafts/modules-web-blog/sanity/types";
 import { slugify } from "@indiecrafts/packages-shared-utils/slugify";

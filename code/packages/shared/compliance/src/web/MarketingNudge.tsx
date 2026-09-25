@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the one-time post-sign-in commercial-email opt-in prompt.
+ *
+ * @see docs/reference/packages/shared/compliance/src/web/MarketingNudge.md
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 

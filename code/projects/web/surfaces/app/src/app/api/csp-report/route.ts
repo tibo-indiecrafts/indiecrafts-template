@@ -1,3 +1,8 @@
+/**
+ * Receive browser CSP violation reports and forward them server-side.
+ *
+ * @see docs/reference/projects/web/app/src/app/api/csp-report/route.md
+ */
 import { handleCspReport } from "@indiecrafts/packages-web-security-reports/handle";
 
 // The browser POSTs CSP violations here (report-to / report-uri). No auth: the

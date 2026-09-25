@@ -1,3 +1,8 @@
+/**
+ * Creates the server-only authenticated Sanity write client.
+ *
+ * @see docs/reference/packages/web/sanity/src/write.md
+ */
 import "server-only";
 
 import { createClient } from "next-sanity";

@@ -1,3 +1,8 @@
+/**
+ * Render the admin system-health dashboard for surfaces, workers, and databases.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/system/page.md
+ */
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent, CardHeader } from "@indiecrafts/packages-web-ui/web/card";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";

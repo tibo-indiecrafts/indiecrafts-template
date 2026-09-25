@@ -1,3 +1,8 @@
+/**
+ * Forward error and fatal log records to Cloudflare Workers Logs.
+ *
+ * @see docs/reference/packages/shared/logger/src/cloudflare.md
+ */
 import type { Transport } from "./transport";
 import { jsonReporter } from "./reporters";
 

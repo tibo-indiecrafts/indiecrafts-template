@@ -1,3 +1,8 @@
+/**
+ * Render the owner-facing alert email carrying a new contact message.
+ *
+ * @see docs/reference/modules/web/contact/src/emails/contact-notification.md
+ */
 import {
   EMAIL_COLORS,
   escapeHtml,

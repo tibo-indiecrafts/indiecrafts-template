@@ -1,8 +1,14 @@
+---
+title: "Getting started — the platform"
+description: "A config-first Next.js 16 template, structured as a full-platform monorepo with the dev framework in-repo."
+status: stable
+---
+
 # Getting started — the platform
 
 A config-first Next.js 16 template, structured as a **full-platform monorepo** with the
 dev framework in-repo. New here? Read this first, then jump to
-[New client setup](/apps/web/setup/new-client) for the web app.
+[New client setup](/projects/web/website/setup/new-client) for the web app.
 
 ## What you build and deploy
 
@@ -32,7 +38,7 @@ pnpm verify:quick  # tsc + lint (manual pre-PR check)
 
 ## Documentation site
 
-`pnpm docs` → http://localhost:3002 — this site (product docs), its own npm package
+`pnpm docs` → `http://localhost:3002` — this site (product docs), its own npm package
 isolated from the pnpm workspace.
 
 ## Deploy — app + docs only
@@ -43,5 +49,5 @@ The workspace installs at the **repo root**; the app builds to `code/projects/we
 
 ## Where to go next
 
-- **Set up the web app** → [Environment](/apps/web/setup/environment) → [New client](/apps/web/setup/new-client) → [Launch checklist](/apps/web/setup/launch-checklist).
-- **The growth slots** (empty until needed) → [Modules](/modules/README) · [Packages](/packages/README) · [Db](/db/README) · [Infra](/infra/README).
+- **Set up the web app** → [Environment](/projects/web/website/setup/environment) → [New client](/projects/web/website/setup/new-client) → [Launch checklist](/projects/web/website/setup/launch-checklist).
+- **The growth slots** (empty until needed) → [Modules](/modules/README) · [Packages](/packages/README) · [Db](/shared/db/README) · [Infra](/shared/infra/README).

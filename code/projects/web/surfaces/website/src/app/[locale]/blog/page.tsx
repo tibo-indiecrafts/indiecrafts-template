@@ -1,3 +1,8 @@
+/**
+ * Render the blog frontpage from editor modules or the code default.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/blog/page.md
+ */
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, pages, type Locale } from "@/config";

@@ -1,3 +1,9 @@
+/**
+ * Renders the React Native one-time marketing-consent nudge.
+ *
+ * @see docs/reference/packages/shared/compliance/src/native/MarketingNudge.md
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";

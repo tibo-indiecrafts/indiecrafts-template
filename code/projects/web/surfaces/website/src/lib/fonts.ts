@@ -1,3 +1,8 @@
+/**
+ * Instantiate every next/font and expose the `<html>` font classes and style vars.
+ *
+ * @see docs/reference/projects/web/website/src/lib/fonts.md
+ */
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import type { CSSProperties } from "react";

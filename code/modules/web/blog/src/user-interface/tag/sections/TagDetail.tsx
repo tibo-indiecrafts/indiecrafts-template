@@ -1,3 +1,8 @@
+/**
+ * Render the tag archive page with its header and paginated post grid.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/tag/sections/TagDetail.md
+ */
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import type {
   PostListItem,

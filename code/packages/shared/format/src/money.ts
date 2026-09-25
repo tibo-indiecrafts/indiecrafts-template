@@ -1,3 +1,8 @@
+/**
+ * Format, parse, convert, and apply VAT to money amounts.
+ *
+ * @see docs/reference/packages/shared/format/src/money.md
+ */
 import {
   defaultLocale,
   formatDefaults,

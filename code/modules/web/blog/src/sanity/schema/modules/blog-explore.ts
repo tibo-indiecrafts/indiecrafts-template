@@ -1,4 +1,9 @@
-import { SearchIcon } from "@sanity/icons";
+/**
+ * Define the explore page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-explore.md
+ */
+import { SearchIcon } from "@sanity/icons/Search";
 import { defineField } from "sanity";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 

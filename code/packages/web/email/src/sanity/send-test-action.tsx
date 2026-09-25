@@ -1,5 +1,10 @@
+/**
+ * Sends a sample of every enabled email to an address via a Studio document action.
+ *
+ * @see docs/reference/packages/web/email/src/sanity/send-test-action.md
+ */
 import { useState } from "react";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 import { Button, Flex, Stack, Text, TextInput } from "@sanity/ui";
 import { useClient, type DocumentActionComponent } from "sanity";
 import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
@@ -75,7 +80,7 @@ export const sendTestEmailAction: DocumentActionComponent = () => {
       header: "Envoyer un e-mail de test",
       onClose: () => setOpen(false),
       content: (
-        <Stack space={4}>
+        <Stack gap={4}>
           <Text size={1} muted>
             Envoie un exemple de chaque e-mail activé à l&apos;adresse
             ci-dessous — pour vérifier qu&apos;ils arrivent bien.

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders a button that opens the cookie preferences dialog.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/ManagePreferencesButton.md
+ */
+
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { openPreferences } from "./consent-store";
 

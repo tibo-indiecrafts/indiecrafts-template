@@ -1,3 +1,8 @@
+/**
+ * Declares a page-builder module schema with shared anchor and hidden fields.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/objects/define-module.md
+ */
 import {
   defineField,
   defineType,

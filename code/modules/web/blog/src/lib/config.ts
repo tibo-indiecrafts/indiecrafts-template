@@ -1,3 +1,8 @@
+/**
+ * Hold the blog island's app-injected feature flags and page entry.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/config.md
+ */
 import type { PageConfig } from "@indiecrafts/packages-shared-config";
 
 /**

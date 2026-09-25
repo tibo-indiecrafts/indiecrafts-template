@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the homepage icon-systems showcase.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/homepage/sections/IconShowcase.md
+ */
+
 import { useTranslations } from "next-intl";
 import {
   Icon,

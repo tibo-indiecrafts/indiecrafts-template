@@ -1,3 +1,8 @@
+/**
+ * Render the self-service account page for a signed-in user.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/account/page.md
+ */
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";

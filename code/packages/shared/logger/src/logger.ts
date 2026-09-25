@@ -1,3 +1,8 @@
+/**
+ * Create scoped structured loggers and the root logger.
+ *
+ * @see docs/reference/packages/shared/logger/src/logger.md
+ */
 import {
   LEVEL_WEIGHT,
   normalizeError,

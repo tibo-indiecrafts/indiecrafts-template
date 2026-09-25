@@ -1,3 +1,8 @@
+/**
+ * Build the per-request CSP nonce and the enforced/report-only header pair.
+ *
+ * @see docs/reference/packages/shared/security/src/csp-nonce.md
+ */
 import {
   buildCsp,
   buildTrustedTypesReportOnly,

@@ -1,3 +1,8 @@
+/**
+ * Renders the module.newsletter block server-side under the newsletter feature flag.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/form/Newsletter.md
+ */
 import type { NewsletterModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { blockFeatures } from "../features";
 import { NewsletterForm } from "./NewsletterForm";

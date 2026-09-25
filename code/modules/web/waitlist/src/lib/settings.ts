@@ -1,3 +1,8 @@
+/**
+ * Reads the editor-configurable waitlist settings singleton.
+ *
+ * @see docs/reference/modules/web/waitlist/src/lib/settings.md
+ */
 import "server-only";
 
 import { cache } from "react";

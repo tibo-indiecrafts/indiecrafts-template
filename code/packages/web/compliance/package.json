@@ -12,25 +12,26 @@
   "dependencies": {
     "@indiecrafts/packages-shared-compliance": "workspace:*",
     "@indiecrafts/packages-shared-config": "workspace:*",
+    "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-web-email": "workspace:*",
     "@indiecrafts/packages-web-i18n": "workspace:*",
-    "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-web-sanity": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
     "@indiecrafts/packages-web-ui-components": "workspace:*",
     "@portabletext/react": "^6.2.0",
-    "@sanity/icons": "^3.7.4",
+    "@sanity/icons": "^5.2.2",
     "next-intl": "^4.13.6",
-    "next-sanity": "^13.3.3",
-    "sanity": "^5.31.1"
+    "next-sanity": "^13.3.4"
   },
   "peerDependencies": {
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sanity": "*"
   },
   "devDependencies": {
     "@types/react": "^19",
-    "@types/react-dom": "^19"
+    "@types/react-dom": "^19",
+    "sanity": "^6.16.0"
   }
 }

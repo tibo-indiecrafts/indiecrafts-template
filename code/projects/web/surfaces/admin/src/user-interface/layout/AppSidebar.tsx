@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the dashboard's collapsible left navigation rail.
+ *
+ * @see docs/reference/projects/web/admin/src/user-interface/layout/AppSidebar.md
+ */
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
 import {

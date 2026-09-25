@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the data-export button and drives the export request.
+ *
+ * @see docs/reference/packages/shared/compliance/src/web/ExportSection.md
+ */
+
 import { useState } from "react";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

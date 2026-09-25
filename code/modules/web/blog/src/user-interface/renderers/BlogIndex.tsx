@@ -1,3 +1,8 @@
+/**
+ * Render the /blog index hero with title and intro.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogIndex.md
+ */
 import type { BlogIndexModule } from "@indiecrafts/modules-web-blog/sanity/types";
 
 /** Frontpage hero for /blog — title + intro. Posts go in BlogPostList. */

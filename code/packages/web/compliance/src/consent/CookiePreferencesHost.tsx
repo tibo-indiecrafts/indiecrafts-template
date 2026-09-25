@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Mount the cookie preferences dialog without a banner.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/CookiePreferencesHost.md
+ */
+
 import { useSyncExternalStore } from "react";
 import type { ConsentCategory } from "./consent-signals";
 import { CookiePreferences } from "./CookiePreferences";

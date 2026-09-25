@@ -1,3 +1,8 @@
+/**
+ * Stamp src/lib/build-info.ts with version, git sha, and build time.
+ *
+ * @see docs/reference/projects/web/app/scripts/version.md
+ */
 // Stamp src/lib/build-info.ts with version + git sha + build time. Runs inside
 // `build:cf`, so every deployed Worker carries its provenance — the version-check
 // polls `/api/version` and compares against this bundle's baked `commit`. The

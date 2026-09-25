@@ -1,3 +1,8 @@
+/**
+ * Assemble the waitlist's Sanity contribution — schema, desk, and email groups — as a SanityModule factory.
+ *
+ * @see docs/reference/modules/web/waitlist/src/sanity/index.md
+ */
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import { schemaTypes } from "./schema";
 import { waitlistStructure } from "./structure";

@@ -1,3 +1,9 @@
+/**
+ * Validates and stores a data-subject request, then alerts the owner.
+ *
+ * @see docs/reference/packages/web/compliance/src/requests/submit.md
+ */
+
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";

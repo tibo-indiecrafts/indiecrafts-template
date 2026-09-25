@@ -1,3 +1,8 @@
+/**
+ * Render the self-hosted Clerk sign-up page carrying the active locale.
+ *
+ * @see docs/reference/projects/web/app/src/app/locale/sign-up/sign-up/page.md
+ */
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { SignUpView } from "@indiecrafts/packages-web-auth/sign-up-view";

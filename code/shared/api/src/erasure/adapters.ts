@@ -1,3 +1,8 @@
+/**
+ * Assemble the real erasure adapters from env secrets.
+ *
+ * @see docs/reference/shared/api/src/erasure/adapters.md
+ */
 import type { ErasureAdapter } from "@indiecrafts/packages-shared-compliance/shared";
 import type { Env } from "../index";
 import { createCoreErasureAdapter, createAuditErasureAdapter } from "./d1";

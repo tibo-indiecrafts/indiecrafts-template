@@ -1,3 +1,8 @@
+/**
+ * Render the sticky app header with the sidebar and locale/theme toggles.
+ *
+ * @see docs/reference/projects/web/app/src/user-interface/layout/AppHeader.md
+ */
 import { getTranslations } from "next-intl/server";
 import { SidebarTrigger } from "@indiecrafts/packages-web-ui/web/sidebar";
 import { ThemeToggle } from "./ThemeToggle";

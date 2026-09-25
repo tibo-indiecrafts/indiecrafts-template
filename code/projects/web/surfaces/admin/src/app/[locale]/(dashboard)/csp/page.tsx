@@ -1,3 +1,8 @@
+/**
+ * Render the admin CSP-violations dashboard from the shared api feed.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/csp/page.md
+ */
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";

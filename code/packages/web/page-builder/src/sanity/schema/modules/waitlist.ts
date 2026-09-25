@@ -1,3 +1,8 @@
+/**
+ * Defines the waitlist page-builder module — an email capture block with GDPR consent.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/waitlist.md
+ */
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

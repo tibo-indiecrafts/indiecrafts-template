@@ -1,3 +1,8 @@
+/**
+ * Defines the stat-list page-builder module — a titled grid of value/label statistics.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/stat-list.md
+ */
 import { defineArrayMember, defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

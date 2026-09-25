@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@indiecrafts/packages-shared-config": "workspace:*",
-    "next-sanity": "^13.3.3",
+    "next-sanity": "^13.3.4",
     "server-only": "^0.0.1"
   },
   "peerDependencies": {

@@ -1,14 +1,16 @@
 /**
  * Fire-and-forget: log this sign-in to the shared api's `/v1/events` (EU D1 session
- * log). Uses the bundled public api url + token — an abuse gate, not per-user auth
- * (`EXPO_PUBLIC_*` ships in the binary). Never throws; the caller dedups per session.
+ * log). Uses the bundled public api url + the LEAST-PRIVILEGE `EXPO_PUBLIC_EVENTS_TOKEN`
+ * (api `EVENTS_TOKEN`) — an ingest abuse-gate for the `session`/`security` kinds only,
+ * NOT the admin `APP_API_TOKEN`. `EXPO_PUBLIC_*` ships in the binary, so it must stay a
+ * least-privilege token. Never throws; the caller dedups per session.
  */
 export async function logSignIn(
   userId: string,
   sessionId?: string,
 ): Promise<void> {
   const url = process.env.EXPO_PUBLIC_API_URL;
-  const token = process.env.EXPO_PUBLIC_API_TOKEN;
+  const token = process.env.EXPO_PUBLIC_EVENTS_TOKEN;
   if (!url || !token) return;
   try {
     await fetch(`${url}/v1/events`, {
@@ -38,7 +40,7 @@ export async function logSignIn(
  */
 export async function logFailedLogin(): Promise<void> {
   const url = process.env.EXPO_PUBLIC_API_URL;
-  const token = process.env.EXPO_PUBLIC_API_TOKEN;
+  const token = process.env.EXPO_PUBLIC_EVENTS_TOKEN;
   if (!url || !token) return;
   try {
     await fetch(`${url}/v1/events`, {

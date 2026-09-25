@@ -1,5 +1,11 @@
+/**
+ * Defines the Sanity announcement-bar singleton schema.
+ *
+ * @see docs/reference/packages/web/announcement/src/sanity/announcement-bar.md
+ */
+
 import { defineField, defineType } from "sanity";
-import { BellIcon } from "@sanity/icons";
+import { BellIcon } from "@sanity/icons/Bell";
 import { surfacesField } from "./surfaces";
 
 /**

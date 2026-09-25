@@ -1,3 +1,8 @@
+/**
+ * Sends the internal security-alert email for a high or critical incident.
+ *
+ * @see docs/reference/shared/api/src/security/alert.md
+ */
 // INTERNAL security-alert email. Reuses the inlined Resend POST from the erasure
 // module (server-only `@indiecrafts/packages-web-email` is unusable in this bare
 // Worker). The subject prefix + intro line are Studio-editable (the `securityAlert`

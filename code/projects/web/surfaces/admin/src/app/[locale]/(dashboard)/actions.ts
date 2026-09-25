@@ -1,5 +1,11 @@
 "use server";
 
+/**
+ * Run admin-gated role, session, and settings mutations, re-authorized and audited.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/actions.md
+ */
+
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { isAdmin, type Roles } from "@indiecrafts/packages-shared-auth";
 import { audit } from "@/lib/audit";

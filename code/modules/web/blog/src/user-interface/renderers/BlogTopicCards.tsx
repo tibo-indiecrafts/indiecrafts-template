@@ -1,3 +1,8 @@
+/**
+ * Render the frontpage topic-cards block linking to taxonomy pages.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogTopicCards.md
+ */
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { localizedPathname } from "@indiecrafts/packages-web-i18n";
 import { TopicCards } from "@indiecrafts/packages-web-ui-components/web/layout/TopicCards";

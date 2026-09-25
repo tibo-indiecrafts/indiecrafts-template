@@ -1,3 +1,8 @@
+/**
+ * Renders the localized 404 not-found page with a bundled fallback.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/not-found.md
+ */
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/config";

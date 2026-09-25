@@ -1,5 +1,10 @@
+/**
+ * Defines the per-locale UI dictionary schema, generated from the message shape.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/schema/ui-messages.md
+ */
 import { defineField, defineType, type FieldDefinition } from "sanity";
-import { HelpCircleIcon } from "@sanity/icons";
+import { HelpCircleIcon } from "@sanity/icons/HelpCircle";
 import fallback from "../../../messages/en.json";
 
 /**

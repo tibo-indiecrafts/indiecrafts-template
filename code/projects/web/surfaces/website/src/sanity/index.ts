@@ -1,3 +1,9 @@
+/**
+ * Assemble the core, feature-independent Sanity module for the Studio.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/index.md
+ */
+
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import {
   seoStructureItem,

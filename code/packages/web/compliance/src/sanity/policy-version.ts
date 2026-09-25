@@ -1,3 +1,9 @@
+/**
+ * Read the privacy-policy version stamped on consent records.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/policy-version.md
+ */
+
 import "server-only";
 
 import { cache } from "react";

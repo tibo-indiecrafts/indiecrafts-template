@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Drive the admin role grant/revoke action by Clerk user id.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/admin-role-form.md
+ */
+
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";

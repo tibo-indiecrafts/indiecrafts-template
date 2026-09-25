@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the per-category cookie consent toggle dialog.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/CookiePreferences.md
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

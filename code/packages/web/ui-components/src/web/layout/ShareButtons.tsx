@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders social share links and a copy-link button over a resolved URL and title.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/layout/ShareButtons.md
+ */
+
 import { useEffect, useState } from "react";
 import { Link2, Check } from "lucide-react";
 import { shareTargets } from "@indiecrafts/packages-shared-utils/share";

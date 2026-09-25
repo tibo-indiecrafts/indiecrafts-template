@@ -1,3 +1,9 @@
+/**
+ * Renders the React Native download-my-data section.
+ *
+ * @see docs/reference/packages/shared/compliance/src/native/ExportSection.md
+ */
+
 import { useState } from "react";
 import { Linking, View } from "react-native";
 import {

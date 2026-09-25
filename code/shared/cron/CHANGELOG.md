@@ -7,6 +7,13 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- **`user_profiles` final-anonymisation purge.** The retention pass now hard-deletes `user_profiles`
+  rows that were pseudonymised on erasure (`anonymized = 1`, email/name already scrubbed) once they
+  pass `retention.profile_anonymized_days` (default 90, operator-overridable) after `deleted_at` —
+  dropping the retained `email_fingerprint` row, which is the FINAL anonymisation (GDPR storage
+  limitation, Art. 5(1)(e)). Active accounts (`anonymized = 0`) are never touched. **Why:** the
+  `0001_user_profiles.sql` schema promised "hard-deleted after 90 days" but the purge was never
+  implemented — erasure only pseudonymised in place, so the linkable fingerprint lived forever.
 - **Churn free-text minimisation.** The retention pass now scrubs churn `feedback`/`competitor`
   (user-typed free text, where a departing user can self-enter PII) on rows older than
   `retention.churn_freetext_days` (default 365, operator-overridable), setting them NULL while keeping

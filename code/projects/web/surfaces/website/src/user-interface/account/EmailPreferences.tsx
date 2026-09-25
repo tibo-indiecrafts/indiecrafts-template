@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the transport-agnostic email preference centre.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/account/EmailPreferences.md
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Switch } from "@indiecrafts/packages-web-ui/web/switch";

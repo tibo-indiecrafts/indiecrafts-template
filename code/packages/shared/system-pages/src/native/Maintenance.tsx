@@ -1,3 +1,8 @@
+/**
+ * Render the native full-screen maintenance page.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/native/Maintenance.md
+ */
 import { View, Text, Linking, Pressable, StyleSheet } from "react-native";
 import type { MaintenanceProps } from "../shared/types";
 import { useColors } from "./theme";

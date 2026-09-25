@@ -1,3 +1,8 @@
+/**
+ * Handle same-origin CSP violation reports at the trust boundary.
+ *
+ * @see docs/reference/packages/web/security-reports/src/handle.md
+ */
 import {
   normalizeCspReports,
   sanitizeCspReport,

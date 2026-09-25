@@ -1,3 +1,8 @@
+/**
+ * Validate and create a blog comment as an unapproved document.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/comments.md
+ */
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";

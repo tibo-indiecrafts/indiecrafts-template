@@ -1,5 +1,11 @@
+/**
+ * Define the navigation singleton for the header menu and footer columns.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/schema/navigation.md
+ */
+
 import { defineField, defineType } from "sanity";
-import { MenuIcon } from "@sanity/icons";
+import { MenuIcon } from "@sanity/icons/Menu";
 
 /**
  * Navigation — a single, language-independent singleton (`_id: navigation`) that

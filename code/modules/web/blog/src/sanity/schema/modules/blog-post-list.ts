@@ -1,4 +1,9 @@
-import { BlockContentIcon } from "@sanity/icons";
+/**
+ * Define the post-list page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-post-list.md
+ */
+import { BlockContentIcon } from "@sanity/icons/BlockContent";
 import { defineField } from "sanity";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 

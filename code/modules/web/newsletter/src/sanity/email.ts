@@ -1,3 +1,8 @@
+/**
+ * Defines the newsletter transactional-email groups on the shared emailStrings singleton.
+ *
+ * @see docs/reference/modules/web/newsletter/src/sanity/email.md
+ */
 import {
   confirmationGroup,
   ownerAlertGroup,

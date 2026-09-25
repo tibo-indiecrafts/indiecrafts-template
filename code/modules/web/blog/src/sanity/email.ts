@@ -1,3 +1,8 @@
+/**
+ * Define the blog's comment-notification email group on emailStrings.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/email.md
+ */
 import { ownerAlertGroup } from "@indiecrafts/packages-web-email/sanity";
 
 /**

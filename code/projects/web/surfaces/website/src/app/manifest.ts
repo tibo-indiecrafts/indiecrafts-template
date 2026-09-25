@@ -1,3 +1,8 @@
+/**
+ * Build the Web App Manifest from Sanity settings and theme hex colors.
+ *
+ * @see docs/reference/projects/web/website/src/app/manifest.md
+ */
 import type { MetadataRoute } from "next";
 import { defaultLocale, theme } from "@/config";
 import { DEFAULT_SITE_NAME, getSiteSeo, getSiteSettings } from "@/lib/seo/site-seo";

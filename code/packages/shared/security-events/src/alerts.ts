@@ -1,3 +1,8 @@
+/**
+ * Decide which security incidents alert and build the internal alert email.
+ *
+ * @see docs/reference/packages/shared/security-events/src/alerts.md
+ */
 import type { Severity } from "./events";
 
 /** Severities that page the operator. `credential_stuffing` + `privilege_escalation`

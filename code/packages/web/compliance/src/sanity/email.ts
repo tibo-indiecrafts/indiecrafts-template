@@ -1,3 +1,9 @@
+/**
+ * Define the compliance surface's transactional-email groups.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/email.md
+ */
+
 import {
   confirmationGroup,
   ownerAlertGroup,

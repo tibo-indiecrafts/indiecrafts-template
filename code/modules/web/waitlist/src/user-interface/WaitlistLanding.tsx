@@ -1,3 +1,8 @@
+/**
+ * Render the waitlist landing view — settings-driven copy in the shared WaitlistForm.
+ *
+ * @see docs/reference/modules/web/waitlist/src/user-interface/WaitlistLanding.md
+ */
 import {
   defaultLocale,
   type Locale,

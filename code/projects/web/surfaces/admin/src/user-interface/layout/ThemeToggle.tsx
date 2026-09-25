@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Toggle and persist the admin light/dark theme.
+ *
+ * @see docs/reference/projects/web/admin/src/user-interface/layout/ThemeToggle.md
+ */
 import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

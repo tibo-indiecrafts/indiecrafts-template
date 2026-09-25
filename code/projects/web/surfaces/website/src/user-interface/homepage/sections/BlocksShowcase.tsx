@@ -1,3 +1,8 @@
+/**
+ * Renders the shared page-builder blocks showcase for the homepage.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/homepage/sections/BlocksShowcase.md
+ */
 import { getTranslations } from "next-intl/server";
 import { renderBlock } from "@indiecrafts/packages-web-ui-components/web/registry";
 import { portableComponents } from "@indiecrafts/packages-web-ui-components/web/portable-text-components";

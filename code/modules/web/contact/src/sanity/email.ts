@@ -1,3 +1,8 @@
+/**
+ * Define the contact module's confirmation and owner-alert email groups on the shared emailStrings singleton.
+ *
+ * @see docs/reference/modules/web/contact/src/sanity/email.md
+ */
 import {
   confirmationGroup,
   ownerAlertGroup,

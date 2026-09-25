@@ -1,3 +1,8 @@
+/**
+ * Render the signed-in mobile account screen.
+ *
+ * @see docs/reference/projects/mobile/main/app/account.md
+ */
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Redirect } from "expo-router";
 import * as WebBrowser from "expo-web-browser";

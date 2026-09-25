@@ -1,3 +1,8 @@
+/**
+ * Reads the emailStrings singleton and resolves a locale value to one string.
+ *
+ * @see docs/reference/packages/web/email/src/strings.md
+ */
 import "server-only";
 
 import { cache } from "react";

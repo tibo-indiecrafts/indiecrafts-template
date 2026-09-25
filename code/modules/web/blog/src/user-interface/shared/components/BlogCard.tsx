@@ -1,3 +1,8 @@
+/**
+ * Render a blog post preview card with media, category, title, excerpt, and author footer.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/shared/components/BlogCard.md
+ */
 import { getTranslations } from "next-intl/server";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import { type Locale } from "@indiecrafts/packages-shared-config";

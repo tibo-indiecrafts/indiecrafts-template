@@ -1,3 +1,8 @@
+/**
+ * Export a signed-in user's data to a single-use R2 download link.
+ *
+ * @see docs/reference/shared/api/src/export/route.md
+ */
 // GDPR data export (Art. 15/20) — an AUTHENTICATED route. A signed-in user downloads a
 // full export of their own data: the Clerk session JWT proves identity, `runExport`
 // gathers every store, the bundle lands in R2, and a single-use expiring link is

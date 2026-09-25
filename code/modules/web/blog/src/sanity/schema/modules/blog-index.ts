@@ -1,4 +1,9 @@
-import { HomeIcon } from "@sanity/icons";
+/**
+ * Define the blog-index hero page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-index.md
+ */
+import { HomeIcon } from "@sanity/icons/Home";
 import { defineField } from "sanity";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 

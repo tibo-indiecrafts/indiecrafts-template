@@ -1,3 +1,8 @@
+/**
+ * File a GDPR erasure request without leaking which emails exist.
+ *
+ * @see docs/reference/shared/api/src/erasure/request.md
+ */
 // GDPR erasure request — GET renders the request form, POST files a request.
 // Anti-enumeration (spec §8.2): the POST response is IDENTICAL whether or not the
 // email matches a subject, so an attacker cannot use this route to test which

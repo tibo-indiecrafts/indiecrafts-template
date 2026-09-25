@@ -1,3 +1,8 @@
+/**
+ * Bulk-upload non-public server secrets to a Cloudflare Worker environment.
+ *
+ * @see docs/reference/projects/web/website/scripts/sync-secrets.md
+ */
 // Sync server secrets to a Cloudflare Worker env via `wrangler secret bulk`.
 // Reads `.dev.vars` (fallback `.env.local`), keeps only non-public keys with real
 // values, and bulk-uploads them — so you provision N secrets per env in one command

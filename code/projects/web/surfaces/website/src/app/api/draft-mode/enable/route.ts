@@ -1,3 +1,8 @@
+/**
+ * Enter Sanity draft preview for live editing.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/draft-mode/enable/route.md
+ */
 import { defineEnableDraftMode } from "next-sanity/draft-mode";
 import { features } from "@/config";
 import { client } from "@indiecrafts/packages-web-sanity/client";

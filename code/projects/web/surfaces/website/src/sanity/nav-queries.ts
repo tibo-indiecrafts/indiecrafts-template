@@ -1,3 +1,9 @@
+/**
+ * Query the navigation singleton — header menu and footer columns.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/nav-queries.md
+ */
+
 import { defineQuery } from "next-sanity";
 
 /**

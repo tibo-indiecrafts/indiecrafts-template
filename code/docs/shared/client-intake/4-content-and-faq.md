@@ -1,3 +1,9 @@
+---
+title: "Page content & FAQ — fill-in form"
+description: "The full text of each page feeds both your website and the detailed version AI assistants read (llms-full)."
+status: stable
+---
+
 # Page content & FAQ — fill-in form
 
 The full text of each page feeds both your website **and** the detailed version

@@ -1,3 +1,8 @@
+/**
+ * Resolve a content-detail route to its translated path for the locale switcher.
+ *
+ * @see docs/reference/projects/web/website/src/lib/i18n/resolve-translated-path.md
+ */
 import type { TranslatedPathResolver } from "@indiecrafts/packages-web-i18n";
 
 /**

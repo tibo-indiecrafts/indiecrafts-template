@@ -1,3 +1,8 @@
+/**
+ * Define the quote-list module — a titled list of referenced quotes.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/quote-list.md
+ */
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

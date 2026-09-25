@@ -1,3 +1,8 @@
+/**
+ * Builds the desk item that opens the localeSuggest copy singleton.
+ *
+ * @see docs/reference/packages/web/locale-suggest/src/sanity/structure.md
+ */
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
 
 /** "Suggestion de langue" desk — the editable copy singleton. */

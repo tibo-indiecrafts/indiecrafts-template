@@ -1,3 +1,8 @@
+/**
+ * Configure the website-surface Storybook preview with a theme toolbar and token wrapper.
+ *
+ * @see docs/reference/projects/web/tools/storybook/.storybook-website/preview.md
+ */
 import type { Preview } from "@storybook/nextjs-vite";
 import { withThemeByDataAttribute } from "@storybook/addon-themes";
 import "../.storybook/preview.css";

@@ -1,3 +1,9 @@
+/**
+ * Assemble the email brick's Sanity module.
+ *
+ * @see docs/reference/packages/web/email/src/sanity/index.md
+ */
+
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import { buildEmailStrings } from "./email-strings";
 import { emailStructure } from "./structure";

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the account panel for data export and account erasure.
+ *
+ * @see docs/reference/packages/shared/compliance/src/web/AccountDataTab.md
+ */
+
 import type { DeleteAccountCopy, ExportCopy } from "../shared/account-copy";
 import type { AccountAuth } from "../shared/account-port";
 import { DeleteAccountSection } from "./DeleteAccountSection";

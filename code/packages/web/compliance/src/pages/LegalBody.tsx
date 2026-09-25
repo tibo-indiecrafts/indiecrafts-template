@@ -1,3 +1,9 @@
+/**
+ * Renders legal-page body content from PortableText.
+ *
+ * @see docs/reference/packages/web/compliance/src/pages/LegalBody.md
+ */
+
 import type { ComponentProps } from "react";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 

@@ -1,3 +1,9 @@
+/**
+ * Build the ordered list of the site's social profiles for the footer and JSON-LD.
+ *
+ * @see docs/reference/projects/web/website/src/lib/social.md
+ */
+
 import type { BrandName } from "@indiecrafts/packages-shared-ui-icons/shared";
 import type { SiteSettings } from "@/lib/seo/site-seo";
 

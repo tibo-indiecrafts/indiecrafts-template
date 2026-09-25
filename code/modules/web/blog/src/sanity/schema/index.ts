@@ -1,3 +1,8 @@
+/**
+ * Collect every blog schema type into one array for the Studio.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/index.md
+ */
 import type { SchemaTypeDefinition } from "sanity";
 
 // Documents

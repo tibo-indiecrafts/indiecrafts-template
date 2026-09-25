@@ -1,3 +1,8 @@
+/**
+ * Render the footer social-profile icon links from Sanity settings.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/SocialFollow.md
+ */
 import type { CSSProperties } from "react";
 import { BrandIcon, BRANDS } from "@indiecrafts/packages-shared-ui-icons/web";
 import { socialLinks } from "@/lib/social";

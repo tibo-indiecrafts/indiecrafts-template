@@ -1,3 +1,8 @@
+/**
+ * Log a consent decision for the current visitor.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/consent-log/route.md
+ */
 import { randomUUID } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { auth } from "@clerk/nextjs/server";

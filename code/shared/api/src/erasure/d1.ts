@@ -1,3 +1,8 @@
+/**
+ * Erase identity, consent, and audit data across the two EU D1s.
+ *
+ * @see docs/reference/shared/api/src/erasure/d1.md
+ */
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
 import type {
   ErasureAdapter,

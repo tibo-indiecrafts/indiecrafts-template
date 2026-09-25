@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the header sign-in button or account menu, only when Clerk is configured.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/AuthMenu.md
+ */
+
 import { useTranslations } from "next-intl";
 import { Show, SignInButton } from "@indiecrafts/packages-web-auth";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

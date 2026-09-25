@@ -1,3 +1,8 @@
+/**
+ * Render the production site footer from Sanity navigation, social, and legal links.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/Footer.md
+ */
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";

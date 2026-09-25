@@ -1,4 +1,9 @@
-import { DocumentTextIcon } from "@sanity/icons";
+/**
+ * Define the post-content page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-post-content.md
+ */
+import { DocumentTextIcon } from "@sanity/icons/DocumentText";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 
 /**

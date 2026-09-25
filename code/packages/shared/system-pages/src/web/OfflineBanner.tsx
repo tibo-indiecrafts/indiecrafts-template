@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render a strip while the browser is offline.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/web/OfflineBanner.md
+ */
 import { useOnlineStatus } from "./useOnlineStatus";
 
 /**

@@ -1,3 +1,8 @@
+/**
+ * Render the web 404 content card.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/web/NotFoundContent.md
+ */
 import type { ComponentType, ReactNode } from "react";
 import type { NotFoundContentProps as BaseProps } from "../shared/types";
 

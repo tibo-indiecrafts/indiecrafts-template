@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the CCPA Do Not Sell footer link.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/DoNotSellLink.md
+ */
+
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { openPreferences } from "./consent-store";
 

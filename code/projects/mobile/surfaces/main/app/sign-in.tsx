@@ -1,3 +1,8 @@
+/**
+ * Drive the mobile email-code and Google sign-in flow.
+ *
+ * @see docs/reference/projects/mobile/main/app/sign-in.md
+ */
 import { useReducer, useState } from "react";
 import { Switch, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";

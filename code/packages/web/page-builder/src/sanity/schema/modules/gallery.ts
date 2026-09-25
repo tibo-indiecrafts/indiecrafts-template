@@ -1,5 +1,10 @@
+/**
+ * Define the gallery module — a swipeable image carousel with zoom.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/gallery.md
+ */
 import { defineArrayMember, defineField } from "sanity";
-import { ImagesIcon } from "@sanity/icons";
+import { ImagesIcon } from "@sanity/icons/Images";
 import { defineModule } from "../objects/define-module";
 
 /**

@@ -1,3 +1,8 @@
+/**
+ * Resolve the visitor locale for the standalone `/maintenance` route.
+ *
+ * @see docs/reference/projects/web/website/src/app/maintenance/locale.md
+ */
 import { cookies } from "next/headers";
 import {
   defaultLocale,

@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Renders the non-intrusive "available in your language" suggestion strip.
+ *
+ * @see docs/reference/packages/web/locale-suggest/src/LocaleSuggest.md
+ */
 import { useState } from "react";
 import { useLocaleSwitch } from "@indiecrafts/packages-web-i18n";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

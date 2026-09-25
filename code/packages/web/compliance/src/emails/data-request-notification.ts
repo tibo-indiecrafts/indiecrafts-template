@@ -1,3 +1,9 @@
+/**
+ * Renders the owner alert email for a new GDPR data-subject request.
+ *
+ * @see docs/reference/packages/web/compliance/src/emails/data-request-notification.md
+ */
+
 import {
   EMAIL_COLORS,
   escapeHtml,

@@ -1,3 +1,9 @@
+/**
+ * Renders the React Native per-category consent toggles.
+ *
+ * @see docs/reference/packages/shared/compliance/src/native/ConsentPreferences.md
+ */
+
 import { View, Switch, StyleSheet } from "react-native";
 import { ThemedText, useTheme } from "@indiecrafts/packages-mobile-ui-native";
 import type { ConsentCategory } from "../shared/consent-signals";

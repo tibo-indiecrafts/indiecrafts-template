@@ -1,3 +1,8 @@
+/**
+ * Read the editor-configurable contact form copy and enabled toggle from Sanity.
+ *
+ * @see docs/reference/modules/web/contact/src/lib/settings.md
+ */
 import "server-only";
 
 import { cache } from "react";

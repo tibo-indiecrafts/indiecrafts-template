@@ -1,3 +1,8 @@
+/**
+ * Render end-of-article author cards from resolved author data.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/AuthorBio.md
+ */
 import Image from "next/image";
 
 /** One author for the "Written by" block — resolved fields (bio is plain text). */

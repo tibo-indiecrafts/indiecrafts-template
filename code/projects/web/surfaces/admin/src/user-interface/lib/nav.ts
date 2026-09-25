@@ -1,3 +1,8 @@
+/**
+ * Define the admin sidebar navigation and resolve the active item.
+ *
+ * @see docs/reference/projects/web/admin/src/user-interface/lib/nav.md
+ */
 import {
   LayoutDashboard,
   Users,

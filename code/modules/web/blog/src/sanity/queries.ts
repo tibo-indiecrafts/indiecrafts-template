@@ -1,3 +1,8 @@
+/**
+ * Define the blog's GROQ queries and shared projections.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/queries.md
+ */
 import { defineQuery } from "next-sanity";
 import { MODULES_FRAGMENT as GENERIC_MODULES_FRAGMENT } from "@indiecrafts/packages-web-page-builder/sanity/queries";
 

@@ -1,3 +1,8 @@
+/**
+ * Build the hardened Next headers() array and static CSP rules.
+ *
+ * @see docs/reference/packages/shared/security/src/headers.md
+ */
 import type { Environment } from "@indiecrafts/packages-shared-config";
 import {
   buildCsp,

@@ -1,4 +1,9 @@
-import { ImageIcon } from "@sanity/icons";
+/**
+ * Define the blog-hero page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-hero.md
+ */
+import { ImageIcon } from "@sanity/icons/Image";
 import { defineField } from "sanity";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 

@@ -1,3 +1,8 @@
+/**
+ * Defines the core, feature-independent SEO GROQ queries.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/seo-queries.md
+ */
 import { defineQuery } from "next-sanity";
 
 /**

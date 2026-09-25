@@ -1,3 +1,8 @@
+/**
+ * List blog authors for the active locale.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/author/page.md
+ */
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages } from "@/config";
 import type { Locale } from "@/config";

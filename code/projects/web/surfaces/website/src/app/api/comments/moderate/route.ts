@@ -1,3 +1,8 @@
+/**
+ * Handle one-click comment moderation from the notification email.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/comments/moderate/route.md
+ */
 import { NextResponse } from "next/server";
 import { security, site } from "@/config";
 import { escapeHtml } from "@indiecrafts/packages-web-email";

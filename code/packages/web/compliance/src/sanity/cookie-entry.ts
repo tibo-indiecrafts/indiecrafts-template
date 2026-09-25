@@ -1,3 +1,9 @@
+/**
+ * Defines the Sanity object schema for one cookie declaration row.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/cookie-entry.md
+ */
+
 import { defineField, defineType } from "sanity";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 

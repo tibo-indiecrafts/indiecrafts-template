@@ -1,5 +1,10 @@
+/**
+ * Defines the newsletterSettings Sanity singleton schema.
+ *
+ * @see docs/reference/modules/web/newsletter/src/sanity/schema/newsletter-settings.md
+ */
 import { defineField, defineType } from "sanity";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 
 /**
  * Newsletter settings (singleton). The code flag `features.newsletter` is the

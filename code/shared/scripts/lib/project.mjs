@@ -19,9 +19,11 @@ import { resourceName } from "./apps.mjs";
 export const TEMPLATE_PREFIX = "indiecrafts";
 
 /** Assignment lines whose quoted value carries the prefix — the resource-name lines a
- *  rename rewrites. `dataset` = an Analytics Engine dataset name (else it drifts on rename). */
+ *  rename rewrites. `dataset` = an Analytics Engine dataset name (else it drifts on rename);
+ *  `BACKUP_BUCKET` = the R2 backup-bucket name carried as a `[vars]` string (the backup
+ *  script reads it), so it must rename too or a client's backups target the template bucket. */
 const RESOURCE_LINE =
-  /^\s*(name|bucket_name|database_name|dataset|service|queue|worker_name)\s*=/;
+  /^\s*(name|bucket_name|database_name|dataset|service|queue|worker_name|BACKUP_BUCKET)\s*=/;
 
 /**
  * Swap the resource-name `<from>-` prefix → `<to>-` across a wrangler.toml / tfvars body.
@@ -50,9 +52,12 @@ export function renameResourcePrefix(text, from, to) {
 const WRANGLER = resolve("wrangler.toml");
 const ENV_LOCAL = resolve(".env.local");
 const HERE = dirname(fileURLToPath(import.meta.url)); // code/shared/scripts/lib
+// The file that DEFINES `DEFAULT_SITE_PREFIX` (the rename target). It lives in
+// `src/web/site.ts`; `src/index.ts` only RE-EXPORTS it, so pointing here is required —
+// otherwise the rename finds no assignment and aborts ("nothing changed").
 export const CONFIG_INDEX = resolve(
   HERE,
-  "../../../packages/shared/config/src/index.ts",
+  "../../../packages/shared/config/src/web/site.ts",
 );
 
 function readFileOr(path, fallback = "") {

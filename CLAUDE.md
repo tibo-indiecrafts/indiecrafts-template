@@ -5,7 +5,7 @@ the folder map, the always-true non-negotiables, and pointers. The web app's ful
 _how to code_ lives in **[`code/projects/web/surfaces/website/.claude/CLAUDE.md`](code/projects/web/surfaces/website/.claude/CLAUDE.md)** (auto-loads when you
 touch files under `code/projects/web/surfaces/website/**`); design tokens in **[`code/packages/shared/ui-tokens/DESIGN.md`](code/packages/shared/ui-tokens/DESIGN.md)**.
 
-**Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui · Sanity v5 · next-intl v4 · pnpm 10 + Turborepo (Node 22). Config-first monorepo for marketing sites + a blog/page-builder.
+**Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui · Sanity v6 · next-intl v4 · pnpm 10 + Turborepo (Node 22). Config-first monorepo for marketing sites + a blog/page-builder.
 
 **Top non-negotiables** (the app brief has the full list):
 
@@ -24,7 +24,7 @@ projects under `code/projects/`) is the whole tree. Conventions live **in-repo**
 (`code/projects/web/surfaces/website/.claude/rules/`), and the product docs (`code/docs/`).
 
 - **`code/`** — EXECUTION: the pnpm + Turbo workspace. **`projects/`** holds the **per-platform** deployables, nested **platform → kind → leaf** (`code/projects/<platform>/<kind>/<name>`): `web/surfaces/{website,admin,app}` · `web/tools/storybook` · `mobile/surfaces/main` (`website` is live + the hub Studio; the rest are activated scaffolds). **`shared/`** is the **top-level cross-cutting tier** (a sibling of `projects/`) — everything shared across platforms: the `worker-cf` services (`api · cron · workers`) **and** the ops layer `db · infra` (`domains` is toolchain-only, no folder) + the concern-grouped **toolchain** with its four machine registries at `code/shared/scripts/lib/{apps,databases,infra-registry,domains}.mjs` (each carries its entity's `dir`; runners in `code/shared/scripts/{deploy,data,infra,checks,dev}/`). Per-platform sharing stays under its platform (`code/projects/<platform>/shared/…`). Then `packages/` (shared bricks), `modules/` (product features: blog/shop/events…), and the npm-isolated `docs/`. Roster → `code/projects/_registry.md`. **Infra co-locates** per stack (`<app.dir>/infra/<provider>/`); deploy + CI read the registries. Workspace root is the **repo root** (`package.json`, `pnpm-workspace.yaml`, `turbo.json`).
-- **`code/docs/`** — CANON (product docs): a VitePress site at the top of `code/` (sibling of `projects/ packages/ modules/`), **foldered like the code**: `shared/`, `apps/web/` (`setup/ config/ design/ seo/ features/blog/`), and `modules/ packages/ db/ infra/` stubs. **npm-isolated** — matches no pnpm-workspace glob, so it stays out (own lockfile). Run via `pnpm docs` / `pnpm docs:build`.
+- **`code/docs/`** — CANON (product docs): a VitePress site at the top of `code/` (sibling of `projects/ packages/ modules/ shared/`), **foldered to mirror the code spine**: `projects/web/{website,admin,app,tools}` + `projects/mobile/main` · `packages/{shared,web,mobile}/<name>.md` · `modules/web/<name>/` · `shared/{api,cron,workers,db,infra,scripts,architecture,client-intake}` · `contributing/` (the `how-we-document` governance page + ADRs). `quick-start.md` leads; `pnpm check:doc-coverage` asserts every code unit has a page; dead links fail the build. **npm-isolated** — matches no pnpm-workspace glob, so it stays out (own lockfile). Run via `pnpm docs` / `pnpm docs:build`.
 - **`code/projects/web/tools/storybook/`** — the component gallery (Storybook), documenting the design-system bricks (`ui` · `ui-components` · `ui-tokens` + `announcement`/`locale-suggest` stories). A workspace member; static build. Run via `pnpm --filter @indiecrafts/web-tools-storybook storybook`.
 
 Run scripts from the repo root. `pnpm build/tsc/lint/…` fan out via turbo; `pnpm dev` runs the local stack — the `website` (Next, :3000) + the three backend workers `api`/`cron`/`workers` (`wrangler dev` on distinct `--port`/`--inspector-port`s so they don't collide). The other surfaces (`admin`/`app`) are run individually (`pnpm --filter <pkg> dev`).
@@ -48,6 +48,8 @@ Guardrails against common LLM coding mistakes — bias to caution over speed (us
 ```bash
 pnpm dev                                  # local stack: website (:3000) + api/cron/workers (wrangler dev, ports 8787/8789/8790 / inspectors 9229/9231/9232)
 pnpm build / tsc / lint / format          # standard (turbo → @indiecrafts/web-surfaces-website)
+pnpm tsc:fast                             # FAST typecheck via tsgo (TS 7 Go port, ~10× faster) — the local inner loop; CI keeps real `tsc`
+pnpm oxlint                               # FAST repo-wide AST lint (~3s, Rust) — advisory; covers admin/app/storybook too
 pnpm verify                               # CI gate — `turbo run verify` fans out to EVERY app (website: tsc+lint+format+contrast+react-doctor+test · workers: tsc+test · admin/mobile: tsc) + issue-tag/scripts/canary checks
 pnpm verify:quick                         # tsc + lint — the commit hook + CI run this; rarely needed by hand
 pnpm --filter @indiecrafts/web-surfaces-website shadscan   # shadcn/ui fundamentals audit — scores UX 0–100 (62 rules); --prompt for an AI fix-plan (a website script, not a root one)

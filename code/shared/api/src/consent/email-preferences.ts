@@ -1,3 +1,8 @@
+/**
+ * Handle the authenticated and no-login email-preference routes plus RFC 8058 one-click unsubscribe.
+ *
+ * @see docs/reference/shared/api/src/consent/email-preferences.md
+ */
 // Per-category email preferences. Two ways in:
 //   AUTHENTICATED (Clerk JWT) — the account preference centre + mobile, reading/writing the
 //     caller's own choices.

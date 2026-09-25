@@ -1,3 +1,8 @@
+/**
+ * Define the newsletter module — an email newsletter capture block.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/newsletter.md
+ */
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

@@ -1,3 +1,8 @@
+/**
+ * Render the frontpage big-hero block from a pinned or latest post.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogHeroModule.md
+ */
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { localizedPathname } from "@indiecrafts/packages-web-i18n";

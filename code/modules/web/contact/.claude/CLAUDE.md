@@ -1,6 +1,6 @@
 # Contact module — CLAUDE.md
 
-**Stack:** Sanity v5 · TypeScript · `@indiecrafts/packages-web-sanity/write` (server-only) · `@indiecrafts/packages-web-email`. Contact form — submit engine + message inbox + settings singleton. Modeled on `@indiecrafts/modules-web-waitlist`.
+**Stack:** Sanity v6 · TypeScript · `@indiecrafts/packages-web-sanity/write` (server-only) · `@indiecrafts/packages-web-email`. Contact form — submit engine + message inbox + settings singleton. Modeled on `@indiecrafts/modules-web-waitlist`.
 
 Auto-loads under `code/modules/web/contact/**`. Feature-flagged by `features.contact` (app-owned in `@/config`, injected into the module). **Collect + notify** — every submission is stored and (best-effort) emailed; no dedupe (a person may write more than once).
 

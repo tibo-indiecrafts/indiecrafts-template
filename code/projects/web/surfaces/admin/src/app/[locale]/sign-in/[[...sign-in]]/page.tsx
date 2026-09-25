@@ -1,3 +1,8 @@
+/**
+ * Render the admin sign-in route with non-admin and unconfigured fallbacks.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/sign-in/sign-in/page.md
+ */
 import { auth } from "@clerk/nextjs/server";
 import { SignInView } from "@indiecrafts/packages-web-auth/sign-in-view";
 import { isAdmin } from "@indiecrafts/packages-shared-auth";

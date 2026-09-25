@@ -1,3 +1,8 @@
+/**
+ * Render a single blog post with its layout, related posts and comments.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/blog/slug/page.md
+ */
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { features, pages, site, type Locale } from "@/config";

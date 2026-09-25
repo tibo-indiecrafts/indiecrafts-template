@@ -1,3 +1,9 @@
+---
+title: "Modules — product-feature docs"
+description: "Vertical product slices — blog · shop · events · community · … — each feature-flagged, composed from code/packages/ bricks, and mounted by an app."
+status: stable
+---
+
 # Modules — product-feature docs
 
 **Vertical product slices** — blog · shop · events · community · … — each feature-flagged,

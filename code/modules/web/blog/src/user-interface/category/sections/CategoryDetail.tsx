@@ -1,3 +1,8 @@
+/**
+ * Renders the /blog/category/[slug] section — header plus a paged post grid.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/category/sections/CategoryDetail.md
+ */
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import type {
   Category,

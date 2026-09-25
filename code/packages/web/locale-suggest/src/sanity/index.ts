@@ -1,3 +1,8 @@
+/**
+ * Bundles the localeSuggest singleton and desk section as a SanityModule.
+ *
+ * @see docs/reference/packages/web/locale-suggest/src/sanity/index.md
+ */
 import type { SchemaTypeDefinition } from "sanity";
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import localeSuggest from "./locale-suggest";

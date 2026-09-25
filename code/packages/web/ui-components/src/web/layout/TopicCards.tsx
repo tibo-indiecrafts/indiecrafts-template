@@ -1,3 +1,8 @@
+/**
+ * Render one to three large image cards linking to a category or tag listing.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/layout/TopicCards.md
+ */
 import Image from "next/image";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { ModuleSection } from "./ModuleSection";

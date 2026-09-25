@@ -1,3 +1,8 @@
+/**
+ * Build the sitemap of every route and locale with hreflang alternates.
+ *
+ * @see docs/reference/projects/web/website/src/app/sitemap.md
+ */
 import type { MetadataRoute } from "next";
 import {
   defaultLocale,

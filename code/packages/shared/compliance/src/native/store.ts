@@ -1,3 +1,9 @@
+/**
+ * Builds an AsyncStorage-backed consent store adapter.
+ *
+ * @see docs/reference/packages/shared/compliance/src/native/store.md
+ */
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Store } from "../shared/consent";
 

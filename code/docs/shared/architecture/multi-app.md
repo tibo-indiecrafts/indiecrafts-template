@@ -1,3 +1,9 @@
+---
+title: "Multi-app architecture"
+description: "How the platform scales from one app to several — and how content, Studio, and infra are shared."
+status: stable
+---
+
 # Multi-app architecture
 
 How the platform scales from one app to several — and how content, Studio, and infra are shared. This
@@ -6,7 +12,7 @@ is the **target model**; today there is one app (`web`), which _is_ the hub. New
 ## Three axes — name them, everything follows
 
 - **Tenant** = one client = **one Sanity project/dataset + one Cloudflare zone**. The multi-_instance_
-  axis, already handled by [`pnpm project:rename`](/apps/web/setup/new-client) (namespace) + a per-client
+  axis, already handled by [`pnpm project:rename`](/projects/web/website/setup/new-client) (namespace) + a per-client
   project/dataset. Every app a tenant runs shares this one content graph.
 - **App** = a deployable Next app = a **read-lens** over the tenant's content + its own Worker/domain.
   The multi-_app_ axis (web · a future admin · a standalone blog · …).
@@ -55,7 +61,7 @@ legible in one file.
 
 `@indiecrafts/packages-shared-config` is now **shared primitives + the generic page-config contract** (i18n mechanics,
 Intl format, env/CSP, logging, `PageConfig`/`isPageVisible`); the app owns its instance config in
-`apps/web/src/config` (`theme` · `fonts` · `features` · the `pages` map + the derived
+`projects/web/website/src/config` (`theme` · `fonts` · `features` · the `pages` map + the derived
 `StaticAppPathname`), imported via `@/config`. A second app gets its own `src/config`.
 
 - **`site` stays in `@indiecrafts/packages-shared-config`** — it's pure deploy env (`NEXT_PUBLIC_SITE_URL` /
@@ -68,7 +74,7 @@ Intl format, env/CSP, logging, `PageConfig`/`isPageVisible`); the app owns its i
   routes gate on `features` directly. The app wires all of it once at boot in
   `src/instrumentation.ts` → `@/lib/islands` (`configureIslands`), so an island recombines across apps
   without assuming one app's flag shape. Each holder defaults to the template's set, so a single app is
-  correct even before `configureIslands` runs. (See [`packages/config`](/packages/config).)
+  correct even before `configureIslands` runs. (See [`packages/shared/config`](/packages/shared/config).)
 
 ## Brick & module tiers — what a surface pulls in
 
@@ -95,26 +101,26 @@ waitlist · contact`. A non-content surface depends on **none** of these.
 Rule of thumb: **content is a module or a `web/` brick, and only the content surface (`website`) pulls
 it in.** Add `sanity`/`email`/page-builder/a module to another surface only when a real page needs it —
 `app` deliberately declares none. Scope is decided by _what a brick can run on_, not who uses it today
-(see [`packages/_registry.md`](/packages/)). When a native app eventually needs a web-coupled brick
+(see [`packages/_registry.md`](/packages/README)). When a native app eventually needs a web-coupled brick
 (Sanity reads, block types, i18n), split its portable core into `shared/` then — `config`'s `./shared`
 vs `./web` split is the proven pattern.
 
 How the two UI platforms assemble the **same shell** (theme · i18n · fonts · status pages · UI) from
 these tiers — and the Next-agnostic rule that keeps web bricks portable — is its own page:
-[**Cross-platform shell**](./cross-platform-shell.md).
+[**Cross-platform shell**](/shared/architecture/cross-platform-shell).
 
 ## Infra & deploy per app
 
 **Deploy** is registry-driven: one row in [`code/shared/scripts/lib/apps.mjs`](../../../code/shared/scripts/lib/apps.mjs) per
 app, shared runners dispatched by platform class, and CI that fans out from the registry — full model in
-[**Platform deploy**](./platform-deploy.md).
+[**Platform deploy**](/shared/architecture/platform-deploy).
 
 **Terraform** (the Cloudflare edge config `wrangler.toml` can't express) is already multi-app: each app's
 per-app root is **co-located with the app and self-contained** at `code/projects/<platform>/<kind>/<app>/infra/` (one
 `main.tf` with all edge resources inlined — no shared module), keyed by `worker_name`, state isolated per
 env workspace. A new app = copy `code/projects/web/surfaces/website/infra/` → `code/projects/<platform>/<kind>/<app>/infra/` + its tfvars +
 `infra:<app>:*` delegators. **One app = one Cloudflare zone** (the zone-level rules are singletons — see
-[Cloudflare IaC](/infra/cloudflare-iac#add-app-2)). `pnpm project:rename <slug>` keeps the config
+[Cloudflare IaC](/shared/infra/cloudflare-iac#add-app-2)). `pnpm project:rename <slug>` keeps the config
 prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
 
 ## Where it stands
@@ -122,11 +128,11 @@ prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
 - **Now:** eight activated app slots across three platform classes; `web` is the full app + the hub
   Studio + the only content lens; one tenant dataset. The non-website shells (`app` · `mobile`)
   now share a compliance + version + locale layer over the portable bricks
-  ([`compliance-shared`](/packages/compliance-shared) · [`version-shared`](/packages/version-shared)) —
+  ([`compliance-shared`](/packages/shared/compliance) · [`version-shared`](/packages/shared/version)) —
   legal link-out, a compliant-ready consent + re-acceptance UI, an update prompt, and a persisted locale
-  choice; see [Cross-platform shell](./cross-platform-shell). **Done:** the config split (app-owned
+  choice; see [Cross-platform shell](/shared/architecture/cross-platform-shell). **Done:** the config split (app-owned
   `theme`/`fonts`/`features`/`pages`; islands read injected config), `composeStudio` (the per-app-grouped
-  hub desk), and registry-driven deploy + CI ([Platform deploy](./platform-deploy.md)). **Still readiness
+  hub desk), and registry-driven deploy + CI ([Platform deploy](/shared/architecture/platform-deploy)). **Still readiness
   work:** the `Island` manifest + `composeApp` (Decision C — one line per island composing
   `transpilePackages`/features/pages), and graduation of a module into its own app (e.g. `apps/blog`) — a
   cheap follow-up _because_ of the split, not built yet.

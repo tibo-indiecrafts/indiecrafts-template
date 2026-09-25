@@ -1,3 +1,9 @@
+/**
+ * Resolve a content slug to its other-locale path via the document-i18n links.
+ *
+ * @see docs/reference/projects/web/website/src/lib/seo/translations.md
+ */
+
 import "server-only";
 
 import { client } from "@indiecrafts/packages-web-sanity/client";

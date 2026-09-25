@@ -4,7 +4,7 @@ The web app (`code/projects/web/surfaces/website`). Auto-loads when you work und
 rules + the four-root layout live in the **root `CLAUDE.md`**; this file is the app's
 _how to code_. **Design-context pair:** this file = _how to build_ · **[`DESIGN.md`](../../../../../packages/shared/ui-tokens/DESIGN.md)** = _how it looks_ (tokens, imported below). (Product truth — users/purpose/positioning — is authored per project, not shipped in the template.)
 
-**Stack:** Next.js 16.x (App Router) · React 19.x · TypeScript 5.x (strict) · Tailwind v4 · shadcn/ui · Sanity v5 · next-intl v4 · pnpm 10 / Node 22. Production-only — the Storybook component library is an internal component-library repo.
+**Stack:** Next.js 16.x (App Router) · React 19.x · TypeScript 5.x (strict) · Tailwind v4 · shadcn/ui · Sanity v6 · next-intl v4 · pnpm 10 / Node 22. Production-only — the Storybook component library is an internal component-library repo.
 
 **Focused rules auto-load** (self-contained) from `.claude/rules/` when you work here: naming · accessibility · adaptive-design · component-architecture · design-token-usage · figma-handoff · sanity-images · sanity-legends · visual-verification — plus the ❌/✅ [`code-patterns`](rules/code-patterns.md) library and the [`self-review`](rules/self-review.md) checklist. Global `writing-style` auto-loads from the root.
 

@@ -1,8 +1,11 @@
 # Local secrets for `wrangler dev` — copy to `.dev.vars` (gitignored) and fill.
 # In staging/prod these are set with `wrangler secret put <NAME> --env <env>`.
 
-# Audit + session sink (POST /v1/events → EU D1):
-# APP_API_TOKEN=""   # the bearer token the mobile app sends (Authorization: Bearer …)
+# Audit + session sink (POST /v1/events → EU D1) + the admin read/write routes:
+# APP_API_TOKEN=""   # TRUSTED admin/backend bearer — gates the admin routes AND the privileged
+#                    # /v1/events kinds (admin/consent/csp-report). Server-side only; NEVER bundle it.
+# EVENTS_TOKEN=""    # LEAST-PRIVILEGE ingest bearer the mobile app sends (as EXPO_PUBLIC_EVENTS_TOKEN):
+#                    # POST /v1/events session/security kinds ONLY, reads nothing. DISTINCT value from APP_API_TOKEN.
 # IP_HASH_SALT=""    # salt for hashing IPs before storage (never a raw IP is stored)
 
 # Announcements (GET /v1/announcements → Sanity). PROJECT_ID/DATASET go in wrangler.toml
@@ -15,6 +18,11 @@ CLERK_WEBHOOK_SECRET=""
 
 # GDPR email-fingerprint salt — DISTINCT per env, STABLE within an env, never rotated on a live env.
 GDPR_FINGERPRINT_SALT=""
+
+# At-rest PII encryption (AES-256-GCM) for data_requests (the replyable email + free-text
+# message). Unset → those fields store plaintext (backward compatible; the read path decrypts
+# either). Server-side only — never a public prefix.
+# PII_ENCRYPTION_KEY=""
 
 # Transactional email (erasure token/completion + Clerk email take-over). RESEND_API_KEY is
 # a secret → set it here; unset → email sends no-op (never throw). The sender EMAIL_FROM now

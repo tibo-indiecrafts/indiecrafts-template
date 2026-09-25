@@ -1,3 +1,8 @@
+/**
+ * Serve the blog's RSS 2.0 feed for a locale.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/blog/rss.xml/route.md
+ */
 import { getTranslations } from "next-intl/server";
 import { site } from "@/config";
 import type { Locale } from "@/config";

@@ -1,3 +1,8 @@
+/**
+ * Render a sidebar list of related-topic links.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/MoreOnTopic.md
+ */
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /** One link in a "More on this topic" list — a resolved title + href (+ optional meta). */

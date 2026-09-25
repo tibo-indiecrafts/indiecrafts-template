@@ -1,3 +1,8 @@
+/**
+ * Build the shared PortableText render map for module bodies.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/portable-text-components.md
+ */
 import Image from "next/image";
 import type {
   PortableTextBlock,

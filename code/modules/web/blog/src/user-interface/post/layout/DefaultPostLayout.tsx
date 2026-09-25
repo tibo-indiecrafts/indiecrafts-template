@@ -1,3 +1,8 @@
+/**
+ * Render the default single-post page when no module layout is configured.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/post/layout/DefaultPostLayout.md
+ */
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";

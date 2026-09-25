@@ -1,3 +1,8 @@
+/**
+ * Render a brand or social mark by name for the web.
+ *
+ * @see docs/reference/packages/shared/ui-icons/src/web/BrandIcon.md
+ */
 import type { SVGProps } from "react";
 import { BRANDS, type BrandName } from "../shared/brands";
 

@@ -11,9 +11,10 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// `prepare` is the husky lifecycle — it runs on install, not on demand, so it is
-// intentionally NOT a task (see the header in .vscode/tasks.json).
-const IGNORE = new Set(["prepare"]);
+// Lifecycle scripts run automatically, not on demand, so they are intentionally NOT
+// tasks (see the header in .vscode/tasks.json): `prepare` (husky, on install) and
+// `predev` (the dev:doctor preflight, runs before `dev`).
+const IGNORE = new Set(["prepare", "predev"]);
 
 /**
  * Pure compare. Returns the drift both ways:

@@ -1,3 +1,8 @@
+/**
+ * Render the collapsed "On this page" jump list shown below the lg breakpoint.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/post/components/MobileToc.md
+ */
 import { ChevronDown } from "lucide-react";
 import type { Heading } from "@indiecrafts/modules-web-blog/sanity/types";
 import { slugify } from "@indiecrafts/packages-shared-utils/slugify";

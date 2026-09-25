@@ -5,7 +5,7 @@ switch when the active locale ≠ the browser preference — a Sanity copy singl
 the pure `detectPreferredLocale`. Consumed by the website `DefaultLayout`. Area rules →
 `../../../.claude/CLAUDE.md`.
 
-**Stack:** React 19 · Sanity v5 · next-sanity. Deps: web-ui · web-i18n (`useLocaleSwitch`) · web-sanity · shared-config.
+**Stack:** React 19 · Sanity v6 · next-sanity. Deps: web-ui · web-i18n (`useLocaleSwitch`) · web-sanity · shared-config.
 
 - **Exports:** `./*` → `src/*` (no root `.`) — import a subpath (`.../detect`, `.../LocaleSuggest`,
   `.../locale-suggest-store`, `.../sanity/...`).

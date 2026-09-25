@@ -1,3 +1,8 @@
+/**
+ * Report a GDPR erasure request's status by token, with no PII.
+ *
+ * @see docs/reference/shared/api/src/erasure/status.md
+ */
 // GDPR erasure status — a public, read-only, no-PII poll of a request's lifecycle
 // state by the plaintext token from the subject's email. Never returns the
 // fingerprint, user id, token hash, or the engine receipt.

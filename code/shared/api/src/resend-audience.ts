@@ -1,3 +1,8 @@
+/**
+ * Mirrors marketing-email consent decisions to Resend's global Contacts.
+ *
+ * @see docs/reference/shared/api/src/resend-audience.md
+ */
 // Mirror a marketing-email consent decision to Resend's global Contacts. Resend renamed
 // Audiences to Segments and made Contacts global, so there is no audience id: create is
 // `POST /contacts`, and a contact is addressed by email in the path (`/contacts/{email}`).

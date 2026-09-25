@@ -1,3 +1,8 @@
+/**
+ * Renders the newsletter double opt-in confirmation email.
+ *
+ * @see docs/reference/modules/web/newsletter/src/emails/newsletter-confirm.md
+ */
 import {
   EMAIL_COLORS,
   escapeHtml,

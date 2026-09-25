@@ -1,3 +1,8 @@
+/**
+ * List the marketing site's legal pages as external links.
+ *
+ * @see docs/reference/projects/web/app/src/app/locale/(app)/legal/page.md
+ */
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { site, type Locale } from "@/config";

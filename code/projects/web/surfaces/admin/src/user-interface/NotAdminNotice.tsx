@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Offer a signed-in non-admin a way out of the admin sign-in route.
+ *
+ * @see docs/reference/projects/web/admin/src/user-interface/NotAdminNotice.md
+ */
 import { SignOutButton } from "@indiecrafts/packages-web-auth";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 

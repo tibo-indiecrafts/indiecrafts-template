@@ -1,5 +1,10 @@
+/**
+ * Defines the per-locale site SEO singleton schema (siteMeta).
+ *
+ * @see docs/reference/projects/web/website/src/sanity/schema/site-meta.md
+ */
 import { defineField, defineType } from "sanity";
-import { EarthGlobeIcon } from "@sanity/icons";
+import { EarthGlobeIcon } from "@sanity/icons/EarthGlobe";
 
 /**
  * One taxonomy-index page's editorial copy (heading + intro + empty states).

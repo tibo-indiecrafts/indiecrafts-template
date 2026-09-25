@@ -1,3 +1,8 @@
+/**
+ * Validates and stores a newsletter subscription.
+ *
+ * @see docs/reference/modules/web/newsletter/src/lib/newsletter.md
+ */
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";

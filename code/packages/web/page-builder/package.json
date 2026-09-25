@@ -10,10 +10,15 @@
     "@indiecrafts/packages-shared-config": "workspace:*",
     "@indiecrafts/packages-shared-ui-icons": "workspace:*",
     "@indiecrafts/packages-web-sanity": "workspace:*",
-    "@sanity/icons": "^3.7.4",
-    "sanity": "^5.31.1"
+    "@sanity/icons": "^5.2.2"
   },
   "scripts": {
     "test": "vitest run"
+  },
+  "peerDependencies": {
+    "sanity": "*"
+  },
+  "devDependencies": {
+    "sanity": "^6.16.0"
   }
 }

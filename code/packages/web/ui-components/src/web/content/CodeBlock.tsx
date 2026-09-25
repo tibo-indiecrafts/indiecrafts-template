@@ -1,3 +1,8 @@
+/**
+ * Render a syntax-highlighted code block.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/content/CodeBlock.md
+ */
 import { codeToHtml } from "shiki";
 
 /**

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Provides open-state for the cookie preferences dialog, wired to the open event and query param.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/use-preferences-dialog.md
+ */
+
 import { useEffect, useState } from "react";
 import { OPEN_PREFERENCES_EVENT } from "./consent-store";
 

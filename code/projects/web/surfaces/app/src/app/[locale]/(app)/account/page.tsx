@@ -1,3 +1,8 @@
+/**
+ * Render the self-service account route full-page.
+ *
+ * @see docs/reference/projects/web/app/src/app/locale/(app)/account/page.md
+ */
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { features, type Locale } from "@/config";

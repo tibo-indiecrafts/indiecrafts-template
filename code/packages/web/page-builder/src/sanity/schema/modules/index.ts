@@ -1,3 +1,8 @@
+/**
+ * Collect the generic page-builder module schemas and their type literals.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/index.md
+ */
 import type { SchemaTypeDefinition } from "sanity";
 import accordionList from "./accordion-list";
 import callout from "./callout";

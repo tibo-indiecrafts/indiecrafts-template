@@ -1,3 +1,8 @@
+/**
+ * Generate `src/shared/brands.ts` from `brands.json` and the `simple-icons` package.
+ *
+ * @see docs/reference/packages/shared/ui-icons/scripts/build-brands.md
+ */
 // Generate `src/shared/brands.ts` from `src/shared/brands.json` (our name →
 // simple-icons export) + the `simple-icons` package (official marks). Runtime
 // stays dependency-free — the generated file is plain data. Edit brands.json

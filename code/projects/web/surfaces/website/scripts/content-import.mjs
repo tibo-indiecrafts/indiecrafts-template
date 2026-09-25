@@ -1,3 +1,8 @@
+/**
+ * Import a Sanity dataset backup, overwriting documents with matching ids.
+ *
+ * @see docs/reference/projects/web/website/scripts/content-import.md
+ */
 // Import a Sanity dataset backup (the CMS analog of a DB restore). DESTRUCTIVE:
 // `--replace` overwrites documents with the same _id in the target dataset.
 //

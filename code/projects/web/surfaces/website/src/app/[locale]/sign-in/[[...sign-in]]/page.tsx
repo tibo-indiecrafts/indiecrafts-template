@@ -1,3 +1,8 @@
+/**
+ * Renders the public Clerk sign-in page, gated on Clerk being configured.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/sign-in/sign-in/page.md
+ */
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { SignInView } from "@indiecrafts/packages-web-auth/sign-in-view";

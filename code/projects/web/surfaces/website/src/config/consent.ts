@@ -1,3 +1,8 @@
+/**
+ * Configure the geo cookie-consent regulations for this deployment.
+ *
+ * @see docs/reference/projects/web/website/src/config/consent.md
+ */
 import type { ConsentConfig } from "@indiecrafts/packages-shared-compliance/shared";
 
 /**

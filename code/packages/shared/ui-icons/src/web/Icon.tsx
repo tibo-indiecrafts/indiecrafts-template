@@ -1,3 +1,8 @@
+/**
+ * Render a curated glyph by name for the web.
+ *
+ * @see docs/reference/packages/shared/ui-icons/src/web/Icon.md
+ */
 import type { ComponentProps } from "react";
 import {
   ArrowRight,

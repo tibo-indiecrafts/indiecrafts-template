@@ -1,9 +1,19 @@
+/**
+ * Handle the GDPR data-subject-request form's write and read paths.
+ *
+ * @see docs/reference/shared/api/src/data-request/route.md
+ */
 // DSAR (data-subject request) intake — the GDPR Art. 15–21 request form's write + read
 // paths, migrated off Sanity into D1. `handleDataRequestWrite` is called server-to-server
 // by the website's `withGuard`-protected `/api/data-request` route (Turnstile, rate-limit,
 // origin, and body-cap already enforced there — this route re-checks only what a bearer
 // caller could still get wrong). `handleDataRequestList` backs the admin screen.
 import { logger } from "@indiecrafts/packages-shared-logger";
+import {
+  encrypt,
+  decrypt,
+  type EncryptedData,
+} from "@indiecrafts/packages-shared-security/crypto";
 import { type Env, corsHeaders, safeEqual } from "../index";
 
 // The 7 GDPR request types — mirrors `DATA_REQUEST_TYPES` in
@@ -40,6 +50,53 @@ function bearerOf(request: Request): string {
     /^Bearer\s+/i,
     "",
   );
+}
+
+// At-rest encryption for the operational plaintext PII in `data_requests` (email + free-text
+// message). Cloudflare D1 already encrypts at rest; this adds field-level AES-256-GCM so a
+// leaked DB dump or a read-access breach sees ciphertext, not the data subject's email/message.
+// Opt-in via `PII_ENCRYPTION_KEY`: unset → plaintext (unchanged); the read path decrypts either,
+// so existing plaintext rows keep working and a key can be introduced without a migration.
+
+/** Shape-check the JSON we store for an encrypted field. */
+function isEncrypted(v: unknown): v is EncryptedData {
+  return (
+    typeof v === "object" &&
+    v !== null &&
+    typeof (v as EncryptedData).ciphertext === "string" &&
+    typeof (v as EncryptedData).iv === "string" &&
+    (v as EncryptedData).version === 1
+  );
+}
+
+/** Encrypt a field for storage when a key is set; else store as-is (backward compatible). */
+async function encField(
+  value: string | null,
+  key: string | undefined,
+): Promise<string | null> {
+  if (!key || !value) return value;
+  return JSON.stringify(await encrypt(value, key));
+}
+
+/** Decrypt a stored field: encrypted-JSON → plaintext (needs the key); legacy plaintext
+ *  (or a value we can't decrypt) → returned as-is, never throwing. */
+async function decField(
+  value: string | null,
+  key: string | undefined,
+): Promise<string | null> {
+  if (value == null) return value;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    return value; // legacy plaintext (not JSON)
+  }
+  if (!isEncrypted(parsed) || !key) return value;
+  try {
+    return await decrypt(parsed, key);
+  } catch {
+    return value; // wrong key / tampered — surface the raw value rather than crash the list
+  }
 }
 
 export async function handleDataRequestWrite(
@@ -97,14 +154,18 @@ export async function handleDataRequestWrite(
       ? body.submittedAt
       : new Date().toISOString();
 
+  // Encrypt the replyable PII at rest when a key is configured (else plaintext, unchanged).
+  const emailStored = await encField(email, env.PII_ENCRYPTION_KEY);
+  const messageStored = await encField(message, env.PII_ENCRYPTION_KEY);
+
   try {
     await env.MAIN_DB.prepare(
       "INSERT INTO data_requests (request_type, email, message, status, submitted_at, source, locale, policy_version) VALUES (?, ?, ?, 'new', ?, ?, ?, ?)",
     )
       .bind(
         requestType,
-        email,
-        message,
+        emailStored,
+        messageStored,
         submittedAt,
         source,
         locale,
@@ -147,7 +208,16 @@ export async function handleDataRequestList(
     )
       .bind(limit)
       .all();
-    return json({ data: results }, 200, cors);
+    // Decrypt the at-rest PII for the operator view — handles encrypted + legacy plaintext rows.
+    const key = env.PII_ENCRYPTION_KEY;
+    const data = await Promise.all(
+      results.map(async (r) => ({
+        ...r,
+        email: await decField((r as { email: string | null }).email, key),
+        message: await decField((r as { message: string | null }).message, key),
+      })),
+    );
+    return json({ data }, 200, cors);
   } catch (error) {
     logger.error("data-requests read failed", {
       name: (error as Error)?.name,

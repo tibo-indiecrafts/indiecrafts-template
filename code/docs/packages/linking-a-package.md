@@ -1,9 +1,15 @@
+---
+title: "Linking a package into an app"
+description: "A package (code/packages/<name>, @indiecrafts/<name>) is a single-purpose brick — shared logic, UI, types, or a Sanity contribution."
+status: stable
+---
+
 # Linking a package into an app
 
 A package (`code/packages/<name>`, `@indiecrafts/<name>`) is a single-purpose brick — shared
 logic, UI, types, or a Sanity contribution. Linking it means **wiring its code into an app**; a
 package never wires itself. This is the generic recipe. For a full feature slice with its own
-routes and gating, see [Linking a module](../modules/linking-a-module.md).
+routes and gating, see [Linking a module](/modules/linking-a-module).
 
 ## What the package ships vs what the app owns
 
@@ -46,7 +52,7 @@ const sharedModules = [coreSanity, complianceSanity /* … */];
 ```
 
 `sharedModules` = site-wide config every app reads ("Contenu partagé"); `appModules` = this app's
-own content ("Site web"). See [sanity](./sanity.md) + [Multi-app](../shared/architecture/multi-app.md).
+own content ("Site web"). See [sanity](/packages/web/sanity) + [Multi-app](/shared/architecture/multi-app).
 
 ## Routes: a package can't own one
 
@@ -78,7 +84,7 @@ export default async function CookiePolicyPage({ params }) {
 The package stays **prop-driven** — no layout, no SEO, no flags inside. The app keeps the shell,
 the `pages` map entry, feature-flag gating, and SEO. Adding the one `pages` entry auto-propagates
 sitemap, llms.txt, typed routing, and the SEO chain. Full route detail →
-[Linking a module § Routes](../modules/linking-a-module.md#routes-app-owned-thin-shells). Live
+[Linking a module § Routes](/modules/linking-a-module#routes-app-owned-thin-shells). Live
 examples: `@indiecrafts/packages-web-compliance` (5 legal pages), `@indiecrafts/packages-shared-system-pages` (404 · error ·
 maintenance).
 

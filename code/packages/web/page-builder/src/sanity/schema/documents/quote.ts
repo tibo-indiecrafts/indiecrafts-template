@@ -1,3 +1,8 @@
+/**
+ * Define the quote document — a testimonial shown by the Quote List module.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/documents/quote.md
+ */
 import { defineField, defineType } from "sanity";
 
 export default defineType({

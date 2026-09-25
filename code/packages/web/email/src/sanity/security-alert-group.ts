@@ -1,3 +1,8 @@
+/**
+ * Defines the internal security-alert email's editable Sanity fields.
+ *
+ * @see docs/reference/packages/web/email/src/sanity/security-alert-group.md
+ */
 import { defineField, type FieldDefinition } from "sanity";
 
 /**

@@ -1,3 +1,8 @@
+/**
+ * Render the admin security-incident feed from the shared api.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/security/page.md
+ */
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";

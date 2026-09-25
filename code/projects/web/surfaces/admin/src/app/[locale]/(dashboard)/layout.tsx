@@ -1,3 +1,8 @@
+/**
+ * Gate every dashboard route behind an admin session, failing closed.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/layout.md
+ */
 import type { ReactNode } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { isAdmin } from "@indiecrafts/packages-shared-auth";

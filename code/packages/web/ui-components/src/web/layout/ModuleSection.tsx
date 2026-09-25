@@ -1,3 +1,8 @@
+/**
+ * Wraps a module as a full-width section or an inline body embed.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/layout/ModuleSection.md
+ */
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 
 /**

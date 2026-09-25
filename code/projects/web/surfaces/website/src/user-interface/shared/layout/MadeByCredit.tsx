@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the footer maker credit with a tap-friendly link preview.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/MadeByCredit.md
+ */
+
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {

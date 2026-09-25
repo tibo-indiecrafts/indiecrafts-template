@@ -1,3 +1,8 @@
+/**
+ * Render the blog's comment-moderation notification email.
+ *
+ * @see docs/reference/modules/web/blog/src/emails/comment-notification.md
+ */
 import {
   EMAIL_COLORS,
   escapeHtml,

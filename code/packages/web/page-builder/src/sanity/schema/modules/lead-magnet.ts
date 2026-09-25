@@ -1,3 +1,8 @@
+/**
+ * Define the lead-magnet module — email capture tied to a downloadable resource.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/lead-magnet.md
+ */
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Poll a version endpoint and report when a newer build is deployed.
+ *
+ * @see docs/reference/packages/web/version/src/use-version-check.md
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import {
   type VersionResponse,

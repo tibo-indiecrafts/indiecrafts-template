@@ -1,3 +1,8 @@
+/**
+ * Gate the app route group behind a signed-in user.
+ *
+ * @see docs/reference/projects/web/app/src/app/locale/(app)/layout.md
+ */
 import type { ReactNode } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "@/i18n/routing";

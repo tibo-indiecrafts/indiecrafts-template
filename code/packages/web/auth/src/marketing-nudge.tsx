@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Mount the one-time sign-in marketing-email consent nudge.
+ *
+ * @see docs/reference/packages/web/auth/src/marketing-nudge.md
+ */
+
 import { useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
 import {

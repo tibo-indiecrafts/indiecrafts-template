@@ -1,3 +1,8 @@
+/**
+ * Wraps Sanity live content and draft preview for the app.
+ *
+ * @see docs/reference/packages/web/sanity/src/live.md
+ */
 import "server-only";
 
 import { draftMode } from "next/headers";

@@ -1,3 +1,8 @@
+/**
+ * Renders the /blog frontpage hero — a five-card mosaic with a featured lead.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/blog/sections/BlogHero.md
+ */
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Play } from "lucide-react";

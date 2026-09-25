@@ -1,3 +1,8 @@
+/**
+ * Serve the blog's Atom 1.0 feed for a locale.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/blog/atom.xml/route.md
+ */
 import { getTranslations } from "next-intl/server";
 import { site } from "@/config";
 import type { Locale } from "@/config";

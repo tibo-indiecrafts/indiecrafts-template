@@ -1,35 +1,40 @@
+/**
+ * Swap the client namespace prefix across config, wrangler.toml, tfvars, and Expo config.
+ *
+ * @see docs/reference/projects/web/website/scripts/project-rename.md
+ */
 // Rename the project's namespace in ONE command — for reusing this template per
 // client. Cloudflare resource names are `<prefix>-<env>-<platform>-<slug>`
 // (`resourceName` in apps.mjs), so ONLY `<prefix>` is client-specific: this swaps
-// it in `@indiecrafts/packages-shared-config` (`DEFAULT_SITE_PREFIX`) + on every Cloudflare app's
-// `wrangler.toml` resource names + Terraform `worker_name`. Registry-driven, so it
-// reaches `code/shared/*` (api·cron·workers) and any app added later — no per-dir
-// loop. Run from `code/projects/web/surfaces/website`:
+// it in `@indiecrafts/packages-shared-config` (`DEFAULT_SITE_PREFIX`) + on EVERY
+// `wrangler.toml` resource name + Terraform `worker_name` under `code/`, plus the
+// native (expo) config. A repo-wide sweep (not registry-driven) so it also reaches
+// non-registry deployables — the `tools/storybook` Worker + any app added later. Run
+// from `code/projects/web/surfaces/website`:
 //
-//   pnpm project:rename <slug>      # e.g. acme → prefix "acme", names "acme-<env>-<platform>-<slug>"
+//   pnpm project:rename <slug>            # e.g. acme → "acme-<env>-<platform>-<slug>"
+//   pnpm project:rename <slug> --dry-run  # print what WOULD change, write nothing
 //
 // The slug is the per-client namespace: it prefixes browser keys (consent/theme/
 // locale) AND the Cloudflare Worker/R2 names, so two clients under one account
 // never collide. Must be unique per client.
 
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  deployable,
-  ENVS,
-  resourceName,
-} from "../../../../../shared/scripts/lib/apps.mjs";
+import { ENVS, resourceName } from "../../../../../shared/scripts/lib/apps.mjs";
 import {
   CONFIG_INDEX,
   TEMPLATE_PREFIX,
   renameResourcePrefix,
 } from "../../../../../shared/scripts/lib/project.mjs";
 
-const slug = process.argv[2];
+const args = process.argv.slice(2);
+const dryRun = args.includes("--dry-run");
+const slug = args.find((a) => !a.startsWith("-"));
 if (!slug || !/^[a-z][a-z0-9-]{2,40}$/.test(slug)) {
   console.error(
-    "Usage: project:rename <slug>   (lowercase, a-z 0-9 -, 3–41 chars, starts with a letter)",
+    "Usage: project:rename <slug> [--dry-run]   (lowercase, a-z 0-9 -, 3–41 chars, starts with a letter)",
   );
   process.exit(1);
 }
@@ -40,8 +45,13 @@ if (slug === TEMPLATE_PREFIX) {
   process.exit(1);
 }
 
-// Repo root, resolved from THIS script (not CWD) so `app.dir` (repo-relative) works.
+// Repo root, resolved from THIS script (not CWD) so the walk + `app.dir` work.
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../../..");
+const tag = dryRun ? " [dry-run]" : "";
+
+const write = (file, text) => {
+  if (!dryRun) writeFileSync(file, text);
+};
 
 // 1. Config: DEFAULT_SITE_PREFIX = "<template>" → "<slug>"
 const config = readFileSync(CONFIG_INDEX, "utf8");
@@ -52,59 +62,68 @@ if (nextConfig === config) {
   );
   process.exit(1);
 }
-writeFileSync(CONFIG_INDEX, nextConfig);
+write(CONFIG_INDEX, nextConfig);
 
 // Swap the LEADING `<template>-` prefix → `<slug>-` on resource-name assignment lines
-// (name/bucket_name/database_name/dataset/service/queue/worker_name) AND on the
-// `wrangler … create <template>-…` comment examples — so both the live config and the
-// copy-paste create commands land on the client namespace. Prose comments stay untouched.
+// (name/bucket_name/database_name/dataset/service/queue/worker_name/BACKUP_BUCKET) AND on
+// the `wrangler … create <template>-…` comment examples. Prose comments stay untouched.
 const swap = (text) => renameResourcePrefix(text, TEMPLATE_PREFIX, slug);
 
-const renamed = [];
-for (const app of deployable()) {
-  const appRoot = resolve(REPO_ROOT, app.dir);
-  // 2. The app's wrangler.toml.
-  const wrangler = `${appRoot}/wrangler.toml`;
-  if (existsSync(wrangler)) {
-    const src = readFileSync(wrangler, "utf8");
-    const out = swap(src);
-    if (out !== src) {
-      writeFileSync(wrangler, out);
-      renamed.push(app.slug);
+// 2 + 3. EVERY wrangler.toml + Terraform tfvars under `code/`, found by a repo-wide walk
+// that skips build output + deps — registry apps AND non-registry tools (storybook), so a
+// rename is complete regardless of whether a dir is in `apps.mjs`.
+const SKIP = new Set([
+  "node_modules",
+  ".git",
+  ".next",
+  ".open-next",
+  ".wrangler",
+  ".turbo",
+  "dist",
+  "storybook-static",
+  ".sanity",
+  "coverage",
+]);
+function walkInfra(dir, out = []) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (!SKIP.has(entry.name)) walkInfra(join(dir, entry.name), out);
+    } else if (
+      basename(entry.name) === "wrangler.toml" ||
+      entry.name.endsWith(".tfvars")
+    ) {
+      out.push(join(dir, entry.name));
     }
   }
-  // 3. The app's co-located Terraform tfvars (optional).
-  for (const env of ENVS) {
-    const file = `${appRoot}/infra/cloudflare/env/${env}.tfvars`;
-    if (!existsSync(file)) continue;
-    const src = readFileSync(file, "utf8");
-    const out = swap(src);
-    if (out !== src) writeFileSync(file, out);
+  return out;
+}
+
+const changed = [];
+for (const file of walkInfra(resolve(REPO_ROOT, "code"))) {
+  const src = readFileSync(file, "utf8");
+  const out = swap(src);
+  if (out !== src) {
+    write(file, out);
+    changed.push(relative(REPO_ROOT, file));
   }
 }
 
 // 4. The native surface (expo) carries the prefix in its OWN config, not a
-// wrangler.toml — so the registry loop above never reaches it. Swap it here so a
-// rename is COMPLETE: the Expo app slug/scheme + reverse-DNS bundle id and the EAS build
-// env's api-URL prefix. Keyed off TEMPLATE_PREFIX (alphanumeric, safe to interpolate
-// into a RegExp).
+// wrangler.toml — so the infra walk never reaches it. Swap it here so a rename is
+// COMPLETE: the Expo app slug/scheme + reverse-DNS bundle id and the EAS build env's
+// api-URL prefix. Keyed off TEMPLATE_PREFIX (alphanumeric, safe to interpolate).
 const P = TEMPLATE_PREFIX;
 const nativeFiles = [
   {
     path: "code/projects/mobile/surfaces/main/app.config.ts",
     subs: [
-      // name/slug/scheme: "indiecrafts" → "<slug>"
       [new RegExp(`(\\b(?:name|slug|scheme):\\s*)"${P}"`, "g"), `$1"${slug}"`],
-      // reverse-DNS bundle id "dev.indiecrafts.app" → "dev.<slug>.app"
       [new RegExp(`"dev\\.${P}\\.`, "g"), `"dev.${slug}.`],
     ],
   },
   {
     path: "code/projects/mobile/surfaces/main/eas.json",
-    subs: [
-      // EXPO_PUBLIC_API_URL host prefix https://indiecrafts-<env>-… → https://<slug>-<env>-…
-      [new RegExp(`//${P}-`, "g"), `//${slug}-`],
-    ],
+    subs: [[new RegExp(`//${P}-`, "g"), `//${slug}-`]],
   },
 ];
 const nativeRenamed = [];
@@ -115,18 +134,23 @@ for (const { path, subs } of nativeFiles) {
   let out = src;
   for (const [re, rep] of subs) out = out.replace(re, rep);
   if (out !== src) {
-    writeFileSync(file, out);
-    nativeRenamed.push(path.split("/").pop());
+    write(file, out);
+    nativeRenamed.push(path); // already repo-relative
   }
 }
 
-console.log(`✓ Renamed project namespace → "${slug}"`);
+console.log(`✓ Renamed project namespace → "${slug}"${tag}`);
 console.log(`  · @indiecrafts/packages-shared-config  DEFAULT_SITE_PREFIX = "${slug}"`);
-console.log(
-  `  · wrangler.toml + tfvars  ${renamed.length} app(s): ${renamed.join(", ")}`,
-);
-if (nativeRenamed.length)
-  console.log(`  · native config           ${nativeRenamed.join(", ")}`);
+console.log(`  · wrangler.toml + tfvars  ${changed.length} file(s):`);
+for (const f of changed) console.log(`      ${f}`);
+if (nativeRenamed.length) {
+  console.log(`  · native config  ${nativeRenamed.length} file(s):`);
+  for (const f of nativeRenamed) console.log(`      ${f}`);
+}
+if (dryRun) {
+  console.log("\n[dry-run] Nothing written. Re-run without --dry-run to apply.");
+  process.exit(0);
+}
 console.log("\nNext:");
 console.log("  1. Create the R2 buckets for the web app (one per env):");
 for (const env of ENVS) {

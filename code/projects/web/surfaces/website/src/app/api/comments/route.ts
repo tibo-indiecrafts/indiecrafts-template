@@ -1,3 +1,8 @@
+/**
+ * Accept a public blog comment submission.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/comments/route.md
+ */
 import { NextResponse } from "next/server";
 import { security } from "@/config";
 import { withGuard } from "@indiecrafts/packages-shared-security/guard";

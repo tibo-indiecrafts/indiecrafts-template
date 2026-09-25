@@ -21,10 +21,15 @@ Wired baseline:
   (`createMiddleware(routing)`), and the `[locale]` segment. Root `layout.tsx` is a passthrough; `[locale]/layout.tsx` owns `<html lang dir>`. Import `Link` from `@/i18n/routing`, never `next/link`.
 - **Compliance** — a `/legal` route links out to the website's legal pages
   (`legalUrl(site.websiteUrl, …)`); the consent banner + legal re-acceptance popup mount via
-  `src/user-interface/ShellOverlays.tsx` (shared `compliance/web`, `localStorage` store, gated by
+  `src/user-interface/ShellOverlays.tsx` — a thin composition root; each overlay is its own file under
+  `user-interface/overlays/` (`ConsentGate` · `LegalGate`, over the shared consent/legal stores in
+  `overlays/stores.ts`) using shared `compliance/web` + a `localStorage` store, gated by
   `features.requireConsent` — off by default). See [`compliance-shared`](../../../../../docs/packages/compliance-shared.md).
 - **Version prompt** — `web-version`'s `UpdatePrompt` + its own `src/app/api/version/route.ts` +
   `src/lib/build-info.ts` (stamped by `scripts/version.mjs` in `build:cf`).
+- **E2e** — Playwright journeys (`e2e/journeys/`: `version` · `not-found` · `boot` · `sign-in`) on a
+  dedicated port (:3011), `pnpm e2e`; no dataset seed (the home Sanity read falls back). CI-gated in
+  `browser-e2e-app`; the `sign-in` journey self-skips without the Clerk test keys.
 
 Instance config (`features` · `consent` — geo cookie-consent regulations · `policyVersion`) lives in `src/config/index.ts`. It is **not** a content
 surface — add `packages-web-sanity` (reads), `packages-shared-security` (headers), or any content brick

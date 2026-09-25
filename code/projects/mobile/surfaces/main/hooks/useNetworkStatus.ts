@@ -1,3 +1,8 @@
+/**
+ * Track whether the device has a usable network connection.
+ *
+ * @see docs/reference/projects/mobile/main/hooks/useNetworkStatus.md
+ */
 import { useEffect, useState } from "react";
 import NetInfo from "@react-native-community/netinfo";
 

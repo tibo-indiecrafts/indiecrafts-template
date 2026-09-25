@@ -1,3 +1,8 @@
+/**
+ * Record a privileged admin action to the shared audit sink.
+ *
+ * @see docs/reference/projects/web/admin/src/lib/audit.md
+ */
 import "server-only";
 import { headers } from "next/headers";
 

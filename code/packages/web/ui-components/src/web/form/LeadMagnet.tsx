@@ -1,3 +1,8 @@
+/**
+ * Renders the module.lead-magnet block server-side under the newsletter feature flag.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/form/LeadMagnet.md
+ */
 import type { LeadMagnetModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { blockFeatures } from "../features";
 import { LeadMagnetForm } from "./LeadMagnetForm";

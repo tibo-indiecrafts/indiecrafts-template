@@ -1,3 +1,8 @@
+/**
+ * Models dotted paths into the runtime message tree.
+ *
+ * @see docs/reference/projects/web/website/src/types/messages.md
+ */
 import type globalEn from "../../messages/en.json";
 
 /**

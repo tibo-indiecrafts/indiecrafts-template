@@ -17,7 +17,45 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **Harness memory + speed: typecheck no longer builds, lint stays type-free, Oxlint added.**
+  The type graph — the memory-intensive part of the harness — is built only by `tsc`, and we were
+  building it wastefully. Fixes, from the biggest:
+  - **Dropped `dependsOn:["^build"]` from the turbo `tsc` (and `test`/`verify`) tasks.** tsc typechecks
+    workspace packages as source (they're `transpilePackages`-consumed), so it never needed the upstream
+    OpenNext builds it was forcing first. Result: `pnpm tsc` went from **~2 min (with builds) → 435 ms
+    cached** (0.4s FULL TURBO); `verify` no longer runs OpenNext builds (the CI `build` job still does).
+  - **`incremental: true` on the 5 tsconfigs that lacked it** (api · cron · workers · mobile · storybook;
+    the 3 Next apps already had it) + `.tsbuildinfo` in the turbo `tsc` `outputs` — repeat typechecks
+    reuse the graph.
+  - **`--concurrency=50%` on `build`/`test`/`verify`** — caps how many type graphs + workerd test pools
+    build at once (the peak-memory event, and the source of the documented workerd-parallelism flakes).
+  - **Lint is confirmed type-info-free** (verified via `eslint --print-config`: no `parserOptions.project`/
+    `projectService`, no type-aware rules) — so ESLint never builds the type graph. New `check:lint-no-types`
+    guard (in `verify`) fails if a config re-introduces it — the one change that would regress lint memory.
+  - **`tsc:fast` via tsgo** (`@typescript/native-preview`, the TS 7 Go port) — ~10× faster, ~half the
+    memory of `tsc`, for the local inner loop (`pnpm tsc:fast`). Scoped to the 6 core surfaces (api · cron ·
+    workers · website · admin · app); storybook + mobile stay on real `tsc` (the preview doesn't yet
+    auto-discover their vitest/jest ambient globals). CI + the commit hook keep the real `tsc`.
+  - **Oxlint added** (`pnpm oxlint`, `.oxlintrc.json`) — the fast (Rust) AST-only linter, repo-wide in
+    ~3s, covering the surfaces ESLint doesn't (admin · app · storybook). **Advisory** for now (it surfaces
+    ~4 pre-existing findings — Carousel unsupported-aria, a ref-in-render); graduate it to a gate once
+    those are triaged. Our AST-only rules port to it 1:1 (the whole point of keeping lint type-free).
+
 ### Added
+
+- **Remote-dev workflow: `dev:doctor` · `dev:setup` · `dev:refresh:dev`.** `pnpm dev` runs the workers as
+  `wrangler dev --env dev --remote` against the one shared remote `dev`, which silently 500s when you're
+  logged out / a worker has no `.dev.vars` / a `[env.dev]` id is a placeholder. New shared runners
+  (`code/shared/scripts/dev/{doctor,setup,refresh}.mjs`): **`dev:doctor`** preflights those (wired as
+  `predev`, so `pnpm dev` runs it first — warns without blocking, hard-fails only when not logged in;
+  `SKIP_DEV_DOCTOR=1` bypasses; `dev:doctor:deep` adds a remote D1 migration-drift check). **`dev:setup`**
+  is a one-shot bootstrap (login → scaffold each worker's `.dev.vars` from `.dev.vars.example`, which you
+  fill → `deploy:all:dev`). **`dev:refresh:dev`** re-aligns dev (migrations + secrets) without a full
+  redeploy; **`secrets:sync:all:dev`** pushes every worker's secrets at once. **Why:** make "working
+  directly on dev" fail loud with the fix instead of a confusing 500, and bootstrap a fresh clone in one
+  command. Docs: [setup/environment.md](../../../../docs/apps/web/setup/environment.md).
 
 - **`appContent` welcome singleton in the hub Studio.** A new `Contenu de l'app` singleton
   (`src/sanity/app-content.ts`, wired into the "Contenu partagé" desk group) holds an editor-owned
@@ -38,6 +76,27 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **Sanity Studio upgraded to v6 (from v5).** Bumped the whole Sanity family to `sanity@6.16.0`
+  (`@sanity/vision` 6.16.0, `@sanity/client` 8.7.0, `@sanity/ui` 4.2.3, `@sanity/icons` 5.2.2,
+  `next-sanity` 13.3.4, `@sanity/document-internationalization` 6.2.37). **Why:** v6 runs on Vite 8 and
+  builds the Studio ~4–5× faster (measured `sanity build` ≈ 2.4s here). Migration work this required:
+  - **`@sanity/icons` v5 moved named icons off the root barrel to per-icon subpaths** — `import { EnvelopeIcon }
+from "@sanity/icons"` → `from "@sanity/icons/Envelope"`. Rewrote all 49 import sites (bricks + modules +
+    website). tsc still accepted the old form (the root re-exports each as `never`), so this only surfaced in
+    the Studio bundle — validate icon changes with `sanity build`, not tsc alone.
+  - **`@sanity/ui` v4 deprecated `space` in favour of `gap`** on `Stack`/`Flex` (`send-test-action.tsx`).
+  - **Bumped the two companion i18n plugins** to their `@sanity/ui`-v4 builds — `sanity-plugin-internationalized-array`
+    5.3.1 and `@sanity/language-filter` 5.0.18 (both now declared directly in the website; the old auto-installed
+    peers still imported removed `@sanity/ui` root components). Added `sanity-plugin-internationalized-array` to
+    `minimumReleaseAgeExclude` (its only matching release is days old, on the Studio cadence).
+  - **Pinned one React across the web tree.** Added `react`/`react-dom` `19.2.8` to the root so the root-level
+    test/Clerk devDeps stop auto-installing React 19.3.0; a second React runtime forks the `sanity` Studio peer
+    closure into two instances and breaks tsc. Run `pnpm dedupe` after adding a new Sanity/React dependency to
+    keep the closure collapsed. Mobile stays on React 18.3.1 (untouched).
+  - **Converted 9 schema/content bricks' `sanity` dependency to a peer** (page-builder, compliance,
+    locale-suggest, announcement, email, waitlist, contact, blog, newsletter) so every `sanity` resolves to the
+    one app-provided instance. The custom `workspaceIndexFallback` Vite plugin (`sanity.cli.ts`) survives Vite 8
+    unchanged.
 - **The language switcher now persists a signed-in user's choice.** Switching language calls
   `usePersistLocale` (`@indiecrafts/packages-web-auth`) → the user's Clerk `unsafeMetadata.locale` →
   (via the api webhook) `user_profiles.locale`. **Why:** the stored locale was captured only at
@@ -61,6 +120,14 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **`pnpm project:rename` was fully broken — now renames everything.** It aborted immediately
+  (_"Could not find DEFAULT_SITE_PREFIX … nothing changed"_) because `CONFIG_INDEX` still pointed at
+  `config/src/index.ts`, but the constant had moved to `config/src/web/site.ts` (index only re-exports
+  it) — pointed it at the definition. Also closed two coverage gaps: the runner is now a **repo-wide
+  sweep** of every `wrangler.toml` + `*.tfvars` under `code/` (the registry loop skipped `tools/storybook`,
+  a non-registry deployable, though its own docs claimed rename covered it), and `BACKUP_BUCKET` (an R2
+  bucket name carried in `[vars]`) is now in `RESOURCE_LINE` so a client's backups don't target the
+  template bucket. Added a **`--dry-run`** flag (`project.test.mjs` covers the `BACKUP_BUCKET` case).
 - **`POST /api/consent-log` (and `/api/session-log`) 500 → work again.** The `proxy.ts` matcher
   excluded `/api`, so `clerkMiddleware()` never ran for those routes and their `auth()` call threw
   _"can't detect clerkMiddleware()"_. Both authenticated API routes are now in the matcher, and the

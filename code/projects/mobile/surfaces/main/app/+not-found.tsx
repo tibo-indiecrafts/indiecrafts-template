@@ -1,3 +1,8 @@
+/**
+ * Render the mobile catch-all 404 screen.
+ *
+ * @see docs/reference/projects/mobile/main/app/+not-found.md
+ */
 import { useRouter } from "expo-router";
 import { useIntl } from "react-intl";
 import { NotFoundContent } from "@indiecrafts/packages-shared-system-pages/native";

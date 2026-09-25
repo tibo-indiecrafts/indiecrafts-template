@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the Sanity Studio inside a Next client boundary.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/Studio.md
+ */
+
 import { NextStudio } from "next-sanity/studio";
 import config from "../../sanity.config";
 

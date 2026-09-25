@@ -1,3 +1,8 @@
+/**
+ * Renders the per-locale root layout with providers, SEO, and consent chrome.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/layout.md
+ */
 import "@indiecrafts/packages-shared-ui-tokens/globals.css";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";

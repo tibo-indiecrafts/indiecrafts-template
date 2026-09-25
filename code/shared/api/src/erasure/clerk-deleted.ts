@@ -1,3 +1,8 @@
+/**
+ * Run the full erasure engine on an out-of-band Clerk user deletion.
+ *
+ * @see docs/reference/shared/api/src/erasure/clerk-deleted.md
+ */
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { sha256Hex } from "@indiecrafts/packages-shared-security/crypto";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";

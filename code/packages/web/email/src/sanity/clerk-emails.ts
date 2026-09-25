@@ -1,6 +1,12 @@
+/**
+ * Define the Clerk authentication-email copy singleton.
+ *
+ * @see docs/reference/packages/web/email/src/sanity/clerk-emails.md
+ */
+
 import { defineType } from "sanity";
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
-import { LockIcon } from "@sanity/icons";
+import { LockIcon } from "@sanity/icons/Lock";
 import { confirmationGroup } from "./groups";
 
 /**

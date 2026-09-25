@@ -1,3 +1,8 @@
+/**
+ * Wrap each locale tree with the Clerk provider, intl, and theme script.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/layout.md
+ */
 import "@indiecrafts/packages-shared-ui-tokens/globals.css";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";

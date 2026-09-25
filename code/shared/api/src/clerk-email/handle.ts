@@ -1,3 +1,8 @@
+/**
+ * Render and send a localized Clerk auth email from an emails.created event.
+ *
+ * @see docs/reference/shared/api/src/clerk-email/handle.md
+ */
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";

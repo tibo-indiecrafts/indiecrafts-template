@@ -1,3 +1,8 @@
+/**
+ * Render a curated glyph by name for React Native.
+ *
+ * @see docs/reference/packages/shared/ui-icons/src/native/Icon.md
+ */
 import type { ComponentProps } from "react";
 import {
   ArrowRight,

@@ -10,6 +10,20 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 API security-hardening pass (audit 2026-09-11). One HIGH + four MED + a LOW batch; plan →
 [`docs/superpowers/plans/2026-09-11-api-security-hardening.md`](../../../docs/superpowers/plans/2026-09-11-api-security-hardening.md).
 
+- **HIGH (2026-09-21) — split the API bearer so the mobile bundle no longer ships the admin key.**
+  `POST /v1/events` and every admin read/write route validated the SAME `APP_API_TOKEN`, and the
+  mobile app bundles it (`EXPO_PUBLIC_*` is inlined into the binary) — so extracting it from the app
+  yielded full admin-API access (read plaintext DSAR PII, forge `admin`/`consent` rows, `PUT
+/v1/settings`). Now `/v1/events` accepts either the trusted `APP_API_TOKEN` (all kinds) OR a new
+  least-privilege `EVENTS_TOKEN` (device telemetry — `session`/`security` kinds only, reads nothing);
+  the ingest token is what the mobile app ships (`EXPO_PUBLIC_EVENTS_TOKEN`). A leaked ingest token
+  can no longer write `admin`/`consent`/`csp-report` rows (403) or reach any read route (401). **Also
+  (MED):** the admin bearer routes (`/v1/sessions`·`security`·`csp-reports`·`churn`·`settings`·
+  `profiles/consent`·`data-requests`·`backups/status`) are now rate-limited too — they were not — via
+  a shared `requireAdminBearer` + `rateLimit` guard that also dedupes the bearer block (was pasted 8×).
+  **Runbook:** set a NEW `EVENTS_TOKEN` secret per env (`wrangler secret put EVENTS_TOKEN --env <env>`,
+  DISTINCT from `APP_API_TOKEN`), and set `EXPO_PUBLIC_EVENTS_TOKEN` to that value on the mobile build;
+  the old `EXPO_PUBLIC_API_TOKEN` is retired.
 - **HIGH — the Clerk delete is now a required step on `/v1/erasure/confirm`.** The mailed-token
   RTBF path treated a failed Clerk delete (the one global session/credential kill-switch) as a benign
   `207` partial — sending the "erasure complete" email and spending the single-use token while the
@@ -54,6 +68,26 @@ clerk_failed`.
 
 ### Added
 
+- **At-rest field encryption for `data_requests` PII (opt-in).** The DSAR table deliberately keeps a
+  replyable plaintext `email` + free-text `message` (operational PII the operator answers). Cloudflare
+  D1 already encrypts at rest, but a leaked dump or a read-access breach would expose those fields; with
+  `PII_ENCRYPTION_KEY` set, the write path now AES-256-GCM-encrypts both (the existing, unused
+  `@indiecrafts/packages-shared-security` `encrypt` helper) and the admin read decrypts. **Backward
+  compatible:** unset key → plaintext as before, and the read handles legacy plaintext rows either way,
+  so no migration or backfill is required. **Why:** defence-in-depth on the one place we store raw
+  replyable PII — GDPR Art. 32 names encryption as an appropriate measure. (Lookup/erasure keys stay
+  deterministic SHA-256 fingerprints, so matching still works; `user_profiles.email` stays plaintext by
+  design — it is the email-keyed erasure lookup.)
+- **Pre-migration snapshot now covers deploy-time migrations, plus a D1 revert tool.** A worker
+  deploy applies its owned D1 migrations inline (`scripts/deploy/worker.mjs`); that path called
+  `wrangler d1 migrations apply` directly and took NO backup, so `deploy:shared:api:prod` could alter
+  the `audit`/`main` D1s unbacked. It now delegates each DB to `scripts/data/migrate.mjs`, so the same
+  FAIL-CLOSED pre-migration R2 snapshot (schema + data) runs first — a failed snapshot aborts the
+  deploy. And a new `scripts/data/restore.mjs` reverts a D1 to any minute in the last 30 days via
+  Cloudflare Time Travel (`node restore.mjs <name>|--all <env> [--info] [--timestamp=|--bookmark=]`),
+  the recovery counterpart to a bad migration/deploy (it pairs with CI's `wrangler rollback` for the
+  code half). **Why:** never change a remote schema without a rollback net, and give one-command undo.
+  Deploy environments now need R2-write + D1-export perms so the snapshot can run.
 - **Welcome email on account creation.** The `user.created` Clerk webhook (`index.ts`, already
   handled for profile sync) now also sends a branded, localized welcome email — best-effort via
   `ctx.waitUntil`, only on `user.created`, in the sign-up locale (`unsafe.locale`), and it never

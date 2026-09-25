@@ -1,3 +1,8 @@
+/**
+ * Render one compact post card.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/PostCard.md
+ */
 import Image from "next/image";
 import type { PostCardItem } from "@indiecrafts/packages-web-ui-components/shared/types";
 

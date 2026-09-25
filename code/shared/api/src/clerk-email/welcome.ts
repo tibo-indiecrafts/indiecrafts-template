@@ -1,3 +1,8 @@
+/**
+ * Send the best-effort post-signup welcome email in the recipient's locale.
+ *
+ * @see docs/reference/shared/api/src/clerk-email/welcome.md
+ */
 import { resend, supportFooter, type MailEnv } from "../erasure/email";
 import { fetchAuthEmailStrings, resolveWelcomeCopy } from "./sanity";
 import { renderWelcome } from "./templates";

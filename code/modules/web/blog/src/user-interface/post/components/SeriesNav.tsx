@@ -1,3 +1,8 @@
+/**
+ * Render the "Part N of M" series navigation on a post.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/post/components/SeriesNav.md
+ */
 import { Link } from "@indiecrafts/packages-web-i18n";
 import type { SeriesRef } from "@indiecrafts/modules-web-blog/sanity/types";
 

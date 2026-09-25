@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Switch the active locale and persist the choice to a signed-in user's profile.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/LocaleSwitcher.md
+ */
+
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useLocaleSwitch } from "@indiecrafts/packages-web-i18n";

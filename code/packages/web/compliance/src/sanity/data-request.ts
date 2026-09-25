@@ -1,5 +1,11 @@
+/**
+ * Define the deprecated GDPR data-request Sanity document.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/data-request.md
+ */
+
 import { defineField, defineType } from "sanity";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 import {
   DATA_REQUEST_TYPES,
   REQUEST_TYPE_LABELS_FR,

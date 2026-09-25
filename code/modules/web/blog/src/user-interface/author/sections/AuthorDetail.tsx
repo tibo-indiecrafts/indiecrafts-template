@@ -1,3 +1,8 @@
+/**
+ * Renders the /author/[slug] section — author hero plus a paged post grid.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/author/sections/AuthorDetail.md
+ */
 import Image from "next/image";
 import { Globe } from "lucide-react";
 import type { Locale } from "@indiecrafts/packages-shared-config";

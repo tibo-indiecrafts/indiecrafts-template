@@ -1,5 +1,10 @@
+/**
+ * Define the hero module — the lead band of a marketing page.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/hero.md
+ */
 import { defineField } from "sanity";
-import { StarIcon } from "@sanity/icons";
+import { StarIcon } from "@sanity/icons/Star";
 import { defineModule } from "../objects/define-module";
 
 /**

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Wires the shared unified account modal for the website.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/account/AccountControl.md
+ */
+
 import { useTranslations } from "next-intl";
 import { AccountButton, AccountPage } from "@indiecrafts/packages-web-auth/account";
 import {

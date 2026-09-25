@@ -1,4 +1,9 @@
-import { FolderIcon } from "@sanity/icons";
+/**
+ * Define the category-spotlight page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-category-spotlight.md
+ */
+import { FolderIcon } from "@sanity/icons/Folder";
 import { defineField } from "sanity";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the token-themed sign-up surface with a marketing opt-in.
+ *
+ * @see docs/reference/packages/web/auth/src/sign-up-view.md
+ */
+
 import { useState } from "react";
 import { SignUp } from "@clerk/nextjs";
 import { Checkbox } from "@indiecrafts/packages-web-ui/web/checkbox";

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render children only while a consent category is granted.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/ConsentGate.md
+ */
+
 import type { ReactNode } from "react";
 import { useConsent } from "./useConsent";
 

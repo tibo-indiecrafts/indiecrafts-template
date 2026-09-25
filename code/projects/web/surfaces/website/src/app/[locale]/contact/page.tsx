@@ -1,3 +1,8 @@
+/**
+ * Render the contact landing page shell.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/contact/page.md
+ */
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { features, pages, type Locale } from "@/config";

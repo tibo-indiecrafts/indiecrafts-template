@@ -1,3 +1,8 @@
+/**
+ * Render the gallery module wrapper and hand its images to the client carousel.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/media/Gallery.md
+ */
 import type { GalleryModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { RichTitle } from "../RichTitle";
 import { GalleryCarousel } from "./GalleryCarousel";

@@ -1,3 +1,8 @@
+/**
+ * Fetch and locale-resolve the emailPreferences singleton's categories, notices, and topic ids.
+ *
+ * @see docs/reference/shared/api/src/consent/email-preferences-sanity.md
+ */
 // Raw GROQ-over-HTTP read of the Studio `emailPreferences` singleton — mirrors
 // `clerk-email/sanity.ts` `fetchAuthEmailStrings` (same host branch, Bearer, no new
 // deps). This is the api's SINGLE runtime reader of the category definitions; both

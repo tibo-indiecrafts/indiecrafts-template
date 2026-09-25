@@ -1,3 +1,8 @@
+/**
+ * Authenticate a Clerk session and enforce step-up reverification for sensitive per-user actions.
+ *
+ * @see docs/reference/shared/api/src/auth/sensitive-action.md
+ */
 // One shared gate for sensitive, per-user actions (self-service erasure + data export).
 // It resolves the caller from their Clerk session JWT and (optionally) enforces step-up
 // reverification. Extracted from a verbatim copy that lived in both erasure/self.ts and

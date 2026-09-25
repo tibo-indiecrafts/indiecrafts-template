@@ -1,3 +1,8 @@
+/**
+ * Renders the anonymous email-preference centre for an emailed token link.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/email-preferences/page.md
+ */
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Locale } from "@/config";

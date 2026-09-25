@@ -1,3 +1,8 @@
+/**
+ * Wrap dashboard pages in the sidebar shell.
+ *
+ * @see docs/reference/projects/web/admin/src/user-interface/layout/AppShell.md
+ */
 import type { ReactNode } from "react";
 import { SidebarInset, SidebarProvider } from "@indiecrafts/packages-web-ui/web/sidebar";
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";

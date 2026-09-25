@@ -1,5 +1,10 @@
+/**
+ * Define the pricing module — a row of plan tiers with features and CTAs.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/pricing.md
+ */
 import { defineArrayMember, defineField } from "sanity";
-import { CreditCardIcon } from "@sanity/icons";
+import { CreditCardIcon } from "@sanity/icons/CreditCard";
 import { defineModule } from "../objects/define-module";
 
 /**

@@ -1,3 +1,8 @@
+/**
+ * Verify a Cloudflare Turnstile token against the siteverify API.
+ *
+ * @see docs/reference/packages/shared/security/src/turnstile.md
+ */
 import "server-only";
 
 /**

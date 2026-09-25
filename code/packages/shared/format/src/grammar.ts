@@ -1,3 +1,8 @@
+/**
+ * Applies locale grammar rules (casing, adjective order, agreement) to generated content.
+ *
+ * @see docs/reference/packages/shared/format/src/grammar.md
+ */
 import {
   defaultLocale,
   localeFormat,

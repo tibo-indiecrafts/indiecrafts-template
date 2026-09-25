@@ -1,3 +1,8 @@
+/**
+ * Re-export the security-events taxonomy, thresholds, counter, and alerts.
+ *
+ * @see docs/reference/packages/shared/security-events/src/index.md
+ */
 export {
   type SecurityEventType,
   type Severity,

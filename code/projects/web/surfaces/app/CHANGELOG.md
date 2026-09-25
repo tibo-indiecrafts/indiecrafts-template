@@ -23,6 +23,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Changed
 
+- **`ShellOverlays` split into a thin composition root + `overlays/`.** The 163-line component inlined
+  three concerns; it's now `user-interface/overlays/{stores,ConsentGate,LegalGate}.tsx` with
+  `ShellOverlays.tsx` just mounting `<ConsentGate/> <LegalGate/> <UpdatePrompt/>`. Behavior + the export
+  (imported by `[locale]/layout`) are unchanged; each overlay is now independently readable. **Why:** three
+  responsibilities in one file — the consent banner + geo-seed, the legal re-acceptance gate, and the
+  version prompt — each belongs in its own unit.
 - **Clerk UI localized + self-hosted `/sign-up`.** `<ClerkProvider>` gets the active locale (the provider
   moved into `[locale]/layout.tsx`) so Clerk's UI renders in the visitor's language; a new `/sign-up`
   route renders `<SignUp>` carrying `unsafeMetadata.locale` (set `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`).

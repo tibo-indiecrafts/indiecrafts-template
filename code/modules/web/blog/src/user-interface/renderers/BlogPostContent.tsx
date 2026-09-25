@@ -1,3 +1,8 @@
+/**
+ * Render the active post's header and body block.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogPostContent.md
+ */
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { getTranslations } from "next-intl/server";

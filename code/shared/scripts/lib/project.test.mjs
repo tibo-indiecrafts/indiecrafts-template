@@ -22,6 +22,13 @@ test("renames an Analytics Engine dataset name (the rename-completeness gap)", (
   );
 });
 
+test("renames the BACKUP_BUCKET var (an R2 bucket name carried in [vars])", () => {
+  assert.equal(
+    swap('BACKUP_BUCKET = "indiecrafts-prod-db-backup"'),
+    'BACKUP_BUCKET = "acme-prod-db-backup"',
+  );
+});
+
 test("rewrites `wrangler … create <prefix>-…` comment examples", () => {
   assert.equal(
     swap("#   wrangler d1 create indiecrafts-dev-shared-api --location weur"),

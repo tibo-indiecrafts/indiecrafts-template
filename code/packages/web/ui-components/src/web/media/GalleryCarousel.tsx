@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the client image-gallery carousel with thumbnails and a lightbox.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/media/GalleryCarousel.md
+ */
+
 import * as React from "react";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";

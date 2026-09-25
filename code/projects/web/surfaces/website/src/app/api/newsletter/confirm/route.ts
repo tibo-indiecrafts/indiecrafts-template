@@ -1,3 +1,8 @@
+/**
+ * Confirm a newsletter double opt-in from a one-time token.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/newsletter/confirm/route.md
+ */
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
 import { withGuard } from "@indiecrafts/packages-shared-security/guard";

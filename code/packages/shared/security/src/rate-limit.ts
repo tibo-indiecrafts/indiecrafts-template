@@ -1,3 +1,8 @@
+/**
+ * Rate-limit a key with a best-effort fixed window over Workers KV.
+ *
+ * @see docs/reference/packages/shared/security/src/rate-limit.md
+ */
 import "server-only";
 
 /**

@@ -1,3 +1,8 @@
+/**
+ * Bundles the page document, blocks, entities, desk, and templates as a SanityModule.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/index.md
+ */
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import { locales } from "@indiecrafts/packages-shared-config";
 import { schemaTypes } from "./schema";

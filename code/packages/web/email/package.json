@@ -10,18 +10,19 @@
   },
   "dependencies": {
     "@indiecrafts/packages-shared-config": "workspace:*",
-    "@indiecrafts/packages-web-sanity": "workspace:*",
     "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
-    "@sanity/icons": "^3.7.4",
-    "@sanity/ui": "^3.5.1",
-    "next-sanity": "^13.3.3",
-    "sanity": "^5.31.1"
+    "@indiecrafts/packages-web-sanity": "workspace:*",
+    "@sanity/icons": "^5.2.2",
+    "@sanity/ui": "^4.2.3",
+    "next-sanity": "^13.3.4"
   },
   "peerDependencies": {
-    "react": "19.2.8"
+    "react": "19.2.8",
+    "sanity": "*"
   },
   "devDependencies": {
-    "@types/react": "^19"
+    "@types/react": "^19",
+    "sanity": "^6.16.0"
   },
   "scripts": {
     "test": "vitest run"

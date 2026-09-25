@@ -1,5 +1,11 @@
+/**
+ * Defines the Sanity singleton document schema for cookie consent content.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/cookie-consent.md
+ */
+
 import { defineField, defineType } from "sanity";
-import { RemoveCircleIcon } from "@sanity/icons";
+import { RemoveCircleIcon } from "@sanity/icons/RemoveCircle";
 
 /**
  * Cookie consent — a single, language-independent singleton (`_id: cookieConsent`)

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Fire one session-log ping per Clerk session.
+ *
+ * @see docs/reference/packages/web/auth/src/session-logger.md
+ */
+
 import { useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 

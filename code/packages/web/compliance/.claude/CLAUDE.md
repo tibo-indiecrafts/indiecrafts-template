@@ -1,6 +1,6 @@
 # @indiecrafts/packages-web-compliance — legal pages + cookie consent
 
-**Stack:** React 19 · TypeScript · Tailwind v4 · Sanity v5 · next-intl. The site's legal +
+**Stack:** React 19 · TypeScript · Tailwind v4 · Sanity v6 · next-intl. The site's legal +
 data-protection surface: the legal pages, the cookie-consent runtime, and legal re-acceptance.
 
 Auto-loads under `code/packages/web/compliance/**`. Consumed as source via `transpilePackages`.

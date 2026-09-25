@@ -1,6 +1,12 @@
+/**
+ * Define the app-content singleton holding the signed-in welcome message.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/app-content.md
+ */
+
 import { defineField, defineType } from "sanity";
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
-import { HomeIcon } from "@sanity/icons";
+import { HomeIcon } from "@sanity/icons/Home";
 
 /**
  * Contenu de l'app (singleton) — the editor-owned welcome message shown at the top

@@ -1,3 +1,8 @@
+/**
+ * Build the Content-Security-Policy string with hardened defaults.
+ *
+ * @see docs/reference/packages/shared/security/src/csp.md
+ */
 import {
   getCSPConnectSources,
   getClerkCspHosts,

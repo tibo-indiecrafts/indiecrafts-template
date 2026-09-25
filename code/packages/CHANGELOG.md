@@ -14,6 +14,19 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **Storybook stories for three previously-uncovered components** — `AnnouncementToast`
+  (`@indiecrafts/packages-web-announcement`, the sibling of `AnnouncementBar` used on all 3 surfaces),
+  `PostCard` (`@indiecrafts/packages-web-ui-components`, the shared blog card), and the native
+  `OfflineBanner` (`@indiecrafts/packages-shared-system-pages`). **Why:** each is a shipping UI component
+  the gallery didn't document; all three now pass `test:stories` (render + a11y). The `packages-web-ui`
+  primitives were already 100% covered. **Known gap:** the native `ui-icons` renderers (`Icon`/`BrandIcon`/
+  `SvgIcon`) still have no stories — `react-native-svg` pulls raw `react-native` Flow source the Storybook
+  Vite bundler can't parse (the `react-native`→`react-native-web` alias is exact-match and misses its deep
+  imports); wiring that is its own task. The web icon stories already document the identical glyph sets.
+- **`retention.profile_anonymized_days` setting** (`@indiecrafts/packages-shared-config` `SETTINGS`,
+  default 90, range 30–3650). The window after which the cron hard-deletes a `user_profiles` row
+  pseudonymised on erasure (`anonymized = 1`), dropping the retained `email_fingerprint` as the final
+  anonymisation. Operator-overridable in `site_settings` like the other retention windows.
 - **`clerkEmails.welcome` Studio group** (`@indiecrafts/packages-web-email/sanity`) — editable copy for
   the post-signup welcome email (translatable subject/intro/outro over a hardcoded en/fr fallback).
   Rendered + sent by `code/shared/api` on the `user.created` webhook, not the Clerk take-over.
@@ -87,6 +100,16 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Changed
 
+- **`@indiecrafts/packages-shared-compliance` — two clarity splits (public API unchanged).** (1) The
+  224-line `shared/regions.ts` split into `regions.data.ts` (the editable geo→regulation tables) +
+  `regions.ts` (the resolution algorithm); `./regions` re-exports the same surface, so the `shared` barrel
+  and every consumer are unaffected. (2) The churn exit-survey extracted from `web/DeleteAccountSection.tsx`
+  (188 → ~120 lines) into a controlled `web/ChurnSurvey.tsx` (exported), keeping `DeleteAccountSection`'s
+  props identical. **Storybook:** compliance web UI is now in the gallery — added
+  `brickStories("@indiecrafts/packages-shared-compliance")` (previously the `DeleteAccountSection` story was
+  orphaned) plus a new `ChurnSurvey.stories.tsx`; a `regions.data` integrity test was added. **Why:** the
+  two biggest compliance files each mixed two concerns; the splits make the data catalog and the survey
+  independently readable/testable without changing any import.
 - **`@indiecrafts/packages-web-i18n` routing now sets the namespaced locale cookie.** The shared
   next-intl shim omitted `localeCookie`, so a module navigating through it read/wrote next-intl's
   un-namespaced `NEXT_LOCALE` instead of the app's `${site.prefix}_NEXT_LOCALE`. It now uses

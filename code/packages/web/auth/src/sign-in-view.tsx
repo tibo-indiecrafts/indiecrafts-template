@@ -1,3 +1,8 @@
+/**
+ * Render the token-themed sign-in surface.
+ *
+ * @see docs/reference/packages/web/auth/src/sign-in-view.md
+ */
 import { SignIn } from "@clerk/nextjs";
 import { authAppearance } from "./appearance";
 

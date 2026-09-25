@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the per-category consent toggle switches.
+ *
+ * @see docs/reference/packages/shared/compliance/src/web/ConsentPreferences.md
+ */
+
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Switch } from "@indiecrafts/packages-web-ui/web/switch";
 import type { ConsentCategory } from "../shared/consent-signals";

@@ -1,3 +1,8 @@
+/**
+ * Select the locale plural form for a count.
+ *
+ * @see docs/reference/packages/shared/format/src/plural.md
+ */
 import {
   defaultLocale,
   localeFormat,

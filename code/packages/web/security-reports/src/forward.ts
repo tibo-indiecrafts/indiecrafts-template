@@ -1,3 +1,8 @@
+/**
+ * Forward sanitized CSP reports to the api events endpoint.
+ *
+ * @see docs/reference/packages/web/security-reports/src/forward.md
+ */
 import "server-only";
 import type { SanitizedCspReport } from "@indiecrafts/packages-shared-security/csp-report";
 

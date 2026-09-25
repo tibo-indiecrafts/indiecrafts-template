@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the sidebar footer menu: Legal, plus Sign out when Clerk is configured.
+ *
+ * @see docs/reference/projects/web/app/src/user-interface/layout/NavUser.md
+ */
 import { useTranslations } from "next-intl";
 import { useAuth } from "@clerk/nextjs";
 import { UserRound } from "lucide-react";

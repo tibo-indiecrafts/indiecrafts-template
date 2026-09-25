@@ -1,3 +1,8 @@
+/**
+ * Renders a titled two- or three-column grid of blog cards.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/blog/sections/BlogListing.md
+ */
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import type { PostListItem } from "@indiecrafts/modules-web-blog/sanity/types";
 import { BlogCard } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogCard";

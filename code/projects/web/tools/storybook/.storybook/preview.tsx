@@ -1,3 +1,8 @@
+/**
+ * Configure the gallery Storybook preview: a theme toolbar bridged to the native design system.
+ *
+ * @see docs/reference/projects/web/tools/storybook/.storybook/preview.md
+ */
 import type { Preview } from "@storybook/nextjs-vite";
 import { withThemeByDataAttribute } from "@storybook/addon-themes";
 // `react-native` resolves to `react-native-web` via the Vite alias in main.ts at

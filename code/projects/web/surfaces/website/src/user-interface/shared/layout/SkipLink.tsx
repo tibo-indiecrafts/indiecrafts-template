@@ -1,3 +1,8 @@
+/**
+ * Render the skip-to-content link as the first focusable element in the body.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/SkipLink.md
+ */
 import { useTranslations } from "next-intl";
 
 /**

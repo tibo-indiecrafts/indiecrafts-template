@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Mounts the email preference centre for a signed-in account.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/account/EmailPreferencesMount.md
+ */
+
 import { useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
 import {

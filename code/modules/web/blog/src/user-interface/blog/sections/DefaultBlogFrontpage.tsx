@@ -1,3 +1,8 @@
+/**
+ * Renders the code-default /blog frontpage when no editor modules are set.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/blog/sections/DefaultBlogFrontpage.md
+ */
 import type { getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { BlogSearchForm } from "@indiecrafts/modules-web-blog/user-interface/shared/components/BlogSearchForm";

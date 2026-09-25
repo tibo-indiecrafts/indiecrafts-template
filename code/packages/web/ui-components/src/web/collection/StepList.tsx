@@ -1,3 +1,8 @@
+/**
+ * Render a numbered vertical step timeline.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/StepList.md
+ */
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { StepListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { ModuleSection } from "../layout/ModuleSection";

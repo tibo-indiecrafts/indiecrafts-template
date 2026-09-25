@@ -1,3 +1,8 @@
+/**
+ * Renders the waitlist confirmation email.
+ *
+ * @see docs/reference/modules/web/waitlist/src/emails/waitlist-confirm.md
+ */
 import {
   EMAIL_COLORS,
   escapeHtml,

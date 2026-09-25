@@ -33,6 +33,9 @@ export default defineWorkersConfig(async () => {
               // The bearer the authenticated-route tests send. Safe: the
               // existing no-bearer 401 tests are unaffected.
               APP_API_TOKEN: "test-token",
+              // The least-privilege ingest bearer (POST /v1/events session/security only).
+              // Distinct from APP_API_TOKEN so the privilege-split tests can exercise both.
+              EVENTS_TOKEN: "test-events-token",
               // Keep the test env hermetic: pin the Clerk webhook secret empty so the
               // "fails closed with no secret → 503" test holds regardless of a
               // developer's real `.dev.vars` (which the pool loads and would otherwise

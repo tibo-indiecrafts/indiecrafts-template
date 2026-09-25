@@ -1,3 +1,8 @@
+/**
+ * Return the popular post ids feeding the Trending block.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/popularity.md
+ */
 import type { Locale } from "@indiecrafts/packages-shared-config";
 
 /**

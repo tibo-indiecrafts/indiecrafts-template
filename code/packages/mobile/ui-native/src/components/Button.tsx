@@ -1,3 +1,8 @@
+/**
+ * Render a themed native button with shadcn-style variants.
+ *
+ * @see docs/reference/packages/mobile/ui-native/src/components/Button.md
+ */
 import { Pressable, Text, StyleSheet } from "react-native";
 import { useTheme } from "../theme";
 

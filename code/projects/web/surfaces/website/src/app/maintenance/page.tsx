@@ -1,3 +1,8 @@
+/**
+ * Render the maintenance page from Sanity system-page copy with message fallbacks.
+ *
+ * @see docs/reference/projects/web/website/src/app/maintenance/page.md
+ */
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getSystemPages } from "@/lib/system-pages";

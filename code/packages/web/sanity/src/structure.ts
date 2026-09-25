@@ -1,3 +1,8 @@
+/**
+ * Builds the core feature-independent desk items (UI text, navigation, SEO).
+ *
+ * @see docs/reference/packages/web/sanity/src/structure.md
+ */
 import type { StructureBuilder, ListItemBuilder } from "sanity/structure";
 import { locales } from "@indiecrafts/packages-shared-config";
 

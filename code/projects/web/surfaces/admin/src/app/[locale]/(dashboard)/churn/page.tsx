@@ -1,3 +1,8 @@
+/**
+ * Fetch and display churn aggregates from the shared api.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/churn/page.md
+ */
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import {

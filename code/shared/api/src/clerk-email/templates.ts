@@ -1,3 +1,8 @@
+/**
+ * Render localized bodies for the taken-over Clerk auth emails and the welcome email.
+ *
+ * @see docs/reference/shared/api/src/clerk-email/templates.md
+ */
 import { pickLocale } from "@indiecrafts/packages-shared-config";
 
 /**

@@ -1,3 +1,8 @@
+/**
+ * Format relative time, durations, and date ranges per locale.
+ *
+ * @see docs/reference/packages/shared/format/src/relative.md
+ */
 import {
   defaultLocale,
   localeFormat,

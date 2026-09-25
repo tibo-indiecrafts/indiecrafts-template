@@ -1,5 +1,10 @@
+/**
+ * Builds the blog's Studio desk sections — content lists and comment moderation.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/structure.md
+ */
 import type { StructureBuilder, ListItemBuilder } from "sanity/structure";
-import { CommentIcon } from "@sanity/icons";
+import { CommentIcon } from "@sanity/icons/Comment";
 import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
 import { locales, type Locale } from "@indiecrafts/packages-shared-config";
 

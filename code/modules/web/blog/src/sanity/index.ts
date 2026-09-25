@@ -1,3 +1,8 @@
+/**
+ * Assemble the blog's Sanity module barrel for the app.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/index.md
+ */
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import { locales } from "@indiecrafts/packages-shared-config";
 import { schemaTypes } from "./schema";

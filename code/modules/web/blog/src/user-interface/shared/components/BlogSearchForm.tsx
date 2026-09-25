@@ -1,3 +1,8 @@
+/**
+ * Render the blog search box as a JS-free GET form that navigates to a shareable results URL.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/shared/components/BlogSearchForm.md
+ */
 import { Search } from "lucide-react";
 
 /**

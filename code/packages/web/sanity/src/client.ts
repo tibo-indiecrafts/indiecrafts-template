@@ -1,3 +1,8 @@
+/**
+ * Creates the read-only Sanity client for server-component content fetches.
+ *
+ * @see docs/reference/packages/web/sanity/src/client.md
+ */
 import { createClient } from "next-sanity";
 import { apiVersion, dataset, projectId, studioBasePath } from "./env";
 

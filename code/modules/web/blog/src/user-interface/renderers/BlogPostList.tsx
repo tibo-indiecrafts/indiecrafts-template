@@ -1,3 +1,8 @@
+/**
+ * Fetch and render a filtered grid of posts with the shared BlogCard.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogPostList.md
+ */
 import { getTranslations } from "next-intl/server";
 import type {
   BlogPostListModule,

@@ -1,5 +1,10 @@
+/**
+ * Define the feature-grid module — a grid of icon feature cards.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/feature-grid.md
+ */
 import { defineArrayMember, defineField } from "sanity";
-import { ThLargeIcon } from "@sanity/icons";
+import { ThLargeIcon } from "@sanity/icons/ThLarge";
 import { glyphOptions } from "@indiecrafts/packages-shared-ui-icons/shared";
 import { defineModule } from "../objects/define-module";
 

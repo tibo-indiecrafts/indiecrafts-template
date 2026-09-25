@@ -1,3 +1,8 @@
+/**
+ * Read and write per-category email opt-ins in D1 with append-only consent proof.
+ *
+ * @see docs/reference/shared/api/src/consent/email-preferences-store.md
+ */
 // Email-preferences D1 store — pure read/write layer for per-category marketing opt-ins.
 // State lives in email_preferences (one row per user per category, migration 0009); each
 // write also appends an append-only consent_events proof row (same idiom as marketing.ts)

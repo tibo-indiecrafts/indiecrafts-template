@@ -1,3 +1,8 @@
+/**
+ * Render the approved comment thread and the comment form under a post.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/post/sections/Comments.md
+ */
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { formatDate } from "@indiecrafts/packages-shared-utils/format-date";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";

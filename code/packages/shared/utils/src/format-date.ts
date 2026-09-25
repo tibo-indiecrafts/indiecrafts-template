@@ -1,3 +1,9 @@
+/**
+ * Formats a post's publish date for a locale, reusing cached Intl formatters.
+ *
+ * @see docs/reference/packages/shared/utils/src/format-date.md
+ */
+
 import type { Locale } from "@indiecrafts/packages-shared-config/shared";
 
 /**

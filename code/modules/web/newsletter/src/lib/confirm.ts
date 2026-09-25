@@ -1,3 +1,8 @@
+/**
+ * Confirms a pending subscriber from its one-time double opt-in token.
+ *
+ * @see docs/reference/modules/web/newsletter/src/lib/confirm.md
+ */
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";

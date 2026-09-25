@@ -1,5 +1,10 @@
+/**
+ * Define the read-only contactMessage document captured from the public contact form.
+ *
+ * @see docs/reference/modules/web/contact/src/sanity/schema/contact-message.md
+ */
 import { defineField, defineType } from "sanity";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 
 /**
  * Contact message — captured by the `module.contact` block via `/api/contact`

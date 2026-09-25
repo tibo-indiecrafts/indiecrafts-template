@@ -1,3 +1,8 @@
+/**
+ * Render the frontpage explore block for categories, tags, or top authors.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogExplore.md
+ */
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";

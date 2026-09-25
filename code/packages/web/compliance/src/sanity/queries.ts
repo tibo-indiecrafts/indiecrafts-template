@@ -1,3 +1,9 @@
+/**
+ * Hold the compliance GROQ queries.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/queries.md
+ */
+
 import { defineQuery } from "next-sanity";
 
 /**

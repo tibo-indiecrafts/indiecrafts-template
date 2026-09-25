@@ -1,3 +1,8 @@
+/**
+ * Render a team grid of people with avatars.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/PersonList.md
+ */
 import Image from "next/image";
 import type { PersonListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { ModuleSection } from "../layout/ModuleSection";

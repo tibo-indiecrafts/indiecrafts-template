@@ -1,3 +1,8 @@
+/**
+ * Provides reusable Storybook fixtures for the block renderers.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/_mock.md
+ */
 import type { PortableTextBlock } from "@portabletext/react";
 import type { ImageRef, GalleryImage } from "../shared/types";
 

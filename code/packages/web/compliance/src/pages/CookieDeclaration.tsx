@@ -1,3 +1,9 @@
+/**
+ * Renders the cookie declaration table on the cookie-policy page.
+ *
+ * @see docs/reference/packages/web/compliance/src/pages/CookieDeclaration.md
+ */
+
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import type { CookieRow } from "../consent/consent-signals";

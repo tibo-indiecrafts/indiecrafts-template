@@ -21,7 +21,7 @@ Auto-loads when you work under `code/projects/**`. Deployables nest **by platfor
 Human roster → `_registry.md`; machine source of truth → [`code/shared/scripts/lib/apps.mjs`](../../shared/scripts/lib/apps.mjs)
 (carries each app's `dir` — every path resolver reads it, never a hard-coded `code/projects/<slug>`).
 
-**Stack:** per-app, by platform class. `next-cf` (`website`): Next.js 16 · React 19 · TypeScript · Tailwind v4 · shadcn/ui · Sanity v5. `worker-cf`: bare Cloudflare Worker. `expo`: React Native / Expo.
+**Stack:** per-app, by platform class. `next-cf` (`website`): Next.js 16 · React 19 · TypeScript · Tailwind v4 · shadcn/ui · Sanity v6. `worker-cf`: bare Cloudflare Worker. `expo`: React Native / Expo.
 
 ## Rules
 

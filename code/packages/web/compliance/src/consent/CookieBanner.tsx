@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the GDPR cookie banner and preferences dialog.
+ *
+ * @see docs/reference/packages/web/compliance/src/consent/CookieBanner.md
+ */
+
 import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/packages-web-i18n";

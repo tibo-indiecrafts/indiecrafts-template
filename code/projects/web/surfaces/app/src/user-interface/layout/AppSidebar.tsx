@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the app's collapsible left sidebar rail.
+ *
+ * @see docs/reference/projects/web/app/src/user-interface/layout/AppSidebar.md
+ */
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
 import {

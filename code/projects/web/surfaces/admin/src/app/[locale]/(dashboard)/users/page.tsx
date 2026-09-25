@@ -1,3 +1,8 @@
+/**
+ * Browse and search Clerk users with their marketing-email consent.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/users/page.md
+ */
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";

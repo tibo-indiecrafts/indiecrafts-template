@@ -1,3 +1,8 @@
+/**
+ * Render the sender-facing "we got your message" contact acknowledgement email.
+ *
+ * @see docs/reference/modules/web/contact/src/emails/contact-confirm.md
+ */
 import {
   EMAIL_COLORS,
   escapeHtml,

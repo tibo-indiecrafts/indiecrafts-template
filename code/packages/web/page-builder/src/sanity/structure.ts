@@ -1,5 +1,13 @@
+/**
+ * Builds the page-builder desk sections for the embedded Studio.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/structure.md
+ */
 import type { StructureBuilder, ListItemBuilder } from "sanity/structure";
-import { DocumentsIcon, HomeIcon, StarIcon, UsersIcon } from "@sanity/icons";
+import { DocumentsIcon } from "@sanity/icons/Documents";
+import { HomeIcon } from "@sanity/icons/Home";
+import { StarIcon } from "@sanity/icons/Star";
+import { UsersIcon } from "@sanity/icons/Users";
 import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
 import { locales, type Locale } from "@indiecrafts/packages-shared-config";
 

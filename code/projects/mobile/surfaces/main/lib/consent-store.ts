@@ -1,3 +1,8 @@
+/**
+ * Provide the single shared consent-record store for the mobile app.
+ *
+ * @see docs/reference/projects/mobile/main/lib/consent-store.md
+ */
 import { createNativeStore } from "@indiecrafts/packages-shared-compliance/native";
 import type { ConsentRecord } from "@indiecrafts/packages-shared-compliance/shared";
 import { STORAGE_KEYS } from "@/config";

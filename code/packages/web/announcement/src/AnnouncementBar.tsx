@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the dismissible announcement strip under the site navigation.
+ *
+ * @see docs/reference/packages/web/announcement/src/AnnouncementBar.md
+ */
+
 import {
   useEffect,
   useState,

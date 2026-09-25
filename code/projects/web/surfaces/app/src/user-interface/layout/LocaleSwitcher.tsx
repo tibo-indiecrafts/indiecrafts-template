@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Switch the active locale, preserving the current path.
+ *
+ * @see docs/reference/projects/web/app/src/user-interface/layout/LocaleSwitcher.md
+ */
 import { useTransition } from "react";
 import { Languages } from "lucide-react";
 import { useLocale } from "next-intl";

@@ -1,3 +1,8 @@
+/**
+ * Render a full-bleed themed native page root.
+ *
+ * @see docs/reference/packages/mobile/ui-native/src/components/Screen.md
+ */
 import type { ReactNode } from "react";
 import { View, StyleSheet, type ViewStyle } from "react-native";
 import { useTheme } from "../theme";

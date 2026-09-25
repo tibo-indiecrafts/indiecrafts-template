@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Mounts the email preference centre for the public token page.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/email-preferences/EmailPreferencesPublic.md
+ */
+
 import { useMemo } from "react";
 import {
   EmailPreferences,

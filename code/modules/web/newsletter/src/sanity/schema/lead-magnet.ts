@@ -1,5 +1,10 @@
+/**
+ * Defines the leadMagnet Sanity document schema.
+ *
+ * @see docs/reference/modules/web/newsletter/src/sanity/schema/lead-magnet.md
+ */
 import { defineField, defineType } from "sanity";
-import { DownloadIcon } from "@sanity/icons";
+import { DownloadIcon } from "@sanity/icons/Download";
 
 /**
  * Lead magnet — a downloadable file (guide, checklist, template) offered in

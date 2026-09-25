@@ -1,3 +1,8 @@
+/**
+ * Renders the /author index section — a grid of author cards.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/author/sections/AuthorListing.md
+ */
 import type { Author } from "@indiecrafts/modules-web-blog/sanity/types";
 import { AuthorCard } from "@indiecrafts/modules-web-blog/user-interface/author/components/AuthorCard";
 import {

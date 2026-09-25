@@ -1,3 +1,8 @@
+/**
+ * Accept a public newsletter signup.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/newsletter/route.md
+ */
 import { NextResponse } from "next/server";
 import { features, security } from "@/config";
 import { withGuard } from "@indiecrafts/packages-shared-security/guard";

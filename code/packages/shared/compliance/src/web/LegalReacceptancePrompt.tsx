@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Prompts review and re-acceptance of changed legal documents.
+ *
+ * @see docs/reference/packages/shared/compliance/src/web/LegalReacceptancePrompt.md
+ */
+
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import type { LegalReacceptanceCopy } from "../shared/legal";

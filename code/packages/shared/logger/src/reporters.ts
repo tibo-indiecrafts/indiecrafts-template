@@ -1,3 +1,8 @@
+/**
+ * Render log records to the console for dev, browser, and production.
+ *
+ * @see docs/reference/packages/shared/logger/src/reporters.md
+ */
 import type { EmitLevel, LogRecord } from "./core";
 import { safeStringify } from "./core";
 

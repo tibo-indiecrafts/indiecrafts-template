@@ -1,3 +1,8 @@
+/**
+ * Renders the anonymous account-erasure request page.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/erasure/page.md
+ */
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { pages, isPageVisible, type Locale } from "@/config";

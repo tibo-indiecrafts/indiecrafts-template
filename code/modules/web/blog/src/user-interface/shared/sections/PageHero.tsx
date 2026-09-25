@@ -1,3 +1,8 @@
+/**
+ * Render the centered editorial header shared by every top-level blog listing page.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/shared/sections/PageHero.md
+ */
 import { Link } from "@indiecrafts/packages-web-i18n";
 
 /**

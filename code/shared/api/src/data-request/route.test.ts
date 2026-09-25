@@ -1,7 +1,7 @@
 import { SELF, env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import type { Env } from "../index";
-import { handleDataRequestWrite } from "./route";
+import { handleDataRequestWrite, handleDataRequestList } from "./route";
 
 function postDataRequest(body: Record<string, unknown>, bearer?: string) {
   return SELF.fetch("https://example.com/v1/data-request", {
@@ -153,5 +153,76 @@ describe("GET /v1/data-requests", () => {
     expect(data[0].message).toBe("new one");
     expect(data[0].status).toBe("new");
     expect(data[0].request_type).toBe("erasure");
+  });
+});
+
+describe("data_requests at-rest encryption (PII_ENCRYPTION_KEY)", () => {
+  // A keyed env, without mutating the global test env (whose other tests use the
+  // plaintext path). Mirrors the "503 when MAIN_DB unbound" pattern above.
+  const keyedEnv = () =>
+    ({ ...(env as unknown as Env), PII_ENCRYPTION_KEY: "test-pii-key" }) as Env;
+  const writeReq = (body: Record<string, unknown>) =>
+    new Request("https://example.com/v1/data-request", {
+      method: "POST",
+      headers: {
+        authorization: "Bearer test-token",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  const list = (e: Env) =>
+    handleDataRequestList(
+      new Request("https://example.com/v1/data-requests?limit=200", {
+        headers: { authorization: "Bearer test-token" },
+      }),
+      e,
+    );
+
+  it("stores ciphertext at rest, but the keyed list read round-trips the plaintext", async () => {
+    const e = keyedEnv();
+    const w = await handleDataRequestWrite(
+      writeReq({
+        requestType: "portability",
+        email: "enc@example.com",
+        message: "secret note",
+      }),
+      e,
+    );
+    expect(w.status).toBe(201);
+
+    // The raw column is NOT the plaintext — it's the AES-256-GCM envelope JSON.
+    const raw = await env.MAIN_DB.prepare(
+      "SELECT email, message FROM data_requests WHERE request_type = 'portability' ORDER BY id DESC LIMIT 1",
+    ).first<{ email: string; message: string }>();
+    expect(raw?.email).not.toBe("enc@example.com");
+    const envelope = JSON.parse(raw!.email) as {
+      version: number;
+      ciphertext: string;
+      iv: string;
+    };
+    expect(envelope.version).toBe(1);
+    expect(typeof envelope.ciphertext).toBe("string");
+    expect(typeof envelope.iv).toBe("string");
+
+    // The keyed operator read decrypts it back to plaintext.
+    const { data } = (await (await list(e)).json()) as {
+      data: Array<{ email: string; message: string; request_type: string }>;
+    };
+    const row = data.find((d) => d.request_type === "portability");
+    expect(row?.email).toBe("enc@example.com");
+    expect(row?.message).toBe("secret note");
+  });
+
+  it("still reads legacy plaintext rows when a key is configured", async () => {
+    // A row written WITHOUT encryption (pre-key), read back WITH a key → returned as-is.
+    await env.MAIN_DB.prepare(
+      "INSERT INTO data_requests (request_type, email, message, status, submitted_at) VALUES ('objection', 'legacy@example.com', 'plain msg', 'new', '2031-01-01T00:00:00.000Z')",
+    ).run();
+    const { data } = (await (await list(keyedEnv())).json()) as {
+      data: Array<{ email: string; message: string; request_type: string }>;
+    };
+    const row = data.find((d) => d.request_type === "objection");
+    expect(row?.email).toBe("legacy@example.com");
+    expect(row?.message).toBe("plain msg");
   });
 });

@@ -1,3 +1,8 @@
+/**
+ * Render the tag index page with tags sorted by post count.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/tag/sections/TagListing.md
+ */
 import type { Tag } from "@indiecrafts/modules-web-blog/sanity/types";
 import { TagCard } from "@indiecrafts/modules-web-blog/user-interface/tag/components/TagCard";
 import {

@@ -1,3 +1,8 @@
+/**
+ * Create the real Sanity erasure client over the Sanity HTTP API.
+ *
+ * @see docs/reference/shared/api/src/erasure/sanity-client.md
+ */
 import type { SanityErasureClient } from "./sanity";
 
 // Real SanityErasureClient over the Sanity HTTP API (the bare Worker can't use

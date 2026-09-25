@@ -1,3 +1,8 @@
+/**
+ * List blog tags for the active locale.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/blog/tag/page.md
+ */
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { pages, type Locale } from "@/config";
 import { requireTaxonomyRoute } from "@indiecrafts/modules-web-blog/lib/route-gate";

@@ -1,3 +1,9 @@
+/**
+ * Renders the React Native marketing-email opt-in toggle.
+ *
+ * @see docs/reference/packages/shared/compliance/src/native/MarketingEmailToggle.md
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import { View, Switch, StyleSheet } from "react-native";
 import { ThemedText, useTheme } from "@indiecrafts/packages-mobile-ui-native";

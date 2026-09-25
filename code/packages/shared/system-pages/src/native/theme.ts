@@ -1,3 +1,8 @@
+/**
+ * Resolve the active theme's colours for the native status pages.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/native/theme.md
+ */
 import { useColorScheme } from "react-native";
 import { tokens } from "@indiecrafts/packages-shared-ui-tokens/native";
 

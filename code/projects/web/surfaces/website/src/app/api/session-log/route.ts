@@ -1,3 +1,8 @@
+/**
+ * Log a sign-in session for the current user.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/session-log/route.md
+ */
 import { auth } from "@clerk/nextjs/server";
 import { logSession } from "@indiecrafts/packages-web-auth/session-log";
 import { surface as appSurface } from "@/config";

@@ -1,3 +1,8 @@
+/**
+ * Verify a gated-delivery token, then resolve the asset URL.
+ *
+ * @see docs/reference/packages/shared/gated-delivery/src/index.md
+ */
 export * from "./token";
 
 import { verifyDownloadToken } from "./token";

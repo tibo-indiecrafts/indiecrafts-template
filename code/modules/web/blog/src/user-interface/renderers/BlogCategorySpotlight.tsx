@@ -1,3 +1,8 @@
+/**
+ * Render the frontpage category-spotlight block from pins plus latest category posts.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogCategorySpotlight.md
+ */
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { localizedPathname } from "@indiecrafts/packages-web-i18n";

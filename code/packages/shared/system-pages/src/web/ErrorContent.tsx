@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the web 500 error content card.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/web/ErrorContent.md
+ */
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import type { ErrorContentProps } from "../shared/types";
 

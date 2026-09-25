@@ -1,3 +1,8 @@
+/**
+ * Run one-click comment moderation from a single-use token.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/moderate.md
+ */
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";

@@ -1,3 +1,8 @@
+/**
+ * Composes per-owner Sanity contributions into one embedded Studio.
+ *
+ * @see docs/reference/packages/web/sanity/src/module.md
+ */
 import type { FieldDefinition, SchemaTypeDefinition, Template } from "sanity";
 import type {
   StructureBuilder,

@@ -1,3 +1,8 @@
+/**
+ * Serve a clean Markdown export of a blog post.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/blog/slug/md/route.md
+ */
 import { pages, site } from "@/config";
 import { isBlogRouteEnabled } from "@indiecrafts/modules-web-blog/lib/route-gate";
 import { sanityFetchLive } from "@indiecrafts/packages-web-sanity/live";

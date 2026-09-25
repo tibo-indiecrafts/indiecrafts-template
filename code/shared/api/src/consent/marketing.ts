@@ -1,3 +1,8 @@
+/**
+ * Handles the authenticated marketing-email consent endpoint (GET reads, POST records).
+ *
+ * @see docs/reference/shared/api/src/consent/marketing.md
+ */
 // Marketing-email consent — the AUTHENTICATED self-service endpoint. A signed-in user
 // reads and sets their own opt-in; the Clerk session JWT proves identity. The account
 // settings toggle AND the one-time sign-in nudge both call this (GET to render, POST to

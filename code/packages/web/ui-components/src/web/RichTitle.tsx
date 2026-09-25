@@ -1,3 +1,8 @@
+/**
+ * Renders a heading and promotes any [[word]] span to the brand accent colour.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/RichTitle.md
+ */
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { splitHighlights } from "../shared/rich-title";
 

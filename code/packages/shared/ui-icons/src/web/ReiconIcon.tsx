@@ -1,4 +1,9 @@
 "use client";
+/**
+ * Render a reicon glyph by name for the web.
+ *
+ * @see docs/reference/packages/shared/ui-icons/src/web/ReiconIcon.md
+ */
 import type { ComponentType } from "react";
 import * as ReiconReact from "reicon-react";
 

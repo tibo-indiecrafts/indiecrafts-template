@@ -1,3 +1,8 @@
+/**
+ * Define the custom-html module — a raw HTML escape hatch for trusted editors.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/custom-html.md
+ */
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

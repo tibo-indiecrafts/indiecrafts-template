@@ -1,3 +1,8 @@
+/**
+ * Resolve a per-locale blog string with a default fallback.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/localize.md
+ */
 import { pickLocale, type Locale } from "@indiecrafts/packages-shared-config";
 import type { LocaleString } from "@indiecrafts/modules-web-blog/sanity/types";
 

@@ -1,3 +1,8 @@
+/**
+ * Read the live maintenance-mode flag from Sanity, cached per isolate and fail-open.
+ *
+ * @see docs/reference/projects/web/website/src/lib/maintenance.md
+ */
 import { apiVersion, dataset, projectId } from "@indiecrafts/packages-web-sanity/env";
 import { logger } from "@indiecrafts/packages-shared-logger";
 

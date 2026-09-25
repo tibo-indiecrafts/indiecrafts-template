@@ -1,3 +1,8 @@
+/**
+ * Mount the one-time marketing sign-in nudge for a signed-in user.
+ *
+ * @see docs/reference/projects/mobile/main/components/MarketingNudgeGate.md
+ */
 import { useSyncExternalStore } from "react";
 import { useAuth } from "@clerk/clerk-expo";
 import { useIntl } from "react-intl";

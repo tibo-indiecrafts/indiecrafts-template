@@ -1,3 +1,8 @@
+/**
+ * Render a row of pricing plan cards.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/Pricing.md
+ */
 import type { PricingModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { Check } from "lucide-react";
 import {

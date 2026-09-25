@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the anonymous erasure-confirm form.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/erasure/ErasureConfirmForm.md
+ */
+
 import { useId, useState } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Input } from "@indiecrafts/packages-web-ui/web/input";

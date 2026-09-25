@@ -1,3 +1,9 @@
+/**
+ * Renders the React Native legal re-acceptance prompt.
+ *
+ * @see docs/reference/packages/shared/compliance/src/native/LegalReacceptancePrompt.md
+ */
+
 import { View, StyleSheet } from "react-native";
 import {
   Button,

@@ -7,9 +7,9 @@
  *
  * SCOPE: non-secret prefs. A runtime SESSION TOKEN — once the reserved `auth` brick
  * lands — belongs in `expo-secure-store` (OS keychain), not here; add a `secureStorage`
- * sibling with this same shape then. Today's api bearer is a build-time bundle GATE
- * (`EXPO_PUBLIC_API_TOKEN`), not a runtime secret, so it stays in env — encrypting a
- * value that already ships inside the bundle is theater, not security.
+ * sibling with this same shape then. Today's api ingest bearer is a build-time bundle GATE
+ * (`EXPO_PUBLIC_EVENTS_TOKEN` — least-privilege, not the admin key), not a runtime secret,
+ * so it stays in env — encrypting a value that already ships in the bundle is theater.
  *
  * The compliance consent/legal records use the brick's own `createNativeStore` (a
  * package can never import the app); they share only the KEY, via `STORAGE_KEYS`.

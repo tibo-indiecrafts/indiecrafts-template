@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the Cloudflare Turnstile challenge and reports the solved token.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/form/TurnstileWidget.md
+ */
+
 import { useEffect, useRef } from "react";
 
 /**

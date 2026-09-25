@@ -1,3 +1,8 @@
+/**
+ * Declares the resolved page-builder block types shared by the web renderers and blog.
+ *
+ * @see docs/reference/packages/web/ui-components/src/shared/types.md
+ */
 import type { PortableTextBlock } from "@portabletext/react";
 import type { GlyphName as FeatureIcon } from "@indiecrafts/packages-shared-ui-icons/shared";
 

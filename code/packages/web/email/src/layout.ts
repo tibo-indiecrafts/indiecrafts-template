@@ -1,3 +1,9 @@
+/**
+ * Render the shared branded HTML email shell.
+ *
+ * @see docs/reference/packages/web/email/src/layout.md
+ */
+
 import { site, defaultLocale } from "@indiecrafts/packages-shared-config";
 import { EMAIL_COLORS } from "./theme";
 

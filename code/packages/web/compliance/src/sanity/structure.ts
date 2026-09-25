@@ -1,3 +1,9 @@
+/**
+ * Build the compliance desk sections for the Studio.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/structure.md
+ */
+
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
 import { locales } from "@indiecrafts/packages-shared-config";
 import { apiVersion } from "@indiecrafts/packages-web-sanity/env";

@@ -1,3 +1,8 @@
+/**
+ * Render the production home page from editor-composed blocks and template showcases.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/(home)/page.md
+ */
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { features, isPageVisible, pages } from "@/config";

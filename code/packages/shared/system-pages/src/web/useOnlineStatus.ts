@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Track the browser's online/offline status.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/web/useOnlineStatus.md
+ */
 import { useSyncExternalStore } from "react";
 
 function subscribe(callback: () => void) {

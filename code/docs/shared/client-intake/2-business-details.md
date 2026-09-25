@@ -1,3 +1,9 @@
+---
+title: "Business details — fill-in form"
+description: 'This powers the "business card" Google can show next to your site (name, address, opening hours, area served) and helps AI assistants describe you accurately.'
+status: stable
+---
+
 # Business details — fill-in form
 
 This powers the "business card" Google can show next to your site (name,

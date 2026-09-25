@@ -1,3 +1,8 @@
+/**
+ * Define the Sanity document schema for a blog category.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/category.md
+ */
 import { defineField, defineType } from "sanity";
 
 export default defineType({

@@ -1,3 +1,8 @@
+/**
+ * Run every gallery story as a component and a11y test in a headless browser.
+ *
+ * @see docs/reference/projects/web/tools/storybook/vitest.config.md
+ */
 import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { defineConfig } from "vitest/config";

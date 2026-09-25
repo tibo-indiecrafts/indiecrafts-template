@@ -1,4 +1,9 @@
-import { PresentationIcon } from "@sanity/icons";
+/**
+ * Define the collection-carousel page-builder module schema.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/modules/blog-collection.md
+ */
+import { PresentationIcon } from "@sanity/icons/Presentation";
 import { defineField } from "sanity";
 import { defineModule } from "@indiecrafts/packages-web-page-builder/sanity/schema/objects/define-module";
 

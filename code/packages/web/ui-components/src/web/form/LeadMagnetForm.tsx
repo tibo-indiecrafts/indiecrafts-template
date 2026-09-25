@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Captures an email for gated lead-magnet delivery via /api/newsletter.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/form/LeadMagnetForm.md
+ */
+
 import { useId, useState } from "react";
 import { useLocale } from "next-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

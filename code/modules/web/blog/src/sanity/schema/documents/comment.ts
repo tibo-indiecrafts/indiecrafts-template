@@ -1,5 +1,10 @@
+/**
+ * Define the Sanity document schema for a public blog comment.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/documents/comment.md
+ */
 import { defineField, defineType } from "sanity";
-import { CommentIcon } from "@sanity/icons";
+import { CommentIcon } from "@sanity/icons/Comment";
 
 /**
  * Public blog comment (user-generated). Created server-side via the write

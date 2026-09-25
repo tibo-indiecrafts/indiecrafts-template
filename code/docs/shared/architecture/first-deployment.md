@@ -1,7 +1,13 @@
+---
+title: "First deployment — runbook (all envs)"
+description: "A step-by-step plan to take one instance of this template live across dev, staging, and prod."
+status: stable
+---
+
 # First deployment — runbook (all envs)
 
 A step-by-step plan to take one **instance** of this template live across `dev`, `staging`, and
-`prod`. This is the operational companion to [Platform deploy](./platform-deploy.md) (the model:
+`prod`. This is the operational companion to [Platform deploy](/shared/architecture/platform-deploy) (the model:
 registry, runners, CI). Read that first for _how_ deploy works; read this for _what to do_, in order.
 
 ## Template vs instance

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Persist a locale change to the signed-in user's Clerk metadata.
+ *
+ * @see docs/reference/packages/web/auth/src/persist-locale.md
+ */
+
 import { useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { logger } from "@indiecrafts/packages-shared-logger";

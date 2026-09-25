@@ -1,3 +1,8 @@
+/**
+ * Serve robots.txt, indexable only in production with a configured origin.
+ *
+ * @see docs/reference/projects/web/website/src/app/robots.txt/route.md
+ */
 import {
   AI_TRAINING_USER_AGENTS,
   features,

@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Edit the operational retention, ops, and TTL settings in grouped number inputs.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/settings-form.md
+ */
 import { useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";

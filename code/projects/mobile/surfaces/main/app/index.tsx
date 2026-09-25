@@ -1,3 +1,8 @@
+/**
+ * Render the mobile home screen and its shell wiring.
+ *
+ * @see docs/reference/projects/mobile/main/app/index.md
+ */
 import { Share, View } from "react-native";
 import { useIntl } from "react-intl";
 import { useRouter } from "expo-router";

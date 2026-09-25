@@ -1,3 +1,8 @@
+/**
+ * Define the person document — team members shown by the Person List module.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/documents/person.md
+ */
 import { defineField, defineType } from "sanity";
 
 /**

@@ -1,6 +1,6 @@
 # Waitlist module — CLAUDE.md
 
-**Stack:** Sanity v5 · TypeScript · `@indiecrafts/packages-web-sanity/write` (server-only) · `@indiecrafts/packages-web-email`. Early-access signups — join engine + entry data + settings singleton. Modeled on `@indiecrafts/modules-web-newsletter`.
+**Stack:** Sanity v6 · TypeScript · `@indiecrafts/packages-web-sanity/write` (server-only) · `@indiecrafts/packages-web-email`. Early-access signups — join engine + entry data + settings singleton. Modeled on `@indiecrafts/modules-web-newsletter`.
 
 Auto-loads under `code/modules/web/waitlist/**`. Feature-flagged by `features.waitlist` (app-owned in `@/config`, injected into the module). **Collect + export only** — no runtime gating.
 

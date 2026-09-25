@@ -1,3 +1,8 @@
+/**
+ * Renders the anonymous erasure-confirm page for an emailed token link.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/erasure/confirm/page.md
+ */
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { pages, isPageVisible, type Locale } from "@/config";

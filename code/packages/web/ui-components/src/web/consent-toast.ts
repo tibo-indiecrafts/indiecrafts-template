@@ -1,3 +1,8 @@
+/**
+ * Show the consent choice-saved toast on any web surface.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/consent-toast.md
+ */
 import { toast } from "sonner";
 
 /** The one consent/legal "choice saved" toast shape — identical on every web surface.

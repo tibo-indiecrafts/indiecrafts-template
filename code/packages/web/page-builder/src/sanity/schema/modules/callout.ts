@@ -1,3 +1,8 @@
+/**
+ * Define the callout module — a coloured note with rich content and a CTA.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/modules/callout.md
+ */
 import { defineField } from "sanity";
 import { defineModule } from "../objects/define-module";
 

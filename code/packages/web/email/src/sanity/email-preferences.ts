@@ -1,6 +1,12 @@
+/**
+ * Define the subscriber email-preference-centre singleton.
+ *
+ * @see docs/reference/packages/web/email/src/sanity/email-preferences.md
+ */
+
 import { defineArrayMember, defineField, defineType } from "sanity";
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 import { defaultLocale } from "@indiecrafts/packages-shared-config";
 
 /**

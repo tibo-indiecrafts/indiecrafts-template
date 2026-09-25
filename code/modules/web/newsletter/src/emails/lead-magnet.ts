@@ -1,3 +1,8 @@
+/**
+ * Renders the lead-magnet delivery email.
+ *
+ * @see docs/reference/modules/web/newsletter/src/emails/lead-magnet.md
+ */
 import {
   EMAIL_COLORS,
   escapeHtml,

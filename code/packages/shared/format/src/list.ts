@@ -1,3 +1,8 @@
+/**
+ * Join a list of strings with locale-aware conjunctions.
+ *
+ * @see docs/reference/packages/shared/format/src/list.md
+ */
 import {
   defaultLocale,
   localeFormat,

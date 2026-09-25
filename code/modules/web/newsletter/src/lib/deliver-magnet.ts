@@ -1,3 +1,8 @@
+/**
+ * Delivers gated lead-magnet downloads to confirmed subscribers.
+ *
+ * @see docs/reference/modules/web/newsletter/src/lib/deliver-magnet.md
+ */
 import "server-only";
 
 import { logger } from "@indiecrafts/packages-shared-logger";

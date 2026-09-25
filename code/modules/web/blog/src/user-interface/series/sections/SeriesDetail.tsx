@@ -1,3 +1,8 @@
+/**
+ * Render the series landing page with its posts in reading order.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/series/sections/SeriesDetail.md
+ */
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import type {
   PostListItem,

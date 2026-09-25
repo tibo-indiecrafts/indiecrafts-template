@@ -1,3 +1,8 @@
+/**
+ * Define the log record shape and sanitize values for logging.
+ *
+ * @see docs/reference/packages/shared/logger/src/core.md
+ */
 import type { LogLevel } from "@indiecrafts/packages-shared-config";
 
 export type { LogLevel };

@@ -1,3 +1,8 @@
+/**
+ * Render themed native text with typographic variants.
+ *
+ * @see docs/reference/packages/mobile/ui-native/src/components/ThemedText.md
+ */
 import { Text, type TextStyle, type AccessibilityRole } from "react-native";
 import type { ReactNode } from "react";
 import { useTheme } from "../theme";

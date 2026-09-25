@@ -1,3 +1,8 @@
+/**
+ * Render a grid of labelled statistics.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/StatList.md
+ */
 import type { StatListModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { ModuleSection } from "../layout/ModuleSection";

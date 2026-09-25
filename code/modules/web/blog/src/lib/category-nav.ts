@@ -1,3 +1,8 @@
+/**
+ * Build the blog category nav bar as a server-rendered node.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/category-nav.md
+ */
 import { createElement, type ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/packages-shared-config";

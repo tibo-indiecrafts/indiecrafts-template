@@ -1,3 +1,9 @@
+---
+title: "Platform deploy — registry · runners · CI"
+description: "This platform ships many apps across several platforms from one monorepo."
+status: stable
+---
+
 # Platform deploy — registry · runners · CI
 
 This platform ships **many apps across several platforms** from one monorepo. The deploy layer is
@@ -89,7 +95,7 @@ CI reads the same registry — no app is hard-coded:
 The DB tiers are the same three as the deploy envs — **`dev` · `staging` · `prod`**, all real remote
 Cloudflare D1s. There is no separate local tier: local dev binds the real `dev` D1 (`pnpm dev` →
 `wrangler dev --env dev --remote`), so `pnpm dev` and `db:migrate:*:dev` share the one dev database.
-Full model + per-DB scripts → [`code/shared/db`](../../../shared/db/.claude/CLAUDE.md).
+Full model + per-DB scripts → [`code/shared/db`](/.claude/CLAUDE).
 
 | Tier                       | `db:migrate:<db>\|all:<tier>` runs | Backed up first?                                                                                      |
 | -------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -99,6 +105,18 @@ Local flow: `pnpm db:migrate:all:dev` → `pnpm dev` (needs wrangler auth + netw
 shared across developers). A prod `db:migrate` / `db:backup` confirms first (`⚠ … in PRODUCTION?
 [y/N]`, auto-skips under `CI` / `--yes`). Back up or migrate one DB by name (`db:migrate:main:<tier>`,
 `db:backup:audit:<tier>`, …) or the whole registry with `--all`.
+
+**Deploy-time migrations are snapshotted too.** A `worker-cf` deploy applies the migrations that worker
+OWNS before shipping the new code (`scripts/deploy/worker.mjs`, expand → migrate → contract). It runs
+each DB through `migrate.mjs`, so the same **fail-closed pre-migration R2 snapshot** fires first — a
+deploy never alters a remote schema unbacked, and a failed snapshot aborts the deploy. This needs the
+deploy environment's Cloudflare token to have R2-write + D1-export scope.
+
+**Revert (undo a bad migration/deploy).** `node code/shared/scripts/data/restore.mjs <name>|--all <env>`
+rewinds a D1 via Cloudflare **Time Travel** to any minute in the last 30 days — `--info` prints the
+current restore bookmark (read-only), `--timestamp=<ISO|unix>` or `--bookmark=<id>` restores (prod
+confirms; `--dry-run` previews). It is the data half of a rollback; the code half is CI's
+`wrangler rollback`. For a point older than 30 days, restore from the R2 dump by hand.
 
 ## IaC (Terraform)
 

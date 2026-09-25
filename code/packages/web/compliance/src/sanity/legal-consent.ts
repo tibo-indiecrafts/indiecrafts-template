@@ -1,5 +1,11 @@
+/**
+ * Define the legal re-acceptance banner singleton.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/legal-consent.md
+ */
+
 import { defineField, defineType } from "sanity";
-import { DocumentsIcon } from "@sanity/icons";
+import { DocumentsIcon } from "@sanity/icons/Documents";
 
 /**
  * Legal re-acceptance — a single, language-independent singleton

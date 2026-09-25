@@ -1,3 +1,8 @@
+/**
+ * Renders the /blog/category index — category cards sorted by post count.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/category/sections/CategoryListing.md
+ */
 import type { Category } from "@indiecrafts/modules-web-blog/sanity/types";
 import { CategoryCard } from "@indiecrafts/modules-web-blog/user-interface/category/components/CategoryCard";
 import {

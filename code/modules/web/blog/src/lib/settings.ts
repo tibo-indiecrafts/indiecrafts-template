@@ -1,3 +1,8 @@
+/**
+ * Resolve the editor's blog display toggles against the feature flags.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/settings.md
+ */
 import "server-only";
 
 import { cache } from "react";

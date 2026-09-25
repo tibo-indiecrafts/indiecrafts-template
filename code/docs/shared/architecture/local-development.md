@@ -1,3 +1,9 @@
+---
+title: "Local development"
+description: "Run the whole stack on your machine, wired to the real remote Cloudflare dev resources."
+status: stable
+---
+
 # Local development
 
 Run the whole stack on your machine, wired to the **real remote Cloudflare `dev`
@@ -32,7 +38,7 @@ The registry declares four data stores. The D1s, KV and R2 bind to the real `dev
 | `content`            | Sanity | **remote** — see [Sanity](#sanity-content)               |
 
 `dev` is a real remote tier, the same one `staging`/`prod` are (all real remote Cloudflare D1s).
-Full model → the `code/shared/db` brief and [Deployment](../../apps/web/setup/deployment).
+Full model → the `code/shared/db` brief and [Deployment](/projects/web/website/setup/deployment).
 
 - **First run, and after adding any migration:** `pnpm db:migrate:all:dev`. This is a real remote
   D1 — the migrate runner takes a pre-migration R2 snapshot first (aborts on failure).
@@ -69,10 +75,10 @@ Leave them unset and the `blog` / `studio` feature flags stay off — the market
 - **`api` and `cron` bind the same remote `dev` D1s** — so a row the api writes, the cron job sees
   (no separate local state to keep in sync).
 - **Deploying still needs the real IDs.** `dev`/`staging`/`prod` D1 IDs live in `wrangler.toml`;
-  local dev reuses the `dev` ones → [Deployment](../../apps/web/setup/deployment).
+  local dev reuses the `dev` ones → [Deployment](/projects/web/website/setup/deployment).
 
 ## Migrating the real environments
 
 `db:migrate:<db>|all:<tier>` picks the tier: `dev` / `staging` / `prod` — all real remote D1s, each
 taking a pre-migration R2 snapshot that **aborts on failure**; a prod run **confirms first**. Full
-script list → [Scripts](../../apps/web/setup/scripts); the R2 snapshots → [Backups](../../apps/web/setup/backups).
+script list → [Scripts](/projects/web/website/setup/scripts); the R2 snapshots → [Backups](/projects/web/website/setup/backups).

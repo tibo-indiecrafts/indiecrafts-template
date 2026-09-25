@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Render the backup bucket summary and recent-runs table with a failure flag.
+ *
+ * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/backups-table.md
+ */
+
 import { useTranslations } from "next-intl";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {

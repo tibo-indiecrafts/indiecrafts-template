@@ -1,3 +1,9 @@
+/**
+ * Renders the React Native cookie-consent banner.
+ *
+ * @see docs/reference/packages/shared/compliance/src/native/ConsentBanner.md
+ */
+
 import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import {

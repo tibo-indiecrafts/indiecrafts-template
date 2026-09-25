@@ -1,3 +1,9 @@
+/**
+ * Defines the per-surface Clerk seam for the account data tab.
+ *
+ * @see docs/reference/packages/shared/compliance/src/shared/account-port.md
+ */
+
 import type { ChurnSurveyInput, ErasureSelfResult } from "./erasure-self";
 
 /**

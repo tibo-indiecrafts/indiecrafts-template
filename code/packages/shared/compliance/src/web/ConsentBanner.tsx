@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the cookie-consent banner with accept, reject, and customize.
+ *
+ * @see docs/reference/packages/shared/compliance/src/web/ConsentBanner.md
+ */
+
 import { useState } from "react";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

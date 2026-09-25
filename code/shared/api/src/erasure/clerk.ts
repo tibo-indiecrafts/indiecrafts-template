@@ -1,3 +1,8 @@
+/**
+ * Erase a Clerk user (delete, not pseudonymise) via the erasure adapter.
+ *
+ * @see docs/reference/shared/api/src/erasure/clerk.md
+ */
 import type {
   ErasureAdapter,
   AdapterMatch,

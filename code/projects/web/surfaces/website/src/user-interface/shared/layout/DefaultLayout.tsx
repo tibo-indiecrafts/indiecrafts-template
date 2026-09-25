@@ -1,3 +1,8 @@
+/**
+ * Compose the production page chrome — header, footer, announcements, and locale suggestion.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/DefaultLayout.md
+ */
 import type { ReactNode } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cookies, headers } from "next/headers";

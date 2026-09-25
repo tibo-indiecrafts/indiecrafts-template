@@ -2,7 +2,7 @@
 
 Auto-loads under `code/projects/web/surfaces/website/src/sanity/**`. Core, feature-agnostic Sanity wiring for the web app. The blog **content model** (schema / queries / types / desk) lives in the blog module `code/modules/web/blog/` (`@indiecrafts/modules-web-blog`) — see `code/modules/web/blog/.claude/CLAUDE.md`.
 
-**Stack:** Sanity v5 (Studio · GROQ · structure) · next-sanity · TypeScript. The CMS infrastructure layer.
+**Stack:** Sanity v6 (Studio · GROQ · structure) · next-sanity · TypeScript. The CMS infrastructure layer.
 
 ## Modules
 

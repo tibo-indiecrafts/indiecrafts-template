@@ -1,3 +1,8 @@
+/**
+ * Fetch and locale-resolve the Studio clerkEmails copy and map Clerk slugs to canonical kinds.
+ *
+ * @see docs/reference/shared/api/src/clerk-email/sanity.md
+ */
 import { pickLocale } from "@indiecrafts/packages-shared-config";
 import type { MailEnv } from "../erasure/email";
 import type { AuthCopy } from "./templates";

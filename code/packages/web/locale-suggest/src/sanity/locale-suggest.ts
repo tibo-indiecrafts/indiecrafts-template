@@ -1,5 +1,10 @@
+/**
+ * Defines the localeSuggest singleton schema for the language-suggestion banner copy.
+ *
+ * @see docs/reference/packages/web/locale-suggest/src/sanity/locale-suggest.md
+ */
 import { defineField, defineType } from "sanity";
-import { TranslateIcon } from "@sanity/icons";
+import { TranslateIcon } from "@sanity/icons/Translate";
 
 /**
  * Language-suggestion copy — a single, language-independent singleton

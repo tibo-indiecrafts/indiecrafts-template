@@ -1,3 +1,8 @@
+/**
+ * Renders a full-width lead-post media hero with title, category, and byline overlay.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/layout/PostHero.md
+ */
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { FeaturedMedia } from "../media/FeaturedMedia";
 

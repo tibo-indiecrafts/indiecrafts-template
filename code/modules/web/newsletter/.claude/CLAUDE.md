@@ -1,6 +1,6 @@
 # Newsletter module — CLAUDE.md
 
-**Stack:** Sanity v5 · TypeScript · `@indiecrafts/packages-web-sanity/write` (server-only) · `@indiecrafts/packages-web-email`. The newsletter feature — subscribe engine + subscriber data + settings singleton + double opt-in.
+**Stack:** Sanity v6 · TypeScript · `@indiecrafts/packages-web-sanity/write` (server-only) · `@indiecrafts/packages-web-email`. The newsletter feature — subscribe engine + subscriber data + settings singleton + double opt-in.
 
 Auto-loads under `code/modules/web/newsletter/**`. Feature-flagged by `features.newsletter` (app-owned in `@/config`, injected into the module — see below).
 

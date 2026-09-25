@@ -1,8 +1,9 @@
 # CI — the PR gate. `verify` (types/lint/format/contrast/tests + tooling gates),
 # `build` (the real OpenNext Worker build), `csp` (the CSP-enforcement e2e),
-# `browser-stories` (every Storybook story as a component + a11y test), `infra`
-# (terraform validate) and `wrangler` (worker config dry-run) BLOCK; `browser-e2e`
-# (Playwright visual/e2e) is advisory until linux baselines are trusted; `docs` builds
+# `browser-stories` (every Storybook story as a component + a11y test), `browser-e2e-app`
+# (the Playwright functional journeys, incl. auth), `infra` (terraform validate) and
+# `wrangler` (worker config dry-run) BLOCK; `browser-e2e-visual` (Playwright screenshots)
+# is advisory until linux baselines are trusted; `docs` builds
 # the VitePress site; `dependency-review` + `secrets-scan` flag risky deps / leaked
 # secrets on PRs. React Doctor runs in react-doctor.yml.
 
@@ -83,27 +84,48 @@ jobs:
       # its stories as component + a11y tests too. Add a line per surface as it lands.
       - run: pnpm --filter @indiecrafts/web-tools-storybook test:stories:website
 
-  # Playwright visual-regression + app e2e journeys. ADVISORY (`continue-on-error`)
-  # until linux visual baselines are committed — then drop `continue-on-error` to
-  # graduate the gate.
-  browser-e2e:
+  # App e2e journeys — real browser, built app, seeded throwaway `e2e` Sanity dataset.
+  # BLOCKING: the functional journeys don't use visual baselines (the visual suite is the
+  # separate advisory job below), so they gate like `csp`. The auth journey
+  # (`sign-in.spec.ts`) self-skips unless the Clerk TEST-instance keys are set, so this stays
+  # green until they are. If a functional journey is red on the first run, fix it — or
+  # re-add `continue-on-error: true` here to unblock while you do.
+  browser-e2e-app:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup
       - run: pnpm exec playwright install --with-deps chromium
-      # Visual regression against the built Storybook.
-      - run: pnpm --filter @indiecrafts/web-tools-storybook storybook:build
-      - run: pnpm --filter @indiecrafts/web-surfaces-website e2e:visual
-      # App journeys: global-setup seeds a throwaway `e2e` Sanity dataset, then the
-      # webServer builds + serves the app against it. Needs the Sanity secrets.
       - run: pnpm --filter @indiecrafts/web-surfaces-website e2e
         env:
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
           E2E_SANITY_DATASET: e2e
+          # Auth journey (self-skips when unset): a Clerk TEST/dev instance's keys —
+          # DISTINCT from any prod Clerk keys. Add both as repo Secrets.
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.E2E_CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.E2E_CLERK_SECRET_KEY }}
+      # App-surface journeys (boot · not-found · version · sign-in). No seeded dataset — the
+      # app's one Sanity read (home welcome) falls back — so no Sanity secrets here; runs on a
+      # dedicated port. The sign-in journey self-skips without the Clerk keys.
+      - run: pnpm --filter @indiecrafts/web-surfaces-app e2e
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.E2E_CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.E2E_CLERK_SECRET_KEY }}
+
+  # Playwright visual regression against the built Storybook. ADVISORY (`continue-on-error`)
+  # until linux visual baselines are committed (`e2e:update` on CI) — then drop
+  # `continue-on-error` to graduate this gate too.
+  browser-e2e-visual:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @indiecrafts/web-tools-storybook storybook:build
+      - run: pnpm --filter @indiecrafts/web-surfaces-website e2e:visual
 
   # The CSP-enforcement gate. BLOCKING (unlike the advisory `browser` job): CSP now
   # defaults to enforce, so a broken nonce pipeline would silently break the live site.

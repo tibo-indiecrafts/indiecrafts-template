@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the web offline content card.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/web/OfflineContent.md
+ */
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import type { OfflineContentProps } from "../shared/types";
 

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Show a banner when a new deploy shipped and offer a reload.
+ *
+ * @see docs/reference/packages/web/version/src/UpdatePrompt.md
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";

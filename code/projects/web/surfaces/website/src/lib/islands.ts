@@ -1,3 +1,8 @@
+/**
+ * Inject this app's feature flags into the islands it mounts at boot.
+ *
+ * @see docs/reference/projects/web/website/src/lib/islands.md
+ */
 import { configureBlog } from "@indiecrafts/modules-web-blog/lib/config";
 import { configureBlocks } from "@indiecrafts/packages-web-ui-components/web/features";
 import { features, pages } from "@/config";

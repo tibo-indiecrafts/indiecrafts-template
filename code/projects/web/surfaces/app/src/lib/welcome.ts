@@ -1,3 +1,8 @@
+/**
+ * Read the editor-owned home welcome message from Sanity.
+ *
+ * @see docs/reference/projects/web/app/src/lib/welcome.md
+ */
 import { logger } from "@indiecrafts/packages-shared-logger";
 
 /**

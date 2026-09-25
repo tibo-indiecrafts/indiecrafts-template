@@ -1,5 +1,10 @@
+/**
+ * Builds the "E-mails" desk section for the emailStrings singleton.
+ *
+ * @see docs/reference/packages/web/email/src/sanity/structure.md
+ */
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 
 /**
  * The "E-mails" desk section — the single `emailStrings` singleton (config + copy

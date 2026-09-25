@@ -1,3 +1,9 @@
+---
+title: "Packages — shared bricks"
+description: "Internal @indiecrafts/<name> TypeScript bricks shared by the app and the modules."
+status: stable
+---
+
 # Packages — shared bricks
 
 Internal `@indiecrafts/<name>` TypeScript **bricks** shared by the app and the modules.
@@ -5,32 +11,34 @@ Single-purpose, **consumed as source** (no per-brick build) through pnpm workspa
 symlinks + Next `transpilePackages`. Dependencies point **down** and never up:
 `app → module → package`. A brick that imports an app is a design error.
 
-**Fifteen bricks are live** — one page each below (exports · deps · consumers · gotchas). All
-ship `version: 0.0.0`, `private: true`, `type: module`. The roster and reserved names live in
-[`code/packages/_registry.md`](../../code/packages/_registry.md).
+**Thirty bricks across three scopes** — `shared/` (portable · DOM-free), `web/` (Next/Sanity),
+and `mobile/` (Expo). Each has its own page (exports · deps · consumers · gotchas) in the
+**Packages** sidebar group, grouped by scope. The highlights are tabled below; the full roster
+and reserved names live in [`code/packages/_registry.md`](../../code/packages/_registry.md). All
+ship `version: 0.0.0`, `private: true`, `type: module`.
 
 Grouped by **category** — `foundation` (the base every layer builds on) · `design-system` (the
 presentation layer) · `domain` (cross-cutting product capabilities). The roster is **flat on
 disk** while scannable; it folds into `packages/<category>/` only past a trigger — see the
 [categorisation convention](../../code/packages/.claude/CLAUDE.md).
 
-| Brick                                                            | Category      | What it holds                                                                                                                                                        | Consumers                          |
-| ---------------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| [`@indiecrafts/packages-shared-config`](./config.md)             | foundation    | site config DATA + types/helpers (`isLocale`, env, CSP, `localizedPathname`)                                                                                         | app + blog                         |
-| [`@indiecrafts/packages-shared-logger`](./logger.md)             | foundation    | structured logging — `logger` (levels · `child` scopes) + per-env config + reporters (pretty/json) + opt-in Sentry transport; edge/Workers-safe                      | app + blog · newsletter · waitlist |
-| [`@indiecrafts/packages-shared-utils`](./utils.md)               | foundation    | `cn` · slugify · video-embed · format-date                                                                                                                           | app + blog                         |
-| [`@indiecrafts/packages-web-schema`](./schema.md)                | foundation    | shared Sanity object primitives (`localeString · seoMeta`) + `sharedSanity`                                                                                          | app + blog                         |
-| [`@indiecrafts/packages-web-i18n`](./i18n.md)                    | foundation    | shared next-intl navigation (`Link`) — modules use it (app keeps typed routing)                                                                                      | blog                               |
-| [`@indiecrafts/packages-web-sanity`](./sanity.md)                | foundation    | Sanity infra — `client · live · env · token · structure · image · write` + the `composeSanity` contribution model                                                    | app + blog                         |
-| [`@indiecrafts/packages-shared-format`](./format.md)             | foundation    | locale money/number/time/list/plural formatters + grammar for generated content + text helpers + validators (phone/IBAN/VAT/postal); per-locale rules on `config`    | app + blog                         |
-| [`@indiecrafts/packages-web-ui`](./ui.md)                        | design-system | 61 shadcn primitives + `use-mobile` (CLI-managed, docs colocated)                                                                                                    | app + blog                         |
-| [`@indiecrafts/packages-shared-ui-tokens`](./ui-tokens.md)       | design-system | `globals.css` (OKLCH) · `typeset.css` · `DESIGN.md` — the design system                                                                                              | app                                |
-| [`@indiecrafts/packages-web-ui-components`](./ui-components.md)  | design-system | generic page-builder block renderers + `BLOCK_RENDERERS` registry                                                                                                    | app + blog                         |
-| [`@indiecrafts/web-tools-storybook`](./storybook.md)             | design-system | Storybook documenting `ui` + `ui-components` + `ui-tokens` — colocated stories + token doc pages                                                                     | — (docs tool)                      |
-| [`@indiecrafts/consent`](./consent.md)                           | domain        | cookie-consent runtime (banner · store · Consent-Mode gates) + Sanity schema + `getCookieConsent`                                                                    | app                                |
-| [`@indiecrafts/packages-web-email`](./email.md)                  | domain        | transactional email — `sendEmail` (Resend REST) + `renderEmailLayout` + per-email templates + the composed **E-mails** entity + "Send test"                          | blog · newsletter · waitlist · app |
-| [`@indiecrafts/packages-shared-system-pages`](./system-pages.md) | domain        | branded status pages — `Maintenance` · `NotFoundContent` · `ErrorContent` + `maintenanceRewrite`                                                                     | app                                |
-| [`@indiecrafts/packages-shared-security`](./security.md)         | domain        | CSP + hardened headers (HSTS/COOP) + image allowlist **and** request hardening — `withGuard` (origin · body-cap · rate-limit · Turnstile) for the public form routes | app                                |
+| Brick                                                                        | Category      | What it holds                                                                                                                                                        | Consumers                          |
+| ---------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| [`@indiecrafts/packages-shared-config`](/packages/shared/config)             | foundation    | site config DATA + types/helpers (`isLocale`, env, CSP, `localizedPathname`)                                                                                         | app + blog                         |
+| [`@indiecrafts/packages-shared-logger`](/packages/shared/logger)             | foundation    | structured logging — `logger` (levels · `child` scopes) + per-env config + reporters (pretty/json) + opt-in Sentry transport; edge/Workers-safe                      | app + blog · newsletter · waitlist |
+| [`@indiecrafts/packages-shared-utils`](/packages/shared/utils)               | foundation    | `cn` · slugify · video-embed · format-date                                                                                                                           | app + blog                         |
+| [`@indiecrafts/packages-web-schema`](/packages/web/schema)                   | foundation    | shared Sanity object primitives (`localeString · seoMeta`) + `sharedSanity`                                                                                          | app + blog                         |
+| [`@indiecrafts/packages-web-i18n`](/packages/web/i18n)                       | foundation    | shared next-intl navigation (`Link`) — modules use it (app keeps typed routing)                                                                                      | blog                               |
+| [`@indiecrafts/packages-web-sanity`](/packages/web/sanity)                   | foundation    | Sanity infra — `client · live · env · token · structure · image · write` + the `composeSanity` contribution model                                                    | app + blog                         |
+| [`@indiecrafts/packages-shared-format`](/packages/shared/format)             | foundation    | locale money/number/time/list/plural formatters + grammar for generated content + text helpers + validators (phone/IBAN/VAT/postal); per-locale rules on `config`    | app + blog                         |
+| [`@indiecrafts/packages-web-ui`](/packages/web/ui)                           | design-system | 61 shadcn primitives + `use-mobile` (CLI-managed, docs colocated)                                                                                                    | app + blog                         |
+| [`@indiecrafts/packages-shared-ui-tokens`](/packages/shared/ui-tokens)       | design-system | `globals.css` (OKLCH) · `typeset.css` · `DESIGN.md` — the design system                                                                                              | app                                |
+| [`@indiecrafts/packages-web-ui-components`](/packages/web/ui-components)     | design-system | generic page-builder block renderers + `BLOCK_RENDERERS` registry                                                                                                    | app + blog                         |
+| [`@indiecrafts/web-tools-storybook`](/projects/web/tools/storybook)          | design-system | Storybook documenting `ui` + `ui-components` + `ui-tokens` — colocated stories + token doc pages                                                                     | — (docs tool)                      |
+| [`@indiecrafts/packages-web-compliance`](/packages/web/compliance)           | domain        | cookie-consent runtime (banner · store · Consent-Mode gates) + legal pages + Sanity schema — portable core in [`compliance-shared`](/packages/shared/compliance)     | app                                |
+| [`@indiecrafts/packages-web-email`](/packages/web/email)                     | domain        | transactional email — `sendEmail` (Resend REST) + `renderEmailLayout` + per-email templates + the composed **E-mails** entity + "Send test"                          | blog · newsletter · waitlist · app |
+| [`@indiecrafts/packages-shared-system-pages`](/packages/shared/system-pages) | domain        | branded status pages — `Maintenance` · `NotFoundContent` · `ErrorContent` + `maintenanceRewrite`                                                                     | app                                |
+| [`@indiecrafts/packages-shared-security`](/packages/shared/security)         | domain        | CSP + hardened headers (HSTS/COOP) + image allowlist **and** request hardening — `withGuard` (origin · body-cap · rate-limit · Turnstile) for the public form routes | app                                |
 
 ## How a brick is wired
 

@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the homepage Morphicons showcase.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/homepage/sections/MorphiconsShowcase.md
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { MorphIcon, type IconInput } from "morphicons/react";

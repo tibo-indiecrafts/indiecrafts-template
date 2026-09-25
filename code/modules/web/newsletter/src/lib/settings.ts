@@ -1,3 +1,8 @@
+/**
+ * Reads the editor-configurable newsletter settings singleton.
+ *
+ * @see docs/reference/modules/web/newsletter/src/lib/settings.md
+ */
 import "server-only";
 
 import { cache } from "react";

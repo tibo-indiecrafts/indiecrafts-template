@@ -1,3 +1,8 @@
+/**
+ * Erase a signed-in user's own data behind a Clerk JWT and typed-email gate.
+ *
+ * @see docs/reference/shared/api/src/erasure/self.md
+ */
 // GDPR self-service erasure — an AUTHENTICATED route. A signed-in user erases their
 // own data: the Clerk session JWT proves identity, a typed-email match is the
 // deliberate-action gate, then the Phase-3 engine runs live. No email round-trip.

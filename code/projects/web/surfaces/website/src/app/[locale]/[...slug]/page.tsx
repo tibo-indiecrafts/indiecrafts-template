@@ -1,3 +1,8 @@
+/**
+ * Render an editor-driven page from its Sanity slug and locale.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/slug/page.md
+ */
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";

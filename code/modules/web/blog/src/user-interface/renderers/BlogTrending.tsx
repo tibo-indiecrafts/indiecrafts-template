@@ -1,3 +1,8 @@
+/**
+ * Render the frontpage trending block from popular posts, falling back to recent.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/BlogTrending.md
+ */
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { localizedPathname } from "@indiecrafts/packages-web-i18n";

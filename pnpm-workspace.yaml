@@ -65,6 +65,17 @@ minimumReleaseAgeExclude:
   - "sanity"
   - "@sanity/*"
   - "next-sanity"
+  # Sanity-org transitives that ride the Studio release cadence: `get-it` (published
+  # UNSCOPED) + the PortableText rich-text monorepo (`@portabletext/*`) + `eventsource`
+  # (a mature, high-profile SSE lib pulled by @sanity/client; the gate targets obscure
+  # malware, not this).
+  - "get-it"
+  - "@portabletext/*"
+  - "eventsource"
+  # Sanity i18n plugin — `@sanity/document-internationalization` v6 requires its
+  # companion `sanity-plugin-internationalized-array@^5.3.1`, whose only matching
+  # release is days old. Rides the Studio release cadence, same as the entries above.
+  - "sanity-plugin-internationalized-array"
   - "typescript"
   - "eslint"
   - "@eslint/*"
@@ -91,6 +102,10 @@ trustPolicyExclude:
   - "undici-types"
   - "semver"
   - "eslint-import-resolver-typescript"
+  # Sanity SDK monorepo (@sanity/sdk, @sanity/sdk-react, …) — provenance dropped in a
+  # publish-workflow change, not a takeover (verified: published by sanity-svc.npm from
+  # github.com/sanity-io/sdk). Pulled in transitively by Studio v6 (`sanity@6.x`).
+  - "@sanity/sdk*"
   - "groq"
   - "ua-parser-js"
   # Whole ecosystems with inconsistent npm provenance — the age gate + no-downgrade
@@ -106,3 +121,15 @@ trustPolicyExclude:
   - "@react-native-community/*"
   - "fbjs" # legacy expo/RN transitives
   - "fbemitter"
+
+# Single instance of the peer-heavy Sanity Studio packages across the monorepo. Schema +
+# structure types cross package boundaries (page-builder/modules → the website Studio), so
+# two instances with different peer closures make tsc reject otherwise-identical types. Pin
+# the shared set to one version each so every `sanity` resolution collapses to one instance.
+overrides:
+  sanity: 6.16.0
+  "@sanity/vision": 6.16.0
+  "@sanity/client": 8.7.0
+  "@sanity/ui": 4.2.3
+  "@sanity/icons": 5.2.2
+  styled-components: 6.5.2

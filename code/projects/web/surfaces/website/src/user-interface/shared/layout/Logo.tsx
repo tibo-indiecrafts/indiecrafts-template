@@ -1,3 +1,8 @@
+/**
+ * Render the brand lockup — a theme-aware Sanity logo plus the site-name wordmark.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/Logo.md
+ */
 import Image from "next/image";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { sanityImageLoader } from "@indiecrafts/packages-web-sanity/image";

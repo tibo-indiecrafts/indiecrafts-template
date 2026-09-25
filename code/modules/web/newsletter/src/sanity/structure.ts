@@ -1,5 +1,11 @@
+/**
+ * Builds the newsletter desk structure.
+ *
+ * @see docs/reference/modules/web/newsletter/src/sanity/structure.md
+ */
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
-import { EnvelopeIcon, DownloadIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
+import { DownloadIcon } from "@sanity/icons/Download";
 import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
 
 /**

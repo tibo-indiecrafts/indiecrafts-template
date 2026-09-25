@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the sidebar footer user menu with sign-out.
+ *
+ * @see docs/reference/projects/web/admin/src/user-interface/layout/NavUser.md
+ */
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@clerk/nextjs";

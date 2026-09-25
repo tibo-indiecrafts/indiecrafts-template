@@ -1,3 +1,8 @@
+/**
+ * Renders the module.contact block server-side under the app's contact feature flag.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/form/Contact.md
+ */
 import type { ContactModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { blockFeatures } from "../features";
 import { ContactForm } from "./ContactForm";

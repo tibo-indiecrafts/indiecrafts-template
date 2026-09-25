@@ -1,3 +1,9 @@
+/**
+ * Re-export the email brick's send + layout public API.
+ *
+ * @see docs/reference/packages/web/email/src/index.md
+ */
+
 export { sendEmail } from "./resend";
 export type { SendEmailInput } from "./resend";
 

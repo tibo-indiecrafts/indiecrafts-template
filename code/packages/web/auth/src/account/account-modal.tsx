@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Renders the Clerk account UI with custom consent and data tabs.
+ *
+ * @see docs/reference/packages/web/auth/src/account/account-modal.md
+ */
+
 import { UserButton, UserProfile } from "@clerk/nextjs";
 import {
   AccountConsentTab,

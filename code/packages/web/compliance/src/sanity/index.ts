@@ -1,3 +1,9 @@
+/**
+ * Assemble the compliance brick's Sanity module.
+ *
+ * @see docs/reference/packages/web/compliance/src/sanity/index.md
+ */
+
 import type { SchemaTypeDefinition } from "sanity";
 import type { SanityModule } from "@indiecrafts/packages-web-sanity/module";
 import { locales } from "@indiecrafts/packages-shared-config";

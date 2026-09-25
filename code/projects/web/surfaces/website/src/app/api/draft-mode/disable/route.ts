@@ -1,3 +1,8 @@
+/**
+ * Exit Sanity draft preview and redirect the visitor to the home page.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/draft-mode/disable/route.md
+ */
 import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 import { features } from "@/config";

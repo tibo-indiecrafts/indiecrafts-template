@@ -1,3 +1,8 @@
+/**
+ * Resolve a content slug to its counterpart in another locale.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/i18n/translated-slug/route.md
+ */
 import { NextResponse, type NextRequest } from "next/server";
 import { translatedSlugPath } from "@/lib/seo/translations";
 

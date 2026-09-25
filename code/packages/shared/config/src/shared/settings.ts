@@ -14,6 +14,16 @@ export const SETTINGS = {
     max: 3650,
     unit: "days",
   },
+  // Anonymised `user_profiles` rows (email/name scrubbed on erasure, the fingerprint kept
+  // so a late erasure of consent/audit can still resolve the subject) are hard-deleted this
+  // long after `deleted_at` — dropping the fingerprint row is the FINAL anonymisation
+  // (storage limitation, GDPR Art. 5(1)(e)). Matches the 0001_user_profiles.sql promise.
+  "retention.profile_anonymized_days": {
+    def: 90,
+    min: 30,
+    max: 3650,
+    unit: "days",
+  },
   "retention.data_request_days": { def: 365, min: 30, max: 3650, unit: "days" },
   "retention.churn_days": { def: 730, min: 30, max: 3650, unit: "days" },
   // Data minimisation: churn free-text (feedback/competitor) is scrubbed at this shorter

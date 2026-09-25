@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Render the logged-in-only announcement banner and toast.
+ *
+ * @see docs/reference/projects/web/app/src/user-interface/AnnouncementChrome.md
+ */
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@clerk/nextjs";

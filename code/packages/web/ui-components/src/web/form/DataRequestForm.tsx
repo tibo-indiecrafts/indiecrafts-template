@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Captures a GDPR data-subject request and posts it to /api/data-request.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/form/DataRequestForm.md
+ */
+
 import { useId, useState } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { Input } from "@indiecrafts/packages-web-ui/web/input";

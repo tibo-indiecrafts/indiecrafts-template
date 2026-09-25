@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Inject the app content-route resolver into the shared locale switcher.
+ *
+ * @see docs/reference/projects/web/website/src/user-interface/shared/layout/LocaleSwitchBoundary.md
+ */
+
 import type { ReactNode } from "react";
 import { LocaleSwitchProvider } from "@indiecrafts/packages-web-i18n";
 import { resolveTranslatedPath } from "@/lib/i18n/resolve-translated-path";

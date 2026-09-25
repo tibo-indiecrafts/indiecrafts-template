@@ -1,3 +1,8 @@
+/**
+ * Defines the cta object — a styled call-to-action link with a variant.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/objects/cta.md
+ */
 import { defineField, defineType } from "sanity";
 
 /**

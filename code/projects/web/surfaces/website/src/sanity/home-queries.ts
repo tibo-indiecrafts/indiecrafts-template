@@ -1,3 +1,9 @@
+/**
+ * Query the home page document and its resolved page-builder sections.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/home-queries.md
+ */
+
 import { defineQuery } from "next-sanity";
 import { MODULES_FRAGMENT } from "@indiecrafts/packages-web-page-builder/sanity/queries";
 

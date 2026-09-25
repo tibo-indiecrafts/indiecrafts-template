@@ -1,5 +1,10 @@
+/**
+ * Build the waitlist desk section — the settings singleton and the entries lists.
+ *
+ * @see docs/reference/modules/web/waitlist/src/sanity/structure.md
+ */
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
-import { UsersIcon } from "@sanity/icons";
+import { UsersIcon } from "@sanity/icons/Users";
 import { apiVersion } from "@indiecrafts/packages-web-sanity/env";
 
 /**

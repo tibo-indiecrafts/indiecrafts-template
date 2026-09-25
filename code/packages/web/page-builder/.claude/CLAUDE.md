@@ -6,7 +6,7 @@ GROQ. Pure Sanity schema + GROQ — **no React** (the renderers live in `package
 Consumed by the app, the blog, and future apps without depending on the blog. Area rules →
 `../../../.claude/CLAUDE.md`.
 
-**Stack:** Sanity v5 · GROQ · TypeScript. Deps: shared-config · shared-ui-icons · web-sanity.
+**Stack:** Sanity v6 · GROQ · TypeScript. Deps: shared-config · shared-ui-icons · web-sanity.
 
 - **Exports:** `./*` → `src/*` — import a subpath (`.../sanity/queries`, the `pageBuilderSanity` barrel).
 - **Schemas here, renderers elsewhere** — adding a `module.<name>` block touches BOTH this brick

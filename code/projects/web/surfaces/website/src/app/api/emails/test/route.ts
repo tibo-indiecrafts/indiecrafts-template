@@ -1,3 +1,8 @@
+/**
+ * Send a sample of every enabled email to a chosen address.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/emails/test/route.md
+ */
 import { NextResponse } from "next/server";
 import { defaultLocale, features, site } from "@/config";
 import { projectId } from "@indiecrafts/packages-web-sanity/env";

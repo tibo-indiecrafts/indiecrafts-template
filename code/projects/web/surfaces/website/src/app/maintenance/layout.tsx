@@ -1,3 +1,8 @@
+/**
+ * Render the standalone root layout for the `/maintenance` route.
+ *
+ * @see docs/reference/projects/web/website/src/app/maintenance/layout.md
+ */
 import "@indiecrafts/packages-shared-ui-tokens/globals.css";
 import { localeDir } from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";

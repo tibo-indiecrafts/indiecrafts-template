@@ -1,3 +1,8 @@
+/**
+ * Create the real Clerk erasure client over @clerk/backend.
+ *
+ * @see docs/reference/shared/api/src/erasure/clerk-client.md
+ */
 import type { ClerkClient } from "@clerk/backend";
 import type { ClerkErasureClient } from "./clerk";
 

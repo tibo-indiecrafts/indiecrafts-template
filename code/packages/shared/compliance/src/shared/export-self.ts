@@ -1,3 +1,9 @@
+/**
+ * Runs the authenticated data-export POST and resolves a download URL.
+ *
+ * @see docs/reference/packages/shared/compliance/src/shared/export-self.md
+ */
+
 export type ExportResult = { ok: true; url: string } | { ok: false };
 
 /**

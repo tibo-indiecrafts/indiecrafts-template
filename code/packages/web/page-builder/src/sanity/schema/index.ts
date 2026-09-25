@@ -1,3 +1,8 @@
+/**
+ * Collect every schema the page-builder contributes to the Studio.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/index.md
+ */
 import type { SchemaTypeDefinition } from "sanity";
 
 // Documents

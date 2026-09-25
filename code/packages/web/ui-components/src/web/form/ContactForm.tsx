@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Captures a contact message and posts it to /api/contact with anti-bot guards.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/form/ContactForm.md
+ */
+
 import { useId, useState } from "react";
 import { useLocale } from "next-intl";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";

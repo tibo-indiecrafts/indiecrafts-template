@@ -1,4 +1,9 @@
-import { StackCompactIcon } from "@sanity/icons";
+/**
+ * Defines the blog `series` Sanity document schema (an ordered, localized post collection).
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/schema/series.md
+ */
+import { StackCompactIcon } from "@sanity/icons/StackCompact";
 import { defineField, defineType } from "sanity";
 
 /**

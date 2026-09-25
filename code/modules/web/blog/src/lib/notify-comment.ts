@@ -1,3 +1,8 @@
+/**
+ * Send the site owner a best-effort new-comment alert email.
+ *
+ * @see docs/reference/modules/web/blog/src/lib/notify-comment.md
+ */
 import "server-only";
 
 import { defineQuery } from "next-sanity";

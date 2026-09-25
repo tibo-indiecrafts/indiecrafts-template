@@ -1,3 +1,8 @@
+/**
+ * Renders the owner alert email for a new newsletter subscriber.
+ *
+ * @see docs/reference/modules/web/newsletter/src/emails/newsletter-notification.md
+ */
 import {
   EMAIL_COLORS,
   escapeHtml,

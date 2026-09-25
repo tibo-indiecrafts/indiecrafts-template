@@ -1,3 +1,8 @@
+/**
+ * Validate .env.local before dev, seed, or content operations.
+ *
+ * @see docs/reference/projects/web/website/scripts/doctor-env.md
+ */
 // Preflight: validate .env.local before dev / seed / content ops. Reads the file
 // itself (not --env-file) so a MISSING file is reported clearly, not a crash.
 //

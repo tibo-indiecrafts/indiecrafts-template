@@ -1,3 +1,8 @@
+/**
+ * Log a signed-in session and forward it to the audit api server-side.
+ *
+ * @see docs/reference/projects/web/app/src/app/api/session-log/route.md
+ */
 import { auth } from "@clerk/nextjs/server";
 import { logSession } from "@indiecrafts/packages-web-auth/session-log";
 

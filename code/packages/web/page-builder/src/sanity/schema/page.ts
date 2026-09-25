@@ -1,5 +1,10 @@
+/**
+ * Defines the generic page document — slug plus an ordered array of page-builder blocks.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/page.md
+ */
 import { defineField, defineType } from "sanity";
-import { DocumentIcon } from "@sanity/icons";
+import { DocumentIcon } from "@sanity/icons/Document";
 import { MODULE_TYPES } from "./modules";
 
 // A page composes the generic blocks (not the blog-specific ones).

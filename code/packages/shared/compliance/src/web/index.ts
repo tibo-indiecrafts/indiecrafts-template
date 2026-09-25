@@ -17,6 +17,8 @@ export type {
   DeleteAccountSectionProps,
   ErasureSelfResult,
 } from "./DeleteAccountSection";
+export { ChurnSurvey } from "./ChurnSurvey";
+export type { ChurnSurveyProps, ChurnSurveyCopy } from "./ChurnSurvey";
 export {
   rawErasureFetch,
   mapErasureResponse,

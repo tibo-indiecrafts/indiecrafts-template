@@ -1,3 +1,8 @@
+/**
+ * Resolves the design tokens to inline hex for email templates.
+ *
+ * @see docs/reference/packages/web/email/src/theme.md
+ */
 import { tokens } from "@indiecrafts/packages-shared-ui-tokens/native";
 
 /**

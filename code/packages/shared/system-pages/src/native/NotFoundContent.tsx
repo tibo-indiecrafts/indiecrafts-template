@@ -1,3 +1,8 @@
+/**
+ * Render the native 404 screen.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/native/NotFoundContent.md
+ */
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import type { NotFoundContentProps as BaseProps } from "../shared/types";
 import { useColors } from "./theme";

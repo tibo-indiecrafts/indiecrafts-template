@@ -1,3 +1,8 @@
+/**
+ * Renders the public Clerk sign-up page, carrying the active locale for localized emails.
+ *
+ * @see docs/reference/projects/web/website/src/app/locale/sign-up/sign-up/page.md
+ */
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { SignUpView } from "@indiecrafts/packages-web-auth/sign-up-view";

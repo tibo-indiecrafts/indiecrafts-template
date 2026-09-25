@@ -1,3 +1,8 @@
+/**
+ * Render a variant-styled callout aside.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/content/Callout.md
+ */
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { CalloutModule } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";

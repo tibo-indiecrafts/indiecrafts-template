@@ -1,3 +1,8 @@
+/**
+ * Pseudonymise subject emails in the subscriber and waitlistEntry docs.
+ *
+ * @see docs/reference/shared/api/src/erasure/sanity.md
+ */
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
 import type {
   AdapterMatch,

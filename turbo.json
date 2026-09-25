@@ -14,8 +14,8 @@
     "storybook": { "cache": false, "persistent": true },
     "storybook:build": { "outputs": ["storybook-static/**"] },
     "lint": {},
-    "tsc": { "dependsOn": ["^build"] },
-    "test": { "dependsOn": ["^build"] },
-    "verify": { "dependsOn": ["^build"], "cache": false }
+    "tsc": { "outputs": ["*.tsbuildinfo"] },
+    "test": {},
+    "verify": { "cache": false }
   }
 }

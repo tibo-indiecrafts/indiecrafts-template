@@ -1,0 +1,21 @@
+---
+title: "Security incidents page"
+description: "Admin route that lists recent app-level security incidents from the shared api and links to the edge firehose."
+status: stable
+---
+
+# Security incidents page
+
+> The admin screen for recent app-level security events.
+
+## Purpose
+
+This is the `/security` segment of the admin dashboard. It reads recent app-level incidents from the shared api server-side (the api holds the token), with a data-minimized projection (no `ip_hash`). A failed read is distinguished from a healthy-but-empty feed, so a broken monitor never reads as "all clear". It also deep-links to the Cloudflare edge security view when `CLOUDFLARE_SECURITY_URL` is set.
+
+## Exports
+
+- `default` — `SecurityPage`, an async server component for the admin `/security` route. Not imported by other code; Next.js renders it for the segment.
+
+## Source
+
+`code/projects/web/surfaces/admin/src/app/[locale]/(dashboard)/security/page.tsx`

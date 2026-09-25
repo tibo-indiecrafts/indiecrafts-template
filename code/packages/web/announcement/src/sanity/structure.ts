@@ -1,3 +1,9 @@
+/**
+ * Builds the announcement bar and toast Studio desk sections.
+ *
+ * @see docs/reference/packages/web/announcement/src/sanity/structure.md
+ */
+
 import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
 
 /** "Bandeau d'annonce" desk — the editable announcement singleton. */

@@ -1,3 +1,8 @@
+/**
+ * Render a breadcrumb trail with the last item as the current, aria-current page.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/shared/components/Breadcrumbs.md
+ */
 import { ChevronRight } from "lucide-react";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";

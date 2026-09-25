@@ -1,5 +1,10 @@
+/**
+ * Define the waitlistEntry document — a captured or hand-added early-access signup.
+ *
+ * @see docs/reference/modules/web/waitlist/src/sanity/schema/waitlist-entry.md
+ */
 import { defineField, defineType } from "sanity";
-import { UsersIcon } from "@sanity/icons";
+import { UsersIcon } from "@sanity/icons/Users";
 
 /**
  * Waitlist entry — captured by the `module.waitlist` block via `/api/waitlist`

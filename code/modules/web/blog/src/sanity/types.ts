@@ -1,3 +1,8 @@
+/**
+ * Declares the blog's shared content types — documents, fragments, and modules.
+ *
+ * @see docs/reference/modules/web/blog/src/sanity/types.md
+ */
 import type { PortableTextBlock } from "@portabletext/react";
 import type {
   ImageRef,

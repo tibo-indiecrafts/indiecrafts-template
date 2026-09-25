@@ -1,5 +1,11 @@
+/**
+ * Build the transactional-email settings singleton.
+ *
+ * @see docs/reference/packages/web/email/src/sanity/email-strings.md
+ */
+
 import { defineField, defineType, type FieldDefinition } from "sanity";
-import { EnvelopeIcon } from "@sanity/icons";
+import { EnvelopeIcon } from "@sanity/icons/Envelope";
 
 /** A global support address shown in every email footer (all surfaces + the Clerk
  *  auth emails). Editable here so it changes without a deploy. */

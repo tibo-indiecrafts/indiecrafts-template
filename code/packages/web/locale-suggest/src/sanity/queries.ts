@@ -1,3 +1,8 @@
+/**
+ * Holds the GROQ query for the localeSuggest singleton.
+ *
+ * @see docs/reference/packages/web/locale-suggest/src/sanity/queries.md
+ */
 import { defineQuery } from "next-sanity";
 
 /**

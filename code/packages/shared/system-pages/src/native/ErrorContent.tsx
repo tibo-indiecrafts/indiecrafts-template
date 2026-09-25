@@ -1,3 +1,8 @@
+/**
+ * Render the native 500 error screen.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/native/ErrorContent.md
+ */
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import type { ErrorContentProps } from "../shared/types";
 import { useColors } from "./theme";

@@ -1,3 +1,8 @@
+/**
+ * Configure Storybook: resolve brick stories by name and mock next-intl, shiki, and react-native.
+ *
+ * @see docs/reference/projects/web/tools/storybook/.storybook/main.md
+ */
 import { createRequire } from "node:module";
 import { dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -60,6 +65,8 @@ const config: StorybookConfig = {
     brickStories("@indiecrafts/packages-mobile-ui-native"),
     brickStories("@indiecrafts/packages-shared-system-pages"),
     brickStories("@indiecrafts/packages-shared-ui-icons"),
+    // Compliance web UI (copy-injected, next-intl-free): DeleteAccountSection + ChurnSurvey.
+    brickStories("@indiecrafts/packages-shared-compliance"),
   ],
   addons: [
     "@storybook/addon-docs",

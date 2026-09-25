@@ -1,3 +1,9 @@
+/**
+ * Query generic page documents by slug, plus params for static routes and sitemap.
+ *
+ * @see docs/reference/projects/web/website/src/sanity/page-queries.md
+ */
+
 import { defineQuery } from "next-sanity";
 import { MODULES_FRAGMENT } from "@indiecrafts/packages-web-page-builder/sanity/queries";
 

@@ -1,3 +1,8 @@
+/**
+ * Dispatch blog-specific and generic page-builder modules for the blog.
+ *
+ * @see docs/reference/modules/web/blog/src/user-interface/renderers/ModuleRenderer.md
+ */
 import type {
   AnyModule,
   Post,

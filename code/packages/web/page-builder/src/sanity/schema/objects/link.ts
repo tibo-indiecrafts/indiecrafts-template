@@ -1,3 +1,8 @@
+/**
+ * Defines the polymorphic link object — internal reference or external URL.
+ *
+ * @see docs/reference/packages/web/page-builder/src/sanity/schema/objects/link.md
+ */
 import { defineField, defineType } from "sanity";
 
 /**

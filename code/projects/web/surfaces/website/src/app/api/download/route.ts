@@ -1,3 +1,8 @@
+/**
+ * Verify a signed token and redirect to a gated lead-magnet download.
+ *
+ * @see docs/reference/projects/web/website/src/app/api/download/route.md
+ */
 import { NextResponse } from "next/server";
 import { features } from "@/config";
 import { resolveMagnetDownload } from "@indiecrafts/modules-web-newsletter/lib/deliver-magnet";

@@ -1,3 +1,9 @@
+/**
+ * Send one email through the Resend REST API.
+ *
+ * @see docs/reference/packages/web/email/src/resend.md
+ */
+
 import "server-only";
 
 /**

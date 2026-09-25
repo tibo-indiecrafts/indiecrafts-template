@@ -1,3 +1,8 @@
+/**
+ * Rewrite a request to the maintenance page when the site is down.
+ *
+ * @see docs/reference/packages/shared/system-pages/src/proxy.md
+ */
 import { NextResponse, type NextRequest } from "next/server";
 
 /**

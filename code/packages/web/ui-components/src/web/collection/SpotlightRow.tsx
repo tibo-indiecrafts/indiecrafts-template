@@ -1,3 +1,8 @@
+/**
+ * Render a spotlight row of curated post cards.
+ *
+ * @see docs/reference/packages/web/ui-components/src/web/collection/SpotlightRow.md
+ */
 import type { PostCardItem } from "@indiecrafts/packages-web-ui-components/shared/types";
 import { ModuleSection } from "../layout/ModuleSection";
 import { PostCard } from "./PostCard";
