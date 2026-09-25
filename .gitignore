@@ -36,14 +36,18 @@ yarn-error.log*
 .env*
 !.env.example
 
-# .claude — commit the team toolkit (agents/skills/hooks/settings.json); ignore personal + machine-local state
+# .claude — commit the team toolkit (agents/skills/hooks/commands/rules/README + settings.json); ignore personal + machine-local state
 .claude/*
 !.claude/agents/
 !.claude/skills/
 !.claude/hooks/
+!.claude/commands/
+!.claude/rules/
+!.claude/README.md
 !.claude/settings.json
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+.claude/worktrees/
 
 # personal per-project preferences (Babich CLAUDE.local.md) — never committed
 CLAUDE.local.md

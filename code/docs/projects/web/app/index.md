@@ -1,64 +1,139 @@
 ---
 title: App surface
-description: A lean authenticated web surface with Home, Account, and Legal over the shared baseline.
+description: A lean authenticated web surface — Home, Account, and Legal in a shadcn shell over the shared i18n, compliance, and version baseline.
 status: stable
 order: 1
 ---
 
-# App surface (`@indiecrafts/web-surfaces-app`)
+# App (lean web surface)
+
+> Three pages behind a Clerk gate, in a shadcn sidebar shell, over the shared i18n / compliance / version baseline — `@indiecrafts/web-surfaces-app`.
 
 ## Purpose
 
-> A lean Next.js surface — a shadcn sidebar shell over three pages.
+`app` is a lean **authenticated** web surface. It wraps three pages — **Home**,
+**Account**, and **Legal** — in a shadcn sidebar shell, and inherits the platform
+baseline (i18n, compliance, version prompt) from the shared bricks.
 
-App wraps Home, Account, and Legal in a shadcn shell over the shared
-i18n, compliance, and version baseline. It is not a content surface. Add a content brick
-(`@indiecrafts/packages-web-sanity`, `@indiecrafts/packages-shared-security`) only when a
-real page needs it.
+It runs the same stack as `website` — Next.js 16 (App Router) · React 19 · Tailwind v4 ·
+shadcn/ui · next-intl — on the `next-cf` platform class (Next → OpenNext → Cloudflare
+Workers). Auth is **opt-in on the Clerk key**: set a key and every `(app)` route requires
+a session; leave it unset and the surface runs as a public scaffold.
 
-## Stack / Platform class
+It is **not** a content surface — there is no CMS wired in. Add a content brick
+(`@indiecrafts/packages-web-sanity` for reads, `@indiecrafts/packages-shared-security` for
+headers) only when a real page needs it. Instance config — `features`, `consent`,
+`policyVersion` — lives in `src/config/index.ts`.
 
-- **Framework:** Next.js 16 (App Router) · React 19 · Tailwind v4 · shadcn/ui · next-intl — the same stack as `website`.
-- **Platform class:** `next-cf` (Next → OpenNext → Cloudflare Workers).
+## Architecture
 
-## Wired baseline
+```mermaid
+flowchart TD
+  Root["src/app/layout.tsx<br/>passthrough"]
+  Root --> Locale
 
-- **i18n (parity with `website`)** — next-intl locale detection and redirection:
-  `src/i18n/routing.ts` (`as-needed` prefixes, `localeDetection`, the namespaced locale
-  cookie — no localized `pathnames` map yet), `src/i18n/request.ts` (messages from
-  `messages/<locale>.json`, no Sanity overlay), `src/proxy.ts` (`createMiddleware(routing)`),
-  and the `[locale]` segment. Import `Link` from `@/i18n/routing`, never `next/link`. See
-  [i18n & routing](/projects/web/website/config/i18n-and-routing).
-- **Shell** — `src/user-interface/layout/`: `AppShell` → `AppSidebar` +
-  `SidebarInset`/`AppHeader`, a flat nav (Home + Account) from `src/user-interface/lib/nav.ts`,
-  a no-flash `ThemeToggle`, a `LocaleSwitcher`, and `NavUser` (the footer menu: Legal +
-  Sign out). The `(app)` group renders inside `AppShell`; `sign-in` and `sign-up` stay
-  outside it, unshelled. Pages use the `PageHeader` + `Card` treatment. App-owned
-  components — no Storybook.
-- **Auth** — Clerk (`@clerk/nextjs`) with the `sign-in` and `sign-up` routes.
-- **Compliance** — `/legal` links out to the website's legal pages
-  (`legalUrl(site.websiteUrl, …)`). The consent banner and legal re-acceptance popup mount
-  via `src/user-interface/ShellOverlays.tsx` (`ConsentGate` · `LegalGate` over shared
-  `compliance/web` + a `localStorage` store), gated by `features.requireConsent` — off by
-  default. Account delete and export controls are gated by `features.deleteAccount` and
-  `features.exportAccount` (each also needs Clerk and `NEXT_PUBLIC_API_URL`). See
-  [compliance](/packages/shared/compliance).
-- **Version prompt** — `web-version`'s `UpdatePrompt`, `src/app/api/version/route.ts`, and
-  `src/lib/build-info.ts` (stamped by `scripts/version.mjs` in `build:cf`).
-- **Security** — a `/api/csp-report` sink and session-log ingest at `/api/session-log`.
-- **E2e** — Playwright journeys (`e2e/journeys/`: `version` · `not-found` · `boot` ·
-  `sign-in`) on port `:3011`, run with `pnpm e2e`. CI-gated in `browser-e2e-app`; the
-  `sign-in` journey self-skips without the Clerk test keys.
+  subgraph Locale["[locale]/layout.tsx — html · providers"]
+    direction TB
+    Providers["AppClerkProvider · NextIntlClientProvider · Toaster<br/>OfflineBanner · SessionLogger"]
+  end
 
-Instance config (`features` · `consent` · `policyVersion`) lives in `src/config/index.ts`.
+  Providers --> Group
+  Providers --> Overlays
+  Providers -. "unshelled, outside (app)" .-> Unshelled["/sign-in · /sign-up<br/>Clerk SignInView"]
+
+  subgraph Group["(app) group — auth-gated"]
+    direction TB
+    Gate["layout.tsx<br/>auth() → redirect /sign-in when no session"]
+    Gate --> Shell
+    subgraph Shell["AppShell — SidebarProvider"]
+      direction TB
+      Sidebar["AppSidebar<br/>brand · NAV(Home · Account) · NavUser(Legal · Sign out)"]
+      Header["AppHeader<br/>SidebarTrigger · LocaleSwitcher · ThemeToggle"]
+    end
+  end
+
+  Shell --> Home["/ — Home"]
+  Shell --> Account["/account — Account"]
+  Shell --> Legal["/legal — Legal link-out"]
+
+  subgraph Overlays["ShellOverlays — composition root"]
+    direction TB
+    Consent["ConsentGate<br/>gated by features.requireConsent"]
+    LegalGate["LegalGate<br/>re-accept when policyVersion is stale"]
+    Update["UpdatePrompt<br/>polls /api/version"]
+  end
+
+  Consent --> Stores["consentStore · legalStore<br/>localStorage · compliance/web"]
+  LegalGate --> Stores
+```
+
+**Walk-through.** The root `layout.tsx` is a passthrough; `[locale]/layout.tsx` owns the
+`<html lang dir>` shell, the providers (`AppClerkProvider`, `NextIntlClientProvider`,
+`Toaster`), and mounts `ShellOverlays`. Every route in the **`(app)` group** first passes
+the group `layout.tsx` auth gate — with a Clerk key set, `auth()` redirects a signed-out
+user to `/sign-in` (server-side defense-in-depth beyond the proxy) — then renders inside
+`AppShell`. `AppShell` is the `SidebarProvider` composing `AppSidebar` (brand link, the flat
+`NAV`, and the `NavUser` footer menu) with a `SidebarInset` that holds `AppHeader` and the
+page. The three pages render in that inset. `ShellOverlays` is a thin composition root: it
+mounts `ConsentGate`, `LegalGate`, and the version `UpdatePrompt`; the two compliance gates
+read and write the shared `consentStore` / `legalStore` (`localStorage`, over
+`compliance/web`). `sign-in` and `sign-up` sit **outside** the `(app)` group, so they render
+unshelled — no sidebar, no header.
 
 ## Routes / pages
 
-Under `src/app/[locale]`:
+Everything lives under `src/app/[locale]`. Locale prefixes are `as-needed` (`/` and `/fr`).
 
-- `(app)` group — `/` (Home) · `/account` · `/legal`
-- Unshelled — `/sign-in` · `/sign-up`
-- API — `/api/version` · `/api/csp-report` · `/api/session-log`
+| Route                                 | Page           | What it renders                                                                                                                                                                                          |
+| ------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                                   | Home           | `PageHeader` + two link cards (Account, Legal) + `ShareButtons`. The description is an editor-owned Sanity welcome (`getAppWelcome`) that falls back to the message file.                                |
+| `/account`                            | Account        | `<AccountControl variant="page">` — Clerk `<UserProfile>` with the Privacy & consent + Your data tabs. `notFound()` unless `features.deleteAccount`, a Clerk key, and `NEXT_PUBLIC_API_URL` are all set. |
+| `/legal`                              | Legal          | A list of the marketing site's legal pages, each opened cross-origin via `legalUrl(site.websiteUrl, …)` on a plain `<a>` — no content re-hosting.                                                        |
+| `/sign-in`, `/sign-up`                | Auth           | Clerk `SignInView` / sign-up. **Outside the `(app)` group — unshelled.** `notFound()` when Clerk is unconfigured.                                                                                        |
+| `/api/version`                        | build id       | JSON `{ version, commit }` with `no-store`; polled by the `UpdatePrompt` and used as the deploy smoke probe.                                                                                             |
+| `/api/csp-report`, `/api/session-log` | security sinks | CSP violation reports and session-log ingest.                                                                                                                                                            |
+
+## Wired baseline
+
+- **i18n — parity with `website`.** next-intl locale detection and redirection:
+  `src/i18n/routing.ts` (`as-needed` prefixes, `localeDetection`, a namespaced locale cookie
+  — no localized `pathnames` map yet), `src/i18n/request.ts` (messages from
+  `messages/<locale>.json`, no Sanity overlay), and `src/proxy.ts`
+  (`createMiddleware(routing)`). Import `Link` / `useRouter` / `redirect` from
+  `@/i18n/routing`, never `next/link`. See
+  [i18n &amp; routing](/projects/web/website/config/i18n-and-routing).
+- **Auth — Clerk (`@clerk/nextjs`).** `AppClerkProvider` wraps the locale layout; the `(app)`
+  group layout enforces the session server-side. `sign-in` / `sign-up` are public routes; the
+  `NavUser` footer owns everyday **Sign out** (Clerk's `<UserProfile>` has none). All gated on
+  the publishable key — no key, no session checks, and the auth UI 404s.
+- **Compliance — overlays gated by `features.requireConsent` (off by default).**
+  `ShellOverlays` mounts `ConsentGate` (the cookie banner) and `LegalGate` (the legal
+  re-acceptance popup) over the shared `compliance/web` stores. The consent mode is
+  geo-resolved from the edge `cf-ipcountry` header, and honours a server-read `Sec-GPC: 1`
+  signal. Account delete and data export are separately gated by `features.deleteAccount` /
+  `features.exportAccount` (each also needs Clerk + `NEXT_PUBLIC_API_URL`). Legal content is
+  **not** re-hosted — `/legal` links out to the website. See
+  [compliance](/packages/shared/compliance).
+- **Version prompt.** `@indiecrafts/packages-web-version`'s `UpdatePrompt` polls
+  `src/app/api/version/route.ts`, comparing against `src/lib/build-info.ts` (stamped by
+  `scripts/version.mjs` during `build:cf`), and offers a reload when a new deploy ships while
+  a tab is open.
+
+## E2e
+
+Playwright journeys (`e2e/journeys/`) run against a real `next build && next start` on a
+**dedicated port `:3011`** so they never collide with the website's e2e server (`:3000`).
+Run them with `pnpm e2e`; CI runs them in the `browser-e2e-app` job.
+
+| Journey     | Asserts                                                                                                                                                         |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `boot`      | `/en` returns 2xx and shows the app shell **or** the sign-in form.                                                                                              |
+| `version`   | `GET /api/version` returns 200 with a string `version`.                                                                                                         |
+| `not-found` | `test.fixme` — records a known gap: the app ships no `[locale]/not-found.tsx`, so an unknown route soft-returns 200, not a branded 404.                         |
+| `sign-in`   | Clerk Testing Token flow — sign-in establishes a session, the gated `/account` stays reachable, sign-out clears it. **Self-skips** without the Clerk test keys. |
+
+There is **no dataset seed** — the home's one Sanity read falls back to a message-file
+string, so `global-setup` only fetches a Clerk Testing Token when the auth keys are wired.
 
 ## Deploy
 
@@ -66,10 +141,18 @@ Under `src/app/[locale]`:
 pnpm deploy:web:app:dev          # or :staging | :prod
 ```
 
-It runs the shared `code/shared/scripts/deploy/next.mjs`. `pnpm deploy:all:<env>` includes it.
+Each maps to the app's own `deploy:app:<env>` script, which runs the shared
+`code/shared/scripts/deploy/next.mjs`. `pnpm deploy:all:<env>` includes `app` in the fan-out.
 
-## Registry
+The registry has **one row** in `code/shared/scripts/lib/apps.mjs` — slug `app`, class
+`next-cf`, platform `web`, kind `surface`, order `45`, dir `code/projects/web/surfaces/app`,
+smoke probe `/api/version` (expects `version`). Every path resolver reads that `dir`, never a
+hard-coded path. The full deploy model lives in
+[platform-deploy](/shared/architecture/platform-deploy).
 
-One row in `code/shared/scripts/lib/apps.mjs` (slug `app`, class `next-cf`, order `45`,
-dir `code/projects/web/surfaces/app`, smoke probe `/api/version`). The full deploy model
-lives in [platform-deploy](/shared/architecture/platform-deploy).
+## Source reference
+
+Per-file generated docs for every source file in this surface live under the auto-generated
+**Source reference** tree at `reference/projects/web/app/` — the sidebar lists the whole
+subtree; start at
+[`app/next.config`](/reference/projects/web/app/next.config).
