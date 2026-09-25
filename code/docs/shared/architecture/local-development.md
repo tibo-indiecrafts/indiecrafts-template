@@ -77,6 +77,38 @@ Leave them unset and the `blog` / `studio` feature flags stay off — the market
 - **Deploying still needs the real IDs.** `dev`/`staging`/`prod` D1 IDs live in `wrangler.toml`;
   local dev reuses the `dev` ones → [Deployment](/projects/web/website/setup/deployment).
 
+## Live-on-save vs "needs a command to reach dev"
+
+Two things wear the name **dev**, and the difference is where the "redeploy" gaps hide:
+
+- **The local loop** — what you edit and see: the workers hot-reload under `wrangler dev --remote`,
+  the website under `next dev`. Almost nothing needs a command here.
+- **The deployed `indiecrafts-dev-*` Workers** (on `*.workers.dev`) — only change on an explicit
+  command. Anything that reaches them **directly** — the deployed dev website calling the deployed
+  dev api, or **cron firing on its schedule** — runs whatever was last deployed, not your working tree.
+
+| You change…                                | Hot-reloads locally?                  | To reach the **deployed** dev                         |
+| ------------------------------------------ | ------------------------------------- | ----------------------------------------------------- |
+| worker `src` (`api`/`cron`/`workers`)      | ✓ (`wrangler dev`)                    | `pnpm deploy:shared:<worker>:dev`                     |
+| website/admin/app `src`                    | ✓ (`next dev`)                        | `pnpm deploy:web:<surface>:dev` (`build:cf` + deploy) |
+| `wrangler.toml` binding (D1/KV/R2/queue)   | ✗ — restart `pnpm dev`                | `cf-typegen`, then `pnpm deploy:…:dev`                |
+| a D1 migration                             | shared DB — `pnpm db:migrate:all:dev` | same (one shared `dev` D1)                            |
+| worker `.dev.vars`                         | ✗ — restart `pnpm dev`                | `pnpm secrets:sync:shared:<worker>:dev`               |
+| next-cf `.dev.vars`                        | reads `.env.local`, not this          | `pnpm secrets:sync:web:<surface>:dev`                 |
+| `[triggers] crons` / cron logic            | ✗ — not fired by `pnpm dev`           | `pnpm deploy:shared:cron:dev`                         |
+| Terraform (`.tf`/`.tfvars`, WAF/DNS/cache) | ✗ — not in any dev loop               | `pnpm infra:<stack>:apply:dev` (per stack)            |
+
+The **`redeploy→dev` hook** (PostToolUse) prints the exact command above as you edit one of these files.
+
+**Watch-outs the one-shot paths do NOT cover:**
+
+- **`pnpm dev:refresh:dev`** (and `secrets:sync:all:dev`) re-align **migrations + worker secrets only** —
+  it does **not** redeploy code, sync **next-cf** secrets, register cron triggers, or apply Terraform.
+- **`pnpm deploy:all:dev`** is the fullest path (code + migrations + secrets + cron triggers for all 7
+  apps) but does **not** create resources or apply Terraform.
+- **`pnpm resources:dev`** only **prints** the resource manifest — it provisions nothing.
+- **Terraform has no aggregate apply and no drift check** — re-apply each stack after a `.tf` change.
+
 ## Migrating the real environments
 
 `db:migrate:<db>|all:<tier>` picks the tier: `dev` / `staging` / `prod` — all real remote D1s, each

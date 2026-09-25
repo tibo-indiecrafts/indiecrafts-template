@@ -43,7 +43,9 @@ pnpm docs:install && pnpm docs  # VitePress docs → http://localhost:3002
 `pnpm dev` runs the website locally (`next dev`, :3000) but the three workers as
 `wrangler dev --env dev --remote` — live edge sessions against the **one shared remote `dev`**
 D1/KV/R2 (there is no miniflare tier; local dev and `db:migrate:*:dev` share the dev database).
-The session **hot-reloads** on save, so during `pnpm dev` nothing needs redeploying.
+The session **hot-reloads** on save, so the **local loop** needs no redeploy — but the _deployed_
+`indiecrafts-dev-*` Workers, cron schedules, and Terraform edge config only change on an explicit
+command. What needs a command to reach dev → [Local development § live-vs-command](/shared/architecture/local-development#live-on-save-vs-needs-a-command-to-reach-dev) (the `redeploy→dev` hook also prints it as you edit).
 
 Because it runs on the edge, remote dev silently 500s when you're logged out, a worker has no
 `.dev.vars` (its session then has no secrets), or a `[env.dev]` id is still a placeholder. Three
@@ -55,7 +57,8 @@ pnpm dev:setup        # ONE-SHOT bootstrap: verify login → scaffold each worke
 pnpm dev:doctor       # preflight: logged in? each worker has .dev.vars? no PASTE_…_HERE ids?
                       # (also runs automatically as `predev` before every `pnpm dev`)
 pnpm dev:doctor:deep  # + a remote D1 migration-drift check (network)
-pnpm dev:refresh:dev  # re-align remote dev — migrations + secrets, without a full redeploy
+pnpm dev:refresh:dev  # re-align remote dev — migrations + WORKER secrets only (no code redeploy,
+                      # no next-cf secrets, no cron/infra); use deploy:*:dev for those
 ```
 
 `dev:doctor` **warns** without blocking (fix it or ignore it) and hard-fails only when you're not
