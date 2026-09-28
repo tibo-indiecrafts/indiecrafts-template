@@ -9,7 +9,7 @@ import { AnnouncementToast } from "./AnnouncementToast";
  * uses a distinct one to stay independent.
  */
 const meta = {
-  title: "Chrome/AnnouncementToast",
+  title: "Web/Chrome/AnnouncementToast",
   component: AnnouncementToast,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },

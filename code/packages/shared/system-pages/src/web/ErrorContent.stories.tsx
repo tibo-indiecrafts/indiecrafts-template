@@ -3,7 +3,7 @@ import { ErrorContent } from "./ErrorContent";
 import { SHELL_COPY } from "../shared";
 
 const meta = {
-  title: "System Pages/Web/ErrorContent",
+  title: "Web/System Pages/ErrorContent",
   component: ErrorContent,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },

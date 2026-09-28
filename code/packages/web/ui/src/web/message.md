@@ -1,5 +1,3 @@
-# Message
-
 > shadcn `message` · `src/user-interface/ui/message.tsx`
 
 **Use when** rendering a turn in a conversation thread (chat, AI assistant, comment log) — a sender's avatar, name, and content stacked in a scrollable list. **Don't** use it for a single system notice (use `alert`), an ephemeral confirmation (use a toast), or an inline validation string (use `field`/`FormMessage`).

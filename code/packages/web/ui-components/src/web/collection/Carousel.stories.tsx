@@ -51,7 +51,7 @@ const items = [
 ];
 
 const meta = {
-  title: "UI Components/Carousel",
+  title: "Web/UI Components/Carousel",
   component: Carousel,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

@@ -1,5 +1,3 @@
-# Tooltip
-
 > shadcn `tooltip` · `src/user-interface/ui/tooltip.tsx`
 
 **Use when** labelling an icon-only control or adding brief, non-essential context on hover/focus. **Don't** put anything essential, interactive, or long inside it — that's a Popover, Dialog, or inline text.

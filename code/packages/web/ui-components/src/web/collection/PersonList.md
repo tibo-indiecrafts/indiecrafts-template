@@ -1,5 +1,3 @@
-# PersonList
-
 > `module.person-list` · `code/packages/ui-components/src/renderers/PersonList.tsx`
 
 **Use when** you want a people or team grid — a set of members shown as avatar, name, and role.

@@ -1,5 +1,3 @@
-# Combobox
-
 > shadcn `combobox` · `src/user-interface/ui/combobox.tsx`
 
 **Use when** a user picks one (or several) values from a long, known list and filtering-as-you-type speeds selection. **Don't** use it for a short list (≤7 — use `select`/radio), for free-form text with no options (use `input`), or when every option must stay visible at once (use radio/checkbox group).

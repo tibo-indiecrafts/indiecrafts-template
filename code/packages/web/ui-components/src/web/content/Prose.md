@@ -1,5 +1,3 @@
-# Prose
-
 > `module.prose` renderer · `renderers/Prose.tsx`
 
 **Use when** a block holds long-form editorial body copy (paragraphs, headings, lists, links) authored as PortableText and rendered at a readable measure.

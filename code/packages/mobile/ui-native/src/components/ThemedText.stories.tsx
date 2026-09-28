@@ -5,7 +5,7 @@ import { ThemedText } from "./ThemedText";
 const VARIANTS = ["title", "eyebrow", "body", "muted"] as const;
 
 const meta = {
-  title: "Native/ThemedText",
+  title: "Native/UI/ThemedText",
   component: ThemedText,
   tags: ["autodocs"],
   args: {

@@ -3,7 +3,7 @@ import { DirectionProvider } from "./direction";
 import docs from "./direction.md?raw";
 
 const meta = {
-  title: "UI/Direction",
+  title: "Web/UI/Direction",
   component: DirectionProvider,
   tags: ["autodocs"],
   parameters: {

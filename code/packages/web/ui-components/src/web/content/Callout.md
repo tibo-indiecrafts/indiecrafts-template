@@ -1,5 +1,3 @@
-# Callout
-
 > `module.callout` · `code/packages/ui-components/src/renderers/Callout.tsx`
 
 **Use when** you need a highlighted aside inside a page or post body — a tip, a status note, a warning, or a small call-to-action set apart from the surrounding prose.

@@ -1,5 +1,3 @@
-# PostHero
-
 > `code/packages/ui-components/src/web/layout/PostHero.tsx`
 
 **Use when** you want a large, full-width lead post — the frontpage's "Big Hero". A full-bleed cover image or inline-playable video with a gradient scrim, a category chip, the title, excerpt, and author · date overlaid at the bottom. Built for the blog's `module.blog-hero`; generic over already-resolved data, so any "featured post" surface can reuse it.

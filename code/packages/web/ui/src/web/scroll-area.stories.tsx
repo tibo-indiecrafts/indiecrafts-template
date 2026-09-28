@@ -4,7 +4,7 @@ import docs from "./scroll-area.md?raw";
 import { Separator } from "./separator";
 
 const meta = {
-  title: "UI/ScrollArea",
+  title: "Web/UI/ScrollArea",
   component: ScrollArea,
   tags: ["autodocs"],
   parameters: {

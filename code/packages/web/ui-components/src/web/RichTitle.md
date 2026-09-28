@@ -1,5 +1,3 @@
-# RichTitle
-
 > Shared title primitive · `web/RichTitle.tsx`
 
 **Use when** rendering any heading from a string — an app section title (`messages/`) or a

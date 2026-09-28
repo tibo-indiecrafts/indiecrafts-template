@@ -1,5 +1,3 @@
-# Select
-
 > shadcn `select` · `src/user-interface/ui/select.tsx`
 
 **Use when** the user picks exactly one value from a known list of ~5+ options and vertical space is tight. **Don't** use it for multi-select, free typing, actions, or fewer than 5 options.

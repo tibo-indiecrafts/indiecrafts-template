@@ -1,5 +1,3 @@
-# Form
-
 > shadcn `form` · `src/user-interface/ui/form.tsx`
 
 **Use when** collecting structured user input (auth, contact, checkout, settings) that needs labels, validation, and error messaging wired together. **Don't** use it for a single free-standing control, a search box, or read-only data — a bare `Input`/`Label` or a definition list is enough.

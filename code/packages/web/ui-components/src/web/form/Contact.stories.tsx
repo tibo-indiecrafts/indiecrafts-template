@@ -10,7 +10,7 @@ import docs from "./Contact.md?raw";
  * layouts; set `namePlaceholder` / `subjectPlaceholder` to show those fields.
  */
 const meta = {
-  title: "UI Components/Contact",
+  title: "Web/UI Components/Contact",
   component: ContactForm,
   tags: ["autodocs"],
   parameters: {

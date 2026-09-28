@@ -10,7 +10,7 @@ import docs from "./Newsletter.md?raw";
  * layouts; the success/already/error states show against the live route.
  */
 const meta = {
-  title: "UI Components/Newsletter",
+  title: "Web/UI Components/Newsletter",
   component: NewsletterForm,
   tags: ["autodocs"],
   parameters: {

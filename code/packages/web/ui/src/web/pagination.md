@@ -1,5 +1,3 @@
-# Pagination
-
 > shadcn `pagination` · `src/user-interface/ui/pagination.tsx`
 
 **Use when** splitting a long list/table (roughly >25 items) into ordered pages the user steps through. **Don't** use for endless feeds or <2 pages — use infinite scroll / load-more, or render nothing.

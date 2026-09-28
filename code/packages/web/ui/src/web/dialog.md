@@ -1,5 +1,3 @@
-# Dialog
-
 > shadcn `dialog` · `src/user-interface/ui/dialog.tsx`
 
 **Use when** a focused task or decision must interrupt the flow and block the page until resolved (confirm, edit, short form). **Don't** use for non-blocking feedback (toast), inline validation, contextual menus, or content that belongs on its own page.

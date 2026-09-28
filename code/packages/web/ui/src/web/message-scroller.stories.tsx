@@ -10,7 +10,7 @@ import {
 import docs from "./message-scroller.md?raw";
 
 const meta = {
-  title: "UI/MessageScroller",
+  title: "Web/UI/MessageScroller",
   component: MessageScroller,
   tags: ["autodocs"],
   parameters: {

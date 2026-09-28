@@ -11,7 +11,7 @@ import {
 import docs from "./breadcrumb.md?raw";
 
 const meta = {
-  title: "UI/Breadcrumb",
+  title: "Web/UI/Breadcrumb",
   component: Breadcrumb,
   tags: ["autodocs"],
   parameters: {

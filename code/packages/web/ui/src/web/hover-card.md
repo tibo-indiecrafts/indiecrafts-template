@@ -1,5 +1,3 @@
-# Hover card
-
 > shadcn `hover-card` · `src/user-interface/ui/hover-card.tsx`
 
 **Use when** a sighted mouse user should preview non-essential context behind a link (a person, a term, a linked page). **Don't** put essential info or any action inside it — keyboard and touch users never reach it.

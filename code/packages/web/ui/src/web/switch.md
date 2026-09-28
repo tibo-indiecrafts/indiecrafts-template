@@ -1,5 +1,3 @@
-# Switch
-
 > shadcn `switch` · `src/user-interface/ui/switch.tsx`
 
 **Use when** a single binary setting takes effect **immediately** with no Save button (notifications on/off, dark mode). **Don't** use it inside a form that needs submission, for multi-select lists, or to trigger an action — that's a checkbox or button.

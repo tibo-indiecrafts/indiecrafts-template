@@ -9,7 +9,7 @@ import docs from "./DeleteAccountSection.md?raw";
  * Clerk-free; `getToken` and `apiUrl` are injected by the surface.
  */
 const meta = {
-  title: "Compliance/DeleteAccountSection",
+  title: "Web/Compliance/DeleteAccountSection",
   component: DeleteAccountSection,
   tags: ["autodocs"],
   parameters: { layout: "padded", docs: { description: { component: docs } } },

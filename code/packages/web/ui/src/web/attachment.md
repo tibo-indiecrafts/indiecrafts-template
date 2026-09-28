@@ -1,5 +1,3 @@
-# Attachment
-
 > shadcn `attachment` · `src/user-interface/ui/attachment.tsx`
 
 **Use when** representing a single uploaded/attached file as a compact card — icon or thumbnail, name, size, and a remove/download action. **Don't** use it as the drop target itself (that's a dropzone/`input[type=file]`) or as a generic list-item, chip, or tag.

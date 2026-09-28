@@ -14,7 +14,7 @@ import docs from "./drawer.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "UI/Drawer",
+  title: "Web/UI/Drawer",
   component: Drawer,
   tags: ["autodocs"],
   parameters: {

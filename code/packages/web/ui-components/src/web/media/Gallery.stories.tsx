@@ -4,7 +4,7 @@ import { galleryImages } from "../_mock";
 import docs from "./Gallery.md?raw";
 
 const meta = {
-  title: "UI Components/Gallery",
+  title: "Web/UI Components/Gallery",
   component: Gallery,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

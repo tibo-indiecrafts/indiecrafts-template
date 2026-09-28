@@ -1,5 +1,3 @@
-# Navigation menu
-
 > shadcn `navigation-menu` · `src/user-interface/ui/navigation-menu.tsx`
 
 **Use when** the primary desktop header nav needs top-level links, some of which open a rich mega-menu panel (columns of links, featured content). **Don't** use it for action menus (`dropdown-menu`), form selection (`select`/`combobox`), or the mobile nav — collapse to a `sheet`/`drawer` below `md`.

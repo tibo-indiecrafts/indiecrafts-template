@@ -1,5 +1,3 @@
-# Menubar
-
 > shadcn `menubar` · `src/user-interface/ui/menubar.tsx`
 
 **Use when** you need a persistent, desktop-app-style command surface (File / Edit / View) that groups many low-frequency commands behind top-level menus. **Don't** use it as site/page navigation, a header, a toolbar, or on touch-first layouts — reach for `NavigationMenu` or plain `@/i18n/routing` links instead.

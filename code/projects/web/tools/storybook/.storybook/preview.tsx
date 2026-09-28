@@ -19,11 +19,30 @@ import "./preview.css";
  */
 const preview: Preview = {
   parameters: {
-    layout: "centered",
+    // Full-width by default — a gallery reads better wide, and the tiny centered
+    // previews were the complaint. A story can still opt into `centered`/`padded`.
+    layout: "fullscreen",
     controls: { expanded: true, sort: "requiredFirst" },
     // We drive light/dark via data-theme, not the backgrounds addon.
     backgrounds: { disable: true },
     docs: { toc: true },
+    // Sidebar IA: two renderer umbrellas — Web, then Native — each ordered
+    // domain components first, UI atoms last. Docs + tokens sit above the split.
+    options: {
+      storySort: {
+        order: [
+          "Introduction",
+          "Design Tokens",
+          ["Colors", "Typography & Radius", "Sidebar & Charts", "Native (hex)"],
+          "Adaptive & container queries",
+          "Web",
+          ["UI Components", "Chrome", "Compliance", "System Pages", "Icons", "UI"],
+          "Native",
+          ["System Pages", "UI"],
+          "*",
+        ],
+      },
+    },
   },
   decorators: [
     withThemeByDataAttribute({

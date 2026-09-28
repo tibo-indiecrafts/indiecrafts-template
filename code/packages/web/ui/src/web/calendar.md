@@ -1,5 +1,3 @@
-# Calendar
-
 > shadcn `calendar` · `src/user-interface/ui/calendar.tsx`
 
 **Use when** the user picks a date (or range) and calendar context matters — scheduling, filtering, day-of-week decisions. **Don't** use it for a familiar/memorable date like a birthday or expiry — a plain `<input>` (mm/dd/yyyy) with a format hint is faster and more accessible.

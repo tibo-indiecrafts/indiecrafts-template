@@ -1,5 +1,3 @@
-# ShareButtons
-
 > `code/packages/ui-components/src/web/layout/ShareButtons.tsx`
 
 **Use when** you want a share row — X / LinkedIn / Facebook + copy-link — for any URL. The blog post mounts it inline (post URL + title); `DefaultLayout` mounts it in the footer for a site-wide "share this page".

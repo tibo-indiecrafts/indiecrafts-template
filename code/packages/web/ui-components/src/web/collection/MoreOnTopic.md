@@ -1,5 +1,3 @@
-# MoreOnTopic
-
 > `code/packages/ui-components/src/web/collection/MoreOnTopic.tsx`
 
 **Use when** you want a compact "more on this topic" list in a sidebar — a heading over a few related links, optionally with a "see all" footer link. Built for the blog post TOC sidebar, but generic: any resolved `{ title, href }` items work.

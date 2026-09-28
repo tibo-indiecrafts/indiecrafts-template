@@ -8,7 +8,7 @@ import docs from "./QuoteList.md?raw";
 // Async server component (reads translations via the Storybook next-intl mock).
 // Unwrapped for the client runtime via `Async` + `Suspense`.
 const meta = {
-  title: "UI Components/QuoteList",
+  title: "Web/UI Components/QuoteList",
   component: QuoteList,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

@@ -44,7 +44,7 @@ const tiers = [
 ];
 
 const meta = {
-  title: "UI Components/Pricing",
+  title: "Web/UI Components/Pricing",
   component: Pricing,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

@@ -1,5 +1,3 @@
-# Pricing
-
 > `module.pricing` · `code/packages/ui-components/src/web/collection/Pricing.tsx`
 
 **Use when** you want a row of plan cards — each a name, price, feature list, and CTA. One tier can be highlighted with the brand ring and a badge.

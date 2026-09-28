@@ -1,5 +1,3 @@
-# Avatar
-
 > shadcn `avatar` · `src/user-interface/ui/avatar.tsx`
 
 **Use when** representing a single user, project, or entity as a small image with a text/icon fallback. **Don't** use it as a button, a decorative image, or to show more than a handful stacked — reach for `AvatarGroup` past ~3.

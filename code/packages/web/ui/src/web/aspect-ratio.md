@@ -1,5 +1,3 @@
-# Aspect ratio
-
 > shadcn `aspect-ratio` · `src/user-interface/ui/aspect-ratio.tsx`
 
 **Use when** you must lock a media box (image, video, embed, map) to a fixed proportion so it never reflows as content or viewport changes. **Don't** use it to size text blocks, cards, or anything whose height should follow its content — let the content flow.

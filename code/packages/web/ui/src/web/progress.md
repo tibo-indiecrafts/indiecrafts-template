@@ -1,5 +1,3 @@
-# Progress
-
 > shadcn `progress` · `src/user-interface/ui/progress.tsx`
 
 **Use when** showing determinate completion of a known-length task (upload, install, multi-step form, %-scored meter). **Don't** use for unknown-duration waits (use a `Spinner`/skeleton), or as a decorative accent bar.

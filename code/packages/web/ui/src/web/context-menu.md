@@ -1,5 +1,3 @@
-# Context menu
-
 > shadcn `context-menu` · `src/user-interface/ui/context-menu.tsx`
 
 **Use when** a right-click (or long-press on touch) should reveal actions scoped to the element under the pointer. **Don't** use it as your only path to an action, or as a button-triggered dropdown — that's `DropdownMenu`.

@@ -1,5 +1,3 @@
-# Empty
-
 > shadcn `empty` · `src/user-interface/ui/empty.tsx`
 
 **Use when** a region has no data to show and you must explain what belongs there plus the next step (first use, no results, cleared list, error, no access). **Don't** use it for transient loading (use a skeleton/spinner) or a whole-page 404 chrome swap when a section-level empty state fits inside the existing layout.

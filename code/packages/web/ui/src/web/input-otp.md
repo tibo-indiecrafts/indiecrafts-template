@@ -1,5 +1,3 @@
-# Input otp
-
 > shadcn `input-otp` · `src/user-interface/ui/input-otp.tsx`
 
 **Use when** entering a short one-time verification code (email/SMS 2FA, PIN) where each character reads as a discrete box. **Don't** use for passwords, ID numbers, or any free-text field — that's a plain `Input`.

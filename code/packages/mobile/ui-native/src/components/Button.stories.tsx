@@ -5,7 +5,7 @@ import { Button } from "./Button";
 const VARIANTS = ["primary", "secondary", "outline", "destructive"] as const;
 
 const meta = {
-  title: "Native/Button",
+  title: "Native/UI/Button",
   component: Button,
   tags: ["autodocs"],
   args: { label: "Save changes", variant: "primary", disabled: false },

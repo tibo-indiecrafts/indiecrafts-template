@@ -3,7 +3,7 @@ import { OfflineBanner } from "./OfflineBanner";
 import { SHELL_COPY } from "../shared";
 
 const meta = {
-  title: "System Pages/Web/OfflineBanner",
+  title: "Web/System Pages/OfflineBanner",
   component: OfflineBanner,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },

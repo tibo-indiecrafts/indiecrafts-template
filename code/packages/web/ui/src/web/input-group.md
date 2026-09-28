@@ -1,5 +1,3 @@
-# Input group
-
 > shadcn `input-group` · `src/user-interface/ui/input-group.tsx`
 
 **Use when** an input needs an inline affix — icon, unit, currency, prefix/suffix text, or an action button that belongs _to_ the field. **Don't** use it to lay out separate fields side by side, or as a substitute for a `<label>`.

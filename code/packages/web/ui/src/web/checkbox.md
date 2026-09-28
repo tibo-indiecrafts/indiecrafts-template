@@ -1,5 +1,3 @@
-# Checkbox
-
 > shadcn `checkbox` · `src/user-interface/ui/checkbox.tsx`
 
 **Use when** a user picks zero-or-more independent options, or toggles a single setting that only applies on submit. **Don't** use it for one mutually-exclusive choice (radio) or an instant on/off setting that saves immediately (switch).

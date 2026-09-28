@@ -5,7 +5,7 @@ import docs from "./ModuleSection.md?raw";
 // Layout helper: the shared section shell (max-width + vertical rhythm). `inline`
 // drops the chrome so a module can sit bare inside a prose column.
 const meta = {
-  title: "UI Components/ModuleSection",
+  title: "Web/UI Components/ModuleSection",
   component: ModuleSection,
   tags: ["autodocs"],
   parameters: {

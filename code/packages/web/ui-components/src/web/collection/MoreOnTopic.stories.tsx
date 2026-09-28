@@ -3,7 +3,7 @@ import { MoreOnTopic } from "./MoreOnTopic";
 import docs from "./MoreOnTopic.md?raw";
 
 const meta = {
-  title: "UI Components/MoreOnTopic",
+  title: "Web/UI Components/MoreOnTopic",
   component: MoreOnTopic,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

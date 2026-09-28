@@ -1,5 +1,3 @@
-# Popover
-
 > shadcn `popover` · `src/user-interface/ui/popover.tsx`
 
 **Use when** a button reveals rich, interactive content (a form, filters, extra actions) anchored to that trigger without leaving the page. **Don't** use it for plain hover hints (that's a tooltip), a list of commands (that's a dropdown menu), or a decision that must block the page (that's a dialog).

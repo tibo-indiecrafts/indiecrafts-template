@@ -1,5 +1,3 @@
-# Bubble
-
 > shadcn `bubble` · `src/user-interface/ui/bubble.tsx`
 
 **Use when** rendering a turn in a conversation or chat thread (one message per bubble, grouped by sender). **Don't** use it for toasts, callouts, tooltips, or generic cards — it is a message container, not a notification.

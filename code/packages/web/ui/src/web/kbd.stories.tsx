@@ -3,7 +3,7 @@ import { Kbd, KbdGroup } from "./kbd";
 import docs from "./kbd.md?raw";
 
 const meta = {
-  title: "UI/Kbd",
+  title: "Web/UI/Kbd",
   component: Kbd,
   tags: ["autodocs"],
   parameters: {

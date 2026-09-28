@@ -1,5 +1,3 @@
-# Command
-
 > shadcn `command` · `src/user-interface/ui/command.tsx`
 
 **Use when** a user needs to search-and-run across many actions/destinations from one keyboard-driven list (⌘K palette, searchable menu, combobox popup). **Don't** use it as a plain form select, a nav menu with ≤7 fixed items, or a full-text content search — reach for `Select`, a nav list, or a search page.

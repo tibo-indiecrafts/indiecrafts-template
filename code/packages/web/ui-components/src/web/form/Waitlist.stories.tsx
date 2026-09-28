@@ -10,7 +10,7 @@ import docs from "./Waitlist.md?raw";
  * layouts; set `namePlaceholder` to show the optional name field.
  */
 const meta = {
-  title: "UI Components/Waitlist",
+  title: "Web/UI Components/Waitlist",
   component: WaitlistForm,
   tags: ["autodocs"],
   parameters: {

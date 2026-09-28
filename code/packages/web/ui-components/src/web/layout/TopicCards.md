@@ -1,5 +1,3 @@
-# TopicCards
-
 > `code/packages/ui-components/src/web/layout/TopicCards.tsx`
 
 **Use when** you want one to three categories or tags shown as large, clickable cards — a "browse by topic" section. Same full-bleed image + gradient-scrim card as `PostHero`/`FeaturedPosts`' lead card. Built for the blog's `module.blog-topic-cards`; unlike the other blog blocks it points at taxonomy (categories/tags), not posts, so it takes its own item shape instead of `PostCardItem`.

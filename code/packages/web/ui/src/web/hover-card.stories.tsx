@@ -5,7 +5,7 @@ import docs from "./hover-card.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "UI/HoverCard",
+  title: "Web/UI/HoverCard",
   component: HoverCard,
   tags: ["autodocs"],
   parameters: {

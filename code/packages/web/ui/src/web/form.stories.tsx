@@ -40,7 +40,7 @@ function DemoForm() {
 }
 
 const meta = {
-  title: "UI/Form",
+  title: "Web/UI/Form",
   component: Form,
   tags: ["autodocs"],
   parameters: {

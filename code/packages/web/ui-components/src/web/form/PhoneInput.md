@@ -1,5 +1,3 @@
-# PhoneInput
-
 A lightweight international phone field: a country **dial-code `<select>`** + a national
 `<input type="tel">`. Emits an **E.164-ish string** (`+33612345678`) via `onChange`. Uncontrolled
 national part (keeps value parsing simple).

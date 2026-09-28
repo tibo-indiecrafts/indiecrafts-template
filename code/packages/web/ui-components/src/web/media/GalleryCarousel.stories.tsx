@@ -5,7 +5,7 @@ import docs from "./GalleryCarousel.md?raw";
 
 // Client component; reads gallery labels via the Storybook next-intl mock.
 const meta = {
-  title: "UI Components/GalleryCarousel",
+  title: "Web/UI Components/GalleryCarousel",
   component: GalleryCarousel,
   tags: ["autodocs"],
   parameters: {

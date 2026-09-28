@@ -1,5 +1,3 @@
-# Embla carousel
-
 > shadcn `embla-carousel` · `src/user-interface/ui/embla-carousel.tsx`
 
 **Use when** users browse a small set of equal-weight, optional items (logos, testimonials, product shots) and horizontal space is limited. **Don't** use it for primary content, sequential steps, or anything a user must see — off-screen slides are routinely missed.

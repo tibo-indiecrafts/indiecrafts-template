@@ -59,6 +59,17 @@ _The Storybook gallery for the design-system bricks (`ui` · `ui-components` · 
 
 ### Changed
 
+- **Sidebar rerooted under `Web` and `Native` umbrellas, ordered domain-first.** Every brick story
+  title now nests under one of two roots — `Web/…` (`UI Components` → `Chrome` → `Compliance` →
+  `System Pages` → `Icons` → `UI`) or `Native/…` (`System Pages` → `UI`) — so the two renderer families
+  are visually separated and each group runs **domain components first, UI atoms last**. Driven by an
+  explicit `options.storySort` order in `.storybook/preview.tsx`; docs + `Design Tokens` sit above the
+  split. **Why:** the flat, alphabetical roots mixed web and native and buried the composed blocks under
+  the primitives; the umbrellas make the gallery navigable at a glance. `test:stories` stays 265/265.
+- **Story examples render full-width by default.** Flipped the global preview `layout` from `centered`
+  to `fullscreen` (both `.storybook` and `.storybook-website`), so the tiny centered previews now fill
+  the column in Docs and Canvas. Stories that need it still opt into `centered`/`padded` per-story.
+  **Why:** composed blocks (Hero, Pricing…) were shrunk to content width and hard to read.
 - **`test:stories` is now a BLOCKING CI gate.** Split the advisory `browser` job into a blocking
   `browser-stories` (stories = component + a11y tests) and an advisory `browser-e2e` (visual/e2e until
   linux baselines land). **Why:** the stories are the component test suite; failures should fail CI.

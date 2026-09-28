@@ -9,7 +9,7 @@ import {
 import docs from "./input-otp.md?raw";
 
 const meta = {
-  title: "UI/InputOTP",
+  title: "Web/UI/InputOTP",
   component: InputOTP,
   tags: ["autodocs"],
   parameters: {

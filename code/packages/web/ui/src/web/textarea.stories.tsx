@@ -4,7 +4,7 @@ import docs from "./textarea.md?raw";
 import { Label } from "./label";
 
 const meta = {
-  title: "UI/Textarea",
+  title: "Web/UI/Textarea",
   component: Textarea,
   tags: ["autodocs"],
   parameters: {

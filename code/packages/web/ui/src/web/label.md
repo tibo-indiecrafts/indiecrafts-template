@@ -1,5 +1,3 @@
-# Label
-
 > shadcn `label` · `src/user-interface/ui/label.tsx`
 
 **Use when** naming a single form control (input, checkbox, radio, switch, select) so it is clickable and screen-reader announced. **Don't** use it for section headings, helper/error text, or as a substitute for a placeholder.

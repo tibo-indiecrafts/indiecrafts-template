@@ -1,5 +1,3 @@
-# SpotlightRow
-
 > `code/packages/ui-components/src/web/collection/SpotlightRow.tsx`
 
 **Use when** you want a curated "spotlight" on a single topic — a heading (+ optional subheading and a "view all" link) over a row of compact post cards. Built for the blog's `module.blog-category-spotlight`; generic over already-resolved data, so any curated-collection surface can reuse it. Shares `PostCard` with `FeaturedPosts`, so the two primitives render identical cards.

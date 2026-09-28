@@ -1,5 +1,3 @@
-# Button
-
 > shadcn `button` · `src/user-interface/ui/button.tsx`
 
 **Use when** a user triggers an action or navigates a primary flow (submit, save, confirm, open). **Don't** use for plain in-text navigation — that's a link (`@/i18n/routing`), styled with `buttonVariants` only if it must look like a button.

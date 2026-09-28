@@ -1,5 +1,3 @@
-# Hero
-
 > `module.hero` · `code/packages/ui-components/src/web/layout/Hero.tsx`
 
 **Use when** a page needs a lead band — eyebrow, large title, subtitle, and one call-to-action. Centered, with generous vertical rhythm.

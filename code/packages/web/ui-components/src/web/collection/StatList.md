@@ -1,5 +1,3 @@
-# StatList
-
 > `module.stat-list` · `code/packages/ui-components/src/renderers/StatList.tsx`
 
 **Use when** you want to show a few headline metrics — users, uptime, rating — as a compact row of value + label cells.

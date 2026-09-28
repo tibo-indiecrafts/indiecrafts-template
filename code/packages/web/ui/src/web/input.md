@@ -1,5 +1,3 @@
-# Input
-
 > shadcn `input` · `src/user-interface/ui/input.tsx`
 
 **Use when** collecting a single line of free-form text, email, number, URL, password, or a file. **Don't** use for multi-line prose (`textarea`), a fixed set of choices (`select`/`radio`), or on/off (`checkbox`/`switch`).

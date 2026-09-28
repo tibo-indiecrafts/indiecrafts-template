@@ -1,5 +1,3 @@
-# Direction
-
 > shadcn `direction` · `src/user-interface/ui/direction.tsx`
 
 **Use when** the app (or a subtree) must render right-to-left and every Radix primitive under it should flip in lockstep — set `dir` once at the layout root from the active locale. **Don't** reach for it to style layout or flip a single element; it renders no DOM and swaps no classes — it only broadcasts reading direction through context.

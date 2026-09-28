@@ -3,7 +3,7 @@ import { NotFoundContent } from "./NotFoundContent";
 import { SHELL_COPY } from "../shared";
 
 const meta = {
-  title: "System Pages/Native/NotFoundContent",
+  title: "Native/System Pages/NotFoundContent",
   component: NotFoundContent,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },

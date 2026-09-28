@@ -1,5 +1,3 @@
-# Button group
-
 > shadcn `button-group` · `src/user-interface/ui/button-group.tsx`
 
 **Use when** you have 2–3 related actions (or connected controls like a split button / input add-on) that belong together. **Don't** use it to toggle a state (that's `ToggleGroup`) or to hold >3 primary actions — collapse the overflow into a menu.

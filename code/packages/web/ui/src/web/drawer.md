@@ -1,5 +1,3 @@
-# Drawer
-
 > shadcn `drawer` · `src/user-interface/ui/drawer.tsx`
 
 **Use when** a focused task or supplementary content must open over the page without navigating away — mobile-first, dragged from a screen edge. **Don't** use it for desktop dialogs (use `dialog`), transient confirmations, or as a nav menu on a route that already has one.

@@ -1,5 +1,3 @@
-# Sidebar
-
 > shadcn `sidebar` · `src/user-interface/ui/sidebar.tsx`
 
 **Use when** an app-shell needs persistent primary navigation with 5+ destinations grouped into sections. **Don't** use it for a public marketing page (use `Header`), for a one-off overlay panel (use `Sheet`), or for a second/third tier of nav (that goes in-page — tabs or `SidebarMenuSub`, one level only).

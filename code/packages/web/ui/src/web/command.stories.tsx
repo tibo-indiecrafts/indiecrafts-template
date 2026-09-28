@@ -14,7 +14,7 @@ import {
 import docs from "./command.md?raw";
 
 const meta = {
-  title: "UI/Command",
+  title: "Web/UI/Command",
   component: Command,
   tags: ["autodocs"],
   parameters: {

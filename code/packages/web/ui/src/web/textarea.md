@@ -1,5 +1,3 @@
-# Textarea
-
 > shadcn `textarea` · `src/user-interface/ui/textarea.tsx`
 
 **Use when** collecting multi-line free-form prose (messages, comments, descriptions, notes). **Don't** use for a single line (`input`), a fixed set of choices (`select`/`radio`), or code with fixed columns (use a `code` role field).

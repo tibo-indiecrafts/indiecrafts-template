@@ -10,7 +10,9 @@ import "../.storybook/preview.css";
 /** Lean preview for the website surface: theme toolbar (data-theme) + token wrapper. */
 const preview: Preview = {
   parameters: {
-    layout: "centered",
+    // Full-width by default (matches the design-system gallery); a story can still
+    // opt into `centered`/`padded`.
+    layout: "fullscreen",
     controls: { expanded: true, sort: "requiredFirst" },
     backgrounds: { disable: true },
     docs: { toc: true },

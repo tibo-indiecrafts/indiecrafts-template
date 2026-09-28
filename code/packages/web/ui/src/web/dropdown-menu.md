@@ -1,5 +1,3 @@
-# Dropdown menu
-
 > shadcn `dropdown-menu` · `src/user-interface/ui/dropdown-menu.tsx`
 
 **Use when** a trigger button reveals a short list of actions or option toggles for the current context. **Don't** use it for primary site navigation, form selection (use `select`/`combobox`), or as a container for arbitrary layout — it holds a list of items, not a panel.

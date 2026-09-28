@@ -5,7 +5,7 @@ import { BRANDS, type BrandName } from "../shared";
 const NAMES = Object.keys(BRANDS) as BrandName[];
 
 const meta = {
-  title: "Icons/Web/BrandIcon",
+  title: "Web/Icons/BrandIcon",
   component: BrandIcon,
   tags: ["autodocs"],
   args: { name: "github", size: 28, brandColor: false },

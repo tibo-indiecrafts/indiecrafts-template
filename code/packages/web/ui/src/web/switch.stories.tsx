@@ -5,7 +5,7 @@ import docs from "./switch.md?raw";
 import { Label } from "./label";
 
 const meta = {
-  title: "UI/Switch",
+  title: "Web/UI/Switch",
   component: Switch,
   tags: ["autodocs"],
   parameters: {

@@ -1,5 +1,3 @@
-# FeaturedMedia
-
 > Post/page cover · `renderers/FeaturedMedia.tsx`
 
 **Use when** a surface needs a single cover slot — a post hero, the blog frontpage, a card thumbnail — that is either an image or an inline-playable video. One box, one look.

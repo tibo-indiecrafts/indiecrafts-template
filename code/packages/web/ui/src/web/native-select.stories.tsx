@@ -4,7 +4,7 @@ import { NativeSelect, NativeSelectOption } from "./native-select";
 import docs from "./native-select.md?raw";
 
 const meta = {
-  title: "UI/NativeSelect",
+  title: "Web/UI/NativeSelect",
   component: NativeSelect,
   tags: ["autodocs"],
   parameters: {

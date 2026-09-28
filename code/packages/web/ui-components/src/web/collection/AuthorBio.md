@@ -1,5 +1,3 @@
-# AuthorBio
-
 > `code/packages/ui-components/src/web/collection/AuthorBio.tsx`
 
 **Use when** you want an end-of-article "Written by" block — one card per author with avatar, name (linked), role, and a short bio. Generic over resolved author data.

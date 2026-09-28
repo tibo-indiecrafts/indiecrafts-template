@@ -1,5 +1,3 @@
-# AnnouncementBar
-
 Announcement / discount strip under the site nav. Rotates through multiple items
 (a single item is static), each with a message, an optional click-to-copy discount
 code, and an optional link — an internal path (the app's i18n `Link`) or an external

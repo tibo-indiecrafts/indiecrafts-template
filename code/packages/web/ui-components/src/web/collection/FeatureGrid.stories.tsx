@@ -24,7 +24,7 @@ const items = [
 ];
 
 const meta = {
-  title: "UI Components/FeatureGrid",
+  title: "Web/UI Components/FeatureGrid",
   component: FeatureGrid,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

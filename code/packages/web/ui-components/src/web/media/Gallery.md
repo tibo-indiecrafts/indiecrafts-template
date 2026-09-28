@@ -1,5 +1,3 @@
-# Gallery
-
 > `module.gallery` · `code/packages/ui-components/src/renderers/Gallery.tsx`
 
 **Use when** you want a responsive image grid that opens a full-screen lightbox carousel — a portfolio strip, a set of photos, a product gallery.

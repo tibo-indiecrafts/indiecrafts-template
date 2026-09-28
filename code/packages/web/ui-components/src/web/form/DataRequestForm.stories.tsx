@@ -8,7 +8,7 @@ import docs from "./DataRequestForm.md?raw";
  * Storybook). All copy is passed in — resolved server-side from `messages`.
  */
 const meta = {
-  title: "UI Components/DataRequestForm",
+  title: "Web/UI Components/DataRequestForm",
   component: DataRequestForm,
   tags: ["autodocs"],
   parameters: { layout: "padded", docs: { description: { component: docs } } },

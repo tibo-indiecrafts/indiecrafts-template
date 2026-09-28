@@ -1,5 +1,3 @@
-# Carousel
-
 > `code/packages/ui-components/src/web/collection/Carousel.tsx`
 
 **Use when** you want a horizontally scrolling row of post cards — several visible at once, prev/next buttons to page through the rest. Built for the blog's `module.blog-collection` (a pinned, ordered selection of posts); generic over already-resolved data, so any curated-collection surface can reuse it.

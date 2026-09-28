@@ -14,7 +14,7 @@ import docs from "./sheet.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "UI/Sheet",
+  title: "Web/UI/Sheet",
   component: Sheet,
   tags: ["autodocs"],
   parameters: {

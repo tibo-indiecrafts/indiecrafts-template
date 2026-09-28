@@ -1,5 +1,3 @@
-# Scroll area
-
 > shadcn `scroll-area` · `src/user-interface/ui/scroll-area.tsx`
 
 **Use when** a bounded region (fixed height/width) overflows and you want a styled, cross-browser scrollbar that matches the theme. **Don't** wrap the whole page or a region that should grow — let the document scroll natively instead.

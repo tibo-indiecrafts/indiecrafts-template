@@ -1,5 +1,3 @@
-# Sonner
-
 > shadcn `sonner` · `src/user-interface/ui/sonner.tsx`
 
 **Use when** you need a brief, non-blocking confirmation of a background action (saved, copied, sent). **Don't** use it for critical errors, validation, or anything the user must read or act on — use an inline banner/alert instead.

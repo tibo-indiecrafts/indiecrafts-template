@@ -11,7 +11,7 @@ import {
 import docs from "./pagination.md?raw";
 
 const meta = {
-  title: "UI/Pagination",
+  title: "Web/UI/Pagination",
   component: Pagination,
   tags: ["autodocs"],
   parameters: {

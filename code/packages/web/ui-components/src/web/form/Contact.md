@@ -1,5 +1,3 @@
-# Contact (`module.contact`)
-
 Contact form block. Server `<Contact>` wrapper (feature gate) → client
 `<ContactForm>`. Posts to `/api/contact` → a `contactMessage` doc in Sanity
 (`@indiecrafts/modules-web-contact`). Every message is stored + (best-effort) emailed to the

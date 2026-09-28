@@ -1,5 +1,3 @@
-# Sheet
-
 > shadcn `sheet` · `src/user-interface/ui/sheet.tsx`
 
 **Use when** an edge-anchored overlay panel holds a secondary task or supplementary content (filters, cart, nav, detail view) without leaving the page. **Don't** use it for a blocking confirmation or a short message — that's `Dialog`/`AlertDialog` (centered) or a toast.

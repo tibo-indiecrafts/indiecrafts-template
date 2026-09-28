@@ -1,5 +1,3 @@
-# Spinner
-
 > shadcn `spinner` · `src/user-interface/ui/spinner.tsx`
 
 **Use when** an action is running and you can't predict how long it takes (indeterminate wait). **Don't** use it when you know the progress percentage (use a progress bar) or the final layout (use a skeleton).

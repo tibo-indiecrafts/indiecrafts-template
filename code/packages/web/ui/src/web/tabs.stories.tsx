@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
 import docs from "./tabs.md?raw";
 
 const meta = {
-  title: "UI/Tabs",
+  title: "Web/UI/Tabs",
   component: Tabs,
   tags: ["autodocs"],
   parameters: {

@@ -1,5 +1,3 @@
-# TurnstileWidget
-
 Cloudflare Turnstile — the client half of the server-side `verifyTurnstile`
 (`@indiecrafts/packages-shared-security`). Renders only when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set;
 otherwise it renders nothing and the form submits unchanged (the server verify also

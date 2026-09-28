@@ -3,7 +3,7 @@ import { Screen } from "./Screen";
 import { ThemedText } from "./ThemedText";
 
 const meta = {
-  title: "Native/Screen",
+  title: "Native/UI/Screen",
   component: Screen,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },

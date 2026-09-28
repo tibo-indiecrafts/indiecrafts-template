@@ -3,7 +3,7 @@ import { ShareButtons } from "./ShareButtons";
 import docs from "./ShareButtons.md?raw";
 
 const meta = {
-  title: "UI Components/ShareButtons",
+  title: "Web/UI Components/ShareButtons",
   component: ShareButtons,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

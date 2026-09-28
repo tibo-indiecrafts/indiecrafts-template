@@ -1,5 +1,3 @@
-# Badge
-
 > shadcn `badge` · `src/user-interface/ui/badge.tsx`
 
 **Use when** labeling an item's status, category, or attribute with a short, static, at-a-glance word. **Don't** use it as a button, a numeric count bubble, or a chip the user removes/toggles — those are Button, a count indicator, and an interactive Tag/Chip respectively.

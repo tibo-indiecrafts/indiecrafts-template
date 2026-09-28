@@ -6,7 +6,7 @@ import { body } from "../_mock";
 import docs from "./AccordionList.md?raw";
 
 const meta = {
-  title: "UI Components/AccordionList",
+  title: "Web/UI Components/AccordionList",
   component: AccordionList,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

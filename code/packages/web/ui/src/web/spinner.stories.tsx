@@ -3,7 +3,7 @@ import { Spinner } from "./spinner";
 import docs from "./spinner.md?raw";
 
 const meta = {
-  title: "UI/Spinner",
+  title: "Web/UI/Spinner",
   component: Spinner,
   tags: ["autodocs"],
   parameters: {

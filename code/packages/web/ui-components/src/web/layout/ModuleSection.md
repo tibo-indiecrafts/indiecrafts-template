@@ -1,5 +1,3 @@
-# ModuleSection
-
 > Shared section shell · `renderers/ModuleSection.tsx`
 
 **Use when** a module needs the standard section frame — centered max-width, page gutters, vertical rhythm — that works both as a full-width page slot and as an inline body embed.

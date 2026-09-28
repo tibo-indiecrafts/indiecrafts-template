@@ -3,7 +3,7 @@ import { PostHero } from "./PostHero";
 import docs from "./PostHero.md?raw";
 
 const meta = {
-  title: "UI Components/PostHero",
+  title: "Web/UI Components/PostHero",
   component: PostHero,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

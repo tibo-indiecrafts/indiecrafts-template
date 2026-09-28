@@ -10,7 +10,7 @@ import docs from "./collapsible.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "UI/Collapsible",
+  title: "Web/UI/Collapsible",
   component: Collapsible,
   tags: ["autodocs"],
   parameters: {

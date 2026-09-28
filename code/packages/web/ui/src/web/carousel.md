@@ -1,5 +1,3 @@
-# Carousel
-
 > shadcn `carousel` · `src/user-interface/ui/carousel.tsx`
 
 **Use when** showcasing a small set of equal-weight, visual items (featured work, testimonials, gallery) where browsing is optional and space is tight. **Don't** use it for primary content, sequential steps, or anything the user must not miss — carousels hide most of their payload off-screen.

@@ -5,7 +5,7 @@ import { SVGS, type SvgName } from "../shared";
 const NAMES = Object.keys(SVGS) as SvgName[];
 
 const meta = {
-  title: "Icons/Web/SvgIcon",
+  title: "Web/Icons/SvgIcon",
   component: SvgIcon,
   tags: ["autodocs"],
   args: { name: NAMES[0], width: 40, height: 40 },

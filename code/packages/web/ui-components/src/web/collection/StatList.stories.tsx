@@ -3,7 +3,7 @@ import { StatList } from "./StatList";
 import docs from "./StatList.md?raw";
 
 const meta = {
-  title: "UI Components/StatList",
+  title: "Web/UI Components/StatList",
   component: StatList,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

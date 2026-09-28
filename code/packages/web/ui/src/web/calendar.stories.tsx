@@ -3,7 +3,7 @@ import { Calendar } from "./calendar";
 import docs from "./calendar.md?raw";
 
 const meta = {
-  title: "UI/Calendar",
+  title: "Web/UI/Calendar",
   component: Calendar,
   tags: ["autodocs"],
   parameters: {

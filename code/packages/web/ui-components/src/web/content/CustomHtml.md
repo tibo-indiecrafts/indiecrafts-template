@@ -1,5 +1,3 @@
-# CustomHtml
-
 > `module.custom-html` renderer · `renderers/CustomHtml.tsx`
 
 **Use when** the editor needs raw markup no other block covers — an embed script, a third-party widget, a pasted iframe. The escape hatch; reach for a typed block first.

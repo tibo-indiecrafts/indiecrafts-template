@@ -8,7 +8,7 @@ import { PostCard } from "./PostCard";
  * via a stretched `<a>` over the title (like `PostHero`/`FeaturedPosts`).
  */
 const meta = {
-  title: "UI Components/PostCard",
+  title: "Web/UI Components/PostCard",
   component: PostCard,
   tags: ["autodocs"],
   parameters: { layout: "centered" },

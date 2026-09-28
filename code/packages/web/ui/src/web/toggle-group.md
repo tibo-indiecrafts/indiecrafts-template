@@ -1,5 +1,3 @@
-# Toggle group
-
 > shadcn `toggle-group` · `src/user-interface/ui/toggle-group.tsx`
 
 **Use when** picking one of 2–5 short, mutually-exclusive views/modes (list⇄grid, day/week/month), or toggling a few independent formatting states (bold/italic). **Don't** use it for primary navigation (use tabs), a single on/off (use a switch), form field choices submitted with data (use radio/checkbox), or more than ~5 options (use a select/chips).

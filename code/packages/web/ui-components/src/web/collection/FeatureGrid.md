@@ -1,5 +1,3 @@
-# FeatureGrid
-
 > `module.feature-grid` · `code/packages/ui-components/src/web/collection/FeatureGrid.tsx`
 
 **Use when** you want a centered title/intro over a grid of icon cards — each an icon chip, a title, and a short body. Good for a feature overview.

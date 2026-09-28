@@ -9,7 +9,7 @@ import docs from "./LocaleSuggest.md?raw";
  * stories pass the strings directly. Switch is inert in Storybook.
  */
 const meta = {
-  title: "Chrome/LocaleSuggest",
+  title: "Web/Chrome/LocaleSuggest",
   component: LocaleSuggest,
   tags: ["autodocs"],
   parameters: {

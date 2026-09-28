@@ -74,6 +74,17 @@ Changed · Deprecated · Removed · Fixed**.
   allowance was dead. **Why:** tighten the dev/test CSP to hosts we actually use. Doc synced
   (`docs/apps/web/seo/security-headers.md`).
 
+### Fixed
+
+- **Double title on ~99 Storybook Docs pages.** Every component's `<Name>.md` (injected as the
+  autodocs `description.component`) opened with its own `# <Name>` heading — but autodocs already
+  renders the story-title leaf as the page title, so each Docs page showed the name twice. Stripped
+  the redundant leading H1 from all 99 component docs (across `web/ui`, `web/ui-components`,
+  `web/announcement`, `web/locale-suggest`, `shared/*`, `mobile/ui-native`); the `> module.x · path`
+  line now leads the body. **Why:** the autodocs title is the canonical one; the `.md` H1 was a
+  duplicate. The `.md` files have no consumer other than the `?raw` story import, so nothing else
+  regressed. `test:stories` stays green.
+
 ### Added
 
 - **`pickLocale(value, locale, fallback?)` on `@indiecrafts/packages-shared-config`.** One shared

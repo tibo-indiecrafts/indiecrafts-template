@@ -1,5 +1,3 @@
-# AccordionList
-
 > `module.accordion-list` · `code/packages/ui-components/src/renderers/AccordionList.tsx`
 
 **Use when** you have FAQ-style content — a list of questions or topics that each expand to reveal an answer.

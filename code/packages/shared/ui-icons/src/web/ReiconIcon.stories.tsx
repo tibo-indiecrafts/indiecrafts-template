@@ -13,7 +13,7 @@ const NAMES = Object.keys(ReiconReact)
   .slice(0, 18);
 
 const meta = {
-  title: "Icons/Web/ReiconIcon",
+  title: "Web/Icons/ReiconIcon",
   component: ReiconIcon,
   tags: ["autodocs"],
   args: { name: NAMES[0] ?? "", size: 28, weight: "Outline" },

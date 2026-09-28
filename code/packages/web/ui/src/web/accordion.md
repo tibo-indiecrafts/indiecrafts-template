@@ -1,5 +1,3 @@
-# Accordion
-
 > shadcn `accordion` · `src/user-interface/ui/accordion.tsx`
 
 **Use when** condensing related, secondary content (FAQs, spec panels) into collapsible sections to save vertical space. **Don't** use it to hide primary content, form steps, or anything the user must see — that belongs on the page or in Tabs/Stepper.

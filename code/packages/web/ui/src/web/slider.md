@@ -1,5 +1,3 @@
-# Slider
-
 > shadcn `slider` · `src/user-interface/ui/slider.tsx`
 
 **Use when** picking a numeric value (or range) from a bounded, continuous scale where an approximate choice with live visual feedback beats typing — volume, opacity, price range, zoom. **Don't** use for precise/known values (number input), binary on/off (switch), unbounded ranges, or non-numeric choices (select/radio).

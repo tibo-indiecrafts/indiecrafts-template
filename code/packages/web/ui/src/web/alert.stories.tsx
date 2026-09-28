@@ -4,7 +4,7 @@ import { Alert, AlertTitle, AlertDescription } from "./alert";
 import docs from "./alert.md?raw";
 
 const meta = {
-  title: "UI/Alert",
+  title: "Web/UI/Alert",
   component: Alert,
   tags: ["autodocs"],
   parameters: {

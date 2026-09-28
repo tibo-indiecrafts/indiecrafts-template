@@ -1,5 +1,3 @@
-# Kbd
-
 > shadcn `kbd` · `src/user-interface/ui/kbd.tsx`
 
 **Use when** displaying a literal keyboard key or shortcut the user can press (`Ctrl`, `⌘K`, `Esc`). **Don't** use it as a decorative badge, a tag, or to style arbitrary short text — it is semantically keyboard input.

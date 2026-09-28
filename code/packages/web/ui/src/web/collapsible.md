@@ -1,5 +1,3 @@
-# Collapsible
-
 > shadcn `collapsible` · `src/user-interface/ui/collapsible.tsx`
 
 **Use when** a single standalone region toggles open/closed — one "show more", a filter drawer, an expandable row detail (the WAI-ARIA Disclosure pattern). **Don't** use it for a set of related sibling sections with managed open state — that is Accordion.

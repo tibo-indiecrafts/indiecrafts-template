@@ -1,5 +1,3 @@
-# Radio group
-
 > shadcn `radio-group` · `src/user-interface/ui/radio-group.tsx`
 
 **Use when** the user picks exactly one option from a small set (2–7) of mutually exclusive, always-visible choices. **Don't** use for multi-select (use checkbox), instant on/off toggles (use switch), or long option lists (use select/combobox).

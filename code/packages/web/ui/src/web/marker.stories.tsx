@@ -4,7 +4,7 @@ import { Marker, MarkerIcon, MarkerContent } from "./marker";
 import docs from "./marker.md?raw";
 
 const meta = {
-  title: "UI/Marker",
+  title: "Web/UI/Marker",
   component: Marker,
   tags: ["autodocs"],
   parameters: {

@@ -15,7 +15,7 @@ import docs from "./alert-dialog.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "UI/AlertDialog",
+  title: "Web/UI/AlertDialog",
   component: AlertDialog,
   tags: ["autodocs"],
   parameters: {

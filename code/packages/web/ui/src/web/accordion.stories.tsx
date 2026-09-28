@@ -9,7 +9,7 @@ import {
 import docs from "./accordion.md?raw";
 
 const meta = {
-  title: "UI/Accordion",
+  title: "Web/UI/Accordion",
   component: Accordion,
   tags: ["autodocs"],
   parameters: {

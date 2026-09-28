@@ -7,7 +7,7 @@ import {
 import docs from "./resizable.md?raw";
 
 const meta = {
-  title: "UI/Resizable",
+  title: "Web/UI/Resizable",
   component: ResizablePanelGroup,
   tags: ["autodocs"],
   parameters: {

@@ -1,5 +1,3 @@
-# CodeBlock
-
 > Body `codeBlock` renderer · `renderers/CodeBlock.tsx`
 
 **Use when** the article body carries a fenced code sample that needs syntax highlighting, with an optional filename/language header.

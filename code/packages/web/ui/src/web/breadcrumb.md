@@ -1,5 +1,3 @@
-# Breadcrumb
-
 > shadcn `breadcrumb` · `src/user-interface/ui/breadcrumb.tsx`
 
 **Use when** a page sits 3+ levels deep in a real URL hierarchy and users may land mid-tree (search, external link). **Don't** use on flat/1–2-level sites, as primary nav, or as a session-history trail.

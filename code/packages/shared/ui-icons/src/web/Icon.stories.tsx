@@ -3,7 +3,7 @@ import { Icon } from "./Icon";
 import { GLYPHS } from "../shared";
 
 const meta = {
-  title: "Icons/Web/Icon",
+  title: "Web/Icons/Icon",
   component: Icon,
   tags: ["autodocs"],
   args: { name: "sparkles", size: 28 },

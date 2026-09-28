@@ -1,5 +1,3 @@
-# StepList
-
 > `module.step-list` · `code/packages/ui-components/src/renderers/StepList.tsx`
 
 **Use when** you want an ordered how-it-works or setup flow — numbered steps, each with a title and a short body.

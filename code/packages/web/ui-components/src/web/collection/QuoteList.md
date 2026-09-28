@@ -1,5 +1,3 @@
-# QuoteList
-
 > `module.quote-list` · `code/packages/ui-components/src/renderers/QuoteList.tsx`
 
 **Use when** you want testimonial quotes — a stacked list of pull quotes, each with an author, role, and optional avatar.

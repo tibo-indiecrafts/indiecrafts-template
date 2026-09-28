@@ -1,5 +1,3 @@
-# CardList
-
 > `module.card-list` · `code/packages/ui-components/src/renderers/CardList.tsx`
 
 **Use when** you want a responsive grid of small cards — each an image, title, short body, and optional link. Good for feature lists, category tiles, or a "why us" row.

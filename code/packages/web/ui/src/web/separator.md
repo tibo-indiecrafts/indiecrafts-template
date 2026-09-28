@@ -1,5 +1,3 @@
-# Separator
-
 > shadcn `separator` · `src/user-interface/ui/separator.tsx`
 
 **Use when** a thin rule visually or semantically divides two content groups (list rows, menu items, header/body). **Don't** use it as spacing — reach for margin/padding, or as a decorative page frame — use a border on the container.

@@ -1,5 +1,3 @@
-# Field
-
 > shadcn `field` · `src/user-interface/ui/field.tsx`
 
 **Use when** wrapping a form control (input, select, textarea, checkbox, switch, radio) with its label, helper text, and error. **Don't** use it as a layout grid, a card, or to wrap non-form content.

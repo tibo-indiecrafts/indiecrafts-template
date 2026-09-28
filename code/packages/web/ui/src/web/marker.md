@@ -1,5 +1,3 @@
-# Marker
-
 > shadcn `marker` · `src/user-interface/ui/marker.tsx`
 
 **Use when** you need a subordinate, full-width label that annotates or breaks a stream of content — a date/status break in a thread, a section caption, an "OR" divider. **Don't** use it for interactive controls, headings, or body copy — it is a muted annotation, not primary content.

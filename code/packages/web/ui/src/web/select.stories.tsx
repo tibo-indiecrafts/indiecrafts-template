@@ -12,7 +12,7 @@ import {
 import docs from "./select.md?raw";
 
 const meta = {
-  title: "UI/Select",
+  title: "Web/UI/Select",
   component: Select,
   tags: ["autodocs"],
   parameters: {

@@ -6,7 +6,7 @@ import docs from "./sonner.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "UI/Sonner",
+  title: "Web/UI/Sonner",
   component: Toaster,
   tags: ["autodocs"],
   parameters: {

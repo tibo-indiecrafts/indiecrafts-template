@@ -3,7 +3,7 @@ import { CategoryNav } from "./CategoryNav";
 import docs from "./CategoryNav.md?raw";
 
 const meta = {
-  title: "UI Components/CategoryNav",
+  title: "Web/UI Components/CategoryNav",
   component: CategoryNav,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

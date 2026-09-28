@@ -1,5 +1,3 @@
-# Waitlist (`module.waitlist`)
-
 Early-access signup block. Server `<Waitlist>` wrapper (feature gate) → client
 `<WaitlistForm>`. Posts to `/api/waitlist` → a `waitlistEntry` doc in Sanity
 (`@indiecrafts/modules-web-waitlist`). Collect + export only — no runtime gating.

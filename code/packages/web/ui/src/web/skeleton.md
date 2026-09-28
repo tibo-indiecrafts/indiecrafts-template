@@ -1,5 +1,3 @@
-# Skeleton
-
 > shadcn `skeleton` · `src/user-interface/ui/skeleton.tsx`
 
 **Use when** content is loading and you can mirror its final shape/size to reduce layout shift. **Don't** use for sub-300ms loads, indeterminate background work, or as empty-state art — reach for a spinner or an empty state instead.

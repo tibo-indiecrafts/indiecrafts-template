@@ -1,5 +1,3 @@
-# LeadMagnet
-
 > `module.lead-magnet` renderer · `web/form/LeadMagnet.tsx` (+ client `LeadMagnetForm.tsx`)
 
 **Use when** a page or post needs an email capture tied to a downloadable resource (a guide, checklist, template). Editors drop it inline in a body or into `postModules`; every string is per-instance and per-locale. Picks the `leadMagnet` document to send, then submits to `/api/newsletter` with `source: "lead-magnet"` and the magnet id as a tag — gated delivery reads those to send the right document.

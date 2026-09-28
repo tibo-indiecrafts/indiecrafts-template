@@ -1,5 +1,3 @@
-# Alert
-
 > shadcn `alert` · `src/user-interface/ui/alert.tsx`
 
 **Use when** a persistent, in-context message needs the user's attention tied to content already on the page (validation summary, plan limit, config warning). **Don't** use it for transient feedback (use a toast/snackbar), blocking decisions with 2+ actions (use a dialog), or a single form-field error (use inline field text).

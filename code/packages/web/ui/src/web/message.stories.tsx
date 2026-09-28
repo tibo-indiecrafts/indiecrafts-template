@@ -11,7 +11,7 @@ import docs from "./message.md?raw";
 import { Bubble, BubbleContent } from "./bubble";
 
 const meta = {
-  title: "UI/Message",
+  title: "Web/UI/Message",
   component: Message,
   tags: ["autodocs"],
   parameters: {

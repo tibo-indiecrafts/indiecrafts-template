@@ -1,5 +1,3 @@
-# DeleteAccountSection
-
 The **GDPR self-service "Delete my account" panel** — above the confirm control, an optional
 churn exit-survey (a reason radio group + a feedback textarea + a competitor input, all
 optional) — then a signed-in user types their account email to confirm and submits. Drives

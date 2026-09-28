@@ -12,7 +12,7 @@ import {
 import docs from "./context-menu.md?raw";
 
 const meta = {
-  title: "UI/ContextMenu",
+  title: "Web/UI/ContextMenu",
   component: ContextMenu,
   tags: ["autodocs"],
   parameters: {

@@ -13,7 +13,7 @@ import docs from "./combobox.md?raw";
 const FRUITS = ["Apple", "Banana", "Orange", "Mango", "Grape"];
 
 const meta = {
-  title: "UI/Combobox",
+  title: "Web/UI/Combobox",
   component: Combobox,
   tags: ["autodocs"],
   parameters: {

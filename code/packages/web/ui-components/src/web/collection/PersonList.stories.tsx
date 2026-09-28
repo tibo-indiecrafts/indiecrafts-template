@@ -4,7 +4,7 @@ import { img } from "../_mock";
 import docs from "./PersonList.md?raw";
 
 const meta = {
-  title: "UI Components/PersonList",
+  title: "Web/UI Components/PersonList",
   component: PersonList,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

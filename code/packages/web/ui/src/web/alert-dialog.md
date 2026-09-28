@@ -1,5 +1,3 @@
-# Alert dialog
-
 > shadcn `alert-dialog` · `src/user-interface/ui/alert-dialog.tsx`
 
 **Use when** a consequential or irreversible action needs explicit confirmation before it runs (delete, discard, sign out). **Don't** use it for non-critical info, success messages, or forms — that's a plain `Dialog`, or a toast.

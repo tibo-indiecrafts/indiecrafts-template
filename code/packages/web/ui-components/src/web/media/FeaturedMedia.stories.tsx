@@ -5,7 +5,7 @@ import docs from "./FeaturedMedia.md?raw";
 // Client component: renders a cover image, or an inline-playable video facade
 // when `videoUrl` is set (no modal — plays in place).
 const meta = {
-  title: "UI Components/FeaturedMedia",
+  title: "Web/UI Components/FeaturedMedia",
   component: FeaturedMedia,
   tags: ["autodocs"],
   parameters: {

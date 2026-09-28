@@ -9,7 +9,7 @@ import {
 import docs from "./avatar.md?raw";
 
 const meta = {
-  title: "UI/Avatar",
+  title: "Web/UI/Avatar",
   component: Avatar,
   tags: ["autodocs"],
   parameters: {

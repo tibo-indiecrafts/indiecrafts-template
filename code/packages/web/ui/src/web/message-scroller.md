@@ -1,5 +1,3 @@
-# Message scroller
-
 > shadcn `message-scroller` · `src/user-interface/ui/message-scroller.tsx`
 
 **Use when** rendering a chat/AI transcript that must pin to the live edge as replies stream in. **Don't** use it for ordinary page scroll, feeds, or any list where the newest item isn't the focus — a plain scroll container is correct there.

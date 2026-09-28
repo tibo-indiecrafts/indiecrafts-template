@@ -4,7 +4,7 @@ import { ThemedText } from "./ThemedText";
 import { Button } from "./Button";
 
 const meta = {
-  title: "Native/Card",
+  title: "Native/UI/Card",
   component: Card,
   tags: ["autodocs"],
 } satisfies Meta<typeof Card>;

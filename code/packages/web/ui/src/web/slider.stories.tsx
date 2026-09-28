@@ -4,7 +4,7 @@ import { Slider } from "./slider";
 import docs from "./slider.md?raw";
 
 const meta = {
-  title: "UI/Slider",
+  title: "Web/UI/Slider",
   component: Slider,
   tags: ["autodocs"],
   parameters: {

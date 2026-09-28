@@ -1,5 +1,3 @@
-# LocaleSuggest
-
 "This site is available in {your language}" strip. Non-intrusive — a top strip that
 keeps the visitor on the page and **never auto-redirects** (the best-practice
 pattern). Switch or dismiss both remember the choice in a cookie, so it stops

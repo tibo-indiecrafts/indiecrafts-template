@@ -1,5 +1,3 @@
-# CategoryNav
-
 > `code/packages/ui-components/src/web/layout/CategoryNav.tsx`
 
 **Use when** you want a horizontal category bar under a header — top-level categories, each optionally opening a dropdown of sub-categories. Built for the blog category nav; generic over resolved `{ title, href }` items.

@@ -1,5 +1,3 @@
-# Toggle
-
 > shadcn `toggle` · `src/user-interface/ui/toggle.tsx`
 
 **Use when** a single control flips a binary, instantly-applied state and stays visibly pressed — e.g. a formatting button (bold/italic) in a toolbar. **Don't** use it for a labeled on/off setting (switch), a form option submitted later (checkbox), or a mutually-exclusive pick from a set (that is a Toggle **Group** / segmented control).

@@ -1,5 +1,3 @@
-# GalleryCarousel
-
 > `module.gallery` client half · `renderers/GalleryCarousel.tsx`
 
 **Use when** a `module.gallery` block needs its interactive carousel — swipe/drag paging, a thumbnail strip, and a full-screen lightbox. Rendered by the server `<Gallery>` wrapper.

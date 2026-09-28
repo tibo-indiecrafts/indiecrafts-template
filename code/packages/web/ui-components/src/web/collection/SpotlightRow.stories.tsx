@@ -42,7 +42,7 @@ const items = [
 ];
 
 const meta = {
-  title: "UI Components/SpotlightRow",
+  title: "Web/UI Components/SpotlightRow",
   component: SpotlightRow,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

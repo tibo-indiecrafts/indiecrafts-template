@@ -5,7 +5,7 @@ import { SHELL_COPY } from "../shared";
 const { banner: _banner, ...offline } = SHELL_COPY.en.offline;
 
 const meta = {
-  title: "System Pages/Web/OfflineContent",
+  title: "Web/System Pages/OfflineContent",
   component: OfflineContent,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },

@@ -1,5 +1,3 @@
-# Table
-
 > shadcn `table` · `src/user-interface/ui/table.tsx`
 
 **Use when** presenting read-only structured data across two or more comparable columns (rows the user scans, sorts, or compares). **Don't** use it for page layout, single-record key/value pairs (use a description list), or an editable spreadsheet grid.

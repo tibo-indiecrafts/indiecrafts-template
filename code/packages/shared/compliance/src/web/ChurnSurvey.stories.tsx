@@ -25,7 +25,7 @@ const copy = {
 };
 
 const meta = {
-  title: "Compliance/ChurnSurvey",
+  title: "Web/Compliance/ChurnSurvey",
   component: ChurnSurvey,
   tags: ["autodocs"],
   parameters: { layout: "padded" },

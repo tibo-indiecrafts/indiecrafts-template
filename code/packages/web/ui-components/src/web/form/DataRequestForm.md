@@ -1,5 +1,3 @@
-# DataRequestForm
-
 The **GDPR data-subject request form** — a visitor picks a right (access, rectification, erasure,
 restriction, portability, objection, withdraw consent), gives their email and an optional message,
 and submits. Posts to **`/api/data-request`**, which stores a `dataRequest` record in Sanity and

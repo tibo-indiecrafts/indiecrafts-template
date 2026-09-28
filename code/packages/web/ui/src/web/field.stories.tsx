@@ -4,7 +4,7 @@ import docs from "./field.md?raw";
 import { Input } from "./input";
 
 const meta = {
-  title: "UI/Field",
+  title: "Web/UI/Field",
   component: Field,
   tags: ["autodocs"],
   parameters: {

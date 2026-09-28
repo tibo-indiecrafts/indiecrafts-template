@@ -1,5 +1,3 @@
-# Native select
-
 > shadcn `native-select` · `src/user-interface/ui/native-select.tsx`
 
 **Use when** picking one option from a single, ordered list (5+ items, or long enough that radios would crowd the layout) — sorting, filtering, country/quantity/level pickers. **Don't** use for 2–4 unordered options (radios), yes/no (switch/checkbox), multi-select, or free text with suggestions (combobox).

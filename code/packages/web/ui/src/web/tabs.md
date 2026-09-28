@@ -1,5 +1,3 @@
-# Tabs
-
 > shadcn `tabs` · `src/user-interface/ui/tabs.tsx`
 
 **Use when** switching between peer views of the _same_ context without leaving the page (e.g. Overview / Specs / Reviews). **Don't** use for sequential steps, primary site navigation, or content that must be read in order — use a stepper, the header nav, or stacked sections instead.

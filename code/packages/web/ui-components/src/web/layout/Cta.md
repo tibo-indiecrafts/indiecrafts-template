@@ -1,5 +1,3 @@
-# ModuleCta
-
 > Page-builder CTA button · `renderers/Cta.tsx`
 
 **Use when** a block needs a single call-to-action button (callout, card, hero). Exported as `ModuleCta`.

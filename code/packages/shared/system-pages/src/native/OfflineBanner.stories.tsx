@@ -9,7 +9,7 @@ import { SHELL_COPY } from "../shared";
  * browser via react-native-web, matching `OfflineContent`.
  */
 const meta = {
-  title: "System Pages/Native/OfflineBanner",
+  title: "Native/System Pages/OfflineBanner",
   component: OfflineBanner,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },

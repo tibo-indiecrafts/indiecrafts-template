@@ -1,5 +1,3 @@
-# Item
-
 > shadcn `item` · `src/user-interface/ui/item.tsx`
 
 **Use when** laying out a content row — media + title + description + trailing actions — in a list of users, settings, results, or resources. **Don't** use it to host form inputs (checkbox, input, radio, select) — that's `Field`; Item is content-only.

@@ -1,5 +1,3 @@
-# Card
-
 > shadcn `card` · `src/user-interface/ui/card.tsx`
 
 **Use when** grouping content about a **single subject** into a bounded, self-contained surface. **Don't** use it as a page layout wrapper, to nest cards inside cards, or to fake a button/link.

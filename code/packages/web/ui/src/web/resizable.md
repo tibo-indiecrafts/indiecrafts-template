@@ -1,5 +1,3 @@
-# Resizable
-
 > shadcn `resizable` · `src/user-interface/ui/resizable.tsx`
 
 **Use when** users need to persistently redistribute space between two or more side-by-side regions (editor + preview, list + detail, sidebar + canvas). **Don't** use it to show/hide content (that's `Collapsible`/`Sheet`/`Drawer`), for responsive breakpoint reflow, or for a single-region layout.
