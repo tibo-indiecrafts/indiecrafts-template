@@ -69,7 +69,7 @@ Until `NEXT_PUBLIC_SITE_URL` is set, `site.url` falls back to the `PLACEHOLDER_S
 `buildMetadata` re-emits the full OG + Twitter block per page. This is deliberate: Next.js **replaces** (does not deep-merge) `openGraph`/`twitter` when a page returns them, so siteName, type, and card have to be restated or they'd vanish.
 
 - **OG image** — Sanity-only: the document's `seo.image` → the locale's `siteMeta.<locale>.ogImage` → omitted. Emitted at `1200×630`; `alt` falls back to `seo.image` alt → the site OG alt → the title.
-- **OG type** — `page.seo.openGraph.type` (`"website" | "article" | "profile"`) or `seoDefaults.openGraph.type` (`"website"`).
+- **OG type** — `page.seo.openGraph.type` (`"website" | "article" | "profile"`) or `seoDefaults.openGraph.type` (`"website"`). **Blog posts** override to `article` in their own `generateMetadata`, adding the `article:*` tags (`published_time` / `modified_time` / `author` / `section`) from the post's fields.
 - **siteName** — always `siteSettings.siteName || DEFAULT_SITE_NAME`.
 - **Twitter** — `card` from `seoDefaults.twitter.card` (`summary_large_image`); `site` + `creator` from `siteSettings.social.twitter`, both omitted cleanly when empty.
 

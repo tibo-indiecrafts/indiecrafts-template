@@ -75,6 +75,8 @@ export async function generateMetadata({ params }: Props) {
   const title = post.metadata?.title ?? post.title;
   const description = post.metadata?.description;
   const ogImage = post.metadata?.image?.asset?.url;
+  const authors = post.authors?.map((a) => a.name).filter((n): n is string => Boolean(n));
+  const section = post.categories?.[0]?.title;
 
   return {
     ...base,
@@ -83,9 +85,17 @@ export async function generateMetadata({ params }: Props) {
     robots: post.metadata?.noIndex ? { index: false, follow: false } : base.robots,
     openGraph: {
       ...base.openGraph,
+      // A post is an article, not a website: `og:type=article` unlocks the
+      // article:* tags (published/modified time, author, section) that drive
+      // richer social + search treatment. The JSON-LD already emits `Article`.
+      type: "article",
       title,
       description,
       images: ogImage ? [{ url: ogImage }] : base.openGraph?.images,
+      publishedTime: post.publishedAt ?? undefined,
+      modifiedTime: post.updatedAt ?? post.publishedAt ?? undefined,
+      ...(authors && authors.length ? { authors } : {}),
+      ...(section ? { section } : {}),
     },
     alternates: {
       ...base.alternates,

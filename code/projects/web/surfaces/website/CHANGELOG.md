@@ -19,6 +19,12 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **Blog posts emit `og:type=article` (+ `article:published_time` / `modified_time` / `author` /
+  `section`).** The post `generateMetadata` spread `seoDefaults.openGraph.type` (`website`) unchanged,
+  so every article advertised itself as a generic page. It now overrides `type: "article"` and adds
+  the `article:*` tags from the post's own `publishedAt` / `updatedAt` / authors / first category.
+  **Why:** correct OpenGraph type for social + search article treatment; the JSON-LD already emitted
+  an `Article`, so OG and structured data now agree. (Found while QA-verifying SEO card 16.)
 - **Harness memory + speed: typecheck no longer builds, lint stays type-free, Oxlint added.**
   The type graph — the memory-intensive part of the harness — is built only by `tsc`, and we were
   building it wastefully. Fixes, from the biggest:
