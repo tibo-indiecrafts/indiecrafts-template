@@ -8,17 +8,20 @@
 
 import { fileURLToPath } from "node:url";
 import { assertRenamed } from "../lib/project.mjs";
-import { run, confirmProd } from "../lib/deploy-shared.mjs";
+import { run, gate, confirmProd } from "../lib/deploy-shared.mjs";
 import { ENVS } from "../lib/apps.mjs";
 import { originFor } from "../lib/domains.mjs";
 
 const [app, env] = process.argv.slice(2);
 const yes = process.argv.includes("--yes");
+const yesProd = process.argv.includes("--yes-prod"); // intentional non-interactive PROD
+const skipGate = process.argv.includes("--skip-gate"); // hotfix escape for the verify gate
+const dryRun = process.argv.includes("--dry-run"); // build only, never publishes
 // After deploy, sync secrets from `.dev.vars` (soft) — `--skip-secrets` opts out.
 const skipSecrets = process.argv.includes("--skip-secrets");
 if (!app || !ENVS.includes(env)) {
   console.error(
-    "Usage: deploy-next.mjs <app> <dev|staging|prod> [--yes] [--skip-secrets]",
+    "Usage: deploy-next.mjs <app> <dev|staging|prod> [--yes] [--yes-prod] [--skip-gate] [--dry-run] [--skip-secrets]",
   );
   process.exit(1);
 }
@@ -26,7 +29,9 @@ if (!app || !ENVS.includes(env)) {
 // Refuse a staging/prod deploy while the Worker/R2 names are still the template
 // default — a shared Cloudflare account would clobber another client.
 assertRenamed(app, env);
-await confirmProd("Deploy", app, env, { yes });
+// Quality gate (staging/prod, hand-run) then the prod confirm.
+gate(env, { skipGate });
+await confirmProd("Deploy", app, env, { yesProd });
 
 // Runtime origin comes from the domain registry (single source of truth) — set it
 // for the build unless the env already provides one. No-op until a real host is set.
@@ -37,7 +42,11 @@ if (origin && !process.env.NEXT_PUBLIC_SITE_URL) {
 }
 
 run("pnpm", ["run", "build:cf"]); // per-app build recipe (web: version stamp + OpenNext)
-run("wrangler", ["deploy", "--env", env]);
+run("wrangler", ["deploy", "--env", env, ...(dryRun ? ["--dry-run"] : [])]);
+if (dryRun) {
+  console.log(`✓ Dry run for ${app} on ${env} — built, nothing published.`);
+  process.exit(0);
+}
 
 // Secrets AFTER deploy (the Worker must exist for `wrangler secret bulk`). `--soft` so an
 // app with no `.dev.vars` (admin/app today) never fails the deploy.

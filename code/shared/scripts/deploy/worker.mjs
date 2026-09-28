@@ -10,18 +10,21 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { assertRenamed } from "../lib/project.mjs";
-import { run, confirmProd } from "../lib/deploy-shared.mjs";
+import { run, gate, confirmProd } from "../lib/deploy-shared.mjs";
 import { ENVS } from "../lib/apps.mjs";
 import { byKind } from "../lib/databases.mjs";
 
 const [app, env] = process.argv.slice(2);
 const yes = process.argv.includes("--yes");
+const yesProd = process.argv.includes("--yes-prod"); // intentional non-interactive PROD
+const skipGate = process.argv.includes("--skip-gate"); // hotfix escape for the verify gate
+const dryRun = process.argv.includes("--dry-run"); // build only; no migrate, no publish
 // After deploy, sync secrets from `.dev.vars` (soft: a no-op if there are none) — like
 // the website deploy and wahio's deploy-full. `--skip-secrets` opts out.
 const skipSecrets = process.argv.includes("--skip-secrets");
 if (!app || !ENVS.includes(env)) {
   console.error(
-    "Usage: deploy-worker.mjs <app> <dev|staging|prod> [--yes] [--skip-secrets]",
+    "Usage: deploy-worker.mjs <app> <dev|staging|prod> [--yes] [--yes-prod] [--skip-gate] [--dry-run] [--skip-secrets]",
   );
   process.exit(1);
 }
@@ -63,7 +66,17 @@ function migrateOwnedD1() {
 // is still the template default (`indiecrafts-<app>`). `pnpm project:rename <slug>`
 // rewrites it. dev is the shared sandbox, so it is allowed.
 assertRenamed(app, env);
-await confirmProd("Deploy", app, env, { yes });
+gate(env, { skipGate });
+await confirmProd("Deploy", app, env, { yesProd });
+
+// A dry run builds + bundles but never migrates D1 or publishes.
+if (dryRun) {
+  run("wrangler", ["deploy", "--env", env, "--dry-run"]);
+  console.log(
+    `✓ Dry run for ${app} on ${env} — bundled, no migration, nothing published.`,
+  );
+  process.exit(0);
+}
 
 migrateOwnedD1();
 run("wrangler", ["deploy", "--env", env]);

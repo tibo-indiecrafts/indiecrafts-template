@@ -91,15 +91,37 @@ It fans out from the registry, builds with OpenNext (next-cf) / bundles (worker-
 origin (from the domain registry via `domains:url`); no custom domain yet ⇒ skipped.
 
 > **Deploy is gated on CI.** `deploy.yml` triggers on `workflow_run` after the
-> `CI` workflow succeeds on `main` — a red CI blocks the prod deploy. As a second
-> layer, make CI a **required status check**: repo **Settings → Branches → add a
-> branch protection rule** for `main` → enable **Require status checks to pass
-> before merging** → select the `CI` checks (`verify`, `build`, `browser-stories`,
-> `browser-e2e-app`, `csp`, `docs`, `infra`, `wrangler`). This blocks a merge, while
-> `workflow_run` blocks the deploy — together nothing ships on a red CI. (`browser-e2e-visual`
-> stays advisory until linux visual baselines are committed.) The auth E2E needs two repo
-> Secrets — `E2E_CLERK_PUBLISHABLE_KEY` + `E2E_CLERK_SECRET_KEY` (a Clerk **test** instance);
-> without them the sign-in journey self-skips. Setup → [testing](/projects/web/website/setup/testing) § Auth E2E.
+> `CI` workflow succeeds on `main` — a red CI (failing `verify`, `browser-stories`,
+> `browser-e2e-app`, or `csp`) blocks the prod deploy. (`browser-e2e-visual` stays advisory until
+> linux visual baselines are committed.) The auth E2E needs two repo Secrets —
+> `E2E_CLERK_PUBLISHABLE_KEY` + `E2E_CLERK_SECRET_KEY` (a Clerk **test** instance); without them
+> the sign-in journey self-skips. Setup → [testing](/projects/web/website/setup/testing) § Auth E2E.
+
+### Deploy security — gates per env (who + what)
+
+Gating is **tiered** — `dev` stays fast, `staging`/`prod` are gated hard, `prod` needs an approval:
+
+| Env       | Gate before it ships                                                                                                                              | Approval                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `dev`     | none beyond the commit hook + `build:cf` — the fast shared sandbox                                                                                | —                                               |
+| `staging` | full **`pnpm verify`** (tsc · lint · tests · guards) — CI on the auto path, the `gate` job on manual dispatch, or the deploy runner on a hand-run | —                                               |
+| `prod`    | same, **plus** the CI e2e suite and an un-skippable confirm                                                                                       | **required reviewer** on the `prod` Environment |
+
+Three gates enforce that:
+
+1. **Auto (push to `main`)** — `workflow_run` fires only on CI success (above).
+2. **Manual dispatch** — a `workflow_dispatch` to `staging`/`prod` runs a `gate` job (`pnpm verify`) that `deploy` requires, so a dispatch can't ship on red; a `dev` dispatch skips it.
+3. **Hand-run `pnpm deploy:*`** — the runner runs `pnpm verify` for `staging`/`prod` before `wrangler deploy` (dev + CI skip it). Prod also **confirms and no longer skips on bare `--yes`** — an intentional non-interactive prod deploy needs `--yes-prod`; `--skip-gate` is the logged hotfix escape; `--dry-run` builds without publishing.
+
+**Required (enable these in GitHub — they are not in the repo and prod auto-deploys from `main`):**
+
+- **Branch protection on `main`** — Settings → Branches → require status checks to pass: `verify`,
+  `build`, `browser-stories`, `browser-e2e-app`, `csp`, `docs`, `infra`, `wrangler`; and **Require
+  review from Code Owners** (see `.github/CODEOWNERS` — replace the placeholder team).
+- **Required reviewer on the `prod` Environment** — Settings → Environments → `prod` → **Required
+  reviewers**. This is the only human gate on the auto prod deploy; without it a green `main` ships prod unattended.
+- **Scope the `CLOUDFLARE_API_TOKEN`** to the minimum (Workers + R2 edit) and rotate it; prefer short-lived
+  OIDC when available — today it is a long-lived account-scoped token reused by deploy + rollback.
 
 Add these in the repo, scoped to GitHub **Environments** `dev` / `staging` / `prod`:
 
@@ -166,6 +188,6 @@ notes on WASM modules.
   (`next.config.ts` `images.loaderFile`), so every image is CDN-sized, not run through Next's
   optimizer. See [Images](/projects/web/website/config/images).
 - **ISR cache** is R2 (`NEXT_INC_CACHE_R2_BUCKET`). Clearing a bucket forces a cold rebuild of cached pages.
-- **Prod deploys prompt** — a hand-run `pnpm deploy:web:website:prod` asks for confirmation; `--yes` or CI (GitHub Actions sets `CI`) skips it.
+- **Prod deploys prompt + gate** — a hand-run `pnpm deploy:web:website:prod` runs `pnpm verify` first, then asks for confirmation. CI (GitHub sets `CI`) skips both; a bare `--yes` no longer skips the prompt — use `--yes-prod` for an intentional non-interactive prod deploy, `--skip-gate` to skip the verify (logged), `--dry-run` to build without publishing.
 - **Build stamp** — `build:cf` regenerates `src/lib/build-info.ts` (version · git sha · build time). Import `buildInfo` from `@/lib/build-info` to surface it in a footer or debug panel.
 - **Docs site** (`docs/`) is static VitePress — deploy it separately (Cloudflare Pages or any static host).

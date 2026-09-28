@@ -1,0 +1,31 @@
+# CODEOWNERS — review ownership for the deploy-critical surface.
+#
+# ▸ REPLACE `@indiecrafts/maintainers` below with your real GitHub team or handle
+#   (e.g. `@your-org/platform` or `@yourname`). An unmatched team requests no reviewer.
+# ▸ This only ENFORCES review once branch protection requires it: repo Settings →
+#   Branches → protect `main` → "Require review from Code Owners". Until then it just
+#   auto-requests these reviewers. Setup → code/docs/projects/web/website/setup/deployment.md.
+#
+# Scope: the paths where a bad change ships to prod or weakens security — not the whole repo,
+# so day-to-day app/content PRs are not gated on a single owner.
+
+# CI/CD + release
+/.github/                                         @indiecrafts/maintainers
+# Deploy + infra tooling (the runners, registries, migrations)
+/code/shared/scripts/deploy/                       @indiecrafts/maintainers
+/code/shared/scripts/data/migrate.mjs              @indiecrafts/maintainers
+/code/shared/scripts/lib/                          @indiecrafts/maintainers
+/code/shared/infra/                                @indiecrafts/maintainers
+# Per-app infra + wrangler config (bindings, edge)
+**/infra/                                          @indiecrafts/maintainers
+**/wrangler.toml                                   @indiecrafts/maintainers
+# Security + compliance packages (auth, headers, GDPR)
+/code/packages/shared/security/                    @indiecrafts/maintainers
+/code/packages/shared/security-events/             @indiecrafts/maintainers
+/code/packages/shared/compliance/                  @indiecrafts/maintainers
+/code/packages/web/compliance/                     @indiecrafts/maintainers
+/code/packages/shared/auth/                        @indiecrafts/maintainers
+/code/packages/web/auth/                           @indiecrafts/maintainers
+# Agent + repo config
+/.claude/                                          @indiecrafts/maintainers
+/CLAUDE.md                                         @indiecrafts/maintainers

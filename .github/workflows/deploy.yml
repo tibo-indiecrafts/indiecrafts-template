@@ -36,8 +36,22 @@ jobs:
       - id: registry
         run: echo "apps=$(node code/shared/scripts/lib/apps.mjs --json --cloudflare)" >> "$GITHUB_OUTPUT"
 
+  # Manual (workflow_dispatch) deploys skip the CI-success gate, so a dispatch to
+  # staging/prod must pass the full suite HERE first. The workflow_run path is already
+  # CI-gated, and dev is the fast shared sandbox — both skip this job.
+  gate:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment != 'dev' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - run: pnpm verify
+
   deploy:
-    needs: discover
+    needs: [discover, gate]
+    # Deploy when discover succeeded AND the gate did not fail (it is skipped on the
+    # CI-gated workflow_run path and on a dev dispatch, which is not a failure).
+    if: ${{ always() && needs.discover.result == 'success' && needs.gate.result != 'failure' }}
     runs-on: ubuntu-latest
     # GitHub Environment — holds the per-target vars + secrets below.
     environment: ${{ github.event.inputs.environment || 'prod' }}

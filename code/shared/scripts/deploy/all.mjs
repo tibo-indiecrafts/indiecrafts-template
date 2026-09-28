@@ -11,10 +11,13 @@
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { deployable, ENVS } from "../lib/apps.mjs";
+import { gate, confirmProd } from "../lib/deploy-shared.mjs";
 
 const args = process.argv.slice(2);
 const env = args[0];
 const dry = args.includes("--dry-run");
+const yesProd = args.includes("--yes-prod");
+const skipGate = args.includes("--skip-gate");
 const onlyIdx = args.indexOf("--only");
 const only = args.includes("--all")
   ? "all"
@@ -72,6 +75,16 @@ for (const p of plan) {
 }
 if (dry) process.exit(0);
 
+// Gate + confirm ONCE for the whole bulk deploy — then tell each per-app runner to skip
+// its own gate/confirm (`--skip-gate --yes-prod`), so `pnpm verify` runs once, not per app,
+// and prod is confirmed once, not N times. dev is a no-op; CI skips both.
+gate(env, { skipGate });
+await confirmProd("Deploy all", `every ${only} app`, env, { yesProd });
+const perApp = [
+  "--skip-gate",
+  ...(env === "prod" ? ["--yes-prod", "--yes"] : []),
+];
+
 const results = [];
 for (const p of plan) {
   if (!p.hasScript) {
@@ -82,9 +95,11 @@ for (const p of plan) {
     continue;
   }
   console.log(`\n▶ ${p.slug} → ${env}`);
-  const r = spawnSync("pnpm", ["--filter", p.pkg, p.script, ...passthru], {
-    stdio: "inherit",
-  });
+  const r = spawnSync(
+    "pnpm",
+    ["--filter", p.pkg, p.script, ...passthru, ...perApp],
+    { stdio: "inherit" },
+  );
   if (r.status !== 0) {
     results.push([p.slug, "FAILED"]);
     console.error(`✗ ${p.slug} failed — stopping (later apps not deployed).`);
