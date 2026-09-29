@@ -80,7 +80,7 @@ export function Logo({ name, logo, logoDark, className, iconClassName }: LogoPro
           <LogoImg src={logo} alt={name} className={iconClassName} />
         )
       ) : null}
-      <span className="font-semibold">{name}</span>
+      <span className="min-w-0 truncate font-semibold">{name}</span>
     </span>
   );
 }

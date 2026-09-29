@@ -125,11 +125,13 @@ export function Header({
         <Link
           href="/"
           aria-label={tNav("home")}
-          className="focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
+          className="focus-visible:ring-ring min-w-0 rounded focus-visible:ring-2 focus-visible:outline-none"
         >
-          <Logo name={name} logo={logo} logoDark={logoDark} />
+          {/* min-w-0: on a narrow phone (longer French labels) the brand name ellipsizes
+              instead of being drawn over by the controls. */}
+          <Logo name={name} logo={logo} logoDark={logoDark} className="max-w-full" />
         </Link>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           {items.length > 0 ? (
             <>
               <NavigationMenu viewport={false} className="hidden lg:flex">
