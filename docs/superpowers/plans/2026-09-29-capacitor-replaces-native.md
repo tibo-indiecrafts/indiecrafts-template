@@ -1699,3 +1699,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - **Placeholder scan:** none; every code step carries its code, every edit names its file + lines.
 - **Type consistency:** `resolveServerUrl(env)`, `renderOfflinePage({ appName, messages })`, `isExternalUrl(href, appOrigin)`, `deepLinkPath(url)`, `hexColors.light|dark`, `deployable()` (no argument) are used with the same signatures everywhere.
 - **Review Focus:** the five lines each have their pinning test in the owning task (Tasks 1-4).
+
+## Follow-ups (after this plan)
+
+Each item gets its own brainstorm → spec → plan. None blocks this branch.
+
+- **iOS run.** Install Xcode 26, then `pnpm --filter @indiecrafts/mobile-surfaces-main ios`. Run the same five checks as the Android run (cold start, offline + Retry, splash, deep link, sign-in stays in the WebView).
+- **vinext on Cloudflare (user request, 2026-09-29).** Replace the OpenNext build of the `next-cf` apps (`website`, `admin`, `app`) with vinext (Cloudflare's Vite-based implementation of the Next.js API). Start with a spike on `app`, the smallest surface. It must prove that next-intl routing + `proxy.ts`, Clerk, the Sanity reads and the version route work. Then plan `website` (ISR, Sanity Studio, the page builder). The registry class `next-cf`, `scripts/deploy/next.mjs` and the CI build jobs change with it.
+- **`app` sign-up is unreachable when signed out.** `src/proxy.ts` treats only `sign-in` as public. Add `sign-up`, with a test.
+- **`app` dev port.** `next dev` has no fixed port; the shell expects :3002, which `pnpm docs` also uses. Pick one free port and set it in the `dev` script.
