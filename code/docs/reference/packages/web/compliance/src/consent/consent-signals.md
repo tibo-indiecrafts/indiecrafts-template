@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-A re-export shim. The pure consent constants and types moved to `@indiecrafts/packages-shared-compliance/shared` so the Expo shells can share them. This file keeps the historical import path working for every existing importer (`CookieBanner`, `CookiePreferences`, `CookieDeclaration`, the Sanity read path). New code should import from the shared brick directly.
+A re-export shim. The pure consent constants and types moved to `@indiecrafts/packages-shared-compliance/shared` so the `app` surface can share them. This file keeps the historical import path working for every existing importer (`CookieBanner`, `CookiePreferences`, `CookieDeclaration`, the Sanity read path). New code should import from the shared brick directly.
 
 ## Exports
 

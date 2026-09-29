@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The entrypoint for the standalone API — a bare Cloudflare Worker (no Next/OpenNext) serving the non-web clients. Its default `fetch` export routes `/health`, `/v1/events` (the audit + session sink), the admin read routes, the Clerk webhook, the public geo and announcements reads, and the GDPR erasure, export, and consent routes. `withGuard` is Next-only, so this worker re-implements a tiny inline guard: a bearer token, the Cloudflare native rate-limit binding, a body cap, and CORS. The route logic lives in bricks and sibling modules; this file is the shell and dispatch.
+The entrypoint for the standalone API — a bare Cloudflare Worker (no Next/OpenNext) serving the web surfaces' servers and partners. Its default `fetch` export routes `/health`, `/v1/events` (the audit + session sink), the admin read routes, the Clerk webhook, the public announcements read, and the GDPR erasure, export, and consent routes. `withGuard` is Next-only, so this worker re-implements a tiny inline guard: a bearer token, the Cloudflare native rate-limit binding, a body cap, and CORS. The route logic lives in bricks and sibling modules; this file is the shell and dispatch.
 
 ## Exports
 

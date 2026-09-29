@@ -6,7 +6,7 @@ status: stable
 
 # Geo regulation resolver
 
-> One algorithm the website, shells, and api Worker all resolve from.
+> One algorithm the web surfaces all resolve from.
 
 ## Purpose
 

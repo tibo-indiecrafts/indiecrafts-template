@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Platform-agnostic brand-mark data, shared by the web and native `BrandIcon` renderers. Each entry is a 24x24 single path plus the official brand hex, with no DOM dependency. The file is generated from `brands.json` and the `simple-icons` package by `pnpm brands:build`; never hand-edit it (`brands:check` guards drift in CI).
+Platform-agnostic brand-mark data, shared by the web `BrandIcon` renderer. Each entry is a 24x24 single path plus the official brand hex, with no DOM dependency. The file is generated from `brands.json` and the `simple-icons` package by `pnpm brands:build`; never hand-edit it (`brands:check` guards drift in CI).
 
 ## Exports
 

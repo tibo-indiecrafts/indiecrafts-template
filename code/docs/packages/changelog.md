@@ -12,8 +12,42 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Removed
+
+- **Every React Native fork and the `mobile/` scope.** Deleted `@indiecrafts/packages-mobile-ui-native`,
+  the `src/native/` forks of `compliance`, `system-pages`, `ui-icons` and `ui-tokens` (+ their `./native`
+  exports and RN optional peers), the `ui`/`ui-components` native placeholders, `config` `./mobile`, and the
+  dead code the Expo app left: `SHELL_COPY` (system-pages), `flattenMessages` (config), and unused
+  `ui-tokens` deps in `system-pages` + `compliance`. **Why:** mobile is now a Capacitor shell around the
+  `app` web surface (ADR 0001), so no brick forks
+  per platform any more.
+
+### Changed
+
+- **Web-only bricks moved to `web/`** — the rule is now `shared/` = the api or workers use it too:
+  | Before                                      | After                                                         |
+  | ------------------------------------------- | ------------------------------------------------------------- |
+  | `@indiecrafts/packages-shared-version`      | merged into `@indiecrafts/packages-web-version` (`./version`) |
+  | `@indiecrafts/packages-shared-system-pages` | `@indiecrafts/packages-web-system-pages`                      |
+  | `@indiecrafts/packages-shared-ui-icons`     | `@indiecrafts/packages-web-ui-icons`                          |
+  | `@indiecrafts/packages-shared-ui-tokens`    | `@indiecrafts/packages-web-ui-tokens` (DESIGN.md follows)     |
+- **`ui-tokens` emits one hex mirror.** `src/generated/hex.ts` now carries every semantic color (light +
+  dark) for the PWA manifest and `web/email`; the RN `tokens.ts` and NativeWind outputs are gone.
+- **`page-builder` pins `react`/`react-dom` 19.2.8** (dev) like its siblings, so `sanity` resolves to one
+  instance on a fresh install.
+
 ### Added
 
+- **Cross-surface legal re-acceptance transport** (`@indiecrafts/packages-shared-compliance/shared`) —
+  `LEGAL_VERSION_ENDPOINT` + `fetchLegalVersion(websiteBaseUrl)` (reads the website's live legal version)
+  and `readLegalConsent` / `writeLegalConsent({apiUrl, getToken, …})` (the signed-in api-Worker sync via
+  `/v1/consent/legal`). **Why:** the "policies updated" banner was per-surface — website computed its
+  version from Sanity while `app` + mobile used a static `policyVersion`, so a Sanity bump never reached
+  them and the compared version strings differed. Now every surface fetches the SAME version (one Sanity
+  bump re-prompts all three) and a signed-in user's acceptance follows them across website · app · mobile
+  (accept on one, cleared on all). Anonymous visitors keep their per-surface local deposit — no shared
+  identity to sync by. Pure + best-effort (return `null`/`false` on any failure); covered by
+  `legal-consent-transport.test.ts` (6 tests).
 - **Storybook stories for three previously-uncovered components** — `AnnouncementToast`
   (`@indiecrafts/packages-web-announcement`, the sibling of `AnnouncementBar` used on all 3 surfaces),
   `PostCard` (`@indiecrafts/packages-web-ui-components`, the shared blog card), and the native
@@ -73,6 +107,30 @@ Changed · Deprecated · Removed · Fixed**.
   `getCSPConnectSources`). This repo deploys to Cloudflare via OpenNext, never Vercel previews, so the
   allowance was dead. **Why:** tighten the dev/test CSP to hosts we actually use. Doc synced
   (`docs/apps/web/seo/security-headers.md`).
+
+### Fixed
+
+- **Legal re-acceptance banner unified across web + app + mobile: Privacy + Terms links, no Review
+  button, clean saved toast.** Every re-acceptance surface dropped its single "Review/Consulter" button
+  for inline **Privacy + Terms** links so the visitor reads exactly what they're accepting:
+  `LegalNotice` (`web/compliance`, the website) and the shared `LegalReacceptancePrompt`
+  (`shared/compliance` `./web` + `./native`, serving the `app` surface + the Expo shell — web renders
+  `<a>`, native `Linking.openURL`s the website legal pages). On Accept the web surfaces fire a **bare**
+  "Policies accepted" toast — `showConsentSavedToast` (`web/ui-components`) made its Manage action
+  optional, so legal acceptance no longer shows the mismatched "Manage cookie preferences" CTA (which
+  also overflowed); the cookie banner keeps that action, where it belongs. **Removed** the now-unused
+  `reviewLabel` everywhere: the Sanity `legalConsent.banner` field + its query/read type + demo seed,
+  the shared `LegalReacceptanceCopy` type (new `LegalReacceptanceLink`), and the app/mobile
+  `legal.reaccept.review` message (→ `privacy`/`terms`). **Why:** accepting policies is not a cookie
+  choice; the banner should link to the policies and confirm plainly, one behaviour on every surface.
+- **Double title on ~99 Storybook Docs pages.** Every component's `<Name>.md` (injected as the
+  autodocs `description.component`) opened with its own `# <Name>` heading — but autodocs already
+  renders the story-title leaf as the page title, so each Docs page showed the name twice. Stripped
+  the redundant leading H1 from all 99 component docs (across `web/ui`, `web/ui-components`,
+  `web/announcement`, `web/locale-suggest`, `shared/*`, `mobile/ui-native`); the `> module.x · path`
+  line now leads the body. **Why:** the autodocs title is the canonical one; the `.md` H1 was a
+  duplicate. The `.md` files have no consumer other than the `?raw` story import, so nothing else
+  regressed. `test:stories` stays green.
 
 ### Added
 

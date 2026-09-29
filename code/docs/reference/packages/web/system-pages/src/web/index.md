@@ -20,7 +20,7 @@ The public entry for the DOM status pages (Maintenance, 404, 500, offline). It r
 - `OfflineContent`, `OfflineContentProps` — the DOM offline card and its props.
 - `OfflineBanner` — the DOM offline strip.
 - `useOnlineStatus` — the browser online/offline hook.
-- Re-exports everything from `../shared` (the copy contracts and `SHELL_COPY`).
+- Re-exports everything from `../shared` (the copy contracts).
 
 ## Usage
 

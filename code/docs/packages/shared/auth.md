@@ -13,7 +13,7 @@ order: 1
 
 `@indiecrafts/packages-shared-auth` is the framework-agnostic authorization core. It holds the
 gated-role union, the session-claim shape, and the admin gate. It has no dependencies (the
-`shared/` scope rule), so every platform's Clerk SDK (`@clerk/nextjs`, `@clerk/clerk-expo`,
+`shared/` scope rule), so every platform's Clerk SDK (`@clerk/nextjs`,
 `@clerk/clerk-react`) reads the same role off the signed session JWT.
 
 ## Exports

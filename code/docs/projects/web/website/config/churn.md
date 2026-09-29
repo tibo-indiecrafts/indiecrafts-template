@@ -72,9 +72,7 @@ reason/feedback/competitor survey above the delete confirmation. Every field is 
 submitting blank still deletes the account. The website and the app web surface both
 render this shared component — no per-surface survey code.
 
-**Mobile.** The Expo app has no native delete-account survey. Its account screen redirects
-account deletion to the web account (`accountUrl`, an in-app browser tab that shares the
-system cookie jar), so mobile churn is captured through the same web survey.
+**Mobile.** The Capacitor shell loads the `app` surface, so it renders the same survey.
 
 The survey fields travel with the erasure POST — `rawErasureFetch`/`submitAccountErasure`
 and the Clerk step-up path (`useClerkAuthPort`) both carry `reason`/`feedback`/

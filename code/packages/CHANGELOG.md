@@ -12,6 +12,30 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Removed
+
+- **Every React Native fork and the `mobile/` scope.** Deleted `@indiecrafts/packages-mobile-ui-native`,
+  the `src/native/` forks of `compliance`, `system-pages`, `ui-icons` and `ui-tokens` (+ their `./native`
+  exports and RN optional peers), the `ui`/`ui-components` native placeholders, `config` `./mobile`, and the
+  dead code the Expo app left: `SHELL_COPY` (system-pages), `flattenMessages` (config), and unused
+  `ui-tokens` deps in `system-pages` + `compliance`. **Why:** mobile is now a Capacitor shell around the
+  `app` web surface ([ADR 0001](../docs/contributing/adr/0001-capacitor-over-expo.md)), so no brick forks
+  per platform any more.
+
+### Changed
+
+- **Web-only bricks moved to `web/`** — the rule is now `shared/` = the api or workers use it too:
+  | Before                                      | After                                                         |
+  | ------------------------------------------- | ------------------------------------------------------------- |
+  | `@indiecrafts/packages-shared-version`      | merged into `@indiecrafts/packages-web-version` (`./version`) |
+  | `@indiecrafts/packages-shared-system-pages` | `@indiecrafts/packages-web-system-pages`                      |
+  | `@indiecrafts/packages-shared-ui-icons`     | `@indiecrafts/packages-web-ui-icons`                          |
+  | `@indiecrafts/packages-shared-ui-tokens`    | `@indiecrafts/packages-web-ui-tokens` (DESIGN.md follows)     |
+- **`ui-tokens` emits one hex mirror.** `src/generated/hex.ts` now carries every semantic color (light +
+  dark) for the PWA manifest and `web/email`; the RN `tokens.ts` and NativeWind outputs are gone.
+- **`page-builder` pins `react`/`react-dom` 19.2.8** (dev) like its siblings, so `sanity` resolves to one
+  instance on a fresh install.
+
 ### Added
 
 - **Cross-surface legal re-acceptance transport** (`@indiecrafts/packages-shared-compliance/shared`) —

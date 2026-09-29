@@ -5,6 +5,16 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Removed
+
+- **`GET /v1/geo` and the `EVENTS_TOKEN` bearer.** Both existed only for the Expo app. `POST /v1/events`
+  accepts only `APP_API_TOKEN` again — every caller is a first-party server (`session-log`, `consent-log`,
+  `security-reports`). The web surfaces read `cf-ipcountry` themselves. The admin-route rate limiting from
+  the 2026-09-21 hardening stays. **Runbook:** `wrangler secret delete EVENTS_TOKEN --env <env>` per env,
+  and drop the `EVENTS_TOKEN` GitHub secret.
+- **Announcement surface `mobile`.** `SURFACES = ["website", "app"]` — the Capacitor shell renders the app
+  surface. `?surface=mobile` now returns 400. Stored Sanity announcements were migrated (`mobile` → `app`).
+
 ### Added
 
 - **`GET`/`POST /v1/consent/legal`** — the authenticated legal re-acceptance endpoint (Clerk-JWT,

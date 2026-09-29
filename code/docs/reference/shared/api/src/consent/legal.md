@@ -6,11 +6,11 @@ status: stable
 
 # Legal consent endpoint
 
-> The authenticated self-service route that makes the "policies updated" banner follow a signed-in user across website · app · mobile — accept on one, cleared on all.
+> The authenticated self-service route that makes the "policies updated" banner follow a signed-in user across website · app (the Capacitor shell loads `app`) — accept on one, cleared on all.
 
 ## Purpose
 
-Implements the authenticated legal re-acceptance endpoint for the shared API worker. A signed-in user reads (`GET`) and records (`POST`) the policy version they last accepted; the Clerk session JWT proves identity, so the route keys on the JWT `sub` and never exposes a bearer token to the browser. Anonymous visitors keep their per-surface local deposit (cookie / AsyncStorage) — there is no shared identity to sync them by.
+Implements the authenticated legal re-acceptance endpoint for the shared API worker. A signed-in user reads (`GET`) and records (`POST`) the policy version they last accepted; the Clerk session JWT proves identity, so the route keys on the JWT `sub` and never exposes a bearer token to the browser. Anonymous visitors keep their per-surface local deposit (cookie / `localStorage`) — there is no shared identity to sync them by.
 
 A `POST` writes the append-only proof to `consent_events` (`consent_type = 'legal_reaccept'`, one row per accepted version via `INSERT OR IGNORE` so re-accepting is idempotent) and updates the current-state cache column `user_profiles.legal_acked_version` (migration `0011`).
 
@@ -36,7 +36,7 @@ if (url.pathname === "/v1/consent/legal") {
 }
 ```
 
-The client half lives in `@indiecrafts/packages-shared-compliance/shared` (`readLegalConsent` / `writeLegalConsent`), called by the `app` and Expo re-acceptance gates.
+The client half lives in `@indiecrafts/packages-shared-compliance/shared` (`readLegalConsent` / `writeLegalConsent`), called by the `app` re-acceptance gate.
 
 ## Source
 

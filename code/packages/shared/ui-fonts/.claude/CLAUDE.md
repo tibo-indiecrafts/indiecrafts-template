@@ -2,8 +2,7 @@
 
 Auto-loads under `code/packages/shared/ui-fonts/**`. The self-hosted `.woff2` font files plus a
 `FONT_FILES` metadata registry, centralized so every surface ships from one place (a design-system
-brick like `ui-tokens`). Consumed by the website (`next/font` `localFont`) and a native app
-(`expo-font`). Area rules → `../../../.claude/CLAUDE.md`.
+brick like `ui-tokens`). Consumed by the website (`next/font` `localFont`). Area rules → `../../../.claude/CLAUDE.md`.
 
 **Stack:** TypeScript + `.woff2` files (no runtime deps).
 

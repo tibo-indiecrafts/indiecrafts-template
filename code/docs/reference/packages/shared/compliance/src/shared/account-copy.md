@@ -6,11 +6,11 @@ status: stable
 
 # Account section copy
 
-> The copy contracts and builders shared by the web and native account sections.
+> The copy contracts and builders shared by the web account sections.
 
 ## Purpose
 
-Defines the copy contracts for the shared account sections and pure builders that assemble them from a namespace-scoped translator. It lives in `shared` (no React) so the web and native section components and the builders reference one type. Each surface passes a `t` already scoped to `account.delete` or `account.export`, so the builders work regardless of the i18n runtime.
+Defines the copy contracts for the shared account sections and pure builders that assemble them from a namespace-scoped translator. It lives in `shared` (no React) so the web section components and the builders reference one type. Each surface passes a `t` already scoped to `account.delete` or `account.export`, so the builders work regardless of the i18n runtime.
 
 ## Exports
 

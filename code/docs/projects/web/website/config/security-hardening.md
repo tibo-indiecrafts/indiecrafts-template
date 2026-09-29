@@ -54,7 +54,6 @@ and the **app** (the Worker's inline guard / Clerk auth, which works everywhere)
 | **admin** (next-cf)            | its subdomain zone + a Cloudflare Access gate (reserved)                                    | fail-closed Clerk admin gate + data-layer authz       | not public                                                             |
 | **api** (worker-cf)            | ✅ zone TF (`shared/api/infra/cloudflare`) — rate-limit `/v1/*` + WAF + bots + leaked-creds | **inline** bearer + native rate-limit guard (primary) | edge = defence in depth; the inline guard works on `*.workers.dev` too |
 | **cron · workers** (worker-cf) | n/a (no HTTP surface)                                                                       | n/a                                                   | scheduled / queue only                                                 |
-| **mobile** (native)            | n/a (app stores / device)                                                                   | Clerk auth + secure token store                       | failed-OTP → `kind:"security"`; edge N/A                               |
 
 The **inline guard** (`code/shared/api/src/index.ts`: bearer + constant-time compare +
 native rate-limit binding + body cap + CORS) is the primary gate for the bare Workers and

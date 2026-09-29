@@ -16,6 +16,12 @@ _The Storybook gallery for the design-system bricks (`ui` · `ui-components` · 
 `announcement`/`locale-suggest` stories). Log new stories, addon/config changes, and the
 `test:stories` gate here._
 
+### Changed
+
+- **One sidebar tree.** Dropped the `Native` root, `react-native-web`, the native theme decorator and the
+  `Tokens-Native` page; stories lost their `Web/` title prefix. The order stays: Introduction · Design
+  Tokens · domain components · UI atoms last. **Why:** React Native is gone from the codebase.
+
 ### Added
 
 - **Scripted deploy as a Cloudflare Worker (`deploy:web:storybook:<env>`).** The gallery ships as a

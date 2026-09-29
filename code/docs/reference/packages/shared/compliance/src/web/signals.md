@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Reads browser opt-out signals so the shells seed a reject default when a visitor's browser already signals opt-out. `Global Privacy Control` is legally enforceable under CCPA/CPRA; `Do-Not-Track` is honoured as a courtesy. No React Native equivalent exists, so the native fork has no counterpart.
+Reads browser opt-out signals so the web surfaces seed a reject default when a visitor's browser already signals opt-out. `Global Privacy Control` is legally enforceable under CCPA/CPRA; `Do-Not-Track` is honoured as a courtesy.
 
 ## Exports
 

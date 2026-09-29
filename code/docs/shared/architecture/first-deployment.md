@@ -41,7 +41,7 @@ Every Cloudflare resource name comes from one function —
 | **cron**      | worker-cf       | `indiecrafts-<env>-shared-cron.<sub>.workers.dev`          | _(no route — scheduled)_             |
 | **workers**   | worker-cf       | `indiecrafts-<env>-shared-workers.<sub>.workers.dev`       | _(no route — queue/event)_           |
 | **storybook** | Worker (assets) | `indiecrafts-<env>-web-tools-storybook.<sub>.workers.dev`  | `https://storybook.example.com`      |
-| **mobile**    | expo            | EAS build channel `<env>` (App/Play Store)                 | store listing                        |
+| **mobile**    | capacitor       | not deployed — loads the `app` URL (`CAP_SERVER_URL`)      | not deployed (no release pipeline)   |
 
 `admin` + `app` are **subdomains of the website root** so Clerk drops the session cookie on the parent
 domain and all three share one login. `api` and `storybook` get their own subdomains (`api.<root>`,
@@ -72,7 +72,7 @@ Backing data/storage (no public URL): D1 `indiecrafts-<env>-db-audit` (audit) + 
    `pnpm secrets:sync:shared:api:dev` (`APP_API_TOKEN`, `IP_HASH_SALT`, `SANITY_API_READ_TOKEN`, …).
    Website: `pnpm secrets:sync:web:website:dev`. (Or one-off: `wrangler secret put <NAME> --env dev`.)
 3. **Migrate databases** — `pnpm db:migrate:all:dev` (dev is a real remote D1).
-4. **Deploy** — `pnpm deploy:all:dev` (the 7 Cloudflare apps), or `--only all` to include native.
+4. **Deploy** — `pnpm deploy:all:dev` (the 7 Cloudflare apps).
 5. **Verify** — `curl https://indiecrafts-dev-shared-api.<sub>.workers.dev/health` → `{ok:true}`; open
    website/app/admin; sign in once; check the admin System screen. Optional: `pnpm db:backfill:profiles:dev`.
 
@@ -148,24 +148,11 @@ subdomain** (`storybook.<root>`) is a normal **Worker route** in `domains.mjs` a
 `admin`/`app`/`api` — paste the `[[env.prod.routes]]` block from
 `node code/shared/scripts/lib/domains.mjs print storybook prod` into its `wrangler.toml` once the host is set.
 
-## Native surfaces (separate track — not Cloudflare)
+## Mobile shell (separate track — not Cloudflare)
 
-Native apps don't deploy to Cloudflare. Here the `env` selects the **backend URLs baked into the
-artifact** (not separate infra), and the app needs its own credentials.
-
-### Mobile (Expo / EAS) — wired
-
-`eas.json` ships the build/submit profiles and `app.config.ts` carries the EAS identity — you supply the
-account + credentials:
-
-1. Install `eas-cli`; `eas login` (or an `EXPO_TOKEN` CI secret); `eas init` (fills `owner` +
-   `extra.eas.projectId` + the `updates.url`).
-2. Profiles in `eas.json`: `development` (dev) · `preview` (staging) · `production` (prod), each baking
-   its `EXPO_PUBLIC_API_URL`; the `production` submit block takes your Apple/Play store credentials.
-3. `pnpm deploy:mobile:main:<env>` → `deploy/expo.mjs` (env → profile) → **EAS Build** (+ submit on prod).
-4. **EAS Update** OTA is wired (`runtimeVersion` + `updates.url`, keyed by the profile `channel`).
-
-Prerequisites (yours): an Expo account, an Apple Developer account (iOS) + Google Play account (Android).
+The Capacitor shell does not deploy to Cloudflare, and no deploy runner touches it. It loads the
+deployed `app` surface by URL (`CAP_SERVER_URL`), so deploying `app` updates the shell's content.
+A store release has no pipeline yet. Setup + run → [Mobile shell (Capacitor)](/projects/mobile/main/).
 
 ## Pre-flight checklist
 

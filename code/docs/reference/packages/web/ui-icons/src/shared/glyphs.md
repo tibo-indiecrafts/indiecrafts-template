@@ -1,6 +1,6 @@
 ---
 title: "Glyph name set"
-description: "The curated icon-name set shared by the web and native renderers and the Sanity pickers."
+description: "The curated icon-name set shared by the web renderers and the Sanity pickers."
 status: stable
 ---
 

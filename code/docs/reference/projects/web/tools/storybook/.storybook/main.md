@@ -1,6 +1,6 @@
 ---
 title: "Storybook gallery config"
-description: "The main Storybook config: story globs resolved by package name, plus Vite aliases that mock next-intl, shiki, and react-native."
+description: "The main Storybook config: story globs resolved by package name, plus Vite aliases that mock next-intl and shiki."
 status: stable
 ---
 
@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-The main `StorybookConfig` for the design-system gallery. It resolves each design-system brick by its package name (not a relative path) into a `configDir`-relative story glob, so discovery survives the package moving and works for both `storybook build` and the addon-vitest runner. In `viteFinal` it adds Tailwind, aliases `next-intl` / `next-intl/server` / `next-intl/navigation` and `shiki` to local mocks, maps `react-native` to `react-native-web`, and resolves `storybook/test` from this package for sibling-brick `play` functions.
+The main `StorybookConfig` for the design-system gallery. It resolves each design-system brick by its package name (not a relative path) into a `configDir`-relative story glob, so discovery survives the package moving and works for both `storybook build` and the addon-vitest runner. In `viteFinal` it adds Tailwind, aliases `next-intl` / `next-intl/server` / `next-intl/navigation` and `shiki` to local mocks, and resolves `storybook/test` from this package for sibling-brick `play` functions.
 
 ## Exports
 

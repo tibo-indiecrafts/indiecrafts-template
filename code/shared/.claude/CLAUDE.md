@@ -4,7 +4,7 @@ Auto-loads under `code/shared/**`. The **top-level shared tier** (a sibling of `
 `modules/`) — everything shared across platforms that isn't a reusable brick: the backend **services**, the
 **ops** layer, and the **toolchain**. Layered under the root `CLAUDE.md`; each leaf owns its own brief.
 
-- **Services (`worker-cf`)** — `api` (HTTP JSON API for the non-web clients) · `cron` (scheduled) ·
+- **Services (`worker-cf`)** — `api` (the shared, versioned HTTP JSON API — web-surface servers + partners) · `cron` (scheduled) ·
   `workers` (queue/event + background jobs). Bare Cloudflare Workers (no Next/OpenNext); each is a thin
   **deploy shell** — the real job logic lives in a `code/packages` / `code/modules` brick (`workspace:*`).
 - **Ops** — `db` (dataset schema + migrations + backups) · `infra` (Terraform/provider IaC). `domains` is

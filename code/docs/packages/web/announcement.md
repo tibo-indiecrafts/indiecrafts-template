@@ -20,7 +20,7 @@ the **portable resolve + types + fetch** live in
 ## Content (Sanity)
 
 Two singletons, both with **per-surface targeting** (`surfaces` — empty = all;
-`website · app · mobile`, **no admin**):
+`website · app`, **no admin**):
 
 **`announcementBar`** (Studio → **Bandeau d'annonce**) — `enabled` · `dismissible` · `variant`
 (`brand`/`neutral`/`contrast`) · `surfaces` · `start`/`end` · `items[]` (each `message` +
@@ -35,16 +35,15 @@ adapters over the shared `resolveBanner`/`resolveToast`).
 
 ## Delivery per surface
 
-| Surface         | Reads from                    | Gate                             |
-| --------------- | ----------------------------- | -------------------------------- |
-| **website**     | Sanity server-side (no flash) | public (ungated)                 |
-| **app** (Next)  | api Worker (client fetch)     | logged-in (`<SignedIn>`), online |
-| **mobile** (RN) | api Worker (client fetch)     | logged-in, online                |
+| Surface        | Reads from                    | Gate                             |
+| -------------- | ----------------------------- | -------------------------------- |
+| **website**    | Sanity server-side (no flash) | public (ungated)                 |
+| **app** (Next) | api Worker (client fetch)     | logged-in (`<SignedIn>`), online |
 
-The two product surfaces gate on **client-side** `<SignedIn>`, so they fetch the Worker (no
+The `app` surface gates on **client-side** `<SignedIn>`, so it fetches the Worker (no
 server-render benefit); only the public website reads Sanity directly. app reuses the web
-`AnnouncementBar`/`AnnouncementToast`; mobile renders a bespoke shell (next-intl can't run
-outside Next) — same tokens, `Linking` for links.
+`AnnouncementBar`/`AnnouncementToast`. The Capacitor shell loads `app`, so it shows the same bar
+and toast.
 
 ## Behaviour
 
@@ -62,7 +61,7 @@ outside Next) — same tokens, `Linking` for links.
 `announcementSanity` → `sharedModules` in `sanity.config.ts` (registers both singletons + the two
 desk sections). `@source "../../announcement/src"` in `ui-tokens/globals.css`. Web surfaces:
 `transpilePackages` + deps (+ a `tsconfig` `paths` entry for the `./*` wildcard). The Worker route +
-the api URL env vars (`NEXT_PUBLIC_API_URL` / `EXPO_PUBLIC_API_URL` / `VITE_API_URL`) → see
+the api URL env vars (`NEXT_PUBLIC_API_URL` / `VITE_API_URL`) → see
 [the api Worker](/shared/api/).
 
 ## Deps

@@ -1,12 +1,12 @@
 ---
 title: "Storybook — design-system gallery"
-description: "Browse-only Storybook that documents the shared design-system bricks across all three renderers — web, native (via a react-native-web alias), and cross-platform — deployed as a Cloudflare Worker on Static Assets."
+description: "Browse-only Storybook that documents the shared design-system bricks in one sidebar tree, deployed as a Cloudflare Worker on Static Assets."
 status: stable
 ---
 
 # Storybook — design-system gallery
 
-> One browse-only gallery for every shared UI brick, across web, native, and cross-platform renderers — flip the theme toolbar to see it all invert together.
+> One browse-only gallery for every shared UI brick — flip the theme toolbar to see it all invert together.
 
 ## Purpose
 
@@ -15,13 +15,11 @@ Storybook that renders the shared UI bricks so you can browse, read, and compare
 It is a **leaf deployable** (`code/projects/web/tools/storybook`), not a shared brick — it _consumes_ the
 bricks and ships no product code.
 
-It documents the bricks across **all three renderers**:
+It documents the web bricks — `ui` primitives, `ui-components` block renderers, `ui-tokens`, plus
+`announcement`, `locale-suggest`, `system-pages`, `ui-icons`, and the `compliance` web UI.
 
-- **web** — `ui` primitives, `ui-components` block renderers, `ui-tokens`, plus `announcement`,
-  `locale-suggest`, and the `compliance` web UI.
-- **native (via alias)** — the native design system (`ui-native`, `system-pages/native`,
-  `ui-icons/native`) rendered in the browser through a `react-native` → `react-native-web` alias.
-- **cross-platform** — the `system-pages` and `ui-icons` web renderers.
+The sidebar is **one tree**: Introduction, Design Tokens, then the domain components, UI atoms last
+(`storySort` in `.storybook/preview.tsx`).
 
 The theme toolbar sets `data-theme` on `` `<html>` `` — exactly the attribute the token system keys on —
 so one switch flips every color, the sidebar palette, shiki output, and the typeset at once.
@@ -35,9 +33,8 @@ flowchart TB
     uic["ui-components — web block renderers"]
     tok["ui-tokens — design tokens"]
     comp["compliance — web UI"]
-    sp["system-pages — web + native"]
-    ic["ui-icons — web + native"]
-    nat["ui-native — native"]
+    sp["system-pages — web"]
+    ic["ui-icons — web"]
   end
   bricks -->|"brickStories() name-resolved globs"| main[".storybook/main.ts + preview.tsx"]
   main --> gallery["Storybook gallery — nextjs-vite · Vite · Tailwind v4"]
@@ -65,17 +62,16 @@ flowchart TB
 
 ## What it documents
 
-| Brick (package)                            | Renderer                   | What's shown                                                                                                                    |
-| ------------------------------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `@indiecrafts/packages-web-ui`             | web                        | shadcn-derived primitives (Button, Input, …)                                                                                    |
-| `@indiecrafts/packages-web-ui-components`  | web                        | page-builder block renderers (Callout, GalleryCarousel, QuoteList, CodeBlock)                                                   |
-| `@indiecrafts/packages-web-announcement`   | web                        | the announcement-bar component                                                                                                  |
-| `@indiecrafts/packages-web-locale-suggest` | web                        | the locale-suggestion prompt                                                                                                    |
-| `@indiecrafts/packages-shared-compliance`  | web                        | compliance UI — `DeleteAccountSection` + `ChurnSurvey` (copy-injected, `next-intl`-free)                                        |
-| `@indiecrafts/packages-mobile-ui-native`   | native (react-native-web)  | the native design-system components                                                                                             |
-| `@indiecrafts/packages-web-system-pages`   | web + native               | cross-platform system pages, both renderers                                                                                     |
-| `@indiecrafts/packages-web-ui-icons`       | web + native               | the icon set, both renderers                                                                                                    |
-| `@indiecrafts/packages-web-ui-tokens`      | tokens (MDX in `stories/`) | live `var(--token)` swatches — Colors, Sidebar & Charts, Type & Radius, Native — plus an Adaptive & container-query resize demo |
+| Brick (package)                            | Renderer                   | What's shown                                                                                                            |
+| ------------------------------------------ | -------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `@indiecrafts/packages-web-ui`             | web                        | shadcn-derived primitives (Button, Input, …)                                                                            |
+| `@indiecrafts/packages-web-ui-components`  | web                        | page-builder block renderers (Callout, GalleryCarousel, QuoteList, CodeBlock)                                           |
+| `@indiecrafts/packages-web-announcement`   | web                        | the announcement-bar component                                                                                          |
+| `@indiecrafts/packages-web-locale-suggest` | web                        | the locale-suggestion prompt                                                                                            |
+| `@indiecrafts/packages-shared-compliance`  | web                        | compliance UI — `DeleteAccountSection` + `ChurnSurvey` (copy-injected, `next-intl`-free)                                |
+| `@indiecrafts/packages-web-system-pages`   | web                        | the status pages (maintenance · 404 · error · offline)                                                                  |
+| `@indiecrafts/packages-web-ui-icons`       | web                        | the icon set                                                                                                            |
+| `@indiecrafts/packages-web-ui-tokens`      | tokens (MDX in `stories/`) | live `var(--token)` swatches — Colors, Sidebar & Charts, Type & Radius — plus an Adaptive & container-query resize demo |
 
 ## Run
 
@@ -89,7 +85,7 @@ pnpm --filter @indiecrafts/web-tools-storybook test:stories     # every story as
 
 `test:stories` runs `vitest run` — it executes every story as a Vitest browser-mode component test with
 `@storybook/addon-a11y` running axe on each. It is the visual/interaction gate: it **blocks** the CI
-`browser-stories` job (web **and** native stories). It is deliberately **not** in the default `pnpm verify`
+`browser-stories` job. It is deliberately **not** in the default `pnpm verify`
 — it needs a real browser, so it lives in its own Playwright-provisioned CI job, not the browserless gate.
 
 ## The decoupling rule
@@ -105,8 +101,6 @@ pnpm --filter @indiecrafts/web-tools-storybook test:stories     # every story as
     translation-reading renderers (`GalleryCarousel` client, `QuoteList` server).
   - `shiki` → `shiki-mock.ts` — the WASM highlighter hangs in the browser canvas, so `CodeBlock` stories
     render against a stub (real highlighting stays server-side in the app).
-  - `react-native` → `react-native-web` — resolved from **this** package so Vite picks the ESM build,
-    letting the native bricks render in the browser.
 
 ## Deploy
 

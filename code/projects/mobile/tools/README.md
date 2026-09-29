@@ -1,7 +1,7 @@
 # Tools — mobile platform
 
 Reserved slot for the `tools` kind on the `mobile` platform — dev/build tooling that isn't a shipped
-surface: a component gallery (a Storybook-native / Expo-preview), a Detox e2e harness, an EAS/config helper.
+surface: an e2e harness for the Capacitor shell, a native-build or store-release helper.
 Mirrors `code/projects/web/tools/storybook`.
 
 Tools are **not** in the deploy registry (`code/shared/scripts/lib/apps.mjs`) — they build to a static

@@ -1,6 +1,6 @@
 ---
 title: "Project namespace rename"
-description: "Swaps the client namespace prefix across shared config, every wrangler.toml, Terraform tfvars, and the Expo config."
+description: "Swaps the client namespace prefix across shared config, every wrangler.toml, Terraform tfvars, and the Capacitor shell identity."
 status: stable
 ---
 
@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renames the project namespace in one command when reusing this template per client. Cloudflare resource names are `<prefix>-<env>-<platform>-<slug>`, so only `<prefix>` is client-specific. The script rewrites `DEFAULT_SITE_PREFIX` in `@indiecrafts/packages-shared-config`, the leading resource-name prefix on every `wrangler.toml` and `.tfvars` found by a repo-wide walk of `code/`, and the Expo app config. `--dry-run` prints what would change and writes nothing. The slug must be lowercase, 3-41 characters, and unique per client.
+Renames the project namespace in one command when reusing this template per client. Cloudflare resource names are `<prefix>-<env>-<platform>-<slug>`, so only `<prefix>` is client-specific. The script rewrites `DEFAULT_SITE_PREFIX` in `@indiecrafts/packages-shared-config`, the leading resource-name prefix on every `wrangler.toml` and `.tfvars` found by a repo-wide walk of `code/`, and the Capacitor shell identity (`shell.json` + the Android and iOS projects). `--dry-run` prints what would change and writes nothing. The slug must be lowercase, 3-41 characters, and unique per client.
 
 ## Exports
 

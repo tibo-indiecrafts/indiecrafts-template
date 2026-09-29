@@ -2,7 +2,7 @@
 /**
  * PostToolUse (Edit|Write|MultiEdit) — keep the generated design tokens in sync.
  * When `ui-tokens/src/shared/tokens.json` (the DTCG source) is edited, regenerate
- * globals.css / native / hex so they never drift. Local, opt-in hook — wire it
+ * tokens.css / hex so they never drift. Local, opt-in hook — wire it
  * as a PostToolUse entry in `.claude/settings.json`. No-op for every other file.
  *
  * The hard gate is `pnpm tokens:check` (in `pnpm verify`) + the commit lint-staged
@@ -26,7 +26,7 @@ try {
     stdio: "pipe",
   });
   console.log(
-    "🎨 tokens.json changed → regenerated globals.css / native / hex (pnpm tokens:build).",
+    "🎨 tokens.json changed → regenerated tokens.css / hex (pnpm tokens:build).",
   );
 } catch {
   console.log(

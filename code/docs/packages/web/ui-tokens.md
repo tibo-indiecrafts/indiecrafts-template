@@ -9,7 +9,7 @@ status: stable
 > **Browse it:** live token swatches (light/dark) — `pnpm storybook` ([storybook package](/projects/web/tools/storybook)).
 
 The runtime style source + the design contract, shipped together. **One JSON source of truth
-generates every platform output** — web CSS, React-Native hex, and the PWA-manifest hex mirror.
+generates every output** — web CSS and the semantic hex mirror (PWA manifest + email).
 
 |               |                                                                                                                                                                                                                     |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -42,8 +42,7 @@ A component's own themeable token surface lives **beside its `.tsx`** as a `<Com
 sidecar (like `.stories.tsx`/`.md`) — every component in `ui` (61) and `ui-components` (28) ships one.
 Each is a **component-tier DTCG fragment**: keys namespaced by component (`button-bg`), values
 referencing only `{semantic.*}` or `{component.*}`. `tokens:build` globs `code/**/*.tokens.json` and
-**merges** them into the same outputs, so a colocated token reaches web CSS **and** React Native
-(resolved to hex through its semantic ref). The generator hard-errors on a duplicate name, a primitive
+**merges** them into `tokens.css`, so a colocated token reaches web CSS. The generator hard-errors on a duplicate name, a primitive
 ref, or a non-`component` top-level key.
 
 `tokens:check` also **drift-checks** each sidecar against its sibling `.tsx`: if the component uses a

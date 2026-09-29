@@ -18,7 +18,7 @@ deep scans on demand. Nothing here is a manual scan you have to remember to run.
 | **plan**   | before `ExitPlanMode` (`PreToolUse` hook, `settings.local.json`, personal)  | **grill-plan** — run a hard grill-me stress-test of the plan first (needs the `grill-me` skill) · **plan-review-nudge** — suggest a gstack plan review (`/autoplan` · `/plan-eng-review`) before approval                                                                                                                                                     | no — advise                                                            |
 | **stop**   | at turn end (`Stop` hook)                                                   | design deep pass + **lint deep pass** + **change-hygiene** (docs **and** tests) + **CLAUDE.md hygiene** (proposes a brief review when a unit's surface grew) + **security-scan** (semgrep · gitleaks · `pnpm audit` · sensitive-file agent nudge — report-first) + **visual-verify** (UI changed → screenshot) + **review-nudge** (diff scan → gstack review) | change-hygiene + visual-verify block; the rest advise                  |
 | **commit** | `git commit` (husky)                                                        | `lint-staged` (eslint `jsx-a11y` + prettier on staged) then `tsc`                                                                                                                                                                                                                                                                                             | **yes — hard gate**                                                    |
-| **scan**   | on demand / CI                                                              | `pnpm verify` (tsc · lint · contrast · react-doctor · test) · **`pnpm test:stories`** (every Storybook story = a component + a11y test, web **and** native via react-native-web; the CI `browser-stories` job **blocks** on it) · `pnpm shadscan` · axe E2E · **`pnpm size`** (marketing First-Load JS budget, excl. Studio — CI, report-first)               | manual / CI (story tests **block**; size report-only until calibrated) |
+| **scan**   | on demand / CI                                                              | `pnpm verify` (tsc · lint · contrast · react-doctor · test) · **`pnpm test:stories`** (every Storybook story = a component + a11y test; the CI `browser-stories` job **blocks** on it) · `pnpm shadscan` · axe E2E · **`pnpm size`** (marketing First-Load JS budget, excl. Studio — CI, report-first)                                                        | manual / CI (story tests **block**; size report-only until calibrated) |
 
 The edit + stop tiers are **cards** — fast, advisory, no block. Correctness is still enforced at
 **commit** and in CI. The point is to see a problem the second you write it, not at commit.
@@ -67,10 +67,6 @@ called out in the card).
 - **Covers files anywhere** — app, packages, and modules. The `--stdin` trick sidesteps
   `eslint-config-next`'s "outside base path" skip, so UI moved into `@indiecrafts/packages-web-ui/web`,
   `ui-components/web`, etc. is checked too.
-- **Skips React Native** — the `ui-native` brick and the `.../src/native/` forks are RN, not DOM, so the
-  Next + jsx-a11y config is wrong for them. They lint with **`npx expo lint`** (`eslint-config-expo`)
-  instead; the `mobile` surface (Expo) is prompted to run it by the Stop **review-nudge** (below), and the
-  official **Expo plugin** ([environment → Expo/RN](/projects/web/website/setup/environment)) carries the RN skills + docs.
 - **Edit tier** lints the one edited file; **Stop tier** re-lints the whole changed UI set once.
 - **Non-blocking + partial type-awareness** — type-aware rules may be incomplete under per-file
   `--stdin`; the **commit** hook (`lint-staged`) + CI (whole-program `tsc` + `lint`) stay the hard gate,
@@ -110,7 +106,7 @@ except on the file it targets:
   surface** (app · mobile) live — a key in one locale but not another renders the raw id at
   runtime.
 - **`tokens-fresh.mjs`** — on a `ui-tokens/src/shared/tokens.json` edit, **auto-runs `pnpm tokens:build`**
-  so the generated `globals.css` / `native/tokens.ts` / hex mirror never drift. The one **auto-fix** hook
+  so the generated `tokens.css` / hex mirror never drift. The one **auto-fix** hook
   (not just a card); `pnpm tokens:check` in `verify` stays the gate.
 
 ## Auto-review triggers (gstack)
@@ -125,8 +121,8 @@ gracefully where gstack isn't installed.
   / infra / deps / SQL) → `/cso`; UI/renderer changes → `/qa`. **gstack-aware** — it names the exact
   slash-commands only when `~/.claude/skills/gstack` exists, else it prints a generic "review the diff"
   nudge, so it is safe in the committed file. Honors `stop_hook_active`; always `exit 0`. It also nudges
-  **`npx expo lint` + `npx expo-doctor`** (+ the Expo skills) when `mobile/**` changed — the RN
-  equivalent of the web lint/review, since the on-the-fly lint hook skips RN files.
+  **`pnpm --filter @indiecrafts/mobile-surfaces-main verify`** + an emulator check when
+  `code/projects/mobile/**` changed.
 - **`plan-review-nudge.sh`** (`PreToolUse` on `ExitPlanMode`, wired in gitignored `settings.local.json`).
   Just before a plan is finalized it suggests a gstack plan review (`/autoplan` for the full CEO + eng +
   design + DX pass, or `/plan-eng-review` for architecture/edge-cases/tests). Personal + gstack-only, so

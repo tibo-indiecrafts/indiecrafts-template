@@ -27,8 +27,8 @@ controls, each mapped to a Resend Topic for real sending.
   recomputed after every write as "any category granted", kept only because other code
   still reads the single flag.
 - **The api is the single reader.** `fetchEmailPreferences` (`code/shared/api/src/consent/email-preferences-sanity.ts`)
-  reads the Sanity singleton over GROQ, locale-resolved. Web and mobile call the api;
-  neither reads Sanity directly. It **never throws** — an unset, unreachable, or empty
+  reads the Sanity singleton over GROQ, locale-resolved. Every surface calls the api;
+  none reads Sanity directly. It **never throws** — an unset, unreachable, or empty
   Studio falls back to a seeded `news`-only default, so the preference centre is never blank.
 
 ## Routes
@@ -107,12 +107,9 @@ chose as defaults, with the same D1 write + proof row as any other change.
   and on the public, unauthenticated `/email-preferences?token=…` page
   (`EmailPreferencesPublic`) for a recipient who isn't signed in — kept out of nav, sitemap,
   and llms.txt, like `/newsletter/confirm`.
-- **Mobile** — no native preference screen. The account screen's "Manage email
-  preferences" button opens the web `/account` page in an in-app browser tab
-  (`expo-web-browser`, the same handoff pattern as "Manage account"), which shares the
-  system cookie jar so a web session usually carries over. The account modal's single
-  "Commercial emails" toggle (Clerk, `packages-web-auth`) still exists for the one-flag
-  case; the category-level centre lives only on the web.
+- **Mobile** — the Capacitor shell loads the `app` surface, which has no category-level
+  centre. The account modal's single "Commercial emails" toggle (Clerk, `packages-web-auth`)
+  covers the one-flag case; the category-level centre lives only on the website.
 
 ## Known gaps / follow-ups
 
@@ -124,5 +121,3 @@ chose as defaults, with the same D1 write + proof row as any other change.
   delete them. A follow-up should add the count to `preview()`.
 - **No manual visual/a11y pass yet** on the web account section or the public token page —
   not runnable in this CI.
-- **`eslint-plugin-expo` is missing from the lockfile**, which blocks `expo lint`
-  repo-wide. Pre-existing, unrelated to this feature.

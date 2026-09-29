@@ -39,22 +39,20 @@ every row has a matching `code/projects/<slug>` dir, so the registry can't drift
 | ----------- | --------------------- | ---------------------------------- | --------------------------------------- |
 | `next-cf`   | website · admin · app | OpenNext build → Cloudflare Worker | `code/shared/scripts/deploy/next.mjs`   |
 | `worker-cf` | api · cron · workers  | `wrangler deploy` (bare Worker)    | `code/shared/scripts/deploy/worker.mjs` |
-| `expo`      | mobile                | EAS build (+ submit)               | `code/shared/scripts/deploy/expo.mjs`   |
+| `capacitor` | mobile                | not deployed (loads `app` by URL)  | —                                       |
 
-`next-cf` + `worker-cf` are the **Cloudflare** classes. `expo` is native — it needs
-its own credentials (EAS / Apple) and is a **structure-first stub** today: the command +
-guards are wired so it follows the same contract, but the full store pipeline is a follow-up
-(see the app's README).
+`next-cf` + `worker-cf` are the **Cloudflare** classes. `capacitor` is the mobile shell — no deploy
+runner touches it. It loads the deployed `app` surface by URL, and a store release has no pipeline yet
+(see [Mobile shell (Capacitor)](/projects/mobile/main/)).
 
 ## The deploy contract
 
-Every app — Cloudflare or native — exposes the same script: **`deploy:<slug>:<env>`**
+Every Cloudflare app exposes the same script: **`deploy:<slug>:<env>`**
 (`env` ∈ `dev · staging · prod`). It delegates to the shared runner for its class:
 
 ```
 pnpm deploy:web:website:prod    → node ../../../../../code/shared/scripts/deploy/next.mjs website prod
 pnpm deploy:shared:api:staging     → node ../../../../../code/shared/scripts/deploy/worker.mjs api staging
-pnpm deploy:mobile:main:prod     → node ../../../../../code/shared/scripts/deploy/expo.mjs prod
 ```
 
 The runners share `code/shared/scripts/lib/deploy-shared.mjs` (`run` + the prod confirm) and
@@ -68,8 +66,7 @@ swaps only the `<prefix>` (reaching `code/shared/*`), and the guard compares eac
 ### Ship several at once
 
 ```bash
-pnpm deploy:all:prod                 # every Cloudflare app, in registry order (default)
-node code/shared/scripts/deploy/all.mjs prod --only all   # + native apps (expo)
+pnpm deploy:all:prod                 # every Cloudflare app, in registry order
 node code/shared/scripts/deploy/all.mjs dev --dry-run     # list what would deploy, run nothing
 ```
 

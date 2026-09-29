@@ -4,7 +4,7 @@ Auto-loads when you work under `code/docs/**`. The product documentation site �
 project at `code/docs/` (sibling of `projects/ packages/ modules/ shared/`), **npm-isolated** from the
 pnpm workspace (matches no workspace glob, so it stays out; its own lockfile). **Mirrors the code
 spine exactly:** `projects/web/{website,admin,app,tools}` + `projects/mobile/main` ·
-`packages/{shared,web,mobile}/<name>.md` · `modules/web/{blog,contact,newsletter,waitlist}` ·
+`packages/{shared,web}/<name>.md` · `modules/web/{blog,contact,newsletter,waitlist}` ·
 `shared/{api,cron,workers,db,infra,scripts,architecture,client-intake}` · `contributing/` (governance
 
 - ADRs). `index.md` is the home; `quick-start.md` leads. Conventions → `contributing/how-we-document`.

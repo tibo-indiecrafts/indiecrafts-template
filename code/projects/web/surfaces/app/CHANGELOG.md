@@ -14,6 +14,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **`NativeBridge`** — the one component that wires the Capacitor shell's native events (Android back,
+  deep links, system-browser links, status bar, splash). A no-op in a browser; the link and deep-link
+  rules are pure, tested helpers (`src/lib/shell-links.ts`). **Why:** the mobile app is now this surface
+  inside a Capacitor shell ([mobile shell](../../../../docs/projects/mobile/main/index.md)).
+
+### Added
+
 - **Home welcome from Sanity.** The home now reads an editor-owned welcome message live from the
   `appContent` Sanity singleton (the `web` section, falling back to `shared`), resolved to the request
   locale, via `src/lib/welcome.ts` — a short-cached (60s), **fail-open** edge read (unset project id or

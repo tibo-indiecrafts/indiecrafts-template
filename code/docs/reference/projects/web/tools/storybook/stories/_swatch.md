@@ -1,6 +1,6 @@
 ---
 title: "Token swatch helpers"
-description: "MDX helper components that render design-token color chips, including live CSS-var chips and literal-hex native chips."
+description: "MDX helper components that render design-token color chips, as live CSS-var chips."
 status: stable
 ---
 
@@ -10,23 +10,21 @@ status: stable
 
 ## Purpose
 
-Helper components for the token doc MDX pages. CSS-var chips paint with `background: var(--token)`, so they update live when the `data-theme` toolbar flips. A literal-hex variant serves the native token page, where React Native ships resolved hex with no live CSS var. Inline styles keep the chips self-contained inside MDX.
+Helper components for the token doc MDX pages. CSS-var chips paint with `background: var(--token)`, so they update live when the `data-theme` toolbar flips. Inline styles keep the chips self-contained inside MDX.
 
 ## Exports
 
 - `Swatch({ token, name? })` — a live chip painted from `var(--token)`, with the token name shown as code.
-- `HexSwatch({ hex, name })` — a literal-hex chip for the native tokens, showing the name and its hex.
-- `NativePalette({ colors, names })` — renders a named subset of a native theme's hex color map as a swatch grid.
 - `SwatchGrid({ children })` — an auto-fill responsive grid wrapper for chips.
 
 ## Usage
 
 ```tsx
-import { Swatch, HexSwatch, NativePalette } from "./_swatch";
+import { Swatch, SwatchGrid } from "./_swatch";
 
-<Swatch token="--primary" name="Primary" />
-<HexSwatch hex="#0a0a0a" name="background" />
-<NativePalette colors={darkColors} names={["background", "foreground"]} />
+<SwatchGrid>
+  <Swatch token="--primary" name="Primary" />
+</SwatchGrid>;
 ```
 
 ## Source

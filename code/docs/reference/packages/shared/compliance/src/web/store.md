@@ -1,6 +1,6 @@
 ---
 title: "Web consent store"
-description: "A localStorage-backed, synchronous Store adapter for the plain-React compliance shells."
+description: "A localStorage-backed, synchronous Store adapter for the `app` surface."
 status: stable
 ---
 
@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Creates a `localStorage`-backed, synchronous `Store` adapter for the plain-React shells (the `app` web surface). It serves both the consent record and the legal-acceptance record, each under its own `storageKey`, namespaced by `${site.prefix}`. The website keeps its own richer store in `@indiecrafts/packages-web-compliance`; this is the minimal one.
+Creates a `localStorage`-backed, synchronous `Store` adapter for the `app` web surface. It serves both the consent record and the legal-acceptance record, each under its own `storageKey`, namespaced by `${site.prefix}`. The website keeps its own richer store in `@indiecrafts/packages-web-compliance`; this is the minimal one.
 
 ## Exports
 

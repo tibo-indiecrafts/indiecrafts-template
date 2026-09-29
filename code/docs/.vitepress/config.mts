@@ -435,7 +435,7 @@ export default withMermaid(
               link: "/shared/architecture/first-deployment",
             },
             {
-              text: "Cross-platform shell",
+              text: "Mobile shell",
               link: "/shared/architecture/cross-platform-shell",
             },
             {

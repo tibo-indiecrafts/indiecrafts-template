@@ -23,12 +23,12 @@ CI reads for its matrix.
 ### `apps.mjs` — the app registry
 
 Registers every deployable app. Fields: `slug` (id + `deploy:<slug>:<env>` script), `pkg`
-(workspace package), `class` (`next-cf` · `worker-cf` · `expo` → deploy recipe), `platform`
+(workspace package), `class` (`next-cf` · `worker-cf` · `capacitor` → deploy recipe; `capacitor` is not deployed), `platform`
 (`web` · `mobile` · `shared`), `kind` (`surface` · `service` · `tool`), `dir` (the project
 directory), `order` (deploy order), and optional `smoke` (post-deploy probe). It also exports
 `resourceName(slug, env, prefix)` — the one Cloudflare-name formula `<prefix>-<env>-<tail>`.
 
-**Consumed by:** every runner. `deploy/{all,worker,next,expo}.mjs`, `data/{backup,migrate,restore,secrets,backfill-profiles}.mjs`,
+**Consumed by:** every runner. `deploy/{all,worker,next}.mjs`, `data/{backup,migrate,restore,secrets,backfill-profiles}.mjs`,
 `infra/{run,bindings,teardown,gdpr-salt}.mjs`, `checks/typed-routing.mjs`, `dev/{doctor,refresh,setup,tsc-fast}.mjs`,
 plus the CI deploy matrix.
 
@@ -68,6 +68,6 @@ These are not entity registries; they are the plumbing the runners share.
 | `resources.mjs`     | `instanceResources(env, prefix)` — the full list of Cloudflare resources one deployed instance owns, derived from the registries + prefix.     | `infra/teardown.mjs`                                                                                          |
 | `project.mjs`       | Project identity: the `<prefix>` (`readSitePrefix`), `renameResourcePrefix`, and `assertRenamed(app, env)` — the shared-account clobber guard. | `deploy/{worker,next}.mjs`, `data/{secrets,backfill-profiles}.mjs`, `infra/{bindings,gdpr-salt,teardown}.mjs` |
 | `backup-common.mjs` | Backup helpers: `stamp`, `uploadToR2`, `prune`, `buildBackupRunInsert`, `recordBackupRun` (writes a `backup_runs` row).                        | `data/backup.mjs`                                                                                             |
-| `deploy-shared.mjs` | `run(cmd, args)` (spawn + exit on failure) and `confirmProd(action, target, env)` (the interactive prod guard).                                | `deploy/{worker,next,expo}.mjs`, `data/{backup,migrate,restore,secrets}.mjs`, `dev/{setup,refresh}.mjs`       |
+| `deploy-shared.mjs` | `run(cmd, args)` (spawn + exit on failure) and `confirmProd(action, target, env)` (the interactive prod guard).                                | `deploy/{worker,next}.mjs`, `data/{backup,migrate,restore,secrets}.mjs`, `dev/{setup,refresh}.mjs`            |
 
 Deploy model, platform classes, and CI fan-out → [Platform deploy](/shared/architecture/platform-deploy).

@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Defines the cookie-consent constants and types with no server, Sanity, or DOM imports. Every platform — the web store and banner and the Expo shell — plus the web read path can import them without pulling a heavier graph. The web brick re-exports this file so its importers are unchanged.
+Defines the cookie-consent constants and types with no server, Sanity, or DOM imports. The web store and banner plus the web read path can import them without pulling a heavier graph. The web brick re-exports this file so its importers are unchanged.
 
 ## Exports
 

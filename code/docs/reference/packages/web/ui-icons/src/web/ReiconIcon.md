@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-A web-only client renderer for the `reicon-react` icon set, which has no React Native build. It resolves the named glyph from the reicon named exports, uses an optional `fallback`, and returns null for an unknown name.
+A web-only client renderer for the `reicon-react` icon set. It resolves the named glyph from the reicon named exports, uses an optional `fallback`, and returns null for an unknown name.
 
 ## Exports
 

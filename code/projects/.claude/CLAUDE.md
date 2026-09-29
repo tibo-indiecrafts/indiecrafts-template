@@ -5,7 +5,7 @@ Auto-loads when you work under `code/projects/**`. Deployables nest **by platfor
 **self-contained**: it owns its `CLAUDE.md` (how to code), `README.md`, and `CHANGELOG.md`.
 
 - **`web/`** — `next-cf` apps (`surfaces/website` — live + the hub Studio — · `surfaces/admin`) + `tools/storybook`.
-- **`mobile/`** — `expo` (`surfaces/main`). It carries a
+- **`mobile/`** — `capacitor` (`surfaces/main`, the Capacitor shell around the `app` surface). It carries a
   reserved `tools/` marker (like `web/tools/storybook`) — every platform has the same `surfaces · tools`
   kind skeleton; activate a tool when the platform needs one.
 - **The cross-platform `shared/` tier moved up** — the `worker-cf` services (`api` · `cron` · `workers`)
@@ -21,7 +21,7 @@ Auto-loads when you work under `code/projects/**`. Deployables nest **by platfor
 Human roster → `_registry.md`; machine source of truth → [`code/shared/scripts/lib/apps.mjs`](../../shared/scripts/lib/apps.mjs)
 (carries each app's `dir` — every path resolver reads it, never a hard-coded `code/projects/<slug>`).
 
-**Stack:** per-app, by platform class. `next-cf` (`website`): Next.js 16 · React 19 · TypeScript · Tailwind v4 · shadcn/ui · Sanity v6. `worker-cf`: bare Cloudflare Worker. `expo`: React Native / Expo.
+**Stack:** per-app, by platform class. `next-cf` (`website`): Next.js 16 · React 19 · TypeScript · Tailwind v4 · shadcn/ui · Sanity v6. `worker-cf`: bare Cloudflare Worker. `capacitor`: the Capacitor shell (native wrapper, no UI).
 
 ## Rules
 

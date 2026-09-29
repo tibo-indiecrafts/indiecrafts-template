@@ -29,11 +29,11 @@ the runtime pipeline.
 | **cron**    | `@indiecrafts/shared-cron`    | `worker-cf` | `deploy:shared:cron:<env>`    | ◐ bare Worker scaffold — scheduled handler                       |
 | **workers** | `@indiecrafts/shared-workers` | `worker-cf` | `deploy:shared:workers:<env>` | ◐ bare Worker scaffold — background / queue jobs                 |
 
-### `mobile/` — Expo
+### `mobile/` — Capacitor
 
-| Dir                      | Package                             | Class  | Deploy                           | Status                                                               |
-| ------------------------ | ----------------------------------- | ------ | -------------------------------- | -------------------------------------------------------------------- |
-| **mobile/surfaces/main** | `@indiecrafts/mobile-surfaces-main` | `expo` | `deploy:mobile:main:<env>` (EAS) | ◐ real Expo scaffold, one screen — ships via EAS, **not** Cloudflare |
+| Dir                      | Package                             | Class       | Deploy                      | Status                                                          |
+| ------------------------ | ----------------------------------- | ----------- | --------------------------- | --------------------------------------------------------------- |
+| **mobile/surfaces/main** | `@indiecrafts/mobile-surfaces-main` | `capacitor` | — (no release pipeline yet) | ◐ Capacitor shell around the `app` surface — **not** Cloudflare |
 
 ### Top-level (not under a platform)
 
@@ -78,7 +78,7 @@ The **toolchain** (registries + concern-grouped runners) lives at `code/shared/s
 (`lib/` = registries · `deploy/ data/ infra/ checks/ dev/` = runners). Five machine registries drive
 everything — same shape (`--json` CLI + a colocated `*.test.mjs` guard):
 
-- **apps** — `lib/apps.mjs` (`class` → deploy recipe); runners `deploy/{all,next,worker,expo}.mjs`.
+- **apps** — `lib/apps.mjs` (`class` → deploy recipe); runners `deploy/{all,next,worker}.mjs`.
 - **db** — `lib/databases.mjs`; kinds `d1 · kv · postgres · supabase · sanity`; runners `data/migrate.mjs`
   - `data/backup.mjs` (dispatch on kind). **One db active:** the `sanity` `content` dataset. One owner per db.
 - **infra** — `lib/infra-registry.mjs`; provider `cloudflare` (the only wired provider); runner
@@ -93,9 +93,8 @@ carries the same coupling caution as per-leaf services.
 
 **Platform classes** — each has one deploy recipe, dispatched from the registry:
 `next-cf` (Next → OpenNext → Cloudflare) · `worker-cf` (bare Cloudflare Worker) ·
-`expo` (React Native / EAS). Cloudflare apps ship together via
-`pnpm deploy:all:<env>` (`--only cloudflare`, the default); native apps via `deploy:all:<env> --only all`
-or their own `deploy:<slug>:<env>`.
+`capacitor` (the mobile shell — built locally, no deploy recipe yet). Cloudflare apps ship together via
+`pnpm deploy:all:<env>`.
 
 **Legend:** ● live · ◐ activated scaffold (real `package.json` + workspace member; placeholder content) · ○ reserved.
 

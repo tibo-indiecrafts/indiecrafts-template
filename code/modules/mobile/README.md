@@ -1,7 +1,7 @@
 # Reserved — `modules/mobile`
 
 **Not built — a reserved scope.** This marks where a **mobile-only feature** lives —
-an Expo / React-Native product slice with no web surface.
+a product slice that ships only in the mobile shell, with no web surface.
 
 Empty on purpose. A module lives at the **scope where it renders**: web-delivered
 → `modules/web`, cross-platform → `modules/shared`, here **only** when the feature

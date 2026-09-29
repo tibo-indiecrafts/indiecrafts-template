@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Builds platform-agnostic share-intent URLs for a page. The result is plain strings with no DOM, so any surface reuses them: the web renders a button row, and a native surface can feed the same targets to the OS share sheet. Each target's `key` doubles as the icon's brand name.
+Builds platform-agnostic share-intent URLs for a page. The result is plain strings with no DOM, so any surface reuses them: the web renders a button row from them. Each target's `key` doubles as the icon's brand name.
 
 ## Exports
 

@@ -6,11 +6,11 @@ status: stable
 
 # Compliance core barrel
 
-> The `/shared` public surface — pure TS, safe to import from web or Expo.
+> The `/shared` public surface — pure TS, safe to import from any web surface or Worker.
 
 ## Purpose
 
-The public entry of the platform-agnostic compliance core. It re-exports the consent math, store and legal-route contracts, the geo-to-regulation resolver, and the erasure and export clients. Zero DOM, Sanity, or Next coupling; the forked UI lives in `../web` and `../native`.
+The public entry of the platform-agnostic compliance core. It re-exports the consent math, store and legal-route contracts, the geo-to-regulation resolver, and the erasure and export clients. Zero DOM, Sanity, or Next coupling; the UI lives in `../web`.
 
 ## Exports
 

@@ -23,7 +23,7 @@ Run every command from the **repo root** — turbo delegates to `@indiecrafts/we
 > **`pnpm install` blocked?** The workspace pins a supply-chain policy in `pnpm-workspace.yaml`:
 > a **3-day** `minimumReleaseAge` (a fresh version waits 3 days — malware is usually caught +
 > unpublished within 24–72h) plus `trustPolicy: no-downgrade` (rejects a version that lost its npm
-> provenance). Fast-moving trusted toolchains (Cloudflare/Workers, expo/react-native,
+> provenance). Fast-moving trusted toolchains (Cloudflare/Workers,
 > next/sanity/vitest/playwright…) are in `minimumReleaseAgeExclude`, and a handful of
 > provenance-gap false positives (undici-types, `@aws-sdk/*`, `@smithy/*`, flow-*, …) in
 > `trustPolicyExclude`. If a **new** legitimate package trips either gate, add its name to the
@@ -125,21 +125,10 @@ claude plugin install typescript-lsp@claude-plugins-official
 Then **`/reload-plugins`**. It surfaces the same errors the commit hook + CI `tsc` enforce, in real
 time. Nothing to configure — it reads each project's `tsconfig.json`.
 
-### Expo / React Native (the `mobile` surface)
+### Capacitor (the `mobile` shell)
 
-The `mobile` surface (`code/projects/mobile/surfaces/main`, Expo SDK 52 · RN 0.76) gets the **official
-Expo plugin** — Expo Skills (`expo-router` · `expo-native-ui` · `expo-design-system` · `expo-tailwind-setup`
-/ NativeWind · `expo-animation` · `expo-upgrade` · the `eas-*` build/deploy/update workflows) **plus the
-Expo MCP server** for version-correct docs (your SDK 52 is bleeding-edge, where model priors are stale).
-Install once (global, per-developer), from the same `claude-plugins-official` marketplace as the LSP:
-
-```bash
-claude plugin install expo@claude-plugins-official
-```
-
-Then **`/reload-plugins`**. Reach for its skills when working under `code/projects/mobile/**` (and, for the
-shared RN bits, `code/packages/mobile/ui-native`). Source:
-[`docs.expo.dev/agents/claude`](https://docs.expo.dev/agents/claude/).
+The `mobile` shell (`code/projects/mobile/surfaces/main`) is a Capacitor 8 wrapper with no UI of its own.
+It needs JDK 21 for Android and Xcode 26 for iOS. Setup + run → [Mobile shell (Capacitor)](/projects/mobile/main/).
 
 ### Security guidance
 

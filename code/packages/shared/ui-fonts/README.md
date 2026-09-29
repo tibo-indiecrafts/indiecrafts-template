@@ -20,5 +20,5 @@ const satoshi = localFont({
 });
 ```
 
-A **native** (Expo) app loads the same `.woff2` via `expo-font`. Add a font: drop the `.woff2` here,
+Add a font: drop the `.woff2` here,
 add a `FONT_FILES` entry + a `FontKey` in config, then a `localFont` call in the app.

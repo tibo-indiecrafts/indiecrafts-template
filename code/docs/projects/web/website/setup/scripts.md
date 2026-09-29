@@ -83,7 +83,7 @@ The `build` scripts use `next build --turbopack` (Next 16, ~2–5× faster); the
 (`dev:doctor` · `dev:setup` · `dev:refresh:dev`).
 
 ::: tip CI mirrors this
-`pnpm verify` is the local gate. `.github/workflows/test.yml` (CI) runs the same checks as blocking jobs — **verify** (tsc · lint · format · contrast · tests · tooling gates) + **build** (`build:cf`, the real OpenNext Worker build — catches prerender + CF-only breakage) + **browser-stories** (every Storybook story = a component + a11y test, web **and** native via react-native-web; `pnpm test:stories`) — plus advisory **browser-e2e** (Playwright visual-regression + app e2e, until linux baselines land) and a **docs** build + **dependency-review**. React Doctor is the advisory `react-doctor.yml`. `pnpm verify` itself skips `build:cf` and the browser jobs (they need a browser); push a PR (or run `pnpm --filter @indiecrafts/web-surfaces-website build:cf`) to exercise the build.
+`pnpm verify` is the local gate. `.github/workflows/test.yml` (CI) runs the same checks as blocking jobs — **verify** (tsc · lint · format · contrast · tests · tooling gates) + **build** (`build:cf`, the real OpenNext Worker build — catches prerender + CF-only breakage) + **browser-stories** (every Storybook story = a component + a11y test; `pnpm test:stories`) — plus advisory **browser-e2e** (Playwright visual-regression + app e2e, until linux baselines land) and a **docs** build + **dependency-review**. React Doctor is the advisory `react-doctor.yml`. `pnpm verify` itself skips `build:cf` and the browser jobs (they need a browser); push a PR (or run `pnpm --filter @indiecrafts/web-surfaces-website build:cf`) to exercise the build.
 :::
 
 ### CI workflows (`.github/workflows/`)

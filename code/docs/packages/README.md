@@ -11,8 +11,8 @@ Single-purpose, **consumed as source** (no per-brick build) through pnpm workspa
 symlinks + Next `transpilePackages`. Dependencies point **down** and never up:
 `app → module → package`. A brick that imports an app is a design error.
 
-**Thirty bricks across three scopes** — `shared/` (portable · DOM-free), `web/` (Next/Sanity),
-and `mobile/` (Expo). Each has its own page (exports · deps · consumers · gotchas) in the
+**Twenty-eight bricks across two scopes** — `shared/` (the api or workers use it too) and `web/`
+(browser/Next only). Each has its own page (exports · deps · consumers · gotchas) in the
 **Packages** sidebar group, grouped by scope. The highlights are tabled below; the full roster
 and reserved names live in [`code/packages/_registry.md`](../../code/packages/_registry.md). All
 ship `version: 0.0.0`, `private: true`, `type: module`.

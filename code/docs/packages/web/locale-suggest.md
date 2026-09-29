@@ -25,7 +25,7 @@ auto-redirect** (best practice); language **names**, never flags.
   top-ranked supported `Accept-Language` locale that ≠ the active one, else `null`. Only the
   **HTTP-header parser** is web-specific: it parses + ranks `Accept-Language`, then delegates the
   decision to the shared **`pickSuggestedLocale`** (`@indiecrafts/packages-shared-config`, see
-  [config](/packages/shared/config)), which the native shells reuse over `getLocales()` / `navigator.languages`.
+  [config](/packages/shared/config)), which a plain-React host can also call over `navigator.languages`.
 - **`localeSuggest` singleton** (Studio → **Suggestion de langue**): `message` (with a
   `{language}` placeholder), `switchLabel`, `dismissLabel` (`localeString`) →
   `getLocaleSuggest(locale)`.

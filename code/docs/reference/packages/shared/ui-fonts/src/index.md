@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-This is the barrel of `@indiecrafts/packages-shared-ui-fonts`. It describes the self-hosted `.woff2` files that live in `../fonts/`, so every surface ships fonts from one place. The web app points `next/font` `localFont` at the file paths, and a native app loads the same files via `expo-font`.
+This is the barrel of `@indiecrafts/packages-shared-ui-fonts`. It describes the self-hosted `.woff2` files that live in `../fonts/`, so every surface ships fonts from one place. The web app points `next/font` `localFont` at the file paths.
 
 ## Exports
 

@@ -6,8 +6,8 @@
  *
  * `next/font` requires **static-literal** loader calls, so the web app keeps its
  * `localFont(...)` in `src/lib/fonts.ts` and points `src.path` at this brick's
- * `../fonts/*.woff2` (a relative path — not a JS import). A native (Expo) app loads
- * the same `.woff2` via `expo-font`. Google fonts (Geist) stay loaded by the app.
+ * `../fonts/*.woff2` (a relative path — not a JS import). Google fonts (Geist) stay
+ * loaded by the app.
  *
  * `FontKey`/`FontRoles` **types** live in `@indiecrafts/packages-shared-config`
  * (config vocabulary); this brick owns the *files* those keys resolve to.
@@ -23,7 +23,7 @@ export type FontFile = {
 
 /**
  * Self-hosted font files by `FontKey`. Google-served families (e.g. Geist) are not
- * here — they carry no file. Reference for `localFont`/`expo-font` wiring + docs.
+ * here — they carry no file. Reference for the `localFont` wiring + docs.
  */
 export const FONT_FILES = {
   satoshi: [

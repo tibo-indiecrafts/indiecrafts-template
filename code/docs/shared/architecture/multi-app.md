@@ -79,35 +79,31 @@ Intl format, env/CSP, logging, `PageConfig`/`isPageVisible`); the app owns its i
 ## Brick & module tiers — what a surface pulls in
 
 Not every surface is a marketing site. What a surface depends on falls in tiers, so a lean surface
-(`admin` · `app` · `mobile`) never carries the content stack:
+(`admin` · `app`) never carries the content stack:
 
-- **baseline** — every surface: `packages-shared-config` (via `@/config`), `packages-shared-ui-tokens`
+- **baseline** — every surface: `packages-shared-config` (via `@/config`), `packages-web-ui-tokens`
   (`globals.css`), and, on web, `packages-web-ui` (shadcn primitives). The Hello-World `app` surface
   wires only these.
-- **portable** (`packages/shared/*`) — any platform: `config · ui-tokens · ui-icons · ui-fonts · utils ·
-format · logger · security · gated-delivery · system-pages · compliance · version` (`system-pages` +
-  `compliance` fork `web`/`native` inside). No Next/React/DOM/Sanity coupling in the shared surface.
-  `compliance`/`version` each pair a portable core here with a richer `web/` brick (below): the
-  shared core is what the `app`/Expo shells consume, the web brick is the website's Sanity
-  surface over the same math.
-- **web-coupled** (`packages/web/*`) — needs Next/React/DOM/Sanity: `ui · ui-components · sanity ·
-email · page-builder · schema · i18n · announcement · compliance · locale-suggest · version`. Shared
-  across web _surfaces_; can't run on Expo as-is.
-- **native** (`packages/mobile/*`) — Expo/RN-only: `ui-native` (the native design system). The web `ui`
-  (shadcn/DOM) can't run here; native forks the components but shares the **tokens**.
+- **shared** (`packages/shared/*`) — the api or workers use it too: `config · auth · ui-fonts · utils ·
+format · logger · security · security-events · gated-delivery · query · announcement · compliance`.
+  No Next/React/DOM/Sanity coupling in the `./shared` surface. `compliance`/`announcement` each pair a
+  portable core here with a richer `web/` brick (below): the `app` surface consumes the shared core,
+  the web brick is the website's Sanity surface over the same math.
+- **web-coupled** (`packages/web/*`) — browser/Next only: `ui · ui-components · ui-tokens · ui-icons ·
+system-pages · sanity · email · page-builder · schema · i18n · announcement · compliance · locale-suggest ·
+version`. Shared across web _surfaces_.
 - **content / marketing** (`modules/web/*`) — website-only feature verticals: `blog · newsletter ·
 waitlist · contact`. A non-content surface depends on **none** of these.
 
 Rule of thumb: **content is a module or a `web/` brick, and only the content surface (`website`) pulls
 it in.** Add `sanity`/`email`/page-builder/a module to another surface only when a real page needs it —
 `app` deliberately declares none. Scope is decided by _what a brick can run on_, not who uses it today
-(see [`packages/_registry.md`](/packages/README)). When a native app eventually needs a web-coupled brick
+(see [`packages/_registry.md`](/packages/README)). When the api or a worker needs a web-coupled brick
 (Sanity reads, block types, i18n), split its portable core into `shared/` then — `config`'s `./shared`
 vs `./web` split is the proven pattern.
 
-How the two UI platforms assemble the **same shell** (theme · i18n · fonts · status pages · UI) from
-these tiers — and the Next-agnostic rule that keeps web bricks portable — is its own page:
-[**Cross-platform shell**](/shared/architecture/cross-platform-shell).
+How the Capacitor shell reuses the `app` surface — and what lives in `shared/` vs `web/` — is its
+own page: [**Mobile shell**](/shared/architecture/cross-platform-shell).
 
 ## Infra & deploy per app
 
@@ -126,11 +122,11 @@ prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
 ## Where it stands
 
 - **Now:** eight activated app slots across three platform classes; `web` is the full app + the hub
-  Studio + the only content lens; one tenant dataset. The non-website shells (`app` · `mobile`)
-  now share a compliance + version + locale layer over the portable bricks
+  Studio + the only content lens; one tenant dataset. The `app` surface (which the Capacitor shell loads)
+  now carries a compliance + version + locale layer over the portable bricks
   ([`compliance-shared`](/packages/shared/compliance) · [`version`](/packages/web/version)) —
   legal link-out, a compliant-ready consent + re-acceptance UI, an update prompt, and a persisted locale
-  choice; see [Cross-platform shell](/shared/architecture/cross-platform-shell). **Done:** the config split (app-owned
+  choice; see [Mobile shell](/shared/architecture/cross-platform-shell). **Done:** the config split (app-owned
   `theme`/`fonts`/`features`/`pages`; islands read injected config), `composeStudio` (the per-app-grouped
   hub desk), and registry-driven deploy + CI ([Platform deploy](/shared/architecture/platform-deploy)). **Still readiness
   work:** the `Island` manifest + `composeApp` (Decision C — one line per island composing

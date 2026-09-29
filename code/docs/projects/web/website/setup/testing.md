@@ -55,15 +55,12 @@ pnpm verify            # the full gate — now ends with `pnpm test`
 browser suites — `test:stories`, `e2e`, visual — need a browser, so they stay **out** of
 `verify` (like `pnpm build`), and run in the advisory CI `browser` job.
 
-### Native (Expo mobile) — jest, not Vitest
+### Mobile shell (Capacitor) — `node --test`, not Vitest
 
-The **mobile** app runs on React Native, so its suite is **`jest` + `jest-expo`** (the RN transform),
-not Vitest — colocated `*.test.ts(x)` beside the source, same as the web rule. Config:
-`code/projects/mobile/surfaces/main/jest.config.js` (`preset: "jest-expo"`; `transformIgnorePatterns`
-is **pnpm-aware** — it transpiles RN/Expo packages under `node_modules/.pnpm/…`; `jest.setup.js` mocks
-the native `AsyncStorage`). Run with `pnpm --filter @indiecrafts/mobile-surfaces-main test`; it is folded
-into that app's `verify` (`tsc && test`), so `pnpm verify` covers it via the turbo fan-out. Component
-tests add React Native Testing Library + `testID`s when the first screen lands (not before).
+The **mobile** shell has no UI, so its suite is small: `node --test` over `src/*.test.ts` and
+`scripts/*.test.mjs`. Run with `pnpm --filter @indiecrafts/mobile-surfaces-main test`; it is folded
+into that app's `verify` (`tsc && test`), so `pnpm verify` covers it via the turbo fan-out. The screens
+live in the `app` surface and are tested there.
 
 ### Visual baselines are platform-specific
 

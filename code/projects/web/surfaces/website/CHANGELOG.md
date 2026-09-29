@@ -17,6 +17,11 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Removed
+
+- **The `mobile` announcement surface and the `appContent` mobile welcome section** (schema, seed, and
+  stored data). **Why:** the mobile app is now the `app` surface inside a Capacitor shell.
+
 ### Added
 
 - **`GET /api/legal-version`** — a tiny public route returning the effective legal version (the SAME

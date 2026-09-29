@@ -17,6 +17,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Mobile is a Capacitor shell.** New ADR 0001 (Capacitor over Expo); the mobile page is a dev-setup guide
+  for the shell; `cross-platform-shell` became "Mobile shell"; every Expo/native passage, `/v1/geo`,
+  `EVENTS_TOKEN`, and the `mobile/` package scope are gone. `auth` documents password + email code sign-in
+  and the Clerk dashboard steps.
+
+### Changed
+
 - **Restructured the whole site to mirror the code spine + made it enforce itself.** Docs folders
   now match `code/`: `apps/web/**` → `projects/web/website/**`, packages nested by scope
   (`packages/{shared,web,mobile}/<name>.md`, dropping the `-shared` suffix), modules under

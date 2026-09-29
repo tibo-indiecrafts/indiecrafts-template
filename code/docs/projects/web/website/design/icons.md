@@ -13,15 +13,15 @@ code; the marks are edited in Sanity.
 ## Icon sets
 
 Icons come from **one brick** — [`@indiecrafts/packages-web-ui-icons`](/packages/web/ui-icons)
-— so the app, blog, and (later) native surfaces draw from a single source. Import the renderers from
+— so the app and blog draw from a single source. Import the renderers from
 `/web`; all are demoed in `src/user-interface/homepage/sections/IconShowcase.tsx`.
 
-| Renderer     | Family         | Use for                                                                                      |
-| ------------ | -------------- | -------------------------------------------------------------------------------------------- |
-| `Icon`       | Lucide         | The default outline UI glyph set — buttons, list bullets, nav. Cross-platform.               |
-| `ReiconIcon` | Reicon         | The same shapes in Outline **and** Filled weights (`weight="Filled"`). Web only.             |
-| `SvgIcon`    | Custom SVGs    | Project-specific marks (a logo glyph) — add path data to the brick's `SVGS`. Cross-platform. |
-| `BrandIcon`  | Brand / social | Social logos painted in their official brand colors (`brandColor`). Cross-platform.          |
+| Renderer     | Family         | Use for                                                                      |
+| ------------ | -------------- | ---------------------------------------------------------------------------- |
+| `Icon`       | Lucide         | The default outline UI glyph set — buttons, list bullets, nav.               |
+| `ReiconIcon` | Reicon         | The same shapes in Outline **and** Filled weights (`weight="Filled"`).       |
+| `SvgIcon`    | Custom SVGs    | Project-specific marks (a logo glyph) — add path data to the brick's `SVGS`. |
+| `BrandIcon`  | Brand / social | Social logos painted in their official brand colors (`brandColor`).          |
 
 ```tsx
 import { Icon, BrandIcon } from "@indiecrafts/packages-web-ui-icons/web";
@@ -35,9 +35,7 @@ The design contract ([`DESIGN.md`](../../../../code/packages/web/ui-tokens/DESIG
 nav area. Mark decorative icons `aria-hidden="true"` — give them a label only when the icon is the
 sole content of a control.
 
-**Cross-platform:** `Icon`/`SvgIcon`/`BrandIcon` also render on native (`/native`, via
-`lucide-react-native` + `react-native-svg`); `ReiconIcon` is web only (reicon has no React
-Native build). Full reference + how to add a glyph or a custom SVG → the [`ui-icons` package doc](/packages/web/ui-icons).
+Full reference + how to add a glyph or a custom SVG → the [`ui-icons` package doc](/packages/web/ui-icons).
 
 ## Favicon, app icon & logo — edited in Sanity
 

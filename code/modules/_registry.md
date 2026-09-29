@@ -5,11 +5,11 @@ Vertical, feature-flagged slices — composed from `packages/` bricks, mounted b
 ## Layout — foldered by **platform-scope**
 
 Modules nest `code/modules/<scope>/<module>/`, where **scope = where the feature renders** — the
-same `shared · web · mobile` set as the bricks:
+scope folders (`shared · web · mobile`):
 
 - **`web/`** — web-delivered features (the three live modules).
 - **`shared/`** — cross-platform features (same feature on ≥2 platforms). Reserved marker.
-- **`mobile/`** — Expo-only features. Reserved marker.
+- **`mobile/`** — mobile-shell-only features. Reserved marker.
 
 **Category** (`content · growth · …`) stays a **tag**, not a folder.
 

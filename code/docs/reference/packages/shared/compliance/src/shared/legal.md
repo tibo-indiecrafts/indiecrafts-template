@@ -6,11 +6,11 @@ status: stable
 
 # Legal routes contract
 
-> The legal-page slugs shells link out to, plus the re-acceptance check.
+> The legal-page slugs the `app` surface links out to, plus the re-acceptance check.
 
 ## Purpose
 
-One source of truth for the canonical legal pages, so a shell can link out to the website's legal pages and the website's own `pages.ts` reads the same slugs. It also carries the legal re-acceptance shape used by every shell over its own store adapter. No re-hosting — the content stays Sanity-driven on the website.
+One source of truth for the canonical legal pages, so the `app` surface can link out to the website's legal pages and the website's own `pages.ts` reads the same slugs. It also carries the legal re-acceptance shape used by every shell over its own store adapter. No re-hosting — the content stays Sanity-driven on the website.
 
 ## Exports
 

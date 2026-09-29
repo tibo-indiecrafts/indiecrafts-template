@@ -50,7 +50,7 @@ pnpm project:rename <slug> --dry-run   # preview every file it would change, wri
 pnpm project:rename <slug>             # e.g. acme  (lowercase, unique per client)
 ```
 
-This sets `DEFAULT_SITE_PREFIX` in `@indiecrafts/packages-shared-config` **and** the prefix on **every** `wrangler.toml` resource name + Terraform `worker_name` under `code/` (a repo-wide sweep — every surface, the shared `api`/`cron`/`workers`, **and** the `tools/storybook` Worker, plus the `BACKUP_BUCKET` var and the native expo config). The prefix namespaces the browser keys (consent record, theme, locale cookie) and the Cloudflare Worker + R2 buckets, so two clients never collide. A `staging`/`prod` deploy is **blocked** until you do this (a shared-Cloudflare-account guard). It then prints the R2 buckets to create (§10). Use `--dry-run` first to review the change set.
+This sets `DEFAULT_SITE_PREFIX` in `@indiecrafts/packages-shared-config` **and** the prefix on **every** `wrangler.toml` resource name + Terraform `worker_name` under `code/` (a repo-wide sweep — every surface, the shared `api`/`cron`/`workers`, **and** the `tools/storybook` Worker, plus the `BACKUP_BUCKET` var and the Capacitor shell identity in `shell.json` + the native projects). The prefix namespaces the browser keys (consent record, theme, locale cookie) and the Cloudflare Worker + R2 buckets, so two clients never collide. A `staging`/`prod` deploy is **blocked** until you do this (a shared-Cloudflare-account guard). It then prints the R2 buckets to create (§10). Use `--dry-run` first to review the change set.
 
 ---
 

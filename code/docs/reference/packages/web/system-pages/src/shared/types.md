@@ -6,11 +6,11 @@ status: stable
 
 # Status page prop contracts
 
-> The copy contracts an app resolves and passes in — no React, DOM, or RN.
+> The copy contracts an app resolves and passes in — no React or DOM.
 
 ## Purpose
 
-The platform-agnostic copy contracts for the status pages. An app resolves these props (from `messages` or Sanity) and passes them in. There is no React, DOM, or RN here, so both the `../web` (DOM) and `../native` (RN) renderers extend these with their own navigation props.
+The platform-agnostic copy contracts for the status pages. An app resolves these props (from `messages` or Sanity) and passes them in. There is no React or DOM here, so the `../web` (DOM) renderers extend these with their own navigation props.
 
 ## Exports
 
