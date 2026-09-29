@@ -37,7 +37,7 @@ ignoredBuiltDependencies:
 # regardless of age.) Value is in MINUTES: 4320 = 3 days.
 minimumReleaseAge: 4320
 # Fast-moving, trusted vendor toolchains (Cloudflare workerd releases ~daily,
-# expo/react-native ship constantly) can't clear a 7-day age gate — and
+# react-native ships constantly) can't clear a 7-day age gate — and
 # blocking them blocks the whole multi-app install. Exempt those scopes; the gate
 # still guards the app's OWN dependencies (where malware actually hides).
 minimumReleaseAgeExclude:
@@ -46,9 +46,7 @@ minimumReleaseAgeExclude:
   - "wrangler"
   - "workerd"
   - "@opennextjs/*"
-  # Mobile (expo / react-native) toolchains
-  - "expo"
-  - "expo-*"
+  # React Native toolchain (Storybook react-native-web — removed in Task 5)
   - "react-native"
   - "@react-native/*"
   - "@react-native-community/*"
@@ -114,12 +112,10 @@ trustPolicyExclude:
   # multi-app install isn't blocked one transitive at a time.
   - "@smithy/*" # AWS SDK core (via @opennextjs/cloudflare)
   - "@aws-sdk/*"
-  - "@expo/*" # mobile (expo)
-  - "expo-*"
   - "react-native"
   - "@react-native/*"
   - "@react-native-community/*"
-  - "fbjs" # legacy expo/RN transitives
+  - "fbjs" # legacy RN transitives
   - "fbemitter"
 
 # Single instance of the peer-heavy Sanity Studio packages across the monorepo. Schema +

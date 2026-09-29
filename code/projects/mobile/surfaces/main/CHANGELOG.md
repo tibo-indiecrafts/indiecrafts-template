@@ -1,6 +1,6 @@
 # Changelog — mobile app (`@indiecrafts/mobile-surfaces-main`)
 
-One record for the Expo mobile surface — every change that alters behavior, a
+One record for the mobile shell — every change that alters behavior, a
 convention, config, or persistence lands here in plain language with the _why_.
 
 **Not here:** shared-brick changes → [`code/packages/CHANGELOG.md`](../../../../packages/CHANGELOG.md);
@@ -10,6 +10,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 **Added · Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
+
+### Changed
+
+- **The Expo app is replaced by a Capacitor 8 shell.** The shell loads the hosted `app`
+  surface (`CAP_SERVER_URL`) and has no UI of its own; its identity lives in `shell.json`,
+  its offline page is generated from `messages/`, and `android/` + `ios/` are committed.
+  **Why:** one UI codebase instead of two — every screen now ships once, in the web app.
+  Run it: `pnpm --filter @indiecrafts/mobile-surfaces-main android`. Everything Expo
+  (EAS, the native deploy workflow, React Native screens) is removed; history below
+  describes the retired Expo app.
 
 ### Added
 

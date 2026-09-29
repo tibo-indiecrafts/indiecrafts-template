@@ -1,5 +1,5 @@
 /**
- * Swap the client namespace prefix across config, wrangler.toml, tfvars, and Expo config.
+ * Swap the client namespace prefix across config, wrangler.toml, tfvars, and the Capacitor shell identity.
  *
  * @see docs/reference/projects/web/website/scripts/project-rename.md
  */
@@ -8,7 +8,7 @@
 // (`resourceName` in apps.mjs), so ONLY `<prefix>` is client-specific: this swaps
 // it in `@indiecrafts/packages-shared-config` (`DEFAULT_SITE_PREFIX`) + on EVERY
 // `wrangler.toml` resource name + Terraform `worker_name` under `code/`, plus the
-// native (expo) config. A repo-wide sweep (not registry-driven) so it also reaches
+// Capacitor shell identity (shell.json + native projects). A repo-wide sweep (not registry-driven) so it also reaches
 // non-registry deployables — the `tools/storybook` Worker + any app added later. Run
 // from `code/projects/web/surfaces/website`:
 //
@@ -108,22 +108,26 @@ for (const file of walkInfra(resolve(REPO_ROOT, "code"))) {
   }
 }
 
-// 4. The native surface (expo) carries the prefix in its OWN config, not a
-// wrangler.toml — so the infra walk never reaches it. Swap it here so a rename is
-// COMPLETE: the Expo app slug/scheme + reverse-DNS bundle id and the EAS build env's
-// api-URL prefix. Keyed off TEMPLATE_PREFIX (alphanumeric, safe to interpolate).
+// 4. The Capacitor shell keeps its identity in its own files (never a wrangler.toml),
+// so the infra walk never reaches it: the app id + name + URL scheme in shell.json,
+// mirrored into the committed native projects.
 const P = TEMPLATE_PREFIX;
+const SHELL = "code/projects/mobile/surfaces/main";
 const nativeFiles = [
   {
-    path: "code/projects/mobile/surfaces/main/app.config.ts",
+    path: `${SHELL}/shell.json`,
     subs: [
-      [new RegExp(`(\\b(?:name|slug|scheme):\\s*)"${P}"`, "g"), `$1"${slug}"`],
       [new RegExp(`"dev\\.${P}\\.`, "g"), `"dev.${slug}.`],
+      [new RegExp(`("(?:appName|scheme)":\\s*)"${P}"`, "g"), `$1"${slug}"`],
     ],
   },
   {
-    path: "code/projects/mobile/surfaces/main/eas.json",
-    subs: [[new RegExp(`//${P}-`, "g"), `//${slug}-`]],
+    path: `${SHELL}/android/app/src/main/AndroidManifest.xml`,
+    subs: [[new RegExp(`android:scheme="${P}"`, "g"), `android:scheme="${slug}"`]],
+  },
+  {
+    path: `${SHELL}/ios/App/App/Info.plist`,
+    subs: [[new RegExp(`<string>${P}</string>`, "g"), `<string>${slug}</string>`]],
   },
 ];
 const nativeRenamed = [];
@@ -144,7 +148,7 @@ console.log(`  · @indiecrafts/packages-shared-config  DEFAULT_SITE_PREFIX = "${
 console.log(`  · wrangler.toml + tfvars  ${changed.length} file(s):`);
 for (const f of changed) console.log(`      ${f}`);
 if (nativeRenamed.length) {
-  console.log(`  · native config  ${nativeRenamed.length} file(s):`);
+  console.log(`  · shell identity  ${nativeRenamed.length} file(s):`);
   for (const f of nativeRenamed) console.log(`      ${f}`);
 }
 if (dryRun) {

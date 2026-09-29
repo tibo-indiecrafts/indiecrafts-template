@@ -16,13 +16,10 @@ const ROOT = resolve(
   "../../../..",
 );
 // tsgo (TS 7 preview) doesn't auto-discover some ambient test/story globals yet, so the
-// storybook (vitest/storybook globals) and mobile (jest + expo/RN) tsconfigs report false
-// errors real `tsc` doesn't. Exclude them from the fast path — `pnpm tsc` (real) still
-// covers all 8 in CI, and `pnpm --filter <pkg> tsc` covers those two on demand.
-const TSGO_UNSUPPORTED = new Set([
-  "code/projects/web/tools/storybook",
-  "code/projects/mobile/surfaces/main",
-]);
+// storybook (vitest/storybook globals) tsconfig reports false errors real `tsc` doesn't.
+// Exclude it from the fast path — `pnpm tsc` (real) still covers it in CI, and
+// `pnpm --filter <pkg> tsc` covers it on demand.
+const TSGO_UNSUPPORTED = new Set(["code/projects/web/tools/storybook"]);
 const dirs = [...new Set(APPS.map((a) => a.dir))]
   .filter((d) => !TSGO_UNSUPPORTED.has(d))
   .filter((d) => existsSync(resolve(ROOT, d, "tsconfig.json")));

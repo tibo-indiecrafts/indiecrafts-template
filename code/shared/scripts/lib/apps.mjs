@@ -2,27 +2,27 @@
 // platform each targets, and in what order they deploy." Every deploy runner,
 // the deploy-all orchestrator, project-rename, and CI read this instead of
 // re-deriving it (previously: scan `code/projects/*/wrangler.toml`, which can't
-// see non-Cloudflare apps like mobile/desktop).
+// see non-Cloudflare apps).
 //
 // Adding an app = one row here + its own `deploy:<slug>:<env>` script. That's it.
 //
 // Platform classes:
 //   next-cf   — Next.js → OpenNext → Cloudflare Workers (website · admin)
 //   worker-cf — a bare Cloudflare Worker (api · cron · workers)
-//   expo      — React Native / Expo, ships via EAS (mobile) — NOT Cloudflare
+//   capacitor — the Capacitor shell around the app surface (mobile) — NOT deployed by these runners
 //
 // CLI (for the CI matrix): `node scripts/lib/apps.mjs --json [--cloudflare]`
 
 import { fileURLToPath } from "node:url";
 
-/** The deploy environments every Cloudflare app supports. Native classes map these to their own concept (EAS profile / build channel). */
+/** The deploy environments every Cloudflare app supports. */
 export const ENVS = ["dev", "staging", "prod"];
 
 /**
  * @typedef {Object} AppEntry
  * @property {string} slug   short id + `deploy:<slug>:<env>` script name
  * @property {string} pkg    the workspace package name (`pnpm --filter` target)
- * @property {"next-cf"|"worker-cf"|"expo"} class  platform class → deploy recipe
+ * @property {"next-cf"|"worker-cf"|"capacitor"} class  platform class → deploy recipe
  * @property {"web"|"mobile"|"shared"} platform  which platform folder it lives under
  * @property {"surface"|"service"|"tool"} kind  surface (a user-facing site/screen/app) · service (a worker backend) · tool (dev tooling, e.g. storybook)
  * @property {string} dir    the project's directory — `code/projects/<platform>/<kind>s/<leaf>`.
@@ -113,7 +113,7 @@ export const APPS = [
   {
     slug: "mobile",
     pkg: "@indiecrafts/mobile-surfaces-main",
-    class: "expo",
+    class: "capacitor",
     platform: "mobile",
     kind: "surface",
     dir: "code/projects/mobile/surfaces/main",
@@ -124,18 +124,15 @@ export const APPS = [
 /** The classes that deploy to Cloudflare (wrangler). */
 export const CLOUDFLARE = new Set(["next-cf", "worker-cf"]);
 
-/** True when an app deploys to Cloudflare (vs a native store/installer). */
+/** True when an app deploys to Cloudflare. */
 export const isCloudflare = (app) => CLOUDFLARE.has(app.class);
 
 /**
- * Deployable apps in deploy order.
- * @param {{ only?: "cloudflare"|"all" }} [opts] default `cloudflare` — the common
- *   "ship several apps to CF" case; `all` also includes expo (which needs its
- *   own credentials + runners).
+ * Deployable apps in deploy order — the Cloudflare apps. The Capacitor shell has no
+ * release pipeline yet (it ships with the App Store spec), so it is never deployed here.
  */
-export function deployable({ only = "cloudflare" } = {}) {
-  const list = only === "all" ? APPS : APPS.filter(isCloudflare);
-  return [...list].sort(
+export function deployable() {
+  return APPS.filter(isCloudflare).sort(
     (a, b) => a.order - b.order || a.slug.localeCompare(b.slug),
   );
 }
@@ -174,11 +171,13 @@ export function resourceName(slug, env, prefix) {
 }
 
 // ── CLI: emit the app list for the CI matrix ──────────────────────────────────
-//   node scripts/lib/apps.mjs [--json] [--cloudflare] [--class <next-cf|worker-cf|expo>]
+//   node scripts/lib/apps.mjs [--json] [--cloudflare] [--class <next-cf|worker-cf|capacitor>]
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2);
   const clsIdx = argv.indexOf("--class");
-  let list = deployable({ only: "all" }); // registry order
+  let list = [...APPS].sort(
+    (a, b) => a.order - b.order || a.slug.localeCompare(b.slug),
+  ); // registry order
   if (argv.includes("--cloudflare")) list = list.filter(isCloudflare);
   if (clsIdx >= 0) list = list.filter((a) => a.class === argv[clsIdx + 1]);
   if (argv.includes("--json")) {

@@ -34,6 +34,7 @@ Do **not** write one for a routine change the diff already explains.
 ## Log
 
 - `0000` — [Template](/contributing/adr/0000-template).
+- `0001` — [Capacitor over Expo](/contributing/adr/0001-capacitor-over-expo).
 
 > The web app's visual-system decisions also live as a running log in
 > [Design decisions](/projects/web/website/design/decisions).

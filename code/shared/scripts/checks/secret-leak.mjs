@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 // Secret-leak guard — proves no server secret is exposed under a public build prefix.
 //
-// The repo NEVER: "never expose a non-public token under NEXT_PUBLIC_" (and the Expo
-// EXPO_PUBLIC_ / Vite VITE_ equivalents — all inlined into a client bundle). This check
+// The repo NEVER: "never expose a non-public token under NEXT_PUBLIC_" (and the Vite
+// VITE_ equivalent — both inlined into a client bundle). This check
 // encodes it without a hand-maintained list: the secret registry is the set of
 // `*.dev.vars.example` / `.env.example` files, which document every secret the app uses.
 //
 //   node scripts/checks/secret-leak.mjs   # exit 1 if a documented secret sits under a public prefix
 //
 // Rule: for each key declared in an example file,
-//   - a public-prefixed key (NEXT_PUBLIC_/EXPO_PUBLIC_/VITE_) is a DOCUMENTED PUBLIC var
-//     (a legit bundle value — e.g. EXPO_PUBLIC_API_TOKEN, the documented bundle abuse-gate);
+//   - a public-prefixed key (NEXT_PUBLIC_/VITE_) is a DOCUMENTED PUBLIC var (a legit
+//     bundle value, e.g. NEXT_PUBLIC_API_URL);
 //   - a non-public key that is not plain config (a URL, CSP mode) is a SECRET.
 // Then scan app/brick/worker source: a `<PREFIX><SECRET>` occurrence fails UNLESS the exact
 // var is a documented public key. A secret must be *documented* to be guarded — which is the
@@ -25,7 +25,7 @@ const CODE_DIR = fileURLToPath(new URL("../../..", import.meta.url)); // code/
 const BASE = process.env.SECRET_LEAK_ROOT || CODE_DIR;
 const IS_FIXTURE = !!process.env.SECRET_LEAK_ROOT;
 
-const PUBLIC_PREFIXES = ["NEXT_PUBLIC_", "EXPO_PUBLIC_", "VITE_"];
+const PUBLIC_PREFIXES = ["NEXT_PUBLIC_", "VITE_"];
 // Non-public keys that are plain config, never credentials — excluded from the secret set.
 const CONFIG = new Set([
   "CSP_MODE",
@@ -121,7 +121,7 @@ if (violations.length) {
       `✗ secret-leak: ${v.rel}:${v.line} exposes the secret "${v.full}" under a public build prefix.`,
     );
   console.error(
-    "\nA secret documented in a `.dev.vars.example` must never carry a NEXT_PUBLIC_ / EXPO_PUBLIC_ / VITE_\n" +
+    "\nA secret documented in a `.dev.vars.example` must never carry a NEXT_PUBLIC_ / VITE_\n" +
       "prefix — that inlines it into the client bundle. Read it server-side, or (if it is genuinely a\n" +
       "public bundle value) declare that public var in the surface's `.env.example` so it is allowlisted.",
   );

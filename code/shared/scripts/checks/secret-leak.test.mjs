@@ -12,7 +12,6 @@ const SCRIPT = fileURLToPath(new URL("./secret-leak.mjs", import.meta.url));
 // `<public-prefix><secret>` literal — the repo's own write-guard hook (and this very
 // check, which skips scripts/) would otherwise flag the test source itself.
 const NEXT = "NEXT_PUBLIC_";
-const EXPO = "EXPO_PUBLIC_";
 const VITE = "VITE_";
 
 /** Run the check with SECRET_LEAK_ROOT set to a throwaway tree of {relPath: source}. */
@@ -62,12 +61,12 @@ test("the same secret read server-side (no prefix) passes", () => {
 });
 
 test("a documented public bundle-gate token is allowlisted", () => {
-  // API_TOKEN is a server secret, but EXPO_PUBLIC_API_TOKEN is a documented public
+  // API_TOKEN is a server secret, but NEXT_PUBLIC_API_TOKEN is a documented public
   // bundle value — using it must NOT trip the guard.
   const r = runWith({
     "worker/.dev.vars.example": `API_TOKEN=`,
-    "mobile/.env.example": `${EXPO}API_TOKEN=`,
-    "mobile/src/session-log.ts": `const t = process.env.${EXPO}API_TOKEN;`,
+    "projects/web/surfaces/app/.env.example": `${NEXT}API_TOKEN=`,
+    "projects/web/surfaces/app/src/x.ts": `const t = process.env.${NEXT}API_TOKEN;`,
   });
   assert.equal(r.ok, true);
 });

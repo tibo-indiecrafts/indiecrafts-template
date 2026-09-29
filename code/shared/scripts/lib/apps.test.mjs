@@ -10,7 +10,7 @@ const REPO_ROOT = resolve(
   "../../../..",
 );
 
-const CLASSES = new Set(["next-cf", "worker-cf", "expo"]);
+const CLASSES = new Set(["next-cf", "worker-cf", "capacitor"]);
 
 test("every app row is well-formed with a known platform class", () => {
   for (const a of APPS) {
@@ -58,12 +58,8 @@ test("deployable() defaults to Cloudflare apps, in deploy order", () => {
   );
 });
 
-test("deployable({ only: 'all' }) includes the native (expo) class", () => {
-  const all = deployable({ only: "all" });
-  assert.ok(
-    all.some((a) => a.class === "expo"),
-    "expo missing",
-  );
+test("deployable() never includes the Capacitor shell", () => {
+  assert.ok(deployable().every((a) => a.class !== "capacitor"));
 });
 
 test("ENVS are the three Cloudflare deploy envs", () => {

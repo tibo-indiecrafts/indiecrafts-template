@@ -839,27 +839,6 @@
       "problemMatcher": []
     },
     {
-      "label": "deploy:mobile:main:dev",
-      "detail": "deploy mobile (expo) — dev",
-      "type": "shell",
-      "command": "pnpm deploy:mobile:main:dev",
-      "problemMatcher": []
-    },
-    {
-      "label": "deploy:mobile:main:staging",
-      "detail": "deploy mobile (expo) — staging",
-      "type": "shell",
-      "command": "pnpm deploy:mobile:main:staging",
-      "problemMatcher": []
-    },
-    {
-      "label": "deploy:mobile:main:prod",
-      "detail": "deploy mobile (expo) — PROD",
-      "type": "shell",
-      "command": "pnpm deploy:mobile:main:prod",
-      "problemMatcher": []
-    },
-    {
       "label": "deploy:all:dev",
       "detail": "deploy every app — dev",
       "type": "shell",

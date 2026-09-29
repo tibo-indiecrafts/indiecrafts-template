@@ -120,6 +120,10 @@ export default withMermaid(
               link: "/contributing/adr/",
             },
             { text: "ADR template", link: "/contributing/adr/0000-template" },
+            {
+              text: "ADR 0001 — Capacitor over Expo",
+              link: "/contributing/adr/0001-capacitor-over-expo",
+            },
           ],
         },
         {
@@ -354,7 +358,10 @@ export default withMermaid(
               text: "Storybook (design-system gallery)",
               link: "/projects/web/tools/storybook",
             },
-            { text: "Mobile (Expo)", link: "/projects/mobile/main/" },
+            {
+              text: "Mobile shell (Capacitor)",
+              link: "/projects/mobile/main/",
+            },
           ],
         },
         {

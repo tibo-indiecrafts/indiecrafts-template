@@ -1,12 +1,8 @@
-// Deploy every deployable app to one env, in registry order, fail-fast. Default:
-// the CLOUDFLARE apps (the common "ship several apps to CF" case). `--only all`
-// (or `--all`) also includes native apps (expo), which need their own
-// credentials + runners. Each app self-deploys via its own `deploy:<slug>:<env>`
-// script (read from the registry, `scripts/lib/apps.mjs`), so this runner never
-// hardcodes per-app steps — a next-cf app runs OpenNext, a worker just `wrangler
-// deploy`s, a native app runs its EAS recipe.
+// Deploy every Cloudflare app to one env, in registry order, fail-fast. Each app
+// self-deploys via its own `deploy:<slug>:<env>` script (read from the registry,
+// `scripts/lib/apps.mjs`), so this runner never hardcodes per-app steps.
 //
-//   node scripts/deploy-all.mjs <dev|staging|prod> [--only cloudflare|all] [--all] [--yes] [--dry-run]
+//   node scripts/deploy/all.mjs <dev|staging|prod> [--yes] [--dry-run]
 
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -18,35 +14,17 @@ const env = args[0];
 const dry = args.includes("--dry-run");
 const yesProd = args.includes("--yes-prod");
 const skipGate = args.includes("--skip-gate");
-const onlyIdx = args.indexOf("--only");
-const only = args.includes("--all")
-  ? "all"
-  : onlyIdx >= 0
-    ? args[onlyIdx + 1]
-    : "cloudflare";
 // Pass-through flags for each app's deploy (e.g. --yes), minus our own flags.
-const passthru = args
-  .slice(1)
-  .filter(
-    (a, i, arr) =>
-      !["--dry-run", "--all", "--only", only].includes(a) &&
-      arr[i - 1] !== "--only",
-  );
+const passthru = args.slice(1).filter((a) => a !== "--dry-run");
 
 if (!ENVS.includes(env)) {
-  console.error(
-    "Usage: deploy-all.mjs <dev|staging|prod> [--only cloudflare|all] [--yes] [--dry-run]",
-  );
-  process.exit(1);
-}
-if (!["cloudflare", "all"].includes(only)) {
-  console.error(`✗ --only must be "cloudflare" or "all" (got "${only}").`);
+  console.error("Usage: deploy/all.mjs <dev|staging|prod> [--yes] [--dry-run]");
   process.exit(1);
 }
 
 // Resolve each app's `deploy:<slug>:<env>` script up front, so a missing script is
 // reported before anything deploys — no silent skip mid-run.
-const plan = deployable({ only }).map((a) => {
+const plan = deployable().map((a) => {
   const script = `deploy:${a.slug}:${env}`;
   let hasScript = false;
   try {
@@ -62,11 +40,11 @@ const plan = deployable({ only }).map((a) => {
 });
 
 if (plan.length === 0) {
-  console.error(`No deployable apps for --only ${only}.`);
+  console.error(`No deployable Cloudflare apps in the registry.`);
   process.exit(1);
 }
 
-console.log(`deploy:all → ${env}  (${only})${dry ? "  [dry run]" : ""}`);
+console.log(`deploy:all → ${env}  (cloudflare)${dry ? "  [dry run]" : ""}`);
 for (const p of plan) {
   const mark = p.hasScript ? "▶" : "⚠";
   console.log(
@@ -79,7 +57,7 @@ if (dry) process.exit(0);
 // its own gate/confirm (`--skip-gate --yes-prod`), so `pnpm verify` runs once, not per app,
 // and prod is confirmed once, not N times. dev is a no-op; CI skips both.
 gate(env, { skipGate });
-await confirmProd("Deploy all", `every ${only} app`, env, { yesProd });
+await confirmProd("Deploy all", "every Cloudflare app", env, { yesProd });
 const perApp = [
   "--skip-gate",
   ...(env === "prod" ? ["--yes-prod", "--yes"] : []),
