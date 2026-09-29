@@ -32,7 +32,6 @@ const CONFIG = new Set([
   "CSP_TRUSTED_TYPES",
   "SUPABASE_PROJECT_REF",
   "EMAIL_ADMIN_BCC",
-  "EXAMPLE_TOKEN", // stub placeholder in the cron/workers examples
 ]);
 const isConfig = (key) => key.endsWith("_URL") || CONFIG.has(key);
 
