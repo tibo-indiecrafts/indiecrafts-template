@@ -9,10 +9,9 @@ import type { ListItemBuilder, StructureBuilder } from "sanity/structure";
 import { HomeIcon } from "@sanity/icons/Home";
 
 /**
- * Contenu de l'app (singleton) — the editor-owned welcome message shown at the top
- * of the home screen on each signed-in surface. Three sections: `shared` (every
- * surface), `web` (the web app surface), `mobile`. Read LIVE (short-cached) by the
- * app + mobile surfaces, so an editor's change appears without a redeploy. Each
+ * Contenu de l'app (singleton) — the editor-owned welcome message shown at the top of
+ * the `app` home screen (also inside the Capacitor shell). Two sections: `shared` and
+ * `web`. Read live (short-cached), so an edit appears without a redeploy. Each
  * `welcome` is `localeText` (a line per language), like the rest of Sanity copy.
  */
 
@@ -41,7 +40,6 @@ export const appContentSchema = defineType({
   fields: [
     welcomeSection("shared", "Commun (toutes les surfaces)"),
     welcomeSection("web", "App web"),
-    welcomeSection("mobile", "Application mobile"),
   ],
   initialValue: {
     shared: {
@@ -56,17 +54,11 @@ export const appContentSchema = defineType({
         fr: "Bienvenue dans votre espace Indiecrafts.",
       },
     },
-    mobile: {
-      welcome: {
-        en: "Welcome to Indiecrafts.",
-        fr: "Bienvenue sur Indiecrafts.",
-      },
-    },
   },
   preview: {
     prepare: () => ({
       title: "Contenu de l'app",
-      subtitle: "Message de bienvenue — app web + mobile",
+      subtitle: "Message de bienvenue — application",
     }),
   },
 });

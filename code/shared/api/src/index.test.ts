@@ -249,3 +249,12 @@ describe("/v1/churn", () => {
     expect(Array.isArray(body.recentFeedback)).toBe(true);
   });
 });
+
+describe("GET /v1/announcements — surface validation", () => {
+  it("rejects the removed mobile surface with 400", async () => {
+    const res = await SELF.fetch(
+      "https://api.test/v1/announcements?surface=mobile&locale=en",
+    );
+    expect(res.status).toBe(400);
+  });
+});

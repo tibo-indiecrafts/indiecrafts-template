@@ -5,8 +5,8 @@
  */
 // Raw GROQ-over-HTTP read of the Studio `emailPreferences` singleton — mirrors
 // `clerk-email/sanity.ts` `fetchAuthEmailStrings` (same host branch, Bearer, no new
-// deps). This is the api's SINGLE runtime reader of the category definitions; both
-// web and mobile consume the api rather than reading Sanity themselves. MUST NOT
+// deps). This is the api's SINGLE runtime reader of the category definitions; the
+// web surfaces consume the api rather than reading Sanity themselves. MUST NOT
 // throw: an unset/unreachable/empty Studio must never break the preference centre,
 // so every failure resolves to a seeded `news`-only default.
 

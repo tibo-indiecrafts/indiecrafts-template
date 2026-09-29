@@ -15,7 +15,7 @@ import { surfacesField } from "./surfaces";
  * (`surfaces`) and shown "live now" from the enable toggle + date window.
  *
  * SOLE runtime source — resolved by `resolveToast` (`@indiecrafts/packages-shared-announcement`),
- * read server-side on the web surfaces and served to mobile by the
+ * read server-side on the web surfaces and served to the app surface by the
  * `code/shared/api` Worker. `announcementLink` is the same link object the bar uses
  * (registered once in `index.ts`).
  */

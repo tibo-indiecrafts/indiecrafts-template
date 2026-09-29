@@ -4,7 +4,7 @@
  * @see docs/reference/shared/api/src/consent/legal.md
  */
 // Legal re-acceptance — the AUTHENTICATED self-service endpoint that makes the "policies
-// updated" banner follow a SIGNED-IN user across every surface (website · app · mobile):
+// updated" banner follow a SIGNED-IN user across every surface (website · app, incl. the Capacitor shell):
 // accept on one, cleared on all. The Clerk session JWT proves identity; keyed on the JWT
 // `sub`, no bearer token exposed to the client. Anonymous visitors keep their per-surface
 // local deposit (cookie / AsyncStorage) — there is no shared identity to sync them by.

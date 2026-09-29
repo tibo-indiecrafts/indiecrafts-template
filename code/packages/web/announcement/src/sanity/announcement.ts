@@ -1,8 +1,8 @@
 /**
  * Sanity-only announcement read path for the WEB surfaces (website, app). Thin
  * adapters over the shared resolver (`@indiecrafts/packages-shared-announcement`) —
- * the SAME transform the `code/shared/api` Worker runs for the non-web clients
- * (mobile). `announcementBar` + `announcementToast` are the SOLE runtime
+ * the SAME transform the `code/shared/api` Worker runs for the client-gated
+ * app surface. `announcementBar` + `announcementToast` are the SOLE runtime
  * source (no config fallback). Returns an empty banner / a null toast on any error.
  */
 

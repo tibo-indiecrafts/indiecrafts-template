@@ -18,7 +18,6 @@ import {
 const SURFACE_TITLES: Record<Surface, string> = {
   website: "Site web",
   app: "Application web",
-  mobile: "Application mobile",
 };
 
 export const surfacesField = defineField({
@@ -31,5 +30,5 @@ export const surfacesField = defineField({
     layout: "grid",
   },
   description:
-    "Où afficher cette annonce. Vide = partout (site web, application web, mobile).",
+    "Où afficher cette annonce. Vide = partout (site web et application).",
 });

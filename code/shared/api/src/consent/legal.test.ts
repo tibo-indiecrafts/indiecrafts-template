@@ -18,7 +18,7 @@ const post = (version: string) =>
   new Request("https://x/v1/consent/legal", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ version, surface: "mobile" }),
+    body: JSON.stringify({ version, surface: "app" }),
   });
 
 describe("GET/POST /v1/consent/legal", () => {

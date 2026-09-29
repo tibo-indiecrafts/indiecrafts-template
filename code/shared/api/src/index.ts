@@ -1223,7 +1223,7 @@ export default {
 
     // ── Announcements — GET /v1/announcements (PUBLIC; banner + toast per surface) ──
     // Serves the same Sanity content the website reads server-side, to the client-gated
-    // surfaces (app, mobile). No bearer: it is public marketing content.
+    // app surface. No bearer: it is public marketing content.
     if (url.pathname === "/v1/announcements") {
       if (request.method === "OPTIONS")
         return new Response(null, { status: 204, headers: PUBLIC_CORS });
@@ -1304,13 +1304,13 @@ export default {
       return handleMarketingConsent(request, env, ctx);
 
     // ── Legal re-acceptance — GET/POST /v1/consent/legal (AUTHENTICATED; Clerk JWT). Makes
-    // the "policies updated" banner follow a signed-in user across website · app · mobile:
+    // the "policies updated" banner follow a signed-in user across website · app (and the Capacitor shell):
     // accept on one, cleared on all. Anonymous visitors keep their per-surface local deposit.
     if (url.pathname === "/v1/consent/legal")
       return handleLegalConsent(request, env, ctx);
 
     // ── Per-category email preferences — GET/POST /v1/consent/email-preferences
-    // (AUTHENTICATED; Clerk JWT). The account preference centre + mobile read/write the
+    // (AUTHENTICATED; Clerk JWT). The account preference centre reads/writes the
     // caller's own per-category choices (Studio-defined categories, Task 6's reader).
     if (url.pathname === "/v1/consent/email-preferences")
       return handleEmailPreferences(request, env, ctx);

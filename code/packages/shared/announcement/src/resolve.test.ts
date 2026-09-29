@@ -38,19 +38,19 @@ describe("resolveBanner", () => {
 
   it("empty/unset surfaces = every surface; a list gates by membership", () => {
     expect(
-      resolveBanner(baseBanner, { locale: "en", surface: "mobile", now: NOW })
+      resolveBanner(baseBanner, { locale: "en", surface: "app", now: NOW })
         .items,
     ).toHaveLength(1);
     expect(
       resolveBanner(
         { ...baseBanner, surfaces: ["website"] },
-        { locale: "en", surface: "mobile", now: NOW },
+        { locale: "en", surface: "app", now: NOW },
       ).items,
     ).toHaveLength(0);
     expect(
       resolveBanner(
-        { ...baseBanner, surfaces: ["website", "mobile"] },
-        { locale: "en", surface: "mobile", now: NOW },
+        { ...baseBanner, surfaces: ["website", "app"] },
+        { locale: "en", surface: "app", now: NOW },
       ).items,
     ).toHaveLength(1);
   });
@@ -113,7 +113,7 @@ describe("resolveToast", () => {
     expect(
       resolveToast(
         { ...baseToast, surfaces: ["website"] },
-        { locale: "en", surface: "mobile", now: NOW },
+        { locale: "en", surface: "app", now: NOW },
       ),
     ).toBeNull();
     expect(
@@ -149,7 +149,7 @@ describe("resolveToast", () => {
   it("resolves the link and localized fields", () => {
     const t = resolveToast(baseToast, {
       locale: "fr",
-      surface: "mobile",
+      surface: "app",
       now: NOW,
     });
     expect(t?.title).toBe("Nouveauté");

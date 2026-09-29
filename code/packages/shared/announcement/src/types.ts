@@ -1,11 +1,11 @@
 /**
  * Announcement types — the resolved, platform-agnostic shapes shared by every
- * surface (website · app · mobile) and the `code/shared/api` Worker that
- * serves the non-web clients. React/Next-free: only data.
+ * surface (website · app) and the `code/shared/api` Worker that serves the
+ * client-gated app surface. React/Next-free: only data.
  */
 
 /** The surfaces an announcement can target. Admin is intentionally NOT a surface. */
-export const SURFACES = ["website", "app", "mobile"] as const;
+export const SURFACES = ["website", "app"] as const;
 export type Surface = (typeof SURFACES)[number];
 
 /** A per-locale string as authored in Sanity (`localeString`/`localeText`). */

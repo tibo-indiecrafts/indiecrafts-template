@@ -77,7 +77,7 @@ const sanity = composeStudio([
         schemaTypes: [emailPreferencesSchema],
         structure: (S) => [emailPreferencesStructureItem(S)],
       },
-      // The `appContent` welcome singleton — read live by the app + mobile surfaces.
+      // The `appContent` welcome singleton — read live by the app surface.
       {
         name: "app-content",
         schemaTypes: [appContentSchema],

@@ -4,7 +4,7 @@
  * @see docs/reference/shared/api/src/consent/email-preferences.md
  */
 // Per-category email preferences. Two ways in:
-//   AUTHENTICATED (Clerk JWT) — the account preference centre + mobile, reading/writing the
+//   AUTHENTICATED (Clerk JWT) — the account preference centre, reading/writing the
 //     caller's own choices.
 //   NO-LOGIN (a signed pref-token from an email link, Task 7) — the preference centre AND
 //     RFC 8058 one-click unsubscribe reachable straight from an email, no session needed.
