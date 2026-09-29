@@ -21,6 +21,69 @@
       "problemMatcher": []
     },
     {
+      "label": "dev:doctor",
+      "detail": "preflight the remote-dev loop (login · .dev.vars · placeholders)",
+      "type": "shell",
+      "command": "pnpm dev:doctor",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev:doctor:deep",
+      "detail": "dev:doctor + remote D1 migration-drift check (network)",
+      "type": "shell",
+      "command": "pnpm dev:doctor:deep",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev:setup",
+      "detail": "bootstrap remote dev — scaffold .dev.vars, migrate, deploy, sync secrets",
+      "type": "shell",
+      "command": "pnpm dev:setup",
+      "problemMatcher": []
+    },
+    {
+      "label": "dev:refresh:dev",
+      "detail": "re-align remote dev — migrations + secrets, no full redeploy",
+      "type": "shell",
+      "command": "pnpm dev:refresh:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "secrets:sync:all:dev",
+      "detail": "push every worker's .dev.vars secrets to remote dev",
+      "type": "shell",
+      "command": "pnpm secrets:sync:all:dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "tsc:fast",
+      "detail": "typecheck via tsgo (TS 7 Go port) — ~10x faster, half the memory (local)",
+      "type": "shell",
+      "command": "pnpm tsc:fast",
+      "problemMatcher": []
+    },
+    {
+      "label": "oxlint",
+      "detail": "fast (Rust) AST-only lint — repo-wide, all surfaces, no type graph",
+      "type": "shell",
+      "command": "pnpm oxlint",
+      "problemMatcher": []
+    },
+    {
+      "label": "oxlint:fix",
+      "detail": "oxlint with autofix",
+      "type": "shell",
+      "command": "pnpm oxlint:fix",
+      "problemMatcher": []
+    },
+    {
+      "label": "check:lint-no-types",
+      "detail": "guard: lint config must stay type-info-free (no TS type graph)",
+      "type": "shell",
+      "command": "pnpm check:lint-no-types",
+      "problemMatcher": []
+    },
+    {
       "label": "build",
       "detail": "turbo run build — production build, all workspaces",
       "type": "shell",
@@ -95,6 +158,30 @@
       "problemMatcher": ["$tsc"]
     },
     {
+      "label": "verify:contrast",
+      "detail": "WCAG contrast check on the design tokens (website)",
+      "type": "shell",
+      "command": "pnpm verify:contrast",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "project:rename",
+      "detail": "rename the whole template to a new client slug",
+      "type": "shell",
+      "command": "pnpm project:rename",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "waitlist:export",
+      "detail": "export waitlist entries to CSV (website)",
+      "type": "shell",
+      "command": "pnpm waitlist:export",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
       "label": "check:api-guards",
       "detail": "assert every API route adopts the shared guard",
       "type": "shell",
@@ -123,6 +210,22 @@
       "detail": "assert .vscode/tasks.json mirrors every root package.json script",
       "type": "shell",
       "command": "pnpm check:tasks",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "check:doc-coverage",
+      "detail": "assert every code unit (package · module · surface · service) has a docs page",
+      "type": "shell",
+      "command": "pnpm check:doc-coverage",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "check:claude-md",
+      "detail": "guard CLAUDE.md briefs: commands resolve, no misplaced toolkit dirs, compact",
+      "type": "shell",
+      "command": "pnpm check:claude-md",
       "group": "build",
       "problemMatcher": []
     },
