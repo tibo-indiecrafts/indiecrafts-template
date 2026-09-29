@@ -2,6 +2,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { hexColors } from "./generated/hex";
 
 // The design tokens are CSS custom properties in globals.css (OKLCH is the
 // authoritative color source — see DESIGN.md). No component renders them, so the
@@ -46,5 +47,25 @@ describe("design tokens (globals.css)", () => {
   it("every dark override has a light base (no orphan token)", () => {
     const orphans = [...toggleDark].filter((token) => !light.has(token));
     expect(orphans).toEqual([]);
+  });
+});
+
+describe("hex mirror", () => {
+  it("carries the full palette email needs, in both themes", () => {
+    const keys = [
+      "background",
+      "foreground",
+      "brand",
+      "brand-foreground",
+      "muted",
+      "muted-foreground",
+      "border",
+      "destructive",
+    ] as const;
+    for (const theme of ["light", "dark"] as const)
+      for (const key of keys)
+        expect((hexColors[theme] as Record<string, string>)[key]).toMatch(
+          /^#[0-9a-f]{6}$/,
+        );
   });
 });

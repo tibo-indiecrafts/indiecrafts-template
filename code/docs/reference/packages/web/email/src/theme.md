@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Provides the email colour palette. Mail clients strip `<style>`, `var()`, and `<link>`, so the OKLCH tokens in `globals.css` cannot reach an inbox. This file reads the resolved hex mirror (`@indiecrafts/packages-shared-ui-tokens/native`, light set) and maps it to named roles. Change a token, rebuild with `pnpm tokens:build`, and every email updates from one source.
+Provides the email colour palette. Mail clients strip `<style>`, `var()`, and `<link>`, so the OKLCH tokens in `globals.css` cannot reach an inbox. This file reads the resolved hex mirror (`@indiecrafts/packages-shared-ui-tokens/hex`, light set) and maps it to named roles. Change a token, rebuild with `pnpm tokens:build`, and every email updates from one source.
 
 ## Exports
 

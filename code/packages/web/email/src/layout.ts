@@ -15,7 +15,7 @@ import { EMAIL_COLORS } from "./theme";
  *
  * Palette = the design tokens, resolved to inline hex (mail clients strip
  * `var()`/CSS, so email inlines the generated token hex — the same bridge the PWA
- * manifest + React Native use). Edit the tokens, not here:
+ * manifest uses). Edit the tokens, not here:
  * `code/packages/shared/ui-tokens/src/shared/tokens.json` → `pnpm tokens:build`.
  */
 const C = EMAIL_COLORS;

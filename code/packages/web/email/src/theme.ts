@@ -3,22 +3,22 @@
  *
  * @see docs/reference/packages/web/email/src/theme.md
  */
-import { tokens } from "@indiecrafts/packages-shared-ui-tokens/native";
+import { hexColors } from "@indiecrafts/packages-shared-ui-tokens/hex";
 
 /**
  * The email palette — the design tokens, resolved to inline hex.
  *
  * Mail clients strip `<style>`, `var()`, and `<link>`, so the OKLCH tokens in
  * `globals.css` can never reach an inbox. `pnpm tokens:build` emits a resolved
- * hex mirror (`@indiecrafts/packages-shared-ui-tokens/native`); inlining it is the ONLY way an
- * email can track the design system — the same bridge the PWA manifest and React
- * Native use. Change a token → rebuild → every email updates. One source, no
- * hand-maintained email hex.
+ * hex mirror (`@indiecrafts/packages-shared-ui-tokens/hex`); inlining it is the ONLY way an
+ * email can track the design system — the same bridge the PWA manifest uses.
+ * Change a token → rebuild → every email updates. One source, no hand-maintained
+ * email hex.
  *
  * Light-only: emails render `color-scheme: light`, so the light token set is the
  * whole story (no dark-mode mail to reconcile).
  */
-const c = tokens.light.color;
+const c = hexColors.light;
 
 export const EMAIL_COLORS = {
   /** Outer canvas behind the card (+ quote/panel fills). */

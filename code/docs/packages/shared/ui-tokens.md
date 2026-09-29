@@ -11,11 +11,11 @@ status: stable
 The runtime style source + the design contract, shipped together. **One JSON source of truth
 generates every platform output** — web CSS, React-Native hex, and the PWA-manifest hex mirror.
 
-|               |                                                                                                                                                                                                                                                                                                      |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Exports**   | `./globals.css` (web — Tailwind scaffolding + `@import "./generated/tokens.css"`) · `./typeset.css` (long-form prose rhythm) · `./nativewind.css` (NativeWind hex vars) · `./native` (React-Native `{ light, dark }` hex object) · `./hex` (manifest hex mirror) · `./tokens.json` (the DTCG source) |
-| **Deps**      | `tailwindcss ^4`, `@tailwindcss/typography ^0.5.19`, `culori ^4` (build-time oklch→hex). **Peer:** none                                                                                                                                                                                              |
-| **Consumers** | app imports `@indiecrafts/packages-shared-ui-tokens/globals.css` in the root layout; a native app imports `./native`; the manifest reads `./hex`. Design-system source for `ui` + blog too, coupled via CSS scanning, not a JS import                                                                |
+|               |                                                                                                                                                                                                                     |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Exports**   | `./globals.css` (web — Tailwind scaffolding + `@import "./generated/tokens.css"`) · `./typeset.css` (long-form prose rhythm) · `./hex` (semantic hex mirror — manifest + email) · `./tokens.json` (the DTCG source) |
+| **Deps**      | `tailwindcss ^4`, `@tailwindcss/typography ^0.5.19`, `culori ^4` (build-time oklch→hex). **Peer:** none                                                                                                             |
+| **Consumers** | app imports `@indiecrafts/packages-shared-ui-tokens/globals.css` in the root layout; the manifest and `web/email` read `./hex`. Design-system source for `ui` + blog too, coupled via CSS scanning, not a JS import |
 
 Also ships [`DESIGN.md`](../../code/packages/shared/ui-tokens/DESIGN.md) — the authoritative token
 contract (colors, typography scale, spacing, a11y), colocated so contract and
@@ -25,14 +25,11 @@ implementation travel as one package.
 
 The **source of truth is `src/shared/tokens.json`** (DTCG 2025.10, OKLCH, 3-tier
 primitive→semantic→component). `pnpm tokens:build` (`scripts/build-tokens.mjs`, uses `culori`)
-generates three outputs — **never hand-edit them** (a PreToolUse hook blocks it):
+generates two outputs — **never hand-edit them** (a PreToolUse hook blocks it):
 
 - `src/generated/tokens.css` — web `:root` (light) + the two dark blocks; imported by `globals.css`.
-- `src/native/tokens.ts` — React Native `{ light, dark }` hex (no CSS/oklch on RN).
-- `src/generated/nativewind.css` — NativeWind theme (`:root` + `.dark:root` hex vars) for
-  react-native-reusables; token names match shadcn's, so native shares the palette. See
-  [`ui-native`](/packages/mobile/ui-native).
-- `src/generated/hex.ts` — hex mirror the PWA manifest reads (`app/manifest.ts` can't take oklch).
+- `src/generated/hex.ts` — every semantic color as hex (light + dark), for the places that can't read
+  oklch or CSS vars: the PWA manifest (`app/manifest.ts`) and email (`web/email`).
 
 `pnpm tokens:check` (in `pnpm verify` + CI) regenerates and diffs — it fails if a generated file
 drifted from the JSON. Change a color: edit `tokens.json`, run `tokens:build`, then `verify:contrast`.

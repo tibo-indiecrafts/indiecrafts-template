@@ -15,9 +15,7 @@ This CLI script is the token build step for `@indiecrafts/packages-shared-ui-tok
 ## Outputs
 
 - `src/generated/tokens.css` — web `:root` (light) plus the two dark blocks.
-- `src/native/tokens.ts` — React Native `{ light, dark }` hex objects.
-- `src/generated/nativewind.css` — NativeWind `:root` plus `.dark:root` hex vars.
-- `src/generated/hex.ts` — hex mirror for the PWA manifest.
+- `src/generated/hex.ts` — every semantic color resolved to hex (light + dark), for the PWA manifest and email.
 
 ## Exports
 
