@@ -13,6 +13,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **`ios` runs on Xcode 27.** The script builds with `xcodebuild`, installs + launches with `simctl`,
+  then opens DeviceHub (Xcode 27 replaced `Simulator.app`, which `cap run ios` still looks for).
+  **Why:** `cap run ios` failed after a successful build. The mobile guide gains a TestFlight section.
+
 - **Sign-in stays inside the shell.** Clerk's session handshake redirected to its Frontend API
   host, and Capacitor opened that in the system browser. The shell now allows that host
   (`CAP_CLERK_PUBLISHABLE_KEY` → `server.allowNavigation`). **Why:** found on the first

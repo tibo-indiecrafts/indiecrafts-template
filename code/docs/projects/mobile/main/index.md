@@ -25,7 +25,7 @@ Why Capacitor over Expo → [ADR 0001](/contributing/adr/0001-capacitor-over-exp
   `export JAVA_HOME=$(/usr/libexec/java_home -v 21)`), the Android SDK, and an emulator (AVD).
 - The app's Clerk key in `code/projects/web/surfaces/app/.env.local` — the dev scripts read
   `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` from it.
-- **iOS:** Xcode 26.
+- **iOS:** Xcode 27 (its simulator app is **DeviceHub**).
 
 ## Run on Android
 
@@ -42,18 +42,46 @@ and drop the forwarded ports. With several devices attached, set `ANDROID_SERIAL
 
 ## Run on iOS
 
-`pnpm --filter @indiecrafts/mobile-surfaces-main ios` — the simulator shares the Mac's
-network, so `localhost` works without port forwarding.
+1. Boot a simulator: `xcrun simctl boot "iPhone 16"` (`xcrun simctl list devices` lists them).
+2. Run `pnpm --filter @indiecrafts/mobile-surfaces-main ios`.
 
-`cap run ios` needs `Simulator.app` inside Xcode. If it reports that the app is missing,
-the build still succeeded — install and launch it on a booted simulator:
+The `ios` script builds `www/`, runs `cap sync`, builds the app with `xcodebuild`, installs and
+launches it on the booted simulator with `simctl`, then opens **DeviceHub** — the Xcode 27 app that
+replaces `Simulator.app` (it skips `cap run ios`, which still looks for `Simulator.app`). The
+simulator shares the Mac's network, so `localhost` works without port forwarding.
 
-```bash
-xcrun simctl boot "iPhone 16"
-xcrun simctl install booted ios/DerivedData/<simulator-id>/Build/Products/Debug-iphonesimulator/App.app
-xcrun simctl launch booted dev.indiecrafts.app
-xcrun simctl openurl booted "indiecrafts://open/sign-in"   # deep link
-```
+Deep link from the Mac: `xcrun simctl openurl booted "indiecrafts://sign-in"` — the URL is
+`indiecrafts://<path>`, so this opens `/sign-in`. iOS asks "Open in …?" first.
+
+## Ship to TestFlight
+
+TestFlight installs a signed build on real iPhones. The build loads a **hosted** `app` URL — never
+`localhost`.
+
+1. **Apple Developer Program** — enroll at developer.apple.com/programs (paid, yearly). Then Xcode →
+   Settings → Accounts → add the Apple ID; the team appears.
+2. **App record** — App Store Connect → Apps → **+** → New App: iOS, the app name, bundle id
+   `dev.indiecrafts.app` (`shell.json` `appId`; `pnpm project:rename` changes it), a SKU.
+3. **Point the build at the hosted app** — from `code/projects/mobile/surfaces/main`:
+
+   ```bash
+   export CAP_SERVER_URL=https://<deployed app URL>          # e.g. the dev Worker
+   export CAP_CLERK_PUBLISHABLE_KEY=<that app's Clerk publishable key>
+   pnpm www && npx cap sync ios && npx cap open ios
+   ```
+
+4. **Sign** — in Xcode, target **App** → Signing & Capabilities → Team = yours, "Automatically manage
+   signing" on. General → Identity: set Version (e.g. `1.0`) and Build (`1`, then +1 on every upload).
+5. **Archive + upload** — destination **Any iOS Device (arm64)** → Product → **Archive** → Organizer →
+   **Distribute App** → **TestFlight Internal Only** (or TestFlight & App Store) → Upload.
+6. **Test** — App Store Connect → TestFlight: wait for processing (10–30 min), answer the
+   export-compliance question (the shell only uses HTTPS), add **internal testers** (your team, no
+   review). They install the TestFlight app and accept the invite. External testers need Beta App
+   Review first.
+
+A release build uses production values: the prod `app` URL and the prod Clerk key (its Frontend API
+host goes in `server.allowNavigation` automatically). App Store review (guideline 4.2, minimum
+functionality) looks harder at pure web wrappers than TestFlight does.
 
 ## Physical device
 
