@@ -6,13 +6,12 @@
  * @see docs/reference/packages/web/compliance/src/reacceptance/LegalNotice.md
  */
 
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/packages-web-i18n";
-import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
+import { LegalReacceptancePrompt } from "@indiecrafts/packages-shared-compliance/web";
 import {
-  linkifyMessage,
   readLegalConsent,
   writeLegalConsent,
 } from "@indiecrafts/packages-shared-compliance/shared";
@@ -34,8 +33,9 @@ type Props = {
 };
 
 /**
- * "We updated our policies — please Accept" banner. Non-blocking, fixed-bottom,
- * token-styled (the sibling of `CookieBanner`). The layout renders it only when the
+ * "We updated our policies — please Accept" banner — the shared
+ * `LegalReacceptancePrompt` (the same banner as the `app` surface), with the website's
+ * locale `Link`. The layout renders it only when the
  * deposited `legal-ack` cookie differs from the live version, so this component just
  * writes the cookie on Accept and hides — no polling. i18n-agnostic: copy in as props.
  *
@@ -74,48 +74,28 @@ export function LegalNotice({
 
   if (accepted) return null;
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className={`bg-card text-foreground ring-border/60 fixed right-4 left-4 z-50 mx-auto flex w-auto max-w-md flex-col gap-3 rounded-2xl border-0 p-4 shadow-lg ring-1 backdrop-blur sm:flex-row sm:items-center sm:justify-between ${decided ? "bottom-4" : "bottom-28"}`}
-    >
-      <p className="text-sm">
-        {linkifyMessage(message, hrefs).map((part, i) =>
-          typeof part === "string" ? (
-            <Fragment key={i}>{part}</Fragment>
-          ) : (
-            <Link
-              key={i}
-              href={part.href}
-              className="underline underline-offset-2"
-            >
-              {part.label}
-            </Link>
-          ),
-        )}
-      </p>
-      {/* Accepting policies is not a cookie choice — a bare confirmation, no
-          Manage-cookies action (that lives on the cookie banner's own toast). */}
-      <Button
-        size="sm"
-        className="shrink-0"
-        onClick={() => {
-          acceptLegal(version);
-          setAccepted(true);
-          showConsentSavedToast({ saved: t("saved") });
-          // Signed-in: record it server-side so the banner clears on the user's other
-          // surfaces too (best-effort; the cookie above already hid it here).
-          if (getToken && apiUrl)
-            void writeLegalConsent({
-              apiUrl,
-              getToken,
-              version,
-              surface: "website",
-            });
-        }}
-      >
-        {acceptLabel}
-      </Button>
-    </div>
+    <LegalReacceptancePrompt
+      message={message}
+      hrefs={hrefs}
+      acceptLabel={acceptLabel}
+      raised={!decided}
+      link={Link}
+      onAccept={() => {
+        acceptLegal(version);
+        setAccepted(true);
+        // Accepting policies is not a cookie choice — a bare confirmation, no
+        // Manage-cookies action (that lives on the cookie banner's own toast).
+        showConsentSavedToast({ saved: t("saved") });
+        // Signed-in: record it server-side so the banner clears on the user's other
+        // surfaces too (best-effort; the cookie above already hid it here).
+        if (getToken && apiUrl)
+          void writeLegalConsent({
+            apiUrl,
+            getToken,
+            version,
+            surface: "website",
+          });
+      }}
+    />
   );
 }

@@ -34,7 +34,6 @@ export {
   type LegalPageKey,
   legalUrl,
   type LegalAcceptanceRecord,
-  type LegalReacceptanceCopy,
   type LegalReacceptanceLink,
   type LegalMessagePart,
   linkifyMessage,

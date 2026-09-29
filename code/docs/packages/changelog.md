@@ -12,6 +12,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **One legal re-acceptance banner on every web surface.** The `app` banner had a title line,
+  a wider box and ran off the screen edge; the website had its own markup. `LegalReacceptancePrompt`
+  (`shared/compliance/web`) now has the website's look, and the website's `LegalNotice` renders it.
+  `ui-tokens/globals.css` now scans `shared/compliance/src`. **Why:** Tailwind never generated
+  the classes of the `shared/compliance` web components (banner, consent, account sections)
+  for the `app` surface. `LegalReacceptanceCopy` is removed; the banner takes `message` + `acceptLabel`.
+
 ### Removed
 
 - **Every React Native fork and the `mobile/` scope.** Deleted `@indiecrafts/packages-mobile-ui-native`,

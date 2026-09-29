@@ -19,7 +19,6 @@ One source of truth for the canonical legal pages, so the `app` surface can link
 - `LegalPageKey` (type) — a key of `LEGAL_PAGES`.
 - `legalUrl` — the absolute URL of a legal page on the website for a locale.
 - `LegalAcceptanceRecord` (type) — the accepted policy version and timestamp.
-- `LegalReacceptanceCopy` (type) — the injected re-acceptance prompt copy.
 - `needsReacceptance` — true when the visitor must (re-)accept the legal policies.
 
 ## Usage

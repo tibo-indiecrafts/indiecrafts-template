@@ -5,6 +5,7 @@
 @source "../../../web/ui-components/src";
 @source "../../../web/version/src";
 @source "../../../web/compliance/src";
+@source "../../../shared/compliance/src";
 @source "../../../web/announcement/src";
 @source "../../../web/locale-suggest/src";
 @source "../../system-pages/src";

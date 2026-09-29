@@ -1,20 +1,20 @@
 ---
 title: "Legal re-acceptance prompt"
-description: "The popup prompting review and re-acceptance when the legal documents change."
+description: "The banner every web surface shows when the legal documents change."
 status: stable
 ---
 
 # Legal re-acceptance prompt
 
-> Review and accept when the policy version moves.
+> One banner on every web surface: review and accept when the policy version moves.
 
 ## Purpose
 
-The "our legal documents changed — please accept" popup (web, shadcn). Mount it at the shell root only when re-acceptance is due. `links` are the Privacy · Terms pages on the website (rendered as `<a>`); `onAccept` persists a `LegalAcceptanceRecord` via the shell's store. Copy is injected; Next-free.
+The "we updated our policies — please accept" banner. It is fixed to the bottom, centered, and non-blocking: one sentence with the policy links, and an Accept button. Mount it only when re-acceptance is due; `onAccept` persists acceptance through the caller's store. The `app` surface renders it from `LegalGate`; the website renders it through `LegalNotice` (`packages-web-compliance`). Copy is injected; Next-free.
 
 ## Exports
 
-- `LegalReacceptancePrompt` — the popup component (`copy` with `[[…]]` markers in `body`, `hrefs`, `onAccept`).
+- `LegalReacceptancePrompt({ message, hrefs, acceptLabel, onAccept, raised?, link? })` — `message` carries `[[…]]` link markers; `hrefs` are the matching policy URLs (privacy · terms). `link` renders each link — the default opens the website's policy page in a new tab; the website passes its locale `Link`. `raised` moves it above a cookie banner that is still open.
 
 ## Usage
 
@@ -22,8 +22,9 @@ The "our legal documents changed — please accept" popup (web, shadcn). Mount i
 import { LegalReacceptancePrompt } from "@indiecrafts/packages-shared-compliance/web";
 
 <LegalReacceptancePrompt
-  copy={copy}
+  message={t("body")}
   hrefs={legalHrefs}
+  acceptLabel={t("accept")}
   onAccept={acceptVersion}
 />;
 ```

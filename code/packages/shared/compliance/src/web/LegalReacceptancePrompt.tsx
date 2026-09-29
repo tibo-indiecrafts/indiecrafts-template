@@ -1,67 +1,72 @@
 "use client";
 
 /**
- * Prompts review and re-acceptance of changed legal documents.
+ * The "we updated our policies — please accept" banner, shared by every web surface.
  *
  * @see docs/reference/packages/shared/compliance/src/web/LegalReacceptancePrompt.md
  */
 
-import { Fragment } from "react";
-import { cn } from "@indiecrafts/packages-shared-utils/cn";
+import { Fragment, type ComponentType, type ReactNode } from "react";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
-import { linkifyMessage, type LegalReacceptanceCopy } from "../shared/legal";
+import { linkifyMessage } from "../shared/legal";
+
+type LinkProps = { href: string; className?: string; children: ReactNode };
+
+/** Default link: the policy pages live on the website, so open them in a new tab. */
+function ExternalLink({ href, className, children }: LinkProps) {
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className={className}>
+      {children}
+    </a>
+  );
+}
 
 /**
- * "Our legal documents changed — please accept" popup (web, shadcn). Mount it at the
- * shell root ONLY when re-acceptance is due (`needsReacceptance(store.get(),
- * currentVersion)`). `copy.body` carries `[[…]]` link markers; `hrefs` are the matching
- * policy URLs (privacy · terms) woven into the sentence as inline `<a>` link-outs to the
- * website. `onAccept` persists a `LegalAcceptanceRecord` via the shell's store. Copy is
- * injected. Next-free — serves the `app` surface.
+ * Non-blocking, fixed-bottom, centered banner: one sentence and an Accept button. Mount
+ * it only when re-acceptance is due; the caller persists acceptance in `onAccept`.
+ * `message` carries `[[…]]` link markers; `hrefs` are the matching policy URLs (privacy ·
+ * terms). `link` renders them (the website passes its locale `Link`). `raised` stacks it
+ * above a still-open cookie banner. Copy is injected; Next-free.
  */
 export function LegalReacceptancePrompt({
-  copy,
+  message,
   hrefs,
+  acceptLabel,
   onAccept,
+  raised = false,
+  link: Link = ExternalLink,
 }: {
-  copy: LegalReacceptanceCopy;
+  message: string;
   hrefs: string[];
+  acceptLabel: string;
   onAccept: () => void;
+  raised?: boolean;
+  link?: ComponentType<LinkProps>;
 }) {
   return (
     <div
-      role="dialog"
-      aria-modal="false"
-      aria-label={copy.title}
-      className={cn(
-        "bg-card text-foreground ring-border/60 fixed inset-x-4 bottom-4 z-50",
-        "mx-auto flex w-auto max-w-lg flex-col gap-3 rounded-xl border-0 p-4",
-        "shadow-lg ring-1 backdrop-blur",
-      )}
+      role="status"
+      aria-live="polite"
+      className={`bg-card text-foreground ring-border/60 fixed right-4 left-4 z-50 mx-auto flex w-auto max-w-md flex-col gap-3 rounded-2xl border-0 p-4 shadow-lg ring-1 backdrop-blur sm:flex-row sm:items-center sm:justify-between ${raised ? "bottom-28" : "bottom-4"}`}
     >
-      <p className="text-sm font-semibold">{copy.title}</p>
-      <p className="text-muted-foreground text-sm">
-        {linkifyMessage(copy.body, hrefs).map((part, i) =>
+      <p className="text-sm">
+        {linkifyMessage(message, hrefs).map((part, i) =>
           typeof part === "string" ? (
             <Fragment key={i}>{part}</Fragment>
           ) : (
-            <a
+            <Link
               key={i}
               href={part.href}
-              target="_blank"
-              rel="noreferrer"
-              className="text-foreground underline underline-offset-2"
+              className="underline underline-offset-2"
             >
               {part.label}
-            </a>
+            </Link>
           ),
         )}
       </p>
-      <div className="flex justify-end">
-        <Button size="sm" onClick={onAccept}>
-          {copy.acceptLabel}
-        </Button>
-      </div>
+      <Button size="sm" className="shrink-0" onClick={onAccept}>
+        {acceptLabel}
+      </Button>
     </div>
   );
 }

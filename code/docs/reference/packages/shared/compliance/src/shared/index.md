@@ -16,7 +16,7 @@ The public entry of the platform-agnostic compliance core. It re-exports the con
 
 - Consent signals — `CONSENT_SIGNALS`, `ConsentSignal`, `ConsentCategory`, `CookieRow`, `CookieConsent`.
 - Consent math — `grantedKeys`, `consentUpdate`, `DEFAULT_CONSENT_CATEGORIES`, `resolveCategories`, `acceptAllChoices`, `rejectAllChoices`, plus the `ConsentRecord` / `Store` / `ConsentStore` / `ConsentCategoryDef` / `ConsentBannerCopy` types.
-- Legal routes — `LEGAL_PAGES`, `LEGAL_PAGE_KEYS`, `legalUrl`, `needsReacceptance`, plus `LegalPageKey` / `LegalAcceptanceRecord` / `LegalReacceptanceCopy`.
+- Legal routes — `LEGAL_PAGES`, `LEGAL_PAGE_KEYS`, `legalUrl`, `needsReacceptance`, plus `LegalPageKey` / `LegalAcceptanceRecord`.
 - Geo to regulation — `REGULATIONS`, `CONSENT_REGIONS`, `TERRITORIES`, `resolveRegulation`, `resolveConsentMode`, plus `ConsentMode` / `Regulation` / `ConsentConfig`.
 - Erasure orchestrator — `runErasure`, `runExport`, plus the adapter and receipt types.
 - Erasure and export clients — `submitAccountErasure`, `rawErasureFetch`, `mapErasureResponse`, `requestExport`, plus their types.

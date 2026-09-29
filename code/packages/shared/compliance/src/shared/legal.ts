@@ -88,13 +88,6 @@ export type LegalAcceptanceRecord = {
   t: number;
 };
 
-/** The injected copy for the re-acceptance prompt — resolved per shell from `messages`. */
-export type LegalReacceptanceCopy = {
-  title: string;
-  body: string;
-  acceptLabel: string;
-};
-
 /** A policy link woven into the re-acceptance message (label + href). */
 export type LegalReacceptanceLink = { label: string; href: string };
 

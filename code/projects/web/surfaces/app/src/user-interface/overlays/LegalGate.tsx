@@ -76,7 +76,8 @@ export function LegalGate({
 
   return (
     <LegalReacceptancePrompt
-      copy={{ title: t("title"), body: t("body"), acceptLabel: t("accept") }}
+      message={t("body")}
+      acceptLabel={t("accept")}
       hrefs={[
         legalUrl(site.websiteUrl, "privacy", locale),
         legalUrl(site.websiteUrl, "terms", locale),
