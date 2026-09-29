@@ -4,7 +4,7 @@
  * @see docs/reference/projects/mobile/main/components/ShellOverlays.md
  */
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { AppState, Linking, View, StyleSheet } from "react-native";
+import { AppState, View, StyleSheet } from "react-native";
 import { useIntl } from "react-intl";
 import { getLocales } from "expo-localization";
 import {
@@ -24,10 +24,14 @@ import {
   rejectAllChoices,
   needsReacceptance,
   legalUrl,
+  fetchLegalVersion,
+  readLegalConsent,
+  writeLegalConsent,
   type Store,
   type ConsentMode,
   type LegalAcceptanceRecord,
 } from "@indiecrafts/packages-shared-compliance/shared";
+import { useAuth } from "@clerk/clerk-expo";
 import { consentStore } from "@/lib/consent-store";
 import { loadConsentMode } from "@/lib/geo";
 import {
@@ -61,11 +65,6 @@ const legalStore = createNativeStore<LegalAcceptanceRecord>(
 
 function useRecord<T>(store: Store<T>): T | null {
   return useSyncExternalStore(store.subscribe, store.get, store.get);
-}
-
-/** Open a website legal page in the system browser (the RN link-out — zero new deps). */
-function openLegal(key: Parameters<typeof legalUrl>[1], locale: Locale) {
-  if (websiteUrl) void Linking.openURL(legalUrl(websiteUrl, key, locale));
 }
 
 function ConsentGate({ mode }: { mode: ConsentMode | null }) {
@@ -125,27 +124,93 @@ function ConsentGate({ mode }: { mode: ConsentMode | null }) {
   );
 }
 
-function LegalReacceptGate({ locale }: { locale: Locale }) {
+const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? "";
+
+/** Effective legal version — the website's live version, with the static `policyVersion`
+ *  as the offline fallback. Unifies the version across surfaces so ONE Sanity bump
+ *  re-prompts everywhere. Starts static, swaps to live once fetched. */
+function useEffectiveLegalVersion(): string {
+  const [live, setLive] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void fetchLegalVersion(websiteUrl ?? "").then((v) => {
+      if (alive) setLive(v);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return live || policyVersion;
+}
+
+/** `getToken` (signed-in only) syncs acceptance across surfaces via the api Worker: the
+ *  server-recorded version suppresses this prompt, and accepting here records it. */
+function LegalReacceptGate({
+  locale,
+  getToken,
+}: {
+  locale: Locale;
+  getToken?: () => Promise<string | null>;
+}) {
   const t = useIntl();
   const record = useRecord(legalStore);
   const consentRecord = useRecord(consentStore);
+  const version = useEffectiveLegalVersion();
   const consentPending = features.requireConsent && !consentRecord;
-  if (consentPending || !needsReacceptance(record, policyVersion)) return null;
+
+  // Signed-in: pull the server-recorded acceptance; if they accepted THIS version on
+  // another surface, deposit it locally so the prompt never shows here.
+  useEffect(() => {
+    if (!getToken || !apiUrl || !version) return;
+    let alive = true;
+    void readLegalConsent({ apiUrl, getToken }).then((acked) => {
+      if (alive && acked === version)
+        legalStore.save({ version, t: Date.now() });
+    });
+    return () => {
+      alive = false;
+    };
+  }, [getToken, version]);
+
+  if (consentPending || !version || !needsReacceptance(record, version))
+    return null;
 
   return (
     <LegalReacceptancePrompt
       copy={{
         title: t.formatMessage({ id: "legal.reaccept.title" }),
         body: t.formatMessage({ id: "legal.reaccept.body" }),
-        reviewLabel: t.formatMessage({ id: "legal.reaccept.review" }),
         acceptLabel: t.formatMessage({ id: "legal.reaccept.accept" }),
       }}
-      onReview={() => openLegal("terms", locale)}
-      onAccept={() =>
-        legalStore.save({ version: policyVersion, t: Date.now() })
+      hrefs={
+        websiteUrl
+          ? [
+              legalUrl(websiteUrl, "privacy", locale),
+              legalUrl(websiteUrl, "terms", locale),
+            ]
+          : []
       }
+      onAccept={() => {
+        legalStore.save({ version, t: Date.now() });
+        // Signed-in: record it server-side so the prompt clears on the user's other
+        // surfaces too (best-effort; the local deposit already hid it here).
+        if (getToken && apiUrl)
+          void writeLegalConsent({
+            apiUrl,
+            getToken,
+            version,
+            surface: "mobile",
+          });
+      }}
     />
   );
+}
+
+/** Clerk-connected mount — supplies `getToken` so acceptance syncs across surfaces.
+ *  Rendered only when `hasClerk` (a `ClerkProvider` is mounted), so `useAuth` is safe. */
+function SignedInLegalReacceptGate({ locale }: { locale: Locale }) {
+  const { getToken } = useAuth();
+  return <LegalReacceptGate locale={locale} getToken={getToken} />;
 }
 
 /** AppState-driven poll of a hosted `/api/version`; returns the live deploy id (or null). */
@@ -276,7 +341,11 @@ export function ShellOverlays({
       {/* One-time marketing-email nudge for a signed-in user with no decision yet. */}
       {hasClerk ? <MarketingNudgeGate /> : null}
       <ConsentGate mode={consentMode} />
-      <LegalReacceptGate locale={locale} />
+      {hasClerk ? (
+        <SignedInLegalReacceptGate locale={locale} />
+      ) : (
+        <LegalReacceptGate locale={locale} />
+      )}
       {websiteUrl ? (
         <VersionBanner endpoint={`${websiteUrl}${VERSION_ENDPOINT}`} />
       ) : null}

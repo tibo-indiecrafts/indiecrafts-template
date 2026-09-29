@@ -46,6 +46,7 @@ import { handleClerkEmail } from "./clerk-email/handle";
 import { sendWelcomeEmail } from "./clerk-email/welcome";
 import { upsertResendContact } from "./resend-audience";
 import { handleMarketingConsent } from "./consent/marketing";
+import { handleLegalConsent } from "./consent/legal";
 import {
   handleEmailPreferences,
   handleTokenPreferences,
@@ -1352,6 +1353,12 @@ export default {
     // Clerk JWT). The account toggle + the sign-in nudge read/write the caller's own opt-in.
     if (url.pathname === "/v1/consent/marketing-email")
       return handleMarketingConsent(request, env, ctx);
+
+    // ── Legal re-acceptance — GET/POST /v1/consent/legal (AUTHENTICATED; Clerk JWT). Makes
+    // the "policies updated" banner follow a signed-in user across website · app · mobile:
+    // accept on one, cleared on all. Anonymous visitors keep their per-surface local deposit.
+    if (url.pathname === "/v1/consent/legal")
+      return handleLegalConsent(request, env, ctx);
 
     // ── Per-category email preferences — GET/POST /v1/consent/email-preferences
     // (AUTHENTICATED; Clerk JWT). The account preference centre + mobile read/write the

@@ -24,7 +24,10 @@ Wired baseline:
   `src/user-interface/ShellOverlays.tsx` — a thin composition root; each overlay is its own file under
   `user-interface/overlays/` (`ConsentGate` · `LegalGate`, over the shared consent/legal stores in
   `overlays/stores.ts`) using shared `compliance/web` + a `localStorage` store, gated by
-  `features.requireConsent` — off by default). See [`compliance-shared`](../../../../../docs/packages/compliance-shared.md).
+  `features.requireConsent` — off by default). `LegalGate` uses the website's **live** legal version
+  (`fetchLegalVersion`; static `policyVersion` = offline fallback) so one Sanity bump re-prompts every
+  surface; when signed in (`SignedInLegalGate`, Clerk-gated), it syncs acceptance via the api Worker's
+  `/v1/consent/legal` — accept on one surface, cleared on all. See [`compliance-shared`](../../../../../docs/packages/compliance-shared.md).
 - **Version prompt** — `web-version`'s `UpdatePrompt` + its own `src/app/api/version/route.ts` +
   `src/lib/build-info.ts` (stamped by `scripts/version.mjs` in `build:cf`).
 - **E2e** — Playwright journeys (`e2e/journeys/`: `version` · `not-found` · `boot` · `sign-in`) on a

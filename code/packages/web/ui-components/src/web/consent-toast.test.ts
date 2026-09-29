@@ -28,4 +28,13 @@ describe("showConsentSavedToast", () => {
     opts.action.onClick();
     expect(onManage).toHaveBeenCalledTimes(1);
   });
+
+  it("fires a bare confirmation toast with no action when manage is omitted (legal re-acceptance)", () => {
+    (toast.success as any).mockClear();
+    showConsentSavedToast({ saved: "Policies accepted" });
+    expect(toast.success).toHaveBeenCalledTimes(1);
+    const [msg, opts] = (toast.success as any).mock.calls[0];
+    expect(msg).toBe("Policies accepted");
+    expect(opts.action).toBeUndefined();
+  });
 });

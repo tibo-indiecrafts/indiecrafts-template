@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Renders the "our legal documents changed — please review and accept" popup in React Native. Mount it at the shell root only when re-acceptance is due (`needsReacceptance(store.get(), currentVersion)`). `onReview` opens the legal screen; `onAccept` persists a `LegalAcceptanceRecord`. Themed from the shared tokens.
+Renders the "our legal documents changed — please accept" popup in React Native. Mount it at the shell root only when re-acceptance is due (`needsReacceptance(store.get(), currentVersion)`). `links` open the website's Privacy · Terms pages in the system browser (`Linking.openURL`); `onAccept` persists a `LegalAcceptanceRecord`. Themed from the shared tokens.
 
 ## Exports
 
-- `LegalReacceptancePrompt` — the prompt component. Props: `copy`, `onReview`, `onAccept`.
+- `LegalReacceptancePrompt` — the prompt component. Props: `copy` (its `body` carries `[[…]]` markers), `hrefs` (the ordered privacy/terms URLs woven inline), `onAccept`.
 
 ## Usage
 
@@ -23,7 +23,7 @@ import { LegalReacceptancePrompt } from "@indiecrafts/packages-shared-compliance
 
 <LegalReacceptancePrompt
   copy={copy}
-  onReview={openLegalScreen}
+  hrefs={legalHrefs}
   onAccept={recordAcceptance}
 />;
 ```

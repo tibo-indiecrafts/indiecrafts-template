@@ -35,7 +35,14 @@ export {
   legalUrl,
   type LegalAcceptanceRecord,
   type LegalReacceptanceCopy,
+  type LegalReacceptanceLink,
+  type LegalMessagePart,
+  linkifyMessage,
   needsReacceptance,
+  LEGAL_VERSION_ENDPOINT,
+  fetchLegalVersion,
+  readLegalConsent,
+  writeLegalConsent,
 } from "./legal";
 
 export {

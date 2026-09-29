@@ -27,6 +27,7 @@ import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
 import { CookieBanner } from "@indiecrafts/packages-web-compliance/consent/CookieBanner";
 import { CookiePreferencesHost } from "@indiecrafts/packages-web-compliance/consent/CookiePreferencesHost";
 import { LegalNotice } from "@indiecrafts/packages-web-compliance/reacceptance/LegalNotice";
+import { SignedInLegalNotice } from "@/user-interface/legal/SignedInLegalNotice";
 import { routing } from "@/i18n/routing";
 import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
 import { MarketingNudgeMount } from "@indiecrafts/packages-web-auth/marketing-nudge";
@@ -157,12 +158,9 @@ export default async function LocaleLayout({ children, params }: Readonly<Props>
   // Server-read the legal-acceptance cookie so the "policies updated" banner is
   // decided server-side (no flash) — shown only when the deposited version is stale.
   const legalAck = (await cookies()).get(LEGAL_ACK_COOKIE)?.value;
-  // Review link → the first flag-enabled tracked legal page (CGV is off by default).
-  const legalReviewHref = features.legal.privacy
-    ? "/privacy-policy"
-    : features.legal.terms
-      ? "/terms"
-      : "/terms-of-sale";
+  // The two policy URLs woven into the re-acceptance banner message's [[…]] markers
+  // (privacy, terms — the contract documents the update covers).
+  const legalHrefs = ["/privacy-policy", "/terms"];
 
   return (
     <AppClerkProvider locale={locale} nonce={nonce}>
@@ -252,16 +250,26 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                 lastUpdated. Server-gated on the deposited cookie; no fallback. */}
                 {legal.version &&
                 legal.message &&
-                legal.reviewLabel &&
                 legal.acceptLabel &&
                 legalAck !== legal.version ? (
-                  <LegalNotice
-                    version={legal.version}
-                    message={legal.message}
-                    reviewLabel={legal.reviewLabel}
-                    reviewHref={legalReviewHref}
-                    acceptLabel={legal.acceptLabel}
-                  />
+                  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+                    // Signed-in visitors sync acceptance across surfaces (app · mobile)
+                    // via the api Worker; signed-out falls back to the cookie deposit.
+                    <SignedInLegalNotice
+                      version={legal.version}
+                      message={legal.message}
+                      hrefs={legalHrefs}
+                      acceptLabel={legal.acceptLabel}
+                      apiUrl={process.env.NEXT_PUBLIC_API_URL ?? ""}
+                    />
+                  ) : (
+                    <LegalNotice
+                      version={legal.version}
+                      message={legal.message}
+                      hrefs={legalHrefs}
+                      acceptLabel={legal.acceptLabel}
+                    />
+                  )
                 ) : null}
                 {/* "New version available" banner — copy is edited per language in
                 Sanity (`siteMeta.<locale>.versionPrompt`), no fallback. Mounted

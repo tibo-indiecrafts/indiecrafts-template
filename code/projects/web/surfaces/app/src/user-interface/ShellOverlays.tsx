@@ -10,7 +10,12 @@ import { UpdatePrompt } from "@indiecrafts/packages-web-version/update-prompt";
 import type { ConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import { type Locale } from "@/config";
 import { ConsentGate } from "./overlays/ConsentGate";
-import { LegalGate } from "./overlays/LegalGate";
+import { LegalGate, SignedInLegalGate } from "./overlays/LegalGate";
+
+// Auth is opt-in: a `ClerkProvider` (so `useAuth`) exists only with a publishable key.
+// The signed-in gate syncs acceptance across surfaces; without a key, the plain gate is
+// anonymous-only (per-surface local deposit) — the legal banner must work either way.
+const clerkOn = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 /**
  * Compliance + version overlays for the app shell. Mounted in `[locale]/layout`. A thin
@@ -34,7 +39,11 @@ export function ShellOverlays({
   return (
     <>
       <ConsentGate mode={mode} gpcSignal={gpcSignal} />
-      <LegalGate locale={locale} />
+      {clerkOn ? (
+        <SignedInLegalGate locale={locale} />
+      ) : (
+        <LegalGate locale={locale} />
+      )}
       <UpdatePrompt
         current={commit}
         message={tv("message")}

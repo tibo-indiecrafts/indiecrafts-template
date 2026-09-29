@@ -21,7 +21,6 @@ export type LegalAcceptance = {
   /** Effective version — bump of any tracked page's date re-shows the banner. */
   version: string;
   message?: string;
-  reviewLabel?: string;
   acceptLabel?: string;
 };
 
@@ -61,8 +60,6 @@ export const getLegalAcceptance = cache(
       return {
         version,
         message: localized(banner?.message ?? null, locale) || undefined,
-        reviewLabel:
-          localized(banner?.reviewLabel ?? null, locale) || undefined,
         acceptLabel:
           localized(banner?.acceptLabel ?? null, locale) || undefined,
       };

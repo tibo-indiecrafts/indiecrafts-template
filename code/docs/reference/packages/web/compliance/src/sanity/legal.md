@@ -15,7 +15,7 @@ Reads the Sanity `legalConsent` singleton for the banner copy and composes the e
 ## Exports
 
 - `getLegalAcceptance(locale, flags)` — React-`cache`d async reader. Takes the locale and the app's `LegalFlags` (which tracked pages are enabled) and returns the resolved `LegalAcceptance`, or the empty shape on error. A disabled page's date is excluded from the version.
-- `LegalAcceptance` — the resolved shape: `version` plus optional `message`, `reviewLabel`, `acceptLabel`.
+- `LegalAcceptance` — the resolved shape: `version` plus optional `message`, `acceptLabel` (the Privacy · Terms links are built by the app, not stored).
 - `LegalFlags` — `{ privacy, terms, sales }`, the app-injected enable flags.
 
 ## Usage

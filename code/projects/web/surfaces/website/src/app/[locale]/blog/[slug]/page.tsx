@@ -14,6 +14,7 @@ import {
 import { getBlogSettings } from "@indiecrafts/modules-web-blog/lib/settings";
 import { buildMetadata } from "@/lib/metadata";
 import { translationAlternates } from "@/lib/seo/translations";
+import { articleOpenGraph } from "@/lib/seo/article-og";
 import { PageSchemas } from "@/lib/seo/jsonld";
 import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/seo/jsonld-factories";
 import { getSiteSettings } from "@/lib/seo/site-seo";
@@ -75,8 +76,6 @@ export async function generateMetadata({ params }: Props) {
   const title = post.metadata?.title ?? post.title;
   const description = post.metadata?.description;
   const ogImage = post.metadata?.image?.asset?.url;
-  const authors = post.authors?.map((a) => a.name).filter((n): n is string => Boolean(n));
-  const section = post.categories?.[0]?.title;
 
   return {
     ...base,
@@ -85,17 +84,13 @@ export async function generateMetadata({ params }: Props) {
     robots: post.metadata?.noIndex ? { index: false, follow: false } : base.robots,
     openGraph: {
       ...base.openGraph,
-      // A post is an article, not a website: `og:type=article` unlocks the
-      // article:* tags (published/modified time, author, section) that drive
-      // richer social + search treatment. The JSON-LD already emits `Article`.
-      type: "article",
+      // A post is an article, not a website — `articleOpenGraph` sets `type:
+      // "article"` + the article:* tags from the post's own fields. The JSON-LD
+      // already emits an `Article`, so OG and structured data agree.
+      ...articleOpenGraph(post),
       title,
       description,
       images: ogImage ? [{ url: ogImage }] : base.openGraph?.images,
-      publishedTime: post.publishedAt ?? undefined,
-      modifiedTime: post.updatedAt ?? post.publishedAt ?? undefined,
-      ...(authors && authors.length ? { authors } : {}),
-      ...(section ? { section } : {}),
     },
     alternates: {
       ...base.alternates,

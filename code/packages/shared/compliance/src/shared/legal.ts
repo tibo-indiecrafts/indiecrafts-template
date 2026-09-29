@@ -92,9 +92,42 @@ export type LegalAcceptanceRecord = {
 export type LegalReacceptanceCopy = {
   title: string;
   body: string;
-  reviewLabel: string;
   acceptLabel: string;
 };
+
+/** A policy link woven into the re-acceptance message (label + href). */
+export type LegalReacceptanceLink = { label: string; href: string };
+
+/** A parsed message segment — plain text, or a link to render inline. */
+export type LegalMessagePart = string | LegalReacceptanceLink;
+
+/**
+ * Split a re-acceptance `message` into inline text + link parts. Each `[[…]]` marker
+ * becomes a link whose LABEL is the text inside the brackets and whose HREF is the next
+ * entry of `hrefs`, in order — so the message authors the sentence ("We updated our
+ * [[Privacy Policy]] and [[Terms]].") and the shell supplies the two URLs (privacy,
+ * terms). A marker with no matching href falls back to its plain label, so a missing
+ * link never leaves a raw `[[…]]` on screen. Pure — rendered per platform by each prompt.
+ */
+export function linkifyMessage(
+  message: string,
+  hrefs: readonly string[],
+): LegalMessagePart[] {
+  const parts: LegalMessagePart[] = [];
+  const re = /\[\[([^\]]+)\]\]/g;
+  let last = 0;
+  let i = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(message)) !== null) {
+    const label = m[1] ?? "";
+    if (m.index > last) parts.push(message.slice(last, m.index));
+    const href = hrefs[i++];
+    parts.push(href ? { label, href } : label);
+    last = re.lastIndex;
+  }
+  if (last < message.length) parts.push(message.slice(last));
+  return parts;
+}
 
 /**
  * True when the visitor must (re-)accept the legal policies — no prior acceptance,
@@ -106,4 +139,92 @@ export function needsReacceptance(
   current: string,
 ): boolean {
   return !acked || acked.version !== current;
+}
+
+/**
+ * The website route that exposes the effective legal version — the SAME string the
+ * website banner computes (`getLegalAcceptance(...).version`). App + mobile fetch it so
+ * every surface re-prompts on ONE Sanity bump, and all three compare the SAME version
+ * string (a per-surface static `policyVersion` would never match the website's).
+ */
+export const LEGAL_VERSION_ENDPOINT = "/api/legal-version";
+
+/**
+ * Fetch the website's live legal version so every surface shares one version string.
+ * `websiteBaseUrl` is the marketing origin (`site.websiteUrl`). Returns null on any
+ * failure — the caller falls back to its static `policyVersion`, so an unreachable
+ * website never blocks the shell nor falsely re-prompts.
+ */
+export async function fetchLegalVersion(
+  websiteBaseUrl: string,
+): Promise<string | null> {
+  if (!websiteBaseUrl) return null;
+  try {
+    const res = await fetch(
+      `${websiteBaseUrl.replace(/\/+$/, "")}${LEGAL_VERSION_ENDPOINT}`,
+    );
+    if (res.status !== 200) return null;
+    const body = (await res.json()) as { version?: unknown };
+    return typeof body.version === "string" && body.version
+      ? body.version
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Read the SIGNED-IN user's server-recorded accepted legal version (`GET
+ * /v1/consent/legal`). Returns null when signed out, unconfigured, or on error — the
+ * caller then falls back to its per-surface local deposit. This server record is what
+ * makes acceptance follow a user across website · app · mobile.
+ */
+export async function readLegalConsent(input: {
+  apiUrl: string;
+  getToken: () => Promise<string | null>;
+}): Promise<string | null> {
+  if (!input.apiUrl) return null;
+  try {
+    const token = await input.getToken();
+    if (!token) return null;
+    const res = await fetch(`${input.apiUrl}/v1/consent/legal`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    if (res.status !== 200) return null;
+    const body = (await res.json()) as { legal_acked_version?: unknown };
+    return typeof body.legal_acked_version === "string"
+      ? body.legal_acked_version
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Record the accepted legal `version` for the SIGNED-IN user (`POST /v1/consent/legal`),
+ * so the banner clears on their other surfaces. Best-effort: returns false on any
+ * failure — the local deposit already hid the banner here. `surface` tags the proof row.
+ */
+export async function writeLegalConsent(input: {
+  apiUrl: string;
+  getToken: () => Promise<string | null>;
+  version: string;
+  surface: string;
+}): Promise<boolean> {
+  if (!input.apiUrl) return false;
+  try {
+    const token = await input.getToken();
+    if (!token) return false;
+    const res = await fetch(`${input.apiUrl}/v1/consent/legal`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ version: input.version, surface: input.surface }),
+    });
+    return res.status === 200;
+  } catch {
+    return false;
+  }
 }

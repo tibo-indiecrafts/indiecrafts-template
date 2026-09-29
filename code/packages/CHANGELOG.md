@@ -14,6 +14,16 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Added
 
+- **Cross-surface legal re-acceptance transport** (`@indiecrafts/packages-shared-compliance/shared`) —
+  `LEGAL_VERSION_ENDPOINT` + `fetchLegalVersion(websiteBaseUrl)` (reads the website's live legal version)
+  and `readLegalConsent` / `writeLegalConsent({apiUrl, getToken, …})` (the signed-in api-Worker sync via
+  `/v1/consent/legal`). **Why:** the "policies updated" banner was per-surface — website computed its
+  version from Sanity while `app` + mobile used a static `policyVersion`, so a Sanity bump never reached
+  them and the compared version strings differed. Now every surface fetches the SAME version (one Sanity
+  bump re-prompts all three) and a signed-in user's acceptance follows them across website · app · mobile
+  (accept on one, cleared on all). Anonymous visitors keep their per-surface local deposit — no shared
+  identity to sync by. Pure + best-effort (return `null`/`false` on any failure); covered by
+  `legal-consent-transport.test.ts` (6 tests).
 - **Storybook stories for three previously-uncovered components** — `AnnouncementToast`
   (`@indiecrafts/packages-web-announcement`, the sibling of `AnnouncementBar` used on all 3 surfaces),
   `PostCard` (`@indiecrafts/packages-web-ui-components`, the shared blog card), and the native
@@ -76,6 +86,19 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **Legal re-acceptance banner unified across web + app + mobile: Privacy + Terms links, no Review
+  button, clean saved toast.** Every re-acceptance surface dropped its single "Review/Consulter" button
+  for inline **Privacy + Terms** links so the visitor reads exactly what they're accepting:
+  `LegalNotice` (`web/compliance`, the website) and the shared `LegalReacceptancePrompt`
+  (`shared/compliance` `./web` + `./native`, serving the `app` surface + the Expo shell — web renders
+  `<a>`, native `Linking.openURL`s the website legal pages). On Accept the web surfaces fire a **bare**
+  "Policies accepted" toast — `showConsentSavedToast` (`web/ui-components`) made its Manage action
+  optional, so legal acceptance no longer shows the mismatched "Manage cookie preferences" CTA (which
+  also overflowed); the cookie banner keeps that action, where it belongs. **Removed** the now-unused
+  `reviewLabel` everywhere: the Sanity `legalConsent.banner` field + its query/read type + demo seed,
+  the shared `LegalReacceptanceCopy` type (new `LegalReacceptanceLink`), and the app/mobile
+  `legal.reaccept.review` message (→ `privacy`/`terms`). **Why:** accepting policies is not a cookie
+  choice; the banner should link to the policies and confirm plainly, one behaviour on every surface.
 - **Double title on ~99 Storybook Docs pages.** Every component's `<Name>.md` (injected as the
   autodocs `description.component`) opened with its own `# <Name>` heading — but autodocs already
   renders the story-title leaf as the page title, so each Docs page showed the name twice. Stripped

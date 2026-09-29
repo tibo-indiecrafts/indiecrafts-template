@@ -4,27 +4,29 @@
  * @see docs/reference/packages/shared/compliance/src/native/LegalReacceptancePrompt.md
  */
 
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text, Linking } from "react-native";
 import {
   Button,
   ThemedText,
   useTheme,
 } from "@indiecrafts/packages-mobile-ui-native";
-import type { LegalReacceptanceCopy } from "../shared/legal";
+import { linkifyMessage, type LegalReacceptanceCopy } from "../shared/legal";
 
 /**
- * "Our legal documents changed — please review & accept" popup (React Native). Mount it
- * at the shell root ONLY when re-acceptance is due (`needsReacceptance(store.get(),
- * currentVersion)`). `onReview` opens the legal screen (the Phase-2 link-out); `onAccept`
- * persists a `LegalAcceptanceRecord`. Themed from the shared tokens.
+ * "Our legal documents changed — please accept" popup (React Native). Mount it at the
+ * shell root ONLY when re-acceptance is due (`needsReacceptance(store.get(),
+ * currentVersion)`). `copy.body` carries `[[…]]` link markers; `hrefs` are the matching
+ * website policy URLs (privacy · terms) woven inline as tappable `Text` that opens the
+ * page in the system browser (`Linking.openURL`). `onAccept` persists a
+ * `LegalAcceptanceRecord`. Themed from the shared tokens.
  */
 export function LegalReacceptancePrompt({
   copy,
-  onReview,
+  hrefs,
   onAccept,
 }: {
   copy: LegalReacceptanceCopy;
-  onReview: () => void;
+  hrefs: string[];
   onAccept: () => void;
 }) {
   const { theme } = useTheme();
@@ -42,10 +44,25 @@ export function LegalReacceptancePrompt({
     >
       <ThemedText style={styles.title}>{copy.title}</ThemedText>
       <ThemedText variant="muted" style={styles.body}>
-        {copy.body}
+        {linkifyMessage(copy.body, hrefs).map((part, i) =>
+          typeof part === "string" ? (
+            part
+          ) : (
+            <Text
+              key={i}
+              accessibilityRole="link"
+              accessibilityLabel={part.label}
+              style={styles.link}
+              onPress={() => {
+                void Linking.openURL(part.href);
+              }}
+            >
+              {part.label}
+            </Text>
+          ),
+        )}
       </ThemedText>
       <View style={styles.actions}>
-        <Button label={copy.reviewLabel} variant="outline" onPress={onReview} />
         <Button label={copy.acceptLabel} onPress={onAccept} />
       </View>
     </View>
@@ -64,6 +81,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 15, fontWeight: "600" },
   body: { fontSize: 13 },
+  link: { textDecorationLine: "underline" },
   actions: {
     flexDirection: "row",
     flexWrap: "wrap",

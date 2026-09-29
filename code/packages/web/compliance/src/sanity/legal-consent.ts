@@ -43,13 +43,7 @@ export default defineType({
           title: "Message",
           type: "localeString",
           description:
-            "La phrase affichée dans le bandeau. Ex. « Nous avons mis à jour notre politique de confidentialité et nos conditions. »",
-        }),
-        defineField({
-          name: "reviewLabel",
-          title: "Bouton « consulter »",
-          type: "localeString",
-          description: "Texte du lien vers les documents. Ex. « Consulter ».",
+            "La phrase du bandeau. Entourez de [[…]] les mots qui deviennent des liens vers vos documents : le 1er lien pointe vers Confidentialité, le 2e vers CGU. Ex. « Nous avons mis à jour notre [[politique de confidentialité]] et nos [[conditions]]. »",
         }),
         defineField({
           name: "acceptLabel",

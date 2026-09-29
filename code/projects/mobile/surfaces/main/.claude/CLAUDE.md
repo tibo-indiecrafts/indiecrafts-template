@@ -34,7 +34,9 @@ product screens are TBD.**
 - **Compliance + version + locale** — `components/ShellOverlays.tsx` (mounted in `_layout`):
   the shared `compliance/native` consent banner + legal re-acceptance popup (AsyncStorage store,
   gated by `config.features.requireConsent`, off by default; **geo-targeted** per country via the api
-  `GET /v1/geo` + `config.consent` — `lib/geo.ts`), an `AppState` version poll of the
+  `GET /v1/geo` + `config.consent` — `lib/geo.ts`; the legal gate uses the website's **live** version
+  via `fetchLegalVersion` — static `policyVersion` = offline fallback — and, when `hasClerk`
+  (`SignedInLegalReacceptGate`), syncs acceptance across surfaces via `/v1/consent/legal`), an `AppState` version poll of the
   website's `/api/version`, a first-run locale suggestion (`pickSuggestedLocale`), and an offline banner
   (`hooks/useNetworkStatus` via `@react-native-community/netinfo` feeds the shared `system-pages/native`
   `OfflineBanner`, copy from `SHELL_COPY.offline`). `app/legal.tsx`

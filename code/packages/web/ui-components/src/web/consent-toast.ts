@@ -6,8 +6,10 @@
 import { toast } from "sonner";
 
 /** The one consent/legal "choice saved" toast shape — identical on every web surface.
- *  Copy is injected (each surface resolves its own i18n); `onManage` opens that
- *  surface's cookie-preferences control. */
+ *  Copy is injected (each surface resolves its own i18n). The Manage action is
+ *  OPTIONAL: the cookie banner passes it (`onManage` opens that surface's
+ *  cookie-preferences control); legal re-acceptance omits it — accepting policies
+ *  is not a cookie choice, so a bare confirmation toast is correct. */
 export function showConsentSavedToast({
   saved,
   description,
@@ -15,12 +17,13 @@ export function showConsentSavedToast({
   onManage,
 }: {
   saved: string;
-  description: string;
-  manage: string;
-  onManage: () => void;
+  description?: string;
+  manage?: string;
+  onManage?: () => void;
 }): void {
   toast.success(saved, {
     description,
-    action: { label: manage, onClick: onManage },
+    action:
+      manage && onManage ? { label: manage, onClick: onManage } : undefined,
   });
 }

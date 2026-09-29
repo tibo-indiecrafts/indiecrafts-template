@@ -26,6 +26,11 @@ sign-in nudge read/write the caller's own opt-in) and `POST /v1/profiles/consent
 admin users list). Each decision mirrors to Resend's global Contacts (`resend-audience.ts`, keyed by
 email — no audience id since Resend renamed Audiences to Segments; `RESEND_API_KEY` unset → no-op);
 erasure pure-deletes the contact.
+**Legal re-acceptance:** `GET`/`POST /v1/consent/legal` (Clerk-JWT) — a signed-in user's accepted policy
+version, so the "policies updated" banner follows them across website · app · mobile (accept on one,
+cleared on all). Proof in `consent_events` (`consent_type = 'legal_reaccept'`), current state in
+`user_profiles.legal_acked_version` (migration `0011`). Anonymous visitors keep their per-surface local
+deposit (cookie / AsyncStorage) — no shared identity to sync by.
 **Per-category email preferences** (the editor-defined categories, alongside the single flag above):
 `GET`/`POST /v1/consent/email-preferences` (Clerk-JWT) and the no-login
 `GET`/`POST /v1/email-preferences?token=` + `POST /v1/email-preferences/unsubscribe?token=` (RFC 8058

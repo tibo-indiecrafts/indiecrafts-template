@@ -123,8 +123,7 @@
     "termsOfSale": "Terms of sale",
     "reaccept": {
       "title": "Our policies changed",
-      "body": "We updated our legal documents. Please review and accept to continue.",
-      "review": "Review",
+      "body": "We updated our [[Privacy Policy]] and [[Terms]]. Please accept to continue.",
       "accept": "Accept",
       "saved": "Thanks — your acceptance is saved."
     }

@@ -41,7 +41,7 @@ export const cookiePolicyVersionQuery = defineQuery(`
  * their own banner; the legal notice (imprint) is informational and excluded.
  */
 export const legalAcceptanceQuery = defineQuery(`{
-  "copy": *[_id == "legalConsent"][0]{ version, banner{ message, reviewLabel, acceptLabel } },
+  "copy": *[_id == "legalConsent"][0]{ version, banner{ message, acceptLabel } },
   "privacy": *[_type == "legalPage" && pageKey == "confidentialite"] | order(lastUpdated desc)[0].lastUpdated,
   "terms": *[_type == "legalPage" && pageKey == "cgu"] | order(lastUpdated desc)[0].lastUpdated,
   "sales": *[_type == "legalPage" && pageKey == "cgv"] | order(lastUpdated desc)[0].lastUpdated

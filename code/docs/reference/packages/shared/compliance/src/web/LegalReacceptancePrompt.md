@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-The "our legal documents changed — please review and accept" popup (web, shadcn). Mount it at the shell root only when re-acceptance is due. `onReview` opens the legal pages on the website; `onAccept` persists a `LegalAcceptanceRecord` via the shell's store. Copy is injected; Next-free.
+The "our legal documents changed — please accept" popup (web, shadcn). Mount it at the shell root only when re-acceptance is due. `links` are the Privacy · Terms pages on the website (rendered as `<a>`); `onAccept` persists a `LegalAcceptanceRecord` via the shell's store. Copy is injected; Next-free.
 
 ## Exports
 
-- `LegalReacceptancePrompt` — the popup component (`copy`, `onReview`, `onAccept`).
+- `LegalReacceptancePrompt` — the popup component (`copy` with `[[…]]` markers in `body`, `hrefs`, `onAccept`).
 
 ## Usage
 
@@ -23,7 +23,7 @@ import { LegalReacceptancePrompt } from "@indiecrafts/packages-shared-compliance
 
 <LegalReacceptancePrompt
   copy={copy}
-  onReview={openLegalPages}
+  hrefs={legalHrefs}
   onAccept={acceptVersion}
 />;
 ```

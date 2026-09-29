@@ -14,7 +14,7 @@ Defines the `legalConsent` Sanity document — a single, language-independent si
 
 ## Exports
 
-- `default` — the `legalConsent` `SchemaTypeDefinition` (a Sanity document): an optional `version` string plus a `banner` object with translated `message`, `reviewLabel`, and `acceptLabel`.
+- `default` — the `legalConsent` `SchemaTypeDefinition` (a Sanity document): an optional `version` string plus a `banner` object with translated `message` and `acceptLabel` (the Privacy · Terms links are added automatically).
 
 ## Usage
 

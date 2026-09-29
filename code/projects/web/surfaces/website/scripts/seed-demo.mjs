@@ -3162,10 +3162,9 @@ const buildLegalConsent = () => ({
   version: "1",
   banner: {
     message: navLabel(
-      "We updated our Privacy Policy and Terms.",
-      "Nous avons mis à jour notre politique de confidentialité et nos conditions.",
+      "We updated our [[Privacy Policy]] and [[Terms]].",
+      "Nous avons mis à jour notre [[politique de confidentialité]] et nos [[conditions]].",
     ),
-    reviewLabel: navLabel("Review", "Consulter"),
     acceptLabel: navLabel("Accept", "Accepter"),
   },
 });

@@ -5,6 +5,16 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **`GET`/`POST /v1/consent/legal`** — the authenticated legal re-acceptance endpoint (Clerk-JWT,
+  keyed on `sub`). `GET` returns the caller's last-accepted policy version; `POST {version, surface?}`
+  writes an append-only `consent_events` proof (`consent_type = 'legal_reaccept'`, idempotent per
+  version) + the current-state cache `user_profiles.legal_acked_version` (migration `0011`). **Why:** so
+  the "policies updated" banner follows a signed-in user across website · app · mobile — accept on one
+  surface, cleared on all. Anonymous visitors keep their per-surface local deposit. Covered by
+  `consent/legal.test.ts` (5 tests).
+
 ### Security
 
 API security-hardening pass (audit 2026-09-11). One HIGH + four MED + a LOW batch; plan →

@@ -178,7 +178,7 @@ banner (`LegalNotice`, `@indiecrafts/packages-web-compliance/reacceptance/LegalN
 **Review** + **Accept**.
 
 - **Copy** — the `legalConsent` singleton (Studio → **Mise à jour des documents légaux**):
-  `banner.message` / `reviewLabel` / `acceptLabel` (`localeString`) + an optional manual `version`.
+  `banner.message` / `acceptLabel` (`localeString`) — the Privacy · Terms links are added automatically + an optional manual `version`.
   Sole source, no `messages` fallback. Read by `getLegalAcceptance(locale)`
   (`@indiecrafts/packages-web-compliance/sanity/legal`).
 - **Version** — the effective version is the optional manual `version` (usually blank) joined with the
