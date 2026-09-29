@@ -20,6 +20,7 @@ import { ShellOverlays } from "@/user-interface/ShellOverlays";
 import { AnnouncementChrome } from "@/user-interface/AnnouncementChrome";
 import { buildInfo } from "@/lib/build-info";
 import { THEME_SCRIPT } from "@/user-interface/layout/theme-script";
+import { NativeBridge } from "@/user-interface/shell/NativeBridge";
 
 /** Prerender one tree per locale (`as-needed` → `/`, `/fr`). */
 export function generateStaticParams() {
@@ -66,6 +67,8 @@ export default async function LocaleLayout({
       <body suppressHydrationWarning>
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <NextIntlClientProvider>
+          {/* Capacitor shell native events — a no-op in a browser. */}
+          <NativeBridge />
           <OfflineBanner message={tOffline("banner")} />
           {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
             <>
