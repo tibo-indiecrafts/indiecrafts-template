@@ -30,7 +30,7 @@
     "@indiecrafts/packages-shared-logger": "workspace:*",
     "@indiecrafts/packages-shared-security": "workspace:*",
     "@indiecrafts/packages-web-system-pages": "workspace:*",
-    "@indiecrafts/packages-shared-ui-icons": "workspace:*",
+    "@indiecrafts/packages-web-ui-icons": "workspace:*",
     "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*",
     "@indiecrafts/packages-web-announcement": "workspace:*",

@@ -12,7 +12,7 @@ code; the marks are edited in Sanity.
 
 ## Icon sets
 
-Icons come from **one brick** — [`@indiecrafts/packages-shared-ui-icons`](/packages/shared/ui-icons)
+Icons come from **one brick** — [`@indiecrafts/packages-web-ui-icons`](/packages/web/ui-icons)
 — so the app, blog, and (later) native surfaces draw from a single source. Import the renderers from
 `/web`; all are demoed in `src/user-interface/homepage/sections/IconShowcase.tsx`.
 
@@ -24,7 +24,7 @@ Icons come from **one brick** — [`@indiecrafts/packages-shared-ui-icons`](/pac
 | `BrandIcon`  | Brand / social | Social logos painted in their official brand colors (`brandColor`). Cross-platform.          |
 
 ```tsx
-import { Icon, BrandIcon } from "@indiecrafts/packages-shared-ui-icons/web";
+import { Icon, BrandIcon } from "@indiecrafts/packages-web-ui-icons/web";
 
 <Icon name="zap" className="size-5" aria-hidden="true" />
 <BrandIcon name="github" size={20} brandColor />
@@ -37,7 +37,7 @@ sole content of a control.
 
 **Cross-platform:** `Icon`/`SvgIcon`/`BrandIcon` also render on native (`/native`, via
 `lucide-react-native` + `react-native-svg`); `ReiconIcon` is web only (reicon has no React
-Native build). Full reference + how to add a glyph or a custom SVG → the [`ui-icons` package doc](/packages/shared/ui-icons).
+Native build). Full reference + how to add a glyph or a custom SVG → the [`ui-icons` package doc](/packages/web/ui-icons).
 
 ## Favicon, app icon & logo — edited in Sanity
 

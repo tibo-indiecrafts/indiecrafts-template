@@ -4,7 +4,7 @@
  * @see docs/reference/packages/web/ui-components/src/web/collection/FeatureGrid.md
  */
 import type { FeatureGridModule } from "@indiecrafts/packages-web-ui-components/shared/types";
-import { Icon } from "@indiecrafts/packages-shared-ui-icons/web";
+import { Icon } from "@indiecrafts/packages-web-ui-icons/web";
 import {
   Card,
   CardContent,

@@ -13,11 +13,11 @@ import {
   BrandIcon,
   type GlyphName,
   type BrandName,
-} from "@indiecrafts/packages-shared-ui-icons/web";
+} from "@indiecrafts/packages-web-ui-icons/web";
 
 /**
  * Icon-systems showcase for the homepage. Demonstrates the icon sets the shared
- * `@indiecrafts/packages-shared-ui-icons` brick ships, each doing the job it's best at:
+ * `@indiecrafts/packages-web-ui-icons` brick ships, each doing the job it's best at:
  *   - Lucide (`Icon`) — the outline UI glyph set, cross-platform (web + native)
  *   - Reicon (`ReiconIcon`) — the same icons in Outline *and* Filled weights (web)
  *   - Brands (`BrandIcon`) — social marks painted in their official brand colors, from shared SVG data

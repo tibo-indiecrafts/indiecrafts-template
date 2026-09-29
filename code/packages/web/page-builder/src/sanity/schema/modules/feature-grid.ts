@@ -5,7 +5,7 @@
  */
 import { defineArrayMember, defineField } from "sanity";
 import { ThLargeIcon } from "@sanity/icons/ThLarge";
-import { glyphOptions } from "@indiecrafts/packages-shared-ui-icons/shared";
+import { glyphOptions } from "@indiecrafts/packages-web-ui-icons/shared";
 import { defineModule } from "../objects/define-module";
 
 /**

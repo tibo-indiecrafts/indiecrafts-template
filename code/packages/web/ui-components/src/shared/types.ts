@@ -4,9 +4,9 @@
  * @see docs/reference/packages/web/ui-components/src/shared/types.md
  */
 import type { PortableTextBlock } from "@portabletext/react";
-import type { GlyphName as FeatureIcon } from "@indiecrafts/packages-shared-ui-icons/shared";
+import type { GlyphName as FeatureIcon } from "@indiecrafts/packages-web-ui-icons/shared";
 
-/** The feature-grid icon set — the shared curated glyph names (`@indiecrafts/packages-shared-ui-icons`). */
+/** The feature-grid icon set — the shared curated glyph names (`@indiecrafts/packages-web-ui-icons`). */
 export type { FeatureIcon };
 
 /**

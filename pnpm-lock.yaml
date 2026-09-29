@@ -82,9 +82,6 @@ importers:
       '@indiecrafts/packages-shared-logger':
         specifier: workspace:*
         version: link:../../../packages/shared/logger
-      '@indiecrafts/packages-shared-ui-icons':
-        specifier: workspace:*
-        version: link:../../../packages/shared/ui-icons
       '@indiecrafts/packages-shared-utils':
         specifier: workspace:*
         version: link:../../../packages/shared/utils
@@ -106,6 +103,9 @@ importers:
       '@indiecrafts/packages-web-ui-components':
         specifier: workspace:*
         version: link:../../../packages/web/ui-components
+      '@indiecrafts/packages-web-ui-icons':
+        specifier: workspace:*
+        version: link:../../../packages/web/ui-icons
       '@portabletext/react':
         specifier: ^6.2.0
         version: 6.2.0(react@19.2.8)
@@ -345,28 +345,6 @@ importers:
   code/packages/shared/security-events: {}
 
   code/packages/shared/ui-fonts: {}
-
-  code/packages/shared/ui-icons:
-    dependencies:
-      lucide-react:
-        specifier: ^1.31.0
-        version: 1.31.0(react@19.2.8)
-      react:
-        specifier: 19.2.8
-        version: 19.2.8
-      react-dom:
-        specifier: 19.2.8
-        version: 19.2.8(react@19.2.8)
-      reicon-react:
-        specifier: ^1.2.0
-        version: 1.2.0(react@19.2.8)
-    devDependencies:
-      '@types/react':
-        specifier: ^19
-        version: 19.2.14
-      simple-icons:
-        specifier: ^16.28.0
-        version: 16.28.0
 
   code/packages/shared/ui-tokens:
     dependencies:
@@ -626,12 +604,12 @@ importers:
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../shared/config
-      '@indiecrafts/packages-shared-ui-icons':
-        specifier: workspace:*
-        version: link:../../shared/ui-icons
       '@indiecrafts/packages-web-sanity':
         specifier: workspace:*
         version: link:../sanity
+      '@indiecrafts/packages-web-ui-icons':
+        specifier: workspace:*
+        version: link:../ui-icons
       '@sanity/icons':
         specifier: 5.2.2
         version: 5.2.2(react@19.2.8)
@@ -773,15 +751,15 @@ importers:
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../shared/config
-      '@indiecrafts/packages-shared-ui-icons':
-        specifier: workspace:*
-        version: link:../../shared/ui-icons
       '@indiecrafts/packages-shared-utils':
         specifier: workspace:*
         version: link:../../shared/utils
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../ui
+      '@indiecrafts/packages-web-ui-icons':
+        specifier: workspace:*
+        version: link:../ui-icons
       '@portabletext/react':
         specifier: ^6.2.0
         version: 6.2.0(react@19.2.8)
@@ -816,6 +794,28 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.14)
+
+  code/packages/web/ui-icons:
+    dependencies:
+      lucide-react:
+        specifier: ^1.31.0
+        version: 1.31.0(react@19.2.8)
+      react:
+        specifier: 19.2.8
+        version: 19.2.8
+      react-dom:
+        specifier: 19.2.8
+        version: 19.2.8(react@19.2.8)
+      reicon-react:
+        specifier: ^1.2.0
+        version: 1.2.0(react@19.2.8)
+    devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.2.14
+      simple-icons:
+        specifier: ^16.28.0
+        version: 16.28.0
 
   code/packages/web/version:
     dependencies:
@@ -996,9 +996,6 @@ importers:
       '@indiecrafts/packages-shared-security':
         specifier: workspace:*
         version: link:../../../../packages/shared/security
-      '@indiecrafts/packages-shared-ui-icons':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/ui-icons
       '@indiecrafts/packages-shared-ui-tokens':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-tokens
@@ -1026,6 +1023,9 @@ importers:
       '@indiecrafts/packages-web-ui-components':
         specifier: workspace:*
         version: link:../../../../packages/web/ui-components
+      '@indiecrafts/packages-web-ui-icons':
+        specifier: workspace:*
+        version: link:../../../../packages/web/ui-icons
       '@indiecrafts/packages-web-version':
         specifier: workspace:*
         version: link:../../../../packages/web/version
@@ -1129,9 +1129,6 @@ importers:
       '@indiecrafts/packages-shared-ui-fonts':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-fonts
-      '@indiecrafts/packages-shared-ui-icons':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/ui-icons
       '@indiecrafts/packages-shared-ui-tokens':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-tokens
@@ -1177,6 +1174,9 @@ importers:
       '@indiecrafts/packages-web-ui-components':
         specifier: workspace:*
         version: link:../../../../packages/web/ui-components
+      '@indiecrafts/packages-web-ui-icons':
+        specifier: workspace:*
+        version: link:../../../../packages/web/ui-icons
       '@indiecrafts/packages-web-version':
         specifier: workspace:*
         version: link:../../../../packages/web/version
@@ -1352,9 +1352,6 @@ importers:
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../../../packages/shared/config
-      '@indiecrafts/packages-shared-ui-icons':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/ui-icons
       '@indiecrafts/packages-shared-ui-tokens':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-tokens
@@ -1379,6 +1376,9 @@ importers:
       '@indiecrafts/packages-web-ui-components':
         specifier: workspace:*
         version: link:../../../../packages/web/ui-components
+      '@indiecrafts/packages-web-ui-icons':
+        specifier: workspace:*
+        version: link:../../../../packages/web/ui-icons
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 9.1.20

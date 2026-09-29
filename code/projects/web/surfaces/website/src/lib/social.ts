@@ -4,14 +4,14 @@
  * @see docs/reference/projects/web/website/src/lib/social.md
  */
 
-import type { BrandName } from "@indiecrafts/packages-shared-ui-icons/shared";
+import type { BrandName } from "@indiecrafts/packages-web-ui-icons/shared";
 import type { SiteSettings } from "@/lib/seo/site-seo";
 
 export type SocialLink = {
   platform: keyof SiteSettings["social"];
   label: string;
   url: string;
-  /** Brand mark name in `@indiecrafts/packages-shared-ui-icons` — render with its `BrandIcon`. */
+  /** Brand mark name in `@indiecrafts/packages-web-ui-icons` — render with its `BrandIcon`. */
   brand: BrandName;
 };
 

@@ -6,7 +6,7 @@ status: stable
 
 # Icon showcase section
 
-> Demonstrates the Lucide, Reicon, and brand icon sets the shared `@indiecrafts/packages-shared-ui-icons` brick ships.
+> Demonstrates the Lucide, Reicon, and brand icon sets the shared `@indiecrafts/packages-web-ui-icons` brick ships.
 
 ## Purpose
 

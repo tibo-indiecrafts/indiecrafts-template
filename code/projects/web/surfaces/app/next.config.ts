@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-shared-security",
     "@indiecrafts/packages-web-security-reports",
     "@indiecrafts/packages-web-ui-components",
-    "@indiecrafts/packages-shared-ui-icons",
+    "@indiecrafts/packages-web-ui-icons",
     "@indiecrafts/packages-web-system-pages",
   ],
   async headers() {

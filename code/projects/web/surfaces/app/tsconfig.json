@@ -43,8 +43,8 @@
       "@indiecrafts/packages-web-system-pages/*": [
         "../../../../packages/web/system-pages/src/*"
       ],
-      "@indiecrafts/packages-shared-ui-icons/*": [
-        "../../../../packages/shared/ui-icons/src/*"
+      "@indiecrafts/packages-web-ui-icons/*": [
+        "../../../../packages/web/ui-icons/src/*"
       ]
     },
     "allowJs": true

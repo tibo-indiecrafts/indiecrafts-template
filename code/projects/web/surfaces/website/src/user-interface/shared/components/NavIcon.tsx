@@ -6,7 +6,7 @@
  * @see docs/reference/projects/web/website/src/user-interface/shared/components/NavIcon.md
  */
 
-import { ReiconIcon } from "@indiecrafts/packages-shared-ui-icons/web";
+import { ReiconIcon } from "@indiecrafts/packages-web-ui-icons/web";
 
 /**
  * Resolve a free-text Reicon name (as typed by an editor in the `navigation`

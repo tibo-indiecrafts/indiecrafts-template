@@ -4,7 +4,7 @@
  * @see docs/reference/projects/web/website/src/user-interface/shared/layout/SocialFollow.md
  */
 import type { CSSProperties } from "react";
-import { BrandIcon, BRANDS } from "@indiecrafts/packages-shared-ui-icons/web";
+import { BrandIcon, BRANDS } from "@indiecrafts/packages-web-ui-icons/web";
 import { socialLinks } from "@/lib/social";
 import type { SiteSettings } from "@/lib/seo/site-seo";
 

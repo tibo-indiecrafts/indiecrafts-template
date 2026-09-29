@@ -10,7 +10,7 @@
     "@indiecrafts/packages-shared-config": "workspace:*",
     "@indiecrafts/packages-shared-format": "workspace:*",
     "@indiecrafts/packages-shared-logger": "workspace:*",
-    "@indiecrafts/packages-shared-ui-icons": "workspace:*",
+    "@indiecrafts/packages-web-ui-icons": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*",
     "@indiecrafts/packages-web-email": "workspace:*",
     "@indiecrafts/packages-web-i18n": "workspace:*",

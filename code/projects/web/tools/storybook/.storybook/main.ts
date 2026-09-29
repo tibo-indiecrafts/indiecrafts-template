@@ -55,7 +55,7 @@ const config: StorybookConfig = {
     brickStories("@indiecrafts/packages-web-locale-suggest"),
     // Cross-surface web bricks.
     brickStories("@indiecrafts/packages-web-system-pages"),
-    brickStories("@indiecrafts/packages-shared-ui-icons"),
+    brickStories("@indiecrafts/packages-web-ui-icons"),
     // Compliance web UI (copy-injected, next-intl-free): DeleteAccountSection + ChurnSurvey.
     brickStories("@indiecrafts/packages-shared-compliance"),
   ],

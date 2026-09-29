@@ -12,7 +12,7 @@ import { shareTargets } from "@indiecrafts/packages-shared-utils/share";
 import {
   BrandIcon,
   type BrandName,
-} from "@indiecrafts/packages-shared-ui-icons/web";
+} from "@indiecrafts/packages-web-ui-icons/web";
 
 /**
  * Share row — X / LinkedIn / Facebook open a share intent in a new tab (plain

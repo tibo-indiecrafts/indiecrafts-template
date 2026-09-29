@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@indiecrafts/packages-shared-config": "workspace:*",
-    "@indiecrafts/packages-shared-ui-icons": "workspace:*",
+    "@indiecrafts/packages-web-ui-icons": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
     "@portabletext/react": "^6.2.0",

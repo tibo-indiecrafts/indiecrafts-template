@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-web-version",
     "@indiecrafts/packages-web-ui",
     "@indiecrafts/packages-web-ui-components",
-    "@indiecrafts/packages-shared-ui-icons",
+    "@indiecrafts/packages-web-ui-icons",
     "@indiecrafts/packages-shared-ui-tokens",
     "@indiecrafts/packages-web-page-builder",
     "@indiecrafts/packages-web-i18n",

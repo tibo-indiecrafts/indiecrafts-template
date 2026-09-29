@@ -7,7 +7,7 @@ status: stable
 # `@indiecrafts/packages-shared-ui-fonts` — the self-hosted fonts
 
 The self-hosted **font files** + their metadata, centralized as a design-system brick (like
-[`ui-tokens`](/packages/shared/ui-tokens) / [`ui-icons`](/packages/shared/ui-icons)) so every surface ships from one place.
+[`ui-tokens`](/packages/shared/ui-tokens) / [`ui-icons`](/packages/web/ui-icons)) so every surface ships from one place.
 
 |               |                                                                                                                                                                           |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -50,9 +50,7 @@
       "@indiecrafts/packages-web-ui-components/*": [
         "../../../../packages/web/ui-components/src/*"
       ],
-      "@indiecrafts/packages-shared-ui-icons/*": [
-        "../../../../packages/shared/ui-icons/src/*"
-      ],
+      "@indiecrafts/packages-web-ui-icons/*": ["../../../../packages/web/ui-icons/src/*"],
       "@indiecrafts/packages-web-page-builder/*": [
         "../../../../packages/web/page-builder/src/*"
       ],
