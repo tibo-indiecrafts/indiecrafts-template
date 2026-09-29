@@ -45,6 +45,16 @@ and drop the forwarded ports. With several devices attached, set `ANDROID_SERIAL
 `pnpm --filter @indiecrafts/mobile-surfaces-main ios` — the simulator shares the Mac's
 network, so `localhost` works without port forwarding.
 
+`cap run ios` needs `Simulator.app` inside Xcode. If it reports that the app is missing,
+the build still succeeded — install and launch it on a booted simulator:
+
+```bash
+xcrun simctl boot "iPhone 16"
+xcrun simctl install booted ios/DerivedData/<simulator-id>/Build/Products/Debug-iphonesimulator/App.app
+xcrun simctl launch booted dev.indiecrafts.app
+xcrun simctl openurl booted "indiecrafts://open/sign-in"   # deep link
+```
+
 ## Physical device
 
 Connect it over USB, then run the Android steps with `ANDROID_SERIAL=<serial>`
