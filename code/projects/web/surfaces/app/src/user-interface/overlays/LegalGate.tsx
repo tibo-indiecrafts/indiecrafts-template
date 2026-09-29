@@ -5,40 +5,26 @@
  *
  * @see docs/reference/projects/web/app/src/user-interface/overlays/LegalGate.md
  */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@clerk/nextjs";
 import { LegalReacceptancePrompt } from "@indiecrafts/packages-shared-compliance/web";
 import {
   needsReacceptance,
   legalUrl,
-  fetchLegalVersion,
   readLegalConsent,
   writeLegalConsent,
 } from "@indiecrafts/packages-shared-compliance/shared";
 import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
-import { site, features, policyVersion, type Locale } from "@/config";
-import { consentStore, legalStore, useRecord } from "./stores";
+import { site, features, type Locale } from "@/config";
+import {
+  consentStore,
+  legalStore,
+  useEffectiveLegalVersion,
+  useRecord,
+} from "./stores";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-
-/** The effective legal version — the website's live version, with the static
- *  `policyVersion` as the offline fallback. Unifies the version across surfaces so ONE
- *  Sanity bump re-prompts everywhere. Starts static (SSR-stable), swaps to live once
- *  fetched. */
-function useEffectiveLegalVersion(): string {
-  const [live, setLive] = useState<string | null>(null);
-  useEffect(() => {
-    let alive = true;
-    void fetchLegalVersion(site.websiteUrl).then((v) => {
-      if (alive) setLive(v);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
-  return live || policyVersion;
-}
 
 /** The legal re-acceptance prompt — shown when the accepted policy version is stale.
  *  Suppressed while the consent banner is up, so only one bottom popup shows at a time.
@@ -71,7 +57,12 @@ export function LegalGate({
     };
   }, [getToken, version]);
 
-  if (consentPending || !version || !needsReacceptance(record, version))
+  if (
+    record === undefined ||
+    consentPending ||
+    !version ||
+    !needsReacceptance(record, version)
+  )
     return null;
 
   return (

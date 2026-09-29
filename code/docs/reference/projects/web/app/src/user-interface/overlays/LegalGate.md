@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders the legal re-acceptance prompt when the user's accepted policy version is out of date. It reads both the legal and consent stores: while the consent banner is still pending it suppresses itself, so only one bottom popup shows at a time. Review opens the website's terms page; accept records the current `policyVersion` and shows a saved toast.
+Renders the legal re-acceptance prompt when the user's accepted policy version is out of date. It reads both the legal and consent stores: while the consent banner is still pending it suppresses itself, so only one bottom popup shows at a time. It waits for the effective version (`useEffectiveLegalVersion`: the website's live version, else the static `policyVersion`), so an early Accept never records a stale version. The policy links open the website's pages; Accept records that version and shows a saved toast.
 
 ## Exports
 

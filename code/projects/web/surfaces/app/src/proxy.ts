@@ -14,6 +14,8 @@ import {
   type CspMode,
 } from "@indiecrafts/packages-shared-security";
 import { getCurrentEnvironment } from "@indiecrafts/packages-shared-config";
+import { site } from "@/config";
+import { appCspHosts } from "@/lib/csp-hosts";
 
 const intlMiddleware = createMiddleware(routing);
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
@@ -43,7 +45,7 @@ function withNonceRequest(request: NextRequest, nonce: string): NextRequest {
 function setCsp(response: NextResponse, nonce: string): NextResponse {
   const { enforced, reportOnly } = cspHeadersForMode(
     getCurrentEnvironment(),
-    {},
+    appCspHosts(site.websiteUrl, process.env.NEXT_PUBLIC_API_URL),
     REPORTING,
     nonce,
     CSP_MODE,

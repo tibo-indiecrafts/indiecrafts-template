@@ -39,7 +39,7 @@ export function ConsentGate({
   // opt-out / none: no blocking banner — seed the default ONCE (accept-all unless a browser
   // or server GPC signal denies), so the record exists for the legal gate + the analytics default.
   useEffect(() => {
-    if (!features.requireConsent || record || mode === "opt-in") return;
+    if (!features.requireConsent || record !== null || mode === "opt-in") return;
     consentStore.save({
       v: policyVersion,
       t: Date.now(),
@@ -51,7 +51,7 @@ export function ConsentGate({
   }, [mode, gpcSignal, record]);
 
   // Only opt-in regions get the blocking banner; opt-out/none rely on the seed + preferences.
-  if (!features.requireConsent || record || mode !== "opt-in") return null;
+  if (!features.requireConsent || record !== null || mode !== "opt-in") return null;
 
   const cat = (key: string) => ({
     title: t(`categories.${key}.title`),

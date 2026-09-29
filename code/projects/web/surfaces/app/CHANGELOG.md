@@ -12,6 +12,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **The legal banner no longer comes back after Accept.** `useRecord` read `localStorage` during
+  hydration, so the server-rendered banner stayed on screen (React 19 keeps unmatched server DOM).
+  The gates now render nothing until the browser has read the record. **Why:** found in the
+  legal-banner browser QA.
+- **An early Accept no longer records a stale version.** The banner waited for nothing, so an
+  Accept before the website's live version arrived stored the static `policyVersion`, and the
+  banner came back on the next load. It now shows once the version fetch settles
+  (`useEffectiveLegalVersion`, moved to `overlays/stores.ts`).
+- **Cross-surface legal sync works in production.** The CSP `connect-src` now allows the website
+  and the api Worker (`src/lib/csp-hosts.ts`); before, only `'self'` was allowed outside dev, so
+  `/api/legal-version` and `/v1/consent/legal` were blocked. `NEXT_PUBLIC_WEBSITE_URL` is now in
+  `.env.example`.
+
 ### Added
 
 - **`NativeBridge`** — the one component that wires the Capacitor shell's native events (Android back,
