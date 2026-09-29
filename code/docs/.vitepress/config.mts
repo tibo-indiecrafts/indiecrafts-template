@@ -498,7 +498,7 @@ export default withMermaid(
                   link: "/packages/shared/security-events",
                 },
                 { text: "ui-fonts", link: "/packages/shared/ui-fonts" },
-                { text: "ui-tokens", link: "/packages/shared/ui-tokens" },
+                { text: "ui-tokens", link: "/packages/web/ui-tokens" },
                 { text: "utils", link: "/packages/shared/utils" },
               ],
             },

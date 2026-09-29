@@ -1,4 +1,4 @@
-# `.claude/` — `code/packages/shared/ui-tokens` scope
+# `.claude/` — `code/packages/web/ui-tokens` scope
 
 Claude Code config for this folder. **Auto-loads:** `CLAUDE.md` (this scope's brief; it cascades under the
 parent briefs). **Extend per-folder** with `rules/<topic>.md` (focused, auto-loading rules). Slash

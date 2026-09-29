@@ -10,7 +10,7 @@ You are the interaction-states reviewer for this template. The other lenses judg
 what every interactive element does across its states, and whether the non-happy-path states exist and
 read correctly. `ux-reviewer` checks a state is _present_; you check it is _right_.
 
-Authority: `code/packages/shared/ui-tokens/DESIGN.md` — **§Interaction & States** (hover / focus-visible /
+Authority: `code/packages/web/ui-tokens/DESIGN.md` — **§Interaction & States** (hover / focus-visible /
 active-pressed / disabled / destructive-confirm) and **§Required States** (loading / empty / error, and
 success where it matters). Read those sections before judging; a finding must cite the contract, not taste.
 

@@ -1,14 +1,13 @@
 @import "tailwindcss";
 /* content sources — CSS now lives in a package, so scan the app + ui explicitly.
-   Paths are relative to this file's home: code/packages/shared/ui-tokens/src/. */
-@source "../../../../projects/web/src";
+   Paths are relative to this file's home: code/packages/web/ui-tokens/src/. */
 @source "../../../web/ui/src";
 @source "../../../web/ui-components/src";
 @source "../../../web/version/src";
 @source "../../../web/compliance/src";
 @source "../../../web/announcement/src";
 @source "../../../web/locale-suggest/src";
-@source "../../../web/system-pages/src";
+@source "../../system-pages/src";
 @source "../../../../modules/web/blog/src";
 @source "../../../../modules/web/newsletter/src";
 @source "../../../../modules/web/waitlist/src";

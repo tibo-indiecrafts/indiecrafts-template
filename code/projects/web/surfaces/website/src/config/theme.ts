@@ -7,7 +7,7 @@
  */
 
 import type { ThemeName } from "@indiecrafts/packages-shared-config";
-import { hexColors as tokenHex } from "@indiecrafts/packages-shared-ui-tokens/hex";
+import { hexColors as tokenHex } from "@indiecrafts/packages-web-ui-tokens/hex";
 
 export const theme = {
   /**

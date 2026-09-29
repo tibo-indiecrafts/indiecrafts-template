@@ -32,7 +32,7 @@ disk** while scannable; it folds into `packages/<category>/` only past a trigger
 | [`@indiecrafts/packages-web-sanity`](/packages/web/sanity)               | foundation    | Sanity infra — `client · live · env · token · structure · image · write` + the `composeSanity` contribution model                                                    | app + blog                         |
 | [`@indiecrafts/packages-shared-format`](/packages/shared/format)         | foundation    | locale money/number/time/list/plural formatters + grammar for generated content + text helpers + validators (phone/IBAN/VAT/postal); per-locale rules on `config`    | app + blog                         |
 | [`@indiecrafts/packages-web-ui`](/packages/web/ui)                       | design-system | 61 shadcn primitives + `use-mobile` (CLI-managed, docs colocated)                                                                                                    | app + blog                         |
-| [`@indiecrafts/packages-shared-ui-tokens`](/packages/shared/ui-tokens)   | design-system | `globals.css` (OKLCH) · `typeset.css` · `DESIGN.md` — the design system                                                                                              | app                                |
+| [`@indiecrafts/packages-web-ui-tokens`](/packages/web/ui-tokens)         | design-system | `globals.css` (OKLCH) · `typeset.css` · `DESIGN.md` — the design system                                                                                              | app                                |
 | [`@indiecrafts/packages-web-ui-components`](/packages/web/ui-components) | design-system | generic page-builder block renderers + `BLOCK_RENDERERS` registry                                                                                                    | app + blog                         |
 | [`@indiecrafts/web-tools-storybook`](/projects/web/tools/storybook)      | design-system | Storybook documenting `ui` + `ui-components` + `ui-tokens` — colocated stories + token doc pages                                                                     | — (docs tool)                      |
 | [`@indiecrafts/packages-web-compliance`](/packages/web/compliance)       | domain        | cookie-consent runtime (banner · store · Consent-Mode gates) + legal pages + Sanity schema — portable core in [`compliance-shared`](/packages/shared/compliance)     | app                                |
@@ -86,7 +86,7 @@ pages).
 
 - [`code/packages/CLAUDE.md`](../../code/packages/CLAUDE.md) — agent conventions
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — the brick roster + rule
-- [`DESIGN.md`](../../code/packages/shared/ui-tokens/DESIGN.md) — the `ui-tokens` design contract
+- [`DESIGN.md`](../../code/packages/web/ui-tokens/DESIGN.md) — the `ui-tokens` design contract
 - [Packages changelog](./changelog.md) — the `code/packages/` area log
 
 ## Links

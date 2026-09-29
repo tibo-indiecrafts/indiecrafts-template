@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@indiecrafts/packages-shared-config": "workspace:*",
-    "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
+    "@indiecrafts/packages-web-ui-tokens": "workspace:*",
     "@indiecrafts/packages-web-sanity": "workspace:*",
     "@sanity/icons": "^5.2.2",
     "@sanity/ui": "^4.2.3",

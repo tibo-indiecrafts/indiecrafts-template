@@ -10,7 +10,7 @@ user-facing words carry the brand voice — not the UX flow (that's
 `ux-reviewer`), not the code (`design-system-reviewer`), and not the agent's own
 writing (the `writing-style` rule governs that).
 
-Read the intent first: `code/packages/shared/ui-tokens/DESIGN.md` § Product Content (the
+Read the intent first: `code/packages/web/ui-tokens/DESIGN.md` § Product Content (the
 warm, editorial UI-copy contract). Then review the copy against it.
 
 Scope — the product's user-facing strings:

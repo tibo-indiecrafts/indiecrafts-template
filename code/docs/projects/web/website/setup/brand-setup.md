@@ -16,7 +16,7 @@ After any change, run `pnpm verify` to confirm types, lint, format, and contrast
 
 | Surface                                    | Home                                                                                                 | Edited by |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- | --------- |
-| Colours (light + dark)                     | `@indiecrafts/packages-shared-ui-tokens` → `code/packages/shared/ui-tokens/src/globals.css` (OKLCH)  | developer |
+| Colours (light + dark)                     | `@indiecrafts/packages-web-ui-tokens` → `code/packages/web/ui-tokens/src/globals.css` (OKLCH)        | developer |
 | PWA install/splash colour                  | `theme.hexColors.background` in `code/projects/web/surfaces/website/src/config/theme.ts` (app-owned) | developer |
 | Container width + gutter                   | `theme.container` in `code/projects/web/surfaces/website/src/config/theme.ts`                        | developer |
 | Font pairing                               | `fonts` in `code/projects/web/surfaces/website/src/config/fonts.ts` + registry in `src/lib/fonts.ts` | developer |
@@ -30,7 +30,7 @@ Brand name, contact, social profiles, and structured-data business fields no lon
 
 ## 1. Colours — OKLCH tokens
 
-Colour lives in **one place**: the OKLCH tokens in `@indiecrafts/packages-shared-ui-tokens/globals.css`, consumed through Tailwind utilities (modern browsers parse `oklch()` natively). Light values sit under `:root`; dark values under `:root[data-theme="dark"]` and a `prefers-color-scheme: dark` block.
+Colour lives in **one place**: the OKLCH tokens in `@indiecrafts/packages-web-ui-tokens/globals.css`, consumed through Tailwind utilities (modern browsers parse `oklch()` natively). Light values sit under `:root`; dark values under `:root[data-theme="dark"]` and a `prefers-color-scheme: dark` block.
 
 To rebrand a colour, edit the token — never a hex literal in a component.
 

@@ -11,7 +11,7 @@ choices were made — the reasoning a future maintainer needs before they "fix"
 something on purpose. It complements, never duplicates:
 
 - **`code/projects/web/surfaces/website/CHANGELOG.md`** — _what_ changed and when (code + design share one log).
-- **`code/packages/shared/ui-tokens/DESIGN.md`** — the current token contract (the _what is_, not the _why_).
+- **`code/packages/web/ui-tokens/DESIGN.md`** — the current token contract (the _what is_, not the _why_).
 - **The topic guides in this folder** — per-subject deep dives ([typography](/projects/web/website/design/typography), [adaptive & responsive](/projects/web/website/design/adaptive-responsive), [sections](/projects/web/website/design/sections), [icons](/projects/web/website/design/icons), …).
 
 Record a decision here when a choice was non-obvious, contested, or a maintainer

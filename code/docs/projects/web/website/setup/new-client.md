@@ -136,7 +136,7 @@ export const theme = {
 } as const;
 ```
 
-`hexColors.background` exists only because the PWA manifest (`app/manifest.ts` → `theme_color` / `background_color`) can't read OKLCH — keep it matched to `--background`. The actual palette (brand colors and all) is authored in OKLCH in `@indiecrafts/packages-shared-ui-tokens/globals.css`, the authoritative color source — see [`./brand-setup.md`](/projects/web/website/setup/brand-setup). After any palette change run `pnpm verify:contrast` to confirm WCAG AA holds.
+`hexColors.background` exists only because the PWA manifest (`app/manifest.ts` → `theme_color` / `background_color`) can't read OKLCH — keep it matched to `--background`. The actual palette (brand colors and all) is authored in OKLCH in `@indiecrafts/packages-web-ui-tokens/globals.css`, the authoritative color source — see [`./brand-setup.md`](/projects/web/website/setup/brand-setup). After any palette change run `pnpm verify:contrast` to confirm WCAG AA holds.
 
 Theme **modes** are a separate `themeConfig` object:
 
@@ -347,7 +347,7 @@ Robots: with `NEXT_PUBLIC_SITE_URL` set and `NEXT_PUBLIC_ENVIRONMENT=production`
 | Header/footer nav                                                 | Sanity → Navigation                                                                                                                                                                                                        |
 | Per-page SEO copy                                                 | Sanity (each document's **SEO & visibilité** section — the shared `seoMeta`)                                                                                                                                               |
 | Analytics id, cookie banner                                       | Sanity (`siteSettings.analytics`)                                                                                                                                                                                          |
-| Brand palette (OKLCH)                                             | `@indiecrafts/packages-shared-ui-tokens/globals.css`                                                                                                                                                                       |
+| Brand palette (OKLCH)                                             | `@indiecrafts/packages-web-ui-tokens/globals.css`                                                                                                                                                                          |
 | PWA manifest bg color                                             | `code/projects/web/surfaces/website/src/config/theme.ts` → `theme.hexColors`                                                                                                                                               |
 | Font pairing                                                      | `code/projects/web/surfaces/website/src/config/fonts.ts` → `fonts` (+ registry `src/lib/fonts.ts`, shared `FontKey` type in `packages/shared/config/src/types.ts`)                                                         |
 | Theme modes (light/dark/forced)                                   | `config/src/index.ts` → `themeConfig`                                                                                                                                                                                      |

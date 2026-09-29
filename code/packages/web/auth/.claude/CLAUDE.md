@@ -11,7 +11,7 @@ Consumed by the three Next surfaces (`website`, `admin`, `app`) — 3 consumers.
   app-wide. Reads `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (public key — allowed under
   `NEXT_PUBLIC_`) from the env. Server-component compatible.
 - **`authAppearance()`** (`./appearance`) — Clerk `appearance.variables` mapped to the
-  `@indiecrafts/packages-shared-ui-tokens` CSS custom properties (`var(--primary)`, …),
+  `@indiecrafts/packages-web-ui-tokens` CSS custom properties (`var(--primary)`, …),
   so sign-in UI is token-themed with **no hard-coded brand color**. A colocated test
   fails if a raw hex/oklch sneaks in.
 - **`usePersistLocale()`** (`./persist-locale`) — a `(locale) => void` a surface's locale

@@ -8,7 +8,7 @@ status: stable
 
 Everything you can insert into a post body in the Studio.
 
-The body editor is Sanity's Portable Text canvas, configured by `code/modules/web/blog/src/sanity/schema/blockContent.ts`. On the live site the body renders inside a `.prose prose-neutral dark:prose-invert` wrapper — the visual styling of paragraphs, headings, lists, marks, and blockquotes comes from `@tailwindcss/typography` (via `@indiecrafts/packages-shared-ui-tokens/globals.css`). `code/modules/web/blog/src/user-interface/renderers/portable-text-components.tsx` overrides only what the plugin can't infer from markup: deterministic heading `id`s (so the TOC can anchor), the external-link `target`, inline images, and inline modules.
+The body editor is Sanity's Portable Text canvas, configured by `code/modules/web/blog/src/sanity/schema/blockContent.ts`. On the live site the body renders inside a `.prose prose-neutral dark:prose-invert` wrapper — the visual styling of paragraphs, headings, lists, marks, and blockquotes comes from `@tailwindcss/typography` (via `@indiecrafts/packages-web-ui-tokens/globals.css`). `code/modules/web/blog/src/user-interface/renderers/portable-text-components.tsx` overrides only what the plugin can't infer from markup: deterministic heading `id`s (so the TOC can anchor), the external-link `target`, inline images, and inline modules.
 
 To see every primitive in one place, open the seeded showcase post at `/en/blog/<slug>` (or its `/fr/...` twin).
 

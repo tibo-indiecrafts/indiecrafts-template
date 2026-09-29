@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * WCAG contrast checker for the theme tokens declared in code/packages/shared/ui-tokens/src/globals.css.
+ * WCAG contrast checker for the theme tokens declared in code/packages/web/ui-tokens/src/globals.css.
  *
  * Parses oklch(...) values for each named token in `:root` (light),
  * `:root[data-theme="dark"]` (explicit), and the `prefers-color-scheme: dark`
@@ -21,7 +21,7 @@ import path from "node:path";
 
 const CSS_PATH = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
-  "../../../../../packages/shared/ui-tokens/src/generated/tokens.css",
+  "../../../../../packages/web/ui-tokens/src/generated/tokens.css",
 );
 
 // Pairs we enforce. [foregroundToken, backgroundToken, AA threshold, label].

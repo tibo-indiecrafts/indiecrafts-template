@@ -18,7 +18,7 @@ A swipeable image carousel for post bodies — a thumbnail strip, an image count
 - **Click-to-zoom** — clicking the main image opens a full-screen lightbox (`Dialog`) where each image is shown **whole** (uncropped, `object-contain`), with its own arrows, and Escape to close.
 - **Responsive + accessible** — a blurred `lqip` placeholder while each image loads, per-image alt text, keyboard-operable arrows/thumbnails, and an `aria-live` announcement on slide change. A single-image gallery drops the carousel chrome but keeps zoom.
 
-Restraint (see `code/packages/shared/ui-tokens/DESIGN.md`): the gallery is quiet chrome, so active/current states use the neutral `foreground`, **not** the `brand` accent.
+Restraint (see `code/packages/web/ui-tokens/DESIGN.md`): the gallery is quiet chrome, so active/current states use the neutral `foreground`, **not** the `brand` accent.
 
 ## Add one (editor)
 

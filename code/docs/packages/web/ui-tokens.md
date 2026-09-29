@@ -1,10 +1,10 @@
 ---
-title: "@indiecrafts/packages-shared-ui-tokens — the design system"
+title: "@indiecrafts/packages-web-ui-tokens — the design system"
 description: "The runtime style source + the design contract, shipped together."
 status: stable
 ---
 
-# `@indiecrafts/packages-shared-ui-tokens` — the design system
+# `@indiecrafts/packages-web-ui-tokens` — the design system
 
 > **Browse it:** live token swatches (light/dark) — `pnpm storybook` ([storybook package](/projects/web/tools/storybook)).
 
@@ -15,9 +15,9 @@ generates every platform output** — web CSS, React-Native hex, and the PWA-man
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Exports**   | `./globals.css` (web — Tailwind scaffolding + `@import "./generated/tokens.css"`) · `./typeset.css` (long-form prose rhythm) · `./hex` (semantic hex mirror — manifest + email) · `./tokens.json` (the DTCG source) |
 | **Deps**      | `tailwindcss ^4`, `@tailwindcss/typography ^0.5.19`, `culori ^4` (build-time oklch→hex). **Peer:** none                                                                                                             |
-| **Consumers** | app imports `@indiecrafts/packages-shared-ui-tokens/globals.css` in the root layout; the manifest and `web/email` read `./hex`. Design-system source for `ui` + blog too, coupled via CSS scanning, not a JS import |
+| **Consumers** | app imports `@indiecrafts/packages-web-ui-tokens/globals.css` in the root layout; the manifest and `web/email` read `./hex`. Design-system source for `ui` + blog too, coupled via CSS scanning, not a JS import    |
 
-Also ships [`DESIGN.md`](../../code/packages/shared/ui-tokens/DESIGN.md) — the authoritative token
+Also ships [`DESIGN.md`](../../code/packages/web/ui-tokens/DESIGN.md) — the authoritative token
 contract (colors, typography scale, spacing, a11y), colocated so contract and
 implementation travel as one package.
 
@@ -81,5 +81,5 @@ allows `*.tokens.json` there but nothing else.
 How every brick is consumed (exports · `transpilePackages` · resolution · Tailwind `@source`
 · hardening), the ≥2-consumer rule → **[Packages overview](/packages/README)**.
 
-- [`code/packages/shared/ui-tokens/`](../../code/packages/shared/ui-tokens/) — the source (`globals.css` · `typeset.css` · `DESIGN.md`)
+- [`code/packages/web/ui-tokens/`](../../code/packages/web/ui-tokens/) — the source (`globals.css` · `typeset.css` · `DESIGN.md`)
 - [`code/packages/_registry.md`](../../code/packages/_registry.md) — roster + rule

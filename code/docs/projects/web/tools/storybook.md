@@ -75,7 +75,7 @@ flowchart TB
 | `@indiecrafts/packages-mobile-ui-native`   | native (react-native-web)  | the native design-system components                                                                                             |
 | `@indiecrafts/packages-web-system-pages`   | web + native               | cross-platform system pages, both renderers                                                                                     |
 | `@indiecrafts/packages-web-ui-icons`       | web + native               | the icon set, both renderers                                                                                                    |
-| `@indiecrafts/packages-shared-ui-tokens`   | tokens (MDX in `stories/`) | live `var(--token)` swatches — Colors, Sidebar & Charts, Type & Radius, Native — plus an Adaptive & container-query resize demo |
+| `@indiecrafts/packages-web-ui-tokens`      | tokens (MDX in `stories/`) | live `var(--token)` swatches — Colors, Sidebar & Charts, Type & Radius, Native — plus an Adaptive & container-query resize demo |
 
 ## Run
 

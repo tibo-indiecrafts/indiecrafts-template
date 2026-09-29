@@ -75,7 +75,7 @@ Note the LLM and blog-feed endpoints (`/llms.txt`, `/llms-full.txt`, `/llms/<id>
 
 ```text
 src/app/maintenance/
-├── layout.tsx    Own <html>/<body> — imports @indiecrafts/packages-shared-ui-tokens/globals.css + @/lib/fonts
+├── layout.tsx    Own <html>/<body> — imports @indiecrafts/packages-web-ui-tokens/globals.css + @/lib/fonts
 ├── page.tsx      Resolves i18n + Sanity copy, renders <Maintenance>
 └── locale.ts     Best-effort locale from the NEXT_LOCALE cookie
 ```

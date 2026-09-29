@@ -56,7 +56,7 @@ components fork per platform.
 name is the **folder tail** (`packages-web-i18n` → `packages-shared-i18n`). So it is mechanical but
 touches importers: `git mv` the folder, then rewrite the name across every importer (a boundary-safe
 codemod), plus the moved `package.json` `name`, tsconfig `paths` (key **and** value), any `@source`
-line in `shared/ui-tokens/globals.css`, and doc links. Verify with `pnpm tsc` (all workspaces) +
+line in `web/ui-tokens/globals.css`, and doc links. Verify with `pnpm tsc` (all workspaces) +
 `pnpm test`. `code/modules/` follows the identical rule (`modules/<scope>/<module>/`).
 
 ## Adding a brick (the repeatable shape)

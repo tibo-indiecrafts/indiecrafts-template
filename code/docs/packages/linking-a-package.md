@@ -31,7 +31,7 @@ Activate a package by adding only the wires it needs:
 | a   | `transpilePackages` entry                       | `code/projects/web/surfaces/website/next.config.ts`   | **always** (consumed as TS source)                                                                                                                            |
 | b   | `workspace:*` dependency                        | `code/projects/web/surfaces/website/package.json`     | **always**                                                                                                                                                    |
 | c   | `paths` entry                                   | `code/projects/web/surfaces/website/tsconfig.json`    | **only** if it has a wildcard subpath export (`"./*"`) — tsc + the Sanity schema-extract can't map that to a 1:1 file; packages with per-file exports skip it |
-| d   | `@source` line                                  | `packages/shared/ui-tokens/src/globals.css`           | only if it renders Tailwind classes                                                                                                                           |
+| d   | `@source` line                                  | `packages/web/ui-tokens/src/globals.css`              | only if it renders Tailwind classes                                                                                                                           |
 | e   | `SanityModule` barrel → a `composeStudio` group | `code/projects/web/surfaces/website/sanity.config.ts` | only if it ships Sanity content                                                                                                                               |
 
 - **Pure-logic brick** (e.g. `utils`, `format`): `a` + `b` only.

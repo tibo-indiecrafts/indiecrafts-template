@@ -346,19 +346,6 @@ importers:
 
   code/packages/shared/ui-fonts: {}
 
-  code/packages/shared/ui-tokens:
-    dependencies:
-      '@tailwindcss/typography':
-        specifier: ^0.5.20
-        version: 0.5.20(tailwindcss@4.3.3)
-      tailwindcss:
-        specifier: ^4.3.3
-        version: 4.3.3
-    devDependencies:
-      culori:
-        specifier: ^4.0.1
-        version: 4.0.2
-
   code/packages/shared/utils:
     dependencies:
       '@indiecrafts/packages-shared-config':
@@ -514,12 +501,12 @@ importers:
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../shared/config
-      '@indiecrafts/packages-shared-ui-tokens':
-        specifier: workspace:*
-        version: link:../../shared/ui-tokens
       '@indiecrafts/packages-web-sanity':
         specifier: workspace:*
         version: link:../sanity
+      '@indiecrafts/packages-web-ui-tokens':
+        specifier: workspace:*
+        version: link:../ui-tokens
       '@sanity/icons':
         specifier: 5.2.2
         version: 5.2.2(react@19.2.8)
@@ -817,6 +804,19 @@ importers:
         specifier: ^16.28.0
         version: 16.28.0
 
+  code/packages/web/ui-tokens:
+    dependencies:
+      '@tailwindcss/typography':
+        specifier: ^0.5.20
+        version: 0.5.20(tailwindcss@4.3.3)
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+    devDependencies:
+      culori:
+        specifier: ^4.0.1
+        version: 4.0.2
+
   code/packages/web/version:
     dependencies:
       '@indiecrafts/packages-shared-utils':
@@ -890,9 +890,6 @@ importers:
       '@indiecrafts/packages-shared-security':
         specifier: workspace:*
         version: link:../../../../packages/shared/security
-      '@indiecrafts/packages-shared-ui-tokens':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/ui-tokens
       '@indiecrafts/packages-shared-utils':
         specifier: workspace:*
         version: link:../../../../packages/shared/utils
@@ -908,6 +905,9 @@ importers:
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../../../../packages/web/ui
+      '@indiecrafts/packages-web-ui-tokens':
+        specifier: workspace:*
+        version: link:../../../../packages/web/ui-tokens
       lucide-react:
         specifier: ^1.31.0
         version: 1.31.0(react@19.2.8)
@@ -996,9 +996,6 @@ importers:
       '@indiecrafts/packages-shared-security':
         specifier: workspace:*
         version: link:../../../../packages/shared/security
-      '@indiecrafts/packages-shared-ui-tokens':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/ui-tokens
       '@indiecrafts/packages-shared-utils':
         specifier: workspace:*
         version: link:../../../../packages/shared/utils
@@ -1026,6 +1023,9 @@ importers:
       '@indiecrafts/packages-web-ui-icons':
         specifier: workspace:*
         version: link:../../../../packages/web/ui-icons
+      '@indiecrafts/packages-web-ui-tokens':
+        specifier: workspace:*
+        version: link:../../../../packages/web/ui-tokens
       '@indiecrafts/packages-web-version':
         specifier: workspace:*
         version: link:../../../../packages/web/version
@@ -1129,9 +1129,6 @@ importers:
       '@indiecrafts/packages-shared-ui-fonts':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-fonts
-      '@indiecrafts/packages-shared-ui-tokens':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/ui-tokens
       '@indiecrafts/packages-shared-utils':
         specifier: workspace:*
         version: link:../../../../packages/shared/utils
@@ -1177,6 +1174,9 @@ importers:
       '@indiecrafts/packages-web-ui-icons':
         specifier: workspace:*
         version: link:../../../../packages/web/ui-icons
+      '@indiecrafts/packages-web-ui-tokens':
+        specifier: workspace:*
+        version: link:../../../../packages/web/ui-tokens
       '@indiecrafts/packages-web-version':
         specifier: workspace:*
         version: link:../../../../packages/web/version
@@ -1352,9 +1352,6 @@ importers:
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../../../packages/shared/config
-      '@indiecrafts/packages-shared-ui-tokens':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/ui-tokens
       '@indiecrafts/packages-shared-utils':
         specifier: workspace:*
         version: link:../../../../packages/shared/utils
@@ -1379,6 +1376,9 @@ importers:
       '@indiecrafts/packages-web-ui-icons':
         specifier: workspace:*
         version: link:../../../../packages/web/ui-icons
+      '@indiecrafts/packages-web-ui-tokens':
+        specifier: workspace:*
+        version: link:../../../../packages/web/ui-tokens
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 9.1.20

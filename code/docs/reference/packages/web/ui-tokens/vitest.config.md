@@ -6,7 +6,7 @@ status: stable
 
 # Vitest config (ui-tokens)
 
-> Runs the colocated `*.test.ts` files in `@indiecrafts/packages-shared-ui-tokens` on the shared base.
+> Runs the colocated `*.test.ts` files in `@indiecrafts/packages-web-ui-tokens` on the shared base.
 
 ## Purpose
 
@@ -18,4 +18,4 @@ Configures Vitest for the `ui-tokens` package. It extends the repo-wide shared c
 
 ## Source
 
-`code/packages/shared/ui-tokens/vitest.config.ts`
+`code/packages/web/ui-tokens/vitest.config.ts`

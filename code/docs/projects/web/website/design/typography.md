@@ -104,7 +104,7 @@ Both are applied in `src/app/[locale]/layout.tsx` on the `<html>` element:
 
 ## How the roles reach the page
 
-`globals.css` (in `@indiecrafts/packages-shared-ui-tokens`) maps the role vars onto elements inside
+`globals.css` (in `@indiecrafts/packages-web-ui-tokens`) maps the role vars onto elements inside
 `@layer base` — so a Tailwind `font-sans` / `font-display` utility can still
 override per element:
 
@@ -155,7 +155,7 @@ import { RichTitle } from "@indiecrafts/packages-web-ui-components/web/RichTitle
   element's Tailwind classes per call site (`cn`-merged, last wins). `as` picks the element
   (`h1`–`h4`, `p`, `span`).
 - **Brand only** — the highlight is always `text-brand` (theme-aware; flips in dark mode via the
-  token). No palette, no per-span colour — see [`DESIGN.md`](../../../../code/packages/shared/ui-tokens/DESIGN.md) § Colors.
+  token). No palette, no per-span colour — see [`DESIGN.md`](../../../../code/packages/web/ui-tokens/DESIGN.md) § Colors.
 - **Safe to adopt anywhere** — a marker-free string renders as one plain segment, so wrapping an
   existing title changes nothing until someone adds `[[…]]`.
 
@@ -193,7 +193,7 @@ else in the app should reference. Never hard-code a font family in a component.
 
 For rendered markdown / articles the template also ships shadcn's
 [**Typeset**](https://ui.shadcn.com/docs/typeset) preset — `typeset.css` in
-`@indiecrafts/packages-shared-ui-tokens`, imported right after Tailwind in `globals.css`
+`@indiecrafts/packages-web-ui-tokens`, imported right after Tailwind in `globals.css`
 (`@import "./typeset.css"`).
 
 Wrap rendered content in the preset:

@@ -3,7 +3,7 @@
 Config-first, modular monorepo for client sites. This root file is **platform-level**:
 the folder map, the always-true non-negotiables, and pointers. The web app's full
 _how to code_ lives in **[`code/projects/web/surfaces/website/.claude/CLAUDE.md`](code/projects/web/surfaces/website/.claude/CLAUDE.md)** (auto-loads when you
-touch files under `code/projects/web/surfaces/website/**`); design tokens in **[`code/packages/shared/ui-tokens/DESIGN.md`](code/packages/shared/ui-tokens/DESIGN.md)**.
+touch files under `code/projects/web/surfaces/website/**`); design tokens in **[`code/packages/web/ui-tokens/DESIGN.md`](code/packages/web/ui-tokens/DESIGN.md)**.
 
 **Stack:** Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui · Sanity v6 · next-intl v4 · pnpm 10 + Turborepo (Node 22). Config-first monorepo for marketing sites + a blog/page-builder.
 
@@ -29,7 +29,7 @@ projects under `code/projects/`) is the whole tree. Conventions live **in-repo**
 
 Run scripts from the repo root. `pnpm build/tsc/lint/…` fan out via turbo; `pnpm dev` runs the local stack — the `website` (Next, :3000) + the three backend workers `api`/`cron`/`workers` (`wrangler dev` on distinct `--port`/`--inspector-port`s so they don't collide). The other surfaces (`admin`/`app`) are run individually (`pnpm --filter <pkg> dev`).
 
-> **Config split.** `.claude/` holds Claude Code **runtime** only — `agents/`, `skills/`, `settings.json` (must sit at the repo root; Claude Code magic-loads them). **App conventions are app-scoped:** [`code/projects/web/surfaces/website/.claude/CLAUDE.md`](code/projects/web/surfaces/website/.claude/CLAUDE.md) + [`code/packages/shared/ui-tokens/DESIGN.md`](code/packages/shared/ui-tokens/DESIGN.md) auto-load when you work under `code/projects/web/surfaces/website/**`. A new app lands under its platform + kind (`code/projects/<platform>/<kind>/<name>/`) with its own brief; this root stays the thin platform router.
+> **Config split.** `.claude/` holds Claude Code **runtime** only — `agents/`, `skills/`, `settings.json` (must sit at the repo root; Claude Code magic-loads them). **App conventions are app-scoped:** [`code/projects/web/surfaces/website/.claude/CLAUDE.md`](code/projects/web/surfaces/website/.claude/CLAUDE.md) + [`code/packages/web/ui-tokens/DESIGN.md`](code/packages/web/ui-tokens/DESIGN.md) auto-load when you work under `code/projects/web/surfaces/website/**`. A new app lands under its platform + kind (`code/projects/<platform>/<kind>/<name>/`) with its own brief; this root stays the thin platform router.
 
 ## Working principles
 
@@ -61,6 +61,6 @@ Pre-commit hook: `lint-staged` (eslint --fix + prettier on staged files) then `t
 ## Where things are
 
 - **App — how to code** → [`code/projects/web/surfaces/website/.claude/CLAUDE.md`](code/projects/web/surfaces/website/.claude/CLAUDE.md) (architecture, i18n, SEO, blog, the full NEVERs, verification).
-- **App — how to design** → [`code/packages/shared/ui-tokens/DESIGN.md`](code/packages/shared/ui-tokens/DESIGN.md) (token contract).
+- **App — how to design** → [`code/packages/web/ui-tokens/DESIGN.md`](code/packages/web/ui-tokens/DESIGN.md) (token contract).
 - **Product docs** → [`code/docs/`](code/docs/) (VitePress, `pnpm docs`).
 - **History** → [root `CHANGELOG.md`](CHANGELOG.md) is the everything-view (release roll-up + links). Each area owns **one** log at its home altitude: the layers [`code/packages`](code/packages/CHANGELOG.md) · [`code/modules`](code/modules/CHANGELOG.md) · [`code/docs`](code/docs/CHANGELOG.md), **and every deployable/service** — each `code/projects/**` app (website · admin · app · storybook · mobile) + `code/shared/{api,cron,workers}` owns its own `CHANGELOG.md`. Log a change in **exactly one** area log (its home altitude), never copied; roll it up to root at release time.

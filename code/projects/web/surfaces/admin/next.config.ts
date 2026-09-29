@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-web-sanity",
     "@indiecrafts/packages-shared-security",
     "@indiecrafts/packages-web-ui",
-    "@indiecrafts/packages-shared-ui-tokens",
+    "@indiecrafts/packages-web-ui-tokens",
     "@indiecrafts/packages-shared-utils",
     "@indiecrafts/packages-web-security-reports",
   ],

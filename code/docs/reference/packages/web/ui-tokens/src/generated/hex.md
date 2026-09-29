@@ -19,11 +19,11 @@ A small hex mirror of the core theme colors, per light and dark. The PWA manifes
 ## Usage
 
 ```ts
-import { hexColors } from "@indiecrafts/packages-shared-ui-tokens/hex";
+import { hexColors } from "@indiecrafts/packages-web-ui-tokens/hex";
 
 const themeColor = hexColors.dark.brand; // "#67a3ff"
 ```
 
 ## Source
 
-`code/packages/shared/ui-tokens/src/generated/hex.ts`
+`code/packages/web/ui-tokens/src/generated/hex.ts`

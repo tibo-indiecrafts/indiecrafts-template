@@ -9,7 +9,7 @@ import { codeToHtml } from "shiki";
  * Highlighted code block for the body — a `codeBlock` object (`language`,
  * optional `filename`, `code`). Shiki runs server-side (async, no client JS)
  * with a light + dark theme pair; the colours swap under `[data-theme="dark"]`
- * via CSS in `@indiecrafts/packages-shared-ui-tokens` (`.shiki` rules). `not-prose` keeps the
+ * via CSS in `@indiecrafts/packages-web-ui-tokens` (`.shiki` rules). `not-prose` keeps the
  * typography plugin from restyling Shiki's markup.
  *
  * An unknown language degrades to a plain `<pre>` (Shiki throws on unsupported

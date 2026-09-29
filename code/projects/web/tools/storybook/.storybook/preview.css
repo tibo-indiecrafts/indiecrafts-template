@@ -4,6 +4,6 @@
  * stories). Here we only add this package's own dirs (token doc pages +
  * .storybook decorators) so their utility classes aren't purged. Tailwind v4
  * skips node_modules + gitignored paths automatically. */
-@import "@indiecrafts/packages-shared-ui-tokens/globals.css";
+@import "@indiecrafts/packages-web-ui-tokens/globals.css";
 
 @source "../";

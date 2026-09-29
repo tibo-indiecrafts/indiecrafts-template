@@ -2,7 +2,7 @@
 
 The non-visual third of the design-context triad. This file holds **what we are building
 and for whom**; the visual contract lives in
-[`DESIGN.md`](../../../../packages/shared/ui-tokens/DESIGN.md), the build rules in
+[`DESIGN.md`](../../../../packages/web/ui-tokens/DESIGN.md), the build rules in
 [`CLAUDE.md`](./.claude/CLAUDE.md). Read this before you design a _new_ surface — it frames
 the problem the visual work then solves.
 
@@ -46,5 +46,5 @@ bare "design X".
 8. **Consequences** — Does it increase user agency or quietly reduce it? Could it manipulate
    or manufacture dependence? Design the six-months-later behavior, not just the next click.
 
-Answer 1–8, then move to [`DESIGN.md`](../../../../packages/shared/ui-tokens/DESIGN.md) for
+Answer 1–8, then move to [`DESIGN.md`](../../../../packages/web/ui-tokens/DESIGN.md) for
 the visual build. The thinking stays yours; the tools only go faster.

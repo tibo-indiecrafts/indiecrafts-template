@@ -9,7 +9,7 @@ The way to improve a built or AI-generated screen: **not one giant "what's wrong
 passes in a fixed order**, each critique-then-fix, one lens at a time. Order matters — **accessibility
 is the foundation**, so it goes first; a later pass must never regress an earlier one (fix hierarchy
 without breaking a11y, refine copy without breaking hierarchy). Authority for every pass:
-`code/packages/shared/ui-tokens/DESIGN.md`.
+`code/packages/web/ui-tokens/DESIGN.md`.
 
 This is the **refinement** loop (polishing one screen). For a fast PR read, run the reviewer agents in
 **parallel** instead (design + a11y at once) — the two coexist, they do different jobs. Run this after

@@ -24,7 +24,7 @@
     "@indiecrafts/packages-web-locale-suggest": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
     "@indiecrafts/packages-web-ui-components": "workspace:*",
-    "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
+    "@indiecrafts/packages-web-ui-tokens": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*"
   },
   "devDependencies": {

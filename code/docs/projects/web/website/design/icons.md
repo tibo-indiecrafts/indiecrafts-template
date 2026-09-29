@@ -30,7 +30,7 @@ import { Icon, BrandIcon } from "@indiecrafts/packages-web-ui-icons/web";
 <BrandIcon name="github" size={20} brandColor />
 ```
 
-The design contract ([`DESIGN.md`](../../../../code/packages/shared/ui-tokens/DESIGN.md)): default
+The design contract ([`DESIGN.md`](../../../../code/packages/web/ui-tokens/DESIGN.md)): default
 **20px**, **16px** in compact controls, consistent **2px** stroke; don't mix filled + outline in one
 nav area. Mark decorative icons `aria-hidden="true"` — give them a label only when the icon is the
 sole content of a control.

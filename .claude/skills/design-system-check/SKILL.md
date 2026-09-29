@@ -1,12 +1,12 @@
 ---
 name: design-system-check
-description: Run a design-system compliance pass on UI changes in this template — verifies tokens, reuse, and contrast against code/packages/shared/ui-tokens/DESIGN.md. Use before shipping any UI, or when asked to "check the design system", "review tokens", or "is this on-system".
+description: Run a design-system compliance pass on UI changes in this template — verifies tokens, reuse, and contrast against code/packages/web/ui-tokens/DESIGN.md. Use before shipping any UI, or when asked to "check the design system", "review tokens", or "is this on-system".
 ---
 
 # Design-system check
 
-A repeatable pass to confirm a UI change is on-system. Authority: `code/packages/shared/ui-tokens/DESIGN.md`,
-`code/packages/shared/ui-tokens/src/globals.css`, `code/projects/web/surfaces/website/.claude/rules/design-token-usage.md`,
+A repeatable pass to confirm a UI change is on-system. Authority: `code/packages/web/ui-tokens/DESIGN.md`,
+`code/packages/web/ui-tokens/src/globals.css`, `code/projects/web/surfaces/website/.claude/rules/design-token-usage.md`,
 `code/projects/web/surfaces/website/.claude/rules/component-architecture.md`.
 
 ## Steps

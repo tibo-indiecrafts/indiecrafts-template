@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-This CLI script is the token build step for `@indiecrafts/packages-shared-ui-tokens`. It reads the DTCG (OKLCH) source `src/shared/tokens.json` plus every colocated `*.tokens.json` component fragment under `code/`, then emits four generated files. It also validates the fragments (component tier only, allowed reference targets, unique names) and checks for sidecar drift against sibling `.tsx` components. Run it with `pnpm tokens:build`; `--check` verifies the outputs are in sync without writing.
+This CLI script is the token build step for `@indiecrafts/packages-web-ui-tokens`. It reads the DTCG (OKLCH) source `src/shared/tokens.json` plus every colocated `*.tokens.json` component fragment under `code/`, then emits four generated files. It also validates the fragments (component tier only, allowed reference targets, unique names) and checks for sidecar drift against sibling `.tsx` components. Run it with `pnpm tokens:build`; `--check` verifies the outputs are in sync without writing.
 
 ## Outputs
 
@@ -30,4 +30,4 @@ pnpm tokens:check          # fail if a generated file or sidecar drifted (used i
 
 ## Source
 
-`code/packages/shared/ui-tokens/scripts/build-tokens.mjs`
+`code/packages/web/ui-tokens/scripts/build-tokens.mjs`

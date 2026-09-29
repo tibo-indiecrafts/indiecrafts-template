@@ -2,7 +2,7 @@
  * Clerk `appearance` derived from the design tokens — so the hosted
  * `<SignIn>` / `<SignUp>` components match the app with NO hard-coded brand
  * colors. Every value references a CSS custom property defined by
- * `@indiecrafts/packages-shared-ui-tokens` (`globals.css`), which the app
+ * `@indiecrafts/packages-web-ui-tokens` (`globals.css`), which the app
  * already loads, so light/dark + per-client theming flow through automatically.
  *
  * Returned untyped (a plain literal): the `<ClerkProvider appearance={...}>`

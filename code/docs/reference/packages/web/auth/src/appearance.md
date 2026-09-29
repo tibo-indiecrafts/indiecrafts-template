@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Maps Clerk's `appearance.variables` to the `@indiecrafts/packages-shared-ui-tokens` CSS custom properties. The hosted `<SignIn>` and `<SignUp>` components then follow the app's light/dark and per-client theming automatically.
+Maps Clerk's `appearance.variables` to the `@indiecrafts/packages-web-ui-tokens` CSS custom properties. The hosted `<SignIn>` and `<SignUp>` components then follow the app's light/dark and per-client theming automatically.
 
 ## Exports
 

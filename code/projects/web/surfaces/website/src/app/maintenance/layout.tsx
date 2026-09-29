@@ -3,7 +3,7 @@
  *
  * @see docs/reference/projects/web/website/src/app/maintenance/layout.md
  */
-import "@indiecrafts/packages-shared-ui-tokens/globals.css";
+import "@indiecrafts/packages-web-ui-tokens/globals.css";
 import { localeDir } from "@/config";
 import { fontClassName, fontStyle } from "@/lib/fonts";
 import { maintenanceLocale } from "./locale";

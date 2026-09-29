@@ -1,6 +1,6 @@
-# @indiecrafts/packages-shared-ui-tokens — the design system
+# @indiecrafts/packages-web-ui-tokens — the design system
 
-Auto-loads under `code/packages/shared/ui-tokens/**`. `globals.css` (OKLCH tokens) · `typeset.css` ·
+Auto-loads under `code/packages/web/ui-tokens/**`. `globals.css` (OKLCH tokens) · `typeset.css` ·
 `DESIGN.md`. Area rules → `../../../.claude/CLAUDE.md`.
 
 **Stack:** Tailwind v4 · OKLCH design tokens (globals.css) · TypeScript. The design system.

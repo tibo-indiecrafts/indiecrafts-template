@@ -3,14 +3,14 @@
  *
  * @see docs/reference/packages/web/email/src/theme.md
  */
-import { hexColors } from "@indiecrafts/packages-shared-ui-tokens/hex";
+import { hexColors } from "@indiecrafts/packages-web-ui-tokens/hex";
 
 /**
  * The email palette — the design tokens, resolved to inline hex.
  *
  * Mail clients strip `<style>`, `var()`, and `<link>`, so the OKLCH tokens in
  * `globals.css` can never reach an inbox. `pnpm tokens:build` emits a resolved
- * hex mirror (`@indiecrafts/packages-shared-ui-tokens/hex`); inlining it is the ONLY way an
+ * hex mirror (`@indiecrafts/packages-web-ui-tokens/hex`); inlining it is the ONLY way an
  * email can track the design system — the same bridge the PWA manifest uses.
  * Change a token → rebuild → every email updates. One source, no hand-maintained
  * email hex.

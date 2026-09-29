@@ -24,7 +24,7 @@ Six mechanisms, all in `code/projects/web/surfaces/website/`:
 | --- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | 1   | tsconfig path `"@indiecrafts/modules-web-blog/*": ["../../modules/web/blog/src/*"]` (mixed `.ts`/`.tsx`)                    | `tsconfig.json`                                                               |
 | 2   | `transpilePackages` lists `@indiecrafts/modules-web-blog` (with every other brick)                                          | `next.config.ts`                                                              |
-| 3   | `@source "../../../modules/web/blog/src"` so Tailwind scans blog UI                                                         | `@indiecrafts/packages-shared-ui-tokens/globals.css`                          |
+| 3   | `@source "../../../modules/web/blog/src"` so Tailwind scans blog UI                                                         | `@indiecrafts/packages-web-ui-tokens/globals.css`                             |
 | 4   | Studio registers `schemaTypes` + `structure` from `@indiecrafts/modules-web-blog/sanity/*`                                  | `sanity.config.ts`                                                            |
 | 5   | Route-gate `isBlogRouteEnabled` / `requireBlogRoute` / `isRssEnabled`                                                       | `@indiecrafts/modules-web-blog/lib/route-gate`                                |
 | 6   | Feature flags `features.blog` + `features.blogTaxonomy.{authors,categories,tags}`; draft preview gates on `features.studio` | app-owned `features` (`@/config`), injected into the blog via `configureBlog` |

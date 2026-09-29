@@ -2,7 +2,7 @@
 
 The web app (`code/projects/web/surfaces/website`). Auto-loads when you work under here. Platform-wide
 rules + the four-root layout live in the **root `CLAUDE.md`**; this file is the app's
-_how to code_. **Design-context pair:** this file = _how to build_ · **[`DESIGN.md`](../../../../../packages/shared/ui-tokens/DESIGN.md)** = _how it looks_ (tokens, imported below). (Product truth — users/purpose/positioning — is authored per project, not shipped in the template.)
+_how to code_. **Design-context pair:** this file = _how to build_ · **[`DESIGN.md`](../../../../../packages/web/ui-tokens/DESIGN.md)** = _how it looks_ (tokens, imported below). (Product truth — users/purpose/positioning — is authored per project, not shipped in the template.)
 
 **Stack:** Next.js 16.x (App Router) · React 19.x · TypeScript 5.x (strict) · Tailwind v4 · shadcn/ui · Sanity v6 · next-intl v4 · pnpm 10 / Node 22. Production-only — the Storybook component library is an internal component-library repo.
 
@@ -10,7 +10,7 @@ _how to code_. **Design-context pair:** this file = _how to build_ · **[`DESIGN
 
 **Repeatable multi-file tasks** — add a page · adapt a library section · add/remove a blog page-builder block · critique a screen (the ordered `design-critique` skill) — have step-by-step checklists in the internal dev framework. Follow the matching one instead of reconstructing the steps.
 
-**Design system:** follow @../../../../../packages/shared/ui-tokens/DESIGN.md. Before creating or modifying UI — (1) read the component implementation, (2) reuse existing tokens and parts, (3) check the responsive + accessibility + motion rules, (4) flag any `DESIGN.md` ↔ production-code conflict. Verify what's loaded with `/context`.
+**Design system:** follow @../../../../../packages/web/ui-tokens/DESIGN.md. Before creating or modifying UI — (1) read the component implementation, (2) reuse existing tokens and parts, (3) check the responsive + accessibility + motion rules, (4) flag any `DESIGN.md` ↔ production-code conflict. Verify what's loaded with `/context`.
 
 ## Architecture
 
@@ -24,7 +24,7 @@ Full rationale in `code/docs/apps/web/config/project-organization.md`.
 - `@indiecrafts/packages-shared-utils` — `cn` · slugify · video-embed · format-date · error-message · filename (subpath-only)
 - `@indiecrafts/packages-web-sanity` — Sanity infra: `client · live · env · token · structure` builders
 - `@indiecrafts/packages-web-ui` — shadcn primitives + `use-mobile`
-- `@indiecrafts/packages-shared-ui-tokens` — `globals.css` · `typeset.css` · `DESIGN.md`
+- `@indiecrafts/packages-web-ui-tokens` — `globals.css` · `typeset.css` · `DESIGN.md`
 - `@indiecrafts/packages-web-i18n` — shared next-intl navigation (`Link`) for modules
 - `@indiecrafts/modules-web-blog` — the blog module → `code/modules/web/blog`
 
@@ -130,7 +130,7 @@ Details live with the code they describe (Claude Code auto-loads these when you 
 
 ## Accessibility (structural)
 
-The **visual system** — colors, typography, spacing, dark mode, motion, contrast — lives in **`code/packages/shared/ui-tokens/DESIGN.md`**. This file keeps only the structural, code-level rules:
+The **visual system** — colors, typography, spacing, dark mode, motion, contrast — lives in **`code/packages/web/ui-tokens/DESIGN.md`**. This file keeps only the structural, code-level rules:
 
 - `<html lang>` + `dir` from the active locale. `SkipLink` first in the body, targets `#main`. Exactly one `<main id="main" tabIndex={-1}>` per layout. Sections use `<section aria-labelledby="…">`. Icons `aria-hidden="true"` unless the sole label.
 - `jsx-a11y` rules are errors (eslint); `pnpm verify:contrast` gates WCAG AA on the theme tokens (see Verification).

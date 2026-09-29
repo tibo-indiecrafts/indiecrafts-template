@@ -11,7 +11,7 @@ status: stable
 The 61 shadcn/ui primitives + `use-mobile`. CLI-managed — **don't hand-edit**; `shadcn add`
 regenerates these files (its `components.json` aliases point here). Each primitive's usage
 doc is colocated with its source (`code/packages/web/ui/src/web/<name>.md` beside `<name>.tsx`),
-indexed from the [`DESIGN.md` component catalog](../../code/packages/shared/ui-tokens/DESIGN.md).
+indexed from the [`DESIGN.md` component catalog](../../code/packages/web/ui-tokens/DESIGN.md).
 
 |               |                                                                                                                                                                                                                                                                                                                                                                                       |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

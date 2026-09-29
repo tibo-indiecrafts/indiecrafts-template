@@ -3,7 +3,7 @@
  *
  * @see docs/reference/projects/web/admin/src/app/locale/layout.md
  */
-import "@indiecrafts/packages-shared-ui-tokens/globals.css";
+import "@indiecrafts/packages-web-ui-tokens/globals.css";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { NextIntlClientProvider, hasLocale } from "next-intl";

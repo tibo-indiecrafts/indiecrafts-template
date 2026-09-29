@@ -117,7 +117,7 @@ Moon** — no Monitor), and highlights the **OS-resolved** theme before an expli
 
 next-themes writes the resolved theme to the `data-theme` attribute on `<html>`
 (`attribute: "data-theme"`). The design tokens (generated into
-`@indiecrafts/packages-shared-ui-tokens/src/generated/tokens.css` from `tokens.json`) honour **two** triggers so a
+`@indiecrafts/packages-web-ui-tokens/src/generated/tokens.css` from `tokens.json`) honour **two** triggers so a
 first-paint visitor — even without JS — sees their OS preference:
 
 ```css

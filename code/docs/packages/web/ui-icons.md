@@ -7,7 +7,7 @@ status: stable
 # `@indiecrafts/packages-web-ui-icons` — the icon system
 
 One centralized icon brick. A shared **contract** (glyph names, custom-SVG registry, brand SVG data)
-with platform-forked **renderers** — the same data→renderer split as [`ui-tokens`](/packages/shared/ui-tokens).
+with platform-forked **renderers** — the same data→renderer split as [`ui-tokens`](/packages/web/ui-tokens).
 Replaces the previous scattered, DOM-locked icon usage (lucide + reicon + inline SVGs across the app
 and blog). **Four icon families:** lucide (cross-platform base), reicon (web), custom SVGs
 (cross-platform), and brand/social marks (cross-platform).

@@ -39,14 +39,14 @@ The **workspace root is the repo root** (`package.json`, `pnpm-workspace.yaml`, 
 Extracted when **≥2 consumers** use them; consumed **as source** (no build step) via Next
 `transpilePackages` + pnpm workspace symlinks.
 
-| Package                                  | Holds                                                                                                                                                 | Exports                                                       |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `@indiecrafts/packages-shared-config`    | shared config primitives (i18n · format · env · logging · `site` env) + the generic page contract (`PageConfig`/`isPageVisible`); `localizedPathname` | `.` (no `./types`)                                            |
-| `@indiecrafts/packages-shared-utils`     | `cn` · logger · slugify · video-embed · format-date                                                                                                   | subpath-only (no `.`)                                         |
-| `@indiecrafts/packages-web-sanity`       | Sanity infra: client · live · env · token · structure                                                                                                 | subpath-only (no `.`)                                         |
-| `@indiecrafts/packages-web-ui`           | shadcn primitives + `use-mobile` (platform-nested)                                                                                                    | `./web/*` → `src/web/*.tsx`, `./web/use-mobile`, `./shared/*` |
-| `@indiecrafts/packages-shared-ui-tokens` | `globals.css` · `typeset.css` · `DESIGN.md`                                                                                                           | CSS-only (`./globals.css`, `./typeset.css`)                   |
-| `@indiecrafts/packages-web-i18n`         | shared next-intl navigation for **modules** (untyped `Link`)                                                                                          | `.`                                                           |
+| Package                               | Holds                                                                                                                                                 | Exports                                                       |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `@indiecrafts/packages-shared-config` | shared config primitives (i18n · format · env · logging · `site` env) + the generic page contract (`PageConfig`/`isPageVisible`); `localizedPathname` | `.` (no `./types`)                                            |
+| `@indiecrafts/packages-shared-utils`  | `cn` · logger · slugify · video-embed · format-date                                                                                                   | subpath-only (no `.`)                                         |
+| `@indiecrafts/packages-web-sanity`    | Sanity infra: client · live · env · token · structure                                                                                                 | subpath-only (no `.`)                                         |
+| `@indiecrafts/packages-web-ui`        | shadcn primitives + `use-mobile` (platform-nested)                                                                                                    | `./web/*` → `src/web/*.tsx`, `./web/use-mobile`, `./shared/*` |
+| `@indiecrafts/packages-web-ui-tokens` | `globals.css` · `typeset.css` · `DESIGN.md`                                                                                                           | CSS-only (`./globals.css`, `./typeset.css`)                   |
+| `@indiecrafts/packages-web-i18n`      | shared next-intl navigation for **modules** (untyped `Link`)                                                                                          | `.`                                                           |
 
 ### The blog module — `code/modules/web/blog`
 

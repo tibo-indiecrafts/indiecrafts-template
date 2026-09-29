@@ -3,7 +3,7 @@
  *
  * @see docs/reference/projects/web/website/src/app/locale/layout.md
  */
-import "@indiecrafts/packages-shared-ui-tokens/globals.css";
+import "@indiecrafts/packages-web-ui-tokens/globals.css";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale, getTranslations } from "next-intl/server";

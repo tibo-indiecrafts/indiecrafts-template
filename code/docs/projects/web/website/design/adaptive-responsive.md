@@ -165,7 +165,7 @@ adaptive image _selection_ — a fixed set of files — inside a responsive layo
 
 Two layers honor `prefers-reduced-motion: reduce`:
 
-- **Global.** `globals.css` (in `@indiecrafts/packages-shared-ui-tokens`) neutralizes animation and transitions for everyone who asks:
+- **Global.** `globals.css` (in `@indiecrafts/packages-web-ui-tokens`) neutralizes animation and transitions for everyone who asks:
 
   ```css
   @media (prefers-reduced-motion: reduce) {
@@ -191,7 +191,7 @@ utilities keep the reduced-motion state visually correct.
 viewport: OKLCH light/dark tokens with two dark triggers (`html[data-theme="dark"]` +
 `@media (prefers-color-scheme: dark)`), a `forced-colors` (Windows High Contrast) mapping, and a
 branded `::selection`. Those are covered in
-[`DESIGN.md`](../../../../code/packages/shared/ui-tokens/DESIGN.md); the takeaway is that layout, motion, and
+[`DESIGN.md`](../../../../code/packages/web/ui-tokens/DESIGN.md); the takeaway is that layout, motion, and
 imagery all key off Tailwind defaults plus the two container variables — nothing bespoke to learn.
 
 ## Visual verification — look at the pixels before "done"
