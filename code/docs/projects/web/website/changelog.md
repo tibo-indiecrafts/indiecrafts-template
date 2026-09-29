@@ -17,6 +17,15 @@ the repo-wide roll-up → root `CHANGELOG.md`.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`dev:doctor` checks only the env you run.** It flagged `PASTE_…_HERE` placeholders in the
+  staging/prod tables of `wrangler.toml` while booting `dev`, telling every newcomer to fix dev ids
+  that were already set. It now reads only `[env.<env>]` (`wranglerEnvSection` in
+  `scripts/lib/project.mjs`, tested). **Why:** found on the QA Runbook card 01 boot.
+- **React Doctor ignores build output.** `doctor.config.jsonc` now skips `.open-next/**` and
+  `.next/**`; minified bundles were reported as app findings ("weak cryptography" in chunks).
+
 ### Changed
 
 - **Signing in re-checks the legal acceptance.** `SignedInLegalNotice` keys the banner on the user

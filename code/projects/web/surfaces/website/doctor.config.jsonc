@@ -22,6 +22,11 @@
       // React Doctor's reachability tracer can't see, so it mis-reports as an
       // orphan file.
       "docs/**",
+
+      // Build output — minified bundles (`build:cf` / `next dev`), never source. Scanning
+      // them reports library internals as app findings (e.g. "weak cryptography" in chunks).
+      ".open-next/**",
+      ".next/**",
     ],
 
     // Narrow per-path rule suppressions (the file is still scanned for every

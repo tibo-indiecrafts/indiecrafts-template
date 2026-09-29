@@ -17,6 +17,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Quick start covers a real first run.** Cloudflare login + `dev:setup` for secrets, the
+  `dev:doctor` preflight, every port with its health check, how to run `admin` and `app` on their
+  own ports (and the `:3002` clash with the docs site). **Why:** the old five steps skipped the
+  secrets and surfaces a newcomer needs (QA Runbook card 01).
+
+### Changed
+
 - **Mobile is a Capacitor shell.** New ADR 0001 (Capacitor over Expo); the mobile page is a dev-setup guide
   for the shell; `cross-platform-shell` became "Mobile shell"; every Expo/native passage, `/v1/geo`,
   `EVENTS_TOKEN`, and the `mobile/` package scope are gone. `auth` documents password + email code sign-in

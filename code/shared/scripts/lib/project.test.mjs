@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { renameResourcePrefix } from "./project.mjs";
+import { renameResourcePrefix, wranglerEnvSection } from "./project.mjs";
 
 const swap = (t) => renameResourcePrefix(t, "indiecrafts", "acme");
 
@@ -53,4 +53,28 @@ test("leaves prose comments and non-resource keys untouched", () => {
     swap('SANITY_DATASET = "production"'),
     'SANITY_DATASET = "production"',
   );
+});
+
+const TOML = [
+  'name = "indiecrafts-shared-api"',
+  "[env.dev]",
+  'name = "indiecrafts-dev-shared-api"',
+  "[[env.dev.d1_databases]]",
+  'database_id = "real-dev-id"',
+  "[env.dev.vars]",
+  'WEBSITE_URL = "https://dev.test"',
+  "[env.staging]",
+  'name = "indiecrafts-staging-shared-api"',
+  "[[env.staging.d1_databases]]",
+  'database_id = "PASTE_D1_ID_HERE"',
+].join("\n");
+
+test("wranglerEnvSection keeps only the [env.<env>] tables", () => {
+  const dev = wranglerEnvSection(TOML, "dev");
+  assert.match(dev, /real-dev-id/);
+  assert.match(dev, /WEBSITE_URL/);
+  assert.doesNotMatch(dev, /PASTE_D1_ID_HERE/); // staging's placeholder is not dev's problem
+  assert.doesNotMatch(dev, /indiecrafts-shared-api"/); // top-level table is not the env
+  assert.match(wranglerEnvSection(TOML, "staging"), /PASTE_D1_ID_HERE/);
+  assert.equal(wranglerEnvSection(TOML, "prod"), "");
 });

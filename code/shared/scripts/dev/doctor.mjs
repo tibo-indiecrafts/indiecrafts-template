@@ -15,6 +15,7 @@ import { resolve } from "node:path";
 import { APPS, ENVS } from "../lib/apps.mjs";
 import { byKind } from "../lib/databases.mjs";
 import { declaredKeys } from "../data/secrets.mjs";
+import { wranglerEnvSection } from "../lib/project.mjs";
 
 if (process.env.SKIP_DEV_DOCTOR) {
   console.log("dev:doctor skipped (SKIP_DEV_DOCTOR set).");
@@ -73,7 +74,9 @@ for (const w of workers) {
   const toml = resolve(w.dir, "wrangler.toml");
   if (
     existsSync(toml) &&
-    /PASTE_[A-Z0-9_]*_HERE/.test(readFileSync(toml, "utf8"))
+    /PASTE_[A-Z0-9_]*_HERE/.test(
+      wranglerEnvSection(readFileSync(toml, "utf8"), env),
+    )
   )
     warnings.push(
       `${w.slug}: wrangler.toml still has a PASTE_…_HERE placeholder — set the real ${env} D1/KV/R2 ids.`,

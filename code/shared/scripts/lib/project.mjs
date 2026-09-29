@@ -45,6 +45,23 @@ export function renameResourcePrefix(text, from, to) {
     .join("\n");
 }
 
+/**
+ * The `[env.<env>]` part of a wrangler.toml body: every line under a table header that
+ * belongs to that env (`[env.dev]`, `[env.dev.vars]`, `[[env.dev.d1_databases]]`, …).
+ * Wrangler does not inherit bindings into an env, so this is all `--env <env>` uses.
+ */
+export function wranglerEnvSection(text, env) {
+  const own = new RegExp(`^\\[\\[?env\\.${env}(\\]|\\.)`);
+  let inEnv = false;
+  return text
+    .split("\n")
+    .filter((line) => {
+      if (/^\s*\[/.test(line)) inEnv = own.test(line.trim());
+      return inEnv;
+    })
+    .join("\n");
+}
+
 // `wrangler.toml` + `.env.local` are per-app → CWD-relative (each deploy script
 // runs from its own app dir). The config is ONE shared file → resolve it against
 // THIS script's location, so it's correct from any app depth (surfaces are 4 deep,
