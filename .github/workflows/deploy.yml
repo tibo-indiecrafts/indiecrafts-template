@@ -86,7 +86,6 @@ jobs:
           # (dev/staging/prod) Secrets — per-env, so GDPR_FINGERPRINT_SALT stays
           # DISTINCT per env. Empty/unset → secrets.mjs skips it (nothing synced).
           APP_API_TOKEN: ${{ secrets.APP_API_TOKEN }}
-          EVENTS_TOKEN: ${{ secrets.EVENTS_TOKEN }}
           PII_ENCRYPTION_KEY: ${{ secrets.PII_ENCRYPTION_KEY }}
           IP_HASH_SALT: ${{ secrets.IP_HASH_SALT }}
           GDPR_FINGERPRINT_SALT: ${{ secrets.GDPR_FINGERPRINT_SALT }}

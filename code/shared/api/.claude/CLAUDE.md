@@ -1,14 +1,12 @@
 # @indiecrafts/shared-api — standalone API (worker-cf)
 
-Auto-loads under `code/shared/api/**`. A **dedicated JSON/GraphQL API** for the non-web clients (`mobile`,
-partners). The web app keeps its own co-located `/api` routes; this is the shared, versioned API
-those clients call — its own domain, its own deploy. **Activated bare-Worker scaffold — `/health` + the
+Auto-loads under `code/shared/api/**`. A **dedicated JSON/GraphQL API** for the web surfaces and partners. The
+web app keeps its own co-located `/api` routes; this is the shared, versioned API its servers
+and partners call — its own domain, its own deploy. **Activated bare-Worker scaffold — `/health` + the
 audit + session sink (`POST /v1/events` → EU D1, `GET /v1/sessions`)**, bearer-gated + CORS allowlist +
 the native rate-limit binding (on EVERY bearer route now); `withGuard` is Next-only, so the guard is
-inline. **Two bearers:** the TRUSTED `APP_API_TOKEN` (admin read/write routes + the privileged
-`/v1/events` kinds `admin`/`consent`/`csp-report`; server-side only, never bundled) and the
-LEAST-PRIVILEGE `EVENTS_TOKEN` (only `POST /v1/events`, only the `session`/`security` kinds, reads
-nothing — safe to ship in the mobile bundle as `EXPO_PUBLIC_EVENTS_TOKEN`). More routes TBD.
+inline. **One bearer:** `APP_API_TOKEN` gates the admin read/write routes and `POST /v1/events`
+— every caller is a first-party server; never bundled into a client.
 Owns **two EU D1s** (both `--location weur`): **`DB`** (`audit` — the append-only firehose:
 `session_events`, `security_events`, `admin_audit`, `csp_reports`, `backup_runs`) and **`MAIN_DB`**
 (`main` — identity/rights/settings: `user_profiles`, `consent_events`, `email_preferences`,
@@ -40,8 +38,7 @@ never-throws — falls back to a seeded `news` category) and write `email_prefer
 categories to Resend **Topics** (`syncContactTopics` in `resend-audience.ts`, per-category
 `opt_in`/`opt_out`, `resendTopicId` from Sanity) — the per-category counterpart to the audience mirror
 above. Full model → [Email preferences](../../../docs/apps/web/config/email-preferences.md). Secrets:
-`APP_API_TOKEN` (trusted admin/backend) · `EVENTS_TOKEN` (least-privilege `/v1/events` ingest — the
-mobile bundle's `EXPO_PUBLIC_EVENTS_TOKEN`; DISTINCT from `APP_API_TOKEN`) · `IP_HASH_SALT` ·
+`APP_API_TOKEN` (trusted server bearer) · `IP_HASH_SALT` ·
 `CLERK_WEBHOOK_SECRET` · `EMAIL_PREF_SECRET` (signs the no-login preference token) ·
 `GDPR_FINGERPRINT_SALT` (email fingerprint salt, DISTINCT per env (stable within an env) — see `wrangler.toml`) ·
 `PII_ENCRYPTION_KEY` (optional AES-256-GCM key — at-rest field encryption for `data_requests` email + message; unset → plaintext, backward compatible). `POST /v1/events` also accepts `kind:csp-report` →

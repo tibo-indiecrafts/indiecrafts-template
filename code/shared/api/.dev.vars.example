@@ -2,10 +2,8 @@
 # In staging/prod these are set with `wrangler secret put <NAME> --env <env>`.
 
 # Audit + session sink (POST /v1/events → EU D1) + the admin read/write routes:
-# APP_API_TOKEN=""   # TRUSTED admin/backend bearer — gates the admin routes AND the privileged
-#                    # /v1/events kinds (admin/consent/csp-report). Server-side only; NEVER bundle it.
-# EVENTS_TOKEN=""    # LEAST-PRIVILEGE ingest bearer the mobile app sends (as EXPO_PUBLIC_EVENTS_TOKEN):
-#                    # POST /v1/events session/security kinds ONLY, reads nothing. DISTINCT value from APP_API_TOKEN.
+# APP_API_TOKEN=""   # trusted server bearer — gates the admin routes and POST /v1/events.
+#                    # Server-side only; NEVER bundle it.
 # IP_HASH_SALT=""    # salt for hashing IPs before storage (never a raw IP is stored)
 
 # Announcements (GET /v1/announcements → Sanity). PROJECT_ID/DATASET go in wrangler.toml

@@ -26,7 +26,6 @@ import {
   bumpCounter,
   shouldAlert,
 } from "@indiecrafts/packages-shared-security-events";
-import { resolveRegulation } from "@indiecrafts/packages-shared-compliance/shared";
 import {
   SURFACES,
   resolveBanner,
@@ -68,27 +67,22 @@ if (getCurrentEnvironment() === "production")
   addTransport(cloudflareTransport());
 
 /**
- * HTTP API worker — a **bare** Cloudflare Worker (no Next/OpenNext). The deploy
- * shell for the non-web clients (mobile). Serves `POST /v1/events` (the audit +
+ * HTTP API worker — a **bare** Cloudflare Worker (no Next/OpenNext). The shared,
+ * versioned API for the web surfaces and partners. Serves `POST /v1/events` (the audit +
  * session-event sink → the EU D1).
  * Real logic lives in bricks imported `workspace:*`. Run `pnpm cf-typegen` after editing
  * bindings in wrangler.toml.
  *
  * `withGuard` (@indiecrafts/packages-shared-security) is Next-only (`server-only`
  * breaks the esbuild build), so this worker re-implements the tiny guard inline:
- * a bearer token (native callers send no `Origin`, so the origin check would give
- * them zero auth), the Cloudflare native rate-limit binding, a body cap, and CORS.
+ * a bearer token (server-to-server callers send no `Origin`, so an origin check would
+ * give them zero auth), the Cloudflare rate-limit binding, a body cap, and CORS.
  */
 export interface Env {
   /** `wrangler secret put APP_API_TOKEN` — the TRUSTED admin/backend bearer. Gates every
    *  admin read/write route AND the privileged `/v1/events` kinds (`admin` · `consent` ·
    *  `csp-report`). Server-side only — NEVER ship it in a client bundle. */
   APP_API_TOKEN?: string;
-  /** `wrangler secret put EVENTS_TOKEN` — the LEAST-PRIVILEGE ingest bearer. Accepted ONLY
-   *  on `POST /v1/events`, and ONLY for device telemetry (kinds `session` · `security`); it
-   *  can read no route and cannot write `admin`/`consent`/`csp-report` rows. Safe to ship
-   *  in a client bundle (the mobile app uses it). A distinct secret from APP_API_TOKEN. */
-  EVENTS_TOKEN?: string;
   /** Cloudflare native rate-limit binding (`[[ratelimit]]` in wrangler.toml). Optional. */
   AGENT_RATELIMIT?: {
     limit: (o: { key: string }) => Promise<{ success: boolean }>;
@@ -167,8 +161,8 @@ export interface Env {
   BACKUP_RETENTION_DAYS?: string;
 }
 
-// Browser-context origins allowed to READ the response (dev). Native (RN) sends no
-// Origin and needs no CORS.
+// Browser-context origins allowed to READ the response (dev). Server-to-server callers
+// send no Origin and need no CORS.
 const ALLOWED_ORIGINS = new Set(["http://localhost:3000"]);
 const BODY_MAX = 4000;
 
@@ -201,9 +195,7 @@ function bearerToken(request: Request): string {
   );
 }
 
-/** 401 unless the caller holds the TRUSTED admin/backend token (`APP_API_TOKEN`); null when
- *  authorized. For admin read/write routes — NOT `/v1/events`, which also accepts the
- *  least-privilege `EVENTS_TOKEN`. */
+/** 401 unless the caller holds the trusted server token (`APP_API_TOKEN`); null when authorized. */
 function requireAdminBearer(
   request: Request,
   env: Env,
@@ -282,7 +274,7 @@ function json(
 ): Response {
   // no-store: every route through this helper is a bearer-gated view or a signed
   // webhook — admin data + mutations that must never be cached by an intermediary.
-  // (The PUBLIC reads — /v1/geo, /v1/announcements — build their own cacheable Response.)
+  // (The PUBLIC reads — /v1/announcements — build their own cacheable Response.)
   return new Response(JSON.stringify(body), {
     status,
     headers: {
@@ -370,20 +362,9 @@ export default {
       if (request.method !== "POST")
         return json({ error: "method_not_allowed" }, 405, cors);
 
-      // Two tokens gate ingest: the TRUSTED admin/backend key (all kinds) and the
-      // least-privilege EVENTS_TOKEN (device telemetry only). The ingest key ships in the
-      // mobile bundle, so it must never unlock admin/consent writes or any read route.
-      const bearer = bearerToken(request);
-      const adminTok = env.APP_API_TOKEN;
-      const ingestTok = env.EVENTS_TOKEN;
-      const trusted = Boolean(
-        adminTok && bearer && safeEqual(bearer, adminTok),
-      );
-      const ingest = Boolean(
-        ingestTok && bearer && safeEqual(bearer, ingestTok),
-      );
-      if (!trusted && !ingest)
-        return json({ error: "unauthorized" }, 401, cors);
+      // Every caller is a first-party server holding APP_API_TOKEN — never a browser.
+      const unauthorized = requireAdminBearer(request, env, cors);
+      if (unauthorized) return unauthorized;
 
       const limited = await rateLimit(request, env, cors);
       if (limited) return limited;
@@ -399,15 +380,10 @@ export default {
       } catch {
         return json({ error: "invalid" }, 400, cors);
       }
-      // Least-privilege: the ingest token (shipped in the mobile bundle) may write ONLY
-      // device telemetry. admin/consent/csp-report rows are trusted first-party-server
-      // writes — a leaked ingest token must not be able to forge them.
-      if (!trusted && body.kind !== "session" && body.kind !== "security")
-        return json({ error: "forbidden" }, 403, cors);
       const str = (v: unknown, max = 128): string =>
         typeof v === "string" ? v.slice(0, max) : "";
-      // Country: a trusted first-party server may pass the real user's; devices call
-      // direct, so their edge header is correct. Never a raw IP is stored.
+      // Country: the calling server passes the real user's; else the edge header.
+      // Never a raw IP is stored.
       const country =
         str(body.country, 2) || request.headers.get("cf-ipcountry") || null;
       const ts = new Date().toISOString();
@@ -601,9 +577,7 @@ export default {
                 // the api's edge IP is the server, not the visitor — the same
                 // reason `country` is forwarded in the body instead of read
                 // from the edge. Store null rather than a misleading
-                // per-subject hash. When native surfaces call the api
-                // directly (a deferred fast-follow), that path can hash the
-                // real device IP.
+                // per-subject hash.
                 null,
                 `${decisionId}:${type}`,
               )
@@ -1245,31 +1219,6 @@ export default {
         }
       }
       return json({ ok: true }, 200, cors);
-    }
-
-    // ── Geo → consent mode — GET /v1/geo (PUBLIC; the native surfaces' geo signal) ──
-    // Echoes the caller's edge country + the resolved consent mode so the native surfaces (which
-    // have no CF headers of their own) can geo-gate their consent banner. The web surfaces
-    // read `cf-ipcountry` server-side directly; this is only for the native clients. No
-    // bearer (no PII — just the country), no DB. Unknown geo → the resolver returns opt-in.
-    if (url.pathname === "/v1/geo") {
-      if (request.method === "OPTIONS")
-        return new Response(null, { status: 204, headers: PUBLIC_CORS });
-      if (request.method !== "GET")
-        return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS);
-      const country = request.headers.get("cf-ipcountry") || null;
-      const reg = resolveRegulation(country);
-      return new Response(
-        JSON.stringify({ country, regulation: reg.name, mode: reg.mode }),
-        {
-          status: 200,
-          headers: {
-            "content-type": "application/json",
-            "cache-control": "public, max-age=3600",
-            ...PUBLIC_CORS,
-          },
-        },
-      );
     }
 
     // ── Announcements — GET /v1/announcements (PUBLIC; banner + toast per surface) ──

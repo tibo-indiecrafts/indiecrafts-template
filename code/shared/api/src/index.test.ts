@@ -82,87 +82,41 @@ describe("/v1 auth contract — bearer-gated mutating routes reject anon", () =>
   });
 });
 
-describe("/v1/events — dual-token: trusted admin key vs least-privilege ingest key", () => {
-  const admin = {
-    authorization: "Bearer test-token",
-    "content-type": "application/json",
-  };
-  const ingest = {
-    authorization: "Bearer test-events-token",
-    "content-type": "application/json",
-  };
-  const post = (headers: Record<string, string>, body: unknown) =>
+describe("/v1/events — trusted server token only", () => {
+  const post = (token: string, body: Record<string, unknown>) =>
     SELF.fetch("https://api.test/v1/events", {
       method: "POST",
-      headers,
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
       body: JSON.stringify(body),
     });
+  const session = { kind: "session", surface: "app", userId: "u1" };
 
-  it("401s an unknown bearer", async () => {
-    const res = await post(
-      { authorization: "Bearer nope", "content-type": "application/json" },
-      { kind: "session", surface: "mobile", userId: "u1" },
-    );
-    expect(res.status).toBe(401);
-  });
-
-  it("the ingest token MAY write kind:session (device telemetry)", async () => {
-    const res = await post(ingest, {
-      kind: "session",
-      surface: "mobile",
-      userId: "u_ingest_1",
-    });
+  it("accepts the trusted APP_API_TOKEN", async () => {
+    const res = await post(env.APP_API_TOKEN!, session);
     expect(res.status).toBe(201);
   });
 
-  it("the ingest token MAY write kind:security", async () => {
-    const res = await post(ingest, {
-      kind: "security",
-      eventType: "priv_esc",
-      severity: "low",
-      surface: "mobile",
-    });
-    expect(res.status).not.toBe(403);
-    expect([201, 202]).toContain(res.status);
+  it("rejects the retired ingest token with 401 (not 403)", async () => {
+    const res = await post("test-events-token", session);
+    expect(res.status).toBe(401);
   });
 
-  it("the ingest token is FORBIDDEN from kind:admin (403 — can't forge audit rows)", async () => {
-    const res = await post(ingest, {
-      kind: "admin",
-      event: "grant_admin",
-      actorUserId: "attacker",
-      targetUserId: "victim",
-    });
-    expect(res.status).toBe(403);
-  });
-
-  it("the ingest token is FORBIDDEN from kind:consent (403)", async () => {
-    const res = await post(ingest, {
-      kind: "consent",
-      userId: "victim",
-      decisionId: "d1",
-      policyVersion: "1",
-      surface: "web",
-      events: [{ type: "terms", granted: true }],
-    });
-    expect(res.status).toBe(403);
-  });
-
-  it("the trusted admin token MAY write kind:admin (audit row)", async () => {
-    const res = await post(admin, {
-      kind: "admin",
-      event: "test_event",
-      actorUserId: "actor_1",
-      targetUserId: "target_1",
-    });
-    expect(res.status).toBe(201);
-  });
-
-  it("the ingest token CANNOT read an admin route (GET /v1/sessions → 401)", async () => {
-    const res = await SELF.fetch("https://api.test/v1/sessions", {
-      headers: { authorization: "Bearer test-events-token" },
+  it("rejects a missing bearer with 401", async () => {
+    const res = await SELF.fetch("https://api.test/v1/events", {
+      method: "POST",
+      body: "{}",
     });
     expect(res.status).toBe(401);
+  });
+});
+
+describe("GET /v1/geo — removed", () => {
+  it("is no longer routed", async () => {
+    const res = await SELF.fetch("https://api.test/v1/geo");
+    expect(res.status).toBe(404);
   });
 });
 

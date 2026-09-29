@@ -2,8 +2,8 @@
  * Geo → regulation → consent-mode RESOLUTION. The visitor's country (ISO-3166-1 alpha-2, as
  * `cf-ipcountry` returns it) maps to a NAMED privacy regulation (GDPR, UK GDPR, CCPA, …); each
  * regulation carries the consent UI `mode` it implies. Pure + framework-agnostic (the `/shared`
- * layer): the website, the web/native shells, AND the api Worker (`GET /v1/geo`) all resolve
- * from this ONE algorithm. The data tables it reads (regulations + country/territory maps) live
+ * layer): every web surface resolves the mode server-side from its own `cf-ipcountry` header,
+ * all from this ONE algorithm. The data tables it reads (regulations + country/territory maps) live
  * in `./regions.data`; a client edits those. GDPR/UK GDPR/CCPA plus LGPD/PIPEDA/POPIA and
  * Australia's Privacy Act ship built in, and an assignment on a PARENT country cascades to its
  * external territories.
