@@ -69,8 +69,7 @@ jobs:
       # BUDGET_KB in scripts/check-bundle-size.mjs is calibrated — then add `--enforce`.
       - run: pnpm --filter @indiecrafts/web-surfaces-website size
 
-  # Storybook stories-as-tests: every colocated story (web + native via
-  # react-native-web) runs as a component + a11y test in headless chromium, and the
+  # Storybook stories-as-tests: every colocated story runs as a component + a11y test in headless chromium, and the
   # gallery must build. BLOCKING — these are deterministic (no image baselines).
   browser-stories:
     runs-on: ubuntu-latest

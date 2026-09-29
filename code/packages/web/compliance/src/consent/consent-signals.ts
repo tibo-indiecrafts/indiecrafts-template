@@ -1,7 +1,6 @@
 /**
  * Re-export shim — the pure consent constants + types moved to the portable brick
- * `@indiecrafts/packages-shared-compliance/shared` (so the Expo shells share
- * them). This file keeps the historical import path
+ * `@indiecrafts/packages-shared-compliance/shared` (the api Worker shares them). This file keeps the historical import path
  * (`@indiecrafts/packages-web-compliance/consent/consent-signals`) working for every
  * existing importer (`CookieBanner`, `CookiePreferences`, `CookieDeclaration`, the
  * Sanity read path). New code should import from the shared brick directly.

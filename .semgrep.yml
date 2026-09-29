@@ -7,21 +7,21 @@ rules:
     languages: [typescript, javascript]
     severity: ERROR
     message: >
-      A NEXT_PUBLIC_* / EXPO_PUBLIC_* env var named SECRET/PASSWORD/PRIVATE is inlined into
+      A NEXT_PUBLIC_* env var named SECRET/PASSWORD/PRIVATE is inlined into
       the client bundle. Never expose a secret under a public prefix (repo NEVER) — move it
       to a server-only var. (A deliberate bundle abuse-gate TOKEN is the one documented
       exception; secrets never are.)
     patterns:
-      - pattern-regex: (NEXT_PUBLIC_|EXPO_PUBLIC_)[A-Z0-9_]*(SECRET|PASSWORD|PRIVATE)
+      - pattern-regex: NEXT_PUBLIC_[A-Z0-9_]*(SECRET|PASSWORD|PRIVATE)
 
   - id: public-token-review
     languages: [typescript, javascript]
     severity: WARNING
     message: >
-      A NEXT_PUBLIC_*/EXPO_PUBLIC_* TOKEN/KEY is bundled to the client. Confirm it is a
+      A NEXT_PUBLIC_* TOKEN/KEY is bundled to the client. Confirm it is a
       PUBLISHABLE key or a deliberate abuse-gate (documented) — never a private token.
     patterns:
-      - pattern-regex: (NEXT_PUBLIC_|EXPO_PUBLIC_)[A-Z0-9_]*(TOKEN|API_KEY|SECRET_KEY)
+      - pattern-regex: NEXT_PUBLIC_[A-Z0-9_]*(TOKEN|API_KEY|SECRET_KEY)
       - pattern-not-regex: (SITE_KEY|PUBLISHABLE|PUBLIC_KEY)
 
   - id: eval-injection

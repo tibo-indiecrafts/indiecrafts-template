@@ -38,7 +38,7 @@ tests=$(printf '%s\n' "$changed" | grep -E '\.(test|spec|stories)\.|/e2e/')
 # sibling story on disk. `--porcelain` status: added (`A`) or untracked (`??`).
 added=$(git -C "$root" status --porcelain 2>/dev/null | grep -E '^(A|\?\?)' | awk '{print $NF}')
 new_ui=$(printf '%s\n' "$added" \
-  | grep -E '^code/.*(/user-interface/|/ui/src/|/ui-components/src/|/ui-native/src/|/ui-icons/src/|/system-pages/src/|/renderer/src/|/components/).*\.tsx$' \
+  | grep -E '^code/.*(/user-interface/|/ui/src/|/ui-components/src/|/ui-icons/src/|/system-pages/src/|/renderer/src/|/components/).*\.tsx$' \
   | grep -Ev '\.(stories|test|spec)\.|/index\.tsx$|\.d\.ts$|/use-[a-z]')
 story_gap=""
 for f in $new_ui; do

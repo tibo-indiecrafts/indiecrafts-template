@@ -10,12 +10,12 @@ import { defaultLocale, features } from "@/config";
 /**
  * The effective legal version — the SAME string the re-acceptance banner uses
  * (`getLegalAcceptance(...).version`: an optional manual bump + each ENABLED legal
- * page's lastUpdated date). The `app` + Expo shells fetch this so every surface
- * re-prompts on ONE Sanity bump and compares the SAME version string (a per-surface
+ * page's lastUpdated date). The `app` surface (also inside the Capacitor shell) fetches
+ * this so every surface re-prompts on ONE Sanity bump and compares the SAME version string (a per-surface
  * static `policyVersion` would never match the website's). The version is
  * locale-independent (dates, not copy), so it reads the default locale. `no-store` so a
  * CDN can't serve a stale version, and CORS `*` because it is public, read-only, and
- * non-credentialed (the cross-origin `app` browser + native shells fetch it).
+ * non-credentialed (the cross-origin `app` surface fetches it).
  */
 export async function GET() {
   const { version } = await getLegalAcceptance(defaultLocale, features.legal);

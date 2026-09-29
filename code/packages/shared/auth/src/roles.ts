@@ -1,8 +1,7 @@
 /**
  * The app's authorization contract — framework-agnostic and DOM-free. No Clerk,
- * React, or Next import (the `shared/` scope rule), so every platform's Clerk SDK
- * (`@clerk/nextjs`, `@clerk/clerk-expo`, `@clerk/clerk-react`) reads the same role
- * off the signed session token.
+ * React, or Next import (the `shared/` scope rule), so the web surfaces (`@clerk/nextjs`)
+ * and the api Worker (`@clerk/backend`) read the same role off the signed session token.
  *
  * The role lives in Clerk `publicMetadata` (backend-writable only → tamper-proof)
  * and rides the session JWT via the dashboard claim

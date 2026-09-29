@@ -30,8 +30,8 @@ sensitive=$(printf '%s\n' "$changed" \
   | grep -E '(^|/)\.env($|\.)|/\.github/|wrangler\.toml|/infra/|(^|/)package\.json$|(^|/)pnpm-lock\.yaml$|\.sql$|/migrations/')
 # UI / renderer changes.
 ui=$(printf '%s\n' "$changed" | grep -E '\.tsx$' | grep -E 'user-interface|renderer|/components/|packages/web/ui')
-# Mobile (Expo / React Native) changes — the surface + the RN bricks.
-mobile=$(printf '%s\n' "$changed" | grep -E 'code/projects/mobile/|code/packages/mobile/')
+# Mobile shell (Capacitor) changes.
+mobile=$(printf '%s\n' "$changed" | grep -E 'code/projects/mobile/')
 
 BIG=150 # changed-line threshold worth a diff review
 recs=""
@@ -64,8 +64,7 @@ if [ -n "$ui" ]; then
   fi
 fi
 if [ -n "$mobile" ]; then
-  # RN-appropriate checks (the website lint hook skips RN files) + the Expo skills for SDK-52 APIs.
-  add "• Mobile (Expo/RN) changed — run \`npx expo lint\` + \`npx expo-doctor\`; lean on the Expo skills (\`expo plugin\`) for SDK-52 APIs."
+  add "• Mobile shell changed — run \`pnpm --filter @indiecrafts/mobile-surfaces-main verify\`, then check it on the emulator (\`… android\`)."
 fi
 
 [ -z "$recs" ] && exit 0

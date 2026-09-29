@@ -1,9 +1,9 @@
 /**
  * The portable consent core — the pure decision math + the store contract + the
- * default category set, shared by every shell (web app · Expo).
+ * default category set.
  * No DOM, no `localStorage`, no `dataLayer`: the web brick's `consent-store.ts` keeps
  * the persistence + Consent-Mode push and imports the math from here; each shell
- * supplies its own `ConsentStore` adapter (`localStorage` / `AsyncStorage`).
+ * supplies its own `ConsentStore` adapter (`localStorage` on the `app` surface).
  */
 
 import {
@@ -22,8 +22,8 @@ export type ConsentRecord = {
 /**
  * The persistence contract a shell implements over a stored record. `get` returns a
  * STABLE reference when nothing changed (so `useSyncExternalStore` works on web);
- * `subscribe` fires `cb` on every external change. The web adapter is `localStorage`,
- * the native adapter `AsyncStorage`. One generic store serves both the consent record
+ * `subscribe` fires `cb` on every external change. The adapter is `localStorage`.
+ * One generic store serves both the consent record
  * and the legal-acceptance record (each under its own key).
  */
 export interface Store<T> {

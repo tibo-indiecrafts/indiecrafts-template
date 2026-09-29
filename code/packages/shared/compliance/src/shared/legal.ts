@@ -1,11 +1,11 @@
 /**
  * The legal-route contract — one source of truth for the canonical legal pages, so
- * a shell (Expo · the `app` web surface) can link OUT to the website's
+ * the `app` surface (and the Capacitor shell that loads it) can link OUT to the website's
  * legal pages, and the website's own `pages.ts` reads the same slugs. Plus the legal
  * re-acceptance shape (`LegalAcceptanceRecord` + `needsReacceptance`), used by every
- * shell over its own store adapter.
+ * surface over its own store adapter.
  *
- * No re-hosting: the shells open these URLs on the website (`legalUrl`), where the
+ * No re-hosting: the app opens these URLs on the website (`legalUrl`), where the
  * content stays Sanity-driven.
  */
 
@@ -143,7 +143,7 @@ export function needsReacceptance(
 
 /**
  * The website route that exposes the effective legal version — the SAME string the
- * website banner computes (`getLegalAcceptance(...).version`). App + mobile fetch it so
+ * website banner computes (`getLegalAcceptance(...).version`). The `app` surface fetches it so
  * every surface re-prompts on ONE Sanity bump, and all three compare the SAME version
  * string (a per-surface static `policyVersion` would never match the website's).
  */
@@ -177,7 +177,7 @@ export async function fetchLegalVersion(
  * Read the SIGNED-IN user's server-recorded accepted legal version (`GET
  * /v1/consent/legal`). Returns null when signed out, unconfigured, or on error — the
  * caller then falls back to its per-surface local deposit. This server record is what
- * makes acceptance follow a user across website · app · mobile.
+ * makes acceptance follow a user across website · app (incl. the Capacitor shell).
  */
 export async function readLegalConsent(input: {
   apiUrl: string;
