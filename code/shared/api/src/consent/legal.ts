@@ -7,7 +7,7 @@
 // updated" banner follow a SIGNED-IN user across every surface (website · app, incl. the Capacitor shell):
 // accept on one, cleared on all. The Clerk session JWT proves identity; keyed on the JWT
 // `sub`, no bearer token exposed to the client. Anonymous visitors keep their per-surface
-// local deposit (cookie / AsyncStorage) — there is no shared identity to sync them by.
+// local deposit (cookie / localStorage) — there is no shared identity to sync them by.
 //
 //   GET  /v1/consent/legal → { legal_acked_version: string | null }
 //   POST /v1/consent/legal  { version: string, surface?: string } → { ok: true }

@@ -28,7 +28,7 @@ erasure pure-deletes the contact.
 version, so the "policies updated" banner follows them across website · app · mobile (accept on one,
 cleared on all). Proof in `consent_events` (`consent_type = 'legal_reaccept'`), current state in
 `user_profiles.legal_acked_version` (migration `0011`). Anonymous visitors keep their per-surface local
-deposit (cookie / AsyncStorage) — no shared identity to sync by.
+deposit (cookie / localStorage) — no shared identity to sync by.
 **Per-category email preferences** (the editor-defined categories, alongside the single flag above):
 `GET`/`POST /v1/consent/email-preferences` (Clerk-JWT) and the no-login
 `GET`/`POST /v1/email-preferences?token=` + `POST /v1/email-preferences/unsubscribe?token=` (RFC 8058
