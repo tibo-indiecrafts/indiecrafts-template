@@ -10,6 +10,7 @@
 // enforce step-up too (its old copy hard-coded fvaMinutes:null).
 import { reverificationError } from "@clerk/backend/internal";
 import { type Env } from "../index";
+import { bearerToken, verifyClerkClaims } from "./clerk-jwt";
 import { createRealClerkClient } from "../erasure/clerk-client";
 
 /** The resolved caller of a sensitive action. `fvaMinutes` is the first-factor age from
@@ -29,35 +30,26 @@ export const REVERIFY_WINDOW_MIN = 10;
  * Dynamic import keeps @clerk/backend out of the worker startup graph. Fails closed:
  * any missing token/secret or verify/resolve failure → null (unauthenticated).
  *
- * `verifyToken` returns `{ data, errors }` (not throwing); the installed @clerk/backend
- * types resolve these to `unknown`, so the claims are read via a narrow cast.
+ * The token goes through `verifyClerkClaims` (the v3 `verifyToken` contract: returns
+ * the claims, throws on a bad token).
  */
 export async function authenticateClerkJwt(
   request: Request,
   env: Env,
 ): Promise<SelfAuth | null> {
-  const token = (request.headers.get("authorization") ?? "").replace(
-    /^Bearer\s+/i,
-    "",
-  );
-  if (!token || !env.CLERK_SECRET_KEY) return null;
+  if (!env.CLERK_SECRET_KEY) return null;
+  const claims = await verifyClerkClaims(bearerToken(request), {
+    secretKey: env.CLERK_SECRET_KEY,
+  });
+  if (!claims) return null;
+  const { sub: userId, fva } = claims;
   try {
-    const { verifyToken } = await import("@clerk/backend");
-    const { data: claims, errors } = await verifyToken(token, {
-      secretKey: env.CLERK_SECRET_KEY,
-    });
-    if (errors || !claims) return null;
-    const payload = claims as { sub?: unknown; fva?: unknown };
-    const userId = typeof payload.sub === "string" ? payload.sub : null;
-    if (!userId) return null;
     // fva = [firstFactorAgeMinutes, secondFactorAgeMinutes] | undefined; -1 = not
     // applicable. Runtime-validate before trusting it (never trust an uncast claim).
     const isValidFactorAge = (x: unknown): x is number =>
       typeof x === "number" && Number.isFinite(x) && (x === -1 || x >= 0);
     const fvaMinutes =
-      Array.isArray(payload.fva) && isValidFactorAge(payload.fva[0])
-        ? payload.fva[0]
-        : null;
+      Array.isArray(fva) && isValidFactorAge(fva[0]) ? fva[0] : null;
     // Resolve the primary email from Clerk (the JWT omits it by default).
     const user = await createRealClerkClient(env.CLERK_SECRET_KEY).exportUser(
       userId,
@@ -74,7 +66,7 @@ export async function authenticateClerkJwt(
     if (!email) return null;
     return { userId, email, fvaMinutes };
   } catch {
-    return null; // any verify/resolve failure → unauthenticated (fail closed)
+    return null; // any resolve failure → unauthenticated (fail closed)
   }
 }
 

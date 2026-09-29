@@ -5,6 +5,15 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Signed-in routes accept valid Clerk tokens again.** `@clerk/backend` v3 `verifyToken` returns the
+  claims and throws on a bad token; the api read `{ data, errors }`, so `data` was always empty and
+  every valid token got 401 — the legal sync (`/v1/consent/legal`), the marketing-email consent and
+  the step-up routes. One helper now verifies for all of them (`src/auth/clerk-jwt.ts`), tested
+  against the real library with a locally signed RS256 token. **Why:** found by the signed-in
+  legal-banner QA; the route tests inject `authenticate`, so they never ran the real verify.
+
 ### Removed
 
 - **`GET /v1/geo` and the `EVENTS_TOKEN` bearer.** Both existed only for the Expo app. `POST /v1/events`

@@ -16,6 +16,7 @@
 // and best-effort mirrors the Resend audience.
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { type Env, clientIp } from "../index";
+import { bearerToken, verifyClerkClaims } from "../auth/clerk-jwt";
 import { upsertResendContact } from "../resend-audience";
 
 const BODY_MAX = 4000;
@@ -44,22 +45,11 @@ export async function verifyUserId(
   request: Request,
   env: Env,
 ): Promise<string | null> {
-  const token = (request.headers.get("authorization") ?? "").replace(
-    /^Bearer\s+/i,
-    "",
-  );
-  if (!token || !env.CLERK_SECRET_KEY) return null;
-  try {
-    const { verifyToken } = await import("@clerk/backend");
-    const { data: claims, errors } = await verifyToken(token, {
-      secretKey: env.CLERK_SECRET_KEY,
-    });
-    if (errors || !claims) return null;
-    const sub = (claims as { sub?: unknown }).sub;
-    return typeof sub === "string" ? sub : null;
-  } catch {
-    return null; // any verify failure → unauthenticated (fail closed)
-  }
+  if (!env.CLERK_SECRET_KEY) return null;
+  const claims = await verifyClerkClaims(bearerToken(request), {
+    secretKey: env.CLERK_SECRET_KEY,
+  });
+  return claims?.sub ?? null; // any verify failure → unauthenticated (fail closed)
 }
 
 export async function handleMarketingConsent(
