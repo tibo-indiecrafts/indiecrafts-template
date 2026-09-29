@@ -5,7 +5,7 @@ import docs from "./radio-group.md?raw";
 import { Label } from "./label";
 
 const meta = {
-  title: "Web/UI/RadioGroup",
+  title: "UI/RadioGroup",
   component: RadioGroup,
   tags: ["autodocs"],
   parameters: {

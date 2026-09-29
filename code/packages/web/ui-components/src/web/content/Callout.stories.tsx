@@ -14,7 +14,7 @@ const body = (text: string) => [
 ];
 
 const meta = {
-  title: "Web/UI Components/Callout",
+  title: "UI Components/Callout",
   component: Callout,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

@@ -1,7 +1,7 @@
 /**
  * Custom SVG registry — project-specific marks that aren't in lucide/reicon (a logo
  * mark, a bespoke glyph). Pure path DATA (24×24-ish, `fill: currentColor`), so the
- * web (`<svg>`) and native (`react-native-svg`) renderers draw one source — fully
+ * web renderers draw one source — fully
  * cross-platform, unlike reicon (web-only). Drop your own `{ viewBox, path }` here.
  */
 

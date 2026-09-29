@@ -20,16 +20,13 @@ Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers +
   over resolved `{title, href}` items · share-buttons — X/LinkedIn/Facebook + copy-link row over
   an optional `url` (omitted → resolves the current page URL client-side, for client-only surfaces
   like the app) + `title` + an optional `networks` filter (editor-driven, from the
-  site's `siteSettings.share`); intent URLs from `@indiecrafts/packages-shared-utils/share` so native
-  can reuse them · **PostHero** — a full-width lead-post hero (image/video, category chip, author/date)
+  site's `siteSettings.share`); intent URLs from `@indiecrafts/packages-shared-utils/share` · **PostHero** — a full-width lead-post hero (image/video, category chip, author/date)
   for the blog frontpage (`blog-hero`) · **TopicCards** — one to three large clickable category/tag
   cards (`blog-topic-cards`)) · `form/` (shared form
   controls — PhoneInput, TurnstileWidget, Newsletter, Waitlist, LeadMagnet, DataRequestForm). Web infra (`registry.tsx`,
   `portable-text-components.tsx`, story helpers) sits at `src/web/`. `src/shared/types.ts` is the
-  **platform-agnostic contract** (block types) — also home to **`PostCardItem`**, the resolved
-  post-card shape every collection primitive above shares. `src/native/` is **reserved** for a future
-  React-Native renderer set that mirrors the same domain folders + shares `shared/types` + tokens —
-  empty until an RN app exists (see `src/native/README.md`). Consumers import
+  **DOM-free contract** (block types) — also home to **`PostCardItem`**, the resolved
+  post-card shape every collection primitive above shares. Consumers import
   `@indiecrafts/packages-web-ui-components/web/<domain>/<Name>` (or `web/{registry,portable-text-components}`, `shared/types`).
 - **Renderers moved here; schemas live in page-builder** — a generic `module.*` = renderer here + schema in `@indiecrafts/packages-web-page-builder` (`code/packages/web/page-builder`), not the blog.
 - Mixed `.ts`/`.tsx` → resolved via the app's tsconfig `paths` + a `@source` line in `ui-tokens/globals.css`.

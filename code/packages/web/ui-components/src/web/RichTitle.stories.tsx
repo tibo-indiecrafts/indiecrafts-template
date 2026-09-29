@@ -5,7 +5,7 @@ import docs from "./RichTitle.md?raw";
 // Shared title primitive: renders a heading from a string and colours any
 // `[[word]]` span with the brand accent.
 const meta = {
-  title: "Web/UI Components/RichTitle",
+  title: "UI Components/RichTitle",
   component: RichTitle,
   tags: ["autodocs"],
   parameters: {

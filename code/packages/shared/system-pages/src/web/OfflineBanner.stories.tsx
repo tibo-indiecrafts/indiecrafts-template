@@ -1,13 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { OfflineBanner } from "./OfflineBanner";
-import { SHELL_COPY } from "../shared";
 
 const meta = {
-  title: "Web/System Pages/OfflineBanner",
+  title: "System Pages/OfflineBanner",
   component: OfflineBanner,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },
-  args: { message: SHELL_COPY.en.offline.banner },
+  args: { message: "You're offline — some features may be unavailable." },
 } satisfies Meta<typeof OfflineBanner>;
 
 export default meta;

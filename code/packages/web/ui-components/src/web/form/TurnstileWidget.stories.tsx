@@ -8,7 +8,7 @@ import docs from "./TurnstileWidget.md?raw";
  * renders live without a real key. `onToken` is inert here.
  */
 const meta = {
-  title: "Web/UI Components/TurnstileWidget",
+  title: "UI Components/TurnstileWidget",
   component: TurnstileWidget,
   tags: ["autodocs"],
   parameters: { layout: "padded", docs: { description: { component: docs } } },

@@ -3,7 +3,7 @@ import { CustomHtml } from "./CustomHtml";
 import docs from "./CustomHtml.md?raw";
 
 const meta = {
-  title: "Web/UI Components/CustomHtml",
+  title: "UI Components/CustomHtml",
   component: CustomHtml,
   tags: ["autodocs"],
   parameters: {

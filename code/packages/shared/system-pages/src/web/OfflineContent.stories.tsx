@@ -1,15 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { OfflineContent } from "./OfflineContent";
-import { SHELL_COPY } from "../shared";
-
-const { banner: _banner, ...offline } = SHELL_COPY.en.offline;
 
 const meta = {
-  title: "Web/System Pages/OfflineContent",
+  title: "System Pages/OfflineContent",
   component: OfflineContent,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },
-  args: offline,
+  args: {
+    title: "You're offline",
+    description: "Check your connection and try again.",
+    retryLabel: "Try again",
+  },
 } satisfies Meta<typeof OfflineContent>;
 
 export default meta;

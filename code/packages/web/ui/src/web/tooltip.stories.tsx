@@ -11,7 +11,7 @@ import docs from "./tooltip.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "Web/UI/Tooltip",
+  title: "UI/Tooltip",
   component: Tooltip,
   tags: ["autodocs"],
   parameters: {

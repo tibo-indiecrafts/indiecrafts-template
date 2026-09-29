@@ -13,7 +13,7 @@ const item = (message: string, extra: Record<string, unknown> = {}) => ({
 });
 
 const meta = {
-  title: "Web/Chrome/AnnouncementBar",
+  title: "Chrome/AnnouncementBar",
   component: AnnouncementBar,
   tags: ["autodocs"],
   parameters: {

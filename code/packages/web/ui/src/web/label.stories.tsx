@@ -4,7 +4,7 @@ import docs from "./label.md?raw";
 import { Input } from "./input";
 
 const meta = {
-  title: "Web/UI/Label",
+  title: "UI/Label",
   component: Label,
   tags: ["autodocs"],
   parameters: {

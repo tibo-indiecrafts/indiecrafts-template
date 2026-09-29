@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Maintenance } from "./Maintenance";
 
 const meta = {
-  title: "Web/System Pages/Maintenance",
+  title: "System Pages/Maintenance",
   component: Maintenance,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },

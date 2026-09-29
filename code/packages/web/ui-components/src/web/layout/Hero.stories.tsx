@@ -3,7 +3,7 @@ import { Hero } from "./Hero";
 import docs from "./Hero.md?raw";
 
 const meta = {
-  title: "Web/UI Components/Hero",
+  title: "UI Components/Hero",
   component: Hero,
   tags: ["autodocs"],
   parameters: {

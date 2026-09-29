@@ -9,7 +9,7 @@ import docs from "./PhoneInput.md?raw";
  * (`@indiecrafts/packages-shared-format/validate`).
  */
 const meta = {
-  title: "Web/UI Components/PhoneInput",
+  title: "UI Components/PhoneInput",
   component: PhoneInput,
   tags: ["autodocs"],
   parameters: { layout: "padded", docs: { description: { component: docs } } },

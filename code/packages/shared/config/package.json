@@ -6,8 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./shared": "./src/shared/index.ts",
-    "./web": "./src/web/index.ts",
-    "./mobile": "./src/mobile/index.ts"
+    "./web": "./src/web/index.ts"
   },
   "scripts": {
     "test": "vitest run"

@@ -5,7 +5,7 @@ import docs from "./checkbox.md?raw";
 import { Label } from "./label";
 
 const meta = {
-  title: "Web/UI/Checkbox",
+  title: "UI/Checkbox",
   component: Checkbox,
   tags: ["autodocs"],
   parameters: {

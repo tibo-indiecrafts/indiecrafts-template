@@ -3,7 +3,7 @@ import { Progress } from "./progress";
 import docs from "./progress.md?raw";
 
 const meta = {
-  title: "Web/UI/Progress",
+  title: "UI/Progress",
   component: Progress,
   tags: ["autodocs"],
   parameters: {

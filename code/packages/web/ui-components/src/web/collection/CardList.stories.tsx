@@ -30,7 +30,7 @@ const cards = [
 ];
 
 const meta = {
-  title: "Web/UI Components/CardList",
+  title: "UI Components/CardList",
   component: CardList,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

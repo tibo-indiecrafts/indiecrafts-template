@@ -3,7 +3,7 @@ import { ModuleCta } from "./Cta";
 import docs from "./Cta.md?raw";
 
 const meta = {
-  title: "Web/UI Components/ModuleCta",
+  title: "UI Components/ModuleCta",
   component: ModuleCta,
   tags: ["autodocs"],
   parameters: {

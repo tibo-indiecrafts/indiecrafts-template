@@ -7,7 +7,7 @@ packages:
   # `code/docs` (VitePress) is top-level + npm-isolated (its own lockfile) —
   # it matches none of the globs above, so it stays out of the pnpm workspace.
   # Bricks + modules nest by platform-scope: code/<packages|modules>/<scope>/<name>
-  # (scope = shared · web · mobile). Reserved scope dirs hold only a
+  # (scope = shared · web). Reserved scope dirs hold only a
   # README marker (no package.json) and are skipped.
   - code/packages/*/*
   - code/modules/*/*
@@ -36,8 +36,8 @@ ignoredBuiltDependencies:
 # friction. `trustPolicy: no-downgrade` below still catches provenance weakening
 # regardless of age.) Value is in MINUTES: 4320 = 3 days.
 minimumReleaseAge: 4320
-# Fast-moving, trusted vendor toolchains (Cloudflare workerd releases ~daily,
-# react-native ships constantly) can't clear a 7-day age gate — and
+# Fast-moving, trusted vendor toolchains (Cloudflare workerd releases ~daily)
+# can't clear a 7-day age gate — and
 # blocking them blocks the whole multi-app install. Exempt those scopes; the gate
 # still guards the app's OWN dependencies (where malware actually hides).
 minimumReleaseAgeExclude:
@@ -46,15 +46,6 @@ minimumReleaseAgeExclude:
   - "wrangler"
   - "workerd"
   - "@opennextjs/*"
-  # React Native toolchain (Storybook react-native-web — removed in Task 5)
-  - "react-native"
-  - "@react-native/*"
-  - "@react-native-community/*"
-  - "flow-parser"
-  - "flow-*"
-  - "jscodeshift"
-  - "metro"
-  - "metro-*"
   # High-profile, heavily-watched framework + build + test tooling — the age gate
   # adds little here (these aren't where obscure-package malware hides) and they
   # ship often enough that a 7-day wait blocks routine installs.
@@ -108,15 +99,10 @@ trustPolicyExclude:
   - "ua-parser-js"
   # Whole ecosystems with inconsistent npm provenance — the age gate + no-downgrade
   # policy stay ON for the security-critical web RUNTIME tree (next/react/sanity),
-  # but these dev/build/mobile/legacy toolchains are exempt so the large
+  # but these dev/build/legacy toolchains are exempt so the large
   # multi-app install isn't blocked one transitive at a time.
   - "@smithy/*" # AWS SDK core (via @opennextjs/cloudflare)
   - "@aws-sdk/*"
-  - "react-native"
-  - "@react-native/*"
-  - "@react-native-community/*"
-  - "fbjs" # legacy RN transitives
-  - "fbemitter"
 
 # Single instance of the peer-heavy Sanity Studio packages across the monorepo. Schema +
 # structure types cross package boundaries (page-builder/modules → the website Studio), so

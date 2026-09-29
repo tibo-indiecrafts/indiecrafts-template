@@ -1,5 +1,5 @@
 /**
- * Configure Storybook: resolve brick stories by name and mock next-intl, shiki, and react-native.
+ * Configure Storybook: resolve brick stories by name and mock next-intl and shiki.
  *
  * @see docs/reference/projects/web/tools/storybook/.storybook/main.md
  */
@@ -34,11 +34,6 @@ const shikiMock = fileURLToPath(new URL("./shiki-mock.ts", import.meta.url));
 // vite finds it here — with browser export-conditions (a raw require.resolve
 // would pin the Node build and crash the browser bundle on `tty.isatty`).
 const storybookAnchor = fileURLToPath(import.meta.url);
-// Native bricks import bare `react-native`; render them on the web via
-// react-native-web. Resolve its dir from THIS package (it's a devDep here, not in
-// the bricks' node_modules), so Vite picks the ESM `module` build for the browser.
-const reactNativeWeb = dirname(require.resolve("react-native-web/package.json"));
-
 // Composition: each surface has its own Storybook (own `@/` alias), composed into
 // this one gallery via `refs`. Opt-in (env-gated) so the default single gallery stays
 // clean — set STORYBOOK_COMPOSE=1 and run the surface storybooks (e.g. `storybook:website`
@@ -58,11 +53,7 @@ const config: StorybookConfig = {
     brickStories("@indiecrafts/packages-web-ui-components"),
     brickStories("@indiecrafts/packages-web-announcement"),
     brickStories("@indiecrafts/packages-web-locale-suggest"),
-    // Native + cross-platform bricks — rendered in the browser via the
-    // `react-native` → `react-native-web` alias below. The glob reaches both
-    // `src/web/` and `src/native/` story files. Only globbed once a brick HAS
-    // stories: the vitest storybook plugin bails to zero discovery on an empty glob.
-    brickStories("@indiecrafts/packages-mobile-ui-native"),
+    // Cross-surface web bricks.
     brickStories("@indiecrafts/packages-shared-system-pages"),
     brickStories("@indiecrafts/packages-shared-ui-icons"),
     // Compliance web UI (copy-injected, next-intl-free): DeleteAccountSection + ChurnSurvey.
@@ -81,12 +72,6 @@ const config: StorybookConfig = {
     cfg.plugins = cfg.plugins ?? [];
     cfg.plugins.push(tailwindcss());
 
-    // Render React Native bricks in the browser: map `react-native` to
-    // `react-native-web`. Prebundle the shim so Vite never tries to parse the
-    // real `react-native`'s Flow source.
-    cfg.optimizeDeps = cfg.optimizeDeps ?? {};
-    cfg.optimizeDeps.include = [...(cfg.optimizeDeps.include ?? []), "react-native-web"];
-
     cfg.resolve = cfg.resolve ?? {};
     const alias = cfg.resolve.alias;
     // Normalize to the array form and use EXACT regex matches — an object
@@ -100,10 +85,6 @@ const config: StorybookConfig = {
       { find: /^next-intl\/server$/, replacement: nextIntlMock },
       { find: /^next-intl\/navigation$/, replacement: nextIntlMock },
       { find: /^shiki$/, replacement: shikiMock },
-      // Native bricks import bare `react-native`; render it on the web via
-      // react-native-web (absolute dir → Vite picks its ESM build). Exact match
-      // so `react-native-web` itself is untouched.
-      { find: /^react-native$/, replacement: reactNativeWeb },
       {
         find: /^storybook\/test$/,
         replacement: "storybook/test",

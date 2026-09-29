@@ -2,7 +2,7 @@
  * Brand / social marks — GENERATED from `brands.json` + the `simple-icons`
  * package. Do NOT edit by hand: change `brands.json` and run `pnpm brands:build`
  * (`--check` guards drift in CI). Platform-agnostic data (no DOM), so the web
- * (`<svg>`) and native (`react-native-svg`) renderers draw from ONE source: a
+ * (`<svg>`) renderers draw from ONE source: a
  * 24×24 single path + brand hex.
  */
 

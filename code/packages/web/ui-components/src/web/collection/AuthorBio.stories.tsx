@@ -3,7 +3,7 @@ import { AuthorBio } from "./AuthorBio";
 import docs from "./AuthorBio.md?raw";
 
 const meta = {
-  title: "Web/UI Components/AuthorBio",
+  title: "UI Components/AuthorBio",
   component: AuthorBio,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

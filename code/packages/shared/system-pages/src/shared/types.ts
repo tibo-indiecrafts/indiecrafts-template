@@ -1,7 +1,7 @@
 /**
  * The platform-agnostic **copy contracts** for the status pages — the props an app
- * resolves (from `messages`/Sanity) and passes in. No React/DOM/RN here, so both the
- * `../web` (DOM) and `../native` (RN) renderers extend these with their own nav.
+ * resolves (from `messages`/Sanity) and passes in. No React/DOM here; the `../web`
+ * renderers extend these with their own nav.
  */
 
 export type MaintenanceProps = {

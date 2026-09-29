@@ -12,7 +12,7 @@ import {
 import docs from "./attachment.md?raw";
 
 const meta = {
-  title: "Web/UI/Attachment",
+  title: "UI/Attachment",
   component: Attachment,
   tags: ["autodocs"],
   parameters: {

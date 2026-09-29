@@ -12,7 +12,7 @@ import {
 import docs from "./menubar.md?raw";
 
 const meta = {
-  title: "Web/UI/Menubar",
+  title: "UI/Menubar",
   component: Menubar,
   tags: ["autodocs"],
   parameters: {

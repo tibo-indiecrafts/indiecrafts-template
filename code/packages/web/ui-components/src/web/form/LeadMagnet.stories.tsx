@@ -10,7 +10,7 @@ import docs from "./LeadMagnet.md?raw";
  * layouts; the success/already/error states show against the live route.
  */
 const meta = {
-  title: "Web/UI Components/LeadMagnet",
+  title: "UI Components/LeadMagnet",
   component: LeadMagnetForm,
   tags: ["autodocs"],
   parameters: {

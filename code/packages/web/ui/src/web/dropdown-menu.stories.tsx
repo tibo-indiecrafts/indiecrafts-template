@@ -14,7 +14,7 @@ import docs from "./dropdown-menu.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "Web/UI/DropdownMenu",
+  title: "UI/DropdownMenu",
   component: DropdownMenu,
   tags: ["autodocs"],
   parameters: {

@@ -7,8 +7,6 @@
     "./shared": "./src/shared/index.ts",
     "./web": "./src/web/index.ts",
     "./web/*": "./src/web/*.tsx",
-    "./native": "./src/native/index.ts",
-    "./native/*": "./src/native/*.tsx",
     "./package.json": "./package.json"
   },
   "dependencies": {
@@ -16,18 +14,10 @@
     "reicon-react": "^1.2.0"
   },
   "peerDependencies": {
-    "lucide-react-native": "^0.400.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "react-native-svg": "*"
+    "react-dom": "19.2.8"
   },
   "peerDependenciesMeta": {
-    "lucide-react-native": {
-      "optional": true
-    },
-    "react-native-svg": {
-      "optional": true
-    },
     "react-dom": {
       "optional": true
     }

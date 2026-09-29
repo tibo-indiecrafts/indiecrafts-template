@@ -16,7 +16,7 @@ import {
 import docs from "./sidebar.md?raw";
 
 const meta = {
-  title: "Web/UI/Sidebar",
+  title: "UI/Sidebar",
   component: Sidebar,
   tags: ["autodocs"],
   parameters: {

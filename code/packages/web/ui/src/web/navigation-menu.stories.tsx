@@ -11,7 +11,7 @@ import {
 import docs from "./navigation-menu.md?raw";
 
 const meta = {
-  title: "Web/UI/NavigationMenu",
+  title: "UI/NavigationMenu",
   component: NavigationMenu,
   tags: ["autodocs"],
   parameters: {

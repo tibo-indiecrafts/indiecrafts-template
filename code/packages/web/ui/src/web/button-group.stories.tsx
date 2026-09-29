@@ -9,7 +9,7 @@ import docs from "./button-group.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "Web/UI/ButtonGroup",
+  title: "UI/ButtonGroup",
   component: ButtonGroup,
   tags: ["autodocs"],
   parameters: {

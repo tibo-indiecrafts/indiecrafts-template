@@ -47,7 +47,7 @@ const sourceReference = existsSync(REF_ROOT)
 //   npm run docs:build   → static output in .vitepress/dist (deploy to any static host)
 //
 // docs/ is a repo-root sibling of code/ and MIRRORS THE CODE SPINE:
-//   projects/ · packages/{shared,web,mobile}/ · modules/web/ · shared/{api,cron,workers,db,infra,scripts,architecture,client-intake}
+//   projects/ · packages/{shared,web}/ · modules/web/ · shared/{api,cron,workers,db,infra,scripts,architecture,client-intake}
 // The sidebar mirrors those folders. Add a doc = drop the .md in the folder that
 // matches the code it documents + add one sidebar line here (see contributing/how-we-document).
 export default withMermaid(
@@ -528,13 +528,6 @@ export default withMermaid(
                 { text: "ui", link: "/packages/web/ui" },
                 { text: "ui-components", link: "/packages/web/ui-components" },
                 { text: "version", link: "/packages/web/version" },
-              ],
-            },
-            {
-              text: "Mobile",
-              collapsed: true,
-              items: [
-                { text: "ui-native", link: "/packages/mobile/ui-native" },
               ],
             },
           ],

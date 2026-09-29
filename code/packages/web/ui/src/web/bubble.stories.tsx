@@ -12,7 +12,7 @@ const VARIANTS = [
 ] as const;
 
 const meta = {
-  title: "Web/UI/Bubble",
+  title: "UI/Bubble",
   component: Bubble,
   tags: ["autodocs"],
   parameters: {

@@ -14,7 +14,7 @@ import docs from "./item.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "Web/UI/Item",
+  title: "UI/Item",
   component: Item,
   tags: ["autodocs"],
   parameters: {

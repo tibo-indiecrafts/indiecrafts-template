@@ -12,7 +12,7 @@ import {
 import docs from "./table.md?raw";
 
 const meta = {
-  title: "Web/UI/Table",
+  title: "UI/Table",
   component: Table,
   tags: ["autodocs"],
   parameters: {

@@ -3,8 +3,8 @@
  *
  * Pure TypeScript, zero web-runtime coupling (no `next`, no DOM, no
  * `NEXT_PUBLIC_` env): locales + routing helpers, `Intl` format defaults, and
- * the shared types. Safe to import from ANY platform — web, mobile (Expo/RN),
- * . The web-only primitives live in `../web`.
+ * the shared types. Safe to import from the web surfaces and the Worker services.
+ * The web-only primitives live in `../web`.
  */
 
 // ── Values + functions ───────────────────────────────────────
@@ -20,7 +20,6 @@ export {
   isLocale,
   pickSuggestedLocale,
   pickLocale,
-  flattenMessages,
 } from "./i18n";
 export { formatDefaults, localeFormat } from "./format";
 export * from "./settings";

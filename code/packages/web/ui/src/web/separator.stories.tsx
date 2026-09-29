@@ -3,7 +3,7 @@ import { Separator } from "./separator";
 import docs from "./separator.md?raw";
 
 const meta = {
-  title: "Web/UI/Separator",
+  title: "UI/Separator",
   component: Separator,
   tags: ["autodocs"],
   parameters: {

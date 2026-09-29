@@ -3,7 +3,7 @@ import Carousel from "./carousel";
 import docs from "./carousel.md?raw";
 
 const meta = {
-  title: "Web/UI/Carousel",
+  title: "UI/Carousel",
   component: Carousel,
   tags: ["autodocs"],
   parameters: {

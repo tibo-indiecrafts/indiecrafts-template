@@ -12,7 +12,7 @@ import docs from "./empty.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "Web/UI/Empty",
+  title: "UI/Empty",
   component: Empty,
   tags: ["autodocs"],
   parameters: {

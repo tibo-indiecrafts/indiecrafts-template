@@ -12,7 +12,7 @@ import docs from "./popover.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "Web/UI/Popover",
+  title: "UI/Popover",
   component: Popover,
   tags: ["autodocs"],
   parameters: {

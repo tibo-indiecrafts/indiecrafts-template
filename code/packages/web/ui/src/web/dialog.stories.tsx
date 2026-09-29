@@ -14,7 +14,7 @@ import docs from "./dialog.md?raw";
 import { Button } from "./button";
 
 const meta = {
-  title: "Web/UI/Dialog",
+  title: "UI/Dialog",
   component: Dialog,
   tags: ["autodocs"],
   parameters: {

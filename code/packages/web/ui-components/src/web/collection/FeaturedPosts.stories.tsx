@@ -52,7 +52,7 @@ const items = [
 ];
 
 const meta = {
-  title: "Web/UI Components/FeaturedPosts",
+  title: "UI Components/FeaturedPosts",
   component: FeaturedPosts,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

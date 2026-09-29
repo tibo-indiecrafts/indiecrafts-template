@@ -128,11 +128,10 @@ export function isLocale<L extends string>(
 
 /**
  * The first RANKED preference that's supported and differs from the `active` locale —
- * the platform-agnostic "should we suggest a language switch?" decision. Returns `null`
- * when the top supported preference already matches `active` (or none is supported), so
- * no suggestion is shown. Each platform supplies its own ranked, region-stripped list:
- * the web `Accept-Language` parser (`detectPreferredLocale`), Expo `getLocales()`, or
- * `navigator.languages` in a plain-React host.
+ * the "should we suggest a language switch?" decision. Returns `null` when the top
+ * supported preference already matches `active` (or none is supported), so no suggestion
+ * is shown. The caller supplies its ranked, region-stripped list: the web
+ * `Accept-Language` parser (`detectPreferredLocale`) or `navigator.languages`.
  */
 export function pickSuggestedLocale<L extends string>(
   rankedPrefs: readonly string[],
@@ -162,23 +161,4 @@ export function pickLocale(
 ): string {
   if (typeof value === "string") return value;
   return value?.[locale] ?? value?.[defaultLocale] ?? fallback;
-}
-
-/**
- * Nested ICU message object → flat `{ "a.b.c": "msg" }` map. Shared by the mobile
- * (Expo) shells, which format with `react-intl` and need a
- * FLAT id map (react-intl has no nested-message support, unlike next-intl on web).
- */
-export function flattenMessages(
-  obj: Record<string, unknown>,
-  prefix = "",
-): Record<string, string> {
-  const out: Record<string, string> = {};
-  for (const [k, v] of Object.entries(obj)) {
-    const key = prefix ? `${prefix}.${k}` : k;
-    if (v && typeof v === "object")
-      Object.assign(out, flattenMessages(v as Record<string, unknown>, key));
-    else out[key] = String(v);
-  }
-  return out;
 }

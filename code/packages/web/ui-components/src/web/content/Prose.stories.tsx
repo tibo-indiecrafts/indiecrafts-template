@@ -5,7 +5,7 @@ import { body } from "../_mock";
 import docs from "./Prose.md?raw";
 
 const meta = {
-  title: "Web/UI Components/Prose",
+  title: "UI Components/Prose",
   component: Prose,
   tags: ["autodocs"],
   parameters: {

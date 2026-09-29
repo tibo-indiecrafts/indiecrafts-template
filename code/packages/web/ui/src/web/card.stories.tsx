@@ -13,7 +13,7 @@ import { Badge } from "./badge";
 import { Button } from "./button";
 
 const meta = {
-  title: "Web/UI/Card",
+  title: "UI/Card",
   component: Card,
   tags: ["autodocs"],
   parameters: {

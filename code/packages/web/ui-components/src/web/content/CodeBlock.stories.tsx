@@ -8,7 +8,7 @@ import docs from "./CodeBlock.md?raw";
 // async component directly, so we unwrap it via `Async` + `Suspense`. Colours
 // swap with the theme toolbar (light/dark theme pair).
 const meta = {
-  title: "Web/UI Components/CodeBlock",
+  title: "UI Components/CodeBlock",
   component: CodeBlock,
   tags: ["autodocs"],
   parameters: {

@@ -3,7 +3,7 @@ import { Skeleton } from "./skeleton";
 import docs from "./skeleton.md?raw";
 
 const meta = {
-  title: "Web/UI/Skeleton",
+  title: "UI/Skeleton",
   component: Skeleton,
   tags: ["autodocs"],
   parameters: {

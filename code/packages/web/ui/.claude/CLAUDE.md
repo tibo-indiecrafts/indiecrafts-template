@@ -6,10 +6,8 @@ under `src/web/`. Area rules → `../../../.claude/CLAUDE.md`.
 **Stack:** React 19 · shadcn/ui (Radix) · Tailwind v4 · TypeScript. CLI-managed primitives — don't hand-edit.
 
 - **Platform-nested (`src/<platform>/`).** Web primitives live in `src/web/`, imported as
-  `@indiecrafts/packages-web-ui/web/<name>` (+ `@indiecrafts/packages-web-ui/web/use-mobile`). `src/native/` is **reserved** for
-  React-Native primitives (`src/native/README.md`); `src/shared/` holds any platform-agnostic contract
-  (`@indiecrafts/packages-web-ui/shared/*`). A native design system stays **inside this brick** under `native/`, not
-  a separate package — see the area brief's [Categorisation & platform](../../../.claude/CLAUDE.md).
+  `@indiecrafts/packages-web-ui/web/<name>` (+ `@indiecrafts/packages-web-ui/web/use-mobile`); `src/shared/` holds any DOM-free contract
+  (`@indiecrafts/packages-web-ui/shared/*`).
 - **NEVER hand-edit these** — CLI-managed (`shadcn add` regenerates them; `components.json` `ui`/`hooks`
   aliases point at `@indiecrafts/packages-web-ui/web`).
 - **Slots, not config props** — a primitive is `Header`/`Content`/`Footer` slots + `asChild` +

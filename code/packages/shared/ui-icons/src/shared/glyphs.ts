@@ -1,6 +1,6 @@
 /**
- * The curated UI/nav icon-name set — the SINGLE source shared by the web + native
- * renderers AND the Sanity pickers. Names are lucide glyphs (kebab-case, which is
+ * The curated UI/nav icon-name set — the SINGLE source shared by the web renderers
+ * AND the Sanity pickers. Names are lucide glyphs (kebab-case, which is
  * both the picker value and the lucide id). Extend the list here and every renderer
  * + picker follows. The original feature-grid 6 (zap · settings · sparkles · shield ·
  * globe · users) stay first for content compatibility.

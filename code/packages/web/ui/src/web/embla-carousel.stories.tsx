@@ -9,7 +9,7 @@ import {
 import docs from "./embla-carousel.md?raw";
 
 const meta = {
-  title: "Web/UI/EmblaCarousel",
+  title: "UI/EmblaCarousel",
   component: Carousel,
   tags: ["autodocs"],
   parameters: {

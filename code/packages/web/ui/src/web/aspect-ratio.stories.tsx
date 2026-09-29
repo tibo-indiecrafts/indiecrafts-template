@@ -3,7 +3,7 @@ import { AspectRatio } from "./aspect-ratio";
 import docs from "./aspect-ratio.md?raw";
 
 const meta = {
-  title: "Web/UI/AspectRatio",
+  title: "UI/AspectRatio",
   component: AspectRatio,
   tags: ["autodocs"],
   parameters: {

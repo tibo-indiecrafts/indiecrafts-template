@@ -5,7 +5,7 @@ import { Toggle } from "./toggle";
 import docs from "./toggle.md?raw";
 
 const meta = {
-  title: "Web/UI/Toggle",
+  title: "UI/Toggle",
   component: Toggle,
   tags: ["autodocs"],
   parameters: {

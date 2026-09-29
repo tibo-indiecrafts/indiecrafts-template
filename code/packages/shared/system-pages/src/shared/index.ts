@@ -1,5 +1,5 @@
 /**
- * Re-export the shared status-page contracts and shell copy.
+ * Re-export the shared status-page contracts.
  *
  * @see docs/reference/packages/shared/system-pages/src/shared/index.md
  */
@@ -8,4 +8,3 @@ export type {
   NotFoundContentProps,
   ErrorContentProps,
 } from "./types";
-export { SHELL_COPY, type ShellCopy } from "./copy";

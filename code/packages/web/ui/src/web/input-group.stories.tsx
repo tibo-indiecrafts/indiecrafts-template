@@ -9,7 +9,7 @@ import {
 import docs from "./input-group.md?raw";
 
 const meta = {
-  title: "Web/UI/InputGroup",
+  title: "UI/InputGroup",
   component: InputGroup,
   tags: ["autodocs"],
   parameters: {

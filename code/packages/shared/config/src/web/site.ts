@@ -34,8 +34,7 @@ export const site = {
    * The canonical **marketing-site** public URL (`NEXT_PUBLIC_WEBSITE_URL`, else this
    * surface's own `url`). The website's own equals `url`; a non-website surface (the
    * `app` web surface) sets `NEXT_PUBLIC_WEBSITE_URL` to reach the website's legal pages
-   * (`legalUrl(site.websiteUrl, …)`). The native shells read their own env
-   * (`EXPO_PUBLIC_WEBSITE_URL` / `VITE_WEBSITE_URL`) directly, since `site` is web-only.
+   * (`legalUrl(site.websiteUrl, …)`).
    */
   websiteUrl:
     process.env.NEXT_PUBLIC_WEBSITE_URL ||

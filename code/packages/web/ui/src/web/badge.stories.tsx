@@ -13,7 +13,7 @@ const VARIANTS = [
 ] as const;
 
 const meta = {
-  title: "Web/UI/Badge",
+  title: "UI/Badge",
   component: Badge,
   tags: ["autodocs"],
   parameters: {

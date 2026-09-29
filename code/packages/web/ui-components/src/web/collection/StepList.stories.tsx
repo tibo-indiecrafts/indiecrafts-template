@@ -5,7 +5,7 @@ import { body } from "../_mock";
 import docs from "./StepList.md?raw";
 
 const meta = {
-  title: "Web/UI Components/StepList",
+  title: "UI Components/StepList",
   component: StepList,
   tags: ["autodocs"],
   parameters: { docs: { description: { component: docs } } },

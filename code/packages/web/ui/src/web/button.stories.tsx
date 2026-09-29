@@ -13,7 +13,7 @@ const VARIANTS = [
 const SIZES = ["xs", "sm", "default", "lg"] as const;
 
 const meta = {
-  title: "Web/UI/Button",
+  title: "UI/Button",
   component: Button,
   tags: ["autodocs"],
   parameters: {

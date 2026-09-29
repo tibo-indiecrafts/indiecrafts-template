@@ -5,7 +5,7 @@ import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 import docs from "./toggle-group.md?raw";
 
 const meta = {
-  title: "Web/UI/ToggleGroup",
+  title: "UI/ToggleGroup",
   component: ToggleGroup,
   tags: ["autodocs"],
   parameters: {
