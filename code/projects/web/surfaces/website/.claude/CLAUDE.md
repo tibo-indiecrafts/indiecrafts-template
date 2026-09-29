@@ -37,7 +37,7 @@ src/config/                app-owned config: theme · fonts · features · conse
                            index.ts re-exports @indiecrafts/packages-shared-config primitives → import via @/config
 src/user-interface/        app UI, by page then category: homepage/sections/ · legal/ ·
                            shared/{layout,components}  (primitives → @indiecrafts/packages-web-ui; the branded
-                           maintenance/404/error status pages → @indiecrafts/packages-shared-system-pages)
+                           maintenance/404/error status pages → @indiecrafts/packages-web-system-pages)
 src/lib/                   app services: metadata · fonts · theme · navigation · cookies · social ·
                            faq · system-pages · islands (island config injection) · seo/{jsonld,…}
 src/sanity/                app Sanity: {nav,legal,cookie,seo}-queries · schema/ · Studio.tsx

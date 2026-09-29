@@ -52,7 +52,7 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-shared-ui-tokens",
     "@indiecrafts/packages-web-page-builder",
     "@indiecrafts/packages-web-i18n",
-    "@indiecrafts/packages-shared-system-pages",
+    "@indiecrafts/packages-web-system-pages",
     "@indiecrafts/packages-shared-compliance",
     "@indiecrafts/modules-web-blog",
     "@indiecrafts/modules-web-newsletter",

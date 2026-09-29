@@ -65,17 +65,17 @@ flowchart TB
 
 ## What it documents
 
-| Brick (package)                             | Renderer                   | What's shown                                                                                                                    |
-| ------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `@indiecrafts/packages-web-ui`              | web                        | shadcn-derived primitives (Button, Input, …)                                                                                    |
-| `@indiecrafts/packages-web-ui-components`   | web                        | page-builder block renderers (Callout, GalleryCarousel, QuoteList, CodeBlock)                                                   |
-| `@indiecrafts/packages-web-announcement`    | web                        | the announcement-bar component                                                                                                  |
-| `@indiecrafts/packages-web-locale-suggest`  | web                        | the locale-suggestion prompt                                                                                                    |
-| `@indiecrafts/packages-shared-compliance`   | web                        | compliance UI — `DeleteAccountSection` + `ChurnSurvey` (copy-injected, `next-intl`-free)                                        |
-| `@indiecrafts/packages-mobile-ui-native`    | native (react-native-web)  | the native design-system components                                                                                             |
-| `@indiecrafts/packages-shared-system-pages` | web + native               | cross-platform system pages, both renderers                                                                                     |
-| `@indiecrafts/packages-shared-ui-icons`     | web + native               | the icon set, both renderers                                                                                                    |
-| `@indiecrafts/packages-shared-ui-tokens`    | tokens (MDX in `stories/`) | live `var(--token)` swatches — Colors, Sidebar & Charts, Type & Radius, Native — plus an Adaptive & container-query resize demo |
+| Brick (package)                            | Renderer                   | What's shown                                                                                                                    |
+| ------------------------------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `@indiecrafts/packages-web-ui`             | web                        | shadcn-derived primitives (Button, Input, …)                                                                                    |
+| `@indiecrafts/packages-web-ui-components`  | web                        | page-builder block renderers (Callout, GalleryCarousel, QuoteList, CodeBlock)                                                   |
+| `@indiecrafts/packages-web-announcement`   | web                        | the announcement-bar component                                                                                                  |
+| `@indiecrafts/packages-web-locale-suggest` | web                        | the locale-suggestion prompt                                                                                                    |
+| `@indiecrafts/packages-shared-compliance`  | web                        | compliance UI — `DeleteAccountSection` + `ChurnSurvey` (copy-injected, `next-intl`-free)                                        |
+| `@indiecrafts/packages-mobile-ui-native`   | native (react-native-web)  | the native design-system components                                                                                             |
+| `@indiecrafts/packages-web-system-pages`   | web + native               | cross-platform system pages, both renderers                                                                                     |
+| `@indiecrafts/packages-shared-ui-icons`    | web + native               | the icon set, both renderers                                                                                                    |
+| `@indiecrafts/packages-shared-ui-tokens`   | tokens (MDX in `stories/`) | live `var(--token)` swatches — Colors, Sidebar & Charts, Type & Radius, Native — plus an Adaptive & container-query resize demo |
 
 ## Run
 

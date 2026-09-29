@@ -12,7 +12,7 @@
 // guarantees the 500 page never depends on the thing that may have broken.
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { ErrorContent } from "@indiecrafts/packages-shared-system-pages/web";
+import { ErrorContent } from "@indiecrafts/packages-web-system-pages/web";
 import { logger } from "@indiecrafts/packages-shared-logger";
 
 type Props = { error: Error & { digest?: string }; reset: () => void };

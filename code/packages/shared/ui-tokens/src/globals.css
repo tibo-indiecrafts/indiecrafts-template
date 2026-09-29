@@ -8,7 +8,7 @@
 @source "../../../web/compliance/src";
 @source "../../../web/announcement/src";
 @source "../../../web/locale-suggest/src";
-@source "../../system-pages/src";
+@source "../../../web/system-pages/src";
 @source "../../../../modules/web/blog/src";
 @source "../../../../modules/web/newsletter/src";
 @source "../../../../modules/web/waitlist/src";

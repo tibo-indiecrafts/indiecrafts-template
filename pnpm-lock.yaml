@@ -344,28 +344,6 @@ importers:
 
   code/packages/shared/security-events: {}
 
-  code/packages/shared/system-pages:
-    dependencies:
-      '@indiecrafts/packages-web-ui':
-        specifier: workspace:*
-        version: link:../../web/ui
-      next:
-        specifier: 16.3.4
-        version: 16.3.4(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.62.1)(@types/node@20.19.43)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react:
-        specifier: 19.2.8
-        version: 19.2.8
-      react-dom:
-        specifier: 19.2.8
-        version: 19.2.8(react@19.2.8)
-    devDependencies:
-      '@types/react':
-        specifier: ^19
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: ^19
-        version: 19.2.3(@types/react@19.2.14)
-
   code/packages/shared/ui-fonts: {}
 
   code/packages/shared/ui-icons:
@@ -707,6 +685,28 @@ importers:
         specifier: workspace:*
         version: link:../../shared/security
 
+  code/packages/web/system-pages:
+    dependencies:
+      '@indiecrafts/packages-web-ui':
+        specifier: workspace:*
+        version: link:../ui
+      next:
+        specifier: 16.3.4
+        version: 16.3.4(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.62.1)(@types/node@20.19.43)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react:
+        specifier: 19.2.8
+        version: 19.2.8
+      react-dom:
+        specifier: 19.2.8
+        version: 19.2.8(react@19.2.8)
+    devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.2.3(@types/react@19.2.14)
+
   code/packages/web/ui:
     dependencies:
       '@base-ui/react':
@@ -996,9 +996,6 @@ importers:
       '@indiecrafts/packages-shared-security':
         specifier: workspace:*
         version: link:../../../../packages/shared/security
-      '@indiecrafts/packages-shared-system-pages':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/system-pages
       '@indiecrafts/packages-shared-ui-icons':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-icons
@@ -1020,6 +1017,9 @@ importers:
       '@indiecrafts/packages-web-security-reports':
         specifier: workspace:*
         version: link:../../../../packages/web/security-reports
+      '@indiecrafts/packages-web-system-pages':
+        specifier: workspace:*
+        version: link:../../../../packages/web/system-pages
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../../../../packages/web/ui
@@ -1126,9 +1126,6 @@ importers:
       '@indiecrafts/packages-shared-security':
         specifier: workspace:*
         version: link:../../../../packages/shared/security
-      '@indiecrafts/packages-shared-system-pages':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/system-pages
       '@indiecrafts/packages-shared-ui-fonts':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-fonts
@@ -1171,6 +1168,9 @@ importers:
       '@indiecrafts/packages-web-security-reports':
         specifier: workspace:*
         version: link:../../../../packages/web/security-reports
+      '@indiecrafts/packages-web-system-pages':
+        specifier: workspace:*
+        version: link:../../../../packages/web/system-pages
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../../../../packages/web/ui
@@ -1352,9 +1352,6 @@ importers:
       '@indiecrafts/packages-shared-config':
         specifier: workspace:*
         version: link:../../../../packages/shared/config
-      '@indiecrafts/packages-shared-system-pages':
-        specifier: workspace:*
-        version: link:../../../../packages/shared/system-pages
       '@indiecrafts/packages-shared-ui-icons':
         specifier: workspace:*
         version: link:../../../../packages/shared/ui-icons
@@ -1373,6 +1370,9 @@ importers:
       '@indiecrafts/packages-web-locale-suggest':
         specifier: workspace:*
         version: link:../../../../packages/web/locale-suggest
+      '@indiecrafts/packages-web-system-pages':
+        specifier: workspace:*
+        version: link:../../../../packages/web/system-pages
       '@indiecrafts/packages-web-ui':
         specifier: workspace:*
         version: link:../../../../packages/web/ui

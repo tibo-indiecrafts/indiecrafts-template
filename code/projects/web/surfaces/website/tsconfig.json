@@ -25,8 +25,8 @@
       "@indiecrafts/packages-web-security-reports/*": [
         "../../../../packages/web/security-reports/src/*"
       ],
-      "@indiecrafts/packages-shared-system-pages/*": [
-        "../../../../packages/shared/system-pages/src/*"
+      "@indiecrafts/packages-web-system-pages/*": [
+        "../../../../packages/web/system-pages/src/*"
       ],
       "@indiecrafts/packages-shared-compliance/*": [
         "../../../../packages/shared/compliance/src/*"

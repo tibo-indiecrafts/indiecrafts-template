@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Next.js not-found component for the locale segment. It renders `NotFoundContent` (from `@indiecrafts/packages-shared-system-pages`) inside `DefaultLayout`, with each field taken from Sanity (`siteMeta.<locale>.systemPages.notFound`) and falling back to `messages.pages.notFound` so the page still renders when Sanity is down. It is marked `robots: { index: false, follow: false }`.
+Next.js not-found component for the locale segment. It renders `NotFoundContent` (from `@indiecrafts/packages-web-system-pages`) inside `DefaultLayout`, with each field taken from Sanity (`siteMeta.<locale>.systemPages.notFound`) and falling back to `messages.pages.notFound` so the page still renders when Sanity is down. It is marked `robots: { index: false, follow: false }`.
 
 ## Exports
 

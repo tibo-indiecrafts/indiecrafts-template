@@ -9,7 +9,7 @@ import createMiddleware from "next-intl/middleware";
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { features } from "@/config";
-import { maintenanceRewrite } from "@indiecrafts/packages-shared-system-pages/proxy";
+import { maintenanceRewrite } from "@indiecrafts/packages-web-system-pages/proxy";
 import { getMaintenanceMode } from "@/lib/maintenance";
 import { routing } from "@/i18n/routing";
 import {

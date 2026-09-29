@@ -8,17 +8,17 @@ status: stable
 
 Three failure states each get a dedicated page: an uncaught render error (500), a
 404, and site-wide maintenance. Each is a **presentational component** in the shared
-**[`@indiecrafts/packages-shared-system-pages`](/packages/shared/system-pages)** brick, mounted by a **thin
+**[`@indiecrafts/packages-web-system-pages`](/packages/web/system-pages)** brick, mounted by a **thin
 route file** in the app. No copy is inlined — but where it comes from differs by
 state, and that difference is the whole design.
 
 ## The split
 
-| State                | Component (`@indiecrafts/packages-shared-system-pages`) | Route (app)                         | Copy source                                                    |
-| -------------------- | ------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------- |
-| Uncaught error (500) | `ErrorContent`                                          | `app/[locale]/error.tsx`            | `messages` only (`pages.error`)                                |
-| 404 not found        | `NotFoundContent`                                       | `app/[locale]/not-found.tsx`        | Sanity `systemPages.notFound` ?? `messages` (`pages.notFound`) |
-| Maintenance (503)    | `Maintenance`                                           | `app/maintenance/` (via `proxy.ts`) | i18n + Sanity brand                                            |
+| State                | Component (`@indiecrafts/packages-web-system-pages`) | Route (app)                         | Copy source                                                    |
+| -------------------- | ---------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------- |
+| Uncaught error (500) | `ErrorContent`                                       | `app/[locale]/error.tsx`            | `messages` only (`pages.error`)                                |
+| 404 not found        | `NotFoundContent`                                    | `app/[locale]/not-found.tsx`        | Sanity `systemPages.notFound` ?? `messages` (`pages.notFound`) |
+| Maintenance (503)    | `Maintenance`                                        | `app/maintenance/` (via `proxy.ts`) | i18n + Sanity brand                                            |
 
 The brick components are **presentational and token-based** (so a second app inherits
 the same pages in its own theme); the app route files own the Next.js contract,
@@ -47,7 +47,7 @@ logs first:
 ```tsx
 "use client";
 import { useTranslations } from "next-intl";
-import { ErrorContent } from "@indiecrafts/packages-shared-system-pages/web";
+import { ErrorContent } from "@indiecrafts/packages-web-system-pages/web";
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";
 
@@ -105,7 +105,7 @@ stays inside the active locale.
 
 `Maintenance` is the full standalone page served at `/maintenance` when
 `features.maintenance` is on — `proxy.ts` rewrites all traffic to it with a 503 (via
-`maintenanceRewrite` from `@indiecrafts/packages-shared-system-pages/proxy`). The route sits
+`maintenanceRewrite` from `@indiecrafts/packages-web-system-pages/proxy`). The route sits
 **outside** `[locale]/` with its own root layout (the app fonts). Also props-driven:
 the route resolves copy via i18n and the brand identity (name + contact email) from
 Sanity and passes them in. Its one motion — the pulsing status dot — is an honest

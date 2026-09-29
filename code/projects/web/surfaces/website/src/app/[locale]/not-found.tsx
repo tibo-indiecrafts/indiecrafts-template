@@ -6,7 +6,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/config";
-import { NotFoundContent } from "@indiecrafts/packages-shared-system-pages/web";
+import { NotFoundContent } from "@indiecrafts/packages-web-system-pages/web";
 import { Link } from "@/i18n/routing";
 import { getSystemPages } from "@/lib/system-pages";
 import { DefaultLayout } from "@/user-interface/shared/layout/DefaultLayout";

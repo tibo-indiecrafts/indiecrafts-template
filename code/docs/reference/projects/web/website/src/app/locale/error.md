@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Next.js client error boundary for the locale segment. It logs the error with `logger.error` and renders `ErrorContent` (from `@indiecrafts/packages-shared-system-pages`) with a retry button wired to `reset`. Copy comes from bundled `messages/<locale>.json` (`pages.error`), not Sanity, so the 500 page still renders when Sanity is the failure. It provides its own `<main id="main">` because a client boundary cannot use the server `DefaultLayout`.
+Next.js client error boundary for the locale segment. It logs the error with `logger.error` and renders `ErrorContent` (from `@indiecrafts/packages-web-system-pages`) with a retry button wired to `reset`. Copy comes from bundled `messages/<locale>.json` (`pages.error`), not Sanity, so the 500 page still renders when Sanity is the failure. It provides its own `<main id="main">` because a client boundary cannot use the server `DefaultLayout`.
 
 ## Exports
 

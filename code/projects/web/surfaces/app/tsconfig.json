@@ -40,8 +40,8 @@
       "@indiecrafts/packages-web-ui-components/*": [
         "../../../../packages/web/ui-components/src/*"
       ],
-      "@indiecrafts/packages-shared-system-pages/*": [
-        "../../../../packages/shared/system-pages/src/*"
+      "@indiecrafts/packages-web-system-pages/*": [
+        "../../../../packages/web/system-pages/src/*"
       ],
       "@indiecrafts/packages-shared-ui-icons/*": [
         "../../../../packages/shared/ui-icons/src/*"

@@ -72,7 +72,7 @@ src/
 │   ├── homepage/       homepage-specific UI → sections/
 │   ├── legal/          legal-page surfaces
 │   └── shared/         layout/ (Header, Footer, ThemeToggle, CookieBanner…) + components/
-│   (the branded maintenance / 404 / error status pages → @indiecrafts/packages-shared-system-pages)
+│   (the branded maintenance / 404 / error status pages → @indiecrafts/packages-web-system-pages)
 │
 ├── lib/            app services: metadata · seo/ · theme · fonts · navigation · cookies ·
 │                   social · faq · system-pages

@@ -11,7 +11,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { resolveConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import { Toaster } from "@indiecrafts/packages-web-ui/web/sonner";
-import { OfflineBanner } from "@indiecrafts/packages-shared-system-pages/web";
+import { OfflineBanner } from "@indiecrafts/packages-web-system-pages/web";
 import { consent, localeDir, site, type Locale } from "@/config";
 import { AppClerkProvider, SessionLogger } from "@indiecrafts/packages-web-auth";
 import { MarketingNudgeMount } from "@indiecrafts/packages-web-auth/marketing-nudge";

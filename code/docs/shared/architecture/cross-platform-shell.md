@@ -31,7 +31,7 @@ native bricks. `next-intl`, `next/image`, and `next/font` stay in the web app.
 ## The Next-agnostic rule (portable web bricks)
 
 A shared web brick stays framework-neutral so it can serve any React host, not only Next: **a shared
-web component must not import a Next API.** [`system-pages`](/packages/shared/system-pages) proves the
+web component must not import a Next API.** [`system-pages`](/packages/web/system-pages) proves the
 pattern — its 404 injects the home link (`LinkComponent`, default a plain `<a>`), so the website passes
 its typed `next-intl` `Link` while a plain-React host takes the default. One `web` fork serves both.
 
@@ -90,7 +90,7 @@ Beyond the shell chrome, the shells share two capabilities over portable cores
 - **Update prompt** — a `/api/version` poll comparing the live deploy id to this bundle's baked id
   (`isUpdateAvailable`, string identity). The **apply** half is platform-limited: web reloads;
   mobile nudges to restart (`expo-updates`/EAS OTA is a follow-up).
-- **Offline state** — one branded `OfflineContent` page ([`system-pages`](/packages/shared/system-pages),
+- **Offline state** — one branded `OfflineContent` page ([`system-pages`](/packages/web/system-pages),
   forked `web`/`native`) + a per-surface detection hook feeding a non-blocking banner: web uses
   `navigator.onLine` + the `online`/`offline` events (`useSyncExternalStore`); mobile uses
   `@react-native-community/netinfo`. Copy is `SHELL_COPY.offline` (the mobile shell) / `messages.offline` (web). The

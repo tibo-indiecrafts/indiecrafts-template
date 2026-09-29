@@ -85,7 +85,7 @@ The package stays **prop-driven** — no layout, no SEO, no flags inside. The ap
 the `pages` map entry, feature-flag gating, and SEO. Adding the one `pages` entry auto-propagates
 sitemap, llms.txt, typed routing, and the SEO chain. Full route detail →
 [Linking a module § Routes](/modules/linking-a-module#routes-app-owned-thin-shells). Live
-examples: `@indiecrafts/packages-web-compliance` (5 legal pages), `@indiecrafts/packages-shared-system-pages` (404 · error ·
+examples: `@indiecrafts/packages-web-compliance` (5 legal pages), `@indiecrafts/packages-web-system-pages` (404 · error ·
 maintenance).
 
 ## Checklist

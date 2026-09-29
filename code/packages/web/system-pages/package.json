@@ -1,0 +1,33 @@
+{
+  "name": "@indiecrafts/packages-web-system-pages",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./shared": "./src/shared/index.ts",
+    "./web": "./src/web/index.ts",
+    "./web/*": "./src/web/*.tsx",
+    "./proxy": "./src/proxy.ts",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@indiecrafts/packages-web-ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  }
+}
