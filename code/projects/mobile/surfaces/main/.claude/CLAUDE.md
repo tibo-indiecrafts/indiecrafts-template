@@ -9,8 +9,9 @@ by the Cloudflare runners — the release pipeline comes with the App Store spec
 
 - **Identity:** `shell.json` (`appId` · `appName` · `scheme`) — the one home; `project-rename` rewrites it + the native projects.
 - **Server URL:** `src/server-url.ts` → `CAP_SERVER_URL` (required). Dev = `http://localhost:3002`.
+- **Clerk host:** `CAP_CLERK_PUBLISHABLE_KEY` (required) → `server.allowNavigation`; else Clerk's handshake opens the system browser. Dev scripts read it from the app's `.env.local`.
 - **Offline:** `scripts/build-www.mjs` renders `www/offline.html` from `messages/*.json` (`server.errorPath`).
-- **Run:** `pnpm dev` + `pnpm --filter @indiecrafts/web-surfaces-app dev`, boot an emulator, then `pnpm --filter @indiecrafts/mobile-surfaces-main android` (JDK 21). iOS: `… ios` (Xcode 26).
+- **Run:** `pnpm dev` + `pnpm --filter @indiecrafts/web-surfaces-app dev --port 3002`, boot an emulator, then `pnpm --filter @indiecrafts/mobile-surfaces-main android` (JDK 21). iOS: `… ios` (Xcode 26).
 - **Native projects:** `android/` + `ios/` are committed; `www/` is generated (git-ignored).
 
 Full guide → [`code/docs/projects/mobile/main/index.md`](../../../../../docs/projects/mobile/main/index.md).

@@ -25,3 +25,24 @@ export function resolveServerUrl(
     throw new Error(`CAP_SERVER_URL must be http(s): ${raw}`);
   return url.origin;
 }
+
+/**
+ * The Clerk Frontend API host, decoded from `CAP_CLERK_PUBLISHABLE_KEY` (a public key:
+ * `pk_<mode>_` + base64 of `<host>$`). Clerk's session handshake redirects through it, and
+ * Capacitor opens any other-origin navigation in the system browser, so the shell must
+ * allow it (`server.allowNavigation`).
+ */
+export function resolveClerkHost(
+  env: Record<string, string | undefined>,
+): string {
+  const key = env.CAP_CLERK_PUBLISHABLE_KEY?.trim() ?? "";
+  const match = /^pk_(?:test|live)_(.+)$/.exec(key);
+  const host = match
+    ? Buffer.from(match[1], "base64").toString("utf8").replace(/\$$/, "")
+    : "";
+  if (!/^[a-z0-9.-]+$/i.test(host))
+    throw new Error(
+      "CAP_CLERK_PUBLISHABLE_KEY must be the app's Clerk publishable key (pk_test_… / pk_live_…)",
+    );
+  return host;
+}

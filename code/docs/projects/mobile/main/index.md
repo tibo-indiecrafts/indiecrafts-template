@@ -23,19 +23,22 @@ Why Capacitor over Expo → [ADR 0001](/contributing/adr/0001-capacitor-over-exp
 - Node 22 and pnpm 10 (the repo toolchain).
 - **Android:** JDK 21 (`brew install --cask zulu@21`, then
   `export JAVA_HOME=$(/usr/libexec/java_home -v 21)`), the Android SDK, and an emulator (AVD).
+- The app's Clerk key in `code/projects/web/surfaces/app/.env.local` — the dev scripts read
+  `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` from it.
 - **iOS:** Xcode 26.
 
 ## Run on Android
 
 1. Start the backend + website: `pnpm dev` (website :3000, api :8787).
-2. Start the app surface: `pnpm --filter @indiecrafts/web-surfaces-app dev` (:3002).
+2. Start the app surface: `pnpm --filter @indiecrafts/web-surfaces-app dev --port 3002`.
 3. Boot an emulator: `emulator @qa` (any AVD works).
 4. Build and launch the shell: `pnpm --filter @indiecrafts/mobile-surfaces-main android`.
 
-The `android` script runs `adb reverse` for ports 3000, 3002 and 8787, so the emulator
-reaches your Mac on `localhost`. The shell, Clerk's dev instance, the api and the
-website's legal pages then all work unchanged. It installs on `emulator-5554` unless you
-set `ANDROID_TARGET=<serial>`.
+The `android` script builds `www/`, runs `cap sync`, installs the debug APK with Gradle,
+runs `adb reverse` for ports 3000, 3002 and 8787, then launches the app. The emulator then
+reaches your Mac on `localhost`, so Clerk's dev instance, the api and the website's legal
+pages all work unchanged. It skips `cap run`: that command can restart the adb server
+and drop the forwarded ports. With several devices attached, set `ANDROID_SERIAL=<serial>`.
 
 ## Run on iOS
 
@@ -44,17 +47,18 @@ network, so `localhost` works without port forwarding.
 
 ## Physical device
 
-Connect it over USB, then run the Android steps with `ANDROID_TARGET=<serial>`
+Connect it over USB, then run the Android steps with `ANDROID_SERIAL=<serial>`
 (`adb devices` lists it). `adb reverse` works the same over USB.
 
 ## Configuration
 
-| File                     | Holds                                                                                                       |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `shell.json`             | The app identity — `appId`, `appName`, `scheme`. `pnpm project:rename` rewrites it and the native projects. |
-| `CAP_SERVER_URL` (env)   | The URL the shell loads. Required; the dev scripts set `http://localhost:3002`.                             |
-| `messages/<locale>.json` | The offline page copy. `pnpm --filter @indiecrafts/mobile-surfaces-main www` renders `www/offline.html`.    |
-| `android/`, `ios/`       | The native projects, committed. `www/` is generated and git-ignored.                                        |
+| File                              | Holds                                                                                                                                                 |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shell.json`                      | The app identity — `appId`, `appName`, `scheme`. `pnpm project:rename` rewrites it and the native projects.                                           |
+| `CAP_SERVER_URL` (env)            | The URL the shell loads. Required; the dev scripts set `http://localhost:3002`.                                                                       |
+| `CAP_CLERK_PUBLISHABLE_KEY` (env) | The app's Clerk publishable key. Required; its Frontend API host goes in `server.allowNavigation`, so Clerk's session handshake stays in the WebView. |
+| `messages/<locale>.json`          | The offline page copy. `pnpm --filter @indiecrafts/mobile-surfaces-main www` renders `www/offline.html`.                                              |
+| `android/`, `ios/`                | The native projects, committed. `www/` is generated and git-ignored.                                                                                  |
 
 ## Limits
 

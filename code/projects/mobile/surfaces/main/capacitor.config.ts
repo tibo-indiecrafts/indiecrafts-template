@@ -5,7 +5,7 @@
  */
 import type { CapacitorConfig } from "@capacitor/cli";
 import shell from "./shell.json";
-import { resolveServerUrl } from "./src/server-url";
+import { resolveClerkHost, resolveServerUrl } from "./src/server-url";
 
 const url = resolveServerUrl(process.env);
 
@@ -18,6 +18,8 @@ const config: CapacitorConfig = {
     // Plain HTTP only for local dev (localhost via adb reverse).
     cleartext: url.startsWith("http://"),
     errorPath: "offline.html",
+    // Clerk's session handshake must stay in the WebView (else it opens the browser).
+    allowNavigation: [resolveClerkHost(process.env)],
   },
   plugins: {
     // NativeBridge (or the offline page) hides it as soon as a page is up; the auto-hide

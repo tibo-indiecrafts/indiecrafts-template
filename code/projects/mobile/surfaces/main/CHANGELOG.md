@@ -11,6 +11,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **Sign-in stays inside the shell.** Clerk's session handshake redirected to its Frontend API
+  host, and Capacitor opened that in the system browser. The shell now allows that host
+  (`CAP_CLERK_PUBLISHABLE_KEY` → `server.allowNavigation`). **Why:** found on the first
+  emulator run — the app never loaded.
+- **`android` keeps its forwarded ports.** The script installs with Gradle, then runs
+  `adb reverse`, then launches. **Why:** `cap run` can restart the adb server and drop the
+  ports, so the shell showed the offline page.
+
 ### Changed
 
 - **The Expo app is replaced by a Capacitor 8 shell.** The shell loads the hosted `app`
