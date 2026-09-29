@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Reads the app name from `shell.json` and the `offline` copy from `messages/<locale>.json`, then writes `www/offline.html` and `www/index.html` (Capacitor requires `webDir` to hold an index; with `server.url` set it is never shown). `www/` is git-ignored.
+Reads the app name from `shell.json`, the `offline` copy from `messages/<locale>.json`, and the Retry target from `CAP_SERVER_URL` (validated by `resolveServerUrl`; required), then writes `www/offline.html` and `www/index.html` (Capacitor requires `webDir` to hold an index; with `server.url` set it is never shown). `www/` is git-ignored.
 
 ## Exports
 

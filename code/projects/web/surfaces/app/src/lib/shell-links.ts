@@ -20,7 +20,9 @@ export function isExternalUrl(href: string, appOrigin: string): boolean {
 }
 
 /** The in-app path for a custom-scheme deep link: `<scheme>://account?tab=data` →
- *  `/account?tab=data`. Returns `/` for an empty or malformed link. */
+ *  `/account?tab=data`. Returns `/` for an empty or malformed link, and for any link
+ *  whose path would resolve off the app origin (e.g. `/\evil.com`, which browsers read
+ *  as `//evil.com`) — a deep link can only ever land inside the app. */
 export function deepLinkPath(url: string): string {
   let u: URL;
   try {
@@ -31,5 +33,7 @@ export function deepLinkPath(url: string): string {
   const path = `/${u.host}${u.pathname}`
     .replace(/\/{2,}/g, "/")
     .replace(/(.)\/$/, "$1");
-  return `${path}${u.search}`;
+  const target = `${path}${u.search}`;
+  const origin = "https://app.invalid";
+  return new URL(target, origin).origin === origin ? target : "/";
 }

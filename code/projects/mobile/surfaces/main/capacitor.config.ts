@@ -20,8 +20,9 @@ const config: CapacitorConfig = {
     errorPath: "offline.html",
   },
   plugins: {
-    // The app's NativeBridge hides it once the page is up.
-    SplashScreen: { launchAutoHide: false },
+    // NativeBridge (or the offline page) hides it as soon as a page is up; the auto-hide
+    // is the fail-safe when neither runs (a server error page, a crash before hydration).
+    SplashScreen: { launchAutoHide: true, launchShowDuration: 4000 },
   },
 };
 

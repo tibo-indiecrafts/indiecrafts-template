@@ -31,6 +31,14 @@ describe("deepLinkPath", () => {
     expect(deepLinkPath("indiecrafts://legal/privacy")).toBe("/legal/privacy");
     expect(deepLinkPath("indiecrafts://account/")).toBe("/account");
   });
+  it("never returns a path that leaves the app origin", () => {
+    // Browsers read a backslash as a slash in http(s) URLs, so "/\\evil.com"
+    // would resolve to https://evil.com/ — every such link must land on "/".
+    expect(deepLinkPath("indiecrafts:/\\evil.com")).toBe("/");
+    expect(deepLinkPath("indiecrafts:\\\\evil.com")).toBe("/");
+    expect(deepLinkPath("indiecrafts:///\\evil.com/x")).toBe("/");
+    expect(deepLinkPath("indiecrafts:////evil.com")).toBe("/evil.com");
+  });
   it("falls back to the root for an empty or malformed link", () => {
     expect(deepLinkPath("indiecrafts://")).toBe("/");
     expect(deepLinkPath("not a url")).toBe("/");

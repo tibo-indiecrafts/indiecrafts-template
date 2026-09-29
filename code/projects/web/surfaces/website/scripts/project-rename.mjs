@@ -23,6 +23,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ENVS, resourceName } from "../../../../../shared/scripts/lib/apps.mjs";
+import { SHELL_IDENTITY_FILES, renameShellIdentity } from "./lib/shell-identity.mjs";
 import {
   CONFIG_INDEX,
   TEMPLATE_PREFIX,
@@ -109,34 +110,16 @@ for (const file of walkInfra(resolve(REPO_ROOT, "code"))) {
 }
 
 // 4. The Capacitor shell keeps its identity in its own files (never a wrangler.toml),
-// so the infra walk never reaches it: the app id + name + URL scheme in shell.json,
-// mirrored into the committed native projects.
-const P = TEMPLATE_PREFIX;
+// so the infra walk never reaches it: shell.json + the committed native projects
+// (`cap sync` does not copy the app id into them). The rules live in lib/shell-identity.
 const SHELL = "code/projects/mobile/surfaces/main";
-const nativeFiles = [
-  {
-    path: `${SHELL}/shell.json`,
-    subs: [
-      [new RegExp(`"dev\\.${P}\\.`, "g"), `"dev.${slug}.`],
-      [new RegExp(`("(?:appName|scheme)":\\s*)"${P}"`, "g"), `$1"${slug}"`],
-    ],
-  },
-  {
-    path: `${SHELL}/android/app/src/main/AndroidManifest.xml`,
-    subs: [[new RegExp(`android:scheme="${P}"`, "g"), `android:scheme="${slug}"`]],
-  },
-  {
-    path: `${SHELL}/ios/App/App/Info.plist`,
-    subs: [[new RegExp(`<string>${P}</string>`, "g"), `<string>${slug}</string>`]],
-  },
-];
 const nativeRenamed = [];
-for (const { path, subs } of nativeFiles) {
+for (const rel of SHELL_IDENTITY_FILES) {
+  const path = `${SHELL}/${rel}`;
   const file = resolve(REPO_ROOT, path);
   if (!existsSync(file)) continue;
   const src = readFileSync(file, "utf8");
-  let out = src;
-  for (const [re, rep] of subs) out = out.replace(re, rep);
+  const out = renameShellIdentity(rel, src, TEMPLATE_PREFIX, slug);
   if (out !== src) {
     write(file, out);
     nativeRenamed.push(path); // already repo-relative

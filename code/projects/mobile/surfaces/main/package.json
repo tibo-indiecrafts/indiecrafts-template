@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "www": "node scripts/build-www.mjs",
+    "www": "node --experimental-strip-types scripts/build-www.mjs",
     "sync": "pnpm www && cap sync",
-    "android": "pnpm www && adb reverse tcp:3000 tcp:3000 && adb reverse tcp:3002 tcp:3002 && adb reverse tcp:8787 tcp:8787 && CAP_SERVER_URL=http://localhost:3002 cap run android --target ${ANDROID_TARGET:-emulator-5554}",
-    "ios": "pnpm www && CAP_SERVER_URL=http://localhost:3002 cap run ios",
+    "android": "export CAP_SERVER_URL=${CAP_SERVER_URL:-http://localhost:3002} && pnpm www && adb reverse tcp:3000 tcp:3000 && adb reverse tcp:3002 tcp:3002 && adb reverse tcp:8787 tcp:8787 && cap run android --target ${ANDROID_TARGET:-emulator-5554}",
+    "ios": "export CAP_SERVER_URL=${CAP_SERVER_URL:-http://localhost:3002} && pnpm www && cap run ios",
     "test": "node --experimental-strip-types --test src/*.test.ts scripts/*.test.mjs",
     "tsc": "tsc --noEmit",
     "verify": "pnpm tsc && pnpm test"

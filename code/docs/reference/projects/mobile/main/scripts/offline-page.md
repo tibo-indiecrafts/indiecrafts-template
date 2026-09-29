@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Renders `offline.html` — the page Capacitor shows through `server.errorPath` when the first load fails. Every locale's copy ships inline and the device language picks one, with English as the fallback. The app name and every message are HTML-escaped. The Retry button reloads the app.
+Renders `offline.html` — the page Capacitor shows through `server.errorPath` when the first load fails. It is served from the shell's local origin, so the Retry button navigates back to the app server URL (a reload would only reload this page). It also hides the native splash screen, since the app's `NativeBridge` never runs here. Every locale's copy ships inline as script-safe JSON and is set as text (never HTML); the device language picks one, with English as the fallback. The app name is HTML-escaped in the title.
 
 ## Exports
 
-- `renderOfflinePage({ appName, messages })` — returns the page's HTML string.
+- `renderOfflinePage({ appName, messages, serverUrl })` — returns the page's HTML string.
 
 ## Source
 
