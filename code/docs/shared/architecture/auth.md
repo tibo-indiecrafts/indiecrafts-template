@@ -7,9 +7,11 @@ status: stable
 # Authentication (cross-app)
 
 One authentication system across every deployable, built on [Clerk](https://clerk.com).
-Users sign in on all apps. A single global `admin` role gates the admin app. Auth is
-**passwordless** — email one-time-code plus the main social providers. No database: the
-role rides the signed session token.
+Users sign in on all apps. A single global `admin` role gates the admin app. Sign-in uses a
+**password** or an **email one-time code**, on every surface (website · app · the Capacitor
+shell). Social connections are off: OAuth providers such as Google refuse to run inside an
+embedded web view, and one method set keeps every surface identical. No database: the role
+rides the signed session token.
 
 Full design + review record: `docs/superpowers/specs/2026-08-21-clerk-auth-multi-app-design.md`.
 
@@ -24,10 +26,11 @@ Auth is split by scope, because the two Clerk SDKs cannot be shared but the cont
 
 ## Per-platform SDK
 
-| App                 | Stack                | Clerk SDK                                                |
-| ------------------- | -------------------- | -------------------------------------------------------- |
-| website, admin, app | Next 16 / Cloudflare | `@clerk/nextjs`                                          |
-| mobile              | Expo                 | `@clerk/clerk-expo` (token cache on `expo-secure-store`) |
+| App                 | Stack                | Clerk SDK       |
+| ------------------- | -------------------- | --------------- |
+| website, admin, app | Next 16 / Cloudflare | `@clerk/nextjs` |
+
+The Capacitor shell loads the `app` surface, so it signs in through `@clerk/nextjs` like the app.
 
 ## The role model
 
@@ -77,18 +80,21 @@ A signed-in **non-admin** who lands on the admin `/sign-in` sees a "not an admin
 panel (`NotAdminNotice`) — Clerk's `<SignIn>` renders blank for an already-signed-in user, so
 without it a non-admin would be stuck on a blank page.
 
-## Email verification for social
+## Clerk dashboard settings
 
-Trust the email a verified OAuth provider returns (Google, Apple, Microsoft mark it
-verified) — do not force a second OTP on it. Enable Clerk's **"require a verified email for
-account linking"** to close the account-linking hijack path. GitHub can return an
-unverified primary email, so confirm Clerk trusts only verified GitHub emails.
+Apply these on the dev instance, then on prod:
+
+1. **User & Authentication → Email, phone, username:** enable **Email address** (required).
+2. **User & Authentication → Email:** enable **Password** and **Email verification code**.
+3. **SSO connections:** disable every social provider.
+
+Nothing in the code enforces this — the hosted `<SignIn>`/`<SignUp>` render whatever the
+dashboard enables, so the dashboard is the one home for the method set.
 
 ## Suspicious logins
 
-For a passwordless app the OTP is already the per-sign-in factor, so a new-device sign-in
-already needs inbox access. Do **not** add an extra "suspicious-login code." Enable Clerk's
-**unauthorized sign-in detection** (email to the account owner). We run on the **Clerk free
+Enable Clerk's **unauthorized sign-in detection**: it emails the account owner when a sign-in
+looks unusual. We run on the **Clerk free
 plan**, so the one-click revoke-from-email button is unavailable — revoke is manual from the
 account UI. Bot protection and user-enumeration protection stay on by default; the
 `@indiecrafts/packages-shared-security` `withGuard` + Cloudflare WAF are defence-in-depth.
@@ -109,14 +115,13 @@ Clerk speaks the visitor's language on every surface.
 
 **UI** — `@clerk/localizations` bundles (`enUS`/`frFR`) passed to each surface's
 `<ClerkProvider localization>`. Web: `AppClerkProvider` takes a `locale` prop and mounts inside
-`[locale]/layout.tsx` (so it reads the route locale). Mobile passes the bundle from its
-detected locale. **Caveat:** only `en-US` is Clerk-maintained — other locales (incl. `frFR`) are
+`[locale]/layout.tsx` (so it reads the route locale). **Caveat:** only `en-US` is Clerk-maintained — other locales (incl. `frFR`) are
 **community** bundles, so a few strings may stay English. Clerk's hosted **Account Portal** is
 always English, so sign-up is **self-hosted** (`/sign-up` routes) instead — which also lets it
 carry the locale (below).
 
 **Locale capture** — each sign-up writes the active locale to Clerk `unsafeMetadata.locale`
-(web `<SignUp unsafeMetadata>`, mobile `signUp.create`). The api `user.created`/`updated`
+(`<SignUp unsafeMetadata>`). The api `user.created`/`updated`
 webhook validates it (`isLocale`) and mirrors it to `user_profiles.locale`.
 
 **Emails** — the `localization` prop does **not** touch Clerk's emails. To localize them, the api
@@ -169,15 +174,13 @@ Planet49):
 - **Sign-up** — the checkbox value rides Clerk `unsafeMetadata.marketing_email`. The `user.created`
   webhook validates it, sets the column **on the INSERT only** (never re-applied on `user.updated`,
   so a settings change is not clobbered), writes a `consent_events` proof row (`source:"signup"`), and
-  syncs Resend. Web renders the box beside Clerk's prebuilt `<SignUp>`; mobile passes it to
-  `signUp.create`.
-- **Account settings** — an editable toggle (`MarketingEmailToggle`, web + native) reads
+  syncs Resend. The box renders beside Clerk's prebuilt `<SignUp>`.
+- **Account settings** — an editable toggle (`MarketingEmailToggle`) reads
   `GET /v1/consent/marketing-email` and writes each change with `POST` (proof + column + Resend).
 - **Sign-in nudge** — a one-time post-sign-in banner (`MarketingNudge`) shown only when the flag is
-  `NULL` (a social sign-up or pre-existing account that missed the checkbox). Yes/No record a decision;
-  × snoozes per-device. On **every** surface: website/app (`MarketingNudgeMount`, direct fetch) and mobile
-  (`MarketingNudgeGate`, native banner + direct fetch). The shared web `MarketingNudge` is
-  transport-agnostic (`read`/`write` injected).
+  `NULL` (a pre-existing account that missed the checkbox). Yes/No record a decision; × snoozes
+  per-device. Website and app mount it with `MarketingNudgeMount` (direct fetch); the shared
+  `MarketingNudge` is transport-agnostic (`read`/`write` injected).
 
 **Endpoints** (`@indiecrafts/shared-api`): `GET`/`POST /v1/consent/marketing-email` (Clerk JWT — the
 caller's own opt-in) · `POST /v1/profiles/consent` (bearer batch → the admin users-list "Emails"
