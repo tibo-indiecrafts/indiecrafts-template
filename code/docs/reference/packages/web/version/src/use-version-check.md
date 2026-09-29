@@ -18,7 +18,7 @@ gentle interval, and whenever the tab regains focus or the network comes back.
 ## Exports
 
 - `useVersionCheck(options)` — the `"use client"` hook; takes `{ current, endpoint?, intervalMs? }` and returns `{ updateAvailable, latest }`.
-- `isUpdateAvailable` — re-exported string-identity compare from `packages-shared-version`.
+- `isUpdateAvailable` — re-exported string-identity compare from `./version`.
 
 ## Usage
 

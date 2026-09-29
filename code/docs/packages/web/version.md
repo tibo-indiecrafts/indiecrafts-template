@@ -10,11 +10,9 @@ Tells a visitor a **new version shipped while their tab was open**, and offers a
 Lives in the **`@indiecrafts/packages-web-version`** brick (`code/packages/web/version`), consumed as source.
 i18n-agnostic (copy comes in as props, like `system-pages`), so any app reuses it.
 
-> **Portable compare split out.** The version comparison — `isUpdateAvailable(current, latest)`
-> (string identity, not semver) + the `VersionResponse` shape + `versionId` + `VERSION_ENDPOINT` —
-> now lives in **[`@indiecrafts/packages-shared-version`](/packages/shared/version)**, so the Expo shell
-> reuses it. This web brick re-exports `isUpdateAvailable` and its
-> hook/component build the DOM poll on top.
+> **The core compare lives here too** (`./version`): `isUpdateAvailable(current, latest)` (string
+> identity, not semver) + the `VersionResponse` shape + `versionId` + `VERSION_ENDPOINT`. The hook and
+> the banner build the DOM poll on top of it.
 
 The app is OpenNext/Cloudflare — **no service worker** — so detection is a small `no-store` poll of a
 version endpoint, compared to the build id baked into the running bundle. An old tab polling the live
@@ -22,11 +20,11 @@ worker sees the mismatch.
 
 ## Exports
 
-| Import                                      | What it is                                                                                                                                                                                                                 |
-| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useVersionCheck` (`./use-version-check`)   | `"use client"` hook. `{ current, endpoint = "/api/version", intervalMs = 15min }` → `{ updateAvailable, latest }`. Polls on mount, on the interval, and on tab-focus / network-back (people leave tabs open for days).     |
-| `UpdatePrompt` (`./update-prompt`)          | `"use client"` self-contained banner (no `<Toaster>` needed) — fixed bottom, token-styled, `role="status"` + `aria-live`. Props: `current, message, reloadLabel, dismissLabel, endpoint?, intervalMs?, reloadOnNavigate?`. |
-| `isUpdateAvailable` (`./use-version-check`) | Re-exported from [`packages-shared-version`](/packages/shared/version) — the string-identity compare the hook uses (`latest !== null && latest !== current`). One import surface for web consumers.                        |
+| Import                                                                                   | What it is                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useVersionCheck` (`./use-version-check`)                                                | `"use client"` hook. `{ current, endpoint = "/api/version", intervalMs = 15min }` → `{ updateAvailable, latest }`. Polls on mount, on the interval, and on tab-focus / network-back (people leave tabs open for days).     |
+| `UpdatePrompt` (`./update-prompt`)                                                       | `"use client"` self-contained banner (no `<Toaster>` needed) — fixed bottom, token-styled, `role="status"` + `aria-live`. Props: `current, message, reloadLabel, dismissLabel, endpoint?, intervalMs?, reloadOnNavigate?`. |
+| `isUpdateAvailable` · `versionId` · `VersionResponse` · `VERSION_ENDPOINT` (`./version`) | The core: the string-identity compare the hook uses (`latest !== null && latest !== current`), the endpoint response shape, and the conventional path. `isUpdateAvailable` is also re-exported from `./use-version-check`. |
 
 ## How detection works
 

@@ -7,14 +7,10 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import {
-  type VersionResponse,
-  versionId,
-  isUpdateAvailable,
-} from "@indiecrafts/packages-shared-version";
+import { type VersionResponse, versionId, isUpdateAvailable } from "./version";
 
-// Re-export the portable compare so web consumers have one import surface.
-export { isUpdateAvailable } from "@indiecrafts/packages-shared-version";
+// Re-export the compare so consumers have one import surface.
+export { isUpdateAvailable } from "./version";
 
 /**
  * Polls a version endpoint and reports when the **deployed** build differs from

@@ -22,7 +22,6 @@ const nextConfig: NextConfig = {
     "@indiecrafts/packages-web-ui",
     "@indiecrafts/packages-shared-ui-tokens",
     "@indiecrafts/packages-shared-compliance",
-    "@indiecrafts/packages-shared-version",
     "@indiecrafts/packages-web-version",
     "@indiecrafts/packages-shared-security",
     "@indiecrafts/packages-web-security-reports",

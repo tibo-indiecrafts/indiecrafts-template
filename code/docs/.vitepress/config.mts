@@ -502,7 +502,6 @@ export default withMermaid(
                 { text: "ui-icons", link: "/packages/shared/ui-icons" },
                 { text: "ui-tokens", link: "/packages/shared/ui-tokens" },
                 { text: "utils", link: "/packages/shared/utils" },
-                { text: "version", link: "/packages/shared/version" },
               ],
             },
             {

@@ -33,7 +33,6 @@
     "@indiecrafts/packages-shared-ui-icons": "workspace:*",
     "@indiecrafts/packages-shared-ui-tokens": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*",
-    "@indiecrafts/packages-shared-version": "workspace:*",
     "@indiecrafts/packages-web-announcement": "workspace:*",
     "@indiecrafts/packages-web-auth": "workspace:*",
     "@indiecrafts/packages-web-i18n": "workspace:*",

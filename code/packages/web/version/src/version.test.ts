@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isUpdateAvailable, versionId, VERSION_ENDPOINT } from "./index";
+import { isUpdateAvailable, versionId, VERSION_ENDPOINT } from "./version";
 
 describe("isUpdateAvailable", () => {
   it("is false while the live id is unknown (not yet polled)", () => {

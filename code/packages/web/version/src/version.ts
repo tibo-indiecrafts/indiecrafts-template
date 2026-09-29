@@ -1,10 +1,10 @@
 /**
- * `@indiecrafts/packages-shared-version` — the portable version-check core, shared by
- * every shell's update prompt (web `app` · Expo). The compare is
- * STRING IDENTITY: a deploy stamps a new id (commit sha, else version), and any bundle
- * whose baked-in id differs from the live one is stale — NOT semver, deploys are opaque
- * ids. The poll mechanism is per-platform (DOM `visibilitychange`/`online` on web,
- * `AppState` on RN); this file is the whole portable surface. Zero react/next coupling.
+ * The version-check core — the compare + the `/api/version` response shape. String
+ * identity, not semver: a deploy stamps a new opaque id (commit sha, else version), and
+ * any bundle whose baked-in id differs from the live one is stale. Zero react/next
+ * coupling; `use-version-check` owns the polling.
+ *
+ * @see docs/reference/packages/web/version/src/version.md
  */
 
 /** The `/api/version` response — the live deploy's id (`commit` preferred, else `version`). */

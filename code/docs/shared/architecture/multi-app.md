@@ -128,7 +128,7 @@ prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
 - **Now:** eight activated app slots across three platform classes; `web` is the full app + the hub
   Studio + the only content lens; one tenant dataset. The non-website shells (`app` · `mobile`)
   now share a compliance + version + locale layer over the portable bricks
-  ([`compliance-shared`](/packages/shared/compliance) · [`version-shared`](/packages/shared/version)) —
+  ([`compliance-shared`](/packages/shared/compliance) · [`version`](/packages/web/version)) —
   legal link-out, a compliant-ready consent + re-acceptance UI, an update prompt, and a persisted locale
   choice; see [Cross-platform shell](/shared/architecture/cross-platform-shell). **Done:** the config split (app-owned
   `theme`/`fonts`/`features`/`pages`; islands read injected config), `composeStudio` (the per-app-grouped

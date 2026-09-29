@@ -77,7 +77,7 @@ Detection picks a first locale; two more pieces are shared across the shells:
 ## Compliance + version — shared capabilities
 
 Beyond the shell chrome, the shells share two capabilities over portable cores
-([`compliance-shared`](/packages/shared/compliance) · [`version-shared`](/packages/shared/version)):
+([`compliance-shared`](/packages/shared/compliance) · [`version`](/packages/web/version)):
 
 - **Legal link-out** — no content re-hosting. Each shell lists the enabled legal pages and opens each
   on the **website** via `legalUrl(websiteUrl, key, locale)`: a plain `<a>` (app) or `Linking.openURL`

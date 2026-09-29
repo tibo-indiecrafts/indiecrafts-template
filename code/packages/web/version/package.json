@@ -5,12 +5,15 @@
   "type": "module",
   "exports": {
     "./use-version-check": "./src/use-version-check.ts",
-    "./update-prompt": "./src/UpdatePrompt.tsx"
+    "./update-prompt": "./src/UpdatePrompt.tsx",
+    "./version": "./src/version.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
   },
   "dependencies": {
     "@indiecrafts/packages-web-ui": "workspace:*",
-    "@indiecrafts/packages-shared-utils": "workspace:*",
-    "@indiecrafts/packages-shared-version": "workspace:*"
+    "@indiecrafts/packages-shared-utils": "workspace:*"
   },
   "peerDependencies": {
     "next": "16.3.4",
