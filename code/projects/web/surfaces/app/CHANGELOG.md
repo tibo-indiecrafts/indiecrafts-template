@@ -12,6 +12,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Changed
+
+- **Signing in re-checks the legal acceptance.** `SignedInLegalGate` keys the gate on the user id.
+  Sign-in is a client-side navigation, so the gate stayed mounted and never re-read the server
+  record: a user who accepted on another surface saw the banner until a reload.
+
+- **Overlays take turns.** `ConsentGate` and `LegalGate` use `useOverlayTurn` (the consent banner
+  first); `LegalGate` no longer reads the consent record itself. Confirmation toasts sit at the top
+  (`<Toaster position="top-center" />`), clear of the bottom overlays.
+
 ### Fixed
 
 - **The legal banner no longer comes back after Accept.** `useRecord` read `localStorage` during

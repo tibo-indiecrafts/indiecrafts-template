@@ -12,6 +12,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+
+### Changed
+
+- **Confirmation toasts sit at the top** (`<Toaster position="top-center" />`), like the website
+  and the app — the bottom slot belongs to the fixed overlays.
 ### Added
 
 - **Churn dashboard.** A new `/churn` page reads the api's `GET /v1/churn` (bearer-gated) and renders

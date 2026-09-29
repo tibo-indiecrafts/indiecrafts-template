@@ -18,7 +18,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <AppHeader />
         {children}
       </SidebarInset>
-      <Toaster />
+      <Toaster position="top-center" />
     </SidebarProvider>
   );
 }

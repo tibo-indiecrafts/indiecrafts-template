@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@indiecrafts/packages-shared-utils/cn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
+import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 import { useVersionCheck } from "./use-version-check";
 
 /**
@@ -62,7 +63,8 @@ export function UpdatePrompt({
     }
   }, [pathname, reloadOnNavigate]);
 
-  if (!updateAvailable || dismissed) return null;
+  const turn = useOverlayTurn("update", updateAvailable && !dismissed);
+  if (!turn) return null;
 
   return (
     <div

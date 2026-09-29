@@ -95,7 +95,7 @@ export default async function LocaleLayout({
             mode={consentMode}
             gpcSignal={gpcSignal}
           />
-          <Toaster />
+          <Toaster position="top-center" />
         </NextIntlClientProvider>
       </body>
       </html>

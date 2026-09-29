@@ -11,6 +11,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
+import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 import type { ConsentMode } from "@indiecrafts/packages-shared-compliance/shared";
 import type { ConsentCategory } from "./consent-signals";
 import { CookiePreferences } from "./CookiePreferences";
@@ -109,11 +110,15 @@ export function CookieBanner({
     );
   }, [mode, respectGpc, gpcSignal, record, categories, version]);
 
-  if (categories.length === 0) return null;
-
   const needsConsent = record === null || record.v !== version;
   // Only opt-in regions get the blocking banner; opt-out/none rely on the seed + preferences.
-  const showBar = mode === "opt-in" && needsConsent && !prefsOpen;
+  // It is the first overlay in the queue: the others wait until the visitor decides.
+  const showBar = useOverlayTurn(
+    "consent",
+    categories.length > 0 && mode === "opt-in" && needsConsent && !prefsOpen,
+  );
+
+  if (categories.length === 0) return null;
 
   return (
     <>

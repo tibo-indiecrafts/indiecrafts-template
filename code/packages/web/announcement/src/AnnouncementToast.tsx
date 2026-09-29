@@ -19,9 +19,10 @@ import type {
   Toast,
 } from "@indiecrafts/packages-shared-announcement";
 import { dismissToast, readToastAck } from "./announcement-store";
+import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 
 /**
- * Announcement toast — a self-contained, fixed top-right card (NOT a sonner toast:
+ * Announcement toast — a self-contained card (bottom sheet on a phone, top-right wider) (NOT a sonner toast:
  * it carries an image + a link the user may click, which sonner's own guidance says
  * never to auto-dismiss). Same shape as the version `UpdatePrompt`. `role="status"` +
  * `aria-live="polite"` announces it without stealing focus. i18n-agnostic — resolved
@@ -46,7 +47,11 @@ export function AnnouncementToast({
     readToastAck,
     () => "",
   );
-  const visible = !!toast && !closed && acked !== toast.version;
+  // A promotion: it waits until no required notice or prompt is on screen.
+  const visible = useOverlayTurn(
+    "announcement",
+    !!toast && !closed && acked !== toast.version,
+  );
 
   const close = () => {
     if (toast) dismissToast(toast.version);
@@ -69,9 +74,10 @@ export function AnnouncementToast({
       role="status"
       aria-live="polite"
       className={cn(
-        "bg-card text-foreground ring-border/60 fixed top-20 right-4 left-4 z-40",
+        "bg-card text-foreground ring-border/60 fixed right-4 bottom-4 left-4 z-40",
         "flex max-w-none gap-3 rounded-xl border-0 p-4 shadow-lg ring-1 backdrop-blur",
-        "sm:left-auto sm:max-w-sm",
+        // Phone: a bottom sheet, clear of the page heading. Wider: the top-right corner.
+        "sm:top-20 sm:bottom-auto sm:left-auto sm:max-w-sm",
       )}
     >
       {toast.imageUrl ? (

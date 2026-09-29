@@ -28,7 +28,7 @@ describe("LegalReacceptancePrompt", () => {
     );
   });
 
-  it("uses the caller's link component and sits higher when raised", () => {
+  it("uses the caller's link component", () => {
     const Link = ({
       href,
       children,
@@ -41,10 +41,8 @@ describe("LegalReacceptancePrompt", () => {
       </a>
     );
     const html = renderToStaticMarkup(
-      <LegalReacceptancePrompt {...props} link={Link} raised />,
+      <LegalReacceptancePrompt {...props} link={Link} />,
     );
     expect(html).toContain('data-locale-link=""');
-    expect(html).toContain("bottom-28");
-    expect(html).not.toContain("bottom-4");
   });
 });

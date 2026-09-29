@@ -271,6 +271,13 @@ shadows. The `elevation` tokens name the three steps: `flat` (none) →
 is the only place real shadow appears — dialogs and hero gradients. Don't reach
 past the step a surface needs.
 
+**Overlays take turns.** Fixed overlays (cookie banner · legal banner · update prompt ·
+marketing nudge · announcement card) show **one at a time**, in that order, through
+`useOverlayTurn` (`@indiecrafts/packages-web-ui-components/web/overlay-turn`). They sit in the
+bottom slot (`fixed inset-x-4 bottom-4`, centered, `max-w-md`); confirmation toasts sit at the
+top (`<Toaster position="top-center" />`), so the two never collide. A new overlay joins
+`OVERLAY_ORDER` — never a fixed offset to stack above another one.
+
 ## Shapes
 
 Soft but disciplined. Radii: `sm 0.375rem` · `md 0.5rem` (`--radius`, the

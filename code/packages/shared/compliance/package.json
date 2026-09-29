@@ -15,7 +15,8 @@
   "dependencies": {
     "@indiecrafts/packages-shared-config": "workspace:*",
     "@indiecrafts/packages-shared-utils": "workspace:*",
-    "@indiecrafts/packages-web-ui": "workspace:*"
+    "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-web-ui-components": "workspace:*"
   },
   "peerDependencies": {
     "react": "19.2.8",

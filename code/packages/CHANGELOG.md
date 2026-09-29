@@ -12,6 +12,17 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **Overlays take turns (`useOverlayTurn`, `web/ui-components/web/overlay-turn`).** The cookie
+  banner, legal banner, update prompt, marketing nudge and announcement card now show one at a
+  time, in that order. **Why:** on first visit the website stacked the cookie banner, the legal
+  banner (placed on top of it by a fixed 112 px offset) and the announcement card — about half a
+  phone screen (NN/g: no competing overlays on landing). The legal banner's `raised` prop is
+  removed. The announcement card is a bottom sheet on a phone, clear of the page heading, and its
+  auto-dismiss timer starts only once it shows. `web/version`, `web/announcement` and
+  `shared/compliance` now depend on `web/ui-components`.
+
 ### Fixed
 
 - **One legal re-acceptance banner on every web surface.** The `app` banner had a title line,

@@ -14,7 +14,7 @@ The "we updated our policies — please accept" banner. It is fixed to the botto
 
 ## Exports
 
-- `LegalReacceptancePrompt({ message, hrefs, acceptLabel, onAccept, raised?, link? })` — `message` carries `[[…]]` link markers; `hrefs` are the matching policy URLs (privacy · terms). `link` renders each link — the default opens the website's policy page in a new tab; the website passes its locale `Link`. `raised` moves it above a cookie banner that is still open.
+- `LegalReacceptancePrompt({ message, hrefs, acceptLabel, onAccept, link? })` — `message` carries `[[…]]` link markers; `hrefs` are the matching policy URLs (privacy · terms). `link` renders each link — the default opens the website's policy page in a new tab; the website passes its locale `Link`. The caller decides when it shows, through the overlay queue (`useOverlayTurn`).
 
 ## Usage
 

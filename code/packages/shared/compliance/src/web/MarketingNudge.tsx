@@ -7,6 +7,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 
 export interface MarketingNudgeCopy {
@@ -89,7 +90,8 @@ export function MarketingNudge({
     setShow(false);
   }, [snoozeKey]);
 
-  if (!show) return null;
+  const turn = useOverlayTurn("nudge", show);
+  if (!turn) return null;
   return (
     <div
       role="dialog"

@@ -11,11 +11,11 @@ import { useTranslations } from "next-intl";
 import { Link } from "@indiecrafts/packages-web-i18n";
 import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
 import { LegalReacceptancePrompt } from "@indiecrafts/packages-shared-compliance/web";
+import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 import {
   readLegalConsent,
   writeLegalConsent,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { useConsent } from "../consent/useConsent";
 import { acceptLegal } from "./legal-store";
 
 type Props = {
@@ -39,8 +39,8 @@ type Props = {
  * deposited `legal-ack` cookie differs from the live version, so this component just
  * writes the cookie on Accept and hides — no polling. i18n-agnostic: copy in as props.
  *
- * Stacks ABOVE the cookie banner while cookie consent is still undecided (both are
- * bottom-fixed); drops to the resting position once consent is decided.
+ * It waits its turn in the overlay queue (`useOverlayTurn`): it shows once the cookie
+ * banner is gone, so the two never stack.
  */
 export function LegalNotice({
   version,
@@ -51,7 +51,6 @@ export function LegalNotice({
   getToken,
 }: Props) {
   const [accepted, setAccepted] = useState(false);
-  const { decided } = useConsent();
   const t = useTranslations("legal");
 
   // Signed-in: pull the server-recorded acceptance. If they already accepted THIS
@@ -72,13 +71,13 @@ export function LegalNotice({
     };
   }, [getToken, apiUrl, version]);
 
-  if (accepted) return null;
+  const turn = useOverlayTurn("legal", !accepted);
+  if (!turn) return null;
   return (
     <LegalReacceptancePrompt
       message={message}
       hrefs={hrefs}
       acceptLabel={acceptLabel}
-      raised={!decided}
       link={Link}
       onAccept={() => {
         acceptLegal(version);

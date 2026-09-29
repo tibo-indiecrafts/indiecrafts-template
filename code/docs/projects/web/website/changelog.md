@@ -17,6 +17,16 @@ the repo-wide roll-up → root `CHANGELOG.md`.
 
 ## [Unreleased]
 
+### Changed
+
+- **Signing in re-checks the legal acceptance.** `SignedInLegalNotice` keys the banner on the user
+  id, so a user who accepted on another surface no longer sees it until a reload.
+
+- **Overlays take turns.** The cookie banner shows first; the legal banner, then the announcement
+  card follow one at a time (`useOverlayTurn`). Before, the legal banner sat on top of the cookie
+  banner on a phone. Confirmation toasts sit at the top (`<Toaster position="top-center" />`).
+  New e2e journey: `e2e/journeys/overlays.spec.ts` (at most one overlay, 390 px and 1280 px).
+
 ### Removed
 
 - **The `mobile` announcement surface and the `appContent` mobile welcome section** (schema, seed, and

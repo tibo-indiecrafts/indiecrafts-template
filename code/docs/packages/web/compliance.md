@@ -194,7 +194,7 @@ banner (`LegalNotice`, `@indiecrafts/packages-web-compliance/reacceptance/LegalN
   (`cookieConsent.cookies[]`), so it appears on the cookie-policy page like every other cookie. **Any
   new client storage the app sets must be declared here** (ePrivacy).
 - **Mount** — `[locale]/layout.tsx`, next to `CookieBanner`; shown only when copy + version are set and
-  the deposited version is stale. Stacks above the cookie banner while consent is undecided.
+  the deposited version is stale. Waits its turn behind the cookie banner (`useOverlayTurn`) — one overlay at a time.
 
 ## Loading scripts / cookies by consent
 

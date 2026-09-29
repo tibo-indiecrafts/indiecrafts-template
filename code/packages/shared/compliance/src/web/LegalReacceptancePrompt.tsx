@@ -25,29 +25,27 @@ function ExternalLink({ href, className, children }: LinkProps) {
  * Non-blocking, fixed-bottom, centered banner: one sentence and an Accept button. Mount
  * it only when re-acceptance is due; the caller persists acceptance in `onAccept`.
  * `message` carries `[[…]]` link markers; `hrefs` are the matching policy URLs (privacy ·
- * terms). `link` renders them (the website passes its locale `Link`). `raised` stacks it
- * above a still-open cookie banner. Copy is injected; Next-free.
+ * terms). `link` renders them (the website passes its locale `Link`). The caller decides
+ * when it shows (`useOverlayTurn("legal", …)`: one overlay at a time). Copy is injected; Next-free.
  */
 export function LegalReacceptancePrompt({
   message,
   hrefs,
   acceptLabel,
   onAccept,
-  raised = false,
   link: Link = ExternalLink,
 }: {
   message: string;
   hrefs: string[];
   acceptLabel: string;
   onAccept: () => void;
-  raised?: boolean;
   link?: ComponentType<LinkProps>;
 }) {
   return (
     <div
       role="status"
       aria-live="polite"
-      className={`bg-card text-foreground ring-border/60 fixed right-4 left-4 z-50 mx-auto flex w-auto max-w-md flex-col gap-3 rounded-2xl border-0 p-4 shadow-lg ring-1 backdrop-blur sm:flex-row sm:items-center sm:justify-between ${raised ? "bottom-28" : "bottom-4"}`}
+      className="bg-card text-foreground ring-border/60 fixed right-4 bottom-4 left-4 z-50 mx-auto flex w-auto max-w-md flex-col gap-3 rounded-2xl border-0 p-4 shadow-lg ring-1 backdrop-blur sm:flex-row sm:items-center sm:justify-between"
     >
       <p className="text-sm">
         {linkifyMessage(message, hrefs).map((part, i) =>

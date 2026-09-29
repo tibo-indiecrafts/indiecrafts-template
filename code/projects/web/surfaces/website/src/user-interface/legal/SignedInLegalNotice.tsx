@@ -23,6 +23,8 @@ export function SignedInLegalNotice(props: {
   acceptLabel: string;
   apiUrl: string;
 }) {
-  const { getToken } = useAuth();
-  return <LegalNotice {...props} getToken={getToken} />;
+  const { getToken, userId } = useAuth();
+  // Sign-in is a client-side navigation (the banner stays mounted): keying on the user
+  // remounts it, so the server acceptance is re-read for the new identity.
+  return <LegalNotice key={userId ?? "anonymous"} {...props} getToken={getToken} />;
 }

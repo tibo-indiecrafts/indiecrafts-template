@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-A self-contained, fixed top-right card. It is not a sonner toast, because it carries an image and a link the user may click, and sonner's guidance says never to auto-dismiss such content. It announces itself with `role="status"` and `aria-live="polite"` without stealing focus. Dismiss is remembered per content `version` (a cookie), so a new toast re-shows after a prior close; the dismissed version is read hydration-safely. It is i18n-agnostic — resolved copy arrives as props.
+A self-contained card: a bottom sheet on a phone (clear of the page heading), the top-right corner from `sm` up. It is a promotion, so it waits its turn in the overlay queue (`useOverlayTurn("announcement", …)`) until no required notice or prompt is on screen; its auto-dismiss timer starts only once it shows. It is not a sonner toast, because it carries an image and a link the user may click, and sonner's guidance says never to auto-dismiss such content. It announces itself with `role="status"` and `aria-live="polite"` without stealing focus. Dismiss is remembered per content `version` (a cookie), so a new toast re-shows after a prior close; the dismissed version is read hydration-safely. It is i18n-agnostic — resolved copy arrives as props.
 
 ## Exports
 

@@ -301,7 +301,7 @@ gtag('config', '${settings.analytics.googleAnalyticsId}');`}
                   />
                 </>
               ) : null}
-              <Toaster />
+              <Toaster position="top-center" />
             </NextIntlClientProvider>
           </ThemeProvider>
           {features.structuredData && settings.showStructuredData !== false ? (

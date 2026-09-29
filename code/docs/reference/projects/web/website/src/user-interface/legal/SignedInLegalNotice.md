@@ -14,6 +14,8 @@ Wraps `LegalNotice` (`@indiecrafts/packages-web-compliance`) with Clerk's `getTo
 
 Rendered **only** when a publishable key is set (a `ClerkProvider` exists), so `useAuth` always has its provider. Anonymous or no-Clerk builds mount the plain `LegalNotice` (cookie-only) instead. The layout's server-side cookie gate still handles the common anonymous case with no flash; this wrapper only adds the signed-in cross-surface case.
 
+It keys the banner on the Clerk user id. Sign-in is a client-side navigation, so the banner stays mounted; the key remounts it, and the server acceptance is re-read for the new identity.
+
 ## Exports
 
 - `SignedInLegalNotice(props)` — same props as `LegalNotice` (`version`, `message`, `hrefs`, `acceptLabel`) plus `apiUrl`; injects `getToken` from `useAuth`.

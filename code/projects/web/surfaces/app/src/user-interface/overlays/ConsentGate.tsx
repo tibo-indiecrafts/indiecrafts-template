@@ -21,6 +21,7 @@ import {
 import { showConsentSavedToast } from "@indiecrafts/packages-web-ui-components/web/consent-toast";
 import { useRouter } from "@/i18n/routing";
 import { features, policyVersion } from "@/config";
+import { useOverlayTurn } from "@indiecrafts/packages-web-ui-components/web/overlay-turn";
 import { consentStore, useRecord } from "./stores";
 
 /** The cookie-consent banner + its geo auto-seed. `mode` is the geo-resolved consent mode
@@ -51,7 +52,12 @@ export function ConsentGate({
   }, [mode, gpcSignal, record]);
 
   // Only opt-in regions get the blocking banner; opt-out/none rely on the seed + preferences.
-  if (!features.requireConsent || record !== null || mode !== "opt-in") return null;
+  // It is the first overlay in the queue: the others wait until the visitor decides.
+  const turn = useOverlayTurn(
+    "consent",
+    features.requireConsent && record === null && mode === "opt-in",
+  );
+  if (!turn) return null;
 
   const cat = (key: string) => ({
     title: t(`categories.${key}.title`),

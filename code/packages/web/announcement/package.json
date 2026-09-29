@@ -14,6 +14,7 @@
     "@indiecrafts/packages-web-i18n": "workspace:*",
     "@indiecrafts/packages-web-sanity": "workspace:*",
     "@indiecrafts/packages-web-ui": "workspace:*",
+    "@indiecrafts/packages-web-ui-components": "workspace:*",
     "@sanity/icons": "^5.2.2",
     "next-sanity": "^13.3.4"
   },
