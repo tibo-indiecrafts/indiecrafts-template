@@ -19,6 +19,9 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Changed
 
+- **The registry deploys the cron before the api** (`order: 5`): the api's new `CRON` service binding
+  needs the cron to exist. Config tests pin that the cron has no public URL and the binding targets
+  it, and that `project:rename` rewrites the binding target.
 - **CI dry-runs every bare Worker service from the registry.** The `wrangler` job hard-coded
   `api cron workers agent` — `agent` no longer exists, and a new service would have been skipped.
   It now reads `apps.mjs --class worker-cf --kind service` (new `--kind` filter, tested), so a

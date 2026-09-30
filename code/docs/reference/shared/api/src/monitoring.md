@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Pure payload builders for two bearer-gated admin routes. `cronStatus` returns the last 24 `cron_runs` rows (audit D1), a `stale` flag (no run in the last 2 hours — the cron runs hourly), and live counts from the main D1: open, due-soon and breached erasure requests, outstanding and expired-unswept exports. `erasureRequests` lists open requests by deadline and the 20 most recently requested closed ones, each with a computed `state`. It selects an explicit column list, so no `email_fingerprint` or `user_id` ever leaves the api. "Open" means confirmed, or awaiting confirmation with a live link — the same definition as the cron's `erasure_sla` pass.
+Pure payload builders for two bearer-gated admin routes. `cronStatus` returns the last 24 `cron_runs` rows (audit D1), a `stale` flag (no run in the last 2 hours — the cron runs hourly), and live counts from the main D1: open, due-soon and breached erasure requests, outstanding and expired-unswept exports. `erasureRequests` lists open requests by deadline and the 20 most recently requested closed ones, each with a computed `state`. It selects an explicit column list, so no `email_fingerprint` or `user_id` ever leaves the api. "Open" means confirmed, or awaiting confirmation with a live link — the same definition as the cron's `erasure_sla` pass (exported as `OPEN` for the admin close action). A closed row carries its manual-close `note`. `forwardCronRun` backs `POST /v1/cron/run`: it POSTs the cron's `/run` over the private `CRON` service binding and passes the status + body through (`503 cron_unbound` without the binding).
 
 ## Exports
 
@@ -18,6 +18,8 @@ Pure payload builders for two bearer-gated admin routes. `cronStatus` returns th
 - `erasureState(status, dueAt, tokenExpiresAt, nowIso, dueSoonIso)` — `breached` · `dueSoon` · `onTrack` · `closed`.
 - `cronStatus(env, now, warnDays)` — the `GET /v1/cron/status` body.
 - `erasureRequests(env, now, warnDays)` — the `GET /v1/erasure-requests` body.
+- `forwardCronRun(env)` — the `POST /v1/cron/run` forwarder.
+- `OPEN` — the SQL "open request" predicate (`?1` = now).
 
 ## Source
 

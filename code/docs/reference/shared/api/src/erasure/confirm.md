@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Handles `/v1/erasure/confirm`. GET renders a read-only confirm form (never mutates, which defeats link and prefetch scanners). POST verifies the hashed token, the typed email against the stored fingerprint, the TTL, and a per-token attempt cap, then runs the erasure engine live against real Clerk, Sanity, and D1. It is single-use: only a row in status `email_sent` can be confirmed. A failed Clerk delete is retried once inline and, if it still fails, returns 502 with `clerk_failed: true` — never a false "erasure complete".
+Handles `/v1/erasure/confirm`. GET renders a read-only confirm form (never mutates, which defeats link and prefetch scanners). POST verifies the hashed token, the typed email against the stored fingerprint, the TTL, and a per-token attempt cap, then runs the erasure through `executeErasure` (shared with the admin retry) live against real Clerk, Sanity, and D1. It is single-use: only a row in status `email_sent` can be confirmed. A failed Clerk delete is retried once inline and, if it still fails, returns 502 with `clerk_failed: true` — never a false "erasure complete".
 
 ## Exports
 

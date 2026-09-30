@@ -36,6 +36,16 @@ Cloudflare does not retry a cron run; the next hourly tick re-runs every pass (a
 | `erasure_sla`    | GDPR Art. 12(3) one-month deadline. First closes lapsed requests (never confirmed, link expired) as `expired`. Then flags each **open** request (confirmed, or awaiting confirmation with a live link) at most twice in `AUDIT_DB` `security_events`: `erasure_sla_due` (medium) once when due within `ops.sla_warning_days`, `erasure_sla_breach` (high) once when the deadline passes.                                     | `expired` · `dueSoon` · `breached` |
 | `export_cleanup` | Deletes a `MAIN_DB` `export_requests` row and its `EXPORT_BUCKET` object once its TTL passes unread (a downloaded bundle is already gone).                                                                                                                                                                                                                                                                                   | `deleted`                          |
 
+## Run now
+
+The cron has **no public URL** (`workers_dev = false` in every env). Its `fetch` answers `POST /run` by
+running one tick — the same `runTick` as the hourly trigger, history row included — and returns
+`{status, passes}` (500 when a pass failed); any other request is the health check. Only the api can
+reach it, through the `CRON` service binding: `POST /v1/cron/run` (admin-only), behind the **Run now**
+button on Scheduled jobs. A service binding to a Worker that doesn't exist fails the deploy, so the
+registry deploys the cron **before** the api; the cron needs the api's migrations only at run time.
+On a brand-new environment, CI's parallel deploy matrix can fail the api's first deploy — re-run it.
+
 ## Monitoring
 
 Every tick writes one row to **`cron_runs`** (audit D1, migration `audit/0004`): start and finish time,

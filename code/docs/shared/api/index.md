@@ -49,6 +49,9 @@ server-side only). Clerk-JWT routes authenticate the caller's own session.
 | `GET /v1/backups/status`                          | `APP_API_TOKEN`     | Backup-run history + bucket/retention info.                                                                                             |
 | `GET /v1/cron/status`                             | `APP_API_TOKEN`     | Last 24 `cron_runs`, a `stale` flag (no run in 2 h), live erasure/export counts — the admin Scheduled jobs page.                        |
 | `GET /v1/erasure-requests`                        | `APP_API_TOKEN`     | Open erasure requests by deadline + 20 recently closed, with a computed state; no fingerprint or user id — the admin Erasure page.      |
+| `POST /v1/erasure-requests/:id/retry`             | `APP_API_TOKEN`     | Re-run a stuck (`confirmed`) request; email from Clerk by user id, else typed by the operator (fingerprint-checked, never stored).      |
+| `POST /v1/erasure-requests/:id/close`             | `APP_API_TOKEN`     | Close an open request by hand with a required note → `closed_manual`.                                                                   |
+| `POST /v1/cron/run`                               | `APP_API_TOKEN`     | Run one cron tick now over the private `CRON` service binding (admin "Run now").                                                        |
 | `POST /v1/profiles/consent`                       | `APP_API_TOKEN`     | Marketing-consent batch for the admin users list.                                                                                       |
 | `POST /v1/data-request` · `GET /v1/data-requests` | `APP_API_TOKEN`     | DSAR intake write + admin list.                                                                                                         |
 | `POST /v1/clerk-webhook`                          | Svix-signed         | `user_profiles` sync, welcome email, role→admin alert, Clerk email take-over.                                                           |
@@ -87,6 +90,7 @@ threaten identity data.
 | `SECURITY_COUNTERS` | KV                                | Ephemeral TTL failed-login counters (counted at the edge, never per-request in D1).                                                                                               |
 | `EXPORT_BUCKET`     | R2                                | GDPR export bundles (`POST /v1/export`; routes answer 503 until bound).                                                                                                           |
 | `RATELIMIT`         | ratelimit (`[[unsafe.bindings]]`) | Native rate limit on every bearer route, per-env `namespace_id`.                                                                                                                  |
+| `CRON`              | service (`[[services]]`)          | The cron Worker, reached privately for `POST /v1/cron/run`. The cron must exist first — `deploy:all` deploys it before the api.                                                   |
 
 **Vars** (`[env.<env>.vars]`, non-secret): `SANITY_PROJECT_ID` · `SANITY_DATASET` ·
 `SANITY_API_VERSION` · `EMAIL_FROM` · `BACKUP_BUCKET` · `BACKUP_RETENTION_DAYS`. Optional:

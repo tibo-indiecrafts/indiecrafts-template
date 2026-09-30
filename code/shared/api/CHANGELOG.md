@@ -7,6 +7,16 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ### Added
 
+- **Admin actions on erasure requests and the cron.** `POST /v1/erasure-requests/:id/retry` re-runs a
+  stuck (`confirmed`) request — the one case where a GDPR deadline could pass with no way to act; the
+  subject's email comes from Clerk by user id, or is typed by the operator and checked against the
+  fingerprint (never stored). `POST /v1/erasure-requests/:id/close` closes a request handled outside
+  the system with a required note (`closed_manual`). `POST /v1/cron/run` runs a cron tick now over the
+  new `CRON` service binding. The confirm route and the retry share one execution path
+  (`erasure/execute.ts`).
+
+### Added
+
 - **`GET /v1/cron/status` + `GET /v1/erasure-requests`** (bearer-gated, read-only) for the admin
   "Scheduled jobs" and "Erasure requests" pages: the last 24 cron runs with a stale flag (no run in 2
   hours) and live erasure/export counts; open erasure requests by deadline with a computed state and

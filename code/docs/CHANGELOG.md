@@ -44,6 +44,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Admin actions documented:** api routes (retry, close, cron run) + the `CRON` binding, cron
+  "Run now" (no public URL, deploy order), admin actions, and the manual-close + retry path in
+  data-retention; reference pages for the five new files.
 - **Quick start covers a real first run.** Cloudflare login + `dev:setup` for secrets, the
   `dev:doctor` preflight, every port with its health check, how to run `admin` and `app` on their
   own ports (and the `:3002` clash with the docs site). **Why:** the old five steps skipped the

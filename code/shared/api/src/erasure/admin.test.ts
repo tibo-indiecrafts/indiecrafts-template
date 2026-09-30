@@ -271,6 +271,7 @@ describe("routes", () => {
       })
     ).json()) as {
       open: { id: number }[];
+      recentClosed: { id: number; status: string; note: string | null }[];
     };
     expect(list.open.map((r) => r.id)).not.toContain(id);
     expect(list.recentClosed.find((r) => r.id === id)).toMatchObject({

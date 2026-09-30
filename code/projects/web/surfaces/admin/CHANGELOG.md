@@ -14,6 +14,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Retry, Close manually, Run now.** Erasure requests gets Retry on a stuck request (asks for the
+  subject's email only when the api can't read it from Clerk) and Close manually with a required note;
+  Scheduled jobs gets Run now. Each is a server action that re-checks the admin role and writes an
+  audit event (`admin.erasure_retry` / `admin.erasure_close` / `admin.cron_run`).
 - **System shows the background-jobs Worker's health.** The `workers` row said "no endpoint", but the
   Worker serves `/health` (the deploy smoke check uses it). It is now probed like the api from
   `WORKERS_URL` (unset → "Not configured"), without the api token — only the api gets the bearer.

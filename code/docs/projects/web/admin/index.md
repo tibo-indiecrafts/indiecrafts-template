@@ -75,6 +75,16 @@ routes through an audited server action, not a client call.
 | `/settings`      | Operational retention, ops, and link-TTL settings; editable                                            | Shared api `GET /v1/settings`; save via `saveSetting` action → `PUT /v1/settings`                          |
 | `/security`      | App-level security incidents (last 100), data-minimized; deep-link to the edge feed                    | Shared api `/v1/security?limit=100` (D1) + Cloudflare edge (`CLOUDFLARE_SECURITY_URL`)                     |
 
+**Actions on those pages** (server actions in `monitoring-actions.ts` — each re-checks the admin role,
+calls a bearer-gated api route and writes an admin audit event):
+
+- **Erasure requests → Retry** a stuck (`confirmed`) request: the api reads the subject's email from
+  Clerk, or asks the operator to type it (checked against the request's fingerprint, never stored).
+  On success the subject gets the completion email. Audit `admin.erasure_retry`.
+- **Erasure requests → Close manually** with a required note, for a request handled outside the
+  system. Audit `admin.erasure_close`; the note shows on the closed row.
+- **Scheduled jobs → Run now** runs one cron tick immediately. Audit `admin.cron_run`.
+
 `/sign-in` is the one public route. Two API routes back the security baseline:
 `/api/csp-report` (the CSP violation sink) and `/api/session-log` (session-log ingest).
 

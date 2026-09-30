@@ -116,7 +116,12 @@ cannot be actioned, so it is closed, not flagged. It then flags each **open** re
   `high`, once (`breach_flagged_at`) — so a request warned about earlier is still escalated
   when the deadline passes.
 
-`completed`/`cancelled`/`expired` requests are skipped. The admin **Erasure requests** page
+A request stays `confirmed` when a store failed — always when the Clerk delete failed after its
+inline retry — and neither the subject (single-use link) nor the cron can finish it. The admin
+**Retry** re-runs it (the subject's email from Clerk, or typed by the operator and checked against the
+fingerprint, never stored); **Close manually** records a request handled outside the system
+(`closed_manual`, with a required note kept on the row). `completed`/`cancelled`/`expired`/
+`closed_manual` requests are skipped. The admin **Erasure requests** page
 lists open requests by deadline; the **Scheduled jobs** page shows each run's counts. The flag itself no-ops until the
 cron's `MAIN_DB` binding is bound; the `security_events` audit row additionally needs `AUDIT_DB`
 bound — `due_flagged_at` still gets set on `MAIN_DB` even if `AUDIT_DB` isn't. Owner-reminder
