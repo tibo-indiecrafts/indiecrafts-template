@@ -24,6 +24,7 @@ export type RetryResult =
       | "clerk_failed"
       | "clerk_email_changed"
       | "clerk_unavailable"
+      | "unavailable"
       | "not_found"
     >;
 export type CloseResult =
@@ -94,6 +95,7 @@ export async function retryErasure(
     "not_retryable",
     "clerk_email_changed",
     "clerk_unavailable",
+    "unavailable",
     "not_found",
   ] as const;
   const error = known.find((k) => k === res.data.error);
