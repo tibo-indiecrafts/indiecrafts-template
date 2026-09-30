@@ -154,6 +154,13 @@ resource "cloudflare_bot_management" "bots" {
   count      = var.enable_bot_fight ? 1 : 0
   zone_id    = var.zone_id
   fight_mode = true
+  # Pin the AI-crawler settings instead of inheriting Cloudflare's zone defaults (new
+  # domains block training + agent crawlers on ad pages since 2026-09-15, and a training
+  # block also stops multi-purpose crawlers like Googlebot and Bingbot). robots.txt owns
+  # the training opt-out; the edge must not add its own block or rewrite robots.txt.
+  ai_bots_protection    = "disabled"
+  crawler_protection    = "disabled"
+  is_robots_txt_managed = false
 }
 #
 # ── Optional: ENFORCE the training opt-out at the edge (defence in depth) ──────
@@ -164,7 +171,7 @@ resource "cloudflare_bot_management" "bots" {
 #   {
 #     ref         = "block_ai_training_edge"
 #     description = "Block AI *training* crawler UAs at the edge (robots.txt is advisory)"
-#     expression  = "(lower(http.user_agent) contains \"gptbot\" or lower(http.user_agent) contains \"ccbot\" or lower(http.user_agent) contains \"google-extended\" or lower(http.user_agent) contains \"claudebot\" or lower(http.user_agent) contains \"anthropic-ai\" or lower(http.user_agent) contains \"bytespider\" or lower(http.user_agent) contains \"applebot-extended\" or lower(http.user_agent) contains \"meta-externalagent\" or lower(http.user_agent) contains \"amazonbot\" or lower(http.user_agent) contains \"petalbot\")"
+#     expression  = "(lower(http.user_agent) contains \"gptbot\" or lower(http.user_agent) contains \"ccbot\" or lower(http.user_agent) contains \"google-extended\" or lower(http.user_agent) contains \"claudebot\" or lower(http.user_agent) contains \"anthropic-ai\" or lower(http.user_agent) contains \"bytespider\" or lower(http.user_agent) contains \"applebot-extended\" or lower(http.user_agent) contains \"meta-externalagent\" or lower(http.user_agent) contains \"facebookbot\" or lower(http.user_agent) contains \"amazonbot\" or lower(http.user_agent) contains \"pangubot\" or lower(http.user_agent) contains \"ai2bot\" or lower(http.user_agent) contains \"cohere-training-data-crawler\")"
 #     action      = "block"
 #   }
 # Keep the UA list in sync with AI_TRAINING_USER_AGENTS (code/packages/shared/config/src/web/seo.ts).

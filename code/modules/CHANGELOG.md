@@ -15,6 +15,12 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **blog — the `llms.txt` section headings follow the locale.** `## Blog` / `## Categories` /
+  `## Tags` / `## Authors` were English in every locale; they now come from the app's
+  `messages.<locale>.llms` (`/fr/llms.txt` → `## Catégories`, `## Auteurs`).
+
+### Fixed
+
 - **newsletter — lead-magnet email fallback copy resolves by locale, not an en/fr binary.**
   `deliver-magnet.ts` picked its hardcoded fallback with `language === "en" ? COPY.en : COPY.fr`, so a
   third locale silently got the French copy. It now resolves `COPY[locale] ?? COPY[defaultLocale]`, so a

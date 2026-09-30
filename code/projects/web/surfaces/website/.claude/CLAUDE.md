@@ -27,15 +27,17 @@ Rationale + full tree → `code/docs/projects/web/website/config/project-organiz
 
 ## How things connect
 
-- **One source per page:** `messages.<locale>.pages.<id>.*` drives the SEO title/description, canonical,
-  OG/Twitter, JSON-LD `WebPage`, and every `llms.txt` entry. Block keys drop the library `-NN` suffix
-  (`features-01` → `pages.home.blocks.features`). New locale → `locales` array + `messages/<code>.json`.
+- **SEO copy is Sanity-only:** a page's title/description/keywords/`llms*` come from its rendering doc's
+  `.seo`, resolved by `getPageSeo(page.id, locale)` (`@/lib/seo/site-seo`) — no messages fallback; a doc-less
+  page gets the layout default. Page UI copy is `messages.<locale>.pages.<id>.*` (block keys drop the library
+  `-NN` suffix: `features-01` → `pages.home.blocks.features`). New locale → `locales` + `messages/<code>.json`.
 - **Add a page:** `src/app/[locale]/<seg>/page.tsx` → an entry in the `pages` map (`src/config/pages.ts`;
-  `StaticAppPathname` derives from it) → `pages.<id>.title` + `description` in every locale. Sitemap, routing,
-  SEO, JSON-LD and `llms.txt` follow automatically.
-- **SEO chain** (low → high): `site.*` → `seoDefaults.*` → derived from `page.id` → `page.seo.*`, composed by
-  `buildMetadata` (`@/lib/metadata`). Per-page JSON-LD → `page.seo.structuredData[]` via
-  `@/lib/seo/jsonld-factories` (FAQ first — the highest-ROI rich result). → `seo/seo-metadata.md`,
+  `StaticAppPathname` derives from it); for its own SEO, point `getPageSeo` at the Sanity doc with the `.seo`.
+  Sitemap, routing, canonical/hreflang and `llms.txt` follow; a signed-in page sets `seo: { noindex: true }`.
+- **Metadata** (`buildMetadata`, `@/lib/metadata`): structure from config (`site.*` → `seoDefaults.*` →
+  `page.seo.*` robots/canonical) + copy from Sanity; it omits absent keys so the layout defaults survive.
+  Per-page JSON-LD → `page.seo.structuredData[]` via `@/lib/seo/jsonld-factories` (FAQ first — the
+  highest-ROI rich result). → `seo/seo-metadata.md`,
   `seo/structured-data-cookbook.md`, `seo/llms-endpoints.md` under `code/docs/projects/web/website/`.
 - **Flags:** `features.blog` (every blog route 404s and leaves sitemap, `llms.txt`, nav when off; gate in
   `@indiecrafts/modules-web-blog/lib/route-gate`) and `features.studio` (`/studio` + draft mode) are independent.

@@ -32,11 +32,14 @@ Route: `src/app/[locale]/llms.txt/route.ts`. A short, link-heavy summary:
 - **blockquote** = `siteMeta.<locale>.llms.summary`, else the site `tagline`
 - **paragraph** = `siteMeta.<locale>.llms.paragraph`, else the site `description`
 - `Last reviewed: <date>` — from `siteMeta.<locale>.llms.reviewedAt` (omitted when unset)
+- `Other languages: [Français](…/fr/llms.txt)` — a link to every other locale's `llms.txt`, so a crawler that finds one file finds the translations
 - `Site: <site.url>`
 - **Curated `## H2` sections** — visible pages grouped by each page's `seo.llmsSection` (per-locale, since every rendering doc is per-locale), ordered by `siteMeta.<locale>.llms.sectionOrder`; pages with no section fall under a default `## Pages` (kept last). Each bullet is `- [title](url): summary` — title = `seo.title` (else the page `id`); summary = `seo.llmsSummary`, else its `description` (flattened to one line). Editorial grouping is the file's only real edge over a sitemap, so it's editor-controlled in Sanity.
 - **`## Blog`** — one bullet per published post, linking to its `/md` export. Omitted when the blog surface is off.
 - **`## Categories` / `## Tags` / `## Authors`** — one line per taxonomy detail page, each gated by its `features.blogTaxonomy.*` flag.
 - **`## Resources`** — external `http(s)` links from `siteMeta.<locale>.llms.resources`. Empty by default, so the section is omitted.
+
+The route's own labels — `Last reviewed`, `Site`, `Other languages`, the default `## Pages`, `## Resources`, and the blog's `## Blog` / `## Categories` / `## Tags` / `## Authors` — come from `messages/<locale>.json` → `llms`, so `/fr/llms.txt` reads French throughout. Everything else is Sanity copy, per locale.
 
 ### `/llms-full.txt` — the full dump
 

@@ -8,9 +8,10 @@
 
 /**
  * AI **training** / dataset crawlers to block in `robots.txt` when
- * `features.blockAiTraining` is on. Search and AI-*search* crawlers — Googlebot,
- * Bingbot, DuckDuckBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Applebot — are
- * deliberately NOT listed, so the site keeps indexing and AI search still cites it.
+ * `features.blockAiTraining` is on. Search, AI-*search* and user-fetch crawlers —
+ * Googlebot, Bingbot, Applebot, DuckDuckBot, PetalBot, OAI-SearchBot, ChatGPT-User,
+ * Claude-SearchBot, Claude-User, PerplexityBot, Amzn-SearchBot — are deliberately NOT
+ * listed, so the site keeps indexing and AI search still cites it.
  * `Google-Extended` / `Applebot-Extended` opt out of Gemini/Apple training WITHOUT
  * affecting Search ranking. A client edits this list to taste.
  */
@@ -18,13 +19,16 @@ export const AI_TRAINING_USER_AGENTS = [
   "GPTBot", // OpenAI model training
   "Google-Extended", // Gemini/Vertex training — not Search / AI Overviews
   "CCBot", // Common Crawl — feeds most LLM datasets
-  "ClaudeBot", // Anthropic
+  "ClaudeBot", // Anthropic training — Claude-SearchBot / Claude-User stay allowed
   "anthropic-ai", // Anthropic (legacy token)
   "Bytespider", // ByteDance
   "Applebot-Extended", // Apple training — Applebot (search) stays allowed
   "Meta-ExternalAgent", // Meta AI training
-  "Amazonbot", // Amazon
-  "PetalBot", // Huawei
+  "FacebookBot", // Meta language-model training — link previews (facebookexternalhit) stay allowed
+  "Amazonbot", // Amazon, training-eligible — Amzn-SearchBot (Alexa answers) stays allowed
+  "PanguBot", // Huawei PanGu training — PetalBot (Petal Search) stays allowed
+  "AI2Bot", // Ai2 open-model training
+  "cohere-training-data-crawler", // Cohere training
 ] as const;
 
 export const seoDefaults = {

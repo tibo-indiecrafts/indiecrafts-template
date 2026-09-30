@@ -143,9 +143,11 @@ export async function buildMetadata({
     : undefined;
 
   return {
-    title,
-    description,
-    keywords,
+    // Only when set: Next merges per key, so a present-but-undefined `title` would
+    // REPLACE the layout default and ship the page with no <title> at all.
+    ...(title ? { title } : {}),
+    ...(description ? { description } : {}),
+    ...(keywords ? { keywords } : {}),
     alternates: { canonical, languages },
     robots,
     // Next.js REPLACES (does not deep-merge) openGraph/twitter when the

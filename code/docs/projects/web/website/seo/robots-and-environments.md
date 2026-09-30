@@ -26,16 +26,18 @@ User-agent: GPTBot
 Disallow: /
 User-agent: Google-Extended
 Disallow: /
-# … CCBot · ClaudeBot · anthropic-ai · Bytespider · Applebot-Extended · Meta-ExternalAgent · Amazonbot · PetalBot
+# … CCBot · ClaudeBot · anthropic-ai · Bytespider · Applebot-Extended · Meta-ExternalAgent · FacebookBot · Amazonbot · PanguBot · AI2Bot · cohere-training-data-crawler
 
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /_next/
 Sitemap: https://acme.com/sitemap.xml     # only if features.sitemap
 # llms.txt: https://acme.com/llms.txt      # only if features.llms.index
-Host: https://acme.com
 ```
+
+`/_next/` is **never** disallowed: it serves the CSS, JS and optimized images a crawler fetches
+to render the page, and Google warns that blocking them harms rendering and indexing. There is
+no `Host:` line — Google ignores it and Yandex dropped it in 2018.
 
 **Not indexable** — everything blocked:
 
@@ -97,13 +99,26 @@ Robots.txt matches the **most specific** user-agent group, so each training bot 
 `Disallow: /` group and everything else falls through to `User-agent: *` (`Allow: /`). The blocked
 list is `AI_TRAINING_USER_AGENTS` in `@indiecrafts/packages-shared-config` — edit it to taste:
 
-- **Blocked** (training): `GPTBot` · `Google-Extended` · `CCBot` · `ClaudeBot` · `anthropic-ai` · `Bytespider` · `Applebot-Extended` · `Meta-ExternalAgent` · `Amazonbot` · `PetalBot`.
-- **Still allowed** (search + AI search — never named): `Googlebot`, `Bingbot`, `DuckDuckBot`, `OAI-SearchBot`, `ChatGPT-User`, `PerplexityBot`, `Applebot`.
+- **Blocked** (training): `GPTBot` · `Google-Extended` · `CCBot` · `ClaudeBot` · `anthropic-ai` · `Bytespider` · `Applebot-Extended` · `Meta-ExternalAgent` · `FacebookBot` · `Amazonbot` · `PanguBot` · `AI2Bot` · `cohere-training-data-crawler`.
+- **Still allowed** (search, AI search and user-fetch — never named): `Googlebot`, `Bingbot`, `Applebot`, `DuckDuckBot`, `PetalBot` (Huawei Petal Search), `OAI-SearchBot`, `ChatGPT-User`, `Claude-SearchBot`, `Claude-User`, `PerplexityBot`, `Perplexity-User`, `Amzn-SearchBot`. A test fails if one of these lands in the blocked list.
+
+Several operators split one purpose per bot — block the training one, keep the search one:
+Anthropic `ClaudeBot` / `Claude-SearchBot` + `Claude-User`, Amazon `Amazonbot` / `Amzn-SearchBot`,
+Huawei `PanguBot` / `PetalBot`, Meta `FacebookBot` + `Meta-ExternalAgent` / `facebookexternalhit`
+(link previews).
 
 `Google-Extended` and `Applebot-Extended` opt out of Gemini/Apple **training** without touching Search
 ranking or AI Overviews. This is robots.txt-only — no `X-Robots-Tag: noai` header, which is broad
 (discourages AI _search_ too) and barely honored. Set `features.blockAiTraining: false` to let AI
 training crawlers in.
+
+**The Cloudflare edge must not undo this.** Every Terraform stack on the zone pins
+`ai_bots_protection = "disabled"`, `crawler_protection = "disabled"` and
+`is_robots_txt_managed = false` on `cloudflare_bot_management`. Cloudflare's "Block AI bots" also
+blocks crawlers that do both search and training (Googlebot, Bingbot, Applebot), and new domains
+block training crawlers on ad pages by default since 2026-09-15. A test keeps the stacks in step
+(`infra-registry.test.mjs`). Bot Fight Mode stays on — it targets malicious automation, not
+verified crawlers; confirm in Cloudflare → Security → Bots that AI search crawlers get `200`.
 
 ## The sitemap
 

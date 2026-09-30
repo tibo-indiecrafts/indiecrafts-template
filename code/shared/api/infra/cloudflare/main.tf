@@ -104,6 +104,13 @@ resource "cloudflare_bot_management" "bots" {
   count      = var.enable_bot_fight && var.attach_domain ? 1 : 0
   zone_id    = var.zone_id
   fight_mode = true
+  # Pin the AI-crawler settings instead of inheriting Cloudflare's zone defaults (new
+  # domains block training + agent crawlers on ad pages since 2026-09-15, and a training
+  # block also stops multi-purpose crawlers like Googlebot and Bingbot). robots.txt owns
+  # the training opt-out; the edge must not add its own block or rewrite robots.txt.
+  ai_bots_protection    = "disabled"
+  crawler_protection    = "disabled"
+  is_robots_txt_managed = false
 }
 
 # ── Leaked-credentials detection (free: one field) ────────────────────────────

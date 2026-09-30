@@ -52,10 +52,13 @@ describe("buildMetadata — SEO copy from Sanity", () => {
     expect(meta.twitter).toMatchObject({ title: "Home", description: "Welcome" });
   });
 
-  it("emits no title/description when the doc has no .seo (layout default applies)", async () => {
+  it("omits the title/description/keywords KEYS when the doc has no .seo (layout default applies)", async () => {
+    // Next merges metadata per key: a present-but-undefined `title` REPLACES the layout
+    // default, so the page would ship with no <title> at all. The key must be absent.
     const meta = await buildMetadata({ page: homePage, locale: "en" });
-    expect(meta.title).toBeUndefined();
-    expect(meta.description).toBeUndefined();
+    expect(meta).not.toHaveProperty("title");
+    expect(meta).not.toHaveProperty("description");
+    expect(meta).not.toHaveProperty("keywords");
   });
 });
 

@@ -23,6 +23,27 @@ vi.mock("./settings", () => ({ getBlogSettings }));
 vi.mock("@indiecrafts/packages-web-i18n", () => ({
   localizedPathname: (pathname: string) => pathname,
 }));
+// The section headings come from the app's `llms` messages (per locale).
+const HEADINGS = {
+  en: {
+    blog: "Blog",
+    categories: "Categories",
+    tags: "Tags",
+    authors: "Authors",
+  },
+  fr: {
+    blog: "Blog",
+    categories: "Catégories",
+    tags: "Tags",
+    authors: "Auteurs",
+  },
+} as const;
+vi.mock("next-intl/server", () => ({
+  getTranslations:
+    async ({ locale }: { locale: "en" | "fr" }) =>
+    (key: keyof (typeof HEADINGS)["en"]) =>
+      HEADINGS[locale][key],
+}));
 
 const { getBlogLlmsLines, getTaxonomyLlmsLines } = await import("./llms");
 
@@ -64,6 +85,15 @@ describe("getBlogLlmsLines", () => {
 });
 
 describe("getTaxonomyLlmsLines", () => {
+  it("writes the section headings in the requested locale", async () => {
+    sanityFetchLive.mockResolvedValue([{ slug: "x", title: "X" }]);
+    const lines = await getTaxonomyLlmsLines("fr");
+    expect(lines).toEqual(
+      expect.arrayContaining(["## Catégories", "## Tags", "## Auteurs"]),
+    );
+    expect(lines).not.toContain("## Categories");
+  });
+
   it("returns [] when the public blog route is disabled (short-circuit)", async () => {
     isBlogRouteEnabled.mockReturnValueOnce(false);
     expect(await getTaxonomyLlmsLines("en")).toEqual([]);

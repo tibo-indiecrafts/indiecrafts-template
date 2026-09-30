@@ -12,6 +12,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Fixed
+
+- **config — the AI-training block list no longer blocks a search engine.** `PetalBot` is Huawei's
+  Petal Search crawler, not a training bot; it is now allowed, and Huawei's training crawler
+  `PanguBot` is blocked instead. Added the other documented training-only crawlers: `FacebookBot`
+  (Meta), `AI2Bot` (Ai2) and `cohere-training-data-crawler`. A website test fails if a search or
+  user-fetch crawler (Googlebot · Bingbot · PetalBot · OAI-SearchBot · Claude-SearchBot ·
+  PerplexityBot · Amzn-SearchBot · …) ever lands in the list.
+
 ### Added
 
 - **Overlays take turns (`useOverlayTurn`, `web/ui-components/web/overlay-turn`).** The cookie

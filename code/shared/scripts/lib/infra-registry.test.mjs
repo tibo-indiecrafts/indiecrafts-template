@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { INFRA } from "./infra-registry.mjs";
@@ -32,4 +32,41 @@ test("INFRA rows have unique names + unique apply orders", () => {
   assert.equal(new Set(names).size, names.length, "duplicate stack name");
   const orders = INFRA.map((r) => r.order);
   assert.equal(new Set(orders).size, orders.length, "duplicate apply order");
+});
+
+// The surfaces share one root zone (admin/app/api are subdomains of the website's), and bot
+// management is a zone setting: every stack that declares it must pin the same AI-crawler
+// values, or the last `terraform apply` silently flips the zone (a training block also stops
+// Googlebot/Bingbot, and a managed robots.txt overrides the site's own).
+test("every bot_management block pins the same AI-crawler settings (robots.txt owns the opt-out)", () => {
+  const blocks = INFRA.map((row) => [
+    row.name,
+    resolve(REPO_ROOT, row.dir, "main.tf"),
+  ])
+    .filter(([, f]) => existsSync(f))
+    .map(([name, f]) => [
+      name,
+      readFileSync(f, "utf8").match(
+        /resource "cloudflare_bot_management"[\s\S]*?\n}/,
+      )?.[0],
+    ])
+    .filter(([, block]) => block);
+  assert.ok(blocks.length > 0, "no cloudflare_bot_management found");
+  for (const [name, block] of blocks) {
+    assert.match(
+      block,
+      /ai_bots_protection\s*=\s*"disabled"/,
+      `${name}: ai_bots_protection`,
+    );
+    assert.match(
+      block,
+      /crawler_protection\s*=\s*"disabled"/,
+      `${name}: crawler_protection`,
+    );
+    assert.match(
+      block,
+      /is_robots_txt_managed\s*=\s*false/,
+      `${name}: is_robots_txt_managed`,
+    );
+  }
 });

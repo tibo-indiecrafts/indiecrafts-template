@@ -90,6 +90,13 @@ export const legalSeoQuery = defineQuery(`
   }
 `);
 
+/** Contact page SEO — the `contactSettings` singleton's `.seo`. */
+export const contactSeoQuery = defineQuery(`
+  *[_type == "contactSettings"][0].seo{
+    ${SEO_META_PROJECTION}
+  }
+`);
+
 /** Waitlist landing SEO — the `waitlistSettings` singleton's `.seo`. */
 export const waitlistSeoQuery = defineQuery(`
   *[_type == "waitlistSettings"][0].seo{

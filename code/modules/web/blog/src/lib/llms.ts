@@ -6,6 +6,7 @@
 import type { Locale } from "@indiecrafts/packages-shared-config";
 import { site } from "@indiecrafts/packages-shared-config";
 import { localizedPathname } from "@indiecrafts/packages-web-i18n";
+import { getTranslations } from "next-intl/server";
 import {
   allPostsQuery,
   taxonomyForLlmsQuery,
@@ -54,7 +55,8 @@ export async function getBlogLlmsLines(locale: Locale): Promise<string[]> {
   });
   if (!entries.length) return [];
 
-  return [`## Blog`, ``, ...entries, ``];
+  const t = await getTranslations({ locale, namespace: "llms" });
+  return [`## ${t("blog")}`, ``, ...entries, ``];
 }
 
 type TaxonomyLlmsItem = {
@@ -68,19 +70,16 @@ const TAXONOMIES = [
   {
     type: "category",
     key: "categories",
-    heading: "Categories",
     path: (slug: string) => `/blog/category/${slug}` as const,
   },
   {
     type: "tag",
     key: "tags",
-    heading: "Tags",
     path: (slug: string) => `/blog/tag/${slug}` as const,
   },
   {
     type: "author",
     key: "authors",
-    heading: "Authors",
     path: (slug: string) => `/author/${slug}` as const,
   },
 ] as const;
@@ -97,7 +96,11 @@ export async function getTaxonomyLlmsLines(
 ): Promise<string[]> {
   if (!isBlogRouteEnabled(blogPage())) return [];
 
-  const settings = await getBlogSettings();
+  const [settings, t] = await Promise.all([
+    getBlogSettings(),
+    // Section headings follow the locale (the app's `messages.llms`).
+    getTranslations({ locale, namespace: "llms" }),
+  ]);
   const out: string[] = [];
   for (const tax of TAXONOMIES) {
     if (!settings.taxonomy[tax.key]) continue;
@@ -117,7 +120,7 @@ export async function getTaxonomyLlmsLines(
         : `- [${it.title}](${url})`;
       return full && it.full ? [line, ``, it.full, ``] : [line];
     });
-    if (lines.length) out.push(`## ${tax.heading}`, ``, ...lines, ``);
+    if (lines.length) out.push(`## ${t(tax.key)}`, ``, ...lines, ``);
   }
   return out;
 }

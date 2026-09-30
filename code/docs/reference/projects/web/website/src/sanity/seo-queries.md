@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Holds the core SEO GROQ queries, kept out of `features/blog` so site-wide SEO survives with the blog removed. `defineQuery` flags each for `sanity typegen`. The queries are consumed by `src/lib/seo/site-seo.ts` and `src/lib/system-pages.ts`. A shared `seoMeta` projection is reused across the home, blog, legal, and waitlist per-page SEO queries.
+Holds the core SEO GROQ queries, kept out of `features/blog` so site-wide SEO survives with the blog removed. `defineQuery` flags each for `sanity typegen`. The queries are consumed by `src/lib/seo/site-seo.ts` and `src/lib/system-pages.ts`. A shared `seoMeta` projection is reused across the home, blog, legal, waitlist and contact per-page SEO queries.
 
 ## Exports
 
@@ -19,6 +19,7 @@ Holds the core SEO GROQ queries, kept out of `features/blog` so site-wide SEO su
 - `blogSeoQuery` — the `/blog` frontpage SEO plus taxonomy list-page overrides.
 - `legalSeoQuery` — one legal page's SEO by `pageKey` + locale.
 - `waitlistSeoQuery` — the waitlist landing SEO from `waitlistSettings`.
+- `contactSeoQuery` — the contact page SEO from `contactSettings`.
 - `systemPagesQuery` — maintenance + 404 copy for one locale.
 - `taxonomyPagesQuery` — category/tag/author listing-page copy for one locale.
 - `versionPromptQuery` — version-update banner copy for one locale.

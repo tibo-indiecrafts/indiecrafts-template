@@ -49,11 +49,10 @@ export function robotsTxt(opts: {
   lines.push(
     "User-agent: *",
     "Allow: /",
+    // Never `/_next/`: crawlers fetch its CSS, JS and images to render the page.
     "Disallow: /api/",
-    "Disallow: /_next/",
     ...(opts.sitemap ? [`Sitemap: ${opts.siteUrl}/sitemap.xml`] : []),
     ...(opts.llmsIndex ? [`# llms.txt: ${opts.siteUrl}/llms.txt`] : []),
-    `Host: ${opts.siteUrl}`,
   );
   return `${lines.join("\n")}\n`;
 }

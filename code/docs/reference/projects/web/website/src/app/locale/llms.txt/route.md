@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Locale-aware GET route for `/<locale>/llms.txt`. It builds a plain-text summary from the per-locale Sanity `siteMeta` singleton: an H1 site name, a blockquote tagline, a description paragraph, a "Last reviewed" line, and H2 sections grouping the visible routes by each page's `.seo.llmsSection` in editor-defined order. It appends published blog posts, taxonomy sections, and optional external resource links. SEO copy is Sanity-only. Gated by `features.llms.index` (404 when off). Response is `text/plain` with a one-hour cache.
+Locale-aware GET route for `/<locale>/llms.txt`. It builds a plain-text summary from the per-locale Sanity `siteMeta` singleton: an H1 site name, a blockquote tagline, a description paragraph, a "Last reviewed" line, an "Other languages" line linking every other locale's `llms.txt`, and H2 sections grouping the visible routes by each page's `.seo.llmsSection` in editor-defined order. It appends published blog posts, taxonomy sections, and optional external resource links. SEO copy is Sanity-only; the route's own labels come from `messages.<locale>.llms`. Gated by `features.llms.index` (404 when off). Response is `text/plain` with a one-hour cache.
 
 ## Exports
 

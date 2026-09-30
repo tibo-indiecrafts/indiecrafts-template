@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Produces the Markdown lines the blog adds to `/llms.txt` and `/llms-full.txt`. The post section lists every published, indexable post for the locale, each linking to its `/md` export. The taxonomy section adds `## Categories` / `## Tags` / `## Authors`, gated by the feature flags and each doc's noindex. Both return `[]` when the blog surface is off or there is no content, so the endpoints stay blog-agnostic.
+Produces the Markdown lines the blog adds to `/llms.txt` and `/llms-full.txt`. The post section lists every published, indexable post for the locale, each linking to its `/md` export. The taxonomy section adds `## Categories` / `## Tags` / `## Authors` (headings from the app's `messages.<locale>.llms`, like `## Blog`), gated by the feature flags and each doc's noindex. Both return `[]` when the blog surface is off or there is no content, so the endpoints stay blog-agnostic.
 
 ## Exports
 

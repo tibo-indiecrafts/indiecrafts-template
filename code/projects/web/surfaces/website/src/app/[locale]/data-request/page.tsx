@@ -24,8 +24,8 @@ export async function generateMetadata({ params }: Props) {
  * Data-request route — thin shell. Renders the GDPR request form (from
  * `@indiecrafts/packages-web-ui-components`) with copy resolved here from
  * `messages.legal.dataRequest.*`. Gated by `features.legal.dataRequest`
- * (`isPageVisible`); posts to `/api/data-request`. SEO copy is Sanity-only
- * (`siteMeta.<locale>.pageSeo.data-request`).
+ * (`isPageVisible`); posts to `/api/data-request`. Owns no Sanity doc → the
+ * layout's default title + description.
  */
 export default async function DataRequestPage({ params }: Props) {
   const { locale } = await params;

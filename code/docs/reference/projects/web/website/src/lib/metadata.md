@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Composes a Next.js `Metadata` object for a page from three sources: SEO copy (Sanity only — title, description, keywords, og:image), structural fields (canonical, hreflang, robots derived from config and routing), and site-wide defaults in `seoDefaults`. It resolves canonical precedence, builds the hreflang language set (full for static routes, translation-only for dynamic detail pages), and re-emits OpenGraph and Twitter blocks because Next replaces rather than merges them.
+Composes a Next.js `Metadata` object for a page from three sources: SEO copy (Sanity only — title, description, keywords, og:image), structural fields (canonical, hreflang, robots derived from config and routing), and site-wide defaults in `seoDefaults`. It resolves canonical precedence, builds the hreflang language set (full for static routes, translation-only for dynamic detail pages), and re-emits OpenGraph and Twitter blocks because Next replaces rather than merges them. With no Sanity title, description or keywords it leaves those keys out, so the layout defaults apply — a present-but-undefined key would erase them.
 
 ## Exports
 

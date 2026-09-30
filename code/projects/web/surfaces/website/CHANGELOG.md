@@ -17,6 +17,26 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Pages without Sanity SEO had no `<title>` at all.** `buildMetadata` returned `title: undefined`,
+  and Next treats a present key as an override — so `/contact`, `/erasure` and `/data-request`
+  (en + fr) shipped with no title and no description, for browsers and crawlers alike. The keys are
+  now left out, so the layout default applies. `/contact` also reads its own Sanity SEO
+  (`contactSettings.seo`) again — `getPageSeo` had no contact branch.
+- **`robots.txt` no longer blocks `/_next/`.** Crawlers fetch the page's CSS, JS and optimized
+  images from it to render; Google warns that blocking them harms indexing. The obsolete `Host:`
+  line is gone too.
+- **`/account` is `noindex`** — a signed-in page was in search, the sitemap and `llms.txt`.
+- **`llms.txt` speaks the URL's language and links its translations.** The route's own labels
+  (`Last reviewed`, `Site`, `## Pages`, `## Resources`, and the blog's section headings) come from
+  `messages.<locale>.llms`, and a new `Other languages` line links every other locale's file.
+- **The Cloudflare edge can't override the AI-crawler policy.** Every Terraform stack on the zone
+  (website · admin · app · api) pins `ai_bots_protection` / `crawler_protection` = `"disabled"`
+  and `is_robots_txt_managed = false`: Cloudflare's AI-bot block also stops Googlebot and Bingbot,
+  and new domains block training crawlers on ad pages by default since 2026-09-15. A test keeps
+  the four stacks in step.
+
 ### Changed
 
 - **The registry deploys the cron before the api** (`order: 5`): the api's new `CRON` service binding

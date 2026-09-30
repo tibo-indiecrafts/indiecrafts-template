@@ -86,6 +86,8 @@ export const pages = {
     id: "account",
     slug: "/account",
     enabled: features.account.delete,
+    // Signed-in and per-user: out of search, the sitemap and the LLM endpoints.
+    seo: { noindex: true },
   },
   blog: {
     key: "/blog",

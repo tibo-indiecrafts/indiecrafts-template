@@ -20,7 +20,7 @@ Reads the SEO surface from Sanity (`siteMeta.<locale>` plus `siteSettings`). Thi
 - `SiteSettings` — type for the `siteSettings` singleton (brand, social, business, robots, share, theme, maker credit).
 - `DEFAULT_SITE_NAME` — fallback brand name used when `siteName` is empty.
 - `getSiteSeo(locale)` — fetch the site-wide SEO for a locale.
-- `getPageSeo(pageId, locale)` — resolve one static route's SEO from the doc it renders.
+- `getPageSeo(pageId, locale)` — resolve one static route's SEO from the doc it renders (home · blog + taxonomy index · legal pages · waitlist · contact; `undefined` for a doc-less route).
 - `getSiteSettings()` — fetch the `siteSettings` singleton; audits a missing production `siteName`.
 
 ## Usage

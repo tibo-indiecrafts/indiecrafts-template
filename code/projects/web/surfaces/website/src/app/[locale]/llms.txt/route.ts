@@ -17,12 +17,16 @@
  *                     `llms.sectionOrder`; unsectioned pages fall under "## Pages" (last).
  *                     Each line pulls the page's title + `.seo` one-liner (`getPageSeo`).
  *   - "## Resources"= external links from `siteMeta.<locale>.llms.resources`
+ *   - "Other languages" = a link to every other locale's llms.txt, so a crawler that
+ *                     finds one file finds the translations
  *
  * SEO copy is Sanity-only (no config/messages fallback) — see `getSiteSeo` / `getPageSeo`.
+ * The route's own labels (headings, "Last reviewed", …) are `messages.llms`, per locale.
  */
 
 import type { Locale, PageConfig, StaticAppPathname } from "@/config";
-import { features, site } from "@/config";
+import { defaultLocale, features, locales, site } from "@/config";
+import { getTranslations } from "next-intl/server";
 import { getStaticPathname } from "@/i18n/routing";
 import { ROUTES } from "@/app/routes";
 import { isLlmsPage } from "@/lib/seo/page-markdown";
@@ -45,20 +49,33 @@ export async function GET(
   if (!features.llms.index) return new Response("Not found", { status: 404 });
 
   const { locale } = (await params) as { locale: Locale };
-  const [siteSeo, settings] = await Promise.all([getSiteSeo(locale), getSiteSettings()]);
+  const [siteSeo, settings, t] = await Promise.all([
+    getSiteSeo(locale),
+    getSiteSettings(),
+    getTranslations({ locale, namespace: "llms" }),
+  ]);
   const siteName = settings.siteName || DEFAULT_SITE_NAME;
 
   // llms summary/paragraph, else the site tagline/description — all Sanity.
   const tagline = siteSeo.llms.summary ?? siteSeo.tagline;
   const description = siteSeo.llms.paragraph ?? siteSeo.description;
 
+  // `/llms.txt` for the default locale, `/<code>/llms.txt` for the rest (as the route).
+  const otherLanguages = locales
+    .filter((l) => l.code !== locale)
+    .map((l) => `[${l.label}](${site.url}${llmsPath(l.code)})`)
+    .join(" · ");
+
   const header = [
     `# ${siteName}`,
     ``,
     ...(tagline ? [`> ${tagline}`, ``] : []),
     ...(description ? [description, ``] : []),
-    ...(siteSeo.llms.reviewedAt ? [`Last reviewed: ${siteSeo.llms.reviewedAt}`] : []),
-    `Site: ${site.url}`,
+    ...(siteSeo.llms.reviewedAt
+      ? [t("lastReviewed", { date: siteSeo.llms.reviewedAt })]
+      : []),
+    t("site", { url: site.url }),
+    ...(otherLanguages ? [t("otherLanguages", { links: otherLanguages })] : []),
     ``,
   ];
 
@@ -91,7 +108,7 @@ export async function GET(
     ...(groups.has(DEFAULT_SECTION) ? [DEFAULT_SECTION] : []),
   ];
   const pageSection = orderedSections.flatMap((section) => [
-    `## ${section}`,
+    `## ${section === DEFAULT_SECTION ? t("pages") : section}`,
     ``,
     ...groups
       .get(section)!
@@ -115,7 +132,9 @@ export async function GET(
     ...pageSection,
     ...blogLines,
     ...taxonomyLines,
-    ...(resourceLines.length > 0 ? [`## Resources`, ``, ...resourceLines, ``] : []),
+    ...(resourceLines.length > 0
+      ? [`## ${t("resources")}`, ``, ...resourceLines, ``]
+      : []),
   ].join("\n");
 
   return new Response(body, {
@@ -125,6 +144,10 @@ export async function GET(
       "cache-control": "public, max-age=3600, s-maxage=3600",
     },
   });
+}
+
+function llmsPath(code: string): string {
+  return code === defaultLocale ? "/llms.txt" : `/${code}/llms.txt`;
 }
 
 function formatPageEntry(page: PageConfig, locale: Locale, pageSeo?: PageSeo): string {

@@ -8,7 +8,7 @@ status: stable
 
 Every page's `<head>` is composed by one function: `buildMetadata({ page, locale })` in `src/lib/metadata.ts`. You never hand-write `<title>`, description, canonical, hreflang, or Open Graph tags.
 
-The split that matters: **SEO copy is authored in Sanity, structure comes from config.** Title, description, keywords, OG image, per-page canonical, and `noIndex` live on each rendering document's `.seo` (the shared `seoMeta` object), resolved by `getPageSeo(pageId, locale)` — edited in the Studio (see [Editing SEO in Sanity](/projects/web/website/seo/editing-seo-in-sanity)). Canonical/hreflang URLs, robots defaults, and OG type/card come from `@indiecrafts/packages-shared-config`. There is **no `messages` or config fallback for SEO text** — a page whose document has no `.seo` emits no title/description override and the layout default applies.
+The split that matters: **SEO copy is authored in Sanity, structure comes from config.** Title, description, keywords, OG image, per-page canonical, and `noIndex` live on each rendering document's `.seo` (the shared `seoMeta` object), resolved by `getPageSeo(pageId, locale)` — edited in the Studio (see [Editing SEO in Sanity](/projects/web/website/seo/editing-seo-in-sanity)). Canonical/hreflang URLs, robots defaults, and OG type/card come from `@indiecrafts/packages-shared-config`. There is **no `messages` or config fallback for SEO text** — a page whose document has no `.seo` emits no title/description override and the layout default applies. `buildMetadata` leaves the keys **out** in that case: Next merges metadata per key, so a present-but-`undefined` `title` would replace the layout default and ship the page with no `<title>`.
 
 ## Two entry points, one head
 
@@ -125,7 +125,7 @@ Adding a route already covers SEO — there's no separate metadata step. The flo
 1. **Route** — `src/app/[locale]/<seg>/page.tsx`. Its `generateMetadata` calls `buildMetadata({ page: pages.<id>, locale })`; mount `<PageSchemas page={pages.<id>} locale={locale} />` in the body for JSON-LD.
 2. **Config** — add an entry to `pages` in `code/packages/shared/config/src/index.ts`: `{ key, id, slug }` (plus `seo` only if you need a structural override).
 3. **Types** — add the route's key to `STATIC_PATHNAME_KEYS` in `@indiecrafts/packages-shared-config` `./types`.
-4. **Copy (optional)** — a new static route uses the layout default title/description + site-wide OG. To give it its own SEO, point `getPageSeo` (`src/lib/seo/site-seo.ts`) at a Sanity document that carries a `.seo` (the shared `seoMeta`), then fill that document's **SEO & visibilité** section — the pattern the home, blog, legal, and waitlist routes use.
+4. **Copy (optional)** — a new static route uses the layout default title/description + site-wide OG. To give it its own SEO, point `getPageSeo` (`src/lib/seo/site-seo.ts`) at a Sanity document that carries a `.seo` (the shared `seoMeta`), then fill that document's **SEO & visibilité** section — the pattern the home, blog, legal, waitlist and contact routes use.
 
 Canonical, hreflang, OG, twitter, robots, the WebPage JSON-LD, sitemap entry, and llms.txt entry all derive from those four steps.
 

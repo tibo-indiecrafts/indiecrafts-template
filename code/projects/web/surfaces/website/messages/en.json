@@ -466,5 +466,16 @@
       "no": "No thanks",
       "dismiss": "Dismiss"
     }
+  },
+  "llms": {
+    "pages": "Pages",
+    "resources": "Resources",
+    "blog": "Blog",
+    "categories": "Categories",
+    "tags": "Tags",
+    "authors": "Authors",
+    "lastReviewed": "Last reviewed: {date}",
+    "site": "Site: {url}",
+    "otherLanguages": "Other languages: {links}"
   }
 }

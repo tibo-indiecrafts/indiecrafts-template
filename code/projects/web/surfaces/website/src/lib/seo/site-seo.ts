@@ -14,6 +14,7 @@ import { logger } from "@indiecrafts/packages-shared-logger";
 import { client } from "@indiecrafts/packages-web-sanity/client";
 import {
   blogSeoQuery,
+  contactSeoQuery,
   homeSeoQuery,
   legalSeoQuery,
   siteSeoQuery,
@@ -273,7 +274,8 @@ const getBlogSeo = cache(
  * the owning doc's `.seo`:
  *   home → the home `page` doc · blog → the blog singleton ·
  *   author/category/tag → the blog singleton's `indexSeo.*` ·
- *   legal pages → the matching `legalPage` · waitlist → `waitlistSettings`.
+ *   legal pages → the matching `legalPage` · waitlist → `waitlistSettings` ·
+ *   contact → `contactSettings`.
  * Any doc-less route (e.g. `data-request`, `/blog/search`) resolves to
  * `undefined` → the layout defaults + site-wide OG apply. React-cached per
  * `(pageId, locale)`, so `buildMetadata` + `<PageSchemas>` share one fetch.
@@ -290,6 +292,9 @@ export const getPageSeo = cache(
       }
       if (pageId === "waitlist") {
         return normalizeSeoMeta(await client.fetch(waitlistSeoQuery));
+      }
+      if (pageId === "contact") {
+        return normalizeSeoMeta(await client.fetch(contactSeoQuery));
       }
       const pageKey = LEGAL_PAGE_KEY[pageId];
       if (pageKey) {
