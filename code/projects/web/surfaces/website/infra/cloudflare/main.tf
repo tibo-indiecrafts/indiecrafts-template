@@ -45,40 +45,97 @@ terraform {
 }
 
 # Reads CLOUDFLARE_API_TOKEN from the environment (scoped token — Zone: DNS/Cache/WAF
-# edit; Account: Workers/Turnstile edit). See docs/infra/cloudflare-iac.md.
+# edit; Account: Workers/Turnstile edit). See code/docs/shared/infra/cloudflare-iac.md.
 provider "cloudflare" {}
 
 # ── Inputs (per app · per env — set in env/<env>.tfvars) ─────────────────────
 variable "account_id" { type = string }
-variable "zone_id" { type = string, default = "" }
+variable "zone_id" {
+  type    = string
+  default = ""
+}
 variable "worker_name" { type = string } # matches wrangler `name` for this env (e.g. slug-web-prod)
 variable "env" { type = string }         # dev | staging | prod
-variable "domain" { type = string, default = "" }
-variable "attach_domain" { type = bool, default = true } # false for dev/workers.dev
-variable "turnstile_domains" { type = list(string), default = [] }
+variable "domain" {
+  type    = string
+  default = ""
+}
+# false for dev/workers.dev
+variable "attach_domain" {
+  type    = bool
+  default = true
+}
+variable "manage_zone" {
+  # A zone holds ONE of each zone-wide setting (entrypoint rulesets, bot management, tiered
+  # cache, TLS). Exactly one stack × env per zone sets this true; the others on that zone
+  # (subdomains, staging next to prod) set it false and inherit the owner's rules.
+  type    = bool
+  default = true
+}
+locals {
+  # Zone-wide resources need a real zone: none on *.workers.dev (attach_domain = false).
+  manage_zone = var.attach_domain && var.manage_zone
+}
+variable "turnstile_domains" {
+  type    = list(string)
+  default = []
+}
 # Edge tunables — defaults are sensible; override in tfvars if needed.
-variable "rate_limit_requests" { type = number, default = 20 }
-variable "rate_limit_period" { type = number, default = 60 } # seconds
-variable "rate_limit_form_requests" { type = number, default = 10 } # tighter cap for the abuse-prone form endpoints
-variable "enable_managed_waf" { type = bool, default = true }
-variable "enable_bot_fight" { type = bool, default = true }
-variable "enable_leaked_credentials" { type = bool, default = true } # managed-challenge known-leaked creds (Free: one field)
+variable "rate_limit_requests" {
+  type    = number
+  default = 20
+}
+# seconds
+variable "rate_limit_period" {
+  type    = number
+  default = 60
+}
+# tighter cap for the abuse-prone form endpoints
+variable "rate_limit_form_requests" {
+  type    = number
+  default = 10
+}
+variable "enable_managed_waf" {
+  type    = bool
+  default = true
+}
+variable "enable_bot_fight" {
+  type    = bool
+  default = true
+}
+# managed-challenge known-leaked creds (Free: one field)
+variable "enable_leaked_credentials" {
+  type    = bool
+  default = true
+}
 # Managed-challenge scraper/automation user-agents on content routes. OFF by default — a
 # public marketing site WANTS search bots (robots.txt handles AI-training opt-out), and a
 # broad UA rule risks false positives; turn on for a site under active scraping.
-variable "block_bad_bots" { type = bool, default = false }
-variable "enable_cache_rules" { type = bool, default = true }
-variable "enable_tiered_cache" { type = bool, default = true }
-variable "backup_retention_days" { type = number, default = 30 } # R2 backup lifecycle expiry (GDPR-bounded)
+variable "block_bad_bots" {
+  type    = bool
+  default = false
+}
+variable "enable_cache_rules" {
+  type    = bool
+  default = true
+}
+variable "enable_tiered_cache" {
+  type    = bool
+  default = true
+}
+# R2 backup lifecycle expiry (GDPR-bounded)
+variable "backup_retention_days" {
+  type    = number
+  default = 30
+}
 
 # ── Auto domain: attach the hostname to the Worker (CF makes DNS + cert) ──────
 resource "cloudflare_workers_custom_domain" "app" {
-  count       = var.attach_domain ? 1 : 0
-  account_id  = var.account_id
-  zone_id     = var.zone_id
-  hostname    = var.domain
-  service     = var.worker_name
-  environment = "production" # the CF-side Worker env; OpenNext deploys one Worker per wrangler --env
+  count      = var.attach_domain ? 1 : 0
+  account_id = var.account_id
+  zone_id    = var.zone_id
+  hostname   = var.domain
+  service    = var.worker_name
 }
 
 # ── Rate limit on /api/* — the guard's PRIMARY limiter ───────────────────────
@@ -86,6 +143,7 @@ resource "cloudflare_workers_custom_domain" "app" {
 # tighter cap, everything else under /api/* falls through to the general limit. Both key on
 # client IP + colo (the same trusted derivation the in-app `withGuard`/CSP-sink limiter uses).
 resource "cloudflare_ruleset" "rate_limit" {
+  count   = local.manage_zone ? 1 : 0
   zone_id = var.zone_id
   name    = "${var.worker_name}-ratelimit"
   kind    = "zone"
@@ -120,7 +178,7 @@ resource "cloudflare_ruleset" "rate_limit" {
 
 # ── Cloudflare Managed WAF ruleset ───────────────────────────────────────────
 resource "cloudflare_ruleset" "waf_managed" {
-  count   = var.enable_managed_waf ? 1 : 0
+  count   = local.manage_zone && var.enable_managed_waf ? 1 : 0
   zone_id = var.zone_id
   name    = "${var.worker_name}-waf"
   kind    = "zone"
@@ -147,7 +205,7 @@ resource "cloudflare_ruleset" "waf_managed" {
 # through to `User-agent: *`. That keeps the site accessible + citable but NOT used for
 # training. See docs/projects/web/website/seo/robots-and-environments.md.
 resource "cloudflare_bot_management" "bots" {
-  count      = var.enable_bot_fight ? 1 : 0
+  count      = local.manage_zone && var.enable_bot_fight ? 1 : 0
   zone_id    = var.zone_id
   fight_mode = true
   # Pin the AI-crawler settings instead of inheriting Cloudflare's zone defaults (new
@@ -180,6 +238,7 @@ resource "cloudflare_bot_management" "bots" {
 #   3. (opt-in) managed-challenge requests carrying known-leaked credentials
 # Uses only ends_with/contains/lower (no regex) to keep the expressions robust.
 resource "cloudflare_ruleset" "firewall_custom" {
+  count   = local.manage_zone ? 1 : 0
   zone_id = var.zone_id
   name    = "${var.worker_name}-firewall"
   kind    = "zone"
@@ -214,7 +273,7 @@ resource "cloudflare_ruleset" "firewall_custom" {
 
 # ── Cache Rules: immutable static at the edge, never cache dynamic ───────────
 resource "cloudflare_ruleset" "cache" {
-  count   = var.enable_cache_rules ? 1 : 0
+  count   = local.manage_zone && var.enable_cache_rules ? 1 : 0
   zone_id = var.zone_id
   name    = "${var.worker_name}-cache"
   kind    = "zone"
@@ -243,23 +302,26 @@ resource "cloudflare_ruleset" "cache" {
 
 # ── Tiered Cache — funnel misses through one upper-tier PoP near the Worker ───
 resource "cloudflare_tiered_cache" "tc" {
-  count   = var.enable_tiered_cache ? 1 : 0
+  count   = local.manage_zone && var.enable_tiered_cache ? 1 : 0
   zone_id = var.zone_id
   value   = "on"
 }
 
 # ── Zone hardening ───────────────────────────────────────────────────────────
 resource "cloudflare_zone_setting" "ssl" {
+  count      = local.manage_zone ? 1 : 0
   zone_id    = var.zone_id
   setting_id = "ssl"
   value      = "strict"
 }
 resource "cloudflare_zone_setting" "min_tls" {
+  count      = local.manage_zone ? 1 : 0
   zone_id    = var.zone_id
   setting_id = "min_tls_version"
   value      = "1.2"
 }
 resource "cloudflare_zone_setting" "always_https" {
+  count      = local.manage_zone ? 1 : 0
   zone_id    = var.zone_id
   setting_id = "always_use_https"
   value      = "on"
@@ -300,7 +362,6 @@ resource "cloudflare_r2_bucket" "db_backup" {
 #   zone_id     = var.zone_id
 #   hostname    = "cdn.${var.domain}"   # e.g. cdn.example.com / cdn-staging.example.com
 #   service     = var.worker_name
-#   environment = "production"
 # }
 #
 # ── Optional: Cloudflare Image Transformations for FIRST-PARTY images (NOT
@@ -308,35 +369,20 @@ resource "cloudflare_r2_bucket" "db_backup" {
 #    a `/cdn-cgi/image/width=<w>,quality=<q>,format=auto,fit=scale-down/<src>` loader.
 #    "on" = same-origin only; "open" = any origin (higher cost/abuse surface).
 # resource "cloudflare_zone_setting" "image_resizing" {
+#   count = local.manage_zone ? 1 : 0 # zone-wide: only the zone owner
 #   zone_id    = var.zone_id
 #   setting_id = "image_resizing"
 #   value      = "on"
 # }
 #
-# ── Zero Trust Access — gate the ADMIN app behind SSO (the registry says: add a
-#    Cloudflare Access gate before shipping admin). This block belongs in the ADMIN
-#    app's OWN infra/cloudflare (copy this dir there); shown here as the reference.
-#    Protects `admin.<domain>` — only the listed emails/domain reach the Worker.
-# resource "cloudflare_zero_trust_access_application" "admin" {
-#   account_id       = var.account_id
-#   zone_id          = var.zone_id
-#   name             = "${var.worker_name}-admin"
-#   domain           = "admin.${var.domain}"
-#   type             = "self_hosted"
-#   session_duration = "24h"
-# }
-# resource "cloudflare_zero_trust_access_policy" "admin_allow" {
-#   account_id     = var.account_id
-#   application_id = cloudflare_zero_trust_access_application.admin.id
-#   name           = "team-only"
-#   decision       = "allow"
-#   precedence     = 1
-#   include        = [{ email_domain = { domain = "your-company.com" } }]
-#   # or: include = [{ email = { email = "you@your-company.com" } }]
-# }
+# ── Zero Trust Access — the SSO gate lives in the ADMIN app's own stack
+#    (code/projects/web/surfaces/admin/infra/cloudflare/main.tf, provider-v5 syntax: an
+#    account-level policy attached to the application by id). Copy from there to gate
+#    another surface.
 #
 # ── Redirect rule — www → apex (or apex → www). Single-redirect, at the edge.
 # resource "cloudflare_ruleset" "redirect" {
+#   count = local.manage_zone ? 1 : 0 # zone-wide: only the zone owner
 #   zone_id = var.zone_id
 #   name    = "${var.worker_name}-redirects"
 #   kind    = "zone"

@@ -64,10 +64,13 @@ Backing data/storage (no public URL): D1 `indiecrafts-<env>-db-audit` (audit) + 
 
 ## Phase 1 — dev (do this first — `*.workers.dev`, lowest risk)
 
-1. **Provision infra** (D1 `AUDIT_DB` + `MAIN_DB`, KV, R2 `EXPORT_BUCKET`, queues):
-   - `pnpm infra:shared:api:init` then `pnpm infra:shared:api:apply:dev`
-   - `pnpm infra:web:website:apply:dev` · `pnpm setup:web:website:kv`
-   - Wire the bindings into `wrangler.toml`: `node code/shared/scripts/infra/bindings.mjs` (paste the emitted blocks).
+1. **Provision the data resources** (D1 `AUDIT_DB` + `MAIN_DB`, KV, queues) — wrangler, not Terraform:
+   - `node code/shared/scripts/infra/bindings.mjs <app> dev <kv|d1|queue> <BINDING>` creates each one and
+     prints the `wrangler.toml` block to paste (D1 is pinned to the EU, `--location weur`).
+   - `pnpm setup:web:website:kv` · R2 buckets with `wrangler r2 bucket create …` (see the findings below).
+   - Terraform owns only the **edge** (custom domain, zone rules, Turnstile). Dev runs on
+     `*.workers.dev`, so `pnpm infra:web:website:apply:dev` creates just the Turnstile widget and the api
+     stack creates nothing in dev. Before any `apply`, `pnpm check:infra` validates and mock-plans every stack.
 2. **Set secrets** — fill each Worker's `.dev.vars` (from its `.dev.vars.example`) then bulk-push:
    `pnpm secrets:sync:shared:api:dev` (`APP_API_TOKEN`, `IP_HASH_SALT`, `SANITY_API_READ_TOKEN`, …).
    Website: `pnpm secrets:sync:web:website:dev`. (Or one-off: `wrangler secret put <NAME> --env dev`.)

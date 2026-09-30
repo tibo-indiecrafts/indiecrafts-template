@@ -15,7 +15,7 @@
 #   pnpm infra:web:storybook:apply:prod    # provision
 #
 # Written for the cloudflare provider ~> 5 — run `terraform init && validate` against the
-# pinned version before the first apply. Full runbook → code/docs/infra/cloudflare-iac.md.
+# pinned version before the first apply. Full runbook → code/docs/shared/infra/cloudflare-iac.md.
 
 terraform {
   required_version = ">= 1.6"
@@ -28,30 +28,51 @@ terraform {
 }
 
 # Reads CLOUDFLARE_API_TOKEN from the environment (scoped: Zone DNS/Cache edit + Account
-# Workers edit). See docs/infra/cloudflare-iac.md.
+# Workers edit). See code/docs/shared/infra/cloudflare-iac.md.
 provider "cloudflare" {}
 
 # ── Inputs (per env — set in env/<env>.tfvars) ───────────────────────────────
 variable "account_id" { type = string }
-variable "zone_id" { type = string, default = "" }
+variable "zone_id" {
+  type    = string
+  default = ""
+}
 variable "worker_name" { type = string } # matches wrangler `name` for this env (indiecrafts-<env>-web-tools-storybook)
 variable "env" { type = string }         # dev | staging | prod
-variable "domain" { type = string, default = "" } # e.g. storybook.example.com
-variable "attach_domain" { type = bool, default = true } # false for dev/workers.dev
+# e.g. storybook.example.com
+variable "domain" {
+  type    = string
+  default = ""
+}
+# false for dev/workers.dev
+variable "attach_domain" {
+  type    = bool
+  default = true
+}
+variable "manage_zone" {
+  # A zone holds ONE of each zone-wide setting (entrypoint rulesets, bot management, tiered
+  # cache, TLS). Exactly one stack × env per zone sets this true; the others on that zone
+  # (subdomains, staging next to prod) set it false and inherit the owner's rules.
+  type    = bool
+  default = true
+}
+locals {
+  # Zone-wide resources need a real zone: none on *.workers.dev (attach_domain = false).
+  manage_zone = var.attach_domain && var.manage_zone
+}
 
 # ── Auto domain: attach storybook.<root> to the Worker (CF makes DNS + cert) ──
 resource "cloudflare_workers_custom_domain" "storybook" {
-  count       = var.attach_domain ? 1 : 0
-  account_id  = var.account_id
-  zone_id     = var.zone_id
-  hostname    = var.domain
-  service     = var.worker_name
-  environment = "production" # the CF-side Worker env; wrangler deploys one Worker per --env
+  count      = var.attach_domain ? 1 : 0
+  account_id = var.account_id
+  zone_id    = var.zone_id
+  hostname   = var.domain
+  service    = var.worker_name
 }
 
 # ── Cache rule: immutable hashed assets at the edge ──────────────────────────
 resource "cloudflare_ruleset" "cache" {
-  count   = var.attach_domain ? 1 : 0
+  count   = local.manage_zone ? 1 : 0
   zone_id = var.zone_id
   name    = "${var.worker_name}-cache"
   kind    = "zone"
@@ -71,19 +92,19 @@ resource "cloudflare_ruleset" "cache" {
 
 # ── Zone hardening ───────────────────────────────────────────────────────────
 resource "cloudflare_zone_setting" "ssl" {
-  count      = var.attach_domain ? 1 : 0
+  count      = local.manage_zone ? 1 : 0
   zone_id    = var.zone_id
   setting_id = "ssl"
   value      = "strict"
 }
 resource "cloudflare_zone_setting" "min_tls" {
-  count      = var.attach_domain ? 1 : 0
+  count      = local.manage_zone ? 1 : 0
   zone_id    = var.zone_id
   setting_id = "min_tls_version"
   value      = "1.2"
 }
 resource "cloudflare_zone_setting" "always_https" {
-  count      = var.attach_domain ? 1 : 0
+  count      = local.manage_zone ? 1 : 0
   zone_id    = var.zone_id
   setting_id = "always_use_https"
   value      = "on"

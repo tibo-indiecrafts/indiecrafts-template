@@ -41,4 +41,4 @@ create a zone).
 - **Validate before first apply** — `terraform init && validate` against the pinned provider. It has never
   been applied (tfvars are placeholders).
 - Registry: a row in `code/shared/scripts/lib/infra-registry.mjs` (altitude `global`). Full runbook →
-  `code/docs/infra/cloudflare-iac.md`.
+  `code/docs/shared/infra/cloudflare-iac.md`.

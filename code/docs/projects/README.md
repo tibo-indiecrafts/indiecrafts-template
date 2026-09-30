@@ -23,7 +23,7 @@ _how to build_ lives in its `CLAUDE.md`.
   (`pages`) are app-owned in `src/config` (imported via `@/config`); the shared
   [`@indiecrafts/packages-shared-config`](/packages/shared/config) holds only primitives, so a second app ships its own look
   and feature set. See [Feature flags](/projects/web/website/config/feature-flags).
-- **Its own Worker + domain.** One Cloudflare Worker per app × env (`<app>-<env>`), one zone per app.
+- **Its own Worker + domain.** One Cloudflare Worker per app × env (`<app>-<env>`); apps can share a zone, with one owner per zone (`manage_zone`).
   See [Cloudflare as code](/shared/infra/cloudflare-iac).
 
 ## The apps

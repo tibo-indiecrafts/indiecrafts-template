@@ -63,14 +63,14 @@ Toggle any off per env via the `enable_*` variables in the tfvars.
 
 **Commented optionals in `main.tf`** (uncomment + fill to activate — configure a maximum at the edge):
 
-| Resource                                               | For                                                                                        |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| `cloudflare_workers_custom_domain` (cdn)               | a first-party asset CDN on `cdn.<domain>` (`assetPrefix`)                                  |
-| `cloudflare_zone_setting` (image_resizing)             | CF Image Transformations for first-party images                                            |
-| `cloudflare_zero_trust_access_application` + `_policy` | **gate the admin app behind SSO** — copy into admin's own `infra/cloudflare` when it ships |
-| `cloudflare_ruleset` (dynamic_redirect)                | www → apex (single redirect at the edge)                                                   |
-| `cloudflare_dns_record`                                | extra records (SPF/TXT/verification) when CF isn't already fronting the apex               |
-| `cloudflare_logpush_job`                               | ship HTTP/Worker logs to R2/SIEM (retention / compliance)                                  |
+| Resource                                               | For                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cloudflare_workers_custom_domain` (cdn)               | a first-party asset CDN on `cdn.<domain>` (`assetPrefix`)                                                                                                                                                                                                                                   |
+| `cloudflare_zone_setting` (image_resizing)             | CF Image Transformations for first-party images                                                                                                                                                                                                                                             |
+| `cloudflare_zero_trust_access_application` + `_policy` | **admin only — SSO gate** on the admin host. Provider v5: the policy is a reusable **account-level** object; the application (account-scoped — `account_id` or `zone_id`, never both) attaches it with `policies = [{ id, precedence }]`. Copy from the admin stack to gate another surface |
+| `cloudflare_ruleset` (dynamic_redirect)                | www → apex (single redirect at the edge)                                                                                                                                                                                                                                                    |
+| `cloudflare_dns_record`                                | extra records (SPF/TXT/verification) when CF isn't already fronting the apex                                                                                                                                                                                                                |
+| `cloudflare_logpush_job`                               | ship HTTP/Worker logs to R2/SIEM (retention / compliance)                                                                                                                                                                                                                                   |
 
 The Worker's own bindings (KV · R2 · D1 · queues · services · Durable Objects · AI · Hyperdrive · placement ·
 limits · tail) live in `wrangler.toml`, not here — the **full commented reference is `code/shared/api/wrangler.toml`**.
@@ -115,28 +115,49 @@ To add another app, copy the closest stack dir, point the tfvars at that app's W
 add `infra:<scope>:<app>:<action>:<env>` delegators (mirroring the existing ones). `main.tf` is
 self-contained (no shared module).
 
-> **⚠ One app = one Cloudflare zone (the supported model).** The zone-scoped resources — SSL/TLS/HTTPS
-> settings, Bot Fight, Tiered Cache, **and the ruleset entrypoints** (a zone has exactly one ruleset per
-> phase: rate-limit, WAF, firewall, cache) — are keyed by `zone_id`, not `worker_name`. Each stack owns
-> a full set, so **give every surface its own zone/domain** and each stack manages its zone cleanly.
->
-> If instead several surfaces are **subdomains of one apex zone** (`app.`/`admin.`/`storybook.`/
-> `api.example.com` all on `example.com`), their states would **fight** over those single-per-zone objects.
-> The `enable_managed_waf`/`enable_bot_fight`/`enable_cache_rules`/`enable_tiered_cache` toggles (default
-> on) turn off four of them, but the **rate-limit + custom-firewall rulesets are always created** and would
-> still collide. Full shared-zone support needs a `manage_zone_resources` gate on those rulesets — a known
-> **TODO** (`@debt MIGRATION`); until then, use one zone per surface, or point the subdomain stacks at a
-> zone the `website` stack does not manage.
+### One owner per zone
+
+The zone-wide resources are **singletons**: a zone has exactly one ruleset per phase (rate-limit, WAF,
+custom firewall, cache), one bot-management config, one Tiered Cache setting and one value per zone
+setting (SSL, min TLS, Always-HTTPS). They are keyed by `zone_id`, not `worker_name`, so two stacks (or
+two envs of one stack) that both create them on the same zone fight over them.
+
+Every stack gates them behind `local.manage_zone = var.attach_domain && var.manage_zone`
+(`manage_zone` defaults to `true`). Exactly **one stack × env per zone** keeps it `true`; every other
+stack on that zone sets `manage_zone = false` in its tfvars and inherits the owner's rules. The template
+ships:
+
+| Zone              | Owner (`manage_zone = true`) | Same zone, `manage_zone = false`                                            |
+| ----------------- | ---------------------------- | --------------------------------------------------------------------------- |
+| `example.com`     | `website` / prod             | `website` / staging · `admin` + `app` / staging + prod · `storybook` / prod |
+| `indiecrafts.dev` | `api` / prod                 | —                                                                           |
+
+The owner's rules are path-based, not host-based, so they cover every host on the zone: the `/api/*`
+rate limits, WAF, sensitive-path block, leaked-credential check, Bot Fight and TLS apply to `admin.` and
+`app.` too. Two stack-specific rules do not follow a non-owner: the api's `/v1/` edge rate limit (the api
+Worker already enforces its native `RATELIMIT` binding) and storybook's `/assets/` cache rule (Workers
+Assets caches them anyway). Give a surface its own zone and `manage_zone = true` to keep its own rules.
+`pnpm test:scripts` fails if two stack × env pairs own one zone, or a zone singleton is not gated.
 
 ## State
 
 Local per-workspace state (`terraform.tfstate.d/<env>/`, gitignored — it holds the Turnstile
 secret). For a team, switch to **remote state** (Cloudflare **R2** via the Terraform `s3` backend,
-or Terraform Cloud) — uncomment the `backend` block in `code/projects/web/surfaces/website/infra/main.tf`. Commit `.tf`, `.tfvars`
+or Terraform Cloud) — uncomment the `backend` block in the stack's `infra/cloudflare/main.tf`. Commit `.tf`, `.tfvars`
 (placeholders), and `.terraform.lock.hcl`; never state.
 
 ## Verify
 
-`pnpm infra:web:website:init` then `plan` — Terraform validates the schema against the pinned provider (run
-`terraform -chdir=… validate` too; provider schemas evolve — adjust any renamed argument). A green
-`plan` shows exactly what will change before `apply`.
+**`pnpm check:infra`** (in `pnpm verify` and the CI `infra` job) checks every stack in the registry,
+creds-free, in a temp copy: `terraform fmt`, `validate` (a warning fails too — provider deprecations
+surface early), then a `plan` for each env's tfvars against a **mocked provider** (`terraform test` +
+`mock_provider`, with format-valid dummy `account_id`/`zone_id` since the tfvars ship them blank). It
+catches HCL errors, provider-schema changes and bad tfvars values before anyone runs a real plan.
+Locally it skips when `terraform` is not installed; in CI it is required (pinned `1.16.4`).
+
+Each stack commits its **`.terraform.lock.hcl`** — the provider version (`cloudflare/cloudflare` 5.26)
+and its hashes for macOS (arm64 + Intel) and Linux CI. After a provider bump, refresh it with
+`terraform -chdir=<stack> providers lock -platform=darwin_arm64 -platform=darwin_amd64 -platform=linux_amd64`.
+
+Then the real run: `pnpm infra:<scope>:<app>:init`, `plan:<env>` (needs `CLOUDFLARE_API_TOKEN`) — a
+green `plan` shows exactly what will change before `apply`.

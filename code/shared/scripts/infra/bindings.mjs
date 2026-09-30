@@ -6,8 +6,8 @@
 // short `<binding>-<env>` (their `database_name` in wrangler.toml is authoritative). Secrets
 // are NOT bindings — use `wrangler secret put <NAME> --env <env>`.
 //
-//   node scripts/setup-bindings.mjs <app> <dev|staging|prod> <kv|d1|queue> <BINDING_NAME>
-//   e.g. node scripts/setup-bindings.mjs workers prod kv JOBS_KV
+//   node code/shared/scripts/infra/bindings.mjs <app> <dev|staging|prod> <kv|d1|queue> <BINDING_NAME>
+//   e.g. node code/shared/scripts/infra/bindings.mjs workers prod kv JOBS_KV
 
 import { spawnSync } from "node:child_process";
 import { APPS, resourceName } from "../lib/apps.mjs";
@@ -22,7 +22,7 @@ if (
   !binding
 ) {
   console.error(
-    "Usage: setup-bindings.mjs <app> <dev|staging|prod> <kv|d1|queue> <BINDING_NAME>",
+    "Usage: node code/shared/scripts/infra/bindings.mjs <app> <dev|staging|prod> <kv|d1|queue> <BINDING_NAME>",
   );
   process.exit(1);
 }
@@ -39,7 +39,8 @@ const kvName = appRow
   : `${binding}_${env}`;
 const create = {
   kv: ["kv", "namespace", "create", kvName],
-  d1: ["d1", "create", resource],
+  // D1's region is fixed at creation — pin it to the EU (the GDPR design keeps every D1 there).
+  d1: ["d1", "create", resource, "--location", "weur"],
   queue: ["queues", "create", resource],
 }[kind];
 const displayName = kind === "kv" ? kvName : resource;

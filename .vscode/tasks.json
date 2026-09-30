@@ -230,6 +230,14 @@
       "problemMatcher": []
     },
     {
+      "label": "check:infra",
+      "detail": "Terraform gate: fmt + validate + a mock-provider plan per env, every Cloudflare stack",
+      "type": "shell",
+      "command": "pnpm check:infra",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
       "label": "tokens:build",
       "detail": "regenerate design tokens (globals.css + native)",
       "type": "shell",

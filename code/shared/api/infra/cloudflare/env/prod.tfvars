@@ -13,10 +13,10 @@
 #  5. Deploy the Worker first, so the custom domain has a service to bind to:
 #       pnpm deploy:shared:api:prod
 #  6. Provision the edge:
-#       pnpm infra:api:plan:prod     # review the diff
-#       pnpm infra:api:apply:prod    # creates updates.indiecrafts.dev → api Worker + cert
+#       pnpm infra:shared:api:plan:prod     # review the diff
+#       pnpm infra:shared:api:apply:prod    # creates updates.indiecrafts.dev → api Worker + cert
 #  The Worker is then reachable at https://updates.indiecrafts.dev (surfaces read it as
-#  their API_URL). Full runbook → code/docs/infra/cloudflare-iac.md.
+#  their API_URL). Full runbook → code/docs/shared/infra/cloudflare-iac.md.
 # ─────────────────────────────────────────────────────────────────────────────
 env           = "prod"
 worker_name   = "indiecrafts-prod-shared-api"
@@ -24,6 +24,7 @@ attach_domain = true
 account_id    = "98ca87410b95e03a60f646d95e154266" # this Cloudflare account
 zone_id       = ""                                 # REQUIRED — Zone ID of indiecrafts.dev (step 2)
 domain        = "updates.indiecrafts.dev"          # the production API host (inside the zone above)
+manage_zone   = true                               # the only stack on indiecrafts.dev — it owns that zone's rules. Set false if the api moves under the website zone
 
 # Optional edge tunables — main.tf defaults (uncomment here to override):
 # rate_limit_requests       = 60

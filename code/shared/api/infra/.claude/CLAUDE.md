@@ -12,7 +12,7 @@ the per-env variables, and the edge resources directly (no shared module).
 
 - `main.tf` — provider + variables + edge resources (custom domain · rate-limit · WAF · Bot Fight ·
   leaked-credentials · zone hardening) + the `domain` output. The zone-scoped resources are gated on
-  `attach_domain`, so they stay **inert** until the api has a real zone.
+  `local.manage_zone` (`attach_domain && manage_zone`), so they stay **inert** until the api owns a real zone.
 - `env/{dev,staging,prod}.tfvars` — the per-env **values** (`account_id`, `zone_id`, `domain`,
   `worker_name`). dev/staging run on `*.workers.dev` (`attach_domain = false`); prod attaches `api.<root>`.
 
@@ -31,7 +31,11 @@ pnpm infra:shared:api:apply:<env>     # provision
   blunt backstop that switches on once a zone is attached.
 - **NEVER commit state** — `terraform.tfstate*` (gitignored here).
 - **`pnpm project:rename <slug>`** rewrites `worker_name` in these tfvars (matches the wrangler names).
-- **Validate before first apply** — `terraform init && validate` against the pinned provider. It has
-  never been applied (tfvars are placeholders).
+- **`pnpm check:infra` is the gate** (in `pnpm verify` + CI): `fmt` · `validate` (warnings fail) · a
+  mock-provider `plan` per env, creds-free. Commit `.terraform.lock.hcl` (pins the provider + darwin/linux
+  hashes; refresh with `terraform providers lock -platform=darwin_arm64 -platform=darwin_amd64 -platform=linux_amd64`).
+- **One owner per zone** — zone-wide resources (entrypoint rulesets · bot management · tiered cache · TLS
+  settings) sit behind `local.manage_zone` (`attach_domain && manage_zone`). The prod website owns the
+  shared zone; staging and the subdomain stacks set `manage_zone = false` in their tfvars.
 - Registry: a row in [`scripts/lib/infra-registry.mjs`](../../../scripts/lib/infra-registry.mjs). Full
-  runbook → [`code/docs/infra/cloudflare-iac.md`](../../../../docs/shared/infra/cloudflare-iac.md).
+  runbook → [`code/docs/shared/infra/cloudflare-iac.md`](../../../../docs/shared/infra/cloudflare-iac.md).

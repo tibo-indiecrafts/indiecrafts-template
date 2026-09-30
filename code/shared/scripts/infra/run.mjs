@@ -4,7 +4,7 @@
 // `provider`, isolates each env's state in its own Terraform workspace, and
 // passes `env/<env>.tfvars`.
 //
-//   node scripts/infra.mjs <name> <init|plan|apply|destroy|output> <dev|staging|prod>
+//   node code/shared/scripts/infra/run.mjs <name> <init|plan|apply|destroy|output> <dev|staging|prod>
 //
 // <name> matches an INFRA row (e.g. "website"). Falls back to an app's co-located
 // `<app.dir>/infra/cloudflare` for an app not yet listed in the infra registry.
@@ -26,7 +26,7 @@ if (
   (action !== "init" && !ENVS.includes(env))
 ) {
   console.error(
-    "usage: node scripts/infra.mjs <name> <init|plan|apply|destroy|output> <dev|staging|prod>",
+    "usage: node code/shared/scripts/infra/run.mjs <name> <init|plan|apply|destroy|output> <dev|staging|prod>",
   );
   process.exit(1);
 }
@@ -53,7 +53,7 @@ if (!existsSync(dir)) {
 }
 if (!process.env.CLOUDFLARE_API_TOKEN) {
   console.error(
-    "CLOUDFLARE_API_TOKEN is required — a scoped token (Zone: DNS/Cache/WAF edit,\nAccount: Workers/Turnstile edit). See docs/infra/cloudflare-iac.md.",
+    "CLOUDFLARE_API_TOKEN is required — a scoped token (Zone: DNS/Cache/WAF edit,\nAccount: Workers/Turnstile edit). See code/docs/shared/infra/cloudflare-iac.md.",
   );
   process.exit(1);
 }

@@ -18,6 +18,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ## [Unreleased]
 
+- **The Cloudflare Terraform stacks are valid, gated and checked.** Five of the six stacks (website ·
+  api · admin · app · storybook) did not parse — their variables used one-line blocks with two
+  arguments, which HCL rejects — so no `init`/`plan` could run. They are rewritten, the provider-v5
+  breaks are fixed (the admin Zero Trust Access policy is now an account-level policy the application
+  attaches by id; the deprecated `environment` on custom domains is gone), and each stack commits a
+  `.terraform.lock.hcl` (cloudflare 5.26, macOS + Linux hashes). **One owner per zone:** zone-wide
+  singletons sit behind `local.manage_zone` (`attach_domain && manage_zone`) — the prod website owns
+  `example.com`, the prod api owns `indiecrafts.dev`, everything else on a zone sets `manage_zone = false`
+  (the documented shared-zone TODO), and dev no longer tries zone resources without a zone. New
+  **`pnpm check:infra`** (in `verify` + the CI `infra` job, which only covered the website before):
+  `fmt` · `validate` (warnings fail) · a mock-provider `plan` per env; `infra-registry.test.mjs` fails
+  on an ungated zone singleton or two owners of one zone. Also: `bindings.mjs` creates D1 in the EU
+  (`--location weur` — a bare create picks a nearby region, forever), and stale runbook commands and
+  doc paths are corrected. Detail → [Cloudflare IaC](./code/docs/shared/infra/cloudflare-iac.md).
 - **Removed the reserved `aws` + `vercel` infra-provider scaffold** — `cloudflare` is now the only IaC
   provider in the infra registry (`PROVIDERS` → `["cloudflare"]` in `code/shared/scripts/lib/infra-registry.mjs`,
   JSDoc + provider comment trimmed), the runner's unsupported-provider message is reworded

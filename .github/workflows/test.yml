@@ -172,22 +172,23 @@ jobs:
           base-ref: ${{ github.event.pull_request.base.sha || github.event.before }}
           head-ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-  # Terraform for the Cloudflare edge — `fmt` + `validate` on every PR. Creds-free
-  # (`init -backend=false`, no CF API call); `plan`/`apply` stay manual (they need
-  # CLOUDFLARE_API_TOKEN + state). Catches HCL / provider-schema errors before merge.
+  # Terraform for the Cloudflare edge — every stack in the infra registry: `fmt`, `validate`
+  # (warnings fail) and a `plan` per env against a MOCKED provider (`terraform test` +
+  # `mock_provider`). Creds-free (`init -backend=false`, no CF API call, no state); the real
+  # `plan`/`apply` stay manual (they need CLOUDFLARE_API_TOKEN + state). Plain node — the
+  # check imports only node built-ins, so no pnpm install.
   infra:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - uses: hashicorp/setup-terraform@v3
         with:
+          terraform_version: 1.16.4
           terraform_wrapper: false
-      - name: fmt + validate (website Cloudflare edge)
-        working-directory: code/projects/web/surfaces/website/infra/cloudflare
-        run: |
-          terraform fmt -check -recursive
-          terraform init -backend=false
-          terraform validate
+      - run: node code/shared/scripts/checks/infra.mjs
 
   # Validate each BARE Worker service's wrangler.toml + bundle its entry WITHOUT deploying
   # (no Cloudflare auth needed). The list comes from the registry (worker-cf services), so a

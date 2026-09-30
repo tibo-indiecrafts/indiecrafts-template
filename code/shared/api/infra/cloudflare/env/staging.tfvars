@@ -4,8 +4,8 @@ env           = "staging"
 worker_name   = "indiecrafts-staging-shared-api"
 attach_domain = false
 account_id    = "98ca87410b95e03a60f646d95e154266" # this Cloudflare account
-zone_id       = ""    # unused while attach_domain = false
-domain        = ""    # unused — staging stays on *.workers.dev
+zone_id       = ""                                 # unused while attach_domain = false
+domain        = ""                                 # unused — staging stays on *.workers.dev
 
 # Optional edge tunables — main.tf defaults (uncomment here to override):
 # rate_limit_requests       = 60

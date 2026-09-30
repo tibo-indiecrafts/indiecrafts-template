@@ -39,7 +39,11 @@ Needs a **scoped** `CLOUDFLARE_API_TOKEN` (Zone: DNS/Cache/WAF edit · Account: 
   `turnstile_secret` → `TURNSTILE_SECRET` (set via `pnpm secrets:sync:web:website:*`, never committed).
 - **`pnpm project:rename <slug>`** rewrites `worker_name` in these tfvars (matches the wrangler names) —
   don't hand-edit the stem.
-- **Validate before first apply** — `terraform init && validate` against the pinned provider; CF provider
-  resource schemas rename arguments between versions. It has never been applied (tfvars are placeholders).
-- Full runbook (token scopes, remote state, domain) → `code/docs/infra/cloudflare-iac.md`. Deploy model →
+- **`pnpm check:infra` is the gate** (in `pnpm verify` + CI): `fmt` · `validate` (warnings fail) · a
+  mock-provider `plan` per env, creds-free. Commit `.terraform.lock.hcl` (pins the provider + darwin/linux
+  hashes; refresh with `terraform providers lock -platform=darwin_arm64 -platform=darwin_amd64 -platform=linux_amd64`).
+- **One owner per zone** — zone-wide resources (entrypoint rulesets · bot management · tiered cache · TLS
+  settings) sit behind `local.manage_zone` (`attach_domain && manage_zone`). The prod website owns the
+  shared zone; staging and the subdomain stacks set `manage_zone = false` in their tfvars.
+- Full runbook (token scopes, remote state, domain) → `code/docs/shared/infra/cloudflare-iac.md`. Deploy model →
   `code/docs/shared/architecture/platform-deploy.md`.

@@ -18,7 +18,7 @@
 #   pnpm infra:api:apply:prod    # provision
 #
 # Written for the cloudflare provider ~> 5 — run `terraform init && validate` against the
-# pinned version before the first apply. Full runbook → code/docs/infra/cloudflare-iac.md.
+# pinned version before the first apply. Full runbook → code/docs/shared/infra/cloudflare-iac.md.
 
 terraform {
   required_version = ">= 1.6"
@@ -31,37 +31,74 @@ terraform {
 }
 
 # Reads CLOUDFLARE_API_TOKEN from the environment (scoped: Zone DNS/WAF edit + Account
-# Workers edit). See docs/infra/cloudflare-iac.md.
+# Workers edit). See code/docs/shared/infra/cloudflare-iac.md.
 provider "cloudflare" {}
 
 # ── Inputs (per env — set in env/<env>.tfvars) ───────────────────────────────
 variable "account_id" { type = string }
-variable "zone_id" { type = string, default = "" }
+variable "zone_id" {
+  type    = string
+  default = ""
+}
 variable "worker_name" { type = string } # matches wrangler `name` for this env (indiecrafts-<env>-shared-api)
 variable "env" { type = string }         # dev | staging | prod
-variable "domain" { type = string, default = "" } # e.g. api.example.com
-variable "attach_domain" { type = bool, default = true } # false for dev/workers.dev
+# e.g. api.example.com
+variable "domain" {
+  type    = string
+  default = ""
+}
+# false for dev/workers.dev
+variable "attach_domain" {
+  type    = bool
+  default = true
+}
+variable "manage_zone" {
+  # A zone holds ONE of each zone-wide setting (entrypoint rulesets, bot management, tiered
+  # cache, TLS). Exactly one stack × env per zone sets this true; the others on that zone
+  # (subdomains, staging next to prod) set it false and inherit the owner's rules.
+  type    = bool
+  default = true
+}
+locals {
+  # Zone-wide resources need a real zone: none on *.workers.dev (attach_domain = false).
+  manage_zone = var.attach_domain && var.manage_zone
+}
 # Edge tunables — sensible defaults; override in tfvars. The inline guard is the primary
 # limiter, so the zone limit is generous (a DDoS backstop, not the per-endpoint gate).
-variable "rate_limit_requests" { type = number, default = 60 }
-variable "rate_limit_period" { type = number, default = 60 } # seconds
-variable "enable_managed_waf" { type = bool, default = true }
-variable "enable_bot_fight" { type = bool, default = true }
-variable "enable_leaked_credentials" { type = bool, default = true }
+variable "rate_limit_requests" {
+  type    = number
+  default = 60
+}
+# seconds
+variable "rate_limit_period" {
+  type    = number
+  default = 60
+}
+variable "enable_managed_waf" {
+  type    = bool
+  default = true
+}
+variable "enable_bot_fight" {
+  type    = bool
+  default = true
+}
+variable "enable_leaked_credentials" {
+  type    = bool
+  default = true
+}
 
 # ── Auto domain: attach api.<root> to the Worker (CF makes DNS + cert) ────────
 resource "cloudflare_workers_custom_domain" "api" {
-  count       = var.attach_domain ? 1 : 0
-  account_id  = var.account_id
-  zone_id     = var.zone_id
-  hostname    = var.domain
-  service     = var.worker_name
-  environment = "production" # the CF-side Worker env; wrangler deploys one Worker per --env
+  count      = var.attach_domain ? 1 : 0
+  account_id = var.account_id
+  zone_id    = var.zone_id
+  hostname   = var.domain
+  service    = var.worker_name
 }
 
 # ── Rate limit on /v1/* — DEFENCE IN DEPTH (the inline guard is the primary) ──
 resource "cloudflare_ruleset" "rate_limit" {
-  count   = var.attach_domain ? 1 : 0
+  count   = local.manage_zone ? 1 : 0
   zone_id = var.zone_id
   name    = "${var.worker_name}-ratelimit"
   kind    = "zone"
@@ -82,7 +119,7 @@ resource "cloudflare_ruleset" "rate_limit" {
 
 # ── Cloudflare Managed WAF ruleset ───────────────────────────────────────────
 resource "cloudflare_ruleset" "waf_managed" {
-  count   = var.enable_managed_waf && var.attach_domain ? 1 : 0
+  count   = local.manage_zone && var.enable_managed_waf ? 1 : 0
   zone_id = var.zone_id
   name    = "${var.worker_name}-waf"
   kind    = "zone"
@@ -101,7 +138,7 @@ resource "cloudflare_ruleset" "waf_managed" {
 # JSON API (not indexable content), but that toggle would also block legit AI search/fetch
 # agents. AI-training opt-out for the CONTENT site is handled by the website's robots.txt.
 resource "cloudflare_bot_management" "bots" {
-  count      = var.enable_bot_fight && var.attach_domain ? 1 : 0
+  count      = local.manage_zone && var.enable_bot_fight ? 1 : 0
   zone_id    = var.zone_id
   fight_mode = true
   # Pin the AI-crawler settings instead of inheriting Cloudflare's zone defaults (new
@@ -117,7 +154,7 @@ resource "cloudflare_bot_management" "bots" {
 # Managed-challenge any request Cloudflare flags as carrying known-breached credentials.
 # Requires leaked-credentials DETECTION enabled on the zone first (Security → Settings).
 resource "cloudflare_ruleset" "leaked_credentials" {
-  count   = var.enable_leaked_credentials && var.attach_domain ? 1 : 0
+  count   = local.manage_zone && var.enable_leaked_credentials ? 1 : 0
   zone_id = var.zone_id
   name    = "${var.worker_name}-leaked-creds"
   kind    = "zone"
@@ -132,19 +169,19 @@ resource "cloudflare_ruleset" "leaked_credentials" {
 
 # ── Zone hardening ───────────────────────────────────────────────────────────
 resource "cloudflare_zone_setting" "ssl" {
-  count      = var.attach_domain ? 1 : 0
+  count      = local.manage_zone ? 1 : 0
   zone_id    = var.zone_id
   setting_id = "ssl"
   value      = "strict"
 }
 resource "cloudflare_zone_setting" "min_tls" {
-  count      = var.attach_domain ? 1 : 0
+  count      = local.manage_zone ? 1 : 0
   zone_id    = var.zone_id
   setting_id = "min_tls_version"
   value      = "1.2"
 }
 resource "cloudflare_zone_setting" "always_https" {
-  count      = var.attach_domain ? 1 : 0
+  count      = local.manage_zone ? 1 : 0
   zone_id    = var.zone_id
   setting_id = "always_use_https"
   value      = "on"

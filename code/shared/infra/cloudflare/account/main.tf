@@ -14,7 +14,7 @@
 #   pnpm infra:shared:account:apply:prod    # provision
 #
 # Written for the cloudflare provider ~> 5 — run `terraform init && validate` against the
-# pinned version before the first apply. Full runbook → code/docs/infra/cloudflare-iac.md.
+# pinned version before the first apply. Full runbook → code/docs/shared/infra/cloudflare-iac.md.
 
 terraform {
   required_version = ">= 1.6"
@@ -28,7 +28,7 @@ terraform {
 
 # Reads CLOUDFLARE_API_TOKEN from the environment. For account-altitude work the token needs
 # ACCOUNT-level scopes for whatever you enable below (e.g. Zone: Edit to create a zone). See
-# docs/infra/cloudflare-iac.md.
+# code/docs/shared/infra/cloudflare-iac.md.
 provider "cloudflare" {}
 
 # ── Inputs (per env — set in env/<env>.tfvars) ───────────────────────────────

@@ -2,9 +2,9 @@
 env               = "prod"
 worker_name       = "indiecrafts-prod-web-surfaces-website"
 attach_domain     = true
-account_id        = ""              # REQUIRED
-zone_id           = ""              # REQUIRED (the domain's zone)
-domain            = "example.com"   # REQUIRED — your production host
+account_id        = ""            # REQUIRED
+zone_id           = ""            # REQUIRED (the domain's zone)
+domain            = "example.com" # REQUIRED — your production host
 turnstile_domains = ["example.com", "www.example.com"]
 
 # Optional edge tunables — module defaults (uncomment here AND in main.tf to override):

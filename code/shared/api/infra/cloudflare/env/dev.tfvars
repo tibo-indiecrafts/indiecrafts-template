@@ -3,10 +3,10 @@
 # `project:rename <slug>` rewrites `worker_name` like it does the wrangler names.
 env           = "dev"
 worker_name   = "indiecrafts-dev-shared-api"
-attach_domain = false # dev runs on *.workers.dev — no custom domain
+attach_domain = false                              # dev runs on *.workers.dev — no custom domain
 account_id    = "98ca87410b95e03a60f646d95e154266" # this Cloudflare account
-zone_id       = ""    # unused while attach_domain = false
-domain        = ""    # unused — dev stays on *.workers.dev
+zone_id       = ""                                 # unused while attach_domain = false
+domain        = ""                                 # unused — dev stays on *.workers.dev
 
 # Optional edge tunables — main.tf defaults (uncomment here to override):
 # rate_limit_requests       = 60

@@ -15,7 +15,7 @@ the per-env variables, and the edge resources directly (no shared module).
 
 - `main.tf` — provider + variables + edge resources (custom domain · immutable-asset cache rule · zone
   hardening [SSL strict · min TLS 1.2 · Always-HTTPS]) + the `domain` output. The zone-scoped resources are
-  gated on `attach_domain`, so they stay **inert** until storybook has a real zone. **Commented** optional:
+  gated on `local.manage_zone` (`attach_domain && manage_zone`), so they stay **inert** until storybook owns a real zone. **Commented** optional:
   a remote-state backend.
 - `env/{dev,staging,prod}.tfvars` — the per-env **values** (`account_id`, `zone_id`, `domain`,
   `worker_name`). `dev` runs on `*.workers.dev` (`attach_domain = false`); staging + prod attach a custom domain.
@@ -35,7 +35,11 @@ pnpm infra:web:storybook:apply:<env>     # provision
   don't hand-edit the stem.
 - **Keep it minimal** — this is a static gallery. Do not copy the app stacks' WAF/rate-limit/Turnstile here;
   add a resource only if the gallery genuinely needs it.
-- **Validate before first apply** — `terraform init && validate` against the pinned provider. It has never
-  been applied (tfvars are placeholders).
+- **`pnpm check:infra` is the gate** (in `pnpm verify` + CI): `fmt` · `validate` (warnings fail) · a
+  mock-provider `plan` per env, creds-free. Commit `.terraform.lock.hcl` (pins the provider + darwin/linux
+  hashes; refresh with `terraform providers lock -platform=darwin_arm64 -platform=darwin_amd64 -platform=linux_amd64`).
+- **One owner per zone** — zone-wide resources (entrypoint rulesets · bot management · tiered cache · TLS
+  settings) sit behind `local.manage_zone` (`attach_domain && manage_zone`). The prod website owns the
+  shared zone; staging and the subdomain stacks set `manage_zone = false` in their tfvars.
 - Registry: a row in `code/shared/scripts/lib/infra-registry.mjs`. Full runbook →
-  `code/docs/infra/cloudflare-iac.md`. Deploy model → `code/docs/shared/architecture/platform-deploy.md`.
+  `code/docs/shared/infra/cloudflare-iac.md`. Deploy model → `code/docs/shared/architecture/platform-deploy.md`.

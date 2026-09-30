@@ -5,3 +5,4 @@ attach_domain = true
 account_id    = ""                      # REQUIRED
 zone_id       = ""                      # REQUIRED (the domain's zone)
 domain        = "storybook.example.com" # REQUIRED — your production host
+manage_zone   = false                   # a subdomain of the website zone — the prod website stack owns its zone-wide rules

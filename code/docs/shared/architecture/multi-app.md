@@ -115,8 +115,9 @@ app, shared runners dispatched by platform class, and CI that fans out from the 
 per-app root is **co-located with the app and self-contained** at `code/projects/<platform>/<kind>/<app>/infra/` (one
 `main.tf` with all edge resources inlined — no shared module), keyed by `worker_name`, state isolated per
 env workspace. A new app = copy `code/projects/web/surfaces/website/infra/` → `code/projects/<platform>/<kind>/<app>/infra/` + its tfvars +
-`infra:<app>:*` delegators. **One app = one Cloudflare zone** (the zone-level rules are singletons — see
-[Cloudflare IaC](/shared/infra/cloudflare-iac#add-app-2)). `pnpm project:rename <slug>` keeps the config
+`infra:<app>:*` delegators. **One owner per Cloudflare zone** (the zone-level rules are singletons): apps on subdomains of one zone
+set `manage_zone = false` and inherit the owner's rules — see
+[Cloudflare IaC](/shared/infra/cloudflare-iac#one-owner-per-zone). `pnpm project:rename <slug>` keeps the config
 prefix, the wrangler names, **and** the tfvars `worker_name` in sync.
 
 ## Where it stands

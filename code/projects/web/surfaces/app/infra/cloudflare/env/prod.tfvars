@@ -5,6 +5,7 @@ attach_domain     = true
 account_id        = ""                # REQUIRED
 zone_id           = ""                # REQUIRED (the domain's zone)
 domain            = "app.example.com" # REQUIRED — your production host
+manage_zone       = false             # a subdomain of the website zone — the prod website stack owns its zone-wide rules
 turnstile_domains = ["app.example.com"]
 
 # Optional edge tunables — module defaults (uncomment here AND in main.tf to override):

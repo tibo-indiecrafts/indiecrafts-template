@@ -6,6 +6,7 @@ attach_domain       = true
 account_id          = ""                  # REQUIRED
 zone_id             = ""                  # REQUIRED (the domain's zone)
 domain              = "admin.example.com" # REQUIRED — your production host
+manage_zone         = false               # a subdomain of the website zone — the prod website stack owns its zone-wide rules
 turnstile_domains   = ["admin.example.com"]
 access_email_domain = "your-company.com" # REQUIRED — SSO-allowed email domain (Cloudflare Zero Trust Access)
 
