@@ -337,8 +337,6 @@ importers:
         specifier: workspace:*
         version: link:../config
 
-  code/packages/shared/query: {}
-
   code/packages/shared/security:
     dependencies:
       '@indiecrafts/packages-shared-config':

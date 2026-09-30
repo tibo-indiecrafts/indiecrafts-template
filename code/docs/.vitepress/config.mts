@@ -491,7 +491,6 @@ export default withMermaid(
                   link: "/packages/shared/gated-delivery",
                 },
                 { text: "logger", link: "/packages/shared/logger" },
-                { text: "query (TanStack)", link: "/packages/shared/query" },
                 { text: "security", link: "/packages/shared/security" },
                 {
                   text: "security-events",

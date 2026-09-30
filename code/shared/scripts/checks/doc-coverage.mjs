@@ -27,6 +27,10 @@ const dirs = (p) =>
         (n) => !n.startsWith("_") && statSync(join(p, n)).isDirectory(),
       )
     : [];
+// a unit is a dir with a package.json — a leftover folder of ignored files (node_modules, .turbo)
+// after a package is deleted or a branch switch is not a unit
+const unitDirs = (p) =>
+  dirs(p).filter((n) => existsSync(join(p, n, "package.json")));
 const doc = (...p) => join(DOCS, ...p);
 const anyDoc = (...cands) => cands.some((c) => existsSync(c));
 
@@ -39,7 +43,7 @@ function check(kind, id, ...docCandidates) {
 
 // ---- packages: code/packages/<scope>/<name> -> docs/packages/<scope>/<name>.md ----
 for (const scope of dirs(join(CODE, "packages")))
-  for (const name of dirs(join(CODE, "packages", scope)))
+  for (const name of unitDirs(join(CODE, "packages", scope)))
     check(
       "package",
       `packages/${scope}/${name}`,
@@ -48,7 +52,7 @@ for (const scope of dirs(join(CODE, "packages")))
 
 // ---- modules: code/modules/<scope>/<name> -> docs/modules/<scope>/<name>/(index|README).md ----
 for (const scope of dirs(join(CODE, "modules")))
-  for (const name of dirs(join(CODE, "modules", scope)))
+  for (const name of unitDirs(join(CODE, "modules", scope)))
     check(
       "module",
       `modules/${scope}/${name}`,

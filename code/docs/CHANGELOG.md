@@ -15,6 +15,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Removed
+
+- **The `packages/shared/query` page** (+ its reference pages and sidebar line) — the brick is gone.
+  `check:doc-coverage` now counts a folder as a unit only when it has a `package.json`, so a leftover
+  folder of ignored files no longer fails the check.
+
 ### Changed
 
 - **The API page is the one home for the api's routes and invariants.** It gains the missing

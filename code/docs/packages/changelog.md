@@ -34,6 +34,9 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Removed
 
+- **`@indiecrafts/packages-shared-query`** (TanStack Query defaults + key factory). Its only consumer was
+  the Expo app, which the Capacitor shell replaced; nothing imported it since. Its docs page, reference
+  pages, sidebar line, and registry row go with it. A future client SPA adds TanStack in the app itself.
 - **Every React Native fork and the `mobile/` scope.** Deleted `@indiecrafts/packages-mobile-ui-native`,
   the `src/native/` forks of `compliance`, `system-pages`, `ui-icons` and `ui-tokens` (+ their `./native`
   exports and RN optional peers), the `ui`/`ui-components` native placeholders, `config` `./mobile`, and the

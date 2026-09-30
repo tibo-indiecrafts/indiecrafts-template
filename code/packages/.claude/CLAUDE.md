@@ -2,7 +2,7 @@
 
 Auto-loads when you work under `code/packages/**`. Internal TypeScript packages shared
 by apps + modules, **foldered by platform-scope** — `code/packages/<scope>/<brick>/`
-(scope = `shared · web`). 28 live: 12 in `shared/`, 16 in `web/`. `_registry.md` lists the roster + the
+(scope = `shared · web`). 27 live: 11 in `shared/`, 16 in `web/`. `_registry.md` lists the roster + the
 reserved bricks (auth · billing · data · …).
 **How we build packages** → the internal dev framework. **What they are** →
 `code/docs/packages/`.
