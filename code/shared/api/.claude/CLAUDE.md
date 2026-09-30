@@ -21,6 +21,21 @@ Update that page in the same change as a route.
 - `src/auth/` — Clerk-JWT verification + the step-up `sensitive-action` gate.
 - `db/{main,audit}/migrations/` — the two EU D1s this worker owns; `db/kv/` — the KV namespaces.
 
+## Production-ready contract (every route)
+
+A route ships only when it meets all five (checklist: QA card 20, `f20-7`):
+
+- **Duplicates are safe** — a retried mutation changes nothing twice: idempotent by key (`ON CONFLICT` /
+  `INSERT OR IGNORE`, Svix id) or an `Idempotency-Key` mapped to the stored result (TTL 24 h).
+- **Rate limits say when to retry** — a `429` carries `Retry-After` (+ remaining/reset headers); the
+  limits are written in the api docs page.
+- **`/v1` is a contract** — a breaking change is a new version with a documented deprecation window,
+  never a silent behaviour change under the same path.
+- **Every outbound call has a timeout** shorter than the caller's (`AbortSignal.timeout`); retry only
+  timeouts and 5xx, with backoff + jitter — never a 4xx.
+- **Errors are actionable** — `{ error: "<code>", message, requestId }` (the `cf-ray` id), and the
+  status tells the client whether to retry (5xx/429/503) or fix the request (4xx).
+
 ## Rules
 
 - **Two D1s, both EU** (`--location weur`): `AUDIT_DB` (`audit` — append-only firehose) and `MAIN_DB`
