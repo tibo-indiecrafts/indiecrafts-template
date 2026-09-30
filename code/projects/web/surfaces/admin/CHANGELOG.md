@@ -12,9 +12,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
-
 ### Changed
 
+- **`.env.example` documents `CLOUDFLARE_SECURITY_URL`** — the Security screen's deep link to the
+  zone's Cloudflare events, read by the screen but listed nowhere.
 - **Confirmation toasts sit at the top** (`<Toaster position="top-center" />`), like the website
   and the app — the bottom slot belongs to the fixed overlays.
 ### Added

@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Reads `.env.local` directly (not via `--env-file`, so a missing file is reported clearly) and checks the required Sanity keys are present, warning on missing recommended keys. Exits 1 on any missing required key. Then prints the four scattered per-client identity values — site prefix, deploy slug, Sanity project, and site URL — and warns on prefix/deploy drift or a shared-project dataset collision. The `--for=seed` flag also requires `SANITY_API_WRITE_TOKEN`.
+Reads `.env.local` directly (not via `--env-file`, so a missing file is reported clearly) and checks the required Sanity keys are present, warning on missing recommended keys. Exits 1 on any missing required key. Then prints the four scattered per-client identity values — site prefix, deploy slug, Sanity project, and site URL — and warns on prefix/deploy drift (the Worker name must start with `<prefix>-`) or a shared-project dataset collision. The `--for=seed` flag also requires `SANITY_API_WRITE_TOKEN`.
 
 ## Exports
 

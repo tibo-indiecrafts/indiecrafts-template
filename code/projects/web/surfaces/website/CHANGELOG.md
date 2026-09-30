@@ -17,6 +17,15 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **`doctor:web:website:env` no longer reports a false prefix drift.** It expected the Worker to be
+  `<prefix>-web`, but Workers are `<prefix>-<env>-<platform path>`, so it always warned — and its
+  advice (`project:rename indiecrafts`) is refused for the template default. It now checks the name
+  starts with `<prefix>-`.
+- **`.env.example` documents `EMAIL_BCC_ALL_ENABLED`** — the QA blind-copy gate the email modules
+  read (any value turns it on; leave it unset in prod).
+
 ### Fixed
 
 - **`pnpm verify` is green again.** React Doctor failed the website gate on

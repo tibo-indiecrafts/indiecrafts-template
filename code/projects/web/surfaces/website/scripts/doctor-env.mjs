@@ -85,11 +85,12 @@ console.log(
 );
 console.log(`  · site url             ${env.NEXT_PUBLIC_SITE_URL || "(placeholder)"}`);
 
-// Drift: the wrangler resource stem should be `<prefix>-web`.
-if (slug !== `${prefix}-web`) {
+// Drift: Worker names are `<prefix>-<env>-<platform path>` (`resourceName` in apps.mjs), and
+// the prefix is their only client-specific part — so the Worker must start with `<prefix>-`.
+if (!slug.startsWith(`${prefix}-`)) {
   console.log(
-    `\n⚠ Prefix/deploy drift: prefix is "${prefix}" but the Worker is "${slug}" (expected "${prefix}-web").` +
-      `\n  Run  pnpm project:rename ${prefix}  to re-sync, or align NEXT_PUBLIC_SITE_PREFIX.`,
+    `\n⚠ Prefix/deploy drift: prefix is "${prefix}" but the Worker is "${slug}" (expected "${prefix}-…").` +
+      `\n  Run  pnpm project:rename <client-slug>  to re-sync both, or align NEXT_PUBLIC_SITE_PREFIX.`,
   );
 }
 
