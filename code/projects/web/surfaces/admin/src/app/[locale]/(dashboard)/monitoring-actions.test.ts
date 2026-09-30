@@ -63,6 +63,8 @@ describe("retryErasure", () => {
     [422, { error: "email_required" }, { ok: false, error: "email_required" }],
     [400, { error: "email_mismatch" }, { ok: false, error: "email_mismatch" }],
     [409, { error: "not_retryable" }, { ok: false, error: "not_retryable" }],
+    [409, { error: "clerk_email_changed" }, { ok: false, error: "clerk_email_changed" }],
+    [503, { error: "clerk_unavailable" }, { ok: false, error: "clerk_unavailable" }],
   ])("maps a %s reply", async (status, body, expected) => {
     authMock.mockResolvedValue(admin);
     fetchMock.mockResolvedValue(reply(status, body));

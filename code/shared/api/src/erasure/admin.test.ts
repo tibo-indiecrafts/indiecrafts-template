@@ -72,6 +72,9 @@ const rowOf = (id: number) =>
       result: string | null;
     }>();
 
+const has = (email: string) => async () => ({ kind: "email" as const, email });
+const gone = async () => ({ kind: "gone" as const });
+
 const post = (body: unknown) =>
   new Request("https://api.test/x", {
     method: "POST",
@@ -85,7 +88,7 @@ describe("handleErasureRetry", () => {
     const res = await handleErasureRetry(post({}), testEnv(), id, {
       buildAdapters: mockAdapters(),
       send: vi.fn(),
-      lookupEmail: vi.fn(async () => EMAIL),
+      lookupEmail: vi.fn(has(EMAIL)),
     });
     expect(res.status).toBe(409);
     expect(await res.json()).toEqual({ error: "not_retryable" });
@@ -94,7 +97,7 @@ describe("handleErasureRetry", () => {
   it("reads the email from Clerk, erases, completes the row and notifies the subject", async () => {
     const id = await seed("confirmed");
     const send = vi.fn(async () => {});
-    const lookupEmail = vi.fn(async () => EMAIL);
+    const lookupEmail = vi.fn(has(EMAIL));
     const res = await handleErasureRetry(post({}), testEnv(), id, {
       buildAdapters: mockAdapters(),
       send,
@@ -112,7 +115,7 @@ describe("handleErasureRetry", () => {
     const res = await handleErasureRetry(post({}), testEnv(), id, {
       buildAdapters: mockAdapters(),
       send,
-      lookupEmail: vi.fn(async () => null),
+      lookupEmail: vi.fn(gone),
     });
     expect(res.status).toBe(422);
     expect(await res.json()).toEqual({ error: "email_required" });
@@ -120,14 +123,52 @@ describe("handleErasureRetry", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it("422s when Clerk now holds a different email (fingerprint mismatch) — the operator must type the original", async () => {
+  it("409s when the Clerk user still exists under a changed email — the Clerk delete (by email) would miss them", async () => {
     const id = await seed("confirmed");
     const res = await handleErasureRetry(post({}), testEnv(), id, {
       buildAdapters: mockAdapters(),
       send: vi.fn(),
-      lookupEmail: vi.fn(async () => "changed@x.com"),
+      lookupEmail: vi.fn(has("changed@x.com")),
     });
-    expect(res.status).toBe(422);
+    expect(res.status).toBe(409);
+    expect(await res.json()).toEqual({ error: "clerk_email_changed" });
+  });
+
+  it("ignores a typed original email while the Clerk user exists under a changed one — no false completion", async () => {
+    const id = await seed("confirmed");
+    const send = vi.fn(async () => {});
+    const res = await handleErasureRetry(
+      post({ email: EMAIL }),
+      testEnv(),
+      id,
+      {
+        buildAdapters: mockAdapters({
+          findUserIdByEmail: vi.fn(async () => null),
+        }),
+        send,
+        lookupEmail: vi.fn(has("changed@x.com")),
+      },
+    );
+    expect(res.status).toBe(409);
+    expect((await rowOf(id))?.status).toBe("confirmed");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("503s when Clerk cannot answer — an outage never reads as a deleted user", async () => {
+    const id = await seed("confirmed");
+    const res = await handleErasureRetry(
+      post({ email: EMAIL }),
+      testEnv(),
+      id,
+      {
+        buildAdapters: mockAdapters(),
+        send: vi.fn(),
+        lookupEmail: vi.fn(async () => ({ kind: "error" as const })),
+      },
+    );
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "clerk_unavailable" });
+    expect((await rowOf(id))?.status).toBe("confirmed");
   });
 
   it("400s a typed email that does not match the fingerprint", async () => {
@@ -139,7 +180,7 @@ describe("handleErasureRetry", () => {
       {
         buildAdapters: mockAdapters(),
         send: vi.fn(),
-        lookupEmail: vi.fn(async () => null),
+        lookupEmail: vi.fn(gone),
       },
     );
     expect(res.status).toBe(400);
@@ -156,7 +197,7 @@ describe("handleErasureRetry", () => {
       {
         buildAdapters: mockAdapters(),
         send: vi.fn(async () => {}),
-        lookupEmail: vi.fn(async () => null),
+        lookupEmail: vi.fn(gone),
       },
     );
     expect(res.status).toBe(200);
@@ -172,7 +213,7 @@ describe("handleErasureRetry", () => {
     const res = await handleErasureRetry(post({}), testEnv(), id, {
       buildAdapters: mockAdapters({ deleteUser }),
       send,
-      lookupEmail: vi.fn(async () => EMAIL),
+      lookupEmail: vi.fn(has(EMAIL)),
     });
     expect(res.status).toBe(502);
     expect(await res.json()).toMatchObject({ ok: false, clerk_failed: true });
@@ -184,7 +225,7 @@ describe("handleErasureRetry", () => {
     const res = await handleErasureRetry(post({}), testEnv(), 999_999, {
       buildAdapters: mockAdapters(),
       send: vi.fn(),
-      lookupEmail: vi.fn(async () => EMAIL),
+      lookupEmail: vi.fn(has(EMAIL)),
     });
     expect(res.status).toBe(404);
   });

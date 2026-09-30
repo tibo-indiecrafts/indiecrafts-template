@@ -63,7 +63,8 @@ jobs:
       - uses: ./.github/actions/setup
       # Each app self-deploys via its registry `deploy:<platform>:<slug>:<env>` script (a
       # next-cf app builds with OpenNext, a worker just `wrangler deploy`s). Apps deploy in
-      # parallel — CF workers are independent (service bindings resolve at runtime).
+      # parallel. Exception: the api's `CRON` service binding needs the cron Worker to exist,
+      # so on a brand-new environment the api's first deploy can fail — re-run it.
       - run: pnpm run deploy:${{ matrix.app.platform }}:${{ matrix.app.slug }}:${{ github.event.inputs.environment || 'prod' }}
         env:
           # Cloudflare auth — account-scoped API token with Workers + R2 edit.

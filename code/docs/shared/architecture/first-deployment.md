@@ -38,7 +38,7 @@ Every Cloudflare resource name comes from one function —
 | **admin**     | next-cf         | `indiecrafts-<env>-web-surfaces-admin.<sub>.workers.dev`   | `https://admin.example.com`          |
 | **app**       | next-cf         | `indiecrafts-<env>-web-surfaces-app.<sub>.workers.dev`     | `https://app.example.com`            |
 | **api**       | worker-cf       | `indiecrafts-<env>-shared-api.<sub>.workers.dev`           | `https://api.example.com`            |
-| **cron**      | worker-cf       | `indiecrafts-<env>-shared-cron.<sub>.workers.dev`          | _(no route — scheduled)_             |
+| **cron**      | worker-cf       | _(none — `workers_dev = false`; reached via the api only)_ | _(no route — scheduled)_             |
 | **workers**   | worker-cf       | `indiecrafts-<env>-shared-workers.<sub>.workers.dev`       | _(no route — queue/event)_           |
 | **storybook** | Worker (assets) | `indiecrafts-<env>-web-tools-storybook.<sub>.workers.dev`  | `https://storybook.example.com`      |
 | **mobile**    | capacitor       | not deployed — loads the `app` URL (`CAP_SERVER_URL`)      | not deployed (no release pipeline)   |

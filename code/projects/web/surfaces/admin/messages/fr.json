@@ -311,6 +311,8 @@
           "email_mismatch": "Cet e-mail ne correspond pas à cette demande.",
           "not_retryable": "Seule une demande confirmée (bloquée) peut être relancée.",
           "clerk_failed": "Clerk refuse encore la suppression du compte — réessayez plus tard.",
+          "clerk_email_changed": "Le compte Clerk de la personne utilise désormais une autre adresse : une relance le manquerait. Supprimez le compte dans Clerk, puis clôturez la demande manuellement.",
+          "clerk_unavailable": "Clerk ne répond pas — réessayez plus tard.",
           "not_found": "Demande introuvable.",
           "note_required": "Écrivez une note de 5 à 500 caractères.",
           "not_open": "Cette demande est déjà clôturée."

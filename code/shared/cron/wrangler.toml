@@ -12,6 +12,8 @@ main = "src/index.ts"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
 keep_vars = true
+# No public URL anywhere — `POST /run` is reached only through the api's `CRON` service binding.
+workers_dev = false
 
 # Cron schedule(s) — UTC. Example: hourly. https://crontab.guru
 [triggers]

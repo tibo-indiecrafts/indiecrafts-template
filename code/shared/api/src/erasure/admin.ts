@@ -18,28 +18,34 @@ import {
   type ExecuteDeps,
 } from "./execute";
 
+/** The stored Clerk user now: deleted (`gone`), present with a primary email, or unknown
+ *  because Clerk did not answer (`error` — never read as `gone`). */
+export type ClerkLookup =
+  { kind: "gone" } | { kind: "email"; email: string } | { kind: "error" };
+
 export type RetryDeps = ExecuteDeps & {
-  /** The subject's current primary email from Clerk, or null when the user is gone. */
-  lookupEmail: (env: Env, userId: string) => Promise<string | null>;
+  lookupEmail: (env: Env, userId: string) => Promise<ClerkLookup>;
 };
 
 async function clerkPrimaryEmail(
   env: Env,
   userId: string,
-): Promise<string | null> {
-  if (!env.CLERK_SECRET_KEY) return null;
+): Promise<ClerkLookup> {
+  if (!env.CLERK_SECRET_KEY) return { kind: "error" };
   try {
     const { createClerkClient } = await import("@clerk/backend");
     const user = await createClerkClient({
       secretKey: env.CLERK_SECRET_KEY,
     }).users.getUser(userId);
-    return user.primaryEmailAddress?.emailAddress ?? null;
+    const email = user.primaryEmailAddress?.emailAddress;
+    return email ? { kind: "email", email } : { kind: "error" };
   } catch (error) {
-    // A deleted user is a 404 — expected here; anything else is logged by name only.
-    logger.info("erasure retry: no clerk email", {
+    if ((error as { status?: number })?.status === 404) return { kind: "gone" };
+    // Rate limit, outage, bad key — logged by name only (no personal data).
+    logger.warn("erasure retry: clerk lookup failed", {
       name: (error as Error)?.name,
     });
-    return null;
+    return { kind: "error" };
   }
 }
 
@@ -66,8 +72,8 @@ async function readBody(request: Request): Promise<Record<string, unknown>> {
 }
 
 /** `POST /v1/erasure-requests/:id/retry` — re-run a `confirmed` (stuck) request. The email
- *  comes from Clerk (by the stored user id) or the operator; either way it must match the
- *  stored fingerprint, and it is never stored or logged. */
+ *  comes from Clerk (by the stored user id) or, once that user is gone, the operator; either
+ *  way it must match the stored fingerprint, and it is never stored or logged. */
 export async function handleErasureRetry(
   request: Request,
   env: Env,
@@ -107,16 +113,22 @@ export async function handleErasureRetry(
     );
 
   const typed = String((await readBody(request)).email ?? "").trim();
+  if (typed && !(await matches(typed)))
+    return json({ error: "email_mismatch" }, 400);
   let email: string | null = null;
-  if (typed) {
-    if (!(await matches(typed))) return json({ error: "email_mismatch" }, 400);
-    email = typed;
-  } else if (row.user_id) {
-    const fromClerk = await deps.lookupEmail(env, row.user_id);
-    // The subject may have changed their Clerk email since the request — then the operator
-    // must supply the original one.
-    if (fromClerk && (await matches(fromClerk))) email = fromClerk;
+  if (row.user_id) {
+    // The Clerk adapter deletes by email, so a user who still exists under another email
+    // would be missed — a false "completed". Only a gone user lets a typed email through.
+    const found = await deps.lookupEmail(env, row.user_id);
+    if (found.kind === "error")
+      return json({ error: "clerk_unavailable" }, 503);
+    if (found.kind === "email") {
+      if (!(await matches(found.email)))
+        return json({ error: "clerk_email_changed" }, 409);
+      email = found.email;
+    }
   }
+  email ??= typed || null;
   if (!email) return json({ error: "email_required" }, 422);
 
   const result = await executeErasure(env, row, email, deps, null);

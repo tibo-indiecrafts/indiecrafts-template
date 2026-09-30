@@ -104,6 +104,9 @@ const cronService = (section) => {
   }
   return null;
 };
+test("top level: the cron has no public workers.dev URL (a bare `wrangler deploy`)", () => {
+  assert.match(CRON.split(/^\[/m)[0], /^workers_dev\s*=\s*false/m);
+});
 for (const env of ["dev", "staging", "prod"]) {
   test(`${env}: the cron has no public workers.dev URL`, () => {
     assert.match(wranglerEnvSection(CRON, env), /^workers_dev\s*=\s*false/m);

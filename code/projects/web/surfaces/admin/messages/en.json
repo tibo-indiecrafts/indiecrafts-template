@@ -311,6 +311,8 @@
           "email_mismatch": "That email does not match this request.",
           "not_retryable": "Only a confirmed (stuck) request can be retried.",
           "clerk_failed": "Clerk still refuses the account deletion — try again later.",
+          "clerk_email_changed": "The subject's Clerk account now uses another email, so a retry would miss it. Delete the account in Clerk, then close this request manually.",
+          "clerk_unavailable": "Clerk did not answer — try again later.",
           "not_found": "Request not found.",
           "note_required": "Write a note of 5 to 500 characters.",
           "not_open": "This request is already closed."
