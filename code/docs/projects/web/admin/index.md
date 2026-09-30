@@ -60,18 +60,20 @@ Every page lives under `src/app/[locale]/(dashboard)`, grouped in the sidebar by
 (`src/user-interface/lib/nav.ts`). All reads are server-side; where a page writes, the write
 routes through an audited server action, not a client call.
 
-| Route            | What it does                                                                        | Data source                                                                                                |
-| ---------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `/`              | Overview — one count card per section, plus the grant/revoke admin-role form        | Shared api list counts (`/v1/sessions` · `/v1/data-requests` · `/v1/csp-reports` · `/v1/security`) + Clerk |
-| `/users`         | Browse and search Clerk users; shows each user's marketing-email consent            | Clerk `getUserList` + shared api `POST /v1/profiles/consent`                                               |
-| `/sessions`      | Recent sign-ins across surfaces (last 100); revoke one or all                       | Shared api `/v1/sessions?limit=100` (D1); revoke via Clerk action                                          |
-| `/data-requests` | GDPR data-subject requests submitted through the site (last 100), read-only         | Shared api `/v1/data-requests?limit=100` (D1)                                                              |
-| `/csp`           | Aggregated CSP violation groups, most frequent first; `report` vs `enforce` rows    | Shared api `/v1/csp-reports?limit=100` (D1)                                                                |
-| `/churn`         | Deletion-survey aggregates — total, by day, by reason, recent feedback              | Shared api `/v1/churn` (D1)                                                                                |
-| `/backups`       | Bucket, retention, pre-migration flag, and recent backup runs, read-only            | Shared api `/v1/backups/status`                                                                            |
-| `/system`        | Live version and health for every surface, worker, and database                     | Surface `/api/version` · worker `/health` · api health (D1 · Sanity)                                       |
-| `/settings`      | Operational retention, ops, and link-TTL settings; editable                         | Shared api `GET /v1/settings`; save via `saveSetting` action → `PUT /v1/settings`                          |
-| `/security`      | App-level security incidents (last 100), data-minimized; deep-link to the edge feed | Shared api `/v1/security?limit=100` (D1) + Cloudflare edge (`CLOUDFLARE_SECURITY_URL`)                     |
+| Route            | What it does                                                                                           | Data source                                                                                                |
+| ---------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `/`              | Overview — one count card per section, plus the grant/revoke admin-role form                           | Shared api list counts (`/v1/sessions` · `/v1/data-requests` · `/v1/csp-reports` · `/v1/security`) + Clerk |
+| `/users`         | Browse and search Clerk users; shows each user's marketing-email consent                               | Clerk `getUserList` + shared api `POST /v1/profiles/consent`                                               |
+| `/sessions`      | Recent sign-ins across surfaces (last 100); revoke one or all                                          | Shared api `/v1/sessions?limit=100` (D1); revoke via Clerk action                                          |
+| `/data-requests` | GDPR data-subject requests submitted through the site (last 100), read-only                            | Shared api `/v1/data-requests?limit=100` (D1)                                                              |
+| `/erasure`       | Open GDPR erasure requests by deadline (breached · due soon · on track), no identifiers                | Shared api `GET /v1/erasure-requests` (D1)                                                                 |
+| `/csp`           | Aggregated CSP violation groups, most frequent first; `report` vs `enforce` rows                       | Shared api `/v1/csp-reports?limit=100` (D1)                                                                |
+| `/churn`         | Deletion-survey aggregates — total, by day, by reason, recent feedback                                 | Shared api `/v1/churn` (D1)                                                                                |
+| `/backups`       | Bucket, retention, pre-migration flag, and recent backup runs, read-only                               | Shared api `/v1/backups/status`                                                                            |
+| `/cron`          | Cron health (healthy · failed · stale · never ran), live counts, last 24 runs with per-pass results    | Shared api `GET /v1/cron/status` (`cron_runs` + live counts)                                               |
+| `/system`        | Live version and health for every surface, worker, and database; the `cron` row shows its health badge | Surface `/api/version` · worker `/health` · api health (D1 · Sanity) · `/v1/cron/status`                   |
+| `/settings`      | Operational retention, ops, and link-TTL settings; editable                                            | Shared api `GET /v1/settings`; save via `saveSetting` action → `PUT /v1/settings`                          |
+| `/security`      | App-level security incidents (last 100), data-minimized; deep-link to the edge feed                    | Shared api `/v1/security?limit=100` (D1) + Cloudflare edge (`CLOUDFLARE_SECURITY_URL`)                     |
 
 `/sign-in` is the one public route. Two API routes back the security baseline:
 `/api/csp-report` (the CSP violation sink) and `/api/session-log` (session-log ingest).

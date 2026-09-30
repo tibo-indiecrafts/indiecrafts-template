@@ -33,7 +33,7 @@ All three tables above live in the **`audit`** D1 (binding `AUDIT_DB`).
   count is envs × 2 = 6 — verify against current Cloudflare D1 plan limits.
 - **Minimization (Art. 5(1)(c)):** country code + a _hashed_ IP; no raw IP, no
   user-agent, no free text.
-- **Retention (Art. 5(1)(e)):** **90 days**, enforced by the `cron` worker's daily purge.
+- **Retention (Art. 5(1)(e)):** **90 days**, enforced by the `cron` worker's hourly purge.
 - **Lawful basis:** legitimate interest — securing accounts + an admin audit trail.
 - **Processors:** Cloudflare (D1 hosting, EU) and Clerk (authentication).
 
@@ -105,16 +105,19 @@ inserts a row; operators view requests in the admin "Data requests" screen, back
 ## Erasure SLA flag (GDPR Art. 12(3))
 
 An erasure request must be actioned within **one month** (`erasure_requests.due_at`,
-`main` D1, binding `MAIN_DB`). The cron's scheduled handler flags a request once, as it
-nears or misses that deadline:
+`main` D1, binding `MAIN_DB`). The cron's `erasure_sla` pass (hourly) first closes **lapsed**
+requests — never confirmed, confirmation link expired — as `expired`: an unverified request
+cannot be actioned, so it is closed, not flagged. It then flags each **open** request
+(confirmed, or awaiting confirmation with a live link) at most twice:
 
-- **Due soon** (`due_at` within 7 days): a `security_events` row (`audit` D1, binding
-  `AUDIT_DB`), `erasure_sla_due` / `medium`.
+- **Due soon** (`due_at` within `ops.sla_warning_days`, default 7): a `security_events` row
+  (`audit` D1, binding `AUDIT_DB`), `erasure_sla_due` / `medium`, once (`due_flagged_at`).
 - **Breached** (`due_at` already past): a `security_events` row, `erasure_sla_breach` /
-  `high`.
+  `high`, once (`breach_flagged_at`) — so a request warned about earlier is still escalated
+  when the deadline passes.
 
-A flagged request gets `due_flagged_at` set, so a later tick does not repeat it.
-`completed`/`cancelled`/`expired` requests are skipped. The flag itself no-ops until the
+`completed`/`cancelled`/`expired` requests are skipped. The admin **Erasure requests** page
+lists open requests by deadline; the **Scheduled jobs** page shows each run's counts. The flag itself no-ops until the
 cron's `MAIN_DB` binding is bound; the `security_events` audit row additionally needs `AUDIT_DB`
 bound — `due_flagged_at` still gets set on `MAIN_DB` even if `AUDIT_DB` isn't. Owner-reminder
 email is deferred — the cron has no email sender.
@@ -128,8 +131,16 @@ email is deferred — the cron has no email sender.
 `POST /v1/export` bundles expire after **1 hour** (`export_requests.expires_at`, `main` D1,
 binding `MAIN_DB`) and are deleted from R2 on first download. The cron's scheduled handler
 sweeps the rest: any `export_requests` row whose TTL passed unread has its R2 object
-(`EXPORT_BUCKET`) and its row deleted. Idempotent; no-ops until both `MAIN_DB` and
-`EXPORT_BUCKET` are bound.
+(`EXPORT_BUCKET`) and its row deleted. Idempotent; reports `skipped` until both `MAIN_DB` and
+`EXPORT_BUCKET` are bound. The cron binds the bucket in every env the api does (`pnpm
+test:scripts` enforces it); the admin **Scheduled jobs** page shows "expired exports not yet
+deleted" so a stalled cleanup is visible.
+
+## Cron run history
+
+Every hourly tick writes one `cron_runs` row (`audit` D1): timings, `ok`/`failed`, and each
+pass's counts plus an error **name** or skip reason — no personal data. Purged at
+`retention.audit_days` (90 days, about 2,160 rows).
 
 ## Global admin BCC (transactional email)
 

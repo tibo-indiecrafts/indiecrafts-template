@@ -12,6 +12,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Added
+
+- **Scheduled jobs page (`/cron`)** — cron health (healthy · last run failed · stale · never ran), the
+  live erasure/export counts, and the last 24 runs with per-pass results. Before, nothing showed
+  whether the cron ran at all.
+- **Erasure requests page (`/erasure`)** — open GDPR erasure requests by deadline (deadline passed ·
+  due soon · on track) and the recently closed ones, so the one-month deadline can be verified
+  directly instead of inferred from security events.
+- **System page** — the `cron` row shows the same health badge and links to Scheduled jobs (it said
+  "no endpoint").
+
 ### Changed
 
 - **`.env.example` documents `CLOUDFLARE_SECURITY_URL`** — the Security screen's deep link to the

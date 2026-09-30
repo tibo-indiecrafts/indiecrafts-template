@@ -5,6 +5,27 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ## [Unreleased]
 
+### Fixed
+
+- **Unread GDPR exports are deleted again.** The cron never bound the api's `EXPORT_BUCKET`, so the
+  export cleanup silently did nothing in every environment — an export nobody downloaded (a full copy
+  of someone's data) stayed forever. It is bound in dev (like the api), and a `test:scripts` parity
+  check fails if an env binds the bucket on the api but not on the cron.
+- **A missed erasure deadline is always escalated.** A request flagged "due soon" (medium) was never
+  flagged "breached" (high) when its one-month deadline passed. Each open request now gets each flag
+  once (`breach_flagged_at`, main migration `0012`).
+- **Lapsed unverified requests close instead of raising false alarms.** A request whose confirmation
+  link expired unclicked stayed `email_sent` forever and counted as open; it is now closed as `expired`.
+- **One failing pass no longer skips the others.** The four passes run independently; a failure is
+  recorded, the rest still run, then the tick fails. (Cloudflare does not retry — the next hourly tick
+  re-runs.)
+
+### Added
+
+- **Run history.** Every tick writes a `cron_runs` row (audit migration `0004`) with each pass's
+  status, counts and error name or skip reason — no personal data. Read by the admin "Scheduled jobs"
+  page.
+
 ### Added
 
 - **`user_profiles` final-anonymisation purge.** The retention pass now hard-deletes `user_profiles`

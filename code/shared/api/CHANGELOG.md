@@ -5,6 +5,14 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **`GET /v1/cron/status` + `GET /v1/erasure-requests`** (bearer-gated, read-only) for the admin
+  "Scheduled jobs" and "Erasure requests" pages: the last 24 cron runs with a stale flag (no run in 2
+  hours) and live erasure/export counts; open erasure requests by deadline with a computed state and
+  no fingerprint or user id. Migrations `audit/0004_cron_runs` and `main/0012_erasure_breach_flagged`
+  (applied by the api's deploy, which owns both D1s).
+
 ### Changed
 
 - **The rate-limit binding is `RATELIMIT`** (was `AGENT_RATELIMIT`, a leftover from the removed

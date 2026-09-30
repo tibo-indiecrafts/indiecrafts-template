@@ -23,6 +23,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **Cron, api, admin and data-retention pages describe the new monitoring:** the four isolated cron
+  passes and their counts, the `cron_runs` history, the two admin routes and pages, lapsed-request
+  expiry and breach escalation. Six new reference pages. Local tick port corrected to `:8789`.
 - **The Storybook page describes the gate as it runs:** every story as a component + axe test in light
   and dark, `a11y.test: "error"`, the rule-waiver convention, and the Locale toolbar over the real
   messages. New reference page for `vitest.setup.dark.ts`; the mock, preview, config and `Callout`

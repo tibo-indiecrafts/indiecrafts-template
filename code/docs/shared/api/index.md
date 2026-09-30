@@ -47,6 +47,8 @@ server-side only). Clerk-JWT routes authenticate the caller's own session.
 | `GET /v1/churn`                                   | `APP_API_TOKEN`     | Churn-survey aggregate.                                                                                                                 |
 | `GET/PUT /v1/settings`                            | `APP_API_TOKEN`     | Read/edit `site_settings` (the `cron` worker reads these too).                                                                          |
 | `GET /v1/backups/status`                          | `APP_API_TOKEN`     | Backup-run history + bucket/retention info.                                                                                             |
+| `GET /v1/cron/status`                             | `APP_API_TOKEN`     | Last 24 `cron_runs`, a `stale` flag (no run in 2 h), live erasure/export counts — the admin Scheduled jobs page.                        |
+| `GET /v1/erasure-requests`                        | `APP_API_TOKEN`     | Open erasure requests by deadline + 20 recently closed, with a computed state; no fingerprint or user id — the admin Erasure page.      |
 | `POST /v1/profiles/consent`                       | `APP_API_TOKEN`     | Marketing-consent batch for the admin users list.                                                                                       |
 | `POST /v1/data-request` · `GET /v1/data-requests` | `APP_API_TOKEN`     | DSAR intake write + admin list.                                                                                                         |
 | `POST /v1/clerk-webhook`                          | Svix-signed         | `user_profiles` sync, welcome email, role→admin alert, Clerk email take-over.                                                           |
@@ -80,7 +82,7 @@ threaten identity data.
 
 | Binding             | Kind                              | Holds                                                                                                                                                                             |
 | ------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AUDIT_DB`          | D1 (`audit`)                      | Append-only firehose: `session_events` · `security_events` · `admin_audit` · `csp_reports` · `backup_runs`.                                                                       |
+| `AUDIT_DB`          | D1 (`audit`)                      | Append-only firehose: `session_events` · `security_events` · `admin_audit` · `csp_reports` · `backup_runs` · `cron_runs`.                                                         |
 | `MAIN_DB`           | D1 (`main`)                       | Identity/rights/settings: `user_profiles` · `consent_events` · `email_preferences` · `data_requests` · `erasure_requests` · `export_requests` · `site_settings` · `churn_events`. |
 | `SECURITY_COUNTERS` | KV                                | Ephemeral TTL failed-login counters (counted at the edge, never per-request in D1).                                                                                               |
 | `EXPORT_BUCKET`     | R2                                | GDPR export bundles (`POST /v1/export`; routes answer 503 until bound).                                                                                                           |
