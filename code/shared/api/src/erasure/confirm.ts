@@ -9,19 +9,15 @@
 // "email_sent" can be confirmed. The engine never throws — a per-adapter failure lands
 // in `receipt.errors`, which this route turns into a distinguishable partial-failure
 // response instead of a blind "ok".
-import { logger } from "@indiecrafts/packages-shared-logger";
 import {
   fingerprintEmail,
   sha256Hex,
 } from "@indiecrafts/packages-shared-security/crypto";
-import {
-  runErasure,
-  type ErasureAdapter,
-} from "@indiecrafts/packages-shared-compliance/shared";
+import type { ErasureAdapter } from "@indiecrafts/packages-shared-compliance/shared";
 import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
 import { buildErasureAdapters } from "./adapters";
-import { readProfileLocale, sendErasureCompleteEmail } from "./email";
-import { CLERK_STORE } from "./self";
+import { sendErasureCompleteEmail } from "./email";
+import { executeErasure } from "./execute";
 
 const BODY_MAX = 4000;
 const MAX_ATTEMPTS = 5;
@@ -105,14 +101,6 @@ async function parseBody(
   } catch {
     return null;
   }
-}
-
-/** A short, factual summary of what stays and why — sent in the completion email. */
-function retainedSummary(hadErrors: boolean): string {
-  const base =
-    "Your account activity log is retained for legal accountability; everything else has been removed.";
-  if (!hadErrors) return base;
-  return `${base} Some records could not be removed automatically — our team has been notified and will finish this by hand.`;
 }
 
 export async function handleErasureConfirm(
@@ -209,111 +197,28 @@ export async function handleErasureConfirm(
   if (!safeEqual(fp, row.email_fingerprint))
     return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
 
-  const adapters = buildAdapters(env);
-  const ts = new Date().toISOString();
-  // Read the recipient's locale for the completion email BEFORE the erasure runs — the
-  // profile row is gone once it does.
-  const locale = await readProfileLocale(env.MAIN_DB, {
-    userId: row.user_id,
-    fingerprint: row.email_fingerprint,
-  });
-  // A dry-run preview first (mutates nothing), then the live pass that actually erases.
-  await runErasure(adapters, email, {
-    mode: "erase",
-    dryRun: true,
-    ts,
-    fingerprint: row.email_fingerprint,
-  });
-  let receipt = await runErasure(adapters, email, {
-    mode: "erase",
-    dryRun: false,
-    ts,
-    fingerprint: row.email_fingerprint,
-  });
-
-  // Clerk is the one global session/credential kill-switch (every surface's auth is
-  // Clerk). A failed Clerk delete must never be reported as a completed erasure — the
-  // account is still live and the retained fingerprint is re-linkable. Retry it once
-  // inline (same adapter, not a second client), then fail closed. Mirrors self.ts.
-  let clerkStillFailing = false;
-  if (receipt.errors.some((e) => e.store === CLERK_STORE)) {
-    const clerkAdapter = adapters.find((a) => a.name === CLERK_STORE);
-    try {
-      if (!clerkAdapter) throw new Error("clerk adapter not configured");
-      const retried = await clerkAdapter.delete(email);
-      receipt = {
-        ...receipt,
-        errors: receipt.errors.filter((e) => e.store !== CLERK_STORE),
-        stores: [...receipt.stores, retried],
-      };
-    } catch (error) {
-      clerkStillFailing = true;
-      logger.error("erasure.confirm clerk retry failed", {
-        name: (error as Error)?.name,
-      });
-    }
-  }
-
-  const hadErrors = receipt.errors.length > 0;
-  await env.MAIN_DB.prepare(
-    "UPDATE erasure_requests SET status = ?, confirmed_at = ?, completed_at = ?, result = ? WHERE id = ?",
-  )
-    .bind(
-      hadErrors ? "confirmed" : "completed",
-      ts,
-      hadErrors ? null : ts,
-      JSON.stringify(receipt),
-      row.id,
-    )
-    .run();
-
-  // Audit + completion email only when the account was ACTUALLY deleted. If Clerk still
-  // fails, the subject must not get an "erasure complete" email while still logged in, and
-  // the trail must not claim completion — the `confirmed` row above flags it for manual
-  // backfill (same contract as erasure/self).
-  if (!clerkStillFailing) {
-    // The erasure row above is already committed — a failure writing the audit trail
-    // must never turn a completed erasure into a 500 on a single-use, non-retryable row.
-    try {
-      const country = request.headers.get("cf-ipcountry") ?? null;
-      const subjectId = row.user_id ?? row.email_fingerprint;
-      await env.AUDIT_DB.prepare(
-        "INSERT INTO admin_audit (ts, event, actor_user_id, target_user_id, country, ip_hash) VALUES (?, ?, ?, ?, ?, NULL)",
-      )
-        .bind(ts, "erasure.completed", subjectId, subjectId, country)
-        .run();
-    } catch (error) {
-      logger.error("erasure audit insert failed", {
-        name: (error as Error)?.name,
-      });
-    }
-
-    // Best-effort: a failed completion email must never undo the erasure already committed.
-    try {
-      await send(env, {
-        to: email,
-        retained: retainedSummary(hadErrors),
-        locale,
-      });
-    } catch (error) {
-      logger.error("erasure complete email failed", {
-        name: (error as Error)?.name,
-      });
-    }
-  }
+  const result = await executeErasure(
+    env,
+    row,
+    email,
+    { buildAdapters, send },
+    request.headers.get("cf-ipcountry") ?? null,
+  );
+  const clerkStillFailing = result.clerkFailed;
+  const hadErrors = result.errors.length > 0;
 
   // Distinct from `partial`: the Clerk user still exists, so the session is NOT dead
   // everywhere. The caller must not treat this as done — a non-200/207 status maps to
   // "error" client-side, same as erasure/self.
   if (clerkStillFailing)
     return json(
-      { ok: false, clerk_failed: true, errors: receipt.errors },
+      { ok: false, clerk_failed: true, errors: result.errors },
       502,
       PUBLIC_CORS_POST,
     );
   if (hadErrors)
     return json(
-      { ok: true, partial: true, errors: receipt.errors },
+      { ok: true, partial: true, errors: result.errors },
       207,
       PUBLIC_CORS_POST,
     );
