@@ -15,6 +15,8 @@ import {
   TableCell,
 } from "@indiecrafts/packages-web-ui/web/table";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
+import { Link } from "@/i18n/routing";
+import { cronHealth, fetchCronStatus, healthVariant } from "@/lib/monitoring";
 
 // Surfaces expose /api/version; HTTP workers expose /health. URLs from server-only
 // env (operator sets them per deployment); unset → "not configured".
@@ -23,8 +25,9 @@ const SURFACES = [
   { name: "app", url: process.env.APP_URL },
 ];
 const HTTP_WORKERS = [{ name: "api", url: process.env.API_URL }];
-// cron + workers-jobs have no public HTTP surface (scheduled / queue).
-const NON_HTTP_WORKERS = ["cron", "workers"];
+// workers-jobs has no public HTTP surface (queue). cron's health comes from its run history
+// (GET /v1/cron/status) — shown below with a link to the Scheduled jobs page.
+const NON_HTTP_WORKERS = ["workers"];
 
 async function fetchVersion(url?: string) {
   if (!url) return { configured: false, ok: false } as const;
@@ -65,6 +68,8 @@ export default async function SystemPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("admin.system");
+  const tCron = await getTranslations("admin.cron");
+  const cron = cronHealth(await fetchCronStatus());
 
   const surfaces = await Promise.all(
     SURFACES.map(async (s) => ({ name: s.name, ...(await fetchVersion(s.url)) })),
@@ -151,6 +156,22 @@ export default async function SystemPage({
                     </TableCell>
                   </TableRow>
                 ))}
+                <TableRow>
+                  <TableCell>cron</TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <Badge variant={healthVariant(cron)}>
+                        {tCron(`health.${cron}`)}
+                      </Badge>
+                      <Link
+                        href="/cron"
+                        className="text-primary text-sm underline underline-offset-2"
+                      >
+                        {t("cronLink")}
+                      </Link>
+                    </div>
+                  </TableCell>
+                </TableRow>
                 {NON_HTTP_WORKERS.map((name) => (
                   <TableRow key={name}>
                     <TableCell>{name}</TableCell>

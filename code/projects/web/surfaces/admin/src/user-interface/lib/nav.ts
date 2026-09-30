@@ -14,6 +14,8 @@ import {
   Server,
   Settings,
   ShieldCheck,
+  Clock,
+  Hourglass,
   type LucideIcon,
 } from "lucide-react";
 import { localeCodes } from "@/config";
@@ -34,6 +36,7 @@ export const NAV: NavGroup[] = [
     labelKey: "compliance",
     items: [
       { key: "dataRequests", href: "/data-requests", icon: FileText },
+      { key: "erasure", href: "/erasure", icon: Hourglass },
       { key: "csp", href: "/csp", icon: ShieldAlert },
       { key: "churn", href: "/churn", icon: UserMinus },
     ],
@@ -42,6 +45,7 @@ export const NAV: NavGroup[] = [
     labelKey: "operations",
     items: [
       { key: "backups", href: "/backups", icon: DatabaseBackup },
+      { key: "cron", href: "/cron", icon: Clock },
       { key: "system", href: "/system", icon: Server },
       { key: "settings", href: "/settings", icon: Settings },
     ],

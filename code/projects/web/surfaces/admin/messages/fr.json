@@ -20,7 +20,9 @@
       "backups": "Sauvegardes",
       "system": "Système",
       "settings": "Paramètres",
-      "security": "Sécurité"
+      "security": "Sécurité",
+      "cron": "Tâches planifiées",
+      "erasure": "Demandes d'effacement"
     },
     "theme": {
       "toggle": "Changer de thème",
@@ -154,7 +156,8 @@
       "noEndpoint": "Planifié / file (pas d'endpoint)",
       "external": "Externe (Sanity)",
       "unknown": "Inconnu",
-      "notConfigured": "Non configuré"
+      "notConfigured": "Non configuré",
+      "cronLink": "Voir les tâches planifiées"
     },
     "settings": {
       "title": "Paramètres",
@@ -215,6 +218,65 @@
       "stuckFlag": "Bloqué"
     },
     "notAdmin": "Vous êtes connecté, mais ce compte n’est pas administrateur. Déconnectez-vous pour utiliser un autre compte.",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "cron": {
+      "title": "Tâches planifiées",
+      "subtitle": "Le cron horaire : purge de rétention, échéances d'effacement, nettoyage des exports.",
+      "health": {
+        "ok": "En bonne santé",
+        "failed": "Dernière exécution en échec",
+        "stale": "Inactif — aucune exécution depuis plus de 2 heures",
+        "never": "Jamais exécuté",
+        "unreachable": "API injoignable ou non configurée"
+      },
+      "healthLabel": "Statut",
+      "lastRun": "Dernière exécution",
+      "erasureOpen": "Demandes d'effacement ouvertes",
+      "erasureDueSoon": "Échéance proche",
+      "erasureBreached": "Échéance dépassée",
+      "exportsOutstanding": "Exports en attente de téléchargement",
+      "exportsUnswept": "Exports expirés non supprimés",
+      "runs": "Exécutions récentes",
+      "started": "Début",
+      "status": "Statut",
+      "passes": "Étapes",
+      "empty": "Aucune exécution enregistrée.",
+      "pass": {
+        "audit_purge": "Purge audit",
+        "main_purge": "Purge principale",
+        "erasure_sla": "Échéances d'effacement",
+        "export_cleanup": "Nettoyage des exports"
+      },
+      "passStatus": {
+        "ok": "OK",
+        "failed": "Échec",
+        "skipped": "Ignorée"
+      },
+      "runStatus": {
+        "ok": "OK",
+        "failed": "Échec"
+      }
+    },
+    "erasure": {
+      "title": "Demandes d'effacement",
+      "subtitle": "Demandes RGPD d'effacement ouvertes, par échéance (un mois, art. 12(3)).",
+      "open": "Ouvertes",
+      "recentClosed": "Récemment clôturées",
+      "id": "#",
+      "status": "Statut",
+      "requested": "Demandée",
+      "due": "Échéance",
+      "stateLabel": "Échéance",
+      "state": {
+        "breached": "Échéance dépassée",
+        "dueSoon": "Échéance proche",
+        "onTrack": "Dans les délais",
+        "closed": "Clôturée"
+      },
+      "flagged": "Signalée",
+      "empty": "Aucune demande ouverte.",
+      "emptyClosed": "Aucune demande clôturée.",
+      "unreachable": "API injoignable ou non configurée"
+    }
   }
 }

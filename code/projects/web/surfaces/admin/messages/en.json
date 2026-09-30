@@ -20,7 +20,9 @@
       "backups": "Backups",
       "system": "System",
       "settings": "Settings",
-      "security": "Security"
+      "security": "Security",
+      "cron": "Scheduled jobs",
+      "erasure": "Erasure requests"
     },
     "theme": {
       "toggle": "Toggle theme",
@@ -154,7 +156,8 @@
       "noEndpoint": "Scheduled / queue (no endpoint)",
       "external": "External (Sanity)",
       "unknown": "Unknown",
-      "notConfigured": "Not configured"
+      "notConfigured": "Not configured",
+      "cronLink": "View scheduled jobs"
     },
     "settings": {
       "title": "Settings",
@@ -215,6 +218,65 @@
       "stuckFlag": "Stuck"
     },
     "notAdmin": "You are signed in, but this account is not an admin. Sign out to use a different account.",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "cron": {
+      "title": "Scheduled jobs",
+      "subtitle": "The hourly cron: retention purge, erasure deadlines, export cleanup.",
+      "health": {
+        "ok": "Healthy",
+        "failed": "Last run failed",
+        "stale": "Stale — no run for over 2 hours",
+        "never": "Never ran",
+        "unreachable": "API unreachable or not configured"
+      },
+      "healthLabel": "Status",
+      "lastRun": "Last run",
+      "erasureOpen": "Erasure requests open",
+      "erasureDueSoon": "Due soon",
+      "erasureBreached": "Deadline passed",
+      "exportsOutstanding": "Exports awaiting download",
+      "exportsUnswept": "Expired exports not yet deleted",
+      "runs": "Recent runs",
+      "started": "Started",
+      "status": "Status",
+      "passes": "Passes",
+      "empty": "No runs recorded yet.",
+      "pass": {
+        "audit_purge": "Audit purge",
+        "main_purge": "Main purge",
+        "erasure_sla": "Erasure deadlines",
+        "export_cleanup": "Export cleanup"
+      },
+      "passStatus": {
+        "ok": "OK",
+        "failed": "Failed",
+        "skipped": "Skipped"
+      },
+      "runStatus": {
+        "ok": "OK",
+        "failed": "Failed"
+      }
+    },
+    "erasure": {
+      "title": "Erasure requests",
+      "subtitle": "Open GDPR erasure requests by deadline (one month, Art. 12(3)).",
+      "open": "Open",
+      "recentClosed": "Recently closed",
+      "id": "#",
+      "status": "Status",
+      "requested": "Requested",
+      "due": "Due",
+      "stateLabel": "Deadline",
+      "state": {
+        "breached": "Deadline passed",
+        "dueSoon": "Due soon",
+        "onTrack": "On track",
+        "closed": "Closed"
+      },
+      "flagged": "Flagged",
+      "empty": "No open requests.",
+      "emptyClosed": "No closed requests yet.",
+      "unreachable": "API unreachable or not configured"
+    }
   }
 }

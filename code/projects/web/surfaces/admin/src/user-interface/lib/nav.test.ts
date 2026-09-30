@@ -12,5 +12,7 @@ describe("admin nav", () => {
     expect(activeKey("/data-requests")).toBe("dataRequests");
     expect(activeKey("/en")).toBe("overview");
     expect(activeKey("/fr")).toBe("overview");
+    expect(activeKey("/en/cron")).toBe("cron");
+    expect(activeKey("/erasure")).toBe("erasure");
   });
 });
