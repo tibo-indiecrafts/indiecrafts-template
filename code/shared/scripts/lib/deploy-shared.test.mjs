@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { gateSkipped, confirmSkipped } from "./deploy-shared.mjs";
+import { gateSkipped, confirmSkipped, buildVarArgs } from "./deploy-shared.mjs";
 
 // The verify gate is tiered: dev + CI skip; staging/prod run it; --skip-gate opts out.
 test("gateSkipped — dev + CI skip, staging/prod gate", () => {
@@ -20,4 +20,14 @@ test("confirmSkipped — only an un-acked, non-CI prod deploy prompts", () => {
   assert.equal(confirmSkipped("prod", { ci: "true" }), true);
   assert.equal(confirmSkipped("prod", { yesProd: true, ci: "" }), true);
   assert.equal(confirmSkipped("prod", { yes: true, ci: "" }), true); // delegate path
+});
+
+// The api's /health reports the build it runs: every worker deploy stamps its version + commit.
+test("buildVarArgs stamps the version and commit as wrangler --var pairs", () => {
+  assert.deepEqual(buildVarArgs("1.2.0", "abc123"), [
+    "--var",
+    "BUILD_VERSION:1.2.0",
+    "--var",
+    "BUILD_COMMIT:abc123",
+  ]);
 });

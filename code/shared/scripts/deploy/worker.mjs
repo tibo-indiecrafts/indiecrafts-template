@@ -7,10 +7,11 @@
 //
 //   node ../../../scripts/deploy-worker.mjs <app> <dev|staging|prod> [--yes]
 
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { assertRenamed } from "../lib/project.mjs";
-import { run, gate, confirmProd } from "../lib/deploy-shared.mjs";
+import { run, gate, confirmProd, buildVarArgs } from "../lib/deploy-shared.mjs";
 import { ENVS } from "../lib/apps.mjs";
 import { byKind } from "../lib/databases.mjs";
 
@@ -79,7 +80,18 @@ if (dryRun) {
 }
 
 migrateOwnedD1();
-run("wrangler", ["deploy", "--env", env]);
+// Stamp the build (package version + short commit) so /health can report what runs.
+const version =
+  JSON.parse(readFileSync("package.json", "utf8")).version ?? "0.0.0";
+let commit = "unknown";
+try {
+  commit = execFileSync("git", ["rev-parse", "--short", "HEAD"], {
+    encoding: "utf8",
+  }).trim();
+} catch {
+  // no git repo here: the build stays "unknown"
+}
+run("wrangler", ["deploy", "--env", env, ...buildVarArgs(version, commit)]);
 
 // Secrets AFTER deploy — `wrangler secret bulk` needs the Worker to exist. `--soft` so a
 // Worker with no `.dev.vars` (or none to sync) never fails the deploy. Runs from the app

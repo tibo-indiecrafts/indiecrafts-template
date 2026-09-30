@@ -151,6 +151,9 @@ export interface Env {
   SECURITY_ALERT_EMAIL?: string;
   /** The cron Worker, via a private service binding — `POST /v1/cron/run` (admin "Run now"). */
   CRON?: Fetcher;
+  /** Stamped by `scripts/deploy/worker.mjs` (`--var`) — reported by the authed /health. */
+  BUILD_VERSION?: string;
+  BUILD_COMMIT?: string;
   /** `wrangler secret put TURNSTILE_SECRET` — the bot gate on the public erasure-request
    *  form. Optional (unset → the check passes; set → verified, fails closed on error). */
   TURNSTILE_SECRET?: string;
@@ -347,7 +350,7 @@ async function route(
   const url = new URL(request.url);
   if (url.pathname === "/health") {
     // Public uptime check stays minimal; a bearer-authed caller (the admin System
-    // screen) also gets per-binding DB status via a cheap `SELECT 1`.
+    // screen) also gets both D1s (a `SELECT 1` each), the build and the bindings.
     const bearer = (request.headers.get("authorization") ?? "").replace(
       /^Bearer\s+/i,
       "",
@@ -364,7 +367,23 @@ async function route(
         return "error";
       }
     };
-    return Response.json({ ok: true, db: await dbStatus(env.AUDIT_DB) });
+    const bound = (b: unknown) => (b ? "bound" : "unbound");
+    const db = {
+      audit: await dbStatus(env.AUDIT_DB),
+      main: await dbStatus(env.MAIN_DB),
+    };
+    return Response.json({
+      ok: db.audit !== "error" && db.main !== "error",
+      version: env.BUILD_VERSION || "dev",
+      commit: env.BUILD_COMMIT || "dev",
+      db,
+      bindings: {
+        kv: bound(env.SECURITY_COUNTERS),
+        exportBucket: bound(env.EXPORT_BUCKET),
+        cron: bound(env.CRON),
+        rateLimit: bound(env.RATELIMIT),
+      },
+    });
   }
 
   const cors = corsHeaders(request.headers.get("origin"));

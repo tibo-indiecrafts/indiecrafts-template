@@ -55,3 +55,11 @@ export async function confirmProd(action, target, env, { yes, yesProd } = {}) {
     process.exit(0);
   }
 }
+
+/** `wrangler deploy` args that stamp the build into the Worker (read by the api's /health). */
+export const buildVarArgs = (version, commit) => [
+  "--var",
+  `BUILD_VERSION:${version}`,
+  "--var",
+  `BUILD_COMMIT:${commit}`,
+];
