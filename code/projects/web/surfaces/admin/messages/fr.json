@@ -156,7 +156,22 @@
       "external": "Externe (Sanity)",
       "unknown": "Inconnu",
       "notConfigured": "Non configuré",
-      "cronLink": "Voir les tâches planifiées"
+      "cronLink": "Voir les tâches planifiées",
+      "bindings": "Liaisons de l'api :",
+      "bound": "liée",
+      "unbound": "non liée",
+      "binding": {
+        "kv": "Compteurs de sécurité (KV)",
+        "exportBucket": "Stockage des exports (R2)",
+        "cron": "Lien vers le cron",
+        "rateLimit": "Limiteur de débit"
+      },
+      "dbStatus": {
+        "ok": "ok",
+        "error": "erreur",
+        "unbound": "non liée",
+        "unknown": "inconnu"
+      }
     },
     "settings": {
       "title": "Paramètres",

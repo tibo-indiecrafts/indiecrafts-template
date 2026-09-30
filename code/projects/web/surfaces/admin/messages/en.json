@@ -156,7 +156,22 @@
       "external": "External (Sanity)",
       "unknown": "Unknown",
       "notConfigured": "Not configured",
-      "cronLink": "View scheduled jobs"
+      "cronLink": "View scheduled jobs",
+      "bindings": "api bindings:",
+      "bound": "bound",
+      "unbound": "not bound",
+      "binding": {
+        "kv": "Security counters (KV)",
+        "exportBucket": "Export bucket (R2)",
+        "cron": "Cron link",
+        "rateLimit": "Rate limiter"
+      },
+      "dbStatus": {
+        "ok": "ok",
+        "error": "error",
+        "unbound": "not bound",
+        "unknown": "unknown"
+      }
     },
     "settings": {
       "title": "Settings",

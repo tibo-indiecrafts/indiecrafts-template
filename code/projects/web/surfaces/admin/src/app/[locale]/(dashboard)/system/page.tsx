@@ -4,7 +4,11 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/system/page.md
  */
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Card, CardContent, CardHeader } from "@indiecrafts/packages-web-ui/web/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from "@indiecrafts/packages-web-ui/web/card";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
   Table,
@@ -16,7 +20,12 @@ import {
 } from "@indiecrafts/packages-web-ui/web/table";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
 import { Link } from "@/i18n/routing";
-import { cronHealth, fetchCronStatus, healthVariant } from "@/lib/monitoring";
+import {
+  apiHealthView,
+  cronHealth,
+  fetchCronStatus,
+  healthVariant,
+} from "@/lib/monitoring";
 
 // Surfaces expose /api/version; HTTP workers expose /health. URLs from server-only
 // env (operator sets them per deployment); unset → "not configured".
@@ -74,19 +83,45 @@ export default async function SystemPage({
   const cron = cronHealth(await fetchCronStatus());
 
   const surfaces = await Promise.all(
-    SURFACES.map(async (s) => ({ name: s.name, ...(await fetchVersion(s.url)) })),
+    SURFACES.map(async (s) => ({
+      name: s.name,
+      ...(await fetchVersion(s.url)),
+    })),
   );
   const workerHealth = await Promise.all(
-    HTTP_WORKERS.map(async (w) => ({ name: w.name, ...(await fetchHealth(w.url, w.auth)) })),
+    HTTP_WORKERS.map(async (w) => ({
+      name: w.name,
+      ...(await fetchHealth(w.url, w.auth)),
+    })),
   );
-  const apiHealth = workerHealth.find((w) => w.name === "api")?.body;
+  const api = apiHealthView(workerHealth.find((w) => w.name === "api")?.body);
+  const dbVariant = (s: string) =>
+    s === "ok"
+      ? ("outline" as const)
+      : s === "error"
+        ? ("destructive" as const)
+        : ("secondary" as const);
   const dbs = [
+    ...(api.dbs.length
+      ? api.dbs.map((d) => ({
+          name: `${d.key} (D1, EU)`,
+          status: t(
+            `dbStatus.${d.status === "ok" || d.status === "error" || d.status === "unbound" ? d.status : "unknown"}`,
+          ),
+          variant: dbVariant(d.status),
+        }))
+      : [
+          {
+            name: "audit · main (D1, EU)",
+            status: t("unknown"),
+            variant: "secondary" as const,
+          },
+        ]),
     {
-      name: "data (D1, EU)",
-      status: String(apiHealth?.db ?? t("unknown")),
-      variant: apiHealth?.db ? ("outline" as const) : ("secondary" as const),
+      name: "content (Sanity)",
+      status: t("external"),
+      variant: "secondary" as const,
     },
-    { name: "content (Sanity)", status: t("external"), variant: "secondary" as const },
   ];
 
   const badge = (row: { configured: boolean; ok: boolean }) =>
@@ -141,11 +176,13 @@ export default async function SystemPage({
           <CardHeader>
             <h2 className="leading-none font-semibold">{t("workers")}</h2>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col gap-4">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t("name")}</TableHead>
+                  <TableHead>{t("version")}</TableHead>
+                  <TableHead>{t("commit")}</TableHead>
                   <TableHead>{t("status")}</TableHead>
                 </TableRow>
               </TableHeader>
@@ -153,6 +190,12 @@ export default async function SystemPage({
                 {workerHealth.map((w) => (
                   <TableRow key={w.name}>
                     <TableCell>{w.name}</TableCell>
+                    <TableCell className="tabular-nums">
+                      {w.name === "api" ? api.version : "—"}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {w.name === "api" ? api.commit : "—"}
+                    </TableCell>
                     <TableCell>
                       <Badge variant={badgeVariant(w)}>{badge(w)}</Badge>
                     </TableCell>
@@ -160,6 +203,8 @@ export default async function SystemPage({
                 ))}
                 <TableRow>
                   <TableCell>cron</TableCell>
+                  <TableCell>—</TableCell>
+                  <TableCell>—</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap items-center gap-3">
                       <Badge variant={healthVariant(cron)}>
@@ -176,6 +221,20 @@ export default async function SystemPage({
                 </TableRow>
               </TableBody>
             </Table>
+            {api.bindings.length ? (
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <span className="text-muted-foreground">{t("bindings")}</span>
+                {api.bindings.map((b) => (
+                  <Badge
+                    key={b.key}
+                    variant={b.bound ? "outline" : "secondary"}
+                  >
+                    {t(`binding.${b.key}`)} ·{" "}
+                    {b.bound ? t("bound") : t("unbound")}
+                  </Badge>
+                ))}
+              </div>
+            ) : null}
           </CardContent>
         </Card>
 

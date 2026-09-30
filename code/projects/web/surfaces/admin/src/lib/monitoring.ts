@@ -42,7 +42,10 @@ export type ErasureRow = {
 };
 
 /** `GET /v1/erasure-requests` — no identifiers, by design. */
-export type ErasureRequests = { open: ErasureRow[]; recentClosed: ErasureRow[] };
+export type ErasureRequests = {
+  open: ErasureRow[];
+  recentClosed: ErasureRow[];
+};
 
 export type CronHealth = "unreachable" | "never" | "stale" | "failed" | "ok";
 
@@ -83,3 +86,29 @@ async function getApi<T>(path: string): Promise<T | null> {
 export const fetchCronStatus = () => getApi<CronStatus>("/v1/cron/status");
 export const fetchErasureRequests = () =>
   getApi<ErasureRequests>("/v1/erasure-requests");
+
+/** The api's authed `/health` body, flattened for the System page. No body (api down, or the
+ *  bearer is not set) → dashes and empty lists, never a crash. */
+export type ApiHealthView = {
+  version: string;
+  commit: string;
+  dbs: { key: "audit" | "main"; status: string }[];
+  bindings: { key: string; bound: boolean }[];
+};
+export function apiHealthView(body?: Record<string, unknown>): ApiHealthView {
+  if (!body) return { version: "—", commit: "—", dbs: [], bindings: [] };
+  const db = (body.db ?? {}) as Record<string, unknown>;
+  const bindings = (body.bindings ?? {}) as Record<string, unknown>;
+  return {
+    version: String(body.version ?? "—"),
+    commit: String(body.commit ?? "—"),
+    dbs: (["audit", "main"] as const).map((key) => ({
+      key,
+      status: String(db[key] ?? "unknown"),
+    })),
+    bindings: Object.entries(bindings).map(([key, v]) => ({
+      key,
+      bound: v === "bound",
+    })),
+  };
+}
