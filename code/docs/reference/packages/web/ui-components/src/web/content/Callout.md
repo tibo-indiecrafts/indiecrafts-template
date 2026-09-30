@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Renders a `module.callout` block: a variant-styled aside (info, success, warning, or danger) around portable-text content, with an optional CTA. The warning and danger variants use the `alert` ARIA role.
+Renders a `module.callout` block: a variant-styled aside (info, success, warning, or danger) around portable-text content, with an optional CTA. Every variant uses the `note` ARIA role (static content; `alert` would interrupt on load).
 
 ## Exports
 

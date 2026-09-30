@@ -13,4 +13,4 @@ Area rules → `../../../.claude/CLAUDE.md`.
 - **`BRANDS` are GENERATED** — `src/shared/brands.ts` is built from `brands.json` (our name → a `simple-icons` slug, or an inline `{title,hex,path}` for a mark simple-icons lacks, e.g. LinkedIn) via `pnpm brands:build`; `brands:check` guards drift in CI (like `tokens:check`). Never hand-edit `brands.ts`.
 - **No Tailwind classes of its own** — renderers take `className`/size from the caller; no `@source` line needed.
 
-Full reference → [`code/docs/packages/ui-icons.md`](../../../../docs/packages/ui-icons.md).
+Full reference → [`code/docs/packages/web/ui-icons.md`](../../../../docs/packages/web/ui-icons.md).

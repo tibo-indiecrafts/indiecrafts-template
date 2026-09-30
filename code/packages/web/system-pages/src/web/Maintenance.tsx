@@ -59,7 +59,7 @@ export function Maintenance({
         ) : null}
       </div>
 
-      <p className="text-muted-foreground/70 absolute bottom-8 text-xs font-medium tracking-widest uppercase">
+      <p className="text-muted-foreground absolute bottom-8 text-xs font-medium tracking-widest uppercase">
         {name}
       </p>
     </main>

@@ -1,26 +1,28 @@
 /**
  * Storybook mock for `next-intl` + `next-intl/server`. Aliased in main.ts so
- * renderers that read translations resolve to a static message map — no real
- * i18n request or provider needed. Only the keys the design-system renderers
- * actually read are supplied (from the Explore map).
+ * renderers that read translations resolve against the website's real
+ * `messages/<locale>.json` — no i18n request or provider needed. The Locale
+ * toolbar (preview.tsx) calls `setLocale`, so every story renders in en or fr.
  */
 import type { ReactNode } from "react";
+import en from "../../../surfaces/website/messages/en.json";
+import fr from "../../../surfaces/website/messages/fr.json";
 
 type Values = Record<string, string | number>;
 
-const MESSAGES: Record<string, Record<string, unknown>> = {
-  "pages.blog.gallery": {
-    regionLabel: "Image gallery",
-    imageLabel: "Image {n} of {total}",
-    open: "Enlarge image {n} of {total}",
-    goToImage: "Go to image {n}",
-    close: "Close",
-    playVideo: "Play video",
-  },
-  common: { previous: "Previous", next: "Next", skipToContent: "Skip to content" },
-  // QuoteList reads t.raw("quoteStyle.primary") → [open, close] marks.
-  typography: { "quoteStyle.primary": ["« ", " »"] },
-};
+const MESSAGES = { en, fr } as Record<string, unknown>;
+export const LOCALES = Object.keys(MESSAGES);
+
+let locale = "en";
+/** Set by the Locale toolbar decorator before each render. */
+export function setLocale(next: string) {
+  locale = next in MESSAGES ? next : "en";
+}
+
+const lookup = (obj: unknown, path: string): unknown =>
+  path
+    .split(".")
+    .reduce<unknown>((node, key) => (node as Record<string, unknown> | undefined)?.[key], obj);
 
 const interpolate = (input: string, values?: Values) =>
   values
@@ -32,12 +34,16 @@ type Translator = ((key: string, values?: Values) => string) & {
 };
 
 function makeTranslator(namespace?: string): Translator {
-  const dict = (namespace && MESSAGES[namespace]) || {};
+  const dict = namespace ? lookup(MESSAGES[locale], namespace) : MESSAGES[locale];
   const t = ((key: string, values?: Values) => {
-    const val = dict[key];
-    return typeof val === "string" ? interpolate(val, values) : key;
+    const val = lookup(dict, key);
+    if (typeof val === "string") return interpolate(val, values);
+    // Like next-intl in dev: a missing key is loud, and renders its full path.
+    const id = namespace ? `${namespace}.${key}` : key;
+    console.error(`[next-intl mock] missing message "${id}" in ${locale}.json`);
+    return id;
   }) as Translator;
-  t.raw = (key: string) => dict[key];
+  t.raw = (key: string) => lookup(dict, key);
   return t;
 }
 
@@ -55,7 +61,7 @@ export async function getTranslations(
 }
 
 export function useLocale() {
-  return "en";
+  return locale;
 }
 
 export function NextIntlClientProvider({ children }: { children: ReactNode }) {

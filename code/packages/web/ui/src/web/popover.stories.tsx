@@ -34,7 +34,7 @@ export const Default: Story = {
       <PopoverTrigger asChild>
         <Button variant="outline">Open settings</Button>
       </PopoverTrigger>
-      <PopoverContent className="w-72">
+      <PopoverContent className="w-72" aria-label="Dimensions">
         <PopoverHeader>
           <PopoverTitle>Dimensions</PopoverTitle>
           <PopoverDescription>

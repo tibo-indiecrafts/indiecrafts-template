@@ -27,4 +27,4 @@ Auto-loads under `code/packages/shared/format/**`. Consumed as source via `trans
 (`currency`, `vatRate`, `rates`); `localeFormat(locale)` resolves them. **Not Sanity, not `messages/`.**
 Formatting **numbers** here; **words** (labels, "read", "more") stay in `messages/`.
 
-Full reference → [`code/docs/packages/format.md`](../../../../docs/packages/format.md).
+Full reference → [`code/docs/packages/shared/format.md`](../../../../docs/packages/shared/format.md).

@@ -17,4 +17,4 @@ Terraform stacks that stand up shared, project-wide edge infra. Layered under `c
   Deploy/CI fan out from the registry — never hard-code a path.
 - **Run from the repo root** — `pnpm infra:<name>:<action>:<env>` (or `node code/shared/scripts/infra.mjs <name> <init|plan|apply|destroy|output> <env>`).
 
-Model → [`code/docs/shared/architecture/platform-deploy.md`](../../docs/shared/architecture/platform-deploy.md) · IaC → [`code/docs/shared/infra/cloudflare-iac.md`](../../docs/shared/infra/cloudflare-iac.md).
+Model → [`code/docs/shared/architecture/platform-deploy.md`](../../../docs/shared/architecture/platform-deploy.md) · IaC → [`code/docs/shared/infra/cloudflare-iac.md`](../../../docs/shared/infra/cloudflare-iac.md).

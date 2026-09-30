@@ -15,6 +15,8 @@ const preview: Preview = {
     layout: "fullscreen",
     controls: { expanded: true, sort: "requiredFirst" },
     backgrounds: { disable: true },
+    // axe violations FAIL the story test (the addon default, "todo", only warns).
+    a11y: { test: "error" },
     docs: { toc: true },
   },
   decorators: [

@@ -70,7 +70,8 @@ export function AnnouncementToast({
   if (!toast || !visible) return null;
 
   return (
-    <aside
+    // A `div`: `<aside>` (complementary) may not carry the `status` live-region role.
+    <div
       role="status"
       aria-live="polite"
       className={cn(
@@ -115,7 +116,7 @@ export function AnnouncementToast({
       >
         <span aria-hidden="true">×</span>
       </button>
-    </aside>
+    </div>
   );
 }
 

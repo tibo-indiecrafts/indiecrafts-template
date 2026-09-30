@@ -26,4 +26,4 @@ pnpm docs:build     # static → .vitepress/dist
 - **Dead links FAIL the build.** `ignoreDeadLinks` is an allow-list (code-tree pointers · localhost), not `true`. Run `pnpm docs:build` — a green build is the link check. Prefer absolute `/paths` over relative.
 - **Bare `<placeholders>` go in backticks**; a `{{x.y}}` (Vue interpolation on a member) hard-fails the build even inside inline code — put it in a fenced block or `<code v-pre>`.
 - **Deps stay in `docs/`** — npm-managed, never touch the app's pnpm tree. Changelogs are `cp`-synced via `scripts/sync-changelog.mjs` (`pnpm test:scripts` covers it) — never hand-edit `*/changelog.md`.
-- Log doc changes in `docs/CHANGELOG.md`; roll up to root at release. Full conventions → [`contributing/how-we-document`](contributing/how-we-document.md).
+- Log doc changes in `docs/CHANGELOG.md`; roll up to root at release. Full conventions → [`contributing/how-we-document`](../contributing/how-we-document.md).

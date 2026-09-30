@@ -18,7 +18,7 @@ route from `domains.mjs` once set). The gallery is still browse-only; the app ne
 ```bash
 pnpm --filter @indiecrafts/web-tools-storybook storybook        # dev gallery on :6006
 pnpm --filter @indiecrafts/web-tools-storybook storybook:build  # static → storybook-static/
-pnpm --filter @indiecrafts/web-tools-storybook test:stories     # every story as a component + a11y test (Vitest, headless Chromium)
+pnpm --filter @indiecrafts/web-tools-storybook test:stories     # every story as a component + a11y test, Light + Dark (Vitest, headless Chromium)
 ```
 
 `test:stories` is the visual/interaction gate (the repo's "visual = colocated stories" rule); it **blocks**
@@ -33,7 +33,11 @@ so it lives in its own Playwright-provisioned job, not the browserless `verify`.
 - **Stories live in `stories/`.** Add a story when a brick gains a variant worth documenting; keep the
   a11y addon green.
 - **Next-coupled bricks are mocked** for the gallery (`.storybook/next-intl-mock.tsx`, `shiki-mock.ts`) —
-  the gallery is Vite, not Next; mock the Next/CMS edges, don't pull them in.
+  the gallery is Vite, not Next; mock the Next/CMS edges, don't pull them in. The intl mock reads the
+  website's real `messages/{en,fr}.json` (Locale toolbar) — never copy strings into it.
+- **a11y is enforced, in both themes** — `a11y.test: "error"` + the addon annotations in each vitest setup
+  (without them axe never runs). Waive a rule only for upstream markup a story can't reach: disable that one
+  rule on that story with an `@debt ACCESSIBILITY` comment.
 - Log gallery/story/config changes in this app's `CHANGELOG.md` (home altitude); roll up to root at release.
 
-Human-facing reference → [`code/docs/packages/storybook.md`](../../../../../docs/packages/storybook.md).
+Human-facing reference → [`code/docs/projects/web/tools/storybook.md`](../../../../../docs/projects/web/tools/storybook.md).

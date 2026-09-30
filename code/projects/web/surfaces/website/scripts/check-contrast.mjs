@@ -32,6 +32,8 @@ const PAIRS = [
   ["muted-foreground", "muted", 4.5, "muted text on muted surface (chips)"],
   ["brand-foreground", "brand", 4.5, "text on brand"],
   ["brand", "background", 3.0, "brand accent / links"],
+  ["destructive", "background", 4.5, "error text (text-destructive)"],
+  ["destructive-foreground", "destructive", 4.5, "text on destructive"],
   ["ring", "background", 3.0, "focus ring"],
   ["border", "background", 1.5, "border (non-text)"],
   ["selection-fg", "selection-bg", 4.5, "selected text"],

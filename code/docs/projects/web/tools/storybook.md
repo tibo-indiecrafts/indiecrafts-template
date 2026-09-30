@@ -84,7 +84,12 @@ pnpm --filter @indiecrafts/web-tools-storybook test:stories     # every story as
 ```
 
 `test:stories` runs `vitest run` — it executes every story as a Vitest browser-mode component test with
-`@storybook/addon-a11y` running axe on each. It is the visual/interaction gate: it **blocks** the CI
+`@storybook/addon-a11y` running axe on each, **twice: in the Light and the Dark theme** (two Vitest projects;
+contrast differs per theme). The preview sets `a11y: { test: "error" }`, so a violation fails the test (the
+addon default only warns), and each setup file passes the addon's own annotations — without them axe never
+runs. A story that must waive an axe rule for upstream markup it can't reach disables only that rule, with an
+`@debt ACCESSIBILITY` comment. The **Locale** toolbar renders translated components (`GalleryCarousel`,
+`QuoteList`) against the website's real `messages/en.json` / `fr.json`; a missing key logs a console error. It is the visual/interaction gate: it **blocks** the CI
 `browser-stories` job. It is deliberately **not** in the default `pnpm verify`
 — it needs a real browser, so it lives in its own Playwright-provisioned CI job, not the browserless gate.
 

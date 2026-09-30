@@ -26,7 +26,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => (
-    <NativeSelect {...args} defaultValue="apple">
+    <NativeSelect aria-label="Fruit" {...args} defaultValue="apple">
       <NativeSelectOption value="apple">Apple</NativeSelectOption>
       <NativeSelectOption value="banana">Banana</NativeSelectOption>
       <NativeSelectOption value="orange">Orange</NativeSelectOption>

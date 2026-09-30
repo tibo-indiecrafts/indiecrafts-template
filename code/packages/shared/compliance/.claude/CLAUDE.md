@@ -12,4 +12,4 @@ the api Worker (the erasure/export core) — **no `next`/Sanity**. Area rules �
 - **The website keeps its richer `packages-web-compliance`** (Sanity/next-intl) over the **same** math — this brick is the one source of the decision logic.
 - **`LegalReacceptancePrompt` is the one legal banner** — the website's `LegalNotice` renders it too (with its locale `Link`). Its Tailwind classes reach every surface via the `@source` line in `web/ui-tokens/globals.css`.
 
-Full reference → [`code/docs/packages/compliance-shared.md`](../../../../docs/packages/compliance-shared.md).
+Full reference → [`code/docs/packages/shared/compliance.md`](../../../../docs/packages/shared/compliance.md).

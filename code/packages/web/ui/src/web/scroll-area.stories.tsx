@@ -8,6 +8,12 @@ const meta = {
   component: ScrollArea,
   tags: ["autodocs"],
   parameters: {
+    // @debt ACCESSIBILITY - the Radix ScrollArea viewport takes no tabIndex, so a region with no focusable content can't be scrolled by keyboard.
+    a11y: {
+      config: {
+        rules: [{ id: "scrollable-region-focusable", enabled: false }],
+      },
+    },
     docs: {
       description: {
         component: docs,

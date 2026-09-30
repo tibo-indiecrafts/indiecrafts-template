@@ -23,4 +23,4 @@ Auto-loads under `code/packages/web/email/**`. Consumed as source via `transpile
 
 Depends on `@indiecrafts/packages-shared-config` + `@indiecrafts/packages-web-sanity`. Never imports an app or a module.
 
-Full reference → [`code/docs/packages/email.md`](../../../../docs/packages/email.md).
+Full reference → [`code/docs/packages/web/email.md`](../../../../docs/packages/web/email.md).

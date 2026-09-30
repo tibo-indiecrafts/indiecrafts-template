@@ -15,4 +15,4 @@ Consumed by the app, the blog, and future apps without depending on the blog. Ar
 - **`custom-html` renders raw HTML** (`dangerouslySetInnerHTML`) — a trusted-editor escape hatch, keep
   it role-gated.
 
-Full reference → [`code/docs/packages/page-builder.md`](../../../../docs/packages/page-builder.md).
+Full reference → [`code/docs/packages/web/page-builder.md`](../../../../docs/packages/web/page-builder.md).

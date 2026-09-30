@@ -15,6 +15,8 @@ const meta = {
   component: NavigationMenu,
   tags: ["autodocs"],
   parameters: {
+    // @debt ACCESSIBILITY - Radix NavigationMenu renders an aria-hidden focus-proxy span with tabindex 0.
+    a11y: { config: { rules: [{ id: "aria-hidden-focus", enabled: false }] } },
     layout: "centered",
     docs: {
       description: {

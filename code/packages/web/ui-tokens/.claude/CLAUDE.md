@@ -14,4 +14,4 @@ Auto-loads under `code/packages/web/ui-tokens/**`. `globals.css` (OKLCH tokens) 
   `@utility` + animations) + `@import "./generated/tokens.css"`. **Add a `@source` line whenever a new package
   renders classes**, or its styles vanish (Tailwind v4 skips node_modules).
 - `DESIGN.md` (colocated here) is the visual contract → [`DESIGN.md`](../DESIGN.md). Run `pnpm verify:contrast` after any token change.
-- Full reference → [`code/docs/packages/ui-tokens.md`](../../../../docs/packages/ui-tokens.md).
+- Full reference → [`code/docs/packages/web/ui-tokens.md`](../../../../docs/packages/web/ui-tokens.md).

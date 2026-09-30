@@ -36,4 +36,4 @@ Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers +
   incomplete. Match a sibling (e.g. `form/PhoneInput.stories.tsx`): `title: "UI Components/<Name>"`,
   `tags: ["autodocs"]`, description from `./<Name>.md?raw`. A component that can't render without an
   env var / external key takes a prop override so a story can drive it (see `TurnstileWidget`'s `siteKey`).
-- Full reference → [`code/docs/packages/ui-components.md`](../../../../docs/packages/ui-components.md).
+- Full reference → [`code/docs/packages/web/ui-components.md`](../../../../docs/packages/web/ui-components.md).

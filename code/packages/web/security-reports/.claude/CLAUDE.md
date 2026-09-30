@@ -22,4 +22,4 @@ Auto-loads under `code/packages/web/security-reports/**`. Explicit per-file `exp
 `normalizeCspReports`/`sanitizeCspReport`/`SanitizedCspReport`. This brick is the Next-coupled glue
 around it: `server-only` import in `forward.ts` is why the brick can't move to `shared/`.
 
-Full reference → [`code/docs/packages/security-reports.md`](../../../../docs/packages/security-reports.md).
+Full reference → [`code/docs/packages/web/security-reports.md`](../../../../docs/packages/web/security-reports.md).

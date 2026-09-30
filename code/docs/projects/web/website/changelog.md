@@ -19,6 +19,12 @@ the repo-wide roll-up → root `CHANGELOG.md`.
 
 ### Changed
 
+- **`verify:contrast` checks the destructive pairs** — error text on the background and text on a
+  destructive fill, in both themes. The dark theme's error red failed (4.15:1) with nothing catching it.
+- **`check:claude-md` fails on a dead relative link** in a brief or rule (LINK). 36 links pointed at moved
+  doc pages (mostly `docs/packages/<name>.md` → `docs/packages/{shared,web}/<name>.md`); all fixed, and
+  two pointers to files that no longer exist were dropped (the `issue-tags` rule, the `better-colors` skill).
+
 - **Agent instructions load only where they apply, and cannot silently outgrow their budget.**
   `pnpm check:claude-md` now counts `@imports` (they load at launch), fails any brief or rule past 200
   lines (the official Claude Code target), fails dead `@imports`, and covers `.claude/rules/**`. It

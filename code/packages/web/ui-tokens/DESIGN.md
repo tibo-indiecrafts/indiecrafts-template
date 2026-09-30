@@ -13,7 +13,7 @@ colors:
   muted-foreground: "#696969"
   border: "#d4d4d4"
   ring: "{colors.brand}"
-  destructive: "#dc2626"
+  destructive: "#c10007"
   # Dark
   background-dark: "#0a0a0a"
   foreground-dark: "#fafafa"
@@ -191,7 +191,8 @@ matched to `--background`. Always use utilities (`bg-brand`,
   backgrounds). Never text.
 - **`border` — `#d4d4d4`** — hairlines + rings only (`border-dark` bumped to
   `oklch(0.5 0 0)` ≈ neutral-500 for AA on near-black).
-- **`destructive` — `#dc2626`** — error/validation states only, never decorative.
+- **`destructive` — `#c10007` / dark `#ff6467`** — error/validation states only, never decorative. Dark
+  uses a lighter red with dark `destructive-foreground` text, so error text stays AA on near-black.
 - **`background` — `#ffffff` / `card`** — page and raised-surface fills.
 
 ## Typography

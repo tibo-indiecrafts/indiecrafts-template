@@ -124,7 +124,7 @@ export function ContactForm({
             <p
               className={cn(
                 "mt-2 text-pretty",
-                banner ? "text-primary-foreground/80" : "text-muted-foreground",
+                banner ? "text-primary-foreground" : "text-muted-foreground",
               )}
             >
               {body}
@@ -180,7 +180,9 @@ export function ContactForm({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className={
-                      banner ? "bg-background text-foreground" : undefined
+                      banner
+                        ? "bg-background dark:bg-background text-foreground"
+                        : undefined
                     }
                   />
                 </>
@@ -198,7 +200,11 @@ export function ContactForm({
                 placeholder={emailPlaceholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={banner ? "bg-background text-foreground" : undefined}
+                className={
+                  banner
+                    ? "bg-background dark:bg-background text-foreground"
+                    : undefined
+                }
               />
 
               {subjectPlaceholder ? (
@@ -214,7 +220,9 @@ export function ContactForm({
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     className={
-                      banner ? "bg-background text-foreground" : undefined
+                      banner
+                        ? "bg-background dark:bg-background text-foreground"
+                        : undefined
                     }
                   />
                 </>
@@ -231,7 +239,11 @@ export function ContactForm({
                 placeholder={messagePlaceholder}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className={banner ? "bg-background text-foreground" : undefined}
+                className={
+                  banner
+                    ? "bg-background dark:bg-background text-foreground"
+                    : undefined
+                }
               />
 
               {consentText ? (
@@ -249,7 +261,7 @@ export function ContactForm({
                     className={cn(
                       "text-xs leading-snug font-normal",
                       banner
-                        ? "text-primary-foreground/80"
+                        ? "text-primary-foreground"
                         : "text-muted-foreground",
                     )}
                   >

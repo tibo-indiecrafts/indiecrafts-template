@@ -34,7 +34,7 @@ export const Default: Story = {
           @indiecrafts starred 3 repos
         </span>
         <CollapsibleTrigger asChild>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" aria-label="Toggle repositories">
             <ChevronsUpDown />
           </Button>
         </CollapsibleTrigger>

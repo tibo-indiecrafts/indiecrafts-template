@@ -10,4 +10,4 @@ intent URLs — surface-agnostic, so native can reuse them). Area rules → `../
   (`@indiecrafts/packages-shared-utils/cn`, `.../format-date`); explicit-extension `exports` (sanity-style)
   so consumers resolve without a tsconfig `paths` entry. Add a file = add its `exports` line.
 - No React/Next runtime here; keep it dependency-light.
-- Full reference → [`code/docs/packages/utils.md`](../../../../docs/packages/utils.md).
+- Full reference → [`code/docs/packages/shared/utils.md`](../../../../docs/packages/shared/utils.md).

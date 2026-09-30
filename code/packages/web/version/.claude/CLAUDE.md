@@ -16,4 +16,4 @@ props, so any app reuses it. Consumed by the website + app layouts. Area rules �
 - **Explicit per-file exports (no wildcard)** → no tsconfig `paths` entry needed. Never imports an app
   or a module.
 
-Full reference → [`code/docs/packages/version.md`](../../../../docs/packages/version.md).
+Full reference → [`code/docs/packages/web/version.md`](../../../../docs/packages/web/version.md).

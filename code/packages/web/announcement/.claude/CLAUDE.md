@@ -9,7 +9,7 @@ admin). Site chrome; consumed by the website `DefaultLayout` + the `app` shell. 
 **Stack:** React 19 · Sanity v6 · next-sanity. Deps: shared-announcement (resolve/types/fetch) ·
 web-ui · web-i18n · web-sanity · shared-utils · shared-config.
 
-- **The resolve + types + GROQ live in [`@indiecrafts/packages-shared-announcement`](../../shared/announcement)**
+- **The resolve + types + GROQ live in [`@indiecrafts/packages-shared-announcement`](../../../shared/announcement)**
   (React/Next-free, shared with the `code/shared/api` Worker). The readers here (`sanity/announcement`)
   are thin adapters: `client.fetch(query)` → `resolveBanner`/`resolveToast`. Don't re-implement the
   transform.
@@ -25,4 +25,4 @@ web-ui · web-i18n · web-sanity · shared-utils · shared-config.
   desk sections); add a `@source` line in `ui-tokens/globals.css`; consumers need a `tsconfig paths`
   entry for the `./*` export.
 
-Full reference → [`code/docs/packages/announcement.md`](../../../../docs/packages/announcement.md).
+Full reference → [`code/docs/packages/web/announcement.md`](../../../../docs/packages/web/announcement.md).

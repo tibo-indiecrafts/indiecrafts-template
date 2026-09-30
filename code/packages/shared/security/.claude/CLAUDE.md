@@ -50,4 +50,4 @@ unchanged from the app's prior policy, so the Studio keeps working.
 Integrates with, doesn't replace, `@indiecrafts/packages-shared-config` — `getCurrentEnvironment`/`getCSPConnectSources`
 stay in config; this brick imports and composes them. Not Sanity (build config, config-first).
 
-Full reference → [`code/docs/packages/security.md`](../../../../docs/packages/security.md).
+Full reference → [`code/docs/packages/shared/security.md`](../../../../docs/packages/shared/security.md).

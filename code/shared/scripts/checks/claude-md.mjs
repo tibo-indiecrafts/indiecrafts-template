@@ -9,10 +9,11 @@
 //      cost context like inline text. 200 is the official per-file target (code.claude.com/docs/en/memory).
 //   3. IMPORT  — an `@path` import whose file does not exist (Claude Code drops it silently). Backtick a
 //      mention (`@scope/pkg`) to keep it literal.
-//   4. PLACE   — a commands/ or agents/ dir under code/**/.claude/ (Claude Code loads those from the
+//   4. LINK    — a relative markdown link `[x](path)` whose file does not exist (a moved doc page).
+//   5. PLACE   — a commands/ or agents/ dir under code/**/.claude/ (Claude Code loads those from the
 //      repo-root .claude/ only). Nested skills/ are fine: they load when Claude works in that folder.
 // WARNS (never fails) on:
-//   5. BLOAT   — a file's own text over MAP_LINES. A brief is a MAP; move procedures to a skill,
+//   6. BLOAT   — a file's own text over MAP_LINES. A brief is a MAP; move procedures to a skill,
 //      file-type detail to a `paths:`-scoped rule, reference to code/docs/.
 // Block-level HTML comments are stripped before loading, so they count toward nothing.
 //
@@ -169,6 +170,17 @@ for (const b of briefs) {
         `IMPORT  ${rel(b)}: @${raw} — no such file (backtick it if it is a mention, not an import).`,
       );
 
+  for (const [, link] of text
+    .replace(/```[\s\S]*?```/g, "")
+    .matchAll(/\]\(([^)#\s]+)(?:#[^)]*)?\)/g))
+    if (
+      !/^(https?:|mailto:|\/)/.test(link) &&
+      !existsSync(resolve(dirname(b), link))
+    )
+      errors.push(
+        `LINK    ${rel(b)}: (${link}) — no such file; point it at the page's current path.`,
+      );
+
   const total = effectiveLines(b);
   if (total > CEILING_LINES)
     errors.push(
@@ -218,7 +230,7 @@ if (errors.length) {
   process.exit(1);
 }
 console.log(
-  `✓ check:claude-md — ${briefs.length} briefs + rules: commands + imports resolve, ≤ ${CEILING_LINES} lines with imports, no misplaced dirs` +
+  `✓ check:claude-md — ${briefs.length} briefs + rules: commands, imports + links resolve, ≤ ${CEILING_LINES} lines with imports, no misplaced dirs` +
     (warnings.length
       ? ` (${warnings.length} bloat warning(s) above)`
       : ` (all within the ${MAP_LINES}-line map budget)`),

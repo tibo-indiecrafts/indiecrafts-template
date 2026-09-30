@@ -32,7 +32,7 @@ export const Default: Story = {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" aria-label="Add item">
             <Plus />
           </Button>
         </TooltipTrigger>

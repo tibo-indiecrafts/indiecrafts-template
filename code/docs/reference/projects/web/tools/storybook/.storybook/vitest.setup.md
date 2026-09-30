@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Vitest setup file for the main story suite. It calls `setProjectAnnotations` with the gallery `preview`, so every story inherits the same global decorators and parameters (theme wrapper, mocks) when it runs as a Vitest component test. Referenced by `vitest.config.ts`.
+Vitest setup file for the main story suite. It calls `setProjectAnnotations` with the a11y addon annotations and the gallery `preview`, so every story runs axe and inherits the same global decorators and parameters (theme wrapper, mocks) when it runs as a Vitest component test. Without the addon annotations, axe never runs. Referenced by `vitest.config.ts`.
 
 ## Exports
 

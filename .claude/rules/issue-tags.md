@@ -1,10 +1,9 @@
 # Issue tags — triage vocabulary
 
-How to flag a problem in code so it is greppable. Full guide + rationale →
-[`method/shared/engineering/issue-tags.md`](../../method/shared/engineering/issue-tags.md).
+How to flag a problem in code so it is greppable.
 
 **This repo fixes debt in the same diff — tags are not a backlog.** Default: fix it now
-(the `tech-debt.md` gate). Tag only for (1) a deliberate corner you keep — pair with a
+(the fix-in-diff default). Tag only for (1) a deliberate corner you keep — pair with a
 `ponytail:` comment naming the ceiling — or (2) an out-of-blast-radius note (surgical-diff
 rule: note, don't fix). Inside your blast radius: fix it, don't tag it.
 

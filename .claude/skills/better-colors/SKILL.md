@@ -15,7 +15,7 @@ Contrast requirements belong to `better-accessibility`. Surfaces, shadows and ic
 
 Reuse the project's tokens and notation. A second representation added to fix one value makes the palette harder to reason about. A consistent hex system beats hex with `oklch()` scattered through it.
 
-For a new system, `oklch()` is the best default, because its numbers behave the way the ramp rules below describe. Everywhere else, a color library produces the same ramp in the project's own notation ([color-formats.md](color-formats.md)).
+For a new system, `oklch()` is the best default, because its numbers behave the way the ramp rules below describe. Everywhere else, a color library produces the same ramp in the project's own notation.
 
 ## A system is ramps, not colors
 
@@ -23,13 +23,13 @@ One neutral ramp, one accent ramp and only the status ramps the product actually
 
 ## Every step has a job
 
-A ramp is not a gradient to pick from by eye. Each step exists because a role needs it: page background, component hover, border, solid fill, body text. Do not generate a step no role consumes. Both the Tailwind `50`–`950` and Radix `1`–`12` conventions map to those roles ([palette-structure.md](palette-structure.md)).
+A ramp is not a gradient to pick from by eye. Each step exists because a role needs it: page background, component hover, border, solid fill, body text. Do not generate a step no role consumes. Both the Tailwind `50`–`950` and Radix `1`–`12` conventions map to those roles.
 
 ## Name primitives by hue, semantics by role
 
 Primitives name a value (`--blue-500`) and are never applied in a component. Semantic tokens name a job (`--color-text-secondary`), point at a primitive and are the only tier components reference.
 
-That seam is what makes theming possible. Without it, dark mode means auditing every usage to work out which meant "the accent" and which just wanted blue ([token-naming.md](token-naming.md)).
+That seam is what makes theming possible. Without it, dark mode means auditing every usage to work out which meant "the accent" and which just wanted blue.
 
 ## Use a token only in its role
 
@@ -44,7 +44,7 @@ Four properties define a well-formed ramp:
 - Vividness peaks mid-ramp and falls off at both ends.
 - Steps sit denser at the light end than at the dark end.
 
-Both ends stop short of pure black and white, which cannot carry hue at all. Use a color library rather than eyeballing it ([palette-generation.md](palette-generation.md)).
+Both ends stop short of pure black and white, which cannot carry hue at all. Use a color library rather than eyeballing it.
 
 ## One color, one meaning
 
@@ -58,7 +58,7 @@ Several colored backgrounds are fine when they encode distinct states or categor
 
 ## Measure the rendered pair, then report
 
-Measure a foreground against the background it actually renders on, not the page background. When a pair fails, report the pair, its measured value and the threshold it misses, then leave the colors alone. They are a design decision. Change them only when asked, and remeasure after ([contrast.md](contrast.md)).
+Measure a foreground against the background it actually renders on, not the page background. When a pair fails, report the pair, its measured value and the threshold it misses, then leave the colors alone. They are a design decision. Change them only when asked, and remeasure after.
 
 ## Pick a gradient's interpolation space
 
@@ -67,8 +67,6 @@ The space is a look, not a correctness setting.
 - **`in oklab`** is the best default: even brightness, no hue surprises.
 - **`in oklch`** travels around the hue wheel rather than through the middle, staying vivid and sweeping every hue between the stops. Reach for it when a two-hue gradient goes gray in the middle.
 - **The sRGB default** darkens and mutes the midpoint. It is what most interfaces already have, because it is what you get without asking.
-
-See [color-usage.md](color-usage.md).
 
 ## Before you finish
 

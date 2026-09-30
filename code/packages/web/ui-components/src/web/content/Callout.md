@@ -14,5 +14,5 @@
 ## Notes
 
 - Server component. Renders an `<aside>`; pass `components={portableComponents}` so the PortableText body resolves.
-- Accessibility: `warning` and `danger` get `role="alert"`; `info` and `success` get `role="note"`.
+- Accessibility: every variant is `role="note"` — a callout is static editorial content, and `role="alert"` would interrupt screen-reader users on page load.
 - The CTA renders only when its `link` has both `href` and `label`.

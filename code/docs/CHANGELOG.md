@@ -23,6 +23,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **The Storybook page describes the gate as it runs:** every story as a component + axe test in light
+  and dark, `a11y.test: "error"`, the rule-waiver convention, and the Locale toolbar over the real
+  messages. New reference page for `vitest.setup.dark.ts`; the mock, preview, config and `Callout`
+  reference pages match the code.
+
 - **The API page is the one home for the api's routes and invariants.** It gains the missing
   `/v1/consent/legal` route and an Invariants section (required Clerk delete, never-silenced email
   copy, settings write order, `data_requests` PII, churn); the api brief now links here instead of

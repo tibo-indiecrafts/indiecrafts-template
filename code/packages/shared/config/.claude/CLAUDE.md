@@ -22,4 +22,4 @@ ships its own; this package never holds it. Area rules → `../../../.claude/CLA
 - **Brand/SEO copy is Sanity, not here** — only `site.url` + `site.prefix` stay in code; per-page SEO lives in Sanity.
 - **`DEFAULT_SITE_PREFIX` / `site.prefix`** — the per-deployment namespace (env `NEXT_PUBLIC_SITE_PREFIX`). Prefixes browser keys (consent/theme/locale) + anchors the `wrangler.toml` deploy names; keep in sync with `pnpm project:rename <slug>`. Must be unique per client.
 - `PageSeo.*Key` fields are plain `string` (the app message-key coupling was cut on extraction).
-- Full reference → [`code/docs/packages/config.md`](../../../../docs/packages/config.md).
+- Full reference → [`code/docs/packages/shared/config.md`](../../../../docs/packages/shared/config.md).

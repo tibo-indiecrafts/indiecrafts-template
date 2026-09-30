@@ -18,6 +18,8 @@ const meta = {
   component: DropdownMenu,
   tags: ["autodocs"],
   parameters: {
+    // @debt ACCESSIBILITY - Radix hides the page behind an open modal menu (aria-hidden) while the trigger stays focusable — upstream behavior.
+    a11y: { config: { rules: [{ id: "aria-hidden-focus", enabled: false }] } },
     layout: "centered",
     docs: {
       description: {

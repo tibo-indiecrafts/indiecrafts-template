@@ -60,9 +60,10 @@ skills: add a skill, not a command.
 2. **While working** — `hooks/claude-hygiene.mjs` (Stop) **proposes** a brief review when a unit's public
    surface changed but its brief didn't; `/brief` does the edit and routes overflow per the table above.
 3. **Every Stop** — `hooks/claude-md-check.mjs` runs the guard and surfaces any COMMAND · SIZE · IMPORT ·
-   PLACE error or BLOAT warning this session introduced (the repo sits at zero of both).
+   LINK · PLACE error or BLOAT warning this session introduced (the repo sits at zero of both).
 4. **Gate** — `pnpm check:claude-md` (`code/shared/scripts/checks/claude-md.mjs`, in `pnpm verify` + CI):
-   cited `pnpm` commands resolve · size with imports · dead imports · no nested `agents/`/`commands/`.
+   cited `pnpm` commands resolve · size with imports · dead imports · dead relative links · no nested
+   `agents/`/`commands/`.
 5. **Periodic** — `/doctor prompt-audit` (Claude Code v2.1.283+) finds stale, conflicting, or
    older-model instructions across briefs, rules, skills, and agents. Run it after a model upgrade.
 

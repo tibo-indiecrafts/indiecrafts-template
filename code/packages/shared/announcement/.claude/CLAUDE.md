@@ -14,4 +14,4 @@ surface — `AnnouncementChrome`). Area rules → `../../../.claude/CLAUDE.md`.
 - **Empty/unset `surfaces` = every surface**; a non-empty list gates by membership. Empty banner `items` / a `null` toast = show nothing.
 - **Explicit `.` export (no wildcard)** → no `tsconfig` `paths` entry; consumers wire only `transpilePackages` + a `workspace:*` dep (the Worker just needs the dep).
 
-Full reference → [`code/docs/packages/announcement-shared.md`](../../../../docs/packages/announcement-shared.md).
+Full reference → [`code/docs/packages/shared/announcement.md`](../../../../docs/packages/shared/announcement.md).

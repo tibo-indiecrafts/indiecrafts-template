@@ -7,4 +7,4 @@ Auto-loads under `code/packages/web/i18n/**`. A thin next-intl navigation layer 
 
 - **Untyped on purpose** — the app keeps its OWN typed routing (`@/i18n/routing`, `PATHNAMES`).
 - Modules use this shim; this brick exists to break the old blog→`@/i18n/routing` (up-pointing) inversion.
-- Full reference → [`code/docs/packages/i18n.md`](../../../../docs/packages/i18n.md).
+- Full reference → [`code/docs/packages/web/i18n.md`](../../../../docs/packages/web/i18n.md).

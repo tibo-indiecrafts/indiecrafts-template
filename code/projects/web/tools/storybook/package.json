@@ -9,7 +9,7 @@
     "test:stories": "vitest run",
     "storybook:website": "storybook dev -p 6007 -c .storybook-website",
     "storybook:website:build": "storybook build -c .storybook-website -o storybook-static-website",
-    "test:stories:website": "vitest run -c vitest.website.config.ts",
+    "test:stories:website": "vitest run -c vitest.website.config.ts --passWithNoTests",
     "deploy:storybook:dev": "pnpm storybook:build && node ../../../../shared/scripts/deploy/worker.mjs storybook dev",
     "deploy:storybook:staging": "pnpm storybook:build && node ../../../../shared/scripts/deploy/worker.mjs storybook staging",
     "deploy:storybook:prod": "pnpm storybook:build && node ../../../../shared/scripts/deploy/worker.mjs storybook prod"

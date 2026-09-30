@@ -14,4 +14,4 @@ owner needs: `localeString · localeText · seoMeta` + the `sharedSanity` barrel
   the three primitives; app + blog wire it into a `composeStudio` group. Also re-exports each primitive by name.
 - Each primitive is the `./*` wildcard export (so it needs a tsconfig `paths` entry).
 - Depends on `@indiecrafts/packages-shared-config` + `@indiecrafts/packages-web-sanity`. **Peer:** `sanity`. Never imports an app or a module.
-- Full reference → [`code/docs/packages/schema.md`](../../../../docs/packages/schema.md).
+- Full reference → [`code/docs/packages/web/schema.md`](../../../../docs/packages/web/schema.md).

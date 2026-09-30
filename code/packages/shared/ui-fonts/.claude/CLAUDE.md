@@ -13,4 +13,4 @@ brick like `ui-tokens`). Consumed by the website (`next/font` `localFont`). Area
 - **Add a font:** drop the `.woff2` here, add a `FONT_FILES` entry + a `FontKey` in config, then a
   `localFont` call in the app. Google-served families (Geist) carry no file — the app loads them.
 
-Full reference → [`code/docs/packages/ui-fonts.md`](../../../../docs/packages/ui-fonts.md).
+Full reference → [`code/docs/packages/shared/ui-fonts.md`](../../../../docs/packages/shared/ui-fonts.md).

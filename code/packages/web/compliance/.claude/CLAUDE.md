@@ -35,4 +35,4 @@ Three domains under one Sanity barrel:
   (`isPageVisible`), and emit SEO (`generateMetadata` + `PageSchemas`). The package owns the rest.
 - **Other host wiring in the app:** the banner + re-acceptance **mounts** in `[locale]/layout.tsx`
   (banner gated on `siteSettings.analytics.requireCookieConsent`), the GA gtag `<head>` script.
-- Full reference → [`code/docs/packages/compliance.md`](../../../../docs/packages/compliance.md).
+- Full reference → [`code/docs/packages/web/compliance.md`](../../../../docs/packages/web/compliance.md).

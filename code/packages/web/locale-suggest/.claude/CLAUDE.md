@@ -14,4 +14,4 @@ the pure `detectPreferredLocale`. Consumed by the website `DefaultLayout`. Area 
   names, never flags.
 - **`detect.ts` is unit-tested** (`detect.test.ts`, `pnpm test`) — keep the pure detector pure.
 
-Full reference → [`code/docs/packages/locale-suggest.md`](../../../../docs/packages/locale-suggest.md).
+Full reference → [`code/docs/packages/web/locale-suggest.md`](../../../../docs/packages/web/locale-suggest.md).

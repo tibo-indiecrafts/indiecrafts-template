@@ -21,9 +21,8 @@ import { PostCard } from "./PostCard";
  * Accessibility follows the W3C carousel pattern: the region carries
  * `aria-roledescription="carousel"` + a label (the heading, falling back to
  * `labels.slide`); each slide is `role="group"
- * aria-roledescription={labels.slide}` with `aria-posinset`/`aria-setsize`
- * so assistive tech announces "N of M" natively — no "of" string to
- * translate. `motion-reduce` drops the smooth scroll: the track sets
+ * aria-roledescription={labels.slide}` labelled "N / M" (`aria-posinset` is not
+ * allowed on a group) — no "of" string to translate. `motion-reduce` drops the smooth scroll: the track sets
  * `scroll-smooth`/`motion-reduce:scroll-auto` and `scrollBy` is called with
  * no explicit `behavior`, so it inherits the CSS `scroll-behavior`.
  */
@@ -79,8 +78,7 @@ export function Carousel({
               key={post._key}
               role="group"
               aria-roledescription={labels.slide}
-              aria-posinset={i + 1}
-              aria-setsize={items.length}
+              aria-label={`${i + 1} / ${items.length}`}
               className="basis-80 shrink-0 snap-start"
             >
               <PostCard post={post} />

@@ -10,11 +10,11 @@ status: stable
 
 ## Purpose
 
-Defines the global Storybook `Preview` for the whole gallery. The theme toolbar sets `data-theme` on `<html>`, which the token system keys on, so one switch flips every color, the sidebar palette, shiki, and typeset. `storySort` sets one sidebar tree: Introduction, Design Tokens, then the domain components, UI atoms last.
+Defines the global Storybook `Preview` for the whole gallery. The theme toolbar sets `data-theme` on `<html>`, which the token system keys on, so one switch flips every color, the sidebar palette, shiki, and typeset. `storySort` sets one sidebar tree: Introduction, Design Tokens, then the domain components, UI atoms last. A Locale toolbar (`en` / `fr`) sets the `next-intl` mock's locale and `<html lang>`. `a11y: { test: "error" }` makes an axe violation fail the story test.
 
 ## Exports
 
-- `default` — the Storybook `Preview` object: centered layout, expanded controls, disabled backgrounds addon, the `storySort` sidebar order, the `withThemeByDataAttribute` decorator (Light/Dark on `data-theme`), and a `bg-background text-foreground` wrapper.
+- `default` — the Storybook `Preview` object: centered layout, expanded controls, disabled backgrounds addon, the `storySort` sidebar order, the `withThemeByDataAttribute` decorator (Light/Dark on `data-theme`), a Locale toolbar global, `a11y.test: "error"`, and a `bg-background text-foreground` wrapper that also applies the locale.
 
 ## Source
 

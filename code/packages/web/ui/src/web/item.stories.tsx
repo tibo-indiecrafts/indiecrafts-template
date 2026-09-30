@@ -31,7 +31,7 @@ type Story = StoryObj<typeof meta>;
 
 function Row({ name, email }: { name: string; email: string }) {
   return (
-    <Item>
+    <Item role="listitem">
       <ItemMedia variant="icon">
         <UserIcon />
       </ItemMedia>

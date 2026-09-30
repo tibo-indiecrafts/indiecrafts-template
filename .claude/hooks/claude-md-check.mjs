@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Stop hook (advisory) — runs the brief + rule guard and surfaces what this session broke or grew:
-// errors (COMMAND · SIZE · IMPORT · PLACE) and map-budget warnings (BLOAT). The repo sits at zero of
+// errors (COMMAND · SIZE · IMPORT · LINK · PLACE) and map-budget warnings (BLOAT). The repo sits at zero of
 // both, so any line here is new. Silent when clean. Never blocks.
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
@@ -12,7 +12,7 @@ const { stdout = "", stderr = "" } = spawnSync("node", [check], {
 });
 const issues = `${stdout}${stderr}`
   .split("\n")
-  .filter((l) => /\b(COMMAND|SIZE|IMPORT|PLACE|BLOAT)\b/.test(l));
+  .filter((l) => /\b(COMMAND|SIZE|IMPORT|LINK|PLACE|BLOAT)\b/.test(l));
 if (issues.length)
   console.error(
     `⚠ CLAUDE.md guard — ${issues.length} issue(s); run \`pnpm check:claude-md\` (route overflow per .claude/README.md):\n${issues.join("\n")}`,

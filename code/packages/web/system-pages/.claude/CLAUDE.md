@@ -12,4 +12,4 @@ Auto-loads under `code/packages/web/system-pages/**`. `./shared` (prop contracts
 
 Deps: `@indiecrafts/packages-web-ui` (`Button`). The 404 home link is injected, so **no `next-intl` dep**. Never imports an app or a module.
 
-Full reference → [`code/docs/packages/system-pages.md`](../../../../docs/packages/system-pages.md).
+Full reference → [`code/docs/packages/web/system-pages.md`](../../../../docs/packages/web/system-pages.md).

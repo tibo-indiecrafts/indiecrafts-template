@@ -34,4 +34,4 @@ pnpm infra:shared:api:apply:<env>     # provision
 - **Validate before first apply** — `terraform init && validate` against the pinned provider. It has
   never been applied (tfvars are placeholders).
 - Registry: a row in [`scripts/lib/infra-registry.mjs`](../../../scripts/lib/infra-registry.mjs). Full
-  runbook → [`code/docs/infra/cloudflare-iac.md`](../../../../docs/infra/cloudflare-iac.md).
+  runbook → [`code/docs/infra/cloudflare-iac.md`](../../../../docs/shared/infra/cloudflare-iac.md).

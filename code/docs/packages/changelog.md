@@ -25,6 +25,19 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **Every design-system story passes axe in light and dark** (the gallery gate now enforces it). Tokens:
+  `destructive` is `red.700` in light (AA as text on its own tint) and `red.400` with dark
+  `destructive-foreground` in dark (the dark theme reused the light red: 4.15:1 on near-black); the light
+  `sidebar-foreground` is darker so the primitive's `/70` group label passes. Components: `Callout` is
+  always `role="note"` (a static callout must not interrupt screen readers as an `alert`) and its dark
+  danger text uses `text-destructive`; `AnnouncementToast` is a `div role="status"` (`aside` may not be
+  a live region); `Carousel` labels each slide "N / M" (`aria-posinset` is not allowed on a group); the
+  form banners (Contact · LeadMagnet · Newsletter · Waitlist) drop their faded `/80` text and pin a solid
+  field background in dark; the Maintenance footer drops its faded `/70`. Stories: the unnamed controls
+  (collapsible, tooltip, select, native-select, progress, input-otp, popover, item) get accessible names;
+  upstream markup a story can't reach (Slider thumb, Combobox trigger, cmdk, Radix menus, ScrollArea,
+  the 3D carousel) waives only that axe rule, tagged `@debt ACCESSIBILITY`. The Combobox "Filters" play
+  selects its input by placeholder (it failed in the browser gallery). `DESIGN.md` names the real hexes.
 - **One legal re-acceptance banner on every web surface.** The `app` banner had a title line,
   a wider box and ran off the screen edge; the website had its own markup. `LegalReacceptancePrompt`
   (`shared/compliance/web`) now has the website's look, and the website's `LegalNotice` renders it.

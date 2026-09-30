@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { expect } from "storybook/test";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { QuoteList } from "./QuoteList";
 import { Async } from "../_async-story";
@@ -51,5 +52,26 @@ export const Single: Story = {
     quotes: [
       { _id: "q1", content: "Short and sharp.", author: "Grace Hopper" },
     ],
+  },
+};
+
+// Quote marks come from the real `messages/<locale>.json` (Locale toolbar).
+export const English: Story = {
+  ...Single,
+  globals: { locale: "en" },
+  play: async ({ canvas }) => {
+    await expect(
+      await canvas.findByText(/^“Short and sharp\.”$/),
+    ).toBeVisible();
+  },
+};
+
+export const French: Story = {
+  ...Single,
+  globals: { locale: "fr" },
+  play: async ({ canvas }) => {
+    await expect(
+      await canvas.findByText(/^«\s*Short and sharp\.\s*»$/u),
+    ).toBeVisible();
   },
 };

@@ -28,4 +28,4 @@ is on in `wrangler.toml`).
 - **Redaction + `safeStringify`** (circular/depth/array caps, Error normalize) run at source in `core.ts`.
 
 Depends on `@indiecrafts/packages-shared-config` only. Never imports an app or a module. Full reference →
-[`code/docs/packages/logger.md`](../../../../docs/packages/logger.md).
+[`code/docs/packages/shared/logger.md`](../../../../docs/packages/shared/logger.md).

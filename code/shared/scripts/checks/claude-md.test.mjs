@@ -72,6 +72,17 @@ test("an @import of a missing file fails", () => {
   assert.match(r.out, /IMPORT .*@\.\.\/GONE\.md/);
 });
 
+test("a relative markdown link to a missing file fails", () => {
+  const r = runWith({
+    "code/a/.claude/CLAUDE.md":
+      "# a\n\nSee [docs](../../docs/gone.md) and [ok](../x.md).\n",
+    "code/a/x.md": "x",
+  });
+  assert.ok(!r.ok);
+  assert.match(r.out, /LINK .*\.\.\/\.\.\/docs\/gone\.md/);
+  assert.doesNotMatch(r.out, /x\.md —/);
+});
+
 test("HTML comments cost nothing (stripped before loading)", () => {
   const r = runWith({
     "code/a/.claude/CLAUDE.md": `# a\n<!--\n${lines(250)}\n-->\n`,

@@ -16,6 +16,21 @@ _The Storybook gallery for the design-system bricks (`ui` · `ui-components` · 
 `announcement`/`locale-suggest` stories). Log new stories, addon/config changes, and the
 `test:stories` gate here._
 
+### Fixed
+
+- **The a11y gate now actually runs — in light and dark.** `test:stories` never failed on an axe violation:
+  the addon's default `a11y.test` is `"todo"` (warn only), and the vitest setups did not pass the addon's
+  annotations, so axe never ran. The preview now sets `a11y: { test: "error" }`, both setups (gallery +
+  website surface) pass `@storybook/addon-a11y/preview`, and a second `storybook-dark` project re-runs
+  every story with `data-theme="dark"` — contrast differs per theme. 506/506 pass (253 stories × 2 themes)
+  after the fixes logged in the packages CHANGELOG. Tests time out at 30 s (two themes double the load).
+- **Translated components render in en and fr, from the real messages.** The `next-intl` mock read a
+  hand-copied English map that had drifted (French quote marks in English, a dead `playVideo` key). It
+  now reads the website's `messages/{en,fr}.json`; a **Locale** toolbar switches them, and a missing key
+  logs an error. `QuoteList` gains English + French stories that pin each locale's quote marks.
+- **`test:stories:website` passes while the surface has no stories** (`--passWithNoTests`). The CI
+  `browser-stories` step failed on main because the website stories live on an unmerged branch.
+
 ### Changed
 
 - **One sidebar tree.** Dropped the `Native` root, `react-native-web`, the native theme decorator and the

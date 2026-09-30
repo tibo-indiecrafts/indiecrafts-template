@@ -17,6 +17,6 @@
 
 - `"use client"` — the prev/next buttons scroll the track with a `ref` + `scrollBy`.
 - CSS scroll-snap (`overflow-x-auto snap-x snap-mandatory`), no carousel library. Each card is `snap-start` at a fixed `basis-80` width so several show at once; the buttons nudge by roughly one card width.
-- Accessibility follows the W3C carousel pattern: the region is `aria-roledescription="carousel"` with a label (the heading, or `labels.slide` as a fallback); each slide is `role="group" aria-roledescription={labels.slide}` with `aria-posinset`/`aria-setsize` — assistive tech announces "N of M" natively, so no "of" string needs translating.
+- Accessibility follows the W3C carousel pattern: the region is `aria-roledescription="carousel"` with a label (the heading, or `labels.slide` as a fallback); each slide is `role="group" aria-roledescription={labels.slide}` labelled `"N / M"` (`aria-posinset` is not allowed on a group), so no "of" string needs translating.
 - Respects `prefers-reduced-motion`: the track's `scroll-behavior` drops to `auto` under `motion-reduce`, and `scrollBy` is called with no explicit `behavior`, so it inherits the CSS value.
 - Renders nothing when `items` is empty.

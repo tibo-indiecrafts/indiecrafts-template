@@ -15,4 +15,4 @@ under `src/web/`. Area rules → `../../../.claude/CLAUDE.md`.
   data-driven exception — see `.claude/rules/web/component-architecture.md`).
 - **Styling lives in `@indiecrafts/packages-web-ui-tokens`** (DESIGN.md + globals.css), not here.
 - Each primitive's usage doc is colocated (`src/web/<name>.md` beside `<name>.tsx`), indexed from DESIGN.md.
-- Full reference → [`code/docs/packages/ui.md`](../../../../docs/packages/ui.md).
+- Full reference → [`code/docs/packages/web/ui.md`](../../../../docs/packages/web/ui.md).
