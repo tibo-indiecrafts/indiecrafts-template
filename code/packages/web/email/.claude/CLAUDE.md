@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-email — transactional email
+# `@indiecrafts/packages-web-email` — transactional email
 
 **Stack:** TypeScript · Resend REST (no SDK) · Sanity v6. The home for the shared HTML email **layout**, the **render contract**, and the **`emailStrings` content entity** — one branded, mail-client-safe, editor-configurable system for all outbound mail. **It owns no templates** — each email template lives with the feature that sends it.
 

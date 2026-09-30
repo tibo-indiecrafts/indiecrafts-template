@@ -5,7 +5,7 @@ import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
  * App auth journey — mirrors the website's. Clerk **Testing Tokens** + a `+clerk_test`
  * identity (no real user/creds); asserts the session at the framework level
  * (`window.Clerk.user`), not app DOM. SKIPS unless the Clerk keys are wired (so CI stays
- * green until they are). Setup → `docs/apps/web/setup/testing.md` § Auth E2E.
+ * green until they are). Setup → `docs/projects/web/website/setup/testing.md` § Auth E2E.
  */
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 const TEST_EMAIL = process.env.E2E_CLERK_TEST_EMAIL ?? "e2e+clerk_test@example.com";

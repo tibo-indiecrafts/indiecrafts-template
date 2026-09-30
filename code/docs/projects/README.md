@@ -43,7 +43,7 @@ One app today; the platform is **multi-app-ready** (the config split + `composeS
 
 1. **Code** — `code/projects/<name>/` with its own `CLAUDE.md` · `DESIGN.md` · `README.md`; add it to
    `pnpm-workspace.yaml` (already globs `code/projects/*`) + `code/projects/_registry.md`.
-2. **Docs** — a sibling `docs/apps/<name>/` mirroring `web` (`setup/ config/ design/ seo/`), a row in
+2. **Docs** — a sibling `docs/projects/<platform>/<name>/` mirroring `web` (`setup/ config/ design/ seo/`), a row in
    the table above, and its sidebar group in `docs/.vitepress/config.mts`.
 3. **Islands** — mount the shared modules it needs (blog, newsletter, …); each reads the app-injected
    config, so the same island recombines across apps.

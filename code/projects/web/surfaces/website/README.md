@@ -2,7 +2,7 @@
 
 The Next.js 16 app. Run everything from the **repo root** (`pnpm dev/build/verify` →
 turbo → `@indiecrafts/web-surfaces-website`). Agent conventions → [`CLAUDE.md`](./CLAUDE.md) (sibling);
-design tokens → [`DESIGN.md`](./DESIGN.md); product docs → [`../docs/apps/web/`](../docs/apps/web/).
+design tokens → [`DESIGN.md`](./DESIGN.md); product docs → [`../docs/projects/web/website/`](../../../../docs/projects/web/website/).
 
 ## Blog (Sanity-powered, optional)
 
@@ -17,7 +17,7 @@ When `features.blog: false`, every route above 404s, sitemap drops the entry, th
 
 ## How it's organised
 
-Shared code in flat top-level folders (`user-interface/`, `lib/`, `sanity/`, `i18n/`, `config/`); heavy features are extracted to workspace packages + modules (`@indiecrafts/*`), consumed as source. Full tree + rationale in [`CLAUDE.md`](./CLAUDE.md) § Architecture and [`../docs/apps/web/config/project-organization.md`](../docs/apps/web/config/project-organization.md).
+Shared code in flat top-level folders (`user-interface/`, `lib/`, `sanity/`, `i18n/`, `config/`); heavy features are extracted to workspace packages + modules (`@indiecrafts/*`), consumed as source. Full tree + rationale in [`CLAUDE.md`](./CLAUDE.md) § Architecture and [`../docs/projects/web/website/config/project-organization.md`](../../../../docs/projects/web/website/config/project-organization.md).
 
 ```
 messages/<locale>.json     Single source of truth for ALL user-facing copy
@@ -61,9 +61,9 @@ Per-locale, every page automatically gets `<title>` + `<meta description>` (from
 
 **`NEXT_PUBLIC_SITE_URL` MUST be set in production** — when unset, `robots.ts` serves `Disallow: /` (staging gate).
 
-Per-page rich results: add `structuredData` via factories in `@/lib/seo/jsonld-factories` (`buildFAQPageSchema`, `buildArticleSchema`, `buildServiceSchema`, `buildProductSchema`, `buildLocalBusinessSchema`, `buildPersonSchema`, `buildBreadcrumbSchema`). **FAQ is the highest-ROI rich result** for B2B. Cookbook: [`../docs/apps/web/seo/structured-data-cookbook.md`](../docs/apps/web/seo/structured-data-cookbook.md).
+Per-page rich results: add `structuredData` via factories in `@/lib/seo/jsonld-factories` (`buildFAQPageSchema`, `buildArticleSchema`, `buildServiceSchema`, `buildProductSchema`, `buildLocalBusinessSchema`, `buildPersonSchema`, `buildBreadcrumbSchema`). **FAQ is the highest-ROI rich result** for B2B. Cookbook: [`../docs/projects/web/website/seo/structured-data-cookbook.md`](../../../../docs/projects/web/website/seo/structured-data-cookbook.md).
 
-**Brand assets** are all edited in Sanity (Studio → SEO & métadonnées): logo (`siteSettings.logo`/`logoDark`), favicon/app icon (`siteSettings.icon`), OG card per language (`siteMeta.<locale>.ogImage`). Nothing brand-related lives in `/public`; `pnpm seed` uploads defaults from `scripts/seed-media/`. See [`../docs/apps/web/seo/editing-seo-in-sanity.md`](../docs/apps/web/seo/editing-seo-in-sanity.md).
+**Brand assets** are all edited in Sanity (Studio → SEO & métadonnées): logo (`siteSettings.logo`/`logoDark`), favicon/app icon (`siteSettings.icon`), OG card per language (`siteMeta.<locale>.ogImage`). Nothing brand-related lives in `/public`; `pnpm seed` uploads defaults from `scripts/seed-media/`. See [`../docs/projects/web/website/seo/editing-seo-in-sanity.md`](../../../../docs/projects/web/website/seo/editing-seo-in-sanity.md).
 
 ## LLM endpoints
 
@@ -75,11 +75,11 @@ All per-locale, all auto-built from `messages.<locale>.pages.*` — no separate 
 
 ## Deployment (Cloudflare Workers)
 
-The app deploys to **Cloudflare Workers** via OpenNext, across **dev / staging / prod**, with an R2-backed ISR cache and GitHub Actions auto-deploy (push to `main` → prod). Deploy scripts are **app-namespaced** — `pnpm deploy:web:website:{dev,staging,prod}` from the root. Config: `wrangler.toml`, `open-next.config.ts`, and `infra/` (the co-located, **self-contained** Cloudflare **edge** Terraform — domain · WAF · rate-limit · cache · Turnstile; run via `pnpm infra:web:website:*`). Set `NEXT_PUBLIC_SITE_URL` on the prod worker before launch (until then `robots.ts` serves `Disallow: /` — the staging gate). Optional per-env **asset CDN**: set `NEXT_PUBLIC_CDN_URL` (→ Next `assetPrefix`) to serve the app's own `/_next/*` + `/public` assets from a CDN — Sanity content keeps its own CDN (see [images](../docs/apps/web/config/images.md)). **Full runbook** (R2 buckets, secrets, custom domain, first-deploy checks): [`code/docs/apps/web/setup/deployment.md`](../docs/apps/web/setup/deployment.md).
+The app deploys to **Cloudflare Workers** via OpenNext, across **dev / staging / prod**, with an R2-backed ISR cache and GitHub Actions auto-deploy (push to `main` → prod). Deploy scripts are **app-namespaced** — `pnpm deploy:web:website:{dev,staging,prod}` from the root. Config: `wrangler.toml`, `open-next.config.ts`, and `infra/` (the co-located, **self-contained** Cloudflare **edge** Terraform — domain · WAF · rate-limit · cache · Turnstile; run via `pnpm infra:web:website:*`). Set `NEXT_PUBLIC_SITE_URL` on the prod worker before launch (until then `robots.ts` serves `Disallow: /` — the staging gate). Optional per-env **asset CDN**: set `NEXT_PUBLIC_CDN_URL` (→ Next `assetPrefix`) to serve the app's own `/_next/*` + `/public` assets from a CDN — Sanity content keeps its own CDN (see [images](../../../../docs/projects/web/website/config/images.md)). **Full runbook** (R2 buckets, secrets, custom domain, first-deploy checks): [`code/docs/projects/web/website/setup/deployment.md`](../../../../docs/projects/web/website/setup/deployment.md).
 
 ## Forms
 
-Forms POST to **API routes**, not a host feature — so they work the same on any deploy target. The template ships the newsletter (`/api/newsletter`) and blog comments (`/api/comments`): a client form + honeypot → a gated route → a server-only Sanity write (or an email provider). Copy that pattern for a contact form. See [Newsletter](../docs/apps/web/config/newsletter.md) + [Comments](../docs/modules/blog/comments.md).
+Forms POST to **API routes**, not a host feature — so they work the same on any deploy target. The template ships the newsletter (`/api/newsletter`) and blog comments (`/api/comments`): a client form + honeypot → a gated route → a server-only Sanity write (or an email provider). Copy that pattern for a contact form. See [Newsletter](../../../../docs/modules/web/newsletter/index.md) + [Comments](../../../../docs/modules/web/blog/comments.md).
 
 ## Cookie banner + legal page (feature-flagged)
 

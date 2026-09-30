@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-version — new-version-shipped reload prompt
+# `@indiecrafts/packages-web-version` — new-version-shipped reload prompt
 
 Auto-loads under `code/packages/web/version/**`. Tells a visitor a new deploy shipped while their tab
 was open, and offers a one-click (or on-next-navigation) reload. i18n-agnostic — copy comes in as

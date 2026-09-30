@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-security — CSP · headers · request guard · crypto
+# `@indiecrafts/packages-shared-security` — CSP · headers · request guard · crypto
 
 **Stack:** TypeScript. Pure, framework-agnostic (no React/Next imports). Two sides: **response** —
 header **strings + arrays** an app's `next.config.ts` consumes; **request** — a route wrapper the

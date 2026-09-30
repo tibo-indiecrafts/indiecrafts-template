@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-utils — pure helpers
+# `@indiecrafts/packages-shared-utils` — pure helpers
 
 Auto-loads under `code/packages/shared/utils/**`. The leaf brick: `cn` · slugify · video-embed ·
 format-date · error-message · filename · share (`shareTargets(url,title)` → X/LinkedIn/Facebook

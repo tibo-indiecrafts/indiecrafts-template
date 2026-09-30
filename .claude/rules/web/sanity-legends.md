@@ -1,4 +1,7 @@
 ---
+paths:
+  - "code/**/sanity/**/*.ts"
+  - "code/packages/web/schema/**/*.ts"
 description: Studio field labels + descriptions written for non-technical editors.
 ---
 

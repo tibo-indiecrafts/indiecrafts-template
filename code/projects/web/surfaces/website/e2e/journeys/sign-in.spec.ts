@@ -11,7 +11,7 @@ import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
  *
  * SKIPS unless the run has a Clerk instance wired — `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (baked
  * into the built app) + `CLERK_SECRET_KEY` (for the Testing Token, in global-setup). So CI
- * stays green until the Clerk test keys are set. Setup → `docs/apps/web/setup/testing.md`
+ * stays green until the Clerk test keys are set. Setup → `docs/projects/web/website/setup/testing.md`
  * ("Auth E2E") + the Clerk checklist there.
  */
 const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);

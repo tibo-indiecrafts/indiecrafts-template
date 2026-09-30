@@ -1,4 +1,6 @@
 ---
+paths:
+  - "code/{projects,packages,modules}/web/**/*.tsx"
 description: Build shadcn-way — cn/cva, asChild/data-slot, no primitive forks.
 ---
 

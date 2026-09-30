@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-logger — structured logging
+# `@indiecrafts/packages-shared-logger` — structured logging
 
 Auto-loads under `code/packages/shared/logger/**`. The one logging system for app + modules:
 beautiful in dev, structured JSON in prod, **edge/Cloudflare-Workers-safe**, **Sentry-ready**.

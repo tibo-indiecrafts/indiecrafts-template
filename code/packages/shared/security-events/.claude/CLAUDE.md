@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-security-events — app-level security taxonomy + detection (DOM-free)
+# `@indiecrafts/packages-shared-security-events` — app-level security taxonomy + detection (DOM-free)
 
 **Stack:** TypeScript. Pure, framework-agnostic (no Clerk/React/Next/DOM/Worker import — the
 `shared/` scope rule). The contract every surface uses to report a security incident, plus the
@@ -19,4 +19,4 @@ pure detection logic the `api` shell imports (services are shells — job logic 
 Cloudflare's own Security Events dashboard, deep-linked from the admin, never mirrored to D1. This brick
 is only the low-volume post-auth incidents Cloudflare cannot see.
 
-Full design → [`code/docs/apps/web/config/security-hardening.md`](../../../../docs/apps/web/config/security-hardening.md).
+Full design → [`code/docs/projects/web/website/config/security-hardening.md`](../../../../docs/projects/web/website/config/security-hardening.md).

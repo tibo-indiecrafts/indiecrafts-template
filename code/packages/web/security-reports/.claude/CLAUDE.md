@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-security-reports — CSP report sink + forwarder
+# `@indiecrafts/packages-web-security-reports` — CSP report sink + forwarder
 
 **Stack:** TypeScript. The Next route glue + the server-only forwarder for browser CSP violation
 reports. Domain · web. Dep: `@indiecrafts/packages-shared-security` (workspace:*).

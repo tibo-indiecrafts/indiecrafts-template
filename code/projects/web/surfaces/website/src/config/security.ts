@@ -10,7 +10,7 @@
  * These are **defence-in-depth**: the Cloudflare WAF `/api/*` rule is the PRIMARY
  * limiter, and both the KV rate-limit and Turnstile **fail open** until the operator
  * binds `RATE_LIMIT_KV` + sets `TURNSTILE_SECRET` (see
- * `code/docs/apps/web/config/security-limits.md`). App-owned (a second app ships its
+ * `code/docs/projects/web/website/config/security-limits.md`). App-owned (a second app ships its
  * own limits), like `features` — not the shared `@indiecrafts/packages-shared-config` package.
  */
 

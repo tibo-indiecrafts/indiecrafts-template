@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-compliance — portable consent core
+# `@indiecrafts/packages-shared-compliance` — portable consent core
 
 Auto-loads under `code/packages/shared/compliance/**`. The portable half of the compliance surface:
 the consent decision math, the store + legal-route contracts, and a copy-injected consent +

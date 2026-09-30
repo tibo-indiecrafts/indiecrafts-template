@@ -5,7 +5,7 @@ name: Backup (Cloudflare)
 # copies to the last 10; rotate the R2 copies with a bucket lifecycle rule.
 # Hub-scoped by design: one Sanity dataset per tenant, and the hub Studio (on `web`)
 # holds the write token + all content — so backup is NOT a per-app fan-out.
-# Setup + rotation: docs/apps/web/setup/backups.md
+# Setup + rotation: docs/projects/web/website/setup/backups.md
 on:
   schedule:
     - cron: "0 3 * * *" # daily 03:00 UTC (prod)

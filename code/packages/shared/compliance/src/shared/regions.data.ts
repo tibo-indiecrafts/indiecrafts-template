@@ -2,7 +2,7 @@
  * Geo → regulation DATA tables (the editable catalog). The resolution algorithm lives in
  * `./regions`; this file is just the data a deployment edits/extends. Country/territory codes
  * are ISO-3166-1 alpha-2, as `cf-ipcountry` returns them.
- * Reference: docs/apps/web/config/cookie-consent-geo.md
+ * Reference: docs/projects/web/website/config/cookie-consent-geo.md
  */
 
 /**

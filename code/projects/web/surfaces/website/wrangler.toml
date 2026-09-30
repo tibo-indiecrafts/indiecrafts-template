@@ -1,7 +1,7 @@
 # Cloudflare Workers config for the Next.js app (via OpenNext).
 # Deploy: GitHub Actions runs `opennextjs-cloudflare build` then
 # `wrangler deploy --env <dev|staging|prod>`. Runbook + first-time setup
-# (R2 buckets, secrets, custom domain): docs/apps/web/setup/deployment.md
+# (R2 buckets, secrets, custom domain): docs/projects/web/website/setup/deployment.md
 #
 # Names follow `<prefix>-<env>-<platform>-<slug>` (here `indiecrafts-<env>-web-surfaces-website`),
 # the single formula in scripts/lib/apps.mjs `resourceName`. Per client site, run

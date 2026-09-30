@@ -5,7 +5,7 @@ description: Write and run tests for a change — unit/component/integration via
 
 # Test pass
 
-The write→run→fix loop for a change. Authority: `docs/apps/web/setup/testing.md` and the
+The write→run→fix loop for a change. Authority: `docs/projects/web/website/setup/testing.md` and the
 `testing` rule. Tests are **colocated** beside the source (like `*.stories.tsx`).
 
 ## The loop

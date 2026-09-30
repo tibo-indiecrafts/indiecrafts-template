@@ -44,7 +44,7 @@
  * ─ Where the hex mirror lives ──────────────────────────────────
  * `src/config/index.ts:theme.hexColors` exists because the PWA manifest
  * (`app/manifest.ts`) can't take OKLCH for `theme_color`/`background_color`.
- * If you change a colour here, update both. See docs/apps/web/setup/brand-setup.md
+ * If you change a colour here, update both. See docs/projects/web/website/setup/brand-setup.md
  * § "The hex / oklch trap".
  *
  * ─ Two dark triggers ───────────────────────────────────────────

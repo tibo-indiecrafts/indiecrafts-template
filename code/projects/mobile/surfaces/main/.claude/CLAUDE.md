@@ -1,4 +1,4 @@
-# @indiecrafts/mobile-surfaces-main — the Capacitor shell
+# `@indiecrafts/mobile-surfaces-main` — the Capacitor shell
 
 Auto-loads under `code/projects/mobile/surfaces/main/**`. A Capacitor 8 shell around the hosted
 `app` surface — **no UI of its own**. `server.url` loads the app; every screen, string and

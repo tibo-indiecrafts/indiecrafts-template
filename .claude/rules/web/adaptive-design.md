@@ -1,12 +1,14 @@
 ---
+paths:
+  - "code/{projects,packages,modules}/web/**/*.{tsx,css}"
 description: Adaptive-aware layout — responsive by default, adaptive where a component earns it; name the mechanism.
 ---
 
 # Adaptive-aware design
 
 Load when building or changing any layout. "Responsive" gets used for five different things, and the
-failure mode is ambiguity — a designer hands off three fixed frames meaning *adaptive*, a dev builds
-fluid CSS meaning *responsive*, both say "responsive." Be specific about the mechanism.
+failure mode is ambiguity — a designer hands off three fixed frames meaning _adaptive_, a dev builds
+fluid CSS meaning _responsive_, both say "responsive." Be specific about the mechanism.
 
 ## The decision (state it in the PR)
 
@@ -46,4 +48,4 @@ skill), not scaling pixels. Design each device class (mobile / tablet / desktop)
 
 - **375 / 768 / 1280 is the floor, not the definition** — also check a between size (the ~820px
   tablet gap), landscape, and a coarse-pointer (touch) device.
-- Deeper guide: [`code/docs/apps/web/design/adaptive-responsive.md`](../../../docs/apps/web/design/adaptive-responsive.md) · the impeccable `adapt` skill.
+- Deeper guide: `code/docs/projects/web/website/design/adaptive-responsive.md` · the impeccable `adapt` skill.

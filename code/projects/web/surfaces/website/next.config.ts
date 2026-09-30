@@ -76,7 +76,7 @@ const nextConfig: NextConfig = {
     ...imageDefaults,
     // Every `next/image` src is rewritten to a CDN-sized source (Sanity + Unsplash
     // resize at the edge) instead of Next's optimizer. See
-    // `src/lib/sanity-image-loader.ts` → `@indiecrafts/packages-web-sanity/image`. Rule: `.claude/rules/sanity-images.md`.
+    // `src/lib/sanity-image-loader.ts` → `@indiecrafts/packages-web-sanity/image`. Rule: `.claude/rules/web/sanity-images.md`.
     loaderFile: "./src/lib/sanity-image-loader.ts",
   },
   // Auto-memoize components and hooks. Stable in Next 16 — prod-only so HMR stays fast.
@@ -103,7 +103,7 @@ const nextConfig: NextConfig = {
     // the CSP from `/:path*` — `src/proxy.ts` sets the nonce-based CSP per request
     // instead (SP3). The `/studio` route can't take a nonce, so it keeps the same
     // `websiteCspHosts` as a static, permissive rule (`studioCspRule`) — the brick's
-    // defaults keep the Sanity Studio working. See code/docs/apps/web/seo/security-headers.
+    // defaults keep the Sanity Studio working. See code/docs/projects/web/website/seo/security-headers.
     return [
       ...securityHeaders({
         env: getCurrentEnvironment(),
@@ -133,6 +133,6 @@ export default withBundleAnalyzer(withNextIntl(nextConfig));
 
 // Cloudflare Workers (OpenNext) local-dev integration — makes `wrangler dev`
 // bindings (R2 ISR cache, vars, secrets from `.dev.vars`) available while
-// running `next dev`. No-op in production. See `code/docs/apps/web/setup/deployment.md`.
+// running `next dev`. No-op in production. See `code/docs/projects/web/website/setup/deployment.md`.
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 void initOpenNextCloudflareForDev();

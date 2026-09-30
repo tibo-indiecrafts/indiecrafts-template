@@ -1,4 +1,4 @@
-# @indiecrafts/modules-web-blog — self-contained blog + page-builder
+# `@indiecrafts/modules-web-blog` — self-contained blog + page-builder
 
 Auto-loads under `code/modules/web/blog/**`. Self-contained Sanity-backed blog + page-builder, gated by `features.blog` (public surface) and `features.studio` (editing) — both app-owned, injected into the module via `configureBlog` (`lib/config.ts`). Builds on the shared Sanity infra `@indiecrafts/packages-web-sanity` (`code/docs/packages/sanity.md`). Human docs → `code/docs/modules/blog/`.
 
@@ -46,7 +46,7 @@ The blog composes the generic `MODULES_FRAGMENT` (`@indiecrafts/packages-web-pag
 post-card projection (`POST_CARD_PROJECTION`, shared by `blog-post-list`, `blog-hero`, `blog-featured`,
 `blog-category-spotlight`, `blog-collection`, and `blog-trending`) in `sanity/queries.ts`.
 
-Field **legends** (every `title` + `description` an editor sees) are written for non-technical editors — plain words, no jargon. Follow [`.claude/rules/sanity-legends.md`](../../../../projects/web/surfaces/website/.claude/rules/sanity-legends.md).
+Field **legends** (every `title` + `description` an editor sees) are written for non-technical editors — plain words, no jargon. Follow [`.claude/rules/web/sanity-legends.md`](../../../../../.claude/rules/web/sanity-legends.md).
 
 ## Frontpage (`/blog`)
 

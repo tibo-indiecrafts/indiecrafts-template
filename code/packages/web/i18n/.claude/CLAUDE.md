@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-i18n — shared navigation shim
+# `@indiecrafts/packages-web-i18n` — shared navigation shim
 
 Auto-loads under `code/packages/web/i18n/**`. A thin next-intl navigation layer so **modules** get
 `Link`/nav without importing the app. Area rules → `../../../.claude/CLAUDE.md`.

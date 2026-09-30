@@ -1,4 +1,6 @@
 ---
+paths:
+  - "code/{projects,packages,modules}/web/**/*.tsx"
 description: Render Sanity/remote images via next/image — the loader sizes them at the CDN.
 ---
 
@@ -15,4 +17,4 @@ Load when rendering any Sanity- or Unsplash-hosted image.
 - Prefer `placeholder="blur"` + `blurDataURL={lqip}` when the GROQ fragment carries `metadata.lqip`. Fetch it as `asset->{ url, metadata }` and enable `options.metadata: ["lqip"]` on the image schema field.
 - Never hand-build Sanity CDN URLs ad hoc in components — the loader owns the params. New hosts that resize by query string go in `SIZED_HOSTS` in `@indiecrafts/packages-web-sanity/image`.
 
-**Verify** — after adding an image, check the Network panel: requests carry `?w=…&auto=format` and transfer the **downscaled** bytes, not the original; `srcset` is present. Full guide: `code/docs/apps/web/config/images.md`.
+**Verify** — after adding an image, check the Network panel: requests carry `?w=…&auto=format` and transfer the **downscaled** bytes, not the original; `srcset` is present. Full guide: `code/docs/projects/web/website/config/images.md`.

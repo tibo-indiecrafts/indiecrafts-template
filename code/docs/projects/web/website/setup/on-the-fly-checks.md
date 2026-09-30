@@ -97,7 +97,7 @@ except on the file it targets:
 
 - **`config-first.mjs`** — cards the config-first NEVERs eslint misses, on a just-edited **component**:
   raw **color** literals (`#hex` · `rgb()` · `hsl()` · `oklch()` · `bg-[#…]` — use a semantic token per
-  [design-token-usage](../../../projects/web/surfaces/website/.claude/rules/design-token-usage.md)) and
+  [design-token-usage](../../../../../../.claude/rules/web/design-token-usage.md)) and
   hardcoded **absolute URLs** (read from `@/config`). Advisory; the `config-consistency-reviewer` agent
   does the full pass on demand. Skips config/seo/jsonld/sanity/ui-tokens/shadcn-primitive files (where
   those literals are legitimate).

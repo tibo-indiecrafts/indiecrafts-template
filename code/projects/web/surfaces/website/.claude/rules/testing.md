@@ -1,11 +1,15 @@
 ---
+paths:
+  - "**/*.test.{ts,tsx,mjs}"
+  - "**/e2e/**"
+  - "**/*.stories.tsx"
 description: What to test + how — colocate unit/component, separate e2e, behavior not implementation, bug = failing repro first.
 ---
 
 # Testing rules
 
 Load when writing or changing tests, or when a change adds/alters behavior. Full guide:
-`code/docs/apps/web/setup/testing.md`; the write→run→fix loop: the `test-pass` skill.
+`code/docs/projects/web/website/setup/testing.md`; the write→run→fix loop: the `test-pass` skill.
 
 - **Colocate unit / component / integration** — `*.test.ts(x)` sits **beside the source** it guards (like `*.stories.tsx`); **never** a separate `tests/` or `__tests__/` folder. The test travels with the code, shows in the same diff, and deletes with it.
 - **Separate e2e** — Playwright specs live in their own `code/projects/web/surfaces/website/e2e/` folder (own config, own CI job): they drive whole routes/journeys, not one file. Visual = the colocated Storybook stories, no separate files.

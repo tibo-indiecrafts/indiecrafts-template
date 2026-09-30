@@ -3,7 +3,7 @@
  * shells: job logic lives in a brick). Given a running counter for one key (a user or a
  * hashed IP), decide whether a stream of failed logins has crossed from noise into a
  * stored `credential_stuffing` incident. No I/O, no Worker types — pure + testable.
- * Reference: `code/docs/apps/web/config/security-hardening.md`.
+ * Reference: `code/docs/projects/web/website/config/security-hardening.md`.
  */
 
 import type { SecurityEventType, Severity } from "./events";

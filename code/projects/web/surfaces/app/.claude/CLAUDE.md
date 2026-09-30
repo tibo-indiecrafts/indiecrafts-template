@@ -1,4 +1,4 @@
-# @indiecrafts/web-surfaces-app — lean web surface (next-cf)
+# `@indiecrafts/web-surfaces-app` — lean web surface (next-cf)
 
 Auto-loads under `code/projects/web/surfaces/app/**`. A lean Next.js surface with a shadcn sidebar
 shell wrapping three pages — Home, Account, Legal — over the shared i18n/compliance/version

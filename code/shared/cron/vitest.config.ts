@@ -7,7 +7,7 @@ import {
 // wrangler.toml — so `cloudflare:test` `SELF` / `env` exercise the deployed worker
 // and real bindings (KV/D1) once you add them. Pinned to the vitest-3-compatible
 // pool (0.8.x, `defineWorkersConfig`); the `cloudflareTest()` plugin form arrives
-// with the repo's next Vitest (4) bump. See code/docs/apps/workers/.
+// with the repo's next Vitest (4) bump. See code/docs/shared/workers/.
 export default defineWorkersConfig(async () => {
   // The cron shares the api's two D1s (see wrangler.toml) — read the api's own
   // db/audit + db/main migrations/*.sql so the test DB has the real schema (erasure_requests,

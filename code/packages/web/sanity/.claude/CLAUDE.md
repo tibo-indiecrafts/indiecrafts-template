@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-sanity — Sanity infra
+# `@indiecrafts/packages-web-sanity` — Sanity infra
 
 Auto-loads under `code/packages/web/sanity/**`. Client/config plumbing: `client · live · env ·
 token · structure · image · module · write`. Infra only. Area rules → `../../../.claude/CLAUDE.md`.

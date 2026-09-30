@@ -1,4 +1,5 @@
 ---
+name: grill-plan
 description: Hard grill-me stress-test of the current plan before you approve it
 argument-hint: [what to grill, or blank for the current plan]
 ---

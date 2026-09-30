@@ -130,7 +130,7 @@ components:
 # Indiecrafts — Design System
 
 Machine-readable tokens live in the front matter above; the prose below is the
-"why". Deeper guides: `code/docs/apps/web/design/`, `code/docs/apps/web/config/theme-modes.md`.
+"why". Deeper guides: `code/docs/projects/web/website/design/`, `code/docs/projects/web/website/config/theme-modes.md`.
 This is the **visual** third of the design-context triad — the non-visual product truth
 (users, purpose, positioning) lives in [`PRODUCT.md`](../../../projects/web/surfaces/website/PRODUCT.md), and the
 build rules in [`CLAUDE.md`](../../../projects/web/surfaces/website/.claude/CLAUDE.md). Framing a
@@ -148,7 +148,7 @@ problem-framing step.
    `theme.hexColors.background`) — never hardcode them.
 3. **Use utilities, never raw values:** `bg-brand`, `text-muted-foreground`,
    `rounded-md` — never a raw hex, px, or rem in a component.
-4. **Deeper detail** → `code/docs/apps/web/design/*` (typography, responsive, sections, icons…).
+4. **Deeper detail** → `code/docs/projects/web/website/design/*` (typography, responsive, sections, icons…).
    Read this file first, then the topic guide.
 5. **Log every change** in the app changelog `code/projects/web/surfaces/website/CHANGELOG.md` (code + design share one).
 6. **Unsure which rule applies? Ask — never "use your best judgment."**
@@ -249,8 +249,8 @@ Breakpoints are Tailwind's (`sm 640 · md 768 · lg 1024 · xl 1280`); verify at
 variants — not `@min-4xl:`) where a component's own width drives its layout — a block that can
 render **inline in the blog column** (`module.*`) MUST be container-driven, never viewport;
 **`pointer` / `hover`** queries for input method (never gate function on hover); **safe-area
-insets** for notches. Full guide: `code/docs/apps/web/design/adaptive-responsive.md` +
-`code/projects/web/surfaces/website/.claude/rules/adaptive-design.md`.
+insets** for notches. Full guide: `code/docs/projects/web/website/design/adaptive-responsive.md` +
+`.claude/rules/web/adaptive-design.md`.
 
 - Grids collapse `grid-cols-1 → md:2 → lg:3`; hero type scales
   `text-3xl → md:5xl → xl:6xl`.
@@ -302,7 +302,7 @@ status dots use `full`. Don't mix radii within one component.
 ## Component conventions
 
 Build on the shadcn primitives the shadcn way — full rules in
-[`.claude/rules/component-architecture.md`](../../../projects/web/surfaces/website/.claude/rules/component-architecture.md):
+[`.claude/rules/web/component-architecture.md`](../../../../.claude/rules/web/component-architecture.md):
 `cn()` not string-concat, `cva` not forks, `asChild`/`data-slot`, semantic tokens
 over `dark:`, container queries, never hand-edit `@indiecrafts/packages-web-ui` primitives.
 
@@ -361,7 +361,7 @@ Every data view handles three states with real components — never a blank scre
 
 ## Accessibility
 
-Visual a11y contract (structural code rules → `code/projects/web/surfaces/website/.claude/rules/accessibility.md`):
+Visual a11y contract (structural code rules → `.claude/rules/web/accessibility.md`):
 
 - **Contrast** — WCAG **AA** on every token pair; `pnpm verify:contrast` gates it.
 - **Focus** — visible `focus-visible:ring-2 ring-ring` on every interactive element.
@@ -465,7 +465,7 @@ skill runs this loop, sequencing the reviewer agents; the parallel review batch 
   re-sync `theme.hexColors.background` (the only hex mirror, for the PWA manifest)
   → run `pnpm verify:contrast` (WCAG AA).
 - **Log it:** every token/component/design change → app changelog `code/projects/web/surfaces/website/CHANGELOG.md`
-  with a plain-language _why_; deeper rationale → `code/docs/apps/web/design/decisions.md`.
+  with a plain-language _why_; deeper rationale → `code/docs/projects/web/website/design/decisions.md`.
 - **Keep current:** delete anything that no longer matches production — a stale
   rule an agent follows confidently is worse than a missing one.
 - **Loaded?** the app `CLAUDE.md` imports this via `@../../packages/ui-tokens/DESIGN.md`; confirm with `/context`.

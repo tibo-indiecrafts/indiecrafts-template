@@ -13,7 +13,7 @@ touch files under `code/projects/web/surfaces/website/**`); design tokens in **[
 - Read from `@/config` — never hard-code brand strings, URLs, colors, or nav.
 - Route via `@/i18n/routing` — never `next/link` / `next-intl/navigation`.
 - User-facing strings live in `messages/<locale>.json` — never inline.
-- Don't edit `src/user-interface/ui/**` (shadcn CLI) or depend on the library at runtime.
+- Don't hand-edit `@indiecrafts/packages-web-ui` primitives (shadcn CLI) or depend on the component library at runtime.
 - The gate is the **commit hook** (`lint-staged` + `tsc`) + **CI** — not a manual step. Live **lint cards** (the `a11y-check` hook, full eslint config) + the **`typescript-lsp` plugin** give continuous feedback as you edit, so there's no need to manually run `verify:quick` before a PR.
 
 ## Repo layout — the in-repo folders
@@ -29,7 +29,7 @@ projects under `code/projects/`) is the whole tree. Conventions live **in-repo**
 
 Run scripts from the repo root. `pnpm build/tsc/lint/…` fan out via turbo; `pnpm dev` runs the local stack — the `website` (Next, :3000) + the three backend workers `api`/`cron`/`workers` (`wrangler dev` on distinct `--port`/`--inspector-port`s so they don't collide). The other surfaces (`admin`/`app`) are run individually (`pnpm --filter <pkg> dev`).
 
-> **Config split.** `.claude/` holds Claude Code **runtime** only — `agents/`, `skills/`, `settings.json` (must sit at the repo root; Claude Code magic-loads them). **App conventions are app-scoped:** [`code/projects/web/surfaces/website/.claude/CLAUDE.md`](code/projects/web/surfaces/website/.claude/CLAUDE.md) + [`code/packages/web/ui-tokens/DESIGN.md`](code/packages/web/ui-tokens/DESIGN.md) auto-load when you work under `code/projects/web/surfaces/website/**`. A new app lands under its platform + kind (`code/projects/<platform>/<kind>/<name>/`) with its own brief; this root stays the thin platform router.
+> **Config split.** The repo-root `.claude/` holds the project-wide runtime — `agents/`, `skills/`, `hooks/`, `settings.json`, and `rules/` (`rules/web/` is path-scoped: it loads only with web `.tsx`/`.css`/schema files). **Unit conventions are unit-scoped:** each unit's `.claude/CLAUDE.md` loads when you work there (the website brief sends you to `DESIGN.md` before UI work). A new app lands under its platform + kind (`code/projects/<platform>/<kind>/<name>/`) with its own brief; this root stays the thin platform router. Contract → [`.claude/README.md`](.claude/README.md).
 
 ## Working principles
 

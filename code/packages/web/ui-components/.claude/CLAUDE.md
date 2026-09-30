@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-ui-components — shared page-builder blocks
+# `@indiecrafts/packages-web-ui-components` — shared page-builder blocks
 
 Auto-loads under `code/packages/web/ui-components/**`. Generic block renderers + the composable
 `BLOCK_RENDERERS` registry, so the app and the blog paint the **same** blocks. Area rules →

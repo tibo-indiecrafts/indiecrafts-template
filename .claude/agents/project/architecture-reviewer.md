@@ -16,10 +16,10 @@ Check, reporting ✅/❌ with `file:line`:
 1. **No cross-app imports** — a surface NEVER imports a sibling app (`projects/<platform>/surfaces/<other>`); apps share only via `packages/` bricks (global) or `<platform>/shared/` (platform). Grep the diff for an import reaching into another app's tree.
 2. **Deps point down** — app → module → package → db, never up or sideways. Flag a package importing a module or an app; a brick that needs an app is a design error.
 3. **Earn extraction (≥2 consumers)** — a new brick/module is justified only at ≥2 real consumers. A one-consumer extraction is premature (YAGNI); say so.
-4. **Correct scope + altitude** — a brick lives at the highest scope it runs on (`shared/` iff ≥2 platforms, else `web`/`mobile`/`hybrid`); a shared resource sits at the LOWEST altitude covering its consumers (global → platform → leaf). Flag premature promotion to `global`/`shared`.
+4. **Correct scope + altitude** — a brick lives at the highest scope it runs on (`shared/` iff ≥2 platforms, else `web`/`mobile`); a shared resource sits at the LOWEST altitude covering its consumers (global → platform → leaf). Flag premature promotion to `global`/`shared`.
 5. **Single owner** — a shared service/DB has ONE owner that binds/migrates/deploys it; consumers use its API, never a second writer. Flag a new writer to someone else's store.
 6. **Registry row exists** — a new app/service/db/domain has its row in the matching `scripts/lib/*.mjs` registry (+ `_registry.md`). Nothing shared may exist outside a registry.
 7. **Package wiring complete** — a new brick consumed by an app has its wires: `transpilePackages` + `workspace:*` dep (always); `tsconfig` paths (iff a wildcard subpath export); a `@source` line in `ui-tokens/globals.css` (iff it renders Tailwind); the Sanity barrel (iff it ships content).
-8. **Right platform pattern** — native/hybrid code doesn't import web-only patterns (`packages-web-ui`, shadcn `@/…/ui`); the `platform-patterns` hook cards this — flag if it slips.
+8. **Right platform pattern** — the Capacitor shell (`code/projects/mobile/surfaces/main`) stays a thin native wrapper: no UI, no web-only imports (`packages-web-ui`, shadcn); the app UI it wraps lives in `web/surfaces/app`.
 
 Be specific and terse. Every ❌ is a real boundary break or a shared resource with no owner/registry — not a style nit.

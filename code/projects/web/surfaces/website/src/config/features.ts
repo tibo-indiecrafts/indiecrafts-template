@@ -1,7 +1,7 @@
 /**
  * Global feature flags — on/off switches for whole surfaces. One line each; full
  * behavior (routes gated, dependencies, discovery consequences) →
- * `code/docs/apps/web/config/feature-flags.md`.
+ * `code/docs/projects/web/website/config/feature-flags.md`.
  *
  * These are **build-time structural** gates (routes / SSG / sitemap / llms.txt), so
  * they stay in code. An *editor-facing* on/off (e.g. `newsletterSettings.enabled`,

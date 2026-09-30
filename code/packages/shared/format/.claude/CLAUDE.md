@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-format — locale formatting & grammar
+# `@indiecrafts/packages-shared-format` — locale formatting & grammar
 
 **Stack:** TypeScript. Pure, framework-agnostic (no React) `Intl`-based helpers. Foundation · agnostic.
 

@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-config — site config data + shape
+# `@indiecrafts/packages-shared-config` — site config data + shape
 
 Auto-loads under `code/packages/shared/config/**`. The shared config **primitives** (URL/prefix,
 locales, Intl format defaults, env/CSP, logging) + the generic **page-config contract**

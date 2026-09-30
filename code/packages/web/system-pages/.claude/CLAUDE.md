@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-system-pages — shared system pages
+# `@indiecrafts/packages-web-system-pages` — shared system pages
 
 **Stack:** React 19 · TypeScript · Tailwind v4 tokens. The branded status pages every app shares — maintenance · 404 · error · offline — + the maintenance proxy behaviour.
 

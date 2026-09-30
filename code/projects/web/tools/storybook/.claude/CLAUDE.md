@@ -1,4 +1,4 @@
-# @indiecrafts/web-tools-storybook — the component gallery (Storybook)
+# `@indiecrafts/web-tools-storybook` — the component gallery (Storybook)
 
 Auto-loads under `code/projects/web/tools/storybook/**`. The **design-system gallery** — a browse-only
 Storybook that documents the shared UI bricks — `ui` · `ui-components` · `ui-tokens` · `system-pages` ·

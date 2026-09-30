@@ -5,7 +5,7 @@
  * core, each module) exports a `SanityModule` contribution, and `composeStudio`
  * merges them into **one hub Studio** whose desk is **grouped per app** — "Site
  * web" (this app's content) vs "Contenu partagé" (site-wide config every app/lens
- * reads). One dataset, one editing surface. See `code/docs/apps/web/config/multi-app.md`.
+ * reads). One dataset, one editing surface. See `code/docs/shared/architecture/multi-app.md`.
  */
 
 import { visionTool } from "@sanity/vision";

@@ -3,7 +3,7 @@
 // `scripts/lib/apps.mjs`. The migrate + backup runners read THIS and dispatch on
 // `kind` (like deploy dispatches on an app's `class`). `db:migrate:<name>:<env>` also
 // takes a pre-migration R2 snapshot before each REMOTE schema change (retention + layout →
-// docs/apps/web/setup/backups.md).
+// docs/projects/web/website/setup/backups.md).
 //
 // Adding a database = one row here + fill its slot (real migrations, or a README marker
 // under `<slot>/db/<kind>/`). Active today: the api's `main` + `audit` D1s + `security-counters` KV.

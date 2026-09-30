@@ -14,7 +14,7 @@ modules** → the internal dev framework. **What they are** → `code/docs/modul
 - A module is a **vertical slice, feature-flagged**: its routes/UI/data live together and every public surface 404s + drops from sitemap/nav when its flag is off.
 - **Live reference:** the blog — `code/modules/web/blog/` (`@indiecrafts/modules-web-blog`; self-contained `user-interface/ sanity/ lib/` + a route-gate, consumed as source via the app's `transpilePackages`). Read it before extracting a module here.
 - Compose from `packages/` bricks; a module may depend on packages + db, **never on an app** or another module directly.
-- **Scope · category** — **scope is the folder** (`web` where it renders today; `shared` when the same feature ships on ≥2 platforms; `mobile` when that-platform-only), **category is a tag** (`content`/`growth`/…). A native app adds `src/user-interface/native/` beside the web tree and the module moves to `modules/shared/`. Full convention → [`code/packages/.claude/CLAUDE.md` → Categorisation & platform](../../packages/.claude/CLAUDE.md).
+- **Scope · category** — **scope is the folder** (`web` where it renders today; `shared` when the same feature ships on ≥2 platforms; `mobile` when that-platform-only), **category is a tag** (`content`/`growth`/…). The Capacitor shell renders the web UI, so it never needs a `mobile` module. Full convention → [`code/packages/.claude/CLAUDE.md` → Categorisation & platform](../../packages/.claude/CLAUDE.md).
 
 ## When to extract a feature → `code/modules/<scope>/<name>`
 

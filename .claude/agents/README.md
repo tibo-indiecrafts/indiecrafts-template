@@ -1,9 +1,10 @@
-# Agents — this repo's reviewers + build agents
+# Agents — this repo's reviewers
 
 Claude Code discovers agents recursively. This folder holds **only what this repo uses**. The
 general vendored suite (`contains-studio/agents`) was removed as unused — review and build work
 runs through the plugin agents (`pr-review-toolkit`, `feature-dev`, `caveman`), the gstack review
-skills (`/review` · `/codex` · `/cso`), and the agents below.
+skills (`/review` · `/codex` · `/cso`), and the reviewers below. Agents live at the repo root only
+(`pnpm check:claude-md` fails on a nested `.claude/agents/`).
 
 ## `project/` — this repo's custom reviewers
 
@@ -20,13 +21,6 @@ change, before shipping; the `design-critique` skill sequences the design lenses
 - **architecture-reviewer** — monorepo boundary + altitude: no cross-app imports, deps point down, ≥2-consumer extraction, single-owner shared resources, registry rows.
 - **compliance-reviewer** — GDPR: data minimization, consent, erasure/export coverage, audit trail, DPIA/ROPA.
 - **performance-reviewer** — Next.js/React perf: server-first, bundle, image sizing, fetch waterfalls, static/ISR.
-
-## `build/` — native-surface builders
-
-Domain build agents for the non-web surfaces (reach for them when building those apps):
-
-- **electron-pro** — the `hybrid` (Electron) surface.
-- **mobile-app-builder** — the `mobile` (Expo / React Native) surface.
 
 ## Links
 

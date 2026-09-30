@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-auth — themed Clerk provider (web tier)
+# `@indiecrafts/packages-web-auth` — themed Clerk provider (web tier)
 
 **Stack:** TypeScript + React 19 + `@clerk/nextjs` (v7). DOM-coupled → **web scope** (it
 themes DOM sign-in components, so it can't sit in `shared/`). Dep: `@indiecrafts/packages-shared-auth`

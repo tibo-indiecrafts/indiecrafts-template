@@ -13,7 +13,7 @@ without breaking a11y, refine copy without breaking hierarchy). Authority for ev
 
 This is the **refinement** loop (polishing one screen). For a fast PR read, run the reviewer agents in
 **parallel** instead (design + a11y at once) — the two coexist, they do different jobs. Run this after
-the pixels exist (`rules/visual-verification.md` — screenshot at
+the pixels exist (`.claude/rules/web/visual-verification.md` — screenshot at
 375 / 768 / 1280) so each pass interprets real frames.
 
 ## The four passes — in order, each: critique → fix one-by-one → re-screenshot → next
@@ -21,7 +21,7 @@ the pixels exist (`rules/visual-verification.md` — screenshot at
 1. **Accessibility** (foundation first). Lens: contrast, touch targets ≥40px, focus order,
    `focus-visible` rings, semantic hierarchy, no state-by-colour-alone. Run the **`accessibility-pass`**
    skill / delegate to the **`accessibility-reviewer`** agent. Authority: DESIGN.md §Accessibility +
-   `rules/accessibility.md`. Fix, `pnpm verify:contrast`, then move on — the accessible baseline is now
+   `.claude/rules/web/accessibility.md`. Fix, `pnpm verify:contrast`, then move on — the accessible baseline is now
    fixed and later passes must not break it.
 2. **Visual hierarchy** (functional, not pretty). Lens: does the type scale
    (`eyebrow → heading → … → caption`) match actual importance? One primary action per surface? Spacing
@@ -44,6 +44,6 @@ re-screenshot the affected widths, then start the next pass. Never batch all fou
 ## Gate
 
 Re-screenshot at **375 / 768 / 1280** after each pass's fixes and review the _images_ (per
-`rules/visual-verification.md`). At the end: `pnpm verify:quick`, and `pnpm verify:contrast` if any
+`.claude/rules/web/visual-verification.md`). At the end: `pnpm verify:quick`, and `pnpm verify:contrast` if any
 colour moved. Reuse the existing reviewer agents — this skill sequences them, it does not re-implement
 their checks.

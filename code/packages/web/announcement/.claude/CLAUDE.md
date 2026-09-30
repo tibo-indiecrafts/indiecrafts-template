@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-announcement — announcement bar + toast (web presentation)
+# `@indiecrafts/packages-web-announcement` — announcement bar + toast (web presentation)
 
 Auto-loads under `code/packages/web/announcement/**`. The Sanity schema + web presentation for
 editor-managed announcements — the `announcementBar` (rotating strip) + `announcementToast`

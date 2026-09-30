@@ -1,7 +1,7 @@
 name: Deploy (Cloudflare)
 
 # Push to main → deploy prod. Use "Run workflow" to target dev/staging/prod.
-# One-time setup + required secrets/vars: docs/apps/web/setup/deployment.md
+# One-time setup + required secrets/vars: docs/projects/web/website/setup/deployment.md
 on:
   # Prod deploy fires only after CI succeeds on main (see the success gate on
   # the discover job). Manual dispatch stays available for dev/staging/prod.

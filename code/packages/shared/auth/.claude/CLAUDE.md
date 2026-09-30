@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-auth — role contract (DOM-free)
+# `@indiecrafts/packages-shared-auth` — role contract (DOM-free)
 
 **Stack:** TypeScript. Pure, framework-agnostic (no Clerk/React/Next/DOM import — the
 `shared/` scope rule). The portable authorization contract every platform's Clerk SDK reads.

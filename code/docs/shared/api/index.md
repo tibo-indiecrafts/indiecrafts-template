@@ -52,8 +52,25 @@ server-side only). Clerk-JWT routes authenticate the caller's own session.
 | `POST /v1/clerk-webhook`                          | Svix-signed         | `user_profiles` sync, welcome email, role→admin alert, Clerk email take-over.                                                           |
 | `GET/POST /v1/consent/marketing-email`            | Clerk-JWT           | The caller's own marketing opt-in.                                                                                                      |
 | `GET/POST /v1/consent/email-preferences`          | Clerk-JWT           | The caller's own per-category preferences.                                                                                              |
+| `GET/POST /v1/consent/legal`                      | Clerk-JWT           | The caller's accepted policy version — accept on one surface, the "policies updated" banner clears on all.                              |
 | `POST /v1/erasure/self`                           | Clerk-JWT + step-up | Self-service erasure; runs the engine, no email round-trip.                                                                             |
 | `POST /v1/export`                                 | Clerk-JWT + step-up | Runs `runExport`, stores the bundle in R2, returns a single-use link.                                                                   |
+
+## Invariants
+
+- **The Clerk delete is required on both erasure paths** (`self` + `confirm`). It is the one global
+  session kill-switch: a persistent failure returns `502 {clerk_failed:true}`, keeps the row
+  `confirmed`, and sends no completion email — never a false "erasure complete".
+- **Studio-editable email copy never blocks a send.** The erasure, Clerk-auth and security-alert emails
+  read the `emailStrings` singleton over GROQ-HTTP, resolved to the recipient's locale, with a per-field
+  fallback to hard-coded English. The security alert has no `enabled` toggle — it can never be silenced.
+- **`PUT /v1/settings` writes `MAIN_DB` first**, then a best-effort `admin_audit` row on `AUDIT_DB` (two
+  writes, not one atomic batch).
+- **`data_requests` stores plaintext `email` + `message`** — a deliberate exception to the D1
+  minimization convention (the operator needs them); `PII_ENCRYPTION_KEY` encrypts them at rest when set.
+- **Churn:** only `POST /v1/erasure/self` writes `churn_events`. The Clerk `user.deleted` webhook
+  suppresses the Resend contact when a churn row exists, and pure-deletes it otherwise.
+  → [Churn tracking](/projects/web/website/config/churn), [Email preferences](/projects/web/website/config/email-preferences).
 
 ## Bindings / env
 

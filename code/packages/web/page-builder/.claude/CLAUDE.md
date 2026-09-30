@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-page-builder — page-builder content model (schemas + GROQ)
+# `@indiecrafts/packages-web-page-builder` — page-builder content model (schemas + GROQ)
 
 Auto-loads under `code/packages/web/page-builder/**`. The generic `page` document, the 16 `module.*`
 block **schemas**, the shared `blockContent` / `link` / `cta` objects, and the `MODULES_FRAGMENT`

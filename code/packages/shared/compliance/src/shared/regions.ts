@@ -7,7 +7,7 @@
  * in `./regions.data`; a client edits those. GDPR/UK GDPR/CCPA plus LGPD/PIPEDA/POPIA and
  * Australia's Privacy Act ship built in, and an assignment on a PARENT country cascades to its
  * external territories.
- * Reference: docs/apps/web/config/cookie-consent-geo.md
+ * Reference: docs/projects/web/website/config/cookie-consent-geo.md
  */
 import {
   CONSENT_REGIONS,

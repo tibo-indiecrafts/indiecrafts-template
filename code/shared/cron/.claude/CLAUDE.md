@@ -1,17 +1,17 @@
-# @indiecrafts/shared-cron — scheduled worker
+# `@indiecrafts/shared-cron` — scheduled worker
 
 Auto-loads under `code/shared/cron/**`. A **bare Cloudflare Worker** (no Next/OpenNext) that runs on a schedule. This file is the app's _how to code_; platform rules live in the root `CLAUDE.md`.
 
 **Stack:** Cloudflare Workers (`workerd`) · TypeScript · wrangler 4. A thin deploy shell — the scheduled task is imported from packages/modules, not written here.
 
 `scheduled()` runs three passes on the api's two EU D1s (both `--location weur`, both
-bound directly — same `database_id`s the `api` worker uses): `DB` (`audit` — the firehose,
+bound directly — same `database_id`s the `api` worker uses): `AUDIT_DB` (`audit` — the firehose,
 `admin_audit`/`session_events`/`security_events`/`csp_reports`) and `MAIN_DB` (`main` —
 identity/rights/settings, `consent_events`/`data_requests`/`erasure_requests`/
 `export_requests`/`site_settings`). The three passes: the 90-day/3-year retention purge
-(split per binding — audit tables on `DB`, `consent_events`/`data_requests`/
+(split per binding — audit tables on `AUDIT_DB`, `consent_events`/`data_requests`/
 `erasure_requests` on `MAIN_DB`), an erasure-SLA flag (flags a `MAIN_DB` `erasure_requests`
-row nearing or past its GDPR one-month `due_at` with a `DB` `security_events` row, once, via
+row nearing or past its GDPR one-month `due_at` with an `AUDIT_DB` `security_events` row, once, via
 `due_flagged_at`), and an expired-export cleanup (deletes a `MAIN_DB` `export_requests` row
 
 - its object in the api's `EXPORT_BUCKET` R2 bucket once its 1-hour TTL passes unread). Each

@@ -7,7 +7,7 @@ model: sonnet
 
 You audit a web change for **runtime + load performance** on the Next.js 16 / React 19 app.
 Authority: `code/projects/web/surfaces/website/.claude/rules/` (code-patterns, sanity-images),
-`code/packages/web/ui-tokens/DESIGN.md` (image + motion), and `code/docs/apps/web/**` (images/perf).
+`code/packages/web/ui-tokens/DESIGN.md` (image + motion), and `code/docs/projects/web/website/**` (images/perf).
 Scope to changed files (`git diff --name-only`). Defer deep metrics to `react-doctor` / the `web-perf` skill.
 
 Check, reporting ✅/❌ with `file:line`:

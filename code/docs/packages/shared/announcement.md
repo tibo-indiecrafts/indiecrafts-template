@@ -38,7 +38,7 @@ Sanity (announcementBar + announcementToast)
 - **`version` hash** — the resolved content is hashed so a NEW announcement re-shows after a
   prior dismiss (the dismiss store records the last-closed version per surface).
 - **Image** — the resolver returns a CDN-sized URL (`?w=128&auto=format&fit=max&q=75`); a raw
-  `<img>` with those explicit params is compliant (`rules/sanity-images.md`).
+  `<img>` with those explicit params is compliant (`.claude/rules/web/sanity-images.md`).
 
 ## Consumers
 

@@ -5,7 +5,7 @@ import { expect, test } from "@playwright/test";
  * CSP header it sets. The server now defaults to `CSP_MODE=enforce`, so the
  * strict, nonce-gated policy IS the enforced `content-security-policy`; this
  * suite proves that policy actually works — the nonce lands on the served
- * script and nothing gets blocked. See `code/docs/apps/web/seo/security-headers.md`.
+ * script and nothing gets blocked. See `code/docs/projects/web/website/seo/security-headers.md`.
  * `/studio` is excluded from the proxy matcher and keeps the static, permissive
  * `studioCspRule` (Sanity Studio needs `'unsafe-inline'` and can't take a nonce).
  */

@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-gated-delivery — signed, expiring download links
+# `@indiecrafts/packages-shared-gated-delivery` — signed, expiring download links
 
 **Stack:** TypeScript. Pure **Web Crypto** (`crypto.subtle`, HMAC-SHA256), framework-agnostic
 (no React/Next imports), zero deps, runs on Node 22 + Workers. All async. Domain · agnostic.

@@ -82,7 +82,7 @@ export function AnnouncementToast({
     >
       {toast.imageUrl ? (
         // Already CDN-sized by the resolver (?w=128&auto=format&fit=max&q=75) — a raw
-        // <img> is allowed with those explicit params (rules/sanity-images.md).
+        // <img> is allowed with those explicit params (`.claude/rules/web/sanity-images.md`).
         <img
           src={toast.imageUrl}
           alt={toast.imageAlt ?? ""}

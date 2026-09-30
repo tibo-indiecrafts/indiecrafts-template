@@ -21,7 +21,7 @@ Auto-loads under `code/projects/web/surfaces/website/src/sanity/**`. Core, featu
   (`src/lib/seo/site-seo.ts`) dispatches each static route to its owning doc's `.seo`.
 - SEO read path: `src/lib/seo/site-seo.ts` (`getSiteSeo` / `getSiteSettings` /
   `getPageSeo`, React `cache()`) is the **sole** runtime source for the SEO surface —
-  **no config fallback**. Editing guide → `code/docs/apps/web/seo/editing-seo-in-sanity.md`.
+  **no config fallback**. Editing guide → `code/docs/projects/web/website/seo/editing-seo-in-sanity.md`.
 - **Navigation**: `schema/navigation.ts` (singleton `_id: navigation`) + reusable
   `schema/objects/{nav-item,locale-string}.ts` own the header menu + footer columns
   (one shared structure, per-language labels; header items can be dropdown groups
@@ -29,9 +29,9 @@ Auto-loads under `code/projects/web/surfaces/website/src/sanity/**`. Core, featu
   path `src/lib/navigation.ts` (`getNavigation`, React `cache()`) is the **sole**
   runtime source — **no config fallback**, internal links flag-gated (disabled
   routes skipped). Desk: `navStructureItem` (`structure.ts`). Guide →
-  `code/docs/apps/web/config/navigation.md`.
+  `code/docs/projects/web/website/config/navigation.md`.
 - **Field legends** (every `title` + `description` an editor reads) are written for
-  non-technical editors — no jargon. Follow `.claude/rules/sanity-legends.md`.
+  non-technical editors — no jargon. Follow `.claude/rules/web/sanity-legends.md`.
 
 ## Rules
 

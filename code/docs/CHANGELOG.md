@@ -17,6 +17,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **The API page is the one home for the api's routes and invariants.** It gains the missing
+  `/v1/consent/legal` route and an Invariants section (required Clerk delete, never-silenced email
+  copy, settings write order, `data_requests` PII, churn); the api brief now links here instead of
+  restating it. `first-deployment` names the `AUDIT_DB` binding; the `check:claude-md` row in
+  `scripts` describes the upgraded guard; links to the moved web rules point at `.claude/rules/web/`.
+
 - **`pnpm verify` is described as it is.** The getting-started and workspace pages said it runs
   "tsc + lint + format + contrast + react-doctor"; it also runs every app's tests and the repo
   guards. `how-we-document` now names the real `pnpm check:tags` (was `tags:check`).

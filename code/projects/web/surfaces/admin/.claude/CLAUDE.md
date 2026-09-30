@@ -1,4 +1,4 @@
-# @indiecrafts/web-surfaces-admin — internal admin dashboard (next-cf)
+# `@indiecrafts/web-surfaces-admin` — internal admin dashboard (next-cf)
 
 Auto-loads under `code/projects/web/surfaces/admin/**`. A **separate, auth-gated Next.js app** for operators: moderation,
 subscriber/waitlist ops, content review, dashboards over the shared Sanity dataset (+ Cloudflare D1 if

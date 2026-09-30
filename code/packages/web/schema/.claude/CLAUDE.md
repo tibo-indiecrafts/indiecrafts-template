@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-schema — shared Sanity object primitives
+# `@indiecrafts/packages-web-schema` — shared Sanity object primitives
 
 Auto-loads under `code/packages/web/schema/**`. The reusable, doc-agnostic field types more than one
 owner needs: `localeString · localeText · seoMeta` + the `sharedSanity` barrel. Area rules →

@@ -1,4 +1,4 @@
-# @indiecrafts/shared-workers — Cloudflare Worker (background jobs)
+# `@indiecrafts/shared-workers` — Cloudflare Worker (background jobs)
 
 Auto-loads when you work under `code/shared/workers/**`. Platform-wide rules live in the root
 `CLAUDE.md`; this is the app's _how to code_.
@@ -41,5 +41,5 @@ bricks are consumed as source (wrangler/esbuild bundles the TS).
 **Compilable skeleton — the structure + a health-check test are wired; the job isn't.** Fill in
 `scheduled` (logic in a brick), bind what it needs. **Platform class:** `worker-cf`; it's a row in
 [`scripts/lib/apps.mjs`](../../../shared/scripts/lib/apps.mjs), so CI builds + deploys it from the registry — no
-per-app workflow to add. Full guide → [`code/docs/apps/workers/`](../../../docs/apps/workers/index.md); deploy
+per-app workflow to add. Full guide → [`code/docs/shared/workers/`](../../../docs/shared/workers/index.md); deploy
 model → [`code/docs/shared/architecture/platform-deploy.md`](../../../docs/shared/architecture/platform-deploy.md).

@@ -4,7 +4,7 @@
  * survive across the many stateless Worker isolates).
  *
  * The R2 bucket is bound as `NEXT_INC_CACHE_R2_BUCKET` per environment in
- * `wrangler.toml`. Runbook: `code/docs/apps/web/setup/deployment.md`.
+ * `wrangler.toml`. Runbook: `code/docs/projects/web/website/setup/deployment.md`.
  */
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";

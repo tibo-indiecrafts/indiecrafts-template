@@ -145,7 +145,7 @@ resource "cloudflare_ruleset" "waf_managed" {
 # (`AI_TRAINING_USER_AGENTS` in `@/config` → `src/app/robots.txt`): training bots (GPTBot,
 # ClaudeBot, Google-Extended, CCBot, …) get `Disallow: /`, while search + user-fetch fall
 # through to `User-agent: *`. That keeps the site accessible + citable but NOT used for
-# training. See docs/apps/web/seo/robots-and-environments.md.
+# training. See docs/projects/web/website/seo/robots-and-environments.md.
 resource "cloudflare_bot_management" "bots" {
   count      = var.enable_bot_fight ? 1 : 0
   zone_id    = var.zone_id
@@ -286,7 +286,7 @@ resource "cloudflare_r2_bucket" "db_backup" {
 # ── Optional: a first-party asset CDN on your own domain (Sanity content keeps
 #    its own CDN — this is for /_next/static + /public served via `assetPrefix`).
 #    Uncomment + point NEXT_PUBLIC_CDN_URL at this host (per env, in the GitHub
-#    Environment / wrangler [env.*.vars]). See docs/apps/web/config/images.md.
+#    Environment / wrangler [env.*.vars]). See docs/projects/web/website/config/images.md.
 # resource "cloudflare_workers_custom_domain" "cdn" {
 #   count       = var.attach_domain ? 1 : 0
 #   account_id  = var.account_id

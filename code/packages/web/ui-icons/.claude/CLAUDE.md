@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-ui-icons — the icon system
+# `@indiecrafts/packages-web-ui-icons` — the icon system
 
 Auto-loads under `code/packages/web/ui-icons/**`. One centralized icon brick: a shared **contract**
 (glyph names, custom-SVG registry, brand-mark data) with platform-forked **renderers** — the same

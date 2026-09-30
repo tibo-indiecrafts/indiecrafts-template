@@ -1,4 +1,6 @@
 ---
+paths:
+  - "code/{projects,packages,modules}/web/**/*.{tsx,css}"
 description: Screenshot any UI change at 375/768/1280 and review the pixels — green tests don't prove a human can see it.
 ---
 
@@ -8,7 +10,7 @@ Load when building or changing any UI. **Green tests do not prove a human can se
 screen.** jsdom (Jest/Vitest/RTL) has no layout — an element positioned off-screen, painted
 white-on-white, or buried under a `z-index` still "exists" and "clicks". Snapshots diff **markup,
 not pixels**, so a shared-stylesheet change wrecks a layout with a clean snapshot. A passing suite
-tests the app you *wrote*, not the app the user *sees*. Close that gap by looking.
+tests the app you _wrote_, not the app the user _sees_. Close that gap by looking.
 
 ## The loop — after any UI change
 
@@ -17,7 +19,7 @@ tests the app you *wrote*, not the app the user *sees*. Close that gap by lookin
    so you screenshot the **real, stateful** app, not a fresh blank tab claude-in-chrome opens by
    default. Then open every affected page (`claude-in-chrome` tools / `webapp-testing`).
 2. **Screenshot at the three widths — always the same three:** **375 · 768 · 1280** (the
-   [adaptive-design](./adaptive-design.md) floor). Fixed widths every run — drifting widths make the
+   `adaptive-design` rule's floor). Fixed widths every run — drifting widths make the
    review flag viewport noise, not bugs.
 3. **Review the screenshots _as images_, not the DOM.** Look for: layout breakage · overlapping
    elements · clipped / overflowing text · a card wrapping to a lonely second row · an off-centre
@@ -29,11 +31,11 @@ tests the app you *wrote*, not the app the user *sees*. Close that gap by lookin
 ## Adaptive & responsive — verify the mechanism, not just the width
 
 - **Reflow (responsive)** — the same content must reflow cleanly at all three widths (no overflow,
-  no clip). **Context-swap (adaptive)** — where a component deliberately shows *different* content by
+  no clip). **Context-swap (adaptive)** — where a component deliberately shows _different_ content by
   context, confirm each device class renders its intended variant, not a squeezed desktop. Name the
-  mechanism (per [adaptive-design](./adaptive-design.md)); the screenshot check differs for each.
+  mechanism (per the `adaptive-design` rule); the screenshot check differs for each.
 - **Also check a coarse-pointer / touch view** and a between-size (~820px tablet) — the three widths
-  are the floor, not the definition. Hover-only affordances must not hide function ([accessibility](./accessibility.md)).
+  are the floor, not the definition. Hover-only affordances must not hide function (the `accessibility` rule).
 - **Run the full loop for any change to layout, a shared component, or responsive behaviour.** A
   logic-only change can rely on normal tests — the loop burns tokens (3 viewports × images × a fix
   cycle), so spend it where layout can break.
@@ -42,8 +44,8 @@ tests the app you *wrote*, not the app the user *sees*. Close that gap by lookin
 
 - **Stub dynamic data.** Live data / timestamps / user content make every screenshot differ, and the
   review reads variation as breakage. Intercept the API → fixture JSON for verification runs.
-- **Record design intent.** An *intentional* asymmetry or off-balance hero will get "fixed" because
-  it looks unbalanced in one frame. Link the Figma / note the intent ([figma-handoff](./figma-handoff.md))
+- **Record design intent.** An _intentional_ asymmetry or off-balance hero will get "fixed" because
+  it looks unbalanced in one frame. Link the Figma / note the intent (the `figma-handoff` rule)
   so a deliberate decision is not undone. Fold recurring design notes into a branch `checks.md` the
   agent reads before verifying ("card grid broke at 768 last time").
 

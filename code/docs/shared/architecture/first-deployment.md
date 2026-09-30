@@ -64,7 +64,7 @@ Backing data/storage (no public URL): D1 `indiecrafts-<env>-db-audit` (audit) + 
 
 ## Phase 1 — dev (do this first — `*.workers.dev`, lowest risk)
 
-1. **Provision infra** (D1 `DB` + `MAIN_DB`, KV, R2 `EXPORT_BUCKET`, queues):
+1. **Provision infra** (D1 `AUDIT_DB` + `MAIN_DB`, KV, R2 `EXPORT_BUCKET`, queues):
    - `pnpm infra:shared:api:init` then `pnpm infra:shared:api:apply:dev`
    - `pnpm infra:web:website:apply:dev` · `pnpm setup:web:website:kv`
    - Wire the bindings into `wrangler.toml`: `node code/shared/scripts/infra/bindings.mjs` (paste the emitted blocks).

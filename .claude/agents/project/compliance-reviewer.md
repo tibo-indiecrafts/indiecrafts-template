@@ -17,7 +17,7 @@ Check, reporting ✅/❌ with `file:line`:
 3. **Erasure + export coverage** — a new store holding user data has an `ErasureAdapter` path (`runErasure`) AND an export path (`runExport`). New PII unreachable by erasure/export is a right-to-be-forgotten gap.
 4. **Audit-trail integrity** — sign-in / consent / admin-action events are logged to the audit sink with the correct `surface`; audit tables keep a retention window + a cron purge. No PII in logs (redaction).
 5. **Single-owner backend** — compliance mutations route through `shared-api` (`/v1/erasure/*`, `/v1/export`, `/v1/events`), never a second writer; no write token exposed client-side or under `NEXT_PUBLIC_`.
-6. **Cross-surface parity** — a compliance capability added on one surface has its counterpart path (`shared-compliance` `/web` vs `/native`) or is explicitly deferred with a note. Web-only is a silent gap for mobile/hybrid users.
+6. **Cross-surface parity** — a compliance capability added on one surface reaches every surface — website · admin · app (and the Capacitor shell, which wraps `app`) — through `shared-compliance` (`/shared` logic, `/web` UI) or is explicitly deferred with a note.
 7. **Legal copy + version** — consent/erasure copy is Studio-editable with a hard-coded fallback; the consent policy version is bumped when the policy text changes (re-consent trigger).
 8. **Records updated** — DPIA / ROPA / sub-processor records updated when the processing, a store, or a third party changed.
 

@@ -32,7 +32,7 @@ pnpm verify:quick       # tsc + lint (manual pre-PR check)
 
 The app deploys to **Cloudflare Workers** via OpenNext (`@opennextjs/cloudflare`) across **dev / staging / prod**, with an R2-backed ISR cache. GitHub Actions builds + deploys on push to `main`; run manually with `pnpm deploy:website:{dev,staging,prod}`. Per-app config: `code/projects/web/surfaces/website/wrangler.toml` + `open-next.config.ts`.
 
-The workspace installs at the **repo root**; deploy scripts are app-namespaced, so each `apps/*` you add later is its own target (`deploy:<app>:<env>`). First-deploy steps (R2 buckets, secrets, custom domain, first-deploy checks) → [Deployment (Cloudflare)](./docs/apps/web/setup/deployment.md).
+The workspace installs at the **repo root**; deploy scripts are app-namespaced, so each `apps/*` you add later is its own target (`deploy:<app>:<env>`). First-deploy steps (R2 buckets, secrets, custom domain, first-deploy checks) → [Deployment (Cloudflare)](./code/docs/projects/web/website/setup/deployment.md).
 
 ## Documentation
 

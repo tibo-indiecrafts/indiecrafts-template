@@ -19,6 +19,23 @@ the repo-wide roll-up → root `CHANGELOG.md`.
 
 ### Changed
 
+- **Agent instructions load only where they apply, and cannot silently outgrow their budget.**
+  `pnpm check:claude-md` now counts `@imports` (they load at launch), fails any brief or rule past 200
+  lines (the official Claude Code target), fails dead `@imports`, and covers `.claude/rules/**`. It
+  allows nested `.claude/skills/`, which Claude Code now loads per folder. The website brief was 179
+  lines plus a 474-line `DESIGN.md` import (≈650 lines on every website read); it is now a 66-line map
+  that sends you to `DESIGN.md` before UI work. The api brief moved its route catalogue to
+  `code/docs/shared/api/`. The eight UI and Sanity rules moved from the website to root
+  `.claude/rules/web/` with `paths:`, so they now also reach admin, app, packages, and modules — but
+  only with a matching `.tsx`/`.css`/schema file. The Stop hook reports every new guard error or bloat
+  warning, so the evolve loop stays inside the budget.
+- **Stale agent tooling removed.** The React Native and Electron build agents, the `animate-expo`
+  skill, and the dead `platform-patterns` hook wiring are gone (no such surfaces remain). The
+  `/brief` and `/grill-plan` commands are now skills (Claude Code merged commands into skills).
+  `schema-markup` keeps its templates in `types.md` (a skill stays under 500 lines).
+- **Briefs name the real bindings and paths.** `AUDIT_DB` (not `DB`) in the api, cron, and db briefs;
+  `code/docs/projects/web/website/…` (not the removed `code/docs/apps/web/…`) across briefs, rules,
+  agents, skills, workflows, and code comments.
 - **`doctor:web:website:env` no longer reports a false prefix drift.** It expected the Worker to be
   `<prefix>-web`, but Workers are `<prefix>-<env>-<platform path>`, so it always warned — and its
   advice (`project:rename indiecrafts`) is refused for the template default. It now checks the name

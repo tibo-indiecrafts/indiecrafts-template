@@ -13,7 +13,7 @@ conventions; the actual instances live at their altitude slots. **What it is** �
 - **A database = one registry row** (`name · kind · owner · altitude · dir · backup · order`) in
   `scripts/lib/databases.mjs`, plus its co-located instance under the owning altitude's `db/<kind>/<name>/`.
   Every path resolver reads the row's `dir` — never a hard-coded `code/shared/db/migrations`. Example:
-  the api's `main` (`MAIN_DB`) + `audit` (`DB`) D1s — one owner (`api`), two rows, split by
+  the api's `main` (`MAIN_DB`) + `audit` (`AUDIT_DB`) D1s — one owner (`api`), two rows, split by
   sensitivity/write-volume (identity/rights vs. append-only firehose), not just table count.
 - **One owner per db.** The owner binds + migrates it; consumers reach it through the owner's API. Never
   bind one D1 to two workers — except a scheduled job that must read/write the same rows on a cron, not

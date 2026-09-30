@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-locale-suggest — "available in your language" strip
+# `@indiecrafts/packages-web-locale-suggest` — "available in your language" strip
 
 Auto-loads under `code/packages/web/locale-suggest/**`. Suggests (never auto-redirects) a locale
 switch when the active locale ≠ the browser preference — a Sanity copy singleton + a client banner +

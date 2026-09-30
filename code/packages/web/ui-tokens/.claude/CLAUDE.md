@@ -1,4 +1,4 @@
-# @indiecrafts/packages-web-ui-tokens — the design system
+# `@indiecrafts/packages-web-ui-tokens` — the design system
 
 Auto-loads under `code/packages/web/ui-tokens/**`. `globals.css` (OKLCH tokens) · `typeset.css` ·
 `DESIGN.md`. Area rules → `../../../.claude/CLAUDE.md`.

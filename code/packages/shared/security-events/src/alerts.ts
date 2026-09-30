@@ -56,6 +56,9 @@ export function formatSecurityAlert(
     `Detail: ${a.description ?? "—"}`,
   ];
   if (a.adminUrl) lines.push("", `Review: ${a.adminUrl}/security`);
-  lines.push("", "Runbook: code/docs/apps/web/config/breach-response.md");
+  lines.push(
+    "",
+    "Runbook: code/docs/projects/web/website/config/breach-response.md",
+  );
   return { subject, text: lines.join("\n") };
 }

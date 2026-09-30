@@ -1,4 +1,4 @@
-# @indiecrafts/packages-shared-ui-fonts — self-hosted font files
+# `@indiecrafts/packages-shared-ui-fonts` — self-hosted font files
 
 Auto-loads under `code/packages/shared/ui-fonts/**`. The self-hosted `.woff2` font files plus a
 `FONT_FILES` metadata registry, centralized so every surface ships from one place (a design-system

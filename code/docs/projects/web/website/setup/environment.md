@@ -165,14 +165,14 @@ The repo commits its MCP servers in `.mcp.json` (approve them on first run): **s
 `SANITY_API_READ_TOKEN`), **supabase** (read-only, for the DB surfaces), **terraform** (Cloudflare IaC,
 via Docker), and **figma** (the remote Dev-Mode MCP at `mcp.figma.com/mcp` — OAuth on first use, all
 plans/seats, no local app) for the
-[figma-handoff](../../../projects/web/surfaces/website/.claude/rules/figma-handoff.md) workflow. For the
+[figma-handoff](../../../../../../.claude/rules/web/figma-handoff.md) workflow. For the
 richer Figma experience (MCP **+** Agent Skills) install the plugin instead:
 `claude plugin install figma@claude-plugins-official`. (The `vercel` MCP was removed — this repo deploys
 to **Cloudflare** via OpenNext, not Vercel.)
 
 ### Browser verification
 
-The `visual-verification` rule (`code/projects/web/surfaces/website/.claude/rules/visual-verification.md`) requires
+The `visual-verification` rule (`.claude/rules/web/visual-verification.md`) requires
 **rendering a UI change and screenshotting it at 375 / 768 / 1280** before it is done — a screen you
 have not looked at is not done. What a developer needs for that loop (per-developer, global — not part
 of the deliverable):

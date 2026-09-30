@@ -3,7 +3,7 @@
  * Cloudflare's edge WAF cannot see. Framework-agnostic, DOM-free (the `shared/` scope
  * rule). The edge firehose (blocked/challenged requests) stays in Cloudflare's own
  * Security Events dashboard; only these low-volume app incidents reach our EU D1.
- * Reference: `code/docs/apps/web/config/security-hardening.md`.
+ * Reference: `code/docs/projects/web/website/config/security-hardening.md`.
  */
 
 export type SecurityEventType =

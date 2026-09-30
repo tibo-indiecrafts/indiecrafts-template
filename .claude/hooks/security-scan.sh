@@ -3,7 +3,7 @@
 # diff with whatever scanners are installed + nudges the security agent when
 # security-sensitive files changed. Committed; each tier is guarded (no-op if the tool is
 # absent). Activate the SAST/secret tiers with: `brew install semgrep gitleaks`
-# (or `pip install semgrep`). Docs: code/docs/apps/web/setup/on-the-fly-checks.md.
+# (or `pip install semgrep`). Docs: code/docs/projects/web/website/setup/on-the-fly-checks.md.
 root="${CLAUDE_PROJECT_DIR:-.}"
 cd "$root" 2>/dev/null || exit 0
 
