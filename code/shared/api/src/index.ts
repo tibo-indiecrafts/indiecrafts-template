@@ -60,6 +60,8 @@ import {
 } from "./data-request/route";
 import { sendSecurityAlertEmail } from "./security/alert";
 import { readChurnAggregate } from "./consent/churn-store";
+import { cronStatus, erasureRequests } from "./monitoring";
+import { readSettings } from "./settings-cache";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
 // Workers Logs anyway. Non-prod skips it — its console already shows errors.
@@ -164,6 +166,8 @@ export interface Env {
 // Browser-context origins allowed to READ the response (dev). Server-to-server callers
 // send no Origin and need no CORS.
 const ALLOWED_ORIGINS = new Set(["http://localhost:3000"]);
+/** Per-isolate settings cache for the monitoring routes (the SLA warning window). */
+const monitoringSettings: Parameters<typeof readSettings>[1] = { value: null };
 const BODY_MAX = 4000;
 
 export function corsHeaders(origin: string | null): Record<string, string> {
@@ -925,6 +929,31 @@ export default {
         200,
         cors,
       );
+    }
+
+    // ── Monitoring — GET /v1/cron/status + GET /v1/erasure-requests (bearer-gated,
+    // read-only; the admin "Scheduled jobs" + "Erasure requests" pages). Payloads + the
+    // "open request" definition: ./monitoring.ts.
+    if (
+      url.pathname === "/v1/cron/status" ||
+      url.pathname === "/v1/erasure-requests"
+    ) {
+      if (request.method === "OPTIONS")
+        return new Response(null, { status: 204, headers: cors });
+      if (request.method !== "GET")
+        return json({ error: "method_not_allowed" }, 405, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
+      const warnDays = (await readSettings(env.MAIN_DB, monitoringSettings))[
+        "ops.sla_warning_days"
+      ];
+      const body =
+        url.pathname === "/v1/cron/status"
+          ? await cronStatus(env, Date.now(), warnDays)
+          : await erasureRequests(env, Date.now(), warnDays);
+      return json(body, 200, cors);
     }
 
     // ── DSAR intake — POST /v1/data-request (bearer-gated write; the website's
