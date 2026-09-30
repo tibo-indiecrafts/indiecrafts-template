@@ -36,8 +36,8 @@ wrangler.toml      per-env bindings + `[triggers] crons` (UTC)
 - **No public URL** (`workers_dev = false`, `preview_urls = false`): `POST /run` (one tick, same `runTick`) is reached only
   through the api's `CRON` service binding (admin "Run now"). The registry deploys the cron **before**
   the api, because a binding to a missing Worker fails the deploy.
-- **Test a tick locally:** `wrangler dev --test-scheduled` on `:8789` (the `pnpm dev` port), then
-  `curl localhost:8789/__scheduled`.
+- **Test a tick locally:** `pnpm dev` runs the cron locally (`--test-scheduled`, `:8789`, the api's
+  state), then `curl localhost:8789/cdn-cgi/handler/scheduled`. `pnpm dev:remote` = the real dev D1.
 
 ## Deploy
 

@@ -17,7 +17,8 @@ Server-only helpers for the admin "Scheduled jobs", "Erasure requests" and Syste
 - Types — `PassResult`, `CronRun`, `CronStatus`, `ErasureRow`, `ErasureRequests`, `CronHealth`.
 - `cronHealth(status)` — `unreachable` · `never` · `stale` · `failed` · `ok`.
 - `healthVariant(health)` — the `Badge` variant for a health state.
-- `fetchCronStatus()` · `fetchErasureRequests()` — the two api reads.
+- `fetchCronStatus()` · `fetchErasureRequests()` — the two api reads (through `apiFetch`: timeout + one retry).
+- `apiHealthView(body?)` — the api's authed `/health` flattened for System: version, commit, both D1s, the bindings (dashes and empty lists when there is no body).
 
 ## Source
 

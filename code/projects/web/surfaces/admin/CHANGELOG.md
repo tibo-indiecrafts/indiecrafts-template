@@ -14,6 +14,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **System shows the api's version, both D1s and its bindings.** The api row carries its version and
+  commit; Databases lists `audit` and `main` (it showed one D1 and never checked `main`); a line lists
+  the KV, export bucket, cron link and rate limiter. en + fr.
+- **Every call to the api goes through `apiFetch`** — a 10 s timeout, one retry for reads and for the
+  idempotent writes (events, settings); the other actions (cron run, erasure retry/close) time out but
+  never retry, so they cannot act twice.
+
+### Added
+
 - **Retry, Close manually, Run now.** Erasure requests gets Retry on a stuck request (asks for the
   subject's email only when the api can't read it from Clerk) and Close manually with a required note;
   Scheduled jobs gets Run now. Each is a server action that re-checks the admin role and writes an

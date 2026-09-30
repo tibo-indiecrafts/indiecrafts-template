@@ -41,15 +41,17 @@ export default {
 
 Run everything from the **repo root**. Each op is one script that takes `<env>` — never a script per env.
 
-| Command (root)                                                                      | What it does                                                                                                                       |
-| ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm deploy:<app>:<env>`                                                           | Deploy one worker to one env (via the shared `code/shared/scripts/deploy/worker.mjs`).                                             |
-| `pnpm deploy:all:<env>`                                                             | Deploy every Cloudflare app in the registry, in registry order (`code/shared/scripts/deploy/all.mjs`).                             |
-| `pnpm test:workers`                                                                 | Run the three workers' Vitest suites (also folded into `pnpm test`).                                                               |
-| `pnpm --filter @indiecrafts/<app> dev`                                              | `wrangler dev --remote` on the dev env's **real** bindings. For a local-only run: `npx wrangler dev --env dev --persist-to <dir>`. |
-| `pnpm --filter @indiecrafts/<app> tail:<env>`                                       | Live logs (`wrangler tail --env <env>`).                                                                                           |
-| `pnpm --filter @indiecrafts/<app> cf-typegen`                                       | Regenerate `worker-configuration.d.ts` (typed `Env`).                                                                              |
-| `node code/shared/scripts/infra/bindings.mjs <app> <env> <kv\|d1\|queue> <BINDING>` | Provision a binding + print the `wrangler.toml` block.                                                                             |
+| Command (root)                                                                      | What it does                                                                                                                                 |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm deploy:<app>:<env>`                                                           | Deploy one worker to one env (via the shared `code/shared/scripts/deploy/worker.mjs`).                                                       |
+| `pnpm deploy:all:<env>`                                                             | Deploy every Cloudflare app in the registry, in registry order (`code/shared/scripts/deploy/all.mjs`).                                       |
+| `pnpm test:workers`                                                                 | Run the three workers' Vitest suites (also folded into `pnpm test`).                                                                         |
+| `pnpm dev` / `pnpm --filter @indiecrafts/<app> dev`                                 | **Local** `wrangler dev` — api, cron and workers share one state (`--persist-to <repo>/.wrangler/state`); run `pnpm db:migrate:local` first. |
+| `pnpm dev:remote` / `pnpm --filter @indiecrafts/<app> dev:remote`                   | `wrangler dev --remote` on the dev env's **real** bindings (writes to the shared dev D1).                                                    |
+| `pnpm db:migrate:local`                                                             | Apply the D1 migrations to the local state (`code/shared/scripts/data/migrate-local.mjs`).                                                   |
+| `pnpm --filter @indiecrafts/<app> tail:<env>`                                       | Live logs (`wrangler tail --env <env>`).                                                                                                     |
+| `pnpm --filter @indiecrafts/<app> cf-typegen`                                       | Regenerate `worker-configuration.d.ts` (typed `Env`).                                                                                        |
+| `node code/shared/scripts/infra/bindings.mjs <app> <env> <kv\|d1\|queue> <BINDING>` | Provision a binding + print the `wrangler.toml` block.                                                                                       |
 
 `<app>` ∈ `api` · `cron` · `workers`; `<env>` ∈ `dev` · `staging` · `prod`. `worker.mjs` refuses a
 staging/prod deploy while the Worker name is still the template default (`indiecrafts-<env>-shared-<app>`) —

@@ -12,6 +12,15 @@ Changed · Deprecated · Removed · Fixed**.
 
 ## [Unreleased]
 
+### Added
+
+- **utils — `apiFetch` (`@indiecrafts/packages-shared-utils/api-fetch`).** fetch for calls into the api:
+  a 10 s timeout and one retry on a network error, timeout, 5xx or 429 (Retry-After or jittered
+  backoff), never on another 4xx. A POST retries only when marked `idempotent`, with an
+  `Idempotency-Key` kept across the retry. `web/auth`, `web/compliance`, `web/security-reports` and
+  `shared/compliance` send their events / export through it.
+- **security — Turnstile verify times out after 5 s** (fails closed).
+
 ### Fixed
 
 - **config — the AI-training block list no longer blocks a search engine.** `PetalBot` is Huawei's

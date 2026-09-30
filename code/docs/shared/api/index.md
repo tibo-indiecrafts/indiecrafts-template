@@ -25,16 +25,16 @@ server-side only). Clerk-JWT routes authenticate the caller's own session.
 
 **Public routes** (no bearer):
 
-| Route                                           | What it does                                                          |
-| ----------------------------------------------- | --------------------------------------------------------------------- |
-| `GET /health`                                   | Uptime check. A bearer-authed caller also gets per-binding D1 status. |
-| `GET /v1/announcements?surface=&locale=`        | Banner + toast from Sanity (public marketing content).                |
-| `GET/POST /v1/erasure/request`                  | Turnstile-gated GDPR erasure-request form (anti-enumeration).         |
-| `GET/POST /v1/erasure/confirm`                  | Token + typed-email + TTL + attempt cap; runs the erasure engine.     |
-| `GET /v1/erasure/status/:token`                 | No-PII status poll for a filed request.                               |
-| `GET/POST /v1/email-preferences?token=`         | No-login per-category preferences (a signed pref-token).              |
-| `POST /v1/email-preferences/unsubscribe?token=` | RFC 8058 one-click unsubscribe target.                                |
-| `GET /v1/export/download?token=`                | Streams the export bundle, deletes it from R2 on first download.      |
+| Route                                           | What it does                                                                                        |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `GET /health`                                   | Uptime check (`{ok}`). With the bearer: both D1s, the build (`version`, `commit`) and the bindings. |
+| `GET /v1/announcements?surface=&locale=`        | Banner + toast from Sanity (public marketing content).                                              |
+| `GET/POST /v1/erasure/request`                  | Turnstile-gated GDPR erasure-request form (anti-enumeration).                                       |
+| `GET/POST /v1/erasure/confirm`                  | Token + typed-email + TTL + attempt cap; runs the erasure engine.                                   |
+| `GET /v1/erasure/status/:token`                 | No-PII status poll for a filed request.                                                             |
+| `GET/POST /v1/email-preferences?token=`         | No-login per-category preferences (a signed pref-token).                                            |
+| `POST /v1/email-preferences/unsubscribe?token=` | RFC 8058 one-click unsubscribe target.                                                              |
+| `GET /v1/export/download?token=`                | Streams the export bundle, deletes it from R2 on first download.                                    |
 
 **Authenticated routes** (bearer or Clerk-JWT):
 
@@ -76,6 +76,47 @@ server-side only). Clerk-JWT routes authenticate the caller's own session.
 - **Churn:** only `POST /v1/erasure/self` writes `churn_events`. The Clerk `user.deleted` webhook
   suppresses the Resend contact when a churn row exists, and pure-deletes it otherwise.
   → [Churn tracking](/projects/web/website/config/churn), [Email preferences](/projects/web/website/config/email-preferences).
+
+## Production contract
+
+The five rules every route meets (api brief, "Production-ready contract"; QA card 20):
+
+- **Errors are actionable.** Every error is `{ "error": "<code>", "message": "…", "requestId": "…" }`
+  and every response carries `X-Request-Id` — Cloudflare's `cf-ray`, searchable in the dashboard logs
+  (a uuid locally). `error` is the stable code to branch on; `message` is for people. An uncaught throw
+  is `500 internal`; a missing table or column (a deploy that skipped its migrations) is
+  `503 schema_behind`. Retry a 5xx or 429; fix the request on another 4xx.
+
+  | Code                 | Status | Meaning                                                                   |
+  | -------------------- | ------ | ------------------------------------------------------------------------- |
+  | `unauthorized`       | 401    | Missing or invalid bearer / Clerk token                                   |
+  | `forbidden`          | 403    | Valid credentials that cannot do this                                     |
+  | `invalid`            | 400    | Body or parameters invalid                                                |
+  | `not_found`          | 404    | Nothing at this id                                                        |
+  | `method_not_allowed` | 405    | Wrong method for the route                                                |
+  | `too_large`          | 413    | Body over the cap                                                         |
+  | `rate_limited`       | 429    | Over the rate limit — see below                                           |
+  | `too_many_attempts`  | 429    | Erasure-confirm link used 5 times — request a new link (no `Retry-After`) |
+  | `unavailable`        | 503    | The route's configuration (secret or binding) is missing                  |
+  | `schema_behind`      | 503    | Migrations not applied — run the `db:migrate` script for the env          |
+  | `internal`           | 500    | Unexpected — retry once, report the `requestId`                           |
+
+- **Rate limits say when to retry.** Every bearer route and every public write route is limited to
+  **20 requests per 60 s per client IP** (the native `RATELIMIT` binding). A `429 rate_limited` carries
+  `Retry-After: 60` and `RateLimit-Policy: 20;w=60`. Cloudflare's limiter reports allowed/denied only,
+  so there is no "remaining" header.
+- **Duplicates are safe.** `POST /v1/events` and `POST /v1/export` accept an `Idempotency-Key`
+  (1–255 printable characters). A retry with the same key replays the stored answer
+  (`Idempotent-Replayed: true`) for 24 h; the same key with another body is `422
+idempotency_key_reused`; a key whose first request still runs is `409 idempotency_in_progress`. A key
+  never crosses callers (the scope hashes the `authorization` header). A 5xx or 429 is not stored. The
+  other writes are idempotent by key already (`ON CONFLICT` / `INSERT OR IGNORE`, the Svix id).
+  First-party callers use `apiFetch` (`@indiecrafts/packages-shared-utils/api-fetch`), which adds the
+  key and retries once.
+- **Every outbound call has a timeout** — 5 s for Resend, Sanity, Turnstile and every Clerk call
+  (`fetchWithTimeout` / `withTimeout` in `src/http.ts`); `apiFetch` gives callers 10 s. A guard test
+  fails on a new bare `fetch(`.
+- **`/v1` is a contract** — see [API versioning](/shared/api/versioning).
 
 ## Bindings / env
 

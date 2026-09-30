@@ -79,8 +79,9 @@ pnpm deploy:all:<env>                         # every Cloudflare app, in registr
 ```
 
 `worker.mjs` runs the rename guard + prod confirm + `wrangler deploy` (no build step). A cron worker
-needs no domain or WAF, so it has no Terraform stack. Test a run locally: `wrangler dev
---test-scheduled` on `:8789` (the `pnpm dev` port), then `curl "http://localhost:8789/__scheduled"`. Full model →
+needs no domain or WAF, so it has no Terraform stack. Test a run locally: `pnpm dev` runs the cron
+locally with `--test-scheduled` on `:8789` (same state as the api), then
+`curl "http://localhost:8789/cdn-cgi/handler/scheduled"`. Full model →
 [Platform deploy](/shared/architecture/platform-deploy).
 
 ## Registry

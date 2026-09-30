@@ -27,7 +27,7 @@ projects under `code/projects/`) is the whole tree. Conventions live **in-repo**
 - **`code/docs/`** — CANON (product docs): a VitePress site at the top of `code/` (sibling of `projects/ packages/ modules/ shared/`), **foldered to mirror the code spine**: `projects/web/{website,admin,app,tools}` + `projects/mobile/main` · `packages/{shared,web}/<name>.md` · `modules/web/<name>/` · `shared/{api,cron,workers,db,infra,scripts,architecture,client-intake}` · `contributing/` (the `how-we-document` governance page + ADRs). `quick-start.md` leads; `pnpm check:doc-coverage` asserts every code unit has a page; dead links fail the build. **npm-isolated** — matches no pnpm-workspace glob, so it stays out (own lockfile). Run via `pnpm docs` / `pnpm docs:build`.
 - **`code/projects/web/tools/storybook/`** — the component gallery (Storybook), documenting the design-system bricks (`ui` · `ui-components` · `ui-tokens` + `announcement`/`locale-suggest` stories). A workspace member; static build. Run via `pnpm --filter @indiecrafts/web-tools-storybook storybook`.
 
-Run scripts from the repo root. `pnpm build/tsc/lint/…` fan out via turbo; `pnpm dev` runs the local stack — the `website` (Next, :3000) + the three backend workers `api`/`cron`/`workers` (`wrangler dev` on distinct `--port`/`--inspector-port`s so they don't collide). The other surfaces (`admin`/`app`) are run individually (`pnpm --filter <pkg> dev`).
+Run scripts from the repo root. `pnpm build/tsc/lint/…` fan out via turbo; `pnpm dev` runs the local stack — the `website` (Next, :3000) + the three backend workers `api`/`cron`/`workers` (local `wrangler dev` on distinct ports, sharing one state in `.wrangler/state`; `pnpm db:migrate:local` first). `pnpm dev:remote` runs the three workers on the real dev bindings instead. The other surfaces (`admin`/`app`) are run individually (`pnpm --filter <pkg> dev`).
 
 > **Config split.** The repo-root `.claude/` holds the project-wide runtime — `agents/`, `skills/`, `hooks/`, `settings.json`, and `rules/` (`rules/web/` is path-scoped: it loads only with web `.tsx`/`.css`/schema files). **Unit conventions are unit-scoped:** each unit's `.claude/CLAUDE.md` loads when you work there (the website brief sends you to `DESIGN.md` before UI work). A new app lands under its platform + kind (`code/projects/<platform>/<kind>/<name>/`) with its own brief; this root stays the thin platform router. Contract → [`.claude/README.md`](.claude/README.md).
 
@@ -46,7 +46,7 @@ Guardrails against common LLM coding mistakes — bias to caution over speed (us
 ## Commands
 
 ```bash
-pnpm dev                                  # local stack: website (:3000) + api/cron/workers (wrangler dev, ports 8787/8789/8790 / inspectors 9229/9231/9232)
+pnpm dev                                  # local stack: website (:3000) + api/cron/workers (local wrangler dev, ports 8787/8789/8790; pnpm db:migrate:local first)
 pnpm build / tsc / lint / format          # standard (turbo → @indiecrafts/web-surfaces-website)
 pnpm tsc:fast                             # FAST typecheck via tsgo (TS 7 Go port, ~10× faster) — the local inner loop; CI keeps real `tsc`
 pnpm oxlint                               # FAST repo-wide AST lint (~3s, Rust) — advisory; covers admin/app/storybook too

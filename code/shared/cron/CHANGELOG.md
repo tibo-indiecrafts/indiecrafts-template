@@ -7,6 +7,12 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Added
 
+- **`audit_purge` drops Idempotency-Key results after 24 h** (the api's replay window).
+- **`pnpm dev` runs the cron locally** on the api's local state (`--persist-to <repo>/.wrangler/state`,
+  `--test-scheduled`); `dev:remote` keeps the real dev bindings.
+
+### Added
+
 - **Run a tick on demand.** `POST /run` runs the same four passes as the hourly trigger (one shared
   `runTick`) and records the run; the api reaches it through a private `CRON` service binding for the
   admin "Run now" button. The cron no longer has a public workers.dev URL (`workers_dev = false`), and

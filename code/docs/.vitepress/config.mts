@@ -369,6 +369,7 @@ export default withMermaid(
           collapsed: true,
           items: [
             { text: "API worker", link: "/shared/api/" },
+            { text: "API versioning", link: "/shared/api/versioning" },
             { text: "Cron worker", link: "/shared/cron/" },
             { text: "Background workers (jobs)", link: "/shared/workers/" },
             {

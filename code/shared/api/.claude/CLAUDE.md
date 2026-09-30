@@ -10,7 +10,9 @@ Update that page in the same change as a route.
 
 ## Map
 
-- `src/index.ts` — the router: one `if (url.pathname === …)` block per route, then its handler.
+- `src/index.ts` — the router (`route`): one `if (url.pathname === …)` block per route. The default `fetch`
+  wraps it: request id → `src/idempotency.ts` (events, export) → top-level catch → `finalize` (`src/http.ts`:
+  error envelope, 429 hints, timeouts for outbound calls).
 - `src/consent/` — marketing opt-in, per-category email preferences (Sanity `emailPreferences`, never-throws),
   legal re-acceptance. `src/resend-audience.ts` mirrors every decision to Resend (Contacts + Topics).
 - `src/erasure/` — store-agnostic adapters (`d1` core + audit · `clerk` · `sanity` · `orders`) for the

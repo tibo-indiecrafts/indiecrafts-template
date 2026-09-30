@@ -71,7 +71,7 @@ routes through an audited server action, not a client call.
 | `/churn`         | Deletion-survey aggregates — total, by day, by reason, recent feedback                                 | Shared api `/v1/churn` (D1)                                                                                |
 | `/backups`       | Bucket, retention, pre-migration flag, and recent backup runs, read-only                               | Shared api `/v1/backups/status`                                                                            |
 | `/cron`          | Cron health (healthy · failed · stale · never ran), live counts, last 24 runs with per-pass results    | Shared api `GET /v1/cron/status` (`cron_runs` + live counts)                                               |
-| `/system`        | Live version and health for every surface, worker, and database; the `cron` row shows its health badge | Surface `/api/version` · worker `/health` · api health (D1 · Sanity) · `/v1/cron/status`                   |
+| `/system`        | Live version and health for every surface, worker, and database; the `cron` row shows its health badge | Surface `/api/version` · worker `/health` · api health (both D1s · version · bindings) · `/v1/cron/status` |
 | `/settings`      | Operational retention, ops, and link-TTL settings; editable                                            | Shared api `GET /v1/settings`; save via `saveSetting` action → `PUT /v1/settings`                          |
 | `/security`      | App-level security incidents (last 100), data-minimized; deep-link to the edge feed                    | Shared api `/v1/security?limit=100` (D1) + Cloudflare edge (`CLOUDFLARE_SECURITY_URL`)                     |
 

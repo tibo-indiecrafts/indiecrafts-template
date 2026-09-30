@@ -18,6 +18,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ## [Unreleased]
 
+- **`pnpm dev` runs the Workers locally.** The api, cron and workers share one local state
+  (`.wrangler/state`), so testing never writes to the shared dev D1; `pnpm db:migrate:local` sets it up
+  (also run by `dev:setup`). `pnpm dev:remote` keeps the old remote mode. Plus the api's production
+  contract (request ids, actionable errors, retry hints, idempotency, timeouts, a richer `/health`) —
+  detail in the [api log](./code/shared/api/CHANGELOG.md).
 - **One command for all the Terraform: `pnpm infra:all <plan|apply> <env>`.** Runs every Cloudflare
   stack in registry order after a preflight that lists every missing value at once (blank
   `account_id`/`zone_id`, a template `example.com` host, no token) and sends nothing until they are filled;
