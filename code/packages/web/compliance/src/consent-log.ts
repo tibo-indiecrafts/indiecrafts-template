@@ -4,6 +4,7 @@
  * @see docs/reference/packages/web/compliance/src/consent-log.md
  */
 import "server-only";
+import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 
 /** Forward one consent decision to the api's POST /v1/events (kind:consent).
  *  Server-only: holds APP_API_TOKEN and never runs in the browser. Fire-and-forget
@@ -23,8 +24,9 @@ export async function logConsent(input: {
   const token = process.env.APP_API_TOKEN;
   if (!url || !token) return;
   try {
-    await fetch(`${url}/v1/events`, {
+    await apiFetch(`${url}/v1/events`, {
       method: "POST",
+      idempotent: true,
       headers: {
         authorization: `Bearer ${token}`,
         "content-type": "application/json",

@@ -5,6 +5,7 @@
  */
 import "server-only";
 import { headers } from "next/headers";
+import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 
 /**
  * Admin audit sink — POST each privileged action to the shared api's `/v1/events`,
@@ -40,8 +41,9 @@ export async function audit(
 
   if (url && token) {
     try {
-      const res = await fetch(`${url}/v1/events`, {
+      const res = await apiFetch(`${url}/v1/events`, {
         method: "POST",
+        idempotent: true,
         headers: {
           authorization: `Bearer ${token}`,
           "content-type": "application/json",

@@ -4,6 +4,8 @@
  * @see docs/reference/projects/web/admin/src/lib/monitoring.md
  */
 
+import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
+
 /** One cron pass — mirrors `PassResult` in `code/shared/cron/src/index.ts`. */
 export type PassResult = {
   name: string;
@@ -73,7 +75,7 @@ async function getApi<T>(path: string): Promise<T | null> {
   const token = process.env.APP_API_TOKEN;
   if (!url || !token) return null;
   try {
-    const res = await fetch(`${url}${path}`, {
+    const res = await apiFetch(`${url}${path}`, {
       headers: { authorization: `Bearer ${token}` },
       cache: "no-store",
     });

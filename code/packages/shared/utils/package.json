@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./api-fetch": "./src/api-fetch.ts",
     "./cn": "./src/cn.ts",
     "./error-message": "./src/error-message.ts",
     "./filename": "./src/filename.ts",

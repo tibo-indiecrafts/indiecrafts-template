@@ -9,6 +9,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { isAdmin } from "@indiecrafts/packages-shared-auth";
 import { audit } from "@/lib/audit";
+import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 
 type Fail<E extends string> = {
   ok: false;
@@ -49,7 +50,7 @@ async function postApi(
   const token = process.env.APP_API_TOKEN;
   if (!url || !token) return null;
   try {
-    const res = await fetch(`${url}${path}`, {
+    const res = await apiFetch(`${url}${path}`, {
       method: "POST",
       headers: {
         authorization: `Bearer ${token}`,

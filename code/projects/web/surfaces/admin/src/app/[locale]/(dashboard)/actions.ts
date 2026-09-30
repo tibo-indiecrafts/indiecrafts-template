@@ -9,6 +9,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { isAdmin, type Roles } from "@indiecrafts/packages-shared-auth";
 import { audit } from "@/lib/audit";
+import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 
 /**
  * The role-grant path — the crown jewel. Open passwordless sign-up means anyone can
@@ -176,8 +177,9 @@ export async function saveSetting(key: string, value: number): Promise<Result> {
     token = process.env.APP_API_TOKEN;
   if (!url || !token) return { ok: false, error: "failed" };
   try {
-    const res = await fetch(`${url}/v1/settings`, {
+    const res = await apiFetch(`${url}/v1/settings`, {
       method: "PUT",
+        idempotent: true,
       headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
       body: JSON.stringify({ key, value, actor }),
     });

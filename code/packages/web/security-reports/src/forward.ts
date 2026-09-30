@@ -5,6 +5,7 @@
  */
 import "server-only";
 import type { SanitizedCspReport } from "@indiecrafts/packages-shared-security/csp-report";
+import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 
 /**
  * Forward sanitized CSP reports to the api's POST /v1/events (kind:csp-report).
@@ -22,8 +23,9 @@ export async function forwardCspReports(
   for (let i = 0; i < reports.length; i += 5) {
     const batch = reports.slice(i, i + 5);
     try {
-      await fetch(`${url}/v1/events`, {
+      await apiFetch(`${url}/v1/events`, {
         method: "POST",
+        idempotent: true,
         headers: {
           authorization: `Bearer ${token}`,
           "content-type": "application/json",

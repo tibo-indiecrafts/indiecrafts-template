@@ -196,14 +196,18 @@ describe("saveSetting", () => {
     authMock.mockResolvedValueOnce(admin);
     fetchMock.mockResolvedValueOnce({ ok: true });
     expect(await saveSetting("maxItems", 10)).toEqual({ ok: true });
-    expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/v1/settings", {
-      method: "PUT",
-      headers: {
-        authorization: "Bearer secret-token",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ key: "maxItems", value: 10, actor: ADMIN_ID }),
-    });
+    // apiFetch also passes a timeout signal — assert the parts this action owns.
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.example.com/v1/settings",
+      expect.objectContaining({
+        method: "PUT",
+        headers: {
+          authorization: "Bearer secret-token",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ key: "maxItems", value: 10, actor: ADMIN_ID }),
+      }),
+    );
   });
 
   it("returns failed when the api rejects the write", async () => {

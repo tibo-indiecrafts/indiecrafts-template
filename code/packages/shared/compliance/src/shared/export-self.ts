@@ -4,6 +4,8 @@
  * @see docs/reference/packages/shared/compliance/src/shared/export-self.md
  */
 
+import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
+
 export type ExportResult = { ok: true; url: string } | { ok: false };
 
 /**
@@ -15,8 +17,9 @@ export async function requestExport(input: {
 }): Promise<ExportResult> {
   try {
     const token = await input.getToken();
-    const res = await fetch(`${input.apiUrl}/v1/export`, {
+    const res = await apiFetch(`${input.apiUrl}/v1/export`, {
       method: "POST",
+      idempotent: true,
       headers: {
         ...(token ? { authorization: `Bearer ${token}` } : {}),
       },

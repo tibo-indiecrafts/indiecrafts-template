@@ -4,6 +4,7 @@
  * @see docs/reference/packages/web/auth/src/session-log.md
  */
 import "server-only";
+import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
 
 /**
  * Forward a sign-in/session event to the shared api's `/v1/events` (which writes the
@@ -21,8 +22,9 @@ export async function logSession(input: {
   const token = process.env.APP_API_TOKEN;
   if (!url || !token) return;
   try {
-    await fetch(`${url}/v1/events`, {
+    await apiFetch(`${url}/v1/events`, {
       method: "POST",
+      idempotent: true,
       headers: {
         authorization: `Bearer ${token}`,
         "content-type": "application/json",
