@@ -67,6 +67,8 @@ invocation_logs = true
 #             export_requests · site_settings.
 [env.dev]
 name = "indiecrafts-dev-shared-cron"
+# No public URL: "Run now" reaches POST /run only through the api's CRON service binding.
+workers_dev = false
 
 [[env.dev.d1_databases]]
 binding = "AUDIT_DB"
@@ -87,6 +89,8 @@ bucket_name = "indiecrafts-dev-shared-api-exports"
 
 [env.staging]
 name = "indiecrafts-staging-shared-cron"
+# No public URL: "Run now" reaches POST /run only through the api's CRON service binding.
+workers_dev = false
 
 [[env.staging.d1_databases]]
 binding = "AUDIT_DB"
@@ -100,6 +104,8 @@ database_id = "PASTE_CORE_D1_ID_HERE"
 
 [env.prod]
 name = "indiecrafts-prod-shared-cron"
+# No public URL: "Run now" reaches POST /run only through the api's CRON service binding.
+workers_dev = false
 
 [[env.prod.d1_databases]]
 binding = "AUDIT_DB"

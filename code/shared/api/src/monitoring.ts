@@ -163,3 +163,12 @@ export async function erasureRequests(
     recentClosed: closed.results.map(view),
   };
 }
+
+/** `POST /v1/cron/run` — run one cron tick now through the private `CRON` service binding
+ *  (the cron has no public URL). Passes the cron's status + `{status, passes}` through. */
+export async function forwardCronRun(env: { CRON?: Fetcher }) {
+  if (!env.CRON)
+    return { status: 503, body: { error: "cron_unbound" } as unknown };
+  const res = await env.CRON.fetch("https://cron/run", { method: "POST" });
+  return { status: res.status, body: (await res.json()) as unknown };
+}

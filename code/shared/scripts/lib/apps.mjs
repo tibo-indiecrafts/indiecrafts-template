@@ -55,7 +55,9 @@ export const APPS = [
     platform: "shared",
     kind: "service",
     dir: "code/shared/cron",
-    order: 10,
+    // Before the api: the api's CRON service binding needs this Worker to exist (a binding to a
+    // missing Worker fails the deploy). The cron needs the api's migrations only at run time.
+    order: 5,
   },
   {
     slug: "workers",

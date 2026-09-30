@@ -91,3 +91,27 @@ for (const env of ["dev", "staging", "prod"]) {
     if (api) assert.equal(exportBucket(wranglerEnvSection(CRON, env)), api);
   });
 }
+
+// "Run now" reaches the cron through the api's CRON service binding — never over the
+// internet: the cron has no workers.dev URL, and the binding targets the cron's own name.
+const workerName = (section) =>
+  section.match(/^name\s*=\s*"([^"]+)"/m)?.[1] ?? null;
+const cronService = (section) => {
+  for (const block of section.split(/^\s*\[/m)) {
+    if (!/^\[[^\]]*services\]\]/.test(block)) continue;
+    if (block.match(/^\s*binding\s*=\s*"([^"]+)"/m)?.[1] === "CRON")
+      return block.match(/^\s*service\s*=\s*"([^"]+)"/m)?.[1] ?? null;
+  }
+  return null;
+};
+for (const env of ["dev", "staging", "prod"]) {
+  test(`${env}: the cron has no public workers.dev URL`, () => {
+    assert.match(wranglerEnvSection(CRON, env), /^workers_dev\s*=\s*false/m);
+  });
+  test(`${env}: the api's CRON binding targets the cron Worker`, () => {
+    assert.equal(
+      cronService(wranglerEnvSection(API, env)),
+      workerName(wranglerEnvSection(CRON, env)),
+    );
+  });
+}

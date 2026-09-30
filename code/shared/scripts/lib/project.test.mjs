@@ -78,3 +78,12 @@ test("wranglerEnvSection keeps only the [env.<env>] tables", () => {
   assert.match(wranglerEnvSection(TOML, "staging"), /PASTE_D1_ID_HERE/);
   assert.equal(wranglerEnvSection(TOML, "prod"), "");
 });
+
+test("renameResourcePrefix rewrites a service-binding target (the api's CRON binding)", () => {
+  const toml =
+    '[[env.prod.services]]\nbinding = "CRON"\nservice = "indiecrafts-prod-shared-cron"\n';
+  assert.equal(
+    swap(toml),
+    '[[env.prod.services]]\nbinding = "CRON"\nservice = "acme-prod-shared-cron"\n',
+  );
+});

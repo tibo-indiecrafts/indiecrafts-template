@@ -682,6 +682,44 @@ describe("scheduled() — passes + run history", () => {
   });
 });
 
+describe("POST /run — a tick on demand (reached only via the api's service binding)", () => {
+  it("runs the four passes, records the run and returns the result", async () => {
+    const res = await SELF.fetch("https://cron/run", { method: "POST" });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { status: string; passes: PassResult[] };
+    expect(body.status).toBe("ok");
+    expect(body.passes.map((p) => p.name)).toEqual([
+      "audit_purge",
+      "main_purge",
+      "erasure_sla",
+      "export_cleanup",
+    ]);
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT status FROM cron_runs ORDER BY id DESC LIMIT 1",
+    ).first<{ status: string }>();
+    expect(row?.status).toBe("ok");
+  });
+
+  it("500s with the passes when a pass fails", async () => {
+    await env.AUDIT_DB.prepare("DROP TABLE csp_reports").run();
+    const res = await SELF.fetch("https://cron/run", { method: "POST" });
+    expect(res.status).toBe(500);
+    const body = (await res.json()) as { status: string; passes: PassResult[] };
+    expect(body.status).toBe("failed");
+    expect(body.passes[0].status).toBe("failed");
+  });
+
+  it("a GET is still only the health check — it never runs a tick", async () => {
+    const res = await SELF.fetch("https://cron/run");
+    expect(await res.json()).toEqual({ ok: true });
+    expect(
+      await env.AUDIT_DB.prepare("SELECT COUNT(*) AS n FROM cron_runs").first<{
+        n: number;
+      }>(),
+    ).toEqual({ n: 0 });
+  });
+});
+
 describe("slaDueSoonCutoff", () => {
   it("computes the ISO horizon `days` after scheduledTime", () => {
     const now = Date.UTC(2026, 0, 15);

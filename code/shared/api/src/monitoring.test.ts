@@ -1,7 +1,7 @@
 /// <reference types="@cloudflare/vitest-pool-workers" />
 import { env, SELF } from "cloudflare:test";
-import { beforeEach, describe, expect, it } from "vitest";
-import { erasureState } from "./monitoring";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { erasureState, forwardCronRun } from "./monitoring";
 
 const auth = { authorization: "Bearer test-token" };
 const NOW = Date.now();
@@ -135,5 +135,48 @@ describe("GET /v1/cron/status", () => {
       await SELF.fetch("https://api.test/v1/cron/status", { headers: auth })
     ).json()) as { stale: boolean };
     expect(body.stale).toBe(true);
+  });
+});
+
+describe("POST /v1/cron/run", () => {
+  it("401s without the bearer", async () => {
+    expect(
+      (await SELF.fetch("https://api.test/v1/cron/run", { method: "POST" }))
+        .status,
+    ).toBe(401);
+  });
+
+  it("503s when the CRON service binding is not bound", async () => {
+    const res = await SELF.fetch("https://api.test/v1/cron/run", {
+      method: "POST",
+      headers: auth,
+    });
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "cron_unbound" });
+  });
+});
+
+describe("forwardCronRun", () => {
+  it("POSTs /run on the binding and passes its status + body through", async () => {
+    const fetchStub = vi.fn(async () =>
+      Response.json({ status: "failed", passes: [] }, { status: 500 }),
+    );
+    const out = await forwardCronRun({
+      CRON: { fetch: fetchStub } as unknown as Fetcher,
+    });
+    expect(fetchStub).toHaveBeenCalledWith("https://cron/run", {
+      method: "POST",
+    });
+    expect(out).toEqual({
+      status: 500,
+      body: { status: "failed", passes: [] },
+    });
+  });
+
+  it("is 503 cron_unbound without a binding", async () => {
+    expect(await forwardCronRun({})).toEqual({
+      status: 503,
+      body: { error: "cron_unbound" },
+    });
   });
 });

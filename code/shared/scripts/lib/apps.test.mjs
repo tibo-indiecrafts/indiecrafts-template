@@ -55,7 +55,7 @@ test("deployable() defaults to Cloudflare apps, in deploy order", () => {
   assert.ok(cf.every(isCloudflare), "default set must be Cloudflare-only");
   assert.deepEqual(
     cf.map((a) => a.slug),
-    ["api", "cron", "workers", "website", "admin", "app", "storybook"],
+    ["cron", "api", "workers", "website", "admin", "app", "storybook"],
   );
 });
 
@@ -152,5 +152,5 @@ test("CLI --class + --kind lists the bare Worker services (not the static-assets
     .trim()
     .split("\n")
     .map((l) => l.split("\t")[0]);
-  assert.deepEqual(slugs, ["api", "cron", "workers"]);
+  assert.deepEqual(slugs, ["cron", "api", "workers"]);
 });

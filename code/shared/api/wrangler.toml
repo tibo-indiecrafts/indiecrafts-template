@@ -192,6 +192,13 @@ id = "03930e85db0243bc9c6f01553285f4ba"
 binding = "EXPORT_BUCKET"
 bucket_name = "indiecrafts-dev-shared-api-exports"
 
+# "Run now" (admin → POST /v1/cron/run) calls the cron privately — the cron has no public URL.
+# The cron must exist before this deploys (deploy:all deploys it first).
+[[env.dev.services]]
+binding = "CRON"
+service = "indiecrafts-dev-shared-cron"
+
+
 [env.staging]
 name = "indiecrafts-staging-shared-api"
 
@@ -225,6 +232,13 @@ migrations_dir = "db/main/migrations"
 binding = "SECURITY_COUNTERS"
 id = "PASTE_KV_ID_HERE"
 
+# "Run now" (admin → POST /v1/cron/run) calls the cron privately — the cron has no public URL.
+# The cron must exist before this deploys (deploy:all deploys it first).
+[[env.staging.services]]
+binding = "CRON"
+service = "indiecrafts-staging-shared-cron"
+
+
 [env.prod]
 name = "indiecrafts-prod-shared-api"
 
@@ -257,3 +271,9 @@ migrations_dir = "db/main/migrations"
 [[env.prod.kv_namespaces]]
 binding = "SECURITY_COUNTERS"
 id = "PASTE_KV_ID_HERE"
+
+# "Run now" (admin → POST /v1/cron/run) calls the cron privately — the cron has no public URL.
+# The cron must exist before this deploys (deploy:all deploys it first).
+[[env.prod.services]]
+binding = "CRON"
+service = "indiecrafts-prod-shared-cron"

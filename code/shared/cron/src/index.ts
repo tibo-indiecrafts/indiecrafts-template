@@ -304,6 +304,92 @@ async function recordRun(
   }
 }
 
+/** One tick: load the settings, run the four passes in isolation, record the run. Shared by
+ *  the cron trigger (`scheduled`) and an on-demand run (`POST /run`, via the api's binding). */
+export async function runTick(
+  env: Env,
+  scheduledTime: number,
+): Promise<PassResult[]> {
+  const settings = await loadSettings(env.MAIN_DB);
+
+  // Each window is the effective value — the D1 `site_settings` override if operator-set,
+  // else the code default. What each window covers → auditPurge / mainPurge above.
+  const cutoff = retentionCutoff(
+    scheduledTime,
+    settings["retention.audit_days"],
+  );
+  const consentCutoff = retentionCutoff(
+    scheduledTime,
+    settings["retention.consent_days"],
+  );
+  const cspCutoff = retentionCutoff(
+    scheduledTime,
+    settings["retention.csp_days"],
+  );
+  const dataRequestCutoff = retentionCutoff(
+    scheduledTime,
+    settings["retention.data_request_days"],
+  );
+  const erasureRequestCutoff = retentionCutoff(
+    scheduledTime,
+    settings["retention.erasure_request_days"],
+  );
+  const profileCutoff = retentionCutoff(
+    scheduledTime,
+    settings["retention.profile_anonymized_days"],
+  );
+  const churnCutoff = retentionCutoff(
+    scheduledTime,
+    settings["retention.churn_days"],
+  );
+  const churnFreeTextCutoff = retentionCutoff(
+    scheduledTime,
+    settings["retention.churn_freetext_days"],
+  );
+  const nowIso = new Date(scheduledTime).toISOString();
+  const dueSoon = slaDueSoonCutoff(
+    scheduledTime,
+    settings["ops.sla_warning_days"],
+  );
+  const { AUDIT_DB: audit, MAIN_DB: main, EXPORT_BUCKET: bucket } = env;
+  // Each pass runs on its own: one failing pass never skips the others.
+  const passes: PassResult[] = [
+    audit
+      ? await runPass("audit_purge", () => auditPurge(audit, cutoff, cspCutoff))
+      : skipped("audit_purge", "AUDIT_DB unbound"),
+    main
+      ? await runPass("main_purge", () =>
+          mainPurge(main, {
+            consent: consentCutoff,
+            dataRequest: dataRequestCutoff,
+            erasureRequest: erasureRequestCutoff,
+            churnFreeText: churnFreeTextCutoff,
+            churn: churnCutoff,
+            profile: profileCutoff,
+          }),
+        )
+      : skipped("main_purge", "MAIN_DB unbound"),
+    main
+      ? await runPass("erasure_sla", () =>
+          erasureSla(main, audit, nowIso, dueSoon),
+        )
+      : skipped("erasure_sla", "MAIN_DB unbound"),
+    !main
+      ? skipped("export_cleanup", "MAIN_DB unbound")
+      : !bucket
+        ? skipped("export_cleanup", "EXPORT_BUCKET unbound")
+        : await runPass("export_cleanup", () =>
+            exportCleanup(main, bucket, nowIso),
+          ),
+  ];
+  logger.info("cron passes", { passes });
+  await recordRun(audit, nowIso, passes);
+  return passes;
+}
+
+const failedPasses = (passes: PassResult[]) =>
+  passes.filter((p) => p.status === "failed");
+
 export default {
   async scheduled(
     controller: ScheduledController,
@@ -314,85 +400,7 @@ export default {
       cron: controller.cron,
       scheduledTime: controller.scheduledTime,
     });
-
-    const settings = await loadSettings(env.MAIN_DB);
-
-    // Each window is the effective value — the D1 `site_settings` override if operator-set,
-    // else the code default. What each window covers → auditPurge / mainPurge above.
-    const cutoff = retentionCutoff(
-      controller.scheduledTime,
-      settings["retention.audit_days"],
-    );
-    const consentCutoff = retentionCutoff(
-      controller.scheduledTime,
-      settings["retention.consent_days"],
-    );
-    const cspCutoff = retentionCutoff(
-      controller.scheduledTime,
-      settings["retention.csp_days"],
-    );
-    const dataRequestCutoff = retentionCutoff(
-      controller.scheduledTime,
-      settings["retention.data_request_days"],
-    );
-    const erasureRequestCutoff = retentionCutoff(
-      controller.scheduledTime,
-      settings["retention.erasure_request_days"],
-    );
-    const profileCutoff = retentionCutoff(
-      controller.scheduledTime,
-      settings["retention.profile_anonymized_days"],
-    );
-    const churnCutoff = retentionCutoff(
-      controller.scheduledTime,
-      settings["retention.churn_days"],
-    );
-    const churnFreeTextCutoff = retentionCutoff(
-      controller.scheduledTime,
-      settings["retention.churn_freetext_days"],
-    );
-    const nowIso = new Date(controller.scheduledTime).toISOString();
-    const dueSoon = slaDueSoonCutoff(
-      controller.scheduledTime,
-      settings["ops.sla_warning_days"],
-    );
-    const { AUDIT_DB: audit, MAIN_DB: main, EXPORT_BUCKET: bucket } = env;
-    // Each pass runs on its own: one failing pass never skips the others.
-    const passes: PassResult[] = [
-      audit
-        ? await runPass("audit_purge", () =>
-            auditPurge(audit, cutoff, cspCutoff),
-          )
-        : skipped("audit_purge", "AUDIT_DB unbound"),
-      main
-        ? await runPass("main_purge", () =>
-            mainPurge(main, {
-              consent: consentCutoff,
-              dataRequest: dataRequestCutoff,
-              erasureRequest: erasureRequestCutoff,
-              churnFreeText: churnFreeTextCutoff,
-              churn: churnCutoff,
-              profile: profileCutoff,
-            }),
-          )
-        : skipped("main_purge", "MAIN_DB unbound"),
-      main
-        ? await runPass("erasure_sla", () =>
-            erasureSla(main, audit, nowIso, dueSoon),
-          )
-        : skipped("erasure_sla", "MAIN_DB unbound"),
-      !main
-        ? skipped("export_cleanup", "MAIN_DB unbound")
-        : !bucket
-          ? skipped("export_cleanup", "EXPORT_BUCKET unbound")
-          : await runPass("export_cleanup", () =>
-              exportCleanup(main, bucket, nowIso),
-            ),
-    ];
-    logger.info("cron passes", { passes });
-    await recordRun(audit, nowIso, passes);
-
-    const failed = passes.filter((p) => p.status === "failed");
+    const failed = failedPasses(await runTick(env, controller.scheduledTime));
     // Cloudflare does not retry a failed cron run — the next hourly tick re-runs every pass.
     if (failed.length)
       throw new AggregateError(
@@ -401,7 +409,18 @@ export default {
       );
   },
 
-  async fetch(): Promise<Response> {
+  /** `POST /run` runs one tick now. This Worker has no public URL (`workers_dev = false`):
+   *  only the api's service binding (`POST /v1/cron/run`, admin-only) can reach it. Any other
+   *  request is the health check. */
+  async fetch(request: Request, env: Env): Promise<Response> {
+    if (request.method === "POST" && new URL(request.url).pathname === "/run") {
+      const passes = await runTick(env, Date.now());
+      const status = failedPasses(passes).length ? "failed" : "ok";
+      return Response.json(
+        { status, passes },
+        { status: status === "ok" ? 200 : 500 },
+      );
+    }
     return Response.json({ ok: true });
   },
 } satisfies ExportedHandler<Env>;

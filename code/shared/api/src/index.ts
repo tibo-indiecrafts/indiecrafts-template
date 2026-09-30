@@ -60,7 +60,7 @@ import {
 } from "./data-request/route";
 import { sendSecurityAlertEmail } from "./security/alert";
 import { readChurnAggregate } from "./consent/churn-store";
-import { cronStatus, erasureRequests } from "./monitoring";
+import { cronStatus, erasureRequests, forwardCronRun } from "./monitoring";
 import { handleErasureClose, handleErasureRetry } from "./erasure/admin";
 import { readSettings } from "./settings-cache";
 
@@ -143,6 +143,8 @@ export interface Env {
    *  recipient. Optional — unset → falls back to `EMAIL_ADMIN_BCC`, and if that is also
    *  unset, the alert send no-ops (the incident is still written to D1). */
   SECURITY_ALERT_EMAIL?: string;
+  /** The cron Worker, via a private service binding — `POST /v1/cron/run` (admin "Run now"). */
+  CRON?: Fetcher;
   /** `wrangler secret put TURNSTILE_SECRET` — the bot gate on the public erasure-request
    *  form. Optional (unset → the check passes; set → verified, fails closed on error). */
   TURNSTILE_SECRET?: string;
@@ -955,6 +957,21 @@ export default {
           ? await cronStatus(env, Date.now(), warnDays)
           : await erasureRequests(env, Date.now(), warnDays);
       return json(body, 200, cors);
+    }
+
+    // ── Run the cron now — POST /v1/cron/run (bearer-gated; admin "Run now"). Reaches the
+    // cron's POST /run over the private CRON service binding. ./monitoring.ts.
+    if (url.pathname === "/v1/cron/run") {
+      if (request.method === "OPTIONS")
+        return new Response(null, { status: 204, headers: cors });
+      if (request.method !== "POST")
+        return json({ error: "method_not_allowed" }, 405, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
+      const { status, body } = await forwardCronRun(env);
+      return json(body, status, cors);
     }
 
     // ── Admin actions on an erasure request — POST /v1/erasure-requests/:id/retry|close
