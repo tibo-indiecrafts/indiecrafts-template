@@ -73,9 +73,89 @@ export function slaDueSoonCutoff(scheduledTime: number, days = 7): string {
   return new Date(scheduledTime + days * 86_400_000).toISOString();
 }
 
-/** `high` once the due date has already passed (breached); `medium` while still approaching. */
-export function slaSeverity(dueAt: string, nowIso: string): "high" | "medium" {
-  return dueAt < nowIso ? "high" : "medium";
+type DueRow = {
+  id: number;
+  user_id: string | null;
+  email_fingerprint: string;
+  due_at: string;
+};
+
+/** Open = the engine still owes this request an outcome: confirmed, or awaiting confirmation
+ *  with a live link. `?1` = now. Same definition as the api's monitoring routes. */
+const OPEN =
+  "(status = 'confirmed' OR (status IN ('pending','email_sent') AND token_expires_at >= ?1))";
+
+async function flagSla(
+  audit: D1Database | undefined,
+  row: DueRow,
+  type: "erasure_sla_due" | "erasure_sla_breach",
+  severity: "medium" | "high",
+  nowIso: string,
+): Promise<void> {
+  if (!audit) return;
+  await audit
+    .prepare(
+      "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, 'api', ?, NULL, NULL, ?)",
+    )
+    .bind(
+      nowIso,
+      type,
+      severity,
+      row.user_id ?? row.email_fingerprint,
+      `erasure request ${row.id} due ${row.due_at}`,
+    )
+    .run();
+}
+
+/** GDPR Art. 12(3) one-month SLA. Close lapsed unverified requests (never confirmed, link
+ *  expired — nothing to action), then flag each open request at most twice: "due soon"
+ *  (medium) once, "breached" (high) once. A request first seen breached gets only the high
+ *  flag. The security_events insert no-ops until the audit DB is bound; the flags still set. */
+async function erasureSla(
+  main: D1Database,
+  audit: D1Database | undefined,
+  nowIso: string,
+  dueSoonIso: string,
+): Promise<{ expired: number; dueSoon: number; breached: number }> {
+  const expired = await main
+    .prepare(
+      "UPDATE erasure_requests SET status = 'expired' WHERE status IN ('pending','email_sent') AND token_expires_at < ?",
+    )
+    .bind(nowIso)
+    .run();
+  const { results: breached } = await main
+    .prepare(
+      `SELECT id, user_id, email_fingerprint, due_at FROM erasure_requests WHERE ${OPEN} AND breach_flagged_at IS NULL AND due_at < ?1`,
+    )
+    .bind(nowIso)
+    .all<DueRow>();
+  for (const row of breached) {
+    await flagSla(audit, row, "erasure_sla_breach", "high", nowIso);
+    await main
+      .prepare(
+        "UPDATE erasure_requests SET breach_flagged_at = ?1, due_flagged_at = COALESCE(due_flagged_at, ?1) WHERE id = ?2",
+      )
+      .bind(nowIso, row.id)
+      .run();
+  }
+  const { results: dueSoon } = await main
+    .prepare(
+      `SELECT id, user_id, email_fingerprint, due_at FROM erasure_requests WHERE ${OPEN} AND due_flagged_at IS NULL AND due_at >= ?1 AND due_at < ?2`,
+    )
+    .bind(nowIso, dueSoonIso)
+    .all<DueRow>();
+  for (const row of dueSoon) {
+    await flagSla(audit, row, "erasure_sla_due", "medium", nowIso);
+    await main
+      .prepare("UPDATE erasure_requests SET due_flagged_at = ? WHERE id = ?")
+      .bind(nowIso, row.id)
+      .run();
+  }
+  return {
+    expired: expired.meta?.changes ?? 0,
+    dueSoon: dueSoon.length,
+    breached: breached.length,
+  };
 }
 
 export default {
@@ -238,46 +318,14 @@ export default {
         throw error; // surface the failure on the scheduled run
       }
 
-      // Erasure SLA flag (GDPR Art. 12(3) one-month deadline): once per request, flag a
-      // MAIN_DB erasure_requests row whose due date is within the warning window (or
-      // already breached) as a `DB` security_events row, then mark it flagged so a later
-      // tick doesn't repeat it. Idempotent; the security_events insert no-ops until the
-      // audit DB is bound (the flag itself still gets set).
       try {
-        const { results: dueRows } = await env.MAIN_DB.prepare(
-          "SELECT id, user_id, email_fingerprint, due_at FROM erasure_requests WHERE due_flagged_at IS NULL AND status NOT IN ('completed','cancelled','expired') AND due_at < ?",
-        )
-          .bind(dueSoon)
-          .all<{
-            id: number;
-            user_id: string | null;
-            email_fingerprint: string;
-            due_at: string;
-          }>();
-        for (const row of dueRows) {
-          const severity = slaSeverity(row.due_at, nowIso);
-          const eventType =
-            severity === "high" ? "erasure_sla_breach" : "erasure_sla_due";
-          if (env.AUDIT_DB) {
-            await env.AUDIT_DB.prepare(
-              "INSERT INTO security_events (ts, event_type, severity, surface, user_id, country, ip_hash, description) VALUES (?, ?, ?, 'api', ?, NULL, NULL, ?)",
-            )
-              .bind(
-                nowIso,
-                eventType,
-                severity,
-                row.user_id ?? row.email_fingerprint,
-                `erasure request ${row.id} due ${row.due_at}`,
-              )
-              .run();
-          }
-          await env.MAIN_DB.prepare(
-            "UPDATE erasure_requests SET due_flagged_at = ? WHERE id = ?",
-          )
-            .bind(nowIso, row.id)
-            .run();
-        }
-        logger.info("erasure SLA flag", { flagged: dueRows.length });
+        const sla = await erasureSla(
+          env.MAIN_DB,
+          env.AUDIT_DB,
+          nowIso,
+          dueSoon,
+        );
+        logger.info("erasure SLA flag", sla);
       } catch (error) {
         logger.error("erasure SLA flag failed", {
           name: (error as Error)?.name,

@@ -7,7 +7,7 @@ import {
   waitOnExecutionContext,
 } from "cloudflare:test";
 import { beforeAll, describe, expect, it } from "vitest";
-import worker, { type Env, slaDueSoonCutoff, slaSeverity } from "./index";
+import worker, { type Env, slaDueSoonCutoff } from "./index";
 
 // Apply the api's db/audit + db/main migrations/*.sql (see vitest.config.ts) before any test runs —
 // the cron shares the api's D1, so tests exercise the real schema.
@@ -435,11 +435,12 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
     status: string,
     dueAt: string,
     dueFlaggedAt: string | null = null,
+    tokenExpiresAt: string = dueAt,
   ): Promise<void> {
     await env.MAIN_DB.prepare(
       "INSERT INTO erasure_requests (status, token_hash, token_expires_at, user_id, email_fingerprint, requested_at, due_at, due_flagged_at) VALUES (?, 'hash', ?, ?, 'fp@example.com', ?, ?, ?)",
     )
-      .bind(status, dueAt, userId, dueAt, dueAt, dueFlaggedAt)
+      .bind(status, tokenExpiresAt, userId, dueAt, dueAt, dueFlaggedAt)
       .run();
   }
 
@@ -462,11 +463,29 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
     return row?.due_flagged_at ?? null;
   }
 
-  async function runTick(): Promise<void> {
+  async function breachFlaggedAtFor(userId: string): Promise<string | null> {
+    const row = await env.MAIN_DB.prepare(
+      "SELECT breach_flagged_at FROM erasure_requests WHERE user_id = ?",
+    )
+      .bind(userId)
+      .first<{ breach_flagged_at: string | null }>();
+    return row?.breach_flagged_at ?? null;
+  }
+
+  async function statusFor(userId: string): Promise<string | null> {
+    const row = await env.MAIN_DB.prepare(
+      "SELECT status FROM erasure_requests WHERE user_id = ?",
+    )
+      .bind(userId)
+      .first<{ status: string }>();
+    return row?.status ?? null;
+  }
+
+  async function runTick(at: number = NOW): Promise<void> {
     const ctx = createExecutionContext();
     const controller = {
       cron: "0 * * * *",
-      scheduledTime: NOW,
+      scheduledTime: at,
       noRetry() {},
     } as unknown as ScheduledController;
     await worker.scheduled(controller, env, ctx);
@@ -483,7 +502,7 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
   });
 
   it("flags a breached request as erasure_sla_breach/high", async () => {
-    await seedErasureRequest("user-breached", "email_sent", breachedAt);
+    await seedErasureRequest("user-breached", "confirmed", breachedAt);
     await runTick();
     expect(await securityEventsFor("user-breached")).toEqual([
       { event_type: "erasure_sla_breach", severity: "high" },
@@ -501,19 +520,58 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
     },
   );
 
-  it("does not re-flag an already-flagged request on a later tick", async () => {
+  it("escalates a due-soon request to breach once, never twice", async () => {
+    await seedErasureRequest("user-escalate", "confirmed", dueSoonAt);
+    await runTick(); // due soon → medium
+    const after = NOW + 4 * 86_400_000; // past dueSoonAt
+    await runTick(after);
+    await runTick(after + 3_600_000);
+    expect(await securityEventsFor("user-escalate")).toEqual([
+      { event_type: "erasure_sla_due", severity: "medium" },
+      { event_type: "erasure_sla_breach", severity: "high" },
+    ]);
+    expect(await breachFlaggedAtFor("user-escalate")).toBe(
+      new Date(after).toISOString(),
+    );
+  });
+
+  it("a request first seen already breached gets only the high flag, once", async () => {
+    await seedErasureRequest("user-late", "confirmed", breachedAt);
+    await runTick();
+    await runTick(NOW + 3_600_000);
+    expect(await securityEventsFor("user-late")).toEqual([
+      { event_type: "erasure_sla_breach", severity: "high" },
+    ]);
+    expect(await dueFlaggedAtFor("user-late")).toBe(nowIso);
+  });
+
+  it("does not re-flag a request already flagged due soon and breached", async () => {
     await seedErasureRequest(
       "user-already-flagged",
-      "email_sent",
+      "confirmed",
       breachedAt,
       alreadyFlaggedAt,
     );
-    await runTick();
+    await env.MAIN_DB.prepare(
+      "UPDATE erasure_requests SET breach_flagged_at = ? WHERE user_id = 'user-already-flagged'",
+    )
+      .bind(alreadyFlaggedAt)
+      .run();
     await runTick();
     expect(await securityEventsFor("user-already-flagged")).toEqual([]);
-    expect(await dueFlaggedAtFor("user-already-flagged")).toBe(
-      alreadyFlaggedAt,
+  });
+
+  it("closes a never-confirmed request whose link lapsed — expired, never flagged", async () => {
+    await seedErasureRequest(
+      "user-lapsed",
+      "email_sent",
+      breachedAt,
+      null,
+      breachedAt,
     );
+    await runTick();
+    expect(await statusFor("user-lapsed")).toBe("expired");
+    expect(await securityEventsFor("user-lapsed")).toEqual([]);
   });
 
   it("deletes an expired export bundle from R2 + its row; keeps a not-yet-expired one", async () => {
@@ -561,20 +619,6 @@ describe("slaDueSoonCutoff", () => {
   it("defaults to a 7-day horizon", () => {
     const now = Date.UTC(2026, 0, 15);
     expect(slaDueSoonCutoff(now)).toBe(slaDueSoonCutoff(now, 7));
-  });
-});
-
-describe("slaSeverity", () => {
-  const nowIso = new Date(Date.UTC(2026, 0, 15)).toISOString();
-
-  it("is high once the due date has already passed", () => {
-    const pastDueAt = new Date(Date.UTC(2026, 0, 14)).toISOString();
-    expect(slaSeverity(pastDueAt, nowIso)).toBe("high");
-  });
-
-  it("is medium while the due date is still ahead", () => {
-    const futureDueAt = new Date(Date.UTC(2026, 0, 16)).toISOString();
-    expect(slaSeverity(futureDueAt, nowIso)).toBe("medium");
   });
 });
 
