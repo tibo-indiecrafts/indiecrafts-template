@@ -13,7 +13,7 @@ export type ErasureState = "breached" | "dueSoon" | "onTrack" | "closed";
 
 /** Open = the engine still owes this request an outcome: confirmed, or awaiting confirmation
  *  with a live link. `?1` = now. Same definition as the cron's erasure_sla pass. */
-const OPEN =
+export const OPEN =
   "(status = 'confirmed' OR (status IN ('pending','email_sent') AND token_expires_at >= ?1))";
 
 const DAY_MS = 86_400_000;

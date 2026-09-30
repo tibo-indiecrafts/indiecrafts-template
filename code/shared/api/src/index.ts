@@ -61,6 +61,7 @@ import {
 import { sendSecurityAlertEmail } from "./security/alert";
 import { readChurnAggregate } from "./consent/churn-store";
 import { cronStatus, erasureRequests } from "./monitoring";
+import { handleErasureClose, handleErasureRetry } from "./erasure/admin";
 import { readSettings } from "./settings-cache";
 
 // Production console is silent (no request-log noise); this forwards error/fatal to
@@ -954,6 +955,26 @@ export default {
           ? await cronStatus(env, Date.now(), warnDays)
           : await erasureRequests(env, Date.now(), warnDays);
       return json(body, 200, cors);
+    }
+
+    // ── Admin actions on an erasure request — POST /v1/erasure-requests/:id/retry|close
+    // (bearer-gated; the admin server action re-checks the role + audits). ./erasure/admin.ts.
+    const erasureAction = url.pathname.match(
+      /^\/v1\/erasure-requests\/(\d+)\/(retry|close)$/,
+    );
+    if (erasureAction) {
+      if (request.method === "OPTIONS")
+        return new Response(null, { status: 204, headers: cors });
+      if (request.method !== "POST")
+        return json({ error: "method_not_allowed" }, 405, cors);
+      const denied =
+        requireAdminBearer(request, env, cors) ??
+        (await rateLimit(request, env, cors));
+      if (denied) return denied;
+      const id = Number(erasureAction[1]);
+      return erasureAction[2] === "retry"
+        ? handleErasureRetry(request, env, id)
+        : handleErasureClose(request, env, id);
     }
 
     // ── DSAR intake — POST /v1/data-request (bearer-gated write; the website's
