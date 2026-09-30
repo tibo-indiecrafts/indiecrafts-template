@@ -19,16 +19,16 @@ if (getCurrentEnvironment() === "production")
 /**
  * Scheduled (cron) worker — a **bare** Cloudflare Worker (no Next/OpenNext).
  * Cloudflare fires `scheduled(...)` on the `[triggers] crons` schedule in
- * wrangler.toml. This file is the deploy **shell**; the task itself belongs in a
- * package or module (import via `workspace:*`), keeping this entrypoint thin.
+ * wrangler.toml. The passes live inline here: one consumer, so no brick (the repo's
+ * ≥2-consumer extraction rule). Every tick writes one `cron_runs` row (audit D1).
  * Workers are apps — see `code/docs/shared/architecture/multi-app.md`.
  *
  * `fetch` is only a health check (a cron worker needs no HTTP surface).
  * Test a run locally: `wrangler dev` then `curl "http://localhost:8787/__scheduled"`.
  */
 export interface Env {
-  /** The api's EU audit-firehose D1 (binding `DB`) — admin_audit, session_events,
-   *  security_events, csp_reports. The purge deletes rows past retention from each; the
+  /** The api's EU audit-firehose D1 (binding `AUDIT_DB`) — admin_audit, session_events,
+   *  security_events, csp_reports, cron_runs. The purge deletes rows past retention from each; the
    *  erasure-SLA flag pass also inserts a security_events row per due/breached request. */
   AUDIT_DB?: D1Database;
   /** The api's EU main D1 (binding `MAIN_DB`) — identity/rights/settings: consent_events,
@@ -158,6 +158,152 @@ async function erasureSla(
   };
 }
 
+export type PassName =
+  "audit_purge" | "main_purge" | "erasure_sla" | "export_cleanup";
+
+/** One pass's outcome — stored as JSON in `cron_runs.passes` and shown in the admin. */
+export type PassResult = {
+  name: PassName;
+  status: "ok" | "failed" | "skipped";
+  counts: Record<string, number>;
+  /** skipped: which binding is missing. */
+  reason?: string;
+  /** failed: the error NAME only — a message can carry data. */
+  error?: string;
+};
+
+const skipped = (name: PassName, reason: string): PassResult => ({
+  name,
+  status: "skipped",
+  counts: {},
+  reason,
+});
+
+/** Run one pass in isolation: a throw becomes a `failed` result, never an early exit. */
+async function runPass(
+  name: PassName,
+  work: () => Promise<Record<string, number>>,
+): Promise<PassResult> {
+  try {
+    return { name, status: "ok", counts: await work() };
+  } catch (error) {
+    const errorName = (error as Error)?.name || "Error";
+    logger.error(`${name} failed`, { name: errorName });
+    return { name, status: "failed", counts: {}, error: errorName };
+  }
+}
+
+const changes = (r: D1Result): number => r.meta?.changes ?? 0;
+
+/** Audit D1 retention: the 90-day ceiling (admin_audit · session_events · security_events ·
+ *  cron_runs) and the 30-day CSP ceiling (operational signal, not a proof record). */
+async function auditPurge(db: D1Database, cutoff: string, cspCutoff: string) {
+  const del = async (sql: string, at: string) =>
+    changes(await db.prepare(sql).bind(at).run());
+  return {
+    admin_audit: await del("DELETE FROM admin_audit WHERE ts < ?", cutoff),
+    session_events: await del(
+      "DELETE FROM session_events WHERE ts < ?",
+      cutoff,
+    ),
+    security_events: await del(
+      "DELETE FROM security_events WHERE ts < ?",
+      cutoff,
+    ),
+    csp_reports: await del(
+      "DELETE FROM csp_reports WHERE last_seen < ?",
+      cspCutoff,
+    ),
+    cron_runs: await del("DELETE FROM cron_runs WHERE started_at < ?", cutoff),
+  };
+}
+
+type MainCutoffs = {
+  consent: string;
+  dataRequest: string;
+  erasureRequest: string;
+  churnFreeText: string;
+  churn: string;
+  profile: string;
+};
+
+/** Main D1 retention. consent_events + erasure_requests are proof records (3-year window);
+ *  data_requests is short-lived operational PII (365 days); churn_events is
+ *  legitimate-interest data excluded from erasure, so it has its own ceiling, with the
+ *  user-typed free text scrubbed earlier; pseudonymised user_profiles are hard-deleted once
+ *  past their window (drops the retained email_fingerprint — the 0001 "hard-deleted after 90
+ *  days" promise). */
+async function mainPurge(db: D1Database, c: MainCutoffs) {
+  const run = async (sql: string, at: string) =>
+    changes(await db.prepare(sql).bind(at).run());
+  return {
+    consent_events: await run(
+      "DELETE FROM consent_events WHERE ts < ?",
+      c.consent,
+    ),
+    data_requests: await run(
+      "DELETE FROM data_requests WHERE submitted_at < ?",
+      c.dataRequest,
+    ),
+    erasure_requests: await run(
+      "DELETE FROM erasure_requests WHERE requested_at < ?",
+      c.erasureRequest,
+    ),
+    churn_freetext: await run(
+      "UPDATE churn_events SET feedback = NULL, competitor = NULL WHERE deleted_at < ? AND (feedback IS NOT NULL OR competitor IS NOT NULL)",
+      c.churnFreeText,
+    ),
+    churn_events: await run(
+      "DELETE FROM churn_events WHERE deleted_at < ?",
+      c.churn,
+    ),
+    user_profiles: await run(
+      "DELETE FROM user_profiles WHERE anonymized = 1 AND deleted_at IS NOT NULL AND deleted_at < ?",
+      c.profile,
+    ),
+  };
+}
+
+/** Sweep export bundles whose TTL passed unread (a downloaded one is already deleted by the
+ *  api). An R2 delete is a no-op if the object is gone, so the pass is idempotent. */
+async function exportCleanup(db: D1Database, bucket: R2Bucket, nowIso: string) {
+  const { results } = await db
+    .prepare("SELECT id, r2_key FROM export_requests WHERE expires_at < ?")
+    .bind(nowIso)
+    .all<{ id: number; r2_key: string }>();
+  for (const row of results) {
+    await bucket.delete(row.r2_key);
+    await db
+      .prepare("DELETE FROM export_requests WHERE id = ?")
+      .bind(row.id)
+      .run();
+  }
+  return { deleted: results.length };
+}
+
+/** One `cron_runs` row per tick (audit D1) — read by GET /v1/cron/status for the admin.
+ *  A failed write is logged; it never masks the pass results. */
+async function recordRun(
+  db: D1Database | undefined,
+  startedAt: string,
+  passes: PassResult[],
+): Promise<void> {
+  if (!db) return;
+  const status = passes.some((p) => p.status === "failed") ? "failed" : "ok";
+  try {
+    await db
+      .prepare(
+        "INSERT INTO cron_runs (started_at, finished_at, status, passes) VALUES (?, ?, ?, ?)",
+      )
+      .bind(startedAt, new Date().toISOString(), status, JSON.stringify(passes))
+      .run();
+  } catch (error) {
+    logger.error("cron run history write failed", {
+      name: (error as Error)?.name,
+    });
+  }
+}
+
 export default {
   async scheduled(
     controller: ScheduledController,
@@ -171,18 +317,8 @@ export default {
 
     const settings = await loadSettings(env.MAIN_DB);
 
-    // Retention purge (GDPR storage limitation): purge tables past their ceiling, split
-    // across the two EU D1s. admin_audit + session_events + security_events (audit `DB`)
-    // use the 90-day ceiling; csp_reports (audit `DB`) uses a 30-day ceiling (CSP
-    // violations are operational signal, not proof records). consent_events (core
-    // `MAIN_DB`) uses its own, much longer 3-year window, because it is a consent proof
-    // record, not an audit trail; data_requests (core, DSAR intake, short-lived
-    // operational PII) purges at 365 days; erasure_requests (core, proof-of-erasure
-    // record) purges at the same 3-year window as consent_events; churn_events (core,
-    // legitimate-interest churn-survey data — excluded from erasure, so it needs its own
-    // ceiling) purges at a 730-day (24-month) window. Idempotent — safe on every tick.
-    // No-ops until the relevant DB is bound. Each window is the effective value — the D1
-    // `site_settings` override if operator-set, else the code default.
+    // Each window is the effective value — the D1 `site_settings` override if operator-set,
+    // else the code default. What each window covers → auditPurge / mainPurge above.
     const cutoff = retentionCutoff(
       controller.scheduledTime,
       settings["retention.audit_days"],
@@ -220,149 +356,49 @@ export default {
       controller.scheduledTime,
       settings["ops.sla_warning_days"],
     );
-    if (env.AUDIT_DB) {
-      try {
-        const admin = await env.AUDIT_DB.prepare(
-          "DELETE FROM admin_audit WHERE ts < ?",
-        )
-          .bind(cutoff)
-          .run();
-        const session = await env.AUDIT_DB.prepare(
-          "DELETE FROM session_events WHERE ts < ?",
-        )
-          .bind(cutoff)
-          .run();
-        const security = await env.AUDIT_DB.prepare(
-          "DELETE FROM security_events WHERE ts < ?",
-        )
-          .bind(cutoff)
-          .run();
-        const csp = await env.AUDIT_DB.prepare(
-          "DELETE FROM csp_reports WHERE last_seen < ?",
-        )
-          .bind(cspCutoff)
-          .run();
-        logger.info("retention purge (audit)", {
-          cutoff,
-          cspCutoff,
-          adminRows: admin.meta?.changes,
-          sessionRows: session.meta?.changes,
-          securityRows: security.meta?.changes,
-          cspRows: csp.meta?.changes,
-        });
-      } catch (error) {
-        logger.error("retention purge failed", {
-          name: (error as Error)?.name,
-        });
-        throw error; // surface the failure on the scheduled run
-      }
-    }
-
-    if (env.MAIN_DB) {
-      try {
-        const consent = await env.MAIN_DB.prepare(
-          "DELETE FROM consent_events WHERE ts < ?",
-        )
-          .bind(consentCutoff)
-          .run();
-        const dataRequest = await env.MAIN_DB.prepare(
-          "DELETE FROM data_requests WHERE submitted_at < ?",
-        )
-          .bind(dataRequestCutoff)
-          .run();
-        const erasureRequest = await env.MAIN_DB.prepare(
-          "DELETE FROM erasure_requests WHERE requested_at < ?",
-        )
-          .bind(erasureRequestCutoff)
-          .run();
-        // Data-minimisation: scrub the user-typed free text (where a departing user can
-        // self-enter PII) on churn rows past the shorter free-text window, keeping the
-        // aggregate (reason/deleted_at) until the full-row purge below.
-        const churnFreeText = await env.MAIN_DB.prepare(
-          "UPDATE churn_events SET feedback = NULL, competitor = NULL WHERE deleted_at < ? AND (feedback IS NOT NULL OR competitor IS NOT NULL)",
-        )
-          .bind(churnFreeTextCutoff)
-          .run();
-        const churn = await env.MAIN_DB.prepare(
-          "DELETE FROM churn_events WHERE deleted_at < ?",
-        )
-          .bind(churnCutoff)
-          .run();
-        // Final anonymisation: hard-delete user_profiles rows pseudonymised on erasure
-        // (email/name already scrubbed, anonymized=1) once they pass the window — this
-        // drops the retained email_fingerprint, completing storage limitation. Fulfils the
-        // 0001_user_profiles.sql "hard-deleted after 90 days" promise (was never implemented).
-        const profiles = await env.MAIN_DB.prepare(
-          "DELETE FROM user_profiles WHERE anonymized = 1 AND deleted_at IS NOT NULL AND deleted_at < ?",
-        )
-          .bind(profileCutoff)
-          .run();
-        logger.info("retention purge (core)", {
-          consentCutoff,
-          dataRequestCutoff,
-          erasureRequestCutoff,
-          churnFreeTextCutoff,
-          churnCutoff,
-          profileCutoff,
-          consentRows: consent.meta?.changes,
-          dataRequestRows: dataRequest.meta?.changes,
-          erasureRequestRows: erasureRequest.meta?.changes,
-          churnFreeTextRows: churnFreeText.meta?.changes,
-          churnRows: churn.meta?.changes,
-          profileRows: profiles.meta?.changes,
-        });
-      } catch (error) {
-        logger.error("retention purge failed", {
-          name: (error as Error)?.name,
-        });
-        throw error; // surface the failure on the scheduled run
-      }
-
-      try {
-        const sla = await erasureSla(
-          env.MAIN_DB,
-          env.AUDIT_DB,
-          nowIso,
-          dueSoon,
-        );
-        logger.info("erasure SLA flag", sla);
-      } catch (error) {
-        logger.error("erasure SLA flag failed", {
-          name: (error as Error)?.name,
-        });
-        throw error;
-      }
-
-      // Expired export-bundle cleanup (deferred from the export slice): a bundle is
-      // already deleted from R2 on first download, so this sweeps the rest — a bundle
-      // whose 1-hour TTL passed without ever being downloaded. Idempotent (an R2 delete
-      // is a no-op if the object is already gone); no-ops until EXPORT_BUCKET is bound.
-      if (env.EXPORT_BUCKET) {
-        try {
-          const { results: expiredExports } = await env.MAIN_DB.prepare(
-            "SELECT id, r2_key FROM export_requests WHERE expires_at < ?",
+    const { AUDIT_DB: audit, MAIN_DB: main, EXPORT_BUCKET: bucket } = env;
+    // Each pass runs on its own: one failing pass never skips the others.
+    const passes: PassResult[] = [
+      audit
+        ? await runPass("audit_purge", () =>
+            auditPurge(audit, cutoff, cspCutoff),
           )
-            .bind(nowIso)
-            .all<{ id: number; r2_key: string }>();
-          for (const row of expiredExports) {
-            await env.EXPORT_BUCKET.delete(row.r2_key);
-            await env.MAIN_DB.prepare(
-              "DELETE FROM export_requests WHERE id = ?",
-            )
-              .bind(row.id)
-              .run();
-          }
-          logger.info("expired export cleanup", {
-            purged: expiredExports.length,
-          });
-        } catch (error) {
-          logger.error("expired export cleanup failed", {
-            name: (error as Error)?.name,
-          });
-          throw error;
-        }
-      }
-    }
+        : skipped("audit_purge", "AUDIT_DB unbound"),
+      main
+        ? await runPass("main_purge", () =>
+            mainPurge(main, {
+              consent: consentCutoff,
+              dataRequest: dataRequestCutoff,
+              erasureRequest: erasureRequestCutoff,
+              churnFreeText: churnFreeTextCutoff,
+              churn: churnCutoff,
+              profile: profileCutoff,
+            }),
+          )
+        : skipped("main_purge", "MAIN_DB unbound"),
+      main
+        ? await runPass("erasure_sla", () =>
+            erasureSla(main, audit, nowIso, dueSoon),
+          )
+        : skipped("erasure_sla", "MAIN_DB unbound"),
+      !main
+        ? skipped("export_cleanup", "MAIN_DB unbound")
+        : !bucket
+          ? skipped("export_cleanup", "EXPORT_BUCKET unbound")
+          : await runPass("export_cleanup", () =>
+              exportCleanup(main, bucket, nowIso),
+            ),
+    ];
+    logger.info("cron passes", { passes });
+    await recordRun(audit, nowIso, passes);
+
+    const failed = passes.filter((p) => p.status === "failed");
+    // Cloudflare does not retry a failed cron run — the next hourly tick re-runs every pass.
+    if (failed.length)
+      throw new AggregateError(
+        failed.map((p) => new Error(`${p.name}: ${p.error}`)),
+        `cron: ${failed.length} pass(es) failed`,
+      );
   },
 
   async fetch(): Promise<Response> {

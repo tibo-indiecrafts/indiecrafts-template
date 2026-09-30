@@ -7,7 +7,7 @@ import {
   waitOnExecutionContext,
 } from "cloudflare:test";
 import { beforeAll, describe, expect, it } from "vitest";
-import worker, { type Env, slaDueSoonCutoff } from "./index";
+import worker, { type Env, type PassResult, slaDueSoonCutoff } from "./index";
 
 // Apply the api's db/audit + db/main migrations/*.sql (see vitest.config.ts) before any test runs —
 // the cron shares the api's D1, so tests exercise the real schema.
@@ -605,6 +605,80 @@ describe("scheduled() — erasure SLA flag + expired export cleanup", () => {
         "SELECT id FROM export_requests WHERE r2_key = 'export/future-key'",
       ).first(),
     ).not.toBeNull();
+  });
+});
+
+describe("scheduled() — passes + run history", () => {
+  const NOW = Date.UTC(2026, 0, 15);
+  const tick = async (e: Env = env, at = NOW) => {
+    const ctx = createExecutionContext();
+    const controller = {
+      cron: "0 * * * *",
+      scheduledTime: at,
+      noRetry() {},
+    } as unknown as ScheduledController;
+    await worker.scheduled(controller, e, ctx);
+    await waitOnExecutionContext(ctx);
+  };
+  const lastRun = async () =>
+    env.AUDIT_DB.prepare(
+      "SELECT status, passes FROM cron_runs ORDER BY id DESC LIMIT 1",
+    ).first<{ status: string; passes: string }>();
+
+  it("writes one ok history row with every pass's counts", async () => {
+    await tick();
+    const row = await lastRun();
+    expect(row?.status).toBe("ok");
+    const passes = JSON.parse(row!.passes) as PassResult[];
+    expect(passes.map((p) => [p.name, p.status])).toEqual([
+      ["audit_purge", "ok"],
+      ["main_purge", "ok"],
+      ["erasure_sla", "ok"],
+      ["export_cleanup", "ok"],
+    ]);
+    expect(passes[2].counts).toEqual({ expired: 0, dueSoon: 0, breached: 0 });
+  });
+
+  it("a failing pass does not block the others — history says which, then the tick rejects", async () => {
+    await env.AUDIT_DB.prepare("DROP TABLE csp_reports").run();
+    await env.MAIN_DB.prepare(
+      "INSERT INTO erasure_requests (status, token_hash, token_expires_at, user_id, email_fingerprint, requested_at, due_at) VALUES ('confirmed','h','2026-01-01T00:00:00Z','user-still-flagged','fp','2025-12-01T00:00:00Z','2026-01-01T00:00:00Z')",
+    ).run();
+    await expect(tick()).rejects.toThrow(/1 pass\(es\) failed/);
+    const row = await lastRun();
+    expect(row?.status).toBe("failed");
+    const passes = JSON.parse(row!.passes) as PassResult[];
+    expect(passes[0]).toMatchObject({ name: "audit_purge", status: "failed" });
+    expect(passes[0].error).toBeTruthy();
+    expect(passes[2]).toMatchObject({
+      name: "erasure_sla",
+      status: "ok",
+      counts: { breached: 1 },
+    });
+    expect(row!.passes).not.toMatch(/no such table/); // the error NAME only, never the message
+  });
+
+  it("skips the export cleanup (with a reason) when EXPORT_BUCKET is unbound", async () => {
+    await tick({ ...env, EXPORT_BUCKET: undefined });
+    const passes = JSON.parse((await lastRun())!.passes) as PassResult[];
+    expect(passes[3]).toEqual({
+      name: "export_cleanup",
+      status: "skipped",
+      counts: {},
+      reason: "EXPORT_BUCKET unbound",
+    });
+  });
+
+  it("purges cron_runs past the audit window", async () => {
+    await env.AUDIT_DB.prepare(
+      "INSERT INTO cron_runs (started_at, finished_at, status, passes) VALUES ('2025-01-01T00:00:00Z','2025-01-01T00:00:01Z','ok','[]')",
+    ).run();
+    await tick();
+    expect(
+      await env.AUDIT_DB.prepare(
+        "SELECT id FROM cron_runs WHERE started_at = '2025-01-01T00:00:00Z'",
+      ).first(),
+    ).toBeNull();
   });
 });
 

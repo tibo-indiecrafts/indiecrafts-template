@@ -61,7 +61,8 @@ invocation_logs = true
 # The api's two EU D1s, both bound here read/write so the scheduled passes can enforce
 # retention + settings/erasure/export bookkeeping. Same database_ids the api uses (paste
 # per env) — see code/shared/api/wrangler.toml for what lives in each:
-#   DB      — audit firehose: admin_audit · session_events · security_events · csp_reports.
+#   AUDIT_DB — audit firehose: admin_audit · session_events · security_events · csp_reports ·
+#             cron_runs (one row per tick — the admin "Scheduled jobs" page).
 #   MAIN_DB — identity/rights/settings: consent_events · data_requests · erasure_requests ·
 #             export_requests · site_settings.
 [env.dev]
@@ -76,6 +77,13 @@ database_id = "13e4a91d-ede8-4102-8e9e-010034f6134c"
 binding = "MAIN_DB"
 database_name = "indiecrafts-dev-db-main"
 database_id = "280052ef-726d-43fb-9adb-4821da803627"
+
+# Same bucket the api's POST /v1/export writes to (code/shared/api/wrangler.toml) — the
+# export_cleanup pass sweeps bundles that expired unread. Bind it in every env the api does
+# (`pnpm test:scripts` → wrangler-parity fails otherwise).
+[[env.dev.r2_buckets]]
+binding = "EXPORT_BUCKET"
+bucket_name = "indiecrafts-dev-shared-api-exports"
 
 [env.staging]
 name = "indiecrafts-staging-shared-cron"
