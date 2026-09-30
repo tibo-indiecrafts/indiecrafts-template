@@ -29,6 +29,8 @@ export async function verifyTurnstile(
       {
         method: "POST",
         headers: { "content-type": "application/json" },
+        // A hung verify fails closed (catch below) instead of holding the form open.
+        signal: AbortSignal.timeout(5000),
         body: JSON.stringify({
           secret,
           response: token,

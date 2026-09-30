@@ -3,6 +3,7 @@
  *
  * @see docs/reference/shared/api/src/erasure/clerk-client.md
  */
+import { withTimeout } from "../http";
 import type { ClerkClient } from "@clerk/backend";
 import type { ClerkErasureClient } from "./clerk";
 
@@ -20,18 +21,20 @@ export function createRealClerkClient(
   return {
     async findUserIdByEmail(email) {
       const clerk = await clerkFactory();
-      const { data } = await clerk.users.getUserList({
-        emailAddress: [email.toLowerCase().trim()],
-      });
+      const { data } = await withTimeout(
+        clerk.users.getUserList({ emailAddress: [email.toLowerCase().trim()] }),
+        5000,
+        "clerk",
+      );
       return data[0]?.id ?? null;
     },
     async exportUser(userId) {
       const clerk = await clerkFactory();
-      return clerk.users.getUser(userId);
+      return withTimeout(clerk.users.getUser(userId), 5000, "clerk");
     },
     async deleteUser(userId) {
       const clerk = await clerkFactory();
-      await clerk.users.deleteUser(userId);
+      await withTimeout(clerk.users.deleteUser(userId), 5000, "clerk");
     },
   };
 }

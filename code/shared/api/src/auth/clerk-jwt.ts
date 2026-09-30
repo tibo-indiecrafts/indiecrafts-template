@@ -3,6 +3,7 @@
  *
  * @see docs/reference/shared/api/src/auth/clerk-jwt.md
  */
+import { withTimeout } from "../http";
 import type { VerifyTokenOptions } from "@clerk/backend";
 
 /** The session claims the api reads: the user id, and the factor ages (`fva`) for step-up. */
@@ -20,7 +21,11 @@ export async function verifyClerkClaims(
   if (!token) return null;
   try {
     const { verifyToken } = await import("@clerk/backend");
-    const claims = (await verifyToken(token, options)) as {
+    const claims = (await withTimeout(
+      verifyToken(token, options),
+      5000,
+      "clerk",
+    )) as {
       sub?: unknown;
       fva?: unknown;
     };

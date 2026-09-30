@@ -12,6 +12,7 @@
 // English — these emails are mandatory, so a missing/unreachable Sanity, or an
 // operator setting `enabled: false`, must never stop the send.
 
+import { fetchWithTimeout } from "../http";
 import { defaultLocale, pickLocale } from "@indiecrafts/packages-shared-config";
 
 /** The Env slice this module needs — never the full worker `Env`. */
@@ -130,7 +131,7 @@ async function fetchErasureEmailStrings(
     const query =
       '*[_type=="emailStrings"][0]{ erasureToken{enabled,subject,heading,intro,buttonLabel,outro}, erasureComplete{enabled,subject,heading,intro,outro}, supportEmail, bccAll }';
     const endpoint = `https://${host}/v${version}/data/query/${env.SANITY_DATASET}?query=${encodeURIComponent(query)}`;
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       endpoint,
       token ? { headers: { authorization: `Bearer ${token}` } } : undefined,
     );
@@ -170,7 +171,7 @@ export async function resend(
   const cmsBcc = env.EMAIL_BCC_ALL_ENABLED ? bcc : undefined;
   const bccList = [...new Set([env.EMAIL_ADMIN_BCC, cmsBcc].filter(Boolean))];
 
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetchWithTimeout("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${key}`,

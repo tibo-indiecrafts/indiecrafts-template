@@ -7,6 +7,7 @@
 // Anti-enumeration (spec §8.2): the POST response is IDENTICAL whether or not the
 // email matches a subject, so an attacker cannot use this route to test which
 // emails exist. A row + token email are only ever created for a matched subject.
+import { fetchWithTimeout } from "../http";
 import { logger } from "@indiecrafts/packages-shared-logger";
 import {
   fingerprintEmail,
@@ -57,7 +58,7 @@ async function verifyTurnstile(
   if (!env.TURNSTILE_SECRET) return true;
   if (!token) return false;
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       {
         method: "POST",

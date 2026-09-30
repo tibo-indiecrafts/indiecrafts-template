@@ -36,7 +36,12 @@ import {
   type RawBanner,
   type RawToast,
 } from "@indiecrafts/packages-shared-announcement";
-import { errorFromThrow, finalize, requestIdOf } from "./http";
+import {
+  errorFromThrow,
+  fetchWithTimeout,
+  finalize,
+  requestIdOf,
+} from "./http";
 import { handleErasureRequest } from "./erasure/request";
 import { handleErasureConfirm } from "./erasure/confirm";
 import { handleErasureStatus } from "./erasure/status";
@@ -321,7 +326,7 @@ async function fetchAnnouncementDocs(
     : `${env.SANITY_PROJECT_ID}.apicdn.sanity.io`;
   const query = `{ "banner": ${bannerQuery}, "toast": ${toastQuery} }`;
   const endpoint = `https://${host}/v${version}/data/query/${env.SANITY_DATASET}?query=${encodeURIComponent(query)}`;
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     endpoint,
     token ? { headers: { authorization: `Bearer ${token}` } } : undefined,
   );

@@ -3,6 +3,7 @@
  *
  * @see docs/reference/shared/api/src/erasure/sanity-client.md
  */
+import { fetchWithTimeout } from "../http";
 import type { SanityErasureClient } from "./sanity";
 
 // Real SanityErasureClient over the Sanity HTTP API (the bare Worker can't use
@@ -23,7 +24,7 @@ export function createRealSanityClient(cfg: {
         `${base}/query/${cfg.dataset}?query=${encodeURIComponent(groq)}` +
         `&$type=${encodeURIComponent(JSON.stringify(type))}` +
         `&$email=${encodeURIComponent(JSON.stringify(email.toLowerCase().trim()))}`;
-      const res = await fetch(url, {
+      const res = await fetchWithTimeout(url, {
         headers: cfg.readToken
           ? { authorization: `Bearer ${cfg.readToken}` }
           : {},
@@ -33,7 +34,7 @@ export function createRealSanityClient(cfg: {
       return body.result ?? [];
     },
     async pseudonymise(id, patch) {
-      const res = await fetch(`${base}/mutate/${cfg.dataset}`, {
+      const res = await fetchWithTimeout(`${base}/mutate/${cfg.dataset}`, {
         method: "POST",
         headers: {
           authorization: `Bearer ${cfg.writeToken}`,

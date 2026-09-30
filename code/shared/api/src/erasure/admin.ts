@@ -7,6 +7,7 @@
 // role and writes the admin audit event). A request is stuck when a store failed —
 // always when the Clerk delete failed after its inline retry — so it stays `confirmed`
 // and neither the subject (single-use link) nor the cron can finish it.
+import { withTimeout } from "../http";
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { fingerprintEmail } from "@indiecrafts/packages-shared-security/crypto";
 import { type Env, safeEqual } from "../index";
@@ -34,9 +35,13 @@ async function clerkPrimaryEmail(
   if (!env.CLERK_SECRET_KEY) return { kind: "error" };
   try {
     const { createClerkClient } = await import("@clerk/backend");
-    const user = await createClerkClient({
-      secretKey: env.CLERK_SECRET_KEY,
-    }).users.getUser(userId);
+    const user = await withTimeout(
+      createClerkClient({ secretKey: env.CLERK_SECRET_KEY }).users.getUser(
+        userId,
+      ),
+      5000,
+      "clerk",
+    );
     const email = user.primaryEmailAddress?.emailAddress;
     return email ? { kind: "email", email } : { kind: "error" };
   } catch (error) {
