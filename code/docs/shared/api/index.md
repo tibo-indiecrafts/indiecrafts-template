@@ -67,7 +67,7 @@ threaten identity data.
 | `MAIN_DB`           | D1 (`main`)                       | Identity/rights/settings: `user_profiles` · `consent_events` · `email_preferences` · `data_requests` · `erasure_requests` · `export_requests` · `site_settings` · `churn_events`. |
 | `SECURITY_COUNTERS` | KV                                | Ephemeral TTL failed-login counters (counted at the edge, never per-request in D1).                                                                                               |
 | `EXPORT_BUCKET`     | R2                                | GDPR export bundles (`POST /v1/export`; routes answer 503 until bound).                                                                                                           |
-| `AGENT_RATELIMIT`   | ratelimit (`[[unsafe.bindings]]`) | Native rate limit on every bearer route, per-env `namespace_id`.                                                                                                                  |
+| `RATELIMIT`         | ratelimit (`[[unsafe.bindings]]`) | Native rate limit on every bearer route, per-env `namespace_id`.                                                                                                                  |
 
 **Vars** (`[env.<env>.vars]`, non-secret): `SANITY_PROJECT_ID` · `SANITY_DATASET` ·
 `SANITY_API_VERSION` · `EMAIL_FROM` · `BACKUP_BUCKET` · `BACKUP_RETENTION_DAYS`. Optional:

@@ -278,7 +278,7 @@ The privacy policy (Sanity → Studio, per client) **must** now disclose:
 Before `POST /v1/erasure/request` goes live, the operator must also:
 
 - [ ] Arm `TURNSTILE_SECRET`, the bot gate. It fails **open** when unset.
-- [ ] Bind `AGENT_RATELIMIT`, the rate limit.
+- [ ] Bind `RATELIMIT`, the rate limit.
 
 Without both, an attacker can email-bomb a known subject through the public form.
 

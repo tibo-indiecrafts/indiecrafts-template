@@ -83,8 +83,8 @@ export interface Env {
    *  admin read/write route AND the privileged `/v1/events` kinds (`admin` · `consent` ·
    *  `csp-report`). Server-side only — NEVER ship it in a client bundle. */
   APP_API_TOKEN?: string;
-  /** Cloudflare native rate-limit binding (`[[ratelimit]]` in wrangler.toml). Optional. */
-  AGENT_RATELIMIT?: {
+  /** Cloudflare native rate-limit binding (`[[env.<env>.unsafe.bindings]] name = "RATELIMIT"` in wrangler.toml). Optional. */
+  RATELIMIT?: {
     limit: (o: { key: string }) => Promise<{ success: boolean }>;
   };
   /** The EU D1 (`[[d1_databases]] binding = "AUDIT_DB"`) — append-only telemetry firehose:
@@ -214,8 +214,8 @@ async function rateLimit(
   env: Env,
   cors: Record<string, string>,
 ): Promise<Response | null> {
-  if (!env.AGENT_RATELIMIT) return null;
-  const { success } = await env.AGENT_RATELIMIT.limit({
+  if (!env.RATELIMIT) return null;
+  const { success } = await env.RATELIMIT.limit({
     key: clientIp(request),
   });
   return success ? null : json({ error: "rate_limited" }, 429, cors);
@@ -1243,8 +1243,8 @@ export default {
 
       // Rate-limit the public read before the outbound Sanity fetch (cache-bypassing
       // query strings could otherwise amplify into Sanity). Defence-in-depth behind the WAF.
-      if (env.AGENT_RATELIMIT) {
-        const { success } = await env.AGENT_RATELIMIT.limit({
+      if (env.RATELIMIT) {
+        const { success } = await env.RATELIMIT.limit({
           key: clientIp(request),
         });
         if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS);

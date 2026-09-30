@@ -5,6 +5,11 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **The rate-limit binding is `RATELIMIT`** (was `AGENT_RATELIMIT`, a leftover from the removed
+  agent worker). Same namespace ids, same routes — only the name. Takes effect on the next deploy.
+
 ### Fixed
 
 - **Signed-in routes accept valid Clerk tokens again.** `@clerk/backend` v3 `verifyToken` returns the

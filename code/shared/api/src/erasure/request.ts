@@ -125,11 +125,11 @@ export async function handleErasureRequest(
   // The public erasure-request path must have at least one abuse control — a bot
   // challenge or a rate limit. Neither configured → refuse, rather than run an
   // unthrottled, unchallenged public POST that can email-bomb a known victim.
-  if (!env.TURNSTILE_SECRET && !env.AGENT_RATELIMIT)
+  if (!env.TURNSTILE_SECRET && !env.RATELIMIT)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
 
-  if (env.AGENT_RATELIMIT) {
-    const { success } = await env.AGENT_RATELIMIT.limit({
+  if (env.RATELIMIT) {
+    const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
     if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);

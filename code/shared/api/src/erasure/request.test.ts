@@ -23,7 +23,7 @@ function testEnv(overrides: Partial<Env> = {}): Env {
     GDPR_FINGERPRINT_SALT: SALT,
     // A real deploy has an abuse control on this public path; the default env provides a
     // pass-through rate limiter so the happy-path tests satisfy the fail-closed guard.
-    AGENT_RATELIMIT: { limit: async () => ({ success: true }) },
+    RATELIMIT: { limit: async () => ({ success: true }) },
     ...overrides,
   } as Env;
 }
@@ -183,7 +183,7 @@ describe("POST /v1/erasure/request", () => {
     vi.stubGlobal("fetch", fetchMock);
     const res = await handleErasureRequest(
       postForm({ email: "known@example.com" }),
-      testEnv({ AGENT_RATELIMIT: undefined, TURNSTILE_SECRET: undefined }),
+      testEnv({ RATELIMIT: undefined, TURNSTILE_SECRET: undefined }),
       undefined,
     );
     expect(res.status).toBe(503);

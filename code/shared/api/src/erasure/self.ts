@@ -95,11 +95,11 @@ export async function handleErasureSelf(
   if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
     return json({ error: "too_large" }, 413, PUBLIC_CORS_POST);
 
-  if (env.AGENT_RATELIMIT) {
+  if (env.RATELIMIT) {
     // Key on the caller IP, not the bearer token: a Clerk JWT's leading bytes are
     // identical across users (shared alg/kid/iss), so keying on the token would put
     // every user in one bucket. Matches the /v1/events + request routes.
-    const { success } = await env.AGENT_RATELIMIT.limit({
+    const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
     if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);

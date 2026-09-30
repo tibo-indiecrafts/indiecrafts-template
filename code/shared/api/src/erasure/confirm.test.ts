@@ -209,7 +209,7 @@ describe("POST /v1/erasure/confirm", () => {
       postForm({ token, email: EMAIL }),
       {
         ...testEnv(),
-        AGENT_RATELIMIT: { limit: async () => ({ success: false }) },
+        RATELIMIT: { limit: async () => ({ success: false }) },
       },
       undefined,
       build,

@@ -94,7 +94,7 @@ invocation_logs = true
 # ── Data / AI / integration bindings (one line each — uncomment + fill) ──
 # [ai]                            binding = "AI"                            # Workers AI
 # --- Audit + session sink (POST /v1/events → EU D1) — native rate limit + secrets ------
-# [[unsafe.bindings]]  name = "AGENT_RATELIMIT"  type = "ratelimit"  namespace_id = "1001"  simple = { limit = 20, period = 60 }
+# [[unsafe.bindings]]  name = "RATELIMIT"  type = "ratelimit"  namespace_id = "1001"  simple = { limit = 20, period = 60 }
 # secrets (set out-of-band, never here): `wrangler secret put APP_API_TOKEN --env <env>` + `IP_HASH_SALT`
 # [[vectorize]]                   binding = "VEC"       index_name = "…"    # vector search
 # [[hyperdrive]]                  binding = "PG"        id = "<config id>"  # pooled Postgres
@@ -147,9 +147,9 @@ invocation_logs = true
 name = "indiecrafts-dev-shared-api"
 
 # CF native rate limiter (defence-in-depth behind the WAF /api/* rule). Applied to the
-# public/token write paths in code via `if (env.AGENT_RATELIMIT)`. Per-env namespace_id.
+# public/token write paths in code via `if (env.RATELIMIT)`. Per-env namespace_id.
 [[env.dev.unsafe.bindings]]
-name = "AGENT_RATELIMIT"
+name = "RATELIMIT"
 type = "ratelimit"
 namespace_id = "2001"
 simple = { limit = 20, period = 60 }
@@ -196,7 +196,7 @@ bucket_name = "indiecrafts-dev-shared-api-exports"
 name = "indiecrafts-staging-shared-api"
 
 [[env.staging.unsafe.bindings]]
-name = "AGENT_RATELIMIT"
+name = "RATELIMIT"
 type = "ratelimit"
 namespace_id = "3001"
 simple = { limit = 20, period = 60 }
@@ -229,7 +229,7 @@ id = "PASTE_KV_ID_HERE"
 name = "indiecrafts-prod-shared-api"
 
 [[env.prod.unsafe.bindings]]
-name = "AGENT_RATELIMIT"
+name = "RATELIMIT"
 type = "ratelimit"
 namespace_id = "4001"
 simple = { limit = 20, period = 60 }

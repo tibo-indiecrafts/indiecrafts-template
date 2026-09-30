@@ -162,8 +162,8 @@ export async function handleErasureConfirm(
 
   // Rate-limit by caller IP (consistent with erasure/self + request). Bounds brute force
   // on the confirm token beyond the per-token attempt cap.
-  if (env.AGENT_RATELIMIT) {
-    const { success } = await env.AGENT_RATELIMIT.limit({
+  if (env.RATELIMIT) {
+    const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
     if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);

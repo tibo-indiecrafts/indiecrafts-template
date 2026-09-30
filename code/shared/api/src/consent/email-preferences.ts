@@ -211,8 +211,8 @@ export async function handleEmailPreferences(
   if (!env.MAIN_DB || !env.CLERK_SECRET_KEY)
     return json({ error: "unavailable" }, 503);
 
-  if (env.AGENT_RATELIMIT) {
-    const { success } = await env.AGENT_RATELIMIT.limit({
+  if (env.RATELIMIT) {
+    const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
     if (!success) return json({ error: "rate_limited" }, 429);
@@ -292,8 +292,8 @@ export async function handleTokenPreferences(
   if (!env.MAIN_DB || !env.EMAIL_PREF_SECRET)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
 
-  if (env.AGENT_RATELIMIT) {
-    const { success } = await env.AGENT_RATELIMIT.limit({
+  if (env.RATELIMIT) {
+    const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
     if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);
@@ -381,8 +381,8 @@ export async function handleOneClickUnsubscribe(
   if (!env.MAIN_DB || !env.EMAIL_PREF_SECRET)
     return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
 
-  if (env.AGENT_RATELIMIT) {
-    const { success } = await env.AGENT_RATELIMIT.limit({
+  if (env.RATELIMIT) {
+    const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
     if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);

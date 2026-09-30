@@ -92,9 +92,9 @@ export async function handleExport(
   if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
     return json({ error: "too_large" }, 413, PUBLIC_CORS_POST);
 
-  if (env.AGENT_RATELIMIT) {
+  if (env.RATELIMIT) {
     // Key on the caller IP, not the bearer token — matches erasure/self.ts.
-    const { success } = await env.AGENT_RATELIMIT.limit({
+    const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
     if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);

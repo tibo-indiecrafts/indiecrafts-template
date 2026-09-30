@@ -66,8 +66,8 @@ export async function handleMarketingConsent(
   if (!env.MAIN_DB || !env.CLERK_SECRET_KEY)
     return json({ error: "unavailable" }, 503);
 
-  if (env.AGENT_RATELIMIT) {
-    const { success } = await env.AGENT_RATELIMIT.limit({
+  if (env.RATELIMIT) {
+    const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
     if (!success) return json({ error: "rate_limited" }, 429);
