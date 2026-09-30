@@ -152,7 +152,8 @@ describe("POST /v1/cron/run", () => {
       headers: auth,
     });
     expect(res.status).toBe(503);
-    expect(await res.json()).toEqual({ error: "cron_unbound" });
+    // The outer fetch adds message + requestId to every error body.
+    expect(await res.json()).toMatchObject({ error: "cron_unbound" });
   });
 });
 
