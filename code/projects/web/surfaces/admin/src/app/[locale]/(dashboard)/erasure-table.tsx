@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Render open GDPR erasure requests by deadline, then the recently closed ones.
+ * Render open GDPR erasure requests by deadline with their actions, then the recently closed ones.
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/erasure-table.md
  */
@@ -17,6 +17,7 @@ import {
   TableCell,
 } from "@indiecrafts/packages-web-ui/web/table";
 import type { ErasureRequests, ErasureRow } from "@/lib/monitoring";
+import { ErasureRowActions } from "./erasure-row-actions";
 
 const stateVariant = (state: ErasureRow["state"]) =>
   state === "breached"
@@ -27,7 +28,7 @@ const stateVariant = (state: ErasureRow["state"]) =>
 
 const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "—");
 
-function Rows({ rows, empty }: { rows: ErasureRow[]; empty: string }) {
+function Rows({ rows, empty, actions }: { rows: ErasureRow[]; empty: string; actions: boolean }) {
   const t = useTranslations("admin.erasure");
   if (rows.length === 0) return <p className="text-muted-foreground">{empty}</p>;
   return (
@@ -40,6 +41,7 @@ function Rows({ rows, empty }: { rows: ErasureRow[]; empty: string }) {
           <TableHead>{t("due")}</TableHead>
           <TableHead>{t("stateLabel")}</TableHead>
           <TableHead>{t("flagged")}</TableHead>
+          <TableHead>{actions ? t("actionsLabel") : t("noteLabel")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -55,6 +57,13 @@ function Rows({ rows, empty }: { rows: ErasureRow[]; empty: string }) {
             <TableCell className="tabular-nums">
               {when(r.breachFlaggedAt ?? r.dueFlaggedAt)}
             </TableCell>
+            <TableCell className="max-w-xs text-sm">
+              {actions ? (
+                <ErasureRowActions id={r.id} status={r.status} />
+              ) : (
+                <span className="text-muted-foreground">{r.note ?? "—"}</span>
+              )}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -62,17 +71,17 @@ function Rows({ rows, empty }: { rows: ErasureRow[]; empty: string }) {
   );
 }
 
-/** Read-only erasure monitoring: open requests (soonest deadline first) + recently closed.
- *  No identifiers — the erasure engine does the work; this view watches the deadline. */
+/** Erasure monitoring + actions: open requests (soonest deadline first) with Retry / Close
+ *  manually, then recently closed ones with their manual-close note. No identifiers. */
 export function ErasureTable({ data }: { data: ErasureRequests | null }) {
   const t = useTranslations("admin.erasure");
   if (!data) return <p className="text-destructive mt-6">{t("unreachable")}</p>;
   return (
     <div className="mt-6 flex flex-col gap-6">
       <h3 className="text-foreground font-semibold">{t("open")}</h3>
-      <Rows rows={data.open} empty={t("empty")} />
+      <Rows rows={data.open} empty={t("empty")} actions />
       <h3 className="text-foreground font-semibold">{t("recentClosed")}</h3>
-      <Rows rows={data.recentClosed} empty={t("emptyClosed")} />
+      <Rows rows={data.recentClosed} empty={t("emptyClosed")} actions={false} />
     </div>
   );
 }

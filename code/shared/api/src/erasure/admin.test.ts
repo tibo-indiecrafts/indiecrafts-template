@@ -273,5 +273,9 @@ describe("routes", () => {
       open: { id: number }[];
     };
     expect(list.open.map((r) => r.id)).not.toContain(id);
+    expect(list.recentClosed.find((r) => r.id === id)).toMatchObject({
+      status: "closed_manual",
+      note: "duplicate request",
+    });
   });
 });

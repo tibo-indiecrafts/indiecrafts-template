@@ -37,6 +37,8 @@ export type ErasureRow = {
   state: "breached" | "dueSoon" | "onTrack" | "closed";
   dueFlaggedAt: string | null;
   breachFlaggedAt: string | null;
+  /** The operator's note when closed by hand ("Close manually"). */
+  note: string | null;
 };
 
 /** `GET /v1/erasure-requests` — no identifiers, by design. */

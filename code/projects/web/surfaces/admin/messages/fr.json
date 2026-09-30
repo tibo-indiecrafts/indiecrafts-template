@@ -254,6 +254,16 @@
       "runStatus": {
         "ok": "OK",
         "failed": "Échec"
+      },
+      "runNow": "Lancer maintenant",
+      "running": "En cours…",
+      "runDone": "Exécution terminée — toutes les étapes OK.",
+      "runFailed": "Exécution terminée avec une étape en échec — voir le tableau.",
+      "runErrors": {
+        "forbidden": "Il faut le rôle administrateur.",
+        "unreachable": "L'API est injoignable.",
+        "failed": "Une erreur est survenue.",
+        "cron_unbound": "L'api n'a pas de liaison CRON dans cet environnement."
       }
     },
     "erasure": {
@@ -275,7 +285,37 @@
       "flagged": "Signalée",
       "empty": "Aucune demande ouverte.",
       "emptyClosed": "Aucune demande clôturée.",
-      "unreachable": "API injoignable ou non configurée"
+      "unreachable": "API injoignable ou non configurée",
+      "actionsLabel": "Actions",
+      "noteLabel": "Note",
+      "actions": {
+        "retry": "Relancer l'effacement",
+        "close": "Clôturer manuellement",
+        "retryDone": "Effacement terminé — la personne a été prévenue.",
+        "retryPartial": "Effacement lancé, mais certains stockages ont encore échoué.",
+        "emailRequired": "Saisissez l'e-mail de la personne pour relancer — il est vérifié contre la demande et jamais conservé.",
+        "emailLabel": "E-mail de la personne",
+        "closeTitle": "Clôturer la demande n°{id} manuellement",
+        "closeDescription": "À utiliser quand la demande a été traitée hors du système (par exemple effacée à la main, ou en double). La note sert de trace.",
+        "noteLabel": "Pourquoi est-elle clôturée ?",
+        "notePlaceholder": "ex. Effacée à la main dans Sanity le 30 sept.",
+        "cancel": "Annuler",
+        "closeConfirm": "Clôturer la demande",
+        "closeDone": "Demande clôturée.",
+        "errors": {
+          "forbidden": "Il faut le rôle administrateur.",
+          "invalid": "Demande invalide.",
+          "unreachable": "L'API est injoignable.",
+          "failed": "Une erreur est survenue.",
+          "email_required": "L'e-mail de la personne est requis.",
+          "email_mismatch": "Cet e-mail ne correspond pas à cette demande.",
+          "not_retryable": "Seule une demande confirmée (bloquée) peut être relancée.",
+          "clerk_failed": "Clerk refuse encore la suppression du compte — réessayez plus tard.",
+          "not_found": "Demande introuvable.",
+          "note_required": "Écrivez une note de 5 à 500 caractères.",
+          "not_open": "Cette demande est déjà clôturée."
+        }
+      }
     }
   }
 }

@@ -116,12 +116,13 @@ type ErasureRow = {
   token_expires_at: string;
   due_flagged_at: string | null;
   breach_flagged_at: string | null;
+  note: string | null;
 };
 
 /** Explicit columns — never email_fingerprint / user_id: the view monitors the deadline,
  *  the erasure engine does the work. */
 const ERASURE_COLS =
-  "id, status, requested_at, due_at, token_expires_at, due_flagged_at, breach_flagged_at";
+  "id, status, requested_at, due_at, token_expires_at, due_flagged_at, breach_flagged_at, json_extract(result, '$.manualClose.note') AS note";
 
 /** `GET /v1/erasure-requests` — open requests by deadline (soonest first) + the 20 most
  *  recently requested closed ones. */
@@ -147,6 +148,8 @@ export async function erasureRequests(
     ),
     dueFlaggedAt: r.due_flagged_at,
     breachFlaggedAt: r.breach_flagged_at,
+    // The operator's note when the request was closed by hand (admin "Close manually").
+    note: r.note,
   });
   const open = await env.MAIN_DB.prepare(
     `SELECT ${ERASURE_COLS} FROM erasure_requests WHERE ${OPEN} ORDER BY due_at ASC LIMIT 200`,

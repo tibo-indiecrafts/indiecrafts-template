@@ -22,6 +22,7 @@ import {
   type CronStatus,
   type PassResult,
 } from "@/lib/monitoring";
+import { RunCronButton } from "./run-cron-button";
 
 const passVariant = (p: PassResult) =>
   p.status === "failed"
@@ -89,7 +90,10 @@ export function CronRunsTable({ status }: { status: CronStatus | null }) {
         </div>
       </dl>
 
-      <h3 className="text-foreground font-semibold">{t("runs")}</h3>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="text-foreground font-semibold">{t("runs")}</h3>
+        <RunCronButton />
+      </div>
       {!status || status.runs.length === 0 ? (
         <p className="text-muted-foreground">{t("empty")}</p>
       ) : (

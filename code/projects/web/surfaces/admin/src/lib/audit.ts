@@ -21,7 +21,10 @@ export async function audit(
     | "admin.grant"
     | "admin.revoke"
     | "admin.revoke_session"
-    | "admin.revoke_user_sessions",
+    | "admin.revoke_user_sessions"
+    | "admin.erasure_retry"
+    | "admin.erasure_close"
+    | "admin.cron_run",
   fields: { actor: string; target: string },
 ): Promise<void> {
   const url = process.env.API_URL;

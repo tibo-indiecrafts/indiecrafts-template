@@ -254,6 +254,16 @@
       "runStatus": {
         "ok": "OK",
         "failed": "Failed"
+      },
+      "runNow": "Run now",
+      "running": "Running…",
+      "runDone": "Run finished — all passes OK.",
+      "runFailed": "Run finished with a failed pass — see the table.",
+      "runErrors": {
+        "forbidden": "You need the admin role.",
+        "unreachable": "The API is unreachable.",
+        "failed": "Something went wrong.",
+        "cron_unbound": "The api has no CRON binding in this environment."
       }
     },
     "erasure": {
@@ -275,7 +285,37 @@
       "flagged": "Flagged",
       "empty": "No open requests.",
       "emptyClosed": "No closed requests yet.",
-      "unreachable": "API unreachable or not configured"
+      "unreachable": "API unreachable or not configured",
+      "actionsLabel": "Actions",
+      "noteLabel": "Note",
+      "actions": {
+        "retry": "Retry erasure",
+        "close": "Close manually",
+        "retryDone": "Erasure completed — the subject was notified.",
+        "retryPartial": "Erasure ran, but some stores still failed.",
+        "emailRequired": "Enter the subject's email to retry — it is checked against the request and never stored.",
+        "emailLabel": "Subject's email",
+        "closeTitle": "Close request #{id} manually",
+        "closeDescription": "Use this when the request was handled outside the system (for example erased by hand, or a duplicate). The note is kept as the record.",
+        "noteLabel": "Why is it closed?",
+        "notePlaceholder": "e.g. Erased by hand in Sanity on 30 Sept",
+        "cancel": "Cancel",
+        "closeConfirm": "Close request",
+        "closeDone": "Request closed.",
+        "errors": {
+          "forbidden": "You need the admin role.",
+          "invalid": "Invalid request.",
+          "unreachable": "The API is unreachable.",
+          "failed": "Something went wrong.",
+          "email_required": "The subject's email is required.",
+          "email_mismatch": "That email does not match this request.",
+          "not_retryable": "Only a confirmed (stuck) request can be retried.",
+          "clerk_failed": "Clerk still refuses the account deletion — try again later.",
+          "not_found": "Request not found.",
+          "note_required": "Write a note of 5 to 500 characters.",
+          "not_open": "This request is already closed."
+        }
+      }
     }
   }
 }
