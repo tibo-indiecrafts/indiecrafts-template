@@ -76,6 +76,7 @@ describe("EmailPreferences", () => {
       expect(write).toHaveBeenCalledWith([{ key: "marketing", granted: true }]),
     );
     expect(marketingSwitch).toHaveAttribute("aria-checked", "true");
+    await waitFor(() => expect(marketingSwitch).toBeEnabled()); // saving flag cleared
   });
 
   it("rolls back the switch and shows an error when the write fails", async () => {
@@ -90,5 +91,6 @@ describe("EmailPreferences", () => {
 
     await waitFor(() => expect(marketingSwitch).toHaveAttribute("aria-checked", "false"));
     expect(screen.getByRole("alert")).toHaveTextContent(chrome.error);
+    await waitFor(() => expect(marketingSwitch).toBeEnabled()); // saving flag cleared on failure too
   });
 });

@@ -99,13 +99,14 @@ export function EmailPreferences({ read, write, chrome }: EmailPreferencesProps)
           cs.map((c) => (c.key === key ? { ...c, granted: !granted } : c)),
         );
         setSaveError(true);
-      } finally {
-        setSavingKeys((s) => {
-          const next = new Set(s);
-          next.delete(key);
-          return next;
-        });
       }
+      // After try/catch, not in `finally`: the React Compiler can't lower a `finally`
+      // clause, and the catch never rethrows, so this always runs.
+      setSavingKeys((s) => {
+        const next = new Set(s);
+        next.delete(key);
+        return next;
+      });
     },
     [write],
   );
