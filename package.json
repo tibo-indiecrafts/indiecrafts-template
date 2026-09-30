@@ -9,6 +9,7 @@
   "scripts": {
     "predev": "node code/shared/scripts/dev/doctor.mjs",
     "dev": "turbo run dev --filter=@indiecrafts/web-surfaces-website --filter=@indiecrafts/shared-api --filter=@indiecrafts/shared-cron --filter=@indiecrafts/shared-workers",
+    "dev:remote": "turbo run dev:remote --filter=@indiecrafts/shared-api --filter=@indiecrafts/shared-cron --filter=@indiecrafts/shared-workers",
     "dev:doctor": "node code/shared/scripts/dev/doctor.mjs",
     "dev:doctor:deep": "node code/shared/scripts/dev/doctor.mjs --deep",
     "dev:setup": "node code/shared/scripts/dev/setup.mjs",
@@ -88,6 +89,7 @@
     "db:migrate:main:dev": "node code/shared/scripts/data/migrate.mjs main dev",
     "db:migrate:main:staging": "node code/shared/scripts/data/migrate.mjs main staging",
     "db:migrate:main:prod": "node code/shared/scripts/data/migrate.mjs main prod",
+    "db:migrate:local": "node code/shared/scripts/data/migrate-local.mjs",
     "db:migrate:all:dev": "node code/shared/scripts/data/migrate.mjs --all dev",
     "db:migrate:all:staging": "node code/shared/scripts/data/migrate.mjs --all staging",
     "db:migrate:all:prod": "node code/shared/scripts/data/migrate.mjs --all prod",

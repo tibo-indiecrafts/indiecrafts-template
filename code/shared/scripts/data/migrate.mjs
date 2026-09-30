@@ -5,8 +5,8 @@
 //   node scripts/data/migrate.mjs <name>|--all <dev|staging|prod> [--dry-run] [--no-backup] [--yes]
 //
 // TIERS: dev/staging/prod are all REAL remote Cloudflare D1s (`--env <env> --remote`).
-// There is no miniflare tier — local dev runs against the dev D1 too (`wrangler dev
-// --remote`), so `pnpm dev` and `db:migrate:*:dev` share the one dev database. A
+// Local `pnpm dev` uses its own local state instead — migrate it with `pnpm db:migrate:local`
+// (`data/migrate-local.mjs`); `pnpm dev:remote` runs the Workers on the real dev D1. A
 // pre-migration R2 snapshot runs FIRST (via `backup.mjs --remote`) so a bad migration is
 // recoverable; a FAILED snapshot ABORTS the migration (fail-closed). `--no-backup` opts
 // out. A prod migration asks to confirm first (skipped under CI or `--yes`).

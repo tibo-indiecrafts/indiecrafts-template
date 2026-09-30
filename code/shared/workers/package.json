@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev --env dev --remote --port 8790 --inspector-port 9232",
+    "dev": "wrangler dev --env dev --port 8790 --inspector-port 9232 --persist-to ../../../.wrangler/state",
+    "dev:remote": "wrangler dev --env dev --remote --port 8790 --inspector-port 9232",
     "cf-typegen": "wrangler types",
     "tsc": "tsc --noEmit",
     "test": "vitest run",

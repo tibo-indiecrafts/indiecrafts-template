@@ -1,10 +1,11 @@
-// dev:setup — one-shot bootstrap for the remote-dev loop. Takes a fresh clone from
-// "cloned" to "pnpm dev works against remote dev":
+// dev:setup — one-shot bootstrap. Takes a fresh clone from "cloned" to "pnpm dev works
+// locally and pnpm dev:remote works against the real dev env":
 //   1. verify Cloudflare login,
 //   2. scaffold each worker's `.dev.vars` from its `.dev.vars.example` (YOU fill the
 //      secret VALUES — this never writes them),
 //   3. once every `.dev.vars` is filled, deploy every Cloudflare app to dev, which
-//      migrates its D1 + deploys + syncs secrets (worker.mjs / next.mjs).
+//      migrates its D1 + deploys + syncs secrets (worker.mjs / next.mjs),
+//   4. migrate the LOCAL D1 state `pnpm dev` uses (`pnpm db:migrate:local`).
 // If any `.dev.vars` is missing or still on placeholder values it STOPS at step 2 so you
 // can fill secrets first, then re-run.
 //
@@ -84,4 +85,10 @@ console.log(
   "\n▶ Deploying all Cloudflare apps to dev (migrate + deploy + secrets)…",
 );
 run("pnpm", ["deploy:all:dev"]);
-console.log("\n✓ Remote dev is set up. Run  pnpm dev  to work against it.");
+
+// 4. Local dev state — the D1s `pnpm dev` runs on (shared by api, cron and workers).
+console.log("\n▶ Migrating the local D1 state for pnpm dev…");
+run("pnpm", ["db:migrate:local"]);
+console.log(
+  "\n✓ Set up. Run  pnpm dev  (local state) or  pnpm dev:remote  (the real dev env).",
+);

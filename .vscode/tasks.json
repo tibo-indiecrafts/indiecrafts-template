@@ -28,6 +28,21 @@
       "problemMatcher": []
     },
     {
+      "label": "dev:remote",
+      "detail": "run the api, cron and workers on the REAL dev bindings (wrangler dev --remote)",
+      "type": "shell",
+      "command": "pnpm dev:remote",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "db:migrate:local",
+      "detail": "apply the D1 migrations to the local state pnpm dev uses (.wrangler/state)",
+      "type": "shell",
+      "command": "pnpm db:migrate:local",
+      "problemMatcher": []
+    },
+    {
       "label": "dev:doctor:deep",
       "detail": "dev:doctor + remote D1 migration-drift check (network)",
       "type": "shell",
