@@ -58,6 +58,9 @@ async function postApi(
       },
       body: body === undefined ? undefined : JSON.stringify(body),
       cache: "no-store",
+      // A cron tick or an erasure retry (Clerk + Sanity + D1 + email) can outlast apiFetch's
+      // 10 s default — and a client abort may cancel the work half-way.
+      timeoutMs: 60_000,
     });
     return {
       status: res.status,

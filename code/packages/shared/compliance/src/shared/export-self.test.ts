@@ -25,6 +25,11 @@ describe("requestExport", () => {
     expect((init as RequestInit).headers).toMatchObject({
       authorization: "Bearer tkn",
     });
+    // The export runs cross-origin from the browser: an Idempotency-Key header would fail the
+    // CORS preflight, and the api never stores an export answer (it holds a live download link).
+    expect(
+      (init as { headers: Record<string, string> }).headers["idempotency-key"],
+    ).toBeUndefined();
   });
   it("200 without downloadUrl → { ok: false }", async () => {
     stubFetch(200, {});

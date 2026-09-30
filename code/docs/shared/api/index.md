@@ -105,14 +105,16 @@ The five rules every route meets (api brief, "Production-ready contract"; QA car
   **20 requests per 60 s per client IP** (the native `RATELIMIT` binding). A `429 rate_limited` carries
   `Retry-After: 60` and `RateLimit-Policy: 20;w=60`. Cloudflare's limiter reports allowed/denied only,
   so there is no "remaining" header.
-- **Duplicates are safe.** `POST /v1/events` and `POST /v1/export` accept an `Idempotency-Key`
-  (1–255 printable characters). A retry with the same key replays the stored answer
-  (`Idempotent-Replayed: true`) for 24 h; the same key with another body is `422
-idempotency_key_reused`; a key whose first request still runs is `409 idempotency_in_progress`. A key
-  never crosses callers (the scope hashes the `authorization` header). A 5xx or 429 is not stored. The
-  other writes are idempotent by key already (`ON CONFLICT` / `INSERT OR IGNORE`, the Svix id).
-  First-party callers use `apiFetch` (`@indiecrafts/packages-shared-utils/api-fetch`), which adds the
-  key and retries once.
+- **Duplicates are safe.** `POST /v1/events` accepts an `Idempotency-Key` (1–255 printable
+  characters) from a caller holding the server bearer, with a body inside the 4 KB cap. A retry with
+  the same key replays the stored answer (`Idempotent-Replayed: true`) for 24 h; the same key with
+  another body is `422 idempotency_key_reused`; a key whose first request still runs is
+  `409 idempotency_in_progress` — unless it has been unfinished for 30 s (a first attempt cut off
+  mid-flight), when the retry takes it over. A 5xx, 429 or throw releases the key. The table holds
+  hashes and the `{ ok }` answer only. `POST /v1/export` is **not** covered: its answer is a live
+  single-use download link that must never be stored — a retried export makes a second bundle (1 h
+  TTL). The other writes are idempotent by key already (`ON CONFLICT` / `INSERT OR IGNORE`, the Svix
+  id). First-party callers use `apiFetch` (`@indiecrafts/packages-shared-utils/api-fetch`).
 - **Every outbound call has a timeout** — 5 s for Resend, Sanity, Turnstile and every Clerk call
   (`fetchWithTimeout` / `withTimeout` in `src/http.ts`); `apiFetch` gives callers 10 s. A guard test
   fails on a new bare `fetch(`.

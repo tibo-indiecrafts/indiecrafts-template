@@ -19,7 +19,6 @@ export async function requestExport(input: {
     const token = await input.getToken();
     const res = await apiFetch(`${input.apiUrl}/v1/export`, {
       method: "POST",
-      idempotent: true,
       headers: {
         ...(token ? { authorization: `Bearer ${token}` } : {}),
       },

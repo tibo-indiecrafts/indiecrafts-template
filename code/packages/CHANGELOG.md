@@ -18,7 +18,8 @@ Changed · Deprecated · Removed · Fixed**.
   a 10 s timeout and one retry on a network error, timeout, 5xx or 429 (Retry-After or jittered
   backoff), never on another 4xx. A POST retries only when marked `idempotent`, with an
   `Idempotency-Key` kept across the retry. `web/auth`, `web/compliance`, `web/security-reports` and
-  `shared/compliance` send their events / export through it.
+  `shared/compliance` use it — the event senders marked idempotent, the export timeout-only (its
+  answer is a live download link, never replayed).
 - **security — Turnstile verify times out after 5 s** (fails closed).
 
 ### Fixed

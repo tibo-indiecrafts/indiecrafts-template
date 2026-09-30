@@ -106,6 +106,67 @@ describe("Idempotency-Key on POST /v1/events", () => {
     expect(retried.headers.get("idempotent-replayed")).toBeNull();
   });
 
+  it("I1: an unauthenticated request never reserves a key", async () => {
+    const res = await SELF.fetch("https://api.test/v1/events", {
+      method: "POST",
+      headers: {
+        authorization: "Bearer junk",
+        "content-type": "application/json",
+        "idempotency-key": "k-i1",
+      },
+      body: event("qa.idem.i1"),
+    });
+    expect(res.status).toBe(401);
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT key FROM idempotency_keys WHERE key = 'k-i1'",
+    ).first();
+    expect(row).toBeNull();
+  });
+
+  it("I1: a body over the size cap never reserves a key", async () => {
+    const res = await post(
+      JSON.stringify({ kind: "admin", pad: "x".repeat(70_000) }),
+      { "idempotency-key": "k-big" },
+    );
+    expect(res.status).toBe(413);
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT key FROM idempotency_keys WHERE key = 'k-big'",
+    ).first();
+    expect(row).toBeNull();
+  });
+
+  it("I2: /v1/export is not idempotency-wrapped — its download link is never stored", async () => {
+    const req = new Request("https://api.test/v1/export", {
+      method: "POST",
+      headers: { authorization: "Bearer jwt", "idempotency-key": "k-export" },
+    });
+    const res = await withIdempotency(req, env as unknown as Env, async () =>
+      Response.json({
+        ok: true,
+        downloadUrl: "https://api.test/v1/export/download?token=secret",
+      }),
+    );
+    expect(res.status).toBe(200);
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT body FROM idempotency_keys WHERE key = 'k-export'",
+    ).first();
+    expect(row).toBeNull();
+  });
+
+  it("I4: a key left unfinished (the first attempt was cut off) is taken over after 30 s", async () => {
+    const body = event("qa.idem.i4");
+    const first = await post(body, { "idempotency-key": "k-i4" });
+    expect(first.status).toBe(201);
+    await env.AUDIT_DB.prepare(
+      "UPDATE idempotency_keys SET status = NULL, body = NULL, created_at = ? WHERE key = 'k-i4'",
+    )
+      .bind(new Date(Date.now() - 60_000).toISOString())
+      .run();
+    const retry = await post(body, { "idempotency-key": "k-i4" });
+    expect(retry.status).toBe(201);
+    expect(retry.headers.get("idempotent-replayed")).toBeNull();
+  });
+
   it("without a key, every request runs (two rows)", async () => {
     await post(event("qa.idem.7"));
     await post(event("qa.idem.7"));

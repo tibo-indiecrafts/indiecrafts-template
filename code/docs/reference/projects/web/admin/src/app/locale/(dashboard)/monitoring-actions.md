@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Each action re-checks the admin role on the server (never trusted from the client), calls a bearer-gated api route with the server-side token, and writes an admin audit event (`admin.erasure_retry` / `admin.erasure_close` with target `erasure:<id>`, `admin.cron_run` with target `cron`). They return `{ ok: true, … }` or `{ ok: false, error }` and never throw to the client. A non-admin gets `forbidden` with no api call and no audit. Every authorized attempt is audited, whether or not the api answered — a lost response may still have acted.
+Each action re-checks the admin role on the server (never trusted from the client), calls a bearer-gated api route with the server-side token, and writes an admin audit event (`admin.erasure_retry` / `admin.erasure_close` with target `erasure:<id>`, `admin.cron_run` with target `cron`). The api calls go through `apiFetch` with a 60 s timeout and no retry (a tick or an erasure can outlast 10 s, and a retry could act twice). They return `{ ok: true, … }` or `{ ok: false, error }` and never throw to the client. A non-admin gets `forbidden` with no api call and no audit. Every authorized attempt is audited, whether or not the api answered — a lost response may still have acted.
 
 ## Exports
 

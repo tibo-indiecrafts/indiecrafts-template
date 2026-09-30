@@ -10,8 +10,9 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 - **The production contract (QA card 20).** Every response carries `X-Request-Id` (the `cf-ray`);
   every error is `{ error, message, requestId }`; a `rate_limited` 429 carries `Retry-After: 60` and
   `RateLimit-Policy: 20;w=60`; an uncaught throw is `500 internal` and a missing table
-  `503 schema_behind` instead of a raw runtime 500. `POST /v1/events` and `/v1/export` accept an
-  `Idempotency-Key` (24 h replay, audit migration `0005`). Every outbound call (Resend, Sanity,
+  `503 schema_behind` instead of a raw runtime 500. `POST /v1/events` accepts an `Idempotency-Key`
+  from the server bearer (24 h replay, audit migration `0005`; the export is never stored — its
+  answer is a live download link). Every outbound call (Resend, Sanity,
   Turnstile, Clerk) times out after 5 s. The authed `/health` reports both D1s (it only checked
   `AUDIT_DB`), the build the deploy stamps (`BUILD_VERSION`, `BUILD_COMMIT`) and the bindings. The
   `/v1` versioning policy is written ([API versioning](../../docs/shared/api/versioning.md)).

@@ -147,6 +147,14 @@ Every hourly tick writes one `cron_runs` row (`audit` D1): timings, `ok`/`failed
 pass's counts plus an error **name** or skip reason — no personal data. Purged at
 `retention.audit_days` (90 days, about 2,160 rows).
 
+## Idempotency keys
+
+A retried `POST /v1/events` with the same `Idempotency-Key` replays the stored answer instead of
+writing a second row. `idempotency_keys` (`audit` D1) holds a SHA-256 of the caller's bearer and of
+the request body, plus the route's answer (`{ "ok": true }`) — never the request itself. Only the
+server bearer can create a row. The cron's `audit_purge` deletes rows after **24 hours**. The data
+export is never stored here: its answer carries a live download link.
+
 ## Global admin BCC (transactional email)
 
 Setting `EMAIL_ADMIN_BCC` (an env var, read by both send layers) copies **every**
