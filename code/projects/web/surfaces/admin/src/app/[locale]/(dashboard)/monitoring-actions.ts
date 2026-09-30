@@ -25,12 +25,14 @@ export type RetryResult =
       | "clerk_email_changed"
       | "clerk_unavailable"
       | "unavailable"
+      | "changed"
       | "not_found"
     >;
 export type CloseResult =
   { ok: true } | Fail<"note_required" | "not_open" | "not_found">;
 export type RunResult =
-  { ok: true; status: "ok" | "failed" } | Fail<"cron_unbound">;
+  | { ok: true; status: "ok" | "failed" }
+  | Fail<"cron_unbound" | "cron_unreachable">;
 
 /** The caller must be a signed-in admin (checked on the server, never trusted from the client). */
 async function adminId(): Promise<string | null> {
@@ -96,6 +98,7 @@ export async function retryErasure(
     "clerk_email_changed",
     "clerk_unavailable",
     "unavailable",
+    "changed",
     "not_found",
   ] as const;
   const error = known.find((k) => k === res.data.error);
@@ -130,10 +133,13 @@ export async function runCronNow(): Promise<RunResult> {
   const actor = await adminId();
   if (!actor) return { ok: false, error: "forbidden" };
   const res = await postApi("/v1/cron/run");
-  if (!res) return { ok: false, error: "unreachable" };
   await audit("admin.cron_run", { actor, target: "cron" });
-  if (res.data.error === "cron_unbound")
-    return { ok: false, error: "cron_unbound" };
+  if (!res) return { ok: false, error: "unreachable" };
+  if (
+    res.data.error === "cron_unbound" ||
+    res.data.error === "cron_unreachable"
+  )
+    return { ok: false, error: res.data.error };
   if (res.data.status === "ok" || res.data.status === "failed")
     return { ok: true, status: res.data.status };
   return { ok: false, error: "failed" };

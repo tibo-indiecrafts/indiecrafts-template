@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-Retry shows only on a `confirmed` (stuck) request. When the api answers `email_required`, an email field appears; the typed email goes to the server action once and is never kept. Close manually opens a dialog with a required note (5–500 characters) and a destructive confirm button. Both show a toast with the outcome and refresh the page.
+Retry shows only on a `confirmed` (stuck) request. When the api answers `email_required`, an email field appears; the typed email goes to the server action once and is never kept. Close manually opens a dialog with a required note (5–500 characters) and a destructive confirm button. Both show a toast with the outcome and refresh the page. Keyboard and screen reader: each button carries a visually hidden "— request #<id>", so a list of identical buttons stays distinguishable; the email field takes focus when it appears; the row is a form, so Enter in the field retries.
 
 ## Exports
 

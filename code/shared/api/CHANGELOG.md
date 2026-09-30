@@ -16,6 +16,16 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   new `CRON` service binding. The confirm route and the retry share one execution path
   (`erasure/execute.ts`).
 
+### Fixed
+
+- **Erasure runs never overwrite each other.** The final row update lands only if the request is
+  unchanged since it was read: a manual close during a retry stands (`409 changed`), and of two
+  concurrent retries or confirms only the first records the outcome and emails the subject.
+- **A partial erasure emails the subject once.** A retry that still leaves a store failing no longer
+  resends the completion email or a second audit row; the final full run sends the last email.
+- **Run now fails cleanly.** `POST /v1/cron/run` answers `502 cron_unreachable` when the cron throws or
+  answers non-JSON, instead of an uncaught 500.
+
 ### Added
 
 - **`GET /v1/cron/status` + `GET /v1/erasure-requests`** (bearer-gated, read-only) for the admin

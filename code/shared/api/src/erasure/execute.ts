@@ -20,6 +20,10 @@ export type ErasureRow = {
   id: number;
   user_id: string | null;
   email_fingerprint: string;
+  /** Status + receipt as the caller read them — the final update only lands if both are
+   *  unchanged, so a concurrent run or a manual close is never overwritten. */
+  status: string;
+  result: string | null;
 };
 
 export type ExecuteDeps = {
@@ -38,7 +42,19 @@ export type ExecuteResult = {
   /** The Clerk user still exists — the one global session kill-switch did not fire. */
   clerkFailed: boolean;
   errors: unknown[];
+  /** False when the row changed during the run (a concurrent run or a manual close): the
+   *  outcome was not recorded and no audit row or email went out. */
+  recorded: boolean;
 };
+
+/** When a previous run already sent the completion email (a partial run), or undefined. */
+function notifiedAt(result: string | null): string | undefined {
+  try {
+    return (JSON.parse(result ?? "{}") as { notifiedAt?: string }).notifiedAt;
+  } catch {
+    return undefined;
+  }
+}
 
 /** A short, factual summary of what stays and why — sent in the completion email. */
 function retainedSummary(hadErrors: boolean): string {
@@ -104,17 +120,39 @@ export async function executeErasure(
 
   const hadErrors = receipt.errors.length > 0;
   const status = hadErrors ? "confirmed" : "completed";
-  await env
-    .MAIN_DB!.prepare(
-      "UPDATE erasure_requests SET status = ?, confirmed_at = COALESCE(confirmed_at, ?), completed_at = ?, result = ? WHERE id = ?",
-    )
-    .bind(status, ts, hadErrors ? null : ts, JSON.stringify(receipt), row.id)
-    .run();
-
   // Audit + completion email only when the account was ACTUALLY deleted. If Clerk still
   // fails, the subject must not get an "erasure complete" email while still logged in, and
-  // the trail must not claim completion — the `confirmed` row stays open for a retry.
-  if (!clerkFailed) {
+  // the trail must not claim completion — the `confirmed` row stays open for a retry. A
+  // partial run notifies once; a later partial retry stays quiet, a full one notifies again.
+  const previouslyNotified = notifiedAt(row.result);
+  const notify = !clerkFailed && (!hadErrors || !previouslyNotified);
+  // ponytail: optimistic check, not a lock — two concurrent runs both erase (every adapter
+  // is idempotent) but only the first records and notifies.
+  const written = await env
+    .MAIN_DB!.prepare(
+      "UPDATE erasure_requests SET status = ?, confirmed_at = COALESCE(confirmed_at, ?), completed_at = ?, result = ? WHERE id = ? AND status = ? AND result IS ?",
+    )
+    .bind(
+      status,
+      ts,
+      hadErrors ? null : ts,
+      JSON.stringify({
+        ...receipt,
+        notifiedAt: notify ? ts : previouslyNotified,
+      }),
+      row.id,
+      row.status,
+      row.result,
+    )
+    .run();
+  if (!written.meta?.changes) {
+    logger.warn("erasure finished after a concurrent change — not recorded", {
+      id: row.id,
+    });
+    return { status, clerkFailed, errors: receipt.errors, recorded: false };
+  }
+
+  if (notify) {
     // The erasure row above is already committed — a failure writing the audit trail
     // must never turn a completed erasure into a 500.
     try {
@@ -144,5 +182,5 @@ export async function executeErasure(
     }
   }
 
-  return { status, clerkFailed, errors: receipt.errors };
+  return { status, clerkFailed, errors: receipt.errors, recorded: true };
 }

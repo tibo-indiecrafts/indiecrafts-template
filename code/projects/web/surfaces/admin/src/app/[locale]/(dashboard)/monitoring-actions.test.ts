@@ -66,6 +66,7 @@ describe("retryErasure", () => {
     [409, { error: "clerk_email_changed" }, { ok: false, error: "clerk_email_changed" }],
     [503, { error: "clerk_unavailable" }, { ok: false, error: "clerk_unavailable" }],
     [503, { error: "unavailable" }, { ok: false, error: "unavailable" }],
+    [409, { error: "changed" }, { ok: false, error: "changed" }],
   ])("maps a %s reply", async (status, body, expected) => {
     authMock.mockResolvedValue(admin);
     fetchMock.mockResolvedValue(reply(status, body));
@@ -107,15 +108,17 @@ describe("runCronNow", () => {
     expect(auditMock).toHaveBeenCalledWith("admin.cron_run", { actor: "user_admin1", target: "cron" });
   });
 
-  it("reports cron_unbound", async () => {
+  it.each(["cron_unbound", "cron_unreachable"])("reports %s", async (error) => {
     authMock.mockResolvedValue(admin);
-    fetchMock.mockResolvedValue(reply(503, { error: "cron_unbound" }));
-    expect(await runCronNow()).toEqual({ ok: false, error: "cron_unbound" });
+    fetchMock.mockResolvedValue(reply(error === "cron_unbound" ? 503 : 502, { error }));
+    expect(await runCronNow()).toEqual({ ok: false, error });
   });
 
   it("reports unreachable when the api is not configured", async () => {
     authMock.mockResolvedValue(admin);
     vi.stubEnv("API_URL", "");
     expect(await runCronNow()).toEqual({ ok: false, error: "unreachable" });
+    // Same rule as retry/close: every authorized attempt is audited, reached or not.
+    expect(auditMock).toHaveBeenCalledWith("admin.cron_run", { actor: "user_admin1", target: "cron" });
   });
 });

@@ -173,6 +173,18 @@ describe("forwardCronRun", () => {
     });
   });
 
+  it("is 502 cron_unreachable when the cron call throws or answers non-JSON", async () => {
+    for (const fetch of [
+      vi.fn(async () => {
+        throw new Error("cron down");
+      }),
+      vi.fn(async () => new Response("worker error", { status: 500 })),
+    ])
+      expect(
+        await forwardCronRun({ CRON: { fetch } as unknown as Fetcher }),
+      ).toEqual({ status: 502, body: { error: "cron_unreachable" } });
+  });
+
   it("is 503 cron_unbound without a binding", async () => {
     expect(await forwardCronRun({})).toEqual({
       status: 503,

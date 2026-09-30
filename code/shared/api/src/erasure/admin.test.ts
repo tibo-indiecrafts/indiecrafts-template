@@ -19,7 +19,10 @@ const testEnv = (): Env => ({
 });
 
 /** Mock Clerk + Sanity (real D1) — same shape as confirm.test.ts. */
-function mockAdapters(clerk: Partial<ClerkErasureClient> = {}) {
+function mockAdapters(
+  clerk: Partial<ClerkErasureClient> = {},
+  sanity: { findByEmail?: () => Promise<Array<{ _id: string }>> } = {},
+) {
   const clerkClient: ClerkErasureClient = {
     findUserIdByEmail: vi.fn(async () => USER),
     exportUser: vi.fn(async () => ({ id: USER })),
@@ -29,6 +32,7 @@ function mockAdapters(clerk: Partial<ClerkErasureClient> = {}) {
   const sanityClient = {
     findByEmail: vi.fn(async () => []),
     pseudonymise: vi.fn(async () => {}),
+    ...sanity,
   };
   return (e: Env) => [
     createCoreErasureAdapter(e.MAIN_DB!, SALT),
@@ -219,6 +223,73 @@ describe("handleErasureRetry", () => {
     expect(await res.json()).toMatchObject({ ok: false, clerk_failed: true });
     expect((await rowOf(id))?.status).toBe("confirmed");
     expect(send).not.toHaveBeenCalled();
+  });
+
+  it("a retry that loses the race to a manual close keeps the close and sends nothing", async () => {
+    const id = await seed("confirmed");
+    const send = vi.fn(async () => {});
+    // The operator closes the request while the retry is erasing.
+    const deleteUser = vi.fn(async () => {
+      await env.MAIN_DB.prepare(
+        "UPDATE erasure_requests SET status = 'closed_manual' WHERE id = ?",
+      )
+        .bind(id)
+        .run();
+    });
+    const res = await handleErasureRetry(post({}), testEnv(), id, {
+      buildAdapters: mockAdapters({ deleteUser }),
+      send,
+      lookupEmail: vi.fn(has(EMAIL)),
+    });
+    expect(res.status).toBe(409);
+    expect(await res.json()).toEqual({ error: "changed" });
+    expect((await rowOf(id))?.status).toBe("closed_manual");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("two concurrent retries record and notify once", async () => {
+    const id = await seed("confirmed");
+    const send = vi.fn(async () => {});
+    const retry = () =>
+      handleErasureRetry(post({}), testEnv(), id, {
+        buildAdapters: mockAdapters(),
+        send,
+        lookupEmail: vi.fn(has(EMAIL)),
+      });
+    const statuses = (await Promise.all([retry(), retry()])).map(
+      (r) => r.status,
+    );
+    expect(statuses.filter((s) => s === 200)).toHaveLength(1);
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it("a repeated partial retry does not resend the completion email or the audit row", async () => {
+    const id = await seed("confirmed");
+    const send = vi.fn(async () => {});
+    const sanityDown = {
+      findByEmail: vi.fn(async (): Promise<Array<{ _id: string }>> => {
+        throw new Error("sanity down");
+      }),
+    };
+    const retry = (adapters = mockAdapters({}, sanityDown)) =>
+      handleErasureRetry(post({}), testEnv(), id, {
+        buildAdapters: adapters,
+        send,
+        lookupEmail: vi.fn(has(EMAIL)),
+      });
+    expect((await retry()).status).toBe(207);
+    expect((await retry()).status).toBe(207);
+    expect(send).toHaveBeenCalledTimes(1);
+    const audited = () =>
+      env.AUDIT_DB.prepare(
+        "SELECT COUNT(*) AS n FROM admin_audit WHERE event = 'erasure.completed' AND target_user_id = ?",
+      )
+        .bind(USER)
+        .first<{ n: number }>();
+    expect((await audited())?.n).toBe(1);
+    // The last store finally succeeds → the final "everything removed" email goes out.
+    expect((await retry(mockAdapters())).status).toBe(200);
+    expect(send).toHaveBeenCalledTimes(2);
   });
 
   it("404s an unknown id", async () => {

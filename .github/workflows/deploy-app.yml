@@ -1,0 +1,111 @@
+name: Deploy apps (reusable)
+
+# One deploy wave: every app in `apps` deploys in parallel, then smoke-tests and rolls back on
+# a failed smoke. Called by deploy.yml once per wave (services a binding needs, then the rest).
+on:
+  workflow_call:
+    inputs:
+      apps:
+        description: JSON array of registry rows (code/shared/scripts/lib/apps.mjs --json)
+        type: string
+        required: true
+      environment:
+        description: Target environment (dev | staging | prod)
+        type: string
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # GitHub Environment — holds the per-target vars + secrets below.
+    environment: ${{ inputs.environment }}
+    strategy:
+      fail-fast: false # one app failing shouldn't abort the others
+      matrix:
+        app: ${{ fromJson(inputs.apps) }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      # Each app self-deploys via its registry `deploy:<platform>:<slug>:<env>` script (a
+      # next-cf app builds with OpenNext, a worker just `wrangler deploy`s). Apps in one wave
+      # deploy in parallel.
+      - run: pnpm run deploy:${{ matrix.app.platform }}:${{ matrix.app.slug }}:${{ inputs.environment }}
+        env:
+          # Cloudflare auth — account-scoped API token with Workers + R2 edit.
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Build-time env (blog generateStaticParams / sitemap fetch Sanity).
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+          # First-party asset CDN — set this per-env GitHub Environment var to bake
+          # `assetPrefix` for that env. Empty = serve from origin. (Sanity content unaffected.)
+          NEXT_PUBLIC_CDN_URL: ${{ vars.NEXT_PUBLIC_CDN_URL }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+          NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
+          SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          # Worker runtime secrets → auto-synced to Cloudflare AFTER deploy by
+          # scripts/data/secrets.mjs (each app syncs only the keys its OWN
+          # `.dev.vars.example` declares, so injecting the union here is safe — an
+          # unused var is ignored). Add each to the matching GitHub Environment
+          # (dev/staging/prod) Secrets — per-env, so GDPR_FINGERPRINT_SALT stays
+          # DISTINCT per env. Empty/unset → secrets.mjs skips it (nothing synced).
+          APP_API_TOKEN: ${{ secrets.APP_API_TOKEN }}
+          PII_ENCRYPTION_KEY: ${{ secrets.PII_ENCRYPTION_KEY }}
+          IP_HASH_SALT: ${{ secrets.IP_HASH_SALT }}
+          GDPR_FINGERPRINT_SALT: ${{ secrets.GDPR_FINGERPRINT_SALT }}
+          CLERK_WEBHOOK_SECRET: ${{ secrets.CLERK_WEBHOOK_SECRET }}
+          EMAIL_PREF_SECRET: ${{ secrets.EMAIL_PREF_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+
+      # Post-deploy smoke test — best-effort. Curls the app's custom-domain origin
+      # from the registry (`domains:url`); if the app/env has no custom domain (still
+      # on *.workers.dev, whose URL isn't in the registry), it's skipped. Once a real
+      # host is set, a failed fetch fails the deploy so a broken ship is caught here.
+      # An app that declares a `smoke` route in the registry (apps.mjs) also gets a
+      # FUNCTIONAL probe: the health/version endpoint must return the expected marker,
+      # proving the runtime + the freshly deployed build are live (not just a 200 edge).
+      - name: Smoke test
+        id: smoke
+        env:
+          SMOKE_PATH: ${{ matrix.app.smoke.path }}
+          SMOKE_CONTAINS: ${{ matrix.app.smoke.contains }}
+        run: |
+          env="${{ inputs.environment }}"
+          url="$(pnpm -s domains:url ${{ matrix.app.slug }} "$env" || true)"
+          if [ -z "$url" ]; then
+            echo "No custom-domain origin for ${{ matrix.app.slug }} ($env) — skipping (workers.dev URL not in the registry)."
+            exit 0
+          fi
+          echo "Smoke: GET $url"
+          curl -fsS --retry 3 --retry-delay 5 -o /dev/null "$url"
+          echo "✓ ${{ matrix.app.slug }} ($env) reachable at $url"
+          # Functional probe for apps that declare a health/version route in the registry.
+          if [ -n "$SMOKE_PATH" ]; then
+            echo "Smoke: GET $url$SMOKE_PATH (expect \"$SMOKE_CONTAINS\")"
+            body="$(curl -fsS --retry 3 --retry-delay 5 "$url$SMOKE_PATH")"
+            if printf '%s' "$body" | grep -qF "$SMOKE_CONTAINS"; then
+              echo "✓ ${{ matrix.app.slug }} ($env) functional — $SMOKE_PATH returned \"$SMOKE_CONTAINS\""
+            else
+              echo "✗ ${{ matrix.app.slug }} ($env): $SMOKE_PATH did not contain \"$SMOKE_CONTAINS\". Body: $body" >&2
+              exit 1
+            fi
+          fi
+
+      # Auto-rollback — ONLY when the deploy SUCCEEDED but its post-deploy smoke FAILED
+      # (a broken runtime or stale build shipped). `steps.smoke.outcome == 'failure'` is
+      # false when the deploy step itself failed (smoke is skipped then — nothing new is
+      # live to revert), so a broken deploy is left as-is for a human. `wrangler rollback`
+      # with no version-id reverts to the version before the latest; `--message` makes it
+      # non-interactive (skips the confirmation prompt). Works for every Cloudflare app —
+      # the next-cf apps deploy a Worker too, so the same rollback applies.
+      - name: Rollback on smoke failure
+        if: steps.smoke.outcome == 'failure'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          env="${{ inputs.environment }}"
+          echo "Post-deploy smoke failed — rolling ${{ matrix.app.slug }} ($env) back to the previous version."
+          pnpm --filter "${{ matrix.app.pkg }}" exec wrangler rollback \
+            --env "$env" \
+            --message "auto-rollback: post-deploy smoke failed (run ${{ github.run_id }})"

@@ -263,7 +263,8 @@
         "forbidden": "Il faut le rôle administrateur.",
         "unreachable": "L'API est injoignable.",
         "failed": "Une erreur est survenue.",
-        "cron_unbound": "L'api n'a pas de liaison CRON dans cet environnement."
+        "cron_unbound": "L'api n'a pas de liaison CRON dans cet environnement.",
+        "cron_unreachable": "Le Worker cron n'a pas répondu — consultez ses journaux dans Cloudflare."
       }
     },
     "erasure": {
@@ -302,6 +303,7 @@
         "cancel": "Annuler",
         "closeConfirm": "Clôturer la demande",
         "closeDone": "Demande clôturée.",
+        "rowSuffix": "— demande n°{id}",
         "errors": {
           "forbidden": "Il faut le rôle administrateur.",
           "invalid": "Demande invalide.",
@@ -314,6 +316,7 @@
           "clerk_email_changed": "Le compte Clerk de la personne utilise désormais une autre adresse : une relance le manquerait. Supprimez le compte dans Clerk, puis clôturez la demande manuellement.",
           "clerk_unavailable": "Clerk ne répond pas — réessayez plus tard.",
           "unavailable": "Il manque à l'API sa configuration d'effacement (secrets Clerk ou Sanity) — contactez un développeur.",
+          "changed": "La demande a changé pendant la relance (une autre relance ou une clôture manuelle) — rechargez la page.",
           "not_found": "Demande introuvable.",
           "note_required": "Écrivez une note de 5 à 500 caractères.",
           "not_open": "Cette demande est déjà clôturée."

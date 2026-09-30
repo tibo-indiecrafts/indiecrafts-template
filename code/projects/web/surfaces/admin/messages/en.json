@@ -263,7 +263,8 @@
         "forbidden": "You need the admin role.",
         "unreachable": "The API is unreachable.",
         "failed": "Something went wrong.",
-        "cron_unbound": "The api has no CRON binding in this environment."
+        "cron_unbound": "The api has no CRON binding in this environment.",
+        "cron_unreachable": "The cron Worker did not answer — check its logs in Cloudflare."
       }
     },
     "erasure": {
@@ -302,6 +303,7 @@
         "cancel": "Cancel",
         "closeConfirm": "Close request",
         "closeDone": "Request closed.",
+        "rowSuffix": "— request #{id}",
         "errors": {
           "forbidden": "You need the admin role.",
           "invalid": "Invalid request.",
@@ -314,6 +316,7 @@
           "clerk_email_changed": "The subject's Clerk account now uses another email, so a retry would miss it. Delete the account in Clerk, then close this request manually.",
           "clerk_unavailable": "Clerk did not answer — try again later.",
           "unavailable": "The API is missing its erasure configuration (Clerk or Sanity secrets) — ask a developer.",
+          "changed": "The request changed while the retry ran (another retry or a manual close) — reload the page.",
           "not_found": "Request not found.",
           "note_required": "Write a note of 5 to 500 characters.",
           "not_open": "This request is already closed."

@@ -30,6 +30,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 - **System page** — the `cron` row shows the same health badge and links to Scheduled jobs (it said
   "no endpoint").
 
+### Fixed
+
+- **Erasure row actions work by keyboard and screen reader.** Each Retry / Close button names its
+  request, the email field takes focus when it appears, and Enter in it retries.
+- **Clear messages for new api answers** — the request changed during the retry (`changed`), the cron
+  did not answer (`cron_unreachable`).
+- **Run now is audited even when the api is unreachable**, like Retry and Close — every authorized
+  attempt leaves a record.
+
 ### Changed
 
 - **`.env.example` documents `CLOUDFLARE_SECURITY_URL`** — the Security screen's deep link to the

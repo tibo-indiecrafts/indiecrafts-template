@@ -14,6 +14,11 @@ the _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md
 
 ### Fixed
 
+- **No preview URL either.** `preview_urls = false` (top level and every env), like `workers_dev`, so no
+  uploaded version gets a public URL that could reach `POST /run`.
+- **CI deploys the cron first.** The deploy workflow now runs in two waves — the cron, then everything
+  else in parallel (reusable `deploy-app.yml`) — so the api's `CRON` binding never fails a new
+  environment's first deploy.
 - **Unread GDPR exports are deleted again.** The cron never bound the api's `EXPORT_BUCKET`, so the
   export cleanup silently did nothing in every environment — an export nobody downloaded (a full copy
   of someone's data) stayed forever. It is bound in dev (like the api), and a `test:scripts` parity

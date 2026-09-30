@@ -94,7 +94,7 @@ export async function handleErasureRetry(
     return json({ error: "unavailable" }, 503);
 
   const row = await env.MAIN_DB.prepare(
-    "SELECT id, status, user_id, email_fingerprint FROM erasure_requests WHERE id = ?",
+    "SELECT id, status, user_id, email_fingerprint, result FROM erasure_requests WHERE id = ?",
   )
     .bind(id)
     .first<{
@@ -102,6 +102,7 @@ export async function handleErasureRetry(
       status: string;
       user_id: string | null;
       email_fingerprint: string;
+      result: string | null;
     }>();
   if (!row) return json({ error: "not_found" }, 404);
   if (row.status !== "confirmed") return json({ error: "not_retryable" }, 409);
@@ -132,6 +133,7 @@ export async function handleErasureRetry(
   if (!email) return json({ error: "email_required" }, 422);
 
   const result = await executeErasure(env, row, email, deps, null);
+  if (!result.recorded) return json({ error: "changed" }, 409);
   if (result.clerkFailed)
     return json({ ok: false, clerk_failed: true, errors: result.errors }, 502);
   if (result.errors.length)

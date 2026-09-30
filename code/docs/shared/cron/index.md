@@ -38,13 +38,13 @@ Cloudflare does not retry a cron run; the next hourly tick re-runs every pass (a
 
 ## Run now
 
-The cron has **no public URL** (`workers_dev = false` in every env). Its `fetch` answers `POST /run` by
+The cron has **no public URL** (`workers_dev = false` and `preview_urls = false`, top level and every env). Its `fetch` answers `POST /run` by
 running one tick — the same `runTick` as the hourly trigger, history row included — and returns
 `{status, passes}` (500 when a pass failed); any other request is the health check. Only the api can
 reach it, through the `CRON` service binding: `POST /v1/cron/run` (admin-only), behind the **Run now**
 button on Scheduled jobs. A service binding to a Worker that doesn't exist fails the deploy, so the
 registry deploys the cron **before** the api; the cron needs the api's migrations only at run time.
-On a brand-new environment, CI's parallel deploy matrix can fail the api's first deploy — re-run it.
+CI deploys the same way: the cron goes in a first wave, before the parallel wave that holds the api.
 
 ## Monitoring
 

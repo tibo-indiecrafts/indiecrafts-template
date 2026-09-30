@@ -29,6 +29,7 @@ interface ErasureRequestRow {
   attempts: number;
   user_id: string | null;
   email_fingerprint: string;
+  result: string | null;
 }
 
 function json(

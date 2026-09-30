@@ -172,6 +172,11 @@ export async function erasureRequests(
 export async function forwardCronRun(env: { CRON?: Fetcher }) {
   if (!env.CRON)
     return { status: 503, body: { error: "cron_unbound" } as unknown };
-  const res = await env.CRON.fetch("https://cron/run", { method: "POST" });
-  return { status: res.status, body: (await res.json()) as unknown };
+  try {
+    const res = await env.CRON.fetch("https://cron/run", { method: "POST" });
+    return { status: res.status, body: (await res.json()) as unknown };
+  } catch {
+    // The cron threw or answered non-JSON (an uncaught worker error) — never a bare 500.
+    return { status: 502, body: { error: "cron_unreachable" } as unknown };
+  }
 }

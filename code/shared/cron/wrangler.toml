@@ -14,6 +14,7 @@ compatibility_flags = ["nodejs_compat"]
 keep_vars = true
 # No public URL anywhere — `POST /run` is reached only through the api's `CRON` service binding.
 workers_dev = false
+preview_urls = false
 
 # Cron schedule(s) — UTC. Example: hourly. https://crontab.guru
 [triggers]
@@ -71,6 +72,7 @@ invocation_logs = true
 name = "indiecrafts-dev-shared-cron"
 # No public URL: "Run now" reaches POST /run only through the api's CRON service binding.
 workers_dev = false
+preview_urls = false
 
 [[env.dev.d1_databases]]
 binding = "AUDIT_DB"
@@ -93,6 +95,7 @@ bucket_name = "indiecrafts-dev-shared-api-exports"
 name = "indiecrafts-staging-shared-cron"
 # No public URL: "Run now" reaches POST /run only through the api's CRON service binding.
 workers_dev = false
+preview_urls = false
 
 [[env.staging.d1_databases]]
 binding = "AUDIT_DB"
@@ -108,6 +111,7 @@ database_id = "PASTE_CORE_D1_ID_HERE"
 name = "indiecrafts-prod-shared-cron"
 # No public URL: "Run now" reaches POST /run only through the api's CRON service binding.
 workers_dev = false
+preview_urls = false
 
 [[env.prod.d1_databases]]
 binding = "AUDIT_DB"

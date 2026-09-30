@@ -86,7 +86,8 @@ Full model → the [`code/shared/db` brief](/.claude/CLAUDE).
 ## GitHub Actions (auto-deploy)
 
 `.github/workflows/deploy.yml`: **push to `main` (after CI passes) → prod**; **Run workflow** → pick dev/staging/prod.
-It fans out from the registry, builds with OpenNext (next-cf) / bundles (worker-cf), runs
+It fans out from the registry in two waves (the cron first — the api binds it — then the rest, in
+parallel, via the reusable `deploy-app.yml`), builds with OpenNext (next-cf) / bundles (worker-cf), runs
 `wrangler deploy --env <target>`, then a **best-effort smoke test** — it curls the app's custom-domain
 origin (from the domain registry via `domains:url`); no custom domain yet ⇒ skipped.
 

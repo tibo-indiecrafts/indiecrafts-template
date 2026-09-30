@@ -79,9 +79,11 @@ CI reads the same registry — no app is hard-coded:
 
 - **Build gate** (`test.yml`) — `turbo run build:cf --affected` builds every **affected** `next-cf`
   app (a docs-only PR builds none; a change to a shared brick builds its dependents).
-- **Deploy** (`deploy.yml`) — a `discover` job emits `apps.mjs --json --cloudflare`; a matrix deploys
-  each CF app to the target env (parallel — CF workers are independent). Add an app → it deploys, no
-  workflow edit.
+- **Deploy** (`deploy.yml`) — a `discover` job emits `apps.mjs --json --cloudflare` and splits it by
+  registry `order` into two waves, each a matrix in the reusable `deploy-app.yml` (deploy → smoke →
+  rollback). Wave 1 (`order < 10`) is the services another app binds — the cron, which the api's `CRON`
+  service binding needs, since a binding to a missing Worker fails the deploy. Wave 2 is everything
+  else, in parallel. Add an app → it deploys, no workflow edit.
 - **Preview** (`preview.yml`) — a matrix uploads a per-PR Cloudflare version preview for each `next-cf`
   app and comments the URL.
 - **Backup** (`backup.yml`) — **hub-scoped by design**, NOT a fan-out: one Sanity dataset per tenant,
