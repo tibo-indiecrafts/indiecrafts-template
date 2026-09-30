@@ -189,19 +189,21 @@ jobs:
           terraform init -backend=false
           terraform validate
 
-  # Validate each BARE Worker's wrangler.toml + bundle its entry WITHOUT deploying
-  # (no Cloudflare auth needed). The next-cf apps (website · admin) are covered by
-  # the `build` job (turbo build:cf), so this is just the api · cron · workers slots.
+  # Validate each BARE Worker service's wrangler.toml + bundle its entry WITHOUT deploying
+  # (no Cloudflare auth needed). The list comes from the registry (worker-cf services), so a
+  # new service is covered by its apps.mjs row alone. The next-cf apps are covered by the
+  # `build` job (turbo build:cf); storybook (a worker-cf *tool*) needs its static build first.
   wrangler:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup
-      - name: wrangler deploy --dry-run (api · cron · workers · agent)
+      - name: wrangler deploy --dry-run (every worker-cf service in the registry)
         run: |
-          for svc in api cron workers agent; do
-            echo "── $svc ──"
-            pnpm --filter "@indiecrafts/shared-$svc" exec wrangler deploy --dry-run --outdir "/tmp/$svc-dryrun"
+          node code/shared/scripts/lib/apps.mjs --class worker-cf --kind service |
+          while IFS=$'\t' read -r slug _ pkg; do
+            echo "── $slug ──"
+            pnpm --filter "$pkg" exec wrangler deploy --dry-run --outdir "/tmp/$slug-dryrun"
           done
 
   # Secret scanning — fails the PR if a credential is committed (defence in depth on

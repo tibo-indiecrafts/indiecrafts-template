@@ -34,12 +34,14 @@ bricks are consumed as source (wrangler/esbuild bundles the TS).
   `wrangler.toml`.
 - **Test:** colocated `src/index.test.ts` runs in **workerd** via `@cloudflare/vitest-pool-workers`
   (`cloudflare:test` `SELF`/`env` — health + scheduled), in `pnpm test` / `pnpm test:workers` / CI.
-- **Per client:** rename the `indiecrafts-workers-*` Worker names (the shared-account guard blocks
-  staging/prod on the template default) before a staging/prod deploy.
+- **Per client:** `pnpm project:rename <slug>` rewrites the `indiecrafts-<env>-shared-workers` Worker names
+  (the shared-account guard blocks staging/prod on the template default).
+- **Fire `scheduled` locally:** `curl localhost:8790/cdn-cgi/handler/scheduled` (`pnpm dev` runs this Worker
+  with `--remote`; for local-only, `npx wrangler dev --env dev`).
 - **No cross-app imports** — share only through `code/packages/` bricks.
 
 **Compilable skeleton — the structure + a health-check test are wired; the job isn't.** Fill in
-`scheduled` (logic in a brick), bind what it needs. **Platform class:** `worker-cf`; it's a row in
+`scheduled` (a brick once another unit needs the logic — the ≥2-consumer rule), bind what it needs. **Platform class:** `worker-cf`; it's a row in
 [`scripts/lib/apps.mjs`](../../../shared/scripts/lib/apps.mjs), so CI builds + deploys it from the registry — no
 per-app workflow to add. Full guide → [`code/docs/shared/workers/`](../../../docs/shared/workers/index.md); deploy
 model → [`code/docs/shared/architecture/platform-deploy.md`](../../../docs/shared/architecture/platform-deploy.md).

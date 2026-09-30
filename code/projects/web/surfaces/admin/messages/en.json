@@ -153,7 +153,6 @@
       "status": "Status",
       "live": "Live",
       "down": "Down",
-      "noEndpoint": "Scheduled / queue (no endpoint)",
       "external": "External (Sanity)",
       "unknown": "Unknown",
       "notConfigured": "Not configured",

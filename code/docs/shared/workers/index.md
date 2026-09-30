@@ -6,7 +6,7 @@ status: stable
 
 # Background Workers — `api` · `cron` · `workers`
 
-Three **bare Cloudflare Workers** live in the shared tier: `code/shared/api` (HTTP for non-web clients),
+Three **bare Cloudflare Workers** live in the shared tier: `code/shared/api` (the shared HTTP API for the web surfaces' servers and partners),
 `code/shared/cron` (scheduled), and `code/shared/workers` (queues / background). They deploy
 **separately** from the web app — each its own Worker +
 `wrangler.toml`. (The web app is another Cloudflare surface: an OpenNext Worker that also runs its
@@ -32,28 +32,32 @@ export default {
 - **`env`** carries the **bindings** (KV · D1 · R2 · Queues · secrets · vars) declared in `wrangler.toml`.
   `ctx.waitUntil(p)` keeps work alive past the response.
 - **Per-env** via `[env.dev|staging|prod]` blocks. `wrangler deploy --env <env>` picks one.
-- **Thin shell, logic in bricks:** keep `src/index.ts` a ~40-line shell (routing + binding use); put the real
-  job in a `code/packages/<name>` / `code/modules/<name>` brick (`workspace:*`). That brick is unit-tested
-  with plain Vitest; the Worker test only covers the handler wiring. This is what scales — Workers multiply as
-  shells, the testable logic stays shared.
+- **Shared logic in bricks, single-use logic inline:** logic another unit also needs goes in a
+  `code/packages/<name>` / `code/modules/<name>` brick (`workspace:*`, unit-tested with plain Vitest). Logic
+  only this Worker uses may stay in its `src/` (the repo's ≥2-consumer extraction rule) — the `cron` passes
+  live in `code/shared/cron/src/index.ts`, tested in workerd against real D1/R2.
 
 ## Scripts (two tiers, env is an argument)
 
 Run everything from the **repo root**. Each op is one script that takes `<env>` — never a script per env.
 
-| Command (root)                                                                      | What it does                                                                                            |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `pnpm deploy:<app>:<env>`                                                           | Deploy one worker to one env (via the shared `code/shared/scripts/deploy/worker.mjs`).                  |
-| `pnpm deploy:all:<env>`                                                             | Deploy every `code/projects/*` with a `wrangler.toml`, in order (`code/shared/scripts/deploy/all.mjs`). |
-| `pnpm test:workers`                                                                 | Run the three workers' Vitest suites (also folded into `pnpm test`).                                    |
-| `pnpm --filter @indiecrafts/<app> dev`                                              | Local `wrangler dev` (Miniflare/workerd, local storage).                                                |
-| `pnpm --filter @indiecrafts/<app> tail:<env>`                                       | Live logs (`wrangler tail --env <env>`).                                                                |
-| `pnpm --filter @indiecrafts/<app> cf-typegen`                                       | Regenerate `worker-configuration.d.ts` (typed `Env`).                                                   |
-| `node code/shared/scripts/infra/bindings.mjs <app> <env> <kv\|d1\|queue> <BINDING>` | Provision a binding + print the `wrangler.toml` block.                                                  |
+| Command (root)                                                                      | What it does                                                                                                                       |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm deploy:<app>:<env>`                                                           | Deploy one worker to one env (via the shared `code/shared/scripts/deploy/worker.mjs`).                                             |
+| `pnpm deploy:all:<env>`                                                             | Deploy every Cloudflare app in the registry, in registry order (`code/shared/scripts/deploy/all.mjs`).                             |
+| `pnpm test:workers`                                                                 | Run the three workers' Vitest suites (also folded into `pnpm test`).                                                               |
+| `pnpm --filter @indiecrafts/<app> dev`                                              | `wrangler dev --remote` on the dev env's **real** bindings. For a local-only run: `npx wrangler dev --env dev --persist-to <dir>`. |
+| `pnpm --filter @indiecrafts/<app> tail:<env>`                                       | Live logs (`wrangler tail --env <env>`).                                                                                           |
+| `pnpm --filter @indiecrafts/<app> cf-typegen`                                       | Regenerate `worker-configuration.d.ts` (typed `Env`).                                                                              |
+| `node code/shared/scripts/infra/bindings.mjs <app> <env> <kv\|d1\|queue> <BINDING>` | Provision a binding + print the `wrangler.toml` block.                                                                             |
 
-`<app>` ∈ `api` · `cron` · `workers`; `<env>` ∈ `dev` · `staging` · `prod`. `deploy-worker.mjs` refuses a
-staging/prod deploy while the Worker name is still the template default (`indiecrafts-<app>-…`) — run
-`pnpm project:rename <slug>` first — and asks to confirm prod (CI / `--yes` skip it).
+`<app>` ∈ `api` · `cron` · `workers`; `<env>` ∈ `dev` · `staging` · `prod`. `worker.mjs` refuses a
+staging/prod deploy while the Worker name is still the template default (`indiecrafts-<env>-shared-<app>`) —
+run `pnpm project:rename <slug>` first — and asks to confirm prod (CI / `--yes` skip it). CI dry-runs every
+`worker-cf` service from the registry (`apps.mjs --class worker-cf --kind service`) on each push.
+
+**Fire a `scheduled` handler locally:** `curl "http://localhost:<port>/cdn-cgi/handler/scheduled"` (or
+`/__scheduled` when started with `--test-scheduled`). Ports: api `8787` · cron `8789` · workers `8790`.
 
 ## Connectivity (bindings + secrets)
 
@@ -100,13 +104,13 @@ moves to Vitest 4, switch these configs to the newer `cloudflareTest()` **plugin
 ## Where things live
 
 - Worker app + colocated test + `wrangler.toml` + `package.json` → `code/shared/<app>/`.
-- The **job logic** → a `code/packages/` / `code/modules/` brick (thin-shell rule).
+- **Job logic** → a `code/packages/` / `code/modules/` brick once a second unit needs it; single-use logic stays in the Worker's `src/`.
 - Shared deploy/connectivity scripts (`<app> <env>`) → **root `scripts/`** (one copy).
 - The per-app × per-env **delegators** → root `package.json`.
 
 ## Slot roles
 
-`api` = HTTP for non-web clients (audit + session sink `POST /v1/events`) · `cron` = time-triggered
+`api` = the shared HTTP API (audit + session sink, GDPR rights, consent, admin reads) · `cron` = time-triggered
 (`[triggers].crons`) · `workers` = queue/event consumers + background. `cron` and `workers`
 both expose `scheduled`; keep the roles crisp (or merge `cron` into `workers` if you never need separate
 cron observability).

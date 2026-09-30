@@ -30,8 +30,8 @@ built on three ideas:
 - **`order`** — deploy order (low first: services before their consumers).
 
 Helpers: `deployable({ only })`, `byClass()`, `isCloudflare()`. CLI for the CI matrix:
-`node code/shared/scripts/lib/apps.mjs --json [--cloudflare] [--class <class>]`. An `apps.test.mjs` guard asserts
-every row has a matching `code/projects/<slug>` dir, so the registry can't drift or list an orphan.
+`node code/shared/scripts/lib/apps.mjs --json [--cloudflare] [--class <class>] [--kind <kind>]`. An `apps.test.mjs` guard asserts
+every row's `dir` exists, so the registry can't drift or list an orphan.
 
 ## Platform classes
 

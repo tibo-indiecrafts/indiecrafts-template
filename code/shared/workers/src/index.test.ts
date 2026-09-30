@@ -9,7 +9,8 @@ import { describe, expect, it } from "vitest";
 import worker, { type Env } from "./index";
 
 // `SELF` runs the actual worker in workerd (with the env echo from wrangler.toml);
-// `scheduled` is invoked directly with the real `env`. Job logic lives in a brick.
+// `scheduled` is invoked directly with the real `env`. A real job gets its own tests here, or in
+// its brick once another unit shares it.
 describe("background worker (workerd)", () => {
   it("serves /health with the env echo", async () => {
     const res = await SELF.fetch("https://example.com/health");

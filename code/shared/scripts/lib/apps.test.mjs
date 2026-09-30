@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { execFileSync } from "node:child_process";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -136,4 +137,20 @@ test("shipped wrangler names match resourceName (keeps the clobber-guard live)",
       );
     }
   }
+});
+
+test("CLI --class + --kind lists the bare Worker services (not the static-assets storybook)", () => {
+  const cli = fileURLToPath(new URL("./apps.mjs", import.meta.url));
+  const out = execFileSync(
+    "node",
+    [cli, "--class", "worker-cf", "--kind", "service"],
+    {
+      encoding: "utf8",
+    },
+  );
+  const slugs = out
+    .trim()
+    .split("\n")
+    .map((l) => l.split("\t")[0]);
+  assert.deepEqual(slugs, ["api", "cron", "workers"]);
 });

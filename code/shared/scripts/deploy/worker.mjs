@@ -63,7 +63,7 @@ function migrateOwnedD1() {
 }
 
 // Shared-account clobber guard: refuse a staging/prod deploy while the Worker name
-// is still the template default (`indiecrafts-<app>`). `pnpm project:rename <slug>`
+// is still the template default (`indiecrafts-<env>-shared-<app>`). `pnpm project:rename <slug>`
 // rewrites it. dev is the shared sandbox, so it is allowed.
 assertRenamed(app, env);
 gate(env, { skipGate });

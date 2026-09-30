@@ -12,8 +12,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
-_Activated bare-Worker scaffold for queue/event consumers + background jobs (the task logic lives in a
-`code/packages` / `code/modules` brick). Log the first real job here._
+_Activated bare-Worker scaffold for queue/event consumers + background jobs (shared logic in a
+`code/packages` / `code/modules` brick; single-use logic may stay in `src/`). Log the first real job here._
+
+### Changed
+
+- **Docs and brief describe the Worker as it is.** The template Worker name is
+  `indiecrafts-<env>-shared-workers` (not `indiecrafts-workers-*`); `pnpm dev` runs it with `--remote`;
+  fire `scheduled` locally with `/cdn-cgi/handler/scheduled`; logic follows the ≥2-consumer rule.
 
 ### Changed
 

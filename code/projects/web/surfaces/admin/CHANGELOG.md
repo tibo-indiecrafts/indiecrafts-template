@@ -14,6 +14,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **System shows the background-jobs Worker's health.** The `workers` row said "no endpoint", but the
+  Worker serves `/health` (the deploy smoke check uses it). It is now probed like the api from
+  `WORKERS_URL` (unset → "Not configured"), without the api token — only the api gets the bearer.
 - **Scheduled jobs page (`/cron`)** — cron health (healthy · last run failed · stale · never ran), the
   live erasure/export counts, and the last 24 runs with per-pass results. Before, nothing showed
   whether the cron ran at all.

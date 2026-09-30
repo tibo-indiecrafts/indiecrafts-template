@@ -21,8 +21,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
   `check:doc-coverage` now counts a folder as a unit only when it has a `package.json`, so a leftover
   folder of ignored files no longer fails the check.
 
-### Changed
-
+- **Workers + platform-deploy pages match the scripts:** the thin-shell rule is the ≥2-consumer rule,
+  `deploy:all` reads the registry, `dev` runs `--remote`, the template Worker name, the local
+  `scheduled` trigger, and the registry CLI's `--kind` filter.
 - **Cron, api, admin and data-retention pages describe the new monitoring:** the four isolated cron
   passes and their counts, the `cron_runs` history, the two admin routes and pages, lapsed-request
   expiry and breach escalation. Six new reference pages. Local tick port corrected to `:8789`.

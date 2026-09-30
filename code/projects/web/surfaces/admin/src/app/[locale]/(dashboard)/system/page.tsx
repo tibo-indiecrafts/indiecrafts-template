@@ -24,10 +24,12 @@ const SURFACES = [
   { name: "website", url: process.env.WEBSITE_URL },
   { name: "app", url: process.env.APP_URL },
 ];
-const HTTP_WORKERS = [{ name: "api", url: process.env.API_URL }];
-// workers-jobs has no public HTTP surface (queue). cron's health comes from its run history
-// (GET /v1/cron/status) — shown below with a link to the Scheduled jobs page.
-const NON_HTTP_WORKERS = ["workers"];
+// HTTP workers expose /health. Only the api gets the bearer (its /health then adds D1 status);
+// cron has no HTTP surface — its health comes from its run history (GET /v1/cron/status).
+const HTTP_WORKERS = [
+  { name: "api", url: process.env.API_URL, auth: true },
+  { name: "workers", url: process.env.WORKERS_URL, auth: false },
+];
 
 async function fetchVersion(url?: string) {
   if (!url) return { configured: false, ok: false } as const;
@@ -41,10 +43,10 @@ async function fetchVersion(url?: string) {
   }
 }
 
-async function fetchHealth(url?: string) {
+async function fetchHealth(url?: string, auth = false) {
   if (!url) return { configured: false, ok: false, body: undefined };
   try {
-    const token = process.env.APP_API_TOKEN;
+    const token = auth ? process.env.APP_API_TOKEN : undefined;
     const res = await fetch(`${url}/health`, {
       cache: "no-store",
       headers: token ? { authorization: `Bearer ${token}` } : {},
@@ -75,7 +77,7 @@ export default async function SystemPage({
     SURFACES.map(async (s) => ({ name: s.name, ...(await fetchVersion(s.url)) })),
   );
   const workerHealth = await Promise.all(
-    HTTP_WORKERS.map(async (w) => ({ name: w.name, ...(await fetchHealth(w.url)) })),
+    HTTP_WORKERS.map(async (w) => ({ name: w.name, ...(await fetchHealth(w.url, w.auth)) })),
   );
   const apiHealth = workerHealth.find((w) => w.name === "api")?.body;
   const dbs = [
@@ -172,14 +174,6 @@ export default async function SystemPage({
                     </div>
                   </TableCell>
                 </TableRow>
-                {NON_HTTP_WORKERS.map((name) => (
-                  <TableRow key={name}>
-                    <TableCell>{name}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{t("noEndpoint")}</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
               </TableBody>
             </Table>
           </CardContent>

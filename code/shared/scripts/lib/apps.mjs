@@ -172,14 +172,17 @@ export function resourceName(slug, env, prefix) {
 
 // ── CLI: emit the app list for the CI matrix ──────────────────────────────────
 //   node scripts/lib/apps.mjs [--json] [--cloudflare] [--class <next-cf|worker-cf|capacitor>]
+//                             [--kind <surface|service|tool>]
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2);
   const clsIdx = argv.indexOf("--class");
+  const kindIdx = argv.indexOf("--kind");
   let list = [...APPS].sort(
     (a, b) => a.order - b.order || a.slug.localeCompare(b.slug),
   ); // registry order
   if (argv.includes("--cloudflare")) list = list.filter(isCloudflare);
   if (clsIdx >= 0) list = list.filter((a) => a.class === argv[clsIdx + 1]);
+  if (kindIdx >= 0) list = list.filter((a) => a.kind === argv[kindIdx + 1]);
   if (argv.includes("--json")) {
     process.stdout.write(JSON.stringify(list));
   } else {
