@@ -166,8 +166,10 @@ Both bearer-gated (`requireAdminBearer` + `rateLimit`), `GET` only, same shape a
 
 ## Out of scope
 
-- Alerting (email/Slack) on a failed or stale run — the page and the high-severity security events
-  (already emailed by the security-alert path) cover monitoring for now.
+- Alerting (email/Slack) on a failed or stale run **or on an `erasure_sla_breach`**. The cron writes
+  `security_events` straight to D1, so the api's security-alert email does not fire for them; a
+  breach is visible in the admin (`/erasure`, `/cron`, `/security`) only. (Corrected after the final
+  review — an earlier draft wrongly said the breach flag was emailed.)
 - Provisioning `EXPORT_BUCKET` in staging/prod (operator step; the parity test keeps cron in step).
 - A cron "run now" button in admin (control, not monitoring).
 

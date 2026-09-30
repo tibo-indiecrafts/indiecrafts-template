@@ -6,7 +6,7 @@ Auto-loads under `code/shared/**`. The **top-level shared tier** (a sibling of `
 
 - **Services (`worker-cf`)** — `api` (the shared, versioned HTTP JSON API — web-surface servers + partners) · `cron` (scheduled) ·
   `workers` (queue/event + background jobs). Bare Cloudflare Workers (no Next/OpenNext); each is a thin
-  **deploy shell** — the real job logic lives in a `code/packages` / `code/modules` brick (`workspace:*`).
+  **deploy shell** — logic shared with another unit lives in a `code/packages` / `code/modules` brick.
 - **Ops** — `db` (dataset schema + migrations + backups) · `infra` (Terraform/provider IaC). `domains` is
   toolchain-only (no folder).
 - **Toolchain (`scripts/`)** — the runners in `scripts/{deploy,data,infra,checks,dev}/` + the **machine
@@ -16,7 +16,8 @@ Auto-loads under `code/shared/**`. The **top-level shared tier** (a sibling of `
 ## Rules
 
 - **Run from the repo root** (`pnpm deploy:… / verify`) — never `cd` into a service.
-- **Services are shells** — never put job logic in `api`/`cron`/`workers/src`; import it from a brick.
+- **Services are shells** — shared job logic goes in a brick; a service keeps inline only logic it alone
+  uses (the ≥2-consumer rule — e.g. the `cron` passes live in its `src/index.ts`).
 - **`withGuard` is Next-only** (`server-only` breaks the esbuild build) — bare Workers re-implement a tiny
   inline guard (bearer + CF native rate-limit + CORS). Compose the React-free bricks
   (`config`/`logger`/`security`/`sanity`).
