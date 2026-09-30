@@ -238,6 +238,13 @@
       "problemMatcher": []
     },
     {
+      "label": "infra:all",
+      "detail": "Terraform for every Cloudflare stack — preflight, then plan (swap to `apply <env>` to provision)",
+      "type": "shell",
+      "command": "pnpm infra:all plan dev",
+      "problemMatcher": []
+    },
+    {
       "label": "tokens:build",
       "detail": "regenerate design tokens (globals.css + native)",
       "type": "shell",

@@ -30,6 +30,7 @@
     "check:doc-coverage": "node code/shared/scripts/checks/doc-coverage.mjs",
     "check:claude-md": "node code/shared/scripts/checks/claude-md.mjs",
     "check:infra": "node code/shared/scripts/checks/infra.mjs",
+    "infra:all": "node code/shared/scripts/infra/all.mjs",
     "verify:quick": "pnpm --filter @indiecrafts/web-surfaces-website verify:quick",
     "verify:contrast": "pnpm --filter @indiecrafts/web-surfaces-website verify:contrast",
     "project:rename": "pnpm --filter @indiecrafts/web-surfaces-website project:rename",

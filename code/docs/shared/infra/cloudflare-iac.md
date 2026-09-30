@@ -36,6 +36,19 @@ pnpm infra:web:website:output:prod           # read the Turnstile keys (below)
 `node code/shared/scripts/infra/run.mjs <app> <action> <env>` → `-chdir` into the app dir, `terraform workspace
 select <env>`, `-var-file=env/<env>.tfvars`.
 
+**Every stack at once** — `pnpm infra:all <plan|apply> <env>` (`code/shared/scripts/infra/all.mjs`) runs the
+stacks in registry order (account → api → website → app → admin → storybook). It **preflights all of them
+first** (`lib/tfvars-preflight.mjs`) and sends nothing to Cloudflare while any value is missing: a blank
+`account_id`, a blank `zone_id` or domain on an env with `attach_domain = true`, a template `example.com`
+host, or no `CLOUDFLARE_API_TOKEN`. `apply` stays interactive — Terraform prints each plan and waits for
+`yes`. The single-stack `run.mjs` runs the same preflight.
+
+```bash
+export CLOUDFLARE_API_TOKEN=…   # scoped — see Prerequisites
+pnpm infra:all plan dev         # review every stack's diff (dev: workers.dev, no zone needed)
+pnpm infra:all apply dev        # provision — confirm each stack with "yes"
+```
+
 ## Prerequisites
 
 - **Terraform ≥ 1.6** (`brew install terraform`).

@@ -18,6 +18,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com); versions are `[ma
 
 ## [Unreleased]
 
+- **One command for all the Terraform: `pnpm infra:all <plan|apply> <env>`.** Runs every Cloudflare
+  stack in registry order after a preflight that lists every missing value at once (blank
+  `account_id`/`zone_id`, a template `example.com` host, no token) and sends nothing until they are filled;
+  `apply` asks per stack. `run.mjs` runs the same preflight. Every stack's tfvars now carry the account id
+  the Workers deploy to, so dev needs only `CLOUDFLARE_API_TOKEN`.
 - **The Cloudflare Terraform stacks are valid, gated and checked.** Five of the six stacks (website ·
   api · admin · app · storybook) did not parse — their variables used one-line blocks with two
   arguments, which HCL rejects — so no `init`/`plan` could run. They are rewritten, the provider-v5

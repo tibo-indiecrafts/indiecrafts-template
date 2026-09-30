@@ -2,10 +2,10 @@
 env               = "staging"
 worker_name       = "indiecrafts-staging-web-surfaces-website"
 attach_domain     = true
-account_id        = ""                    # REQUIRED
-zone_id           = ""                    # REQUIRED (the domain's zone)
-domain            = "staging.example.com" # REQUIRED — your staging host
-manage_zone       = false                 # staging.example.com is in the prod zone — the prod website stack owns its zone-wide rules
+account_id        = "98ca87410b95e03a60f646d95e154266" # this Cloudflare account (the one every Worker deploys to)
+zone_id           = ""                                 # REQUIRED (the domain's zone)
+domain            = "staging.example.com"              # REQUIRED — your staging host
+manage_zone       = false                              # staging.example.com is in the prod zone — the prod website stack owns its zone-wide rules
 turnstile_domains = ["staging.example.com"]
 
 # Optional edge tunables — module defaults (uncomment here AND in main.tf to override):

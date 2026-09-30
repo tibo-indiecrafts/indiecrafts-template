@@ -11,10 +11,11 @@
 // The `infra:<name>:<action>:<env>` package.json delegators call this. wrangler
 // still deploys the Worker; this owns the edge (domain + security + cache).
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { APPS } from "../lib/apps.mjs";
 import { INFRA } from "../lib/infra-registry.mjs";
+import { preflight } from "../lib/tfvars-preflight.mjs";
 
 const [name, action, env] = process.argv.slice(2);
 const ENVS = ["dev", "staging", "prod"];
@@ -50,6 +51,21 @@ if (provider !== "cloudflare") {
 if (!existsSync(dir)) {
   console.error(`No IaC directory for "${name}": ${dir}.`);
   process.exit(1);
+}
+// Blank ids / placeholder hosts fail deep in the provider (or target a domain you don't
+// own) — say what to fill before any Terraform call.
+if (["plan", "apply", "destroy"].includes(action)) {
+  const tfvars = path.join(dir, "env", `${env}.tfvars`);
+  const problems = existsSync(tfvars)
+    ? preflight(readFileSync(tfvars, "utf8"))
+    : [`${tfvars} is missing`];
+  if (problems.length) {
+    console.error(
+      `✗ ${name} (${env}) is not ready — fill ${path.relative(process.cwd(), tfvars)}:`,
+    );
+    for (const p of problems) console.error(`  - ${p}`);
+    process.exit(1);
+  }
 }
 if (!process.env.CLOUDFLARE_API_TOKEN) {
   console.error(
