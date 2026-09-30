@@ -42,6 +42,7 @@ import {
   finalize,
   requestIdOf,
 } from "./http";
+import { withIdempotency } from "./idempotency";
 import { handleErasureRequest } from "./erasure/request";
 import { handleErasureConfirm } from "./erasure/confirm";
 import { handleErasureStatus } from "./erasure/status";
@@ -1438,7 +1439,7 @@ export default {
     const requestId = requestIdOf(request);
     let res: Response;
     try {
-      res = await route(request, env, ctx);
+      res = await withIdempotency(request, env, (req) => route(req, env, ctx));
     } catch (error) {
       res = errorFromThrow(error, requestId);
     }

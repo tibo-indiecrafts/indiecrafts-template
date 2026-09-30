@@ -313,6 +313,28 @@ describe("scheduled() — retention purge (admin_audit + session_events + securi
     await waitOnExecutionContext(ctx);
   }
 
+  it("purges Idempotency-Key results after 24 h; keeps a fresh one", async () => {
+    const ins = (key: string, at: string) =>
+      env.AUDIT_DB.prepare(
+        "INSERT INTO idempotency_keys (scope, key, request_hash, status, body, created_at) VALUES ('/v1/events:x', ?, 'h', 201, '{}', ?)",
+      )
+        .bind(key, at)
+        .run();
+    await ins("idem-old", new Date(NOW - 2 * 86_400_000).toISOString());
+    await ins("idem-fresh", new Date(NOW - 3_600_000).toISOString());
+
+    await runTick();
+
+    const has = async (key: string) =>
+      (await env.AUDIT_DB.prepare(
+        "SELECT key FROM idempotency_keys WHERE key = ?",
+      )
+        .bind(key)
+        .first()) !== null;
+    expect(await has("idem-old")).toBe(false);
+    expect(await has("idem-fresh")).toBe(true);
+  });
+
   it("purges an admin_audit row past the 90-day retention; keeps a recent one", async () => {
     // admin_audit lives on DB.
     await env.AUDIT_DB.prepare(

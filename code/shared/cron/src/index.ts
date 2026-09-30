@@ -196,8 +196,14 @@ async function runPass(
 const changes = (r: D1Result): number => r.meta?.changes ?? 0;
 
 /** Audit D1 retention: the 90-day ceiling (admin_audit · session_events · security_events ·
- *  cron_runs) and the 30-day CSP ceiling (operational signal, not a proof record). */
-async function auditPurge(db: D1Database, cutoff: string, cspCutoff: string) {
+ *  cron_runs), the 30-day CSP ceiling (operational signal, not a proof record) and the fixed
+ *  24 h of stored Idempotency-Key results (the api's replay window). */
+async function auditPurge(
+  db: D1Database,
+  cutoff: string,
+  cspCutoff: string,
+  idempotencyCutoff: string,
+) {
   const del = async (sql: string, at: string) =>
     changes(await db.prepare(sql).bind(at).run());
   return {
@@ -215,6 +221,10 @@ async function auditPurge(db: D1Database, cutoff: string, cspCutoff: string) {
       cspCutoff,
     ),
     cron_runs: await del("DELETE FROM cron_runs WHERE started_at < ?", cutoff),
+    idempotency_keys: await del(
+      "DELETE FROM idempotency_keys WHERE created_at < ?",
+      idempotencyCutoff,
+    ),
   };
 }
 
@@ -355,7 +365,14 @@ export async function runTick(
   // Each pass runs on its own: one failing pass never skips the others.
   const passes: PassResult[] = [
     audit
-      ? await runPass("audit_purge", () => auditPurge(audit, cutoff, cspCutoff))
+      ? await runPass("audit_purge", () =>
+          auditPurge(
+            audit,
+            cutoff,
+            cspCutoff,
+            new Date(scheduledTime - 86_400_000).toISOString(),
+          ),
+        )
       : skipped("audit_purge", "AUDIT_DB unbound"),
     main
       ? await runPass("main_purge", () =>
