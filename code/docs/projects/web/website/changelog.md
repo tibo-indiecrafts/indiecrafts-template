@@ -19,6 +19,10 @@ the repo-wide roll-up → root `CHANGELOG.md`.
 
 ### Changed
 
+- **CI dry-runs every bare Worker service from the registry.** The `wrangler` job hard-coded
+  `api cron workers agent` — `agent` no longer exists, and a new service would have been skipped.
+  It now reads `apps.mjs --class worker-cf --kind service` (new `--kind` filter, tested), so a
+  registry row is the only thing a new service needs.
 - **`verify:contrast` checks the destructive pairs** — error text on the background and text on a
   destructive fill, in both themes. The dark theme's error red failed (4.15:1) with nothing catching it.
 - **`check:claude-md` fails on a dead relative link** in a brief or rule (LINK). 36 links pointed at moved
