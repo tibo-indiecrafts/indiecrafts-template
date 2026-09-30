@@ -44,6 +44,10 @@ jobs:
       - run: pnpm tokens:check
       - run: pnpm brands:check
       - run: pnpm check:tasks
+      - run: pnpm check:secret-leak
+      - run: pnpm check:lint-no-types
+      - run: pnpm check:doc-coverage
+      - run: pnpm check:claude-md
 
   # The real Cloudflare Worker build (OpenNext) for every AFFECTED Next app
   # (website · admin) — turbo fans out via the `build:cf` task and skips

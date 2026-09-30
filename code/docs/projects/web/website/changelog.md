@@ -19,6 +19,21 @@ the repo-wide roll-up → root `CHANGELOG.md`.
 
 ### Fixed
 
+- **`pnpm verify` is green again.** React Doctor failed the website gate on
+  `EmailPreferences.tsx`: the React Compiler can't lower a `try`/`finally`. The saving-flag
+  cleanup now runs after the `try`/`catch` (same behavior — the catch never rethrows); the tests
+  now also assert the switch is re-enabled after a save and after a failure.
+- **CI runs every check `pnpm verify` runs.** `test.yml` lacked `check:secret-leak`,
+  `check:lint-no-types`, `check:doc-coverage` and `check:claude-md`, so the secret-leak guard
+  never ran in CI. **Why:** QA Runbook card 02 — the local gate and CI must be the same gate.
+
+- **The header no longer draws over the brand name on a phone.** In French ("Se connecter") the
+  controls squeezed the logo and the menu icon overlapped its text at 390 px. The name now
+  ellipsizes and the controls keep their size. **Why:** seen on the QA Runbook card 01 check.
+- **`dev:setup` can finish for cron and workers.** Their `.dev.vars.example` held a commented
+  `EXAMPLE_TOKEN` stub that no code reads, but setup counted it as a required secret, so it never
+  got past step 2. The stub is gone (the example explains how to declare a real one).
+
 - **`dev:doctor` checks only the env you run.** It flagged `PASTE_…_HERE` placeholders in the
   staging/prod tables of `wrangler.toml` while booting `dev`, telling every newcomer to fix dev ids
   that were already set. It now reads only `[env.<env>]` (`wranglerEnvSection` in

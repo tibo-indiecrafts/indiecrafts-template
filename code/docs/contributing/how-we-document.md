@@ -65,7 +65,7 @@ and sub-groups once it passes ~15 items (see Packages).
 
 A page's **Flags** section surfaces the issue tags found in its source. The
 vocabulary is closed: `@complexity`, `@refactor`, `@debt`, `@bug`,
-`@optimisation`. `pnpm tags:check` fails on any off-list qualifier. See the repo
+`@optimisation`. `pnpm check:tags` fails on any off-list qualifier. See the repo
 rule at `.claude/rules/issue-tags.md`. Omit the section when the source carries no
 tags.
 

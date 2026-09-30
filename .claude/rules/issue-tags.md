@@ -9,7 +9,7 @@ How to flag a problem in code so it is greppable. Full guide + rationale →
 rule: note, don't fix). Inside your blast radius: fix it, don't tag it.
 
 Format: `@family QUALIFIER - description`, inline. Families + qualifiers are fixed;
-`pnpm tags:check` fails on anything off-list.
+`pnpm check:tags` fails on anything off-list.
 
 - `@complexity` — `MEDIUM` `HIGH`
 - `@refactor` — `SPLIT` `EXTRACT` `CONSOLIDATE` `COLOCATE` `SIMPLIFY` `RENAME` `DUPLICATE` `TYPES` `BARREL`
@@ -29,5 +29,5 @@ for visibility — not a wishlist; fix-in-diff stays the default.
 - `@debt COUPLING` — one-line note on the real gap.
 ```
 
-`pnpm tags:report` inventories them; `pnpm tags:check` guards the vocabulary. A rising
+`pnpm tags:report` inventories them; `pnpm check:tags` guards the vocabulary. A rising
 tag count is a smell here — flags are being parked instead of paid.

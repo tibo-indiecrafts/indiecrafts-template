@@ -17,6 +17,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Changed
 
+- **`pnpm verify` is described as it is.** The getting-started and workspace pages said it runs
+  "tsc + lint + format + contrast + react-doctor"; it also runs every app's tests and the repo
+  guards. `how-we-document` now names the real `pnpm check:tags` (was `tags:check`).
+
+### Changed
+
 - **Quick start covers a real first run.** Cloudflare login + `dev:setup` for secrets, the
   `dev:doctor` preflight, every port with its health check, how to run `admin` and `app` on their
   own ports (and the `:3002` clash with the docs site). **Why:** the old five steps skipped the

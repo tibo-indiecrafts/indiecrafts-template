@@ -32,7 +32,7 @@ Everything runs from the **repo root** (scripts delegate to the app via Turborep
 pnpm install       # installs the whole workspace (all of code/)
 pnpm dev           # http://localhost:3000  (turbo → @indiecrafts/web-surfaces-website)
 pnpm build         # production build → code/projects/web/surfaces/website/.next
-pnpm verify        # tsc + lint + format + contrast + react-doctor (CI gate)
+pnpm verify        # the full gate: every app's tsc/lint/tests + the repo guards (what CI checks)
 pnpm verify:quick  # tsc + lint (manual pre-PR check)
 ```
 
