@@ -142,6 +142,16 @@ api's en/fr text.
 - Live: submit → receipt arrives → admin Start → Mark done with email → closing email arrives;
   history shows both events.
 
+## Addendum 2026-10-01 — prefilled replies ("write prefilled email per locale")
+
+- Both requester emails ship complete en + fr default copy in the api (Studio overrides win).
+- **Mark done** / **Reject** open with the note already filled: a ready reply in the
+  **requester's** language (the row's `locale`), naming the right and the reference. The
+  operator edits it, then sends. Rendered server-side from admin `messages/<locale>.json`
+  (`admin.dataRequests.replies.*`) with next-intl for that locale.
+- The rejected template carries an empty "Reason:" line (GDPR Art. 12(4): give the reason and
+  the right to complain).
+
 ## Out of scope
 
 - Identity verification links, attachments, editing the request, reopening a closed request,
