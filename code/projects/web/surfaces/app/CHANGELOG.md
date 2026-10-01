@@ -14,6 +14,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Server calls reach the api on deployed envs.** Same-zone Worker-to-Worker fetches fail with
+  Cloudflare error 1042; the `global_fetch_strictly_public` compatibility flag sends them over the
+  public internet, as `API_URL` already assumed.
 - **The api rate-limits sign-in logs per visitor.** `/api/session-log` sends the visitor IP
   (`x-client-ip`), so the api keys its limit on the visitor, not the app server.
 - **Sign-ins are logged again on the app (and the mobile shell, which loads it).** `/api/session-log` calls Clerk's `auth()`, but the

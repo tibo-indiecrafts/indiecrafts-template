@@ -4,7 +4,10 @@
 name = "indiecrafts-dev-web-surfaces-app"
 main = ".open-next/worker.js"
 compatibility_date = "2025-03-01"
-compatibility_flags = ["nodejs_compat"]
+# global_fetch_strictly_public: server calls to the api go over the public internet. Without
+# it, a fetch to another Worker on the same zone (every *.workers.dev Worker of the account)
+# fails with error 1042 — no consent log, CSP report, data request or admin read reached it.
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 keep_vars = true
 
 [assets]

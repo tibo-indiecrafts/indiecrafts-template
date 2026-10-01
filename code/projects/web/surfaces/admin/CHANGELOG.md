@@ -14,6 +14,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **Server calls reach the api on deployed envs.** Same-zone Worker-to-Worker fetches fail with
+  Cloudflare error 1042; the `global_fetch_strictly_public` compatibility flag sends them over the
+  public internet, as `API_URL` already assumed.
 - **CSP reports show "last seen" in the operator's locale.** The column printed the raw ISO
   timestamp; it now uses the locale date and time format (UTC), like the data-request pages.
 - **Per-env origins are `wrangler.toml` vars.** `API_URL`, `WEBSITE_URL` and `APP_URL` are set

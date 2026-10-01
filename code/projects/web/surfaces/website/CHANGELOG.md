@@ -19,6 +19,14 @@ the repo-wide roll-up → [root `CHANGELOG.md`](../../../../../CHANGELOG.md).
 
 ### Fixed
 
+- **Server calls reach the api on deployed envs.** A fetch from one Worker to another on the
+  same zone (every `*.workers.dev` Worker of the account) fails with Cloudflare error 1042, so
+  on dev no consent log, CSP report or data request ever reached the api (`csp_reports` was
+  empty). The `global_fetch_strictly_public` compatibility flag sends these calls over the
+  public internet, as `API_URL` already assumed.
+- **`RATE_LIMIT_KV` points at live namespaces.** The dev and staging ids named deleted
+  namespaces, so the first deploy after the limiter fix failed. New `RATE_LIMIT_KV_dev` /
+  `RATE_LIMIT_KV_staging` namespaces, ids updated.
 - **The api rate-limits per visitor.** `/api/consent-log`, `/api/data-request`,
   `/api/session-log` and `/api/csp-report` send the visitor IP (`x-client-ip`) with their api call.
 - **`API_URL` is a per-env var; the manual secret sync is the deploy's own.** `API_URL` moved to
