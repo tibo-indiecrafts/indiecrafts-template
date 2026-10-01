@@ -39,6 +39,16 @@ describe("SessionsTable", () => {
     expect(screen.queryByText(row.ts)).toBeNull();
   });
 
+  it("shows the user's email, with the Clerk id kept for copy-paste", () => {
+    render(
+      <NextIntlClientProvider locale="fr" messages={messages} timeZone="UTC">
+        <SessionsTable rows={[row]} emails={{ user_abc: "jane@example.com" }} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText("jane@example.com")).toBeTruthy();
+    expect(screen.getByText("user_abc")).toBeTruthy();
+  });
+
   it("formats a live session's last activity the same way", async () => {
     listUserSessions.mockResolvedValueOnce([
       { id: "sess_1", lastActiveAt: Date.parse("2026-10-01T23:45:00.000Z"), browser: "Firefox" },

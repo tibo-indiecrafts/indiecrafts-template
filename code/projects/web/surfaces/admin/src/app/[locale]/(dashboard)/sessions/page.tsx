@@ -6,6 +6,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
+import { fetchEmails } from "@/lib/clerk-users";
 import { SessionsTable, type SessionRow } from "../sessions-table";
 
 /** Read recent sign-ins from the shared api (holds the token server-side). No IP. */
@@ -35,6 +36,7 @@ export default async function SessionsPage({
   setRequestLocale(locale);
   const t = await getTranslations("admin.sessions");
   const rows = await fetchSessions();
+  const emails = await fetchEmails(rows.map((r) => r.user_id));
 
   return (
     <div className="p-4 md:p-6">
@@ -44,7 +46,7 @@ export default async function SessionsPage({
           {rows.length === 0 ? (
             <p className="text-muted-foreground py-10 text-center">{t("empty")}</p>
           ) : (
-            <SessionsTable rows={rows} />
+            <SessionsTable rows={rows} emails={emails} />
           )}
         </CardContent>
       </Card>

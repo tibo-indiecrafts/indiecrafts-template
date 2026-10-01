@@ -69,6 +69,16 @@ made from the UI — a chicken-and-egg. Grant it out-of-band, one of two ways:
   emails at once. The user must have signed up once first, or it reports `not-found`.
   Colocated test: `set-admin.test.mjs`.
 
+### A test user to sign out (QA)
+
+`node code/shared/scripts/data/qa-session-user.mjs [--sessions N] [--delete]` gives the admin
+Sessions screen someone to revoke. It finds or creates `qa-disconnect+clerk_test@example.com` in
+the **development** Clerk instance (it refuses an `sk_live_` key), opens N live sessions (default 2)
+through the Backend API, and logs one sign-in row per session to the shared api, so each row shows
+in the feed. Re-run it for fresh sessions; `--delete` removes the user. It reads `CLERK_SECRET_KEY`,
+`API_URL` and `APP_API_TOKEN` from the env or the admin surface's `.env.local` (`QA_ENV_FILE`
+overrides), and needs the api running for the feed rows. Colocated test: `qa-session-user.test.mjs`.
+
 Either way, the session claim below must be set (Dashboard → Sessions) so the role reaches
 the JWT. Sign out and back in after a change — the role refreshes on the next session.
 

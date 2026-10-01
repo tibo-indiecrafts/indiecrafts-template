@@ -37,7 +37,14 @@ const COLUMN_COUNT = 5;
 
 /** The sign-in activity feed (from the EU D1) with per-user LIVE session management:
  *  expand a row to load the user's active Clerk sessions and revoke one — or all. */
-export function SessionsTable({ rows }: { rows: SessionRow[] }) {
+export function SessionsTable({
+  rows,
+  emails = {},
+}: {
+  rows: SessionRow[];
+  /** user id → email, resolved live from Clerk by the page (never stored). */
+  emails?: Record<string, string>;
+}) {
   const t = useTranslations("admin.sessions");
   return (
     <div className="mt-6">
@@ -53,7 +60,7 @@ export function SessionsTable({ rows }: { rows: SessionRow[] }) {
         </TableHeader>
         <TableBody>
           {rows.map((row, i) => (
-            <Row key={i} row={row} />
+            <Row key={i} row={row} email={emails[row.user_id]} />
           ))}
         </TableBody>
       </Table>
@@ -65,7 +72,7 @@ export function SessionsTable({ rows }: { rows: SessionRow[] }) {
 // the next-intl config, so the server and browser renders match.
 const WHEN = { dateStyle: "medium", timeStyle: "short" } as const;
 
-function Row({ row }: { row: SessionRow }) {
+function Row({ row, email }: { row: SessionRow; email?: string }) {
   const t = useTranslations("admin.sessions");
   const format = useFormatter();
   const [pending, start] = useTransition();
@@ -102,7 +109,10 @@ function Row({ row }: { row: SessionRow }) {
           {format.dateTime(new Date(row.ts), WHEN)}
         </TableCell>
         <TableCell>{row.surface}</TableCell>
-        <TableCell className="font-mono text-xs">{row.user_id}</TableCell>
+        <TableCell>
+          {email ? <div>{email}</div> : null}
+          <div className="font-mono text-xs text-muted-foreground">{row.user_id}</div>
+        </TableCell>
         <TableCell>{row.country ?? "—"}</TableCell>
         <TableCell className="flex gap-2">
           <Button variant="outline" size="sm" disabled={pending} onClick={toggle}>

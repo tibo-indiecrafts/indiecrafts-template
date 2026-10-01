@@ -14,6 +14,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **Sessions show who signed in.** Each sign-in row shows the user's email above the Clerk id. The
+  page resolves the ids live from Clerk in one call (`src/lib/clerk-users.ts`); D1 still stores only
+  the id. On a Clerk error the row shows the bare id.
+- **A test user to sign out.** `code/shared/scripts/data/qa-session-user.mjs` creates a
+  development-only Clerk user with live sessions and feed rows, so the Sessions revoke actions can be
+  tested on demand. `--delete` removes it.
 - **An admin cannot revoke their own role.** `revokeAdmin` returns `self` and the form says why
   (en/fr). The caller always stays admin, so the dashboard can never remove the last admin.
 

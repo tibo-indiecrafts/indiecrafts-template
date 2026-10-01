@@ -17,6 +17,7 @@ import {
 import { Input } from "@indiecrafts/packages-web-ui/web/input";
 import { Button } from "@indiecrafts/packages-web-ui/web/button";
 import { PageHeader } from "@/user-interface/layout/PageHeader";
+import { primaryEmail } from "@/lib/clerk-users";
 
 type UserRow = {
   id: string;
@@ -37,10 +38,7 @@ async function fetchUsers(query: string): Promise<UserRow[]> {
     });
     return data.map((u) => ({
       id: u.id,
-      email:
-        u.primaryEmailAddress?.emailAddress ??
-        u.emailAddresses[0]?.emailAddress ??
-        "—",
+      email: primaryEmail(u) ?? "—",
       role: typeof u.publicMetadata?.role === "string" ? u.publicMetadata.role : "—",
       created: u.createdAt,
       lastSignIn: u.lastSignInAt,
