@@ -14,6 +14,13 @@ Changed · Deprecated · Removed · Fixed**.
 
 ### Fixed
 
+- **security — the in-app rate limiter limits again.** `rateLimit` found `RATE_LIMIT_KV` through a
+  variable-specifier `import("@opennextjs/cloudflare")`. That import cannot resolve inside a Next
+  bundle, so the limiter always failed open: no 429 from `withGuard` forms, comment moderation, or
+  the CSP report sink. It now reads OpenNext's request context
+  (`globalThis[Symbol.for("__cloudflare-context__")]`) directly. Verified live: the CSP sink answers
+  `429` after 30 reports per minute per IP. The Cloudflare WAF rule stays the primary limiter.
+- **security-reports — the 64KB body cap is tested** (declared and undeclared oversize bodies → 413).
 - **compliance — the GDPR request alert links the admin, not Studio.** Requests live in the api's
   `data_requests` table since the D1 move, so the "Voir la demande" Studio link led nowhere. The
   alert now links `${ADMIN_URL}/data-requests` (`reviewUrl`); unset → it names the screen. A missing
