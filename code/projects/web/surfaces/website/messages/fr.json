@@ -64,7 +64,7 @@
       "messagePlaceholder": "Ajoutez tout détail utile au traitement de votre demande.",
       "consent": "J'accepte que cette adresse e-mail serve uniquement à traiter ma demande.",
       "submit": "Envoyer la demande",
-      "success": "Merci — nous avons reçu votre demande et répondrons sous un mois.",
+      "success": "Merci — nous avons bien reçu votre demande. Une confirmation arrive dans votre boîte mail, et nous vous répondrons sous un mois.",
       "error": "Une erreur s'est produite. Merci de réessayer.",
       "erasureNote": "Pour supprimer vos données plus rapidement, utilisez la page d'effacement."
     },

@@ -85,10 +85,14 @@ describe("submitDataRequest", () => {
     delete process.env.RESEND_API_KEY;
   });
 
-  it("links the alert to the admin data-requests screen from ADMIN_URL", async () => {
+  it("links the alert to the exact request in the admin, from ADMIN_URL", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(new Response(null, { status: 201 })),
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(JSON.stringify({ ok: true, id: 12 }), { status: 201 }),
+        ),
     );
     const { sendEmail } = await import("@indiecrafts/packages-web-email");
     const { getEmailStrings } =
@@ -108,7 +112,7 @@ describe("submitDataRequest", () => {
 
     const sent = vi.mocked(sendEmail).mock.calls[0]![0] as { html: string };
     expect(sent.html).toContain(
-      'href="https://admin.example.com/data-requests"',
+      'href="https://admin.example.com/data-requests?id=12"',
     );
     delete process.env.RESEND_API_KEY;
     delete process.env.ADMIN_URL;

@@ -83,8 +83,11 @@ export async function submitDataRequest(
       return { ok: false, error: "server" };
     }
 
+    // The api answers `{ ok, id }` — the id deep-links the alert to that request.
+    const { id } = (await res.json().catch(() => ({}))) as { id?: number };
+
     // Best-effort — a mail failure must not turn a saved request into a 500.
-    await notifyOwner(requestType, email, input.message, input.source);
+    await notifyOwner(requestType, email, input.message, input.source, id);
 
     return { ok: true };
   } catch (error) {
@@ -98,10 +101,12 @@ export async function submitDataRequest(
   }
 }
 
-/** The admin "Data requests" screen — `ADMIN_URL` is the admin surface origin. */
-export const adminReviewUrl = () => {
+/** The admin "Data requests" screen — `ADMIN_URL` is the admin surface origin. With an
+ *  id, the link opens that request's side sheet. */
+export const adminReviewUrl = (id?: number) => {
   const base = process.env.ADMIN_URL?.trim().replace(/\/+$/, "");
-  return base ? `${base}/data-requests` : undefined;
+  if (!base) return undefined;
+  return `${base}/data-requests${id ? `?id=${id}` : ""}`;
 };
 
 const clean = (list?: string[] | null) =>
@@ -113,6 +118,7 @@ async function notifyOwner(
   email: string,
   message: string | undefined,
   source: string | undefined,
+  id?: number,
 ): Promise<void> {
   try {
     const strings = (await getEmailStrings()) as {
@@ -133,7 +139,7 @@ async function notifyOwner(
       email,
       message,
       source,
-      reviewUrl: adminReviewUrl(),
+      reviewUrl: adminReviewUrl(id),
       subjectTemplate: cfg.subject ?? undefined,
       heading: pick(cfg.heading, defaultLocale) || undefined,
       intro: pick(cfg.intro, defaultLocale) || undefined,
