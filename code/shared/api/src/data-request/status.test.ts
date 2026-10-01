@@ -237,3 +237,28 @@ describe("GET /v1/data-requests/:id", () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe("rate limit (every data-request route)", () => {
+  it.each([
+    ["POST", "/v1/data-request"],
+    ["GET", "/v1/data-requests"],
+    ["GET", "/v1/data-requests/1"],
+    ["POST", "/v1/data-requests/1/status"],
+  ])("%s %s answers 429 when the limiter refuses", async (method, path) => {
+    const { createExecutionContext, waitOnExecutionContext } =
+      await import("cloudflare:test");
+    const { default: worker } = await import("../index");
+    const ctx = createExecutionContext();
+    const res = await worker.fetch(
+      new Request(`https://x${path}`, {
+        method,
+        headers: { authorization: "Bearer test-token" },
+        ...(method === "POST" ? { body: "{}" } : {}),
+      }),
+      { ...E, RATELIMIT: { limit: async () => ({ success: false }) } } as Env,
+      ctx,
+    );
+    await waitOnExecutionContext(ctx);
+    expect(res.status).toBe(429);
+  });
+});

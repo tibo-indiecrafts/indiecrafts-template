@@ -1040,17 +1040,24 @@ async function route(
 
   // ── DSAR intake — POST /v1/data-request (bearer-gated write; the website's
   // /api/data-request route proxies here) + GET /v1/data-requests (bearer-gated read;
-  // the admin screen) ── Logic lives in data-request/route.ts — this stays a thin dispatch.
-  if (url.pathname === "/v1/data-request")
-    return handleDataRequestWrite(request, env);
-  if (url.pathname === "/v1/data-requests")
-    return handleDataRequestList(request, env);
-  // GET /v1/data-requests/:id (detail + history) · POST …/:id/status (operator moves).
+  // the admin screen) + GET /v1/data-requests/:id (detail + history) + POST …/:id/status
+  // (operator moves) ── Logic lives in data-request/ — this stays a thin dispatch.
   const dr = url.pathname.match(/^\/v1\/data-requests\/(\d+)(\/status)?$/);
-  if (dr)
-    return dr[2]
-      ? handleDataRequestStatus(request, env, Number(dr[1]))
-      : handleDataRequestDetail(request, env, Number(dr[1]));
+  if (
+    dr ||
+    url.pathname === "/v1/data-request" ||
+    url.pathname === "/v1/data-requests"
+  ) {
+    const limited = await rateLimit(request, env, cors);
+    if (limited) return limited;
+    if (dr)
+      return dr[2]
+        ? handleDataRequestStatus(request, env, Number(dr[1]))
+        : handleDataRequestDetail(request, env, Number(dr[1]));
+    return url.pathname === "/v1/data-request"
+      ? handleDataRequestWrite(request, env)
+      : handleDataRequestList(request, env);
+  }
 
   // ── Clerk webhook — POST /v1/clerk-webhook (Svix-signed; server-verified events) ──
   // Fail-closed: no secret set → 503; bad signature → 401. Records only genuinely
