@@ -65,7 +65,12 @@ export type CspReporting = {
 function cspDirectives(
   env: Environment,
   csp: CspHosts,
-  opts: { dropSources?: string[]; dropUnsafeEval?: boolean } = {},
+  opts: {
+    dropSources?: string[];
+    dropUnsafeEval?: boolean;
+    /** Permissive policy that still names a nonce — see `buildRollbackCsp`. */
+    nonceHint?: string;
+  } = {},
   nonce?: string,
 ): string[] {
   const dev = env === "development" || env === "test";
@@ -87,15 +92,25 @@ function cspDirectives(
   // Dev needs 'unsafe-eval' even under the strict nonce policy: React's dev build uses
   // eval() for debugging (harmless — React never uses eval() in production, and `allowEval`
   // is false outside dev/test, so prod stays strict).
+  const permissiveSources = keep(
+    `script-src ${src(["'self'", "'unsafe-inline'"], allowEval ? ["'unsafe-eval'"] : undefined, ga ? GA_SCRIPT : undefined, TURNSTILE, clerk.script, csp.scriptSrc, embed)}`,
+  ).slice("script-src ".length);
   const scriptSrc = nonce
-    ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'${allowEval ? " 'unsafe-eval'" : ""}`
-    : keep(
-        `script-src ${src(["'self'", "'unsafe-inline'"], allowEval ? ["'unsafe-eval'"] : undefined, ga ? GA_SCRIPT : undefined, TURNSTILE, clerk.script, csp.scriptSrc, embed)}`,
-      );
+    ? [
+        `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'${allowEval ? " 'unsafe-eval'" : ""}`,
+      ]
+    : opts.nonceHint
+      ? [
+          `script-src ${permissiveSources} 'nonce-${opts.nonceHint}'`,
+          // `https:` — an editor's Custom HTML embed script keeps running in a rollback.
+          `script-src-elem ${permissiveSources} https:`,
+          `script-src-attr 'unsafe-inline'`,
+        ]
+      : [`script-src ${permissiveSources}`];
 
   const directives = [
     `default-src 'self'`,
-    scriptSrc,
+    ...scriptSrc,
     `style-src 'self' 'unsafe-inline'`,
     keep(
       `img-src ${src(["'self'", "data:", "blob:", "https:"], clerk.img, csp.imgSrc)}`,
@@ -143,6 +158,29 @@ export function buildCsp(
   return (reporting ? withReporting(directives, reporting) : directives).join(
     "; ",
   );
+}
+
+/**
+ * The permissive policy for `CSP_MODE=report-only`, plus the request nonce on `script-src`.
+ * Next takes its script nonce from the enforced `Content-Security-Policy` header; without one
+ * it nonces none of its own scripts, and the strict Report-Only policy reports every chunk.
+ * CSP3 browsers judge `<script>` and inline handlers by `script-src-elem` / `script-src-attr`,
+ * which carry no nonce, so `'unsafe-inline'` still holds and nothing new is blocked;
+ * `script-src-elem` adds `https:` so an editor's embed script from any host keeps running
+ * (the policy already allows inline script, so this adds little).
+ * ponytail: a pre-CSP3 browser (Safari < 15.4, Firefox < 108) falls back to `script-src`,
+ * where the nonce voids `'unsafe-inline'` — un-nonced inline scripts block there.
+ */
+export function buildRollbackCsp(
+  env: Environment,
+  csp: CspHosts,
+  reporting: CspReporting,
+  nonce: string,
+): string {
+  return withReporting(
+    cspDirectives(env, csp, { nonceHint: nonce }),
+    reporting,
+  ).join("; ");
 }
 
 export function buildReportOnlyCsp(

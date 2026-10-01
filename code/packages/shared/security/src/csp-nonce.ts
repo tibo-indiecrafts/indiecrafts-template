@@ -5,6 +5,7 @@
  */
 import {
   buildCsp,
+  buildRollbackCsp,
   buildTrustedTypesReportOnly,
   type CspHosts,
   type CspReporting,
@@ -24,8 +25,9 @@ export function generateNonce(): string {
  * The CSP header value(s) the proxy sets for a given mode.
  * - enforce: the strict nonce policy as the enforced CSP; the Report-Only slot carries an
  *   optional Trusted-Types trial (only when `reporting.trustedTypesReportOnly` is set, else null).
- * - report-only: the CURRENT permissive policy stays enforced (site keeps working) and the
- *   strict nonce policy is Report-Only — so violations are observed without blocking. (The
+ * - report-only: the permissive policy stays enforced (site keeps working; it names the nonce
+ *   so Next nonces its scripts — `buildRollbackCsp`) and the strict nonce policy is
+ *   Report-Only — so violations are observed without blocking. (The
  *   Trusted-Types trial is enforce-mode only — in report-only the slot holds the strict policy.)
  */
 export function cspHeadersForMode(
@@ -41,5 +43,8 @@ export function cspHeadersForMode(
       enforced: strict,
       reportOnly: buildTrustedTypesReportOnly(reporting),
     };
-  return { enforced: buildCsp(env, csp, reporting), reportOnly: strict };
+  return {
+    enforced: buildRollbackCsp(env, csp, reporting, nonce),
+    reportOnly: strict,
+  };
 }

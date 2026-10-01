@@ -16,7 +16,9 @@ tsconfig `paths`).
   per-request nonce pair for a proxy/middleware: `generateNonce()` is a base64 16-byte nonce (Web
   Crypto); `cspHeadersForMode` returns `{ enforced, reportOnly }` for a `CspMode` of `"enforce"`
   (strict nonce policy enforced, no Report-Only) or `"report-only"` (permissive policy stays
-  enforced — site keeps working — strict nonce policy ships Report-Only). The rollout knob apps read
+  enforced — site keeps working — strict nonce policy ships Report-Only). The report-only
+  enforced policy is `buildRollbackCsp`: it names the nonce on `script-src` (Next reads it from
+  there to nonce its scripts) and keeps `'unsafe-inline'` on `script-src-elem`/`-attr`. The rollout knob apps read
   as `CSP_MODE` (a runtime Worker var, default `enforce`).
 - **`securityHeaders(opts)`** (`./headers`) — the full Next `headers()` array: `nosniff` · `X-Frame
 DENY` · `Referrer-Policy` · `Permissions-Policy` · `CSP` · **HSTS** (prod only) · **COOP** + immutable

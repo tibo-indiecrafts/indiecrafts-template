@@ -32,9 +32,11 @@ describe("encrypt / decrypt", () => {
   it("rejects a wrong key or tampered ciphertext (auth tag)", async () => {
     const enc = await encrypt("secret", SECRET);
     await expect(decrypt(enc, "wrong-key")).rejects.toThrow();
+    // Flip the last hex digit — always a change (a fixed "00" suffix was a no-op 1 in 256).
+    const last = enc.ciphertext.at(-1) === "0" ? "1" : "0";
     await expect(
       decrypt(
-        { ...enc, ciphertext: `${enc.ciphertext.slice(0, -2)}00` },
+        { ...enc, ciphertext: `${enc.ciphertext.slice(0, -1)}${last}` },
         SECRET,
       ),
     ).rejects.toThrow();
