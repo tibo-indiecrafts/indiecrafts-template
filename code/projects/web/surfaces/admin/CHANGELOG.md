@@ -31,6 +31,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Added
 
+- **The requester's message leads the data-request sheet.** It shows first, as a highlighted
+  quote ("Requester's message" / "Message du demandeur"), with a clear line when there is none;
+  the list shows its excerpt in full contrast instead of muted grey.
+
 - **Data-request side sheet with actions.** The right in each row opens a sheet (`?id=<n>`,
   also the owner alert's link): full request, due date (Overdue flag, also as a list column),
   history, and the moves the status allows — Start, Mark done, Reject. Closing opens a reply

@@ -278,6 +278,12 @@ The seven rights are the one `DATA_REQUEST_TYPES` set
 (`@indiecrafts/packages-web-compliance/requests/request-types`) — read by the form options, the validator, and
 the api's allowed set (mirrored in `code/shared/api/src/data-request/route.ts`), so they never drift.
 
+**No account needed.** Any visitor can exercise a right, so a request is stored whatever the
+email — nothing is matched against users; the address only has to be well-formed (Turnstile, the
+honeypot and the rate limit stop bots). If the mailbox does not exist, Resend accepts the receipt
+and it bounces (visible in the Resend dashboard, not in the admin); the operator can still close
+the request — **Reject** with "Email the requester" unticked.
+
 **Receipt.** Once a request is stored, the api emails the requester a receipt in the request's
 language: the right, the reference `#id`, and the due date (one calendar month). Copy: Studio →
 E-mails → **RGPD — accusé de réception** (`dataRequestReceipt`); blank fields use the built-in
@@ -286,7 +292,7 @@ en/fr text, and unticking it turns the receipt off.
 **Admin.** Requests land in the admin **Data requests** screen (`/data-requests`, newest first,
 last 100): date (UTC), the right, the due date (an **Overdue** badge on an open request past it),
 the email (a `mailto:` link), the status, the message, locale + source. The right opens a **side
-sheet** (`?id=<n>`) with the full request, its history, and the moves its status allows: **Start**
+sheet** (`?id=<n>`) with the requester's message first (highlighted), the full request, its history, and the moves its status allows: **Start**
 (new → in progress), **Mark done**, **Reject**. Done / Reject open a reply **prefilled in the
 requester's language** (`admin.dataRequests.replies.*`); with "Email the requester" ticked, the api
 emails it (Studio → **RGPD — demande clôturée**, `dataRequestClosed`). A closed request stays

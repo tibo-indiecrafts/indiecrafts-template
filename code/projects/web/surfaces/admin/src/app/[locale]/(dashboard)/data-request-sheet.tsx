@@ -79,6 +79,20 @@ export function DataRequestSheet({
         </SheetHeader>
 
         <div className="flex flex-col gap-6 px-4 pb-6">
+          {/* The requester's own words come first — the reason the operator acts on. */}
+          <section aria-labelledby="dr-message" className="flex flex-col gap-2">
+            <h3 id="dr-message" className="text-sm font-medium">
+              {t("sheet.message")}
+            </h3>
+            {request.message ? (
+              <blockquote className="border-primary bg-muted/50 rounded-md border-l-4 p-3 text-sm whitespace-pre-wrap">
+                {request.message}
+              </blockquote>
+            ) : (
+              <p className="text-muted-foreground text-sm">{t("sheet.noMessage")}</p>
+            )}
+          </section>
+
           <section aria-labelledby="dr-facts" className="flex flex-col gap-2">
             <h3 id="dr-facts" className="text-sm font-medium">
               {t("sheet.facts")}
@@ -91,15 +105,6 @@ export function DataRequestSheet({
                 </div>
               ))}
             </dl>
-          </section>
-
-          <section aria-labelledby="dr-message" className="flex flex-col gap-2">
-            <h3 id="dr-message" className="text-sm font-medium">
-              {t("sheet.message")}
-            </h3>
-            <p className="text-sm whitespace-pre-wrap">
-              {request.message || t("sheet.noMessage")}
-            </p>
           </section>
 
           <section aria-labelledby="dr-actions" className="flex flex-col gap-2">

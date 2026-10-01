@@ -108,7 +108,7 @@ export function DataRequestsTable({ rows }: { rows: DataRequestRow[] }) {
                   {STATUSES.has(row.status) ? t(`statuses.${row.status}`) : row.status}
                 </Badge>
               </TableCell>
-              <TableCell className="text-muted-foreground whitespace-normal">
+              <TableCell className="whitespace-normal">
                 <Message message={row.message} />
               </TableCell>
               <TableCell>

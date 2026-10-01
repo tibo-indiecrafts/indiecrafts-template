@@ -149,4 +149,27 @@ describe("DataRequestSheet", () => {
     await user.click(screen.getByRole("button", { name: "Start" }));
     expect(refresh).toHaveBeenCalled();
   });
+
+  it("puts the requester's message first, highlighted", () => {
+    renderSheet();
+    const heading = screen.getByRole("heading", { name: "Requester's message" });
+    const facts = screen.getByRole("heading", { name: "Request" });
+    // The reason comes before the facts, actions and history.
+    expect(
+      heading.compareDocumentPosition(facts) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    const quote = heading.parentElement!.querySelector("blockquote");
+    expect(quote?.textContent).toBe("Send me my data.");
+  });
+
+  it("says so when the requester wrote no message", () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={messages} timeZone="UTC">
+        <DataRequestSheet request={{ ...req("new"), message: null }} prefill={prefill} />
+      </NextIntlClientProvider>,
+    );
+    expect(
+      screen.getByText("No message — the requester only chose the right."),
+    ).toBeTruthy();
+  });
 });
