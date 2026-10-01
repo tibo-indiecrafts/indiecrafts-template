@@ -25,7 +25,7 @@ vi.mock(
   },
 );
 
-const { retryErasure, closeErasure, runCronNow } =
+const { retryErasure, closeErasure, runCronNow, setDataRequestStatus } =
   await import("./monitoring-actions");
 
 const admin = {
@@ -52,6 +52,10 @@ describe.each([
   ["retryErasure", () => retryErasure(7)],
   ["closeErasure", () => closeErasure(7, "erased by hand")],
   ["runCronNow", () => runCronNow()],
+  [
+    "setDataRequestStatus",
+    () => setDataRequestStatus(7, "new", "done", "x", true),
+  ],
 ])("%s — non-admin", (_name, call) => {
   it("fails closed: forbidden, no api call, no audit", async () => {
     authMock.mockResolvedValue(nonAdmin);
@@ -194,5 +198,56 @@ describe("long-running actions get a 60 s timeout (a tick or an erasure can outl
       expect.any(String),
       expect.objectContaining({ timeoutMs: 60_000 }),
     );
+  });
+});
+
+describe("setDataRequestStatus", () => {
+  it("POSTs the change with the actor and audits", async () => {
+    authMock.mockResolvedValue(admin);
+    fetchMock.mockResolvedValue(
+      reply(200, { ok: true, status: "done", notified: true }),
+    );
+    expect(
+      await setDataRequestStatus(7, "in-progress", "done", " Done. ", true),
+    ).toEqual({ ok: true, notified: true });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://api.test/v1/data-requests/7/status",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          status: "done",
+          from: "in-progress",
+          note: "Done.",
+          notify: true,
+          by: "user_admin1",
+        }),
+      }),
+    );
+    expect(auditMock).toHaveBeenCalledWith("admin.data_request_status", {
+      actor: "user_admin1",
+      target: "data-request:7",
+    });
+  });
+
+  it("asks for the reply before any call when emailing without one", async () => {
+    authMock.mockResolvedValue(admin);
+    expect(await setDataRequestStatus(7, "new", "done", "  ", true)).toEqual({
+      ok: false,
+      error: "note_required",
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [409, "changed"],
+    [409, "not_allowed"],
+    [404, "not_found"],
+  ] as const)("maps %i %s", async (status, error) => {
+    authMock.mockResolvedValue(admin);
+    fetchMock.mockResolvedValue(reply(status, { error }));
+    expect(await setDataRequestStatus(7, "new", "done", "x", false)).toEqual({
+      ok: false,
+      error,
+    });
   });
 });

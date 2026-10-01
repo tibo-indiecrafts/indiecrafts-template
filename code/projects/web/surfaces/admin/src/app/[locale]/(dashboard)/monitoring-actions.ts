@@ -1,7 +1,8 @@
 "use server";
 
 /**
- * Run the admin actions on erasure requests and the cron — re-authorized and audited.
+ * Run the admin actions on erasure requests, data requests and the cron — re-authorized
+ * and audited.
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/monitoring-actions.md
  */
@@ -31,6 +32,9 @@ export type RetryResult =
     >;
 export type CloseResult =
   { ok: true } | Fail<"note_required" | "not_open" | "not_found">;
+export type DataRequestStatusResult =
+  | { ok: true; notified: boolean }
+  | Fail<"note_required" | "not_allowed" | "changed" | "not_found">;
 export type RunResult =
   | { ok: true; status: "ok" | "failed" }
   | Fail<"cron_unbound" | "cron_unreachable">;
@@ -147,4 +151,44 @@ export async function runCronNow(): Promise<RunResult> {
   if (res.data.status === "ok" || res.data.status === "failed")
     return { ok: true, status: res.data.status };
   return { ok: false, error: "failed" };
+}
+
+/** Move a data request (`from` = the status the operator saw, so a concurrent change is
+ *  refused). Closing with `notify` emails the note to the requester, api-side. */
+export async function setDataRequestStatus(
+  id: number,
+  from: string,
+  status: string,
+  note: string,
+  notify: boolean,
+): Promise<DataRequestStatusResult> {
+  const actor = await adminId();
+  if (!actor) return { ok: false, error: "forbidden" };
+  if (!validId(id)) return { ok: false, error: "invalid" };
+  const text = note.trim();
+  if (notify && !text) return { ok: false, error: "note_required" };
+  if (text.length > 4000) return { ok: false, error: "invalid" };
+  const res = await postApi(`/v1/data-requests/${id}/status`, {
+    status,
+    from,
+    note: text,
+    notify,
+    by: actor,
+  });
+  await audit("admin.data_request_status", {
+    actor,
+    target: `data-request:${id}`,
+  });
+  if (!res) return { ok: false, error: "unreachable" };
+  if (res.status === 200)
+    return { ok: true, notified: res.data.notified === true };
+  const known = [
+    "note_required",
+    "not_allowed",
+    "changed",
+    "not_found",
+    "invalid",
+  ] as const;
+  const error = known.find((k) => k === res.data.error);
+  return { ok: false, error: error ?? "failed" };
 }

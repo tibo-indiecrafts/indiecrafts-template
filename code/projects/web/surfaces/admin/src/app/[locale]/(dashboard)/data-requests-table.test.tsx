@@ -1,9 +1,16 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "../../../../messages/en.json";
 import { DataRequestsTable } from "./data-requests-table";
 import type { DataRequestRow } from "@/lib/monitoring";
+
+// The locale-aware Link needs the Next router; a plain anchor keeps the href testable.
+vi.mock("@/i18n/routing", () => ({
+  Link: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
+}));
 
 // The operator view must be exact: a readable right + status, a reply link, the whole
 // message (not only an excerpt), and a date in the admin's locale.
@@ -15,14 +22,16 @@ const row: DataRequestRow = {
   message: long,
   status: "in-progress",
   submitted_at: "2026-10-01T08:30:00.000Z",
+  // Past due on any clock, so "Overdue" is deterministic.
+  due_at: "2020-11-01T08:30:00.000Z",
   source: "/data-request",
   locale: "fr",
 };
 
-const renderTable = () =>
+const renderTable = (rows: DataRequestRow[] = [row]) =>
   render(
     <NextIntlClientProvider locale="en" messages={messages} timeZone="UTC">
-      <DataRequestsTable rows={[row]} />
+      <DataRequestsTable rows={rows} />
     </NextIntlClientProvider>,
   );
 
@@ -48,5 +57,16 @@ describe("DataRequestsTable", () => {
   it("formats the date in the admin locale", () => {
     renderTable();
     expect(screen.getByText(/Oct 1, 2026/)).toBeTruthy();
+  });
+
+  it("opens the request's side sheet from the right", () => {
+    renderTable();
+    const link = screen.getByRole("link", { name: /Withdraw consent/ });
+    expect(link.getAttribute("href")).toBe("/data-requests?id=7");
+  });
+
+  it("flags an open request past its due date, never a closed one", () => {
+    renderTable([row, { ...row, id: 8, status: "done" }]);
+    expect(screen.getAllByText("Overdue")).toHaveLength(1);
   });
 });

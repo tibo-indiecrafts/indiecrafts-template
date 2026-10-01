@@ -153,7 +153,54 @@
       "statuses": {
         "new": "New",
         "in-progress": "In progress",
-        "done": "Done"
+        "done": "Done",
+        "rejected": "Rejected"
+      },
+      "due": "Due",
+      "overdue": "Overdue",
+      "open": "Open request #{id}",
+      "sheet": {
+        "title": "Request #{id}",
+        "description": "Everything the requester sent, its deadline and what was done.",
+        "facts": "Request",
+        "language": "Language",
+        "source": "Source",
+        "submitted": "Submitted",
+        "policy": "Policy version",
+        "message": "Message",
+        "noMessage": "No message.",
+        "history": "History",
+        "noHistory": "No action yet.",
+        "emailSent": "email sent",
+        "by": "by {actor}",
+        "closed": "This request is closed."
+      },
+      "actions": {
+        "title": "Actions",
+        "start": "Start",
+        "done": "Mark done",
+        "reject": "Reject",
+        "reply": "Reply to the requester",
+        "notify": "Email the requester",
+        "cancel": "Cancel",
+        "confirmDone": "Confirm: done",
+        "confirmRejected": "Confirm: rejected",
+        "saved": "Saved.",
+        "savedNoEmail": "Saved — the email was not sent.",
+        "errors": {
+          "forbidden": "You are not an admin.",
+          "invalid": "This change is not valid.",
+          "unreachable": "The api is unreachable — try again.",
+          "failed": "The change failed — try again.",
+          "note_required": "Write the reply first.",
+          "not_allowed": "This change is not allowed.",
+          "changed": "Someone changed this request — reload the page.",
+          "not_found": "Request not found."
+        }
+      },
+      "replies": {
+        "done": "Hello,\n\nWe have handled your request \"{right}\" (reference #{id}). The requested action is complete.\n\nIf you have a question, write to the support address below.\n\nKind regards",
+        "rejected": "Hello,\n\nWe cannot act on your request \"{right}\" (reference #{id}).\n\nReason: \n\nYou can lodge a complaint with your data protection authority.\n\nKind regards"
       }
     },
     "system": {

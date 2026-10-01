@@ -3,6 +3,8 @@ import {
   cronHealth,
   fetchCronStatus,
   fetchDataRequests,
+  fetchDataRequest,
+  isOverdue,
   type CronStatus,
   apiHealthView,
 } from "./monitoring";
@@ -135,7 +137,7 @@ describe("fetchDataRequests", () => {
   it("returns the newest 100 rows from the bearer-gated list", async () => {
     vi.stubEnv("API_URL", "http://api.test");
     vi.stubEnv("APP_API_TOKEN", "t");
-    const row = { id: 1, request_type: "access", email: "a@b.co", message: null, status: "new", submitted_at: "2026-10-01T08:00:00Z", source: null, locale: "en" };
+    const row = { id: 1, request_type: "access", email: "a@b.co", message: null, status: "new", submitted_at: "2026-10-01T08:00:00Z", due_at: "2026-11-01T08:00:00Z", source: null, locale: "en" };
     const fetchMock = vi
       .fn()
       .mockResolvedValue(new Response(JSON.stringify({ data: [row] }), { status: 200 }));
@@ -145,5 +147,46 @@ describe("fetchDataRequests", () => {
       "http://api.test/v1/data-requests?limit=100",
       expect.objectContaining({ headers: { authorization: "Bearer t" } }),
     );
+  });
+});
+
+describe("fetchDataRequest", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
+  it("returns one request with its history, or null when it cannot load", async () => {
+    vi.stubEnv("API_URL", "http://api.test");
+    vi.stubEnv("APP_API_TOKEN", "t");
+    const data = { id: 7, status: "new", events: [] };
+    const f = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ data }), { status: 200 }));
+    vi.stubGlobal("fetch", f);
+    expect(await fetchDataRequest(7)).toEqual(data);
+    expect(f).toHaveBeenCalledWith(
+      "http://api.test/v1/data-requests/7",
+      expect.anything(),
+    );
+    f.mockResolvedValue(new Response("", { status: 404 }));
+    expect(await fetchDataRequest(7)).toBeNull();
+  });
+
+  it("never calls the api for a bad id", async () => {
+    const f = vi.fn();
+    vi.stubGlobal("fetch", f);
+    expect(await fetchDataRequest(Number("abc"))).toBeNull();
+    expect(f).not.toHaveBeenCalled();
+  });
+});
+
+describe("isOverdue", () => {
+  const now = Date.parse("2026-11-02T00:00:00Z");
+  it("is true only for an open request past its due date", () => {
+    expect(isOverdue({ status: "new", due_at: "2026-11-01T08:30:00Z" }, now)).toBe(true);
+    expect(isOverdue({ status: "in-progress", due_at: "2026-11-01T08:30:00Z" }, now)).toBe(true);
+    expect(isOverdue({ status: "done", due_at: "2026-11-01T08:30:00Z" }, now)).toBe(false);
+    expect(isOverdue({ status: "new", due_at: "2026-12-01T08:30:00Z" }, now)).toBe(false);
   });
 });

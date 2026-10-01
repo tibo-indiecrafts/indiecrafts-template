@@ -96,8 +96,27 @@ export type DataRequestRow = {
   /** `new | in-progress | done` (the api's `data_requests` schema). */
   status: string;
   submitted_at: string;
+  /** Submitted + one calendar month (GDPR Art. 12(3)), computed by the api. */
+  due_at: string;
   source: string | null;
   locale: string | null;
+};
+
+/** One operator action on a request (status change + optional note). */
+export type DataRequestEvent = {
+  id: number;
+  status: string;
+  note: string | null;
+  actor: string;
+  /** The closing email reached Resend. */
+  notified: boolean;
+  at: string;
+};
+
+/** One request with its history — `GET /v1/data-requests/:id`. */
+export type DataRequestDetail = DataRequestRow & {
+  policy_version: string | null;
+  events: DataRequestEvent[];
 };
 
 /** The newest 100 requests. `null` = could not load — never shown as "no requests". */
@@ -105,6 +124,25 @@ export async function fetchDataRequests(): Promise<DataRequestRow[] | null> {
   const body = await getApi<{ data?: DataRequestRow[] }>("/v1/data-requests?limit=100");
   return body ? (body.data ?? []) : null;
 }
+
+/** One request with its history. `null` = not found or could not load. */
+export async function fetchDataRequest(
+  id: number,
+): Promise<DataRequestDetail | null> {
+  if (!Number.isInteger(id) || id < 1) return null;
+  const body = await getApi<{ data?: DataRequestDetail }>(
+    `/v1/data-requests/${id}`,
+  );
+  return body?.data ?? null;
+}
+
+/** Still open (`new` / `in-progress`) and past its due date. */
+export const isOverdue = (
+  r: Pick<DataRequestRow, "status" | "due_at">,
+  now = Date.now(),
+) =>
+  (r.status === "new" || r.status === "in-progress") &&
+  Date.parse(r.due_at) < now;
 export const fetchErasureRequests = () =>
   getApi<ErasureRequests>("/v1/erasure-requests");
 

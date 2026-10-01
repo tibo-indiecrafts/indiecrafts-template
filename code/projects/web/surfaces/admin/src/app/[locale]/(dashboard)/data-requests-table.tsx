@@ -13,13 +13,14 @@ import {
   TableBody,
   TableCell,
 } from "@indiecrafts/packages-web-ui/web/table";
-import type { DataRequestRow } from "@/lib/monitoring";
+import { Link } from "@/i18n/routing";
+import { isOverdue, type DataRequestRow } from "@/lib/monitoring";
 
 // Table-cell excerpt, not a data-retention cap — the row's `message` can be up to
 // 4000 chars (see the api's `data_requests` schema). A longer one opens in place.
 const MESSAGE_EXCERPT = 80;
 
-const TYPES = new Set([
+export const TYPES = new Set([
   "access",
   "rectification",
   "erasure",
@@ -28,12 +29,12 @@ const TYPES = new Set([
   "objection",
   "withdraw-consent",
 ]);
-const STATUSES = new Set(["new", "in-progress", "done"]);
+export const STATUSES = new Set(["new", "in-progress", "done", "rejected"]);
 
-// done is settled (outline), in-progress is active (secondary), new defaults to the
+// done / rejected are settled (outline), in-progress is active (secondary), new defaults to the
 // attention-grabbing variant. Each badge also carries its word — never color alone.
-function statusVariant(status: string): "default" | "secondary" | "outline" {
-  if (status === "done") return "outline";
+export function statusVariant(status: string): "default" | "secondary" | "outline" {
+  if (status === "done" || status === "rejected") return "outline";
   if (status === "in-progress") return "secondary";
   return "default";
 }
@@ -49,8 +50,9 @@ function Message({ message }: { message: string | null }) {
   );
 }
 
-/** Read-only GDPR data-subject-request feed (from the EU D1, via the shared api). An
- *  unknown type or status (a newer api) shows its raw key rather than breaking. */
+/** GDPR data-subject-request feed (from the EU D1, via the shared api). The right opens the
+ *  request's side sheet (`?id=`). An unknown type or status (a newer api) shows its raw key
+ *  rather than breaking. */
 export function DataRequestsTable({ rows }: { rows: DataRequestRow[] }) {
   const t = useTranslations("admin.dataRequests");
   const format = useFormatter();
@@ -61,6 +63,7 @@ export function DataRequestsTable({ rows }: { rows: DataRequestRow[] }) {
           <TableRow>
             <TableHead>{t("when")}</TableHead>
             <TableHead>{t("type")}</TableHead>
+            <TableHead>{t("due")}</TableHead>
             <TableHead>{t("email")}</TableHead>
             <TableHead>{t("status")}</TableHead>
             <TableHead>{t("message")}</TableHead>
@@ -77,7 +80,23 @@ export function DataRequestsTable({ rows }: { rows: DataRequestRow[] }) {
                 })}
               </TableCell>
               <TableCell>
-                {TYPES.has(row.request_type) ? t(`types.${row.request_type}`) : row.request_type}
+                <Link
+                  href={`/data-requests?id=${row.id}`}
+                  className="font-medium underline underline-offset-2"
+                >
+                  {TYPES.has(row.request_type)
+                    ? t(`types.${row.request_type}`)
+                    : row.request_type}
+                  <span className="sr-only"> — {t("open", { id: row.id })}</span>
+                </Link>
+              </TableCell>
+              <TableCell className="tabular-nums">
+                <span className="flex flex-wrap items-center gap-2">
+                  {format.dateTime(new Date(row.due_at), { dateStyle: "medium" })}
+                  {isOverdue(row) ? (
+                    <Badge variant="destructive">{t("overdue")}</Badge>
+                  ) : null}
+                </span>
               </TableCell>
               <TableCell>
                 <a href={`mailto:${row.email}`} className="underline underline-offset-2">

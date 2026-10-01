@@ -153,7 +153,54 @@
       "statuses": {
         "new": "Nouvelle",
         "in-progress": "En cours",
-        "done": "Traitée"
+        "done": "Traitée",
+        "rejected": "Refusée"
+      },
+      "due": "Échéance",
+      "overdue": "En retard",
+      "open": "Ouvrir la demande n° {id}",
+      "sheet": {
+        "title": "Demande n° {id}",
+        "description": "Tout ce que le demandeur a envoyé, son échéance et ce qui a été fait.",
+        "facts": "Demande",
+        "language": "Langue",
+        "source": "Source",
+        "submitted": "Reçue",
+        "policy": "Version de la politique",
+        "message": "Message",
+        "noMessage": "Aucun message.",
+        "history": "Historique",
+        "noHistory": "Aucune action pour l'instant.",
+        "emailSent": "e-mail envoyé",
+        "by": "par {actor}",
+        "closed": "Cette demande est clôturée."
+      },
+      "actions": {
+        "title": "Actions",
+        "start": "Démarrer",
+        "done": "Marquer traitée",
+        "reject": "Refuser",
+        "reply": "Réponse au demandeur",
+        "notify": "Envoyer l'e-mail au demandeur",
+        "cancel": "Annuler",
+        "confirmDone": "Confirmer : traitée",
+        "confirmRejected": "Confirmer : refusée",
+        "saved": "Enregistré.",
+        "savedNoEmail": "Enregistré — l'e-mail n'a pas été envoyé.",
+        "errors": {
+          "forbidden": "Vous n'êtes pas administrateur.",
+          "invalid": "Ce changement n'est pas valide.",
+          "unreachable": "L'api est injoignable — réessayez.",
+          "failed": "Le changement a échoué — réessayez.",
+          "note_required": "Rédigez d'abord la réponse.",
+          "not_allowed": "Ce changement n'est pas autorisé.",
+          "changed": "Quelqu'un a modifié cette demande — rechargez la page.",
+          "not_found": "Demande introuvable."
+        }
+      },
+      "replies": {
+        "done": "Bonjour,\n\nNous avons traité votre demande « {right} » (référence n° {id}). L'action demandée est effectuée.\n\nPour toute question, écrivez à l'adresse d'assistance ci-dessous.\n\nCordialement",
+        "rejected": "Bonjour,\n\nNous ne pouvons pas donner suite à votre demande « {right} » (référence n° {id}).\n\nMotif : \n\nVous pouvez introduire une réclamation auprès de la CNIL.\n\nCordialement"
       }
     },
     "system": {
