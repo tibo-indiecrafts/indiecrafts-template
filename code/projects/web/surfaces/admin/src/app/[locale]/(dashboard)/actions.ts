@@ -19,9 +19,21 @@ import { apiFetch } from "@indiecrafts/packages-shared-utils/api-fetch";
  */
 type Result =
   | { ok: true }
-  | { ok: false; error: "forbidden" | "invalid_user" | "failed" };
+  | { ok: false; error: "forbidden" | "invalid_user" | "invalid_session" | "failed" };
 
 const USER_ID = /^user_[A-Za-z0-9]+$/;
+
+type Clerk = Awaited<ReturnType<typeof clerkClient>>;
+
+/** Revoke every active session of a user. Tries them all, even when one fails, and
+ *  reports whether all succeeded — the caller audits either way. */
+async function revokeActiveSessions(client: Clerk, userId: string): Promise<boolean> {
+  const { data } = await client.sessions.getSessionList({ userId, status: "active" });
+  const results = await Promise.allSettled(
+    data.map((s) => client.sessions.revokeSession(s.id)),
+  );
+  return results.every((r) => r.status === "fulfilled");
+}
 
 /** The caller must be a signed-in admin (checked on the server, never trusted from the client). */
 async function requireAdmin(): Promise<string> {
@@ -58,22 +70,23 @@ export async function revokeAdmin(targetUserId: string): Promise<Result> {
     return { ok: false, error: "forbidden" };
   }
   if (!USER_ID.test(targetUserId)) return { ok: false, error: "invalid_user" };
+  let client: Clerk;
   try {
-    const client = await clerkClient();
-    // Clear the role...
+    client = await clerkClient();
+    // Clear the role, then audit at once: the privilege change is done, so it is
+    // recorded even if the session revocation below fails.
     await client.users.updateUserMetadata(targetUserId, {
       publicMetadata: { role: null },
     });
-    // ...and revoke live sessions so the demotion takes effect now, not on next refresh.
-    const sessions = await client.sessions.getSessionList({
-      userId: targetUserId,
-      status: "active",
-    });
-    await Promise.all(
-      sessions.data.map((s) => client.sessions.revokeSession(s.id)),
-    );
-    await audit("admin.revoke", { actor, target: targetUserId });
-    return { ok: true };
+  } catch {
+    return { ok: false, error: "failed" };
+  }
+  await audit("admin.revoke", { actor, target: targetUserId });
+  // Revoke live sessions so the demotion takes effect now, not on next refresh.
+  try {
+    return (await revokeActiveSessions(client, targetUserId))
+      ? { ok: true }
+      : { ok: false, error: "failed" };
   } catch {
     return { ok: false, error: "failed" };
   }
@@ -129,7 +142,7 @@ export async function revokeSession(sessionId: string): Promise<Result> {
   } catch {
     return { ok: false, error: "forbidden" };
   }
-  if (!SESSION_ID.test(sessionId)) return { ok: false, error: "invalid_user" };
+  if (!SESSION_ID.test(sessionId)) return { ok: false, error: "invalid_session" };
   try {
     const client = await clerkClient();
     await client.sessions.revokeSession(sessionId);
@@ -149,18 +162,16 @@ export async function revokeUserSessions(userId: string): Promise<Result> {
     return { ok: false, error: "forbidden" };
   }
   if (!USER_ID.test(userId)) return { ok: false, error: "invalid_user" };
+  let allRevoked: boolean;
   try {
-    const client = await clerkClient();
-    const { data } = await client.sessions.getSessionList({
-      userId,
-      status: "active",
-    });
-    await Promise.all(data.map((s) => client.sessions.revokeSession(s.id)));
-    await audit("admin.revoke_user_sessions", { actor, target: userId });
-    return { ok: true };
+    allRevoked = await revokeActiveSessions(await clerkClient(), userId);
   } catch {
+    // The session list failed — nothing was revoked, so there is nothing to audit.
     return { ok: false, error: "failed" };
   }
+  // Audit even a partial run: some sessions may already be gone.
+  await audit("admin.revoke_user_sessions", { actor, target: userId });
+  return allRevoked ? { ok: true } : { ok: false, error: "failed" };
 }
 
 /** Write one operational setting (`GET/PUT /v1/settings`). The api itself validates
@@ -179,7 +190,7 @@ export async function saveSetting(key: string, value: number): Promise<Result> {
   try {
     const res = await apiFetch(`${url}/v1/settings`, {
       method: "PUT",
-        idempotent: true,
+      idempotent: true,
       headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
       body: JSON.stringify({ key, value, actor }),
     });

@@ -10,7 +10,7 @@ status: stable
 
 ## Purpose
 
-A client component used by the admin sessions page. It renders each recorded sign-in row and lets an operator expand a row to load that user's active Clerk sessions and revoke one — or all of them. The live-session reads and revokes run through server actions in `actions.ts`.
+A client component used by the admin sessions page. It renders each recorded sign-in row and lets an operator expand a row to load that user's active Clerk sessions and revoke one — or all of them. The live-session reads and revokes run through server actions in `actions.ts`. Each revoke result shows as a toast, so "sign out everywhere" gives feedback with the row collapsed. Times use the next-intl formatter: the admin locale, in UTC.
 
 ## Exports
 

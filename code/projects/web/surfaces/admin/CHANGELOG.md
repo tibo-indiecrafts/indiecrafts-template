@@ -14,6 +14,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ### Fixed
 
+- **A demotion is always audited.** `revokeAdmin` cleared the role, then revoked sessions, then
+  wrote the audit row — a failed revoke skipped the audit. It now audits as soon as the role is
+  cleared. "Sign out everywhere" tries every session and audits a partial run. A malformed session
+  id now returns `invalid_session`, not `invalid_user`.
+- **Times and sizes follow the admin locale.** The sessions, security, users, backups, erasure and
+  cron screens printed raw ISO strings or `toLocaleString` output (the server's locale and the
+  browser's zone, so client tables mismatched on hydration). They now use the next-intl formatter
+  in UTC; backup sizes read "1,5 ko" in fr.
+- **"Sign out everywhere" confirms itself.** The result showed inside the expanded row, so with the
+  row collapsed the operator saw nothing. Session revokes now report with a toast.
+
 - **Server calls reach the api on deployed envs.** Same-zone Worker-to-Worker fetches fail with
   Cloudflare error 1042; the `global_fetch_strictly_public` compatibility flag sends them over the
   public internet, as `API_URL` already assumed.

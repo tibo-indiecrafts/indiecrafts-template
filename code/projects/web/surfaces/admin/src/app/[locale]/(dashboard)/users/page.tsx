@@ -3,7 +3,7 @@
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/users/page.md
  */
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import {
@@ -87,6 +87,8 @@ export default async function UsersPage({
   const { q } = await searchParams;
   const query = typeof q === "string" ? q : "";
   const t = await getTranslations("admin.users");
+  const format = await getFormatter();
+  const day = (ms: number) => format.dateTime(new Date(ms), { dateStyle: "medium" });
   const users = await fetchUsers(query);
   const consent = await fetchMarketingConsent(users.map((u) => u.id));
   const emailsLabel = (v: number | null | undefined) =>
@@ -130,12 +132,10 @@ export default async function UsersPage({
                       <TableCell>{u.role}</TableCell>
                       <TableCell>{emailsLabel(consent[u.id])}</TableCell>
                       <TableCell className="tabular-nums">
-                        {new Date(u.created).toLocaleDateString()}
+                        {day(u.created)}
                       </TableCell>
                       <TableCell className="tabular-nums">
-                        {u.lastSignIn
-                          ? new Date(u.lastSignIn).toLocaleDateString()
-                          : "—"}
+                        {u.lastSignIn ? day(u.lastSignIn) : "—"}
                       </TableCell>
                       <TableCell className="font-mono text-xs">{u.id}</TableCell>
                     </TableRow>

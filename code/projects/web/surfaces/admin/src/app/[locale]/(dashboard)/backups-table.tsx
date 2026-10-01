@@ -6,7 +6,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/backups-table.md
  */
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
   Table,
@@ -37,17 +37,22 @@ export type BackupsStatus = {
   runs: BackupRun[];
 };
 
-function formatBytes(bytes: number | null): string {
-  if (bytes == null) return "—";
-  const units = ["B", "KB", "MB", "GB"];
-  let n = bytes;
+const UNITS = ["byte", "kilobyte", "megabyte", "gigabyte"] as const;
+
+/** Scale bytes to the largest 1024-step unit; the formatter names the unit per locale
+ *  ("1.5 kB" in en, "1,5 ko" in fr). */
+function scaleBytes(bytes: number): { value: number; unit: (typeof UNITS)[number] } {
+  let value = bytes;
   let i = 0;
-  while (n >= 1024 && i < units.length - 1) {
-    n /= 1024;
+  while (value >= 1024 && i < UNITS.length - 1) {
+    value /= 1024;
     i++;
   }
-  return `${n.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+  return { value, unit: UNITS[i] };
 }
+
+// The zone (UTC) comes from the next-intl config, so server and browser renders match.
+const WHEN = { dateStyle: "medium", timeStyle: "short" } as const;
 
 /** Warning glyph for the failed/stuck flag — always paired with a text label so the
  *  flag is never conveyed by color alone. */
@@ -69,6 +74,12 @@ function FlagIcon() {
  *  never finished (`finishedAt == null`) — icon + text, never color alone. */
 export function BackupsTable({ status }: { status: BackupsStatus }) {
   const t = useTranslations("admin.backups");
+  const format = useFormatter();
+  const size = (bytes: number | null) => {
+    if (bytes == null) return "—";
+    const { value, unit } = scaleBytes(bytes);
+    return format.number(value, { style: "unit", unit, maximumFractionDigits: 1 });
+  };
   const runs = [...status.runs].sort(
     (a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime(),
   );
@@ -116,11 +127,11 @@ export function BackupsTable({ status }: { status: BackupsStatus }) {
               return (
                 <TableRow key={i}>
                   <TableCell className="tabular-nums">
-                    {new Date(run.startedAt).toLocaleString()}
+                    {format.dateTime(new Date(run.startedAt), WHEN)}
                   </TableCell>
                   <TableCell className="tabular-nums">
                     {run.finishedAt
-                      ? new Date(run.finishedAt).toLocaleString()
+                      ? format.dateTime(new Date(run.finishedAt), WHEN)
                       : "—"}
                   </TableCell>
                   <TableCell>{run.dbName}</TableCell>
@@ -137,7 +148,7 @@ export function BackupsTable({ status }: { status: BackupsStatus }) {
                     )}
                   </TableCell>
                   <TableCell className="tabular-nums">
-                    {formatBytes(run.bytes)}
+                    {size(run.bytes)}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {run.error ?? "—"}

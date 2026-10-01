@@ -3,7 +3,7 @@
  *
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/security/page.md
  */
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@indiecrafts/packages-web-ui/web/card";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
@@ -54,8 +54,11 @@ export default async function SecurityPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("admin.security");
-  const rows = await fetchSecurity();
+  const [t, format, rows] = await Promise.all([
+    getTranslations("admin.security"),
+    getFormatter(),
+    fetchSecurity(),
+  ]);
   // The edge firehose lives in Cloudflare, not here — deep-link to it. The operator sets the
   // zone-specific URL; when unset we say so rather than guess a URL (like the System screen).
   const cloudflareUrl = process.env.CLOUDFLARE_SECURITY_URL;
@@ -104,7 +107,9 @@ export default async function SecurityPage({
               <TableBody>
                 {rows.map((row, i) => (
                   <TableRow key={i}>
-                    <TableCell className="tabular-nums">{row.ts}</TableCell>
+                    <TableCell className="tabular-nums">
+                      {format.dateTime(new Date(row.ts), { dateStyle: "medium", timeStyle: "short" })}
+                    </TableCell>
                     <TableCell>{row.event_type}</TableCell>
                     <TableCell>
                       <Badge

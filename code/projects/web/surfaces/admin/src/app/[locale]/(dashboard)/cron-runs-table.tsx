@@ -6,7 +6,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/cron-runs-table.md
  */
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
   Table,
@@ -45,6 +45,10 @@ function Alarm({ value }: { value: number }) {
 /** Read-only cron monitoring: health, live counts, then the last 24 runs (newest first). */
 export function CronRunsTable({ status }: { status: CronStatus | null }) {
   const t = useTranslations("admin.cron");
+  const format = useFormatter();
+  // The zone (UTC) comes from the next-intl config, so server and browser renders match.
+  const when = (iso: string) =>
+    format.dateTime(new Date(iso), { dateStyle: "medium", timeStyle: "short" });
   const health = cronHealth(status);
 
   return (
@@ -59,7 +63,7 @@ export function CronRunsTable({ status }: { status: CronStatus | null }) {
         <div>
           <dt className="text-muted-foreground text-sm">{t("lastRun")}</dt>
           <dd className="text-foreground tabular-nums">
-            {status?.lastRunAt ? new Date(status.lastRunAt).toLocaleString() : "—"}
+            {status?.lastRunAt ? when(status.lastRunAt) : "—"}
           </dd>
         </div>
         <div>
@@ -109,7 +113,7 @@ export function CronRunsTable({ status }: { status: CronStatus | null }) {
             {status.runs.map((run) => (
               <TableRow key={run.startedAt}>
                 <TableCell className="align-top tabular-nums">
-                  {new Date(run.startedAt).toLocaleString()}
+                  {when(run.startedAt)}
                 </TableCell>
                 <TableCell className="align-top">
                   <Badge

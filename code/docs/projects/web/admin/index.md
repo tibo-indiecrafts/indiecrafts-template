@@ -34,7 +34,6 @@ flowchart LR
     PG -.->|"writes"| ACT["Server actions<br/>requireAdmin · audited"]
     PG --> CK["Clerk<br/>users · sessions · role metadata"]
     PG --> API["Shared api (bearer)<br/>Cloudflare D1 · EU"]
-    PG --> SN["Sanity<br/>content dataset"]
     ACT --> CK
     ACT --> API
 ```
@@ -47,10 +46,10 @@ CVE-2025-29927), so the real authorization runs **again server-side**: the `(das
 layout re-checks `isAdmin` before it renders `AppShell`, and every server action calls
 `requireAdmin` before it writes.
 
-Pages are React Server Components. They read their data at request time from three
-sources: **Clerk** (users, live sessions, the admin role in `publicMetadata`), the
-**shared api** over a bearer token (`API_URL` + `APP_API_TOKEN`) which fronts **Cloudflare
-D1** in the EU, and **Sanity** for content. The bearer token stays server-side; the browser
+Pages are React Server Components. They read their data at request time from two
+sources: **Clerk** (users, live sessions, the admin role in `publicMetadata`) and the
+**shared api** over a bearer token (`API_URL` + `APP_API_TOKEN`), which fronts **Cloudflare
+D1** in the EU. The bearer token stays server-side; the browser
 never sees it. Every fetch degrades gracefully — a failed read renders an empty state or an
 explicit error, never a crash.
 
@@ -117,13 +116,17 @@ Cloudflare Access gate on the subdomain as defense-in-depth before the app goes 
 
 - **i18n** — next-intl with the `[locale]` segment and `src/i18n/routing.ts` (`as-needed`
   prefixes). Strings live in `messages/<locale>.json` (`en` · `fr`); import `Link` and
-  `redirect` from `@/i18n/routing`, never `next/link`.
+  `redirect` from `@/i18n/routing`, never `next/link`. Dates, times and sizes go through
+  the next-intl formatter (`getFormatter` / `useFormatter`), never `toLocaleString`. The zone
+  is UTC (`src/i18n/request.ts`), so a client table renders the same on the server and in
+  the browser, and times match the api logs.
 - **CSP** — a strict per-request nonce policy set in `src/proxy.ts`
   (`@indiecrafts/packages-shared-security`), enforced by default. `CSP_MODE=report-only`
   rolls a surface back to observation; `CSP_TRUSTED_TYPES=report` opts into a Trusted-Types
   trial. Violations report to `/api/csp-report` and surface on the `/csp` page.
-- **Sanity reads** — content comes through `@indiecrafts/packages-web-sanity` over the
-  shared dataset; no write token ever reaches the client.
+- **No Sanity content** — admin reads no Sanity data; operator copy lives in
+  `messages/<locale>.json`. `@indiecrafts/packages-web-sanity` is wired for a future
+  read, and no write token ever reaches the client.
 - **shadcn shell** — `src/user-interface/layout/`: `AppShell` → `AppSidebar` +
   `SidebarInset`/`AppHeader`, the grouped nav from `src/user-interface/lib/nav.ts`, and a
   no-flash light/dark `ThemeToggle`. Every page uses the same `PageHeader` + `Card`

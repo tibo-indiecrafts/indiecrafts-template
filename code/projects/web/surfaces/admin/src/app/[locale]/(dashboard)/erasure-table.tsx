@@ -6,7 +6,7 @@
  * @see docs/reference/projects/web/admin/src/app/locale/(dashboard)/erasure-table.md
  */
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Badge } from "@indiecrafts/packages-web-ui/web/badge";
 import {
   Table,
@@ -26,10 +26,13 @@ const stateVariant = (state: ErasureRow["state"]) =>
       ? ("secondary" as const)
       : ("outline" as const);
 
-const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "—");
+// The zone (UTC) comes from the next-intl config, so server and browser renders match.
+const WHEN = { dateStyle: "medium", timeStyle: "short" } as const;
 
 function Rows({ rows, empty, actions }: { rows: ErasureRow[]; empty: string; actions: boolean }) {
   const t = useTranslations("admin.erasure");
+  const format = useFormatter();
+  const when = (iso: string | null) => (iso ? format.dateTime(new Date(iso), WHEN) : "—");
   if (rows.length === 0) return <p className="text-muted-foreground">{empty}</p>;
   return (
     <Table>

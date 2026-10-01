@@ -15,6 +15,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Admin page no longer claims Sanity reads.** `projects/web/admin` said pages read Sanity content;
+  they read only Clerk and the shared api. It now also states the date rule (next-intl formatter, UTC).
+  The `actions` reference page lists the error codes and when an audit row is written.
+
 ### Removed
 
 - **The `packages/shared/query` page** (+ its reference pages and sidebar line) — the brick is gone.
