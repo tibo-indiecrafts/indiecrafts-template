@@ -17,7 +17,7 @@ tsconfig `paths`).
   Crypto); `cspHeadersForMode` returns `{ enforced, reportOnly }` for a `CspMode` of `"enforce"`
   (strict nonce policy enforced, no Report-Only) or `"report-only"` (permissive policy stays
   enforced — site keeps working — strict nonce policy ships Report-Only). The rollout knob apps read
-  as `CSP_MODE` (env, default `report-only`).
+  as `CSP_MODE` (a runtime Worker var, default `enforce`).
 - **`securityHeaders(opts)`** (`./headers`) — the full Next `headers()` array: `nosniff` · `X-Frame
 DENY` · `Referrer-Policy` · `Permissions-Policy` · `CSP` · **HSTS** (prod only) · **COOP** + immutable
   `Cache-Control` on `immutablePaths`. `opts.cspMode: "proxy"` (default `"static"`) drops
@@ -37,7 +37,9 @@ DENY` · `Referrer-Policy` · `Permissions-Policy` · `CSP` · **HSTS** (prod on
 - **`isSameSiteRequest`** (`./origin`), **`verifyTurnstile`** (`./turnstile`), IP validators
   (`./ip` — `sanitizeIpAddress` etc.) — the guard's parts, exported for direct use.
 - **`./rate-limit`** — fixed-window limiter on Workers **KV**. **Fails open when `RATE_LIMIT_KV`
-  is unbound** — the Cloudflare WAF rule is the primary limiter; KV is defence-in-depth.
+  is unbound** — the Cloudflare WAF rule is the primary limiter; KV is defence-in-depth. Reads the
+  binding from OpenNext's `globalThis[Symbol.for("__cloudflare-context__")]` — never a dynamic
+  `import("@opennextjs/cloudflare")` (it cannot resolve inside a Next bundle).
 - **`crypto`** (`./crypto`) — AES-256-GCM (with integrity tag) + salted SHA-256 on Web Crypto
   (Node 22 **and** Workers, all async). For at-rest PII + GDPR IP-hashing. The secret/salt is
   **caller-injected** — no keys in the brick.

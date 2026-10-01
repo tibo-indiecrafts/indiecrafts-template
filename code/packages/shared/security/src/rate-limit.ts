@@ -21,7 +21,7 @@ export async function rateLimit(
   limit: number,
   windowSec: number,
 ): Promise<{ ok: boolean; remaining: number }> {
-  const kv = await getKV();
+  const kv = getKV();
   if (!kv) return { ok: true, remaining: limit };
   const k = `rl:${key}`;
   const now = Date.now();
@@ -48,20 +48,16 @@ type KVLike = {
 };
 
 /**
- * Resolve the `RATE_LIMIT_KV` binding via the OpenNext Cloudflare context; `null`
- * off-CF. The specifier is a variable so this stays a runtime-only dynamic import
- * — the brick doesn't take a hard `@opennextjs/cloudflare` dependency (the app
- * provides it; off-CF the import just fails and we no-op).
+ * Resolve the `RATE_LIMIT_KV` binding from the request context OpenNext publishes on
+ * `globalThis[Symbol.for("__cloudflare-context__")]` — what `getCloudflareContext()`
+ * reads, set by the worker runtime and by `initOpenNextCloudflareForDev`. Read
+ * directly: a variable-specifier `import("@opennextjs/cloudflare")` cannot be
+ * resolved inside a Next bundle, so it failed and the limiter never limited. `null`
+ * off-CF (no context) → the limiter no-ops.
  */
-async function getKV(): Promise<KVLike | null> {
-  try {
-    const spec = "@opennextjs/cloudflare";
-    const mod = (await import(spec).catch(() => null)) as {
-      getCloudflareContext?: () => { env?: Record<string, unknown> };
-    } | null;
-    const kv = mod?.getCloudflareContext?.().env?.RATE_LIMIT_KV;
-    return (kv as KVLike | undefined) ?? null;
-  } catch {
-    return null;
-  }
+function getKV(): KVLike | null {
+  const context = (globalThis as Record<symbol, unknown>)[
+    Symbol.for("__cloudflare-context__")
+  ] as { env?: Record<string, unknown> } | undefined;
+  return (context?.env?.RATE_LIMIT_KV as KVLike | undefined) ?? null;
 }

@@ -1,8 +1,10 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// The limiter resolves `RATE_LIMIT_KV` via a dynamic import of the OpenNext
-// context. Mock that module to inject a fake KV so the fixed-window + fail-open
-// branches are testable off-Cloudflare.
+// The limiter reads `RATE_LIMIT_KV` from the context OpenNext publishes on
+// `globalThis[Symbol.for("__cloudflare-context__")]` (worker runtime and
+// `initOpenNextCloudflareForDev`). Publish a fake KV there, the same way, so the
+// fixed-window + fail-open branches are testable off-Cloudflare.
+const CONTEXT = Symbol.for("__cloudflare-context__");
 const store = new Map<string, string>();
 const kv = {
   get: vi.fn(async (k: string) => store.get(k) ?? null),
@@ -10,18 +12,34 @@ const kv = {
     store.set(k, v);
   }),
 };
-vi.mock("@opennextjs/cloudflare", () => ({
-  getCloudflareContext: () => ({ env: { RATE_LIMIT_KV: kv } }),
-}));
+const global = globalThis as Record<symbol, unknown>;
 
 const { rateLimit } = await import("./rate-limit");
 
+beforeEach(() => {
+  global[CONTEXT] = { env: { RATE_LIMIT_KV: kv } };
+});
+
 afterEach(() => {
+  delete global[CONTEXT];
   store.clear();
   vi.clearAllMocks();
 });
 
 describe("rateLimit (KV-backed)", () => {
+  it("allows (no-op) when no Cloudflare context is published", async () => {
+    delete global[CONTEXT];
+    expect(await rateLimit("off-cf", 1, 60)).toEqual({
+      ok: true,
+      remaining: 1,
+    });
+    expect(await rateLimit("off-cf", 1, 60)).toEqual({
+      ok: true,
+      remaining: 1,
+    });
+    expect(kv.get).not.toHaveBeenCalled();
+  });
+
   it("allows up to the limit, then blocks", async () => {
     expect((await rateLimit("ip:/api", 2, 60)).ok).toBe(true); // 1
     expect((await rateLimit("ip:/api", 2, 60)).ok).toBe(true); // 2
