@@ -18,7 +18,7 @@ import {
   runErasure,
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { type Env, PUBLIC_CORS_POST, safeEqual, clientIp } from "../index";
+import { type Env, PUBLIC_CORS_JWT, safeEqual, clientIp } from "../index";
 import { buildErasureAdapters } from "./adapters";
 import {
   authenticateClerkJwt,
@@ -74,26 +74,26 @@ export async function handleErasureSelf(
   send: typeof sendErasureCompleteEmail = sendErasureCompleteEmail,
 ): Promise<Response> {
   if (request.method === "OPTIONS")
-    return new Response(null, { status: 204, headers: PUBLIC_CORS_POST });
+    return new Response(null, { status: 204, headers: PUBLIC_CORS_JWT });
   if (request.method !== "POST")
-    return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_POST);
+    return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_JWT);
 
   if (!env.AUDIT_DB || !env.MAIN_DB || !env.GDPR_FINGERPRINT_SALT)
-    return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
+    return json({ error: "unavailable" }, 503, PUBLIC_CORS_JWT);
   // JWT verification needs the Clerk secret; and when the real adapters are used,
   // the Clerk/Sanity secrets must be armed or the engine half-erases (see confirm.ts).
   if (!env.CLERK_SECRET_KEY)
-    return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
+    return json({ error: "unavailable" }, 503, PUBLIC_CORS_JWT);
   if (
     buildAdapters === buildErasureAdapters &&
     (!env.SANITY_API_WRITE_TOKEN ||
       !env.SANITY_PROJECT_ID ||
       !env.SANITY_DATASET)
   )
-    return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
+    return json({ error: "unavailable" }, 503, PUBLIC_CORS_JWT);
 
   if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
-    return json({ error: "too_large" }, 413, PUBLIC_CORS_POST);
+    return json({ error: "too_large" }, 413, PUBLIC_CORS_JWT);
 
   if (env.RATELIMIT) {
     // Key on the caller IP, not the bearer token: a Clerk JWT's leading bytes are
@@ -102,16 +102,16 @@ export async function handleErasureSelf(
     const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
-    if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);
+    if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_JWT);
   }
 
   const authed = await authenticate(request, env);
-  if (!authed) return json({ error: "unauthorized" }, 401, PUBLIC_CORS_POST);
+  if (!authed) return json({ error: "unauthorized" }, 401, PUBLIC_CORS_JWT);
 
   // Step-up gate: a session whose first factor was verified too long ago (or fva is
   // absent/not-applicable) must reverify before the engine runs — a raw API call cannot
   // bypass step-up. useReverification on the client reacts to this exact response shape.
-  const stepUp = requireStepUp(authed, PUBLIC_CORS_POST);
+  const stepUp = requireStepUp(authed, PUBLIC_CORS_JWT);
   if (stepUp) return stepUp;
 
   let typedEmail = "";
@@ -122,7 +122,7 @@ export async function handleErasureSelf(
     // must not skip this bound, so the actual read body is checked too.
     const bodyText = await request.text();
     if (bodyText.length > BODY_MAX)
-      return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+      return json({ error: "invalid" }, 400, PUBLIC_CORS_JWT);
     const body = JSON.parse(bodyText) as {
       email?: unknown;
       reason?: unknown;
@@ -136,9 +136,9 @@ export async function handleErasureSelf(
       competitor: body.competitor,
     };
   } catch {
-    return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+    return json({ error: "invalid" }, 400, PUBLIC_CORS_JWT);
   }
-  if (!typedEmail) return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+  if (!typedEmail) return json({ error: "invalid" }, 400, PUBLIC_CORS_JWT);
 
   // Deliberate-action gate: the typed email must match the authenticated identity,
   // even with a valid session (constant-time, via the salted fingerprint).
@@ -148,7 +148,7 @@ export async function handleErasureSelf(
     env.GDPR_FINGERPRINT_SALT,
   );
   if (!safeEqual(typedFp, authFp))
-    return json({ error: "invalid" }, 400, PUBLIC_CORS_POST);
+    return json({ error: "invalid" }, 400, PUBLIC_CORS_JWT);
 
   const adapters = buildAdapters(env);
   const ts = new Date().toISOString();
@@ -283,13 +283,13 @@ export async function handleErasureSelf(
     return json(
       { ok: false, clerk_failed: true, errors: receipt.errors },
       502,
-      PUBLIC_CORS_POST,
+      PUBLIC_CORS_JWT,
     );
   if (hadErrors)
     return json(
       { ok: true, partial: true, errors: receipt.errors },
       207,
-      PUBLIC_CORS_POST,
+      PUBLIC_CORS_JWT,
     );
-  return json({ ok: true }, 200, PUBLIC_CORS_POST);
+  return json({ ok: true }, 200, PUBLIC_CORS_JWT);
 }

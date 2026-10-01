@@ -12,6 +12,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com). Categories:
 
 ## [Unreleased]
 
+### Fixed
+
+- **Sign-ins are logged again on the app (and the mobile shell, which loads it).** `/api/session-log` calls Clerk's `auth()`, but the
+  proxy matcher skipped every `/api` path, so Clerk's middleware never ran and each log was a 500. The
+  matcher now lists `/api/session-log` and the proxy passes `/api` straight through (no sign-in
+  redirect, no locale rewrite) — the same pattern as the website.
+
 ### Changed
 
 - **Signing in re-checks the legal acceptance.** `SignedInLegalGate` keys the gate on the user id.

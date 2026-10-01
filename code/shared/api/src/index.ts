@@ -310,6 +310,17 @@ export const PUBLIC_CORS = {
   "access-control-allow-headers": "content-type",
 };
 
+// For the Clerk-JWT routes the browser calls directly (data export, self-erasure — on the
+// website, the app, and the app inside the mobile WebView): the session token travels in
+// `Authorization`, so the preflight must allow that header. `*` stays safe — the request is
+// never credentialed (no cookies; the token is set explicitly), same as the consent routes.
+export const PUBLIC_CORS_JWT = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "POST, OPTIONS",
+  "access-control-allow-headers": "authorization, content-type",
+  "access-control-expose-headers": "x-request-id",
+};
+
 // Same as PUBLIC_CORS, but for the public routes that also accept a POST body
 // (the erasure-request form: GET renders it, POST submits it).
 export const PUBLIC_CORS_POST = {

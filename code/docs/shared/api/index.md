@@ -16,7 +16,7 @@ Next/OpenNext) at `code/shared/api`. It serves the `app` and `admin` surfaces an
 website keeps its own co-located `/api` routes; this is the shared backend those clients call. The
 entrypoint `src/index.ts` is a thin shell — the real logic lives in `@indiecrafts/*` bricks
 imported `workspace:*`. `withGuard` is Next-only, so the worker re-implements a small inline guard:
-a bearer token, the Cloudflare native rate-limit binding, a body cap, and a CORS allowlist.
+a bearer token, the Cloudflare native rate-limit binding, a body cap, and a CORS allowlist. The Clerk-JWT routes the browser calls directly (`/v1/export`, `/v1/erasure/self`, the consent routes) allow the `authorization` header in their preflight — without it the browser (and the mobile WebView) drops the request.
 
 ## Routes
 

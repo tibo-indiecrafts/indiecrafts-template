@@ -15,7 +15,7 @@ The admin surface middleware. It runs next-intl locale routing, stamps a per-req
 ## Exports
 
 - `default` — the composed middleware (gated when Clerk is configured, intl-only otherwise).
-- `config` — the route matcher (every page path except API, Next internals, metadata routes, and static assets).
+- `config` — the route matcher (every page path except API, Next internals, metadata routes, and static assets), plus `/api/session-log`: matched only so Clerk attaches the session for `auth()` — the proxy passes `/api` straight through (no sign-in redirect, no locale rewrite).
 
 ## Source
 

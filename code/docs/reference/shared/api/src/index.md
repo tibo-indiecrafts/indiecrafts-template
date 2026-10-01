@@ -19,6 +19,7 @@ The entrypoint for the standalone API — a bare Cloudflare Worker (no Next/Open
 - `safeEqual(a, b)` — constant-time string compare, so timing does not leak a mismatch.
 - `clientIp(req)` — the `cf-connecting-ip` value, or `"unknown"`.
 - `PUBLIC_CORS`, `PUBLIC_CORS_POST` — CORS header constants for the public routes.
+- `PUBLIC_CORS_JWT` — CORS for the Clerk-JWT routes the browser calls directly (`/v1/export`, `/v1/erasure/self`): allows the `authorization` header and exposes `X-Request-Id`.
 - `default` — the `ExportedHandler<Env>`: `fetch` = request id → idempotency → `route` → catch → `finalize`.
 
 ## Usage

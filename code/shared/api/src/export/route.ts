@@ -17,7 +17,7 @@ import {
   runExport,
   type ErasureAdapter,
 } from "@indiecrafts/packages-shared-compliance/shared";
-import { type Env, PUBLIC_CORS, PUBLIC_CORS_POST, clientIp } from "../index";
+import { type Env, PUBLIC_CORS, PUBLIC_CORS_JWT, clientIp } from "../index";
 import { buildErasureAdapters } from "../erasure/adapters";
 import {
   authenticateClerkJwt,
@@ -64,9 +64,9 @@ export async function handleExport(
   ) => Promise<SelfAuth | null> = authenticateClerkJwt,
 ): Promise<Response> {
   if (request.method === "OPTIONS")
-    return new Response(null, { status: 204, headers: PUBLIC_CORS_POST });
+    return new Response(null, { status: 204, headers: PUBLIC_CORS_JWT });
   if (request.method !== "POST")
-    return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_POST);
+    return json({ error: "method_not_allowed" }, 405, PUBLIC_CORS_JWT);
 
   // EXPORT_BUCKET is used directly by this route (independent of which adapters
   // build the data), so it belongs beside DB/MAIN_DB/salt as an unconditional requirement.
@@ -76,37 +76,37 @@ export async function handleExport(
     !env.GDPR_FINGERPRINT_SALT ||
     !env.EXPORT_BUCKET
   )
-    return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
+    return json({ error: "unavailable" }, 503, PUBLIC_CORS_JWT);
   // JWT verification needs the Clerk secret; and when the real adapters are used,
   // the Sanity secrets must be armed too (see erasure/self.ts).
   if (!env.CLERK_SECRET_KEY)
-    return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
+    return json({ error: "unavailable" }, 503, PUBLIC_CORS_JWT);
   if (
     buildAdapters === buildErasureAdapters &&
     (!env.SANITY_API_WRITE_TOKEN ||
       !env.SANITY_PROJECT_ID ||
       !env.SANITY_DATASET)
   )
-    return json({ error: "unavailable" }, 503, PUBLIC_CORS_POST);
+    return json({ error: "unavailable" }, 503, PUBLIC_CORS_JWT);
 
   if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX)
-    return json({ error: "too_large" }, 413, PUBLIC_CORS_POST);
+    return json({ error: "too_large" }, 413, PUBLIC_CORS_JWT);
 
   if (env.RATELIMIT) {
     // Key on the caller IP, not the bearer token — matches erasure/self.ts.
     const { success } = await env.RATELIMIT.limit({
       key: clientIp(request),
     });
-    if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_POST);
+    if (!success) return json({ error: "rate_limited" }, 429, PUBLIC_CORS_JWT);
   }
 
   const authed = await authenticate(request, env);
-  if (!authed) return json({ error: "unauthorized" }, 401, PUBLIC_CORS_POST);
+  if (!authed) return json({ error: "unauthorized" }, 401, PUBLIC_CORS_JWT);
 
   // A full personal-data export is sensitive — require the same step-up reverification as
   // erasure/self, so a revoked-but-unexpired token (verifyToken is networkless) can't be
   // replayed to exfiltrate the bundle within the access-token TTL.
-  const stepUp = requireStepUp(authed, PUBLIC_CORS_POST);
+  const stepUp = requireStepUp(authed, PUBLIC_CORS_JWT);
   if (stepUp) return stepUp;
 
   const adapters = buildAdapters(env);
@@ -164,7 +164,7 @@ export async function handleExport(
       downloadUrl: `${new URL(request.url).origin}/v1/export/download?token=${token}`,
     },
     200,
-    PUBLIC_CORS_POST,
+    PUBLIC_CORS_JWT,
   );
 }
 

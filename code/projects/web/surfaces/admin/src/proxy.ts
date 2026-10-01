@@ -56,8 +56,12 @@ function setCsp(response: NextResponse, nonce: string): NextResponse {
     CSP_MODE,
   );
   response.headers.set("Content-Security-Policy", enforced);
-  response.headers.set("Reporting-Endpoints", `csp-endpoint="${REPORTING.endpoint}"`);
-  if (reportOnly) response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
+  response.headers.set(
+    "Reporting-Endpoints",
+    `csp-endpoint="${REPORTING.endpoint}"`,
+  );
+  if (reportOnly)
+    response.headers.set("Content-Security-Policy-Report-Only", reportOnly);
   return response;
 }
 
@@ -69,6 +73,9 @@ function runIntl(request: NextRequest): NextResponse {
 }
 
 const gated = clerkMiddleware(async (auth, request) => {
+  // Api routes are matched ONLY so Clerk attaches the session for `auth()` in the handler,
+  // which authorizes the caller itself. Never redirect or locale-rewrite them.
+  if (request.nextUrl.pathname.startsWith("/api")) return NextResponse.next();
   if (isSignIn(request)) return runIntl(request);
   const { userId, sessionClaims } = await auth();
   // Fail closed — anything but a verified admin claim goes to sign-in.
@@ -93,5 +100,9 @@ export const config = {
     // Every page path EXCEPT api, Next internals, root metadata routes, and any
     // path with a dot (static assets).
     "/((?!api|_next|_vercel|manifest|robots|sitemap|.*\\..*).*)",
+    // Clerk-authenticated api routes: matched ONLY so `clerkMiddleware` attaches the session
+    // for `auth()` (the proxy passes them straight through). Add any new api route that calls
+    // `auth()` here.
+    "/api/session-log",
   ],
 };

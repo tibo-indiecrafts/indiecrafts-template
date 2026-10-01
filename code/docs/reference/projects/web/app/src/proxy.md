@@ -15,7 +15,7 @@ The Next.js proxy (middleware) for the `app` surface. It runs next-intl locale d
 ## Exports
 
 - `proxy` (default) — the middleware function (gated or next-intl-only).
-- `config` — the route matcher, excluding api, Next internals, metadata routes, and static assets.
+- `config` — the route matcher, excluding api, Next internals, metadata routes, and static assets, plus `/api/session-log`: matched only so Clerk attaches the session for `auth()` — the proxy passes `/api` straight through (no sign-in redirect, no locale rewrite).
 
 ## Source
 

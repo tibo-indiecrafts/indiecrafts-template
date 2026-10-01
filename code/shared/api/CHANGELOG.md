@@ -5,6 +5,14 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **"Download my data" and "Delete my account" work from the browser again.** `/v1/export` and
+  `/v1/erasure/self` answered their CORS preflight with `PUBLIC_CORS_POST`, which does not allow the
+  `authorization` header that carries the Clerk token — so the browser (website, app, and the app in
+  the mobile WebView) dropped the request and the page showed "Something went wrong". They now use
+  `PUBLIC_CORS_JWT` (allows `authorization`, exposes `X-Request-Id`), like the consent routes.
+
 ### Added
 
 - **The production contract (QA card 20).** Every response carries `X-Request-Id` (the `cf-ray`);
