@@ -50,6 +50,9 @@ _why_. The repo-wide roll-up → [root `CHANGELOG.md`](../../../CHANGELOG.md).
   messages). Closing can email the operator's note to the requester; a mail failure keeps the
   change (`notified: false`). The intake now answers `{ ok, id }` and emails the requester a
   receipt. Both emails are en/fr, Studio-editable (`dataRequestReceipt`, `dataRequestClosed`).
+- **Support footer in the recipient's language.** `supportFooter` now takes the locale: an
+  English recipient reads "Need help?" instead of "Besoin d'aide ?" (erasure, data-request and
+  Clerk emails).
 - **The data-request routes are rate-limited.** The intake, the list, the detail and the status
   route now pass the native `RATELIMIT` check like every other bearer route (they skipped it).
 

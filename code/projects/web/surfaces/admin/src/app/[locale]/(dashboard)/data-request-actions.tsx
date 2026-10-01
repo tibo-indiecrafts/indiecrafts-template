@@ -18,6 +18,10 @@ import { setDataRequestStatus } from "./monitoring-actions";
 
 type Closing = "done" | "rejected";
 
+// A prefilled reply marks what the operator must write in [brackets] (e.g. the reason of a
+// refusal — GDPR Art. 12(4)); it cannot be sent until every bracket is replaced.
+const UNFINISHED = /\[[^\]\n]+\]/;
+
 /** Only the moves the status allows (`new`: start, done, reject · `in-progress`: done,
  *  reject · closed: none). Done / Reject open a reply prefilled in the requester's language;
  *  "Email the requester" is on by default and then needs a reply. */
@@ -45,6 +49,8 @@ export function DataRequestActions({
       const r = await setDataRequestStatus(id, status, to, text, email);
       if (!r.ok) {
         toast.error(t(`actions.errors.${r.error}`));
+        // Someone else moved it: reload, so the sheet shows the real status and moves.
+        if (r.error === "changed" || r.error === "not_allowed") router.refresh();
         return;
       }
       if (email && !r.notified) toast.warning(t("actions.savedNoEmail"));
@@ -53,6 +59,7 @@ export function DataRequestActions({
       router.refresh();
     });
 
+  const unfinished = UNFINISHED.test(note);
   const choose = (m: Closing) => {
     setMode(m);
     setNote(prefill[m]);
@@ -93,8 +100,14 @@ export function DataRequestActions({
             value={note}
             maxLength={4000}
             rows={10}
+            aria-describedby={unfinished ? `dr-reply-hint-${id}` : undefined}
             onChange={(e) => setNote(e.target.value)}
           />
+          {unfinished ? (
+            <p id={`dr-reply-hint-${id}`} className="text-muted-foreground text-xs">
+              {t("actions.unfinished")}
+            </p>
+          ) : null}
           <div className="flex items-center gap-2">
             <Checkbox
               id={`dr-notify-${id}`}
@@ -109,7 +122,7 @@ export function DataRequestActions({
             <Button
               size="sm"
               variant={mode === "rejected" ? "destructive" : "default"}
-              disabled={pending || (notify && !note.trim())}
+              disabled={pending || unfinished || (notify && !note.trim())}
               onClick={() => run(mode, note, notify)}
             >
               {t(mode === "done" ? "actions.confirmDone" : "actions.confirmRejected")}

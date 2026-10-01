@@ -196,11 +196,12 @@
           "not_allowed": "This change is not allowed.",
           "changed": "Someone changed this request — reload the page.",
           "not_found": "Request not found."
-        }
+        },
+        "unfinished": "Replace the text in [brackets] before sending."
       },
       "replies": {
-        "done": "Hello,\n\nWe have handled your request \"{right}\" (reference #{id}). The requested action is complete.\n\nIf you have a question, write to the support address below.\n\nKind regards",
-        "rejected": "Hello,\n\nWe cannot act on your request \"{right}\" (reference #{id}).\n\nReason: \n\nYou can lodge a complaint with your data protection authority.\n\nKind regards"
+        "done": "Hello,\n\nWe have handled your request \"{right}\" (reference #{id}). The requested action is complete.\n\nIf you have a question, contact us.\n\nKind regards",
+        "rejected": "Hello,\n\nWe cannot act on your request \"{right}\" (reference #{id}).\n\nReason: [write the reason]\n\nYou can lodge a complaint with your data protection authority.\n\nKind regards"
       }
     },
     "system": {

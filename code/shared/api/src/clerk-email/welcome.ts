@@ -27,7 +27,7 @@ export async function sendWelcomeEmail(
   const strings = await fetchStrings(env);
   const copy = resolveWelcomeCopy(strings, locale);
   const { subject, html, text } = renderWelcome(locale, copy);
-  const foot = supportFooter(strings?.supportEmail);
+  const foot = supportFooter(strings?.supportEmail, locale);
   await send(env, {
     to,
     subject,

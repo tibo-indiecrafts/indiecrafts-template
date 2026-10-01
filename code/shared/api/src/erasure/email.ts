@@ -68,20 +68,25 @@ function pick(value: LocaleValue, locale: string): string | undefined {
   return pickLocale(value, locale) || undefined;
 }
 
-/** The editor-owned support-address footer, appended to every worker-sent email (erasure +
- *  the Clerk take-over). Worker-safe — the shared `renderEmailLayout` is `server-only`/
- *  Next-coupled, unusable here. Empty when no address is set; the value is escaped though
- *  it is email-validated in Studio. */
-export function supportFooter(supportEmail: string | undefined): {
+/** The editor-owned support-address footer, appended to every worker-sent email (erasure,
+ *  data requests, the Clerk take-over), in the recipient's language (`fr…` → French, else
+ *  English). Worker-safe — the shared `renderEmailLayout` is `server-only`/Next-coupled,
+ *  unusable here. Empty when no address is set; the value is escaped though it is
+ *  email-validated in Studio. */
+export function supportFooter(
+  supportEmail: string | undefined,
+  locale: string,
+): {
   html: string;
   text: string;
 } {
   const e = supportEmail?.trim();
   if (!e) return { html: "", text: "" };
   const esc = escapeHtml(e);
+  const fr = locale.startsWith("fr");
   return {
-    html: `<p style="margin-top:24px;color:#8a8f98;font-size:12px">Besoin d'aide&nbsp;? <a href="mailto:${esc}" style="color:#8a8f98">${esc}</a></p>`,
-    text: `\n\nBesoin d'aide ? ${e}`,
+    html: `<p style="margin-top:24px;color:#8a8f98;font-size:12px">${fr ? "Besoin d'aide&nbsp;?" : "Need help?"} <a href="mailto:${esc}" style="color:#8a8f98">${esc}</a></p>`,
+    text: `\n\n${fr ? "Besoin d'aide ?" : "Need help?"} ${e}`,
   };
 }
 
@@ -233,7 +238,7 @@ export async function sendErasureTokenEmail(
   const line = intro
     ? `${escapeHtml(heading)} ${escapeHtml(intro)}`
     : escapeHtml(heading);
-  const foot = supportFooter(copy?.supportEmail);
+  const foot = supportFooter(copy?.supportEmail, locale);
   const html = `<p>Hello ${escapeHtml(to)},</p><p>${line}</p><p><a href="${url}">${escapeHtml(buttonLabel)}</a></p><p>${escapeHtml(outro)}</p>${foot.html}`;
   const textLine = intro ? `${heading} ${intro}` : heading;
   const text = `Hello ${to},\n\n${textLine} Confirm it here:\n${confirmUrl}\n\n${outro}${foot.text}`;
@@ -266,7 +271,7 @@ export async function sendErasureCompleteEmail(
   const line = intro
     ? `${escapeHtml(heading)} ${escapeHtml(intro)}`
     : escapeHtml(heading);
-  const foot = supportFooter(copy?.supportEmail);
+  const foot = supportFooter(copy?.supportEmail, locale);
   const html = `<p>Hello ${escapeHtml(to)},</p><p>${line}</p><p>${escapeHtml(retained)}</p>${outro ? `<p>${escapeHtml(outro)}</p>` : ""}${foot.html}`;
   const textLine = intro ? `${heading} ${intro}` : heading;
   const text = `Hello ${to},\n\n${textLine}\n\n${retained}${outro ? `\n\n${outro}` : ""}${foot.text}`;

@@ -94,7 +94,7 @@ export async function handleClerkEmail(
   // One read: the clerkEmails copy + the global support address. Never throws (a missing
   // Studio must not stop a mandatory auth email); an unset support address → no footer.
   const strings = await fetchStrings(env);
-  const foot = supportFooter(strings?.supportEmail);
+  const foot = supportFooter(strings?.supportEmail, locale);
   // Clerk's exact slugs vary (the new-device one is undocumented), so match forgivingly
   // to our canonical template slug rather than an exact key.
   const canonical = canonicalAuthSlug(slug);

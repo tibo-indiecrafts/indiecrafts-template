@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { sendErasureCompleteEmail, sendErasureTokenEmail } from "./email";
+import {
+  sendErasureCompleteEmail,
+  sendErasureTokenEmail,
+  supportFooter,
+} from "./email";
 
 const CONFIGURED = { RESEND_API_KEY: "test_key", EMAIL_FROM: "no-reply@x.com" };
 
@@ -386,5 +390,20 @@ describe("sendErasureCompleteEmail", () => {
     expect(body.html).toContain("&lt;tagged&gt;");
     expect(body.html).not.toContain("<admin_audit>");
     expect(body.html).toContain("&lt;admin_audit&gt;");
+  });
+});
+
+describe("supportFooter", () => {
+  it("speaks the recipient's language", () => {
+    expect(supportFooter("help@x.com", "en").text).toContain(
+      "Need help? help@x.com",
+    );
+    expect(supportFooter("help@x.com", "fr").text).toContain(
+      "Besoin d'aide ? help@x.com",
+    );
+    expect(supportFooter("help@x.com", "en").html).toContain("Need help?");
+  });
+  it("is empty without an address", () => {
+    expect(supportFooter(undefined, "en")).toEqual({ html: "", text: "" });
   });
 });

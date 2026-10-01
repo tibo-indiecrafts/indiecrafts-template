@@ -9,7 +9,7 @@
 // note to the requester; a mail failure keeps the change (`notified: false`).
 import { logger } from "@indiecrafts/packages-shared-logger";
 import { type Env, corsHeaders, safeEqual } from "../index";
-import { bearerOf, decField, encField, json } from "./route";
+import { bearerOf, decField, dueAt, encField, json } from "./shared";
 import { sendDataRequestClosedEmail } from "./email";
 
 const STATUSES = new Set(["new", "in-progress", "done", "rejected"]);
@@ -21,20 +21,6 @@ const NEXT: Record<string, readonly string[]> = {
 const CLOSING = new Set(["done", "rejected"]);
 const NOTE_MAX = 4000;
 const BODY_MAX = 8000;
-
-/** GDPR Art. 12(3): answer within one month of receipt. A day the next month lacks
- *  (31 Jan → February) becomes that month's last day. */
-export function dueAt(submittedAt: string): string {
-  const d = new Date(submittedAt);
-  const due = new Date(d);
-  due.setUTCDate(1);
-  due.setUTCMonth(d.getUTCMonth() + 1);
-  const last = new Date(
-    Date.UTC(due.getUTCFullYear(), due.getUTCMonth() + 1, 0),
-  ).getUTCDate();
-  due.setUTCDate(Math.min(d.getUTCDate(), last));
-  return due.toISOString();
-}
 
 function authed(request: Request, env: Env): boolean {
   const bearer = bearerOf(request);
@@ -166,26 +152,25 @@ export async function handleDataRequestStatus(
   if (!(NEXT[row.status] ?? []).includes(status))
     return json({ error: "not_allowed" }, 409, cors);
 
-  // Guarded on the status the operator saw — a concurrent change makes this a no-op.
-  const upd = await db
-    .prepare("UPDATE data_requests SET status = ? WHERE id = ? AND status = ?")
-    .bind(status, id, from)
-    .run();
-  if (!upd.meta.changes) return json({ error: "changed" }, 409, cors);
-
+  // Encrypt first, then move + record in ONE transaction (a D1 batch): the history row is
+  // written only when the guarded UPDATE changed the row (`changes()`), so a concurrent
+  // change or a failure never leaves a status without its actor.
   const key = env.PII_ENCRYPTION_KEY;
-  const event = await db
-    .prepare(
-      "INSERT INTO data_request_events (request_id, status, note, actor, notified, at) VALUES (?, ?, ?, ?, 0, ?) RETURNING id",
-    )
-    .bind(
-      id,
-      status,
-      await encField(note || null, key),
-      by,
-      new Date().toISOString(),
-    )
-    .first<{ id: number }>();
+  const noteStored = await encField(note || null, key);
+  const [moved, recorded] = await db.batch([
+    db
+      .prepare(
+        "UPDATE data_requests SET status = ? WHERE id = ? AND status = ?",
+      )
+      .bind(status, id, from),
+    db
+      .prepare(
+        "INSERT INTO data_request_events (request_id, status, note, actor, notified, at) SELECT ?, ?, ?, ?, 0, ? WHERE changes() > 0 RETURNING id",
+      )
+      .bind(id, status, noteStored, by, new Date().toISOString()),
+  ]);
+  if (!moved?.meta.changes) return json({ error: "changed" }, 409, cors);
+  const eventId = (recorded?.results[0] as { id: number } | undefined)?.id;
 
   let notified = false;
   if (notify && closing) {
@@ -204,10 +189,10 @@ export async function handleDataRequestStatus(
         message: (error as Error)?.message,
       });
     }
-    if (notified && event)
+    if (notified && eventId)
       await db
         .prepare("UPDATE data_request_events SET notified = 1 WHERE id = ?")
-        .bind(event.id)
+        .bind(eventId)
         .run();
   }
   return json({ ok: true, status, notified }, 200, cors);

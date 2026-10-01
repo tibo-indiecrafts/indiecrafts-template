@@ -1,11 +1,8 @@
 import { env } from "cloudflare:test";
 import { describe, expect, it, vi } from "vitest";
 import type { Env } from "../index";
-import {
-  dueAt,
-  handleDataRequestDetail,
-  handleDataRequestStatus,
-} from "./status";
+import { dueAt } from "./shared";
+import { handleDataRequestDetail, handleDataRequestStatus } from "./status";
 
 const E = env as unknown as Env;
 
@@ -134,6 +131,46 @@ describe("POST /v1/data-requests/:id/status", () => {
       .bind(id)
       .first<{ status: string }>();
     expect(row?.status).toBe("rejected");
+  });
+
+  it("changes nothing when the history row cannot be written (one transaction)", async () => {
+    const id = await seed();
+    // Make every history insert fail at the database — the move must not half-apply.
+    await E.MAIN_DB!.prepare(
+      "CREATE TRIGGER fail_events BEFORE INSERT ON data_request_events BEGIN SELECT RAISE(ABORT, 'boom'); END",
+    ).run();
+    try {
+      await expect(
+        handleDataRequestStatus(
+          post(id, { status: "done", from: "new", note: "x", by: "u" }),
+          E,
+          id,
+        ),
+      ).rejects.toThrow();
+    } finally {
+      await E.MAIN_DB!.prepare("DROP TRIGGER fail_events").run();
+    }
+    const row = await E.MAIN_DB!.prepare(
+      "SELECT status FROM data_requests WHERE id = ?",
+    )
+      .bind(id)
+      .first<{ status: string }>();
+    expect(row?.status).toBe("new");
+  });
+
+  it("writes no history row when another admin moved it first", async () => {
+    const id = await seed("in-progress");
+    await handleDataRequestStatus(
+      post(id, { status: "done", from: "new", by: "u" }),
+      E,
+      id,
+    );
+    const n = await E.MAIN_DB!.prepare(
+      "SELECT count(*) AS n FROM data_request_events WHERE request_id = ?",
+    )
+      .bind(id)
+      .first<{ n: number }>();
+    expect(n?.n).toBe(0);
   });
 
   it("note_required when emailing a closing without a note", async () => {

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
@@ -8,13 +8,14 @@ import type { DataRequestDetail } from "@/lib/monitoring";
 
 // The operator's whole job on one request: read it, see its deadline and history, and
 // move it — closing with a reply prefilled in the requester's language.
-const { setDataRequestStatus, toast } = vi.hoisted(() => ({
+const { setDataRequestStatus, toast, refresh } = vi.hoisted(() => ({
   setDataRequestStatus: vi.fn(),
   toast: { success: vi.fn(), warning: vi.fn(), error: vi.fn() },
+  refresh: vi.fn(),
 }));
 vi.mock("./monitoring-actions", () => ({ setDataRequestStatus }));
 vi.mock("@/i18n/routing", () => ({
-  useRouter: () => ({ refresh: vi.fn(), replace: vi.fn() }),
+  useRouter: () => ({ refresh, replace: vi.fn() }),
 }));
 vi.mock("sonner", () => ({ toast }));
 
@@ -42,7 +43,7 @@ const req = (status: string): DataRequestDetail => ({
 });
 const prefill = {
   done: "Bonjour, demande traitée.",
-  rejected: "Bonjour, motif :",
+  rejected: "Bonjour,\n\nMotif : [indiquez le motif]",
 };
 const renderSheet = (status = "new") =>
   render(
@@ -52,6 +53,8 @@ const renderSheet = (status = "new") =>
   );
 
 describe("DataRequestSheet", () => {
+  beforeEach(() => vi.clearAllMocks());
+
   it("shows the request: reply link, full message, due date, history", () => {
     renderSheet();
     expect(
@@ -111,7 +114,7 @@ describe("DataRequestSheet", () => {
     await user.clear(note);
     const confirm = screen.getByRole("button", { name: "Confirm: rejected" });
     expect((confirm as HTMLButtonElement).disabled).toBe(true);
-    await user.type(note, "Not our data.");
+    await user.type(note, "Motif : not our data.");
     await user.click(confirm);
     expect(toast.warning).toHaveBeenCalled();
   });
@@ -124,5 +127,26 @@ describe("DataRequestSheet", () => {
     expect(toast.error).toHaveBeenCalledWith(
       "Someone changed this request — reload the page.",
     );
+  });
+
+  it("cannot send a refusal until the [reason] placeholder is replaced", async () => {
+    const user = userEvent.setup();
+    renderSheet("new");
+    await user.click(screen.getByRole("button", { name: "Reject" }));
+    const confirm = screen.getByRole("button", { name: "Confirm: rejected" });
+    expect((confirm as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText(/Replace the text in \[brackets\]/)).toBeTruthy();
+    const note = screen.getByLabelText("Reply to the requester");
+    await user.clear(note);
+    await user.type(note, "Motif : hors de notre périmètre.");
+    expect((confirm as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it("reloads the request when someone else changed it", async () => {
+    const user = userEvent.setup();
+    setDataRequestStatus.mockResolvedValue({ ok: false, error: "changed" });
+    renderSheet("new");
+    await user.click(screen.getByRole("button", { name: "Start" }));
+    expect(refresh).toHaveBeenCalled();
   });
 });

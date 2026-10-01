@@ -15,7 +15,7 @@ Sends the erasure flow's two transactional emails. The shared `@indiecrafts/pack
 ## Exports
 
 - `MailEnv` — the env slice this module needs (Resend key, From address, BCC controls, Sanity read config).
-- `supportFooter(supportEmail?)` — the editor-owned support-address footer, returned as `{ html, text }`.
+- `supportFooter(supportEmail, locale)` — the editor-owned support-address footer in the recipient's language ("Need help?" / "Besoin d'aide ?"), returned as `{ html, text }`.
 - `readProfileLocale(db, { userId, fingerprint })` — the recipient's stored `user_profiles.locale`, defaulting on any miss; never throws.
 - `escapeHtml(value)` — HTML-escapes untrusted text before it enters an email body.
 - `fetchEmailStrings(env, projection)` — one `emailStrings` projection over GROQ-HTTP; `null` on any failure (never throws). The data-request emails share it.

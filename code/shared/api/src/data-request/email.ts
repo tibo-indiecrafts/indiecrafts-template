@@ -15,7 +15,7 @@ import {
   supportFooter,
   type MailEnv,
 } from "../erasure/email";
-import { dueAt } from "./status";
+import { dueAt } from "./shared";
 
 type L = "en" | "fr";
 type LocaleValue =
@@ -151,7 +151,7 @@ export async function sendDataRequestReceipt(
     text("intro"),
     text("outro"),
   ];
-  const foot = supportFooter(copy?.supportEmail);
+  const foot = supportFooter(copy?.supportEmail, l);
   await resend(env, {
     to,
     subject,
@@ -191,7 +191,7 @@ export async function sendDataRequestClosedEmail(
   const intro = pick(g?.intro, l);
   const lead = intro ? fill(intro, vars) : "";
   const outro = fill(pick(g?.outro, l) || CLOSED[l].outro, vars);
-  const foot = supportFooter(copy?.supportEmail);
+  const foot = supportFooter(copy?.supportEmail, l);
   await resend(env, {
     to,
     subject,

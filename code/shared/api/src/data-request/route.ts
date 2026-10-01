@@ -9,14 +9,9 @@
 // origin, and body-cap already enforced there — this route re-checks only what a bearer
 // caller could still get wrong). `handleDataRequestList` backs the admin screen.
 import { logger } from "@indiecrafts/packages-shared-logger";
-import {
-  encrypt,
-  decrypt,
-  type EncryptedData,
-} from "@indiecrafts/packages-shared-security/crypto";
 import { type Env, corsHeaders, safeEqual } from "../index";
 import { sendDataRequestReceipt } from "./email";
-import { dueAt } from "./status";
+import { bearerOf, decField, dueAt, encField, json } from "./shared";
 
 // The 7 GDPR request types — mirrors `DATA_REQUEST_TYPES` in
 // code/packages/web/compliance/src/requests/request-types.ts (the source of truth).
@@ -35,71 +30,6 @@ const DATA_REQUEST_TYPES = new Set([
 // Higher than the audit-event BODY_MAX (4000) — mirrors the website's own
 // `security.dataRequest.bodyMax` (8000), which must fit the 4000-char free-text message.
 const BODY_MAX = 8000;
-
-export function json(
-  body: unknown,
-  status: number,
-  cors: Record<string, string>,
-): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "content-type": "application/json", ...cors },
-  });
-}
-
-export function bearerOf(request: Request): string {
-  return (request.headers.get("authorization") ?? "").replace(
-    /^Bearer\s+/i,
-    "",
-  );
-}
-
-// At-rest encryption for the operational plaintext PII in `data_requests` (email + free-text
-// message). Cloudflare D1 already encrypts at rest; this adds field-level AES-256-GCM so a
-// leaked DB dump or a read-access breach sees ciphertext, not the data subject's email/message.
-// Opt-in via `PII_ENCRYPTION_KEY`: unset → plaintext (unchanged); the read path decrypts either,
-// so existing plaintext rows keep working and a key can be introduced without a migration.
-
-/** Shape-check the JSON we store for an encrypted field. */
-function isEncrypted(v: unknown): v is EncryptedData {
-  return (
-    typeof v === "object" &&
-    v !== null &&
-    typeof (v as EncryptedData).ciphertext === "string" &&
-    typeof (v as EncryptedData).iv === "string" &&
-    (v as EncryptedData).version === 1
-  );
-}
-
-/** Encrypt a field for storage when a key is set; else store as-is (backward compatible). */
-export async function encField(
-  value: string | null,
-  key: string | undefined,
-): Promise<string | null> {
-  if (!key || !value) return value;
-  return JSON.stringify(await encrypt(value, key));
-}
-
-/** Decrypt a stored field: encrypted-JSON → plaintext (needs the key); legacy plaintext
- *  (or a value we can't decrypt) → returned as-is, never throwing. */
-export async function decField(
-  value: string | null,
-  key: string | undefined,
-): Promise<string | null> {
-  if (value == null) return value;
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(value);
-  } catch {
-    return value; // legacy plaintext (not JSON)
-  }
-  if (!isEncrypted(parsed) || !key) return value;
-  try {
-    return await decrypt(parsed, key);
-  } catch {
-    return value; // wrong key / tampered — surface the raw value rather than crash the list
-  }
-}
 
 export async function handleDataRequestWrite(
   request: Request,
@@ -154,9 +84,11 @@ export async function handleDataRequestWrite(
     typeof body.policyVersion === "string" && body.policyVersion
       ? body.policyVersion.slice(0, 120)
       : null;
+  // A real timestamp, normalized — an unparseable value would break every date read later.
   const submittedAt =
-    typeof body.submittedAt === "string" && body.submittedAt
-      ? body.submittedAt
+    typeof body.submittedAt === "string" &&
+    !Number.isNaN(Date.parse(body.submittedAt))
+      ? new Date(body.submittedAt).toISOString()
       : new Date().toISOString();
 
   // Encrypt the replyable PII at rest when a key is configured (else plaintext, unchanged).

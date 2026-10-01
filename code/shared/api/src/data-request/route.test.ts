@@ -110,6 +110,26 @@ describe("POST /v1/data-request", () => {
   });
 });
 
+describe("POST /v1/data-request — submittedAt", () => {
+  it("stores now when submittedAt is not a date, so the list never breaks", async () => {
+    const res = await postDataRequest(
+      {
+        requestType: "access",
+        email: "bad-date@example.com",
+        submittedAt: "garbage",
+      },
+      "test-token",
+    );
+    expect(res.status).toBe(201);
+    const row = await env.AUDIT_DB.prepare(
+      "SELECT submitted_at FROM data_requests WHERE email = ?",
+    )
+      .bind("bad-date@example.com")
+      .first<{ submitted_at: string }>();
+    expect(Number.isNaN(Date.parse(row!.submitted_at))).toBe(false);
+  });
+});
+
 describe("GET /v1/data-requests", () => {
   it("401s with no bearer", async () => {
     const res = await getDataRequests();

@@ -196,11 +196,12 @@
           "not_allowed": "Ce changement n'est pas autorisé.",
           "changed": "Quelqu'un a modifié cette demande — rechargez la page.",
           "not_found": "Demande introuvable."
-        }
+        },
+        "unfinished": "Remplacez le texte entre [crochets] avant l'envoi."
       },
       "replies": {
-        "done": "Bonjour,\n\nNous avons traité votre demande « {right} » (référence n° {id}). L'action demandée est effectuée.\n\nPour toute question, écrivez à l'adresse d'assistance ci-dessous.\n\nCordialement",
-        "rejected": "Bonjour,\n\nNous ne pouvons pas donner suite à votre demande « {right} » (référence n° {id}).\n\nMotif : \n\nVous pouvez introduire une réclamation auprès de la CNIL.\n\nCordialement"
+        "done": "Bonjour,\n\nNous avons traité votre demande « {right} » (référence n° {id}). L'action demandée est effectuée.\n\nPour toute question, contactez-nous.\n\nCordialement",
+        "rejected": "Bonjour,\n\nNous ne pouvons pas donner suite à votre demande « {right} » (référence n° {id}).\n\nMotif : [indiquez le motif]\n\nVous pouvez introduire une réclamation auprès de la CNIL.\n\nCordialement"
       }
     },
     "system": {
